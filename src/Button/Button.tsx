@@ -7,11 +7,13 @@ import Link from '../../assets/link.svg'
 
 interface Props {
     type: string
+    click: () => void
 }
 
 class Button extends React.Component<Props> {
     static defaultProps: Props = {
-        type: null
+        type: null,
+        click: () => {}
     }
 
     render() {
@@ -24,7 +26,7 @@ class Button extends React.Component<Props> {
             icon = <span className='icon'><Link /></span>
         }
 
-        return <button className='Button'>
+        return <button className='Button' onClick={this.props.click}>
             {icon}
             <span className='text'>{this.props.children}</span>
         </button>
