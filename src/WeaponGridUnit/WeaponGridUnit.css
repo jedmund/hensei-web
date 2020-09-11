@@ -1,0 +1,24 @@
+.WeaponGridUnit {
+    align-items: center;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 8px;
+    display: flex;
+    height: 92px;
+    justify-content: center;
+    transition: all 0.18s ease-in-out;
+    width: 160px;
+}
+
+.WeaponGridUnit:hover {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
+    cursor: pointer;
+    transform: scale(1.1, 1.1);
+}
+
+.WeaponGridUnit .icon {
+    color: #c9c9c9;
+    height: 20px;
+    width: 20px;
+}

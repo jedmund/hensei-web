@@ -1,0 +1,22 @@
+.WeaponGrid {
+    display: flex;
+    margin-top: 48px;
+    justify-content: center;
+}
+
+.grid-weapons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 528px;
+}
+
+.grid-weapons > * {
+    margin-bottom: 72px;
+    margin-right: 24px;
+
+}
+
+.grid-weapons > *:nth-child(3n+3) {
+    margin-right: 0;
+}
