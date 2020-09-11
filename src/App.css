@@ -3,3 +3,12 @@ html {
     font-family: -apple-system, "Helvetica Neue", "Lucida Grande";
     padding: 16px;
 }
+
+a {
+    text-decoration: none;
+}
+
+h1 {
+    color: #444;
+    font-weight: 500;
+}

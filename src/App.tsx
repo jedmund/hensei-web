@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import './App.css'
 
 import Header from './Header/Header'
+import Main from './Main/Main'
 
 function App() {
     const [parties, setParties] = useState(false)
@@ -11,7 +12,7 @@ function App() {
     }, [])
 
     function getParty() {
-        fetch('http://localhost:3001')
+        fetch('http://localhost:3001/parties')
             .then(response => {
                 return response.text()
             })
@@ -54,12 +55,7 @@ function App() {
     return (
         <div>
             <Header />
-
-            {parties ? parties : 'There are no parties available'}
-            <br />
-            <button onClick={createParty}>New party</button>
-            <br />
-            <button onClick={deleteParty}>Delete party</button>
+            <Main />
         </div>
     )
 }
