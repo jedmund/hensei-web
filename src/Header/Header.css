@@ -1,0 +1,12 @@
+.Header {
+    display: flex;
+    width: 100%;
+}
+
+.Header .right button:first-child {
+    margin-right: 8px;
+}
+
+.Header .push {
+    margin-left: auto;
+}

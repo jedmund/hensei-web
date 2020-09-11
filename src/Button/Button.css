@@ -1,0 +1,31 @@
+.Button {
+    -webkit-font-smoothing: antialiased;
+    border: none;
+    box-shadow: none;
+
+    align-items: center;
+    background: white;
+    border-radius: 6px;
+    display: inline-flex;
+    font-family: -apple-system, "Helvetica Neue", "Lucida Grande";
+    font-size: 18px;
+    font-weight: 500;
+    gap: 6px;
+    padding: 8px 12px;
+}
+
+.Button .icon {
+    color: #c9c9c9;
+}
+
+.Button .text {
+    color: #777;
+}
+
+.Button:hover {
+    cursor: pointer;
+}
+
+.Button:hover > * {
+    color: #555;
+}
