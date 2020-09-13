@@ -1,5 +1,5 @@
 import React from 'react'
-import WeaponGrid from '../../WeaponGrid/WeaponGrid'
+import WeaponGrid from '../../components/WeaponGrid/WeaponGrid'
 
 const New = () => (
     <div>

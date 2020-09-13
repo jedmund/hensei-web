@@ -1,24 +1,29 @@
-.WeaponGridUnit {
+.WeaponGridMainhand {
     align-items: center;
     background: white;
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: 8px;
     display: flex;
-    height: 92px;
+    height: 432px;
     justify-content: center;
+    margin-right: 24px;
     transition: all 0.18s ease-in-out;
-    width: 160px;
+    width: 205px;
 }
 
-.WeaponGridUnit:hover {
+.WeaponGridMainhand:hover {
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
     cursor: pointer;
-    transform: scale(1.1, 1.1);
+    transform: scale(1.05, 1.05);
 }
 
-.WeaponGridUnit .icon {
+.WeaponGridMainhand .icon {
     color: #c9c9c9;
     height: 20px;
     width: 20px;
+}
+
+.WeaponGridMainhand:hover .icon {
+    color: #555;
 }

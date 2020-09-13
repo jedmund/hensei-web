@@ -1,9 +1,9 @@
 import React from 'react'
 import './Button.css'
 
-import New from '../../assets/new.svg'
-import Menu from '../../assets/menu.svg'
-import Link from '../../assets/link.svg'
+import New from '../../../assets/new'
+import Menu from '../../../assets/menu'
+import Link from '../../../assets/link'
 
 interface Props {
     type: string
