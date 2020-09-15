@@ -13,6 +13,7 @@ class Parties extends React.Component {
             parties: []
         }
     }
+    
     getParties() {
         fetch('http://localhost:3001/parties/')
             .then(response => response.json())
