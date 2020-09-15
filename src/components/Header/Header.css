@@ -1,5 +1,6 @@
 .Header {
     display: flex;
+    height: 48px;
     width: 100%;
 }
 
@@ -9,4 +10,22 @@
 
 .Header .push {
     margin-left: auto;
+}
+
+.dropdown {
+    display: inline-block;
+    position: relative;
+}
+
+.dropdown:hover {
+    padding-right: 50px;
+    padding-bottom: 8px;
+}
+
+.dropdown:hover .Button > * {
+    color: #555;
+}
+
+.dropdown:hover .Menu {
+    display: block;
 }
