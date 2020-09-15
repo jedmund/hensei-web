@@ -27,11 +27,13 @@ const Portal = ({ children }) => {
     useEffect(() => {
         modalRoot.appendChild(modalDiv.current)
         return () => {
+            document.body.classList.remove('no-scroll')
             return modalRoot.removeChild(modalDiv.current)
         }
     }, [modalDiv, modalRoot])
 
     if (modalDiv.current) {
+        document.body.classList.add('no-scroll')
         return createPortal(children, modalDiv.current)
     }
 
