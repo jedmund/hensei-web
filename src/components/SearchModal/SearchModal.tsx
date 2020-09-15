@@ -9,6 +9,7 @@ import './SearchModal.css'
 
 interface Props {
     close: () => void
+    send: (weapon: Weapon) => void
     placeholderText: string
 }
 
@@ -68,11 +69,11 @@ class SearchModal extends React.Component<Props, State> {
 
         if (results.length) {
             return (
-                <div id="results_container">
+                <ul id="results_container">
                     { results.map( result => {
-                        return <WeaponResult key={result.id} data={result} />
+                        return <WeaponResult key={result.id} data={result} onClick={() => { this.props.send(result) }} />
                     })}
-                </div>
+                </ul>
             )
         }
     }

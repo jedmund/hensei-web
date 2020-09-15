@@ -6,6 +6,7 @@
     display: flex;
     height: 92px;
     justify-content: center;
+    overflow: hidden;
     transition: all 0.18s ease-in-out;
     width: 160px;
 }
@@ -17,10 +18,18 @@
     transform: scale(1.1, 1.1);
 }
 
+.WeaponGridUnit img {
+    position: relative;
+    width: 100%;
+    z-index: 2;
+}
+
 .WeaponGridUnit .icon {
+    position: absolute;
     color: #c9c9c9;
     height: 20px;
     width: 20px;
+    z-index: 1;
 }
 
 .WeaponGridUnit:hover .icon {

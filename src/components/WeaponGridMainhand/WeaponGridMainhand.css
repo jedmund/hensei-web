@@ -4,11 +4,12 @@
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: 8px;
     display: flex;
-    height: 432px;
+    height: 420px;
     justify-content: center;
     margin-right: 24px;
+    overflow: hidden;
     transition: all 0.18s ease-in-out;
-    width: 205px;
+    width: 200px;
 }
 
 .WeaponGridMainhand:hover {
@@ -18,10 +19,18 @@
     transform: scale(1.05, 1.05);
 }
 
+.WeaponGridMainhand img {
+    position: relative;
+    width: 100%;
+    z-index: 2;
+}
+
 .WeaponGridMainhand .icon {
+    position: absolute;
     color: #c9c9c9;
     height: 20px;
     width: 20px;
+    z-index: 1;
 }
 
 .WeaponGridMainhand:hover .icon {

@@ -6,37 +6,9 @@ import WeaponLabelIcon from '../WeaponLabelIcon/WeaponLabelIcon'
 
 import gridImages from '../../images/grid/*.jpg'
 
-interface Weapon {
-    id: string
-    granblue_id: number
-    element: number
-    proficiency: number
-    max_level: number
-    max_skill_level: number
-    name: { 
-        en: string
-        jp: string
-    }
-    hp: {
-        min_hp: number
-        max_hp: number
-        max_hp_flb: number
-        max_hp_ulb: number
-    }
-    atk: {
-        min_atk: number
-        max_atk: number
-        max_atk_flb: number
-        max_atk_ulb: number
-    }
-    uncap: {
-        flb: boolean
-        ulb: boolean
-    }
-}
-
 interface Props {
     data: Weapon
+    onClick: () => Weapon
 }
 
 const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
@@ -47,7 +19,7 @@ class WeaponResult extends React.Component<Props> {
     render() {
         const weapon = this.props.data
         return (
-            <div className="WeaponResult">
+            <li className="WeaponResult" onClick={this.props.onClick}>
                 <img alt={weapon.name.en} src={gridImages[weapon.granblue_id]} />
                 <div>
                     <div>
@@ -57,7 +29,7 @@ class WeaponResult extends React.Component<Props> {
                     <WeaponLabelIcon labelType={Element[weapon.element]} />
                     <WeaponLabelIcon labelType={Proficiency[weapon.proficiency]} />
                 </div>
-            </div>
+            </li>
         )
     }
 }
