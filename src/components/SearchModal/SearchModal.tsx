@@ -1,10 +1,9 @@
 import React from 'react'
-import { v1 as uuidv1 } from 'uuid'
-
 import Portal from '../../Portal'
 
 import Modal from '../Modal/Modal'
 import Overlay from '../Overlay/Overlay'
+import WeaponResult from '../WeaponResult/WeaponResult'
 
 import './SearchModal.css'
 
@@ -16,8 +15,9 @@ interface Props {
 interface State {
     query: string,
     results: { [key: string]: any }
-    isLoaded: boolean
+    loading: boolean
     message: string
+    totalResults: number
 }
 
 class SearchModal extends React.Component<Props, State> {
@@ -28,62 +28,78 @@ class SearchModal extends React.Component<Props, State> {
         this.state = {
             query: '',
             results: {},
-            isLoaded: false,
-            message: ''
-		}
+            loading: false,
+            message: '',
+            totalResults: 0
+        }
     }
 
     fetchResults = (query) => {
-        fetch(`http://127.0.0.1:3000/api/v1/search?query=${query}`)
+        fetch(`http://grid-api.ngrok.io/api/v1/search?query=${query}`)
             .then(res => res.json())
             .then((result) => {
-                // console.log("hello world!")
-                console.log(result)
-                // this.setState({
-                //     isLoaded: true,
-                //     results: result
-                // })
+                const totalResults = result.length
+                this.setState({
+                    results: result,
+                    totalResults: totalResults,
+                    loading: false
+                })
             }, (error) => {
-                // this.setState({
-                //     isLoaded: true,
-                //     message: error
-                // })
+                this.setState({
+                    loading: false,
+                    message: error
+                })
             })
     }
 
     inputChanged = (event) => {
-        const query = this.searchQuery.value
-        if (query.length > 2) {
-            console.log(query)
-            this.fetchResults(query)
+        const query = event.target.value
+        if (query.length) {
+            this.setState({ query, loading: true, message: '' }, () => {
+                this.fetchResults(query)
+            })
+        } else {
+            this.setState({ query, results: {}, message: '' })
         }
-        
-        // if (query) {
-        //     this.setState({ query, isLoaded: true, message: '' }, () => {
-        //         // this.fetchResults(query)
-        //     })
-        // } else {
-        //     this.setState({ query, results: {}, message: '' })
-        // }
+    }
+
+    renderSearchResults = () => {
+        const { results } = this.state
+
+        if (results.length) {
+            return (
+                <div id="results_container">
+                    { results.map( result => {
+                        return <WeaponResult key={result.id} data={result} />
+                    })}
+                </div>
+            )
+        }
     }
 
     render() {
-        const { query, isLoaded, message } = this.state
+        const { query, loading } = this.state
 
         return (
             <Portal key="search_portal">
                 <Modal styleName="SearchModal" key="search_modal">
-                    <input 
-                        className="Input" 
-                        defaultValue={query}
-                        id="SearchInput" 
-                        name="query" 
-                        key="search_input_key"
-                        type="text"
-                        ref={el => this.searchQuery = el}
-                        onChange={this.inputChanged}
-                        placeholder={this.props.placeholderText}
-                    />
+                    <div id="input_container">
+                        <label className="search_label" htmlFor="search_input">
+                            <input 
+                                autoComplete="off"
+                                type="text"
+                                name="query" 
+                                className="Input" 
+                                id="search_input"
+                                value={query}
+                                placeholder={this.props.placeholderText}
+                                onChange={this.inputChanged}
+                            />
+                        </label>
+                    </div>
+
+                    { this.renderSearchResults() }
+                    
                 </Modal>
                 <Overlay onClick={this.props.close} />
             </Portal>
