@@ -1,7 +1,10 @@
-import { useEffect } from 'react'
-import { createPortal } from 'react-dom'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal, render } from 'react-dom'
 
 const Portal = ({ children }) => {
+    const el = document.createElement('div')
+    el.classList.add('modal_content')
+
     let modalRoot = document.getElementById('modal')
 
     if (!modalRoot) {
@@ -10,14 +13,29 @@ const Portal = ({ children }) => {
         document.body.appendChild(modalRoot)
     }
 
-    const modalElement = document.createElement('div')
-    
-    useEffect(() => {
-        modalRoot.appendChild(modalElement)
-        return () => modalRoot.removeChild(modalElement)
-    })
+    const [val, setVal] = useState(true)
 
-    return createPortal(children, modalElement)
+    const modalDiv = useRef(null)
+
+    useEffect(() => {
+        if (!modalDiv.current) {
+            modalDiv.current = el
+            setVal(!val)
+        }
+    }, [modalDiv])
+
+    useEffect(() => {
+        modalRoot.appendChild(modalDiv.current)
+        return () => {
+            return modalRoot.removeChild(modalDiv.current)
+        }
+    }, [modalDiv, modalRoot])
+
+    if (modalDiv.current) {
+        return createPortal(children, modalDiv.current)
+    }
+
+    return null
 }
 
 export default Portal
