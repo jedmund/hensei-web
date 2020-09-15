@@ -1,0 +1,9 @@
+.SearchModal {
+    min-height: 320px;
+    min-width: 600px;
+}
+
+.SearchModal > .Input {
+    padding: 12px 8px;
+    text-align: left;
+}
