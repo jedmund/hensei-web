@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import './Header.css'
 
 import Button from '../Button/Button'
+import UnauthMenu from '../UnauthMenu/UnauthMenu'
 
 class Header extends React.Component {
     constructor(props) {
@@ -25,14 +26,17 @@ class Header extends React.Component {
     render() {
         return <nav className="Header">
             <div className="left">
-                <Link to='/'>
-                    <Button type="new">New</Button>
-                </Link>
+                <div className="dropdown">
+                    <Button type="menu">Menu</Button>
+                    <UnauthMenu />
+                </div>
             </div>
             <div className="push" />
             <div className="right">
                 <Button type="link" click={this.copyToClipboard}>Copy link</Button>
-                <Button type="menu">Menu</Button>
+                <Link to='/'>
+                    <Button type="new">New</Button>
+                </Link>
             </div>
         </nav>
     }
