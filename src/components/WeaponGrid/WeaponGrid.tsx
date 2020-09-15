@@ -4,22 +4,25 @@ import './WeaponGrid.css'
 import WeaponGridMainhand from '../WeaponGridMainhand/WeaponGridMainhand'
 import WeaponGridUnit from '../WeaponGridUnit/WeaponGridUnit'
 
-const WeaponGrid = () => (
-    <div className="WeaponGrid">
-        <WeaponGridMainhand />
+class WeaponGrid extends React.Component {
+    render() {
+        const numWeapons = 9
+        let weapons = []
 
-        <div className="grid-weapons">
-            <WeaponGridUnit />
-            <WeaponGridUnit />
-            <WeaponGridUnit />
-            <WeaponGridUnit />
-            <WeaponGridUnit />
-            <WeaponGridUnit />
-            <WeaponGridUnit />
-            <WeaponGridUnit />
-            <WeaponGridUnit />
-        </div>
-    </div>
-)
+        Array.from(Array(numWeapons)).forEach((x, i) => {
+            weapons.push(<WeaponGridUnit key={`grid_unit_${i}`} />)
+        })
+
+        return (
+            <div className="WeaponGrid">
+                <WeaponGridMainhand key="grid_mainhand" />
+
+                <div className="grid-weapons">
+                    {weapons}
+                </div>
+            </div>
+        )
+    }
+}
 
 export default WeaponGrid
