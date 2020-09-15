@@ -16,15 +16,15 @@
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    max-height: 600px;
+    height: 320px;
     min-width: 360px;
     max-width: 480px;
-    padding: 24px;
+    overflow: scroll;
     position: relative;
     z-index: 10;
 }
 
-.Modal > .Input {
+.Modal .Input {
     -webkit-font-smoothing: antialiased;
     border: none;
 
@@ -38,7 +38,7 @@
     text-align: center;
 }
 
-.Modal > .Button {
+.Modal .Button {
     background: #61B3FF;
     color: #315E87;
     display: block;
@@ -46,7 +46,7 @@
     text-align: center;
 }
 
-.Modal > .Button:hover {
+.Modal .Button:hover {
     background: #4B9BE5;
     color: #233E56;
 }
