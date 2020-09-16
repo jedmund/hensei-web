@@ -15,7 +15,7 @@ const Main = () => (
     <Switch>
       <Route exact path='/' component={New} />
       <Route exact path='/parties/' component={Parties} />
-      <Route path='/:hash' component={Party} />
+      <Route path='/p/:hash' component={Party} />
     </Switch>
   </main>
 )
