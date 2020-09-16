@@ -9,8 +9,9 @@ import './SearchModal.css'
 
 interface Props {
     close: () => void
-    send: (weapon: Weapon) => void
+    send: (weapon: Weapon, position: number) => any
     placeholderText: string
+    fromPosition: number
 }
 
 interface State {
@@ -24,7 +25,7 @@ interface State {
 class SearchModal extends React.Component<Props, State> {
     searchQuery
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props)
         this.state = {
             query: '',
@@ -36,7 +37,7 @@ class SearchModal extends React.Component<Props, State> {
     }
 
     fetchResults = (query) => {
-        fetch(`http://grid-api.ngrok.io/api/v1/search?query=${query}`)
+        fetch(`http://127.0.0.1:3000/api/v1/search?query=${query}`)
             .then(res => res.json())
             .then((result) => {
                 const totalResults = result.length
@@ -64,14 +65,19 @@ class SearchModal extends React.Component<Props, State> {
         }
     }
 
+    sendData = (result: Weapon) => {
+        this.props.send(result, this.props.fromPosition)
+        this.props.close()
+    }
+
     renderSearchResults = () => {
         const { results } = this.state
 
         if (results.length) {
             return (
                 <ul id="results_container">
-                    { results.map( result => {
-                        return <WeaponResult key={result.id} data={result} onClick={() => { this.props.send(result) }} />
+                    { results.map( (result: Weapon) => {
+                        return <WeaponResult key={result.id} data={result} onClick={() => { this.sendData(result) }} />
                     })}
                 </ul>
             )

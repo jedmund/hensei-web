@@ -8,12 +8,11 @@ import gridImages from '../../images/grid/*.jpg'
 
 interface Props {
     data: Weapon
-    onClick: () => Weapon
+    onClick: () => void
 }
 
 const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 const Proficiency = ['none', 'sword', 'dagger', 'axe', 'spear', 'bow', 'staff', 'fist', 'harp', 'gun', 'katana']
-
 
 class WeaponResult extends React.Component<Props> {
     render() {

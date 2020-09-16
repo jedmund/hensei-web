@@ -4,19 +4,25 @@
     justify-content: center;
 }
 
-.grid-weapons {
+#grid_weapons {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
     width: 528px;
 }
 
-.grid-weapons > * {
+#grid_weapons > * {
     margin-bottom: 72px;
     margin-right: 24px;
 
 }
 
-.grid-weapons > *:nth-child(3n+3) {
+#grid_weapons > *:nth-child(3n+3) {
     margin-right: 0;
+}
+
+#grid_weapons > li {
+    list-style: none;
 }

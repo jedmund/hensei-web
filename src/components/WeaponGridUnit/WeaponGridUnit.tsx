@@ -1,43 +1,29 @@
-import React, { useEffect, useState } from 'react'
-
-import './WeaponGridUnit.css'
-
+import React from 'react'
 import SearchModal from '../SearchModal/SearchModal'
 import { useModal as useModal } from '../../useModal'
 
+import './WeaponGridUnit.css'
 import gridImages from '../../images/grid/*.jpg'
 import Plus from '../../../assets/plus.svg'
 
-function WeaponGridUnit() {
+function WeaponGridUnit(props: WeaponGridProps) {
     const { open, openModal, closeModal } = useModal()
-    const [weapon, setWeapon] = useState<Weapon>({
-        id: '', 
-        granblue_id: 0, 
-        name: { 
-            en: '', 
-            jp: ''
-        }
-    })
-    
-    function receiveData(data: Weapon) {
-        setWeapon(data)
-        closeModal()
-    }
 
     return (
-        <div>
+        <li>
             <div className="WeaponGridUnit" onClick={openModal}>
-                <img className="grid_image" src={gridImages[weapon.granblue_id]} />
+                <img className="grid_image" src={gridImages[props.weapon?.granblue_id]} />
                 <span className='icon'><Plus /></span>
             </div>
             {open ? (
                 <SearchModal 
                     close={closeModal}
-                    send={receiveData}
+                    send={props.onReceiveData}
+                    fromPosition={props.position}
                     placeholderText="Search for a weapon..."
                 />
             ) : null}
-        </div>
+        </li>
     )
 }
 

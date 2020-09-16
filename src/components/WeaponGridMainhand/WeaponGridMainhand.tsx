@@ -1,38 +1,29 @@
-import React, { useEffect, useState } from 'react'
-import './WeaponGridMainhand.css'
-
+import React, { useEffect } from 'react'
 import SearchModal from '../SearchModal/SearchModal'
 import { useModal as useModal } from '../../useModal'
 
+import './WeaponGridMainhand.css'
 import mainhandImages from '../../images/mainhand/*.jpg'
 import Plus from '../../../assets/plus.svg'
 
-function WeaponGridUnit() {
+function WeaponGridMainhand(props: WeaponGridProps) {
     const { open, openModal, closeModal } = useModal()
-    const [weapon, setWeapon] = useState<Weapon>({
-        id: '', 
-        granblue_id: 0, 
-        name: { 
-            en: '', 
-            jp: ''
-        }
-    })
-    
-    function receiveData(data: Weapon) {
-        setWeapon(data)
-        closeModal()
-    }
 
+    useEffect(() => {
+        console.log('Mainhand weapon prop was updated.')
+    }, [props.weapon])
+    
     return (
         <div>
             <div className="WeaponGridMainhand" onClick={openModal}>
-                <img className="grid_image" src={mainhandImages[weapon.granblue_id]} />
+                <img className="grid_image" src={mainhandImages[props.weapon?.granblue_id]} />
                 <span className='icon'><Plus /></span>
             </div>
             {open ? (
                 <SearchModal 
                     close={closeModal}
-                    send={receiveData}
+                    send={props.onReceiveData}
+                    fromPosition={props.position}
                     placeholderText="Search for a weapon..."
                 />
             ) : null}
@@ -40,4 +31,4 @@ function WeaponGridUnit() {
     )
 }
 
-export default WeaponGridUnit
+export default WeaponGridMainhand

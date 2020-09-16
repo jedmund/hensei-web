@@ -1,11 +1,13 @@
 .WeaponGridUnit {
+    display: flex;
     align-items: center;
+    justify-content: center;
+
     background: white;
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: 8px;
-    display: flex;
     height: 92px;
-    justify-content: center;
+    list-style-type: none;
     overflow: hidden;
     transition: all 0.18s ease-in-out;
     width: 160px;
