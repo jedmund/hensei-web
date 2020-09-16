@@ -25,4 +25,5 @@ interface Weapon {
         flb: boolean
         ulb: boolean
     }
+    position?: number
 }
