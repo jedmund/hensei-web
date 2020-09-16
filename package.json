@@ -6,6 +6,7 @@
   "browserslist": "last 2 versions",
   "dependencies": {
     "@svgr/parcel-plugin-svgr": "^5.4.0",
+    "@types/react-router": "^5.1.8",
     "autoprefixer": "^9.8.6",
     "classnames": "^2.2.6",
     "i18next": "^19.7.0",
