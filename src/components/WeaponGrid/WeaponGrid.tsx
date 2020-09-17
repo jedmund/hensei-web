@@ -6,12 +6,23 @@ import WeaponGridUnit from '../WeaponGridUnit/WeaponGridUnit'
 
 import './WeaponGrid.css'
 
+interface GridWeapon {
+    id: string
+    mainhand: boolean
+    position: number | null
+    weapon: Weapon
+}
+
+type GridArray = { [key: number]: Weapon } 
+
+const endpoint = process.env.SIERO_API ? process.env.SIERO_API : 'http://127.0.0.1:3000/api/v1'
+
 const WeaponGrid = (props: null) => {
     const [partyId, setPartyId] = useState<string>()
     const [shortcode, setShortcode] = useState<string>()
 
     const [mainhand, setMainhand] = useState<Weapon>()
-    const [weapons, setWeapons] = useState<{ [key: number]: Weapon }>({})
+    const [weapons, setWeapons] = useState<GridArray>({})
 
     const numWeapons: number = 9
 
@@ -19,6 +30,7 @@ const WeaponGrid = (props: null) => {
         const shortcode = props.match.params.hash
 
         if (shortcode) {
+            fetchGrid(shortcode)
             console.log(shortcode)
         } else {
             console.log('nothing')
@@ -26,19 +38,32 @@ const WeaponGrid = (props: null) => {
     }, [])
 
     function fetchGrid(shortcode: string) {
-        // const body = JSON.stringify({
-        //     'weapon': {
-        //         'party_id': pid,
-        //         'weapon_id': weapon.id,
-        //         'position': position
-        //     }
-        // })
+        const options = {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'GET'
+        }
 
-        // const options = {
-        //     headers: { 'Content-Type': 'application/json' },
-        //     method: 'POST',
-        //     body: body
-        // }
+        return fetch(`${endpoint}/party/${shortcode}`, options)
+            .then(response => response.json())
+            .then(data => {
+                const grid = data.party.grid
+
+                const mainhand = grid.filter((gridWeapon: GridWeapon) => gridWeapon.mainhand)[0].weapon
+                setMainhand(mainhand)
+
+                let weapons: GridArray = {}
+                grid.forEach((gridWeapon: GridWeapon) => {
+                    if (gridWeapon.mainhand) {
+                        setMainhand(gridWeapon.weapon)
+                    } 
+                    
+                    else if (!gridWeapon.mainhand && gridWeapon.position != null) {
+                        weapons[gridWeapon.position] = gridWeapon.weapon
+                    }
+                })
+
+                setWeapons(weapons)
+            })
     }
 
     function receiveMainhand(weapon: Weapon, _: number) {
@@ -95,7 +120,7 @@ const WeaponGrid = (props: null) => {
             method: 'POST'
         }
 
-        return fetch('http://127.0.0.1:3000/api/v1/party', options)
+        return fetch(`${endpoint}/api/v1/party`, options)
             .then(response => response.json())
     }
 
@@ -115,7 +140,7 @@ const WeaponGrid = (props: null) => {
             body: body
         }
 
-        fetch('http://127.0.0.1:3000/api/v1/weapons', options)
+        fetch(`${endpoint}/api/v1/weapons`, options)
             .then(data => {
                 console.log(data)
             })
@@ -136,7 +161,7 @@ const WeaponGrid = (props: null) => {
             body: body
         }
 
-        fetch('http://127.0.0.1:3000/api/v1/weapons', options)
+        fetch(`${endpoint}/api/v1/weapons`, options)
             .then(data => {
                 console.log(data)
             })

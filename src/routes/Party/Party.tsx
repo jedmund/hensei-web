@@ -8,7 +8,6 @@ class Party extends React.Component {
         var hash = this.props.match.params.hash
         return (
             <div>
-                <h1>{hash}</h1>
                 <WeaponGrid />
             </div>
         )
