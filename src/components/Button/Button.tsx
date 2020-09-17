@@ -6,7 +6,7 @@ import Menu from '../../../assets/menu'
 import Link from '../../../assets/link'
 
 interface Props {
-    type: string
+    type: string | null
     click: () => void
 }
 
