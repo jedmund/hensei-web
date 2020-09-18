@@ -1,5 +1,5 @@
 import React from 'react'
-import Portal from '~utils/Portal'
+import { createPortal } from 'react-dom'
 import api from '~utils/api'
 
 import Modal from '~components/Modal/Modal'
@@ -24,7 +24,7 @@ interface State {
 }
 
 class SearchModal extends React.Component<Props, State> {
-    searchQuery
+    searchInput: React.RefObject<HTMLInputElement>
 
     constructor(props: Props) {
         super(props)
@@ -34,6 +34,13 @@ class SearchModal extends React.Component<Props, State> {
             loading: false,
             message: '',
             totalResults: 0
+        }
+        this.searchInput = React.createRef<HTMLInputElement>()
+    }
+
+    componentDidMount() {
+        if (this.searchInput.current) {
+            this.searchInput.current.focus()
         }
     }
 
@@ -89,28 +96,32 @@ class SearchModal extends React.Component<Props, State> {
         const { query, loading } = this.state
 
         return (
-            <Portal key="search_portal">
-                <Modal styleName="SearchModal" key="search_modal">
-                    <div id="input_container">
-                        <label className="search_label" htmlFor="search_input">
-                            <input 
-                                autoComplete="off"
-                                type="text"
-                                name="query" 
-                                className="Input" 
-                                id="search_input"
-                                value={query}
-                                placeholder={this.props.placeholderText}
-                                onChange={this.inputChanged}
-                            />
-                        </label>
-                    </div>
+            createPortal(
+                <div>
+                    <Modal styleName="SearchModal" key="search_modal">
+                        <div id="input_container">
+                            <label className="search_label" htmlFor="search_input">
+                                <input 
+                                    autoComplete="off"
+                                    type="text"
+                                    name="query" 
+                                    className="Input" 
+                                    id="search_input"
+                                    ref={this.searchInput}
+                                    value={query}
+                                    placeholder={this.props.placeholderText}
+                                    onChange={this.inputChanged}
+                                />
+                            </label>
+                        </div>
 
-                    { this.renderSearchResults() }
-                    
-                </Modal>
-                <Overlay onClick={this.props.close} />
-            </Portal>
+                        { this.renderSearchResults() }
+                        
+                    </Modal>
+                    <Overlay onClick={this.props.close} />
+                </div>,
+                document.body
+            )
         )
     }
 }
