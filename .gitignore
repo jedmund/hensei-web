@@ -44,7 +44,8 @@ dist/
 
 # Source images
 # Instructions will be provided to download these from the game
-src/images/
+src/images/grid
+src/images/mainhand
 
 # Typescript v1 declaration files
 typings/
