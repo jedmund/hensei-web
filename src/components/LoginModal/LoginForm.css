@@ -36,6 +36,10 @@
     cursor: pointer;
 }
 
+#ModalTop i:hover svg {
+    color: #444;
+}
+
 #ModalTop svg {
     color: #888;
     height: 18px;
