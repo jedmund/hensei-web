@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { withRouter } from 'react-router'
+import api from '~utils/api'
 
 import WeaponGridMainhand from '~components/WeaponGridMainhand/WeaponGridMainhand'
 import WeaponGridUnit from '~components/WeaponGridUnit/WeaponGridUnit'
@@ -15,7 +16,7 @@ interface GridWeapon {
 
 type GridArray = { [key: number]: Weapon } 
 
-const WeaponGrid = (props: null) => {
+const WeaponGrid = (props: {}) => {
     const [partyId, setPartyId] = useState<string>()
     const [shortcode, setShortcode] = useState<string>()
 
@@ -29,25 +30,15 @@ const WeaponGrid = (props: null) => {
 
         if (shortcode) {
             fetchGrid(shortcode)
-            console.log(shortcode)
         } else {
-            console.log('nothing')
+            // There is no need to fetch a weapon
         }
     }, [])
 
     function fetchGrid(shortcode: string) {
-        const options = {
-            headers: { 'Content-Type': 'application/json' },
-            method: 'GET'
-        }
-
-        return fetch(`http://127.0.0.1:3000/api/v1/party/${shortcode}`, options)
-            .then(response => response.json())
-            .then(data => {
-                const grid = data.party.grid
-
-                const mainhand = grid.filter((gridWeapon: GridWeapon) => gridWeapon.mainhand)[0].weapon
-                setMainhand(mainhand)
+        return api.endpoints.parties.getOne({ id: shortcode })
+            .then(response => {
+                const grid = response.data.party.grid
 
                 let weapons: GridArray = {}
                 grid.forEach((gridWeapon: GridWeapon) => {
@@ -71,11 +62,13 @@ const WeaponGrid = (props: null) => {
         if (partyId === undefined) {
             let _partyId = ''
 
-            createParty().then(data => {
-                setPartyId(data.party.id)
-                _partyId = data.party.id
+            createParty().then(response => {
+                const party = response.data.party
 
-                return data.party.shortcode
+                setPartyId(party.id)
+                _partyId = party.id
+
+                return party.shortcode
             })
             .then((code: string) => {
                 setShortcode(shortcode)
@@ -98,11 +91,16 @@ const WeaponGrid = (props: null) => {
         if (partyId === undefined) {
             let _partyId = ''
 
-            createParty().then(data => {
-                setPartyId(data.party.id)
-                _partyId = data.party.id 
+            createParty().then(response => {
+                const party = response.data.party
+                setPartyId(party.id)
+                _partyId = party.id 
 
-                return data.party.shortcode
+                return party.shortcode
+            })
+            .then((code: string) => {
+                setShortcode(shortcode)
+                window.history.replaceState(null, `Grid Tool: ${code}`, `/p/${code}`)
             })
             .then(() => {
                 saveWeapon(_partyId, weapon, position)
@@ -113,56 +111,32 @@ const WeaponGrid = (props: null) => {
     }
 
     function createParty() {
-        const options = {
-            headers: { 'Content-Type': 'application/json' },
-            method: 'POST'
-        }
-
-        return fetch('http://127.0.0.1:3000/api/v1/party', options)
-            .then(response => response.json())
+        return api.endpoints.parties.create({})
     }
 
     function saveWeapon(pid: string, weapon: Weapon, position: number) {
-        const body = JSON.stringify({
+        const body = {
             'weapon': {
                 'party_id': pid,
                 'weapon_id': weapon.id,
                 'position': position,
                 'mainhand': false
             }
-        })
-
-        const options = {
-            headers: { 'Content-Type': 'application/json' },
-            method: 'POST',
-            body: body
         }
 
-        fetch('http://127.0.0.1:3000/api/v1/weapons', options)
-            .then(data => {
-                console.log(data)
-            })
+        api.endpoints.weapons.create(body)
     }
 
     function saveMainhand(pid: string, weapon: Weapon) {
-        const body = JSON.stringify({
+        const body = {
             'weapon': {
                 'party_id': pid,
                 'weapon_id': weapon.id,
                 'mainhand': true
             }
-        })
-
-        const options = {
-            headers: { 'Content-Type': 'application/json' },
-            method: 'POST',
-            body: body
         }
 
-        fetch('http://127.0.0.1:3000/api/v1/weapons', options)
-            .then(data => {
-                console.log(data)
-            })
+        api.endpoints.weapons.create(body)
     }
 
     return (

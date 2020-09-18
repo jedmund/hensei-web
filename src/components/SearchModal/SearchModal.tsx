@@ -1,5 +1,6 @@
 import React from 'react'
 import Portal from '~utils/Portal'
+import api from '~utils/api'
 
 import Modal from '~components/Modal/Modal'
 import Overlay from '~components/Overlay/Overlay'
@@ -8,7 +9,7 @@ import WeaponResult from '~components/WeaponResult/WeaponResult'
 import './SearchModal.css'
 
 interface Props {
-    close: () => void
+    close: OnClickEvent
     send: (weapon: Weapon, position: number) => any
     placeholderText: string
     fromPosition: number
@@ -36,13 +37,13 @@ class SearchModal extends React.Component<Props, State> {
         }
     }
 
-    fetchResults = (query) => {
-        fetch(`http://127.0.0.1:3000/api/v1/search?query=${query}`)
-            .then(res => res.json())
-            .then((result) => {
-                const totalResults = result.length
+    fetchResults = (query: string) => {
+        api.search(query)
+            .then((response) => {
+                const data = response.data
+                const totalResults = data.length
                 this.setState({
-                    results: result,
+                    results: data,
                     totalResults: totalResults,
                     loading: false
                 })
