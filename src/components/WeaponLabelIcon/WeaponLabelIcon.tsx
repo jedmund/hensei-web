@@ -1,4 +1,5 @@
 import React from 'react'
+
 import './WeaponLabelIcon.css'
 
 interface Props {

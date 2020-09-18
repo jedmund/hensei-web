@@ -1,10 +1,11 @@
 import React from 'react'
-import SearchModal from '../SearchModal/SearchModal'
-import { useModal as useModal } from '../../useModal'
+import SearchModal from 'components/SearchModal/SearchModal'
+import { useModal as useModal } from 'useModal'
+
+import gridImages from 'images/grid/*.jpg'
+import Plus from '../../../assets/plus.svg'
 
 import './WeaponGridUnit.css'
-import gridImages from '../../images/grid/*.jpg'
-import Plus from '../../../assets/plus.svg'
 
 function WeaponGridUnit(props: WeaponGridProps) {
     const { open, openModal, closeModal } = useModal()

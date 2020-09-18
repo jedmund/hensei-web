@@ -4,7 +4,7 @@ import Portal from '../../Portal'
 import Modal from '../Modal/Modal'
 import Overlay from '../Overlay/Overlay'
 
-const LoginModal = ({ close }) => {
+const LoginModal = (close: () => null ) => {
     return (
         <Portal>
             <div>

@@ -1,8 +1,8 @@
 import React from 'react'
-import Portal from '../../Portal'
+import Portal from 'Portal'
 
-import Modal from '../Modal/Modal'
-import Overlay from '../Overlay/Overlay'
+import Modal from 'components/Modal/Modal'
+import Overlay from 'components/Overlay/Overlay'
 
 const SignupModal = ({ close }) => {
     return (

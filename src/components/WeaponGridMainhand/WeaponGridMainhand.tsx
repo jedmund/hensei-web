@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
-import SearchModal from '../SearchModal/SearchModal'
-import { useModal as useModal } from '../../useModal'
+import SearchModal from 'components/SearchModal/SearchModal'
+import { useModal as useModal } from 'useModal'
+
+import mainhandImages from 'images/mainhand/*.jpg'
+import Plus from '../../../assets/plus.svg'
 
 import './WeaponGridMainhand.css'
-import mainhandImages from '../../images/mainhand/*.jpg'
-import Plus from '../../../assets/plus.svg'
 
 function WeaponGridMainhand(props: WeaponGridProps) {
     const { open, openModal, closeModal } = useModal()

@@ -1,11 +1,11 @@
 import React from 'react'
 import './UnauthMenu.css'
 
-import LoginModal from '../LoginModal/LoginModal'
-import SignupModal from '../SignupModal/SignupModal'
+import LoginModal from 'components/LoginModal/LoginModal'
+import SignupModal from 'components/SignupModal/SignupModal'
 
-import { useModal as useSignupModal } from '../../useModal'
-import { useModal as useLoginModal } from '../../useModal'
+import { useModal as useSignupModal } from 'useModal'
+import { useModal as useLoginModal } from 'useModal'
 
 function UnauthMenu() {
     const { open: signupOpen, openModal: openSignupModal, closeModal: closeSignupModal } = useSignupModal()

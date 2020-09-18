@@ -1,9 +1,9 @@
 import React from 'react'
-import Portal from '../../Portal'
+import Portal from 'Portal'
 
-import Modal from '../Modal/Modal'
-import Overlay from '../Overlay/Overlay'
-import WeaponResult from '../WeaponResult/WeaponResult'
+import Modal from 'components/Modal/Modal'
+import Overlay from 'components/Overlay/Overlay'
+import WeaponResult from 'components/WeaponResult/WeaponResult'
 
 import './SearchModal.css'
 

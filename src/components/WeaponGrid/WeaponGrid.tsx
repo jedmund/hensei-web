@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { withRouter } from 'react-router'
 
-import WeaponGridMainhand from '../WeaponGridMainhand/WeaponGridMainhand'
-import WeaponGridUnit from '../WeaponGridUnit/WeaponGridUnit'
+import WeaponGridMainhand from 'components/WeaponGridMainhand/WeaponGridMainhand'
+import WeaponGridUnit from 'components/WeaponGridUnit/WeaponGridUnit'
 
 import './WeaponGrid.css'
 

@@ -1,13 +1,13 @@
-import React, { useRef, useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
+
+import Button from 'components/Button/Button'
+import UnauthMenu from 'components/UnauthMenu/UnauthMenu'
 
 import './Header.css'
 
-import Button from '../Button/Button'
-import UnauthMenu from '../UnauthMenu/UnauthMenu'
-
 class Header extends React.Component {
-    constructor(props) {
+    constructor(props: any) {
         super(props)
         this.copyToClipboard = this.copyToClipboard.bind(this)
     }
