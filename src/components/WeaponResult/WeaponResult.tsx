@@ -15,10 +15,18 @@ const Proficiency = ['none', 'sword', 'dagger', 'axe', 'spear', 'bow', 'staff', 
 
 class WeaponResult extends React.Component<Props> {
     render() {
+        let imgSrc
+
         const weapon = this.props.data
+        if (process.env.NODE_ENV === 'development') {
+            imgSrc = gridImages[weapon.granblue_id]
+        } else if (process.env.NODE_ENV === 'production') {
+            imgSrc = `${process.env.SIERO_IMG_URL}/grid/${weapon.granblue_id}.jpg`
+        }
+
         return (
             <li className="WeaponResult" onClick={this.props.onClick}>
-                <img alt={weapon.name.en} src={gridImages[weapon.granblue_id]} />
+                <img alt={weapon.name.en} src={imgSrc} />
                 <div>
                     <div>
                         <h5>{weapon.name.en}</h5>
