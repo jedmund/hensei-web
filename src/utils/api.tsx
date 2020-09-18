@@ -52,7 +52,7 @@ class Api {
     }
 }
 
-const api: Api = new Api({ url: 'http://127.0.0.1:3000/api/v1' })
+const api: Api = new Api({ url: process.env.SIERO_API_URL || 'http://127.0.0.1:3000/api/v1' })
 api.createEntity( { name: 'users' })
 api.createEntity( { name: 'parties' })
 api.createEntity( { name: 'weapons' })
