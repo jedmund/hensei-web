@@ -19,7 +19,7 @@
     height: 320px;
     min-width: 360px;
     max-width: 480px;
-    overflow: scroll;
+    overflow-y: auto;
     position: relative;
     z-index: 10;
 }
