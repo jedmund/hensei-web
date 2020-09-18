@@ -32,7 +32,8 @@ function WeaponGridMainhand(props: WeaponGridProps) {
 
     const classes = classnames({
         WeaponGridMainhand: true,
-        'editable': props.editable
+        'editable': props.editable,
+        'filled': (props.weapon !== undefined)
     })
 
     const weapon = props.weapon

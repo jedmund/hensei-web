@@ -27,10 +27,13 @@ function WeaponGridUnit(props: WeaponGridProps) {
 
     const openModalIfEditable = (props.editable) ? openModal : () => {}
 
+    console.log(props.weapon)
     const classes = classnames({
         WeaponGridUnit: true,
-        'editable': props.editable
+        'editable': props.editable,
+        'filled': (props.weapon !== undefined)
     })
+    console.log(`Classes: ${classes}`)
 
     const weapon = props.weapon
 

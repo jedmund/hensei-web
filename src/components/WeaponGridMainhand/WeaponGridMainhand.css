@@ -52,3 +52,16 @@
 .WeaponGridImage:hover .icon {
     color: #555;
 }
+
+.WeaponGridMainhand h3,
+.WeaponGridMainhand ul {
+    display: none;
+}
+
+.filled h3 {
+    display: block;
+}
+
+.filled ul {
+    display: flex;
+}
