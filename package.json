@@ -15,6 +15,7 @@
     "classnames": "^2.2.6",
     "components": "^0.1.0",
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "i18next": "^19.7.0",
     "i18next-browser-languagedetector": "^6.0.1",
     "i18next-xhr-backend": "^3.2.2",
@@ -28,7 +29,8 @@
   },
   "scripts": {
     "dev": "parcel ./src/index.html",
-    "start": "parcel build ./src/index.html",
+    "start": "node index.js",
+    "prestart": "parcel build ./src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "compilerOptions": {
