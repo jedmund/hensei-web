@@ -1,4 +1,5 @@
 import React from 'react'
+import classnames from 'classnames'
 import SearchModal from '~components/SearchModal/SearchModal'
 import { useModal as useModal } from '~utils/useModal'
 
@@ -16,11 +17,18 @@ function WeaponGridUnit(props: WeaponGridProps) {
         imgSrc = gridImages[weapon.granblue_id]
     }
 
+    const openModalIfEditable = (props.editable) ? openModal : () => {}
+
+    const classes = classnames({
+        WeaponGridUnit: true,
+        'editable': props.editable
+    })
+
     return (
         <li>
-            <div className="WeaponGridUnit" onClick={openModal}>
+            <div className={classes} onClick={openModalIfEditable}>
                 <img className="grid_image" src={imgSrc} />
-                <span className='icon'><Plus /></span>
+                { (props.editable) ? <span className='icon'><Plus /></span> : '' }
             </div>
             {open ? (
                 <SearchModal 

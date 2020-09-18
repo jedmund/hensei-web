@@ -3,7 +3,7 @@ import SearchModal from '../../components/SearchModal/SearchModal'
 import WeaponGrid from '../../components/WeaponGrid/WeaponGrid'
 
 const New = () => (
-    <WeaponGrid key="weapon_grid"/>
+    <WeaponGrid key="weapon_grid" editable={true} />
 )
 
 export default New

@@ -14,9 +14,14 @@ interface GridWeapon {
     weapon: Weapon
 }
 
+interface Props {
+    shortcode: string
+    editable: boolean
+}
+
 type GridArray = { [key: number]: Weapon } 
 
-const WeaponGrid = (props: {}) => {
+const WeaponGrid = (props: Props) => {
     const [partyId, setPartyId] = useState<string>()
     const [shortcode, setShortcode] = useState<string>()
 
@@ -26,10 +31,8 @@ const WeaponGrid = (props: {}) => {
     const numWeapons: number = 9
 
     useEffect(() => {
-        const shortcode = props.match.params.hash
-
-        if (shortcode) {
-            fetchGrid(shortcode)
+        if (props.shortcode) {
+            fetchGrid(props.shortcode)
         } else {
             // There is no need to fetch a weapon
         }
@@ -141,12 +144,24 @@ const WeaponGrid = (props: {}) => {
 
     return (
         <div className="WeaponGrid">
-            <WeaponGridMainhand key="grid_mainhand" onReceiveData={receiveMainhand} position={0} weapon={mainhand} />
+            <WeaponGridMainhand 
+                editable={props.editable}
+                key="grid_mainhand" 
+                onReceiveData={receiveMainhand} 
+                position={0} 
+                weapon={mainhand}
+            />
 
             <ul id="grid_weapons">
                 {
                     Array.from(Array(numWeapons)).map((x, i) => {
-                        return <WeaponGridUnit key={`grid_unit_${i}`} onReceiveData={receiveWeapon} position={i} weapon={weapons[i]} />
+                        return <WeaponGridUnit 
+                            editable={props.editable}
+                            key={`grid_unit_${i}`} 
+                            onReceiveData={receiveWeapon} 
+                            position={i} 
+                            weapon={weapons[i]}
+                        />
                     })
                 }
             </ul>
