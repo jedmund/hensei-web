@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
 import classnames from 'classnames'
-import SearchModal from '~components/SearchModal/SearchModal'
 import { useModal as useModal } from '~utils/useModal'
+
+import SearchModal from '~components/SearchModal/SearchModal'
+import UncapIndicator from '~components/UncapIndicator/UncapIndicator'
 
 import mainhandImages from '../../images/mainhand/*.jpg'
 import Plus from '../../../assets/plus.svg'
@@ -33,11 +35,21 @@ function WeaponGridMainhand(props: WeaponGridProps) {
         'editable': props.editable
     })
 
+    const weapon = props.weapon
+
     return (
         <div>
             <div className={classes} onClick={openModalIfEditable}>
-                <img className="grid_image" src={imgSrc} />
-                { (props.editable) ? <span className='icon'><Plus /></span> : '' }
+                <div className="WeaponGridImage">
+                    <img className="grid_image" src={imgSrc} />
+                    { (props.editable) ? <span className='icon'><Plus /></span> : '' }
+                </div>
+                <UncapIndicator 
+                    ulb={weapon?.uncap.ulb || false} 
+                    flb={weapon?.uncap.flb || false }
+                    uncapLevel={3}
+                />
+                <h3 className="WeaponName">{weapon?.name.en}</h3>
             </div>
             {open ? (
                 <SearchModal 

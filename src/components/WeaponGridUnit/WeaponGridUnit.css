@@ -1,5 +1,13 @@
 .WeaponGridUnit {
     display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+    max-width: 160px;
+}
+
+.WeaponGridUnit .WeaponGridImage {
+    display: flex;
     align-items: center;
     justify-content: center;
 
@@ -13,11 +21,18 @@
     width: 160px;
 }
 
-.WeaponGridUnit.editable:hover {
+.editable .WeaponGridImage:hover {
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
     cursor: pointer;
     transform: scale(1.1, 1.1);
+}
+
+.WeaponGridUnit h3 {
+    color: #333;
+    font-weight: 500;
+    margin: 0;
+    text-align: center;
 }
 
 .WeaponGridUnit img {
@@ -26,7 +41,7 @@
     z-index: 2;
 }
 
-.WeaponGridUnit .icon {
+.WeaponGridImage .icon {
     position: absolute;
     color: #c9c9c9;
     height: 20px;
@@ -34,6 +49,6 @@
     z-index: 1;
 }
 
-.WeaponGridUnit:hover .icon {
+.WeaponGridImage:hover .icon {
     color: #555;
 }
