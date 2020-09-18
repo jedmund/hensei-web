@@ -14,7 +14,12 @@ function WeaponGridUnit(props: WeaponGridProps) {
     let imgSrc
     if (props.weapon) {
         const weapon = props.weapon!
-        imgSrc = gridImages[weapon.granblue_id]
+
+        if (process.env.NODE_ENV === 'development') {
+            imgSrc = gridImages[weapon.granblue_id]
+        } else if (process.env.NODE_ENV === 'production') {
+            imgSrc = `${process.env.SIERO_IMG_URL}/grid/${weapon.granblue_id}.jpg`
+        }
     }
 
     const openModalIfEditable = (props.editable) ? openModal : () => {}

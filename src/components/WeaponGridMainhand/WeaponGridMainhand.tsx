@@ -18,7 +18,12 @@ function WeaponGridMainhand(props: WeaponGridProps) {
     let imgSrc
     if (props.weapon) {
         const weapon = props.weapon!
-        imgSrc = mainhandImages[weapon.granblue_id]
+
+        if (process.env.NODE_ENV === 'development') {
+            imgSrc = mainhandImages[weapon.granblue_id]
+        } else if (process.env.NODE_ENV === 'production') {
+            imgSrc = `${process.env.SIERO_IMG_URL}/mainhand/${weapon.granblue_id}.jpg`
+        }
     }
 
     const openModalIfEditable = (props.editable) ? openModal : () => {}
