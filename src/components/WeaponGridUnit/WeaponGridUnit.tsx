@@ -10,10 +10,16 @@ import './WeaponGridUnit.css'
 function WeaponGridUnit(props: WeaponGridProps) {
     const { open, openModal, closeModal } = useModal()
 
+    let imgSrc = ''
+    if (props.weapon) {
+        const weapon = props.weapon!
+        imgSrc = gridImages[weapon.granblue_id]
+    }
+
     return (
         <li>
             <div className="WeaponGridUnit" onClick={openModal}>
-                <img className="grid_image" src={gridImages[props.weapon?.granblue_id]} />
+                <img className="grid_image" src={imgSrc} />
                 <span className='icon'><Plus /></span>
             </div>
             {open ? (
