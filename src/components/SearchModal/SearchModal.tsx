@@ -9,7 +9,7 @@ import WeaponResult from '~components/WeaponResult/WeaponResult'
 import './SearchModal.css'
 
 interface Props {
-    close: OnClickEvent
+    close: () => void
     send: (weapon: Weapon, position: number) => any
     placeholderText: string
     fromPosition: number
@@ -62,7 +62,7 @@ class SearchModal extends React.Component<Props, State> {
             })
     }
 
-    inputChanged = (event) => {
+    inputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value
         if (query.length) {
             this.setState({ query, loading: true, message: '' }, () => {
