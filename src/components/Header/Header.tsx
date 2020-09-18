@@ -1,8 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import Button from 'components/Button/Button'
-import UnauthMenu from 'components/UnauthMenu/UnauthMenu'
+import Button from '~components/Button/Button'
+import UnauthMenu from '~components/UnauthMenu/UnauthMenu'
 
 import './Header.css'
 

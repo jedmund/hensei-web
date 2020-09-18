@@ -1,8 +1,8 @@
 import React from 'react'
-import SearchModal from 'components/SearchModal/SearchModal'
-import { useModal as useModal } from 'useModal'
+import SearchModal from '~components/SearchModal/SearchModal'
+import { useModal as useModal } from '~utils/useModal'
 
-import gridImages from 'images/grid/*.jpg'
+import gridImages from '../../images/grid/*.jpg'
 import Plus from '../../../assets/plus.svg'
 
 import './WeaponGridUnit.css'
@@ -10,7 +10,7 @@ import './WeaponGridUnit.css'
 function WeaponGridUnit(props: WeaponGridProps) {
     const { open, openModal, closeModal } = useModal()
 
-    let imgSrc = ''
+    let imgSrc
     if (props.weapon) {
         const weapon = props.weapon!
         imgSrc = gridImages[weapon.granblue_id]

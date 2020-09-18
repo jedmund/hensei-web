@@ -1,9 +1,9 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
-import New from '../routes/New/New'
-import Party from '../routes/Party/Party'
-import Parties from '../routes/Parties/Parties'
+import New from '~routes/New/New'
+import Party from '~routes/Party/Party'
+import Parties from '~routes/Parties/Parties'
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster

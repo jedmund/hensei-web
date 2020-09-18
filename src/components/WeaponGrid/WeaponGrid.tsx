@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { withRouter } from 'react-router'
 
-import WeaponGridMainhand from 'components/WeaponGridMainhand/WeaponGridMainhand'
-import WeaponGridUnit from 'components/WeaponGridUnit/WeaponGridUnit'
+import WeaponGridMainhand from '~components/WeaponGridMainhand/WeaponGridMainhand'
+import WeaponGridUnit from '~components/WeaponGridUnit/WeaponGridUnit'
 
 import './WeaponGrid.css'
 
@@ -14,8 +14,6 @@ interface GridWeapon {
 }
 
 type GridArray = { [key: number]: Weapon } 
-
-const endpoint = process.env.SIERO_API ? process.env.SIERO_API : 'http://127.0.0.1:3000/api/v1'
 
 const WeaponGrid = (props: null) => {
     const [partyId, setPartyId] = useState<string>()
@@ -43,7 +41,7 @@ const WeaponGrid = (props: null) => {
             method: 'GET'
         }
 
-        return fetch(`${endpoint}/party/${shortcode}`, options)
+        return fetch(`http://127.0.0.1:3000/api/v1/party/${shortcode}`, options)
             .then(response => response.json())
             .then(data => {
                 const grid = data.party.grid
@@ -120,7 +118,7 @@ const WeaponGrid = (props: null) => {
             method: 'POST'
         }
 
-        return fetch(`${endpoint}/api/v1/party`, options)
+        return fetch('http://127.0.0.1:3000/api/v1/party', options)
             .then(response => response.json())
     }
 
@@ -140,7 +138,7 @@ const WeaponGrid = (props: null) => {
             body: body
         }
 
-        fetch(`${endpoint}/api/v1/weapons`, options)
+        fetch('http://127.0.0.1:3000/api/v1/weapons', options)
             .then(data => {
                 console.log(data)
             })
@@ -161,7 +159,7 @@ const WeaponGrid = (props: null) => {
             body: body
         }
 
-        fetch(`${endpoint}/api/v1/weapons`, options)
+        fetch('http://127.0.0.1:3000/api/v1/weapons', options)
             .then(data => {
                 console.log(data)
             })
