@@ -16,7 +16,7 @@
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    height: 320px;
+
     min-width: 360px;
     max-width: 480px;
     overflow-y: auto;
@@ -34,8 +34,7 @@
     display: block;
     font-size: 18px;
     margin-bottom: 8px;
-    padding: 12px 0;
-    text-align: center;
+    padding: 12px 16px;
 }
 
 .Modal .Button {

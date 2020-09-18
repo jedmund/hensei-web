@@ -14,7 +14,7 @@ function WeaponGridMainhand(props: WeaponGridProps) {
     const { open, openModal, closeModal } = useModal()
 
     useEffect(() => {
-        console.log('Mainhand weapon prop was updated.')
+        // console.log('Mainhand weapon prop was updated.')
     }, [props.weapon])
     
     let imgSrc
