@@ -26,3 +26,15 @@
 #grid_weapons > li {
     list-style: none;
 }
+
+#NotFound {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+
+#NotFound h2 {
+    color: #444;
+    font-weight: 500;
+}

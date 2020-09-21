@@ -34,27 +34,19 @@ const WeaponGrid = (props: Props) => {
         if (props.shortcode) {
             fetchGrid(props.shortcode)
         } else {
-            // There is no need to fetch a weapon
+            setIsValid(true)
         }
     }, [])
 
     function fetchGrid(shortcode: string) {
         return api.endpoints.parties.getOne({ id: shortcode })
             .then(response => {
-                const grid = response.data.party.grid
-
-                let weapons: GridArray = {}
-                grid.forEach((gridWeapon: GridWeapon) => {
-                    if (gridWeapon.mainhand) {
-                        setMainhand(gridWeapon.weapon)
-                    } 
-                    
-                    else if (!gridWeapon.mainhand && gridWeapon.position != null) {
-                        weapons[gridWeapon.position] = gridWeapon.weapon
-                    }
-                })
-
-                setWeapons(weapons)
+                setupGrid(response)
+            })
+            .catch(error => {
+                if (error.response.status == 404) {
+                    gridNotFound()
+                }
             })
     }
 

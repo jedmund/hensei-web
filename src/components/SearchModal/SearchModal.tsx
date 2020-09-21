@@ -80,20 +80,41 @@ class SearchModal extends React.Component<Props, State> {
 
     renderSearchResults = () => {
         const { results } = this.state
+        console.log(results)    
+        return (
+            <ul id="results_container">
+                { results.map( (result: Weapon) => {
+                    return <WeaponResult key={result.id} data={result} onClick={() => { this.sendData(result) }} />
+                })}
+            </ul>
+        )
+    }
 
-        if (results.length) {
-            return (
-                <ul id="results_container">
-                    { results.map( (result: Weapon) => {
-                        return <WeaponResult key={result.id} data={result} onClick={() => { this.sendData(result) }} />
-                    })}
-                </ul>
-            )
+    renderEmptyState = () => {
+        let string = ''
+
+        if (this.state.query === '') {
+            string = 'No weapons'
+        } else {
+            string = `No results found for '${this.state.query}'`
         }
+
+        return (
+            <div id="NoResults">
+                <h2>{string}</h2>
+            </div>
+        )
     }
 
     render() {
         const { query, loading } = this.state
+
+        let content: JSX.Element
+        if (Object.entries(this.state.results).length == 0) {
+            content = this.renderEmptyState()
+        } else {
+            content = this.renderSearchResults()
+        }
 
         return (
             createPortal(
@@ -115,8 +136,7 @@ class SearchModal extends React.Component<Props, State> {
                             </label>
                         </div>
 
-                        { this.renderSearchResults() }
-                        
+                        {content}
                     </Modal>
                     <Overlay onClick={this.props.close} />
                 </div>,

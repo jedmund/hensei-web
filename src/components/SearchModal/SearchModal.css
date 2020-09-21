@@ -25,5 +25,21 @@
 
 .SearchModal #results_container {
     margin: 0;
+    max-height: 320px;
     padding: 0 12px 12px 12px;
+}
+
+.SearchModal #NoResults {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.SearchModal #NoResults h2 {
+    color: #ccc;
+    font-size: 18px;
+    font-weight: 500;
+    margin-top: -32px;
 }
