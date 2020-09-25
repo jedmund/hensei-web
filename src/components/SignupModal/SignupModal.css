@@ -6,7 +6,7 @@
     margin: 0;
 }
 
-.SignupForm .fieldset {
+.SignupForm #fields {
     display: flex;
     flex-direction: column;
     gap: 4px;

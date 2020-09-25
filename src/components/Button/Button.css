@@ -4,7 +4,6 @@
     box-shadow: none;
 
     align-items: center;
-    background: white;
     border-radius: 6px;
     display: inline-flex;
     font-family: -apple-system, "Helvetica Neue", "Lucida Grande";
@@ -14,6 +13,31 @@
     padding: 8px 12px;
 }
 
+.Button.btn-grey {
+    background: white;
+    color: #777;
+}
+
+.Button.btn-blue {
+    background: #61B3FF;
+    color: #315E87;
+}
+
+.Button.btn-blue:hover {
+    background: #4B9BE5;
+    color: #233E56;
+}
+
+.Button.btn-disabled {
+    background: #e0e0e0;
+    color: #bababa;
+}
+
+.Button.btn-disabled:hover {
+    background: #e0e0e0;
+    color: #bababa;
+}
+
 .Button .icon {
     color: #c9c9c9;
     height: 12px;
@@ -21,13 +45,10 @@
 }
 
 .Button .text {
-    color: #777;
+    color: inherit;
 }
 
 .Button:hover {
-    cursor: pointer;
-}
-
-.Button:hover > * {
     color: #555;
+    cursor: pointer;
 }
