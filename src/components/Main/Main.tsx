@@ -1,5 +1,7 @@
 import React from 'react'
-import { Switch, Route } from 'react-router-dom'
+import { Router, Route } from 'react-router-dom'
+
+import history from '~utils/history'
 
 import New from '~routes/New/New'
 import Party from '~routes/Party/Party'
@@ -12,11 +14,11 @@ import Parties from '~routes/Parties/Parties'
 // when the pathname is exactly the string "/"
 const Main = () => (
   <main>
-    <Switch>
+    <Router history={history}>
       <Route exact path='/' component={New} />
       <Route exact path='/parties/' component={Parties} />
       <Route path='/p/:hash' component={Party} />
-    </Switch>
+    </Router>
   </main>
 )
 
