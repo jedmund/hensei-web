@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { withCookies, Cookies } from 'react-cookie'
 import { createPortal } from 'react-dom'
 import api from '~utils/api'

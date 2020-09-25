@@ -45,6 +45,10 @@ class Api {
         } as EndpointMap
     }
 
+    login(object: {}) {
+        return axios.post(`${process.env.SIERO_OAUTH_URL}/token` || 'http://127.0.0.1:3000/oauth/token', object)
+    }
+
     search(query: string) {
         const resourceUrl = `${this.url}/${name}`
         return axios.get(`${resourceUrl}/search?query=${query}`)
