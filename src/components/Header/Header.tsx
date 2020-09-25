@@ -1,13 +1,19 @@
 import React from 'react'
+import { RouteComponentProps, useLocation, withRouter } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
+import history from '~utils/history'
 
 import Button from '~components/Button/Button'
 import UnauthMenu from '~components/UnauthMenu/UnauthMenu'
 
 import './Header.css'
 
-const Header = () => {
+interface Props {}
+interface HeaderProps extends RouteComponentProps<Props> {}
+
+const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
     const [cookies, setCookie] = useCookies(['user'])
+    let location = useLocation()
 
     function copyToClipboard() {
         const el = document.createElement('input')
@@ -18,6 +24,15 @@ const Header = () => {
         el.select()
         document.execCommand('copy')
         el.remove()
+    }
+
+    function newParty() {
+        if (props.history.location.pathname === '/') {
+            window.history.replaceState(null, `Grid Tool`, `/`)
+            props.history.go(0)
+        } else {
+            props.history.push('/')
+        }
     }
 
     if (cookies.user != null) {
@@ -34,10 +49,10 @@ const Header = () => {
             </div>
             <div className="push" />
             <div className="right">
-                <Button type="link" click={this.copyToClipboard}>Copy link</Button>
-                <Link to='/'>
-                    <Button type="new">New</Button>
-                </Link>
+                { (location.pathname !== '/') ?
+                    <Button type="link" click={copyToClipboard}>Copy link</Button> : ''
+                }
+                <Button type="new" click={newParty}>New</Button>
             </div>
         </nav>
     )
