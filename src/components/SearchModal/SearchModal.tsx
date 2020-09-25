@@ -79,8 +79,7 @@ class SearchModal extends React.Component<Props, State> {
     }
 
     renderSearchResults = () => {
-        const { results } = this.state
-        console.log(results)    
+        const { results } = this.state  
         return (
             <ul id="results_container">
                 { results.map( (result: Weapon) => {
