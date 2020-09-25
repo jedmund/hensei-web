@@ -1,112 +1,77 @@
 import React, { useEffect, useState } from 'react'
-import { withRouter } from 'react-router'
 import api from '~utils/api'
 
-import WeaponGridMainhand from '~components/WeaponGridMainhand/WeaponGridMainhand'
-import WeaponGridUnit from '~components/WeaponGridUnit/WeaponGridUnit'
+import WeaponUnit from '~components/WeaponUnit/WeaponUnit'
+import Button from '~components/Button/Button'
 
 import './WeaponGrid.css'
 
-interface GridWeapon {
-    id: string
-    mainhand: boolean
-    position: number | null
-    weapon: Weapon
-}
-
 interface Props {
-    shortcode: string
+    userId: string
+    partyId: string
+    mainhand: Weapon | undefined
+    grid: GridArray
     editable: boolean
+    exists: boolean
+    found: boolean
 }
 
-type GridArray = { [key: number]: Weapon } 
+type GridArray = { [key: number]: Weapon }
 
 const WeaponGrid = (props: Props) => {
-    const [partyId, setPartyId] = useState<string>()
-    const [shortcode, setShortcode] = useState<string>()
+    const numWeapons: number = 9
 
     const [mainhand, setMainhand] = useState<Weapon>()
     const [weapons, setWeapons] = useState<GridArray>({})
 
-    const numWeapons: number = 9
-
     useEffect(() => {
-        if (props.shortcode) {
-            fetchGrid(props.shortcode)
-        } else {
-            setIsValid(true)
-        }
-    }, [])
+        if (props.exists && props.found)
+            configure()
+    }, [props.mainhand, props.grid])
 
-    function fetchGrid(shortcode: string) {
-        return api.endpoints.parties.getOne({ id: shortcode })
-            .then(response => {
-                setupGrid(response)
-            })
-            .catch(error => {
-                if (error.response.status == 404) {
-                    gridNotFound()
-                }
-            })
-    }
-
-    function receiveMainhand(weapon: Weapon, _: number) {
-        // Store the mainhand weapon
-        setMainhand(weapon)
-
-        if (partyId === undefined) {
-            let _partyId = ''
-
-            createParty().then(response => {
-                const party = response.data.party
-
-                setPartyId(party.id)
-                _partyId = party.id
-
-                return party.shortcode
-            })
-            .then((code: string) => {
-                setShortcode(shortcode)
-                window.history.replaceState(null, `Grid Tool: ${code}`, `/p/${code}`)
-            })
-            .then(() => {
-                saveMainhand(_partyId, weapon)
-            })
-        } else {
-            saveMainhand(partyId, weapon)
-        }
-    }
-
-    function receiveWeapon(weapon: Weapon, position: number) {
-        // Store the grid unit weapon at the correct position
-        let newWeapons = Object.assign({}, weapons)
-        newWeapons[position] = weapon
-        setWeapons(newWeapons)
-
-        if (partyId === undefined) {
-            let _partyId = ''
-
-            createParty().then(response => {
-                const party = response.data.party
-                setPartyId(party.id)
-                _partyId = party.id 
-
-                return party.shortcode
-            })
-            .then((code: string) => {
-                setShortcode(shortcode)
-                window.history.replaceState(null, `Grid Tool: ${code}`, `/p/${code}`)
-            })
-            .then(() => {
-                saveWeapon(_partyId, weapon, position)
-            })
-        } else {
-            saveWeapon(partyId, weapon, position)
-        }
+    function configure() {
+        setMainhand(props.mainhand)
+        setWeapons(props.grid)
     }
 
     function createParty() {
-        return api.endpoints.parties.create({})
+        const body = (props.userId === '') ? {} : {
+            party: {
+                user_id: props.userId
+            }
+        }
+
+        return api.endpoints.parties.create(body)
+    }
+
+    function receiveWeapon(weapon: Weapon, position: number) {
+        const isMainhand = position == -1
+
+        if (isMainhand) {
+            setMainhand(weapon)
+        } else {
+            // Store the grid unit weapon at the correct position
+            let newWeapons = Object.assign({}, weapons)
+            newWeapons[position] = weapon
+            setWeapons(newWeapons)
+        }
+        
+        if (props.partyId == undefined) {
+            createParty()
+                .then(response => {
+                    return response.data.party
+                })
+                .then(party => {                    
+                    window.history.replaceState(null, `Grid Tool`, `/p/${party.shortcode}`)
+
+                    return party.id
+                })
+                .then(partyId => {
+                    saveWeapon(partyId, weapon, position)
+                })
+        } else {
+            saveWeapon(props.partyId, weapon, position)
+        }
     }
 
     function saveWeapon(pid: string, weapon: Weapon, position: number) {
@@ -115,50 +80,56 @@ const WeaponGrid = (props: Props) => {
                 'party_id': pid,
                 'weapon_id': weapon.id,
                 'position': position,
-                'mainhand': false
+                'mainhand': (position == -1)
             }
         }
 
         api.endpoints.weapons.create(body)
     }
 
-    function saveMainhand(pid: string, weapon: Weapon) {
-        const body = {
-            'weapon': {
-                'party_id': pid,
-                'weapon_id': weapon.id,
-                'mainhand': true
-            }
-        }
-
-        api.endpoints.weapons.create(body)
+    function renderGrid() {
+        return (
+            <div className="WeaponGrid">
+                <WeaponUnit 
+                    editable={props.editable}
+                    key="grid_mainhand"
+                    onReceiveData={receiveWeapon} 
+                    position={-1} 
+                    unitType={0}
+                    weapon={mainhand}
+                />
+    
+                <ul id="grid_weapons">
+                    {
+                        Array.from(Array(numWeapons)).map((x, i) => {
+                            return (
+                                <li key={`grid_unit_${i}`} >
+                                    <WeaponUnit 
+                                        editable={props.editable}
+                                        onReceiveData={receiveWeapon} 
+                                        position={i} 
+                                        unitType={1}
+                                        weapon={weapons[i]}
+                                    />
+                                </li>
+                            )
+                        })
+                    }
+                </ul>
+            </div>
+        )
     }
 
-    return (
-        <div className="WeaponGrid">
-            <WeaponGridMainhand 
-                editable={props.editable}
-                key="grid_mainhand" 
-                onReceiveData={receiveMainhand} 
-                position={0} 
-                weapon={mainhand}
-            />
+    function renderGridNotFound() {
+        return (
+            <div id="NotFound">
+                <h2>There's no grid here.</h2>
+                <Button type="new">New grid</Button>
+            </div>
+        )
+    }
 
-            <ul id="grid_weapons">
-                {
-                    Array.from(Array(numWeapons)).map((x, i) => {
-                        return <WeaponGridUnit 
-                            editable={props.editable}
-                            key={`grid_unit_${i}`} 
-                            onReceiveData={receiveWeapon} 
-                            position={i} 
-                            weapon={weapons[i]}
-                        />
-                    })
-                }
-            </ul>
-        </div>
-    )
+    return (props.found) ? renderGrid() : renderGridNotFound()
 }
 
-export default withRouter(WeaponGrid)
+export default WeaponGrid
