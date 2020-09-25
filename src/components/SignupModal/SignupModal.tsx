@@ -95,6 +95,7 @@ class SignupModal extends React.Component<Props, State> {
                 .then((response) => {
                     const cookies = this.props.cookies
                     cookies.set('user', response.data.user, { path: '/'})
+                    this.props.close()
                 }, (error) => {
                     console.log(error)
                 })
