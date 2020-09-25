@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import api from '~utils/api'
 import history from '~utils/history'
 
-
 import WeaponUnit from '~components/WeaponUnit/WeaponUnit'
 import Button from '~components/Button/Button'
 
@@ -68,7 +67,7 @@ const WeaponGrid = (props: Props) => {
                     if (props.pushHistory) {   
                         props.pushHistory(`/p/${party.shortcode}`)
                     }
-                    
+
                     return party.id
                 })
                 .then(partyId => {

@@ -7,7 +7,7 @@ interface Props {}
 interface NewProps extends RouteComponentProps<Props> {}
 
 const New: React.FC<NewProps> = (props: NewProps) => {
-    const [cookies, setCookie] = useCookies(['userId'])
+    const [cookies, setCookie] = useCookies(['user'])
 
     function callback(path: string) {
         // This is scuffed, how do we do this natively?
