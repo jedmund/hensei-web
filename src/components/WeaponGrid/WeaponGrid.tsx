@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import api from '~utils/api'
+import history from '~utils/history'
+
 
 import WeaponUnit from '~components/WeaponUnit/WeaponUnit'
 import Button from '~components/Button/Button'
@@ -14,6 +16,7 @@ interface Props {
     editable: boolean
     exists: boolean
     found?: boolean
+    pushHistory?: (path: string) => void
 }
 
 type GridArray = { [key: number]: Weapon }
@@ -61,9 +64,11 @@ const WeaponGrid = (props: Props) => {
                 .then(response => {
                     return response.data.party
                 })
-                .then(party => {                    
-                    window.history.replaceState(null, `Grid Tool`, `/p/${party.shortcode}`)
-
+                .then(party => {
+                    if (props.pushHistory) {   
+                        props.pushHistory(`/p/${party.shortcode}`)
+                    }
+                    
                     return party.id
                 })
                 .then(partyId => {
