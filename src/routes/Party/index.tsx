@@ -3,7 +3,7 @@ import { withCookies, useCookies } from 'react-cookie'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import api from '~utils/api'
 
-import WeaponGrid from '../../components/WeaponGrid'
+import WeaponGrid from '~components/WeaponGrid'
 
 interface Props {
     hash: string
