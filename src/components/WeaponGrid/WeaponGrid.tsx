@@ -7,13 +7,13 @@ import Button from '~components/Button/Button'
 import './WeaponGrid.css'
 
 interface Props {
-    userId: string
-    partyId: string
-    mainhand: Weapon | undefined
-    grid: GridArray
+    userId?: string
+    partyId?: string
+    mainhand?: Weapon | undefined
+    grid?: GridArray
     editable: boolean
     exists: boolean
-    found: boolean
+    found?: boolean
 }
 
 type GridArray = { [key: number]: Weapon }
@@ -31,11 +31,11 @@ const WeaponGrid = (props: Props) => {
 
     function configure() {
         setMainhand(props.mainhand)
-        setWeapons(props.grid)
+        setWeapons(props.grid || {})
     }
 
     function createParty() {
-        const body = (props.userId === '') ? {} : {
+        const body = (props.userId === undefined) ? {} : {
             party: {
                 user_id: props.userId
             }
@@ -129,7 +129,7 @@ const WeaponGrid = (props: Props) => {
         )
     }
 
-    return (props.found) ? renderGrid() : renderGridNotFound()
+    return (!props.exists || props.found) ? renderGrid() : renderGridNotFound()
 }
 
 export default WeaponGrid

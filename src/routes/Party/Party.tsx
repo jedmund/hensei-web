@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { withCookies, useCookies, Cookies } from 'react-cookie'
+import { withCookies, useCookies } from 'react-cookie'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import api from '~utils/api'
 
@@ -46,7 +46,10 @@ const Party: React.FC<PartyProps> = ({ match }, state: State) => {
             .then(response => {
                 const party = response.data.party
 
-                if (party.user_id === cookies.user_id)
+                const partyUser = party.user_id
+                const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
+
+                if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser)
                     setEditable(true)
 
                 let weapons: GridArray = {}
@@ -75,7 +78,7 @@ const Party: React.FC<PartyProps> = ({ match }, state: State) => {
     return (
         <div>
             <WeaponGrid
-                userId={cookies.user_id}
+                userId={cookies.user ? cookies.user.user_id : ''}
                 partyId={partyId}
                 mainhand={mainhand}
                 grid={grid}
