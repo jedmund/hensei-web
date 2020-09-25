@@ -1,18 +1,15 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { useCookies } from 'react-cookie'
 
 import Button from '~components/Button/Button'
 import UnauthMenu from '~components/UnauthMenu/UnauthMenu'
 
 import './Header.css'
 
-class Header extends React.Component {
-    constructor(props: any) {
-        super(props)
-        this.copyToClipboard = this.copyToClipboard.bind(this)
-    }
+const Header = () => {
+    const [cookies, setCookie] = useCookies(['user'])
 
-    copyToClipboard() {
+    function copyToClipboard() {
         const el = document.createElement('input')
         el.value = window.location.href
         el.id = 'url-input'
@@ -23,8 +20,12 @@ class Header extends React.Component {
         el.remove()
     }
 
-    render() {
-        return <nav className="Header">
+    if (cookies.user != null) {
+        console.log(`Logged in as user "${cookies.user.username}"`)
+    }
+        
+    return (
+        <nav className="Header">
             <div className="left">
                 <div className="dropdown">
                     <Button type="menu">Menu</Button>
@@ -39,7 +40,7 @@ class Header extends React.Component {
                 </Link>
             </div>
         </nav>
-    }
+    )
 }
 
-export default Header
+export default withRouter(Header)
