@@ -3,9 +3,10 @@ import { Router, Route } from 'react-router-dom'
 
 import history from '~utils/history'
 
-import New from '~routes/New/New'
-import Party from '~routes/Party/Party'
-import Parties from '~routes/Parties/Parties'
+import New from '~routes/New'
+import Party from '~routes/Party'
+import Parties from '~routes/Parties'
+import Profile from '~routes/Profile'
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
@@ -18,6 +19,7 @@ const Main = () => (
       <Route exact path='/' component={New} />
       <Route exact path='/parties/' component={Parties} />
       <Route path='/p/:hash' component={Party} />
+      <Route path='/:username' component={Profile} />
     </Router>
   </main>
 )
