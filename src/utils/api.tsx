@@ -45,10 +45,16 @@ class Api {
         } as EndpointMap
     }
 
-
     search(query: string) {
         const resourceUrl = `${this.url}/${name}`
         return axios.get(`${resourceUrl}/search?query=${query}`)
+    }
+
+    check(resource: string, value: string) {
+        const resourceUrl = `${this.url}/check/${resource}`
+        return axios.post(resourceUrl, {
+            [resource]: value
+        })
     }
 }
 
