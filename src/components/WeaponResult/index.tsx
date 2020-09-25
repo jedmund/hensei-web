@@ -1,9 +1,9 @@
 import React from 'react'
-import WeaponLabelIcon from '~components/WeaponLabelIcon/WeaponLabelIcon'
+import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
 import gridImages from '../../images/grid/*.jpg'
 
-import './WeaponResult.css'
+import './index.css'
 
 interface Props {
     data: Weapon

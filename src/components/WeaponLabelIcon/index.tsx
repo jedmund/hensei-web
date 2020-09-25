@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './WeaponLabelIcon.css'
+import './index.css'
 
 interface Props {
     labelType: string

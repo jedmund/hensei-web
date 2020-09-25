@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { RouteComponentProps, useLocation, withRouter } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 
-import Button from '~components/Button/Button'
-import HeaderMenu from '~components/HeaderMenu/HeaderMenu'
+import Button from '~components/Button'
+import HeaderMenu from '~components/HeaderMenu'
 
-import './Header.css'
+import './index.css'
 
 interface Props {}
 interface HeaderProps extends RouteComponentProps<Props> {}

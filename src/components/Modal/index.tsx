@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 
-import './Modal.css'
+import './index.css'
 
 interface Props {
     styleName?: string

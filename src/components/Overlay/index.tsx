@@ -1,5 +1,6 @@
 import React from 'react'
-import './Overlay.css'
+
+import './index.css'
 
 interface Props {
     onClick: OnClickEvent

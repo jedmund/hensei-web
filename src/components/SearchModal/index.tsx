@@ -2,11 +2,11 @@ import React from 'react'
 import { createPortal } from 'react-dom'
 import api from '~utils/api'
 
-import Modal from '~components/Modal/Modal'
-import Overlay from '~components/Overlay/Overlay'
-import WeaponResult from '~components/WeaponResult/WeaponResult'
+import Modal from '~components/Modal'
+import Overlay from '~components/Overlay'
+import WeaponResult from '~components/WeaponResult'
 
-import './SearchModal.css'
+import './index.css'
 
 interface Props {
     close: () => void

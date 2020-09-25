@@ -1,5 +1,5 @@
 import React from 'react'
-import './Fieldset.css'
+import './index.css'
 
 interface Props {
     fieldName: string

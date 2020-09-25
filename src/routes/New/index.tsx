@@ -1,7 +1,7 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
-import WeaponGrid from '../../components/WeaponGrid/WeaponGrid'
+import WeaponGrid from '../../components/WeaponGrid'
 
 interface Props {}
 interface NewProps extends RouteComponentProps<Props> {}

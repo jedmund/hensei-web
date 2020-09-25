@@ -1,10 +1,11 @@
 import React from 'react'
-import './Button.css'
+import classNames from 'classnames'
+
+import './index.css'
 
 import New from '../../../assets/new'
 import Menu from '../../../assets/menu'
 import Link from '../../../assets/link'
-import classNames from 'classnames'
 
 interface Props {
     color: string

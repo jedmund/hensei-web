@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 
-import './UncapStar.css'
+import './index.css'
 
 import Star from '../../../assets/star'
 

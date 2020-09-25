@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import api from '~utils/api'
-import history from '~utils/history'
 
-import WeaponUnit from '~components/WeaponUnit/WeaponUnit'
-import Button from '~components/Button/Button'
+import WeaponUnit from '~components/WeaponUnit'
+import Button from '~components/Button'
 
-import './WeaponGrid.css'
+import './index.css'
 
 interface Props {
     userId?: string

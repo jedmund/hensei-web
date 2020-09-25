@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 import { useModal as useModal } from '~utils/useModal'
 
-import SearchModal from '~components/SearchModal/SearchModal'
-import UncapIndicator from '~components/UncapIndicator/UncapIndicator'
+import SearchModal from '~components/SearchModal'
+import UncapIndicator from '~components/UncapIndicator'
 
 import mainhandImages from '../../images/mainhand/*.jpg'
 import gridImages from '../../images/grid/*.jpg'
 import Plus from '../../../assets/plus.svg'
 
-import './WeaponUnit.css'
+import './index.css'
 
 interface Props {
     onReceiveData: (weapon: Weapon, position: number) => void

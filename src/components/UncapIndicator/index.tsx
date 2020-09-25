@@ -1,8 +1,8 @@
 import React from 'react'
 import classnames from 'classnames'
-import UncapStar from '~components/UncapStar/UncapStar'
+import UncapStar from '~components/UncapStar'
 
-import './UncapIndicator.css'
+import './index.css'
 
 
 interface Props {

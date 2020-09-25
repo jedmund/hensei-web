@@ -1,8 +1,8 @@
 import React from 'react'
-import './HeaderMenu.css'
+import './index.css'
 
-import LoginModal from '~components/LoginModal/LoginModal'
-import SignupModal from '~components/SignupModal/SignupModal'
+import LoginModal from '~components/LoginModal'
+import SignupModal from '~components/SignupModal'
 
 import { useModal as useSignupModal } from '~utils/useModal'
 import { useModal as useLoginModal } from '~utils/useModal'

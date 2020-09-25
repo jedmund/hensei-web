@@ -3,12 +3,12 @@ import { withCookies, Cookies } from 'react-cookie'
 import { createPortal } from 'react-dom'
 import api from '~utils/api'
 
-import Button from '~components/Button/Button'
-import Fieldset from '~components/Fieldset/Fieldset'
-import Modal from '~components/Modal/Modal'
-import Overlay from '~components/Overlay/Overlay'
+import Button from '~components/Button'
+import Fieldset from '~components/Fieldset'
+import Modal from '~components/Modal'
+import Overlay from '~components/Overlay'
 
-import './LoginForm.css'
+import './index.css'
 
 import New from '../../../assets/new'
 
