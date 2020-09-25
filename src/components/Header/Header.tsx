@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { RouteComponentProps, useLocation, withRouter } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
-import history from '~utils/history'
 
 import Button from '~components/Button/Button'
-import UnauthMenu from '~components/UnauthMenu/UnauthMenu'
+import HeaderMenu from '~components/HeaderMenu/HeaderMenu'
 
 import './Header.css'
 
@@ -12,8 +11,15 @@ interface Props {}
 interface HeaderProps extends RouteComponentProps<Props> {}
 
 const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
-    const [cookies, setCookie] = useCookies(['user'])
+    const [username, setUsername] = useState(undefined)
+    const [cookies, setCookie, removeCookie] = useCookies(['user'])
     let location = useLocation()
+
+    useEffect(() => {
+        if (cookies.user) {
+            setUsername(cookies.user.username)
+        }
+    }, [])
 
     function copyToClipboard() {
         const el = document.createElement('input')
@@ -35,6 +41,16 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
         }
     }
 
+    function route(pathname: string) {
+        props.history.push(pathname)
+    }
+
+    function logout() {
+        removeCookie('user')
+        window.history.replaceState(null, `Grid Tool`, `/`)
+        props.history.go(0)
+    }
+
     if (cookies.user != null) {
         console.log(`Logged in as user "${cookies.user.username}"`)
     }
@@ -44,7 +60,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
             <div className="left">
                 <div className="dropdown">
                     <Button type="menu">Menu</Button>
-                    <UnauthMenu />
+                    <HeaderMenu username={username} navigate={route} logout={logout} />
                 </div>
             </div>
             <div className="push" />
