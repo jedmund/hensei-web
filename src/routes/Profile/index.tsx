@@ -3,6 +3,10 @@ import { withCookies, useCookies } from 'react-cookie'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import api from '~utils/api'
 
+import GridRep from '~components/GridRep'
+import GridRepCollection from '~components/GridRepCollection'
+import { composeInitialProps } from 'react-i18next'
+
 interface Props {
     username: string
 }
@@ -13,21 +17,31 @@ interface User {
     granblueId: number
 }
 
+interface Party {
+    id: string
+    shortcode: string
+    grid: GridWeapon[]
+}
+
 interface ProfileProps extends RouteComponentProps<Props> {}
 
-const Profile: React.FC<ProfileProps> = ({ match }) => {
+const Profile: React.FC<ProfileProps> = ({ history, match }) => {
     const [cookies, setCookie] = useCookies(['user'])
+
+    const [found, setFound] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [parties, setParties] = useState<Party[]>([])
     const [user, setUser] = useState<User>({
         id: '',
         username: '',
         granblueId: 0
     })
-    const [parties, setParties] = useState<GridArray[]>([])
 
     const username = match.params.username || ''
 
     useEffect(() => {
-        fetchProfile(username)
+        console.log(`Fetching profile for ${username}...`)
+        fetchProfile(username)            
     }, [])
 
     async function fetchProfile(username: string) {
@@ -40,13 +54,75 @@ const Profile: React.FC<ProfileProps> = ({ match }) => {
                 })
                 setParties(response.data.user.parties)
             })
+            .then(() => {
+                setFound(true)
+                setLoading(false)
+            })
+            .catch(error => {
+                if (error.response != null) {
+                    if (error.response.status == 404) {
+                        setFound(false)
+                    }
+                } else {
+                    console.error(error)
+                }
+            })
     }
 
-    return (
-        <div>
-            <h1>{user.username}</h1>
-        </div>
-    )
+    function render() {
+        const content = (parties && parties.length > 0) ? renderGrids() : renderNoGrids()
+        return (
+            <div>
+                <h1>{user.username}</h1>
+                {content}
+            </div>
+        )
+    }
+
+    function navigate(shortcode: string) {
+        history.push(`/p/${shortcode}`)
+    }
+    
+    function renderGrids() {
+        return (
+            <GridRepCollection>
+                {
+                    parties.map((party, i) => {
+                        return <GridRep 
+                            shortcode={party.shortcode} 
+                            grid={party.grid}
+                            key={`party-${i}`}
+                            onClick={navigate}
+                        />
+                    })
+                }
+            </GridRepCollection>
+        )
+    }
+
+    function renderNoGrids() {
+        return (
+            <div id="NotFound">
+                <h2>This user has no grids.</h2>
+            </div>
+        )
+    }
+
+    function renderNotFound() {
+        return (
+            <div id="NotFound">
+                <h2>That user doesn't exist.</h2>
+            </div>
+        )
+    }
+
+    if (!found && !loading) {
+        return renderNotFound()
+    } else if (found && !loading) {
+        return render()
+    } else {
+        return (<div />)
+    }
 }
 
 export default 

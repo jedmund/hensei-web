@@ -4,6 +4,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import api from '~utils/api'
 
 import WeaponGrid from '~components/WeaponGrid'
+import Button from '~components/Button'
 
 interface Props {
     hash: string
@@ -29,6 +30,7 @@ interface GridWeapon {
 
 const Party: React.FC<PartyProps> = ({ match }, state: State) => {
     const [found, setFound] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [editable, setEditable] = useState(false)
     const [grid, setGrid] = useState<GridArray>({})
     const [mainhand, setMainhand] = useState<Weapon>()
@@ -61,6 +63,7 @@ const Party: React.FC<PartyProps> = ({ match }, state: State) => {
                 })
 
                 setFound(true)
+                setLoading(false)
                 setGrid(weapons)
                 setPartyId(party.id)
             })
@@ -68,6 +71,7 @@ const Party: React.FC<PartyProps> = ({ match }, state: State) => {
                 if (error.response != null) {
                     if (error.response.status == 404) {
                         setFound(false)
+                        setLoading(false)
                     }
                 } else {
                     console.error(error)
@@ -75,19 +79,38 @@ const Party: React.FC<PartyProps> = ({ match }, state: State) => {
             })
     }
 
-    return (
-        <div>
-            <WeaponGrid
-                userId={cookies.user ? cookies.user.user_id : ''}
-                partyId={partyId}
-                mainhand={mainhand}
-                grid={grid}
-                editable={editable}
-                exists={true}
-                found={found}
-            />
-        </div>
-    )
+    function render() {
+        return (
+            <div>
+                <WeaponGrid
+                    userId={cookies.user ? cookies.user.user_id : ''}
+                    partyId={partyId}
+                    mainhand={mainhand}
+                    grid={grid}
+                    editable={editable}
+                    exists={true}
+                    found={found}
+                />
+            </div>
+        )
+    }
+
+    function renderNotFound() {
+        return (
+            <div id="NotFound">
+                <h2>There's no grid here.</h2>
+                <Button type="new">New grid</Button>
+            </div>
+        )
+    }
+
+    if (!found && !loading) {
+        return renderNotFound()
+    } else if (found && !loading) {
+        return render()
+    } else {
+        return (<div />)
+    }
 }
 
 export default 

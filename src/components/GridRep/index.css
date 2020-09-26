@@ -1,0 +1,51 @@
+.GridRep {
+    border: 2px solid transparent;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    margin: 0 8px 8px 0;
+    padding: 4px;
+    height: 148px;
+    width: 311px;
+}
+
+.GridRep:hover {
+    border: 2px solid #61B3FF;
+    cursor: pointer;
+}
+
+.GridRep .weapon {
+    background: white;
+    border-radius: 4px;
+}
+
+.GridRep .grid_mainhand {
+    flex-shrink: 0;
+    height: 136px;
+    width: 65px;
+    margin-right: 8px;
+}
+
+.GridRep .grid_weapons {
+    list-style: none;
+    padding: 0;
+}
+
+.GridRep .grid_weapon {
+    float: left;
+    margin: 0 8px 8px 0;
+    height: 40px;
+    width: 70px;
+}
+
+.GridRep .grid_weapon:nth-child(3n+3) {
+    margin-right: 0;
+}
+
+.GridRep .weapon img[src*="jpg"] {
+    border-radius: 4px;
+    height: 100%;
+    width: 100%;
+}
+

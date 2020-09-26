@@ -90,49 +90,36 @@ const WeaponGrid = (props: Props) => {
         api.endpoints.weapons.create(body)
     }
 
-    function renderGrid() {
-        return (
-            <div className="WeaponGrid">
-                <WeaponUnit 
-                    editable={props.editable}
-                    key="grid_mainhand"
-                    onReceiveData={receiveWeapon} 
-                    position={-1} 
-                    unitType={0}
-                    weapon={mainhand}
-                />
-    
-                <ul id="grid_weapons">
-                    {
-                        Array.from(Array(numWeapons)).map((x, i) => {
-                            return (
-                                <li key={`grid_unit_${i}`} >
-                                    <WeaponUnit 
-                                        editable={props.editable}
-                                        onReceiveData={receiveWeapon} 
-                                        position={i} 
-                                        unitType={1}
-                                        weapon={weapons[i]}
-                                    />
-                                </li>
-                            )
-                        })
-                    }
-                </ul>
-            </div>
-        )
-    }
+    return (
+        <div className="WeaponGrid">
+            <WeaponUnit 
+                editable={props.editable}
+                key="grid_mainhand"
+                onReceiveData={receiveWeapon} 
+                position={-1} 
+                unitType={0}
+                weapon={mainhand}
+            />
 
-    function renderGridNotFound() {
-        return (
-            <div id="NotFound">
-                <h2>There's no grid here.</h2>
-                <Button type="new">New grid</Button>
-            </div>
-        )
-    }
-
-    return (!props.exists || props.found) ? renderGrid() : renderGridNotFound()
+            <ul id="grid_weapons">
+                {
+                    Array.from(Array(numWeapons)).map((x, i) => {
+                        return (
+                            <li key={`grid_unit_${i}`} >
+                                <WeaponUnit 
+                                    editable={props.editable}
+                                    onReceiveData={receiveWeapon} 
+                                    position={i} 
+                                    unitType={1}
+                                    weapon={weapons[i]}
+                                />
+                            </li>
+                        )
+                    })
+                }
+            </ul>
+        </div>
+    )
 }
 
 export default WeaponGrid

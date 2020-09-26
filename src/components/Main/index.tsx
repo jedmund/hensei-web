@@ -19,7 +19,7 @@ const Main = () => (
       <Route exact path='/' component={New} />
       <Route exact path='/parties/' component={Parties} />
       <Route path='/p/:hash' component={Party} />
-      <Route path='/:username' component={Profile} />
+      <Route exact path='/:username' component={Profile} />
     </Router>
   </main>
 )
