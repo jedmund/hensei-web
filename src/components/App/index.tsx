@@ -1,9 +1,8 @@
 import React from 'react'
-import { Switch, Route, useHistory } from 'react-router-dom'
+import { Route, useHistory } from 'react-router-dom'
 import './index.css'
 
 import Header from '~components/Header'
-import Main from '~components/Main'
 
 import New from '~routes/New'
 import Party from '~routes/Party'
