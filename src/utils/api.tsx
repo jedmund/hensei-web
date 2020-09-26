@@ -6,7 +6,7 @@ interface Entity {
 
 type CollectionEndpoint = ({ query }: { query: AxiosRequestConfig }) => Promise<AxiosResponse<any>>
 type IdEndpoint = ({ id }: { id: string }) => Promise<AxiosResponse<any>>
-type PostEndpoint = (object: {}) => Promise<AxiosResponse<any>>
+type PostEndpoint = (object: {}, headers?: {}) => Promise<AxiosResponse<any>>
 
 interface EndpointMap {
     getAll: CollectionEndpoint
@@ -39,8 +39,8 @@ class Api {
         return {
             getAll:  ({ query }: { query: AxiosRequestConfig }) => axios.get(resourceUrl, { params: { query }}),
             getOne:  ({ id }: { id: string }) => axios.get(`${resourceUrl}/${id}`),
-            create:  (object: {}) => axios.post(resourceUrl, object),
-            update:  (object: {}) => axios.put(resourceUrl, object),
+            create:  (object: {}, headers?: {}) => axios.post(resourceUrl, object, headers),
+            update:  (object: {}, headers?: {}) => axios.put(resourceUrl, object, headers),
             destroy: ({ id }: { id: string }) => axios.delete(`${resourceUrl}/${id}`)
         } as EndpointMap
     }
