@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useCookies } from 'react-cookie'
 import api from '~utils/api'
 
 import WeaponUnit from '~components/WeaponUnit'
@@ -24,25 +25,35 @@ const WeaponGrid = (props: Props) => {
 
     const [mainhand, setMainhand] = useState<Weapon>()
     const [weapons, setWeapons] = useState<GridArray>({})
+    const [partyId, setPartyId] = useState('')
+
+    const [cookies, setCookie] = useCookies(['user'])
 
     useEffect(() => {
         if (props.exists && props.found)
             configure()
-    }, [props.mainhand, props.grid])
+    }, [props.mainhand, props.grid, props.partyId])
 
     function configure() {
         setMainhand(props.mainhand)
         setWeapons(props.grid || {})
+        setPartyId(props.partyId || '')
     }
 
     function createParty() {
+        const headers = (cookies.user != null) ? {
+            headers: {
+                'Authorization': `Bearer ${cookies.user.access_token}`
+            }
+        } : {}
+
         const body = (props.userId === undefined) ? {} : {
             party: {
                 user_id: props.userId
             }
         }
 
-        return api.endpoints.parties.create(body)
+        return api.endpoints.parties.create(body, headers)
     }
 
     function receiveWeapon(weapon: Weapon, position: number) {
@@ -56,8 +67,10 @@ const WeaponGrid = (props: Props) => {
             newWeapons[position] = weapon
             setWeapons(newWeapons)
         }
-        
-        if (props.partyId == undefined) {
+
+        if (partyId) {
+            saveWeapon(partyId, weapon, position)
+        } else {
             createParty()
                 .then(response => {
                     return response.data.party
@@ -71,13 +84,18 @@ const WeaponGrid = (props: Props) => {
                 })
                 .then(partyId => {
                     saveWeapon(partyId, weapon, position)
+                    setPartyId(partyId)
                 })
-        } else {
-            saveWeapon(props.partyId, weapon, position)
         }
     }
 
     function saveWeapon(pid: string, weapon: Weapon, position: number) {
+        const headers = (cookies.user != null) ? {
+            headers: {
+                'Authorization': `Bearer ${cookies.user.access_token}`
+            }
+        } : {}
+
         const body = {
             'weapon': {
                 'party_id': pid,
@@ -87,7 +105,7 @@ const WeaponGrid = (props: Props) => {
             }
         }
 
-        api.endpoints.weapons.create(body)
+        api.endpoints.weapons.create(body, headers)
     }
 
     return (
