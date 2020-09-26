@@ -38,28 +38,39 @@ const GridRep = (props: Props) => {
         props.onClick(props.shortcode)
     }
 
+    function generateMainhandImage() {
+        return (mainhand)
+            ? <img src={
+                process.env.NODE_ENV === 'development'
+                    ? mainhandImages[mainhand?.granblue_id || 0]
+                    : `${process.env.SIERO_IMG_URL}/mainhand/${mainhand?.granblue_id}.jpg`
+            } />
+            : <img />
+    }
+
+    function generateGridImage(position: number) {
+        return (weapons[position])
+            ? <img src={
+                process.env.NODE_ENV === 'development'
+                    ? gridImages[weapons[position]?.granblue_id || 0]
+                    : `${process.env.SIERO_IMG_URL}/grid/${weapons[position]?.granblue_id}.jpg`
+            } />
+            : <img />
+    }
+
     return (
         <div className="GridRep" onClick={navigate}>
             <div className="weapon grid_mainhand">
-                <img src={
-                    process.env.NODE_ENV === 'development'
-                        ? mainhandImages[mainhand?.granblue_id || 0]
-                        : `${process.env.SIERO_IMG_URL}/mainhand/${mainhand?.granblue_id}.jpg`
-                } />
+                {generateMainhandImage()}
             </div>
 
             <ul className="grid_weapons">
                 {
                     Array.from(Array(numWeapons)).map((x, i) => {
-                        console.log()
                         return (
-                            <li className="weapon grid_weapon" key={`grid_unit_${i}`}>
-                                <img src={
-                                    process.env.NODE_ENV === 'development'
-                                        ? gridImages[weapons[i]?.granblue_id || 0]
-                                        : `${process.env.SIERO_IMG_URL}/grid/${weapons[i]?.granblue_id}.jpg`
-                                } />
-                            </li>
+                            <div className="grid_weapon">
+                                {generateGridImage(i)}
+                            </div>
                         )
                     })
                 }
