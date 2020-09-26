@@ -89,9 +89,15 @@ const LoginModal = (props: Props) => {
         if (formValid) {
             api.login(body)
                 .then((response) => {
-                    console.log(response)
                     const cookies = props.cookies
-                    cookies.set('user', response.data.user, { path: '/'})
+
+                    const cookieObj = {
+                        user_id: response.data.user.id,
+                        username: response.data.user.username,
+                        access_token: response.data.access_token
+                    }
+
+                    cookies.set('user', cookieObj, { path: '/'})
                     props.close()
                 }, (error) => {
                     console.error(error)
