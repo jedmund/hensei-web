@@ -6,12 +6,12 @@ import SignupModal from '~components/SignupModal'
 
 import { useModal as useSignupModal } from '~utils/useModal'
 import { useModal as useLoginModal } from '~utils/useModal'
-import { Route } from 'react-router'
+import { Link, Route } from 'react-router-dom'
+import Profile from '~routes/Profile'
 
 
 interface Props {
     username?: string
-    navigate: (pathname: string) => void
     logout: () => void
 }
 
@@ -21,18 +21,27 @@ const HeaderMenu = (props: Props) => {
 
     function authItems() {
         return (
-            <ul className="Menu auth">
-                <div className="MenuGroup">
-                    <li className="MenuItem" onClick={ () => props.username ? props.navigate(`/${props.username}`) : '' }>My Parties</li>
-                </div>
-                <div className="MenuGroup">
-                    <li className="MenuItem" onClick={ () => props.navigate('about') }>About</li>
-                    <li className="MenuItem" onClick={ () => props.navigate('guides') }>Guides</li>
-                </div>
-                <div className="MenuGroup">
-                    <li className="MenuItem" onClick={props.logout}>Logout</li>
-                </div>
-            </ul>
+            <nav>
+                <ul className="Menu auth">
+                    <div className="MenuGroup">
+                        <li className="MenuItem">
+                            <Link to={props.username || ''}>My Parties</Link>
+                        </li>
+                    </div>
+                    <div className="MenuGroup">
+                        <li className="MenuItem">
+                            <Link to='/about'>About</Link>
+                        </li>
+
+                        <li className="MenuItem">
+                            <Link to='/guides'>Guides</Link>
+                        </li>
+                    </div>
+                    <div className="MenuGroup">
+                        <li className="MenuItem" onClick={props.logout}>Logout</li>
+                    </div>
+                </ul>
+            </nav>
         )
     }
 

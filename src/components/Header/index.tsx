@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { RouteComponentProps, useLocation, withRouter } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 
 import Button from '~components/Button'
@@ -7,13 +7,16 @@ import HeaderMenu from '~components/HeaderMenu'
 
 import './index.css'
 
-interface Props {}
-interface HeaderProps extends RouteComponentProps<Props> {}
+interface Props {
+    navigate: (pathname: string) => void
+}
 
-const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
+const Header = (props: Props) => {
     const [username, setUsername] = useState(undefined)
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
     let location = useLocation()
+    
+    const route = (pathname: string) => props.navigate(pathname)
 
     useEffect(() => {
         if (cookies.user) {
@@ -33,16 +36,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
     }
 
     function newParty() {
-        if (props.history.location.pathname === '/') {
-            window.history.replaceState(null, `Grid Tool`, `/`)
-            props.history.go(0)
-        } else {
-            props.history.push('/')
-        }
-    }
-
-    function route(pathname: string) {
-        props.history.push(pathname)
+        props.navigate('/')
     }
 
     function logout() {
@@ -60,7 +54,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
             <div className="left">
                 <div className="dropdown">
                     <Button type="menu">Menu</Button>
-                    <HeaderMenu username={username} navigate={route} logout={logout} />
+                    <HeaderMenu username={username} logout={logout} />
                 </div>
             </div>
             <div className="push" />
@@ -74,4 +68,4 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
     )
 }
 
-export default withRouter(Header)
+export default Header
