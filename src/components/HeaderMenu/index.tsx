@@ -23,7 +23,7 @@ const HeaderMenu = (props: Props) => {
         return (
             <ul className="Menu auth">
                 <div className="MenuGroup">
-                    <li className="MenuItem" onClick={ () => props.username ? props.navigate(props.username) : '' }>My Parties</li>
+                    <li className="MenuItem" onClick={ () => props.username ? props.navigate(`/${props.username}`) : '' }>My Parties</li>
                 </div>
                 <div className="MenuGroup">
                     <li className="MenuItem" onClick={ () => props.navigate('about') }>About</li>
