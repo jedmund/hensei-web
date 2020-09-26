@@ -25,7 +25,7 @@ const HeaderMenu = (props: Props) => {
                 <ul className="Menu auth">
                     <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link to={`/${props.username}` || ''}>My Parties</Link>
+                            <Link to={'/' || ''}>My Parties</Link>
                         </li>
                     </div>
                     <div className="MenuGroup">
