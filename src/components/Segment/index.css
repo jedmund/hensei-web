@@ -1,0 +1,101 @@
+.Segment {
+    border-radius: 4px;
+    color: #888;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    min-width: 100px;
+}
+
+.Segment > input {
+    display: none;
+}
+
+.Segment > input + label {
+
+}
+
+.Segment > input:checked + label {
+    background: #61B3FF;
+    color: white;
+}
+
+.Segment > label {
+    display: block;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 8px 12px;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.Segment > label:before {
+    background: #fff;
+}
+
+/* 
+.flight-types
+  +segmented-controls(3, 112px, 0px, #3395DE)
+  margin: 0 auto
+  font-size: 12px
+  border: 1px solid #fff
+  border-radius: 3px
+  color: #fff
+  label
+    padding: 6px 3px
+    transition: color 250ms cubic-bezier(0,.95,.38,.98)
+    &:before
+      background: #fff
+      transition: all 250ms cubic-bezier(0,.95,.38,.98)
+    &:not(:last-child)
+      border-right: 1px solid #fff */
+/* 
+ 
+  z-index: 1
+  > input
+    display: none
+    &:checked + label
+      color: $active
+    @for $i from 1 through $amount
+      $index: $i - 1
+      &:nth-of-type(#{$i}):checked
+        ~ label:last-of-type:before
+          transform: translateX(calc(#{100 * $index}% + #{$_margin * $index}))
+  label
+    flex: 1
+    text-align: center
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+    cursor: pointer
+    // we use the last label's pseudo element as the active state
+    // to eliminate the need for an arbitrary element
+    &:last-of-type:before
+      content: ""
+      display: block
+      max-width: calc(#{$_width} - #{$_margin})
+      margin: $margin
+      position: absolute
+      top: 0
+      right: 0
+      bottom: 0
+      left: 0
+      z-index: -1
+      transform: translateX(0)
+
+.flight-types
+  +segmented-controls(3, 112px, 0px, #3395DE)
+  margin: 0 auto
+  font-size: 12px
+  border: 1px solid #fff
+  border-radius: 3px
+  color: #fff
+  label
+    padding: 6px 3px
+    transition: color 250ms cubic-bezier(0,.95,.38,.98)
+    &:before
+      background: #fff
+      transition: all 250ms cubic-bezier(0,.95,.38,.98)
+    &:not(:last-child)
+      border-right: 1px solid #fff */
