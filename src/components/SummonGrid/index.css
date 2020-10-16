@@ -1,27 +1,27 @@
-.WeaponGrid {
+.SummonGrid {
     display: flex;
     justify-content: center;
 }
 
-#grid_weapons {
+#grid_summons {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    margin: 0;
+    margin: 0 24px 0 0;
     padding: 0;
-    width: 528px;
+    width: 344px;
 }
 
-#grid_weapons > * {
+#grid_summons > * {
     margin-bottom: 24px;
     margin-right: 24px;
 
 }
 
-#grid_weapons > *:nth-child(3n+3) {
+#grid_summons > *:nth-child(2n+2) {
     margin-right: 0;
 }
 
-#grid_weapons > li {
+#grid_summons > li {
     list-style: none;
 }

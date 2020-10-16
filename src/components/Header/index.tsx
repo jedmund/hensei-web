@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 
 import Button from '~components/Button'
@@ -14,6 +14,8 @@ interface Props {
 const Header = (props: Props) => {
     const [username, setUsername] = useState(undefined)
     const [cookies, setCookie, removeCookie] = useCookies(['user'])
+
+    let history = useHistory()
     let location = useLocation()
     
     const route = (pathname: string) => props.navigate(pathname)
@@ -42,7 +44,7 @@ const Header = (props: Props) => {
     function logout() {
         removeCookie('user')
         window.history.replaceState(null, `Grid Tool`, `/`)
-        props.history.go(0)
+        history.go(0)
     }
 
     if (cookies.user != null) {

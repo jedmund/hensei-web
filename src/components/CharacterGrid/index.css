@@ -1,27 +1,27 @@
-.WeaponGrid {
+.CharacterGrid {
     display: flex;
     justify-content: center;
 }
 
-#grid_weapons {
+#grid_characters {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     margin: 0;
     padding: 0;
-    width: 528px;
+    width: 752px;
 }
 
-#grid_weapons > * {
+#grid_characters > * {
     margin-bottom: 24px;
     margin-right: 24px;
 
 }
 
-#grid_weapons > *:nth-child(3n+3) {
-    margin-right: 0;
+#grid_characters > li {
+    list-style: none;
 }
 
-#grid_weapons > li {
-    list-style: none;
+#grid_characters > li:last-child {
+    margin: 0;
 }

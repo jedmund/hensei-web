@@ -2,6 +2,11 @@ import React, { useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 import WeaponGrid from '~components/WeaponGrid'
+import SegmentedControl from '~components/SegmentedControl'
+import Segment from '~components/Segment'
+import PartySegmentedControl from '~components/PartySegmentedControl'
+import SummonGrid from '~components/SummonGrid'
+import CharacterGrid from '~components/CharacterGrid'
 
 interface Props {}
 interface NewProps extends RouteComponentProps<Props> {}
@@ -24,6 +29,36 @@ const New: React.FC<NewProps> = (props: NewProps) => {
     }
 
     function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
+        setSelectedTab(event.target.value)
+
+        switch(event.target.value) {
+            case 'weapons':
+                setGrid((
+                    <WeaponGrid 
+                        userId={cookies.user ? cookies.user.user_id : ''} 
+                        editable={true} 
+                        exists={false} 
+                        pushHistory={callback} 
+                    />
+                ))
+                break
+            case 'summons':
+                setGrid((
+                    <SummonGrid 
+                        editable={true} 
+                    />
+                ))
+                break
+            case 'characters':
+                setGrid((
+                    <CharacterGrid
+                        editable={true}
+                    />
+                ))
+                break
+            default: 
+                break
+        }
     }
 
     return (

@@ -1,0 +1,64 @@
+.CharacterUnit {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 200px;
+}
+
+.CharacterUnit .CharacterImage {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.18s ease-in-out;
+    height: 275px;
+    width: 131px;
+}
+
+.CharacterUnit.editable .CharacterImage:hover {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
+    cursor: pointer;
+    transform: scale(1.1, 1.1);
+}
+
+.CharacterUnit.filled h3 {
+    display: block;
+}
+
+.CharacterUnit.filled ul {
+    display: flex;
+}
+
+.CharacterUnit h3,
+.CharacterUnit ul {
+    display: none;
+}
+
+.CharacterUnit h3 {
+    color: #333;
+    font-weight: 500;
+    margin: 0;
+    text-align: center;
+}
+
+.CharacterUnit img {
+    position: relative;
+    width: 100%;
+    z-index: 2;
+}
+
+.CharacterImage .icon {
+    position: absolute;
+    color: #c9c9c9;
+    height: 20px;
+    width: 20px;
+    z-index: 1;
+}
+
+.CharacterImage:hover .icon {
+    color: #555;
+}

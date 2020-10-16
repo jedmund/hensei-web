@@ -6,9 +6,9 @@ interface Props {}
 
 const GridRepCollection: React.FC<Props> = ({ children }) => {
     return (
-        <ul className="GridRepCollection">
+        <div className="GridRepCollection">
             {children}
-        </ul>
+        </div>
     )
 }
 
