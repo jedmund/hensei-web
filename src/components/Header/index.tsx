@@ -58,7 +58,7 @@ const Header = (props: Props) => {
             </div>
             <div className="push" />
             <div className="right">
-                { (location.pathname !== '/') ?
+                { (location.pathname.includes('/p/')) ?
                     <Button type="link" click={copyToClipboard}>Copy link</Button> : ''
                 }
                 <Button type="new" click={newParty}>New</Button>
