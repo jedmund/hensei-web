@@ -11,8 +11,8 @@
     display: none;
 }
 
-.Segment > input + label {
-
+.Segment:hover > label {
+    background: #e0e0e0;
 }
 
 .Segment > input:checked + label {
