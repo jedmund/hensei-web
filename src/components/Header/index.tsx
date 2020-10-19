@@ -58,6 +58,9 @@ const Header = (props: Props) => {
             </div>
             <div className="push" />
             <div className="right">
+                {/* { (location.pathname.includes('/p/')) ?
+                    <Button color="red" type="link" click={() => {}}>Delete</Button> : ''
+                } */}
                 { (location.pathname.includes('/p/')) ?
                     <Button type="link" click={copyToClipboard}>Copy link</Button> : ''
                 }

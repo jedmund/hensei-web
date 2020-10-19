@@ -12,11 +12,12 @@
 }
 
 .Segment:hover > label {
-    background: #e0e0e0;
+    background: #f9f9f9;
+    color: #555;
 }
 
 .Segment > input:checked + label {
-    background: #61B3FF;
+    background: #2360C5;
     color: white;
 }
 

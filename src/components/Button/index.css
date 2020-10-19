@@ -20,12 +20,30 @@
 
 .Button.btn-blue {
     background: #61B3FF;
-    color: #315E87;
+    color: #8b8b8b;
 }
 
 .Button.btn-blue:hover {
     background: #4B9BE5;
     color: #233E56;
+}
+
+.Button.btn-red {
+    background: #fa4242;
+    color: #860f0f;
+}
+
+.Button.btn-red:hover {
+    background: #e91a1a;
+    color: #4e1717;
+}
+
+.Button.btn-red .icon {
+    color: #860f0f;
+}
+
+.Button.btn-red:hover .icon {
+    color: #4e1717;
 }
 
 .Button.btn-disabled {
@@ -51,4 +69,8 @@
 .Button:hover {
     color: #555;
     cursor: pointer;
+}
+
+.Button:hover .icon {
+    color: #2360C5;
 }

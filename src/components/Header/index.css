@@ -23,7 +23,11 @@
     padding-bottom: 16px;
 }
 
-.dropdown:hover .Button > * {
+.dropdown:hover .Button .icon {
+    color: #2360C5;
+}
+
+.dropdown:hover .Button .text {
     color: #555;
 }
 
