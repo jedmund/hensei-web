@@ -62,13 +62,13 @@ const WeaponUnit = (props: Props) => {
         setImageUrl(imgSrc)
     }
 
-    function sendData(object: Weapon | Summon, position: number) {
+    function sendData(object: Character | Weapon | Summon, position: number) {
         if (isWeapon(object)) {
             props.onReceiveData(object, position)
         }
     }
 
-    function isWeapon(object: Weapon | Summon): object is Weapon {
+    function isWeapon(object: Character | Weapon | Summon): object is Weapon {
         return (object as Weapon).proficiency !== undefined
     }
 
@@ -85,6 +85,7 @@ const WeaponUnit = (props: Props) => {
                     { (props.editable) ? <span className='icon'><Plus /></span> : '' }
                 </div>
                 <UncapIndicator 
+                    type="weapon"
                     ulb={weapon?.uncap.ulb || false} 
                     flb={weapon?.uncap.flb || false}
                     uncapLevel={3}

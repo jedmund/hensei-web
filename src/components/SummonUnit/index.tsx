@@ -21,7 +21,6 @@ interface Props {
 
 const SummonUnit = (props: Props) => {
     const [imageUrl, setImageUrl] = useState('')
-    
     const { open, openModal, closeModal } = useModal()
 
     const openModalIfEditable = (props.editable) ? openModal : () => {}
@@ -63,13 +62,13 @@ const SummonUnit = (props: Props) => {
         setImageUrl(imgSrc)
     }
 
-    function sendData(object: Weapon | Summon, position: number) {
+    function sendData(object: Character | Weapon | Summon, position: number) {
         if (isSummon(object)) {
             props.onReceiveData(object, position)
         }
     }
 
-    function isSummon(object: Weapon | Summon): object is Summon {
+    function isSummon(object: Character | Weapon | Summon): object is Summon {
         // There aren't really any unique fields here
         return (object as Summon).granblue_id !== undefined
     }
@@ -87,6 +86,7 @@ const SummonUnit = (props: Props) => {
                     { (props.editable) ? <span className='icon'><Plus /></span> : '' }
                 </div>
                 <UncapIndicator 
+                    type="summon"
                     ulb={summon?.uncap.ulb || false} 
                     flb={summon?.uncap.flb || false}
                     uncapLevel={3}
