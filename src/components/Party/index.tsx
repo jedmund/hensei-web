@@ -131,9 +131,9 @@ const Party = (props: Props) => {
     }
 
     async function createParty() {
-        const body = (cookies.user.userId === undefined) ? {} : {
+        const body = (cookies.userId === undefined) ? {} : {
             party: {
-                user_id: cookies.user.userId
+                user_id: cookies.userId
             }
         }
 
