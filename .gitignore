@@ -46,6 +46,7 @@ dist/
 # Instructions will be provided to download these from the game
 src/images/weapon*
 src/images/summon*
+src/images/chara*
 
 # Typescript v1 declaration files
 typings/
