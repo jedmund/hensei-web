@@ -1,7 +1,9 @@
 interface Character {
     id: string
-    granblue_id: number
+    granblue_id: string
     element: number
+    rarity: number
+    gender: number
     max_level: number
     name: { 
         en: string
@@ -11,17 +13,22 @@ interface Character {
         min_hp: number
         max_hp: number
         max_hp_flb: number
-        max_hp_ulb: number
     }
     atk: {
         min_atk: number
         max_atk: number
         max_atk_flb: number
-        max_atk_ulb: number
     }
     uncap: {
         flb: boolean
-        ulb: boolean
+    }
+    race: {
+        race1: number
+        race2: number
+    }
+    proficiency: {
+        proficiency1: number
+        proficiency2: number
     }
     position?: number
 }
