@@ -11,6 +11,8 @@ export enum GridType {
 }
 
 interface Props {
+    userId?: string
+    grid: GridArray<Character>
     editable: boolean
     exists: boolean
     onSelect: (type: GridType, character: Character, position: number) => void
@@ -19,8 +21,9 @@ interface Props {
 const CharacterGrid = (props: Props) => {
     const numCharacters: number = 5
 
-    const [characters, setCharacters] = useState<GridArray<Character>>({})
-    const [partyId, setPartyId] = useState('')
+    function receiveCharacter(character: Character, position: number) {
+        props.onSelect(GridType.Character, character, position)
+    }
 
     return (
         <div className="CharacterGrid">
@@ -31,9 +34,9 @@ const CharacterGrid = (props: Props) => {
                             <li key={`grid_unit_${i}`} >
                                 <CharacterUnit 
                                     editable={props.editable}
-                                    onReceiveData={() => {}} 
+                                    onReceiveData={receiveCharacter} 
                                     position={i} 
-                                    character={characters[i]}
+                                    character={props.grid[i]}
                                 />
                             </li>
                         )
