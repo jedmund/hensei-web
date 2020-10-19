@@ -21,6 +21,7 @@ export enum GridType {
 import './index.css'
 
 interface Props {
+    partyId?: string
     mainWeapon?: Weapon
     mainSummon?: Summon
     friendSummon?: Summon
@@ -51,13 +52,14 @@ const Party = (props: Props) => {
     const [friendSummon, setFriendSummon] = useState<Summon>()
 
     useEffect(() => {
+        setPartyId(props.partyId || '')
         setMainWeapon(props.mainWeapon)
         setMainSummon(props.mainSummon)
         setFriendSummon(props.friendSummon)
         setCharacters(props.characters || {})
         setWeapons(props.weapons || {})
         setSummons(props.summons || {})
-    }, [props.mainWeapon, props.mainSummon, props.friendSummon, props.characters, props.weapons, props.summons])
+    }, [props.partyId, props.mainWeapon, props.mainSummon, props.friendSummon, props.characters, props.weapons, props.summons])
 
     const weaponGrid = (
         <WeaponGrid 

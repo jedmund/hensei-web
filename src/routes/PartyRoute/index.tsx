@@ -92,6 +92,7 @@ const PartyRoute: React.FC<PartyProps> = ({ match }) => {
         return (
             <div id="Content">
                 <Party
+                    partyId={partyId}
                     mainWeapon={mainWeapon}
                     mainSummon={mainSummon}
                     friendSummon={friendSummon}
