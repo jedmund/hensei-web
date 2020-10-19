@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
-import api from '~utils/api'
-
+import React from 'react'
 import SummonUnit from '~components/SummonUnit'
 
 import './index.css'
@@ -25,7 +22,6 @@ interface Props {
     exists: boolean
     found?: boolean
     onSelect: (type: GridType, summon: Summon, position: number) => void
-    pushHistory?: (path: string) => void
 }
 
 const SummonGrid = (props: Props) => {

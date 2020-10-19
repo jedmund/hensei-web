@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
-import api from '~utils/api'
-
+import React from 'react'
 import WeaponUnit from '~components/WeaponUnit'
 
 import './index.css'
@@ -24,7 +21,6 @@ interface Props {
     exists: boolean
     found?: boolean
     onSelect: (type: GridType, weapon: Weapon, position: number) => void
-    pushHistory?: (path: string) => void
 }
 
 const WeaponGrid = (props: Props) => {

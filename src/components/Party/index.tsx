@@ -64,7 +64,6 @@ const Party = (props: Props) => {
             editable={props.editable} 
             exists={props.exists}
             onSelect={itemSelected}
-            pushHistory={props.pushHistory} 
         />
     )
 
@@ -77,7 +76,6 @@ const Party = (props: Props) => {
             editable={props.editable} 
             exists={props.exists} 
             onSelect={itemSelected}
-            pushHistory={props.pushHistory} 
         />
     )
 
