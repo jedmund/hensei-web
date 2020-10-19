@@ -1,7 +1,7 @@
 import React from 'react'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
-import gridImages from '../../images/grid/*.jpg'
+import gridImages from '../../images/weapon-grid/*.jpg'
 
 import './index.css'
 

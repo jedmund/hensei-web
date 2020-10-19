@@ -5,14 +5,16 @@ import api from '~utils/api'
 import Modal from '~components/Modal'
 import Overlay from '~components/Overlay'
 import WeaponResult from '~components/WeaponResult'
+import SummonResult from '~components/SummonResult'
 
 import './index.css'
 
 interface Props {
     close: () => void
-    send: (weapon: Weapon, position: number) => any
+    send: (object: Weapon | Summon, position: number) => any
     placeholderText: string
     fromPosition: number
+    object: 'weapons' | 'characters' | 'summons'
 }
 
 interface State {
@@ -45,7 +47,7 @@ class SearchModal extends React.Component<Props, State> {
     }
 
     fetchResults = (query: string) => {
-        api.search(query)
+        api.search(this.props.object, query)
             .then((response) => {
                 const data = response.data
                 const totalResults = data.length
@@ -73,13 +75,27 @@ class SearchModal extends React.Component<Props, State> {
         }
     }
 
-    sendData = (result: Weapon) => {
+    sendData = (result: Weapon | Summon) => {
         this.props.send(result, this.props.fromPosition)
         this.props.close()
     }
 
     renderSearchResults = () => {
-        const { results } = this.state  
+        const { results } = this.state
+         
+        switch(this.props.object) {
+            case 'weapons':
+                return this.renderWeaponSearchResults(results)
+
+            case 'summons':
+                return this.renderSummonSearchResults(results)
+
+            case 'characters':
+                return (<div />) 
+        }
+    }
+
+    renderWeaponSearchResults = (results: { [key: string]: any }) => {
         return (
             <ul id="results_container">
                 { results.map( (result: Weapon) => {
@@ -89,11 +105,21 @@ class SearchModal extends React.Component<Props, State> {
         )
     }
 
+    renderSummonSearchResults = (results: { [key: string]: any }) => {
+        return (
+            <ul id="results_container">
+                { results.map( (result: Summon) => {
+                    return <SummonResult key={result.id} data={result} onClick={() => { this.sendData(result) }} />
+                })}
+            </ul>
+        )
+    }
+
     renderEmptyState = () => {
         let string = ''
 
         if (this.state.query === '') {
-            string = 'No weapons'
+            string = `No ${this.props.object}`
         } else {
             string = `No results found for '${this.state.query}'`
         }

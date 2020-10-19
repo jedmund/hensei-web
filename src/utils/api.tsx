@@ -49,9 +49,9 @@ class Api {
         return axios.post(`${process.env.SIERO_OAUTH_URL}/token` || 'http://127.0.0.1:3000/oauth/token', object)
     }
 
-    search(query: string) {
+    search(object: string, query: string) {
         const resourceUrl = `${this.url}/${name}`
-        return axios.get(`${resourceUrl}/search?query=${query}`)
+        return axios.get(`${resourceUrl}/search/${object}?query=${query}`)
     }
 
     check(resource: string, value: string) {
@@ -66,5 +66,6 @@ const api: Api = new Api({ url: process.env.SIERO_API_URL || 'http://127.0.0.1:3
 api.createEntity( { name: 'users' })
 api.createEntity( { name: 'parties' })
 api.createEntity( { name: 'weapons' })
+api.createEntity( { name: 'summons' })
 
 export default api

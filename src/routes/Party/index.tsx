@@ -3,40 +3,34 @@ import { withCookies, useCookies } from 'react-cookie'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import api from '~utils/api'
 
+import PartySegmentedControl from '~components/PartySegmentedControl'
 import WeaponGrid from '~components/WeaponGrid'
+import SummonGrid from '~components/SummonGrid'
+import CharacterGrid from '~components/CharacterGrid'
 import Button from '~components/Button'
 
 interface Props {
     hash: string
 }
 
-interface State {
-    found: boolean
-    editable: boolean
-    mainhand: Weapon,
-    grid: GridArray,
-    partyId: string
-}
-
 interface PartyProps extends RouteComponentProps<Props> {}
 
-type GridArray = { [key: number]: Weapon } 
-interface GridWeapon {
-    id: string
-    mainhand: boolean
-    position: number | null
-    weapon: Weapon
-}
-
-const Party: React.FC<PartyProps> = ({ match }, state: State) => {
+const Party: React.FC<PartyProps> = ({ match }) => {
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
     const [editable, setEditable] = useState(false)
-    const [grid, setGrid] = useState<GridArray>({})
-    const [mainhand, setMainhand] = useState<Weapon>()
+
+    const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
+    const [summons, setSummons] = useState<GridArray<Summon>>({})
+
+    const [mainWeapon, setMainWeapon] = useState<Weapon>()
+    const [mainSummon, setMainSummon] = useState<Summon>()
+    const [friendSummon, setFriendSummon] = useState<Summon>()
+
     const [partyId, setPartyId] = useState('')
     const [cookies, setCookie] = useCookies(['userId'])
-
+    const [selectedTab, setSelectedTab] = useState('weapons')
+    const [tab, setTab] = useState<JSX.Element>()
     const shortcode = match.params.hash || ''
 
     useEffect(() => {
@@ -54,17 +48,28 @@ const Party: React.FC<PartyProps> = ({ match }, state: State) => {
                 if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser)
                     setEditable(true)
 
-                let weapons: GridArray = {}
-                party.grid.forEach((gridWeapon: GridWeapon) => {
+                let weapons: GridArray<Weapon> = {}
+                let summons: GridArray<Summon> = {}
+                party.weapons.forEach((gridWeapon: GridWeapon) => {
                     if (gridWeapon.mainhand)
-                        setMainhand(gridWeapon.weapon)
+                        setMainWeapon(gridWeapon.weapon)
                     else if (!gridWeapon.mainhand && gridWeapon.position != null)
                         weapons[gridWeapon.position] = gridWeapon.weapon
                 })
 
+                party.summons.forEach((gridSummon: GridSummon) => {
+                    if (gridSummon.main)
+                        setMainSummon(gridSummon.summon)
+                    else if (gridSummon.friend)
+                        setFriendSummon(gridSummon.summon)
+                    else if (!gridSummon.main && !gridSummon.friend && gridSummon.position != null)
+                        summons[gridSummon.position] = gridSummon.summon
+                })
+
                 setFound(true)
                 setLoading(false)
-                setGrid(weapons)
+                setWeapons(weapons)
+                setSummons(summons)
                 setPartyId(party.id)
             })
             .catch(error => {
@@ -79,18 +84,68 @@ const Party: React.FC<PartyProps> = ({ match }, state: State) => {
             })
     }
 
+    function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
+        setSelectedTab(event.target.value)
+
+        switch(event.target.value) {
+            case 'weapons':
+                setTab((
+                    <WeaponGrid
+                        userId={cookies.user ? cookies.user.user_id : ''}
+                        partyId={partyId}
+                        mainhand={mainWeapon}
+                        grid={weapons}
+                        editable={editable}
+                        exists={true}
+                        found={found}
+                    />
+                ))
+                break
+            case 'summons':
+                setTab((
+                    <SummonGrid 
+                        userId={cookies.user ? cookies.user.user_id : ''}
+                        partyId={partyId}
+                        main={mainSummon}
+                        friend={friendSummon}
+                        grid={summons}
+                        editable={editable}
+                        exists={true}
+                        found={found}
+                    />
+                ))
+                break
+            case 'characters':
+                setTab((
+                    <CharacterGrid
+                        editable={true}
+                    />
+                ))
+                break
+            default: 
+                break
+        }
+    }
+
     function render() {
         return (
-            <div>
-                <WeaponGrid
-                    userId={cookies.user ? cookies.user.user_id : ''}
-                    partyId={partyId}
-                    mainhand={mainhand}
-                    grid={grid}
-                    editable={editable}
-                    exists={true}
-                    found={found}
+            <div id="Content">
+                <PartySegmentedControl
+                    selectedTab={selectedTab}
+                    onClick={segmentClicked}
                 />
+
+                {tab || (
+                    <WeaponGrid 
+                        userId={cookies.user ? cookies.user.user_id : ''}
+                        partyId={partyId}
+                        mainhand={mainWeapon}
+                        grid={weapons}
+                        editable={editable}
+                        exists={true}
+                        found={found} 
+                    />
+                )}
             </div>
         )
     }

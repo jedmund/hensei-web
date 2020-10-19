@@ -1,1 +1,1 @@
-type GridArray = { [key: number]: Weapon }
+type GridArray<T> = { [key: number]: T }
