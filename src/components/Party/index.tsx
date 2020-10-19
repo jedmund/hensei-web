@@ -41,8 +41,6 @@ const Party = (props: Props) => {
         }
     } : {}
 
-    console.log(headers)
-
     // Grid data
     const [characters, setCharacters] = useState<GridArray<Character>>({})
     const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
