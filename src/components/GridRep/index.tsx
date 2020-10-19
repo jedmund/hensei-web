@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 
 import './index.css'
 
-import mainhandImages from '../../images/mainhand/*.jpg'
-import gridImages from '../../images/grid/*.jpg'
+import mainhandImages from '../../images/weapon-main/*.jpg'
+import gridImages from '../../images/weapon-grid/*.jpg'
 
 interface Props {
     shortcode: string
@@ -43,7 +43,7 @@ const GridRep = (props: Props) => {
             ? <img src={
                 process.env.NODE_ENV === 'development'
                     ? mainhandImages[mainhand?.granblue_id || 0]
-                    : `${process.env.SIERO_IMG_URL}/mainhand/${mainhand?.granblue_id}.jpg`
+                    : `${process.env.SIERO_IMG_URL}/weapon-main/${mainhand?.granblue_id}.jpg`
             } />
             : <img />
     }
@@ -53,7 +53,7 @@ const GridRep = (props: Props) => {
             ? <img src={
                 process.env.NODE_ENV === 'development'
                     ? gridImages[weapons[position]?.granblue_id || 0]
-                    : `${process.env.SIERO_IMG_URL}/grid/${weapons[position]?.granblue_id}.jpg`
+                    : `${process.env.SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`
             } />
             : <img />
     }

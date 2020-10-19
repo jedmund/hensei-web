@@ -20,7 +20,7 @@ interface User {
 interface Party {
     id: string
     shortcode: string
-    grid: GridWeapon[]
+    weapons: GridWeapon[]
 }
 
 interface ProfileProps extends RouteComponentProps<Props> {}
@@ -90,7 +90,7 @@ const ProfileRoute: React.FC<ProfileProps> = ({ history, match }) => {
                     parties.map((party, i) => {
                         return <GridRep 
                             shortcode={party.shortcode} 
-                            grid={party.grid}
+                            grid={party.weapons}
                             key={`party-${i}`}
                             onClick={navigate}
                         />

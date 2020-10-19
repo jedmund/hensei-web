@@ -35,11 +35,13 @@ interface Props {
 const Party = (props: Props) => {
     const [cookies, setCookie] = useCookies(['user'])
 
-    const headers = (cookies.user) ? {
+    const headers = (cookies.user != null) ? {
         headers: {
             'Authorization': `Bearer ${cookies.user.access_token}`
         }
     } : {}
+
+    console.log(headers)
 
     // Grid data
     const [characters, setCharacters] = useState<GridArray<Character>>({})
