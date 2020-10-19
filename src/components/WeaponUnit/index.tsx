@@ -5,8 +5,8 @@ import { useModal as useModal } from '~utils/useModal'
 import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 
-import mainhandImages from '../../images/mainhand/*.jpg'
-import gridImages from '../../images/grid/*.jpg'
+import mainImages from '../../images/weapon-main/*.jpg'
+import gridImages from '../../images/weapon-grid/*.jpg'
 import Plus from '../../../assets/plus.svg'
 
 import './index.css'
@@ -19,7 +19,7 @@ interface Props {
     unitType: 0 | 1
 }
 
-function WeaponUnit(props: Props) {
+const WeaponUnit = (props: Props) => {
     const [imageUrl, setImageUrl] = useState('')
 
     const { open, openModal, closeModal } = useModal()
@@ -48,18 +48,28 @@ function WeaponUnit(props: Props) {
             // Generate the correct source for the weapon
             if (process.env.NODE_ENV === 'development') {
                 if (props.unitType == 0)
-                    imgSrc = mainhandImages[weapon.granblue_id]
+                    imgSrc = mainImages[weapon.granblue_id]
                 else
                     imgSrc = gridImages[weapon.granblue_id]
             } else if (process.env.NODE_ENV === 'production') {
                 if (props.unitType == 0)
-                    imgSrc = `${process.env.SIERO_IMG_URL}/mainhand/${weapon.granblue_id}.jpg`
+                    imgSrc = `${process.env.SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
                 else
-                    imgSrc = `${process.env.SIERO_IMG_URL}/grid/${weapon.granblue_id}.jpg`
+                    imgSrc = `${process.env.SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
             }
         }
         
         setImageUrl(imgSrc)
+    }
+
+    function sendData(object: Weapon | Summon, position: number) {
+        if (isWeapon(object)) {
+            props.onReceiveData(object, position)
+        }
+    }
+
+    function isWeapon(object: Weapon | Summon): object is Weapon {
+        return (object as Weapon).proficiency !== undefined
     }
 
     return (
@@ -84,8 +94,9 @@ function WeaponUnit(props: Props) {
             {open ? (
                 <SearchModal 
                     close={closeModal}
-                    send={props.onReceiveData}
+                    send={sendData}
                     fromPosition={props.position}
+                    object="weapons"
                     placeholderText="Search for a weapon..."
                 />
             ) : null}

@@ -15,7 +15,7 @@ const GridRep = (props: Props) => {
     const numWeapons: number = 9
 
     const [mainhand, setMainhand] = useState<Weapon>()
-    const [weapons, setWeapons] = useState<GridArray>({})
+    const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
 
     useEffect(() => {
         configure()

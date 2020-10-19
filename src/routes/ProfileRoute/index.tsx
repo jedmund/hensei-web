@@ -25,7 +25,7 @@ interface Party {
 
 interface ProfileProps extends RouteComponentProps<Props> {}
 
-const Profile: React.FC<ProfileProps> = ({ history, match }) => {
+const ProfileRoute: React.FC<ProfileProps> = ({ history, match }) => {
     const [cookies, setCookie] = useCookies(['user'])
 
     const [found, setFound] = useState(false)
@@ -128,6 +128,6 @@ const Profile: React.FC<ProfileProps> = ({ history, match }) => {
 export default 
     withCookies(
         withRouter(
-            Profile
+            ProfileRoute
         )
     )

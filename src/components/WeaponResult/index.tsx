@@ -1,7 +1,7 @@
 import React from 'react'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
-import gridImages from '../../images/grid/*.jpg'
+import gridImages from '../../images/weapon-grid/*.jpg'
 
 import './index.css'
 
@@ -21,7 +21,7 @@ class WeaponResult extends React.Component<Props> {
         if (process.env.NODE_ENV === 'development') {
             imgSrc = gridImages[weapon.granblue_id]
         } else if (process.env.NODE_ENV === 'production') {
-            imgSrc = `${process.env.SIERO_IMG_URL}/grid/${weapon.granblue_id}.jpg`
+            imgSrc = `${process.env.SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
         }
 
         return (

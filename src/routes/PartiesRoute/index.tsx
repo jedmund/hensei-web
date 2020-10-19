@@ -4,7 +4,7 @@ interface State {
     parties: {id: string, hash: string}[]
 }
 
-class Parties extends React.Component {
+class PartiesRoute extends React.Component {
     state: State
     
     constructor(props) {
@@ -36,4 +36,4 @@ class Parties extends React.Component {
     }
 }
 
-export default Parties
+export default PartiesRoute

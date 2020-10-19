@@ -3,14 +3,23 @@ import CharacterUnit from '~components/CharacterUnit'
 
 import './index.css'
 
+export enum GridType {
+    Class,
+    Character,
+    Weapon,
+    Summon
+}
+
 interface Props {
     editable: boolean
+    exists: boolean
+    onSelect: (type: GridType, character: Character, position: number) => void
 }
 
 const CharacterGrid = (props: Props) => {
     const numCharacters: number = 5
 
-    const [characters, setCharacters] = useState<GridArray>({})
+    const [characters, setCharacters] = useState<GridArray<Character>>({})
     const [partyId, setPartyId] = useState('')
 
     return (
