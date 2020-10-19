@@ -23,6 +23,7 @@ const Header = (props: Props) => {
     useEffect(() => {
         if (cookies.user) {
             setUsername(cookies.user.username)
+            console.log(`Logged in as user "${cookies.user.username}"`)
         }
     }, [])
 
@@ -45,10 +46,6 @@ const Header = (props: Props) => {
         removeCookie('user')
         window.history.replaceState(null, `Grid Tool`, `/`)
         history.go(0)
-    }
-
-    if (cookies.user != null) {
-        console.log(`Logged in as user "${cookies.user.username}"`)
     }
         
     return (

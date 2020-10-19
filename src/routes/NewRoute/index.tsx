@@ -3,12 +3,12 @@ import { RouteComponentProps } from 'react-router-dom'
 
 import Party from '~components/Party'
 
-interface Props {}
-interface NewProps extends RouteComponentProps<Props> {}
+interface Props extends RouteComponentProps {}
 
-const NewRoute: React.FC<NewProps> = () => {
+const NewRoute: React.FC<Props> = () => {
     function callback(path: string) {
         // This is scuffed, how do we do this natively?
+        console.log("Callback to rewrite URL called")
         window.history.replaceState(null, `Grid Tool`, `${path}`)
     }
 
