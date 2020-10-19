@@ -3,10 +3,7 @@ import { withCookies, useCookies } from 'react-cookie'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import api from '~utils/api'
 
-import PartySegmentedControl from '~components/PartySegmentedControl'
-import WeaponGrid from '~components/WeaponGrid'
-import SummonGrid from '~components/SummonGrid'
-import CharacterGrid from '~components/CharacterGrid'
+import Party from '~components/Party'
 import Button from '~components/Button'
 
 interface Props {
@@ -15,7 +12,7 @@ interface Props {
 
 interface PartyProps extends RouteComponentProps<Props> {}
 
-const Party: React.FC<PartyProps> = ({ match }) => {
+const PartyRoute: React.FC<PartyProps> = ({ match }) => {
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
     const [editable, setEditable] = useState(false)
@@ -28,9 +25,7 @@ const Party: React.FC<PartyProps> = ({ match }) => {
     const [friendSummon, setFriendSummon] = useState<Summon>()
 
     const [partyId, setPartyId] = useState('')
-    const [cookies, setCookie] = useCookies(['userId'])
-    const [selectedTab, setSelectedTab] = useState('weapons')
-    const [tab, setTab] = useState<JSX.Element>()
+    const [cookies, setCookie] = useCookies(['user'])
     const shortcode = match.params.hash || ''
 
     useEffect(() => {
@@ -84,68 +79,18 @@ const Party: React.FC<PartyProps> = ({ match }) => {
             })
     }
 
-    function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
-        setSelectedTab(event.target.value)
-
-        switch(event.target.value) {
-            case 'weapons':
-                setTab((
-                    <WeaponGrid
-                        userId={cookies.user ? cookies.user.user_id : ''}
-                        partyId={partyId}
-                        mainhand={mainWeapon}
-                        grid={weapons}
-                        editable={editable}
-                        exists={true}
-                        found={found}
-                    />
-                ))
-                break
-            case 'summons':
-                setTab((
-                    <SummonGrid 
-                        userId={cookies.user ? cookies.user.user_id : ''}
-                        partyId={partyId}
-                        main={mainSummon}
-                        friend={friendSummon}
-                        grid={summons}
-                        editable={editable}
-                        exists={true}
-                        found={found}
-                    />
-                ))
-                break
-            case 'characters':
-                setTab((
-                    <CharacterGrid
-                        editable={true}
-                    />
-                ))
-                break
-            default: 
-                break
-        }
-    }
-
     function render() {
         return (
             <div id="Content">
-                <PartySegmentedControl
-                    selectedTab={selectedTab}
-                    onClick={segmentClicked}
+                <Party
+                    mainWeapon={mainWeapon}
+                    mainSummon={mainSummon}
+                    friendSummon={friendSummon}
+                    weapons={weapons}
+                    summons={summons}
+                    editable={editable}
+                    exists={found}
                 />
-
-                {tab || (
-                    <WeaponGrid 
-                        userId={cookies.user ? cookies.user.user_id : ''}
-                        partyId={partyId}
-                        mainhand={mainWeapon}
-                        grid={weapons}
-                        editable={editable}
-                        exists={true}
-                        found={found} 
-                    />
-                )}
             </div>
         )
     }
@@ -171,6 +116,6 @@ const Party: React.FC<PartyProps> = ({ match }) => {
 export default 
     withCookies(
         withRouter(
-            Party
+            PartyRoute
         )
     )

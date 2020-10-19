@@ -21,9 +21,14 @@ export enum GridType {
 import './index.css'
 
 interface Props {
+    mainWeapon?: Weapon
+    mainSummon?: Summon
+    friendSummon?: Summon
+    weapons?: GridArray<Weapon>
+    summons?: GridArray<Summon>
     editable: boolean
     exists: boolean
-    pushHistory: (path: string) => void
+    pushHistory?: (path: string) => void
 }
 
 const Party = (props: Props) => {
@@ -42,6 +47,14 @@ const Party = (props: Props) => {
     const [mainWeapon, setMainWeapon] = useState<Weapon>()
     const [mainSummon, setMainSummon] = useState<Summon>()
     const [friendSummon, setFriendSummon] = useState<Summon>()
+
+    useEffect(() => {
+        setMainWeapon(props.mainWeapon)
+        setMainSummon(props.mainSummon)
+        setFriendSummon(props.friendSummon)
+        setWeapons(props.weapons || {})
+        setSummons(props.summons || {})
+    }, [props.mainWeapon, props.mainSummon, props.friendSummon, props.weapons, props.summons])
 
     const weaponGrid = (
         <WeaponGrid 
@@ -72,28 +85,23 @@ const Party = (props: Props) => {
         <CharacterGrid
             editable={props.editable}
             exists={props.exists}
-            onSelect={saveCharacter}
+            onSelect={itemSelected}
         />
     )
 
-    const [currentGrid, setCurrentGrid] = useState<JSX.Element>(weaponGrid)
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
-
     const [partyId, setPartyId] = useState('')
 
     function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
         switch(event.target.value) {
             case 'characters':
                 setCurrentTab(GridType.Character)
-                setCurrentGrid(characterGrid)
                 break
             case 'weapons':
                 setCurrentTab(GridType.Weapon)
-                setCurrentGrid(weaponGrid)
                 break
             case 'summons':
                 setCurrentTab(GridType.Summon)
-                setCurrentGrid(summonGrid)
                 break
             default: 
                 break
@@ -115,10 +123,10 @@ const Party = (props: Props) => {
                 })
                 .then(partyId => {
                     setPartyId(partyId)
-                    save(partyId, type, item, position)
+                    saveItem(partyId, type, item, position)
                 })
         } else {
-            save(partyId, type, item, position)
+            saveItem(partyId, type, item, position)
         }
     }
 
@@ -132,7 +140,7 @@ const Party = (props: Props) => {
         return await api.endpoints.parties.create(body, headers)
     }
 
-    function save(partyId: string, type: GridType, item: Character | Weapon | Summon, position: number) {
+    function saveItem(partyId: string, type: GridType, item: Character | Weapon | Summon, position: number) {
         switch(type) {
             case GridType.Class:
                 saveClass()
@@ -157,6 +165,7 @@ const Party = (props: Props) => {
         }
     }
     
+    // Weapons
     function storeWeapon(weapon: Weapon, position: number) {
         if (position == -1) {
             setMainWeapon(weapon)
@@ -179,6 +188,7 @@ const Party = (props: Props) => {
         }, headers)
     }
 
+    // Summons
     function storeSummon(summon: Summon, position: number) {
         if (position == -1) {
             setMainSummon(summon)
@@ -204,10 +214,12 @@ const Party = (props: Props) => {
         }, headers)
     }
 
+    // Character
     function saveCharacter(character: Character, position: number, party: string) {
         // TODO: Implement this
     }
 
+    // Class
     function saveClass() {
         // TODO: Implement this
     }
@@ -219,7 +231,18 @@ const Party = (props: Props) => {
                 onClick={segmentClicked}
             />
             
-            {currentGrid}
+            {
+                (() => {
+                    switch(currentTab) {
+                        case GridType.Character:
+                            return characterGrid
+                        case GridType.Weapon:
+                            return weaponGrid
+                        case GridType.Summon:
+                            return summonGrid
+                    }
+                })()
+            }
         </div>
     )
 }

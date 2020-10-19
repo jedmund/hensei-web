@@ -6,7 +6,7 @@ import Party from '~components/Party'
 interface Props {}
 interface NewProps extends RouteComponentProps<Props> {}
 
-const New: React.FC<NewProps> = () => {
+const NewRoute: React.FC<NewProps> = () => {
     function callback(path: string) {
         // This is scuffed, how do we do this natively?
         window.history.replaceState(null, `Grid Tool`, `${path}`)
@@ -23,4 +23,4 @@ const New: React.FC<NewProps> = () => {
     )
 }
 
-export default New
+export default NewRoute

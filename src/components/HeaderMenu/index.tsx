@@ -7,7 +7,7 @@ import SignupModal from '~components/SignupModal'
 import { useModal as useSignupModal } from '~utils/useModal'
 import { useModal as useLoginModal } from '~utils/useModal'
 import { Link, Route } from 'react-router-dom'
-import Profile from '~routes/Profile'
+import Profile from '~routes/ProfileRoute'
 
 
 interface Props {

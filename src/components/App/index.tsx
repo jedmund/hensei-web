@@ -4,10 +4,10 @@ import './index.css'
 
 import Header from '~components/Header'
 
-import New from '~routes/New'
-import Party from '~routes/Party'
-import Parties from '~routes/Parties'
-import Profile from '~routes/Profile'
+import NewRoute from '~routes/NewRoute'
+import PartyRoute from '~routes/PartyRoute'
+import PartiesRoute from '~routes/PartiesRoute'
+import ProfileRoute from '~routes/ProfileRoute'
 
 
 const App = () => {
@@ -17,10 +17,10 @@ const App = () => {
     return (   
         <div>
             <Header navigate={route} />
-            <Route exact path='/' component={New} />
-            <Route exact path='/parties/' component={Parties} />
-            <Route path='/p/:hash' component={Party} />
-            <Route exact path='/:username' component={Profile} />
+            <Route exact path='/' component={NewRoute} />
+            <Route exact path='/parties/' component={PartiesRoute} />
+            <Route path='/p/:hash' component={PartyRoute} />
+            <Route exact path='/:username' component={ProfileRoute} />
         </div>
     )
 }

@@ -16,6 +16,7 @@ interface Props {
 }
 
 const PartySegmentedControl = (props: Props) => {
+
     return (
         <div>
             <SegmentedControl>
@@ -29,21 +30,21 @@ const PartySegmentedControl = (props: Props) => {
                 <Segment 
                     groupName="grid"
                     name="characters"
-                    selected={props.selectedTab === GridType.Character}
+                    selected={props.selectedTab == GridType.Character}
                     onClick={props.onClick}
                 >Characters</Segment>
 
                 <Segment 
                     groupName="grid"
                     name="weapons"
-                    selected={props.selectedTab === GridType.Weapon}
+                    selected={props.selectedTab == GridType.Weapon}
                     onClick={props.onClick}
                 >Weapons</Segment>
 
                 <Segment 
                     groupName="grid"
                     name="summons"
-                    selected={props.selectedTab === GridType.Summon}
+                    selected={props.selectedTab == GridType.Summon}
                     onClick={props.onClick}
                 >Summons</Segment>
             </SegmentedControl>
