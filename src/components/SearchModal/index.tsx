@@ -4,6 +4,7 @@ import api from '~utils/api'
 
 import Modal from '~components/Modal'
 import Overlay from '~components/Overlay'
+import CharacterResult from '~components/CharacterResult'
 import WeaponResult from '~components/WeaponResult'
 import SummonResult from '~components/SummonResult'
 
@@ -11,7 +12,7 @@ import './index.css'
 
 interface Props {
     close: () => void
-    send: (object: Weapon | Summon, position: number) => any
+    send: (object: Character | Weapon | Summon, position: number) => any
     placeholderText: string
     fromPosition: number
     object: 'weapons' | 'characters' | 'summons'
@@ -75,7 +76,7 @@ class SearchModal extends React.Component<Props, State> {
         }
     }
 
-    sendData = (result: Weapon | Summon) => {
+    sendData = (result: Character | Weapon | Summon) => {
         this.props.send(result, this.props.fromPosition)
         this.props.close()
     }
@@ -91,7 +92,7 @@ class SearchModal extends React.Component<Props, State> {
                 return this.renderSummonSearchResults(results)
 
             case 'characters':
-                return (<div />) 
+                return this.renderCharacterSearchResults(results) 
         }
     }
 
@@ -110,6 +111,16 @@ class SearchModal extends React.Component<Props, State> {
             <ul id="results_container">
                 { results.map( (result: Summon) => {
                     return <SummonResult key={result.id} data={result} onClick={() => { this.sendData(result) }} />
+                })}
+            </ul>
+        )
+    }
+
+    renderCharacterSearchResults = (results: { [key: string]: any }) => {
+        return (
+            <ul id="results_container">
+                { results.map( (result: Character) => {
+                    return <CharacterResult key={result.id} data={result} onClick={() => { this.sendData(result) }} />
                 })}
             </ul>
         )

@@ -24,6 +24,7 @@ interface Props {
     mainWeapon?: Weapon
     mainSummon?: Summon
     friendSummon?: Summon
+    characters?: GridArray<Character>
     weapons?: GridArray<Weapon>
     summons?: GridArray<Summon>
     editable: boolean
@@ -41,6 +42,7 @@ const Party = (props: Props) => {
     } : {}
 
     // Grid data
+    const [characters, setCharacters] = useState<GridArray<Character>>({})
     const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
     const [summons, setSummons] = useState<GridArray<Summon>>({})
 
@@ -52,9 +54,10 @@ const Party = (props: Props) => {
         setMainWeapon(props.mainWeapon)
         setMainSummon(props.mainSummon)
         setFriendSummon(props.friendSummon)
+        setCharacters(props.characters || {})
         setWeapons(props.weapons || {})
         setSummons(props.summons || {})
-    }, [props.mainWeapon, props.mainSummon, props.friendSummon, props.weapons, props.summons])
+    }, [props.mainWeapon, props.mainSummon, props.friendSummon, props.characters, props.weapons, props.summons])
 
     const weaponGrid = (
         <WeaponGrid 
@@ -81,6 +84,8 @@ const Party = (props: Props) => {
 
     const characterGrid = (
         <CharacterGrid
+            userId={cookies.user ? cookies.user.userId : ''}
+            grid={characters}
             editable={props.editable}
             exists={props.exists}
             onSelect={itemSelected}
@@ -144,7 +149,11 @@ const Party = (props: Props) => {
                 saveClass()
                 break
             case GridType.Character:
-                saveCharacter(item as Character, position, partyId)
+                const character = item as Character
+                saveCharacter(character, position, partyId)
+                    .then(() => {
+                        storeCharacter(character, position)
+                    })
                 break
             case GridType.Weapon:
                 const weapon = item as Weapon
@@ -213,8 +222,21 @@ const Party = (props: Props) => {
     }
 
     // Character
-    function saveCharacter(character: Character, position: number, party: string) {
-        // TODO: Implement this
+    function storeCharacter(character: Character, position: number) {
+        // Store the grid unit character at the correct position
+        let newCharacters = Object.assign({}, characters)
+        newCharacters[position] = character
+        setCharacters(newCharacters)
+    }
+
+    async function saveCharacter(character: Character, position: number, party: string) {
+        await api.endpoints.characters.create({
+            'character': {
+                'party_id': party,
+                'character_id': character.id,
+                'position': position
+            }
+        }, headers)
     }
 
     // Class

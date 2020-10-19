@@ -17,6 +17,7 @@ const PartyRoute: React.FC<PartyProps> = ({ match }) => {
     const [loading, setLoading] = useState(true)
     const [editable, setEditable] = useState(false)
 
+    const [characters, setCharacters] = useState<GridArray<Character>>({})
     const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
     const [summons, setSummons] = useState<GridArray<Summon>>({})
 
@@ -43,8 +44,15 @@ const PartyRoute: React.FC<PartyProps> = ({ match }) => {
                 if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser)
                     setEditable(true)
 
+                let characters: GridArray<Character> = {}
                 let weapons: GridArray<Weapon> = {}
                 let summons: GridArray<Summon> = {}
+
+                party.characters.forEach((gridCharacter: GridCharacter) => {
+                    if (gridCharacter.position != null)
+                        characters[gridCharacter.position] = gridCharacter.character
+                })
+
                 party.weapons.forEach((gridWeapon: GridWeapon) => {
                     if (gridWeapon.mainhand)
                         setMainWeapon(gridWeapon.weapon)
@@ -63,6 +71,7 @@ const PartyRoute: React.FC<PartyProps> = ({ match }) => {
 
                 setFound(true)
                 setLoading(false)
+                setCharacters(characters)
                 setWeapons(weapons)
                 setSummons(summons)
                 setPartyId(party.id)
@@ -86,6 +95,7 @@ const PartyRoute: React.FC<PartyProps> = ({ match }) => {
                     mainWeapon={mainWeapon}
                     mainSummon={mainSummon}
                     friendSummon={friendSummon}
+                    characters={characters}
                     weapons={weapons}
                     summons={summons}
                     editable={editable}
