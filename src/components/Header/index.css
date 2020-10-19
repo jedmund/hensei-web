@@ -1,11 +1,12 @@
 .Header {
     display: flex;
-    height: 48px;
+    height: 34px;
     width: 100%;
 }
 
-.Header .right button:first-child {
-    margin-right: 8px;
+.Header .right {
+    display: flex;
+    gap: 8px;
 }
 
 .Header .push {
