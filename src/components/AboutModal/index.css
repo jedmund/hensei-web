@@ -1,0 +1,14 @@
+.AboutModal {
+    padding: 24px;
+}
+
+.AboutModal p {
+    color: #333;
+    font-size: 14px;
+    margin: 0;
+    margin-bottom: 16px;
+}
+
+.AboutModal p:last-of-type {
+    margin-bottom: 0;
+}

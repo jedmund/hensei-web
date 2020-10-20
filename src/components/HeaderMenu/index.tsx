@@ -6,8 +6,11 @@ import SignupModal from '~components/SignupModal'
 
 import { useModal as useSignupModal } from '~utils/useModal'
 import { useModal as useLoginModal } from '~utils/useModal'
+import { useModal as useAboutModal } from '~utils/useModal'
+
 import { Link, Route } from 'react-router-dom'
 import Profile from '~routes/ProfileRoute'
+import AboutModal from '~components/AboutModal'
 
 
 interface Props {
@@ -18,6 +21,7 @@ interface Props {
 const HeaderMenu = (props: Props) => {
     const { open: signupOpen, openModal: openSignupModal, closeModal: closeSignupModal } = useSignupModal()
     const { open: loginOpen, openModal: openLoginModal, closeModal: closeLoginModal } = useLoginModal()
+    const { open: aboutOpen, openModal: openAboutModal, closeModal: closeAboutModal } = useAboutModal()
 
     function authItems() {
         return (
@@ -29,13 +33,14 @@ const HeaderMenu = (props: Props) => {
                         </li>
                     </div>
                     <div className="MenuGroup">
-                        <li className="MenuItem">
-                            <Link to='/about'>About</Link>
-                        </li>
-
-                        <li className="MenuItem">
+                        <li className="MenuItem" onClick={openAboutModal}>About</li>
+                        {aboutOpen ? (
+                            <AboutModal close={closeAboutModal} />
+                        ) : null}
+                        
+                        {/* <li className="MenuItem">
                             <Link to='/guides'>Guides</Link>
-                        </li>
+                        </li> */}
                     </div>
                     <div className="MenuGroup">
                         <li className="MenuItem" onClick={props.logout}>Logout</li>
@@ -49,8 +54,11 @@ const HeaderMenu = (props: Props) => {
         return (
             <ul className="Menu unauth">
                 <div className="MenuGroup">
-                    <li className="MenuItem" onClick={ () => props.navigate('about') }>About</li>
-                    <li className="MenuItem" onClick={ () => props.navigate('guides') }>Guides</li>
+                    <li className="MenuItem" onClick={openAboutModal}>About</li>
+                    {aboutOpen ? (
+                        <AboutModal close={closeAboutModal} />
+                    ) : null}
+                    {/* <li className="MenuItem" onClick={ () => props.navigate('guides') }>Guides</li> */}
                 </div>
                 <div className="MenuGroup">
                     <li className="MenuItem" onClick={openLoginModal}>Log in</li>
@@ -66,6 +74,7 @@ const HeaderMenu = (props: Props) => {
                         />
                     ) : null}
                 </div>
+                
             </ul>
         )
     }
