@@ -25,6 +25,10 @@ button {
 
         &:hover {
             background: $grey-90;
+
+            .text {
+                color: $grey-00;
+            }
         }
 
         .text {
