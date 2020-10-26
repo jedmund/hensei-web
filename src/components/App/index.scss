@@ -41,6 +41,12 @@ h1 {
     margin-top: $unit * 3;
 }
 
+@include media('>small', '<=medium') {
+    body {
+        font-size: 1.6rem;
+    }
+}
+
 // #NotFound {
 //     display: flex;
 //     flex-direction: column;

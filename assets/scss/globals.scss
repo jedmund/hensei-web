@@ -1,3 +1,9 @@
+@import 'include-media/dist/_include-media';
+
+// Breakpoints
+$breakpoints: (small: 320px, medium: 768px, large: 1024px);
+
+// Sizing
 $unit: 8px;
 
 // Colors

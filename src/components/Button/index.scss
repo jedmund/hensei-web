@@ -87,3 +87,9 @@ button {
         color: inherit;
     }
 }
+
+@include media('>small', '<=medium') {
+    .Button {
+        font-size: 1.6rem;
+    }
+}
