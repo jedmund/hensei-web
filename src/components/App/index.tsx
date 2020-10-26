@@ -1,6 +1,6 @@
 import React from 'react'
 import { Route, useHistory } from 'react-router-dom'
-import './index.css'
+import './index.scss'
 
 import Header from '~components/Header'
 

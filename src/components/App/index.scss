@@ -1,0 +1,47 @@
+@import '~meyer-reset-scss';
+
+html {
+    background: $bg-color;
+    padding: $unit * 2;
+}
+
+body {
+    font-family: system-ui, -apple-system, Helvetica Neue, Helvetica, Arial, sans-serif;
+
+    &.no-scroll {
+        overflow: hidden;
+    }
+}
+
+a {
+    text-decoration: none;
+}
+
+h1, h2, h3, p {
+    color: $text-color;
+}
+
+h1 {
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+}
+
+#Content {
+    display: flex;
+    flex-direction: column;
+    gap: $unit * 3;
+    margin-top: $unit * 3;
+}
+
+// #NotFound {
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     margin-top: 40px;
+// }
+
+// #NotFound h2 {
+//     color: #444;
+//     font-weight: 500;
+// }
