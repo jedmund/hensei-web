@@ -1,7 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 
-import './index.css'
+import './index.scss'
 
 import New from '../../../assets/new'
 import Menu from '../../../assets/menu'

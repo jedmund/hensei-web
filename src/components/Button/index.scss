@@ -1,0 +1,85 @@
+.Button {
+    -webkit-font-smoothing: antialiased;
+    border: none;
+    box-shadow: none;
+
+    align-items: center;
+    border-radius: 6px;
+    display: inline-flex;
+    font-size: 1.4rem;
+    font-weight: 600;
+    gap: 6px;
+    padding: 8px 12px;
+
+    &:hover {
+        color: $grey-00;
+        cursor: pointer;
+
+        & .icon {
+            color: #2360C5;
+        }
+    }
+
+    &.btn-grey {
+        background: white;
+
+        &:hover {
+            background: $grey-90;
+        }
+
+        .text {
+            color: $grey-10;
+        }
+    }
+
+    &.btn-blue {
+        background: $blue;
+        color: #8b8b8b;
+
+        &:hover {
+            background: #4B9BE5;
+            color: #233E56;
+        }
+    }
+
+    &.btn-red {
+        background: #fa4242;
+        color: #860f0f;
+
+        &:hover {
+            background: #e91a1a;
+            color: #4e1717;
+
+            .icon {
+                color: #4e1717;
+            }
+        }
+
+        .icon {
+            color: #860f0f;
+        }
+    }
+
+    &.btn-disabled {
+        background: #e0e0e0;
+        color: #bababa;
+
+        &:hover {
+            background: #e0e0e0;
+            color: #bababa;
+        }
+    }
+
+    .icon {
+        height: 12px;
+        width: 12px;
+
+        svg {
+            fill: #c9c9c9;
+        }
+    }
+    
+    .text {
+        color: inherit;
+    }
+}
