@@ -1,12 +1,12 @@
 .SegmentedControlWrapper {
     display: flex;
     justify-content: center;
-    margin-bottom: 24px;
+    margin-bottom: $unit * 3;
 }
 
 .SegmentedControl {
     background: white;
-    border-radius: 8px;
+    border-radius: $unit;
     display: inline-flex;
     position: relative;
     user-select: none;
