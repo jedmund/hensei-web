@@ -22,6 +22,7 @@
     "i18next": "^19.7.0",
     "i18next-browser-languagedetector": "^6.0.1",
     "i18next-xhr-backend": "^3.2.2",
+    "include-media": "^1.4.9",
     "meyer-reset-scss": "^2.0.4",
     "parcel-bundler": "^1.12.4",
     "postcss-modules": "^3.2.2",
