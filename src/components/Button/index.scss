@@ -1,13 +1,13 @@
-.Button {
-    -webkit-font-smoothing: antialiased;
+button {
     border: none;
-    box-shadow: none;
+    font-weight: $medium;
+}
 
+.Button {
     align-items: center;
     border-radius: 6px;
     display: inline-flex;
     font-size: 1.4rem;
-    font-weight: 600;
     gap: 6px;
     padding: 8px 12px;
 
