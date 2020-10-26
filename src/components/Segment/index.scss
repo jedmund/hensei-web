@@ -1,22 +1,21 @@
 .Segment {
     border-radius: 4px;
-    color: #888;
+    color: $grey-10;
     cursor: pointer;
-    font-size: 16px;
     font-size: 1.4rem;
     font-weight: 500;
     min-width: 100px;
 
     &:hover label {
-      background: #f9f9f9;
-      color: #555;
+      background: $grey-90;
+      color: $grey-00;
     }
 
     & input {
       display: none;
 
       &:checked + label {
-        background: #2360C5;
+        background: $blue;
         color: white;
       }
     }

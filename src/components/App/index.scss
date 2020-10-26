@@ -1,15 +1,15 @@
 @import '~meyer-reset-scss';
 
 html {
-    background: $bg-color;
+    background: $grey-80;
     font-size: 62.5%;
     padding: $unit * 2;
 }
 
 body {
     font-family: system-ui, -apple-system, Helvetica Neue, Helvetica, Arial, sans-serif;
-
     font-size: 1.4rem;
+    
     &.no-scroll {
         overflow: hidden;
     }
@@ -19,12 +19,15 @@ a {
     text-decoration: none;
 }
 
+button, input {
+    font-family: system-ui, -apple-system, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
 h1, h2, h3, p {
-    color: $text-color;
+    color: $grey-00;
 }
 
 h1 {
-    font-size: 18px;
     font-size: 2.1rem;
     font-weight: 500;
     text-align: center;
