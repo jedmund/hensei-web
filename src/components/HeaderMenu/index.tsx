@@ -1,5 +1,5 @@
 import React from 'react'
-import './index.css'
+import './index.scss'
 
 import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'

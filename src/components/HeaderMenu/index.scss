@@ -1,0 +1,47 @@
+.Menu {
+    background: white;
+    border-radius: 6px;
+    display: none;
+    min-width: 140px;
+    position: absolute;
+    top: $unit * 4;
+    z-index: 1;
+}
+
+.MenuItem {
+    color: $grey-10;
+    font-weight: 500;
+    padding: 6px 12px;
+
+    &:hover {
+        background: $grey-90;
+        color: $grey-00;
+        cursor: pointer;
+    }
+
+    a {
+        color: $grey-10;
+
+        &:hover {
+            color: $grey-00;
+        }
+    }
+}
+
+.MenuGroup {
+    border-bottom: 2px solid #f5f5f5;
+
+    &:first-child .MenuItem:first-child:hover {
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+
+    &:last-child .MenuItem:last-child:hover {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
