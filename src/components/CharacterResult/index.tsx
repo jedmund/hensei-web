@@ -3,7 +3,7 @@ import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
 import images from '../../images/chara-grid/*.jpg'
 
-import './index.css'
+import './index.scss'
 
 interface Props {
     data: Character

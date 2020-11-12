@@ -51,10 +51,13 @@
 
 .WeaponImage .icon {
     position: absolute;
-    color: #c9c9c9;
     height: 20px;
     width: 20px;
     z-index: 1;
+
+    svg {
+        fill: #c9c9c9;
+    }
 }
 
 .WeaponImage:hover .icon {

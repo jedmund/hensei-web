@@ -1,7 +1,7 @@
 import React from 'react'
 import WeaponUnit from '~components/WeaponUnit'
 
-import './index.css'
+import './index.scss'
 
 // GridType
 export enum GridType {

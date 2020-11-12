@@ -9,7 +9,7 @@ import mainImages from '../../images/weapon-main/*.jpg'
 import gridImages from '../../images/weapon-grid/*.jpg'
 import Plus from '../../../assets/plus.svg'
 
-import './index.css'
+import './index.scss'
 
 interface Props {
     onReceiveData: (weapon: Weapon, position: number) => void

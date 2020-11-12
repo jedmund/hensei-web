@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import CharacterUnit from '~components/CharacterUnit'
 
-import './index.css'
+import './index.scss'
 
 export enum GridType {
     Class,

@@ -5,7 +5,7 @@ import { useModal as useModal } from '~utils/useModal'
 import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 
-import './index.css'
+import './index.scss'
 
 import images from '../../images/chara-main/*.jpg'
 import Plus from '../../../assets/plus.svg'

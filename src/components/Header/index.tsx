@@ -5,7 +5,7 @@ import { useCookies } from 'react-cookie'
 import Button from '~components/Button'
 import HeaderMenu from '~components/HeaderMenu'
 
-import './index.css'
+import './index.scss'
 
 interface Props {
     navigate: (pathname: string) => void
