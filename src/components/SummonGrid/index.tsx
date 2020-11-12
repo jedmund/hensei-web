@@ -1,7 +1,7 @@
 import React from 'react'
 import SummonUnit from '~components/SummonUnit'
 
-import './index.css'
+import './index.scss'
 
 // GridType
 export enum GridType {

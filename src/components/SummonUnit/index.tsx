@@ -9,7 +9,7 @@ import mainImages from '../../images/summon-main/*.jpg'
 import gridImages from '../../images/summon-grid/*.jpg'
 import Plus from '../../../assets/plus.svg'
 
-import './index.css'
+import './index.scss'
 
 interface Props {
     onReceiveData: (summon: Summon, position: number) => void

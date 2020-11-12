@@ -1,0 +1,92 @@
+.SummonUnit {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .SummonImage {
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: all 0.18s ease-in-out;
+
+        &:hover .icon {
+            color: #555;
+        }
+
+        .icon {
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            z-index: 1;
+    
+            svg {
+                fill: #c9c9c9;
+            }
+        }
+    }
+
+    &.editable .SummonImage:hover {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
+        cursor: pointer;
+        transform: scale(1.1, 1.1);
+    }
+
+    &.filled h3 {
+        display: block;
+    }
+
+    &.filled ul {
+        display: flex;
+    }
+
+    h3, ul {
+        display: none;
+    }
+
+    h3 {
+        color: #333;
+        font-size: 14px;
+        font-weight: 500;
+        margin: 0;
+        text-align: center;
+    }
+
+    img {
+        position: relative;
+        width: 100%;
+        z-index: 2;
+    }
+}
+
+/* Mainhand */
+.SummonUnit.main,
+.SummonUnit.friend {
+    margin-right: 24px;
+    max-width: 200px;
+}
+
+.SummonUnit.friend {
+    margin-right: 0;
+}
+
+.SummonUnit.main .SummonImage,
+.SummonUnit.friend .SummonImage {
+    height: 374px;
+    width: 180px;
+}
+
+/* Grid */
+.SummonUnit.grid {
+    max-width: 160px;
+}
+
+.SummonUnit.grid .SummonImage {
+    list-style-type: none;
+    height: 92px;
+    width: 160px;
+}

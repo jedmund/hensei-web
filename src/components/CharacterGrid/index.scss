@@ -10,18 +10,13 @@
     margin: 0;
     padding: 0;
     width: 761px;
-}
 
-#grid_characters > * {
-    margin-bottom: 24px;
-    margin-right: 24px;
+    & > * {
+        margin-bottom: 24px;
+        margin-right: 24px;
+    }
 
-}
-
-#grid_characters > li {
-    list-style: none;
-}
-
-#grid_characters > li:last-child {
-    margin: 0;
+    & > li:last-child {
+        margin: 0;
+    }
 }
