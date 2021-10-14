@@ -46,7 +46,7 @@ class Api {
     }
 
     login(object: {}) {
-        return axios.post(`${process.env.SIERO_OAUTH_URL}/token` || 'http://127.0.0.1:3000/oauth/token', object)
+        return axios.post(`${ process.env.SIERO_OAUTH_URL || 'http://127.0.0.1:3000/oauth' }/token`, object)
     }
 
     search(object: string, query: string) {
