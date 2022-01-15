@@ -1,0 +1,32 @@
+#ExtraSummons {
+    background: #FFEBD9;
+    border-radius: 8px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    max-width: 727px;
+    padding: 16px 16px 16px 0;
+    position: relative;
+    left: 9px;
+
+    & > span {
+        color: #825B39;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.2;
+        font-weight: 500;
+        margin-right: 16px;
+        text-align: center;
+        width: 387px;
+    }
+
+    .SummonUnit .SummonImage {
+        background: #D5D3F6;
+    }
+
+    .WeaponUnit .WeaponImage .icon svg {
+        fill: #8F8AC6;
+    }
+}

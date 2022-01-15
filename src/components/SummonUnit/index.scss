@@ -64,29 +64,24 @@
 }
 
 /* Mainhand */
-.SummonUnit.main,
-.SummonUnit.friend {
-    margin-right: 24px;
-    max-width: 200px;
-}
-
 .SummonUnit.friend {
     margin-right: 0;
 }
 
 .SummonUnit.main .SummonImage,
 .SummonUnit.friend .SummonImage {
-    height: 374px;
-    width: 180px;
+    height: 315px;
+    width: 182px;
 }
 
 /* Grid */
 .SummonUnit.grid {
-    max-width: 160px;
+    max-width: 148px;
+    min-height: 141px;
 }
 
 .SummonUnit.grid .SummonImage {
     list-style-type: none;
-    height: 92px;
-    width: 160px;
+    height: 111px;
+    width: 148px;
 }

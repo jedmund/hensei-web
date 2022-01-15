@@ -1,27 +1,27 @@
 .SummonGrid {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-column-gap: $unit * 2;
     justify-content: center;
+
+    & .Label {
+        color: $grey-50;
+        font-size: 12px;
+        font-weight: $medium;
+        margin-bottom: $unit;
+        text-align: center;
+    }
 }
 
 #grid_summons {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin: 0 24px 0 0;
-    padding: 0;
-    width: 344px;
-}
-
-#grid_summons > * {
-    margin-bottom: 24px;
-    margin-right: 24px;
-
-}
-
-#grid_summons > *:nth-child(2n+2) {
-    margin-right: 0;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-column-gap: $unit * 2;
+    grid-template-rows: 1fr;
+    grid-row-gap: $unit * 3;
 }
 
 #grid_summons > li {
     list-style: none;
+    min-height: 180px;
 }
