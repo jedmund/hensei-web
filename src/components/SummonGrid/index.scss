@@ -25,3 +25,11 @@
     list-style: none;
     min-height: 180px;
 }
+
+#ExtraSummons #grid_summons > li {
+    min-height: 0;
+
+    .SummonUnit {
+        min-height: 0;
+    }
+}
