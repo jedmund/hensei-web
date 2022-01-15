@@ -53,9 +53,9 @@ const WeaponUnit = (props: Props) => {
                     imgSrc = gridImages[weapon.granblue_id]
             } else if (process.env.NODE_ENV === 'production') {
                 if (props.unitType == 0)
-                    imgSrc = `${process.env.SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
+                    imgSrc = `${process.env.REACT_APP_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
                 else
-                    imgSrc = `${process.env.SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+                    imgSrc = `${process.env.REACT_APP_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
             }
         }
         

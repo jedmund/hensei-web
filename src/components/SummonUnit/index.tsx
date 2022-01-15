@@ -53,9 +53,9 @@ const SummonUnit = (props: Props) => {
                     imgSrc = gridImages[summon.granblue_id]
             } else if (process.env.NODE_ENV === 'production') {
                 if (props.unitType == 0 || props.unitType == 2)
-                    imgSrc = `${process.env.SIERO_IMG_URL}/summon-main/${summon.granblue_id}.jpg`
+                    imgSrc = `${process.env.REACT_APP_SIERO_IMG_URL}/summon-main/${summon.granblue_id}.jpg`
                 else
-                    imgSrc = `${process.env.SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`
+                    imgSrc = `${process.env.REACT_APP_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`
             }
         }
         

@@ -20,7 +20,7 @@ class SummonResult extends React.Component<Props> {
         if (process.env.NODE_ENV === 'development') {
             imgSrc = gridImages[summon.granblue_id]
         } else if (process.env.NODE_ENV === 'production') {
-            imgSrc = `${process.env.SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`
+            imgSrc = `${process.env.REACT_APP_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`
         }
 
         return (

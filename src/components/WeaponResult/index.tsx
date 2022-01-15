@@ -21,7 +21,7 @@ class WeaponResult extends React.Component<Props> {
         if (process.env.NODE_ENV === 'development') {
             imgSrc = gridImages[weapon.granblue_id]
         } else if (process.env.NODE_ENV === 'production') {
-            imgSrc = `${process.env.SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+            imgSrc = `${process.env.REACT_APP_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
         }
 
         return (

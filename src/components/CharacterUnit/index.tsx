@@ -44,7 +44,7 @@ const CharacterUnit = (props: Props) => {
             if (process.env.NODE_ENV === 'development') {
                 imgSrc = images[character.granblue_id]
             } else if (process.env.NODE_ENV === 'production') {
-                imgSrc = `${process.env.SIERO_IMG_URL}/chara-main/${character.granblue_id}.jpg`
+                imgSrc = `${process.env.REACT_APP_SIERO_IMG_URL}/chara-main/${character.granblue_id}.jpg`
             }
         }
 
