@@ -22,6 +22,17 @@ interface Props {
 }
 
 const PartySegmentedControl = (props: Props) => {
+    const extraToggle =
+        <div className="Extra">
+            Extra
+            <ToggleSwitch 
+                name="Extra" 
+                editable={props.editable}
+                checked={props.extra}
+                onChange={props.onCheckboxChange} 
+            />
+        </div>
+
     return (
         <div className="PartyNavigation">
             <SegmentedControl>
@@ -54,15 +65,13 @@ const PartySegmentedControl = (props: Props) => {
                 >Summons</Segment>
             </SegmentedControl>
 
-            <div className="Extra">
-                Extra
-                <ToggleSwitch 
-                    name="Extra" 
-                    editable={props.editable}
-                    checked={props.extra}
-                    onChange={props.onCheckboxChange} 
-                />
-            </div>
+            {
+                (() => {
+                    if (props.selectedTab == GridType.Weapon) {
+                        return extraToggle
+                    }
+                })()
+            }
         </div>
     )
 }

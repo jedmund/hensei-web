@@ -1,9 +1,10 @@
 .PartyNavigation {
     display: flex;
     gap: 58px;
-    justify-content: right;
+    justify-content: center;
     margin: 0 auto;
     max-width: 760px;
+    position: relative;
 }
 
 .Extra {
@@ -13,4 +14,6 @@
     gap: 8px;
     line-height: 34px;
     height: 100%;
+    position: absolute;
+    right: 0px;
 }
