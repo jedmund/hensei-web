@@ -12,6 +12,7 @@ interface Props {
 
 const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 const Proficiency = ['none', 'sword', 'dagger', 'axe', 'spear', 'bow', 'staff', 'fist', 'harp', 'gun', 'katana']
+const Series = ['seraphic', 'grand', 'opus', 'draconic', 'revenant', 'primal', 'beast','regalia', 'omega', 'olden_primal', 'hollowsky', 'xeno', 'astral', 'rose', 'ultima', 'bahamut', 'epic', 'ennead', 'cosmos', 'ancestral', 'superlative', 'vintage', 'class_champion', 'sephira', 'new_world_foundation']
 
 class WeaponResult extends React.Component<Props> {
     render() {
