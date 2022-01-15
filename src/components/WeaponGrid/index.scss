@@ -1,9 +1,9 @@
-.WeaponGrid {
+#WeaponGrid {
     display: flex;
     justify-content: center;
 }
 
-.ExtraWeapons #grid_weapons > * {
+#ExtraWeapons #grid_weapons > * {
     margin-bottom: 0;
 }
 

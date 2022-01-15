@@ -47,7 +47,7 @@ const WeaponGrid = (props: Props) => {
 
     return (
         <div id="weapon_grids">
-            <div className="WeaponGrid">
+            <div id="WeaponGrid">
                 <WeaponUnit 
                     editable={props.editable}
                     key="grid_mainhand"

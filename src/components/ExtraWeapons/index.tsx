@@ -28,7 +28,7 @@ const ExtraWeapons = (props: Props) => {
     }
 
     return (
-        <div className="ExtraWeapons">
+        <div id="ExtraWeapons">
             <span>Additional<br />Weapons</span>
             <ul id="grid_weapons">
                 {
