@@ -17,6 +17,7 @@ interface Props {
     editable: boolean
     exists: boolean
     found?: boolean
+    offset: number
     onSelect: (type: GridType, weapon: Weapon, position: number) => void
 }
 
@@ -38,9 +39,9 @@ const ExtraWeapons = (props: Props) => {
                                 <WeaponUnit 
                                     editable={props.editable}
                                     onReceiveData={receiveWeapon} 
-                                    position={i} 
+                                    position={props.offset + i} 
                                     unitType={1}
-                                    weapon={props.grid[i]}
+                                    weapon={props.grid[props.offset + i]}
                                 />
                             </li>
                         )

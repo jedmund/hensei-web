@@ -32,7 +32,8 @@ const WeaponGrid = (props: Props) => {
         <ExtraWeapons 
             grid={props.grid} 
             editable={props.editable} 
-            exists={false} 
+            exists={false}
+            offset={numWeapons}
             onSelect={
                 function (type: GridType, weapon: Weapon, position: number): void {
                     throw new Error('Function not implemented.')

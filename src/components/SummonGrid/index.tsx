@@ -85,6 +85,7 @@ const SummonGrid = (props: Props) => {
                 grid={props.grid} 
                 editable={false} 
                 exists={false} 
+                offset={numSummons}
                 onSelect={
                     function (type: GridType, summon: Summon, position: number): void {
                         throw new Error('Function not implemented.')

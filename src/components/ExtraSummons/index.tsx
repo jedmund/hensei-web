@@ -16,6 +16,7 @@ interface Props {
     editable: boolean
     exists: boolean
     found?: boolean
+    offset: number
     onSelect: (type: GridType, summon: Summon, position: number) => void
 }
 
@@ -37,9 +38,9 @@ const ExtraSummons = (props: Props) => {
                                 <SummonUnit 
                                     editable={props.editable}
                                     onReceiveData={receiveWeapon} 
-                                    position={i} 
+                                    position={props.offset + i} 
                                     unitType={1}
-                                    summon={props.grid[i]}
+                                    summon={props.grid[props.offset + i]}
                                 />
                             </li>
                         )
