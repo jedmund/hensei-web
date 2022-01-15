@@ -53,7 +53,7 @@ const SummonGrid = (props: Props) => {
                         editable={props.editable}
                         key="grid_friend_summon"
                         onReceiveData={receiveSummon}
-                        position={4}
+                        position={6}
                         unitType={2}
                         summon={props.friend}
                     />
@@ -83,14 +83,10 @@ const SummonGrid = (props: Props) => {
             
             <ExtraSummons 
                 grid={props.grid} 
-                editable={false} 
+                editable={props.editable} 
                 exists={false} 
                 offset={numSummons}
-                onSelect={
-                    function (type: GridType, summon: Summon, position: number): void {
-                        throw new Error('Function not implemented.')
-                    } 
-                } 
+                onSelect={props.onSelect} 
             />
         </div>
     )

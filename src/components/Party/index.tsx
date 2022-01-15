@@ -218,7 +218,7 @@ const Party = (props: Props) => {
     function storeSummon(summon: Summon, position: number) {
         if (position == -1) {
             setMainSummon(summon)
-        } else if (position == 4) {
+        } else if (position == 6) {
             setFriendSummon(summon)
         } else {
             // Store the grid unit summon at the correct position
@@ -235,7 +235,7 @@ const Party = (props: Props) => {
                 'summon_id': summon.id,
                 'position': position,
                 'main': (position == -1),
-                'friend': (position == 4)
+                'friend': (position == 6)
             }
         }, headers)
     }
