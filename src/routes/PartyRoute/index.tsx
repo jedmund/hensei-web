@@ -26,6 +26,7 @@ const PartyRoute: React.FC<PartyProps> = ({ match }) => {
     const [friendSummon, setFriendSummon] = useState<Summon>()
 
     const [partyId, setPartyId] = useState('')
+    const [extra, setExtra] = useState<boolean>(false)
     const [cookies, setCookie] = useCookies(['user'])
     const shortcode = match.params.hash || ''
 
@@ -69,6 +70,7 @@ const PartyRoute: React.FC<PartyProps> = ({ match }) => {
                         summons[gridSummon.position] = gridSummon.summon
                 })
 
+                setExtra(response.data.party.is_extra)
                 setFound(true)
                 setLoading(false)
                 setCharacters(characters)
@@ -101,6 +103,7 @@ const PartyRoute: React.FC<PartyProps> = ({ match }) => {
                     summons={summons}
                     editable={editable}
                     exists={found}
+                    extra={extra}
                 />
             </div>
         )

@@ -3,6 +3,10 @@
     justify-content: center;
 }
 
+.ExtraWeapons #grid_weapons > * {
+    margin-bottom: 0;
+}
+
 #grid_weapons {
     display: flex;
     flex-direction: row;

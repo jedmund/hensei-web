@@ -1,0 +1,60 @@
+.toggle-switch {
+  background: #fff;
+  border-radius: 18px;
+  display: inline-block;
+  position: relative;
+  width: 58px;
+
+  &-checkbox {
+    display: none;
+  }
+
+  &-label {
+    border-radius: 17px;
+    display: block;
+    cursor: pointer;
+    height: 34px;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  &-disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+
+    &:before {
+      background-color: #ddd;
+      cursor: not-allowed;
+    }
+  }
+
+  &-switch {
+    background: #e4e4e4;
+    display: block;
+    width: 24px;
+    margin: 5px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 24px;
+    border-radius: 17px;
+    transition: all 0.18s ease-in 0s;
+  }
+
+  &-checkbox:checked + &-label {
+    background: #ECEBFF;
+  }
+
+  &-checkbox:checked + &-label &-switch {
+    background: #8C86FF;
+  }
+
+  &-checkbox:checked + &-label {
+    .toggle-switch-inner {
+      margin-left: 0;
+    }
+    .toggle-switch-switch {
+      right: 0px;
+    }
+  }
+}

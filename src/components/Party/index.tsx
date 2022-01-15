@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import api from '~utils/api'
 
@@ -28,6 +28,7 @@ interface Props {
     characters?: GridArray<Character>
     weapons?: GridArray<Weapon>
     summons?: GridArray<Summon>
+    extra: boolean
     editable: boolean
     exists: boolean
     pushHistory?: (path: string) => void
@@ -51,6 +52,8 @@ const Party = (props: Props) => {
     const [mainSummon, setMainSummon] = useState<Summon>()
     const [friendSummon, setFriendSummon] = useState<Summon>()
 
+    const [extra, setExtra] = useState<boolean>(false)
+
     useEffect(() => {
         setPartyId(props.partyId || '')
         setMainWeapon(props.mainWeapon)
@@ -59,7 +62,8 @@ const Party = (props: Props) => {
         setCharacters(props.characters || {})
         setWeapons(props.weapons || {})
         setSummons(props.summons || {})
-    }, [props.partyId, props.mainWeapon, props.mainSummon, props.friendSummon, props.characters, props.weapons, props.summons])
+        setExtra(props.extra || false)
+    }, [props.partyId, props.mainWeapon, props.mainSummon, props.friendSummon, props.characters, props.weapons, props.summons, props.extra])
 
     const weaponGrid = (
         <WeaponGrid 
@@ -68,6 +72,7 @@ const Party = (props: Props) => {
             grid={weapons}
             editable={props.editable} 
             exists={props.exists}
+            extra={extra}
             onSelect={itemSelected}
         />
     )
@@ -97,8 +102,15 @@ const Party = (props: Props) => {
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
     const [partyId, setPartyId] = useState('')
 
+    function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
+        setExtra(event.target.checked)
+    }
+
     function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
         switch(event.target.value) {
+            case 'class':
+                setCurrentTab(GridType.Class)
+                break
             case 'characters':
                 setCurrentTab(GridType.Character)
                 break
@@ -136,9 +148,14 @@ const Party = (props: Props) => {
     }
 
     async function createParty() {
-        const body = (cookies.userId === undefined) ? {} : {
+        const body = (cookies.userId === undefined) ? {
             party: {
-                user_id: cookies.userId
+                is_extra: extra
+            }
+        } : {
+            party: {
+                user_id: cookies.userId,
+                is_extra: extra
             }
         }
 
@@ -249,8 +266,11 @@ const Party = (props: Props) => {
     return (
         <div>
             <PartySegmentedControl
+                extra={extra}
+                editable={props.editable}
                 selectedTab={currentTab}
                 onClick={segmentClicked}
+                onCheckboxChange={checkboxChanged}
             />
             
             {

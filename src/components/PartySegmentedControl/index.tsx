@@ -1,6 +1,9 @@
 import React from 'react'
+import './index.scss'
+
 import SegmentedControl from '~components/SegmentedControl'
 import Segment from '~components/Segment'
+import ToggleSwitch from '~components/ToggleSwitch'
 
 // GridType
 export enum GridType {
@@ -11,21 +14,23 @@ export enum GridType {
 }
 
 interface Props {
+    editable: boolean
+    extra: boolean
     selectedTab: GridType
     onClick: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const PartySegmentedControl = (props: Props) => {
-
     return (
-        <div>
+        <div className="PartyNavigation">
             <SegmentedControl>
-                {/* <Segment
+                <Segment
                     groupName="grid"
                     name="class"
                     selected={props.selectedTab === GridType.Class}
                     onClick={props.onClick}
-                >Class</Segment> */}
+                >Class</Segment>
 
                 <Segment 
                     groupName="grid"
@@ -48,6 +53,16 @@ const PartySegmentedControl = (props: Props) => {
                     onClick={props.onClick}
                 >Summons</Segment>
             </SegmentedControl>
+
+            <div className="Extra">
+                Extra
+                <ToggleSwitch 
+                    name="Extra" 
+                    editable={props.editable}
+                    checked={props.extra}
+                    onChange={props.onCheckboxChange} 
+                />
+            </div>
         </div>
     )
 }

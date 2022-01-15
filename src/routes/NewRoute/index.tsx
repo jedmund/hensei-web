@@ -15,6 +15,7 @@ const NewRoute: React.FC<Props> = () => {
         <div id="Content">
             <Party
                 editable={true}
+                extra={false}
                 exists={false}
                 pushHistory={callback}
             />

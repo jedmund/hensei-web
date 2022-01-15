@@ -1,0 +1,32 @@
+.ExtraWeapons {
+    background: #ECEBFF;
+    border-radius: 8px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    max-width: 766px;
+    padding: 16px 16px 16px 0;
+    position: relative;
+    left: 8px;
+
+    & > span {
+        color: #4F3C79;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.2;
+        font-weight: 500;
+        margin-right: 16px;
+        text-align: center;
+        width: 206px;
+    }
+
+    .WeaponUnit .WeaponImage {
+        background: #D5D3F6;
+    }
+
+    .WeaponUnit .WeaponImage .icon svg {
+        fill: #8F8AC6;
+    }
+}
