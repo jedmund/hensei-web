@@ -23,7 +23,7 @@
 
 #ModalTop h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: $font-xlarge;
     text-align: left;
     flex-grow: 1;
 }
@@ -55,7 +55,7 @@
 
 #ModalBottom a {
     color: #666;
-    font-size: 13px;
+    font-size: $font-regular;
     font-weight: 500;
     flex-grow: 1;
     display: flex;

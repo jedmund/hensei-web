@@ -19,7 +19,7 @@
 .WeaponResult h5 {
     color: #555;
     display: inline-block;
-    font-size: 18px;
+    font-size: $font-large;
     font-weight: 500;
     margin: 2px 4px 4px 0;
 }
@@ -31,7 +31,7 @@
 .WeaponResult .stars {
     display: inline-block;
     color: #FFA15E;
-    font-size: 21px;
+    font-size: $font-xlarge;
 }
 
 .WeaponResult .stars > span {
