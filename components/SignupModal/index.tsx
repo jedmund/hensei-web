@@ -160,11 +160,11 @@ class SignupModal extends React.Component<Props, State> {
         return (
             createPortal(
                 <div>
-                    <Modal styleName="SignupForm">
-                        <div id="ModalTop">
-                            <h1>Sign up</h1>
-                            <i className='close' onClick={this.props.close}><New /></i>
-                        </div>
+                    <Modal 
+                        title="Sign up" 
+                        styleName="SignupForm"
+                        close={ () => {} }
+                    >
                         <form className="form" onSubmit={this.process}>
                             <div id="fields">
                                 <Fieldset 

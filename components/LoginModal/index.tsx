@@ -108,12 +108,11 @@ const LoginModal = (props: Props) => {
     return (
         createPortal(
             <div>
-                <Modal styleName="LoginForm">
-                    <div id="ModalTop">
-                        <h1>Log in</h1>
-                        {/* <i className='close' onClick={props.close}><New /></i> */}
-                        <i className='close' onClick={props.close}></i>
-                    </div>
+                <Modal 
+                    title="Log in"
+                    styleName="LoginForm"
+                    close={ () => {} }
+                >
                     <form className="form" onSubmit={submit}>
                         <div id="fields">
                             <Fieldset 
