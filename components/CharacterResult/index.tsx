@@ -16,7 +16,7 @@ class CharacterResult extends React.Component<Props> {
 
         return (
             <li className="CharacterResult" onClick={this.props.onClick}>
-                <img alt={character.name.en} src={`/images/chara-grid/${character.granblue_id}.jpg`} />
+                <img alt={character.name.en} src={`/images/chara-grid/${character.granblue_id}_01.jpg`} />
                 <div>
                     <div>
                         <h5>{character.name.en}</h5>
