@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { createPortal } from 'react-dom'
 import api from '~utils/api'
 
@@ -9,6 +10,7 @@ import WeaponResult from '~components/WeaponResult'
 import SummonResult from '~components/SummonResult'
 
 import './index.scss'
+import PlusIcon from '~public/icons/plus.svg'
 
 interface Props {
     close: () => void
@@ -155,25 +157,28 @@ class SearchModal extends React.Component<Props, State> {
         return (
             createPortal(
                 <div>
-                    <Modal styleName="SearchModal" key="search_modal">
-                        <div id="input_container">
-                            <label className="search_label" htmlFor="search_input">
-                                <input 
-                                    autoComplete="off"
-                                    type="text"
-                                    name="query" 
-                                    className="Input" 
-                                    id="search_input"
-                                    ref={this.searchInput}
-                                    value={query}
-                                    placeholder={this.props.placeholderText}
-                                    onChange={this.inputChanged}
-                                />
-                            </label>
-                        </div>
+                    <div className="ModalContainer">
+                        <div className="Modal SearchModal" key="search_modal">
+                            <div id="ModalTop">
+                                <label className="search_label" htmlFor="search_input">
+                                    <input 
+                                        autoComplete="off"
+                                        type="text"
+                                        name="query" 
+                                        className="Input" 
+                                        id="search_input"
+                                        ref={this.searchInput}
+                                        value={query}
+                                        placeholder={this.props.placeholderText}
+                                        onChange={this.inputChanged}
+                                    />
+                                </label>
+                                <PlusIcon onClick={this.props.close} />
+                            </div>
 
-                        {content}
-                    </Modal>
+                            {content}
+                        </div>
+                    </div>
                     <Overlay onClick={this.props.close} />
                 </div>,
                 document.body
