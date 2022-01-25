@@ -1,53 +1,29 @@
 {
-  "name": "hensei-web",
-  "version": "1.0.0",
-  "author": "Justin Edmund (@jedmund)",
-  "main": "./src/index.html",
-  "browserslist": "last 2 versions",
+  "name": "grid-web",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 1234",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
-    "@babel/core": "^7.16.12",
-    "@babel/plugin-transform-runtime": "^7.16.10",
-    "@svgr/parcel-plugin-svgr": "^5.5.0",
-    "@types/axios": "^0.14.0",
-    "@types/classnames": "^2.3.0",
-    "@types/react-router": "^5.1.18",
-    "@types/react-router-dom": "^5.3.3",
-    "autoprefixer": "^10.4.2",
     "axios": "^0.25.0",
     "classnames": "^2.3.1",
-    "components": "^0.1.0",
-    "dotenv": "^14.3.0",
-    "express": "^4.17.2",
-    "i18next": "^21.6.7",
-    "i18next-browser-languagedetector": "^6.1.2",
-    "i18next-xhr-backend": "^3.2.2",
-    "include-media": "^1.4.10",
     "meyer-reset-scss": "^2.0.4",
-    "next": "^12.0.8",
-    "parcel-bundler": "^1.12.4",
-    "postcss-modules": "^4.3.0",
-    "postcss-normalize": "^10.0.1",
-    "react": "^17.0.2",
+    "next": "12.0.8",
+    "react": "17.0.2",
     "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",
     "react-i18next": "^11.15.3",
     "react-router-dom": "^6.2.1",
-    "sass": "^1.49.0",
-    "typescript": "^4.5.5"
-  },
-  "scripts": {
-    "dev": "next dev -p 1234",
-    "build": "next build",
-    "start": "next start"
-  },
-  "compilerOptions": {
-    "jsx": "react",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "sass": "^1.49.0"
   },
   "devDependencies": {
-    "@types/node": "^17.0.11",
-    "node-sass-package-importer": "^5.3.2"
+    "@types/node": "17.0.11",
+    "@types/react": "17.0.38",
+    "eslint": "8.7.0",
+    "eslint-config-next": "12.0.8",
+    "typescript": "4.5.5"
   }
 }
