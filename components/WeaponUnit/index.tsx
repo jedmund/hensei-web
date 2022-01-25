@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
 
 import classnames from 'classnames'
 import { useModal as useModal } from '~utils/useModal'

@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
 import './index.scss'
