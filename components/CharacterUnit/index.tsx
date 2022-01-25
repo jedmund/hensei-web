@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
-import { useModal as useModal } from '~utils/useModal'
 
-import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 
 import PlusIcon from '~public/icons/plus.svg'
@@ -10,7 +8,7 @@ import PlusIcon from '~public/icons/plus.svg'
 import './index.scss'
 
 interface Props {
-    onReceiveData: (character: Character, position: number) => void
+    onClick: () => void
     character: Character | undefined
     position: number
     editable: boolean
@@ -18,9 +16,6 @@ interface Props {
 
 const CharacterUnit = (props: Props) => {
     const [imageUrl, setImageUrl] = useState('')
-    const { open, openModal, closeModal } = useModal()
-
-    const openModalIfEditable = (props.editable) ? openModal : () => {}
 
     const classes = classnames({
         CharacterUnit: true,
@@ -40,27 +35,16 @@ const CharacterUnit = (props: Props) => {
         
         if (props.character) {
             const character = props.character!
-            imgSrc = `/images/chara-main/${character.granblue_id}.jpg`
+            imgSrc = `/images/chara-main/${character.granblue_id}_01.jpg`
         }
 
         setImageUrl(imgSrc)
     }
 
-    function sendData(object: Character | Weapon | Summon, position: number) {
-        if (isCharacter(object)) {
-            props.onReceiveData(object, position)
-        }
-    }
-
-    function isCharacter(object: Character | Weapon | Summon): object is Character {
-        // There aren't really any unique fields here
-        return (object as Character).gender !== undefined
-    }
-
     return (
         <div>
-            <div className={classes} onClick={openModalIfEditable}>
-                <div className="CharacterImage">
+            <div className={classes}>
+                <div className="CharacterImage" onClick={props.onClick}>
                     <img alt={character?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>
@@ -71,15 +55,6 @@ const CharacterUnit = (props: Props) => {
                 />
                 <h3 className="CharacterName">{character?.name.en}</h3>
             </div>
-            {open ? (
-                <SearchModal 
-                    close={closeModal}
-                    send={sendData}
-                    fromPosition={props.position}
-                    object="characters"
-                    placeholderText="Search for a character..."
-                />
-            ) : null}
         </div>
     )
 }

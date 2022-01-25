@@ -15,6 +15,7 @@ import PlusIcon from '~public/icons/plus.svg'
 interface Props {
     close: () => void
     send: (object: Character | Weapon | Summon, position: number) => any
+    grid: GridArray<Character|Weapon|Summon>
     placeholderText: string
     fromPosition: number
     object: 'weapons' | 'characters' | 'summons'
