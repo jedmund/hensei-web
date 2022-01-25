@@ -51,7 +51,7 @@ class Api {
 
     search(object: string, query: string) {
         const resourceUrl = `${this.url}/${name}`
-        return axios.get(`${resourceUrl}/search/${object}?query=${query}`)
+        return axios.get(`${resourceUrl}search/${object}?query=${query}`)
     }
 
     check(resource: string, value: string) {
