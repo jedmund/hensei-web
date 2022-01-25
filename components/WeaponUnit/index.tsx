@@ -66,7 +66,7 @@ const WeaponUnit = (props: Props) => {
         <div>
             <div className={classes} onClick={openModalIfEditable}>
                 <div className="WeaponImage">
-                    <img alt="ALT TEXT GOES HERE" className="grid_image" src={imageUrl} />
+                    <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><img src="/icons/plus.svg" /></span> : '' }
                 </div>
                 <UncapIndicator 

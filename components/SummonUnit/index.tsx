@@ -68,7 +68,7 @@ const SummonUnit = (props: Props) => {
         <div>
             <div className={classes} onClick={openModalIfEditable}>
                 <div className="SummonImage">
-                    <img alt="ALT TEXT GOES HERE" className="grid_image" src={imageUrl} />
+                    <img alt={summon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><img src="/icons/plus.svg" /></span> : '' }
                 </div>
                 <UncapIndicator 

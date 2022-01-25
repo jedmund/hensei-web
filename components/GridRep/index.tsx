@@ -40,11 +40,11 @@ const GridRep = (props: Props) => {
     }
 
     function generateMainhandImage() {
-        return <img alt="ALT TEXT GOES HERE" src={`/images/weapon-main/${mainhand?.granblue_id}.jpg`} />
+        return <img alt={mainhand?.name.en} src={`/images/weapon-main/${mainhand?.granblue_id}.jpg`} />
     }
 
     function generateGridImage(position: number) {
-        return <img alt="ALT TEXT GOES HERE" src={`/images/weapon-grid/${weapons[position]?.granblue_id}.jpg`} />
+        return <img alt={weapons[position]?.name.en} src={`/images/weapon-grid/${weapons[position]?.granblue_id}.jpg`} />
     }
 
     return (
