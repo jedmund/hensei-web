@@ -6,6 +6,8 @@ import { useModal as useModal } from '~utils/useModal'
 import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 
+import PlusIcon from '~public/icons/plus.svg'
+
 import './index.scss'
 
 interface Props {
@@ -66,7 +68,7 @@ const WeaponUnit = (props: Props) => {
             <div className={classes} onClick={openModalIfEditable}>
                 <div className="WeaponImage">
                     <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
-                    { (props.editable) ? <span className='icon'><img src="/icons/plus.svg" /></span> : '' }
+                    { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>
                 <UncapIndicator 
                     type="weapon"
