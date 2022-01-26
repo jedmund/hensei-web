@@ -1,0 +1,14 @@
+.LoginForm {
+    #fields {
+        display: flex;
+        flex-direction: column;
+        gap: $unit;
+    }
+    .fieldset {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 8px;
+    }    
+}
+

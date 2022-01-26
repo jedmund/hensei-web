@@ -1,0 +1,36 @@
+.Segment {
+    border-radius: 4px;
+    color: $grey-10;
+    cursor: pointer;
+    font-size: 1.4rem;
+    font-weight: $medium;
+    min-width: 100px;
+
+    &:hover label {
+      background: $grey-90;
+      color: $grey-00;
+    }
+
+    & input {
+      display: none;
+
+      &:checked + label {
+        background: $blue;
+        color: white;
+      }
+    }
+
+    & label {
+        display: block;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 8px 12px;
+        text-overflow: ellipsis;
+        cursor: pointer;
+
+        &:before {
+            background: #fff;
+        }
+    }
+}
