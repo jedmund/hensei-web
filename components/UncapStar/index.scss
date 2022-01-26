@@ -1,7 +1,31 @@
 .UncapStar {
-    color: #FFA15E;
-}
+    background-repeat: no-repeat;
+    background-size: 18px 18px;
+    display: block;
+    height: 18px;
+    width: 18px;
 
-.UncapStar.uncap {
-    color: #65DAFF;
+    &:hover {
+        transform: scale(1.2);
+    }
+
+    &.empty {
+        background: url('/icons/uncap/empty.svg');
+    }
+
+    &.mlb {
+        background: url('/icons/uncap/yellow.svg')
+    }
+
+    &.special {
+        background: url('/icons/uncap/red.svg')
+    }
+
+    &.flb {
+        background: url('/icons/uncap/blue.svg')
+    }
+
+    &.ulb {
+        background: url('/icons/uncap/purple.svg')
+    }
 }

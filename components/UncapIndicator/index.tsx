@@ -1,5 +1,4 @@
-import React from 'react'
-import classnames from 'classnames'
+import React, { useState } from 'react'
 import UncapStar from '~components/UncapStar'
 
 import './index.scss'
@@ -36,11 +35,14 @@ const UncapIndicator = (props: Props) => {
         <ul className="UncapIndicator">
             {
                 Array.from(Array(numStars)).map((x, i) => {
-                    if (props.type === 'character' && i > 3 ||
+                    if (props.type === 'character' && i > 4) {
+                        return <UncapStar ulb={true} key={`star_${i}`} />
+                    } else if (
+                        props.type === 'character' && i == 4 ||
                         props.type !== 'character' && i > 2) {
-                        return <UncapStar uncap={true} key={`star_${i}`} />
+                        return <UncapStar flb={true} key={`star_${i}`} />
                     } else {
-                        return <UncapStar uncap={false} key={`star_${i}`} />
+                        return <UncapStar key={`star_${i}`} />
                     }
                 })
             }
