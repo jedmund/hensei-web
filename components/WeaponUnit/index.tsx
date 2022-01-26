@@ -54,13 +54,13 @@ const WeaponUnit = (props: Props) => {
                     <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>
+                <h3 className="WeaponName">{weapon?.name.en}</h3>
                 <UncapIndicator 
                     type="weapon"
                     ulb={weapon?.uncap.ulb || false} 
                     flb={weapon?.uncap.flb || false}
                     uncapLevel={3}
                 />
-                <h3 className="WeaponName">{weapon?.name.en}</h3>
             </div>
         </div>
     )
