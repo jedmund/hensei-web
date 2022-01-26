@@ -4,14 +4,18 @@ import classnames from 'classnames'
 import './index.scss'
 
 interface Props {
+    empty: boolean
     special: boolean
     flb: boolean
     ulb: boolean
+    index: number
+    onClick: (index: number, empty: boolean) => void
 }
 
 const UncapStar = (props: Props) => {
     const classes = classnames({
         UncapStar:  true,
+        'empty':    props.empty,
         'special':  props.special,
         'mlb':      !props.special,
         'flb':      props.flb,
@@ -19,12 +23,17 @@ const UncapStar = (props: Props) => {
 
     })
 
+    function clicked() {
+        props.onClick(props.index, props.empty)
+    }
+
     return (
         <li className={classes}><img alt="" src="/icons/star.svg" /></li>
     )
 }
 
 UncapStar.defaultProps = {
+    empty: false,
     special: false,
     flb: false,
     ulb: false

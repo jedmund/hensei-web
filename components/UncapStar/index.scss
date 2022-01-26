@@ -9,7 +9,11 @@
         transform: scale(1.2);
     }
 
-    &.empty {
+    &.empty,
+    &.empty.mlb,
+    &.empty.flb,
+    &.empty.ulb,
+    &.empty.special {
         background: url('/icons/uncap/empty.svg');
     }
 
