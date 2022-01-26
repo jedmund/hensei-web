@@ -49,9 +49,12 @@ class Api {
         return axios.post(`${ process.env.REACT_APP_SIERO_OAUTH_URL || 'http://127.0.0.1:3000/oauth' }/token`, object)
     }
 
-    search(object: string, query: string) {
+    search(object: string, query: string, excludes: string) {
         const resourceUrl = `${this.url}/${name}`
-        return axios.get(`${resourceUrl}search/${object}?query=${query}`)
+        const url = (excludes.length > 0) ? 
+            `${resourceUrl}search/${object}?query=${query}&excludes=${excludes}` :
+            `${resourceUrl}search/${object}?query=${query}`
+        return axios.get(url)
     }
 
     check(resource: string, value: string) {

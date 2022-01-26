@@ -50,8 +50,17 @@ class SearchModal extends React.Component<Props, State> {
         }
     }
 
+    filterExclusions = (o: Character | Weapon | Summon) => {
+        if (this.props.grid[this.props.fromPosition] && 
+            o.granblue_id == this.props.grid[this.props.fromPosition].granblue_id) {
+            return null
+        } else return o
+    }
+
     fetchResults = (query: string) => {
-        api.search(this.props.object, query)
+        const excludes = Object.values(this.props.grid).filter(this.filterExclusions).map((o) => { return o.name.en }).join(',')
+
+        api.search(this.props.object, query, excludes)
             .then((response) => {
                 const data = response.data
                 const totalResults = data.length
