@@ -7,7 +7,7 @@ interface State {
 class PartiesRoute extends React.Component {
     state: State
     
-    constructor(props) {
+    constructor(props: any) {
         super(props)
         this.state = {
             parties: []
