@@ -1,4 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useModal as useModal } from '~utils/useModal'
+
+import SearchModal from '~components/SearchModal'
 import WeaponUnit from '~components/WeaponUnit'
 import ExtraWeapons from '~components/ExtraWeapons'
 
@@ -26,6 +29,9 @@ interface Props {
 }
 
 const WeaponGrid = (props: Props) => {
+    const { open, openModal, closeModal } = useModal()
+    const [searchPosition, setSearchPosition] = useState(0)
+
     const numWeapons: number = 9
 
     const extraGrid = (
@@ -34,7 +40,7 @@ const WeaponGrid = (props: Props) => {
             editable={props.editable} 
             exists={false}
             offset={numWeapons}
-            onSelect={props.onSelect}
+            onClick={openSearchModal}
         />
     )
 
@@ -42,13 +48,28 @@ const WeaponGrid = (props: Props) => {
         props.onSelect(GridType.Weapon, weapon, position)
     }
 
+    function sendData(object: Character | Weapon | Summon, position: number) {
+        if (isWeapon(object)) {
+            receiveWeapon(object, position)
+        }
+    }
+
+    function isWeapon(object: Character | Weapon | Summon): object is Weapon {
+        return (object as Weapon).proficiency !== undefined
+    }
+
+    function openSearchModal(position: number) {
+        setSearchPosition(position)
+        openModal()
+    }
+
     return (
         <div id="weapon_grids">
             <div id="WeaponGrid">
                 <WeaponUnit 
+                    onClick={() => { openSearchModal(0) }}
                     editable={props.editable}
                     key="grid_mainhand"
-                    onReceiveData={receiveWeapon} 
                     position={-1} 
                     unitType={0}
                     weapon={props.mainhand}
@@ -60,8 +81,8 @@ const WeaponGrid = (props: Props) => {
                             return (
                                 <li key={`grid_unit_${i}`} >
                                     <WeaponUnit 
+                                        onClick={() => { openSearchModal(i) }}
                                         editable={props.editable}
-                                        onReceiveData={receiveWeapon} 
                                         position={i} 
                                         unitType={1}
                                         weapon={props.grid[i]}
@@ -78,6 +99,17 @@ const WeaponGrid = (props: Props) => {
                     return extraGrid
                 }    
             })() }
+
+            {open ? (
+                <SearchModal 
+                    grid={props.grid}
+                    close={closeModal}
+                    send={sendData}
+                    fromPosition={searchPosition}
+                    object="weapons"
+                    placeholderText="Search for a weapon..."
+                />
+            ) : null}
         </div>
     )
 }

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import classnames from 'classnames'
-import { useModal as useModal } from '~utils/useModal'
 
-import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 
 import PlusIcon from '~public/icons/plus.svg'
@@ -11,7 +9,7 @@ import PlusIcon from '~public/icons/plus.svg'
 import './index.scss'
 
 interface Props {
-    onReceiveData: (weapon: Weapon, position: number) => void
+    onClick: () => void
     weapon: Weapon | undefined
     position: number
     editable: boolean
@@ -20,10 +18,6 @@ interface Props {
 
 const WeaponUnit = (props: Props) => {
     const [imageUrl, setImageUrl] = useState('')
-
-    const { open, openModal, closeModal } = useModal()
-
-    const openModalIfEditable = (props.editable) ? openModal : () => {}
 
     const classes = classnames({
         WeaponUnit: true,
@@ -53,20 +47,10 @@ const WeaponUnit = (props: Props) => {
         setImageUrl(imgSrc)
     }
 
-    function sendData(object: Character | Weapon | Summon, position: number) {
-        if (isWeapon(object)) {
-            props.onReceiveData(object, position)
-        }
-    }
-
-    function isWeapon(object: Character | Weapon | Summon): object is Weapon {
-        return (object as Weapon).proficiency !== undefined
-    }
-
     return (
         <div>
-            <div className={classes} onClick={openModalIfEditable}>
-                <div className="WeaponImage">
+            <div className={classes}>
+                <div className="WeaponImage" onClick={props.onClick}>
                     <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>
@@ -78,15 +62,6 @@ const WeaponUnit = (props: Props) => {
                 />
                 <h3 className="WeaponName">{weapon?.name.en}</h3>
             </div>
-            {open ? (
-                <SearchModal 
-                    close={closeModal}
-                    send={sendData}
-                    fromPosition={props.position}
-                    object="weapons"
-                    placeholderText="Search for a weapon..."
-                />
-            ) : null}
         </div>
     )
 }

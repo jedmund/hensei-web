@@ -18,15 +18,11 @@ interface Props {
     exists: boolean
     found?: boolean
     offset: number
-    onSelect: (type: GridType, weapon: Weapon, position: number) => void
+    onClick: (position: number) => void
 }
 
 const ExtraWeapons = (props: Props) => {
     const numWeapons: number = 3
-
-    function receiveWeapon(weapon: Weapon, position: number) {
-        props.onSelect(GridType.Weapon, weapon, position)
-    }
 
     return (
         <div id="ExtraWeapons">
@@ -38,7 +34,7 @@ const ExtraWeapons = (props: Props) => {
                             <li key={`grid_unit_${i}`} >
                                 <WeaponUnit 
                                     editable={props.editable}
-                                    onReceiveData={receiveWeapon} 
+                                    onClick={() => { props.onClick(props.offset + i)}} 
                                     position={props.offset + i} 
                                     unitType={1}
                                     weapon={props.grid[props.offset + i]}
