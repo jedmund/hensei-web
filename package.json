@@ -1,6 +1,7 @@
 {
   "name": "grid-web",
   "private": true,
+  "cacheDirectories": [".next/cache"],
   "scripts": {
     "dev": "next dev -p 1234",
     "build": "next build",
