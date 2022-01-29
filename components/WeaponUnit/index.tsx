@@ -50,7 +50,7 @@ const WeaponUnit = (props: Props) => {
     return (
         <div>
             <div className={classes}>
-                <div className="WeaponImage" onClick={props.onClick}>
+                <div className="WeaponImage" onClick={ (props.editable) ? props.onClick : () => {} }>
                     <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>

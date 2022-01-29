@@ -44,7 +44,7 @@ const CharacterUnit = (props: Props) => {
     return (
         <div>
             <div className={classes}>
-                <div className="CharacterImage" onClick={props.onClick}>
+                <div className="CharacterImage" onClick={ (props.editable) ? props.onClick : () => {} }>
                     <img alt={character?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>

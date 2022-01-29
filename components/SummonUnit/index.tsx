@@ -52,7 +52,7 @@ const SummonUnit = (props: Props) => {
     return (
         <div>
             <div className={classes}>
-                <div className="SummonImage" onClick={props.onClick}>
+                <div className="SummonImage" onClick={ (props.editable) ? props.onClick : () => {} }>
                     <img alt={summon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>
