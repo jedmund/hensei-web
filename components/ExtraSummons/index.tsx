@@ -17,15 +17,11 @@ interface Props {
     exists: boolean
     found?: boolean
     offset: number
-    onSelect: (type: GridType, summon: Summon, position: number) => void
+    onClick: (position: number) => void
 }
 
 const ExtraSummons = (props: Props) => {
     const numSummons: number = 2
-
-    function receiveWeapon(summon: Summon, position: number) {
-        props.onSelect(GridType.Summon, summon, position)
-    }
 
     return (
         <div id="ExtraSummons">
@@ -36,8 +32,8 @@ const ExtraSummons = (props: Props) => {
                         return (
                             <li key={`grid_unit_${i}`} >
                                 <SummonUnit 
-                                    editable={props.editable}
-                                    onReceiveData={receiveWeapon} 
+                                    onClick={() => { props.onClick(props.offset + i) }}
+                                    editable={props.editable} 
                                     position={props.offset + i} 
                                     unitType={1}
                                     summon={props.grid[props.offset + i]}

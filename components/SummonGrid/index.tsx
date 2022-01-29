@@ -1,4 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useModal as useModal } from '~utils/useModal'
+
+import SearchModal from '~components/SearchModal'
 import ExtraSummons from '~components/ExtraSummons'
 import SummonUnit from '~components/SummonUnit'
 
@@ -26,10 +29,29 @@ interface Props {
 }
 
 const SummonGrid = (props: Props) => {
+    const { open, openModal, closeModal } = useModal()
+    const [searchPosition, setSearchPosition] = useState(0)
+
     const numSummons: number = 4
+
+    function openSearchModal(position: number) {
+        setSearchPosition(position)
+        openModal()
+    }
 
     function receiveSummon(summon: Summon, position: number) {
         props.onSelect(GridType.Summon, summon, position)
+    }
+
+    function sendData(object: Character | Weapon | Summon, position: number) {
+        if (isSummon(object)) {
+            receiveSummon(object, position)
+        }
+    }
+
+    function isSummon(object: Character | Weapon | Summon): object is Summon {
+        // There aren't really any unique fields here
+        return (object as Summon).granblue_id !== undefined
     }
 
     return (
@@ -38,9 +60,9 @@ const SummonGrid = (props: Props) => {
                 <div className="LabeledUnit">
                     <div className="Label">Main Summon</div>
                     <SummonUnit
+                        onClick={() => { openSearchModal(0) }}
                         editable={props.editable}
                         key="grid_main_summon"
-                        onReceiveData={receiveSummon}
                         position={-1}
                         unitType={0}
                         summon={props.main}
@@ -50,9 +72,9 @@ const SummonGrid = (props: Props) => {
                 <div className="LabeledUnit">
                     <div className="Label">Friend Summon</div>
                     <SummonUnit
+                        onClick={() => { openSearchModal(6) }}
                         editable={props.editable}
                         key="grid_friend_summon"
-                        onReceiveData={receiveSummon}
                         position={6}
                         unitType={2}
                         summon={props.friend}
@@ -67,8 +89,8 @@ const SummonGrid = (props: Props) => {
                                 return (
                                     <li key={`grid_unit_${i}`} >
                                         <SummonUnit 
+                                            onClick={() => { openSearchModal(i) }}
                                             editable={props.editable}
-                                            onReceiveData={receiveSummon} 
                                             position={i} 
                                             unitType={1}
                                             summon={props.grid[i]}
@@ -82,12 +104,23 @@ const SummonGrid = (props: Props) => {
             </div>
             
             <ExtraSummons 
+                onClick={openSearchModal}
                 grid={props.grid} 
                 editable={props.editable} 
                 exists={false} 
                 offset={numSummons}
-                onSelect={props.onSelect} 
             />
+
+            {open ? (
+                <SearchModal 
+                    grid={props.grid}
+                    close={closeModal}
+                    send={sendData}
+                    fromPosition={searchPosition}
+                    object="summons"
+                    placeholderText="Search for a summon..."
+                />
+            ) : null}
         </div>
     )
 }

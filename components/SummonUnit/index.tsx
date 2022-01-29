@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import classnames from 'classnames'
-import { useModal as useModal } from '~utils/useModal'
 
-import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 
 import PlusIcon from '~public/icons/plus.svg'
@@ -11,7 +9,7 @@ import PlusIcon from '~public/icons/plus.svg'
 import './index.scss'
 
 interface Props {
-    onReceiveData: (summon: Summon, position: number) => void
+    onClick: () => void
     summon: Summon | undefined
     position: number
     editable: boolean
@@ -20,9 +18,6 @@ interface Props {
 
 const SummonUnit = (props: Props) => {
     const [imageUrl, setImageUrl] = useState('')
-    const { open, openModal, closeModal } = useModal()
-
-    const openModalIfEditable = (props.editable) ? openModal : () => {}
 
     const classes = classnames({
         SummonUnit: true,
@@ -54,21 +49,10 @@ const SummonUnit = (props: Props) => {
         setImageUrl(imgSrc)
     }
 
-    function sendData(object: Character | Weapon | Summon, position: number) {
-        if (isSummon(object)) {
-            props.onReceiveData(object, position)
-        }
-    }
-
-    function isSummon(object: Character | Weapon | Summon): object is Summon {
-        // There aren't really any unique fields here
-        return (object as Summon).granblue_id !== undefined
-    }
-
     return (
         <div>
-            <div className={classes} onClick={openModalIfEditable}>
-                <div className="SummonImage">
+            <div className={classes}>
+                <div className="SummonImage" onClick={props.onClick}>
                     <img alt={summon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>
@@ -80,15 +64,6 @@ const SummonUnit = (props: Props) => {
                 />
                 <h3 className="SummonName">{summon?.name.en}</h3>
             </div>
-            {open ? (
-                <SearchModal 
-                    close={closeModal}
-                    send={sendData}
-                    fromPosition={props.position}
-                    object="summons"
-                    placeholderText="Search for a summon..."
-                />
-            ) : null}
         </div>
     )
 }
