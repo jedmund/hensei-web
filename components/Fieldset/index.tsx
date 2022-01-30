@@ -9,9 +9,9 @@ interface Props {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const Fieldset = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
+const Fieldset = (props: Props) => {
     const fieldType = (['password', 'confirm_password'].includes(props.fieldName)) ? 'password' : 'text'
-    
+
     return (
         <fieldset className="Fieldset">
             <input
@@ -31,6 +31,6 @@ const Fieldset = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
             }
         </fieldset>
     )
-})
+}
 
 export default Fieldset

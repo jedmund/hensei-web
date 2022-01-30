@@ -25,7 +25,7 @@ const Header = (props: Props) => {
             setUsername(cookies.user.username)
             console.log(`Logged in as user "${cookies.user.username}"`)
         }
-    }, [])
+    }, [cookies])
 
     function copyToClipboard() {
         const el = document.createElement('input')

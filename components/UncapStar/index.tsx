@@ -14,7 +14,7 @@ const UncapStar = (props: Props) => {
     })
 
     return (
-        <li className={classes}><img src="/icons/star.svg" /></li>
+        <li className={classes}><img alt="" src="/icons/star.svg" /></li>
     )
 }
 

@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react'
 
 import './index.scss'
 
-import mainhandImages from '../../images/weapon-main/*.jpg'
-import gridImages from '../../images/weapon-grid/*.jpg'
-
 interface Props {
     shortcode: string
     grid: GridWeapon[]
@@ -18,10 +15,6 @@ const GridRep = (props: Props) => {
     const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
 
     useEffect(() => {
-        configure()
-    }, [])
-    
-    function configure() {
         const newWeapons = Array(numWeapons)
 
         for (const [key, value] of Object.entries(props.grid)) {
@@ -32,7 +25,7 @@ const GridRep = (props: Props) => {
         }
 
         setWeapons(newWeapons)
-    }
+    }, [props.grid])
 
     function navigate() {
         props.onClick(props.shortcode)
