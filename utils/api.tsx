@@ -23,6 +23,7 @@ class Api {
     constructor({url}: {url: string}) {
         this.url = url
         this.endpoints = {}
+        console.log(process.env)
     }
 
     createEntity(entity: Entity) {
