@@ -1,43 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
-import { createPortal, render } from 'react-dom'
+import React, { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
-const Portal = ({ children }) => {
-    const el = document.createElement('div')
-    el.classList.add('modal_content')
+const modalRoot = document.querySelector('#modal') as HTMLElement
 
-    let modalRoot = document.getElementById('modal')
+const Portal: React.FC<{}> = ({ children }) => {    
+    const modalContent = document.createElement('div')
+    modalContent.classList.add('modal_content')
 
-    if (!modalRoot) {
-        modalRoot = document.createElement('div')
-        modalRoot.setAttribute('id', 'modal')
-        document.body.appendChild(modalRoot)
-    }
-
-    const [val, setVal] = useState(true)
-
-    const modalDiv = useRef(null)
+    const el = useRef(modalContent)
 
     useEffect(() => {
-        if (!modalDiv.current) {
-            modalDiv.current = el
-            setVal(!val)
-        }
-    }, [modalDiv])
+        const current = el.current
 
-    useEffect(() => {
-        modalRoot.appendChild(modalDiv.current)
-        return () => {
-            document.body.classList.remove('no-scroll')
-            return modalRoot.removeChild(modalDiv.current)
-        }
-    }, [modalDiv, modalRoot])
+        modalRoot!.appendChild(current)
+        return () => void modalRoot!.removeChild(current)
+    }, [])
 
-    if (modalDiv.current) {
-        document.body.classList.add('no-scroll')
-        return createPortal(children, modalDiv.current)
-    }
-
-    return null
+    return createPortal(children, el.current)
 }
 
 export default Portal
