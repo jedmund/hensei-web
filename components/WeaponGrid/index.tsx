@@ -67,7 +67,7 @@ const WeaponGrid = (props: Props) => {
         <div id="weapon_grids">
             <div id="WeaponGrid">
                 <WeaponUnit 
-                    onClick={() => { openSearchModal(0) }}
+                    onClick={() => { openSearchModal(-1) }}
                     editable={props.editable}
                     key="grid_mainhand"
                     position={-1} 
