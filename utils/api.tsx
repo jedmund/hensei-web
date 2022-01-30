@@ -1,5 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
 
+const { REACT_APP_SIERO_API_URL, REACT_APP_SIERO_OAUTH_URL } = process.env
+
 interface Entity {
     name: string
 }
@@ -46,7 +48,7 @@ class Api {
     }
 
     login(object: {}) {
-        return axios.post(`${ process.env.REACT_APP_SIERO_OAUTH_URL || 'http://127.0.0.1:3000/oauth' }/token`, object)
+        return axios.post(`${ REACT_APP_SIERO_OAUTH_URL || 'http://127.0.0.1:3000/oauth' }/token`, object)
     }
 
     search(object: string, query: string, excludes: string) {
@@ -65,7 +67,7 @@ class Api {
     }
 }
 
-const api: Api = new Api({ url: process.env.REACT_APP_SIERO_API_URL || 'http://127.0.0.1:3000/api/v1' })
+const api: Api = new Api({ url: REACT_APP_SIERO_API_URL || 'http://127.0.0.1:3000/api/v1' })
 api.createEntity( { name: 'users' })
 api.createEntity( { name: 'parties' })
 api.createEntity( { name: 'characters' })
