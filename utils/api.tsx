@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
-import { env } from 'react-env'
+import env from "@beam-australia/react-env";
 
 interface Entity {
     name: string
