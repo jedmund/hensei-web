@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
+import { env } from 'react-env'
 
 interface Entity {
     name: string
@@ -23,9 +24,6 @@ class Api {
     constructor({url}: {url: string}) {
         this.url = url
         this.endpoints = {}
-
-        console.log(`api url ${process.env.REACT_APP_SIERO_API_URL}`)
-        console.log(`siero url ${process.env.REACT_APP_SIERO_OAUTH_URL}`)
     }
 
     createEntity(entity: Entity) {
@@ -49,8 +47,7 @@ class Api {
     }
 
     login(object: {}) {
-        const oauthUrl = (process.env.REACT_APP_SIERO_OAUTH_URL) ? process.env.REACT_APP_SIERO_OAUTH_URL : 'http://127.0.0.1:3000/oauth'
-        return axios.post(`${ oauthUrl }/token`, object)
+        return axios.post(`${ env("REACT_APP_SIERO_OAUTH_URL") }/token`, object)
     }
 
     search(object: string, query: string, excludes: string) {
@@ -69,8 +66,7 @@ class Api {
     }
 }
 
-const apiUrl = (process.env.REACT_APP_SIERO_API_URL) ? process.env.REACT_APP_SIERO_API_URL : 'http://127.0.0.1:3000/api/v1'
-const api: Api = new Api({ url: apiUrl })
+const api: Api = new Api({ url: env("REACT_APP_SIERO_API_URL") })
 api.createEntity( { name: 'users' })
 api.createEntity( { name: 'parties' })
 api.createEntity( { name: 'characters' })
