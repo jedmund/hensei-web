@@ -46,7 +46,8 @@ class Api {
     }
 
     login(object: {}) {
-        return axios.post(`${ process.env.REACT_APP_SIERO_OAUTH_URL }/token`, object)
+        const oauthUrl = (process.env.REACT_APP_SIERO_OAUTH_URL) ? process.env.REACT_APP_SIERO_OAUTH_URL : 'http://127.0.0.1:3000/oauth'
+        return axios.post(`${ oauthUrl }/token`, object)
     }
 
     search(object: string, query: string, excludes: string) {
@@ -65,7 +66,8 @@ class Api {
     }
 }
 
-const api: Api = new Api({ url: process.env.REACT_APP_SIERO_API_URL })
+const apiUrl = (process.env.REACT_APP_SIERO_API_URL) ? process.env.REACT_APP_SIERO_API_URL : 'http://127.0.0.1:3000/api/v1'
+const api: Api = new Api({ url: apiUrl })
 api.createEntity( { name: 'users' })
 api.createEntity( { name: 'parties' })
 api.createEntity( { name: 'characters' })
