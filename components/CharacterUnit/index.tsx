@@ -35,7 +35,7 @@ const CharacterUnit = (props: Props) => {
         
         if (props.character) {
             const character = props.character!
-            imgSrc = `/images/chara-main/${character.granblue_id}_01.jpg`
+            imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-main/${character.granblue_id}_01.jpg`
         }
 
         setImageUrl(imgSrc)

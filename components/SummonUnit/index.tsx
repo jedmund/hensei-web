@@ -41,9 +41,9 @@ const SummonUnit = (props: Props) => {
     
             // Generate the correct source for the summon
             if (props.unitType == 0 || props.unitType == 2)
-                imgSrc = `/images/summon-main/${summon.granblue_id}.jpg`
+                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${summon.granblue_id}.jpg`
             else
-                imgSrc = `/images/summon-grid/${summon.granblue_id}.jpg`
+                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`
         }
         
         setImageUrl(imgSrc)

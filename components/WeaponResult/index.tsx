@@ -18,7 +18,7 @@ class WeaponResult extends React.Component<Props> {
 
         return (
             <li className="WeaponResult" onClick={this.props.onClick}>
-                <img alt={weapon.name.en} src={`/images/weapon-grid/${weapon.granblue_id}.jpg`} />
+                <img alt={weapon.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`} />
                 <div>
                     <div>
                         <h5>{weapon.name.en}</h5>

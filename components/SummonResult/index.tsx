@@ -16,7 +16,7 @@ class SummonResult extends React.Component<Props> {
 
         return (
             <li className="SummonResult" onClick={this.props.onClick}>
-                <img alt={summon.name.en} src={`/images/summon-grid/${summon.granblue_id}.jpg`} />
+                <img alt={summon.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`} />
                 <div>
                     <div>
                         <h5>{summon.name.en}</h5>

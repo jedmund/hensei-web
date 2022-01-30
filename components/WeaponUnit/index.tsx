@@ -39,9 +39,9 @@ const WeaponUnit = (props: Props) => {
             const weapon = props.weapon!
     
             if (props.unitType == 0)
-                imgSrc = `/images/weapon-main/${weapon.granblue_id}.jpg`
+                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
             else
-                imgSrc = `/images/weapon-grid/${weapon.granblue_id}.jpg`
+                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
         }
         
         setImageUrl(imgSrc)
