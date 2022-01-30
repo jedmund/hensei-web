@@ -1,5 +1,4 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
-import env from "@beam-australia/react-env";
 
 interface Entity {
     name: string
@@ -47,7 +46,8 @@ class Api {
     }
 
     login(object: {}) {
-        return axios.post(`${ env("REACT_APP_SIERO_OAUTH_URL") }/token`, object)
+        const oauthUrl = process.env.NEXT_PUBLIC_SIERO_OAUTH_URL || 'https://localhost:3000/oauth'
+        return axios.post(`${ oauthUrl }/token`, object)
     }
 
     search(object: string, query: string, excludes: string) {
@@ -66,7 +66,7 @@ class Api {
     }
 }
 
-const api: Api = new Api({ url: env("REACT_APP_SIERO_API_URL") })
+const api: Api = new Api({ url: process.env.NEXT_PUBLIC_SIERO_API_URL || 'https://localhost:3000/api/v1'})
 api.createEntity( { name: 'users' })
 api.createEntity( { name: 'parties' })
 api.createEntity( { name: 'characters' })
