@@ -23,7 +23,9 @@ class Api {
     constructor({url}: {url: string}) {
         this.url = url
         this.endpoints = {}
-        console.log(process.env)
+
+        console.log(`api url ${process.env.REACT_APP_SIERO_API_URL}`)
+        console.log(`siero url ${process.env.REACT_APP_SIERO_OAUTH_URL}`)
     }
 
     createEntity(entity: Entity) {
