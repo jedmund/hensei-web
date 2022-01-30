@@ -33,12 +33,12 @@ const GridRep = (props: Props) => {
 
     function generateMainhandImage() {
         return (mainhand) ?
-            <img alt={mainhand?.name.en} src={`/images/weapon-main/${mainhand?.granblue_id}.jpg`} /> : ''
+            <img alt={mainhand?.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand?.granblue_id}.jpg`} /> : ''
     }
 
     function generateGridImage(position: number) {
         return (weapons[position]) ?
-            <img alt={weapons[position]?.name.en} src={`/images/weapon-grid/${weapons[position]?.granblue_id}.jpg`} /> : ''
+            <img alt={weapons[position]?.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`} /> : ''
     }
 
     return (
