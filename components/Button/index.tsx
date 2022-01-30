@@ -33,15 +33,15 @@ class Button extends React.Component<Props, State> {
         let icon
         if (this.props.type === 'new') {
             icon = <span className='icon'>
-                <img src="/icons/new.svg" />
+                <img alt="" src="/icons/new.svg" />
             </span>
         } else if (this.props.type === 'menu') {
             icon = <span className='icon'>
-                <img src="/icons/menu.svg" />
+                <img alt="" src="/icons/menu.svg" />
             </span>
         } else if (this.props.type === 'link') {
             icon = <span className='icon'>
-                <img src="/icons/link.svg" />
+                <img alt="" src="/icons/link.svg" />
             </span>
         }
 
