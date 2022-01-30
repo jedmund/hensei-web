@@ -149,7 +149,7 @@ const Party = (props: Props) => {
     }
 
     async function createParty() {
-        const body = (cookies.user.userId === undefined) ? {
+        const body = (!cookies.user) ? {
             party: {
                 is_extra: extra
             }
