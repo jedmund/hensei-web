@@ -103,7 +103,7 @@ const ProfileRoute: React.FC = () => {
     function renderNotFound() {
         return (
             <div id="NotFound">
-                <h2>That user doesn't exist.</h2>
+                <h2>That user doesn&apos;t exist.</h2>
             </div>
         )
     }
