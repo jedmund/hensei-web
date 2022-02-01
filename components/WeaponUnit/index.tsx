@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-
 import classnames from 'classnames'
 
 import UncapIndicator from '~components/UncapIndicator'
-
 import PlusIcon from '~public/icons/plus.svg'
 
 import './index.scss'
@@ -28,7 +26,8 @@ const WeaponUnit = (props: Props) => {
         'filled': (props.gridWeapon !== undefined)
     })
 
-    const weapon = props.gridWeapon?.weapon
+    const gridWeapon = props.gridWeapon
+    const weapon = gridWeapon?.weapon
 
     useEffect(() => {
         generateImageUrl()
@@ -53,21 +52,27 @@ const WeaponUnit = (props: Props) => {
             props.updateUncap(props.gridWeapon.id, uncap)
     }
 
+    function imageClickHandler() {
+        if (props.editable) props.onClick
+    }
+
     return (
         <div>
             <div className={classes}>
-                <div className="WeaponImage" onClick={ (props.editable) ? props.onClick : () => {} }>
+                <div className="WeaponImage" onClick={imageClickHandler}>
                     <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>
                 <h3 className="WeaponName">{weapon?.name.en}</h3>
-                <UncapIndicator 
-                    type="weapon"
-                    ulb={weapon?.uncap.ulb || false} 
-                    flb={weapon?.uncap.flb || false}
-                    updateUncap={passUncapData}
-                />
+                { (gridWeapon) ? 
+                    <UncapIndicator 
+                        type="weapon"
+                        ulb={gridWeapon.weapon.uncap.ulb || false} 
+                        flb={gridWeapon.weapon.uncap.flb || false}
                         uncapLevel={gridWeapon.uncap_level}
+                        updateUncap={passUncapData} 
+                    /> : ''
+                }
             </div>
         </div>
     )

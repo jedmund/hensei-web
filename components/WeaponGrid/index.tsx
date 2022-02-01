@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useModal as useModal } from '~utils/useModal'
 
 import debounce from 'lodash.debounce'
@@ -7,9 +7,8 @@ import SearchModal from '~components/SearchModal'
 import WeaponUnit from '~components/WeaponUnit'
 import ExtraWeapons from '~components/ExtraWeapons'
 
-import './index.scss'
-import { delay } from 'lodash'
 import api from '~utils/api'
+import './index.scss'
 
 // GridType
 export enum GridType {
@@ -59,13 +58,9 @@ const WeaponGrid = (props: Props) => {
     }
 
     async function updateUncap(id: string, level: number) {
-        console.log(id, level) 
         await api.updateUncap('weapon', id, level)
-            .then(response => {
-                console.log(response.data)
-            })
             .catch(error => {
-                console.log(error)
+                console.error(error)
             })
     }
 

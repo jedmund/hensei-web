@@ -13,15 +13,9 @@ interface Props {
 }
 
 const UncapIndicator = (props: Props) => {
-    const firstUpdate = useRef(true)
     const [uncap, setUncap] = useState(props.uncapLevel)
 
     useEffect(() => {
-        if (firstUpdate.current) {
-            firstUpdate.current = false
-            return
-        }
-
         props.updateUncap(uncap)
     }, [uncap])
 
@@ -53,18 +47,32 @@ const UncapIndicator = (props: Props) => {
         else setUncap(index)
     }
 
+    const transcendence = (i: number) => {
+        return <UncapStar ulb={true} empty={i >= uncap} key={`star_${i}`} index={i} onClick={toggleStar} />
+    }
+
+    const flb = (i: number) => {
+        return <UncapStar flb={true} empty={i >= uncap} key={`star_${i}`} index={i} onClick={toggleStar} />
+    }
+
+    const mlb = (i: number) => {
+        return <UncapStar empty={i >= uncap} key={`star_${i}`} index={i} onClick={toggleStar} />
+    }
+
+
+
     return (
         <ul className="UncapIndicator">
             {
                 Array.from(Array(numStars)).map((x, i) => {
                     if (props.type === 'character' && i > 4) {
-                        return <UncapStar ulb={true} empty={i >= uncap} key={`star_${i}`} index={i} onClick={toggleStar} />
+                        return transcendence(i)
                     } else if (
                         props.type === 'character' && i == 4 ||
                         props.type !== 'character' && i > 2) {
-                        return <UncapStar flb={true} empty={i >= uncap} key={`star_${i}`} index={i} onClick={toggleStar} />
+                        return flb(i)
                     } else {
-                        return <UncapStar empty={i >= uncap} key={`star_${i}`} index={i} onClick={toggleStar} />
+                        return mlb(i)
                     }
                 })
             }
