@@ -1,29 +1,26 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
+import { useRouter } from 'next/router'
 
 import Button from '~components/Button'
 import HeaderMenu from '~components/HeaderMenu'
 
 import './index.scss'
 
-interface Props {
-    navigate: (pathname: string) => void
-}
+interface Props {}
 
 const Header = (props: Props) => {
     const [username, setUsername] = useState(undefined)
-    const [cookies, setCookie, removeCookie] = useCookies(['user'])
+    const [cookies, _, removeCookie] = useCookies(['user'])
 
-    let navigate = useNavigate()
-    let location = useLocation()
-    
-    const route = (pathname: string) => props.navigate(pathname)
+    const router = useRouter()
 
     useEffect(() => {
         if (cookies.user) {
             setUsername(cookies.user.username)
             console.log(`Logged in as user "${cookies.user.username}"`)
+        } else {
+            console.log('You are currently not logged in.')
         }
     }, [cookies])
 
@@ -39,18 +36,18 @@ const Header = (props: Props) => {
     }
 
     function newParty() {
-        navigate('/')
+        router.push('/')
     }
 
     function logout() {
         removeCookie('user')
         window.history.replaceState(null, `Grid Tool`, `/`)
-        navigate(0)
+        // navigate(0)
     }
         
     return (
-        <nav className="Header">
-            <div className="left">
+        <nav id="Header">
+            <div id="left">
                 <div className="dropdown">
                     <Button type="menu">Menu</Button>
                     <HeaderMenu username={username} logout={logout} />
@@ -61,7 +58,8 @@ const Header = (props: Props) => {
                 {/* { (location.pathname.includes('/p/')) ?
                     <Button color="red" type="link" click={() => {}}>Delete</Button> : ''
                 } */}
-                { (location.pathname.includes('/p/')) ?
+                }
+                { (router.route === '/p/[slug]') ? 
                     <Button type="link" click={copyToClipboard}>Copy link</Button> : ''
                 }
                 <Button type="new" click={newParty}>New</Button>
