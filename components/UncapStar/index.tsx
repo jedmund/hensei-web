@@ -28,7 +28,7 @@ const UncapStar = (props: Props) => {
     }
 
     return (
-        <li className={classes}><img alt="" src="/icons/star.svg" /></li>
+        <li className={classes} onClick={clicked}></li>
     )
 }
 
