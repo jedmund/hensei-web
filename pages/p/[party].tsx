@@ -14,7 +14,7 @@ interface Props {
 
 const PartyRoute: React.FC = () => {
     const router = useRouter()
-    const { slug } = router.query
+    const { party: slug } = router.query
 
     const { setEditable: setEditableContext } = useContext(AppContext)
 
@@ -113,7 +113,7 @@ const PartyRoute: React.FC = () => {
 
         const shortcode: string = slug as string 
         fetchGrid(shortcode)
-    }, [slug, cookies.user])
+    }, [slug, cookies.user, setEditableContext])
 
     function render() {
         return (
