@@ -10,7 +10,7 @@ import './index.scss'
 
 interface Props {
     onClick: () => void
-    weapon: Weapon | undefined
+    gridWeapon: GridWeapon | undefined
     position: number
     editable: boolean
     unitType: 0 | 1
@@ -24,10 +24,10 @@ const WeaponUnit = (props: Props) => {
         'mainhand': props.unitType == 0,
         'grid': props.unitType == 1,
         'editable': props.editable,
-        'filled': (props.weapon !== undefined)
+        'filled': (props.gridWeapon !== undefined)
     })
 
-    const weapon = props.weapon
+    const weapon = props.gridWeapon?.weapon
 
     useEffect(() => {
         generateImageUrl()
@@ -35,8 +35,8 @@ const WeaponUnit = (props: Props) => {
 
     function generateImageUrl() {
         let imgSrc = ""
-        if (props.weapon) {
-            const weapon = props.weapon!
+        if (props.gridWeapon) {
+            const weapon = props.gridWeapon.weapon!
     
             if (props.unitType == 0)
                 imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
@@ -59,7 +59,7 @@ const WeaponUnit = (props: Props) => {
                     type="weapon"
                     ulb={weapon?.uncap.ulb || false} 
                     flb={weapon?.uncap.flb || false}
-                    uncapLevel={weapon?.uncap_level!}
+                    uncapLevel={props.gridWeapon?.uncap_level!}
                 />
             </div>
         </div>

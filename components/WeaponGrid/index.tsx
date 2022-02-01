@@ -19,8 +19,8 @@ export enum GridType {
 interface Props {
     userId?: string
     partyId?: string
-    mainhand?: Weapon | undefined
-    grid: GridArray<Weapon>
+    mainhand?: GridWeapon | undefined
+    grid: GridArray<GridWeapon>
     extra: boolean
     editable: boolean
     exists: boolean
@@ -33,6 +33,7 @@ const WeaponGrid = (props: Props) => {
     const [searchPosition, setSearchPosition] = useState(0)
 
     const numWeapons: number = 9
+    const searchGrid: GridArray<Weapon> = Object.values(props.grid).map((o) => o.weapon)
 
     const extraGrid = (
         <ExtraWeapons 
@@ -67,12 +68,12 @@ const WeaponGrid = (props: Props) => {
         <div id="weapon_grids">
             <div id="WeaponGrid">
                 <WeaponUnit 
-                    onClick={() => { openSearchModal(-1) }}
                     editable={props.editable}
                     key="grid_mainhand"
                     position={-1} 
                     unitType={0}
-                    weapon={props.mainhand}
+                    gridWeapon={props.mainhand}
+                    onClick={() => { openSearchModal(-1) }}
                 />
 
                 <ul id="grid_weapons">
@@ -81,11 +82,11 @@ const WeaponGrid = (props: Props) => {
                             return (
                                 <li key={`grid_unit_${i}`} >
                                     <WeaponUnit 
-                                        onClick={() => { openSearchModal(i) }}
                                         editable={props.editable}
                                         position={i} 
                                         unitType={1}
-                                        weapon={props.grid[i]}
+                                        gridWeapon={props.grid[i]}
+                                        onClick={() => { openSearchModal(i) }}
                                     />
                                 </li>
                             )
@@ -102,7 +103,7 @@ const WeaponGrid = (props: Props) => {
 
             {open ? (
                 <SearchModal 
-                    grid={props.grid}
+                    grid={searchGrid}
                     close={closeModal}
                     send={sendData}
                     fromPosition={searchPosition}

@@ -13,12 +13,13 @@ export enum GridType {
 
 // Props
 interface Props {
-    grid: GridArray<Weapon>
+    grid: GridArray<GridWeapon>
     editable: boolean
     exists: boolean
     found?: boolean
     offset: number
     onClick: (position: number) => void
+    updateUncap: (id: string, uncap: number) => void
 }
 
 const ExtraWeapons = (props: Props) => {
@@ -34,10 +35,10 @@ const ExtraWeapons = (props: Props) => {
                             <li key={`grid_unit_${i}`} >
                                 <WeaponUnit 
                                     editable={props.editable}
-                                    onClick={() => { props.onClick(props.offset + i)}} 
                                     position={props.offset + i} 
                                     unitType={1}
-                                    weapon={props.grid[props.offset + i]}
+                                    gridWeapon={props.grid[props.offset + i]}
+                                    onClick={() => { props.onClick(props.offset + i)}} 
                                 />
                             </li>
                         )

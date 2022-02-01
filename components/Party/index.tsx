@@ -23,11 +23,11 @@ import './index.scss'
 
 interface Props {
     partyId?: string
-    mainWeapon?: Weapon
+    mainWeapon?: GridWeapon
     mainSummon?: Summon
     friendSummon?: Summon
     characters?: GridArray<Character>
-    weapons?: GridArray<Weapon>
+    weapons?: GridArray<GridWeapon>
     summons?: GridArray<Summon>
     extra: boolean
     editable: boolean
@@ -46,10 +46,10 @@ const Party = (props: Props) => {
 
     // Grid data
     const [characters, setCharacters] = useState<GridArray<Character>>({})
-    const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
+    const [weapons, setWeapons] = useState<GridArray<GridWeapon>>({})
     const [summons, setSummons] = useState<GridArray<Summon>>({})
 
-    const [mainWeapon, setMainWeapon] = useState<Weapon>()
+    const [mainWeapon, setMainWeapon] = useState<GridWeapon>()
     const [mainSummon, setMainSummon] = useState<Summon>()
     const [friendSummon, setFriendSummon] = useState<Summon>()
 
@@ -178,8 +178,8 @@ const Party = (props: Props) => {
             case GridType.Weapon:
                 const weapon = item as Weapon
                 saveWeapon(weapon, position, partyId)
-                    .then(() => {
-                        storeWeapon(weapon, position)
+                    .then((response) => {
+                        storeWeapon(response.data.grid_weapon)
                     })
                 break
             case GridType.Summon:
@@ -193,24 +193,32 @@ const Party = (props: Props) => {
     }
     
     // Weapons
-    function storeWeapon(weapon: Weapon, position: number) {
-        if (position == -1) {
+    function storeWeapon(weapon: GridWeapon) {
+        if (weapon.position == -1) {
             setMainWeapon(weapon)
         } else {
             // Store the grid unit weapon at the correct position
             let newWeapons = Object.assign({}, weapons)
-            newWeapons[position] = weapon
+            newWeapons[weapon.position!] = weapon
             setWeapons(newWeapons)
         }
     }
 
     async function saveWeapon(weapon: Weapon, position: number, party: string) {
-        await api.endpoints.weapons.create({
+        let uncapLevel = 3
+
+        if (weapon.uncap.ulb)
+            uncapLevel = 5
+        else if (weapon.uncap.flb)
+            uncapLevel = 4
+
+        return await api.endpoints.weapons.create({
             'weapon': {
                 'party_id': party,
                 'weapon_id': weapon.id,
                 'position': position,
-                'mainhand': (position == -1)
+                'mainhand': (position == -1),
+                'uncap_level': uncapLevel
             }
         }, headers)
     }

@@ -23,10 +23,10 @@ const PartyRoute: React.FC = () => {
     const [editable, setEditable] = useState(false)
 
     const [characters, setCharacters] = useState<GridArray<Character>>({})
-    const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
+    const [weapons, setWeapons] = useState<GridArray<GridWeapon>>({})
     const [summons, setSummons] = useState<GridArray<Summon>>({})
 
-    const [mainWeapon, setMainWeapon] = useState<Weapon>()
+    const [mainWeapon, setMainWeapon] = useState<GridWeapon>()
     const [mainSummon, setMainSummon] = useState<Summon>()
     const [friendSummon, setFriendSummon] = useState<Summon>()
 
@@ -84,16 +84,13 @@ const PartyRoute: React.FC = () => {
         }
 
         function populateWeapons(list: [GridWeapon]) {
-            let weapons: GridArray<Weapon> = {}
+            let weapons: GridArray<GridWeapon> = {}
 
             list.forEach((object: GridWeapon) => {
-                const weapon = object.weapon
-                weapon.uncap_level = object.uncapLevel
-
                 if (object.mainhand)
-                    setMainWeapon(weapon)
+                    setMainWeapon(object)
                 else if (!object.mainhand && object.position != null)
-                    weapons[object.position] = weapon
+                    weapons[object.position] = object
             })
 
             return weapons
