@@ -29,7 +29,7 @@ const HeaderMenu = (props: Props) => {
                 <ul className="Menu auth">
                     <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link to={`/${props.username}` || ''}>My Parties</Link>
+                            <Link href={`/${props.username}` || ''}>My Parties</Link>
                         </li>
                     </div>
                     <div className="MenuGroup">
@@ -38,9 +38,9 @@ const HeaderMenu = (props: Props) => {
                             <AboutModal close={closeAboutModal} />
                         ) : null}
                         
-                        {/* <li className="MenuItem">
-                            <Link to='/guides'>Guides</Link>
-                        </li> */}
+                        <li className="MenuItem">
+                            <Link href='/guides'>Guides</Link>
+                        </li>
                     </div>
                     <div className="MenuGroup">
                         <li className="MenuItem" onClick={props.logout}>Logout</li>
