@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import UncapStar from '~components/UncapStar'
+
+import debounce from 'lodash.debounce'
 
 import './index.scss'
 
@@ -15,6 +17,15 @@ interface Props {
 
 const UncapIndicator = (props: Props) => {
     const [uncap, setUncap] = useState(props.uncapLevel)
+
+    const debouncedAction = debounce(() => {
+        console.log("Debouncing...")
+        props.updateUncap(numStars)
+    }, 1000)
+    
+    const delayedAction = useCallback(() => {
+        debouncedAction()
+    }, [])
 
     const numStars = setNumStars()
 
@@ -47,6 +58,8 @@ const UncapIndicator = (props: Props) => {
             setUncap(index + 1)
         else
             setUncap(index)
+
+        delayedAction()
     }
 
     return (

@@ -39,6 +39,7 @@ const ExtraWeapons = (props: Props) => {
                                     unitType={1}
                                     gridWeapon={props.grid[props.offset + i]}
                                     onClick={() => { props.onClick(props.offset + i)}} 
+                                    updateUncap={updateUncap}
                                 />
                             </li>
                         )

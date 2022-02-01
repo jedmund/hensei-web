@@ -42,6 +42,7 @@ const WeaponGrid = (props: Props) => {
             exists={false}
             offset={numWeapons}
             onClick={openSearchModal}
+            updateUncap={updateUncap}
         />
     )
 
@@ -64,6 +65,10 @@ const WeaponGrid = (props: Props) => {
         openModal()
     }
 
+    function updateUncap(id: string, uncap: number) {
+        console.log(`${id} is now ${uncap} stars`)
+    }
+
     return (
         <div id="weapon_grids">
             <div id="WeaponGrid">
@@ -74,6 +79,7 @@ const WeaponGrid = (props: Props) => {
                     unitType={0}
                     gridWeapon={props.mainhand}
                     onClick={() => { openSearchModal(-1) }}
+                    updateUncap={updateUncap}
                 />
 
                 <ul id="grid_weapons">
@@ -87,6 +93,7 @@ const WeaponGrid = (props: Props) => {
                                         unitType={1}
                                         gridWeapon={props.grid[i]}
                                         onClick={() => { openSearchModal(i) }}
+                                        updateUncap={updateUncap}
                                     />
                                 </li>
                             )

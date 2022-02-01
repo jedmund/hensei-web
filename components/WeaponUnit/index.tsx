@@ -10,6 +10,7 @@ import './index.scss'
 
 interface Props {
     onClick: () => void
+    updateUncap: (id: string, uncap: number) => void
     gridWeapon: GridWeapon | undefined
     position: number
     editable: boolean
@@ -47,6 +48,11 @@ const WeaponUnit = (props: Props) => {
         setImageUrl(imgSrc)
     }
 
+    function passUncapData(uncap: number) {
+        if (props.gridWeapon)
+            props.updateUncap(props.gridWeapon.id, uncap)
+    }
+
     return (
         <div>
             <div className={classes}>
@@ -60,6 +66,7 @@ const WeaponUnit = (props: Props) => {
                     ulb={weapon?.uncap.ulb || false} 
                     flb={weapon?.uncap.flb || false}
                     uncapLevel={props.gridWeapon?.uncap_level!}
+                    updateUncap={passUncapData}
                 />
             </div>
         </div>
