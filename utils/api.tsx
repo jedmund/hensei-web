@@ -58,10 +58,20 @@ class Api {
         return axios.get(url)
     }
 
-    check(resource: string, value: string) {
+    check(resource: 'username'|'email', value: string) {
         const resourceUrl = `${this.url}/check/${resource}`
         return axios.post(resourceUrl, {
             [resource]: value
+        })
+    }
+
+    updateUncap(resource: 'characters'|'weapons'|'summons', id: string, value: number) {
+        const resourceUrl = `${this.url}/${resource}/update_uncap`
+        return axios.post(resourceUrl, {
+            [resource]: {
+                id: id,
+                uncap_level: value
+            }
         })
     }
 }
