@@ -12,7 +12,6 @@ import { useModal as useSignupModal } from '~utils/useModal'
 import { useModal as useLoginModal } from '~utils/useModal'
 import { useModal as useAboutModal } from '~utils/useModal'
 
-import Profile from '~routes/ProfileRoute'
 import AboutModal from '~components/AboutModal'
 
 
