@@ -125,6 +125,12 @@ const SignupModal = (props: Props) => {
                 break
 
             case 'password':
+                newErrors.password = passwordInput.current?.value.includes(usernameInput.current?.value!)
+                    ? 'Your password should not contain your username'
+                    : ''
+                break
+
+            case 'password':
                 newErrors.password = value.length < 8
                     ? 'Password must be at least 8 characters'
                     : ''
