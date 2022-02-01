@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import { withCookies, Cookies } from 'react-cookie'
 import { createPortal } from 'react-dom'
+
+import AppContext from '~context/AppContext'
 import api from '~utils/api'
 
 import Button from '~components/Button'
@@ -10,16 +12,9 @@ import Overlay from '~components/Overlay'
 
 import './index.scss'
 
-// import New from '../../../assets/new'
-
 interface Props {
     cookies: Cookies
     close: () => void
-}
-
-interface State {
-    formValid: boolean
-    errors: ErrorMap
 }
 
 interface ErrorMap {
@@ -32,117 +27,111 @@ interface ErrorMap {
 
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-class SignupModal extends React.Component<Props, State> {
-    usernameInput: React.RefObject<HTMLInputElement>
-    emailInput: React.RefObject<HTMLInputElement>
-    passwordInput: React.RefObject<HTMLInputElement>
-    passwordConfirmationInput: React.RefObject<HTMLInputElement>
-    form: React.RefObject<HTMLInputElement>[]
+const SignupModal = (props: Props) => {
+    const { setAuthenticated } = useContext(AppContext)
 
-    constructor(props: Props) {
-        super(props)
-        this.state = {
-            formValid: false,
-            errors: {
-                username: '',
-                email: '',
-                password: '',
-                passwordConfirmation: ''
-            }
-        }
-        
-        this.usernameInput = React.createRef()
-        this.emailInput = React.createRef()
-        this.passwordInput = React.createRef()
-        this.passwordConfirmationInput = React.createRef()
-        this.form = [this.usernameInput, this.emailInput, this.passwordInput, this.passwordConfirmationInput]
-    }
+    const [formValid, setFormValid] = useState(false)
+    const [errors, setErrors] = useState<ErrorMap>({
+        username: '',
+        email: '',
+        password: '',
+        passwordConfirmation: ''
+    })
+ 
+    const usernameInput = React.createRef<HTMLInputElement>()
+    const emailInput = React.createRef<HTMLInputElement>()
+    const passwordInput = React.createRef<HTMLInputElement>()
+    const passwordConfirmationInput = React.createRef<HTMLInputElement>()
+    const form = [usernameInput, emailInput, passwordInput, passwordConfirmationInput]
 
-    check = (event: React.ChangeEvent<HTMLInputElement>) => {
+    function check(event: React.ChangeEvent<HTMLInputElement>) {
         const name = event.target.name
         const value = event.target.value
 
-        if (value.length > 0 && this.state.errors[name].length == 0) {
-            const errors = this.state.errors
+        if (value.length > 0 && errors[name].length == 0) {
+            const newErrors = errors
             
             api.check(name, value)
                 .then((response) => {
                     if (!response.data.available) {
-                        errors[name] = `This ${name} is already in use`
+                        newErrors[name] = `This ${name} is already in use`
                     }
 
-                    this.setState({ errors: errors })
+                    setErrors(newErrors)
                 }, (error) => {
                     console.log(error)
                 })
         }
     }
 
-    process = (event: React.FormEvent) => {
+    function process(event: React.FormEvent) {
         event.preventDefault()
 
         const body = {
             user: {
-                username: this.usernameInput.current?.value,
-                email: this.emailInput.current?.value,
-                password: this.passwordInput.current?.value,
-                password_confirmation: this.passwordConfirmationInput.current?.value
+                username: usernameInput.current?.value,
+                email: emailInput.current?.value,
+                password: passwordInput.current?.value,
+                password_confirmation: passwordConfirmationInput.current?.value
             }
         }
 
-        if (this.state.formValid) {
+        if (formValid) {
             api.endpoints.users.create(body)
                 .then((response) => {
-                    const cookies = this.props.cookies
+                    const cookies = props.cookies
                     cookies.set('user', response.data.user, { path: '/'})
-                    this.props.close()
+
+                    setAuthenticated(true)
+
+                    props.close()
                 }, (error) => {
                     console.log(error)
                 })
         }
     }
 
-    validateForm = () => {
+    function validateForm() {
         let valid = true
 
-        Object.values(this.form).forEach(
+        Object.values(form).forEach(
             (input) => input.current?.value.length == 0 && (valid = false)
         )
 
-        Object.values(this.state.errors).forEach(
+        Object.values(errors).forEach(
             (error) => error.length > 0 && (valid = false)
         )
 
         return valid
     }
 
-    handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         event.preventDefault()
 
         const { name, value } = event.target
-        const errors = this.state.errors
+        let newErrors = errors
 
         switch(name) {
             case 'username':
-                errors.username = value.length < 3 
+                newErrors.username = value.length < 3 
                     ? 'Username must be at least 3 characters'
                     : ''
                 break
 
             case 'email':
-                errors.email = emailRegex.test(value)
+                newErrors.email = emailRegex.test(value)
                     ? ''
                     : 'That email address is not valid'
                 break
 
             case 'password':
-                errors.password = value.length < 8
+                newErrors.password = value.length < 8
                     ? 'Password must be at least 8 characters'
                     : ''
                 break
 
             case 'confirm_password':
-                errors.passwordConfirmation = this.passwordInput.current?.value === this.passwordConfirmationInput.current?.value
+                newErrors.passwordConfirmation = passwordInput.current?.value === passwordConfirmationInput.current?.value
                     ? ''
                     : 'Your passwords don\'t match'
                 break
@@ -151,67 +140,64 @@ class SignupModal extends React.Component<Props, State> {
                 break
         }
 
-        this.setState({ errors: errors })
-        this.setState({ formValid: this.validateForm() })
+        setErrors(newErrors)
+        setFormValid(validateForm())
     }
 
-    render() {
-        const errors = this.state.errors
-        return (
-            createPortal(
-                <div>
-                    <Modal 
-                        title="Sign up" 
-                        styleName="SignupForm"
-                        close={ () => {} }
-                    >
-                        <form className="form" onSubmit={this.process}>
-                            <div id="fields">
-                                <Fieldset 
-                                    fieldName="username"
-                                    placeholder="Username"
-                                    onBlur={this.check}
-                                    onChange={this.handleChange}
-                                    error={errors.username}
-                                    ref={this.usernameInput}
-                                />
+    return (
+        createPortal(
+            <div>
+                <Modal 
+                    title="Sign up" 
+                    styleName="SignupForm"
+                    close={ () => {} }
+                >
+                    <form className="form" onSubmit={process}>
+                        <div id="fields">
+                            <Fieldset 
+                                fieldName="username"
+                                placeholder="Username"
+                                onBlur={check}
+                                onChange={handleChange}
+                                error={errors.username}
+                                ref={usernameInput}
+                            />
 
-                                <Fieldset 
-                                    fieldName="email"
-                                    placeholder="Email address"
-                                    onBlur={this.check}
-                                    onChange={this.handleChange}
-                                    error={errors.email}
-                                    ref={this.emailInput}
-                                />
+                            <Fieldset 
+                                fieldName="email"
+                                placeholder="Email address"
+                                onBlur={check}
+                                onChange={handleChange}
+                                error={errors.email}
+                                ref={emailInput}
+                            />
 
-                                <Fieldset 
-                                    fieldName="password"
-                                    placeholder="Password"
-                                    onChange={this.handleChange}
-                                    error={errors.password}
-                                    ref={this.passwordInput}
-                                />
+                            <Fieldset 
+                                fieldName="password"
+                                placeholder="Password"
+                                onChange={handleChange}
+                                error={errors.password}
+                                ref={passwordInput}
+                            />
 
-                                <Fieldset 
-                                    fieldName="confirm_password"
-                                    placeholder="Password (again)"
-                                    onChange={this.handleChange}
-                                    error={errors.passwordConfirmation}
-                                    ref={this.passwordConfirmationInput}
-                                />
-                            </div>
-                            <div id="ModalBottom">
-                                <Button color="blue" disabled={!this.state.formValid}>Sign up</Button>
-                            </div>
-                        </form>
-                    </Modal>
-                    <Overlay onClick={this.props.close} />
-                </div>,
-                document.body
-            )
+                            <Fieldset 
+                                fieldName="confirm_password"
+                                placeholder="Password (again)"
+                                onChange={handleChange}
+                                error={errors.passwordConfirmation}
+                                ref={passwordConfirmationInput}
+                            />
+                        </div>
+                        <div id="ModalBottom">
+                            <Button color="blue" disabled={!formValid}>Sign up</Button>
+                        </div>
+                    </form>
+                </Modal>
+                <Overlay onClick={props.close} />
+            </div>,
+            document.body
         )
-    }
+    )
 }
 
 
