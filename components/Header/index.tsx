@@ -1,29 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
+import { useRouter } from 'next/router'
+
+import AppContext from '~context/AppContext'
 
 import Button from '~components/Button'
 import HeaderMenu from '~components/HeaderMenu'
 
 import './index.scss'
 
-interface Props {
-    navigate: (pathname: string) => void
-}
+interface Props {}
 
 const Header = (props: Props) => {
-    const [username, setUsername] = useState(undefined)
-    const [cookies, setCookie, removeCookie] = useCookies(['user'])
+    const { editable, setEditable, setAuthenticated } = useContext(AppContext)
 
-    let navigate = useNavigate()
-    let location = useLocation()
-    
-    const route = (pathname: string) => props.navigate(pathname)
+    const [username, setUsername] = useState(undefined)
+    const [cookies, _, removeCookie] = useCookies(['user'])
+
+    const router = useRouter()
 
     useEffect(() => {
         if (cookies.user) {
             setUsername(cookies.user.username)
             console.log(`Logged in as user "${cookies.user.username}"`)
+        } else {
+            console.log('You are currently not logged in.')
         }
     }, [cookies])
 
@@ -39,29 +40,34 @@ const Header = (props: Props) => {
     }
 
     function newParty() {
-        navigate('/')
+        router.push('/')
     }
 
     function logout() {
         removeCookie('user')
-        window.history.replaceState(null, `Grid Tool`, `/`)
-        navigate(0)
+
+        setAuthenticated(false)
+        if (editable) setEditable(false)
+
+        // How can we log out without navigating to root
+        router.push('/')
+        return false
     }
         
     return (
-        <nav className="Header">
-            <div className="left">
+        <nav id="Header">
+            <div id="left">
                 <div className="dropdown">
                     <Button type="menu">Menu</Button>
                     <HeaderMenu username={username} logout={logout} />
                 </div>
             </div>
             <div className="push" />
-            <div className="right">
-                {/* { (location.pathname.includes('/p/')) ?
+            <div id="right">
+                { (editable && router.route === '/p/[slug]') ?
                     <Button color="red" type="link" click={() => {}}>Delete</Button> : ''
-                } */}
-                { (location.pathname.includes('/p/')) ?
+                }
+                { (router.route === '/p/[slug]') ? 
                     <Button type="link" click={copyToClipboard}>Copy link</Button> : ''
                 }
                 <Button type="new" click={newParty}>New</Button>

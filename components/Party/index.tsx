@@ -36,7 +36,7 @@ interface Props {
 }
 
 const Party = (props: Props) => {
-    const [cookies, setCookie] = useCookies(['user'])
+    const [cookies, _] = useCookies(['user'])
 
     const headers = (cookies.user != null) ? {
         headers: {

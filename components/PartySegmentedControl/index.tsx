@@ -67,7 +67,7 @@ const PartySegmentedControl = (props: Props) => {
 
             {
                 (() => {
-                    if (props.selectedTab == GridType.Weapon) {
+                    if (props.editable && props.selectedTab == GridType.Weapon) {
                         return extraToggle
                     }
                 })()

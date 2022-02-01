@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { withCookies, useCookies } from 'react-cookie'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/router'
+
 import api from '~utils/api'
 
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
-import { composeInitialProps } from 'react-i18next'
-
-interface Props {
-    username: string
-}
 
 interface User {
     id: string
@@ -24,10 +19,8 @@ interface Party {
 }
 
 const ProfileRoute: React.FC = () => {
-    const params = useParams()
-    const navigate = useNavigate()
-
-    const [cookies, setCookie] = useCookies(['user'])
+    const router = useRouter()
+    const { username } = router.query
 
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -38,12 +31,10 @@ const ProfileRoute: React.FC = () => {
         granblueId: 0
     })
 
-    const username = params.username || ''
-
     useEffect(() => {
         console.log(`Fetching profile for ${username}...`)
-        fetchProfile(username)            
-    }, [])
+        fetchProfile(username as string)            
+    }, [username])
 
     async function fetchProfile(username: string) {
         api.endpoints.users.getOne({ id: username })
@@ -81,7 +72,7 @@ const ProfileRoute: React.FC = () => {
     }
 
     function goTo(shortcode: string) {
-        navigate(`/p/${shortcode}`)
+        router.push(`/p/${shortcode}`)
     }
     
     function renderGrids() {
@@ -126,7 +117,4 @@ const ProfileRoute: React.FC = () => {
     }
 }
 
-export default 
-    withCookies(
-        ProfileRoute
-    )
+export default ProfileRoute

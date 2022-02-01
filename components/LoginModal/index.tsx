@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { withCookies, Cookies } from 'react-cookie'
 import { createPortal } from 'react-dom'
+
+import AppContext from '~context/AppContext'
 import api from '~utils/api'
 
 import Button from '~components/Button'
@@ -26,6 +28,8 @@ interface ErrorMap {
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const LoginModal = (props: Props) => {
+    const { setAuthenticated } = useContext(AppContext)
+
     const emailInput: React.RefObject<HTMLInputElement> = React.createRef()
     const passwordInput: React.RefObject<HTMLInputElement> = React.createRef()
     const form: React.RefObject<HTMLInputElement>[] = [emailInput, passwordInput]
@@ -98,6 +102,8 @@ const LoginModal = (props: Props) => {
                     }
 
                     cookies.set('user', cookieObj, { path: '/'})
+                    setAuthenticated(true)
+
                     props.close()
                 }, (error) => {
                     console.error(error)
