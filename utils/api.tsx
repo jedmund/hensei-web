@@ -65,8 +65,9 @@ class Api {
         })
     }
 
-    updateUncap(resource: 'characters'|'weapons'|'summons', id: string, value: number) {
-        const resourceUrl = `${this.url}/${resource}/update_uncap`
+    updateUncap(resource: 'character'|'weapon'|'summon', id: string, value: number) {
+        const pluralized = resource + 's'
+        const resourceUrl = `${this.url}/${pluralized}/update_uncap`
         return axios.post(resourceUrl, {
             [resource]: {
                 id: id,
