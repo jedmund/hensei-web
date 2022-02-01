@@ -59,7 +59,10 @@ const Header = (props: Props) => {
             <div id="left">
                 <div className="dropdown">
                     <Button type="menu">Menu</Button>
-                    <HeaderMenu username={username} logout={logout} />
+                    { (username) ? 
+                        <HeaderMenu username={username} logout={logout} /> :
+                        <HeaderMenu logout={logout} />
+                    }
                 </div>
             </div>
             <div className="push" />

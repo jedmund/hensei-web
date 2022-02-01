@@ -16,7 +16,7 @@ import AboutModal from '~components/AboutModal'
 
 
 interface Props {
-    username: string,
+    username?: string,
     logout: () => void
 }
 
