@@ -1,10 +1,19 @@
 /** @type {import('next').NextConfig} */
 const path = require('path')
 
-module.exports = {reactStrictMode: true,
+module.exports = {
+  reactStrictMode: true,
   sassOptions: {
     prependData: '@import "variables";',
     includePaths: [path.join(__dirname, 'styles')],
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/',
+        destination: '/new'
+      }
+    ]
   },
   webpack(config) {
     config.module.rules.push({
@@ -18,4 +27,3 @@ module.exports = {reactStrictMode: true,
     return config;
   },
 };
-
