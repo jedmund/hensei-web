@@ -12,7 +12,7 @@ import './index.scss'
 interface Props {}
 
 const Header = (props: Props) => {
-    const { editable } = useContext(AppContext)
+    const { editable, setEditable, setAuthenticated } = useContext(AppContext)
 
     const [username, setUsername] = useState(undefined)
     const [cookies, _, removeCookie] = useCookies(['user'])
@@ -45,8 +45,13 @@ const Header = (props: Props) => {
 
     function logout() {
         removeCookie('user')
-        window.history.replaceState(null, `Grid Tool`, `/`)
-        // navigate(0)
+
+        setAuthenticated(false)
+        if (editable) setEditable(false)
+
+        // How can we log out without navigating to root
+        router.push('/')
+        return false
     }
         
     return (
