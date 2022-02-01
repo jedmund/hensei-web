@@ -1,24 +1,29 @@
-import React from 'react'
 import './index.scss'
+
+import React, { useContext } from 'react'
+import Link from 'next/link'
 
 import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
+
+import AppContext from '~context/AppContext'
 
 import { useModal as useSignupModal } from '~utils/useModal'
 import { useModal as useLoginModal } from '~utils/useModal'
 import { useModal as useAboutModal } from '~utils/useModal'
 
-import { Link, Route } from 'react-router-dom'
 import Profile from '~routes/ProfileRoute'
 import AboutModal from '~components/AboutModal'
 
 
 interface Props {
-    username?: string
+    username: string,
     logout: () => void
 }
 
 const HeaderMenu = (props: Props) => {
+    const { authenticated } = useContext(AppContext)
+
     const { open: signupOpen, openModal: openSignupModal, closeModal: closeSignupModal } = useSignupModal()
     const { open: loginOpen, openModal: openLoginModal, closeModal: closeLoginModal } = useLoginModal()
     const { open: aboutOpen, openModal: openAboutModal, closeModal: closeAboutModal } = useAboutModal()
@@ -79,7 +84,7 @@ const HeaderMenu = (props: Props) => {
         )
     }
 
-    return (props.username !== undefined) ? authItems() : unauthItems()
+    return (authenticated) ? authItems() : unauthItems()
 }
 
 export default HeaderMenu
