@@ -112,7 +112,9 @@ const PartyRoute: React.FC = () => {
         }
 
         const shortcode: string = slug as string 
-        fetchGrid(shortcode)
+        if (shortcode)
+            fetchGrid(shortcode)
+            
     }, [slug, cookies.user, setEditableContext])
 
     function render() {
