@@ -49,7 +49,7 @@ const SignupModal = (props: Props) => {
         const value = event.target.value
 
         if (value.length > 0 && errors[name].length == 0) {
-            const newErrors = errors
+            const newErrors = {...errors}
             
             api.check(name, value)
                 .then((response) => {
@@ -109,7 +109,7 @@ const SignupModal = (props: Props) => {
         event.preventDefault()
 
         const { name, value } = event.target
-        let newErrors = errors
+        let newErrors = {...errors}
 
         switch(name) {
             case 'username':
