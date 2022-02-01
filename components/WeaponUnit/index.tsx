@@ -52,14 +52,10 @@ const WeaponUnit = (props: Props) => {
             props.updateUncap(props.gridWeapon.id, uncap)
     }
 
-    function imageClickHandler() {
-        if (props.editable) props.onClick
-    }
-
     return (
         <div>
             <div className={classes}>
-                <div className="WeaponImage" onClick={imageClickHandler}>
+                <div className="WeaponImage" onClick={ (props.editable) ? props.onClick : () => {} }>
                     <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>
