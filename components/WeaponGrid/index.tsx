@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useModal as useModal } from '~utils/useModal'
+
+import debounce from 'lodash.debounce'
 
 import SearchModal from '~components/SearchModal'
 import WeaponUnit from '~components/WeaponUnit'
 import ExtraWeapons from '~components/ExtraWeapons'
 
 import './index.scss'
+import { delay } from 'lodash'
+import api from '~utils/api'
 
 // GridType
 export enum GridType {
@@ -35,17 +39,6 @@ const WeaponGrid = (props: Props) => {
     const numWeapons: number = 9
     const searchGrid: GridArray<Weapon> = Object.values(props.grid).map((o) => o.weapon)
 
-    const extraGrid = (
-        <ExtraWeapons 
-            grid={props.grid} 
-            editable={props.editable} 
-            exists={false}
-            offset={numWeapons}
-            onClick={openSearchModal}
-            updateUncap={updateUncap}
-        />
-    )
-
     function receiveWeapon(weapon: Weapon, position: number) {
         props.onSelect(GridType.Weapon, weapon, position)
     }
@@ -65,10 +58,38 @@ const WeaponGrid = (props: Props) => {
         openModal()
     }
 
-    function updateUncap(id: string, uncap: number) {
-        console.log(`${id} is now ${uncap} stars`)
+    async function updateUncap(id: string, level: number) {
+        console.log(id, level) 
+        await api.updateUncap('weapon', id, level)
+            .then(response => {
+                console.log(response.data)
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }
 
+    const initiateUncapUpdate = (id: string, uncapLevel: number) => {
+        debouncedAction(id, uncapLevel)
+    }
+
+    const debouncedAction = useCallback(
+        () => debounce((id, number) => { 
+            updateUncap(id, number)
+        }, 1000), []
+    )()
+
+    const extraGrid = (
+        <ExtraWeapons 
+            grid={props.grid} 
+            editable={props.editable} 
+            exists={false}
+            offset={numWeapons}
+            onClick={openSearchModal}
+            updateUncap={initiateUncapUpdate}
+        />
+    )
+    
     return (
         <div id="weapon_grids">
             <div id="WeaponGrid">
@@ -79,7 +100,7 @@ const WeaponGrid = (props: Props) => {
                     unitType={0}
                     gridWeapon={props.mainhand}
                     onClick={() => { openSearchModal(-1) }}
-                    updateUncap={updateUncap}
+                    updateUncap={initiateUncapUpdate}
                 />
 
                 <ul id="grid_weapons">
@@ -93,7 +114,7 @@ const WeaponGrid = (props: Props) => {
                                         unitType={1}
                                         gridWeapon={props.grid[i]}
                                         onClick={() => { openSearchModal(i) }}
-                                        updateUncap={updateUncap}
+                                        updateUncap={initiateUncapUpdate}
                                     />
                                 </li>
                             )

@@ -1,10 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import UncapStar from '~components/UncapStar'
 
-import debounce from 'lodash.debounce'
-
 import './index.scss'
-
 
 interface Props {
     type: 'character' | 'weapon' | 'summon'
@@ -16,19 +13,19 @@ interface Props {
 }
 
 const UncapIndicator = (props: Props) => {
+    const firstUpdate = useRef(true)
     const [uncap, setUncap] = useState(props.uncapLevel)
 
-    const debouncedAction = debounce(() => {
-        console.log("Debouncing...")
-        props.updateUncap(numStars)
-    }, 1000)
-    
-    const delayedAction = useCallback(() => {
-        debouncedAction()
-    }, [])
+    useEffect(() => {
+        if (firstUpdate.current) {
+            firstUpdate.current = false
+            return
+        }
+
+        props.updateUncap(uncap)
+    }, [uncap])
 
     const numStars = setNumStars()
-
     function setNumStars() {
         let numStars
         
@@ -52,14 +49,8 @@ const UncapIndicator = (props: Props) => {
     }
 
     function toggleStar(index: number, empty: boolean) {
-        console.log("Toggling star!")
-
-        if (empty)
-            setUncap(index + 1)
-        else
-            setUncap(index)
-
-        delayedAction()
+        if (empty) setUncap(index + 1)
+        else setUncap(index)
     }
 
     return (
