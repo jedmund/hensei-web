@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { withCookies, useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
+
+import AppContext from '~context/AppContext'
 import api from '~utils/api'
 
 import Party from '~components/Party'
@@ -13,6 +15,8 @@ interface Props {
 const PartyRoute: React.FC = () => {
     const router = useRouter()
     const { slug } = router.query
+
+    const { setEditable: setEditableContext } = useContext(AppContext)
 
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -39,8 +43,10 @@ const PartyRoute: React.FC = () => {
                     const partyUser = (party.user_id) ? party.user_id : undefined
                     const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
     
-                    if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser)
+                    if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
                         setEditable(true)
+                        setEditableContext(true)
+                    }
     
                     const characters = populateCharacters(party.characters)
                     const weapons = populateWeapons(party.weapons)

@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
+
+import AppContext from '~context/AppContext'
 
 import Button from '~components/Button'
 import HeaderMenu from '~components/HeaderMenu'
@@ -10,6 +12,8 @@ import './index.scss'
 interface Props {}
 
 const Header = (props: Props) => {
+    const { editable } = useContext(AppContext)
+
     const [username, setUsername] = useState(undefined)
     const [cookies, _, removeCookie] = useCookies(['user'])
 
@@ -54,10 +58,9 @@ const Header = (props: Props) => {
                 </div>
             </div>
             <div className="push" />
-            <div className="right">
-                {/* { (location.pathname.includes('/p/')) ?
+            <div id="right">
+                { (editable && router.route === '/p/[slug]') ?
                     <Button color="red" type="link" click={() => {}}>Delete</Button> : ''
-                } */}
                 }
                 { (router.route === '/p/[slug]') ? 
                     <Button type="link" click={copyToClipboard}>Copy link</Button> : ''
