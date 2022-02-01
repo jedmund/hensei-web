@@ -87,10 +87,13 @@ const PartyRoute: React.FC = () => {
             let weapons: GridArray<Weapon> = {}
 
             list.forEach((object: GridWeapon) => {
+                const weapon = object.weapon
+                weapon.uncap_level = object.uncapLevel
+
                 if (object.mainhand)
-                    setMainWeapon(object.weapon)
+                    setMainWeapon(weapon)
                 else if (!object.mainhand && object.position != null)
-                    weapons[object.position] = object.weapon
+                    weapons[object.position] = weapon
             })
 
             return weapons

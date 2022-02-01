@@ -59,7 +59,7 @@ const WeaponUnit = (props: Props) => {
                     type="weapon"
                     ulb={weapon?.uncap.ulb || false} 
                     flb={weapon?.uncap.flb || false}
-                    uncapLevel={3}
+                    uncapLevel={weapon?.uncap_level!}
                 />
             </div>
         </div>

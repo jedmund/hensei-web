@@ -25,5 +25,6 @@ interface Weapon {
         flb: boolean
         ulb: boolean
     }
+    uncap_level: number | null
     position?: number
 }
