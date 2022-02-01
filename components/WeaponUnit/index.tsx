@@ -65,7 +65,7 @@ const WeaponUnit = (props: Props) => {
                     type="weapon"
                     ulb={weapon?.uncap.ulb || false} 
                     flb={weapon?.uncap.flb || false}
-                    uncapLevel={props.gridWeapon?.uncap_level!}
+                    uncapLevel={props.gridWeapon?.uncapLevel!}
                     updateUncap={passUncapData}
                 />
             </div>
