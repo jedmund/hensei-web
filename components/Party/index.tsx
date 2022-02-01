@@ -24,11 +24,11 @@ import './index.scss'
 interface Props {
     partyId?: string
     mainWeapon?: GridWeapon
-    mainSummon?: Summon
-    friendSummon?: Summon
+    mainSummon?: GridSummon
+    friendSummon?: GridSummon
     characters?: GridArray<Character>
     weapons?: GridArray<GridWeapon>
-    summons?: GridArray<Summon>
+    summons?: GridArray<GridSummon>
     extra: boolean
     editable: boolean
     exists: boolean
@@ -47,11 +47,11 @@ const Party = (props: Props) => {
     // Grid data
     const [characters, setCharacters] = useState<GridArray<Character>>({})
     const [weapons, setWeapons] = useState<GridArray<GridWeapon>>({})
-    const [summons, setSummons] = useState<GridArray<Summon>>({})
+    const [summons, setSummons] = useState<GridArray<GridSummon>>({})
 
     const [mainWeapon, setMainWeapon] = useState<GridWeapon>()
-    const [mainSummon, setMainSummon] = useState<Summon>()
-    const [friendSummon, setFriendSummon] = useState<Summon>()
+    const [mainSummon, setMainSummon] = useState<GridSummon>()
+    const [friendSummon, setFriendSummon] = useState<GridSummon>()
 
     const [extra, setExtra] = useState<boolean>(false)
 
@@ -185,8 +185,8 @@ const Party = (props: Props) => {
             case GridType.Summon:
                 const summon = item as Summon
                 saveSummon(summon, position, partyId)
-                    .then(() => {
-                        storeSummon(summon, position)
+                    .then((response) => {
+                        storeSummon(response.data.grid_summon, position)
                     })
                 break
         }
@@ -224,7 +224,7 @@ const Party = (props: Props) => {
     }
 
     // Summons
-    function storeSummon(summon: Summon, position: number) {
+    function storeSummon(summon: GridSummon, position: number) {
         if (position == -1) {
             setMainSummon(summon)
         } else if (position == 6) {
@@ -238,7 +238,7 @@ const Party = (props: Props) => {
     }
 
     async function saveSummon(summon: Summon, position: number, party: string) {
-        await api.endpoints.summons.create({
+        return await api.endpoints.summons.create({
             'summon': {
                 'party_id': party,
                 'summon_id': summon.id,

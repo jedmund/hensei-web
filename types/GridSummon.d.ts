@@ -4,4 +4,5 @@ interface GridSummon {
     friend: boolean
     position: number | null
     summon: Summon
+    uncap_level: number
 }

@@ -24,11 +24,11 @@ const PartyRoute: React.FC = () => {
 
     const [characters, setCharacters] = useState<GridArray<Character>>({})
     const [weapons, setWeapons] = useState<GridArray<GridWeapon>>({})
-    const [summons, setSummons] = useState<GridArray<Summon>>({})
+    const [summons, setSummons] = useState<GridArray<GridSummon>>({})
 
     const [mainWeapon, setMainWeapon] = useState<GridWeapon>()
-    const [mainSummon, setMainSummon] = useState<Summon>()
-    const [friendSummon, setFriendSummon] = useState<Summon>()
+    const [mainSummon, setMainSummon] = useState<GridSummon>()
+    const [friendSummon, setFriendSummon] = useState<GridSummon>()
 
     const [partyId, setPartyId] = useState('')
     const [extra, setExtra] = useState<boolean>(false)
@@ -97,15 +97,15 @@ const PartyRoute: React.FC = () => {
         }
 
         function populateSummons(list: [GridSummon]) {
-            let summons: GridArray<Summon> = {}
+            let summons: GridArray<GridSummon> = {}
 
             list.forEach((object: GridSummon) => {
                 if (object.main)
-                    setMainSummon(object.summon)
+                    setMainSummon(object)
                 else if (object.friend)
-                    setFriendSummon(object.summon)
+                    setFriendSummon(object)
                 else if (!object.main && !object.friend && object.position != null)
-                    summons[object.position] = object.summon
+                    summons[object.position] = object
             })
 
             return summons

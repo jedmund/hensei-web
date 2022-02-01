@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useModal as useModal } from '~utils/useModal'
 
-import SearchModal from '~components/SearchModal'
-import ExtraSummons from '~components/ExtraSummons'
-import SummonUnit from '~components/SummonUnit'
+import debounce from 'lodash.debounce'
 
+import SearchModal from '~components/SearchModal'
+import SummonUnit from '~components/SummonUnit'
+import ExtraSummons from '~components/ExtraSummons'
+
+import api from '~utils/api'
 import './index.scss'
 
 // GridType
@@ -19,9 +22,9 @@ export enum GridType {
 interface Props {
     userId?: string
     partyId?: string
-    main?: Summon | undefined
-    friend?: Summon | undefined
-    grid: GridArray<Summon>
+    main?: GridSummon | undefined
+    friend?: GridSummon | undefined
+    grid: GridArray<GridSummon>
     editable: boolean
     exists: boolean
     found?: boolean
@@ -33,11 +36,7 @@ const SummonGrid = (props: Props) => {
     const [searchPosition, setSearchPosition] = useState(0)
 
     const numSummons: number = 4
-
-    function openSearchModal(position: number) {
-        setSearchPosition(position)
-        openModal()
-    }
+    const searchGrid: GridArray<Summon> = Object.values(props.grid).map((o) => o.summon)
 
     function receiveSummon(summon: Summon, position: number) {
         props.onSelect(GridType.Summon, summon, position)
@@ -54,30 +53,54 @@ const SummonGrid = (props: Props) => {
         return (object as Summon).granblue_id !== undefined
     }
 
+    function openSearchModal(position: number) {
+        setSearchPosition(position)
+        openModal()
+    }
+
+    async function updateUncap(id: string, level: number) {
+        await api.updateUncap('summon', id, level)
+            .catch(error => {
+                console.error(error)
+            })
+    }
+
+    const initiateUncapUpdate = (id: string, uncapLevel: number) => {
+        debouncedAction(id, uncapLevel)
+    }
+
+    const debouncedAction = useCallback(
+        () => debounce((id, number) => { 
+            updateUncap(id, number)
+        }, 1000), []
+    )()
+
     return (
         <div>
             <div className="SummonGrid">
                 <div className="LabeledUnit">
                     <div className="Label">Main Summon</div>
                     <SummonUnit
-                        onClick={() => { openSearchModal(0) }}
                         editable={props.editable}
                         key="grid_main_summon"
                         position={-1}
                         unitType={0}
-                        summon={props.main}
+                        gridSummon={props.main}
+                        onClick={() => { openSearchModal(-1) }}
+                        updateUncap={initiateUncapUpdate}
                     />
                 </div>
 
                 <div className="LabeledUnit">
                     <div className="Label">Friend Summon</div>
                     <SummonUnit
-                        onClick={() => { openSearchModal(6) }}
                         editable={props.editable}
                         key="grid_friend_summon"
                         position={6}
                         unitType={2}
-                        summon={props.friend}
+                        gridSummon={props.friend}
+                        onClick={() => { openSearchModal(6) }}
+                        updateUncap={initiateUncapUpdate}
                     />
                 </div>
 
@@ -89,11 +112,12 @@ const SummonGrid = (props: Props) => {
                                 return (
                                     <li key={`grid_unit_${i}`} >
                                         <SummonUnit 
-                                            onClick={() => { openSearchModal(i) }}
                                             editable={props.editable}
                                             position={i} 
                                             unitType={1}
-                                            summon={props.grid[i]}
+                                            gridSummon={props.grid[i]}
+                                            onClick={() => { openSearchModal(i) }}
+                                            updateUncap={initiateUncapUpdate}
                                         />
                                     </li>
                                 )
@@ -104,16 +128,17 @@ const SummonGrid = (props: Props) => {
             </div>
             
             <ExtraSummons 
-                onClick={openSearchModal}
                 grid={props.grid} 
                 editable={props.editable} 
                 exists={false} 
                 offset={numSummons}
+                onClick={openSearchModal}
+                updateUncap={initiateUncapUpdate}
             />
 
             {open ? (
                 <SearchModal 
-                    grid={props.grid}
+                    grid={searchGrid}
                     close={closeModal}
                     send={sendData}
                     fromPosition={searchPosition}
