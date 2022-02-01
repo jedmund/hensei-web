@@ -1,36 +1,36 @@
-.Header {
+#Header {
     display: flex;
     height: 34px;
     width: 100%;
-}
 
-.Header .right {
-    display: flex;
-    gap: 8px;
-}
+    #right {
+        display: flex;
+        gap: 8px;
+    }
 
-.Header .push {
-    margin-left: auto;
-}
+    .dropdown {
+        display: inline-block;
+        position: relative;
 
-.dropdown {
-    display: inline-block;
-    position: relative;
-}
+        &:hover {
+            padding-right: 50px;
+            padding-bottom: 16px;
 
-.dropdown:hover {
-    padding-right: 50px;
-    padding-bottom: 16px;
-}
+            .Button .icon {
+                color: #2360C5;
+            }
 
-.dropdown:hover .Button .icon {
-    color: #2360C5;
-}
+            .Button .text {
+                color: #555;
+            }
 
-.dropdown:hover .Button .text {
-    color: #555;
-}
+            .Menu {
+                display: block;
+            }        
+        }
+    }
 
-.dropdown:hover .Menu {
-    display: block;
+    .push {
+        margin-left: auto;
+    }
 }
