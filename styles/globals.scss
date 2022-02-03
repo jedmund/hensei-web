@@ -1,42 +1,43 @@
 @import '~meyer-reset-scss';
 
 html {
-  background: $grey-90;
-  font-size: 62.5%;
-  padding: $unit * 2;
+    background: $background-color;
+    font-size: 62.5%;
+    padding: $unit * 2;
 }
 
 body {
-  -webkit-font-smoothing: antialiased;
-  font-family: system-ui, -apple-system, Helvetica Neue, Helvetica, Arial, sans-serif;
-  font-size: 1.4rem;
-  
-  &.no-scroll {
-      overflow: hidden;
-  }
+    -webkit-font-smoothing: antialiased;
+    font-family: system-ui, -apple-system, Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 1.4rem;
+    
+    &.no-scroll {
+        overflow: hidden;
+    }
 }
 
 a {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 button, input {
-  font-family: system-ui, -apple-system, Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-family: system-ui, -apple-system, Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 
 h1, h2, h3, p {
-  color: $grey-00;
+    color: $grey-00;
 }
 
 h1 {
-  font-size: 2.1rem;
-  font-weight: $medium;
-  text-align: center;
+    font-size: 2.1rem;
+    font-weight: $medium;
+    text-align: center;
 }
 
 #Content {
-  display: flex;
-  flex-direction: column;
-  gap: $unit * 3;
-  margin-top: $unit * 3;
-}
+    display: flex;
+    flex-direction: column;
+    gap: $unit * 3;
+    margin-top: $unit * 3;
+    min-width: 752px;
+

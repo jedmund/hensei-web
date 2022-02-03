@@ -1,7 +1,8 @@
 // @import 'include-media/dist/_include-media';
 
 // Breakpoints
-$breakpoints: (small: 320px, medium: 768px, large: 1024px);
+$breakpoints: (small: 320px, medium: 800px, large: 1024px);
+$medium-screen: 800px;
 
 // Sizing
 $unit: 8px;
@@ -12,6 +13,7 @@ $grey-10: #777;
 $grey-50: #888;
 $grey-80: #E9E9E9;
 $grey-90: #F5F5F5;
+$background-color: $grey-90;
 
 $blue: #61B3FF;
 $red: #FF6161;
@@ -23,10 +25,11 @@ $medium: 500;
 $bold: 600;
 
 // Font size
-$font-small:    12px;
-$font-regular:  14px;
-$font-large:    18px;
-$font-xlarge:   21px;
+$font-small:    11px;
+$font-button:   15px;
+$font-regular:  16px;
+$font-large:    21px;
+$font-xlarge:   24px;
 
 // Scale factors
 $scale-wide: scale(1.05, 1.05);
