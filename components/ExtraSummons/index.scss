@@ -10,6 +10,12 @@
     position: relative;
     left: 9px;
 
+    @media (max-width: $medium-screen) {
+        left: auto;
+        max-width: auto;
+        width: 100%;
+    }
+
     & > span {
         color: #825B39;
         display: flex;

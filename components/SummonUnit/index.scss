@@ -3,6 +3,42 @@
     flex-direction: column;
     gap: 4px;
 
+    &.main .SummonImage,
+    &.friend .SummonImage {
+        aspect-ratio: 182 / 315;
+        width: 182px;
+        height: auto;
+
+        @media (max-width: $medium-screen) {
+            width: 20.3vw;
+        }
+    }
+
+    &.grid {
+        // max-width: 148px;
+        // min-height: 141px;
+        min-height: 180px;
+
+        @media (max-width: $medium-screen) {
+            min-height: 16.5vw;
+        }
+
+        .SummonImage {
+            aspect-ratio: 148 / 111;
+            list-style-type: none;
+            width: 148px;
+            height: auto;
+
+            @media (max-width: $medium-screen) {
+                width: 20vw;
+            }
+        }
+    }
+
+    &.friend {
+        margin-right: 0;
+    }
+
     .SummonImage {
         background: white;
         border: 1px solid rgba(0, 0, 0, 0);
@@ -66,27 +102,4 @@
         width: 100%;
         z-index: 2;
     }
-}
-
-/* Mainhand */
-.SummonUnit.friend {
-    margin-right: 0;
-}
-
-.SummonUnit.main .SummonImage,
-.SummonUnit.friend .SummonImage {
-    height: 315px;
-    width: 182px;
-}
-
-/* Grid */
-.SummonUnit.grid {
-    max-width: 148px;
-    min-height: 141px;
-}
-
-.SummonUnit.grid .SummonImage {
-    list-style-type: none;
-    height: 111px;
-    width: 148px;
 }
