@@ -68,6 +68,14 @@ const WeaponGrid = (props: Props) => {
         setMainWeapon(props.mainhand)
     }, [props])
 
+    // Initialize an array of current uncap values for each weapon
+    useEffect(() => {
+        let initialPreviousUncapValues: {[key: number]: number} = {}
+        if (props.mainhand) initialPreviousUncapValues[-1] = props.mainhand.uncap_level
+        Object.values(props.weapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+        setPreviousUncapValues(initialPreviousUncapValues)
+    }, [props])
+
     // Update search grid whenever weapons or the mainhand are updated
     useEffect(() => {
         let newSearchGrid = Object.values(weapons).map((o) => o.weapon)
@@ -133,12 +141,12 @@ const WeaponGrid = (props: Props) => {
     // Methods: Updating uncap level
     // Note: Saves, but debouncing is not working properly
     async function saveUncap(id: string, position: number, uncapLevel: number) {
-        // TODO: Don't make an API call if the new uncapLevel is the same as the current uncapLevel
+        storePreviousUncapValue(position)
+
         try {
-            await api.updateUncap('weapon', id, uncapLevel)
-                .then(response => {
-                    storeGridWeapon(response.data.grid_weapon)
-                })
+            if (uncapLevel != previousUncapValues[position])
+                await api.updateUncap('weapon', id, uncapLevel)
+                    .then(response => { storeGridWeapon(response.data.grid_weapon) })
         } catch (error) {
             console.error(error)
 
@@ -155,11 +163,6 @@ const WeaponGrid = (props: Props) => {
     function initiateUncapUpdate(id: string, position: number, uncapLevel: number) {
         memoizeAction(id, position, uncapLevel)
 
-        // Save the current value in case of an unexpected result
-        let newPreviousValues = {...previousUncapValues}
-        newPreviousValues[position] = (mainWeapon && position == -1) ? mainWeapon.uncap_level : weapons[position].uncap_level
-        setPreviousUncapValues(newPreviousValues)
-
         // Optimistically update UI
         updateUncapLevel(position, uncapLevel)
     }
@@ -167,7 +170,7 @@ const WeaponGrid = (props: Props) => {
     const memoizeAction = useCallback(
         (id: string, position: number, uncapLevel: number) => {
             debouncedAction(id, position, uncapLevel)
-        }, [props]
+        }, [props, previousUncapValues]
     )
 
     const debouncedAction = useMemo(() =>
@@ -185,6 +188,13 @@ const WeaponGrid = (props: Props) => {
             newWeapons[position].uncap_level = uncapLevel
             setWeapons(newWeapons)
         }
+    }
+
+    function storePreviousUncapValue(position: number) {
+        // Save the current value in case of an unexpected result
+        let newPreviousValues = {...previousUncapValues}
+        newPreviousValues[position] = (mainWeapon && position == -1) ? mainWeapon.uncap_level : weapons[position].uncap_level
+        setPreviousUncapValues(newPreviousValues)
     }
 
     // Render: JSX components

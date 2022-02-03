@@ -62,6 +62,15 @@ const SummonGrid = (props: Props) => {
     // Create a state dictionary to store pure objects for Search
     const [searchGrid, setSearchGrid] = useState<GridArray<Summon>>({})
 
+    // Initialize an array of current uncap values for each summon
+    useEffect(() => {
+        let initialPreviousUncapValues: {[key: number]: number} = {}
+        if (props.mainSummon) initialPreviousUncapValues[-1] = props.mainSummon.uncap_level
+        if (props.friendSummon) initialPreviousUncapValues[6] = props.friendSummon.uncap_level
+        Object.values(props.summons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+        setPreviousUncapValues(initialPreviousUncapValues)
+    }, [props])
+
     // Set states from props
     useEffect(() => {
         setSummons(props.summons || {})
@@ -138,11 +147,12 @@ const SummonGrid = (props: Props) => {
     // Methods: Updating uncap level
     // Note: Saves, but debouncing is not working properly
     async function saveUncap(id: string, position: number, uncapLevel: number) {
+        storePreviousUncapValue(position)
+
         try {
-            await api.updateUncap('summon', id, uncapLevel)
-                .then(response => {
-                    storeGridSummon(response.data.grid_summon)
-                })
+            if (uncapLevel != previousUncapValues[position])
+                await api.updateUncap('summon', id, uncapLevel)
+                    .then(response => { storeGridSummon(response.data.grid_summon) })
         } catch (error) {
             console.error(error)
 
@@ -159,11 +169,6 @@ const SummonGrid = (props: Props) => {
     const initiateUncapUpdate = useCallback(
         (id: string, position: number, uncapLevel: number) => {
             memoizeAction(id, position, uncapLevel)
-
-            // Save the current value in case of an unexpected result
-            let newPreviousValues = {...previousUncapValues}
-            newPreviousValues[position] = summons[position].uncap_level
-            setPreviousUncapValues(newPreviousValues)
 
             // Optimistically update UI
             updateUncapLevel(position, uncapLevel)
@@ -186,6 +191,17 @@ const SummonGrid = (props: Props) => {
         let newSummons = Object.assign({}, summons)
         newSummons[position].uncap_level = uncapLevel
         setSummons(newSummons)
+    }
+
+    function storePreviousUncapValue(position: number) {
+        // Save the current value in case of an unexpected result
+        let newPreviousValues = {...previousUncapValues}
+
+        if (mainSummon && position == -1) newPreviousValues[position] = mainSummon.uncap_level
+        else if (friendSummon && position == 6) newPreviousValues[position] = friendSummon.uncap_level 
+        else newPreviousValues[position] = summons[position].uncap_level
+
+        setPreviousUncapValues(newPreviousValues)
     }
 
     // Render: JSX components

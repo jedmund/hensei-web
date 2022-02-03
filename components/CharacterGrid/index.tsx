@@ -63,6 +63,13 @@ const CharacterGrid = (props: Props) => {
         setCharacters(props.characters || {})
     }, [props])
 
+    // Initialize an array of current uncap values for each characters
+    useEffect(() => {
+        let initialPreviousUncapValues: {[key: number]: number} = {}
+        Object.values(props.characters).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+        setPreviousUncapValues(initialPreviousUncapValues)
+    }, [props])
+    
     // Update search grid whenever characters are updated
     useEffect(() => {
         let newSearchGrid = Object.values(characters).map((o) => o.character)
@@ -131,11 +138,12 @@ const CharacterGrid = (props: Props) => {
     // Methods: Updating uncap level
     // Note: Saves, but debouncing is not working properly
     async function saveUncap(id: string, position: number, uncapLevel: number) {
+        storePreviousUncapValue(position)
+
         try {
-            await api.updateUncap('weapon', id, uncapLevel)
-                .then(response => {
-                    storeGridCharacter(response.data.grid_character)
-                })
+            if (uncapLevel != previousUncapValues[position])
+                await api.updateUncap('weapon', id, uncapLevel)
+                    .then(response => { storeGridCharacter(response.data.grid_character) })
         } catch (error) {
             console.error(error)
 
@@ -152,11 +160,6 @@ const CharacterGrid = (props: Props) => {
     const initiateUncapUpdate = useCallback(
         (id: string, position: number, uncapLevel: number) => {
             memoizeAction(id, position, uncapLevel)
-
-            // Save the current value in case of an unexpected result
-            let newPreviousValues = {...previousUncapValues}
-            newPreviousValues[position] = characters[position].uncap_level
-            setPreviousUncapValues(newPreviousValues)
 
             // Optimistically update UI
             updateUncapLevel(position, uncapLevel)
@@ -179,6 +182,14 @@ const CharacterGrid = (props: Props) => {
         let newCharacters = {...characters}
         newCharacters[position].uncap_level = uncapLevel
         setCharacters(newCharacters)
+    }
+
+    function storePreviousUncapValue(position: number) {
+        // Save the current value in case of an unexpected result
+        let newPreviousValues = {...previousUncapValues}
+         newPreviousValues[position] = characters[position].uncap_level
+
+        setPreviousUncapValues(newPreviousValues)
     }
 
     // Render: JSX components
