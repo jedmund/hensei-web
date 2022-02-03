@@ -6,11 +6,84 @@
 
 .SegmentedControl {
     background: white;
-    border-radius: $unit;
+    border-radius: $unit * 3;
     display: inline-flex;
+    padding: 3px;
     position: relative;
     user-select: none;
     overflow: hidden;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     z-index: 1;
+    
+    &.fire {
+        .Segment input:checked + label {
+            background: $fire-bg-dark;
+            color: $fire-text-dark;
+        }
+
+        .Segment:hover label {
+            background: $fire-bg-light;
+            color: $fire-text-light;
+        }
+    }
+
+    &.water {
+        .Segment input:checked + label {
+            background: $water-bg-dark;
+            color: $water-text-dark;
+        }
+
+        .Segment:hover label {
+            background: $water-bg-light;
+            color: $water-text-light;
+        }
+    }
+
+    &.earth {
+        .Segment input:checked + label {
+            background: $earth-bg-dark;
+            color: $earth-text-dark;
+        }
+
+        .Segment:hover label {
+            background: $earth-bg-light;
+            color: $earth-text-light;
+        }
+    }
+
+    &.wind {
+        .Segment input:checked + label {
+            background: $wind-bg-dark;
+            color: $wind-text-dark;
+        }
+
+        .Segment:hover label {
+            background: $wind-bg-light;
+            color: $wind-text-light;
+        }
+    }
+
+    &.light {
+        .Segment input:checked + label {
+            background: $light-bg-dark;
+            color: $light-text-dark;
+        }
+
+        .Segment:hover label {
+            background: $light-bg-light;
+            color: $light-text-light;
+        }
+    }
+
+    &.dark {
+        .Segment input:checked + label {
+            background: $dark-bg-dark;
+            color: $dark-text-dark;
+        }
+
+        .Segment:hover label {
+            background: $dark-bg-light;
+            color: $dark-text-light;
+        }
+    }
 }
