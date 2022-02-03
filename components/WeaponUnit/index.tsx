@@ -48,7 +48,6 @@ const WeaponUnit = (props: Props) => {
     }
 
     function passUncapData(uncap: number) {
-        console.log("Passing uncap data to updateUncap callback...")
         if (props.gridWeapon)
             props.updateUncap(props.gridWeapon.id, props.position, uncap)
     }
