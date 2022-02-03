@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useModal as useModal } from '~utils/useModal'
 
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
+
+import PartyContext from '~context/PartyContext'
 
 import SearchModal from '~components/SearchModal'
 import WeaponUnit from '~components/WeaponUnit'
@@ -47,6 +49,9 @@ const WeaponGrid = (props: Props) => {
     // Set up state for party
     const [partyId, setPartyId] = useState('')
 
+    // Set up the party context
+    const { setElement } = useContext(PartyContext)
+
     // Set up states for Grid data
     const [weapons, setWeapons] = useState<GridArray<GridWeapon>>({})
     const [mainWeapon, setMainWeapon] = useState<GridWeapon>()
@@ -75,6 +80,10 @@ const WeaponGrid = (props: Props) => {
         Object.values(props.weapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
         setPreviousUncapValues(initialPreviousUncapValues)
     }, [props])
+
+    useEffect(() => {
+        if (mainWeapon) setElement(mainWeapon.weapon.element)
+    }, [mainWeapon])
 
     // Update search grid whenever weapons or the mainhand are updated
     useEffect(() => {

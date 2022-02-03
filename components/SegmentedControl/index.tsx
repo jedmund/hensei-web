@@ -2,12 +2,14 @@ import React from 'react'
 
 import './index.scss'
 
-interface Props {}
+interface Props {
+    elementClass?: string
+}
 
-const SegmentedControl: React.FC<Props> = ({ children }) => {
+const SegmentedControl: React.FC<Props> = ({ elementClass, children }) => {
     return (
         <div className="SegmentedControlWrapper">
-            <div className="SegmentedControl">
+            <div className={`SegmentedControl ${(elementClass) ? elementClass : ''}`}>
                 {children}
             </div>
         </div>

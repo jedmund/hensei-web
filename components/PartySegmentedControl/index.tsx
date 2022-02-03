@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './index.scss'
+
+import PartyContext from '~context/PartyContext'
 
 import SegmentedControl from '~components/SegmentedControl'
 import Segment from '~components/Segment'
@@ -22,6 +24,19 @@ interface Props {
 }
 
 const PartySegmentedControl = (props: Props) => {
+    const { element } = useContext(PartyContext)
+
+    function getElement() {
+        switch(element) {
+            case 1: return "wind"; break
+            case 2: return "fire"; break
+            case 3: return "water"; break
+            case 4: return "earth"; break
+            case 5: return "dark"; break
+            case 6: return "light"; break
+        }
+    }
+
     const extraToggle =
         <div className="ExtraSwitch">
             Extra
@@ -35,7 +50,7 @@ const PartySegmentedControl = (props: Props) => {
 
     return (
         <div className="PartyNavigation">
-            <SegmentedControl>
+            <SegmentedControl elementClass={getElement()}>
                 <Segment
                     groupName="grid"
                     name="class"
