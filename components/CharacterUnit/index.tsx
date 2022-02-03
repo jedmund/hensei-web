@@ -15,8 +15,6 @@ interface Props {
 }
 
 const CharacterUnit = (props: Props) => {
-    console.log(props.gridCharacter?.character.name.en, props.gridCharacter?.uncap_level)
-
     const [imageUrl, setImageUrl] = useState('')
 
     const classes = classnames({
@@ -44,7 +42,6 @@ const CharacterUnit = (props: Props) => {
     }
 
     function passUncapData(uncap: number) {
-        console.log(`passuncapdata ${uncap}`)
         if (props.gridCharacter)
             props.updateUncap(props.gridCharacter.id, props.position, uncap)
     }
