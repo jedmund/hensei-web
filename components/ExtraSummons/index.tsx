@@ -18,7 +18,7 @@ interface Props {
     found?: boolean
     offset: number
     onClick: (position: number) => void
-    updateUncap: (id: string, uncap: number) => void
+    updateUncap: (id: string, position: number, uncap: number) => void
 }
 
 const ExtraSummons = (props: Props) => {

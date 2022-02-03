@@ -8,27 +8,36 @@ interface Props {
     rarity?: number
     uncapLevel: number
     flb: boolean
-    ulb?: boolean
+    ulb: boolean
+    special: boolean
     updateUncap: (uncap: number) => void
 }
 
 const UncapIndicator = (props: Props) => {
     const [uncap, setUncap] = useState(props.uncapLevel)
 
-    useEffect(() => {
-        props.updateUncap(uncap)
-    }, [uncap])
-
     const numStars = setNumStars()
     function setNumStars() {
         let numStars
         
         if (props.type === 'character') {
-            if (props.flb) {
-                numStars = 5
+            if (props.special) {
+                if (props.ulb) {
+                    numStars = 5
+                } else if (props.flb) {
+                    numStars = 4
+                } else {
+                    numStars = 3
+                }
             } else {
-                numStars = 4
-            }
+                if (props.ulb) {
+                    numStars = 6
+                } else if (props.flb) {
+                    numStars = 5
+                } else {
+                    numStars = 4
+                }
+            }      
         } else {
             if (props.ulb) {
                 numStars = 5
@@ -43,31 +52,38 @@ const UncapIndicator = (props: Props) => {
     }
 
     function toggleStar(index: number, empty: boolean) {
-        if (empty) setUncap(index + 1)
-        else setUncap(index)
+        if (empty) props.updateUncap(index + 1)
+        else props.updateUncap(index)
     }
 
     const transcendence = (i: number) => {
-        return <UncapStar ulb={true} empty={i >= uncap} key={`star_${i}`} index={i} onClick={toggleStar} />
+        return <UncapStar ulb={true} empty={i >= props.uncapLevel} key={`star_${i}`} index={i} onClick={toggleStar} />
+    }
+
+    const ulb = (i: number) => {
+        return <UncapStar ulb={true} empty={i >= props.uncapLevel} key={`star_${i}`} index={i} onClick={toggleStar} />
     }
 
     const flb = (i: number) => {
-        return <UncapStar flb={true} empty={i >= uncap} key={`star_${i}`} index={i} onClick={toggleStar} />
+        return <UncapStar flb={true} empty={i >= props.uncapLevel} key={`star_${i}`} index={i} onClick={toggleStar} />
     }
 
     const mlb = (i: number) => {
-        return <UncapStar empty={i >= uncap} key={`star_${i}`} index={i} onClick={toggleStar} />
+        // console.log("MLB; Number of stars:", props.uncapLevel)
+        return <UncapStar empty={i >= props.uncapLevel} key={`star_${i}`} index={i} onClick={toggleStar} />
     }
-
-
 
     return (
         <ul className="UncapIndicator">
             {
                 Array.from(Array(numStars)).map((x, i) => {
                     if (props.type === 'character' && i > 4) {
-                        return transcendence(i)
+                        if (props.special)
+                            return ulb(i)
+                        else
+                            return transcendence(i)
                     } else if (
+                        props.special && props.type === 'character' && i == 3 ||
                         props.type === 'character' && i == 4 ||
                         props.type !== 'character' && i > 2) {
                         return flb(i)

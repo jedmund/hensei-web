@@ -7,12 +7,12 @@ import PlusIcon from '~public/icons/plus.svg'
 import './index.scss'
 
 interface Props {
-    onClick: () => void
-    updateUncap: (id: string, uncap: number) => void
     gridWeapon: GridWeapon | undefined
+    unitType: 0 | 1
     position: number
     editable: boolean
-    unitType: 0 | 1
+    onClick: () => void
+    updateUncap: (id: string, position: number, uncap: number) => void
 }
 
 const WeaponUnit = (props: Props) => {
@@ -48,8 +48,9 @@ const WeaponUnit = (props: Props) => {
     }
 
     function passUncapData(uncap: number) {
+        console.log("Passing uncap data to updateUncap callback...")
         if (props.gridWeapon)
-            props.updateUncap(props.gridWeapon.id, uncap)
+            props.updateUncap(props.gridWeapon.id, props.position, uncap)
     }
 
     return (
@@ -66,7 +67,8 @@ const WeaponUnit = (props: Props) => {
                         ulb={gridWeapon.weapon.uncap.ulb || false} 
                         flb={gridWeapon.weapon.uncap.flb || false}
                         uncapLevel={gridWeapon.uncap_level}
-                        updateUncap={passUncapData} 
+                        updateUncap={passUncapData}
+                        special={false}
                     /> : ''
                 }
             </div>

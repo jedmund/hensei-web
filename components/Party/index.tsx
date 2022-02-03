@@ -1,14 +1,13 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
-import api from '~utils/api'
 
-// UI Elements
 import PartySegmentedControl from '~components/PartySegmentedControl'
-
-// Grids
 import WeaponGrid from '~components/WeaponGrid'
 import SummonGrid from '~components/SummonGrid'
 import CharacterGrid from '~components/CharacterGrid'
+
+import api from '~utils/api'
+import './index.scss'
 
 // GridType
 enum GridType {
@@ -17,96 +16,58 @@ enum GridType {
     Weapon,
     Summon
 }
-export { GridType }
 
-import './index.scss'
-
+// Props
 interface Props {
     partyId?: string
     mainWeapon?: GridWeapon
     mainSummon?: GridSummon
     friendSummon?: GridSummon
-    characters?: GridArray<Character>
+    characters?: GridArray<GridCharacter>
     weapons?: GridArray<GridWeapon>
     summons?: GridArray<GridSummon>
     extra: boolean
     editable: boolean
-    exists: boolean
     pushHistory?: (path: string) => void
 }
 
 const Party = (props: Props) => {
+    // Cookies
     const [cookies, _] = useCookies(['user'])
-
     const headers = (cookies.user != null) ? {
         headers: {
             'Authorization': `Bearer ${cookies.user.access_token}`
         }
     } : {}
 
-    // Grid data
-    const [characters, setCharacters] = useState<GridArray<Character>>({})
-    const [weapons, setWeapons] = useState<GridArray<GridWeapon>>({})
-    const [summons, setSummons] = useState<GridArray<GridSummon>>({})
-
-    const [mainWeapon, setMainWeapon] = useState<GridWeapon>()
-    const [mainSummon, setMainSummon] = useState<GridSummon>()
-    const [friendSummon, setFriendSummon] = useState<GridSummon>()
-
+    // Set up states
     const [extra, setExtra] = useState<boolean>(false)
-
-    useEffect(() => {
-        setPartyId(props.partyId || '')
-        setMainWeapon(props.mainWeapon)
-        setMainSummon(props.mainSummon)
-        setFriendSummon(props.friendSummon)
-        setCharacters(props.characters || {})
-        setWeapons(props.weapons || {})
-        setSummons(props.summons || {})
-        setExtra(props.extra || false)
-    }, [props.partyId, props.mainWeapon, props.mainSummon, props.friendSummon, props.characters, props.weapons, props.summons, props.extra])
-
-    const weaponGrid = (
-        <WeaponGrid 
-            userId={cookies.user ? cookies.user.userId : ''} 
-            mainhand={mainWeapon}
-            grid={weapons}
-            editable={props.editable} 
-            exists={props.exists}
-            extra={extra}
-            onSelect={itemSelected}
-        />
-    )
-
-    const summonGrid = (
-        <SummonGrid 
-            userId={cookies.user ? cookies.user.userId : ''} 
-            main={mainSummon}
-            friend={friendSummon}
-            grid={summons}
-            editable={props.editable} 
-            exists={props.exists} 
-            onSelect={itemSelected}
-        />
-    )
-
-    const characterGrid = (
-        <CharacterGrid
-            userId={cookies.user ? cookies.user.userId : ''}
-            grid={characters}
-            editable={props.editable}
-            exists={props.exists}
-            onSelect={itemSelected}
-        />
-    )
-
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
-    const [partyId, setPartyId] = useState('')
 
+    // Set states from props
+    useEffect(() => {
+        setExtra(props.extra || false)
+    }, [props])
+
+    // Methods: Creating a new party
+    async function createParty() {
+        let body = {
+            party: {
+                ...(cookies.user) && { user_id: cookies.user.user_id },
+                is_extra: extra
+            }
+        }
+
+        return await api.endpoints.parties.create(body, headers)
+    }
+
+    // Methods: Updating the party's extra flag
+    // Note: This doesn't save to the server yet.
     function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
         setExtra(event.target.checked)
     }
 
+    // Methods: Navigating with segmented control
     function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
         switch(event.target.value) {
             case 'class':
@@ -126,174 +87,66 @@ const Party = (props: Props) => {
         }
     }
 
-    function itemSelected(type: GridType, item: Character | Weapon | Summon, position: number) {
-        if (!partyId) {
-            createParty()
-                .then(response => {
-                    return response.data.party
-                })
-                .then(party => {
-                    if (props.pushHistory) {   
-                        props.pushHistory(`/p/${party.shortcode}`)
-                    }
+    // Render: JSX components
+    const navigation = (
+        <PartySegmentedControl
+            extra={props.extra}
+            editable={props.editable}
+            selectedTab={currentTab}
+            onClick={segmentClicked}
+            onCheckboxChange={checkboxChanged}
+        />
+    )
 
-                    return party.id
-                })
-                .then(partyId => {
-                    setPartyId(partyId)
-                    saveItem(partyId, type, item, position)
-                })
-        } else {
-            saveItem(partyId, type, item, position)
-        }
-    }
+    const weaponGrid = (
+        <WeaponGrid 
+            partyId={props.partyId}
+            mainhand={props.mainWeapon}
+            weapons={props.weapons || {}}
+            extra={props.extra}
+            editable={props.editable}
+            createParty={createParty}
+            pushHistory={props.pushHistory}
+        />
+    )
 
-    async function createParty() {
-        const body = (!cookies.user) ? {
-            party: {
-                is_extra: extra
-            }
-        } : {
-            party: {
-                user_id: cookies.user.userId,
-                is_extra: extra
-            }
-        }
+    const summonGrid = (
+        <SummonGrid 
+            partyId={props.partyId}
+            mainSummon={props.mainSummon}
+            friendSummon={props.friendSummon}
+            summons={props.summons || {}}
+            editable={props.editable} 
+            createParty={createParty}
+            pushHistory={props.pushHistory}
+        />
+    )
 
-        return await api.endpoints.parties.create(body, headers)
-    }
+    const characterGrid = (
+        <CharacterGrid
+            partyId={props.partyId}
+            characters={props.characters || {}}
+            editable={props.editable}
+            createParty={createParty}
+            pushHistory={props.pushHistory}
+        />
+    )
 
-    function saveItem(partyId: string, type: GridType, item: Character | Weapon | Summon, position: number) {
-        switch(type) {
-            case GridType.Class:
-                saveClass()
-                break
+    const currentGrid = () => {
+        switch(currentTab) {
             case GridType.Character:
-                const character = item as Character
-                saveCharacter(character, position, partyId)
-                    .then(() => {
-                        storeCharacter(character, position)
-                    })
-                break
+                return characterGrid
             case GridType.Weapon:
-                const weapon = item as Weapon
-                saveWeapon(weapon, position, partyId)
-                    .then((response) => {
-                        storeWeapon(response.data.grid_weapon)
-                    })
-                break
+                return weaponGrid
             case GridType.Summon:
-                const summon = item as Summon
-                saveSummon(summon, position, partyId)
-                    .then((response) => {
-                        storeSummon(response.data.grid_summon, position)
-                    })
-                break
+                return summonGrid
         }
-    }
-    
-    // Weapons
-    function storeWeapon(weapon: GridWeapon) {
-        if (weapon.position == -1) {
-            setMainWeapon(weapon)
-        } else {
-            // Store the grid unit weapon at the correct position
-            let newWeapons = Object.assign({}, weapons)
-            newWeapons[weapon.position!] = weapon
-            setWeapons(newWeapons)
-        }
-    }
-
-    async function saveWeapon(weapon: Weapon, position: number, party: string) {
-        let uncapLevel = 3
-
-        if (weapon.uncap.ulb)
-            uncapLevel = 5
-        else if (weapon.uncap.flb)
-            uncapLevel = 4
-
-        return await api.endpoints.weapons.create({
-            'weapon': {
-                'party_id': party,
-                'weapon_id': weapon.id,
-                'position': position,
-                'mainhand': (position == -1),
-                'uncap_level': uncapLevel
-            }
-        }, headers)
-    }
-
-    // Summons
-    function storeSummon(summon: GridSummon, position: number) {
-        if (position == -1) {
-            setMainSummon(summon)
-        } else if (position == 6) {
-            setFriendSummon(summon)
-        } else {
-            // Store the grid unit summon at the correct position
-            let newSummons = Object.assign({}, summons)
-            newSummons[position] = summon
-            setSummons(newSummons)
-        }
-    }
-
-    async function saveSummon(summon: Summon, position: number, party: string) {
-        return await api.endpoints.summons.create({
-            'summon': {
-                'party_id': party,
-                'summon_id': summon.id,
-                'position': position,
-                'main': (position == -1),
-                'friend': (position == 6)
-            }
-        }, headers)
-    }
-
-    // Character
-    function storeCharacter(character: Character, position: number) {
-        // Store the grid unit character at the correct position
-        let newCharacters = Object.assign({}, characters)
-        newCharacters[position] = character
-        setCharacters(newCharacters)
-    }
-
-    async function saveCharacter(character: Character, position: number, party: string) {
-        await api.endpoints.characters.create({
-            'character': {
-                'party_id': party,
-                'character_id': character.id,
-                'position': position
-            }
-        }, headers)
-    }
-
-    // Class
-    function saveClass() {
-        // TODO: Implement this
     }
 
     return (
         <div>
-            <PartySegmentedControl
-                extra={extra}
-                editable={props.editable}
-                selectedTab={currentTab}
-                onClick={segmentClicked}
-                onCheckboxChange={checkboxChanged}
-            />
-            
-            {
-                (() => {
-                    switch(currentTab) {
-                        case GridType.Character:
-                            return characterGrid
-                        case GridType.Weapon:
-                            return weaponGrid
-                        case GridType.Summon:
-                            return summonGrid
-                    }
-                })()
-            }
+            { navigation }
+            { currentGrid() }
         </div>
     )
 }

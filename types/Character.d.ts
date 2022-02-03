@@ -21,6 +21,7 @@ interface Character {
     }
     uncap: {
         flb: boolean
+        ulb: boolean
     }
     race: {
         race1: number
@@ -31,4 +32,5 @@ interface Character {
         proficiency2: number
     }
     position?: number
+    special: boolean
 }

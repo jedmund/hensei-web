@@ -15,11 +15,10 @@ export enum GridType {
 interface Props {
     grid: GridArray<GridWeapon>
     editable: boolean
-    exists: boolean
     found?: boolean
     offset: number
     onClick: (position: number) => void
-    updateUncap: (id: string, uncap: number) => void
+    updateUncap: (id: string, position: number, uncap: number) => void
 }
 
 const ExtraWeapons = (props: Props) => {

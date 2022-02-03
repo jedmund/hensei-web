@@ -22,7 +22,7 @@ const PartyRoute: React.FC = () => {
     const [loading, setLoading] = useState(true)
     const [editable, setEditable] = useState(false)
 
-    const [characters, setCharacters] = useState<GridArray<Character>>({})
+    const [characters, setCharacters] = useState<GridArray<GridCharacter>>({})
     const [weapons, setWeapons] = useState<GridArray<GridWeapon>>({})
     const [summons, setSummons] = useState<GridArray<GridSummon>>({})
 
@@ -73,11 +73,11 @@ const PartyRoute: React.FC = () => {
         }
 
         function populateCharacters(list: [GridCharacter]) {
-            let characters: GridArray<Character> = {}
+            let characters: GridArray<GridCharacter> = {}
 
             list.forEach((object: GridCharacter) => {
                 if (object.position != null)
-                    characters[object.position] = object.character
+                    characters[object.position] = object
             })
 
             return characters

@@ -8,7 +8,7 @@ import './index.scss'
 
 interface Props {
     onClick: () => void
-    updateUncap: (id: string, uncap: number) => void
+    updateUncap: (id: string, position: number, uncap: number) => void
     gridSummon: GridSummon | undefined
     position: number
     editable: boolean
@@ -67,7 +67,8 @@ const SummonUnit = (props: Props) => {
                     ulb={summon?.uncap.ulb || false}
                     flb={summon?.uncap.flb || false}
                     uncapLevel={gridSummon?.uncap_level} 
-                    updateUncap={passUncapData}                
+                    updateUncap={passUncapData}
+                    special={false}               
                 /> : '' }
                 <h3 className="SummonName">{summon?.name.en}</h3>
             </div>
