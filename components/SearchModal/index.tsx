@@ -10,7 +10,7 @@ import WeaponResult from '~components/WeaponResult'
 import SummonResult from '~components/SummonResult'
 
 import './index.scss'
-import PlusIcon from '~public/icons/plus.svg'
+import PlusIcon from '~public/icons/Add.svg'
 
 interface Props {
     close: () => void
