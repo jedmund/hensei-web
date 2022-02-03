@@ -58,7 +58,7 @@ class Api {
         return axios.get(url)
     }
 
-    check(resource: 'username'|'email', value: string) {
+    check(resource: string, value: string) {
         const resourceUrl = `${this.url}/check/${resource}`
         return axios.post(resourceUrl, {
             [resource]: value
