@@ -23,10 +23,10 @@ interface Props {
 
 const PartySegmentedControl = (props: Props) => {
     const extraToggle =
-        <div className="Extra">
+        <div className="ExtraSwitch">
             Extra
             <ToggleSwitch 
-                name="Extra" 
+                name="ExtraSwitch" 
                 editable={props.editable}
                 checked={props.extra}
                 onChange={props.onCheckboxChange} 

@@ -7,10 +7,10 @@
     position: relative;
 }
 
-.Extra {
+.ExtraSwitch {
     color: #888;
     display: flex;
-    font-weight: 500;
+    font-weight: $normal;
     gap: 8px;
     line-height: 34px;
     height: 100%;
