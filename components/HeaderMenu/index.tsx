@@ -6,8 +6,6 @@ import Link from 'next/link'
 import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
 
-import AppContext from '~context/AppContext'
-
 import { useModal as useSignupModal } from '~utils/useModal'
 import { useModal as useLoginModal } from '~utils/useModal'
 import { useModal as useAboutModal } from '~utils/useModal'
@@ -16,13 +14,12 @@ import AboutModal from '~components/AboutModal'
 
 
 interface Props {
+    authenticated: boolean,
     username?: string,
-    logout: () => void
+    logout?: () => void
 }
 
 const HeaderMenu = (props: Props) => {
-    const { authenticated } = useContext(AppContext)
-
     const { open: signupOpen, openModal: openSignupModal, closeModal: closeSignupModal } = useSignupModal()
     const { open: loginOpen, openModal: openLoginModal, closeModal: closeLoginModal } = useLoginModal()
     const { open: aboutOpen, openModal: openAboutModal, closeModal: closeAboutModal } = useAboutModal()
@@ -83,7 +80,7 @@ const HeaderMenu = (props: Props) => {
         )
     }
 
-    return (authenticated) ? authItems() : unauthItems()
+    return (props.authenticated) ? authItems() : unauthItems()
 }
 
 export default HeaderMenu

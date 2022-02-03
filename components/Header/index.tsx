@@ -12,7 +12,7 @@ import './index.scss'
 interface Props {}
 
 const Header = (props: Props) => {
-    const { editable, setEditable, setAuthenticated } = useContext(AppContext)
+    const { editable, setEditable, authenticated, setAuthenticated } = useContext(AppContext)
 
     const [username, setUsername] = useState(undefined)
     const [cookies, _, removeCookie] = useCookies(['user'])
@@ -21,12 +21,14 @@ const Header = (props: Props) => {
 
     useEffect(() => {
         if (cookies.user) {
+            setAuthenticated(true)
             setUsername(cookies.user.username)
             console.log(`Logged in as user "${cookies.user.username}"`)
         } else {
+            setAuthenticated(false)
             console.log('You are currently not logged in.')
         }
-    }, [cookies])
+    }, [cookies, setUsername, setAuthenticated])
 
     function copyToClipboard() {
         const el = document.createElement('input')
@@ -60,8 +62,8 @@ const Header = (props: Props) => {
                 <div className="dropdown">
                     <Button type="menu">Menu</Button>
                     { (username) ? 
-                        <HeaderMenu username={username} logout={logout} /> :
-                        <HeaderMenu logout={logout} />
+                        <HeaderMenu authenticated={authenticated} username={username} logout={logout} /> :
+                        <HeaderMenu authenticated={authenticated} />
                     }
                 </div>
             </div>
