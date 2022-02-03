@@ -1,12 +1,12 @@
 .CharacterUnit {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: $unit / 2;
     max-width: 200px;
 
     &.editable .CharacterImage:hover {
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
+        border: $hover-stroke;
+        box-shadow: $hover-shadow;
         cursor: pointer;
         transform: $scale-tall;
     }
@@ -45,7 +45,7 @@
         aspect-ratio: 131 / 238;
         background: white;
         border: 1px solid rgba(0, 0, 0, 0);
-        border-radius: 8px;
+        border-radius: $unit;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -58,18 +58,18 @@
             width: 17vw;
         }
 
-        &:hover .icon {
-            color: #555;
+        &:hover .icon svg {
+            color: $grey-10;
         }
 
         .icon {
             position: absolute;
-            height: 20px;
-            width: 20px;
+            height: $unit * 3;
+            width: $unit * 3;
             z-index: 1;
         
             svg {
-                fill: #c9c9c9;
+                fill: $grey-70;
             }
         }
     }

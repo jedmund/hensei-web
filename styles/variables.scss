@@ -35,3 +35,7 @@ $font-xlarge:   24px;
 // Scale factors
 $scale-wide: scale(1.05, 1.05);
 $scale-tall: scale(1.012, 1.012);
+
+// Shadows
+$hover-stroke: 1px solid rgba(0, 0, 0, 0.1);
+$hover-shadow: rgba(0, 0, 0, 0.08) 0px 0px 14px;

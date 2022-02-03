@@ -4,8 +4,8 @@
     gap: 4px;
 
     &.editable .WeaponImage:hover {
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
+        border: $hover-stroke;
+        box-shadow: $hover-shadow;
         cursor: pointer;
         transform: $scale-wide;
     }
@@ -64,22 +64,22 @@
     .WeaponImage {
         background: white;
         border: 1px solid rgba(0, 0, 0, 0);
-        border-radius: 8px;
+        border-radius: $unit;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 2px;
+        margin-bottom: $unit / 4;
         overflow: hidden;
         transition: all 0.18s ease-in-out;
 
-        &:hover .icon {
-            color: #555;
+        &:hover .icon svg {
+            fill: $grey-10;
         }
 
         h3 {
-            color: #333;
+            color: $grey-00;
             font-size: $font-regular;
-            font-weight: 500;
+            font-weight: $medium;
             margin: 0;
             text-align: center;
         }
@@ -92,12 +92,12 @@
 
         .icon {
             position: absolute;
-            height: 20px;
-            width: 20px;
+            height: $unit * 3;
+            width: $unit * 3;
             z-index: 1;
         
             svg {
-                fill: #c9c9c9;
+                fill: $grey-70;
             }
         }
     }
