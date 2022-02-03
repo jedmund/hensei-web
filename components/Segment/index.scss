@@ -7,15 +7,15 @@
 
     &:hover label {
         background: $grey-90;
-        color: $grey-00;
+        color: $grey-10;
     }
 
     & input {
         display: none;
 
         &:checked + label {
-            background: $blue;
-            color: white;
+            background: $grey-90;
+            color: $grey-00;
         }
     }
 
