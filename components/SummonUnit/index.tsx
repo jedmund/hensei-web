@@ -49,9 +49,9 @@ const SummonUnit = (props: Props) => {
         setImageUrl(imgSrc)
     }
 
-    function passUncapData(uncap: number) {
+    function passUncapData(position: number, uncap: number) {
         if (props.gridSummon)
-            props.updateUncap(props.gridSummon.id, uncap)
+            props.updateUncap(props.gridSummon.id, position, uncap)
     }
 
     return (
