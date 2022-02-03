@@ -146,29 +146,28 @@ const WeaponGrid = (props: Props) => {
         }
     }
 
+    function initiateUncapUpdate(id: string, position: number, uncapLevel: number) {
+        memoizeAction(id, position, uncapLevel)
+
+        // Save the current value in case of an unexpected result
+        let newPreviousValues = {...previousUncapValues}
+        newPreviousValues[position] = (mainWeapon && position == -1) ? mainWeapon.uncap_level : weapons[position].uncap_level
+        setPreviousUncapValues(newPreviousValues)
+
+        // Optimistically update UI
+        updateUncapLevel(position, uncapLevel)
+    }
+
     const memoizeAction = useCallback(
         (id: string, position: number, uncapLevel: number) => {
             debouncedAction(id, position, uncapLevel)
-        }, []
+        }, [props]
     )
 
-    function initiateUncapUpdate(id: string, position: number, uncapLevel: number) {
-            memoizeAction(id, position, uncapLevel)
-
-            // Save the current value in case of an unexpected result
-            let newPreviousValues = {...previousUncapValues}
-            newPreviousValues[position] = (mainWeapon && position == -1) ? mainWeapon.uncap_level : weapons[position].uncap_level
-            setPreviousUncapValues(newPreviousValues)
-
-            // Optimistically update UI
-            updateUncapLevel(position, uncapLevel)
-        
-    }
-
     const debouncedAction = useMemo(() =>
-        debounce((id, position, number) => { 
+        debounce((id, position, number) => {
             saveUncap(id, position, number)
-        }, 1000), [saveUncap]
+        }, 500), [props, saveUncap]
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {
@@ -176,7 +175,7 @@ const WeaponGrid = (props: Props) => {
             mainWeapon.uncap_level = uncapLevel
             setMainWeapon(mainWeapon)
         } else {
-            let newWeapons = Object.assign({}, weapons)
+            let newWeapons = Object.assign({}, props.weapons)
             newWeapons[position].uncap_level = uncapLevel
             setWeapons(newWeapons)
         }
