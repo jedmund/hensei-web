@@ -5,15 +5,21 @@
 
 #grid_characters {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
     margin: 0;
     padding: 0;
-    width: 761px;
+    max-width: 761px;
+
+    @media (max-width: $medium-screen) {
+        justify-content: space-between;
+        width: 100%;
+    }
 
     & > * {
-        margin-bottom: 24px;
-        margin-right: 24px;
+        margin-right: $unit * 3;
+
+        @media (max-width: $medium-screen) {
+            margin-right: inherit;
+        }
     }
 
     & > li:last-child {

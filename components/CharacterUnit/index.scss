@@ -3,68 +3,74 @@
     flex-direction: column;
     gap: 4px;
     max-width: 200px;
-}
 
-.CharacterUnit .CharacterImage {
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    transition: all 0.18s ease-in-out;
-    height: 268px;
-    width: 131px;
-}
-
-.CharacterUnit.editable .CharacterImage:hover {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
-    cursor: pointer;
-    transform: $scale-tall;
-}
-
-.CharacterUnit.filled h3 {
-    display: block;
-}
-
-.CharacterUnit.filled ul {
-    display: flex;
-}
-
-.CharacterUnit h3,
-.CharacterUnit ul {
-    display: none;
-}
-
-.CharacterUnit h3 {
-    color: #333;
-    font-size: $font-regular;
-    font-weight: 500;
-    margin: 0;
-    max-width: 131px;
-    text-align: center;
-    word-wrap: normal;
-}
-
-.CharacterUnit img {
-    position: relative;
-    width: 100%;
-    z-index: 2;
-}
-
-.CharacterImage .icon {
-    position: absolute;
-    height: 20px;
-    width: 20px;
-    z-index: 1;
-
-    svg {
-        fill: #c9c9c9;
+    &.editable .CharacterImage:hover {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
+        cursor: pointer;
+        transform: $scale-tall;
     }
-}
 
-.CharacterImage:hover .icon {
-    color: #555;
+    &.filled h3 {
+        display: block;
+    }
+
+    &.filled ul {
+        display: flex;
+    }
+
+    h3,
+    ul {
+        display: none;
+    }
+
+    h3 {
+        color: #333;
+        font-size: $font-regular;
+        font-weight: 500;
+        margin: 0;
+        max-width: 131px;
+        text-align: center;
+        word-wrap: normal;
+    }
+
+    img {
+        position: relative;
+        width: 100%;
+        z-index: 2;
+    }
+    
+
+    .CharacterImage {
+        aspect-ratio: 131 / 238;
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: all 0.18s ease-in-out;
+        height: auto;
+        width: 131px;
+
+        @media (max-width: $medium-screen) {
+            width: 17vw;
+        }
+
+        &:hover .icon {
+            color: #555;
+        }
+
+        .icon {
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            z-index: 1;
+        
+            svg {
+                fill: #c9c9c9;
+            }
+        }
+    }
 }

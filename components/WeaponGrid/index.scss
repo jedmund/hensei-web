@@ -2,10 +2,6 @@
     display: flex;
     justify-content: center;
 
-    @media (max-width: $medium-screen) {
-        
-    }
-    
     .grid_weapons {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
