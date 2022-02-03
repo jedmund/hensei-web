@@ -10,6 +10,12 @@
     position: relative;
     left: 9px;
 
+    @media (max-width: $medium-screen) {
+        left: auto;
+        max-width: auto;
+        width: 100%;
+    }
+
     & > span {
         color: #825B39;
         display: flex;
@@ -20,6 +26,23 @@
         margin-right: 16px;
         text-align: center;
         width: 387px;
+    }
+
+    #grid_summons {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-column-gap: $unit * 2;
+        grid-template-rows: 1fr;
+        grid-row-gap: $unit * 3;
+
+        & > li {
+            list-style: none;
+            min-height: 0;
+
+            .SummonUnit {
+                min-height: 0;
+            }
+        }
     }
 
     .SummonUnit .SummonImage {

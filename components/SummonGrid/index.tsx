@@ -265,7 +265,7 @@ const SummonGrid = (props: Props) => {
     )
     return (
         <div>
-            <div className="SummonGrid">
+            <div id="SummonGrid">
                 { mainSummonElement }
                 { friendSummonElement }
                 { summonGridElement }

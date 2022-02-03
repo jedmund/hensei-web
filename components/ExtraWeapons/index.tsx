@@ -25,9 +25,9 @@ const ExtraWeapons = (props: Props) => {
     const numWeapons: number = 3
 
     return (
-        <div id="ExtraWeapons">
+        <div id="ExtraGrid">
             <span>Additional<br />Weapons</span>
-            <ul id="grid_weapons">
+            <ul className="grid_weapons">
                 {
                     Array.from(Array(numWeapons)).map((x, i) => {
                         return (

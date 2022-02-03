@@ -238,10 +238,10 @@ const WeaponGrid = (props: Props) => {
     )
     
     return (
-        <div id="weapon_grids">
-            <div id="WeaponGrid">
+        <div id="WeaponGrid">
+            <div id="MainGrid">
                 { mainhandElement }
-                <ul id="grid_weapons">{ weaponGridElement }</ul>
+                <ul className="grid_weapons">{ weaponGridElement }</ul>
             </div>
 
             { (() => { return (props.extra) ? extraGridElement : '' })() }

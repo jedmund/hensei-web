@@ -194,7 +194,7 @@ const CharacterGrid = (props: Props) => {
 
     // Render: JSX components
     return (
-        <div className="CharacterGrid">
+        <div id="CharacterGrid">
             <ul id="grid_characters">
                 {Array.from(Array(numCharacters)).map((x, i) => {
                     return (
