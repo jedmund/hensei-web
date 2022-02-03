@@ -127,7 +127,6 @@ const PartyRoute: React.FC = () => {
                     weapons={weapons}
                     summons={summons}
                     editable={editable}
-                    exists={found}
                     extra={extra}
                 />
             </div>
