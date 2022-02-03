@@ -41,6 +41,9 @@ const CharacterGrid = (props: Props) => {
         }
     } : {}
 
+    // Set up state for party
+    const [partyId, setPartyId] = useState('')
+
     // Set up states for Grid data
     const [characters, setCharacters] = useState<GridArray<GridCharacter>>({})
 
@@ -56,6 +59,7 @@ const CharacterGrid = (props: Props) => {
 
     // Set states from props
     useEffect(() => {
+        setPartyId(props.partyId || '')
         setCharacters(props.characters || {})
     }, [props])
 
@@ -74,7 +78,7 @@ const CharacterGrid = (props: Props) => {
     function receiveCharacterFromSearch(object: Character | Weapon | Summon, position: number) {
         const character = object as Character
 
-        if (!props.partyId) {
+        if (!partyId) {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
@@ -83,7 +87,7 @@ const CharacterGrid = (props: Props) => {
                         .then(response => storeGridCharacter(response.data.grid_character))
                 })
         } else {
-            saveCharacter(props.partyId, character, position)
+            saveCharacter(partyId, character, position)
                 .then(response => storeGridCharacter(response.data.grid_character))
         }
     }
@@ -147,7 +151,7 @@ const CharacterGrid = (props: Props) => {
 
     const initiateUncapUpdate = useCallback(
         (id: string, position: number, uncapLevel: number) => {
-            debouncedAction(id, position, uncapLevel)
+            memoizeAction(id, position, uncapLevel)
 
             // Save the current value in case of an unexpected result
             let newPreviousValues = {...previousUncapValues}
@@ -159,14 +163,20 @@ const CharacterGrid = (props: Props) => {
         }, [previousUncapValues, characters]
     )
 
+    const memoizeAction = useCallback(
+        (id: string, position: number, uncapLevel: number) => {
+            debouncedAction(id, position, uncapLevel)
+        }, [props]
+    )
+
     const debouncedAction = useMemo(() =>
-        debounce((id, position, number) => { 
+        debounce((id, position, number) => {
             saveUncap(id, position, number)
-        }, 1000), [saveUncap]
+        }, 500), [props, saveUncap]
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {
-        let newCharacters = Object.assign({}, characters)
+        let newCharacters = {...characters}
         newCharacters[position].uncap_level = uncapLevel
         setCharacters(newCharacters)
     }

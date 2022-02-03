@@ -44,6 +44,9 @@ const WeaponGrid = (props: Props) => {
         }
     } : {}
 
+    // Set up state for party
+    const [partyId, setPartyId] = useState('')
+
     // Set up states for Grid data
     const [weapons, setWeapons] = useState<GridArray<GridWeapon>>({})
     const [mainWeapon, setMainWeapon] = useState<GridWeapon>()
@@ -60,6 +63,7 @@ const WeaponGrid = (props: Props) => {
 
     // Set states from props
     useEffect(() => {
+        setPartyId(props.partyId || '')
         setWeapons(props.weapons || {})
         setMainWeapon(props.mainhand)
     }, [props])
@@ -83,16 +87,18 @@ const WeaponGrid = (props: Props) => {
     function receiveWeaponFromSearch(object: Character | Weapon | Summon, position: number) {
         const weapon = object as Weapon
 
-        if (!props.partyId) {
+        if (!partyId) {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
+                    setPartyId(party.id)
+
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
                     saveWeapon(party.id, weapon, position)
                         .then(response => storeGridWeapon(response.data.grid_weapon))
                 })
         } else {
-            saveWeapon(props.partyId, weapon, position)
+            saveWeapon(partyId, weapon, position)
                 .then(response => storeGridWeapon(response.data.grid_weapon))
         }
     }
@@ -118,7 +124,7 @@ const WeaponGrid = (props: Props) => {
             setMainWeapon(gridWeapon)
         } else {
             // Store the grid unit at the correct position
-            let newWeapons = Object.assign({}, props.weapons)
+            let newWeapons = Object.assign({}, weapons)
             newWeapons[gridWeapon.position] = gridWeapon
             setWeapons(newWeapons)
         }
@@ -175,7 +181,7 @@ const WeaponGrid = (props: Props) => {
             mainWeapon.uncap_level = uncapLevel
             setMainWeapon(mainWeapon)
         } else {
-            let newWeapons = Object.assign({}, props.weapons)
+            let newWeapons = Object.assign({}, weapons)
             newWeapons[position].uncap_level = uncapLevel
             setWeapons(newWeapons)
         }

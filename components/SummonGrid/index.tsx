@@ -44,6 +44,9 @@ const SummonGrid = (props: Props) => {
         }
     } : {}
 
+    // Set up state for party
+    const [partyId, setPartyId] = useState('')
+
     // Set up states for Grid data
     const [summons, setSummons] = useState<GridArray<GridSummon>>({})
     const [mainSummon, setMainSummon] = useState<GridSummon>()
@@ -88,7 +91,7 @@ const SummonGrid = (props: Props) => {
     function receiveSummonFromSearch(object: Character | Weapon | Summon, position: number) {
         const summon = object as Summon
 
-        if (!props.partyId) {
+        if (!partyId) {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
@@ -97,7 +100,7 @@ const SummonGrid = (props: Props) => {
                         .then(response => storeGridSummon(response.data.grid_summon))
                 })
         } else {
-            saveSummon(props.partyId, summon, position)
+            saveSummon(partyId, summon, position)
                 .then(response => storeGridSummon(response.data.grid_summon))
         }
     }
@@ -155,7 +158,7 @@ const SummonGrid = (props: Props) => {
 
     const initiateUncapUpdate = useCallback(
         (id: string, position: number, uncapLevel: number) => {
-            debouncedAction(id, position, uncapLevel)
+            memoizeAction(id, position, uncapLevel)
 
             // Save the current value in case of an unexpected result
             let newPreviousValues = {...previousUncapValues}
@@ -167,10 +170,16 @@ const SummonGrid = (props: Props) => {
         }, [previousUncapValues, summons]
     )
 
+    const memoizeAction = useCallback(
+        (id: string, position: number, uncapLevel: number) => {
+            debouncedAction(id, position, uncapLevel)
+        }, [props]
+    )
+
     const debouncedAction = useMemo(() =>
-        debounce((id, position, number) => { 
+        debounce((id, position, number) => {
             saveUncap(id, position, number)
-        }, 1000), [saveUncap]
+        }, 500), [props, saveUncap]
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {
