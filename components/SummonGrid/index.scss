@@ -1,4 +1,4 @@
-.SummonGrid {
+#SummonGrid {
     display: grid;
     grid-template-columns: auto auto auto;
     grid-column-gap: $unit * 2;
@@ -11,24 +11,16 @@
         margin-bottom: $unit;
         text-align: center;
     }
-}
 
-#grid_summons {
-    display: grid;
-    grid-template-columns: auto auto;
-    grid-column-gap: $unit * 2;
-    grid-template-rows: 1fr;
-    grid-row-gap: $unit * 3;
-}
+    #grid_summons {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-column-gap: $unit * 2;
+        grid-template-rows: 1fr;
+        grid-row-gap: $unit * 3;
 
-#grid_summons > li {
-    list-style: none;
-}
-
-#ExtraSummons #grid_summons > li {
-    min-height: 0;
-
-    .SummonUnit {
-        min-height: 0;
+        & > li {
+            list-style: none;
+        }
     }
 }
