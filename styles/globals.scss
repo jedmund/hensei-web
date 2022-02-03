@@ -41,3 +41,10 @@ h1 {
     margin-top: $unit * 3;
     min-width: 752px;
 
+    @media (max-width: $medium-screen) {
+        min-width: auto;
+        width: 100%;
+    }
+
+}
+
