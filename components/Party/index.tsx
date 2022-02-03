@@ -90,7 +90,7 @@ const Party = (props: Props) => {
     // Render: JSX components
     const navigation = (
         <PartySegmentedControl
-            extra={props.extra}
+            extra={extra}
             editable={props.editable}
             selectedTab={currentTab}
             onClick={segmentClicked}
@@ -103,7 +103,7 @@ const Party = (props: Props) => {
             partyId={props.partyId}
             mainhand={props.mainWeapon}
             weapons={props.weapons || {}}
-            extra={props.extra}
+            extra={extra}
             editable={props.editable}
             createParty={createParty}
             pushHistory={props.pushHistory}
