@@ -12,12 +12,13 @@ export enum GridType {
 
 // Props
 interface Props {
-    grid: GridArray<Summon>
+    grid: GridArray<GridSummon>
     editable: boolean
     exists: boolean
     found?: boolean
     offset: number
     onClick: (position: number) => void
+    updateUncap: (id: string, position: number, uncap: number) => void
 }
 
 const ExtraSummons = (props: Props) => {
@@ -32,11 +33,12 @@ const ExtraSummons = (props: Props) => {
                         return (
                             <li key={`grid_unit_${i}`} >
                                 <SummonUnit 
-                                    onClick={() => { props.onClick(props.offset + i) }}
                                     editable={props.editable} 
                                     position={props.offset + i} 
                                     unitType={1}
-                                    summon={props.grid[props.offset + i]}
+                                    gridSummon={props.grid[props.offset + i]}
+                                    onClick={() => { props.onClick(props.offset + i) }}
+                                    updateUncap={props.updateUncap}
                                 />
                             </li>
                         )

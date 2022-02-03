@@ -1,5 +1,6 @@
 interface GridCharacter {
     id: string
-    position: number | null
+    position: number
     character: Character
+    uncap_level: number
 }

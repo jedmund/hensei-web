@@ -22,13 +22,13 @@ const PartyRoute: React.FC = () => {
     const [loading, setLoading] = useState(true)
     const [editable, setEditable] = useState(false)
 
-    const [characters, setCharacters] = useState<GridArray<Character>>({})
-    const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
-    const [summons, setSummons] = useState<GridArray<Summon>>({})
+    const [characters, setCharacters] = useState<GridArray<GridCharacter>>({})
+    const [weapons, setWeapons] = useState<GridArray<GridWeapon>>({})
+    const [summons, setSummons] = useState<GridArray<GridSummon>>({})
 
-    const [mainWeapon, setMainWeapon] = useState<Weapon>()
-    const [mainSummon, setMainSummon] = useState<Summon>()
-    const [friendSummon, setFriendSummon] = useState<Summon>()
+    const [mainWeapon, setMainWeapon] = useState<GridWeapon>()
+    const [mainSummon, setMainSummon] = useState<GridSummon>()
+    const [friendSummon, setFriendSummon] = useState<GridSummon>()
 
     const [partyId, setPartyId] = useState('')
     const [extra, setExtra] = useState<boolean>(false)
@@ -73,39 +73,39 @@ const PartyRoute: React.FC = () => {
         }
 
         function populateCharacters(list: [GridCharacter]) {
-            let characters: GridArray<Character> = {}
+            let characters: GridArray<GridCharacter> = {}
 
             list.forEach((object: GridCharacter) => {
                 if (object.position != null)
-                    characters[object.position] = object.character
+                    characters[object.position] = object
             })
 
             return characters
         }
 
         function populateWeapons(list: [GridWeapon]) {
-            let weapons: GridArray<Weapon> = {}
+            let weapons: GridArray<GridWeapon> = {}
 
             list.forEach((object: GridWeapon) => {
                 if (object.mainhand)
-                    setMainWeapon(object.weapon)
+                    setMainWeapon(object)
                 else if (!object.mainhand && object.position != null)
-                    weapons[object.position] = object.weapon
+                    weapons[object.position] = object
             })
 
             return weapons
         }
 
         function populateSummons(list: [GridSummon]) {
-            let summons: GridArray<Summon> = {}
+            let summons: GridArray<GridSummon> = {}
 
             list.forEach((object: GridSummon) => {
                 if (object.main)
-                    setMainSummon(object.summon)
+                    setMainSummon(object)
                 else if (object.friend)
-                    setFriendSummon(object.summon)
+                    setFriendSummon(object)
                 else if (!object.main && !object.friend && object.position != null)
-                    summons[object.position] = object.summon
+                    summons[object.position] = object
             })
 
             return summons
@@ -129,7 +129,6 @@ const PartyRoute: React.FC = () => {
                     weapons={weapons}
                     summons={summons}
                     editable={editable}
-                    exists={found}
                     extra={extra}
                 />
             </div>

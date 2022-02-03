@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react'
-
 import classnames from 'classnames'
 
 import UncapIndicator from '~components/UncapIndicator'
-
 import PlusIcon from '~public/icons/plus.svg'
 
 import './index.scss'
 
 interface Props {
-    onClick: () => void
-    weapon: Weapon | undefined
+    gridWeapon: GridWeapon | undefined
+    unitType: 0 | 1
     position: number
     editable: boolean
-    unitType: 0 | 1
+    onClick: () => void
+    updateUncap: (id: string, position: number, uncap: number) => void
 }
 
 const WeaponUnit = (props: Props) => {
@@ -24,10 +23,11 @@ const WeaponUnit = (props: Props) => {
         'mainhand': props.unitType == 0,
         'grid': props.unitType == 1,
         'editable': props.editable,
-        'filled': (props.weapon !== undefined)
+        'filled': (props.gridWeapon !== undefined)
     })
 
-    const weapon = props.weapon
+    const gridWeapon = props.gridWeapon
+    const weapon = gridWeapon?.weapon
 
     useEffect(() => {
         generateImageUrl()
@@ -35,8 +35,8 @@ const WeaponUnit = (props: Props) => {
 
     function generateImageUrl() {
         let imgSrc = ""
-        if (props.weapon) {
-            const weapon = props.weapon!
+        if (props.gridWeapon) {
+            const weapon = props.gridWeapon.weapon!
     
             if (props.unitType == 0)
                 imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
@@ -47,6 +47,11 @@ const WeaponUnit = (props: Props) => {
         setImageUrl(imgSrc)
     }
 
+    function passUncapData(uncap: number) {
+        if (props.gridWeapon)
+            props.updateUncap(props.gridWeapon.id, props.position, uncap)
+    }
+
     return (
         <div>
             <div className={classes}>
@@ -54,13 +59,17 @@ const WeaponUnit = (props: Props) => {
                     <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>
-                <UncapIndicator 
-                    type="weapon"
-                    ulb={weapon?.uncap.ulb || false} 
-                    flb={weapon?.uncap.flb || false}
-                    uncapLevel={3}
-                />
                 <h3 className="WeaponName">{weapon?.name.en}</h3>
+                { (gridWeapon) ? 
+                    <UncapIndicator 
+                        type="weapon"
+                        ulb={gridWeapon.weapon.uncap.ulb || false} 
+                        flb={gridWeapon.weapon.uncap.flb || false}
+                        uncapLevel={gridWeapon.uncap_level}
+                        updateUncap={passUncapData}
+                        special={false}
+                    /> : ''
+                }
             </div>
         </div>
     )

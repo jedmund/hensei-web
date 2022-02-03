@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
-
 import classnames from 'classnames'
 
 import UncapIndicator from '~components/UncapIndicator'
-
 import PlusIcon from '~public/icons/plus.svg'
 
 import './index.scss'
 
 interface Props {
     onClick: () => void
-    summon: Summon | undefined
+    updateUncap: (id: string, position: number, uncap: number) => void
+    gridSummon: GridSummon | undefined
     position: number
     editable: boolean
     unitType: 0 | 1 | 2
@@ -25,10 +24,11 @@ const SummonUnit = (props: Props) => {
         'grid': props.unitType == 1,
         'friend': props.unitType == 2,
         'editable': props.editable,
-        'filled': (props.summon !== undefined)
+        'filled': (props.gridSummon !== undefined)
     })
 
-    const summon = props.summon
+    const gridSummon = props.gridSummon
+    const summon = gridSummon?.summon
 
     useEffect(() => {
         generateImageUrl()
@@ -36,8 +36,8 @@ const SummonUnit = (props: Props) => {
 
     function generateImageUrl() {
         let imgSrc = ""
-        if (props.summon) {
-            const summon = props.summon!
+        if (props.gridSummon) {
+            const summon = props.gridSummon.summon!
     
             // Generate the correct source for the summon
             if (props.unitType == 0 || props.unitType == 2)
@@ -49,6 +49,11 @@ const SummonUnit = (props: Props) => {
         setImageUrl(imgSrc)
     }
 
+    function passUncapData(uncap: number) {
+        if (props.gridSummon)
+            props.updateUncap(props.gridSummon.id, uncap)
+    }
+
     return (
         <div>
             <div className={classes}>
@@ -56,12 +61,15 @@ const SummonUnit = (props: Props) => {
                     <img alt={summon?.name.en} className="grid_image" src={imageUrl} />
                     { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                 </div>
+                { (gridSummon) ? 
                 <UncapIndicator 
                     type="summon"
-                    ulb={summon?.uncap.ulb || false} 
+                    ulb={summon?.uncap.ulb || false}
                     flb={summon?.uncap.flb || false}
-                    uncapLevel={3}
-                />
+                    uncapLevel={gridSummon?.uncap_level} 
+                    updateUncap={passUncapData}
+                    special={false}               
+                /> : '' }
                 <h3 className="SummonName">{summon?.name.en}</h3>
             </div>
         </div>
