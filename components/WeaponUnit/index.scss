@@ -3,6 +3,13 @@
     flex-direction: column;
     gap: 4px;
 
+    &.editable .WeaponImage:hover {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
+        cursor: pointer;
+        transform: $scale-wide;
+    }
+
     &.mainhand {
         margin-right: $unit * 3;
         max-width: 200px;
@@ -67,13 +74,6 @@
 
         &:hover .icon {
             color: #555;
-        }
-
-        &.editable .WeaponImage:hover {
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
-            cursor: pointer;
-            transform: $scale-wide;
         }
 
         h3 {
