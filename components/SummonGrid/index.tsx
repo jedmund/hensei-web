@@ -35,13 +35,11 @@ const SummonGrid = (props: Props) => {
         }
     } : {}
 
-    // Set up state for party
-    const { id, setId } = useContext(PartyContext)
-
-
     // Set up state for view management
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
+    const { id, setId } = useContext(PartyContext)
+    const { slug, setSlug } = useContext(PartyContext)
     const { editable, setEditable } = useContext(AppContext)
 
     // Set up states for Grid data
@@ -61,9 +59,10 @@ const SummonGrid = (props: Props) => {
 
     // Fetch data from the server
     useEffect(() => {
-        if (props.slug) fetchGrid(props.slug)
+        const shortcode = (props.slug) ? props.slug : slug
+        if (shortcode) fetchGrid(shortcode)
         else setEditable(true)
-    }, [])
+    }, [slug, props.slug])
 
     // Initialize an array of current uncap values for each summon
     useEffect(() => {
@@ -154,6 +153,9 @@ const SummonGrid = (props: Props) => {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
+                    setId(party.id)
+                    setSlug(party.shortcode)
+
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
                     saveSummon(party.id, summon, position)
                         .then(response => storeGridSummon(response.data.grid_summon))

@@ -38,6 +38,7 @@ const CharacterGrid = (props: Props) => {
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
     const { id, setId } = useContext(PartyContext)
+    const { slug, setSlug } = useContext(PartyContext)
     const { editable, setEditable } = useContext(AppContext)
 
     // Set up states for Grid data
@@ -55,9 +56,10 @@ const CharacterGrid = (props: Props) => {
     
     // Fetch data from the server
     useEffect(() => {
-        if (props.slug) fetchGrid(props.slug)
+        const shortcode = (props.slug) ? props.slug : slug
+        if (shortcode) fetchGrid(shortcode)
         else setEditable(true)
-    }, [])
+    }, [slug, props.slug])
 
     // Initialize an array of current uncap values for each characters
     useEffect(() => {
@@ -136,6 +138,9 @@ const CharacterGrid = (props: Props) => {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
+                    setId(party.id)
+                    setSlug(party.shortcode)
+
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
                     saveCharacter(party.id, character, position)
                         .then(response => storeGridCharacter(response.data.grid_character))

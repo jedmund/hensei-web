@@ -43,6 +43,7 @@ const WeaponGrid = (props: Props) => {
     // Set up the party context
     const { setEditable: setAppEditable } = useContext(AppContext)
     const { id, setId } = useContext(PartyContext)
+    const { slug, setSlug } = useContext(PartyContext)
     const { editable, setEditable } = useContext(PartyContext)
     const { hasExtra, setHasExtra } = useContext(PartyContext)
     const { setElement } = useContext(PartyContext)
@@ -63,12 +64,13 @@ const WeaponGrid = (props: Props) => {
 
     // Fetch data from the server
     useEffect(() => {
-        if (props.slug) fetchGrid(props.slug)
+        const shortcode = (props.slug) ? props.slug : slug
+        if (shortcode) fetchGrid(shortcode)
         else {
             setEditable(true)
             setAppEditable(true)
         }
-    }, [props.slug])
+    }, [slug, props.slug])
 
     // Initialize an array of current uncap values for each weapon
     useEffect(() => {
@@ -159,6 +161,7 @@ const WeaponGrid = (props: Props) => {
                 .then(response => {
                     const party = response.data.party
                     setId(party.id)
+                    setSlug(party.shortcode)
 
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
                     saveWeapon(party.id, weapon, position)

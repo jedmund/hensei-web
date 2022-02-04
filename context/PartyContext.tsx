@@ -4,6 +4,8 @@ import { TeamElement } from '~utils/enums'
 const PartyContext = createContext({
     id: '',
     setId: (id: string) => {},
+    slug: '',
+    setSlug: (slug: string) => {},
     element: TeamElement.Any,
     setElement: (element: TeamElement) => {},
     editable: false,
