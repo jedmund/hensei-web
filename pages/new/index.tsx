@@ -9,11 +9,7 @@ const NewRoute: React.FC = () => {
 
     return (
         <div id="Content">
-            <Party
-                editable={true}
-                extra={false}
-                pushHistory={callback}
-            />
+            <Party pushHistory={callback} />
         </div>
     )
 }
