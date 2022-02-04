@@ -6,6 +6,7 @@ import { useModal as useModal } from '~utils/useModal'
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
+import AppContext from '~context/AppContext'
 import PartyContext from '~context/PartyContext'
 
 import SearchModal from '~components/SearchModal'
@@ -15,21 +16,9 @@ import ExtraWeapons from '~components/ExtraWeapons'
 import api from '~utils/api'
 import './index.scss'
 
-// GridType
-export enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
-}
-
 // Props
 interface Props {
-    partyId?: string
-    mainhand: GridWeapon | undefined
-    weapons: GridArray<GridWeapon>
-    extra: boolean
-    editable: boolean
+    slug?: string
     createParty: () => Promise<AxiosResponse<any, any>>
     pushHistory?: (path: string) => void
 }
@@ -48,6 +37,13 @@ const WeaponGrid = (props: Props) => {
 
     // Set up state for party
     const [partyId, setPartyId] = useState('')
+    const [extra, setExtra] = useState<boolean>(false)
+
+    // Set up state for view management
+    const [found, setFound] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [editable, setEditable] = useState(false)
+    const { setEditable: setEditableContext } = useContext(AppContext)
 
     // Set up the party context
     const { setElement } = useContext(PartyContext)
@@ -66,21 +62,18 @@ const WeaponGrid = (props: Props) => {
     // Create a state dictionary to store pure objects for Search
     const [searchGrid, setSearchGrid] = useState<GridArray<Weapon>>({})
 
-    // Set states from props
+    // Fetch data from the server
     useEffect(() => {
-        setPartyId(props.partyId || '')
-        setWeapons(props.weapons || {})
-        setMainWeapon(props.mainhand)
-        if (props.mainhand) setElement(props.mainhand.weapon.element)
-    }, [props])
+        if (props.slug) fetchGrid(props.slug)
+    }, [])
 
     // Initialize an array of current uncap values for each weapon
     useEffect(() => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
-        if (props.mainhand) initialPreviousUncapValues[-1] = props.mainhand.uncap_level
-        Object.values(props.weapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+        if (mainWeapon) initialPreviousUncapValues[-1] = mainWeapon.uncap_level
+        Object.values(weapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [props])
+    }, [mainWeapon, weapons])
 
     // Update search grid whenever weapons or the mainhand are updated
     useEffect(() => {
@@ -91,6 +84,62 @@ const WeaponGrid = (props: Props) => {
 
         setSearchGrid(newSearchGrid)
     }, [weapons, mainWeapon])
+
+    // Methods: Fetching an object from the server
+    async function fetchGrid(shortcode: string) {
+        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'weapons' })
+            .then(response => processResult(response))
+            .catch(error => processError(error))
+    }
+
+    function processResult(response: AxiosResponse) {
+        // Store the response
+        const party = response.data.party
+            
+        // Get the party user and logged in user, if possible, to compare
+        const partyUser = (party.user_id) ? party.user_id : undefined
+        const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
+
+        if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
+            setEditable(true)
+            setEditableContext(true)
+        }
+        
+        // Store the important party and state-keeping values
+        setPartyId(party.id)
+        setExtra(party.is_extra)
+        setFound(true)
+        setLoading(false)
+
+        // Populate the weapons in state
+        populateWeapons(party.weapons)
+    }
+
+    function processError(error: any) {
+        if (error.response != null) {
+            if (error.response.status == 404) {
+                setFound(false)
+                setLoading(false)
+            }
+        } else {
+            console.error(error)
+        }
+    }
+
+    function populateWeapons(list: [GridWeapon]) {
+        let weapons: GridArray<GridWeapon> = {}
+
+        list.forEach((object: GridWeapon) => {
+            if (object.mainhand) {
+                setMainWeapon(object)
+                setElement(object.weapon.element)
+            } else if (!object.mainhand && object.position != null) {
+                weapons[object.position] = object
+            }
+        })
+
+        setWeapons(weapons)
+    }
 
     // Methods: Adding an object from search
     function openSearchModal(position: number) {
@@ -208,7 +257,7 @@ const WeaponGrid = (props: Props) => {
     const mainhandElement = (
         <WeaponUnit 
             gridWeapon={mainWeapon}
-            editable={props.editable}
+            editable={editable}
             key="grid_mainhand"
             position={-1} 
             unitType={0}
@@ -223,7 +272,7 @@ const WeaponGrid = (props: Props) => {
                 <li key={`grid_unit_${i}`} >
                     <WeaponUnit 
                         gridWeapon={weapons[i]}
-                        editable={props.editable}
+                        editable={editable}
                         position={i} 
                         unitType={1}
                         onClick={() => { openSearchModal(i) }}
@@ -237,7 +286,7 @@ const WeaponGrid = (props: Props) => {
     const extraGridElement = (
         <ExtraWeapons 
             grid={weapons} 
-            editable={props.editable} 
+            editable={editable} 
             offset={numWeapons}
             onClick={openSearchModal}
             updateUncap={initiateUncapUpdate}
@@ -251,7 +300,7 @@ const WeaponGrid = (props: Props) => {
                 <ul className="grid_weapons">{ weaponGridElement }</ul>
             </div>
 
-            { (() => { return (props.extra) ? extraGridElement : '' })() }
+            { (() => { return (extra) ? extraGridElement : '' })() }
 
             {open ? (
                 <SearchModal 
