@@ -23,15 +23,7 @@ enum GridType {
 
 // Props
 interface Props {
-    partyId?: string
-    mainWeapon?: GridWeapon
-    mainSummon?: GridSummon
-    friendSummon?: GridSummon
-    characters?: GridArray<GridCharacter>
-    weapons?: GridArray<GridWeapon>
-    summons?: GridArray<GridSummon>
-    extra: boolean
-    editable: boolean
+    slug?: string
     pushHistory?: (path: string) => void
 }
 
@@ -45,17 +37,13 @@ const Party = (props: Props) => {
     } : {}
 
     // Set up states
-    const [extra, setExtra] = useState<boolean>(false)
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
     const [element, setElement] = useState<TeamElement>(TeamElement.Any)
-
-    // Set states from props
-    useEffect(() => {
-        setExtra(props.extra || false)
-    }, [props])
+    const [editable, setEditable] = useState(false)
+    const [hasExtra, setHasExtra] = useState(false)
 
     // Methods: Creating a new party
-    async function createParty() {
+    async function createParty(extra: boolean = false) {
         let body = {
             party: {
                 ...(cookies.user) && { user_id: cookies.user.user_id },
@@ -69,7 +57,7 @@ const Party = (props: Props) => {
     // Methods: Updating the party's extra flag
     // Note: This doesn't save to the server yet.
     function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        setExtra(event.target.checked)
+        setHasExtra(event.target.checked)
     }
 
     // Methods: Navigating with segmented control
@@ -95,8 +83,6 @@ const Party = (props: Props) => {
     // Render: JSX components
     const navigation = (
         <PartySegmentedControl
-            extra={extra}
-            editable={props.editable}
             selectedTab={currentTab}
             onClick={segmentClicked}
             onCheckboxChange={checkboxChanged}
@@ -105,11 +91,7 @@ const Party = (props: Props) => {
 
     const weaponGrid = (
         <WeaponGrid 
-            partyId={props.partyId}
-            mainhand={props.mainWeapon}
-            weapons={props.weapons || {}}
-            extra={extra}
-            editable={props.editable}
+            slug={props.slug}
             createParty={createParty}
             pushHistory={props.pushHistory}
         />
@@ -117,11 +99,7 @@ const Party = (props: Props) => {
 
     const summonGrid = (
         <SummonGrid 
-            partyId={props.partyId}
-            mainSummon={props.mainSummon}
-            friendSummon={props.friendSummon}
-            summons={props.summons || {}}
-            editable={props.editable} 
+            slug={props.slug}
             createParty={createParty}
             pushHistory={props.pushHistory}
         />
@@ -129,9 +107,7 @@ const Party = (props: Props) => {
 
     const characterGrid = (
         <CharacterGrid
-            partyId={props.partyId}
-            characters={props.characters || {}}
-            editable={props.editable}
+            slug={props.slug}
             createParty={createParty}
             pushHistory={props.pushHistory}
         />
@@ -150,7 +126,7 @@ const Party = (props: Props) => {
 
     return (
         <div>
-            <PartyContext.Provider value={{ element, setElement }}>
+            <PartyContext.Provider value={{ element, setElement, editable, setEditable, hasExtra, setHasExtra }}>
                 { navigation }
                 { currentGrid() }
             </PartyContext.Provider>

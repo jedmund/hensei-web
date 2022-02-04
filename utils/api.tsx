@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
+import axios, { Axios, AxiosRequestConfig, AxiosResponse } from "axios"
 
 interface Entity {
     name: string
@@ -6,11 +6,13 @@ interface Entity {
 
 type CollectionEndpoint = ({ query }: { query: AxiosRequestConfig }) => Promise<AxiosResponse<any>>
 type IdEndpoint = ({ id }: { id: string }) => Promise<AxiosResponse<any>>
+type IdWithObjectEndpoint = ({ id, object }: { id: string, object: string }) => Promise<AxiosResponse<any>>
 type PostEndpoint = (object: {}, headers?: {}) => Promise<AxiosResponse<any>>
 
 interface EndpointMap {
     getAll: CollectionEndpoint
     getOne: IdEndpoint
+    getOneWithObject: IdWithObjectEndpoint
     create: PostEndpoint
     update: PostEndpoint
     destroy: IdEndpoint
@@ -38,7 +40,8 @@ class Api {
 
         return {
             getAll:  ({ query }: { query: AxiosRequestConfig }) => axios.get(resourceUrl, { params: { query }}),
-            getOne:  ({ id }: { id: string }) => axios.get(`${resourceUrl}/${id}`),
+            getOne:  ({ id }: { id: string }) => axios.get(`${resourceUrl}/${id}/`),
+            getOneWithObject:  ({ id, object }: { id: string, object: string }) => axios.get(`${resourceUrl}/${id}/${object}`),
             create:  (object: {}, headers?: {}) => axios.post(resourceUrl, object, headers),
             update:  (object: {}, headers?: {}) => axios.put(resourceUrl, object, headers),
             destroy: ({ id }: { id: string }) => axios.delete(`${resourceUrl}/${id}`)

@@ -1,3 +1,9 @@
+export enum GridType {
+    Class,
+    Character,
+    Weapon,
+    Summon
+}
 export enum TeamElement {
     Any,
     Wind,

@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useModal as useModal } from '~utils/useModal'
 
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
+
+import AppContext from '~context/AppContext'
 
 import CharacterUnit from '~components/CharacterUnit'
 import SearchModal from '~components/SearchModal'
@@ -12,19 +14,9 @@ import SearchModal from '~components/SearchModal'
 import api from '~utils/api'
 import './index.scss'
 
-// GridType
-export enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
-}
-
 // Props
 interface Props {
-    partyId?: string
-    characters: GridArray<GridCharacter>
-    editable: boolean
+    slug?: string
     createParty: () => Promise<AxiosResponse<any, any>>
     pushHistory?: (path: string) => void
 }
@@ -44,6 +36,12 @@ const CharacterGrid = (props: Props) => {
     // Set up state for party
     const [partyId, setPartyId] = useState('')
 
+    // Set up state for view management
+    const [found, setFound] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [editable, setEditable] = useState(false)
+    const { setEditable: setEditableContext } = useContext(AppContext)
+
     // Set up states for Grid data
     const [characters, setCharacters] = useState<GridArray<GridCharacter>>({})
 
@@ -56,17 +54,16 @@ const CharacterGrid = (props: Props) => {
 
     // Create a state dictionary to store pure objects for Search
     const [searchGrid, setSearchGrid] = useState<GridArray<Character>>({})
-
-    // Set states from props
+    
+    // Fetch data from the server
     useEffect(() => {
-        setPartyId(props.partyId || '')
-        setCharacters(props.characters || {})
-    }, [props])
+        if (props.slug) fetchGrid(props.slug)
+    }, [])
 
     // Initialize an array of current uncap values for each characters
     useEffect(() => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
-        Object.values(props.characters).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+        Object.values(characters).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
         setPreviousUncapValues(initialPreviousUncapValues)
     }, [props])
     
@@ -75,6 +72,58 @@ const CharacterGrid = (props: Props) => {
         let newSearchGrid = Object.values(characters).map((o) => o.character)
         setSearchGrid(newSearchGrid)
     }, [characters])
+
+    // Methods: Fetching an object from the server
+    async function fetchGrid(shortcode: string) {
+        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'characters' })
+            .then(response => processResult(response))
+            .catch(error => processError(error))
+    }
+
+    function processResult(response: AxiosResponse) {
+        // Store the response
+        const party = response.data.party
+            
+        // Get the party user and logged in user, if possible, to compare
+        const partyUser = (party.user_id) ? party.user_id : undefined
+        const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
+
+        if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
+            setEditable(true)
+            setEditableContext(true)
+        }
+        
+        // Store the important party and state-keeping values
+        setPartyId(party.id)
+        setFound(true)
+        setLoading(false)
+
+        // Populate the weapons in state
+        populateCharacters(party.characters)
+    }
+
+    function processError(error: any) {
+        if (error.response != null) {
+            if (error.response.status == 404) {
+                setFound(false)
+                setLoading(false)
+            }
+        } else {
+            console.error(error)
+        }
+    }
+
+    function populateCharacters(list: [GridCharacter]) {
+        let characters: GridArray<GridCharacter> = {}
+
+        list.forEach((object: GridCharacter) => {
+            if (object.position != null)
+                characters[object.position] = object
+        })
+
+        setCharacters(characters)
+    }
+
 
     // Methods: Adding an object from search
     function openSearchModal(position: number) {
@@ -200,8 +249,8 @@ const CharacterGrid = (props: Props) => {
                     return (
                         <li key={`grid_unit_${i}`} >
                             <CharacterUnit 
-                                gridCharacter={props.characters[i]}
-                                editable={props.editable}
+                                gridCharacter={characters[i]}
+                                editable={editable}
                                 position={i} 
                                 onClick={() => { openSearchModal(i) }}
                                 updateUncap={initiateUncapUpdate}

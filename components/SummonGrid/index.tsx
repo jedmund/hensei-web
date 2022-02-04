@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useModal as useModal } from '~utils/useModal'
 
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
+
+import AppContext from '~context/AppContext'
 
 import SearchModal from '~components/SearchModal'
 import SummonUnit from '~components/SummonUnit'
@@ -13,21 +15,9 @@ import ExtraSummons from '~components/ExtraSummons'
 import api from '~utils/api'
 import './index.scss'
 
-// GridType
-export enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
-}
-
 // Props
 interface Props {
-    partyId?: string
-    mainSummon: GridSummon | undefined
-    friendSummon: GridSummon | undefined
-    summons: GridArray<GridSummon>
-    editable: boolean
+    slug?: string
     createParty: () => Promise<AxiosResponse<any, any>>
     pushHistory?: (path: string) => void
 }
@@ -47,6 +37,12 @@ const SummonGrid = (props: Props) => {
     // Set up state for party
     const [partyId, setPartyId] = useState('')
 
+    // Set up state for view management
+    const [found, setFound] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [editable, setEditable] = useState(false)
+    const { setEditable: setEditableContext } = useContext(AppContext)
+
     // Set up states for Grid data
     const [summons, setSummons] = useState<GridArray<GridSummon>>({})
     const [mainSummon, setMainSummon] = useState<GridSummon>()
@@ -62,20 +58,18 @@ const SummonGrid = (props: Props) => {
     // Create a state dictionary to store pure objects for Search
     const [searchGrid, setSearchGrid] = useState<GridArray<Summon>>({})
 
+    // Fetch data from the server
+    useEffect(() => {
+        if (props.slug) fetchGrid(props.slug)
+    }, [])
+
     // Initialize an array of current uncap values for each summon
     useEffect(() => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
-        if (props.mainSummon) initialPreviousUncapValues[-1] = props.mainSummon.uncap_level
-        if (props.friendSummon) initialPreviousUncapValues[6] = props.friendSummon.uncap_level
-        Object.values(props.summons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+        if (mainSummon) initialPreviousUncapValues[-1] = mainSummon.uncap_level
+        if (friendSummon) initialPreviousUncapValues[6] = friendSummon.uncap_level
+        Object.values(summons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [props])
-
-    // Set states from props
-    useEffect(() => {
-        setSummons(props.summons || {})
-        setMainSummon(props.mainSummon)
-        setFriendSummon(props.friendSummon)
     }, [props])
 
     // Update search grid whenever any summon is updated
@@ -90,6 +84,61 @@ const SummonGrid = (props: Props) => {
 
         setSearchGrid(newSearchGrid)
     }, [summons, mainSummon, friendSummon])
+
+    // Methods: Fetching an object from the server
+    async function fetchGrid(shortcode: string) {
+        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'summons' })
+            .then(response => processResult(response))
+            .catch(error => processError(error))
+    }
+
+    function processResult(response: AxiosResponse) {
+        // Store the response
+        const party = response.data.party
+            
+        // Get the party user and logged in user, if possible, to compare
+        const partyUser = (party.user_id) ? party.user_id : undefined
+        const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
+
+        if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
+            setEditable(true)
+            setEditableContext(true)
+        }
+        
+        // Store the important party and state-keeping values
+        setPartyId(party.id)
+        setFound(true)
+        setLoading(false)
+
+        // Populate the weapons in state
+        populateSummons(party.summons)
+    }
+
+    function processError(error: any) {
+        if (error.response != null) {
+            if (error.response.status == 404) {
+                setFound(false)
+                setLoading(false)
+            }
+        } else {
+            console.error(error)
+        }
+    }
+
+    function populateSummons(list: [GridSummon]) {
+        let summons: GridArray<GridSummon> = {}
+
+        list.forEach((object: GridSummon) => {
+            if (object.main)
+                setMainSummon(object)
+            else if (object.friend)
+                setFriendSummon(object)
+            else if (!object.main && !object.friend && object.position != null)
+                summons[object.position] = object
+        })
+
+        setSummons(summons)
+    }
 
     // Methods: Adding an object from search
     function openSearchModal(position: number) {
@@ -209,8 +258,8 @@ const SummonGrid = (props: Props) => {
         <div className="LabeledUnit">
             <div className="Label">Main Summon</div>
             <SummonUnit
-                gridSummon={props.mainSummon}
-                editable={props.editable}
+                gridSummon={mainSummon}
+                editable={editable}
                 key="grid_main_summon"
                 position={-1}
                 unitType={0}
@@ -224,8 +273,8 @@ const SummonGrid = (props: Props) => {
         <div className="LabeledUnit">
             <div className="Label">Friend Summon</div>
             <SummonUnit
-                gridSummon={props.friendSummon}
-                editable={props.editable}
+                gridSummon={friendSummon}
+                editable={editable}
                 key="grid_friend_summon"
                 position={6}
                 unitType={2}
@@ -241,8 +290,8 @@ const SummonGrid = (props: Props) => {
                 {Array.from(Array(numSummons)).map((x, i) => {
                     return (<li key={`grid_unit_${i}`} >
                         <SummonUnit 
-                            gridSummon={props.summons[i]}
-                            editable={props.editable}
+                            gridSummon={summons[i]}
+                            editable={editable}
                             position={i} 
                             unitType={1}
                             onClick={() => { openSearchModal(i) }}
@@ -255,8 +304,8 @@ const SummonGrid = (props: Props) => {
     )
     const subAuraSummonElement = (
         <ExtraSummons 
-            grid={props.summons} 
-            editable={props.editable} 
+            grid={summons} 
+            editable={editable} 
             exists={false} 
             offset={numSummons}
             onClick={openSearchModal}

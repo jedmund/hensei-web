@@ -16,15 +16,13 @@ export enum GridType {
 }
 
 interface Props {
-    editable: boolean
-    extra: boolean
     selectedTab: GridType
     onClick: (event: React.ChangeEvent<HTMLInputElement>) => void
     onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const PartySegmentedControl = (props: Props) => {
-    const { element } = useContext(PartyContext)
+    const { editable, element, hasExtra } = useContext(PartyContext)
 
     function getElement() {
         switch(element) {
@@ -42,8 +40,8 @@ const PartySegmentedControl = (props: Props) => {
             Extra
             <ToggleSwitch 
                 name="ExtraSwitch" 
-                editable={props.editable}
-                checked={props.extra}
+                editable={editable}
+                checked={hasExtra}
                 onChange={props.onCheckboxChange} 
             />
         </div>
@@ -82,7 +80,7 @@ const PartySegmentedControl = (props: Props) => {
 
             {
                 (() => {
-                    if (props.editable && props.selectedTab == GridType.Weapon) {
+                    if (editable && props.selectedTab == GridType.Weapon) {
                         return extraToggle
                     }
                 })()
