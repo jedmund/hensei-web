@@ -19,7 +19,7 @@ import './index.scss'
 // Props
 interface Props {
     slug?: string
-    createParty: () => Promise<AxiosResponse<any, any>>
+    createParty: (extra: boolean) => Promise<AxiosResponse<any, any>>
     pushHistory?: (path: string) => void
 }
 
@@ -37,15 +37,15 @@ const WeaponGrid = (props: Props) => {
 
     // Set up state for party
     const [partyId, setPartyId] = useState('')
-    const [extra, setExtra] = useState<boolean>(false)
 
     // Set up state for view management
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
-    const [editable, setEditable] = useState(false)
-    const { setEditable: setEditableContext } = useContext(AppContext)
-
+    
     // Set up the party context
+    const { setEditable: setAppEditable } = useContext(AppContext)
+    const { editable, setEditable } = useContext(PartyContext)
+    const { hasExtra, setHasExtra } = useContext(PartyContext)
     const { setElement } = useContext(PartyContext)
 
     // Set up states for Grid data
@@ -65,7 +65,7 @@ const WeaponGrid = (props: Props) => {
     // Fetch data from the server
     useEffect(() => {
         if (props.slug) fetchGrid(props.slug)
-    }, [])
+    }, [props.slug])
 
     // Initialize an array of current uncap values for each weapon
     useEffect(() => {
@@ -102,12 +102,12 @@ const WeaponGrid = (props: Props) => {
 
         if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
             setEditable(true)
-            setEditableContext(true)
+            setAppEditable(true)
         }
         
         // Store the important party and state-keeping values
         setPartyId(party.id)
-        setExtra(party.is_extra)
+        setHasExtra(party.is_extra)
         setFound(true)
         setLoading(false)
 
@@ -152,7 +152,7 @@ const WeaponGrid = (props: Props) => {
         setElement(weapon.element)
 
         if (!partyId) {
-            props.createParty()
+            props.createParty(hasExtra)
                 .then(response => {
                     const party = response.data.party
                     setPartyId(party.id)
@@ -300,7 +300,7 @@ const WeaponGrid = (props: Props) => {
                 <ul className="grid_weapons">{ weaponGridElement }</ul>
             </div>
 
-            { (() => { return (extra) ? extraGridElement : '' })() }
+            { (() => { return (hasExtra) ? extraGridElement : '' })() }
 
             {open ? (
                 <SearchModal 
