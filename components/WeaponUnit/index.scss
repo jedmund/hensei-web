@@ -2,6 +2,11 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-height: 139px;
+
+    @media (max-width: $medium-screen) {
+        min-height: auto;
+    }
 
     &.editable .WeaponImage:hover {
         border: $hover-stroke;
@@ -61,6 +66,14 @@
         display: none;
     }
 
+    h3 {
+        color: $grey-00;
+        font-size: $font-button;
+        font-weight: $normal;
+        margin: 0;
+        text-align: center;
+    }
+
     .WeaponImage {
         background: white;
         border: 1px solid rgba(0, 0, 0, 0);
@@ -74,14 +87,6 @@
 
         &:hover .icon svg {
             fill: $grey-10;
-        }
-
-        h3 {
-            color: $grey-00;
-            font-size: $font-regular;
-            font-weight: $medium;
-            margin: 0;
-            text-align: center;
         }
 
         img {
