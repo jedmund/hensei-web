@@ -57,9 +57,11 @@ const Party = (props: Props) => {
     }
 
     // Methods: Updating the party's extra flag
-    // Note: This doesn't save to the server yet.
     function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
         setHasExtra(event.target.checked)
+        api.endpoints.parties.update(id, {
+            'party': { 'is_extra': event.target.checked }
+        }, headers)
     }
 
     // Methods: Navigating with segmented control
