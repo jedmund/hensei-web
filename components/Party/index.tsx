@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 
+import PartyContext from '~context/PartyContext'
+
 import PartySegmentedControl from '~components/PartySegmentedControl'
 import WeaponGrid from '~components/WeaponGrid'
 import SummonGrid from '~components/SummonGrid'
 import CharacterGrid from '~components/CharacterGrid'
 
 import api from '~utils/api'
+import { TeamElement } from '~utils/enums'
+
 import './index.scss'
 
 // GridType
@@ -43,6 +47,7 @@ const Party = (props: Props) => {
     // Set up states
     const [extra, setExtra] = useState<boolean>(false)
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
+    const [element, setElement] = useState<TeamElement>(TeamElement.Any)
 
     // Set states from props
     useEffect(() => {
@@ -145,8 +150,10 @@ const Party = (props: Props) => {
 
     return (
         <div>
-            { navigation }
-            { currentGrid() }
+            <PartyContext.Provider value={{ element, setElement }}>
+                { navigation }
+                { currentGrid() }
+            </PartyContext.Provider>
         </div>
     )
 }
