@@ -15,7 +15,6 @@ import ExtraWeapons from '~components/ExtraWeapons'
 
 import api from '~utils/api'
 import './index.scss'
-import Party from '~components/Party'
 
 // Props
 interface Props {

@@ -66,7 +66,7 @@ const CharacterGrid = (props: Props) => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
         Object.values(characters).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [props])
+    }, [characters])
     
     // Update search grid whenever characters are updated
     useEffect(() => {
@@ -194,7 +194,7 @@ const CharacterGrid = (props: Props) => {
 
         try {
             if (uncapLevel != previousUncapValues[position])
-                await api.updateUncap('weapon', id, uncapLevel)
+                await api.updateUncap('character', id, uncapLevel)
                     .then(response => { storeGridCharacter(response.data.grid_character) })
         } catch (error) {
             console.error(error)
@@ -221,13 +221,13 @@ const CharacterGrid = (props: Props) => {
     const memoizeAction = useCallback(
         (id: string, position: number, uncapLevel: number) => {
             debouncedAction(id, position, uncapLevel)
-        }, [props]
+        }, [characters]
     )
 
     const debouncedAction = useMemo(() =>
         debounce((id, position, number) => {
             saveUncap(id, position, number)
-        }, 500), [props, saveUncap]
+        }, 500), [characters, saveUncap]
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {

@@ -71,7 +71,7 @@ const SummonGrid = (props: Props) => {
         if (friendSummon) initialPreviousUncapValues[6] = friendSummon.uncap_level
         Object.values(summons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [props])
+    }, [summons, mainSummon, friendSummon])
 
     // Update search grid whenever any summon is updated
     useEffect(() => {
@@ -230,13 +230,13 @@ const SummonGrid = (props: Props) => {
     const memoizeAction = useCallback(
         (id: string, position: number, uncapLevel: number) => {
             debouncedAction(id, position, uncapLevel)
-        }, [props]
+        }, [summons, mainSummon, friendSummon]
     )
 
     const debouncedAction = useMemo(() =>
         debounce((id, position, number) => {
             saveUncap(id, position, number)
-        }, 500), [props, saveUncap]
+        }, 500), [summons, mainSummon, friendSummon, saveUncap]
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {
