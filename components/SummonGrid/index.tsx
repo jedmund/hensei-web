@@ -7,6 +7,7 @@ import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
 import AppContext from '~context/AppContext'
+import PartyContext from '~context/PartyContext'
 
 import SearchModal from '~components/SearchModal'
 import SummonUnit from '~components/SummonUnit'
@@ -35,13 +36,13 @@ const SummonGrid = (props: Props) => {
     } : {}
 
     // Set up state for party
-    const [partyId, setPartyId] = useState('')
+    const { id, setId } = useContext(PartyContext)
+
 
     // Set up state for view management
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
-    const [editable, setEditable] = useState(false)
-    const { setEditable: setEditableContext } = useContext(AppContext)
+    const { editable, setEditable } = useContext(AppContext)
 
     // Set up states for Grid data
     const [summons, setSummons] = useState<GridArray<GridSummon>>({})
@@ -61,6 +62,7 @@ const SummonGrid = (props: Props) => {
     // Fetch data from the server
     useEffect(() => {
         if (props.slug) fetchGrid(props.slug)
+        else setEditable(true)
     }, [])
 
     // Initialize an array of current uncap values for each summon
@@ -102,11 +104,10 @@ const SummonGrid = (props: Props) => {
 
         if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
             setEditable(true)
-            setEditableContext(true)
         }
         
         // Store the important party and state-keeping values
-        setPartyId(party.id)
+        setId(party.id)
         setFound(true)
         setLoading(false)
 
@@ -149,7 +150,7 @@ const SummonGrid = (props: Props) => {
     function receiveSummonFromSearch(object: Character | Weapon | Summon, position: number) {
         const summon = object as Summon
 
-        if (!partyId) {
+        if (!id) {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
@@ -158,7 +159,7 @@ const SummonGrid = (props: Props) => {
                         .then(response => storeGridSummon(response.data.grid_summon))
                 })
         } else {
-            saveSummon(partyId, summon, position)
+            saveSummon(id, summon, position)
                 .then(response => storeGridSummon(response.data.grid_summon))
         }
     }

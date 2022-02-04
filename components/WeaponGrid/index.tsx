@@ -15,6 +15,7 @@ import ExtraWeapons from '~components/ExtraWeapons'
 
 import api from '~utils/api'
 import './index.scss'
+import Party from '~components/Party'
 
 // Props
 interface Props {
@@ -35,15 +36,13 @@ const WeaponGrid = (props: Props) => {
         }
     } : {}
 
-    // Set up state for party
-    const [partyId, setPartyId] = useState('')
-
     // Set up state for view management
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
     
     // Set up the party context
     const { setEditable: setAppEditable } = useContext(AppContext)
+    const { id, setId } = useContext(PartyContext)
     const { editable, setEditable } = useContext(PartyContext)
     const { hasExtra, setHasExtra } = useContext(PartyContext)
     const { setElement } = useContext(PartyContext)
@@ -65,6 +64,10 @@ const WeaponGrid = (props: Props) => {
     // Fetch data from the server
     useEffect(() => {
         if (props.slug) fetchGrid(props.slug)
+        else {
+            setEditable(true)
+            setAppEditable(true)
+        }
     }, [props.slug])
 
     // Initialize an array of current uncap values for each weapon
@@ -106,7 +109,7 @@ const WeaponGrid = (props: Props) => {
         }
         
         // Store the important party and state-keeping values
-        setPartyId(party.id)
+        setId(party.id)
         setHasExtra(party.is_extra)
         setFound(true)
         setLoading(false)
@@ -151,18 +154,18 @@ const WeaponGrid = (props: Props) => {
         const weapon = object as Weapon
         setElement(weapon.element)
 
-        if (!partyId) {
+        if (!id) {
             props.createParty(hasExtra)
                 .then(response => {
                     const party = response.data.party
-                    setPartyId(party.id)
+                    setId(party.id)
 
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
                     saveWeapon(party.id, weapon, position)
                         .then(response => storeGridWeapon(response.data.grid_weapon))
                 })
         } else {
-            saveWeapon(partyId, weapon, position)
+            saveWeapon(id, weapon, position)
                 .then(response => storeGridWeapon(response.data.grid_weapon))
         }
     }

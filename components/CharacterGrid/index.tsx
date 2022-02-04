@@ -7,6 +7,7 @@ import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
 import AppContext from '~context/AppContext'
+import PartyContext from '~context/PartyContext'
 
 import CharacterUnit from '~components/CharacterUnit'
 import SearchModal from '~components/SearchModal'
@@ -33,14 +34,11 @@ const CharacterGrid = (props: Props) => {
         }
     } : {}
 
-    // Set up state for party
-    const [partyId, setPartyId] = useState('')
-
     // Set up state for view management
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
-    const [editable, setEditable] = useState(false)
-    const { setEditable: setEditableContext } = useContext(AppContext)
+    const { id, setId } = useContext(PartyContext)
+    const { editable, setEditable } = useContext(AppContext)
 
     // Set up states for Grid data
     const [characters, setCharacters] = useState<GridArray<GridCharacter>>({})
@@ -58,6 +56,7 @@ const CharacterGrid = (props: Props) => {
     // Fetch data from the server
     useEffect(() => {
         if (props.slug) fetchGrid(props.slug)
+        else setEditable(true)
     }, [])
 
     // Initialize an array of current uncap values for each characters
@@ -90,11 +89,10 @@ const CharacterGrid = (props: Props) => {
 
         if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
             setEditable(true)
-            setEditableContext(true)
         }
         
         // Store the important party and state-keeping values
-        setPartyId(party.id)
+        setId(party.id)
         setFound(true)
         setLoading(false)
 
@@ -134,7 +132,7 @@ const CharacterGrid = (props: Props) => {
     function receiveCharacterFromSearch(object: Character | Weapon | Summon, position: number) {
         const character = object as Character
 
-        if (!partyId) {
+        if (!id) {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
@@ -143,7 +141,7 @@ const CharacterGrid = (props: Props) => {
                         .then(response => storeGridCharacter(response.data.grid_character))
                 })
         } else {
-            saveCharacter(partyId, character, position)
+            saveCharacter(id, character, position)
                 .then(response => storeGridCharacter(response.data.grid_character))
         }
     }

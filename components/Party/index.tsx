@@ -38,6 +38,7 @@ const Party = (props: Props) => {
 
     // Set up states
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
+    const [id, setId] = useState('')
     const [element, setElement] = useState<TeamElement>(TeamElement.Any)
     const [editable, setEditable] = useState(false)
     const [hasExtra, setHasExtra] = useState(false)
@@ -126,7 +127,7 @@ const Party = (props: Props) => {
 
     return (
         <div>
-            <PartyContext.Provider value={{ element, setElement, editable, setEditable, hasExtra, setHasExtra }}>
+            <PartyContext.Provider value={{ id, setId, element, setElement, editable, setEditable, hasExtra, setHasExtra }}>
                 { navigation }
                 { currentGrid() }
             </PartyContext.Provider>
