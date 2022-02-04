@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 
 import UncapIndicator from '~components/UncapIndicator'
-import PlusIcon from '~public/icons/plus.svg'
+import PlusIcon from '~public/icons/Add.svg'
 
 import './index.scss'
 

@@ -30,7 +30,19 @@ const HeaderMenu = (props: Props) => {
                 <ul className="Menu auth">
                     <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link href={`/${props.username}` || ''}>My Parties</Link>
+                            <Link href={`/${props.username}` || ''}>{props.username}</Link>
+                        </li>
+                        <li className="MenuItem">
+                            <Link href={`/${props.username}/saved` || ''}>Saved</Link>
+                        </li>
+                    </div>
+                    <div className="MenuGroup">
+                        <li className="MenuItem">
+                            <Link href='/teans'>Teams</Link>
+                        </li>
+
+                        <li className="MenuItem">
+                            <Link href='/guides'>Guides</Link>
                         </li>
                     </div>
                     <div className="MenuGroup">
@@ -38,12 +50,7 @@ const HeaderMenu = (props: Props) => {
                         {aboutOpen ? (
                             <AboutModal close={closeAboutModal} />
                         ) : null}
-                        
-                        <li className="MenuItem">
-                            <Link href='/guides'>Guides</Link>
-                        </li>
-                    </div>
-                    <div className="MenuGroup">
+                        <li className="MenuItem">Settings</li>
                         <li className="MenuItem" onClick={props.logout}>Logout</li>
                     </div>
                 </ul>
@@ -59,8 +66,16 @@ const HeaderMenu = (props: Props) => {
                     {aboutOpen ? (
                         <AboutModal close={closeAboutModal} />
                     ) : null}
-                    {/* <li className="MenuItem" onClick={ () => props.navigate('guides') }>Guides</li> */}
                 </div>
+                <div className="MenuGroup">
+                        <li className="MenuItem">
+                            <Link href='/teans'>Teams</Link>
+                        </li>
+
+                        <li className="MenuItem">
+                            <Link href='/guides'>Guides</Link>
+                        </li>
+                    </div>
                 <div className="MenuGroup">
                     <li className="MenuItem" onClick={openLoginModal}>Log in</li>
                     {loginOpen ? (

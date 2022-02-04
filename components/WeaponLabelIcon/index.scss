@@ -3,77 +3,77 @@
     background-size: 60px 25px;
     height: 25px;
     width: 60px;
-}
 
-/* Elements */
+    /* Elements */
 
-.fire {
-    background-image: url('/labels/element/Label_Element_Fire.png')
-}
+    &.fire {
+        background-image: url('/labels/element/Label_Element_Fire.png')
+    }
 
-.water {
-    background-image: url('/labels/element/Label_Element_Water.png')
-}
+    &.water {
+        background-image: url('/labels/element/Label_Element_Water.png')
+    }
 
-.earth {
-    background-image: url('/labels/element/Label_Element_Earth.png')
-}
+    &.earth {
+        background-image: url('/labels/element/Label_Element_Earth.png')
+    }
 
-.wind {
-    background-image: url('/labels/element/Label_Element_Wind.png')
-}
+    &.wind {
+        background-image: url('/labels/element/Label_Element_Wind.png')
+    }
 
-.dark {
-    background-image: url('/labels/element/Label_Element_Dark.png')
-}
+    &.dark {
+        background-image: url('/labels/element/Label_Element_Dark.png')
+    }
 
-.light {
-    background-image: url('/labels/element/Label_Element_Light.png')
-}
+    &.light {
+        background-image: url('/labels/element/Label_Element_Light.png')
+    }
 
-.null {
-    background-image: url('/labels/element/Label_Element_Any.png')
-}
+    &.null {
+        background-image: url('/labels/element/Label_Element_Any.png')
+    }
 
-/* Proficiencies */
+    /* Proficiencies */
 
-.sword {
-    background-image: url('/labels/proficiency/Label_Weapon_Sabre.png')
-}
+    &.sword {
+        background-image: url('/labels/proficiency/Label_Weapon_Sabre.png')
+    }
 
-.dagger {
-    background-image: url('/labels/proficiency/Label_Weapon_Dagger.png')
-}
+    &.dagger {
+        background-image: url('/labels/proficiency/Label_Weapon_Dagger.png')
+    }
 
-.axe {
-    background-image: url('/labels/proficiency/Label_Weapon_Axe.png')
-}
+    &.axe {
+        background-image: url('/labels/proficiency/Label_Weapon_Axe.png')
+    }
 
-.spear {
-    background-image: url('/labels/proficiency/Label_Weapon_Spear.png')
-}
+    &.spear {
+        background-image: url('/labels/proficiency/Label_Weapon_Spear.png')
+    }
 
-.staff {
-    background-image: url('/labels/proficiency/Label_Weapon_Staff.png')
-}
+    &.staff {
+        background-image: url('/labels/proficiency/Label_Weapon_Staff.png')
+    }
 
-.fist {
-    background-image: url('/labels/proficiency/Label_Weapon_Melee.png')
-}
+    &.fist {
+        background-image: url('/labels/proficiency/Label_Weapon_Melee.png')
+    }
 
-.harp {
-    background-image: url('/labels/proficiency/Label_Weapon_Harp.png')
-}
+    &.harp {
+        background-image: url('/labels/proficiency/Label_Weapon_Harp.png')
+    }
 
-.gun {
-    background-image: url('/labels/proficiency/Label_Weapon_Gun.png')
-}
+    &.gun {
+        background-image: url('/labels/proficiency/Label_Weapon_Gun.png')
+    }
 
-.bow {
-    background-image: url('/labels/proficiency/Label_Weapon_Bow.png')
-}
+    &.bow {
+        background-image: url('/labels/proficiency/Label_Weapon_Bow.png')
+    }
 
-.katana {
-    background-image: url('/labels/proficiency/Label_Weapon_Katana.png')
+    &.katana {
+        background-image: url('/labels/proficiency/Label_Weapon_Katana.png')
+    }
 }
 

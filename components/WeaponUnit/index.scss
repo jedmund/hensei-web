@@ -2,6 +2,18 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-height: 139px;
+
+    @media (max-width: $medium-screen) {
+        min-height: auto;
+    }
+
+    &.editable .WeaponImage:hover {
+        border: $hover-stroke;
+        box-shadow: $hover-shadow;
+        cursor: pointer;
+        transform: $scale-wide;
+    }
 
     &.mainhand {
         margin-right: $unit * 3;
@@ -54,34 +66,27 @@
         display: none;
     }
 
+    h3 {
+        color: $grey-00;
+        font-size: $font-button;
+        font-weight: $normal;
+        margin: 0;
+        text-align: center;
+    }
+
     .WeaponImage {
         background: white;
         border: 1px solid rgba(0, 0, 0, 0);
-        border-radius: 8px;
+        border-radius: $unit;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 2px;
+        margin-bottom: $unit / 4;
         overflow: hidden;
         transition: all 0.18s ease-in-out;
 
-        &:hover .icon {
-            color: #555;
-        }
-
-        &.editable .WeaponImage:hover {
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 14px;
-            cursor: pointer;
-            transform: $scale-wide;
-        }
-
-        h3 {
-            color: #333;
-            font-size: $font-regular;
-            font-weight: 500;
-            margin: 0;
-            text-align: center;
+        &:hover .icon svg {
+            fill: $grey-10;
         }
 
         img {
@@ -92,12 +97,12 @@
 
         .icon {
             position: absolute;
-            height: 20px;
-            width: 20px;
+            height: $unit * 3;
+            width: $unit * 3;
             z-index: 1;
         
             svg {
-                fill: #c9c9c9;
+                fill: $grey-70;
             }
         }
     }

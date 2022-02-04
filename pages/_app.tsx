@@ -11,6 +11,7 @@ import type { AppProps } from 'next/app'
 function MyApp({ Component, pageProps }: AppProps) {
     const [authenticated, setAuthenticated] = useState(false)
     const [editable, setEditable] = useState(false)
+
     return (
         <CookiesProvider>
             <AppContext.Provider value={{ authenticated, setAuthenticated, editable, setEditable }}>

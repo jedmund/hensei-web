@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 
 import './index.scss'
-import PlusIcon from '~public/icons/plus.svg'
+import PlusIcon from '~public/icons/Add.svg'
 
 interface Props {
     styleName?: string
