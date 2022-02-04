@@ -71,6 +71,7 @@ const WeaponGrid = (props: Props) => {
         setPartyId(props.partyId || '')
         setWeapons(props.weapons || {})
         setMainWeapon(props.mainhand)
+        if (props.mainhand) setElement(props.mainhand.weapon.element)
     }, [props])
 
     // Initialize an array of current uncap values for each weapon
@@ -80,10 +81,6 @@ const WeaponGrid = (props: Props) => {
         Object.values(props.weapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
         setPreviousUncapValues(initialPreviousUncapValues)
     }, [props])
-
-    useEffect(() => {
-        if (mainWeapon) setElement(mainWeapon.weapon.element)
-    }, [mainWeapon])
 
     // Update search grid whenever weapons or the mainhand are updated
     useEffect(() => {
@@ -103,6 +100,7 @@ const WeaponGrid = (props: Props) => {
 
     function receiveWeaponFromSearch(object: Character | Weapon | Summon, position: number) {
         const weapon = object as Weapon
+        setElement(weapon.element)
 
         if (!partyId) {
             props.createParty()
