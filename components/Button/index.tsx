@@ -1,6 +1,9 @@
 import React from 'react'
 import classNames from 'classnames'
 
+import AddIcon from '~public/icons/Add.svg'
+import MenuIcon from '~public/icons/Menu.svg'
+
 import './index.scss'
 
 interface Props {
@@ -33,15 +36,15 @@ class Button extends React.Component<Props, State> {
         let icon
         if (this.props.type === 'new') {
             icon = <span className='icon'>
-                <img alt="" src="/icons/new.svg" />
+                <AddIcon />
             </span>
         } else if (this.props.type === 'menu') {
             icon = <span className='icon'>
-                <img alt="" src="/icons/menu.svg" />
+                <MenuIcon />
             </span>
         } else if (this.props.type === 'link') {
             icon = <span className='icon'>
-                <img alt="" src="/icons/link.svg" />
+                <img alt="" src="/icons/Link.svg" />
             </span>
         }
 

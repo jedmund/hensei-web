@@ -2,7 +2,7 @@
     background: white;
     border-radius: 6px;
     display: none;
-    min-width: 140px;
+    min-width: 220px;
     position: absolute;
     top: $unit * 5; // This shouldn't be hardcoded. How to calculate it?
     z-index: 1;
@@ -10,21 +10,21 @@
 
 .MenuItem {
     color: $grey-10;
-    font-weight: $medium;
-    padding: 10px;
+    font-weight: $normal;
+    padding: 12px;
 
     &:hover {
-        background: $grey-90;
+        background: $grey-100;
         color: $grey-00;
         cursor: pointer;
+
+        a {
+            color: $grey-00;
+        }
     }
 
     a {
         color: $grey-10;
-
-        &:hover {
-            color: $grey-00;
-        }
     }
 }
 
