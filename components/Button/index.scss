@@ -16,7 +16,21 @@
         color: $grey-00;
 
         .icon svg {
-            fill: $grey-50;
+            fill: $grey-00;
+        }
+
+        .icon.stroke svg {
+            fill: none;
+            stroke: $grey-00;
+        }
+    }
+
+    &.destructive:hover {
+        background: $error;
+        color: white;
+
+        .icon svg {
+            fill: white;
         }
     }
 
@@ -27,6 +41,11 @@
             fill: $grey-50;
             height: 12px;
             width: 12px;
+        }
+
+        &.stroke svg {
+            fill: none;
+            stroke: $grey-50;
         }
     }
 
