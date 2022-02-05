@@ -52,7 +52,7 @@ const BottomHeader = () => {
                     <span className="text">Delete team</span>
                 </AlertDialog.Trigger>
                 <AlertDialog.Portal>
-                <AlertDialog.Overlay className="Overlay" onClick={(e) => closeModal()} />
+                <AlertDialog.Overlay className="Overlay"} />
                 <AlertDialog.Content className="Dialog">
                     <AlertDialog.Title className="DialogTitle">
                         Delete team
