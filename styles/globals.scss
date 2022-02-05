@@ -69,12 +69,13 @@ h1 {
 }
 
 .Dialog {
-    animation: 150ms cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal none running;
+    animation: 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal none running openModal;
     background: white;
     border-radius: $unit;
     display: flex;
     flex-direction: column;
     gap: $unit * 3;
+    height: auto;
     min-width: $unit * 48;
     min-height: $unit * 12;
     padding: $unit * 3;
@@ -84,8 +85,31 @@ h1 {
     transform: translate(-50%, -50%);
     z-index: 21;
 
+    .DialogHeader {
+        display: flex;
+    }
+
+    .DialogClose {
+        background: transparent;
+        height: 21px;
+        width: 21px;
+
+        &:hover {
+            cursor: pointer;
+            
+            svg {
+                fill: $grey-00;
+            }
+        }
+
+        svg {
+            fill: $grey-10;
+        }
+    }
+
     .DialogTitle {
         font-size: $font-large;
+        flex-grow: 1;
     }
 
     .DialogDescription {
@@ -96,6 +120,18 @@ h1 {
         display: flex;
         justify-content: flex-end;
         width: 100%;
+    }
+}
+
+@keyframes openModal {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -48%) scale(0.96);
+    }
+
+    100% {
+        // opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
     }
 }
 

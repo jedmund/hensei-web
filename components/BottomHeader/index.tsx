@@ -30,11 +30,6 @@ const BottomHeader = () => {
         }
     }, [cookies, setUsername, setAuthenticated])
 
-    function closeModal() {
-        const escape = new KeyboardEvent('keydown', {'key': 'Escape'})
-        document.dispatchEvent(escape)
-    }
-
     function deleteTeam(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         // TODO: Implement deleting teams
         console.log("Deleting team...")
