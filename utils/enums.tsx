@@ -1,3 +1,8 @@
+export enum ButtonType {
+    Base,
+    Destructive
+}
+
 export enum GridType {
     Class,
     Character,
