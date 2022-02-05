@@ -3,17 +3,27 @@
 html {
     background: $background-color;
     font-size: 62.5%;
-    padding: $unit * 2;
 }
 
 body {
     -webkit-font-smoothing: antialiased;
-    font-family: system-ui, -apple-system, Helvetica Neue, Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 1.4rem;
+    height: 100vh;
+    padding: $unit * 2;
     
     &.no-scroll {
         overflow: hidden;
     }
+}
+
+#__next {
+    height: 100%;
+}
+
+main {
+    min-height: 90%;
 }
 
 a {
@@ -21,7 +31,7 @@ a {
 }
 
 button, input {
-    font-family: system-ui, -apple-system, Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 h1, h2, h3, p {
