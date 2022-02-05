@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import Party from '~components/Party'
+import * as AlertDialog  from '@radix-ui/react-alert-dialog'
 
 const PartyRoute: React.FC = () => {
     const router = useRouter()

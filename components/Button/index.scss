@@ -34,6 +34,18 @@
         }
     }
 
+    &.modal:hover {
+        background: $grey-90;
+    }
+
+    &.modal.destructive {
+        color: $error;
+        
+        &:hover {
+            color: darken($error, 10)
+        }
+    }
+
     .icon {
         margin-top: 2px;
         

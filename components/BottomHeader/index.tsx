@@ -1,13 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { MouseEventHandler, useContext, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
 
 import AppContext from '~context/AppContext'
 
+import * as AlertDialog from '@radix-ui/react-alert-dialog';
+
 import Header from '~components/Header'
 import Button from '~components/Button'
 
 import { ButtonType } from '~utils/enums'
+import CrossIcon from '~public/icons/Cross.svg'
+
 
 const BottomHeader = () => {
     const { editable, setEditable, authenticated, setAuthenticated } = useContext(AppContext)
@@ -26,6 +30,16 @@ const BottomHeader = () => {
         }
     }, [cookies, setUsername, setAuthenticated])
 
+    function closeModal() {
+        const escape = new KeyboardEvent('keydown', {'key': 'Escape'})
+        document.dispatchEvent(escape)
+    }
+
+    function deleteTeam(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        // TODO: Implement deleting teams
+        console.log("Deleting team...")
+    }
+
     const leftNav = () => {
         return (
             <Button icon="edit" click={() => {}}>Add more info</Button>
@@ -33,13 +47,35 @@ const BottomHeader = () => {
     }
 
     const rightNav = () => {
-        return (
-            <div>
-                { (editable && router.route === '/p/[party]') ?
-                    <Button icon="cross" type={ButtonType.Destructive} click={() => {}}>Delete team</Button> : ''
-                }
-            </div>
-        )
+        if (editable && router.route === '/p/[party]') {
+            return (
+                <AlertDialog.Root>
+                <AlertDialog.Trigger className="Button destructive">
+                    <span className='icon'>
+                        <CrossIcon />
+                    </span>
+                    <span className="text">Delete team</span>
+                </AlertDialog.Trigger>
+                <AlertDialog.Portal>
+                <AlertDialog.Overlay className="Overlay" onClick={(e) => closeModal()} />
+                <AlertDialog.Content className="Dialog">
+                    <AlertDialog.Title className="DialogTitle">
+                        Delete team
+                    </AlertDialog.Title>
+                    <AlertDialog.Description className="DialogDescription">
+                        Are you sure you want to permanently delete this team?
+                    </AlertDialog.Description>
+                    <div className="actions">
+                        <AlertDialog.Cancel className="Button modal">Nevermind</AlertDialog.Cancel>
+                        <AlertDialog.Action className="Button modal destructive" onClick={(e) => deleteTeam(e)}>Yes, delete</AlertDialog.Action>
+                    </div>
+                </AlertDialog.Content>
+                </AlertDialog.Portal>
+            </AlertDialog.Root>
+            )
+        } else {
+            return (<div />)
+        }
     }
         
             
