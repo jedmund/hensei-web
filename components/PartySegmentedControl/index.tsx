@@ -7,13 +7,7 @@ import SegmentedControl from '~components/SegmentedControl'
 import Segment from '~components/Segment'
 import ToggleSwitch from '~components/ToggleSwitch'
 
-// GridType
-export enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
-}
+import { GridType } from '~utils/enums'
 
 interface Props {
     selectedTab: GridType

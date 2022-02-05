@@ -2,14 +2,6 @@ import React from 'react'
 import SummonUnit from '~components/SummonUnit'
 import './index.scss'
 
-// GridType
-export enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
-}
-
 // Props
 interface Props {
     grid: GridArray<GridSummon>

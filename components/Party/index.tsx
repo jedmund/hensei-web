@@ -9,17 +9,9 @@ import SummonGrid from '~components/SummonGrid'
 import CharacterGrid from '~components/CharacterGrid'
 
 import api from '~utils/api'
-import { TeamElement } from '~utils/enums'
+import { GridType, TeamElement } from '~utils/enums'
 
 import './index.scss'
-
-// GridType
-enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
-}
 
 // Props
 interface Props {

@@ -3,14 +3,6 @@ import WeaponUnit from '~components/WeaponUnit'
 
 import './index.scss'
 
-// GridType
-export enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
-}
-
 // Props
 interface Props {
     grid: GridArray<GridWeapon>
