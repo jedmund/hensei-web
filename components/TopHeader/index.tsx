@@ -50,6 +50,9 @@ const TopHeader = () => {
         Object.keys(resetState).forEach((key) => {
             appState[key] = resetState[key]
         })
+
+        // Set party to be editable
+        appState.party.editable = true
     }
 
     function logout() {
