@@ -1,10 +1,21 @@
-.AboutModal p {
-    font-size: $font-regular;
-    line-height: 1.24;
-    margin: 0;
-    margin-bottom: $unit * 2;
+.About.Dialog {
+    width: $unit * 60;
 
-    &:last-of-type {
-        margin-bottom: 0;
+    section {
+        margin-bottom: $unit;
+
+        h2 {
+            margin-bottom: $unit * 3;
+        }
+    }
+
+    .DialogDescription {
+        font-size: $font-regular;
+        line-height: 1.24;
+        margin-bottom: $unit;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
     }
 }

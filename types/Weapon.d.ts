@@ -1,4 +1,6 @@
 interface Weapon {
+    type: 'weapon'
+    
     id: string
     granblue_id: number
     element: number

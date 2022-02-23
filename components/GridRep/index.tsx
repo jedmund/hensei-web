@@ -19,9 +19,9 @@ const GridRep = (props: Props) => {
 
         for (const [key, value] of Object.entries(props.grid)) {
             if (value.position == -1)
-                setMainhand(value.weapon)
+                setMainhand(value.object)
             else if (!value.mainhand && value.position != null)
-                newWeapons[value.position] = value.weapon
+                newWeapons[value.position] = value.object
         }
 
         setWeapons(newWeapons)

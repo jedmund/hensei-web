@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 
+import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 import PlusIcon from '~public/icons/Add.svg'
 
@@ -11,7 +12,7 @@ interface Props {
     unitType: 0 | 1
     position: number
     editable: boolean
-    onClick: () => void
+    updateObject: (object: Character | Weapon | Summon, position: number) => void
     updateUncap: (id: string, position: number, uncap: number) => void
 }
 
@@ -27,7 +28,7 @@ const WeaponUnit = (props: Props) => {
     })
 
     const gridWeapon = props.gridWeapon
-    const weapon = gridWeapon?.weapon
+    const weapon = gridWeapon?.object
 
     useEffect(() => {
         generateImageUrl()
@@ -36,7 +37,7 @@ const WeaponUnit = (props: Props) => {
     function generateImageUrl() {
         let imgSrc = ""
         if (props.gridWeapon) {
-            const weapon = props.gridWeapon.weapon!
+            const weapon = props.gridWeapon.object!
     
             if (props.unitType == 0)
                 imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
@@ -55,15 +56,22 @@ const WeaponUnit = (props: Props) => {
     return (
         <div>
             <div className={classes}>
-                <div className="WeaponImage" onClick={ (props.editable) ? props.onClick : () => {} }>
-                    <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
-                    { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
-                </div>
+                <SearchModal 
+                    placeholderText="Search for a weapon..." 
+                    fromPosition={props.position} 
+                    object="weapons"
+                    send={props.updateObject}>
+                        <div className="WeaponImage">
+                            <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
+                            { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
+                        </div>
+                </SearchModal>
+
                 { (gridWeapon) ? 
                     <UncapIndicator 
                         type="weapon"
-                        ulb={gridWeapon.weapon.uncap.ulb || false} 
-                        flb={gridWeapon.weapon.uncap.flb || false}
+                        ulb={gridWeapon.object.uncap.ulb || false} 
+                        flb={gridWeapon.object.uncap.flb || false}
                         uncapLevel={gridWeapon.uncap_level}
                         updateUncap={passUncapData}
                         special={false}

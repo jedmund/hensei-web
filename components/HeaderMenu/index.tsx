@@ -38,7 +38,7 @@ const HeaderMenu = (props: Props) => {
                     </div>
                     <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link href='/teans'>Teams</Link>
+                            <Link href='/teams'>Teams</Link>
                         </li>
 
                         <li className="MenuItem">
@@ -46,10 +46,7 @@ const HeaderMenu = (props: Props) => {
                         </li>
                     </div>
                     <div className="MenuGroup">
-                        <li className="MenuItem" onClick={openAboutModal}>About</li>
-                        {aboutOpen ? (
-                            <AboutModal close={closeAboutModal} />
-                        ) : null}
+                        <AboutModal />
                         <li className="MenuItem">Settings</li>
                         <li className="MenuItem" onClick={props.logout}>Logout</li>
                     </div>
@@ -62,14 +59,11 @@ const HeaderMenu = (props: Props) => {
         return (
             <ul className="Menu unauth">
                 <div className="MenuGroup">
-                    <li className="MenuItem" onClick={openAboutModal}>About</li>
-                    {aboutOpen ? (
-                        <AboutModal close={closeAboutModal} />
-                    ) : null}
+                    <AboutModal />
                 </div>
                 <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link href='/teans'>Teams</Link>
+                            <Link href='/teams'>Teams</Link>
                         </li>
 
                         <li className="MenuItem">

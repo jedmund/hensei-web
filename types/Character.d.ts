@@ -1,4 +1,6 @@
 interface Character {
+    type: 'character'
+    
     id: string
     granblue_id: string
     element: number

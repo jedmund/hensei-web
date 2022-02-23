@@ -1,6 +1,6 @@
-interface GridCharacter {
+interface GridCharacter {    
     id: string
     position: number
-    character: Character
+    object: Character
     uncap_level: number
 }

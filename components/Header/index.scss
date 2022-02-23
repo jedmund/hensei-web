@@ -1,7 +1,12 @@
-#Header {
+.Header {
     display: flex;
     height: 34px;
     width: 100%;
+
+    &.bottom {
+        position: sticky;
+        bottom: $unit * 2;
+    }
 
     #right {
         display: flex;

@@ -1,19 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useCookies } from 'react-cookie'
-import { useModal as useModal } from '~utils/useModal'
+import { useSnapshot } from 'valtio'
 
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
-import AppContext from '~context/AppContext'
-import PartyContext from '~context/PartyContext'
-
-import SearchModal from '~components/SearchModal'
 import SummonUnit from '~components/SummonUnit'
 import ExtraSummons from '~components/ExtraSummons'
 
 import api from '~utils/api'
+import state from '~utils/state'
+
 import './index.scss'
 
 // Props
@@ -36,55 +34,37 @@ const SummonGrid = (props: Props) => {
     } : {}
 
     // Set up state for view management
+    const { party, grid } = useSnapshot(state)
+
+    const [slug, setSlug] = useState()
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
-    const { id, setId } = useContext(PartyContext)
-    const { slug, setSlug } = useContext(PartyContext)
-    const { editable, setEditable } = useContext(AppContext)
-
-    // Set up states for Grid data
-    const [summons, setSummons] = useState<GridArray<GridSummon>>({})
-    const [mainSummon, setMainSummon] = useState<GridSummon>()
-    const [friendSummon, setFriendSummon] = useState<GridSummon>()
-
-    // Set up states for Search
-    const { open, openModal, closeModal } = useModal()
-    const [itemPositionForSearch, setItemPositionForSearch] = useState(0)
 
     // Create a temporary state to store previous weapon uncap value
     const [previousUncapValues, setPreviousUncapValues] = useState<{[key: number]: number}>({})
-
-    // Create a state dictionary to store pure objects for Search
-    const [searchGrid, setSearchGrid] = useState<GridArray<Summon>>({})
 
     // Fetch data from the server
     useEffect(() => {
         const shortcode = (props.slug) ? props.slug : slug
         if (shortcode) fetchGrid(shortcode)
-        else setEditable(true)
+        else state.party.editable = true
     }, [slug, props.slug])
 
     // Initialize an array of current uncap values for each summon
     useEffect(() => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
-        if (mainSummon) initialPreviousUncapValues[-1] = mainSummon.uncap_level
-        if (friendSummon) initialPreviousUncapValues[6] = friendSummon.uncap_level
-        Object.values(summons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+
+        if (state.grid.summons.mainSummon) 
+            initialPreviousUncapValues[-1] = state.grid.summons.mainSummon.uncap_level
+
+        if (state.grid.summons.friendSummon) 
+            initialPreviousUncapValues[6] = state.grid.summons.friendSummon.uncap_level
+
+        Object.values(state.grid.summons.allSummons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [summons, mainSummon, friendSummon])
+    }, [state.grid.summons.mainSummon, state.grid.summons.friendSummon, state.grid.summons.allSummons])
 
-    // Update search grid whenever any summon is updated
-    useEffect(() => {
-        let newSearchGrid = Object.values(summons).map((o) => o.summon)
-
-        if (mainSummon)
-            newSearchGrid.unshift(mainSummon.summon)
-
-        if (friendSummon)
-            newSearchGrid.unshift(friendSummon.summon)
-
-        setSearchGrid(newSearchGrid)
-    }, [summons, mainSummon, friendSummon])
 
     // Methods: Fetching an object from the server
     async function fetchGrid(shortcode: string) {
@@ -102,11 +82,12 @@ const SummonGrid = (props: Props) => {
         const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
 
         if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
-            setEditable(true)
+            state.party.editable = true
         }
         
         // Store the important party and state-keeping values
-        setId(party.id)
+        state.party.id = party.id
+
         setFound(true)
         setLoading(false)
 
@@ -126,42 +107,34 @@ const SummonGrid = (props: Props) => {
     }
 
     function populateSummons(list: [GridSummon]) {
-        let summons: GridArray<GridSummon> = {}
-
-        list.forEach((object: GridSummon) => {
-            if (object.main)
-                setMainSummon(object)
-            else if (object.friend)
-                setFriendSummon(object)
-            else if (!object.main && !object.friend && object.position != null)
-                summons[object.position] = object
+        list.forEach((gridObject: GridSummon) => {
+            if (gridObject.main)
+                state.grid.summons.mainSummon = gridObject
+            else if (gridObject.friend)
+                state.grid.summons.friendSummon = gridObject
+            else if (!gridObject.main && !gridObject.friend && gridObject.position != null)
+                state.grid.summons.allSummons[gridObject.position] = gridObject
         })
-
-        setSummons(summons)
     }
 
     // Methods: Adding an object from search
-    function openSearchModal(position: number) {
-        setItemPositionForSearch(position)
-        openModal()
-    }
-
     function receiveSummonFromSearch(object: Character | Weapon | Summon, position: number) {
         const summon = object as Summon
 
-        if (!id) {
+        if (!party.id) {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
-                    setId(party.id)
+                    state.party.id = party.id
                     setSlug(party.shortcode)
 
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
+
                     saveSummon(party.id, summon, position)
                         .then(response => storeGridSummon(response.data.grid_summon))
                 })
         } else {
-            saveSummon(id, summon, position)
+            saveSummon(party.id, summon, position)
                 .then(response => storeGridSummon(response.data.grid_summon))
         }
     }
@@ -184,16 +157,12 @@ const SummonGrid = (props: Props) => {
     }
 
     function storeGridSummon(gridSummon: GridSummon) {
-        if (gridSummon.position == -1) {
-            setMainSummon(gridSummon)
-        } else if (gridSummon.position == 6) {
-            setFriendSummon(gridSummon)
-        } else {
-            // Store the grid unit at the correct position
-            let newSummons = Object.assign({}, summons)
-            newSummons[gridSummon.position] = gridSummon
-            setSummons(newSummons)
-        }
+        if (gridSummon.position == -1)
+            state.grid.summons.mainSummon = gridSummon
+        else if (gridSummon.position == 6)
+            state.grid.summons.friendSummon = gridSummon
+        else
+            state.grid.summons.allSummons[gridSummon.position] = gridSummon
     }
 
     // Methods: Updating uncap level
@@ -218,40 +187,41 @@ const SummonGrid = (props: Props) => {
         }
     }
 
-    const initiateUncapUpdate = useCallback(
-        (id: string, position: number, uncapLevel: number) => {
-            memoizeAction(id, position, uncapLevel)
+    function initiateUncapUpdate(id: string, position: number, uncapLevel: number) {
+        memoizeAction(id, position, uncapLevel)
 
-            // Optimistically update UI
-            updateUncapLevel(position, uncapLevel)
-        }, [previousUncapValues, summons]
-    )
+        // Optimistically update UI
+        updateUncapLevel(position, uncapLevel)
+    }
 
     const memoizeAction = useCallback(
         (id: string, position: number, uncapLevel: number) => {
             debouncedAction(id, position, uncapLevel)
-        }, [summons, mainSummon, friendSummon]
+        }, [props, previousUncapValues]
     )
 
     const debouncedAction = useMemo(() =>
         debounce((id, position, number) => {
             saveUncap(id, position, number)
-        }, 500), [summons, mainSummon, friendSummon, saveUncap]
+        }, 500), [props, saveUncap]
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {
-        let newSummons = Object.assign({}, summons)
-        newSummons[position].uncap_level = uncapLevel
-        setSummons(newSummons)
+        if (state.grid.summons.mainSummon && position == -1)
+            state.grid.summons.mainSummon.uncap_level = uncapLevel
+        else if (state.grid.summons.friendSummon && position == 6) 
+            state.grid.summons.friendSummon.uncap_level = uncapLevel
+        else
+            state.grid.summons.allSummons[position].uncap_level = uncapLevel
     }
 
     function storePreviousUncapValue(position: number) {
         // Save the current value in case of an unexpected result
         let newPreviousValues = {...previousUncapValues}
 
-        if (mainSummon && position == -1) newPreviousValues[position] = mainSummon.uncap_level
-        else if (friendSummon && position == 6) newPreviousValues[position] = friendSummon.uncap_level 
-        else newPreviousValues[position] = summons[position].uncap_level
+        if (state.grid.summons.mainSummon && position == -1) newPreviousValues[position] = state.grid.summons.mainSummon.uncap_level
+        else if (state.grid.summons.friendSummon && position == 6) newPreviousValues[position] = state.grid.summons.friendSummon.uncap_level 
+        else newPreviousValues[position] = state.grid.summons.allSummons[position].uncap_level
 
         setPreviousUncapValues(newPreviousValues)
     }
@@ -261,12 +231,12 @@ const SummonGrid = (props: Props) => {
         <div className="LabeledUnit">
             <div className="Label">Main Summon</div>
             <SummonUnit
-                gridSummon={mainSummon}
-                editable={editable}
+                gridSummon={grid.summons.mainSummon}
+                editable={party.editable}
                 key="grid_main_summon"
                 position={-1}
                 unitType={0}
-                onClick={() => { openSearchModal(-1) }}
+                updateObject={receiveSummonFromSearch}
                 updateUncap={initiateUncapUpdate}
             />
         </div>
@@ -276,12 +246,12 @@ const SummonGrid = (props: Props) => {
         <div className="LabeledUnit">
             <div className="Label">Friend Summon</div>
             <SummonUnit
-                gridSummon={friendSummon}
-                editable={editable}
+                gridSummon={grid.summons.friendSummon}
+                editable={party.editable}
                 key="grid_friend_summon"
                 position={6}
                 unitType={2}
-                onClick={() => { openSearchModal(6) }}
+                updateObject={receiveSummonFromSearch}
                 updateUncap={initiateUncapUpdate}
             />
         </div>
@@ -293,11 +263,11 @@ const SummonGrid = (props: Props) => {
                 {Array.from(Array(numSummons)).map((x, i) => {
                     return (<li key={`grid_unit_${i}`} >
                         <SummonUnit 
-                            gridSummon={summons[i]}
-                            editable={editable}
+                            gridSummon={grid.summons.allSummons[i]}
+                            editable={party.editable}
                             position={i} 
                             unitType={1}
-                            onClick={() => { openSearchModal(i) }}
+                            updateObject={receiveSummonFromSearch}
                             updateUncap={initiateUncapUpdate}
                         />
                     </li>)
@@ -307,11 +277,11 @@ const SummonGrid = (props: Props) => {
     )
     const subAuraSummonElement = (
         <ExtraSummons 
-            grid={summons} 
-            editable={editable} 
+            grid={grid.summons.allSummons} 
+            editable={party.editable} 
             exists={false} 
             offset={numSummons}
-            onClick={openSearchModal}
+            updateObject={receiveSummonFromSearch}
             updateUncap={initiateUncapUpdate}
         />
     )
@@ -324,17 +294,6 @@ const SummonGrid = (props: Props) => {
             </div>
             
             { subAuraSummonElement }
-
-            {open ? (
-                <SearchModal 
-                    grid={searchGrid}
-                    close={closeModal}
-                    send={receiveSummonFromSearch}
-                    fromPosition={itemPositionForSearch}
-                    object="summons"
-                    placeholderText="Search for a summon..."
-                />
-            ) : null}
         </div>
     )
 }

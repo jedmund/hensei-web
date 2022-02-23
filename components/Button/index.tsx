@@ -1,15 +1,22 @@
 import React from 'react'
 import classNames from 'classnames'
 
+import Link from 'next/link'
+
 import AddIcon from '~public/icons/Add.svg'
+import CrossIcon from '~public/icons/Cross.svg'
+import EditIcon from '~public/icons/Edit.svg'
+import LinkIcon from '~public/icons/Link.svg'
 import MenuIcon from '~public/icons/Menu.svg'
 
 import './index.scss'
 
+import { ButtonType } from '~utils/enums'
+
 interface Props {
-    color: string
     disabled: boolean
-    type: string | null
+    icon: string | null
+    type: ButtonType
     click: any
 }
 
@@ -19,9 +26,9 @@ interface State {
 
 class Button extends React.Component<Props, State> {
     static defaultProps: Props = {
-        color: 'grey',
         disabled: false,
-        type: null,
+        icon: null,
+        type: ButtonType.Base,
         click: () => {}
     }
 
@@ -34,17 +41,25 @@ class Button extends React.Component<Props, State> {
 
     render() {
         let icon
-        if (this.props.type === 'new') {
+        if (this.props.icon === 'new') {
             icon = <span className='icon'>
                 <AddIcon />
             </span>
-        } else if (this.props.type === 'menu') {
+        } else if (this.props.icon === 'menu') {
             icon = <span className='icon'>
                 <MenuIcon />
             </span>
-        } else if (this.props.type === 'link') {
+        } else if (this.props.icon === 'link') {
+            icon = <span className='icon stroke'>
+                <LinkIcon />
+            </span>
+        } else if (this.props.icon === 'cross') {
             icon = <span className='icon'>
-                <img alt="" src="/icons/Link.svg" />
+                <CrossIcon />
+            </span>
+        } else if (this.props.icon === 'edit') {
+            icon = <span className='icon'>
+                <EditIcon />
             </span>
         }
 
@@ -52,7 +67,7 @@ class Button extends React.Component<Props, State> {
             Button: true,
             'btn-pressed': this.state.isPressed,
             'btn-disabled': this.props.disabled,
-            [`btn-${this.props.color}`]: true
+            'destructive': this.props.type == ButtonType.Destructive
         })
 
         return <button className={classes} disabled={this.props.disabled} onClick={this.props.click}>

@@ -1,18 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useCookies } from 'react-cookie'
-import { useModal as useModal } from '~utils/useModal'
+import { useSnapshot } from 'valtio'
 
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
-
-import AppContext from '~context/AppContext'
-import PartyContext from '~context/PartyContext'
 
 import CharacterUnit from '~components/CharacterUnit'
 import SearchModal from '~components/SearchModal'
 
 import api from '~utils/api'
+import state from '~utils/state'
+
 import './index.scss'
 
 // Props
@@ -35,44 +34,28 @@ const CharacterGrid = (props: Props) => {
     } : {}
 
     // Set up state for view management
+    const { party, grid } = useSnapshot(state)
+
+    const [slug, setSlug] = useState()
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
-    const { id, setId } = useContext(PartyContext)
-    const { slug, setSlug } = useContext(PartyContext)
-    const { editable, setEditable } = useContext(AppContext)
-
-    // Set up states for Grid data
-    const [characters, setCharacters] = useState<GridArray<GridCharacter>>({})
-
-    // Set up states for Search
-    const { open, openModal, closeModal } = useModal()
-    const [itemPositionForSearch, setItemPositionForSearch] = useState(0)
 
     // Create a temporary state to store previous character uncap values
     const [previousUncapValues, setPreviousUncapValues] = useState<{[key: number]: number}>({})
-
-    // Create a state dictionary to store pure objects for Search
-    const [searchGrid, setSearchGrid] = useState<GridArray<Character>>({})
     
     // Fetch data from the server
     useEffect(() => {
         const shortcode = (props.slug) ? props.slug : slug
         if (shortcode) fetchGrid(shortcode)
-        else setEditable(true)
+        else state.party.editable = true
     }, [slug, props.slug])
 
     // Initialize an array of current uncap values for each characters
     useEffect(() => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
-        Object.values(characters).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+        Object.values(state.grid.characters).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [characters])
-    
-    // Update search grid whenever characters are updated
-    useEffect(() => {
-        let newSearchGrid = Object.values(characters).map((o) => o.character)
-        setSearchGrid(newSearchGrid)
-    }, [characters])
+    }, [state.grid.characters])
 
     // Methods: Fetching an object from the server
     async function fetchGrid(shortcode: string) {
@@ -90,11 +73,12 @@ const CharacterGrid = (props: Props) => {
         const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
 
         if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
-            setEditable(true)
+            party.editable = true
         }
         
         // Store the important party and state-keeping values
-        setId(party.id)
+        state.party.id = party.id
+
         setFound(true)
         setLoading(false)
 
@@ -114,60 +98,48 @@ const CharacterGrid = (props: Props) => {
     }
 
     function populateCharacters(list: [GridCharacter]) {
-        let characters: GridArray<GridCharacter> = {}
-
         list.forEach((object: GridCharacter) => {
             if (object.position != null)
-                characters[object.position] = object
+                state.grid.characters[object.position] = object
         })
-
-        setCharacters(characters)
     }
-
 
     // Methods: Adding an object from search
-    function openSearchModal(position: number) {
-        setItemPositionForSearch(position)
-        openModal()
-    }
-
     function receiveCharacterFromSearch(object: Character | Weapon | Summon, position: number) {
         const character = object as Character
 
-        if (!id) {
+        if (!party.id) {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
-                    setId(party.id)
+                    state.party.id = party.id
                     setSlug(party.shortcode)
 
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
                     saveCharacter(party.id, character, position)
                         .then(response => storeGridCharacter(response.data.grid_character))
+                        .catch(error => console.error(error))
                 })
         } else {
-            saveCharacter(id, character, position)
+            saveCharacter(party.id, character, position)
                 .then(response => storeGridCharacter(response.data.grid_character))
+                .catch(error => console.error(error))
         }
     }
 
-    async function saveCharacter(partyId: string, character: Character, position: number) {        
+    async function saveCharacter(partyId: string, character: Character, position: number) { 
         return await api.endpoints.characters.create({
             'character': {
                 'party_id': partyId,
                 'character_id': character.id,
                 'position': position,
-                'mainhand': (position == -1),
                 'uncap_level': characterUncapLevel(character)
             }
         }, headers)
     }
 
     function storeGridCharacter(gridCharacter: GridCharacter) {
-        // Store the grid unit at the correct position
-        let newCharacters = Object.assign({}, characters)
-        newCharacters[gridCharacter.position] = gridCharacter
-        setCharacters(newCharacters)
+        state.grid.characters[gridCharacter.position] = gridCharacter
     }
 
     // Methods: Helpers
@@ -209,39 +181,37 @@ const CharacterGrid = (props: Props) => {
         }
     }
 
-    const initiateUncapUpdate = useCallback(
-        (id: string, position: number, uncapLevel: number) => {
-            memoizeAction(id, position, uncapLevel)
+    function initiateUncapUpdate(id: string, position: number, uncapLevel: number) {
+        memoizeAction(id, position, uncapLevel)
 
-            // Optimistically update UI
-            updateUncapLevel(position, uncapLevel)
-        }, [previousUncapValues, characters]
-    )
+        // Optimistically update UI
+        updateUncapLevel(position, uncapLevel)
+    }
 
     const memoizeAction = useCallback(
         (id: string, position: number, uncapLevel: number) => {
             debouncedAction(id, position, uncapLevel)
-        }, [characters]
+        }, [props, previousUncapValues]
     )
 
     const debouncedAction = useMemo(() =>
         debounce((id, position, number) => {
             saveUncap(id, position, number)
-        }, 500), [characters, saveUncap]
+        }, 500), [props, saveUncap]
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {
-        let newCharacters = {...characters}
-        newCharacters[position].uncap_level = uncapLevel
-        setCharacters(newCharacters)
+        state.grid.characters[position].uncap_level = uncapLevel
     }
 
     function storePreviousUncapValue(position: number) {
         // Save the current value in case of an unexpected result
         let newPreviousValues = {...previousUncapValues}
-         newPreviousValues[position] = characters[position].uncap_level
 
-        setPreviousUncapValues(newPreviousValues)
+        if (grid.characters[position]) {
+            newPreviousValues[position] = grid.characters[position].uncap_level
+            setPreviousUncapValues(newPreviousValues)
+        }
     }
 
     // Render: JSX components
@@ -252,26 +222,15 @@ const CharacterGrid = (props: Props) => {
                     return (
                         <li key={`grid_unit_${i}`} >
                             <CharacterUnit 
-                                gridCharacter={characters[i]}
-                                editable={editable}
+                                gridCharacter={grid.characters[i]}
+                                editable={party.editable}
                                 position={i} 
-                                onClick={() => { openSearchModal(i) }}
+                                updateObject={receiveCharacterFromSearch}
                                 updateUncap={initiateUncapUpdate}
                             />
                         </li>
                     )
                 })}
-
-                {open ? (
-                    <SearchModal 
-                        grid={searchGrid}
-                        close={closeModal}
-                        send={receiveCharacterFromSearch}
-                        fromPosition={itemPositionForSearch}
-                        object="characters"
-                        placeholderText="Search for a character..."
-                    />
-                ) : null}
             </ul>
         </div>
     )

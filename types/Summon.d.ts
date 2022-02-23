@@ -1,4 +1,6 @@
 interface Summon {
+    type: 'summon'
+    
     id: string
     granblue_id: number
     element: number

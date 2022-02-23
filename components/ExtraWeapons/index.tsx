@@ -3,21 +3,13 @@ import WeaponUnit from '~components/WeaponUnit'
 
 import './index.scss'
 
-// GridType
-export enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
-}
-
 // Props
 interface Props {
     grid: GridArray<GridWeapon>
     editable: boolean
     found?: boolean
     offset: number
-    onClick: (position: number) => void
+    updateObject: (object: Character | Weapon | Summon, position: number) => void
     updateUncap: (id: string, position: number, uncap: number) => void
 }
 
@@ -37,7 +29,7 @@ const ExtraWeapons = (props: Props) => {
                                     position={props.offset + i} 
                                     unitType={1}
                                     gridWeapon={props.grid[props.offset + i]}
-                                    onClick={() => { props.onClick(props.offset + i)}} 
+                                    updateObject={props.updateObject}
                                     updateUncap={props.updateUncap}
                                 />
                             </li>

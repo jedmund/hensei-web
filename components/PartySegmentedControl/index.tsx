@@ -1,19 +1,14 @@
 import React, { useContext } from 'react'
 import './index.scss'
 
-import PartyContext from '~context/PartyContext'
+import state from '~utils/state'
 
 import SegmentedControl from '~components/SegmentedControl'
 import Segment from '~components/Segment'
 import ToggleSwitch from '~components/ToggleSwitch'
 
-// GridType
-export enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
-}
+import { GridType } from '~utils/enums'
+import { useSnapshot } from 'valtio'
 
 interface Props {
     selectedTab: GridType
@@ -22,10 +17,10 @@ interface Props {
 }
 
 const PartySegmentedControl = (props: Props) => {
-    const { editable, element, hasExtra } = useContext(PartyContext)
+    const { party } = useSnapshot(state)
 
     function getElement() {
-        switch(element) {
+        switch(party.element) {
             case 1: return "wind"; break
             case 2: return "fire"; break
             case 3: return "water"; break
@@ -40,8 +35,8 @@ const PartySegmentedControl = (props: Props) => {
             Extra
             <ToggleSwitch 
                 name="ExtraSwitch" 
-                editable={editable}
-                checked={hasExtra}
+                editable={party.editable}
+                checked={party.extra}
                 onChange={props.onCheckboxChange} 
             />
         </div>
@@ -80,7 +75,7 @@ const PartySegmentedControl = (props: Props) => {
 
             {
                 (() => {
-                    if (editable && props.selectedTab == GridType.Weapon) {
+                    if (party.editable && props.selectedTab == GridType.Weapon) {
                         return extraToggle
                     }
                 })()

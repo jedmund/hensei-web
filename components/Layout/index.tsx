@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react'
-import Header from '~components/Header'
+import TopHeader from '~components/TopHeader'
+import BottomHeader from '~components/BottomHeader'
 
 interface Props {
     children: ReactElement
@@ -8,8 +9,9 @@ interface Props {
 const Layout = ({children}: Props) => {
   return (
     <>
-      <Header />
+      <TopHeader />
       <main>{children}</main>
+      <BottomHeader />
     </>
   )
 }

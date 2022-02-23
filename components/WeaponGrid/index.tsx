@@ -1,19 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useCookies } from 'react-cookie'
-import { useModal as useModal } from '~utils/useModal'
+import { useSnapshot } from 'valtio'
 
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
-import AppContext from '~context/AppContext'
-import PartyContext from '~context/PartyContext'
-
-import SearchModal from '~components/SearchModal'
 import WeaponUnit from '~components/WeaponUnit'
 import ExtraWeapons from '~components/ExtraWeapons'
 
 import api from '~utils/api'
+import state from '~utils/state'
+
 import './index.scss'
 
 // Props
@@ -36,58 +34,33 @@ const WeaponGrid = (props: Props) => {
     } : {}
 
     // Set up state for view management
+    const { party, grid } = useSnapshot(state)
+
+    const [slug, setSlug] = useState()
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
-    
-    // Set up the party context
-    const { setEditable: setAppEditable } = useContext(AppContext)
-    const { id, setId } = useContext(PartyContext)
-    const { slug, setSlug } = useContext(PartyContext)
-    const { editable, setEditable } = useContext(PartyContext)
-    const { hasExtra, setHasExtra } = useContext(PartyContext)
-    const { setElement } = useContext(PartyContext)
-
-    // Set up states for Grid data
-    const [weapons, setWeapons] = useState<GridArray<GridWeapon>>({})
-    const [mainWeapon, setMainWeapon] = useState<GridWeapon>()
-
-    // Set up states for Search
-    const { open, openModal, closeModal } = useModal()
-    const [itemPositionForSearch, setItemPositionForSearch] = useState(0)
 
     // Create a temporary state to store previous weapon uncap values
     const [previousUncapValues, setPreviousUncapValues] = useState<{[key: number]: number}>({})
-
-    // Create a state dictionary to store pure objects for Search
-    const [searchGrid, setSearchGrid] = useState<GridArray<Weapon>>({})
 
     // Fetch data from the server
     useEffect(() => {
         const shortcode = (props.slug) ? props.slug : slug
         if (shortcode) fetchGrid(shortcode)
-        else {
-            setEditable(true)
-            setAppEditable(true)
-        }
+        else state.party.editable = true
     }, [slug, props.slug])
 
     // Initialize an array of current uncap values for each weapon
     useEffect(() => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
-        if (mainWeapon) initialPreviousUncapValues[-1] = mainWeapon.uncap_level
-        Object.values(weapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+
+        if (state.grid.weapons.mainWeapon) 
+            initialPreviousUncapValues[-1] = state.grid.weapons.mainWeapon.uncap_level
+
+        Object.values(state.grid.weapons.allWeapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [mainWeapon, weapons])
-
-    // Update search grid whenever weapons or the mainhand are updated
-    useEffect(() => {
-        let newSearchGrid = Object.values(weapons).map((o) => o.weapon)
-
-        if (mainWeapon)
-            newSearchGrid.unshift(mainWeapon.weapon)
-
-        setSearchGrid(newSearchGrid)
-    }, [weapons, mainWeapon])
+    }, [state.grid.weapons.mainWeapon, state.grid.weapons.allWeapons])
 
     // Methods: Fetching an object from the server
     async function fetchGrid(shortcode: string) {
@@ -105,13 +78,13 @@ const WeaponGrid = (props: Props) => {
         const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
 
         if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
-            setEditable(true)
-            setAppEditable(true)
+            state.party.editable = true
         }
         
         // Store the important party and state-keeping values
-        setId(party.id)
-        setHasExtra(party.is_extra)
+        state.party.id = party.id
+        state.party.extra = party.is_extra
+
         setFound(true)
         setLoading(false)
 
@@ -131,43 +104,36 @@ const WeaponGrid = (props: Props) => {
     }
 
     function populateWeapons(list: [GridWeapon]) {
-        let weapons: GridArray<GridWeapon> = {}
-
-        list.forEach((object: GridWeapon) => {
-            if (object.mainhand) {
-                setMainWeapon(object)
-                setElement(object.weapon.element)
-            } else if (!object.mainhand && object.position != null) {
-                weapons[object.position] = object
+        list.forEach((gridObject: GridWeapon) => {
+            if (gridObject.mainhand) {
+                state.grid.weapons.mainWeapon = gridObject
+                state.party.element = gridObject.object.element
+            } else if (!gridObject.mainhand && gridObject.position != null) {
+                state.grid.weapons.allWeapons[gridObject.position] = gridObject
             }
         })
-
-        setWeapons(weapons)
     }
-
+    
     // Methods: Adding an object from search
-    function openSearchModal(position: number) {
-        setItemPositionForSearch(position)
-        openModal()
-    }
-
     function receiveWeaponFromSearch(object: Character | Weapon | Summon, position: number) {
         const weapon = object as Weapon
-        setElement(weapon.element)
+        if (position == 1)
+            state.party.element = weapon.element
 
-        if (!id) {
-            props.createParty(hasExtra)
+        if (!party.id) {
+            props.createParty(party.extra)
                 .then(response => {
                     const party = response.data.party
-                    setId(party.id)
+                    state.party.id = party.id
                     setSlug(party.shortcode)
 
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
+
                     saveWeapon(party.id, weapon, position)
                         .then(response => storeGridWeapon(response.data.grid_weapon))
                 })
         } else {
-            saveWeapon(id, weapon, position)
+            saveWeapon(party.id, weapon, position)
                 .then(response => storeGridWeapon(response.data.grid_weapon))
         }
     }
@@ -190,12 +156,11 @@ const WeaponGrid = (props: Props) => {
 
     function storeGridWeapon(gridWeapon: GridWeapon) {
         if (gridWeapon.position == -1) {
-            setMainWeapon(gridWeapon)
+            state.grid.weapons.mainWeapon = gridWeapon
+            state.party.element = gridWeapon.object.element
         } else {
             // Store the grid unit at the correct position
-            let newWeapons = Object.assign({}, weapons)
-            newWeapons[gridWeapon.position] = gridWeapon
-            setWeapons(newWeapons)
+            state.grid.weapons.allWeapons[gridWeapon.position] = gridWeapon
         }
     }
 
@@ -241,32 +206,29 @@ const WeaponGrid = (props: Props) => {
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {
-        if (mainWeapon && position == -1) {
-            mainWeapon.uncap_level = uncapLevel
-            setMainWeapon(mainWeapon)
-        } else {
-            let newWeapons = Object.assign({}, weapons)
-            newWeapons[position].uncap_level = uncapLevel
-            setWeapons(newWeapons)
-        }
+        if (state.grid.weapons.mainWeapon && position == -1)
+            state.grid.weapons.mainWeapon.uncap_level = uncapLevel
+        else
+            state.grid.weapons.allWeapons[position].uncap_level = uncapLevel
     }
 
     function storePreviousUncapValue(position: number) {
         // Save the current value in case of an unexpected result
         let newPreviousValues = {...previousUncapValues}
-        newPreviousValues[position] = (mainWeapon && position == -1) ? mainWeapon.uncap_level : weapons[position].uncap_level
+        newPreviousValues[position] = (state.grid.weapons.mainWeapon && position == -1) ? 
+            state.grid.weapons.mainWeapon.uncap_level : state.grid.weapons.allWeapons[position].uncap_level
         setPreviousUncapValues(newPreviousValues)
     }
 
     // Render: JSX components
     const mainhandElement = (
         <WeaponUnit 
-            gridWeapon={mainWeapon}
-            editable={editable}
+            gridWeapon={grid.weapons.mainWeapon}
+            editable={party.editable}
             key="grid_mainhand"
             position={-1} 
             unitType={0}
-            onClick={() => { openSearchModal(-1) }}
+            updateObject={receiveWeaponFromSearch}
             updateUncap={initiateUncapUpdate}
         />
     )
@@ -276,11 +238,11 @@ const WeaponGrid = (props: Props) => {
             return (
                 <li key={`grid_unit_${i}`} >
                     <WeaponUnit 
-                        gridWeapon={weapons[i]}
-                        editable={editable}
+                        gridWeapon={grid.weapons.allWeapons[i]}
+                        editable={party.editable}
                         position={i} 
                         unitType={1}
-                        onClick={() => { openSearchModal(i) }}
+                        updateObject={receiveWeaponFromSearch}
                         updateUncap={initiateUncapUpdate}
                     />
                 </li>
@@ -290,10 +252,10 @@ const WeaponGrid = (props: Props) => {
 
     const extraGridElement = (
         <ExtraWeapons 
-            grid={weapons} 
-            editable={editable} 
+            grid={state.grid.weapons.allWeapons} 
+            editable={party.editable} 
             offset={numWeapons}
-            onClick={openSearchModal}
+            updateObject={receiveWeaponFromSearch}
             updateUncap={initiateUncapUpdate}
         />
     )
@@ -305,18 +267,7 @@ const WeaponGrid = (props: Props) => {
                 <ul className="grid_weapons">{ weaponGridElement }</ul>
             </div>
 
-            { (() => { return (hasExtra) ? extraGridElement : '' })() }
-
-            {open ? (
-                <SearchModal 
-                    grid={searchGrid}
-                    close={closeModal}
-                    send={receiveWeaponFromSearch}
-                    fromPosition={itemPositionForSearch}
-                    object="weapons"
-                    placeholderText="Search for a weapon..."
-                />
-            ) : null}
+            { (() => { return (party.extra) ? extraGridElement : '' })() }
         </div>
     )
 }

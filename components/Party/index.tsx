@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import { useSnapshot } from 'valtio'
 import { useCookies } from 'react-cookie'
 
-import PartyContext from '~context/PartyContext'
 
 import PartySegmentedControl from '~components/PartySegmentedControl'
 import WeaponGrid from '~components/WeaponGrid'
@@ -9,17 +9,10 @@ import SummonGrid from '~components/SummonGrid'
 import CharacterGrid from '~components/CharacterGrid'
 
 import api from '~utils/api'
-import { TeamElement } from '~utils/enums'
+import state from '~utils/state'
+import { GridType, TeamElement } from '~utils/enums'
 
 import './index.scss'
-
-// GridType
-enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
-}
 
 // Props
 interface Props {
@@ -37,12 +30,8 @@ const Party = (props: Props) => {
     } : {}
 
     // Set up states
+    const { party } = useSnapshot(state)
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
-    const [id, setId] = useState('')
-    const [slug, setSlug] = useState('')
-    const [element, setElement] = useState<TeamElement>(TeamElement.Any)
-    const [editable, setEditable] = useState(false)
-    const [hasExtra, setHasExtra] = useState(false)
 
     // Methods: Creating a new party
     async function createParty(extra: boolean = false) {
@@ -58,10 +47,12 @@ const Party = (props: Props) => {
 
     // Methods: Updating the party's extra flag
     function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        setHasExtra(event.target.checked)
-        api.endpoints.parties.update(id, {
-            'party': { 'is_extra': event.target.checked }
-        }, headers)
+        if (party.id) {
+            state.party.extra = event.target.checked
+            api.endpoints.parties.update(party.id, {
+                'party': { 'is_extra': event.target.checked }
+            }, headers)
+        }
     }
 
     // Methods: Navigating with segmented control
@@ -130,10 +121,8 @@ const Party = (props: Props) => {
 
     return (
         <div>
-            <PartyContext.Provider value={{ id, setId, slug, setSlug, element, setElement, editable, setEditable, hasExtra, setHasExtra }}>
-                { navigation }
-                { currentGrid() }
-            </PartyContext.Provider>
+            { navigation }
+            { currentGrid() }
         </div>
     )
 }
