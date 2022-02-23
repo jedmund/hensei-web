@@ -11,7 +11,6 @@
 .MenuItem {
     color: $grey-10;
     font-weight: $normal;
-    padding: 12px;
 
     &:hover {
         background: $grey-100;
@@ -25,6 +24,11 @@
 
     a {
         color: $grey-10;
+    }
+
+    a, span {
+        display: block;
+        padding: 12px;
     }
 }
 

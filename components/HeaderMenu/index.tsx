@@ -47,8 +47,12 @@ const HeaderMenu = (props: Props) => {
                     </div>
                     <div className="MenuGroup">
                         <AboutModal />
-                        <li className="MenuItem">Settings</li>
-                        <li className="MenuItem" onClick={props.logout}>Logout</li>
+                        <li className="MenuItem">
+                            <span>Settings</span>
+                        </li>
+                        <li className="MenuItem" onClick={props.logout}>
+                            <span>Logout</span>
+                        </li>
                     </div>
                 </ul>
             </nav>
@@ -71,13 +75,18 @@ const HeaderMenu = (props: Props) => {
                         </li>
                     </div>
                 <div className="MenuGroup">
-                    <li className="MenuItem" onClick={openLoginModal}>Log in</li>
+                    <li className="MenuItem" onClick={openLoginModal}>
+                        <span>Log in</span>
+                    </li>
                     {loginOpen ? (
                         <LoginModal 
                             close={closeLoginModal}
                         />
                     ) : null}
-                    <li className="MenuItem" onClick={openSignupModal}>Sign up</li>
+
+                    <li className="MenuItem" onClick={openSignupModal}>
+                        <span>Sign up</span>
+                    </li>
                     {signupOpen ? (
                         <SignupModal 
                             close={closeSignupModal}

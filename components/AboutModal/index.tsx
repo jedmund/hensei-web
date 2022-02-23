@@ -8,7 +8,9 @@ const AboutModal = () => {
     return (
         <Dialog.Root>
             <Dialog.Trigger asChild>
-                <li className="MenuItem">About</li>
+                <li className="MenuItem">
+                    <span>About</span>
+                </li>
             </Dialog.Trigger>
             <Dialog.Portal>
                 <Dialog.Content className="About Dialog" onOpenAutoFocus={ (event) => event.preventDefault() }>
