@@ -26,7 +26,7 @@ const SearchModal = (props: Props) => {
 
     let searchInput = React.createRef<HTMLInputElement>()
 
-    const [pool, setPool] = useState(Array<Character | Weapon | Summon>())
+    const [objects, setObjects] = useState<{[id: number]: GridCharacter | GridWeapon | GridSummon}>()
     const [open, setOpen] = useState(false)
     const [query, setQuery] = useState('')
     const [results, setResults] = useState({})
@@ -34,27 +34,14 @@ const SearchModal = (props: Props) => {
     const [message, setMessage] = useState('')
     const [totalResults, setTotalResults] = useState(0)
 
-    useEffect(() => {
-        if (props.object === 'characters') {
-            setPool(Object.values(grid.characters).map(o => o.character))
-        } else if (props.object === 'weapons') {
-            setPool(Object.values(grid.weapons.allWeapons).map(o => o.weapon))
-        } else if (props.object === 'summons') {
-            setPool(Object.values(grid.summons.allSummons).map(o => o.summon))
-        }
+    useEffect(() => {   
+        setObjects(grid[props.object])
     }, [grid, props.object])
 
     useEffect(() => {
         if (searchInput.current)
             searchInput.current.focus()
     }, [searchInput])
-
-    function filterExclusions(object: Character | Weapon | Summon) {
-        if (pool[props.fromPosition] &&
-            object.granblue_id === pool[props.fromPosition].granblue_id)
-                return null
-        else return object
-    }
 
     function inputChanged(event: React.ChangeEvent<HTMLInputElement>) {
         const text = event.target.value
@@ -73,9 +60,13 @@ const SearchModal = (props: Props) => {
     }
     
     function fetchResults() {
-        const excludes = Object.values(pool)
+        // Exclude objects in grid from search results
+        // unless the object is in the position that the user clicked
+        // so that users can replace object versions with 
+        // compatible other objects.
+        const excludes = (objects) ? Object.values(objects)
             .filter(filterExclusions)
-            .map((o) => { return o.name.en }).join(',')
+            .map((o) => { return (o.object) ? o.object.name.en : undefined }).join(',') : ''
 
         api.search(props.object, query, excludes)
             .then(response => {
@@ -87,6 +78,13 @@ const SearchModal = (props: Props) => {
                 setMessage(error)
                 setLoading(false)
             }) 
+    }
+
+    function filterExclusions(gridObject: GridCharacter | GridWeapon | GridSummon) {
+        if (objects && gridObject.object && 
+            gridObject.object.granblue_id === objects[props.fromPosition]?.object.granblue_id)
+                return null
+        else return gridObject
     }
 
     function sendData(result: Character | Weapon | Summon) {
