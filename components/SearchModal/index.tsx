@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 
-import state from '~utils/state'
+import { appState } from '~utils/appState'
 import api from '~utils/api'
 
 import * as Dialog from '@radix-ui/react-dialog'
@@ -22,7 +22,7 @@ interface Props {
 }
 
 const SearchModal = (props: Props) => {
-    let { grid } = useSnapshot(state)
+    let { grid } = useSnapshot(appState)
 
     let searchInput = React.createRef<HTMLInputElement>()
 

@@ -7,10 +7,9 @@ import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
 import CharacterUnit from '~components/CharacterUnit'
-import SearchModal from '~components/SearchModal'
 
 import api from '~utils/api'
-import state from '~utils/state'
+import { appState } from '~utils/appState'
 
 import './index.scss'
 
@@ -34,7 +33,7 @@ const CharacterGrid = (props: Props) => {
     } : {}
 
     // Set up state for view management
-    const { party, grid } = useSnapshot(state)
+    const { party, grid } = useSnapshot(appState)
 
     const [slug, setSlug] = useState()
     const [found, setFound] = useState(false)
@@ -47,15 +46,15 @@ const CharacterGrid = (props: Props) => {
     useEffect(() => {
         const shortcode = (props.slug) ? props.slug : slug
         if (shortcode) fetchGrid(shortcode)
-        else state.party.editable = true
+        else appState.party.editable = true
     }, [slug, props.slug])
 
     // Initialize an array of current uncap values for each characters
     useEffect(() => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
-        Object.values(state.grid.characters).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+        Object.values(appState.grid.characters).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [state.grid.characters])
+    }, [appState.grid.characters])
 
     // Methods: Fetching an object from the server
     async function fetchGrid(shortcode: string) {
@@ -77,7 +76,7 @@ const CharacterGrid = (props: Props) => {
         }
         
         // Store the important party and state-keeping values
-        state.party.id = party.id
+        appState.party.id = party.id
 
         setFound(true)
         setLoading(false)
@@ -100,7 +99,7 @@ const CharacterGrid = (props: Props) => {
     function populateCharacters(list: [GridCharacter]) {
         list.forEach((object: GridCharacter) => {
             if (object.position != null)
-                state.grid.characters[object.position] = object
+                appState.grid.characters[object.position] = object
         })
     }
 
@@ -112,7 +111,7 @@ const CharacterGrid = (props: Props) => {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
-                    state.party.id = party.id
+                    appState.party.id = party.id
                     setSlug(party.shortcode)
 
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
@@ -139,7 +138,7 @@ const CharacterGrid = (props: Props) => {
     }
 
     function storeGridCharacter(gridCharacter: GridCharacter) {
-        state.grid.characters[gridCharacter.position] = gridCharacter
+        appState.grid.characters[gridCharacter.position] = gridCharacter
     }
 
     // Methods: Helpers
@@ -201,7 +200,7 @@ const CharacterGrid = (props: Props) => {
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {
-        state.grid.characters[position].uncap_level = uncapLevel
+        appState.grid.characters[position].uncap_level = uncapLevel
     }
 
     function storePreviousUncapValue(position: number) {

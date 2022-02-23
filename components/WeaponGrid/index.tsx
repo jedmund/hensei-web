@@ -10,7 +10,7 @@ import WeaponUnit from '~components/WeaponUnit'
 import ExtraWeapons from '~components/ExtraWeapons'
 
 import api from '~utils/api'
-import state from '~utils/state'
+import { appState } from '~utils/appState'
 
 import './index.scss'
 
@@ -34,7 +34,7 @@ const WeaponGrid = (props: Props) => {
     } : {}
 
     // Set up state for view management
-    const { party, grid } = useSnapshot(state)
+    const { party, grid } = useSnapshot(appState)
 
     const [slug, setSlug] = useState()
     const [found, setFound] = useState(false)
@@ -47,20 +47,20 @@ const WeaponGrid = (props: Props) => {
     useEffect(() => {
         const shortcode = (props.slug) ? props.slug : slug
         if (shortcode) fetchGrid(shortcode)
-        else state.party.editable = true
+        else appState.party.editable = true
     }, [slug, props.slug])
 
     // Initialize an array of current uncap values for each weapon
     useEffect(() => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
 
-        if (state.grid.weapons.mainWeapon) 
-            initialPreviousUncapValues[-1] = state.grid.weapons.mainWeapon.uncap_level
+        if (appState.grid.weapons.mainWeapon) 
+            initialPreviousUncapValues[-1] = appState.grid.weapons.mainWeapon.uncap_level
 
-        Object.values(state.grid.weapons.allWeapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+        Object.values(appState.grid.weapons.allWeapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
 
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [state.grid.weapons.mainWeapon, state.grid.weapons.allWeapons])
+    }, [appState.grid.weapons.mainWeapon, appState.grid.weapons.allWeapons])
 
     // Methods: Fetching an object from the server
     async function fetchGrid(shortcode: string) {
@@ -78,12 +78,12 @@ const WeaponGrid = (props: Props) => {
         const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
 
         if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
-            state.party.editable = true
+            appState.party.editable = true
         }
         
         // Store the important party and state-keeping values
-        state.party.id = party.id
-        state.party.extra = party.is_extra
+        appState.party.id = party.id
+        appState.party.extra = party.is_extra
 
         setFound(true)
         setLoading(false)
@@ -106,10 +106,10 @@ const WeaponGrid = (props: Props) => {
     function populateWeapons(list: [GridWeapon]) {
         list.forEach((gridObject: GridWeapon) => {
             if (gridObject.mainhand) {
-                state.grid.weapons.mainWeapon = gridObject
-                state.party.element = gridObject.object.element
+                appState.grid.weapons.mainWeapon = gridObject
+                appState.party.element = gridObject.object.element
             } else if (!gridObject.mainhand && gridObject.position != null) {
-                state.grid.weapons.allWeapons[gridObject.position] = gridObject
+                appState.grid.weapons.allWeapons[gridObject.position] = gridObject
             }
         })
     }
@@ -118,13 +118,13 @@ const WeaponGrid = (props: Props) => {
     function receiveWeaponFromSearch(object: Character | Weapon | Summon, position: number) {
         const weapon = object as Weapon
         if (position == 1)
-            state.party.element = weapon.element
+            appState.party.element = weapon.element
 
         if (!party.id) {
             props.createParty(party.extra)
                 .then(response => {
                     const party = response.data.party
-                    state.party.id = party.id
+                    appState.party.id = party.id
                     setSlug(party.shortcode)
 
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
@@ -156,11 +156,11 @@ const WeaponGrid = (props: Props) => {
 
     function storeGridWeapon(gridWeapon: GridWeapon) {
         if (gridWeapon.position == -1) {
-            state.grid.weapons.mainWeapon = gridWeapon
-            state.party.element = gridWeapon.object.element
+            appState.grid.weapons.mainWeapon = gridWeapon
+            appState.party.element = gridWeapon.object.element
         } else {
             // Store the grid unit at the correct position
-            state.grid.weapons.allWeapons[gridWeapon.position] = gridWeapon
+            appState.grid.weapons.allWeapons[gridWeapon.position] = gridWeapon
         }
     }
 
@@ -206,17 +206,17 @@ const WeaponGrid = (props: Props) => {
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {
-        if (state.grid.weapons.mainWeapon && position == -1)
-            state.grid.weapons.mainWeapon.uncap_level = uncapLevel
+        if (appState.grid.weapons.mainWeapon && position == -1)
+            appState.grid.weapons.mainWeapon.uncap_level = uncapLevel
         else
-            state.grid.weapons.allWeapons[position].uncap_level = uncapLevel
+            appState.grid.weapons.allWeapons[position].uncap_level = uncapLevel
     }
 
     function storePreviousUncapValue(position: number) {
         // Save the current value in case of an unexpected result
         let newPreviousValues = {...previousUncapValues}
-        newPreviousValues[position] = (state.grid.weapons.mainWeapon && position == -1) ? 
-            state.grid.weapons.mainWeapon.uncap_level : state.grid.weapons.allWeapons[position].uncap_level
+        newPreviousValues[position] = (appState.grid.weapons.mainWeapon && position == -1) ? 
+            appState.grid.weapons.mainWeapon.uncap_level : appState.grid.weapons.allWeapons[position].uncap_level
         setPreviousUncapValues(newPreviousValues)
     }
 
@@ -252,7 +252,7 @@ const WeaponGrid = (props: Props) => {
 
     const extraGridElement = (
         <ExtraWeapons 
-            grid={state.grid.weapons.allWeapons} 
+            grid={appState.grid.weapons.allWeapons} 
             editable={party.editable} 
             offset={numWeapons}
             updateObject={receiveWeaponFromSearch}
