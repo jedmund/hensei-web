@@ -42,7 +42,14 @@ const TopHeader = () => {
     }
 
     function newParty() {
+        // Push the root URL
         router.push('/')
+
+        // Clean state
+        const resetState = clonedeep(initialAppState)
+        Object.keys(resetState).forEach((key) => {
+            appState[key] = resetState[key]
+        })
     }
 
     function logout() {
