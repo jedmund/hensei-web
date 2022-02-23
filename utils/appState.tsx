@@ -1,9 +1,8 @@
 import { proxy } from "valtio";
 
-interface State {
-    app: {
-        authenticated: boolean
-    },
+interface AppState {
+    [key: string]: any
+    
     party: {
         id: string | undefined,
         editable: boolean,
@@ -27,10 +26,7 @@ interface State {
     }
 }
 
-const state: State = {
-    app: {
-        authenticated: false
-    },
+export const initialAppState: AppState = {
     party: {
         id: undefined,
         editable: false,
@@ -54,4 +50,4 @@ const state: State = {
     }
 }
 
-export default proxy(state)
+export const appState = proxy(initialAppState)
