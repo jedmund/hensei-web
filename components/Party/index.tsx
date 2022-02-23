@@ -47,8 +47,9 @@ const Party = (props: Props) => {
 
     // Methods: Updating the party's extra flag
     function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
+        state.party.extra = event.target.checked
+
         if (party.id) {
-            state.party.extra = event.target.checked
             api.endpoints.parties.update(party.id, {
                 'party': { 'is_extra': event.target.checked }
             }, headers)
