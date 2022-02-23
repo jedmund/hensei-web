@@ -139,7 +139,7 @@ const LoginModal = (props: Props) => {
                         </div>
                         <div id="ModalBottom">
                             <a>Forgot your password?</a>
-                            <Button color="blue" disabled={!formValid}>Log in</Button>
+                            <Button disabled={!formValid}>Log in</Button>
                         </div>
                     </form>
                 </Modal>

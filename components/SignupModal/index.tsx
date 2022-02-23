@@ -195,7 +195,7 @@ const SignupModal = (props: Props) => {
                             />
                         </div>
                         <div id="ModalBottom">
-                            <Button color="blue" disabled={!formValid}>Sign up</Button>
+                            <Button disabled={!formValid}>Sign up</Button>
                         </div>
                     </form>
                 </Modal>
