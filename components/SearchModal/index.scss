@@ -1,11 +1,11 @@
-.ModalContainer .Modal.SearchModal {
+.Modal.Search {
     display: flex;
     flex-direction: column;
     min-height: 420px;
     min-width: 600px;
     padding: 0;
 
-    #ModalTop {
+    #ModalHeader {
         background: $grey-90;
         gap: $unit;
         margin: 0;
@@ -13,12 +13,28 @@
         position: sticky;
         top: 0;
 
+        button {
+            background: transparent;
+            border: none;
+            height: 42px;
+            padding: 0;
+
+            svg {
+                height: 24px;
+                width: 24px;
+                vertical-align: middle;
+            }
+        }
+
         label {
             width: 100%;
 
             .Input {
+                border: 1px solid $grey-70;
+                border-radius: $unit / 2;
                 box-sizing: border-box;
-                padding: 12px 8px;
+                font-size: $font-regular;
+                padding: $unit * 1.5;
                 text-align: left;
                 width: 100%;
             }
@@ -26,13 +42,13 @@
     }
 }
 
-.SearchModal #results_container {
+.Search.Modal #results_container {
     margin: 0;
     max-height: 330px;
     padding: 0 12px 12px 12px;
 }
 
-.SearchModal #NoResults {
+.Search.Modal #NoResults {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -40,7 +56,7 @@
     flex-grow: 1;
 }
 
-.SearchModal #NoResults h2 {
+.Search.Modal #NoResults h2 {
     color: #ccc;
     font-size: $font-large;
     font-weight: 500;

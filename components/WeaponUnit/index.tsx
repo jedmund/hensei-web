@@ -5,6 +5,7 @@ import UncapIndicator from '~components/UncapIndicator'
 import PlusIcon from '~public/icons/Add.svg'
 
 import './index.scss'
+import SearchModal from '~components/SearchModal'
 
 interface Props {
     gridWeapon: GridWeapon | undefined
@@ -12,6 +13,7 @@ interface Props {
     position: number
     editable: boolean
     onClick: () => void
+    updateObject: (object: Character | Weapon | Summon, position: number) => void
     updateUncap: (id: string, position: number, uncap: number) => void
 }
 
@@ -55,10 +57,17 @@ const WeaponUnit = (props: Props) => {
     return (
         <div>
             <div className={classes}>
-                <div className="WeaponImage" onClick={ (props.editable) ? props.onClick : () => {} }>
-                    <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
-                    { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
-                </div>
+                <SearchModal 
+                    placeholderText="Search for a weapon..." 
+                    fromPosition={props.position} 
+                    object="weapons"
+                    send={props.updateObject}>
+                        <div className="WeaponImage" onClick={ (props.editable) ? props.onClick : () => {} }>
+                            <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
+                            { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
+                        </div>
+                </SearchModal>
+
                 { (gridWeapon) ? 
                     <UncapIndicator 
                         type="weapon"
