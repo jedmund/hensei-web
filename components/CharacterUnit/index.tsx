@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 
+import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 import PlusIcon from '~public/icons/Add.svg'
 
@@ -10,7 +11,7 @@ interface Props {
     gridCharacter: GridCharacter | undefined
     position: number
     editable: boolean
-    onClick: () => void
+    updateObject: (object: Character | Weapon | Summon, position: number) => void
     updateUncap: (id: string, position: number, uncap: number) => void
 }
 
@@ -24,7 +25,7 @@ const CharacterUnit = (props: Props) => {
     })
 
     const gridCharacter = props.gridCharacter
-    const character = gridCharacter?.character
+    const character = gridCharacter?.object
 
     useEffect(() => {
         generateImageUrl()
@@ -34,7 +35,7 @@ const CharacterUnit = (props: Props) => {
         let imgSrc = ""
         
         if (props.gridCharacter) {
-            const character = props.gridCharacter.character!
+            const character = props.gridCharacter.object!
             imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-main/${character.granblue_id}_01.jpg`
         }
 
@@ -49,10 +50,17 @@ const CharacterUnit = (props: Props) => {
     return (
         <div>
             <div className={classes}>
-                <div className="CharacterImage" onClick={ (props.editable) ? props.onClick : () => {} }>
-                    <img alt={character?.name.en} className="grid_image" src={imageUrl} />
-                    { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
-                </div>
+                <SearchModal 
+                    placeholderText="Search for a character..." 
+                    fromPosition={props.position} 
+                    object="characters"
+                    send={props.updateObject}>
+                        <div className="CharacterImage">
+                            <img alt={character?.name.en} className="grid_image" src={imageUrl} />
+                            { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
+                        </div>
+                </SearchModal>
+
                 { (gridCharacter && character) ? 
                     <UncapIndicator 
                         type="character"
