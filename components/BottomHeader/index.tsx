@@ -1,34 +1,24 @@
 import React, { MouseEventHandler, useContext, useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
-
-import AppContext from '~context/AppContext'
+import { useSnapshot } from 'valtio'
 
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 
 import Header from '~components/Header'
 import Button from '~components/Button'
 
+import { accountState } from '~utils/accountState'
+import { appState } from '~utils/appState'
+
 import { ButtonType } from '~utils/enums'
 import CrossIcon from '~public/icons/Cross.svg'
 
 
 const BottomHeader = () => {
-    const { editable, setEditable, authenticated, setAuthenticated } = useContext(AppContext)
-
-    const [username, setUsername] = useState(undefined)
-    const [cookies, _, removeCookie] = useCookies(['user'])
+    const account = useSnapshot(accountState)
+    const app = useSnapshot(appState)
 
     const router = useRouter()
-
-    useEffect(() => {
-        if (cookies.user) {
-            setAuthenticated(true)
-            setUsername(cookies.user.username)
-        } else {
-            setAuthenticated(false)
-        }
-    }, [cookies, setUsername, setAuthenticated])
 
     function deleteTeam(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         // TODO: Implement deleting teams
@@ -42,7 +32,7 @@ const BottomHeader = () => {
     }
 
     const rightNav = () => {
-        if (editable && router.route === '/p/[party]') {
+        if (app.party.editable && router.route === '/p/[party]') {
             return (
                 <AlertDialog.Root>
                 <AlertDialog.Trigger className="Button destructive">

@@ -1,6 +1,4 @@
-import './index.scss'
-
-import React, { useContext } from 'react'
+import React from 'react'
 import Link from 'next/link'
 
 import LoginModal from '~components/LoginModal'
@@ -12,6 +10,7 @@ import { useModal as useAboutModal } from '~utils/useModal'
 
 import AboutModal from '~components/AboutModal'
 
+import './index.scss'
 
 interface Props {
     authenticated: boolean,

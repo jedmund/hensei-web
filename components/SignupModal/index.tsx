@@ -1,9 +1,9 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { withCookies, Cookies } from 'react-cookie'
 import { createPortal } from 'react-dom'
 
-import AppContext from '~context/AppContext'
 import api from '~utils/api'
+import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
 import Fieldset from '~components/Fieldset'
@@ -28,8 +28,6 @@ interface ErrorMap {
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const SignupModal = (props: Props) => {
-    const { setAuthenticated } = useContext(AppContext)
-
     const [formValid, setFormValid] = useState(false)
     const [errors, setErrors] = useState<ErrorMap>({
         username: '',
@@ -81,8 +79,12 @@ const SignupModal = (props: Props) => {
                 .then((response) => {
                     const cookies = props.cookies
                     cookies.set('user', response.data.user, { path: '/'})
-
-                    setAuthenticated(true)
+                    
+                    accountState.account.authorized = true
+                    accountState.account.user = {
+                        id: response.data.user.id,
+                        username: response.data.user.username
+                    }
 
                     props.close()
                 }, (error) => {
