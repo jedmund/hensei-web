@@ -1,12 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
+import clonedeep from 'lodash.clonedeep'
 
 import AppContext from '~context/AppContext'
+import { appState, initialAppState } from '~utils/appState'
 
 import Header from '~components/Header'
 import Button from '~components/Button'
 import HeaderMenu from '~components/HeaderMenu'
+
 
 const TopHeader = () => {
     const { editable, setEditable, authenticated, setAuthenticated } = useContext(AppContext)
@@ -39,7 +42,14 @@ const TopHeader = () => {
     }
 
     function newParty() {
+        // Push the root URL
         router.push('/')
+
+        // Clean state
+        const resetState = clonedeep(initialAppState)
+        Object.keys(resetState).forEach((key) => {
+            appState[key] = resetState[key]
+        })
     }
 
     function logout() {

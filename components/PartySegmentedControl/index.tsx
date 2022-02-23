@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import './index.scss'
 
-import state from '~utils/state'
+import { appState } from '~utils/appState'
 
 import SegmentedControl from '~components/SegmentedControl'
 import Segment from '~components/Segment'
@@ -17,7 +17,7 @@ interface Props {
 }
 
 const PartySegmentedControl = (props: Props) => {
-    const { party } = useSnapshot(state)
+    const { party } = useSnapshot(appState)
 
     function getElement() {
         switch(party.element) {

@@ -10,7 +10,7 @@ import SummonUnit from '~components/SummonUnit'
 import ExtraSummons from '~components/ExtraSummons'
 
 import api from '~utils/api'
-import state from '~utils/state'
+import { appState } from '~utils/appState'
 
 import './index.scss'
 
@@ -34,7 +34,7 @@ const SummonGrid = (props: Props) => {
     } : {}
 
     // Set up state for view management
-    const { party, grid } = useSnapshot(state)
+    const { party, grid } = useSnapshot(appState)
 
     const [slug, setSlug] = useState()
     const [found, setFound] = useState(false)
@@ -47,23 +47,23 @@ const SummonGrid = (props: Props) => {
     useEffect(() => {
         const shortcode = (props.slug) ? props.slug : slug
         if (shortcode) fetchGrid(shortcode)
-        else state.party.editable = true
+        else appState.party.editable = true
     }, [slug, props.slug])
 
     // Initialize an array of current uncap values for each summon
     useEffect(() => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
 
-        if (state.grid.summons.mainSummon) 
-            initialPreviousUncapValues[-1] = state.grid.summons.mainSummon.uncap_level
+        if (appState.grid.summons.mainSummon) 
+            initialPreviousUncapValues[-1] = appState.grid.summons.mainSummon.uncap_level
 
-        if (state.grid.summons.friendSummon) 
-            initialPreviousUncapValues[6] = state.grid.summons.friendSummon.uncap_level
+        if (appState.grid.summons.friendSummon) 
+            initialPreviousUncapValues[6] = appState.grid.summons.friendSummon.uncap_level
 
-        Object.values(state.grid.summons.allSummons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+        Object.values(appState.grid.summons.allSummons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
 
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [state.grid.summons.mainSummon, state.grid.summons.friendSummon, state.grid.summons.allSummons])
+    }, [appState.grid.summons.mainSummon, appState.grid.summons.friendSummon, appState.grid.summons.allSummons])
 
 
     // Methods: Fetching an object from the server
@@ -82,11 +82,11 @@ const SummonGrid = (props: Props) => {
         const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
 
         if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
-            state.party.editable = true
+            appState.party.editable = true
         }
         
         // Store the important party and state-keeping values
-        state.party.id = party.id
+        appState.party.id = party.id
 
         setFound(true)
         setLoading(false)
@@ -109,11 +109,11 @@ const SummonGrid = (props: Props) => {
     function populateSummons(list: [GridSummon]) {
         list.forEach((gridObject: GridSummon) => {
             if (gridObject.main)
-                state.grid.summons.mainSummon = gridObject
+                appState.grid.summons.mainSummon = gridObject
             else if (gridObject.friend)
-                state.grid.summons.friendSummon = gridObject
+                appState.grid.summons.friendSummon = gridObject
             else if (!gridObject.main && !gridObject.friend && gridObject.position != null)
-                state.grid.summons.allSummons[gridObject.position] = gridObject
+                appState.grid.summons.allSummons[gridObject.position] = gridObject
         })
     }
 
@@ -125,7 +125,7 @@ const SummonGrid = (props: Props) => {
             props.createParty()
                 .then(response => {
                     const party = response.data.party
-                    state.party.id = party.id
+                    appState.party.id = party.id
                     setSlug(party.shortcode)
 
                     if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
@@ -158,11 +158,11 @@ const SummonGrid = (props: Props) => {
 
     function storeGridSummon(gridSummon: GridSummon) {
         if (gridSummon.position == -1)
-            state.grid.summons.mainSummon = gridSummon
+            appState.grid.summons.mainSummon = gridSummon
         else if (gridSummon.position == 6)
-            state.grid.summons.friendSummon = gridSummon
+            appState.grid.summons.friendSummon = gridSummon
         else
-            state.grid.summons.allSummons[gridSummon.position] = gridSummon
+            appState.grid.summons.allSummons[gridSummon.position] = gridSummon
     }
 
     // Methods: Updating uncap level
@@ -207,21 +207,21 @@ const SummonGrid = (props: Props) => {
     )
 
     const updateUncapLevel = (position: number, uncapLevel: number) => {
-        if (state.grid.summons.mainSummon && position == -1)
-            state.grid.summons.mainSummon.uncap_level = uncapLevel
-        else if (state.grid.summons.friendSummon && position == 6) 
-            state.grid.summons.friendSummon.uncap_level = uncapLevel
+        if (appState.grid.summons.mainSummon && position == -1)
+            appState.grid.summons.mainSummon.uncap_level = uncapLevel
+        else if (appState.grid.summons.friendSummon && position == 6) 
+            appState.grid.summons.friendSummon.uncap_level = uncapLevel
         else
-            state.grid.summons.allSummons[position].uncap_level = uncapLevel
+            appState.grid.summons.allSummons[position].uncap_level = uncapLevel
     }
 
     function storePreviousUncapValue(position: number) {
         // Save the current value in case of an unexpected result
         let newPreviousValues = {...previousUncapValues}
 
-        if (state.grid.summons.mainSummon && position == -1) newPreviousValues[position] = state.grid.summons.mainSummon.uncap_level
-        else if (state.grid.summons.friendSummon && position == 6) newPreviousValues[position] = state.grid.summons.friendSummon.uncap_level 
-        else newPreviousValues[position] = state.grid.summons.allSummons[position].uncap_level
+        if (appState.grid.summons.mainSummon && position == -1) newPreviousValues[position] = appState.grid.summons.mainSummon.uncap_level
+        else if (appState.grid.summons.friendSummon && position == 6) newPreviousValues[position] = appState.grid.summons.friendSummon.uncap_level 
+        else newPreviousValues[position] = appState.grid.summons.allSummons[position].uncap_level
 
         setPreviousUncapValues(newPreviousValues)
     }

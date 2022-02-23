@@ -9,7 +9,7 @@ import SummonGrid from '~components/SummonGrid'
 import CharacterGrid from '~components/CharacterGrid'
 
 import api from '~utils/api'
-import state from '~utils/state'
+import { appState } from '~utils/appState'
 import { GridType, TeamElement } from '~utils/enums'
 
 import './index.scss'
@@ -30,7 +30,7 @@ const Party = (props: Props) => {
     } : {}
 
     // Set up states
-    const { party } = useSnapshot(state)
+    const { party } = useSnapshot(appState)
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
 
     // Methods: Creating a new party
@@ -47,8 +47,9 @@ const Party = (props: Props) => {
 
     // Methods: Updating the party's extra flag
     function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
+        appState.party.extra = event.target.checked
+
         if (party.id) {
-            state.party.extra = event.target.checked
             api.endpoints.parties.update(party.id, {
                 'party': { 'is_extra': event.target.checked }
             }, headers)
