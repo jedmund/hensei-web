@@ -3,9 +3,6 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useCookies } from 'react-cookie'
 import { useSnapshot } from 'valtio'
 
-import { useModal as useModal } from '~utils/useModal'
-import state from '~utils/state'
-
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
@@ -13,6 +10,8 @@ import WeaponUnit from '~components/WeaponUnit'
 import ExtraWeapons from '~components/ExtraWeapons'
 
 import api from '~utils/api'
+import state from '~utils/state'
+
 import './index.scss'
 
 // Props
@@ -41,15 +40,8 @@ const WeaponGrid = (props: Props) => {
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
 
-    // Set up states for Search
-    const { open, openModal, closeModal } = useModal()
-    const [itemPositionForSearch, setItemPositionForSearch] = useState(0)
-
     // Create a temporary state to store previous weapon uncap values
     const [previousUncapValues, setPreviousUncapValues] = useState<{[key: number]: number}>({})
-
-    // Create a state dictionary to store pure objects for Search
-    const [searchGrid, setSearchGrid] = useState<GridArray<Weapon>>({})
 
     // Fetch data from the server
     useEffect(() => {
@@ -66,16 +58,6 @@ const WeaponGrid = (props: Props) => {
         if (state.grid.weapons.mainWeapon) initialPreviousUncapValues[-1] = state.grid.weapons.mainWeapon.uncap_level
         Object.values(state.grid.weapons.allWeapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
         setPreviousUncapValues(initialPreviousUncapValues)
-    }, [state.grid.weapons.mainWeapon, state.grid.weapons.allWeapons])
-
-    // Update search grid whenever weapons or the mainhand are updated
-    useEffect(() => {
-        let newSearchGrid = Object.values(grid.weapons.allWeapons).map((o) => o.weapon)
-
-        if (state.grid.weapons.mainWeapon)
-            newSearchGrid.unshift(state.grid.weapons.mainWeapon.weapon)
-
-        setSearchGrid(newSearchGrid)
     }, [state.grid.weapons.mainWeapon, state.grid.weapons.allWeapons])
 
     // Methods: Fetching an object from the server
@@ -130,12 +112,6 @@ const WeaponGrid = (props: Props) => {
                 state.grid.weapons.allWeapons[object.position] = object
             }
         })
-    }
-
-    // Methods: Adding an object from search
-    function openSearchModal(position: number) {
-        setItemPositionForSearch(position)
-        openModal()
     }
 
     function receiveWeaponFromSearch(object: Character | Weapon | Summon, position: number) {
@@ -251,7 +227,6 @@ const WeaponGrid = (props: Props) => {
             key="grid_mainhand"
             position={-1} 
             unitType={0}
-            onClick={() => { openSearchModal(-1) }}
             updateObject={receiveWeaponFromSearch}
             updateUncap={initiateUncapUpdate}
         />
@@ -266,7 +241,6 @@ const WeaponGrid = (props: Props) => {
                         editable={party.editable}
                         position={i} 
                         unitType={1}
-                        onClick={() => { openSearchModal(i) }}
                         updateObject={receiveWeaponFromSearch}
                         updateUncap={initiateUncapUpdate}
                     />
@@ -280,7 +254,6 @@ const WeaponGrid = (props: Props) => {
             grid={state.grid.weapons.allWeapons} 
             editable={party.editable} 
             offset={numWeapons}
-            onClick={openSearchModal}
             updateObject={receiveWeaponFromSearch}
             updateUncap={initiateUncapUpdate}
         />

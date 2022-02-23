@@ -12,7 +12,6 @@ interface Props {
     unitType: 0 | 1
     position: number
     editable: boolean
-    onClick: () => void
     updateObject: (object: Character | Weapon | Summon, position: number) => void
     updateUncap: (id: string, position: number, uncap: number) => void
 }
@@ -62,7 +61,7 @@ const WeaponUnit = (props: Props) => {
                     fromPosition={props.position} 
                     object="weapons"
                     send={props.updateObject}>
-                        <div className="WeaponImage" onClick={ (props.editable) ? props.onClick : () => {} }>
+                        <div className="WeaponImage">
                             <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
                             { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
                         </div>
