@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 
+import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 import PlusIcon from '~public/icons/Add.svg'
 
 import './index.scss'
-import SearchModal from '~components/SearchModal'
 
 interface Props {
     gridWeapon: GridWeapon | undefined

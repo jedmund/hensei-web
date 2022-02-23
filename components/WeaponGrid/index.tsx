@@ -47,16 +47,18 @@ const WeaponGrid = (props: Props) => {
     useEffect(() => {
         const shortcode = (props.slug) ? props.slug : slug
         if (shortcode) fetchGrid(shortcode)
-        else {
-            state.party.editable = true
-        }
+        else state.party.editable = true
     }, [slug, props.slug])
 
     // Initialize an array of current uncap values for each weapon
     useEffect(() => {
         let initialPreviousUncapValues: {[key: number]: number} = {}
-        if (state.grid.weapons.mainWeapon) initialPreviousUncapValues[-1] = state.grid.weapons.mainWeapon.uncap_level
+
+        if (state.grid.weapons.mainWeapon) 
+            initialPreviousUncapValues[-1] = state.grid.weapons.mainWeapon.uncap_level
+
         Object.values(state.grid.weapons.allWeapons).map(o => initialPreviousUncapValues[o.position] = o.uncap_level)
+
         setPreviousUncapValues(initialPreviousUncapValues)
     }, [state.grid.weapons.mainWeapon, state.grid.weapons.allWeapons])
 
@@ -113,7 +115,8 @@ const WeaponGrid = (props: Props) => {
             }
         })
     }
-
+    
+    // Methods: Adding an object from search
     function receiveWeaponFromSearch(object: Character | Weapon | Summon, position: number) {
         const weapon = object as Weapon
         if (position == 1)
