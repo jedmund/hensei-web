@@ -28,7 +28,7 @@ const WeaponUnit = (props: Props) => {
     })
 
     const gridWeapon = props.gridWeapon
-    const weapon = gridWeapon?.weapon
+    const weapon = gridWeapon?.object
 
     useEffect(() => {
         generateImageUrl()
@@ -37,7 +37,7 @@ const WeaponUnit = (props: Props) => {
     function generateImageUrl() {
         let imgSrc = ""
         if (props.gridWeapon) {
-            const weapon = props.gridWeapon.weapon!
+            const weapon = props.gridWeapon.object!
     
             if (props.unitType == 0)
                 imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
@@ -70,8 +70,8 @@ const WeaponUnit = (props: Props) => {
                 { (gridWeapon) ? 
                     <UncapIndicator 
                         type="weapon"
-                        ulb={gridWeapon.weapon.uncap.ulb || false} 
-                        flb={gridWeapon.weapon.uncap.flb || false}
+                        ulb={gridWeapon.object.uncap.ulb || false} 
+                        flb={gridWeapon.object.uncap.flb || false}
                         uncapLevel={gridWeapon.uncap_level}
                         updateUncap={passUncapData}
                         special={false}

@@ -29,7 +29,7 @@ const SummonUnit = (props: Props) => {
     })
 
     const gridSummon = props.gridSummon
-    const summon = gridSummon?.summon
+    const summon = gridSummon?.object
 
     useEffect(() => {
         generateImageUrl()
@@ -38,7 +38,7 @@ const SummonUnit = (props: Props) => {
     function generateImageUrl() {
         let imgSrc = ""
         if (props.gridSummon) {
-            const summon = props.gridSummon.summon!
+            const summon = props.gridSummon.object!
     
             // Generate the correct source for the summon
             if (props.unitType == 0 || props.unitType == 2)
@@ -72,8 +72,8 @@ const SummonUnit = (props: Props) => {
                 { (gridSummon) ? 
                     <UncapIndicator 
                         type="summon"
-                        ulb={gridSummon.summon.uncap.ulb || false}
-                        flb={gridSummon.summon.uncap.flb || false}
+                        ulb={gridSummon.object.uncap.ulb || false}
+                        flb={gridSummon.object.uncap.flb || false}
                         uncapLevel={gridSummon.uncap_level} 
                         updateUncap={passUncapData}
                         special={false}               

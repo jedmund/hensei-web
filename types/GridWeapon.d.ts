@@ -2,6 +2,6 @@ interface GridWeapon {
     id: string
     mainhand: boolean
     position: number
-    weapon: Weapon
+    object: Weapon
     uncap_level: number
 }

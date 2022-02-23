@@ -1,8 +1,8 @@
-interface GridSummon {
+interface GridSummon {    
     id: string
     main: boolean
     friend: boolean
     position: number
-    summon: Summon
+    object: Summon
     uncap_level: number
 }

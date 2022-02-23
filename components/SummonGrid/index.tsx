@@ -107,13 +107,13 @@ const SummonGrid = (props: Props) => {
     }
 
     function populateSummons(list: [GridSummon]) {
-        list.forEach((object: GridSummon) => {
-            if (object.main)
-                state.grid.summons.mainSummon = object
-            else if (object.friend)
-                state.grid.summons.friendSummon = object
-            else if (!object.main && !object.friend && object.position != null)
-                state.grid.summons.allSummons[object.position] = object
+        list.forEach((gridObject: GridSummon) => {
+            if (gridObject.main)
+                state.grid.summons.mainSummon = gridObject
+            else if (gridObject.friend)
+                state.grid.summons.friendSummon = gridObject
+            else if (!gridObject.main && !gridObject.friend && gridObject.position != null)
+                state.grid.summons.allSummons[gridObject.position] = gridObject
         })
     }
 

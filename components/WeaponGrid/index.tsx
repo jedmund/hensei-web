@@ -104,14 +104,12 @@ const WeaponGrid = (props: Props) => {
     }
 
     function populateWeapons(list: [GridWeapon]) {
-        let weapons: GridArray<GridWeapon> = {}
-
-        list.forEach((object: GridWeapon) => {
-            if (object.mainhand) {
-                state.grid.weapons.mainWeapon = object
-                state.party.element = object.weapon.element
-            } else if (!object.mainhand && object.position != null) {
-                state.grid.weapons.allWeapons[object.position] = object
+        list.forEach((gridObject: GridWeapon) => {
+            if (gridObject.mainhand) {
+                state.grid.weapons.mainWeapon = gridObject
+                state.party.element = gridObject.object.element
+            } else if (!gridObject.mainhand && gridObject.position != null) {
+                state.grid.weapons.allWeapons[gridObject.position] = gridObject
             }
         })
     }
@@ -159,7 +157,7 @@ const WeaponGrid = (props: Props) => {
     function storeGridWeapon(gridWeapon: GridWeapon) {
         if (gridWeapon.position == -1) {
             state.grid.weapons.mainWeapon = gridWeapon
-            state.party.element = gridWeapon.weapon.element
+            state.party.element = gridWeapon.object.element
         } else {
             // Store the grid unit at the correct position
             state.grid.weapons.allWeapons[gridWeapon.position] = gridWeapon
