@@ -38,7 +38,7 @@ const HeaderMenu = (props: Props) => {
                     </div>
                     <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link href='/teans'>Teams</Link>
+                            <Link href='/teams'>Teams</Link>
                         </li>
 
                         <li className="MenuItem">
@@ -63,7 +63,7 @@ const HeaderMenu = (props: Props) => {
                 </div>
                 <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link href='/teans'>Teams</Link>
+                            <Link href='/teams'>Teams</Link>
                         </li>
 
                         <li className="MenuItem">
