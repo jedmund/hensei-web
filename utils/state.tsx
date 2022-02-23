@@ -13,14 +13,14 @@ interface State {
     grid: {
         weapons: {
             mainWeapon: GridWeapon | undefined,
-            allWeapons: GridWeapon[]
+            allWeapons: GridArray<GridWeapon>
         },
         summons: {
             mainSummon: GridSummon | undefined,
             friendSummon: GridSummon | undefined,
-            allSummons: GridSummon[]
+            allSummons: GridArray<GridSummon>
         },
-        characters: GridCharacter[]
+        characters: GridArray<GridCharacter>
     },
     search: {
         sourceItem: GridCharacter | GridWeapon | GridSummon | undefined
@@ -40,14 +40,14 @@ const state: State = {
     grid: {
         weapons: {
             mainWeapon: undefined,
-            allWeapons: Array<GridWeapon>()
+            allWeapons: {}
         },
         summons: {
             mainSummon: undefined,
             friendSummon: undefined,
-            allSummons: Array<GridSummon>()
+            allSummons: {}
         },
-        characters: Array<GridCharacter>()
+        characters: {}
     },
     search: {
         sourceItem: undefined
