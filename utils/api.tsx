@@ -9,6 +9,7 @@ type IdEndpoint = ({ id }: { id: string }) => Promise<AxiosResponse<any>>
 type IdWithObjectEndpoint = ({ id, object }: { id: string, object: string }) => Promise<AxiosResponse<any>>
 type PostEndpoint = (object: {}, headers?: {}) => Promise<AxiosResponse<any>>
 type PutEndpoint  = (id: string, object: {}, headers?: {}) => Promise<AxiosResponse<any>>
+type DestroyEndpoint = (id: string, headers?: {}) => Promise<AxiosResponse<any>>
 
 interface EndpointMap {
     getAll: CollectionEndpoint
@@ -16,7 +17,7 @@ interface EndpointMap {
     getOneWithObject: IdWithObjectEndpoint
     create: PostEndpoint
     update: PutEndpoint
-    destroy: IdEndpoint
+    destroy: DestroyEndpoint
 }
 
 class Api {
@@ -45,7 +46,7 @@ class Api {
             getOneWithObject:  ({ id, object }: { id: string, object: string }) => axios.get(`${resourceUrl}/${id}/${object}`),
             create:  (object: {}, headers?: {}) => axios.post(resourceUrl, object, headers),
             update:  (id: string, object: {}, headers?: {}) => axios.put(`${resourceUrl}/${id}`, object, headers),
-            destroy: ({ id }: { id: string }) => axios.delete(`${resourceUrl}/${id}`)
+            destroy: (id: string, headers?: {}) => axios.delete(`${resourceUrl}/${id}`, headers)
         } as EndpointMap
     }
 
