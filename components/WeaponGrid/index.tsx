@@ -85,6 +85,19 @@ const WeaponGrid = (props: Props) => {
         appState.party.id = party.id
         appState.party.extra = party.is_extra
 
+        // Store the party's user-generated details
+        if (party.name) {
+            appState.party.name = {
+                en: party.name.en,
+                jp: party.name.jp
+            }
+        }
+        if (party.description)
+            appState.party.description = party.description
+
+        if (party.raid)
+            appState.raid = party.raid
+
         setFound(true)
         setLoading(false)
 
