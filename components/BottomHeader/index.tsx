@@ -1,18 +1,20 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import { useCookies } from 'react-cookie'
 import { useSnapshot } from 'valtio'
+import clonedeep from 'lodash.clonedeep'
 
-import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import * as AlertDialog from '@radix-ui/react-alert-dialog'
 
 import Header from '~components/Header'
 import Button from '~components/Button'
 
+import api from '~utils/api'
 import { accountState } from '~utils/accountState'
-import { appState } from '~utils/appState'
+import { appState, initialAppState } from '~utils/appState'
 
 import { ButtonType } from '~utils/enums'
 import CrossIcon from '~public/icons/Cross.svg'
-
 
 const BottomHeader = () => {
     const account = useSnapshot(accountState)
@@ -20,9 +22,34 @@ const BottomHeader = () => {
 
     const router = useRouter()
 
+    // Cookies
+    const [cookies] = useCookies(['user'])
+    const headers = (cookies.user != null) ? {
+        headers: {
+            'Authorization': `Bearer ${cookies.user.access_token}`
+        }
+    } : {}
+
     function deleteTeam(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-        // TODO: Implement deleting teams
-        console.log("Deleting team...")
+        if (appState.party.editable && appState.party.id) {
+            api.endpoints.parties.destroy(appState.party.id, headers)
+                .then(() => {
+                    // Push to route
+                    router.push('/')
+
+                    // Clean state
+                    const resetState = clonedeep(initialAppState)
+                    Object.keys(resetState).forEach((key) => {
+                        appState[key] = resetState[key]
+                    })
+
+                    // Set party to be editable
+                    appState.party.editable = true
+                })
+                .catch((error) => {
+                    console.error(error)
+                })
+        }
     }
 
     const leftNav = () => {
