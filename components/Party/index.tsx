@@ -38,7 +38,7 @@ const Party = (props: Props) => {
         let body = {
             party: {
                 ...(cookies.user) && { user_id: cookies.user.user_id },
-                is_extra: extra
+                extra: extra
             }
         }
 
@@ -51,7 +51,7 @@ const Party = (props: Props) => {
 
         if (party.id) {
             api.endpoints.parties.update(party.id, {
-                'party': { 'is_extra': event.target.checked }
+                'party': { 'extra': event.target.checked }
             }, headers)
         }
     }
