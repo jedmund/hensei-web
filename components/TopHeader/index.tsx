@@ -1,34 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
 import clonedeep from 'lodash.clonedeep'
+import { useSnapshot } from 'valtio'
 
-import AppContext from '~context/AppContext'
+import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 
 import Header from '~components/Header'
 import Button from '~components/Button'
 import HeaderMenu from '~components/HeaderMenu'
 
-
 const TopHeader = () => {
-    const { editable, setEditable, authenticated, setAuthenticated } = useContext(AppContext)
-
-    const [username, setUsername] = useState(undefined)
     const [cookies, _, removeCookie] = useCookies(['user'])
 
+    const accountSnap = useSnapshot(accountState)
     const router = useRouter()
-
-    useEffect(() => {
-        if (cookies.user) {
-            setAuthenticated(true)
-            setUsername(cookies.user.username)
-            console.log(`Logged in as user "${cookies.user.username}"`)
-        } else {
-            setAuthenticated(false)
-            console.log('You are currently not logged in.')
-        }
-    }, [cookies, setUsername, setAuthenticated])
 
     function copyToClipboard() {
         const el = document.createElement('input')
@@ -58,8 +45,8 @@ const TopHeader = () => {
     function logout() {
         removeCookie('user')
 
-        setAuthenticated(false)
-        if (editable) setEditable(false)
+        accountState.authorized = false
+        appState.party.editable = false
 
         // TODO: How can we log out without navigating to root
         router.push('/')
@@ -70,9 +57,9 @@ const TopHeader = () => {
         return (
             <div className="dropdown">
                 <Button icon="menu">Menu</Button>
-                { (username) ? 
-                    <HeaderMenu authenticated={authenticated} username={username} logout={logout} /> :
-                    <HeaderMenu authenticated={authenticated} />
+                { (accountSnap.account.user) ? 
+                    <HeaderMenu authenticated={accountSnap.account.authorized} username={accountSnap.account.user.username} logout={logout} /> :
+                    <HeaderMenu authenticated={accountSnap.account.authorized} />
                 }
             </div>
         )

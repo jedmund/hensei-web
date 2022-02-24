@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import './index.scss'
 
 import { appState } from '~utils/appState'
