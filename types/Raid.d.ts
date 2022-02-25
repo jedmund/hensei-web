@@ -6,4 +6,5 @@ interface Raid {
     }
     level: number
     group: number
+    element: TeamElement
 }
