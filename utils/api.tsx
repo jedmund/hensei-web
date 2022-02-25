@@ -4,7 +4,7 @@ interface Entity {
     name: string
 }
 
-type CollectionEndpoint = ({ query }: { query: AxiosRequestConfig }) => Promise<AxiosResponse<any>>
+type CollectionEndpoint = (headers?: {}) => Promise<AxiosResponse<any>>
 type IdEndpoint = ({ id }: { id: string }) => Promise<AxiosResponse<any>>
 type IdWithObjectEndpoint = ({ id, object }: { id: string, object: string }) => Promise<AxiosResponse<any>>
 type PostEndpoint = (object: {}, headers?: {}) => Promise<AxiosResponse<any>>
@@ -41,7 +41,7 @@ class Api {
         const resourceUrl = `${this.url}/${name}`
 
         return {
-            getAll:  ({ query }: { query: AxiosRequestConfig }) => axios.get(resourceUrl, { params: { query }}),
+            getAll:  (headers?: {}) => axios.get(resourceUrl, headers),
             getOne:  ({ id }: { id: string }) => axios.get(`${resourceUrl}/${id}/`),
             getOneWithObject:  ({ id, object }: { id: string, object: string }) => axios.get(`${resourceUrl}/${id}/${object}`),
             create:  (object: {}, headers?: {}) => axios.post(resourceUrl, object, headers),
@@ -88,5 +88,6 @@ api.createEntity( { name: 'parties' })
 api.createEntity( { name: 'characters' })
 api.createEntity( { name: 'weapons' })
 api.createEntity( { name: 'summons' })
+api.createEntity( { name: 'raids' })
 
 export default api
