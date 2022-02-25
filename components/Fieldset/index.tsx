@@ -4,6 +4,7 @@ import './index.scss'
 interface Props {
     fieldName: string
     placeholder: string
+    value?: string
     error: string
     onBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -17,9 +18,10 @@ const Fieldset = React.forwardRef<HTMLInputElement, Props>(function fieldSet(pro
             <input
                 autoComplete="off"
                 className="Input" 
-                name={props.fieldName} 
                 type={fieldType}
+                name={props.fieldName} 
                 placeholder={props.placeholder}
+                defaultValue={props.value || ''}
                 onBlur={props.onBlur}
                 onChange={props.onChange}
                 ref={ref}
