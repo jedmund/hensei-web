@@ -6,10 +6,8 @@ interface AppState {
     party: {
         id: string | undefined,
         editable: boolean,
-        name: {
-            en: string,
-            jp: string
-        } | undefined,
+        detailsVisible: boolean,
+        name: string | undefined,
         description: string | undefined,
         raid: Raid | undefined,
         element: number,
@@ -36,6 +34,7 @@ export const initialAppState: AppState = {
     party: {
         id: undefined,
         editable: false,
+        detailsVisible: false,
         name: undefined,
         description: undefined,
         raid: undefined,
