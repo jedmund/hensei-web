@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 import { useSnapshot } from 'valtio'
 import clonedeep from 'lodash.clonedeep'
+import * as Scroll from 'react-scroll'
 
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 
@@ -21,6 +22,7 @@ const BottomHeader = () => {
     const app = useSnapshot(appState)
 
     const router = useRouter()
+    const scroll = Scroll.animateScroll;
 
     // Cookies
     const [cookies] = useCookies(['user'])
@@ -29,6 +31,15 @@ const BottomHeader = () => {
             'Authorization': `Bearer ${cookies.user.access_token}`
         }
     } : {}
+
+    function toggleDetails() {
+        appState.party.detailsVisible = !appState.party.detailsVisible
+
+        if (appState.party.detailsVisible)
+            scroll.scrollToBottom()
+        else
+            scroll.scrollToTop()
+    }
 
     function deleteTeam(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         if (appState.party.editable && appState.party.id) {
@@ -53,9 +64,11 @@ const BottomHeader = () => {
     }
 
     const leftNav = () => {
-        return (
-            <Button icon="edit" click={() => {}}>Add more info</Button>
-        )
+        if (app.party.detailsVisible) {
+            return (<Button icon="edit" active={true} click={toggleDetails}>Hide info</Button>)
+        } else {
+            return (<Button icon="edit" click={toggleDetails}>Edit info</Button>)
+        }
     }
 
     const rightNav = () => {

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import { useCookies } from 'react-cookie'
 
-
 import PartySegmentedControl from '~components/PartySegmentedControl'
+import PartyDetails from '~components/PartyDetails'
 import WeaponGrid from '~components/WeaponGrid'
 import SummonGrid from '~components/SummonGrid'
 import CharacterGrid from '~components/CharacterGrid'
@@ -13,6 +13,7 @@ import { appState } from '~utils/appState'
 import { GridType, TeamElement } from '~utils/enums'
 
 import './index.scss'
+import { AxiosResponse } from 'axios'
 
 // Props
 interface Props {
@@ -32,6 +33,13 @@ const Party = (props: Props) => {
     // Set up states
     const { party } = useSnapshot(appState)
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
+
+    // Fetch data from the server
+    useEffect(() => {
+        const shortcode = (props.slug) ? props.slug : undefined
+        if (shortcode) fetchDetails(shortcode)
+        else appState.party.editable = true
+    }, [props.slug])
 
     // Methods: Creating a new party
     async function createParty(extra: boolean = false) {
@@ -73,6 +81,39 @@ const Party = (props: Props) => {
                 break
             default: 
                 break
+        }
+    }
+
+    // Methods: Fetch party details
+    function fetchDetails(shortcode: string) {
+        return api.endpoints.parties.getOne({ id: shortcode })
+            .then(response => processResult(response))
+            .catch(error => processError(error))
+    }
+
+    function processResult(response: AxiosResponse) {
+        // Store the response
+        const party = response.data.party
+
+        // Store the party's user-generated details
+        if (party.name)
+            appState.party.name = party.name
+
+        if (party.description)
+            appState.party.description = party.description
+
+        if (party.raid)
+            appState.party.raid = party.raid
+    }
+
+    function processError(error: any) {
+        if (error.response != null) {
+            if (error.response.status == 404) {
+                // setFound(false)
+                // setLoading(false)
+            }
+        } else {
+            console.error(error)
         }
     }
 
@@ -123,7 +164,12 @@ const Party = (props: Props) => {
     return (
         <div>
             { navigation }
-            { currentGrid() }
+            <section id="Party">
+                { currentGrid() }
+            </section>
+            { <PartyDetails
+                editable={party.editable}
+            />}
         </div>
     )
 }

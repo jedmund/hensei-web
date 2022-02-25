@@ -1,0 +1,87 @@
+.Details {
+    display: none; // This breaks transition, find a workaround
+    opacity: 0;
+    margin: 0 auto;
+    max-width: $unit * 95;
+    position: relative;
+
+    &.Editable {
+        top: $unit;
+        height: 0;
+        z-index: 2;
+        transition: opacity 0.2s ease-in-out, 
+                    top 0.2s ease-in-out;
+
+
+        &.Visible {
+            display: block;
+            height: auto;
+            margin-bottom: 40vh;
+            opacity: 1;
+            top: 0;
+        }
+    
+        fieldset {
+            display: block;
+            width: 100%;
+    
+            textarea {
+                min-height: $unit * 20;
+                width: 100%;
+            }
+        }
+
+        select {
+            appearance: none;
+            background-image: url('/icons/Arrow.svg');
+            background-repeat: no-repeat;
+            background-position-y: center;
+            background-position-x: 98%;
+            background-size: $unit * 1.5;
+            border: none;
+            border-radius: 6px;
+            color: $grey-00;
+            margin-bottom: $unit;
+            font-size: $font-regular;
+            padding: 0 ($unit * 2);
+            height: $unit * 6;
+            width: 100%;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    &.ReadOnly {
+        top: $unit * -1;
+        transition: opacity 0.2s ease-in-out, 
+                    top 0.2s ease-in-out;
+
+        &.Visible {
+            display: block;
+            height: auto;
+            opacity: 1;
+            top: 0;
+        }
+
+        h1 {
+            font-size: $font-xlarge;
+            font-weight: $normal;
+            text-align: left;
+            margin-bottom: $unit;
+        }
+
+        .Raid {
+            color: $grey-50;
+            font-size: $font-regular;
+            font-weight: $medium;
+            margin-bottom: $unit * 2;
+        }
+
+        p {
+            font-size: $font-regular;
+            line-height: $font-regular * 1.2;
+        }
+    }
+}
