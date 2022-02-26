@@ -2,11 +2,9 @@ import React from 'react'
 import { useRouter } from 'next/router'
 
 import Party from '~components/Party'
-import * as AlertDialog  from '@radix-ui/react-alert-dialog'
 
 const PartyRoute: React.FC = () => {
-    const router = useRouter()
-    const { party: slug } = router.query
+    const { party: slug } = useRouter().query
 
     return (
         <div id="Content">

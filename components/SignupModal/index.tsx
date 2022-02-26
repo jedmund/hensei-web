@@ -57,7 +57,7 @@ const SignupModal = (props: Props) => {
 
                     setErrors(newErrors)
                 }, (error) => {
-                    console.log(error)
+                    console.error(error)
                 })
         }
     }
@@ -88,7 +88,7 @@ const SignupModal = (props: Props) => {
 
                     props.close()
                 }, (error) => {
-                    console.log(error)
+                    console.error(error)
                 })
         }
     }

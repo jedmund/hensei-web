@@ -70,6 +70,8 @@ const WeaponGrid = (props: Props) => {
     }
 
     function processResult(response: AxiosResponse) {
+        console.log("Retrieved data from server...")
+
         // Store the response
         const party = response.data.party
             
@@ -252,7 +254,7 @@ const WeaponGrid = (props: Props) => {
 
     const extraGridElement = (
         <ExtraWeapons 
-            grid={appState.grid.weapons.allWeapons} 
+            grid={grid.weapons.allWeapons} 
             editable={party.editable} 
             offset={numWeapons}
             updateObject={receiveWeaponFromSearch}
