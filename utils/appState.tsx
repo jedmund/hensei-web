@@ -27,7 +27,8 @@ interface AppState {
     },
     search: {
         sourceItem: GridCharacter | GridWeapon | GridSummon | undefined
-    }
+    },
+    raids: Raid[]
 }
 
 export const initialAppState: AppState = {
@@ -55,7 +56,8 @@ export const initialAppState: AppState = {
     },
     search: {
         sourceItem: undefined
-    }
+    },
+    raids: []
 }
 
 export const appState = proxy(initialAppState)
