@@ -1,20 +1,26 @@
-import { group } from 'console'
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
+
+import { appState } from '~utils/appState'
 import api from '~utils/api'
 
 import './index.scss'
 
 // Props
-interface Props {}
+interface Props {
+    selected?: string
+    onBlur: (event: React.ChangeEvent<HTMLSelectElement>) => void
+}
 
-const RaidDropdown = (props: Props) => {
+const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function fieldSet(props, ref) {
     const [cookies, _] = useCookies(['user'])
     const headers = (cookies.user != null) ? {
         headers: { 'Authorization': `Bearer ${cookies.user.access_token}` }
     } : {}
 
     const [raids, setRaids] = useState<Raid[][]>()
+    const [flatRaids, setFlatRaids] = useState<Raid[]>()
+
     const raidGroups = [
         'Assorted',
         'Omega',
@@ -42,7 +48,10 @@ const RaidDropdown = (props: Props) => {
     function fetchRaids() {
         api.endpoints.raids.getAll(headers)
             .then((response) => {
-                organizeRaids(response.data.map((r: any) => r.raid))
+                const raids = response.data.map((r: any) => r.raid)
+                
+                appState.raids = raids
+                organizeRaids(raids)
             })
     }
 
@@ -70,15 +79,15 @@ const RaidDropdown = (props: Props) => {
                 {options}
             </optgroup>
         )
-    } 
-
+    }
+    
     return (
-        <select>
+        <select key={props.selected} defaultValue={props.selected} onBlur={props.onBlur} ref={ref}>
             { Array.from(Array(raids?.length)).map((x, i) => {
                 return raidGroup(i)
             })}
         </select>
     )
-}
+})
 
 export default RaidDropdown
