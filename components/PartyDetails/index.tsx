@@ -13,6 +13,7 @@ import RaidDropdown from '~components/RaidDropdown'
 // Props
 interface Props {
     editable: boolean
+    updateCallback: (name?: string, description?: string, raid?: Raid) => void
 }
 
 const PartyDetails = (props: Props) => {
@@ -20,6 +21,7 @@ const PartyDetails = (props: Props) => {
 
     const nameInput = React.createRef<HTMLInputElement>()
     const descriptionInput = React.createRef<HTMLTextAreaElement>()
+    const raidSelect = React.createRef<HTMLSelectElement>()
 
     const readOnlyClasses = classNames({
         'Details': true,
@@ -39,8 +41,6 @@ const PartyDetails = (props: Props) => {
     })
 
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-        console.log(event)
-
         event.preventDefault()
 
         const { name, value } = event.target
@@ -58,6 +58,14 @@ const PartyDetails = (props: Props) => {
         setErrors(newErrors)
     }
 
+    function updateDetails(event: React.ChangeEvent) {
+        const nameValue = nameInput.current?.value
+        const descriptionValue = descriptionInput.current?.value
+        const raid = appSnapshot.raids.find(raid => raid.id == raidSelect.current?.value)
+
+        props.updateCallback(nameValue, descriptionValue, raid)
+    }
+
     const editable = (
         <section className={editableClasses}>
             <CharLimitedFieldset 
@@ -65,22 +73,21 @@ const PartyDetails = (props: Props) => {
                 placeholder="Name your team"
                 value={appSnapshot.party.name}
                 limit={50}
-                onBlur={ () => {} }
+                onBlur={updateDetails}
                 onChange={handleInputChange}
                 error={errors.name}
                 ref={nameInput}
             />
-            <RaidDropdown />
-            <select>
-                <option>Belial</option>
-                <option>Beelzebub</option>
-                <option>Lucifer (Hard)</option>
-            </select>
+            <RaidDropdown 
+                selected={appSnapshot.party.raid?.id || ''}
+                onBlur={updateDetails}
+                ref={raidSelect}
+            />
             <TextFieldset 
                 fieldName="name"
                 placeholder={"Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 1 first\nGood luck with RNG!"}
                 value={appSnapshot.party.description}
-                onBlur={ () => {} }
+                onBlur={updateDetails}
                 onChange={handleTextAreaChange}
                 error={errors.description}
                 ref={descriptionInput}

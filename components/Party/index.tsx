@@ -37,8 +37,11 @@ const Party = (props: Props) => {
     // Fetch data from the server
     useEffect(() => {
         const shortcode = (props.slug) ? props.slug : undefined
-        if (shortcode) fetchDetails(shortcode)
-        else appState.party.editable = true
+
+        if (shortcode)
+            fetchDetails(shortcode)
+        else
+            appState.party.editable = true
     }, [props.slug])
 
     // Methods: Creating a new party
@@ -53,7 +56,7 @@ const Party = (props: Props) => {
         return await api.endpoints.parties.create(body, headers)
     }
 
-    // Methods: Updating the party's extra flag
+    // Methods: Updating the party's details
     function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
         appState.party.extra = event.target.checked
 
@@ -62,6 +65,27 @@ const Party = (props: Props) => {
                 'party': { 'extra': event.target.checked }
             }, headers)
         }
+    }
+
+    function updateDetails(name?: string, description?: string, raid?: Raid) {
+        if (appState.party.name !== name ||
+            appState.party.description !== description ||
+            appState.party.raid?.id !== raid?.id) {
+                if (appState.party.id)
+                    api.endpoints.parties.update(appState.party.id, {
+                        'party': {
+                            'name': name,
+                            'description': description,
+                            'raid_id': raid?.id
+                        }
+                    }, headers)
+                    .then(() => {
+                        appState.party.name = name
+                        appState.party.description = description
+                        appState.party.raid = raid
+                    })
+            }
+
     }
 
     // Methods: Navigating with segmented control
@@ -92,18 +116,12 @@ const Party = (props: Props) => {
     }
 
     function processResult(response: AxiosResponse) {
-        // Store the response
-        const party = response.data.party
+        appState.party.id = response.data.party.id
 
         // Store the party's user-generated details
-        if (party.name)
-            appState.party.name = party.name
-
-        if (party.description)
-            appState.party.description = party.description
-
-        if (party.raid)
-            appState.party.raid = party.raid
+        appState.party.name = response.data.party.name
+        appState.party.description = response.data.party.description
+        appState.party.raid = response.data.party.raid
     }
 
     function processError(error: any) {
@@ -169,6 +187,7 @@ const Party = (props: Props) => {
             </section>
             { <PartyDetails
                 editable={party.editable}
+                updateCallback={updateDetails}
             />}
         </div>
     )
