@@ -35,7 +35,7 @@ const ProfileRoute: React.FC = () => {
                 })
 
                 const parties: Party[] = response.data.user.parties
-                setParties(parties.sort((a, b) => (a.updated_at > b.updated_at) ? -1 : 1))
+                setParties(parties.sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
             })
             .then(() => {
                 setFound(true)
@@ -74,7 +74,7 @@ const ProfileRoute: React.FC = () => {
                         return <GridRep 
                             shortcode={party.shortcode} 
                             name={party.name}
-                            updatedAt={new Date(party.updated_at)}
+                            createdAt={new Date(party.created_at)}
                             raid={party.raid}
                             grid={party.weapons}
                             key={`party-${i}`}
