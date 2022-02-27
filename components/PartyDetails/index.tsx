@@ -79,6 +79,7 @@ const PartyDetails = (props: Props) => {
                 ref={nameInput}
             />
             <RaidDropdown 
+                allOption={false}
                 selected={appSnapshot.party.raid?.id || ''}
                 onBlur={updateDetails}
                 ref={raidSelect}

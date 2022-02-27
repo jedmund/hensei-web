@@ -8,8 +8,10 @@ import './index.scss'
 
 // Props
 interface Props {
+    allOption: boolean
     selected?: string
-    onBlur: (event: React.ChangeEvent<HTMLSelectElement>) => void
+    onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void
+    onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
 const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(props, ref) {
@@ -63,6 +65,18 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
             groupedRaids[i] = raids.filter(raid => raid.group == i)
         }
 
+        if (props.allOption)
+            groupedRaids[0].unshift({
+                id: '0',
+                name: {
+                    en: 'All raids',
+                    jp: '全て'
+                },
+                level: 0,
+                group: 0,
+                element: 0
+            })
+
         setRaids(groupedRaids)
     }
 
@@ -82,7 +96,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
     }
     
     return (
-        <select key={props.selected} defaultValue={props.selected} onBlur={props.onBlur} ref={ref}>
+        <select key={props.selected} defaultValue={props.selected} onBlur={props.onBlur} onChange={props.onChange} ref={ref}>
             { Array.from(Array(raids?.length)).map((x, i) => {
                 return raidGroup(i)
             })}
