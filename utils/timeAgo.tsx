@@ -1,5 +1,5 @@
 
-const DIVISIONS = [
+const DIVISIONS: { amount: number, name: Intl.RelativeTimeFormatUnit }[] = [
     { amount: 60, name: 'seconds' },
     { amount: 60, name: 'minutes' },
     { amount: 24, name: 'hours' },
