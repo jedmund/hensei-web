@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 
 import api from '~utils/api'
 
+import ProfileHeader from '~components/ProfileHeader'
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 
@@ -14,8 +15,11 @@ interface User {
 
 interface Party {
     id: string
+    name: string
+    raid: Raid
     shortcode: string
     weapons: GridWeapon[]
+    updated_at: string
 }
 
 const ProfileRoute: React.FC = () => {
@@ -44,7 +48,9 @@ const ProfileRoute: React.FC = () => {
                     username: response.data.user.username,
                     granblueId: response.data.user.granblue_id
                 })
-                setParties(response.data.user.parties)
+
+                const parties: Party[] = response.data.user.parties
+                setParties(parties.sort((a, b) => (a.updated_at > b.updated_at) ? -1 : 1))
             })
             .then(() => {
                 setFound(true)
@@ -65,7 +71,7 @@ const ProfileRoute: React.FC = () => {
         const content = (parties && parties.length > 0) ? renderGrids() : renderNoGrids()
         return (
             <div>
-                <h1>{user.username}</h1>
+                <ProfileHeader username={user.username} gender={true} />
                 {content}
             </div>
         )
@@ -82,6 +88,9 @@ const ProfileRoute: React.FC = () => {
                     parties.map((party, i) => {
                         return <GridRep 
                             shortcode={party.shortcode} 
+                            name={party.name}
+                            updatedAt={new Date(party.updated_at)}
+                            raid={party.raid}
                             grid={party.weapons}
                             key={`party-${i}`}
                             onClick={goTo}

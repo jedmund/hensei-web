@@ -1,18 +1,36 @@
+
 import React, { useEffect, useState } from 'react'
+import classNames from 'classnames'
+
+import { formatTimeAgo } from '~utils/timeAgo'
 
 import './index.scss'
 
 interface Props {
     shortcode: string
+    name: string
+    raid: Raid
     grid: GridWeapon[]
+    updatedAt: Date
     onClick: (shortcode: string) => void
 }
 
 const GridRep = (props: Props) => {
+
+    console.log(props)
     const numWeapons: number = 9
 
     const [mainhand, setMainhand] = useState<Weapon>()
     const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
+
+    const titleClass = classNames({
+        'empty': !props.name
+    })
+
+    const raidClass = classNames({
+        'raid': true,
+        'empty': !props.raid
+    })
 
     useEffect(() => {
         const newWeapons = Array(numWeapons)
@@ -43,21 +61,31 @@ const GridRep = (props: Props) => {
 
     return (
         <div className="GridRep" onClick={navigate}>
-            <div className="weapon grid_mainhand">
-                {generateMainhandImage()}
+            <div className="Details">
+                <h2 className={titleClass}>{ (props.name) ? props.name : 'Untitled' }</h2>
+                <div className="bottom">
+                    <div className={raidClass}>{ (props.raid) ? props.raid.name.en : 'No raid set' }</div>
+                    <time className="last-updated" dateTime={props.updatedAt.toISOString()}>{formatTimeAgo(props.updatedAt, 'en-us')}</time>
+                </div>
             </div>
 
-            <ul className="grid_weapons">
-                {
-                    Array.from(Array(numWeapons)).map((x, i) => {
-                        return (
-                            <li key={`${props.shortcode}-${i}`} className="grid_weapon">
-                                {generateGridImage(i)}
-                            </li>
-                        )
-                    })
-                }
-            </ul>
+            <div className="Grid">
+                <div className="weapon grid_mainhand">
+                    {generateMainhandImage()}
+                </div>
+
+                <ul className="grid_weapons">
+                    {
+                        Array.from(Array(numWeapons)).map((x, i) => {
+                            return (
+                                <li key={`${props.shortcode}-${i}`} className="grid_weapon">
+                                    {generateGridImage(i)}
+                                </li>
+                            )
+                        })
+                    }
+                </ul>
+            </div>
         </div>
     )
 }

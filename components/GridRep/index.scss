@@ -1,54 +1,82 @@
 .GridRep {
-    border: 2px solid transparent;
     border-radius: 6px;
     display: flex;
-    flex-direction: row;
-    flex-shrink: 0;
-    margin: 0 8px 8px 0;
-    padding: 4px;
-    height: 148px;
-    width: 311px;
-}
+    flex-direction: column;
+    gap: $unit;
+    padding: $unit * 2;
 
-.GridRep:hover {
-    border: 2px solid #2360C5;
-    cursor: pointer;
-}
+    &:hover {
+        background: white;
+        cursor: pointer;
 
-.GridRep .weapon {
-    background: white;
-    border-radius: 4px;
-}
+        .Grid .grid_weapons .grid_weapon {
+            box-shadow: inset 0 0 1px $grey-70;
+        }
+    }
 
-.GridRep .grid_mainhand {
-    flex-shrink: 0;
-    height: 136px;
-    width: 65px;
-    margin-right: 8px;
-}
+    .Grid {
+        display: flex;
+        flex-direction: row;
+        flex-shrink: 0;
 
-.GridRep .grid_weapons {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
+        .grid_mainhand {
+            margin-right: $unit;
+            height: 139px;
+            width: auto;
+        }
 
-.GridRep .grid_weapon {
-    background: white;
-    border-radius: 4px;
-    float: left;
-    margin: 0 8px 8px 0;
-    height: 40px;
-    width: 70px;
-}
+        .grid_weapons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: $unit;
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+        }
 
-.GridRep .grid_weapon:nth-child(3n+3) {
-    margin-right: 0;
-}
+        .grid_weapon {
+            background: white;
+            border-radius: 4px;
+            float: left;
+            height: 40px;
+            width: 70px;
+        }
+        
+        .grid_mainhand img[src*="jpg"],
+        .grid_weapon img[src*="jpg"] {
+            border-radius: 4px;
+            width: 100%;
+            height: 100%;
+        }
+    }
 
-.GridRep .grid_mainhand img[src*="jpg"],
-.GridRep .grid_weapon img[src*="jpg"] {
-    border-radius: 4px;
-    width: 100%;
-    height: 100%;
+    .Details {
+        display: flex;
+        flex-direction: column;
+        gap: $unit / 2;
+
+        h2 {
+            color: $grey-00;
+            font-size: $font-regular;
+
+            &.empty {
+                color: $grey-50;
+            }
+        }
+
+        .bottom {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .raid, time {
+            color: $grey-50;
+            font-size: $font-small;
+        }
+
+        .raid {
+            flex-grow: 1;
+        }
+    }
 }

@@ -24,13 +24,13 @@ const PartyDetails = (props: Props) => {
     const raidSelect = React.createRef<HTMLSelectElement>()
 
     const readOnlyClasses = classNames({
-        'Details': true,
+        'PartyDetails': true,
         'ReadOnly': true,
         'Visible': !appSnapshot.party.detailsVisible
     })
 
     const editableClasses = classNames({
-        'Details': true,
+        'PartyDetails': true,
         'Editable': true,
         'Visible': appSnapshot.party.detailsVisible
     })
