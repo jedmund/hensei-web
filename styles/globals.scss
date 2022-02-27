@@ -144,6 +144,28 @@ select {
     }
 }
 
+#Teams {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    gap: $unit * 4;
+}
+
+#NotFound {
+    height: 200px;
+    width: 400px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;;
+
+    h2 {
+        color: $grey-60;
+        font-size: $font-regular;
+        text-align: center;
+    }
+}
+
 @keyframes openModal {
     0% {
         opacity: 0;
