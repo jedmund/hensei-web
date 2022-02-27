@@ -11,7 +11,9 @@ interface Props {
     name: string
     raid: Raid
     grid: GridWeapon[]
-    updatedAt: Date
+    user?: User
+    createdAt: Date
+    displayUser: boolean
     onClick: (shortcode: string) => void
 }
 
@@ -28,6 +30,11 @@ const GridRep = (props: Props) => {
     const raidClass = classNames({
         'raid': true,
         'empty': !props.raid
+    })
+
+    const userClass = classNames({
+        'user': true,
+        'empty': !props.user
     })
 
     useEffect(() => {
@@ -57,16 +64,47 @@ const GridRep = (props: Props) => {
             <img alt={weapons[position]?.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`} /> : ''
     }
 
+    const userImage = () => {
+        if (props.user)
+            return (
+                <img 
+                    alt="Gran"
+                    className="gran"
+                    srcSet="/profile/gran.png,
+                            /profile/gran@2x.png 2x"
+                    src="/profile/gran.png" />
+            )
+        else
+            return (<div className="no-user" />)
+    }
+
+    const details = (
+        <div className="Details">
+            <h2 className={titleClass}>{ (props.name) ? props.name : 'Untitled' }</h2>
+            <div className="bottom">
+                <div className={raidClass}>{ (props.raid) ? props.raid.name.en : 'No raid set' }</div>
+                <time className="last-updated" dateTime={props.createdAt.toISOString()}>{formatTimeAgo(props.createdAt, 'en-us')}</time>
+            </div>
+        </div>
+    )
+
+    const detailsWithUsername = (
+        <div className="Details">
+            <h2 className={titleClass}>{ (props.name) ? props.name : 'Untitled' }</h2>
+            <div className={raidClass}>{ (props.raid) ? props.raid.name.en : 'No raid set' }</div>
+            <div className="bottom">
+                <div className={userClass}>
+                    { userImage() }
+                    { (props.user) ? props.user.username : 'Anonymous' }
+                </div>
+                <time className="last-updated" dateTime={props.createdAt.toISOString()}>{formatTimeAgo(props.createdAt, 'en-us')}</time>
+            </div>
+        </div>
+    )
+
     return (
         <div className="GridRep" onClick={navigate}>
-            <div className="Details">
-                <h2 className={titleClass}>{ (props.name) ? props.name : 'Untitled' }</h2>
-                <div className="bottom">
-                    <div className={raidClass}>{ (props.raid) ? props.raid.name.en : 'No raid set' }</div>
-                    <time className="last-updated" dateTime={props.updatedAt.toISOString()}>{formatTimeAgo(props.updatedAt, 'en-us')}</time>
-                </div>
-            </div>
-
+            { (props.displayUser) ? detailsWithUsername : details}
             <div className="Grid">
                 <div className="weapon grid_mainhand">
                     {generateMainhandImage()}

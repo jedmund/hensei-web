@@ -73,13 +73,44 @@
             flex-direction: row;
         }
 
-        .raid, time {
+        .raid, .user, time {
             color: $grey-50;
             font-size: $font-small;
         }
 
-        .raid {
+        .raid, .user {
             flex-grow: 1;
+        }
+
+        .raid {
+            margin-bottom: $unit / 2;
+        }
+
+        .user {
+            display: flex;
+            gap: $unit / 2;
+            align-items: center;
+
+
+            img, .no-user {
+                $diameter: 18px;
+
+                border-radius: $diameter / 2;
+                height: $diameter;
+                width: $diameter;
+            }
+
+            img.gran {
+                background-color: #CEE7FE;
+            }
+    
+            img.djeeta {
+                background-color: #FFE1FE;
+            }
+
+            .no-user {
+                background: $grey-80;
+            }
         }
     }
 }
