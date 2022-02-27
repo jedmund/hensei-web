@@ -78,7 +78,7 @@ const GridRep = (props: Props) => {
                     {
                         Array.from(Array(numWeapons)).map((x, i) => {
                             return (
-                                <li key={`${props.shortcode}-${i}`} className="grid_weapon">
+                                <li key={`${props.shortcode}-${i}`} className="weapon grid_weapon">
                                     {generateGridImage(i)}
                                 </li>
                             )

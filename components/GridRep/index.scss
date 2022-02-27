@@ -9,8 +9,8 @@
         background: white;
         cursor: pointer;
 
-        .Grid .grid_weapons .grid_weapon {
-            box-shadow: inset 0 0 1px $grey-70;
+        .Grid .weapon {
+            box-shadow: inset 0 0 0 1px $grey-80;
         }
     }
 
@@ -19,10 +19,15 @@
         flex-direction: row;
         flex-shrink: 0;
 
+        .weapon {
+            background: white;
+            border-radius: 4px;
+        }
+
         .grid_mainhand {
             margin-right: $unit;
             height: 139px;
-            width: auto;
+            width: 66px;
         }
 
         .grid_weapons {
@@ -36,8 +41,6 @@
         }
 
         .grid_weapon {
-            background: white;
-            border-radius: 4px;
             float: left;
             height: 40px;
             width: 70px;
