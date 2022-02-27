@@ -1,0 +1,32 @@
+#ProfileHeader {
+    align-items: center;
+    background: white;
+    border-radius: $unit;
+    display: flex;
+    margin: 0 auto;
+    margin-bottom: $unit * 5;
+    max-width: $unit * 52;
+    padding: ($unit * 3) ($unit * 5);
+
+    h1 {
+        font-size: $font-xxlarge;
+        font-weight: $normal;
+        flex-grow: 1;
+        text-align: left;
+    }
+
+    img {
+        $diameter: 120px;
+        border-radius: $diameter / 2;
+        height: $diameter;
+        width: $diameter;
+
+        &.gran {
+            background-color: #CEE7FE;
+        }
+
+        &.djeeta {
+            background-color: #FFE1FE;
+        }
+    }
+}
