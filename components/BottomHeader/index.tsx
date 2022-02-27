@@ -16,6 +16,7 @@ import { appState, initialAppState } from '~utils/appState'
 
 import { ButtonType } from '~utils/enums'
 import CrossIcon from '~public/icons/Cross.svg'
+import { route } from 'next/dist/server/router'
 
 const BottomHeader = () => {
     const account = useSnapshot(accountState)
@@ -64,10 +65,12 @@ const BottomHeader = () => {
     }
 
     const leftNav = () => {
-        if (app.party.detailsVisible) {
-            return (<Button icon="edit" active={true} click={toggleDetails}>Hide info</Button>)
-        } else {
-            return (<Button icon="edit" click={toggleDetails}>Edit info</Button>)
+        if (router.pathname === '/p/[party]') {
+            if (app.party.detailsVisible) {
+                return (<Button icon="edit" active={true} click={toggleDetails}>Hide info</Button>)
+            } else {
+                return (<Button icon="edit" click={toggleDetails}>Edit info</Button>)
+            }
         }
     }
 
