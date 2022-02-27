@@ -75,10 +75,10 @@ const SummonGrid = (props: Props) => {
 
     function processResult(response: AxiosResponse) {
         // Store the response
-        const party = response.data.party
+        const party: Party = response.data.party
             
         // Get the party user and logged in user, if possible, to compare
-        const partyUser = (party.user_id) ? party.user_id : undefined
+        const partyUser = (party.user) ? party.user.id : undefined
         const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
 
         if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser)
@@ -107,7 +107,7 @@ const SummonGrid = (props: Props) => {
         }
     }
 
-    function populateSummons(list: [GridSummon]) {
+    function populateSummons(list: Array<GridSummon>) {
         list.forEach((gridObject: GridSummon) => {
             if (gridObject.main)
                 appState.grid.summons.mainSummon = gridObject

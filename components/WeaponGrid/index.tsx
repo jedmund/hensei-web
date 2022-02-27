@@ -71,10 +71,10 @@ const WeaponGrid = (props: Props) => {
 
     function processResult(response: AxiosResponse) {
         // Store the response
-        const party = response.data.party
-            
+        const party: Party = response.data.party
+
         // Get the party user and logged in user, if possible, to compare
-        const partyUser = (party.user_id) ? party.user_id : undefined
+        const partyUser = (party.user) ? party.user.id : undefined
         const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
 
         if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser)
@@ -84,7 +84,7 @@ const WeaponGrid = (props: Props) => {
         
         // Store the important party and state-keeping values
         appState.party.id = party.id
-        appState.party.extra = party.is_extra
+        appState.party.extra = party.extra
 
 
         setFound(true)
@@ -105,7 +105,7 @@ const WeaponGrid = (props: Props) => {
         }
     }
 
-    function populateWeapons(list: [GridWeapon]) {
+    function populateWeapons(list: Array<GridWeapon>) {
         list.forEach((gridObject: GridWeapon) => {
             if (gridObject.mainhand) {
                 appState.grid.weapons.mainWeapon = gridObject
