@@ -16,8 +16,6 @@ interface Props {
 }
 
 const GridRep = (props: Props) => {
-
-    console.log(props)
     const numWeapons: number = 9
 
     const [mainhand, setMainhand] = useState<Weapon>()

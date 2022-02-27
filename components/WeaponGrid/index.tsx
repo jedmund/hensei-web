@@ -70,8 +70,6 @@ const WeaponGrid = (props: Props) => {
     }
 
     function processResult(response: AxiosResponse) {
-        console.log("Retrieved data from server...")
-
         // Store the response
         const party = response.data.party
             
