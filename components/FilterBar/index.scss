@@ -1,0 +1,38 @@
+.FilterBar {
+    align-items: center;
+    background: white;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    gap: $unit * 2;
+    margin: 0 auto;
+    padding: $unit * 2;
+    position: sticky;
+    transition: box-shadow 0.24s ease-in-out;
+    top: $unit * 4;
+    width: 966px;
+
+    &.shadow {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+    }
+
+    h1 {
+        color: $grey-50;
+        font-size: $font-regular;
+        font-weight: $normal;
+        flex-grow: 1;
+        text-align: left;
+    }
+
+    select {
+        background: url('/icons/Arrow.svg'), $grey-90;
+        background-repeat: no-repeat;
+        background-position-y: center;
+        background-position-x: 98%;
+        background-size: $unit * 1.5;
+        color: $grey-50;
+        font-size: $font-small;
+        margin: 0;
+        max-width: 200px;
+    }
+}
