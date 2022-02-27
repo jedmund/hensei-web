@@ -53,20 +53,27 @@ const WeaponUnit = (props: Props) => {
             props.updateUncap(props.gridWeapon.id, props.position, uncap)
     }
 
+    const image = (
+        <div className="WeaponImage">
+            <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
+            { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
+        </div>
+    )
+
+    const editableImage = (
+        <SearchModal 
+            placeholderText="Search for a weapon..." 
+            fromPosition={props.position} 
+            object="weapons"
+            send={props.updateObject}>
+                {image}
+        </SearchModal>
+    )
+
     return (
         <div>
             <div className={classes}>
-                <SearchModal 
-                    placeholderText="Search for a weapon..." 
-                    fromPosition={props.position} 
-                    object="weapons"
-                    send={props.updateObject}>
-                        <div className="WeaponImage">
-                            <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
-                            { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
-                        </div>
-                </SearchModal>
-
+                { (props.editable) ? editableImage : image }
                 { (gridWeapon) ? 
                     <UncapIndicator 
                         type="weapon"

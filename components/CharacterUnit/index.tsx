@@ -6,6 +6,7 @@ import UncapIndicator from '~components/UncapIndicator'
 import PlusIcon from '~public/icons/Add.svg'
 
 import './index.scss'
+import { omit } from 'lodash'
 
 interface Props {
     gridCharacter: GridCharacter | undefined
@@ -47,20 +48,27 @@ const CharacterUnit = (props: Props) => {
             props.updateUncap(props.gridCharacter.id, props.position, uncap)
     }
 
+    const image = (
+        <div className="CharacterImage">
+            <img alt={character?.name.en} className="grid_image" src={imageUrl} />
+            { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
+        </div>
+    )
+
+    const editableImage = (
+        <SearchModal 
+            placeholderText="Search for a character..." 
+            fromPosition={props.position} 
+            object="characters"
+            send={props.updateObject}>
+                {image}
+        </SearchModal>
+    )
+
     return (
         <div>
             <div className={classes}>
-                <SearchModal 
-                    placeholderText="Search for a character..." 
-                    fromPosition={props.position} 
-                    object="characters"
-                    send={props.updateObject}>
-                        <div className="CharacterImage">
-                            <img alt={character?.name.en} className="grid_image" src={imageUrl} />
-                            { (props.editable) ? <span className='icon'><PlusIcon /></span> : '' }
-                        </div>
-                </SearchModal>
-
+                { (props.editable) ? editableImage : image }
                 { (gridCharacter && character) ? 
                     <UncapIndicator 
                         type="character"
