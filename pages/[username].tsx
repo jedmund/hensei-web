@@ -7,21 +7,6 @@ import ProfileHeader from '~components/ProfileHeader'
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 
-interface User {
-    id: string
-    username: string
-    granblueId: number
-}
-
-interface Party {
-    id: string
-    name: string
-    raid: Raid
-    shortcode: string
-    weapons: GridWeapon[]
-    updated_at: string
-}
-
 const ProfileRoute: React.FC = () => {
     const router = useRouter()
     const { username } = router.query
