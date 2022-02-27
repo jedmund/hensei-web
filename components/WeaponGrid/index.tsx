@@ -135,7 +135,6 @@ const WeaponGrid = (props: Props) => {
                         .then(response => storeGridWeapon(response.data.grid_weapon))
                 })
         } else {
-            console.log(party.editable)
                 saveWeapon(party.id, weapon, position)
                     .then(response => storeGridWeapon(response.data.grid_weapon))
         }
