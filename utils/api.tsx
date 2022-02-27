@@ -4,7 +4,7 @@ interface Entity {
     name: string
 }
 
-type CollectionEndpoint = (headers?: {}) => Promise<AxiosResponse<any>>
+type CollectionEndpoint = (params?: {}) => Promise<AxiosResponse<any>>
 type IdEndpoint = ({ id }: { id: string }) => Promise<AxiosResponse<any>>
 type IdWithObjectEndpoint = ({ id, object }: { id: string, object: string }) => Promise<AxiosResponse<any>>
 type PostEndpoint = (object: {}, headers?: {}) => Promise<AxiosResponse<any>>
@@ -41,7 +41,7 @@ class Api {
         const resourceUrl = `${this.url}/${name}`
 
         return {
-            getAll:  (headers?: {}) => axios.get(resourceUrl, headers),
+            getAll:  (params?: {}) => axios.get(resourceUrl, params),
             getOne:  ({ id }: { id: string }) => axios.get(`${resourceUrl}/${id}/`),
             getOneWithObject:  ({ id, object }: { id: string, object: string }) => axios.get(`${resourceUrl}/${id}/${object}`),
             create:  (object: {}, headers?: {}) => axios.post(resourceUrl, object, headers),
