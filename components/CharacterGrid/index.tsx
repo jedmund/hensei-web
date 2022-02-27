@@ -71,9 +71,10 @@ const CharacterGrid = (props: Props) => {
         const partyUser = (party.user_id) ? party.user_id : undefined
         const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
 
-        if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
-            party.editable = true
-        }
+        if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser)
+            appState.party.editable = true
+        else
+            appState.party.editable = false
         
         // Store the important party and state-keeping values
         appState.party.id = party.id
@@ -120,9 +121,10 @@ const CharacterGrid = (props: Props) => {
                         .catch(error => console.error(error))
                 })
         } else {
-            saveCharacter(party.id, character, position)
-                .then(response => storeGridCharacter(response.data.grid_character))
-                .catch(error => console.error(error))
+            if (party.editable)
+                saveCharacter(party.id, character, position)
+                    .then(response => storeGridCharacter(response.data.grid_character))
+                    .catch(error => console.error(error))
         }
     }
 

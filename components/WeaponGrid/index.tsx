@@ -77,13 +77,15 @@ const WeaponGrid = (props: Props) => {
         const partyUser = (party.user_id) ? party.user_id : undefined
         const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
 
-        if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
+        if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser.id)
             appState.party.editable = true
-        }
+        else
+            appState.party.editable = false
         
         // Store the important party and state-keeping values
         appState.party.id = party.id
         appState.party.extra = party.is_extra
+
 
         setFound(true)
         setLoading(false)
@@ -133,8 +135,9 @@ const WeaponGrid = (props: Props) => {
                         .then(response => storeGridWeapon(response.data.grid_weapon))
                 })
         } else {
-            saveWeapon(party.id, weapon, position)
-                .then(response => storeGridWeapon(response.data.grid_weapon))
+            console.log(party.editable)
+                saveWeapon(party.id, weapon, position)
+                    .then(response => storeGridWeapon(response.data.grid_weapon))
         }
     }
 

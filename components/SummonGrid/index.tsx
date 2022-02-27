@@ -81,9 +81,10 @@ const SummonGrid = (props: Props) => {
         const partyUser = (party.user_id) ? party.user_id : undefined
         const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
 
-        if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser) {
+        if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser.id)
             appState.party.editable = true
-        }
+        else
+            appState.party.editable = false
         
         // Store the important party and state-keeping values
         appState.party.id = party.id
@@ -134,8 +135,9 @@ const SummonGrid = (props: Props) => {
                         .then(response => storeGridSummon(response.data.grid_summon))
                 })
         } else {
-            saveSummon(party.id, summon, position)
-                .then(response => storeGridSummon(response.data.grid_summon))
+            if (party.editable)
+                saveSummon(party.id, summon, position)
+                    .then(response => storeGridSummon(response.data.grid_summon))
         }
     }
 
