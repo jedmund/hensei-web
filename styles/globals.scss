@@ -44,6 +44,27 @@ h1 {
     text-align: center;
 }
 
+select {
+    appearance: none;
+    background-image: url('/icons/Arrow.svg');
+    background-repeat: no-repeat;
+    background-position-y: center;
+    background-position-x: 98%;
+    background-size: $unit * 1.5;
+    border: none;
+    border-radius: 6px;
+    color: $grey-00;
+    margin-bottom: $unit;
+    font-size: $font-regular;
+    padding: 0 ($unit * 2);
+    height: $unit * 6;
+    width: 100%;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
 #Content {
     display: flex;
     flex-direction: column;
