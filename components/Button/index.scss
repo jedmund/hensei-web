@@ -61,6 +61,10 @@
         }
     }
 
+    &.Active {
+        background: white;
+    }
+
     &.btn-blue {
         background: $blue;
         color: #8b8b8b;

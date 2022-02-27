@@ -6,6 +6,10 @@ interface AppState {
     party: {
         id: string | undefined,
         editable: boolean,
+        detailsVisible: boolean,
+        name: string | undefined,
+        description: string | undefined,
+        raid: Raid | undefined,
         element: number,
         extra: boolean
     },
@@ -23,13 +27,18 @@ interface AppState {
     },
     search: {
         sourceItem: GridCharacter | GridWeapon | GridSummon | undefined
-    }
+    },
+    raids: Raid[]
 }
 
 export const initialAppState: AppState = {
     party: {
         id: undefined,
         editable: false,
+        detailsVisible: false,
+        name: undefined,
+        description: undefined,
+        raid: undefined,
         element: 0,
         extra: false
     },
@@ -47,7 +56,8 @@ export const initialAppState: AppState = {
     },
     search: {
         sourceItem: undefined
-    }
+    },
+    raids: []
 }
 
 export const appState = proxy(initialAppState)

@@ -14,6 +14,7 @@ import './index.scss'
 import { ButtonType } from '~utils/enums'
 
 interface Props {
+    active: boolean
     disabled: boolean
     icon: string | null
     type: ButtonType
@@ -26,6 +27,7 @@ interface State {
 
 class Button extends React.Component<Props, State> {
     static defaultProps: Props = {
+        active: false,
         disabled: false,
         icon: null,
         type: ButtonType.Base,
@@ -65,6 +67,7 @@ class Button extends React.Component<Props, State> {
 
         const classes = classNames({
             Button: true,
+            'Active': this.props.active,
             'btn-pressed': this.state.isPressed,
             'btn-disabled': this.props.disabled,
             'destructive': this.props.type == ButtonType.Destructive
