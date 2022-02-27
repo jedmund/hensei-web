@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import { useCookies } from 'react-cookie'
+import clonedeep from 'lodash.clonedeep'
 
 import PartySegmentedControl from '~components/PartySegmentedControl'
 import PartyDetails from '~components/PartyDetails'
@@ -9,7 +10,7 @@ import SummonGrid from '~components/SummonGrid'
 import CharacterGrid from '~components/CharacterGrid'
 
 import api from '~utils/api'
-import { appState } from '~utils/appState'
+import { appState, initialAppState } from '~utils/appState'
 import { GridType, TeamElement } from '~utils/enums'
 
 import './index.scss'
@@ -33,6 +34,12 @@ const Party = (props: Props) => {
     // Set up states
     const { party } = useSnapshot(appState)
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
+
+    // Reset state on first load
+    useEffect(() => {
+        const resetState = clonedeep(initialAppState)
+        appState.grid = resetState.grid
+    }, [])
 
     // Fetch data from the server
     useEffect(() => {
