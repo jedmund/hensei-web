@@ -11,7 +11,7 @@ interface Props {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const CharLimitedFieldset = React.forwardRef<HTMLInputElement, Props>(function fieldSet(props, ref) {
+const CharLimitedFieldset = React.forwardRef<HTMLInputElement, Props>(function useFieldSet(props, ref) {
     const fieldType = (['password', 'confirm_password'].includes(props.fieldName)) ? 'password' : 'text'
 
     const [currentCount, setCurrentCount] = useState(0)

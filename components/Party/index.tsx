@@ -42,7 +42,7 @@ const Party = (props: Props) => {
             fetchDetails(shortcode)
         else
             appState.party.editable = true
-    }, [props.slug])
+    }, [props.slug, fetchDetails])
 
     // Methods: Creating a new party
     async function createParty(extra: boolean = false) {

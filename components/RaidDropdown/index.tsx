@@ -12,7 +12,7 @@ interface Props {
     onBlur: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
-const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function fieldSet(props, ref) {
+const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(props, ref) {
     const [cookies, _] = useCookies(['user'])
     const headers = (cookies.user != null) ? {
         headers: { 'Authorization': `Bearer ${cookies.user.access_token}` }
