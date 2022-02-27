@@ -13,7 +13,7 @@ interface Props {
     grid: GridWeapon[]
     user?: User
     createdAt: Date
-    displayUser: boolean
+    displayUser?: boolean | false
     onClick: (shortcode: string) => void
 }
 

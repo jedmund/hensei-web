@@ -71,6 +71,8 @@ const BottomHeader = () => {
             } else {
                 return (<Button icon="edit" click={toggleDetails}>Edit info</Button>)
             }
+        } else {
+            return (<div />)
         }
     }
 
