@@ -8,7 +8,7 @@
         bottom: $unit * 2;
     }
 
-    #right {
+    #right > div {
         display: flex;
         gap: 8px;
     }
