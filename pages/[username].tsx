@@ -21,7 +21,8 @@ const ProfileRoute: React.FC = () => {
     })
 
     useEffect(() => {
-        fetchProfile(username as string)            
+        if (username)
+            fetchProfile(username as string)            
     }, [username])
 
     async function fetchProfile(username: string) {
