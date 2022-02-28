@@ -27,26 +27,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
         'Super Ultimate'
     ]
 
-    useEffect(() => {
-        const headers = (cookies.user != null) ? {
-            headers: { 'Authorization': `Bearer ${cookies.user.access_token}` }
-        } : {}
-
-        function fetchRaids() {
-            console.log("Fetching list of raids...")
-            api.endpoints.raids.getAll(headers)
-                .then((response) => {
-                    const raids = response.data.map((r: any) => r.raid)
-                    
-                    appState.raids = raids
-                    organizeRaids(raids)
-                })
-        }
-
-        fetchRaids()
-    }, [])
-
-    function organizeRaids(raids: Raid[]) {
+    const organizeRaids = useCallback((raids: Raid[]) => {
         const numGroups = Math.max.apply(Math, raids.map(raid => raid.group))
         let groupedRaids = []
 
@@ -67,7 +48,26 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
             })
 
         setRaids(groupedRaids)
-    }
+    }, [props.allOption])
+
+    useEffect(() => {
+        const headers = (cookies.user != null) ? {
+            headers: { 'Authorization': `Bearer ${cookies.user.access_token}` }
+        } : {}
+
+        function fetchRaids() {
+            console.log("Fetching list of raids...")
+            api.endpoints.raids.getAll(headers)
+                .then((response) => {
+                    const raids = response.data.map((r: any) => r.raid)
+                    
+                    appState.raids = raids
+                    organizeRaids(raids)
+                })
+        }
+
+        fetchRaids()
+    }, [cookies.user, organizeRaids])
 
     function raidGroup(index: number) {
         const options = raids && raids.length > 0 && raids[index].length > 0 && 
