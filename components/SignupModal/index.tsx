@@ -9,8 +9,6 @@ import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
 import Fieldset from '~components/Fieldset'
-import Modal from '~components/Modal'
-import Overlay from '~components/Overlay'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
@@ -28,6 +26,8 @@ interface ErrorMap {
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const SignupModal = (props: Props) => {
+    // TODO: Clear error state on close
+
     // Set up error handling
     const [formValid, setFormValid] = useState(false)
     const [errors, setErrors] = useState<ErrorMap>({
@@ -55,16 +55,19 @@ const SignupModal = (props: Props) => {
                 .then((response) => {
                     if (!response.data.available) {
                         newErrors[name] = `This ${name} is already in use`
+                        setErrors(newErrors)
+                        setFormValid(false)
+                    } else {
+                        setFormValid(true)
                     }
-
-                    setErrors(newErrors)
                 }, (error) => {
                     console.error(error)
                 })
         }
     }
 
-    function process(event: React.FormEvent) {
+    // TODO: Refactor this
+    function register(event: React.FormEvent) {
         event.preventDefault()
 
         const body = {
@@ -95,31 +98,53 @@ const SignupModal = (props: Props) => {
         }
     }
 
-    function validateForm() {
-        let valid = true
-
-        Object.values(form).forEach(
-            (input) => input.current?.value.length == 0 && (valid = false)
-        )
-
-        Object.values(errors).forEach(
-            (error) => error.length > 0 && (valid = false)
-        )
-
-        return valid
-    }
-
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
         event.preventDefault()
 
-        const { name, value } = event.target
+        const fieldName = event.target.name
+        const value = event.target.value
+
+        if (value.length >= 3) {            
+            api.check(fieldName, value)
+                .then((response) => {
+                    processNameCheck(fieldName, value, response.data.available)
+                }, (error) => {
+                    console.error(error)
+                })
+        } else {
+            validateName(fieldName, value)
+        }
+    }
+
+    function processNameCheck(fieldName: string, value: string, available: boolean) {
+        const newErrors = {...errors}
+
+        if (available) {
+            // Continue checking for errors
+            newErrors[fieldName] = ''
+            setErrors(newErrors)
+            setFormValid(true)
+
+            validateName(fieldName, value)
+        } else {
+            newErrors[fieldName] = `This ${fieldName} is already in use`
+            setErrors(newErrors)
+            setFormValid(false)
+        }
+    }
+
+    function validateName(fieldName: string, value: string) {
         let newErrors = {...errors}
 
-        switch(name) {
+        switch(fieldName) {
             case 'username':
-                newErrors.username = value.length < 3 
-                    ? 'Username must be at least 3 characters'
-                    : ''
+                if (value.length < 3)
+                    newErrors.username = 'Username must be at least 3 characters'
+                else if (value.length > 20)
+                    newErrors.username = 'Username must be less than 20 characters'
+                else
+                    newErrors.username = ''
+
                 break
 
             case 'email':
@@ -128,6 +153,21 @@ const SignupModal = (props: Props) => {
                     : 'That email address is not valid'
                 break
 
+            default:
+                break
+        }
+
+        setErrors(newErrors)
+        setFormValid(validateForm(newErrors))
+    }
+
+    function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
+        event.preventDefault()
+
+        const { name, value } = event.target
+        let newErrors = {...errors}
+
+        switch(name) {
             case 'password':
                 newErrors.password = passwordInput.current?.value.includes(usernameInput.current?.value!)
                     ? 'Your password should not contain your username'
@@ -151,7 +191,21 @@ const SignupModal = (props: Props) => {
         }
 
         setErrors(newErrors)
-        setFormValid(validateForm())
+        setFormValid(validateForm(newErrors))
+    }
+
+    function validateForm(errors: ErrorMap) {
+        let valid = true
+
+        Object.values(form).forEach(
+            (input) => input.current?.value.length == 0 && (valid = false)
+        )
+
+        Object.values(errors).forEach(
+            (error) => error.length > 0 && (valid = false)
+        )
+
+        return valid
     }
 
     return (
@@ -174,12 +228,11 @@ const SignupModal = (props: Props) => {
 
                     
 
-                    <form className="form" onSubmit={process}>
+                    <form className="form" onSubmit={register}>
                         <Fieldset 
                             fieldName="username"
                             placeholder="Username"
-                            onBlur={check}
-                            onChange={handleChange}
+                            onChange={handleNameChange}
                             error={errors.username}
                             ref={usernameInput}
                         />
@@ -188,7 +241,7 @@ const SignupModal = (props: Props) => {
                             fieldName="email"
                             placeholder="Email address"
                             onBlur={check}
-                            onChange={handleChange}
+                            onChange={handleNameChange}
                             error={errors.email}
                             ref={emailInput}
                         />
@@ -196,7 +249,7 @@ const SignupModal = (props: Props) => {
                         <Fieldset 
                             fieldName="password"
                             placeholder="Password"
-                            onChange={handleChange}
+                            onChange={handlePasswordChange}
                             error={errors.password}
                             ref={passwordInput}
                         />
@@ -204,7 +257,7 @@ const SignupModal = (props: Props) => {
                         <Fieldset 
                             fieldName="confirm_password"
                             placeholder="Password (again)"
-                            onChange={handleChange}
+                            onChange={handlePasswordChange}
                             error={errors.passwordConfirmation}
                             ref={passwordConfirmationInput}
                         />
