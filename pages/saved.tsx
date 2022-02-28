@@ -9,9 +9,9 @@ import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
 
-const TeamsRoute: React.FC = () => {
+const SavedRoute: React.FC = () => {
     const router = useRouter()
-
+    
     // Cookies
     const [cookies, _] = useCookies(['user'])
     const headers = (cookies.user != null) ? {
@@ -24,7 +24,7 @@ const TeamsRoute: React.FC = () => {
     const [parties, setParties] = useState<Party[]>([])
 
     useEffect(() => {
-        console.log(`Fetching teams...`)
+        console.log(`Fetching favorite teams...`)
         fetchTeams()            
     }, [])
 
@@ -45,7 +45,7 @@ const TeamsRoute: React.FC = () => {
             }
         }
 
-        api.endpoints.parties.getAll(params)
+        api.savedTeams(params)
             .then(response => {
                 const parties: Party[] = response.data
                 setParties(parties.map((p: any) => p.party).sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
@@ -99,7 +99,7 @@ const TeamsRoute: React.FC = () => {
                     party.favorited = false
 
                     let clonedParties = clonedeep(parties)
-                    clonedParties[index] = party
+                    clonedParties.splice(index, 1)
 
                     setParties(clonedParties)
                 }
@@ -145,17 +145,17 @@ const TeamsRoute: React.FC = () => {
     function renderNoGrids() {
         return (
             <div id="NotFound">
-                <h2>No teams found</h2>
+                <h2>You haven't saved any teams yet</h2>
             </div>
         )
     }
 
     return (
         <div id="Teams">
-            <FilterBar onFilter={fetchTeams} name="Discover Teams" scrolled={scrolled} />
+            <FilterBar onFilter={fetchTeams} name="Your saved teams" scrolled={scrolled} />
             { (parties.length > 0) ? renderGrids() : renderNoGrids() }
         </div>
     )
 }
 
-export default TeamsRoute
+export default SavedRoute

@@ -58,7 +58,7 @@ const CharacterGrid = (props: Props) => {
 
     // Methods: Fetching an object from the server
     async function fetchGrid(shortcode: string) {
-        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'characters' })
+        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'characters', params: headers })
             .then(response => processResult(response))
             .catch(error => processError(error))
     }
@@ -78,6 +78,8 @@ const CharacterGrid = (props: Props) => {
         
         // Store the important party and state-keeping values
         appState.party.id = party.id
+        appState.party.user = party.user
+        appState.party.favorited = party.favorited
 
         setFound(true)
         setLoading(false)

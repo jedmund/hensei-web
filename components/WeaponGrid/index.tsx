@@ -64,7 +64,7 @@ const WeaponGrid = (props: Props) => {
 
     // Methods: Fetching an object from the server
     async function fetchGrid(shortcode: string) {
-        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'weapons' })
+        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'weapons', params: headers })
             .then(response => processResult(response))
             .catch(error => processError(error))
     }
@@ -85,7 +85,8 @@ const WeaponGrid = (props: Props) => {
         // Store the important party and state-keeping values
         appState.party.id = party.id
         appState.party.extra = party.extra
-
+        appState.party.user = party.user
+        appState.party.favorited = party.favorited
 
         setFound(true)
         setLoading(false)

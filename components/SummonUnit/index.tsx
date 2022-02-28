@@ -44,8 +44,7 @@ const SummonUnit = (props: Props) => {
                 '2040094000', '2040100000', '2040080000', '2040098000', 
                 '2040090000', '2040084000', '2040003000', '2040056000'
             ]
-
-            console.log(`${summon.granblue_id} ${summon.name.en} ${props.gridSummon.uncap_level} ${upgradedSummons.indexOf(summon.granblue_id.toString())}`)
+            
             let suffix = ''
             if (upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 && props.gridSummon.uncap_level == 5)
                 suffix = '_02'

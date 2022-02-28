@@ -1,5 +1,6 @@
 export enum ButtonType {
     Base,
+    IconOnly,
     Destructive
 }
 

@@ -32,7 +32,7 @@ const HeaderMenu = (props: Props) => {
                             <Link href={`/${props.username}` || ''}>{props.username}</Link>
                         </li>
                         <li className="MenuItem">
-                            <Link href={`/${props.username}/saved` || ''}>Saved</Link>
+                            <Link href={`/saved` || ''}>Saved</Link>
                         </li>
                     </div>
                     <div className="MenuGroup">

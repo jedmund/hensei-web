@@ -1,15 +1,16 @@
 import axios, { Axios, AxiosRequestConfig, AxiosResponse } from "axios"
+import { appState } from "./appState"
 
 interface Entity {
     name: string
 }
 
 type CollectionEndpoint = (params?: {}) => Promise<AxiosResponse<any>>
-type IdEndpoint = ({ id }: { id: string }) => Promise<AxiosResponse<any>>
-type IdWithObjectEndpoint = ({ id, object }: { id: string, object: string }) => Promise<AxiosResponse<any>>
+type IdEndpoint = ({ id, params }: { id: string, params?: {} }) => Promise<AxiosResponse<any>>
+type IdWithObjectEndpoint = ({ id, object, params }: { id: string, object: string, params?: {} }) => Promise<AxiosResponse<any>>
 type PostEndpoint = (object: {}, headers?: {}) => Promise<AxiosResponse<any>>
 type PutEndpoint  = (id: string, object: {}, headers?: {}) => Promise<AxiosResponse<any>>
-type DestroyEndpoint = (id: string, headers?: {}) => Promise<AxiosResponse<any>>
+type DestroyEndpoint = ({ id, params }: { id: string, params?: {} }) => Promise<AxiosResponse<any>>
 
 interface EndpointMap {
     getAll: CollectionEndpoint
@@ -42,11 +43,11 @@ class Api {
 
         return {
             getAll:  (params?: {}) => axios.get(resourceUrl, params),
-            getOne:  ({ id }: { id: string }) => axios.get(`${resourceUrl}/${id}/`),
-            getOneWithObject:  ({ id, object }: { id: string, object: string }) => axios.get(`${resourceUrl}/${id}/${object}`),
+            getOne:  ({ id, params }: { id: string, params?: {} }) => axios.get(`${resourceUrl}/${id}/`, params),
+            getOneWithObject:  ({ id, object, params }: { id: string, object: string, params?: {} }) => axios.get(`${resourceUrl}/${id}/${object}`, params),
             create:  (object: {}, headers?: {}) => axios.post(resourceUrl, object, headers),
             update:  (id: string, object: {}, headers?: {}) => axios.put(`${resourceUrl}/${id}`, object, headers),
-            destroy: (id: string, headers?: {}) => axios.delete(`${resourceUrl}/${id}`, headers)
+            destroy: ({ id, params }: { id: string, params?: {} }) => axios.delete(`${resourceUrl}/${id}`, params)
         } as EndpointMap
     }
 
@@ -70,6 +71,23 @@ class Api {
         })
     }
 
+    savedTeams(params: {}) {
+        const resourceUrl = `${this.url}/parties/favorites`
+        return axios.get(resourceUrl, params)
+    }
+
+    saveTeam({ id, params }: { id: string, params?: {} }) {
+        const body = { favorite: { party_id: id } }
+        const resourceUrl = `${this.url}/favorites`
+        return axios.post(resourceUrl, body, { headers: params })
+    }
+
+    unsaveTeam({ id, params }: { id: string, params?: {} }) {
+        const body = { favorite: { party_id: id } }
+        const resourceUrl = `${this.url}/favorites`
+        return axios.delete(resourceUrl, { data: body, headers: params })
+    }
+
     updateUncap(resource: 'character'|'weapon'|'summon', id: string, value: number) {
         const pluralized = resource + 's'
         const resourceUrl = `${this.url}/${pluralized}/update_uncap`
@@ -89,5 +107,6 @@ api.createEntity( { name: 'characters' })
 api.createEntity( { name: 'weapons' })
 api.createEntity( { name: 'summons' })
 api.createEntity( { name: 'raids' })
+api.createEntity( { name: 'favorites' })
 
 export default api

@@ -1,24 +1,34 @@
 
 import React, { useEffect, useState } from 'react'
+import { useSnapshot } from 'valtio'
 import classNames from 'classnames'
 
+import { accountState } from '~utils/accountState'
 import { formatTimeAgo } from '~utils/timeAgo'
+
+import Button from '~components/Button'
+import { ButtonType } from '~utils/enums'
 
 import './index.scss'
 
 interface Props {
     shortcode: string
+    id: string
     name: string
     raid: Raid
     grid: GridWeapon[]
     user?: User
+    favorited: boolean
     createdAt: Date
     displayUser?: boolean | false
     onClick: (shortcode: string) => void
+    onSave: (partyId: string, favorited: boolean) => void
 }
 
 const GridRep = (props: Props) => {
     const numWeapons: number = 9
+
+    const { account } = useSnapshot(accountState)
 
     const [mainhand, setMainhand] = useState<Weapon>()
     const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
@@ -64,6 +74,10 @@ const GridRep = (props: Props) => {
             <img alt={weapons[position]?.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`} /> : ''
     }
 
+    function sendSaveData() {
+        props.onSave(props.id, props.favorited)
+    }
+
     const userImage = () => {
         if (props.user)
             return (
@@ -80,7 +94,7 @@ const GridRep = (props: Props) => {
 
     const details = (
         <div className="Details">
-            <h2 className={titleClass}>{ (props.name) ? props.name : 'Untitled' }</h2>
+            <h2 className={titleClass} onClick={navigate}>{ (props.name) ? props.name : 'Untitled' }</h2>
             <div className="bottom">
                 <div className={raidClass}>{ (props.raid) ? props.raid.name.en : 'No raid set' }</div>
                 <time className="last-updated" dateTime={props.createdAt.toISOString()}>{formatTimeAgo(props.createdAt, 'en-us')}</time>
@@ -90,8 +104,19 @@ const GridRep = (props: Props) => {
 
     const detailsWithUsername = (
         <div className="Details">
-            <h2 className={titleClass}>{ (props.name) ? props.name : 'Untitled' }</h2>
-            <div className={raidClass}>{ (props.raid) ? props.raid.name.en : 'No raid set' }</div>
+            <div className="top">
+                <div className="info">
+                    <h2 className={titleClass} onClick={navigate}>{ (props.name) ? props.name : 'Untitled' }</h2>
+                    <div className={raidClass}>{ (props.raid) ? props.raid.name.en : 'No raid set' }</div>
+                </div>
+                { (!props.user || (account.user && account.user.id !== props.user.id)) ? 
+                    <Button 
+                        active={props.favorited} 
+                        icon="save" 
+                        type={ButtonType.IconOnly} 
+                        click={sendSaveData} 
+                    /> : ''}
+            </div>
             <div className="bottom">
                 <div className={userClass}>
                     { userImage() }
@@ -103,9 +128,9 @@ const GridRep = (props: Props) => {
     )
 
     return (
-        <div className="GridRep" onClick={navigate}>
+        <div className="GridRep">
             { (props.displayUser) ? detailsWithUsername : details}
-            <div className="Grid">
+            <div className="Grid" onClick={navigate}>
                 <div className="weapon grid_mainhand">
                     {generateMainhandImage()}
                 </div>

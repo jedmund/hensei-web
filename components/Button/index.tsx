@@ -8,6 +8,7 @@ import CrossIcon from '~public/icons/Cross.svg'
 import EditIcon from '~public/icons/Edit.svg'
 import LinkIcon from '~public/icons/Link.svg'
 import MenuIcon from '~public/icons/Menu.svg'
+import SaveIcon from '~public/icons/Save.svg'
 
 import './index.scss'
 
@@ -63,6 +64,10 @@ class Button extends React.Component<Props, State> {
             icon = <span className='icon'>
                 <EditIcon />
             </span>
+        } else if (this.props.icon === 'save') {
+            icon = <span className='icon stroke'>
+                <SaveIcon />
+            </span>
         }
 
         const classes = classNames({
@@ -70,12 +75,14 @@ class Button extends React.Component<Props, State> {
             'Active': this.props.active,
             'btn-pressed': this.state.isPressed,
             'btn-disabled': this.props.disabled,
+            'save': this.props.icon === 'save',
             'destructive': this.props.type == ButtonType.Destructive
         })
 
         return <button className={classes} disabled={this.props.disabled} onClick={this.props.click}>
             {icon}
-            <span className='text'>{this.props.children}</span>
+            { (this.props.type != ButtonType.IconOnly) ? 
+                <span className='text'>{this.props.children}</span> : '' }
         </button>
     }
 }
