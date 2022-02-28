@@ -5,7 +5,7 @@ import clonedeep from 'lodash.clonedeep'
 import { useSnapshot } from 'valtio'
 
 import api from '~utils/api'
-import { accountState } from '~utils/accountState'
+import { accountState, initialAccountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 
 import Header from '~components/Header'
@@ -51,10 +51,15 @@ const TopHeader = () => {
     function logout() {
         removeCookie('user')
 
-        accountState.authorized = false
+        // Clean state
+        const resetState = clonedeep(initialAccountState)
+        Object.keys(resetState).forEach((key) => {
+            if (key !== 'language')
+                accountState[key] = resetState[key]
+        })
+        
         appState.party.editable = false
 
-        // TODO: How can we log out without navigating to root
         router.push('/')
         return false
     }
