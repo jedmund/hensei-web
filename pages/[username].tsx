@@ -72,11 +72,13 @@ const ProfileRoute: React.FC = () => {
                 {
                     parties.map((party, i) => {
                         return <GridRep 
+                            id={party.id}
                             shortcode={party.shortcode} 
                             name={party.name}
                             createdAt={new Date(party.created_at)}
                             raid={party.raid}
                             grid={party.weapons}
+                            favorited={party.favorited}
                             key={`party-${i}`}
                             onClick={goTo}
                         />

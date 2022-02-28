@@ -45,7 +45,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
 
     useEffect(() => {
         fetchRaids()
-    }, [])
+    }, [fetchRaids])
     
     function fetchRaids() {
         api.endpoints.raids.getAll(headers)

@@ -26,7 +26,7 @@ const SavedRoute: React.FC = () => {
     useEffect(() => {
         console.log(`Fetching favorite teams...`)
         fetchTeams()            
-    }, [])
+    }, [fetchTeams])
 
     useEffect(() => {
         window.addEventListener("scroll", handleScroll)
@@ -145,7 +145,7 @@ const SavedRoute: React.FC = () => {
     function renderNoGrids() {
         return (
             <div id="NotFound">
-                <h2>You haven't saved any teams yet</h2>
+                <h2>You haven&apos;t saved any teams yet</h2>
             </div>
         )
     }

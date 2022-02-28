@@ -22,7 +22,7 @@ interface Props {
     createdAt: Date
     displayUser?: boolean | false
     onClick: (shortcode: string) => void
-    onSave: (partyId: string, favorited: boolean) => void
+    onSave?: (partyId: string, favorited: boolean) => void
 }
 
 const GridRep = (props: Props) => {
@@ -75,7 +75,8 @@ const GridRep = (props: Props) => {
     }
 
     function sendSaveData() {
-        props.onSave(props.id, props.favorited)
+        if (props.onSave)
+            props.onSave(props.id, props.favorited)
     }
 
     const userImage = () => {

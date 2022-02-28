@@ -26,7 +26,7 @@ const TeamsRoute: React.FC = () => {
     useEffect(() => {
         console.log(`Fetching teams...`)
         fetchTeams()            
-    }, [])
+    }, [fetchTeams])
 
     useEffect(() => {
         window.addEventListener("scroll", handleScroll)
