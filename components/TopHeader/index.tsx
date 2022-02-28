@@ -69,6 +69,10 @@ const TopHeader = () => {
     function saveFavorite() {
         if (party.id)
             api.saveTeam({ id: party.id, params: headers })
+                .then((response) => {
+                    if (response.status == 201)
+                        appState.party.favorited = true
+                })
         else
             console.error("Failed to save team: No party ID")
     }
@@ -76,6 +80,10 @@ const TopHeader = () => {
     function unsaveFavorite() {
         if (party.id)
             api.unsaveTeam({ id: party.id, params: headers })
+                .then((response) => {
+                    if (response.status == 200)
+                        appState.party.favorited = false
+                })
         else
             console.error("Failed to unsave team: No party ID")
     }
