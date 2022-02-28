@@ -39,12 +39,22 @@ const SummonUnit = (props: Props) => {
         let imgSrc = ""
         if (props.gridSummon) {
             const summon = props.gridSummon.object!
+
+            const upgradedSummons = [
+                '2040094000', '2040100000', '2040080000', '2040098000', 
+                '2040090000', '2040084000', '2040003000', '2040056000'
+            ]
+
+            console.log(`${summon.granblue_id} ${summon.name.en} ${props.gridSummon.uncap_level} ${upgradedSummons.indexOf(summon.granblue_id.toString())}`)
+            let suffix = ''
+            if (upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 && props.gridSummon.uncap_level == 5)
+                suffix = '_02'
     
             // Generate the correct source for the summon
             if (props.unitType == 0 || props.unitType == 2)
-                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${summon.granblue_id}.jpg`
+                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${summon.granblue_id}${suffix}.jpg`
             else
-                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`
+                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
         }
         
         setImageUrl(imgSrc)

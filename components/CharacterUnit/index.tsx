@@ -37,7 +37,17 @@ const CharacterUnit = (props: Props) => {
         
         if (props.gridCharacter) {
             const character = props.gridCharacter.object!
-            imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-main/${character.granblue_id}_01.jpg`
+
+            // Change the image based on the uncap level
+            let suffix = '01'
+            if (props.gridCharacter.uncap_level == 6)
+                suffix = '04'
+            else if (props.gridCharacter.uncap_level == 5)
+                suffix = '03'
+            else if (props.gridCharacter.uncap_level > 2)
+                suffix = '02'
+
+            imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-main/${character.granblue_id}_${suffix}.jpg`
         }
 
         setImageUrl(imgSrc)
