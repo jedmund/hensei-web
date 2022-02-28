@@ -71,6 +71,31 @@ class Api {
         })
     }
 
+    savedTeams(params: {}) {
+        const resourceUrl = `${this.url}/parties/favorites`
+        return axios.get(resourceUrl, params)
+    }
+
+    saveTeam({ id, params }: { id: string, params?: {} }) {
+        const body = { favorite: { party_id: id } }
+        const resourceUrl = `${this.url}/favorites`
+        return axios.post(resourceUrl, body, { headers: params })
+            .then((response) => {
+                if (response.status == 201)
+                    appState.party.favorited = true
+            })
+    }
+
+    unsaveTeam({ id, params }: { id: string, params?: {} }) {
+        const body = { favorite: { party_id: id } }
+        const resourceUrl = `${this.url}/favorites`
+        return axios.delete(resourceUrl, { data: body, headers: params })
+            .then((response) => {
+                if (response.status == 200)
+                    appState.party.favorited = false
+            })
+    }
+
     updateUncap(resource: 'character'|'weapon'|'summon', id: string, value: number) {
         const pluralized = resource + 's'
         const resourceUrl = `${this.url}/${pluralized}/update_uncap`
@@ -90,5 +115,6 @@ api.createEntity( { name: 'characters' })
 api.createEntity( { name: 'weapons' })
 api.createEntity( { name: 'summons' })
 api.createEntity( { name: 'raids' })
+api.createEntity( { name: 'favorites' })
 
 export default api
