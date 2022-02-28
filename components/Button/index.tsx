@@ -81,7 +81,8 @@ class Button extends React.Component<Props, State> {
 
         return <button className={classes} disabled={this.props.disabled} onClick={this.props.click}>
             {icon}
-            <span className='text'>{this.props.children}</span>
+            { (this.props.type != ButtonType.IconOnly) ? 
+                <span className='text'>{this.props.children}</span> : '' }
         </button>
     }
 }
