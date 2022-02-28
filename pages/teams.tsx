@@ -31,7 +31,17 @@ const TeamsRoute: React.FC = () => {
     useEffect(() => {
         window.addEventListener("scroll", handleScroll)
         return () => window.removeEventListener("scroll", handleScroll);
-      }, [])
+    }, [])
+
+    const handleError = useCallback((error: any) => {
+        if (error.response != null && error.response.status == 404) {
+            setFound(false)
+        } else if (error.response != null) {
+            console.error(error)
+        } else {
+            console.error("There was an error.")
+        }
+    }, [])
 
     const fetchTeams = useCallback(() => {
         console.log(`Fetching teams with filters... ${element} ${raidId} ${recencyInSeconds}`)
@@ -56,16 +66,8 @@ const TeamsRoute: React.FC = () => {
                 setFound(true)
                 setLoading(false)
             })
-            .catch(error => {
-                if (error.response != null && error.response.status == 404) {
-                    setFound(false)
-                } else if (error.response != null) {
-                    console.error(error)
-                } else {
-                    console.error("There was an error.")
-                }
-            })
-    }, [element, raidId, recencyInSeconds, cookies.user])
+            .catch(error => handleError(error))
+    }, [element, raidId, recencyInSeconds, cookies.user, handleError])
 
     useEffect(() => {
         fetchTeams()           
