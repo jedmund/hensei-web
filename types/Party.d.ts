@@ -4,6 +4,7 @@ interface Party {
     raid: Raid
     shortcode: string
     extra: boolean
+    favorited: boolean
     characters: Array<GridCharacter>
     weapons: Array<GridWeapon>
     summons: Array<GridSummon>

@@ -11,7 +11,9 @@ interface AppState {
         description: string | undefined,
         raid: Raid | undefined,
         element: number,
-        extra: boolean
+        extra: boolean,
+        user: User | undefined,
+        favorited: boolean
     },
     grid: {
         weapons: {
@@ -40,7 +42,9 @@ export const initialAppState: AppState = {
         description: undefined,
         raid: undefined,
         element: 0,
-        extra: false
+        extra: false,
+        user: undefined,
+        favorited: false
     },
     grid: {
         weapons: {
