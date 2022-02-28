@@ -50,6 +50,15 @@
             fill: #FF4D4D;
             stroke: #FF4D4D;
         }
+
+        &:hover {
+            color: darken(#FF4D4D, 30);
+
+            .icon svg {
+                fill: darken(#FF4D4D, 30);
+                stroke: darken(#FF4D4D, 30);
+            }
+        }
     }
 
     &.modal:hover {
