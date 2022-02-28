@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 import clonedeep from 'lodash.clonedeep'
@@ -13,7 +13,7 @@ const SavedRoute: React.FC = () => {
     const router = useRouter()
     
     // Cookies
-    const [cookies, _] = useCookies(['user'])
+    const [cookies] = useCookies(['user'])
     const headers = (cookies.user != null) ? {
         'Authorization': `Bearer ${cookies.user.access_token}`
     } : {}
@@ -21,31 +21,41 @@ const SavedRoute: React.FC = () => {
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
     const [scrolled, setScrolled] = useState(false)
+
     const [parties, setParties] = useState<Party[]>([])
 
-    useEffect(() => {
-        console.log(`Fetching favorite teams...`)
-        fetchTeams()            
-    }, [fetchTeams])
+    const [element, setElement] = useState<number | null>(null)
+    const [raidId, setRaidId] = useState<string | null>(null)
+    const [recencyInSeconds, setRecencyInSeconds] = useState<number | null>(null)
 
     useEffect(() => {
         window.addEventListener("scroll", handleScroll)
         return () => window.removeEventListener("scroll", handleScroll);
-      }, [])
+    }, [])
 
-    async function fetchTeams(element?: number, raid?: string, recency?: number) {
-        const params = {
+    const handleError = useCallback((error: any) => {
+        if (error.response != null && error.response.status == 404) {
+            setFound(false)
+        } else if (error.response != null) {
+            console.error(error)
+        } else {
+            console.error("There was an error.")
+        }
+    }, [])
+
+    const fetchTeams = useCallback(() => {
+        const filterParams = {
             params: {
-                element: (element && element >= 0) ? element : undefined,
-                raid: (raid && raid != '0') ? raid : undefined,
-                recency: (recency && recency > 0) ? recency : undefined
+                element: element,
+                raid: raidId,
+                recency: recencyInSeconds
             },
             headers: {
                 'Authorization': `Bearer ${cookies.user.access_token}`
             }
         }
 
-        api.savedTeams(params)
+        api.savedTeams(filterParams)
             .then(response => {
                 const parties: Party[] = response.data
                 setParties(parties.map((p: any) => p.party).sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
@@ -54,15 +64,28 @@ const SavedRoute: React.FC = () => {
                 setFound(true)
                 setLoading(false)
             })
-            .catch(error => {
-                if (error.response != null) {
-                    if (error.response.status == 404) {
-                        setFound(false)
-                    }
-                } else {
-                    console.error(error)
-                }
-            })
+            .catch(error => handleError(error))
+    }, [element, raidId, recencyInSeconds, cookies.user, handleError])
+
+    useEffect(() => {
+        fetchTeams()           
+    }, [fetchTeams])
+
+    function receiveFilters(element?: number, raid?: string, recency?: number) {
+        if (element != null && element >= 0)
+            setElement(element)
+        else
+            setElement(null)
+
+        if (raid && raid != '0')
+            setRaidId(raid)
+        else
+            setRaidId(null)
+
+        if (recency && recency > 0)
+            setRecencyInSeconds(recency)
+        else
+            setRecencyInSeconds(null)
     }
 
     function toggleFavorite(teamId: string, favorited: boolean) {
@@ -152,7 +175,7 @@ const SavedRoute: React.FC = () => {
 
     return (
         <div id="Teams">
-            <FilterBar onFilter={fetchTeams} name="Your saved teams" scrolled={scrolled} />
+            <FilterBar onFilter={receiveFilters} name="Your saved teams" scrolled={scrolled} />
             { (parties.length > 0) ? renderGrids() : renderNoGrids() }
         </div>
     )

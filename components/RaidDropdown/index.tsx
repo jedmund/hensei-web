@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 
 import { appState } from '~utils/appState'
@@ -15,49 +15,18 @@ interface Props {
 }
 
 const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(props, ref) {
-    const [cookies, _] = useCookies(['user'])
-    const headers = (cookies.user != null) ? {
-        headers: { 'Authorization': `Bearer ${cookies.user.access_token}` }
-    } : {}
-
+    const [cookies] = useCookies(['user'])
     const [raids, setRaids] = useState<Raid[][]>()
-    const [flatRaids, setFlatRaids] = useState<Raid[]>()
 
     const raidGroups = [
-        'Assorted',
-        'Omega',
-        'T1 Summons',
-        'T2 Summons',
-        'Primarchs',
-        'Nightmare',
-        'Omega (Impossible)',
-        'Omega II',
-        'Tier 1 Summons (Impossible)',
-        'Tier 3 Summons',
-        'Ennead',
-        'Malice',
-        '6-Star Raids',
-        'Six-Dragons',
-        'Nightmare (Impossible)',
-        'Astral',
+        'Assorted', 'Omega', 'T1 Summons', 'T2 Summons',
+        'Primarchs', 'Nightmare', 'Omega (Impossible)', 'Omega II',
+        'Tier 1 Summons (Impossible)', 'Tier 3 Summons', 'Ennead', 'Malice',
+        '6-Star Raids', 'Six-Dragons', 'Nightmare (Impossible)', 'Astral', 
         'Super Ultimate'
     ]
 
-    useEffect(() => {
-        fetchRaids()
-    }, [fetchRaids])
-    
-    function fetchRaids() {
-        api.endpoints.raids.getAll(headers)
-            .then((response) => {
-                const raids = response.data.map((r: any) => r.raid)
-                
-                appState.raids = raids
-                organizeRaids(raids)
-            })
-    }
-
-    function organizeRaids(raids: Raid[]) {
+    const organizeRaids = useCallback((raids: Raid[]) => {
         const numGroups = Math.max.apply(Math, raids.map(raid => raid.group))
         let groupedRaids = []
 
@@ -78,7 +47,25 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
             })
 
         setRaids(groupedRaids)
-    }
+    }, [props.allOption])
+
+    useEffect(() => {
+        const headers = (cookies.user != null) ? {
+            headers: { 'Authorization': `Bearer ${cookies.user.access_token}` }
+        } : {}
+
+        function fetchRaids() {
+            api.endpoints.raids.getAll(headers)
+                .then((response) => {
+                    const raids = response.data.map((r: any) => r.raid)
+                    
+                    appState.raids = raids
+                    organizeRaids(raids)
+                })
+        }
+
+        fetchRaids()
+    }, [cookies.user, organizeRaids])
 
     function raidGroup(index: number) {
         const options = raids && raids.length > 0 && raids[index].length > 0 && 

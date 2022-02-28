@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import { useCookies } from 'react-cookie'
 import clonedeep from 'lodash.clonedeep'
@@ -24,12 +24,12 @@ interface Props {
 
 const Party = (props: Props) => {
     // Cookies
-    const [cookies, _] = useCookies(['user'])
-    const headers = (cookies.user != null) ? {
-        headers: {
-            'Authorization': `Bearer ${cookies.user.access_token}`
-        }
-    } : {}
+    const [cookies] = useCookies(['user'])
+    const headers = useMemo(() => {
+        return (cookies.user != null) ? {
+            headers: { 'Authorization': `Bearer ${cookies.user.access_token}` }
+        } : {}
+    }, [cookies.user])
 
     // Set up states
     const { party } = useSnapshot(appState)
@@ -40,16 +40,6 @@ const Party = (props: Props) => {
         const resetState = clonedeep(initialAppState)
         appState.grid = resetState.grid
     }, [])
-
-    // Fetch data from the server
-    useEffect(() => {
-        const shortcode = (props.slug) ? props.slug : undefined
-
-        if (shortcode)
-            fetchDetails(shortcode)
-        else
-            appState.party.editable = true
-    }, [props.slug, fetchDetails])
 
     // Methods: Creating a new party
     async function createParty(extra: boolean = false) {
@@ -92,7 +82,6 @@ const Party = (props: Props) => {
                         appState.party.raid = raid
                     })
             }
-
     }
 
     // Methods: Navigating with segmented control
@@ -116,13 +105,7 @@ const Party = (props: Props) => {
     }
 
     // Methods: Fetch party details
-    function fetchDetails(shortcode: string) {
-        return api.endpoints.parties.getOne({ id: shortcode, params: headers })
-            .then(response => processResult(response))
-            .catch(error => processError(error))
-    }
-
-    function processResult(response: AxiosResponse) {
+    const processResult = useCallback((response: AxiosResponse) => {
         appState.party.id = response.data.party.id
         appState.party.user = response.data.party.user
         appState.party.favorited = response.data.party.favorited
@@ -131,18 +114,32 @@ const Party = (props: Props) => {
         appState.party.name = response.data.party.name
         appState.party.description = response.data.party.description
         appState.party.raid = response.data.party.raid
-    }
+    }, [])
 
-    function processError(error: any) {
-        if (error.response != null) {
-            if (error.response.status == 404) {
-                // setFound(false)
-                // setLoading(false)
-            }
-        } else {
+    const handleError = useCallback((error: any) => {
+        if (error.response != null && error.response.status == 404) {
+            // setFound(false)
+        } else if (error.response != null) {
             console.error(error)
+        } else {
+            console.error("There was an error.")
         }
-    }
+    }, [])
+
+    const fetchDetails = useCallback((shortcode: string) => {
+        return api.endpoints.parties.getOne({ id: shortcode, params: headers })
+            .then(response => processResult(response))
+            .catch(error => handleError(error))
+    }, [headers, processResult, handleError])
+
+    useEffect(() => {
+        const shortcode = (props.slug) ? props.slug : undefined
+
+        if (shortcode)
+            fetchDetails(shortcode)
+        else
+            appState.party.editable = true
+    }, [props.slug, fetchDetails])
 
     // Render: JSX components
     const navigation = (
