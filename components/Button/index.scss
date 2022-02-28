@@ -34,6 +34,24 @@
         }
     }
 
+    &.save:hover {
+        color: #FF4D4D;
+        
+        .icon svg {
+            fill: #FF4D4D;
+            stroke: #FF4D4D;
+        }
+    }
+
+    &.save.Active {
+        color: #FF4D4D;
+        
+        .icon svg {
+            fill: #FF4D4D;
+            stroke: #FF4D4D;
+        }
+    }
+
     &.modal:hover {
         background: $grey-90;
     }
