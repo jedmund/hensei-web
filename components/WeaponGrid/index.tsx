@@ -85,7 +85,8 @@ const WeaponGrid = (props: Props) => {
         // Store the important party and state-keeping values
         appState.party.id = party.id
         appState.party.extra = party.extra
-
+        appState.party.user = party.user
+        appState.party.favorited = party.favorited
 
         setFound(true)
         setLoading(false)

@@ -117,13 +117,15 @@ const Party = (props: Props) => {
 
     // Methods: Fetch party details
     function fetchDetails(shortcode: string) {
-        return api.endpoints.parties.getOne({ id: shortcode })
+        return api.endpoints.parties.getOne({ id: shortcode, params: headers })
             .then(response => processResult(response))
             .catch(error => processError(error))
     }
 
     function processResult(response: AxiosResponse) {
         appState.party.id = response.data.party.id
+        appState.party.user = response.data.party.user
+        appState.party.favorited = response.data.party.favorited
 
         // Store the party's user-generated details
         appState.party.name = response.data.party.name
