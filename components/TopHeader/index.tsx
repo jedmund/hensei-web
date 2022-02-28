@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import clonedeep from 'lodash.clonedeep'
 import { useSnapshot } from 'valtio'
 
+import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 
@@ -12,9 +13,14 @@ import Button from '~components/Button'
 import HeaderMenu from '~components/HeaderMenu'
 
 const TopHeader = () => {
+    // Cookies
     const [cookies, _, removeCookie] = useCookies(['user'])
+    const headers = (cookies.user != null) ? {
+        'Authorization': `Bearer ${cookies.user.access_token}`
+    } : {}
 
-    const accountSnap = useSnapshot(accountState)
+    const { account } = useSnapshot(accountState)
+    const { party } = useSnapshot(appState)
     const router = useRouter()
 
     function copyToClipboard() {
@@ -53,21 +59,52 @@ const TopHeader = () => {
         return false
     }
 
+    function toggleFavorite() {
+        if (party.favorited)
+            unsaveFavorite()
+        else
+            saveFavorite()
+    }
+
+    function saveFavorite() {
+        if (party.id)
+            api.saveTeam({ id: party.id, params: headers })
+        else
+            console.error("Failed to save team: No party ID")
+    }
+
+    function unsaveFavorite() {
+        if (party.id)
+            api.unsaveTeam({ id: party.id, params: headers })
+        else
+            console.error("Failed to unsave team: No party ID")
+    }
+
     const leftNav = () => {
         return (
             <div className="dropdown">
                 <Button icon="menu">Menu</Button>
-                { (accountSnap.account.user) ? 
-                    <HeaderMenu authenticated={accountSnap.account.authorized} username={accountSnap.account.user.username} logout={logout} /> :
-                    <HeaderMenu authenticated={accountSnap.account.authorized} />
+                { (account.user) ? 
+                    <HeaderMenu authenticated={account.authorized} username={account.user.username} logout={logout} /> :
+                    <HeaderMenu authenticated={account.authorized} />
                 }
             </div>
         )
     }
 
+    const saveButton = () => {
+        if (party.favorited)
+            return (<Button icon="save" active={true} click={toggleFavorite}>Saved</Button>)
+        else
+            return (<Button icon="save" click={toggleFavorite}>Save</Button>)
+    }
+
     const rightNav = () => {
         return (
             <div>
+                { (router.route === '/p/[party]' && account.user && (!party.user || party.user.id !== account.user.id)) ? 
+                    saveButton() : ''
+                }
                 { (router.route === '/p/[party]') ? 
                     <Button icon="link" click={copyToClipboard}>Copy link</Button> : ''
                 }
