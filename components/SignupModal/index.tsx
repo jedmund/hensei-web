@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { withCookies, Cookies } from 'react-cookie'
 import { createPortal } from 'react-dom'
 
+import * as Dialog from '@radix-ui/react-dialog'
+
 import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 
@@ -10,12 +12,10 @@ import Fieldset from '~components/Fieldset'
 import Modal from '~components/Modal'
 import Overlay from '~components/Overlay'
 
+import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
-interface Props {
-    cookies: Cookies
-    close: () => void
-}
+interface Props {}
 
 interface ErrorMap {
     [index: string]: string
@@ -28,6 +28,7 @@ interface ErrorMap {
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const SignupModal = (props: Props) => {
+    // Set up error handling
     const [formValid, setFormValid] = useState(false)
     const [errors, setErrors] = useState<ErrorMap>({
         username: '',
@@ -36,6 +37,7 @@ const SignupModal = (props: Props) => {
         passwordConfirmation: ''
     })
  
+    // Set up form refs
     const usernameInput = React.createRef<HTMLInputElement>()
     const emailInput = React.createRef<HTMLInputElement>()
     const passwordInput = React.createRef<HTMLInputElement>()
@@ -153,58 +155,70 @@ const SignupModal = (props: Props) => {
     }
 
     return (
-        createPortal(
-            <div>
-                <Modal 
-                    title="Sign up" 
-                    styleName="SignupForm"
-                    close={ () => {} }
-                >
+        <Dialog.Root>
+            <Dialog.Trigger asChild>
+                <li className="MenuItem">
+                    <span>Sign up</span>
+                </li>
+            </Dialog.Trigger>
+            <Dialog.Portal>
+                <Dialog.Content className="Signup Dialog" onOpenAutoFocus={ (event) => event.preventDefault() }>
+                    <div className="DialogHeader">
+                        <Dialog.Title className="DialogTitle">Sign up</Dialog.Title>
+                        <Dialog.Close className="DialogClose" asChild>
+                            <span>
+                                <CrossIcon />
+                            </span>
+                        </Dialog.Close>
+                    </div>
+
+                    
+
                     <form className="form" onSubmit={process}>
-                        <div id="fields">
-                            <Fieldset 
-                                fieldName="username"
-                                placeholder="Username"
-                                onBlur={check}
-                                onChange={handleChange}
-                                error={errors.username}
-                                ref={usernameInput}
-                            />
+                        <Fieldset 
+                            fieldName="username"
+                            placeholder="Username"
+                            onBlur={check}
+                            onChange={handleChange}
+                            error={errors.username}
+                            ref={usernameInput}
+                        />
 
-                            <Fieldset 
-                                fieldName="email"
-                                placeholder="Email address"
-                                onBlur={check}
-                                onChange={handleChange}
-                                error={errors.email}
-                                ref={emailInput}
-                            />
+                        <Fieldset 
+                            fieldName="email"
+                            placeholder="Email address"
+                            onBlur={check}
+                            onChange={handleChange}
+                            error={errors.email}
+                            ref={emailInput}
+                        />
 
-                            <Fieldset 
-                                fieldName="password"
-                                placeholder="Password"
-                                onChange={handleChange}
-                                error={errors.password}
-                                ref={passwordInput}
-                            />
+                        <Fieldset 
+                            fieldName="password"
+                            placeholder="Password"
+                            onChange={handleChange}
+                            error={errors.password}
+                            ref={passwordInput}
+                        />
 
-                            <Fieldset 
-                                fieldName="confirm_password"
-                                placeholder="Password (again)"
-                                onChange={handleChange}
-                                error={errors.passwordConfirmation}
-                                ref={passwordConfirmationInput}
-                            />
-                        </div>
-                        <div id="ModalBottom">
-                            <Button disabled={!formValid}>Sign up</Button>
-                        </div>
+                        <Fieldset 
+                            fieldName="confirm_password"
+                            placeholder="Password (again)"
+                            onChange={handleChange}
+                            error={errors.passwordConfirmation}
+                            ref={passwordConfirmationInput}
+                        />
+
+                        <Button disabled={!formValid}>Sign up</Button>
+
+                        <Dialog.Description className="terms">
+                            By signing up, I agree to the<br /><a href="#">Terms and Conditions</a> and <a href="#">Usage Guidelines</a>.
+                        </Dialog.Description>
                     </form>
-                </Modal>
-                <Overlay onClick={props.close} />
-            </div>,
-            document.body
-        )
+                </Dialog.Content>
+                <Dialog.Overlay className="Overlay" />
+            </Dialog.Portal>
+        </Dialog.Root>
     )
 }
 

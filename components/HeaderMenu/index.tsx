@@ -83,14 +83,7 @@ const HeaderMenu = (props: Props) => {
                         />
                     ) : null}
 
-                    <li className="MenuItem" onClick={openSignupModal}>
-                        <span>Sign up</span>
-                    </li>
-                    {signupOpen ? (
-                        <SignupModal 
-                            close={closeSignupModal}
-                        />
-                    ) : null}
+                    <SignupModal />
                 </div>
                 
             </ul>

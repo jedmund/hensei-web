@@ -1,67 +1,46 @@
-.SignupForm {
-    padding: 16px;
-}
-
-.SignupForm form {
-    margin: 0;
-}
-
-.SignupForm #fields {
+.Signup.Dialog form {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-bottom: 8px;
-}
+    gap: $unit / 2;
+    margin-bottom: $unit;
 
-#ModalTop {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 16px;
-    margin-right: -8px;
-}
+    .Button {
+        font-size: $font-regular;
+        padding: ($unit * 1.5) ($unit * 2);
+        width: 100%;
 
-#ModalTop h1 {
-    margin: 0;
-    font-size: $font-xlarge;
-    text-align: left;
-    flex-grow: 1;
-}
+        &.btn-disabled {
+            background: $grey-90;
+            color: $grey-70;
+        }
 
-#ModalTop i {
-    padding: 8px;
-}
+        &:not(.btn-disabled) {
+            background: $grey-90;
+            color: $grey-40;
 
-#ModalTop i:hover {
-    cursor: pointer;
-}
+            &:hover {
+                background: $grey-80;
+            }
+        }
+    }
 
-#ModalTop i:hover svg {
-    color: #444;
-}
+    .terms {
+        color: $grey-40;
+        font-size: $font-small;
+        line-height: 1.2;
+        margin-top: $unit;
+        text-align: center;
 
-#ModalTop svg {
-    color: #888;
-    height: 18px;
-    width: 18px;
-    transform: rotate(45deg);
-}
+        a {
+            color: $blue;
 
-#ModalBottom {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
+            &:hover {
+                color: darken($blue, 30);
+            }
+        }
+    }
 
-#ModalBottom a {
-    color: #666;
-    font-size: $font-regular;
-    font-weight: 500;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-}
-
-#ModalBottom .Button {
-    min-width: 88px;
+    input {
+        background: $grey-90;
+    }
 }

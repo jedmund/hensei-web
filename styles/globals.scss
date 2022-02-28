@@ -90,16 +90,18 @@ select {
 }
 
 .Dialog {
+    $multiplier: 4;
+
     animation: 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal none running openModal;
     background: white;
     border-radius: $unit;
     display: flex;
     flex-direction: column;
-    gap: $unit * 3;
+    gap: $unit * $multiplier;
     height: auto;
     min-width: $unit * 48;
     min-height: $unit * 12;
-    padding: $unit * 3;
+    padding: $unit * $multiplier;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -108,28 +110,43 @@ select {
 
     .DialogHeader {
         display: flex;
+        gap: $unit;
+
+        .left {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: $unit;
+
+            p {
+                color: $grey-40;
+                font-size: $font-small;
+                line-height: 1.25;
+            }
+        }
     }
 
     .DialogClose {
         background: transparent;
-        height: 21px;
-        width: 21px;
 
         &:hover {
             cursor: pointer;
             
             svg {
-                fill: $grey-00;
+                fill: $error;
             }
         }
 
         svg {
             fill: $grey-40;
+            float: right;
+            height: 24px;
+            width: 24px;
         }
     }
 
     .DialogTitle {
-        font-size: $font-large;
+        font-size: $font-xlarge;
         flex-grow: 1;
     }
 
