@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useCookies } from 'react-cookie'
+import clonedeep from 'lodash.clonedeep'
 
 import api from '~utils/api'
 
@@ -9,6 +11,12 @@ import FilterBar from '~components/FilterBar'
 
 const TeamsRoute: React.FC = () => {
     const router = useRouter()
+
+    // Cookies
+    const [cookies, _] = useCookies(['user'])
+    const headers = (cookies.user != null) ? {
+        'Authorization': `Bearer ${cookies.user.access_token}`
+    } : {}
 
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -31,6 +39,9 @@ const TeamsRoute: React.FC = () => {
                 element: (element && element >= 0) ? element : undefined,
                 raid: (raid && raid != '0') ? raid : undefined,
                 recency: (recency && recency > 0) ? recency : undefined
+            },
+            headers: {
+                'Authorization': `Bearer ${cookies.user.access_token}`
             }
         }
 
@@ -54,6 +65,47 @@ const TeamsRoute: React.FC = () => {
             })
     }
 
+    function toggleFavorite(teamId: string, favorited: boolean) {
+        if (favorited)
+            unsaveFavorite(teamId)
+        else
+            saveFavorite(teamId)
+    }
+
+    function saveFavorite(teamId: string) {
+        api.saveTeam({ id: teamId, params: headers })
+            .then((response) => {
+                if (response.status == 201) {
+                    const index = parties.findIndex(p => p.id === teamId)
+                    const party = parties[index]
+
+                    party.favorited = true
+
+                    let clonedParties = clonedeep(parties)
+                    clonedParties[index] = party
+
+                    setParties(clonedParties)
+                }
+            })
+    }
+
+    function unsaveFavorite(teamId: string) {
+        api.unsaveTeam({ id: teamId, params: headers })
+            .then((response) => {
+                if (response.status == 200) {
+                    const index = parties.findIndex(p => p.id === teamId)
+                    const party = parties[index]
+
+                    party.favorited = false
+
+                    let clonedParties = clonedeep(parties)
+                    clonedParties[index] = party
+
+                    setParties(clonedParties)
+                }
+            })
+    }
+
     function handleScroll() {
         if (window.pageYOffset > 90)
             setScrolled(true)
@@ -71,15 +123,18 @@ const TeamsRoute: React.FC = () => {
                 {
                     parties.map((party, i) => {
                         return <GridRep 
+                            id={party.id}
                             shortcode={party.shortcode} 
                             name={party.name}
                             createdAt={new Date(party.created_at)}
                             raid={party.raid}
                             grid={party.weapons}
                             user={party.user}
+                            favorited={party.favorited}
                             key={`party-${i}`}
                             displayUser={true}
                             onClick={goTo}
+                            onSave={toggleFavorite}
                         />
                     })
                 }
@@ -90,7 +145,7 @@ const TeamsRoute: React.FC = () => {
     function renderNoGrids() {
         return (
             <div id="NotFound">
-                <h2>No grids found</h2>
+                <h2>No teams found</h2>
             </div>
         )
     }

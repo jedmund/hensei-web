@@ -80,20 +80,12 @@ class Api {
         const body = { favorite: { party_id: id } }
         const resourceUrl = `${this.url}/favorites`
         return axios.post(resourceUrl, body, { headers: params })
-            .then((response) => {
-                if (response.status == 201)
-                    appState.party.favorited = true
-            })
     }
 
     unsaveTeam({ id, params }: { id: string, params?: {} }) {
         const body = { favorite: { party_id: id } }
         const resourceUrl = `${this.url}/favorites`
         return axios.delete(resourceUrl, { data: body, headers: params })
-            .then((response) => {
-                if (response.status == 200)
-                    appState.party.favorited = false
-            })
     }
 
     updateUncap(resource: 'character'|'weapon'|'summon', id: string, value: number) {
