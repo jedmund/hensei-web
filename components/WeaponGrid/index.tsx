@@ -64,7 +64,7 @@ const WeaponGrid = (props: Props) => {
 
     // Methods: Fetching an object from the server
     async function fetchGrid(shortcode: string) {
-        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'weapons' })
+        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'weapons', params: headers })
             .then(response => processResult(response))
             .catch(error => processError(error))
     }

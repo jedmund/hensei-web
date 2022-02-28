@@ -44,7 +44,7 @@ const BottomHeader = () => {
 
     function deleteTeam(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         if (appState.party.editable && appState.party.id) {
-            api.endpoints.parties.destroy(appState.party.id, headers)
+            api.endpoints.parties.destroy({ id: appState.party.id, params: headers })
                 .then(() => {
                     // Push to route
                     router.push('/')

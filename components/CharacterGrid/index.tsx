@@ -58,7 +58,7 @@ const CharacterGrid = (props: Props) => {
 
     // Methods: Fetching an object from the server
     async function fetchGrid(shortcode: string) {
-        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'characters' })
+        return api.endpoints.parties.getOneWithObject({ id: shortcode, object: 'characters', params: headers })
             .then(response => processResult(response))
             .catch(error => processError(error))
     }
