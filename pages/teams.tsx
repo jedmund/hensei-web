@@ -44,8 +44,6 @@ const TeamsRoute: React.FC = () => {
     }, [])
 
     const fetchTeams = useCallback(() => {
-        console.log(`Fetching teams with filters... ${element} ${raidId} ${recencyInSeconds}`)
-
         const filterParams = {
             params: {
                 element: element,

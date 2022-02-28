@@ -21,7 +21,6 @@ const ProfileRoute: React.FC = () => {
     })
 
     useEffect(() => {
-        console.log(`Fetching profile for ${username}...`)
         fetchProfile(username as string)            
     }, [username])
 

@@ -44,8 +44,6 @@ const SavedRoute: React.FC = () => {
     }, [])
 
     const fetchTeams = useCallback(() => {
-        console.log(`Fetching favorite teams with filters... ${element} ${raidId} ${recencyInSeconds}`)
-
         const filterParams = {
             params: {
                 element: element,
