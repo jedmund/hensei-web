@@ -17,7 +17,6 @@ interface Props {
 const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(props, ref) {
     const [cookies] = useCookies(['user'])
     const [raids, setRaids] = useState<Raid[][]>()
-    const [flatRaids, setFlatRaids] = useState<Raid[]>()
 
     const raidGroups = [
         'Assorted', 'Omega', 'T1 Summons', 'T2 Summons',
