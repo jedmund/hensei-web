@@ -12,7 +12,7 @@ interface Props {
 
 const Fieldset = React.forwardRef<HTMLInputElement, Props>(function fieldSet(props, ref) {
     const fieldType = (['password', 'confirm_password'].includes(props.fieldName)) ? 'password' : 'text'
-    
+
     return (
         <fieldset className="Fieldset">
             <input
