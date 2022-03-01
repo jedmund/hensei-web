@@ -1,4 +1,5 @@
 import React from 'react'
+import UncapIndicator from '~components/UncapIndicator'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
 import './index.scss'
@@ -17,12 +18,17 @@ class CharacterResult extends React.Component<Props> {
         return (
             <li className="CharacterResult" onClick={this.props.onClick}>
                 <img alt={character.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_01.jpg`} />
-                <div>
-                    <div>
-                        <h5>{character.name.en}</h5>
-                        <div className="stars">{(character.rarity == 2) ? '⭑⭑⭑' : '⭑⭑⭑⭑'}{(character.uncap.flb) ? <span>⭑</span> : ''}</div>
+                <div className="Info">
+                    <h5>{character.name.en}</h5>
+                    <UncapIndicator 
+                        type="character"
+                        flb={character.uncap.flb}
+                        ulb={character.uncap.ulb}
+                        special={character.special}
+                    />
+                    <div className="tags">
+                        <WeaponLabelIcon labelType={Element[character.element]} />
                     </div>
-                    <WeaponLabelIcon labelType={Element[character.element]} />
                 </div>
             </li>
         )
