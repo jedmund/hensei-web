@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { withCookies, Cookies } from 'react-cookie'
-import { createPortal } from 'react-dom'
+import { useCookies } from 'react-cookie'
 
 import * as Dialog from '@radix-ui/react-dialog'
 
@@ -26,9 +25,7 @@ interface ErrorMap {
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const SignupModal = (props: Props) => {
-    // TODO: Clear error state on close
-
-    // Set up error handling
+    // Set up form states and error handling
     const [formValid, setFormValid] = useState(false)
     const [errors, setErrors] = useState<ErrorMap>({
         username: '',
@@ -36,6 +33,12 @@ const SignupModal = (props: Props) => {
         password: '',
         passwordConfirmation: ''
     })
+
+    // Cookies
+    const [cookies, setCookies] = useCookies()
+
+    // States
+    const [open, setOpen] = useState(false)
  
     // Set up form refs
     const usernameInput = React.createRef<HTMLInputElement>()
@@ -44,29 +47,6 @@ const SignupModal = (props: Props) => {
     const passwordConfirmationInput = React.createRef<HTMLInputElement>()
     const form = [usernameInput, emailInput, passwordInput, passwordConfirmationInput]
 
-    function check(event: React.ChangeEvent<HTMLInputElement>) {
-        const name = event.target.name
-        const value = event.target.value
-
-        if (value.length > 0 && errors[name].length == 0) {
-            const newErrors = {...errors}
-            
-            api.check(name, value)
-                .then((response) => {
-                    if (!response.data.available) {
-                        newErrors[name] = `This ${name} is already in use`
-                        setErrors(newErrors)
-                        setFormValid(false)
-                    } else {
-                        setFormValid(true)
-                    }
-                }, (error) => {
-                    console.error(error)
-                })
-        }
-    }
-
-    // TODO: Refactor this
     function register(event: React.FormEvent) {
         event.preventDefault()
 
@@ -79,23 +59,27 @@ const SignupModal = (props: Props) => {
             }
         }
 
-        if (formValid) {
+        if (formValid)
             api.endpoints.users.create(body)
                 .then((response) => {
-                    const cookies = props.cookies
-                    cookies.set('user', response.data.user, { path: '/'})
+                    // Set cookies
+                    setCookies('user', response.data.user, { path: '/'})
                     
+                    // Set states
                     accountState.account.authorized = true
                     accountState.account.user = {
                         id: response.data.user.id,
                         username: response.data.user.username
                     }
 
-                    props.close()
+                    // Close the modal
+                    setOpen(false)
                 }, (error) => {
                     console.error(error)
                 })
-        }
+                .catch(error => {
+                    console.error(error)
+                })
     }
 
     function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -208,8 +192,18 @@ const SignupModal = (props: Props) => {
         return valid
     }
 
+    function openChange(open: boolean) {
+        setOpen(open)
+        setErrors({
+            username: '',
+            email: '',
+            password: '',
+            passwordConfirmation: ''
+        })
+    }
+
     return (
-        <Dialog.Root>
+        <Dialog.Root open={open} onOpenChange={openChange}>
             <Dialog.Trigger asChild>
                 <li className="MenuItem">
                     <span>Sign up</span>
@@ -240,7 +234,6 @@ const SignupModal = (props: Props) => {
                         <Fieldset 
                             fieldName="email"
                             placeholder="Email address"
-                            onBlur={check}
                             onChange={handleNameChange}
                             error={errors.email}
                             ref={emailInput}
@@ -276,4 +269,4 @@ const SignupModal = (props: Props) => {
 }
 
 
-export default withCookies(SignupModal)
+export default SignupModal
