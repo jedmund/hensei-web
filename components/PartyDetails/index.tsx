@@ -98,9 +98,9 @@ const PartyDetails = (props: Props) => {
 
     const readOnly = (
         <section className={readOnlyClasses}>
-            <h1>{ (appSnapshot.party.name) ? appSnapshot.party.name : 'No title' }</h1>
+            { (appSnapshot.party.name) ? <h1>appSnapshot.party.name</h1> : '' }
             { (appSnapshot.party.raid) ? <div className="Raid">{appSnapshot.party.raid.name.en}</div> : '' }
-            <p>{ (appSnapshot.party.description) ? appSnapshot.party.description : '' }</p>
+            { (appSnapshot.party.description) ? <p>appSnapshot.party.description</p> : '' }
         </section>
     )
 

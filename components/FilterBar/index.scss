@@ -35,4 +35,28 @@
         margin: 0;
         max-width: 200px;
     }
+
+
+    .UserInfo {
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        gap: $unit * 1.5;
+
+        img {
+            $diameter: $unit * 6;
+            border-radius: $diameter / 2;
+            height: $diameter;
+            width: $diameter;
+
+            &.gran {
+                background-color: #CEE7FE;
+            }
+    
+            &.djeeta {
+                background-color: #FFE1FE;
+            }
+        }
+    }
 }

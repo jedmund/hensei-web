@@ -18,12 +18,12 @@ const SavedRoute: React.FC = () => {
         'Authorization': `Bearer ${cookies.user.access_token}`
     } : {}
 
-    const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
     const [scrolled, setScrolled] = useState(false)
 
     const [parties, setParties] = useState<Party[]>([])
 
+    // Filter states
     const [element, setElement] = useState<number | null>(null)
     const [raidId, setRaidId] = useState<string | null>(null)
     const [recencyInSeconds, setRecencyInSeconds] = useState<number | null>(null)
@@ -34,9 +34,7 @@ const SavedRoute: React.FC = () => {
     }, [])
 
     const handleError = useCallback((error: any) => {
-        if (error.response != null && error.response.status == 404) {
-            setFound(false)
-        } else if (error.response != null) {
+        if (error.response != null) {
             console.error(error)
         } else {
             console.error("There was an error.")
@@ -55,13 +53,14 @@ const SavedRoute: React.FC = () => {
             }
         }
 
+        setLoading(true)
+
         api.savedTeams(filterParams)
             .then(response => {
                 const parties: Party[] = response.data
                 setParties(parties.map((p: any) => p.party).sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
             })
             .then(() => {
-                setFound(true)
                 setLoading(false)
             })
             .catch(error => handleError(error))
@@ -139,44 +138,41 @@ const SavedRoute: React.FC = () => {
     function goTo(shortcode: string) {
         router.push(`/p/${shortcode}`)
     }
-    
-    function renderGrids() {
-        return (
-            <GridRepCollection>
-                {
-                    parties.map((party, i) => {
-                        return <GridRep 
-                            id={party.id}
-                            shortcode={party.shortcode} 
-                            name={party.name}
-                            createdAt={new Date(party.created_at)}
-                            raid={party.raid}
-                            grid={party.weapons}
-                            user={party.user}
-                            favorited={party.favorited}
-                            key={`party-${i}`}
-                            displayUser={true}
-                            onClick={goTo}
-                            onSave={toggleFavorite}
-                        />
-                    })
-                }
-            </GridRepCollection>
-        )
-    }
-
-    function renderNoGrids() {
-        return (
-            <div id="NotFound">
-                <h2>You haven&apos;t saved any teams yet</h2>
-            </div>
-        )
-    }
 
     return (
         <div id="Teams">
-            <FilterBar onFilter={receiveFilters} name="Your saved teams" scrolled={scrolled} />
-            { (parties.length > 0) ? renderGrids() : renderNoGrids() }
+            <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
+                <h1>Your saved teams</h1>
+            </FilterBar>
+            
+            <section>
+                <GridRepCollection loading={loading}>
+                    {
+                        parties.map((party, i) => {
+                            return <GridRep 
+                                id={party.id}
+                                shortcode={party.shortcode} 
+                                name={party.name}
+                                createdAt={new Date(party.created_at)}
+                                raid={party.raid}
+                                grid={party.weapons}
+                                user={party.user}
+                                favorited={party.favorited}
+                                key={`party-${i}`}
+                                displayUser={true}
+                                onClick={goTo}
+                                onSave={toggleFavorite}
+                            />
+                        })
+                    }
+                </GridRepCollection>
+
+                { (parties.length == 0) ?
+                    <div id="NotFound">
+                        <h2>{ (loading) ? 'Loading saved teams...' : 'You haven&apos;t saved any teams yet' }</h2>
+                    </div> 
+                : '' }
+            </section>
         </div>
     )
 }

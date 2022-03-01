@@ -6,7 +6,7 @@ import RaidDropdown from '~components/RaidDropdown'
 import './index.scss'
 
 interface Props {
-    name: string
+    children: React.ReactNode
     scrolled: boolean
     onFilter: (element?: number, raid?: string, recency?: number) => void
 }
@@ -31,7 +31,7 @@ const FilterBar = (props: Props) => {
 
     return (
         <div className={classes}>
-            <h1>{props.name}</h1>
+            {props.children}
             <select onChange={selectChanged} ref={elementSelect}>
                 <option key={-1} value={-1}>All elements</option>
                 <option key={-0} value={0}>Null</option>
