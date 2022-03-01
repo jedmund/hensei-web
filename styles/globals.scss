@@ -161,11 +161,11 @@ select {
     }
 }
 
-#Teams {
+#Teams, #Profile {
     display: flex;
     height: 100%;
     flex-direction: column;
-    gap: $unit * 4;
+    gap: $unit * 2;
 }
 
 #NotFound {
