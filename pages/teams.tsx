@@ -51,7 +51,7 @@ const TeamsRoute: React.FC = () => {
                 recency: recencyInSeconds
             },
             headers: {
-                'Authorization': `Bearer ${cookies.user.access_token}`
+                'Authorization': `Bearer ${cookies.user?.access_token}`
             }
         }
 
