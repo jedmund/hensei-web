@@ -6,11 +6,11 @@ import './index.scss'
 interface Props {
     type: 'character' | 'weapon' | 'summon'
     rarity?: number
-    uncapLevel: number
+    uncapLevel?: number
     flb: boolean
     ulb: boolean
     special: boolean
-    updateUncap: (uncap: number) => void
+    updateUncap?: (uncap: number) => void
 }
 
 const UncapIndicator = (props: Props) => {
@@ -52,25 +52,27 @@ const UncapIndicator = (props: Props) => {
     }
 
     function toggleStar(index: number, empty: boolean) {
-        if (empty) props.updateUncap(index + 1)
-        else props.updateUncap(index)
+        if (props.updateUncap) {
+            if (empty) props.updateUncap(index + 1)
+            else props.updateUncap(index)
+        }
     }
 
     const transcendence = (i: number) => {
-        return <UncapStar ulb={true} empty={i >= props.uncapLevel} key={`star_${i}`} index={i} onClick={toggleStar} />
+        return <UncapStar ulb={true} empty={ (props.uncapLevel) ? i >= props.uncapLevel : false } key={`star_${i}`} index={i} onClick={toggleStar} />
     }
 
     const ulb = (i: number) => {
-        return <UncapStar ulb={true} empty={i >= props.uncapLevel} key={`star_${i}`} index={i} onClick={toggleStar} />
+        return <UncapStar ulb={true} empty={ (props.uncapLevel) ? i >= props.uncapLevel : false } key={`star_${i}`} index={i} onClick={toggleStar} />
     }
 
     const flb = (i: number) => {
-        return <UncapStar flb={true} empty={i >= props.uncapLevel} key={`star_${i}`} index={i} onClick={toggleStar} />
+        return <UncapStar flb={true} empty={ (props.uncapLevel) ? i >= props.uncapLevel : false } key={`star_${i}`} index={i} onClick={toggleStar} />
     }
 
     const mlb = (i: number) => {
         // console.log("MLB; Number of stars:", props.uncapLevel)
-        return <UncapStar empty={i >= props.uncapLevel} key={`star_${i}`} index={i} onClick={toggleStar} />
+        return <UncapStar empty={ (props.uncapLevel) ? i >= props.uncapLevel : false } key={`star_${i}`} index={i} onClick={toggleStar} />
     }
 
     return (
