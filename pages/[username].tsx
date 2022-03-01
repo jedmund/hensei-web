@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 
@@ -36,12 +36,15 @@ const ProfileRoute: React.FC = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, [])
 
-    useEffect(() => {
-        if (username)
-            fetchProfile(username as string)            
-    }, [username])
+    const handleError = useCallback((error: any) => {
+        if (error.response != null) {
+            console.error(error)
+        } else {
+            console.error("There was an error.")
+        }
+    }, [])
 
-    async function fetchProfile(username: string) {
+    const fetchProfile = useCallback(() => {
         const filterParams = {
             params: {
                 element: element,
@@ -55,31 +58,28 @@ const ProfileRoute: React.FC = () => {
 
         setLoading(true)
 
-        api.endpoints.users.getOne({ id: username, params: filterParams })
-            .then(response => {
-                setUser({
-                    id: response.data.user.id,
-                    username: response.data.user.username,
-                    granblueId: response.data.user.granblue_id
-                })
+        if (username)
+            api.endpoints.users.getOne({ id: username as string, params: filterParams })
+                .then(response => {
+                    setUser({
+                        id: response.data.user.id,
+                        username: response.data.user.username,
+                        granblueId: response.data.user.granblue_id
+                    })
 
-                const parties: Party[] = response.data.user.parties
-                setParties(parties.sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
-            })
-            .then(() => {
-                setFound(true)
-                setLoading(false)
-            })
-            .catch(error => {
-                if (error.response != null) {
-                    if (error.response.status == 404) {
-                        setFound(false)
-                    }
-                } else {
-                    console.error(error)
-                }
-            })
-    }
+                    const parties: Party[] = response.data.user.parties
+                    setParties(parties.sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
+                })
+                .then(() => {
+                    setFound(true)
+                    setLoading(false)
+                })
+                .catch(error => handleError(error))
+    }, [username, element, raidId, recencyInSeconds, cookies.user, handleError])
+
+    useEffect(() => {
+        fetchProfile()            
+    }, [fetchProfile])
 
     function receiveFilters(element?: number, raid?: string, recency?: number) {
         if (element != null && element >= 0)
