@@ -4,7 +4,6 @@ import { useCookies } from 'react-cookie'
 
 import api from '~utils/api'
 
-import ProfileHeader from '~components/ProfileHeader'
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
