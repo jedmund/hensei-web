@@ -1,7 +1,7 @@
 import React from 'react'
 import Party from '~components/Party'
 
-const NewRoute: React.FC = () => {
+const NewRoute = () => {
     function callback(path: string) {
         // This is scuffed, how do we do this natively?
         window.history.replaceState(null, `Grid Tool`, `${path}`)
@@ -9,7 +9,7 @@ const NewRoute: React.FC = () => {
 
     return (
         <div id="Content">
-            <Party pushHistory={callback} />
+            <Party new={true} pushHistory={callback} />
         </div>
     )
 }

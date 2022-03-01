@@ -18,11 +18,12 @@ import { AxiosResponse } from 'axios'
 
 // Props
 interface Props {
+    new?: boolean
     slug?: string
     pushHistory?: (path: string) => void
 }
 
-const Party = (props: Props) => {
+const Party = (props: Props) => {    
     // Cookies
     const [cookies] = useCookies(['user'])
     const headers = useMemo(() => {
@@ -134,11 +135,7 @@ const Party = (props: Props) => {
 
     useEffect(() => {
         const shortcode = (props.slug) ? props.slug : undefined
-
-        if (shortcode)
-            fetchDetails(shortcode)
-        else
-            appState.party.editable = true
+        if (shortcode) fetchDetails(shortcode)
     }, [props.slug, fetchDetails])
 
     // Render: JSX components
@@ -152,6 +149,7 @@ const Party = (props: Props) => {
 
     const weaponGrid = (
         <WeaponGrid 
+            new={props.new || false}
             slug={props.slug}
             createParty={createParty}
             pushHistory={props.pushHistory}
@@ -160,6 +158,7 @@ const Party = (props: Props) => {
 
     const summonGrid = (
         <SummonGrid 
+            new={props.new || false}
             slug={props.slug}
             createParty={createParty}
             pushHistory={props.pushHistory}
@@ -168,6 +167,7 @@ const Party = (props: Props) => {
 
     const characterGrid = (
         <CharacterGrid
+            new={props.new || false}
             slug={props.slug}
             createParty={createParty}
             pushHistory={props.pushHistory}

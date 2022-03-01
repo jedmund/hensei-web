@@ -15,6 +15,7 @@ import './index.scss'
 
 // Props
 interface Props {
+    new: boolean
     slug?: string
     createParty: () => Promise<AxiosResponse<any, any>>
     pushHistory?: (path: string) => void
@@ -38,6 +39,7 @@ const CharacterGrid = (props: Props) => {
     const [slug, setSlug] = useState()
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [firstLoadComplete, setFirstLoadComplete] = useState(false)
 
     // Create a temporary state to store previous character uncap values
     const [previousUncapValues, setPreviousUncapValues] = useState<{[key: number]: number}>({})
@@ -48,6 +50,19 @@ const CharacterGrid = (props: Props) => {
         if (shortcode) fetchGrid(shortcode)
         else appState.party.editable = true
     }, [slug, props.slug])
+
+    // Set the editable flag only on first load
+    useEffect(() => {        
+        if (!loading && !firstLoadComplete) {
+            // If user is logged in and matches
+            if ((cookies.user && party.user && cookies.user.user_id === party.user.id) || props.new)
+                appState.party.editable = true
+            else            
+                appState.party.editable = false
+
+            setFirstLoadComplete(true)
+        }
+    }, [props.new, cookies, party, loading, firstLoadComplete])
 
     // Initialize an array of current uncap values for each characters
     useEffect(() => {
@@ -66,15 +81,6 @@ const CharacterGrid = (props: Props) => {
     function processResult(response: AxiosResponse) {
         // Store the response
         const party: Party = response.data.party
-            
-        // Get the party user and logged in user, if possible, to compare
-        const partyUser = (party.user) ? party.user.id : undefined
-        const loggedInUser = (cookies.user) ? cookies.user.user_id : ''
-
-        if (partyUser != undefined && loggedInUser != undefined && partyUser === loggedInUser)
-            appState.party.editable = true
-        else
-            appState.party.editable = false
         
         // Store the important party and state-keeping values
         appState.party.id = party.id
