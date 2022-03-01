@@ -1,4 +1,5 @@
 import React from 'react'
+import UncapIndicator from '~components/UncapIndicator'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
 import './index.scss'
@@ -19,13 +20,18 @@ class WeaponResult extends React.Component<Props> {
         return (
             <li className="WeaponResult" onClick={this.props.onClick}>
                 <img alt={weapon.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`} />
-                <div>
-                    <div>
-                        <h5>{weapon.name.en}</h5>
-                        <div className="stars">⭑⭑⭑{(weapon.uncap.flb) ? <span>⭑</span> : ''}{(weapon.uncap.ulb) ? <span>⭑</span> : ''}</div>
+                <div className="Info">
+                    <h5>{weapon.name.en}</h5>
+                    <UncapIndicator 
+                        type="weapon"
+                        flb={weapon.uncap.flb}
+                        ulb={weapon.uncap.ulb}
+                        special={false}
+                    />
+                    <div className="tags">
+                        <WeaponLabelIcon labelType={Element[weapon.element]} />
+                        <WeaponLabelIcon labelType={Proficiency[weapon.proficiency]} />
                     </div>
-                    <WeaponLabelIcon labelType={Element[weapon.element]} />
-                    <WeaponLabelIcon labelType={Proficiency[weapon.proficiency]} />
                 </div>
             </li>
         )
