@@ -32,6 +32,11 @@ const ProfileRoute: React.FC = () => {
     const [recencyInSeconds, setRecencyInSeconds] = useState<number | null>(null)
 
     useEffect(() => {
+        window.addEventListener("scroll", handleScroll)
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [])
+
+    useEffect(() => {
         if (username)
             fetchProfile(username as string)            
     }, [username])
@@ -91,16 +96,6 @@ const ProfileRoute: React.FC = () => {
             setRecencyInSeconds(recency)
         else
             setRecencyInSeconds(null)
-    }
-
-    function render() {
-        const content = (parties && parties.length > 0) ? renderGrids() : renderNoGrids()
-        return (
-            <div>
-                <ProfileHeader username={user.username} gender={true} />
-                {content}
-            </div>
-        )
     }
 
     function handleScroll() {
