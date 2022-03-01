@@ -1,15 +1,18 @@
-.Modal.Search {
+.Search.Dialog {
     display: flex;
     flex-direction: column;
-    min-height: 420px;
-    min-width: 600px;
+    min-height: 431px;
+    width: 600px;
+    gap: 0;
     padding: 0;
 
-    #ModalHeader {
-        background: $grey-90;
-        gap: $unit;
+    #Header {
+        border-top-left-radius: $unit;
+        border-top-right-radius: $unit;
+        display: flex;
+        gap: $unit * 2.5;
         margin: 0;
-        padding: ($unit * 3) ($unit * 3) ($unit * 1.5) ($unit * 3);
+        padding: ($unit * 3) ($unit * 3) ($unit * 2) ($unit * 3);
         position: sticky;
         top: 0;
 
@@ -18,12 +21,6 @@
             border: none;
             height: 42px;
             padding: 0;
-
-            svg {
-                height: 24px;
-                width: 24px;
-                vertical-align: middle;
-            }
         }
 
         label {
@@ -40,15 +37,16 @@
             }
         }
     }
+
+    #Results {
+        margin: 0;
+        max-height: 330px;
+        padding: $unit ($unit * 1.5);
+        overflow-y: scroll;
+    }
 }
 
-.Search.Modal #results_container {
-    margin: 0;
-    max-height: 330px;
-    padding: 0 12px 12px 12px;
-}
-
-.Search.Modal #NoResults {
+.Search.Dialog #NoResults {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -56,7 +54,7 @@
     flex-grow: 1;
 }
 
-.Search.Modal #NoResults h2 {
+.Search.Dialog #NoResults h2 {
     color: #ccc;
     font-size: $font-large;
     font-weight: 500;

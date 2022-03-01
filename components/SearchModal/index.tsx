@@ -11,7 +11,7 @@ import WeaponResult from '~components/WeaponResult'
 import SummonResult from '~components/SummonResult'
 
 import './index.scss'
-import PlusIcon from '~public/icons/Add.svg'
+import CrossIcon from '~public/icons/Cross.svg'
 
 interface Props {
     send: (object: Character | Weapon | Summon, position: number) => any
@@ -115,7 +115,7 @@ const SearchModal = (props: Props) => {
             />
         })
 
-        return (<ul id="results_container">{elements}</ul>)
+        return (<ul id="Results">{elements}</ul>)
     }
 
     function renderSummonSearchResults(results: { [key: string]: any }) {
@@ -127,7 +127,7 @@ const SearchModal = (props: Props) => {
             />
         })
 
-        return (<ul id="results_container">{elements}</ul>)
+        return (<ul id="Results">{elements}</ul>)
     }
 
     function renderCharacterSearchResults(results: { [key: string]: any }) {
@@ -139,7 +139,7 @@ const SearchModal = (props: Props) => {
             />
         })
 
-        return (<ul id="results_container">{elements}</ul>)
+        return (<ul id="Results">{elements}</ul>)
     }
 
     function renderEmptyState() {
@@ -172,29 +172,27 @@ const SearchModal = (props: Props) => {
                 {props.children}
             </Dialog.Trigger>
             <Dialog.Portal>
-                <div className="ModalContainer">
-                    <Dialog.Content className="Search Modal">
-                        <div id="ModalHeader">
-                            <label className="search_label" htmlFor="search_input">
-                                <input 
-                                    autoComplete="off"
-                                    type="text"
-                                    name="query" 
-                                    className="Input" 
-                                    id="search_input"
-                                    ref={searchInput}
-                                    value={query}
-                                    placeholder={props.placeholderText}
-                                    onChange={inputChanged}
-                                />
-                            </label> 
-                            <Dialog.Close onClick={resetAndClose}>
-                                <PlusIcon />
-                            </Dialog.Close>
-                        </div>
-                        { ((Object.entries(results).length == 0) ? renderEmptyState() : renderResults()) }
-                    </Dialog.Content>
-                </div>
+                <Dialog.Content className="Search Dialog">
+                    <div id="Header">
+                        <label className="search_label" htmlFor="search_input">
+                            <input 
+                                autoComplete="off"
+                                type="text"
+                                name="query" 
+                                className="Input" 
+                                id="search_input"
+                                ref={searchInput}
+                                value={query}
+                                placeholder={props.placeholderText}
+                                onChange={inputChanged}
+                            />
+                        </label> 
+                        <Dialog.Close className="DialogClose" onClick={resetAndClose}>
+                            <CrossIcon />
+                        </Dialog.Close>
+                    </div>
+                    { ((Object.entries(results).length == 0) ? renderEmptyState() : renderResults()) }
+                </Dialog.Content>
                 <Dialog.Overlay className="Overlay" />
             </Dialog.Portal>
         </Dialog.Root>
