@@ -65,7 +65,7 @@ const BottomHeader = () => {
     }
 
     const leftNav = () => {
-        if (router.pathname === '/p/[party]') {
+        if (router.pathname === '/p/[party]' || router.pathname === '/new') {
             if (app.party.detailsVisible) {
                 return (<Button icon="edit" active={true} click={toggleDetails}>Hide info</Button>)
             } else {
