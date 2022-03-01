@@ -1,21 +1,18 @@
 import React, { useState } from 'react'
-import { withCookies, Cookies } from 'react-cookie'
-import { createPortal } from 'react-dom'
+import { useCookies } from 'react-cookie'
+
+import * as Dialog from '@radix-ui/react-dialog'
 
 import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
 import Fieldset from '~components/Fieldset'
-import Modal from '~components/Modal'
-import Overlay from '~components/Overlay'
 
+import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
-interface Props {
-    cookies: Cookies
-    close: () => void
-}
+interface Props {}
 
 interface ErrorMap {
     [index: string]: string
@@ -26,31 +23,40 @@ interface ErrorMap {
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const LoginModal = (props: Props) => {
-    const emailInput: React.RefObject<HTMLInputElement> = React.createRef()
-    const passwordInput: React.RefObject<HTMLInputElement> = React.createRef()
-    const form: React.RefObject<HTMLInputElement>[] = [emailInput, passwordInput]
-
+    // Set up form states and error handling
     const [formValid, setFormValid] = useState(false)
     const [errors, setErrors] = useState<ErrorMap>({
         email: '',
         password: ''
     })
 
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        event.preventDefault()
+    // Cookies
+    const [cookies, setCookies] = useCookies()
 
+    // States
+    const [open, setOpen] = useState(false)
+
+    // Set up form refs
+    const emailInput: React.RefObject<HTMLInputElement> = React.createRef()
+    const passwordInput: React.RefObject<HTMLInputElement> = React.createRef()
+    const form: React.RefObject<HTMLInputElement>[] = [emailInput, passwordInput]
+
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target
-        let newErrors = errors
+        let newErrors = {...errors}
 
         switch(name) {
             case 'email':
-                errors.email = emailRegex.test(value)
-                    ? ''
-                    : 'That email address is not valid'
+                if (value.length == 0)
+                    newErrors.email = 'Please enter your email'
+                else if (!emailRegex.test(value))
+                    newErrors.email = 'That email address is not valid'
+                else
+                    newErrors.email = ''
                 break
 
             case 'password':
-                errors.password = value.length == 0
+                newErrors.password = value.length == 0
                     ? 'Please enter your password'
                     : ''
                 break
@@ -60,10 +66,10 @@ const LoginModal = (props: Props) => {
         }
 
         setErrors(newErrors)
-        setFormValid(validateForm())
+        setFormValid(validateForm(newErrors))
     }
 
-    function validateForm() {
+    function validateForm(errors: ErrorMap) {
         let valid = true
 
         Object.values(form).forEach(
@@ -73,11 +79,11 @@ const LoginModal = (props: Props) => {
         Object.values(errors).forEach(
             (error) => error.length > 0 && (valid = false)
         )
-
+        
         return valid
     }
 
-    function submit(event: React.FormEvent) {
+    function login(event: React.FormEvent) {
         event.preventDefault()
 
         const body = {
@@ -89,65 +95,76 @@ const LoginModal = (props: Props) => {
         if (formValid) {
             api.login(body)
                 .then((response) => {
-                    const cookies = props.cookies
-
                     const cookieObj = {
                         user_id: response.data.user.id,
                         username: response.data.user.username,
                         access_token: response.data.access_token
                     }
 
-                    cookies.set('user', cookieObj, { path: '/'})
+                    setCookies('user', cookieObj, { path: '/'})
                     accountState.account.authorized = true
                     accountState.account.user = {
                         id: cookieObj.user_id,
                         username: cookieObj.username
                     }
 
-                    props.close()
+                    setOpen(false)
                 }, (error) => {
                     console.error(error)
                 })
         }
     }
 
-    return (
-        createPortal(
-            <div>
-                <Modal 
-                    title="Log in"
-                    styleName="LoginForm"
-                    close={ () => {} }
-                >
-                    <form className="form" onSubmit={submit}>
-                        <div id="fields">
-                            <Fieldset 
-                                fieldName="email"
-                                placeholder="Email address"
-                                onChange={handleChange}
-                                error={errors.email}
-                                ref={emailInput}
-                            />
+    function openChange(open: boolean) {
+        setOpen(open)
+        setErrors({
+            email: '',
+            password: ''
+        })
+    }
 
-                            <Fieldset 
-                                fieldName="password"
-                                placeholder="Password"
-                                onChange={handleChange}
-                                error={errors.password}
-                                ref={passwordInput}
-                            />
-                        </div>
-                        <div id="ModalBottom">
-                            <a>Forgot your password?</a>
-                            <Button disabled={!formValid}>Log in</Button>
-                        </div>
+    return (
+        <Dialog.Root open={open} onOpenChange={openChange}>
+            <Dialog.Trigger asChild>
+                <li className="MenuItem">
+                    <span>Log in</span>
+                </li>
+            </Dialog.Trigger>
+            <Dialog.Portal>
+                <Dialog.Content className="Login Dialog" onOpenAutoFocus={ (event) => event.preventDefault() }>
+                    <div className="DialogHeader">
+                        <Dialog.Title className="DialogTitle">Log in</Dialog.Title>
+                        <Dialog.Close className="DialogClose" asChild>
+                            <span>
+                                <CrossIcon />
+                            </span>
+                        </Dialog.Close>
+                    </div>
+
+                    <form className="form" onSubmit={login}>
+                        <Fieldset 
+                            fieldName="email"
+                            placeholder="Email address"
+                            onChange={handleChange}
+                            error={errors.email}
+                            ref={emailInput}
+                        />
+
+                        <Fieldset 
+                            fieldName="password"
+                            placeholder="Password"
+                            onChange={handleChange}
+                            error={errors.password}
+                            ref={passwordInput}
+                        />
+
+                        <Button disabled={!formValid}>Log in</Button>
                     </form>
-                </Modal>
-                <Overlay onClick={props.close} />
-            </div>,
-            document.body
-        )
+                </Dialog.Content>
+                <Dialog.Overlay className="Overlay" />
+            </Dialog.Portal>
+        </Dialog.Root>
     )
 }
 
-export default withCookies(LoginModal)
+export default LoginModal
