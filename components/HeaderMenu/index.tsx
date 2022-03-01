@@ -19,10 +19,6 @@ interface Props {
 }
 
 const HeaderMenu = (props: Props) => {
-    const { open: signupOpen, openModal: openSignupModal, closeModal: closeSignupModal } = useSignupModal()
-    const { open: loginOpen, openModal: openLoginModal, closeModal: closeLoginModal } = useLoginModal()
-    const { open: aboutOpen, openModal: openAboutModal, closeModal: closeAboutModal } = useAboutModal()
-
     function authItems() {
         return (
             <nav>
@@ -74,18 +70,9 @@ const HeaderMenu = (props: Props) => {
                         </li>
                     </div>
                 <div className="MenuGroup">
-                    <li className="MenuItem" onClick={openLoginModal}>
-                        <span>Log in</span>
-                    </li>
-                    {loginOpen ? (
-                        <LoginModal 
-                            close={closeLoginModal}
-                        />
-                    ) : null}
-
+                    <LoginModal />
                     <SignupModal />
                 </div>
-                
             </ul>
         )
     }

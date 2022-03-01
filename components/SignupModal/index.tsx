@@ -88,7 +88,7 @@ const SignupModal = (props: Props) => {
         const fieldName = event.target.name
         const value = event.target.value
 
-        if (value.length >= 3) {            
+        if (value.length >= 3) {
             api.check(fieldName, value)
                 .then((response) => {
                     processNameCheck(fieldName, value, response.data.available)
@@ -219,8 +219,6 @@ const SignupModal = (props: Props) => {
                             </span>
                         </Dialog.Close>
                     </div>
-
-                    
 
                     <form className="form" onSubmit={register}>
                         <Fieldset 

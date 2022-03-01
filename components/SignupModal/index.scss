@@ -12,6 +12,7 @@
         &.btn-disabled {
             background: $grey-90;
             color: $grey-70;
+            cursor: not-allowed;
         }
 
         &:not(.btn-disabled) {
