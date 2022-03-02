@@ -1,0 +1,12 @@
+.Weapon.Dialog {
+    section {
+        display: flex;
+        flex-direction: column;
+        gap: $unit / 2;
+
+        h3 {
+            color: $grey-50;
+            font-size: $font-small;
+        }
+    }
+}

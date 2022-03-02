@@ -110,6 +110,7 @@ select {
 
     .DialogHeader {
         display: flex;
+        align-items: center;
         gap: $unit;
 
         .left {
@@ -148,6 +149,19 @@ select {
     .DialogTitle {
         font-size: $font-xlarge;
         flex-grow: 1;
+    }
+
+    .DialogTop {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: $unit / 2;
+
+        .SubTitle {
+            color: $grey-50;
+            font-size: $font-small;
+            font-weight: $medium;
+        }
     }
 
     .DialogDescription {
