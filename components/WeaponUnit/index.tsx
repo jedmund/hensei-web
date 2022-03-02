@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
+import WeaponModal from '~components/WeaponModal'
 import UncapIndicator from '~components/UncapIndicator'
-import PlusIcon from '~public/icons/Add.svg'
+import Button from '~components/Button'
 
+import { ButtonType } from '~utils/enums'
+
+import PlusIcon from '~public/icons/Add.svg'
 import './index.scss'
 
 interface Props {
@@ -53,6 +57,14 @@ const WeaponUnit = (props: Props) => {
             props.updateUncap(props.gridWeapon.id, props.position, uncap)
     }
 
+    function canBeModified(gridWeapon: GridWeapon) {
+        const weapon = gridWeapon.object
+
+        console.log(`${weapon.name.en}: ${weapon.series} ${weapon.ax > 0 || (weapon.series) && [2, 3, 8, 22, 25].includes(weapon.series)}`)
+        return weapon.ax > 0 || 
+            (weapon.series) && [2, 3, 8, 22, 25].includes(weapon.series)
+    }
+
     const image = (
         <div className="WeaponImage">
             <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
@@ -61,18 +73,27 @@ const WeaponUnit = (props: Props) => {
     )
 
     const editableImage = (
-        <SearchModal 
-            placeholderText="Search for a weapon..." 
-            fromPosition={props.position} 
-            object="weapons"
-            send={props.updateObject}>
-                {image}
-        </SearchModal>
+        <div className="WeaponImage">
+            <SearchModal 
+                placeholderText="Search for a weapon..." 
+                fromPosition={props.position} 
+                object="weapons"
+                send={props.updateObject}>
+                    {image}
+            </SearchModal>
+        </div>
     )
+    console.log(gridWeapon?.object)
 
     return (
         <div>
             <div className={classes}>
+                { (props.editable && gridWeapon && canBeModified(gridWeapon)) ? 
+                    <WeaponModal gridWeapon={gridWeapon}>
+                        <div>
+                            <Button icon="settings" type={ButtonType.IconOnly}/> 
+                        </div>
+                    </WeaponModal>: '' }
                 { (props.editable) ? editableImage : image }
                 { (gridWeapon) ? 
                     <UncapIndicator 
