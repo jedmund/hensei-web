@@ -9,6 +9,7 @@ import EditIcon from '~public/icons/Edit.svg'
 import LinkIcon from '~public/icons/Link.svg'
 import MenuIcon from '~public/icons/Menu.svg'
 import SaveIcon from '~public/icons/Save.svg'
+import SettingsIcon from '~public/icons/Settings.svg'
 
 import './index.scss'
 
@@ -67,6 +68,10 @@ class Button extends React.Component<Props, State> {
         } else if (this.props.icon === 'save') {
             icon = <span className='icon stroke'>
                 <SaveIcon />
+            </span>
+        } else if (this.props.icon === 'settings') {
+            icon = <span className='icon settings'>
+                <SettingsIcon />
             </span>
         }
 
