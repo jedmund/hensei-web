@@ -49,6 +49,7 @@ const WeaponModal = (props: Props) => {
 
     // State
     const [open, setOpen] = useState(false)
+    const [formValid, setFormValid] = useState(false)
 
     const [element, setElement] = useState(-1)
     const [primaryAxModifier, setPrimaryAxModifier] = useState(-1)
@@ -62,6 +63,10 @@ const WeaponModal = (props: Props) => {
 
         setPrimaryAxValue(primaryAxValue)
         setSecondaryAxValue(secondaryAxValue)
+    }
+
+    function receiveAxValidity(isValid: boolean) {
+        setFormValid(isValid)
     }
 
     function receiveElementValue(element: string) {
@@ -164,6 +169,7 @@ const WeaponModal = (props: Props) => {
                 <AXSelect 
                     axType={props.gridWeapon.object.ax}
                     currentSkills={props.gridWeapon.ax}
+                    sendValidity={receiveAxValidity}
                     sendValues={receiveAxValues}    
                 />
             </section>
@@ -171,6 +177,7 @@ const WeaponModal = (props: Props) => {
     }
 
     function openChange(open: boolean) {
+        setFormValid(false)
         setOpen(open)
     }
     
@@ -197,7 +204,7 @@ const WeaponModal = (props: Props) => {
                         { (props.gridWeapon.object.element == 0) ? elementSelect() : '' }
                         { ([2, 3, 17, 24].includes(props.gridWeapon.object.series)) ? keySelect() : '' }
                         { (props.gridWeapon.object.ax > 0) ? axSelect() : '' }
-                        <Button click={updateWeapon}>Save Weapon</Button>
+                        <Button click={updateWeapon} disabled={!formValid}>Save Weapon</Button>
                     </div>
                 </Dialog.Content>
                 <Dialog.Overlay className="Overlay" />

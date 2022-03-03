@@ -5,13 +5,36 @@ import { axData } from '~utils/axData'
 
 import './index.scss'
 
+interface ErrorMap {
+    [index: string]: string
+    axValue1: string
+    axValue2: string
+}
+
 interface Props {
     axType: number
     currentSkills?: SimpleAxSkill[],
+    sendValidity: (isValid: boolean) => void
     sendValues: (primaryAxModifier: number, primaryAxValue: number, secondaryAxModifier: number, secondaryAxValue: number) => void
 }
 
 const AXSelect = (props: Props) => {
+    // Set up form states and error handling
+    const [errors, setErrors] = useState<ErrorMap>({
+        axValue1: '',
+        axValue2: ''
+    })
+
+    const primaryErrorClasses = classNames({
+        'errors': true,
+        'visible': errors.axValue1.length > 0
+    })
+
+    const secondaryErrorClasses = classNames({
+        'errors': true,
+        'visible': errors.axValue2.length > 0
+    })
+
     // Refs
     const primaryAxModifierSelect = React.createRef<HTMLSelectElement>()
     const primaryAxValueInput = React.createRef<HTMLInputElement>()
@@ -112,11 +135,44 @@ const AXSelect = (props: Props) => {
     }
 
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+        let newErrors = {...errors}
+
         if (primaryAxValueInput.current == event.target) {
-            setPrimaryAxValue(parseFloat(event.target.value))
+            const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
+            const value = parseFloat(event.target.value)
+
+            if (value < primaryAxSkill.minValue) {
+                newErrors.axValue1 = `${primaryAxSkill.name.en} must be at least ${primaryAxSkill.minValue}${ (primaryAxSkill.suffix) ? primaryAxSkill.suffix : ''}`
+            } else if (value > primaryAxSkill.maxValue) {
+                newErrors.axValue1 = `${primaryAxSkill.name.en} cannot be greater than ${primaryAxSkill.maxValue}${ (primaryAxSkill.suffix) ? primaryAxSkill.suffix : ''}`
+            } else {
+                newErrors.axValue1 = ''
+                setPrimaryAxValue(parseFloat(event.target.value))
+            }
         } else {
-            setSecondaryAxValue(parseFloat(event.target.value))
+            const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
+            const value = parseFloat(event.target.value)
+
+            if (primaryAxSkill.secondary) {
+                const secondaryAxSkill = primaryAxSkill.secondary.find(skill => skill.id == secondaryAxModifier)
+
+                if (secondaryAxSkill) {
+                    if (value < secondaryAxSkill.minValue) {
+                        newErrors.axValue2 = `${secondaryAxSkill.name.en} must be at least ${secondaryAxSkill.minValue}${ (secondaryAxSkill.suffix) ? secondaryAxSkill.suffix : ''}`
+                    } else if (value > secondaryAxSkill.maxValue) {
+                        newErrors.axValue2 = `${secondaryAxSkill.name.en} cannot be greater than ${secondaryAxSkill.maxValue}${ (secondaryAxSkill.suffix) ? secondaryAxSkill.suffix : ''}`
+                    } else if (!secondaryAxSkill.suffix && value % 1 !== 0) {
+                        newErrors.axValue2 = `${secondaryAxSkill.name.en} must be a whole number`
+                    } else {
+                        newErrors.axValue2 = ''
+                        setSecondaryAxValue(parseFloat(event.target.value))
+                    }
+                }
+            }
         }
+
+        props.sendValidity(newErrors.axValue1 === '' && newErrors.axValue2 === '')
+        setErrors(newErrors)
     }
 
     function setupInput(ax: AxSkill | undefined, element: HTMLInputElement) {
@@ -144,13 +200,19 @@ const AXSelect = (props: Props) => {
     return (
         <div className="AXSelect">
             <div className="AXSet">
-                <select key="ax1" defaultValue={ (props.currentSkills && props.currentSkills[0]) ? props.currentSkills[0].modifier : -1 } onChange={handleSelectChange} ref={primaryAxModifierSelect}>{ generateOptions(0) }</select>
-                <input defaultValue={ (props.currentSkills && props.currentSkills[0]) ? props.currentSkills[0].strength : 0 } className="Input" type="number" onChange={handleInputChange} ref={primaryAxValueInput} disabled />
+                <div className="fields">
+                    <select key="ax1" defaultValue={ (props.currentSkills && props.currentSkills[0]) ? props.currentSkills[0].modifier : -1 } onChange={handleSelectChange} ref={primaryAxModifierSelect}>{ generateOptions(0) }</select>
+                    <input defaultValue={ (props.currentSkills && props.currentSkills[0]) ? props.currentSkills[0].strength : 0 } className="Input" type="number" onChange={handleInputChange} ref={primaryAxValueInput} disabled />
+                </div>
+                <p className={primaryErrorClasses}>{errors.axValue1}</p>
             </div>
 
             <div className={secondarySetClasses}>
-                <select key="ax2" defaultValue={ (props.currentSkills && props.currentSkills[1]) ? props.currentSkills[1].modifier : -1 } onChange={handleSelectChange} ref={secondaryAxModifierSelect}>{ generateOptions(1) }</select>
-                <input defaultValue={ (props.currentSkills && props.currentSkills[1]) ? props.currentSkills[1].strength : 0 } className="Input" type="number" onChange={handleInputChange} ref={secondaryAxValueInput} disabled />
+                <div className="fields">
+                    <select key="ax2" defaultValue={ (props.currentSkills && props.currentSkills[1]) ? props.currentSkills[1].modifier : -1 } onChange={handleSelectChange} ref={secondaryAxModifierSelect}>{ generateOptions(1) }</select>
+                    <input defaultValue={ (props.currentSkills && props.currentSkills[1]) ? props.currentSkills[1].strength : 0 } className="Input" type="number" onChange={handleInputChange} ref={secondaryAxValueInput} disabled />
+                </div>
+                <p className={secondaryErrorClasses}>{errors.axValue2}</p>
             </div>
         </div>
     )
