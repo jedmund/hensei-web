@@ -107,6 +107,7 @@ api.createEntity( { name: 'characters' })
 api.createEntity( { name: 'weapons' })
 api.createEntity( { name: 'summons' })
 api.createEntity( { name: 'raids' })
+api.createEntity( { name: 'weapon_keys' })
 api.createEntity( { name: 'favorites' })
 
 export default api
