@@ -43,10 +43,17 @@ const WeaponUnit = (props: Props) => {
         if (props.gridWeapon) {
             const weapon = props.gridWeapon.object!
     
-            if (props.unitType == 0)
-                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
-            else
-                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+            if (props.unitType == 0) {
+                if (props.gridWeapon.object.element == 0 && props.gridWeapon.element)
+                    imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
+                else
+                    imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
+            } else {
+                if (props.gridWeapon.object.element == 0 && props.gridWeapon.element)
+                    imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
+                else
+                    imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+            }
         }
         
         setImageUrl(imgSrc)
