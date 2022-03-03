@@ -61,7 +61,7 @@ const WeaponUnit = (props: Props) => {
         const weapon = gridWeapon.object
 
         return weapon.ax > 0 || 
-            (weapon.series) && [2, 3, 8, 22, 25].includes(weapon.series)
+            (weapon.series) && [2, 3, 17, 22].includes(weapon.series)
     }
 
     const image = (
