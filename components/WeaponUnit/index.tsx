@@ -60,7 +60,6 @@ const WeaponUnit = (props: Props) => {
     function canBeModified(gridWeapon: GridWeapon) {
         const weapon = gridWeapon.object
 
-        console.log(`${weapon.name.en}: ${weapon.series} ${weapon.ax > 0 || (weapon.series) && [2, 3, 8, 22, 25].includes(weapon.series)}`)
         return weapon.ax > 0 || 
             (weapon.series) && [2, 3, 8, 22, 25].includes(weapon.series)
     }
@@ -83,7 +82,6 @@ const WeaponUnit = (props: Props) => {
             </SearchModal>
         </div>
     )
-    console.log(gridWeapon?.object)
 
     return (
         <div>
