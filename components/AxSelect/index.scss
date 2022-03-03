@@ -1,0 +1,30 @@
+.AXSet {
+    display: flex;
+    flex-direction: row;
+    gap: $unit;
+
+    &.hidden {
+        display: none;
+    }
+
+    select {
+        flex-grow: 1;
+    }
+
+    .Input {
+        -webkit-font-smoothing: antialiased;
+        border: none;
+        background-color: $grey-90;
+        border-radius: 6px;
+        box-sizing: border-box;
+        color: $grey-00;
+        height: $unit * 6;
+        display: block;
+        font-size: $font-regular;
+        padding: $unit;
+        text-align: right;
+        min-width: 100px;
+        width: 100px;
+    }
+
+}
