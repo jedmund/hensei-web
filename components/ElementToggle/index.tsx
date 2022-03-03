@@ -5,11 +5,12 @@ import './index.scss'
 
 interface Props {
     currentElement: number
+    sendValue: (value: string) => void
 }
 
 const ElementToggle = (props: Props) => {
     return (
-        <ToggleGroup.Root className="ToggleGroup" type="single" defaultValue={`${props.currentElement}`} aria-label="Element">
+        <ToggleGroup.Root className="ToggleGroup" type="single" defaultValue={`${props.currentElement}`} aria-label="Element" onValueChange={props.sendValue}>
             <ToggleGroup.Item className="ToggleItem" value="0" aria-label="null">
                 Null
             </ToggleGroup.Item>
