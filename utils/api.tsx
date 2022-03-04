@@ -103,10 +103,12 @@ class Api {
 const api: Api = new Api({ url: process.env.NEXT_PUBLIC_SIERO_API_URL || 'https://localhost:3000/api/v1'})
 api.createEntity( { name: 'users' })
 api.createEntity( { name: 'parties' })
+api.createEntity( { name: 'grid_weapons' })
 api.createEntity( { name: 'characters' })
 api.createEntity( { name: 'weapons' })
 api.createEntity( { name: 'summons' })
 api.createEntity( { name: 'raids' })
+api.createEntity( { name: 'weapon_keys' })
 api.createEntity( { name: 'favorites' })
 
 export default api

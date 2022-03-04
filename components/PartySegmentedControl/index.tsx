@@ -17,10 +17,16 @@ interface Props {
 }
 
 const PartySegmentedControl = (props: Props) => {
-    const { party } = useSnapshot(appState)
+    const { party, grid } = useSnapshot(appState)
 
     function getElement() {
-        switch(party.element) {
+        let element: number = 0
+        if (party.element == 0 && grid.weapons.mainWeapon)
+            element = grid.weapons.mainWeapon.element
+        else
+            element = party.element
+
+        switch(element) {
             case 1: return "wind"; break
             case 2: return "fire"; break
             case 3: return "water"; break

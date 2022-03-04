@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
+import WeaponModal from '~components/WeaponModal'
 import UncapIndicator from '~components/UncapIndicator'
-import PlusIcon from '~public/icons/Add.svg'
+import Button from '~components/Button'
 
+import { ButtonType } from '~utils/enums'
+
+import PlusIcon from '~public/icons/Add.svg'
 import './index.scss'
 
 interface Props {
@@ -39,10 +43,17 @@ const WeaponUnit = (props: Props) => {
         if (props.gridWeapon) {
             const weapon = props.gridWeapon.object!
     
-            if (props.unitType == 0)
-                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
-            else
-                imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+            if (props.unitType == 0) {
+                if (props.gridWeapon.object.element == 0 && props.gridWeapon.element)
+                    imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
+                else
+                    imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
+            } else {
+                if (props.gridWeapon.object.element == 0 && props.gridWeapon.element)
+                    imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
+                else
+                    imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+            }
         }
         
         setImageUrl(imgSrc)
@@ -53,6 +64,13 @@ const WeaponUnit = (props: Props) => {
             props.updateUncap(props.gridWeapon.id, props.position, uncap)
     }
 
+    function canBeModified(gridWeapon: GridWeapon) {
+        const weapon = gridWeapon.object
+
+        return weapon.ax > 0 || 
+            (weapon.series) && [2, 3, 17, 22].includes(weapon.series)
+    }
+
     const image = (
         <div className="WeaponImage">
             <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
@@ -61,18 +79,26 @@ const WeaponUnit = (props: Props) => {
     )
 
     const editableImage = (
-        <SearchModal 
-            placeholderText="Search for a weapon..." 
-            fromPosition={props.position} 
-            object="weapons"
-            send={props.updateObject}>
-                {image}
-        </SearchModal>
+        <div className="WeaponImage">
+            <SearchModal 
+                placeholderText="Search for a weapon..." 
+                fromPosition={props.position} 
+                object="weapons"
+                send={props.updateObject}>
+                    {image}
+            </SearchModal>
+        </div>
     )
 
     return (
         <div>
             <div className={classes}>
+                { (props.editable && gridWeapon && canBeModified(gridWeapon)) ? 
+                    <WeaponModal gridWeapon={gridWeapon}>
+                        <div>
+                            <Button icon="settings" type={ButtonType.IconOnly}/> 
+                        </div>
+                    </WeaponModal>: '' }
                 { (props.editable) ? editableImage : image }
                 { (gridWeapon) ? 
                     <UncapIndicator 

@@ -86,6 +86,11 @@
             fill: none;
             stroke: $grey-50;
         }
+
+        &.settings svg {
+            height: 13px;
+            width: 13px;
+        }
     }
 
     &.Active {

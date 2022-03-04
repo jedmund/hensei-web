@@ -49,7 +49,7 @@ select {
     background-image: url('/icons/Arrow.svg');
     background-repeat: no-repeat;
     background-position-y: center;
-    background-position-x: 98%;
+    background-position-x: 97%;
     background-size: $unit * 1.5;
     border: none;
     border-radius: 6px;
@@ -110,6 +110,7 @@ select {
 
     .DialogHeader {
         display: flex;
+        align-items: center;
         gap: $unit;
 
         .left {
@@ -148,6 +149,19 @@ select {
     .DialogTitle {
         font-size: $font-xlarge;
         flex-grow: 1;
+    }
+
+    .DialogTop {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: $unit / 2;
+
+        .SubTitle {
+            color: $grey-50;
+            font-size: $font-small;
+            font-weight: $medium;
+        }
     }
 
     .DialogDescription {

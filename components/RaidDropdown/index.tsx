@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
 
 import { appState } from '~utils/appState'
 import api from '~utils/api'
@@ -15,7 +14,6 @@ interface Props {
 }
 
 const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(props, ref) {
-    const [cookies] = useCookies(['user'])
     const [raids, setRaids] = useState<Raid[][]>()
 
     const raidGroups = [
@@ -50,12 +48,8 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
     }, [props.allOption])
 
     useEffect(() => {
-        const headers = (cookies.user != null) ? {
-            headers: { 'Authorization': `Bearer ${cookies.user.access_token}` }
-        } : {}
-
         function fetchRaids() {
-            api.endpoints.raids.getAll(headers)
+            api.endpoints.raids.getAll()
                 .then((response) => {
                     const raids = response.data.map((r: any) => r.raid)
                     
@@ -65,7 +59,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
         }
 
         fetchRaids()
-    }, [cookies.user, organizeRaids])
+    }, [organizeRaids])
 
     function raidGroup(index: number) {
         const options = raids && raids.length > 0 && raids[index].length > 0 && 

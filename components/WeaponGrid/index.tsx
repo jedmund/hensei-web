@@ -232,7 +232,7 @@ const WeaponGrid = (props: Props) => {
     // Render: JSX components
     const mainhandElement = (
         <WeaponUnit 
-            gridWeapon={grid.weapons.mainWeapon}
+            gridWeapon={appState.grid.weapons.mainWeapon}
             editable={party.editable}
             key="grid_mainhand"
             position={-1} 
@@ -247,7 +247,7 @@ const WeaponGrid = (props: Props) => {
             return (
                 <li key={`grid_unit_${i}`} >
                     <WeaponUnit 
-                        gridWeapon={grid.weapons.allWeapons[i]}
+                        gridWeapon={appState.grid.weapons.allWeapons[i]}
                         editable={party.editable}
                         position={i} 
                         unitType={1}
@@ -261,7 +261,7 @@ const WeaponGrid = (props: Props) => {
 
     const extraGridElement = (
         <ExtraWeapons 
-            grid={grid.weapons.allWeapons} 
+            grid={appState.grid.weapons.allWeapons} 
             editable={party.editable} 
             offset={numWeapons}
             updateObject={receiveWeaponFromSearch}

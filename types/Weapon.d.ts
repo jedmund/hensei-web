@@ -7,6 +7,8 @@ interface Weapon {
     proficiency: number
     max_level: number
     max_skill_level: number
+    series: number
+    ax: number
     name: { 
         en: string
         jp: string

@@ -1,0 +1,48 @@
+.AXSelect {
+    display: flex;
+    flex-direction: column;
+    gap: $unit;
+
+    .AXSet {
+        &.hidden {
+            display: none;
+        }
+
+        .errors {
+            color: $error;
+            display: none;
+            padding: $unit 0;
+
+            &.visible {
+                display: block;
+            }
+        }
+
+        .fields {
+            display: flex;
+            flex-direction: row;
+            gap: $unit;
+
+            select {
+                flex-grow: 1;
+                margin: 0;
+            }
+
+            .Input {
+                -webkit-font-smoothing: antialiased;
+                border: none;
+                background-color: $grey-90;
+                border-radius: 6px;
+                box-sizing: border-box;
+                color: $grey-00;
+                height: $unit * 6;
+                display: block;
+                font-size: $font-regular;
+                padding: $unit;
+                text-align: right;
+                min-width: 100px;
+                width: 100px;
+            }
+        }
+    }
+}
