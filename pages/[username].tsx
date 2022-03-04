@@ -124,17 +124,17 @@ const ProfileRoute: React.FC = () => {
     return (
         <div id="Profile">
             <Head>
-                <title>@{user.username}'s Teams</title>
+                <title>@{user.username}&apos;s Teams</title>
 
-                <meta property="og:title" content={`@${user.username}'s Teams`} />
-                <meta property="og:description" content={`Browse @${user.username}'s Teams and filter raid, element or recency`} />
+                <meta property="og:title" content={`@${user.username}\'s Teams`} />
+                <meta property="og:description" content={`Browse @${user.username}\'s Teams and filter raid, element or recency`} />
                 <meta property="og:url" content={`https://app.granblue.team/${user.username}`} />
                 <meta property="og:type" content="website" />
 
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta property="twitter:domain" content="app.granblue.team" />
-                <meta name="twitter:title" content={`@${user.username}'s Teams`} />
-                <meta name="twitter:description" content={`Browse @${user.username}'s Teams and filter raid, element or recency`} />
+                <meta name="twitter:title" content={`@${user.username}\'s Teams`} />
+                <meta name="twitter:description" content={`Browse @${user.username}\''s Teams and filter raid, element or recency`} />
             </Head>
             <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
                 <div className="UserInfo">
