@@ -16,8 +16,8 @@ interface Props {
 }
 
 const HeaderMenu = (props: Props) => {
-    
-    const [cookies] = useCookies()
+    const [accountCookies] = useCookies(['account'])
+    const [userCookies] = useCookies(['user'])
 
     function authItems() {
         return (
@@ -25,15 +25,15 @@ const HeaderMenu = (props: Props) => {
                 <ul className="Menu auth">
                     <div className="MenuGroup">
                         <li className="MenuItem profile">
-                            <Link href={`/${cookies.user?.username}` || ''}>
+                            <Link href={`/${accountCookies.account.username}` || ''}>
                                 <div>
-                                    <span>{cookies.user?.username}</span>
+                                    <span>{accountCookies.account.username}</span>
                                     <img 
-                                        alt={cookies.user?.picture}
-                                        className={`profile ${cookies.user?.element}`}
-                                        srcSet={`/profile/${cookies.user?.picture}.png,
-                                                /profile/${cookies.user?.picture}@2x.png 2x`}
-                                        src={`/profile/${cookies.user?.picture}.png`} 
+                                        alt={userCookies.user.picture}
+                                        className={`profile ${userCookies.user.element}`}
+                                        srcSet={`/profile/${userCookies.user.picture}.png,
+                                                /profile/${userCookies.user.picture}@2x.png 2x`}
+                                        src={`/profile/${userCookies.user.picture}.png`} 
                                     />
                                 </div
                             ></Link>

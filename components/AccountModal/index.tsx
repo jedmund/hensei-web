@@ -18,10 +18,12 @@ const AccountModal = () => {
     const { account } = useSnapshot(accountState)
 
     // Cookies
-    const [cookies] = useCookies(['user'])
-    const headers = (cookies.user != null) ? {
+    const [accountCookies] = useCookies(['account'])
+    const [userCookies] = useCookies(['user'])
+
+    const headers = (accountCookies.account != null) ? {
         headers: {
-            'Authorization': `Bearer ${cookies.user.access_token}`
+            'Authorization': `Bearer ${accountCookies.account.access_token}`
         }
     } : {}
     
@@ -37,9 +39,9 @@ const AccountModal = () => {
     const privateSelect = React.createRef<HTMLInputElement>()
 
     useEffect(() => {
-        if (cookies.user) setPicture(cookies.user.picture)
-        if (cookies.user) setLanguage(cookies.user.language)
-    }, [cookies])
+        if (userCookies.user) setPicture(userCookies.user.picture)
+        if (userCookies.user) setLanguage(userCookies.user.language)
+    }, [userCookies])
 
     const pictureOptions = (
             pictureData.sort((a, b) => (a.name.en > b.name.en) ? 1 : -1).map((item, i) => {
@@ -75,7 +77,7 @@ const AccountModal = () => {
             }
         }
 
-        api.endpoints.users.update(cookies.user.user_id, object, headers)
+        api.endpoints.users.update(accountCookies.account.user_id, object, headers)
             .then(response => {
                 setOpen(false)
             })

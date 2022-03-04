@@ -25,12 +25,12 @@ interface Props {
 
 const Party = (props: Props) => {    
     // Cookies
-    const [cookies] = useCookies(['user'])
+    const [cookies] = useCookies(['account'])
     const headers = useMemo(() => {
-        return (cookies.user != null) ? {
-            headers: { 'Authorization': `Bearer ${cookies.user.access_token}` }
+        return (cookies.account != null) ? {
+            headers: { 'Authorization': `Bearer ${cookies.account.access_token}` }
         } : {}
-    }, [cookies.user])
+    }, [cookies.account])
 
     // Set up states
     const { party } = useSnapshot(appState)
@@ -46,7 +46,7 @@ const Party = (props: Props) => {
     async function createParty(extra: boolean = false) {
         let body = {
             party: {
-                ...(cookies.user) && { user_id: cookies.user.user_id },
+                ...(cookies.account) && { user_id: cookies.account.user_id },
                 extra: extra
             }
         }

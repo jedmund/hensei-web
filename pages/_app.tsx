@@ -9,24 +9,24 @@ import { accountState } from '~utils/accountState'
 import '../styles/globals.scss'
 
 function MyApp({ Component, pageProps }: AppProps) {
-    const [cookies] = useCookies(['user'])
+    const [cookies] = useCookies(['account'])
 
     useEffect(() => {
-        if (cookies.user) {
-            console.log(`Logged in as user "${cookies.user.username}"`)
+        if (cookies.account) {
+            console.log(`Logged in as user "${cookies.account.username}"`)
 
             accountState.account.authorized = true
-            accountState.account.language = cookies.user.language
+            accountState.account.language = cookies.account.language
             accountState.account.user = {
-                id: cookies.user.user_id,
-                username: cookies.user.username,
-                picture: cookies.user.picture,
-                element: cookies.user.element
+                id: cookies.account.user_id,
+                username: cookies.account.username,
+                picture: '',
+                element: ''
             }
         } else {
             console.log(`You are not currently logged in.`)
         }
-    }, [cookies.user])
+    }, [cookies.account])
 
     return (
         <CookiesProvider>

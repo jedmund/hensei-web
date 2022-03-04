@@ -13,7 +13,7 @@ const ProfileRoute: React.FC = () => {
     const router = useRouter()
     const { username } = router.query
 
-    const [cookies] = useCookies(['user'])
+    const [cookies] = useCookies(['account'])
 
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -57,7 +57,7 @@ const ProfileRoute: React.FC = () => {
                 recency: recencyInSeconds
             },
             headers: {
-                'Authorization': `Bearer ${cookies.user?.access_token}`
+                'Authorization': `Bearer ${cookies.account.access_token}`
             }
         }
 
@@ -82,7 +82,7 @@ const ProfileRoute: React.FC = () => {
                     setLoading(false)
                 })
                 .catch(error => handleError(error))
-    }, [username, element, raidId, recencyInSeconds, cookies.user, handleError])
+    }, [username, element, raidId, recencyInSeconds, cookies.account, handleError])
 
     useEffect(() => {
         fetchProfile()            

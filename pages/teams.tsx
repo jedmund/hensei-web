@@ -14,9 +14,9 @@ const TeamsRoute: React.FC = () => {
     const router = useRouter()
 
     // Cookies
-    const [cookies] = useCookies(['user'])
-    const headers = (cookies.user != null) ? {
-        'Authorization': `Bearer ${cookies.user.access_token}`
+    const [cookies] = useCookies(['account'])
+    const headers = (cookies.account != null) ? {
+        'Authorization': `Bearer ${cookies.account.access_token}`
     } : {}
 
     const [loading, setLoading] = useState(true)
@@ -50,7 +50,7 @@ const TeamsRoute: React.FC = () => {
                 recency: recencyInSeconds
             },
             headers: {
-                'Authorization': `Bearer ${cookies.user?.access_token}`
+                'Authorization': `Bearer ${cookies.account?.access_token}`
             }
         }
 
@@ -65,7 +65,7 @@ const TeamsRoute: React.FC = () => {
                 setLoading(false)
             })
             .catch(error => handleError(error))
-    }, [element, raidId, recencyInSeconds, cookies.user, handleError])
+    }, [element, raidId, recencyInSeconds, cookies.account, handleError])
 
     useEffect(() => {
         fetchTeams()           

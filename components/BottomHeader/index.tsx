@@ -26,10 +26,10 @@ const BottomHeader = () => {
     const scroll = Scroll.animateScroll;
 
     // Cookies
-    const [cookies] = useCookies(['user'])
-    const headers = (cookies.user != null) ? {
+    const [cookies] = useCookies(['account'])
+    const headers = (cookies.account != null) ? {
         headers: {
-            'Authorization': `Bearer ${cookies.user.access_token}`
+            'Authorization': `Bearer ${cookies.account.access_token}`
         }
     } : {}
 

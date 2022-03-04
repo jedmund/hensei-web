@@ -14,9 +14,11 @@ import HeaderMenu from '~components/HeaderMenu'
 
 const TopHeader = () => {
     // Cookies
-    const [cookies, _, removeCookie] = useCookies(['user'])
-    const headers = (cookies.user != null) ? {
-        'Authorization': `Bearer ${cookies.user.access_token}`
+    const [accountCookies, setAccountCookie, removeAccountCookie] = useCookies(['account'])
+    const [userCookies, setUserCookies, removeUserCookie] = useCookies(['user'])
+    
+    const headers = (accountCookies.account != null) ? {
+        'Authorization': `Bearer ${accountCookies.account.access_token}`
     } : {}
 
     const { account } = useSnapshot(accountState)
@@ -49,7 +51,8 @@ const TopHeader = () => {
     }
 
     function logout() {
-        removeCookie('user')
+        removeAccountCookie('account')
+        removeUserCookie('user')
 
         // Clean state
         const resetState = clonedeep(initialAccountState)

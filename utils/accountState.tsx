@@ -4,13 +4,13 @@ interface AccountState {
     [key: string]: any
     
     account: {
-        authorized: boolean,
-        language: 'en' | 'jp',
+        authorized: boolean
+        language: 'en' | 'jp'
         user: {
-            id: string,
-            username: string,
-            picture: string,
-            element: string,
+            id: string
+            username: string
+            picture: string
+            element: string
         } | undefined
     }
 }

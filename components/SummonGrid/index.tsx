@@ -27,10 +27,10 @@ const SummonGrid = (props: Props) => {
     const numSummons: number = 4
 
     // Cookies
-    const [cookies, _] = useCookies(['user'])
-    const headers = (cookies.user != null) ? {
+    const [cookies, _] = useCookies(['account'])
+    const headers = (cookies.account != null) ? {
         headers: {
-            'Authorization': `Bearer ${cookies.user.access_token}`
+            'Authorization': `Bearer ${cookies.account.access_token}`
         }
     } : {}
 

@@ -26,10 +26,10 @@ const CharacterGrid = (props: Props) => {
     const numCharacters: number = 5
 
     // Cookies
-    const [cookies, _] = useCookies(['user'])
-    const headers = (cookies.user != null) ? {
+    const [cookies] = useCookies(['account'])
+    const headers = (cookies.account != null) ? {
         headers: {
-            'Authorization': `Bearer ${cookies.user.access_token}`
+            'Authorization': `Bearer ${cookies.account.access_token}`
         }
     } : {}
 
@@ -55,7 +55,7 @@ const CharacterGrid = (props: Props) => {
     useEffect(() => {        
         if (!loading && !firstLoadComplete) {
             // If user is logged in and matches
-            if ((cookies.user && party.user && cookies.user.user_id === party.user.id) || props.new)
+            if ((cookies.account && party.user && cookies.account.user_id === party.user.id) || props.new)
                 appState.party.editable = true
             else            
                 appState.party.editable = false
