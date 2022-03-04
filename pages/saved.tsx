@@ -144,18 +144,18 @@ const SavedRoute: React.FC = () => {
         <div id="Teams">
             <Head>
                 <title>Your saved Teams</title>
+
+                <meta property="og:title" content="Your saved Teams" />
+                <meta property="og:url" content="https://app.granblue.team/saved" />
+                <meta property="og:type" content="website" />
+
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta property="twitter:domain" content="app.granblue.team" />
+                <meta name="twitter:title" content="Your saved Teams" />
             </Head>
 
             <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
                 <h1>Your saved Teams</h1>
-
-                <meta property="og:title" content="Your saved Teams" />
-                    <meta property="og:url" content="https://app.granblue.team/saved" />
-                    <meta property="og:type" content="website" />
-
-                    <meta name="twitter:card" content="summary_large_image" />
-                    <meta property="twitter:domain" content="app.granblue.team" />
-                    <meta name="twitter:title" content="Your saved Teams" />
             </FilterBar>
             
             <section>
