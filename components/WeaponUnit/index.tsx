@@ -79,15 +79,13 @@ const WeaponUnit = (props: Props) => {
     )
 
     const editableImage = (
-        <div className="WeaponImage">
-            <SearchModal 
-                placeholderText="Search for a weapon..." 
-                fromPosition={props.position} 
-                object="weapons"
-                send={props.updateObject}>
-                    {image}
-            </SearchModal>
-        </div>
+        <SearchModal 
+            placeholderText="Search for a weapon..." 
+            fromPosition={props.position} 
+            object="weapons"
+            send={props.updateObject}>
+                {image}
+        </SearchModal>
     )
 
     return (
