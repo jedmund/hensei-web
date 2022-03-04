@@ -83,11 +83,12 @@ const GridRep = (props: Props) => {
         if (props.user)
             return (
                 <img 
-                    alt="Gran"
-                    className="gran"
-                    srcSet="/profile/gran.png,
-                            /profile/gran@2x.png 2x"
-                    src="/profile/gran.png" />
+                    alt={props.user.picture.picture}
+                    className={`profile ${props.user.picture.element}`}
+                    srcSet={`/profile/${props.user.picture.picture}.png,
+                            /profile/${props.user.picture.picture}@2x.png 2x`}
+                    src={`/profile/${props.user.picture.picture}.png`} 
+                />
             )
         else
             return (<div className="no-user" />)

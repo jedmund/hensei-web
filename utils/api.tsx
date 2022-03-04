@@ -98,6 +98,11 @@ class Api {
             }
         })
     }
+
+    userInfo(id: string) {
+        const resourceUrl = `${this.url}/users/info/${id}`
+        return axios.get(resourceUrl)
+    }
 }
 
 const api: Api = new Api({ url: process.env.NEXT_PUBLIC_SIERO_API_URL || 'https://localhost:3000/api/v1'})
