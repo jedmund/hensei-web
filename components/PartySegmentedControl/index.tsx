@@ -50,12 +50,12 @@ const PartySegmentedControl = (props: Props) => {
     return (
         <div className="PartyNavigation">
             <SegmentedControl elementClass={getElement()}>
-                <Segment
+                {/* <Segment
                     groupName="grid"
                     name="class"
                     selected={props.selectedTab === GridType.Class}
                     onClick={props.onClick}
-                >Class</Segment>
+                >Class</Segment> */}
 
                 <Segment 
                     groupName="grid"
