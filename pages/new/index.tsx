@@ -1,4 +1,5 @@
 import React from 'react'
+import Head from 'next/head'
 import Party from '~components/Party'
 
 const NewRoute = () => {
@@ -9,6 +10,9 @@ const NewRoute = () => {
 
     return (
         <div id="Content">
+            <Head>
+                <title>New Team</title>
+            </Head>
             <Party new={true} pushHistory={callback} />
         </div>
     )

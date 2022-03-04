@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 import clonedeep from 'lodash.clonedeep'
@@ -141,8 +142,12 @@ const SavedRoute: React.FC = () => {
 
     return (
         <div id="Teams">
+            <Head>
+                <title>Your saved Teams</title>
+            </Head>
+
             <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
-                <h1>Your saved teams</h1>
+                <h1>Your saved Teams</h1>
             </FilterBar>
             
             <section>

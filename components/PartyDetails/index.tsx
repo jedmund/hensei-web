@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Head from 'next/head'
 import { useSnapshot } from 'valtio'
 import classNames from 'classnames'
 
@@ -106,6 +107,11 @@ const PartyDetails = (props: Props) => {
 
     return (
         <div>
+            <Head>
+                <title>
+                    { (appSnapshot.party.name != null) ? appSnapshot.party.name : 'Untitled team'} by { (appSnapshot.party.user != null) ? `@${appSnapshot.party.user?.username}` : 'Anonymous' }
+                </title>
+            </Head>
             {readOnly}
             {editable}
         </div>
