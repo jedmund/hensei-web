@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import api from '~utils/api'
 
@@ -15,6 +15,7 @@ interface Props {
 
 const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(props, ref) {
     const [keys, setKeys] = useState<WeaponKey[][]>([])
+    const [currentKey, setCurrentKey] = useState('')
 
     const pendulumNames = [
         { en: 'Pendulum', jp: '' },
@@ -29,34 +30,10 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(function us
         { en: 'Gate of Omnipotence', jp: '' }
     ]
 
-    const keyName = () => {
-        return {
-            en: '',
-            jp: ''
-        }
-    }
-
-    const emptyKey: WeaponKey = {
-        id: '0',
-        name: {
-            en: `No ${keyName().en}`,
-            jp: `${keyName().jp}なし`
-        },
-        series: props.series,
-        slot: props.slot,
-        group: -1,
-        order: 0
-    }
-
-    const organizeWeaponKeys = useCallback((weaponKeys: WeaponKey[]) => {
-        const numGroups = Math.max.apply(Math, weaponKeys.map(key => key.group))
-        let groupedKeys = []
-        for (let i = 0; i <= numGroups; i++) {
-            groupedKeys[i] = weaponKeys.filter(key => key.group == i)
-        }
-
-        setKeys(groupedKeys)
-    }, [])
+    useEffect(() => {
+        if (props.currentValue)
+            setCurrentKey(props.currentValue.id)
+    }, [props.currentValue])
 
     useEffect(() => {
         const filterParams = {
@@ -64,6 +41,16 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(function us
                 series: props.series,
                 slot: props.slot
             }
+        }
+
+        function organizeWeaponKeys(weaponKeys: WeaponKey[]) {
+            const numGroups = Math.max.apply(Math, weaponKeys.map(key => key.group))
+            let groupedKeys = []
+            for (let i = 0; i <= numGroups; i++) {
+                groupedKeys[i] = weaponKeys.filter(key => key.group == i)
+            }
+    
+            setKeys(groupedKeys)
         }
 
         function fetchWeaponKeys() {
@@ -75,7 +62,7 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(function us
         }
 
         fetchWeaponKeys()
-    }, [props.series, props.slot, organizeWeaponKeys])
+    }, [props.series, props.slot])
 
     function weaponKeyGroup(index: number) {
         ['α','β','γ','Δ'].sort((a, b) => a.localeCompare(b, 'el'))
@@ -108,6 +95,13 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(function us
         )
     }
 
+    function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        if (props.onChange)
+            props.onChange(event)
+
+        setCurrentKey(event.currentTarget.value)
+    }
+
     const emptyOption = () => {
         let name = ''
         if (props.series == 2) 
@@ -124,12 +118,12 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(function us
     
     return (
         <select 
-            key={ (props.currentValue) ? props.currentValue.id : ''} 
-            defaultValue={ (props.currentValue) ? props.currentValue.id : '' } 
+            key={`weapon-key-${props.slot}`} 
+            value={currentKey} 
             onBlur={props.onBlur} 
-            onChange={props.onChange} 
+            onChange={handleChange} 
             ref={ref}>
-                <option key="-1" value="-1">{emptyOption()}</option>
+                <option key="-1" value="-1">{ emptyOption() }</option>
                 { Array.from(Array(keys?.length)).map((x, i) => {
                     return weaponKeyGroup(i)
                 })}

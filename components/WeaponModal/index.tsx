@@ -132,7 +132,7 @@ const WeaponModal = (props: Props) => {
         )
     }
 
-    const keySelect = () => {
+    const keySelect = () => {        
         return (
             <section>
                 <h3>Weapon Keys</h3>
