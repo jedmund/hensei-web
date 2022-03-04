@@ -1,8 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { useSnapshot } from 'valtio'
-
-import { accountState } from '~utils/accountState'
+import { useCookies } from 'react-cookie'
 
 import AboutModal from '~components/AboutModal'
 import AccountModal from '~components/AccountModal'
@@ -18,14 +16,27 @@ interface Props {
 }
 
 const HeaderMenu = (props: Props) => {
-    const { account } = useSnapshot(accountState)
+    
+    const [cookies] = useCookies()
+
     function authItems() {
         return (
             <nav>
                 <ul className="Menu auth">
                     <div className="MenuGroup">
-                        <li className="MenuItem">
-                            <Link href={`/${account.user?.username}` || ''}>{account.user?.username}</Link>
+                        <li className="MenuItem profile">
+                            <Link href={`/${cookies.user?.username}` || ''}>
+                                <div>
+                                    <span>{cookies.user?.username}</span>
+                                    <img 
+                                        alt={cookies.user?.picture}
+                                        className={`profile ${cookies.user?.element}`}
+                                        srcSet={`/profile/${cookies.user?.picture}.png,
+                                                /profile/${cookies.user?.picture}@2x.png 2x`}
+                                        src={`/profile/${cookies.user?.picture}.png`} 
+                                    />
+                                </div
+                            ></Link>
                         </li>
                         <li className="MenuItem">
                             <Link href={`/saved` || ''}>Saved</Link>
@@ -66,8 +77,11 @@ const HeaderMenu = (props: Props) => {
                             <Link href='/teams'>Teams</Link>
                         </li>
 
-                        <li className="MenuItem">
-                            <Link href='/guides'>Guides</Link>
+                        <li className="MenuItem disabled">
+                            <div>
+                                <span>Guides</span>
+                                <i className="tag">Coming Soon</i>
+                            </div>
                         </li>
                     </div>
                 <div className="MenuGroup">

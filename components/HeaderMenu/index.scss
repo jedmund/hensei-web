@@ -22,13 +22,17 @@
         }
     }
 
+    &.profile > div {
+        padding: 6px 12px;
+    }
+
     a {
         color: $grey-40;
     }
 
     & > a, & > span {
         display: block;
-        padding: 12px;
+        padding: 12px 12px;
     }
 
     & > div {
@@ -37,15 +41,22 @@
         flex-direction: row;
         padding: 10px 12px;
 
-        span {
-            flex-grow: 1;
-        }
-
         &:hover {
             i.tag {
                 background: $grey-60;
                 color: white;
             }
+        }
+
+        span {
+            flex-grow: 1;
+        }
+
+        img {
+            $diameter: 32px;
+            border-radius: $diameter / 2;
+            height: $diameter;
+            width: $diameter;
         }
     }
 }
