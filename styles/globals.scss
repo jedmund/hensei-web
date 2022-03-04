@@ -175,6 +175,99 @@ select {
     }
 }
 
+.Hovercard {
+    background: #222;
+    border-radius: $unit;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: $unit * 2;
+    padding: $unit * 2;
+    min-width: 300px;
+
+    .top {
+        display: flex;
+        flex-direction: column;
+        gap: $unit / 2;
+
+        .title {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            gap: $unit * 2;
+
+            h4 {
+                flex-grow: 1;
+                font-size: $font-medium;
+                line-height: 1.2;
+                min-width: 140px;
+            }
+
+            img {
+                height: auto;
+                width: 100px;
+            }
+        }
+
+        .subInfo {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            gap: $unit * 2;
+
+            .icons {
+                display: flex;
+                flex-direction: row;
+                flex-grow: 1;
+                gap: $unit;
+            }
+
+            .UncapIndicator {
+                width: 100px;
+            }
+        }
+    }
+
+    section {
+        h5 {
+            font-size: $font-small;
+            font-weight: $medium;
+            opacity: 0.7;
+
+            &.wind {
+                color: $wind-bg-light;
+            }
+        
+            &.fire {
+                color: $fire-bg-light;
+            }
+        
+            &.water {
+                color: $water-bg-light;
+            }
+        
+            &.earth {
+                color: $earth-bg-light;
+            }
+        
+            &.dark {
+                color: $dark-bg-light;
+            }
+        
+        
+            &.light {
+                color: $light-bg-light;
+            }
+        }
+    }
+
+    a.Button {
+        display: block;
+        padding: $unit * 1.5;
+        text-align: center;
+    }
+}
+
 #Teams, #Profile {
     display: flex;
     height: 100%;
