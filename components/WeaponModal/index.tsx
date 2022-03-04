@@ -203,7 +203,7 @@ const WeaponModal = (props: Props) => {
                         { (props.gridWeapon.object.element == 0) ? elementSelect() : '' }
                         { ([2, 3, 17, 24].includes(props.gridWeapon.object.series)) ? keySelect() : '' }
                         { (props.gridWeapon.object.ax > 0) ? axSelect() : '' }
-                        <Button click={updateWeapon} disabled={props.gridWeapon.object.ax > 0 && !formValid}>Save Weapon</Button>
+                        <Button onClick={updateWeapon} disabled={props.gridWeapon.object.ax > 0 && !formValid}>Save Weapon</Button>
                     </div>
                 </Dialog.Content>
                 <Dialog.Overlay className="Overlay" />
