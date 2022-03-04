@@ -107,9 +107,9 @@ const TopHeader = () => {
 
     const saveButton = () => {
         if (party.favorited)
-            return (<Button icon="save" active={true} click={toggleFavorite}>Saved</Button>)
+            return (<Button icon="save" active={true} onClick={toggleFavorite}>Saved</Button>)
         else
-            return (<Button icon="save" click={toggleFavorite}>Save</Button>)
+            return (<Button icon="save" onClick={toggleFavorite}>Save</Button>)
     }
 
     const rightNav = () => {
@@ -119,9 +119,9 @@ const TopHeader = () => {
                     saveButton() : ''
                 }
                 { (router.route === '/p/[party]') ? 
-                    <Button icon="link" click={copyToClipboard}>Copy link</Button> : ''
+                    <Button icon="link" onClick={copyToClipboard}>Copy link</Button> : ''
                 }
-                <Button icon="new" click={newParty}>New</Button>
+                <Button icon="new" onClick={newParty}>New</Button>
             </div>
         )
     }

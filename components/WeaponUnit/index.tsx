@@ -3,6 +3,7 @@ import classnames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
 import WeaponModal from '~components/WeaponModal'
+import WeaponHovercard from '~components/WeaponHovercard'
 import UncapIndicator from '~components/UncapIndicator'
 import Button from '~components/Button'
 
@@ -79,39 +80,47 @@ const WeaponUnit = (props: Props) => {
     )
 
     const editableImage = (
-        <div className="WeaponImage">
-            <SearchModal 
-                placeholderText="Search for a weapon..." 
-                fromPosition={props.position} 
-                object="weapons"
-                send={props.updateObject}>
-                    {image}
-            </SearchModal>
+        <SearchModal 
+            placeholderText="Search for a weapon..." 
+            fromPosition={props.position} 
+            object="weapons"
+            send={props.updateObject}>
+                {image}
+        </SearchModal>
+    )
+
+    const unitContent = (
+        <div>
+            { (props.editable && gridWeapon && canBeModified(gridWeapon)) ? 
+            <WeaponModal gridWeapon={gridWeapon}>
+                <div>
+                    <Button icon="settings" type={ButtonType.IconOnly}/> 
+                </div>
+            </WeaponModal>: '' }
+            { (props.editable) ? editableImage : image }
+            { (gridWeapon) ? 
+                <UncapIndicator 
+                    type="weapon"
+                    ulb={gridWeapon.object.uncap.ulb || false} 
+                    flb={gridWeapon.object.uncap.flb || false}
+                    uncapLevel={gridWeapon.uncap_level}
+                    updateUncap={passUncapData}
+                    special={false}
+                /> : ''
+            }
+            <h3 className="WeaponName">{weapon?.name.en}</h3>
         </div>
     )
 
+    const withHovercard = (
+        <WeaponHovercard gridWeapon={gridWeapon!}>
+            {unitContent}
+        </WeaponHovercard>
+    )
+
     return (
-        <div>
-            <div className={classes}>
-                { (props.editable && gridWeapon && canBeModified(gridWeapon)) ? 
-                    <WeaponModal gridWeapon={gridWeapon}>
-                        <div>
-                            <Button icon="settings" type={ButtonType.IconOnly}/> 
-                        </div>
-                    </WeaponModal>: '' }
-                { (props.editable) ? editableImage : image }
-                { (gridWeapon) ? 
-                    <UncapIndicator 
-                        type="weapon"
-                        ulb={gridWeapon.object.uncap.ulb || false} 
-                        flb={gridWeapon.object.uncap.flb || false}
-                        uncapLevel={gridWeapon.uncap_level}
-                        updateUncap={passUncapData}
-                        special={false}
-                    /> : ''
-                }
-                <h3 className="WeaponName">{weapon?.name.en}</h3>
-            </div>
+        <div className={classes}>
+            { (gridWeapon) ? withHovercard : unitContent }
         </div>
     )
 }

@@ -14,7 +14,6 @@ import { appState } from '~utils/appState'
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
-
 interface GridWeaponObject {
     weapon: {
         element?: number
