@@ -7,6 +7,7 @@ import PlusIcon from '~public/icons/Add.svg'
 
 import './index.scss'
 import { omit } from 'lodash'
+import CharacterHovercard from '~components/CharacterHovercard'
 
 interface Props {
     gridCharacter: GridCharacter | undefined
@@ -75,7 +76,7 @@ const CharacterUnit = (props: Props) => {
         </SearchModal>
     )
 
-    return (
+    const unitContent = (
         <div>
             <div className={classes}>
                 { (props.editable) ? editableImage : image }
@@ -90,6 +91,18 @@ const CharacterUnit = (props: Props) => {
                     /> : '' }
                 <h3 className="CharacterName">{character?.name.en}</h3>
             </div>
+        </div>
+    )
+
+    const withHovercard = (
+        <CharacterHovercard gridCharacter={gridCharacter!}>
+            {unitContent}
+        </CharacterHovercard>
+    )
+
+    return (
+        <div className={classes}>
+            { (gridCharacter) ? withHovercard : unitContent }
         </div>
     )
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
+import SummonHovercard from '~components/SummonHovercard'
 import UncapIndicator from '~components/UncapIndicator'
 import PlusIcon from '~public/icons/Add.svg'
 
@@ -81,8 +82,8 @@ const SummonUnit = (props: Props) => {
         </SearchModal>
     )
 
-    return (
-        <div className={classes}>
+    const unitContent = (
+        <div>
             { (props.editable) ? editableImage : image }
             { (gridSummon) ? 
                 <UncapIndicator 
@@ -95,6 +96,18 @@ const SummonUnit = (props: Props) => {
                 /> : '' 
             }
             <h3 className="SummonName">{summon?.name.en}</h3>
+        </div>
+    )
+
+    const withHovercard = (
+        <SummonHovercard gridSummon={gridSummon!}>
+            {unitContent}
+        </SummonHovercard>
+    )
+
+    return (
+        <div className={classes}>
+            { (gridSummon) ? withHovercard : unitContent }
         </div>
     )
 }

@@ -7,7 +7,6 @@ import UncapIndicator from '~components/UncapIndicator'
 import { axData } from '~utils/axData'
 
 import './index.scss'
-import { keys } from 'lodash'
 
 interface Props {
     gridWeapon: GridWeapon
@@ -96,7 +95,7 @@ const WeaponHovercard = (props: Props) => {
                 Array.from(Array(props.gridWeapon.weapon_keys.length)).map((x, i) => {
                     return (
                         <div className="weaponKey" key={props.gridWeapon.weapon_keys![i].id}>
-                            <span>{props.gridWeapon.weapon_keys![i].name.en}</span>
+                        <span>{props.gridWeapon.weapon_keys![i].name.en}</span>
                         </div>
                     )
                 }) : '' }
