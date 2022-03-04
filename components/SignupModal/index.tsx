@@ -255,7 +255,7 @@ const SignupModal = (props: Props) => {
                             ref={passwordConfirmationInput}
                         />
 
-                        <Button disabled={!formValid}>Sign up</Button>
+                        <Button>Sign up</Button>
 
                         <Dialog.Description className="terms">
                             By signing up, I agree to the<br /><a href="#">Terms and Conditions</a> and <a href="#">Usage Guidelines</a>.

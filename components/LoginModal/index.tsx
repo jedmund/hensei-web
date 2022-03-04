@@ -186,7 +186,7 @@ const LoginModal = (props: Props) => {
                             ref={passwordInput}
                         />
 
-                        <Button disabled={false}>Log in</Button>
+                        <Button>Log in</Button>
                     </form>
                 </Dialog.Content>
                 <Dialog.Overlay className="Overlay" />
