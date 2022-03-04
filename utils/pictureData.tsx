@@ -61,7 +61,7 @@ export const pictureData: Picture[] = [
             en: "Cassius",
             jp: "カシウス"
         },
-        filename: "Cassius",
+        filename: "cassius",
         element: "dark"
     },
     {
