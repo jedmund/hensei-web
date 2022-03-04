@@ -141,7 +141,7 @@ export const pictureData: Picture[] = [
             en: "Tien",
             jp: "エッセル"
         },
-        filename: "Tien",
+        filename: "tien",
         element: "fire"
     },
     {
