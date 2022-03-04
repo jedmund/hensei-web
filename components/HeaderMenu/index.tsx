@@ -1,14 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
+import { useSnapshot } from 'valtio'
 
-import LoginModal from '~components/LoginModal'
-import SignupModal from '~components/SignupModal'
-
-import { useModal as useSignupModal } from '~utils/useModal'
-import { useModal as useLoginModal } from '~utils/useModal'
-import { useModal as useAboutModal } from '~utils/useModal'
+import { accountState } from '~utils/accountState'
 
 import AboutModal from '~components/AboutModal'
+import AccountModal from '~components/AccountModal'
+import LoginModal from '~components/LoginModal'
+import SignupModal from '~components/SignupModal'
 
 import './index.scss'
 
@@ -19,13 +18,14 @@ interface Props {
 }
 
 const HeaderMenu = (props: Props) => {
+    const { account } = useSnapshot(accountState)
     function authItems() {
         return (
             <nav>
                 <ul className="Menu auth">
                     <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link href={`/${props.username}` || ''}>{props.username}</Link>
+                            <Link href={`/${account.user?.username}` || ''}>{account.user?.username}</Link>
                         </li>
                         <li className="MenuItem">
                             <Link href={`/saved` || ''}>Saved</Link>
@@ -36,15 +36,16 @@ const HeaderMenu = (props: Props) => {
                             <Link href='/teams'>Teams</Link>
                         </li>
 
-                        <li className="MenuItem">
-                            <Link href='/guides'>Guides</Link>
+                        <li className="MenuItem disabled">
+                            <div>
+                                <span>Guides</span>
+                                <i className="tag">Coming Soon</i>
+                            </div>
                         </li>
                     </div>
                     <div className="MenuGroup">
                         <AboutModal />
-                        <li className="MenuItem">
-                            <span>Settings</span>
-                        </li>
+                        <AccountModal />
                         <li className="MenuItem" onClick={props.logout}>
                             <span>Logout</span>
                         </li>

@@ -12,7 +12,7 @@
     color: $grey-40;
     font-weight: $normal;
 
-    &:hover {
+    &:hover:not(.disabled) {
         background: $grey-100;
         color: $grey-00;
         cursor: pointer;
@@ -26,9 +26,27 @@
         color: $grey-40;
     }
 
-    a, span {
+    & > a, & > span {
         display: block;
         padding: 12px;
+    }
+
+    & > div {
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        padding: 10px 12px;
+
+        span {
+            flex-grow: 1;
+        }
+
+        &:hover {
+            i.tag {
+                background: $grey-60;
+                color: white;
+            }
+        }
     }
 }
 
