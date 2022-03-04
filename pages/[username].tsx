@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 
@@ -117,6 +118,9 @@ const ProfileRoute: React.FC = () => {
 
     return (
         <div id="Profile">
+            <Head>
+                <title>@{user.username}</title>
+            </Head>
             <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
                 <div className="UserInfo">
                     <img 
