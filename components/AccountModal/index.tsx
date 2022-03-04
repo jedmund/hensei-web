@@ -19,7 +19,7 @@ const AccountModal = () => {
 
     // Cookies
     const [accountCookies] = useCookies(['account'])
-    const [userCookies] = useCookies(['user'])
+    const [userCookies, setUserCookies] = useCookies(['user'])
 
     const headers = (accountCookies.account != null) ? {
         headers: {
@@ -79,6 +79,24 @@ const AccountModal = () => {
 
         api.endpoints.users.update(accountCookies.account.user_id, object, headers)
             .then(response => {
+                const user = response.data.user
+
+                const cookieObj = {
+                    picture: user.picture.picture,
+                    element: user.picture.element,
+                    language: user.language,
+                }
+        
+                setUserCookies('user', cookieObj, { path: '/'})
+
+                accountState.account.language = user.language
+                accountState.account.user = {
+                    id: user.id,
+                    username: user.username,
+                    picture: user.picture.picture,
+                    element: user.picture.element
+                }
+
                 setOpen(false)
             })
     }
