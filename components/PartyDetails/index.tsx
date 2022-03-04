@@ -5,12 +5,12 @@ import Linkify from 'react-linkify'
 import classNames from 'classnames'
 
 import CharLimitedFieldset from '~components/CharLimitedFieldset'
+import RaidDropdown from '~components/RaidDropdown'
 import TextFieldset from '~components/TextFieldset'
 
 import { appState } from '~utils/appState'
 
 import './index.scss'
-import RaidDropdown from '~components/RaidDropdown'
 
 // Props
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 }
 
 const PartyDetails = (props: Props) => {
-    const appSnapshot = useSnapshot(appState)
+    const { party, raids } = useSnapshot(appState)
 
     const nameInput = React.createRef<HTMLInputElement>()
     const descriptionInput = React.createRef<HTMLTextAreaElement>()
@@ -28,13 +28,13 @@ const PartyDetails = (props: Props) => {
     const readOnlyClasses = classNames({
         'PartyDetails': true,
         'ReadOnly': true,
-        'Visible': !appSnapshot.party.detailsVisible
+        'Visible': !party.detailsVisible
     })
 
     const editableClasses = classNames({
         'PartyDetails': true,
         'Editable': true,
-        'Visible': appSnapshot.party.detailsVisible
+        'Visible': party.detailsVisible
     })
 
     const [errors, setErrors] = useState<{ [key: string]: string }>({
@@ -63,7 +63,7 @@ const PartyDetails = (props: Props) => {
     function updateDetails(event: React.ChangeEvent) {
         const nameValue = nameInput.current?.value
         const descriptionValue = descriptionInput.current?.value
-        const raid = appSnapshot.raids.find(raid => raid.id == raidSelect.current?.value)
+        const raid = raids.find(raid => raid.id == raidSelect.current?.value)
 
         props.updateCallback(nameValue, descriptionValue, raid)
     }
@@ -73,7 +73,7 @@ const PartyDetails = (props: Props) => {
             <CharLimitedFieldset 
                 fieldName="name"
                 placeholder="Name your team"
-                value={appSnapshot.party.name}
+                value={party.name}
                 limit={50}
                 onBlur={updateDetails}
                 onChange={handleInputChange}
@@ -82,14 +82,14 @@ const PartyDetails = (props: Props) => {
             />
             <RaidDropdown 
                 allOption={false}
-                selected={appSnapshot.party.raid?.id || ''}
+                selected={party.raid?.id || ''}
                 onBlur={updateDetails}
                 ref={raidSelect}
             />
             <TextFieldset 
                 fieldName="name"
                 placeholder={"Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 1 first\nGood luck with RNG!"}
-                value={appSnapshot.party.description}
+                value={party.description}
                 onBlur={updateDetails}
                 onChange={handleTextAreaChange}
                 error={errors.description}
@@ -100,17 +100,32 @@ const PartyDetails = (props: Props) => {
 
     const readOnly = (
         <section className={readOnlyClasses}>
-            { (appSnapshot.party.name) ? <h1>{appSnapshot.party.name}</h1> : '' }
-            { (appSnapshot.party.raid) ? <div className="Raid">{appSnapshot.party.raid.name.en}</div> : '' }
-            { (appSnapshot.party.description) ? <p><Linkify>{appSnapshot.party.description}</Linkify></p> : '' }
+            { (party.name) ? <h1>{party.name}</h1> : '' }
+            { (party.raid) ? <div className="Raid">{party.raid.name.en}</div> : '' }
+            { (party.description) ? <p><Linkify>{party.description}</Linkify></p> : '' }
         </section>
     )
+
+    const generateTitle = () => {
+        let title = ''
+
+        const username = (party.user != null) ? `@${party.user?.username}` : 'Anonymous'
+
+        if (party.name != null)
+            title = `${party.name} by ${username}`
+        else if (party.name == null && party.editable)
+            title = "New Team"
+        else
+            title = `Untitled team by ${username}`
+
+        return title
+    }
 
     return (
         <div>
             <Head>
                 <title>
-                    { (appSnapshot.party.name != null) ? appSnapshot.party.name : 'Untitled team'} by { (appSnapshot.party.user != null) ? `@${appSnapshot.party.user?.username}` : 'Anonymous' }
+                    {generateTitle()}
                 </title>
             </Head>
             {readOnly}
