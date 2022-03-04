@@ -183,7 +183,7 @@ select {
     flex-direction: column;
     gap: $unit * 2;
     padding: $unit * 2;
-    min-width: 300px;
+    width: 300px;
 
     .top {
         display: flex;

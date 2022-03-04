@@ -45,6 +45,15 @@ const WeaponHovercard = (props: Props) => {
     const tintElement = (props.gridWeapon.object.element == 0 && props.gridWeapon.element) ? Element[props.gridWeapon.element] : Element[props.gridWeapon.object.element]
     const wikiUrl = `https://gbf.wiki/${props.gridWeapon.object.name.en.replaceAll(' ', '_')}`
 
+    const hovercardSide = () => {
+        if (props.gridWeapon.position == -1)
+            return "right"
+        else if ([6, 7, 8, 9, 10, 11].includes(props.gridWeapon.position))
+            return "top"
+        else
+            return "bottom"
+    }
+
     const createPrimaryAxSkillString = () => {
         const primaryAxSkills = axData[props.gridWeapon.object.ax - 1]
 
@@ -125,7 +134,7 @@ const WeaponHovercard = (props: Props) => {
             <HoverCard.Trigger>
                 { props.children }
             </HoverCard.Trigger>
-            <HoverCard.Content className="Weapon Hovercard">
+            <HoverCard.Content className="Weapon Hovercard" side={hovercardSide()}>
                 <div className="top">
                     <div className="title">
                         <h4>{ props.gridWeapon.object.name.en }</h4>
