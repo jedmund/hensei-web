@@ -58,13 +58,13 @@ const ProfileRoute: React.FC = () => {
             }
         }
 
-        const headers = {
+        const headers = (cookies.account) ? {
             headers: {
                 'Authorization': `Bearer ${cookies.account.access_token}`
             }
-        }
+        } : {}
 
-        const params = (cookies.account) ? {...filters, ...headers} : filters
+        const params = {...filters, ...headers}
 
         setLoading(true)
 
