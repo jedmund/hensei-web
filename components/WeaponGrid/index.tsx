@@ -28,7 +28,6 @@ const WeaponGrid = (props: Props) => {
 
     // Cookies
     const [cookies] = useCookies(['account'])
-    console.log(cookies)
     const headers = (cookies.account != null) ? {
         headers: {
             'Authorization': `Bearer ${cookies.account.access_token}`
@@ -153,7 +152,6 @@ const WeaponGrid = (props: Props) => {
         if (weapon.uncap.ulb) uncapLevel = 5
         else if (weapon.uncap.flb) uncapLevel = 4
         
-        console.log(headers)
         return await api.endpoints.weapons.create({
             'weapon': {
                 'party_id': partyId,
