@@ -1,11 +1,12 @@
 .FilterBar {
     align-items: center;
     background: white;
-    border-radius: 6px;
+    border-radius: $unit;
     display: flex;
     flex-direction: row;
     gap: $unit * 2;
     margin: 0 auto;
+    margin-top: 7px; // Line up with HeaderMenu
     padding: $unit * 2;
     position: sticky;
     transition: box-shadow 0.24s ease-in-out;
