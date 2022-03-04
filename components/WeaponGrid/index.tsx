@@ -27,10 +27,11 @@ const WeaponGrid = (props: Props) => {
     const numWeapons: number = 9
 
     // Cookies
-    const [cookies, _] = useCookies(['user'])
-    const headers = (cookies.user != null) ? {
+    const [cookies] = useCookies(['account'])
+    console.log(cookies)
+    const headers = (cookies.account != null) ? {
         headers: {
-            'Authorization': `Bearer ${cookies.user.access_token}`
+            'Authorization': `Bearer ${cookies.account.access_token}`
         }
     } : {}
 
@@ -56,7 +57,7 @@ const WeaponGrid = (props: Props) => {
     useEffect(() => {        
         if (!loading && !firstLoadComplete) {
             // If user is logged in and matches
-            if ((cookies.user && party.user && cookies.user.user_id === party.user.id) || props.new)
+            if ((cookies.account && party.user && cookies.account.user_id === party.user.id) || props.new)
                 appState.party.editable = true
             else            
                 appState.party.editable = false
@@ -152,6 +153,7 @@ const WeaponGrid = (props: Props) => {
         if (weapon.uncap.ulb) uncapLevel = 5
         else if (weapon.uncap.flb) uncapLevel = 4
         
+        console.log(headers)
         return await api.endpoints.weapons.create({
             'weapon': {
                 'party_id': partyId,

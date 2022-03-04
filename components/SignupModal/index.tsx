@@ -72,11 +72,11 @@ const SignupModal = (props: Props) => {
 
     function storeCookieInfo(response: AxiosResponse) {
         const user = response.data.user
-
+        
         const cookieObj = {
-            user_id: user.id,
+            user_id: user.user_id,
             username: user.username,
-            access_token: response.data.access_token
+            access_token: user.token
         }
 
         setCookies('account', cookieObj, { path: '/'})
