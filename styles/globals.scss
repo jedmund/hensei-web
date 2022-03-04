@@ -290,6 +290,43 @@ select {
     }
 }
 
+.profile {
+    background: $grey-90;
+    
+    &.fire {
+        background: $fire-bg-light;
+    }
+
+    &.water {
+        background: $water-bg-light;
+    }
+
+    &.wind {
+        background: $wind-bg-light;
+    }
+
+    &.earth {
+        background: $earth-bg-light;
+    }
+
+    &.dark {
+        background: $dark-bg-light;
+    }
+
+    &.light {
+        background: $light-bg-light;
+    }
+}
+
+i.tag {
+    background: $grey-90;
+    border-radius: $unit / 2;
+    font-size: 10px;
+    font-weight: $bold;
+    padding: 4px 6px;
+    text-transform: uppercase;
+}
+
 @keyframes openModal {
     0% {
         opacity: 0;
