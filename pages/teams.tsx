@@ -43,20 +43,25 @@ const TeamsRoute: React.FC = () => {
     }, [])
 
     const fetchTeams = useCallback(() => {
-        const filterParams = {
+        const filters = {
             params: {
                 element: element,
                 raid: raidId,
                 recency: recencyInSeconds
-            },
+            }
+        }
+
+        const headers = {
             headers: {
                 'Authorization': `Bearer ${cookies.account?.access_token}`
             }
         }
 
+        const params = (cookies.account) ? {...filters, ...headers} : filters
+
         setLoading(true)
 
-        api.endpoints.parties.getAll(filterParams)
+        api.endpoints.parties.getAll(params)
             .then(response => {
                 const parties: Party[] = response.data
                 setParties(parties.map((p: any) => p.party).sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))

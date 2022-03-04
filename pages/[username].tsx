@@ -50,21 +50,26 @@ const ProfileRoute: React.FC = () => {
     }, [])
 
     const fetchProfile = useCallback(() => {
-        const filterParams = {
+        const filters = {
             params: {
                 element: element,
                 raid: raidId,
                 recency: recencyInSeconds
-            },
+            }
+        }
+
+        const headers = {
             headers: {
                 'Authorization': `Bearer ${cookies.account.access_token}`
             }
         }
 
+        const params = (cookies.account) ? {...filters, ...headers} : filters
+
         setLoading(true)
 
         if (username)
-            api.endpoints.users.getOne({ id: username as string, params: filterParams })
+            api.endpoints.users.getOne({ id: username as string, params: params })
                 .then(response => {
                     setUser({
                         id: response.data.user.id,
