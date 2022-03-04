@@ -58,7 +58,8 @@ const TopHeader = () => {
                 accountState[key] = resetState[key]
         })
         
-        appState.party.editable = false
+        if (router.route != '/new')
+            appState.party.editable = false
 
         router.push('/')
         return false
