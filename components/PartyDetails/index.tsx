@@ -126,6 +126,16 @@ const PartyDetails = (props: Props) => {
             <Head>
                 <title>
                     {generateTitle()}
+
+                    <meta property="og:title" content={generateTitle()} />
+                    <meta property="og:description" content={ (party.description) ? party.description : '' } />
+                    <meta property="og:url" content="https://app.granblue.team" />
+                    <meta property="og:type" content="website" />
+
+                    <meta name="twitter:card" content="summary_large_image" />
+                    <meta property="twitter:domain" content="app.granblue.team" />
+                    <meta name="twitter:title" content={generateTitle()} />
+                    <meta name="twitter:description" content={ (party.description) ? party.description : '' } />
                 </title>
             </Head>
             {readOnly}

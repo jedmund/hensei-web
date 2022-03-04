@@ -149,6 +149,16 @@ const TeamsRoute: React.FC = () => {
         <div id="Teams">
             <Head>
                 <title>Discover Teams</title>
+
+                <meta property="og:title" content="Discover Teams" />
+                <meta property="og:description" content="Find different Granblue Fantasy teams by raid, element or recency" />
+                <meta property="og:url" content="https://app.granblue.team/teams" />
+                <meta property="og:type" content="website" />
+
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta property="twitter:domain" content="app.granblue.team" />
+                <meta name="twitter:title" content="Discover Teams" />
+                <meta name="twitter:description" content="Find different Granblue Fantasy teams by raid, element or recency" />
             </Head>
             <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
                 <h1>Discover Teams</h1>
