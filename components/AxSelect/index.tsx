@@ -67,6 +67,10 @@ const AXSelect = (props: Props) => {
         props.sendValues(primaryAxModifier, primaryAxValue, secondaryAxModifier, secondaryAxValue)
     }, [primaryAxModifier, primaryAxValue, secondaryAxModifier, secondaryAxValue])
 
+    useEffect(() => {
+        props.sendValidity(primaryAxValue > 0 && errors.axValue1 === '' && errors.axValue2 === '')
+    }, [primaryAxValue, errors])
+
     // Classes
     const secondarySetClasses = classNames({
         'AXSet': true,
@@ -135,44 +139,62 @@ const AXSelect = (props: Props) => {
     }
 
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const value = parseFloat(event.target.value)
         let newErrors = {...errors}
 
         if (primaryAxValueInput.current == event.target) {
-            const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
-            const value = parseFloat(event.target.value)
-
-            if (value < primaryAxSkill.minValue) {
-                newErrors.axValue1 = `${primaryAxSkill.name.en} must be at least ${primaryAxSkill.minValue}${ (primaryAxSkill.suffix) ? primaryAxSkill.suffix : ''}`
-            } else if (value > primaryAxSkill.maxValue) {
-                newErrors.axValue1 = `${primaryAxSkill.name.en} cannot be greater than ${primaryAxSkill.maxValue}${ (primaryAxSkill.suffix) ? primaryAxSkill.suffix : ''}`
-            } else {
-                newErrors.axValue1 = ''
-                setPrimaryAxValue(parseFloat(event.target.value))
-            }
+            if (handlePrimaryErrors(value))
+                setPrimaryAxValue(value)
         } else {
-            const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
-            const value = parseFloat(event.target.value)
+            if (handleSecondaryErrors(value))
+                setSecondaryAxValue(value)
+        }
+    }
 
-            if (primaryAxSkill.secondary) {
-                const secondaryAxSkill = primaryAxSkill.secondary.find(skill => skill.id == secondaryAxModifier)
+    function handlePrimaryErrors(value: number) {
+        const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
+        let newErrors = {...errors}
 
-                if (secondaryAxSkill) {
-                    if (value < secondaryAxSkill.minValue) {
-                        newErrors.axValue2 = `${secondaryAxSkill.name.en} must be at least ${secondaryAxSkill.minValue}${ (secondaryAxSkill.suffix) ? secondaryAxSkill.suffix : ''}`
-                    } else if (value > secondaryAxSkill.maxValue) {
-                        newErrors.axValue2 = `${secondaryAxSkill.name.en} cannot be greater than ${secondaryAxSkill.maxValue}${ (secondaryAxSkill.suffix) ? secondaryAxSkill.suffix : ''}`
-                    } else if (!secondaryAxSkill.suffix && value % 1 !== 0) {
-                        newErrors.axValue2 = `${secondaryAxSkill.name.en} must be a whole number`
-                    } else {
-                        newErrors.axValue2 = ''
-                        setSecondaryAxValue(parseFloat(event.target.value))
-                    }
+        if (value < primaryAxSkill.minValue) {
+            newErrors.axValue1 = `${primaryAxSkill.name.en} must be at least ${primaryAxSkill.minValue}${ (primaryAxSkill.suffix) ? primaryAxSkill.suffix : ''}`
+        } else if (value > primaryAxSkill.maxValue) {
+            newErrors.axValue1 = `${primaryAxSkill.name.en} cannot be greater than ${primaryAxSkill.maxValue}${ (primaryAxSkill.suffix) ? primaryAxSkill.suffix : ''}`
+        } else if (!value || value <= 0) {
+            newErrors.axValue1 = `${primaryAxSkill.name.en} must have a value`
+        } else {
+            newErrors.axValue1 = ''
+        }
+
+        setErrors(newErrors)
+
+        return newErrors.axValue1.length === 0
+    }
+
+    function handleSecondaryErrors(value: number) {
+        const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
+        let newErrors = {...errors}
+
+        if (primaryAxSkill.secondary) {
+            const secondaryAxSkill = primaryAxSkill.secondary.find(skill => skill.id == secondaryAxModifier)
+
+            if (secondaryAxSkill) {
+                if (value < secondaryAxSkill.minValue) {
+                    newErrors.axValue2 = `${secondaryAxSkill.name.en} must be at least ${secondaryAxSkill.minValue}${ (secondaryAxSkill.suffix) ? secondaryAxSkill.suffix : ''}`
+                } else if (value > secondaryAxSkill.maxValue) {
+                    newErrors.axValue2 = `${secondaryAxSkill.name.en} cannot be greater than ${secondaryAxSkill.maxValue}${ (secondaryAxSkill.suffix) ? secondaryAxSkill.suffix : ''}`
+                } else if (!secondaryAxSkill.suffix && value % 1 !== 0) {
+                    newErrors.axValue2 = `${secondaryAxSkill.name.en} must be a whole number`
+                } else if (primaryAxValue <= 0) {
+                    newErrors.axValue1 = `${primaryAxSkill.name.en} must have a value`
+                } else {
+                    newErrors.axValue2 = ''
                 }
             }
         }
 
-        props.sendValidity(newErrors.axValue1 === '' && newErrors.axValue2 === '')
         setErrors(newErrors)
+
+        return newErrors.axValue2.length === 0
     }
 
     function setupInput(ax: AxSkill | undefined, element: HTMLInputElement) {
