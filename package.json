@@ -16,7 +16,7 @@
     "@radix-ui/react-dropdown-menu": "^0.1.4",
     "@radix-ui/react-hover-card": "^0.1.5",
     "@radix-ui/react-label": "^0.1.4",
-    "@radix-ui/react-switch": "^0.1.4",
+    "@radix-ui/react-switch": "^0.1.5",
     "@radix-ui/react-toggle-group": "^0.1.5",
     "@svgr/webpack": "^6.2.0",
     "@types/axios": "^0.14.0",

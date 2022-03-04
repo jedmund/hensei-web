@@ -22,7 +22,12 @@ const ProfileRoute: React.FC = () => {
     const [user, setUser] = useState<User>({
         id: '',
         username: '',
-        granblueId: 0
+        granblueId: 0,
+        picture: {
+            picture: '',
+            element: ''
+        },
+        private: false
     })
 
     // Filter states
@@ -63,7 +68,9 @@ const ProfileRoute: React.FC = () => {
                     setUser({
                         id: response.data.user.id,
                         username: response.data.user.username,
-                        granblueId: response.data.user.granblue_id
+                        granblueId: response.data.user.granblue_id,
+                        picture: response.data.user.picture,
+                        private: response.data.user.private
                     })
 
                     const parties: Party[] = response.data.user.parties
@@ -113,11 +120,12 @@ const ProfileRoute: React.FC = () => {
             <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
                 <div className="UserInfo">
                     <img 
-                        alt="Gran"
-                        className="gran"
-                        srcSet="/profile/gran.png,
-                                /profile/gran@2x.png 2x"
-                        src="/profile/gran.png" />
+                        alt={user.picture.picture}
+                        className={`profile ${user.picture.element}`}
+                        srcSet={`/profile/${user.picture.picture}.png,
+                                 /profile/${user.picture.picture}@2x.png 2x`}
+                        src={`/profile/${user.picture.picture}.png`} 
+                    />
                     <h1>{user.username}</h1>
                 </div>
             </FilterBar>

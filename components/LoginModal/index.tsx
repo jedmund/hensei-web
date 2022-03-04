@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useCookies } from 'react-cookie'
+import { AxiosResponse } from 'axios'
 
 import * as Dialog from '@radix-ui/react-dialog'
 
@@ -94,25 +95,40 @@ const LoginModal = (props: Props) => {
 
         if (formValid) {
             api.login(body)
-                .then((response) => {
-                    const cookieObj = {
-                        user_id: response.data.user.id,
-                        username: response.data.user.username,
-                        access_token: response.data.access_token
-                    }
-
-                    setCookies('user', cookieObj, { path: '/'})
-                    accountState.account.authorized = true
-                    accountState.account.user = {
-                        id: cookieObj.user_id,
-                        username: cookieObj.username
-                    }
-
-                    setOpen(false)
-                }, (error) => {
-                    console.error(error)
-                })
+                .then(response => response.data.user.id)
+                .then(id => fetchUserInfo(id))
+                .then(infoResponse => storeUserInfo(infoResponse))
         }
+    }
+
+    function fetchUserInfo(id: string) {
+        return api.userInfo(id)
+    }
+
+    function storeUserInfo(response: AxiosResponse) {
+        const user = response.data.user
+
+        const cookieObj = {
+            user_id: user.id,
+            username: user.username,
+            picture: user.picture.picture,
+            element: user.picture.element,
+            language: user.language,
+            access_token: response.data.access_token
+        }
+
+        setCookies('user', cookieObj, { path: '/'})
+
+        accountState.account.language = user.language
+        accountState.account.user = {
+            id: user.id,
+            username: user.username,
+            picture: user.picture.picture,
+            element: user.picture.element
+        }
+
+        accountState.account.authorized = true
+        setOpen(false)
     }
 
     function openChange(open: boolean) {
@@ -158,7 +174,7 @@ const LoginModal = (props: Props) => {
                             ref={passwordInput}
                         />
 
-                        <Button disabled={!formValid}>Log in</Button>
+                        <Button disabled={false}>Log in</Button>
                     </form>
                 </Dialog.Content>
                 <Dialog.Overlay className="Overlay" />

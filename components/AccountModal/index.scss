@@ -1,0 +1,160 @@
+.Account.Dialog {
+    display: flex;
+    flex-direction: column;
+    gap: $unit * 2;
+    width: $unit * 60;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: $unit * 2;
+
+        .Switch {
+            $height: 34px;
+            background: $grey-70;
+            border-radius: $height / 2;
+            border: none;
+            position: relative;
+            width: 58px;
+            height: $height;
+
+            &:focus {
+                box-shadow: 0 0 0 2px $grey-00;
+            }
+
+            &[data-state="checked"] {
+                background: $grey-00;
+            }
+        }
+
+        .Thumb {
+            background: white;
+            border-radius: 13px;
+            display: block;
+            height: 26px;
+            width: 26px;
+            transition: transform 100ms;
+            transform: translateX(-1px);
+
+            &:hover {
+                cursor: pointer;
+            }
+
+            &[data-state="checked"] {
+                background: white;
+                transform: translateX(21px);
+            }
+        }
+
+        .Button {
+            font-size: $font-regular;
+            padding: ($unit * 1.5) ($unit * 2);
+            margin-top: $unit * 2;
+            width: 100%;
+    
+            &.btn-disabled {
+                background: $grey-90;
+                color: $grey-70;
+                cursor: not-allowed;
+            }
+    
+            &:not(.btn-disabled) {
+                background: $grey-90;
+                color: $grey-40;
+    
+                &:hover {
+                    background: $grey-80;
+                }
+            }
+        }
+
+        .field {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            gap: $unit * 2;
+
+            select {
+                background: no-repeat url('/icons/ArrowDark.svg'), $grey-90;
+                background-position-y: center;
+                background-position-x: 95%;
+                margin: 0;
+                width: 240px;
+            }
+            
+            .left {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                gap: $unit / 2;
+
+                label {
+                    color: $grey-00;
+                    font-size: $font-regular;
+                }
+
+                p {
+                    color: $grey-60;
+                    font-size: $font-small;
+                    line-height: 1.1;
+                    max-width: 300px;
+                }
+            }
+
+            .preview {
+                $diameter: 48px;
+                background-color: $grey-90;
+                border-radius: 999px;
+                height: $diameter;
+                width: $diameter;
+
+                img {
+                    height: $diameter;
+                    width: $diameter;
+                }
+
+                &.fire {
+                    background: $fire-bg-light;
+                }
+            
+                &.water {
+                    background: $water-bg-light;
+                }
+
+                &.wind {
+                    background: $wind-bg-light;
+                }
+            
+                &.earth {
+                    background: $earth-bg-light;
+                }
+            
+                &.dark {
+                    background: $dark-bg-light;
+                }
+            
+                &.light {
+                    background: $light-bg-light;
+                }
+            }
+        }
+
+        section {
+            margin-bottom: $unit;
+
+            h2 {
+                margin-bottom: $unit * 3;
+            }
+        }
+    }
+
+    .DialogDescription {
+        font-size: $font-regular;
+        line-height: 1.24;
+        margin-bottom: $unit;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+    }
+}

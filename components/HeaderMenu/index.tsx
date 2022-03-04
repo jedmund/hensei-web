@@ -1,14 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
-
-import LoginModal from '~components/LoginModal'
-import SignupModal from '~components/SignupModal'
-
-import { useModal as useSignupModal } from '~utils/useModal'
-import { useModal as useLoginModal } from '~utils/useModal'
-import { useModal as useAboutModal } from '~utils/useModal'
+import { useCookies } from 'react-cookie'
 
 import AboutModal from '~components/AboutModal'
+import AccountModal from '~components/AccountModal'
+import LoginModal from '~components/LoginModal'
+import SignupModal from '~components/SignupModal'
 
 import './index.scss'
 
@@ -19,13 +16,27 @@ interface Props {
 }
 
 const HeaderMenu = (props: Props) => {
+    
+    const [cookies] = useCookies()
+
     function authItems() {
         return (
             <nav>
                 <ul className="Menu auth">
                     <div className="MenuGroup">
-                        <li className="MenuItem">
-                            <Link href={`/${props.username}` || ''}>{props.username}</Link>
+                        <li className="MenuItem profile">
+                            <Link href={`/${cookies.user?.username}` || ''}>
+                                <div>
+                                    <span>{cookies.user?.username}</span>
+                                    <img 
+                                        alt={cookies.user?.picture}
+                                        className={`profile ${cookies.user?.element}`}
+                                        srcSet={`/profile/${cookies.user?.picture}.png,
+                                                /profile/${cookies.user?.picture}@2x.png 2x`}
+                                        src={`/profile/${cookies.user?.picture}.png`} 
+                                    />
+                                </div
+                            ></Link>
                         </li>
                         <li className="MenuItem">
                             <Link href={`/saved` || ''}>Saved</Link>
@@ -36,15 +47,16 @@ const HeaderMenu = (props: Props) => {
                             <Link href='/teams'>Teams</Link>
                         </li>
 
-                        <li className="MenuItem">
-                            <Link href='/guides'>Guides</Link>
+                        <li className="MenuItem disabled">
+                            <div>
+                                <span>Guides</span>
+                                <i className="tag">Coming Soon</i>
+                            </div>
                         </li>
                     </div>
                     <div className="MenuGroup">
                         <AboutModal />
-                        <li className="MenuItem">
-                            <span>Settings</span>
-                        </li>
+                        <AccountModal />
                         <li className="MenuItem" onClick={props.logout}>
                             <span>Logout</span>
                         </li>
@@ -65,8 +77,11 @@ const HeaderMenu = (props: Props) => {
                             <Link href='/teams'>Teams</Link>
                         </li>
 
-                        <li className="MenuItem">
-                            <Link href='/guides'>Guides</Link>
+                        <li className="MenuItem disabled">
+                            <div>
+                                <span>Guides</span>
+                                <i className="tag">Coming Soon</i>
+                            </div>
                         </li>
                     </div>
                 <div className="MenuGroup">
