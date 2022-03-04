@@ -69,7 +69,9 @@ const SignupModal = (props: Props) => {
                     accountState.account.authorized = true
                     accountState.account.user = {
                         id: response.data.user.id,
-                        username: response.data.user.username
+                        username: response.data.user.username,
+                        picture: 'gran',
+                        element: 'water'
                     }
 
                     // Close the modal

@@ -16,9 +16,12 @@ function MyApp({ Component, pageProps }: AppProps) {
             console.log(`Logged in as user "${cookies.user.username}"`)
 
             accountState.account.authorized = true
+            accountState.account.language = cookies.user.language
             accountState.account.user = {
                 id: cookies.user.user_id,
-                username: cookies.user.username
+                username: cookies.user.username,
+                picture: cookies.user.picture,
+                element: cookies.user.element
             }
         } else {
             console.log(`You are not currently logged in.`)
