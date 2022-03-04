@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Head from 'next/head'
 import { useSnapshot } from 'valtio'
+import Linkify from 'react-linkify'
 import classNames from 'classnames'
 
 import CharLimitedFieldset from '~components/CharLimitedFieldset'
@@ -101,7 +102,7 @@ const PartyDetails = (props: Props) => {
         <section className={readOnlyClasses}>
             { (appSnapshot.party.name) ? <h1>{appSnapshot.party.name}</h1> : '' }
             { (appSnapshot.party.raid) ? <div className="Raid">{appSnapshot.party.raid.name.en}</div> : '' }
-            { (appSnapshot.party.description) ? <p>{appSnapshot.party.description}</p> : '' }
+            { (appSnapshot.party.description) ? <p><Linkify>{appSnapshot.party.description}</Linkify></p> : '' }
         </section>
     )
 

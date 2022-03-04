@@ -2,6 +2,7 @@
     display: none; // This breaks transition, find a workaround
     opacity: 0;
     margin: 0 auto;
+    margin-bottom: 100px;
     max-width: $unit * 95;
     position: relative;
 
@@ -49,6 +50,14 @@
             font-weight: $normal;
             text-align: left;
             margin-bottom: $unit;
+        }
+
+        a {
+            color: $blue;
+
+            &:hover {
+                text-decoration: underline;
+            }
         }
 
         .Raid {
