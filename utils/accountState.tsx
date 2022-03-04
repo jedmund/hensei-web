@@ -8,7 +8,9 @@ interface AccountState {
         language: 'en' | 'jp',
         user: {
             id: string,
-            username: string
+            username: string,
+            picture: string,
+            element: string,
         } | undefined
     }
 }
