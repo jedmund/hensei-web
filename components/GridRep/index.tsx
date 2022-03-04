@@ -115,7 +115,7 @@ const GridRep = (props: Props) => {
                         active={props.favorited} 
                         icon="save" 
                         type={ButtonType.IconOnly} 
-                        click={sendSaveData} 
+                        onClick={sendSaveData} 
                     /> : ''}
             </div>
             <div className="bottom">

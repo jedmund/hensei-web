@@ -134,6 +134,71 @@
             color: #bababa;
         }
     }
+
+    &.null {
+        background: $grey-90;
+        color: $grey-50;
+
+        &:hover {
+            background: $grey-70;
+            color: $grey-00;
+        }
+    }
+
+    &.wind {
+        background: $wind-bg-light;
+        color: $wind-text-dark;
+
+        &:hover {
+            background: darken($wind-bg-light, 10);
+        }
+    }
+
+    &.fire {
+        background: $fire-bg-light;
+        color: $fire-text-dark;
+
+        &:hover {
+            background: darken($fire-bg-light, 10);
+        }
+    }
+
+    &.water {
+        background: $water-bg-light;
+        color: $water-text-dark;
+
+        &:hover {
+            background: darken($water-bg-light, 10);
+        }
+    }
+
+    &.earth {
+        background: $earth-bg-light;
+        color: $earth-text-dark;
+
+        &:hover {
+            background: darken($earth-bg-light, 10);
+        }
+    }
+
+    &.dark {
+        background: $dark-bg-light;
+        color: $dark-text-dark;
+
+        &:hover {
+            background: darken($dark-bg-light, 10);
+        }
+    }
+
+
+    &.light {
+        background: $light-bg-light;
+        color: $light-text-dark;
+
+        &:hover {
+            background: darken($light-bg-light, 10);
+        }
+    }
     
     .text {
         color: inherit;

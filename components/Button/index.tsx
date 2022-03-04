@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
 
 import Link from 'next/link'
@@ -16,80 +16,118 @@ import './index.scss'
 import { ButtonType } from '~utils/enums'
 
 interface Props {
-    active: boolean
-    disabled: boolean
-    icon: string | null
-    type: ButtonType
-    click: any
+    active?: boolean
+    disabled?: boolean
+    classes?: string[],
+    icon?: string
+    type?: ButtonType
+    children?: React.ReactNode
+    onClick?: (event: React.MouseEvent<HTMLElement>) => void
 }
 
-interface State {
-    isPressed: boolean
-}
+const Button = (props: Props) => {
+    // States
+    const [active, setActive] = useState(false)
+    const [disabled, setDisabled] = useState(false)
+    const [pressed, setPressed] = useState(false)
+    const [buttonType, setButtonType] = useState(ButtonType.Base)
 
-class Button extends React.Component<Props, State> {
-    static defaultProps: Props = {
-        active: false,
-        disabled: false,
-        icon: null,
-        type: ButtonType.Base,
-        click: () => {}
+    const classes = classNames({
+        Button: true,
+        'Active': active,
+        'btn-pressed': pressed,
+        'btn-disabled': disabled,
+        'save': props.icon === 'save',
+        'destructive': props.type == ButtonType.Destructive
+    }, props.classes)
+
+    useEffect(() => {
+        if (props.active) setActive(props.active)
+        if (props.disabled) setDisabled(props.disabled)
+        if (props.type) setButtonType(props.type)
+    }, [props.active, props.disabled, props.type])
+
+    const addIcon = (
+        <span className='icon'>
+            <AddIcon />
+        </span>
+    )
+
+    const menuIcon = (
+        <span className='icon'>
+            <MenuIcon />
+        </span>
+    )
+
+    const linkIcon = (
+        <span className='icon stroke'>
+            <LinkIcon />
+        </span>
+    )
+
+    const crossIcon = (
+        <span className='icon'>
+            <CrossIcon />
+        </span>
+    )
+
+    const editIcon = (
+        <span className='icon'>
+            <EditIcon />
+        </span>
+    )
+
+    const saveIcon = (
+        <span className='icon stroke'>
+            <SaveIcon />
+        </span>
+    )
+
+    const settingsIcon = (
+        <span className='icon settings'>
+            <SettingsIcon />
+        </span>
+    )
+
+    function getIcon() {
+        let icon: React.ReactNode
+        
+        switch(props.icon) {
+            case 'new':      icon = addIcon; break
+            case 'menu':     icon = menuIcon; break
+            case 'link':     icon = linkIcon; break
+            case 'cross':    icon = crossIcon; break
+            case 'edit':     icon = editIcon; break
+            case 'save':     icon = saveIcon; break
+            case 'settings': icon = settingsIcon; break
+        }
+
+        return icon
     }
 
-    constructor(props: Props) {
-        super(props)
-        this.state = {
-            isPressed: false,
-        }
+    function handleMouseDown() {
+        setPressed(true)
     }
 
-    render() {
-        let icon
-        if (this.props.icon === 'new') {
-            icon = <span className='icon'>
-                <AddIcon />
-            </span>
-        } else if (this.props.icon === 'menu') {
-            icon = <span className='icon'>
-                <MenuIcon />
-            </span>
-        } else if (this.props.icon === 'link') {
-            icon = <span className='icon stroke'>
-                <LinkIcon />
-            </span>
-        } else if (this.props.icon === 'cross') {
-            icon = <span className='icon'>
-                <CrossIcon />
-            </span>
-        } else if (this.props.icon === 'edit') {
-            icon = <span className='icon'>
-                <EditIcon />
-            </span>
-        } else if (this.props.icon === 'save') {
-            icon = <span className='icon stroke'>
-                <SaveIcon />
-            </span>
-        } else if (this.props.icon === 'settings') {
-            icon = <span className='icon settings'>
-                <SettingsIcon />
-            </span>
-        }
+    function handleMouseUp() {
+        setPressed(false)
+    }
+    return (
+        <button 
+            className={classes} 
+            disabled={disabled} 
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onClick={props.onClick}>
+                { getIcon() }
 
-        const classes = classNames({
-            Button: true,
-            'Active': this.props.active,
-            'btn-pressed': this.state.isPressed,
-            'btn-disabled': this.props.disabled,
-            'save': this.props.icon === 'save',
-            'destructive': this.props.type == ButtonType.Destructive
-        })
-
-        return <button className={classes} disabled={this.props.disabled} onClick={this.props.click}>
-            {icon}
-            { (this.props.type != ButtonType.IconOnly) ? 
-                <span className='text'>{this.props.children}</span> : '' }
+                { (props.type != ButtonType.IconOnly) ? 
+                    <span className='text'>
+                        { props.children }
+                    </span> : '' 
+                }
         </button>
-    }
+    )  
 }
 
 export default Button
