@@ -90,7 +90,7 @@ const WeaponUnit = (props: Props) => {
     )
 
     const unitContent = (
-        <div>
+        <div className={classes}>
             { (props.editable && gridWeapon && canBeModified(gridWeapon)) ? 
             <WeaponModal gridWeapon={gridWeapon}>
                 <div>
@@ -118,11 +118,7 @@ const WeaponUnit = (props: Props) => {
         </WeaponHovercard>
     )
 
-    return (
-        <div className={classes}>
-            { (gridWeapon) ? withHovercard : unitContent }
-        </div>
-    )
+    return (gridWeapon) ? withHovercard : unitContent
 }
 
 export default WeaponUnit

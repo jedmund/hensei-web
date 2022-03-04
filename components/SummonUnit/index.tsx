@@ -83,7 +83,7 @@ const SummonUnit = (props: Props) => {
     )
 
     const unitContent = (
-        <div>
+        <div className={classes}>
             { (props.editable) ? editableImage : image }
             { (gridSummon) ? 
                 <UncapIndicator 
@@ -105,11 +105,7 @@ const SummonUnit = (props: Props) => {
         </SummonHovercard>
     )
 
-    return (
-        <div className={classes}>
-            { (gridSummon) ? withHovercard : unitContent }
-        </div>
-    )
+    return (gridSummon) ? withHovercard : unitContent
 }
 
 export default SummonUnit

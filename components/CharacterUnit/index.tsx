@@ -77,20 +77,18 @@ const CharacterUnit = (props: Props) => {
     )
 
     const unitContent = (
-        <div>
-            <div className={classes}>
-                { (props.editable) ? editableImage : image }
-                { (gridCharacter && character) ? 
-                    <UncapIndicator 
-                        type="character"
-                        flb={character.uncap.flb || false}
-                        ulb={character.uncap.ulb || false}
-                        uncapLevel={gridCharacter.uncap_level}
-                        updateUncap={passUncapData}
-                        special={character.special}
-                    /> : '' }
-                <h3 className="CharacterName">{character?.name.en}</h3>
-            </div>
+        <div className={classes}>
+            { (props.editable) ? editableImage : image }
+            { (gridCharacter && character) ? 
+                <UncapIndicator 
+                    type="character"
+                    flb={character.uncap.flb || false}
+                    ulb={character.uncap.ulb || false}
+                    uncapLevel={gridCharacter.uncap_level}
+                    updateUncap={passUncapData}
+                    special={character.special}
+                /> : '' }
+            <h3 className="CharacterName">{character?.name.en}</h3>
         </div>
     )
 
@@ -101,9 +99,7 @@ const CharacterUnit = (props: Props) => {
     )
 
     return (
-        <div className={classes}>
-            { (gridCharacter) ? withHovercard : unitContent }
-        </div>
+        (gridCharacter) ? withHovercard : unitContent
     )
 }
 

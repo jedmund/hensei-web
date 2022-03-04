@@ -92,7 +92,8 @@
     h3 {
         color: #333;
         font-size: $font-regular;
-        font-weight: 500;
+        font-weight: $normal;
+        line-height: 1.1;
         margin: 0;
         text-align: center;
     }
