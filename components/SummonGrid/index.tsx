@@ -56,7 +56,7 @@ const SummonGrid = (props: Props) => {
     useEffect(() => {        
         if (!loading && !firstLoadComplete) {
             // If user is logged in and matches
-            if ((cookies.user && party.user && cookies.user.user_id === party.user.id) || props.new)
+            if ((cookies.account && party.user && cookies.account.user_id === party.user.id) || props.new)
                 appState.party.editable = true
             else            
                 appState.party.editable = false
