@@ -1,5 +1,4 @@
 import React from 'react'
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 import Party from '~components/Party'
@@ -9,9 +8,6 @@ const PartyRoute: React.FC = () => {
 
     return (
         <div id="Content">
-            <Head>
-                <title>Party</title>
-            </Head>
             <Party slug={slug as string} />
         </div>
     )
