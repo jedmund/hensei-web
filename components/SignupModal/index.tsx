@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
+import { AxiosResponse } from 'axios'
 
 import * as Dialog from '@radix-ui/react-dialog'
 
@@ -61,27 +62,51 @@ const SignupModal = (props: Props) => {
 
         if (formValid)
             api.endpoints.users.create(body)
-                .then((response) => {
-                    // Set cookies
-                    setCookies('user', response.data.user, { path: '/'})
-                    
-                    // Set states
-                    accountState.account.authorized = true
-                    accountState.account.user = {
-                        id: response.data.user.id,
-                        username: response.data.user.username,
-                        picture: 'gran',
-                        element: 'water'
-                    }
+                .then(response => {
+                    storeCookieInfo(response)
+                    return response.data.user.user_id
+                })
+                .then(id => fetchUserInfo(id))
+                .then(infoResponse => storeUserInfo(infoResponse))
+    }
 
-                    // Close the modal
-                    setOpen(false)
-                }, (error) => {
-                    console.error(error)
-                })
-                .catch(error => {
-                    console.error(error)
-                })
+    function storeCookieInfo(response: AxiosResponse) {
+        const user = response.data.user
+
+        const cookieObj = {
+            user_id: user.id,
+            username: user.username,
+            access_token: response.data.access_token
+        }
+
+        setCookies('account', cookieObj, { path: '/'})
+    }
+
+    function fetchUserInfo(id: string) {
+        return api.userInfo(id)
+    }
+
+    function storeUserInfo(response: AxiosResponse) {
+        const user = response.data.user
+
+        const cookieObj = {
+            picture: user.picture.picture,
+            element: user.picture.element,
+            language: user.language,
+        }
+
+        setCookies('user', cookieObj, { path: '/'})
+
+        accountState.account.language = user.language
+        accountState.account.user = {
+            id: user.id,
+            username: user.username,
+            picture: user.picture.picture,
+            element: user.picture.element
+        }
+
+        accountState.account.authorized = true
+        setOpen(false)
     }
 
     function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -143,7 +168,6 @@ const SignupModal = (props: Props) => {
                 break
         }
 
-        setErrors(newErrors)
         setFormValid(validateForm(newErrors))
     }
 
@@ -176,7 +200,6 @@ const SignupModal = (props: Props) => {
                 break
         }
 
-        setErrors(newErrors)
         setFormValid(validateForm(newErrors))
     }
 
