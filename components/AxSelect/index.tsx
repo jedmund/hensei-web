@@ -65,11 +65,11 @@ const AXSelect = (props: Props) => {
 
     useEffect(() => {
         props.sendValues(primaryAxModifier, primaryAxValue, secondaryAxModifier, secondaryAxValue)
-    }, [primaryAxModifier, primaryAxValue, secondaryAxModifier, secondaryAxValue])
+    }, [props, primaryAxModifier, primaryAxValue, secondaryAxModifier, secondaryAxValue])
 
     useEffect(() => {
         props.sendValidity(primaryAxValue > 0 && errors.axValue1 === '' && errors.axValue2 === '')
-    }, [primaryAxValue, errors])
+    }, [props, primaryAxValue, errors])
 
     // Classes
     const secondarySetClasses = classNames({

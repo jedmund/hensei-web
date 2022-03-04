@@ -44,7 +44,8 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(function us
         },
         series: props.series,
         slot: props.slot,
-        group: -1
+        group: -1,
+        order: 0
     }
 
     const organizeWeaponKeys = useCallback((weaponKeys: WeaponKey[]) => {
@@ -74,7 +75,7 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(function us
         }
 
         fetchWeaponKeys()
-    }, [organizeWeaponKeys])
+    }, [props.series, props.slot, organizeWeaponKeys])
 
     function weaponKeyGroup(index: number) {
         ['α','β','γ','Δ'].sort((a, b) => a.localeCompare(b, 'el'))

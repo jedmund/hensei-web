@@ -5,6 +5,6 @@ interface GridWeapon {
     object: Weapon
     uncap_level: number
     element: number
-    weapon_keys?: WeaponKey[]
-    ax?: SimpleAxSkill[]
+    weapon_keys?: Array<WeaponKey>
+    ax?: Array<SimpleAxSkill>
 }
