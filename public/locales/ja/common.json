@@ -133,6 +133,11 @@
             "summons": "召喚石"
         }
     },
+    "saved": {
+        "title": "保存した編成",
+        "loading": "ロード中...",
+        "not_found": "編成はまだ保存していません"
+    },
     "teams": {
         "title": "編成一覧",
         "loading": "ロード中...",

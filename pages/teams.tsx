@@ -3,8 +3,8 @@ import Head from 'next/head'
 
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
-
 import { useTranslation } from 'next-i18next'
+
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import clonedeep from 'lodash.clonedeep'

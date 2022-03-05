@@ -132,6 +132,11 @@
             "summons": "Summons"
         }
     },
+    "saved": {
+        "title": "Your saved Teams",
+        "loading": "Loading saved teams...",
+        "not_found": "You haven't saved any teams"
+    },
     "teams": {
         "title": "Discover Teams",
         "loading": "Loading teams...",
