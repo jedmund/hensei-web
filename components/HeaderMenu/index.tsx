@@ -40,7 +40,6 @@ const HeaderMenu = (props: Props) => {
         const language = (value) ? 'ja' : 'en'
         setCookies('NEXT_LOCALE', language, { path: '/'})
         router.push(router.asPath, undefined, { locale: language })
-        // router.reload()
     } 
 
     function authItems() {

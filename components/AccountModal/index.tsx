@@ -24,12 +24,11 @@ const AccountModal = () => {
     const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
 
     // Cookies
-    const [accountCookies] = useCookies(['account'])
-    const [userCookies, setUserCookies] = useCookies(['user'])
+    const [cookies, setCookies] = useCookies()
 
-    const headers = (accountCookies.account != null) ? {
+    const headers = (cookies.account != null) ? {
         headers: {
-            'Authorization': `Bearer ${accountCookies.account.access_token}`
+            'Authorization': `Bearer ${cookies.account.access_token}`
         }
     } : {}
     
@@ -45,9 +44,10 @@ const AccountModal = () => {
     const privateSelect = React.createRef<HTMLInputElement>()
 
     useEffect(() => {
-        if (userCookies.user) setPicture(userCookies.user.picture)
-        if (userCookies.user) setLanguage(userCookies.user.language)
-    }, [userCookies])
+        console.log(cookies.user)
+        if (cookies.user) setPicture(cookies.user.picture)
+        if (cookies.user) setLanguage(cookies.user.language)
+    }, [cookies])
 
     const pictureOptions = (
             pictureData.sort((a, b) => (a.name.en > b.name.en) ? 1 : -1).map((item, i) => {
@@ -83,7 +83,7 @@ const AccountModal = () => {
             }
         }
 
-        api.endpoints.users.update(accountCookies.account.user_id, object, headers)
+        api.endpoints.users.update(cookies.account.user_id, object, headers)
             .then(response => {
                 const user = response.data.user
 
@@ -93,9 +93,8 @@ const AccountModal = () => {
                     language: user.language,
                 }
         
-                setUserCookies('user', cookieObj, { path: '/'})
+                setCookies('user', cookieObj, { path: '/'})
 
-                accountState.account.language = user.language
                 accountState.account.user = {
                     id: user.id,
                     username: user.username,
@@ -104,7 +103,15 @@ const AccountModal = () => {
                 }
 
                 setOpen(false)
+                changeLanguage(user.language)
             })
+    }
+
+    function changeLanguage(newLanguage: string) {
+        if (newLanguage !== router.locale) {
+            setCookies('NEXT_LOCALE', language, { path: '/'})
+            router.push(router.asPath, undefined, { locale: language })
+        }
     }
 
     function openChange(open: boolean) {
@@ -158,7 +165,7 @@ const AccountModal = () => {
 
                             <select name="language" onChange={handleLanguageChange} value={language} ref={languageSelect}>
                                 <option key="en" value="en">{t('modals.settings.language.english')}</option>
-                                <option key="jp" value="jp">{t('modals.settings.language.japanese')}</option>
+                                <option key="jp" value="ja">{t('modals.settings.language.japanese')}</option>
                             </select>
                         </div>
                         <div className="field">
