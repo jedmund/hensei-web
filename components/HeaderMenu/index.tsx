@@ -104,20 +104,20 @@ const HeaderMenu = (props: Props) => {
                     </li>
                 </div>
                 <div className="MenuGroup">
-                    <AboutModal />
+                    <li className="MenuItem">
+                        <Link href='/teams'>{t('menu.teams')}</Link>
+                    </li>
+
+                    <li className="MenuItem disabled">
+                        <div>
+                            <span>{t('menu.guides')}</span>
+                            <i className="tag">{t('menu.logout')}</i>
+                        </div>
+                    </li>
                 </div>
                 <div className="MenuGroup">
-                        <li className="MenuItem">
-                            <Link href='/teams'>{t('menu.teams')}</Link>
-                        </li>
-
-                        <li className="MenuItem disabled">
-                            <div>
-                                <span>{t('menu.guides')}</span>
-                                <i className="tag">{t('menu.logout')}</i>
-                            </div>
-                        </li>
-                    </div>
+                    <AboutModal />
+                </div>
                 <div className="MenuGroup">
                     <LoginModal />
                     <SignupModal />
