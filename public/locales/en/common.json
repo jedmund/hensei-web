@@ -8,6 +8,12 @@
         "new": "New",
         "wiki": "View more on gbf.wiki"
     },
+    "summons": {
+        "main": "Main Summon",
+        "friend": "Friend Summon",
+        "summons": "Summons",
+        "subaura": "Sub Aura Summons"
+    },
     "modals": {
         "about": {
             "title": "About"

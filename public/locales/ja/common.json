@@ -8,6 +8,12 @@
         "new": "作成",
         "wiki": "gbf.wikiで詳しく見る"
     },
+    "summons": {
+        "main": "メイン",
+        "friend": "フレンド",
+        "summons": "召喚石",
+        "subaura": "サブ加護召喚石"
+    },
     "modals": {
         "about": {
             "title": "このサイトについて"

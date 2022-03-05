@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
@@ -25,6 +26,8 @@ interface Props {
 const SummonGrid = (props: Props) => {
     // Constants
     const numSummons: number = 4
+
+    const { t } = useTranslation('common')
 
     // Cookies
     const [cookies, _] = useCookies(['account'])
@@ -239,7 +242,7 @@ const SummonGrid = (props: Props) => {
     // Render: JSX components
     const mainSummonElement = (
         <div className="LabeledUnit">
-            <div className="Label">Main Summon</div>
+            <div className="Label">{t('summons.main')}</div>
             <SummonUnit
                 gridSummon={grid.summons.mainSummon}
                 editable={party.editable}
@@ -254,7 +257,7 @@ const SummonGrid = (props: Props) => {
 
     const friendSummonElement = (
         <div className="LabeledUnit">
-            <div className="Label">Friend Summon</div>
+            <div className="Label">{t('summons.friend')}</div>
             <SummonUnit
                 gridSummon={grid.summons.friendSummon}
                 editable={party.editable}
@@ -268,7 +271,7 @@ const SummonGrid = (props: Props) => {
     )
     const summonGridElement = (
         <div id="LabeledGrid">
-            <div className="Label">Summons</div>
+            <div className="Label">{t('summons.summons')}</div>
             <ul id="grid_summons">
                 {Array.from(Array(numSummons)).map((x, i) => {
                     return (<li key={`grid_unit_${i}`} >
