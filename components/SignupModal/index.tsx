@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
+import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
 
@@ -27,6 +28,7 @@ interface ErrorMap {
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const SignupModal = (props: Props) => {
+    const router = useRouter()
     const { t } = useTranslation('common')
     
     // Set up form states and error handling
@@ -59,7 +61,8 @@ const SignupModal = (props: Props) => {
                 username: usernameInput.current?.value,
                 email: emailInput.current?.value,
                 password: passwordInput.current?.value,
-                password_confirmation: passwordConfirmationInput.current?.value
+                password_confirmation: passwordConfirmationInput.current?.value,
+                language: router.locale
             }
         }
 
