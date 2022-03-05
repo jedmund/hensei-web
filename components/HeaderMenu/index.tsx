@@ -111,7 +111,7 @@ const HeaderMenu = (props: Props) => {
                     <li className="MenuItem disabled">
                         <div>
                             <span>{t('menu.guides')}</span>
-                            <i className="tag">{t('menu.logout')}</i>
+                            <i className="tag">{t('menu.coming_soon')}</i>
                         </div>
                     </li>
                 </div>
