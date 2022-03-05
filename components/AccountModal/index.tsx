@@ -109,8 +109,8 @@ const AccountModal = () => {
 
     function changeLanguage(newLanguage: string) {
         if (newLanguage !== router.locale) {
-            setCookies('NEXT_LOCALE', language, { path: '/'})
-            router.push(router.asPath, undefined, { locale: language })
+            setCookies('NEXT_LOCALE', newLanguage, { path: '/'})
+            router.push(router.asPath, undefined, { locale: newLanguage })
         }
     }
 

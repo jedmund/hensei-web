@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useCookies } from 'react-cookie'
+import Router, { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import { AxiosResponse } from 'axios'
 
@@ -25,6 +26,7 @@ interface ErrorMap {
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const LoginModal = (props: Props) => {
+    const router = useRouter()
     const { t } = useTranslation('common')
 
     // Set up form states and error handling
@@ -126,8 +128,6 @@ const LoginModal = (props: Props) => {
     function storeUserInfo(response: AxiosResponse) {
         const user = response.data.user
 
-        setCookies('NEXT_LOCALE', user.language, { path: '/' })
-
         const cookieObj = {
             picture: user.picture.picture,
             element: user.picture.element,
@@ -144,7 +144,16 @@ const LoginModal = (props: Props) => {
         }
 
         accountState.account.authorized = true
+
         setOpen(false)
+        changeLanguage(user.language)
+    }
+
+    function changeLanguage(newLanguage: string) {
+        if (newLanguage !== router.locale) {
+            setCookies('NEXT_LOCALE', newLanguage, { path: '/'})
+            router.push(router.asPath, undefined, { locale: newLanguage })
+        }
     }
 
     function openChange(open: boolean) {
