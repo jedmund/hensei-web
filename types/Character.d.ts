@@ -8,8 +8,9 @@ interface Character {
     gender: number
     max_level: number
     name: { 
+        [key: string]: string
         en: string
-        jp: string
+        ja: string
     }
     hp: {
         min_hp: number

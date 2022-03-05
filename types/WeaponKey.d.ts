@@ -1,8 +1,9 @@
 interface WeaponKey {
     id: string
     name: {
+        [key: string]: string
         en: string,
-        jp: string
+        ja: string
     }
     series: integer
     slot: integer
