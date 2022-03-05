@@ -1,7 +1,8 @@
 interface Picture {
     name: {
+        [key: string]: string
         en: string
-        jp: string
+        ja: string
     }
     filename: string
     element: string
@@ -11,7 +12,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Gran 2019",
-            jp: "グラン"
+            ja: "グラン"
         },
         filename: "gran_19",
         element: "water"
@@ -19,7 +20,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Djeeta 2019",
-            jp: "ジータ"
+            ja: "ジータ"
         },
         filename: "djeeta_19",
         element: "fire"
@@ -27,7 +28,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Gran 2020",
-            jp: "グラン"
+            ja: "グラン"
         },
         filename: "gran_20",
         element: "water"
@@ -35,7 +36,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Djeeta 2020",
-            jp: "ジータ"
+            ja: "ジータ"
         },
         filename: "djeeta_20",
         element: "fire"
@@ -43,7 +44,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Gran - Farer of the Skies",
-            jp: "空駆ける新鋭 グランver"
+            ja: "空駆ける新鋭 グランver"
         },
         filename: "gran",
         element: "water"
@@ -51,7 +52,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Djeeta - Farer of the Skies",
-            jp: "空駆ける新鋭 ジータver"
+            ja: "空駆ける新鋭 ジータver"
         },
         filename: "djeeta",
         element: "fire"
@@ -59,7 +60,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Cassius",
-            jp: "カシウス"
+            ja: "カシウス"
         },
         filename: "cassius",
         element: "dark"
@@ -67,7 +68,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Percival",
-            jp: "パーシヴァル"
+            ja: "パーシヴァル"
         },
         filename: "percival",
         element: "fire"
@@ -75,7 +76,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Vane",
-            jp: "ヴェイン"
+            ja: "ヴェイン"
         },
         filename: "vane",
         element: "water"
@@ -83,7 +84,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Heles",
-            jp: "ヘルエス"
+            ja: "ヘルエス"
         },
         filename: "heles",
         element: "fire"
@@ -91,7 +92,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Lunalu",
-            jp: "ルナール"
+            ja: "ルナール"
         },
         filename: "lunalu",
         element: "dark"
@@ -99,7 +100,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Catura",
-            jp: "シャトラ"
+            ja: "シャトラ"
         },
         filename: "catura",
         element: "wind"
@@ -107,7 +108,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Yuisis",
-            jp: "ユイシス"
+            ja: "ユイシス"
         },
         filename: "yuisis",
         element: "wind"
@@ -115,7 +116,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Meg",
-            jp: "メグ"
+            ja: "メグ"
         },
         filename: "meg",
         element: "dark"
@@ -123,7 +124,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Seofon",
-            jp: "シエテ"
+            ja: "シエテ"
         },
         filename: "seofon",
         element: "wind"
@@ -131,7 +132,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Quatre",
-            jp: "カトル"
+            ja: "カトル"
         },
         filename: "quatre",
         element: "water"
@@ -139,7 +140,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Tien",
-            jp: "エッセル"
+            ja: "エッセル"
         },
         filename: "tien",
         element: "fire"
@@ -147,7 +148,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Seox",
-            jp: "シス"
+            ja: "シス"
         },
         filename: "seox",
         element: "dark"
@@ -155,7 +156,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Aoidos",
-            jp: "アオイドス"
+            ja: "アオイドス"
         },
         filename: "aoidos",
         element: "fire"
@@ -163,7 +164,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Sandalphon",
-            jp: "サンダルフォン"
+            ja: "サンダルフォン"
         },
         filename: "sandalphon",
         element: "light"
@@ -171,7 +172,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Vikala",
-            jp: "ビカラ"
+            ja: "ビカラ"
         },
         filename: "vikala",
         element: "dark"
@@ -179,7 +180,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Belial",
-            jp: "ベリアル"
+            ja: "ベリアル"
         },
         filename: "belial",
         element: "dark"
@@ -187,7 +188,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Zeta",
-            jp: "ゼタ"
+            ja: "ゼタ"
         },
         filename: "zeta",
         element: "fire"
@@ -195,7 +196,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Beatrix",
-            jp: "ベアトリックス"
+            ja: "ベアトリックス"
         },
         filename: "beatrix",
         element: "earth"
@@ -203,7 +204,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Yuel",
-            jp: "ユエル"
+            ja: "ユエル"
         },
         filename: "yuel",
         element: "fire"
@@ -211,7 +212,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Societte",
-            jp: "ソシエ"
+            ja: "ソシエ"
         },
         filename: "societte",
         element: "water"
@@ -219,7 +220,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Kumbhira",
-            jp: "クビラ"
+            ja: "クビラ"
         },
         filename: "kumbhira",
         element: "light"
@@ -227,7 +228,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Narmaya",
-            jp: "ナルメア"
+            ja: "ナルメア"
         },
         filename: "narmaya",
         element: "dark"
@@ -235,7 +236,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Siegfried",
-            jp: "ジークフリード"
+            ja: "ジークフリード"
         },
         filename: "siegfried",
         element: "earth"
@@ -243,7 +244,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Naoise",
-            jp: "ノイシュ"
+            ja: "ノイシュ"
         },
         filename: "naoise",
         element: "light"
@@ -251,7 +252,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Scathacha",
-            jp: "スカーサハ"
+            ja: "スカーサハ"
         },
         filename: "scathacha",
         element: "wind"
@@ -259,7 +260,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Seruel",
-            jp: "セルエル"
+            ja: "セルエル"
         },
         filename: "seruel",
         element: "light"
@@ -267,7 +268,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Shiva",
-            jp: "シヴァ"
+            ja: "シヴァ"
         },
         filename: "shiva",
         element: "fire"
@@ -275,7 +276,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Europa",
-            jp: "エウロペ"
+            ja: "エウロペ"
         },
         filename: "europa",
         element: "water"
@@ -283,7 +284,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Grimnir",
-            jp: "グリームニル"
+            ja: "グリームニル"
         },
         filename: "grimnir",
         element: "wind"
@@ -291,7 +292,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Alexiel",
-            jp: "ブローディア"
+            ja: "ブローディア"
         },
         filename: "alexiel",
         element: "earth"
@@ -299,7 +300,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Sierokarte",
-            jp: "シェロカルテ"
+            ja: "シェロカルテ"
         },
         filename: "siero",
         element: "wind"
@@ -307,7 +308,7 @@ export const pictureData: Picture[] = [
     {
         name: {
             en: "Vajra",
-            jp: "ヴァジラ"
+            ja: "ヴァジラ"
         },
         filename: "vajra",
         element: "water"
