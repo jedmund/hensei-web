@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useCookies } from 'react-cookie'
 
 import api from '~utils/api'
@@ -175,6 +176,25 @@ const ProfileRoute: React.FC = () => {
             </section>
         </div>
     )
+}
+
+export async function getStaticPaths() {
+    return {
+        paths: [
+            // Object variant:
+            { params: { username: 'string' } },
+        ],
+        fallback: true,
+    }
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+            // Will be passed to the page component as props
+        },
+    }
 }
 
 export default ProfileRoute
