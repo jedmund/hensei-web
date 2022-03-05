@@ -18,6 +18,7 @@ interface Props {
 
 interface KeyNames {
     [key: string]: {
+        [key: string]: string
         en: string,
         ja: string
     }
@@ -104,7 +105,7 @@ const WeaponHovercard = (props: Props) => {
     const keysSection = (
         <section className="weaponKeys">
             { (WeaponKeyNames[props.gridWeapon.object.series]) ?
-                <h5 className={tintElement}>{ WeaponKeyNames[props.gridWeapon.object.series].en }s</h5> : '' 
+                <h5 className={tintElement}>{ WeaponKeyNames[props.gridWeapon.object.series][locale] }{ (locale === 'en') ? 's' : '' }</h5> : '' 
             }
 
             { (props.gridWeapon.weapon_keys) ?
@@ -120,7 +121,7 @@ const WeaponHovercard = (props: Props) => {
 
     const axSection = (
         <section className="axSkills">
-            <h5 className={tintElement}>AX Skills</h5>
+            <h5 className={tintElement}>{t('modals.weapon.subtitles.ax_skills')}</h5>
             <div className="skills">
                 <div className="primary axSkill">
                     <img src={`/icons/ax/primary_${ (props.gridWeapon.ax) ? props.gridWeapon.ax[0].modifier : '' }.png`} />
