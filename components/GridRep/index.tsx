@@ -109,7 +109,7 @@ const GridRep = (props: Props) => {
             </div>
         </div>
     )
-
+    
     const detailsWithUsername = (
         <div className="Details">
             <div className="top">
@@ -117,7 +117,7 @@ const GridRep = (props: Props) => {
                     <h2 className={titleClass} onClick={navigate}>{ (props.name) ? props.name : t('no_title') }</h2>
                     <div className={raidClass}>{ (props.raid) ? props.raid.name[locale] : t('no_raid') }</div>
                 </div>
-                { (!props.user || (account.user && account.user.id !== props.user.id)) ? 
+                { (account.authorized && (props.user && account.user && account.user.id !== props.user.id)) ? 
                     <Button 
                         active={props.favorited} 
                         icon="save" 
