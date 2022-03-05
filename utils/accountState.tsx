@@ -5,7 +5,6 @@ interface AccountState {
     
     account: {
         authorized: boolean
-        language: 'en' | 'jp'
         user: {
             id: string
             username: string
@@ -18,7 +17,6 @@ interface AccountState {
 export const initialAccountState: AccountState = {
     account: {
         authorized: false,
-        language: 'en',
         user: undefined
     }
 }
