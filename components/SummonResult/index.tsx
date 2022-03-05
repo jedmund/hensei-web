@@ -1,4 +1,6 @@
 import React from 'react'
+import { useRouter } from 'next/router'
+
 import UncapIndicator from '~components/UncapIndicator'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
@@ -11,28 +13,29 @@ interface Props {
 
 const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 
-class SummonResult extends React.Component<Props> {
-    render() {
-        const summon = this.props.data
+const SummonResult = (props: Props) => {
+    const router = useRouter()
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
 
-        return (
-            <li className="SummonResult" onClick={this.props.onClick}>
-                <img alt={summon.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`} />
-                <div className="Info">
-                    <h5>{summon.name.en}</h5>
-                    <UncapIndicator 
-                        type="summon"
-                        flb={summon.uncap.flb}
-                        ulb={summon.uncap.ulb}
-                        special={false}
-                    />
-                    <div className="tags">
-                        <WeaponLabelIcon labelType={Element[summon.element]} />
-                    </div>
+    const summon = props.data
+    
+    return (
+        <li className="SummonResult" onClick={props.onClick}>
+            <img alt={summon.name[locale]} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`} />
+            <div className="Info">
+                <h5>{summon.name[locale]}</h5>
+                <UncapIndicator 
+                    type="summon"
+                    flb={summon.uncap.flb}
+                    ulb={summon.uncap.ulb}
+                    special={false}
+                />
+                <div className="tags">
+                    <WeaponLabelIcon labelType={Element[summon.element]} />
                 </div>
-            </li>
-        )
-    }
+            </div>
+        </li>
+    )
 }
 
 export default SummonResult
