@@ -2,7 +2,7 @@
     "buttons": {
         "copy": "Copy link",
         "delete": "Delete team",
-        "edit_info": "Edit info",
+        "show_info": "Edit info",
         "hide_info": "Hide info",
         "menu": "Menu",
         "new": "New",
