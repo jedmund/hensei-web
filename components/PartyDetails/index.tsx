@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Head from 'next/head'
+import Router, { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import Linkify from 'react-linkify'
 import classNames from 'classnames'
@@ -20,6 +21,7 @@ interface Props {
 
 const PartyDetails = (props: Props) => {
     const { party, raids } = useSnapshot(appState)
+    const router = useRouter()
 
     const nameInput = React.createRef<HTMLInputElement>()
     const descriptionInput = React.createRef<HTMLTextAreaElement>()
@@ -113,7 +115,7 @@ const PartyDetails = (props: Props) => {
 
         if (party.name != null)
             title = `${party.name} by ${username}`
-        else if (party.name == null && party.editable)
+        else if (party.name == null && party.editable && router.route === '/new')
             title = "New Team"
         else
             title = `Untitled team by ${username}`
