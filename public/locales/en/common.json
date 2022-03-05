@@ -8,6 +8,34 @@
         "new": "New",
         "wiki": "View more on gbf.wiki"
     },
+    "elements": {
+        "null": "Null",
+        "wind": "Wind",
+        "fire": "Fire",
+        "water": "Water",
+        "earth": "Earth",
+        "dark": "Dark",
+        "light": "Light",
+        "full": {
+            "all": "All elements",
+            "null": "Null",
+            "wind": "Wind",
+            "fire": "Fire",
+            "water": "Water",
+            "earth": "Earth",
+            "dark": "Dark",
+            "light": "Light"
+        }
+    },
+    "recency": {
+        "all_time": "All time",
+        "last_day": "Last day",
+        "last_week": "Last week",
+        "last_month": "Last month",
+        "last_3_months": "Last 3 months",
+        "last_6_months": "Last 6 months",
+        "last_year": "Last year"
+    },
     "summons": {
         "main": "Main Summon",
         "friend": "Friend Summon",
@@ -66,5 +94,8 @@
         "loading": "Loading teams...",
         "not_found": "No teams found"
     },
-    "coming_soon": "Coming Soon"
+    "coming_soon": "Coming Soon",
+    "no_title": "Untitled",
+    "no_raid": "No raid",
+    "no_user": "Anonymous"
 }

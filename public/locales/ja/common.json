@@ -8,6 +8,34 @@
         "new": "作成",
         "wiki": "gbf.wikiで詳しく見る"
     },
+    "elements": {
+        "null": "無",
+        "wind": "風",
+        "fire": "火",
+        "water": "水",
+        "earth": "土",
+        "dark": "闇",
+        "light": "光",
+        "full": {
+            "all": "全属性",
+            "null": "無属性",
+            "wind": "風属性",
+            "fire": "火属性",
+            "water": "水属性",
+            "earth": "土属性",
+            "dark": "闇属性",
+            "light": "光属性"
+        }
+    },
+    "recency": {
+        "all_time": "全ての期間",
+        "last_day": "1日",
+        "last_week": "7日",
+        "last_month": "1ヶ月",
+        "last_3_months": "3ヶ月",
+        "last_6_months": "6ヶ月",
+        "last_year": "1年"
+    },
     "summons": {
         "main": "メイン",
         "friend": "フレンド",
@@ -66,6 +94,9 @@
         "loading": "ロード中...",
         "not_found": "編成は見つかりませんでした"
     },
-    "coming_soon": "開発中"
+    "coming_soon": "開発中",
+    "no_title": "無題",
+    "no_raid": "マルチなし",
+    "no_user": "無名"
 }
    

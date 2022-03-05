@@ -1,6 +1,8 @@
 
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
 import { accountState } from '~utils/accountState'
@@ -29,6 +31,10 @@ const GridRep = (props: Props) => {
     const numWeapons: number = 9
 
     const { account } = useSnapshot(accountState)
+
+    const router = useRouter()
+    const { t } = useTranslation('common')
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
 
     const [mainhand, setMainhand] = useState<Weapon>()
     const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
@@ -66,12 +72,12 @@ const GridRep = (props: Props) => {
 
     function generateMainhandImage() {
         return (mainhand) ?
-            <img alt={mainhand?.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand?.granblue_id}.jpg`} /> : ''
+            <img alt={mainhand?.name[locale]} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand?.granblue_id}.jpg`} /> : ''
     }
 
     function generateGridImage(position: number) {
         return (weapons[position]) ?
-            <img alt={weapons[position]?.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`} /> : ''
+            <img alt={weapons[position]?.name[locale]} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`} /> : ''
     }
 
     function sendSaveData() {
@@ -96,10 +102,10 @@ const GridRep = (props: Props) => {
 
     const details = (
         <div className="Details">
-            <h2 className={titleClass} onClick={navigate}>{ (props.name) ? props.name : 'Untitled' }</h2>
+            <h2 className={titleClass} onClick={navigate}>{ (props.name) ? props.name : t('no_title') }</h2>
             <div className="bottom">
-                <div className={raidClass}>{ (props.raid) ? props.raid.name.en : 'No raid set' }</div>
-                <time className="last-updated" dateTime={props.createdAt.toISOString()}>{formatTimeAgo(props.createdAt, 'en-us')}</time>
+                <div className={raidClass}>{ (props.raid) ? props.raid.name[locale] : t('no_raid') }</div>
+                <time className="last-updated" dateTime={props.createdAt.toISOString()}>{formatTimeAgo(props.createdAt, locale)}</time>
             </div>
         </div>
     )
@@ -108,8 +114,8 @@ const GridRep = (props: Props) => {
         <div className="Details">
             <div className="top">
                 <div className="info">
-                    <h2 className={titleClass} onClick={navigate}>{ (props.name) ? props.name : 'Untitled' }</h2>
-                    <div className={raidClass}>{ (props.raid) ? props.raid.name.en : 'No raid set' }</div>
+                    <h2 className={titleClass} onClick={navigate}>{ (props.name) ? props.name : t('no_title') }</h2>
+                    <div className={raidClass}>{ (props.raid) ? props.raid.name[locale] : t('no_raid') }</div>
                 </div>
                 { (!props.user || (account.user && account.user.id !== props.user.id)) ? 
                     <Button 
@@ -122,9 +128,9 @@ const GridRep = (props: Props) => {
             <div className="bottom">
                 <div className={userClass}>
                     { userImage() }
-                    { (props.user) ? props.user.username : 'Anonymous' }
+                    { (props.user) ? props.user.username : t('no_user') }
                 </div>
-                <time className="last-updated" dateTime={props.createdAt.toISOString()}>{formatTimeAgo(props.createdAt, 'en-us')}</time>
+                <time className="last-updated" dateTime={props.createdAt.toISOString()}>{formatTimeAgo(props.createdAt, locale)}</time>
             </div>
         </div>
     )

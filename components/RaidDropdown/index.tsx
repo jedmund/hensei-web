@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 
 import { appState } from '~utils/appState'
 import api from '~utils/api'
@@ -14,6 +16,10 @@ interface Props {
 }
 
 const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(props, ref) {
+    const router = useRouter()
+    const { t } = useTranslation('common')
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
+
     const [raids, setRaids] = useState<Raid[][]>()
 
     const raidGroups = [
@@ -37,7 +43,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
                 id: '0',
                 name: {
                     en: 'All raids',
-                    jp: '全て'
+                    ja: '全てのマルチ'
                 },
                 level: 0,
                 group: 0,
@@ -65,7 +71,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
         const options = raids && raids.length > 0 && raids[index].length > 0 && 
             raids[index].sort((a, b) => a.element - b.element).map((item, i) => {
                 return (
-                    <option key={i} value={item.id}>{item.name.en}</option>
+                    <option key={i} value={item.id}>{item.name[locale]}</option>
                 )
             })
         
