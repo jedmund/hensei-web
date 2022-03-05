@@ -1,8 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
+
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
+
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+
 import clonedeep from 'lodash.clonedeep'
+
 
 import api from '~utils/api'
 
@@ -12,6 +18,7 @@ import FilterBar from '~components/FilterBar'
 
 const TeamsRoute: React.FC = () => {
     const router = useRouter()
+    const { t } = useTranslation('common')
 
     // Cookies
     const [cookies] = useCookies(['account'])
@@ -148,7 +155,7 @@ const TeamsRoute: React.FC = () => {
     return (
         <div id="Teams">
             <Head>
-                <title>Discover Teams</title>
+                <title>{ t('teams.title') }</title>
 
                 <meta property="og:title" content="Discover Teams" />
                 <meta property="og:description" content="Find different Granblue Fantasy teams by raid, element or recency" />
@@ -161,7 +168,7 @@ const TeamsRoute: React.FC = () => {
                 <meta name="twitter:description" content="Find different Granblue Fantasy teams by raid, element or recency" />
             </Head>
             <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
-                <h1>Discover Teams</h1>
+                <h1>{t('teams.title')}</h1>
             </FilterBar>
             
             <section>
@@ -188,12 +195,21 @@ const TeamsRoute: React.FC = () => {
 
                 { (parties.length == 0) ?
                     <div id="NotFound">
-                        <h2>{ (loading) ? 'Loading teams...' : 'No teams found' }</h2>
+                        <h2>{ (loading) ? t('teams.loading') : t('teams.not_found') }</h2>
                     </div> 
                 : '' }
             </section>
         </div>
     )
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+            // Will be passed to the page component as props
+        },
+    }
 }
 
 export default TeamsRoute

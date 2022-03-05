@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useCookies, CookiesProvider } from 'react-cookie'
+import { appWithTranslation } from 'next-i18next'
 
 import type { AppProps } from 'next/app'
 import Layout from '~components/Layout'
@@ -37,4 +38,4 @@ function MyApp({ Component, pageProps }: AppProps) {
     )
 }
 
-export default MyApp
+export default appWithTranslation(MyApp)
