@@ -29,7 +29,7 @@ const HeaderMenu = (props: Props) => {
 
     const [checked, setChecked] = useState(false)
 
-    console.log(`Currently: ${checked} ${cookies['NEXT_LOCALE']}`)
+    // console.log(`Currently: ${checked} ${cookies['NEXT_LOCALE']}`)
 
     useEffect(() => {
         const locale = cookies['NEXT_LOCALE']
@@ -37,11 +37,10 @@ const HeaderMenu = (props: Props) => {
     }, [cookies])
 
     function handleCheckedChange(value: boolean) {
-        setChecked(value)
-        setCookies('NEXT_LOCALE', (value) ? 'ja' : 'en', { path: '/'})
-
-        // TODO: How do we persist the current page when changing languages?
-        window.location.href = '/'
+        const language = (value) ? 'ja' : 'en'
+        setCookies('NEXT_LOCALE', language, { path: '/'})
+        router.push(router.asPath, undefined, { locale: language })
+        // router.reload()
     } 
 
     function authItems() {
