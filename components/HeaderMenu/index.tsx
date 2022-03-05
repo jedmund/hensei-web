@@ -1,7 +1,10 @@
-import React from 'react'
-import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
+import Router, { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+
+import Link from 'next/link'
+import * as Switch from '@radix-ui/react-switch'
 
 import AboutModal from '~components/AboutModal'
 import AccountModal from '~components/AccountModal'
@@ -17,10 +20,29 @@ interface Props {
 }
 
 const HeaderMenu = (props: Props) => {
+    const router = useRouter()
     const { t } = useTranslation('common')
-
+    
     const [accountCookies] = useCookies(['account'])
     const [userCookies] = useCookies(['user'])
+    const [cookies, setCookies] = useCookies()
+
+    const [checked, setChecked] = useState(false)
+
+    console.log(`Currently: ${checked} ${cookies['NEXT_LOCALE']}`)
+
+    useEffect(() => {
+        const locale = cookies['NEXT_LOCALE']
+        setChecked((locale === 'ja') ? true : false)
+    }, [cookies])
+
+    function handleCheckedChange(value: boolean) {
+        setChecked(value)
+        setCookies('NEXT_LOCALE', (value) ? 'ja' : 'en', { path: '/'})
+
+        // TODO: How do we persist the current page when changing languages?
+        window.location.href = '/'
+    } 
 
     function authItems() {
         return (
@@ -72,6 +94,16 @@ const HeaderMenu = (props: Props) => {
     function unauthItems() {
         return (
             <ul className="Menu unauth">
+                <div className="MenuGroup">
+                    <li className="MenuItem language">
+                        <span>{t('menu.language')}</span>
+                        <Switch.Root className="Switch" onCheckedChange={handleCheckedChange} checked={checked}>
+                            <Switch.Thumb className="Thumb" />
+                            <span className="left">JP</span>
+                            <span className="right">EN</span>
+                        </Switch.Root>
+                    </li>
+                </div>
                 <div className="MenuGroup">
                     <AboutModal />
                 </div>
