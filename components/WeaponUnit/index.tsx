@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Router, { useRouter } from 'next/router'
 import classnames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
@@ -23,6 +24,9 @@ interface Props {
 
 const WeaponUnit = (props: Props) => {
     const [imageUrl, setImageUrl] = useState('')
+
+    const router = useRouter()
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
 
     const classes = classnames({
         WeaponUnit: true,
@@ -108,7 +112,7 @@ const WeaponUnit = (props: Props) => {
                     special={false}
                 /> : ''
             }
-            <h3 className="WeaponName">{weapon?.name.en}</h3>
+            <h3 className="WeaponName">{weapon?.name[locale]}</h3>
         </div>
     )
 
