@@ -1,5 +1,6 @@
 import React from 'react'
-import './index.scss'
+import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
 import { appState } from '~utils/appState'
 
@@ -8,7 +9,9 @@ import Segment from '~components/Segment'
 import ToggleSwitch from '~components/ToggleSwitch'
 
 import { GridType } from '~utils/enums'
-import { useSnapshot } from 'valtio'
+
+
+import './index.scss'
 
 interface Props {
     selectedTab: GridType
@@ -17,6 +20,8 @@ interface Props {
 }
 
 const PartySegmentedControl = (props: Props) => {
+    const { t } = useTranslation('common')
+
     const { party, grid } = useSnapshot(appState)
 
     function getElement() {
@@ -62,21 +67,21 @@ const PartySegmentedControl = (props: Props) => {
                     name="characters"
                     selected={props.selectedTab == GridType.Character}
                     onClick={props.onClick}
-                >Characters</Segment>
+                >{t('party.segmented_control.characters')}</Segment>
 
                 <Segment 
                     groupName="grid"
                     name="weapons"
                     selected={props.selectedTab == GridType.Weapon}
                     onClick={props.onClick}
-                >Weapons</Segment>
+                >{t('party.segmented_control.weapons')}</Segment>
 
                 <Segment 
                     groupName="grid"
                     name="summons"
                     selected={props.selectedTab == GridType.Summon}
                     onClick={props.onClick}
-                >Summons</Segment>
+                >{t('party.segmented_control.summons')}</Segment>
             </SegmentedControl>
 
             {
