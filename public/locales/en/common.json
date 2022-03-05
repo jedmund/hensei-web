@@ -1,4 +1,13 @@
 {
+    "ax": {
+        "no_skill": "No AX Skill",
+        "errors": {
+            "value_too_low": "{{name}} must be at least {{minValue}}{{suffix}}",
+            "value_too_high": "{{name}} cannot be greater than {{maxValue}}{{suffix}}",
+            "value_not_whole": "{{name}} must be a whole number",
+            "value_empty": "{{name}} must have a value"
+        }
+    },
     "buttons": {
         "copy": "Copy link",
         "delete": "Delete team",
@@ -110,6 +119,17 @@
                 "email": "Email address",
                 "password": "Password",
                 "password_confirm": "Password (again)"
+            }
+        },
+        "weapon": {
+            "title": "Modify Weapon",
+            "buttons": {
+                "confirm": "Save weapon"
+            },
+            "subtitles": {
+                "element": "Element",
+                "ax_skills": "AX Skills",
+                "weapon_keys": "Weapon Keys"
             }
         }
     },

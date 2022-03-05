@@ -1,4 +1,13 @@
 {
+    "ax": {
+        "no_skill": "EXスキルなし",
+        "errors": {
+            "value_too_low": "{{name}}は最低{{minValue}}{{suffix}}を入力してください",
+            "value_too_high": "{{name}}は最大{{maxValue}}を入力してください",
+            "value_not_whole": "{{name}}は整数でなければなりません",
+            "value_empty": "{{name}}を入力してください"
+        }
+    },
     "buttons": {
         "copy": "リンクをコピー",
         "delete": "編成を削除",
@@ -111,6 +120,17 @@
                 "email": "メールアドレス",
                 "password": "パスワード",
                 "password_confirm": "パスワード確認"
+            }
+        },
+        "weapon": {
+            "title": "武器変更",
+            "buttons": {
+                "confirm": "武器を変更する"
+            },
+            "subtitles": {
+                "element": "属性",
+                "ax_skills": "EXスキル",
+                "weapon_keys": "武器スキル"
             }
         }
     },

@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { useCookies } from 'react-cookie'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
+
 import * as Dialog from '@radix-ui/react-dialog'
 
 import AXSelect from '~components/AxSelect'
@@ -33,6 +36,10 @@ interface Props {
 }
 
 const WeaponModal = (props: Props) => {
+    const router = useRouter()
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
+    const { t } = useTranslation('common')
+    
     // Cookies
     const [cookies] = useCookies(['account'])
     const headers = (cookies.account != null) ? {
@@ -122,7 +129,7 @@ const WeaponModal = (props: Props) => {
     const elementSelect = () => {
         return (
             <section>
-                <h3>Element</h3>
+                <h3>{t('modals.weapon.subtitles.element')}</h3>
                 <ElementToggle 
                     currentElement={props.gridWeapon.element} 
                     sendValue={receiveElementValue}
@@ -134,7 +141,7 @@ const WeaponModal = (props: Props) => {
     const keySelect = () => {        
         return (
             <section>
-                <h3>Weapon Keys</h3>
+                <h3>{t('modals.weapon.subtitles.weapon_keys')}</h3>
                 { ([2, 3, 17, 22].includes(props.gridWeapon.object.series)) ? 
                     <WeaponKeyDropdown
                         currentValue={ (props.gridWeapon.weapon_keys) ? props.gridWeapon.weapon_keys[0] : undefined }
@@ -165,6 +172,7 @@ const WeaponModal = (props: Props) => {
     const axSelect = () => {
         return (
             <section>
+                <h3>{t('modals.weapon.subtitles.ax_skills')}</h3>
                 <AXSelect 
                     axType={props.gridWeapon.object.ax}
                     currentSkills={props.gridWeapon.ax}
@@ -189,8 +197,8 @@ const WeaponModal = (props: Props) => {
                 <Dialog.Content className="Weapon Dialog" onOpenAutoFocus={ (event) => event.preventDefault() }>
                     <div className="DialogHeader">
                         <div className="DialogTop">
-                            <Dialog.Title className="SubTitle">Modify Weapon</Dialog.Title>
-                            <Dialog.Title className="DialogTitle">{props.gridWeapon.object.name.en}</Dialog.Title>
+                            <Dialog.Title className="SubTitle">{t('modals.weapon.title')}</Dialog.Title>
+                            <Dialog.Title className="DialogTitle">{props.gridWeapon.object.name[locale]}</Dialog.Title>
                         </div>
                         <Dialog.Close className="DialogClose" asChild>
                             <span>
@@ -203,7 +211,7 @@ const WeaponModal = (props: Props) => {
                         { (props.gridWeapon.object.element == 0) ? elementSelect() : '' }
                         { ([2, 3, 17, 24].includes(props.gridWeapon.object.series)) ? keySelect() : '' }
                         { (props.gridWeapon.object.ax > 0) ? axSelect() : '' }
-                        <Button onClick={updateWeapon} disabled={props.gridWeapon.object.ax > 0 && !formValid}>Save Weapon</Button>
+                        <Button onClick={updateWeapon} disabled={props.gridWeapon.object.ax > 0 && !formValid}>{t('modals.weapon.buttons.confirm')}</Button>
                     </div>
                 </Dialog.Content>
                 <Dialog.Overlay className="Overlay" />
