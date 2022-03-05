@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 import classnames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
@@ -23,6 +24,8 @@ interface Props {
 }
 
 const WeaponUnit = (props: Props) => {
+    const { t } = useTranslation('common')
+
     const [imageUrl, setImageUrl] = useState('')
 
     const router = useRouter()
@@ -85,7 +88,7 @@ const WeaponUnit = (props: Props) => {
 
     const editableImage = (
         <SearchModal 
-            placeholderText="Search for a weapon..." 
+            placeholderText={t('search.placeholders.weapon')} 
             fromPosition={props.position} 
             object="weapons"
             send={props.updateObject}>

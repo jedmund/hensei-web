@@ -157,6 +157,18 @@
         "loading": "Loading saved teams...",
         "not_found": "You haven't saved any teams"
     },
+    "search": {
+        "errors": {
+            "start_typing": "Start typing the name of a {{object}}",
+            "min_length": "Type at least 3 characters",
+            "no_results": "No results found for '{{query}}'"
+        },
+        "placeholders": {
+            "weapon": "Search for a weapon...",
+            "summon": "Search for a summon...",
+            "character": "Search for a weapon..."
+        }
+    },
     "teams": {
         "title": "Discover Teams",
         "loading": "Loading teams...",

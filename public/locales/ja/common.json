@@ -158,6 +158,18 @@
         "loading": "ロード中...",
         "not_found": "編成はまだ保存していません"
     },
+    "search": {
+        "errors": {
+            "start_typing": "{{object}}名を入力してください",
+            "min_length": "3文字以上を入力してください",
+            "no_results": "'{{query}}'の検索結果が見つかりませんでした"
+        },
+        "placeholders": {
+            "weapon": "武器を検索...",
+            "summon": "召喚石を検索...",
+            "character": "キャラを検索..."
+        }
+    },
     "teams": {
         "title": "編成一覧",
         "loading": "ロード中...",
