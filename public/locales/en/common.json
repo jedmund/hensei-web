@@ -54,6 +54,22 @@
                 "cancel": "Nevermind"
             }
         },
+        "login": {
+            "title": "Log in",
+            "buttons": {
+                "confirm": "Log in"
+            },
+            "errors": {
+                "empty_email": "Please enter your email",
+                "empty_password": "Please enter your password",
+                "invalid_email": "That email address is not valid",
+                "invalid_credentials": "Your email address or password is incorrect"
+            },
+            "placeholders": {
+                "email": "Email address",
+                "password": "Password"
+            }
+        },
         "settings": {
             "title": "Account Settings",
             "labels": {
@@ -71,14 +87,40 @@
             "buttons": {
                 "confirm": "Save settings"
             }
+        },
+        "signup": {
+            "title": "Create an account",
+            "buttons": {
+                "confirm": "Sign up"
+            },
+            "agreement": "By signing up, I agree to the <br/><2>Privacy Policy</2> and <1>Usage Guidelines</1>.",
+            "errors": {
+                "field_in_use": "This {{field}} is already in use",
+                "empty_email": "Please enter your email",
+                "invalid_email": "That email address is not valid",
+                "username_too_short": "Username must be at least 3 characters",
+                "username_too_long": "Username must be less than 20 characters",
+                "empty_password": "Please enter your password",
+                "password_contains_username": "Your password should not contain your username",
+                "password_too_short": "Password must be at least 8 characters",
+                "mismatched_passwords": "Your passwords don't match"
+            },
+            "placeholders": {
+                "username": "Username",
+                "email": "Email address",
+                "password": "Password",
+                "password_confirm": "Password (again)"
+            }
         }
     },
     "menu": {
         "about": "About",
         "guides": "Guides",
         "language": "Language",
+        "login": "Log in",
         "saved": "Saved",
         "settings": "Settings",
+        "signup": "Sign up",
         "teams": "Teams",
         "logout": "Logout"
     },

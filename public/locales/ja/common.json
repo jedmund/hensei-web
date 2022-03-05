@@ -54,6 +54,22 @@
                 "cancel": "キャンセル"
             }
         },
+        "login": {
+            "title": "ログイン",
+            "buttons": {
+                "confirm": "ログイン"
+            },
+            "errors": {
+                "empty_email": "メールアドレスを入力して下さい",
+                "empty_password": "パスワードを入力して下さい",
+                "invalid_email": "メールアドレスは有効ではありません",
+                "invalid_credentials": "パスワードまたはメールアドレスが違います"
+            },
+            "placeholders": {
+                "email": "メールアドレス",
+                "password": "パスワード"
+            }
+        },
         "settings": {
             "title": "アカウント設定",
             "labels": {
@@ -71,14 +87,41 @@
             "buttons": {
                 "confirm": "設定を保存する"
             }
+        },
+        "signup": {
+            "title": "アカウント登録",
+            "buttons": {
+                "confirm": "登録する"
+            },
+            "agreement": "続行することで<1>利用規約</1>に同意し、<br/><1>プライバシーポリシー</1>を読んだものとみなされます。",
+            "errors": {
+                "field_in_use": "入力された{{field}}は既に登録済みです",
+                "empty_email": "メールアドレスを入力して下さい",
+                "invalid_email": "メールアドレスは有効ではありません",
+                "username_too_short": "ユーザーネームは3文字以上で入力してください",
+                "username_too_long": "ユーザーネームは20文字以内で入力してください",
+                "empty_password": "パスワードを入力して下さい",
+                "password_contains_username": "パスワードにはユーザー名を含めないでください",
+                "password_too_short": "パスワードは8文字以上で入力してください",
+                "mismatched_passwords": "パスワードとパスワード確認を確かめてください",
+                "invalid_credentials": "パスワードまたはメールアドレスが違います"
+            },
+            "placeholders": {
+                "username": "ユーザー名",
+                "email": "メールアドレス",
+                "password": "パスワード",
+                "password_confirm": "パスワード確認"
+            }
         }
     },
     "menu": {
         "about": "このサイトについて",
         "guides": "攻略",
         "language": "言語",
+        "login": "ログイン",
         "saved": "保存した編成",
         "settings": "アカウント設定",
+        "signup": "登録",
         "teams": "編成一覧",
         "logout": "ログアウト"
     },
