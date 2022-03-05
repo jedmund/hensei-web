@@ -5,7 +5,8 @@
         "show_info": "詳細を編集",
         "hide_info": "詳細を非表示",
         "menu": "メニュー",
-        "new": "作成"
+        "new": "作成",
+        "wiki": "gbf.wikiで詳しく見る"
     },
     "modals": {
         "about": {

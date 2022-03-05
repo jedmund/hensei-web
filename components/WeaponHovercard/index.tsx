@@ -1,4 +1,7 @@
 import React from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+
 import * as HoverCard from '@radix-ui/react-hover-card'
 
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
@@ -16,29 +19,33 @@ interface Props {
 interface KeyNames {
     [key: string]: {
         en: string,
-        jp: string
+        ja: string
     }
 }
 
 const WeaponHovercard = (props: Props) => {
+    const router = useRouter()
+    const { t } = useTranslation('common')
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
+    
     const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
     const Proficiency = ['none', 'sword', 'dagger', 'axe', 'spear', 'bow', 'staff', 'fist', 'harp', 'gun', 'katana']
     const WeaponKeyNames: KeyNames = {
         '2': {
             en: 'Pendulum',
-            jp: ''
+            ja: 'ペンデュラム'
         },
         '3': {
             en: 'Teluma',
-            jp: ''
+            ja: 'テルマ'
         },
         '17': {
             en: 'Gauph Key',
-            jp: ''
+            ja: 'ガフスキー'
         },
         '22': {
             en: 'Emblem',
-            jp: ''
+            ja: 'エンブレム'
         }
     }
 
@@ -61,7 +68,7 @@ const WeaponHovercard = (props: Props) => {
             const simpleAxSkill = props.gridWeapon.ax[0]
             const axSkill = primaryAxSkills.find(skill => skill.id == simpleAxSkill.modifier)
             
-            return `${axSkill?.name.en} +${simpleAxSkill.strength}${ (axSkill?.suffix) ? axSkill.suffix : '' }`
+            return `${axSkill?.name[locale]} +${simpleAxSkill.strength}${ (axSkill?.suffix) ? axSkill.suffix : '' }`
         }
 
         return ''
@@ -78,7 +85,7 @@ const WeaponHovercard = (props: Props) => {
 
             if (primaryAxSkill && primaryAxSkill.secondary) {
                 const secondaryAxSkill = primaryAxSkill.secondary.find(skill => skill.id == secondarySimpleAxSkill.modifier)
-                return `${secondaryAxSkill?.name.en} +${secondarySimpleAxSkill.strength}${ (secondaryAxSkill?.suffix) ? secondaryAxSkill.suffix : '' }`
+                return `${secondaryAxSkill?.name[locale]} +${secondarySimpleAxSkill.strength}${ (secondaryAxSkill?.suffix) ? secondaryAxSkill.suffix : '' }`
             }
         }
 
@@ -104,7 +111,7 @@ const WeaponHovercard = (props: Props) => {
                 Array.from(Array(props.gridWeapon.weapon_keys.length)).map((x, i) => {
                     return (
                         <div className="weaponKey" key={props.gridWeapon.weapon_keys![i].id}>
-                        <span>{props.gridWeapon.weapon_keys![i].name.en}</span>
+                        <span>{props.gridWeapon.weapon_keys![i].name[locale]}</span>
                         </div>
                     )
                 }) : '' }
@@ -137,8 +144,8 @@ const WeaponHovercard = (props: Props) => {
             <HoverCard.Content className="Weapon Hovercard" side={hovercardSide()}>
                 <div className="top">
                     <div className="title">
-                        <h4>{ props.gridWeapon.object.name.en }</h4>
-                        <img alt={props.gridWeapon.object.name.en} src={weaponImage()} />
+                        <h4>{ props.gridWeapon.object.name[locale] }</h4>
+                        <img alt={props.gridWeapon.object.name[locale]} src={weaponImage()} />
                     </div>
                     <div className="subInfo">
                         <div className="icons">
@@ -158,7 +165,7 @@ const WeaponHovercard = (props: Props) => {
 
                 { (props.gridWeapon.object.ax > 0 && props.gridWeapon.ax && props.gridWeapon.ax[0].modifier && props.gridWeapon.ax[0].strength ) ? axSection : '' }
                 { (props.gridWeapon.weapon_keys && props.gridWeapon.weapon_keys.length > 0) ? keysSection : '' }
-                <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">View more on gbf.wiki</a>
+                <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">{t('buttons.wiki')}</a>
                 <HoverCard.Arrow />
             </HoverCard.Content>
         </HoverCard.Root>
