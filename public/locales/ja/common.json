@@ -1,0 +1,64 @@
+{
+    "buttons": {
+        "copy": "リンクをコピー",
+        "delete": "編成を削除",
+        "show_info": "詳細を編集",
+        "hide_info": "詳細を非表示",
+        "menu": "メニュー",
+        "new": "作成"
+    },
+    "modals": {
+        "about": {
+            "title": "このサイトについて"
+        },
+        "delete_team": {
+            "title": "編成を削除しますか",
+            "description": "編成を削除する操作は取り消せません。",
+            "buttons": {
+                "confirm": "削除",
+                "cancel": "キャンセル"
+            }
+        },
+        "settings": {
+            "title": "アカウント設定",
+            "labels": {
+                "picture": "プロフィール画像",
+                "language": "言語",
+                "private": "プライベート"
+            },
+            "descriptions": {
+                "private": "プロフィールを隠し、編成をコレクションに表示されないようにします"
+            },
+            "language": {
+                "english": "英語",
+                "japanese": "日本語"
+            },
+            "buttons": {
+                "confirm": "設定を保存する"
+            }
+        }
+    },
+    "menu": {
+        "about": "このサイトについて",
+        "guides": "攻略",
+        "saved": "保存した編成",
+        "settings": "アカウント設定",
+        "teams": "編成一覧",
+        "logout": "ログアウト"
+    },
+    "party": {
+        "segmented_control": {
+            "class": "ジョブ",
+            "characters": "キャラ",
+            "weapons": "武器",
+            "summons": "召喚石"
+        }
+    },
+    "teams": {
+        "title": "編成一覧",
+        "loading": "ロード中...",
+        "not_found": "編成は見つかりませんでした"
+    },
+    "coming_soon": "開発中"
+}
+   

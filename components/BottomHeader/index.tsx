@@ -90,14 +90,14 @@ const BottomHeader = () => {
                 <AlertDialog.Overlay className="Overlay" />
                 <AlertDialog.Content className="Dialog">
                     <AlertDialog.Title className="DialogTitle">
-                        {t('delete_team.title')}
+                        {t('modals.delete_team.title')}
                     </AlertDialog.Title>
                     <AlertDialog.Description className="DialogDescription">
-                        {t('delete_team.description')}
+                        {t('modals.delete_team.description')}
                     </AlertDialog.Description>
                     <div className="actions">
-                        <AlertDialog.Cancel className="Button modal">{t('delete_team.buttons.cancel')}</AlertDialog.Cancel>
-                        <AlertDialog.Action className="Button modal destructive" onClick={(e) => deleteTeam(e)}>{t('delete_team.buttons.confirm')}</AlertDialog.Action>
+                        <AlertDialog.Cancel className="Button modal">{t('modals.delete_team.buttons.cancel')}</AlertDialog.Cancel>
+                        <AlertDialog.Action className="Button modal destructive" onClick={(e) => deleteTeam(e)}>{t('modals.delete_team.buttons.confirm')}</AlertDialog.Action>
                     </div>
                 </AlertDialog.Content>
                 </AlertDialog.Portal>

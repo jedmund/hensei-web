@@ -1,0 +1,63 @@
+{
+    "buttons": {
+        "copy": "Copy link",
+        "delete": "Delete team",
+        "edit_info": "Edit info",
+        "hide_info": "Hide info",
+        "menu": "Menu",
+        "new": "New"
+    },
+    "modals": {
+        "about": {
+            "title": "About"
+        },
+        "delete_team": {
+            "title": "Delete team",
+            "description": "Are you sure you want to permanently delete this team?",
+            "buttons": {
+                "confirm": "Yes, delete",
+                "cancel": "Nevermind"
+            }
+        },
+        "settings": {
+            "title": "Account Settings",
+            "labels": {
+                "picture": "Picture",
+                "language": "Language",
+                "private": "Private"
+            },
+            "descriptions": {
+                "private": "Hide your profile and prevent your grids from showing up in collections"
+            },
+            "language": {
+                "english": "English",
+                "japanese": "Japanese"
+            },
+            "buttons": {
+                "confirm": "Save settings"
+            }
+        }
+    },
+    "menu": {
+        "about": "About",
+        "guides": "Guides",
+        "saved": "Saved",
+        "settings": "Settings",
+        "teams": "Teams",
+        "logout": "Logout"
+    },
+    "party": {
+        "segmented_control": {
+            "class": "Class",
+            "characters": "Characters",
+            "weapons": "Weapons",
+            "summons": "Summons"
+        }
+    },
+    "teams": {
+        "title": "Discover Teams",
+        "loading": "Loading teams...",
+        "not_found": "No teams found"
+    },
+    "coming_soon": "Coming Soon"
+}

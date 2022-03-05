@@ -98,6 +98,10 @@
                     font-size: $font-small;
                     line-height: 1.1;
                     max-width: 300px;
+
+                    &.jp {
+                        max-width: 270px;
+                    }
                 }
             }
 

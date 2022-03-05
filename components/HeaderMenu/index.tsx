@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { useCookies } from 'react-cookie'
+import { useTranslation } from 'next-i18next'
 
 import AboutModal from '~components/AboutModal'
 import AccountModal from '~components/AccountModal'
@@ -16,6 +17,8 @@ interface Props {
 }
 
 const HeaderMenu = (props: Props) => {
+    const { t } = useTranslation('common')
+
     const [accountCookies] = useCookies(['account'])
     const [userCookies] = useCookies(['user'])
 
@@ -35,22 +38,22 @@ const HeaderMenu = (props: Props) => {
                                                 /profile/${userCookies.user.picture}@2x.png 2x`}
                                         src={`/profile/${userCookies.user.picture}.png`} 
                                     />
-                                </div
-                            ></Link>
+                                </div>
+                            </Link>
                         </li>
                         <li className="MenuItem">
-                            <Link href={`/saved` || ''}>Saved</Link>
+                            <Link href={`/saved` || ''}>{t('menu.saved')}</Link>
                         </li>
                     </div>
                     <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link href='/teams'>Teams</Link>
+                            <Link href='/teams'>{t('menu.teams')}</Link>
                         </li>
 
                         <li className="MenuItem disabled">
                             <div>
-                                <span>Guides</span>
-                                <i className="tag">Coming Soon</i>
+                                <span>{t('menu.guides')}</span>
+                                <i className="tag">{t('coming_soon')}</i>
                             </div>
                         </li>
                     </div>
@@ -58,7 +61,7 @@ const HeaderMenu = (props: Props) => {
                         <AboutModal />
                         <AccountModal />
                         <li className="MenuItem" onClick={props.logout}>
-                            <span>Logout</span>
+                            <span>{t('menu.logout')}</span>
                         </li>
                     </div>
                 </ul>
@@ -74,13 +77,13 @@ const HeaderMenu = (props: Props) => {
                 </div>
                 <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link href='/teams'>Teams</Link>
+                            <Link href='/teams'>{t('menu.teams')}</Link>
                         </li>
 
                         <li className="MenuItem disabled">
                             <div>
-                                <span>Guides</span>
-                                <i className="tag">Coming Soon</i>
+                                <span>{t('menu.guides')}</span>
+                                <i className="tag">{t('menu.logout')}</i>
                             </div>
                         </li>
                     </div>
