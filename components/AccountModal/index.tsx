@@ -17,11 +17,10 @@ import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
 const AccountModal = () => {
-    const { t } = useTranslation('common')
-
     const { account } = useSnapshot(accountState)
 
     const router = useRouter()
+    const { t } = useTranslation('common')
     const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
 
     // Cookies
