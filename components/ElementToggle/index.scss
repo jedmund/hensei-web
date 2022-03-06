@@ -5,8 +5,8 @@
     border-radius: $height;
     display: flex;
     height: $height;
-    gap: $unit / 4;
-    padding: $unit / 2;
+    gap: calc($unit / 4);
+    padding: calc($unit / 2);
 
     .ToggleItem {
         background: white;

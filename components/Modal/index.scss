@@ -40,7 +40,7 @@
 
             svg {
                 fill: $grey-50;
-                padding: $unit / 2;
+                padding: calc($unit / 2);
                 height: 18px;
                 width: 18px;
                 transform: rotate(45deg);

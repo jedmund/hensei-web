@@ -29,7 +29,7 @@
             .Input {
                 background: $grey-90;
                 border: none;
-                border-radius: $unit / 2;
+                border-radius: calc($unit / 2);
                 box-sizing: border-box;
                 font-size: $font-regular;
                 padding: $unit * 1.5;

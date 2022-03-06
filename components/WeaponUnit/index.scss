@@ -97,7 +97,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: $unit / 4;
+        margin-bottom: calc($unit / 4);
         overflow: hidden;
         transition: all 0.18s ease-in-out;
 

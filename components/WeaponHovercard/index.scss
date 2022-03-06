@@ -36,6 +36,6 @@
         display: flex;
         flex-direction: column;
         font-size: $normal;
-        gap: $unit / 2;
+        gap: calc($unit / 2);
     }
 }

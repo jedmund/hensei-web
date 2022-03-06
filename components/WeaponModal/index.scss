@@ -7,7 +7,7 @@
         section {
             display: flex;
             flex-direction: column;
-            gap: $unit / 2;
+            gap: calc($unit / 2);
 
             h3 {
                 color: $grey-50;
