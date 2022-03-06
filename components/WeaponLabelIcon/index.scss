@@ -6,74 +6,142 @@
 
     /* Elements */
 
-    &.fire {
-        background-image: url('/labels/element/Label_Element_Fire.png')
+    &.fire.en {
+        background-image: url('/labels/element/fire_en.png')
     }
 
-    &.water {
-        background-image: url('/labels/element/Label_Element_Water.png')
+    &.fire.ja {
+        background-image: url('/labels/element/fire_ja.png')
     }
 
-    &.earth {
-        background-image: url('/labels/element/Label_Element_Earth.png')
+    &.water.en {
+        background-image: url('/labels/element/water_en.png')
     }
 
-    &.wind {
-        background-image: url('/labels/element/Label_Element_Wind.png')
+    &.water.ja {
+        background-image: url('/labels/element/water_ja.png')
     }
 
-    &.dark {
-        background-image: url('/labels/element/Label_Element_Dark.png')
+    &.earth.en {
+        background-image: url('/labels/element/earth_en.png')
     }
 
-    &.light {
-        background-image: url('/labels/element/Label_Element_Light.png')
+    &.earth.ja {
+        background-image: url('/labels/element/earth_ja.png')
     }
 
-    &.null {
-        background-image: url('/labels/element/Label_Element_Any.png')
+    &.wind.en {
+        background-image: url('/labels/element/wind_en.png')
+    }
+
+    &.wind.ja {
+        background-image: url('/labels/element/wind_ja.png')
+    }
+
+    &.dark.en {
+        background-image: url('/labels/element/dark_en.png')
+    }
+
+    &.dark.ja {
+        background-image: url('/labels/element/dark_ja.png')
+    }
+
+    &.light.en {
+        background-image: url('/labels/element/light_en.png')
+    }
+
+    &.light.ja {
+        background-image: url('/labels/element/light_ja.png')
+    }
+
+    &.null.en {
+        background-image: url('/labels/element/any_en.png')
+    }
+
+    &.null.ja {
+        background-image: url('/labels/element/any_ja.png')
     }
 
     /* Proficiencies */
 
-    &.sword {
-        background-image: url('/labels/proficiency/Label_Weapon_Sabre.png')
+    &.sword.en {
+        background-image: url('/labels/proficiency/sabre_en.png')
     }
 
-    &.dagger {
-        background-image: url('/labels/proficiency/Label_Weapon_Dagger.png')
+    &.sword.ja {
+        background-image: url('/labels/proficiency/sabre_ja.png')
     }
 
-    &.axe {
-        background-image: url('/labels/proficiency/Label_Weapon_Axe.png')
+    &.dagger.en {
+        background-image: url('/labels/proficiency/dagger_en.png')
     }
 
-    &.spear {
-        background-image: url('/labels/proficiency/Label_Weapon_Spear.png')
+    &.dagger.ja {
+        background-image: url('/labels/proficiency/dagger_ja.png')
     }
 
-    &.staff {
-        background-image: url('/labels/proficiency/Label_Weapon_Staff.png')
+    &.axe.en {
+        background-image: url('/labels/proficiency/axe_en.png')
     }
 
-    &.fist {
-        background-image: url('/labels/proficiency/Label_Weapon_Melee.png')
+    &.axe.ja {
+        background-image: url('/labels/proficiency/axe_ja.png')
     }
 
-    &.harp {
-        background-image: url('/labels/proficiency/Label_Weapon_Harp.png')
+    &.spear.en {
+        background-image: url('/labels/proficiency/spear_en.png')
     }
 
-    &.gun {
-        background-image: url('/labels/proficiency/Label_Weapon_Gun.png')
+    &.spear.ja {
+        background-image: url('/labels/proficiency/spear_ja.png')
     }
 
-    &.bow {
-        background-image: url('/labels/proficiency/Label_Weapon_Bow.png')
+    &.staff.en {
+        background-image: url('/labels/proficiency/staff_en.png')
     }
 
-    &.katana {
-        background-image: url('/labels/proficiency/Label_Weapon_Katana.png')
+    &.staff.ja {
+        background-image: url('/labels/proficiency/staff_ja.png')
+    }
+
+    &.fist.en {
+        background-image: url('/labels/proficiency/melee_en.png')
+    }
+
+    &.fist.ja {
+        background-image: url('/labels/proficiency/melee_ja.png')
+    }
+
+    &.harp.en {
+        background-image: url('/labels/proficiency/harp_en.png')
+    }
+
+    &.harp.ja {
+        background-image: url('/labels/proficiency/harp_ja.png')
+    }
+
+    &.gun.en {
+        background-image: url('/labels/proficiency/gun_en.png')
+    }
+
+    &.gun.ja {
+        background-image: url('/labels/proficiency/gun_ja.png')
+    }
+
+    &.bow.en {
+        background-image: url('/labels/proficiency/bow_en.png')
+    }
+
+    &.bow.ja {
+        background-image: url('/labels/proficiency/bow_ja.png')
+    }
+
+    &.katana.en {
+        background-image: url('/labels/proficiency/katana_en.png')
+    }
+
+    &.katana.ja {
+        background-image: url('/labels/proficiency/katana_ja.png')
     }
 }
 
