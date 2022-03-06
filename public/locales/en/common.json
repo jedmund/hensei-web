@@ -166,7 +166,7 @@
         "placeholders": {
             "weapon": "Search for a weapon...",
             "summon": "Search for a summon...",
-            "character": "Search for a weapon..."
+            "character": "Search for a character..."
         }
     },
     "teams": {
