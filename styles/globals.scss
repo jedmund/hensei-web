@@ -155,7 +155,7 @@ select {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        gap: $unit / 2;
+        gap: calc($unit / 2);
 
         .SubTitle {
             color: $grey-50;
@@ -188,7 +188,7 @@ select {
     .top {
         display: flex;
         flex-direction: column;
-        gap: $unit / 2;
+        gap: calc($unit / 2);
 
         .title {
             align-items: center;
@@ -320,7 +320,7 @@ img.profile {
 
 i.tag {
     background: $grey-90;
-    border-radius: $unit / 2;
+    border-radius: calc($unit / 2);
     font-size: 10px;
     font-weight: $bold;
     padding: 4px 6px;

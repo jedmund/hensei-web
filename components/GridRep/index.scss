@@ -60,7 +60,7 @@
     .Details {
         display: flex;
         flex-direction: column;
-        gap: $unit / 2;
+        gap: calc($unit / 2);
 
         h2 {
             color: $grey-00;
@@ -74,14 +74,14 @@
         .top {
             display: flex;
             flex-direction: row;
-            gap: $unit / 2;
+            gap: calc($unit / 2);
             align-items: center;
 
             .info {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
-                gap: $unit / 2;
+                gap: calc($unit / 2);
             }
 
             button svg {
@@ -110,19 +110,19 @@
         }
 
         .raid {
-            margin-bottom: $unit / 2;
+            margin-bottom: calc($unit / 2);
         }
 
         .user {
             display: flex;
-            gap: $unit / 2;
+            gap: calc($unit / 2);
             align-items: center;
 
 
             img, .no-user {
                 $diameter: 18px;
 
-                border-radius: $diameter / 2;
+                border-radius: calc($diameter / 2);
                 height: $diameter;
                 width: $diameter;
             }

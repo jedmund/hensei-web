@@ -1,7 +1,7 @@
 .Signup.Dialog form {
     display: flex;
     flex-direction: column;
-    gap: $unit / 2;
+    gap: calc($unit / 2);
     margin-bottom: $unit;
 
     .Button {
