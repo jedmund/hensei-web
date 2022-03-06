@@ -10,7 +10,7 @@ import './index.scss'
 // Props
 interface Props {
     showAllRaidsOption: boolean
-    currentRaidId?: string
+    currentRaid?: string
     onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void
     onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
@@ -20,7 +20,8 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
     const router = useRouter()
     const locale = router.locale || 'en'
 
-    // Set up local states for storing lists of raids
+    // Set up local states for storing raids
+    const [currentRaid, setCurrentRaid] = useState<Raid>()
     const [raids, setRaids] = useState<Raid[]>()
     const [sortedRaids, setSortedRaids] = useState<Raid[][]>()
 
@@ -53,6 +54,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
 
         setRaids(raids)
         setSortedRaids(groupedRaids)
+        appState.raids = raids
     }, [props.showAllRaidsOption])
 
     // Fetch all raids on mount
@@ -61,12 +63,29 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
             .then(response => organizeRaids(response.data.map((r: any) => r.raid)))
     }, [organizeRaids])
 
+    // Set current raid on mount
+    useEffect(() => {
+        if (raids && props.currentRaid) {
+            const raid = raids.find(raid => raid.slug === props.currentRaid)
+            setCurrentRaid(raid)
+        }
+    }, [raids, props.currentRaid])
+
+    // Enable changing select value
+    function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        if (raids) {
+            const raid = raids.find(raid => raid.slug === event.target.value)
+            if (props.onChange) props.onChange(event)
+            setCurrentRaid(raid)
+        }
+    }
+
     // Render JSX for each raid option, sorted into optgroups
     function renderRaidGroup(index: number) {
         const options = sortedRaids && sortedRaids.length > 0 && sortedRaids[index].length > 0 && 
             sortedRaids[index].sort((a, b) => a.element - b.element).map((item, i) => {
                 return (
-                    <option key={i} value={item.id}>{item.name[locale]}</option>
+                    <option key={i} value={item.slug}>{item.name[locale]}</option>
                 )
             })
         
@@ -79,10 +98,10 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
     
     return (
         <select 
-            key={props.currentRaidId} 
-            defaultValue={props.currentRaidId} 
+            key={currentRaid?.slug} 
+            value={currentRaid?.slug} 
             onBlur={props.onBlur} 
-            onChange={props.onChange} 
+            onChange={handleChange} 
             ref={ref}>
                 { Array.from(Array(sortedRaids?.length)).map((x, i) => renderRaidGroup(i)) }
         </select>

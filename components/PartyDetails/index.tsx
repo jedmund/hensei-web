@@ -65,7 +65,7 @@ const PartyDetails = (props: Props) => {
     function updateDetails(event: React.ChangeEvent) {
         const nameValue = nameInput.current?.value
         const descriptionValue = descriptionInput.current?.value
-        const raid = raids.find(raid => raid.id == raidSelect.current?.value)
+        const raid = raids.find(raid => raid.slug === raidSelect.current?.value)
 
         props.updateCallback(nameValue, descriptionValue, raid)
     }
@@ -83,8 +83,8 @@ const PartyDetails = (props: Props) => {
                 ref={nameInput}
             />
             <RaidDropdown 
-                allOption={false}
-                selected={party.raid?.id || ''}
+                showAllRaidsOption={false}
+                currentRaid={party.raid?.slug || ''}
                 onBlur={updateDetails}
                 ref={raidSelect}
             />
