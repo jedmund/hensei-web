@@ -124,13 +124,13 @@ const WeaponHovercard = (props: Props) => {
             <h5 className={tintElement}>{t('modals.weapon.subtitles.ax_skills')}</h5>
             <div className="skills">
                 <div className="primary axSkill">
-                    <img src={`/icons/ax/primary_${ (props.gridWeapon.ax) ? props.gridWeapon.ax[0].modifier : '' }.png`} />
+                    <img alt="AX1" src={`/icons/ax/primary_${ (props.gridWeapon.ax) ? props.gridWeapon.ax[0].modifier : '' }.png`} />
                     <span>{createPrimaryAxSkillString()}</span>
                 </div>
 
                 { (props.gridWeapon.ax && props.gridWeapon.ax[1].modifier && props.gridWeapon.ax[1].strength) ?
                     <div className="secondary axSkill">
-                        <img src={`/icons/ax/secondary_${ (props.gridWeapon.ax) ? props.gridWeapon.ax[1].modifier : '' }.png`} />
+                        <img alt="AX2" src={`/icons/ax/secondary_${ (props.gridWeapon.ax) ? props.gridWeapon.ax[1].modifier : '' }.png`} />
                         <span>{createSecondaryAxSkillString()}</span>
                     </div> : ''}
             </div>

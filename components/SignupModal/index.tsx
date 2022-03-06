@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
@@ -288,7 +289,7 @@ const SignupModal = (props: Props) => {
 
                         <Dialog.Description className="terms">
                             <Trans i18nKey="modals.signup.agreement">
-                                By signing up, I agree to the <a href="/privacy">Privacy Policy</a><a href="/usage">Usage Guidelines</a>.
+                                By signing up, I agree to the <Link href="/privacy">Privacy Policy</Link><Link href="/usage">Usage Guidelines</Link>.
                             </Trans>
                         </Dialog.Description>
                     </form>

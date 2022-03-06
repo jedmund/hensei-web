@@ -17,7 +17,6 @@ function MyApp({ Component, pageProps }: AppProps) {
             console.log(`Logged in as user "${cookies.account.username}"`)
 
             accountState.account.authorized = true
-            accountState.account.language = cookies.account.language
             accountState.account.user = {
                 id: cookies.account.user_id,
                 username: cookies.account.username,
