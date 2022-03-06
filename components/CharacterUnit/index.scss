@@ -1,7 +1,7 @@
 .CharacterUnit {
     display: flex;
     flex-direction: column;
-    gap: $unit / 2;
+    gap: calc($unit / 2);
     max-width: 200px;
 
     &.editable .CharacterImage:hover {
