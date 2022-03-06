@@ -288,9 +288,9 @@ const SignupModal = (props: Props) => {
                         <Button>{t('modals.signup.buttons.confirm')}</Button>
 
                         <Dialog.Description className="terms">
-                            <Trans i18nKey="modals.signup.agreement">
-                                By signing up, I agree to the <Link href="/privacy">Privacy Policy</Link><Link href="/usage">Usage Guidelines</Link>.
-                            </Trans>
+                            {/* <Trans i18nKey="modals.signup.agreement">
+                                By signing up, I agree to the <Link href="/privacy"><span>Privacy Policy</span></Link><Link href="/usage"><span>Usage Guidelines</span></Link>.
+                            </Trans> */}
                         </Dialog.Description>
                     </form>
                 </Dialog.Content>
