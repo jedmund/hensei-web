@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+
 import classNames from 'classnames'
 
 import { axData } from '~utils/axData'
@@ -19,6 +22,10 @@ interface Props {
 }
 
 const AXSelect = (props: Props) => {
+    const router = useRouter()
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
+    const { t } = useTranslation('common')
+
     // Set up form states and error handling
     const [errors, setErrors] = useState<ErrorMap>({
         axValue1: '',
@@ -84,7 +91,7 @@ const AXSelect = (props: Props) => {
         if (modifierSet == 0) {
             axOptionElements = axOptions.map((ax, i) => {
                 return (
-                    <option key={i} value={ax.id}>{ax.name.en}</option>
+                    <option key={i} value={ax.id}>{ax.name[locale]}</option>
                 )
             })
         } else {
@@ -103,14 +110,14 @@ const AXSelect = (props: Props) => {
                     const secondaryAxOptions = primarySkill.secondary
                     axOptionElements = secondaryAxOptions.map((ax, i) => {
                         return (
-                            <option key={i} value={ax.id}>{ax.name.en}</option>
+                            <option key={i} value={ax.id}>{ax.name[locale]}</option>
                         )
                     })
                 }
             }
         }
 
-        axOptionElements?.unshift(<option key={-1} value={-1}>No AX Skill</option>)
+        axOptionElements?.unshift(<option key={-1} value={-1}>{t('ax.no_skill')}</option>)
         return axOptionElements
     }
 
@@ -156,11 +163,19 @@ const AXSelect = (props: Props) => {
         let newErrors = {...errors}
 
         if (value < primaryAxSkill.minValue) {
-            newErrors.axValue1 = `${primaryAxSkill.name.en} must be at least ${primaryAxSkill.minValue}${ (primaryAxSkill.suffix) ? primaryAxSkill.suffix : ''}`
+            newErrors.axValue1 = t('ax.errors.value_too_low', { 
+                name: primaryAxSkill.name[locale], 
+                minValue: primaryAxSkill.minValue, 
+                suffix: (primaryAxSkill.suffix) ? primaryAxSkill.suffix : '' 
+            })
         } else if (value > primaryAxSkill.maxValue) {
-            newErrors.axValue1 = `${primaryAxSkill.name.en} cannot be greater than ${primaryAxSkill.maxValue}${ (primaryAxSkill.suffix) ? primaryAxSkill.suffix : ''}`
+            newErrors.axValue1 = t('ax.errors.value_too_high', { 
+                name: primaryAxSkill.name[locale], 
+                maxValue: primaryAxSkill.minValue, 
+                suffix: (primaryAxSkill.suffix) ? primaryAxSkill.suffix : '' 
+            })
         } else if (!value || value <= 0) {
-            newErrors.axValue1 = `${primaryAxSkill.name.en} must have a value`
+            newErrors.axValue1 = t('ax.errors.value_empty', { name: primaryAxSkill.name[locale] })
         } else {
             newErrors.axValue1 = ''
         }
@@ -179,13 +194,21 @@ const AXSelect = (props: Props) => {
 
             if (secondaryAxSkill) {
                 if (value < secondaryAxSkill.minValue) {
-                    newErrors.axValue2 = `${secondaryAxSkill.name.en} must be at least ${secondaryAxSkill.minValue}${ (secondaryAxSkill.suffix) ? secondaryAxSkill.suffix : ''}`
+                    newErrors.axValue2 = t('ax.errors.value_too_low', { 
+                        name: secondaryAxSkill.name[locale], 
+                        minValue: secondaryAxSkill.minValue, 
+                        suffix: (secondaryAxSkill.suffix) ? secondaryAxSkill.suffix : '' 
+                    })
                 } else if (value > secondaryAxSkill.maxValue) {
-                    newErrors.axValue2 = `${secondaryAxSkill.name.en} cannot be greater than ${secondaryAxSkill.maxValue}${ (secondaryAxSkill.suffix) ? secondaryAxSkill.suffix : ''}`
+                    newErrors.axValue2 = t('ax.errors.value_too_high', { 
+                        name: secondaryAxSkill.name[locale], 
+                        maxValue: secondaryAxSkill.minValue, 
+                        suffix: (secondaryAxSkill.suffix) ? secondaryAxSkill.suffix : '' 
+                    })
                 } else if (!secondaryAxSkill.suffix && value % 1 !== 0) {
-                    newErrors.axValue2 = `${secondaryAxSkill.name.en} must be a whole number`
+                    newErrors.axValue2 = t('ax.errors.value_not_whole', { name: secondaryAxSkill.name[locale] })
                 } else if (primaryAxValue <= 0) {
-                    newErrors.axValue1 = `${primaryAxSkill.name.en} must have a value`
+                    newErrors.axValue1 = t('ax.errors.value_empty', { name: primaryAxSkill.name[locale] })
                 } else {
                     newErrors.axValue2 = ''
                 }
@@ -224,7 +247,7 @@ const AXSelect = (props: Props) => {
             <div className="AXSet">
                 <div className="fields">
                     <select key="ax1" defaultValue={ (props.currentSkills && props.currentSkills[0]) ? props.currentSkills[0].modifier : -1 } onChange={handleSelectChange} ref={primaryAxModifierSelect}>{ generateOptions(0) }</select>
-                    <input defaultValue={ (props.currentSkills && props.currentSkills[0]) ? props.currentSkills[0].strength : 0 } className="Input" type="number" onChange={handleInputChange} ref={primaryAxValueInput} disabled />
+                    <input defaultValue={ (props.currentSkills && props.currentSkills[0]) ? props.currentSkills[0].strength : 0 } className="Input" type="number" onChange={handleInputChange} ref={primaryAxValueInput} disabled={primaryAxValue != 0} />
                 </div>
                 <p className={primaryErrorClasses}>{errors.axValue1}</p>
             </div>
@@ -232,7 +255,7 @@ const AXSelect = (props: Props) => {
             <div className={secondarySetClasses}>
                 <div className="fields">
                     <select key="ax2" defaultValue={ (props.currentSkills && props.currentSkills[1]) ? props.currentSkills[1].modifier : -1 } onChange={handleSelectChange} ref={secondaryAxModifierSelect}>{ generateOptions(1) }</select>
-                    <input defaultValue={ (props.currentSkills && props.currentSkills[1]) ? props.currentSkills[1].strength : 0 } className="Input" type="number" onChange={handleInputChange} ref={secondaryAxValueInput} disabled />
+                    <input defaultValue={ (props.currentSkills && props.currentSkills[1]) ? props.currentSkills[1].strength : 0 } className="Input" type="number" onChange={handleInputChange} ref={secondaryAxValueInput} disabled={secondaryAxValue != 0} />
                 </div>
                 <p className={secondaryErrorClasses}>{errors.axValue2}</p>
             </div>

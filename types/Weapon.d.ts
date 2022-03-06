@@ -10,8 +10,9 @@ interface Weapon {
     series: number
     ax: number
     name: { 
+        [key: string]: string
         en: string
-        jp: string
+        ja: string
     }
     hp: {
         min_hp: number

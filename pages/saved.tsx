@@ -1,8 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+
 import clonedeep from 'lodash.clonedeep'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import api from '~utils/api'
 
@@ -12,6 +15,7 @@ import FilterBar from '~components/FilterBar'
 
 const SavedRoute: React.FC = () => {
     const router = useRouter()
+    const { t } = useTranslation('common')
     
     // Cookies
     const [cookies] = useCookies(['account'])
@@ -143,7 +147,7 @@ const SavedRoute: React.FC = () => {
     return (
         <div id="Teams">
             <Head>
-                <title>Your saved Teams</title>
+                <title>{t('saved.title')}</title>
 
                 <meta property="og:title" content="Your saved Teams" />
                 <meta property="og:url" content="https://app.granblue.team/saved" />
@@ -155,7 +159,7 @@ const SavedRoute: React.FC = () => {
             </Head>
 
             <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
-                <h1>Your saved Teams</h1>
+                <h1>{t('saved.title')}</h1>
             </FilterBar>
             
             <section>
@@ -182,12 +186,21 @@ const SavedRoute: React.FC = () => {
 
                 { (parties.length == 0) ?
                     <div id="NotFound">
-                        <h2>{ (loading) ? 'Loading saved teams...' : 'You haven&apos;t saved any teams yet' }</h2>
+                        <h2>{ (loading) ? t('saved.loading') : t('saved.not_found') }</h2>
                     </div> 
                 : '' }
             </section>
         </div>
     )
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+            // Will be passed to the page component as props
+        },
+    }
 }
 
 export default SavedRoute

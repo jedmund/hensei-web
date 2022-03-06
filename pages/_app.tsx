@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useCookies, CookiesProvider } from 'react-cookie'
+import { appWithTranslation } from 'next-i18next'
 
 import type { AppProps } from 'next/app'
 import Layout from '~components/Layout'
@@ -16,7 +17,6 @@ function MyApp({ Component, pageProps }: AppProps) {
             console.log(`Logged in as user "${cookies.account.username}"`)
 
             accountState.account.authorized = true
-            accountState.account.language = cookies.account.language
             accountState.account.user = {
                 id: cookies.account.user_id,
                 username: cookies.account.username,
@@ -37,4 +37,4 @@ function MyApp({ Component, pageProps }: AppProps) {
     )
 }
 
-export default MyApp
+export default appWithTranslation(MyApp)

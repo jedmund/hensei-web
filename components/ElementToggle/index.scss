@@ -17,6 +17,11 @@
         font-size: $font-regular;
         padding: ($unit) $unit * 2;
 
+        &.ja {
+            padding-top: 6px;
+            padding-bottom: 10px;
+        }
+
         &:hover {
             cursor: pointer;
         }

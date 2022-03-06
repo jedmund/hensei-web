@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 import classnames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
@@ -18,6 +20,11 @@ interface Props {
 }
 
 const CharacterUnit = (props: Props) => {
+    const { t } = useTranslation('common')
+
+    const router = useRouter()
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
+
     const [imageUrl, setImageUrl] = useState('')
 
     const classes = classnames({
@@ -68,7 +75,7 @@ const CharacterUnit = (props: Props) => {
 
     const editableImage = (
         <SearchModal 
-            placeholderText="Search for a character..." 
+            placeholderText={t('search.placeholders.character')} 
             fromPosition={props.position} 
             object="characters"
             send={props.updateObject}>
@@ -88,7 +95,7 @@ const CharacterUnit = (props: Props) => {
                     updateUncap={passUncapData}
                     special={character.special}
                 /> : '' }
-            <h3 className="CharacterName">{character?.name.en}</h3>
+            <h3 className="CharacterName">{character?.name[locale]}</h3>
         </div>
     )
 

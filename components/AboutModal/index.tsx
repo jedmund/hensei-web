@@ -1,21 +1,24 @@
 import React from 'react'
+import { useTranslation } from 'next-i18next'
 import * as Dialog from '@radix-ui/react-dialog'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
 const AboutModal = () => {
+    const { t } = useTranslation('common')
+
     return (
         <Dialog.Root>
             <Dialog.Trigger asChild>
                 <li className="MenuItem">
-                    <span>About</span>
+                    <span>{t('modals.about.title')}</span>
                 </li>
             </Dialog.Trigger>
             <Dialog.Portal>
                 <Dialog.Content className="About Dialog" onOpenAutoFocus={ (event) => event.preventDefault() }>
                     <div className="DialogHeader">
-                        <Dialog.Title className="DialogTitle">About</Dialog.Title>
+                        <Dialog.Title className="DialogTitle">{t('menu.about')}</Dialog.Title>
                         <Dialog.Close className="DialogClose" asChild>
                             <span>
                                 <CrossIcon />

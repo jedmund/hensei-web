@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 import classnames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
@@ -18,7 +20,12 @@ interface Props {
 }
 
 const SummonUnit = (props: Props) => {
+    const { t } = useTranslation('common')
+    
     const [imageUrl, setImageUrl] = useState('')
+
+    const router = useRouter()
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
 
     const classes = classnames({
         SummonUnit: true,
@@ -76,7 +83,7 @@ const SummonUnit = (props: Props) => {
 
     const editableImage = (
         <SearchModal 
-            placeholderText="Search for a summon..." 
+            placeholderText={t('search.placeholders.summon')}
             fromPosition={props.position} 
             object="summons"
             send={props.updateObject}>
@@ -97,7 +104,7 @@ const SummonUnit = (props: Props) => {
                     special={false}               
                 /> : '' 
             }
-            <h3 className="SummonName">{summon?.name.en}</h3>
+            <h3 className="SummonName">{summon?.name[locale]}</h3>
         </div>
     )
 

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 import classnames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
@@ -22,7 +24,12 @@ interface Props {
 }
 
 const WeaponUnit = (props: Props) => {
+    const { t } = useTranslation('common')
+
     const [imageUrl, setImageUrl] = useState('')
+
+    const router = useRouter()
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
 
     const classes = classnames({
         WeaponUnit: true,
@@ -81,7 +88,7 @@ const WeaponUnit = (props: Props) => {
 
     const editableImage = (
         <SearchModal 
-            placeholderText="Search for a weapon..." 
+            placeholderText={t('search.placeholders.weapon')} 
             fromPosition={props.position} 
             object="weapons"
             send={props.updateObject}>
@@ -108,7 +115,7 @@ const WeaponUnit = (props: Props) => {
                     special={false}
                 /> : ''
             }
-            <h3 className="WeaponName">{weapon?.name.en}</h3>
+            <h3 className="WeaponName">{weapon?.name[locale]}</h3>
         </div>
     )
 

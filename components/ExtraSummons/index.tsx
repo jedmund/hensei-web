@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'next-i18next'
 import SummonUnit from '~components/SummonUnit'
 import './index.scss'
 
@@ -16,9 +17,11 @@ interface Props {
 const ExtraSummons = (props: Props) => {
     const numSummons: number = 2
 
+    const { t } = useTranslation('common')
+
     return (
         <div id="ExtraSummons">
-            <span>Sub Aura Summons</span>
+            <span>{t('summons.subaura')}</span>
             <ul id="grid_summons">
                 {
                     Array.from(Array(numSummons)).map((x, i) => {

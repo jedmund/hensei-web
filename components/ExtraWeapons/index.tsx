@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'next-i18next'
 import WeaponUnit from '~components/WeaponUnit'
 
 import './index.scss'
@@ -15,10 +16,11 @@ interface Props {
 
 const ExtraWeapons = (props: Props) => {
     const numWeapons: number = 3
+    const { t } = useTranslation('common')
 
     return (
         <div id="ExtraGrid">
-            <span>Additional<br />Weapons</span>
+            <span>{t('extra_weapons')}</span>
             <ul className="grid_weapons">
                 {
                     Array.from(Array(numWeapons)).map((x, i) => {

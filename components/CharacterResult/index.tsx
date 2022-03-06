@@ -1,4 +1,6 @@
 import React from 'react'
+import { useRouter } from 'next/router'
+
 import UncapIndicator from '~components/UncapIndicator'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
@@ -11,28 +13,29 @@ interface Props {
 
 const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 
-class CharacterResult extends React.Component<Props> {
-    render() {
-        const character = this.props.data
+const CharacterResult = (props: Props) => {
+    const router = useRouter()
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
 
-        return (
-            <li className="CharacterResult" onClick={this.props.onClick}>
-                <img alt={character.name.en} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_01.jpg`} />
-                <div className="Info">
-                    <h5>{character.name.en}</h5>
-                    <UncapIndicator 
-                        type="character"
-                        flb={character.uncap.flb}
-                        ulb={character.uncap.ulb}
-                        special={character.special}
-                    />
-                    <div className="tags">
-                        <WeaponLabelIcon labelType={Element[character.element]} />
-                    </div>
+    const character = props.data
+
+    return(
+        <li className="CharacterResult" onClick={props.onClick}>
+            <img alt={character.name[locale]} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_01.jpg`} />
+            <div className="Info">
+                <h5>{character.name[locale]}</h5>
+                <UncapIndicator 
+                    type="character"
+                    flb={character.uncap.flb}
+                    ulb={character.uncap.ulb}
+                    special={character.special}
+                />
+                <div className="tags">
+                    <WeaponLabelIcon labelType={Element[character.element]} />
                 </div>
-            </li>
-        )
-    }
+            </div>
+        </li>
+    )
 }
 
 export default CharacterResult

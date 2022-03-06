@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { useCookies } from 'react-cookie'
+import Router, { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import { AxiosResponse } from 'axios'
 
 import * as Dialog from '@radix-ui/react-dialog'
@@ -24,6 +26,9 @@ interface ErrorMap {
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const LoginModal = (props: Props) => {
+    const router = useRouter()
+    const { t } = useTranslation('common')
+
     // Set up form states and error handling
     const [formValid, setFormValid] = useState(false)
     const [errors, setErrors] = useState<ErrorMap>({
@@ -49,16 +54,16 @@ const LoginModal = (props: Props) => {
         switch(name) {
             case 'email':
                 if (value.length == 0)
-                    newErrors.email = 'Please enter your email'
+                    newErrors.email = t('modals.login.errors.empty_email')
                 else if (!emailRegex.test(value))
-                    newErrors.email = 'That email address is not valid'
+                    newErrors.email = t('modals.login.errors.invalid_email')
                 else
                     newErrors.email = ''
                 break
 
             case 'password':
                 newErrors.password = value.length == 0
-                    ? 'Please enter your password'
+                    ? t('modals.login.errors.empty_password')
                     : ''
                 break
 
@@ -117,7 +122,7 @@ const LoginModal = (props: Props) => {
             access_token: response.data.access_token
         }
 
-        setCookies('account', cookieObj, { path: '/'})
+        setCookies('account', cookieObj, { path: '/' })
     }
 
     function storeUserInfo(response: AxiosResponse) {
@@ -129,9 +134,8 @@ const LoginModal = (props: Props) => {
             language: user.language,
         }
 
-        setCookies('user', cookieObj, { path: '/'})
+        setCookies('user', cookieObj, { path: '/' })
 
-        accountState.account.language = user.language
         accountState.account.user = {
             id: user.id,
             username: user.username,
@@ -140,7 +144,16 @@ const LoginModal = (props: Props) => {
         }
 
         accountState.account.authorized = true
+
         setOpen(false)
+        changeLanguage(user.language)
+    }
+
+    function changeLanguage(newLanguage: string) {
+        if (newLanguage !== router.locale) {
+            setCookies('NEXT_LOCALE', newLanguage, { path: '/'})
+            router.push(router.asPath, undefined, { locale: newLanguage })
+        }
     }
 
     function openChange(open: boolean) {
@@ -155,13 +168,13 @@ const LoginModal = (props: Props) => {
         <Dialog.Root open={open} onOpenChange={openChange}>
             <Dialog.Trigger asChild>
                 <li className="MenuItem">
-                    <span>Log in</span>
+                    <span>{t('menu.login')}</span>
                 </li>
             </Dialog.Trigger>
             <Dialog.Portal>
                 <Dialog.Content className="Login Dialog" onOpenAutoFocus={ (event) => event.preventDefault() }>
                     <div className="DialogHeader">
-                        <Dialog.Title className="DialogTitle">Log in</Dialog.Title>
+                        <Dialog.Title className="DialogTitle">{t('modals.login.title')}</Dialog.Title>
                         <Dialog.Close className="DialogClose" asChild>
                             <span>
                                 <CrossIcon />
@@ -172,7 +185,7 @@ const LoginModal = (props: Props) => {
                     <form className="form" onSubmit={login}>
                         <Fieldset 
                             fieldName="email"
-                            placeholder="Email address"
+                            placeholder={t('modals.login.placeholders.email')}
                             onChange={handleChange}
                             error={errors.email}
                             ref={emailInput}
@@ -180,13 +193,13 @@ const LoginModal = (props: Props) => {
 
                         <Fieldset 
                             fieldName="password"
-                            placeholder="Password"
+                            placeholder={t('modals.login.placeholders.password')}
                             onChange={handleChange}
                             error={errors.password}
                             ref={passwordInput}
                         />
 
-                        <Button>Log in</Button>
+                        <Button>{t('modals.login.buttons.confirm')}</Button>
                     </form>
                 </Dialog.Content>
                 <Dialog.Overlay className="Overlay" />

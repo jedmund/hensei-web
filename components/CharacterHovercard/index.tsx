@@ -1,10 +1,11 @@
 import React from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+
 import * as HoverCard from '@radix-ui/react-hover-card'
 
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
-
-import { axData } from '~utils/axData'
 
 import './index.scss'
 
@@ -21,6 +22,10 @@ interface KeyNames {
 }
 
 const CharacterHovercard = (props: Props) => {
+    const router = useRouter()
+    const { t } = useTranslation('common')
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
+
     const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
     const Proficiency = ['none', 'sword', 'dagger', 'axe', 'spear', 'bow', 'staff', 'fist', 'harp', 'gun', 'katana']
 
@@ -56,8 +61,8 @@ const CharacterHovercard = (props: Props) => {
             <HoverCard.Content className="Weapon Hovercard">
                 <div className="top">
                     <div className="title">
-                        <h4>{ props.gridCharacter.object.name.en }</h4>
-                        <img alt={props.gridCharacter.object.name.en} src={characterImage()} />
+                        <h4>{ props.gridCharacter.object.name[locale] }</h4>
+                        <img alt={props.gridCharacter.object.name[locale]} src={characterImage()} />
                     </div>
                     <div className="subInfo">
                         <div className="icons">
@@ -76,7 +81,7 @@ const CharacterHovercard = (props: Props) => {
                     </div>
                 </div>
 
-                <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">View more on gbf.wiki</a>
+                <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">{t('buttons.wiki')}</a>
                 <HoverCard.Arrow />
             </HoverCard.Content>
         </HoverCard.Root>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
+import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Switch from '@radix-ui/react-switch'
@@ -17,13 +19,16 @@ import './index.scss'
 const AccountModal = () => {
     const { account } = useSnapshot(accountState)
 
-    // Cookies
-    const [accountCookies] = useCookies(['account'])
-    const [userCookies, setUserCookies] = useCookies(['user'])
+    const router = useRouter()
+    const { t } = useTranslation('common')
+    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
 
-    const headers = (accountCookies.account != null) ? {
+    // Cookies
+    const [cookies, setCookies] = useCookies()
+
+    const headers = (cookies.account != null) ? {
         headers: {
-            'Authorization': `Bearer ${accountCookies.account.access_token}`
+            'Authorization': `Bearer ${cookies.account.access_token}`
         }
     } : {}
     
@@ -39,14 +44,15 @@ const AccountModal = () => {
     const privateSelect = React.createRef<HTMLInputElement>()
 
     useEffect(() => {
-        if (userCookies.user) setPicture(userCookies.user.picture)
-        if (userCookies.user) setLanguage(userCookies.user.language)
-    }, [userCookies])
+        console.log(cookies.user)
+        if (cookies.user) setPicture(cookies.user.picture)
+        if (cookies.user) setLanguage(cookies.user.language)
+    }, [cookies])
 
     const pictureOptions = (
             pictureData.sort((a, b) => (a.name.en > b.name.en) ? 1 : -1).map((item, i) => {
             return (
-                <option key={`picture-${i}`} value={item.filename}>{item.name.en}</option>
+                <option key={`picture-${i}`} value={item.filename}>{item.name[locale]}</option>
             )
         })
     )
@@ -77,7 +83,7 @@ const AccountModal = () => {
             }
         }
 
-        api.endpoints.users.update(accountCookies.account.user_id, object, headers)
+        api.endpoints.users.update(cookies.account.user_id, object, headers)
             .then(response => {
                 const user = response.data.user
 
@@ -87,9 +93,8 @@ const AccountModal = () => {
                     language: user.language,
                 }
         
-                setUserCookies('user', cookieObj, { path: '/'})
+                setCookies('user', cookieObj, { path: '/'})
 
-                accountState.account.language = user.language
                 accountState.account.user = {
                     id: user.id,
                     username: user.username,
@@ -98,7 +103,15 @@ const AccountModal = () => {
                 }
 
                 setOpen(false)
+                changeLanguage(user.language)
             })
+    }
+
+    function changeLanguage(newLanguage: string) {
+        if (newLanguage !== router.locale) {
+            setCookies('NEXT_LOCALE', newLanguage, { path: '/'})
+            router.push(router.asPath, undefined, { locale: newLanguage })
+        }
     }
 
     function openChange(open: boolean) {
@@ -109,14 +122,14 @@ const AccountModal = () => {
         <Dialog.Root open={open} onOpenChange={openChange}>
             <Dialog.Trigger asChild>
                 <li className="MenuItem">
-                    <span>Settings</span>
+                    <span>{t('menu.settings')}</span>
                 </li>
             </Dialog.Trigger>
             <Dialog.Portal>
                 <Dialog.Content className="Account Dialog" onOpenAutoFocus={ (event) => event.preventDefault() }>
                     <div className="DialogHeader">
                         <div className="DialogTop">
-                            <Dialog.Title className="SubTitle">Account Settings</Dialog.Title>
+                            <Dialog.Title className="SubTitle">{t('modals.settings.title')}</Dialog.Title>
                             <Dialog.Title className="DialogTitle">@{account.user?.username}</Dialog.Title>
                         </div>
                         <Dialog.Close className="DialogClose" asChild>
@@ -129,7 +142,7 @@ const AccountModal = () => {
                     <form onSubmit={update}>
                         <div className="field">
                             <div className="left">
-                                <label>Picture</label>
+                                <label>{t('modals.settings.labels.picture')}</label>
                             </div>
 
                             <div className={`preview ${pictureData.find(i => i.filename === picture)?.element}`}>
@@ -147,18 +160,18 @@ const AccountModal = () => {
                         </div>
                         <div className="field">
                             <div className="left">
-                                <label>Language</label>
+                                <label>{t('modals.settings.labels.language')}</label>
                             </div>
 
                             <select name="language" onChange={handleLanguageChange} value={language} ref={languageSelect}>
-                                <option key="en" value="en">English</option>
-                                <option key="jp" value="jp">Japanese</option>
+                                <option key="en" value="en">{t('modals.settings.language.english')}</option>
+                                <option key="jp" value="ja">{t('modals.settings.language.japanese')}</option>
                             </select>
                         </div>
                         <div className="field">
                             <div className="left">
-                                <label>Private</label>
-                                <p>Hide your profile and prevent your grids from showing up in collections</p>
+                                <label>{t('modals.settings.labels.private')}</label>
+                                <p className={locale}>{t('modals.settings.descriptions.private')}</p>
                             </div>
 
                             <Switch.Root className="Switch" onCheckedChange={handlePrivateChange} checked={privateProfile}>
@@ -166,7 +179,7 @@ const AccountModal = () => {
                             </Switch.Root>
                         </div>
 
-                        <Button>Save settings</Button>
+                        <Button>{t('modals.settings.buttons.confirm')}</Button>
                     </form>
                 </Dialog.Content>
                 <Dialog.Overlay className="Overlay" />

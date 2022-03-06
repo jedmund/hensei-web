@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react'
+import { useSnapshot } from 'valtio'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+
 import clonedeep from 'lodash.clonedeep'
-import { useSnapshot } from 'valtio'
 
 import api from '~utils/api'
 import { accountState, initialAccountState } from '~utils/accountState'
@@ -13,6 +15,8 @@ import Button from '~components/Button'
 import HeaderMenu from '~components/HeaderMenu'
 
 const TopHeader = () => {
+    const { t } = useTranslation('common')
+
     // Cookies
     const [accountCookies, setAccountCookie, removeAccountCookie] = useCookies(['account'])
     const [userCookies, setUserCookies, removeUserCookie] = useCookies(['user'])
@@ -100,7 +104,7 @@ const TopHeader = () => {
     const leftNav = () => {
         return (
             <div className="dropdown">
-                <Button icon="menu">Menu</Button>
+                <Button icon="menu">{t('buttons.menu')}</Button>
                 { (account.user) ? 
                     <HeaderMenu authenticated={account.authorized} username={account.user.username} logout={logout} /> :
                     <HeaderMenu authenticated={account.authorized} />
@@ -123,9 +127,9 @@ const TopHeader = () => {
                     saveButton() : ''
                 }
                 { (router.route === '/p/[party]') ? 
-                    <Button icon="link" onClick={copyToClipboard}>Copy link</Button> : ''
+                    <Button icon="link" onClick={copyToClipboard}>{t('buttons.copy')}</Button> : ''
                 }
-                <Button icon="new" onClick={newParty}>New</Button>
+                <Button icon="new" onClick={newParty}>{t('buttons.new')}</Button>
             </div>
         )
     }

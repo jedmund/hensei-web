@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import Party from '~components/Party'
 
@@ -28,6 +29,25 @@ const PartyRoute: React.FC = () => {
     // } else {
     //     return (<div />)
     // }
+}
+
+export async function getStaticPaths() {
+    return {
+        paths: [
+            // Object variant:
+            { params: { party: 'string' } },
+        ],
+        fallback: true,
+    }
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+            // Will be passed to the page component as props
+        },
+    }
 }
 
 export default PartyRoute

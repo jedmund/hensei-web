@@ -1,0 +1,182 @@
+{
+    "ax": {
+        "no_skill": "No AX Skill",
+        "errors": {
+            "value_too_low": "{{name}} must be at least {{minValue}}{{suffix}}",
+            "value_too_high": "{{name}} cannot be greater than {{maxValue}}{{suffix}}",
+            "value_not_whole": "{{name}} must be a whole number",
+            "value_empty": "{{name}} must have a value"
+        }
+    },
+    "buttons": {
+        "copy": "Copy link",
+        "delete": "Delete team",
+        "show_info": "Edit info",
+        "hide_info": "Hide info",
+        "menu": "Menu",
+        "new": "New",
+        "wiki": "View more on gbf.wiki"
+    },
+    "elements": {
+        "null": "Null",
+        "wind": "Wind",
+        "fire": "Fire",
+        "water": "Water",
+        "earth": "Earth",
+        "dark": "Dark",
+        "light": "Light",
+        "full": {
+            "all": "All elements",
+            "null": "Null",
+            "wind": "Wind",
+            "fire": "Fire",
+            "water": "Water",
+            "earth": "Earth",
+            "dark": "Dark",
+            "light": "Light"
+        }
+    },
+    "recency": {
+        "all_time": "All time",
+        "last_day": "Last day",
+        "last_week": "Last week",
+        "last_month": "Last month",
+        "last_3_months": "Last 3 months",
+        "last_6_months": "Last 6 months",
+        "last_year": "Last year"
+    },
+    "summons": {
+        "main": "Main Summon",
+        "friend": "Friend Summon",
+        "summons": "Summons",
+        "subaura": "Sub Aura Summons"
+    },
+    "modals": {
+        "about": {
+            "title": "About"
+        },
+        "delete_team": {
+            "title": "Delete team",
+            "description": "Are you sure you want to permanently delete this team?",
+            "buttons": {
+                "confirm": "Yes, delete",
+                "cancel": "Nevermind"
+            }
+        },
+        "login": {
+            "title": "Log in",
+            "buttons": {
+                "confirm": "Log in"
+            },
+            "errors": {
+                "empty_email": "Please enter your email",
+                "empty_password": "Please enter your password",
+                "invalid_email": "That email address is not valid",
+                "invalid_credentials": "Your email address or password is incorrect"
+            },
+            "placeholders": {
+                "email": "Email address",
+                "password": "Password"
+            }
+        },
+        "settings": {
+            "title": "Account Settings",
+            "labels": {
+                "picture": "Picture",
+                "language": "Language",
+                "private": "Private"
+            },
+            "descriptions": {
+                "private": "Hide your profile and prevent your grids from showing up in collections"
+            },
+            "language": {
+                "english": "English",
+                "japanese": "Japanese"
+            },
+            "buttons": {
+                "confirm": "Save settings"
+            }
+        },
+        "signup": {
+            "title": "Create an account",
+            "buttons": {
+                "confirm": "Sign up"
+            },
+            "agreement": "By signing up, I agree to the <br/><2>Privacy Policy</2> and <1>Usage Guidelines</1>.",
+            "errors": {
+                "field_in_use": "This {{field}} is already in use",
+                "empty_email": "Please enter your email",
+                "invalid_email": "That email address is not valid",
+                "username_too_short": "Username must be at least 3 characters",
+                "username_too_long": "Username must be less than 20 characters",
+                "empty_password": "Please enter your password",
+                "password_contains_username": "Your password should not contain your username",
+                "password_too_short": "Password must be at least 8 characters",
+                "mismatched_passwords": "Your passwords don't match"
+            },
+            "placeholders": {
+                "username": "Username",
+                "email": "Email address",
+                "password": "Password",
+                "password_confirm": "Password (again)"
+            }
+        },
+        "weapon": {
+            "title": "Modify Weapon",
+            "buttons": {
+                "confirm": "Save weapon"
+            },
+            "subtitles": {
+                "element": "Element",
+                "ax_skills": "AX Skills",
+                "weapon_keys": "Weapon Keys"
+            }
+        }
+    },
+    "menu": {
+        "about": "About",
+        "guides": "Guides",
+        "language": "Language",
+        "login": "Log in",
+        "saved": "Saved",
+        "settings": "Settings",
+        "signup": "Sign up",
+        "teams": "Teams",
+        "logout": "Logout"
+    },
+    "party": {
+        "segmented_control": {
+            "class": "Class",
+            "characters": "Characters",
+            "weapons": "Weapons",
+            "summons": "Summons"
+        }
+    },
+    "saved": {
+        "title": "Your saved Teams",
+        "loading": "Loading saved teams...",
+        "not_found": "You haven't saved any teams"
+    },
+    "search": {
+        "errors": {
+            "start_typing": "Start typing the name of a {{object}}",
+            "min_length": "Type at least 3 characters",
+            "no_results": "No results found for '{{query}}'"
+        },
+        "placeholders": {
+            "weapon": "Search for a weapon...",
+            "summon": "Search for a summon...",
+            "character": "Search for a weapon..."
+        }
+    },
+    "teams": {
+        "title": "Discover Teams",
+        "loading": "Loading teams...",
+        "not_found": "No teams found"
+    },
+    "extra_weapons": "Additional<br/>Weapons",
+    "coming_soon": "Coming Soon",
+    "no_title": "Untitled",
+    "no_raid": "No raid",
+    "no_user": "Anonymous"
+}

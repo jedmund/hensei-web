@@ -2,6 +2,8 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
+
 import clonedeep from 'lodash.clonedeep'
 import * as Scroll from 'react-scroll'
 
@@ -11,15 +13,13 @@ import Header from '~components/Header'
 import Button from '~components/Button'
 
 import api from '~utils/api'
-import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 
-import { ButtonType } from '~utils/enums'
 import CrossIcon from '~public/icons/Cross.svg'
-import { route } from 'next/dist/server/router'
 
 const BottomHeader = () => {
-    const account = useSnapshot(accountState)
+    const { t } = useTranslation('common')
+
     const app = useSnapshot(appState)
 
     const router = useRouter()
@@ -67,9 +67,9 @@ const BottomHeader = () => {
     const leftNav = () => {
         if (router.pathname === '/p/[party]' || router.pathname === '/new') {
             if (app.party.detailsVisible) {
-                return (<Button icon="edit" active={true} onClick={toggleDetails}>Hide info</Button>)
+                return (<Button icon="edit" active={true} onClick={toggleDetails}>{t('buttons.hide_info')}</Button>)
             } else {
-                return (<Button icon="edit" onClick={toggleDetails}>Edit info</Button>)
+                return (<Button icon="edit" onClick={toggleDetails}>{t('buttons.show_info')}</Button>)
             }
         } else {
             return (<div />)
@@ -84,20 +84,20 @@ const BottomHeader = () => {
                     <span className='icon'>
                         <CrossIcon />
                     </span>
-                    <span className="text">Delete team</span>
+                    <span className="text">{t('buttons.delete')}</span>
                 </AlertDialog.Trigger>
                 <AlertDialog.Portal>
                 <AlertDialog.Overlay className="Overlay" />
                 <AlertDialog.Content className="Dialog">
                     <AlertDialog.Title className="DialogTitle">
-                        Delete team
+                        {t('modals.delete_team.title')}
                     </AlertDialog.Title>
                     <AlertDialog.Description className="DialogDescription">
-                        Are you sure you want to permanently delete this team?
+                        {t('modals.delete_team.description')}
                     </AlertDialog.Description>
                     <div className="actions">
-                        <AlertDialog.Cancel className="Button modal">Nevermind</AlertDialog.Cancel>
-                        <AlertDialog.Action className="Button modal destructive" onClick={(e) => deleteTeam(e)}>Yes, delete</AlertDialog.Action>
+                        <AlertDialog.Cancel className="Button modal">{t('modals.delete_team.buttons.cancel')}</AlertDialog.Cancel>
+                        <AlertDialog.Action className="Button modal destructive" onClick={(e) => deleteTeam(e)}>{t('modals.delete_team.buttons.confirm')}</AlertDialog.Action>
                     </div>
                 </AlertDialog.Content>
                 </AlertDialog.Portal>

@@ -1,6 +1,10 @@
-import React from 'react'
-import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
+import Router, { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+
+import Link from 'next/link'
+import * as Switch from '@radix-ui/react-switch'
 
 import AboutModal from '~components/AboutModal'
 import AccountModal from '~components/AccountModal'
@@ -16,8 +20,27 @@ interface Props {
 }
 
 const HeaderMenu = (props: Props) => {
+    const router = useRouter()
+    const { t } = useTranslation('common')
+    
     const [accountCookies] = useCookies(['account'])
     const [userCookies] = useCookies(['user'])
+    const [cookies, setCookies] = useCookies()
+
+    const [checked, setChecked] = useState(false)
+
+    // console.log(`Currently: ${checked} ${cookies['NEXT_LOCALE']}`)
+
+    useEffect(() => {
+        const locale = cookies['NEXT_LOCALE']
+        setChecked((locale === 'ja') ? true : false)
+    }, [cookies])
+
+    function handleCheckedChange(value: boolean) {
+        const language = (value) ? 'ja' : 'en'
+        setCookies('NEXT_LOCALE', language, { path: '/'})
+        router.push(router.asPath, undefined, { locale: language })
+    } 
 
     function authItems() {
         return (
@@ -35,22 +58,22 @@ const HeaderMenu = (props: Props) => {
                                                 /profile/${userCookies.user.picture}@2x.png 2x`}
                                         src={`/profile/${userCookies.user.picture}.png`} 
                                     />
-                                </div
-                            ></Link>
+                                </div>
+                            </Link>
                         </li>
                         <li className="MenuItem">
-                            <Link href={`/saved` || ''}>Saved</Link>
+                            <Link href={`/saved` || ''}>{t('menu.saved')}</Link>
                         </li>
                     </div>
                     <div className="MenuGroup">
                         <li className="MenuItem">
-                            <Link href='/teams'>Teams</Link>
+                            <Link href='/teams'>{t('menu.teams')}</Link>
                         </li>
 
                         <li className="MenuItem disabled">
                             <div>
-                                <span>Guides</span>
-                                <i className="tag">Coming Soon</i>
+                                <span>{t('menu.guides')}</span>
+                                <i className="tag">{t('coming_soon')}</i>
                             </div>
                         </li>
                     </div>
@@ -58,7 +81,7 @@ const HeaderMenu = (props: Props) => {
                         <AboutModal />
                         <AccountModal />
                         <li className="MenuItem" onClick={props.logout}>
-                            <span>Logout</span>
+                            <span>{t('menu.logout')}</span>
                         </li>
                     </div>
                 </ul>
@@ -70,20 +93,30 @@ const HeaderMenu = (props: Props) => {
         return (
             <ul className="Menu unauth">
                 <div className="MenuGroup">
-                    <AboutModal />
+                    <li className="MenuItem language">
+                        <span>{t('menu.language')}</span>
+                        <Switch.Root className="Switch" onCheckedChange={handleCheckedChange} checked={checked}>
+                            <Switch.Thumb className="Thumb" />
+                            <span className="left">JP</span>
+                            <span className="right">EN</span>
+                        </Switch.Root>
+                    </li>
                 </div>
                 <div className="MenuGroup">
-                        <li className="MenuItem">
-                            <Link href='/teams'>Teams</Link>
-                        </li>
+                    <li className="MenuItem">
+                        <Link href='/teams'>{t('menu.teams')}</Link>
+                    </li>
 
-                        <li className="MenuItem disabled">
-                            <div>
-                                <span>Guides</span>
-                                <i className="tag">Coming Soon</i>
-                            </div>
-                        </li>
-                    </div>
+                    <li className="MenuItem disabled">
+                        <div>
+                            <span>{t('menu.guides')}</span>
+                            <i className="tag">{t('coming_soon')}</i>
+                        </div>
+                    </li>
+                </div>
+                <div className="MenuGroup">
+                    <AboutModal />
+                </div>
                 <div className="MenuGroup">
                     <LoginModal />
                     <SignupModal />
