@@ -23,11 +23,11 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
     const [raids, setRaids] = useState<Raid[][]>()
 
     const raidGroups = [
-        'Assorted', 'Omega', 'T1 Summons', 'T2 Summons',
+        'Assorted', 'Guild Wars', 'Omega', 'T1 Summons', 'T2 Summons',
         'Primarchs', 'Nightmare', 'Omega (Impossible)', 'Omega II',
         'Tier 1 Summons (Impossible)', 'Tier 3 Summons', 'Ennead', 'Malice',
-        '6-Star Raids', 'Six-Dragons', 'Nightmare (Impossible)', 'Astral', 
-        'Super Ultimate'
+        '6-Star Raids', 'Six-Dragons', 'Nightmare (Impossible)', 'Arcarum: Replicard Sandbox', 
+        'Astral', 'Super Ultimate'
     ]
 
     const organizeRaids = useCallback((raids: Raid[]) => {
