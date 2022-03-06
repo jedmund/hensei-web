@@ -175,6 +175,7 @@
         "loading": "ロード中...",
         "not_found": "編成は見つかりませんでした"
     },
+    "extra_weapons": "Additional<br/>Weapons",
     "coming_soon": "開発中",
     "no_title": "無題",
     "no_raid": "マルチなし",
