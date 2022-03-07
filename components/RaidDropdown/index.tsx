@@ -11,7 +11,7 @@ import './index.scss'
 interface Props {
     showAllRaidsOption: boolean
     currentRaid?: string
-    onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void
+    onChange?: (raid?: Raid) => void
     onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
@@ -75,7 +75,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         if (raids) {
             const raid = raids.find(raid => raid.slug === event.target.value)
-            if (props.onChange) props.onChange(event)
+            if (props.onChange) props.onChange(raid)
             setCurrentRaid(raid)
         }
     }

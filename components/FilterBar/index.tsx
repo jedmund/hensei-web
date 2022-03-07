@@ -8,6 +8,7 @@ import RaidDropdown from '~components/RaidDropdown'
 import { appState } from '~utils/appState'
 
 import './index.scss'
+import { raidGroups } from '~utils/raidGroups'
 
 interface Props {
     children: React.ReactNode
@@ -15,7 +16,7 @@ interface Props {
     element?: number
     raidSlug?: string
     recency?: number
-    onFilter: (element?: number, raid?: string, recency?: number) => void
+    onFilter: ({element, raid, recency} : { element?: number, raid?: Raid, recency?: number}) => void
 }
 
 const FilterBar = (props: Props) => { 
@@ -36,25 +37,26 @@ const FilterBar = (props: Props) => {
         'shadow': props.scrolled
     })
 
-    function selectChanged(event: React.ChangeEvent<HTMLSelectElement>) {
+    function elementSelectChanged() {
         const elementValue = (elementSelect.current) ? parseInt(elementSelect.current.value) : -1
+        props.onFilter({ element: elementValue })
+    }
+
+    function recencySelectChanged() {
         const recencyValue = (recencySelect.current) ? parseInt(recencySelect.current.value) : -1
-        let raidValue = ''
+        props.onFilter({ recency: recencyValue })
+    }
 
-        if (app.raids) {
-            const raid = app.raids.find((raid: Raid) => raid.slug === raidSelect.current?.value)
-            raidValue = (raid) ? raid.id : ''
-        }
-
-        props.onFilter(elementValue, raidValue, recencyValue)
+    function raidSelectChanged(raid?: Raid) {
+        props.onFilter({ raid: raid })
     }
 
     return (
         <div className={classes}>
             {props.children}
-            <select onChange={selectChanged} ref={elementSelect} value={props.element}>
+            <select onChange={elementSelectChanged} ref={elementSelect} value={props.element}>
                 <option data-element="all" key={-1} value={-1}>{t('elements.full.all')}</option>
-                <option data-element="null" key={-0} value={0}>{t('elements.full.null')}</option>
+                <option data-element="null" key={0} value={0}>{t('elements.full.null')}</option>
                 <option data-element="wind" key={1} value={1}>{t('elements.full.wind')}</option>
                 <option data-element="fire" key={2} value={2}>{t('elements.full.fire')}</option>
                 <option data-element="water" key={3} value={3}>{t('elements.full.water')}</option>
@@ -64,10 +66,10 @@ const FilterBar = (props: Props) => {
             </select>
             <RaidDropdown 
                 showAllRaidsOption={true} 
-                onChange={selectChanged}
+                onChange={raidSelectChanged}
                 ref={raidSelect}
             />
-            <select onChange={selectChanged} ref={recencySelect}>
+            <select onChange={recencySelectChanged} ref={recencySelect}>
                 <option key={-1} value={-1}>{t('recency.all_time')}</option>
                 <option key={86400} value={86400}>{t('recency.last_day')}</option>
                 <option key={604800} value={604800}>{t('recency.last_week')}</option>
