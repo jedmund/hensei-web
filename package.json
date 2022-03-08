@@ -31,6 +31,7 @@
     "next": "12.0.8",
     "next-i18next": "^10.5.0",
     "next-remote-watch": "^1.0.0",
+    "next-usequerystate": "^1.7.0",
     "react": "17.0.2",
     "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",
@@ -51,6 +52,6 @@
     "eslint": "8.7.0",
     "eslint-config-next": "12.0.8",
     "eslint-plugin-valtio": "^0.4.1",
-    "typescript": "4.5.5"
+    "typescript": "^4.5.5"
   }
 }

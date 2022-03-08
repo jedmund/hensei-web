@@ -9,48 +9,61 @@ import './index.scss'
 interface Props {
     children: React.ReactNode
     scrolled: boolean
-    onFilter: (element?: number, raid?: string, recency?: number) => void
+    element?: number
+    raidSlug?: string
+    recency?: number
+    onFilter: ({element, raidSlug, recency} : { element?: number, raidSlug?: string, recency?: number}) => void
 }
 
 const FilterBar = (props: Props) => { 
+    // Set up translation
     const { t } = useTranslation('common')
 
+    // Set up refs for filter dropdowns
     const elementSelect = React.createRef<HTMLSelectElement>()
     const raidSelect = React.createRef<HTMLSelectElement>()
     const recencySelect = React.createRef<HTMLSelectElement>()
 
+    // Set up classes object for showing shadow on scroll
     const classes = classNames({
         'FilterBar': true,
         'shadow': props.scrolled
     })
 
-    function selectChanged(event: React.ChangeEvent<HTMLSelectElement>) {
+    function elementSelectChanged() {
         const elementValue = (elementSelect.current) ? parseInt(elementSelect.current.value) : -1
-        const raidValue = (raidSelect.current) ? raidSelect.current.value : ''
-        const recencyValue = (recencySelect.current) ? parseInt(recencySelect.current.value) : -1
+        props.onFilter({ element: elementValue })
+    }
 
-        props.onFilter(elementValue, raidValue, recencyValue)
+    function recencySelectChanged() {
+        const recencyValue = (recencySelect.current) ? parseInt(recencySelect.current.value) : -1
+        props.onFilter({ recency: recencyValue })
+    }
+
+    function raidSelectChanged(slug?: string) {
+        props.onFilter({ raidSlug: slug })
     }
 
     return (
         <div className={classes}>
             {props.children}
-            <select onChange={selectChanged} ref={elementSelect}>
-                <option key={-1} value={-1}>{t('elements.full.all')}</option>
-                <option key={-0} value={0}>{t('elements.full.null')}</option>
-                <option key={1}value={1}>{t('elements.full.wind')}</option>
-                <option key={2}value={2}>{t('elements.full.fire')}</option>
-                <option key={3}value={3}>{t('elements.full.water')}</option>
-                <option key={4}value={4}>{t('elements.full.earth')}</option>
-                <option key={5}value={5}>{t('elements.full.dark')}</option>
-                <option key={6}value={6}>{t('elements.full.light')}</option>
+            <select onChange={elementSelectChanged} ref={elementSelect} value={props.element}>
+                <option data-element="all" key={-1} value={-1}>{t('elements.full.all')}</option>
+                <option data-element="null" key={0} value={0}>{t('elements.full.null')}</option>
+                <option data-element="wind" key={1} value={1}>{t('elements.full.wind')}</option>
+                <option data-element="fire" key={2} value={2}>{t('elements.full.fire')}</option>
+                <option data-element="water" key={3} value={3}>{t('elements.full.water')}</option>
+                <option data-element="earth" key={4} value={4}>{t('elements.full.earth')}</option>
+                <option data-element="dark" key={5} value={5}>{t('elements.full.dark')}</option>
+                <option data-element="light" key={6} value={6}>{t('elements.full.light')}</option>
             </select>
             <RaidDropdown 
-                allOption={true} 
-                onChange={selectChanged} 
+                currentRaid={props.raidSlug}
+                showAllRaidsOption={true} 
+                onChange={raidSelectChanged}
                 ref={raidSelect}
             />
-            <select onChange={selectChanged} ref={recencySelect}>
+            <select onChange={recencySelectChanged} ref={recencySelect}>
                 <option key={-1} value={-1}>{t('recency.all_time')}</option>
                 <option key={86400} value={86400}>{t('recency.last_day')}</option>
                 <option key={604800} value={604800}>{t('recency.last_week')}</option>

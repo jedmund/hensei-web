@@ -44,7 +44,6 @@ const AccountModal = () => {
     const privateSelect = React.createRef<HTMLInputElement>()
 
     useEffect(() => {
-        console.log(cookies.user)
         if (cookies.user) setPicture(cookies.user.picture)
         if (cookies.user) setLanguage(cookies.user.language)
     }, [cookies])

@@ -1,50 +1,97 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
+
 import { useCookies } from 'react-cookie'
+import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import api from '~utils/api'
+import { elements, allElement } from '~utils/Element'
 
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
 
+const emptyUser = {
+    id: '',
+    username: '',
+    granblueId: 0,
+    picture: {
+        picture: '',
+        element: ''
+    },
+    private: false
+}
+
 const ProfileRoute: React.FC = () => {
+    // Set up cookies
+    const [cookies] = useCookies(['account'])
+    const headers = (cookies.account) ? {
+        headers: {
+            'Authorization': `Bearer ${cookies.account.access_token}`
+        }
+    } : {}
+
+    // Set up router
     const router = useRouter()
     const { username } = router.query
 
+    // Import translations
     const { t } = useTranslation('common')
-    const [cookies] = useCookies(['account'])
 
+    // Set up app-specific states
     const [found, setFound] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [raidsLoading, setRaidsLoading] = useState(true)
     const [scrolled, setScrolled] = useState(false)
 
+    // Set up page-specific states
     const [parties, setParties] = useState<Party[]>([])
-    const [user, setUser] = useState<User>({
-        id: '',
-        username: '',
-        granblueId: 0,
-        picture: {
-            picture: '',
-            element: ''
-        },
-        private: false
+    const [raids, setRaids] = useState<Raid[]>()
+    const [raid, setRaid] = useState<Raid>()
+    const [user, setUser] = useState<User>(emptyUser)
+
+    // Set up filter-specific query states
+    // Recency is in seconds
+    const [element, setElement] = useQueryState("element", {
+        defaultValue: -1,
+        parse: (query: string) => parseElement(query),
+        serialize: value => serializeElement(value)
     })
+    const [raidSlug, setRaidSlug] = useQueryState("raid", { defaultValue: "all" })
+    const [recency, setRecency] = useQueryState("recency", queryTypes.integer.withDefault(-1))
 
-    // Filter states
-    const [element, setElement] = useState<number | null>(null)
-    const [raidId, setRaidId] = useState<string | null>(null)
-    const [recencyInSeconds, setRecencyInSeconds] = useState<number | null>(null)
+    // Define transformers for element
+    function parseElement(query: string) {
+        let element: TeamElement | undefined = 
+            (query === 'all') ? 
+                allElement : elements.find(element => element.name.en.toLowerCase() === query)
+        return (element) ? element.id : -1
+    }
 
+    function serializeElement(value: number | undefined) {
+        let name = ''
+
+        if (value != undefined) {
+            if (value == -1)
+                name = allElement.name.en.toLowerCase()
+            else
+                name = elements[value].name.en.toLowerCase()
+        }
+
+        return name
+    }
+
+    // Add scroll event listener for shadow on FilterBar on mount
     useEffect(() => {
         window.addEventListener("scroll", handleScroll)
         return () => window.removeEventListener("scroll", handleScroll);
     }, [])
 
+    // Handle errors
     const handleError = useCallback((error: any) => {
         if (error.response != null) {
             console.error(error)
@@ -56,24 +103,14 @@ const ProfileRoute: React.FC = () => {
     const fetchProfile = useCallback(() => {
         const filters = {
             params: {
-                element: element,
-                raid: raidId,
-                recency: recencyInSeconds
+                element: (element != -1) ? element : undefined,
+                raid: (raid) ? raid.id : undefined,
+                recency: (recency != -1) ? recency : undefined
             }
         }
 
-        const headers = (cookies.account) ? {
-            headers: {
-                'Authorization': `Bearer ${cookies.account.access_token}`
-            }
-        } : {}
-
-        const params = {...filters, ...headers}
-
-        setLoading(true)
-
-        if (username)
-            api.endpoints.users.getOne({ id: username as string, params: params })
+        if (username && !Array.isArray(username))
+            api.endpoints.users.getOne({ id: username , params: {...filters, ...headers} })
                 .then(response => {
                     setUser({
                         id: response.data.user.id,
@@ -91,29 +128,55 @@ const ProfileRoute: React.FC = () => {
                     setLoading(false)
                 })
                 .catch(error => handleError(error))
-    }, [username, element, raidId, recencyInSeconds, cookies.account, handleError])
+    }, [element, raid, recency])
 
+    // Fetch all raids on mount, then find the raid in the URL if present
     useEffect(() => {
-        fetchProfile()            
-    }, [fetchProfile])
+        api.endpoints.raids.getAll()
+            .then(response => {
+                const cleanRaids: Raid[] = response.data.map((r: any) => r.raid)
+                setRaids(cleanRaids)
 
-    function receiveFilters(element?: number, raid?: string, recency?: number) {
-        if (element != null && element >= 0)
+                setRaidsLoading(false)
+
+                const raid = cleanRaids.find(r => r.slug === raidSlug)
+                setRaid(raid)
+
+                return raid
+            })
+    }, [setRaids])
+
+    // When the element, raid or recency filter changes,
+    // fetch all teams again.
+    useEffect(() => {
+        if (!raidsLoading) fetchProfile()
+    }, [element, raid, recency])
+
+    // On first mount only, disable loading if we are fetching all teams
+    useEffect(() => {
+        if (raidSlug === 'all') {
+            setRaidsLoading(false)
+            fetchProfile()
+        }
+    }, [])
+
+    // Receive filters from the filter bar
+    function receiveFilters({ element, raidSlug, recency }: {element?: number, raidSlug?: string, recency?: number}) {
+        if (element == 0) 
+            setElement(0)
+        else if (element) 
             setElement(element)
-        else
-            setElement(null)
+        
+        if (raids && raidSlug) {
+            const raid = raids.find(raid => raid.slug === raidSlug)
+            setRaid(raid)
+            setRaidSlug(raidSlug)
+        }
 
-        if (raid && raid != '0')
-            setRaidId(raid)
-        else
-            setRaidId(null)
-
-        if (recency && recency > 0)
-            setRecencyInSeconds(recency)
-        else
-            setRecencyInSeconds(null)
+        if (recency) setRecency(recency)
     }
 
+    // Methods: Navigation
     function handleScroll() {
         if (window.pageYOffset > 90)
             setScrolled(true)
@@ -124,6 +187,8 @@ const ProfileRoute: React.FC = () => {
     function goTo(shortcode: string) {
         router.push(`/p/${shortcode}`)
     }
+
+    // TODO: Add save functions
 
     return (
         <div id="Profile">
@@ -140,17 +205,22 @@ const ProfileRoute: React.FC = () => {
                 <meta name="twitter:title" content={`@${user.username}\'s Teams`} />
                 <meta name="twitter:description" content={`Browse @${user.username}\''s Teams and filter raid, element or recency`} />
             </Head>
-            <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
-                <div className="UserInfo">
-                    <img 
-                        alt={user.picture.picture}
-                        className={`profile ${user.picture.element}`}
-                        srcSet={`/profile/${user.picture.picture}.png,
-                                 /profile/${user.picture.picture}@2x.png 2x`}
-                        src={`/profile/${user.picture.picture}.png`} 
-                    />
-                    <h1>{user.username}</h1>
-                </div>
+            <FilterBar 
+                onFilter={receiveFilters} 
+                scrolled={scrolled}
+                element={element}
+                raidSlug={ (raidSlug) ? raidSlug : undefined }
+                recency={recency}>
+                    <div className="UserInfo">
+                        <img 
+                            alt={user.picture.picture}
+                            className={`profile ${user.picture.element}`}
+                            srcSet={`/profile/${user.picture.picture}.png,
+                                    /profile/${user.picture.picture}@2x.png 2x`}
+                            src={`/profile/${user.picture.picture}.png`} 
+                        />
+                        <h1>{user.username}</h1>
+                    </div>
             </FilterBar>
 
             <section>

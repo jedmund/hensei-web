@@ -1,36 +1,45 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
 
-import { appState } from '~utils/appState'
 import api from '~utils/api'
+import { appState } from '~utils/appState'
+import { raidGroups } from '~utils/raidGroups'
 
 import './index.scss'
 
 // Props
 interface Props {
-    allOption: boolean
-    selected?: string
-    onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void
+    showAllRaidsOption: boolean
+    currentRaid?: string
+    onChange?: (slug?: string) => void
     onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
 const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(props, ref) {
+    // Set up router for locale
     const router = useRouter()
-    const { t } = useTranslation('common')
-    const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
+    const locale = router.locale || 'en'
 
-    const [raids, setRaids] = useState<Raid[][]>()
+    // Set up local states for storing raids
+    const [currentRaid, setCurrentRaid] = useState<Raid>()
+    const [raids, setRaids] = useState<Raid[]>()
+    const [sortedRaids, setSortedRaids] = useState<Raid[][]>()
 
-    const raidGroups = [
-        'Assorted', 'Guild Wars', 'Omega', 'T1 Summons', 'T2 Summons',
-        'Primarchs', 'Nightmare', 'Omega (Impossible)', 'Omega II',
-        'Tier 1 Summons (Impossible)', 'Tier 3 Summons', 'Ennead', 'Malice',
-        '6-Star Raids', 'Six-Dragons', 'Nightmare (Impossible)', 'Arcarum: Replicard Sandbox', 
-        'Astral', 'Super Ultimate'
-    ]
-
+    // Organize raids into groups on mount
     const organizeRaids = useCallback((raids: Raid[]) => {
+        // Set up empty raid for "All raids"
+        const all = {
+            id: '0',
+            name: {
+                en: 'All raids',
+                ja: '全て'
+            },
+            slug: 'all',
+            level: 0,
+            group: 0,
+            element: 0
+        }
+        
         const numGroups = Math.max.apply(Math, raids.map(raid => raid.group))
         let groupedRaids = []
 
@@ -38,55 +47,64 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
             groupedRaids[i] = raids.filter(raid => raid.group == i)
         }
 
-        if (props.allOption)
-            groupedRaids[0].unshift({
-                id: '0',
-                name: {
-                    en: 'All raids',
-                    ja: '全てのマルチ'
-                },
-                level: 0,
-                group: 0,
-                element: 0
-            })
-
-        setRaids(groupedRaids)
-    }, [props.allOption])
-
-    useEffect(() => {
-        function fetchRaids() {
-            api.endpoints.raids.getAll()
-                .then((response) => {
-                    const raids = response.data.map((r: any) => r.raid)
-                    
-                    appState.raids = raids
-                    organizeRaids(raids)
-                })
+        if (props.showAllRaidsOption) {
+            raids.unshift(all)
+            groupedRaids[0].unshift(all)
         }
 
-        fetchRaids()
+        setRaids(raids)
+        setSortedRaids(groupedRaids)
+        appState.raids = raids
+    }, [props.showAllRaidsOption])
+
+    // Fetch all raids on mount
+    useEffect(() => {
+        api.endpoints.raids.getAll()
+            .then(response => organizeRaids(response.data.map((r: any) => r.raid)))
     }, [organizeRaids])
 
-    function raidGroup(index: number) {
-        const options = raids && raids.length > 0 && raids[index].length > 0 && 
-            raids[index].sort((a, b) => a.element - b.element).map((item, i) => {
+    // Set current raid on mount
+    useEffect(() => {
+        if (raids && props.currentRaid) {
+            const raid = raids.find(raid => raid.slug === props.currentRaid)
+            setCurrentRaid(raid)
+        }
+    }, [raids, props.currentRaid])
+
+    // Enable changing select value
+    function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        if (props.onChange) props.onChange(event.target.value)
+
+        if (raids) {
+            const raid = raids.find(raid => raid.slug === event.target.value)
+            setCurrentRaid(raid)
+        }
+    }
+
+    // Render JSX for each raid option, sorted into optgroups
+    function renderRaidGroup(index: number) {
+        const options = sortedRaids && sortedRaids.length > 0 && sortedRaids[index].length > 0 && 
+            sortedRaids[index].sort((a, b) => a.element - b.element).map((item, i) => {
                 return (
-                    <option key={i} value={item.id}>{item.name[locale]}</option>
+                    <option key={i} value={item.slug}>{item.name[locale]}</option>
                 )
             })
         
         return (
-            <optgroup key={index} label={raidGroups[index]}>
+            <optgroup key={index} label={raidGroups[index].name[locale]}>
                 {options}
             </optgroup>
         )
     }
     
     return (
-        <select key={props.selected} defaultValue={props.selected} onBlur={props.onBlur} onChange={props.onChange} ref={ref}>
-            { Array.from(Array(raids?.length)).map((x, i) => {
-                return raidGroup(i)
-            })}
+        <select 
+            key={currentRaid?.slug} 
+            value={currentRaid?.slug} 
+            onBlur={props.onBlur} 
+            onChange={handleChange} 
+            ref={ref}>
+                { Array.from(Array(sortedRaids?.length)).map((x, i) => renderRaidGroup(i)) }
         </select>
     )
 })

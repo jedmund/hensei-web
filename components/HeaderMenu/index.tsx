@@ -48,7 +48,7 @@ const HeaderMenu = (props: Props) => {
                 <ul className="Menu auth">
                     <div className="MenuGroup">
                         <li className="MenuItem profile">
-                            <Link href={`/${accountCookies.account.username}` || ''}>
+                            <Link href={`/${accountCookies.account.username}` || ''} passHref>
                                 <div>
                                     <span>{accountCookies.account.username}</span>
                                     <img 

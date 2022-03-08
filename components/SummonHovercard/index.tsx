@@ -14,13 +14,6 @@ interface Props {
     children: React.ReactNode
 }
 
-interface KeyNames {
-    [key: string]: {
-        en: string,
-        jp: string
-    }
-}
-
 const SummonHovercard = (props: Props) => {
     const router = useRouter()
     const { t } = useTranslation('common')
