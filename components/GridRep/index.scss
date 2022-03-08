@@ -65,6 +65,11 @@
         h2 {
             color: $grey-00;
             font-size: $font-regular;
+            overflow: hidden;
+            padding-bottom: 1px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 258px; // Can we not do this?
 
             &.empty {
                 color: $grey-50;
