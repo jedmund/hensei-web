@@ -25,21 +25,21 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(function useFiel
     const [raids, setRaids] = useState<Raid[]>()
     const [sortedRaids, setSortedRaids] = useState<Raid[][]>()
 
-    // Set up empty raid for "All raids"
-    const all = {
-        id: '0',
-        name: {
-            en: 'All raids',
-            ja: '全て'
-        },
-        slug: 'all',
-        level: 0,
-        group: 0,
-        element: 0
-    }
-
     // Organize raids into groups on mount
     const organizeRaids = useCallback((raids: Raid[]) => {
+        // Set up empty raid for "All raids"
+        const all = {
+            id: '0',
+            name: {
+                en: 'All raids',
+                ja: '全て'
+            },
+            slug: 'all',
+            level: 0,
+            group: 0,
+            element: 0
+        }
+        
         const numGroups = Math.max.apply(Math, raids.map(raid => raid.group))
         let groupedRaids = []
 
