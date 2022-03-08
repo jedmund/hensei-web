@@ -1,43 +1,84 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
+
 import { useCookies } from 'react-cookie'
+import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
-import clonedeep from 'lodash.clonedeep'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import clonedeep from 'lodash.clonedeep'
 
 import api from '~utils/api'
+import { elements, allElement } from '~utils/Element'
 
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
 
 const SavedRoute: React.FC = () => {
-    const router = useRouter()
-    const { t } = useTranslation('common')
-    
-    // Cookies
+    // Set up cookies
     const [cookies] = useCookies(['account'])
-    const headers = (cookies.account != null) ? {
-        'Authorization': `Bearer ${cookies.account.access_token}`
+    const headers = (cookies.account) ? {
+        headers: {
+            'Authorization': `Bearer ${cookies.account.access_token}`
+        }
     } : {}
 
+    // Set up router
+    const router = useRouter()
+
+    // Import translations
+    const { t } = useTranslation('common')
+
+    // Set up app-specific states
     const [loading, setLoading] = useState(true)
+    const [raidsLoading, setRaidsLoading] = useState(true)
     const [scrolled, setScrolled] = useState(false)
 
+    // Set up page-specific states
     const [parties, setParties] = useState<Party[]>([])
+    const [raids, setRaids] = useState<Raid[]>()
+    const [raid, setRaid] = useState<Raid>()
 
-    // Filter states
-    const [element, setElement] = useState<number | null>(null)
-    const [raidId, setRaidId] = useState<string | null>(null)
-    const [recencyInSeconds, setRecencyInSeconds] = useState<number | null>(null)
+    // Set up filter-specific query states
+    // Recency is in seconds
+    const [element, setElement] = useQueryState("element", {
+        defaultValue: -1,
+        parse: (query: string) => parseElement(query),
+        serialize: value => serializeElement(value)
+    })
+    const [raidSlug, setRaidSlug] = useQueryState("raid", { defaultValue: "all" })
+    const [recency, setRecency] = useQueryState("recency", queryTypes.integer.withDefault(-1))
 
+    // Define transformers for element
+    function parseElement(query: string) {
+        let element: TeamElement | undefined = 
+            (query === 'all') ? 
+                allElement : elements.find(element => element.name.en.toLowerCase() === query)
+        return (element) ? element.id : -1
+    }
+
+    function serializeElement(value: number | undefined) {
+        let name = ''
+
+        if (value != undefined) {
+            if (value == -1)
+                name = allElement.name.en.toLowerCase()
+            else
+                name = elements[value].name.en.toLowerCase()
+        }
+
+        return name
+    }
+
+    // Add scroll event listener for shadow on FilterBar on mount
     useEffect(() => {
         window.addEventListener("scroll", handleScroll)
         return () => window.removeEventListener("scroll", handleScroll);
     }, [])
 
+    // Handle errors
     const handleError = useCallback((error: any) => {
         if (error.response != null) {
             console.error(error)
@@ -47,51 +88,73 @@ const SavedRoute: React.FC = () => {
     }, [])
 
     const fetchTeams = useCallback(() => {
-        const filterParams = {
+        const filters = {
             params: {
-                element: element,
-                raid: raidId,
-                recency: recencyInSeconds
-            },
-            headers: {
-                'Authorization': `Bearer ${cookies.account.access_token}`
+                element: (element != -1) ? element : undefined,
+                raid: (raid) ? raid?.id : undefined,
+                recency: (recency != -1) ? recency : undefined
             }
         }
 
-        setLoading(true)
-
-        api.savedTeams(filterParams)
+        api.savedTeams({...filters, ...headers})
             .then(response => {
                 const parties: Party[] = response.data
-                setParties(parties.map((p: any) => p.party).sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
+                setParties(parties.map((p: any) => p.party)
+                    .sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
             })
             .then(() => {
                 setLoading(false)
             })
             .catch(error => handleError(error))
-    }, [element, raidId, recencyInSeconds, cookies.account, handleError])
+    }, [element, raid, recency])
 
+    // Fetch all raids on mount, then find the raid in the URL if present
     useEffect(() => {
-        fetchTeams()           
-    }, [fetchTeams])
+        api.endpoints.raids.getAll()
+            .then(response => {
+                const cleanRaids: Raid[] = response.data.map((r: any) => r.raid)
+                setRaids(cleanRaids)
 
-    function receiveFilters(element?: number, raid?: string, recency?: number) {
-        if (element != null && element >= 0)
+                setRaidsLoading(false)
+
+                const raid = cleanRaids.find(r => r.slug === raidSlug)
+                setRaid(raid)
+
+                return raid
+            })
+    }, [setRaids])
+
+    // When the element, raid or recency filter changes,
+    // fetch all teams again.
+    useEffect(() => {
+        if (!raidsLoading) fetchTeams()
+    }, [element, raid, recency])
+
+    // On first mount only, disable loading if we are fetching all teams
+    useEffect(() => {
+        if (raidSlug === 'all') {
+            setRaidsLoading(false)
+            fetchTeams()
+        }
+    }, [])
+
+    // Receive filters from the filter bar
+    function receiveFilters({ element, raidSlug, recency }: {element?: number, raidSlug?: string, recency?: number}) {
+        if (element == 0) 
+            setElement(0)
+        else if (element) 
             setElement(element)
-        else
-            setElement(null)
+        
+        if (raids && raidSlug) {
+            const raid = raids.find(raid => raid.slug === raidSlug)
+            setRaid(raid)
+            setRaidSlug(raidSlug)
+        }
 
-        if (raid && raid != '0')
-            setRaidId(raid)
-        else
-            setRaidId(null)
-
-        if (recency && recency > 0)
-            setRecencyInSeconds(recency)
-        else
-            setRecencyInSeconds(null)
+        if (recency) setRecency(recency)
     }
 
+    // Methods: Favorites
     function toggleFavorite(teamId: string, favorited: boolean) {
         if (favorited)
             unsaveFavorite(teamId)
@@ -133,6 +196,7 @@ const SavedRoute: React.FC = () => {
             })
     }
 
+    // Methods: Navigation
     function handleScroll() {
         if (window.pageYOffset > 90)
             setScrolled(true)
@@ -158,8 +222,13 @@ const SavedRoute: React.FC = () => {
                 <meta name="twitter:title" content="Your saved Teams" />
             </Head>
 
-            <FilterBar onFilter={receiveFilters} scrolled={scrolled}>
-                <h1>{t('saved.title')}</h1>
+            <FilterBar 
+                onFilter={receiveFilters} 
+                scrolled={scrolled}
+                element={element}
+                raidSlug={ (raidSlug) ? raidSlug : undefined }
+                recency={recency}>
+                    <h1>{t('saved.title')}</h1>
             </FilterBar>
             
             <section>
@@ -178,8 +247,7 @@ const SavedRoute: React.FC = () => {
                                 key={`party-${i}`}
                                 displayUser={true}
                                 onClick={goTo}
-                                onSave={toggleFavorite}
-                            />
+                                onSave={toggleFavorite} />
                         })
                     }
                 </GridRepCollection>
