@@ -5,7 +5,8 @@ interface Raid {
         en: string
         ja: string
     }
+    slug: string
     level: number
     group: number
-    element: TeamElement
+    element: number
 }

@@ -1,14 +1,10 @@
 import React from 'react'
-import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
 import RaidDropdown from '~components/RaidDropdown'
 
-import { appState } from '~utils/appState'
-
 import './index.scss'
-import { raidGroups } from '~utils/raidGroups'
 
 interface Props {
     children: React.ReactNode
@@ -16,15 +12,12 @@ interface Props {
     element?: number
     raidSlug?: string
     recency?: number
-    onFilter: ({element, raid, recency} : { element?: number, raid?: Raid, recency?: number}) => void
+    onFilter: ({element, raidSlug, recency} : { element?: number, raidSlug?: string, recency?: number}) => void
 }
 
 const FilterBar = (props: Props) => { 
     // Set up translation
     const { t } = useTranslation('common')
-
-    // Set up state object
-    const app = useSnapshot(appState)
 
     // Set up refs for filter dropdowns
     const elementSelect = React.createRef<HTMLSelectElement>()
@@ -47,8 +40,8 @@ const FilterBar = (props: Props) => {
         props.onFilter({ recency: recencyValue })
     }
 
-    function raidSelectChanged(raid?: Raid) {
-        props.onFilter({ raid: raid })
+    function raidSelectChanged(slug?: string) {
+        props.onFilter({ raidSlug: slug })
     }
 
     return (
@@ -65,6 +58,7 @@ const FilterBar = (props: Props) => {
                 <option data-element="light" key={6} value={6}>{t('elements.full.light')}</option>
             </select>
             <RaidDropdown 
+                currentRaid={props.raidSlug}
                 showAllRaidsOption={true} 
                 onChange={raidSelectChanged}
                 ref={raidSelect}

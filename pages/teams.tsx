@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
 
-import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
-import { queryTypes, useQueryState } from 'next-usequerystate'
+import { useQueryState, queryTypes } from 'next-usequerystate'
+import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -19,13 +19,13 @@ import FilterBar from '~components/FilterBar'
 const TeamsRoute: React.FC = () => {
     // Set up cookies
     const [cookies] = useCookies(['account'])
-    const headers = (cookies.account != null) ? {
-        'Authorization': `Bearer ${cookies.account.access_token}`
+    const headers = (cookies.account) ? {
+        headers: {
+            'Authorization': `Bearer ${cookies.account.access_token}`
+        }
     } : {}
 
-    // const { raids } = useSnapshot(appState)
-
-    // Get the information we need from the router
+    // Set up router
     const router = useRouter()
 
     // Import translations
@@ -33,10 +33,12 @@ const TeamsRoute: React.FC = () => {
 
     // Set up app-specific states
     const [loading, setLoading] = useState(true)
+    const [raidsLoading, setRaidsLoading] = useState(true)
     const [scrolled, setScrolled] = useState(false)
 
     // Set up page-specific states
     const [parties, setParties] = useState<Party[]>([])
+    const [raids, setRaids] = useState<Raid[]>()
     const [raid, setRaid] = useState<Raid>()
 
     // Set up filter-specific query states
@@ -49,8 +51,7 @@ const TeamsRoute: React.FC = () => {
     const [raidSlug, setRaidSlug] = useQueryState("raid", { defaultValue: "all" })
     const [recency, setRecency] = useQueryState("recency", queryTypes.integer.withDefault(-1))
 
-
-    // Define transformers for element and raid
+    // Define transformers for element
     function parseElement(query: string) {
         let element: TeamElement | undefined = 
             (query === 'all') ? 
@@ -62,23 +63,22 @@ const TeamsRoute: React.FC = () => {
         let name = ''
 
         if (value != undefined) {
-            if (value == -1) {
+            if (value == -1)
                 name = allElement.name.en.toLowerCase()
-            } else {
-                console.log(value)
+            else
                 name = elements[value].name.en.toLowerCase()
-            }
         }
 
         return name
     }
 
-    // Add scroll event listener for shadow on FilterBar
+    // Add scroll event listener for shadow on FilterBar on mount
     useEffect(() => {
         window.addEventListener("scroll", handleScroll)
         return () => window.removeEventListener("scroll", handleScroll);
     }, [])
 
+    // Handle errors
     const handleError = useCallback((error: any) => {
         if (error.response != null) {
             console.error(error)
@@ -91,52 +91,70 @@ const TeamsRoute: React.FC = () => {
         const filters = {
             params: {
                 element: (element != -1) ? element : undefined,
-                raid: (raidSlug !== "all") ? raid?.id : undefined,
+                raid: (raid) ? raid.id : undefined,
                 recency: (recency != -1) ? recency : undefined
             }
         }
 
-        console.log(filters)
-
-        const headers = (cookies.account) ? {
-            headers: {
-                'Authorization': `Bearer ${cookies.account.access_token}`
-            }
-        } : {}
-
-        const params = {...filters, ...headers}
-
-        setLoading(true)
-
-        api.endpoints.parties.getAll(params)
+        api.endpoints.parties.getAll({...filters, ...headers})
             .then(response => {
                 const parties: Party[] = response.data
-                setParties(parties.map((p: any) => p.party).sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
+                setParties(parties.map((p: any) => p.party)
+                    .sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
             })
             .then(() => {
                 setLoading(false)
             })
             .catch(error => handleError(error))
-    }, [element, raid, recency, cookies.account, handleError])
+    }, [element, raid, recency])
 
+    // Fetch all raids on mount, then find the raid in the URL if present
     useEffect(() => {
-        fetchTeams()
-    }, [fetchTeams])
+        api.endpoints.raids.getAll()
+            .then(response => {
+                const cleanRaids: Raid[] = response.data.map((r: any) => r.raid)
+                setRaids(cleanRaids)
 
-    function receiveFilters({ element, raid, recency }: {element?: number, raid?: Raid, recency?: number}) {
+                setRaidsLoading(false)
+
+                const raid = cleanRaids.find(r => r.slug === raidSlug)
+                setRaid(raid)
+
+                return raid
+            })
+    }, [setRaids])
+
+    // When the element, raid or recency filter changes,
+    // fetch all teams again.
+    useEffect(() => {
+        if (!raidsLoading) fetchTeams()
+    }, [element, raid, recency])
+
+    // On first mount only, disable loading if we are fetching all teams
+    useEffect(() => {
+        if (raidSlug === 'all') {
+            setRaidsLoading(false)
+            fetchTeams()
+        }
+    }, [])
+
+    // Receive filters from the filter bar
+    function receiveFilters({ element, raidSlug, recency }: {element?: number, raidSlug?: string, recency?: number}) {
         if (element == 0) 
             setElement(0)
         else if (element) 
             setElement(element)
         
-        if (raid) {
+        if (raids && raidSlug) {
+            const raid = raids.find(raid => raid.slug === raidSlug)
             setRaid(raid)
-            setRaidSlug(raid.slug)
+            setRaidSlug(raidSlug)
         }
 
         if (recency) setRecency(recency)
     }
 
+    // Methods: Favorites
     function toggleFavorite(teamId: string, favorited: boolean) {
         if (favorited)
             unsaveFavorite(teamId)
@@ -178,6 +196,7 @@ const TeamsRoute: React.FC = () => {
             })
     }
 
+    // Methods: Navigation
     function handleScroll() {
         if (window.pageYOffset > 90)
             setScrolled(true)
@@ -209,7 +228,7 @@ const TeamsRoute: React.FC = () => {
                 onFilter={receiveFilters} 
                 scrolled={scrolled}
                 element={element}
-                raidSlug={raidSlug}
+                raidSlug={ (raidSlug) ? raidSlug : undefined }
                 recency={recency}>
                     <h1>{t('teams.title')}</h1>
             </FilterBar>
@@ -230,8 +249,7 @@ const TeamsRoute: React.FC = () => {
                                 key={`party-${i}`}
                                 displayUser={true}
                                 onClick={goTo}
-                                onSave={toggleFavorite}
-                            />
+                                onSave={toggleFavorite} />
                         })
                     }
                 </GridRepCollection>
