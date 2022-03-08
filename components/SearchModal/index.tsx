@@ -43,15 +43,17 @@ const SearchModal = (props: Props) => {
             searchInput.current.focus()
     }, [searchInput])
 
+    useEffect(() => {
+        if (query.length > 2) 
+            fetchResults()
+    }, [query])
+
     function inputChanged(event: React.ChangeEvent<HTMLInputElement>) {
         const text = event.target.value
         if (text.length) {
             setQuery(text)
             setLoading(true)
             setMessage('')
-
-            if (text.length > 2)
-                fetchResults()
         } else {
             setQuery('')
             setResults({})
