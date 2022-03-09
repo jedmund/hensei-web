@@ -1,5 +1,4 @@
 import axios, { Axios, AxiosRequestConfig, AxiosResponse } from "axios"
-import { appState } from "./appState"
 
 interface Entity {
     name: string
@@ -56,11 +55,11 @@ class Api {
         return axios.post(`${ oauthUrl }/token`, object)
     }
 
-    search(object: string, query: string, excludes: string) {
+    search(object: string, query: string, excludes: string, locale: string = 'en') {
         const resourceUrl = `${this.url}/${name}`
         const url = (excludes.length > 0) ? 
-            `${resourceUrl}search/${object}?query=${query}&excludes=${excludes}` :
-            `${resourceUrl}search/${object}?query=${query}`
+            `${resourceUrl}search/${object}?query=${query}&locale=${locale}&excludes=${excludes}` :
+            `${resourceUrl}search/${object}?query=${query}&locale=${locale}`
         return axios.get(url)
     }
 

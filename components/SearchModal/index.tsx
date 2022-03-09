@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 
 import { appState } from '~utils/appState'
@@ -24,6 +25,9 @@ interface Props {
 const SearchModal = (props: Props) => {
     let { grid } = useSnapshot(appState)
 
+    const router = useRouter()
+    const locale = router.locale
+
     let searchInput = React.createRef<HTMLInputElement>()
 
     const [objects, setObjects] = useState<{[id: number]: GridCharacter | GridWeapon | GridSummon}>()
@@ -44,7 +48,7 @@ const SearchModal = (props: Props) => {
     }, [searchInput])
 
     useEffect(() => {
-        if (query.length > 2) 
+        if (query.length > 1) 
             fetchResults()
     }, [query])
 
@@ -70,7 +74,7 @@ const SearchModal = (props: Props) => {
             .filter(filterExclusions)
             .map((o) => { return (o.object) ? o.object.name.en : undefined }).join(',') : ''
 
-        api.search(props.object, query, excludes)
+        api.search(props.object, query, excludes, locale)
             .then(response => {
                 setResults(response.data)
                 setTotalResults(response.data.length)
@@ -149,8 +153,8 @@ const SearchModal = (props: Props) => {
 
         if (query === '') {
             string = `No ${props.object}`
-        } else if (query.length < 3) {
-            string = `Type at least 3 characters`
+        } else if (query.length < 2) {
+            string = `Type at least 2 characters`
         } else {
             string = `No results found for '${query}'`
         }
