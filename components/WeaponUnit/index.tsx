@@ -125,7 +125,7 @@ const WeaponUnit = (props: Props) => {
         </WeaponHovercard>
     )
 
-    return (gridWeapon) ? withHovercard : unitContent
+    return (gridWeapon && !props.editable) ? withHovercard : unitContent
 }
 
 export default WeaponUnit

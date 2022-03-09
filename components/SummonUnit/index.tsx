@@ -114,7 +114,7 @@ const SummonUnit = (props: Props) => {
         </SummonHovercard>
     )
 
-    return (gridSummon) ? withHovercard : unitContent
+    return (gridSummon && !props.editable) ? withHovercard : unitContent
 }
 
 export default SummonUnit

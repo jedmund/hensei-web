@@ -106,7 +106,7 @@ const CharacterUnit = (props: Props) => {
     )
 
     return (
-        (gridCharacter) ? withHovercard : unitContent
+        (gridCharacter && !props.editable) ? withHovercard : unitContent
     )
 }
 
