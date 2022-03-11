@@ -17,6 +17,18 @@
         "new": "New",
         "wiki": "View more on gbf.wiki"
     },
+    "filters": {
+        "labels": {
+            "element": "Element",
+            "series": "Series",
+            "proficiency": "Proficiency",
+            "rarity": "Rarity"
+        }
+    },
+    "rarities": {
+        "sr": "SR",
+        "ssr": "SSR"
+    },
     "elements": {
         "null": "Null",
         "wind": "Wind",
@@ -35,6 +47,44 @@
             "dark": "Dark",
             "light": "Light"
         }
+    },
+    "proficiencies": {
+        "sabre": "Sabre",
+        "dagger": "Dagger",
+        "spear": "Spear",
+        "axe": "Axe",
+        "staff": "Staff",
+        "gun": "Gun",
+        "melee": "Melee",
+        "bow": "Bow",
+        "harp": "Harp",
+        "katana": "Katana"
+    },
+    "series": {
+        "seraphic": "Seraphic",
+        "grand": "Grand",
+        "opus": "Dark Opus",
+        "draconic": "Draconic",
+        "primal": "Primal",
+        "olden_primal": "Olden Primal",
+        "beast": "Beast",
+        "omega": "Omega",
+        "militis": "Militis",
+        "xeno": "Xeno",
+        "astral": "Astral",
+        "rose": "Rose",
+        "hollowsky": "Hollowsky",
+        "ultima": "Ultima",
+        "bahamut": "Bahamut",
+        "epic": "Epic",
+        "ennead": "Ennead",
+        "cosmos": "Cosmos",
+        "ancestral": "Ancestral",
+        "superlative": "Superlative",
+        "vintage": "Vintage",
+        "class_champion": "Class Champion",
+        "sephira": "Sephira",
+        "new_world": "New World Foundation"
     },
     "recency": {
         "all_time": "All time",
@@ -158,10 +208,12 @@
         "not_found": "You haven't saved any teams"
     },
     "search": {
+        "result_count": "{{record_count}} results",
         "errors": {
             "start_typing": "Start typing the name of a {{object}}",
             "min_length": "Type at least 3 characters",
-            "no_results": "No results found for '{{query}}'"
+            "no_results": "No results found for '{{query}}'",
+            "end_results": "No more results"
         },
         "placeholders": {
             "weapon": "Search for a weapon...",
