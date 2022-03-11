@@ -115,12 +115,12 @@ const SearchModal = (props: Props) => {
         let recents: Character[] | Weapon[] | Summon[] = []
         
         if (props.object === "weapons") {
-            recents = cloneDeep(cookies[key] as Weapon[])
+            recents = cloneDeep(cookies[key] as Weapon[]) || []
             if (!recents.find(item => item.granblue_id === result.granblue_id)) {
                 recents.unshift(result as Weapon)
             }
         } else if (props.object === "summons") {
-            recents = cloneDeep(cookies[key] as Summon[])
+            recents = cloneDeep(cookies[key] as Summon[]) || []
             if (!recents.find(item => item.granblue_id === result.granblue_id)) {
                 recents.unshift(result as Summon)
             }
