@@ -327,6 +327,16 @@ i.tag {
     text-transform: uppercase;
 }
 
+.infinite-scroll-component {
+    overflow: hidden !important;
+}
+
+.SearchFilterBar {
+    display: flex;
+    gap: $unit;
+    padding: 0 ($unit * 3);
+}
+
 @keyframes openModal {
     0% {
         opacity: 0;
