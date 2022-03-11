@@ -156,7 +156,7 @@ const SearchModal = (props: Props) => {
         const key = `recent_${props.object}`
 
         if (open) {
-            if (firstLoad && cookies[key].length > 0) {
+            if (firstLoad && cookies[key] && cookies[key].length > 0) {
                 setResults(cookies[key])
                 setRecordCount(cookies[key].length)
                 setFirstLoad(false)
