@@ -3,38 +3,52 @@
     flex-direction: column;
     min-height: 431px;
     width: 600px;
+    height: 480px;
     gap: 0;
     padding: 0;
 
     #Header {
-        border-top-left-radius: $unit;
-        border-top-right-radius: $unit;
+        border-bottom: 1px solid transparent;
         display: flex;
-        gap: $unit * 2.5;
-        margin: 0;
-        padding: ($unit * 3) ($unit * 3) ($unit) ($unit * 3);
-        position: sticky;
-        top: 0;
+        flex-direction: column;
+        gap: $unit;
+        padding-bottom: $unit * 2;
 
-        button {
-            background: transparent;
-            border: none;
-            height: 42px;
-            padding: 0;
+        &.scrolled {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.12);
         }
 
-        label {
-            width: 100%;
+        #Bar {
+            border-top-left-radius: $unit;
+            border-top-right-radius: $unit;
+            display: flex;
+            gap: $unit * 2.5;
+            margin: 0;
+            padding: ($unit * 3) ($unit * 3) 0 ($unit * 3);
+            position: sticky;
+            top: 0;
 
-            .Input {
-                background: $grey-90;
+            button {
+                background: transparent;
                 border: none;
-                border-radius: calc($unit / 2);
-                box-sizing: border-box;
-                font-size: $font-regular;
-                padding: $unit * 1.5;
-                text-align: left;
+                height: 42px;
+                padding: 0;
+            }
+
+            label {
                 width: 100%;
+
+                .Input {
+                    background: $grey-90;
+                    border: none;
+                    border-radius: calc($unit / 2);
+                    box-sizing: border-box;
+                    font-size: $font-regular;
+                    padding: $unit * 1.5;
+                    text-align: left;
+                    width: 100%;
+                }
             }
         }
     }
@@ -44,6 +58,23 @@
         max-height: 356px;
         padding: 0 ($unit * 1.5);
         overflow-y: scroll;
+
+        h5.total {
+            font-size: $font-regular;
+            font-weight: $normal;
+            color: $grey-40;
+            padding: calc($unit / 2) ($unit * 1.5);
+        }
+
+        .footer {
+            align-items: center;
+            display: flex;
+            color: $grey-60;
+            font-size: $font-regular;
+            font-weight: $normal;
+            height: $unit * 10;
+            justify-content: center;
+        }
 
         .WeaponResult:last-child {
             margin-bottom: $unit * 1.5;
