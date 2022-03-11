@@ -29,8 +29,6 @@ const HeaderMenu = (props: Props) => {
 
     const [checked, setChecked] = useState(false)
 
-    // console.log(`Currently: ${checked} ${cookies['NEXT_LOCALE']}`)
-
     useEffect(() => {
         const locale = cookies['NEXT_LOCALE']
         setChecked((locale === 'ja') ? true : false)
