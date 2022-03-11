@@ -126,7 +126,7 @@ const SearchModal = (props: Props) => {
             }
         }
 
-        if (recents.length > 5) recents.pop()
+        if (recents && recents.length > 5) recents.pop()
         setCookies(`recent_${props.object}`, recents, { path: '/' })
         sendData(result)
     }
