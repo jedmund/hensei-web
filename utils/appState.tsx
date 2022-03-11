@@ -28,7 +28,11 @@ interface AppState {
         characters: GridArray<GridCharacter>
     },
     search: {
-        sourceItem: GridCharacter | GridWeapon | GridSummon | undefined
+        recents: {
+            characters: Character[]
+            weapons: Weapon[]
+            summons: Summon[]
+        }
     },
     raids: Raid[]
 }
@@ -59,7 +63,11 @@ export const initialAppState: AppState = {
         characters: {}
     },
     search: {
-        sourceItem: undefined
+        recents: {
+            characters: [],
+            weapons: [],
+            summons: []
+        }
     },
     raids: []
 }
