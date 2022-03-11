@@ -133,7 +133,7 @@ const SearchModal = (props: Props) => {
 
     function sendData(result: Character | Weapon | Summon) {
         props.send(result, props.fromPosition)
-        setOpen(false)
+        openChange()
     }
 
     function receiveFilters(filters: { [key: string]: number[] }) {
@@ -256,7 +256,10 @@ const SearchModal = (props: Props) => {
     function openChange() {
         if (open) {
             setQuery('')
+            setFirstLoad(true)
             setResults([])
+            setRecordCount(0)
+            setCurrentPage(1)
             setOpen(false)
         } else {
             setOpen(true)
