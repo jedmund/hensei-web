@@ -55,12 +55,17 @@ class Api {
         return axios.post(`${ oauthUrl }/token`, object)
     }
 
-    search(object: string, query: string, excludes: string, locale: string = 'en') {
+    search({ object, query, filters, locale = "en", page = 0 }: 
+           { object: string, query: string, filters?: { [key: string]: number[] }, locale?: string,  page?: number }) {
         const resourceUrl = `${this.url}/${name}`
-        const url = (excludes.length > 0) ? 
-            `${resourceUrl}search/${object}?query=${query}&locale=${locale}&excludes=${excludes}` :
-            `${resourceUrl}search/${object}?query=${query}&locale=${locale}`
-        return axios.get(url)
+        return axios.post(`${resourceUrl}search/${object}`, {
+            search: {
+                query: query,
+                filters: filters,
+                locale: locale,
+                page: page
+            }
+        })
     }
 
     check(resource: string, value: string) {

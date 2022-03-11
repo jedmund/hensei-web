@@ -17,6 +17,18 @@
         "new": "作成",
         "wiki": "gbf.wikiで詳しく見る"
     },
+    "filters": {
+        "labels": {
+            "element": "属性",
+            "series": "シリーズ",
+            "proficiency": "武器種",
+            "rarity": "レアリティ"
+        }
+    },
+    "rarities": {
+        "sr": "SR",
+        "ssr": "SSR"
+    },
     "elements": {
         "null": "無",
         "wind": "風",
@@ -35,6 +47,44 @@
             "dark": "闇属性",
             "light": "光属性"
         }
+    },
+    "proficiencies": {
+        "sabre": "剣",
+        "dagger": "短剣",
+        "spear": "槍",
+        "axe": "斧",
+        "staff": "杖",
+        "gun": "銃",
+        "melee": "拳",
+        "bow": "弓",
+        "harp": "琴",
+        "katana": "刀"
+    },
+    "series": {
+        "seraphic": "セラフィックウェポン",
+        "grand": "リミテッドシリーズ",
+        "opus": "終末の神器",
+        "draconic": "ドラコニックウェポン",
+        "primal": "プライマルシリーズ",
+        "olden_primal": "オールド・プライマルシリーズ",
+        "beast": "四象武器",
+        "omega": "マグナシリーズ",
+        "militis": "ミーレスシリーズ",
+        "xeno": "六道武器",
+        "astral": "アストラルウェポン",
+        "rose": "ローズシリーズ",
+        "hollowsky": "虚ろなる神器",
+        "ultima": "オメガウェポン",
+        "bahamut": "バハムートウェポン",
+        "epic": "エピックウェポン",
+        "ennead": "エニアドシリーズ",
+        "cosmos": "コスモスシリーズ",
+        "ancestral": "アンセスタルシリーズ",
+        "superlative": "スペリオシリーズ",
+        "vintage": "ヴィンテージシリーズ",
+        "class_champion": "英雄武器",
+        "sephira": "セフィラン・オールドウェポン",
+        "new_world": "新世界の礎"
     },
     "recency": {
         "all_time": "全ての期間",
@@ -159,10 +209,12 @@
         "not_found": "編成はまだ保存していません"
     },
     "search": {
+        "result_count": "{{record_count}}件",
         "errors": {
             "start_typing": "{{object}}名を入力してください",
             "min_length": "3文字以上を入力してください",
-            "no_results": "'{{query}}'の検索結果が見つかりませんでした"
+            "no_results": "'{{query}}'の検索結果が見つかりませんでした",
+            "end_results": "検索結果これ以上ありません"
         },
         "placeholders": {
             "weapon": "武器を検索...",

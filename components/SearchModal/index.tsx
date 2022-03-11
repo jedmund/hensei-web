@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
+import { useTranslation } from 'react-i18next'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { appState } from '~utils/appState'
 import api from '~utils/api'
 
 import * as Dialog from '@radix-ui/react-dialog'
+
+import CharacterSearchFilterBar from '~components/CharacterSearchFilterBar'
+import WeaponSearchFilterBar from '~components/WeaponSearchFilterBar'
+import SummonSearchFilterBar from '~components/SummonSearchFilterBar'
 
 import CharacterResult from '~components/CharacterResult'
 import WeaponResult from '~components/WeaponResult'
@@ -28,17 +34,23 @@ const SearchModal = (props: Props) => {
     const router = useRouter()
     const locale = router.locale
 
+    const { t } = useTranslation('common')
+
     let searchInput = React.createRef<HTMLInputElement>()
+    let scrollContainer = React.createRef<HTMLDivElement>()
 
     const [objects, setObjects] = useState<{[id: number]: GridCharacter | GridWeapon | GridSummon}>()
+    const [filters, setFilters] = useState<{ [key: string]: number[] }>()
     const [open, setOpen] = useState(false)
     const [query, setQuery] = useState('')
-    const [results, setResults] = useState({})
-    const [loading, setLoading] = useState(false)
-    const [message, setMessage] = useState('')
-    const [totalResults, setTotalResults] = useState(0)
+    const [results, setResults] = useState<(Weapon | Summon | Character)[]>([])
 
-    useEffect(() => {   
+    // Pagination states
+    const [recordCount, setRecordCount] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+
+    useEffect(() => {
         setObjects(grid[props.object])
     }, [grid, props.object])
 
@@ -47,50 +59,46 @@ const SearchModal = (props: Props) => {
             searchInput.current.focus()
     }, [searchInput])
 
-    useEffect(() => {
-        if (query.length > 1) 
-            fetchResults()
-    }, [query])
-
     function inputChanged(event: React.ChangeEvent<HTMLInputElement>) {
         const text = event.target.value
         if (text.length) {
             setQuery(text)
-            setLoading(true)
-            setMessage('')
         } else {
             setQuery('')
-            setResults({})
-            setMessage('')
         }
     }
     
-    function fetchResults() {
-        // Exclude objects in grid from search results
-        // unless the object is in the position that the user clicked
-        // so that users can replace object versions with 
-        // compatible other objects.
-        const excludes = (objects) ? Object.values(objects)
-            .filter(filterExclusions)
-            .map((o) => { return (o.object) ? o.object.name.en : undefined }).join(',') : ''
+    function fetchResults({ replace = false }: { replace?: boolean }) {
+        api.search({
+            object: props.object, 
+            query: query, 
+            filters: filters, 
+            locale: locale, 
+            page: currentPage
+        }).then(response => {
+            setTotalPages(response.data.total_pages)
+            setRecordCount(response.data.count)
 
-        api.search(props.object, query, excludes, locale)
-            .then(response => {
-                setResults(response.data)
-                setTotalResults(response.data.length)
-                setLoading(false)
-            })
-            .catch(error => {
-                setMessage(error)
-                setLoading(false)
-            }) 
+            if (replace) {
+                replaceResults(response.data.count, response.data.results)
+            } else {
+                appendResults(response.data.results)
+            }
+        }).catch(error => {
+            console.error(error)
+        }) 
     }
 
-    function filterExclusions(gridObject: GridCharacter | GridWeapon | GridSummon) {
-        if (objects && gridObject.object && 
-            gridObject.object.granblue_id === objects[props.fromPosition]?.object.granblue_id)
-                return null
-        else return gridObject
+    function replaceResults(count: number, list: Weapon[] | Summon[] | Character[]) {
+        if (count > 0) {
+            setResults(list)
+        } else {
+            setResults([])
+        }
+    }
+
+    function appendResults(list: Weapon[] | Summon[] | Character[]) {
+        setResults([...results, ...list])
     }
 
     function sendData(result: Character | Weapon | Summon) {
@@ -98,106 +106,160 @@ const SearchModal = (props: Props) => {
         setOpen(false)
     }
 
+    function receiveFilters(filters: { [key: string]: number[] }) {
+        setCurrentPage(1)
+        setResults([])
+        setFilters(filters)
+    }
+
+    useEffect(() => {
+        // Current page changed
+        if (open && currentPage > 1) {
+            fetchResults({ replace: false })
+        } else if (open && currentPage == 1) {
+            fetchResults({ replace: true })
+        }
+    }, [currentPage])
+
+    useEffect(() => {
+        // Filters changed
+        if (open) {
+            setCurrentPage(1)
+            fetchResults({ replace: true })
+        }
+    }, [filters])
+
+    useEffect(() => {
+        // Query changed
+        if (open && query.length != 1) {
+            setCurrentPage(1)
+            fetchResults({ replace: true })
+        }
+    }, [query])
+
     function renderResults() {
+        let jsx
+
         switch(props.object) {
             case 'weapons':
-                return renderWeaponSearchResults(results)
+                jsx = renderWeaponSearchResults()
                 break
             case 'summons':
-                return renderSummonSearchResults(results)
+                jsx = renderSummonSearchResults(results)
                 break
             case 'characters':
-                return renderCharacterSearchResults(results) 
+                jsx = renderCharacterSearchResults(results) 
                 break
-        }
-    }
-
-    function renderWeaponSearchResults(results: { [key: string]: any }) {
-        const elements = results.map((result: Weapon) => {
-            return <WeaponResult 
-                key={result.id} 
-                data={result} 
-                onClick={() => { sendData(result) }} 
-            />
-        })
-
-        return (<ul id="Results">{elements}</ul>)
-    }
-
-    function renderSummonSearchResults(results: { [key: string]: any }) {
-        const elements = results.map((result: Summon) => {
-            return <SummonResult 
-                key={result.id} 
-                data={result} 
-                onClick={() => { sendData(result) }} 
-            />
-        })
-
-        return (<ul id="Results">{elements}</ul>)
-    }
-
-    function renderCharacterSearchResults(results: { [key: string]: any }) {
-        const elements = results.map((result: Character) => {
-            return <CharacterResult 
-                key={result.id} 
-                data={result} 
-                onClick={() => { sendData(result) }} 
-            />
-        })
-
-        return (<ul id="Results">{elements}</ul>)
-    }
-
-    function renderEmptyState() {
-        let string = ''
-
-        if (query === '') {
-            string = `No ${props.object}`
-        } else if (query.length < 2) {
-            string = `Type at least 2 characters`
-        } else {
-            string = `No results found for '${query}'`
         }
 
         return (
-            <div id="NoResults">
-                <h2>{string}</h2>
-            </div>
+            <InfiniteScroll
+                dataLength={ (results && results.length > 0) ? results.length : 0}
+                next={ () => setCurrentPage(currentPage + 1) }
+                hasMore={totalPages > currentPage}
+                scrollableTarget="Results"
+                loader={<div className="footer">Loading...</div>}>
+                    {jsx}
+            </InfiniteScroll>
         )
     }
+
+    function renderWeaponSearchResults() {
+        let jsx: React.ReactNode
+        
+        const castResults: Weapon[] = results as Weapon[]
+        if (castResults && Object.keys(castResults).length > 0) {
+            jsx = castResults.map((result: Weapon) => {
+                return <WeaponResult 
+                    key={result.id} 
+                    data={result} 
+                    onClick={() => { sendData(result) }} 
+                />
+            })
+        }
+
+        return jsx
+    }
+
+    function renderSummonSearchResults(results: { [key: string]: any }) {
+        let jsx: React.ReactNode
+        
+        const castResults: Summon[] = results as Summon[]
+        if (castResults && Object.keys(castResults).length > 0) {
+            jsx = castResults.map((result: Summon) => {
+                return <SummonResult 
+                    key={result.id} 
+                    data={result} 
+                    onClick={() => { sendData(result) }} 
+                />
+            })
+        }
+
+        return jsx
+    }
+
+    function renderCharacterSearchResults(results: { [key: string]: any }) {
+        let jsx: React.ReactNode
+        
+        const castResults: Character[] = results as Character[]
+        if (castResults && Object.keys(castResults).length > 0) {
+            jsx = castResults.map((result: Character) => {
+                return <CharacterResult 
+                    key={result.id} 
+                    data={result} 
+                    onClick={() => { sendData(result) }} 
+                />
+            })
+        }
+
+        return jsx
+    }
     
-    function resetAndClose() {
-        setQuery('')
-        setResults({})
-        setOpen(true)
+    function openChange() {
+        if (open) {
+            setQuery('')
+            setResults([])
+            setOpen(false)
+        } else {
+            setOpen(true)
+        }
     }
 
     return (
-        <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Root open={open} onOpenChange={openChange}>
             <Dialog.Trigger asChild>
                 {props.children}
             </Dialog.Trigger>
             <Dialog.Portal>
                 <Dialog.Content className="Search Dialog">
                     <div id="Header">
-                        <label className="search_label" htmlFor="search_input">
-                            <input 
-                                autoComplete="off"
-                                type="text"
-                                name="query" 
-                                className="Input" 
-                                id="search_input"
-                                ref={searchInput}
-                                value={query}
-                                placeholder={props.placeholderText}
-                                onChange={inputChanged}
-                            />
-                        </label> 
-                        <Dialog.Close className="DialogClose" onClick={resetAndClose}>
-                            <CrossIcon />
-                        </Dialog.Close>
+                        <div id="Bar">
+                            <label className="search_label" htmlFor="search_input">
+                                <input 
+                                    autoComplete="off"
+                                    type="text"
+                                    name="query" 
+                                    className="Input" 
+                                    id="search_input"
+                                    ref={searchInput}
+                                    value={query}
+                                    placeholder={props.placeholderText}
+                                    onChange={inputChanged}
+                                />
+                            </label> 
+                            <Dialog.Close className="DialogClose" onClick={openChange}>
+                                <CrossIcon />
+                            </Dialog.Close>
+                        </div>
+                        { (props.object === 'characters') ? <CharacterSearchFilterBar sendFilters={receiveFilters} /> : '' }
+                        { (props.object === 'weapons') ? <WeaponSearchFilterBar sendFilters={receiveFilters} /> : '' }
+                        { (props.object === 'summons') ? <SummonSearchFilterBar sendFilters={receiveFilters} /> : '' }
                     </div>
-                    { ((Object.entries(results).length == 0) ? renderEmptyState() : renderResults()) }
+
+                    <div id="Results" ref={scrollContainer}>
+                        <h5 className="total">{t('search.result_count', { "record_count": recordCount })}</h5>
+                        { (open) ? renderResults() : ''}
+                    </div>
                 </Dialog.Content>
                 <Dialog.Overlay className="Overlay" />
             </Dialog.Portal>
