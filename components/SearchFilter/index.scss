@@ -1,0 +1,74 @@
+.DropdownLabel {
+    align-items: center;
+    background: $grey-90;
+    border: none;
+    border-radius: $unit * 2;
+    color: $grey-40;
+    display: flex;
+    gap: calc($unit / 2);
+    flex-direction: row;
+    padding: ($unit) ($unit * 2);
+
+    &:hover {
+        background: $grey-80;
+        color: $grey-00;
+        cursor: pointer;
+    }
+
+    .count {
+        color: $grey-60;
+        font-weight: $medium;
+    }
+
+    & > .icon {
+        $diameter: 12px;
+        height: $diameter;
+        width: $diameter;
+
+        svg {
+            transform: scale(0.85);
+
+            path {
+                fill: $grey-60;
+            }
+        }
+    }
+}
+
+.Dropdown {
+    background: white;
+    border-radius: $unit;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: calc($unit / 2);
+    padding: $unit;
+    min-width: 120px;
+
+    & > span {
+        overflow: hidden;
+
+        svg {
+            fill: white;
+            filter: drop-shadow(0px 0px 1px rgb(0 0 0 / 0.18));
+        }
+    }
+
+    section {
+        display: flex;
+        flex-direction: row;
+        gap: $unit;
+    }
+
+    .Group {
+        flex: 1 1 0px;
+        flex-direction: column;
+    }
+
+    .Label {
+        color: $grey-60;
+        font-size: $font-small;
+        margin-bottom: calc($unit / 2);
+        padding-left: calc($unit / 2);
+    }
+}
