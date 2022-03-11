@@ -1,0 +1,41 @@
+.Item {
+    align-items: center;
+    border-radius: calc($unit / 2);
+    color: $grey-40;
+    font-size: $font-regular;
+    line-height: 1.2;
+    min-width: 100px;
+    position: relative;
+    padding: $unit;
+    padding-left: $unit * 3;
+
+    &:hover {
+        background: $grey-90;
+        cursor: pointer;
+    }
+
+    &[data-state="checked"] {
+        background: $grey-90;
+
+        svg {
+            fill: $grey-50;
+        }
+    }
+
+    .Indicator {
+        $diameter: 18px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: calc($unit / 2);
+        height: $diameter;
+        width: $diameter;
+
+        svg {
+            height: $diameter;
+            width: $diameter;
+        }
+    }
+}
