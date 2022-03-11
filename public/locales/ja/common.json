@@ -209,6 +209,7 @@
         "not_found": "編成はまだ保存していません"
     },
     "search": {
+        "recent": "最近追加した",
         "result_count": "{{record_count}}件",
         "errors": {
             "start_typing": "{{object}}名を入力してください",

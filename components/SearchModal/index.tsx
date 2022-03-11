@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'react-i18next'
@@ -19,6 +20,7 @@ import SummonResult from '~components/SummonResult'
 
 import './index.scss'
 import CrossIcon from '~public/icons/Cross.svg'
+import cloneDeep from 'lodash.clonedeep'
 
 interface Props {
     send: (object: Character | Weapon | Summon, position: number) => any
@@ -29,16 +31,23 @@ interface Props {
 }
 
 const SearchModal = (props: Props) => {
-    let { grid } = useSnapshot(appState)
+    // Set up snapshot of app state
+    let { grid, search } = useSnapshot(appState)
 
+    // Set up router
     const router = useRouter()
     const locale = router.locale
 
+    // Set up translation
     const { t } = useTranslation('common')
+
+    // Set up cookies
+    const [cookies, setCookies] = useCookies()
 
     let searchInput = React.createRef<HTMLInputElement>()
     let scrollContainer = React.createRef<HTMLDivElement>()
 
+    const [firstLoad, setFirstLoad] = useState(true)
     const [objects, setObjects] = useState<{[id: number]: GridCharacter | GridWeapon | GridSummon}>()
     const [filters, setFilters] = useState<{ [key: string]: number[] }>()
     const [open, setOpen] = useState(false)
@@ -101,9 +110,30 @@ const SearchModal = (props: Props) => {
         setResults([...results, ...list])
     }
 
+    function storeRecentResult(result: Character | Weapon | Summon) {
+        const key = `recent_${props.object}`
+        let recents: Character[] | Weapon[] | Summon[] = []
+        
+        if (props.object === "weapons") {
+            recents = cloneDeep(cookies[key] as Weapon[])
+            if (!recents.find(item => item.granblue_id === result.granblue_id)) {
+                recents.unshift(result as Weapon)
+            }
+        } else if (props.object === "summons") {
+            recents = cloneDeep(cookies[key] as Summon[])
+            if (!recents.find(item => item.granblue_id === result.granblue_id)) {
+                recents.unshift(result as Summon)
+            }
+        }
+
+        if (recents.length > 5) recents.pop()
+        setCookies(`recent_${props.object}`, recents, { path: '/' })
+        sendData(result)
+    }
+
     function sendData(result: Character | Weapon | Summon) {
         props.send(result, props.fromPosition)
-        setOpen(false)
+        openChange()
     }
 
     function receiveFilters(filters: { [key: string]: number[] }) {
@@ -123,9 +153,17 @@ const SearchModal = (props: Props) => {
 
     useEffect(() => {
         // Filters changed
+        const key = `recent_${props.object}`
+
         if (open) {
-            setCurrentPage(1)
-            fetchResults({ replace: true })
+            if (firstLoad && cookies[key].length > 0) {
+                setResults(cookies[key])
+                setRecordCount(cookies[key].length)
+                setFirstLoad(false)
+            } else {
+                setCurrentPage(1)
+                fetchResults({ replace: true })
+            }
         }
     }, [filters])
 
@@ -173,7 +211,7 @@ const SearchModal = (props: Props) => {
                 return <WeaponResult 
                     key={result.id} 
                     data={result} 
-                    onClick={() => { sendData(result) }} 
+                    onClick={() => { storeRecentResult(result) }} 
                 />
             })
         }
@@ -190,7 +228,7 @@ const SearchModal = (props: Props) => {
                 return <SummonResult 
                     key={result.id} 
                     data={result} 
-                    onClick={() => { sendData(result) }} 
+                    onClick={() => { storeRecentResult(result) }} 
                 />
             })
         }
@@ -207,7 +245,7 @@ const SearchModal = (props: Props) => {
                 return <CharacterResult 
                     key={result.id} 
                     data={result} 
-                    onClick={() => { sendData(result) }} 
+                    onClick={() => { storeRecentResult(result) }} 
                 />
             })
         }
@@ -218,7 +256,10 @@ const SearchModal = (props: Props) => {
     function openChange() {
         if (open) {
             setQuery('')
+            setFirstLoad(true)
             setResults([])
+            setRecordCount(0)
+            setCurrentPage(1)
             setOpen(false)
         } else {
             setOpen(true)
