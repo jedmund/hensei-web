@@ -208,6 +208,7 @@
         "not_found": "You haven't saved any teams"
     },
     "search": {
+        "recent": "Recently added",
         "result_count": "{{record_count}} results",
         "errors": {
             "start_typing": "Start typing the name of a {{object}}",
