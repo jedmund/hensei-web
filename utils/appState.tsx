@@ -13,7 +13,9 @@ interface AppState {
         element: number,
         extra: boolean,
         user: User | undefined,
-        favorited: boolean
+        favorited: boolean,
+        created_at: string
+        updated_at: string
     },
     grid: {
         weapons: {
@@ -48,7 +50,9 @@ export const initialAppState: AppState = {
         element: 0,
         extra: false,
         user: undefined,
-        favorited: false
+        favorited: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
     },
     grid: {
         weapons: {
