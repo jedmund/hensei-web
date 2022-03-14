@@ -10,7 +10,7 @@ body {
     box-sizing: border-box;
     font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 1.4rem;
-    height: 100vh;
+    height: 100%;
     padding: $unit * 2 !important;
     
     &.no-scroll {
