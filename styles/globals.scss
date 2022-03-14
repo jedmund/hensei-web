@@ -28,6 +28,30 @@ main {
 
 a {
     text-decoration: none;
+
+    &.wind {
+        color: $wind-text-dark;
+    }
+
+    &.fire {
+        color: $fire-text-dark;
+    }
+
+    &.water {
+        color: $water-text-dark;
+    }
+
+    &.earth {
+        color: $earth-text-dark;
+    }
+
+    &.dark {
+        color: $dark-text-dark;
+    }
+
+    &.light {
+        color: $light-text-dark;
+    }
 }
 
 button, input {
