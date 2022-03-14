@@ -9,10 +9,12 @@
         }
     },
     "buttons": {
+        "cancel": "Cancel",
         "copy": "Copy link",
         "delete": "Delete team",
         "show_info": "Edit info",
         "hide_info": "Hide info",
+        "save_info": "Save info",
         "menu": "Menu",
         "new": "New",
         "wiki": "View more on gbf.wiki"
