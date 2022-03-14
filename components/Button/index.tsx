@@ -4,6 +4,7 @@ import classNames from 'classnames'
 import Link from 'next/link'
 
 import AddIcon from '~public/icons/Add.svg'
+import CheckIcon from '~public/icons/LargeCheck.svg'
 import CrossIcon from '~public/icons/Cross.svg'
 import EditIcon from '~public/icons/Edit.svg'
 import LinkIcon from '~public/icons/Link.svg'
@@ -65,6 +66,12 @@ const Button = (props: Props) => {
         </span>
     )
 
+    const checkIcon = (
+        <span className='icon check'>
+            <CheckIcon />
+        </span>
+    )
+
     const crossIcon = (
         <span className='icon'>
             <CrossIcon />
@@ -96,6 +103,7 @@ const Button = (props: Props) => {
             case 'new':      icon = addIcon; break
             case 'menu':     icon = menuIcon; break
             case 'link':     icon = linkIcon; break
+            case 'check':    icon = checkIcon; break
             case 'cross':    icon = crossIcon; break
             case 'edit':     icon = editIcon; break
             case 'save':     icon = saveIcon; break
