@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useCookies } from 'react-cookie'
 import clonedeep from 'lodash.clonedeep'
@@ -31,6 +32,9 @@ const Party = (props: Props) => {
             headers: { 'Authorization': `Bearer ${cookies.account.access_token}` }
         } : {}
     }, [cookies.account])
+
+    // Set up router
+    const router = useRouter()
 
     // Set up states
     const { party } = useSnapshot(appState)
@@ -81,8 +85,32 @@ const Party = (props: Props) => {
                         appState.party.name = name
                         appState.party.description = description
                         appState.party.raid = raid
+                        appState.party.updated_at = party.updated_at
                     })
             }
+    }
+
+    // Deleting the party
+    function deleteTeam(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        if (appState.party.editable && appState.party.id) {
+            api.endpoints.parties.destroy({ id: appState.party.id, params: headers })
+                .then(() => {
+                    // Push to route
+                    router.push('/')
+
+                    // Clean state
+                    const resetState = clonedeep(initialAppState)
+                    Object.keys(resetState).forEach((key) => {
+                        appState[key] = resetState[key]
+                    })
+
+                    // Set party to be editable
+                    appState.party.editable = true
+                })
+                .catch((error) => {
+                    console.error(error)
+                })
+        }
     }
 
     // Methods: Navigating with segmented control
@@ -110,6 +138,8 @@ const Party = (props: Props) => {
         appState.party.id = response.data.party.id
         appState.party.user = response.data.party.user
         appState.party.favorited = response.data.party.favorited
+        appState.party.created_at = response.data.party.created_at
+        appState.party.updated_at = response.data.party.updated_at
 
         // Store the party's user-generated details
         appState.party.name = response.data.party.name
@@ -194,6 +224,7 @@ const Party = (props: Props) => {
             { <PartyDetails
                 editable={party.editable}
                 updateCallback={updateDetails}
+                deleteCallback={deleteTeam}
             />}
         </div>
     )

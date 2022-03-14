@@ -82,6 +82,12 @@
             width: 12px;
         }
 
+        &.check svg {
+            margin-top: 1px;
+            height: 14px;
+            width: auto;
+        }
+
         &.stroke svg {
             fill: none;
             stroke: $grey-50;

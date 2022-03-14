@@ -99,7 +99,9 @@ const SummonGrid = (props: Props) => {
         appState.party.id = party.id
         appState.party.user = party.user
         appState.party.favorited = party.favorited
-
+        appState.party.created_at = party.created_at
+        appState.party.updated_at = party.updated_at
+        
         setFound(true)
         setLoading(false)
 

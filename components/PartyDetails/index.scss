@@ -31,6 +31,22 @@
                 width: 100%;
             }
         }
+
+        .bottom {
+            display: flex;
+            flex-direction: row;
+            gap: $unit;
+
+            .left {
+                flex-grow: 1;
+            }
+
+            .right {
+                display: flex;
+                flex-direction: row;
+                gap: $unit;
+            }
+        }
     }
 
     &.ReadOnly {
@@ -45,26 +61,8 @@
             top: 0;
         }
 
-        h1 {
-            font-size: $font-xlarge;
-            font-weight: $normal;
-            text-align: left;
-            margin-bottom: $unit;
-        }
-
-        a {
-            color: $blue;
-
-            &:hover {
-                text-decoration: underline;
-            }
-        }
-
-        .Raid {
-            color: $grey-50;
-            font-size: $font-regular;
-            font-weight: $medium;
-            margin-bottom: $unit * 2;
+        a:hover {
+            text-decoration: underline;
         }
 
         p {
@@ -72,5 +70,84 @@
             line-height: $font-regular * 1.2;
             white-space: pre-line;
         }
+
+
+        h1 {
+            font-size: $font-xlarge;
+            font-weight: $normal;
+            text-align: left;
+            margin-bottom: $unit;
+        }
+
+        .info {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            gap: $unit;
+            margin-bottom: $unit * 2;
+
+            .left {
+                flex-grow: 1;
+            }
+        }
+
+        .attribution {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+
+            & > div {
+                align-items: center;
+                display: inline-flex;
+                font-size: $font-small;
+                height: 26px;
+            }
+
+            time {
+                font-size: $font-small;
+            }
+
+            & > *:not(:last-child):after {
+                content: " · ";
+                margin: 0 calc($unit / 2);
+            }
+        }
+
+        .user {
+            align-items: center;
+            display: inline-flex;
+            gap: calc($unit / 2);
+            margin-top: 1px;
+
+            img, .no-user {
+                $diameter: 24px;
+
+                border-radius: calc($diameter / 2);
+                height: $diameter;
+                width: $diameter;
+            }
+
+            img.gran {
+                background-color: #CEE7FE;
+            }
+    
+            img.djeeta {
+                background-color: #FFE1FE;
+            }
+
+            .no-user {
+                background: $grey-80;
+            }
+        }
+    }
+}
+
+.EmptyDetails {
+    display: none;
+    justify-content: center;
+    margin-bottom: $unit * 10;
+
+    &.Visible {
+        display: flex;
     }
 }
