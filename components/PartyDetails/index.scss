@@ -99,12 +99,12 @@
             & > div {
                 align-items: center;
                 display: inline-flex;
-                font-size: $font-regular;
+                font-size: $font-small;
                 height: 26px;
             }
 
             time {
-                font-size: $font-regular;
+                font-size: $font-small;
             }
 
             & > *:not(:last-child):after {
