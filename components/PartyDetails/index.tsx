@@ -109,11 +109,6 @@ const PartyDetails = (props: Props) => {
 
     function toggleDetails() {
         appState.party.detailsVisible = !appState.party.detailsVisible
-
-        // if (appState.party.detailsVisible)
-            // scroll.scrollToBottom()
-        // else
-            // scroll.scrollToTop()
     }
 
     function updateDetails(event: React.MouseEvent) {
