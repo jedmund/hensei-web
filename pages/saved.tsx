@@ -5,6 +5,7 @@ import { useCookies } from 'react-cookie'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import clonedeep from 'lodash.clonedeep'
@@ -20,9 +21,7 @@ const SavedRoute: React.FC = () => {
     // Set up cookies
     const [cookies] = useCookies(['account'])
     const headers = (cookies.account) ? {
-        headers: {
-            'Authorization': `Bearer ${cookies.account.access_token}`
-        }
+        'Authorization': `Bearer ${cookies.account.access_token}`
     } : {}
 
     // Set up router
@@ -40,6 +39,11 @@ const SavedRoute: React.FC = () => {
     const [parties, setParties] = useState<Party[]>([])
     const [raids, setRaids] = useState<Raid[]>()
     const [raid, setRaid] = useState<Raid>()
+
+    // Set up infinite scrolling-related states
+    const [recordCount, setRecordCount] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
 
     // Set up filter-specific query states
     // Recency is in seconds
@@ -87,26 +91,43 @@ const SavedRoute: React.FC = () => {
         }
     }, [])
 
-    const fetchTeams = useCallback(() => {
+    const fetchTeams = useCallback(({ replace }: { replace: boolean }) => {
         const filters = {
             params: {
                 element: (element != -1) ? element : undefined,
-                raid: (raid) ? raid?.id : undefined,
-                recency: (recency != -1) ? recency : undefined
+                raid: (raid) ? raid.id : undefined,
+                recency: (recency != -1) ? recency : undefined,
+                page: currentPage
             }
         }
 
-        api.savedTeams({...filters, ...headers})
+        api.savedTeams({...filters, ...{ headers: headers }})
             .then(response => {
-                const parties: Party[] = response.data
-                setParties(parties.map((p: any) => p.party)
-                    .sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
+                setTotalPages(response.data.total_pages)
+                setRecordCount(response.data.count)
+
+                if (replace)
+                    replaceResults(response.data.count, response.data.results)
+                else
+                    appendResults(response.data.results)
             })
             .then(() => {
                 setLoading(false)
             })
             .catch(error => handleError(error))
-    }, [element, raid, recency])
+    }, [currentPage, parties, element, raid, recency])
+
+    function replaceResults(count: number, list: Party[]) {
+        if (count > 0) {
+            setParties(list)
+        } else {
+            setParties([])
+        }
+    }
+
+    function appendResults(list: Party[]) {
+        setParties([...parties, ...list])
+    }
 
     // Fetch all raids on mount, then find the raid in the URL if present
     useEffect(() => {
@@ -127,16 +148,19 @@ const SavedRoute: React.FC = () => {
     // When the element, raid or recency filter changes,
     // fetch all teams again.
     useEffect(() => {
-        if (!raidsLoading) fetchTeams()
+        if (!raidsLoading) {
+            setCurrentPage(1)
+            fetchTeams({ replace: true })
+        }
     }, [element, raid, recency])
 
-    // On first mount only, disable loading if we are fetching all teams
     useEffect(() => {
-        if (raidSlug === 'all') {
-            setRaidsLoading(false)
-            fetchTeams()
-        }
-    }, [])
+        // Current page changed
+        if (currentPage > 1)
+            fetchTeams({ replace: false })
+        else if (currentPage == 1)
+            fetchTeams({ replace: true })
+    }, [currentPage])
 
     // Receive filters from the filter bar
     function receiveFilters({ element, raidSlug, recency }: {element?: number, raidSlug?: string, recency?: number}) {
@@ -208,6 +232,24 @@ const SavedRoute: React.FC = () => {
         router.push(`/p/${shortcode}`)
     }
 
+    function renderParties() {
+        return parties.map((party, i) => {
+            return <GridRep 
+                id={party.id}
+                shortcode={party.shortcode} 
+                name={party.name}
+                createdAt={new Date(party.created_at)}
+                raid={party.raid}
+                grid={party.weapons}
+                user={party.user}
+                favorited={party.favorited}
+                key={`party-${i}`}
+                displayUser={true}
+                onClick={goTo}
+                onSave={toggleFavorite} />
+        })
+    }
+
     return (
         <div id="Teams">
             <Head>
@@ -232,25 +274,15 @@ const SavedRoute: React.FC = () => {
             </FilterBar>
             
             <section>
-                <GridRepCollection loading={loading}>
-                    {
-                        parties.map((party, i) => {
-                            return <GridRep 
-                                id={party.id}
-                                shortcode={party.shortcode} 
-                                name={party.name}
-                                createdAt={new Date(party.created_at)}
-                                raid={party.raid}
-                                grid={party.weapons}
-                                user={party.user}
-                                favorited={party.favorited}
-                                key={`party-${i}`}
-                                displayUser={true}
-                                onClick={goTo}
-                                onSave={toggleFavorite} />
-                        })
-                    }
-                </GridRepCollection>
+                <InfiniteScroll
+                    dataLength={ (parties && parties.length > 0) ? parties.length : 0}
+                    next={ () => setCurrentPage(currentPage + 1) }
+                    hasMore={totalPages > currentPage}
+                    loader={ <div id="NotFound"><h2>Loading...</h2></div> }>
+                        <GridRepCollection loading={loading}>
+                            { renderParties() }
+                        </GridRepCollection>
+                </InfiniteScroll>
 
                 { (parties.length == 0) ?
                     <div id="NotFound">
