@@ -5,8 +5,10 @@ import { useCookies } from 'react-cookie'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import clonedeep from 'lodash.clonedeep'
 
 import api from '~utils/api'
 import { elements, allElement } from '~utils/Element'
@@ -30,9 +32,7 @@ const ProfileRoute: React.FC = () => {
     // Set up cookies
     const [cookies] = useCookies(['account'])
     const headers = (cookies.account) ? {
-        headers: {
-            'Authorization': `Bearer ${cookies.account.access_token}`
-        }
+        'Authorization': `Bearer ${cookies.account.access_token}`
     } : {}
 
     // Set up router
@@ -53,6 +53,11 @@ const ProfileRoute: React.FC = () => {
     const [raids, setRaids] = useState<Raid[]>()
     const [raid, setRaid] = useState<Raid>()
     const [user, setUser] = useState<User>(emptyUser)
+
+    // Set up infinite scrolling-related states
+    const [recordCount, setRecordCount] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
 
     // Set up filter-specific query states
     // Recency is in seconds
@@ -100,17 +105,18 @@ const ProfileRoute: React.FC = () => {
         }
     }, [])
 
-    const fetchProfile = useCallback(() => {
+    const fetchProfile = useCallback(({ replace }: { replace: boolean }) => {
         const filters = {
             params: {
                 element: (element != -1) ? element : undefined,
                 raid: (raid) ? raid.id : undefined,
-                recency: (recency != -1) ? recency : undefined
+                recency: (recency != -1) ? recency : undefined,
+                page: currentPage
             }
         }
 
         if (username && !Array.isArray(username))
-            api.endpoints.users.getOne({ id: username , params: {...filters, ...headers} })
+            api.endpoints.users.getOne({ id: username , params: {...filters, ...{ headers: headers }}})
                 .then(response => {
                     setUser({
                         id: response.data.user.id,
@@ -120,15 +126,32 @@ const ProfileRoute: React.FC = () => {
                         private: response.data.user.private
                     })
 
-                    const parties: Party[] = response.data.user.parties
-                    setParties(parties.sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
+                    setTotalPages(response.data.parties.total_pages)
+                    setRecordCount(response.data.parties.count)
+
+                    if (replace)
+                        replaceResults(response.data.parties.count, response.data.parties.results)
+                    else
+                        appendResults(response.data.parties.results)
                 })
                 .then(() => {
                     setFound(true)
                     setLoading(false)
                 })
                 .catch(error => handleError(error))
-    }, [element, raid, recency])
+    }, [currentPage, parties, element, raid, recency])
+
+    function replaceResults(count: number, list: Party[]) {
+        if (count > 0) {
+            setParties(list.sort((a, b) => (a.created_at > b.created_at) ? -1 : 1))
+        } else {
+            setParties([])
+        }
+    }
+
+    function appendResults(list: Party[]) {
+        setParties([...parties, ...list])
+    }
 
     // Fetch all raids on mount, then find the raid in the URL if present
     useEffect(() => {
@@ -149,16 +172,19 @@ const ProfileRoute: React.FC = () => {
     // When the element, raid or recency filter changes,
     // fetch all teams again.
     useEffect(() => {
-        if (!raidsLoading) fetchProfile()
+        if (!raidsLoading) {
+            setCurrentPage(1)
+            fetchProfile({ replace: true })
+        }
     }, [element, raid, recency])
 
-    // On first mount only, disable loading if we are fetching all teams
     useEffect(() => {
-        if (raidSlug === 'all') {
-            setRaidsLoading(false)
-            fetchProfile()
-        }
-    }, [])
+        // Current page changed
+        if (currentPage > 1)
+        fetchProfile({ replace: false })
+        else if (currentPage == 1)
+        fetchProfile({ replace: true })
+    }, [currentPage])
 
     // Receive filters from the filter bar
     function receiveFilters({ element, raidSlug, recency }: {element?: number, raidSlug?: string, recency?: number}) {
@@ -189,6 +215,22 @@ const ProfileRoute: React.FC = () => {
     }
 
     // TODO: Add save functions
+
+    function renderParties() {
+        return parties.map((party, i) => {
+            return <GridRep 
+                id={party.id}
+                shortcode={party.shortcode} 
+                name={party.name}
+                createdAt={new Date(party.created_at)}
+                raid={party.raid}
+                grid={party.weapons}
+                favorited={party.favorited}
+                key={`party-${i}`}
+                onClick={goTo}
+            />
+        })
+    }
 
     return (
         <div id="Profile">
@@ -224,23 +266,16 @@ const ProfileRoute: React.FC = () => {
             </FilterBar>
 
             <section>
-                <GridRepCollection loading={loading}>
-                    {
-                        parties.map((party, i) => {
-                            return <GridRep 
-                                id={party.id}
-                                shortcode={party.shortcode} 
-                                name={party.name}
-                                createdAt={new Date(party.created_at)}
-                                raid={party.raid}
-                                grid={party.weapons}
-                                favorited={party.favorited}
-                                key={`party-${i}`}
-                                onClick={goTo}
-                            />
-                        })
-                    }
-                </GridRepCollection>
+                <InfiniteScroll
+                    dataLength={ (parties && parties.length > 0) ? parties.length : 0}
+                    next={ () => setCurrentPage(currentPage + 1) }
+                    hasMore={totalPages > currentPage}
+                    loader={ <div id="NotFound"><h2>Loading...</h2></div> }>
+                        <GridRepCollection loading={loading}>
+                            { renderParties() }
+                        </GridRepCollection>
+                </InfiniteScroll>
+
                 { (parties.length == 0) ?
                     <div id="NotFound">
                         <h2>{ (loading) ? t('teams.loading') : t('teams.not_found') }</h2>
