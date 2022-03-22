@@ -20,10 +20,10 @@ const CharacterResult = (props: Props) => {
     const character = props.data
 
     const characterUrl = () => {
-        let url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}chara-grid/${character.granblue_id}_01.jpg`
+        let url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_01.jpg`
 
         if (character.granblue_id === '3030182000') {
-            url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}chara-grid/${character.granblue_id}_01_01.jpg`
+            url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_01_01.jpg`
         }
 
         return url
