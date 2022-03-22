@@ -19,9 +19,19 @@ const CharacterResult = (props: Props) => {
 
     const character = props.data
 
-    return(
+    const characterUrl = () => {
+        let url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}chara-grid/${character.granblue_id}_01.jpg`
+
+        if (character.granblue_id === '3030182000') {
+            url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}chara-grid/${character.granblue_id}_01_01.jpg`
+        }
+
+        return url
+    }
+
+    return (
         <li className="CharacterResult" onClick={props.onClick}>
-            <img alt={character.name[locale]} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_01.jpg`} />
+            <img alt={character.name[locale]} src={characterUrl()} />
             <div className="Info">
                 <h5>{character.name[locale]}</h5>
                 <UncapIndicator 
