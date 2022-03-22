@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 import classnames from 'classnames'
 
+import { appState } from '~utils/appState'
+
+import CharacterHovercard from '~components/CharacterHovercard'
 import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 import PlusIcon from '~public/icons/Add.svg'
 
 import './index.scss'
-import { omit } from 'lodash'
-import CharacterHovercard from '~components/CharacterHovercard'
+import { getRedirectStatus } from 'next/dist/lib/load-custom-routes'
 
 interface Props {
     gridCharacter: GridCharacter | undefined
@@ -21,6 +24,8 @@ interface Props {
 
 const CharacterUnit = (props: Props) => {
     const { t } = useTranslation('common')
+
+    const { party, grid } = useSnapshot(appState)
 
     const router = useRouter()
     const locale = (router.locale && ['en', 'ja'].includes(router.locale)) ? router.locale : 'en'
@@ -55,7 +60,19 @@ const CharacterUnit = (props: Props) => {
             else if (props.gridCharacter.uncap_level > 2)
                 suffix = '02'
 
-            imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-main/${character.granblue_id}_${suffix}.jpg`
+            // Special casing for Lyria (and Young Cat eventually)
+            if (props.gridCharacter.object.granblue_id === '3030182000') {
+                let element = 1
+                if (grid.weapons.mainWeapon && grid.weapons.mainWeapon.element) {
+                    element = grid.weapons.mainWeapon.element
+                } else if (party.element != 0) {
+                    element = party.element
+                }
+
+                suffix = `${suffix}_0${element}`
+            }
+
+            imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}chara-main/${character.granblue_id}_${suffix}.jpg`
         }
 
         setImageUrl(imgSrc)
