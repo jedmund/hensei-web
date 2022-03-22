@@ -71,13 +71,33 @@ const GridRep = (props: Props) => {
     }
 
     function generateMainhandImage() {
+        let url = ''
+
+        if (mainhand) {
+            if (mainhand.element == 0 && props.grid[0].element) {
+                url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}_${props.grid[0].element}.jpg`
+            } else {
+                url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}.jpg`
+            }
+        }
+
         return (mainhand) ?
-            <img alt={mainhand?.name[locale]} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand?.granblue_id}.jpg`} /> : ''
+            <img alt={mainhand.name[locale]} src={url} /> : ''
     }
 
     function generateGridImage(position: number) {
+        let url = ''
+
+        if (weapons[position]) {
+            if (weapons[position].element == 0 && props.grid[position].element) {
+                url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}_${props.grid[position].element}.jpg`
+            } else {
+                url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`
+            }
+        }
+
         return (weapons[position]) ?
-            <img alt={weapons[position]?.name[locale]} src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`} /> : ''
+            <img alt={weapons[position].name[locale]} src={url} /> : ''
     }
 
     function sendSaveData() {
