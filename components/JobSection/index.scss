@@ -1,0 +1,44 @@
+#Job {
+    display: flex;
+    margin-bottom: $unit * 3;
+
+    select {
+        flex-grow: 1;
+        width: auto;
+    }
+
+    .JobImage {
+        $height: 249px;
+        $width: 447px;
+
+        background: url('/images/background_a.jpg');
+        background-size: 500px 281px;
+        border-radius: $unit;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+        display: block;
+        flex-grow: 2;
+        height: $height;
+        margin-right: $unit * 3;
+        max-height: $height;
+        max-width: $width;
+        overflow: hidden;
+        position: relative;
+        width: $width;
+        transition: box-shadow 0.15s ease-in-out;
+
+        img {
+            position: relative;
+            top: $unit * -4;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            z-index: 2;
+        }
+
+        .Overlay {
+            background: rgba(255, 255, 255, 0.12);
+            position: absolute;
+            z-index: 1;
+        }
+    }
+}
