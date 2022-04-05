@@ -1,6 +1,9 @@
 #CharacterGrid {
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    margin: auto;
+    max-width: 761px;
 }
 
 #grid_characters {
