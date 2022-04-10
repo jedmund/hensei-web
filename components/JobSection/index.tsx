@@ -8,9 +8,7 @@ import { appState } from '~utils/appState'
 import './index.scss'
 
 // Props
-interface Props {
-    currentJob?: string
-}
+interface Props {}
 
 const JobSection = (props: Props) => {
     const [job, setJob] = useState<Job>()
@@ -28,8 +26,7 @@ const JobSection = (props: Props) => {
     })
 
     useEffect(() => {
-        if (job)
-            appState.party.job = job
+        if (job) appState.party.job = job
     }, [job])
 
     function receiveJob(job?: Job) {
@@ -57,7 +54,7 @@ const JobSection = (props: Props) => {
                 <div className="Overlay" />
             </div>
             <JobDropdown 
-                currentJob={party.job.id}
+                currentJob={ (party.job) ? party.job.id : undefined}
                 onChange={receiveJob} 
             />
         </section>
