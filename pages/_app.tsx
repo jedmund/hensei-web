@@ -21,7 +21,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                 id: cookies.account.user_id,
                 username: cookies.account.username,
                 picture: '',
-                element: ''
+                element: '',
+                gender: 0
             }
         } else {
             console.log(`You are not currently logged in.`)

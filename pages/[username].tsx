@@ -25,7 +25,8 @@ const emptyUser = {
         picture: '',
         element: ''
     },
-    private: false
+    private: false,
+    gender: 0
 }
 
 const ProfileRoute: React.FC = () => {
@@ -123,7 +124,8 @@ const ProfileRoute: React.FC = () => {
                         username: response.data.user.username,
                         granblueId: response.data.user.granblue_id,
                         picture: response.data.user.picture,
-                        private: response.data.user.private
+                        private: response.data.user.private,
+                        gender: response.data.user.gender
                     })
 
                     setTotalPages(response.data.parties.total_pages)

@@ -132,6 +132,7 @@ const LoginModal = (props: Props) => {
             picture: user.picture.picture,
             element: user.picture.element,
             language: user.language,
+            gender: user.gender
         }
 
         setCookies('user', cookieObj, { path: '/' })
@@ -140,7 +141,8 @@ const LoginModal = (props: Props) => {
             id: user.id,
             username: user.username,
             picture: user.picture.picture,
-            element: user.picture.element
+            element: user.picture.element,
+            gender: user.gender
         }
 
         accountState.account.authorized = true
