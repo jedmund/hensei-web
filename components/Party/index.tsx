@@ -39,20 +39,20 @@ const Party = (props: Props) => {
 
     // Set up states
     const { party } = useSnapshot(appState)
+    const jobState = party.job
 
     const [job, setJob] = useState<Job>()
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
-
-    // Update job when state changes
-    subscribeKey(appState.party, 'job', (value: Job) => {
-        setJob(value)
-    })
 
     // Reset state on first load
     useEffect(() => {
         const resetState = clonedeep(initialAppState)
         appState.grid = resetState.grid
     }, [])
+
+    useEffect(() => {
+        setJob(jobState)
+    }, [jobState])
 
     useEffect(() => {
         jobChanged()
