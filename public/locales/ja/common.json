@@ -136,10 +136,15 @@
             "labels": {
                 "picture": "プロフィール画像",
                 "language": "言語",
+                "gender": "主人公",
                 "private": "プライベート"
             },
             "descriptions": {
                 "private": "プロフィールを隠し、編成をコレクションに表示されないようにします"
+            },
+            "gender": {
+                "gran": "グラン",
+                "djeeta": "ジータ"
             },
             "language": {
                 "english": "英語",

@@ -136,10 +136,15 @@
             "labels": {
                 "picture": "Picture",
                 "language": "Language",
+                "gender": "Main Character",
                 "private": "Private"
             },
             "descriptions": {
                 "private": "Hide your profile and prevent your grids from showing up in collections"
+            },
+            "gender": {
+                "gran": "Gran",
+                "djeeta": "Djeeta"
             },
             "language": {
                 "english": "English",
