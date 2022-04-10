@@ -38,7 +38,7 @@ const JobSection = (props: Props) => {
         
         if (job) {
             const slug = job?.name.en.replaceAll(' ', '-').toLowerCase()
-            const gender = (true) ? 'a' : 'b'
+            const gender = (party.user && party.user.gender == 1) ? 'b' : 'a'
 
             imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/jobs/${slug}_${gender}.png`
         }
