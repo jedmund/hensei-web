@@ -6,6 +6,7 @@ import { useSnapshot } from 'valtio'
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
+import JobSection from '~components/JobSection'
 import CharacterUnit from '~components/CharacterUnit'
 
 import api from '~utils/api'
@@ -227,22 +228,25 @@ const CharacterGrid = (props: Props) => {
 
     // Render: JSX components
     return (
-        <div id="CharacterGrid">
-            <ul id="grid_characters">
-                {Array.from(Array(numCharacters)).map((x, i) => {
-                    return (
-                        <li key={`grid_unit_${i}`} >
-                            <CharacterUnit 
-                                gridCharacter={grid.characters[i]}
-                                editable={party.editable}
-                                position={i} 
-                                updateObject={receiveCharacterFromSearch}
-                                updateUncap={initiateUncapUpdate}
-                            />
-                        </li>
-                    )
-                })}
-            </ul>
+        <div>
+            <div id="CharacterGrid">
+                <JobSection />
+                <ul id="grid_characters">
+                    {Array.from(Array(numCharacters)).map((x, i) => {
+                        return (
+                            <li key={`grid_unit_${i}`} >
+                                <CharacterUnit 
+                                    gridCharacter={grid.characters[i]}
+                                    editable={party.editable}
+                                    position={i} 
+                                    updateObject={receiveCharacterFromSearch}
+                                    updateUncap={initiateUncapUpdate}
+                                />
+                            </li>
+                        )
+                    })}
+                </ul>
+            </div>
         </div>
     )
 }

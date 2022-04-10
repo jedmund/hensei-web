@@ -36,16 +36,19 @@ const AccountModal = () => {
     const [open, setOpen] = useState(false)
     const [picture, setPicture] = useState('')
     const [language, setLanguage] = useState('')
+    const [gender, setGender] = useState(0)
     const [privateProfile, setPrivateProfile] = useState(false)
 
     // Refs
     const pictureSelect = React.createRef<HTMLSelectElement>()
     const languageSelect = React.createRef<HTMLSelectElement>()
+    const genderSelect = React.createRef<HTMLSelectElement>()
     const privateSelect = React.createRef<HTMLInputElement>()
 
     useEffect(() => {
         if (cookies.user) setPicture(cookies.user.picture)
         if (cookies.user) setLanguage(cookies.user.language)
+        if (cookies.user) setGender(cookies.user.gender)
     }, [cookies])
 
     const pictureOptions = (
@@ -66,6 +69,11 @@ const AccountModal = () => {
             setLanguage(languageSelect.current.value)
     }
 
+    function handleGenderChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        if (genderSelect.current)
+            setGender(parseInt(genderSelect.current.value))
+    }
+
     function handlePrivateChange(checked: boolean) {
         setPrivateProfile(checked)
     }
@@ -78,6 +86,7 @@ const AccountModal = () => {
                 picture: picture,
                 element: pictureData.find(i => i.filename === picture)?.element,
                 language: language,
+                gender: gender,
                 private: privateProfile
             }
         }
@@ -89,7 +98,8 @@ const AccountModal = () => {
                 const cookieObj = {
                     picture: user.picture.picture,
                     element: user.picture.element,
-                    language: user.language,
+                    gender: user.gender,
+                    language: user.language
                 }
         
                 setCookies('user', cookieObj, { path: '/'})
@@ -98,7 +108,8 @@ const AccountModal = () => {
                     id: user.id,
                     username: user.username,
                     picture: user.picture.picture,
-                    element: user.picture.element
+                    element: user.picture.element,
+                    gender: user.gender
                 }
 
                 setOpen(false)
@@ -155,6 +166,16 @@ const AccountModal = () => {
 
                             <select name="picture" onChange={handlePictureChange} value={picture} ref={pictureSelect}>
                                 {pictureOptions}
+                            </select>
+                        </div>
+                        <div className="field">
+                            <div className="left">
+                                <label>{t('modals.settings.labels.gender')}</label>
+                            </div>
+
+                            <select name="gender" onChange={handleGenderChange} value={gender} ref={genderSelect}>
+                                <option key="gran" value="0">{t('modals.settings.gender.gran')}</option>
+                                <option key="djeeta" value="1">{t('modals.settings.gender.djeeta')}</option>
                             </select>
                         </div>
                         <div className="field">

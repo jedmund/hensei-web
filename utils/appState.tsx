@@ -1,5 +1,20 @@
 import { proxy } from "valtio";
 
+const emptyJob: Job = {
+    id: "-1",
+    row: "",
+    ml: false,
+    order: 0,
+    name: {
+        en: "",
+        ja: ""
+    },
+    proficiency: {
+        proficiency1: 0,
+        proficiency2: 0
+    }
+}
+
 interface AppState {
     [key: string]: any
     
@@ -9,6 +24,7 @@ interface AppState {
         detailsVisible: boolean,
         name: string | undefined,
         description: string | undefined,
+        job: Job,
         raid: Raid | undefined,
         element: number,
         extra: boolean,
@@ -46,6 +62,7 @@ export const initialAppState: AppState = {
         detailsVisible: false,
         name: undefined,
         description: undefined,
+        job: emptyJob,
         raid: undefined,
         element: 0,
         extra: false,

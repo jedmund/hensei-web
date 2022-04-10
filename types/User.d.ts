@@ -6,5 +6,6 @@ interface User {
         picture: string
         element: string
     }
+    gender: number
     private: boolean
 }

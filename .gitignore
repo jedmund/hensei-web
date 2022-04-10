@@ -50,6 +50,7 @@ dist/
 public/images/weapon*
 public/images/summon*
 public/images/chara*
+public/images/jobs
 
 # Typescript v1 declaration files
 typings/

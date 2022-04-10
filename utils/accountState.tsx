@@ -10,6 +10,7 @@ interface AccountState {
             username: string
             picture: string
             element: string
+            gender: number
         } | undefined
     }
 }

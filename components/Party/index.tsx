@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useCookies } from 'react-cookie'
 import clonedeep from 'lodash.clonedeep'
+import { subscribeKey } from 'valtio/utils'
 
 import PartySegmentedControl from '~components/PartySegmentedControl'
 import PartyDetails from '~components/PartyDetails'
@@ -38,6 +39,9 @@ const Party = (props: Props) => {
 
     // Set up states
     const { party } = useSnapshot(appState)
+    const jobState = party.job
+
+    const [job, setJob] = useState<Job>()
     const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
 
     // Reset state on first load
@@ -45,6 +49,14 @@ const Party = (props: Props) => {
         const resetState = clonedeep(initialAppState)
         appState.grid = resetState.grid
     }, [])
+
+    useEffect(() => {
+        setJob(jobState)
+    }, [jobState])
+
+    useEffect(() => {
+        jobChanged()
+    }, [job])
 
     // Methods: Creating a new party
     async function createParty(extra: boolean = false) {
@@ -65,6 +77,14 @@ const Party = (props: Props) => {
         if (party.id) {
             api.endpoints.parties.update(party.id, {
                 'party': { 'extra': event.target.checked }
+            }, headers)
+        }
+    }
+
+    function jobChanged() {
+        if (party.id) {
+            api.endpoints.parties.update(party.id, {
+                'party': { 'job_id': (job) ? job.id : '' }
             }, headers)
         }
     }
@@ -145,6 +165,7 @@ const Party = (props: Props) => {
         appState.party.name = response.data.party.name
         appState.party.description = response.data.party.description
         appState.party.raid = response.data.party.raid
+        appState.party.job = response.data.party.job
     }, [])
 
     const handleError = useCallback((error: any) => {
