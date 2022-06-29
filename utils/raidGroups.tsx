@@ -117,6 +117,12 @@ export const raidGroups: RaidGroup[] = [
     },
     {
         name: {
+            en: '10-Star Raids',
+            ja: '★★★★★★★★★★'
+        }
+    },
+    {
+        name: {
             en: 'Super Ultimate',
             ja: 'スーパーアルティメット'
         }
