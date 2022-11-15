@@ -11,7 +11,7 @@ import "../styles/globals.scss"
 
 function MyApp({ Component, pageProps }: AppProps) {
   const cookie = getCookie("account")
-  const cookieData = cookie ? JSON.parse(cookie as string) : null
+  const cookieData: AccountCookie = cookie ? JSON.parse(cookie as string) : null
 
   useEffect(() => {
     if (cookie) {
@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
       accountState.account.authorized = true
       accountState.account.user = {
-        id: cookieData.user_id,
+        id: cookieData.userId,
         username: cookieData.username,
         picture: "",
         element: "",
