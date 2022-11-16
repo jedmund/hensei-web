@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-// import { useCookies } from 'react-cookie'
+import { getCookie } from "cookies-next"
 import { useRouter } from "next/router"
 import { useTranslation } from "next-i18next"
 import { AxiosResponse } from "axios"
@@ -42,15 +42,13 @@ const WeaponModal = (props: Props) => {
   const { t } = useTranslation("common")
 
   // Cookies
-  const [cookies] = useCookies(["account"])
-  const headers =
-    cookies.account != null
-      ? {
-          headers: {
-            Authorization: `Bearer ${cookies.account.access_token}`,
-          },
-        }
-      : {}
+  const cookie = getCookie("account")
+  const accountData: AccountCookie = cookie
+    ? JSON.parse(cookie as string)
+    : null
+  const headers = accountData
+    ? { Authorization: `Bearer ${accountData.token}` }
+    : {}
 
   // Refs
   const weaponKey1Select = React.createRef<HTMLSelectElement>()
