@@ -1,6 +1,7 @@
 interface Party {
   id: string
   name: string
+  description: string
   raid: Raid
   shortcode: string
   extra: boolean

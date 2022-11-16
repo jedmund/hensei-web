@@ -156,6 +156,11 @@ const Party = (props: Props) => {
   // Methods: Storing party data
   const storeParty = function (party: Party) {
     // Store the important party and state-keeping values
+    appState.party.name = party.name
+    appState.party.description = party.description
+    appState.party.raid = party.raid
+    appState.party.updated_at = party.updated_at
+
     appState.party.id = party.id
     appState.party.extra = party.extra
     appState.party.user = party.user
