@@ -106,20 +106,6 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // When the element, raid or recency filter changes,
-  // fetch all teams again.
-  useDidMountEffect(() => {
-    setCurrentPage(1)
-    fetchProfile({ replace: true })
-  }, [element, raid, recency])
-
-  // When the page changes, fetch all teams again.
-  useDidMountEffect(() => {
-    // Current page changed
-    if (currentPage > 1) fetchProfile({ replace: false })
-    else if (currentPage == 1) fetchProfile({ replace: true })
-  }, [currentPage])
-
   // Handle errors
   const handleError = useCallback((error: any) => {
     if (error.response != null) {
@@ -140,7 +126,7 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
         },
       }
 
-      if (username && !Array.isArray(username))
+      if (username && !Array.isArray(username)) {
         api.endpoints.users
           .getOne({
             id: username,
@@ -157,8 +143,8 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
               )
             else appendResults(response.data.parties.results)
           })
-          .then(() => {})
           .catch((error) => handleError(error))
+      }
     },
     [currentPage, parties, element, raid, recency]
   )
@@ -189,6 +175,20 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
       return raid
     })
   }, [setRaids])
+
+  // When the element, raid or recency filter changes,
+  // fetch all teams again.
+  useDidMountEffect(() => {
+    setCurrentPage(1)
+    fetchProfile({ replace: true })
+  }, [element, raid, recency])
+
+  // When the page changes, fetch all teams again.
+  useDidMountEffect(() => {
+    // Current page changed
+    if (currentPage > 1) fetchProfile({ replace: false })
+    else if (currentPage == 1) fetchProfile({ replace: true })
+  }, [currentPage])
 
   // Receive filters from the filter bar
   function receiveFilters({
@@ -304,6 +304,7 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
         >
           <GridRepCollection>{renderParties()}</GridRepCollection>
         </InfiniteScroll>
+
         {parties.length == 0 ? (
           <div id="NotFound">
             <h2>{t("teams.not_found")}</h2>
@@ -373,9 +374,12 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   let user: User | null = null
   let teams: Party[] | null = null
   if (query.username) {
-    let response = await api.endpoints.users.getOne({
+    const response = await api.endpoints.users.getOne({
       id: query.username,
-      params: { params: { ...filters, ...{ headers: headers } } },
+      params: {
+        params: filters,
+        ...headers
+      }
     })
 
     user = response.data.user
