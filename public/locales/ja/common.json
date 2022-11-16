@@ -1,244 +1,249 @@
 {
-    "ax": {
-        "no_skill": "EXスキルなし",
-        "errors": {
-            "value_too_low": "{{name}}は最低{{minValue}}{{suffix}}を入力してください",
-            "value_too_high": "{{name}}は最大{{maxValue}}を入力してください",
-            "value_not_whole": "{{name}}は整数でなければなりません",
-            "value_empty": "{{name}}を入力してください"
-        }
+  "ax": {
+    "no_skill": "EXスキルなし",
+    "errors": {
+      "value_too_low": "{{name}}は最低{{minValue}}{{suffix}}を入力してください",
+      "value_too_high": "{{name}}は最大{{maxValue}}を入力してください",
+      "value_not_whole": "{{name}}は整数でなければなりません",
+      "value_empty": "{{name}}を入力してください"
+    }
+  },
+  "buttons": {
+    "cancel": "キャンセルs",
+    "copy": "リンクをコピー",
+    "delete": "編成を削除",
+    "show_info": "詳細を編集",
+    "save_info": "詳細を保存",
+    "hide_info": "詳細を非表示",
+    "menu": "メニュー",
+    "new": "作成",
+    "wiki": "gbf.wikiで詳しく見る"
+  },
+  "filters": {
+    "labels": {
+      "element": "属性",
+      "series": "シリーズ",
+      "proficiency": "武器種",
+      "rarity": "レアリティ"
+    }
+  },
+  "header": {
+    "anonymous": "無名",
+    "untitled_team": "{{username}}さんからの無題編成",
+    "new_team": "新編成",
+    "byline": "{{username}}さんからの{{partyName}}"
+  },
+  "rarities": {
+    "sr": "SR",
+    "ssr": "SSR"
+  },
+  "elements": {
+    "null": "無",
+    "wind": "風",
+    "fire": "火",
+    "water": "水",
+    "earth": "土",
+    "dark": "闇",
+    "light": "光",
+    "full": {
+      "all": "全属性",
+      "null": "無属性",
+      "wind": "風属性",
+      "fire": "火属性",
+      "water": "水属性",
+      "earth": "土属性",
+      "dark": "闇属性",
+      "light": "光属性"
+    }
+  },
+  "proficiencies": {
+    "sabre": "剣",
+    "dagger": "短剣",
+    "spear": "槍",
+    "axe": "斧",
+    "staff": "杖",
+    "gun": "銃",
+    "melee": "拳",
+    "bow": "弓",
+    "harp": "琴",
+    "katana": "刀"
+  },
+  "series": {
+    "seraphic": "セラフィックウェポン",
+    "grand": "リミテッドシリーズ",
+    "opus": "終末の神器",
+    "draconic": "ドラコニックウェポン",
+    "primal": "プライマルシリーズ",
+    "olden_primal": "オールド・プライマルシリーズ",
+    "beast": "四象武器",
+    "omega": "マグナシリーズ",
+    "militis": "ミーレスシリーズ",
+    "xeno": "六道武器",
+    "astral": "アストラルウェポン",
+    "rose": "ローズシリーズ",
+    "hollowsky": "虚ろなる神器",
+    "ultima": "オメガウェポン",
+    "bahamut": "バハムートウェポン",
+    "epic": "エピックウェポン",
+    "ennead": "エニアドシリーズ",
+    "cosmos": "コスモスシリーズ",
+    "ancestral": "アンセスタルシリーズ",
+    "superlative": "スペリオシリーズ",
+    "vintage": "ヴィンテージシリーズ",
+    "class_champion": "英雄武器",
+    "sephira": "セフィラン・オールドウェポン",
+    "new_world": "新世界の礎"
+  },
+  "recency": {
+    "all_time": "全ての期間",
+    "last_day": "1日",
+    "last_week": "7日",
+    "last_month": "1ヶ月",
+    "last_3_months": "3ヶ月",
+    "last_6_months": "6ヶ月",
+    "last_year": "1年"
+  },
+  "summons": {
+    "main": "メイン",
+    "friend": "フレンド",
+    "summons": "召喚石",
+    "subaura": "サブ加護召喚石"
+  },
+  "modals": {
+    "about": {
+      "title": "このサイトについて"
     },
-    "buttons": {
-        "cancel": "キャンセルs",
-        "copy": "リンクをコピー",
-        "delete": "編成を削除",
-        "show_info": "詳細を編集",
-        "save_info": "詳細を保存",
-        "hide_info": "詳細を非表示",
-        "menu": "メニュー",
-        "new": "作成",
-        "wiki": "gbf.wikiで詳しく見る"
+    "delete_team": {
+      "title": "編成を削除しますか",
+      "description": "編成を削除する操作は取り消せません。",
+      "buttons": {
+        "confirm": "削除",
+        "cancel": "キャンセル"
+      }
     },
-    "filters": {
-        "labels": {
-            "element": "属性",
-            "series": "シリーズ",
-            "proficiency": "武器種",
-            "rarity": "レアリティ"
-        }
+    "login": {
+      "title": "ログイン",
+      "buttons": {
+        "confirm": "ログイン"
+      },
+      "errors": {
+        "empty_email": "メールアドレスを入力して下さい",
+        "empty_password": "パスワードを入力して下さい",
+        "invalid_email": "メールアドレスは有効ではありません",
+        "invalid_credentials": "パスワードまたはメールアドレスが違います"
+      },
+      "placeholders": {
+        "email": "メールアドレス",
+        "password": "パスワード"
+      }
     },
-    "rarities": {
-        "sr": "SR",
-        "ssr": "SSR"
-    },
-    "elements": {
-        "null": "無",
-        "wind": "風",
-        "fire": "火",
-        "water": "水",
-        "earth": "土",
-        "dark": "闇",
-        "light": "光",
-        "full": {
-            "all": "全属性",
-            "null": "無属性",
-            "wind": "風属性",
-            "fire": "火属性",
-            "water": "水属性",
-            "earth": "土属性",
-            "dark": "闇属性",
-            "light": "光属性"
-        }
-    },
-    "proficiencies": {
-        "sabre": "剣",
-        "dagger": "短剣",
-        "spear": "槍",
-        "axe": "斧",
-        "staff": "杖",
-        "gun": "銃",
-        "melee": "拳",
-        "bow": "弓",
-        "harp": "琴",
-        "katana": "刀"
-    },
-    "series": {
-        "seraphic": "セラフィックウェポン",
-        "grand": "リミテッドシリーズ",
-        "opus": "終末の神器",
-        "draconic": "ドラコニックウェポン",
-        "primal": "プライマルシリーズ",
-        "olden_primal": "オールド・プライマルシリーズ",
-        "beast": "四象武器",
-        "omega": "マグナシリーズ",
-        "militis": "ミーレスシリーズ",
-        "xeno": "六道武器",
-        "astral": "アストラルウェポン",
-        "rose": "ローズシリーズ",
-        "hollowsky": "虚ろなる神器",
-        "ultima": "オメガウェポン",
-        "bahamut": "バハムートウェポン",
-        "epic": "エピックウェポン",
-        "ennead": "エニアドシリーズ",
-        "cosmos": "コスモスシリーズ",
-        "ancestral": "アンセスタルシリーズ",
-        "superlative": "スペリオシリーズ",
-        "vintage": "ヴィンテージシリーズ",
-        "class_champion": "英雄武器",
-        "sephira": "セフィラン・オールドウェポン",
-        "new_world": "新世界の礎"
-    },
-    "recency": {
-        "all_time": "全ての期間",
-        "last_day": "1日",
-        "last_week": "7日",
-        "last_month": "1ヶ月",
-        "last_3_months": "3ヶ月",
-        "last_6_months": "6ヶ月",
-        "last_year": "1年"
-    },
-    "summons": {
-        "main": "メイン",
-        "friend": "フレンド",
-        "summons": "召喚石",
-        "subaura": "サブ加護召喚石"
-    },
-    "modals": {
-        "about": {
-            "title": "このサイトについて"
-        },
-        "delete_team": {
-            "title": "編成を削除しますか",
-            "description": "編成を削除する操作は取り消せません。",
-            "buttons": {
-                "confirm": "削除",
-                "cancel": "キャンセル"
-            }
-        },
-        "login": {
-            "title": "ログイン",
-            "buttons": {
-                "confirm": "ログイン"
-            },
-            "errors": {
-                "empty_email": "メールアドレスを入力して下さい",
-                "empty_password": "パスワードを入力して下さい",
-                "invalid_email": "メールアドレスは有効ではありません",
-                "invalid_credentials": "パスワードまたはメールアドレスが違います"
-            },
-            "placeholders": {
-                "email": "メールアドレス",
-                "password": "パスワード"
-            }
-        },
-        "settings": {
-            "title": "アカウント設定",
-            "labels": {
-                "picture": "プロフィール画像",
-                "language": "言語",
-                "gender": "主人公",
-                "private": "プライベート"
-            },
-            "descriptions": {
-                "private": "プロフィールを隠し、編成をコレクションに表示されないようにします"
-            },
-            "gender": {
-                "gran": "グラン",
-                "djeeta": "ジータ"
-            },
-            "language": {
-                "english": "英語",
-                "japanese": "日本語"
-            },
-            "buttons": {
-                "confirm": "設定を保存する"
-            }
-        },
-        "signup": {
-            "title": "アカウント登録",
-            "buttons": {
-                "confirm": "登録する"
-            },
-            "agreement": "続行することで<1>利用規約</1>に同意し、<br/><1>プライバシーポリシー</1>を読んだものとみなされます。",
-            "errors": {
-                "field_in_use": "入力された{{field}}は既に登録済みです",
-                "empty_email": "メールアドレスを入力して下さい",
-                "invalid_email": "メールアドレスは有効ではありません",
-                "username_too_short": "ユーザーネームは3文字以上で入力してください",
-                "username_too_long": "ユーザーネームは20文字以内で入力してください",
-                "empty_password": "パスワードを入力して下さい",
-                "password_contains_username": "パスワードにはユーザー名を含めないでください",
-                "password_too_short": "パスワードは8文字以上で入力してください",
-                "mismatched_passwords": "パスワードとパスワード確認を確かめてください",
-                "invalid_credentials": "パスワードまたはメールアドレスが違います"
-            },
-            "placeholders": {
-                "username": "ユーザー名",
-                "email": "メールアドレス",
-                "password": "パスワード",
-                "password_confirm": "パスワード確認"
-            }
-        },
-        "weapon": {
-            "title": "武器変更",
-            "buttons": {
-                "confirm": "武器を変更する"
-            },
-            "subtitles": {
-                "element": "属性",
-                "ax_skills": "EXスキル",
-                "weapon_keys": "武器スキル"
-            }
-        }
-    },
-    "menu": {
-        "about": "このサイトについて",
-        "guides": "攻略",
+    "settings": {
+      "title": "アカウント設定",
+      "labels": {
+        "picture": "プロフィール画像",
         "language": "言語",
-        "login": "ログイン",
-        "saved": "保存した編成",
-        "settings": "アカウント設定",
-        "signup": "登録",
-        "teams": "編成一覧",
-        "logout": "ログアウト"
+        "gender": "主人公",
+        "private": "プライベート"
+      },
+      "descriptions": {
+        "private": "プロフィールを隠し、編成をコレクションに表示されないようにします"
+      },
+      "gender": {
+        "gran": "グラン",
+        "djeeta": "ジータ"
+      },
+      "language": {
+        "english": "英語",
+        "japanese": "日本語"
+      },
+      "buttons": {
+        "confirm": "設定を保存する"
+      }
     },
-    "party": {
-        "segmented_control": {
-            "class": "ジョブ",
-            "characters": "キャラ",
-            "weapons": "武器",
-            "summons": "召喚石"
-        }
+    "signup": {
+      "title": "アカウント登録",
+      "buttons": {
+        "confirm": "登録する"
+      },
+      "agreement": "続行することで<1>利用規約</1>に同意し、<br/><1>プライバシーポリシー</1>を読んだものとみなされます。",
+      "errors": {
+        "field_in_use": "入力された{{field}}は既に登録済みです",
+        "empty_email": "メールアドレスを入力して下さい",
+        "invalid_email": "メールアドレスは有効ではありません",
+        "username_too_short": "ユーザーネームは3文字以上で入力してください",
+        "username_too_long": "ユーザーネームは20文字以内で入力してください",
+        "empty_password": "パスワードを入力して下さい",
+        "password_contains_username": "パスワードにはユーザー名を含めないでください",
+        "password_too_short": "パスワードは8文字以上で入力してください",
+        "mismatched_passwords": "パスワードとパスワード確認を確かめてください",
+        "invalid_credentials": "パスワードまたはメールアドレスが違います"
+      },
+      "placeholders": {
+        "username": "ユーザー名",
+        "email": "メールアドレス",
+        "password": "パスワード",
+        "password_confirm": "パスワード確認"
+      }
     },
-    "saved": {
-        "title": "保存した編成",
-        "loading": "ロード中...",
-        "not_found": "編成はまだ保存していません"
+    "weapon": {
+      "title": "武器変更",
+      "buttons": {
+        "confirm": "武器を変更する"
+      },
+      "subtitles": {
+        "element": "属性",
+        "ax_skills": "EXスキル",
+        "weapon_keys": "武器スキル"
+      }
+    }
+  },
+  "menu": {
+    "about": "このサイトについて",
+    "guides": "攻略",
+    "language": "言語",
+    "login": "ログイン",
+    "saved": "保存した編成",
+    "settings": "アカウント設定",
+    "signup": "登録",
+    "teams": "編成一覧",
+    "logout": "ログアウト"
+  },
+  "party": {
+    "segmented_control": {
+      "class": "ジョブ",
+      "characters": "キャラ",
+      "weapons": "武器",
+      "summons": "召喚石"
+    }
+  },
+  "saved": {
+    "title": "保存した編成",
+    "loading": "ロード中...",
+    "not_found": "編成はまだ保存していません"
+  },
+  "search": {
+    "recent": "最近追加した",
+    "result_count": "{{record_count}}件",
+    "errors": {
+      "start_typing": "{{object}}名を入力してください",
+      "min_length": "3文字以上を入力してください",
+      "no_results": "'{{query}}'の検索結果が見つかりませんでした",
+      "end_results": "検索結果これ以上ありません"
     },
-    "search": {
-        "recent": "最近追加した",
-        "result_count": "{{record_count}}件",
-        "errors": {
-            "start_typing": "{{object}}名を入力してください",
-            "min_length": "3文字以上を入力してください",
-            "no_results": "'{{query}}'の検索結果が見つかりませんでした",
-            "end_results": "検索結果これ以上ありません"
-        },
-        "placeholders": {
-            "weapon": "武器を検索...",
-            "summon": "召喚石を検索...",
-            "character": "キャラを検索..."
-        }
-    },
-    "teams": {
-        "title": "編成一覧",
-        "loading": "ロード中...",
-        "not_found": "編成は見つかりませんでした"
-    },
-    "extra_weapons": "Additional<br/>Weapons",
-    "coming_soon": "開発中",
-    "no_title": "無題",
-    "no_raid": "マルチなし",
-    "no_user": "無名"
+    "placeholders": {
+      "weapon": "武器を検索...",
+      "summon": "召喚石を検索...",
+      "character": "キャラを検索..."
+    }
+  },
+  "teams": {
+    "title": "編成一覧",
+    "loading": "ロード中...",
+    "not_found": "編成は見つかりませんでした"
+  },
+  "extra_weapons": "Additional<br/>Weapons",
+  "coming_soon": "開発中",
+  "no_title": "無題",
+  "no_raid": "マルチなし",
+  "no_user": "無名"
 }
-   
