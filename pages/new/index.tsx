@@ -1,28 +1,94 @@
-import React from 'react'
-import Party from '~components/Party'
+import React from "react"
+import { getCookie } from "cookies-next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
 
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import Party from "~components/Party"
+import api from "~utils/api"
 
-const NewRoute = () => {
-    function callback(path: string) {
-        // This is scuffed, how do we do this natively?
-        window.history.replaceState(null, `Grid Tool`, `${path}`)
-    }
+import type { NextApiRequest, NextApiResponse } from "next"
 
-    return (
-        <div id="Content">
-            <Party new={true} pushHistory={callback} />
-        </div>
-    )
+interface Props {
+  raids: Raid[]
+  sortedRaids: Raid[][]
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-    return {
-        props: {
-            ...(await serverSideTranslations(locale, ['common'])),
-            // Will be passed to the page component as props
-        },
-    }
+const NewRoute: React.FC<Props> = (props: Props) => {
+  function callback(path: string) {
+    // This is scuffed, how do we do this natively?
+    window.history.replaceState(null, `Grid Tool`, `${path}`)
+  }
+
+  return (
+    <div id="Content">
+      <Party new={true} raids={props.sortedRaids} pushHistory={callback} />
+    </div>
+  )
+}
+
+export const getServerSidePaths = async () => {
+  return {
+    paths: [
+      // Object variant:
+      { params: { party: "string" } },
+    ],
+    fallback: true,
+  }
+}
+
+// prettier-ignore
+export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
+  // Cookies
+  const cookie = getCookie("account", { req, res })
+  const accountData: AccountCookie = cookie
+    ? JSON.parse(cookie as string)
+    : null
+
+  const headers = accountData
+    ? { headers: { Authorization: `Bearer ${accountData.token}` } }
+    : {}
+
+  let { raids, sortedRaids } = await api.endpoints.raids
+    .getAll(headers)
+    .then((response) => organizeRaids(response.data.map((r: any) => r.raid)))
+
+  return {
+    props: {
+      raids: raids,
+      sortedRaids: sortedRaids,
+      ...(await serverSideTranslations(locale, ["common"])),
+      // Will be passed to the page component as props
+    },
+  }
+}
+
+const organizeRaids = (raids: Raid[]) => {
+  // Set up empty raid for "All raids"
+  const all = {
+    id: "0",
+    name: {
+      en: "All raids",
+      ja: "全て",
+    },
+    slug: "all",
+    level: 0,
+    group: 0,
+    element: 0,
+  }
+
+  const numGroups = Math.max.apply(
+    Math,
+    raids.map((raid) => raid.group)
+  )
+  let groupedRaids = []
+
+  for (let i = 0; i <= numGroups; i++) {
+    groupedRaids[i] = raids.filter((raid) => raid.group == i)
+  }
+
+  return {
+    raids: raids,
+    sortedRaids: groupedRaids,
+  }
 }
 
 export default NewRoute
