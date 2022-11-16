@@ -353,7 +353,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     : {}
 
   let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll(headers)
+    .getAll({ params: headers })
     .then((response) => organizeRaids(response.data.map((r: any) => r.raid)))
 
   // Extract recency filter
@@ -385,8 +385,10 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   // Fetch initial set of parties here
   const response = await api.endpoints.parties.getAll({
-    params: filters,
-    ...headers
+    params: {
+      ...filters,
+    },
+    ...headers,
   })
 
   return {

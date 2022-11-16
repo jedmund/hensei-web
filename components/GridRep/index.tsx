@@ -90,7 +90,7 @@ const GridRep = (props: Props) => {
   function generateGridImage(position: number) {
     let url = ""
 
-    if (weapons[position]) {
+    if (weapons[position] && props.grid[position]) {
       if (weapons[position].element == 0 && props.grid[position].element) {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}_${props.grid[position].element}.jpg`
       } else {
