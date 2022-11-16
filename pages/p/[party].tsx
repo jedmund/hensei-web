@@ -14,7 +14,7 @@ interface Props {
   sortedRaids: Raid[][]
 }
 
-const PartyRoute: React.FC<Props> = (props) => {
+const PartyRoute: React.FC<Props> = (props: Props) => {
   return (
     <div id="Content">
       <Party team={props.party} raids={props.sortedRaids} />
@@ -22,7 +22,6 @@ const PartyRoute: React.FC<Props> = (props) => {
   )
 }
 
-// prettier-ignore
 export const getServerSidePaths = async () => {
   return {
     paths: [
