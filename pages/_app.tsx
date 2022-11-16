@@ -1,41 +1,40 @@
-import { useEffect } from 'react'
-import { useCookies, CookiesProvider } from 'react-cookie'
-import { appWithTranslation } from 'next-i18next'
+import { useEffect } from "react"
+import { getCookie } from "cookies-next"
+import { appWithTranslation } from "next-i18next"
 
-import type { AppProps } from 'next/app'
-import Layout from '~components/Layout'
+import type { AppProps } from "next/app"
+import Layout from "~components/Layout"
 
-import { accountState } from '~utils/accountState'
+import { accountState } from "~utils/accountState"
 
-import '../styles/globals.scss'
+import "../styles/globals.scss"
 
 function MyApp({ Component, pageProps }: AppProps) {
-    const [cookies] = useCookies(['account'])
+  const cookie = getCookie("account")
+  const cookieData: AccountCookie = cookie ? JSON.parse(cookie as string) : null
 
-    useEffect(() => {
-        if (cookies.account) {
-            console.log(`Logged in as user "${cookies.account.username}"`)
+  useEffect(() => {
+    if (cookie) {
+      console.log(`Logged in as user "${cookieData.username}"`)
 
-            accountState.account.authorized = true
-            accountState.account.user = {
-                id: cookies.account.user_id,
-                username: cookies.account.username,
-                picture: '',
-                element: '',
-                gender: 0
-            }
-        } else {
-            console.log(`You are not currently logged in.`)
-        }
-    }, [cookies.account])
+      accountState.account.authorized = true
+      accountState.account.user = {
+        id: cookieData.userId,
+        username: cookieData.username,
+        picture: "",
+        element: "",
+        gender: 0,
+      }
+    } else {
+      console.log(`You are not currently logged in.`)
+    }
+  }, [cookieData])
 
-    return (
-        <CookiesProvider>
-            <Layout>
-                <Component {...pageProps} />
-            </Layout>
-        </CookiesProvider>
-    )
+  return (
+    <Layout>
+      <Component {...pageProps} />
+    </Layout>
+  )
 }
 
 export default appWithTranslation(MyApp)
