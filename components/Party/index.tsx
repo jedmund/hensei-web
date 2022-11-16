@@ -90,7 +90,7 @@ const Party = (props: Props) => {
   }
 
   function jobChanged() {
-    if (party.id) {
+    if (party.id && appState.party.editable) {
       api.endpoints.parties.update(
         party.id,
         {
