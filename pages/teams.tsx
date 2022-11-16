@@ -385,7 +385,8 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   // Fetch initial set of parties here
   const response = await api.endpoints.parties.getAll({
-    params: { ...filters, ...{ headers: headers } },
+    params: filters,
+    ...headers
   })
 
   return {
