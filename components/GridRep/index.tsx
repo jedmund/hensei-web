@@ -38,6 +38,7 @@ const GridRep = (props: Props) => {
 
   const [mainhand, setMainhand] = useState<Weapon>()
   const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
+  const [grid, setGrid] = useState<GridArray<GridWeapon>>({})
 
   const titleClass = classNames({
     empty: !props.name,
@@ -55,14 +56,18 @@ const GridRep = (props: Props) => {
 
   useEffect(() => {
     const newWeapons = Array(numWeapons)
+    const gridWeapons = Array(numWeapons)
 
     for (const [key, value] of Object.entries(props.grid)) {
       if (value.position == -1) setMainhand(value.object)
-      else if (!value.mainhand && value.position != null)
+      else if (!value.mainhand && value.position != null) {
         newWeapons[value.position] = value.object
+        gridWeapons[value.position] = value
+      }
     }
 
     setWeapons(newWeapons)
+    setGrid(gridWeapons)
   }, [props.grid])
 
   function navigate() {
@@ -90,9 +95,9 @@ const GridRep = (props: Props) => {
   function generateGridImage(position: number) {
     let url = ""
 
-    if (weapons[position] && props.grid[position]) {
-      if (weapons[position].element == 0 && props.grid[position].element) {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}_${props.grid[position].element}.jpg`
+    if (weapons[position] && grid[position]) {
+      if (weapons[position].element == 0 && grid[position].element) {
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}_${grid[position].element}.jpg`
       } else {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`
       }
