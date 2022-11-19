@@ -1,0 +1,63 @@
+.Conflict.Dialog {
+  & > p {
+    line-height: 1.2;
+    max-width: 400px;
+  }
+  img {
+    border-radius: 1rem;
+  }
+
+  .arrow {
+    color: $grey-50;
+    font-size: 4rem;
+    text-align: center;
+  }
+
+  .character {
+    display: flex;
+    flex-direction: column;
+    gap: $unit;
+    text-align: center;
+    width: 12rem;
+    font-weight: $medium;
+  }
+
+  .diagram {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: $unit * 2;
+    }
+  }
+
+  footer {
+    display: flex;
+    flex-direction: row;
+    gap: $unit;
+
+    .Button {
+      font-size: $font-regular;
+      padding: ($unit * 1.5) ($unit * 2);
+      width: 100%;
+
+      &.btn-disabled {
+        background: $grey-90;
+        color: $grey-70;
+        cursor: not-allowed;
+      }
+
+      &:not(.btn-disabled) {
+        background: $grey-90;
+        color: $grey-40;
+
+        &:hover {
+          background: $grey-80;
+        }
+      }
+    }
+  }
+}

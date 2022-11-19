@@ -13,6 +13,8 @@ import api from "~utils/api"
 import { appState } from "~utils/appState"
 
 import "./index.scss"
+import CharacterConflictModal from "~components/CharacterConflictModal"
+import { resolve } from "path"
 
 // Props
 interface Props {
@@ -38,6 +40,12 @@ const CharacterGrid = (props: Props) => {
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
   const [slug, setSlug] = useState()
+  const [modalOpen, setModalOpen] = useState(false)
+
+  // Set up state for conflict management
+  const [incoming, setIncoming] = useState<Character>()
+  const [conflicts, setConflicts] = useState<GridCharacter[]>([])
+  const [position, setPosition] = useState(0)
 
   // Create a temporary state to store previous character uncap values
   const [previousUncapValues, setPreviousUncapValues] = useState<{
@@ -85,8 +93,19 @@ const CharacterGrid = (props: Props) => {
     } else {
       if (party.editable)
         saveCharacter(party.id, character, position)
-          .then((response) => storeGridCharacter(response.data.grid_character))
+          .then((response) => handleCharacterResponse(response.data))
           .catch((error) => console.error(error))
+    }
+  }
+
+  async function handleCharacterResponse(data: any) {
+    if (data.hasOwnProperty("conflicts")) {
+      setIncoming(data.incoming)
+      setConflicts(data.conflicts)
+      setPosition(data.position)
+      setModalOpen(true)
+    } else {
+      storeGridCharacter(data.grid_character)
     }
   }
 
@@ -110,6 +129,39 @@ const CharacterGrid = (props: Props) => {
 
   function storeGridCharacter(gridCharacter: GridCharacter) {
     appState.grid.characters[gridCharacter.position] = gridCharacter
+  }
+
+  async function resolveConflict() {
+    if (incoming && conflicts.length > 0) {
+      await api
+        .resolveCharacterConflict({
+          incoming: incoming.id,
+          conflicting: conflicts.map((c) => c.id),
+          position: position,
+          params: headers,
+        })
+        .then((response) => {
+          // Store new character in state
+          storeGridCharacter(response.data.grid_character)
+
+          // Remove conflicting characters from state
+          conflicts.forEach(
+            (c) => (appState.grid.characters[c.position] = undefined)
+          )
+
+          // Reset conflict
+          resetConflict()
+
+          // Close modal
+          setModalOpen(false)
+        })
+    }
+  }
+
+  function resetConflict() {
+    setPosition(-1)
+    setConflicts([])
+    setIncoming(undefined)
   }
 
   // Methods: Helpers
@@ -197,6 +249,14 @@ const CharacterGrid = (props: Props) => {
     <div>
       <div id="CharacterGrid">
         <JobSection />
+        <CharacterConflictModal
+          open={modalOpen}
+          incomingCharacter={incoming}
+          conflictingCharacters={conflicts}
+          desiredPosition={position}
+          resolveConflict={resolveConflict}
+          resetConflict={resetConflict}
+        />
         <ul id="grid_characters">
           {Array.from(Array(numCharacters)).map((x, i) => {
             return (
