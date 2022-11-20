@@ -66,8 +66,8 @@ const CharacterGrid = (props: Props) => {
   // Initialize an array of current uncap values for each characters
   useEffect(() => {
     let initialPreviousUncapValues: { [key: number]: number } = {}
-    Object.values(appState.grid.characters).map((o) =>
-      o ? (initialPreviousUncapValues[o.position] = o.uncap_level) : null
+    Object.values(appState.grid.characters).map(
+      (o) => (initialPreviousUncapValues[o.position] = o.uncap_level)
     )
     setPreviousUncapValues(initialPreviousUncapValues)
   }, [appState.grid.characters])
