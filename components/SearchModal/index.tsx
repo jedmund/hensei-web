@@ -46,7 +46,7 @@ const SearchModal = (props: Props) => {
 
   const [firstLoad, setFirstLoad] = useState(true)
   const [objects, setObjects] = useState<{
-    [id: number]: GridCharacter | GridWeapon | GridSummon
+    [id: number]: GridCharacter | GridWeapon | GridSummon | undefined
   }>()
   const [filters, setFilters] = useState<{ [key: string]: number[] }>()
   const [open, setOpen] = useState(false)
