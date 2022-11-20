@@ -95,11 +95,14 @@ const GridRep = (props: Props) => {
   function generateGridImage(position: number) {
     let url = ""
 
-    if (weapons[position] && grid[position]) {
-      if (weapons[position]?.element == 0 && grid[position]?.element) {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}_${grid[position].element}.jpg`
+    const weapon = weapons[position]
+    const gridWeapon = grid[position]
+
+    if (weapon && gridWeapon) {
+      if (weapon.element == 0 && gridWeapon.element) {
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${gridWeapon.element}.jpg`
       } else {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
       }
     }
 
