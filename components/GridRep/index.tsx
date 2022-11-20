@@ -96,7 +96,7 @@ const GridRep = (props: Props) => {
     let url = ""
 
     if (weapons[position] && grid[position]) {
-      if (weapons[position].element == 0 && grid[position].element) {
+      if (weapons[position]?.element == 0 && grid[position]?.element) {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}_${grid[position].element}.jpg`
       } else {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapons[position]?.granblue_id}.jpg`
@@ -104,7 +104,7 @@ const GridRep = (props: Props) => {
     }
 
     return weapons[position] ? (
-      <img alt={weapons[position].name[locale]} src={url} />
+      <img alt={weapons[position]?.name[locale]} src={url} />
     ) : (
       ""
     )

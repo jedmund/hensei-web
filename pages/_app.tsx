@@ -28,7 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     } else {
       console.log(`You are not currently logged in.`)
     }
-  }, [cookieData])
+  }, [cookie, cookieData])
 
   return (
     <Layout>
