@@ -14,7 +14,6 @@ import { appState } from "~utils/appState"
 
 import "./index.scss"
 import CharacterConflictModal from "~components/CharacterConflictModal"
-import { resolve } from "path"
 
 // Props
 interface Props {
@@ -49,7 +48,7 @@ const CharacterGrid = (props: Props) => {
 
   // Create a temporary state to store previous character uncap values
   const [previousUncapValues, setPreviousUncapValues] = useState<{
-    [key: number]: number
+    [key: number]: number | undefined
   }>({})
 
   // Set the editable flag only on first load
@@ -66,9 +65,9 @@ const CharacterGrid = (props: Props) => {
   // Initialize an array of current uncap values for each characters
   useEffect(() => {
     let initialPreviousUncapValues: { [key: number]: number } = {}
-    Object.values(appState.grid.characters).map(
-      (o) => (initialPreviousUncapValues[o.position] = o.uncap_level)
-    )
+    Object.values(appState.grid.characters).map((o) => {
+      o ? (initialPreviousUncapValues[o.position] = o.uncap_level) : -1
+    })
     setPreviousUncapValues(initialPreviousUncapValues)
   }, [appState.grid.characters])
 
@@ -230,8 +229,15 @@ const CharacterGrid = (props: Props) => {
     [props, saveUncap]
   )
 
-  const updateUncapLevel = (position: number, uncapLevel: number) => {
-    appState.grid.characters[position].uncap_level = uncapLevel
+  const updateUncapLevel = (
+    position: number,
+    uncapLevel: number | undefined
+  ) => {
+    const character = appState.grid.characters[position]
+    if (character && uncapLevel) {
+      character.uncap_level = uncapLevel
+      appState.grid.characters[position] = character
+    }
   }
 
   function storePreviousUncapValue(position: number) {
@@ -239,7 +245,7 @@ const CharacterGrid = (props: Props) => {
     let newPreviousValues = { ...previousUncapValues }
 
     if (grid.characters[position]) {
-      newPreviousValues[position] = grid.characters[position].uncap_level
+      newPreviousValues[position] = grid.characters[position]?.uncap_level
       setPreviousUncapValues(newPreviousValues)
     }
   }

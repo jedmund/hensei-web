@@ -43,7 +43,7 @@ interface AppState {
       friendSummon: GridSummon | undefined
       allSummons: GridArray<GridSummon>
     }
-    characters: GridArray<GridCharacter | undefined>
+    characters: GridArray<GridCharacter>
   }
   search: {
     recents: {

@@ -81,8 +81,8 @@ const CharacterConflictModal = (props: Props) => {
           </p>
           <div className="diagram">
             <ul>
-              {props.conflictingCharacters?.map((character) => (
-                <li className="character">
+              {props.conflictingCharacters?.map((character, i) => (
+                <li className="character" key={`conflict-${i}`}>
                   <img
                     alt={character.object.name.en}
                     src={imageUrl(character.object, character.uncap_level)}
