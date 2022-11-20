@@ -71,8 +71,8 @@ const SummonGrid = (props: Props) => {
       initialPreviousUncapValues[6] =
         appState.grid.summons.friendSummon.uncap_level
 
-    Object.values(appState.grid.summons.allSummons).map(
-      (o) => (initialPreviousUncapValues[o.position] = o.uncap_level)
+    Object.values(appState.grid.summons.allSummons).map((o) =>
+      o ? (initialPreviousUncapValues[o.position] = o.uncap_level) : 0
     )
 
     setPreviousUncapValues(initialPreviousUncapValues)
@@ -190,7 +190,13 @@ const SummonGrid = (props: Props) => {
       appState.grid.summons.mainSummon.uncap_level = uncapLevel
     else if (appState.grid.summons.friendSummon && position == 6)
       appState.grid.summons.friendSummon.uncap_level = uncapLevel
-    else appState.grid.summons.allSummons[position].uncap_level = uncapLevel
+    else {
+      const summon = appState.grid.summons.allSummons[position]
+      if (summon) {
+        summon.uncap_level = uncapLevel
+        appState.grid.summons.allSummons[position] = summon
+      }
+    }
   }
 
   function storePreviousUncapValue(position: number) {
@@ -202,9 +208,10 @@ const SummonGrid = (props: Props) => {
     else if (appState.grid.summons.friendSummon && position == 6)
       newPreviousValues[position] =
         appState.grid.summons.friendSummon.uncap_level
-    else
-      newPreviousValues[position] =
-        appState.grid.summons.allSummons[position].uncap_level
+    else {
+      const summon = appState.grid.summons.allSummons[position]
+      newPreviousValues[position] = summon ? summon.uncap_level : 0
+    }
 
     setPreviousUncapValues(newPreviousValues)
   }

@@ -63,8 +63,8 @@ const WeaponGrid = (props: Props) => {
       initialPreviousUncapValues[-1] =
         appState.grid.weapons.mainWeapon.uncap_level
 
-    Object.values(appState.grid.weapons.allWeapons).map(
-      (o) => (initialPreviousUncapValues[o.position] = o.uncap_level)
+    Object.values(appState.grid.weapons.allWeapons).map((o) =>
+      o ? (initialPreviousUncapValues[o.position] = o.uncap_level) : 0
     )
 
     setPreviousUncapValues(initialPreviousUncapValues)
@@ -178,16 +178,30 @@ const WeaponGrid = (props: Props) => {
   const updateUncapLevel = (position: number, uncapLevel: number) => {
     if (appState.grid.weapons.mainWeapon && position == -1)
       appState.grid.weapons.mainWeapon.uncap_level = uncapLevel
-    else appState.grid.weapons.allWeapons[position].uncap_level = uncapLevel
+    else {
+      const weapon = appState.grid.weapons.allWeapons[position]
+      if (weapon) {
+        weapon.uncap_level = uncapLevel
+        appState.grid.weapons.allWeapons[position] = weapon
+      }
+    }
   }
 
   function storePreviousUncapValue(position: number) {
     // Save the current value in case of an unexpected result
     let newPreviousValues = { ...previousUncapValues }
-    newPreviousValues[position] =
-      appState.grid.weapons.mainWeapon && position == -1
-        ? appState.grid.weapons.mainWeapon.uncap_level
-        : appState.grid.weapons.allWeapons[position].uncap_level
+
+    if (appState.grid.weapons.mainWeapon && position == -1) {
+      newPreviousValues[position] = appState.grid.weapons.mainWeapon.uncap_level
+    } else {
+      const weapon = appState.grid.weapons.allWeapons[position]
+      if (weapon) {
+        newPreviousValues[position] = weapon.uncap_level
+      } else {
+        newPreviousValues[position] = 0
+      }
+    }
+
     setPreviousUncapValues(newPreviousValues)
   }
 
