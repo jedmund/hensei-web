@@ -231,9 +231,7 @@ const CharacterGrid = (props: Props) => {
   )
 
   const updateUncapLevel = (position: number, uncapLevel: number) => {
-    if (grid.characters[position]) {
-      appState.grid.characters[position]!.uncap_level = uncapLevel
-    }
+    appState.grid.characters[position].uncap_level = uncapLevel
   }
 
   function storePreviousUncapValue(position: number) {
@@ -241,8 +239,7 @@ const CharacterGrid = (props: Props) => {
     let newPreviousValues = { ...previousUncapValues }
 
     if (grid.characters[position]) {
-      const character = grid.characters[position]
-      newPreviousValues[position] = character ? character.uncap_level : -1
+      newPreviousValues[position] = grid.characters[position].uncap_level
       setPreviousUncapValues(newPreviousValues)
     }
   }
