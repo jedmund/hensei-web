@@ -53,6 +53,8 @@ interface AppState {
     }
   }
   raids: Raid[]
+  jobs: Job[]
+  jobSkills: JobSkill[]
 }
 
 export const initialAppState: AppState = {
@@ -91,6 +93,8 @@ export const initialAppState: AppState = {
     },
   },
   raids: [],
+  jobs: [],
+  jobSkills: [],
 }
 
 export const appState = proxy(initialAppState)
