@@ -3,20 +3,24 @@
   gap: $unit;
   align-items: center;
 
-  &:hover p.placeholder {
-    color: $grey-20;
-  }
-
-  &.editable:hover > img,
-  &.editable:hover > .placeholder {
-    border: $hover-stroke;
-    box-shadow: $hover-shadow;
+  &.editable:hover {
     cursor: pointer;
-    transform: $scale-tall;
+
+    & > img,
+    & > div.placeholder {
+      border: $hover-stroke;
+      box-shadow: $hover-shadow;
+      cursor: pointer;
+      transform: $scale-tall;
+    }
+
+    & p.placeholder {
+      color: $grey-20;
+    }
   }
 
   & > img,
-  & > .placeholder {
+  & > div.placeholder {
     background: white;
     border-radius: calc($unit / 2);
     border: 1px solid rgba(0, 0, 0, 0);
@@ -24,7 +28,7 @@
     height: $unit * 5;
   }
 
-  & > .placeholder {
+  & > div.placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
