@@ -1,0 +1,42 @@
+.JobSkill {
+  display: flex;
+  gap: $unit;
+  align-items: center;
+
+  &:hover p.placeholder {
+    color: $grey-20;
+  }
+
+  &.editable:hover > img,
+  &.editable:hover > .placeholder {
+    border: $hover-stroke;
+    box-shadow: $hover-shadow;
+    cursor: pointer;
+    transform: $scale-tall;
+  }
+
+  & > img,
+  & > .placeholder {
+    background: white;
+    border-radius: calc($unit / 2);
+    border: 1px solid rgba(0, 0, 0, 0);
+    width: $unit * 5;
+    height: $unit * 5;
+  }
+
+  & > .placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & > svg {
+      fill: $grey-60;
+      width: $unit * 2;
+      height: $unit * 2;
+    }
+  }
+
+  p.placeholder {
+    color: $grey-50;
+  }
+}
