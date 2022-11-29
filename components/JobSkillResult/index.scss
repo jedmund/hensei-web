@@ -1,0 +1,71 @@
+.JobSkillResult {
+  border-radius: 6px;
+  display: flex;
+  gap: $unit;
+  padding: $unit * 1.5;
+  align-items: center;
+
+  &:hover {
+    background: $grey-90;
+    cursor: pointer;
+
+    .Info .skill.pill {
+      background: $grey-80;
+    }
+  }
+
+  .Info {
+    display: flex;
+    flex-direction: row;
+    gap: calc($unit / 2);
+    width: 100%;
+
+    .skill.pill {
+      background: $grey-90;
+      border-radius: $unit * 2;
+      color: $grey-00;
+      display: inline;
+      font-size: $font-tiny;
+      font-weight: $medium;
+      padding: calc($unit / 2) $unit;
+
+      &.buffing {
+        background-color: $light-bg-dark;
+        color: $light-text-dark;
+      }
+
+      &.debuffing {
+        background-color: $water-bg-dark;
+        color: $water-text-dark;
+      }
+
+      &.healing {
+        background-color: $wind-bg-dark;
+        color: $wind-text-dark;
+      }
+
+      &.damaging {
+        background-color: $fire-bg-dark;
+        color: $fire-text-dark;
+      }
+
+      &.field {
+        background-color: $dark-bg-dark;
+        color: $dark-text-dark;
+      }
+    }
+
+    h5 {
+      color: #555;
+      display: inline-block;
+      font-size: $font-medium;
+      font-weight: $medium;
+      flex-grow: 1;
+    }
+  }
+
+  img {
+    width: $unit * 6;
+    height: $unit * 6;
+  }
+}
