@@ -7,7 +7,7 @@ interface JobSkill {
     ja: string
   }
   slug: string
-  group: number
+  color: number
   main: boolean
   base: boolean
   sub: boolean
