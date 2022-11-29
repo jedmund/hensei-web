@@ -1,7 +1,7 @@
 #Header #Bar select {
   background-color: $grey-90;
 }
-#Header label {
+#Header > label {
   margin: 0 $unit * 3;
 
   .Input {
