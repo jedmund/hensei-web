@@ -17,13 +17,14 @@ import SummonSearchFilterBar from "~components/SummonSearchFilterBar"
 import CharacterResult from "~components/CharacterResult"
 import WeaponResult from "~components/WeaponResult"
 import SummonResult from "~components/SummonResult"
+import type { SearchableObject, SearchableObjectArray } from "~types"
 
 import "./index.scss"
 import CrossIcon from "~public/icons/Cross.svg"
 import cloneDeep from "lodash.clonedeep"
 
 interface Props {
-  send: (object: Character | Weapon | Summon, position: number) => any
+  send: (object: SearchableObject, position: number) => any
   placeholderText: string
   fromPosition: number
   object: "weapons" | "characters" | "summons"
@@ -51,7 +52,7 @@ const SearchModal = (props: Props) => {
   const [filters, setFilters] = useState<{ [key: string]: number[] }>()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
-  const [results, setResults] = useState<(Weapon | Summon | Character)[]>([])
+  const [results, setResults] = useState<SearchableObjectArray>([])
 
   // Pagination states
   const [recordCount, setRecordCount] = useState(0)
@@ -99,10 +100,7 @@ const SearchModal = (props: Props) => {
       })
   }
 
-  function replaceResults(
-    count: number,
-    list: Weapon[] | Summon[] | Character[]
-  ) {
+  function replaceResults(count: number, list: SearchableObjectArray) {
     if (count > 0) {
       setResults(list)
     } else {
@@ -110,26 +108,36 @@ const SearchModal = (props: Props) => {
     }
   }
 
-  function appendResults(list: Weapon[] | Summon[] | Character[]) {
+  function appendResults(list: SearchableObjectArray) {
     setResults([...results, ...list])
   }
 
-  function storeRecentResult(result: Character | Weapon | Summon) {
+  function storeRecentResult(result: SearchableObject) {
     const key = `recent_${props.object}`
     const cookie = getCookie(key)
-    const cookieObj: Character[] | Weapon[] | Summon[] = cookie
+    const cookieObj: SearchableObjectArray = cookie
       ? JSON.parse(cookie as string)
       : []
-    let recents: Character[] | Weapon[] | Summon[] = []
+    let recents: SearchableObjectArray = []
 
     if (props.object === "weapons") {
       recents = cloneDeep(cookieObj as Weapon[]) || []
-      if (!recents.find((item) => item.granblue_id === result.granblue_id)) {
+      if (
+        !recents.find(
+          (item) =>
+            (item as Weapon).granblue_id === (result as Weapon).granblue_id
+        )
+      ) {
         recents.unshift(result as Weapon)
       }
     } else if (props.object === "summons") {
       recents = cloneDeep(cookieObj as Summon[]) || []
-      if (!recents.find((item) => item.granblue_id === result.granblue_id)) {
+      if (
+        !recents.find(
+          (item) =>
+            (item as Summon).granblue_id === (result as Summon).granblue_id
+        )
+      ) {
         recents.unshift(result as Summon)
       }
     }
@@ -139,7 +147,7 @@ const SearchModal = (props: Props) => {
     sendData(result)
   }
 
-  function sendData(result: Character | Weapon | Summon) {
+  function sendData(result: SearchableObject) {
     props.send(result, props.fromPosition)
     openChange()
   }
