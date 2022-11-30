@@ -71,7 +71,6 @@ const SearchModal = (props: Props) => {
   }
 
   function fetchResults({ replace = false }: { replace?: boolean }) {
-    console.log("Fetch results!!!")
     api
       .search({
         object: props.object,
@@ -82,8 +81,6 @@ const SearchModal = (props: Props) => {
         page: currentPage,
       })
       .then((response) => {
-        console.log("resp")
-        console.log(response)
         setTotalPages(response.data.total_pages)
         setRecordCount(response.data.count)
 

@@ -47,10 +47,6 @@ const JobSection = (props: Props) => {
     setSkillRefs(Array(numSkills).fill(React.createRef<HTMLDivElement>()))
   }, [numSkills])
 
-  useEffect(() => {
-    console.log(skillRefs)
-  }, [skillRefs])
-
   function receiveJob(job?: Job) {
     console.log(`Receiving job! Row ${job?.row}: ${job?.name.en}`)
     if (job) {
