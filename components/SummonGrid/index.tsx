@@ -12,6 +12,7 @@ import ExtraSummons from "~components/ExtraSummons"
 
 import api from "~utils/api"
 import { appState } from "~utils/appState"
+import type { SearchableObject } from "~types"
 
 import "./index.scss"
 
@@ -83,10 +84,7 @@ const SummonGrid = (props: Props) => {
   ])
 
   // Methods: Adding an object from search
-  function receiveSummonFromSearch(
-    object: Character | Weapon | Summon,
-    position: number
-  ) {
+  function receiveSummonFromSearch(object: SearchableObject, position: number) {
     const summon = object as Summon
 
     if (!party.id) {

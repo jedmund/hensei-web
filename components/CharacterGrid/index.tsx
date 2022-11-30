@@ -8,12 +8,14 @@ import debounce from "lodash.debounce"
 
 import JobSection from "~components/JobSection"
 import CharacterUnit from "~components/CharacterUnit"
+import CharacterConflictModal from "~components/CharacterConflictModal"
+
+import type { SearchableObject } from "~types"
 
 import api from "~utils/api"
 import { appState } from "~utils/appState"
 
 import "./index.scss"
-import CharacterConflictModal from "~components/CharacterConflictModal"
 
 // Props
 interface Props {
@@ -73,7 +75,7 @@ const CharacterGrid = (props: Props) => {
 
   // Methods: Adding an object from search
   function receiveCharacterFromSearch(
-    object: Character | Weapon | Summon,
+    object: SearchableObject,
     position: number
   ) {
     const character = object as Character

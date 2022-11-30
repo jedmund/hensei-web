@@ -12,6 +12,8 @@ import ExtraWeapons from "~components/ExtraWeapons"
 import api from "~utils/api"
 import { appState } from "~utils/appState"
 
+import type { SearchableObject } from "~types"
+
 import "./index.scss"
 
 // Props
@@ -71,10 +73,7 @@ const WeaponGrid = (props: Props) => {
   }, [appState.grid.weapons.mainWeapon, appState.grid.weapons.allWeapons])
 
   // Methods: Adding an object from search
-  function receiveWeaponFromSearch(
-    object: Character | Weapon | Summon,
-    position: number
-  ) {
+  function receiveWeaponFromSearch(object: SearchableObject, position: number) {
     const weapon = object as Weapon
     if (position == 1) appState.party.element = weapon.element
 
