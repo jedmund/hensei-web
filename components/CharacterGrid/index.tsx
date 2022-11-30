@@ -254,7 +254,7 @@ const CharacterGrid = (props: Props) => {
   return (
     <div>
       <div id="CharacterGrid">
-        <JobSection />
+        <JobSection editable={party.editable} />
         <CharacterConflictModal
           open={modalOpen}
           incomingCharacter={incoming}

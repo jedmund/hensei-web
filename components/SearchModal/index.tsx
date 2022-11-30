@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { getCookie, setCookie } from "cookies-next"
 import { useRouter } from "next/router"
 import { useSnapshot } from "valtio"
@@ -13,10 +13,13 @@ import * as Dialog from "@radix-ui/react-dialog"
 import CharacterSearchFilterBar from "~components/CharacterSearchFilterBar"
 import WeaponSearchFilterBar from "~components/WeaponSearchFilterBar"
 import SummonSearchFilterBar from "~components/SummonSearchFilterBar"
+import JobSkillSearchFilterBar from "~components/JobSkillSearchFilterBar"
 
 import CharacterResult from "~components/CharacterResult"
 import WeaponResult from "~components/WeaponResult"
 import SummonResult from "~components/SummonResult"
+import JobSkillResult from "~components/JobSkillResult"
+
 import type { SearchableObject, SearchableObjectArray } from "~types"
 
 import "./index.scss"
@@ -27,14 +30,12 @@ interface Props {
   send: (object: SearchableObject, position: number) => any
   placeholderText: string
   fromPosition: number
-  object: "weapons" | "characters" | "summons"
+  job?: Job
+  object: "weapons" | "characters" | "summons" | "job_skills"
   children: React.ReactNode
 }
 
 const SearchModal = (props: Props) => {
-  // Set up snapshot of app state
-  let { grid, search } = useSnapshot(appState)
-
   // Set up router
   const router = useRouter()
   const locale = router.locale
@@ -46,10 +47,7 @@ const SearchModal = (props: Props) => {
   let scrollContainer = React.createRef<HTMLDivElement>()
 
   const [firstLoad, setFirstLoad] = useState(true)
-  const [objects, setObjects] = useState<{
-    [id: number]: GridCharacter | GridWeapon | GridSummon | undefined
-  }>()
-  const [filters, setFilters] = useState<{ [key: string]: number[] }>()
+  const [filters, setFilters] = useState<{ [key: string]: any }>()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchableObjectArray>([])
@@ -58,10 +56,6 @@ const SearchModal = (props: Props) => {
   const [recordCount, setRecordCount] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-
-  useEffect(() => {
-    setObjects(grid[props.object])
-  }, [grid, props.object])
 
   useEffect(() => {
     if (searchInput.current) searchInput.current.focus()
@@ -77,15 +71,19 @@ const SearchModal = (props: Props) => {
   }
 
   function fetchResults({ replace = false }: { replace?: boolean }) {
+    console.log("Fetch results!!!")
     api
       .search({
         object: props.object,
         query: query,
+        job: props.job?.id,
         filters: filters,
         locale: locale,
         page: currentPage,
       })
       .then((response) => {
+        console.log("resp")
+        console.log(response)
         setTotalPages(response.data.total_pages)
         setRecordCount(response.data.count)
 
@@ -152,7 +150,7 @@ const SearchModal = (props: Props) => {
     openChange()
   }
 
-  function receiveFilters(filters: { [key: string]: number[] }) {
+  function receiveFilters(filters: { [key: string]: any }) {
     setCurrentPage(1)
     setResults([])
     setFilters(filters)
@@ -207,6 +205,9 @@ const SearchModal = (props: Props) => {
         break
       case "characters":
         jsx = renderCharacterSearchResults(results)
+        break
+      case "job_skills":
+        jsx = renderJobSkillSearchResults(results)
         break
     }
 
@@ -286,6 +287,27 @@ const SearchModal = (props: Props) => {
     return jsx
   }
 
+  function renderJobSkillSearchResults(results: { [key: string]: any }) {
+    let jsx: React.ReactNode
+
+    const castResults: JobSkill[] = results as JobSkill[]
+    if (castResults && Object.keys(castResults).length > 0) {
+      jsx = castResults.map((result: JobSkill) => {
+        return (
+          <JobSkillResult
+            key={result.id}
+            data={result}
+            onClick={() => {
+              storeRecentResult(result)
+            }}
+          />
+        )
+      })
+    }
+
+    return jsx
+  }
+
   function openChange() {
     if (open) {
       setQuery("")
@@ -335,6 +357,11 @@ const SearchModal = (props: Props) => {
             )}
             {props.object === "summons" ? (
               <SummonSearchFilterBar sendFilters={receiveFilters} />
+            ) : (
+              ""
+            )}
+            {props.object === "job_skills" ? (
+              <JobSkillSearchFilterBar sendFilters={receiveFilters} />
             ) : (
               ""
             )}

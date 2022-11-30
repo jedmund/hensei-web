@@ -12,9 +12,10 @@ import "./index.scss"
 interface Props {
   skill?: JobSkill
   editable: boolean
+  hasJob: boolean
 }
 
-const JobSkillItem = (props: Props) => {
+const JobSkillItem = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
   const router = useRouter()
   const { t } = useTranslation("common")
   const locale =
@@ -25,28 +26,57 @@ const JobSkillItem = (props: Props) => {
     editable: props.editable,
   })
 
-  return (
-    <div className={classes}>
-      {props.skill ? (
+  const imageClasses = classNames({
+    placeholder: !props.skill,
+    editable: props.editable && props.hasJob,
+  })
+
+  const skillImage = () => {
+    let jsx: React.ReactNode
+
+    if (props.skill) {
+      jsx = (
         <img
           alt={props.skill.name[locale]}
+          className={imageClasses}
           src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}job-skills/${props.skill.slug}.png`}
         />
-      ) : (
-        <div className="placeholder">
-          <PlusIcon />
+      )
+    } else {
+      jsx = (
+        <div className={imageClasses}>
+          {props.editable && props.hasJob ? <PlusIcon /> : ""}
         </div>
-      )}
-      <div className="info">
-        {/* {props.skill ? <div className="skill pill">Grouping</div> : ""} */}
-        {props.skill ? (
-          <p>{props.skill.name[locale]}</p>
-        ) : (
-          <p className="placeholder">Select a skill</p>
-        )}
+      )
+    }
+
+    return jsx
+  }
+
+  const label = () => {
+    let jsx: React.ReactNode
+
+    if (props.skill) {
+      jsx = <p>{props.skill.name[locale]}</p>
+    } else if (props.editable && props.hasJob) {
+      jsx = <p className="placeholder">Select a skill</p>
+    } else {
+      jsx = <p className="placeholder">No skill</p>
+    }
+
+    return jsx
+  }
+
+  const skillItem = () => {
+    return (
+      <div className={classes} ref={ref}>
+        {skillImage()}
+        {label()}
       </div>
-    </div>
-  )
-}
+    )
+  }
+
+  return skillItem()
+})
 
 export default JobSkillItem

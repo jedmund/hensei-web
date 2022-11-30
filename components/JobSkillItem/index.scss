@@ -6,8 +6,8 @@
   &.editable:hover {
     cursor: pointer;
 
-    & > img,
-    & > div.placeholder {
+    & > img.editable,
+    & > div.placeholder.editable {
       border: $hover-stroke;
       box-shadow: $hover-shadow;
       cursor: pointer;
