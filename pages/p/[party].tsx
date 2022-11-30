@@ -23,7 +23,6 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
   }, [persistStaticData])
 
   function persistStaticData() {
-    console.log("Persisting static data...")
     appState.raids = props.raids
     appState.jobs = props.jobs
     appState.jobSkills = props.jobSkills
@@ -83,7 +82,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   return {
     props: {
       party: party,
-      job: jobs,
+      jobs: jobs,
       jobSkills: jobSkills,
       raids: raids,
       sortedRaids: sortedRaids,
