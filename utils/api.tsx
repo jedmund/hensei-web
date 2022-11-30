@@ -56,13 +56,14 @@ class Api {
     return axios.post(`${ oauthUrl }/token`, object)
   }
   
-  search({ object, query, filters, locale = "en", page = 0 }: 
-  { object: string, query: string, filters?: { [key: string]: number[] }, locale?: string,  page?: number }) {
+  search({ object, query, job, filters, locale = "en", page = 0 }: 
+  { object: string, query: string, job?: string, filters?: { [key: string]: number[] }, locale?: string,  page?: number }) {
     const resourceUrl = `${this.url}/${name}`
     return axios.post(`${resourceUrl}search/${object}`, {
       search: {
         query: query,
         filters: filters,
+        job: job,
         locale: locale,
         page: page
       }
