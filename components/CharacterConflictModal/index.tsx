@@ -40,7 +40,6 @@ const CharacterConflictModal = (props: Props) => {
     else if (uncap == 5) suffix = "03"
     else if (uncap > 2) suffix = "02"
 
-    console.log(appState.grid.weapons.mainWeapon)
     // Special casing for Lyria (and Young Cat eventually)
     if (character?.granblue_id === "3030182000") {
       let element = 1
