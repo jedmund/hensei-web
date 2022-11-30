@@ -249,7 +249,11 @@
     "damaging": "ダメージアビリティ",
     "healing": "回復アビリティ",
     "emp": "リミットアビリティ",
-    "base": "ベースアビリティ"
+    "base": "ベースアビリティ",
+    "state": {
+      "selectable": "アビリティを選択",
+      "no_skill": "設定されていません"
+    }
   },
   "extra_weapons": "Additional<br/>Weapons",
   "coming_soon": "開発中",

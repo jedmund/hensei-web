@@ -248,7 +248,11 @@
     "damaging": "Damaging",
     "healing": "Healing",
     "emp": "Extended Mastery",
-    "base": "Base Skills"
+    "base": "Base Skills",
+    "state": {
+      "selectable": "Select a skill",
+      "no_skill": "No skill"
+    }
   },
   "extra_weapons": "Additional Weapons",
   "coming_soon": "Coming Soon",
