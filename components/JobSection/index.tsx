@@ -28,8 +28,6 @@ const JobSection = (props: Props) => {
   const [numSkills, setNumSkills] = useState(4)
   const [skills, setSkills] = useState<JobSkill[]>([])
 
-  const [skillRefs, setSkillRefs] = useState<ForwardedRef<HTMLDivElement>[]>([])
-
   useEffect(() => {
     // Set current job based on ID
     if (party.job) setJob(party.job)
@@ -42,10 +40,6 @@ const JobSection = (props: Props) => {
   useEffect(() => {
     if (job) appState.party.job = job
   }, [job])
-
-  useEffect(() => {
-    setSkillRefs(Array(numSkills).fill(React.createRef<HTMLDivElement>()))
-  }, [numSkills])
 
   function receiveJob(job?: Job) {
     console.log(`Receiving job! Row ${job?.row}: ${job?.name.en}`)
@@ -83,7 +77,6 @@ const JobSection = (props: Props) => {
         editable={!skills[index]?.main && editable}
         key={`skill-${index}`}
         hasJob={job != undefined && job.id != "-1"}
-        ref={skillRefs[index]}
       />
     )
   }
