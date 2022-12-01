@@ -67,7 +67,11 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
           .sort((a, b) => a.order - b.order)
           .map((item, i) => {
             return (
-              <option key={i} value={item.id}>
+              <option
+                key={i}
+                value={item.id}
+                selected={item.id === props.currentJob}
+              >
                 {item.name[locale]}
               </option>
             )
