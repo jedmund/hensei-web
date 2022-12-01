@@ -25,6 +25,11 @@ interface AppState {
     name: string | undefined
     description: string | undefined
     job: Job
+    jobSkills: {
+      1: JobSkill | undefined
+      2: JobSkill | undefined
+      3: JobSkill | undefined
+    }
     raid: Raid | undefined
     element: number
     extra: boolean
@@ -65,6 +70,11 @@ export const initialAppState: AppState = {
     name: undefined,
     description: undefined,
     job: emptyJob,
+    jobSkills: {
+      1: undefined,
+      2: undefined,
+      3: undefined,
+    },
     raid: undefined,
     element: 0,
     extra: false,
