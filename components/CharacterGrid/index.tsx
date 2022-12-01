@@ -165,6 +165,42 @@ const CharacterGrid = (props: Props) => {
     setIncoming(undefined)
   }
 
+  // Methods: Saving job and job skills
+  const saveJob = function (job: Job) {
+    console.log("Save job!")
+    if (party.id && appState.party.editable) {
+      api.endpoints.parties.update(
+        party.id,
+        {
+          party: { job_id: job ? job.id : "" },
+        },
+        headers
+      )
+    }
+  }
+
+  const saveJobSkill = function (skill: JobSkill, position: number) {
+    if (party.id && appState.party.editable) {
+      const positionedKey = `skill${position}_id`
+
+      let skillObject: {
+        [key: string]: string | undefined
+        skill1_id?: string
+        skill2_id?: string
+        skill3_id?: string
+      } = {}
+
+      skillObject[positionedKey] = skill.id
+      api.endpoints.parties.update(
+        party.id,
+        {
+          party: skillObject,
+        },
+        headers
+      )
+    }
+  }
+
   // Methods: Helpers
   function characterUncapLevel(character: Character) {
     let uncapLevel
@@ -256,7 +292,11 @@ const CharacterGrid = (props: Props) => {
   return (
     <div>
       <div id="CharacterGrid">
-        <JobSection editable={party.editable} />
+        <JobSection
+          editable={party.editable}
+          saveJob={saveJob}
+          saveSkill={saveJobSkill}
+        />
         <CharacterConflictModal
           open={modalOpen}
           incomingCharacter={incoming}

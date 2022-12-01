@@ -15,6 +15,8 @@ import "./index.scss"
 // Props
 interface Props {
   editable: boolean
+  saveJob: (job: Job) => void
+  saveSkill: (skill: JobSkill, position: number) => void
 }
 
 const JobSection = (props: Props) => {
@@ -38,14 +40,23 @@ const JobSection = (props: Props) => {
   })
 
   useEffect(() => {
-    if (job) appState.party.job = job
+    if (job) {
+      appState.party.job = job
+      setBaseSkills(job)
+    }
   }, [job])
 
   function receiveJob(job?: Job) {
     console.log(`Receiving job! Row ${job?.row}: ${job?.name.en}`)
     if (job) {
       setJob(job)
+      props.saveJob(job)
+      setBaseSkills(job)
+    }
+  }
 
+  function setBaseSkills(job?: Job) {
+    if (job) {
       const baseSkills = appState.jobSkills.filter(
         (skill) => skill.job.id === job.id && skill.main
       )
@@ -95,7 +106,11 @@ const JobSection = (props: Props) => {
     )
   }
 
-  function updateObject(object: SearchableObject, position: number) {}
+  function updateObject(object: SearchableObject, position: number) {
+    const skill = object as JobSkill
+
+    props.saveSkill(skill, position)
+  }
 
   // Render: JSX components
   return (
@@ -105,10 +120,7 @@ const JobSection = (props: Props) => {
         <div className="Overlay" />
       </div>
       <div className="JobDetails">
-        <JobDropdown
-          currentJob={party.job ? party.job.id : undefined}
-          onChange={receiveJob}
-        />
+        <JobDropdown currentJob={party.job?.id} onChange={receiveJob} />
         <ul className="JobSkills">
           {[...Array(numSkills)].map((e, i) => (
             <li key={`job-${i}`}>
