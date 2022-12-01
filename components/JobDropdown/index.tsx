@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useRouter } from "next/router"
+import { useSnapshot } from "valtio"
 
 import { appState } from "~utils/appState"
 import { jobGroups } from "~utils/jobGroups"
@@ -21,10 +22,18 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
     const router = useRouter()
     const locale = router.locale || "en"
 
+    // Create snapshot of app state
+    const { party } = useSnapshot(appState)
+
     // Set up local states for storing jobs
     const [currentJob, setCurrentJob] = useState<Job>()
     const [jobs, setJobs] = useState<Job[]>()
     const [sortedJobs, setSortedJobs] = useState<GroupedJob>()
+
+    // Set current job from state on mount
+    useEffect(() => {
+      setCurrentJob(party.job)
+    }, [])
 
     // Organize jobs into groups on mount
     useEffect(() => {
@@ -67,11 +76,7 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
           .sort((a, b) => a.order - b.order)
           .map((item, i) => {
             return (
-              <option
-                key={i}
-                value={item.id}
-                selected={item.id === props.currentJob}
-              >
+              <option key={i} value={item.id}>
                 {item.name[locale]}
               </option>
             )
@@ -88,8 +93,8 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     return (
       <select
-        key={currentJob?.id}
-        value={currentJob?.id}
+        key={currentJob ? currentJob.id : -1}
+        value={currentJob ? currentJob.id : -1}
         onBlur={props.onBlur}
         onChange={handleChange}
         ref={ref}
