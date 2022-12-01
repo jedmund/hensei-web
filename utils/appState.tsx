@@ -1,4 +1,5 @@
 import { proxy } from "valtio"
+import { JobSkillObject } from "~types"
 
 const emptyJob: Job = {
   id: "-1",
@@ -25,11 +26,7 @@ interface AppState {
     name: string | undefined
     description: string | undefined
     job: Job
-    jobSkills: {
-      1: JobSkill | undefined
-      2: JobSkill | undefined
-      3: JobSkill | undefined
-    }
+    jobSkills: JobSkillObject
     raid: Raid | undefined
     element: number
     extra: boolean
@@ -71,6 +68,7 @@ export const initialAppState: AppState = {
     description: undefined,
     job: emptyJob,
     jobSkills: {
+      0: undefined,
       1: undefined,
       2: undefined,
       3: undefined,
