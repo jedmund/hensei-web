@@ -47,7 +47,6 @@ const JobSection = (props: Props) => {
   }, [job])
 
   function receiveJob(job?: Job) {
-    console.log(`Receiving job! Row ${job?.row}: ${job?.name.en}`)
     if (job) {
       setJob(job)
       props.saveJob(job)

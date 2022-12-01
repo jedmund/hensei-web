@@ -167,7 +167,6 @@ const CharacterGrid = (props: Props) => {
 
   // Methods: Saving job and job skills
   const saveJob = function (job: Job) {
-    console.log("Save job!")
     if (party.id && appState.party.editable) {
       api.endpoints.parties.update(
         party.id,

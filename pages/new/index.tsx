@@ -27,7 +27,6 @@ const NewRoute: React.FC<Props> = (props: Props) => {
   }, [persistStaticData])
 
   function persistStaticData() {
-    console.log("Persisting static data...")
     appState.raids = props.raids
     appState.jobs = props.jobs
     appState.jobSkills = props.jobSkills

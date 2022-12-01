@@ -42,9 +42,6 @@ const Party = (props: Props) => {
 
   // Set up states
   const { party } = useSnapshot(appState)
-  const jobState = party.job
-
-  const [job, setJob] = useState<Job>()
   const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
 
   // Reset state on first load
@@ -53,14 +50,6 @@ const Party = (props: Props) => {
     appState.grid = resetState.grid
     if (props.team) storeParty(props.team)
   }, [])
-
-  useEffect(() => {
-    setJob(jobState)
-  }, [jobState])
-
-  useEffect(() => {
-    jobChanged()
-  }, [job])
 
   // Methods: Creating a new party
   async function createParty(extra: boolean = false) {
@@ -83,18 +72,6 @@ const Party = (props: Props) => {
         party.id,
         {
           party: { extra: event.target.checked },
-        },
-        headers
-      )
-    }
-  }
-
-  function jobChanged() {
-    if (party.id && appState.party.editable) {
-      api.endpoints.parties.update(
-        party.id,
-        {
-          party: { job_id: job ? job.id : "" },
         },
         headers
       )
