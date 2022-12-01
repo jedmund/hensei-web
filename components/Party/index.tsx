@@ -137,6 +137,8 @@ const Party = (props: Props) => {
     appState.party.description = party.description
     appState.party.raid = party.raid
     appState.party.updated_at = party.updated_at
+    appState.party.job = party.job
+    appState.party.jobSkills = party.job_skills
 
     appState.party.id = party.id
     appState.party.extra = party.extra
