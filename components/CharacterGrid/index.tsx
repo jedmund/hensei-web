@@ -10,7 +10,7 @@ import JobSection from "~components/JobSection"
 import CharacterUnit from "~components/CharacterUnit"
 import CharacterConflictModal from "~components/CharacterConflictModal"
 
-import type { SearchableObject } from "~types"
+import type { JobSkillObject, SearchableObject } from "~types"
 
 import api from "~utils/api"
 import { appState } from "~utils/appState"
@@ -48,6 +48,15 @@ const CharacterGrid = (props: Props) => {
   const [conflicts, setConflicts] = useState<GridCharacter[]>([])
   const [position, setPosition] = useState(0)
 
+  // Set up state for data
+  const [job, setJob] = useState<Job | undefined>()
+  const [jobSkills, setJobSkills] = useState<JobSkillObject>({
+    0: undefined,
+    1: undefined,
+    2: undefined,
+    3: undefined,
+  })
+
   // Create a temporary state to store previous character uncap values
   const [previousUncapValues, setPreviousUncapValues] = useState<{
     [key: number]: number | undefined
@@ -63,6 +72,13 @@ const CharacterGrid = (props: Props) => {
       appState.party.editable = true
     else appState.party.editable = false
   }, [props.new, accountData, party])
+
+  useEffect(() => {
+    console.log("In useeffect")
+    console.log(party.jobSkills)
+    setJob(party.job)
+    setJobSkills(party.jobSkills)
+  }, [party])
 
   // Initialize an array of current uncap values for each characters
   useEffect(() => {
@@ -167,14 +183,22 @@ const CharacterGrid = (props: Props) => {
 
   // Methods: Saving job and job skills
   const saveJob = function (job: Job) {
+    const payload = {
+      party: { job_id: job ? job.id : "" },
+    }
+
     if (party.id && appState.party.editable) {
-      api.endpoints.parties.update(
-        party.id,
-        {
-          party: { job_id: job ? job.id : "" },
-        },
-        headers
-      )
+      api.endpoints.parties
+        .update(party.id, payload, headers)
+        .then((response) => {
+          const newParty = response.data.party
+
+          setJob(newParty.job)
+          appState.party.job = newParty.job
+
+          setJobSkills(newParty.job_skills)
+          appState.party.jobSkills = newParty.job_skills
+        })
     }
   }
 
@@ -184,6 +208,7 @@ const CharacterGrid = (props: Props) => {
 
       let skillObject: {
         [key: string]: string | undefined
+        skill0_id?: string
         skill1_id?: string
         skill2_id?: string
         skill3_id?: string
@@ -292,6 +317,8 @@ const CharacterGrid = (props: Props) => {
     <div>
       <div id="CharacterGrid">
         <JobSection
+          job={job}
+          jobSkills={jobSkills}
           editable={party.editable}
           saveJob={saveJob}
           saveSkill={saveJobSkill}

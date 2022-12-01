@@ -8,12 +8,14 @@ import SearchModal from "~components/SearchModal"
 
 import { appState } from "~utils/appState"
 
-import type { SearchableObject } from "~types"
+import type { JobSkillObject, SearchableObject } from "~types"
 
 import "./index.scss"
 
 // Props
 interface Props {
+  job?: Job
+  jobSkills: JobSkillObject
   editable: boolean
   saveJob: (job: Job) => void
   saveSkill: (skill: JobSkill, position: number) => void
@@ -25,15 +27,32 @@ const JobSection = (props: Props) => {
   const [job, setJob] = useState<Job>()
   const [imageUrl, setImageUrl] = useState("")
 
-  const { party } = useSnapshot(appState)
+  const { party, jobSkills } = useSnapshot(appState)
 
   const [numSkills, setNumSkills] = useState(4)
-  const [skills, setSkills] = useState<JobSkill[]>([])
+  const [skills, setSkills] = useState<{ [key: number]: JobSkill | undefined }>(
+    []
+  )
+
+  const selectRef = React.createRef<HTMLSelectElement>()
 
   useEffect(() => {
+    console.log("party has changed")
     // Set current job based on ID
-    if (party.job) setJob(party.job)
-  }, [])
+    console.log(props.jobSkills)
+
+    if (props.job) {
+      setJob(props.job)
+      setSkills({
+        0: props.jobSkills[0],
+        1: props.jobSkills[1],
+        2: props.jobSkills[2],
+        3: props.jobSkills[3],
+      })
+
+      if (selectRef.current) selectRef.current.value = props.job.id
+    }
+  }, [props])
 
   useEffect(() => {
     generateImageUrl()
@@ -41,8 +60,9 @@ const JobSection = (props: Props) => {
 
   useEffect(() => {
     if (job) {
-      appState.party.job = job
-      setBaseSkills(job)
+      if (job.id != party.job.id) appState.party.job = job
+      if (job.row === "1") setNumSkills(3)
+      else setNumSkills(4)
     }
   }, [job])
 
@@ -50,20 +70,6 @@ const JobSection = (props: Props) => {
     if (job) {
       setJob(job)
       props.saveJob(job)
-      setBaseSkills(job)
-    }
-  }
-
-  function setBaseSkills(job?: Job) {
-    if (job) {
-      const baseSkills = appState.jobSkills.filter(
-        (skill) => skill.job.id === job.id && skill.main
-      )
-
-      if (job.row === "1") setNumSkills(3)
-      else setNumSkills(4)
-
-      setSkills(baseSkills)
     }
   }
 
@@ -80,11 +86,19 @@ const JobSection = (props: Props) => {
     setImageUrl(imgSrc)
   }
 
+  const canEditSkill = (skill?: JobSkill) => {
+    if (job && skill) {
+      if (skill.job.id === job.id && skill.main && !skill.sub) return false
+    }
+
+    return props.editable
+  }
+
   const skillItem = (index: number, editable: boolean) => {
     return (
       <JobSkillItem
         skill={skills[index]}
-        editable={!skills[index]?.main && editable}
+        editable={canEditSkill(skills[index])}
         key={`skill-${index}`}
         hasJob={job != undefined && job.id != "-1"}
       />
@@ -98,15 +112,19 @@ const JobSection = (props: Props) => {
         fromPosition={index}
         object="job_skills"
         job={job}
-        send={updateObject}
+        send={saveJobSkill}
       >
         {skillItem(index, true)}
       </SearchModal>
     )
   }
 
-  function updateObject(object: SearchableObject, position: number) {
+  function saveJobSkill(object: SearchableObject, position: number) {
     const skill = object as JobSkill
+
+    const newSkills = skills
+    newSkills[position] = skill
+    setSkills(newSkills)
 
     props.saveSkill(skill, position)
   }
@@ -119,11 +137,15 @@ const JobSection = (props: Props) => {
         <div className="Overlay" />
       </div>
       <div className="JobDetails">
-        <JobDropdown currentJob={party.job?.id} onChange={receiveJob} />
+        <JobDropdown
+          currentJob={party.job?.id}
+          onChange={receiveJob}
+          ref={selectRef}
+        />
         <ul className="JobSkills">
           {[...Array(numSkills)].map((e, i) => (
             <li key={`job-${i}`}>
-              {job && job.id != "-1" && !skills[i]?.main && props.editable
+              {canEditSkill(skills[i])
                 ? editableSkillItem(i)
                 : skillItem(i, false)}
             </li>
