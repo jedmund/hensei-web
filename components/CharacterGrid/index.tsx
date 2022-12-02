@@ -74,8 +74,6 @@ const CharacterGrid = (props: Props) => {
   }, [props.new, accountData, party])
 
   useEffect(() => {
-    console.log("In useeffect")
-    console.log(party.jobSkills)
     setJob(party.job)
     setJobSkills(party.jobSkills)
   }, [party])

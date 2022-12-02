@@ -37,10 +37,7 @@ const JobSection = (props: Props) => {
   const selectRef = React.createRef<HTMLSelectElement>()
 
   useEffect(() => {
-    console.log("party has changed")
     // Set current job based on ID
-    console.log(props.jobSkills)
-
     if (props.job) {
       setJob(props.job)
       setSkills({
