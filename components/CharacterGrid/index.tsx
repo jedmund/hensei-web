@@ -74,9 +74,9 @@ const CharacterGrid = (props: Props) => {
   }, [props.new, accountData, party])
 
   useEffect(() => {
-    setJob(party.job)
-    setJobSkills(party.jobSkills)
-  }, [party])
+    setJob(appState.party.job)
+    setJobSkills(appState.party.jobSkills)
+  }, [appState])
 
   // Initialize an array of current uncap values for each characters
   useEffect(() => {
@@ -213,13 +213,20 @@ const CharacterGrid = (props: Props) => {
       } = {}
 
       skillObject[positionedKey] = skill.id
-      api.endpoints.parties.update(
-        party.id,
-        {
-          party: skillObject,
-        },
-        headers
-      )
+      api.endpoints.parties
+        .update(
+          party.id,
+          {
+            party: skillObject,
+          },
+          headers
+        )
+        .then((response) => {
+          // Update the current skills
+          const newSkills = response.data.party.job_skills
+          setJobSkills(newSkills)
+          appState.party.jobSkills = newSkills
+        })
     }
   }
 
