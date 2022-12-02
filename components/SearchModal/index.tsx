@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react"
 import { getCookie, setCookie } from "cookies-next"
 import { useRouter } from "next/router"
-import { useSnapshot } from "valtio"
 import { useTranslation } from "react-i18next"
 import InfiniteScroll from "react-infinite-scroll-component"
 
-import { appState } from "~utils/appState"
 import api from "~utils/api"
 
 import * as Dialog from "@radix-ui/react-dialog"

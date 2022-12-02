@@ -22,13 +22,11 @@ interface Props {
 }
 
 const JobSection = (props: Props) => {
+  const { party } = useSnapshot(appState)
   const { t } = useTranslation("common")
 
   const [job, setJob] = useState<Job>()
   const [imageUrl, setImageUrl] = useState("")
-
-  const { party, jobSkills } = useSnapshot(appState)
-
   const [numSkills, setNumSkills] = useState(4)
   const [skills, setSkills] = useState<{ [key: number]: JobSkill | undefined }>(
     []
