@@ -1,7 +1,14 @@
 :root {
   --background: #{$page--bg--light};
   --page-hover: #{$page--hover--light};
+
+  --grid-rep-hover: #{$grid--rep--hover--light};
+
   --card-bg: white;
+  --bar-bg: white;
+
+  --input-bg: #{$input--bg--light};
+  --input-bg-hover: #{$input--bg--light--hover};
 
   --text-primary: #{$text--primary--color--light};
 
@@ -10,7 +17,10 @@
 
   --icon-secondary: #{$icon--secondary--color--light};
   --icon-secondary-hover: #{$icon--secondary--hover--light};
+
   --switch-nub: #{$switch--nub--bg--light};
+
+  --grid-border-color: #{$grid--border--color--light};
 
   --wind-hover-bg: #{$wind-bg-20};
   --wind-hover-text: #{$wind-text-20};
@@ -29,7 +39,14 @@
 [data-theme="dark"] {
   --background: #{$page--bg--dark};
   --page-hover: #{$page--hover--dark};
+
+  --grid-rep-hover: #{$grid--rep--hover--dark};
+
   --card-bg: #{$page--element--bg--dark};
+  --bar-bg: #{$grey-00};
+
+  --input-bg: #{$input--bg--dark};
+  --input-bg-hover: #{$input--bg--dark--hover};
 
   --text-primary: #{$text--primary--color--dark};
 
@@ -38,7 +55,10 @@
 
   --icon-secondary: #{$icon--secondary--color--dark};
   --icon-secondary-hover: #{$icon--secondary--hover--dark};
+
   --switch-nub: #{$switch--nub--bg--dark};
+
+  --grid-border-color: #{$grid--border--color--dark};
 
   --wind-hover-bg: #{$wind-bg-00};
   --wind-hover-text: #{$wind-text-00};

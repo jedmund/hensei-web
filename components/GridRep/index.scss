@@ -6,7 +6,7 @@
   padding: $unit * 2;
 
   &:hover {
-    background: white;
+    background: var(--grid-rep-hover);
 
     h2,
     .Grid {
@@ -14,7 +14,7 @@
     }
 
     .Grid .weapon {
-      box-shadow: inset 0 0 0 1px $grey-80;
+      box-shadow: inset 0 0 0 1px var(--grid-border-color);
     }
   }
 
@@ -24,7 +24,7 @@
     flex-shrink: 0;
 
     .weapon {
-      background: white;
+      background: var(--card-bg);
       border-radius: 4px;
     }
 
@@ -64,7 +64,7 @@
     gap: calc($unit / 2);
 
     h2 {
-      color: $grey-10;
+      color: var(--text-primary);
       font-size: $font-regular;
       overflow: hidden;
       padding-bottom: 1px;
@@ -73,7 +73,7 @@
       max-width: 258px; // Can we not do this?
 
       &.empty {
-        color: $grey-50;
+        color: var(--text-secondary);
       }
     }
 

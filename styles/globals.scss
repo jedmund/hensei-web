@@ -78,6 +78,7 @@ h1 {
 
 select {
   appearance: none;
+  background-color: var(--input-bg);
   background-image: url("/icons/Arrow.svg");
   background-repeat: no-repeat;
   background-position-y: center;
@@ -93,6 +94,7 @@ select {
   width: 100%;
 
   &:hover {
+    background-color: var(--input-bg-hover);
     cursor: pointer;
   }
 }
