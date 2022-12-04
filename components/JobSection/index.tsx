@@ -60,7 +60,8 @@ const JobSection = (props: Props) => {
 
   useEffect(() => {
     if (job) {
-      if (job.id != party.job.id) appState.party.job = job
+      if ((party.job && job.id != party.job.id) || !party.job)
+        appState.party.job = job
       if (job.row === "1") setNumSkills(3)
       else setNumSkills(4)
     }
