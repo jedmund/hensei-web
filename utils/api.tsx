@@ -25,7 +25,7 @@ class Api {
   url: string
   endpoints: { [key: string]: EndpointMap }
   
-  constructor({url}: {url: string}) {
+  constructor({ url }: { url: string }) {
     this.url = url
     this.endpoints = {}
   }
@@ -56,13 +56,14 @@ class Api {
     return axios.post(`${ oauthUrl }/token`, object)
   }
   
-  search({ object, query, filters, locale = "en", page = 0 }: 
-  { object: string, query: string, filters?: { [key: string]: number[] }, locale?: string,  page?: number }) {
+  search({ object, query, job, filters, locale = "en", page = 0 }: 
+  { object: string, query: string, job?: string, filters?: { [key: string]: number[] }, locale?: string,  page?: number }) {
     const resourceUrl = `${this.url}/${name}`
     return axios.post(`${resourceUrl}search/${object}`, {
       search: {
         query: query,
         filters: filters,
+        job: job,
         locale: locale,
         page: page
       }
@@ -92,6 +93,22 @@ class Api {
     const resourceUrl = `${this.url}/characters/resolve`
     return axios.post(resourceUrl, body, { headers: params })
   }
+
+  updateJob({ partyId, params }: { partyId: string, params?: {} }) {
+    const resourceUrl = `${this.url}/parties/${partyId}/jobs`
+    return axios.put(resourceUrl, params)
+  }
+
+  updateJobSkills({ partyId, params }: { partyId: string, params?: {} }) {
+    const resourceUrl = `${this.url}/parties/${partyId}/job_skills`
+    return axios.put(resourceUrl, params)
+  }
+
+  allSkills(params: {}) {
+    const resourceUrl = `${this.url}/jobs/skills`
+    return axios.get(resourceUrl, params)
+  }
+
   savedTeams(params: {}) {
     const resourceUrl = `${this.url}/parties/favorites`
     return axios.get(resourceUrl, params)
@@ -127,15 +144,15 @@ class Api {
 }
 
 const api: Api = new Api({ url: process.env.NEXT_PUBLIC_SIERO_API_URL || 'https://localhost:3000/api/v1'})
-api.createEntity( { name: 'users' })
-api.createEntity( { name: 'parties' })
-api.createEntity( { name: 'grid_weapons' })
-api.createEntity( { name: 'characters' })
-api.createEntity( { name: 'weapons' })
-api.createEntity( { name: 'summons' })
-api.createEntity( { name: 'jobs' })
-api.createEntity( { name: 'raids' })
-api.createEntity( { name: 'weapon_keys' })
-api.createEntity( { name: 'favorites' })
+api.createEntity({ name: 'users' })
+api.createEntity({ name: 'parties' })
+api.createEntity({ name: 'grid_weapons' })
+api.createEntity({ name: 'characters' })
+api.createEntity({ name: 'weapons' })
+api.createEntity({ name: 'summons' })
+api.createEntity({ name: 'jobs' })
+api.createEntity({ name: 'raids' })
+api.createEntity({ name: 'weapon_keys' })
+api.createEntity({ name: 'favorites' })
 
 export default api

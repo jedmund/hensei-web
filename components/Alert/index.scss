@@ -1,0 +1,52 @@
+.AlertWrapper {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  z-index: 21;
+}
+
+.Alert {
+  background: white;
+  border-radius: $unit;
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+  min-width: $unit * 20;
+  max-width: $unit * 40;
+  padding: $unit * 4;
+
+  .description {
+    font-size: $font-regular;
+    line-height: 1.26;
+  }
+
+  .buttons {
+    align-self: flex-end;
+  }
+
+  .Button {
+    font-size: $font-regular;
+    padding: ($unit * 1.5) ($unit * 2);
+    margin-top: $unit * 2;
+
+    &.btn-disabled {
+      background: $grey-90;
+      color: $grey-70;
+      cursor: not-allowed;
+    }
+
+    &:not(.btn-disabled) {
+      background: $grey-90;
+      color: $grey-40;
+
+      &:hover {
+        background: $grey-80;
+      }
+    }
+  }
+}

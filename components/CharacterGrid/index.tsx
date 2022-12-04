@@ -6,14 +6,17 @@ import { useSnapshot } from "valtio"
 import { AxiosResponse } from "axios"
 import debounce from "lodash.debounce"
 
+import Alert from "~components/Alert"
 import JobSection from "~components/JobSection"
 import CharacterUnit from "~components/CharacterUnit"
+import CharacterConflictModal from "~components/CharacterConflictModal"
+
+import type { JobSkillObject, SearchableObject } from "~types"
 
 import api from "~utils/api"
 import { appState } from "~utils/appState"
 
 import "./index.scss"
-import CharacterConflictModal from "~components/CharacterConflictModal"
 
 // Props
 interface Props {
@@ -46,6 +49,16 @@ const CharacterGrid = (props: Props) => {
   const [conflicts, setConflicts] = useState<GridCharacter[]>([])
   const [position, setPosition] = useState(0)
 
+  // Set up state for data
+  const [job, setJob] = useState<Job | undefined>()
+  const [jobSkills, setJobSkills] = useState<JobSkillObject>({
+    0: undefined,
+    1: undefined,
+    2: undefined,
+    3: undefined,
+  })
+  const [errorMessage, setErrorMessage] = useState("")
+
   // Create a temporary state to store previous character uncap values
   const [previousUncapValues, setPreviousUncapValues] = useState<{
     [key: number]: number | undefined
@@ -62,6 +75,11 @@ const CharacterGrid = (props: Props) => {
     else appState.party.editable = false
   }, [props.new, accountData, party])
 
+  useEffect(() => {
+    setJob(appState.party.job)
+    setJobSkills(appState.party.jobSkills)
+  }, [appState])
+
   // Initialize an array of current uncap values for each characters
   useEffect(() => {
     let initialPreviousUncapValues: { [key: number]: number } = {}
@@ -73,7 +91,7 @@ const CharacterGrid = (props: Props) => {
 
   // Methods: Adding an object from search
   function receiveCharacterFromSearch(
-    object: Character | Weapon | Summon,
+    object: SearchableObject,
     position: number
   ) {
     const character = object as Character
@@ -163,6 +181,69 @@ const CharacterGrid = (props: Props) => {
     setIncoming(undefined)
   }
 
+  // Methods: Saving job and job skills
+  const saveJob = function (job: Job) {
+    const payload = {
+      party: {
+        job_id: job ? job.id : "",
+      },
+      ...headers,
+    }
+
+    if (party.id && appState.party.editable) {
+      api.updateJob({ partyId: party.id, params: payload }).then((response) => {
+        const newParty = response.data.party
+
+        setJob(newParty.job)
+        appState.party.job = newParty.job
+
+        setJobSkills(newParty.job_skills)
+        appState.party.jobSkills = newParty.job_skills
+      })
+    }
+  }
+
+  const saveJobSkill = function (skill: JobSkill, position: number) {
+    if (party.id && appState.party.editable) {
+      const positionedKey = `skill${position}_id`
+
+      let skillObject: {
+        [key: string]: string | undefined
+        skill0_id?: string
+        skill1_id?: string
+        skill2_id?: string
+        skill3_id?: string
+      } = {}
+
+      const payload = {
+        party: skillObject,
+        ...headers,
+      }
+
+      skillObject[positionedKey] = skill.id
+      api
+        .updateJobSkills({ partyId: party.id, params: payload })
+        .then((response) => {
+          // Update the current skills
+          const newSkills = response.data.party.job_skills
+          setJobSkills(newSkills)
+          appState.party.jobSkills = newSkills
+        })
+        .catch((error) => {
+          const data = error.response.data
+          if (data.code == "too_many_skills_of_type") {
+            const message = `You can only add up to 2 ${
+              data.skill_type === "emp"
+                ? data.skill_type.toUpperCase()
+                : data.skill_type
+            } skills to your party at once.`
+            setErrorMessage(message)
+          }
+          console.log(error.response.data)
+        })
+    }
+  }
+
   // Methods: Helpers
   function characterUncapLevel(character: Character) {
     let uncapLevel
@@ -250,11 +331,27 @@ const CharacterGrid = (props: Props) => {
     }
   }
 
+  function cancelAlert() {
+    setErrorMessage("")
+  }
+
   // Render: JSX components
   return (
     <div>
+      <Alert
+        open={errorMessage.length > 0}
+        message={errorMessage}
+        cancelAction={cancelAlert}
+        cancelActionText={"Got it"}
+      />
       <div id="CharacterGrid">
-        <JobSection />
+        <JobSection
+          job={job}
+          jobSkills={jobSkills}
+          editable={party.editable}
+          saveJob={saveJob}
+          saveSkill={saveJobSkill}
+        />
         <CharacterConflictModal
           open={modalOpen}
           incomingCharacter={incoming}

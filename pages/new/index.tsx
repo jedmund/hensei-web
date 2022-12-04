@@ -1,13 +1,17 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { getCookie } from "cookies-next"
 import { serverSideTranslations } from "next-i18next/serverSideTranslations"
 
 import Party from "~components/Party"
+
+import { appState } from "~utils/appState"
 import api from "~utils/api"
 
 import type { NextApiRequest, NextApiResponse } from "next"
 
 interface Props {
+  jobs: Job[]
+  jobSkills: JobSkill[]
   raids: Raid[]
   sortedRaids: Raid[][]
 }
@@ -16,6 +20,16 @@ const NewRoute: React.FC<Props> = (props: Props) => {
   function callback(path: string) {
     // This is scuffed, how do we do this natively?
     window.history.replaceState(null, `Grid Tool`, `${path}`)
+  }
+
+  useEffect(() => {
+    persistStaticData()
+  }, [persistStaticData])
+
+  function persistStaticData() {
+    appState.raids = props.raids
+    appState.jobs = props.jobs
+    appState.jobSkills = props.jobSkills
   }
 
   return (
@@ -51,8 +65,17 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     .getAll({ params: headers })
     .then((response) => organizeRaids(response.data.map((r: any) => r.raid)))
   
+  let jobs = await api.endpoints.jobs
+    .getAll({ params: headers })
+    .then((response) => { return response.data })
+  
+  let jobSkills = await api.allSkills(headers)
+    .then((response) => { return response.data })
+  
   return {
     props: {
+      jobs: jobs,
+      jobSkills: jobSkills,
       raids: raids,
       sortedRaids: sortedRaids,
       ...(await serverSideTranslations(locale, ["common"])),

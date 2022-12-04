@@ -233,13 +233,27 @@
     "placeholders": {
       "weapon": "武器を検索...",
       "summon": "召喚石を検索...",
-      "character": "キャラを検索..."
+      "character": "キャラを検索...",
+      "job_skill": "ジョブのスキルを検索..."
     }
   },
   "teams": {
     "title": "編成一覧",
     "loading": "ロード中...",
     "not_found": "編成は見つかりませんでした"
+  },
+  "job_skills": {
+    "all": "全てのアビリティ",
+    "buffing": "強化アビリティ",
+    "debuffing": "弱体アビリティ",
+    "damaging": "ダメージアビリティ",
+    "healing": "回復アビリティ",
+    "emp": "リミットアビリティ",
+    "base": "ベースアビリティ",
+    "state": {
+      "selectable": "アビリティを選択",
+      "no_skill": "設定されていません"
+    }
   },
   "extra_weapons": "Additional<br/>Weapons",
   "coming_soon": "開発中",
