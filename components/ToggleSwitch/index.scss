@@ -1,5 +1,5 @@
 .toggle-switch {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 18px;
   display: inline-block;
   position: relative;
@@ -30,7 +30,7 @@
   }
 
   &-switch {
-    background: #e4e4e4;
+    background: var(--switch-nub); // #e4e4e4;
     display: block;
     width: 24px;
     margin: 5px;
@@ -40,6 +40,10 @@
     right: 24px;
     border-radius: 17px;
     transition: all 0.18s ease-in 0s;
+
+    &:hover {
+      background: var(--background);
+    }
   }
 
   &-checkbox:checked + &-label {
