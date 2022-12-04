@@ -1,11 +1,8 @@
 @import "~meyer-reset-scss";
+@import "themes.scss";
 
 html {
-  @include themed() {
-    background-color: t($background);
-  }
-
-  background: $background-color;
+  background-color: var(--background);
   font-size: 62.5%;
   height: 100%;
 }
@@ -36,27 +33,27 @@ a {
   text-decoration: none;
 
   &.wind {
-    color: $wind-text-dark;
+    color: $wind-text-10;
   }
 
   &.fire {
-    color: $fire-text-dark;
+    color: $fire-text-10;
   }
 
   &.water {
-    color: $water-text-dark;
+    color: $water-text-10;
   }
 
   &.earth {
-    color: $earth-text-dark;
+    color: $earth-text-10;
   }
 
   &.dark {
-    color: $dark-text-dark;
+    color: $dark-text-10;
   }
 
   &.light {
-    color: $light-text-dark;
+    color: $light-text-10;
   }
 }
 
@@ -70,7 +67,7 @@ h1,
 h2,
 h3,
 p {
-  color: $grey-00;
+  color: $grey-10;
 }
 
 h1 {
@@ -88,7 +85,7 @@ select {
   background-size: $unit * 1.5;
   border: none;
   border-radius: 6px;
-  color: $grey-00;
+  color: $grey-10;
   margin-bottom: $unit;
   font-size: $font-regular;
   padding: 0 ($unit * 2);
@@ -270,27 +267,27 @@ select {
       opacity: 0.7;
 
       &.wind {
-        color: $wind-bg-light;
+        color: $wind-bg-20;
       }
 
       &.fire {
-        color: $fire-bg-light;
+        color: $fire-bg-20;
       }
 
       &.water {
-        color: $water-bg-light;
+        color: $water-bg-20;
       }
 
       &.earth {
-        color: $earth-bg-light;
+        color: $earth-bg-20;
       }
 
       &.dark {
-        color: $dark-bg-light;
+        color: $dark-bg-10;
       }
 
       &.light {
-        color: $light-bg-light;
+        color: $light-bg-20;
       }
     }
   }
@@ -329,27 +326,27 @@ img.profile {
   background: $grey-90;
 
   &.fire {
-    background: $fire-bg-light;
+    background: $fire-bg-20;
   }
 
   &.water {
-    background: $water-bg-light;
+    background: $water-bg-20;
   }
 
   &.wind {
-    background: $wind-bg-light;
+    background: $wind-bg-20;
   }
 
   &.earth {
-    background: $earth-bg-light;
+    background: $earth-bg-20;
   }
 
   &.dark {
-    background: $dark-bg-light;
+    background: $dark-bg-10;
   }
 
   &.light {
-    background: $light-bg-light;
+    background: $light-bg-20;
   }
 }
 

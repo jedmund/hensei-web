@@ -1,0 +1,49 @@
+:root {
+  --background: #{$page--bg--light};
+  --page-hover: #{$page--hover--light};
+  --card-bg: white;
+
+  --text-primary: #{$text--primary--color--light};
+  --text-secondary: #{$text--secondary--color--light};
+
+  --icon-secondary: #{$icon--secondary--color--light};
+  --icon-secondary-hover: #{$icon--secondary--hover--light};
+  --switch-nub: #{$switch--nub--bg--light};
+
+  --wind-hover-bg: #{$wind-bg-20};
+  --wind-hover-text: #{$wind-text-20};
+  --fire-hover-bg: #{$fire-bg-20};
+  --fire-hover-text: #{$fire-text-20};
+  --water-hover-bg: #{$water-bg-20};
+  --water-hover-text: #{$water-text-20};
+  --earth-hover-bg: #{$earth-bg-20};
+  --earth-hover-text: #{$earth-text-20};
+  --dark-hover-bg: #{$dark-bg-20};
+  --dark-hover-text: #{$dark-text-20};
+  --light-hover-bg: #{$light-bg-20};
+  --light-hover-text: #{$light-text-20};
+}
+
+[data-theme="dark"] {
+  --background: #{$page--bg--dark};
+  --page-hover: #{$page--hover--dark};
+  --card-bg: #{$page--element--bg--dark};
+
+  --text-primary: #{$text--primary--color--dark};
+  --text-secondary: #{$text--secondary--color--dark};
+
+  --icon-secondary: #{$icon--secondary--color--dark};
+  --icon-secondary-hover: #{$icon--secondary--hover--dark};
+  --switch-nub: #{$switch--nub--bg--dark};
+
+  --wind-hover-bg: #{$wind-bg-00};
+  --wind-hover-text: #{$wind-text-00};
+  --fire-hover-bg: #{$fire-bg-00};
+  --fire-hover-text: #{$fire-text-00};
+  --earth-hover-bg: #{$earth-bg-00};
+  --earth-hover-text: #{$earth-text-00};
+  --dark-hover-bg: #{$dark-bg-00};
+  --dark-hover-text: #{$dark-text-00};
+  --light-hover-bg: #{$light-bg-00};
+  --light-hover-text: #{$light-text-00};
+}
