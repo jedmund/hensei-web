@@ -15,7 +15,7 @@ interface Props extends React.ComponentPropsWithoutRef<"div"> {
 }
 
 const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
-  ({ ...props }, forwardedRef) => {
+  function useJobSkillItem({ ...props }, forwardedRef) {
     const router = useRouter()
     const { t } = useTranslation("common")
     const locale =
