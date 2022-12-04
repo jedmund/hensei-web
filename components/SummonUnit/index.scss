@@ -52,7 +52,7 @@
   }
 
   .SummonImage {
-    background: white;
+    background: var(--card-bg);
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: $unit;
     display: flex;
@@ -62,7 +62,7 @@
     transition: all 0.18s ease-in-out;
 
     &:hover .icon svg {
-      fill: $grey-40;
+      fill: var(--icon-secondary-hover);
     }
 
     .icon {
@@ -72,7 +72,7 @@
       z-index: 1;
 
       svg {
-        fill: $grey-70;
+        fill: var(--icon-secondary);
       }
     }
   }
@@ -91,7 +91,7 @@
   }
 
   h3 {
-    color: #333;
+    color: var(--text-secondary);
     font-size: $font-regular;
     font-weight: $normal;
     line-height: 1.1;

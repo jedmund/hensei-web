@@ -6,16 +6,16 @@
   min-width: 100px;
 
   &:hover label {
-    background: $grey-90;
-    color: $grey-40;
+    background: var(--page-hover);
+    color: var(--text-primary);
   }
 
   & input {
     display: none;
 
     &:checked + label {
-      background: $grey-90;
-      color: $grey-00;
+      background: var(--background);
+      color: var(--text-primary);
     }
   }
 

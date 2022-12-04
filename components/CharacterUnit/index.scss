@@ -27,7 +27,7 @@
   }
 
   h3 {
-    color: #333;
+    color: var(--text-secondary);
     font-size: $font-regular;
     font-weight: $normal;
     line-height: 1.1;
@@ -45,7 +45,7 @@
 
   .CharacterImage {
     aspect-ratio: 131 / 273;
-    background: white;
+    background: var(--card-bg);
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: $unit;
     display: flex;
@@ -61,7 +61,7 @@
     }
 
     &:hover .icon svg {
-      color: $grey-40;
+      fill: var(--icon-secondary-hover);
     }
 
     .icon {
@@ -71,7 +71,7 @@
       z-index: 1;
 
       svg {
-        fill: $grey-70;
+        fill: var(--icon-secondary);
       }
     }
   }
