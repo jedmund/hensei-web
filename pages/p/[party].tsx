@@ -1,6 +1,9 @@
 import React, { useEffect } from "react"
+import Head from "next/head"
 import { getCookie } from "cookies-next"
 import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import { useRouter } from "next/router"
+import { useTranslation } from "next-i18next"
 
 import Party from "~components/Party"
 
@@ -18,6 +21,10 @@ interface Props {
 }
 
 const PartyRoute: React.FC<Props> = (props: Props) => {
+  const { t } = useTranslation("common")
+  const router = useRouter()
+  const locale = router.locale || "en"
+
   useEffect(() => {
     persistStaticData()
   }, [persistStaticData])
@@ -28,9 +35,51 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
     appState.jobSkills = props.jobSkills
   }
 
+  const title = () => {
+    let title = props.party.raid ? `[${props.party.raid?.name[locale]}] ` : ""
+
+    const username =
+      props.party.user != null
+        ? `@${props.party.user?.username}`
+        : t("header.anonymous")
+
+    if (props.party.name != null)
+      title += t("header.byline", {
+        partyName: props.party.name,
+        username: username,
+      })
+    else
+      title += t("header.untitled_team", {
+        username: username,
+      })
+
+    return title
+  }
+
   return (
-    <div id="Content">
-      <Party team={props.party} raids={props.sortedRaids} />
+    <div>
+      <Head>
+        <title>{title()}</title>
+
+        <meta property="og:title" content={title()} />
+        <meta
+          property="og:description"
+          content={props.party.description ? props.party.description : ""}
+        />
+        <meta property="og:url" content="https://app.granblue.team" />
+        <meta property="og:type" content="website" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:domain" content="app.granblue.team" />
+        <meta name="twitter:title" content={title()} />
+        <meta
+          name="twitter:description"
+          content={props.party.description ? props.party.description : ""}
+        />
+      </Head>
+      <div id="Content">
+        <Party team={props.party} raids={props.sortedRaids} />
+      </div>
     </div>
   )
 }

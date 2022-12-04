@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import Head from "next/head"
 import { useRouter } from "next/router"
 import { useSnapshot } from "valtio"
 import { useTranslation } from "next-i18next"
@@ -300,45 +299,8 @@ const PartyDetails = (props: Props) => {
     </div>
   )
 
-  const generateTitle = () => {
-    let title = party.raid ? `[${party.raid?.name[locale]}] ` : ""
-
-    const username =
-      party.user != null ? `@${party.user?.username}` : t("header.anonymous")
-
-    if (party.name != null)
-      title += t("header.byline", { partyName: party.name, username: username })
-    else if (party.name == null && party.editable && router.route === "/new")
-      title = t("header.new_team")
-    else
-      title += t("header.untitled_team", {
-        username: username,
-      })
-
-    return title
-  }
-
   return (
     <div>
-      <Head>
-        <title>{generateTitle()}</title>
-
-        <meta property="og:title" content={generateTitle()} />
-        <meta
-          property="og:description"
-          content={party.description ? party.description : ""}
-        />
-        <meta property="og:url" content="https://app.granblue.team" />
-        <meta property="og:type" content="website" />
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:domain" content="app.granblue.team" />
-        <meta name="twitter:title" content={generateTitle()} />
-        <meta
-          name="twitter:description"
-          content={party.description ? party.description : ""}
-        />
-      </Head>
       {editable && (party.name || party.description || party.raid)
         ? readOnly
         : emptyDetails}
