@@ -4,7 +4,9 @@
   --card-bg: white;
 
   --text-primary: #{$text--primary--color--light};
+
   --text-secondary: #{$text--secondary--color--light};
+  --text-secondary-hover: #{$text--secondary--hover--light};
 
   --icon-secondary: #{$icon--secondary--color--light};
   --icon-secondary-hover: #{$icon--secondary--hover--light};
@@ -30,7 +32,9 @@
   --card-bg: #{$page--element--bg--dark};
 
   --text-primary: #{$text--primary--color--dark};
+
   --text-secondary: #{$text--secondary--color--dark};
+  --text-secondary-hover: #{$text--secondary--hover--dark};
 
   --icon-secondary: #{$icon--secondary--color--dark};
   --icon-secondary-hover: #{$icon--secondary--hover--dark};
