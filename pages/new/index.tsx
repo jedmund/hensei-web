@@ -1,6 +1,9 @@
 import React, { useEffect } from "react"
+import Head from "next/head"
 import { getCookie } from "cookies-next"
 import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import { useRouter } from "next/router"
+import { useTranslation } from "next-i18next"
 
 import Party from "~components/Party"
 
@@ -17,6 +20,10 @@ interface Props {
 }
 
 const NewRoute: React.FC<Props> = (props: Props) => {
+  const { t } = useTranslation("common")
+  const router = useRouter()
+  const locale = router.locale || "en"
+
   function callback(path: string) {
     // This is scuffed, how do we do this natively?
     window.history.replaceState(null, `Grid Tool`, `${path}`)
@@ -33,8 +40,35 @@ const NewRoute: React.FC<Props> = (props: Props) => {
   }
 
   return (
-    <div id="Content">
-      <Party new={true} raids={props.sortedRaids} pushHistory={callback} />
+    <div>
+      <Head>
+        <title>{"New team / granblue.team"}</title>
+
+        <meta
+          property="og:title"
+          content="Create and share Granblue Fantasy teams"
+        />
+        <meta
+          property="og:description"
+          content="granblue.team helps you create, discover, and share teams for Granblue Fantasy."
+        />
+        <meta property="og:url" content="https://app.granblue.team" />
+        <meta property="og:type" content="website" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:domain" content="app.granblue.team" />
+        <meta
+          name="twitter:title"
+          content="Create and share Granblue Fantasy teams"
+        />
+        <meta
+          name="twitter:description"
+          content="granblue.team helps you create, discover, and share teams for Granblue Fantasy."
+        />
+      </Head>
+      <div id="Content">
+        <Party new={true} raids={props.sortedRaids} pushHistory={callback} />
+      </div>
     </div>
   )
 }
