@@ -1,4 +1,10 @@
-import { JobSkillObject } from "~types"
+type JobSkillObject = {
+  [key: number]: JobSkill | undefined
+  0: JobSkill | undefined
+  1: JobSkill | undefined
+  2: JobSkill | undefined
+  3: JobSkill | undefined
+}
 
 interface Party {
   id: string
