@@ -41,7 +41,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
           <img
             alt={props.skill.name[locale]}
             className={imageClasses}
-            src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}job-skills/${props.skill.slug}.png`}
+            src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-skills/${props.skill.slug}.png`}
           />
         )
       } else {
