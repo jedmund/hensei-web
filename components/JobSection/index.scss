@@ -12,6 +12,12 @@
     flex-direction: column;
     width: 100%;
 
+    h3 {
+      font-size: $font-medium;
+      font-weight: $medium;
+      padding: $unit 0 $unit * 2;
+    }
+
     select {
       flex-grow: 0;
     }

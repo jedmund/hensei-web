@@ -1,6 +1,7 @@
 import React, { ForwardedRef, useEffect, useState } from "react"
-import { useTranslation } from "next-i18next"
+import { useRouter } from "next/router"
 import { useSnapshot } from "valtio"
+import { useTranslation } from "next-i18next"
 
 import JobDropdown from "~components/JobDropdown"
 import JobSkillItem from "~components/JobSkillItem"
@@ -24,6 +25,10 @@ interface Props {
 const JobSection = (props: Props) => {
   const { party } = useSnapshot(appState)
   const { t } = useTranslation("common")
+
+  const router = useRouter()
+  const locale =
+    router.locale && ["en", "ja"].includes(router.locale) ? router.locale : "en"
 
   const [job, setJob] = useState<Job>()
   const [imageUrl, setImageUrl] = useState("")
@@ -132,11 +137,16 @@ const JobSection = (props: Props) => {
         <div className="Overlay" />
       </div>
       <div className="JobDetails">
-        <JobDropdown
-          currentJob={party.job?.id}
-          onChange={receiveJob}
-          ref={selectRef}
-        />
+        {props.editable ? (
+          <JobDropdown
+            currentJob={party.job?.id}
+            onChange={receiveJob}
+            ref={selectRef}
+          />
+        ) : (
+          <h3>{party.job?.name[locale]}</h3>
+        )}
+
         <ul className="JobSkills">
           {[...Array(numSkills)].map((e, i) => (
             <li key={`job-${i}`}>
