@@ -6,6 +6,7 @@ import { useSnapshot } from "valtio"
 import { AxiosResponse } from "axios"
 import debounce from "lodash.debounce"
 
+import Alert from "~components/Alert"
 import JobSection from "~components/JobSection"
 import CharacterUnit from "~components/CharacterUnit"
 import CharacterConflictModal from "~components/CharacterConflictModal"
@@ -56,6 +57,7 @@ const CharacterGrid = (props: Props) => {
     2: undefined,
     3: undefined,
   })
+  const [errorMessage, setErrorMessage] = useState("")
 
   // Create a temporary state to store previous character uncap values
   const [previousUncapValues, setPreviousUncapValues] = useState<{
@@ -182,21 +184,22 @@ const CharacterGrid = (props: Props) => {
   // Methods: Saving job and job skills
   const saveJob = function (job: Job) {
     const payload = {
-      party: { job_id: job ? job.id : "" },
+      party: {
+        job_id: job ? job.id : "",
+      },
+      ...headers,
     }
 
     if (party.id && appState.party.editable) {
-      api.endpoints.parties
-        .update(party.id, payload, headers)
-        .then((response) => {
-          const newParty = response.data.party
+      api.updateJob({ partyId: party.id, params: payload }).then((response) => {
+        const newParty = response.data.party
 
-          setJob(newParty.job)
-          appState.party.job = newParty.job
+        setJob(newParty.job)
+        appState.party.job = newParty.job
 
-          setJobSkills(newParty.job_skills)
-          appState.party.jobSkills = newParty.job_skills
-        })
+        setJobSkills(newParty.job_skills)
+        appState.party.jobSkills = newParty.job_skills
+      })
     }
   }
 
@@ -212,20 +215,31 @@ const CharacterGrid = (props: Props) => {
         skill3_id?: string
       } = {}
 
+      const payload = {
+        party: skillObject,
+        ...headers,
+      }
+
       skillObject[positionedKey] = skill.id
-      api.endpoints.parties
-        .update(
-          party.id,
-          {
-            party: skillObject,
-          },
-          headers
-        )
+      api
+        .updateJobSkills({ partyId: party.id, params: payload })
         .then((response) => {
           // Update the current skills
           const newSkills = response.data.party.job_skills
           setJobSkills(newSkills)
           appState.party.jobSkills = newSkills
+        })
+        .catch((error) => {
+          const data = error.response.data
+          if (data.code == "too_many_skills_of_type") {
+            const message = `You can only add up to 2 ${
+              data.skill_type === "emp"
+                ? data.skill_type.toUpperCase()
+                : data.skill_type
+            } skills to your party at once.`
+            setErrorMessage(message)
+          }
+          console.log(error.response.data)
         })
     }
   }
@@ -317,9 +331,19 @@ const CharacterGrid = (props: Props) => {
     }
   }
 
+  function cancelAlert() {
+    setErrorMessage("")
+  }
+
   // Render: JSX components
   return (
     <div>
+      <Alert
+        open={errorMessage.length > 0}
+        message={errorMessage}
+        cancelAction={cancelAlert}
+        cancelActionText={"Got it"}
+      />
       <div id="CharacterGrid">
         <JobSection
           job={job}

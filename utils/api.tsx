@@ -94,6 +94,16 @@ class Api {
     return axios.post(resourceUrl, body, { headers: params })
   }
 
+  updateJob({ partyId, params }: { partyId: string, params?: {} }) {
+    const resourceUrl = `${this.url}/parties/${partyId}/jobs`
+    return axios.put(resourceUrl, params)
+  }
+
+  updateJobSkills({ partyId, params }: { partyId: string, params?: {} }) {
+    const resourceUrl = `${this.url}/parties/${partyId}/job_skills`
+    return axios.put(resourceUrl, params)
+  }
+
   allSkills(params: {}) {
     const resourceUrl = `${this.url}/jobs/skills`
     return axios.get(resourceUrl, params)
