@@ -42,6 +42,8 @@
     transition: box-shadow 0.15s ease-in-out;
 
     img {
+      -webkit-filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.48));
+      filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.48));
       position: relative;
       top: $unit * -4;
       left: 50%;
@@ -51,7 +53,7 @@
     }
 
     .Overlay {
-      background: rgba(255, 255, 255, 0.12);
+      background: none;
       position: absolute;
       z-index: 1;
     }
