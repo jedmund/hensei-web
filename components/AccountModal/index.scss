@@ -19,11 +19,11 @@
       height: $height;
 
       &:focus {
-        box-shadow: 0 0 0 2px $grey-00;
+        box-shadow: 0 0 0 2px $grey-10;
       }
 
       &[data-state="checked"] {
-        background: $grey-00;
+        background: $grey-10;
       }
     }
 
@@ -89,7 +89,7 @@
         gap: calc($unit / 2);
 
         label {
-          color: $grey-00;
+          color: $grey-10;
           font-size: $font-regular;
         }
 

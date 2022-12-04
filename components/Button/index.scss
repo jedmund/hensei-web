@@ -13,15 +13,15 @@
   &:hover {
     background: white;
     cursor: pointer;
-    color: $grey-00;
+    color: $grey-10;
 
     .icon svg {
-      fill: $grey-00;
+      fill: $grey-10;
     }
 
     .icon.stroke svg {
       fill: none;
-      stroke: $grey-00;
+      stroke: $grey-10;
     }
   }
 
@@ -147,7 +147,7 @@
 
     &:hover {
       background: $grey-70;
-      color: $grey-00;
+      color: $grey-10;
     }
   }
 

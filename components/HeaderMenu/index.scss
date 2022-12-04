@@ -14,11 +14,11 @@
 
   &:hover:not(.disabled) {
     background: $grey-100;
-    color: $grey-00;
+    color: $grey-10;
     cursor: pointer;
 
     a {
-      color: $grey-00;
+      color: $grey-10;
     }
   }
 
