@@ -277,7 +277,10 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
       <Head>
         <title>{t("teams.title")}</title>
 
-        <meta property="og:title" content="Discover Teams" />
+        <meta
+          property="og:title"
+          content="Discover teams for Granblue Fantasy"
+        />
         <meta
           property="og:description"
           content="Find different Granblue Fantasy teams by raid, element or recency"
@@ -287,7 +290,10 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="app.granblue.team" />
-        <meta name="twitter:title" content="Discover Teams" />
+        <meta
+          name="twitter:title"
+          content="Discover teams for Granblue Fantasy"
+        />
         <meta
           name="twitter:description"
           content="Find different Granblue Fantasy teams by raid, element or recency"
