@@ -4,7 +4,7 @@
 }
 
 .SegmentedControl {
-  background: white;
+  background: var(--card-bg);
   border-radius: $unit * 3;
   display: inline-flex;
   padding: 3px;
@@ -12,77 +12,76 @@
   user-select: none;
   overflow: hidden;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  z-index: 1;
 
   &.fire {
     .Segment input:checked + label {
-      background: $fire-bg-dark;
-      color: $fire-text-dark;
+      background: $fire-bg-10;
+      color: $fire-text-10;
     }
 
     .Segment:hover label {
-      background: $fire-bg-light;
-      color: $fire-text-light;
+      background: var(--fire-hover-bg);
+      color: var(--fire-hover-text);
     }
   }
 
   &.water {
     .Segment input:checked + label {
-      background: $water-bg-dark;
-      color: $water-text-dark;
+      background: $water-bg-10;
+      color: $water-text-10;
     }
 
     .Segment:hover label {
-      background: $water-bg-light;
-      color: $water-text-light;
+      background: var(--water-hover-bg);
+      color: var(--water-hover-text);
     }
   }
 
   &.earth {
     .Segment input:checked + label {
-      background: $earth-bg-dark;
-      color: $earth-text-dark;
+      background: $earth-bg-10;
+      color: $earth-text-10;
     }
 
     .Segment:hover label {
-      background: $earth-bg-light;
-      color: $earth-text-light;
+      background: var(--earth-hover-bg);
+      color: var(--earth-hover-text);
     }
   }
 
   &.wind {
     .Segment input:checked + label {
-      background: $wind-bg-dark;
-      color: $wind-text-dark;
+      background: $wind-bg-10;
+      color: $wind-text-10;
     }
 
     .Segment:hover label {
-      background: $wind-bg-light;
-      color: $wind-text-light;
+      background: var(--wind-hover-bg);
+      color: var(--wind-hover-text);
     }
   }
 
   &.light {
     .Segment input:checked + label {
-      background: $light-bg-dark;
-      color: $light-text-dark;
+      background: $light-bg-10;
+      color: $light-text-10;
     }
 
     .Segment:hover label {
-      background: $light-bg-light;
-      color: $light-text-light;
+      background: var(--light-hover-bg);
+      color: var(--light-hover-text);
     }
   }
 
   &.dark {
     .Segment input:checked + label {
-      background: $dark-bg-dark;
-      color: $dark-text-dark;
+      background: $dark-bg-10;
+      color: $dark-text-10;
     }
 
     .Segment:hover label {
-      background: $dark-bg-light;
-      color: $dark-text-light;
+      background: var(--dark-hover-bg);
+      color: var(--dark-hover-text);
     }
   }
 }

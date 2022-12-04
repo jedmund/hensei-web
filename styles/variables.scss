@@ -33,35 +33,48 @@ $red: #ff6161;
 $error: #d13a3a;
 
 // Colors: Elements
-$wind-text-dark: #006a43;
-$wind-text-light: #1dc688;
-$wind-bg-dark: #4cffbf;
-$wind-bg-light: #cdffed;
 
-$fire-text-dark: #6e0000;
-$fire-text-light: #ec5c5c;
-$fire-bg-dark: #ff4d4d;
-$fire-bg-light: #ffcdcd;
+$wind-text-00: #023e28;
+$wind-text-10: #006a43;
+$wind-text-20: #1dc688;
+$wind-bg-00: #4cffbf55;
+$wind-bg-10: #4cffbf;
+$wind-bg-20: #cdffed;
 
-$water-text-dark: #004b77;
-$water-text-light: #5cb7ec;
-$water-bg-dark: #6cc9ff;
-$water-bg-light: #cdedff;
+$fire-text-00: #3f0202;
+$fire-text-10: #6e0000;
+$fire-text-20: #ec5c5c;
+$fire-bg-00: #ff4d4d55;
+$fire-bg-10: #ff4d4d;
+$fire-bg-20: #ffcdcd;
 
-$earth-text-dark: #662a00;
-$earth-text-light: #ec985c;
-$earth-bg-dark: #fd9f5b;
-$earth-bg-light: #ffe2cd;
+$water-text-00: #03263b;
+$water-text-10: #004b77;
+$water-text-20: #5cb7ec;
+$water-bg-00: #6cc9ff55;
+$water-bg-10: #6cc9ff;
+$water-bg-20: #cdedff;
 
-$light-text-dark: #716500;
-$light-text-light: #c5b20c;
-$light-bg-dark: #ffed4c;
-$light-bg-light: #fffacd;
+$earth-text-00: #321602;
+$earth-text-10: #662a00;
+$earth-text-20: #ec985c;
+$earth-bg-00: #fd9f5b55;
+$earth-bg-10: #fd9f5b;
+$earth-bg-20: #ffe2cd;
 
-$dark-text-dark: #560075;
-$dark-text-light: #c65cec;
-$dark-bg-dark: #d565fb;
-$dark-bg-light: #f2cdff;
+$light-text-00: #433d02;
+$light-text-10: #716500;
+$light-text-20: #c5b20c;
+$light-bg-00: #ffed4c55;
+$light-bg-10: #ffed4c;
+$light-bg-20: #fffacd;
+
+$dark-text-00: #260134;
+$dark-text-10: #560075;
+$dark-text-20: #c65cec;
+$dark-bg-00: #d565fb55;
+$dark-bg-10: #d565fb;
+$dark-bg-20: #f2cdff;
 
 $normal: 400;
 $medium: 500;
