@@ -1,37 +1,37 @@
 .Header {
+  display: flex;
+  height: 34px;
+  width: 100%;
+
+  &.bottom {
+    position: sticky;
+    bottom: $unit * 2;
+  }
+
+  #right > div {
     display: flex;
-    height: 34px;
-    width: 100%;
+    gap: 8px;
+  }
 
-    &.bottom {
-        position: sticky;
-        bottom: $unit * 2;
+  .dropdown {
+    display: inline-block;
+    position: relative;
+
+    &:hover {
+      padding-right: 50px;
+      padding-bottom: 16px;
+
+      .Button {
+        background: white;
+      }
+
+      .Menu {
+        display: block;
+      }
     }
+  }
 
-    #right > div {
-        display: flex;
-        gap: 8px;
-    }
-
-    .dropdown {
-        display: inline-block;
-        position: relative;
-
-        &:hover {
-            padding-right: 50px;
-            padding-bottom: 16px;
-
-            .Button {
-                background: white;
-            }
-
-            .Menu {
-                display: block;
-            }        
-        }
-    }
-
-    .push {
-        margin-left: auto;
-    }
+  .push {
+    margin-left: auto;
+  }
 }

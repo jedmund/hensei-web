@@ -1,24 +1,24 @@
-import React from "react"
-import { useTranslation } from "next-i18next"
-import SummonUnit from "~components/SummonUnit"
-import { SearchableObject } from "~types"
-import "./index.scss"
+import React from "react";
+import { useTranslation } from "next-i18next";
+import SummonUnit from "~components/SummonUnit";
+import { SearchableObject } from "~types";
+import "./index.scss";
 
 // Props
 interface Props {
-  grid: GridArray<GridSummon>
-  editable: boolean
-  exists: boolean
-  found?: boolean
-  offset: number
-  updateObject: (object: SearchableObject, position: number) => void
-  updateUncap: (id: string, position: number, uncap: number) => void
+  grid: GridArray<GridSummon>;
+  editable: boolean;
+  exists: boolean;
+  found?: boolean;
+  offset: number;
+  updateObject: (object: SearchableObject, position: number) => void;
+  updateUncap: (id: string, position: number, uncap: number) => void;
 }
 
 const ExtraSummons = (props: Props) => {
-  const numSummons: number = 2
+  const numSummons: number = 2;
 
-  const { t } = useTranslation("common")
+  const { t } = useTranslation("common");
 
   return (
     <div id="ExtraSummons">
@@ -36,11 +36,11 @@ const ExtraSummons = (props: Props) => {
                 updateUncap={props.updateUncap}
               />
             </li>
-          )
+          );
         })}
       </ul>
     </div>
-  )
-}
+  );
+};
 
-export default ExtraSummons
+export default ExtraSummons;

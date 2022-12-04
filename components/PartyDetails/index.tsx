@@ -1,26 +1,26 @@
-import React, { useState } from "react"
-import Head from "next/head"
-import { useRouter } from "next/router"
-import { useSnapshot } from "valtio"
-import { useTranslation } from "next-i18next"
+import React, { useState } from "react";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { useSnapshot } from "valtio";
+import { useTranslation } from "next-i18next";
 
-import Linkify from "react-linkify"
-import classNames from "classnames"
+import Linkify from "react-linkify";
+import classNames from "classnames";
 
-import * as AlertDialog from "@radix-ui/react-alert-dialog"
-import CrossIcon from "~public/icons/Cross.svg"
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import CrossIcon from "~public/icons/Cross.svg";
 
-import Button from "~components/Button"
-import CharLimitedFieldset from "~components/CharLimitedFieldset"
-import RaidDropdown from "~components/RaidDropdown"
-import TextFieldset from "~components/TextFieldset"
+import Button from "~components/Button";
+import CharLimitedFieldset from "~components/CharLimitedFieldset";
+import RaidDropdown from "~components/RaidDropdown";
+import TextFieldset from "~components/TextFieldset";
 
-import { accountState } from "~utils/accountState"
-import { appState } from "~utils/appState"
+import { accountState } from "~utils/accountState";
+import { appState } from "~utils/appState";
 
-import "./index.scss"
-import Link from "next/link"
-import { formatTimeAgo } from "~utils/timeAgo"
+import "./index.scss";
+import Link from "next/link";
+import { formatTimeAgo } from "~utils/timeAgo";
 
 const emptyRaid: Raid = {
   id: "",
@@ -32,50 +32,50 @@ const emptyRaid: Raid = {
   level: 0,
   group: 0,
   element: 0,
-}
+};
 
 // Props
 interface Props {
-  editable: boolean
-  updateCallback: (name?: string, description?: string, raid?: Raid) => void
+  editable: boolean;
+  updateCallback: (name?: string, description?: string, raid?: Raid) => void;
   deleteCallback: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void
+  ) => void;
 }
 
 const PartyDetails = (props: Props) => {
-  const { party, raids } = useSnapshot(appState)
-  const { account } = useSnapshot(accountState)
+  const { party, raids } = useSnapshot(appState);
+  const { account } = useSnapshot(accountState);
 
-  const { t } = useTranslation("common")
-  const router = useRouter()
-  const locale = router.locale || "en"
+  const { t } = useTranslation("common");
+  const router = useRouter();
+  const locale = router.locale || "en";
 
-  const nameInput = React.createRef<HTMLInputElement>()
-  const descriptionInput = React.createRef<HTMLTextAreaElement>()
-  const raidSelect = React.createRef<HTMLSelectElement>()
+  const nameInput = React.createRef<HTMLInputElement>();
+  const descriptionInput = React.createRef<HTMLTextAreaElement>();
+  const raidSelect = React.createRef<HTMLSelectElement>();
 
   const readOnlyClasses = classNames({
     PartyDetails: true,
     ReadOnly: true,
     Visible: !party.detailsVisible,
-  })
+  });
 
   const editableClasses = classNames({
     PartyDetails: true,
     Editable: true,
     Visible: party.detailsVisible,
-  })
+  });
 
   const emptyClasses = classNames({
     EmptyDetails: true,
     Visible: !party.detailsVisible,
-  })
+  });
 
   const userClass = classNames({
     user: true,
     empty: !party.user,
-  })
+  });
 
   const linkClass = classNames({
     wind: party && party.element == 1,
@@ -84,42 +84,42 @@ const PartyDetails = (props: Props) => {
     earth: party && party.element == 4,
     dark: party && party.element == 5,
     light: party && party.element == 6,
-  })
+  });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({
     name: "",
     description: "",
-  })
+  });
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    event.preventDefault()
+    event.preventDefault();
 
-    const { name, value } = event.target
-    let newErrors = errors
+    const { name, value } = event.target;
+    let newErrors = errors;
 
-    setErrors(newErrors)
+    setErrors(newErrors);
   }
 
   function handleTextAreaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    event.preventDefault()
+    event.preventDefault();
 
-    const { name, value } = event.target
-    let newErrors = errors
+    const { name, value } = event.target;
+    let newErrors = errors;
 
-    setErrors(newErrors)
+    setErrors(newErrors);
   }
 
   function toggleDetails() {
-    appState.party.detailsVisible = !appState.party.detailsVisible
+    appState.party.detailsVisible = !appState.party.detailsVisible;
   }
 
   function updateDetails(event: React.MouseEvent) {
-    const nameValue = nameInput.current?.value
-    const descriptionValue = descriptionInput.current?.value
-    const raid = raids.find((raid) => raid.slug === raidSelect.current?.value)
+    const nameValue = nameInput.current?.value;
+    const descriptionValue = descriptionInput.current?.value;
+    const raid = raids.find((raid) => raid.slug === raidSelect.current?.value);
 
-    props.updateCallback(nameValue, descriptionValue, raid)
-    toggleDetails()
+    props.updateCallback(nameValue, descriptionValue, raid);
+    toggleDetails();
   }
 
   const userImage = () => {
@@ -132,9 +132,9 @@ const PartyDetails = (props: Props) => {
                             /profile/${party.user.picture.picture}@2x.png 2x`}
           src={`/profile/${party.user.picture.picture}.png`}
         />
-      )
-    else return <div className="no-user" />
-  }
+      );
+    else return <div className="no-user" />;
+  };
 
   const userBlock = () => {
     return (
@@ -142,8 +142,8 @@ const PartyDetails = (props: Props) => {
         {userImage()}
         {party.user ? party.user.username : t("no_user")}
       </div>
-    )
-  }
+    );
+  };
 
   const linkedUserBlock = (user: User) => {
     return (
@@ -152,8 +152,8 @@ const PartyDetails = (props: Props) => {
           <a className={linkClass}>{userBlock()}</a>
         </Link>
       </div>
-    )
-  }
+    );
+  };
 
   const linkedRaidBlock = (raid: Raid) => {
     return (
@@ -162,8 +162,8 @@ const PartyDetails = (props: Props) => {
           <a className={`Raid ${linkClass}`}>{raid.name[locale]}</a>
         </Link>
       </div>
-    )
-  }
+    );
+  };
 
   const deleteButton = () => {
     if (party.editable) {
@@ -198,11 +198,11 @@ const PartyDetails = (props: Props) => {
             </AlertDialog.Content>
           </AlertDialog.Portal>
         </AlertDialog.Root>
-      )
+      );
     } else {
-      return ""
+      return "";
     }
-  }
+  };
 
   const editable = (
     <section className={editableClasses}>
@@ -246,7 +246,7 @@ const PartyDetails = (props: Props) => {
         </div>
       </div>
     </section>
-  )
+  );
 
   const readOnly = (
     <section className={readOnlyClasses}>
@@ -286,7 +286,7 @@ const PartyDetails = (props: Props) => {
         ""
       )}
     </section>
-  )
+  );
 
   const emptyDetails = (
     <div className={emptyClasses}>
@@ -298,25 +298,28 @@ const PartyDetails = (props: Props) => {
         <div />
       )}
     </div>
-  )
+  );
 
   const generateTitle = () => {
-    let title = party.raid ? `[${party.raid?.name[locale]}] ` : ""
+    let title = party.raid ? `[${party.raid?.name[locale]}] ` : "";
 
     const username =
-      party.user != null ? `@${party.user?.username}` : t("header.anonymous")
+      party.user != null ? `@${party.user?.username}` : t("header.anonymous");
 
     if (party.name != null)
-      title += t("header.byline", { partyName: party.name, username: username })
+      title += t("header.byline", {
+        partyName: party.name,
+        username: username,
+      });
     else if (party.name == null && party.editable && router.route === "/new")
-      title = t("header.new_team")
+      title = t("header.new_team");
     else
       title += t("header.untitled_team", {
         username: username,
-      })
+      });
 
-    return title
-  }
+    return title;
+  };
 
   return (
     <div>
@@ -344,7 +347,7 @@ const PartyDetails = (props: Props) => {
         : emptyDetails}
       {editable}
     </div>
-  )
-}
+  );
+};
 
-export default PartyDetails
+export default PartyDetails;

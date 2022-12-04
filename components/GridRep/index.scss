@@ -1,148 +1,152 @@
 .GridRep {
-    border-radius: 6px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+  padding: $unit * 2;
+
+  &:hover {
+    background: white;
+
+    h2,
+    .Grid {
+      cursor: pointer;
+    }
+
+    .Grid .weapon {
+      box-shadow: inset 0 0 0 1px $grey-80;
+    }
+  }
+
+  .Grid {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+
+    .weapon {
+      background: white;
+      border-radius: 4px;
+    }
+
+    .grid_mainhand {
+      margin-right: $unit;
+      height: 139px;
+      width: 66px;
+    }
+
+    .grid_weapons {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr;
+      gap: $unit;
+      margin: 0;
+      padding: 0;
+      width: fit-content;
+    }
+
+    .grid_weapon {
+      float: left;
+      height: 40px;
+      width: 70px;
+    }
+
+    .grid_mainhand img[src*="jpg"],
+    .grid_weapon img[src*="jpg"] {
+      border-radius: 4px;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .Details {
     display: flex;
     flex-direction: column;
-    gap: $unit;
-    padding: $unit * 2;
+    gap: calc($unit / 2);
 
-    &:hover {
-        background: white;
+    h2 {
+      color: $grey-00;
+      font-size: $font-regular;
+      overflow: hidden;
+      padding-bottom: 1px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 258px; // Can we not do this?
 
-        h2, .Grid {
-            cursor: pointer;
-        }
-
-        .Grid .weapon {
-            box-shadow: inset 0 0 0 1px $grey-80;
-        }
+      &.empty {
+        color: $grey-50;
+      }
     }
 
-    .Grid {
-        display: flex;
-        flex-direction: row;
-        flex-shrink: 0;
+    .top {
+      display: flex;
+      flex-direction: row;
+      gap: calc($unit / 2);
+      align-items: center;
 
-        .weapon {
-            background: white;
-            border-radius: 4px;
-        }
-
-        .grid_mainhand {
-            margin-right: $unit;
-            height: 139px;
-            width: 66px;
-        }
-
-        .grid_weapons {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 1fr 1fr 1fr;
-            gap: $unit;
-            margin: 0;
-            padding: 0;
-            width: fit-content;
-        }
-
-        .grid_weapon {
-            float: left;
-            height: 40px;
-            width: 70px;
-        }
-        
-        .grid_mainhand img[src*="jpg"],
-        .grid_weapon img[src*="jpg"] {
-            border-radius: 4px;
-            width: 100%;
-            height: 100%;
-        }
-    }
-
-    .Details {
+      .info {
         display: flex;
         flex-direction: column;
+        flex-grow: 1;
         gap: calc($unit / 2);
+      }
 
-        h2 {
-            color: $grey-00;
-            font-size: $font-regular;
-            overflow: hidden;
-            padding-bottom: 1px;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 258px; // Can we not do this?
+      button svg {
+        width: 14px;
+        height: 14px;
+      }
 
-            &.empty {
-                color: $grey-50;
-            }
-        }
-
-        .top {
-            display: flex;
-            flex-direction: row;
-            gap: calc($unit / 2);
-            align-items: center;
-
-            .info {
-                display: flex;
-                flex-direction: column;
-                flex-grow: 1;
-                gap: calc($unit / 2);
-            }
-
-            button svg {
-                width: 14px;
-                height: 14px;
-            }
-
-            button:hover,
-            button.Active {
-                background: $grey-90;
-            }
-        }
-
-        .bottom {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .raid, .user, time {
-            color: $grey-50;
-            font-size: $font-small;
-        }
-
-        .raid, .user {
-            flex-grow: 1;
-        }
-
-        .raid {
-            margin-bottom: calc($unit / 2);
-        }
-
-        .user {
-            display: flex;
-            gap: calc($unit / 2);
-            align-items: center;
-
-
-            img, .no-user {
-                $diameter: 18px;
-
-                border-radius: calc($diameter / 2);
-                height: $diameter;
-                width: $diameter;
-            }
-
-            img.gran {
-                background-color: #CEE7FE;
-            }
-    
-            img.djeeta {
-                background-color: #FFE1FE;
-            }
-
-            .no-user {
-                background: $grey-80;
-            }
-        }
+      button:hover,
+      button.Active {
+        background: $grey-90;
+      }
     }
+
+    .bottom {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .raid,
+    .user,
+    time {
+      color: $grey-50;
+      font-size: $font-small;
+    }
+
+    .raid,
+    .user {
+      flex-grow: 1;
+    }
+
+    .raid {
+      margin-bottom: calc($unit / 2);
+    }
+
+    .user {
+      display: flex;
+      gap: calc($unit / 2);
+      align-items: center;
+
+      img,
+      .no-user {
+        $diameter: 18px;
+
+        border-radius: calc($diameter / 2);
+        height: $diameter;
+        width: $diameter;
+      }
+
+      img.gran {
+        background-color: #cee7fe;
+      }
+
+      img.djeeta {
+        background-color: #ffe1fe;
+      }
+
+      .no-user {
+        background: $grey-80;
+      }
+    }
+  }
 }

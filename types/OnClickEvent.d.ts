@@ -1,1 +1,3 @@
-type OnClickEvent = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+type OnClickEvent = (
+  event: React.MouseEvent<HTMLDivElement, MouseEvent>
+) => void;

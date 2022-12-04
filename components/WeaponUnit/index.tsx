@@ -1,37 +1,39 @@
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { useTranslation } from "next-i18next"
-import classnames from "classnames"
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import classnames from "classnames";
 
-import SearchModal from "~components/SearchModal"
-import WeaponModal from "~components/WeaponModal"
-import WeaponHovercard from "~components/WeaponHovercard"
-import UncapIndicator from "~components/UncapIndicator"
-import Button from "~components/Button"
+import SearchModal from "~components/SearchModal";
+import WeaponModal from "~components/WeaponModal";
+import WeaponHovercard from "~components/WeaponHovercard";
+import UncapIndicator from "~components/UncapIndicator";
+import Button from "~components/Button";
 
-import { ButtonType } from "~utils/enums"
-import type { SearchableObject } from "~types"
+import { ButtonType } from "~utils/enums";
+import type { SearchableObject } from "~types";
 
-import PlusIcon from "~public/icons/Add.svg"
-import "./index.scss"
+import PlusIcon from "~public/icons/Add.svg";
+import "./index.scss";
 
 interface Props {
-  gridWeapon: GridWeapon | undefined
-  unitType: 0 | 1
-  position: number
-  editable: boolean
-  updateObject: (object: SearchableObject, position: number) => void
-  updateUncap: (id: string, position: number, uncap: number) => void
+  gridWeapon: GridWeapon | undefined;
+  unitType: 0 | 1;
+  position: number;
+  editable: boolean;
+  updateObject: (object: SearchableObject, position: number) => void;
+  updateUncap: (id: string, position: number, uncap: number) => void;
 }
 
 const WeaponUnit = (props: Props) => {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation("common");
 
-  const [imageUrl, setImageUrl] = useState("")
+  const [imageUrl, setImageUrl] = useState("");
 
-  const router = useRouter()
+  const router = useRouter();
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale) ? router.locale : "en"
+    router.locale && ["en", "ja"].includes(router.locale)
+      ? router.locale
+      : "en";
 
   const classes = classnames({
     WeaponUnit: true,
@@ -39,48 +41,48 @@ const WeaponUnit = (props: Props) => {
     grid: props.unitType == 1,
     editable: props.editable,
     filled: props.gridWeapon !== undefined,
-  })
+  });
 
-  const gridWeapon = props.gridWeapon
-  const weapon = gridWeapon?.object
+  const gridWeapon = props.gridWeapon;
+  const weapon = gridWeapon?.object;
 
   useEffect(() => {
-    generateImageUrl()
-  })
+    generateImageUrl();
+  });
 
   function generateImageUrl() {
-    let imgSrc = ""
+    let imgSrc = "";
     if (props.gridWeapon) {
-      const weapon = props.gridWeapon.object!
+      const weapon = props.gridWeapon.object!;
 
       if (props.unitType == 0) {
         if (props.gridWeapon.object.element == 0 && props.gridWeapon.element)
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`;
         else
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`;
       } else {
         if (props.gridWeapon.object.element == 0 && props.gridWeapon.element)
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`;
         else
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`;
       }
     }
 
-    setImageUrl(imgSrc)
+    setImageUrl(imgSrc);
   }
 
   function passUncapData(uncap: number) {
     if (props.gridWeapon)
-      props.updateUncap(props.gridWeapon.id, props.position, uncap)
+      props.updateUncap(props.gridWeapon.id, props.position, uncap);
   }
 
   function canBeModified(gridWeapon: GridWeapon) {
-    const weapon = gridWeapon.object
+    const weapon = gridWeapon.object;
 
     return (
       weapon.ax > 0 ||
       (weapon.series && [2, 3, 17, 22, 24].includes(weapon.series))
-    )
+    );
   }
 
   const image = (
@@ -94,7 +96,7 @@ const WeaponUnit = (props: Props) => {
         ""
       )}
     </div>
-  )
+  );
 
   const editableImage = (
     <SearchModal
@@ -105,7 +107,7 @@ const WeaponUnit = (props: Props) => {
     >
       {image}
     </SearchModal>
-  )
+  );
 
   const unitContent = (
     <div className={classes}>
@@ -133,13 +135,13 @@ const WeaponUnit = (props: Props) => {
       )}
       <h3 className="WeaponName">{weapon?.name[locale]}</h3>
     </div>
-  )
+  );
 
   const withHovercard = (
     <WeaponHovercard gridWeapon={gridWeapon!}>{unitContent}</WeaponHovercard>
-  )
+  );
 
-  return gridWeapon && !props.editable ? withHovercard : unitContent
-}
+  return gridWeapon && !props.editable ? withHovercard : unitContent;
+};
 
-export default WeaponUnit
+export default WeaponUnit;

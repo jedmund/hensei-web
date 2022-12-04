@@ -1,64 +1,64 @@
-import React, { useEffect, useState } from "react"
-import Link from "next/link"
-import { setCookie } from "cookies-next"
-import { useRouter } from "next/router"
-import { Trans, useTranslation } from "next-i18next"
-import { AxiosResponse } from "axios"
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { setCookie } from "cookies-next";
+import { useRouter } from "next/router";
+import { Trans, useTranslation } from "next-i18next";
+import { AxiosResponse } from "axios";
 
-import * as Dialog from "@radix-ui/react-dialog"
+import * as Dialog from "@radix-ui/react-dialog";
 
-import api from "~utils/api"
-import { accountState } from "~utils/accountState"
+import api from "~utils/api";
+import { accountState } from "~utils/accountState";
 
-import Button from "~components/Button"
-import Fieldset from "~components/Fieldset"
+import Button from "~components/Button";
+import Fieldset from "~components/Fieldset";
 
-import CrossIcon from "~public/icons/Cross.svg"
-import "./index.scss"
+import CrossIcon from "~public/icons/Cross.svg";
+import "./index.scss";
 
 interface Props {}
 
 interface ErrorMap {
-  [index: string]: string
-  username: string
-  email: string
-  password: string
-  passwordConfirmation: string
+  [index: string]: string;
+  username: string;
+  email: string;
+  password: string;
+  passwordConfirmation: string;
 }
 
 const emailRegex =
-  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const SignupModal = (props: Props) => {
-  const router = useRouter()
-  const { t } = useTranslation("common")
+  const router = useRouter();
+  const { t } = useTranslation("common");
 
   // Set up form states and error handling
-  const [formValid, setFormValid] = useState(false)
+  const [formValid, setFormValid] = useState(false);
   const [errors, setErrors] = useState<ErrorMap>({
     username: "",
     email: "",
     password: "",
     passwordConfirmation: "",
-  })
+  });
 
   // States
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   // Set up form refs
-  const usernameInput = React.createRef<HTMLInputElement>()
-  const emailInput = React.createRef<HTMLInputElement>()
-  const passwordInput = React.createRef<HTMLInputElement>()
-  const passwordConfirmationInput = React.createRef<HTMLInputElement>()
+  const usernameInput = React.createRef<HTMLInputElement>();
+  const emailInput = React.createRef<HTMLInputElement>();
+  const passwordInput = React.createRef<HTMLInputElement>();
+  const passwordConfirmationInput = React.createRef<HTMLInputElement>();
   const form = [
     usernameInput,
     emailInput,
     passwordInput,
     passwordConfirmationInput,
-  ]
+  ];
 
   function register(event: React.FormEvent) {
-    event.preventDefault()
+    event.preventDefault();
 
     const body = {
       user: {
@@ -68,47 +68,47 @@ const SignupModal = (props: Props) => {
         password_confirmation: passwordConfirmationInput.current?.value,
         language: router.locale,
       },
-    }
+    };
 
     if (formValid)
       api.endpoints.users
         .create(body)
         .then((response) => {
-          storeCookieInfo(response)
-          return response.data.user.user_id
+          storeCookieInfo(response);
+          return response.data.user.user_id;
         })
         .then((id) => fetchUserInfo(id))
-        .then((infoResponse) => storeUserInfo(infoResponse))
+        .then((infoResponse) => storeUserInfo(infoResponse));
   }
 
   function storeCookieInfo(response: AxiosResponse) {
-    const user = response.data.user
+    const user = response.data.user;
 
     const cookieObj: AccountCookie = {
       userId: user.user_id,
       username: user.username,
       token: user.token,
-    }
+    };
 
-    setCookie("account", cookieObj, { path: "/" })
+    setCookie("account", cookieObj, { path: "/" });
   }
 
   function fetchUserInfo(id: string) {
-    return api.userInfo(id)
+    return api.userInfo(id);
   }
 
   function storeUserInfo(response: AxiosResponse) {
-    const user = response.data.user
+    const user = response.data.user;
 
     const cookieObj: UserCookie = {
       picture: user.picture.picture,
       element: user.picture.element,
       language: user.language,
       gender: user.gender,
-    }
+    };
 
     // TODO: Set language
-    setCookie("user", cookieObj, { path: "/" })
+    setCookie("user", cookieObj, { path: "/" });
 
     accountState.account.user = {
       id: user.id,
@@ -116,29 +116,29 @@ const SignupModal = (props: Props) => {
       picture: user.picture.picture,
       element: user.picture.element,
       gender: user.gender,
-    }
+    };
 
-    accountState.account.authorized = true
-    setOpen(false)
+    accountState.account.authorized = true;
+    setOpen(false);
   }
 
   function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
-    event.preventDefault()
+    event.preventDefault();
 
-    const fieldName = event.target.name
-    const value = event.target.value
+    const fieldName = event.target.name;
+    const value = event.target.value;
 
     if (value.length >= 3) {
       api.check(fieldName, value).then(
         (response) => {
-          processNameCheck(fieldName, value, response.data.available)
+          processNameCheck(fieldName, value, response.data.available);
         },
         (error) => {
-          console.error(error)
+          console.error(error);
         }
-      )
+      );
     } else {
-      validateName(fieldName, value)
+      validateName(fieldName, value);
     }
   }
 
@@ -147,55 +147,55 @@ const SignupModal = (props: Props) => {
     value: string,
     available: boolean
   ) {
-    const newErrors = { ...errors }
+    const newErrors = { ...errors };
 
     if (available) {
       // Continue checking for errors
-      newErrors[fieldName] = ""
-      setErrors(newErrors)
-      setFormValid(true)
+      newErrors[fieldName] = "";
+      setErrors(newErrors);
+      setFormValid(true);
 
-      validateName(fieldName, value)
+      validateName(fieldName, value);
     } else {
       newErrors[fieldName] = t("modals.signup.errors.field_in_use", {
         field: fieldName,
-      })
-      setErrors(newErrors)
-      setFormValid(false)
+      });
+      setErrors(newErrors);
+      setFormValid(false);
     }
   }
 
   function validateName(fieldName: string, value: string) {
-    let newErrors = { ...errors }
+    let newErrors = { ...errors };
 
     switch (fieldName) {
       case "username":
         if (value.length < 3)
-          newErrors.username = t("modals.signup.errors.username_too_short")
+          newErrors.username = t("modals.signup.errors.username_too_short");
         else if (value.length > 20)
-          newErrors.username = t("modals.signup.errors.username_too_long")
-        else newErrors.username = ""
+          newErrors.username = t("modals.signup.errors.username_too_long");
+        else newErrors.username = "";
 
-        break
+        break;
 
       case "email":
         newErrors.email = emailRegex.test(value)
           ? ""
-          : t("modals.signup.errors.invalid_email")
-        break
+          : t("modals.signup.errors.invalid_email");
+        break;
 
       default:
-        break
+        break;
     }
 
-    setFormValid(validateForm(newErrors))
+    setFormValid(validateForm(newErrors));
   }
 
   function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
-    event.preventDefault()
+    event.preventDefault();
 
-    const { name, value } = event.target
-    let newErrors = { ...errors }
+    const { name, value } = event.target;
+    let newErrors = { ...errors };
 
     switch (name) {
       case "password":
@@ -203,51 +203,51 @@ const SignupModal = (props: Props) => {
           usernameInput.current?.value!
         )
           ? t("modals.signup.errors.password_contains_username")
-          : ""
-        break
+          : "";
+        break;
 
       case "password":
         newErrors.password =
-          value.length < 8 ? t("modals.signup.errors.password_too_short") : ""
-        break
+          value.length < 8 ? t("modals.signup.errors.password_too_short") : "";
+        break;
 
       case "confirm_password":
         newErrors.passwordConfirmation =
           passwordInput.current?.value ===
           passwordConfirmationInput.current?.value
             ? ""
-            : t("modals.signup.errors.passwords_dont_match")
-        break
+            : t("modals.signup.errors.passwords_dont_match");
+        break;
 
       default:
-        break
+        break;
     }
 
-    setFormValid(validateForm(newErrors))
+    setFormValid(validateForm(newErrors));
   }
 
   function validateForm(errors: ErrorMap) {
-    let valid = true
+    let valid = true;
 
     Object.values(form).forEach(
       (input) => input.current?.value.length == 0 && (valid = false)
-    )
+    );
 
     Object.values(errors).forEach(
       (error) => error.length > 0 && (valid = false)
-    )
+    );
 
-    return valid
+    return valid;
   }
 
   function openChange(open: boolean) {
-    setOpen(open)
+    setOpen(open);
     setErrors({
       username: "",
       email: "",
       password: "",
       passwordConfirmation: "",
-    })
+    });
   }
 
   return (
@@ -318,7 +318,7 @@ const SignupModal = (props: Props) => {
         <Dialog.Overlay className="Overlay" />
       </Dialog.Portal>
     </Dialog.Root>
-  )
-}
+  );
+};
 
-export default SignupModal
+export default SignupModal;

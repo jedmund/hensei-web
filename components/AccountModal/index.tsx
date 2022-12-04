@@ -1,33 +1,35 @@
-import React, { useEffect, useState } from "react"
-import { getCookie } from "cookies-next"
-import { useRouter } from "next/router"
-import { useSnapshot } from "valtio"
-import { useTranslation } from "next-i18next"
+import React, { useEffect, useState } from "react";
+import { getCookie } from "cookies-next";
+import { useRouter } from "next/router";
+import { useSnapshot } from "valtio";
+import { useTranslation } from "next-i18next";
 
-import * as Dialog from "@radix-ui/react-dialog"
-import * as Switch from "@radix-ui/react-switch"
+import * as Dialog from "@radix-ui/react-dialog";
+import * as Switch from "@radix-ui/react-switch";
 
-import api from "~utils/api"
-import { accountState } from "~utils/accountState"
-import { pictureData } from "~utils/pictureData"
+import api from "~utils/api";
+import { accountState } from "~utils/accountState";
+import { pictureData } from "~utils/pictureData";
 
-import Button from "~components/Button"
+import Button from "~components/Button";
 
-import CrossIcon from "~public/icons/Cross.svg"
-import "./index.scss"
+import CrossIcon from "~public/icons/Cross.svg";
+import "./index.scss";
 
 const AccountModal = () => {
-  const { account } = useSnapshot(accountState)
+  const { account } = useSnapshot(accountState);
 
-  const router = useRouter()
-  const { t } = useTranslation("common")
+  const router = useRouter();
+  const { t } = useTranslation("common");
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale) ? router.locale : "en"
+    router.locale && ["en", "ja"].includes(router.locale)
+      ? router.locale
+      : "en";
 
   // Cookies
-  const cookie = getCookie("account")
+  const cookie = getCookie("account");
 
-  const headers = {}
+  const headers = {};
   // cookies.account != null
   //   ? {
   //       headers: {
@@ -37,17 +39,17 @@ const AccountModal = () => {
   //   : {}
 
   // State
-  const [open, setOpen] = useState(false)
-  const [picture, setPicture] = useState("")
-  const [language, setLanguage] = useState("")
-  const [gender, setGender] = useState(0)
-  const [privateProfile, setPrivateProfile] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [picture, setPicture] = useState("");
+  const [language, setLanguage] = useState("");
+  const [gender, setGender] = useState(0);
+  const [privateProfile, setPrivateProfile] = useState(false);
 
   // Refs
-  const pictureSelect = React.createRef<HTMLSelectElement>()
-  const languageSelect = React.createRef<HTMLSelectElement>()
-  const genderSelect = React.createRef<HTMLSelectElement>()
-  const privateSelect = React.createRef<HTMLInputElement>()
+  const pictureSelect = React.createRef<HTMLSelectElement>();
+  const languageSelect = React.createRef<HTMLSelectElement>();
+  const genderSelect = React.createRef<HTMLSelectElement>();
+  const privateSelect = React.createRef<HTMLInputElement>();
 
   // useEffect(() => {
   //   if (cookies.user) setPicture(cookies.user.picture)
@@ -62,27 +64,27 @@ const AccountModal = () => {
         <option key={`picture-${i}`} value={item.filename}>
           {item.name[locale]}
         </option>
-      )
-    })
+      );
+    });
 
   function handlePictureChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    if (pictureSelect.current) setPicture(pictureSelect.current.value)
+    if (pictureSelect.current) setPicture(pictureSelect.current.value);
   }
 
   function handleLanguageChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    if (languageSelect.current) setLanguage(languageSelect.current.value)
+    if (languageSelect.current) setLanguage(languageSelect.current.value);
   }
 
   function handleGenderChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    if (genderSelect.current) setGender(parseInt(genderSelect.current.value))
+    if (genderSelect.current) setGender(parseInt(genderSelect.current.value));
   }
 
   function handlePrivateChange(checked: boolean) {
-    setPrivateProfile(checked)
+    setPrivateProfile(checked);
   }
 
   function update(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+    event.preventDefault();
 
     const object = {
       user: {
@@ -92,7 +94,7 @@ const AccountModal = () => {
         gender: gender,
         private: privateProfile,
       },
-    }
+    };
 
     // api.endpoints.users
     //   .update(cookies.account.user_id, object, headers)
@@ -129,7 +131,7 @@ const AccountModal = () => {
   }
 
   function openChange(open: boolean) {
-    setOpen(open)
+    setOpen(open);
   }
 
   return (
@@ -249,7 +251,7 @@ const AccountModal = () => {
         <Dialog.Overlay className="Overlay" />
       </Dialog.Portal>
     </Dialog.Root>
-  )
-}
+  );
+};
 
-export default AccountModal
+export default AccountModal;

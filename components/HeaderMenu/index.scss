@@ -1,147 +1,149 @@
 .Menu {
-    background: white;
-    border-radius: 6px;
-    display: none;
-    min-width: 220px;
-    position: absolute;
-    top: $unit * 5; // This shouldn't be hardcoded. How to calculate it?
-    z-index: 10;
+  background: white;
+  border-radius: 6px;
+  display: none;
+  min-width: 220px;
+  position: absolute;
+  top: $unit * 5; // This shouldn't be hardcoded. How to calculate it?
+  z-index: 10;
 }
 
 .MenuItem {
-    color: $grey-40;
-    font-weight: $normal;
+  color: $grey-40;
+  font-weight: $normal;
 
-    &:hover:not(.disabled) {
-        background: $grey-100;
-        color: $grey-00;
-        cursor: pointer;
-
-        a {
-            color: $grey-00;
-        }
-    }
-
-    &.profile > div {
-        padding: 6px 12px;
-    }
-
-    &.language {
-        align-items: center;
-        display: flex;
-        flex-direction: row;
-        gap: $unit;
-        padding-right: $unit;
-
-        span {
-            flex-grow: 1;
-        }
-
-        .Switch {
-            $height: 24px;
-
-            background: $grey-60;
-            border-radius: calc($height / 2);
-            border: none;
-            position: relative;
-            width: 44px;
-            height: $height;
-
-            &:hover {
-                cursor: pointer;
-            }
-
-            .Thumb {
-                $diameter: 18px;
-
-                background: white;
-                border-radius: calc($diameter / 2);
-                display: block;
-                height: $diameter;
-                width: $diameter;
-                transition: transform 100ms;
-                transform: translateX(-2px);
-                z-index: 3;
-    
-                &:hover {
-                    cursor: pointer;
-                }
-    
-                &[data-state="checked"] {
-                    background: white;
-                    transform: translateX(17px);
-                }
-            }
-            
-            .left, .right {
-                color: white;
-                font-size: 10px;
-                font-weight: $bold;
-                position: absolute;
-                z-index: 2;
-            }
-
-            .left {
-                top: 6px;
-                left: 6px;
-            }
-
-            .right {
-                top: 6px;
-                right: 5px;
-            }
-        }
-    }
+  &:hover:not(.disabled) {
+    background: $grey-100;
+    color: $grey-00;
+    cursor: pointer;
 
     a {
-        color: $grey-40;
+      color: $grey-00;
+    }
+  }
+
+  &.profile > div {
+    padding: 6px 12px;
+  }
+
+  &.language {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: $unit;
+    padding-right: $unit;
+
+    span {
+      flex-grow: 1;
     }
 
-    & > a, & > span {
+    .Switch {
+      $height: 24px;
+
+      background: $grey-60;
+      border-radius: calc($height / 2);
+      border: none;
+      position: relative;
+      width: 44px;
+      height: $height;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      .Thumb {
+        $diameter: 18px;
+
+        background: white;
+        border-radius: calc($diameter / 2);
         display: block;
-        padding: 12px 12px;
-    }
-
-    & > div {
-        align-items: center;
-        display: flex;
-        flex-direction: row;
-        padding: 10px 12px;
+        height: $diameter;
+        width: $diameter;
+        transition: transform 100ms;
+        transform: translateX(-2px);
+        z-index: 3;
 
         &:hover {
-            i.tag {
-                background: $grey-60;
-                color: white;
-            }
+          cursor: pointer;
         }
 
-        span {
-            flex-grow: 1;
+        &[data-state="checked"] {
+          background: white;
+          transform: translateX(17px);
         }
+      }
 
-        img {
-            $diameter: 32px;
-            border-radius: calc($diameter / 2);
-            height: $diameter;
-            width: $diameter;
-        }
+      .left,
+      .right {
+        color: white;
+        font-size: 10px;
+        font-weight: $bold;
+        position: absolute;
+        z-index: 2;
+      }
+
+      .left {
+        top: 6px;
+        left: 6px;
+      }
+
+      .right {
+        top: 6px;
+        right: 5px;
+      }
     }
+  }
+
+  a {
+    color: $grey-40;
+  }
+
+  & > a,
+  & > span {
+    display: block;
+    padding: 12px 12px;
+  }
+
+  & > div {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    padding: 10px 12px;
+
+    &:hover {
+      i.tag {
+        background: $grey-60;
+        color: white;
+      }
+    }
+
+    span {
+      flex-grow: 1;
+    }
+
+    img {
+      $diameter: 32px;
+      border-radius: calc($diameter / 2);
+      height: $diameter;
+      width: $diameter;
+    }
+  }
 }
 
 .MenuGroup {
-    border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid #f5f5f5;
 
-    &:first-child .MenuItem:first-child:hover {
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
-    }
+  &:first-child .MenuItem:first-child:hover {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+  }
 
-    &:last-child .MenuItem:last-child:hover {
-        border-bottom-left-radius: 6px;
-        border-bottom-right-radius: 6px;
-    }
+  &:last-child .MenuItem:last-child:hover {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
 
-    &:last-child {
-        border-bottom: none;
-    }
+  &:last-child {
+    border-bottom: none;
+  }
 }

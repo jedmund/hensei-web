@@ -1,106 +1,107 @@
 .SummonUnit {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 
-    &.main .SummonImage,
-    &.friend .SummonImage {
-        aspect-ratio: 182 / 315;
-        width: 182px;
-        height: auto;
+  &.main .SummonImage,
+  &.friend .SummonImage {
+    aspect-ratio: 182 / 315;
+    width: 182px;
+    height: auto;
 
-        @media (max-width: $medium-screen) {
-            width: 20.3vw;
-        }
+    @media (max-width: $medium-screen) {
+      width: 20.3vw;
     }
+  }
 
-    &.grid {
-        // max-width: 148px;
-        // min-height: 141px;
-        min-height: 180px;
+  &.grid {
+    // max-width: 148px;
+    // min-height: 141px;
+    min-height: 180px;
 
-        @media (max-width: $medium-screen) {
-            min-height: 16.5vw;
-        }
-
-        .SummonImage {
-            aspect-ratio: 148 / 111;
-            list-style-type: none;
-            width: 148px;
-            height: auto;
-
-            @media (max-width: $medium-screen) {
-                width: 20vw;
-            }
-        }
-    }
-
-    &.friend {
-        margin-right: 0;
-    }
-
-    &.main.editable .SummonImage:hover,
-    &.friend.editable .SummonImage:hover {
-        transform: $scale-tall;
-    }
-
-    &.editable .SummonImage:hover {
-        border: $hover-stroke;
-        box-shadow: $hover-shadow;
-        cursor: pointer;
-        transform: $scale-wide;
+    @media (max-width: $medium-screen) {
+      min-height: 16.5vw;
     }
 
     .SummonImage {
-        background: white;
-        border: 1px solid rgba(0, 0, 0, 0);
-        border-radius: $unit;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        transition: all 0.18s ease-in-out;
+      aspect-ratio: 148 / 111;
+      list-style-type: none;
+      width: 148px;
+      height: auto;
 
-        &:hover .icon svg {
-            fill: $grey-40;
-        }
+      @media (max-width: $medium-screen) {
+        width: 20vw;
+      }
+    }
+  }
 
-        .icon {
-            position: absolute;
-            height: $unit * 3;
-            width: $unit * 3;
-            z-index: 1;
-    
-            svg {
-                fill: $grey-70;
-            }
-        }
+  &.friend {
+    margin-right: 0;
+  }
+
+  &.main.editable .SummonImage:hover,
+  &.friend.editable .SummonImage:hover {
+    transform: $scale-tall;
+  }
+
+  &.editable .SummonImage:hover {
+    border: $hover-stroke;
+    box-shadow: $hover-shadow;
+    cursor: pointer;
+    transform: $scale-wide;
+  }
+
+  .SummonImage {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: $unit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.18s ease-in-out;
+
+    &:hover .icon svg {
+      fill: $grey-40;
     }
 
-    &.filled h3 {
-        display: block;
-    }
+    .icon {
+      position: absolute;
+      height: $unit * 3;
+      width: $unit * 3;
+      z-index: 1;
 
-    &.filled ul {
-        display: flex;
+      svg {
+        fill: $grey-70;
+      }
     }
+  }
 
-    h3, ul {
-        display: none;
-    }
+  &.filled h3 {
+    display: block;
+  }
 
-    h3 {
-        color: #333;
-        font-size: $font-regular;
-        font-weight: $normal;
-        line-height: 1.1;
-        margin: 0;
-        text-align: center;
-    }
+  &.filled ul {
+    display: flex;
+  }
 
-    img {
-        position: relative;
-        width: 100%;
-        z-index: 2;
-    }
+  h3,
+  ul {
+    display: none;
+  }
+
+  h3 {
+    color: #333;
+    font-size: $font-regular;
+    font-weight: $normal;
+    line-height: 1.1;
+    margin: 0;
+    text-align: center;
+  }
+
+  img {
+    position: relative;
+    width: 100%;
+    z-index: 2;
+  }
 }

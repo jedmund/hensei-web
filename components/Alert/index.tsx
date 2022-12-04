@@ -1,19 +1,19 @@
-import React from "react"
-import * as AlertDialog from "@radix-ui/react-alert-dialog"
+import React from "react";
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
-import "./index.scss"
-import Button from "~components/Button"
-import { ButtonType } from "~utils/enums"
+import "./index.scss";
+import Button from "~components/Button";
+import { ButtonType } from "~utils/enums";
 
 // Props
 interface Props {
-  open: boolean
-  title?: string
-  message: string
-  primaryAction?: () => void
-  primaryActionText?: string
-  cancelAction: () => void
-  cancelActionText: string
+  open: boolean;
+  title?: string;
+  message: string;
+  primaryAction?: () => void;
+  primaryActionText?: string;
+  cancelAction: () => void;
+  cancelActionText: string;
 }
 
 const Alert = (props: Props) => {
@@ -45,7 +45,7 @@ const Alert = (props: Props) => {
         </div>
       </AlertDialog.Portal>
     </AlertDialog.Root>
-  )
-}
+  );
+};
 
-export default Alert
+export default Alert;

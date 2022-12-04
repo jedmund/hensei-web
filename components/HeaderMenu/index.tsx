@@ -1,51 +1,51 @@
-import React, { useEffect, useState } from "react"
-import { getCookie, setCookie } from "cookies-next"
-import { useRouter } from "next/router"
-import { useTranslation } from "next-i18next"
+import React, { useEffect, useState } from "react";
+import { getCookie, setCookie } from "cookies-next";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
-import Link from "next/link"
-import * as Switch from "@radix-ui/react-switch"
+import Link from "next/link";
+import * as Switch from "@radix-ui/react-switch";
 
-import AboutModal from "~components/AboutModal"
-import AccountModal from "~components/AccountModal"
-import LoginModal from "~components/LoginModal"
-import SignupModal from "~components/SignupModal"
+import AboutModal from "~components/AboutModal";
+import AccountModal from "~components/AccountModal";
+import LoginModal from "~components/LoginModal";
+import SignupModal from "~components/SignupModal";
 
-import "./index.scss"
+import "./index.scss";
 
 interface Props {
-  authenticated: boolean
-  username?: string
-  logout?: () => void
+  authenticated: boolean;
+  username?: string;
+  logout?: () => void;
 }
 
 const HeaderMenu = (props: Props) => {
-  const router = useRouter()
-  const { t } = useTranslation("common")
+  const router = useRouter();
+  const { t } = useTranslation("common");
 
-  const accountCookie = getCookie("account")
+  const accountCookie = getCookie("account");
   const accountData: AccountCookie = accountCookie
     ? JSON.parse(accountCookie as string)
-    : null
+    : null;
 
-  const userCookie = getCookie("user")
+  const userCookie = getCookie("user");
   const userData: UserCookie = userCookie
     ? JSON.parse(userCookie as string)
-    : null
+    : null;
 
-  const localeCookie = getCookie("NEXT_LOCALE")
+  const localeCookie = getCookie("NEXT_LOCALE");
 
-  const [checked, setChecked] = useState(false)
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    const locale = localeCookie
-    setChecked(locale === "ja" ? true : false)
-  }, [localeCookie])
+    const locale = localeCookie;
+    setChecked(locale === "ja" ? true : false);
+  }, [localeCookie]);
 
   function handleCheckedChange(value: boolean) {
-    const language = value ? "ja" : "en"
-    setCookie("NEXT_LOCALE", language, { path: "/" })
-    router.push(router.asPath, undefined, { locale: language })
+    const language = value ? "ja" : "en";
+    setCookie("NEXT_LOCALE", language, { path: "/" });
+    router.push(router.asPath, undefined, { locale: language });
   }
 
   function authItems() {
@@ -92,7 +92,7 @@ const HeaderMenu = (props: Props) => {
           </div>
         </ul>
       </nav>
-    )
+    );
   }
 
   function unauthItems() {
@@ -132,10 +132,10 @@ const HeaderMenu = (props: Props) => {
           <SignupModal />
         </div>
       </ul>
-    )
+    );
   }
 
-  return props.authenticated ? authItems() : unauthItems()
-}
+  return props.authenticated ? authItems() : unauthItems();
+};
 
-export default HeaderMenu
+export default HeaderMenu;

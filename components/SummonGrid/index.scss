@@ -1,26 +1,26 @@
 #SummonGrid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-column-gap: $unit * 2;
+  justify-content: center;
+
+  & .Label {
+    color: $grey-50;
+    font-size: $font-tiny;
+    font-weight: $medium;
+    margin-bottom: $unit;
+    text-align: center;
+  }
+
+  #grid_summons {
     display: grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: auto auto;
     grid-column-gap: $unit * 2;
-    justify-content: center;
+    grid-template-rows: 1fr;
+    grid-row-gap: $unit * 3;
 
-    & .Label {
-        color: $grey-50;
-        font-size: $font-tiny;
-        font-weight: $medium;
-        margin-bottom: $unit;
-        text-align: center;
+    & > li {
+      list-style: none;
     }
-
-    #grid_summons {
-        display: grid;
-        grid-template-columns: auto auto;
-        grid-column-gap: $unit * 2;
-        grid-template-rows: 1fr;
-        grid-row-gap: $unit * 3;
-
-        & > li {
-            list-style: none;
-        }
-    }
+  }
 }

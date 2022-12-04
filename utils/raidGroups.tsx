@@ -1,9 +1,9 @@
 interface RaidGroup {
   name: {
-    [key: string]: string
-    en: string
-    ja: string
-  }
+    [key: string]: string;
+    en: string;
+    ja: string;
+  };
 }
 
 export const raidGroups: RaidGroup[] = [
@@ -127,4 +127,4 @@ export const raidGroups: RaidGroup[] = [
       ja: "スーパーアルティメット",
     },
   },
-]
+];

@@ -1,47 +1,47 @@
 .Signup.Dialog form {
-    display: flex;
-    flex-direction: column;
-    gap: calc($unit / 2);
-    margin-bottom: $unit;
+  display: flex;
+  flex-direction: column;
+  gap: calc($unit / 2);
+  margin-bottom: $unit;
 
-    .Button {
-        font-size: $font-regular;
-        padding: ($unit * 1.5) ($unit * 2);
-        width: 100%;
+  .Button {
+    font-size: $font-regular;
+    padding: ($unit * 1.5) ($unit * 2);
+    width: 100%;
 
-        &.btn-disabled {
-            background: $grey-90;
-            color: $grey-70;
-            cursor: not-allowed;
-        }
-
-        &:not(.btn-disabled) {
-            background: $grey-90;
-            color: $grey-40;
-
-            &:hover {
-                background: $grey-80;
-            }
-        }
+    &.btn-disabled {
+      background: $grey-90;
+      color: $grey-70;
+      cursor: not-allowed;
     }
 
-    .terms {
-        color: $grey-40;
-        font-size: $font-small;
-        line-height: 1.2;
-        margin-top: $unit;
-        text-align: center;
+    &:not(.btn-disabled) {
+      background: $grey-90;
+      color: $grey-40;
 
-        a {
-            color: $blue;
-
-            &:hover {
-                color: darken($blue, 30);
-            }
-        }
+      &:hover {
+        background: $grey-80;
+      }
     }
+  }
 
-    input {
-        background: $grey-90;
+  .terms {
+    color: $grey-40;
+    font-size: $font-small;
+    line-height: 1.2;
+    margin-top: $unit;
+    text-align: center;
+
+    a {
+      color: $blue;
+
+      &:hover {
+        color: darken($blue, 30);
+      }
     }
+  }
+
+  input {
+    background: $grey-90;
+  }
 }

@@ -1,20 +1,20 @@
 .PartyNavigation {
-    display: flex;
-    gap: 58px;
-    justify-content: center;
-    margin: 0 auto;
-    margin-bottom: $unit * 3;
-    max-width: 760px;
-    position: relative;
+  display: flex;
+  gap: 58px;
+  justify-content: center;
+  margin: 0 auto;
+  margin-bottom: $unit * 3;
+  max-width: 760px;
+  position: relative;
 }
 
 .ExtraSwitch {
-    color: #888;
-    display: flex;
-    font-weight: $normal;
-    gap: 8px;
-    line-height: 34px;
-    height: 100%;
-    position: absolute;
-    right: 0px;
+  color: #888;
+  display: flex;
+  font-weight: $normal;
+  gap: 8px;
+  line-height: 34px;
+  height: 100%;
+  position: absolute;
+  right: 0px;
 }

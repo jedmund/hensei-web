@@ -1,55 +1,55 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { useRouter } from "next/router"
-import { useSnapshot } from "valtio"
-import { getCookie } from "cookies-next"
-import clonedeep from "lodash.clonedeep"
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
+import { useSnapshot } from "valtio";
+import { getCookie } from "cookies-next";
+import clonedeep from "lodash.clonedeep";
 
-import PartySegmentedControl from "~components/PartySegmentedControl"
-import PartyDetails from "~components/PartyDetails"
-import WeaponGrid from "~components/WeaponGrid"
-import SummonGrid from "~components/SummonGrid"
-import CharacterGrid from "~components/CharacterGrid"
+import PartySegmentedControl from "~components/PartySegmentedControl";
+import PartyDetails from "~components/PartyDetails";
+import WeaponGrid from "~components/WeaponGrid";
+import SummonGrid from "~components/SummonGrid";
+import CharacterGrid from "~components/CharacterGrid";
 
-import api from "~utils/api"
-import { appState, initialAppState } from "~utils/appState"
-import { GridType, TeamElement } from "~utils/enums"
+import api from "~utils/api";
+import { appState, initialAppState } from "~utils/appState";
+import { GridType, TeamElement } from "~utils/enums";
 
-import "./index.scss"
+import "./index.scss";
 
 // Props
 interface Props {
-  new?: boolean
-  team?: Party
-  raids: Raid[][]
-  pushHistory?: (path: string) => void
+  new?: boolean;
+  team?: Party;
+  raids: Raid[][];
+  pushHistory?: (path: string) => void;
 }
 
 const Party = (props: Props) => {
   // Cookies
-  const cookie = getCookie("account")
+  const cookie = getCookie("account");
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
-    : null
+    : null;
 
   const headers = useMemo(() => {
     return accountData
       ? { headers: { Authorization: `Bearer ${accountData.token}` } }
-      : {}
-  }, [accountData])
+      : {};
+  }, [accountData]);
 
   // Set up router
-  const router = useRouter()
+  const router = useRouter();
 
   // Set up states
-  const { party } = useSnapshot(appState)
-  const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
+  const { party } = useSnapshot(appState);
+  const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon);
 
   // Reset state on first load
   useEffect(() => {
-    const resetState = clonedeep(initialAppState)
-    appState.grid = resetState.grid
-    if (props.team) storeParty(props.team)
-  }, [])
+    const resetState = clonedeep(initialAppState);
+    appState.grid = resetState.grid;
+    if (props.team) storeParty(props.team);
+  }, []);
 
   // Methods: Creating a new party
   async function createParty(extra: boolean = false) {
@@ -58,14 +58,14 @@ const Party = (props: Props) => {
         ...(accountData && { user_id: accountData.userId }),
         extra: extra,
       },
-    }
+    };
 
-    return await api.endpoints.parties.create(body, headers)
+    return await api.endpoints.parties.create(body, headers);
   }
 
   // Methods: Updating the party's details
   function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
-    appState.party.extra = event.target.checked
+    appState.party.extra = event.target.checked;
 
     if (party.id) {
       api.endpoints.parties.update(
@@ -74,7 +74,7 @@ const Party = (props: Props) => {
           party: { extra: event.target.checked },
         },
         headers
-      )
+      );
     }
   }
 
@@ -98,11 +98,11 @@ const Party = (props: Props) => {
             headers
           )
           .then(() => {
-            appState.party.name = name
-            appState.party.description = description
-            appState.party.raid = raid
-            appState.party.updated_at = party.updated_at
-          })
+            appState.party.name = name;
+            appState.party.description = description;
+            appState.party.raid = raid;
+            appState.party.updated_at = party.updated_at;
+          });
     }
   }
 
@@ -113,95 +113,95 @@ const Party = (props: Props) => {
         .destroy({ id: appState.party.id, params: headers })
         .then(() => {
           // Push to route
-          router.push("/")
+          router.push("/");
 
           // Clean state
-          const resetState = clonedeep(initialAppState)
+          const resetState = clonedeep(initialAppState);
           Object.keys(resetState).forEach((key) => {
-            appState[key] = resetState[key]
-          })
+            appState[key] = resetState[key];
+          });
 
           // Set party to be editable
-          appState.party.editable = true
+          appState.party.editable = true;
         })
         .catch((error) => {
-          console.error(error)
-        })
+          console.error(error);
+        });
     }
   }
 
   // Methods: Storing party data
   const storeParty = function (party: Party) {
     // Store the important party and state-keeping values
-    appState.party.name = party.name
-    appState.party.description = party.description
-    appState.party.raid = party.raid
-    appState.party.updated_at = party.updated_at
-    appState.party.job = party.job
-    appState.party.jobSkills = party.job_skills
+    appState.party.name = party.name;
+    appState.party.description = party.description;
+    appState.party.raid = party.raid;
+    appState.party.updated_at = party.updated_at;
+    appState.party.job = party.job;
+    appState.party.jobSkills = party.job_skills;
 
-    appState.party.id = party.id
-    appState.party.extra = party.extra
-    appState.party.user = party.user
-    appState.party.favorited = party.favorited
-    appState.party.created_at = party.created_at
-    appState.party.updated_at = party.updated_at
+    appState.party.id = party.id;
+    appState.party.extra = party.extra;
+    appState.party.user = party.user;
+    appState.party.favorited = party.favorited;
+    appState.party.created_at = party.created_at;
+    appState.party.updated_at = party.updated_at;
 
     // Populate state
-    storeCharacters(party.characters)
-    storeWeapons(party.weapons)
-    storeSummons(party.summons)
-  }
+    storeCharacters(party.characters);
+    storeWeapons(party.weapons);
+    storeSummons(party.summons);
+  };
 
   const storeCharacters = (list: Array<GridCharacter>) => {
     list.forEach((object: GridCharacter) => {
       if (object.position != null)
-        appState.grid.characters[object.position] = object
-    })
-  }
+        appState.grid.characters[object.position] = object;
+    });
+  };
 
   const storeWeapons = (list: Array<GridWeapon>) => {
     list.forEach((gridObject: GridWeapon) => {
       if (gridObject.mainhand) {
-        appState.grid.weapons.mainWeapon = gridObject
-        appState.party.element = gridObject.object.element
+        appState.grid.weapons.mainWeapon = gridObject;
+        appState.party.element = gridObject.object.element;
       } else if (!gridObject.mainhand && gridObject.position != null) {
-        appState.grid.weapons.allWeapons[gridObject.position] = gridObject
+        appState.grid.weapons.allWeapons[gridObject.position] = gridObject;
       }
-    })
-  }
+    });
+  };
 
   const storeSummons = (list: Array<GridSummon>) => {
     list.forEach((gridObject: GridSummon) => {
-      if (gridObject.main) appState.grid.summons.mainSummon = gridObject
+      if (gridObject.main) appState.grid.summons.mainSummon = gridObject;
       else if (gridObject.friend)
-        appState.grid.summons.friendSummon = gridObject
+        appState.grid.summons.friendSummon = gridObject;
       else if (
         !gridObject.main &&
         !gridObject.friend &&
         gridObject.position != null
       )
-        appState.grid.summons.allSummons[gridObject.position] = gridObject
-    })
-  }
+        appState.grid.summons.allSummons[gridObject.position] = gridObject;
+    });
+  };
 
   // Methods: Navigating with segmented control
   function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
     switch (event.target.value) {
       case "class":
-        setCurrentTab(GridType.Class)
-        break
+        setCurrentTab(GridType.Class);
+        break;
       case "characters":
-        setCurrentTab(GridType.Character)
-        break
+        setCurrentTab(GridType.Character);
+        break;
       case "weapons":
-        setCurrentTab(GridType.Weapon)
-        break
+        setCurrentTab(GridType.Weapon);
+        break;
       case "summons":
-        setCurrentTab(GridType.Summon)
-        break
+        setCurrentTab(GridType.Summon);
+        break;
       default:
-        break
+        break;
     }
   }
 
@@ -212,7 +212,7 @@ const Party = (props: Props) => {
       onClick={segmentClicked}
       onCheckboxChange={checkboxChanged}
     />
-  )
+  );
 
   const weaponGrid = (
     <WeaponGrid
@@ -221,7 +221,7 @@ const Party = (props: Props) => {
       createParty={createParty}
       pushHistory={props.pushHistory}
     />
-  )
+  );
 
   const summonGrid = (
     <SummonGrid
@@ -230,7 +230,7 @@ const Party = (props: Props) => {
       createParty={createParty}
       pushHistory={props.pushHistory}
     />
-  )
+  );
 
   const characterGrid = (
     <CharacterGrid
@@ -239,18 +239,18 @@ const Party = (props: Props) => {
       createParty={createParty}
       pushHistory={props.pushHistory}
     />
-  )
+  );
 
   const currentGrid = () => {
     switch (currentTab) {
       case GridType.Character:
-        return characterGrid
+        return characterGrid;
       case GridType.Weapon:
-        return weaponGrid
+        return weaponGrid;
       case GridType.Summon:
-        return summonGrid
+        return summonGrid;
     }
-  }
+  };
 
   return (
     <div>
@@ -264,7 +264,7 @@ const Party = (props: Props) => {
         />
       }
     </div>
-  )
-}
+  );
+};
 
-export default Party
+export default Party;

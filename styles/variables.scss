@@ -1,73 +1,81 @@
 // @import 'include-media/dist/_include-media';
 
 // Breakpoints
-$breakpoints: (small: 320px, medium: 800px, large: 1024px);
+$breakpoints: (
+  small: 320px,
+  medium: 800px,
+  large: 1024px,
+);
 $medium-screen: 800px;
 
 // Sizing
 $unit: 8px;
 
 // Colors
-$grey-00: #444;
+$grey-00: #222;
+$grey-10: #444;
 $grey-20: #555;
+$grey-30: #666;
 $grey-40: #777;
 $grey-50: #888;
-$grey-60: #A9A9A9;
-$grey-70: #C6C6C6;
-$grey-80: #E9E9E9;
-$grey-90: #F5F5F5;
-$grey-100:#FAFAFA;
+$grey-60: #a9a9a9;
+$grey-70: #c6c6c6;
+$grey-80: #e9e9e9;
+$grey-90: #f5f5f5;
+$grey-100: #fafafa;
 $background-color: $grey-90;
 
-$blue: #275DC5;
-$red: #FF6161;
-$error: #D13A3A;
+$page--bg--light: $grey-90;
+$page--bg--dark: $grey-00;
+
+$blue: #275dc5;
+$red: #ff6161;
+$error: #d13a3a;
 
 // Colors: Elements
-$wind-text-dark:    #009961;
-$wind-text-light:   #1DC688;
-$wind-bg-dark:      #4CFFBF;
-$wind-bg-light:     #CDFFED;
+$wind-text-dark: #009961;
+$wind-text-light: #1dc688;
+$wind-bg-dark: #4cffbf;
+$wind-bg-light: #cdffed;
 
-$fire-text-dark:    #990000;
-$fire-text-light:   #EC5C5C;
-$fire-bg-dark:      #FF4D4D;
-$fire-bg-light:     #FFCDCD;
+$fire-text-dark: #990000;
+$fire-text-light: #ec5c5c;
+$fire-bg-dark: #ff4d4d;
+$fire-bg-light: #ffcdcd;
 
-$water-text-dark:   #006199;
-$water-text-light:  #5CB7EC;
-$water-bg-dark:     #4DBFFF;
-$water-bg-light:    #CDEDFF;
+$water-text-dark: #006199;
+$water-text-light: #5cb7ec;
+$water-bg-dark: #4dbfff;
+$water-bg-light: #cdedff;
 
-$earth-text-dark:   #994000;
-$earth-text-light:  #EC985C;
-$earth-bg-dark:     #FF974C;
-$earth-bg-light:    #FFE2CD;
+$earth-text-dark: #994000;
+$earth-text-light: #ec985c;
+$earth-bg-dark: #ff974c;
+$earth-bg-light: #ffe2cd;
 
-$light-text-dark:   #998A00;
-$light-text-light:  #C5B20C;
-$light-bg-dark:     #FFED4C;
-$light-bg-light:    #FFFACD;
+$light-text-dark: #998a00;
+$light-text-light: #c5b20c;
+$light-bg-dark: #ffed4c;
+$light-bg-light: #fffacd;
 
-$dark-text-dark:    #8806B7;
-$dark-text-light:   #C65CEC;
-$dark-bg-dark:      #D14CFF;
-$dark-bg-light:     #F2CDFF;
+$dark-text-dark: #8806b7;
+$dark-text-light: #c65cec;
+$dark-bg-dark: #d14cff;
+$dark-bg-light: #f2cdff;
 
-// Font weight
 $normal: 400;
 $medium: 500;
 $bold: 600;
 
 // Font size
-$font-tiny:     11px;
-$font-small:    13px;
-$font-button:   15px;
-$font-regular:  16px;
-$font-medium:   18px;
-$font-large:    21px;
-$font-xlarge:   24px;
-$font-xxlarge:  28px;
+$font-tiny: 11px;
+$font-small: 13px;
+$font-button: 15px;
+$font-regular: 16px;
+$font-medium: 18px;
+$font-large: 21px;
+$font-xlarge: 24px;
+$font-xxlarge: 28px;
 
 // Scale factors
 $scale-wide: scale(1.05, 1.05);

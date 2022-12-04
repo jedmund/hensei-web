@@ -1,34 +1,36 @@
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { useTranslation } from "next-i18next"
-import classnames from "classnames"
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import classnames from "classnames";
 
-import SearchModal from "~components/SearchModal"
-import SummonHovercard from "~components/SummonHovercard"
-import UncapIndicator from "~components/UncapIndicator"
-import PlusIcon from "~public/icons/Add.svg"
+import SearchModal from "~components/SearchModal";
+import SummonHovercard from "~components/SummonHovercard";
+import UncapIndicator from "~components/UncapIndicator";
+import PlusIcon from "~public/icons/Add.svg";
 
-import type { SearchableObject } from "~types"
+import type { SearchableObject } from "~types";
 
-import "./index.scss"
+import "./index.scss";
 
 interface Props {
-  gridSummon: GridSummon | undefined
-  unitType: 0 | 1 | 2
-  position: number
-  editable: boolean
-  updateObject: (object: SearchableObject, position: number) => void
-  updateUncap: (id: string, position: number, uncap: number) => void
+  gridSummon: GridSummon | undefined;
+  unitType: 0 | 1 | 2;
+  position: number;
+  editable: boolean;
+  updateObject: (object: SearchableObject, position: number) => void;
+  updateUncap: (id: string, position: number, uncap: number) => void;
 }
 
 const SummonUnit = (props: Props) => {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation("common");
 
-  const [imageUrl, setImageUrl] = useState("")
+  const [imageUrl, setImageUrl] = useState("");
 
-  const router = useRouter()
+  const router = useRouter();
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale) ? router.locale : "en"
+    router.locale && ["en", "ja"].includes(router.locale)
+      ? router.locale
+      : "en";
 
   const classes = classnames({
     SummonUnit: true,
@@ -37,19 +39,19 @@ const SummonUnit = (props: Props) => {
     friend: props.unitType == 2,
     editable: props.editable,
     filled: props.gridSummon !== undefined,
-  })
+  });
 
-  const gridSummon = props.gridSummon
-  const summon = gridSummon?.object
+  const gridSummon = props.gridSummon;
+  const summon = gridSummon?.object;
 
   useEffect(() => {
-    generateImageUrl()
-  })
+    generateImageUrl();
+  });
 
   function generateImageUrl() {
-    let imgSrc = ""
+    let imgSrc = "";
     if (props.gridSummon) {
-      const summon = props.gridSummon.object!
+      const summon = props.gridSummon.object!;
 
       const upgradedSummons = [
         "2040094000",
@@ -66,28 +68,28 @@ const SummonUnit = (props: Props) => {
         "2040027000",
         "2040046000",
         "2040047000",
-      ]
+      ];
 
-      let suffix = ""
+      let suffix = "";
       if (
         upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
         props.gridSummon.uncap_level == 5
       )
-        suffix = "_02"
+        suffix = "_02";
 
       // Generate the correct source for the summon
       if (props.unitType == 0 || props.unitType == 2)
-        imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${summon.granblue_id}${suffix}.jpg`
+        imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${summon.granblue_id}${suffix}.jpg`;
       else
-        imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
+        imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`;
     }
 
-    setImageUrl(imgSrc)
+    setImageUrl(imgSrc);
   }
 
   function passUncapData(uncap: number) {
     if (props.gridSummon)
-      props.updateUncap(props.gridSummon.id, props.position, uncap)
+      props.updateUncap(props.gridSummon.id, props.position, uncap);
   }
 
   const image = (
@@ -101,7 +103,7 @@ const SummonUnit = (props: Props) => {
         ""
       )}
     </div>
-  )
+  );
 
   const editableImage = (
     <SearchModal
@@ -112,7 +114,7 @@ const SummonUnit = (props: Props) => {
     >
       {image}
     </SearchModal>
-  )
+  );
 
   const unitContent = (
     <div className={classes}>
@@ -131,13 +133,13 @@ const SummonUnit = (props: Props) => {
       )}
       <h3 className="SummonName">{summon?.name[locale]}</h3>
     </div>
-  )
+  );
 
   const withHovercard = (
     <SummonHovercard gridSummon={gridSummon!}>{unitContent}</SummonHovercard>
-  )
+  );
 
-  return gridSummon && !props.editable ? withHovercard : unitContent
-}
+  return gridSummon && !props.editable ? withHovercard : unitContent;
+};
 
-export default SummonUnit
+export default SummonUnit;

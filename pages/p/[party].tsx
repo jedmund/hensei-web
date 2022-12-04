@@ -1,39 +1,39 @@
-import React, { useEffect } from "react"
-import { getCookie } from "cookies-next"
-import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import React, { useEffect } from "react";
+import { getCookie } from "cookies-next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import Party from "~components/Party"
+import Party from "~components/Party";
 
-import { appState } from "~utils/appState"
-import api from "~utils/api"
+import { appState } from "~utils/appState";
+import api from "~utils/api";
 
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from "next";
 
 interface Props {
-  party: Party
-  jobs: Job[]
-  jobSkills: JobSkill[]
-  raids: Raid[]
-  sortedRaids: Raid[][]
+  party: Party;
+  jobs: Job[];
+  jobSkills: JobSkill[];
+  raids: Raid[];
+  sortedRaids: Raid[][];
 }
 
 const PartyRoute: React.FC<Props> = (props: Props) => {
   useEffect(() => {
-    persistStaticData()
-  }, [persistStaticData])
+    persistStaticData();
+  }, [persistStaticData]);
 
   function persistStaticData() {
-    appState.raids = props.raids
-    appState.jobs = props.jobs
-    appState.jobSkills = props.jobSkills
+    appState.raids = props.raids;
+    appState.jobs = props.jobs;
+    appState.jobSkills = props.jobSkills;
   }
 
   return (
     <div id="Content">
       <Party team={props.party} raids={props.sortedRaids} />
     </div>
-  )
-}
+  );
+};
 
 export const getServerSidePaths = async () => {
   return {
@@ -42,8 +42,8 @@ export const getServerSidePaths = async () => {
       { params: { party: "string" } },
     ],
     fallback: true,
-  }
-}
+  };
+};
 
 // prettier-ignore
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
@@ -104,22 +104,22 @@ const organizeRaids = (raids: Raid[]) => {
     level: 0,
     group: 0,
     element: 0,
-  }
+  };
 
   const numGroups = Math.max.apply(
     Math,
     raids.map((raid) => raid.group)
-  )
-  let groupedRaids = []
+  );
+  let groupedRaids = [];
 
   for (let i = 0; i <= numGroups; i++) {
-    groupedRaids[i] = raids.filter((raid) => raid.group == i)
+    groupedRaids[i] = raids.filter((raid) => raid.group == i);
   }
 
   return {
     raids: raids,
     sortedRaids: groupedRaids,
-  }
-}
+  };
+};
 
-export default PartyRoute
+export default PartyRoute;

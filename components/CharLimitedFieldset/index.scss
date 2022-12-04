@@ -1,29 +1,29 @@
 .Limited {
-    background: white;
-    border-radius: 6px;
-    border: 2px solid transparent;
-    box-sizing: border-box;
-    display: flex;
-    gap: $unit;
-    padding-right: $unit * 2;
+  background: white;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  box-sizing: border-box;
+  display: flex;
+  gap: $unit;
+  padding-right: $unit * 2;
 
-    &:focus-within {
-        border: 2px solid $blue;
-        box-shadow: 0 2px rgba(255, 255, 255, 1);
+  &:focus-within {
+    border: 2px solid $blue;
+    box-shadow: 0 2px rgba(255, 255, 255, 1);
+  }
+
+  .Counter {
+    color: $grey-50;
+    font-weight: $bold;
+    line-height: 42px;
+  }
+
+  .Input {
+    background: transparent;
+    border-radius: 0;
+
+    &:focus {
+      outline: none;
     }
-
-    .Counter {
-        color: $grey-50;
-        font-weight: $bold;
-        line-height: 42px;
-    }
-
-    .Input {
-        background: transparent;
-        border-radius: 0;
-
-        &:focus {
-            outline: none;
-        }
-    }
+  }
 }

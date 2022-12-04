@@ -1,18 +1,18 @@
-import React from 'react'
-import { useRouter } from 'next/router'
+import React from "react";
+import { useRouter } from "next/router";
 
-import './index.scss'
+import "./index.scss";
 
 interface Props {
-    labelType: string
+  labelType: string;
 }
 
 const WeaponLabelIcon = (props: Props) => {
-    const router = useRouter()
-    
-    return (
-        <i className={`WeaponLabelIcon ${props.labelType} ${router.locale}`} />
-    )
-}
+  const router = useRouter();
 
-export default WeaponLabelIcon
+  return (
+    <i className={`WeaponLabelIcon ${props.labelType} ${router.locale}`} />
+  );
+};
+
+export default WeaponLabelIcon;

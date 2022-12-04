@@ -1,10 +1,10 @@
 export interface SkillGroup {
-  id: number
+  id: number;
   name: {
-    [key: string]: string
-    en: string
-    ja: string
-  }
+    [key: string]: string;
+    en: string;
+    ja: string;
+  };
 }
 
 export const skillClassification: SkillGroup[] = [
@@ -43,7 +43,7 @@ export const skillClassification: SkillGroup[] = [
       ja: "フィールドアビリティ",
     },
   },
-]
+];
 
 export const skillGroups: SkillGroup[] = [
   {
@@ -88,4 +88,4 @@ export const skillGroups: SkillGroup[] = [
       ja: "ベースアビリティ",
     },
   },
-]
+];
