@@ -36,59 +36,21 @@ $grey-90: #f5f5f5;
 $grey-95: #fafafa;
 $grey-100: white;
 
-$page--bg--light: $grey-90;
-$page--bg--dark: $grey-10;
+// Purple -- Additional Weapons
+$purple-00: #332f7c;
+$purple-10: #4f3c79;
+$purple-20: #635fb7;
+$purple-30: #8c86ff;
+$purple-40: #7471c7;
+$purple-80: #d5d3f6;
+$purple-90: #ecebff;
 
-$page--hover--light: $grey-90;
-$page--hover--dark: $grey-20;
-
-$page--element--bg--light: $grey-70;
-$page--element--bg--dark: $grey-30;
-
-$input--bg--light: $grey-100;
-$input--bg--light--hover: $grey-95;
-$input--bg--dark: $grey-20;
-$input--bg--dark--hover: $grey-15;
-
-$input--bound--bg--light: $grey-90;
-$input--bound--bg--light--hover: $grey-80;
-$input--bound--bg--dark: $grey-10;
-$input--bound--bg--dark--hover: $grey-15;
-
-$item--bg--light--hover: $grey-90;
-$item--bg--dark--hover: $grey-10;
-
-$grid--rep--hover--light: $grey-100;
-$grid--rep--hover--dark: $grey-00;
-
-$grid--border--color--light: $grey-80;
-$grid--border--color--dark: $grey-30;
-
-$switch--nub--bg--light: $grey-80;
-$switch--nub--bg--dark: $grey-20;
-
-$text--primary--color--light: $grey-30;
-$text--primary--color--dark: $grey-90;
-
-$text--secondary--color--light: $grey-40;
-$text--secondary--hover--light: $grey-30;
-$text--secondary--color--dark: $grey-40;
-$text--secondary--hover--dark: $grey-70;
-
-$icon--secondary--color--light: $grey-70;
-$icon--secondary--color--dark: $grey-40;
-$icon--secondary--hover--light: $grey-40;
-$icon--secondary--hover--dark: $grey-70;
-
-$text--tertiary--color--light: $grey-60;
-$text--tertiary--color--dark: $grey-60;
-
+// Colors -- Interface
 $blue: #275dc5;
 $red: #ff6161;
 $error: #d13a3a;
 
-// Colors: Elements
-
+// Colors -- Elements
 $wind-text-00: #023e28;
 $wind-text-10: #006a43;
 $wind-text-20: #1dc688;
@@ -130,6 +92,64 @@ $dark-text-20: #c65cec;
 $dark-bg-00: #d565fb55;
 $dark-bg-10: #d565fb;
 $dark-bg-20: #f2cdff;
+
+$page--bg--light: $grey-90;
+$page--bg--dark: $grey-10;
+
+$page--hover--light: $grey-90;
+$page--hover--dark: $grey-20;
+
+$page--element--bg--light: $grey-70;
+$page--element--bg--dark: $grey-30;
+
+$input--bg--light: $grey-100;
+$input--bg--light--hover: $grey-95;
+$input--bg--dark: $grey-20;
+$input--bg--dark--hover: $grey-15;
+
+$input--bound--bg--light: $grey-90;
+$input--bound--bg--light--hover: $grey-80;
+$input--bound--bg--dark: $grey-10;
+$input--bound--bg--dark--hover: $grey-15;
+
+$item--bg--light--hover: $grey-90;
+$item--bg--dark--hover: $grey-10;
+
+$grid--rep--hover--light: $grey-100;
+$grid--rep--hover--dark: $grey-00;
+
+$grid--border--color--light: $grey-80;
+$grid--border--color--dark: $grey-30;
+
+$switch--nub--bg--light: $grey-80;
+$switch--nub--bg--dark: $grey-20;
+
+$extra--purple--bg--light: $purple-90;
+$extra--purple--card--bg--light: $purple-80;
+$extra--purple--primary--light: $purple-30;
+$extra--purple--secondary--light: $purple-40;
+$extra--purple--text--light: $purple-10;
+$extra--purple--bg--dark: $purple-20;
+$extra--purple--card--bg--dark: $purple-40;
+$extra--purple--primary--dark: $purple-00;
+$extra--purple--secondary--dark: $purple-10;
+$extra--purple--text--dark: $purple-00;
+
+$text--primary--color--light: $grey-30;
+$text--primary--color--dark: $grey-90;
+
+$text--secondary--color--light: $grey-40;
+$text--secondary--hover--light: $grey-30;
+$text--secondary--color--dark: $grey-40;
+$text--secondary--hover--dark: $grey-70;
+
+$icon--secondary--color--light: $grey-70;
+$icon--secondary--color--dark: $grey-40;
+$icon--secondary--hover--light: $grey-40;
+$icon--secondary--hover--dark: $grey-70;
+
+$text--tertiary--color--light: $grey-60;
+$text--tertiary--color--dark: $grey-60;
 
 $normal: 400;
 $medium: 500;

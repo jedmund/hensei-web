@@ -1,5 +1,5 @@
 #ExtraGrid {
-  background: #ecebff;
+  background: var(--extra-purple-bg);
   border-radius: 8px;
   box-sizing: border-box;
   display: flex;
@@ -17,7 +17,7 @@
   }
 
   & > span {
-    color: #4f3c79;
+    color: var(--extra-purple-text);
     display: flex;
     align-items: center;
     flex-grow: 1;
@@ -38,10 +38,10 @@
   }
 
   .WeaponUnit .WeaponImage {
-    background: #d5d3f6;
+    background: var(--extra-purple-card-bg);
   }
 
   .WeaponUnit .WeaponImage .icon svg {
-    fill: #8f8ac6;
+    fill: var(--extra-purple-secondary);
   }
 }

@@ -2,7 +2,7 @@
   display: none; // This breaks transition, find a workaround
   opacity: 0;
   margin: $unit-4x auto 0;
-  max-width: $unit * 95;
+  max-width: $unit * 94;
   position: relative;
 
   &.Editable {

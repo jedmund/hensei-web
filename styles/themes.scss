@@ -26,6 +26,12 @@
 
   --switch-nub: #{$switch--nub--bg--light};
 
+  --extra-purple-bg: #{$extra--purple--bg--light};
+  --extra-purple-card-bg: #{$extra--purple--card--bg--light};
+  --extra-purple-primary: #{$extra--purple--primary--light};
+  --extra-purple-secondary: #{$extra--purple--secondary--light};
+  --extra-purple-text: #{$extra--purple--text--light};
+
   --grid-border-color: #{$grid--border--color--light};
 
   --wind-hover-bg: #{$wind-bg-20};
@@ -42,7 +48,7 @@
   --light-hover-text: #{$light-text-20};
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --background: #{$page--bg--dark};
   --page-hover: #{$page--hover--dark};
 
@@ -69,6 +75,12 @@
   --icon-secondary-hover: #{$icon--secondary--hover--dark};
 
   --switch-nub: #{$switch--nub--bg--dark};
+
+  --extra-purple-bg: #{$extra--purple--bg--dark};
+  --extra-purple-card-bg: #{$extra--purple--card--bg--dark};
+  --extra-purple-primary: #{$extra--purple--primary--dark};
+  --extra-purple-secondary: #{$extra--purple--secondary--dark};
+  --extra-purple-text: #{$extra--purple--text--dark};
 
   --grid-border-color: #{$grid--border--color--dark};
 

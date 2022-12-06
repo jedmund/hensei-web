@@ -28,7 +28,7 @@ const ExtraWeapons = (props: Props) => {
           return (
             <li key={`grid_unit_${i}`}>
               <WeaponUnit
-                editable={props.editable}
+                editable={i < 2 ? props.editable : false}
                 position={props.offset + i}
                 unitType={1}
                 gridWeapon={props.grid[props.offset + i]}

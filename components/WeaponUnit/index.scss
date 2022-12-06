@@ -20,6 +20,10 @@
     transform: $scale-wide;
   }
 
+  &.empty {
+    min-height: auto;
+  }
+
   &.mainhand {
     margin-right: $unit * 3;
     max-width: 200px;

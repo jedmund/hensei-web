@@ -47,11 +47,11 @@
   }
 
   &-checkbox:checked + &-label {
-    background: #ecebff;
+    background: var(--extra-purple-bg);
   }
 
   &-checkbox:checked + &-label &-switch {
-    background: #8c86ff;
+    background: var(--extra-purple-primary);
   }
 
   &-checkbox:checked + &-label {

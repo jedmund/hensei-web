@@ -39,6 +39,7 @@ const WeaponUnit = (props: Props) => {
     grid: props.unitType == 1,
     editable: props.editable,
     filled: props.gridWeapon !== undefined,
+    empty: props.gridWeapon == undefined,
   })
 
   const gridWeapon = props.gridWeapon
