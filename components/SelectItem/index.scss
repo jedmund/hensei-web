@@ -16,6 +16,10 @@
     outline: none;
   }
 
+  &:first-child {
+    margin-top: $unit;
+  }
+
   &:last-child {
     margin-bottom: $unit;
   }
