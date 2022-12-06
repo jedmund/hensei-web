@@ -25,6 +25,10 @@
   .SelectIcon {
     display: flex;
     align-items: center;
+
+    svg {
+      fill: var(--icon-secondary);
+    }
   }
 }
 

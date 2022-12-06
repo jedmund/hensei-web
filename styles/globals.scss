@@ -1,5 +1,5 @@
-@import "~meyer-reset-scss";
-@import "themes.scss";
+@import '~meyer-reset-scss';
+@import 'themes.scss';
 
 html {
   background-color: var(--background);
@@ -10,7 +10,7 @@ html {
 body {
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
-  font-family: system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial,
+  font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
     sans-serif;
   font-size: 1.4rem;
   height: 100%;
@@ -58,9 +58,11 @@ a {
 }
 
 button,
-input {
-  font-family: system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial,
+input,
+textarea {
+  font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
     sans-serif;
+  font-size: $font-regular;
 }
 
 h1,
@@ -79,7 +81,7 @@ h1 {
 select {
   appearance: none;
   background-color: var(--input-bound-bg);
-  background-image: url("/icons/Arrow.svg");
+  background-image: url('/icons/Arrow.svg');
   background-repeat: no-repeat;
   background-position-y: center;
   background-position-x: 97%;

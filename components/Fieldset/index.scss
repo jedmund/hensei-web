@@ -5,17 +5,14 @@
   padding: 0;
   margin: 0;
 
-  .Input {
+  input {
     -webkit-font-smoothing: antialiased;
+    background-color: var(--input-bg);
     border: none;
-
-    background-color: $grey-100;
     border-radius: 6px;
     box-sizing: border-box;
-    color: $grey-10;
     display: block;
-    font-size: $font-regular;
-    padding: 12px 16px;
+    padding: ($unit * 1.5) $unit-2x;
     width: 100%;
   }
 
@@ -29,6 +26,6 @@
 
 ::placeholder {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: #a9a9a9 !important;
+  color: var(--text-tertiary) !important;
   opacity: 1; /* Firefox */
 }

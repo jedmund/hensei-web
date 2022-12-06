@@ -1,15 +1,19 @@
 .Limited {
-  background: $grey-100;
-  border-radius: 6px;
-  border: 2px solid transparent;
+  $offset: 2px;
+
+  background: var(--input-bg);
+  border-radius: $input-corner;
+  border: $offset solid transparent;
   box-sizing: border-box;
   display: flex;
   gap: $unit;
-  padding-right: $unit * 2;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: calc($unit-2x - $offset);
 
   &:focus-within {
-    border: 2px solid $blue;
-    box-shadow: 0 2px rgba(255, 255, 255, 1);
+    border: $offset solid $blue;
+    // box-shadow: 0 2px rgba(255, 255, 255, 1);
   }
 
   .Counter {
@@ -21,6 +25,7 @@
   .Input {
     background: transparent;
     border-radius: 0;
+    padding-left: calc($unit-2x - $offset);
 
     &:focus {
       outline: none;
