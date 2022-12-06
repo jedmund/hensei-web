@@ -18,6 +18,8 @@
   --button-bg: #{$button--bg--light};
   --button-bg-hover: #{$button--bg--light--hover};
   --button-bg-disabled: #{$button--bg--light--disabled};
+  --button-contained-bg: #{$button--contained--bg--light};
+  --button-contained-bg-hover: #{$button--contained--bg--light--hover};
 
   --button-text: #{$button--text--light};
   --button-text-hover: #{$button--text--light--hover};
@@ -102,6 +104,8 @@
   --button-bg: #{$button--bg--dark};
   --button-bg-hover: #{$button--bg--dark--hover};
   --button-bg-disabled: #{$button--bg--dark--disabled};
+  --button-contained-bg: #{$button--contained--bg--dark};
+  --button-contained-bg-hover: #{$button--contained--bg--dark--hover};
 
   --button-text: #{$button--text--dark};
   --button-text-hover: #{$button--text--dark--hover};

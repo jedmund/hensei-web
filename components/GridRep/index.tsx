@@ -8,7 +8,8 @@ import { accountState } from '~utils/accountState'
 import { formatTimeAgo } from '~utils/timeAgo'
 
 import Button from '~components/Button'
-import { ButtonType } from '~utils/enums'
+
+import SaveIcon from '~public/icons/Save.svg'
 
 import './index.scss'
 
@@ -162,9 +163,11 @@ const GridRep = (props: Props) => {
         ((props.user && account.user && account.user.id !== props.user.id) ||
           !props.user) ? (
           <Button
+            className="Save"
+            accessoryIcon={<SaveIcon class="stroke" />}
             active={props.favorited}
-            icon="save"
-            type={ButtonType.IconOnly}
+            contained={true}
+            size="small"
             onClick={sendSaveData}
           />
         ) : (

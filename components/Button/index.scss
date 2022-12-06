@@ -29,9 +29,44 @@
     background: transparent;
   }
 
+  &.Contained {
+    background: var(--button-contained-bg);
+
+    &:hover {
+      background: var(--button-contained-bg-hover);
+    }
+
+    &.Save:hover .Accessory svg {
+      fill: #ff4d4d;
+      stroke: #ff4d4d;
+    }
+
+    &.Active.Save {
+      color: #ff4d4d;
+
+      .Accessory svg {
+        fill: #ff4d4d;
+        stroke: #ff4d4d;
+      }
+
+      &:hover {
+        color: darken(#ff4d4d, 30);
+
+        .Accessory svg {
+          fill: darken(#ff4d4d, 30);
+          stroke: darken(#ff4d4d, 30);
+        }
+      }
+    }
+  }
+
   &.medium {
     height: $unit * 5.5;
     padding: ($unit * 1.5) $unit-2x;
+  }
+
+  &.small {
+    padding: $unit * 1.5;
   }
 
   &.destructive:hover {
@@ -54,11 +89,6 @@
 
   &.save.Active {
     color: #ff4d4d;
-
-    .Accessory svg {
-      fill: #ff4d4d;
-      stroke: #ff4d4d;
-    }
 
     &:hover {
       color: darken(#ff4d4d, 30);

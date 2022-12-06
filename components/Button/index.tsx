@@ -23,23 +23,31 @@ interface Props
     HTMLButtonElement
   > {
   accessoryIcon?: React.ReactNode
+  active?: boolean
   blended?: boolean
+  contained?: boolean
   size?: 'small' | 'medium' | 'large'
   text?: string
 }
 
 const defaultProps = {
+  active: false,
   blended: false,
+  contained: false,
   size: 'medium',
 }
 
 const Button = React.forwardRef<HTMLButtonElement, Props>(
-  ({ accessoryIcon, blended, size, text, ...props }, forwardedRef) => {
+  (
+    { accessoryIcon, active, blended, contained, size, text, ...props },
+    forwardedRef
+  ) => {
     const classes = classNames(
       {
         Button: true,
+        Active: active,
         Blended: blended,
-        // Active: active,
+        Contained: contained,
         // 'btn-pressed': pressed,
         // 'btn-disabled': disabled,
         // save: props.icon === 'save',
