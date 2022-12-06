@@ -300,27 +300,6 @@ const PartyDetails = (props: Props) => {
     </div>
   )
 
-  const generateTitle = () => {
-    let title = party.raid ? `[${party.raid?.name[locale]}] ` : ''
-
-    const username =
-      party.user != null ? `@${party.user?.username}` : t('header.anonymous')
-
-    if (party.name != null)
-      title += t('header.byline', {
-        partyName: party.name,
-        username: username,
-      })
-    else if (party.name == null && party.editable && router.route === '/new')
-      title = t('header.new_team')
-    else
-      title += t('header.untitled_team', {
-        username: username,
-      })
-
-    return title
-  }
-
   return (
     <React.Fragment>
       {editable && (party.name || party.description || party.raid)
