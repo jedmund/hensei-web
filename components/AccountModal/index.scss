@@ -19,11 +19,11 @@
       height: $height;
 
       &:focus {
-        box-shadow: 0 0 0 2px $grey-10;
+        box-shadow: 0 0 0 2px $grey-15;
       }
 
       &[data-state='checked'] {
-        background: $grey-10;
+        background: $grey-15;
       }
     }
 
@@ -60,7 +60,7 @@
 
       &:not(.btn-disabled) {
         background: $grey-90;
-        color: $grey-40;
+        color: $grey-50;
 
         &:hover {
           background: $grey-80;
@@ -89,7 +89,7 @@
         gap: calc($unit / 2);
 
         label {
-          color: $grey-10;
+          color: $grey-15;
           font-size: $font-regular;
         }
 

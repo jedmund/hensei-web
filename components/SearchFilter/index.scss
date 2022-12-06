@@ -3,7 +3,7 @@
   background: $grey-90;
   border: none;
   border-radius: $unit * 2;
-  color: $grey-40;
+  color: $grey-50;
   display: flex;
   gap: calc($unit / 2);
   flex-direction: row;
@@ -11,7 +11,7 @@
 
   &:hover {
     background: $grey-80;
-    color: $grey-10;
+    color: $grey-15;
     cursor: pointer;
   }
 

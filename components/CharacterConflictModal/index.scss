@@ -8,7 +8,7 @@
   }
 
   .arrow {
-    color: $grey-50;
+    color: $grey-55;
     font-size: 4rem;
     text-align: center;
   }
@@ -52,7 +52,7 @@
 
       &:not(.btn-disabled) {
         background: $grey-90;
-        color: $grey-40;
+        color: $grey-50;
 
         &:hover {
           background: $grey-80;

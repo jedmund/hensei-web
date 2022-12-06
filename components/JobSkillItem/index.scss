@@ -44,7 +44,11 @@
     }
   }
 
-  p.placeholder {
-    color: var(--text-secondary);
+  p {
+    color: var(--text-primary);
+
+    &.placeholder {
+      color: var(--text-secondary);
+    }
   }
 }

@@ -12,7 +12,7 @@
     background: $grey-100;
     border: none;
     border-radius: 18px;
-    color: $grey-40;
+    color: $grey-50;
     flex-grow: 1;
     font-size: $font-regular;
     padding: ($unit) $unit * 2;
@@ -29,7 +29,7 @@
     &:hover,
     &[data-state='on'] {
       background: $grey-80;
-      color: $grey-10;
+      color: $grey-15;
 
       &.fire {
         background: $fire-bg-20;

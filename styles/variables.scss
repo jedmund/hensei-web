@@ -22,13 +22,15 @@ $unit-12x: $unit * 12;
 $unit-20x: $unit * 20;
 
 // Colors
-$grey-00: #111;
-$grey-10: #191919;
-$grey-15: #232323;
-$grey-20: #2f2f2f;
-$grey-30: #444;
-$grey-40: #777;
-$grey-50: #888;
+$grey-00: #000;
+$grey-05: #0a0a0a;
+$grey-10: #111;
+$grey-15: #191919;
+$grey-25: #232323;
+$grey-30: #2f2f2f;
+$grey-40: #444;
+$grey-50: #777;
+$grey-55: #888;
 $grey-60: #a9a9a9;
 $grey-70: #c6c6c6;
 $grey-80: #e9e9e9;
@@ -103,36 +105,42 @@ $dark-bg-10: #d565fb;
 $dark-bg-20: #f2cdff;
 
 $page--bg--light: $grey-90;
-$page--bg--dark: $grey-10;
+$page--bg--dark: $grey-15;
 
 $page--hover--light: $grey-90;
-$page--hover--dark: $grey-20;
+$page--hover--dark: $grey-30;
 
 $page--element--bg--light: $grey-70;
-$page--element--bg--dark: $grey-30;
+$page--element--bg--dark: $grey-40;
 
+// Color Definitions: Input
 $input--bg--light: $grey-100;
 $input--bg--light--hover: $grey-95;
-$input--bg--dark: $grey-20;
-$input--bg--dark--hover: $grey-15;
+$input--bg--dark: $grey-40;
+$input--bg--dark--hover: $grey-30;
 
 $input--bound--bg--light: $grey-90;
 $input--bound--bg--light--hover: $grey-80;
-$input--bound--bg--dark: $grey-10;
-$input--bound--bg--dark--hover: $grey-15;
+$input--bound--bg--dark: $grey-15;
+$input--bound--bg--dark--hover: $grey-25;
 
-$item--bg--light--hover: $grey-90;
-$item--bg--dark--hover: $grey-10;
+$select--bg--light: $grey-100;
+$select--bg--dark: $grey-10;
+$select--separator--light: $grey-90;
+$select--separator--dark: $grey-05;
+$option--bg--light--hover: $grey-90;
+$option--bg--dark--hover: $grey-00;
 
 $grid--rep--hover--light: $grey-100;
-$grid--rep--hover--dark: $grey-00;
+$grid--rep--hover--dark: $grey-10;
 
 $grid--border--color--light: $grey-80;
-$grid--border--color--dark: $grey-30;
+$grid--border--color--dark: $grey-40;
 
 $switch--nub--bg--light: $grey-80;
-$switch--nub--bg--dark: $grey-20;
+$switch--nub--bg--dark: $grey-30;
 
+// Color Definitions: Additional Weapons
 $extra--purple--bg--light: $purple-90;
 $extra--purple--card--bg--light: $purple-80;
 $extra--purple--primary--light: $purple-30;
@@ -144,6 +152,7 @@ $extra--purple--primary--dark: $purple-00;
 $extra--purple--secondary--dark: $purple-10;
 $extra--purple--text--dark: $purple-00;
 
+// Color Definitions: Subaura
 $subaura--orange--bg--light: $orange-90;
 $subaura--orange--card--bg--light: $orange-80;
 $subaura--orange--primary--light: $orange-30;
@@ -155,22 +164,25 @@ $subaura--orange--primary--dark: $orange-00;
 $subaura--orange--secondary--dark: $orange-10;
 $subaura--orange--text--dark: $orange-00;
 
-$text--primary--color--light: $grey-30;
+// Color Definitions: Text
+$text--primary--color--light: $grey-40;
 $text--primary--color--dark: $grey-90;
 
-$text--secondary--color--light: $grey-40;
-$text--secondary--hover--light: $grey-30;
-$text--secondary--color--dark: $grey-40;
+$text--secondary--color--light: $grey-50;
+$text--secondary--hover--light: $grey-40;
+$text--secondary--color--dark: $grey-50;
 $text--secondary--hover--dark: $grey-70;
 
+// Color Definitions: Icon
 $icon--secondary--color--light: $grey-70;
-$icon--secondary--color--dark: $grey-40;
-$icon--secondary--hover--light: $grey-40;
+$icon--secondary--color--dark: $grey-50;
+$icon--secondary--hover--light: $grey-50;
 $icon--secondary--hover--dark: $grey-70;
 
 $text--tertiary--color--light: $grey-60;
 $text--tertiary--color--dark: $grey-60;
 
+// Font-weight
 $normal: 400;
 $medium: 500;
 $bold: 600;

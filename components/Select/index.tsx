@@ -1,5 +1,6 @@
 import React from 'react'
 import * as RadixSelect from '@radix-ui/react-select'
+import classNames from 'classnames'
 
 import ArrowIcon from '~public/icons/Arrow.svg'
 
@@ -13,6 +14,7 @@ interface Props {
   children?: React.ReactNode
   onClick?: () => void
   onChange?: (value: string) => void
+  triggerClass?: string
 }
 
 const Select = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(
@@ -22,7 +24,7 @@ const Select = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(
   return (
     <RadixSelect.Root onValueChange={props.onChange}>
       <RadixSelect.Trigger
-        className="SelectTrigger"
+        className={classNames('SelectTrigger', props.triggerClass)}
         placeholder={props.placeholder}
       >
         <RadixSelect.Value placeholder={props.placeholder} />

@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import Select from '~components/Select'
 import SelectItem from '~components/SelectItem'
 import SelectGroup from '~components/SelectGroup'
-import { SelectSeparator } from '@radix-ui/react-select'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
@@ -131,7 +130,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
     return (
       <Select
         trigger={'Select a raid...'}
-        placeholder={'Select a raid'}
+        placeholder={'Select a raid...'}
         open={open}
         onClick={openRaidSelect}
         onChange={handleChange}

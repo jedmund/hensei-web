@@ -12,7 +12,9 @@
   --input-bound-bg: #{$input--bound--bg--light};
   --input-bound-bg-hover: #{$input--bound--bg--light--hover};
 
-  --item-bg-hover: #{$item--bg--light--hover};
+  --select-bg: #{$select--bg--light};
+  --select-separator: #{$select--separator--light};
+  --option-bg-hover: #{$option--bg--light--hover};
 
   --text-primary: #{$text--primary--color--light};
 
@@ -61,14 +63,16 @@
   --grid-rep-hover: #{$grid--rep--hover--dark};
 
   --card-bg: #{$page--element--bg--dark};
-  --bar-bg: #{$grey-00};
+  --bar-bg: #{$grey-10};
 
   --input-bg: #{$input--bg--dark};
   --input-bg-hover: #{$input--bg--dark--hover};
   --input-bound-bg: #{$input--bound--bg--dark};
   --input-bound-bg-hover: #{$input--bound--bg--dark--hover};
 
-  --item-bg-hover: #{$item--bg--dark--hover};
+  --select-bg: #{$select--bg--dark};
+  --select-separator: #{$select--separator--dark};
+  --option-bg-hover: #{$option--bg--dark--hover};
 
   --text-primary: #{$text--primary--color--dark};
 

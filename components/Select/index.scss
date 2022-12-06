@@ -33,20 +33,25 @@
 }
 
 .Select {
-  background: var(--card-bg);
+  background: var(--select-bg);
   border-radius: $input-corner;
   border: $hover-stroke;
   box-shadow: $hover-shadow;
   padding: 0 $unit;
-  // position: relative;
-  // max-height: 350px !important;
-  // top: -800px;
-  z-index: 99999;
+  z-index: 40;
 
   .Scroll.Up,
   .Scroll.Down {
     padding: $unit 0;
     text-align: center;
+
+    &:hover svg {
+      fill: var(--icon-secondary-hover);
+    }
+
+    svg {
+      fill: var(--icon-secondary);
+    }
   }
 
   .Scroll.Up {

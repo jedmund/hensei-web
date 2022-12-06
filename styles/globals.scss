@@ -69,7 +69,7 @@ h1,
 h2,
 h3,
 p {
-  color: $grey-10;
+  color: $grey-15;
 }
 
 h1 {
@@ -88,7 +88,7 @@ select {
   background-size: $unit * 1.5;
   border: none;
   border-radius: 6px;
-  color: $grey-10;
+  color: $grey-15;
   margin-bottom: $unit;
   font-size: $font-regular;
   padding: 0 ($unit * 2);
@@ -156,7 +156,7 @@ select {
       gap: $unit;
 
       p {
-        color: $grey-40;
+        color: $grey-50;
         font-size: $font-small;
         line-height: 1.25;
       }
@@ -175,7 +175,7 @@ select {
     }
 
     svg {
-      fill: $grey-40;
+      fill: $grey-50;
       float: right;
       height: 24px;
       width: 24px;
@@ -194,7 +194,7 @@ select {
     gap: calc($unit / 2);
 
     .SubTitle {
-      color: $grey-50;
+      color: $grey-55;
       font-size: $font-small;
       font-weight: $medium;
     }

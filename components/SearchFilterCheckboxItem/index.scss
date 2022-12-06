@@ -1,7 +1,7 @@
 .Item {
   align-items: center;
   border-radius: calc($unit / 2);
-  color: $grey-40;
+  color: $grey-50;
   font-size: $font-regular;
   line-height: 1.2;
   min-width: 100px;
@@ -18,7 +18,7 @@
     background: $grey-90;
 
     svg {
-      fill: $grey-50;
+      fill: $grey-55;
     }
   }
 

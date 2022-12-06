@@ -9,16 +9,16 @@
 }
 
 .MenuItem {
-  color: $grey-40;
+  color: $grey-50;
   font-weight: $normal;
 
   &:hover:not(.disabled) {
     background: $grey-95;
-    color: $grey-10;
+    color: $grey-15;
     cursor: pointer;
 
     a {
-      color: $grey-10;
+      color: $grey-15;
     }
   }
 
@@ -95,7 +95,7 @@
   }
 
   a {
-    color: $grey-40;
+    color: $grey-50;
   }
 
   & > a,

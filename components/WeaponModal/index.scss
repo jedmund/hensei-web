@@ -10,7 +10,7 @@
       gap: calc($unit / 2);
 
       h3 {
-        color: $grey-50;
+        color: $grey-55;
         font-size: $font-small;
         margin-bottom: $unit;
       }
@@ -33,7 +33,7 @@
 
       &:not(.btn-disabled) {
         background: $grey-90;
-        color: $grey-40;
+        color: $grey-50;
 
         &:hover {
           background: $grey-80;
