@@ -4,8 +4,8 @@
 
   --grid-rep-hover: #{$grid--rep--hover--light};
 
-  --card-bg: white;
-  --bar-bg: white;
+  --card-bg: #{$grey-100};
+  --bar-bg: #{$grey-100};
 
   --input-bg: #{$input--bg--light};
   --input-bg-hover: #{$input--bg--light--hover};

@@ -11,7 +11,7 @@
   padding: 8px 12px;
 
   &:hover {
-    background: white;
+    background: $grey-100;
     cursor: pointer;
     color: $grey-10;
 
@@ -27,10 +27,10 @@
 
   &.destructive:hover {
     background: $error;
-    color: white;
+    color: $grey-100;
 
     .icon svg {
-      fill: white;
+      fill: $grey-100;
     }
   }
 
@@ -100,7 +100,7 @@
   }
 
   &.Active {
-    background: white;
+    background: $grey-100;
   }
 
   &.btn-blue {

@@ -28,7 +28,7 @@
     }
 
     .Thumb {
-      background: white;
+      background: $grey-100;
       border-radius: 13px;
       display: block;
       height: 26px;
@@ -41,7 +41,7 @@
       }
 
       &[data-state="checked"] {
-        background: white;
+        background: $grey-100;
         transform: translateX(21px);
       }
     }

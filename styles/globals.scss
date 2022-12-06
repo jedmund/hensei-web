@@ -127,7 +127,7 @@ select {
 
   animation: 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal none running
     openModal;
-  background: white;
+  background: $grey-100;
   border-radius: $unit;
   display: flex;
   flex-direction: column;
@@ -212,7 +212,7 @@ select {
 .Hovercard {
   background: #222;
   border-radius: $unit;
-  color: white;
+  color: $grey-100;
   display: flex;
   flex-direction: column;
   gap: $unit * 2;

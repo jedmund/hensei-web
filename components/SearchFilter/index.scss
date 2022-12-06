@@ -36,7 +36,7 @@
 }
 
 .Dropdown {
-  background: white;
+  background: $grey-100;
   border-radius: $unit;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.18);
   display: flex;
@@ -49,7 +49,7 @@
     overflow: hidden;
 
     svg {
-      fill: white;
+      fill: $grey-100;
       filter: drop-shadow(0px 0px 1px rgb(0 0 0 / 0.18));
     }
   }
