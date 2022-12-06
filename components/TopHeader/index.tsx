@@ -14,6 +14,11 @@ import Header from '~components/Header'
 import Button from '~components/Button'
 import HeaderMenu from '~components/HeaderMenu'
 
+import AddIcon from '~public/icons/Add.svg'
+import LinkIcon from '~public/icons/Link.svg'
+import MenuIcon from '~public/icons/Menu.svg'
+import SaveIcon from '~public/icons/Save.svg'
+
 const TopHeader = () => {
   const { t } = useTranslation('common')
 
@@ -94,10 +99,26 @@ const TopHeader = () => {
     else console.error('Failed to unsave team: No party ID')
   }
 
+  const copyButton = () => {
+    if (router.route === '/p/[party]')
+      return (
+        <Button
+          accessoryIcon={<LinkIcon className="stroke" />}
+          blended={true}
+          text={t('buttons.copy')}
+          onClick={copyToClipboard}
+        />
+      )
+  }
+
   const leftNav = () => {
     return (
       <div className="dropdown">
-        <Button icon="menu">{t('buttons.menu')}</Button>
+        <Button
+          accessoryIcon={<MenuIcon />}
+          blended={true}
+          text={t('buttons.menu')}
+        />
         {account.user ? (
           <HeaderMenu
             authenticated={account.authorized}
@@ -114,15 +135,19 @@ const TopHeader = () => {
   const saveButton = () => {
     if (party.favorited)
       return (
-        <Button icon="save" active={true} onClick={toggleFavorite}>
-          Saved
-        </Button>
+        <Button
+          accessoryIcon={<SaveIcon />}
+          text="Saved"
+          onClick={toggleFavorite}
+        />
       )
     else
       return (
-        <Button icon="save" onClick={toggleFavorite}>
-          Save
-        </Button>
+        <Button
+          accessoryIcon={<SaveIcon />}
+          text="Save"
+          onClick={toggleFavorite}
+        />
       )
   }
 
@@ -134,16 +159,15 @@ const TopHeader = () => {
         (!party.user || party.user.id !== account.user.id)
           ? saveButton()
           : ''}
-        {router.route === '/p/[party]' ? (
-          <Button icon="link" onClick={copyToClipboard}>
-            {t('buttons.copy')}
-          </Button>
-        ) : (
-          ''
-        )}
-        <Button icon="new" onClick={newParty}>
-          {t('buttons.new')}
-        </Button>
+
+        {copyButton()}
+
+        <Button
+          accessoryIcon={<AddIcon className="Add" />}
+          blended={true}
+          text={t('buttons.new')}
+          onClick={newParty}
+        />
       </div>
     )
   }

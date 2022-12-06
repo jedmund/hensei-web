@@ -1,6 +1,6 @@
 .Header {
   display: flex;
-  height: 34px;
+  margin-bottom: $unit-2x;
   width: 100%;
 
   &.bottom {
@@ -19,10 +19,10 @@
 
     &:hover {
       padding-right: 50px;
-      padding-bottom: 16px;
 
       .Button {
-        background: $grey-100;
+        background: var(--button-bg-hover);
+        color: var(--button-text-hover);
       }
 
       .Menu {

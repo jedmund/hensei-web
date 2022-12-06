@@ -8,7 +8,6 @@ import Linkify from 'react-linkify'
 import classNames from 'classnames'
 
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
-import CrossIcon from '~public/icons/Cross.svg'
 
 import Button from '~components/Button'
 import CharLimitedFieldset from '~components/CharLimitedFieldset'
@@ -17,6 +16,10 @@ import TextFieldset from '~components/TextFieldset'
 
 import { accountState } from '~utils/accountState'
 import { appState } from '~utils/appState'
+
+import CheckIcon from '~public/icons/Check.svg'
+import CrossIcon from '~public/icons/Cross.svg'
+import EditIcon from '~public/icons/Edit.svg'
 
 import './index.scss'
 import Link from 'next/link'
@@ -169,11 +172,11 @@ const PartyDetails = (props: Props) => {
     if (party.editable) {
       return (
         <AlertDialog.Root>
-          <AlertDialog.Trigger className="Button destructive">
-            <span className="icon">
+          <AlertDialog.Trigger className="Button Blended medium destructive">
+            <span className="Accessory">
               <CrossIcon />
             </span>
-            <span className="text">{t('buttons.delete')}</span>
+            <span className="Text">{t('buttons.delete')}</span>
           </AlertDialog.Trigger>
           <AlertDialog.Portal>
             <AlertDialog.Overlay className="Overlay" />
@@ -236,13 +239,12 @@ const PartyDetails = (props: Props) => {
           {router.pathname !== '/new' ? deleteButton() : ''}
         </div>
         <div className="right">
-          <Button active={true} onClick={toggleDetails}>
-            {t('buttons.cancel')}
-          </Button>
-
-          <Button active={true} icon="check" onClick={updateDetails}>
-            {t('buttons.save_info')}
-          </Button>
+          <Button text={t('buttons.cancel')} onClick={toggleDetails} />
+          <Button
+            accessoryIcon={<CheckIcon className="Check" />}
+            text={t('buttons.save_info')}
+            onClick={updateDetails}
+          />
         </div>
       </div>
     </section>
@@ -252,7 +254,9 @@ const PartyDetails = (props: Props) => {
     <section className={readOnlyClasses}>
       <div className="info">
         <div className="left">
-          {party.name ? <h1>{party.name}</h1> : ''}
+          <h1 className={!party.name ? 'empty' : ''}>
+            {party.name ? party.name : 'Untitled'}
+          </h1>
           <div className="attribution">
             {party.user ? linkedUserBlock(party.user) : userBlock()}
             {party.raid ? linkedRaidBlock(party.raid) : ''}
@@ -270,9 +274,11 @@ const PartyDetails = (props: Props) => {
         </div>
         <div className="right">
           {party.editable ? (
-            <Button active={true} icon="edit" onClick={toggleDetails}>
-              {t('buttons.show_info')}
-            </Button>
+            <Button
+              accessoryIcon={<EditIcon />}
+              text={t('buttons.show_info')}
+              onClick={toggleDetails}
+            />
           ) : (
             <div />
           )}
@@ -291,9 +297,11 @@ const PartyDetails = (props: Props) => {
   const emptyDetails = (
     <div className={emptyClasses}>
       {party.editable ? (
-        <Button active={true} icon="edit" onClick={toggleDetails}>
-          {t('buttons.show_info')}
-        </Button>
+        <Button
+          accessoryIcon={<EditIcon />}
+          text={t('buttons.show_info')}
+          onClick={toggleDetails}
+        />
       ) : (
         <div />
       )}

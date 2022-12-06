@@ -1,35 +1,44 @@
 .Button {
   align-items: center;
-  background: transparent;
+  background: var(--button-bg);
   border: none;
-  border-radius: 6px;
-  color: $grey-55;
+  border-radius: $input-corner;
+  color: var(--button-text);
   display: inline-flex;
   font-size: $font-button;
   font-weight: $normal;
   gap: 6px;
-  padding: 8px 12px;
 
-  &:hover {
-    background: $grey-100;
+  &:hover,
+  &.Blended:hover {
+    background: var(--button-bg-hover);
     cursor: pointer;
-    color: $grey-15;
+    color: var(--button-text-hover);
 
-    .icon svg {
-      fill: $grey-15;
+    .Accessory svg {
+      fill: var(--button-text-hover);
     }
 
-    .icon.stroke svg {
+    .Accessory svg.stroke {
       fill: none;
-      stroke: $grey-15;
+      stroke: var(--button-text-hover);
     }
+  }
+
+  &.Blended {
+    background: transparent;
+  }
+
+  &.medium {
+    height: $unit * 5.5;
+    padding: ($unit * 1.5) $unit-2x;
   }
 
   &.destructive:hover {
     background: $error;
     color: $grey-100;
 
-    .icon svg {
+    .Accessory svg {
       fill: $grey-100;
     }
   }
@@ -37,7 +46,7 @@
   &.save:hover {
     color: #ff4d4d;
 
-    .icon svg {
+    .Accessory svg {
       fill: #ff4d4d;
       stroke: #ff4d4d;
     }
@@ -46,7 +55,7 @@
   &.save.Active {
     color: #ff4d4d;
 
-    .icon svg {
+    .Accessory svg {
       fill: #ff4d4d;
       stroke: #ff4d4d;
     }
@@ -73,13 +82,30 @@
     }
   }
 
-  .icon {
-    margin-top: 2px;
+  .Accessory {
+    $dimension: $unit-2x;
+
+    display: flex;
 
     svg {
-      fill: $grey-55;
-      height: 12px;
-      width: 12px;
+      fill: var(--button-text);
+      height: $dimension;
+      width: $dimension;
+
+      &.stroke {
+        fill: none;
+        stroke: var(--button-text);
+      }
+
+      &.Add {
+        height: 18px;
+        width: 18px;
+      }
+
+      &.Check {
+        height: 22px;
+        width: 22px;
+      }
     }
 
     &.check svg {
@@ -88,19 +114,10 @@
       width: auto;
     }
 
-    &.stroke svg {
-      fill: none;
-      stroke: $grey-55;
-    }
-
-    &.settings svg {
+    svg &.settings svg {
       height: 13px;
       width: 13px;
     }
-  }
-
-  &.Active {
-    background: $grey-100;
   }
 
   &.btn-blue {

@@ -88,6 +88,10 @@
 
         h1 {
           color: var(--text-primary);
+
+          &.empty {
+            color: var(--text-tertiary);
+          }
         }
       }
     }
