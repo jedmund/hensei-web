@@ -33,6 +33,8 @@
 
   // Light - Selects
   --select-bg: #{$select--bg--light};
+  --select-contained-bg: #{$select--contained--bg--light};
+  --select-contained-bg-hover: #{$select--contained--bg--light--hover};
   --select-separator: #{$select--separator--light};
   --option-bg-hover: #{$option--bg--light--hover};
 
@@ -103,9 +105,9 @@
   // Dark - Buttons
   --button-bg: #{$button--bg--dark};
   --button-bg-hover: #{$button--bg--dark--hover};
+  --button-contained-bg-hover: #{$button--contained--bg--dark--hover};
   --button-bg-disabled: #{$button--bg--dark--disabled};
   --button-contained-bg: #{$button--contained--bg--dark};
-  --button-contained-bg-hover: #{$button--contained--bg--dark--hover};
 
   --button-text: #{$button--text--dark};
   --button-text-hover: #{$button--text--dark--hover};
@@ -119,6 +121,8 @@
 
   // Dark - Selects
   --select-bg: #{$select--bg--dark};
+  --select-contained-bg: #{$select--contained--bg--dark};
+  --select-contained-bg-hover: #{$select--contained--bg--dark--hover};
   --select-separator: #{$select--separator--dark};
   --option-bg-hover: #{$option--bg--dark--hover};
 

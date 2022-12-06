@@ -32,10 +32,15 @@
     // background-position-y: center;
     // background-position-x: 95%;
     // background-size: $unit * 1.5;
+    background-color: var(--select-contained-bg);
     color: $grey-55;
     font-size: $font-small;
     margin: 0;
     max-width: 200px;
+
+    &:hover {
+      background-color: var(--select-contained-bg-hover);
+    }
   }
 
   .SelectTrigger {

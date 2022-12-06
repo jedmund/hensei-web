@@ -32,11 +32,7 @@ const NewRoute: React.FC<Props> = (props: Props) => {
     appState.jobSkills = props.jobSkills
   }
 
-  return (
-    <div id="Content">
-      <Party new={true} raids={props.sortedRaids} pushHistory={callback} />
-    </div>
-  )
+  return <Party new={true} raids={props.sortedRaids} pushHistory={callback} />
 }
 
 export const getServerSidePaths = async () => {
