@@ -1,70 +1,70 @@
-import React, { useEffect, useState } from "react";
-import { setCookie } from "cookies-next";
-import Router, { useRouter } from "next/router";
-import { useTranslation } from "react-i18next";
-import { AxiosResponse } from "axios";
+import React, { useEffect, useState } from 'react'
+import { setCookie } from 'cookies-next'
+import Router, { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
+import { AxiosResponse } from 'axios'
 
-import * as Dialog from "@radix-ui/react-dialog";
+import * as Dialog from '@radix-ui/react-dialog'
 
-import api from "~utils/api";
-import { appState } from "~utils/appState";
-import { accountState } from "~utils/accountState";
+import api from '~utils/api'
+import { appState } from '~utils/appState'
+import { accountState } from '~utils/accountState'
 
-import Button from "~components/Button";
+import Button from '~components/Button'
 
-import "./index.scss";
+import './index.scss'
 
 interface Props {
-  open: boolean;
-  incomingCharacter?: Character;
-  conflictingCharacters?: GridCharacter[];
-  desiredPosition: number;
-  resolveConflict: () => void;
-  resetConflict: () => void;
+  open: boolean
+  incomingCharacter?: Character
+  conflictingCharacters?: GridCharacter[]
+  desiredPosition: number
+  resolveConflict: () => void
+  resetConflict: () => void
 }
 
 const CharacterConflictModal = (props: Props) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common')
 
   // States
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    setOpen(props.open);
-  }, [setOpen, props.open]);
+    setOpen(props.open)
+  }, [setOpen, props.open])
 
   function imageUrl(character?: Character, uncap: number = 0) {
     // Change the image based on the uncap level
-    let suffix = "01";
-    if (uncap == 6) suffix = "04";
-    else if (uncap == 5) suffix = "03";
-    else if (uncap > 2) suffix = "02";
+    let suffix = '01'
+    if (uncap == 6) suffix = '04'
+    else if (uncap == 5) suffix = '03'
+    else if (uncap > 2) suffix = '02'
 
     // Special casing for Lyria (and Young Cat eventually)
-    if (character?.granblue_id === "3030182000") {
-      let element = 1;
+    if (character?.granblue_id === '3030182000') {
+      let element = 1
       if (
         appState.grid.weapons.mainWeapon &&
         appState.grid.weapons.mainWeapon.element
       ) {
-        element = appState.grid.weapons.mainWeapon.element;
+        element = appState.grid.weapons.mainWeapon.element
       } else if (appState.party.element != 0) {
-        element = appState.party.element;
+        element = appState.party.element
       }
 
-      suffix = `${suffix}_0${element}`;
+      suffix = `${suffix}_0${element}`
     }
 
-    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-square/${character?.granblue_id}_${suffix}.jpg`;
+    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-square/${character?.granblue_id}_${suffix}.jpg`
   }
 
   function openChange(open: boolean) {
-    setOpen(open);
+    setOpen(open)
   }
 
   function close() {
-    setOpen(false);
-    props.resetConflict();
+    setOpen(false)
+    props.resetConflict()
   }
 
   return (
@@ -107,7 +107,7 @@ const CharacterConflictModal = (props: Props) => {
         <Dialog.Overlay className="Overlay" />
       </Dialog.Portal>
     </Dialog.Root>
-  );
-};
+  )
+}
 
-export default CharacterConflictModal;
+export default CharacterConflictModal

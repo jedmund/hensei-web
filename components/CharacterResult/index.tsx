@@ -1,36 +1,34 @@
-import React from "react";
-import { useRouter } from "next/router";
+import React from 'react'
+import { useRouter } from 'next/router'
 
-import UncapIndicator from "~components/UncapIndicator";
-import WeaponLabelIcon from "~components/WeaponLabelIcon";
+import UncapIndicator from '~components/UncapIndicator'
+import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
-import "./index.scss";
+import './index.scss'
 
 interface Props {
-  data: Character;
-  onClick: () => void;
+  data: Character
+  onClick: () => void
 }
 
-const Element = ["null", "wind", "fire", "water", "earth", "dark", "light"];
+const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 
 const CharacterResult = (props: Props) => {
-  const router = useRouter();
+  const router = useRouter()
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale)
-      ? router.locale
-      : "en";
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
-  const character = props.data;
+  const character = props.data
 
   const characterUrl = () => {
-    let url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_01.jpg`;
+    let url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_01.jpg`
 
-    if (character.granblue_id === "3030182000") {
-      url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_01_01.jpg`;
+    if (character.granblue_id === '3030182000') {
+      url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_01_01.jpg`
     }
 
-    return url;
-  };
+    return url
+  }
 
   return (
     <li className="CharacterResult" onClick={props.onClick}>
@@ -48,7 +46,7 @@ const CharacterResult = (props: Props) => {
         </div>
       </div>
     </li>
-  );
-};
+  )
+}
 
-export default CharacterResult;
+export default CharacterResult

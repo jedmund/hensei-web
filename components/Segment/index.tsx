@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react'
 
-import "./index.scss";
+import './index.scss'
 
 interface Props {
-  groupName: string;
-  name: string;
-  selected: boolean;
-  children: string;
-  onClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  groupName: string
+  name: string
+  selected: boolean
+  children: string
+  onClick: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const Segment: React.FC<Props> = (props: Props) => {
@@ -23,7 +23,7 @@ const Segment: React.FC<Props> = (props: Props) => {
       />
       <label htmlFor={props.name}>{props.children}</label>
     </div>
-  );
-};
+  )
+}
 
-export default Segment;
+export default Segment

@@ -1,40 +1,40 @@
 interface Character {
-  type: "character";
+  type: 'character'
 
-  id: string;
-  granblue_id: string;
-  character_id: readonly number[];
-  element: number;
-  rarity: number;
-  gender: number;
-  max_level: number;
+  id: string
+  granblue_id: string
+  character_id: readonly number[]
+  element: number
+  rarity: number
+  gender: number
+  max_level: number
   name: {
-    [key: string]: string;
-    en: string;
-    ja: string;
-  };
+    [key: string]: string
+    en: string
+    ja: string
+  }
   hp: {
-    min_hp: number;
-    max_hp: number;
-    max_hp_flb: number;
-  };
+    min_hp: number
+    max_hp: number
+    max_hp_flb: number
+  }
   atk: {
-    min_atk: number;
-    max_atk: number;
-    max_atk_flb: number;
-  };
+    min_atk: number
+    max_atk: number
+    max_atk_flb: number
+  }
   uncap: {
-    flb: boolean;
-    ulb: boolean;
-  };
+    flb: boolean
+    ulb: boolean
+  }
   race: {
-    race1: number;
-    race2: number;
-  };
+    race1: number
+    race2: number
+  }
   proficiency: {
-    proficiency1: number;
-    proficiency2: number;
-  };
-  position?: number;
-  special: boolean;
+    proficiency1: number
+    proficiency2: number
+  }
+  position?: number
+  special: boolean
 }

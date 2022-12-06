@@ -1,16 +1,16 @@
-import React from "react";
+import React from 'react'
 
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
-import ArrowIcon from "~public/icons/Arrow.svg";
-import "./index.scss";
+import ArrowIcon from '~public/icons/Arrow.svg'
+import './index.scss'
 
 interface Props {
-  label: string;
-  open: boolean;
-  numSelected: number;
-  onOpenChange: (open: boolean) => void;
-  children: React.ReactNode;
+  label: string
+  open: boolean
+  numSelected: number
+  onOpenChange: (open: boolean) => void
+  children: React.ReactNode
 }
 
 const SearchFilter = (props: Props) => {
@@ -28,7 +28,7 @@ const SearchFilter = (props: Props) => {
         <DropdownMenu.Arrow />
       </DropdownMenu.Content>
     </DropdownMenu.Root>
-  );
-};
+  )
+}
 
-export default SearchFilter;
+export default SearchFilter

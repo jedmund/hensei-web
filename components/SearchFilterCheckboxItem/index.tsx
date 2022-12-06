@@ -1,20 +1,20 @@
-import React from "react";
+import React from 'react'
 
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
-import CheckIcon from "~public/icons/Check.svg";
-import "./index.scss";
+import CheckIcon from '~public/icons/Check.svg'
+import './index.scss'
 
 interface Props {
-  checked?: boolean;
-  valueKey: string;
-  onCheckedChange: (open: boolean, key: string) => void;
-  children: React.ReactNode;
+  checked?: boolean
+  valueKey: string
+  onCheckedChange: (open: boolean, key: string) => void
+  children: React.ReactNode
 }
 
 const SearchFilterCheckboxItem = (props: Props) => {
   function handleCheckedChange(checked: boolean) {
-    props.onCheckedChange(checked, props.valueKey);
+    props.onCheckedChange(checked, props.valueKey)
   }
 
   return (
@@ -29,7 +29,7 @@ const SearchFilterCheckboxItem = (props: Props) => {
       </DropdownMenu.ItemIndicator>
       {props.children}
     </DropdownMenu.CheckboxItem>
-  );
-};
+  )
+}
 
-export default SearchFilterCheckboxItem;
+export default SearchFilterCheckboxItem

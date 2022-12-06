@@ -1,51 +1,51 @@
-import React, { useEffect, useState } from "react";
-import { getCookie, setCookie } from "cookies-next";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
+import React, { useEffect, useState } from 'react'
+import { getCookie, setCookie } from 'cookies-next'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 
-import Link from "next/link";
-import * as Switch from "@radix-ui/react-switch";
+import Link from 'next/link'
+import * as Switch from '@radix-ui/react-switch'
 
-import AboutModal from "~components/AboutModal";
-import AccountModal from "~components/AccountModal";
-import LoginModal from "~components/LoginModal";
-import SignupModal from "~components/SignupModal";
+import AboutModal from '~components/AboutModal'
+import AccountModal from '~components/AccountModal'
+import LoginModal from '~components/LoginModal'
+import SignupModal from '~components/SignupModal'
 
-import "./index.scss";
+import './index.scss'
 
 interface Props {
-  authenticated: boolean;
-  username?: string;
-  logout?: () => void;
+  authenticated: boolean
+  username?: string
+  logout?: () => void
 }
 
 const HeaderMenu = (props: Props) => {
-  const router = useRouter();
-  const { t } = useTranslation("common");
+  const router = useRouter()
+  const { t } = useTranslation('common')
 
-  const accountCookie = getCookie("account");
+  const accountCookie = getCookie('account')
   const accountData: AccountCookie = accountCookie
     ? JSON.parse(accountCookie as string)
-    : null;
+    : null
 
-  const userCookie = getCookie("user");
+  const userCookie = getCookie('user')
   const userData: UserCookie = userCookie
     ? JSON.parse(userCookie as string)
-    : null;
+    : null
 
-  const localeCookie = getCookie("NEXT_LOCALE");
+  const localeCookie = getCookie('NEXT_LOCALE')
 
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(false)
 
   useEffect(() => {
-    const locale = localeCookie;
-    setChecked(locale === "ja" ? true : false);
-  }, [localeCookie]);
+    const locale = localeCookie
+    setChecked(locale === 'ja' ? true : false)
+  }, [localeCookie])
 
   function handleCheckedChange(value: boolean) {
-    const language = value ? "ja" : "en";
-    setCookie("NEXT_LOCALE", language, { path: "/" });
-    router.push(router.asPath, undefined, { locale: language });
+    const language = value ? 'ja' : 'en'
+    setCookie('NEXT_LOCALE', language, { path: '/' })
+    router.push(router.asPath, undefined, { locale: language })
   }
 
   function authItems() {
@@ -54,7 +54,7 @@ const HeaderMenu = (props: Props) => {
         <ul className="Menu auth">
           <div className="MenuGroup">
             <li className="MenuItem profile">
-              <Link href={`/${accountData.username}` || ""} passHref>
+              <Link href={`/${accountData.username}` || ''} passHref>
                 <div>
                   <span>{accountData.username}</span>
                   <img
@@ -68,18 +68,18 @@ const HeaderMenu = (props: Props) => {
               </Link>
             </li>
             <li className="MenuItem">
-              <Link href={`/saved` || ""}>{t("menu.saved")}</Link>
+              <Link href={`/saved` || ''}>{t('menu.saved')}</Link>
             </li>
           </div>
           <div className="MenuGroup">
             <li className="MenuItem">
-              <Link href="/teams">{t("menu.teams")}</Link>
+              <Link href="/teams">{t('menu.teams')}</Link>
             </li>
 
             <li className="MenuItem disabled">
               <div>
-                <span>{t("menu.guides")}</span>
-                <i className="tag">{t("coming_soon")}</i>
+                <span>{t('menu.guides')}</span>
+                <i className="tag">{t('coming_soon')}</i>
               </div>
             </li>
           </div>
@@ -87,12 +87,12 @@ const HeaderMenu = (props: Props) => {
             <AboutModal />
             <AccountModal />
             <li className="MenuItem" onClick={props.logout}>
-              <span>{t("menu.logout")}</span>
+              <span>{t('menu.logout')}</span>
             </li>
           </div>
         </ul>
       </nav>
-    );
+    )
   }
 
   function unauthItems() {
@@ -100,7 +100,7 @@ const HeaderMenu = (props: Props) => {
       <ul className="Menu unauth">
         <div className="MenuGroup">
           <li className="MenuItem language">
-            <span>{t("menu.language")}</span>
+            <span>{t('menu.language')}</span>
             <Switch.Root
               className="Switch"
               onCheckedChange={handleCheckedChange}
@@ -114,13 +114,13 @@ const HeaderMenu = (props: Props) => {
         </div>
         <div className="MenuGroup">
           <li className="MenuItem">
-            <Link href="/teams">{t("menu.teams")}</Link>
+            <Link href="/teams">{t('menu.teams')}</Link>
           </li>
 
           <li className="MenuItem disabled">
             <div>
-              <span>{t("menu.guides")}</span>
-              <i className="tag">{t("coming_soon")}</i>
+              <span>{t('menu.guides')}</span>
+              <i className="tag">{t('coming_soon')}</i>
             </div>
           </li>
         </div>
@@ -132,10 +132,10 @@ const HeaderMenu = (props: Props) => {
           <SignupModal />
         </div>
       </ul>
-    );
+    )
   }
 
-  return props.authenticated ? authItems() : unauthItems();
-};
+  return props.authenticated ? authItems() : unauthItems()
+}
 
-export default HeaderMenu;
+export default HeaderMenu

@@ -1,7 +1,7 @@
 interface TeamElement {
-  id: number;
+  id: number
   name: {
-    en: string;
-    ja: string;
-  };
+    en: string
+    ja: string
+  }
 }

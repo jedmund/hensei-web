@@ -1,8 +1,8 @@
-import type { ReactElement } from "react";
-import TopHeader from "~components/TopHeader";
+import type { ReactElement } from 'react'
+import TopHeader from '~components/TopHeader'
 
 interface Props {
-  children: ReactElement;
+  children: ReactElement
 }
 
 const Layout = ({ children }: Props) => {
@@ -11,7 +11,7 @@ const Layout = ({ children }: Props) => {
       <TopHeader />
       <main>{children}</main>
     </>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout

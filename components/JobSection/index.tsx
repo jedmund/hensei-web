@@ -1,101 +1,99 @@
-import React, { ForwardedRef, useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { useSnapshot } from "valtio";
-import { useTranslation } from "next-i18next";
+import React, { ForwardedRef, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
-import JobDropdown from "~components/JobDropdown";
-import JobSkillItem from "~components/JobSkillItem";
-import SearchModal from "~components/SearchModal";
+import JobDropdown from '~components/JobDropdown'
+import JobSkillItem from '~components/JobSkillItem'
+import SearchModal from '~components/SearchModal'
 
-import { appState } from "~utils/appState";
+import { appState } from '~utils/appState'
 
-import type { JobSkillObject, SearchableObject } from "~types";
+import type { JobSkillObject, SearchableObject } from '~types'
 
-import "./index.scss";
+import './index.scss'
 
 // Props
 interface Props {
-  job?: Job;
-  jobSkills: JobSkillObject;
-  editable: boolean;
-  saveJob: (job: Job) => void;
-  saveSkill: (skill: JobSkill, position: number) => void;
+  job?: Job
+  jobSkills: JobSkillObject
+  editable: boolean
+  saveJob: (job: Job) => void
+  saveSkill: (skill: JobSkill, position: number) => void
 }
 
 const JobSection = (props: Props) => {
-  const { party } = useSnapshot(appState);
-  const { t } = useTranslation("common");
+  const { party } = useSnapshot(appState)
+  const { t } = useTranslation('common')
 
-  const router = useRouter();
+  const router = useRouter()
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale)
-      ? router.locale
-      : "en";
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
-  const [job, setJob] = useState<Job>();
-  const [imageUrl, setImageUrl] = useState("");
-  const [numSkills, setNumSkills] = useState(4);
+  const [job, setJob] = useState<Job>()
+  const [imageUrl, setImageUrl] = useState('')
+  const [numSkills, setNumSkills] = useState(4)
   const [skills, setSkills] = useState<{ [key: number]: JobSkill | undefined }>(
     []
-  );
+  )
 
-  const selectRef = React.createRef<HTMLSelectElement>();
+  const selectRef = React.createRef<HTMLSelectElement>()
 
   useEffect(() => {
     // Set current job based on ID
     if (props.job) {
-      setJob(props.job);
+      setJob(props.job)
       setSkills({
         0: props.jobSkills[0],
         1: props.jobSkills[1],
         2: props.jobSkills[2],
         3: props.jobSkills[3],
-      });
+      })
 
-      if (selectRef.current) selectRef.current.value = props.job.id;
+      if (selectRef.current) selectRef.current.value = props.job.id
     }
-  }, [props]);
+  }, [props])
 
   useEffect(() => {
-    generateImageUrl();
-  });
+    generateImageUrl()
+  })
 
   useEffect(() => {
     if (job) {
       if ((party.job && job.id != party.job.id) || !party.job)
-        appState.party.job = job;
-      if (job.row === "1") setNumSkills(3);
-      else setNumSkills(4);
+        appState.party.job = job
+      if (job.row === '1') setNumSkills(3)
+      else setNumSkills(4)
     }
-  }, [job]);
+  }, [job])
 
   function receiveJob(job?: Job) {
     if (job) {
-      setJob(job);
-      props.saveJob(job);
+      setJob(job)
+      props.saveJob(job)
     }
   }
 
   function generateImageUrl() {
-    let imgSrc = "";
+    let imgSrc = ''
 
     if (job) {
-      const slug = job?.name.en.replaceAll(" ", "-").toLowerCase();
-      const gender = party.user && party.user.gender == 1 ? "b" : "a";
+      const slug = job?.name.en.replaceAll(' ', '-').toLowerCase()
+      const gender = party.user && party.user.gender == 1 ? 'b' : 'a'
 
-      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/jobs/${slug}_${gender}.png`;
+      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/jobs/${slug}_${gender}.png`
     }
 
-    setImageUrl(imgSrc);
+    setImageUrl(imgSrc)
   }
 
   const canEditSkill = (skill?: JobSkill) => {
     if (job && skill) {
-      if (skill.job.id === job.id && skill.main && !skill.sub) return false;
+      if (skill.job.id === job.id && skill.main && !skill.sub) return false
     }
 
-    return props.editable;
-  };
+    return props.editable
+  }
 
   const skillItem = (index: number, editable: boolean) => {
     return (
@@ -103,15 +101,15 @@ const JobSection = (props: Props) => {
         skill={skills[index]}
         editable={canEditSkill(skills[index])}
         key={`skill-${index}`}
-        hasJob={job != undefined && job.id != "-1"}
+        hasJob={job != undefined && job.id != '-1'}
       />
-    );
-  };
+    )
+  }
 
   const editableSkillItem = (index: number) => {
     return (
       <SearchModal
-        placeholderText={t("search.placeholders.job_skill")}
+        placeholderText={t('search.placeholders.job_skill')}
         fromPosition={index}
         object="job_skills"
         job={job}
@@ -119,17 +117,17 @@ const JobSection = (props: Props) => {
       >
         {skillItem(index, true)}
       </SearchModal>
-    );
-  };
+    )
+  }
 
   function saveJobSkill(object: SearchableObject, position: number) {
-    const skill = object as JobSkill;
+    const skill = object as JobSkill
 
-    const newSkills = skills;
-    newSkills[position] = skill;
-    setSkills(newSkills);
+    const newSkills = skills
+    newSkills[position] = skill
+    setSkills(newSkills)
 
-    props.saveSkill(skill, position);
+    props.saveSkill(skill, position)
   }
 
   // Render: JSX components
@@ -161,7 +159,7 @@ const JobSection = (props: Props) => {
         </ul>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default JobSection;
+export default JobSection

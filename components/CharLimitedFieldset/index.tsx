@@ -1,33 +1,33 @@
-import React, { useEffect, useState } from "react";
-import "./index.scss";
+import React, { useEffect, useState } from 'react'
+import './index.scss'
 
 interface Props {
-  fieldName: string;
-  placeholder: string;
-  value?: string;
-  limit: number;
-  error: string;
-  onBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  fieldName: string
+  placeholder: string
+  value?: string
+  limit: number
+  error: string
+  onBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const CharLimitedFieldset = React.forwardRef<HTMLInputElement, Props>(
   function useFieldSet(props, ref) {
-    const fieldType = ["password", "confirm_password"].includes(props.fieldName)
-      ? "password"
-      : "text";
+    const fieldType = ['password', 'confirm_password'].includes(props.fieldName)
+      ? 'password'
+      : 'text'
 
-    const [currentCount, setCurrentCount] = useState(0);
+    const [currentCount, setCurrentCount] = useState(0)
 
     useEffect(() => {
       setCurrentCount(
         props.value ? props.limit - props.value.length : props.limit
-      );
-    }, [props.limit, props.value]);
+      )
+    }, [props.limit, props.value])
 
     function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-      setCurrentCount(props.limit - event.currentTarget.value.length);
-      if (props.onChange) props.onChange(event);
+      setCurrentCount(props.limit - event.currentTarget.value.length)
+      if (props.onChange) props.onChange(event)
     }
 
     return (
@@ -39,7 +39,7 @@ const CharLimitedFieldset = React.forwardRef<HTMLInputElement, Props>(
             type={fieldType}
             name={props.fieldName}
             placeholder={props.placeholder}
-            defaultValue={props.value || ""}
+            defaultValue={props.value || ''}
             onBlur={props.onBlur}
             onChange={onChange}
             maxLength={props.limit}
@@ -50,8 +50,8 @@ const CharLimitedFieldset = React.forwardRef<HTMLInputElement, Props>(
         </div>
         {props.error.length > 0 && <p className="InputError">{props.error}</p>}
       </fieldset>
-    );
+    )
   }
-);
+)
 
-export default CharLimitedFieldset;
+export default CharLimitedFieldset

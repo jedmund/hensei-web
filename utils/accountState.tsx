@@ -1,20 +1,20 @@
-import { proxy } from "valtio";
+import { proxy } from 'valtio'
 
 interface AccountState {
-  [key: string]: any;
+  [key: string]: any
 
   account: {
-    authorized: boolean;
+    authorized: boolean
     user:
       | {
-          id: string;
-          username: string;
-          picture: string;
-          element: string;
-          gender: number;
+          id: string
+          username: string
+          picture: string
+          element: string
+          gender: number
         }
-      | undefined;
-  };
+      | undefined
+  }
 }
 
 export const initialAccountState: AccountState = {
@@ -22,6 +22,6 @@ export const initialAccountState: AccountState = {
     authorized: false,
     user: undefined,
   },
-};
+}
 
-export const accountState = proxy(initialAccountState);
+export const accountState = proxy(initialAccountState)

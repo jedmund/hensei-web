@@ -1,62 +1,62 @@
-import { proxy } from "valtio";
-import { JobSkillObject } from "~types";
+import { proxy } from 'valtio'
+import { JobSkillObject } from '~types'
 
 const emptyJob: Job = {
-  id: "-1",
-  row: "",
+  id: '-1',
+  row: '',
   ml: false,
   order: 0,
   name: {
-    en: "",
-    ja: "",
+    en: '',
+    ja: '',
   },
   proficiency: {
     proficiency1: 0,
     proficiency2: 0,
   },
-};
+}
 
 interface AppState {
-  [key: string]: any;
+  [key: string]: any
 
   party: {
-    id: string | undefined;
-    editable: boolean;
-    detailsVisible: boolean;
-    name: string | undefined;
-    description: string | undefined;
-    job: Job;
-    jobSkills: JobSkillObject;
-    raid: Raid | undefined;
-    element: number;
-    extra: boolean;
-    user: User | undefined;
-    favorited: boolean;
-    created_at: string;
-    updated_at: string;
-  };
+    id: string | undefined
+    editable: boolean
+    detailsVisible: boolean
+    name: string | undefined
+    description: string | undefined
+    job: Job
+    jobSkills: JobSkillObject
+    raid: Raid | undefined
+    element: number
+    extra: boolean
+    user: User | undefined
+    favorited: boolean
+    created_at: string
+    updated_at: string
+  }
   grid: {
     weapons: {
-      mainWeapon: GridWeapon | undefined;
-      allWeapons: GridArray<GridWeapon>;
-    };
+      mainWeapon: GridWeapon | undefined
+      allWeapons: GridArray<GridWeapon>
+    }
     summons: {
-      mainSummon: GridSummon | undefined;
-      friendSummon: GridSummon | undefined;
-      allSummons: GridArray<GridSummon>;
-    };
-    characters: GridArray<GridCharacter>;
-  };
+      mainSummon: GridSummon | undefined
+      friendSummon: GridSummon | undefined
+      allSummons: GridArray<GridSummon>
+    }
+    characters: GridArray<GridCharacter>
+  }
   search: {
     recents: {
-      characters: Character[];
-      weapons: Weapon[];
-      summons: Summon[];
-    };
-  };
-  raids: Raid[];
-  jobs: Job[];
-  jobSkills: JobSkill[];
+      characters: Character[]
+      weapons: Weapon[]
+      summons: Summon[]
+    }
+  }
+  raids: Raid[]
+  jobs: Job[]
+  jobSkills: JobSkill[]
 }
 
 export const initialAppState: AppState = {
@@ -103,6 +103,6 @@ export const initialAppState: AppState = {
   raids: [],
   jobs: [],
   jobSkills: [],
-};
+}
 
-export const appState = proxy(initialAppState);
+export const appState = proxy(initialAppState)

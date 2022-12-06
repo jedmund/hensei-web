@@ -67,7 +67,7 @@
           cursor: pointer;
         }
 
-        &[data-state="checked"] {
+        &[data-state='checked'] {
           background: $grey-100;
           transform: translateX(17px);
         }

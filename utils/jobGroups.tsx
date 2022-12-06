@@ -1,60 +1,60 @@
 interface JobGroup {
-  slug: string;
+  slug: string
   name: {
-    [key: string]: string;
-    en: string;
-    ja: string;
-  };
+    [key: string]: string
+    en: string
+    ja: string
+  }
 }
 
 export const jobGroups: JobGroup[] = [
   {
-    slug: "1",
+    slug: '1',
     name: {
-      en: "Row I",
-      ja: "Class I",
+      en: 'Row I',
+      ja: 'Class I',
     },
   },
   {
-    slug: "2",
+    slug: '2',
     name: {
-      en: "Row II",
-      ja: "Class II",
+      en: 'Row II',
+      ja: 'Class II',
     },
   },
   {
-    slug: "3",
+    slug: '3',
     name: {
-      en: "Row III",
-      ja: "Class III",
+      en: 'Row III',
+      ja: 'Class III',
     },
   },
   {
-    slug: "4",
+    slug: '4',
     name: {
-      en: "Row IV",
-      ja: "Class IV",
+      en: 'Row IV',
+      ja: 'Class IV',
     },
   },
   {
-    slug: "5",
+    slug: '5',
     name: {
-      en: "Row V",
-      ja: "Class V",
+      en: 'Row V',
+      ja: 'Class V',
     },
   },
   {
-    slug: "ex1",
+    slug: 'ex1',
     name: {
-      en: "Extra I",
-      ja: "EXTRA I",
+      en: 'Extra I',
+      ja: 'EXTRA I',
     },
   },
   {
-    slug: "ex2",
+    slug: 'ex2',
     name: {
-      en: "Extra II",
-      ja: "EXTRA II",
+      en: 'Extra II',
+      ja: 'EXTRA II',
     },
   },
-];
+]

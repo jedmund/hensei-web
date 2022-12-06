@@ -22,7 +22,7 @@
         box-shadow: 0 0 0 2px $grey-10;
       }
 
-      &[data-state="checked"] {
+      &[data-state='checked'] {
         background: $grey-10;
       }
     }
@@ -40,7 +40,7 @@
         cursor: pointer;
       }
 
-      &[data-state="checked"] {
+      &[data-state='checked'] {
         background: $grey-100;
         transform: translateX(21px);
       }
@@ -75,7 +75,7 @@
       gap: $unit * 2;
 
       select {
-        background: no-repeat url("/icons/ArrowDark.svg"), $grey-90;
+        background: no-repeat url('/icons/ArrowDark.svg'), $grey-90;
         background-position-y: center;
         background-position-x: 95%;
         margin: 0;

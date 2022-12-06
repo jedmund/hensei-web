@@ -1,5 +1,5 @@
 interface AccountCookie {
-  userId: string;
-  username: string;
-  token: string;
+  userId: string
+  username: string
+  token: string
 }

@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 
-import { skillGroups } from "~utils/skillGroups";
+import { skillGroups } from '~utils/skillGroups'
 
-import "./index.scss";
+import './index.scss'
 
 interface Props {
-  sendFilters: (filters: { [key: string]: number }) => void;
+  sendFilters: (filters: { [key: string]: number }) => void
 }
 
 const JobSkillSearchFilterBar = (props: Props) => {
   // Set up translation
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common')
 
-  const [currentGroup, setCurrentGroup] = useState(-1);
+  const [currentGroup, setCurrentGroup] = useState(-1)
 
   function onChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setCurrentGroup(parseInt(event.target.value));
+    setCurrentGroup(parseInt(event.target.value))
   }
 
   function onBlur(event: React.ChangeEvent<HTMLSelectElement>) {}
@@ -25,14 +25,14 @@ const JobSkillSearchFilterBar = (props: Props) => {
   function sendFilters() {
     const filters = {
       group: currentGroup,
-    };
+    }
 
-    props.sendFilters(filters);
+    props.sendFilters(filters)
   }
 
   useEffect(() => {
-    sendFilters();
-  }, [currentGroup]);
+    sendFilters()
+  }, [currentGroup])
 
   return (
     <div className="SearchFilterBar">
@@ -65,7 +65,7 @@ const JobSkillSearchFilterBar = (props: Props) => {
         </option>
       </select>
     </div>
-  );
-};
+  )
+}
 
-export default JobSkillSearchFilterBar;
+export default JobSkillSearchFilterBar

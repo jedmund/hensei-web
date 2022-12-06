@@ -1,120 +1,120 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Head from "next/head";
+import React, { useCallback, useEffect, useState } from 'react'
+import Head from 'next/head'
 
-import { getCookie } from "cookies-next";
-import { queryTypes, useQueryState } from "next-usequerystate";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { getCookie } from 'cookies-next'
+import { queryTypes, useQueryState } from 'next-usequerystate'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import clonedeep from "lodash.clonedeep";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import clonedeep from 'lodash.clonedeep'
 
-import api from "~utils/api";
-import useDidMountEffect from "~utils/useDidMountEffect";
-import { elements, allElement } from "~utils/Element";
+import api from '~utils/api'
+import useDidMountEffect from '~utils/useDidMountEffect'
+import { elements, allElement } from '~utils/Element'
 
-import GridRep from "~components/GridRep";
-import GridRepCollection from "~components/GridRepCollection";
-import FilterBar from "~components/FilterBar";
+import GridRep from '~components/GridRep'
+import GridRepCollection from '~components/GridRepCollection'
+import FilterBar from '~components/FilterBar'
 
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 interface Props {
-  teams?: { count: number; total_pages: number; results: Party[] };
-  raids: Raid[];
-  sortedRaids: Raid[][];
+  teams?: { count: number; total_pages: number; results: Party[] }
+  raids: Raid[]
+  sortedRaids: Raid[][]
 }
 
 const SavedRoute: React.FC<Props> = (props: Props) => {
   // Set up cookies
-  const cookie = getCookie("account");
+  const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
-    : null;
+    : null
   const headers = accountData
     ? { Authorization: `Bearer ${accountData.token}` }
-    : {};
+    : {}
 
   // Set up router
-  const router = useRouter();
+  const router = useRouter()
 
   // Import translations
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common')
 
   // Set up app-specific states
-  const [raidsLoading, setRaidsLoading] = useState(true);
-  const [scrolled, setScrolled] = useState(false);
+  const [raidsLoading, setRaidsLoading] = useState(true)
+  const [scrolled, setScrolled] = useState(false)
 
   // Set up page-specific states
-  const [parties, setParties] = useState<Party[]>([]);
-  const [raids, setRaids] = useState<Raid[]>();
-  const [raid, setRaid] = useState<Raid>();
+  const [parties, setParties] = useState<Party[]>([])
+  const [raids, setRaids] = useState<Raid[]>()
+  const [raid, setRaid] = useState<Raid>()
 
   // Set up infinite scrolling-related states
-  const [recordCount, setRecordCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [recordCount, setRecordCount] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   // Set up filter-specific query states
   // Recency is in seconds
-  const [element, setElement] = useQueryState("element", {
+  const [element, setElement] = useQueryState('element', {
     defaultValue: -1,
     parse: (query: string) => parseElement(query),
     serialize: (value) => serializeElement(value),
-  });
-  const [raidSlug, setRaidSlug] = useQueryState("raid", {
-    defaultValue: "all",
-  });
+  })
+  const [raidSlug, setRaidSlug] = useQueryState('raid', {
+    defaultValue: 'all',
+  })
   const [recency, setRecency] = useQueryState(
-    "recency",
+    'recency',
     queryTypes.integer.withDefault(-1)
-  );
+  )
 
   // Define transformers for element
   function parseElement(query: string) {
     let element: TeamElement | undefined =
-      query === "all"
+      query === 'all'
         ? allElement
-        : elements.find((element) => element.name.en.toLowerCase() === query);
-    return element ? element.id : -1;
+        : elements.find((element) => element.name.en.toLowerCase() === query)
+    return element ? element.id : -1
   }
 
   function serializeElement(value: number | undefined) {
-    let name = "";
+    let name = ''
 
     if (value != undefined) {
-      if (value == -1) name = allElement.name.en.toLowerCase();
-      else name = elements[value].name.en.toLowerCase();
+      if (value == -1) name = allElement.name.en.toLowerCase()
+      else name = elements[value].name.en.toLowerCase()
     }
 
-    return name;
+    return name
   }
 
   // Set the initial parties from props
   useEffect(() => {
     if (props.teams) {
-      setTotalPages(props.teams.total_pages);
-      setRecordCount(props.teams.count);
-      replaceResults(props.teams.count, props.teams.results);
+      setTotalPages(props.teams.total_pages)
+      setRecordCount(props.teams.count)
+      replaceResults(props.teams.count, props.teams.results)
     }
-    setCurrentPage(1);
-  }, []);
+    setCurrentPage(1)
+  }, [])
 
   // Add scroll event listener for shadow on FilterBar on mount
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Handle errors
   const handleError = useCallback((error: any) => {
     if (error.response != null) {
-      console.error(error);
+      console.error(error)
     } else {
-      console.error("There was an error.");
+      console.error('There was an error.')
     }
-  }, []);
+  }, [])
 
   const fetchTeams = useCallback(
     ({ replace }: { replace: boolean }) => {
@@ -125,63 +125,63 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
           recency: recency != -1 ? recency : undefined,
           page: currentPage,
         },
-      };
+      }
 
       api
         .savedTeams({ ...filters, ...{ headers: headers } })
         .then((response) => {
-          setTotalPages(response.data.total_pages);
-          setRecordCount(response.data.count);
+          setTotalPages(response.data.total_pages)
+          setRecordCount(response.data.count)
 
           if (replace)
-            replaceResults(response.data.count, response.data.results);
-          else appendResults(response.data.results);
+            replaceResults(response.data.count, response.data.results)
+          else appendResults(response.data.results)
         })
-        .catch((error) => handleError(error));
+        .catch((error) => handleError(error))
     },
     [currentPage, parties, element, raid, recency]
-  );
+  )
 
   function replaceResults(count: number, list: Party[]) {
     if (count > 0) {
-      setParties(list);
+      setParties(list)
     } else {
-      setParties([]);
+      setParties([])
     }
   }
 
   function appendResults(list: Party[]) {
-    setParties([...parties, ...list]);
+    setParties([...parties, ...list])
   }
 
   // Fetch all raids on mount, then find the raid in the URL if present
   useEffect(() => {
     api.endpoints.raids.getAll().then((response) => {
-      const cleanRaids: Raid[] = response.data.map((r: any) => r.raid);
-      setRaids(cleanRaids);
+      const cleanRaids: Raid[] = response.data.map((r: any) => r.raid)
+      setRaids(cleanRaids)
 
-      setRaidsLoading(false);
+      setRaidsLoading(false)
 
-      const raid = cleanRaids.find((r) => r.slug === raidSlug);
-      setRaid(raid);
+      const raid = cleanRaids.find((r) => r.slug === raidSlug)
+      setRaid(raid)
 
-      return raid;
-    });
-  }, [setRaids]);
+      return raid
+    })
+  }, [setRaids])
 
   // When the element, raid or recency filter changes,
   // fetch all teams again.
   useDidMountEffect(() => {
-    setCurrentPage(1);
-    fetchTeams({ replace: true });
-  }, [element, raid, recency]);
+    setCurrentPage(1)
+    fetchTeams({ replace: true })
+  }, [element, raid, recency])
 
   // When the page changes, fetch all teams again.
   useDidMountEffect(() => {
     // Current page changed
-    if (currentPage > 1) fetchTeams({ replace: false });
-    else if (currentPage == 1) fetchTeams({ replace: true });
-  }, [currentPage]);
+    if (currentPage > 1) fetchTeams({ replace: false })
+    else if (currentPage == 1) fetchTeams({ replace: true })
+  }, [currentPage])
 
   // Receive filters from the filter bar
   function receiveFilters({
@@ -189,68 +189,68 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
     raidSlug,
     recency,
   }: {
-    element?: number;
-    raidSlug?: string;
-    recency?: number;
+    element?: number
+    raidSlug?: string
+    recency?: number
   }) {
-    if (element == 0) setElement(0);
-    else if (element) setElement(element);
+    if (element == 0) setElement(0)
+    else if (element) setElement(element)
 
     if (raids && raidSlug) {
-      const raid = raids.find((raid) => raid.slug === raidSlug);
-      setRaid(raid);
-      setRaidSlug(raidSlug);
+      const raid = raids.find((raid) => raid.slug === raidSlug)
+      setRaid(raid)
+      setRaidSlug(raidSlug)
     }
 
-    if (recency) setRecency(recency);
+    if (recency) setRecency(recency)
   }
 
   // Methods: Favorites
   function toggleFavorite(teamId: string, favorited: boolean) {
-    if (favorited) unsaveFavorite(teamId);
-    else saveFavorite(teamId);
+    if (favorited) unsaveFavorite(teamId)
+    else saveFavorite(teamId)
   }
 
   function saveFavorite(teamId: string) {
     api.saveTeam({ id: teamId, params: headers }).then((response) => {
       if (response.status == 201) {
-        const index = parties.findIndex((p) => p.id === teamId);
-        const party = parties[index];
+        const index = parties.findIndex((p) => p.id === teamId)
+        const party = parties[index]
 
-        party.favorited = true;
+        party.favorited = true
 
-        let clonedParties = clonedeep(parties);
-        clonedParties[index] = party;
+        let clonedParties = clonedeep(parties)
+        clonedParties[index] = party
 
-        setParties(clonedParties);
+        setParties(clonedParties)
       }
-    });
+    })
   }
 
   function unsaveFavorite(teamId: string) {
     api.unsaveTeam({ id: teamId, params: headers }).then((response) => {
       if (response.status == 200) {
-        const index = parties.findIndex((p) => p.id === teamId);
-        const party = parties[index];
+        const index = parties.findIndex((p) => p.id === teamId)
+        const party = parties[index]
 
-        party.favorited = false;
+        party.favorited = false
 
-        let clonedParties = clonedeep(parties);
-        clonedParties.splice(index, 1);
+        let clonedParties = clonedeep(parties)
+        clonedParties.splice(index, 1)
 
-        setParties(clonedParties);
+        setParties(clonedParties)
       }
-    });
+    })
   }
 
   // Methods: Navigation
   function handleScroll() {
-    if (window.pageYOffset > 90) setScrolled(true);
-    else setScrolled(false);
+    if (window.pageYOffset > 90) setScrolled(true)
+    else setScrolled(false)
   }
 
   function goTo(shortcode: string) {
-    router.push(`/p/${shortcode}`);
+    router.push(`/p/${shortcode}`)
   }
 
   function renderParties() {
@@ -270,14 +270,14 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
           onClick={goTo}
           onSave={toggleFavorite}
         />
-      );
-    });
+      )
+    })
   }
 
   return (
     <div id="Teams">
       <Head>
-        <title>{t("saved.title")}</title>
+        <title>{t('saved.title')}</title>
 
         <meta property="og:title" content="Your saved Teams" />
         <meta property="og:url" content="https://app.granblue.team/saved" />
@@ -295,7 +295,7 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
         raidSlug={raidSlug ? raidSlug : undefined}
         recency={recency}
       >
-        <h1>{t("saved.title")}</h1>
+        <h1>{t('saved.title')}</h1>
       </FilterBar>
 
       <section>
@@ -314,25 +314,25 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
 
         {parties.length == 0 ? (
           <div id="NotFound">
-            <h2>{t("saved.not_found")}</h2>
+            <h2>{t('saved.not_found')}</h2>
           </div>
         ) : (
-          ""
+          ''
         )}
       </section>
     </div>
-  );
-};
+  )
+}
 
 export const getServerSidePaths = async () => {
   return {
     paths: [
       // Object variant:
-      { params: { party: "string" } },
+      { params: { party: 'string' } },
     ],
     fallback: true,
-  };
-};
+  }
+}
 
 // prettier-ignore
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
@@ -399,31 +399,31 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 const organizeRaids = (raids: Raid[]) => {
   // Set up empty raid for "All raids"
   const all = {
-    id: "0",
+    id: '0',
     name: {
-      en: "All raids",
-      ja: "全て",
+      en: 'All raids',
+      ja: '全て',
     },
-    slug: "all",
+    slug: 'all',
     level: 0,
     group: 0,
     element: 0,
-  };
+  }
 
   const numGroups = Math.max.apply(
     Math,
     raids.map((raid) => raid.group)
-  );
-  let groupedRaids = [];
+  )
+  let groupedRaids = []
 
   for (let i = 0; i <= numGroups; i++) {
-    groupedRaids[i] = raids.filter((raid) => raid.group == i);
+    groupedRaids[i] = raids.filter((raid) => raid.group == i)
   }
 
   return {
     raids: raids,
     sortedRaids: groupedRaids,
-  };
-};
+  }
+}
 
-export default SavedRoute;
+export default SavedRoute

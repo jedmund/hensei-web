@@ -1,69 +1,69 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { useSnapshot } from "valtio";
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useSnapshot } from 'valtio'
 
-import { appState } from "~utils/appState";
-import { jobGroups } from "~utils/jobGroups";
+import { appState } from '~utils/appState'
+import { jobGroups } from '~utils/jobGroups'
 
-import "./index.scss";
+import './index.scss'
 
 // Props
 interface Props {
-  currentJob?: string;
-  onChange?: (job?: Job) => void;
-  onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  currentJob?: string
+  onChange?: (job?: Job) => void
+  onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
-type GroupedJob = { [key: string]: Job[] };
+type GroupedJob = { [key: string]: Job[] }
 
 const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
   function useFieldSet(props, ref) {
     // Set up router for locale
-    const router = useRouter();
-    const locale = router.locale || "en";
+    const router = useRouter()
+    const locale = router.locale || 'en'
 
     // Create snapshot of app state
-    const { party } = useSnapshot(appState);
+    const { party } = useSnapshot(appState)
 
     // Set up local states for storing jobs
-    const [currentJob, setCurrentJob] = useState<Job>();
-    const [jobs, setJobs] = useState<Job[]>();
-    const [sortedJobs, setSortedJobs] = useState<GroupedJob>();
+    const [currentJob, setCurrentJob] = useState<Job>()
+    const [jobs, setJobs] = useState<Job[]>()
+    const [sortedJobs, setSortedJobs] = useState<GroupedJob>()
 
     // Set current job from state on mount
     useEffect(() => {
-      setCurrentJob(party.job);
-    }, []);
+      setCurrentJob(party.job)
+    }, [])
 
     // Organize jobs into groups on mount
     useEffect(() => {
       const jobGroups = appState.jobs
         .map((job) => job.row)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      let groupedJobs: GroupedJob = {};
+        .filter((value, index, self) => self.indexOf(value) === index)
+      let groupedJobs: GroupedJob = {}
 
       jobGroups.forEach((group) => {
-        groupedJobs[group] = appState.jobs.filter((job) => job.row === group);
-      });
+        groupedJobs[group] = appState.jobs.filter((job) => job.row === group)
+      })
 
-      setJobs(appState.jobs);
-      setSortedJobs(groupedJobs);
-    }, [appState]);
+      setJobs(appState.jobs)
+      setSortedJobs(groupedJobs)
+    }, [appState])
 
     // Set current job on mount
     useEffect(() => {
       if (jobs && props.currentJob) {
-        const job = appState.jobs.find((job) => job.id === props.currentJob);
-        setCurrentJob(job);
+        const job = appState.jobs.find((job) => job.id === props.currentJob)
+        setCurrentJob(job)
       }
-    }, [appState, props.currentJob]);
+    }, [appState, props.currentJob])
 
     // Enable changing select value
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
       if (jobs) {
-        const job = jobs.find((job) => job.id === event.target.value);
-        if (props.onChange) props.onChange(job);
-        setCurrentJob(job);
+        const job = jobs.find((job) => job.id === event.target.value)
+        if (props.onChange) props.onChange(job)
+        setCurrentJob(job)
       }
     }
 
@@ -79,16 +79,16 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
               <option key={i} value={item.id}>
                 {item.name[locale]}
               </option>
-            );
-          });
+            )
+          })
 
-      const groupName = jobGroups.find((g) => g.slug === group)?.name[locale];
+      const groupName = jobGroups.find((g) => g.slug === group)?.name[locale]
 
       return (
         <optgroup key={group} label={groupName}>
           {options}
         </optgroup>
-      );
+      )
     }
 
     return (
@@ -104,10 +104,10 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
         </option>
         {sortedJobs
           ? Object.keys(sortedJobs).map((x) => renderJobGroup(x))
-          : ""}
+          : ''}
       </select>
-    );
+    )
   }
-);
+)
 
-export default JobDropdown;
+export default JobDropdown

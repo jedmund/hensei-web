@@ -1,12 +1,12 @@
 interface Raid {
-  id: string;
+  id: string
   name: {
-    [key: string]: string;
-    en: string;
-    ja: string;
-  };
-  slug: string;
-  level: number;
-  group: number;
-  element: number;
+    [key: string]: string
+    en: string
+    ja: string
+  }
+  slug: string
+  level: number
+  group: number
+  element: number
 }

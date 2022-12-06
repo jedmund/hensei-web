@@ -1,18 +1,18 @@
-import React from "react";
-import { useTranslation } from "next-i18next";
-import * as Dialog from "@radix-ui/react-dialog";
+import React from 'react'
+import { useTranslation } from 'next-i18next'
+import * as Dialog from '@radix-ui/react-dialog'
 
-import CrossIcon from "~public/icons/Cross.svg";
-import "./index.scss";
+import CrossIcon from '~public/icons/Cross.svg'
+import './index.scss'
 
 const AboutModal = () => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common')
 
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <li className="MenuItem">
-          <span>{t("modals.about.title")}</span>
+          <span>{t('modals.about.title')}</span>
         </li>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -22,7 +22,7 @@ const AboutModal = () => {
         >
           <div className="DialogHeader">
             <Dialog.Title className="DialogTitle">
-              {t("menu.about")}
+              {t('menu.about')}
             </Dialog.Title>
             <Dialog.Close className="DialogClose" asChild>
               <span>
@@ -33,7 +33,7 @@ const AboutModal = () => {
 
           <section>
             <Dialog.Description className="DialogDescription">
-              Granblue.team is a tool to save and share team compositions for{" "}
+              Granblue.team is a tool to save and share team compositions for{' '}
               <a href="https://game.granbluefantasy.jp">Granblue Fantasy.</a>
             </Dialog.Description>
             <Dialog.Description className="DialogDescription">
@@ -49,10 +49,10 @@ const AboutModal = () => {
           <section>
             <Dialog.Title className="DialogTitle">Credits</Dialog.Title>
             <Dialog.Description className="DialogDescription">
-              Granblue.team was built by{" "}
+              Granblue.team was built by{' '}
               <a href="https://twitter.com/jedmund">@jedmund</a> with a lot of
-              help from{" "}
-              <a href="https://twitter.com/lalalalinna">@lalalalinna</a> and{" "}
+              help from{' '}
+              <a href="https://twitter.com/lalalalinna">@lalalalinna</a> and{' '}
               <a href="https://twitter.com/tarngerine">@tarngerine</a>.
             </Dialog.Description>
           </section>
@@ -67,7 +67,7 @@ const AboutModal = () => {
         <Dialog.Overlay className="Overlay" />
       </Dialog.Portal>
     </Dialog.Root>
-  );
-};
+  )
+}
 
-export default AboutModal;
+export default AboutModal

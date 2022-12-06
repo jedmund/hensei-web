@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react'
 
-import "./index.scss";
+import './index.scss'
 
 interface Props {
-  name: string;
-  checked: boolean;
-  editable: boolean;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  name: string
+  checked: boolean
+  editable: boolean
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const ToggleSwitch: React.FC<Props> = (props: Props) => {
@@ -25,7 +25,7 @@ const ToggleSwitch: React.FC<Props> = (props: Props) => {
         <span className="toggle-switch-switch" />
       </label>
     </div>
-  );
-};
+  )
+}
 
-export default ToggleSwitch;
+export default ToggleSwitch

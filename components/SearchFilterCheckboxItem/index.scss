@@ -14,7 +14,7 @@
     cursor: pointer;
   }
 
-  &[data-state="checked"] {
+  &[data-state='checked'] {
     background: $grey-90;
 
     svg {

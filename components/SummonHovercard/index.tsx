@@ -1,64 +1,62 @@
-import React from "react";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
+import React from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 
-import * as HoverCard from "@radix-ui/react-hover-card";
+import * as HoverCard from '@radix-ui/react-hover-card'
 
-import WeaponLabelIcon from "~components/WeaponLabelIcon";
-import UncapIndicator from "~components/UncapIndicator";
+import WeaponLabelIcon from '~components/WeaponLabelIcon'
+import UncapIndicator from '~components/UncapIndicator'
 
-import "./index.scss";
+import './index.scss'
 
 interface Props {
-  gridSummon: GridSummon;
-  children: React.ReactNode;
+  gridSummon: GridSummon
+  children: React.ReactNode
 }
 
 const SummonHovercard = (props: Props) => {
-  const router = useRouter();
-  const { t } = useTranslation("common");
+  const router = useRouter()
+  const { t } = useTranslation('common')
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale)
-      ? router.locale
-      : "en";
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
-  const Element = ["null", "wind", "fire", "water", "earth", "dark", "light"];
+  const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 
-  const tintElement = Element[props.gridSummon.object.element];
+  const tintElement = Element[props.gridSummon.object.element]
   const wikiUrl = `https://gbf.wiki/${props.gridSummon.object.name.en.replaceAll(
-    " ",
-    "_"
-  )}`;
+    ' ',
+    '_'
+  )}`
 
   function summonImage() {
-    let imgSrc = "";
+    let imgSrc = ''
 
     if (props.gridSummon) {
-      const summon = props.gridSummon.object;
+      const summon = props.gridSummon.object
 
       const upgradedSummons = [
-        "2040094000",
-        "2040100000",
-        "2040080000",
-        "2040098000",
-        "2040090000",
-        "2040084000",
-        "2040003000",
-        "2040056000",
-      ];
+        '2040094000',
+        '2040100000',
+        '2040080000',
+        '2040098000',
+        '2040090000',
+        '2040084000',
+        '2040003000',
+        '2040056000',
+      ]
 
-      let suffix = "";
+      let suffix = ''
       if (
         upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
         props.gridSummon.uncap_level == 5
       )
-        suffix = "_02";
+        suffix = '_02'
 
       // Generate the correct source for the summon
-      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`;
+      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
     }
 
-    return imgSrc;
+    return imgSrc
   }
 
   return (
@@ -88,12 +86,12 @@ const SummonHovercard = (props: Props) => {
           </div>
         </div>
         <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-          {t("buttons.wiki")}
+          {t('buttons.wiki')}
         </a>
         <HoverCard.Arrow />
       </HoverCard.Content>
     </HoverCard.Root>
-  );
-};
+  )
+}
 
-export default SummonHovercard;
+export default SummonHovercard

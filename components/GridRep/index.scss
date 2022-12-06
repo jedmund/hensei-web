@@ -50,8 +50,8 @@
       width: 70px;
     }
 
-    .grid_mainhand img[src*="jpg"],
-    .grid_weapon img[src*="jpg"] {
+    .grid_mainhand img[src*='jpg'],
+    .grid_weapon img[src*='jpg'] {
       border-radius: 4px;
       width: 100%;
       height: 100%;

@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react'
 
-import "./index.scss";
+import './index.scss'
 
 interface Props {
-  position: "top" | "bottom";
-  left: JSX.Element;
-  right: JSX.Element;
+  position: 'top' | 'bottom'
+  left: JSX.Element
+  right: JSX.Element
 }
 
 const Header = (props: Props) => {
@@ -15,7 +15,7 @@ const Header = (props: Props) => {
       <div className="push" />
       <div id="right">{props.right}</div>
     </nav>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

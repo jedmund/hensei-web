@@ -1,59 +1,59 @@
-import React from "react";
-import { useTranslation } from "next-i18next";
-import classNames from "classnames";
+import React from 'react'
+import { useTranslation } from 'next-i18next'
+import classNames from 'classnames'
 
-import RaidDropdown from "~components/RaidDropdown";
+import RaidDropdown from '~components/RaidDropdown'
 
-import "./index.scss";
+import './index.scss'
 
 interface Props {
-  children: React.ReactNode;
-  scrolled: boolean;
-  element?: number;
-  raidSlug?: string;
-  recency?: number;
+  children: React.ReactNode
+  scrolled: boolean
+  element?: number
+  raidSlug?: string
+  recency?: number
   onFilter: ({
     element,
     raidSlug,
     recency,
   }: {
-    element?: number;
-    raidSlug?: string;
-    recency?: number;
-  }) => void;
+    element?: number
+    raidSlug?: string
+    recency?: number
+  }) => void
 }
 
 const FilterBar = (props: Props) => {
   // Set up translation
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common')
 
   // Set up refs for filter dropdowns
-  const elementSelect = React.createRef<HTMLSelectElement>();
-  const raidSelect = React.createRef<HTMLSelectElement>();
-  const recencySelect = React.createRef<HTMLSelectElement>();
+  const elementSelect = React.createRef<HTMLSelectElement>()
+  const raidSelect = React.createRef<HTMLSelectElement>()
+  const recencySelect = React.createRef<HTMLSelectElement>()
 
   // Set up classes object for showing shadow on scroll
   const classes = classNames({
     FilterBar: true,
     shadow: props.scrolled,
-  });
+  })
 
   function elementSelectChanged() {
     const elementValue = elementSelect.current
       ? parseInt(elementSelect.current.value)
-      : -1;
-    props.onFilter({ element: elementValue });
+      : -1
+    props.onFilter({ element: elementValue })
   }
 
   function recencySelectChanged() {
     const recencyValue = recencySelect.current
       ? parseInt(recencySelect.current.value)
-      : -1;
-    props.onFilter({ recency: recencyValue });
+      : -1
+    props.onFilter({ recency: recencyValue })
   }
 
   function raidSelectChanged(slug?: string) {
-    props.onFilter({ raidSlug: slug });
+    props.onFilter({ raidSlug: slug })
   }
 
   return (
@@ -65,28 +65,28 @@ const FilterBar = (props: Props) => {
         value={props.element}
       >
         <option data-element="all" key={-1} value={-1}>
-          {t("elements.full.all")}
+          {t('elements.full.all')}
         </option>
         <option data-element="null" key={0} value={0}>
-          {t("elements.full.null")}
+          {t('elements.full.null')}
         </option>
         <option data-element="wind" key={1} value={1}>
-          {t("elements.full.wind")}
+          {t('elements.full.wind')}
         </option>
         <option data-element="fire" key={2} value={2}>
-          {t("elements.full.fire")}
+          {t('elements.full.fire')}
         </option>
         <option data-element="water" key={3} value={3}>
-          {t("elements.full.water")}
+          {t('elements.full.water')}
         </option>
         <option data-element="earth" key={4} value={4}>
-          {t("elements.full.earth")}
+          {t('elements.full.earth')}
         </option>
         <option data-element="dark" key={5} value={5}>
-          {t("elements.full.dark")}
+          {t('elements.full.dark')}
         </option>
         <option data-element="light" key={6} value={6}>
-          {t("elements.full.light")}
+          {t('elements.full.light')}
         </option>
       </select>
       <RaidDropdown
@@ -97,29 +97,29 @@ const FilterBar = (props: Props) => {
       />
       <select onChange={recencySelectChanged} ref={recencySelect}>
         <option key={-1} value={-1}>
-          {t("recency.all_time")}
+          {t('recency.all_time')}
         </option>
         <option key={86400} value={86400}>
-          {t("recency.last_day")}
+          {t('recency.last_day')}
         </option>
         <option key={604800} value={604800}>
-          {t("recency.last_week")}
+          {t('recency.last_week')}
         </option>
         <option key={2629746} value={2629746}>
-          {t("recency.last_month")}
+          {t('recency.last_month')}
         </option>
         <option key={7889238} value={7889238}>
-          {t("recency.last_3_months")}
+          {t('recency.last_3_months')}
         </option>
         <option key={15778476} value={15778476}>
-          {t("recency.last_6_months")}
+          {t('recency.last_6_months')}
         </option>
         <option key={31556952} value={31556952}>
-          {t("recency.last_year")}
+          {t('recency.last_year')}
         </option>
       </select>
     </div>
-  );
-};
+  )
+}
 
-export default FilterBar;
+export default FilterBar

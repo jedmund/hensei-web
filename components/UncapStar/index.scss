@@ -14,42 +14,42 @@
   &.empty.flb,
   &.empty.ulb,
   &.empty.special {
-    background: url("/icons/uncap/empty.svg");
+    background: url('/icons/uncap/empty.svg');
 
     &:hover {
-      background: url("/icons/uncap/empty-hover.svg");
+      background: url('/icons/uncap/empty-hover.svg');
     }
   }
 
   &.mlb {
-    background: url("/icons/uncap/yellow.svg");
+    background: url('/icons/uncap/yellow.svg');
 
     &:hover {
-      background: url("/icons/uncap/yellow-hover.svg");
+      background: url('/icons/uncap/yellow-hover.svg');
     }
   }
 
   &.special {
-    background: url("/icons/uncap/red.svg");
+    background: url('/icons/uncap/red.svg');
 
     &:hover {
-      background: url("/icons/uncap/red-hover.svg");
+      background: url('/icons/uncap/red-hover.svg');
     }
   }
 
   &.flb {
-    background: url("/icons/uncap/blue.svg");
+    background: url('/icons/uncap/blue.svg');
 
     &:hover {
-      background: url("/icons/uncap/blue-hover.svg");
+      background: url('/icons/uncap/blue-hover.svg');
     }
   }
 
   &.ulb {
-    background: url("/icons/uncap/purple.svg");
+    background: url('/icons/uncap/purple.svg');
 
     &:hover {
-      background: url("/icons/uncap/purple-hover.svg");
+      background: url('/icons/uncap/purple-hover.svg');
     }
   }
 }

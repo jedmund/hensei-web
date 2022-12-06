@@ -7,7 +7,7 @@ export const emptyRarityState: RarityState = {
     id: 3,
     checked: true,
   },
-};
+}
 
 export const emptyElementState: ElementState = {
   null: {
@@ -38,7 +38,7 @@ export const emptyElementState: ElementState = {
     id: 6,
     checked: false,
   },
-};
+}
 
 export const emptyProficiencyState: ProficiencyState = {
   sabre: {
@@ -81,7 +81,7 @@ export const emptyProficiencyState: ProficiencyState = {
     id: 10,
     checked: false,
   },
-};
+}
 
 export const emptyWeaponSeriesState: WeaponSeriesState = {
   seraphic: {
@@ -184,4 +184,4 @@ export const emptyWeaponSeriesState: WeaponSeriesState = {
     id: 29,
     checked: false,
   },
-};
+}

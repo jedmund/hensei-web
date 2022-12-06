@@ -1,65 +1,63 @@
-import React from "react";
-import { useRouter } from "next/router";
+import React from 'react'
+import { useRouter } from 'next/router'
 
-import UncapIndicator from "~components/UncapIndicator";
-import WeaponLabelIcon from "~components/WeaponLabelIcon";
+import UncapIndicator from '~components/UncapIndicator'
+import WeaponLabelIcon from '~components/WeaponLabelIcon'
 
-import "./index.scss";
+import './index.scss'
 
 interface Props {
-  data: Weapon;
-  onClick: () => void;
+  data: Weapon
+  onClick: () => void
 }
 
-const Element = ["null", "wind", "fire", "water", "earth", "dark", "light"];
+const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 const Proficiency = [
-  "none",
-  "sword",
-  "dagger",
-  "axe",
-  "spear",
-  "bow",
-  "staff",
-  "fist",
-  "harp",
-  "gun",
-  "katana",
-];
+  'none',
+  'sword',
+  'dagger',
+  'axe',
+  'spear',
+  'bow',
+  'staff',
+  'fist',
+  'harp',
+  'gun',
+  'katana',
+]
 const Series = [
-  "seraphic",
-  "grand",
-  "opus",
-  "draconic",
-  "revenant",
-  "primal",
-  "beast",
-  "regalia",
-  "omega",
-  "olden_primal",
-  "hollowsky",
-  "xeno",
-  "astral",
-  "rose",
-  "ultima",
-  "bahamut",
-  "epic",
-  "ennead",
-  "cosmos",
-  "ancestral",
-  "superlative",
-  "vintage",
-  "class_champion",
-  "sephira",
-  "new_world_foundation",
-];
+  'seraphic',
+  'grand',
+  'opus',
+  'draconic',
+  'revenant',
+  'primal',
+  'beast',
+  'regalia',
+  'omega',
+  'olden_primal',
+  'hollowsky',
+  'xeno',
+  'astral',
+  'rose',
+  'ultima',
+  'bahamut',
+  'epic',
+  'ennead',
+  'cosmos',
+  'ancestral',
+  'superlative',
+  'vintage',
+  'class_champion',
+  'sephira',
+  'new_world_foundation',
+]
 
 const WeaponResult = (props: Props) => {
-  const router = useRouter();
+  const router = useRouter()
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale)
-      ? router.locale
-      : "en";
-  const weapon = props.data;
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const weapon = props.data
 
   return (
     <li className="WeaponResult" onClick={props.onClick}>
@@ -81,7 +79,7 @@ const WeaponResult = (props: Props) => {
         </div>
       </div>
     </li>
-  );
-};
+  )
+}
 
-export default WeaponResult;
+export default WeaponResult
