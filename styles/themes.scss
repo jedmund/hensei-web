@@ -9,11 +9,17 @@
 
   --input-bg: #{$input--bg--light};
   --input-bg-hover: #{$input--bg--light--hover};
+  --input-bound-bg: #{$input--bound--bg--light};
+  --input-bound-bg-hover: #{$input--bound--bg--light--hover};
+
+  --item-bg-hover: #{$item--bg--light--hover};
 
   --text-primary: #{$text--primary--color--light};
 
   --text-secondary: #{$text--secondary--color--light};
   --text-secondary-hover: #{$text--secondary--hover--light};
+
+  --text-tertiary: #{$text--tertiary--color--light};
 
   --icon-secondary: #{$icon--secondary--color--light};
   --icon-secondary-hover: #{$icon--secondary--hover--light};
@@ -47,11 +53,17 @@
 
   --input-bg: #{$input--bg--dark};
   --input-bg-hover: #{$input--bg--dark--hover};
+  --input-bound-bg: #{$input--bound--bg--dark};
+  --input-bound-bg-hover: #{$input--bound--bg--dark--hover};
+
+  --item-bg-hover: #{$item--bg--dark--hover};
 
   --text-primary: #{$text--primary--color--dark};
 
   --text-secondary: #{$text--secondary--color--dark};
   --text-secondary-hover: #{$text--secondary--hover--dark};
+
+  --text-tertiary: #{$text--tertiary--color--dark};
 
   --icon-secondary: #{$icon--secondary--color--dark};
   --icon-secondary-hover: #{$icon--secondary--hover--dark};

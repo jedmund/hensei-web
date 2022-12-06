@@ -11,6 +11,16 @@ $medium-screen: 800px;
 // Sizing
 $unit: 8px;
 
+$unit-fourth: calc($unit / 4);
+$unit-half: calc($unit / 2);
+$unit-2x: $unit * 2;
+$unit-4x: $unit * 4;
+$unit-6x: $unit * 6;
+$unit-8x: $unit * 8;
+$unit-10x: $unit * 10;
+$unit-12x: $unit * 12;
+$unit-20x: $unit * 20;
+
 // Colors
 $grey-00: #111;
 $grey-10: #191919;
@@ -35,12 +45,20 @@ $page--hover--dark: $grey-20;
 $page--element--bg--light: $grey-70;
 $page--element--bg--dark: $grey-30;
 
-$input--bg--light: $grey-90;
-$input--bg--light--hover: $grey-80;
-$input--bg--dark: $grey-10;
+$input--bg--light: $grey-100;
+$input--bg--light--hover: $grey-95;
+$input--bg--dark: $grey-20;
 $input--bg--dark--hover: $grey-15;
 
-$grid--rep--hover--light: white;
+$input--bound--bg--light: $grey-90;
+$input--bound--bg--light--hover: $grey-80;
+$input--bound--bg--dark: $grey-10;
+$input--bound--bg--dark--hover: $grey-15;
+
+$item--bg--light--hover: $grey-90;
+$item--bg--dark--hover: $grey-10;
+
+$grid--rep--hover--light: $grey-100;
 $grid--rep--hover--dark: $grey-00;
 
 $grid--border--color--light: $grey-80;
@@ -61,6 +79,9 @@ $icon--secondary--color--light: $grey-70;
 $icon--secondary--color--dark: $grey-40;
 $icon--secondary--hover--light: $grey-40;
 $icon--secondary--hover--dark: $grey-70;
+
+$text--tertiary--color--light: $grey-60;
+$text--tertiary--color--dark: $grey-60;
 
 $blue: #275dc5;
 $red: #ff6161;
@@ -127,6 +148,10 @@ $font-xxlarge: 28px;
 // Scale factors
 $scale-wide: scale(1.05, 1.05);
 $scale-tall: scale(1.012, 1.012);
+
+// Border radius
+$input-corner: $unit;
+$item-corner: $unit-half;
 
 // Shadows
 $hover-stroke: 1px solid rgba(0, 0, 0, 0.1);

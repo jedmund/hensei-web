@@ -1,0 +1,51 @@
+.SelectTrigger {
+  align-items: center;
+  background-color: var(--input-bg);
+  border-radius: $input-corner;
+  border: none;
+  display: flex;
+  padding: $unit-2x $unit-2x;
+
+  &:hover {
+    background-color: var(--input-bg-hover);
+    cursor: pointer;
+  }
+
+  &[data-placeholder] > span:not(.SelectIcon) {
+    color: var(--text-tertiary);
+  }
+
+  & > span:not(.SelectIcon) {
+    color: var(--text-primary);
+    flex-grow: 1;
+    font-size: $font-regular;
+    text-align: left;
+  }
+
+  .SelectIcon {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.Select {
+  background: var(--card-bg);
+  border-radius: $input-corner;
+  border: $hover-stroke;
+  box-shadow: $hover-shadow;
+  padding: 0 $unit;
+  // position: relative;
+  // max-height: 350px !important;
+  // top: -800px;
+  z-index: 99999;
+
+  .Scroll.Up,
+  .Scroll.Down {
+    padding: $unit 0;
+    text-align: center;
+  }
+
+  .Scroll.Up {
+    transform: scale(1, -1);
+  }
+}

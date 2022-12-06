@@ -1,8 +1,7 @@
 .PartyDetails {
   display: none; // This breaks transition, find a workaround
   opacity: 0;
-  margin: 0 auto;
-  margin-bottom: 100px;
+  margin: $unit-4x auto 0;
   max-width: $unit * 95;
   position: relative;
 
@@ -13,9 +12,10 @@
     transition: opacity 0.2s ease-in-out, top 0.2s ease-in-out;
 
     &.Visible {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      gap: $unit;
       height: auto;
-      margin-bottom: 40vh;
       opacity: 1;
       top: 0;
     }
@@ -34,6 +34,7 @@
       display: flex;
       flex-direction: row;
       gap: $unit;
+      margin-bottom: $unit-12x;
 
       .left {
         flex-grow: 1;
@@ -108,7 +109,7 @@
       }
 
       & > *:not(:last-child):after {
-        content: " · ";
+        content: ' · ';
         margin: 0 calc($unit / 2);
       }
     }
@@ -146,7 +147,7 @@
 .EmptyDetails {
   display: none;
   justify-content: center;
-  margin-bottom: $unit * 10;
+  margin: $unit-4x 0 $unit-10x;
 
   &.Visible {
     display: flex;
