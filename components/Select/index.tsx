@@ -9,6 +9,7 @@ import './index.scss'
 // Props
 interface Props {
   open: boolean
+  defaultValue?: string | number
   placeholder?: string
   trigger?: React.ReactNode
   children?: React.ReactNode
@@ -22,7 +23,10 @@ const Select = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(
   ref
 ) {
   return (
-    <RadixSelect.Root onValueChange={props.onChange}>
+    <RadixSelect.Root
+      defaultValue={props.defaultValue as string}
+      onValueChange={props.onChange}
+    >
       <RadixSelect.Trigger
         className={classNames('SelectTrigger', props.triggerClass)}
         placeholder={props.placeholder}

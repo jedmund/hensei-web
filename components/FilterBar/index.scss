@@ -25,7 +25,8 @@
     text-align: left;
   }
 
-  select {
+  select,
+  .SelectTrigger {
     // background: url("/icons/Arrow.svg"), $grey-90;
     // background-repeat: no-repeat;
     // background-position-y: center;
@@ -35,6 +36,14 @@
     font-size: $font-small;
     margin: 0;
     max-width: 200px;
+  }
+
+  .SelectTrigger {
+    width: 100%;
+
+    span {
+      font-size: $font-small;
+    }
   }
 
   .UserInfo {

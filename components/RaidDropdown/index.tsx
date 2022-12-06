@@ -15,6 +15,7 @@ import './index.scss'
 interface Props {
   showAllRaidsOption: boolean
   currentRaid?: string
+  defaultRaid?: string
   onChange?: (slug?: string) => void
   onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
@@ -129,6 +130,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     return (
       <Select
+        defaultValue={props.defaultRaid}
         trigger={'Select a raid...'}
         placeholder={'Select a raid...'}
         open={open}
