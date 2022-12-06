@@ -7,15 +7,34 @@
   --card-bg: #{$grey-100};
   --bar-bg: #{$grey-100};
 
+  // Light - Menus
+  --menu-bg: #{$menu--bg--light};
+  --menu-separator: #{$menu--separator--light};
+  --menu-text: #{$menu--text--light};
+  --menu-bg-item-hover: #{$menu--item--bg--light--hover};
+  --menu-text-hover: #{$menu--text--light--hover};
+
+  // Light - Buttons
+  --button-bg: #{$button--bg--light};
+  --button-bg-hover: #{$button--bg--light--hover};
+  --button-bg-disabled: #{$button--bg--light--disabled};
+
+  --button-text: #{$button--text--light};
+  --button-text-hover: #{$button--text--light--hover};
+  --button-text-disabled: #{$button--text--light--disabled};
+
+  // Light - Inputs
   --input-bg: #{$input--bg--light};
   --input-bg-hover: #{$input--bg--light--hover};
   --input-bound-bg: #{$input--bound--bg--light};
   --input-bound-bg-hover: #{$input--bound--bg--light--hover};
 
+  // Light - Selects
   --select-bg: #{$select--bg--light};
   --select-separator: #{$select--separator--light};
   --option-bg-hover: #{$option--bg--light--hover};
 
+  // Light - Text
   --text-primary: #{$text--primary--color--light};
 
   --text-secondary: #{$text--secondary--color--light};
@@ -23,17 +42,24 @@
 
   --text-tertiary: #{$text--tertiary--color--light};
 
+  // Light - Icons
   --icon-secondary: #{$icon--secondary--color--light};
   --icon-secondary-hover: #{$icon--secondary--hover--light};
 
+  // Light - Tags
+  --tag-bg: #{$tag--bg--light};
+  --tag-text: #{$tag--text--light};
+
   --switch-nub: #{$switch--nub--bg--light};
 
+  // Light - Extra Weapons
   --extra-purple-bg: #{$extra--purple--bg--light};
   --extra-purple-card-bg: #{$extra--purple--card--bg--light};
   --extra-purple-primary: #{$extra--purple--primary--light};
   --extra-purple-secondary: #{$extra--purple--secondary--light};
   --extra-purple-text: #{$extra--purple--text--light};
 
+  // Light - Subaura Summons
   --subaura-orange-bg: #{$subaura--orange--bg--light};
   --subaura-orange-card-bg: #{$subaura--orange--card--bg--light};
   --subaura-orange-primary: #{$subaura--orange--primary--light};
@@ -65,15 +91,34 @@
   --card-bg: #{$page--element--bg--dark};
   --bar-bg: #{$grey-10};
 
+  // Dark - Menus
+  --menu-bg: #{$menu--bg--dark};
+  --menu-text: #{$menu--text--dark};
+  --menu-separator: #{$menu--separator--dark};
+  --menu-bg-item-hover: #{$menu--item--bg--dark--hover};
+  --menu-text-hover: #{$menu--text--dark--hover};
+
+  // Dark - Buttons
+  --button-bg: #{$button--bg--dark};
+  --button-bg-hover: #{$button--bg--dark--hover};
+  --button-bg-disabled: #{$button--bg--dark--disabled};
+
+  --button-text: #{$button--text--dark};
+  --button-text-hover: #{$button--text--dark--hover};
+  --button-text-disabled: #{$button--text--dark--disabled};
+
+  // Dark - Inputs
   --input-bg: #{$input--bg--dark};
   --input-bg-hover: #{$input--bg--dark--hover};
   --input-bound-bg: #{$input--bound--bg--dark};
   --input-bound-bg-hover: #{$input--bound--bg--dark--hover};
 
+  // Dark - Selects
   --select-bg: #{$select--bg--dark};
   --select-separator: #{$select--separator--dark};
   --option-bg-hover: #{$option--bg--dark--hover};
 
+  // Dark - Text
   --text-primary: #{$text--primary--color--dark};
 
   --text-secondary: #{$text--secondary--color--dark};
@@ -81,17 +126,24 @@
 
   --text-tertiary: #{$text--tertiary--color--dark};
 
+  // Dark - Icons
   --icon-secondary: #{$icon--secondary--color--dark};
   --icon-secondary-hover: #{$icon--secondary--hover--dark};
 
+  // Dark - Tags
+  --tag-bg: #{$tag--bg--dark};
+  --tag-text: #{$tag--text--dark};
+
   --switch-nub: #{$switch--nub--bg--dark};
 
+  // Dark - Extra Weapons
   --extra-purple-bg: #{$extra--purple--bg--dark};
   --extra-purple-card-bg: #{$extra--purple--card--bg--dark};
   --extra-purple-primary: #{$extra--purple--primary--dark};
   --extra-purple-secondary: #{$extra--purple--secondary--dark};
   --extra-purple-text: #{$extra--purple--text--dark};
 
+  // Dark - Subaura Summons
   --subaura-orange-bg: #{$subaura--orange--bg--dark};
   --subaura-orange-card-bg: #{$subaura--orange--card--bg--dark};
   --subaura-orange-primary: #{$subaura--orange--primary--dark};

@@ -355,7 +355,8 @@ img.profile {
 }
 
 i.tag {
-  background: $grey-90;
+  background: var(--tag-bg);
+  color: var(--tag-text);
   border-radius: calc($unit / 2);
   font-size: 10px;
   font-weight: $bold;
