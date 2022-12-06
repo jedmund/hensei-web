@@ -1,5 +1,5 @@
 #ExtraSummons {
-  background: #ffebd9;
+  background: var(--subaura-orange-bg);
   border-radius: 8px;
   box-sizing: border-box;
   display: flex;
@@ -17,7 +17,7 @@
   }
 
   & > span {
-    color: #825b39;
+    color: var(--subaura-orange-text);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -46,10 +46,10 @@
   }
 
   .SummonUnit .SummonImage {
-    background: #facea7;
+    background: var(--subaura-orange-card-bg);
   }
 
   .SummonUnit .SummonImage .icon svg {
-    fill: #a8703f;
+    fill: var(--subaura-orange-secondary);
   }
 }
