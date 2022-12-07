@@ -46,28 +46,6 @@
       }
     }
 
-    .Button {
-      font-size: $font-regular;
-      padding: ($unit * 1.5) ($unit * 2);
-      margin-top: $unit * 2;
-      width: 100%;
-
-      &.btn-disabled {
-        background: $grey-90;
-        color: $grey-70;
-        cursor: not-allowed;
-      }
-
-      &:not(.btn-disabled) {
-        background: $grey-90;
-        color: $grey-50;
-
-        &:hover {
-          background: $grey-80;
-        }
-      }
-    }
-
     .field {
       align-items: center;
       display: flex;
@@ -89,12 +67,12 @@
         gap: calc($unit / 2);
 
         label {
-          color: $grey-15;
+          color: var(--text-secondary);
           font-size: $font-regular;
         }
 
         p {
-          color: $grey-60;
+          color: var(--text-secondary);
           font-size: $font-small;
           line-height: 1.1;
           max-width: 300px;

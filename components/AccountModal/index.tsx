@@ -243,7 +243,10 @@ const AccountModal = () => {
               </Switch.Root>
             </div>
 
-            <Button>{t('modals.settings.buttons.confirm')}</Button>
+            <Button
+              contained={true}
+              text={t('modals.settings.buttons.confirm')}
+            />
           </form>
         </Dialog.Content>
         <Dialog.Overlay className="Overlay" />

@@ -10,7 +10,7 @@
   gap: $unit * $multiplier;
   height: auto;
   min-width: $unit * 48;
-  min-height: $unit * 12;
+  min-height: $unit-12x;
   padding: $unit * $multiplier;
   position: absolute;
   top: 50%;
@@ -56,7 +56,7 @@
   }
 
   .DialogTitle {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-size: $font-xlarge;
     flex-grow: 1;
   }

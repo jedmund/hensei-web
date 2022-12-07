@@ -1,10 +1,11 @@
-.DropdownLabel {
+button.DropdownLabel {
   align-items: center;
   background: var(--button-contained-bg);
   border: none;
   border-radius: $unit-2x;
   color: var(--text-secondary);
   display: flex;
+  font-size: $font-small;
   gap: $unit-half;
   flex-direction: row;
   padding: $unit ($unit * 1.5) $unit $unit-2x;
