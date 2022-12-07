@@ -1,29 +1,30 @@
 .Item {
   align-items: center;
   border-radius: calc($unit / 2);
-  color: $grey-50;
+  color: var(--text-secondary);
   font-size: $font-regular;
   line-height: 1.2;
   min-width: 100px;
   position: relative;
   padding: $unit;
-  padding-left: $unit * 3;
+  padding-left: $unit * 3.5;
 
   &:hover {
-    background: $grey-90;
+    background: var(--button-contained-bg-hover);
+    color: var(--text-primary);
     cursor: pointer;
   }
 
   &[data-state='checked'] {
-    background: $grey-90;
+    background: var(--button-contained-bg-hover);
 
     svg {
-      fill: $grey-55;
+      fill: var(--text-secondary);
     }
   }
 
   .Indicator {
-    $diameter: 18px;
+    $diameter: 20px;
 
     display: flex;
     align-items: center;

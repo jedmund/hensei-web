@@ -6,8 +6,14 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 import api from '~utils/api'
 
-import * as Dialog from '@radix-ui/react-dialog'
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogClose,
+} from '~components/Dialog'
 
+import Input from '~components/Input'
 import CharacterSearchFilterBar from '~components/CharacterSearchFilterBar'
 import WeaponSearchFilterBar from '~components/WeaponSearchFilterBar'
 import SummonSearchFilterBar from '~components/SummonSearchFilterBar'
@@ -317,61 +323,54 @@ const SearchModal = (props: Props) => {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={openChange}>
-      <Dialog.Trigger asChild>{props.children}</Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Content className="Search Dialog">
-          <div id="Header">
-            <div id="Bar">
-              <label className="search_label" htmlFor="search_input">
-                <input
-                  autoComplete="off"
-                  type="text"
-                  name="query"
-                  className="Input"
-                  id="search_input"
-                  ref={searchInput}
-                  value={query}
-                  placeholder={props.placeholderText}
-                  onChange={inputChanged}
-                />
-              </label>
-              <Dialog.Close className="DialogClose" onClick={openChange}>
-                <CrossIcon />
-              </Dialog.Close>
-            </div>
-            {props.object === 'characters' ? (
-              <CharacterSearchFilterBar sendFilters={receiveFilters} />
-            ) : (
-              ''
-            )}
-            {props.object === 'weapons' ? (
-              <WeaponSearchFilterBar sendFilters={receiveFilters} />
-            ) : (
-              ''
-            )}
-            {props.object === 'summons' ? (
-              <SummonSearchFilterBar sendFilters={receiveFilters} />
-            ) : (
-              ''
-            )}
-            {props.object === 'job_skills' ? (
-              <JobSkillSearchFilterBar sendFilters={receiveFilters} />
-            ) : (
-              ''
-            )}
+    <Dialog open={open} onOpenChange={openChange}>
+      <DialogTrigger asChild>{props.children}</DialogTrigger>
+      <DialogContent className="Search Dialog">
+        <div id="Header">
+          <div id="Bar">
+            <Input
+              autoComplete="off"
+              className="Search"
+              name="query"
+              placeholder={props.placeholderText}
+              ref={searchInput}
+              value={query}
+              onChange={inputChanged}
+            />
+            <DialogClose className="DialogClose" onClick={openChange}>
+              <CrossIcon />
+            </DialogClose>
           </div>
+          {props.object === 'characters' ? (
+            <CharacterSearchFilterBar sendFilters={receiveFilters} />
+          ) : (
+            ''
+          )}
+          {props.object === 'weapons' ? (
+            <WeaponSearchFilterBar sendFilters={receiveFilters} />
+          ) : (
+            ''
+          )}
+          {props.object === 'summons' ? (
+            <SummonSearchFilterBar sendFilters={receiveFilters} />
+          ) : (
+            ''
+          )}
+          {props.object === 'job_skills' ? (
+            <JobSkillSearchFilterBar sendFilters={receiveFilters} />
+          ) : (
+            ''
+          )}
+        </div>
 
-          <div id="Results" ref={scrollContainer}>
-            <h5 className="total">
-              {t('search.result_count', { record_count: recordCount })}
-            </h5>
-            {open ? renderResults() : ''}
-          </div>
-        </Dialog.Content>
-        <Dialog.Overlay className="Overlay" />
-      </Dialog.Portal>
-    </Dialog.Root>
+        <div id="Results" ref={scrollContainer}>
+          <h5 className="total">
+            {t('search.result_count', { record_count: recordCount })}
+          </h5>
+          {open ? renderResults() : ''}
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 

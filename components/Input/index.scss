@@ -1,0 +1,23 @@
+.Input {
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--input-bg);
+  border: none;
+  border-radius: 6px;
+  box-sizing: border-box;
+  display: block;
+  padding: ($unit * 1.5) $unit-2x;
+  width: 100%;
+}
+
+.InputError {
+  color: $error;
+  font-size: $font-tiny;
+  margin: $unit 0;
+  padding: calc($unit / 2) ($unit * 2);
+}
+
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--text-secondary) !important;
+  opacity: 1; /* Firefox */
+}

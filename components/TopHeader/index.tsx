@@ -137,6 +137,7 @@ const TopHeader = () => {
       return (
         <Button
           accessoryIcon={<SaveIcon />}
+          blended={true}
           text="Saved"
           onClick={toggleFavorite}
         />
@@ -145,6 +146,7 @@ const TopHeader = () => {
       return (
         <Button
           accessoryIcon={<SaveIcon />}
+          blended={true}
           text="Save"
           onClick={toggleFavorite}
         />

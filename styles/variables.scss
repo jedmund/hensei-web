@@ -113,6 +113,10 @@ $page--hover--dark: $grey-30;
 $page--element--bg--light: $grey-70;
 $page--element--bg--dark: $grey-40;
 
+// Color Definitions: Dialog
+$dialog--bg--light: $grey-100;
+$dialog--bg--dark: $grey-25;
+
 // Color Definitions: Menu
 $menu--bg--light: $grey-100;
 $menu--bg--dark: $grey-05;
@@ -158,13 +162,13 @@ $input--bound--bg--dark--hover: $grey-25;
 
 // Color Definitions: Select
 $select--bg--light: $grey-100;
-$select--bg--dark: $grey-05;
+$select--bg--dark: $grey-10;
 $select--contained--bg--light: $grey-90;
 $select--contained--bg--dark: $grey-05;
 $select--contained--bg--light--hover: $grey-80;
 $select--contained--bg--dark--hover: $grey-00;
 $select--separator--light: $grey-90;
-$select--separator--dark: $grey-00;
+$select--separator--dark: $grey-05;
 $option--bg--light--hover: $grey-90;
 $option--bg--dark--hover: $grey-00;
 
@@ -205,19 +209,20 @@ $subaura--orange--text--dark: $orange-00;
 $text--primary--color--light: $grey-40;
 $text--primary--color--dark: $grey-90;
 
-$text--secondary--color--light: $grey-50;
-$text--secondary--hover--light: $grey-40;
-$text--secondary--color--dark: $grey-50;
-$text--secondary--hover--dark: $grey-70;
+$text--secondary--color--light: $grey-60;
+$text--secondary--color--dark: $grey-60;
+
+$text--tertiary--color--light: $grey-50;
+$text--tertiary--color--dark: $grey-50;
+
+$text--tertiary--hover--light: $grey-40;
+$text--tertiary--hover--dark: $grey-70;
 
 // Color Definitions: Icon
 $icon--secondary--color--light: $grey-70;
 $icon--secondary--color--dark: $grey-50;
 $icon--secondary--hover--light: $grey-50;
 $icon--secondary--hover--dark: $grey-70;
-
-$text--tertiary--color--light: $grey-60;
-$text--tertiary--color--dark: $grey-60;
 
 // Color Definitions: Tag
 $tag--bg--light: $grey-60;
@@ -245,6 +250,7 @@ $scale-wide: scale(1.05, 1.05);
 $scale-tall: scale(1.012, 1.012);
 
 // Border radius
+$card-corner: $unit * 1.5;
 $input-corner: $unit;
 $item-corner: $unit-half;
 

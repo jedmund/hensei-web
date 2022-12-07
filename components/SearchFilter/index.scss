@@ -1,33 +1,31 @@
 .DropdownLabel {
   align-items: center;
-  background: $grey-90;
+  background: var(--button-contained-bg);
   border: none;
-  border-radius: $unit * 2;
-  color: $grey-50;
+  border-radius: $unit-2x;
+  color: var(--text-secondary);
   display: flex;
-  gap: calc($unit / 2);
+  gap: $unit-half;
   flex-direction: row;
-  padding: ($unit) ($unit * 2);
+  padding: $unit ($unit * 1.5) $unit $unit-2x;
 
   &:hover {
-    background: $grey-80;
-    color: $grey-15;
+    background: var(--button-contained-bg-hover);
+    color: var(--text-primary);
     cursor: pointer;
   }
 
   .count {
-    color: $grey-60;
+    color: var(--text-tertiary);
     font-weight: $medium;
   }
 
   & > .icon {
-    $diameter: 12px;
+    $diameter: 16px;
     height: $diameter;
     width: $diameter;
 
     svg {
-      transform: scale(0.85);
-
       path {
         fill: $grey-60;
       }
@@ -36,12 +34,11 @@
 }
 
 .Dropdown {
-  background: $grey-100;
+  background: var(--button-contained-bg);
   border-radius: $unit;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.18);
   display: flex;
   flex-direction: column;
-  gap: calc($unit / 2);
   padding: $unit;
   min-width: 120px;
 
@@ -49,7 +46,7 @@
     overflow: hidden;
 
     svg {
-      fill: $grey-100;
+      fill: var(--button-contained-bg);
       filter: drop-shadow(0px 0px 1px rgb(0 0 0 / 0.18));
     }
   }
@@ -66,9 +63,9 @@
   }
 
   .Label {
-    color: $grey-60;
+    color: var(--text-tertiary);
     font-size: $font-small;
-    margin-bottom: calc($unit / 2);
-    padding-left: calc($unit / 2);
+    margin-bottom: $unit-half;
+    padding: $unit-half 0 $unit $unit-half;
   }
 }

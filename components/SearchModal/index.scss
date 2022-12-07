@@ -39,16 +39,16 @@
       label {
         width: 100%;
 
-        .Input {
-          background: $grey-90;
-          border: none;
-          border-radius: calc($unit / 2);
-          box-sizing: border-box;
-          font-size: $font-regular;
-          padding: $unit * 1.5;
-          text-align: left;
-          width: 100%;
-        }
+        // .Input {
+        //   background: $grey-90;
+        //   border: none;
+        //   border-radius: calc($unit / 2);
+        //   box-sizing: border-box;
+        //   font-size: $font-regular;
+        //   padding: $unit * 1.5;
+        //   text-align: left;
+        //   width: 100%;
+        // }
       }
     }
   }
@@ -62,17 +62,17 @@
     h5.total {
       font-size: $font-regular;
       font-weight: $normal;
-      color: $grey-50;
-      padding: calc($unit / 2) ($unit * 1.5);
+      color: var(--text-tertiary);
+      padding: $unit-half ($unit * 1.5);
     }
 
     .footer {
       align-items: center;
       display: flex;
-      color: $grey-60;
+      color: var(--text-tertiary);
       font-size: $font-regular;
       font-weight: $normal;
-      height: $unit * 10;
+      height: $unit-10x;
       justify-content: center;
     }
 
@@ -91,8 +91,8 @@
 }
 
 .Search.Dialog #NoResults h2 {
-  color: #ccc;
+  color: var(--text-secondary);
   font-size: $font-large;
   font-weight: 500;
-  margin-top: -32px;
+  margin-top: $unit-4x * -1;
 }

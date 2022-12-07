@@ -8,6 +8,9 @@
   --bar-bg: #{$grey-100};
 
   // Light - Menus
+  --dialog-bg: #{$dialog--bg--light};
+
+  // Light - Menus
   --menu-bg: #{$menu--bg--light};
   --menu-separator: #{$menu--separator--light};
   --menu-text: #{$menu--text--light};
@@ -40,11 +43,10 @@
 
   // Light - Text
   --text-primary: #{$text--primary--color--light};
-
   --text-secondary: #{$text--secondary--color--light};
-  --text-secondary-hover: #{$text--secondary--hover--light};
 
   --text-tertiary: #{$text--tertiary--color--light};
+  --text-tertiary-hover: #{$text--tertiary--hover--light};
 
   // Light - Icons
   --icon-secondary: #{$icon--secondary--color--light};
@@ -54,14 +56,14 @@
   --tag-bg: #{$tag--bg--light};
   --tag-text: #{$tag--text--light};
 
-  --switch-nub: #{$switch--nub--bg--light};
-
   // Light - Extra Weapons
   --extra-purple-bg: #{$extra--purple--bg--light};
   --extra-purple-card-bg: #{$extra--purple--card--bg--light};
   --extra-purple-primary: #{$extra--purple--primary--light};
   --extra-purple-secondary: #{$extra--purple--secondary--light};
   --extra-purple-text: #{$extra--purple--text--light};
+
+  --switch-nub: #{$switch--nub--bg--light};
 
   // Light - Subaura Summons
   --subaura-orange-bg: #{$subaura--orange--bg--light};
@@ -94,6 +96,9 @@
 
   --card-bg: #{$page--element--bg--dark};
   --bar-bg: #{$grey-10};
+
+  // Dark - Dialogs
+  --dialog-bg: #{$dialog--bg--dark};
 
   // Dark - Menus
   --menu-bg: #{$menu--bg--dark};
@@ -128,11 +133,10 @@
 
   // Dark - Text
   --text-primary: #{$text--primary--color--dark};
-
   --text-secondary: #{$text--secondary--color--dark};
-  --text-secondary-hover: #{$text--secondary--hover--dark};
 
   --text-tertiary: #{$text--tertiary--color--dark};
+  --text-tertiary-hover: #{$text--tertiary--hover--dark};
 
   // Dark - Icons
   --icon-secondary: #{$icon--secondary--color--dark};
@@ -142,14 +146,14 @@
   --tag-bg: #{$tag--bg--dark};
   --tag-text: #{$tag--text--dark};
 
-  --switch-nub: #{$switch--nub--bg--dark};
-
   // Dark - Extra Weapons
   --extra-purple-bg: #{$extra--purple--bg--dark};
   --extra-purple-card-bg: #{$extra--purple--card--bg--dark};
   --extra-purple-primary: #{$extra--purple--primary--dark};
   --extra-purple-secondary: #{$extra--purple--secondary--dark};
   --extra-purple-text: #{$extra--purple--text--dark};
+
+  --switch-nub: #{$switch--nub--bg--dark};
 
   // Dark - Subaura Summons
   --subaura-orange-bg: #{$subaura--orange--bg--dark};

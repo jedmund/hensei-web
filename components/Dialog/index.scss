@@ -1,0 +1,87 @@
+.Dialog {
+  $multiplier: 4;
+
+  animation: 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal none running
+    openModal;
+  background: var(--dialog-bg);
+  border-radius: $card-corner;
+  display: flex;
+  flex-direction: column;
+  gap: $unit * $multiplier;
+  height: auto;
+  min-width: $unit * 48;
+  min-height: $unit * 12;
+  padding: $unit * $multiplier;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 21;
+
+  .DialogHeader {
+    display: flex;
+    align-items: center;
+    gap: $unit;
+
+    .left {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      gap: $unit;
+
+      p {
+        font-size: $font-small;
+        line-height: 1.25;
+      }
+    }
+  }
+
+  .DialogClose {
+    background: transparent;
+
+    &:hover {
+      cursor: pointer;
+
+      svg {
+        fill: $error;
+      }
+    }
+
+    svg {
+      fill: $grey-50;
+      float: right;
+      height: 24px;
+      width: 24px;
+    }
+  }
+
+  .DialogTitle {
+    color: var(--text-secondary);
+    font-size: $font-xlarge;
+    flex-grow: 1;
+  }
+
+  .DialogTop {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: calc($unit / 2);
+
+    .SubTitle {
+      color: var(--text-secondary);
+      font-size: $font-small;
+      font-weight: $medium;
+    }
+  }
+
+  .DialogDescription {
+    color: var(--text-secondary);
+    flex-grow: 1;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+}

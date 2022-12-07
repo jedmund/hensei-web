@@ -5,8 +5,12 @@
   padding: $unit * 1.5;
 
   &:hover {
-    background: $grey-90;
+    background: var(--button-contained-bg);
     cursor: pointer;
+
+    .Info h5 {
+      color: var(--text-primary);
+    }
   }
 
   img {
@@ -24,7 +28,7 @@
     gap: calc($unit / 2);
 
     h5 {
-      color: #555;
+      color: var(--text-secondary);
       display: inline-block;
       font-size: $font-medium;
       font-weight: $medium;

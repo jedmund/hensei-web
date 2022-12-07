@@ -10,7 +10,7 @@ import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
-import Fieldset from '~components/Fieldset'
+import Fieldset from '~components/Input'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'

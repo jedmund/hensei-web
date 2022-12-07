@@ -1,12 +1,13 @@
 .SelectItem {
   border-radius: $item-corner;
   border: 2px solid transparent;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   font-size: $font-regular;
   padding: ($unit * 1.5) $unit-2x;
 
   &:hover {
     background-color: var(--option-bg-hover);
+    color: var(--text-primary);
     cursor: pointer;
     outline: none;
   }
