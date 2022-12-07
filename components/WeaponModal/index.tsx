@@ -247,9 +247,8 @@ const WeaponModal = (props: Props) => {
             <Button
               onClick={updateWeapon}
               disabled={props.gridWeapon.object.ax > 0 && !formValid}
-            >
-              {t('modals.weapon.buttons.confirm')}
-            </Button>
+              text={t('modals.weapon.buttons.confirm')}
+            />
           </div>
         </Dialog.Content>
         <Dialog.Overlay className="Overlay" />

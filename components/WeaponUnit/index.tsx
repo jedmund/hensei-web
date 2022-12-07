@@ -13,6 +13,7 @@ import { ButtonType } from '~utils/enums'
 import type { SearchableObject } from '~types'
 
 import PlusIcon from '~public/icons/Add.svg'
+import SettingsIcon from '~public/icons/Settings.svg'
 import './index.scss'
 
 interface Props {
@@ -113,7 +114,7 @@ const WeaponUnit = (props: Props) => {
       {props.editable && gridWeapon && canBeModified(gridWeapon) ? (
         <WeaponModal gridWeapon={gridWeapon}>
           <div>
-            <Button icon="settings" type={ButtonType.IconOnly} />
+            <Button accessoryIcon={<SettingsIcon />} />
           </div>
         </WeaponModal>
       ) : (
