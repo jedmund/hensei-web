@@ -10,7 +10,7 @@ import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
-import Fieldset from '~components/Input'
+import Input from '~components/Input'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
@@ -188,16 +188,16 @@ const LoginModal = (props: Props) => {
           </div>
 
           <form className="form" onSubmit={login}>
-            <Fieldset
-              fieldName="email"
+            <Input
+              name="email"
               placeholder={t('modals.login.placeholders.email')}
               onChange={handleChange}
               error={errors.email}
               ref={emailInput}
             />
 
-            <Fieldset
-              fieldName="password"
+            <Input
+              name="password"
               placeholder={t('modals.login.placeholders.password')}
               onChange={handleChange}
               error={errors.password}

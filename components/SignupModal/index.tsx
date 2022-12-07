@@ -11,7 +11,7 @@ import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
-import Fieldset from '~components/Input'
+import Input from '~components/Input'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
@@ -274,32 +274,32 @@ const SignupModal = (props: Props) => {
           </div>
 
           <form className="form" onSubmit={register}>
-            <Fieldset
-              fieldName="username"
+            <Input
+              name="username"
               placeholder={t('modals.signup.placeholders.username')}
               onChange={handleNameChange}
               error={errors.username}
               ref={usernameInput}
             />
 
-            <Fieldset
-              fieldName="email"
+            <Input
+              name="email"
               placeholder={t('modals.signup.placeholders.email')}
               onChange={handleNameChange}
               error={errors.email}
               ref={emailInput}
             />
 
-            <Fieldset
-              fieldName="password"
+            <Input
+              name="password"
               placeholder={t('modals.signup.placeholders.password')}
               onChange={handlePasswordChange}
               error={errors.password}
               ref={passwordInput}
             />
 
-            <Fieldset
-              fieldName="confirm_password"
+            <Input
+              name="confirm_password"
               placeholder={t('modals.signup.placeholders.password_confirm')}
               onChange={handlePasswordChange}
               error={errors.passwordConfirmation}
