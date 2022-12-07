@@ -11,7 +11,7 @@ interface Props
   > {}
 
 export const DialogContent = React.forwardRef<HTMLDivElement, Props>(
-  ({ children, ...props }, forwardedRef) => {
+  function dialog({ children, ...props }, forwardedRef) {
     const classes = classNames(
       {
         Dialog: true,
