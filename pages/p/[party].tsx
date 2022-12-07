@@ -1,13 +1,13 @@
-import React, { useEffect } from "react"
-import { getCookie } from "cookies-next"
-import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import React, { useEffect } from 'react'
+import { getCookie } from 'cookies-next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
-import Party from "~components/Party"
+import Party from '~components/Party'
 
-import { appState } from "~utils/appState"
-import api from "~utils/api"
+import { appState } from '~utils/appState'
+import api from '~utils/api'
 
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 interface Props {
   party: Party
@@ -28,18 +28,14 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
     appState.jobSkills = props.jobSkills
   }
 
-  return (
-    <div id="Content">
-      <Party team={props.party} raids={props.sortedRaids} />
-    </div>
-  )
+  return <Party team={props.party} raids={props.sortedRaids} />
 }
 
 export const getServerSidePaths = async () => {
   return {
     paths: [
       // Object variant:
-      { params: { party: "string" } },
+      { params: { party: 'string' } },
     ],
     fallback: true,
   }
@@ -95,12 +91,12 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 const organizeRaids = (raids: Raid[]) => {
   // Set up empty raid for "All raids"
   const all = {
-    id: "0",
+    id: '0',
     name: {
-      en: "All raids",
-      ja: "全て",
+      en: 'All raids',
+      ja: '全て',
     },
-    slug: "all",
+    slug: 'all',
     level: 0,
     group: 0,
     element: 0,

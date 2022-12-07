@@ -1,153 +1,159 @@
 .PartyDetails {
-    display: none; // This breaks transition, find a workaround
-    opacity: 0;
-    margin: 0 auto;
-    margin-bottom: 100px;
-    max-width: $unit * 95;
-    position: relative;
+  display: none; // This breaks transition, find a workaround
+  opacity: 0;
+  margin: $unit-4x auto 0;
+  max-width: $unit * 94;
+  position: relative;
 
-    &.Editable {
-        top: $unit;
-        height: 0;
-        z-index: 2;
-        transition: opacity 0.2s ease-in-out, 
-                    top 0.2s ease-in-out;
+  &.Editable {
+    top: $unit;
+    height: 0;
+    z-index: 2;
+    transition: opacity 0.2s ease-in-out, top 0.2s ease-in-out;
 
-
-        &.Visible {
-            display: block;
-            height: auto;
-            margin-bottom: 40vh;
-            opacity: 1;
-            top: 0;
-        }
-    
-        fieldset {
-            display: block;
-            width: 100%;
-    
-            textarea {
-                min-height: $unit * 20;
-                width: 100%;
-            }
-        }
-
-        .bottom {
-            display: flex;
-            flex-direction: row;
-            gap: $unit;
-
-            .left {
-                flex-grow: 1;
-            }
-
-            .right {
-                display: flex;
-                flex-direction: row;
-                gap: $unit;
-            }
-        }
+    &.Visible {
+      display: flex;
+      flex-direction: column;
+      gap: $unit;
+      height: auto;
+      opacity: 1;
+      top: 0;
     }
 
-    &.ReadOnly {
-        top: $unit * -1;
-        transition: opacity 0.2s ease-in-out, 
-                    top 0.2s ease-in-out;
+    fieldset {
+      display: block;
+      width: 100%;
 
-        &.Visible {
-            display: block;
-            height: auto;
-            opacity: 1;
-            top: 0;
-        }
+      textarea {
+        min-height: $unit * 20;
+        width: 100%;
+      }
+    }
 
-        a:hover {
-            text-decoration: underline;
-        }
+    .bottom {
+      display: flex;
+      flex-direction: row;
+      gap: $unit;
+      margin-bottom: $unit-12x;
 
-        p {
-            font-size: $font-regular;
-            line-height: $font-regular * 1.2;
-            white-space: pre-line;
-        }
+      .left {
+        flex-grow: 1;
+      }
 
+      .right {
+        display: flex;
+        flex-direction: row;
+        gap: $unit;
+      }
+    }
+  }
+
+  &.ReadOnly {
+    top: $unit * -1;
+    transition: opacity 0.2s ease-in-out, top 0.2s ease-in-out;
+
+    &.Visible {
+      display: block;
+      height: auto;
+      opacity: 1;
+      top: 0;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    p {
+      font-size: $font-regular;
+      line-height: $font-regular * 1.2;
+      white-space: pre-line;
+    }
+
+    h1 {
+      font-size: $font-xlarge;
+      font-weight: $normal;
+      text-align: left;
+      margin-bottom: $unit;
+    }
+
+    .info {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      gap: $unit;
+      margin-bottom: $unit * 2;
+
+      .left {
+        flex-grow: 1;
 
         h1 {
-            font-size: $font-xlarge;
-            font-weight: $normal;
-            text-align: left;
-            margin-bottom: $unit;
+          color: var(--text-primary);
+
+          &.empty {
+            color: var(--text-secondary);
+          }
         }
-
-        .info {
-            align-items: center;
-            display: flex;
-            flex-direction: row;
-            gap: $unit;
-            margin-bottom: $unit * 2;
-
-            .left {
-                flex-grow: 1;
-            }
-        }
-
-        .attribution {
-            align-items: center;
-            display: flex;
-            flex-direction: row;
-
-            & > div {
-                align-items: center;
-                display: inline-flex;
-                font-size: $font-small;
-                height: 26px;
-            }
-
-            time {
-                font-size: $font-small;
-            }
-
-            & > *:not(:last-child):after {
-                content: " · ";
-                margin: 0 calc($unit / 2);
-            }
-        }
-
-        .user {
-            align-items: center;
-            display: inline-flex;
-            gap: calc($unit / 2);
-            margin-top: 1px;
-
-            img, .no-user {
-                $diameter: 24px;
-
-                border-radius: calc($diameter / 2);
-                height: $diameter;
-                width: $diameter;
-            }
-
-            img.gran {
-                background-color: #CEE7FE;
-            }
-    
-            img.djeeta {
-                background-color: #FFE1FE;
-            }
-
-            .no-user {
-                background: $grey-80;
-            }
-        }
+      }
     }
+
+    .attribution {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+
+      & > div {
+        align-items: center;
+        display: inline-flex;
+        font-size: $font-small;
+        height: 26px;
+      }
+
+      time {
+        font-size: $font-small;
+      }
+
+      & > *:not(:last-child):after {
+        content: ' · ';
+        margin: 0 calc($unit / 2);
+      }
+    }
+
+    .user {
+      align-items: center;
+      display: inline-flex;
+      gap: calc($unit / 2);
+      margin-top: 1px;
+
+      img,
+      .no-user {
+        $diameter: 24px;
+
+        border-radius: calc($diameter / 2);
+        height: $diameter;
+        width: $diameter;
+      }
+
+      img.gran {
+        background-color: #cee7fe;
+      }
+
+      img.djeeta {
+        background-color: #ffe1fe;
+      }
+
+      .no-user {
+        background: $grey-80;
+      }
+    }
+  }
 }
 
 .EmptyDetails {
-    display: none;
-    justify-content: center;
-    margin-bottom: $unit * 10;
+  display: none;
+  justify-content: center;
+  margin: $unit-4x 0 $unit-10x;
 
-    &.Visible {
-        display: flex;
-    }
+  &.Visible {
+    display: flex;
+  }
 }

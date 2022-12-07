@@ -1,20 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { getCookie } from "cookies-next"
-import { useSnapshot } from "valtio"
-import { useTranslation } from "next-i18next"
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { getCookie } from 'cookies-next'
+import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
-import { AxiosResponse } from "axios"
-import debounce from "lodash.debounce"
+import { AxiosResponse } from 'axios'
+import debounce from 'lodash.debounce'
 
-import SummonUnit from "~components/SummonUnit"
-import ExtraSummons from "~components/ExtraSummons"
+import SummonUnit from '~components/SummonUnit'
+import ExtraSummons from '~components/ExtraSummons'
 
-import api from "~utils/api"
-import { appState } from "~utils/appState"
-import type { SearchableObject } from "~types"
+import api from '~utils/api'
+import { appState } from '~utils/appState'
+import type { SearchableObject } from '~types'
 
-import "./index.scss"
+import './index.scss'
 
 // Props
 interface Props {
@@ -29,7 +29,7 @@ const SummonGrid = (props: Props) => {
   const numSummons: number = 4
 
   // Cookies
-  const cookie = getCookie("account")
+  const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
@@ -38,7 +38,7 @@ const SummonGrid = (props: Props) => {
     : {}
 
   // Localization
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
@@ -141,7 +141,7 @@ const SummonGrid = (props: Props) => {
 
     try {
       if (uncapLevel != previousUncapValues[position])
-        await api.updateUncap("summon", id, uncapLevel).then((response) => {
+        await api.updateUncap('summon', id, uncapLevel).then((response) => {
           storeGridSummon(response.data.grid_summon)
         })
     } catch (error) {
@@ -217,7 +217,7 @@ const SummonGrid = (props: Props) => {
   // Render: JSX components
   const mainSummonElement = (
     <div className="LabeledUnit">
-      <div className="Label">{t("summons.main")}</div>
+      <div className="Label">{t('summons.main')}</div>
       <SummonUnit
         gridSummon={grid.summons.mainSummon}
         editable={party.editable}
@@ -232,7 +232,7 @@ const SummonGrid = (props: Props) => {
 
   const friendSummonElement = (
     <div className="LabeledUnit">
-      <div className="Label">{t("summons.friend")}</div>
+      <div className="Label">{t('summons.friend')}</div>
       <SummonUnit
         gridSummon={grid.summons.friendSummon}
         editable={party.editable}
@@ -246,7 +246,7 @@ const SummonGrid = (props: Props) => {
   )
   const summonGridElement = (
     <div id="LabeledGrid">
-      <div className="Label">{t("summons.summons")}</div>
+      <div className="Label">{t('summons.summons')}</div>
       <ul id="grid_summons">
         {Array.from(Array(numSummons)).map((x, i) => {
           return (

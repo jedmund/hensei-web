@@ -1,63 +1,76 @@
 .FilterBar {
+  align-items: center;
+  background: var(--bar-bg);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  gap: $unit * 2;
+  margin: 0 auto;
+  margin-top: 7px; // Line up with HeaderMenu
+  padding: $unit * 2;
+  position: sticky;
+  transition: box-shadow 0.24s ease-in-out;
+  top: $unit * 4;
+  width: 966px;
+
+  &.shadow {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+  }
+
+  h1 {
+    color: var(--text-primary);
+    font-size: $font-regular;
+    font-weight: $normal;
+    flex-grow: 1;
+    text-align: left;
+  }
+
+  select,
+  .SelectTrigger {
+    // background: url("/icons/Arrow.svg"), $grey-90;
+    // background-repeat: no-repeat;
+    // background-position-y: center;
+    // background-position-x: 95%;
+    // background-size: $unit * 1.5;
+    background-color: var(--select-contained-bg);
+    color: $grey-55;
+    font-size: $font-small;
+    margin: 0;
+    max-width: 200px;
+
+    &:hover {
+      background-color: var(--select-contained-bg-hover);
+    }
+  }
+
+  .SelectTrigger {
+    width: 100%;
+
+    span {
+      font-size: $font-small;
+    }
+  }
+
+  .UserInfo {
     align-items: center;
-    background: white;
-    border-radius: 6px;
     display: flex;
     flex-direction: row;
-    gap: $unit * 2;
-    margin: 0 auto;
-    margin-top: 7px; // Line up with HeaderMenu
-    padding: $unit * 2;
-    position: sticky;
-    transition: box-shadow 0.24s ease-in-out;
-    top: $unit * 4;
-    width: 966px;
+    flex-grow: 1;
+    gap: $unit * 1.5;
 
-    &.shadow {
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+    img {
+      $diameter: $unit * 6;
+      border-radius: $diameter / 2;
+      height: $diameter;
+      width: $diameter;
+
+      &.gran {
+        background-color: #cee7fe;
+      }
+
+      &.djeeta {
+        background-color: #ffe1fe;
+      }
     }
-
-    h1 {
-        color: $grey-20;
-        font-size: $font-regular;
-        font-weight: $normal;
-        flex-grow: 1;
-        text-align: left;
-    }
-
-    select {
-        background: url('/icons/Arrow.svg'), $grey-90;
-        background-repeat: no-repeat;
-        background-position-y: center;
-        background-position-x: 95%;
-        background-size: $unit * 1.5;
-        color: $grey-50;
-        font-size: $font-small;
-        margin: 0;
-        max-width: 200px;
-    }
-
-
-    .UserInfo {
-        align-items: center;
-        display: flex;
-        flex-direction: row;
-        flex-grow: 1;
-        gap: $unit * 1.5;
-
-        img {
-            $diameter: $unit * 6;
-            border-radius: $diameter / 2;
-            height: $diameter;
-            width: $diameter;
-
-            &.gran {
-                background-color: #CEE7FE;
-            }
-    
-            &.djeeta {
-                background-color: #FFE1FE;
-            }
-        }
-    }
+  }
 }

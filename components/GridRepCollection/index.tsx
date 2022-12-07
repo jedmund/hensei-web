@@ -1,7 +1,7 @@
-import classNames from "classnames"
-import React from "react"
+import classNames from 'classnames'
+import React from 'react'
 
-import "./index.scss"
+import './index.scss'
 
 interface Props {
   children: React.ReactNode

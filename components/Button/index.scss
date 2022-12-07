@@ -1,214 +1,260 @@
 .Button {
-    align-items: center;
+  align-items: center;
+  background: var(--button-bg);
+  border: none;
+  border-radius: $input-corner;
+  color: var(--button-text);
+  display: inline-flex;
+  font-size: $font-button;
+  font-weight: $normal;
+  gap: 6px;
+
+  &:hover,
+  &.Blended:hover {
+    background: var(--button-bg-hover);
+    cursor: pointer;
+    color: var(--button-text-hover);
+
+    .Accessory svg {
+      fill: var(--button-text-hover);
+    }
+
+    .Accessory svg.stroke {
+      fill: none;
+      stroke: var(--button-text-hover);
+    }
+  }
+
+  &.Blended {
     background: transparent;
-    border: none;
-    border-radius: 6px;
-    color: $grey-50;
-    display: inline-flex;
-    font-size: $font-button;
-    font-weight: $normal;
-    gap: 6px;
-    padding: 8px 12px;
+  }
+
+  &.Contained {
+    background: var(--button-contained-bg);
 
     &:hover {
-        background: white;
-        cursor: pointer;
-        color: $grey-00;
-
-        .icon svg {
-            fill: $grey-00;
-        }
-
-        .icon.stroke svg {
-            fill: none;
-            stroke: $grey-00;
-        }
+      background: var(--button-contained-bg-hover);
     }
 
-    &.destructive:hover {
-        background: $error;
-        color: white;
-
-        .icon svg {
-            fill: white;
-        }
+    &.Save:hover .Accessory svg {
+      fill: #ff4d4d;
+      stroke: #ff4d4d;
     }
 
-    &.save:hover {
-        color: #FF4D4D;
-        
-        .icon svg {
-            fill: #FF4D4D;
-            stroke: #FF4D4D;
+    &.Active.Save {
+      color: #ff4d4d;
+
+      .Accessory svg {
+        fill: #ff4d4d;
+        stroke: #ff4d4d;
+      }
+
+      &:hover {
+        color: darken(#ff4d4d, 30);
+
+        .Accessory svg {
+          fill: darken(#ff4d4d, 30);
+          stroke: darken(#ff4d4d, 30);
         }
+      }
+    }
+  }
+
+  &.medium {
+    height: $unit * 5.5;
+    padding: ($unit * 1.5) $unit-2x;
+  }
+
+  &.small {
+    padding: $unit * 1.5;
+  }
+
+  &.destructive:hover {
+    background: $error;
+    color: $grey-100;
+
+    .Accessory svg {
+      fill: $grey-100;
+    }
+  }
+
+  &.save:hover {
+    color: #ff4d4d;
+
+    .Accessory svg {
+      fill: #ff4d4d;
+      stroke: #ff4d4d;
+    }
+  }
+
+  &.save.Active {
+    color: #ff4d4d;
+
+    &:hover {
+      color: darken(#ff4d4d, 30);
+
+      .icon svg {
+        fill: darken(#ff4d4d, 30);
+        stroke: darken(#ff4d4d, 30);
+      }
+    }
+  }
+
+  &.modal:hover {
+    background: $grey-90;
+  }
+
+  &.modal.destructive {
+    color: $error;
+
+    &:hover {
+      color: darken($error, 10);
+    }
+  }
+
+  .Accessory {
+    $dimension: $unit-2x;
+
+    display: flex;
+
+    svg {
+      fill: var(--button-text);
+      height: $dimension;
+      width: $dimension;
+
+      &.stroke {
+        fill: none;
+        stroke: var(--button-text);
+      }
+
+      &.Add {
+        height: 18px;
+        width: 18px;
+      }
+
+      &.Check {
+        height: 22px;
+        width: 22px;
+      }
     }
 
-    &.save.Active {
-        color: #FF4D4D;
-        
-        .icon svg {
-            fill: #FF4D4D;
-            stroke: #FF4D4D;
-        }
-
-        &:hover {
-            color: darken(#FF4D4D, 30);
-
-            .icon svg {
-                fill: darken(#FF4D4D, 30);
-                stroke: darken(#FF4D4D, 30);
-            }
-        }
+    &.check svg {
+      margin-top: 1px;
+      height: 14px;
+      width: auto;
     }
 
-    &.modal:hover {
-        background: $grey-90;
+    svg &.settings svg {
+      height: 13px;
+      width: 13px;
     }
+  }
 
-    &.modal.destructive {
-        color: $error;
-        
-        &:hover {
-            color: darken($error, 10)
-        }
+  &.btn-blue {
+    background: $blue;
+    color: #8b8b8b;
+
+    &:hover {
+      background: #4b9be5;
+      color: #233e56;
+    }
+  }
+
+  &.btn-red {
+    background: #fa4242;
+    color: #860f0f;
+
+    &:hover {
+      background: #e91a1a;
+      color: #4e1717;
+
+      .icon {
+        color: #4e1717;
+      }
     }
 
     .icon {
-        margin-top: 2px;
-        
-        svg {
-            fill: $grey-50;
-            height: 12px;
-            width: 12px;
-        }
-
-        &.check svg {
-            margin-top: 1px;
-            height: 14px;
-            width: auto;
-        }
-
-        &.stroke svg {
-            fill: none;
-            stroke: $grey-50;
-        }
-
-        &.settings svg {
-            height: 13px;
-            width: 13px;
-        }
+      color: #860f0f;
     }
+  }
 
-    &.Active {
-        background: white;
+  &.btn-disabled {
+    background: #e0e0e0;
+    color: #bababa;
+
+    &:hover {
+      background: #e0e0e0;
+      color: #bababa;
     }
+  }
 
-    &.btn-blue {
-        background: $blue;
-        color: #8b8b8b;
+  &.null {
+    background: $grey-90;
+    color: $grey-55;
 
-        &:hover {
-            background: #4B9BE5;
-            color: #233E56;
-        }
+    &:hover {
+      background: $grey-70;
+      color: $grey-15;
     }
+  }
 
-    &.btn-red {
-        background: #fa4242;
-        color: #860f0f;
+  &.wind {
+    background: $wind-bg-20;
+    color: $wind-text-10;
 
-        &:hover {
-            background: #e91a1a;
-            color: #4e1717;
-
-            .icon {
-                color: #4e1717;
-            }
-        }
-
-        .icon {
-            color: #860f0f;
-        }
+    &:hover {
+      background: darken($wind-bg-20, 10);
     }
+  }
 
-    &.btn-disabled {
-        background: #e0e0e0;
-        color: #bababa;
+  &.fire {
+    background: $fire-bg-20;
+    color: $fire-text-10;
 
-        &:hover {
-            background: #e0e0e0;
-            color: #bababa;
-        }
+    &:hover {
+      background: darken($fire-bg-20, 10);
     }
+  }
 
-    &.null {
-        background: $grey-90;
-        color: $grey-50;
+  &.water {
+    background: $water-bg-20;
+    color: $water-text-10;
 
-        &:hover {
-            background: $grey-70;
-            color: $grey-00;
-        }
+    &:hover {
+      background: darken($water-bg-20, 10);
     }
+  }
 
-    &.wind {
-        background: $wind-bg-light;
-        color: $wind-text-dark;
+  &.earth {
+    background: $earth-bg-20;
+    color: $earth-text-10;
 
-        &:hover {
-            background: darken($wind-bg-light, 10);
-        }
+    &:hover {
+      background: darken($earth-bg-20, 10);
     }
+  }
 
-    &.fire {
-        background: $fire-bg-light;
-        color: $fire-text-dark;
+  &.dark {
+    background: $dark-bg-10;
+    color: $dark-text-10;
 
-        &:hover {
-            background: darken($fire-bg-light, 10);
-        }
+    &:hover {
+      background: darken($dark-bg-10, 10);
     }
+  }
 
-    &.water {
-        background: $water-bg-light;
-        color: $water-text-dark;
+  &.light {
+    background: $light-bg-20;
+    color: $light-text-10;
 
-        &:hover {
-            background: darken($water-bg-light, 10);
-        }
+    &:hover {
+      background: darken($light-bg-20, 10);
     }
+  }
 
-    &.earth {
-        background: $earth-bg-light;
-        color: $earth-text-dark;
-
-        &:hover {
-            background: darken($earth-bg-light, 10);
-        }
-    }
-
-    &.dark {
-        background: $dark-bg-light;
-        color: $dark-text-dark;
-
-        &:hover {
-            background: darken($dark-bg-light, 10);
-        }
-    }
-
-
-    &.light {
-        background: $light-bg-light;
-        color: $light-text-dark;
-
-        &:hover {
-            background: darken($light-bg-light, 10);
-        }
-    }
-    
-    .text {
-        color: inherit;
-        display: block;
-        width: 100%;
-    }
+  .Text {
+    color: inherit;
+    display: block;
+    width: 100%;
+  }
 }

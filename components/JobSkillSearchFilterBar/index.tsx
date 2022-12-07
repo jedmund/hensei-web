@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { useTranslation } from "react-i18next"
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { skillGroups } from "~utils/skillGroups"
+import Select from '~components/Select'
+import SelectItem from '~components/SelectItem'
 
-import "./index.scss"
+import './index.scss'
 
 interface Props {
   sendFilters: (filters: { [key: string]: number }) => void
@@ -12,15 +12,18 @@ interface Props {
 
 const JobSkillSearchFilterBar = (props: Props) => {
   // Set up translation
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
+  const [open, setOpen] = useState(false)
   const [currentGroup, setCurrentGroup] = useState(-1)
 
-  function onChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setCurrentGroup(parseInt(event.target.value))
+  function openSelect() {
+    setOpen(!open)
   }
 
-  function onBlur(event: React.ChangeEvent<HTMLSelectElement>) {}
+  function onChange(value: string) {
+    setCurrentGroup(parseInt(value))
+  }
 
   function sendFilters() {
     const filters = {
@@ -36,34 +39,35 @@ const JobSkillSearchFilterBar = (props: Props) => {
 
   return (
     <div className="SearchFilterBar">
-      <select
-        key="job-skill-groups"
-        value={currentGroup}
-        onBlur={onBlur}
+      <Select
+        defaultValue={-1}
+        trigger={'All elements'}
+        open={open}
         onChange={onChange}
+        onClick={openSelect}
       >
-        <option key="all" value={-1}>
+        <SelectItem key="all" value={-1}>
           {t(`job_skills.all`)}
-        </option>
-        <option key="damaging" value={2}>
+        </SelectItem>
+        <SelectItem key="damaging" value={2}>
           {t(`job_skills.damaging`)}
-        </option>
-        <option key="buffing" value={0}>
+        </SelectItem>
+        <SelectItem key="buffing" value={0}>
           {t(`job_skills.buffing`)}
-        </option>
-        <option key="debuffing" value={1}>
+        </SelectItem>
+        <SelectItem key="debuffing" value={1}>
           {t(`job_skills.debuffing`)}
-        </option>
-        <option key="healing" value={3}>
+        </SelectItem>
+        <SelectItem key="healing" value={3}>
           {t(`job_skills.healing`)}
-        </option>
-        <option key="emp" value={4}>
+        </SelectItem>
+        <SelectItem key="emp" value={4}>
           {t(`job_skills.emp`)}
-        </option>
-        <option key="base" value={5}>
+        </SelectItem>
+        <SelectItem key="base" value={5}>
           {t(`job_skills.base`)}
-        </option>
-      </select>
+        </SelectItem>
+      </Select>
     </div>
   )
 }

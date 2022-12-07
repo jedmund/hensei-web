@@ -1,5 +1,18 @@
 .Fieldset textarea {
-    color: $grey-00;
-    font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    line-height: 21px;
+  $offset: 2px;
+
+  background-color: var(--input-bg);
+  border: $offset solid transparent;
+  border-radius: $input-corner;
+  box-sizing: border-box;
+  color: var(--text-primary);
+  display: block;
+  line-height: 21px;
+  -webkit-font-smoothing: antialiased;
+  padding: $unit-2x calc($unit-2x - $offset);
+
+  &:focus-within {
+    border: $offset solid $blue;
+    outline: none;
+  }
 }

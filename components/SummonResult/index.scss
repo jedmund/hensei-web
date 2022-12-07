@@ -1,63 +1,67 @@
 .SummonResult {
+  border-radius: 6px;
+  display: flex;
+  gap: $unit;
+  padding: $unit * 1.5;
+
+  &:hover {
+    background: var(--button-contained-bg);
+    cursor: pointer;
+
+    .Info h5 {
+      color: var(--text-primary);
+    }
+  }
+
+  img {
+    background: $grey-80;
     border-radius: 6px;
+    display: inline-block;
+    height: auto;
+    width: 120px;
+  }
+
+  .Info {
     display: flex;
-    gap: $unit;
-    padding: $unit * 1.5;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: $unit-half;
 
-    &:hover {
-        background: $grey-90;
-        cursor: pointer;
+    h5 {
+      color: var(--text-secondary);
+      display: inline-block;
+      font-size: $font-medium;
+      font-weight: $medium;
     }
 
-    img {
-        background: $grey-80;
-        border-radius: 6px;
-        display: inline-block;
-        height: auto;
-        width: 120px;
+    .UncapIndicator {
+      justify-content: left;
+      pointer-events: none;
     }
 
-    .Info {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        gap: calc($unit / 2);
+    .stars {
+      display: inline-block;
+      color: #ffa15e;
+      font-size: $font-xlarge;
 
-        h5 {
-            color: #555;
-            display: inline-block;
-            font-size: $font-medium;
-            font-weight: $medium;
-        }
-
-        .UncapIndicator {
-            justify-content: left;
-            pointer-events: none;
-        }
-
-        .stars {
-            display: inline-block;
-            color: #FFA15E;
-            font-size: $font-xlarge;
-
-            & > span {
-                color: #65DAFF;
-            }            
-        }
-
-        .tags {
-            display: flex;
-            flex-direction: row;
-            gap: calc($unit / 2);
-
-            .WeaponLabelIcon {
-                $aspect-ratio: calc(25 / 60);
-                $height: 22px;
-                background-size: calc($height / $aspect-ratio) $height;
-                background-repeat: no-repeat;
-                height: $height;
-                width: calc($height / $aspect-ratio);
-            }
-        }
+      & > span {
+        color: #65daff;
+      }
     }
+
+    .tags {
+      display: flex;
+      flex-direction: row;
+      gap: calc($unit / 2);
+
+      .WeaponLabelIcon {
+        $aspect-ratio: calc(25 / 60);
+        $height: 22px;
+        background-size: calc($height / $aspect-ratio) $height;
+        background-repeat: no-repeat;
+        height: $height;
+        width: calc($height / $aspect-ratio);
+      }
+    }
+  }
 }

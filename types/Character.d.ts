@@ -1,5 +1,5 @@
 interface Character {
-  type: "character"
+  type: 'character'
 
   id: string
   granblue_id: string

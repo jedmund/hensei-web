@@ -1,47 +1,47 @@
 #ExtraGrid {
-    background: #ECEBFF;
-    border-radius: 8px;
-    box-sizing: border-box;
+  background: var(--extra-purple-bg);
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  margin: 20px auto;
+  max-width: 766px;
+  padding: 16px 16px 16px 0;
+  position: relative;
+  left: 8px;
+
+  @media (max-width: $medium-screen) {
+    left: auto;
+    max-width: auto;
+    width: 100%;
+  }
+
+  & > span {
+    color: var(--extra-purple-text);
     display: flex;
+    align-items: center;
+    flex-grow: 1;
     justify-content: center;
-    margin: 20px auto;
-    max-width: 766px;
-    padding: 16px 16px 16px 0;
-    position: relative;
-    left: 8px;
+    line-height: 1.2;
+    font-weight: 500;
+    margin-right: 16px;
+    text-align: center;
+  }
 
-    @media (max-width: $medium-screen) {
-        left: auto;
-        max-width: auto;
-        width: 100%;
-    }
+  .grid_weapons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    max-width: 528px;
+  }
 
-    & > span {
-        color: #4F3C79;
-        display: flex;
-        align-items: center;
-        flex-grow: 1;
-        justify-content: center;
-        line-height: 1.2;
-        font-weight: 500;
-        margin-right: 16px;
-        text-align: center;
-    }
+  .WeaponUnit .WeaponImage {
+    background: var(--extra-purple-card-bg);
+  }
 
-    .grid_weapons {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        margin: 0;
-        padding: 0;
-        max-width: 528px;
-    }
-
-    .WeaponUnit .WeaponImage {
-        background: #D5D3F6;
-    }
-
-    .WeaponUnit .WeaponImage .icon svg {
-        fill: #8F8AC6;
-    }
+  .WeaponUnit .WeaponImage .icon svg {
+    fill: var(--extra-purple-secondary);
+  }
 }

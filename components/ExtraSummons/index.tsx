@@ -1,8 +1,8 @@
-import React from "react"
-import { useTranslation } from "next-i18next"
-import SummonUnit from "~components/SummonUnit"
-import { SearchableObject } from "~types"
-import "./index.scss"
+import React from 'react'
+import { useTranslation } from 'next-i18next'
+import SummonUnit from '~components/SummonUnit'
+import { SearchableObject } from '~types'
+import './index.scss'
 
 // Props
 interface Props {
@@ -18,11 +18,11 @@ interface Props {
 const ExtraSummons = (props: Props) => {
   const numSummons: number = 2
 
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
   return (
     <div id="ExtraSummons">
-      <span>{t("summons.subaura")}</span>
+      <span>{t('summons.subaura')}</span>
       <ul id="grid_summons">
         {Array.from(Array(numSummons)).map((x, i) => {
           return (

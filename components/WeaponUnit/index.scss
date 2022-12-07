@@ -1,125 +1,129 @@
 .WeaponUnit {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-height: 139px;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 139px;
+  position: relative;
+
+  @media (max-width: $medium-screen) {
+    min-height: auto;
+  }
+
+  &:hover .Button {
+    display: block;
+  }
+
+  &.editable .WeaponImage:hover {
+    border: $hover-stroke;
+    box-shadow: $hover-shadow;
+    cursor: pointer;
+    transform: $scale-wide;
+  }
+
+  &.empty {
+    min-height: auto;
+  }
+
+  &.mainhand {
+    margin-right: $unit * 3;
+    max-width: 200px;
 
     @media (max-width: $medium-screen) {
-        min-height: auto;
-    }
-
-    &:hover .Button {
-        display: block;
+      margin-right: $unit * 2;
     }
 
     &.editable .WeaponImage:hover {
-        border: $hover-stroke;
-        box-shadow: $hover-shadow;
-        cursor: pointer;
-        transform: $scale-wide;
-    }
-
-    &.mainhand {
-        margin-right: $unit * 3;
-        max-width: 200px;
-
-        @media (max-width: $medium-screen) {
-            margin-right: $unit * 2;
-        }
-
-        &.editable .WeaponImage:hover {
-            transform: $scale-tall;
-        }
-
-        .WeaponImage {
-            aspect-ratio: 200 / 418;
-            width: 200px;
-            height: auto;
-        
-            @media (max-width: $medium-screen) {
-                width: 25vw;
-            }
-        }
-    }
-
-    &.grid {
-        max-width: 160px;
-
-        .WeaponImage {
-            aspect-ratio: 160 / 92;
-            list-style-type: none;
-            width: 160px;
-            height: auto;
-        
-            @media (max-width: $medium-screen) {
-                width: 20vw;
-            }
-        }
-    }
-
-    &.filled h3 {
-        display: block;
-    }    
-
-    &.filled ul {
-        display: flex;
-    }
-
-    & h3,
-    & ul {
-        display: none;
-    }
-
-    .Button {
-        background: white;
-        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.14);
-        display: none;
-        position: absolute;
-        left: $unit;
-        top: $unit;
-        z-index: 3;
-    }
-
-    h3 {
-        color: $grey-00;
-        font-size: $font-button;
-        font-weight: $normal;
-        line-height: 1.1;
-        margin: 0;
-        text-align: center;
+      transform: $scale-tall;
     }
 
     .WeaponImage {
-        background: white;
-        border: 1px solid rgba(0, 0, 0, 0);
-        border-radius: $unit;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: calc($unit / 4);
-        overflow: hidden;
-        transition: all 0.18s ease-in-out;
+      aspect-ratio: 200 / 418;
+      width: 200px;
+      height: auto;
 
-        &:hover .icon svg {
-            fill: $grey-40;
-        }
-
-        img {
-            position: relative;
-            width: 100%;
-            z-index: 2;
-        }
-
-        .icon {
-            position: absolute;
-            height: $unit * 3;
-            width: $unit * 3;
-            z-index: 1;
-        
-            svg {
-                fill: $grey-70;
-            }
-        }
+      @media (max-width: $medium-screen) {
+        width: 25vw;
+      }
     }
+  }
+
+  &.grid {
+    max-width: 160px;
+
+    .WeaponImage {
+      aspect-ratio: 160 / 92;
+      list-style-type: none;
+      width: 160px;
+      height: auto;
+
+      @media (max-width: $medium-screen) {
+        width: 20vw;
+      }
+    }
+  }
+
+  &.filled h3 {
+    display: block;
+  }
+
+  &.filled ul {
+    display: flex;
+  }
+
+  & h3,
+  & ul {
+    display: none;
+  }
+
+  .Button {
+    background: $grey-100;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.14);
+    display: none;
+    position: absolute;
+    left: $unit;
+    top: $unit;
+    z-index: 3;
+  }
+
+  h3 {
+    color: var(--text-primary);
+    font-size: $font-button;
+    font-weight: $normal;
+    line-height: 1.1;
+    margin: 0;
+    text-align: center;
+  }
+
+  .WeaponImage {
+    background: var(--card-bg);
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: $unit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: calc($unit / 4);
+    overflow: hidden;
+    transition: all 0.18s ease-in-out;
+
+    &:hover .icon svg {
+      fill: var(--icon-secondary-hover);
+    }
+
+    img {
+      position: relative;
+      width: 100%;
+      z-index: 2;
+    }
+
+    .icon {
+      position: absolute;
+      height: $unit * 3;
+      width: $unit * 3;
+      z-index: 1;
+
+      svg {
+        fill: var(--icon-secondary);
+      }
+    }
+  }
 }

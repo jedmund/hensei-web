@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { useSnapshot } from "valtio"
-import { useTranslation } from "next-i18next"
-import classNames from "classnames"
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
+import classNames from 'classnames'
 
-import { accountState } from "~utils/accountState"
-import { formatTimeAgo } from "~utils/timeAgo"
+import { accountState } from '~utils/accountState'
+import { formatTimeAgo } from '~utils/timeAgo'
 
-import Button from "~components/Button"
-import { ButtonType } from "~utils/enums"
+import Button from '~components/Button'
 
-import "./index.scss"
+import SaveIcon from '~public/icons/Save.svg'
+
+import './index.scss'
 
 interface Props {
   shortcode: string
@@ -32,9 +33,9 @@ const GridRep = (props: Props) => {
   const { account } = useSnapshot(accountState)
 
   const router = useRouter()
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale) ? router.locale : "en"
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
   const [mainhand, setMainhand] = useState<Weapon>()
   const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
@@ -75,7 +76,7 @@ const GridRep = (props: Props) => {
   }
 
   function generateMainhandImage() {
-    let url = ""
+    let url = ''
 
     if (mainhand) {
       if (mainhand.element == 0 && props.grid[0].element) {
@@ -88,12 +89,12 @@ const GridRep = (props: Props) => {
     return mainhand && props.grid[0] ? (
       <img alt={mainhand.name[locale]} src={url} />
     ) : (
-      ""
+      ''
     )
   }
 
   function generateGridImage(position: number) {
-    let url = ""
+    let url = ''
 
     const weapon = weapons[position]
     const gridWeapon = grid[position]
@@ -109,7 +110,7 @@ const GridRep = (props: Props) => {
     return weapons[position] ? (
       <img alt={weapons[position]?.name[locale]} src={url} />
     ) : (
-      ""
+      ''
     )
   }
 
@@ -134,11 +135,11 @@ const GridRep = (props: Props) => {
   const details = (
     <div className="Details">
       <h2 className={titleClass} onClick={navigate}>
-        {props.name ? props.name : t("no_title")}
+        {props.name ? props.name : t('no_title')}
       </h2>
       <div className="bottom">
         <div className={raidClass}>
-          {props.raid ? props.raid.name[locale] : t("no_raid")}
+          {props.raid ? props.raid.name[locale] : t('no_raid')}
         </div>
         <time className="last-updated" dateTime={props.createdAt.toISOString()}>
           {formatTimeAgo(props.createdAt, locale)}
@@ -152,29 +153,31 @@ const GridRep = (props: Props) => {
       <div className="top">
         <div className="info">
           <h2 className={titleClass} onClick={navigate}>
-            {props.name ? props.name : t("no_title")}
+            {props.name ? props.name : t('no_title')}
           </h2>
           <div className={raidClass}>
-            {props.raid ? props.raid.name[locale] : t("no_raid")}
+            {props.raid ? props.raid.name[locale] : t('no_raid')}
           </div>
         </div>
         {account.authorized &&
         ((props.user && account.user && account.user.id !== props.user.id) ||
           !props.user) ? (
           <Button
+            className="Save"
+            accessoryIcon={<SaveIcon class="stroke" />}
             active={props.favorited}
-            icon="save"
-            type={ButtonType.IconOnly}
+            contained={true}
+            size="small"
             onClick={sendSaveData}
           />
         ) : (
-          ""
+          ''
         )}
       </div>
       <div className="bottom">
         <div className={userClass}>
           {userImage()}
-          {props.user ? props.user.username : t("no_user")}
+          {props.user ? props.user.username : t('no_user')}
         </div>
         <time className="last-updated" dateTime={props.createdAt.toISOString()}>
           {formatTimeAgo(props.createdAt, locale)}

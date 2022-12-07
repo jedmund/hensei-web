@@ -1,9 +1,9 @@
-import React from "react"
-import * as AlertDialog from "@radix-ui/react-alert-dialog"
+import React from 'react'
+import * as AlertDialog from '@radix-ui/react-alert-dialog'
 
-import "./index.scss"
-import Button from "~components/Button"
-import { ButtonType } from "~utils/enums"
+import './index.scss'
+import Button from '~components/Button'
+import { ButtonType } from '~utils/enums'
 
 // Props
 interface Props {
@@ -23,7 +23,7 @@ const Alert = (props: Props) => {
         <AlertDialog.Overlay className="Overlay" onClick={props.cancelAction} />
         <div className="AlertWrapper">
           <AlertDialog.Content className="Alert">
-            {props.title ? <AlertDialog.Title>Error</AlertDialog.Title> : ""}
+            {props.title ? <AlertDialog.Title>Error</AlertDialog.Title> : ''}
             <AlertDialog.Description className="description">
               {props.message}
             </AlertDialog.Description>
@@ -38,7 +38,7 @@ const Alert = (props: Props) => {
                   {props.primaryActionText}
                 </AlertDialog.Action>
               ) : (
-                ""
+                ''
               )}
             </div>
           </AlertDialog.Content>

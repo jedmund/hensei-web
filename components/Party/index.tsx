@@ -1,20 +1,20 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { useRouter } from "next/router"
-import { useSnapshot } from "valtio"
-import { getCookie } from "cookies-next"
-import clonedeep from "lodash.clonedeep"
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useSnapshot } from 'valtio'
+import { getCookie } from 'cookies-next'
+import clonedeep from 'lodash.clonedeep'
 
-import PartySegmentedControl from "~components/PartySegmentedControl"
-import PartyDetails from "~components/PartyDetails"
-import WeaponGrid from "~components/WeaponGrid"
-import SummonGrid from "~components/SummonGrid"
-import CharacterGrid from "~components/CharacterGrid"
+import PartySegmentedControl from '~components/PartySegmentedControl'
+import PartyDetails from '~components/PartyDetails'
+import WeaponGrid from '~components/WeaponGrid'
+import SummonGrid from '~components/SummonGrid'
+import CharacterGrid from '~components/CharacterGrid'
 
-import api from "~utils/api"
-import { appState, initialAppState } from "~utils/appState"
-import { GridType, TeamElement } from "~utils/enums"
+import api from '~utils/api'
+import { appState, initialAppState } from '~utils/appState'
+import { GridType, TeamElement } from '~utils/enums'
 
-import "./index.scss"
+import './index.scss'
 
 // Props
 interface Props {
@@ -26,7 +26,7 @@ interface Props {
 
 const Party = (props: Props) => {
   // Cookies
-  const cookie = getCookie("account")
+  const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
@@ -113,7 +113,7 @@ const Party = (props: Props) => {
         .destroy({ id: appState.party.id, params: headers })
         .then(() => {
           // Push to route
-          router.push("/")
+          router.push('/')
 
           // Clean state
           const resetState = clonedeep(initialAppState)
@@ -188,16 +188,16 @@ const Party = (props: Props) => {
   // Methods: Navigating with segmented control
   function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
     switch (event.target.value) {
-      case "class":
+      case 'class':
         setCurrentTab(GridType.Class)
         break
-      case "characters":
+      case 'characters':
         setCurrentTab(GridType.Character)
         break
-      case "weapons":
+      case 'weapons':
         setCurrentTab(GridType.Weapon)
         break
-      case "summons":
+      case 'summons':
         setCurrentTab(GridType.Summon)
         break
       default:
@@ -253,7 +253,7 @@ const Party = (props: Props) => {
   }
 
   return (
-    <div>
+    <React.Fragment>
       {navigation}
       <section id="Party">{currentGrid()}</section>
       {
@@ -263,7 +263,7 @@ const Party = (props: Props) => {
           deleteCallback={deleteTeam}
         />
       }
-    </div>
+    </React.Fragment>
   )
 }
 

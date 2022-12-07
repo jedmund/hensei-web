@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react"
-import Link from "next/link"
-import { setCookie } from "cookies-next"
-import { useRouter } from "next/router"
-import { Trans, useTranslation } from "next-i18next"
-import { AxiosResponse } from "axios"
+import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { setCookie } from 'cookies-next'
+import { useRouter } from 'next/router'
+import { Trans, useTranslation } from 'next-i18next'
+import { AxiosResponse } from 'axios'
 
-import * as Dialog from "@radix-ui/react-dialog"
+import * as Dialog from '@radix-ui/react-dialog'
 
-import api from "~utils/api"
-import { accountState } from "~utils/accountState"
+import api from '~utils/api'
+import { accountState } from '~utils/accountState'
 
-import Button from "~components/Button"
-import Fieldset from "~components/Fieldset"
+import Button from '~components/Button'
+import Fieldset from '~components/Input'
 
-import CrossIcon from "~public/icons/Cross.svg"
-import "./index.scss"
+import CrossIcon from '~public/icons/Cross.svg'
+import './index.scss'
 
 interface Props {}
 
@@ -31,15 +31,15 @@ const emailRegex =
 
 const SignupModal = (props: Props) => {
   const router = useRouter()
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
   // Set up form states and error handling
   const [formValid, setFormValid] = useState(false)
   const [errors, setErrors] = useState<ErrorMap>({
-    username: "",
-    email: "",
-    password: "",
-    passwordConfirmation: "",
+    username: '',
+    email: '',
+    password: '',
+    passwordConfirmation: '',
   })
 
   // States
@@ -90,7 +90,7 @@ const SignupModal = (props: Props) => {
       token: user.token,
     }
 
-    setCookie("account", cookieObj, { path: "/" })
+    setCookie('account', cookieObj, { path: '/' })
   }
 
   function fetchUserInfo(id: string) {
@@ -108,7 +108,7 @@ const SignupModal = (props: Props) => {
     }
 
     // TODO: Set language
-    setCookie("user", cookieObj, { path: "/" })
+    setCookie('user', cookieObj, { path: '/' })
 
     accountState.account.user = {
       id: user.id,
@@ -151,13 +151,13 @@ const SignupModal = (props: Props) => {
 
     if (available) {
       // Continue checking for errors
-      newErrors[fieldName] = ""
+      newErrors[fieldName] = ''
       setErrors(newErrors)
       setFormValid(true)
 
       validateName(fieldName, value)
     } else {
-      newErrors[fieldName] = t("modals.signup.errors.field_in_use", {
+      newErrors[fieldName] = t('modals.signup.errors.field_in_use', {
         field: fieldName,
       })
       setErrors(newErrors)
@@ -169,19 +169,19 @@ const SignupModal = (props: Props) => {
     let newErrors = { ...errors }
 
     switch (fieldName) {
-      case "username":
+      case 'username':
         if (value.length < 3)
-          newErrors.username = t("modals.signup.errors.username_too_short")
+          newErrors.username = t('modals.signup.errors.username_too_short')
         else if (value.length > 20)
-          newErrors.username = t("modals.signup.errors.username_too_long")
-        else newErrors.username = ""
+          newErrors.username = t('modals.signup.errors.username_too_long')
+        else newErrors.username = ''
 
         break
 
-      case "email":
+      case 'email':
         newErrors.email = emailRegex.test(value)
-          ? ""
-          : t("modals.signup.errors.invalid_email")
+          ? ''
+          : t('modals.signup.errors.invalid_email')
         break
 
       default:
@@ -198,25 +198,25 @@ const SignupModal = (props: Props) => {
     let newErrors = { ...errors }
 
     switch (name) {
-      case "password":
+      case 'password':
         newErrors.password = passwordInput.current?.value.includes(
           usernameInput.current?.value!
         )
-          ? t("modals.signup.errors.password_contains_username")
-          : ""
+          ? t('modals.signup.errors.password_contains_username')
+          : ''
         break
 
-      case "password":
+      case 'password':
         newErrors.password =
-          value.length < 8 ? t("modals.signup.errors.password_too_short") : ""
+          value.length < 8 ? t('modals.signup.errors.password_too_short') : ''
         break
 
-      case "confirm_password":
+      case 'confirm_password':
         newErrors.passwordConfirmation =
           passwordInput.current?.value ===
           passwordConfirmationInput.current?.value
-            ? ""
-            : t("modals.signup.errors.passwords_dont_match")
+            ? ''
+            : t('modals.signup.errors.passwords_dont_match')
         break
 
       default:
@@ -243,10 +243,10 @@ const SignupModal = (props: Props) => {
   function openChange(open: boolean) {
     setOpen(open)
     setErrors({
-      username: "",
-      email: "",
-      password: "",
-      passwordConfirmation: "",
+      username: '',
+      email: '',
+      password: '',
+      passwordConfirmation: '',
     })
   }
 
@@ -254,7 +254,7 @@ const SignupModal = (props: Props) => {
     <Dialog.Root open={open} onOpenChange={openChange}>
       <Dialog.Trigger asChild>
         <li className="MenuItem">
-          <span>{t("menu.signup")}</span>
+          <span>{t('menu.signup')}</span>
         </li>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -264,7 +264,7 @@ const SignupModal = (props: Props) => {
         >
           <div className="DialogHeader">
             <Dialog.Title className="DialogTitle">
-              {t("modals.signup.title")}
+              {t('modals.signup.title')}
             </Dialog.Title>
             <Dialog.Close className="DialogClose" asChild>
               <span>
@@ -276,7 +276,7 @@ const SignupModal = (props: Props) => {
           <form className="form" onSubmit={register}>
             <Fieldset
               fieldName="username"
-              placeholder={t("modals.signup.placeholders.username")}
+              placeholder={t('modals.signup.placeholders.username')}
               onChange={handleNameChange}
               error={errors.username}
               ref={usernameInput}
@@ -284,7 +284,7 @@ const SignupModal = (props: Props) => {
 
             <Fieldset
               fieldName="email"
-              placeholder={t("modals.signup.placeholders.email")}
+              placeholder={t('modals.signup.placeholders.email')}
               onChange={handleNameChange}
               error={errors.email}
               ref={emailInput}
@@ -292,7 +292,7 @@ const SignupModal = (props: Props) => {
 
             <Fieldset
               fieldName="password"
-              placeholder={t("modals.signup.placeholders.password")}
+              placeholder={t('modals.signup.placeholders.password')}
               onChange={handlePasswordChange}
               error={errors.password}
               ref={passwordInput}
@@ -300,13 +300,13 @@ const SignupModal = (props: Props) => {
 
             <Fieldset
               fieldName="confirm_password"
-              placeholder={t("modals.signup.placeholders.password_confirm")}
+              placeholder={t('modals.signup.placeholders.password_confirm')}
               onChange={handlePasswordChange}
               error={errors.passwordConfirmation}
               ref={passwordConfirmationInput}
             />
 
-            <Button>{t("modals.signup.buttons.confirm")}</Button>
+            <Button>{t('modals.signup.buttons.confirm')}</Button>
 
             <Dialog.Description className="terms">
               {/* <Trans i18nKey="modals.signup.agreement">

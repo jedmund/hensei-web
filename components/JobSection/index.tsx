@@ -1,17 +1,17 @@
-import React, { ForwardedRef, useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { useSnapshot } from "valtio"
-import { useTranslation } from "next-i18next"
+import React, { ForwardedRef, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
-import JobDropdown from "~components/JobDropdown"
-import JobSkillItem from "~components/JobSkillItem"
-import SearchModal from "~components/SearchModal"
+import JobDropdown from '~components/JobDropdown'
+import JobSkillItem from '~components/JobSkillItem'
+import SearchModal from '~components/SearchModal'
 
-import { appState } from "~utils/appState"
+import { appState } from '~utils/appState'
 
-import type { JobSkillObject, SearchableObject } from "~types"
+import type { JobSkillObject, SearchableObject } from '~types'
 
-import "./index.scss"
+import './index.scss'
 
 // Props
 interface Props {
@@ -24,14 +24,14 @@ interface Props {
 
 const JobSection = (props: Props) => {
   const { party } = useSnapshot(appState)
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
   const router = useRouter()
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale) ? router.locale : "en"
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
   const [job, setJob] = useState<Job>()
-  const [imageUrl, setImageUrl] = useState("")
+  const [imageUrl, setImageUrl] = useState('')
   const [numSkills, setNumSkills] = useState(4)
   const [skills, setSkills] = useState<{ [key: number]: JobSkill | undefined }>(
     []
@@ -62,7 +62,7 @@ const JobSection = (props: Props) => {
     if (job) {
       if ((party.job && job.id != party.job.id) || !party.job)
         appState.party.job = job
-      if (job.row === "1") setNumSkills(3)
+      if (job.row === '1') setNumSkills(3)
       else setNumSkills(4)
     }
   }, [job])
@@ -75,11 +75,11 @@ const JobSection = (props: Props) => {
   }
 
   function generateImageUrl() {
-    let imgSrc = ""
+    let imgSrc = ''
 
     if (job) {
-      const slug = job?.name.en.replaceAll(" ", "-").toLowerCase()
-      const gender = party.user && party.user.gender == 1 ? "b" : "a"
+      const slug = job?.name.en.replaceAll(' ', '-').toLowerCase()
+      const gender = party.user && party.user.gender == 1 ? 'b' : 'a'
 
       imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/jobs/${slug}_${gender}.png`
     }
@@ -101,7 +101,7 @@ const JobSection = (props: Props) => {
         skill={skills[index]}
         editable={canEditSkill(skills[index])}
         key={`skill-${index}`}
-        hasJob={job != undefined && job.id != "-1"}
+        hasJob={job != undefined && job.id != '-1'}
       />
     )
   }
@@ -109,7 +109,7 @@ const JobSection = (props: Props) => {
   const editableSkillItem = (index: number) => {
     return (
       <SearchModal
-        placeholderText={t("search.placeholders.job_skill")}
+        placeholderText={t('search.placeholders.job_skill')}
         fromPosition={index}
         object="job_skills"
         job={job}

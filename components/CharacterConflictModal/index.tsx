@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react"
-import { setCookie } from "cookies-next"
-import Router, { useRouter } from "next/router"
-import { useTranslation } from "react-i18next"
-import { AxiosResponse } from "axios"
+import React, { useEffect, useState } from 'react'
+import { setCookie } from 'cookies-next'
+import Router, { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
+import { AxiosResponse } from 'axios'
 
-import * as Dialog from "@radix-ui/react-dialog"
+import * as Dialog from '@radix-ui/react-dialog'
 
-import api from "~utils/api"
-import { appState } from "~utils/appState"
-import { accountState } from "~utils/accountState"
+import api from '~utils/api'
+import { appState } from '~utils/appState'
+import { accountState } from '~utils/accountState'
 
-import Button from "~components/Button"
+import Button from '~components/Button'
 
-import "./index.scss"
+import './index.scss'
 
 interface Props {
   open: boolean
@@ -24,7 +24,7 @@ interface Props {
 }
 
 const CharacterConflictModal = (props: Props) => {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
   // States
   const [open, setOpen] = useState(false)
@@ -35,13 +35,13 @@ const CharacterConflictModal = (props: Props) => {
 
   function imageUrl(character?: Character, uncap: number = 0) {
     // Change the image based on the uncap level
-    let suffix = "01"
-    if (uncap == 6) suffix = "04"
-    else if (uncap == 5) suffix = "03"
-    else if (uncap > 2) suffix = "02"
+    let suffix = '01'
+    if (uncap == 6) suffix = '04'
+    else if (uncap == 5) suffix = '03'
+    else if (uncap > 2) suffix = '02'
 
     // Special casing for Lyria (and Young Cat eventually)
-    if (character?.granblue_id === "3030182000") {
+    if (character?.granblue_id === '3030182000') {
       let element = 1
       if (
         appState.grid.weapons.mainWeapon &&

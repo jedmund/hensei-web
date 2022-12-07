@@ -15,13 +15,17 @@
     }
 
     & p.placeholder {
-      color: $grey-20;
+      color: var(--text-tertiary-hover);
+    }
+
+    & svg {
+      fill: var(--icon-tertiary-hover);
     }
   }
 
   & > img,
   & > div.placeholder {
-    background: white;
+    background: var(--card-bg);
     border-radius: calc($unit / 2);
     border: 1px solid rgba(0, 0, 0, 0);
     width: $unit * 5;
@@ -34,13 +38,17 @@
     justify-content: center;
 
     & > svg {
-      fill: $grey-60;
+      fill: var(--icon-secondary);
       width: $unit * 2;
       height: $unit * 2;
     }
   }
 
-  p.placeholder {
-    color: $grey-50;
+  p {
+    color: var(--text-primary);
+
+    &.placeholder {
+      color: var(--text-tertiary);
+    }
   }
 }

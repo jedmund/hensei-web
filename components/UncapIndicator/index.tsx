@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react"
-import UncapStar from "~components/UncapStar"
+import React, { useEffect, useRef, useState } from 'react'
+import UncapStar from '~components/UncapStar'
 
-import "./index.scss"
+import './index.scss'
 
 interface Props {
-  type: "character" | "weapon" | "summon"
+  type: 'character' | 'weapon' | 'summon'
   rarity?: number
   uncapLevel?: number
   flb: boolean
@@ -20,7 +20,7 @@ const UncapIndicator = (props: Props) => {
   function setNumStars() {
     let numStars
 
-    if (props.type === "character") {
+    if (props.type === 'character') {
       if (props.special) {
         if (props.ulb) {
           numStars = 5
@@ -109,13 +109,13 @@ const UncapIndicator = (props: Props) => {
   return (
     <ul className="UncapIndicator">
       {Array.from(Array(numStars)).map((x, i) => {
-        if (props.type === "character" && i > 4) {
+        if (props.type === 'character' && i > 4) {
           if (props.special) return ulb(i)
           else return transcendence(i)
         } else if (
-          (props.special && props.type === "character" && i == 3) ||
-          (props.type === "character" && i == 4) ||
-          (props.type !== "character" && i > 2)
+          (props.special && props.type === 'character' && i == 3) ||
+          (props.type === 'character' && i == 4) ||
+          (props.type !== 'character' && i > 2)
         ) {
           return flb(i)
         } else {

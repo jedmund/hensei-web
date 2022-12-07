@@ -1,34 +1,37 @@
-import React, { useState } from "react"
-import Head from "next/head"
-import { useRouter } from "next/router"
-import { useSnapshot } from "valtio"
-import { useTranslation } from "next-i18next"
+import React, { useState } from 'react'
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
-import Linkify from "react-linkify"
-import classNames from "classnames"
+import Linkify from 'react-linkify'
+import classNames from 'classnames'
 
-import * as AlertDialog from "@radix-ui/react-alert-dialog"
-import CrossIcon from "~public/icons/Cross.svg"
+import * as AlertDialog from '@radix-ui/react-alert-dialog'
 
-import Button from "~components/Button"
-import CharLimitedFieldset from "~components/CharLimitedFieldset"
-import RaidDropdown from "~components/RaidDropdown"
-import TextFieldset from "~components/TextFieldset"
+import Button from '~components/Button'
+import CharLimitedFieldset from '~components/CharLimitedFieldset'
+import RaidDropdown from '~components/RaidDropdown'
+import TextFieldset from '~components/TextFieldset'
 
-import { accountState } from "~utils/accountState"
-import { appState } from "~utils/appState"
+import { accountState } from '~utils/accountState'
+import { appState } from '~utils/appState'
 
-import "./index.scss"
-import Link from "next/link"
-import { formatTimeAgo } from "~utils/timeAgo"
+import CheckIcon from '~public/icons/Check.svg'
+import CrossIcon from '~public/icons/Cross.svg'
+import EditIcon from '~public/icons/Edit.svg'
+
+import './index.scss'
+import Link from 'next/link'
+import { formatTimeAgo } from '~utils/timeAgo'
 
 const emptyRaid: Raid = {
-  id: "",
+  id: '',
   name: {
-    en: "",
-    ja: "",
+    en: '',
+    ja: '',
   },
-  slug: "",
+  slug: '',
   level: 0,
   group: 0,
   element: 0,
@@ -47,9 +50,9 @@ const PartyDetails = (props: Props) => {
   const { party, raids } = useSnapshot(appState)
   const { account } = useSnapshot(accountState)
 
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
   const router = useRouter()
-  const locale = router.locale || "en"
+  const locale = router.locale || 'en'
 
   const nameInput = React.createRef<HTMLInputElement>()
   const descriptionInput = React.createRef<HTMLTextAreaElement>()
@@ -87,8 +90,8 @@ const PartyDetails = (props: Props) => {
   })
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({
-    name: "",
-    description: "",
+    name: '',
+    description: '',
   })
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -140,7 +143,7 @@ const PartyDetails = (props: Props) => {
     return (
       <div className={userClass}>
         {userImage()}
-        {party.user ? party.user.username : t("no_user")}
+        {party.user ? party.user.username : t('no_user')}
       </div>
     )
   }
@@ -169,30 +172,30 @@ const PartyDetails = (props: Props) => {
     if (party.editable) {
       return (
         <AlertDialog.Root>
-          <AlertDialog.Trigger className="Button destructive">
-            <span className="icon">
+          <AlertDialog.Trigger className="Button Blended medium destructive">
+            <span className="Accessory">
               <CrossIcon />
             </span>
-            <span className="text">{t("buttons.delete")}</span>
+            <span className="Text">{t('buttons.delete')}</span>
           </AlertDialog.Trigger>
           <AlertDialog.Portal>
             <AlertDialog.Overlay className="Overlay" />
             <AlertDialog.Content className="Dialog">
               <AlertDialog.Title className="DialogTitle">
-                {t("modals.delete_team.title")}
+                {t('modals.delete_team.title')}
               </AlertDialog.Title>
               <AlertDialog.Description className="DialogDescription">
-                {t("modals.delete_team.description")}
+                {t('modals.delete_team.description')}
               </AlertDialog.Description>
               <div className="actions">
                 <AlertDialog.Cancel className="Button modal">
-                  {t("modals.delete_team.buttons.cancel")}
+                  {t('modals.delete_team.buttons.cancel')}
                 </AlertDialog.Cancel>
                 <AlertDialog.Action
                   className="Button modal destructive"
                   onClick={(e) => props.deleteCallback(e)}
                 >
-                  {t("modals.delete_team.buttons.confirm")}
+                  {t('modals.delete_team.buttons.confirm')}
                 </AlertDialog.Action>
               </div>
             </AlertDialog.Content>
@@ -200,7 +203,7 @@ const PartyDetails = (props: Props) => {
         </AlertDialog.Root>
       )
     } else {
-      return ""
+      return ''
     }
   }
 
@@ -217,13 +220,13 @@ const PartyDetails = (props: Props) => {
       />
       <RaidDropdown
         showAllRaidsOption={false}
-        currentRaid={party.raid?.slug || ""}
+        currentRaid={party.raid?.slug || ''}
         ref={raidSelect}
       />
       <TextFieldset
         fieldName="name"
         placeholder={
-          "Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 1 first\nGood luck with RNG!"
+          'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 1 first\nGood luck with RNG!'
         }
         value={party.description}
         onChange={handleTextAreaChange}
@@ -233,16 +236,15 @@ const PartyDetails = (props: Props) => {
 
       <div className="bottom">
         <div className="left">
-          {router.pathname !== "/new" ? deleteButton() : ""}
+          {router.pathname !== '/new' ? deleteButton() : ''}
         </div>
         <div className="right">
-          <Button active={true} onClick={toggleDetails}>
-            {t("buttons.cancel")}
-          </Button>
-
-          <Button active={true} icon="check" onClick={updateDetails}>
-            {t("buttons.save_info")}
-          </Button>
+          <Button text={t('buttons.cancel')} onClick={toggleDetails} />
+          <Button
+            accessoryIcon={<CheckIcon className="Check" />}
+            text={t('buttons.save_info')}
+            onClick={updateDetails}
+          />
         </div>
       </div>
     </section>
@@ -252,10 +254,12 @@ const PartyDetails = (props: Props) => {
     <section className={readOnlyClasses}>
       <div className="info">
         <div className="left">
-          {party.name ? <h1>{party.name}</h1> : ""}
+          <h1 className={!party.name ? 'empty' : ''}>
+            {party.name ? party.name : 'Untitled'}
+          </h1>
           <div className="attribution">
             {party.user ? linkedUserBlock(party.user) : userBlock()}
-            {party.raid ? linkedRaidBlock(party.raid) : ""}
+            {party.raid ? linkedRaidBlock(party.raid) : ''}
             {party.created_at != undefined ? (
               <time
                 className="last-updated"
@@ -264,15 +268,17 @@ const PartyDetails = (props: Props) => {
                 {formatTimeAgo(new Date(party.created_at), locale)}
               </time>
             ) : (
-              ""
+              ''
             )}
           </div>
         </div>
         <div className="right">
           {party.editable ? (
-            <Button active={true} icon="edit" onClick={toggleDetails}>
-              {t("buttons.show_info")}
-            </Button>
+            <Button
+              accessoryIcon={<EditIcon />}
+              text={t('buttons.show_info')}
+              onClick={toggleDetails}
+            />
           ) : (
             <div />
           )}
@@ -283,7 +289,7 @@ const PartyDetails = (props: Props) => {
           <Linkify>{party.description}</Linkify>
         </p>
       ) : (
-        ""
+        ''
       )}
     </section>
   )
@@ -291,59 +297,24 @@ const PartyDetails = (props: Props) => {
   const emptyDetails = (
     <div className={emptyClasses}>
       {party.editable ? (
-        <Button active={true} icon="edit" onClick={toggleDetails}>
-          {t("buttons.show_info")}
-        </Button>
+        <Button
+          accessoryIcon={<EditIcon />}
+          text={t('buttons.show_info')}
+          onClick={toggleDetails}
+        />
       ) : (
         <div />
       )}
     </div>
   )
 
-  const generateTitle = () => {
-    let title = party.raid ? `[${party.raid?.name[locale]}] ` : ""
-
-    const username =
-      party.user != null ? `@${party.user?.username}` : t("header.anonymous")
-
-    if (party.name != null)
-      title += t("header.byline", { partyName: party.name, username: username })
-    else if (party.name == null && party.editable && router.route === "/new")
-      title = t("header.new_team")
-    else
-      title += t("header.untitled_team", {
-        username: username,
-      })
-
-    return title
-  }
-
   return (
-    <div>
-      <Head>
-        <title>{generateTitle()}</title>
-
-        <meta property="og:title" content={generateTitle()} />
-        <meta
-          property="og:description"
-          content={party.description ? party.description : ""}
-        />
-        <meta property="og:url" content="https://app.granblue.team" />
-        <meta property="og:type" content="website" />
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:domain" content="app.granblue.team" />
-        <meta name="twitter:title" content={generateTitle()} />
-        <meta
-          name="twitter:description"
-          content={party.description ? party.description : ""}
-        />
-      </Head>
+    <React.Fragment>
       {editable && (party.name || party.description || party.raid)
         ? readOnly
         : emptyDetails}
       {editable}
-    </div>
+    </React.Fragment>
   )
 }
 

@@ -1,88 +1,87 @@
 .SegmentedControlWrapper {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .SegmentedControl {
-    background: white;
-    border-radius: $unit * 3;
-    display: inline-flex;
-    padding: 3px;
-    position: relative;
-    user-select: none;
-    overflow: hidden;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    z-index: 1;
-    
-    &.fire {
-        .Segment input:checked + label {
-            background: $fire-bg-dark;
-            color: $fire-text-dark;
-        }
+  background: var(--card-bg);
+  border-radius: $unit * 3;
+  display: inline-flex;
+  padding: 3px;
+  position: relative;
+  user-select: none;
+  overflow: hidden;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
-        .Segment:hover label {
-            background: $fire-bg-light;
-            color: $fire-text-light;
-        }
+  &.fire {
+    .Segment input:checked + label {
+      background: $fire-bg-10;
+      color: $fire-text-10;
     }
 
-    &.water {
-        .Segment input:checked + label {
-            background: $water-bg-dark;
-            color: $water-text-dark;
-        }
+    .Segment:hover label {
+      background: var(--fire-hover-bg);
+      color: var(--fire-hover-text);
+    }
+  }
 
-        .Segment:hover label {
-            background: $water-bg-light;
-            color: $water-text-light;
-        }
+  &.water {
+    .Segment input:checked + label {
+      background: $water-bg-10;
+      color: $water-text-10;
     }
 
-    &.earth {
-        .Segment input:checked + label {
-            background: $earth-bg-dark;
-            color: $earth-text-dark;
-        }
+    .Segment:hover label {
+      background: var(--water-hover-bg);
+      color: var(--water-hover-text);
+    }
+  }
 
-        .Segment:hover label {
-            background: $earth-bg-light;
-            color: $earth-text-light;
-        }
+  &.earth {
+    .Segment input:checked + label {
+      background: $earth-bg-10;
+      color: $earth-text-10;
     }
 
-    &.wind {
-        .Segment input:checked + label {
-            background: $wind-bg-dark;
-            color: $wind-text-dark;
-        }
+    .Segment:hover label {
+      background: var(--earth-hover-bg);
+      color: var(--earth-hover-text);
+    }
+  }
 
-        .Segment:hover label {
-            background: $wind-bg-light;
-            color: $wind-text-light;
-        }
+  &.wind {
+    .Segment input:checked + label {
+      background: $wind-bg-10;
+      color: $wind-text-10;
     }
 
-    &.light {
-        .Segment input:checked + label {
-            background: $light-bg-dark;
-            color: $light-text-dark;
-        }
+    .Segment:hover label {
+      background: var(--wind-hover-bg);
+      color: var(--wind-hover-text);
+    }
+  }
 
-        .Segment:hover label {
-            background: $light-bg-light;
-            color: $light-text-light;
-        }
+  &.light {
+    .Segment input:checked + label {
+      background: $light-bg-10;
+      color: $light-text-10;
     }
 
-    &.dark {
-        .Segment input:checked + label {
-            background: $dark-bg-dark;
-            color: $dark-text-dark;
-        }
-
-        .Segment:hover label {
-            background: $dark-bg-light;
-            color: $dark-text-light;
-        }
+    .Segment:hover label {
+      background: var(--light-hover-bg);
+      color: var(--light-hover-text);
     }
+  }
+
+  &.dark {
+    .Segment input:checked + label {
+      background: $dark-bg-10;
+      color: $dark-text-10;
+    }
+
+    .Segment:hover label {
+      background: var(--dark-hover-bg);
+      color: var(--dark-hover-text);
+    }
+  }
 }

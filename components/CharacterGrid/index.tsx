@@ -1,22 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { getCookie } from "cookies-next"
-import { useSnapshot } from "valtio"
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { getCookie } from 'cookies-next'
+import { useSnapshot } from 'valtio'
 
-import { AxiosResponse } from "axios"
-import debounce from "lodash.debounce"
+import { AxiosResponse } from 'axios'
+import debounce from 'lodash.debounce'
 
-import Alert from "~components/Alert"
-import JobSection from "~components/JobSection"
-import CharacterUnit from "~components/CharacterUnit"
-import CharacterConflictModal from "~components/CharacterConflictModal"
+import Alert from '~components/Alert'
+import JobSection from '~components/JobSection'
+import CharacterUnit from '~components/CharacterUnit'
+import CharacterConflictModal from '~components/CharacterConflictModal'
 
-import type { JobSkillObject, SearchableObject } from "~types"
+import type { JobSkillObject, SearchableObject } from '~types'
 
-import api from "~utils/api"
-import { appState } from "~utils/appState"
+import api from '~utils/api'
+import { appState } from '~utils/appState'
 
-import "./index.scss"
+import './index.scss'
 
 // Props
 interface Props {
@@ -31,7 +31,7 @@ const CharacterGrid = (props: Props) => {
   const numCharacters: number = 5
 
   // Cookies
-  const cookie = getCookie("account")
+  const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
@@ -57,7 +57,7 @@ const CharacterGrid = (props: Props) => {
     2: undefined,
     3: undefined,
   })
-  const [errorMessage, setErrorMessage] = useState("")
+  const [errorMessage, setErrorMessage] = useState('')
 
   // Create a temporary state to store previous character uncap values
   const [previousUncapValues, setPreviousUncapValues] = useState<{
@@ -116,7 +116,7 @@ const CharacterGrid = (props: Props) => {
   }
 
   async function handleCharacterResponse(data: any) {
-    if (data.hasOwnProperty("conflicts")) {
+    if (data.hasOwnProperty('conflicts')) {
       setIncoming(data.incoming)
       setConflicts(data.conflicts)
       setPosition(data.position)
@@ -185,7 +185,7 @@ const CharacterGrid = (props: Props) => {
   const saveJob = function (job: Job) {
     const payload = {
       party: {
-        job_id: job ? job.id : "",
+        job_id: job ? job.id : '',
       },
       ...headers,
     }
@@ -231,9 +231,9 @@ const CharacterGrid = (props: Props) => {
         })
         .catch((error) => {
           const data = error.response.data
-          if (data.code == "too_many_skills_of_type") {
+          if (data.code == 'too_many_skills_of_type') {
             const message = `You can only add up to 2 ${
-              data.skill_type === "emp"
+              data.skill_type === 'emp'
                 ? data.skill_type.toUpperCase()
                 : data.skill_type
             } skills to your party at once.`
@@ -268,7 +268,7 @@ const CharacterGrid = (props: Props) => {
 
     try {
       if (uncapLevel != previousUncapValues[position])
-        await api.updateUncap("character", id, uncapLevel).then((response) => {
+        await api.updateUncap('character', id, uncapLevel).then((response) => {
           storeGridCharacter(response.data.grid_character)
         })
     } catch (error) {
@@ -332,7 +332,7 @@ const CharacterGrid = (props: Props) => {
   }
 
   function cancelAlert() {
-    setErrorMessage("")
+    setErrorMessage('')
   }
 
   // Render: JSX components
@@ -342,7 +342,7 @@ const CharacterGrid = (props: Props) => {
         open={errorMessage.length > 0}
         message={errorMessage}
         cancelAction={cancelAlert}
-        cancelActionText={"Got it"}
+        cancelActionText={'Got it'}
       />
       <div id="CharacterGrid">
         <JobSection

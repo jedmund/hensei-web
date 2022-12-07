@@ -1,64 +1,65 @@
 .ToggleGroup {
-    $height: 36px;
+  $height: 36px;
 
-    border: 1px solid rgba(0, 0, 0, 0.14);
-    border-radius: $height;
-    display: flex;
-    height: $height;
-    gap: calc($unit / 4);
-    padding: calc($unit / 2);
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: $height;
+  display: flex;
+  height: $height;
+  gap: calc($unit / 4);
+  padding: calc($unit / 2);
 
-    .ToggleItem {
-        background: white;
-        border: none;
-        border-radius: 18px;
-        color: $grey-40;
-        flex-grow: 1;
-        font-size: $font-regular;
-        padding: ($unit) $unit * 2;
+  .ToggleItem {
+    background: $grey-100;
+    border: none;
+    border-radius: 18px;
+    color: $grey-50;
+    flex-grow: 1;
+    font-size: $font-regular;
+    padding: ($unit) $unit * 2;
 
-        &.ja {
-            padding-top: 6px;
-            padding-bottom: 10px;
-        }
-
-        &:hover {
-            cursor: pointer;
-        }
-
-        &:hover, &[data-state="on"] {
-            background:$grey-80;
-            color: $grey-00;
-
-            &.fire {
-                background: $fire-bg-light;
-                color: $fire-text-dark;
-            }
-
-            &.water {
-                background: $water-bg-light;
-                color: $water-text-dark;
-            }
-
-            &.earth {
-                background: $earth-bg-light;
-                color: $earth-text-dark;
-            }
-
-            &.wind {
-                background: $wind-bg-light;
-                color: $wind-text-dark;
-            }
-
-            &.dark {
-                background: $dark-bg-light;
-                color: $dark-text-dark;
-            }
-
-            &.light {
-                background: $light-bg-light;
-                color: $light-text-dark;
-            }
-        }
+    &.ja {
+      padding-top: 6px;
+      padding-bottom: 10px;
     }
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &:hover,
+    &[data-state='on'] {
+      background: $grey-80;
+      color: $grey-15;
+
+      &.fire {
+        background: $fire-bg-20;
+        color: $fire-text-10;
+      }
+
+      &.water {
+        background: $water-bg-20;
+        color: $water-text-10;
+      }
+
+      &.earth {
+        background: $earth-bg-20;
+        color: $earth-text-10;
+      }
+
+      &.wind {
+        background: $wind-bg-20;
+        color: $wind-text-10;
+      }
+
+      &.dark {
+        background: $dark-bg-10;
+        color: $dark-text-10;
+      }
+
+      &.light {
+        background: $light-bg-20;
+        color: $light-text-10;
+      }
+    }
+  }
 }

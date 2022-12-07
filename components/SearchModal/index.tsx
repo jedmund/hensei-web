@@ -1,35 +1,41 @@
-import React, { useEffect, useState } from "react"
-import { getCookie, setCookie } from "cookies-next"
-import { useRouter } from "next/router"
-import { useTranslation } from "react-i18next"
-import InfiniteScroll from "react-infinite-scroll-component"
+import React, { useEffect, useState } from 'react'
+import { getCookie, setCookie } from 'cookies-next'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
-import api from "~utils/api"
+import api from '~utils/api'
 
-import * as Dialog from "@radix-ui/react-dialog"
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogClose,
+} from '~components/Dialog'
 
-import CharacterSearchFilterBar from "~components/CharacterSearchFilterBar"
-import WeaponSearchFilterBar from "~components/WeaponSearchFilterBar"
-import SummonSearchFilterBar from "~components/SummonSearchFilterBar"
-import JobSkillSearchFilterBar from "~components/JobSkillSearchFilterBar"
+import Input from '~components/Input'
+import CharacterSearchFilterBar from '~components/CharacterSearchFilterBar'
+import WeaponSearchFilterBar from '~components/WeaponSearchFilterBar'
+import SummonSearchFilterBar from '~components/SummonSearchFilterBar'
+import JobSkillSearchFilterBar from '~components/JobSkillSearchFilterBar'
 
-import CharacterResult from "~components/CharacterResult"
-import WeaponResult from "~components/WeaponResult"
-import SummonResult from "~components/SummonResult"
-import JobSkillResult from "~components/JobSkillResult"
+import CharacterResult from '~components/CharacterResult'
+import WeaponResult from '~components/WeaponResult'
+import SummonResult from '~components/SummonResult'
+import JobSkillResult from '~components/JobSkillResult'
 
-import type { SearchableObject, SearchableObjectArray } from "~types"
+import type { SearchableObject, SearchableObjectArray } from '~types'
 
-import "./index.scss"
-import CrossIcon from "~public/icons/Cross.svg"
-import cloneDeep from "lodash.clonedeep"
+import './index.scss'
+import CrossIcon from '~public/icons/Cross.svg'
+import cloneDeep from 'lodash.clonedeep'
 
 interface Props {
   send: (object: SearchableObject, position: number) => any
   placeholderText: string
   fromPosition: number
   job?: Job
-  object: "weapons" | "characters" | "summons" | "job_skills"
+  object: 'weapons' | 'characters' | 'summons' | 'job_skills'
   children: React.ReactNode
 }
 
@@ -39,7 +45,7 @@ const SearchModal = (props: Props) => {
   const locale = router.locale
 
   // Set up translation
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
   let searchInput = React.createRef<HTMLInputElement>()
   let scrollContainer = React.createRef<HTMLDivElement>()
@@ -47,7 +53,7 @@ const SearchModal = (props: Props) => {
   const [firstLoad, setFirstLoad] = useState(true)
   const [filters, setFilters] = useState<{ [key: string]: any }>()
   const [open, setOpen] = useState(false)
-  const [query, setQuery] = useState("")
+  const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchableObjectArray>([])
 
   // Pagination states
@@ -64,7 +70,7 @@ const SearchModal = (props: Props) => {
     if (text.length) {
       setQuery(text)
     } else {
-      setQuery("")
+      setQuery('')
     }
   }
 
@@ -113,7 +119,7 @@ const SearchModal = (props: Props) => {
       : []
     let recents: SearchableObjectArray = []
 
-    if (props.object === "weapons") {
+    if (props.object === 'weapons') {
       recents = cloneDeep(cookieObj as Weapon[]) || []
       if (
         !recents.find(
@@ -123,7 +129,7 @@ const SearchModal = (props: Props) => {
       ) {
         recents.unshift(result as Weapon)
       }
-    } else if (props.object === "summons") {
+    } else if (props.object === 'summons') {
       recents = cloneDeep(cookieObj as Summon[]) || []
       if (
         !recents.find(
@@ -136,7 +142,7 @@ const SearchModal = (props: Props) => {
     }
 
     if (recents && recents.length > 5) recents.pop()
-    setCookie(`recent_${props.object}`, recents, { path: "/" })
+    setCookie(`recent_${props.object}`, recents, { path: '/' })
     sendData(result)
   }
 
@@ -192,16 +198,16 @@ const SearchModal = (props: Props) => {
     let jsx
 
     switch (props.object) {
-      case "weapons":
+      case 'weapons':
         jsx = renderWeaponSearchResults()
         break
-      case "summons":
+      case 'summons':
         jsx = renderSummonSearchResults(results)
         break
-      case "characters":
+      case 'characters':
         jsx = renderCharacterSearchResults(results)
         break
-      case "job_skills":
+      case 'job_skills':
         jsx = renderJobSkillSearchResults(results)
         break
     }
@@ -305,7 +311,7 @@ const SearchModal = (props: Props) => {
 
   function openChange() {
     if (open) {
-      setQuery("")
+      setQuery('')
       setFirstLoad(true)
       setResults([])
       setRecordCount(0)
@@ -317,61 +323,54 @@ const SearchModal = (props: Props) => {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={openChange}>
-      <Dialog.Trigger asChild>{props.children}</Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Content className="Search Dialog">
-          <div id="Header">
-            <div id="Bar">
-              <label className="search_label" htmlFor="search_input">
-                <input
-                  autoComplete="off"
-                  type="text"
-                  name="query"
-                  className="Input"
-                  id="search_input"
-                  ref={searchInput}
-                  value={query}
-                  placeholder={props.placeholderText}
-                  onChange={inputChanged}
-                />
-              </label>
-              <Dialog.Close className="DialogClose" onClick={openChange}>
-                <CrossIcon />
-              </Dialog.Close>
-            </div>
-            {props.object === "characters" ? (
-              <CharacterSearchFilterBar sendFilters={receiveFilters} />
-            ) : (
-              ""
-            )}
-            {props.object === "weapons" ? (
-              <WeaponSearchFilterBar sendFilters={receiveFilters} />
-            ) : (
-              ""
-            )}
-            {props.object === "summons" ? (
-              <SummonSearchFilterBar sendFilters={receiveFilters} />
-            ) : (
-              ""
-            )}
-            {props.object === "job_skills" ? (
-              <JobSkillSearchFilterBar sendFilters={receiveFilters} />
-            ) : (
-              ""
-            )}
+    <Dialog open={open} onOpenChange={openChange}>
+      <DialogTrigger asChild>{props.children}</DialogTrigger>
+      <DialogContent className="Search Dialog">
+        <div id="Header">
+          <div id="Bar">
+            <Input
+              autoComplete="off"
+              className="Search"
+              name="query"
+              placeholder={props.placeholderText}
+              ref={searchInput}
+              value={query}
+              onChange={inputChanged}
+            />
+            <DialogClose className="DialogClose" onClick={openChange}>
+              <CrossIcon />
+            </DialogClose>
           </div>
+          {props.object === 'characters' ? (
+            <CharacterSearchFilterBar sendFilters={receiveFilters} />
+          ) : (
+            ''
+          )}
+          {props.object === 'weapons' ? (
+            <WeaponSearchFilterBar sendFilters={receiveFilters} />
+          ) : (
+            ''
+          )}
+          {props.object === 'summons' ? (
+            <SummonSearchFilterBar sendFilters={receiveFilters} />
+          ) : (
+            ''
+          )}
+          {props.object === 'job_skills' ? (
+            <JobSkillSearchFilterBar sendFilters={receiveFilters} />
+          ) : (
+            ''
+          )}
+        </div>
 
-          <div id="Results" ref={scrollContainer}>
-            <h5 className="total">
-              {t("search.result_count", { record_count: recordCount })}
-            </h5>
-            {open ? renderResults() : ""}
-          </div>
-        </Dialog.Content>
-        <Dialog.Overlay className="Overlay" />
-      </Dialog.Portal>
-    </Dialog.Root>
+        <div id="Results" ref={scrollContainer}>
+          <h5 className="total">
+            {t('search.result_count', { record_count: recordCount })}
+          </h5>
+          {open ? renderResults() : ''}
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 

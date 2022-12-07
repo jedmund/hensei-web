@@ -28,10 +28,10 @@
   }
 
   .JobImage {
-    $height: 249px;
+    $height: 252px;
     $width: 447px;
 
-    background: url("/images/background_a.jpg");
+    background: url('/images/background_a.jpg');
     background-size: 500px 281px;
     border-radius: $unit;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);

@@ -1,31 +1,31 @@
 #CharacterGrid {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: auto;
-    max-width: 761px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  max-width: 761px;
 }
 
 #grid_characters {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    max-width: 761px;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  max-width: 761px;
+
+  @media (max-width: $medium-screen) {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  & > * {
+    margin-right: $unit * 3;
 
     @media (max-width: $medium-screen) {
-        justify-content: space-between;
-        width: 100%;
+      margin-right: inherit;
     }
+  }
 
-    & > * {
-        margin-right: $unit * 3;
-
-        @media (max-width: $medium-screen) {
-            margin-right: inherit;
-        }
-    }
-
-    & > li:last-child {
-        margin: 0;
-    }
+  & > li:last-child {
+    margin: 0;
+  }
 }

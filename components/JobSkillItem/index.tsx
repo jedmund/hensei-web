@@ -1,14 +1,14 @@
-import React from "react"
-import { useRouter } from "next/router"
-import { useTranslation } from "next-i18next"
+import React from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 
-import classNames from "classnames"
-import PlusIcon from "~public/icons/Add.svg"
+import classNames from 'classnames'
+import PlusIcon from '~public/icons/Add.svg'
 
-import "./index.scss"
+import './index.scss'
 
 // Props
-interface Props extends React.ComponentPropsWithoutRef<"div"> {
+interface Props extends React.ComponentPropsWithoutRef<'div'> {
   skill?: JobSkill
   editable: boolean
   hasJob: boolean
@@ -17,11 +17,11 @@ interface Props extends React.ComponentPropsWithoutRef<"div"> {
 const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
   function useJobSkillItem({ ...props }, forwardedRef) {
     const router = useRouter()
-    const { t } = useTranslation("common")
+    const { t } = useTranslation('common')
     const locale =
-      router.locale && ["en", "ja"].includes(router.locale)
+      router.locale && ['en', 'ja'].includes(router.locale)
         ? router.locale
-        : "en"
+        : 'en'
 
     const classes = classNames({
       JobSkill: true,
@@ -47,7 +47,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       } else {
         jsx = (
           <div className={imageClasses}>
-            {props.editable && props.hasJob ? <PlusIcon /> : ""}
+            {props.editable && props.hasJob ? <PlusIcon /> : ''}
           </div>
         )
       }
@@ -61,9 +61,9 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       if (props.skill) {
         jsx = <p>{props.skill.name[locale]}</p>
       } else if (props.editable && props.hasJob) {
-        jsx = <p className="placeholder">{t("job_skills.state.selectable")}</p>
+        jsx = <p className="placeholder">{t('job_skills.state.selectable')}</p>
       } else {
-        jsx = <p className="placeholder">{t("job_skills.state.no_skill")}</p>
+        jsx = <p className="placeholder">{t('job_skills.state.no_skill')}</p>
       }
 
       return jsx

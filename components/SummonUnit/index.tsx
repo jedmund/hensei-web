@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { useTranslation } from "next-i18next"
-import classnames from "classnames"
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+import classnames from 'classnames'
 
-import SearchModal from "~components/SearchModal"
-import SummonHovercard from "~components/SummonHovercard"
-import UncapIndicator from "~components/UncapIndicator"
-import PlusIcon from "~public/icons/Add.svg"
+import SearchModal from '~components/SearchModal'
+import SummonHovercard from '~components/SummonHovercard'
+import UncapIndicator from '~components/UncapIndicator'
+import PlusIcon from '~public/icons/Add.svg'
 
-import type { SearchableObject } from "~types"
+import type { SearchableObject } from '~types'
 
-import "./index.scss"
+import './index.scss'
 
 interface Props {
   gridSummon: GridSummon | undefined
@@ -22,13 +22,13 @@ interface Props {
 }
 
 const SummonUnit = (props: Props) => {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
-  const [imageUrl, setImageUrl] = useState("")
+  const [imageUrl, setImageUrl] = useState('')
 
   const router = useRouter()
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale) ? router.locale : "en"
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
   const classes = classnames({
     SummonUnit: true,
@@ -47,33 +47,33 @@ const SummonUnit = (props: Props) => {
   })
 
   function generateImageUrl() {
-    let imgSrc = ""
+    let imgSrc = ''
     if (props.gridSummon) {
       const summon = props.gridSummon.object!
 
       const upgradedSummons = [
-        "2040094000",
-        "2040100000",
-        "2040080000",
-        "2040098000",
-        "2040090000",
-        "2040084000",
-        "2040003000",
-        "2040056000",
-        "2040020000",
-        "2040034000",
-        "2040028000",
-        "2040027000",
-        "2040046000",
-        "2040047000",
+        '2040094000',
+        '2040100000',
+        '2040080000',
+        '2040098000',
+        '2040090000',
+        '2040084000',
+        '2040003000',
+        '2040056000',
+        '2040020000',
+        '2040034000',
+        '2040028000',
+        '2040027000',
+        '2040046000',
+        '2040047000',
       ]
 
-      let suffix = ""
+      let suffix = ''
       if (
         upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
         props.gridSummon.uncap_level == 5
       )
-        suffix = "_02"
+        suffix = '_02'
 
       // Generate the correct source for the summon
       if (props.unitType == 0 || props.unitType == 2)
@@ -98,14 +98,14 @@ const SummonUnit = (props: Props) => {
           <PlusIcon />
         </span>
       ) : (
-        ""
+        ''
       )}
     </div>
   )
 
   const editableImage = (
     <SearchModal
-      placeholderText={t("search.placeholders.summon")}
+      placeholderText={t('search.placeholders.summon')}
       fromPosition={props.position}
       object="summons"
       send={props.updateObject}
@@ -127,7 +127,7 @@ const SummonUnit = (props: Props) => {
           special={false}
         />
       ) : (
-        ""
+        ''
       )}
       <h3 className="SummonName">{summon?.name[locale]}</h3>
     </div>

@@ -1,20 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { getCookie } from "cookies-next"
-import { useSnapshot } from "valtio"
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { getCookie } from 'cookies-next'
+import { useSnapshot } from 'valtio'
 
-import { AxiosResponse } from "axios"
-import debounce from "lodash.debounce"
+import { AxiosResponse } from 'axios'
+import debounce from 'lodash.debounce'
 
-import WeaponUnit from "~components/WeaponUnit"
-import ExtraWeapons from "~components/ExtraWeapons"
+import WeaponUnit from '~components/WeaponUnit'
+import ExtraWeapons from '~components/ExtraWeapons'
 
-import api from "~utils/api"
-import { appState } from "~utils/appState"
+import api from '~utils/api'
+import { appState } from '~utils/appState'
 
-import type { SearchableObject } from "~types"
+import type { SearchableObject } from '~types'
 
-import "./index.scss"
+import './index.scss'
 
 // Props
 interface Props {
@@ -29,7 +29,7 @@ const WeaponGrid = (props: Props) => {
   const numWeapons: number = 9
 
   // Cookies
-  const cookie = getCookie("account")
+  const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
@@ -132,7 +132,7 @@ const WeaponGrid = (props: Props) => {
 
     try {
       if (uncapLevel != previousUncapValues[position])
-        await api.updateUncap("weapon", id, uncapLevel).then((response) => {
+        await api.updateUncap('weapon', id, uncapLevel).then((response) => {
           storeGridWeapon(response.data.grid_weapon)
         })
     } catch (error) {
@@ -250,7 +250,7 @@ const WeaponGrid = (props: Props) => {
       </div>
 
       {(() => {
-        return party.extra ? extraGridElement : ""
+        return party.extra ? extraGridElement : ''
       })()}
     </div>
   )

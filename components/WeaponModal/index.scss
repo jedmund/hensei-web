@@ -1,44 +1,44 @@
 .Weapon.Dialog {
-    .mods {
-        display: flex;
-        flex-direction: column;
-        gap: $unit * 4;
+  .mods {
+    display: flex;
+    flex-direction: column;
+    gap: $unit * 4;
 
-        section {
-            display: flex;
-            flex-direction: column;
-            gap: calc($unit / 2);
+    section {
+      display: flex;
+      flex-direction: column;
+      gap: calc($unit / 2);
 
-            h3 {
-                color: $grey-50;
-                font-size: $font-small;
-                margin-bottom: $unit;
-            }
+      h3 {
+        color: $grey-55;
+        font-size: $font-small;
+        margin-bottom: $unit;
+      }
 
-            select {
-                background-color: $grey-90;
-            }
-        }
-
-        .Button {
-            font-size: $font-regular;
-            padding: ($unit * 1.5) ($unit * 2);
-            width: 100%;
-    
-            &.btn-disabled {
-                background: $grey-90;
-                color: $grey-70;
-                cursor: not-allowed;
-            }
-    
-            &:not(.btn-disabled) {
-                background: $grey-90;
-                color: $grey-40;
-    
-                &:hover {
-                    background: $grey-80;
-                }
-            }
-        }
+      select {
+        background-color: $grey-90;
+      }
     }
+
+    .Button {
+      font-size: $font-regular;
+      padding: ($unit * 1.5) ($unit * 2);
+      width: 100%;
+
+      &.btn-disabled {
+        background: $grey-90;
+        color: $grey-70;
+        cursor: not-allowed;
+      }
+
+      &:not(.btn-disabled) {
+        background: $grey-90;
+        color: $grey-50;
+
+        &:hover {
+          background: $grey-80;
+        }
+      }
+    }
+  }
 }

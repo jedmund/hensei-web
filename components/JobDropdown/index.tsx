@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { useSnapshot } from "valtio"
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useSnapshot } from 'valtio'
 
-import { appState } from "~utils/appState"
-import { jobGroups } from "~utils/jobGroups"
+import Select from '~components/Select'
+import SelectItem from '~components/SelectItem'
+import SelectGroup from '~components/SelectGroup'
 
-import "./index.scss"
+import { appState } from '~utils/appState'
+import { jobGroups } from '~utils/jobGroups'
+
+import './index.scss'
 
 // Props
 interface Props {
@@ -20,12 +24,13 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
   function useFieldSet(props, ref) {
     // Set up router for locale
     const router = useRouter()
-    const locale = router.locale || "en"
+    const locale = router.locale || 'en'
 
     // Create snapshot of app state
     const { party } = useSnapshot(appState)
 
     // Set up local states for storing jobs
+    const [open, setOpen] = useState(false)
     const [currentJob, setCurrentJob] = useState<Job>()
     const [jobs, setJobs] = useState<Job[]>()
     const [sortedJobs, setSortedJobs] = useState<GroupedJob>()
@@ -58,10 +63,14 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
       }
     }, [appState, props.currentJob])
 
+    function openJobSelect() {
+      setOpen(!open)
+    }
+
     // Enable changing select value
-    function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    function handleChange(value: string) {
       if (jobs) {
-        const job = jobs.find((job) => job.id === event.target.value)
+        const job = jobs.find((job) => job.id === value)
         if (props.onChange) props.onChange(job)
         setCurrentJob(job)
       }
@@ -76,36 +85,37 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
           .sort((a, b) => a.order - b.order)
           .map((item, i) => {
             return (
-              <option key={i} value={item.id}>
+              <SelectItem key={i} value={item.id}>
                 {item.name[locale]}
-              </option>
+              </SelectItem>
             )
           })
 
       const groupName = jobGroups.find((g) => g.slug === group)?.name[locale]
 
       return (
-        <optgroup key={group} label={groupName}>
+        <SelectGroup key={group} label={groupName} separator={false}>
           {options}
-        </optgroup>
+        </SelectGroup>
       )
     }
 
     return (
-      <select
-        key={currentJob ? currentJob.id : -1}
-        value={currentJob ? currentJob.id : -1}
-        onBlur={props.onBlur}
+      <Select
+        trigger={'Select a class...'}
+        placeholder={'Select a class...'}
+        open={open}
+        onClick={openJobSelect}
         onChange={handleChange}
-        ref={ref}
+        triggerClass="Job"
       >
-        <option key="no-job" value={-1}>
+        <SelectItem key={-1} value="no-job">
           No class
-        </option>
+        </SelectItem>
         {sortedJobs
           ? Object.keys(sortedJobs).map((x) => renderJobGroup(x))
-          : ""}
-      </select>
+          : ''}
+      </Select>
     )
   }
 )

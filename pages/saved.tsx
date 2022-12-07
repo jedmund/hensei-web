@@ -1,24 +1,24 @@
-import React, { useCallback, useEffect, useState } from "react"
-import Head from "next/head"
+import React, { useCallback, useEffect, useState } from 'react'
+import Head from 'next/head'
 
-import { getCookie } from "cookies-next"
-import { queryTypes, useQueryState } from "next-usequerystate"
-import { useRouter } from "next/router"
-import { useTranslation } from "next-i18next"
-import InfiniteScroll from "react-infinite-scroll-component"
+import { getCookie } from 'cookies-next'
+import { queryTypes, useQueryState } from 'next-usequerystate'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { serverSideTranslations } from "next-i18next/serverSideTranslations"
-import clonedeep from "lodash.clonedeep"
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import clonedeep from 'lodash.clonedeep'
 
-import api from "~utils/api"
-import useDidMountEffect from "~utils/useDidMountEffect"
-import { elements, allElement } from "~utils/Element"
+import api from '~utils/api'
+import useDidMountEffect from '~utils/useDidMountEffect'
+import { elements, allElement } from '~utils/Element'
 
-import GridRep from "~components/GridRep"
-import GridRepCollection from "~components/GridRepCollection"
-import FilterBar from "~components/FilterBar"
+import GridRep from '~components/GridRep'
+import GridRepCollection from '~components/GridRepCollection'
+import FilterBar from '~components/FilterBar'
 
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 interface Props {
   teams?: { count: number; total_pages: number; results: Party[] }
@@ -28,7 +28,7 @@ interface Props {
 
 const SavedRoute: React.FC<Props> = (props: Props) => {
   // Set up cookies
-  const cookie = getCookie("account")
+  const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
@@ -40,7 +40,7 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
   const router = useRouter()
 
   // Import translations
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
   // Set up app-specific states
   const [raidsLoading, setRaidsLoading] = useState(true)
@@ -58,28 +58,30 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
 
   // Set up filter-specific query states
   // Recency is in seconds
-  const [element, setElement] = useQueryState("element", {
+  const [element, setElement] = useQueryState('element', {
     defaultValue: -1,
     parse: (query: string) => parseElement(query),
     serialize: (value) => serializeElement(value),
   })
-  const [raidSlug, setRaidSlug] = useQueryState("raid", { defaultValue: "all" })
+  const [raidSlug, setRaidSlug] = useQueryState('raid', {
+    defaultValue: 'all',
+  })
   const [recency, setRecency] = useQueryState(
-    "recency",
+    'recency',
     queryTypes.integer.withDefault(-1)
   )
 
   // Define transformers for element
   function parseElement(query: string) {
     let element: TeamElement | undefined =
-      query === "all"
+      query === 'all'
         ? allElement
         : elements.find((element) => element.name.en.toLowerCase() === query)
     return element ? element.id : -1
   }
 
   function serializeElement(value: number | undefined) {
-    let name = ""
+    let name = ''
 
     if (value != undefined) {
       if (value == -1) name = allElement.name.en.toLowerCase()
@@ -101,8 +103,8 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
 
   // Add scroll event listener for shadow on FilterBar on mount
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   // Handle errors
@@ -110,7 +112,7 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
     if (error.response != null) {
       console.error(error)
     } else {
-      console.error("There was an error.")
+      console.error('There was an error.')
     }
   }, [])
 
@@ -275,7 +277,7 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
   return (
     <div id="Teams">
       <Head>
-        <title>{t("saved.title")}</title>
+        <title>{t('saved.title')}</title>
 
         <meta property="og:title" content="Your saved Teams" />
         <meta property="og:url" content="https://app.granblue.team/saved" />
@@ -293,7 +295,7 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
         raidSlug={raidSlug ? raidSlug : undefined}
         recency={recency}
       >
-        <h1>{t("saved.title")}</h1>
+        <h1>{t('saved.title')}</h1>
       </FilterBar>
 
       <section>
@@ -312,10 +314,10 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
 
         {parties.length == 0 ? (
           <div id="NotFound">
-            <h2>{t("saved.not_found")}</h2>
+            <h2>{t('saved.not_found')}</h2>
           </div>
         ) : (
-          ""
+          ''
         )}
       </section>
     </div>
@@ -326,7 +328,7 @@ export const getServerSidePaths = async () => {
   return {
     paths: [
       // Object variant:
-      { params: { party: "string" } },
+      { params: { party: 'string' } },
     ],
     fallback: true,
   }
@@ -397,12 +399,12 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 const organizeRaids = (raids: Raid[]) => {
   // Set up empty raid for "All raids"
   const all = {
-    id: "0",
+    id: '0',
     name: {
-      en: "All raids",
-      ja: "全て",
+      en: 'All raids',
+      ja: '全て',
     },
-    slug: "all",
+    slug: 'all',
     level: 0,
     group: 0,
     element: 0,

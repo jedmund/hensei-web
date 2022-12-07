@@ -1,55 +1,55 @@
 .UncapStar {
-    background-repeat: no-repeat;
-    background-size: 18px 18px;
-    display: block;
-    height: 18px;
-    width: 18px;
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+  display: block;
+  height: 18px;
+  width: 18px;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+
+  &.empty,
+  &.empty.mlb,
+  &.empty.flb,
+  &.empty.ulb,
+  &.empty.special {
+    background: url('/icons/uncap/empty.svg');
 
     &:hover {
-        transform: scale(1.2);
+      background: url('/icons/uncap/empty-hover.svg');
     }
+  }
 
-    &.empty,
-    &.empty.mlb,
-    &.empty.flb,
-    &.empty.ulb,
-    &.empty.special {
-        background: url('/icons/uncap/empty.svg');
+  &.mlb {
+    background: url('/icons/uncap/yellow.svg');
 
-        &:hover {
-            background: url('/icons/uncap/empty-hover.svg');
-        }
+    &:hover {
+      background: url('/icons/uncap/yellow-hover.svg');
     }
+  }
 
-    &.mlb {
-        background: url('/icons/uncap/yellow.svg');
+  &.special {
+    background: url('/icons/uncap/red.svg');
 
-        &:hover {
-            background: url('/icons/uncap/yellow-hover.svg');
-        }
+    &:hover {
+      background: url('/icons/uncap/red-hover.svg');
     }
+  }
 
-    &.special {
-        background: url('/icons/uncap/red.svg');
+  &.flb {
+    background: url('/icons/uncap/blue.svg');
 
-        &:hover {
-            background: url('/icons/uncap/red-hover.svg');
-        }
+    &:hover {
+      background: url('/icons/uncap/blue-hover.svg');
     }
+  }
 
-    &.flb {
-        background: url('/icons/uncap/blue.svg');
+  &.ulb {
+    background: url('/icons/uncap/purple.svg');
 
-        &:hover {
-            background: url('/icons/uncap/blue-hover.svg');
-        }
+    &:hover {
+      background: url('/icons/uncap/purple-hover.svg');
     }
-
-    &.ulb {
-        background: url('/icons/uncap/purple.svg');
-
-        &:hover {
-            background: url('/icons/uncap/purple-hover.svg');
-        }
-    }
+  }
 }

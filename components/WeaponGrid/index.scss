@@ -1,42 +1,42 @@
 #MainGrid {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 
-    .grid_weapons {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 1fr 1fr 1fr;
-        margin: 0;
-        padding: 0;
-        max-width: 528px;
-    }
+  .grid_weapons {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    margin: 0;
+    padding: 0;
+    max-width: 528px;
+  }
 }
 
-#MainGrid, #ExtraGrid {    
-    .grid_weapons > * {
-        margin-bottom: $unit * 3;
-        margin-right: $unit * 3;
-        
-        @media (max-width: $medium-screen) {
-            margin-bottom: $unit * 2;
-            margin-right: $unit * 2;
-        }
+#MainGrid,
+#ExtraGrid {
+  .grid_weapons > * {
+    margin-bottom: $unit * 3;
+    margin-right: $unit * 3;
 
-        &:nth-last-child(-n+3) {
-            margin-bottom: 0;
-        }
+    @media (max-width: $medium-screen) {
+      margin-bottom: $unit * 2;
+      margin-right: $unit * 2;
     }
-    
-    .grid_weapons > *:nth-child(3n+3) {
-        margin-right: 0;
+
+    &:nth-last-child(-n + 3) {
+      margin-bottom: 0;
     }
-    
-    .grid_weapons > li {
-        list-style: none;
-    }
+  }
+
+  .grid_weapons > *:nth-child(3n + 3) {
+    margin-right: 0;
+  }
+
+  .grid_weapons > li {
+    list-style: none;
+  }
 }
 
 #ExtraWeapons #grid_weapons > * {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
-

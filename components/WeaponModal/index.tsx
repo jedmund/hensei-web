@@ -1,21 +1,21 @@
-import React, { useState } from "react"
-import { getCookie } from "cookies-next"
-import { useRouter } from "next/router"
-import { useTranslation } from "next-i18next"
-import { AxiosResponse } from "axios"
+import React, { useState } from 'react'
+import { getCookie } from 'cookies-next'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+import { AxiosResponse } from 'axios'
 
-import * as Dialog from "@radix-ui/react-dialog"
+import * as Dialog from '@radix-ui/react-dialog'
 
-import AXSelect from "~components/AxSelect"
-import ElementToggle from "~components/ElementToggle"
-import WeaponKeyDropdown from "~components/WeaponKeyDropdown"
-import Button from "~components/Button"
+import AXSelect from '~components/AxSelect'
+import ElementToggle from '~components/ElementToggle'
+import WeaponKeyDropdown from '~components/WeaponKeyDropdown'
+import Button from '~components/Button'
 
-import api from "~utils/api"
-import { appState } from "~utils/appState"
+import api from '~utils/api'
+import { appState } from '~utils/appState'
 
-import CrossIcon from "~public/icons/Cross.svg"
-import "./index.scss"
+import CrossIcon from '~public/icons/Cross.svg'
+import './index.scss'
 
 interface GridWeaponObject {
   weapon: {
@@ -38,11 +38,11 @@ interface Props {
 const WeaponModal = (props: Props) => {
   const router = useRouter()
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale) ? router.locale : "en"
-  const { t } = useTranslation("common")
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const { t } = useTranslation('common')
 
   // Cookies
-  const cookie = getCookie("account")
+  const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
@@ -134,7 +134,7 @@ const WeaponModal = (props: Props) => {
   const elementSelect = () => {
     return (
       <section>
-        <h3>{t("modals.weapon.subtitles.element")}</h3>
+        <h3>{t('modals.weapon.subtitles.element')}</h3>
         <ElementToggle
           currentElement={props.gridWeapon.element}
           sendValue={receiveElementValue}
@@ -146,7 +146,7 @@ const WeaponModal = (props: Props) => {
   const keySelect = () => {
     return (
       <section>
-        <h3>{t("modals.weapon.subtitles.weapon_keys")}</h3>
+        <h3>{t('modals.weapon.subtitles.weapon_keys')}</h3>
         {[2, 3, 17, 22].includes(props.gridWeapon.object.series) ? (
           <WeaponKeyDropdown
             currentValue={
@@ -159,7 +159,7 @@ const WeaponModal = (props: Props) => {
             ref={weaponKey1Select}
           />
         ) : (
-          ""
+          ''
         )}
 
         {[2, 3, 17].includes(props.gridWeapon.object.series) ? (
@@ -174,7 +174,7 @@ const WeaponModal = (props: Props) => {
             ref={weaponKey2Select}
           />
         ) : (
-          ""
+          ''
         )}
 
         {props.gridWeapon.object.series == 17 ? (
@@ -189,7 +189,7 @@ const WeaponModal = (props: Props) => {
             ref={weaponKey3Select}
           />
         ) : (
-          ""
+          ''
         )}
       </section>
     )
@@ -198,7 +198,7 @@ const WeaponModal = (props: Props) => {
   const axSelect = () => {
     return (
       <section>
-        <h3>{t("modals.weapon.subtitles.ax_skills")}</h3>
+        <h3>{t('modals.weapon.subtitles.ax_skills')}</h3>
         <AXSelect
           axType={props.gridWeapon.object.ax}
           currentSkills={props.gridWeapon.ax}
@@ -225,7 +225,7 @@ const WeaponModal = (props: Props) => {
           <div className="DialogHeader">
             <div className="DialogTop">
               <Dialog.Title className="SubTitle">
-                {t("modals.weapon.title")}
+                {t('modals.weapon.title')}
               </Dialog.Title>
               <Dialog.Title className="DialogTitle">
                 {props.gridWeapon.object.name[locale]}
@@ -239,16 +239,16 @@ const WeaponModal = (props: Props) => {
           </div>
 
           <div className="mods">
-            {props.gridWeapon.object.element == 0 ? elementSelect() : ""}
+            {props.gridWeapon.object.element == 0 ? elementSelect() : ''}
             {[2, 3, 17, 24].includes(props.gridWeapon.object.series)
               ? keySelect()
-              : ""}
-            {props.gridWeapon.object.ax > 0 ? axSelect() : ""}
+              : ''}
+            {props.gridWeapon.object.ax > 0 ? axSelect() : ''}
             <Button
               onClick={updateWeapon}
               disabled={props.gridWeapon.object.ax > 0 && !formValid}
             >
-              {t("modals.weapon.buttons.confirm")}
+              {t('modals.weapon.buttons.confirm')}
             </Button>
           </div>
         </Dialog.Content>

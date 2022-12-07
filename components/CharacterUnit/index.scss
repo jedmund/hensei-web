@@ -1,79 +1,78 @@
 .CharacterUnit {
+  display: flex;
+  flex-direction: column;
+  gap: calc($unit / 2);
+  min-height: 320px;
+  max-width: 200px;
+  margin-bottom: $unit * 4;
+
+  &.editable .CharacterImage:hover {
+    border: $hover-stroke;
+    box-shadow: $hover-shadow;
+    cursor: pointer;
+    transform: $scale-tall;
+  }
+
+  &.filled h3 {
+    display: block;
+  }
+
+  &.filled ul {
     display: flex;
-    flex-direction: column;
-    gap: calc($unit / 2);
-    min-height: 320px;
-    max-width: 200px;
-    margin-bottom: $unit * 4;
+  }
 
-    &.editable .CharacterImage:hover {
-        border: $hover-stroke;
-        box-shadow: $hover-shadow;
-        cursor: pointer;
-        transform: $scale-tall;
+  h3,
+  ul {
+    display: none;
+  }
+
+  h3 {
+    color: var(--text-primary);
+    font-size: $font-regular;
+    font-weight: $normal;
+    line-height: 1.1;
+    margin: 0;
+    max-width: 131px;
+    text-align: center;
+    word-wrap: normal;
+  }
+
+  img {
+    position: relative;
+    width: 100%;
+    z-index: 2;
+  }
+
+  .CharacterImage {
+    aspect-ratio: 131 / 273;
+    background: var(--card-bg);
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: $unit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.18s ease-in-out;
+    height: auto;
+    width: 131px;
+
+    @media (max-width: $medium-screen) {
+      width: 17vw;
     }
 
-    &.filled h3 {
-        display: block;
+    &:hover .icon svg {
+      fill: var(--icon-secondary-hover);
     }
 
-    &.filled ul {
-        display: flex;
+    .icon {
+      position: absolute;
+      height: $unit * 3;
+      width: $unit * 3;
+      z-index: 1;
+
+      svg {
+        fill: var(--icon-secondary);
+      }
     }
-
-    h3,
-    ul {
-        display: none;
-    }
-
-    h3 {
-        color: #333;
-        font-size: $font-regular;
-        font-weight: $normal;
-        line-height: 1.1;
-        margin: 0;
-        max-width: 131px;
-        text-align: center;
-        word-wrap: normal;
-    }
-
-    img {
-        position: relative;
-        width: 100%;
-        z-index: 2;
-    }
-    
-
-    .CharacterImage {
-        aspect-ratio: 131 / 273;
-        background: white;
-        border: 1px solid rgba(0, 0, 0, 0);
-        border-radius: $unit;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        transition: all 0.18s ease-in-out;
-        height: auto;
-        width: 131px;
-
-        @media (max-width: $medium-screen) {
-            width: 17vw;
-        }
-
-        &:hover .icon svg {
-            color: $grey-40;
-        }
-
-        .icon {
-            position: absolute;
-            height: $unit * 3;
-            width: $unit * 3;
-            z-index: 1;
-        
-            svg {
-                fill: $grey-70;
-            }
-        }
-    }
+  }
 }

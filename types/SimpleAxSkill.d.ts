@@ -1,4 +1,4 @@
 interface SimpleAxSkill {
-    modifier: number
-    strength: number
+  modifier: number
+  strength: number
 }

@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { useTranslation } from "next-i18next"
-import classnames from "classnames"
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+import classnames from 'classnames'
 
-import SearchModal from "~components/SearchModal"
-import WeaponModal from "~components/WeaponModal"
-import WeaponHovercard from "~components/WeaponHovercard"
-import UncapIndicator from "~components/UncapIndicator"
-import Button from "~components/Button"
+import SearchModal from '~components/SearchModal'
+import WeaponModal from '~components/WeaponModal'
+import WeaponHovercard from '~components/WeaponHovercard'
+import UncapIndicator from '~components/UncapIndicator'
+import Button from '~components/Button'
 
-import { ButtonType } from "~utils/enums"
-import type { SearchableObject } from "~types"
+import { ButtonType } from '~utils/enums'
+import type { SearchableObject } from '~types'
 
-import PlusIcon from "~public/icons/Add.svg"
-import "./index.scss"
+import PlusIcon from '~public/icons/Add.svg'
+import './index.scss'
 
 interface Props {
   gridWeapon: GridWeapon | undefined
@@ -25,13 +25,13 @@ interface Props {
 }
 
 const WeaponUnit = (props: Props) => {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
-  const [imageUrl, setImageUrl] = useState("")
+  const [imageUrl, setImageUrl] = useState('')
 
   const router = useRouter()
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale) ? router.locale : "en"
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
   const classes = classnames({
     WeaponUnit: true,
@@ -39,6 +39,7 @@ const WeaponUnit = (props: Props) => {
     grid: props.unitType == 1,
     editable: props.editable,
     filled: props.gridWeapon !== undefined,
+    empty: props.gridWeapon == undefined,
   })
 
   const gridWeapon = props.gridWeapon
@@ -49,7 +50,7 @@ const WeaponUnit = (props: Props) => {
   })
 
   function generateImageUrl() {
-    let imgSrc = ""
+    let imgSrc = ''
     if (props.gridWeapon) {
       const weapon = props.gridWeapon.object!
 
@@ -91,14 +92,14 @@ const WeaponUnit = (props: Props) => {
           <PlusIcon />
         </span>
       ) : (
-        ""
+        ''
       )}
     </div>
   )
 
   const editableImage = (
     <SearchModal
-      placeholderText={t("search.placeholders.weapon")}
+      placeholderText={t('search.placeholders.weapon')}
       fromPosition={props.position}
       object="weapons"
       send={props.updateObject}
@@ -116,7 +117,7 @@ const WeaponUnit = (props: Props) => {
           </div>
         </WeaponModal>
       ) : (
-        ""
+        ''
       )}
       {props.editable ? editableImage : image}
       {gridWeapon ? (
@@ -129,7 +130,7 @@ const WeaponUnit = (props: Props) => {
           special={false}
         />
       ) : (
-        ""
+        ''
       )}
       <h3 className="WeaponName">{weapon?.name[locale]}</h3>
     </div>

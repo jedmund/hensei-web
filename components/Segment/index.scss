@@ -1,36 +1,36 @@
 .Segment {
-    color: $grey-50;
+  color: $grey-55;
+  cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: $normal;
+  min-width: 100px;
+
+  &:hover label {
+    background: var(--page-hover);
+    color: var(--text-primary);
+  }
+
+  & input {
+    display: none;
+
+    &:checked + label {
+      background: var(--background);
+      color: var(--text-primary);
+    }
+  }
+
+  & label {
+    border-radius: $unit * 3;
+    display: block;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 8px 12px;
+    text-overflow: ellipsis;
     cursor: pointer;
-    font-size: 1.4rem;
-    font-weight: $normal;
-    min-width: 100px;
 
-    &:hover label {
-        background: $grey-90;
-        color: $grey-40;
+    &:before {
+      background: #fff;
     }
-
-    & input {
-        display: none;
-
-        &:checked + label {
-            background: $grey-90;
-            color: $grey-00;
-        }
-    }
-
-    & label {
-        border-radius: $unit * 3;
-        display: block;
-        text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
-        padding: 8px 12px;
-        text-overflow: ellipsis;
-        cursor: pointer;
-
-        &:before {
-            background: #fff;
-        }
-    }
+  }
 }

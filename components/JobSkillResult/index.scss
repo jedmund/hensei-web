@@ -6,57 +6,57 @@
   align-items: center;
 
   &:hover {
-    background: $grey-90;
+    background: var(--button-contained-bg);
     cursor: pointer;
 
-    .Info .skill.pill {
-      background: $grey-80;
+    .Info h5 {
+      color: var(--text-primary);
     }
   }
 
   .Info {
     display: flex;
     flex-direction: row;
-    gap: calc($unit / 2);
+    gap: $unit-half;
     width: 100%;
 
     .skill.pill {
       background: $grey-90;
       border-radius: $unit * 2;
-      color: $grey-00;
+      color: $grey-15;
       display: inline;
       font-size: $font-tiny;
       font-weight: $medium;
-      padding: calc($unit / 2) $unit;
+      padding: $unit-half $unit;
 
       &.buffing {
-        background-color: $light-bg-dark;
-        color: $light-text-dark;
+        background-color: $light-bg-10;
+        color: $light-text-10;
       }
 
       &.debuffing {
-        background-color: $water-bg-dark;
-        color: $water-text-dark;
+        background-color: $water-bg-10;
+        color: $water-text-10;
       }
 
       &.healing {
-        background-color: $wind-bg-dark;
-        color: $wind-text-dark;
+        background-color: $wind-bg-10;
+        color: $wind-text-10;
       }
 
       &.damaging {
-        background-color: $fire-bg-dark;
-        color: $fire-text-dark;
+        background-color: $fire-bg-10;
+        color: $fire-text-10;
       }
 
       &.field {
-        background-color: $dark-bg-dark;
-        color: $dark-text-dark;
+        background-color: $dark-bg-20;
+        color: $dark-text-10;
       }
     }
 
     h5 {
-      color: #555;
+      color: var(--text-secondary);
       display: inline-block;
       font-size: $font-medium;
       font-weight: $medium;
@@ -65,7 +65,7 @@
   }
 
   img {
-    width: $unit * 6;
-    height: $unit * 6;
+    width: $unit-6x;
+    height: $unit-6x;
   }
 }

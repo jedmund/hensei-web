@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { SkillGroup, skillClassification } from "~utils/skillGroups"
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { SkillGroup, skillClassification } from '~utils/skillGroups'
 
-import "./index.scss"
+import './index.scss'
 
 interface Props {
   data: JobSkill
@@ -12,7 +12,7 @@ interface Props {
 const JobSkillResult = (props: Props) => {
   const router = useRouter()
   const locale =
-    router.locale && ["en", "ja"].includes(router.locale) ? router.locale : "en"
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
   const skill = props.data
 
@@ -30,7 +30,7 @@ const JobSkillResult = (props: Props) => {
       <img alt={skill.name[locale]} src={jobSkillUrl()} />
       <div className="Info">
         <h5>{skill.name[locale]}</h5>
-        <div className={`skill pill ${group?.name["en"].toLowerCase()}`}>
+        <div className={`skill pill ${group?.name['en'].toLowerCase()}`}>
           {group?.name[locale]}
         </div>
       </div>

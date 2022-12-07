@@ -1,10 +1,10 @@
-import React from "react"
-import { useTranslation } from "next-i18next"
-import WeaponUnit from "~components/WeaponUnit"
+import React from 'react'
+import { useTranslation } from 'next-i18next'
+import WeaponUnit from '~components/WeaponUnit'
 
-import type { SearchableObject } from "~types"
+import type { SearchableObject } from '~types'
 
-import "./index.scss"
+import './index.scss'
 
 // Props
 interface Props {
@@ -18,17 +18,17 @@ interface Props {
 
 const ExtraWeapons = (props: Props) => {
   const numWeapons: number = 3
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
 
   return (
     <div id="ExtraGrid">
-      <span>{t("extra_weapons")}</span>
+      <span>{t('extra_weapons')}</span>
       <ul className="grid_weapons">
         {Array.from(Array(numWeapons)).map((x, i) => {
           return (
             <li key={`grid_unit_${i}`}>
               <WeaponUnit
-                editable={props.editable}
+                editable={i < 2 ? props.editable : false}
                 position={props.offset + i}
                 unitType={1}
                 gridWeapon={props.grid[props.offset + i]}

@@ -1,21 +1,21 @@
 export enum ButtonType {
-    Base,
-    IconOnly,
-    Destructive
+  Base,
+  IconOnly,
+  Destructive,
 }
 
 export enum GridType {
-    Class,
-    Character,
-    Weapon,
-    Summon
+  Class,
+  Character,
+  Weapon,
+  Summon,
 }
 export enum TeamElement {
-    Any,
-    Wind,
-    Fire,
-    Water,
-    Earth,
-    Dark,
-    Light
+  Any,
+  Wind,
+  Fire,
+  Water,
+  Earth,
+  Dark,
+  Light,
 }

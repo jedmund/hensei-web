@@ -1,14 +1,14 @@
-import { proxy } from "valtio"
-import { JobSkillObject } from "~types"
+import { proxy } from 'valtio'
+import { JobSkillObject } from '~types'
 
 const emptyJob: Job = {
-  id: "-1",
-  row: "",
+  id: '-1',
+  row: '',
   ml: false,
   order: 0,
   name: {
-    en: "",
-    ja: "",
+    en: '',
+    ja: '',
   },
   proficiency: {
     proficiency1: 0,

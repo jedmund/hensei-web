@@ -1,0 +1,25 @@
+.SelectGroup {
+  .Label {
+    align-items: center;
+    color: var(--text-tertiary);
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    font-size: $font-small;
+    font-weight: $medium;
+    gap: $unit;
+    padding: $unit $unit-2x $unit-half;
+
+    &:first-child {
+      padding-top: $unit-2x;
+    }
+
+    .Separator {
+      background: var(--select-separator);
+      border-radius: 1px;
+      display: block;
+      flex-grow: 1;
+      height: 2px;
+    }
+  }
+}
