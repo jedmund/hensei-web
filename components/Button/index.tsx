@@ -12,7 +12,7 @@ interface Props
   active?: boolean
   blended?: boolean
   contained?: boolean
-  size: 'small' | 'medium' | 'large'
+  buttonSize?: 'small' | 'medium' | 'large'
   text?: string
 }
 
@@ -20,11 +20,11 @@ const defaultProps = {
   active: false,
   blended: false,
   contained: false,
-  size: 'medium' as const,
+  buttonSize: 'medium' as const,
 }
 
 const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
-  { accessoryIcon, active, blended, contained, size, text, ...props },
+  { accessoryIcon, active, blended, contained, buttonSize, text, ...props },
   forwardedRef
 ) {
   const classes = classNames(

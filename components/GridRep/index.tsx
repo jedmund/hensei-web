@@ -167,7 +167,7 @@ const GridRep = (props: Props) => {
             accessoryIcon={<SaveIcon class="stroke" />}
             active={props.favorited}
             contained={true}
-            size="small"
+            buttonSize="small"
             onClick={sendSaveData}
           />
         ) : (
