@@ -1,7 +1,8 @@
 .ToggleGroup {
   $height: 36px;
 
-  border: 1px solid rgba(0, 0, 0, 0.14);
+  background-color: var(--toggle-bg);
+  border: 1px solid var(--toggle-stroke);
   border-radius: $height;
   display: flex;
   height: $height;
@@ -9,10 +10,10 @@
   padding: calc($unit / 2);
 
   .ToggleItem {
-    background: $grey-100;
+    background: var(--toggle-bg);
     border: none;
     border-radius: 18px;
-    color: $grey-50;
+    color: var(--input-secondary);
     flex-grow: 1;
     font-size: $font-regular;
     padding: ($unit) $unit * 2;
@@ -32,33 +33,33 @@
       color: $grey-15;
 
       &.fire {
-        background: $fire-bg-20;
-        color: $fire-text-10;
+        background: var(--fire-bg);
+        color: var(--fire-text);
       }
 
       &.water {
-        background: $water-bg-20;
-        color: $water-text-10;
+        background: var(--water-bg);
+        color: var(--water-text);
       }
 
       &.earth {
-        background: $earth-bg-20;
-        color: $earth-text-10;
+        background: var(--earth-bg);
+        color: var(--earth-text);
       }
 
       &.wind {
-        background: $wind-bg-20;
-        color: $wind-text-10;
+        background: var(--wind-bg);
+        color: var(--wind-text);
       }
 
       &.dark {
-        background: $dark-bg-10;
-        color: $dark-text-10;
+        background: var(--dark-bg);
+        color: var(--dark-text);
       }
 
       &.light {
-        background: $light-bg-20;
-        color: $light-text-10;
+        background: var(--light-bg);
+        color: var(--light-text);
       }
     }
   }
