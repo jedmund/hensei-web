@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -8,7 +8,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 
 import AXSelect from '~components/AxSelect'
 import ElementToggle from '~components/ElementToggle'
-import WeaponKeyDropdown from '~components/WeaponKeyDropdown'
+import WeaponKeySelect from '~components/WeaponKeySelect'
 import Button from '~components/Button'
 
 import api from '~utils/api'
@@ -50,20 +50,37 @@ const WeaponModal = (props: Props) => {
     ? { Authorization: `Bearer ${accountData.token}` }
     : {}
 
-  // Refs
-  const weaponKey1Select = React.createRef<HTMLSelectElement>()
-  const weaponKey2Select = React.createRef<HTMLSelectElement>()
-  const weaponKey3Select = React.createRef<HTMLSelectElement>()
-
   // State
   const [open, setOpen] = useState(false)
   const [formValid, setFormValid] = useState(false)
 
   const [element, setElement] = useState(-1)
+
   const [primaryAxModifier, setPrimaryAxModifier] = useState(-1)
   const [secondaryAxModifier, setSecondaryAxModifier] = useState(-1)
   const [primaryAxValue, setPrimaryAxValue] = useState(0.0)
   const [secondaryAxValue, setSecondaryAxValue] = useState(0.0)
+
+  const [weaponKey1, setWeaponKey1] = useState<WeaponKey | undefined>()
+  const [weaponKey2, setWeaponKey2] = useState<WeaponKey | undefined>()
+  const [weaponKey3, setWeaponKey3] = useState<WeaponKey | undefined>()
+  const [weaponKey1Id, setWeaponKey1Id] = useState('')
+  const [weaponKey2Id, setWeaponKey2Id] = useState('')
+  const [weaponKey3Id, setWeaponKey3Id] = useState('')
+
+  useEffect(() => {
+    setElement(props.gridWeapon.element)
+
+    if (props.gridWeapon.weapon_keys) {
+      if (props.gridWeapon.weapon_keys[0]) {
+        setWeaponKey1(props.gridWeapon.weapon_keys[0])
+      }
+      if (props.gridWeapon.weapon_keys[1])
+        setWeaponKey2(props.gridWeapon.weapon_keys[1])
+      if (props.gridWeapon.weapon_keys[2])
+        setWeaponKey3(props.gridWeapon.weapon_keys[2])
+    }
+  }, [props])
 
   function receiveAxValues(
     primaryAxModifier: number,
@@ -91,14 +108,15 @@ const WeaponModal = (props: Props) => {
 
     if (props.gridWeapon.object.element == 0) object.weapon.element = element
 
-    if ([2, 3, 17, 24].includes(props.gridWeapon.object.series))
-      object.weapon.weapon_key1_id = weaponKey1Select.current?.value
+    if ([2, 3, 17, 24].includes(props.gridWeapon.object.series)) {
+      object.weapon.weapon_key1_id = weaponKey1Id
+    }
 
     if ([2, 3, 17].includes(props.gridWeapon.object.series))
-      object.weapon.weapon_key2_id = weaponKey2Select.current?.value
+      object.weapon.weapon_key2_id = weaponKey2Id
 
     if (props.gridWeapon.object.series == 17)
-      object.weapon.weapon_key3_id = weaponKey3Select.current?.value
+      object.weapon.weapon_key3_id = weaponKey3Id
 
     if (props.gridWeapon.object.ax > 0) {
       object.weapon.ax_modifier1 = primaryAxModifier
@@ -131,12 +149,18 @@ const WeaponModal = (props: Props) => {
     console.error(error)
   }
 
+  function receiveWeaponKey(value: string, slot: number) {
+    if (slot === 0) setWeaponKey1Id(value)
+    if (slot === 1) setWeaponKey2Id(value)
+    if (slot === 2) setWeaponKey3Id(value)
+  }
+
   const elementSelect = () => {
     return (
       <section>
         <h3>{t('modals.weapon.subtitles.element')}</h3>
         <ElementToggle
-          currentElement={props.gridWeapon.element}
+          currentElement={element}
           sendValue={receiveElementValue}
         />
       </section>
@@ -148,45 +172,33 @@ const WeaponModal = (props: Props) => {
       <section>
         <h3>{t('modals.weapon.subtitles.weapon_keys')}</h3>
         {[2, 3, 17, 22].includes(props.gridWeapon.object.series) ? (
-          <WeaponKeyDropdown
-            currentValue={
-              props.gridWeapon.weapon_keys
-                ? props.gridWeapon.weapon_keys[0]
-                : undefined
-            }
+          <WeaponKeySelect
+            currentValue={weaponKey1 != null ? weaponKey1 : undefined}
             series={props.gridWeapon.object.series}
             slot={0}
-            ref={weaponKey1Select}
+            onChange={receiveWeaponKey}
           />
         ) : (
           ''
         )}
 
         {[2, 3, 17].includes(props.gridWeapon.object.series) ? (
-          <WeaponKeyDropdown
-            currentValue={
-              props.gridWeapon.weapon_keys
-                ? props.gridWeapon.weapon_keys[1]
-                : undefined
-            }
+          <WeaponKeySelect
+            currentValue={weaponKey2 != null ? weaponKey2 : undefined}
             series={props.gridWeapon.object.series}
             slot={1}
-            ref={weaponKey2Select}
+            onChange={receiveWeaponKey}
           />
         ) : (
           ''
         )}
 
         {props.gridWeapon.object.series == 17 ? (
-          <WeaponKeyDropdown
-            currentValue={
-              props.gridWeapon.weapon_keys
-                ? props.gridWeapon.weapon_keys[2]
-                : undefined
-            }
+          <WeaponKeySelect
+            currentValue={weaponKey3 != null ? weaponKey3 : undefined}
             series={props.gridWeapon.object.series}
             slot={2}
-            ref={weaponKey3Select}
+            onChange={receiveWeaponKey}
           />
         ) : (
           ''
@@ -245,6 +257,7 @@ const WeaponModal = (props: Props) => {
               : ''}
             {props.gridWeapon.object.ax > 0 ? axSelect() : ''}
             <Button
+              contained={true}
               onClick={updateWeapon}
               disabled={props.gridWeapon.object.ax > 0 && !formValid}
               text={t('modals.weapon.buttons.confirm')}

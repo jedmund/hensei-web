@@ -6,9 +6,22 @@
   display: flex;
   padding: $unit-2x $unit-2x;
 
+  &.modal {
+    background-color: var(--select-modal-bg);
+
+    &:hover {
+      background-color: var(--select-modal-bg-hover);
+    }
+  }
+
   &:hover {
     background-color: var(--input-bg-hover);
+    color: var(--text-primary);
     cursor: pointer;
+
+    &[data-placeholder] > span:not(.SelectIcon) {
+      color: var(--text-primary);
+    }
   }
 
   &[data-placeholder] > span:not(.SelectIcon) {

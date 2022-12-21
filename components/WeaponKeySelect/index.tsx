@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
+import Select from '~components/Select'
+import SelectGroup from '~components/SelectGroup'
+import SelectItem from '~components/SelectItem'
 import api from '~utils/api'
 
 import './index.scss'
@@ -9,14 +12,13 @@ interface Props {
   currentValue?: WeaponKey
   series: number
   slot: number
-  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void
-  onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
+  onChange?: (value: string, slot: number) => void
 }
 
-const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
+const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
   function useFieldSet(props, ref) {
+    const [open, setOpen] = useState(false)
     const [keys, setKeys] = useState<WeaponKey[][]>([])
-    const [currentKey, setCurrentKey] = useState('')
 
     const pendulumNames = [
       { en: 'Pendulum', jp: '' },
@@ -30,10 +32,6 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
       { en: 'Ultima Key', jp: '' },
       { en: 'Gate of Omnipotence', jp: '' },
     ]
-
-    useEffect(() => {
-      if (props.currentValue) setCurrentKey(props.currentValue.id)
-    }, [props.currentValue])
 
     useEffect(() => {
       const filterParams = {
@@ -66,6 +64,10 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
       fetchWeaponKeys()
     }, [props.series, props.slot])
 
+    function openSelect() {
+      setOpen(!open)
+    }
+
     function weaponKeyGroup(index: number) {
       ;['α', 'β', 'γ', 'Δ'].sort((a, b) => a.localeCompare(b, 'el'))
 
@@ -78,9 +80,9 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
         keys[index].length > 0 &&
         keys[index].sort(sortByOrder).map((item, i) => {
           return (
-            <option key={i} value={item.id}>
+            <SelectItem key={i} value={item.id}>
               {item.name.en}
-            </option>
+            </SelectItem>
           )
         })
 
@@ -93,21 +95,20 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
       else if (props.series == 22) name = emblemNames[index]
 
       return (
-        <optgroup
+        <SelectGroup
           key={index}
           label={
             props.series == 17 && props.slot == 2 ? name.en : `${name.en}s`
           }
+          separator={false}
         >
           {options}
-        </optgroup>
+        </SelectGroup>
       )
     }
 
-    function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
-      if (props.onChange) props.onChange(event)
-
-      setCurrentKey(event.currentTarget.value)
+    function handleChange(value: string) {
+      if (props.onChange) props.onChange(value, props.slot)
     }
 
     const emptyOption = () => {
@@ -121,22 +122,24 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
     }
 
     return (
-      <select
+      <Select
         key={`weapon-key-${props.slot}`}
-        value={currentKey}
-        onBlur={props.onBlur}
+        defaultValue={props.currentValue ? props.currentValue.id : 'no-key'}
+        open={open}
         onChange={handleChange}
+        onClick={openSelect}
         ref={ref}
+        triggerClass="modal"
       >
-        <option key="-1" value="-1">
+        <SelectItem key="no-key" value="no-key">
           {emptyOption()}
-        </option>
+        </SelectItem>
         {Array.from(Array(keys?.length)).map((x, i) => {
           return weaponKeyGroup(i)
         })}
-      </select>
+      </Select>
     )
   }
 )
 
-export default WeaponKeyDropdown
+export default WeaponKeySelect

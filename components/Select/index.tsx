@@ -11,25 +11,27 @@ interface Props {
   open: boolean
   defaultValue?: string | number
   placeholder?: string
-  trigger?: React.ReactNode
+  name?: string
   children?: React.ReactNode
   onClick?: () => void
   onChange?: (value: string) => void
   triggerClass?: string
 }
 
-const Select = React.forwardRef<HTMLSelectElement, Props>(function useFieldSet(
+const Select = React.forwardRef<HTMLButtonElement, Props>(function useFieldSet(
   props,
   ref
 ) {
   return (
     <RadixSelect.Root
       defaultValue={props.defaultValue as string}
+      name={props.name}
       onValueChange={props.onChange}
     >
       <RadixSelect.Trigger
         className={classNames('SelectTrigger', props.triggerClass)}
         placeholder={props.placeholder}
+        ref={ref}
       >
         <RadixSelect.Value placeholder={props.placeholder} />
         <RadixSelect.Icon className="SelectIcon">

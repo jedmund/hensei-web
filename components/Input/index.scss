@@ -7,6 +7,14 @@
   display: block;
   padding: $unit-2x;
   width: 100%;
+
+  &.Contained {
+    background-color: var(--input-bound-bg);
+
+    &:hover {
+      background-color: var(--input-bound-bg-hover);
+    }
+  }
 }
 
 .InputError {

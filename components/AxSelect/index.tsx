@@ -311,7 +311,7 @@ const AXSelect = (props: Props) => {
     if (ax) {
       const rangeString = `${ax.minValue}~${ax.maxValue}${ax.suffix || ''}`
 
-      element.className = 'Input Visible'
+      element.className = 'Input Contained Visible'
       element.disabled = false
       element.placeholder = rangeString
       element.min = `${ax.minValue}`
@@ -320,12 +320,12 @@ const AXSelect = (props: Props) => {
     } else {
       if (primaryAxValueInput.current && secondaryAxValueInput.current) {
         if (primaryAxValueInput.current == element) {
-          primaryAxValueInput.current.className = 'Input'
+          primaryAxValueInput.current.className = 'Input Contained'
           primaryAxValueInput.current.disabled = true
           primaryAxValueInput.current.placeholder = ''
         }
 
-        secondaryAxValueInput.current.className = 'Input'
+        secondaryAxValueInput.current.className = 'Input Contained'
         secondaryAxValueInput.current.disabled = true
         secondaryAxValueInput.current.placeholder = ''
       }
@@ -356,6 +356,7 @@ const AXSelect = (props: Props) => {
             open={openAX1}
             onChange={handleAX1SelectChange}
             onClick={() => openSelect(primaryAxModifierSelect)}
+            triggerClass="modal"
             ref={primaryAxModifierSelect}
           >
             {generateOptions(0)}
@@ -383,6 +384,7 @@ const AXSelect = (props: Props) => {
             open={openAX2}
             onChange={handleAX2SelectChange}
             onClick={() => openSelect(secondaryAxModifierSelect)}
+            triggerClass="modal"
             ref={secondaryAxModifierSelect}
           >
             {generateOptions(1)}
