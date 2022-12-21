@@ -9,7 +9,6 @@ import WeaponHovercard from '~components/WeaponHovercard'
 import UncapIndicator from '~components/UncapIndicator'
 import Button from '~components/Button'
 
-import { ButtonType } from '~utils/enums'
 import type { SearchableObject } from '~types'
 
 import PlusIcon from '~public/icons/Add.svg'

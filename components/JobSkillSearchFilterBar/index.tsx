@@ -41,7 +41,6 @@ const JobSkillSearchFilterBar = (props: Props) => {
     <div className="SearchFilterBar">
       <Select
         defaultValue={-1}
-        trigger={'All elements'}
         open={open}
         onChange={onChange}
         onClick={openSelect}

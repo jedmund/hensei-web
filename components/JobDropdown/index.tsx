@@ -102,7 +102,6 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     return (
       <Select
-        trigger={'Select a class...'}
         placeholder={'Select a class...'}
         open={open}
         onClick={openJobSelect}

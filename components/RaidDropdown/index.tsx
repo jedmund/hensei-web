@@ -131,7 +131,6 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
     return (
       <Select
         defaultValue={props.defaultRaid}
-        trigger={'Select a raid...'}
         placeholder={'Select a raid...'}
         open={open}
         onClick={openRaidSelect}

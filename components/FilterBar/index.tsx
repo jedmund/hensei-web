@@ -70,7 +70,6 @@ const FilterBar = (props: Props) => {
       {props.children}
       <Select
         defaultValue={-1}
-        trigger={'All elements'}
         open={elementOpen}
         onChange={elementSelectChanged}
         onClick={openElementSelect}
@@ -111,7 +110,6 @@ const FilterBar = (props: Props) => {
 
       <Select
         defaultValue={-1}
-        trigger={'All time'}
         open={recencyOpen}
         onChange={recencySelectChanged}
         onClick={openRecencySelect}
