@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { ForwardedRef, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+
+import Select from '~components/Select'
+import SelectItem from '~components/SelectItem'
 
 import classNames from 'classnames'
 
@@ -32,6 +35,9 @@ const AXSelect = (props: Props) => {
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
   const { t } = useTranslation('common')
 
+  const [openAX1, setOpenAX1] = useState(false)
+  const [openAX2, setOpenAX2] = useState(false)
+
   // Set up form states and error handling
   const [errors, setErrors] = useState<ErrorMap>({
     axValue1: '',
@@ -49,9 +55,9 @@ const AXSelect = (props: Props) => {
   })
 
   // Refs
-  const primaryAxModifierSelect = React.createRef<HTMLSelectElement>()
+  const primaryAxModifierSelect = React.createRef<HTMLButtonElement>()
   const primaryAxValueInput = React.createRef<HTMLInputElement>()
-  const secondaryAxModifierSelect = React.createRef<HTMLSelectElement>()
+  const secondaryAxModifierSelect = React.createRef<HTMLButtonElement>()
   const secondaryAxValueInput = React.createRef<HTMLInputElement>()
 
   // States
@@ -61,19 +67,8 @@ const AXSelect = (props: Props) => {
   const [secondaryAxValue, setSecondaryAxValue] = useState(0.0)
 
   useEffect(() => {
-    if (props.currentSkills && props.currentSkills[0]) {
-      if (props.currentSkills[0].modifier != null)
-        setPrimaryAxModifier(props.currentSkills[0].modifier)
-
-      setPrimaryAxValue(props.currentSkills[0].strength)
-    }
-
-    if (props.currentSkills && props.currentSkills[1]) {
-      if (props.currentSkills[1].modifier != null)
-        setSecondaryAxModifier(props.currentSkills[1].modifier)
-
-      setSecondaryAxValue(props.currentSkills[1].strength)
-    }
+    setupAx1()
+    setupAx2()
   }, [props.currentSkills])
 
   useEffect(() => {
@@ -103,6 +98,62 @@ const AXSelect = (props: Props) => {
     hidden: primaryAxModifier < 0,
   })
 
+  function setupAx1() {
+    if (
+      props.currentSkills &&
+      props.currentSkills[0] &&
+      // Should this be > -1 or != null
+      props.currentSkills[0].modifier != null
+    ) {
+      setPrimaryAxModifier(props.currentSkills[0].modifier)
+      setPrimaryAxValue(props.currentSkills[0].strength)
+
+      if (props.currentSkills[0].modifier > -1 && primaryAxValueInput.current) {
+        const modifier = props.currentSkills[0].modifier
+        const axSkill = axData[props.axType - 1][modifier]
+        setupInput(axSkill, primaryAxValueInput.current)
+      }
+    }
+  }
+
+  function setupAx2() {
+    if (
+      props.currentSkills &&
+      props.currentSkills[1] &&
+      // Should this be > -1 or != null
+      props.currentSkills[1].modifier != null
+    ) {
+      const firstSkill = props.currentSkills[0]
+      const primaryAxSkill = axData[props.axType - 1][firstSkill.modifier]
+      const secondaryAxSkill = findSecondaryAxSkill(
+        primaryAxSkill,
+        props.currentSkills[1]
+      )
+
+      if (
+        props.currentSkills[1].modifier > -1 &&
+        secondaryAxValueInput.current
+      ) {
+        setupInput(secondaryAxSkill, secondaryAxValueInput.current)
+      }
+    }
+  }
+
+  function findSecondaryAxSkill(
+    axSkill: AxSkill | undefined,
+    skillAtIndex: SimpleAxSkill
+  ) {
+    if (axSkill)
+      return axSkill.secondary
+        ? axSkill.secondary.find((skill) => skill.id === skillAtIndex.modifier)
+        : undefined
+  }
+
+  function openSelect(ref: ForwardedRef<HTMLButtonElement>) {
+    if (ref === primaryAxModifierSelect) setOpenAX1(!openAX1)
+    if (ref === secondaryAxModifierSelect) setOpenAX2(!openAX2)
+  }
+
   function generateOptions(modifierSet: number) {
     const axOptions = axData[props.axType - 1]
 
@@ -110,9 +161,9 @@ const AXSelect = (props: Props) => {
     if (modifierSet == 0) {
       axOptionElements = axOptions.map((ax, i) => {
         return (
-          <option key={i} value={ax.id}>
+          <SelectItem key={i} value={ax.id}>
             {ax.name[locale]}
-          </option>
+          </SelectItem>
         )
       })
     } else {
@@ -129,9 +180,9 @@ const AXSelect = (props: Props) => {
           const secondaryAxOptions = primarySkill.secondary
           axOptionElements = secondaryAxOptions.map((ax, i) => {
             return (
-              <option key={i} value={ax.id}>
+              <SelectItem key={i} value={ax.id}>
                 {ax.name[locale]}
-              </option>
+              </SelectItem>
             )
           })
         }
@@ -139,40 +190,40 @@ const AXSelect = (props: Props) => {
     }
 
     axOptionElements?.unshift(
-      <option key={-1} value={-1}>
+      <SelectItem key={-1} value={-1}>
         {t('ax.no_skill')}
-      </option>
+      </SelectItem>
     )
     return axOptionElements
   }
 
-  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    const value = parseInt(event.target.value)
+  function handleAX1SelectChange(rawValue: string) {
+    const value = parseInt(rawValue)
+    setPrimaryAxModifier(value)
 
-    if (primaryAxModifierSelect.current == event.target) {
-      setPrimaryAxModifier(value)
+    if (
+      primaryAxValueInput.current &&
+      secondaryAxModifierSelect.current &&
+      secondaryAxValueInput.current
+    ) {
+      setupInput(axData[props.axType - 1][value], primaryAxValueInput.current)
 
-      if (
-        primaryAxValueInput.current &&
-        secondaryAxModifierSelect.current &&
-        secondaryAxValueInput.current
-      ) {
-        setupInput(axData[props.axType - 1][value], primaryAxValueInput.current)
-
-        secondaryAxModifierSelect.current.value = '-1'
-        secondaryAxValueInput.current.value = ''
-      }
-    } else {
-      setSecondaryAxModifier(value)
-
-      const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
-      const currentAxSkill = primaryAxSkill.secondary
-        ? primaryAxSkill.secondary.find((skill) => skill.id == value)
-        : undefined
-
-      if (secondaryAxValueInput.current)
-        setupInput(currentAxSkill, secondaryAxValueInput.current)
+      secondaryAxModifierSelect.current.value = '-1'
+      secondaryAxValueInput.current.value = ''
     }
+  }
+
+  function handleAX2SelectChange(rawValue: string) {
+    const value = parseInt(rawValue)
+    setSecondaryAxModifier(value)
+
+    const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
+    const currentAxSkill = primaryAxSkill.secondary
+      ? primaryAxSkill.secondary.find((skill) => skill.id == value)
+      : undefined
+
+    if (secondaryAxValueInput.current)
+      setupInput(currentAxSkill, secondaryAxValueInput.current)
   }
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -260,6 +311,7 @@ const AXSelect = (props: Props) => {
     if (ax) {
       const rangeString = `${ax.minValue}~${ax.maxValue}${ax.suffix || ''}`
 
+      element.className = 'Input Visible'
       element.disabled = false
       element.placeholder = rangeString
       element.min = `${ax.minValue}`
@@ -268,43 +320,56 @@ const AXSelect = (props: Props) => {
     } else {
       if (primaryAxValueInput.current && secondaryAxValueInput.current) {
         if (primaryAxValueInput.current == element) {
+          primaryAxValueInput.current.className = 'Input'
           primaryAxValueInput.current.disabled = true
           primaryAxValueInput.current.placeholder = ''
         }
 
+        secondaryAxValueInput.current.className = 'Input'
         secondaryAxValueInput.current.disabled = true
         secondaryAxValueInput.current.placeholder = ''
       }
     }
   }
 
+  const ax1DefaultValue = () => {
+    return props.currentSkills &&
+      props.currentSkills[0].modifier != null &&
+      props.currentSkills[0].modifier >= 0
+      ? props.currentSkills[0].modifier
+      : -1
+  }
+
+  const ax2DefaultValue = () => {
+    return props.currentSkills && props.currentSkills[1].modifier
+      ? props.currentSkills[1].modifier
+      : -1
+  }
+
   return (
     <div className="AXSelect">
       <div className="AXSet">
         <div className="fields">
-          <select
+          <Select
             key="ax1"
-            defaultValue={
-              props.currentSkills && props.currentSkills[0]
-                ? props.currentSkills[0].modifier
-                : -1
-            }
-            onChange={handleSelectChange}
+            defaultValue={`${ax1DefaultValue()}`}
+            open={openAX1}
+            onChange={handleAX1SelectChange}
+            onClick={() => openSelect(primaryAxModifierSelect)}
             ref={primaryAxModifierSelect}
           >
             {generateOptions(0)}
-          </select>
+          </Select>
+
           <input
             defaultValue={
               props.currentSkills && props.currentSkills[0]
                 ? props.currentSkills[0].strength
                 : 0
             }
-            className="Input"
             type="number"
             onChange={handleInputChange}
             ref={primaryAxValueInput}
-            disabled={primaryAxValue != 0}
           />
         </div>
         <p className={primaryErrorClasses}>{errors.axValue1}</p>
@@ -312,29 +377,25 @@ const AXSelect = (props: Props) => {
 
       <div className={secondarySetClasses}>
         <div className="fields">
-          <select
+          <Select
             key="ax2"
-            defaultValue={
-              props.currentSkills && props.currentSkills[1]
-                ? props.currentSkills[1].modifier
-                : -1
-            }
-            onChange={handleSelectChange}
+            defaultValue={`${ax2DefaultValue()}`}
+            open={openAX2}
+            onChange={handleAX2SelectChange}
+            onClick={() => openSelect(secondaryAxModifierSelect)}
             ref={secondaryAxModifierSelect}
           >
             {generateOptions(1)}
-          </select>
+          </Select>
           <input
             defaultValue={
               props.currentSkills && props.currentSkills[1]
                 ? props.currentSkills[1].strength
                 : 0
             }
-            className="Input"
             type="number"
             onChange={handleInputChange}
             ref={secondaryAxValueInput}
-            disabled={secondaryAxValue != 0}
           />
         </div>
         <p className={secondaryErrorClasses}>{errors.axValue2}</p>
