@@ -38,6 +38,8 @@
   --select-bg: #{$select--bg--light};
   --select-contained-bg: #{$select--contained--bg--light};
   --select-contained-bg-hover: #{$select--contained--bg--light--hover};
+  --select-modal-bg: #{$select--modal--bg--light};
+  --select-modal-bg-hover: #{$select--modal--bg--light--hover};
   --select-separator: #{$select--separator--light};
   --option-bg-hover: #{$option--bg--light--hover};
 
@@ -71,6 +73,9 @@
   --subaura-orange-primary: #{$subaura--orange--primary--light};
   --subaura-orange-secondary: #{$subaura--orange--secondary--light};
   --subaura-orange-text: #{$subaura--orange--text--light};
+
+  // Light - Element Toggle
+  --toggle-stroke: #{$toggle--stroke--light};
 
   --grid-border-color: #{$grid--border--color--light};
 
@@ -128,6 +133,8 @@
   --select-bg: #{$select--bg--dark};
   --select-contained-bg: #{$select--contained--bg--dark};
   --select-contained-bg-hover: #{$select--contained--bg--dark--hover};
+  --select-modal-bg: #{$select--modal--bg--dark};
+  --select-modal-bg-hover: #{$select--modal--bg--dark--hover};
   --select-separator: #{$select--separator--dark};
   --option-bg-hover: #{$option--bg--dark--hover};
 
@@ -161,6 +168,9 @@
   --subaura-orange-primary: #{$subaura--orange--primary--dark};
   --subaura-orange-secondary: #{$subaura--orange--secondary--dark};
   --subaura-orange-text: #{$subaura--orange--text--dark};
+
+  // Dark - Element Toggle
+  --toggle-stroke: #{$toggle--stroke--dark};
 
   --grid-border-color: #{$grid--border--color--dark};
 

@@ -34,6 +34,7 @@ $grey-55: #888;
 $grey-60: #a9a9a9;
 $grey-70: #c6c6c6;
 $grey-80: #e9e9e9;
+$grey-85: #efefef;
 $grey-90: #f5f5f5;
 $grey-95: #fafafa;
 $grey-100: white;
@@ -133,7 +134,7 @@ $menu--text--dark--hover: $grey-15;
 $button--bg--light: $grey-80;
 $button--bg--light--hover: $grey-100;
 $button--bg--light--disabled: $grey-50;
-$button--contained--bg--light: $grey-90;
+$button--contained--bg--light: $grey-85;
 $button--contained--bg--light--hover: $grey-80;
 
 $button--bg--dark: $grey-00;
@@ -155,7 +156,7 @@ $input--bg--light--hover: $grey-95;
 $input--bg--dark: $grey-40;
 $input--bg--dark--hover: $grey-30;
 
-$input--bound--bg--light: $grey-90;
+$input--bound--bg--light: $grey-85;
 $input--bound--bg--light--hover: $grey-80;
 $input--bound--bg--dark: $grey-15;
 $input--bound--bg--dark--hover: $grey-25;
@@ -163,12 +164,20 @@ $input--bound--bg--dark--hover: $grey-25;
 // Color Definitions: Select
 $select--bg--light: $grey-100;
 $select--bg--dark: $grey-10;
+
 $select--contained--bg--light: $grey-90;
-$select--contained--bg--dark: $grey-05;
 $select--contained--bg--light--hover: $grey-80;
+$select--contained--bg--dark: $grey-05;
 $select--contained--bg--dark--hover: $grey-00;
+
+$select--modal--bg--light: $grey-85;
+$select--modal--bg--light--hover: $grey-80;
+$select--modal--bg--dark: $grey-40;
+$select--modal--bg--dark--hover: $grey-30;
+
 $select--separator--light: $grey-90;
 $select--separator--dark: $grey-05;
+
 $option--bg--light--hover: $grey-90;
 $option--bg--dark--hover: $grey-00;
 
@@ -204,6 +213,10 @@ $subaura--orange--card--bg--dark: $orange-30;
 $subaura--orange--primary--dark: $orange-00;
 $subaura--orange--secondary--dark: $orange-10;
 $subaura--orange--text--dark: $orange-00;
+
+// Color Definitions: Element Toggle
+$toggle--stroke--light: rgba(0, 0, 0, 0.14);
+$toggle--stroke--dark: rgba(0, 0, 0, 0.8);
 
 // Color Definitions: Text
 $text--primary--color--light: $grey-40;
