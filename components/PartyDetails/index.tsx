@@ -129,11 +129,11 @@ const PartyDetails = (props: Props) => {
     if (party.user)
       return (
         <img
-          alt={party.user.picture.picture}
-          className={`profile ${party.user.picture.element}`}
-          srcSet={`/profile/${party.user.picture.picture}.png,
-                            /profile/${party.user.picture.picture}@2x.png 2x`}
-          src={`/profile/${party.user.picture.picture}.png`}
+          alt={party.user.avatar.picture}
+          className={`profile ${party.user.avatar.element}`}
+          srcSet={`/profile/${party.user.avatar.picture}.png,
+                            /profile/${party.user.avatar.picture}@2x.png 2x`}
+          src={`/profile/${party.user.avatar.picture}.png`}
         />
       )
     else return <div className="no-user" />
