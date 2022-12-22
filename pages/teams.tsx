@@ -19,10 +19,11 @@ import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
+import type { PaginationObject } from '~types'
 
 interface Props {
-  teams?: { count: number; total_pages: number; results: Party[] }
-  raids: Raid[]
+  teams?: Party[]
+  meta: PaginationObject
   sortedRaids: Raid[][]
 }
 
@@ -94,9 +95,9 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
   // Set the initial parties from props
   useEffect(() => {
     if (props.teams) {
-      setTotalPages(props.teams.total_pages)
-      setRecordCount(props.teams.count)
-      replaceResults(props.teams.count, props.teams.results)
+      setTotalPages(props.meta.totalPages)
+      setRecordCount(props.meta.count)
+      replaceResults(props.meta.count, props.teams)
     }
     setCurrentPage(1)
   }, [])
@@ -130,12 +131,14 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
       api.endpoints.parties
         .getAll({ ...filters, ...{ headers: headers } })
         .then((response) => {
-          setTotalPages(response.data.meta.total_pages)
-          setRecordCount(response.data.meta.count)
+          const results = response.data.results
+          const meta = response.data.meta
 
-          if (replace)
-            replaceResults(response.data.meta.count, response.data.results)
-          else appendResults(response.data.results)
+          setTotalPages(meta.total_pages)
+          setRecordCount(meta.count)
+
+          if (replace) replaceResults(meta.count, results)
+          else appendResults(results)
         })
         .catch((error) => handleError(error))
     },
@@ -384,6 +387,13 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   if (teamElement && teamElement.id > -1) filters.element = teamElement.id
   if (raid) filters.raid = raid.id
 
+  let teams: Party[] | null = null
+  let meta: PaginationObject = {
+    count: 0,
+    totalPages: 0,
+    perPage: 15,
+  }
+
   // Fetch initial set of parties here
   const response = await api.endpoints.parties.getAll({
     params: {
@@ -392,9 +402,15 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     ...headers,
   })
 
+  teams = response.data.results
+  meta.count = response.data.meta.count
+  meta.totalPages = response.data.meta.total_pages
+  meta.perPage = response.data.meta.per_page
+
   return {
     props: {
-      teams: response.data,
+      teams: teams,
+      meta: meta,
       raids: raids,
       sortedRaids: sortedRaids,
       ...(await serverSideTranslations(locale, ["common"])),

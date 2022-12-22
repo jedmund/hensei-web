@@ -164,7 +164,7 @@ const GridRep = (props: Props) => {
           !props.user) ? (
           <Button
             className="Save"
-            accessoryIcon={<SaveIcon class="stroke" />}
+            accessoryIcon={<SaveIcon className="stroke" />}
             active={props.favorited}
             contained={true}
             buttonSize="small"

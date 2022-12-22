@@ -19,6 +19,7 @@ import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
+import type { PaginationObject } from '~types'
 
 interface Props {
   teams?: { count: number; total_pages: number; results: Party[] }

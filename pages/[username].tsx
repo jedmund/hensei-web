@@ -18,7 +18,7 @@ import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PaginationObject } from '~types'
+import type { PaginationObject } from '~types'
 
 interface Props {
   user?: User
