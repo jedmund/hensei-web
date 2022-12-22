@@ -85,8 +85,8 @@ const SearchModal = (props: Props) => {
         page: currentPage,
       })
       .then((response) => {
-        setTotalPages(response.data.total_pages)
-        setRecordCount(response.data.count)
+        setTotalPages(response.data.meta.total_pages)
+        setRecordCount(response.data.meta.count)
 
         if (replace) {
           replaceResults(response.data.count, response.data.results)

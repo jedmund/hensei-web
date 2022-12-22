@@ -7,3 +7,9 @@ export type JobSkillObject = {
   2: JobSkill | undefined
   3: JobSkill | undefined
 }
+
+export type PaginationObject = {
+  count: number
+  totalPages: number
+  perPage: number
+}

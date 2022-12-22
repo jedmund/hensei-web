@@ -130,11 +130,11 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
       api
         .savedTeams({ ...filters, ...{ headers: headers } })
         .then((response) => {
-          setTotalPages(response.data.total_pages)
-          setRecordCount(response.data.count)
+          setTotalPages(response.data.meta.total_pages)
+          setRecordCount(response.data.meta.count)
 
           if (replace)
-            replaceResults(response.data.count, response.data.results)
+            replaceResults(response.data.meta.count, response.data.results)
           else appendResults(response.data.results)
         })
         .catch((error) => handleError(error))

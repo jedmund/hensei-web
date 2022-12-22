@@ -79,7 +79,7 @@ const GridRep = (props: Props) => {
     let url = ''
 
     if (mainhand) {
-      if (mainhand.element == 0 && props.grid[0].element) {
+      if (mainhand.element == 0 && props.grid[0] && props.grid[0].element) {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}_${props.grid[0].element}.jpg`
       } else {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}.jpg`

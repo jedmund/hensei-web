@@ -18,10 +18,12 @@ import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { PaginationObject } from '~types'
 
 interface Props {
   user?: User
-  teams?: { count: number; total_pages: number; results: Party[] }
+  teams?: Party[]
+  meta: PaginationObject
   raids: Raid[]
   sortedRaids: Raid[][]
 }
@@ -95,9 +97,9 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
   // Set the initial parties from props
   useEffect(() => {
     if (props.teams) {
-      setTotalPages(props.teams.total_pages)
-      setRecordCount(props.teams.count)
-      replaceResults(props.teams.count, props.teams.results)
+      setTotalPages(props.meta.totalPages)
+      setRecordCount(props.meta.count)
+      replaceResults(props.meta.count, props.teams)
     }
     setCurrentPage(1)
   }, [])
@@ -113,6 +115,7 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
     if (error.response != null) {
       console.error(error)
     } else {
+      // TODO: Put an alert here
       console.error('There was an error.')
     }
   }, [])
@@ -135,15 +138,14 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
             params: { ...filters, ...{ headers: headers } },
           })
           .then((response) => {
-            setTotalPages(response.data.parties.total_pages)
-            setRecordCount(response.data.parties.count)
+            const results = response.data.profile.parties
+            const meta = response.data.meta
 
-            if (replace)
-              replaceResults(
-                response.data.parties.count,
-                response.data.parties.results
-              )
-            else appendResults(response.data.parties.results)
+            setTotalPages(meta.total_pages)
+            setRecordCount(meta.count)
+
+            if (replace) replaceResults(meta.count, results)
+            else appendResults(results)
           })
           .catch((error) => handleError(error))
       }
@@ -282,11 +284,11 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
       >
         <div className="UserInfo">
           <img
-            alt={props.user?.picture.picture}
-            className={`profile ${props.user?.picture.element}`}
-            srcSet={`/profile/${props.user?.picture.picture}.png,
-                                    /profile/${props.user?.picture.picture}@2x.png 2x`}
-            src={`/profile/${props.user?.picture.picture}.png`}
+            alt={props.user?.avatar.picture}
+            className={`profile ${props.user?.avatar.element}`}
+            srcSet={`/profile/${props.user?.avatar.picture}.png,
+                                    /profile/${props.user?.avatar.picture}@2x.png 2x`}
+            src={`/profile/${props.user?.avatar.picture}.png`}
           />
           <h1>{props.user?.username}</h1>
         </div>
@@ -374,6 +376,12 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Fetch initial set of parties here
   let user: User | null = null
   let teams: Party[] | null = null
+  let meta: PaginationObject = {
+    count: 0,
+    totalPages: 0,
+    perPage: 15
+  }
+
   if (query.username) {
     const response = await api.endpoints.users.getOne({
       id: query.username,
@@ -383,14 +391,19 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       ...headers,
     })
 
-    user = response.data.user
-    teams = response.data.parties
+    user = response.data.profile
+    teams = response.data.profile.parties
+
+    meta.count = response.data.meta.count
+    meta.totalPages = response.data.meta.total_pages
+    meta.perPage = response.data.meta.per_page
   }
 
   return {
     props: {
       user: user,
       teams: teams,
+      meta: meta,
       raids: raids,
       sortedRaids: sortedRaids,
       ...(await serverSideTranslations(locale, ["common"])),
