@@ -157,12 +157,11 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
   // Fetch all raids on mount, then find the raid in the URL if present
   useEffect(() => {
     api.endpoints.raids.getAll().then((response) => {
-      const cleanRaids: Raid[] = response.data.map((r: any) => r.raid)
-      setRaids(cleanRaids)
+      setRaids(response.data)
 
       setRaidsLoading(false)
 
-      const raid = cleanRaids.find((r) => r.slug === raidSlug)
+      const raid = response.data.find((r: Raid) => r.slug === raidSlug)
       setRaid(raid)
 
       return raid
@@ -356,7 +355,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   let { raids, sortedRaids } = await api.endpoints.raids
     .getAll({ params: headers })
-    .then((response) => organizeRaids(response.data.map((r: any) => r.raid)))
+    .then((response) => organizeRaids(response.data))
 
   // Extract recency filter
   const recencyParam: number = parseInt(query.recency)

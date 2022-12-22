@@ -78,9 +78,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
     useEffect(() => {
       api.endpoints.raids
         .getAll()
-        .then((response) =>
-          organizeRaids(response.data.map((r: any) => r.raid))
-        )
+        .then((response) => organizeRaids(response.data))
     }, [organizeRaids])
 
     // Set current raid on mount

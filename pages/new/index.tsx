@@ -59,7 +59,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   let { raids, sortedRaids } = await api.endpoints.raids
     .getAll({ params: headers })
-    .then((response) => organizeRaids(response.data.map((r: any) => r.raid)))
+    .then((response) => organizeRaids(response.data))
   
   let jobs = await api.endpoints.jobs
     .getAll({ params: headers })
