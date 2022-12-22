@@ -96,13 +96,13 @@ const SummonGrid = (props: Props) => {
         if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
 
         saveSummon(party.id, summon, position).then((response) =>
-          storeGridSummon(response.data.grid_summon)
+          storeGridSummon(response.data)
         )
       })
     } else {
       if (party.editable)
         saveSummon(party.id, summon, position).then((response) =>
-          storeGridSummon(response.data.grid_summon)
+          storeGridSummon(response.data)
         )
     }
   }

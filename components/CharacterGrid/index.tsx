@@ -104,7 +104,7 @@ const CharacterGrid = (props: Props) => {
 
         if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
         saveCharacter(party.id, character, position)
-          .then((response) => storeGridCharacter(response.data.grid_character))
+          .then((response) => storeGridCharacter(response.data))
           .catch((error) => console.error(error))
       })
     } else {
@@ -122,7 +122,7 @@ const CharacterGrid = (props: Props) => {
       setPosition(data.position)
       setModalOpen(true)
     } else {
-      storeGridCharacter(data.grid_character)
+      storeGridCharacter(data)
     }
   }
 
@@ -159,7 +159,7 @@ const CharacterGrid = (props: Props) => {
         })
         .then((response) => {
           // Store new character in state
-          storeGridCharacter(response.data.grid_character)
+          storeGridCharacter(response.data)
 
           // Remove conflicting characters from state
           conflicts.forEach(
@@ -192,7 +192,7 @@ const CharacterGrid = (props: Props) => {
 
     if (party.id && appState.party.editable) {
       api.updateJob({ partyId: party.id, params: payload }).then((response) => {
-        const newParty = response.data.party
+        const newParty = response.data
 
         setJob(newParty.job)
         appState.party.job = newParty.job
@@ -269,7 +269,7 @@ const CharacterGrid = (props: Props) => {
     try {
       if (uncapLevel != previousUncapValues[position])
         await api.updateUncap('character', id, uncapLevel).then((response) => {
-          storeGridCharacter(response.data.grid_character)
+          storeGridCharacter(response.data)
         })
     } catch (error) {
       console.error(error)
