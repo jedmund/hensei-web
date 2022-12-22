@@ -99,7 +99,7 @@ const LoginModal = (props: Props) => {
         .login(body)
         .then((response) => {
           storeCookieInfo(response)
-          return response.data.user.id
+          return response.data.id
         })
         .then((id) => fetchUserInfo(id))
         .then((infoResponse) => storeUserInfo(infoResponse))
@@ -111,7 +111,7 @@ const LoginModal = (props: Props) => {
   }
 
   function storeCookieInfo(response: AxiosResponse) {
-    const user = response.data.user
+    const user = response.data
 
     const cookieObj: AccountCookie = {
       userId: user.id,
@@ -123,11 +123,11 @@ const LoginModal = (props: Props) => {
   }
 
   function storeUserInfo(response: AxiosResponse) {
-    const user = response.data.user
+    const user = response.data
 
     const cookieObj: UserCookie = {
-      picture: user.picture.picture,
-      element: user.picture.element,
+      picture: user.avatar.picture,
+      element: user.avatar.element,
       language: user.language,
       gender: user.gender,
     }
@@ -137,8 +137,8 @@ const LoginModal = (props: Props) => {
     accountState.account.user = {
       id: user.id,
       username: user.username,
-      picture: user.picture.picture,
-      element: user.picture.element,
+      picture: user.avatar.picture,
+      element: user.avatar.element,
       gender: user.gender,
     }
 

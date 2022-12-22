@@ -75,7 +75,7 @@ const SignupModal = (props: Props) => {
         .create(body)
         .then((response) => {
           storeCookieInfo(response)
-          return response.data.user.user_id
+          return response.data.user_id
         })
         .then((id) => fetchUserInfo(id))
         .then((infoResponse) => storeUserInfo(infoResponse))
@@ -98,11 +98,12 @@ const SignupModal = (props: Props) => {
   }
 
   function storeUserInfo(response: AxiosResponse) {
-    const user = response.data.user
+    const user = response.data
+    console.log(user)
 
     const cookieObj: UserCookie = {
-      picture: user.picture.picture,
-      element: user.picture.element,
+      picture: user.avatar.picture,
+      element: user.avatar.element,
       language: user.language,
       gender: user.gender,
     }
@@ -113,8 +114,8 @@ const SignupModal = (props: Props) => {
     accountState.account.user = {
       id: user.id,
       username: user.username,
-      picture: user.picture.picture,
-      element: user.picture.element,
+      picture: user.avatar.picture,
+      element: user.avatar.element,
       gender: user.gender,
     }
 
