@@ -6,6 +6,7 @@ import SelectItem from '~components/SelectItem'
 import SelectGroup from '~components/SelectGroup'
 
 import api from '~utils/api'
+import organizeRaids from '~utils/organizeRaids'
 import { appState } from '~utils/appState'
 import { raidGroups } from '~utils/raidGroups'
 
@@ -18,6 +19,19 @@ interface Props {
   defaultRaid?: string
   onChange?: (slug?: string) => void
   onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
+}
+
+// Set up empty raid for "All raids"
+const allRaidsOption = {
+  id: '0',
+  name: {
+    en: 'All raids',
+    ja: '全て',
+  },
+  slug: 'all',
+  level: 0,
+  group: 0,
+  element: 0,
 }
 
 const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
@@ -37,38 +51,17 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
     }
 
     // Organize raids into groups on mount
-    const organizeRaids = useCallback(
+    const organizeAllRaids = useCallback(
       (raids: Raid[]) => {
-        // Set up empty raid for "All raids"
-        const all = {
-          id: '0',
-          name: {
-            en: 'All raids',
-            ja: '全て',
-          },
-          slug: 'all',
-          level: 0,
-          group: 0,
-          element: 0,
-        }
-
-        const numGroups = Math.max.apply(
-          Math,
-          raids.map((raid) => raid.group)
-        )
-        let groupedRaids = []
-
-        for (let i = 0; i <= numGroups; i++) {
-          groupedRaids[i] = raids.filter((raid) => raid.group == i)
-        }
+        let { sortedRaids } = organizeRaids(raids)
 
         if (props.showAllRaidsOption) {
-          raids.unshift(all)
-          groupedRaids[0].unshift(all)
+          raids.unshift(allRaidsOption)
+          sortedRaids[0].unshift(allRaidsOption)
         }
 
         setRaids(raids)
-        setSortedRaids(groupedRaids)
+        setSortedRaids(sortedRaids)
         appState.raids = raids
       },
       [props.showAllRaidsOption]
@@ -78,7 +71,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
     useEffect(() => {
       api.endpoints.raids
         .getAll()
-        .then((response) => organizeRaids(response.data))
+        .then((response) => organizeAllRaids(response.data))
     }, [organizeRaids])
 
     // Set current raid on mount
