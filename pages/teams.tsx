@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
 
-import { getCookie } from 'cookies-next'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -11,6 +10,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import clonedeep from 'lodash.clonedeep'
 
 import api from '~utils/api'
+import setUserToken from '~utils/setUserToken'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { elements, allElement } from '~utils/Element'
 
@@ -28,15 +28,6 @@ interface Props {
 }
 
 const TeamsRoute: React.FC<Props> = (props: Props) => {
-  // Set up cookies
-  const cookie = getCookie('account')
-  const accountData: AccountCookie = cookie
-    ? JSON.parse(cookie as string)
-    : null
-  const headers = accountData
-    ? { Authorization: `Bearer ${accountData.token}` }
-    : {}
-
   // Set up router
   const router = useRouter()
 
@@ -133,7 +124,7 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
       }
 
       api.endpoints.parties
-        .getAll({ ...filters, ...{ headers: headers } })
+        .getAll(params)
         .then((response) => {
           const results = response.data.results
           const meta = response.data.meta
@@ -218,7 +209,7 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
   }
 
   function saveFavorite(teamId: string) {
-    api.saveTeam({ id: teamId, params: headers }).then((response) => {
+    api.saveTeam({ id: teamId }).then((response) => {
       if (response.status == 201) {
         const index = parties.findIndex((p) => p.id === teamId)
         const party = parties[index]
@@ -234,7 +225,7 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
   }
 
   function unsaveFavorite(teamId: string) {
-    api.unsaveTeam({ id: teamId, params: headers }).then((response) => {
+    api.unsaveTeam({ id: teamId }).then((response) => {
       if (response.status == 200) {
         const index = parties.findIndex((p) => p.id === teamId)
         const party = parties[index]
@@ -350,18 +341,12 @@ export const getServerSidePaths = async () => {
 
 // prettier-ignore
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
-  // Cookies
-  const cookie = getCookie("account", { req, res })
-  const accountData: AccountCookie = cookie
-    ? JSON.parse(cookie as string)
-    : null
+  // Set headers for server-side requests
+  setUserToken(req, res)
 
-  const headers = accountData
-    ? { headers: { Authorization: `Bearer ${accountData.token}` } }
-    : {}
-
+  // Fetch and organize raids
   let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll({ params: headers })
+    .getAll()
     .then((response) => organizeRaids(response.data))
 
   // Extract recency filter
@@ -390,6 +375,9 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   if (recencyParam) filters.recency = recencyParam
   if (teamElement && teamElement.id > -1) filters.element = teamElement.id
   if (raid) filters.raid = raid.id
+  const params = {
+    params: { ...filters },
+  }
 
   let teams: Party[] | null = null
   let meta: PaginationObject = {
@@ -398,13 +386,8 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     perPage: 15,
   }
 
-  // Fetch initial set of parties here
-  const response = await api.endpoints.parties.getAll({
-    params: {
-      ...filters,
-    },
-    ...headers,
-  })
+  // Fetch initial set of parties
+  const response = await api.endpoints.parties.getAll(params)
 
   teams = response.data.results
   meta.count = response.data.meta.count

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
 
-import { getCookie } from 'cookies-next'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -10,6 +9,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import api from '~utils/api'
+import setUserToken from '~utils/setUserToken'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { elements, allElement } from '~utils/Element'
 
@@ -19,6 +19,7 @@ import FilterBar from '~components/FilterBar'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { PaginationObject } from '~types'
+import type { FilterObject, PaginationObject } from '~types'
 
 interface Props {
   user?: User
@@ -29,15 +30,6 @@ interface Props {
 }
 
 const ProfileRoute: React.FC<Props> = (props: Props) => {
-  // Set up cookies
-  const cookie = getCookie('account')
-  const accountData: AccountCookie = cookie
-    ? JSON.parse(cookie as string)
-    : null
-  const headers = accountData
-    ? { Authorization: `Bearer ${accountData.token}` }
-    : {}
-
   // Set up router
   const router = useRouter()
   const { username } = router.query
@@ -139,7 +131,7 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
         api.endpoints.users
           .getOne({
             id: username,
-            params: { ...filters, ...{ headers: headers } },
+            params: { ...filters },
           })
           .then((response) => {
             const results = response.data.profile.parties
@@ -336,18 +328,12 @@ export const getServerSidePaths = async () => {
 
 // prettier-ignore
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
-  // Cookies
-  const cookie = getCookie("account", { req, res })
-  const accountData: AccountCookie = cookie
-    ? JSON.parse(cookie as string)
-    : null
+  // Set headers for server-side requests
+  setUserToken(req, res)
 
-  const headers = accountData
-    ? { headers: { Authorization: `Bearer ${accountData.token}` } }
-    : {}
-
+  // Fetch and organize raids
   let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll({ params: headers })
+    .getAll()
     .then((response) => organizeRaids(response.data))
 
   // Extract recency filter
@@ -376,8 +362,11 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   if (recencyParam) filters.recency = recencyParam
   if (teamElement && teamElement.id > -1) filters.element = teamElement.id
   if (raid) filters.raid = raid.id
+  const params = {
+    params: { ...filters },
+  }
 
-  // Fetch initial set of parties here
+  // Set up empty variables
   let user: User | null = null
   let teams: Party[] | null = null
   let meta: PaginationObject = {
@@ -389,10 +378,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   if (query.username) {
     const response = await api.endpoints.users.getOne({
       id: query.username,
-      params: {
-        ...filters,
-      },
-      ...headers,
+      params,
     })
 
     user = response.data.profile
