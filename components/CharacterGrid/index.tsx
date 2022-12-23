@@ -225,7 +225,7 @@ const CharacterGrid = (props: Props) => {
         .updateJobSkills({ partyId: party.id, params: payload })
         .then((response) => {
           // Update the current skills
-          const newSkills = response.data.party.job_skills
+          const newSkills = response.data.job_skills
           setJobSkills(newSkills)
           appState.party.jobSkills = newSkills
         })
