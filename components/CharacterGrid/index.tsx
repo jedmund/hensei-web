@@ -175,23 +175,26 @@ const CharacterGrid = (props: Props) => {
   }
 
   // Methods: Saving job and job skills
-  const saveJob = function (job: Job) {
+  const saveJob = async function (job?: Job) {
     const payload = {
       party: {
-        job_id: job ? job.id : '',
+        job_id: job ? job.id : -1,
       },
     }
 
     if (party.id && appState.party.editable) {
-      api.updateJob({ partyId: party.id, params: payload }).then((response) => {
-        const newParty = response.data
-
-        setJob(newParty.job)
-        appState.party.job = newParty.job
-
-        setJobSkills(newParty.job_skills)
-        appState.party.jobSkills = newParty.job_skills
+      const response = await api.updateJob({
+        partyId: party.id,
+        params: payload,
       })
+
+      const newParty = response.data
+
+      setJob(newParty.job)
+      appState.party.job = newParty.job
+
+      setJobSkills(newParty.job_skills)
+      appState.party.jobSkills = newParty.job_skills
     }
   }
 

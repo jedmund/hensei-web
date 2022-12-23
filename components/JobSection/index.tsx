@@ -18,7 +18,7 @@ interface Props {
   job?: Job
   jobSkills: JobSkillObject
   editable: boolean
-  saveJob: (job: Job) => void
+  saveJob: (job?: Job) => void
   saveSkill: (skill: JobSkill, position: number) => void
 }
 
@@ -41,17 +41,15 @@ const JobSection = (props: Props) => {
 
   useEffect(() => {
     // Set current job based on ID
-    if (props.job) {
-      setJob(props.job)
-      setSkills({
-        0: props.jobSkills[0],
-        1: props.jobSkills[1],
-        2: props.jobSkills[2],
-        3: props.jobSkills[3],
-      })
+    setJob(props.job)
+    setSkills({
+      0: props.jobSkills[0],
+      1: props.jobSkills[1],
+      2: props.jobSkills[2],
+      3: props.jobSkills[3],
+    })
 
-      if (selectRef.current) selectRef.current.value = props.job.id
-    }
+    if (selectRef.current && props.job) selectRef.current.value = props.job.id
   }, [props])
 
   useEffect(() => {
@@ -68,10 +66,8 @@ const JobSection = (props: Props) => {
   }, [job])
 
   function receiveJob(job?: Job) {
-    if (job) {
-      setJob(job)
-      props.saveJob(job)
-    }
+    setJob(job)
+    props.saveJob(job)
   }
 
   function generateImageUrl() {
