@@ -63,16 +63,20 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
   // Recency is in seconds
   const [element, setElement] = useQueryState('element', {
     defaultValue: -1,
+    history: 'push',
     parse: (query: string) => parseElement(query),
     serialize: (value) => serializeElement(value),
   })
   const [raidSlug, setRaidSlug] = useQueryState('raid', {
     defaultValue: 'all',
+    history: 'push',
   })
-  const [recency, setRecency] = useQueryState(
-    'recency',
-    queryTypes.integer.withDefault(-1)
-  )
+  const [recency, setRecency] = useQueryState('recency', {
+    defaultValue: -1,
+    history: 'push',
+    parse: (query: string) => parseInt(query),
+    serialize: (value) => `${value}`,
+  })
 
   // Define transformers for element
   function parseElement(query: string) {
@@ -203,16 +207,16 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
     raidSlug?: string
     recency?: number
   }) {
-    if (element == 0) setElement(0)
-    else if (element) setElement(element)
+    if (element == 0) setElement(0, { shallow: true })
+    else if (element) setElement(element, { shallow: true })
 
     if (raids && raidSlug) {
       const raid = raids.find((raid) => raid.slug === raidSlug)
       setRaid(raid)
-      setRaidSlug(raidSlug)
+      setRaidSlug(raidSlug, { shallow: true })
     }
 
-    if (recency) setRecency(recency)
+    if (recency) setRecency(recency, { shallow: true })
   }
 
   // Methods: Navigation
