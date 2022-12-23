@@ -13,7 +13,6 @@ import CharLimitedFieldset from '~components/CharLimitedFieldset'
 import RaidDropdown from '~components/RaidDropdown'
 import TextFieldset from '~components/TextFieldset'
 
-import { accountState } from '~utils/accountState'
 import { appState } from '~utils/appState'
 
 import CheckIcon from '~public/icons/Check.svg'
@@ -23,18 +22,6 @@ import EditIcon from '~public/icons/Edit.svg'
 import './index.scss'
 import Link from 'next/link'
 import { formatTimeAgo } from '~utils/timeAgo'
-
-const emptyRaid: Raid = {
-  id: '',
-  name: {
-    en: '',
-    ja: '',
-  },
-  slug: '',
-  level: 0,
-  group: 0,
-  element: 0,
-}
 
 // Props
 interface Props {
