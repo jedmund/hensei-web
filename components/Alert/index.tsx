@@ -29,9 +29,10 @@ const Alert = (props: Props) => {
             </AlertDialog.Description>
             <div className="buttons">
               <AlertDialog.Cancel asChild>
-                <Button onClick={props.cancelAction}>
-                  {props.cancelActionText}
-                </Button>
+                <Button
+                  onClick={props.cancelAction}
+                  text={props.cancelActionText}
+                />
               </AlertDialog.Cancel>
               {props.primaryAction ? (
                 <AlertDialog.Action onClick={props.primaryAction}>
