@@ -35,9 +35,6 @@ const CharacterGrid = (props: Props) => {
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
-  const headers = accountData
-    ? { headers: { Authorization: `Bearer ${accountData.token}` } }
-    : {}
 
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
@@ -131,17 +128,14 @@ const CharacterGrid = (props: Props) => {
     character: Character,
     position: number
   ) {
-    return await api.endpoints.characters.create(
-      {
-        character: {
-          party_id: partyId,
-          character_id: character.id,
-          position: position,
-          uncap_level: characterUncapLevel(character),
-        },
+    return await api.endpoints.characters.create({
+      character: {
+        party_id: partyId,
+        character_id: character.id,
+        position: position,
+        uncap_level: characterUncapLevel(character),
       },
-      headers
-    )
+    })
   }
 
   function storeGridCharacter(gridCharacter: GridCharacter) {
@@ -155,7 +149,6 @@ const CharacterGrid = (props: Props) => {
           incoming: incoming.id,
           conflicting: conflicts.map((c) => c.id),
           position: position,
-          params: headers,
         })
         .then((response) => {
           // Store new character in state
@@ -187,7 +180,6 @@ const CharacterGrid = (props: Props) => {
       party: {
         job_id: job ? job.id : '',
       },
-      ...headers,
     }
 
     if (party.id && appState.party.editable) {
@@ -217,7 +209,6 @@ const CharacterGrid = (props: Props) => {
 
       const payload = {
         party: skillObject,
-        ...headers,
       }
 
       skillObject[positionedKey] = skill.id
