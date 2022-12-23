@@ -91,7 +91,6 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     // Enable changing select value
     function handleChange(value: string) {
-      console.log(value)
       if (props.onChange) props.onChange(value)
 
       if (raids) {
@@ -128,8 +127,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     return (
       <Select
-        defaultValue={props.defaultRaid}
-        trigger={'Select a raid...'}
+        defaultValue={props.currentRaid}
         placeholder={'Select a raid...'}
         open={open}
         onClick={openRaidSelect}

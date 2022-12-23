@@ -69,8 +69,7 @@ const FilterBar = (props: Props) => {
     <div className={classes}>
       {props.children}
       <Select
-        defaultValue="-1"
-        trigger={'All elements'}
+        defaultValue={`${props.element}`}
         open={elementOpen}
         onChange={elementSelectChanged}
         onClick={openElementSelect}
@@ -110,7 +109,7 @@ const FilterBar = (props: Props) => {
       />
 
       <Select
-        defaultValue="-1"
+        defaultValue={`${props.recency}`}
         trigger={'All time'}
         open={recencyOpen}
         onChange={recencySelectChanged}
