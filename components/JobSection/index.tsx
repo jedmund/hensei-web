@@ -84,11 +84,13 @@ const JobSection = (props: Props) => {
   }
 
   const canEditSkill = (skill?: JobSkill) => {
-    if (job && skill) {
-      if (skill.job.id === job.id && skill.main && !skill.sub) return false
-    }
+    // If there is a job and a skill present in the slot
+    if (job) {
+      // If the skill's job is one of the job's main skill
+      if (skill && skill.job.id === job.id && skill.main) return false
 
-    return props.editable
+      return props.editable
+    } else return false
   }
 
   const skillItem = (index: number, editable: boolean) => {
