@@ -102,7 +102,7 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     return (
       <Select
-        trigger={'Select a class...'}
+        defaultValue={props.currentJob}
         placeholder={'Select a class...'}
         open={open}
         onClick={openJobSelect}
@@ -113,7 +113,9 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
           No class
         </SelectItem>
         {sortedJobs
-          ? Object.keys(sortedJobs).map((x) => renderJobGroup(x))
+          ? Object.keys(sortedJobs)
+              .sort((a, b) => ('' + a).localeCompare(b))
+              .map((x) => renderJobGroup(x))
           : ''}
       </Select>
     )
