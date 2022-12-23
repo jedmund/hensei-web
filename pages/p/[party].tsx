@@ -64,9 +64,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       return response.data
     })
 
-  let jobSkills = await api.allSkills(headers).then((response) => {
-    return response.data
-  })
+  let jobSkills = await api.allJobSkills(headers).then((response) => response.data)
   
   let party: Party | null = null
   if (query.party) {
