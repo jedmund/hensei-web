@@ -4,13 +4,17 @@ import Router, { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import { AxiosResponse } from 'axios'
 
-import * as Dialog from '@radix-ui/react-dialog'
-
 import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
 import Input from '~components/Input'
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogClose,
+} from '~components/Dialog'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
@@ -99,7 +103,7 @@ const LoginModal = (props: Props) => {
         .login(body)
         .then((response) => {
           storeCookieInfo(response)
-          return response.data.id
+          return response.data.user.id
         })
         .then((id) => fetchUserInfo(id))
         .then((infoResponse) => storeUserInfo(infoResponse))
@@ -111,12 +115,12 @@ const LoginModal = (props: Props) => {
   }
 
   function storeCookieInfo(response: AxiosResponse) {
-    const user = response.data
+    const resp = response.data
 
     const cookieObj: AccountCookie = {
-      userId: user.id,
-      username: user.username,
-      token: response.data.access_token,
+      userId: resp.user.id,
+      username: resp.user.username,
+      token: resp.access_token,
     }
 
     setCookie('account', cookieObj, { path: '/' })
@@ -165,51 +169,44 @@ const LoginModal = (props: Props) => {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={openChange}>
-      <Dialog.Trigger asChild>
+    <Dialog open={open} onOpenChange={openChange}>
+      <DialogTrigger asChild>
         <li className="MenuItem">
           <span>{t('menu.login')}</span>
         </li>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Content
-          className="Login Dialog"
-          onOpenAutoFocus={(event) => event.preventDefault()}
-        >
-          <div className="DialogHeader">
-            <Dialog.Title className="DialogTitle">
-              {t('modals.login.title')}
-            </Dialog.Title>
-            <Dialog.Close className="DialogClose" asChild>
-              <span>
-                <CrossIcon />
-              </span>
-            </Dialog.Close>
+      </DialogTrigger>
+      <DialogContent className="Login Dialog">
+        <div className="DialogHeader">
+          <div className="DialogTitle">
+            <h1>{t('modals.login.title')}</h1>
           </div>
+          <DialogClose className="DialogClose">
+            <CrossIcon />
+          </DialogClose>
+        </div>
 
-          <form className="form" onSubmit={login}>
-            <Input
-              name="email"
-              placeholder={t('modals.login.placeholders.email')}
-              onChange={handleChange}
-              error={errors.email}
-              ref={emailInput}
-            />
+        <form className="form" onSubmit={login}>
+          <Input
+            name="email"
+            placeholder={t('modals.login.placeholders.email')}
+            onChange={handleChange}
+            error={errors.email}
+            ref={emailInput}
+          />
 
-            <Input
-              name="password"
-              placeholder={t('modals.login.placeholders.password')}
-              onChange={handleChange}
-              error={errors.password}
-              ref={passwordInput}
-            />
+          <Input
+            name="password"
+            placeholder={t('modals.login.placeholders.password')}
+            type="password"
+            onChange={handleChange}
+            error={errors.password}
+            ref={passwordInput}
+          />
 
-            <Button>{t('modals.login.buttons.confirm')}</Button>
-          </form>
-        </Dialog.Content>
-        <Dialog.Overlay className="Overlay" />
-      </Dialog.Portal>
-    </Dialog.Root>
+          <Button text={t('modals.login.buttons.confirm')} />
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

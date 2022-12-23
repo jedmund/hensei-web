@@ -5,13 +5,17 @@ import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
 
-import * as Dialog from '@radix-ui/react-dialog'
-
 import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
 import Input from '~components/Input'
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogClose,
+} from '~components/Dialog'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
@@ -75,19 +79,19 @@ const SignupModal = (props: Props) => {
         .create(body)
         .then((response) => {
           storeCookieInfo(response)
-          return response.data.user_id
+          return response.data.id
         })
         .then((id) => fetchUserInfo(id))
         .then((infoResponse) => storeUserInfo(infoResponse))
   }
 
   function storeCookieInfo(response: AxiosResponse) {
-    const user = response.data.user
+    const resp = response.data
 
     const cookieObj: AccountCookie = {
-      userId: user.user_id,
-      username: user.username,
-      token: user.token,
+      userId: resp.id,
+      username: resp.username,
+      token: resp.token,
     }
 
     setCookie('account', cookieObj, { path: '/' })
@@ -99,7 +103,6 @@ const SignupModal = (props: Props) => {
 
   function storeUserInfo(response: AxiosResponse) {
     const user = response.data
-    console.log(user)
 
     const cookieObj: UserCookie = {
       picture: user.avatar.picture,
@@ -252,73 +255,67 @@ const SignupModal = (props: Props) => {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={openChange}>
-      <Dialog.Trigger asChild>
+    <Dialog open={open} onOpenChange={openChange}>
+      <DialogTrigger asChild>
         <li className="MenuItem">
           <span>{t('menu.signup')}</span>
         </li>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Content
-          className="Signup Dialog"
-          onOpenAutoFocus={(event) => event.preventDefault()}
-        >
-          <div className="DialogHeader">
-            <Dialog.Title className="DialogTitle">
-              {t('modals.signup.title')}
-            </Dialog.Title>
-            <Dialog.Close className="DialogClose" asChild>
-              <span>
-                <CrossIcon />
-              </span>
-            </Dialog.Close>
+      </DialogTrigger>
+      <DialogContent className="Signup Dialog">
+        <div className="DialogHeader">
+          <div className="DialogTitle">
+            <h1>{t('modals.signup.title')}</h1>
           </div>
+          <DialogClose className="DialogClose">
+            <CrossIcon />
+          </DialogClose>
+        </div>
 
-          <form className="form" onSubmit={register}>
-            <Input
-              name="username"
-              placeholder={t('modals.signup.placeholders.username')}
-              onChange={handleNameChange}
-              error={errors.username}
-              ref={usernameInput}
-            />
+        <form className="form" onSubmit={register}>
+          <Input
+            name="username"
+            placeholder={t('modals.signup.placeholders.username')}
+            onChange={handleNameChange}
+            error={errors.username}
+            ref={usernameInput}
+          />
 
-            <Input
-              name="email"
-              placeholder={t('modals.signup.placeholders.email')}
-              onChange={handleNameChange}
-              error={errors.email}
-              ref={emailInput}
-            />
+          <Input
+            name="email"
+            placeholder={t('modals.signup.placeholders.email')}
+            onChange={handleNameChange}
+            error={errors.email}
+            ref={emailInput}
+          />
 
-            <Input
-              name="password"
-              placeholder={t('modals.signup.placeholders.password')}
-              onChange={handlePasswordChange}
-              error={errors.password}
-              ref={passwordInput}
-            />
+          <Input
+            name="password"
+            placeholder={t('modals.signup.placeholders.password')}
+            type="password"
+            onChange={handlePasswordChange}
+            error={errors.password}
+            ref={passwordInput}
+          />
 
-            <Input
-              name="confirm_password"
-              placeholder={t('modals.signup.placeholders.password_confirm')}
-              onChange={handlePasswordChange}
-              error={errors.passwordConfirmation}
-              ref={passwordConfirmationInput}
-            />
+          <Input
+            name="confirm_password"
+            placeholder={t('modals.signup.placeholders.password_confirm')}
+            type="password"
+            onChange={handlePasswordChange}
+            error={errors.passwordConfirmation}
+            ref={passwordConfirmationInput}
+          />
 
-            <Button>{t('modals.signup.buttons.confirm')}</Button>
+          <Button text={t('modals.signup.buttons.confirm')} />
 
-            <Dialog.Description className="terms">
-              {/* <Trans i18nKey="modals.signup.agreement">
+          <p className="terms">
+            {/* <Trans i18nKey="modals.signup.agreement">
                                 By signing up, I agree to the <Link href="/privacy"><span>Privacy Policy</span></Link><Link href="/usage"><span>Usage Guidelines</span></Link>.
                             </Trans> */}
-            </Dialog.Description>
-          </form>
-        </Dialog.Content>
-        <Dialog.Overlay className="Overlay" />
-      </Dialog.Portal>
-    </Dialog.Root>
+          </p>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

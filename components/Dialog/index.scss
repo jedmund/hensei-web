@@ -22,6 +22,7 @@
     display: flex;
     align-items: center;
     gap: $unit;
+    justify-content: space-between;
 
     .left {
       display: flex;
@@ -38,6 +39,7 @@
 
   .DialogClose {
     background: transparent;
+    border: none;
 
     &:hover {
       cursor: pointer;
@@ -58,7 +60,13 @@
   .DialogTitle {
     color: var(--text-primary);
     font-size: $font-xlarge;
-    flex-grow: 1;
+
+    h1 {
+      color: var(--text-primary);
+      font-size: $font-xlarge;
+      font-weight: $medium;
+      text-align: left;
+    }
   }
 
   .DialogTop {
