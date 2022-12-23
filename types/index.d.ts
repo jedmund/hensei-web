@@ -8,6 +8,12 @@ export type JobSkillObject = {
   3: JobSkill | undefined
 }
 
+export type FilterObject = {
+  raid?: string
+  element?: number
+  recency?: number
+}
+
 export type PaginationObject = {
   count: number
   totalPages: number

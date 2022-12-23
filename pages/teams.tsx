@@ -11,15 +11,18 @@ import clonedeep from 'lodash.clonedeep'
 
 import api from '~utils/api'
 import setUserToken from '~utils/setUserToken'
+import extractFilters from '~utils/extractFilters'
+import organizeRaids from '~utils/organizeRaids'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { elements, allElement } from '~utils/Element'
+import { emptyPaginationObject } from '~utils/emptyStates'
 
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { PaginationObject } from '~types'
+import type { FilterObject, PaginationObject } from '~types'
 
 interface Props {
   teams?: Party[]
@@ -114,12 +117,22 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
 
   const fetchTeams = useCallback(
     ({ replace }: { replace: boolean }) => {
-      const filters = {
+      const filters: {
+        [key: string]: any
+      } = {
+        element: element !== -1 ? element : undefined,
+        raid: raid ? raid.id : undefined,
+        recency: recency !== -1 ? recency : undefined,
+        page: currentPage,
+      }
+
+      Object.keys(filters).forEach(
+        (key) => filters[key] === undefined && delete filters[key]
+      )
+
+      const params = {
         params: {
-          element: element != -1 ? element : undefined,
-          raid: raid ? raid.id : undefined,
-          recency: recency != -1 ? recency : undefined,
-          page: currentPage,
+          ...filters,
         },
       }
 
@@ -349,46 +362,20 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     .getAll()
     .then((response) => organizeRaids(response.data))
 
-  // Extract recency filter
-  const recencyParam: number = parseInt(query.recency)
-
-  // Extract element filter
-  const elementParam: string = query.element
-  const teamElement: TeamElement | undefined =
-    elementParam === "all"
-      ? allElement
-      : elements.find(
-          (element) => element.name.en.toLowerCase() === elementParam
-        )
-
-  // Extract raid filter
-  const raidParam: string = query.raid
-  const raid: Raid | undefined = raids.find((r) => r.slug === raidParam)
-
   // Create filter object
-  const filters: {
-    raid?: string
-    element?: number
-    recency?: number
-  } = {}
-
-  if (recencyParam) filters.recency = recencyParam
-  if (teamElement && teamElement.id > -1) filters.element = teamElement.id
-  if (raid) filters.raid = raid.id
+  const filters: FilterObject = extractFilters(query, raids)
   const params = {
     params: { ...filters },
   }
 
+  // Set up empty variables
   let teams: Party[] | null = null
-  let meta: PaginationObject = {
-    count: 0,
-    totalPages: 0,
-    perPage: 15,
-  }
+  let meta: PaginationObject = emptyPaginationObject
 
   // Fetch initial set of parties
   const response = await api.endpoints.parties.getAll(params)
 
+  // Assign values to pass to props
   teams = response.data.results
   meta.count = response.data.meta.count
   meta.totalPages = response.data.meta.total_pages
@@ -400,39 +387,9 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       meta: meta,
       raids: raids,
       sortedRaids: sortedRaids,
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await serverSideTranslations(locale, ['common'])),
       // Will be passed to the page component as props
     },
-  }
-}
-
-const organizeRaids = (raids: Raid[]) => {
-  // Set up empty raid for "All raids"
-  const all = {
-    id: '0',
-    name: {
-      en: 'All raids',
-      ja: '全て',
-    },
-    slug: 'all',
-    level: 0,
-    group: 0,
-    element: 0,
-  }
-
-  const numGroups = Math.max.apply(
-    Math,
-    raids.map((raid) => raid.group)
-  )
-  let groupedRaids = []
-
-  for (let i = 0; i <= numGroups; i++) {
-    groupedRaids[i] = raids.filter((raid) => raid.group == i)
-  }
-
-  return {
-    raids: raids,
-    sortedRaids: groupedRaids,
   }
 }
 

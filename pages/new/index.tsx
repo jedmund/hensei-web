@@ -4,6 +4,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Party from '~components/Party'
 
 import { appState } from '~utils/appState'
+import organizeRaids from '~utils/organizeRaids'
 import setUserToken from '~utils/setUserToken'
 import api from '~utils/api'
 
@@ -53,7 +54,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   let { raids, sortedRaids } = await api.endpoints.raids
     .getAll()
     .then((response) => organizeRaids(response.data))
-  
+
   let jobs = await api.endpoints.jobs
     .getAll()
     .then((response) => {
@@ -70,39 +71,9 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       jobSkills: jobSkills,
       raids: raids,
       sortedRaids: sortedRaids,
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await serverSideTranslations(locale, ['common'])),
       // Will be passed to the page component as props
     },
-  }
-}
-
-const organizeRaids = (raids: Raid[]) => {
-  // Set up empty raid for "All raids"
-  const all = {
-    id: '0',
-    name: {
-      en: 'All raids',
-      ja: '全て',
-    },
-    slug: 'all',
-    level: 0,
-    group: 0,
-    element: 0,
-  }
-
-  const numGroups = Math.max.apply(
-    Math,
-    raids.map((raid) => raid.group)
-  )
-  let groupedRaids = []
-
-  for (let i = 0; i <= numGroups; i++) {
-    groupedRaids[i] = raids.filter((raid) => raid.group == i)
-  }
-
-  return {
-    raids: raids,
-    sortedRaids: groupedRaids,
   }
 }
 

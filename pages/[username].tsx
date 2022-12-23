@@ -10,15 +10,17 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import api from '~utils/api'
 import setUserToken from '~utils/setUserToken'
+import extractFilters from '~utils/extractFilters'
+import organizeRaids from '~utils/organizeRaids'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { elements, allElement } from '~utils/Element'
+import { emptyPaginationObject } from '~utils/emptyStates'
 
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { PaginationObject } from '~types'
 import type { FilterObject, PaginationObject } from '~types'
 
 interface Props {
@@ -336,32 +338,8 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     .getAll()
     .then((response) => organizeRaids(response.data))
 
-  // Extract recency filter
-  const recencyParam: number = parseInt(query.recency)
-
-  // Extract element filter
-  const elementParam: string = query.element
-  const teamElement: TeamElement | undefined =
-    elementParam === "all"
-      ? allElement
-      : elements.find(
-          (element) => element.name.en.toLowerCase() === elementParam
-        )
-
-  // Extract raid filter
-  const raidParam: string = query.raid
-  const raid: Raid | undefined = raids.find((r) => r.slug === raidParam)
-
   // Create filter object
-  const filters: {
-    raid?: string
-    element?: number
-    recency?: number
-  } = {}
-
-  if (recencyParam) filters.recency = recencyParam
-  if (teamElement && teamElement.id > -1) filters.element = teamElement.id
-  if (raid) filters.raid = raid.id
+  const filters: FilterObject = extractFilters(query, raids)
   const params = {
     params: { ...filters },
   }
@@ -369,20 +347,20 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set up empty variables
   let user: User | null = null
   let teams: Party[] | null = null
-  let meta: PaginationObject = {
-    count: 0,
-    totalPages: 0,
-    perPage: 15
-  }
+  let meta: PaginationObject = emptyPaginationObject
 
+  // Perform a request only if we received a username
   if (query.username) {
     const response = await api.endpoints.users.getOne({
       id: query.username,
       params,
     })
 
+    // Assign values to pass to props
     user = response.data.profile
-    teams = response.data.profile.parties
+
+    if (response.data.profile.parties) teams = response.data.profile.parties
+    else teams = []
 
     meta.count = response.data.meta.count
     meta.totalPages = response.data.meta.total_pages
@@ -396,39 +374,9 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       meta: meta,
       raids: raids,
       sortedRaids: sortedRaids,
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await serverSideTranslations(locale, ['common'])),
       // Will be passed to the page component as props
     },
-  }
-}
-
-const organizeRaids = (raids: Raid[]) => {
-  // Set up empty raid for "All raids"
-  const all = {
-    id: '0',
-    name: {
-      en: 'All raids',
-      ja: '全て',
-    },
-    slug: 'all',
-    level: 0,
-    group: 0,
-    element: 0,
-  }
-
-  const numGroups = Math.max.apply(
-    Math,
-    raids.map((raid) => raid.group)
-  )
-  let groupedRaids = []
-
-  for (let i = 0; i <= numGroups; i++) {
-    groupedRaids[i] = raids.filter((raid) => raid.group == i)
-  }
-
-  return {
-    raids: raids,
-    sortedRaids: groupedRaids,
   }
 }
 
