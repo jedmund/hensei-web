@@ -1,18 +1,4 @@
 export default (raids: Raid[]) => {
-  console.log('organizing raids...')
-  // Set up empty raid for "All raids"
-  const all = {
-    id: '0',
-    name: {
-      en: 'All raids',
-      ja: '全て',
-    },
-    slug: 'all',
-    level: 0,
-    group: 0,
-    element: 0,
-  }
-
   const numGroups = Math.max.apply(
     Math,
     raids.map((raid) => raid.group)

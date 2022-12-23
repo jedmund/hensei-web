@@ -47,7 +47,6 @@ interface Props {
 
 const PartyDetails = (props: Props) => {
   const { party, raids } = useSnapshot(appState)
-  const { account } = useSnapshot(accountState)
 
   const { t } = useTranslation('common')
   const router = useRouter()
@@ -55,7 +54,8 @@ const PartyDetails = (props: Props) => {
 
   const nameInput = React.createRef<HTMLInputElement>()
   const descriptionInput = React.createRef<HTMLTextAreaElement>()
-  const raidSelect = React.createRef<HTMLSelectElement>()
+
+  const [raidSlug, setRaidSlug] = useState('')
 
   const readOnlyClasses = classNames({
     PartyDetails: true,
@@ -115,10 +115,14 @@ const PartyDetails = (props: Props) => {
     appState.party.detailsVisible = !appState.party.detailsVisible
   }
 
+  function receiveRaid(slug?: string) {
+    if (slug) setRaidSlug(slug)
+  }
+
   function updateDetails(event: React.MouseEvent) {
     const nameValue = nameInput.current?.value
     const descriptionValue = descriptionInput.current?.value
-    const raid = raids.find((raid) => raid.slug === raidSelect.current?.value)
+    const raid = raids.find((raid) => raid.slug === raidSlug)
 
     props.updateCallback(nameValue, descriptionValue, raid)
     toggleDetails()
@@ -219,8 +223,8 @@ const PartyDetails = (props: Props) => {
       />
       <RaidDropdown
         showAllRaidsOption={false}
-        currentRaid={party.raid?.slug || ''}
-        ref={raidSelect}
+        currentRaid={party.raid ? party.raid.slug : undefined}
+        onChange={receiveRaid}
       />
       <TextFieldset
         fieldName="name"
