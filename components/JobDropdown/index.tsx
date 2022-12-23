@@ -102,11 +102,11 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     return (
       <Select
-        defaultValue={props.currentJob}
+        value={currentJob ? currentJob.id : 'no-job'}
         placeholder={'Select a class...'}
         open={open}
         onClick={openJobSelect}
-        onChange={handleChange}
+        onValueChange={handleChange}
         triggerClass="Job"
       >
         <SelectItem key={-1} value="no-job">

@@ -32,11 +32,6 @@ const FilterBar = (props: Props) => {
   const [recencyOpen, setRecencyOpen] = useState(false)
   const [elementOpen, setElementOpen] = useState(false)
 
-  // Set up refs for filter dropdowns
-  const elementSelect = React.createRef<HTMLSelectElement>()
-  const raidSelect = React.createRef<HTMLSelectElement>()
-  const recencySelect = React.createRef<HTMLSelectElement>()
-
   // Set up classes object for showing shadow on scroll
   const classes = classNames({
     FilterBar: true,
@@ -69,9 +64,9 @@ const FilterBar = (props: Props) => {
     <div className={classes}>
       {props.children}
       <Select
-        defaultValue={`${props.element}`}
+        value={`${props.element}`}
         open={elementOpen}
-        onChange={elementSelectChanged}
+        onValueChange={elementSelectChanged}
         onClick={openElementSelect}
       >
         <SelectItem data-element="all" key={-1} value={-1}>
@@ -105,14 +100,13 @@ const FilterBar = (props: Props) => {
         defaultRaid="all"
         showAllRaidsOption={true}
         onChange={raidSelectChanged}
-        ref={raidSelect}
       />
 
       <Select
-        defaultValue={`${props.recency}`}
+        value={`${props.recency}`}
         trigger={'All time'}
         open={recencyOpen}
-        onChange={recencySelectChanged}
+        onValueChange={recencySelectChanged}
         onClick={openRecencySelect}
       >
         <SelectItem key={-1} value={-1}>
