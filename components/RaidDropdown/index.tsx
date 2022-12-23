@@ -127,7 +127,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     return (
       <Select
-        defaultValue={props.currentRaid}
+        defaultValue={props.showAllRaidsOption ? props.currentRaid : undefined}
         placeholder={'Select a raid...'}
         open={open}
         onClick={openRaidSelect}
