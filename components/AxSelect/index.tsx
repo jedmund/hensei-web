@@ -250,7 +250,7 @@ const AXSelect = (props: Props) => {
     } else if (value > primaryAxSkill.maxValue) {
       newErrors.axValue1 = t('ax.errors.value_too_high', {
         name: primaryAxSkill.name[locale],
-        maxValue: primaryAxSkill.minValue,
+        maxValue: primaryAxSkill.maxValue,
         suffix: primaryAxSkill.suffix ? primaryAxSkill.suffix : '',
       })
     } else if (!value || value <= 0) {
@@ -285,7 +285,7 @@ const AXSelect = (props: Props) => {
         } else if (value > secondaryAxSkill.maxValue) {
           newErrors.axValue2 = t('ax.errors.value_too_high', {
             name: secondaryAxSkill.name[locale],
-            maxValue: secondaryAxSkill.minValue,
+            maxValue: secondaryAxSkill.maxValue,
             suffix: secondaryAxSkill.suffix ? secondaryAxSkill.suffix : '',
           })
         } else if (!secondaryAxSkill.suffix && value % 1 !== 0) {
