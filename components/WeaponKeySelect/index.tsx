@@ -56,7 +56,6 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
 
       function fetchWeaponKeys() {
         api.endpoints.weapon_keys.getAll(filterParams).then((response) => {
-          const keys = response.data.map((k: any) => k.weapon_key)
           const keys = response.data
           organizeWeaponKeys(keys)
         })
@@ -125,9 +124,9 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
     return (
       <Select
         key={`weapon-key-${props.slot}`}
-        defaultValue={props.currentValue ? props.currentValue.id : 'no-key'}
+        value={props.currentValue ? props.currentValue.id : 'no-key'}
         open={open}
-        onChange={handleChange}
+        onValueChange={handleChange}
         onClick={openSelect}
         ref={ref}
         triggerClass="modal"

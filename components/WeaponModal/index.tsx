@@ -7,6 +7,7 @@ import { AxiosResponse } from 'axios'
 import * as Dialog from '@radix-ui/react-dialog'
 
 import AXSelect from '~components/AxSelect'
+import AwakeningSelect from '~components/AwakeningSelect'
 import ElementToggle from '~components/ElementToggle'
 import WeaponKeySelect from '~components/WeaponKeySelect'
 import Button from '~components/Button'
@@ -16,7 +17,6 @@ import { appState } from '~utils/appState'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
-import AwakeningSelect from '~components/AwakeningSelect'
 
 interface GridWeaponObject {
   weapon: {
@@ -253,11 +253,16 @@ const WeaponModal = (props: Props) => {
   }
 
   function openChange(open: boolean) {
-    setFormValid(false)
+    if (props.gridWeapon.object.ax > 0 || props.gridWeapon.object.awakening) {
+      setFormValid(false)
+    } else {
+      setFormValid(true)
+    }
     setOpen(open)
   }
 
   return (
+    // TODO: Refactor into Dialog component
     <Dialog.Root open={open} onOpenChange={openChange}>
       <Dialog.Trigger asChild>{props.children}</Dialog.Trigger>
       <Dialog.Portal>
