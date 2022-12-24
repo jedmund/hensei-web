@@ -119,12 +119,66 @@ const WeaponUnit = (props: Props) => {
 
       return (
         <img
-          alt={`${altText}`}
+          alt={altText}
+          key={altText}
           className="Skill"
           src={`${baseUrl}${filename}`}
         />
       )
     }
+  }
+
+  function ultimaImage(index: number) {
+    const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
+    let filename = ''
+    let altText = ''
+
+    // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 17 &&
+      props.gridWeapon.weapon_keys
+    ) {
+      if (
+        props.gridWeapon.weapon_keys[index] &&
+        (props.gridWeapon.weapon_keys[index].slot === 1 ||
+          props.gridWeapon.weapon_keys[index].slot === 2)
+      ) {
+        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
+        filename = `${props.gridWeapon.weapon_keys[index].slug}.png`
+      } else if (
+        props.gridWeapon.weapon_keys[index] &&
+        props.gridWeapon.weapon_keys[index].slot === 0
+      ) {
+        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
+
+        const weapon = props.gridWeapon.object.proficiency
+
+        const suffix = `${weapon}`
+        filename = `${props.gridWeapon.weapon_keys[index].slug}-${suffix}.png`
+      }
+    }
+
+    return (
+      <img alt={`${altText}`} className="Skill" src={`${baseUrl}${filename}`} />
+    )
+  }
+
+  function ultimaImages() {
+    let images: JSX.Element[] = []
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 17 &&
+      props.gridWeapon.weapon_keys &&
+      props.gridWeapon.weapon_keys.length > 0
+    ) {
+      for (let i = 0; i < props.gridWeapon.weapon_keys.length; i++) {
+        const image = ultimaImage(i)
+        if (image) images.push(image)
+      }
+    }
+
+    return images
   }
 
   function opusImage(index: number) {
@@ -176,7 +230,8 @@ const WeaponUnit = (props: Props) => {
 
       return (
         <img
-          alt={`${altText}`}
+          alt={altText}
+          key={altText}
           className="Skill"
           src={`${baseUrl}${filename}`}
         />
@@ -188,6 +243,7 @@ const WeaponUnit = (props: Props) => {
     let images: JSX.Element[] = []
     if (
       props.gridWeapon &&
+      props.gridWeapon.object.series === 2 &&
       props.gridWeapon.weapon_keys &&
       props.gridWeapon.weapon_keys.length > 0
     ) {
@@ -268,6 +324,7 @@ const WeaponUnit = (props: Props) => {
           {telumaImage(0)}
           {telumaImage(1)}
           {opusImages()}
+          {ultimaImages()}
         </div>
       </div>
       <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
