@@ -78,13 +78,15 @@ const WeaponModal = (props: Props) => {
     setElement(props.gridWeapon.element)
 
     if (props.gridWeapon.weapon_keys) {
-      if (props.gridWeapon.weapon_keys[0]) {
-        setWeaponKey1(props.gridWeapon.weapon_keys[0])
-      }
-      if (props.gridWeapon.weapon_keys[1])
-        setWeaponKey2(props.gridWeapon.weapon_keys[1])
-      if (props.gridWeapon.weapon_keys[2])
-        setWeaponKey3(props.gridWeapon.weapon_keys[2])
+      props.gridWeapon.weapon_keys.forEach((key) => {
+        if (key.slot + 1 === 1) {
+          setWeaponKey1(key)
+        } else if (key.slot + 1 === 2) {
+          setWeaponKey2(key)
+        } else if (key.slot + 1 === 3) {
+          setWeaponKey3(key)
+        }
+      })
     }
   }, [props])
 
@@ -119,14 +121,17 @@ const WeaponModal = (props: Props) => {
 
     if (props.gridWeapon.object.element == 0) object.weapon.element = element
 
-    if ([2, 3, 17, 24].includes(props.gridWeapon.object.series)) {
+    if (
+      [2, 3, 17, 24].includes(props.gridWeapon.object.series) &&
+      weaponKey1Id
+    ) {
       object.weapon.weapon_key1_id = weaponKey1Id
     }
 
-    if ([2, 3, 17].includes(props.gridWeapon.object.series))
+    if ([2, 3, 17].includes(props.gridWeapon.object.series) && weaponKey2Id)
       object.weapon.weapon_key2_id = weaponKey2Id
 
-    if (props.gridWeapon.object.series == 17)
+    if (props.gridWeapon.object.series == 17 && weaponKey3Id)
       object.weapon.weapon_key3_id = weaponKey3Id
 
     if (props.gridWeapon.object.ax > 0) {

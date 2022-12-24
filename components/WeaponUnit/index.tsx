@@ -127,6 +127,79 @@ const WeaponUnit = (props: Props) => {
     }
   }
 
+  function opusImage(index: number) {
+    const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
+    let filename = ''
+    let altText = ''
+
+    // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 2 &&
+      props.gridWeapon.weapon_keys
+    ) {
+      if (
+        props.gridWeapon.weapon_keys[index] &&
+        props.gridWeapon.weapon_keys[index].slot === 0
+      ) {
+        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
+        filename = `${props.gridWeapon.weapon_keys[index].slug}.png`
+      } else if (
+        props.gridWeapon.weapon_keys[index] &&
+        props.gridWeapon.weapon_keys[index].slot === 1
+      ) {
+        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
+
+        const element = props.gridWeapon.object.element
+        const mod = props.gridWeapon.object.name.en.includes('Repudiation')
+          ? 'primal'
+          : 'magna'
+
+        const suffix = `${mod}-${element}`
+        const weaponKey = props.gridWeapon.weapon_keys[index]
+
+        if (
+          [
+            'pendulum-strength',
+            'pendulum-zeal',
+            'pendulum-strife',
+            'chain-temperament',
+            'chain-restoration',
+            'chain-glorification',
+          ].includes(weaponKey.slug)
+        ) {
+          filename = `${props.gridWeapon.weapon_keys[index].slug}-${suffix}.png`
+        } else {
+          filename = `${props.gridWeapon.weapon_keys[index].slug}.png`
+        }
+      }
+
+      return (
+        <img
+          alt={`${altText}`}
+          className="Skill"
+          src={`${baseUrl}${filename}`}
+        />
+      )
+    }
+  }
+
+  function opusImages() {
+    let images: JSX.Element[] = []
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.weapon_keys &&
+      props.gridWeapon.weapon_keys.length > 0
+    ) {
+      for (let i = 0; i < props.gridWeapon.weapon_keys.length; i++) {
+        const image = opusImage(i)
+        if (image) images.push(image)
+      }
+    }
+
+    return images
+  }
+
   function axImage(index: number) {
     const axSkill = getCanonicalAxSkill(index)
 
@@ -194,6 +267,7 @@ const WeaponUnit = (props: Props) => {
           {axImage(1)}
           {telumaImage(0)}
           {telumaImage(1)}
+          {opusImages()}
         </div>
       </div>
       <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
