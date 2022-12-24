@@ -311,7 +311,7 @@ const AXSelect = (props: Props) => {
     if (ax) {
       const rangeString = `${ax.minValue}~${ax.maxValue}${ax.suffix || ''}`
 
-      element.className = 'Input Contained Visible'
+      element.className = 'Input Bound Visible'
       element.disabled = false
       element.placeholder = rangeString
       element.min = `${ax.minValue}`
