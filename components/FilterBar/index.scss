@@ -60,7 +60,7 @@
 
     img {
       $diameter: $unit * 6;
-      border-radius: $diameter / 2;
+      border-radius: calc($diameter / 2);
       height: $diameter;
       width: $diameter;
 

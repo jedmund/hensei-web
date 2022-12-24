@@ -119,14 +119,14 @@ const GridRep = (props: Props) => {
   }
 
   const userImage = () => {
-    if (props.user && props.user.picture) {
+    if (props.user && props.user.avatar) {
       return (
         <img
-          alt={props.user.picture.picture}
-          className={`profile ${props.user.picture.element}`}
-          srcSet={`/profile/${props.user.picture.picture}.png,
-                              /profile/${props.user.picture.picture}@2x.png 2x`}
-          src={`/profile/${props.user.picture.picture}.png`}
+          alt={props.user.avatar.picture}
+          className={`profile ${props.user.avatar.element}`}
+          srcSet={`/profile/${props.user.avatar.picture}.png,
+                              /profile/${props.user.avatar.picture}@2x.png 2x`}
+          src={`/profile/${props.user.avatar.picture}.png`}
         />
       )
     } else return <div className="no-user" />
