@@ -224,6 +224,18 @@ const WeaponModal = (props: Props) => {
         ) : (
           ''
         )}
+
+        {props.gridWeapon.object.series == 24 &&
+        props.gridWeapon.object.uncap.ulb ? (
+          <WeaponKeySelect
+            currentValue={weaponKey1 != null ? weaponKey1 : undefined}
+            series={props.gridWeapon.object.series}
+            slot={0}
+            onChange={receiveWeaponKey}
+          />
+        ) : (
+          ''
+        )}
       </section>
     )
   }

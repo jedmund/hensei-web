@@ -92,7 +92,7 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
         name = pendulumNames[1]
       else if (props.series == 3) name = telumaNames[0]
       else if (props.series == 17) name = gauphNames[props.slot]
-      else if (props.series == 22) name = emblemNames[index]
+      else if (props.series == 24) name = emblemNames[index]
 
       return (
         <SelectGroup
@@ -116,7 +116,7 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
       if (props.series == 2) name = pendulumNames[0].en
       else if (props.series == 3) name = telumaNames[0].en
       else if (props.series == 17) name = gauphNames[props.slot].en
-      else if (props.series == 22) name = emblemNames[0].en
+      else if (props.series == 24) name = emblemNames[0].en
 
       return `No ${name}`
     }
