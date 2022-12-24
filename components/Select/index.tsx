@@ -20,7 +20,7 @@ interface Props
   triggerClass?: string
 }
 
-const Select = React.forwardRef<HTMLButtonElement, Props>(function input(
+const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
   props: Props,
   forwardedRef
 ) {

@@ -12,7 +12,7 @@ interface Props
   label?: string
 }
 
-const Input = React.forwardRef<HTMLInputElement, Props>(function input(
+const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
   props: Props,
   forwardedRef
 ) {
