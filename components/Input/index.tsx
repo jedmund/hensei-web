@@ -25,7 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
 
   // Change value when prop updates
   useEffect(() => {
-    setInputValue(`${props.value}`)
+    if (props.value) setInputValue(`${props.value}`)
   }, [props.value])
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
