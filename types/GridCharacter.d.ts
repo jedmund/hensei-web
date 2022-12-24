@@ -3,4 +3,8 @@ interface GridCharacter {
   position: number
   object: Character
   uncap_level: number
+  awakening: {
+    type: number
+    level: number
+  }
 }
