@@ -21,16 +21,16 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
     const [keys, setKeys] = useState<WeaponKey[][]>([])
 
     const pendulumNames = [
-      { en: 'Pendulum', jp: '' },
-      { en: 'Chain', jp: '' },
+      { en: 'Pendulum', jp: 'ペンデュラム' },
+      { en: 'Chain', jp: 'チェイン' },
     ]
 
-    const telumaNames = [{ en: 'Teluma', jp: '' }]
-    const emblemNames = [{ en: 'Emblem', jp: '' }]
+    const telumaNames = [{ en: 'Teluma', jp: 'テルマ' }]
+    const emblemNames = [{ en: 'Emblem', jp: 'エンブレム' }]
     const gauphNames = [
-      { en: 'Gauph Key', jp: '' },
-      { en: 'Ultima Key', jp: '' },
-      { en: 'Gate of Omnipotence', jp: '' },
+      { en: 'Gauph Key', jp: 'ガフスキー' },
+      { en: 'Ultima Key', jp: 'ガフスキーΩ' },
+      { en: 'Gate of Omnipotence', jp: 'ガフスキー' },
     ]
 
     useEffect(() => {
@@ -57,6 +57,7 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
       function fetchWeaponKeys() {
         api.endpoints.weapon_keys.getAll(filterParams).then((response) => {
           const keys = response.data.map((k: any) => k.weapon_key)
+          const keys = response.data
           organizeWeaponKeys(keys)
         })
       }
