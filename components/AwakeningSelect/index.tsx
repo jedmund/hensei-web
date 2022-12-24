@@ -121,6 +121,8 @@ const AwakeningSelect = (props: Props) => {
       error = t('awakening.errors.value_too_high', {
         maxValue: maxValue,
       })
+    } else if (value % 1 != 0) {
+      error = t('awakening.errors.value_not_whole')
     } else if (!value || value <= 0) {
       error = t('awakening.errors.value_empty')
     } else {
