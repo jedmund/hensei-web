@@ -7,4 +7,8 @@ interface GridWeapon {
   element: number
   weapon_keys?: Array<WeaponKey>
   ax?: Array<SimpleAxSkill>
+  awakening?: {
+    type: number
+    level: number
+  }
 }

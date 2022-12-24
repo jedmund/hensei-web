@@ -20,7 +20,10 @@ interface Props
   triggerClass?: string
 }
 
-const Select = (props: Props) => {
+const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
+  props: Props,
+  forwardedRef
+) {
   const [value, setValue] = useState('')
 
   useEffect(() => {
@@ -33,7 +36,6 @@ const Select = (props: Props) => {
     if (props.onValueChange) props.onValueChange(newValue)
   }
 
-  console.log(value)
   return (
     <RadixSelect.Root
       value={value !== '' ? value : undefined}
@@ -42,6 +44,7 @@ const Select = (props: Props) => {
       <RadixSelect.Trigger
         className={classNames('SelectTrigger', props.triggerClass)}
         placeholder={props.placeholder}
+        ref={forwardedRef}
       >
         <RadixSelect.Value placeholder={props.placeholder} />
         <RadixSelect.Icon className="SelectIcon">
@@ -62,6 +65,6 @@ const Select = (props: Props) => {
       </RadixSelect.Portal>
     </RadixSelect.Root>
   )
-}
+})
 
 export default Select

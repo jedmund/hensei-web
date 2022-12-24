@@ -51,6 +51,8 @@ public/images/weapon*
 public/images/summon*
 public/images/chara*
 public/images/job*
+public/images/awakening*
+public/images/ax*
 
 # Typescript v1 declaration files
 typings/

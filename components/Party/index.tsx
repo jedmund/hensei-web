@@ -47,8 +47,6 @@ const Party = (props: Props) => {
       },
     }
 
-    console.log(body)
-
     return await api.endpoints.parties.create(body)
   }
 

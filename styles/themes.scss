@@ -38,6 +38,8 @@
   --select-bg: #{$select--bg--light};
   --select-contained-bg: #{$select--contained--bg--light};
   --select-contained-bg-hover: #{$select--contained--bg--light--hover};
+  --select-modal-bg: #{$select--modal--bg--light};
+  --select-modal-bg-hover: #{$select--modal--bg--light--hover};
   --select-separator: #{$select--separator--light};
   --option-bg-hover: #{$option--bg--light--hover};
 
@@ -72,19 +74,40 @@
   --subaura-orange-secondary: #{$subaura--orange--secondary--light};
   --subaura-orange-text: #{$subaura--orange--text--light};
 
+  // Light - Element Toggle
+  --toggle-bg: #{$toggle--bg--light};
+  --toggle-stroke: #{$toggle--stroke--light};
+
   --grid-border-color: #{$grid--border--color--light};
 
+  --wind-bg: #{$wind-bg-10};
   --wind-hover-bg: #{$wind-bg-20};
+  --wind-text: #{$wind-text-10};
   --wind-hover-text: #{$wind-text-20};
+
+  --fire-bg: #{$fire-bg-10};
   --fire-hover-bg: #{$fire-bg-20};
+  --fire-text: #{$fire-text-10};
   --fire-hover-text: #{$fire-text-20};
+
+  --water-bg: #{$water-bg-10};
   --water-hover-bg: #{$water-bg-20};
+  --water-text: #{$water-text-10};
   --water-hover-text: #{$water-text-20};
+
+  --earth-bg: #{$earth-bg-10};
   --earth-hover-bg: #{$earth-bg-20};
+  --earth-text: #{$earth-text-10};
   --earth-hover-text: #{$earth-text-20};
+
+  --dark-bg: #{$dark-bg-10};
   --dark-hover-bg: #{$dark-bg-20};
+  --dark-text: #{$dark-text-10};
   --dark-hover-text: #{$dark-text-20};
+
+  --light-bg: #{$light-bg-10};
   --light-hover-bg: #{$light-bg-20};
+  --light-text: #{$light-text-10};
   --light-hover-text: #{$light-text-20};
 }
 
@@ -128,6 +151,8 @@
   --select-bg: #{$select--bg--dark};
   --select-contained-bg: #{$select--contained--bg--dark};
   --select-contained-bg-hover: #{$select--contained--bg--dark--hover};
+  --select-modal-bg: #{$select--modal--bg--dark};
+  --select-modal-bg-hover: #{$select--modal--bg--dark--hover};
   --select-separator: #{$select--separator--dark};
   --option-bg-hover: #{$option--bg--dark--hover};
 
@@ -162,16 +187,40 @@
   --subaura-orange-secondary: #{$subaura--orange--secondary--dark};
   --subaura-orange-text: #{$subaura--orange--text--dark};
 
+  // Dark - Element Toggle
+  --toggle-bg: #{$toggle--bg--dark};
+  --toggle-stroke: #{$toggle--stroke--dark};
+
   --grid-border-color: #{$grid--border--color--dark};
 
+  // Element theming
+  --wind-bg: #{$wind-bg-10};
   --wind-hover-bg: #{$wind-bg-00};
+  --wind-text: #{$wind-text-10};
   --wind-hover-text: #{$wind-text-00};
+
+  --fire-bg: #{$fire-bg-10};
   --fire-hover-bg: #{$fire-bg-00};
+  --fire-text: #{$fire-text-10};
   --fire-hover-text: #{$fire-text-00};
+
+  --water-bg: #{$water-bg-10};
+  --water-hover-bg: #{$water-bg-00};
+  --water-text: #{$water-text-10};
+  --water-hover-text: #{$water-text-00};
+
+  --earth-bg: #{$earth-bg-10};
   --earth-hover-bg: #{$earth-bg-00};
+  --earth-text: #{$earth-text-10};
   --earth-hover-text: #{$earth-text-00};
+
+  --dark-bg: #{$dark-bg-10};
   --dark-hover-bg: #{$dark-bg-00};
+  --dark-text: #{$dark-text-10};
   --dark-hover-text: #{$dark-text-00};
+
+  --light-bg: #{$light-bg-10};
   --light-hover-bg: #{$light-bg-00};
+  --light-text: #{$light-text-10};
   --light-hover-text: #{$light-text-00};
 }

@@ -9,8 +9,11 @@ import WeaponHovercard from '~components/WeaponHovercard'
 import UncapIndicator from '~components/UncapIndicator'
 import Button from '~components/Button'
 
-import { ButtonType } from '~utils/enums'
 import type { SearchableObject } from '~types'
+
+import { appState } from '~utils/appState'
+import { axData } from '~utils/axData'
+import { weaponAwakening } from '~utils/awakening'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
@@ -71,6 +74,265 @@ const WeaponUnit = (props: Props) => {
     setImageUrl(imgSrc)
   }
 
+  function awakeningImage() {
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.awakening &&
+      props.gridWeapon.awakening &&
+      props.gridWeapon.awakening.type >= 0
+    ) {
+      const awakening = weaponAwakening.find(
+        (awakening) => awakening.id === props.gridWeapon?.awakening?.type
+      )
+      const name = awakening?.name[locale]
+
+      return (
+        <img
+          alt={`${name} Lv${props.gridWeapon.awakening.level}`}
+          className="Awakening"
+          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/weapon_${props.gridWeapon.awakening.type}.png`}
+        />
+      )
+    }
+  }
+
+  function telumaImage(index: number) {
+    const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
+    let filename = ''
+    let altText = ''
+
+    // If there is a grid weapon, it is a Draconic Weapon and it has keys
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 3 &&
+      props.gridWeapon.weapon_keys
+    ) {
+      if (index === 0 && props.gridWeapon.weapon_keys[0]) {
+        altText = `${props.gridWeapon.weapon_keys[0].name[locale]}`
+        filename = `${props.gridWeapon.weapon_keys[0].slug}.png`
+      } else if (index === 1 && props.gridWeapon.weapon_keys[1]) {
+        altText = `${props.gridWeapon.weapon_keys[1].name[locale]}`
+
+        const element = props.gridWeapon.object.element
+        filename = `${props.gridWeapon.weapon_keys[1].slug}-${element}.png`
+      }
+
+      return (
+        <img
+          alt={altText}
+          key={altText}
+          className="Skill"
+          src={`${baseUrl}${filename}`}
+        />
+      )
+    }
+  }
+
+  function telumaImages() {
+    let images: JSX.Element[] = []
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 3 &&
+      props.gridWeapon.weapon_keys &&
+      props.gridWeapon.weapon_keys.length > 0
+    ) {
+      for (let i = 0; i < props.gridWeapon.weapon_keys.length; i++) {
+        const image = telumaImage(i)
+        if (image) images.push(image)
+      }
+    }
+
+    return images
+  }
+
+  function ultimaImage(index: number) {
+    const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
+    let filename = ''
+    let altText = ''
+
+    // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 17 &&
+      props.gridWeapon.weapon_keys
+    ) {
+      if (
+        props.gridWeapon.weapon_keys[index] &&
+        (props.gridWeapon.weapon_keys[index].slot === 1 ||
+          props.gridWeapon.weapon_keys[index].slot === 2)
+      ) {
+        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
+        filename = `${props.gridWeapon.weapon_keys[index].slug}.png`
+      } else if (
+        props.gridWeapon.weapon_keys[index] &&
+        props.gridWeapon.weapon_keys[index].slot === 0
+      ) {
+        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
+
+        const weapon = props.gridWeapon.object.proficiency
+
+        const suffix = `${weapon}`
+        filename = `${props.gridWeapon.weapon_keys[index].slug}-${suffix}.png`
+      }
+    }
+
+    return (
+      <img alt={`${altText}`} className="Skill" src={`${baseUrl}${filename}`} />
+    )
+  }
+
+  function ultimaImages() {
+    let images: JSX.Element[] = []
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 17 &&
+      props.gridWeapon.weapon_keys &&
+      props.gridWeapon.weapon_keys.length > 0
+    ) {
+      for (let i = 0; i < props.gridWeapon.weapon_keys.length; i++) {
+        const image = ultimaImage(i)
+        if (image) images.push(image)
+      }
+    }
+
+    return images
+  }
+
+  function opusImage(index: number) {
+    const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
+    let filename = ''
+    let altText = ''
+
+    // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 2 &&
+      props.gridWeapon.weapon_keys
+    ) {
+      if (
+        props.gridWeapon.weapon_keys[index] &&
+        props.gridWeapon.weapon_keys[index].slot === 0
+      ) {
+        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
+        filename = `${props.gridWeapon.weapon_keys[index].slug}.png`
+      } else if (
+        props.gridWeapon.weapon_keys[index] &&
+        props.gridWeapon.weapon_keys[index].slot === 1
+      ) {
+        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
+
+        const element = props.gridWeapon.object.element
+        const mod = props.gridWeapon.object.name.en.includes('Repudiation')
+          ? 'primal'
+          : 'magna'
+
+        const suffix = `${mod}-${element}`
+        const weaponKey = props.gridWeapon.weapon_keys[index]
+
+        if (
+          [
+            'pendulum-strength',
+            'pendulum-zeal',
+            'pendulum-strife',
+            'chain-temperament',
+            'chain-restoration',
+            'chain-glorification',
+          ].includes(weaponKey.slug)
+        ) {
+          filename = `${props.gridWeapon.weapon_keys[index].slug}-${suffix}.png`
+        } else {
+          filename = `${props.gridWeapon.weapon_keys[index].slug}.png`
+        }
+      }
+
+      return (
+        <img
+          alt={altText}
+          key={altText}
+          className="Skill"
+          src={`${baseUrl}${filename}`}
+        />
+      )
+    }
+  }
+
+  function opusImages() {
+    let images: JSX.Element[] = []
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 2 &&
+      props.gridWeapon.weapon_keys &&
+      props.gridWeapon.weapon_keys.length > 0
+    ) {
+      for (let i = 0; i < props.gridWeapon.weapon_keys.length; i++) {
+        const image = opusImage(i)
+        if (image) images.push(image)
+      }
+    }
+
+    return images
+  }
+
+  function axImage(index: number) {
+    const axSkill = getCanonicalAxSkill(index)
+
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.ax &&
+      props.gridWeapon.object.ax > 0 &&
+      props.gridWeapon.ax &&
+      axSkill
+    ) {
+      return (
+        <img
+          alt={`axskill`}
+          className="Skill"
+          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/ax/${axSkill.slug}.png`}
+        />
+      )
+    }
+  }
+
+  function axImages() {
+    let images: JSX.Element[] = []
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.ax > 0 &&
+      props.gridWeapon.ax &&
+      props.gridWeapon.ax.length > 0
+    ) {
+      for (let i = 0; i < props.gridWeapon.ax.length; i++) {
+        const image = axImage(i)
+        if (image) images.push(image)
+      }
+    }
+
+    return images
+  }
+
+  function getCanonicalAxSkill(index: number) {
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.ax &&
+      props.gridWeapon.object.ax > 0 &&
+      props.gridWeapon.ax
+    ) {
+      const axOptions = axData[props.gridWeapon.object.ax - 1]
+      const weaponAxSkill: SimpleAxSkill = props.gridWeapon.ax[0]
+
+      let axSkill = axOptions.find((ax) => ax.id === weaponAxSkill.modifier)
+
+      if (index !== 0 && axSkill && axSkill.secondary) {
+        const weaponSubAxSkill: SimpleAxSkill = props.gridWeapon.ax[1]
+        axSkill = axSkill.secondary.find(
+          (ax) => ax.id === weaponSubAxSkill.modifier
+        )
+      }
+
+      return axSkill
+    } else return
+  }
+
   function passUncapData(uncap: number) {
     if (props.gridWeapon)
       props.updateUncap(props.gridWeapon.id, props.position, uncap)
@@ -81,12 +343,22 @@ const WeaponUnit = (props: Props) => {
 
     return (
       weapon.ax > 0 ||
+      weapon.awakening ||
       (weapon.series && [2, 3, 17, 22, 24].includes(weapon.series))
     )
   }
 
   const image = (
     <div className="WeaponImage">
+      <div className="Modifiers">
+        {awakeningImage()}
+        <div className="Skills">
+          {axImages()}
+          {telumaImages()}
+          {opusImages()}
+          {ultimaImages()}
+        </div>
+      </div>
       <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
       {props.editable ? (
         <span className="icon">

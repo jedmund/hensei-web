@@ -1,5 +1,6 @@
 import { proxy } from 'valtio'
 import { JobSkillObject } from '~types'
+import { GroupedWeaponKeys } from './groupWeaponKeys'
 
 const emptyJob: Job = {
   id: '-1',
@@ -57,6 +58,7 @@ interface AppState {
   raids: Raid[]
   jobs: Job[]
   jobSkills: JobSkill[]
+  weaponKeys: GroupedWeaponKeys
 }
 
 export const initialAppState: AppState = {
@@ -103,6 +105,13 @@ export const initialAppState: AppState = {
   raids: [],
   jobs: [],
   jobSkills: [],
+  weaponKeys: {
+    pendulum: [],
+    chain: [],
+    teluma: [],
+    gauph: [],
+    emblem: [],
+  },
 }
 
 export const appState = proxy(initialAppState)

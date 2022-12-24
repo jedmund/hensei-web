@@ -5,6 +5,7 @@ interface AxSkill {
     ja: string
   }
   id: number
+  slug: string
   minValue: number
   maxValue: number
   suffix?: string

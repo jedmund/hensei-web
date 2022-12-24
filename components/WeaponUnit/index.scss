@@ -41,6 +41,23 @@
       width: 200px;
       height: auto;
 
+      .Awakening {
+        width: 40%;
+        height: auto;
+        top: 67%;
+        left: -3.5%;
+      }
+
+      .Modifiers > .Skills {
+        bottom: 12%;
+        right: -3.5%;
+
+        & > .Skill {
+          width: 25%;
+          height: auto;
+        }
+      }
+
       @media (max-width: $medium-screen) {
         width: 25vw;
       }
@@ -55,6 +72,23 @@
       list-style-type: none;
       width: 160px;
       height: auto;
+
+      .Awakening {
+        width: 30%;
+        height: auto;
+        top: 14%;
+        left: -3.5%;
+      }
+
+      .Modifiers > .Skills {
+        bottom: 12%;
+        left: -3.5%;
+
+        & > .Skill {
+          width: 20%;
+          height: auto;
+        }
+      }
 
       @media (max-width: $medium-screen) {
         width: 20vw;
@@ -81,7 +115,7 @@
     position: absolute;
     left: $unit;
     top: $unit;
-    z-index: 3;
+    z-index: 10;
   }
 
   h3 {
@@ -102,10 +136,35 @@
     justify-content: center;
     margin-bottom: calc($unit / 4);
     overflow: hidden;
+    position: relative;
     transition: all 0.18s ease-in-out;
 
     &:hover .icon svg {
       fill: var(--icon-secondary-hover);
+    }
+
+    .Awakening {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: 3;
+    }
+
+    .Modifiers {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: 3;
+
+      .Skills {
+        display: flex;
+        gap: $unit-fourth;
+        justify-content: flex-end;
+        padding: $unit-half;
+        width: 100%;
+      }
     }
 
     img {

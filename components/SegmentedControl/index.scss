@@ -15,8 +15,8 @@
 
   &.fire {
     .Segment input:checked + label {
-      background: $fire-bg-10;
-      color: $fire-text-10;
+      background: var(--fire-bg);
+      color: var(--fire-text);
     }
 
     .Segment:hover label {
@@ -27,8 +27,8 @@
 
   &.water {
     .Segment input:checked + label {
-      background: $water-bg-10;
-      color: $water-text-10;
+      background: var(--water-bg);
+      color: var(--water-text);
     }
 
     .Segment:hover label {
@@ -39,8 +39,8 @@
 
   &.earth {
     .Segment input:checked + label {
-      background: $earth-bg-10;
-      color: $earth-text-10;
+      background: var(--earth-bg);
+      color: var(--earth-text);
     }
 
     .Segment:hover label {
@@ -51,8 +51,8 @@
 
   &.wind {
     .Segment input:checked + label {
-      background: $wind-bg-10;
-      color: $wind-text-10;
+      background: var(--wind-bg);
+      color: var(--wind-text);
     }
 
     .Segment:hover label {
@@ -63,8 +63,8 @@
 
   &.light {
     .Segment input:checked + label {
-      background: $light-bg-10;
-      color: $light-text-10;
+      background: var(--light-bg);
+      color: var(--light-text);
     }
 
     .Segment:hover label {
@@ -75,8 +75,8 @@
 
   &.dark {
     .Segment input:checked + label {
-      background: $dark-bg-10;
-      color: $dark-text-10;
+      background: var(--dark-bg);
+      color: var(--dark-text);
     }
 
     .Segment:hover label {

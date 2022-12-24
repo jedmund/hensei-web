@@ -23,25 +23,24 @@
       flex-direction: row;
       gap: $unit;
 
-      select {
+      .SelectTrigger {
         flex-grow: 1;
         margin: 0;
       }
 
-      .Input {
+      input {
         -webkit-font-smoothing: antialiased;
         border: none;
-        background-color: $grey-90;
-        border-radius: 6px;
+        border-radius: $input-corner;
         box-sizing: border-box;
-        color: $grey-15;
-        height: $unit * 6;
-        display: block;
-        font-size: $font-regular;
-        padding: $unit;
+        display: none;
         text-align: right;
-        min-width: 100px;
+        min-width: $unit-14x;
         width: 100px;
+
+        &.Visible {
+          display: block;
+        }
       }
     }
   }

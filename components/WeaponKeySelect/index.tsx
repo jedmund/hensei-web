@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
+import Select from '~components/Select'
+import SelectGroup from '~components/SelectGroup'
+import SelectItem from '~components/SelectItem'
 import api from '~utils/api'
 
 import './index.scss'
@@ -9,31 +12,26 @@ interface Props {
   currentValue?: WeaponKey
   series: number
   slot: number
-  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void
-  onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
+  onChange?: (value: string, slot: number) => void
 }
 
-const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
+const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
   function useFieldSet(props, ref) {
+    const [open, setOpen] = useState(false)
     const [keys, setKeys] = useState<WeaponKey[][]>([])
-    const [currentKey, setCurrentKey] = useState('')
 
     const pendulumNames = [
-      { en: 'Pendulum', jp: '' },
-      { en: 'Chain', jp: '' },
+      { en: 'Pendulum', jp: 'ペンデュラム' },
+      { en: 'Chain', jp: 'チェイン' },
     ]
 
-    const telumaNames = [{ en: 'Teluma', jp: '' }]
-    const emblemNames = [{ en: 'Emblem', jp: '' }]
+    const telumaNames = [{ en: 'Teluma', jp: 'テルマ' }]
+    const emblemNames = [{ en: 'Emblem', jp: 'エンブレム' }]
     const gauphNames = [
-      { en: 'Gauph Key', jp: '' },
-      { en: 'Ultima Key', jp: '' },
-      { en: 'Gate of Omnipotence', jp: '' },
+      { en: 'Gauph Key', jp: 'ガフスキー' },
+      { en: 'Ultima Key', jp: 'ガフスキーΩ' },
+      { en: 'Gate of Omnipotence', jp: 'ガフスキー' },
     ]
-
-    useEffect(() => {
-      if (props.currentValue) setCurrentKey(props.currentValue.id)
-    }, [props.currentValue])
 
     useEffect(() => {
       const filterParams = {
@@ -50,21 +48,25 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
         )
         let groupedKeys = []
         for (let i = 0; i <= numGroups; i++) {
-          groupedKeys[i] = weaponKeys.filter((key) => key.group == i)
+          const values = weaponKeys.filter((key) => key.group == i)
+          if (values.length > 0) groupedKeys[i] = values
         }
 
-        setKeys(groupedKeys)
+        setKeys(groupedKeys.filter(() => true))
       }
 
       function fetchWeaponKeys() {
-        api.endpoints.weapon_keys.getAll(filterParams).then((response) => {
-          const keys = response.data.map((k: any) => k.weapon_key)
-          organizeWeaponKeys(keys)
-        })
+        api.endpoints.weapon_keys
+          .getAll(filterParams)
+          .then((response) => organizeWeaponKeys(response.data))
       }
 
       fetchWeaponKeys()
     }, [props.series, props.slot])
+
+    function openSelect() {
+      setOpen(!open)
+    }
 
     function weaponKeyGroup(index: number) {
       ;['α', 'β', 'γ', 'Δ'].sort((a, b) => a.localeCompare(b, 'el'))
@@ -78,9 +80,9 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
         keys[index].length > 0 &&
         keys[index].sort(sortByOrder).map((item, i) => {
           return (
-            <option key={i} value={item.id}>
+            <SelectItem key={i} value={item.id}>
               {item.name.en}
-            </option>
+            </SelectItem>
           )
         })
 
@@ -88,26 +90,25 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
       if (props.series == 2 && index == 0) name = pendulumNames[0]
       else if (props.series == 2 && props.slot == 1 && index == 1)
         name = pendulumNames[1]
-      else if (props.series == 3) name = telumaNames[index]
+      else if (props.series == 3) name = telumaNames[0]
       else if (props.series == 17) name = gauphNames[props.slot]
-      else if (props.series == 22) name = emblemNames[index]
+      else if (props.series == 24) name = emblemNames[index]
 
       return (
-        <optgroup
+        <SelectGroup
           key={index}
           label={
             props.series == 17 && props.slot == 2 ? name.en : `${name.en}s`
           }
+          separator={false}
         >
           {options}
-        </optgroup>
+        </SelectGroup>
       )
     }
 
-    function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
-      if (props.onChange) props.onChange(event)
-
-      setCurrentKey(event.currentTarget.value)
+    function handleChange(value: string) {
+      if (props.onChange) props.onChange(value, props.slot)
     }
 
     const emptyOption = () => {
@@ -115,28 +116,30 @@ const WeaponKeyDropdown = React.forwardRef<HTMLSelectElement, Props>(
       if (props.series == 2) name = pendulumNames[0].en
       else if (props.series == 3) name = telumaNames[0].en
       else if (props.series == 17) name = gauphNames[props.slot].en
-      else if (props.series == 22) name = emblemNames[0].en
+      else if (props.series == 24) name = emblemNames[0].en
 
       return `No ${name}`
     }
 
     return (
-      <select
+      <Select
         key={`weapon-key-${props.slot}`}
-        value={currentKey}
-        onBlur={props.onBlur}
-        onChange={handleChange}
+        value={props.currentValue ? props.currentValue.id : 'no-key'}
+        open={open}
+        onValueChange={handleChange}
+        onClick={openSelect}
         ref={ref}
+        triggerClass="modal"
       >
-        <option key="-1" value="-1">
+        <SelectItem key="no-key" value="no-key">
           {emptyOption()}
-        </option>
+        </SelectItem>
         {Array.from(Array(keys?.length)).map((x, i) => {
           return weaponKeyGroup(i)
         })}
-      </select>
+      </Select>
     )
   }
 )
 
-export default WeaponKeyDropdown
+export default WeaponKeySelect

@@ -1,0 +1,31 @@
+.AwakeningSelect .AwakeningSet {
+  .errors {
+    color: $error;
+    display: none;
+    padding: $unit 0;
+
+    &.visible {
+      display: block;
+    }
+  }
+
+  .fields {
+    display: flex;
+    flex-direction: row;
+    gap: $unit;
+    width: 100%;
+
+    .SelectTrigger {
+      flex-grow: 1;
+    }
+
+    .Label {
+      flex-grow: 0;
+
+      .Input {
+        min-width: $unit * 12;
+        width: inherit;
+      }
+    }
+  }
+}
