@@ -35,7 +35,7 @@
         box-sizing: border-box;
         display: none;
         text-align: right;
-        min-width: 100px;
+        min-width: $unit-14x;
         width: 100px;
 
         &.Visible {
