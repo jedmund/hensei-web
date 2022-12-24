@@ -2,7 +2,7 @@ interface User {
   id: string
   username: string
   granblueId: number
-  picture: {
+  avatar: {
     picture: string
     element: string
   }

@@ -25,18 +25,6 @@ interface Props {
 }
 
 const Party = (props: Props) => {
-  // Cookies
-  const cookie = getCookie('account')
-  const accountData: AccountCookie = cookie
-    ? JSON.parse(cookie as string)
-    : null
-
-  const headers = useMemo(() => {
-    return accountData
-      ? { headers: { Authorization: `Bearer ${accountData.token}` } }
-      : {}
-  }, [accountData])
-
   // Set up router
   const router = useRouter()
 
@@ -55,12 +43,13 @@ const Party = (props: Props) => {
   async function createParty(extra: boolean = false) {
     let body = {
       party: {
-        ...(accountData && { user_id: accountData.userId }),
         extra: extra,
       },
     }
 
-    return await api.endpoints.parties.create(body, headers)
+    console.log(body)
+
+    return await api.endpoints.parties.create(body)
   }
 
   // Methods: Updating the party's details
@@ -68,13 +57,9 @@ const Party = (props: Props) => {
     appState.party.extra = event.target.checked
 
     if (party.id) {
-      api.endpoints.parties.update(
-        party.id,
-        {
-          party: { extra: event.target.checked },
-        },
-        headers
-      )
+      api.endpoints.parties.update(party.id, {
+        party: { extra: event.target.checked },
+      })
     }
   }
 
@@ -86,17 +71,13 @@ const Party = (props: Props) => {
     ) {
       if (appState.party.id)
         api.endpoints.parties
-          .update(
-            appState.party.id,
-            {
-              party: {
-                name: name,
-                description: description,
-                raid_id: raid?.id,
-              },
+          .update(appState.party.id, {
+            party: {
+              name: name,
+              description: description,
+              raid_id: raid?.id,
             },
-            headers
-          )
+          })
           .then(() => {
             appState.party.name = name
             appState.party.description = description
@@ -110,7 +91,7 @@ const Party = (props: Props) => {
   function deleteTeam(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     if (appState.party.editable && appState.party.id) {
       api.endpoints.parties
-        .destroy({ id: appState.party.id, params: headers })
+        .destroy({ id: appState.party.id })
         .then(() => {
           // Push to route
           router.push('/')
@@ -131,26 +112,28 @@ const Party = (props: Props) => {
   }
 
   // Methods: Storing party data
-  const storeParty = function (party: Party) {
+  const storeParty = function (team: Party) {
     // Store the important party and state-keeping values
-    appState.party.name = party.name
-    appState.party.description = party.description
-    appState.party.raid = party.raid
-    appState.party.updated_at = party.updated_at
-    appState.party.job = party.job
-    appState.party.jobSkills = party.job_skills
+    appState.party.name = team.name
+    appState.party.description = team.description
+    appState.party.raid = team.raid
+    appState.party.updated_at = team.updated_at
+    appState.party.job = team.job
+    appState.party.jobSkills = team.job_skills
 
-    appState.party.id = party.id
-    appState.party.extra = party.extra
-    appState.party.user = party.user
-    appState.party.favorited = party.favorited
-    appState.party.created_at = party.created_at
-    appState.party.updated_at = party.updated_at
+    appState.party.id = team.id
+    appState.party.extra = team.extra
+    appState.party.user = team.user
+    appState.party.favorited = team.favorited
+    appState.party.created_at = team.created_at
+    appState.party.updated_at = team.updated_at
+
+    appState.party.detailsVisible = false
 
     // Populate state
-    storeCharacters(party.characters)
-    storeWeapons(party.weapons)
-    storeSummons(party.summons)
+    storeCharacters(team.characters)
+    storeWeapons(team.weapons)
+    storeSummons(team.summons)
   }
 
   const storeCharacters = (list: Array<GridCharacter>) => {
@@ -256,13 +239,11 @@ const Party = (props: Props) => {
     <React.Fragment>
       {navigation}
       <section id="Party">{currentGrid()}</section>
-      {
-        <PartyDetails
-          editable={party.editable}
-          updateCallback={updateDetails}
-          deleteCallback={deleteTeam}
-        />
-      }
+      <PartyDetails
+        editable={party.editable}
+        updateCallback={updateDetails}
+        deleteCallback={deleteTeam}
+      />
     </React.Fragment>
   )
 }

@@ -185,3 +185,9 @@ export const emptyWeaponSeriesState: WeaponSeriesState = {
     checked: false,
   },
 }
+
+export const emptyPaginationObject = {
+  count: 0,
+  totalPages: 0,
+  perPage: 15,
+}

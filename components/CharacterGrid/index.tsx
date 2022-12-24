@@ -35,9 +35,6 @@ const CharacterGrid = (props: Props) => {
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
-  const headers = accountData
-    ? { headers: { Authorization: `Bearer ${accountData.token}` } }
-    : {}
 
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
@@ -104,7 +101,7 @@ const CharacterGrid = (props: Props) => {
 
         if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
         saveCharacter(party.id, character, position)
-          .then((response) => storeGridCharacter(response.data.grid_character))
+          .then((response) => storeGridCharacter(response.data))
           .catch((error) => console.error(error))
       })
     } else {
@@ -122,7 +119,7 @@ const CharacterGrid = (props: Props) => {
       setPosition(data.position)
       setModalOpen(true)
     } else {
-      storeGridCharacter(data.grid_character)
+      storeGridCharacter(data)
     }
   }
 
@@ -131,17 +128,14 @@ const CharacterGrid = (props: Props) => {
     character: Character,
     position: number
   ) {
-    return await api.endpoints.characters.create(
-      {
-        character: {
-          party_id: partyId,
-          character_id: character.id,
-          position: position,
-          uncap_level: characterUncapLevel(character),
-        },
+    return await api.endpoints.characters.create({
+      character: {
+        party_id: partyId,
+        character_id: character.id,
+        position: position,
+        uncap_level: characterUncapLevel(character),
       },
-      headers
-    )
+    })
   }
 
   function storeGridCharacter(gridCharacter: GridCharacter) {
@@ -155,11 +149,10 @@ const CharacterGrid = (props: Props) => {
           incoming: incoming.id,
           conflicting: conflicts.map((c) => c.id),
           position: position,
-          params: headers,
         })
         .then((response) => {
           // Store new character in state
-          storeGridCharacter(response.data.grid_character)
+          storeGridCharacter(response.data)
 
           // Remove conflicting characters from state
           conflicts.forEach(
@@ -182,24 +175,26 @@ const CharacterGrid = (props: Props) => {
   }
 
   // Methods: Saving job and job skills
-  const saveJob = function (job: Job) {
+  const saveJob = async function (job?: Job) {
     const payload = {
       party: {
-        job_id: job ? job.id : '',
+        job_id: job ? job.id : -1,
       },
-      ...headers,
     }
 
     if (party.id && appState.party.editable) {
-      api.updateJob({ partyId: party.id, params: payload }).then((response) => {
-        const newParty = response.data.party
-
-        setJob(newParty.job)
-        appState.party.job = newParty.job
-
-        setJobSkills(newParty.job_skills)
-        appState.party.jobSkills = newParty.job_skills
+      const response = await api.updateJob({
+        partyId: party.id,
+        params: payload,
       })
+
+      const newParty = response.data
+
+      setJob(newParty.job)
+      appState.party.job = newParty.job
+
+      setJobSkills(newParty.job_skills)
+      appState.party.jobSkills = newParty.job_skills
     }
   }
 
@@ -217,7 +212,6 @@ const CharacterGrid = (props: Props) => {
 
       const payload = {
         party: skillObject,
-        ...headers,
       }
 
       skillObject[positionedKey] = skill.id
@@ -225,7 +219,7 @@ const CharacterGrid = (props: Props) => {
         .updateJobSkills({ partyId: party.id, params: payload })
         .then((response) => {
           // Update the current skills
-          const newSkills = response.data.party.job_skills
+          const newSkills = response.data.job_skills
           setJobSkills(newSkills)
           appState.party.jobSkills = newSkills
         })
@@ -269,7 +263,7 @@ const CharacterGrid = (props: Props) => {
     try {
       if (uncapLevel != previousUncapValues[position])
         await api.updateUncap('character', id, uncapLevel).then((response) => {
-          storeGridCharacter(response.data.grid_character)
+          storeGridCharacter(response.data)
         })
     } catch (error) {
       console.error(error)

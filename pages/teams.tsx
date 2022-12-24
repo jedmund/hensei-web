@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
 
-import { getCookie } from 'cookies-next'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -11,31 +10,27 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import clonedeep from 'lodash.clonedeep'
 
 import api from '~utils/api'
+import setUserToken from '~utils/setUserToken'
+import extractFilters from '~utils/extractFilters'
+import organizeRaids from '~utils/organizeRaids'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { elements, allElement } from '~utils/Element'
+import { emptyPaginationObject } from '~utils/emptyStates'
 
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
+import type { FilterObject, PaginationObject } from '~types'
 
 interface Props {
-  teams?: { count: number; total_pages: number; results: Party[] }
-  raids: Raid[]
+  teams?: Party[]
+  meta: PaginationObject
   sortedRaids: Raid[][]
 }
 
 const TeamsRoute: React.FC<Props> = (props: Props) => {
-  // Set up cookies
-  const cookie = getCookie('account')
-  const accountData: AccountCookie = cookie
-    ? JSON.parse(cookie as string)
-    : null
-  const headers = accountData
-    ? { Authorization: `Bearer ${accountData.token}` }
-    : {}
-
   // Set up router
   const router = useRouter()
 
@@ -60,16 +55,20 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
   // Recency is in seconds
   const [element, setElement] = useQueryState('element', {
     defaultValue: -1,
+    history: 'push',
     parse: (query: string) => parseElement(query),
     serialize: (value) => serializeElement(value),
   })
   const [raidSlug, setRaidSlug] = useQueryState('raid', {
     defaultValue: 'all',
+    history: 'push',
   })
-  const [recency, setRecency] = useQueryState(
-    'recency',
-    queryTypes.integer.withDefault(-1)
-  )
+  const [recency, setRecency] = useQueryState('recency', {
+    defaultValue: -1,
+    history: 'push',
+    parse: (query: string) => parseInt(query),
+    serialize: (value) => `${value}`,
+  })
 
   // Define transformers for element
   function parseElement(query: string) {
@@ -94,9 +93,9 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
   // Set the initial parties from props
   useEffect(() => {
     if (props.teams) {
-      setTotalPages(props.teams.total_pages)
-      setRecordCount(props.teams.count)
-      replaceResults(props.teams.count, props.teams.results)
+      setTotalPages(props.meta.totalPages)
+      setRecordCount(props.meta.count)
+      replaceResults(props.meta.count, props.teams)
     }
     setCurrentPage(1)
   }, [])
@@ -118,24 +117,36 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
 
   const fetchTeams = useCallback(
     ({ replace }: { replace: boolean }) => {
-      const filters = {
+      const filters: {
+        [key: string]: any
+      } = {
+        element: element !== -1 ? element : undefined,
+        raid: raid ? raid.id : undefined,
+        recency: recency !== -1 ? recency : undefined,
+        page: currentPage,
+      }
+
+      Object.keys(filters).forEach(
+        (key) => filters[key] === undefined && delete filters[key]
+      )
+
+      const params = {
         params: {
-          element: element != -1 ? element : undefined,
-          raid: raid ? raid.id : undefined,
-          recency: recency != -1 ? recency : undefined,
-          page: currentPage,
+          ...filters,
         },
       }
 
       api.endpoints.parties
-        .getAll({ ...filters, ...{ headers: headers } })
+        .getAll(params)
         .then((response) => {
-          setTotalPages(response.data.total_pages)
-          setRecordCount(response.data.count)
+          const results = response.data.results
+          const meta = response.data.meta
 
-          if (replace)
-            replaceResults(response.data.count, response.data.results)
-          else appendResults(response.data.results)
+          setTotalPages(meta.total_pages)
+          setRecordCount(meta.count)
+
+          if (replace) replaceResults(meta.count, results)
+          else appendResults(results)
         })
         .catch((error) => handleError(error))
     },
@@ -157,12 +168,11 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
   // Fetch all raids on mount, then find the raid in the URL if present
   useEffect(() => {
     api.endpoints.raids.getAll().then((response) => {
-      const cleanRaids: Raid[] = response.data.map((r: any) => r.raid)
-      setRaids(cleanRaids)
+      setRaids(response.data)
 
       setRaidsLoading(false)
 
-      const raid = cleanRaids.find((r) => r.slug === raidSlug)
+      const raid = response.data.find((r: Raid) => r.slug === raidSlug)
       setRaid(raid)
 
       return raid
@@ -193,16 +203,16 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
     raidSlug?: string
     recency?: number
   }) {
-    if (element == 0) setElement(0)
-    else if (element) setElement(element)
+    if (element == 0) setElement(0, { shallow: true })
+    else if (element) setElement(element, { shallow: true })
 
     if (raids && raidSlug) {
       const raid = raids.find((raid) => raid.slug === raidSlug)
       setRaid(raid)
-      setRaidSlug(raidSlug)
+      setRaidSlug(raidSlug, { shallow: true })
     }
 
-    if (recency) setRecency(recency)
+    if (recency) setRecency(recency, { shallow: true })
   }
 
   // Methods: Favorites
@@ -212,7 +222,7 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
   }
 
   function saveFavorite(teamId: string) {
-    api.saveTeam({ id: teamId, params: headers }).then((response) => {
+    api.saveTeam({ id: teamId }).then((response) => {
       if (response.status == 201) {
         const index = parties.findIndex((p) => p.id === teamId)
         const party = parties[index]
@@ -228,7 +238,7 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
   }
 
   function unsaveFavorite(teamId: string) {
-    api.unsaveTeam({ id: teamId, params: headers }).then((response) => {
+    api.unsaveTeam({ id: teamId }).then((response) => {
       if (response.status == 200) {
         const index = parties.findIndex((p) => p.id === teamId)
         const party = parties[index]
@@ -344,93 +354,42 @@ export const getServerSidePaths = async () => {
 
 // prettier-ignore
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
-  // Cookies
-  const cookie = getCookie("account", { req, res })
-  const accountData: AccountCookie = cookie
-    ? JSON.parse(cookie as string)
-    : null
+  // Set headers for server-side requests
+  setUserToken(req, res)
 
-  const headers = accountData
-    ? { headers: { Authorization: `Bearer ${accountData.token}` } }
-    : {}
-
+  // Fetch and organize raids
   let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll({ params: headers })
-    .then((response) => organizeRaids(response.data.map((r: any) => r.raid)))
-
-  // Extract recency filter
-  const recencyParam: number = parseInt(query.recency)
-
-  // Extract element filter
-  const elementParam: string = query.element
-  const teamElement: TeamElement | undefined =
-    elementParam === "all"
-      ? allElement
-      : elements.find(
-          (element) => element.name.en.toLowerCase() === elementParam
-        )
-
-  // Extract raid filter
-  const raidParam: string = query.raid
-  const raid: Raid | undefined = raids.find((r) => r.slug === raidParam)
+    .getAll()
+    .then((response) => organizeRaids(response.data))
 
   // Create filter object
-  const filters: {
-    raid?: string
-    element?: number
-    recency?: number
-  } = {}
+  const filters: FilterObject = extractFilters(query, raids)
+  const params = {
+    params: { ...filters },
+  }
 
-  if (recencyParam) filters.recency = recencyParam
-  if (teamElement && teamElement.id > -1) filters.element = teamElement.id
-  if (raid) filters.raid = raid.id
+  // Set up empty variables
+  let teams: Party[] | null = null
+  let meta: PaginationObject = emptyPaginationObject
 
-  // Fetch initial set of parties here
-  const response = await api.endpoints.parties.getAll({
-    params: {
-      ...filters,
-    },
-    ...headers,
-  })
+  // Fetch initial set of parties
+  const response = await api.endpoints.parties.getAll(params)
+
+  // Assign values to pass to props
+  teams = response.data.results
+  meta.count = response.data.meta.count
+  meta.totalPages = response.data.meta.total_pages
+  meta.perPage = response.data.meta.per_page
 
   return {
     props: {
-      teams: response.data,
+      teams: teams,
+      meta: meta,
       raids: raids,
       sortedRaids: sortedRaids,
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await serverSideTranslations(locale, ['common'])),
       // Will be passed to the page component as props
     },
-  }
-}
-
-const organizeRaids = (raids: Raid[]) => {
-  // Set up empty raid for "All raids"
-  const all = {
-    id: '0',
-    name: {
-      en: 'All raids',
-      ja: '全て',
-    },
-    slug: 'all',
-    level: 0,
-    group: 0,
-    element: 0,
-  }
-
-  const numGroups = Math.max.apply(
-    Math,
-    raids.map((raid) => raid.group)
-  )
-  let groupedRaids = []
-
-  for (let i = 0; i <= numGroups; i++) {
-    groupedRaids[i] = raids.filter((raid) => raid.group == i)
-  }
-
-  return {
-    raids: raids,
-    sortedRaids: groupedRaids,
   }
 }
 

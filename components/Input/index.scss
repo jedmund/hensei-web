@@ -5,8 +5,16 @@
   border-radius: 6px;
   box-sizing: border-box;
   display: block;
-  padding: $unit-2x;
+  padding: ($unit * 1.5) $unit-2x;
   width: 100%;
+
+  &.Bound {
+    background-color: var(--input-bound-bg);
+
+    &:hover {
+      background-color: var(--input-bound-bg-hover);
+    }
+  }
 }
 
 .InputError {

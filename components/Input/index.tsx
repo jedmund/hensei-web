@@ -16,11 +16,12 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
   forwardedRef
 ) {
   const classes = classNames({ Input: true }, props.className)
+  const { value, ...inputProps } = props
 
   return (
     <label className="Label" htmlFor={props.name}>
       <input
-        {...props}
+        {...inputProps}
         autoComplete="off"
         className={classes}
         defaultValue={props.value || ''}
