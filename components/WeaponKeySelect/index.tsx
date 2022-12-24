@@ -48,17 +48,17 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
         )
         let groupedKeys = []
         for (let i = 0; i <= numGroups; i++) {
-          groupedKeys[i] = weaponKeys.filter((key) => key.group == i)
+          const values = weaponKeys.filter((key) => key.group == i)
+          if (values.length > 0) groupedKeys[i] = values
         }
 
-        setKeys(groupedKeys)
+        setKeys(groupedKeys.filter(() => true))
       }
 
       function fetchWeaponKeys() {
-        api.endpoints.weapon_keys.getAll(filterParams).then((response) => {
-          const keys = response.data
-          organizeWeaponKeys(keys)
-        })
+        api.endpoints.weapon_keys
+          .getAll(filterParams)
+          .then((response) => organizeWeaponKeys(response.data))
       }
 
       fetchWeaponKeys()
@@ -90,7 +90,7 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
       if (props.series == 2 && index == 0) name = pendulumNames[0]
       else if (props.series == 2 && props.slot == 1 && index == 1)
         name = pendulumNames[1]
-      else if (props.series == 3) name = telumaNames[index]
+      else if (props.series == 3) name = telumaNames[0]
       else if (props.series == 17) name = gauphNames[props.slot]
       else if (props.series == 22) name = emblemNames[index]
 

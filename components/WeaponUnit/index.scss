@@ -48,11 +48,11 @@
         left: -3.5%;
       }
 
-      .Modifiers > .AxSkills {
+      .Modifiers > .Skills {
         bottom: 12%;
         right: -3.5%;
 
-        & > .AxSkill {
+        & > .Skill {
           width: 25%;
           height: auto;
         }
@@ -80,11 +80,11 @@
         left: -3.5%;
       }
 
-      .Modifiers > .AxSkills {
+      .Modifiers > .Skills {
         bottom: 12%;
         left: -3.5%;
 
-        & > .AxSkill {
+        & > .Skill {
           width: 20%;
           height: auto;
         }
@@ -158,7 +158,7 @@
       position: absolute;
       z-index: 3;
 
-      .AxSkills {
+      .Skills {
         display: flex;
         gap: $unit-fourth;
         justify-content: flex-end;

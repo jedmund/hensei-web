@@ -11,6 +11,7 @@ import Button from '~components/Button'
 
 import type { SearchableObject } from '~types'
 
+import { appState } from '~utils/appState'
 import { axData } from '~utils/axData'
 import { weaponAwakening } from '~utils/awakening'
 
@@ -95,6 +96,37 @@ const WeaponUnit = (props: Props) => {
     }
   }
 
+  function telumaImage(index: number) {
+    const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
+    let filename = ''
+    let altText = ''
+
+    // If there is a grid weapon, it is a Draconic Weapon and it has keys
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 3 &&
+      props.gridWeapon.weapon_keys
+    ) {
+      if (index === 0 && props.gridWeapon.weapon_keys[0]) {
+        altText = `${props.gridWeapon.weapon_keys[0].name[locale]}`
+        filename = `${props.gridWeapon.weapon_keys[0].slug}.png`
+      } else if (index === 1 && props.gridWeapon.weapon_keys[1]) {
+        altText = `${props.gridWeapon.weapon_keys[1].name[locale]}`
+
+        const element = props.gridWeapon.object.element
+        filename = `${props.gridWeapon.weapon_keys[1].slug}-${element}.png`
+      }
+
+      return (
+        <img
+          alt={`${altText}`}
+          className="Skill"
+          src={`${baseUrl}${filename}`}
+        />
+      )
+    }
+  }
+
   function axImage(index: number) {
     const axSkill = getCanonicalAxSkill(index)
 
@@ -108,7 +140,7 @@ const WeaponUnit = (props: Props) => {
       return (
         <img
           alt={`axskill`}
-          className="AxSkill"
+          className="Skill"
           src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/ax/${axSkill.slug}.png`}
         />
       )
@@ -157,9 +189,11 @@ const WeaponUnit = (props: Props) => {
     <div className="WeaponImage">
       <div className="Modifiers">
         {awakeningImage()}
-        <div className="AxSkills">
+        <div className="Skills">
           {axImage(0)}
           {axImage(1)}
+          {telumaImage(0)}
+          {telumaImage(1)}
         </div>
       </div>
       <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
