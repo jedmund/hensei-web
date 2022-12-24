@@ -128,6 +128,8 @@ const Party = (props: Props) => {
     appState.party.created_at = team.created_at
     appState.party.updated_at = team.updated_at
 
+    appState.party.detailsVisible = false
+
     // Populate state
     storeCharacters(team.characters)
     storeWeapons(team.weapons)
