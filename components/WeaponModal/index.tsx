@@ -101,7 +101,7 @@ const WeaponModal = (props: Props) => {
     setSecondaryAxValue(secondaryAxValue)
   }
 
-  function receiveAxValidity(isValid: boolean) {
+  function receiveValidity(isValid: boolean) {
     setFormValid(isValid)
   }
 
@@ -153,7 +153,6 @@ const WeaponModal = (props: Props) => {
   }
 
   function processResult(response: AxiosResponse) {
-    console.log(response)
     const gridWeapon: GridWeapon = response.data
 
     if (gridWeapon.mainhand) appState.grid.weapons.mainWeapon = gridWeapon
@@ -231,7 +230,7 @@ const WeaponModal = (props: Props) => {
         <AXSelect
           axType={props.gridWeapon.object.ax}
           currentSkills={props.gridWeapon.ax}
-          sendValidity={receiveAxValidity}
+          sendValidity={receiveValidity}
           sendValues={receiveAxValues}
         />
       </section>
@@ -246,6 +245,7 @@ const WeaponModal = (props: Props) => {
           object="weapon"
           awakeningType={props.gridWeapon.awakening?.type}
           awakeningLevel={props.gridWeapon.awakening?.level}
+          sendValidity={receiveValidity}
           sendValues={receiveAwakeningValues}
         />
       </section>
@@ -289,9 +289,10 @@ const WeaponModal = (props: Props) => {
             {props.gridWeapon.object.ax > 0 ? axSelect() : ''}
             {props.gridWeapon.awakening ? awakeningSelect() : ''}
             <Button
+              className={!formValid ? 'Disabled' : ''}
               contained={true}
               onClick={updateWeapon}
-              disabled={props.gridWeapon.object.ax > 0 && !formValid}
+              disabled={!formValid}
               text={t('modals.weapon.buttons.confirm')}
             />
           </div>
