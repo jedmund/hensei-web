@@ -123,8 +123,18 @@ const WeaponUnit = (props: Props) => {
       props.gridWeapon.ax
     ) {
       const axOptions = axData[props.gridWeapon.object.ax - 1]
-      const weaponAxSkill: SimpleAxSkill = props.gridWeapon.ax[index]
-      return axOptions.find((ax) => ax.id === weaponAxSkill.modifier)
+      const weaponAxSkill: SimpleAxSkill = props.gridWeapon.ax[0]
+
+      let axSkill = axOptions.find((ax) => ax.id === weaponAxSkill.modifier)
+
+      if (index !== 0 && axSkill && axSkill.secondary) {
+        const weaponSubAxSkill: SimpleAxSkill = props.gridWeapon.ax[1]
+        axSkill = axSkill.secondary.find(
+          (ax) => ax.id === weaponSubAxSkill.modifier
+        )
+      }
+
+      return axSkill
     } else return
   }
 
