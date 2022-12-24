@@ -11,6 +11,9 @@ import Button from '~components/Button'
 
 import type { SearchableObject } from '~types'
 
+import { axData } from '~utils/axData'
+import { weaponAwakening } from '~utils/awakening'
+
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
 import './index.scss'
@@ -77,14 +80,52 @@ const WeaponUnit = (props: Props) => {
       props.gridWeapon.awakening &&
       props.gridWeapon.awakening.type >= 0
     ) {
+      const awakening = weaponAwakening.find(
+        (awakening) => awakening.id === props.gridWeapon?.awakening?.type
+      )
+      const name = awakening?.name[locale]
+
       return (
         <img
-          alt="Awakening type"
+          alt={`${name} Lv${props.gridWeapon.awakening.level}`}
           className="Awakening"
           src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/weapon_${props.gridWeapon.awakening.type}.png`}
         />
       )
     }
+  }
+
+  function axImage(index: number) {
+    const axSkill = getCanonicalAxSkill(index)
+
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.ax &&
+      props.gridWeapon.object.ax > 0 &&
+      props.gridWeapon.ax &&
+      axSkill
+    ) {
+      return (
+        <img
+          alt={`axskill`}
+          className="AxSkill"
+          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/ax/${axSkill.slug}.png`}
+        />
+      )
+    }
+  }
+
+  function getCanonicalAxSkill(index: number) {
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.ax &&
+      props.gridWeapon.object.ax > 0 &&
+      props.gridWeapon.ax
+    ) {
+      const axOptions = axData[props.gridWeapon.object.ax - 1]
+      const weaponAxSkill: SimpleAxSkill = props.gridWeapon.ax[index]
+      return axOptions.find((ax) => ax.id === weaponAxSkill.modifier)
+    } else return
   }
 
   function passUncapData(uncap: number) {
@@ -104,7 +145,13 @@ const WeaponUnit = (props: Props) => {
 
   const image = (
     <div className="WeaponImage">
-      {awakeningImage()}
+      <div className="Modifiers">
+        {awakeningImage()}
+        <div className="AxSkills">
+          {axImage(0)}
+          {axImage(1)}
+        </div>
+      </div>
       <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
       {props.editable ? (
         <span className="icon">

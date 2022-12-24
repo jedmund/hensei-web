@@ -48,6 +48,16 @@
         left: -3.5%;
       }
 
+      .Modifiers > .AxSkills {
+        bottom: 12%;
+        right: -3.5%;
+
+        & > .AxSkill {
+          width: 25%;
+          height: auto;
+        }
+      }
+
       @media (max-width: $medium-screen) {
         width: 25vw;
       }
@@ -66,8 +76,18 @@
       .Awakening {
         width: 30%;
         height: auto;
-        top: 12%;
+        top: 14%;
         left: -3.5%;
+      }
+
+      .Modifiers > .AxSkills {
+        bottom: 12%;
+        left: -3.5%;
+
+        & > .AxSkill {
+          width: 20%;
+          height: auto;
+        }
       }
 
       @media (max-width: $medium-screen) {
@@ -124,8 +144,27 @@
     }
 
     .Awakening {
+      width: 100%;
+      height: 100%;
       position: absolute;
       z-index: 3;
+    }
+
+    .Modifiers {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: 3;
+
+      .AxSkills {
+        display: flex;
+        gap: $unit-fourth;
+        justify-content: flex-end;
+        padding: $unit-half;
+        width: 100%;
+      }
     }
 
     img {
