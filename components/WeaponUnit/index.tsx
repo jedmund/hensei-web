@@ -128,6 +128,23 @@ const WeaponUnit = (props: Props) => {
     }
   }
 
+  function telumaImages() {
+    let images: JSX.Element[] = []
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.series === 3 &&
+      props.gridWeapon.weapon_keys &&
+      props.gridWeapon.weapon_keys.length > 0
+    ) {
+      for (let i = 0; i < props.gridWeapon.weapon_keys.length; i++) {
+        const image = telumaImage(i)
+        if (image) images.push(image)
+      }
+    }
+
+    return images
+  }
+
   function ultimaImage(index: number) {
     const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
     let filename = ''
@@ -276,6 +293,23 @@ const WeaponUnit = (props: Props) => {
     }
   }
 
+  function axImages() {
+    let images: JSX.Element[] = []
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.ax > 0 &&
+      props.gridWeapon.ax &&
+      props.gridWeapon.ax.length > 0
+    ) {
+      for (let i = 0; i < props.gridWeapon.ax.length; i++) {
+        const image = axImage(i)
+        if (image) images.push(image)
+      }
+    }
+
+    return images
+  }
+
   function getCanonicalAxSkill(index: number) {
     if (
       props.gridWeapon &&
@@ -319,10 +353,8 @@ const WeaponUnit = (props: Props) => {
       <div className="Modifiers">
         {awakeningImage()}
         <div className="Skills">
-          {axImage(0)}
-          {axImage(1)}
-          {telumaImage(0)}
-          {telumaImage(1)}
+          {axImages()}
+          {telumaImages()}
           {opusImages()}
           {ultimaImages()}
         </div>
