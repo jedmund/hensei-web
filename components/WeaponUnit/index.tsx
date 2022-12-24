@@ -79,7 +79,8 @@ const WeaponUnit = (props: Props) => {
       props.gridWeapon &&
       props.gridWeapon.object.awakening &&
       props.gridWeapon.awakening &&
-      props.gridWeapon.awakening.type >= 0
+      props.gridWeapon.awakening.type >= 0 &&
+      props.gridWeapon.awakening.type != null
     ) {
       const awakening = weaponAwakening.find(
         (awakening) => awakening.id === props.gridWeapon?.awakening?.type
