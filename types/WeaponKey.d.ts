@@ -5,6 +5,7 @@ interface WeaponKey {
     en: string
     ja: string
   }
+  slug: string
   series: integer
   slot: integer
   group: integer
