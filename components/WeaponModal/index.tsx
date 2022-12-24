@@ -289,7 +289,6 @@ const WeaponModal = (props: Props) => {
             {props.gridWeapon.object.ax > 0 ? axSelect() : ''}
             {props.gridWeapon.awakening ? awakeningSelect() : ''}
             <Button
-              className={!formValid ? 'Disabled' : ''}
               contained={true}
               onClick={updateWeapon}
               disabled={!formValid}

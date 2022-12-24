@@ -60,7 +60,7 @@
     }
   }
 
-  &.Disabled {
+  &:disabled {
     background-color: var(--button-bg-disabled);
     color: var(--button-text-disabled);
 
