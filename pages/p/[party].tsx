@@ -5,10 +5,12 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Party from '~components/Party'
 
 import { appState } from '~utils/appState'
+import { groupWeaponKeys } from '~utils/groupWeaponKeys'
 import organizeRaids from '~utils/organizeRaids'
 import api from '~utils/api'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
+import type { GroupedWeaponKeys } from '~utils/groupWeaponKeys'
 
 interface Props {
   party: Party
@@ -16,6 +18,7 @@ interface Props {
   jobSkills: JobSkill[]
   raids: Raid[]
   sortedRaids: Raid[][]
+  weaponKeys: GroupedWeaponKeys
 }
 
 const PartyRoute: React.FC<Props> = (props: Props) => {
@@ -27,6 +30,7 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
     appState.raids = props.raids
     appState.jobs = props.jobs
     appState.jobSkills = props.jobSkills
+    appState.weaponKeys = props.weaponKeys
   }
 
   return <Party team={props.party} raids={props.sortedRaids} />
@@ -65,6 +69,10 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     })
 
   let jobSkills = await api.allJobSkills(headers).then((response) => response.data)
+
+  let weaponKeys = await api.endpoints.weapon_keys
+    .getAll()
+    .then((response) => groupWeaponKeys(response.data))
   
   let party: Party | null = null
   if (query.party) {
@@ -81,6 +89,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       jobSkills: jobSkills,
       raids: raids,
       sortedRaids: sortedRaids,
+      weaponKeys: weaponKeys,
       ...(await serverSideTranslations(locale, ["common"])),
       // Will be passed to the page component as props
     },
