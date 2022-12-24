@@ -93,7 +93,7 @@ const AwakeningSelect = (props: Props) => {
     if (object === 'weapon') {
       optionElements?.unshift(
         <SelectItem key={-1} value={-1}>
-          {t('ax.no_skill')}
+          {t('awakening.no_type')}
         </SelectItem>
       )
     }

@@ -8,6 +8,15 @@
       "value_empty": "{{name}} must have a value"
     }
   },
+  "awakening": {
+    "no_type": "No awakening",
+    "errors": {
+      "value_too_low": "Awakening level must be at least {{minValue}}",
+      "value_too_high": "Awakening level cannot be greater than {{maxValue}}",
+      "value_not_whole": "Awakening level must be a whole number",
+      "value_empty": "Awakening must have a level"
+    }
+  },
   "buttons": {
     "cancel": "Cancel",
     "copy": "Copy link",
@@ -192,6 +201,7 @@
       "subtitles": {
         "element": "Element",
         "ax_skills": "AX Skills",
+        "awakening": "Awakening",
         "weapon_keys": "Weapon Keys"
       }
     }
