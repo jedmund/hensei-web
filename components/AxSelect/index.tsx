@@ -127,7 +127,13 @@ const AXSelect = (props: Props) => {
     }
 
     props.sendValidity(noErrors)
-  }, [props, primaryAxValue, errors])
+  }, [
+    primaryAxModifier,
+    primaryAxValue,
+    secondaryAxModifier,
+    secondaryAxValue,
+    errors,
+  ])
 
   // Classes
   const secondarySetClasses = classNames({
