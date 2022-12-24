@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
-import { getCookie } from 'cookies-next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import Party from '~components/Party'
 
 import { appState } from '~utils/appState'
+import organizeRaids from '~utils/organizeRaids'
+import setUserToken from '~utils/setUserToken'
 import api from '~utils/api'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -47,66 +48,32 @@ export const getServerSidePaths = async () => {
 
 // prettier-ignore
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
-  // Cookies
-  const cookie = getCookie("account", { req, res })
-  const accountData: AccountCookie = cookie
-    ? JSON.parse(cookie as string)
-    : null
-
-  const headers = accountData
-    ? { headers: { Authorization: `Bearer ${accountData.token}` } }
-    : {}
+  // Set headers for server-side requests
+  setUserToken(req, res)
 
   let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll({ params: headers })
-    .then((response) => organizeRaids(response.data.map((r: any) => r.raid)))
-  
+    .getAll()
+    .then((response) => organizeRaids(response.data))
+
   let jobs = await api.endpoints.jobs
-    .getAll({ params: headers })
-    .then((response) => { return response.data })
-  
-  let jobSkills = await api.allSkills(headers)
-    .then((response) => { return response.data })
-  
+    .getAll()
+    .then((response) => {
+      return response.data
+    })
+
+  let jobSkills = await api.allJobSkills().then((response) => {
+    return response.data
+  })
+
   return {
     props: {
       jobs: jobs,
       jobSkills: jobSkills,
       raids: raids,
       sortedRaids: sortedRaids,
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await serverSideTranslations(locale, ['common'])),
       // Will be passed to the page component as props
     },
-  }
-}
-
-const organizeRaids = (raids: Raid[]) => {
-  // Set up empty raid for "All raids"
-  const all = {
-    id: '0',
-    name: {
-      en: 'All raids',
-      ja: '全て',
-    },
-    slug: 'all',
-    level: 0,
-    group: 0,
-    element: 0,
-  }
-
-  const numGroups = Math.max.apply(
-    Math,
-    raids.map((raid) => raid.group)
-  )
-  let groupedRaids = []
-
-  for (let i = 0; i <= numGroups; i++) {
-    groupedRaids[i] = raids.filter((raid) => raid.group == i)
-  }
-
-  return {
-    raids: raids,
-    sortedRaids: groupedRaids,
   }
 }
 

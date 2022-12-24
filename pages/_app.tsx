@@ -7,6 +7,7 @@ import type { AppProps } from 'next/app'
 import Layout from '~components/Layout'
 
 import { accountState } from '~utils/accountState'
+import setUserToken from '~utils/setUserToken'
 
 import '../styles/globals.scss'
 
@@ -15,6 +16,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   const cookieData: AccountCookie = cookie ? JSON.parse(cookie as string) : null
 
   useEffect(() => {
+    setUserToken()
+
     if (cookie) {
       console.log(`Logged in as user "${cookieData.username}"`)
 

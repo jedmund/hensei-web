@@ -35,6 +35,14 @@
     text-align: left;
   }
 
+  &.Bound {
+    background-color: var(--select-contained-bg);
+
+    &:hover {
+      background-color: var(--select-contained-bg-hover);
+    }
+  }
+
   .SelectIcon {
     display: flex;
     align-items: center;

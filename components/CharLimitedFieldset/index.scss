@@ -1,6 +1,7 @@
 .Limited {
   $offset: 2px;
 
+  align-items: center;
   background: var(--input-bg);
   border-radius: $input-corner;
   border: $offset solid transparent;

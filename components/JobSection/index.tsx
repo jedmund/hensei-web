@@ -18,7 +18,7 @@ interface Props {
   job?: Job
   jobSkills: JobSkillObject
   editable: boolean
-  saveJob: (job: Job) => void
+  saveJob: (job?: Job) => void
   saveSkill: (skill: JobSkill, position: number) => void
 }
 
@@ -41,17 +41,15 @@ const JobSection = (props: Props) => {
 
   useEffect(() => {
     // Set current job based on ID
-    if (props.job) {
-      setJob(props.job)
-      setSkills({
-        0: props.jobSkills[0],
-        1: props.jobSkills[1],
-        2: props.jobSkills[2],
-        3: props.jobSkills[3],
-      })
+    setJob(props.job)
+    setSkills({
+      0: props.jobSkills[0],
+      1: props.jobSkills[1],
+      2: props.jobSkills[2],
+      3: props.jobSkills[3],
+    })
 
-      if (selectRef.current) selectRef.current.value = props.job.id
-    }
+    if (selectRef.current && props.job) selectRef.current.value = props.job.id
   }, [props])
 
   useEffect(() => {
@@ -68,10 +66,8 @@ const JobSection = (props: Props) => {
   }, [job])
 
   function receiveJob(job?: Job) {
-    if (job) {
-      setJob(job)
-      props.saveJob(job)
-    }
+    setJob(job)
+    props.saveJob(job)
   }
 
   function generateImageUrl() {
@@ -88,11 +84,13 @@ const JobSection = (props: Props) => {
   }
 
   const canEditSkill = (skill?: JobSkill) => {
-    if (job && skill) {
-      if (skill.job.id === job.id && skill.main && !skill.sub) return false
-    }
+    // If there is a job and a skill present in the slot
+    if (job) {
+      // If the skill's job is one of the job's main skill
+      if (skill && skill.job.id === job.id && skill.main) return false
 
-    return props.editable
+      return props.editable
+    } else return false
   }
 
   const skillItem = (index: number, editable: boolean) => {

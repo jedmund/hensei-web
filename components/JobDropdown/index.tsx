@@ -102,17 +102,20 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     return (
       <Select
+        value={currentJob ? currentJob.id : 'no-job'}
         placeholder={'Select a class...'}
         open={open}
         onClick={openJobSelect}
-        onChange={handleChange}
+        onValueChange={handleChange}
         triggerClass="Job"
       >
         <SelectItem key={-1} value="no-job">
           No class
         </SelectItem>
         {sortedJobs
-          ? Object.keys(sortedJobs).map((x) => renderJobGroup(x))
+          ? Object.keys(sortedJobs)
+              .sort((a, b) => ('' + a).localeCompare(b))
+              .map((x) => renderJobGroup(x))
           : ''}
       </Select>
     )

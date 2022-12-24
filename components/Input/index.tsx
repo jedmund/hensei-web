@@ -7,43 +7,33 @@ interface Props
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   > {
-  contained?: boolean
   error?: string
   label?: string
 }
 
-const defaultProps = {
-  contained: false,
-}
-
 const Input = React.forwardRef<HTMLInputElement, Props>(function input(
-  { contained, error, label, ...props },
+  props: Props,
   forwardedRef
 ) {
-  const classes = classNames(
-    {
-      Input: true,
-      Contained: contained,
-    },
-    props.className
-  )
+  const classes = classNames({ Input: true }, props.className)
+  const { value, ...inputProps } = props
 
   return (
     <label className="Label" htmlFor={props.name}>
       <input
-        {...props}
+        {...inputProps}
         autoComplete="off"
         className={classes}
         defaultValue={props.value || ''}
         ref={forwardedRef}
         formNoValidate
       />
-      {label}
-      {error && error.length > 0 && <p className="InputError">{error}</p>}
+      {props.label}
+      {props.error && props.error.length > 0 && (
+        <p className="InputError">{props.error}</p>
+      )}
     </label>
   )
 })
-
-Input.defaultProps = defaultProps
 
 export default Input

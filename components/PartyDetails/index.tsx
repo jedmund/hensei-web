@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
@@ -14,7 +13,6 @@ import CharLimitedFieldset from '~components/CharLimitedFieldset'
 import RaidDropdown from '~components/RaidDropdown'
 import TextFieldset from '~components/TextFieldset'
 
-import { accountState } from '~utils/accountState'
 import { appState } from '~utils/appState'
 
 import CheckIcon from '~public/icons/Check.svg'
@@ -24,18 +22,6 @@ import EditIcon from '~public/icons/Edit.svg'
 import './index.scss'
 import Link from 'next/link'
 import { formatTimeAgo } from '~utils/timeAgo'
-
-const emptyRaid: Raid = {
-  id: '',
-  name: {
-    en: '',
-    ja: '',
-  },
-  slug: '',
-  level: 0,
-  group: 0,
-  element: 0,
-}
 
 // Props
 interface Props {
@@ -48,7 +34,6 @@ interface Props {
 
 const PartyDetails = (props: Props) => {
   const { party, raids } = useSnapshot(appState)
-  const { account } = useSnapshot(accountState)
 
   const { t } = useTranslation('common')
   const router = useRouter()
@@ -56,7 +41,8 @@ const PartyDetails = (props: Props) => {
 
   const nameInput = React.createRef<HTMLInputElement>()
   const descriptionInput = React.createRef<HTMLTextAreaElement>()
-  const raidSelect = React.createRef<HTMLSelectElement>()
+
+  const [raidSlug, setRaidSlug] = useState('')
 
   const readOnlyClasses = classNames({
     PartyDetails: true,
@@ -116,10 +102,14 @@ const PartyDetails = (props: Props) => {
     appState.party.detailsVisible = !appState.party.detailsVisible
   }
 
+  function receiveRaid(slug?: string) {
+    if (slug) setRaidSlug(slug)
+  }
+
   function updateDetails(event: React.MouseEvent) {
     const nameValue = nameInput.current?.value
     const descriptionValue = descriptionInput.current?.value
-    const raid = raids.find((raid) => raid.slug === raidSelect.current?.value)
+    const raid = raids.find((raid) => raid.slug === raidSlug)
 
     props.updateCallback(nameValue, descriptionValue, raid)
     toggleDetails()
@@ -129,11 +119,11 @@ const PartyDetails = (props: Props) => {
     if (party.user)
       return (
         <img
-          alt={party.user.picture.picture}
-          className={`profile ${party.user.picture.element}`}
-          srcSet={`/profile/${party.user.picture.picture}.png,
-                            /profile/${party.user.picture.picture}@2x.png 2x`}
-          src={`/profile/${party.user.picture.picture}.png`}
+          alt={party.user.avatar.picture}
+          className={`profile ${party.user.avatar.element}`}
+          srcSet={`/profile/${party.user.avatar.picture}.png,
+                            /profile/${party.user.avatar.picture}@2x.png 2x`}
+          src={`/profile/${party.user.avatar.picture}.png`}
         />
       )
     else return <div className="no-user" />
@@ -220,8 +210,8 @@ const PartyDetails = (props: Props) => {
       />
       <RaidDropdown
         showAllRaidsOption={false}
-        currentRaid={party.raid?.slug || ''}
-        ref={raidSelect}
+        currentRaid={party.raid ? party.raid.slug : undefined}
+        onChange={receiveRaid}
       />
       <TextFieldset
         fieldName="name"

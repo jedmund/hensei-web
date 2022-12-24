@@ -24,18 +24,6 @@ const AccountModal = () => {
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
-  // Cookies
-  const cookie = getCookie('account')
-
-  const headers = {}
-  // cookies.account != null
-  //   ? {
-  //       headers: {
-  //         Authorization: `Bearer ${cookies.account.access_token}`,
-  //       },
-  //     }
-  //   : {}
-
   // State
   const [open, setOpen] = useState(false)
   const [picture, setPicture] = useState('')
@@ -171,12 +159,16 @@ const AccountModal = () => {
                   pictureData.find((i) => i.filename === picture)?.element
                 }`}
               >
-                <img
-                  alt="Profile preview"
-                  srcSet={`/profile/${picture}.png,
+                {picture ? (
+                  <img
+                    alt="Profile preview"
+                    srcSet={`/profile/${picture}.png,
                                              /profile/${picture}@2x.png 2x`}
-                  src={`/profile/${picture}.png`}
-                />
+                    src={`/profile/${picture}.png`}
+                  />
+                ) : (
+                  ''
+                )}
               </div>
 
               <select

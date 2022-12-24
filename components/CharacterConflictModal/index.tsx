@@ -100,8 +100,8 @@ const CharacterConflictModal = (props: Props) => {
             </div>
           </div>
           <footer>
-            <Button onClick={close}>Nevermind</Button>
-            <Button onClick={props.resolveConflict}>Confirm</Button>
+            <Button onClick={close} text="Nevermind" />
+            <Button onClick={props.resolveConflict} text="Confirm" />
           </footer>
         </Dialog.Content>
         <Dialog.Overlay className="Overlay" />

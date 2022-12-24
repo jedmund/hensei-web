@@ -104,8 +104,13 @@ class Api {
     return axios.put(resourceUrl, params)
   }
 
-  allSkills(params: {}) {
+  allJobSkills(params?: {}) {
     const resourceUrl = `${this.url}/jobs/skills`
+    return axios.get(resourceUrl, params)
+  }
+
+  jobSkillsForJob(jobId: string, params?: {}) {
+    const resourceUrl = `${this.url}/jobs/${jobId}/skills`
     return axios.get(resourceUrl, params)
   }
 

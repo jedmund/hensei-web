@@ -85,11 +85,11 @@ const SearchModal = (props: Props) => {
         page: currentPage,
       })
       .then((response) => {
-        setTotalPages(response.data.total_pages)
-        setRecordCount(response.data.count)
+        setTotalPages(response.data.meta.total_pages)
+        setRecordCount(response.data.meta.count)
 
         if (replace) {
-          replaceResults(response.data.count, response.data.results)
+          replaceResults(response.data.meta.count, response.data.results)
         } else {
           appendResults(response.data.results)
         }
@@ -330,7 +330,7 @@ const SearchModal = (props: Props) => {
           <div id="Bar">
             <Input
               autoComplete="off"
-              className="Search"
+              className="Search Bound"
               name="query"
               placeholder={props.placeholderText}
               ref={searchInput}

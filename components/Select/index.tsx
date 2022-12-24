@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import * as RadixSelect from '@radix-ui/react-select'
 import classNames from 'classnames'
 
@@ -7,31 +7,41 @@ import ArrowIcon from '~public/icons/Arrow.svg'
 import './index.scss'
 
 // Props
-interface Props {
+interface Props
+  extends React.DetailedHTMLProps<
+    React.SelectHTMLAttributes<HTMLSelectElement>,
+    HTMLSelectElement
+  > {
   open: boolean
-  defaultValue?: string | number
-  placeholder?: string
-  name?: string
+  trigger?: React.ReactNode
   children?: React.ReactNode
   onClick?: () => void
-  onChange?: (value: string) => void
+  onValueChange?: (value: string) => void
   triggerClass?: string
 }
 
-const Select = React.forwardRef<HTMLButtonElement, Props>(function useFieldSet(
-  props,
-  ref
-) {
+const Select = (props: Props) => {
+  const [value, setValue] = useState('')
+
+  useEffect(() => {
+    if (props.value && props.value !== '') setValue(`${props.value}`)
+    else setValue('')
+  }, [props.value])
+
+  function onValueChange(newValue: string) {
+    setValue(`${newValue}`)
+    if (props.onValueChange) props.onValueChange(newValue)
+  }
+
+  console.log(value)
   return (
     <RadixSelect.Root
-      defaultValue={props.defaultValue as string}
-      name={props.name}
-      onValueChange={props.onChange}
+      value={value !== '' ? value : undefined}
+      onValueChange={onValueChange}
     >
       <RadixSelect.Trigger
         className={classNames('SelectTrigger', props.triggerClass)}
         placeholder={props.placeholder}
-        ref={ref}
       >
         <RadixSelect.Value placeholder={props.placeholder} />
         <RadixSelect.Icon className="SelectIcon">
@@ -52,6 +62,6 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function useFieldSet(
       </RadixSelect.Portal>
     </RadixSelect.Root>
   )
-})
+}
 
 export default Select
