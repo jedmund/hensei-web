@@ -16,6 +16,7 @@ import { appState } from '~utils/appState'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
+import AwakeningSelect from '~components/AwakeningSelect'
 
 interface GridWeaponObject {
   weapon: {
@@ -27,6 +28,8 @@ interface GridWeaponObject {
     ax_modifier2?: number
     ax_strength1?: number
     ax_strength2?: number
+    awakening_type?: number
+    awakening_level?: Number
   }
 }
 
@@ -55,6 +58,9 @@ const WeaponModal = (props: Props) => {
   const [formValid, setFormValid] = useState(false)
 
   const [element, setElement] = useState(-1)
+
+  const [awakeningType, setAwakeningType] = useState(-1)
+  const [awakeningLevel, setAwakeningLevel] = useState(1)
 
   const [primaryAxModifier, setPrimaryAxModifier] = useState(-1)
   const [secondaryAxModifier, setSecondaryAxModifier] = useState(-1)
@@ -99,6 +105,11 @@ const WeaponModal = (props: Props) => {
     setFormValid(isValid)
   }
 
+  function receiveAwakeningValues(type: number, level: number) {
+    setAwakeningType(type)
+    setAwakeningLevel(level)
+  }
+
   function receiveElementValue(element: string) {
     setElement(parseInt(element))
   }
@@ -125,6 +136,11 @@ const WeaponModal = (props: Props) => {
       object.weapon.ax_strength2 = secondaryAxValue
     }
 
+    if (props.gridWeapon.object.awakening) {
+      object.weapon.awakening_type = awakeningType
+      object.weapon.awakening_level = awakeningLevel
+    }
+
     return object
   }
 
@@ -137,7 +153,8 @@ const WeaponModal = (props: Props) => {
   }
 
   function processResult(response: AxiosResponse) {
-    const gridWeapon: GridWeapon = response.data.grid_weapon
+    console.log(response)
+    const gridWeapon: GridWeapon = response.data
 
     if (gridWeapon.mainhand) appState.grid.weapons.mainWeapon = gridWeapon
     else appState.grid.weapons.allWeapons[gridWeapon.position] = gridWeapon
@@ -221,6 +238,20 @@ const WeaponModal = (props: Props) => {
     )
   }
 
+  const awakeningSelect = () => {
+    return (
+      <section>
+        <h3>{t('modals.weapon.subtitles.awakening')}</h3>
+        <AwakeningSelect
+          object="weapon"
+          awakeningType={props.gridWeapon.awakening?.type}
+          awakeningLevel={props.gridWeapon.awakening?.level}
+          sendValues={receiveAwakeningValues}
+        />
+      </section>
+    )
+  }
+
   function openChange(open: boolean) {
     setFormValid(false)
     setOpen(open)
@@ -256,6 +287,7 @@ const WeaponModal = (props: Props) => {
               ? keySelect()
               : ''}
             {props.gridWeapon.object.ax > 0 ? axSelect() : ''}
+            {props.gridWeapon.awakening ? awakeningSelect() : ''}
             <Button
               contained={true}
               onClick={updateWeapon}

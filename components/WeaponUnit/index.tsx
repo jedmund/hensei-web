@@ -80,6 +80,7 @@ const WeaponUnit = (props: Props) => {
 
     return (
       weapon.ax > 0 ||
+      weapon.awakening ||
       (weapon.series && [2, 3, 17, 22, 24].includes(weapon.series))
     )
   }

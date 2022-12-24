@@ -33,7 +33,6 @@ const Select = (props: Props) => {
     if (props.onValueChange) props.onValueChange(newValue)
   }
 
-  console.log(value)
   return (
     <RadixSelect.Root
       value={value !== '' ? value : undefined}
