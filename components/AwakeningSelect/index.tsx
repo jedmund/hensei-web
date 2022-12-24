@@ -17,6 +17,7 @@ interface Props {
   object: 'character' | 'weapon'
   awakeningType?: number
   awakeningLevel?: number
+  sendValidity: (isValid: boolean) => void
   sendValues: (type: number, level: number) => void
 }
 
@@ -67,9 +68,15 @@ const AwakeningSelect = (props: Props) => {
     setAwakeningLevel(props.awakeningLevel ? props.awakeningLevel : 1)
   }, [props.object, props.awakeningType, props.awakeningLevel])
 
+  // Send awakening type and level when changed
   useEffect(() => {
     props.sendValues(awakeningType, awakeningLevel)
   }, [props.sendValues, awakeningType, awakeningLevel])
+
+  // Send validity of form when awakening level changes
+  useEffect(() => {
+    props.sendValidity(awakeningLevel > 0 && error === '')
+  }, [props.sendValidity, awakeningLevel, error])
 
   // Classes
   function changeOpen() {
