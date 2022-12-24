@@ -91,39 +91,54 @@ const AXSelect = (props: Props) => {
       props.currentSkills &&
       props.currentSkills[0].modifier != null &&
       props.currentSkills[0].modifier >= 0
-    )
+    ) {
       setPrimaryAxModifier(props.currentSkills[0].modifier)
-    else setPrimaryAxModifier(-1)
+      setPrimaryAxValue(props.currentSkills[0].strength)
+    } else setPrimaryAxModifier(-1)
   }, [props.currentSkills, setPrimaryAxModifier])
 
   useEffect(() => {
     if (props.currentSkills && props.currentSkills[1].modifier) {
       setSecondaryAxModifier(props.currentSkills[1].modifier)
+      setSecondaryAxValue(props.currentSkills[1].strength)
     } else {
       setSecondaryAxModifier(-1)
     }
   }, [props.currentSkills, setSecondaryAxModifier])
 
   useEffect(() => {
+    console.log(
+      primaryAxModifier,
+      primaryAxValue,
+      secondaryAxModifier,
+      secondaryAxValue
+    )
+
     let noErrors = false
 
     if (errors.axValue1 === '' && errors.axValue2 === '') {
-      if (primaryAxModifier === -1 && secondaryAxModifier === -1) {
+      if (primaryAxModifier === -1 && secondaryAxModifier === -1)
         noErrors = true
-      } else if (
+      else if (
         primaryAxModifier >= 0 &&
         primaryAxValue > 0 &&
         secondaryAxModifier === -1
-      ) {
+      )
         noErrors = true
-      } else if (
+      else if (
         primaryAxModifier >= 0 &&
         primaryAxValue > 0 &&
         secondaryAxModifier >= 0 &&
         secondaryAxValue > 0
-      ) {
+      )
         noErrors = true
-      }
+      else
+        console.log(
+          primaryAxModifier >= 0,
+          primaryAxValue > 0,
+          secondaryAxModifier >= 0,
+          secondaryAxValue > 0
+        )
     }
 
     props.sendValidity(noErrors)
