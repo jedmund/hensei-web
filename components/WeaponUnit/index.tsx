@@ -70,6 +70,23 @@ const WeaponUnit = (props: Props) => {
     setImageUrl(imgSrc)
   }
 
+  function awakeningImage() {
+    if (
+      props.gridWeapon &&
+      props.gridWeapon.object.awakening &&
+      props.gridWeapon.awakening &&
+      props.gridWeapon.awakening.type >= 0
+    ) {
+      return (
+        <img
+          alt="Awakening type"
+          className="Awakening"
+          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/weapon_${props.gridWeapon.awakening.type}.png`}
+        />
+      )
+    }
+  }
+
   function passUncapData(uncap: number) {
     if (props.gridWeapon)
       props.updateUncap(props.gridWeapon.id, props.position, uncap)
@@ -87,6 +104,7 @@ const WeaponUnit = (props: Props) => {
 
   const image = (
     <div className="WeaponImage">
+      {awakeningImage()}
       <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
       {props.editable ? (
         <span className="icon">
