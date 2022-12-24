@@ -178,7 +178,12 @@ const WeaponUnit = (props: Props) => {
     }
 
     return (
-      <img alt={`${altText}`} className="Skill" src={`${baseUrl}${filename}`} />
+      <img
+        alt={altText}
+        key={altText}
+        className="Skill"
+        src={`${baseUrl}${filename}`}
+      />
     )
   }
 
@@ -284,9 +289,11 @@ const WeaponUnit = (props: Props) => {
       props.gridWeapon.ax &&
       axSkill
     ) {
+      const altText = `${axSkill.name[locale]} Lv${props.gridWeapon.ax[index].strength}`
       return (
         <img
-          alt={`axskill`}
+          alt={altText}
+          key={altText}
           className="Skill"
           src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/ax/${axSkill.slug}.png`}
         />
