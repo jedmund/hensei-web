@@ -13,7 +13,6 @@ interface Props
     HTMLSelectElement
   > {
   open: boolean
-  placeholder?: string
   trigger?: React.ReactNode
   children?: React.ReactNode
   onClick?: () => void
@@ -25,7 +24,8 @@ const Select = (props: Props) => {
   const [value, setValue] = useState('')
 
   useEffect(() => {
-    if (props.value) setValue(`${props.value}`)
+    if (props.value && props.value !== '') setValue(`${props.value}`)
+    else setValue('')
   }, [props.value])
 
   function onValueChange(newValue: string) {
@@ -33,8 +33,12 @@ const Select = (props: Props) => {
     if (props.onValueChange) props.onValueChange(newValue)
   }
 
+  console.log(value)
   return (
-    <RadixSelect.Root value={value} onValueChange={onValueChange}>
+    <RadixSelect.Root
+      value={value !== '' ? value : undefined}
+      onValueChange={onValueChange}
+    >
       <RadixSelect.Trigger
         className={classNames('SelectTrigger', props.triggerClass)}
         placeholder={props.placeholder}
