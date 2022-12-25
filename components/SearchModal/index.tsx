@@ -151,9 +151,22 @@ const SearchModal = (props: Props) => {
     openChange()
   }
 
+  const extraPositions = () => {
+    if (props.object === 'weapons') return [9, 10, 11]
+    else if (props.object === 'summons') return [4, 5]
+    else return []
+  }
+
   function receiveFilters(filters: { [key: string]: any }) {
     setCurrentPage(1)
     setResults([])
+
+    // Only show extra or subaura objects if invoked from those positions
+    if (extraPositions().includes(props.fromPosition)) {
+      if (props.object === 'weapons') filters.extra = true
+      else if (props.object === 'summons') filters.subaura = true
+    }
+
     setFilters(filters)
   }
 
@@ -175,7 +188,12 @@ const SearchModal = (props: Props) => {
       : []
 
     if (open) {
-      if (firstLoad && cookieObj && cookieObj.length > 0) {
+      if (
+        firstLoad &&
+        cookieObj &&
+        cookieObj.length > 0 &&
+        !extraPositions().includes(props.fromPosition)
+      ) {
         setResults(cookieObj)
         setRecordCount(cookieObj.length)
         setFirstLoad(false)
