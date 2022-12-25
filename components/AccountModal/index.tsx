@@ -19,6 +19,8 @@ import './index.scss'
 const AccountModal = () => {
   const { account } = useSnapshot(accountState)
 
+  const cookie = getCookie('user')
+
   const router = useRouter()
   const { t } = useTranslation('common')
   const locale =
@@ -37,11 +39,12 @@ const AccountModal = () => {
   const genderSelect = React.createRef<HTMLSelectElement>()
   const privateSelect = React.createRef<HTMLInputElement>()
 
-  // useEffect(() => {
-  //   if (cookies.user) setPicture(cookies.user.picture)
-  //   if (cookies.user) setLanguage(cookies.user.language)
-  //   if (cookies.user) setGender(cookies.user.gender)
-  // }, [cookies])
+  useEffect(() => {
+    console.log(cookie)
+    // if (cookie) setPicture(cookie.picture)
+    // if (cookie) setLanguage(cookie.user.language)
+    // if (cookie) setGender(cookie.user.gender)
+  }, [cookie])
 
   const pictureOptions = pictureData
     .sort((a, b) => (a.name.en > b.name.en ? 1 : -1))
