@@ -1,4 +1,7 @@
 {
+  "alert": {
+    "incompatible_weapon": "You've selected a weapon that can't be added to the Additional Weapon slots."
+  },
   "ax": {
     "no_skill": "No AX Skill",
     "errors": {
@@ -20,6 +23,7 @@
   "buttons": {
     "cancel": "Cancel",
     "copy": "Copy link",
+    "confirm": "Got it",
     "delete": "Delete team",
     "show_info": "Edit info",
     "hide_info": "Hide info",

@@ -1,4 +1,7 @@
 {
+  "alert": {
+    "incompatible_weapon": "Additional Weaponsに装備できない武器を入れました。"
+  },
   "ax": {
     "no_skill": "EXスキルなし",
     "errors": {
@@ -20,6 +23,7 @@
   "buttons": {
     "cancel": "キャンセル",
     "copy": "リンクをコピー",
+    "confirm": "OK",
     "delete": "編成を削除",
     "show_info": "詳細を編集",
     "save_info": "詳細を保存",

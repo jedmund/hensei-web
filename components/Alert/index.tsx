@@ -3,7 +3,6 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog'
 
 import './index.scss'
 import Button from '~components/Button'
-import { ButtonType } from '~utils/enums'
 
 // Props
 interface Props {

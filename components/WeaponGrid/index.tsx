@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
@@ -16,6 +17,7 @@ import type { SearchableObject } from '~types'
 
 import './index.scss'
 import WeaponConflictModal from '~components/WeaponConflictModal'
+import Alert from '~components/Alert'
 
 // Props
 interface Props {
@@ -29,19 +31,20 @@ const WeaponGrid = (props: Props) => {
   // Constants
   const numWeapons: number = 9
 
+  // Localization
+  const { t } = useTranslation('common')
+
   // Cookies
   const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
-  const headers = accountData
-    ? { headers: { Authorization: `Bearer ${accountData.token}` } }
-    : {}
 
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
   const [slug, setSlug] = useState()
   const [modalOpen, setModalOpen] = useState(false)
+  const [showIncompatibleAlert, setShowIncompatibleAlert] = useState(false)
 
   // Set up state for conflict management
   const [incoming, setIncoming] = useState<Weapon>()
@@ -100,7 +103,19 @@ const WeaponGrid = (props: Props) => {
       if (party.editable)
         saveWeapon(party.id, weapon, position)
           .then((response) => handleWeaponResponse(response.data))
-          .catch((error) => console.error(error))
+          .catch((error) => {
+            const code = error.response.status
+            const data = error.response.data
+            console.log(error.response)
+
+            console.log(data, code)
+            if (code === 422) {
+              if (data.code === 'incompatible_weapon_for_position') {
+                console.log('Here')
+                setShowIncompatibleAlert(true)
+              }
+            }
+          })
     }
   }
 
@@ -132,18 +147,15 @@ const WeaponGrid = (props: Props) => {
     if (weapon.uncap.ulb) uncapLevel = 5
     else if (weapon.uncap.flb) uncapLevel = 4
 
-    return await api.endpoints.weapons.create(
-      {
-        weapon: {
-          party_id: partyId,
-          weapon_id: weapon.id,
-          position: position,
-          mainhand: position == -1,
-          uncap_level: uncapLevel,
-        },
+    return await api.endpoints.weapons.create({
+      weapon: {
+        party_id: partyId,
+        weapon_id: weapon.id,
+        position: position,
+        mainhand: position == -1,
+        uncap_level: uncapLevel,
       },
-      headers
-    )
+    })
   }
 
   function storeGridWeapon(gridWeapon: GridWeapon) {
@@ -326,9 +338,24 @@ const WeaponGrid = (props: Props) => {
     )
   }
 
+  const incompatibleAlert = () => {
+    console.log(t('alert.incompatible_weapon'))
+    return showIncompatibleAlert ? (
+      <Alert
+        open={showIncompatibleAlert}
+        cancelAction={() => setShowIncompatibleAlert(!showIncompatibleAlert)}
+        cancelActionText={t('buttons.confirm')}
+        message={t('alert.incompatible_weapon')}
+      ></Alert>
+    ) : (
+      ''
+    )
+  }
+
   return (
     <div id="WeaponGrid">
       {conflicts ? conflictModal() : ''}
+      {incompatibleAlert()}
       <div id="MainGrid">
         {mainhandElement}
         <ul className="grid_weapons">{weaponGridElement}</ul>
