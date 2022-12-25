@@ -78,7 +78,7 @@ const CharacterConflictModal = (props: Props) => {
             Only one version of a character can be included in each party. Do
             you want to change your party members?
           </p>
-          <div className="diagram">
+          <div className="CharacterDiagram Diagram">
             <ul>
               {props.conflictingCharacters?.map((character, i) => (
                 <li className="character" key={`conflict-${i}`}>
@@ -91,12 +91,14 @@ const CharacterConflictModal = (props: Props) => {
               ))}
             </ul>
             <span className="arrow">&rarr;</span>
-            <div className="character">
-              <img
-                alt={props.incomingCharacter?.name.en}
-                src={imageUrl(props.incomingCharacter)}
-              />
-              {props.incomingCharacter?.name.en}
+            <div className="wrapper">
+              <div className="character">
+                <img
+                  alt={props.incomingCharacter?.name[locale]}
+                  src={imageUrl(props.incomingCharacter)}
+                />
+                <span>{props.incomingCharacter?.name[locale]}</span>
+              </div>
             </div>
           </div>
           <footer>
