@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { setCookie } from 'cookies-next'
-import Router, { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
-import { AxiosResponse } from 'axios'
+import { useRouter } from 'next/router'
+import { Trans, useTranslation } from 'next-i18next'
 
 import * as Dialog from '@radix-ui/react-dialog'
 
-import api from '~utils/api'
 import { appState } from '~utils/appState'
-import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
 
@@ -24,7 +20,11 @@ interface Props {
 }
 
 const CharacterConflictModal = (props: Props) => {
+  // Localization
+  const router = useRouter()
   const { t } = useTranslation('common')
+  const locale =
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
   // States
   const [open, setOpen] = useState(false)
@@ -60,11 +60,11 @@ const CharacterConflictModal = (props: Props) => {
 
   function openChange(open: boolean) {
     setOpen(open)
+    props.resetConflict()
   }
 
   function close() {
     setOpen(false)
-    props.resetConflict()
   }
 
   return (
@@ -75,33 +75,37 @@ const CharacterConflictModal = (props: Props) => {
           onOpenAutoFocus={(event) => event.preventDefault()}
         >
           <p>
-            Only one version of a character can be included in each party. Do
-            you want to change your party members?
+            <Trans i18nKey="modals.conflict.character"></Trans>
           </p>
-          <div className="diagram">
+          <div className="CharacterDiagram Diagram">
             <ul>
               {props.conflictingCharacters?.map((character, i) => (
                 <li className="character" key={`conflict-${i}`}>
                   <img
-                    alt={character.object.name.en}
+                    alt={character.object.name[locale]}
                     src={imageUrl(character.object, character.uncap_level)}
                   />
-                  <span>{character.object.name.en}</span>
+                  <span>{character.object.name[locale]}</span>
                 </li>
               ))}
             </ul>
             <span className="arrow">&rarr;</span>
-            <div className="character">
-              <img
-                alt={props.incomingCharacter?.name.en}
-                src={imageUrl(props.incomingCharacter)}
-              />
-              {props.incomingCharacter?.name.en}
+            <div className="wrapper">
+              <div className="character">
+                <img
+                  alt={props.incomingCharacter?.name[locale]}
+                  src={imageUrl(props.incomingCharacter)}
+                />
+                <span>{props.incomingCharacter?.name[locale]}</span>
+              </div>
             </div>
           </div>
           <footer>
-            <Button onClick={close} text="Nevermind" />
-            <Button onClick={props.resolveConflict} text="Confirm" />
+            <Button onClick={close} text={t('buttons.cancel')} />
+            <Button
+              onClick={props.resolveConflict}
+              text={t('modals.conflict.buttons.confirm')}
+            />
           </footer>
         </Dialog.Content>
         <Dialog.Overlay className="Overlay" />

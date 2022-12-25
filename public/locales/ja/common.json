@@ -1,4 +1,7 @@
 {
+  "alert": {
+    "incompatible_weapon": "Additional Weaponsに装備できない武器を入れました。"
+  },
   "ax": {
     "no_skill": "EXスキルなし",
     "errors": {
@@ -18,8 +21,9 @@
     }
   },
   "buttons": {
-    "cancel": "キャンセルs",
+    "cancel": "キャンセル",
     "copy": "リンクをコピー",
+    "confirm": "OK",
     "delete": "編成を削除",
     "show_info": "詳細を編集",
     "save_info": "詳細を保存",
@@ -86,6 +90,7 @@
     "olden_primal": "オールド・プライマルシリーズ",
     "beast": "四象武器",
     "omega": "マグナシリーズ",
+    "regalia": "レガリアシリーズ",
     "militis": "ミーレスシリーズ",
     "xeno": "六道武器",
     "astral": "アストラルウェポン",
@@ -101,7 +106,10 @@
     "vintage": "ヴィンテージシリーズ",
     "class_champion": "英雄武器",
     "sephira": "セフィラン・オールドウェポン",
-    "new_world": "新世界の礎"
+    "new_world": "新世界の礎",
+    "revenant": "天星器",
+    "proving": "ブレイブグラウンド",
+    "disaster": "災害シリーズ"
   },
   "recency": {
     "all_time": "全ての期間",
@@ -121,6 +129,16 @@
   "modals": {
     "about": {
       "title": "このサイトについて"
+    },
+    "conflict": {
+      "character": "<strong>同じ名前のキャラクター</strong>がパーティに編成されています。<br />以下のキャラクターを入れ替えますか？",
+      "weapon": {
+        "generic": "<strong>{{series}}</strong>の武器に装備制限があり、武器が既に装備されています。<br /><br />以下の武器を入れ替えますか？",
+        "opus-draconic": "<strong>終末の神器シリーズ</strong>と<strong>ドラコニックシリーズ</strong>から１本しか装備できない制限があり、武器が既に装備されています。<br /><br />以下の武器を入れ替えますか？"
+      },
+      "buttons": {
+        "confirm": "入れ替える"
+      }
     },
     "delete_team": {
       "title": "編成を削除しますか",
