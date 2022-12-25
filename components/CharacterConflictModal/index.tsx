@@ -60,11 +60,11 @@ const CharacterConflictModal = (props: Props) => {
 
   function openChange(open: boolean) {
     setOpen(open)
+    props.resetConflict()
   }
 
   function close() {
     setOpen(false)
-    props.resetConflict()
   }
 
   return (
