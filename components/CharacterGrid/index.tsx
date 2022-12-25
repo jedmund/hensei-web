@@ -145,7 +145,8 @@ const CharacterGrid = (props: Props) => {
   async function resolveConflict() {
     if (incoming && conflicts.length > 0) {
       await api
-        .resolveCharacterConflict({
+        .resolveConflict({
+          object: 'characters',
           incoming: incoming.id,
           conflicting: conflicts.map((c) => c.id),
           position: position,

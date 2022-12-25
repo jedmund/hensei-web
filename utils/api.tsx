@@ -77,7 +77,8 @@ class Api {
     })
   }
   
-  resolveCharacterConflict({ incoming, conflicting, position, params }: {
+  resolveConflict({ object, incoming, conflicting, position, params }: {
+    object: 'characters' | 'weapons'
     incoming: string
     conflicting: string[]
     position: number,
@@ -90,7 +91,7 @@ class Api {
         position: position,
       },
     }
-    const resourceUrl = `${this.url}/characters/resolve`
+    const resourceUrl = `${this.url}/${object}/resolve`
     return axios.post(resourceUrl, body, { headers: params })
   }
 
