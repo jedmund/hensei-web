@@ -10,7 +10,6 @@ export type GroupedWeaponKeys = {
 }
 
 export function groupWeaponKeys(keys: WeaponKey[]) {
-  console.log(keys)
   const numGroups = Math.max.apply(
     Math,
     keys.map((key) => key.group)
@@ -27,8 +26,6 @@ export function groupWeaponKeys(keys: WeaponKey[]) {
   for (let i = 0; i <= numGroups; i++) {
     groupedKeys[weaponKeyGroups[i].slug] = keys.filter((key) => key.group == i)
   }
-
-  console.log(groupedKeys)
 
   return groupedKeys
 }
