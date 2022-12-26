@@ -171,6 +171,15 @@ const LoginModal = (props: Props) => {
     })
   }
 
+  function onEscapeKeyDown(event: KeyboardEvent) {
+    setOpen(false)
+  }
+
+  function onOpenAutoFocus(event: Event) {
+    event.preventDefault()
+    if (emailInput.current) emailInput.current.focus()
+  }
+
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>
@@ -178,7 +187,11 @@ const LoginModal = (props: Props) => {
           <span>{t('menu.login')}</span>
         </li>
       </DialogTrigger>
-      <DialogContent className="Login Dialog">
+      <DialogContent
+        className="Login Dialog"
+        onEscapeKeyDown={onEscapeKeyDown}
+        onOpenAutoFocus={onOpenAutoFocus}
+      >
         <div className="DialogHeader">
           <div className="DialogTitle">
             <h1>{t('modals.login.title')}</h1>
