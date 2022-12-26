@@ -7,5 +7,6 @@ export default function changeLanguage(
 ) {
   if (newLanguage !== router.locale) {
     setCookie('NEXT_LOCALE', newLanguage, { path: '/' })
+    router.push(router.asPath, undefined, { locale: newLanguage })
   }
 }

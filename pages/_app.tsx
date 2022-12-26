@@ -20,10 +20,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     user: userCookie ? JSON.parse(userCookie as string) : undefined,
   }
 
-  const [useSystem, setUseSystem] = useState(
-    cookieData.user?.theme === 'system'
-  )
-
   useEffect(() => {
     setUserToken()
 
@@ -46,7 +42,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [])
 
   return (
-    <ThemeProvider enableSystem={useSystem}>
+    <ThemeProvider>
       <Layout>
         <Component {...pageProps} />
       </Layout>

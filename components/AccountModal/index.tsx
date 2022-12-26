@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -23,6 +23,7 @@ import { pictureData } from '~utils/pictureData'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
+import { useTheme } from 'next-themes'
 
 type StateVariables = {
   [key: string]: boolean
@@ -47,6 +48,10 @@ const AccountModal = (props: Props) => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+
+  // useEffect only runs on the client, so now we can safely show the UI
+  const [mounted, setMounted] = useState(false)
+  const { theme: appTheme, setTheme: setAppTheme } = useTheme()
 
   // Cookies
   const accountCookie = getCookie('account')
@@ -109,6 +114,7 @@ const AccountModal = (props: Props) => {
 
   function handleThemeChange(value: string) {
     setTheme(value)
+    setAppTheme(value)
   }
 
   // API calls
@@ -131,7 +137,6 @@ const AccountModal = (props: Props) => {
         .update(accountState.account.user?.id, object)
         .then((response) => {
           const user = response.data
-          console.log(user)
 
           const cookieObj = {
             picture: user.avatar.picture,
@@ -155,7 +160,6 @@ const AccountModal = (props: Props) => {
 
           setOpen(false)
           changeLanguage(router, user.language)
-          router.push(router.asPath, undefined)
         })
     }
   }
@@ -254,6 +258,14 @@ const AccountModal = (props: Props) => {
       </SelectItem>
     </SelectTableField>
   )
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
 
   return (
     <Dialog open={open} onOpenChange={openChange}>
