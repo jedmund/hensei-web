@@ -17,6 +17,10 @@
     // box-shadow: 0 2px rgba(255, 255, 255, 1);
   }
 
+  .Input {
+    padding: $unit * 1.5 $unit-2x;
+  }
+
   .Counter {
     color: $grey-55;
     font-weight: $bold;
