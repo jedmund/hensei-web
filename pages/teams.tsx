@@ -287,22 +287,26 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
   return (
     <div id="Teams">
       <Head>
-        <title>{t('teams.title')}</title>
+        {/* HTML */}
+        <title>{t('page.titles.discover')}</title>
+        <meta name="description" content={t('page.descriptions.discover')} />
 
-        <meta property="og:title" content="Discover Teams" />
+        {/* OpenGraph */}
+        <meta property="og:title" content={t('page.titles.discover')} />
         <meta
           property="og:description"
-          content="Find different Granblue Fantasy teams by raid, element or recency"
+          content={t('page.descriptions.discover')}
         />
         <meta property="og:url" content="https://app.granblue.team/teams" />
         <meta property="og:type" content="website" />
 
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="app.granblue.team" />
-        <meta name="twitter:title" content="Discover Teams" />
+        <meta name="twitter:title" content={t('page.titles.discover')} />
         <meta
           name="twitter:description"
-          content="Find different Granblue Fantasy teams by raid, element or recency"
+          content={t('page.descriptions.discover')}
         />
       </Head>
 

@@ -279,6 +279,19 @@
     "loading": "ロード中...",
     "not_found": "編成は見つかりませんでした"
   },
+  "page": {
+    "titles": {
+      "discover": "編成を見出す",
+      "profile": "@{{username}}さんの作った編成",
+      "team": "{{emoji}} {{teamName}}、{{username}}さんから / granblue.team",
+      "saved": "保存した編成"
+    },
+    "descriptions": {
+      "discover": "グランブルーファンタジーの編成をマルチ、属性、作った時間などで探したり保存したりできる",
+      "profile": "@{{username}}の編成を調査し、マルチ、属性、または作った時間でフィルターする",
+      "team": "granblue.teamで{{username}}さんが作った{{raidName}}の編成を調査できる"
+    }
+  },
   "job_skills": {
     "all": "全てのアビリティ",
     "buffing": "強化アビリティ",

@@ -246,15 +246,27 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
   return (
     <div id="Profile">
       <Head>
-        <title>@{props.user?.username}&apos;s Teams</title>
+        {/* HTML */}
+        <title>
+          {t('page.titles.profile', { username: props.user?.username })}
+        </title>
+        <meta
+          name="description"
+          content={t('page.descriptions.profile', {
+            username: props.user?.username,
+          })}
+        />
 
+        {/* OpenGraph */}
         <meta
           property="og:title"
-          content={`@${props.user?.username}\'s Teams`}
+          content={t('page.titles.profile', { username: props.user?.username })}
         />
         <meta
           property="og:description"
-          content={`Browse @${props.user?.username}\'s Teams and filter raid, element or recency`}
+          content={t('page.descriptions.profile', {
+            username: props.user?.username,
+          })}
         />
         <meta
           property="og:url"
@@ -262,15 +274,18 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
         />
         <meta property="og:type" content="website" />
 
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="app.granblue.team" />
         <meta
           name="twitter:title"
-          content={`@${props.user?.username}\'s Teams`}
+          content={t('page.titles.profile', { username: props.user?.username })}
         />
         <meta
           name="twitter:description"
-          content={`Browse @${props.user?.username}\''s Teams and filter raid, element or recency`}
+          content={t('page.descriptions.profile', {
+            username: props.user?.username,
+          })}
         />
       </Head>
       <FilterBar

@@ -278,6 +278,19 @@
     "loading": "Loading teams...",
     "not_found": "No teams found"
   },
+  "page": {
+    "titles": {
+      "discover": "Discover teams",
+      "profile": "@{{username}}'s Teams / granblue.team",
+      "team": "{{emoji}} {{teamName}} by {{username}} / granblue.team",
+      "saved": "Your saved teams"
+    },
+    "descriptions": {
+      "discover": "Save and discover teams to use in Granblue Fantasy and search by raid, element or recency",
+      "profile": "Browse @{{username}}'s Teams and filter by raid, element or recency",
+      "team": "Browse this team for {{raidName}} by {{username}} and others on granblue.team"
+    }
+  },
   "job_skills": {
     "all": "All skills",
     "buffing": "Buffing",
