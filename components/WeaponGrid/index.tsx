@@ -96,7 +96,7 @@ const WeaponGrid = (props: Props) => {
         if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
 
         saveWeapon(party.id, weapon, position).then((response) =>
-          storeGridWeapon(response.data)
+          storeGridWeapon(response.data.grid_weapon)
         )
       })
     } else {
