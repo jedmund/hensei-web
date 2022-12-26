@@ -3,4 +3,5 @@ interface UserCookie {
   element: string
   language: string
   gender: number
+  theme: string
 }
