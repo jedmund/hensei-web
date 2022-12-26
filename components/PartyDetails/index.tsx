@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
@@ -15,14 +16,13 @@ import TextFieldset from '~components/TextFieldset'
 
 import { accountState } from '~utils/accountState'
 import { appState } from '~utils/appState'
+import { formatTimeAgo } from '~utils/timeAgo'
 
 import CheckIcon from '~public/icons/Check.svg'
 import CrossIcon from '~public/icons/Cross.svg'
 import EditIcon from '~public/icons/Edit.svg'
 
 import './index.scss'
-import Link from 'next/link'
-import { formatTimeAgo } from '~utils/timeAgo'
 
 // Props
 interface Props {
@@ -142,6 +142,25 @@ const PartyDetails = (props: Props) => {
     )
   }
 
+  const renderUserBlock = () => {
+    let username, picture, element
+    if (accountState.account.authorized && props.new) {
+      username = accountState.account.user?.username
+      picture = accountState.account.user?.picture
+      element = accountState.account.user?.element
+    } else if (party.user && !props.new) {
+      username = party.user.username
+      picture = party.user.avatar.picture
+      element = party.user.avatar.element
+    }
+
+    if (username && picture && element) {
+      return linkedUserBlock(username, picture, element)
+    } else if (!props.new) {
+      return userBlock()
+    }
+  }
+
   const linkedUserBlock = (
     username?: string,
     picture?: string,
@@ -256,21 +275,7 @@ const PartyDetails = (props: Props) => {
             {party.name ? party.name : 'Untitled'}
           </h1>
           <div className="attribution">
-            {accountState.account.authorized && props.new
-              ? linkedUserBlock(
-                  accountState.account.user?.username,
-                  accountState.account.user?.picture,
-                  accountState.account.user?.element
-                )
-              : userBlock()}
-            {party.user && !props.new
-              ? linkedUserBlock(
-                  party.user.username,
-                  party.user.avatar.picture,
-                  party.user.avatar.element
-                )
-              : ''}
-            {!party.user && !props.new ? userBlock() : ''}
+            {renderUserBlock()}
             {party.raid ? linkedRaidBlock(party.raid) : ''}
             {party.created_at != '' ? (
               <time
