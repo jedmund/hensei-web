@@ -13,6 +13,7 @@ import {
 import Button from '~components/Button'
 import SelectItem from '~components/SelectItem'
 import PictureSelectItem from '~components/PictureSelectItem'
+import SelectTableField from '~components/SelectTableField'
 // import * as Switch from '@radix-ui/react-switch'
 
 import api from '~utils/api'
@@ -22,8 +23,6 @@ import { pictureData } from '~utils/pictureData'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
-import { subscribe } from 'valtio'
-import SelectTableField from '~components/SelectTableField'
 
 type StateVariables = {
   [key: string]: boolean
