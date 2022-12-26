@@ -41,6 +41,7 @@
     "react-lite-youtube-embed": "^2.3.52",
     "react-scroll": "^1.8.5",
     "react-string-replace": "^1.1.0",
+    "sanitize-html": "^2.8.1",
     "sass": "^1.49.0",
     "valtio": "^1.3.0",
     "youtube-api-v3-wrapper": "^2.3.0"
@@ -54,6 +55,7 @@
     "@types/react-infinite-scroller": "^1.2.2",
     "@types/react-linkify": "^1.0.1",
     "@types/react-scroll": "^1.8.3",
+    "@types/sanitize-html": "^2.8.0",
     "eslint": "8.7.0",
     "eslint-config-next": "12.0.8",
     "eslint-plugin-valtio": "^0.4.1",

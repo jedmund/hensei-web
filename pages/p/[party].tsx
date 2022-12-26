@@ -62,7 +62,7 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
           name="description"
           content={t('page.descriptions.team', {
             username: props.party.user?.username,
-            raidName: props.party.raid.name[locale],
+            raidName: props.party.raid ? props.party.raid.name[locale] : '',
           })}
         />
 
@@ -79,7 +79,7 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
           property="og:description"
           content={t('page.descriptions.team', {
             username: props.party.user?.username,
-            raidName: props.party.raid.name[locale],
+            raidName: props.party.raid ? props.party.raid.name[locale] : '',
           })}
         />
         <meta
@@ -103,7 +103,7 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
           name="twitter:description"
           content={t('page.descriptions.team', {
             username: props.party.user?.username,
-            raidName: props.party.raid.name[locale],
+            raidName: props.party.raid ? props.party.raid.name[locale] : '',
           })}
         />
       </Head>
@@ -171,12 +171,13 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     const element = getElement()
 
     if (element === 0) return '⚪'
-    if (element === 1) return '🟢'
-    if (element === 2) return '🔴'
-    if (element === 3) return '🔵'
-    if (element === 4) return '🟤'
-    if (element === 5) return '🟣'
-    if (element === 6) return '🟡'
+    else if (element === 1) return '🟢'
+    else if (element === 2) return '🔴'
+    else if (element === 3) return '🔵'
+    else if (element === 4) return '🟤'
+    else if (element === 5) return '🟣'
+    else if (element === 6) return '🟡'
+    else return '⚪'
   }
 
   return {

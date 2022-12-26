@@ -8,6 +8,7 @@ import Linkify from 'react-linkify'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import classNames from 'classnames'
 import reactStringReplace from 'react-string-replace'
+import sanitizeHtml from 'sanitize-html'
 
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 
@@ -110,6 +111,7 @@ const PartyDetails = (props: Props) => {
   useEffect(() => {
     // Extract the video IDs from the description
     if (party.description) {
+      // sanitizeHtml(party.description)
       const videoIds = extractYoutubeVideoIds(party.description)
 
       // Fetch the video titles for each ID
