@@ -33,27 +33,27 @@ a {
   text-decoration: none;
 
   &.wind {
-    color: $wind-text-10;
+    color: var(--wind-bg);
   }
 
   &.fire {
-    color: $fire-text-10;
+    color: var(--fire-bg);
   }
 
   &.water {
-    color: $water-text-10;
+    color: var(--water-bg);
   }
 
   &.earth {
-    color: $earth-text-10;
+    color: var(--earth-bg);
   }
 
   &.dark {
-    color: $dark-text-10;
+    color: var(--dark-bg);
   }
 
   &.light {
-    color: $light-text-10;
+    color: var(--light-bg);
   }
 }
 
