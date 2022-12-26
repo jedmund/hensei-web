@@ -256,6 +256,7 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
             username: props.user?.username,
           })}
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         {/* OpenGraph */}
         <meta

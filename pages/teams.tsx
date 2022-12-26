@@ -290,6 +290,7 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
         {/* HTML */}
         <title>{t('page.titles.discover')}</title>
         <meta name="description" content={t('page.descriptions.discover')} />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         {/* OpenGraph */}
         <meta property="og:title" content={t('page.titles.discover')} />

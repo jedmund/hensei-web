@@ -1,9 +1,8 @@
 .GridRepCollection {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, 332px);
   margin: 0 auto;
   padding: 0;
-  width: fit-content;
   transition: opacity 0.14s ease-in-out;
   // width: fit-content;
   max-width: 996px;

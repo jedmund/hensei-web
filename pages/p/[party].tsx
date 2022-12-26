@@ -65,6 +65,7 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
             raidName: props.party.raid ? props.party.raid.name[locale] : '',
           })}
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         {/* OpenGraph */}
         <meta

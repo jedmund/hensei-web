@@ -49,6 +49,7 @@ const NewRoute: React.FC<Props> = (props: Props) => {
         {/* HTML */}
         <title>{t('page.titles.new')}</title>
         <meta name="description" content={t('page.descriptions.new')} />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         {/* OpenGraph */}
         <meta property="og:title" content={t('page.titles.new')} />
