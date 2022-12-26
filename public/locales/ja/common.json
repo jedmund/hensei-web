@@ -100,7 +100,7 @@
     "bahamut": "バハムートウェポン",
     "epic": "エピックウェポン",
     "ennead": "エニアドシリーズ",
-    "cosmos": "コスモスシリーズ",
+    "cosmic": "コスモスシリーズ",
     "ancestral": "アンセスタルシリーズ",
     "superlative": "スペリオシリーズ",
     "vintage": "ヴィンテージシリーズ",
@@ -109,7 +109,8 @@
     "new_world": "新世界の礎",
     "revenant": "天星器",
     "proving": "ブレイブグラウンド",
-    "disaster": "災害シリーズ"
+    "disaster": "災害シリーズ",
+    "luminous": "ルミナス"
   },
   "recency": {
     "all_time": "全ての期間",

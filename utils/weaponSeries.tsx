@@ -116,4 +116,8 @@ export const weaponSeries: WeaponSeries[] = [
     id: 30,
     slug: 'disaster',
   },
+  {
+    id: 31,
+    slug: 'illustrious',
+  },
 ]

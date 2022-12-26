@@ -15,12 +15,8 @@ import {
   emptyRarityState,
   emptyWeaponSeriesState,
 } from '~utils/emptyStates'
-import {
-  elements,
-  proficiencies,
-  rarities,
-  weaponSeries,
-} from '~utils/stateValues'
+import { elements, proficiencies, rarities } from '~utils/stateValues'
+import { weaponSeries } from '~utils/weaponSeries'
 
 interface Props {
   sendFilters: (filters: { [key: string]: number[] }) => void
@@ -126,6 +122,45 @@ const WeaponSearchFilterBar = (props: Props) => {
     }
 
     props.sendFilters(filters)
+  }
+
+  const renderWeaponSeries = () => {
+    const numColumns = 3
+    return (
+      <React.Fragment>
+        {Array.from({ length: numColumns }, () => 0).map((x, i) => {
+          return renderWeaponSeriesGroup(i)
+        })}
+      </React.Fragment>
+    )
+  }
+
+  const renderWeaponSeriesGroup = (index: number) => {
+    return (
+      <DropdownMenu.Group className="Group">
+        {weaponSeries
+          .slice(
+            index * Math.ceil(weaponSeries.length / 3),
+            (index + 1) * Math.ceil(weaponSeries.length / 3)
+          )
+          .map((x, i) => {
+            return renderSingleWeaponSeries(x.id, x.slug)
+          })}
+      </DropdownMenu.Group>
+    )
+  }
+
+  const renderSingleWeaponSeries = (id: number, slug: string) => {
+    return (
+      <SearchFilterCheckboxItem
+        key={id}
+        onCheckedChange={handleSeriesChange}
+        checked={seriesState[slug].checked}
+        valueKey={slug}
+      >
+        {t(`series.${slug}`)}
+      </SearchFilterCheckboxItem>
+    )
   }
 
   useEffect(() => {
@@ -254,58 +289,7 @@ const WeaponSearchFilterBar = (props: Props) => {
         <DropdownMenu.Label className="Label">
           {t('filters.labels.series')}
         </DropdownMenu.Label>
-        <section>
-          <DropdownMenu.Group className="Group">
-            {Array.from(Array(weaponSeries.length / 3)).map((x, i) => {
-              return (
-                <SearchFilterCheckboxItem
-                  key={weaponSeries[i]}
-                  onCheckedChange={handleSeriesChange}
-                  checked={seriesState[weaponSeries[i]].checked}
-                  valueKey={weaponSeries[i]}
-                >
-                  {t(`series.${weaponSeries[i]}`)}
-                </SearchFilterCheckboxItem>
-              )
-            })}
-          </DropdownMenu.Group>
-          <DropdownMenu.Group className="Group">
-            {Array.from(Array(weaponSeries.length / 3)).map((x, i) => {
-              return (
-                <SearchFilterCheckboxItem
-                  key={weaponSeries[i + weaponSeries.length / 3]}
-                  onCheckedChange={handleSeriesChange}
-                  checked={
-                    seriesState[weaponSeries[i + weaponSeries.length / 3]]
-                      .checked
-                  }
-                  valueKey={weaponSeries[i + weaponSeries.length / 3]}
-                >
-                  {t(`series.${weaponSeries[i + weaponSeries.length / 3]}`)}
-                </SearchFilterCheckboxItem>
-              )
-            })}
-          </DropdownMenu.Group>
-          <DropdownMenu.Group className="Group">
-            {Array.from(Array(weaponSeries.length / 3)).map((x, i) => {
-              return (
-                <SearchFilterCheckboxItem
-                  key={weaponSeries[i + 2 * (weaponSeries.length / 3)]}
-                  onCheckedChange={handleSeriesChange}
-                  checked={
-                    seriesState[weaponSeries[i + 2 * (weaponSeries.length / 3)]]
-                      .checked
-                  }
-                  valueKey={weaponSeries[i + 2 * (weaponSeries.length / 3)]}
-                >
-                  {t(
-                    `series.${weaponSeries[i + 2 * (weaponSeries.length / 3)]}`
-                  )}
-                </SearchFilterCheckboxItem>
-              )
-            })}
-          </DropdownMenu.Group>
-        </section>
+        <section>{renderWeaponSeries()}</section>
       </SearchFilter>
     </div>
   )

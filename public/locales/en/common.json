@@ -100,7 +100,7 @@
     "bahamut": "Bahamut",
     "epic": "Epic",
     "ennead": "Ennead",
-    "cosmos": "Cosmos",
+    "cosmic": "Cosmic",
     "ancestral": "Ancestral",
     "superlative": "Superlative",
     "vintage": "Vintage",
@@ -109,7 +109,8 @@
     "new_world": "New World Foundation",
     "revenant": "Revenant",
     "proving": "Proving Grounds",
-    "disaster": "Disaster"
+    "disaster": "Disaster",
+    "illustrious": "Illustrious"
   },
   "recency": {
     "all_time": "All time",
