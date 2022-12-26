@@ -340,10 +340,24 @@ const SearchModal = (props: Props) => {
     }
   }
 
+  function onEscapeKeyDown(event: KeyboardEvent) {
+    event.preventDefault()
+    openChange()
+  }
+
+  function onOpenAutoFocus(event: Event) {
+    event.preventDefault()
+    if (searchInput.current) searchInput.current.focus()
+  }
+
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{props.children}</DialogTrigger>
-      <DialogContent className="Search Dialog">
+      <DialogContent
+        className="Search Dialog"
+        onEscapeKeyDown={onEscapeKeyDown}
+        onOpenAutoFocus={onOpenAutoFocus}
+      >
         <div id="Header">
           <div id="Bar">
             <Input
