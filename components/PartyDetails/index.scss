@@ -1,6 +1,7 @@
 .DetailsWrapper {
   display: flex;
   flex-direction: column;
+  margin-top: $unit-4x;
 
   .PartyDetails {
     display: none;
