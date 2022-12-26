@@ -7,6 +7,8 @@
   --card-bg: #{$grey-100};
   --bar-bg: #{$grey-100};
 
+  --link-text-hover: #{$text--link--hover--light};
+
   // Light - Menus
   --dialog-bg: #{$dialog--bg--light};
 
@@ -119,6 +121,8 @@
 
   --card-bg: #{$page--element--bg--dark};
   --bar-bg: #{$grey-10};
+
+  --link-text-hover: #{$text--link--hover--dark};
 
   // Dark - Dialogs
   --dialog-bg: #{$dialog--bg--dark};
