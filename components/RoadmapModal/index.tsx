@@ -52,6 +52,7 @@ const RoadmapModal = () => {
           <section>
             <h3 className="priority mid">Medium priority</h3>
             <ul className="notes">
+              <li>Dark mode improvements for logged out users</li>
               <li>Light Markdown in team details</li>
               <li>Transcendence Steps - Eternals and Bahamut</li>
               <li>Rearrange items in team</li>
