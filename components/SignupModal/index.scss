@@ -4,27 +4,6 @@
   gap: calc($unit / 2);
   margin-bottom: $unit;
 
-  .Button {
-    font-size: $font-regular;
-    padding: ($unit * 1.5) ($unit * 2);
-    width: 100%;
-
-    &.btn-disabled {
-      background: $grey-90;
-      color: $grey-70;
-      cursor: not-allowed;
-    }
-
-    &:not(.btn-disabled) {
-      background: $grey-90;
-      color: $grey-50;
-
-      &:hover {
-        background: $grey-80;
-      }
-    }
-  }
-
   .terms {
     color: $grey-50;
     font-size: $font-small;
@@ -39,9 +18,5 @@
         color: darken($blue, 30);
       }
     }
-  }
-
-  input {
-    background: $grey-90;
   }
 }
