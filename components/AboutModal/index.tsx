@@ -41,7 +41,11 @@ const AboutModal = () => {
               <section>
                 <Dialog.Description className="DialogDescription">
                   Granblue.team is a tool to save and share team comps for{' '}
-                  <a href="https://game.granbluefantasy.jp">
+                  <a
+                    href="https://game.granbluefantasy.jp"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     Granblue Fantasy.
                   </a>
                 </Dialog.Description>
@@ -69,7 +73,11 @@ const AboutModal = () => {
                 </Dialog.Description>
                 <div className="LinkItem">
                   <Link href="https://discord.gg/qyZ5hGdPC8">
-                    <a href="https://discord.gg/qyZ5hGdPC8">
+                    <a
+                      href="https://discord.gg/qyZ5hGdPC8"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       <div className="Left">
                         <DiscordIcon />
                         <h3>granblue-tools</h3>
@@ -84,15 +92,27 @@ const AboutModal = () => {
                 <Dialog.Title className="DialogTitle">Credits</Dialog.Title>
                 <Dialog.Description className="DialogDescription">
                   Granblue.team was built by{' '}
-                  <a href="https://twitter.com/jedmund" target="_blank">
+                  <a
+                    href="https://twitter.com/jedmund"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     @jedmund
                   </a>{' '}
                   with a lot of help from{' '}
-                  <a href="https://twitter.com/lalalalinna" target="_blank">
+                  <a
+                    href="https://twitter.com/lalalalinna"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     @lalalalinna
                   </a>{' '}
                   and{' '}
-                  <a href="https://twitter.com/tarngerine" target="_blank">
+                  <a
+                    href="https://twitter.com/tarngerine"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     @tarngerine
                   </a>
                   .
@@ -103,11 +123,12 @@ const AboutModal = () => {
                   <a
                     href="https://game.granbluefantasy.jp/#guild/detail/1190185"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     Fireplace
                   </a>{' '}
-                  that helped with bug testing and feature requests. (P.S. We're
-                  recruiting!)
+                  that helped with bug testing and feature requests. (P.S.
+                  We&apos;re recruiting!)
                 </Dialog.Description>
               </section>
 
@@ -120,6 +141,7 @@ const AboutModal = () => {
                   <a
                     href="https://choosealicense.com/licenses/agpl-3.0/"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     GNU AGPLv3
                   </a>
@@ -131,7 +153,11 @@ const AboutModal = () => {
                 <ul className="Links">
                   <li className="LinkItem">
                     <Link href="https://github.com/jedmund/hensei-api">
-                      <a href="https://github.com/jedmund/hensei-api">
+                      <a
+                        href="https://github.com/jedmund/hensei-api"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         <div className="Left">
                           <GithubIcon />
                           <h3>jedmund/hensei-api</h3>
@@ -142,7 +168,11 @@ const AboutModal = () => {
                   </li>
                   <li className="LinkItem">
                     <Link href="https://github.com/jedmund/hensei-web">
-                      <a href="https://github.com/jedmund/hensei-web">
+                      <a
+                        href="https://github.com/jedmund/hensei-web"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         <div className="Left">
                           <GithubIcon />
                           <h3>jedmund/hensei-web</h3>
