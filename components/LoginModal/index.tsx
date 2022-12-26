@@ -203,6 +203,7 @@ const LoginModal = (props: Props) => {
 
         <form className="form" onSubmit={login}>
           <Input
+            className="Bound"
             name="email"
             placeholder={t('modals.login.placeholders.email')}
             onChange={handleChange}
@@ -211,6 +212,7 @@ const LoginModal = (props: Props) => {
           />
 
           <Input
+            className="Bound"
             name="password"
             placeholder={t('modals.login.placeholders.password')}
             type="password"

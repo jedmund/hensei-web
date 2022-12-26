@@ -295,6 +295,7 @@ const SignupModal = (props: Props) => {
 
         <form className="form" onSubmit={register}>
           <Input
+            className="Bound"
             name="username"
             placeholder={t('modals.signup.placeholders.username')}
             onChange={handleNameChange}
@@ -303,6 +304,7 @@ const SignupModal = (props: Props) => {
           />
 
           <Input
+            className="Bound"
             name="email"
             placeholder={t('modals.signup.placeholders.email')}
             onChange={handleNameChange}
@@ -311,6 +313,7 @@ const SignupModal = (props: Props) => {
           />
 
           <Input
+            className="Bound"
             name="password"
             placeholder={t('modals.signup.placeholders.password')}
             type="password"
@@ -320,6 +323,7 @@ const SignupModal = (props: Props) => {
           />
 
           <Input
+            className="Bound"
             name="confirm_password"
             placeholder={t('modals.signup.placeholders.password_confirm')}
             type="password"
