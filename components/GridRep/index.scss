@@ -8,6 +8,10 @@
   &:hover {
     background: var(--grid-rep-hover);
 
+    a {
+      text-decoration: none;
+    }
+
     h2,
     .Grid {
       cursor: pointer;

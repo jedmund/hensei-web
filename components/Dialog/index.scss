@@ -18,6 +18,10 @@
   transform: translate(-50%, -50%);
   z-index: 21;
 
+  a:hover {
+    text-decoration: underline;
+  }
+
   .DialogHeader {
     display: flex;
     align-items: center;
