@@ -12,6 +12,7 @@ import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
 
 import './index.scss'
+import { accountState } from '~utils/accountState'
 
 interface Props {
   authenticated: boolean
@@ -59,8 +60,8 @@ const HeaderMenu = (props: Props) => {
                   <span>{accountData.username}</span>
                   <img
                     alt={userData.picture}
-                    className={`profile ${userData.element}`}
-                    srcSet={`/profile/${userData.picture}.png, 
+                    className={`profile ${accountState.account.user?.element}`}
+                    srcSet={`/profile/${accountState.account.user?.picture}.png, 
                       /profile/${userData.picture}@2x.png 2x`}
                     src={`/profile/${userData.picture}.png`}
                   />
@@ -85,7 +86,13 @@ const HeaderMenu = (props: Props) => {
           </div>
           <div className="MenuGroup">
             <AboutModal />
-            <AccountModal />
+            <AccountModal
+              username={accountState.account.user?.username}
+              picture={accountState.account.user?.picture}
+              gender={accountState.account.user?.gender}
+              language={accountState.account.user?.language}
+              theme={accountState.account.user?.theme}
+            />
             <li className="MenuItem" onClick={props.logout}>
               <span>{t('menu.logout')}</span>
             </li>
