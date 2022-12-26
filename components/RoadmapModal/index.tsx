@@ -62,6 +62,7 @@ const RoadmapModal = () => {
           <section>
             <h3 className="priority low">Low priority</h3>
             <ul className="notes">
+              <li>Figure out DNS to simplify URLs to just granblue.team</li>
               <li>Unify About, Changelog, Roadmap</li>
               <li>Add R characters</li>
               <li>Add images for weird units like Aquors</li>
