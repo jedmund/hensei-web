@@ -42,23 +42,24 @@ const PartyDetails = (props: Props) => {
   const nameInput = React.createRef<HTMLInputElement>()
   const descriptionInput = React.createRef<HTMLTextAreaElement>()
 
+  const [open, setOpen] = useState(false)
   const [raidSlug, setRaidSlug] = useState('')
 
   const readOnlyClasses = classNames({
     PartyDetails: true,
     ReadOnly: true,
-    Visible: !party.detailsVisible,
+    Visible: true,
   })
 
   const editableClasses = classNames({
     PartyDetails: true,
     Editable: true,
-    Visible: party.detailsVisible,
+    Visible: open,
   })
 
   const emptyClasses = classNames({
     EmptyDetails: true,
-    Visible: !party.detailsVisible,
+    Visible: true,
   })
 
   const userClass = classNames({
@@ -99,7 +100,7 @@ const PartyDetails = (props: Props) => {
   }
 
   function toggleDetails() {
-    appState.party.detailsVisible = !appState.party.detailsVisible
+    setOpen(!open)
   }
 
   function receiveRaid(slug?: string) {
@@ -284,25 +285,9 @@ const PartyDetails = (props: Props) => {
     </section>
   )
 
-  const emptyDetails = (
-    <div className={emptyClasses}>
-      {party.editable ? (
-        <Button
-          accessoryIcon={<EditIcon />}
-          text={t('buttons.show_info')}
-          onClick={toggleDetails}
-        />
-      ) : (
-        <div />
-      )}
-    </div>
-  )
-
   return (
     <React.Fragment>
-      {editable && (party.name || party.description || party.raid)
-        ? readOnly
-        : emptyDetails}
+      {readOnly}
       {editable}
     </React.Fragment>
   )
