@@ -206,7 +206,10 @@ const LoginModal = (props: Props) => {
             ref={passwordInput}
           />
 
-          <Button text={t('modals.login.buttons.confirm')} />
+          <Button
+            disabled={!formValid}
+            text={t('modals.login.buttons.confirm')}
+          />
         </form>
       </DialogContent>
     </Dialog>

@@ -315,7 +315,10 @@ const SignupModal = (props: Props) => {
             ref={passwordConfirmationInput}
           />
 
-          <Button text={t('modals.signup.buttons.confirm')} />
+          <Button
+            disabled={!formValid}
+            text={t('modals.signup.buttons.confirm')}
+          />
 
           <p className="terms">
             {/* <Trans i18nKey="modals.signup.agreement">
