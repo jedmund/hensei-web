@@ -17,7 +17,7 @@ interface WeaponSeriesState {
   astral: CheckedState
   epic: CheckedState
   ennead: CheckedState
-  cosmos: CheckedState
+  cosmic: CheckedState
   ancestral: CheckedState
   superlative: CheckedState
   vintage: CheckedState
