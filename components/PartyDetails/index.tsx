@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 
 import Linkify from 'react-linkify'
+import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import classNames from 'classnames'
+import reactStringReplace from 'react-string-replace'
 
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 
@@ -23,6 +25,7 @@ import CrossIcon from '~public/icons/Cross.svg'
 import EditIcon from '~public/icons/Edit.svg'
 
 import './index.scss'
+import { youtube } from '~utils/youtube'
 
 // Props
 interface Props {
@@ -47,11 +50,13 @@ const PartyDetails = (props: Props) => {
 
   const [open, setOpen] = useState(false)
   const [raidSlug, setRaidSlug] = useState('')
+  const [embeddedDescription, setEmbeddedDescription] =
+    useState<React.ReactNode>()
 
   const readOnlyClasses = classNames({
     PartyDetails: true,
     ReadOnly: true,
-    Visible: true,
+    Visible: !open,
   })
 
   const editableClasses = classNames({
@@ -102,6 +107,45 @@ const PartyDetails = (props: Props) => {
     setErrors(newErrors)
   }
 
+  useEffect(() => {
+    // Extract the video IDs from the description
+    if (party.description) {
+      const videoIds = extractYoutubeVideoIds(party.description)
+
+      // Fetch the video titles for each ID
+      const fetchPromises = videoIds.map(({ id }) => fetchYoutubeData(id))
+
+      // Wait for all the video titles to be fetched
+      Promise.all(fetchPromises).then((videoTitles) => {
+        // YouTube regex
+        const youtubeUrlRegex =
+          /https:\/\/www\.youtube\.com\/watch\?v=([\w-]+)/g
+        // Replace the video URLs in the description with LiteYoutubeEmbed elements
+        const newDescription = reactStringReplace(
+          party.description,
+          youtubeUrlRegex,
+          (match, i) => (
+            <LiteYouTubeEmbed
+              id={match}
+              title={videoTitles[i]}
+              wrapperClass="YoutubeWrapper"
+              playerClass="PlayerButton"
+            />
+          )
+        )
+
+        // Update the state with the new description
+        setEmbeddedDescription(newDescription)
+      })
+    }
+  }, [party.description])
+
+  async function fetchYoutubeData(videoId: string) {
+    return await youtube
+      .getVideoById(videoId, { maxResults: 1 })
+      .then((data) => data.items[0].snippet.localized.title)
+  }
+
   function toggleDetails() {
     setOpen(!open)
   }
@@ -117,6 +161,31 @@ const PartyDetails = (props: Props) => {
 
     props.updateCallback(nameValue, descriptionValue, raid)
     toggleDetails()
+  }
+
+  function extractYoutubeVideoIds(text: string) {
+    // Create a regular expression to match Youtube URLs in the text
+    const youtubeUrlRegex = /https:\/\/www\.youtube\.com\/watch\?v=([\w-]+)/g
+
+    // Initialize an array to store the video IDs
+    const videoIds = []
+
+    // Use the regular expression to find all the Youtube URLs in the text
+    let match
+    while ((match = youtubeUrlRegex.exec(text)) !== null) {
+      // Extract the video ID from the URL
+      const videoId = match[1]
+
+      // Add the video ID to the array, along with the character position of the URL
+      videoIds.push({
+        id: videoId,
+        url: match[0],
+        position: match.index,
+      })
+    }
+
+    // Return the array of video IDs
+    return videoIds
   }
 
   const userImage = (picture?: string, element?: string) => {
@@ -268,9 +337,13 @@ const PartyDetails = (props: Props) => {
   )
 
   const readOnly = (
-    <section className={readOnlyClasses}>
-      <div className="info">
-        <div className="left">
+    <section className={readOnlyClasses}>{embeddedDescription}</section>
+  )
+
+  return (
+    <section className="DetailsWrapper">
+      <div className="PartyInfo">
+        <div className="Left">
           <h1 className={!party.name ? 'empty' : ''}>
             {party.name ? party.name : 'Untitled'}
           </h1>
@@ -289,7 +362,7 @@ const PartyDetails = (props: Props) => {
             )}
           </div>
         </div>
-        <div className="right">
+        <div className="Right">
           {party.editable ? (
             <Button
               accessoryIcon={<EditIcon />}
@@ -301,21 +374,9 @@ const PartyDetails = (props: Props) => {
           )}
         </div>
       </div>
-      {party.description ? (
-        <p>
-          <Linkify>{party.description}</Linkify>
-        </p>
-      ) : (
-        ''
-      )}
-    </section>
-  )
-
-  return (
-    <React.Fragment>
       {readOnly}
       {editable}
-    </React.Fragment>
+    </section>
   )
 }
 
