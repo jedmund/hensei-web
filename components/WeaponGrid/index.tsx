@@ -252,6 +252,7 @@ const WeaponGrid = (props: Props) => {
   )
 
   const updateUncapLevel = (position: number, uncapLevel: number) => {
+    console.log(`Updating uncap level at position ${position} to ${uncapLevel}`)
     if (appState.grid.weapons.mainWeapon && position == -1)
       appState.grid.weapons.mainWeapon.uncap_level = uncapLevel
     else {

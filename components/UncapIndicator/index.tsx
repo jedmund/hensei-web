@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect } from 'react'
 import UncapStar from '~components/UncapStar'
 
 import './index.scss'
@@ -10,12 +10,10 @@ interface Props {
   flb: boolean
   ulb: boolean
   special: boolean
-  updateUncap?: (uncap: number) => void
+  updateUncap?: (index: number) => void
 }
 
 const UncapIndicator = (props: Props) => {
-  const [uncap, setUncap] = useState(props.uncapLevel)
-
   const numStars = setNumStars()
   function setNumStars() {
     let numStars
@@ -53,7 +51,7 @@ const UncapIndicator = (props: Props) => {
 
   function toggleStar(index: number, empty: boolean) {
     if (props.updateUncap) {
-      if (empty) props.updateUncap(index + 1)
+      if (empty && index > 0) props.updateUncap(index + 1)
       else props.updateUncap(index)
     }
   }
@@ -71,10 +69,11 @@ const UncapIndicator = (props: Props) => {
   }
 
   const ulb = (i: number) => {
+    // console.log('ULB; Number of stars:', props.uncapLevel)
     return (
       <UncapStar
         ulb={true}
-        empty={props.uncapLevel ? i >= props.uncapLevel : false}
+        empty={props.uncapLevel != null ? i >= props.uncapLevel : false}
         key={`star_${i}`}
         index={i}
         onClick={toggleStar}
@@ -83,10 +82,11 @@ const UncapIndicator = (props: Props) => {
   }
 
   const flb = (i: number) => {
+    // console.log('FLB; Number of stars:', props.uncapLevel)
     return (
       <UncapStar
         flb={true}
-        empty={props.uncapLevel ? i >= props.uncapLevel : false}
+        empty={props.uncapLevel != null ? i >= props.uncapLevel : false}
         key={`star_${i}`}
         index={i}
         onClick={toggleStar}
@@ -95,10 +95,10 @@ const UncapIndicator = (props: Props) => {
   }
 
   const mlb = (i: number) => {
-    // console.log("MLB; Number of stars:", props.uncapLevel)
+    // console.log('MLB; Number of stars:', props.uncapLevel)
     return (
       <UncapStar
-        empty={props.uncapLevel ? i >= props.uncapLevel : false}
+        empty={props.uncapLevel != null ? i >= props.uncapLevel : false}
         key={`star_${i}`}
         index={i}
         onClick={toggleStar}
