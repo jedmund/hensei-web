@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
 import Select from '~components/Select'
 import SelectItem from '~components/SelectItem'
@@ -25,6 +26,9 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
     // Set up router for locale
     const router = useRouter()
     const locale = router.locale || 'en'
+
+    // Set up translation
+    const { t } = useTranslation('common')
 
     // Create snapshot of app state
     const { party } = useSnapshot(appState)
@@ -111,7 +115,7 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
         triggerClass="Job"
       >
         <SelectItem key={-1} value="no-job">
-          No class
+          {t('no_job')}
         </SelectItem>
         {sortedJobs
           ? Object.keys(sortedJobs)
