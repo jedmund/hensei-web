@@ -288,15 +288,15 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
   return (
     <div id="Teams">
       <Head>
-        <title>{t('saved.title')}</title>
+        <title>{t('page.titles.saved')}</title>
 
-        <meta property="og:title" content="Your saved Teams" />
+        <meta property="og:title" content={t('page.titles.saved')} />
         <meta property="og:url" content="https://app.granblue.team/saved" />
         <meta property="og:type" content="website" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="app.granblue.team" />
-        <meta name="twitter:title" content="Your saved Teams" />
+        <meta name="twitter:title" content={t('page.titles.saved')} />
       </Head>
 
       <FilterBar

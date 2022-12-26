@@ -8,7 +8,10 @@ interface Props
   extends React.DetailedHTMLProps<
     React.DialogHTMLAttributes<HTMLDivElement>,
     HTMLDivElement
-  > {}
+  > {
+  onEscapeKeyDown: (event: KeyboardEvent) => void
+  onOpenAutoFocus: (event: Event) => void
+}
 
 export const DialogContent = React.forwardRef<HTMLDivElement, Props>(
   function dialog({ children, ...props }, forwardedRef) {
@@ -25,6 +28,8 @@ export const DialogContent = React.forwardRef<HTMLDivElement, Props>(
         <DialogPrimitive.Content
           className={classes}
           {...props}
+          onOpenAutoFocus={props.onOpenAutoFocus}
+          onEscapeKeyDown={props.onEscapeKeyDown}
           ref={forwardedRef}
         >
           {children}

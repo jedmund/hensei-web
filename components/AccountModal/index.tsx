@@ -80,6 +80,10 @@ const AccountModal = (props: Props) => {
   // const [privateProfile, setPrivateProfile] = useState(false)
 
   // Setup
+  const [pictureOpen, setPictureOpen] = useState(false)
+  const [genderOpen, setGenderOpen] = useState(false)
+  const [languageOpen, setLanguageOpen] = useState(false)
+  const [themeOpen, setThemeOpen] = useState(false)
 
   // UI management
   function openChange(open: boolean) {
@@ -87,16 +91,10 @@ const AccountModal = (props: Props) => {
   }
 
   function openSelect(name: 'picture' | 'gender' | 'language' | 'theme') {
-    const stateVars = selectOpenState
-    Object.keys(stateVars).forEach((key) => {
-      if (key === name) {
-        stateVars[name] = true
-      } else {
-        stateVars[key] = false
-      }
-    })
-
-    setSelectOpenState(stateVars)
+    setPictureOpen(name === 'picture' ? !pictureOpen : false)
+    setGenderOpen(name === 'gender' ? !genderOpen : false)
+    setLanguageOpen(name === 'language' ? !languageOpen : false)
+    setThemeOpen(name === 'theme' ? !themeOpen : false)
   }
 
   // Event handlers
@@ -115,6 +113,14 @@ const AccountModal = (props: Props) => {
   function handleThemeChange(value: string) {
     setTheme(value)
     setAppTheme(value)
+  }
+
+  function onEscapeKeyDown(event: KeyboardEvent) {
+    if (pictureOpen || genderOpen || languageOpen || themeOpen) {
+      return event.preventDefault()
+    } else {
+      setOpen(false)
+    }
   }
 
   // API calls
@@ -189,9 +195,10 @@ const AccountModal = (props: Props) => {
       description={t('modals.settings.descriptions.picture')}
       className="Image"
       label={t('modals.settings.labels.picture')}
-      open={selectOpenState.picture}
-      onClick={() => openSelect('picture')}
+      open={pictureOpen}
+      onOpenChange={() => openSelect('picture')}
       onChange={handlePictureChange}
+      onClose={() => setPictureOpen(false)}
       imageAlt={t('modals.settings.labels.image_alt')}
       imageClass={pictureData.find((i) => i.filename === picture)?.element}
       imageSrc={[`/profile/${picture}.png`, `/profile/${picture}@2x.png 2x`]}
@@ -206,9 +213,10 @@ const AccountModal = (props: Props) => {
       name="gender"
       description={t('modals.settings.descriptions.gender')}
       label={t('modals.settings.labels.gender')}
-      open={selectOpenState.gender}
-      onClick={() => openSelect('gender')}
+      open={genderOpen}
+      onOpenChange={() => openSelect('gender')}
       onChange={handleGenderChange}
+      onClose={() => setGenderOpen(false)}
       value={`${gender}`}
     >
       <SelectItem key="gran" value="0">
@@ -224,9 +232,10 @@ const AccountModal = (props: Props) => {
     <SelectTableField
       name="language"
       label={t('modals.settings.labels.language')}
-      open={selectOpenState.language}
-      onClick={() => openSelect('language')}
+      open={languageOpen}
+      onOpenChange={() => openSelect('language')}
       onChange={handleLanguageChange}
+      onClose={() => setLanguageOpen(false)}
       value={language}
     >
       <SelectItem key="en" value="en">
@@ -242,9 +251,10 @@ const AccountModal = (props: Props) => {
     <SelectTableField
       name="theme"
       label={t('modals.settings.labels.theme')}
-      open={selectOpenState.theme}
-      onClick={() => openSelect('theme')}
+      open={themeOpen}
+      onOpenChange={() => openSelect('theme')}
       onChange={handleThemeChange}
+      onClose={() => setThemeOpen(false)}
       value={theme}
     >
       <SelectItem key="system" value="system">
@@ -274,7 +284,11 @@ const AccountModal = (props: Props) => {
           <span>{t('menu.settings')}</span>
         </li>
       </DialogTrigger>
-      <DialogContent className="Account Dialog">
+      <DialogContent
+        className="Account Dialog"
+        onOpenAutoFocus={(event: Event) => {}}
+        onEscapeKeyDown={onEscapeKeyDown}
+      >
         <div className="DialogHeader">
           <div className="DialogTop">
             <DialogTitle className="SubTitle">

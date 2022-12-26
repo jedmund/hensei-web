@@ -99,6 +99,10 @@
     .bottom {
       display: flex;
       flex-direction: row;
+
+      a.user:hover {
+        color: var(--link-text-hover);
+      }
     }
 
     .raid,

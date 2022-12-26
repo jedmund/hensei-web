@@ -15,8 +15,9 @@ interface Props
   open: boolean
   trigger?: React.ReactNode
   children?: React.ReactNode
-  onClick?: () => void
+  onOpenChange?: () => void
   onValueChange?: (value: string) => void
+  onClose?: () => void
   triggerClass?: string
 }
 
@@ -24,7 +25,12 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
   props: Props,
   forwardedRef
 ) {
+  const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
+
+  useEffect(() => {
+    setOpen(props.open)
+  }, [props.open])
 
   useEffect(() => {
     if (props.value && props.value !== '') setValue(`${props.value}`)
@@ -36,10 +42,27 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
     if (props.onValueChange) props.onValueChange(newValue)
   }
 
+  function onCloseAutoFocus() {
+    setOpen(false)
+    if (props.onClose) props.onClose()
+  }
+
+  function onEscapeKeyDown() {
+    setOpen(false)
+    if (props.onClose) props.onClose()
+  }
+
+  function onPointerDownOutside() {
+    setOpen(false)
+    if (props.onClose) props.onClose()
+  }
+
   return (
     <RadixSelect.Root
+      open={open}
       value={value !== '' ? value : undefined}
       onValueChange={onValueChange}
+      onOpenChange={props.onOpenChange}
     >
       <RadixSelect.Trigger
         className={classNames('SelectTrigger', props.triggerClass)}
@@ -53,7 +76,11 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
       </RadixSelect.Trigger>
 
       <RadixSelect.Portal className="Select">
-        <RadixSelect.Content>
+        <RadixSelect.Content
+          onCloseAutoFocus={onCloseAutoFocus}
+          onEscapeKeyDown={onEscapeKeyDown}
+          onPointerDownOutside={onPointerDownOutside}
+        >
           <RadixSelect.ScrollUpButton className="Scroll Up">
             <ArrowIcon />
           </RadixSelect.ScrollUpButton>

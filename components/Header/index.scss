@@ -1,6 +1,6 @@
 .Header {
   display: flex;
-  margin-bottom: $unit-2x;
+  margin-bottom: $unit;
   width: 100%;
 
   &.bottom {
@@ -16,9 +16,10 @@
   .dropdown {
     display: inline-block;
     position: relative;
+    padding-bottom: $unit;
 
     &:hover {
-      padding-right: 50px;
+      padding-right: $unit-4x;
 
       .Button {
         background: var(--button-bg-hover);

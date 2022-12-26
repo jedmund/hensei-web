@@ -17,6 +17,7 @@ interface Props {
   object: 'character' | 'weapon'
   awakeningType?: number
   awakeningLevel?: number
+  onOpenChange: (open: boolean) => void
   sendValidity: (isValid: boolean) => void
   sendValues: (type: number, level: number) => void
 }
@@ -81,6 +82,11 @@ const AwakeningSelect = (props: Props) => {
   // Classes
   function changeOpen() {
     setOpen(!open)
+    props.onOpenChange(!open)
+  }
+
+  function onClose() {
+    props.onOpenChange(false)
   }
 
   function generateOptions(object: 'character' | 'weapon') {
@@ -165,7 +171,8 @@ const AwakeningSelect = (props: Props) => {
             value={`${awakeningType}`}
             open={open}
             onValueChange={handleSelectChange}
-            onClick={() => changeOpen()}
+            onOpenChange={() => changeOpen()}
+            onClose={onClose}
             triggerClass="modal"
           >
             {generateOptions(props.object)}

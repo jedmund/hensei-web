@@ -123,6 +123,7 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
           value={props.currentRaid}
           placeholder={'Select a raid...'}
           open={open}
+          onOpenChange={() => setOpen(!open)}
           onClick={openRaidSelect}
           onValueChange={handleChange}
         >

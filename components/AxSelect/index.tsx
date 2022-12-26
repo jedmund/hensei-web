@@ -20,6 +20,7 @@ interface ErrorMap {
 interface Props {
   axType: number
   currentSkills?: SimpleAxSkill[]
+  onOpenChange: (index: 1 | 2, open: boolean) => void
   sendValidity: (isValid: boolean) => void
   sendValues: (
     primaryAxModifier: number,
@@ -193,9 +194,22 @@ const AXSelect = (props: Props) => {
         : undefined
   }
 
-  function openSelect(ref: ForwardedRef<HTMLButtonElement>) {
-    if (ref === primaryAxModifierSelect) setOpenAX1(!openAX1)
-    if (ref === secondaryAxModifierSelect) setOpenAX2(!openAX2)
+  function openSelect(index: 1 | 2) {
+    if (index === 1) {
+      setOpenAX1(!openAX1)
+      setOpenAX2(false)
+      props.onOpenChange(1, !openAX1)
+      props.onOpenChange(2, false)
+    } else if (index === 2) {
+      setOpenAX2(!openAX2)
+      setOpenAX1(false)
+      props.onOpenChange(2, !openAX2)
+      props.onOpenChange(1, false)
+    }
+  }
+
+  function onClose(index: 1 | 2) {
+    props.onOpenChange(index, false)
   }
 
   function generateOptions(modifierSet: number) {
@@ -392,8 +406,9 @@ const AXSelect = (props: Props) => {
             key="ax1"
             value={`${primaryAxModifier}`}
             open={openAX1}
+            onClose={() => onClose(1)}
+            onOpenChange={() => openSelect(1)}
             onValueChange={handleAX1SelectChange}
-            onClick={() => openSelect(primaryAxModifierSelect)}
             triggerClass="modal"
           >
             {generateOptions(0)}
@@ -419,8 +434,9 @@ const AXSelect = (props: Props) => {
             key="ax2"
             value={`${secondaryAxModifier}`}
             open={openAX2}
+            onClose={() => onClose(2)}
+            onOpenChange={() => openSelect(2)}
             onValueChange={handleAX2SelectChange}
-            onClick={() => openSelect(secondaryAxModifierSelect)}
             triggerClass="modal"
             ref={secondaryAxModifierSelect}
           >

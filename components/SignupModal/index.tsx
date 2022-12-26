@@ -263,6 +263,15 @@ const SignupModal = (props: Props) => {
     })
   }
 
+  function onEscapeKeyDown(event: KeyboardEvent) {
+    setOpen(false)
+  }
+
+  function onOpenAutoFocus(event: Event) {
+    event.preventDefault()
+    if (usernameInput.current) usernameInput.current.focus()
+  }
+
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>
@@ -270,7 +279,11 @@ const SignupModal = (props: Props) => {
           <span>{t('menu.signup')}</span>
         </li>
       </DialogTrigger>
-      <DialogContent className="Signup Dialog">
+      <DialogContent
+        className="Signup Dialog"
+        onEscapeKeyDown={onEscapeKeyDown}
+        onOpenAutoFocus={onOpenAutoFocus}
+      >
         <div className="DialogHeader">
           <div className="DialogTitle">
             <h1>{t('modals.signup.title')}</h1>
@@ -315,7 +328,10 @@ const SignupModal = (props: Props) => {
             ref={passwordConfirmationInput}
           />
 
-          <Button text={t('modals.signup.buttons.confirm')} />
+          <Button
+            disabled={!formValid}
+            text={t('modals.signup.buttons.confirm')}
+          />
 
           <p className="terms">
             {/* <Trans i18nKey="modals.signup.agreement">

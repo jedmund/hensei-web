@@ -25,33 +25,6 @@ const Proficiency = [
   'gun',
   'katana',
 ]
-const Series = [
-  'seraphic',
-  'grand',
-  'opus',
-  'draconic',
-  'revenant',
-  'primal',
-  'beast',
-  'regalia',
-  'omega',
-  'olden_primal',
-  'hollowsky',
-  'xeno',
-  'astral',
-  'rose',
-  'ultima',
-  'bahamut',
-  'epic',
-  'ennead',
-  'cosmos',
-  'ancestral',
-  'superlative',
-  'vintage',
-  'class_champion',
-  'sephira',
-  'new_world_foundation',
-]
 
 const WeaponResult = (props: Props) => {
   const router = useRouter()

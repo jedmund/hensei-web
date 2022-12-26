@@ -9,10 +9,13 @@ import './index.scss'
 
 // Props
 interface Props {
+  open: boolean
   currentValue?: WeaponKey
   series: number
   slot: number
   onChange?: (value: string, slot: number) => void
+  onOpenChange: () => void
+  onClose?: () => void
 }
 
 const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
@@ -63,10 +66,6 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
 
       fetchWeaponKeys()
     }, [props.series, props.slot])
-
-    function openSelect() {
-      setOpen(!open)
-    }
 
     function weaponKeyGroup(index: number) {
       ;['α', 'β', 'γ', 'Δ'].sort((a, b) => a.localeCompare(b, 'el'))
@@ -125,9 +124,10 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
       <Select
         key={`weapon-key-${props.slot}`}
         value={props.currentValue ? props.currentValue.id : 'no-key'}
-        open={open}
+        open={props.open}
+        onClose={props.onClose}
+        onOpenChange={props.onOpenChange}
         onValueChange={handleChange}
-        onClick={openSelect}
         ref={ref}
         triggerClass="modal"
       >

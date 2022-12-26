@@ -96,7 +96,7 @@ const WeaponGrid = (props: Props) => {
         if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
 
         saveWeapon(party.id, weapon, position).then((response) =>
-          storeGridWeapon(response.data)
+          storeGridWeapon(response.data.grid_weapon)
         )
       })
     } else {
@@ -252,6 +252,7 @@ const WeaponGrid = (props: Props) => {
   )
 
   const updateUncapLevel = (position: number, uncapLevel: number) => {
+    console.log(`Updating uncap level at position ${position} to ${uncapLevel}`)
     if (appState.grid.weapons.mainWeapon && position == -1)
       appState.grid.weapons.mainWeapon.uncap_level = uncapLevel
     else {

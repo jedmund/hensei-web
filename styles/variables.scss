@@ -55,6 +55,7 @@ $orange-10: #6b401b;
 $orange-30: #825b39;
 $orange-40: #925a2a;
 $orange-50: #a8703f;
+$orange-70: #d08f57;
 $orange-80: #facea7;
 $orange-90: #ffebd9;
 
@@ -213,7 +214,7 @@ $subaura--orange--bg--dark: $orange-10;
 $subaura--orange--card--bg--dark: $orange-30;
 $subaura--orange--primary--dark: $orange-00;
 $subaura--orange--secondary--dark: $orange-10;
-$subaura--orange--text--dark: $orange-00;
+$subaura--orange--text--dark: $orange-70;
 
 // Color Definitions: Element Toggle
 $toggle--bg--light: $grey-90;
@@ -234,6 +235,9 @@ $text--tertiary--color--dark: $grey-50;
 
 $text--tertiary--hover--light: $grey-40;
 $text--tertiary--hover--dark: $grey-70;
+
+$text--link--hover--light: $grey-40;
+$text--link--hover--dark: $grey-100;
 
 // Color Definitions: Icon
 $icon--secondary--color--light: $grey-70;

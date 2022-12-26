@@ -100,12 +100,16 @@ export const emptyWeaponSeriesState: WeaponSeriesState = {
     id: 3,
     checked: false,
   },
-  ultima: {
-    id: 17,
+  revenant: {
+    id: 4,
     checked: false,
   },
-  bahamut: {
-    id: 16,
+  primal: {
+    id: 6,
+    checked: false,
+  },
+  beast: {
+    id: 7,
     checked: false,
   },
   regalia: {
@@ -116,10 +120,6 @@ export const emptyWeaponSeriesState: WeaponSeriesState = {
     id: 9,
     checked: false,
   },
-  primal: {
-    id: 6,
-    checked: false,
-  },
   olden_primal: {
     id: 10,
     checked: false,
@@ -128,24 +128,28 @@ export const emptyWeaponSeriesState: WeaponSeriesState = {
     id: 11,
     checked: false,
   },
-  beast: {
-    id: 7,
-    checked: false,
-  },
-  rose: {
-    id: 15,
+  hollowsky: {
+    id: 12,
     checked: false,
   },
   xeno: {
     id: 13,
     checked: false,
   },
-  hollowsky: {
-    id: 12,
-    checked: false,
-  },
   astral: {
     id: 14,
+    checked: false,
+  },
+  rose: {
+    id: 15,
+    checked: false,
+  },
+  bahamut: {
+    id: 16,
+    checked: false,
+  },
+  ultima: {
+    id: 17,
     checked: false,
   },
   epic: {
@@ -156,7 +160,7 @@ export const emptyWeaponSeriesState: WeaponSeriesState = {
     id: 19,
     checked: false,
   },
-  cosmos: {
+  cosmic: {
     id: 20,
     checked: false,
   },
@@ -176,12 +180,24 @@ export const emptyWeaponSeriesState: WeaponSeriesState = {
     id: 24,
     checked: false,
   },
+  proving: {
+    id: 25,
+    checked: false,
+  },
   sephira: {
     id: 28,
     checked: false,
   },
   new_world: {
     id: 29,
+    checked: false,
+  },
+  disaster: {
+    id: 30,
+    checked: false,
+  },
+  illustrious: {
+    id: 31,
     checked: false,
   },
 }

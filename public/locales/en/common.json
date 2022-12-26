@@ -100,7 +100,7 @@
     "bahamut": "Bahamut",
     "epic": "Epic",
     "ennead": "Ennead",
-    "cosmos": "Cosmos",
+    "cosmic": "Cosmic",
     "ancestral": "Ancestral",
     "superlative": "Superlative",
     "vintage": "Vintage",
@@ -109,7 +109,8 @@
     "new_world": "New World Foundation",
     "revenant": "Revenant",
     "proving": "Proving Grounds",
-    "disaster": "Disaster"
+    "disaster": "Disaster",
+    "illustrious": "Illustrious"
   },
   "recency": {
     "all_time": "All time",
@@ -277,6 +278,19 @@
     "loading": "Loading teams...",
     "not_found": "No teams found"
   },
+  "page": {
+    "titles": {
+      "discover": "Discover teams",
+      "profile": "@{{username}}'s Teams / granblue.team",
+      "team": "{{emoji}} {{teamName}} by {{username}} / granblue.team",
+      "saved": "Your saved teams"
+    },
+    "descriptions": {
+      "discover": "Save and discover teams to use in Granblue Fantasy and search by raid, element or recency",
+      "profile": "Browse @{{username}}'s Teams and filter by raid, element or recency",
+      "team": "Browse this team for {{raidName}} by {{username}} and others on granblue.team"
+    }
+  },
   "job_skills": {
     "all": "All skills",
     "buffing": "Buffing",
@@ -294,5 +308,6 @@
   "coming_soon": "Coming Soon",
   "no_title": "Untitled",
   "no_raid": "No raid",
-  "no_user": "Anonymous"
+  "no_user": "Anonymous",
+  "no_job": "No class"
 }

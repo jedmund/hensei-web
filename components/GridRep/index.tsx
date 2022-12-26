@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
@@ -132,11 +133,28 @@ const GridRep = (props: Props) => {
     } else return <div className="no-user" />
   }
 
+  const linkedAttribution = () => (
+    <Link href={`/${props.user ? props.user.username : '#'}`}>
+      <a
+        className={userClass}
+        href={`/${props.user ? props.user.username : '#'}`}
+      >
+        {userImage()}
+        {props.user ? props.user.username : t('no_user')}
+      </a>
+    </Link>
+  )
+
+  const unlinkedAttribution = () => (
+    <div className={userClass}>
+      {userImage()}
+      {props.user ? props.user.username : t('no_user')}
+    </div>
+  )
+
   const details = (
     <div className="Details">
-      <h2 className={titleClass} onClick={navigate}>
-        {props.name ? props.name : t('no_title')}
-      </h2>
+      <h2 className={titleClass}>{props.name ? props.name : t('no_title')}</h2>
       <div className="bottom">
         <div className={raidClass}>
           {props.raid ? props.raid.name[locale] : t('no_raid')}
@@ -152,7 +170,7 @@ const GridRep = (props: Props) => {
     <div className="Details">
       <div className="top">
         <div className="info">
-          <h2 className={titleClass} onClick={navigate}>
+          <h2 className={titleClass}>
             {props.name ? props.name : t('no_title')}
           </h2>
           <div className={raidClass}>
@@ -162,23 +180,25 @@ const GridRep = (props: Props) => {
         {account.authorized &&
         ((props.user && account.user && account.user.id !== props.user.id) ||
           !props.user) ? (
-          <Button
-            className="Save"
-            accessoryIcon={<SaveIcon className="stroke" />}
-            active={props.favorited}
-            contained={true}
-            buttonSize="small"
-            onClick={sendSaveData}
-          />
+          <Link href="#">
+            <a href="#">
+              <Button
+                className="Save"
+                accessoryIcon={<SaveIcon className="stroke" />}
+                active={props.favorited}
+                contained={true}
+                buttonSize="small"
+                onClick={sendSaveData}
+              />
+            </a>
+          </Link>
         ) : (
           ''
         )}
       </div>
       <div className="bottom">
-        <div className={userClass}>
-          {userImage()}
-          {props.user ? props.user.username : t('no_user')}
-        </div>
+        {props.user ? linkedAttribution() : unlinkedAttribution()}
+
         <time className="last-updated" dateTime={props.createdAt.toISOString()}>
           {formatTimeAgo(props.createdAt, locale)}
         </time>
@@ -187,25 +207,27 @@ const GridRep = (props: Props) => {
   )
 
   return (
-    <div className="GridRep">
-      {props.displayUser ? detailsWithUsername : details}
-      <div className="Grid" onClick={navigate}>
-        <div className="weapon grid_mainhand">{generateMainhandImage()}</div>
+    <Link href={`/p/${props.shortcode}`}>
+      <a className="GridRep">
+        {props.displayUser ? detailsWithUsername : details}
+        <div className="Grid">
+          <div className="weapon grid_mainhand">{generateMainhandImage()}</div>
 
-        <ul className="grid_weapons">
-          {Array.from(Array(numWeapons)).map((x, i) => {
-            return (
-              <li
-                key={`${props.shortcode}-${i}`}
-                className="weapon grid_weapon"
-              >
-                {generateGridImage(i)}
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-    </div>
+          <ul className="grid_weapons">
+            {Array.from(Array(numWeapons)).map((x, i) => {
+              return (
+                <li
+                  key={`${props.shortcode}-${i}`}
+                  className="weapon grid_weapon"
+                >
+                  {generateGridImage(i)}
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      </a>
+    </Link>
   )
 }
 

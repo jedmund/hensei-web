@@ -11,7 +11,6 @@ import Button from '~components/Button'
 
 import type { SearchableObject } from '~types'
 
-import { appState } from '~utils/appState'
 import { axData } from '~utils/axData'
 import { weaponAwakening } from '~utils/awakening'
 
@@ -341,9 +340,9 @@ const WeaponUnit = (props: Props) => {
     } else return
   }
 
-  function passUncapData(uncap: number) {
+  function passUncapData(index: number) {
     if (props.gridWeapon)
-      props.updateUncap(props.gridWeapon.id, props.position, uncap)
+      props.updateUncap(props.gridWeapon.id, props.position, index)
   }
 
   function canBeModified(gridWeapon: GridWeapon) {
