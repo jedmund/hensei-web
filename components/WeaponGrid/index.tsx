@@ -106,12 +106,8 @@ const WeaponGrid = (props: Props) => {
           .catch((error) => {
             const code = error.response.status
             const data = error.response.data
-            console.log(error.response)
-
-            console.log(data, code)
             if (code === 422) {
               if (data.code === 'incompatible_weapon_for_position') {
-                console.log('Here')
                 setShowIncompatibleAlert(true)
               }
             }
@@ -339,7 +335,6 @@ const WeaponGrid = (props: Props) => {
   }
 
   const incompatibleAlert = () => {
-    console.log(t('alert.incompatible_weapon'))
     return showIncompatibleAlert ? (
       <Alert
         open={showIncompatibleAlert}

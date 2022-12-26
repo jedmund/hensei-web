@@ -107,13 +107,6 @@ const AXSelect = (props: Props) => {
   }, [props.currentSkills, setSecondaryAxModifier])
 
   useEffect(() => {
-    console.log(
-      primaryAxModifier,
-      primaryAxValue,
-      secondaryAxModifier,
-      secondaryAxValue
-    )
-
     let noErrors = false
 
     if (errors.axValue1 === '' && errors.axValue2 === '') {
@@ -132,13 +125,6 @@ const AXSelect = (props: Props) => {
         secondaryAxValue > 0
       )
         noErrors = true
-      else
-        console.log(
-          primaryAxModifier >= 0,
-          primaryAxValue > 0,
-          secondaryAxModifier >= 0,
-          secondaryAxValue > 0
-        )
     }
 
     props.sendValidity(noErrors)

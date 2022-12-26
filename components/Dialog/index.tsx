@@ -35,5 +35,6 @@ export const DialogContent = React.forwardRef<HTMLDivElement, Props>(
 )
 
 export const Dialog = DialogPrimitive.Root
+export const DialogTitle = DialogPrimitive.Title
 export const DialogTrigger = DialogPrimitive.Trigger
 export const DialogClose = DialogPrimitive.Close

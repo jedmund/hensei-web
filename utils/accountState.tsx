@@ -1,19 +1,21 @@
 import { proxy } from 'valtio'
 
+export type UserState = {
+  id: string
+  username: string
+  picture: string
+  element: string
+  gender: number
+  language: string
+  theme: string
+}
+
 interface AccountState {
   [key: string]: any
 
   account: {
     authorized: boolean
-    user:
-      | {
-          id: string
-          username: string
-          picture: string
-          element: string
-          gender: number
-        }
-      | undefined
+    user: UserState | undefined
   }
 }
 

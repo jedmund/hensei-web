@@ -16,6 +16,8 @@ import {
   DialogClose,
 } from '~components/Dialog'
 
+import changeLanguage from '~utils/changeLanguage'
+
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
@@ -127,37 +129,38 @@ const LoginModal = (props: Props) => {
   }
 
   function storeUserInfo(response: AxiosResponse) {
+    // Extract the user
     const user = response.data
 
-    const cookieObj: UserCookie = {
-      picture: user.avatar.picture,
-      element: user.avatar.element,
-      language: user.language,
-      gender: user.gender,
-    }
+    // Set user data in the user cookie
+    setCookie(
+      'user',
+      {
+        picture: user.avatar.picture,
+        element: user.avatar.element,
+        language: user.language,
+        gender: user.gender,
+        theme: user.theme,
+      },
+      { path: '/' }
+    )
 
-    setCookie('user', cookieObj, { path: '/' })
-
+    // Set the user data in the account state
     accountState.account.user = {
       id: user.id,
       username: user.username,
       picture: user.avatar.picture,
       element: user.avatar.element,
       gender: user.gender,
+      language: user.language,
+      theme: user.theme,
     }
 
     console.log('Authorizing account...')
     accountState.account.authorized = true
 
     setOpen(false)
-    changeLanguage(user.language)
-  }
-
-  function changeLanguage(newLanguage: string) {
-    if (newLanguage !== router.locale) {
-      setCookie('NEXT_LOCALE', newLanguage, { path: '/' })
-      router.push(router.asPath, undefined, { locale: newLanguage })
-    }
+    changeLanguage(router, user.language)
   }
 
   function openChange(open: boolean) {

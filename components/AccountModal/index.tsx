@@ -1,74 +1,123 @@
 import React, { useEffect, useState } from 'react'
-import { getCookie } from 'cookies-next'
+import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
-import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 
-import * as Dialog from '@radix-ui/react-dialog'
-import * as Switch from '@radix-ui/react-switch'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from '~components/Dialog'
+import Button from '~components/Button'
+import SelectItem from '~components/SelectItem'
+import PictureSelectItem from '~components/PictureSelectItem'
+import SelectTableField from '~components/SelectTableField'
+// import * as Switch from '@radix-ui/react-switch'
 
 import api from '~utils/api'
+import changeLanguage from 'utils/changeLanguage'
 import { accountState } from '~utils/accountState'
 import { pictureData } from '~utils/pictureData'
 
-import Button from '~components/Button'
-
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
+import { useTheme } from 'next-themes'
 
-const AccountModal = () => {
-  const { account } = useSnapshot(accountState)
+type StateVariables = {
+  [key: string]: boolean
+  picture: boolean
+  gender: boolean
+  language: boolean
+  theme: boolean
+}
 
-  const router = useRouter()
+interface Props {
+  username?: string
+  picture?: string
+  gender?: number
+  language?: string
+  theme?: string
+  private?: boolean
+}
+
+const AccountModal = (props: Props) => {
+  // Localization
   const { t } = useTranslation('common')
+  const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
-  // State
+  // useEffect only runs on the client, so now we can safely show the UI
+  const [mounted, setMounted] = useState(false)
+  const { theme: appTheme, setTheme: setAppTheme } = useTheme()
+
+  // Cookies
+  const accountCookie = getCookie('account')
+  const userCookie = getCookie('user')
+
+  const cookieData = {
+    account: accountCookie ? JSON.parse(accountCookie as string) : undefined,
+    user: userCookie ? JSON.parse(userCookie as string) : undefined,
+  }
+
+  // UI State
   const [open, setOpen] = useState(false)
-  const [picture, setPicture] = useState('')
-  const [language, setLanguage] = useState('')
-  const [gender, setGender] = useState(0)
-  const [privateProfile, setPrivateProfile] = useState(false)
+  const [selectOpenState, setSelectOpenState] = useState<StateVariables>({
+    picture: false,
+    gender: false,
+    language: false,
+    theme: false,
+  })
 
-  // Refs
-  const pictureSelect = React.createRef<HTMLSelectElement>()
-  const languageSelect = React.createRef<HTMLSelectElement>()
-  const genderSelect = React.createRef<HTMLSelectElement>()
-  const privateSelect = React.createRef<HTMLInputElement>()
+  // Values
+  const [username, setUsername] = useState(props.username || '')
+  const [picture, setPicture] = useState(props.picture || '')
+  const [language, setLanguage] = useState(props.language || '')
+  const [gender, setGender] = useState(props.gender || 0)
+  const [theme, setTheme] = useState(props.theme || 'system')
+  // const [privateProfile, setPrivateProfile] = useState(false)
 
-  // useEffect(() => {
-  //   if (cookies.user) setPicture(cookies.user.picture)
-  //   if (cookies.user) setLanguage(cookies.user.language)
-  //   if (cookies.user) setGender(cookies.user.gender)
-  // }, [cookies])
+  // Setup
 
-  const pictureOptions = pictureData
-    .sort((a, b) => (a.name.en > b.name.en ? 1 : -1))
-    .map((item, i) => {
-      return (
-        <option key={`picture-${i}`} value={item.filename}>
-          {item.name[locale]}
-        </option>
-      )
+  // UI management
+  function openChange(open: boolean) {
+    setOpen(open)
+  }
+
+  function openSelect(name: 'picture' | 'gender' | 'language' | 'theme') {
+    const stateVars = selectOpenState
+    Object.keys(stateVars).forEach((key) => {
+      if (key === name) {
+        stateVars[name] = true
+      } else {
+        stateVars[key] = false
+      }
     })
 
-  function handlePictureChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    if (pictureSelect.current) setPicture(pictureSelect.current.value)
+    setSelectOpenState(stateVars)
   }
 
-  function handleLanguageChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    if (languageSelect.current) setLanguage(languageSelect.current.value)
+  // Event handlers
+  function handlePictureChange(value: string) {
+    setPicture(value)
   }
 
-  function handleGenderChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    if (genderSelect.current) setGender(parseInt(genderSelect.current.value))
+  function handleLanguageChange(value: string) {
+    setLanguage(value)
   }
 
-  function handlePrivateChange(checked: boolean) {
-    setPrivateProfile(checked)
+  function handleGenderChange(value: string) {
+    setGender(parseInt(value))
   }
 
+  function handleThemeChange(value: string) {
+    setTheme(value)
+    setAppTheme(value)
+  }
+
+  // API calls
   function update(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
@@ -78,172 +127,180 @@ const AccountModal = () => {
         element: pictureData.find((i) => i.filename === picture)?.element,
         language: language,
         gender: gender,
-        private: privateProfile,
+        theme: theme,
+        // private: privateProfile,
       },
     }
 
-    // api.endpoints.users
-    //   .update(cookies.account.user_id, object, headers)
-    //   .then((response) => {
-    //     const user = response.data.user
+    if (accountState.account.user) {
+      api.endpoints.users
+        .update(accountState.account.user?.id, object)
+        .then((response) => {
+          const user = response.data
 
-    //     const cookieObj = {
-    //       picture: user.picture.picture,
-    //       element: user.picture.element,
-    //       gender: user.gender,
-    //       language: user.language,
-    //     }
+          const cookieObj = {
+            picture: user.avatar.picture,
+            element: user.avatar.element,
+            gender: user.gender,
+            language: user.language,
+            theme: user.theme,
+          }
 
-    //     setCookies("user", cookieObj, { path: "/" })
+          setCookie('user', cookieObj, { path: '/' })
 
-    //     accountState.account.user = {
-    //       id: user.id,
-    //       username: user.username,
-    //       picture: user.picture.picture,
-    //       element: user.picture.element,
-    //       gender: user.gender,
-    //     }
+          accountState.account.user = {
+            id: user.id,
+            username: user.username,
+            picture: user.avatar.picture,
+            element: user.avatar.element,
+            language: user.language,
+            theme: user.theme,
+            gender: user.gender,
+          }
 
-    //     setOpen(false)
-    //     changeLanguage(user.language)
-    //   })
+          setOpen(false)
+          changeLanguage(router, user.language)
+        })
+    }
   }
 
-  function changeLanguage(newLanguage: string) {
-    // if (newLanguage !== router.locale) {
-    //   setCookies("NEXT_LOCALE", newLanguage, { path: "/" })
-    //   router.push(router.asPath, undefined, { locale: newLanguage })
-    // }
-  }
+  // Views
+  const pictureOptions = pictureData
+    .sort((a, b) => (a.name.en > b.name.en ? 1 : -1))
+    .map((item, i) => {
+      return (
+        <PictureSelectItem
+          key={`picture-${i}`}
+          element={item.element}
+          src={[
+            `/profile/${item.filename}.png`,
+            `/profile/${item.filename}@2x.png 2x`,
+          ]}
+          value={item.filename}
+        >
+          {item.name[locale]}
+        </PictureSelectItem>
+      )
+    })
 
-  function openChange(open: boolean) {
-    setOpen(open)
+  const pictureField = () => (
+    <SelectTableField
+      name="picture"
+      description={t('modals.settings.descriptions.picture')}
+      className="Image"
+      label={t('modals.settings.labels.picture')}
+      open={selectOpenState.picture}
+      onClick={() => openSelect('picture')}
+      onChange={handlePictureChange}
+      imageAlt={t('modals.settings.labels.image_alt')}
+      imageClass={pictureData.find((i) => i.filename === picture)?.element}
+      imageSrc={[`/profile/${picture}.png`, `/profile/${picture}@2x.png 2x`]}
+      value={picture}
+    >
+      {pictureOptions}
+    </SelectTableField>
+  )
+
+  const genderField = () => (
+    <SelectTableField
+      name="gender"
+      description={t('modals.settings.descriptions.gender')}
+      label={t('modals.settings.labels.gender')}
+      open={selectOpenState.gender}
+      onClick={() => openSelect('gender')}
+      onChange={handleGenderChange}
+      value={`${gender}`}
+    >
+      <SelectItem key="gran" value="0">
+        {t('modals.settings.gender.gran')}
+      </SelectItem>
+      <SelectItem key="djeeta" value="1">
+        {t('modals.settings.gender.djeeta')}
+      </SelectItem>
+    </SelectTableField>
+  )
+
+  const languageField = () => (
+    <SelectTableField
+      name="language"
+      label={t('modals.settings.labels.language')}
+      open={selectOpenState.language}
+      onClick={() => openSelect('language')}
+      onChange={handleLanguageChange}
+      value={language}
+    >
+      <SelectItem key="en" value="en">
+        {t('modals.settings.language.english')}
+      </SelectItem>
+      <SelectItem key="ja" value="ja">
+        {t('modals.settings.language.japanese')}
+      </SelectItem>
+    </SelectTableField>
+  )
+
+  const themeField = () => (
+    <SelectTableField
+      name="theme"
+      label={t('modals.settings.labels.theme')}
+      open={selectOpenState.theme}
+      onClick={() => openSelect('theme')}
+      onChange={handleThemeChange}
+      value={theme}
+    >
+      <SelectItem key="system" value="system">
+        {t('modals.settings.theme.system')}
+      </SelectItem>
+      <SelectItem key="light" value="light">
+        {t('modals.settings.theme.light')}
+      </SelectItem>
+      <SelectItem key="dark" value="dark">
+        {t('modals.settings.theme.dark')}
+      </SelectItem>
+    </SelectTableField>
+  )
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={openChange}>
-      <Dialog.Trigger asChild>
+    <Dialog open={open} onOpenChange={openChange}>
+      <DialogTrigger asChild>
         <li className="MenuItem">
           <span>{t('menu.settings')}</span>
         </li>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Content
-          className="Account Dialog"
-          onOpenAutoFocus={(event) => event.preventDefault()}
-        >
-          <div className="DialogHeader">
-            <div className="DialogTop">
-              <Dialog.Title className="SubTitle">
-                {t('modals.settings.title')}
-              </Dialog.Title>
-              <Dialog.Title className="DialogTitle">
-                @{account.user?.username}
-              </Dialog.Title>
-            </div>
-            <Dialog.Close className="DialogClose" asChild>
-              <span>
-                <CrossIcon />
-              </span>
-            </Dialog.Close>
+      </DialogTrigger>
+      <DialogContent className="Account Dialog">
+        <div className="DialogHeader">
+          <div className="DialogTop">
+            <DialogTitle className="SubTitle">
+              {t('modals.settings.title')}
+            </DialogTitle>
+            <DialogTitle className="DialogTitle">@{username}</DialogTitle>
           </div>
+          <DialogClose className="DialogClose" asChild>
+            <span>
+              <CrossIcon />
+            </span>
+          </DialogClose>
+        </div>
 
-          <form onSubmit={update}>
-            <div className="field">
-              <div className="left">
-                <label>{t('modals.settings.labels.picture')}</label>
-              </div>
-
-              <div
-                className={`preview ${
-                  pictureData.find((i) => i.filename === picture)?.element
-                }`}
-              >
-                {picture ? (
-                  <img
-                    alt="Profile preview"
-                    srcSet={`/profile/${picture}.png,
-                                             /profile/${picture}@2x.png 2x`}
-                    src={`/profile/${picture}.png`}
-                  />
-                ) : (
-                  ''
-                )}
-              </div>
-
-              <select
-                name="picture"
-                onChange={handlePictureChange}
-                value={picture}
-                ref={pictureSelect}
-              >
-                {pictureOptions}
-              </select>
-            </div>
-            <div className="field">
-              <div className="left">
-                <label>{t('modals.settings.labels.gender')}</label>
-              </div>
-
-              <select
-                name="gender"
-                onChange={handleGenderChange}
-                value={gender}
-                ref={genderSelect}
-              >
-                <option key="gran" value="0">
-                  {t('modals.settings.gender.gran')}
-                </option>
-                <option key="djeeta" value="1">
-                  {t('modals.settings.gender.djeeta')}
-                </option>
-              </select>
-            </div>
-            <div className="field">
-              <div className="left">
-                <label>{t('modals.settings.labels.language')}</label>
-              </div>
-
-              <select
-                name="language"
-                onChange={handleLanguageChange}
-                value={language}
-                ref={languageSelect}
-              >
-                <option key="en" value="en">
-                  {t('modals.settings.language.english')}
-                </option>
-                <option key="jp" value="ja">
-                  {t('modals.settings.language.japanese')}
-                </option>
-              </select>
-            </div>
-            <div className="field">
-              <div className="left">
-                <label>{t('modals.settings.labels.private')}</label>
-                <p className={locale}>
-                  {t('modals.settings.descriptions.private')}
-                </p>
-              </div>
-
-              <Switch.Root
-                className="Switch"
-                onCheckedChange={handlePrivateChange}
-                checked={privateProfile}
-              >
-                <Switch.Thumb className="Thumb" />
-              </Switch.Root>
-            </div>
-
-            <Button
-              contained={true}
-              text={t('modals.settings.buttons.confirm')}
-            />
-          </form>
-        </Dialog.Content>
-        <Dialog.Overlay className="Overlay" />
-      </Dialog.Portal>
-    </Dialog.Root>
+        <form onSubmit={update}>
+          {pictureField()}
+          {genderField()}
+          {languageField()}
+          {themeField()}
+          <Button
+            contained={true}
+            text={t('modals.settings.buttons.confirm')}
+          />
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

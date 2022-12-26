@@ -170,9 +170,12 @@
         "picture": "Picture",
         "language": "Language",
         "gender": "Main Character",
-        "private": "Private"
+        "private": "Private",
+        "theme": "Theme"
       },
       "descriptions": {
+        "picture": "Displayed next to your name",
+        "gender": "The character shown on your teams",
         "private": "Hide your profile and prevent your grids from showing up in collections"
       },
       "gender": {
@@ -182,6 +185,11 @@
       "language": {
         "english": "English",
         "japanese": "Japanese"
+      },
+      "theme": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "Follow system"
       },
       "buttons": {
         "confirm": "Save settings"
