@@ -170,7 +170,8 @@
         "picture": "Picture",
         "language": "Language",
         "gender": "Main Character",
-        "private": "Private"
+        "private": "Private",
+        "theme": "Theme"
       },
       "descriptions": {
         "private": "Hide your profile and prevent your grids from showing up in collections"
@@ -182,6 +183,11 @@
       "language": {
         "english": "English",
         "japanese": "Japanese"
+      },
+      "theme": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "Follow system"
       },
       "buttons": {
         "confirm": "Save settings"

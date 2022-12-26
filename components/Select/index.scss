@@ -43,6 +43,10 @@
     }
   }
 
+  &.Table {
+    min-width: $unit * 30;
+  }
+
   .SelectIcon {
     display: flex;
     align-items: center;

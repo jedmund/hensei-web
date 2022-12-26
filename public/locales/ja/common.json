@@ -170,7 +170,8 @@
         "picture": "プロフィール画像",
         "language": "言語",
         "gender": "主人公",
-        "private": "プライベート"
+        "private": "プライベート",
+        "theme": "表示"
       },
       "descriptions": {
         "private": "プロフィールを隠し、編成をコレクションに表示されないようにします"
@@ -182,6 +183,11 @@
       "language": {
         "english": "英語",
         "japanese": "日本語"
+      },
+      "theme": {
+        "light": "ライト",
+        "dark": "ダーク",
+        "system": "システム"
       },
       "buttons": {
         "confirm": "設定を保存する"
