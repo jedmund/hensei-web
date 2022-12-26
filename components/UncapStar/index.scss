@@ -1,12 +1,20 @@
 .UncapStar {
-  background-repeat: no-repeat;
-  background-size: 18px 18px;
-  display: block;
-  height: 18px;
-  width: 18px;
+  $size: 18px;
 
-  &:hover {
-    transform: scale(1.2);
+  @media (max-width: $tablet) {
+    $size: 12px;
+  }
+
+  background-repeat: no-repeat;
+  background-size: $size;
+  display: block;
+  height: $size;
+  width: $size;
+
+  @media (min-width: $laptop) {
+    &:hover {
+      transform: scale(1.2);
+    }
   }
 
   &.empty,
@@ -14,23 +22,23 @@
   &.empty.flb,
   &.empty.ulb,
   &.empty.special {
-    background: url('/icons/uncap/empty.svg');
+    background-image: url('/icons/uncap/empty.svg');
 
     &:hover {
-      background: url('/icons/uncap/empty-hover.svg');
+      background-image: url('/icons/uncap/empty-hover.svg');
     }
   }
 
   &.mlb {
-    background: url('/icons/uncap/yellow.svg');
+    background-image: url('/icons/uncap/yellow.svg');
 
     &:hover {
-      background: url('/icons/uncap/yellow-hover.svg');
+      background-image: url('/icons/uncap/yellow-hover.svg');
     }
   }
 
   &.special {
-    background: url('/icons/uncap/red.svg');
+    background-image: url('/icons/uncap/red.svg');
 
     &:hover {
       background: url('/icons/uncap/red-hover.svg');
@@ -38,7 +46,7 @@
   }
 
   &.flb {
-    background: url('/icons/uncap/blue.svg');
+    background-image: url('/icons/uncap/blue.svg');
 
     &:hover {
       background: url('/icons/uncap/blue-hover.svg');
@@ -46,10 +54,10 @@
   }
 
   &.ulb {
-    background: url('/icons/uncap/purple.svg');
+    background-image: url('/icons/uncap/purple.svg');
 
     &:hover {
-      background: url('/icons/uncap/purple-hover.svg');
+      background-image: url('/icons/uncap/purple-hover.svg');
     }
   }
 }

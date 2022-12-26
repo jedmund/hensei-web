@@ -303,9 +303,3 @@ i.tag {
     transform: translate(-50%, -50%) scale(1);
   }
 }
-
-@media (max-width: $phone) {
-  body {
-    padding: $unit !important;
-  }
-}

@@ -11,6 +11,7 @@ import ToggleSwitch from '~components/ToggleSwitch'
 import { GridType } from '~utils/enums'
 
 import './index.scss'
+import classNames from 'classnames'
 
 interface Props {
   selectedTab: GridType
@@ -64,7 +65,12 @@ const PartySegmentedControl = (props: Props) => {
   )
 
   return (
-    <div className="PartyNavigation">
+    <div
+      className={classNames({
+        PartyNavigation: true,
+        Editable: party.editable,
+      })}
+    >
       <SegmentedControl elementClass={getElement()}>
         {/* <Segment
                     groupName="grid"

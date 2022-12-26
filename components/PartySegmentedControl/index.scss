@@ -10,12 +10,15 @@
 
   @media (max-width: $phone) {
     gap: $unit;
-    justify-content: flex-start;
     margin-left: 0;
     margin-right: 0;
     padding: 0 $unit;
     max-width: auto;
     width: 100%;
+
+    &.Editable {
+      justify-content: flex-start;
+    }
 
     .SegmentedControl {
       flex-grow: 1;

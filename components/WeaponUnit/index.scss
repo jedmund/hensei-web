@@ -25,11 +25,15 @@
   }
 
   &.mainhand {
-    margin-right: $unit * 3;
+    margin-right: $unit-3x;
     max-width: 200px;
 
-    @media (max-width: $medium-screen) {
-      margin-right: $unit * 2;
+    @media (max-width: $tablet) {
+      margin-right: $unit-2x;
+    }
+
+    @media (max-width: $phone) {
+      margin-right: $unit;
     }
 
     &.editable .WeaponImage:hover {
