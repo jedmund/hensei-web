@@ -8,6 +8,8 @@ import * as Switch from '@radix-ui/react-switch'
 
 import AboutModal from '~components/AboutModal'
 import AccountModal from '~components/AccountModal'
+import ChangelogModal from '~components/ChangelogModal'
+import RoadmapModal from '~components/RoadmapModal'
 import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
 
@@ -86,6 +88,10 @@ const HeaderMenu = (props: Props) => {
           </div>
           <div className="MenuGroup">
             <AboutModal />
+            <ChangelogModal />
+            <RoadmapModal />
+          </div>
+          <div className="MenuGroup">
             <AccountModal
               username={accountState.account.user?.username}
               picture={accountState.account.user?.picture}
@@ -133,6 +139,8 @@ const HeaderMenu = (props: Props) => {
         </div>
         <div className="MenuGroup">
           <AboutModal />
+          <ChangelogModal />
+          <RoadmapModal />
         </div>
         <div className="MenuGroup">
           <LoginModal />

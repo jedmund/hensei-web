@@ -131,6 +131,12 @@
     "about": {
       "title": "このサイトについて"
     },
+    "roadmap": {
+      "title": "ロードマップ"
+    },
+    "changelog": {
+      "title": "変更ログ"
+    },
     "conflict": {
       "character": "<strong>同じ名前のキャラクター</strong>がパーティに編成されています。<br />以下のキャラクターを入れ替えますか？",
       "weapon": {
@@ -236,9 +242,11 @@
   },
   "menu": {
     "about": "このサイトについて",
+    "changelog": "変更ログ",
     "guides": "攻略",
     "language": "言語",
     "login": "ログイン",
+    "roadmap": "ロードマップ",
     "saved": "保存した編成",
     "settings": "アカウント設定",
     "signup": "登録",

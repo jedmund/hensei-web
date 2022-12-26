@@ -131,6 +131,12 @@
     "about": {
       "title": "About"
     },
+    "roadmap": {
+      "title": "Roadmap"
+    },
+    "changelog": {
+      "title": "Changelog"
+    },
     "conflict": {
       "character": "Only one <strong>version of a character</strong> can be included in each party. Do you want to change your party members?",
       "weapon": {
@@ -235,9 +241,11 @@
   },
   "menu": {
     "about": "About",
+    "changelog": "Changelog",
     "guides": "Guides",
     "language": "Language",
     "login": "Log in",
+    "roadmap": "Roadmap",
     "saved": "Saved",
     "settings": "Settings",
     "signup": "Sign up",

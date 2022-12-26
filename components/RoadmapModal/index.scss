@@ -1,0 +1,26 @@
+h3.priority {
+  font-weight: $medium;
+  font-size: $font-medium;
+  margin-bottom: $unit;
+
+  &.high {
+    color: $red;
+  }
+
+  &.mid {
+    color: $orange-10;
+  }
+
+  &.low {
+    color: $blue;
+  }
+}
+
+.notes {
+  color: var(--text-primary);
+  list-style-type: disc;
+
+  li {
+    margin-bottom: $unit-half;
+  }
+}
