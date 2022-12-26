@@ -15,8 +15,9 @@ interface Props {
   imageClass?: string
   imageSrc?: string[]
   children: React.ReactNode
-  onClick: () => void
+  onOpenChange: () => void
   onChange: (value: string) => void
+  onClose: () => void
 }
 
 const SelectTableField = (props: Props) => {
@@ -53,8 +54,9 @@ const SelectTableField = (props: Props) => {
         <Select
           name={props.name}
           open={props.open}
-          onClick={props.onClick}
+          onOpenChange={props.onOpenChange}
           onValueChange={props.onChange}
+          onClose={props.onClose}
           triggerClass={classNames({ Bound: true, Table: true })}
           value={value}
         >

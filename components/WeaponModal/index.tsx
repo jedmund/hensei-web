@@ -4,7 +4,13 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
 
-import * as Dialog from '@radix-ui/react-dialog'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from '~components/Dialog'
 
 import AXSelect from '~components/AxSelect'
 import AwakeningSelect from '~components/AwakeningSelect'
@@ -73,6 +79,14 @@ const WeaponModal = (props: Props) => {
   const [weaponKey1Id, setWeaponKey1Id] = useState('')
   const [weaponKey2Id, setWeaponKey2Id] = useState('')
   const [weaponKey3Id, setWeaponKey3Id] = useState('')
+
+  const [weaponKey1Open, setWeaponKey1Open] = useState(false)
+  const [weaponKey2Open, setWeaponKey2Open] = useState(false)
+  const [weaponKey3Open, setWeaponKey3Open] = useState(false)
+  const [weaponKey4Open, setWeaponKey4Open] = useState(false)
+  const [ax1Open, setAx1Open] = useState(false)
+  const [ax2Open, setAx2Open] = useState(false)
+  const [awakeningOpen, setAwakeningOpen] = useState(false)
 
   useEffect(() => {
     setElement(props.gridWeapon.element)
@@ -188,16 +202,35 @@ const WeaponModal = (props: Props) => {
     )
   }
 
+  function openSelect(index: 1 | 2 | 3 | 4) {
+    setWeaponKey1Open(index === 1 ? !weaponKey1Open : false)
+    setWeaponKey2Open(index === 2 ? !weaponKey2Open : false)
+    setWeaponKey3Open(index === 3 ? !weaponKey3Open : false)
+    setWeaponKey4Open(index === 4 ? !weaponKey4Open : false)
+  }
+
+  function receiveAxOpen(index: 1 | 2, isOpen: boolean) {
+    if (index === 1) setAx1Open(isOpen)
+    if (index === 2) setAx2Open(isOpen)
+  }
+
+  function receiveAwakeningOpen(isOpen: boolean) {
+    setAwakeningOpen(isOpen)
+  }
+
   const keySelect = () => {
     return (
       <section>
         <h3>{t('modals.weapon.subtitles.weapon_keys')}</h3>
         {[2, 3, 17, 22].includes(props.gridWeapon.object.series) ? (
           <WeaponKeySelect
+            open={weaponKey1Open}
             currentValue={weaponKey1 != null ? weaponKey1 : undefined}
             series={props.gridWeapon.object.series}
             slot={0}
+            onOpenChange={() => openSelect(1)}
             onChange={receiveWeaponKey}
+            onClose={() => setWeaponKey1Open(false)}
           />
         ) : (
           ''
@@ -205,10 +238,13 @@ const WeaponModal = (props: Props) => {
 
         {[2, 3, 17].includes(props.gridWeapon.object.series) ? (
           <WeaponKeySelect
+            open={weaponKey2Open}
             currentValue={weaponKey2 != null ? weaponKey2 : undefined}
             series={props.gridWeapon.object.series}
             slot={1}
+            onOpenChange={() => openSelect(2)}
             onChange={receiveWeaponKey}
+            onClose={() => setWeaponKey2Open(false)}
           />
         ) : (
           ''
@@ -216,10 +252,13 @@ const WeaponModal = (props: Props) => {
 
         {props.gridWeapon.object.series == 17 ? (
           <WeaponKeySelect
+            open={weaponKey3Open}
             currentValue={weaponKey3 != null ? weaponKey3 : undefined}
             series={props.gridWeapon.object.series}
             slot={2}
+            onOpenChange={() => openSelect(3)}
             onChange={receiveWeaponKey}
+            onClose={() => setWeaponKey3Open(false)}
           />
         ) : (
           ''
@@ -228,10 +267,13 @@ const WeaponModal = (props: Props) => {
         {props.gridWeapon.object.series == 24 &&
         props.gridWeapon.object.uncap.ulb ? (
           <WeaponKeySelect
+            open={weaponKey4Open}
             currentValue={weaponKey1 != null ? weaponKey1 : undefined}
             series={props.gridWeapon.object.series}
             slot={0}
+            onOpenChange={() => openSelect(4)}
             onChange={receiveWeaponKey}
+            onClose={() => setWeaponKey4Open(false)}
           />
         ) : (
           ''
@@ -247,6 +289,7 @@ const WeaponModal = (props: Props) => {
         <AXSelect
           axType={props.gridWeapon.object.ax}
           currentSkills={props.gridWeapon.ax}
+          onOpenChange={receiveAxOpen}
           sendValidity={receiveValidity}
           sendValues={receiveAxValues}
         />
@@ -262,6 +305,7 @@ const WeaponModal = (props: Props) => {
           object="weapon"
           awakeningType={props.gridWeapon.awakening?.type}
           awakeningLevel={props.gridWeapon.awakening?.level}
+          onOpenChange={receiveAwakeningOpen}
           sendValidity={receiveValidity}
           sendValues={receiveAwakeningValues}
         />
@@ -278,49 +322,64 @@ const WeaponModal = (props: Props) => {
     setOpen(open)
   }
 
+  const anySelectOpen =
+    weaponKey1Open ||
+    weaponKey2Open ||
+    weaponKey3Open ||
+    weaponKey4Open ||
+    ax1Open ||
+    ax2Open ||
+    awakeningOpen
+
+  function onEscapeKeyDown(event: KeyboardEvent) {
+    if (anySelectOpen) {
+      return event.preventDefault()
+    } else {
+      setOpen(false)
+    }
+  }
+
   return (
     // TODO: Refactor into Dialog component
-    <Dialog.Root open={open} onOpenChange={openChange}>
-      <Dialog.Trigger asChild>{props.children}</Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Content
-          className="Weapon Dialog"
-          onOpenAutoFocus={(event) => event.preventDefault()}
-        >
-          <div className="DialogHeader">
-            <div className="DialogTop">
-              <Dialog.Title className="SubTitle">
-                {t('modals.weapon.title')}
-              </Dialog.Title>
-              <Dialog.Title className="DialogTitle">
-                {props.gridWeapon.object.name[locale]}
-              </Dialog.Title>
-            </div>
-            <Dialog.Close className="DialogClose" asChild>
-              <span>
-                <CrossIcon />
-              </span>
-            </Dialog.Close>
+    <Dialog open={open} onOpenChange={openChange}>
+      <DialogTrigger asChild>{props.children}</DialogTrigger>
+      <DialogContent
+        className="Weapon Dialog"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        onEscapeKeyDown={onEscapeKeyDown}
+      >
+        <div className="DialogHeader">
+          <div className="DialogTop">
+            <DialogTitle className="SubTitle">
+              {t('modals.weapon.title')}
+            </DialogTitle>
+            <DialogTitle className="DialogTitle">
+              {props.gridWeapon.object.name[locale]}
+            </DialogTitle>
           </div>
+          <DialogClose className="DialogClose" asChild>
+            <span>
+              <CrossIcon />
+            </span>
+          </DialogClose>
+        </div>
 
-          <div className="mods">
-            {props.gridWeapon.object.element == 0 ? elementSelect() : ''}
-            {[2, 3, 17, 24].includes(props.gridWeapon.object.series)
-              ? keySelect()
-              : ''}
-            {props.gridWeapon.object.ax > 0 ? axSelect() : ''}
-            {props.gridWeapon.awakening ? awakeningSelect() : ''}
-            <Button
-              contained={true}
-              onClick={updateWeapon}
-              disabled={!formValid}
-              text={t('modals.weapon.buttons.confirm')}
-            />
-          </div>
-        </Dialog.Content>
-        <Dialog.Overlay className="Overlay" />
-      </Dialog.Portal>
-    </Dialog.Root>
+        <div className="mods">
+          {props.gridWeapon.object.element == 0 ? elementSelect() : ''}
+          {[2, 3, 17, 24].includes(props.gridWeapon.object.series)
+            ? keySelect()
+            : ''}
+          {props.gridWeapon.object.ax > 0 ? axSelect() : ''}
+          {props.gridWeapon.awakening ? awakeningSelect() : ''}
+          <Button
+            contained={true}
+            onClick={updateWeapon}
+            disabled={!formValid}
+            text={t('modals.weapon.buttons.confirm')}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 

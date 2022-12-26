@@ -60,12 +60,18 @@ const FilterBar = (props: Props) => {
     props.onFilter({ raidSlug: slug })
   }
 
+  function onSelectChange(name: 'element' | 'recency') {
+    setElementOpen(name === 'element' ? !elementOpen : false)
+    setRecencyOpen(name === 'recency' ? !recencyOpen : false)
+  }
+
   return (
     <div className={classes}>
       {props.children}
       <Select
         value={`${props.element}`}
         open={elementOpen}
+        onOpenChange={() => onSelectChange('element')}
         onValueChange={elementSelectChanged}
         onClick={openElementSelect}
       >
@@ -106,6 +112,7 @@ const FilterBar = (props: Props) => {
         value={`${props.recency}`}
         trigger={'All time'}
         open={recencyOpen}
+        onOpenChange={() => onSelectChange('recency')}
         onValueChange={recencySelectChanged}
         onClick={openRecencySelect}
       >
