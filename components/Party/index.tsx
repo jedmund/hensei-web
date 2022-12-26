@@ -238,6 +238,8 @@ const Party = (props: Props) => {
       {navigation}
       <section id="Party">{currentGrid()}</section>
       <PartyDetails
+        party={props.team}
+        new={props.new || false}
         editable={party.editable}
         updateCallback={updateDetails}
         deleteCallback={deleteTeam}

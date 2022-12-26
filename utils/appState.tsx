@@ -80,8 +80,8 @@ export const initialAppState: AppState = {
     extra: false,
     user: undefined,
     favorited: false,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: '',
+    updated_at: '',
   },
   grid: {
     weapons: {

@@ -13,6 +13,7 @@ import CharLimitedFieldset from '~components/CharLimitedFieldset'
 import RaidDropdown from '~components/RaidDropdown'
 import TextFieldset from '~components/TextFieldset'
 
+import { accountState } from '~utils/accountState'
 import { appState } from '~utils/appState'
 
 import CheckIcon from '~public/icons/Check.svg'
@@ -25,6 +26,8 @@ import { formatTimeAgo } from '~utils/timeAgo'
 
 // Props
 interface Props {
+  party?: Party
+  new: boolean
   editable: boolean
   updateCallback: (name?: string, description?: string, raid?: Raid) => void
   deleteCallback: (
@@ -116,34 +119,38 @@ const PartyDetails = (props: Props) => {
     toggleDetails()
   }
 
-  const userImage = () => {
-    if (party.user)
+  const userImage = (picture?: string, element?: string) => {
+    if (picture && element)
       return (
         <img
-          alt={party.user.avatar.picture}
-          className={`profile ${party.user.avatar.element}`}
-          srcSet={`/profile/${party.user.avatar.picture}.png,
-                            /profile/${party.user.avatar.picture}@2x.png 2x`}
-          src={`/profile/${party.user.avatar.picture}.png`}
+          alt={picture}
+          className={`profile ${element}`}
+          srcSet={`/profile/${picture}.png,
+                            /profile/${picture}@2x.png 2x`}
+          src={`/profile/${picture}.png`}
         />
       )
     else return <div className="no-user" />
   }
 
-  const userBlock = () => {
+  const userBlock = (username?: string, picture?: string, element?: string) => {
     return (
       <div className={userClass}>
-        {userImage()}
-        {party.user ? party.user.username : t('no_user')}
+        {userImage(picture, element)}
+        {username ? username : t('no_user')}
       </div>
     )
   }
 
-  const linkedUserBlock = (user: User) => {
+  const linkedUserBlock = (
+    username?: string,
+    picture?: string,
+    element?: string
+  ) => {
     return (
       <div>
-        <Link href={`/${user.username}`} passHref>
-          <a className={linkClass}>{userBlock()}</a>
+        <Link href={`/${username}`} passHref>
+          <a className={linkClass}>{userBlock(username, picture, element)}</a>
         </Link>
       </div>
     )
@@ -203,7 +210,7 @@ const PartyDetails = (props: Props) => {
       <CharLimitedFieldset
         fieldName="name"
         placeholder="Name your team"
-        value={party.name}
+        value={props.party?.name}
         limit={50}
         onChange={handleInputChange}
         error={errors.name}
@@ -211,7 +218,7 @@ const PartyDetails = (props: Props) => {
       />
       <RaidDropdown
         showAllRaidsOption={false}
-        currentRaid={party.raid ? party.raid.slug : undefined}
+        currentRaid={props.party?.raid ? props.party?.raid.slug : undefined}
         onChange={receiveRaid}
       />
       <TextFieldset
@@ -219,7 +226,7 @@ const PartyDetails = (props: Props) => {
         placeholder={
           'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 1 first\nGood luck with RNG!'
         }
-        value={party.description}
+        value={props.party?.description}
         onChange={handleTextAreaChange}
         error={errors.description}
         ref={descriptionInput}
@@ -249,9 +256,23 @@ const PartyDetails = (props: Props) => {
             {party.name ? party.name : 'Untitled'}
           </h1>
           <div className="attribution">
-            {party.user ? linkedUserBlock(party.user) : userBlock()}
+            {accountState.account.authorized && props.new
+              ? linkedUserBlock(
+                  accountState.account.user?.username,
+                  accountState.account.user?.picture,
+                  accountState.account.user?.element
+                )
+              : userBlock()}
+            {party.user && !props.new
+              ? linkedUserBlock(
+                  party.user.username,
+                  party.user.avatar.picture,
+                  party.user.avatar.element
+                )
+              : ''}
+            {!party.user && !props.new ? userBlock() : ''}
             {party.raid ? linkedRaidBlock(party.raid) : ''}
-            {party.created_at != undefined ? (
+            {party.created_at != '' ? (
               <time
                 className="last-updated"
                 dateTime={new Date(party.created_at).toString()}
