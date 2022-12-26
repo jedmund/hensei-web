@@ -20,6 +20,14 @@
 
     a {
       color: var(--text-primary);
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      &:visited {
+        color: var(--text-primary);
+      }
     }
   }
 
@@ -97,6 +105,14 @@
 
   a {
     color: $grey-50;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    &:visited {
+      color: $grey-50;
+    }
   }
 
   & > a,

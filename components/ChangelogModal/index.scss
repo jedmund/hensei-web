@@ -1,0 +1,15 @@
+h3.version {
+  color: $blue;
+  font-weight: $medium;
+  font-size: $font-medium;
+  margin-bottom: $unit;
+}
+
+.notes {
+  color: var(--text-primary);
+  list-style-type: disc;
+
+  li {
+    margin-bottom: $unit-half;
+  }
+}
