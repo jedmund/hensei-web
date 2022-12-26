@@ -160,7 +160,7 @@ const LoginModal = (props: Props) => {
     accountState.account.authorized = true
 
     setOpen(false)
-    changeLanguage(user.language)
+    changeLanguage(router, user.language)
   }
 
   function openChange(open: boolean) {
