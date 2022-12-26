@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react'
+import Head from 'next/head'
+import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import Party from '~components/Party'
 
 import { appState } from '~utils/appState'
 import { groupWeaponKeys } from '~utils/groupWeaponKeys'
+import generateTitle from '~utils/generateTitle'
 import organizeRaids from '~utils/organizeRaids'
 import setUserToken from '~utils/setUserToken'
 import api from '~utils/api'
@@ -21,6 +24,9 @@ interface Props {
 }
 
 const NewRoute: React.FC<Props> = (props: Props) => {
+  // Import translations
+  const { t } = useTranslation('common')
+
   function callback(path: string) {
     // This is scuffed, how do we do this natively?
     window.history.replaceState(null, `Grid Tool`, `${path}`)
@@ -37,7 +43,28 @@ const NewRoute: React.FC<Props> = (props: Props) => {
     appState.weaponKeys = props.weaponKeys
   }
 
-  return <Party new={true} raids={props.sortedRaids} pushHistory={callback} />
+  return (
+    <React.Fragment>
+      <Head>
+        {/* HTML */}
+        <title>{t('page.titles.new')}</title>
+        <meta name="description" content={t('page.descriptions.new')} />
+
+        {/* OpenGraph */}
+        <meta property="og:title" content={t('page.titles.new')} />
+        <meta property="og:description" content={t('page.descriptions.new')} />
+        <meta property="og:url" content={`https://app.granblue.team/`} />
+        <meta property="og:type" content="website" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:domain" content="app.granblue.team" />
+        <meta name="twitter:title" content={t('page.titles.new')} />
+        <meta name="twitter:description" content={t('page.descriptions.new')} />
+      </Head>
+      <Party new={true} raids={props.sortedRaids} pushHistory={callback} />
+    </React.Fragment>
+  )
 }
 
 export const getServerSidePaths = async () => {

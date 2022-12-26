@@ -280,13 +280,15 @@
   },
   "page": {
     "titles": {
-      "discover": "Discover teams",
+      "discover": "Discover teams / granblue.team",
+      "new": "Create a new team / granblue.team",
       "profile": "@{{username}}'s Teams / granblue.team",
       "team": "{{emoji}} {{teamName}} by {{username}} / granblue.team",
-      "saved": "Your saved teams"
+      "saved": "Your saved teams / granblue.team"
     },
     "descriptions": {
       "discover": "Save and discover teams to use in Granblue Fantasy and search by raid, element or recency",
+      "new": "Create and theorycraft teams to use in Granblue Fantasy and share with the community",
       "profile": "Browse @{{username}}'s Teams and filter by raid, element or recency",
       "team": "Browse this team for {{raidName}} by {{username}} and others on granblue.team"
     }

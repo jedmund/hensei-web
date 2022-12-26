@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
@@ -7,15 +8,13 @@ import Party from '~components/Party'
 
 import { appState } from '~utils/appState'
 import { groupWeaponKeys } from '~utils/groupWeaponKeys'
+import generateTitle from '~utils/generateTitle'
 import organizeRaids from '~utils/organizeRaids'
 import setUserToken from '~utils/setUserToken'
 import api from '~utils/api'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { GroupedWeaponKeys } from '~utils/groupWeaponKeys'
-import { useSnapshot } from 'valtio'
-import { raidGroups } from '~utils/raidGroups'
-import { useRouter } from 'next/router'
 
 interface Props {
   party: Party
@@ -47,28 +46,18 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
     appState.weaponKeys = props.weaponKeys
   }
 
-  function generateTitle() {
-    const teamName =
-      props.party && props.party.name ? props.party.name : t('no_title')
-    const username = props.party
-      ? `@${props.party.user.username}`
-      : t('no_user')
-
-    const title = t('page.titles.team', {
-      username: username,
-      teamName: teamName,
-      emoji: props.meta.element,
-    })
-
-    return title
-  }
-
   return (
     <React.Fragment>
       <Party team={props.party} raids={props.sortedRaids} />
       <Head>
         {/* HTML */}
-        <title>{generateTitle()}</title>
+        <title>
+          {generateTitle(
+            props.meta.element,
+            props.party.user?.username,
+            props.party.name
+          )}
+        </title>
         <meta
           name="description"
           content={t('page.descriptions.team', {
@@ -78,7 +67,14 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
         />
 
         {/* OpenGraph */}
-        <meta property="og:title" content={generateTitle()} />
+        <meta
+          property="og:title"
+          content={generateTitle(
+            props.meta.element,
+            props.party.user?.username,
+            props.party.name
+          )}
+        />
         <meta
           property="og:description"
           content={t('page.descriptions.team', {
@@ -95,7 +91,14 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="app.granblue.team" />
-        <meta name="twitter:title" content={generateTitle()} />
+        <meta
+          name="twitter:title"
+          content={generateTitle(
+            props.meta.element,
+            props.party.user?.username,
+            props.party.name
+          )}
+        />
         <meta
           name="twitter:description"
           content={t('page.descriptions.team', {

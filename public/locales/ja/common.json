@@ -281,13 +281,15 @@
   },
   "page": {
     "titles": {
-      "discover": "編成を見出す",
-      "profile": "@{{username}}さんの作った編成",
+      "discover": "編成を見出す / granblue.team",
+      "new": "新しい編成 / granblue.team",
+      "profile": "@{{username}}さんの作った編成 / granblue.team",
       "team": "{{emoji}} {{teamName}}、{{username}}さんから / granblue.team",
       "saved": "保存した編成"
     },
     "descriptions": {
       "discover": "グランブルーファンタジーの編成をマルチ、属性、作った時間などで探したり保存したりできる",
+      "new": "グランブルーファンタジーの編成を作成し、騎空士とシェアできるサイトgranblue.team",
       "profile": "@{{username}}の編成を調査し、マルチ、属性、または作った時間でフィルターする",
       "team": "granblue.teamで{{username}}さんが作った{{raidName}}の編成を調査できる"
     }
