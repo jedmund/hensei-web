@@ -35,4 +35,10 @@
   .push {
     margin-left: auto;
   }
+
+  @media (max-width: $phone) {
+    .Button .Text {
+      display: none;
+    }
+  }
 }

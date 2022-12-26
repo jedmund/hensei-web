@@ -53,7 +53,7 @@ const PartySegmentedControl = (props: Props) => {
 
   const extraToggle = (
     <div className="ExtraSwitch">
-      Extra
+      <span className="Text">Extra</span>
       <ToggleSwitch
         name="ExtraSwitch"
         editable={party.editable}

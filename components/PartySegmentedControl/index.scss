@@ -1,4 +1,5 @@
 .PartyNavigation {
+  align-items: center;
   display: flex;
   gap: 58px;
   justify-content: center;
@@ -6,6 +7,20 @@
   margin-bottom: $unit * 3;
   max-width: 760px;
   position: relative;
+
+  @media (max-width: $phone) {
+    gap: $unit;
+    justify-content: flex-start;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 $unit;
+    max-width: auto;
+    width: 100%;
+
+    .SegmentedControl {
+      flex-grow: 1;
+    }
+  }
 }
 
 .ExtraSwitch {
@@ -17,4 +32,12 @@
   height: 100%;
   position: absolute;
   right: 0px;
+
+  @media (max-width: $phone) {
+    position: static;
+
+    .Text {
+      display: none;
+    }
+  }
 }

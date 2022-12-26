@@ -3,6 +3,10 @@
   flex-direction: column;
   margin-top: $unit-4x;
 
+  @media (max-width: $phone) {
+    padding: 0 $unit;
+  }
+
   .PartyDetails {
     display: none;
     margin: 0 auto;

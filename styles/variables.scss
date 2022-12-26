@@ -6,7 +6,14 @@ $breakpoints: (
   medium: 800px,
   large: 1024px,
 );
-$medium-screen: 800px;
+
+$desktop: 1920px;
+$laptop: 1280px;
+$tablet: 768px;
+$phone: 375px;
+
+// Legacy
+$medium-screen: 768px;
 
 // Sizing
 $unit: 8px;

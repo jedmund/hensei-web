@@ -33,4 +33,8 @@
       background: #fff;
     }
   }
+
+  @media (max-width: $phone) {
+    min-width: auto;
+  }
 }

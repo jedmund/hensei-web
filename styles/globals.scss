@@ -14,7 +14,7 @@ body {
     sans-serif;
   font-size: 1.4rem;
   height: 100%;
-  padding: $unit * 2 !important;
+  padding: $unit-2x !important;
 
   &.no-scroll {
     overflow: hidden;
@@ -301,5 +301,11 @@ i.tag {
   100% {
     // opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (max-width: $phone) {
+  body {
+    padding: $unit !important;
   }
 }
