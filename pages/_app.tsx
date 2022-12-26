@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getCookie, getCookies } from 'cookies-next'
 import { appWithTranslation } from 'next-i18next'
-import { ThemeProvider } from 'next-themes'
+import { ThemeProvider, useTheme } from 'next-themes'
 
 import type { AppProps } from 'next/app'
 import Layout from '~components/Layout'
@@ -20,12 +20,15 @@ function MyApp({ Component, pageProps }: AppProps) {
     user: userCookie ? JSON.parse(userCookie as string) : undefined,
   }
 
+  const [useSystem, setUseSystem] = useState(
+    cookieData.user?.theme === 'system'
+  )
+
   useEffect(() => {
     setUserToken()
 
     if (accountCookie) {
-      console.log(`Logged in as user "${cookieData.user}"`)
-      console.log(cookieData.account, cookieData.user)
+      console.log(`Logged in as user "${cookieData.account.username}"`)
 
       accountState.account.authorized = true
       accountState.account.user = {
@@ -43,7 +46,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [])
 
   return (
-    <ThemeProvider>
+    <ThemeProvider enableSystem={useSystem}>
       <Layout>
         <Component {...pageProps} />
       </Layout>
