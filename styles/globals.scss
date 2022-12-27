@@ -113,7 +113,7 @@ select {
   margin-top: $unit * 3;
   min-width: 752px;
 
-  @media (max-width: $medium-screen) {
+  @include breakpoint(tablet) {
     min-width: auto;
     width: 100%;
   }
@@ -291,7 +291,7 @@ i.tag {
   gap: $unit;
   padding: 0 ($unit * 3);
 
-  @media (max-width: $phone) {
+  @include breakpoint(phone) {
     display: grid;
     gap: 8px;
     grid-template-columns: 1fr 1fr;

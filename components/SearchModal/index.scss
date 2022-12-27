@@ -8,7 +8,7 @@
   gap: 0;
   padding: 0;
 
-  @media (max-width: $phone) {
+  @include breakpoint(phone) {
     min-width: inherit;
     min-height: inherit;
     width: 96%; // is this even right
@@ -68,7 +68,7 @@
     padding: 0 ($unit * 1.5);
     overflow-y: scroll;
 
-    @media (max-width: $phone) {
+    @include breakpoint(phone) {
       max-height: inherit;
     }
 

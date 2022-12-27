@@ -10,7 +10,7 @@
   position: relative;
   left: 8px;
 
-  @media (max-width: $medium-screen) {
+  @include breakpoint(tablet) {
     left: auto;
     max-width: auto;
     width: 100%;

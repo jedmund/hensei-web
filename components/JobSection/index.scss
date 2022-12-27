@@ -3,7 +3,7 @@
   display: flex;
   margin-bottom: $unit * 3;
 
-  @media (max-width: $phone) {
+  @include breakpoint(phone) {
     flex-direction: column;
     gap: $unit;
   }
@@ -56,7 +56,7 @@
     width: $width;
     transition: box-shadow 0.15s ease-in-out;
 
-    @media (max-width: $phone) {
+    @include breakpoint(phone) {
       aspect-ratio: 16/9;
       margin: 0;
       width: inherit;

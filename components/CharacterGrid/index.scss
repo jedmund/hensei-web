@@ -12,7 +12,7 @@
   padding: 0;
   max-width: 761px;
 
-  @media (max-width: $medium-screen) {
+  @include breakpoint(tablet) {
     justify-content: space-between;
     width: 100%;
   }
@@ -20,7 +20,7 @@
   & > * {
     margin-right: $unit * 3;
 
-    @media (max-width: $medium-screen) {
+    @include breakpoint(tablet) {
       margin-right: inherit;
     }
   }

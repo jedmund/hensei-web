@@ -9,7 +9,7 @@
   max-width: 760px;
   position: relative;
 
-  @media (max-width: $phone) {
+  @include breakpoint(phone) {
     gap: $unit;
     margin-left: 0;
     margin-right: 0;
@@ -20,16 +20,16 @@
     &.Editable {
       justify-content: flex-start;
     }
+  }
 
-    .SegmentedControl {
+  .SegmentedControl {
+    flex-grow: 1;
+
+    @include breakpoint(phone) {
       flex-grow: 1;
-
-      @media (max-width: $phone) {
-        flex-grow: 1;
-        width: 100%;
-        display: grid;
-        grid-template-columns: auto auto auto;
-      }
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto auto auto;
     }
   }
 }
@@ -44,7 +44,7 @@
   position: absolute;
   right: 0px;
 
-  @media (max-width: $phone) {
+  @include breakpoint(phone) {
     position: static;
 
     .Text {

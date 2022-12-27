@@ -9,13 +9,13 @@
   width: auto;
   max-width: 996px;
 
-  @media (max-width: $tablet) {
+  @include breakpoint(tablet) {
     grid-template-columns: minmax(320px, 1fr);
     max-width: inherit;
     width: 100%;
   }
 
-  @media (max-width: $phone) {
+  @include breakpoint(tablet) {
     grid-template-columns: 1fr;
     max-width: inherit;
     width: 100%;
