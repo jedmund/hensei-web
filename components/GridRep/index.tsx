@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
+import 'fix-date'
 
 import { accountState } from '~utils/accountState'
 import { formatTimeAgo } from '~utils/timeAgo'
