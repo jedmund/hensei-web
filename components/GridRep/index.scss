@@ -1,9 +1,12 @@
 .GridRep {
-  border-radius: 6px;
+  aspect-ratio: 3/2;
+  border-radius: $card-corner;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: $unit;
-  padding: $unit * 2;
+  padding: $unit-2x;
+  max-width: 320px;
 
   &:hover {
     background: var(--grid-rep-hover);
@@ -26,6 +29,7 @@
     display: flex;
     flex-direction: row;
     flex-shrink: 0;
+    gap: $unit;
 
     .weapon {
       background: var(--card-bg);
@@ -33,25 +37,27 @@
     }
 
     .grid_mainhand {
-      margin-right: $unit;
-      height: 139px;
-      width: 66px;
+      $d: 64px;
+      aspect-ratio: 200 / 418;
+      height: auto;
+      max-width: $d;
+      min-width: $d;
     }
 
     .grid_weapons {
+      $p: 29.5%;
+      box-sizing: border-box;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
+      grid-template-columns: fit-content($p) fit-content($p) fit-content($p);
+      grid-template-rows: fit-content($p) fit-content($p) fit-content($p);
       gap: $unit;
       margin: 0;
       padding: 0;
-      width: fit-content;
+      width: 100%;
     }
 
     .grid_weapon {
-      float: left;
-      height: 40px;
-      width: 70px;
+      aspect-ratio: 160 / 92;
     }
 
     .grid_mainhand img[src*='jpg'],

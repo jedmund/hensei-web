@@ -12,7 +12,8 @@
   position: sticky;
   transition: box-shadow 0.24s ease-in-out;
   top: $unit * 4;
-  width: 966px;
+  width: 100%;
+  max-width: 996px;
 
   @media (max-width: $tablet) {
     position: static;
