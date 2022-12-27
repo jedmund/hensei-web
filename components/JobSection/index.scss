@@ -1,6 +1,12 @@
 #Job {
+  box-sizing: border-box;
   display: flex;
   margin-bottom: $unit * 3;
+
+  @media (max-width: $phone) {
+    flex-direction: column;
+    gap: $unit;
+  }
 
   select {
     flex-grow: 1;
@@ -8,6 +14,7 @@
   }
 
   .JobDetails {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -31,9 +38,11 @@
     $height: 252px;
     $width: 447px;
 
+    aspect-ratio: 7/9;
     background: url('/images/background_a.jpg');
     background-size: 500px 281px;
     border-radius: $unit;
+    box-sizing: border-box;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
     display: block;
     flex-grow: 2;
@@ -46,6 +55,13 @@
     position: relative;
     width: $width;
     transition: box-shadow 0.15s ease-in-out;
+
+    @media (max-width: $phone) {
+      aspect-ratio: 16/9;
+      margin: 0;
+      width: inherit;
+      height: inherit;
+    }
 
     img {
       -webkit-filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.48));
