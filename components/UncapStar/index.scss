@@ -1,15 +1,17 @@
 .UncapStar {
   $size: 18px;
 
-  @media (max-width: $tablet) {
-    $size: 12px;
-  }
-
   background-repeat: no-repeat;
   background-size: $size;
   display: block;
   height: $size;
   width: $size;
+
+  @media (max-width: $phone) {
+    background-size: 12px;
+    height: 12px;
+    width: 12px;
+  }
 
   @media (min-width: $laptop) {
     &:hover {
