@@ -66,11 +66,6 @@ const PartyDetails = (props: Props) => {
     Visible: open,
   })
 
-  const emptyClasses = classNames({
-    EmptyDetails: true,
-    Visible: true,
-  })
-
   const userClass = classNames({
     user: true,
     empty: !party.user,
@@ -110,9 +105,8 @@ const PartyDetails = (props: Props) => {
 
   useEffect(() => {
     // Extract the video IDs from the description
-    if (party.description) {
-      // sanitizeHtml(party.description)
-      const videoIds = extractYoutubeVideoIds(party.description)
+    if (appState.party.description) {
+      const videoIds = extractYoutubeVideoIds(appState.party.description)
 
       // Fetch the video titles for each ID
       const fetchPromises = videoIds.map(({ id }) => fetchYoutubeData(id))
@@ -124,10 +118,11 @@ const PartyDetails = (props: Props) => {
           /https:\/\/www\.youtube\.com\/watch\?v=([\w-]+)/g
         // Replace the video URLs in the description with LiteYoutubeEmbed elements
         const newDescription = reactStringReplace(
-          party.description,
+          appState.party.description,
           youtubeUrlRegex,
           (match, i) => (
             <LiteYouTubeEmbed
+              key={`${match}-${i}`}
               id={match}
               title={videoTitles[i]}
               wrapperClass="YoutubeWrapper"
@@ -139,8 +134,10 @@ const PartyDetails = (props: Props) => {
         // Update the state with the new description
         setEmbeddedDescription(newDescription)
       })
+    } else {
+      setEmbeddedDescription('')
     }
-  }, [party.description])
+  }, [appState.party.description])
 
   async function fetchYoutubeData(videoId: string) {
     return await youtube
