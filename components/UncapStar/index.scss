@@ -1,16 +1,13 @@
 .UncapStar {
   $size: 18px;
-
   background-repeat: no-repeat;
   background-size: $size;
   display: block;
   height: $size;
   width: $size;
 
-  @media (min-width: $laptop) {
-    &:hover {
-      transform: scale(1.2);
-    }
+  &:hover {
+    transform: scale(1.2);
   }
 
   &.empty,
@@ -45,7 +42,7 @@
     background-image: url('/icons/uncap/blue@3x.png');
 
     &:hover {
-      background: url('/icons/uncap/blue-hover@3x.png');
+      background-image: url('/icons/uncap/blue-hover@3x.png');
     }
   }
 
@@ -64,5 +61,9 @@
     background-size: cover;
     height: 14px;
     width: 14px;
+
+    &:hover {
+      transform: scale(1);
+    }
   }
 }
