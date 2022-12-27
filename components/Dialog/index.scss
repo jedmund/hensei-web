@@ -22,6 +22,12 @@
     text-decoration: underline;
   }
 
+  @media (max-width: $phone) {
+    min-width: inherit;
+    min-height: inherit;
+    width: 100%;
+  }
+
   .DialogHeader {
     display: flex;
     align-items: center;

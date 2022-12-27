@@ -10,6 +10,15 @@
     font-weight: $medium;
     margin-bottom: $unit;
     text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    @media (max-width: $phone) {
+      &.Friend {
+        max-width: 78px;
+      }
+    }
   }
 
   #grid_summons {

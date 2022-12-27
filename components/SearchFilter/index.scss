@@ -8,7 +8,13 @@ button.DropdownLabel {
   font-size: $font-small;
   gap: $unit-half;
   flex-direction: row;
+  justify-content: space-between;
   padding: $unit ($unit * 1.5) $unit $unit-2x;
+
+  div {
+    display: flex;
+    gap: $unit-half;
+  }
 
   &:hover {
     background: var(--button-contained-bg-hover);

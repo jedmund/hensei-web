@@ -17,8 +17,10 @@ const SearchFilter = (props: Props) => {
   return (
     <DropdownMenu.Root open={props.open} onOpenChange={props.onOpenChange}>
       <DropdownMenu.Trigger className="DropdownLabel">
-        {props.label}
-        <span className="count">{props.numSelected}</span>
+        <div>
+          {props.label}
+          <span className="count">{props.numSelected}</span>
+        </div>
         <span className="icon">
           <ArrowIcon />
         </span>

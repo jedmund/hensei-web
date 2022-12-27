@@ -1,5 +1,6 @@
 .PartyNavigation {
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   gap: 58px;
   justify-content: center;
@@ -22,6 +23,13 @@
 
     .SegmentedControl {
       flex-grow: 1;
+
+      @media (max-width: $phone) {
+        flex-grow: 1;
+        width: 100%;
+        display: grid;
+        grid-template-columns: auto auto auto;
+      }
     }
   }
 }

@@ -290,6 +290,12 @@ i.tag {
   display: flex;
   gap: $unit;
   padding: 0 ($unit * 3);
+
+  @media (max-width: $phone) {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @keyframes openModal {

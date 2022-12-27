@@ -35,6 +35,7 @@
   }
 
   @media (max-width: $phone) {
-    min-width: auto;
+    min-width: initial;
+    width: 100%;
   }
 }

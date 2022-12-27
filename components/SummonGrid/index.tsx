@@ -232,7 +232,7 @@ const SummonGrid = (props: Props) => {
 
   const friendSummonElement = (
     <div className="LabeledUnit">
-      <div className="Label">{t('summons.friend')}</div>
+      <div className="Label Friend">{t('summons.friend')}</div>
       <SummonUnit
         gridSummon={grid.summons.friendSummon}
         editable={party.editable}
