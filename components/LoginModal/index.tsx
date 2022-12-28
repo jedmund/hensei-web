@@ -43,7 +43,6 @@ const LoginModal = () => {
 
   // Set up form states and error handling
   const [formValid, setFormValid] = useState(false)
-  const [axiosError, setAxiosError] = useState<AxiosError>()
   const [errors, setErrors] = useState<ErrorMap>({
     email: '',
     password: '',
@@ -51,7 +50,6 @@ const LoginModal = () => {
 
   // States
   const [open, setOpen] = useState(false)
-  const [alertOpen, setAlertOpen] = useState(false)
 
   // Set up form refs
   const emailInput: React.RefObject<HTMLInputElement> = React.createRef()
@@ -95,6 +93,8 @@ const LoginModal = () => {
       (error) => error.length > 0 && (valid = false)
     )
 
+    console.log(errors)
+
     return valid
   }
 
@@ -120,13 +120,15 @@ const LoginModal = () => {
           console.log(error)
 
           if (axios.isAxiosError(error)) {
-            const axiosError: AxiosError = error
-            console.log(axiosError.request)
-            console.log(axiosError.response)
-            console.log(axiosError.code)
-            setAlertOpen(true)
-
-            setAxiosError(axiosError)
+            const response = error?.response
+            if (response && response.data.error === 'invalid_grant') {
+              const errors = {
+                email: '',
+                password: t('modals.login.errors.invalid_credentials'),
+              }
+              setErrors(errors)
+              setFormValid(validateForm(errors))
+            }
           }
         })
     }
@@ -201,64 +203,53 @@ const LoginModal = () => {
   }
 
   return (
-    <React.Fragment>
-      <Alert
-        title="There was an error"
-        message={`${axiosError?.code}: Something went wrong.`}
-        cancelActionText="Okay"
-        cancelAction={() => {
-          setAlertOpen(false)
-        }}
-        open={alertOpen}
-      ></Alert>
-      <Dialog open={open} onOpenChange={openChange}>
-        <DialogTrigger asChild>
-          <li className="MenuItem">
-            <span>{t('menu.login')}</span>
-          </li>
-        </DialogTrigger>
-        <DialogContent
-          className="Login Dialog"
-          onEscapeKeyDown={onEscapeKeyDown}
-          onOpenAutoFocus={onOpenAutoFocus}
-        >
-          <div className="DialogHeader">
-            <div className="DialogTitle">
-              <h1>{t('modals.login.title')}</h1>
-            </div>
-            <DialogClose className="DialogClose">
-              <CrossIcon />
-            </DialogClose>
+    <Dialog open={open} onOpenChange={openChange}>
+      <DialogTrigger asChild>
+        <li className="MenuItem">
+          <span>{t('menu.login')}</span>
+        </li>
+      </DialogTrigger>
+      <DialogContent
+        className="Login Dialog"
+        onEscapeKeyDown={onEscapeKeyDown}
+        onOpenAutoFocus={onOpenAutoFocus}
+      >
+        <div className="DialogHeader">
+          <div className="DialogTitle">
+            <h1>{t('modals.login.title')}</h1>
           </div>
+          <DialogClose className="DialogClose">
+            <CrossIcon />
+          </DialogClose>
+        </div>
 
-          <form className="form" onSubmit={login}>
-            <Input
-              className="Bound"
-              name="email"
-              placeholder={t('modals.login.placeholders.email')}
-              onChange={handleChange}
-              error={errors.email}
-              ref={emailInput}
-            />
+        <form className="form" onSubmit={login}>
+          <Input
+            className="Bound"
+            name="email"
+            placeholder={t('modals.login.placeholders.email')}
+            onChange={handleChange}
+            error={errors.email}
+            ref={emailInput}
+          />
 
-            <Input
-              className="Bound"
-              name="password"
-              placeholder={t('modals.login.placeholders.password')}
-              type="password"
-              onChange={handleChange}
-              error={errors.password}
-              ref={passwordInput}
-            />
+          <Input
+            className="Bound"
+            name="password"
+            placeholder={t('modals.login.placeholders.password')}
+            type="password"
+            onChange={handleChange}
+            error={errors.password}
+            ref={passwordInput}
+          />
 
-            <Button
-              disabled={!formValid}
-              text={t('modals.login.buttons.confirm')}
-            />
-          </form>
-        </DialogContent>
-      </Dialog>
-    </React.Fragment>
+          <Button
+            disabled={!formValid}
+            text={t('modals.login.buttons.confirm')}
+          />
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 
