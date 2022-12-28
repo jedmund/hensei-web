@@ -118,8 +118,8 @@ const AboutModal = () => {
                   .
                 </Dialog.Description>
                 <Dialog.Description className="DialogDescription">
-                  Many thanks also go to Jif, Slipper, Bless, yoey, 9highwind,
-                  and everyone else in{' '}
+                  Many thanks also go to Disinfect, Slipper, Jif, Bless,
+                  9highwind, and everyone else in{' '}
                   <a
                     href="https://game.granbluefantasy.jp/#guild/detail/1190185"
                     target="_blank"
@@ -128,7 +128,7 @@ const AboutModal = () => {
                     Fireplace
                   </a>{' '}
                   that helped with bug testing and feature requests. (P.S.
-                  We&apos;re recruiting!)
+                  We&apos;re recruiting!) And yoey, but he won't join our crew.
                 </Dialog.Description>
               </section>
 
