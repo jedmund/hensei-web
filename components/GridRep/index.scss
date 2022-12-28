@@ -23,6 +23,14 @@
     .Grid .weapon {
       box-shadow: inset 0 0 0 1px var(--grid-border-color);
     }
+
+    @include breakpoint(phone) {
+      background: inherit;
+
+      .Grid .weapon {
+        box-shadow: none;
+      }
+    }
   }
 
   .Grid {
