@@ -36,16 +36,21 @@ const HeaderMenu = (props: Props) => {
 
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
+      const target = event.target instanceof Element ? event.target : null
+      const isButton = target && target.closest('.Button.Active')
+
       if (
         ref.current &&
-        event.target instanceof Element &&
-        !ref.current.contains(event.target) &&
+        target &&
+        !ref.current.contains(target) &&
+        !isButton &&
         props.open
       ) {
         props.onClickOutside()
       }
     }
     document.addEventListener('click', handleClickOutside, true)
+
     return () => {
       document.removeEventListener('click', handleClickOutside, true)
     }

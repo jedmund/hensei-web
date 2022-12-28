@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import { deleteCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
@@ -40,7 +40,7 @@ const Header = () => {
   }
 
   function onClickOutsideMenu() {
-    setOpen(!open)
+    setOpen(false)
   }
 
   function copyToClipboard() {
