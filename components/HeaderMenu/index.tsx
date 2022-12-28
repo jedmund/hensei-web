@@ -20,6 +20,7 @@ interface Props {
   authenticated: boolean
   open: boolean
   username?: string
+  onClickOutside: () => void
   logout?: () => void
 }
 
@@ -31,6 +32,8 @@ const HeaderMenu = (props: Props) => {
   const accountData: AccountCookie = accountCookie
     ? JSON.parse(accountCookie as string)
     : null
+  // Refs
+  const ref: React.RefObject<HTMLDivElement> = React.createRef()
 
   const userCookie = getCookie('user')
   const userData: UserCookie = userCookie
@@ -38,6 +41,22 @@ const HeaderMenu = (props: Props) => {
     : null
 
   const localeCookie = getCookie('NEXT_LOCALE')
+  useEffect(() => {
+    const handleClickOutside = (event: Event) => {
+      if (
+        ref.current &&
+        event.target instanceof Element &&
+        !ref.current.contains(event.target) &&
+        props.open
+      ) {
+        props.onClickOutside()
+      }
+    }
+    document.addEventListener('click', handleClickOutside, true)
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true)
+    }
+  }, [props.onClickOutside])
 
   const [checked, setChecked] = useState(false)
 
