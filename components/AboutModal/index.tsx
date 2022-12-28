@@ -128,7 +128,8 @@ const AboutModal = () => {
                     Fireplace
                   </a>{' '}
                   that helped with bug testing and feature requests. (P.S.
-                  We&apos;re recruiting!) And yoey, but he won't join our crew.
+                  We&apos;re recruiting!) And yoey, but he won&apos;t join our
+                  crew.
                 </Dialog.Description>
               </section>
 
