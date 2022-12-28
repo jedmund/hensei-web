@@ -1,3 +1,9 @@
+.Label {
+  box-sizing: border-box;
+  display: grid;
+  width: 100%;
+}
+
 .Input {
   -webkit-font-smoothing: antialiased;
   background-color: var(--input-bg);
@@ -26,6 +32,8 @@
   font-size: $font-tiny;
   margin: $unit 0;
   padding: calc($unit / 2) ($unit * 2);
+  min-width: 100%;
+  width: 0;
 }
 
 ::placeholder {
