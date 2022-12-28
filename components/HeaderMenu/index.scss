@@ -1,12 +1,18 @@
 .Menu {
   background: var(--menu-bg);
   border-radius: 6px;
+  box-sizing: border-box;
   display: none;
   min-width: 220px;
   position: absolute;
-  top: $unit * 5.75; // This shouldn't be hardcoded. How to calculate it?
+  top: $unit-8x; // This shouldn't be hardcoded. How to calculate it?
   // Also, add space that doesn't make the menu disappear if you move your mouse slowly
   z-index: 10;
+
+  @include breakpoint(phone) {
+    left: $unit-2x;
+    right: $unit-2x;
+  }
 }
 
 .MenuItem {
@@ -27,6 +33,16 @@
 
       &:visited {
         color: var(--text-primary);
+      }
+    }
+
+    @include breakpoint(phone) {
+      background: inherit;
+      color: inherit;
+      cursor: default;
+
+      a {
+        color: inherit;
       }
     }
   }

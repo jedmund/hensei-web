@@ -1,21 +1,20 @@
 .GridRepCollection {
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   margin: 0 auto;
   padding: 0;
   transition: opacity 0.14s ease-in-out;
   justify-items: center;
-  // width: fit-content;
-  width: auto;
+  width: 100%;
   max-width: 996px;
 
-  @media (max-width: $tablet) {
-    grid-template-columns: minmax(320px, 1fr);
+  @include breakpoint(tablet) {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     max-width: inherit;
-    width: 100%;
   }
 
-  @media (max-width: $phone) {
+  @include breakpoint(phone) {
     grid-template-columns: 1fr;
     max-width: inherit;
     width: 100%;

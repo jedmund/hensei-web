@@ -5,7 +5,7 @@
   min-height: 139px;
   position: relative;
 
-  @media (max-width: $medium-screen) {
+  @include breakpoint(tablet) {
     min-height: auto;
   }
 
@@ -28,11 +28,12 @@
     margin-right: $unit-3x;
     max-width: 200px;
 
-    @media (max-width: $tablet) {
+    @include breakpoint(tablet) {
       margin-right: $unit-2x;
     }
 
-    @media (max-width: $phone) {
+    @include breakpoint(phone) {
+      margin-right: $unit-2x;
       margin-right: $unit;
     }
 
@@ -62,7 +63,7 @@
         }
       }
 
-      @media (max-width: $medium-screen) {
+      @include breakpoint(tablet) {
         width: 25vw;
       }
     }
@@ -94,7 +95,7 @@
         }
       }
 
-      @media (max-width: $medium-screen) {
+      @include breakpoint(tablet) {
         width: 20vw;
       }
     }

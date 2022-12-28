@@ -10,7 +10,8 @@
   gap: 6px;
 
   &:hover,
-  &.Blended:hover {
+  &.Blended:hover,
+  &.Blended.Active {
     background: var(--button-bg-hover);
     cursor: pointer;
     color: var(--button-text-hover);

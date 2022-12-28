@@ -22,7 +22,7 @@
     text-decoration: underline;
   }
 
-  @media (max-width: $phone) {
+  @include breakpoint(phone) {
     min-width: inherit;
     min-height: inherit;
     width: 100%;

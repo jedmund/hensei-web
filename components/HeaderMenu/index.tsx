@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import { setCookie } from 'cookies-next'
+import classNames from 'classnames'
+import retrieveCookies from '~utils/retrieveCookies'
 
 import Link from 'next/link'
 import * as Switch from '@radix-ui/react-switch'
@@ -14,36 +16,52 @@ import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
 
 import './index.scss'
-import { accountState } from '~utils/accountState'
 
 interface Props {
   authenticated: boolean
+  open: boolean
   username?: string
+  onClickOutside: () => void
   logout?: () => void
 }
 
 const HeaderMenu = (props: Props) => {
+  // Setup
   const router = useRouter()
+  const data: GranblueCookie | undefined = retrieveCookies()
   const { t } = useTranslation('common')
 
-  const accountCookie = getCookie('account')
-  const accountData: AccountCookie = accountCookie
-    ? JSON.parse(accountCookie as string)
-    : null
+  // Refs
+  const ref: React.RefObject<HTMLDivElement> = React.createRef()
 
-  const userCookie = getCookie('user')
-  const userData: UserCookie = userCookie
-    ? JSON.parse(userCookie as string)
-    : null
+  useEffect(() => {
+    const handleClickOutside = (event: Event) => {
+      const target = event.target instanceof Element ? event.target : null
+      const isButton = target && target.closest('.Button.Active')
 
-  const localeCookie = getCookie('NEXT_LOCALE')
+      if (
+        ref.current &&
+        target &&
+        !ref.current.contains(target) &&
+        !isButton &&
+        props.open
+      ) {
+        props.onClickOutside()
+      }
+    }
+    document.addEventListener('click', handleClickOutside, true)
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true)
+    }
+  }, [props.onClickOutside])
 
   const [checked, setChecked] = useState(false)
 
   useEffect(() => {
-    const locale = localeCookie
+    const locale = data?.locale
     setChecked(locale === 'ja' ? true : false)
-  }, [localeCookie])
+  }, [data?.locale])
 
   function handleCheckedChange(value: boolean) {
     const language = value ? 'ja' : 'en'
@@ -51,66 +69,70 @@ const HeaderMenu = (props: Props) => {
     router.push(router.asPath, undefined, { locale: language })
   }
 
+  const menuClasses = classNames({
+    Menu: true,
+    auth: props.authenticated,
+    open: props.open,
+  })
+
   function authItems() {
     return (
-      <nav>
-        <ul className="Menu auth">
-          <div className="MenuGroup">
-            <li className="MenuItem profile">
-              <Link href={`/${accountData.username}` || ''} passHref>
-                <div>
-                  <span>{accountData.username}</span>
-                  <img
-                    alt={userData.picture}
-                    className={`profile ${accountState.account.user?.element}`}
-                    srcSet={`/profile/${accountState.account.user?.picture}.png, 
-                      /profile/${userData.picture}@2x.png 2x`}
-                    src={`/profile/${userData.picture}.png`}
-                  />
-                </div>
-              </Link>
-            </li>
-            <li className="MenuItem">
-              <Link href={`/saved` || ''}>{t('menu.saved')}</Link>
-            </li>
-          </div>
-          <div className="MenuGroup">
-            <li className="MenuItem">
-              <Link href="/teams">{t('menu.teams')}</Link>
-            </li>
-
-            <li className="MenuItem disabled">
+      <ul className={menuClasses}>
+        <div className="MenuGroup">
+          <li className="MenuItem profile">
+            <Link href={`/${data?.account.username}` || ''} passHref>
               <div>
-                <span>{t('menu.guides')}</span>
-                <i className="tag">{t('coming_soon')}</i>
+                <span>{data?.account.username}</span>
+                <img
+                  alt={data?.user.picture}
+                  className={`profile ${data?.user.element}`}
+                  srcSet={`/profile/${data?.user.picture}.png, 
+                      /profile/${data?.user.picture}@2x.png 2x`}
+                  src={`/profile/${data?.user.picture}.png`}
+                />
               </div>
-            </li>
-          </div>
-          <div className="MenuGroup">
-            <AboutModal />
-            <ChangelogModal />
-            <RoadmapModal />
-          </div>
-          <div className="MenuGroup">
-            <AccountModal
-              username={accountState.account.user?.username}
-              picture={accountState.account.user?.picture}
-              gender={accountState.account.user?.gender}
-              language={accountState.account.user?.language}
-              theme={accountState.account.user?.theme}
-            />
-            <li className="MenuItem" onClick={props.logout}>
-              <span>{t('menu.logout')}</span>
-            </li>
-          </div>
-        </ul>
-      </nav>
+            </Link>
+          </li>
+          <li className="MenuItem">
+            <Link href={`/saved` || ''}>{t('menu.saved')}</Link>
+          </li>
+        </div>
+        <div className="MenuGroup">
+          <li className="MenuItem">
+            <Link href="/teams">{t('menu.teams')}</Link>
+          </li>
+
+          <li className="MenuItem disabled">
+            <div>
+              <span>{t('menu.guides')}</span>
+              <i className="tag">{t('coming_soon')}</i>
+            </div>
+          </li>
+        </div>
+        <div className="MenuGroup">
+          <AboutModal />
+          <ChangelogModal />
+          <RoadmapModal />
+        </div>
+        <div className="MenuGroup">
+          <AccountModal
+            username={data?.account.username}
+            picture={data?.user.picture}
+            gender={data?.user.gender}
+            language={data?.user.language}
+            theme={data?.user.theme}
+          />
+          <li className="MenuItem" onClick={props.logout}>
+            <span>{t('menu.logout')}</span>
+          </li>
+        </div>
+      </ul>
     )
   }
 
   function unauthItems() {
     return (
-      <ul className="Menu unauth">
+      <ul className={menuClasses}>
         <div className="MenuGroup">
           <li className="MenuItem language">
             <span>{t('menu.language')}</span>
@@ -150,7 +172,9 @@ const HeaderMenu = (props: Props) => {
     )
   }
 
-  return props.authenticated ? authItems() : unauthItems()
+  return (
+    <nav ref={ref}>{props.authenticated ? authItems() : unauthItems()}</nav>
+  )
 }
 
 export default HeaderMenu

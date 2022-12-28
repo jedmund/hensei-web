@@ -1,22 +1,23 @@
-.Header {
+#Header {
   display: flex;
+  flex-direction: row;
   margin-bottom: $unit;
+  justify-content: space-between;
   width: 100%;
 
-  &.bottom {
-    position: sticky;
-    bottom: $unit * 2;
-  }
-
-  #right > div {
+  #Right > div {
     display: flex;
-    gap: 8px;
+    gap: $unit;
   }
 
-  .dropdown {
+  #DropdownWrapper {
     display: inline-block;
-    position: relative;
     padding-bottom: $unit;
+
+    &:hover .Menu,
+    .Menu.open {
+      display: block;
+    }
 
     &:hover {
       padding-right: $unit-4x;
@@ -25,18 +26,10 @@
         background: var(--button-bg-hover);
         color: var(--button-text-hover);
       }
-
-      .Menu {
-        display: block;
-      }
     }
   }
 
-  .push {
-    margin-left: auto;
-  }
-
-  @media (max-width: $phone) {
+  @include breakpoint(phone) {
     .Button .Text {
       display: none;
     }

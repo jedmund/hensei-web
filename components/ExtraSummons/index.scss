@@ -10,7 +10,7 @@
   position: relative;
   left: 9px;
 
-  @media (max-width: $medium-screen) {
+  @include breakpoint(phone) {
     left: auto;
     max-width: auto;
     width: 100%;

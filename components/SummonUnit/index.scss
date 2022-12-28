@@ -9,7 +9,7 @@
     width: 182px;
     height: auto;
 
-    @media (max-width: $medium-screen) {
+    @include breakpoint(tablet) {
       width: 20.3vw;
     }
   }
@@ -19,7 +19,7 @@
     // min-height: 141px;
     min-height: 180px;
 
-    @media (max-width: $medium-screen) {
+    @include breakpoint(tablet) {
       min-height: 16.5vw;
     }
 
@@ -29,7 +29,7 @@
       width: 148px;
       height: auto;
 
-      @media (max-width: $medium-screen) {
+      @include breakpoint(tablet) {
         width: 20vw;
       }
     }

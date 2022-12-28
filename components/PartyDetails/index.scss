@@ -3,7 +3,7 @@
   flex-direction: column;
   margin-top: $unit-4x;
 
-  @media (max-width: $phone) {
+  @include breakpoint(phone) {
     padding: 0 $unit;
   }
 
@@ -30,7 +30,7 @@
         width: 100%;
 
         textarea {
-          min-height: $unit * 20;
+          min-height: $unit * 22;
           width: 100%;
         }
       }
@@ -86,7 +86,7 @@
         width: 60%;
         height: 60%;
 
-        @media (max-width: $tablet) {
+        @include breakpoint(tablet) {
           width: 100%;
           height: 100%;
         }
