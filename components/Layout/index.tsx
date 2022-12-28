@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import TopHeader from '~components/TopHeader'
+import TopHeader from '~components/Header'
 
 interface Props {
   children: ReactElement
