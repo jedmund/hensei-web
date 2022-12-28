@@ -29,10 +29,15 @@ const Header = () => {
   const router = useRouter()
 
   // State management
+  const [open, setOpen] = useState(false)
 
   // Snapshots
   const { account } = useSnapshot(accountState)
   const { party } = useSnapshot(appState)
+
+  function menuButtonClicked() {
+    setOpen(!open)
+  }
 
   function onClickOutsideMenu() {
     setOpen(!open)
@@ -124,6 +129,7 @@ const Header = () => {
         />
         <HeaderMenu
           authenticated={account.authorized}
+          open={open}
           username={account.user?.username}
           onClickOutside={onClickOutsideMenu}
           logout={logout}

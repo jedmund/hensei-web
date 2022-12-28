@@ -18,6 +18,7 @@ import { accountState } from '~utils/accountState'
 
 interface Props {
   authenticated: boolean
+  open: boolean
   username?: string
   logout?: () => void
 }
@@ -51,10 +52,15 @@ const HeaderMenu = (props: Props) => {
     router.push(router.asPath, undefined, { locale: language })
   }
 
+  const menuClasses = classNames({
+    Menu: true,
+    auth: props.authenticated,
+    open: props.open,
+  })
+
   function authItems() {
     return (
       <nav>
-        <ul className="Menu auth">
           <div className="MenuGroup">
             <li className="MenuItem profile">
               <Link href={`/${accountData.username}` || ''} passHref>
@@ -80,6 +86,7 @@ const HeaderMenu = (props: Props) => {
             </li>
 
             <li className="MenuItem disabled">
+      <ul className={menuClasses}>
               <div>
                 <span>{t('menu.guides')}</span>
                 <i className="tag">{t('coming_soon')}</i>
@@ -110,7 +117,7 @@ const HeaderMenu = (props: Props) => {
 
   function unauthItems() {
     return (
-      <ul className="Menu unauth">
+      <ul className={menuClasses}>
         <div className="MenuGroup">
           <li className="MenuItem language">
             <span>{t('menu.language')}</span>
