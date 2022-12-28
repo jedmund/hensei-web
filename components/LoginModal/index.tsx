@@ -2,11 +2,12 @@ import React, { useState } from 'react'
 import { setCookie } from 'cookies-next'
 import Router, { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
-import { AxiosResponse } from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 
 import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 
+import Alert from '~components/Alert'
 import Button from '~components/Button'
 import Input from '~components/Input'
 import {
@@ -21,23 +22,28 @@ import changeLanguage from '~utils/changeLanguage'
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
-interface Props {}
-
 interface ErrorMap {
   [index: string]: string
   email: string
   password: string
 }
 
+interface GranblueAxiosError {
+  response: AxiosResponse<any, any>
+  request: any
+  code: number
+}
+
 const emailRegex =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-const LoginModal = (props: Props) => {
+const LoginModal = () => {
   const router = useRouter()
   const { t } = useTranslation('common')
 
   // Set up form states and error handling
   const [formValid, setFormValid] = useState(false)
+  const [axiosError, setAxiosError] = useState<AxiosError>()
   const [errors, setErrors] = useState<ErrorMap>({
     email: '',
     password: '',
@@ -45,6 +51,7 @@ const LoginModal = (props: Props) => {
 
   // States
   const [open, setOpen] = useState(false)
+  const [alertOpen, setAlertOpen] = useState(false)
 
   // Set up form refs
   const emailInput: React.RefObject<HTMLInputElement> = React.createRef()
@@ -109,6 +116,19 @@ const LoginModal = (props: Props) => {
         })
         .then((id) => fetchUserInfo(id))
         .then((infoResponse) => storeUserInfo(infoResponse))
+        .catch((error: Error | AxiosError) => {
+          console.log(error)
+
+          if (axios.isAxiosError(error)) {
+            const axiosError: AxiosError = error
+            console.log(axiosError.request)
+            console.log(axiosError.response)
+            console.log(axiosError.code)
+            setAlertOpen(true)
+
+            setAxiosError(axiosError)
+          }
+        })
     }
   }
 
@@ -181,53 +201,64 @@ const LoginModal = (props: Props) => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={openChange}>
-      <DialogTrigger asChild>
-        <li className="MenuItem">
-          <span>{t('menu.login')}</span>
-        </li>
-      </DialogTrigger>
-      <DialogContent
-        className="Login Dialog"
-        onEscapeKeyDown={onEscapeKeyDown}
-        onOpenAutoFocus={onOpenAutoFocus}
-      >
-        <div className="DialogHeader">
-          <div className="DialogTitle">
-            <h1>{t('modals.login.title')}</h1>
+    <React.Fragment>
+      <Alert
+        title="There was an error"
+        message={`${axiosError?.code}: Something went wrong.`}
+        cancelActionText="Okay"
+        cancelAction={() => {
+          setAlertOpen(false)
+        }}
+        open={alertOpen}
+      ></Alert>
+      <Dialog open={open} onOpenChange={openChange}>
+        <DialogTrigger asChild>
+          <li className="MenuItem">
+            <span>{t('menu.login')}</span>
+          </li>
+        </DialogTrigger>
+        <DialogContent
+          className="Login Dialog"
+          onEscapeKeyDown={onEscapeKeyDown}
+          onOpenAutoFocus={onOpenAutoFocus}
+        >
+          <div className="DialogHeader">
+            <div className="DialogTitle">
+              <h1>{t('modals.login.title')}</h1>
+            </div>
+            <DialogClose className="DialogClose">
+              <CrossIcon />
+            </DialogClose>
           </div>
-          <DialogClose className="DialogClose">
-            <CrossIcon />
-          </DialogClose>
-        </div>
 
-        <form className="form" onSubmit={login}>
-          <Input
-            className="Bound"
-            name="email"
-            placeholder={t('modals.login.placeholders.email')}
-            onChange={handleChange}
-            error={errors.email}
-            ref={emailInput}
-          />
+          <form className="form" onSubmit={login}>
+            <Input
+              className="Bound"
+              name="email"
+              placeholder={t('modals.login.placeholders.email')}
+              onChange={handleChange}
+              error={errors.email}
+              ref={emailInput}
+            />
 
-          <Input
-            className="Bound"
-            name="password"
-            placeholder={t('modals.login.placeholders.password')}
-            type="password"
-            onChange={handleChange}
-            error={errors.password}
-            ref={passwordInput}
-          />
+            <Input
+              className="Bound"
+              name="password"
+              placeholder={t('modals.login.placeholders.password')}
+              type="password"
+              onChange={handleChange}
+              error={errors.password}
+              ref={passwordInput}
+            />
 
-          <Button
-            disabled={!formValid}
-            text={t('modals.login.buttons.confirm')}
-          />
-        </form>
-      </DialogContent>
-    </Dialog>
+            <Button
+              disabled={!formValid}
+              text={t('modals.login.buttons.confirm')}
+            />
+          </form>
+        </DialogContent>
+      </Dialog>
+    </React.Fragment>
   )
 }
 
