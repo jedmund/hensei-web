@@ -2,11 +2,12 @@
   aspect-ratio: 3/2;
   border-radius: $card-corner;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
   gap: $unit;
   padding: $unit-2x;
-  max-width: 320px;
+  min-width: 320px;
+  width: 100%;
 
   &:hover {
     background: var(--grid-rep-hover);
@@ -20,56 +21,58 @@
       cursor: pointer;
     }
 
-    .Grid .weapon {
+    .Grid .Weapon {
       box-shadow: inset 0 0 0 1px var(--grid-border-color);
     }
 
     @include breakpoint(phone) {
       background: inherit;
 
-      .Grid .weapon {
+      .Grid .Weapon {
         box-shadow: none;
       }
     }
   }
 
-  .Grid {
-    display: flex;
-    flex-direction: row;
-    flex-shrink: 0;
-    gap: $unit;
+  & > .Grid {
+    aspect-ratio: 2/1;
+    display: grid;
+    grid-template-columns: 1fr 3fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
+    grid-template-rows: repeat(
+      3,
+      1fr
+    ); /* create 3 rows, each taking up 1 fraction */
+    grid-gap: $unit; /* add a gap of 8px between grid items */
 
-    .weapon {
+    .Weapon {
       background: var(--card-bg);
       border-radius: 4px;
     }
 
-    .grid_mainhand {
-      $d: 64px;
-      aspect-ratio: 200 / 418;
-      height: auto;
-      max-width: $d;
-      min-width: $d;
+    .Mainhand.Weapon {
+      grid-column: 1 / 2; /* spans one column */
     }
 
-    .grid_weapons {
-      $p: 29.5%;
-      box-sizing: border-box;
-      display: grid;
-      grid-template-columns: fit-content($p) fit-content($p) fit-content($p);
-      grid-template-rows: fit-content($p) fit-content($p) fit-content($p);
+    .GridWeapons {
+      display: grid; /* make the right-images container a grid */
+      grid-template-columns: repeat(
+        3,
+        1fr
+      ); /* create 3 columns, each taking up 1 fraction */
+      grid-template-rows: repeat(
+        3,
+        1fr
+      ); /* create 3 rows, each taking up 1 fraction */
       gap: $unit;
-      margin: 0;
-      padding: 0;
-      width: 100%;
     }
 
-    .grid_weapon {
+    .Grid.Weapon {
       aspect-ratio: 160 / 92;
+      display: grid;
     }
 
-    .grid_mainhand img[src*='jpg'],
-    .grid_weapon img[src*='jpg'] {
+    .Mainhand.Weapon img[src*='jpg'],
+    .Grid.Weapon img[src*='jpg'] {
       border-radius: 4px;
       width: 100%;
       height: 100%;

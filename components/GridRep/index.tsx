@@ -212,15 +212,12 @@ const GridRep = (props: Props) => {
       <a className="GridRep">
         {props.displayUser ? detailsWithUsername : details}
         <div className="Grid">
-          <div className="weapon grid_mainhand">{generateMainhandImage()}</div>
+          <div className="Mainhand Weapon">{generateMainhandImage()}</div>
 
-          <ul className="grid_weapons">
+          <ul className="GridWeapons">
             {Array.from(Array(numWeapons)).map((x, i) => {
               return (
-                <li
-                  key={`${props.shortcode}-${i}`}
-                  className="weapon grid_weapon"
-                >
+                <li key={`${props.shortcode}-${i}`} className="Grid Weapon">
                   {generateGridImage(i)}
                 </li>
               )
