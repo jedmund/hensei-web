@@ -91,7 +91,7 @@ const Header = () => {
 
   function saveFavorite() {
     if (party.id)
-      api.saveTeam({ id: party.id, params: headers }).then((response) => {
+      api.saveTeam({ id: party.id }).then((response) => {
         if (response.status == 201) appState.party.favorited = true
       })
     else console.error('Failed to save team: No party ID')
@@ -99,7 +99,7 @@ const Header = () => {
 
   function unsaveFavorite() {
     if (party.id)
-      api.unsaveTeam({ id: party.id, params: headers }).then((response) => {
+      api.unsaveTeam({ id: party.id }).then((response) => {
         if (response.status == 200) appState.party.favorited = false
       })
     else console.error('Failed to unsave team: No party ID')
