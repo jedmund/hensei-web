@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import { setCookie } from 'cookies-next'
+import classNames from 'classnames'
+import retrieveCookies from '~utils/retrieveCookies'
 
 import Link from 'next/link'
 import * as Switch from '@radix-ui/react-switch'
@@ -14,7 +16,6 @@ import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
 
 import './index.scss'
-import { accountState } from '~utils/accountState'
 
 interface Props {
   authenticated: boolean
@@ -25,22 +26,14 @@ interface Props {
 }
 
 const HeaderMenu = (props: Props) => {
+  // Setup
   const router = useRouter()
+  const data: GranblueCookie | undefined = retrieveCookies()
   const { t } = useTranslation('common')
 
-  const accountCookie = getCookie('account')
-  const accountData: AccountCookie = accountCookie
-    ? JSON.parse(accountCookie as string)
-    : null
   // Refs
   const ref: React.RefObject<HTMLDivElement> = React.createRef()
 
-  const userCookie = getCookie('user')
-  const userData: UserCookie = userCookie
-    ? JSON.parse(userCookie as string)
-    : null
-
-  const localeCookie = getCookie('NEXT_LOCALE')
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
       if (
@@ -61,9 +54,9 @@ const HeaderMenu = (props: Props) => {
   const [checked, setChecked] = useState(false)
 
   useEffect(() => {
-    const locale = localeCookie
+    const locale = data?.locale
     setChecked(locale === 'ja' ? true : false)
-  }, [localeCookie])
+  }, [data?.locale])
 
   function handleCheckedChange(value: boolean) {
     const language = value ? 'ja' : 'en'
