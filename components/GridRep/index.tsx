@@ -81,8 +81,12 @@ const GridRep = (props: Props) => {
     let url = ''
 
     if (mainhand) {
-      if (mainhand.element == 0 && props.grid[0] && props.grid[0].element) {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}_${props.grid[0].element}.jpg`
+      const weapon = Object.values(props.grid).find(
+        (w) => w && w.object.id === mainhand.id
+      )
+
+      if (mainhand.element == 0 && weapon && weapon.element) {
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}_${weapon.element}.jpg`
       } else {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}.jpg`
       }

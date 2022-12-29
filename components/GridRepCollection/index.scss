@@ -1,7 +1,7 @@
 .GridRepCollection {
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   margin: 0 auto;
   padding: 0;
   transition: opacity 0.14s ease-in-out;
@@ -10,8 +10,7 @@
   max-width: 996px;
 
   @include breakpoint(tablet) {
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    max-width: inherit;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
 
   @include breakpoint(phone) {
