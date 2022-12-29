@@ -1,9 +1,10 @@
 #Job {
+  align-items: center;
   box-sizing: border-box;
   display: flex;
   margin-bottom: $unit * 3;
 
-  @include breakpoint(phone) {
+  @include breakpoint(tablet) {
     flex-direction: column;
     gap: $unit;
   }
@@ -60,7 +61,7 @@
     @include breakpoint(phone) {
       aspect-ratio: 16/9;
       margin: 0;
-      width: inherit;
+      width: 100%;
       height: inherit;
     }
 
