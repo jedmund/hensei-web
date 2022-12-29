@@ -19,6 +19,10 @@
   color: var(--text-tertiary);
   font-weight: $normal;
 
+  @include breakpoint(phone) {
+    cursor: pointer;
+  }
+
   &:hover:not(.disabled) {
     background: var(--menu-bg-item-hover);
     color: var(--text-primary);
