@@ -1,9 +1,10 @@
 .CharacterUnit {
+  align-items: center;
   display: flex;
   flex-direction: column;
   gap: calc($unit / 2);
-  min-height: 320px;
-  max-width: 200px;
+  // min-height: 320px;
+  // max-width: 200px;
   margin-bottom: $unit * 4;
 
   &.editable .CharacterImage:hover {
@@ -35,6 +36,10 @@
     max-width: 131px;
     text-align: center;
     word-wrap: normal;
+
+    @include breakpoint(phone) {
+      font-size: $font-small;
+    }
   }
 
   img {
@@ -54,11 +59,7 @@
     overflow: hidden;
     transition: all 0.18s ease-in-out;
     height: auto;
-    width: 131px;
-
-    @include breakpoint(tablet) {
-      width: 17vw;
-    }
+    // width: 131px;
 
     &:hover .icon svg {
       fill: var(--icon-secondary-hover);
