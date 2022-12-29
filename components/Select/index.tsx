@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import * as RadixSelect from '@radix-ui/react-select'
 import classNames from 'classnames'
 
+import Overlay from '~components/Overlay'
+
 import ArrowIcon from '~public/icons/Arrow.svg'
 
 import './index.scss'
-import Overlay from '~components/Overlay'
 
 // Props
 interface Props
