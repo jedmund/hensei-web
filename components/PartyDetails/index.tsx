@@ -336,7 +336,9 @@ const PartyDetails = (props: Props) => {
   )
 
   const readOnly = (
-    <section className={readOnlyClasses}>{embeddedDescription}</section>
+    <section className={readOnlyClasses}>
+      <Linkify>{embeddedDescription}</Linkify>
+    </section>
   )
 
   return (
