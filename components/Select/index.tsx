@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import ArrowIcon from '~public/icons/Arrow.svg'
 
 import './index.scss'
+import Overlay from '~components/Overlay'
 
 // Props
 interface Props
@@ -76,19 +77,24 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
       </RadixSelect.Trigger>
 
       <RadixSelect.Portal className="Select">
-        <RadixSelect.Content
-          onCloseAutoFocus={onCloseAutoFocus}
-          onEscapeKeyDown={onEscapeKeyDown}
-          onPointerDownOutside={onPointerDownOutside}
-        >
-          <RadixSelect.ScrollUpButton className="Scroll Up">
-            <ArrowIcon />
-          </RadixSelect.ScrollUpButton>
-          <RadixSelect.Viewport>{props.children}</RadixSelect.Viewport>
-          <RadixSelect.ScrollDownButton className="Scroll Down">
-            <ArrowIcon />
-          </RadixSelect.ScrollDownButton>
-        </RadixSelect.Content>
+        <>
+          <Overlay open={open} visible={false} />
+
+          <RadixSelect.Content
+            className="Select"
+            onCloseAutoFocus={onCloseAutoFocus}
+            onEscapeKeyDown={onEscapeKeyDown}
+            onPointerDownOutside={onPointerDownOutside}
+          >
+            <RadixSelect.ScrollUpButton className="Scroll Up">
+              <ArrowIcon />
+            </RadixSelect.ScrollUpButton>
+            <RadixSelect.Viewport>{props.children}</RadixSelect.Viewport>
+            <RadixSelect.ScrollDownButton className="Scroll Down">
+              <ArrowIcon />
+            </RadixSelect.ScrollDownButton>
+          </RadixSelect.Content>
+        </>
       </RadixSelect.Portal>
     </RadixSelect.Root>
   )
