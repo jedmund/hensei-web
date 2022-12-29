@@ -27,9 +27,7 @@ const Overlay = ({
 
   useEffect(() => {
     if (!open) {
-      console.log('No longer open, setting timeout...')
       const timer = setTimeout(() => {
-        console.log('Timeout cleared!')
         setVisible(false)
       }, 200)
       return () => {
