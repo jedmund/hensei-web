@@ -33,9 +33,6 @@ const SummonGrid = (props: Props) => {
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
-  const headers = accountData
-    ? { headers: { Authorization: `Bearer ${accountData.token}` } }
-    : {}
 
   // Localization
   const { t } = useTranslation('common')
@@ -112,19 +109,16 @@ const SummonGrid = (props: Props) => {
     if (summon.uncap.ulb) uncapLevel = 5
     else if (summon.uncap.flb) uncapLevel = 4
 
-    return await api.endpoints.summons.create(
-      {
-        summon: {
-          party_id: partyId,
-          summon_id: summon.id,
-          position: position,
-          main: position == -1,
-          friend: position == 6,
-          uncap_level: uncapLevel,
-        },
+    return await api.endpoints.summons.create({
+      summon: {
+        party_id: partyId,
+        summon_id: summon.id,
+        position: position,
+        main: position == -1,
+        friend: position == 6,
+        uncap_level: uncapLevel,
       },
-      headers
-    )
+    })
   }
 
   function storeGridSummon(gridSummon: GridSummon) {

@@ -3,6 +3,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog'
 import classNames from 'classnames'
 
 import './index.scss'
+import Overlay from '~components/Overlay'
 
 interface Props
   extends React.DetailedHTMLProps<
@@ -24,7 +25,6 @@ export const DialogContent = React.forwardRef<HTMLDivElement, Props>(
 
     return (
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="Overlay" />
         <DialogPrimitive.Content
           className={classes}
           {...props}
@@ -34,6 +34,7 @@ export const DialogContent = React.forwardRef<HTMLDivElement, Props>(
         >
           {children}
         </DialogPrimitive.Content>
+        <Overlay visible={true} open={true} />
       </DialogPrimitive.Portal>
     )
   }

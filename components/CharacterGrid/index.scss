@@ -7,22 +7,17 @@
 }
 
 #grid_characters {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: $unit;
   margin: 0;
   padding: 0;
   max-width: 761px;
+  isolation: isolate;
 
   @include breakpoint(tablet) {
     justify-content: space-between;
     width: 100%;
-  }
-
-  & > * {
-    margin-right: $unit * 3;
-
-    @include breakpoint(tablet) {
-      margin-right: inherit;
-    }
   }
 
   & > li:last-child {

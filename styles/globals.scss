@@ -119,16 +119,6 @@ select {
   }
 }
 
-.Overlay {
-  background: rgba(0, 0, 0, 0.6);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 20;
-}
-
 .Hovercard {
   background: #222;
   border-radius: $unit;
@@ -298,7 +288,7 @@ i.tag {
   }
 }
 
-@keyframes openModal {
+@keyframes openModalDesktop {
   0% {
     opacity: 0;
     transform: translate(-50%, -48%) scale(0.96);
@@ -307,5 +297,17 @@ i.tag {
   100% {
     // opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes openModalMobile {
+  0% {
+    opacity: 0;
+    transform: translate(0%, 100%);
+  }
+
+  100% {
+    // opacity: 1;
+    transform: translate(0, 30%);
   }
 }

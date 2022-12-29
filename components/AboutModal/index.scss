@@ -3,6 +3,7 @@
   background: none;
   border: 0;
   inset: 0;
+  top: 0;
   display: grid;
   place-items: center;
   min-height: 100vh;
@@ -12,12 +13,19 @@
 }
 
 .About.Dialog {
-  width: $unit * 60;
   top: 0;
+  animation: none;
   transform: translate(-50%, 0);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   margin-top: $unit-10x;
+
+  @include breakpoint(phone) {
+    border-radius: 0;
+    transform: none;
+    margin: 0;
+  }
+
   section {
     margin-bottom: $unit;
 
@@ -102,4 +110,5 @@
   place-items: center;
   overflow-y: auto;
   z-index: 40;
+  padding-top: 10%;
 }

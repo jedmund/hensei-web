@@ -2,17 +2,16 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  min-height: 431px;
-  width: 600px;
+  min-height: 430px;
   height: 480px;
   gap: 0;
   padding: 0;
 
   @include breakpoint(phone) {
+    animation: none;
+    border-radius: 0;
     min-width: inherit;
-    min-height: inherit;
-    width: 96%; // is this even right
-    height: 96vh;
+    min-height: 100vh;
   }
 
   #Header {

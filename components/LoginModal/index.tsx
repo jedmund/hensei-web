@@ -7,7 +7,6 @@ import axios, { AxiosError, AxiosResponse } from 'axios'
 import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 
-import Alert from '~components/Alert'
 import Button from '~components/Button'
 import Input from '~components/Input'
 import {
@@ -26,12 +25,6 @@ interface ErrorMap {
   [index: string]: string
   email: string
   password: string
-}
-
-interface GranblueAxiosError {
-  response: AxiosResponse<any, any>
-  request: any
-  code: number
 }
 
 const emailRegex =

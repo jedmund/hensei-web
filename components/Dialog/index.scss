@@ -2,9 +2,10 @@
   $multiplier: 4;
 
   animation: 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal none running
-    openModal;
+    openModalDesktop;
   background: var(--dialog-bg);
   border-radius: $card-corner;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: $unit * $multiplier;
@@ -16,15 +17,22 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 21;
+  z-index: 40;
 
   a:hover {
     text-decoration: underline;
   }
 
   @include breakpoint(phone) {
+    animation: 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running
+      openModalMobile;
     min-width: inherit;
-    min-height: inherit;
+    min-height: 80vh;
+    transform: initial;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: auto;
     width: 100%;
   }
 
