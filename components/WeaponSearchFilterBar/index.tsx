@@ -153,7 +153,7 @@ const WeaponSearchFilterBar = (props: Props) => {
   const renderSingleWeaponSeries = (id: number, slug: string) => {
     return (
       <SearchFilterCheckboxItem
-        key={id}
+        key={slug}
         onCheckedChange={handleSeriesChange}
         checked={seriesState[slug].checked}
         valueKey={slug}
@@ -171,6 +171,7 @@ const WeaponSearchFilterBar = (props: Props) => {
     <div className="SearchFilterBar">
       <SearchFilter
         label={t('filters.labels.rarity')}
+        key="rarity"
         numSelected={
           Object.values(rarityState)
             .map((x) => x.checked)
@@ -198,6 +199,7 @@ const WeaponSearchFilterBar = (props: Props) => {
 
       <SearchFilter
         label={t('filters.labels.element')}
+        key="element"
         numSelected={
           Object.values(elementState)
             .map((x) => x.checked)
@@ -225,6 +227,7 @@ const WeaponSearchFilterBar = (props: Props) => {
 
       <SearchFilter
         label={t('filters.labels.proficiency')}
+        key="proficiency"
         numSelected={
           Object.values(proficiencyState)
             .map((x) => x.checked)
@@ -278,6 +281,7 @@ const WeaponSearchFilterBar = (props: Props) => {
 
       <SearchFilter
         label={t('filters.labels.series')}
+        key="series"
         numSelected={
           Object.values(seriesState)
             .map((x) => x.checked)
