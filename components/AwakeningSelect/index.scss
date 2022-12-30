@@ -20,7 +20,13 @@
     }
 
     .Label {
+      display: none;
       flex-grow: 0;
+
+      &.Visible {
+        display: block;
+        width: auto;
+      }
 
       .Input {
         min-width: $unit * 12;

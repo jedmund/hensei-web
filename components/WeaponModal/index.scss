@@ -1,4 +1,10 @@
 .Weapon.Dialog {
+  min-width: 480px;
+
+  @include breakpoint(phone) {
+    min-width: inherit;
+  }
+
   .mods {
     display: flex;
     flex-direction: column;

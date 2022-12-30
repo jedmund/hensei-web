@@ -42,10 +42,9 @@ const JobSkillSearchFilterBar = (props: Props) => {
       <Select
         value={-1}
         triggerClass="Bound"
-        trigger={'All elements'}
         open={open}
         onValueChange={onChange}
-        onClick={openSelect}
+        onOpenChange={openSelect}
       >
         <SelectItem key="all" value={-1}>
           {t(`job_skills.all`)}

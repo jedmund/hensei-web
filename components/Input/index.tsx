@@ -8,8 +8,13 @@ interface Props
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   > {
+  visible?: boolean
   error?: string
   label?: string
+}
+
+const defaultProps = {
+  visible: true,
 }
 
 const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
@@ -34,7 +39,13 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
   }
 
   return (
-    <label className="Label" htmlFor={props.name}>
+    <label
+      className={classNames({
+        Label: true,
+        Visible: props.visible,
+      })}
+      htmlFor={props.name}
+    >
       <input
         {...inputProps}
         autoComplete="off"
@@ -51,5 +62,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
     </label>
   )
 })
+
+Input.defaultProps = defaultProps
 
 export default Input
