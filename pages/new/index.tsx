@@ -7,7 +7,6 @@ import Party from '~components/Party'
 
 import { appState } from '~utils/appState'
 import { groupWeaponKeys } from '~utils/groupWeaponKeys'
-import generateTitle from '~utils/generateTitle'
 import organizeRaids from '~utils/organizeRaids'
 import setUserToken from '~utils/setUserToken'
 import api from '~utils/api'
