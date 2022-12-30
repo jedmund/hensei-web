@@ -41,13 +41,11 @@ const Party = (props: Props) => {
 
   // Methods: Creating a new party
   async function createParty(extra: boolean = false) {
-    let body = {
+    return await api.endpoints.parties.create({
       party: {
         extra: extra,
       },
-    }
-
-    return await api.endpoints.parties.create(body)
+    })
   }
 
   // Methods: Updating the party's details

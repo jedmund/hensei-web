@@ -234,7 +234,6 @@ const CharacterGrid = (props: Props) => {
             } skills to your party at once.`
             setErrorMessage(message)
           }
-          console.log(error.response.data)
         })
     }
   }

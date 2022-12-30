@@ -78,9 +78,7 @@ const Header = () => {
       if (key !== 'language') accountState[key] = resetState[key]
     })
 
-    if (router.route != '/new') appState.party.editable = false
-
-    router.push('/')
+    router.reload()
     return false
   }
 
