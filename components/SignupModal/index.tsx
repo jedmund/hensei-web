@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
+import React, { useState } from 'react'
 import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
-import { Trans, useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
 
 import api from '~utils/api'

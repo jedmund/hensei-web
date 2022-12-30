@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { setCookie } from 'cookies-next'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
@@ -86,8 +86,6 @@ const LoginModal = () => {
       (error) => error.length > 0 && (valid = false)
     )
 
-    console.log(errors)
-
     return valid
   }
 
@@ -110,8 +108,6 @@ const LoginModal = () => {
         .then((id) => fetchUserInfo(id))
         .then((infoResponse) => storeUserInfo(infoResponse))
         .catch((error: Error | AxiosError) => {
-          console.log(error)
-
           if (axios.isAxiosError(error)) {
             const response = error?.response
             if (response && response.data.error === 'invalid_grant') {
