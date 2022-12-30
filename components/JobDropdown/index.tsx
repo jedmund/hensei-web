@@ -41,7 +41,9 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     // Set current job from state on mount
     useEffect(() => {
-      setCurrentJob(party.job)
+      if (party.job.id !== '-1') {
+        setCurrentJob(party.job)
+      }
     }, [])
 
     // Organize jobs into groups on mount
@@ -107,7 +109,6 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
     return (
       <Select
         value={currentJob ? currentJob.id : 'no-job'}
-        placeholder={'Select a class...'}
         open={open}
         onClick={openJobSelect}
         onOpenChange={() => setOpen(!open)}

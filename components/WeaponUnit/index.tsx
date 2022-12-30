@@ -390,7 +390,10 @@ const WeaponUnit = (props: Props) => {
 
   const unitContent = (
     <div className={classes}>
-      {props.editable && gridWeapon && canBeModified(gridWeapon) ? (
+      {props.editable &&
+      gridWeapon &&
+      gridWeapon.id &&
+      canBeModified(gridWeapon) ? (
         <WeaponModal gridWeapon={gridWeapon}>
           <div>
             <Button accessoryIcon={<SettingsIcon />} />

@@ -4,6 +4,10 @@
   justify-content: center;
   margin: auto;
   max-width: 761px;
+
+  @include breakpoint(tablet) {
+    align-items: center;
+  }
 }
 
 #grid_characters {
