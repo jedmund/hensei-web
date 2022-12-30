@@ -41,7 +41,7 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     // Set current job from state on mount
     useEffect(() => {
-      if (party.job.id !== '-1') {
+      if (party.job?.id !== '-1') {
         setCurrentJob(party.job)
       }
     }, [])
