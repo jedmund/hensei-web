@@ -46,6 +46,9 @@ const PartyDetails = (props: Props) => {
   const router = useRouter()
   const locale = router.locale || 'en'
 
+  const youtubeUrlRegex =
+    /(?:https:\/\/www\.youtube\.com\/watch\?v=|https:\/\/youtu\.be\/)([\w-]+)/g
+
   const nameInput = React.createRef<HTMLInputElement>()
   const descriptionInput = React.createRef<HTMLTextAreaElement>()
 
@@ -113,9 +116,6 @@ const PartyDetails = (props: Props) => {
 
       // Wait for all the video titles to be fetched
       Promise.all(fetchPromises).then((videoTitles) => {
-        // YouTube regex
-        const youtubeUrlRegex =
-          /https:\/\/www\.youtube\.com\/watch\?v=([\w-]+)/g
         // Replace the video URLs in the description with LiteYoutubeEmbed elements
         const newDescription = reactStringReplace(
           appState.party.description,
@@ -163,10 +163,6 @@ const PartyDetails = (props: Props) => {
   }
 
   function extractYoutubeVideoIds(text: string) {
-    // Create a regular expression to match Youtube URLs in the text
-    const youtubeUrlRegex =
-      /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/watch\?v=)([^&]+)/
-
     // Initialize an array to store the video IDs
     const videoIds = []
 
