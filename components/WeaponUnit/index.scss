@@ -156,6 +156,10 @@
       position: relative;
       width: 100%;
       z-index: 2;
+
+      &.Placeholder {
+        opacity: 0;
+      }
     }
 
     .icon {
