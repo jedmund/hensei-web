@@ -6,6 +6,7 @@
   position: relative;
   width: 100%;
   height: auto;
+  z-index: 0;
 
   @include breakpoint(tablet) {
     min-height: auto;

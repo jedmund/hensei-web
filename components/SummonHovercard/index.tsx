@@ -62,34 +62,36 @@ const SummonHovercard = (props: Props) => {
   return (
     <HoverCard.Root>
       <HoverCard.Trigger>{props.children}</HoverCard.Trigger>
-      <HoverCard.Content className="Weapon Hovercard">
-        <div className="top">
-          <div className="title">
-            <h4>{props.gridSummon.object.name[locale]}</h4>
-            <img
-              alt={props.gridSummon.object.name[locale]}
-              src={summonImage()}
-            />
-          </div>
-          <div className="subInfo">
-            <div className="icons">
-              <WeaponLabelIcon
-                labelType={Element[props.gridSummon.object.element]}
+      <HoverCard.Portal>
+        <HoverCard.Content className="Weapon Hovercard">
+          <div className="top">
+            <div className="title">
+              <h4>{props.gridSummon.object.name[locale]}</h4>
+              <img
+                alt={props.gridSummon.object.name[locale]}
+                src={summonImage()}
               />
             </div>
-            <UncapIndicator
-              type="summon"
-              ulb={props.gridSummon.object.uncap.ulb || false}
-              flb={props.gridSummon.object.uncap.flb || false}
-              special={false}
-            />
+            <div className="subInfo">
+              <div className="icons">
+                <WeaponLabelIcon
+                  labelType={Element[props.gridSummon.object.element]}
+                />
+              </div>
+              <UncapIndicator
+                type="summon"
+                ulb={props.gridSummon.object.uncap.ulb || false}
+                flb={props.gridSummon.object.uncap.flb || false}
+                special={false}
+              />
+            </div>
           </div>
-        </div>
-        <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-          {t('buttons.wiki')}
-        </a>
-        <HoverCard.Arrow />
-      </HoverCard.Content>
+          <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
+            {t('buttons.wiki')}
+          </a>
+          <HoverCard.Arrow />
+        </HoverCard.Content>
+      </HoverCard.Portal>
     </HoverCard.Root>
   )
 }

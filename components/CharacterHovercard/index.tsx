@@ -69,53 +69,55 @@ const CharacterHovercard = (props: Props) => {
   return (
     <HoverCard.Root>
       <HoverCard.Trigger>{props.children}</HoverCard.Trigger>
-      <HoverCard.Content className="Weapon Hovercard">
-        <div className="top">
-          <div className="title">
-            <h4>{props.gridCharacter.object.name[locale]}</h4>
-            <img
-              alt={props.gridCharacter.object.name[locale]}
-              src={characterImage()}
-            />
-          </div>
-          <div className="subInfo">
-            <div className="icons">
-              <WeaponLabelIcon
-                labelType={Element[props.gridCharacter.object.element]}
+      <HoverCard.Portal>
+        <HoverCard.Content className="Weapon Hovercard">
+          <div className="top">
+            <div className="title">
+              <h4>{props.gridCharacter.object.name[locale]}</h4>
+              <img
+                alt={props.gridCharacter.object.name[locale]}
+                src={characterImage()}
               />
-              <WeaponLabelIcon
-                labelType={
-                  Proficiency[
-                    props.gridCharacter.object.proficiency.proficiency1
-                  ]
-                }
-              />
-              {props.gridCharacter.object.proficiency.proficiency2 ? (
+            </div>
+            <div className="subInfo">
+              <div className="icons">
+                <WeaponLabelIcon
+                  labelType={Element[props.gridCharacter.object.element]}
+                />
                 <WeaponLabelIcon
                   labelType={
                     Proficiency[
-                      props.gridCharacter.object.proficiency.proficiency2
+                      props.gridCharacter.object.proficiency.proficiency1
                     ]
                   }
                 />
-              ) : (
-                ''
-              )}
+                {props.gridCharacter.object.proficiency.proficiency2 ? (
+                  <WeaponLabelIcon
+                    labelType={
+                      Proficiency[
+                        props.gridCharacter.object.proficiency.proficiency2
+                      ]
+                    }
+                  />
+                ) : (
+                  ''
+                )}
+              </div>
+              <UncapIndicator
+                type="character"
+                ulb={props.gridCharacter.object.uncap.ulb || false}
+                flb={props.gridCharacter.object.uncap.flb || false}
+                special={false}
+              />
             </div>
-            <UncapIndicator
-              type="character"
-              ulb={props.gridCharacter.object.uncap.ulb || false}
-              flb={props.gridCharacter.object.uncap.flb || false}
-              special={false}
-            />
           </div>
-        </div>
 
-        <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-          {t('buttons.wiki')}
-        </a>
-        <HoverCard.Arrow />
-      </HoverCard.Content>
+          <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
+            {t('buttons.wiki')}
+          </a>
+          <HoverCard.Arrow />
+        </HoverCard.Content>
+      </HoverCard.Portal>
     </HoverCard.Root>
   )
 }

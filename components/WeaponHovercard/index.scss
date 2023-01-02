@@ -1,45 +1,41 @@
-.Hovercard {
-  z-index: 99;
+.Weapon.Hovercard {
+  .skills {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-right: $unit * 2;
 
-  .Weapon.HovercardContent {
-    .skills {
+    .axSkill {
+      align-items: center;
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
-      padding-right: $unit * 2;
 
-      .axSkill {
-        align-items: center;
-        display: flex;
-        flex-direction: row;
+      &.primary img {
+        height: 64px;
+        width: 64px;
+      }
 
-        &.primary img {
-          height: 64px;
-          width: 64px;
-        }
+      &.secondary {
+        gap: $unit * 1.5;
 
-        &.secondary {
-          gap: $unit * 1.5;
-
-          img {
-            height: 36px;
-            width: 36px;
-          }
-        }
-
-        span {
-          font-size: $font-small;
-          font-weight: $medium;
-          text-align: center;
+        img {
+          height: 36px;
+          width: 36px;
         }
       }
-    }
 
-    .weaponKeys {
-      display: flex;
-      flex-direction: column;
-      font-size: $normal;
-      gap: calc($unit / 2);
+      span {
+        font-size: $font-small;
+        font-weight: $medium;
+        text-align: center;
+      }
     }
+  }
+
+  .weaponKeys {
+    display: flex;
+    flex-direction: column;
+    font-size: $normal;
+    gap: calc($unit / 2);
   }
 }
