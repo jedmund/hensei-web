@@ -395,9 +395,7 @@ const WeaponUnit = (props: Props) => {
       gridWeapon.id &&
       canBeModified(gridWeapon) ? (
         <WeaponModal gridWeapon={gridWeapon}>
-          <div>
-            <Button accessoryIcon={<SettingsIcon />} />
-          </div>
+          <Button accessoryIcon={<SettingsIcon />} />
         </WeaponModal>
       ) : (
         ''

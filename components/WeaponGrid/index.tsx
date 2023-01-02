@@ -361,7 +361,7 @@ const WeaponGrid = (props: Props) => {
       {incompatibleAlert()}
       <div id="MainGrid">
         {mainhandElement}
-        <ul className="grid_weapons">{weaponGridElement}</ul>
+        <ul className="Weapons">{weaponGridElement}</ul>
       </div>
 
       {(() => {
