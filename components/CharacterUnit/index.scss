@@ -76,4 +76,10 @@
       }
     }
   }
+
+  .CharacterName {
+    @include breakpoint(phone) {
+      font-size: $font-tiny;
+    }
+  }
 }
