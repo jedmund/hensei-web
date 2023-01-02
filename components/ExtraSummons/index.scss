@@ -1,18 +1,20 @@
-#ExtraSummons {
+.ExtraGrid.Summons {
   background: var(--subaura-orange-bg);
-  border-radius: 8px;
+  border-radius: $input-corner;
   box-sizing: border-box;
-  display: flex;
+  display: grid;
+  grid-template-columns: 2.32fr 2fr;
   justify-content: center;
   margin: 20px auto;
-  max-width: 727px;
-  padding: 16px 16px 16px 0;
+  max-width: calc($grid-width + 20px);
+  padding: $unit-3x $unit-3x $unit-3x 0;
   position: relative;
   left: 9px;
 
-  @include breakpoint(phone) {
+  @include breakpoint(tablet) {
     left: auto;
-    max-width: auto;
+    max-width: $grid-width;
+    padding: $unit-2x;
     width: 100%;
   }
 
@@ -23,17 +25,21 @@
     justify-content: center;
     line-height: 1.2;
     font-weight: 500;
-    margin-right: 16px;
     text-align: center;
-    width: 387px;
   }
 
-  #grid_summons {
+  #ExtraSummons {
     display: grid;
-    grid-template-columns: auto auto;
-    grid-column-gap: $unit * 2;
-    grid-template-rows: 1fr;
-    grid-row-gap: $unit * 3;
+    gap: $unit-3x;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    @include breakpoint(tablet) {
+      gap: $unit-2x;
+    }
+
+    @include breakpoint(phone) {
+      gap: $unit;
+    }
 
     & > li {
       list-style: none;

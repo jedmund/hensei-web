@@ -21,7 +21,7 @@ const ExtraWeapons = (props: Props) => {
   const { t } = useTranslation('common')
 
   return (
-    <div id="ExtraGrid">
+    <div className="ExtraGrid Weapons">
       <span>{t('extra_weapons')}</span>
       <ul id="ExtraWeapons">
         {Array.from(Array(numWeapons)).map((x, i) => {

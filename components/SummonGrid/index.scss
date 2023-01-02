@@ -1,8 +1,18 @@
 #SummonGrid {
   display: grid;
-  grid-template-columns: auto auto auto;
-  grid-column-gap: $unit * 2;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) 2fr;
+  gap: $unit-3x;
   justify-content: center;
+  margin: 0 auto;
+  max-width: $grid-width;
+
+  @include breakpoint(tablet) {
+    gap: $unit-2x;
+  }
+
+  @include breakpoint(phone) {
+    gap: $unit;
+  }
 
   & .Label {
     color: $grey-55;
@@ -21,12 +31,19 @@
     }
   }
 
-  #grid_summons {
+  #Summons {
     display: grid;
-    grid-template-columns: auto auto;
-    grid-column-gap: $unit * 2;
-    grid-template-rows: 1fr;
-    grid-row-gap: $unit * 3;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: $unit-3x;
+
+    @include breakpoint(tablet) {
+      gap: $unit-2x;
+    }
+
+    @include breakpoint(phone) {
+      gap: $unit;
+    }
 
     & > li {
       list-style: none;
