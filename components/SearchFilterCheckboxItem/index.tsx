@@ -13,8 +13,12 @@ interface Props {
 }
 
 const SearchFilterCheckboxItem = (props: Props) => {
-  function handleCheckedChange(checked: boolean) {
-    props.onCheckedChange(checked, props.valueKey)
+  function handleCheckedChange(checked: string | boolean) {
+    if (typeof checked === 'boolean') {
+      props.onCheckedChange(checked, props.valueKey)
+    } else {
+      props.onCheckedChange(false, props.valueKey)
+    }
   }
 
   return (
