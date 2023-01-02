@@ -187,7 +187,7 @@ const AwakeningSelect = (props: Props) => {
             max={maxValue}
             step="1"
             onChange={handleInputChange}
-            visible={awakeningType !== -1}
+            visible={`${awakeningType !== -1}`}
             ref={awakeningLevelInput}
           />
         </div>
