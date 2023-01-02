@@ -189,9 +189,9 @@ const WeaponHovercard = (props: Props) => {
   )
 
   return (
-    <HoverCard.Root>
+    <HoverCard.Root className="Hovercard">
       <HoverCard.Trigger>{props.children}</HoverCard.Trigger>
-      <HoverCard.Content className="Weapon Hovercard" side={hovercardSide()}>
+      <HoverCard.Content className="Weapon HovercardContent" side={hovercardSide()}>
         <div className="top">
           <div className="title">
             <h4>{props.gridWeapon.object.name[locale]}</h4>
