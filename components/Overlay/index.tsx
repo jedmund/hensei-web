@@ -11,13 +11,16 @@ const defaultProps = {
   visible: true,
 }
 
-const Overlay = ({
-  visible: displayed,
-  open,
-}: {
-  visible: boolean
-  open: boolean
-}) => {
+const Overlay = React.forwardRef<HTMLDivElement, Props>(function Overlay(
+  {
+    visible: displayed,
+    open,
+  }: {
+    visible: boolean
+    open: boolean
+  },
+  forwardedRef
+) {
   const [visible, setVisible] = useState(open)
 
   const classes = classNames({
@@ -43,7 +46,7 @@ const Overlay = ({
   }
 
   return visible ? <div className={classes} onClick={handleClick} /> : null
-}
+})
 
 Overlay.defaultProps = defaultProps
 

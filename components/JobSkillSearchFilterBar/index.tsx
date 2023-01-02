@@ -18,6 +18,7 @@ const JobSkillSearchFilterBar = (props: Props) => {
   const [currentGroup, setCurrentGroup] = useState(-1)
 
   function openSelect() {
+    // debugger
     setOpen(!open)
   }
 
