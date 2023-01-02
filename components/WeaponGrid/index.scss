@@ -1,52 +1,51 @@
-#MainGrid {
+#WeaponGrid {
+  align-items: center;
   display: flex;
+  flex-direction: column;
   justify-content: center;
 
-  @include breakpoint(phone) {
+  #MainGrid {
     display: grid;
-    grid-template-columns: 1fr auto;
-  }
-
-  .grid_weapons {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    margin: 0;
-    padding: 0;
-    max-width: 528px;
-  }
-}
-
-#MainGrid,
-#ExtraGrid {
-  .grid_weapons > * {
-    margin-bottom: $unit-3x;
-    margin-right: $unit-3x;
+    gap: $unit-3x;
+    grid-template-columns: 1.278fr 3fr;
+    justify-items: center;
+    grid-template-areas:
+      'mainhand grid'
+      'mainhand grid'
+      'mainhand grid';
+    max-width: $grid-width;
 
     @include breakpoint(tablet) {
-      margin-bottom: $unit-2x;
-      margin-right: $unit-2x;
+      gap: $unit-2x;
     }
+
+    @include breakpoint(phone) {
+      gap: $unit;
+    }
+  }
+
+  #Weapons {
+    display: grid; /* make the right-images container a grid */
+    grid-template-columns: repeat(
+      3,
+      minmax(0, 1fr)
+    ); /* create 3 columns, each taking up 1 fraction */
+    grid-template-rows: repeat(
+      3,
+      1fr
+    ); /* create 3 rows, each taking up 1 fraction */
+    gap: $unit-3x;
 
     @include breakpoint(tablet) {
-      margin-bottom: $unit;
-      margin-right: $unit;
+      gap: $unit-2x;
     }
 
-    &:nth-last-child(-n + 3) {
-      margin-bottom: 0;
+    @include breakpoint(phone) {
+      gap: $unit;
     }
   }
 
-  .grid_weapons > *:nth-child(3n + 3) {
-    margin-right: 0;
-  }
-
-  .grid_weapons > li {
+  li {
     list-style: none;
   }
-}
-
-#ExtraWeapons #grid_weapons > * {
-  margin-bottom: 0;
 }

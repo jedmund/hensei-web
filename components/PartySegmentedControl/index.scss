@@ -6,22 +6,30 @@
   justify-content: center;
   margin: 0 auto;
   margin-bottom: $unit * 3;
-  max-width: 760px;
+  max-width: $grid-width;
   position: relative;
 
-  @include breakpoint(phone) {
-    gap: $unit;
-    margin-left: 0;
-    margin-right: 0;
-    padding: 0 $unit;
-    max-width: auto;
-    width: 100%;
+  // prettier-ignore
+  @media only screen 
+    and (max-width: 550px) 
+    and (max-height: 920px) 
+    and (-webkit-min-device-pixel-ratio: 2) {
+      gap: $unit;
+      margin-left: 0;
+      margin-right: 0;
+      padding: 0 $unit;
+      max-width: auto;
+      width: 100%;
   }
 
   .SegmentedControl {
     flex-grow: 1;
 
-    @include breakpoint(phone) {
+    // prettier-ignore
+    @media only screen 
+    and (max-width: 550px) 
+    and (max-height: 920px) 
+    and (-webkit-min-device-pixel-ratio: 2) {
       flex-grow: 1;
       width: 100%;
       display: grid;
@@ -34,13 +42,18 @@
   color: #888;
   display: flex;
   font-weight: $normal;
-  gap: 8px;
+  gap: $unit;
   line-height: 34px;
   height: 100%;
   position: absolute;
   right: 0px;
+  top: 1px;
 
-  @include breakpoint(phone) {
+  // prettier-ignore
+  @media only screen 
+    and (max-width: 550px) 
+    and (max-height: 920px) 
+    and (-webkit-min-device-pixel-ratio: 2) {
     position: static;
 
     .Text {

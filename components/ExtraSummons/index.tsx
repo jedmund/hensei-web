@@ -21,9 +21,9 @@ const ExtraSummons = (props: Props) => {
   const { t } = useTranslation('common')
 
   return (
-    <div id="ExtraSummons">
+    <div className="ExtraGrid Summons">
       <span>{t('summons.subaura')}</span>
-      <ul id="grid_summons">
+      <ul id="ExtraSummons">
         {Array.from(Array(numSummons)).map((x, i) => {
           return (
             <li key={`grid_unit_${i}`}>

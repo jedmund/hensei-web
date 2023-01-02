@@ -248,7 +248,7 @@ const SummonGrid = (props: Props) => {
   const summonGridElement = (
     <div id="LabeledGrid">
       <div className="Label">{t('summons.summons')}</div>
-      <ul id="grid_summons">
+      <ul id="Summons">
         {Array.from(Array(numSummons)).map((x, i) => {
           return (
             <li key={`grid_unit_${i}`}>

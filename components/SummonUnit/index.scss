@@ -3,35 +3,18 @@
   flex-direction: column;
   gap: 4px;
 
-  &.main .SummonImage,
-  &.friend .SummonImage {
-    aspect-ratio: 182 / 315;
-    width: 182px;
-    height: auto;
-
-    @include breakpoint(tablet) {
-      width: 20.3vw;
-    }
-  }
-
   &.grid {
     // max-width: 148px;
     // min-height: 141px;
     min-height: 180px;
 
     @include breakpoint(tablet) {
-      min-height: 16.5vw;
+      min-height: 15.9vw;
     }
 
     .SummonImage {
-      aspect-ratio: 148 / 111;
       list-style-type: none;
-      width: 148px;
-      height: auto;
-
-      @include breakpoint(tablet) {
-        width: 20vw;
-      }
+      width: 100%;
     }
   }
 
@@ -77,6 +60,12 @@
     }
   }
 
+  .SummonName {
+    @include breakpoint(phone) {
+      font-size: $font-tiny;
+    }
+  }
+
   &.filled h3 {
     display: block;
   }
@@ -103,5 +92,9 @@
     position: relative;
     width: 100%;
     z-index: 2;
+
+    &.Placeholder {
+      opacity: 0;
+    }
   }
 }

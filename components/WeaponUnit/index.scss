@@ -1,9 +1,11 @@
 .WeaponUnit {
+  align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-height: 139px;
+  gap: $unit-half;
   position: relative;
+  width: 100%;
+  height: auto;
 
   @include breakpoint(tablet) {
     min-height: auto;
@@ -25,25 +27,14 @@
   }
 
   &.mainhand {
-    margin-right: $unit-3x;
-    max-width: 200px;
-
-    @include breakpoint(tablet) {
-      margin-right: $unit-2x;
-    }
-
-    @include breakpoint(phone) {
-      margin-right: $unit-2x;
-      margin-right: $unit;
-    }
+    display: flex;
 
     &.editable .WeaponImage:hover {
       transform: $scale-tall;
     }
 
     .WeaponImage {
-      aspect-ratio: 200 / 418;
-      width: 200px;
+      width: 100%;
       height: auto;
 
       .Awakening {
@@ -62,20 +53,13 @@
           height: auto;
         }
       }
-
-      @include breakpoint(tablet) {
-        width: 25vw;
-      }
     }
   }
 
   &.grid {
-    max-width: 160px;
-
     .WeaponImage {
-      aspect-ratio: 160 / 92;
       list-style-type: none;
-      width: 160px;
+      width: 100%;
       height: auto;
 
       .Awakening {
@@ -93,10 +77,6 @@
           width: 20%;
           height: auto;
         }
-      }
-
-      @include breakpoint(tablet) {
-        width: 20vw;
       }
     }
   }
@@ -176,6 +156,10 @@
       position: relative;
       width: 100%;
       z-index: 2;
+
+      &.Placeholder {
+        opacity: 0;
+      }
     }
 
     .icon {
@@ -187,6 +171,12 @@
       svg {
         fill: var(--icon-secondary);
       }
+    }
+  }
+
+  .WeaponName {
+    @include breakpoint(phone) {
+      font-size: $font-tiny;
     }
   }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
-import classnames from 'classnames'
+import classNames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
 import WeaponModal from '~components/WeaponModal'
@@ -36,7 +36,7 @@ const WeaponUnit = (props: Props) => {
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
-  const classes = classnames({
+  const classes = classNames({
     WeaponUnit: true,
     mainhand: props.unitType == 0,
     grid: props.unitType == 1,
@@ -71,6 +71,12 @@ const WeaponUnit = (props: Props) => {
     }
 
     setImageUrl(imgSrc)
+  }
+
+  function placeholderImageUrl() {
+    return props.unitType == 0
+      ? '/images/placeholders/placeholder-weapon-main.png'
+      : '/images/placeholders/placeholder-weapon-grid.png'
   }
 
   function awakeningImage() {
@@ -366,7 +372,14 @@ const WeaponUnit = (props: Props) => {
           {ultimaImages()}
         </div>
       </div>
-      <img alt={weapon?.name.en} className="grid_image" src={imageUrl} />
+      <img
+        alt={weapon?.name.en}
+        className={classNames({
+          GridImage: true,
+          Placeholder: imageUrl === '',
+        })}
+        src={imageUrl !== '' ? imageUrl : placeholderImageUrl()}
+      />
       {props.editable ? (
         <span className="icon">
           <PlusIcon />
@@ -395,9 +408,7 @@ const WeaponUnit = (props: Props) => {
       gridWeapon.id &&
       canBeModified(gridWeapon) ? (
         <WeaponModal gridWeapon={gridWeapon}>
-          <div>
-            <Button accessoryIcon={<SettingsIcon />} />
-          </div>
+          <Button accessoryIcon={<SettingsIcon />} />
         </WeaponModal>
       ) : (
         ''

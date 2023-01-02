@@ -1,19 +1,27 @@
-#ExtraGrid {
+.ExtraGrid.Weapons {
   background: var(--extra-purple-bg);
-  border-radius: 8px;
+  border-radius: $card-corner;
   box-sizing: border-box;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1.42fr 3fr;
   justify-content: center;
   margin: 20px auto;
-  max-width: 766px;
-  padding: 16px 16px 16px 0;
+  max-width: calc($grid-width + 20px);
+  padding: $unit-2x $unit-2x $unit-2x 0;
   position: relative;
-  left: 8px;
+  left: $unit;
 
   @include breakpoint(tablet) {
     left: auto;
     max-width: auto;
     width: 100%;
+  }
+
+  @include breakpoint(phone) {
+    display: flex;
+    gap: $unit-2x;
+    padding: $unit-2x;
+    flex-direction: column;
   }
 
   & > span {
@@ -24,17 +32,21 @@
     justify-content: center;
     line-height: 1.2;
     font-weight: 500;
-    margin-right: 16px;
     text-align: center;
   }
 
-  .grid_weapons {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin: 0;
-    padding: 0;
-    max-width: 528px;
+  #ExtraWeapons {
+    display: grid;
+    gap: $unit-3x;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    @include breakpoint(tablet) {
+      gap: $unit-2x;
+    }
+
+    @include breakpoint(phone) {
+      gap: $unit;
+    }
   }
 
   .WeaponUnit .WeaponImage {

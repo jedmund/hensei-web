@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
-import classnames from 'classnames'
+import classNames from 'classnames'
 
 import SearchModal from '~components/SearchModal'
 import SummonHovercard from '~components/SummonHovercard'
@@ -30,7 +30,7 @@ const SummonUnit = (props: Props) => {
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
-  const classes = classnames({
+  const classes = classNames({
     SummonUnit: true,
     main: props.unitType == 0,
     grid: props.unitType == 1,
@@ -85,6 +85,12 @@ const SummonUnit = (props: Props) => {
     setImageUrl(imgSrc)
   }
 
+  function placeholderImageUrl() {
+    return props.unitType == 0 || props.unitType == 2
+      ? '/images/placeholders/placeholder-summon-main.png'
+      : '/images/placeholders/placeholder-summon-grid.png'
+  }
+
   function passUncapData(uncap: number) {
     if (props.gridSummon)
       props.updateUncap(props.gridSummon.id, props.position, uncap)
@@ -92,7 +98,14 @@ const SummonUnit = (props: Props) => {
 
   const image = (
     <div className="SummonImage">
-      <img alt={summon?.name.en} className="grid_image" src={imageUrl} />
+      <img
+        alt={summon?.name.en}
+        className={classNames({
+          GridImage: true,
+          Placeholder: imageUrl === '',
+        })}
+        src={imageUrl !== '' ? imageUrl : placeholderImageUrl()}
+      />
       {props.editable ? (
         <span className="icon">
           <PlusIcon />

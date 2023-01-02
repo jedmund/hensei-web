@@ -361,7 +361,7 @@ const CharacterGrid = (props: Props) => {
           resolveConflict={resolveConflict}
           resetConflict={resetConflict}
         />
-        <ul id="grid_characters">
+        <ul id="Characters">
           {Array.from(Array(numCharacters)).map((x, i) => {
             return (
               <li key={`grid_unit_${i}`}>
