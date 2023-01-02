@@ -1,4 +1,4 @@
-import React, { ForwardedRef, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
@@ -8,7 +8,6 @@ import JobSkillItem from '~components/JobSkillItem'
 import SearchModal from '~components/SearchModal'
 
 import { appState } from '~utils/appState'
-
 import type { JobSkillObject, SearchableObject } from '~types'
 
 import './index.scss'
@@ -132,7 +131,11 @@ const JobSection = (props: Props) => {
   return (
     <section id="Job">
       <div className="JobImage">
-        <img src={imageUrl} />
+        {party.job && party.job.id !== '-1' ? (
+          <img alt={party.job.name[locale]} src={imageUrl} />
+        ) : (
+          ''
+        )}
         <div className="Overlay" />
       </div>
       <div className="JobDetails">
