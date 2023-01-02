@@ -8,13 +8,13 @@ interface Props
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   > {
-  visible?: boolean
+  visible?: string
   error?: string
   label?: string
 }
 
 const defaultProps = {
-  visible: true,
+  visible: 'true',
 }
 
 const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
