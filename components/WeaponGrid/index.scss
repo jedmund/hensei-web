@@ -1,9 +1,10 @@
 #WeaponGrid {
+  align-items: center;
   display: flex;
+  flex-direction: column;
   justify-content: center;
 
   #MainGrid {
-    aspect-ratio: 2/1;
     display: grid;
     gap: $unit-3x;
     grid-template-columns: 1.278fr 3fr;
@@ -23,7 +24,7 @@
     }
   }
 
-  .Weapons {
+  #Weapons {
     display: grid; /* make the right-images container a grid */
     grid-template-columns: repeat(
       3,
@@ -42,9 +43,9 @@
     @include breakpoint(phone) {
       gap: $unit;
     }
+  }
 
-    li {
-      list-style: none;
-    }
+  li {
+    list-style: none;
   }
 }

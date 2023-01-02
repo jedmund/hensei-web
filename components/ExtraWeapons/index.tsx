@@ -23,7 +23,7 @@ const ExtraWeapons = (props: Props) => {
   return (
     <div id="ExtraGrid">
       <span>{t('extra_weapons')}</span>
-      <ul className="grid_weapons">
+      <ul id="ExtraWeapons">
         {Array.from(Array(numWeapons)).map((x, i) => {
           return (
             <li key={`grid_unit_${i}`}>
