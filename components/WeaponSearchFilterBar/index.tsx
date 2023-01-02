@@ -137,7 +137,7 @@ const WeaponSearchFilterBar = (props: Props) => {
 
   const renderWeaponSeriesGroup = (index: number) => {
     return (
-      <DropdownMenu.Group className="Group">
+      <DropdownMenu.Group className="Group" key={`Group-${index}`}>
         {weaponSeries
           .slice(
             index * Math.ceil(weaponSeries.length / 3),
