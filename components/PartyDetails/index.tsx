@@ -164,7 +164,8 @@ const PartyDetails = (props: Props) => {
 
   function extractYoutubeVideoIds(text: string) {
     // Create a regular expression to match Youtube URLs in the text
-    const youtubeUrlRegex = /https:\/\/www\.youtube\.com\/watch\?v=([\w-]+)/g
+    const youtubeUrlRegex =
+      /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/watch\?v=)([^&]+)/
 
     // Initialize an array to store the video IDs
     const videoIds = []
