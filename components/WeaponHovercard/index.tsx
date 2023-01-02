@@ -189,60 +189,63 @@ const WeaponHovercard = (props: Props) => {
   )
 
   return (
-    <HoverCard.Root className="Hovercard">
+    <HoverCard.Root>
       <HoverCard.Trigger>{props.children}</HoverCard.Trigger>
-      <HoverCard.Content className="Weapon HovercardContent" side={hovercardSide()}>
-        <div className="top">
-          <div className="title">
-            <h4>{props.gridWeapon.object.name[locale]}</h4>
-            <img
-              alt={props.gridWeapon.object.name[locale]}
-              src={weaponImage()}
-            />
-          </div>
-          <div className="subInfo">
-            <div className="icons">
-              {props.gridWeapon.object.element !== 0 ||
-              (props.gridWeapon.object.element === 0 &&
-                props.gridWeapon.element != null) ? (
-                <WeaponLabelIcon
-                  labelType={
-                    props.gridWeapon.object.element === 0 &&
-                    props.gridWeapon.element !== 0
-                      ? Element[props.gridWeapon.element]
-                      : Element[props.gridWeapon.object.element]
-                  }
-                />
-              ) : (
-                ''
-              )}
-              <WeaponLabelIcon
-                labelType={Proficiency[props.gridWeapon.object.proficiency]}
+      <HoverCard.Portal>
+        <HoverCard.Content className="Weapon Hovercard" side={hovercardSide()}>
+          <div className="top">
+            <div className="title">
+              <h4>{props.gridWeapon.object.name[locale]}</h4>
+              <img
+                alt={props.gridWeapon.object.name[locale]}
+                src={weaponImage()}
               />
             </div>
-            <UncapIndicator
-              type="weapon"
-              ulb={props.gridWeapon.object.uncap.ulb || false}
-              flb={props.gridWeapon.object.uncap.flb || false}
-              special={false}
-            />
+            <div className="subInfo">
+              <div className="icons">
+                {props.gridWeapon.object.element !== 0 ||
+                (props.gridWeapon.object.element === 0 &&
+                  props.gridWeapon.element != null) ? (
+                  <WeaponLabelIcon
+                    labelType={
+                      props.gridWeapon.object.element === 0 &&
+                      props.gridWeapon.element !== 0
+                        ? Element[props.gridWeapon.element]
+                        : Element[props.gridWeapon.object.element]
+                    }
+                  />
+                ) : (
+                  ''
+                )}
+                <WeaponLabelIcon
+                  labelType={Proficiency[props.gridWeapon.object.proficiency]}
+                />
+              </div>
+              <UncapIndicator
+                type="weapon"
+                ulb={props.gridWeapon.object.uncap.ulb || false}
+                flb={props.gridWeapon.object.uncap.flb || false}
+                special={false}
+              />
+            </div>
           </div>
-        </div>
 
-        {props.gridWeapon.object.ax > 0 &&
-        props.gridWeapon.ax &&
-        props.gridWeapon.ax[0].modifier &&
-        props.gridWeapon.ax[0].strength
-          ? axSection
-          : ''}
-        {props.gridWeapon.weapon_keys && props.gridWeapon.weapon_keys.length > 0
-          ? keysSection
-          : ''}
-        <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-          {t('buttons.wiki')}
-        </a>
-        <HoverCard.Arrow />
-      </HoverCard.Content>
+          {props.gridWeapon.object.ax > 0 &&
+          props.gridWeapon.ax &&
+          props.gridWeapon.ax[0].modifier &&
+          props.gridWeapon.ax[0].strength
+            ? axSection
+            : ''}
+          {props.gridWeapon.weapon_keys &&
+          props.gridWeapon.weapon_keys.length > 0
+            ? keysSection
+            : ''}
+          <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
+            {t('buttons.wiki')}
+          </a>
+          <HoverCard.Arrow />
+        </HoverCard.Content>
+      </HoverCard.Portal>
     </HoverCard.Root>
   )
 }
