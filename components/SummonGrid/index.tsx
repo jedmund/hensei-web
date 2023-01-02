@@ -12,6 +12,7 @@ import ExtraSummons from '~components/ExtraSummons'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
+import { accountState } from '~utils/accountState'
 import type { SearchableObject } from '~types'
 
 import './index.scss'
@@ -156,10 +157,16 @@ const SummonGrid = (props: Props) => {
     position: number,
     uncapLevel: number
   ) {
-    memoizeAction(id, position, uncapLevel)
+    if (
+      party.user &&
+      accountState.account.user &&
+      party.user.id === accountState.account.user.id
+    ) {
+      memoizeAction(id, position, uncapLevel)
 
-    // Optimistically update UI
-    updateUncapLevel(position, uncapLevel)
+      // Optimistically update UI
+      updateUncapLevel(position, uncapLevel)
+    }
   }
 
   const memoizeAction = useCallback(
