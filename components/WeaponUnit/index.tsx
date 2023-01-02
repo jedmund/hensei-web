@@ -75,8 +75,8 @@ const WeaponUnit = (props: Props) => {
 
   function placeholderImageUrl() {
     return props.unitType == 0
-      ? '/images/placeholder-main.png'
-      : '/images/placeholder-grid.png'
+      ? '/images/placeholders/placeholder-weapon-main.png'
+      : '/images/placeholders/placeholder-weapon-grid.png'
   }
 
   function awakeningImage() {
