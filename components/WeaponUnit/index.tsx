@@ -355,7 +355,7 @@ const WeaponUnit = (props: Props) => {
     const weapon = gridWeapon.object
 
     return (
-      weapon.ax > 0 ||
+      weapon.ax ||
       weapon.awakening ||
       (weapon.series && [2, 3, 17, 22, 24].includes(weapon.series))
     )
