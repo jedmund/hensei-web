@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
 
-import * as Dialog from '@radix-ui/react-dialog'
+import { Dialog, DialogContent } from '~components/Dialog'
+import Button from '~components/Button'
+import Overlay from '~components/Overlay'
 
 import { appState } from '~utils/appState'
-
-import Button from '~components/Button'
 
 import './index.scss'
 
@@ -68,49 +68,48 @@ const CharacterConflictModal = (props: Props) => {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={openChange}>
-      <Dialog.Portal>
-        <Dialog.Content
-          className="Conflict Dialog"
-          onOpenAutoFocus={(event) => event.preventDefault()}
-        >
-          <p>
-            <Trans i18nKey="modals.conflict.character"></Trans>
-          </p>
-          <div className="CharacterDiagram Diagram">
-            <ul>
-              {props.conflictingCharacters?.map((character, i) => (
-                <li className="character" key={`conflict-${i}`}>
-                  <img
-                    alt={character.object.name[locale]}
-                    src={imageUrl(character.object, character.uncap_level)}
-                  />
-                  <span>{character.object.name[locale]}</span>
-                </li>
-              ))}
-            </ul>
-            <span className="arrow">&rarr;</span>
-            <div className="wrapper">
-              <div className="character">
+    <Dialog open={open} onOpenChange={openChange}>
+      <DialogContent
+        className="Conflict Dialog"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        onEscapeKeyDown={close}
+      >
+        <p>
+          <Trans i18nKey="modals.conflict.character"></Trans>
+        </p>
+        <div className="CharacterDiagram Diagram">
+          <ul>
+            {props.conflictingCharacters?.map((character, i) => (
+              <li className="character" key={`conflict-${i}`}>
                 <img
-                  alt={props.incomingCharacter?.name[locale]}
-                  src={imageUrl(props.incomingCharacter)}
+                  alt={character.object.name[locale]}
+                  src={imageUrl(character.object, character.uncap_level)}
                 />
-                <span>{props.incomingCharacter?.name[locale]}</span>
-              </div>
+                <span>{character.object.name[locale]}</span>
+              </li>
+            ))}
+          </ul>
+          <span className="arrow">&rarr;</span>
+          <div className="wrapper">
+            <div className="character">
+              <img
+                alt={props.incomingCharacter?.name[locale]}
+                src={imageUrl(props.incomingCharacter)}
+              />
+              <span>{props.incomingCharacter?.name[locale]}</span>
             </div>
           </div>
-          <footer>
-            <Button onClick={close} text={t('buttons.cancel')} />
-            <Button
-              onClick={props.resolveConflict}
-              text={t('modals.conflict.buttons.confirm')}
-            />
-          </footer>
-        </Dialog.Content>
-        <Dialog.Overlay className="Overlay" />
-      </Dialog.Portal>
-    </Dialog.Root>
+        </div>
+        <footer>
+          <Button onClick={close} text={t('buttons.cancel')} />
+          <Button
+            onClick={props.resolveConflict}
+            text={t('modals.conflict.buttons.confirm')}
+          />
+        </footer>
+      </DialogContent>
+      <Overlay open={open} visible={true} />
+    </Dialog>
   )
 }
 

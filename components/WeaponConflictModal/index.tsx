@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'react-i18next'
 
-import * as Dialog from '@radix-ui/react-dialog'
+import { Dialog, DialogContent } from '~components/Dialog'
 import Button from '~components/Button'
+import Overlay from '~components/Overlay'
 
 import mapWeaponSeries from '~utils/mapWeaponSeries'
 
@@ -62,47 +63,46 @@ const WeaponConflictModal = (props: Props) => {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={openChange}>
-      <Dialog.Portal>
-        <Dialog.Content
-          className="Conflict Dialog"
-          onOpenAutoFocus={(event) => event.preventDefault()}
-        >
-          <p>{infoString()}</p>
-          <div className="WeaponDiagram Diagram">
-            <ul>
-              {props.conflictingWeapons?.map((weapon, i) => (
-                <li className="weapon" key={`conflict-${i}`}>
-                  <img
-                    alt={weapon.object.name[locale]}
-                    src={imageUrl(weapon.object)}
-                  />
-                  <span>{weapon.object.name[locale]}</span>
-                </li>
-              ))}
-            </ul>
-            <span className="arrow">&rarr;</span>
-            <div className="wrapper">
-              <div className="weapon">
+    <Dialog open={open} onOpenChange={openChange}>
+      <DialogContent
+        className="Conflict Dialog"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        onEscapeKeyDown={close}
+      >
+        <p>{infoString()}</p>
+        <div className="WeaponDiagram Diagram">
+          <ul>
+            {props.conflictingWeapons?.map((weapon, i) => (
+              <li className="weapon" key={`conflict-${i}`}>
                 <img
-                  alt={props.incomingWeapon?.name[locale]}
-                  src={imageUrl(props.incomingWeapon)}
+                  alt={weapon.object.name[locale]}
+                  src={imageUrl(weapon.object)}
                 />
-                {props.incomingWeapon?.name[locale]}
-              </div>
+                <span>{weapon.object.name[locale]}</span>
+              </li>
+            ))}
+          </ul>
+          <span className="arrow">&rarr;</span>
+          <div className="wrapper">
+            <div className="weapon">
+              <img
+                alt={props.incomingWeapon?.name[locale]}
+                src={imageUrl(props.incomingWeapon)}
+              />
+              {props.incomingWeapon?.name[locale]}
             </div>
           </div>
-          <footer>
-            <Button onClick={close} text={t('buttons.cancel')} />
-            <Button
-              onClick={props.resolveConflict}
-              text={t('modals.conflict.buttons.confirm')}
-            />
-          </footer>
-        </Dialog.Content>
-        <Dialog.Overlay className="Overlay" />
-      </Dialog.Portal>
-    </Dialog.Root>
+        </div>
+        <footer>
+          <Button onClick={close} text={t('buttons.cancel')} />
+          <Button
+            onClick={props.resolveConflict}
+            text={t('modals.conflict.buttons.confirm')}
+          />
+        </footer>
+      </DialogContent>
+      <Overlay open={open} visible={true} />
+    </Dialog>
   )
 }
 
