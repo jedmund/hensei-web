@@ -290,7 +290,7 @@ const WeaponUnit = (props: Props) => {
     if (
       props.gridWeapon &&
       props.gridWeapon.object.ax &&
-      props.gridWeapon.object.ax > 0 &&
+      props.gridWeapon.object.ax_type > 0 &&
       props.gridWeapon.ax &&
       axSkill
     ) {
@@ -310,7 +310,7 @@ const WeaponUnit = (props: Props) => {
     let images: JSX.Element[] = []
     if (
       props.gridWeapon &&
-      props.gridWeapon.object.ax > 0 &&
+      props.gridWeapon.object.ax &&
       props.gridWeapon.ax &&
       props.gridWeapon.ax.length > 0
     ) {
@@ -327,10 +327,10 @@ const WeaponUnit = (props: Props) => {
     if (
       props.gridWeapon &&
       props.gridWeapon.object.ax &&
-      props.gridWeapon.object.ax > 0 &&
+      props.gridWeapon.object.ax_type > 0 &&
       props.gridWeapon.ax
     ) {
-      const axOptions = axData[props.gridWeapon.object.ax - 1]
+      const axOptions = axData[props.gridWeapon.object.ax_type - 1]
       const weaponAxSkill: SimpleAxSkill = props.gridWeapon.ax[0]
 
       let axSkill = axOptions.find((ax) => ax.id === weaponAxSkill.modifier)
