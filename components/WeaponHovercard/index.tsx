@@ -80,7 +80,7 @@ const WeaponHovercard = (props: Props) => {
   }
 
   const createPrimaryAxSkillString = () => {
-    const primaryAxSkills = axData[props.gridWeapon.object.ax - 1]
+    const primaryAxSkills = axData[props.gridWeapon.object.ax_type - 1]
 
     if (props.gridWeapon.ax) {
       const simpleAxSkill = props.gridWeapon.ax[0]
@@ -97,7 +97,7 @@ const WeaponHovercard = (props: Props) => {
   }
 
   const createSecondaryAxSkillString = () => {
-    const primaryAxSkills = axData[props.gridWeapon.object.ax - 1]
+    const primaryAxSkills = axData[props.gridWeapon.object.ax_type - 1]
 
     if (props.gridWeapon.ax) {
       const primarySimpleAxSkill = props.gridWeapon.ax[0]
@@ -230,7 +230,7 @@ const WeaponHovercard = (props: Props) => {
             </div>
           </div>
 
-          {props.gridWeapon.object.ax > 0 &&
+          {props.gridWeapon.object.ax &&
           props.gridWeapon.ax &&
           props.gridWeapon.ax[0].modifier &&
           props.gridWeapon.ax[0].strength

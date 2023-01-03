@@ -148,7 +148,7 @@ const WeaponModal = (props: Props) => {
     if (props.gridWeapon.object.series == 17 && weaponKey3Id)
       object.weapon.weapon_key3_id = weaponKey3Id
 
-    if (props.gridWeapon.object.ax > 0) {
+    if (props.gridWeapon.object.ax && props.gridWeapon.object.ax_type > 0) {
       object.weapon.ax_modifier1 = primaryAxModifier
       object.weapon.ax_modifier2 = secondaryAxModifier
       object.weapon.ax_strength1 = primaryAxValue
@@ -287,7 +287,7 @@ const WeaponModal = (props: Props) => {
       <section>
         <h3>{t('modals.weapon.subtitles.ax_skills')}</h3>
         <AXSelect
-          axType={props.gridWeapon.object.ax}
+          axType={props.gridWeapon.object.ax_type}
           currentSkills={props.gridWeapon.ax}
           onOpenChange={receiveAxOpen}
           sendValidity={receiveValidity}
@@ -314,7 +314,7 @@ const WeaponModal = (props: Props) => {
   }
 
   function openChange(open: boolean) {
-    if (props.gridWeapon.object.ax > 0 || props.gridWeapon.object.awakening) {
+    if (props.gridWeapon.object.ax || props.gridWeapon.object.awakening) {
       setFormValid(false)
     } else {
       setFormValid(true)
@@ -369,7 +369,7 @@ const WeaponModal = (props: Props) => {
           {[2, 3, 17, 24].includes(props.gridWeapon.object.series)
             ? keySelect()
             : ''}
-          {props.gridWeapon.object.ax > 0 ? axSelect() : ''}
+          {props.gridWeapon.object.ax ? axSelect() : ''}
           {props.gridWeapon.awakening ? awakeningSelect() : ''}
           <Button
             contained={true}
