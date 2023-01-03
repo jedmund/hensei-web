@@ -43,6 +43,7 @@ const WeaponConflictModal = (props: Props) => {
 
   function close() {
     setOpen(false)
+    props.resetConflict()
   }
 
   const infoString = () => {
