@@ -65,6 +65,7 @@ const CharacterConflictModal = (props: Props) => {
 
   function close() {
     setOpen(false)
+    props.resetConflict()
   }
 
   return (
