@@ -22,6 +22,7 @@ interface Props {
   raid: Raid
   grid: GridWeapon[]
   user?: User
+  fullAuto: boolean
   favorited: boolean
   createdAt: Date
   displayUser?: boolean | false
@@ -161,8 +162,17 @@ const GridRep = (props: Props) => {
     <div className="Details">
       <h2 className={titleClass}>{props.name ? props.name : t('no_title')}</h2>
       <div className="bottom">
-        <div className={raidClass}>
-          {props.raid ? props.raid.name[locale] : t('no_raid')}
+        <div className="Properties">
+          <span className={raidClass}>
+            {props.raid ? props.raid.name[locale] : t('no_raid')}
+          </span>
+          {props.fullAuto ? (
+            <span className="full_auto">
+              {` · ${t('party.details.labels.full_auto')}`}
+            </span>
+          ) : (
+            ''
+          )}
         </div>
         <time className="last-updated" dateTime={props.createdAt.toISOString()}>
           {formatTimeAgo(props.createdAt, locale)}

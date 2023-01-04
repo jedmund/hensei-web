@@ -236,6 +236,7 @@ const ProfileRoute: React.FC<Props> = (props: Props) => {
           raid={party.raid}
           grid={party.weapons}
           favorited={party.favorited}
+          fullAuto={party.full_auto}
           key={`party-${i}`}
           onClick={goTo}
         />

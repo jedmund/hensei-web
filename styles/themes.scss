@@ -9,6 +9,8 @@
 
   --link-text-hover: #{$text--link--hover--light};
 
+  --full-auto-text: #{$text--full--auto--light};
+
   // Light - Menus
   --dialog-bg: #{$dialog--bg--light};
 
@@ -128,6 +130,8 @@
   --bar-bg: #{$grey-10};
 
   --link-text-hover: #{$text--link--hover--dark};
+
+  --full-auto-text: #{$text--full--auto--dark};
 
   // Dark - Dialogs
   --dialog-bg: #{$dialog--bg--dark};
