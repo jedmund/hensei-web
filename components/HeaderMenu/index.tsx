@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { setCookie } from 'cookies-next'
 import classNames from 'classnames'
-import retrieveCookies from '~utils/retrieveCookies'
+import { retrieveCookies, retrieveLocaleCookies } from '~utils/retrieveCookies'
 
 import Link from 'next/link'
 import * as Switch from '@radix-ui/react-switch'
@@ -29,6 +29,7 @@ const HeaderMenu = (props: Props) => {
   // Setup
   const router = useRouter()
   const data: GranblueCookie | undefined = retrieveCookies()
+  const localeData = retrieveLocaleCookies()
   const { t } = useTranslation('common')
 
   // Refs
@@ -59,9 +60,8 @@ const HeaderMenu = (props: Props) => {
   const [checked, setChecked] = useState(false)
 
   useEffect(() => {
-    const locale = data?.locale
-    setChecked(locale === 'ja' ? true : false)
-  }, [data?.locale])
+    setChecked(localeData === 'ja' ? true : false)
+  }, [localeData])
 
   function handleCheckedChange(value: boolean) {
     const language = value ? 'ja' : 'en'
