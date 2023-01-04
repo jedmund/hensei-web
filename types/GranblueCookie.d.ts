@@ -1,5 +1,5 @@
 interface GranblueCookie {
-  account?: AccountCookie
-  user?: UserCookie
+  account: AccountCookie
+  user: UserCookie
   locale: string
 }
