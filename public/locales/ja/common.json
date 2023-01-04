@@ -259,6 +259,26 @@
       "characters": "キャラ",
       "weapons": "武器",
       "summons": "召喚石"
+    },
+    "details": {
+      "labels": {
+        "charge_attack": "奥義",
+        "full_auto": "フルオート",
+        "auto_guard": "オートガード",
+        "turn_count": "経過ターン",
+        "button_chain": "ポチチェイン",
+        "clear_time": "討伐時間"
+      },
+      "suffix": {
+        "buttons": "ポチ",
+        "chains": "チェ",
+        "minutes": "分",
+        "seconds": "秒"
+      },
+      "turns": {
+        "with_count_one": "{{count}}ターン",
+        "with_count_other": "{{count}}ターン"
+      }
     }
   },
   "saved": {

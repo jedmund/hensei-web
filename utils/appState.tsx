@@ -30,6 +30,13 @@ interface AppState {
     jobSkills: JobSkillObject
     raid: Raid | undefined
     element: number
+    fullAuto: boolean
+    autoGuard: boolean
+    chargeAttack: boolean
+    clearTime: number
+    buttonCount?: number
+    turnCount?: number
+    chainCount?: number
     extra: boolean
     user: User | undefined
     favorited: boolean
@@ -76,6 +83,13 @@ export const initialAppState: AppState = {
       3: undefined,
     },
     raid: undefined,
+    fullAuto: false,
+    autoGuard: false,
+    chargeAttack: true,
+    clearTime: 0,
+    buttonCount: undefined,
+    turnCount: undefined,
+    chainCount: undefined,
     element: 0,
     extra: false,
     user: undefined,

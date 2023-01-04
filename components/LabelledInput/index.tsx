@@ -8,16 +8,16 @@ interface Props
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   > {
-  visible?: string
+  visible?: boolean
   error?: string
   label?: string
 }
 
 const defaultProps = {
-  visible: 'true',
+  visible: true,
 }
 
-const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
+const LabelledInput = React.forwardRef<HTMLInputElement, Props>(function Input(
   props: Props,
   forwardedRef
 ) {
@@ -39,7 +39,13 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
   }
 
   return (
-    <React.Fragment>
+    <label
+      className={classNames({
+        Label: true,
+        Visible: props.visible,
+      })}
+      htmlFor={props.name}
+    >
       <input
         {...inputProps}
         autoComplete="off"
@@ -49,13 +55,14 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
         onChange={handleChange}
         formNoValidate
       />
+      {props.label}
       {props.error && props.error.length > 0 && (
         <p className="InputError">{props.error}</p>
       )}
-    </React.Fragment>
+    </label>
   )
 })
 
-Input.defaultProps = defaultProps
+LabelledInput.defaultProps = defaultProps
 
-export default Input
+export default LabelledInput

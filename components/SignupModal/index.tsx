@@ -9,7 +9,7 @@ import setUserToken from '~utils/setUserToken'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
-import Input from '~components/Input'
+import Input from '~components/LabelledInput'
 import {
   Dialog,
   DialogTrigger,

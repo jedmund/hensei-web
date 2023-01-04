@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, ChangeEvent, KeyboardEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
@@ -8,32 +8,38 @@ import Linkify from 'react-linkify'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import classNames from 'classnames'
 import reactStringReplace from 'react-string-replace'
-import sanitizeHtml from 'sanitize-html'
 
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 
 import Button from '~components/Button'
 import CharLimitedFieldset from '~components/CharLimitedFieldset'
+import Input from '~components/Input'
+import DurationInput from '~components/DurationInput'
+import Token from '~components/Token'
+
 import RaidDropdown from '~components/RaidDropdown'
 import TextFieldset from '~components/TextFieldset'
+import Switch from '~components/Switch'
 
 import { accountState } from '~utils/accountState'
 import { appState } from '~utils/appState'
 import { formatTimeAgo } from '~utils/timeAgo'
+import { youtube } from '~utils/youtube'
 
 import CheckIcon from '~public/icons/Check.svg'
 import CrossIcon from '~public/icons/Cross.svg'
 import EditIcon from '~public/icons/Edit.svg'
 
+import type { DetailsObject } from 'types'
+
 import './index.scss'
-import { youtube } from '~utils/youtube'
 
 // Props
 interface Props {
   party?: Party
   new: boolean
   editable: boolean
-  updateCallback: (name?: string, description?: string, raid?: Raid) => void
+  updateCallback: (details: DetailsObject) => void
   deleteCallback: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void
@@ -53,6 +59,17 @@ const PartyDetails = (props: Props) => {
   const descriptionInput = React.createRef<HTMLTextAreaElement>()
 
   const [open, setOpen] = useState(false)
+  const [name, setName] = useState('')
+
+  const [chargeAttack, setChargeAttack] = useState(true)
+  const [fullAuto, setFullAuto] = useState(false)
+  const [autoGuard, setAutoGuard] = useState(false)
+
+  const [buttonCount, setButtonCount] = useState<number | undefined>(undefined)
+  const [chainCount, setChainCount] = useState<number | undefined>(undefined)
+  const [turnCount, setTurnCount] = useState<number | undefined>(undefined)
+  const [clearTime, setClearTime] = useState(0)
+
   const [raidSlug, setRaidSlug] = useState('')
   const [embeddedDescription, setEmbeddedDescription] =
     useState<React.ReactNode>()
@@ -88,23 +105,18 @@ const PartyDetails = (props: Props) => {
     description: '',
   })
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    event.preventDefault()
-
-    const { name, value } = event.target
-    let newErrors = errors
-
-    setErrors(newErrors)
-  }
-
-  function handleTextAreaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    event.preventDefault()
-
-    const { name, value } = event.target
-    let newErrors = errors
-
-    setErrors(newErrors)
-  }
+  useEffect(() => {
+    if (props.party) {
+      setName(props.party.name)
+      setAutoGuard(props.party.auto_guard)
+      setFullAuto(props.party.full_auto)
+      setChargeAttack(props.party.charge_attack)
+      setClearTime(props.party.clear_time)
+      if (props.party.turn_count) setTurnCount(props.party.turn_count)
+      if (props.party.button_count) setButtonCount(props.party.button_count)
+      if (props.party.chain_count) setChainCount(props.party.chain_count)
+    }
+  }, [props.party])
 
   useEffect(() => {
     // Extract the video IDs from the description
@@ -139,6 +151,100 @@ const PartyDetails = (props: Props) => {
     }
   }, [appState.party.description])
 
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    event.preventDefault()
+
+    const { name, value } = event.target
+    setName(value)
+
+    let newErrors = errors
+    setErrors(newErrors)
+  }
+
+  function handleTextAreaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    event.preventDefault()
+
+    const { name, value } = event.target
+    let newErrors = errors
+
+    setErrors(newErrors)
+  }
+
+  function handleChargeAttackChanged(checked: boolean) {
+    setChargeAttack(checked)
+  }
+
+  function handleFullAutoChanged(checked: boolean) {
+    setFullAuto(checked)
+  }
+
+  function handleAutoGuardChanged(checked: boolean) {
+    setAutoGuard(checked)
+  }
+
+  function handleClearTimeInput(value: number) {
+    if (!isNaN(value)) setClearTime(value)
+  }
+
+  function handleTurnCountInput(event: React.ChangeEvent<HTMLInputElement>) {
+    const value = parseInt(event.currentTarget.value)
+    if (!isNaN(value)) setTurnCount(value)
+  }
+
+  function handleButtonCountInput(event: ChangeEvent<HTMLInputElement>) {
+    const value = parseInt(event.currentTarget.value)
+    if (!isNaN(value)) setButtonCount(value)
+  }
+
+  function handleChainCountInput(event: ChangeEvent<HTMLInputElement>) {
+    const value = parseInt(event.currentTarget.value)
+    if (!isNaN(value)) setChainCount(value)
+  }
+
+  function handleInputKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+      // Allow the key to be processed normally
+      return
+    }
+
+    // Get the current value
+    const input = event.currentTarget
+    let value = event.currentTarget.value
+
+    // Check if the key that was pressed is the backspace key
+    if (event.key === 'Backspace') {
+      // Remove the colon if the value is "12:"
+      if (value.length === 4) {
+        value = value.slice(0, -1)
+      }
+
+      // Allow the backspace key to be processed normally
+      input.value = value
+      return
+    }
+
+    // Check if the key that was pressed is the tab key
+    if (event.key === 'Tab') {
+      // Allow the tab key to be processed normally
+      return
+    }
+
+    // Get the character that was entered and check if it is numeric
+    const char = parseInt(event.key)
+    const isNumber = !isNaN(char)
+
+    // Check if the character should be accepted or rejected
+    const numberValue = parseInt(`${value}${char}`)
+    const minValue = parseInt(event.currentTarget.min)
+    const maxValue = parseInt(event.currentTarget.max)
+
+    if (!isNumber || numberValue < minValue || numberValue > maxValue) {
+      // Reject the character if it isn't a number,
+      // or if it exceeds the min and max values
+      event.preventDefault()
+    }
+  }
+
   async function fetchYoutubeData(videoId: string) {
     return await youtube
       .getVideoById(videoId, { maxResults: 1 })
@@ -146,6 +252,11 @@ const PartyDetails = (props: Props) => {
   }
 
   function toggleDetails() {
+    if (name !== party.name) {
+      const resetName = party.name ? party.name : 'Untitled'
+      setName(resetName)
+      if (nameInput.current) nameInput.current.value = resetName
+    }
     setOpen(!open)
   }
 
@@ -153,12 +264,30 @@ const PartyDetails = (props: Props) => {
     if (slug) setRaidSlug(slug)
   }
 
+  function switchValue(value: boolean) {
+    if (value) return 'on'
+    else return 'off'
+  }
+
   function updateDetails(event: React.MouseEvent) {
     const nameValue = nameInput.current?.value
     const descriptionValue = descriptionInput.current?.value
     const raid = raids.find((raid) => raid.slug === raidSlug)
 
-    props.updateCallback(nameValue, descriptionValue, raid)
+    const details: DetailsObject = {
+      fullAuto: fullAuto,
+      autoGuard: autoGuard,
+      chargeAttack: chargeAttack,
+      clearTime: clearTime,
+      buttonCount: buttonCount,
+      turnCount: turnCount,
+      chainCount: chainCount,
+      name: nameValue,
+      description: descriptionValue,
+      raid: raid,
+    }
+
+    props.updateCallback(details)
     toggleDetails()
   }
 
@@ -305,10 +434,114 @@ const PartyDetails = (props: Props) => {
         currentRaid={props.party?.raid ? props.party?.raid.slug : undefined}
         onChange={receiveRaid}
       />
+      <ul className="SwitchToggleGroup DetailToggleGroup">
+        <li className="Ougi ToggleSection">
+          <label htmlFor="ougi">
+            <span>{t('party.details.labels.charge_attack')}</span>
+            <div>
+              <Switch
+                name="charge_attack"
+                onCheckedChange={handleChargeAttackChanged}
+                value={switchValue(chargeAttack)}
+                checked={chargeAttack}
+              />
+            </div>
+          </label>
+        </li>
+        <li className="FullAuto ToggleSection">
+          <label htmlFor="full_auto">
+            <span>{t('party.details.labels.full_auto')}</span>
+            <div>
+              <Switch
+                onCheckedChange={handleFullAutoChanged}
+                name="full_auto"
+                value={switchValue(fullAuto)}
+                checked={fullAuto}
+              />
+            </div>
+          </label>
+        </li>
+        <li className="AutoGuard ToggleSection">
+          <label htmlFor="auto_guard">
+            <span>{t('party.details.labels.auto_guard')}</span>
+            <div>
+              <Switch
+                onCheckedChange={handleAutoGuardChanged}
+                name="auto_guard"
+                value={switchValue(autoGuard)}
+                disabled={!fullAuto}
+                checked={autoGuard}
+              />
+            </div>
+          </label>
+        </li>
+      </ul>
+      <ul className="InputToggleGroup DetailToggleGroup">
+        <li className="InputSection">
+          <label htmlFor="auto_guard">
+            <span>{t('party.details.labels.button_chain')}</span>
+            <div className="Input Bound">
+              <Input
+                name="buttons"
+                type="number"
+                placeholder="0"
+                value={`${buttonCount}`}
+                min="0"
+                max="99"
+                onChange={handleButtonCountInput}
+                onKeyDown={handleInputKeyDown}
+              />
+              <span>b</span>
+              <Input
+                name="chains"
+                type="number"
+                placeholder="0"
+                min="0"
+                max="99"
+                value={`${chainCount}`}
+                onChange={handleChainCountInput}
+                onKeyDown={handleInputKeyDown}
+              />
+              <span>c</span>
+            </div>
+          </label>
+        </li>
+        <li className="InputSection">
+          <label htmlFor="auto_guard">
+            <span>{t('party.details.labels.turn_count')}</span>
+            <Input
+              name="turn_count"
+              className="AlignRight Bound"
+              type="number"
+              step="1"
+              min="1"
+              max="999"
+              placeholder="0"
+              value={`${turnCount}`}
+              onChange={handleTurnCountInput}
+              onKeyDown={handleInputKeyDown}
+            />
+          </label>
+        </li>
+        <li className="InputSection">
+          <label htmlFor="auto_guard">
+            <span>{t('party.details.labels.clear_time')}</span>
+            <div>
+              <DurationInput
+                name="clear_time"
+                className="Bound"
+                placeholder="00:00"
+                value={clearTime}
+                onValueChange={(value: number) => handleClearTimeInput(value)}
+              />
+            </div>
+          </label>
+        </li>
+      </ul>
       <TextFieldset
         fieldName="name"
         placeholder={
-          'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 1 first\nGood luck with RNG!'
+          'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 3 first\nGood luck with RNG!'
         }
         value={props.party?.description}
         onChange={handleTextAreaChange}
@@ -332,8 +565,63 @@ const PartyDetails = (props: Props) => {
     </section>
   )
 
+  const clearTimeString = () => {
+    const minutes = Math.floor(clearTime / 60)
+    const seconds = clearTime - minutes * 60
+
+    if (minutes > 0)
+      return `${minutes}${t('party.details.suffix.minutes')} ${seconds}${t(
+        'party.details.suffix.seconds'
+      )}`
+    else return `${seconds}${t('party.details.suffix.seconds')}`
+  }
+
+  const buttonChainToken = () => {
+    if (buttonCount || chainCount) {
+      let string = ''
+
+      if (buttonCount && buttonCount > 0) {
+        string += `${buttonCount}b`
+      }
+
+      if (!buttonCount && chainCount && chainCount > 0) {
+        string += `0${t('party.details.suffix.buttons')}${chainCount}${t(
+          'party.details.suffix.chains'
+        )}`
+      } else if (buttonCount && chainCount && chainCount > 0) {
+        string += `${chainCount}${t('party.details.suffix.chains')}`
+      } else if (buttonCount && !chainCount) {
+        string += `0${t('party.details.suffix.chains')}`
+      }
+
+      return <Token>{string}</Token>
+    }
+  }
+
   const readOnly = (
     <section className={readOnlyClasses}>
+      <section className="Details">
+        {
+          <Token>
+            {`${t('party.details.labels.charge_attack')} ${
+              chargeAttack ? 'On' : 'Off'
+            }`}
+          </Token>
+        }
+        {fullAuto ? <Token>{t('party.details.labels.full_auto')}</Token> : ''}
+        {autoGuard ? <Token>{t('party.details.labels.auto_guard')}</Token> : ''}
+        {turnCount ? (
+          <Token>
+            {t('party.details.turns.with_count', {
+              count: turnCount,
+            })}
+          </Token>
+        ) : (
+          ''
+        )}
+        {clearTime > 0 ? <Token>{clearTimeString()}</Token> : ''}
+        {buttonChainToken()}
+      </section>
       <Linkify>{embeddedDescription}</Linkify>
     </section>
   )
@@ -342,8 +630,8 @@ const PartyDetails = (props: Props) => {
     <section className="DetailsWrapper">
       <div className="PartyInfo">
         <div className="Left">
-          <h1 className={!party.name ? 'empty' : ''}>
-            {party.name ? party.name : 'Untitled'}
+          <h1 className={name === '' ? 'empty' : ''}>
+            {name !== '' ? name : 'Untitled'}
           </h1>
           <div className="attribution">
             {renderUserBlock()}

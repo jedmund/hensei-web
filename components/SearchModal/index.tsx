@@ -13,7 +13,7 @@ import {
   DialogClose,
 } from '~components/Dialog'
 
-import Input from '~components/Input'
+import Input from '~components/LabelledInput'
 import CharacterSearchFilterBar from '~components/CharacterSearchFilterBar'
 import WeaponSearchFilterBar from '~components/WeaponSearchFilterBar'
 import SummonSearchFilterBar from '~components/SummonSearchFilterBar'

@@ -19,3 +19,17 @@ export type PaginationObject = {
   totalPages: number
   perPage: number
 }
+
+export type DetailsObject = {
+  [key: string]: boolean | number | string | Raid | undefined
+  fullAuto: boolean
+  autoGuard: boolean
+  chargeAttack: boolean
+  clearTime: number
+  buttonCount?: number
+  turnCount?: number
+  chainCount?: number
+  name?: string
+  description?: string
+  raid?: Raid
+}

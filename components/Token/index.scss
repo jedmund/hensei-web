@@ -1,0 +1,10 @@
+.Token {
+  background: var(--input-bg);
+  border-radius: 99px;
+  display: inline;
+  font-size: $font-tiny;
+  font-weight: $bold;
+  min-width: 3rem;
+  text-align: center;
+  padding: $unit-half $unit;
+}
