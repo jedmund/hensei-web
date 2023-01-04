@@ -275,6 +275,7 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
           grid={party.weapons}
           user={party.user}
           favorited={party.favorited}
+          fullAuto={party.full_auto}
           key={`party-${i}`}
           displayUser={true}
           onClick={goTo}

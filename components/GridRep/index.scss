@@ -117,22 +117,23 @@
     .bottom {
       display: flex;
       flex-direction: row;
+      color: $grey-55;
+      font-size: $font-small;
 
       a.user:hover {
         color: var(--link-text-hover);
       }
     }
 
-    .raid,
-    .user,
-    time {
-      color: $grey-55;
-      font-size: $font-small;
-    }
-
-    .raid,
+    .Properties,
     .user {
       flex-grow: 1;
+    }
+
+    .Properties {
+      .full_auto {
+        color: var(--full-auto-text);
+      }
     }
 
     .raid {
