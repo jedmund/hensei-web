@@ -1,18 +1,21 @@
-.Label {
-  box-sizing: border-box;
-  display: grid;
-  width: 100%;
-}
-
 .Input {
   -webkit-font-smoothing: antialiased;
   background-color: var(--input-bg);
-  border: none;
+  border: 2px solid transparent;
   border-radius: 6px;
   box-sizing: border-box;
   display: block;
   padding: $unit-2x;
   width: 100%;
+
+  &[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+
+  &:focus {
+    border: 2px solid $blue;
+    outline: none;
+  }
 
   &.Bound {
     background-color: var(--input-bound-bg);
@@ -20,6 +23,10 @@
     &:hover {
       background-color: var(--input-bound-bg-hover);
     }
+  }
+
+  &.AlignRight {
+    text-align: right;
   }
 
   &.Hidden {

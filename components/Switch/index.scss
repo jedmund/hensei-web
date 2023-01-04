@@ -1,0 +1,49 @@
+.Switch {
+  $height: 34px;
+  background: $grey-70;
+  border-radius: calc($height / 2);
+  border: none;
+  position: relative;
+  width: 58px;
+  height: $height;
+
+  &:focus {
+    box-shadow: 0 0 0 2px $grey-15;
+  }
+
+  &[data-state='checked'] {
+    background: $grey-15;
+  }
+
+  &:disabled {
+    box-shadow: none;
+
+    &:hover,
+    .SwitchThumb:hover {
+      cursor: not-allowed;
+    }
+
+    .SwitchThumb {
+      background: $grey-80;
+    }
+  }
+}
+
+.SwitchThumb {
+  background: $grey-100;
+  border-radius: 13px;
+  display: block;
+  height: 26px;
+  width: 26px;
+  transition: transform 100ms;
+  transform: translateX(-1px);
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &[data-state='checked'] {
+    background: $grey-100;
+    transform: translateX(21px);
+  }
+}

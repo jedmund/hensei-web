@@ -40,6 +40,94 @@
         width: 100%;
       }
 
+      .DetailToggleGroup {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: $unit;
+
+        .ToggleSection,
+        .InputSection {
+          align-items: center;
+          display: flex;
+          background: var(--card-bg);
+          border-radius: $card-corner;
+
+          & > label {
+            align-items: center;
+            display: flex;
+            font-size: $font-regular;
+            gap: $unit;
+            grid-template-columns: 2fr 1fr;
+            justify-content: space-between;
+            width: 100%;
+
+            & > span {
+              flex-grow: 1;
+            }
+          }
+        }
+
+        .ToggleSection {
+          padding: ($unit * 1.5) $unit-2x;
+        }
+
+        .InputSection {
+          padding: $unit-half $unit-2x;
+          padding-right: $unit-half;
+
+          .Input {
+            border-radius: 7px;
+          }
+
+          div.Input {
+            align-items: center;
+            border: 2px solid transparent;
+            box-sizing: border-box;
+            display: flex;
+            padding: $unit;
+
+            &:has(> input:focus) {
+              border: 2px solid $blue;
+              outline: none;
+            }
+
+            & > input {
+              background: transparent;
+              border: none;
+              padding: $unit 0;
+              text-align: right;
+              width: 2rem;
+
+              &:focus {
+                outline: none;
+                border: none;
+              }
+            }
+          }
+
+          label {
+            display: flex;
+            justify-content: space-between;
+
+            span {
+              flex-grow: 1;
+            }
+
+            .Input {
+              border-radius: 7px;
+              max-width: 10rem;
+            }
+
+            div {
+              display: flex;
+              flex-direction: row;
+              gap: $unit-half;
+              justify-content: right;
+            }
+          }
+        }
+      }
+
       .bottom {
         display: flex;
         flex-direction: row;
@@ -73,6 +161,13 @@
         font-size: $font-regular;
         line-height: $font-regular * 1.2;
         white-space: pre-line;
+      }
+
+      .Details {
+        display: flex;
+        flex-direction: row;
+        gap: $unit-half;
+        margin-bottom: $unit-2x;
       }
 
       .YoutubeWrapper {

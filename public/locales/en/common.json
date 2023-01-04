@@ -258,6 +258,26 @@
       "characters": "Characters",
       "weapons": "Weapons",
       "summons": "Summons"
+    },
+    "details": {
+      "labels": {
+        "charge_attack": "Charge Attack",
+        "full_auto": "Full Auto",
+        "auto_guard": "Auto Guard",
+        "turn_count": "Turn count",
+        "button_chain": "Buttons/Chains",
+        "clear_time": "Clear time"
+      },
+      "suffix": {
+        "buttons": "b",
+        "chains": "c",
+        "minutes": "m",
+        "seconds": "s"
+      },
+      "turns": {
+        "with_count_one": "{{count}} turn",
+        "with_count_other": "{{count}} turns"
+      }
     }
   },
   "saved": {

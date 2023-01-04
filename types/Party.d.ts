@@ -11,6 +11,13 @@ interface Party {
   name: string
   description: string
   raid: Raid
+  full_auto: boolean
+  auto_guard: boolean
+  charge_attack: boolean
+  clear_time: number
+  button_count?: number
+  turn_count?: number
+  chain_count?: number
   job: Job
   job_skills: JobSkillObject
   shortcode: string

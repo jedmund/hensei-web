@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
-import { getCookie } from 'cookies-next'
 import clonedeep from 'lodash.clonedeep'
 
 import PartySegmentedControl from '~components/PartySegmentedControl'
@@ -13,6 +12,7 @@ import CharacterGrid from '~components/CharacterGrid'
 import api from '~utils/api'
 import { appState, initialAppState } from '~utils/appState'
 import { GridType, TeamElement } from '~utils/enums'
+import type { DetailsObject } from '~types'
 
 import './index.scss'
 
@@ -59,25 +59,42 @@ const Party = (props: Props) => {
     }
   }
 
-  function updateDetails(name?: string, description?: string, raid?: Raid) {
+  function updateDetails(details: DetailsObject) {
     if (
-      appState.party.name !== name ||
-      appState.party.description !== description ||
-      appState.party.raid?.id !== raid?.id
+      appState.party.name !== details.name ||
+      appState.party.description !== details.description ||
+      appState.party.raid?.id !== details.raid?.id
     ) {
       if (appState.party.id)
         api.endpoints.parties
           .update(appState.party.id, {
             party: {
-              name: name,
-              description: description,
-              raid_id: raid?.id,
+              name: details.name,
+              description: details.description,
+              raid_id: details.raid?.id,
+              charge_attack: details.chargeAttack,
+              full_auto: details.fullAuto,
+              auto_guard: details.autoGuard,
+              clear_time: details.clearTime,
+              button_count: details.buttonCount,
+              chain_count: details.chainCount,
+              turn_count: details.turnCount,
             },
           })
           .then(() => {
-            appState.party.name = name
-            appState.party.description = description
-            appState.party.raid = raid
+            appState.party.name = details.name
+            appState.party.description = details.description
+            appState.party.raid = details.raid
+
+            appState.party.chargeAttack = details.chargeAttack
+            appState.party.fullAuto = details.fullAuto
+            appState.party.autoGuard = details.autoGuard
+
+            appState.party.clearTime = details.clearTime
+            appState.party.buttonCount = details.buttonCount
+            appState.party.chainCount = details.chainCount
+            appState.party.turnCount = details.turnCount
+
             appState.party.updated_at = party.updated_at
           })
     }

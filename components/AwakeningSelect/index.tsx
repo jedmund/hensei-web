@@ -2,7 +2,7 @@ import React, { ForwardedRef, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
-import Input from '~components/Input'
+import Input from '~components/LabelledInput'
 import Select from '~components/Select'
 import SelectItem from '~components/SelectItem'
 
@@ -187,7 +187,7 @@ const AwakeningSelect = (props: Props) => {
             max={maxValue}
             step="1"
             onChange={handleInputChange}
-            visible={`${awakeningType !== -1}`}
+            visible={awakeningType !== -1 ? true : false}
             ref={awakeningLevelInput}
           />
         </div>
