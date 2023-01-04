@@ -117,8 +117,6 @@
     .bottom {
       display: flex;
       flex-direction: row;
-      color: $grey-55;
-      font-size: $font-small;
 
       a.user:hover {
         color: var(--link-text-hover);
@@ -128,6 +126,13 @@
     .Properties,
     .user {
       flex-grow: 1;
+    }
+
+    .user,
+    .raid,
+    time {
+      color: $grey-55;
+      font-size: $font-small;
     }
 
     .Properties {

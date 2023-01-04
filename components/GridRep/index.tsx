@@ -188,8 +188,17 @@ const GridRep = (props: Props) => {
           <h2 className={titleClass}>
             {props.name ? props.name : t('no_title')}
           </h2>
-          <div className={raidClass}>
-            {props.raid ? props.raid.name[locale] : t('no_raid')}
+          <div className="Properties">
+            <span className={raidClass}>
+              {props.raid ? props.raid.name[locale] : t('no_raid')}
+            </span>
+            {props.fullAuto ? (
+              <span className="full_auto">
+                {` · ${t('party.details.labels.full_auto')}`}
+              </span>
+            ) : (
+              ''
+            )}
           </div>
         </div>
         {account.authorized &&
