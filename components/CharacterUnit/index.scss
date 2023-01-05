@@ -60,6 +60,8 @@
     transition: all 0.18s ease-in-out;
     height: auto;
     width: 100%;
+    -webkit-user-select: none; /* Safari */
+    user-select: none;
 
     &:hover .icon svg {
       fill: var(--icon-secondary-hover);
