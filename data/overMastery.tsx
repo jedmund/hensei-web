@@ -9,6 +9,7 @@ const overMasteryPrimary: ItemSkill[] = [
     minValue: 300,
     maxValue: 3000,
     suffix: '',
+    fractional: false,
     secondary: [],
   },
   {
@@ -21,6 +22,7 @@ const overMasteryPrimary: ItemSkill[] = [
     minValue: 150,
     maxValue: 1500,
     suffix: '',
+    fractional: false,
     secondary: [],
   },
 ]
@@ -36,6 +38,7 @@ const overMasterySecondary: ItemSkill[] = [
     minValue: 6,
     maxValue: 15,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -48,6 +51,7 @@ const overMasterySecondary: ItemSkill[] = [
     minValue: 6,
     maxValue: 15,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -60,6 +64,7 @@ const overMasterySecondary: ItemSkill[] = [
     minValue: 10,
     maxValue: 30,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -72,6 +77,7 @@ const overMasterySecondary: ItemSkill[] = [
     minValue: 6,
     maxValue: 15,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -84,6 +90,7 @@ const overMasterySecondary: ItemSkill[] = [
     minValue: 1,
     maxValue: 10,
     suffix: '',
+    fractional: false,
     secondary: [],
   },
   {
@@ -96,6 +103,7 @@ const overMasterySecondary: ItemSkill[] = [
     minValue: 1,
     maxValue: 10,
     suffix: '',
+    fractional: false,
     secondary: [],
   },
   {
@@ -108,6 +116,7 @@ const overMasterySecondary: ItemSkill[] = [
     minValue: 10,
     maxValue: 30,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
 ]
@@ -123,6 +132,7 @@ const overMasteryTertiary: ItemSkill[] = [
     minValue: 6,
     maxValue: 15,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -135,6 +145,7 @@ const overMasteryTertiary: ItemSkill[] = [
     minValue: 1,
     maxValue: 10,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -147,6 +158,7 @@ const overMasteryTertiary: ItemSkill[] = [
     minValue: 6,
     maxValue: 20,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -159,6 +171,7 @@ const overMasteryTertiary: ItemSkill[] = [
     minValue: 3,
     maxValue: 30,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -171,6 +184,7 @@ const overMasteryTertiary: ItemSkill[] = [
     minValue: 6,
     maxValue: 15,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -183,6 +197,7 @@ const overMasteryTertiary: ItemSkill[] = [
     minValue: 1,
     maxValue: 10,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
 ]
@@ -193,7 +208,7 @@ export const overMastery = {
   c: overMasteryTertiary,
 }
 
-export const aetherialMastery = [
+export const aetherialMastery: ItemSkill[] = [
   {
     name: {
       en: 'Double Attack',
@@ -204,6 +219,7 @@ export const aetherialMastery = [
     minValue: 10,
     maxValue: 17,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -216,6 +232,7 @@ export const aetherialMastery = [
     minValue: 5,
     maxValue: 12,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -228,6 +245,7 @@ export const aetherialMastery = [
     minValue: 15,
     maxValue: 22,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -240,6 +258,7 @@ export const aetherialMastery = [
     minValue: 5,
     maxValue: 12,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -252,6 +271,7 @@ export const aetherialMastery = [
     minValue: 5,
     maxValue: 12,
     suffix: '',
+    fractional: false,
     secondary: [],
   },
   {
@@ -264,6 +284,7 @@ export const aetherialMastery = [
     minValue: 5,
     maxValue: 12,
     suffix: '',
+    fractional: false,
     secondary: [],
   },
   {
@@ -288,6 +309,7 @@ export const aetherialMastery = [
     minValue: 18,
     maxValue: 35,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -300,6 +322,7 @@ export const aetherialMastery = [
     minValue: 5,
     maxValue: 12,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
   {
@@ -312,6 +335,7 @@ export const aetherialMastery = [
     minValue: 10,
     maxValue: 17,
     suffix: '%',
+    fractional: false,
     secondary: [],
   },
 ]

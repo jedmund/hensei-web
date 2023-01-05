@@ -8,6 +8,7 @@ interface ItemSkill {
   slug: string
   minValue: number
   maxValue: number
+  fractional: boolean
   suffix?: string
   secondary?: ItemSkill[]
 }
