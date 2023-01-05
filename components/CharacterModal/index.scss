@@ -1,0 +1,41 @@
+.Character.Dialog {
+  min-width: 480px;
+
+  @include breakpoint(phone) {
+    min-width: inherit;
+  }
+
+  .mods {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-4x;
+
+    section {
+      display: flex;
+      flex-direction: column;
+      gap: $unit-half;
+
+      h3 {
+        color: $grey-55;
+        font-size: $font-small;
+        margin-bottom: $unit;
+      }
+
+      select {
+        background-color: $grey-90;
+      }
+    }
+
+    .Button {
+      font-size: $font-regular;
+      padding: ($unit * 1.5) ($unit-2x);
+      width: 100%;
+
+      &.btn-disabled {
+        background: $grey-90;
+        color: $grey-70;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
