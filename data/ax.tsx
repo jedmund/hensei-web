@@ -1,4 +1,4 @@
-export const axData: AxSkill[][] = [
+const ax: ItemSkill[][] = [
   [
     {
       name: {
@@ -868,3 +868,5 @@ export const axData: AxSkill[][] = [
     },
   ],
 ]
+
+export default ax

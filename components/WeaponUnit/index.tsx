@@ -11,8 +11,8 @@ import Button from '~components/Button'
 
 import type { SearchableObject } from '~types'
 
-import { axData } from '~utils/axData'
-import { weaponAwakening } from '~utils/awakening'
+import ax from '~data/ax'
+import { weaponAwakening } from '~data/awakening'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
@@ -330,7 +330,7 @@ const WeaponUnit = (props: Props) => {
       props.gridWeapon.object.ax_type > 0 &&
       props.gridWeapon.ax
     ) {
-      const axOptions = axData[props.gridWeapon.object.ax_type - 1]
+      const axOptions = ax[props.gridWeapon.object.ax_type - 1]
       const weaponAxSkill: SimpleAxSkill = props.gridWeapon.ax[0]
 
       let axSkill = axOptions.find((ax) => ax.id === weaponAxSkill.modifier)

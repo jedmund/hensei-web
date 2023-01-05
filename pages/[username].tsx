@@ -13,7 +13,7 @@ import setUserToken from '~utils/setUserToken'
 import extractFilters from '~utils/extractFilters'
 import organizeRaids from '~utils/organizeRaids'
 import useDidMountEffect from '~utils/useDidMountEffect'
-import { elements, allElement } from '~utils/Element'
+import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
 
 import GridRep from '~components/GridRep'

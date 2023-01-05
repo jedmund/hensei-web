@@ -8,8 +8,8 @@ import SelectItem from '~components/SelectItem'
 
 import classNames from 'classnames'
 
-import { weaponAwakening, characterAwakening } from '~utils/awakening'
-import type { Awakening } from '~utils/awakening'
+import { weaponAwakening, characterAwakening } from '~data/awakening'
+import type { Awakening } from '~data/awakening'
 
 import './index.scss'
 
