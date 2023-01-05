@@ -61,6 +61,14 @@
     }
   }
 
+  &.Options {
+    box-shadow: 0px 1px 3px rgb(0 0 0 / 14%);
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    z-index: 3;
+  }
+
   &:disabled {
     background-color: var(--button-bg-disabled);
     color: var(--button-text-disabled);
