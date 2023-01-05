@@ -5,6 +5,7 @@
   gap: calc($unit / 2);
   // min-height: 320px;
   // max-width: 200px;
+  position: relative;
   margin-bottom: $unit * 4;
 
   &.editable .CharacterImage:hover {

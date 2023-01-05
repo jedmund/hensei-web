@@ -4,12 +4,21 @@ import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 import classnames from 'classnames'
 
-import { appState } from '~utils/appState'
-
+import Button from '~components/Button'
 import CharacterHovercard from '~components/CharacterHovercard'
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+} from '~components/ContextMenu'
+import ContextMenuItem from '~components/ContextMenuItem'
 import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
+
+import { appState } from '~utils/appState'
+
 import PlusIcon from '~public/icons/Add.svg'
+import SettingsIcon from '~public/icons/Settings.svg'
 
 import type { SearchableObject } from '~types'
 
@@ -106,8 +115,25 @@ const CharacterUnit = (props: Props) => {
     </SearchModal>
   )
 
+  const contextMenu = () => {
+    return props.editable && gridCharacter && gridCharacter.id ? (
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <Button accessoryIcon={<SettingsIcon />} className="Options" />
+        </ContextMenuTrigger>
+        <ContextMenuContent align="start">
+          <ContextMenuItem>Modify character</ContextMenuItem>
+          <ContextMenuItem>Remove from grid</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    ) : (
+      ''
+    )
+  }
+
   const unitContent = (
     <div className={classes}>
+      {contextMenu()}
       {props.editable ? editableImage : image}
       {gridCharacter && character ? (
         <UncapIndicator
