@@ -1,4 +1,4 @@
-interface AxSkill {
+interface ItemSkill {
   name: {
     [key: string]: string
     en: string
@@ -9,5 +9,5 @@ interface AxSkill {
   minValue: number
   maxValue: number
   suffix?: string
-  secondary?: AxSkill[]
+  secondary?: ItemSkill[]
 }
