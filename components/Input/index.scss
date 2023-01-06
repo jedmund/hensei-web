@@ -2,10 +2,10 @@
   -webkit-font-smoothing: antialiased;
   background-color: var(--input-bg);
   border: 2px solid transparent;
-  border-radius: 6px;
+  border-radius: $input-corner;
   box-sizing: border-box;
   display: block;
-  padding: $unit-2x;
+  padding: calc($unit-2x - 2px);
   width: 100%;
 
   &[type='number']::-webkit-inner-spin-button {
