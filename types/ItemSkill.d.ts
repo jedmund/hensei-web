@@ -11,4 +11,5 @@ interface ItemSkill {
   fractional: boolean
   suffix?: string
   secondary?: ItemSkill[]
+  values?: number[]
 }

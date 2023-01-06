@@ -10,7 +10,7 @@ const overMasteryPrimary: ItemSkill[] = [
     maxValue: 3000,
     suffix: '',
     fractional: false,
-    secondary: [],
+    values: [300, 600, 900, 1200, 1500, 1800, 2100, 2400, 2700, 3000],
   },
   {
     name: {
@@ -23,7 +23,7 @@ const overMasteryPrimary: ItemSkill[] = [
     maxValue: 1500,
     suffix: '',
     fractional: false,
-    secondary: [],
+    values: [150, 300, 450, 600, 750, 900, 1050, 1200, 1350, 1500],
   },
 ]
 
@@ -39,7 +39,7 @@ const overMasterySecondary: ItemSkill[] = [
     maxValue: 15,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
   },
   {
     name: {
@@ -52,7 +52,7 @@ const overMasterySecondary: ItemSkill[] = [
     maxValue: 15,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
   },
   {
     name: {
@@ -65,7 +65,7 @@ const overMasterySecondary: ItemSkill[] = [
     maxValue: 30,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [10, 12, 14, 16, 18, 20, 22, 24, 27, 30],
   },
   {
     name: {
@@ -78,7 +78,7 @@ const overMasterySecondary: ItemSkill[] = [
     maxValue: 15,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
   },
   {
     name: {
@@ -91,7 +91,7 @@ const overMasterySecondary: ItemSkill[] = [
     maxValue: 10,
     suffix: '',
     fractional: false,
-    secondary: [],
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   },
   {
     name: {
@@ -104,7 +104,7 @@ const overMasterySecondary: ItemSkill[] = [
     maxValue: 10,
     suffix: '',
     fractional: false,
-    secondary: [],
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   },
   {
     name: {
@@ -117,7 +117,7 @@ const overMasterySecondary: ItemSkill[] = [
     maxValue: 30,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [10, 12, 14, 16, 18, 20, 22, 24, 27, 30],
   },
 ]
 
@@ -133,7 +133,7 @@ const overMasteryTertiary: ItemSkill[] = [
     maxValue: 15,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
   },
   {
     name: {
@@ -146,7 +146,7 @@ const overMasteryTertiary: ItemSkill[] = [
     maxValue: 10,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   },
   {
     name: {
@@ -159,7 +159,7 @@ const overMasteryTertiary: ItemSkill[] = [
     maxValue: 20,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [6, 7, 8, 9, 10, 12, 14, 16, 18, 20],
   },
   {
     name: {
@@ -172,7 +172,7 @@ const overMasteryTertiary: ItemSkill[] = [
     maxValue: 30,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30],
   },
   {
     name: {
@@ -220,7 +220,6 @@ export const aetherialMastery: ItemSkill[] = [
     maxValue: 17,
     suffix: '%',
     fractional: false,
-    secondary: [],
   },
   {
     name: {
@@ -233,7 +232,6 @@ export const aetherialMastery: ItemSkill[] = [
     maxValue: 12,
     suffix: '%',
     fractional: false,
-    secondary: [],
   },
   {
     name: {
@@ -246,7 +244,6 @@ export const aetherialMastery: ItemSkill[] = [
     maxValue: 22,
     suffix: '%',
     fractional: false,
-    secondary: [],
   },
   {
     name: {
@@ -259,7 +256,6 @@ export const aetherialMastery: ItemSkill[] = [
     maxValue: 12,
     suffix: '%',
     fractional: false,
-    secondary: [],
   },
   {
     name: {
@@ -272,7 +268,6 @@ export const aetherialMastery: ItemSkill[] = [
     maxValue: 12,
     suffix: '',
     fractional: false,
-    secondary: [],
   },
   {
     name: {
@@ -285,7 +280,6 @@ export const aetherialMastery: ItemSkill[] = [
     maxValue: 12,
     suffix: '',
     fractional: false,
-    secondary: [],
   },
   {
     name: {
@@ -298,7 +292,6 @@ export const aetherialMastery: ItemSkill[] = [
     maxValue: 12,
     suffix: '',
     fractional: false,
-    secondary: [],
   },
   {
     name: {
@@ -311,7 +304,6 @@ export const aetherialMastery: ItemSkill[] = [
     maxValue: 35,
     suffix: '%',
     fractional: false,
-    secondary: [],
   },
   {
     name: {
@@ -324,7 +316,6 @@ export const aetherialMastery: ItemSkill[] = [
     maxValue: 12,
     suffix: '%',
     fractional: false,
-    secondary: [],
   },
   {
     name: {
@@ -337,6 +328,5 @@ export const aetherialMastery: ItemSkill[] = [
     maxValue: 17,
     suffix: '%',
     fractional: false,
-    secondary: [],
   },
 ]
