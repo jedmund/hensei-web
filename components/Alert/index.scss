@@ -7,11 +7,11 @@
   width: 100vw;
   top: 0;
   left: 0;
-  z-index: 21;
+  z-index: 31;
 }
 
 .Alert {
-  background: $grey-100;
+  background: var(--dialog-bg);
   border-radius: $unit;
   display: flex;
   flex-direction: column;
@@ -22,11 +22,17 @@
 
   .description {
     font-size: $font-regular;
-    line-height: 1.26;
+    line-height: 1.4;
+
+    strong {
+      font-weight: $bold;
+    }
   }
 
   .buttons {
+    display: flex;
     align-self: flex-end;
+    gap: $unit;
   }
 
   .Button {
