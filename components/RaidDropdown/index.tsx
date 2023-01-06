@@ -8,7 +8,7 @@ import SelectGroup from '~components/SelectGroup'
 import api from '~utils/api'
 import organizeRaids from '~utils/organizeRaids'
 import { appState } from '~utils/appState'
-import { raidGroups } from '~utils/raidGroups'
+import { raidGroups } from '~data/raidGroups'
 
 import './index.scss'
 
