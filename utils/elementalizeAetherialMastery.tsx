@@ -5,12 +5,12 @@ export default function elementalizeAetherialMastery(
   gridCharacter: GridCharacter
 ) {
   const elementalized = aetherialMastery.map((modifier) => {
-    const element = elements.find(
-      (element) => element.id === gridCharacter.object.element
-    )
-    const oppositeElement = elements.find(
-      (element) => element.id === element.opposite_id
-    )
+    const element = elements.find((a) => a.id === gridCharacter.object.element)
+
+    const oppositeElement = elements.find((b) => {
+      if (element) return b.id === element.opposite_id
+    })
+
     const newModifier = modifier
 
     if (element && oppositeElement && modifier.name.en.includes('{Element}')) {
@@ -20,8 +20,8 @@ export default function elementalizeAetherialMastery(
           element.name.en
         )
         newModifier.name.ja = newModifier.name.ja.replace(
-          '{Element}',
-          element.name.ja
+          '{属性}',
+          `${element.name.ja}属性`
         )
       } else if (modifier.id === 4) {
         newModifier.name.en = newModifier.name.en.replace(
@@ -29,8 +29,8 @@ export default function elementalizeAetherialMastery(
           oppositeElement.name.en
         )
         newModifier.name.ja = newModifier.name.ja.replace(
-          '{Element}',
-          oppositeElement.name.ja
+          '{属性}',
+          `${oppositeElement.name.ja}属性`
         )
       }
     }
