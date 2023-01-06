@@ -1,8 +1,5 @@
 // Core dependencies
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
-import classNames from 'classnames'
 
 // UI dependencies
 import SelectWithSelect from '~components/SelectWithSelect'
@@ -14,7 +11,7 @@ import { overMastery } from '~data/overMastery'
 import './index.scss'
 
 // Types
-import { CharacterOverMastery } from '~types'
+import { CharacterOverMastery, ExtendedMastery } from '~types'
 
 const emptyRing: ExtendedMastery = {
   modifier: 0,
@@ -35,6 +32,9 @@ const RingSelect = (props: Props) => {
     4: emptyRing,
   })
 
+  useEffect(() => {
+    props.sendValues(rings)
+  }, [rings])
 
   function dataSet(index: number) {
     const noValue = {
@@ -65,25 +65,32 @@ const RingSelect = (props: Props) => {
     }
   }
 
+  function receiveRingValues(index: number, left: number, right: number) {
+    setRings({
+      ...rings,
+      [index]: {
+        modifier: left,
+        strength: right,
+      },
+    })
   }
 
   return (
     <div className="Rings">
-      {[...Array(4)].map((element, i) => {
+      {[...Array(4)].map((e, i) => {
         const ringIndex = i + 1
 
         return (
           <SelectWithSelect
-            name={`ring${ringIndex}`}
+            name={`ring-${ringIndex}`}
             object="ring"
             key={`ring-${ringIndex}`}
             dataSet={dataSet(ringIndex)}
             leftSelectDisabled={i === 0 || i === 1}
             leftSelectValue={rings[ringIndex].modifier}
             rightSelectValue={rings[ringIndex].strength}
-            onOpenChange={(index: 'left' | 'right', open: boolean) => {}}
-            sendValues={(value: number) => {
-              console.log(`VALUE ${value} RECEIVED`)
+            sendValues={(left: number, right: number) => {
+              receiveRingValues(ringIndex, left, right)
             }}
           />
         )
