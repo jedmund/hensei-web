@@ -3,12 +3,13 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog'
 
 import './index.scss'
 import Button from '~components/Button'
+import Overlay from '~components/Overlay'
 
 // Props
 interface Props {
   open: boolean
   title?: string
-  message: string
+  message: string | React.ReactNode
   primaryAction?: () => void
   primaryActionText?: string
   cancelAction: () => void
@@ -34,8 +35,11 @@ const Alert = (props: Props) => {
                 />
               </AlertDialog.Cancel>
               {props.primaryAction ? (
-                <AlertDialog.Action onClick={props.primaryAction}>
-                  {props.primaryActionText}
+                <AlertDialog.Action asChild>
+                  <Button
+                    onClick={props.cancelAction}
+                    text={props.primaryActionText}
+                  />
                 </AlertDialog.Action>
               ) : (
                 ''
@@ -43,6 +47,7 @@ const Alert = (props: Props) => {
             </div>
           </AlertDialog.Content>
         </div>
+        <Overlay open={props.open} visible={true} />
       </AlertDialog.Portal>
     </AlertDialog.Root>
   )
