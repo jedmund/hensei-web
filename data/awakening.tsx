@@ -6,57 +6,85 @@ export type Awakening = {
     ja: string
   }
 }
-export const characterAwakening: Awakening[] = [
+export const characterAwakening: ItemSkill[] = [
   {
-    id: 0,
+    id: 1,
     name: {
       en: 'Balanced',
       ja: 'バランス',
     },
-  },
-  {
-    id: 1,
-    name: {
-      en: 'Attack',
-      ja: '攻撃',
-    },
+    slug: 'balanced',
+    minValue: 1,
+    maxValue: 15,
+    fractional: false,
   },
   {
     id: 2,
     name: {
-      en: 'Defense',
-      ja: '防御',
+      en: 'Attack',
+      ja: '攻撃',
     },
+    slug: 'attack',
+    minValue: 1,
+    maxValue: 15,
+    fractional: false,
   },
   {
     id: 3,
     name: {
+      en: 'Defense',
+      ja: '防御',
+    },
+    slug: 'defense',
+    minValue: 1,
+    maxValue: 15,
+    fractional: false,
+  },
+  {
+    id: 4,
+    name: {
       en: 'Multiattack',
       ja: '連続攻撃',
     },
+    slug: 'multiattack',
+    minValue: 1,
+    maxValue: 15,
+    fractional: false,
   },
 ]
 
-export const weaponAwakening: Awakening[] = [
+export const weaponAwakening: ItemSkill[] = [
   {
-    id: 0,
+    id: 1,
     name: {
       en: 'Attack',
       ja: '攻撃',
     },
-  },
-  {
-    id: 1,
-    name: {
-      en: 'Defense',
-      ja: '防御',
-    },
+    slug: 'attack',
+    minValue: 1,
+    maxValue: 15,
+    fractional: false,
   },
   {
     id: 2,
     name: {
+      en: 'Defense',
+      ja: '防御',
+    },
+    slug: 'defense',
+    minValue: 1,
+    maxValue: 15,
+    fractional: false,
+  },
+  {
+    id: 3,
+    name: {
       en: 'Special',
       ja: '特殊',
     },
+    slug: 'special',
+    minValue: 1,
+    maxValue: 15,
+    fractional: false,
   },
 ]
