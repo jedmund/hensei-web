@@ -137,6 +137,17 @@
     "changelog": {
       "title": "変更ログ"
     },
+    "characters": {
+      "title": "キャラクター",
+      "subtitles": {
+        "ring": "EXリミットボーナス",
+        "earring": "エーテリアルプラス",
+        "awakening": "覚醒"
+      },
+      "buttons": {
+        "confirm": "キャラクターを変更する"
+      }
+    },
     "conflict": {
       "character": "<strong>同じ名前のキャラクター</strong>がパーティに編成されています。<br />以下のキャラクターを入れ替えますか？",
       "weapon": {
@@ -340,5 +351,6 @@
   "no_title": "無題",
   "no_raid": "マルチなし",
   "no_user": "無名",
-  "no_job": "ジョブなし"
+  "no_job": "ジョブなし",
+  "no_value": "値なし"
 }

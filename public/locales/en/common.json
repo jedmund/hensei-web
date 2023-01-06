@@ -137,6 +137,17 @@
     "changelog": {
       "title": "Changelog"
     },
+    "characters": {
+      "title": "Character",
+      "subtitles": {
+        "ring": "Over Mastery",
+        "earring": "Aetherial Mastery",
+        "awakening": "Awakening"
+      },
+      "buttons": {
+        "confirm": "Save character"
+      }
+    },
     "conflict": {
       "character": "Only one <strong>version of a character</strong> can be included in each party. Do you want to change your party members?",
       "weapon": {
@@ -339,5 +350,6 @@
   "no_title": "Untitled",
   "no_raid": "No raid",
   "no_user": "Anonymous",
-  "no_job": "No class"
+  "no_job": "No class",
+  "no_value": "No value"
 }
