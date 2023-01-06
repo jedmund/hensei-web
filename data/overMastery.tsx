@@ -185,7 +185,7 @@ const overMasteryTertiary: ItemSkill[] = [
     maxValue: 15,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
   },
   {
     name: {
@@ -198,7 +198,7 @@ const overMasteryTertiary: ItemSkill[] = [
     maxValue: 10,
     suffix: '%',
     fractional: false,
-    secondary: [],
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   },
 ]
 
