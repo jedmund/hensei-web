@@ -33,3 +33,16 @@ export type DetailsObject = {
   description?: string
   raid?: Raid
 }
+
+export type ExtendedMastery = {
+  modifier: number
+  strength: number
+}
+
+export type CharacterOverMastery = {
+  [key: number]: ExtendedMastery
+  1: ExtendedMastery
+  2: ExtendedMastery
+  3: ExtendedMastery
+  4: ExtendedMastery
+}
