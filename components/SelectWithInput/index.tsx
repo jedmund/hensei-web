@@ -20,7 +20,7 @@ interface Props {
   selectDisabled: boolean
   inputValue: number
   awakeningLevel?: number
-  onOpenChange: (open: boolean) => void
+  onOpenChange?: (open: boolean) => void
   sendValidity: (isValid: boolean) => void
   sendValues: (type: number, level: number) => void
 }
@@ -80,12 +80,12 @@ const SelectWithInput = ({
   function changeOpen() {
     if (!selectDisabled) {
       setOpen(!open)
-      onOpenChange(!open)
+      if (onOpenChange) onOpenChange(!open)
     }
   }
 
   function onClose() {
-    onOpenChange(false)
+    if (onOpenChange) onOpenChange(false)
   }
 
   // Methods: Rendering

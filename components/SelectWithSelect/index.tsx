@@ -19,7 +19,6 @@ interface Props {
   leftSelectValue: number
   leftSelectDisabled: boolean
   rightSelectValue: number
-  onOpenChange: (index: 'left' | 'right', open: boolean) => void
   sendValues: (left: number, right: number) => void
 }
 
@@ -34,7 +33,6 @@ const SelectWithInput = ({
   leftSelectDisabled,
   leftSelectValue,
   rightSelectValue,
-  onOpenChange,
   sendValues,
 }: Props) => {
   const router = useRouter()
@@ -63,16 +61,14 @@ const SelectWithInput = ({
   function changeOpen(side: 'left' | 'right') {
     if (side === 'left' && !leftSelectDisabled) {
       setLeftSelectOpen(!leftSelectOpen)
-      onOpenChange('left', !open)
     } else if (side === 'right') {
       setRightSelectOpen(!rightSelectOpen)
-      onOpenChange('right', !open)
     }
   }
 
   function onClose() {
-    onOpenChange('left', false)
-    onOpenChange('right', false)
+    setLeftSelectOpen(false)
+    setRightSelectOpen(false)
   }
 
   // Methods: Rendering
