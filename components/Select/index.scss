@@ -24,6 +24,11 @@
     }
   }
 
+  &.Disabled:hover {
+    background-color: var(--input-bg);
+    cursor: not-allowed;
+  }
+
   &[data-placeholder] > span:not(.SelectIcon) {
     color: var(--text-secondary);
   }
