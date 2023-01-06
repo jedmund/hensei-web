@@ -52,6 +52,10 @@ const AwakeningSelect = (props: Props) => {
           en: 'No awakening',
           ja: '覚醒なし',
         },
+        slug: 'no-awakening',
+        minValue: 0,
+        maxValue: 0,
+        fractional: false,
       })
 
       return weaponDataSet
