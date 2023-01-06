@@ -1,9 +1,8 @@
-import React, { ForwardedRef, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
-import Input from '~components/LabelledInput'
-import Select from '~components/Select'
+import SelectWithInput from '~components/SelectWithInput'
 import SelectItem from '~components/SelectItem'
 
 import classNames from 'classnames'
@@ -40,6 +39,24 @@ const AwakeningSelect = (props: Props) => {
   const [maxValue, setMaxValue] = useState(1)
 
   const [error, setError] = useState('')
+
+  // Data
+  const dataSet = () => {
+    if (props.object === 'character') return characterAwakening
+    else {
+      const weaponDataSet = weaponAwakening
+
+      weaponDataSet.unshift({
+        id: 0,
+        name: {
+          en: 'No awakening',
+          ja: '覚醒なし',
+        },
+      })
+
+      return weaponDataSet
+    }
+  }
 
   // Classes
   const inputClasses = classNames({
@@ -163,36 +180,16 @@ const AwakeningSelect = (props: Props) => {
   }
 
   return (
-    <div className="AwakeningSelect">
-      <div className="AwakeningSet">
-        <div className="fields">
-          <Select
-            key="awakening_type"
-            value={`${awakeningType}`}
-            open={open}
-            onValueChange={handleSelectChange}
-            onOpenChange={() => changeOpen()}
-            onClose={onClose}
-            triggerClass="modal"
-          >
-            {generateOptions(props.object)}
-          </Select>
-
-          <Input
-            value={awakeningLevel}
-            className={inputClasses}
-            type="number"
-            placeholder={rangeString(props.object)}
-            min={1}
-            max={maxValue}
-            step="1"
-            onChange={handleInputChange}
-            visible={awakeningType !== -1 ? true : false}
-            ref={awakeningLevelInput}
-          />
-        </div>
-        <p className={errorClasses}>{error}</p>
-      </div>
+    <div className="Awakening">
+      <SelectWithInput
+        object={`${props.object}_awakening`}
+        dataSet={dataSet()}
+        selectValue={awakeningType}
+        inputValue={awakeningLevel}
+        onOpenChange={changeOpen}
+        sendValidity={props.sendValidity}
+        sendValues={props.sendValues}
+      />
     </div>
   )
 }
