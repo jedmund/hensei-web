@@ -16,7 +16,7 @@ interface Props {
   object: 'character' | 'weapon'
   awakeningType?: number
   awakeningLevel?: number
-  onOpenChange: (open: boolean) => void
+  onOpenChange?: (open: boolean) => void
   sendValidity: (isValid: boolean) => void
   sendValues: (type: number, level: number) => void
 }
@@ -103,11 +103,11 @@ const AwakeningSelect = (props: Props) => {
   // Classes
   function changeOpen() {
     setOpen(!open)
-    props.onOpenChange(!open)
+    if (props.onOpenChange) props.onOpenChange(!open)
   }
 
   function onClose() {
-    props.onOpenChange(false)
+    if (props.onOpenChange) props.onOpenChange(false)
   }
 
   function generateOptions(object: 'character' | 'weapon') {
