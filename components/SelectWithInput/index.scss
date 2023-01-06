@@ -1,0 +1,30 @@
+.SelectWithItem {
+  .InputSet {
+    display: flex;
+    flex-direction: row;
+    gap: $unit;
+    width: 100%;
+
+    .SelectTrigger {
+      flex-grow: 1;
+      width: 100%;
+    }
+
+    .Input {
+      // min-width: $unit * 12;
+      flex-grow: 0;
+      text-align: right;
+      width: inherit;
+    }
+  }
+
+  .errors {
+    color: $error;
+    display: none;
+    padding: $unit 0;
+
+    &.visible {
+      display: block;
+    }
+  }
+}
