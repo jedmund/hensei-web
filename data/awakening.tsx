@@ -15,7 +15,7 @@ export const characterAwakening: ItemSkill[] = [
     },
     slug: 'balanced',
     minValue: 1,
-    maxValue: 15,
+    maxValue: 9,
     fractional: false,
   },
   {
@@ -26,7 +26,7 @@ export const characterAwakening: ItemSkill[] = [
     },
     slug: 'attack',
     minValue: 1,
-    maxValue: 15,
+    maxValue: 9,
     fractional: false,
   },
   {
@@ -37,7 +37,7 @@ export const characterAwakening: ItemSkill[] = [
     },
     slug: 'defense',
     minValue: 1,
-    maxValue: 15,
+    maxValue: 9,
     fractional: false,
   },
   {
@@ -48,7 +48,7 @@ export const characterAwakening: ItemSkill[] = [
     },
     slug: 'multiattack',
     minValue: 1,
-    maxValue: 15,
+    maxValue: 9,
     fractional: false,
   },
 ]
