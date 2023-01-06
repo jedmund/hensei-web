@@ -1,0 +1,16 @@
+.SelectSet {
+  display: flex;
+  flex-direction: row;
+  gap: $unit;
+  width: 100%;
+
+  .SelectTrigger.Left {
+    flex-grow: 1;
+    width: 100%;
+  }
+
+  .SelectTrigger.Right {
+    flex-grow: 0;
+    min-width: 10rem;
+  }
+}
