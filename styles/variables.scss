@@ -73,6 +73,7 @@ $orange-90: #ffebd9;
 // Colors -- Interface
 $blue: #275dc5;
 $red: #ff6161;
+$yellow: #c89d39;
 $error: #d13a3a;
 
 // Colors -- Elements
@@ -129,6 +130,9 @@ $page--hover--dark: $grey-30;
 
 $page--element--bg--light: $grey-70;
 $page--element--bg--dark: $grey-40;
+
+$separator--bg--light: $grey-90;
+$separator--bg--dark: $grey-15;
 
 // Color Definitions: Dialog
 $dialog--bg--light: $grey-100;
@@ -250,7 +254,7 @@ $text--primary--color--light: $grey-40;
 $text--primary--color--dark: $grey-90;
 
 $text--secondary--color--light: $grey-60;
-$text--secondary--color--dark: $grey-60;
+$text--secondary--color--dark: $grey-70;
 
 $text--tertiary--color--light: $grey-50;
 $text--tertiary--color--dark: $grey-50;

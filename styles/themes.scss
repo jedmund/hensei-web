@@ -11,6 +11,8 @@
 
   --full-auto-text: #{$text--full--auto--light};
 
+  --separator-bg: #{$separator--bg--light};
+
   // Light - Menus
   --dialog-bg: #{$dialog--bg--light};
 
@@ -132,6 +134,8 @@
   --link-text-hover: #{$text--link--hover--dark};
 
   --full-auto-text: #{$text--full--auto--dark};
+
+  --separator-bg: #{$separator--bg--dark};
 
   // Dark - Dialogs
   --dialog-bg: #{$dialog--bg--dark};
