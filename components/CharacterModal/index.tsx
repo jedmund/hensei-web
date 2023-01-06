@@ -1,6 +1,5 @@
 // Core dependencies
 import React, { useEffect, useState } from 'react'
-import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
@@ -14,18 +13,29 @@ import {
   DialogTrigger,
 } from '~components/Dialog'
 import Button from '~components/Button'
+import SelectWithInput from '~components/SelectWithInput'
 import AwakeningSelect from '~components/AwakeningSelect'
+import RingSelect from '~components/RingSelect'
 
 // Utilities
 import api from '~utils/api'
 import { appState } from '~utils/appState'
 import { retrieveCookies } from '~utils/retrieveCookies'
+import elementalizeAetherialMastery from '~utils/elementalizeAetherialMastery'
+
+// Data
+const emptyExtendedMastery: ExtendedMastery = {
+  modifier: 0,
+  strength: 0,
+}
 
 // Styles and icons
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
 // Types
+import { CharacterOverMastery, ExtendedMastery } from '~types'
+
 interface GridCharacterObject {
   character: {
     ring_modifier1: number
@@ -36,6 +46,8 @@ interface GridCharacterObject {
     ring_strength2: number
     ring_strength3: number
     ring_strength4: number
+    earring_modifier: number
+    earring_strength: number
     awakening_type: number
     awakening_level: number
     transcendence_step: number
@@ -44,10 +56,17 @@ interface GridCharacterObject {
 
 interface Props {
   gridCharacter: GridCharacter
-  children: React.ReactNode
+  children?: React.ReactNode
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-const CharacterModal = ({ gridCharacter, children }: Props) => {
+const CharacterModal = ({
+  gridCharacter,
+  children,
+  open: modalOpen,
+  onOpenChange,
+}: Props) => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
@@ -60,27 +79,20 @@ const CharacterModal = ({ gridCharacter, children }: Props) => {
   const [open, setOpen] = useState(false)
   const [formValid, setFormValid] = useState(false)
 
-  const [ring1Open, setRing1Open] = useState(false)
-  const [ring2Open, setRing2Open] = useState(false)
-  const [ring3Open, setRing3Open] = useState(false)
-  const [ring4Open, setRing4Open] = useState(false)
-  const [earringOpen, setEarringOpen] = useState(false)
-  const [awakeningOpen, setAwakeningOpen] = useState(false)
+  useEffect(() => {
+    setOpen(modalOpen)
+  }, [modalOpen])
 
   // Character properties: Ring
-  const [ringModifier1, setRingModifier1] = useState(0)
-  const [ringModifier2, setRingModifier2] = useState(0)
-  const [ringModifier3, setRingModifier3] = useState(0)
-  const [ringModifier4, setRingModifier4] = useState(0)
-
-  const [ringStrength1, setRingStrength1] = useState(0)
-  const [ringStrength2, setRingStrength2] = useState(0)
-  const [ringStrength3, setRingStrength3] = useState(0)
-  const [ringStrength4, setRingStrength4] = useState(0)
+  const [rings, setRings] = useState<CharacterOverMastery>({
+    1: { ...emptyExtendedMastery, modifier: 1 },
+    2: { ...emptyExtendedMastery, modifier: 2 },
+    3: emptyExtendedMastery,
+    4: emptyExtendedMastery,
+  })
 
   // Character properties: Earrings
-  const [earringModifier, setEarringModifier] = useState(0)
-  const [earringStrength, setEarringStrength] = useState(0)
+  const [earring, setEarring] = useState<ExtendedMastery>(emptyExtendedMastery)
 
   // Character properties: Awakening
   const [awakeningType, setAwakeningType] = useState(0)
@@ -95,78 +107,41 @@ const CharacterModal = ({ gridCharacter, children }: Props) => {
   // Methods: UI state management
   function openChange(open: boolean) {
     setOpen(open)
-  }
-
-  function openSelect(
-    name: 'ring1' | 'ring2' | 'ring3' | 'ring4' | 'earring' | 'awakening'
-  ) {
-    setRing1Open(name === 'ring1' ? !ring1Open : false)
-    setRing2Open(name === 'ring2' ? !ring2Open : false)
-    setRing3Open(name === 'ring3' ? !ring3Open : false)
-    setRing4Open(name === 'ring4' ? !ring4Open : false)
-    setEarringOpen(name === 'earring' ? !earringOpen : false)
-    setAwakeningOpen(name === 'awakening' ? !awakeningOpen : false)
-  }
-
-  const anySelectOpen =
-    ring1Open ||
-    ring2Open ||
-    ring3Open ||
-    ring4Open ||
-    earringOpen ||
-    awakeningOpen
-
-  function onEscapeKeyDown(event: KeyboardEvent) {
-    if (anySelectOpen) {
-      return event.preventDefault()
-    } else {
-      setOpen(false)
-    }
-  }
-
-  function receiveRingOpen(index: 1 | 2 | 3 | 4, isOpen: boolean) {
-    if (index === 1) setRing1Open(isOpen)
-    if (index === 2) setRing2Open(isOpen)
-    if (index === 3) setRing3Open(isOpen)
-    if (index === 4) setRing4Open(isOpen)
-  }
-
-  function receiveEarringOpen(isOpen: boolean) {
-    setEarringOpen(isOpen)
-  }
-
-  function receiveAwakeningOpen(isOpen: boolean) {
-    setAwakeningOpen(isOpen)
+    onOpenChange(open)
   }
 
   // Methods: Receive data from components
-  function receiveRingValues(
-    ringModifier1: number,
-    ringModifier2: number,
-    ringModifier3: number,
-    ringModifier4: number,
-    ringStrength1: number,
-    ringStrength2: number,
-    ringStrength3: number,
-    ringStrength4: number
-  ) {
-    setRingModifier1(ringModifier1)
-    setRingModifier2(ringModifier2)
-    setRingModifier3(ringModifier3)
-    setRingModifier4(ringModifier4)
+  function receiveRingValues(overMastery: CharacterOverMastery) {
+    console.log(overMastery)
 
-    setRingStrength1(ringStrength1)
-    setRingStrength2(ringStrength2)
-    setRingStrength3(ringStrength3)
-    setRingStrength4(ringStrength4)
+    setRings({
+      1: {
+        modifier: overMastery[1].modifier,
+        strength: overMastery[1].strength,
+      },
+      2: {
+        modifier: overMastery[2].modifier,
+        strength: overMastery[2].strength,
+      },
+      3: {
+        modifier: overMastery[3].modifier,
+        strength: overMastery[3].strength,
+      },
+      4: {
+        modifier: overMastery[4].modifier,
+        strength: overMastery[4].strength,
+      },
+    })
   }
 
   function receiveEarringValues(
     earringModifier: number,
     earringStrength: number
   ) {
-    setEarringModifier(earringModifier)
-    setEarringStrength(earringStrength)
+    setEarring({
+      modifier: earringModifier,
+      strength: earringStrength,
+    })
   }
 
   function receiveAwakeningValues(type: number, level: number) {
@@ -184,14 +159,16 @@ const CharacterModal = ({ gridCharacter, children }: Props) => {
   function prepareObject() {
     let object: GridCharacterObject = {
       character: {
-        ring_modifier1: ringModifier1,
-        ring_modifier2: ringModifier2,
-        ring_modifier3: ringModifier3,
-        ring_modifier4: ringModifier4,
-        ring_strength1: ringStrength1,
-        ring_strength2: ringStrength2,
-        ring_strength3: ringStrength3,
-        ring_strength4: ringStrength4,
+        ring_modifier1: rings[1].modifier,
+        ring_modifier2: rings[2].modifier,
+        ring_modifier3: rings[3].modifier,
+        ring_modifier4: rings[4].modifier,
+        ring_strength1: rings[1].strength,
+        ring_strength2: rings[2].strength,
+        ring_strength3: rings[3].strength,
+        ring_strength4: rings[4].strength,
+        earring_modifier: earring.modifier,
+        earring_strength: earring.strength,
         awakening_type: awakeningType,
         awakening_level: awakeningLevel,
         transcendence_step: transcendenceStep,
@@ -204,10 +181,11 @@ const CharacterModal = ({ gridCharacter, children }: Props) => {
   // Send the GridWeaponObject to the server
   async function updateCharacter() {
     const updateObject = prepareObject()
-    return await api.endpoints.grid_characters
-      .update(gridCharacter.id, updateObject)
-      .then((response) => processResult(response))
-      .catch((error) => processError(error))
+    console.log(updateObject)
+    // return await api.endpoints.grid_characters
+    //   .update(gridCharacter.id, updateObject)
+    //   .then((response) => processResult(response))
+    //   .catch((error) => processError(error))
   }
 
   // Save the server's response to state
@@ -228,8 +206,6 @@ const CharacterModal = ({ gridCharacter, children }: Props) => {
         <h3>{t('modals.characters.subtitles.ring')}</h3>
         <RingSelect
           gridCharacter={gridCharacter}
-          onOpenChange={receiveRingOpen}
-          sendValidity={receiveValidity}
           sendValues={receiveRingValues}
         />
       </section>
@@ -237,12 +213,16 @@ const CharacterModal = ({ gridCharacter, children }: Props) => {
   }
 
   const earringSelect = () => {
+    const earringData = elementalizeAetherialMastery(gridCharacter)
+
     return (
       <section>
         <h3>{t('modals.characters.subtitles.earring')}</h3>
-        <EarringSelect
-          gridCharacter={gridCharacter}
-          onOpenChange={receiveEarringOpen}
+        <SelectWithInput
+          object="earring"
+          dataSet={earringData}
+          selectValue={earring.modifier}
+          inputValue={earring.strength}
           sendValidity={receiveValidity}
           sendValues={receiveEarringValues}
         />
@@ -258,7 +238,6 @@ const CharacterModal = ({ gridCharacter, children }: Props) => {
           object="character"
           awakeningType={gridCharacter.awakening?.type}
           awakeningLevel={gridCharacter.awakening?.level}
-          onOpenChange={receiveAwakeningOpen}
           sendValidity={receiveValidity}
           sendValues={receiveAwakeningValues}
         />
@@ -267,18 +246,17 @@ const CharacterModal = ({ gridCharacter, children }: Props) => {
   }
 
   return (
-    // TODO: Refactor into Dialog component
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         className="Character Dialog"
         onOpenAutoFocus={(event) => event.preventDefault()}
-        onEscapeKeyDown={onEscapeKeyDown}
+        onEscapeKeyDown={() => {}}
       >
         <div className="DialogHeader">
           <div className="DialogTop">
             <DialogTitle className="SubTitle">
-              {t('modals.character.title')}
+              {t('modals.characters.title')}
             </DialogTitle>
             <DialogTitle className="DialogTitle">
               {gridCharacter.object.name[locale]}
@@ -299,7 +277,7 @@ const CharacterModal = ({ gridCharacter, children }: Props) => {
             contained={true}
             onClick={updateCharacter}
             disabled={!formValid}
-            text={t('modals.character.buttons.confirm')}
+            text={t('modals.characters.buttons.confirm')}
           />
         </div>
       </DialogContent>
