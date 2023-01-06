@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { Trans, useTranslation } from 'next-i18next'
 import classnames from 'classnames'
 
+import Alert from '~components/Alert'
 import Button from '~components/Button'
 import CharacterHovercard from '~components/CharacterHovercard'
+import CharacterModal from '~components/CharacterModal'
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -23,6 +25,7 @@ import SettingsIcon from '~public/icons/Settings.svg'
 import type { SearchableObject } from '~types'
 
 import './index.scss'
+import { Dialog } from '~components/Dialog'
 
 interface Props {
   gridCharacter?: GridCharacter
@@ -30,6 +33,7 @@ interface Props {
   editable: boolean
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
+  removeCharacter: (id: string) => void
 }
 
 const CharacterUnit = (props: Props) => {
@@ -48,6 +52,9 @@ const CharacterUnit = (props: Props) => {
     editable: props.editable,
     filled: props.gridCharacter !== undefined,
   })
+
+  const [modalOpen, setModalOpen] = useState(false)
+  const [alertOpen, setAlertOpen] = useState(false)
 
   const gridCharacter = props.gridCharacter
   const character = gridCharacter?.object
@@ -115,21 +122,70 @@ const CharacterUnit = (props: Props) => {
     </SearchModal>
   )
 
-  const contextMenu = () => {
-    return props.editable && gridCharacter && gridCharacter.id ? (
-      <ContextMenu>
-        <ContextMenuTrigger asChild>
-          <Button accessoryIcon={<SettingsIcon />} className="Options" />
-        </ContextMenuTrigger>
-        <ContextMenuContent align="start">
-          <ContextMenuItem>Modify character</ContextMenuItem>
-          <ContextMenuItem>Remove from grid</ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
-    ) : (
-      ''
+  function openCharacterModal(event: Event) {
+    setModalOpen(true)
+  }
+
+  function onCharacterModalOpenChange(open: boolean) {
+    setModalOpen(open)
+  }
+
+  function openRemoveCharacterAlert() {
+    setAlertOpen(true)
+  }
+
+  function removeCharacter() {
+    if (gridCharacter) props.removeCharacter(gridCharacter.id)
+  }
+
+  const removeAlert = () => {
+    return (
+      <Alert
+        open={alertOpen}
+        primaryAction={removeCharacter}
+        primaryActionText={t('modals.characters.buttons.remove')}
+        cancelAction={() => setAlertOpen(false)}
+        cancelActionText={t('buttons.cancel')}
+        message={
+          <Trans i18nKey="modals.characters.messages.remove">
+            Are you sure you want to remove{' '}
+            <strong>{{ character: gridCharacter?.object.name[locale] }}</strong>{' '}
+            from your team?
+          </Trans>
+        }
+      />
     )
   }
+
+  const contextMenu = () => {
+    if (props.editable && gridCharacter && gridCharacter.id) {
+      return (
+        <>
+          <ContextMenu>
+            <ContextMenuTrigger asChild>
+              <Button accessoryIcon={<SettingsIcon />} className="Options" />
+            </ContextMenuTrigger>
+            <ContextMenuContent align="start">
+              <ContextMenuItem onSelect={openCharacterModal}>
+                Modify character
+              </ContextMenuItem>
+              <ContextMenuItem onSelect={openRemoveCharacterAlert}>
+                Remove from grid
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          <CharacterModal
+            gridCharacter={gridCharacter}
+            open={modalOpen}
+            onOpenChange={onCharacterModalOpenChange}
+          />
+          {removeAlert()}
+        </>
+      )
+    }
+  }
+
+  //
 
   const unitContent = (
     <div className={classes}>

@@ -144,8 +144,12 @@
         "earring": "エーテリアルプラス",
         "awakening": "覚醒"
       },
+      "messages": {
+        "remove": "<strong>{{character}}</strong>を編成から削除しますか？"
+      },
       "buttons": {
-        "confirm": "キャラクターを変更する"
+        "confirm": "キャラクターを変更する",
+        "remove": "キャラクターを削除する"
       }
     },
     "conflict": {

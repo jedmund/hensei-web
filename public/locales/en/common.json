@@ -144,8 +144,12 @@
         "earring": "Aetherial Mastery",
         "awakening": "Awakening"
       },
+      "messages": {
+        "remove": "Are you sure you want to remove <strong>{{character}}</strong> from your team?"
+      },
       "buttons": {
-        "confirm": "Save character"
+        "confirm": "Save character",
+        "remove": "Remove character"
       }
     },
     "conflict": {

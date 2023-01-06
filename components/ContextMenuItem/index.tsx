@@ -4,11 +4,11 @@ import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 
 import './index.scss'
 
-interface Props
-  extends React.DetailedHTMLProps<
-    React.DialogHTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {}
+interface Props {
+  className?: string
+  onSelect?: (event: Event) => void
+  children: React.ReactNode
+}
 
 const ContextMenuItem = React.forwardRef<HTMLDivElement, Props>(
   function ContextMenu({ children, ...props }, forwardedRef) {
@@ -19,7 +19,11 @@ const ContextMenuItem = React.forwardRef<HTMLDivElement, Props>(
       props.className
     )
 
-    return <DropdownMenuItem className={classes}>{children}</DropdownMenuItem>
+    return (
+      <DropdownMenuItem className={classes} onSelect={props.onSelect}>
+        {children}
+      </DropdownMenuItem>
+    )
   }
 )
 
