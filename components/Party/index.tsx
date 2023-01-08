@@ -59,44 +59,60 @@ const Party = (props: Props) => {
     }
   }
 
-  function updateDetails(details: DetailsObject) {
+  async function updateDetails(details: DetailsObject) {
     if (
       appState.party.name !== details.name ||
       appState.party.description !== details.description ||
       appState.party.raid?.id !== details.raid?.id
     ) {
-      if (appState.party.id)
-        api.endpoints.parties
-          .update(appState.party.id, {
-            party: {
-              name: details.name,
-              description: details.description,
-              raid_id: details.raid?.id,
-              charge_attack: details.chargeAttack,
-              full_auto: details.fullAuto,
-              auto_guard: details.autoGuard,
-              clear_time: details.clearTime,
-              button_count: details.buttonCount,
-              chain_count: details.chainCount,
-              turn_count: details.turnCount,
-            },
-          })
-          .then(() => {
-            appState.party.name = details.name
-            appState.party.description = details.description
-            appState.party.raid = details.raid
+      if (!appState.party.id)
+        await createParty().then((response) => {
+          // If the party has no ID, create a new party
+          const party = response.data.party
+          storeParty(party)
 
-            appState.party.chargeAttack = details.chargeAttack
-            appState.party.fullAuto = details.fullAuto
-            appState.party.autoGuard = details.autoGuard
+          // Then, push the browser history to the new party's URL
+          if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
+        })
 
-            appState.party.clearTime = details.clearTime
-            appState.party.buttonCount = details.buttonCount
-            appState.party.chainCount = details.chainCount
-            appState.party.turnCount = details.turnCount
+      // Update the party
+      await sendUpdate(details)
+    }
+  }
 
-            appState.party.updated_at = party.updated_at
-          })
+  async function sendUpdate(details: DetailsObject) {
+    if (appState.party.id) {
+      return await api.endpoints.parties
+        .update(appState.party.id, {
+          party: {
+            name: details.name,
+            description: details.description,
+            raid_id: details.raid?.id,
+            charge_attack: details.chargeAttack,
+            full_auto: details.fullAuto,
+            auto_guard: details.autoGuard,
+            clear_time: details.clearTime,
+            button_count: details.buttonCount,
+            chain_count: details.chainCount,
+            turn_count: details.turnCount,
+          },
+        })
+        .then(() => {
+          appState.party.name = details.name
+          appState.party.description = details.description
+          appState.party.raid = details.raid
+
+          appState.party.chargeAttack = details.chargeAttack
+          appState.party.fullAuto = details.fullAuto
+          appState.party.autoGuard = details.autoGuard
+
+          appState.party.clearTime = details.clearTime
+          appState.party.buttonCount = details.buttonCount
+          appState.party.chainCount = details.chainCount
+          appState.party.turnCount = details.turnCount
+
+          appState.party.updated_at = party.updated_at
+        })
     }
   }
 
