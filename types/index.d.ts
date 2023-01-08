@@ -22,16 +22,18 @@ export type PaginationObject = {
 
 export type DetailsObject = {
   [key: string]: boolean | number | string | Raid | undefined
-  fullAuto: boolean
-  autoGuard: boolean
-  chargeAttack: boolean
-  clearTime: number
+  fullAuto?: boolean
+  autoGuard?: boolean
+  chargeAttack?: boolean
+  clearTime?: number
   buttonCount?: number
   turnCount?: number
   chainCount?: number
   name?: string
   description?: string
   raid?: Raid
+  job?: Job
+  extra?: boolean
 }
 
 export type ExtendedMastery = {

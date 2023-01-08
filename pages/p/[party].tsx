@@ -190,9 +190,9 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       sortedRaids: sortedRaids,
       weaponKeys: weaponKeys,
       meta: {
-        element: elementEmoji()
+        element: elementEmoji(),
       },
-      ...(await serverSideTranslations(locale, ['common'])),
+      ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
       // Will be passed to the page component as props
     },
   }

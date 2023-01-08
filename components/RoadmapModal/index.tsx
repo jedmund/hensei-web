@@ -5,13 +5,12 @@ import * as Dialog from '@radix-ui/react-dialog'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import ShareIcon from '~public/icons/Share.svg'
-import DiscordIcon from '~public/icons/discord.svg'
 import GithubIcon from '~public/icons/github.svg'
 
 import './index.scss'
 
 const RoadmapModal = () => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation('roadmap')
 
   return (
     <Dialog.Root>
@@ -22,13 +21,11 @@ const RoadmapModal = () => {
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Content
-          className="Dialog"
+          className="Roadmap Dialog"
           onOpenAutoFocus={(event) => event.preventDefault()}
         >
           <div className="DialogHeader">
-            <Dialog.Title className="DialogTitle">
-              {t('menu.roadmap')}
-            </Dialog.Title>
+            <Dialog.Title className="DialogTitle">{t('title')}</Dialog.Title>
             <Dialog.Close className="DialogClose" asChild>
               <span>
                 <CrossIcon />
@@ -37,37 +34,52 @@ const RoadmapModal = () => {
           </div>
 
           <section>
-            <h3 className="priority high">High priority</h3>
+            <div className="top">
+              <h3 className="priority in_progress">{t('subtitle')}</h3>
+              <p>{t('blurb')}</p>
+              <p>{t('link.intro')}</p>
+              <div className="LinkItem">
+                <Link href="https://github.com/users/jedmund/projects/1/views/3">
+                  <a
+                    href="https://github.com/users/jedmund/projects/1/views/3"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <div className="Left">
+                      <GithubIcon />
+                      <h3>{t('link.title')}</h3>
+                    </div>
+                    <ShareIcon className="ShareIcon" />
+                  </a>
+                </Link>
+              </div>
+            </div>
+            <div className="Separator" />
             <ul className="notes">
-              <li>URL state for team tabs</li>
               <li>
-                More team details (Full Auto, Auto Guard, Clear Time) and
-                filters
+                <h4>{t('roadmap.item1.title')}</h4>
+                <p>{t('roadmap.item1.description')}</p>
               </li>
               <li>
-                Character mods - Rings, Earrings, Perpetuity Rings, Styles
+                <h4>{t('roadmap.item2.title')}</h4>
+                <p>{t('roadmap.item2.description')}</p>
               </li>
-            </ul>
-          </section>
-          <section>
-            <h3 className="priority mid">Medium priority</h3>
-            <ul className="notes">
-              <li>Dark mode improvements for logged out users</li>
-              <li>Light Markdown in team details</li>
-              <li>Transcendence Steps - Eternals and Bahamut</li>
-              <li>Rearrange items in team</li>
-              <li>Remove items from team</li>
-            </ul>
-          </section>
-          <section>
-            <h3 className="priority low">Low priority</h3>
-            <ul className="notes">
-              <li>Figure out DNS to simplify URLs to just granblue.team</li>
-              <li>Unify About, Changelog, Roadmap</li>
-              <li>Add R characters</li>
-              <li>Add images for weird units like Aquors</li>
-              <li>Character substitutions</li>
-              <li>Deeper gbf.wiki integration</li>
+              <li>
+                <h4>{t('roadmap.item3.title')}</h4>
+                <p>{t('roadmap.item3.description')}</p>
+              </li>
+              <li>
+                <h4>{t('roadmap.item4.title')}</h4>
+                <p>{t('roadmap.item4.description')}</p>
+              </li>
+              <li>
+                <h4>{t('roadmap.item5.title')}</h4>
+                <p>{t('roadmap.item5.description')}</p>
+              </li>
+              <li>
+                <h4>{t('roadmap.item6.title')}</h4>
+                <p>{t('roadmap.item6.description')}</p>
+              </li>
             </ul>
           </section>
         </Dialog.Content>

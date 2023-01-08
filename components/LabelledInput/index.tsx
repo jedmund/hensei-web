@@ -26,7 +26,7 @@ const LabelledInput = React.forwardRef<HTMLInputElement, Props>(function Input(
 
   // Classes
   const classes = classNames({ Input: true }, props.className)
-  const { defaultValue, ...inputProps } = props
+  const { defaultValue, visible, ...inputProps } = props
 
   // Change value when prop updates
   useEffect(() => {

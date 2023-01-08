@@ -13,7 +13,7 @@ import ExtraWeapons from '~components/ExtraWeapons'
 import api from '~utils/api'
 import { appState } from '~utils/appState'
 
-import type { SearchableObject } from '~types'
+import type { DetailsObject, SearchableObject } from '~types'
 
 import './index.scss'
 import WeaponConflictModal from '~components/WeaponConflictModal'
@@ -24,7 +24,7 @@ import { accountState } from '~utils/accountState'
 interface Props {
   new: boolean
   weapons?: GridWeapon[]
-  createParty: (extra: boolean) => Promise<AxiosResponse<any, any>>
+  createParty: (details: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
 }
 
@@ -89,16 +89,11 @@ const WeaponGrid = (props: Props) => {
     if (position == 1) appState.party.element = weapon.element
 
     if (!party.id) {
-      props.createParty(party.extra).then((response) => {
-        const party = response.data.party
-        appState.party.id = party.id
-        setSlug(party.shortcode)
-
-        if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
-
-        saveWeapon(party.id, weapon, position).then((response) =>
+      const payload: DetailsObject = { extra: party.extra }
+      props.createParty(payload).then((team) => {
+        saveWeapon(team.id, weapon, position).then((response) => {
           storeGridWeapon(response.data.grid_weapon)
-        )
+        })
       })
     } else {
       if (party.editable)

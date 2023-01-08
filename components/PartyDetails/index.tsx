@@ -252,11 +252,14 @@ const PartyDetails = (props: Props) => {
   }
 
   function toggleDetails() {
-    if (name !== party.name) {
-      const resetName = party.name ? party.name : 'Untitled'
-      setName(resetName)
-      if (nameInput.current) nameInput.current.value = resetName
-    }
+    // Enabling this code will make live updates not work,
+    // but I'm not sure why it's here, so we're not going to remove it.
+
+    // if (name !== party.name) {
+    //   const resetName = party.name ? party.name : ''
+    //   setName(resetName)
+    //   if (nameInput.current) nameInput.current.value = resetName
+    // }
     setOpen(!open)
   }
 
@@ -270,7 +273,6 @@ const PartyDetails = (props: Props) => {
   }
 
   function updateDetails(event: React.MouseEvent) {
-    const nameValue = nameInput.current?.value
     const descriptionValue = descriptionInput.current?.value
     const raid = raids.find((raid) => raid.slug === raidSlug)
 
@@ -282,7 +284,7 @@ const PartyDetails = (props: Props) => {
       buttonCount: buttonCount,
       turnCount: turnCount,
       chainCount: chainCount,
-      name: nameValue,
+      name: name,
       description: descriptionValue,
       raid: raid,
     }
