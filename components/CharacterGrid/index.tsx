@@ -11,7 +11,7 @@ import JobSection from '~components/JobSection'
 import CharacterUnit from '~components/CharacterUnit'
 import CharacterConflictModal from '~components/CharacterConflictModal'
 
-import type { JobSkillObject, SearchableObject } from '~types'
+import type { DetailsObject, JobSkillObject, SearchableObject } from '~types'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
@@ -23,7 +23,7 @@ import './index.scss'
 interface Props {
   new: boolean
   characters?: GridCharacter[]
-  createParty: () => Promise<AxiosResponse<any, any>>
+  createParty: (details?: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
 }
 
@@ -95,13 +95,8 @@ const CharacterGrid = (props: Props) => {
     const character = object as Character
 
     if (!party.id) {
-      props.createParty().then((response) => {
-        const party = response.data.party
-        appState.party.id = party.id
-        setSlug(party.shortcode)
-
-        if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
-        saveCharacter(party.id, character, position)
+      props.createParty().then((team) => {
+        saveCharacter(team.id, character, position)
           .then((response) => storeGridCharacter(response.data))
           .catch((error) => console.error(error))
       })
@@ -184,19 +179,24 @@ const CharacterGrid = (props: Props) => {
       },
     }
 
-    if (party.id && appState.party.editable) {
+    if (!party.id) {
+      // If the party has no ID, create a new party
+      await props.createParty()
+    }
+
+    if (appState.party.id) {
       const response = await api.updateJob({
-        partyId: party.id,
+        partyId: appState.party.id,
         params: payload,
       })
 
-      const newParty = response.data
+      const team = response.data
 
-      setJob(newParty.job)
-      appState.party.job = newParty.job
+      setJob(team.job)
+      appState.party.job = team.job
 
-      setJobSkills(newParty.job_skills)
-      appState.party.jobSkills = newParty.job_skills
+      setJobSkills(team.job_skills)
+      appState.party.jobSkills = team.job_skills
     }
   }
 
