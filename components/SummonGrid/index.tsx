@@ -13,7 +13,7 @@ import ExtraSummons from '~components/ExtraSummons'
 import api from '~utils/api'
 import { appState } from '~utils/appState'
 import { accountState } from '~utils/accountState'
-import type { SearchableObject } from '~types'
+import type { DetailsObject, SearchableObject } from '~types'
 
 import './index.scss'
 
@@ -21,7 +21,7 @@ import './index.scss'
 interface Props {
   new: boolean
   summons?: GridSummon[]
-  createParty: () => Promise<AxiosResponse<any, any>>
+  createParty: (details?: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
 }
 
@@ -86,14 +86,8 @@ const SummonGrid = (props: Props) => {
     const summon = object as Summon
 
     if (!party.id) {
-      props.createParty().then((response) => {
-        const party = response.data.party
-        appState.party.id = party.id
-        setSlug(party.shortcode)
-
-        if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
-
-        saveSummon(party.id, summon, position).then((response) =>
+      props.createParty().then((team) => {
+        saveSummon(team.id, summon, position).then((response) =>
           storeGridSummon(response.data)
         )
       })

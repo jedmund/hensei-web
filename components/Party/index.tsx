@@ -11,7 +11,7 @@ import CharacterGrid from '~components/CharacterGrid'
 
 import api from '~utils/api'
 import { appState, initialAppState } from '~utils/appState'
-import { GridType, TeamElement } from '~utils/enums'
+import { GridType } from '~utils/enums'
 import type { DetailsObject } from '~types'
 
 import './index.scss'
@@ -40,79 +40,59 @@ const Party = (props: Props) => {
   }, [])
 
   // Methods: Creating a new party
-  async function createParty(extra: boolean = false) {
-    return await api.endpoints.parties.create({
-      party: {
-        extra: extra,
-      },
-    })
+  async function createParty(details?: DetailsObject) {
+    let payload = {}
+    if (details) payload = formatDetailsObject(details)
+
+    return await api.endpoints.parties
+      .create(payload)
+      .then((response) => storeParty(response.data.party))
   }
 
   // Methods: Updating the party's details
+  async function updateDetails(details: DetailsObject) {
+    if (!appState.party.id) return await createParty(details)
+    else updateParty(details)
+  }
+
+  function formatDetailsObject(details: DetailsObject) {
+    const payload: { [key: string]: any } = {}
+
+    if (details.name) payload.name = details.name
+    if (details.description) payload.description = details.description
+    if (details.raid) payload.raid_id = details.raid.id
+    if (details.chargeAttack) payload.charge_attack = details.chargeAttack
+    if (details.fullAuto) payload.full_auto = details.fullAuto
+    if (details.autoGuard) payload.auto_guard = details.autoGuard
+    if (details.clearTime) payload.clear_time = details.clearTime
+    if (details.buttonCount) payload.button_count = details.buttonCount
+    if (details.chainCount) payload.chain_count = details.chainCount
+    if (details.turnCount) payload.turn_count = details.turnCount
+    if (details.extra) payload.extra = details.extra
+    if (details.job) payload.job_id = details.job.id
+
+    if (Object.keys(payload).length > 1) return { party: payload }
+    else return {}
+  }
+
+  async function updateParty(details: DetailsObject) {
+    const payload = formatDetailsObject(details)
+
+    if (appState.party.id) {
+      return await api.endpoints.parties
+        .update(appState.party.id, payload)
+        .then((response) => storeParty(response.data.party))
+    }
+  }
+
   function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
     appState.party.extra = event.target.checked
 
-    if (party.id) {
-      api.endpoints.parties.update(party.id, {
+    // Only save if this is a saved party
+    if (appState.party.id) {
+      api.endpoints.parties.update(appState.party.id, {
         party: { extra: event.target.checked },
       })
-    }
-  }
-
-  async function updateDetails(details: DetailsObject) {
-    if (
-      appState.party.name !== details.name ||
-      appState.party.description !== details.description ||
-      appState.party.raid?.id !== details.raid?.id
-    ) {
-      if (!appState.party.id)
-        await createParty().then((response) => {
-          // If the party has no ID, create a new party
-          const party = response.data.party
-          storeParty(party)
-
-          // Then, push the browser history to the new party's URL
-          if (props.pushHistory) props.pushHistory(`/p/${party.shortcode}`)
-        })
-
-      // Update the party
-      await sendUpdate(details)
-    }
-  }
-
-  async function sendUpdate(details: DetailsObject) {
-    if (appState.party.id) {
-      return await api.endpoints.parties
-        .update(appState.party.id, {
-          party: {
-            name: details.name,
-            description: details.description,
-            raid_id: details.raid?.id,
-            charge_attack: details.chargeAttack,
-            full_auto: details.fullAuto,
-            auto_guard: details.autoGuard,
-            clear_time: details.clearTime,
-            button_count: details.buttonCount,
-            chain_count: details.chainCount,
-            turn_count: details.turnCount,
-          },
-        })
-        .then(() => {
-          appState.party.name = details.name
-          appState.party.description = details.description
-          appState.party.raid = details.raid
-
-          appState.party.chargeAttack = details.chargeAttack
-          appState.party.fullAuto = details.fullAuto
-          appState.party.autoGuard = details.autoGuard
-
-          appState.party.clearTime = details.clearTime
-          appState.party.buttonCount = details.buttonCount
-          appState.party.chainCount = details.chainCount
-          appState.party.turnCount = details.turnCount
-
-          appState.party.updated_at = party.updated_at
-        })
     }
   }
 
@@ -142,7 +122,7 @@ const Party = (props: Props) => {
 
   // Methods: Storing party data
   const storeParty = function (team: Party) {
-    // Store the important party and state-keeping values
+    // Store the important party and state-keeping values in global state
     appState.party.name = team.name
     appState.party.description = team.description
     appState.party.raid = team.raid
@@ -163,6 +143,11 @@ const Party = (props: Props) => {
     storeCharacters(team.characters)
     storeWeapons(team.weapons)
     storeSummons(team.summons)
+
+    // Then, push the browser history to the new party's URL
+    if (props.pushHistory) props.pushHistory(`/p/${team.shortcode}`)
+
+    return team
   }
 
   const storeCharacters = (list: Array<GridCharacter>) => {
