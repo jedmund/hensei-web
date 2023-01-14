@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -12,9 +12,11 @@ import generateTitle from '~utils/generateTitle'
 import organizeRaids from '~utils/organizeRaids'
 import setUserToken from '~utils/setUserToken'
 import api from '~utils/api'
+import { GridType } from '~utils/enums'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { GroupedWeaponKeys } from '~utils/groupWeaponKeys'
+import { useQueryState } from 'next-usequerystate'
 
 interface Props {
   party: Party
@@ -35,6 +37,27 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
+  // URL state
+  const [selectedTab, setSelectedTab] = useState<GridType>(GridType.Weapon)
+
+  useEffect(() => {
+    const parts = router.asPath.split('/')
+    const tab = parts[parts.length - 1]
+
+    switch (tab) {
+      case 'characters':
+        setSelectedTab(GridType.Character)
+        break
+      case 'weapons':
+        setSelectedTab(GridType.Weapon)
+        break
+      case 'summons':
+        setSelectedTab(GridType.Summon)
+        break
+    }
+  }, [router.asPath])
+
+  // Static data
   useEffect(() => {
     persistStaticData()
   }, [persistStaticData])
@@ -48,7 +71,11 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
 
   return (
     <React.Fragment>
-      <Party team={props.party} raids={props.sortedRaids} />
+      <Party
+        team={props.party}
+        raids={props.sortedRaids}
+        selectedTab={selectedTab}
+      />
       <Head>
         {/* HTML */}
         <title>
