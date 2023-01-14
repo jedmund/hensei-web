@@ -13,19 +13,35 @@ module.exports = {
     return [
       {
         source: '/',
-        destination: '/new'
-      }
+        destination: '/new',
+      },
+      {
+        source: '/p/:shortcode/characters',
+        destination: '/p/:shortcode',
+      },
+      {
+        source: '/p/:shortcode/weapons',
+        destination: '/p/:shortcode',
+      },
+      {
+        source: '/p/:shortcode/summons',
+        destination: '/p/:shortcode',
+      },
+      {
+        source: '/p/:shortcode/:garbage',
+        destination: '/p/:shortcode',
+      },
     ]
   },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
-      use: ["@svgr/webpack"]
-    });
+      use: ['@svgr/webpack'],
+    })
     config.module.rules[2].oneOf.forEach((one) => {
-      if (!`${one.issuer?.and}`.includes('_app')) return;
-      one.issuer.and = [path.resolve(__dirname)];
-    });
-    return config;
+      if (!`${one.issuer?.and}`.includes('_app')) return
+      one.issuer.and = [path.resolve(__dirname)]
+    })
+    return config
   },
-};
+}
