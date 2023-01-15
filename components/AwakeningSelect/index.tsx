@@ -78,7 +78,7 @@ const AwakeningSelect = (props: Props) => {
 
   // Set default awakening and level based on object type
   useEffect(() => {
-    let defaultAwakening = 0
+    let defaultAwakening = 1
     if (props.object === 'weapon') defaultAwakening = -1
 
     setAwakeningType(
