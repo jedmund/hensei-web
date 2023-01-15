@@ -57,6 +57,10 @@ const SelectWithInput = ({
     setCurrentItemValue(rightSelectValue)
   }, [leftSelectValue, rightSelectValue])
 
+  useEffect(() => {
+    if (currentItemSkill) sendValues(currentItemSkill.id, currentItemValue)
+  }, [currentItemSkill, currentItemValue])
+
   // Methods: UI state management
   function changeOpen(side: 'left' | 'right') {
     if (side === 'left' && !leftSelectDisabled) {
@@ -111,13 +115,11 @@ const SelectWithInput = ({
     const skill = dataSet.find((sk) => sk.id === value)
     setCurrentItemSkill(skill)
     setCurrentItemValue(0)
-    sendValues(leftSelectValue, rightSelectValue)
   }
 
   function handleRightSelectChange(rawValue: string) {
     const value = parseFloat(rawValue)
     setCurrentItemValue(value)
-    sendValues(leftSelectValue, rightSelectValue)
   }
 
   return (

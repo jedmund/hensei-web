@@ -66,11 +66,34 @@ const RingSelect = (props: Props) => {
   }
 
   function receiveRingValues(index: number, left: number, right: number) {
+    if (index == 1 || index == 2) {
+      setSyncedRingValues(index, right)
+    } else {
+      setRings({
+        ...rings,
+        [index]: {
+          modifier: left,
+          strength: right,
+        },
+      })
+    }
+  }
+
+  function setSyncedRingValues(index: 1 | 2, value: number) {
+    const atkValues = (dataSet(1)[0] as ItemSkill).values ?? []
+    const hpValues = (dataSet(2)[0] as ItemSkill).values ?? []
+
+    let found = index === 1 ? atkValues.indexOf(value) : hpValues.indexOf(value)
+
     setRings({
       ...rings,
-      [index]: {
-        modifier: left,
-        strength: right,
+      1: {
+        modifier: rings[1].modifier,
+        strength: atkValues[found],
+      },
+      2: {
+        modifier: rings[2].modifier,
+        strength: hpValues[found],
       },
     })
   }
