@@ -10,13 +10,8 @@ import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
 import Input from '~components/LabelledInput'
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogClose,
-} from '~components/Dialog'
-
+import { Dialog, DialogTrigger, DialogClose } from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
@@ -283,7 +278,7 @@ const SignupModal = (props: Props) => {
         </li>
       </DialogTrigger>
       <DialogContent
-        className="Signup Dialog"
+        className="Signup"
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >

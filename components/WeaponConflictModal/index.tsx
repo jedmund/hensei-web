@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'react-i18next'
 
-import { Dialog, DialogContent } from '~components/Dialog'
+import { Dialog } from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 import Button from '~components/Button'
 import Overlay from '~components/Overlay'
 
@@ -65,7 +66,7 @@ const WeaponConflictModal = (props: Props) => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
-        className="Conflict Dialog"
+        className="Conflict"
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={close}
       >

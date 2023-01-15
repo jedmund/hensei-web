@@ -8,10 +8,10 @@ import { AxiosResponse } from 'axios'
 import {
   Dialog,
   DialogClose,
-  DialogContent,
   DialogTitle,
   DialogTrigger,
 } from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 import Button from '~components/Button'
 import SelectWithInput from '~components/SelectWithInput'
 import AwakeningSelect from '~components/AwakeningSelect'
@@ -259,7 +259,7 @@ const CharacterModal = ({
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
-        className="Character Dialog"
+        className="Character"
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={() => {}}
       >

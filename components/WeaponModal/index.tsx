@@ -7,11 +7,10 @@ import { AxiosResponse } from 'axios'
 import {
   Dialog,
   DialogClose,
-  DialogContent,
   DialogTitle,
   DialogTrigger,
 } from '~components/Dialog'
-
+import DialogContent from '~components/DialogContent'
 import AXSelect from '~components/AxSelect'
 import AwakeningSelect from '~components/AwakeningSelect'
 import ElementToggle from '~components/ElementToggle'
@@ -344,7 +343,7 @@ const WeaponModal = (props: Props) => {
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{props.children}</DialogTrigger>
       <DialogContent
-        className="Weapon Dialog"
+        className="Weapon"
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={onEscapeKeyDown}
       >

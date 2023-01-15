@@ -6,13 +6,8 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 import api from '~utils/api'
 
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogClose,
-} from '~components/Dialog'
-
+import { Dialog, DialogTrigger, DialogClose } from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 import Input from '~components/LabelledInput'
 import CharacterSearchFilterBar from '~components/CharacterSearchFilterBar'
 import WeaponSearchFilterBar from '~components/WeaponSearchFilterBar'
