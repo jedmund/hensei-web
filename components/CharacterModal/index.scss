@@ -15,6 +15,16 @@
       flex-direction: column;
       gap: $unit-half;
 
+      &.inline {
+        align-items: center;
+        flex-direction: row;
+        justify-content: space-between;
+
+        h3 {
+          margin: 0;
+        }
+      }
+
       h3 {
         color: $grey-55;
         font-size: $font-small;

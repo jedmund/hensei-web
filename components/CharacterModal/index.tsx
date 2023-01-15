@@ -16,6 +16,7 @@ import Button from '~components/Button'
 import SelectWithInput from '~components/SelectWithInput'
 import AwakeningSelect from '~components/AwakeningSelect'
 import RingSelect from '~components/RingSelect'
+import Switch from '~components/Switch'
 
 // Utilities
 import api from '~utils/api'
@@ -233,7 +234,7 @@ const CharacterModal = ({
   const awakeningSelect = () => {
     return (
       <section>
-        <h3>{t('modals.weapon.subtitles.awakening')}</h3>
+        <h3>{t('modals.characters.subtitles.awakening')}</h3>
         <AwakeningSelect
           object="character"
           awakeningType={gridCharacter.awakening?.type}
@@ -241,6 +242,15 @@ const CharacterModal = ({
           sendValidity={receiveValidity}
           sendValues={receiveAwakeningValues}
         />
+      </section>
+    )
+  }
+
+  const perpetuitySwitch = () => {
+    return (
+      <section className="inline">
+        <h3>{t('modals.characters.subtitles.permanent')}</h3>
+        <Switch />
       </section>
     )
   }
@@ -275,6 +285,7 @@ const CharacterModal = ({
         </div>
 
         <div className="mods">
+          {perpetuitySwitch()}
           {ringSelect()}
           {earringSelect()}
           {awakeningSelect()}
