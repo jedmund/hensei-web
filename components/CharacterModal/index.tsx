@@ -254,6 +254,11 @@ const CharacterModal = ({
         onEscapeKeyDown={() => {}}
       >
         <div className="DialogHeader">
+          <img
+            alt={gridCharacter.object.name[locale]}
+            className="DialogImage"
+            src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-square/${gridCharacter.object.granblue_id}_01.jpg`}
+          />
           <div className="DialogTop">
             <DialogTitle className="SubTitle">
               {t('modals.characters.title')}

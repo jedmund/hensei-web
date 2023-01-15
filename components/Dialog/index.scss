@@ -40,7 +40,7 @@
   .DialogHeader {
     display: flex;
     align-items: center;
-    gap: $unit;
+    gap: $unit-2x;
     justify-content: space-between;
 
     .left {
@@ -53,6 +53,11 @@
         font-size: $font-small;
         line-height: 1.25;
       }
+    }
+
+    .DialogImage {
+      border-radius: $input-corner;
+      width: $unit-10x;
     }
   }
 
