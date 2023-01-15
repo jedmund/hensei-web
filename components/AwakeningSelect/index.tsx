@@ -29,9 +29,6 @@ const AwakeningSelect = (props: Props) => {
 
   const [open, setOpen] = useState(false)
 
-  // Refs
-  const awakeningLevelInput = React.createRef<HTMLInputElement>()
-
   // States
   const [awakeningType, setAwakeningType] = useState(-1)
   const [awakeningLevel, setAwakeningLevel] = useState(1)
@@ -104,83 +101,6 @@ const AwakeningSelect = (props: Props) => {
   function changeOpen() {
     setOpen(!open)
     if (props.onOpenChange) props.onOpenChange(!open)
-  }
-
-  function onClose() {
-    if (props.onOpenChange) props.onOpenChange(false)
-  }
-
-  function generateOptions(object: 'character' | 'weapon') {
-    let options: Awakening[] = []
-    if (object === 'character') options = characterAwakening
-    else if (object === 'weapon') options = weaponAwakening
-    else return
-
-    let optionElements: React.ReactNode[] = options.map((awakening, i) => {
-      return (
-        <SelectItem key={i} value={awakening.id}>
-          {awakening.name[locale]}
-        </SelectItem>
-      )
-    })
-
-    if (object === 'weapon') {
-      optionElements?.unshift(
-        <SelectItem key={-1} value={-1}>
-          {t('awakening.no_type')}
-        </SelectItem>
-      )
-    }
-
-    return optionElements
-  }
-
-  function handleSelectChange(rawValue: string) {
-    const value = parseInt(rawValue)
-    setAwakeningType(value)
-  }
-
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const value = parseFloat(event.target.value)
-    if (handleLevelError(value)) setAwakeningLevel(value)
-  }
-
-  function handleLevelError(value: number) {
-    let error = ''
-    if (value < 1) {
-      error = t('awakening.errors.value_too_low', {
-        minValue: 1,
-      })
-    } else if (value > maxValue) {
-      error = t('awakening.errors.value_too_high', {
-        maxValue: maxValue,
-      })
-    } else if (value % 1 != 0) {
-      error = t('awakening.errors.value_not_whole')
-    } else if (!value || value <= 0) {
-      error = t('awakening.errors.value_empty')
-    } else {
-      error = ''
-    }
-
-    setError(error)
-
-    return error.length === 0
-  }
-
-  const rangeString = (object: 'character' | 'weapon') => {
-    let minValue = 1
-    let maxValue = 1
-
-    if (object === 'weapon') {
-      minValue = 1
-      maxValue = 15
-    } else if (object === 'character') {
-      minValue = 1
-      maxValue = 9
-    } else return
-
-    return `${minValue}~${maxValue}`
   }
 
   return (
