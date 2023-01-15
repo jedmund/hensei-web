@@ -25,7 +25,6 @@ import SettingsIcon from '~public/icons/Settings.svg'
 import type { SearchableObject } from '~types'
 
 import './index.scss'
-import { Dialog } from '~components/Dialog'
 
 interface Props {
   gridCharacter?: GridCharacter
