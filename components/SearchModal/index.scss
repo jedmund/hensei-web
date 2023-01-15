@@ -1,4 +1,4 @@
-.Search.Dialog {
+.Search.DialogContent {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -94,7 +94,7 @@
   }
 }
 
-.Search.Dialog #NoResults {
+.Search.DialogContent #NoResults {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -102,7 +102,7 @@
   flex-grow: 1;
 }
 
-.Search.Dialog #NoResults h2 {
+.Search.DialogContent #NoResults h2 {
   color: var(--text-secondary);
   font-size: $font-large;
   font-weight: 500;
