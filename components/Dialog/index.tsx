@@ -1,5 +1,6 @@
 import React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
+import { useLockedBody } from 'usehooks-ts'
 
 import './index.scss'
 
@@ -18,9 +19,12 @@ export const Dialog = React.forwardRef<HTMLDivElement, Props>(function dialog(
 ) {
   const [locked, setLocked] = useLockedBody(false, 'root')
 
+  function toggleLocked(open: boolean) {
+    setLocked(open)
   }
 
   function onOpenChange(open: boolean) {
+    toggleLocked(open)
     props.onOpenChange(open)
   }
 
