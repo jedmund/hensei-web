@@ -70,6 +70,9 @@ const SelectWithInput = ({
   function onClose() {
     setLeftSelectOpen(false)
     setRightSelectOpen(false)
+
+    setCurrentItemSkill(undefined)
+    setCurrentItemValue(0)
   }
 
   // Methods: Rendering
@@ -110,13 +113,17 @@ const SelectWithInput = ({
   function handleLeftSelectChange(rawValue: string) {
     const value = parseInt(rawValue)
     const skill = dataSet.find((sk) => sk.id === value)
+
     setCurrentItemSkill(skill)
     setCurrentItemValue(0)
+
+    if (skill) sendValues(skill.id, 0)
   }
 
   function handleRightSelectChange(rawValue: string) {
     const value = parseFloat(rawValue)
     setCurrentItemValue(value)
+
     if (currentItemSkill) sendValues(currentItemSkill.id, value)
   }
 

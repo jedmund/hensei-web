@@ -88,6 +88,9 @@ const CharacterModal = ({
     setOpen(modalOpen)
   }, [modalOpen])
 
+  // Character properties: Perpetuity
+  const [perpetuity, setPerpetuity] = useState(false)
+
   // Character properties: Ring
   const [rings, setRings] = useState<CharacterOverMastery>({
     1: { ...emptyExtendedMastery, modifier: 1 },
@@ -128,61 +131,7 @@ const CharacterModal = ({
 
   // Methods: Receive data from components
   function receiveRingValues(overMastery: CharacterOverMastery) {
-    console.log(overMastery)
-
-    setRings({
-      1: {
-        modifier: overMastery[1].modifier,
-        strength: overMastery[1].strength,
-      },
-      2: {
-        modifier: overMastery[2].modifier,
-        strength: overMastery[2].strength,
-      },
-      3: {
-        modifier: overMastery[3].modifier,
-        strength: overMastery[3].strength,
-      },
-      4: {
-    if (overMastery[1]) {
-      setRings({
-        ...rings,
-        1: {
-          modifier: 1,
-          strength: overMastery[1].strength,
-        },
-      })
-    }
-
-    if (overMastery[2]) {
-      setRings({
-        ...rings,
-        2: {
-          modifier: 2,
-          strength: overMastery[1].strength,
-        },
-      })
-    }
-
-    if (overMastery[3]) {
-      setRings({
-        ...rings,
-        3: {
-          modifier: overMastery[3].modifier,
-          strength: overMastery[3].strength,
-        },
-      })
-    }
-
-    if (overMastery[4]) {
-      setRings({
-        ...rings,
-        4: {
-          modifier: overMastery[4].modifier,
-          strength: overMastery[4].strength,
-        },
-      })
-    }
+    setRings(overMastery)
   }
 
   function receiveEarringValues(
@@ -212,22 +161,34 @@ const CharacterModal = ({
 
   // Prepare the GridWeaponObject to send to the server
   function prepareObject() {
-    console.log('Rings:')
-    console.log(rings)
-
     let object: GridCharacterObject = {
       character: {
-        ring_modifier3: rings[3].modifier,
-        ring_modifier4: rings[4].modifier,
-        ring_strength1: rings[1].strength,
-        ring_strength2: rings[2].strength,
-        ring_strength3: rings[3].strength,
-        ring_strength4: rings[4].strength,
-        earring_modifier: earring.modifier,
-        earring_strength: earring.strength,
-        awakening_type: awakeningType,
-        awakening_level: awakeningLevel,
+        ring1: {
+          modifier: rings[1].modifier,
+          strength: rings[1].strength,
+        },
+        ring2: {
+          modifier: rings[2].modifier,
+          strength: rings[2].strength,
+        },
+        ring3: {
+          modifier: rings[3].modifier,
+          strength: rings[3].strength,
+        },
+        ring4: {
+          modifier: rings[4].modifier,
+          strength: rings[4].strength,
+        },
+        earring: {
+          modifier: earring.modifier,
+          strength: earring.strength,
+        },
+        awakening: {
+          type: awakeningType,
+          level: awakeningLevel,
+        },
         transcendence_step: transcendenceStep,
+        perpetuity: perpetuity,
       },
     }
 
@@ -237,11 +198,11 @@ const CharacterModal = ({
   // Send the GridWeaponObject to the server
   async function updateCharacter() {
     const updateObject = prepareObject()
-    console.log(updateObject)
-    // return await api.endpoints.grid_characters
-    //   .update(gridCharacter.id, updateObject)
-    //   .then((response) => processResult(response))
-    //   .catch((error) => processError(error))
+
+    return await api.endpoints.grid_characters
+      .update(gridCharacter.id, updateObject)
+      .then((response) => processResult(response))
+      .catch((error) => processError(error))
   }
 
   // Save the server's response to state
