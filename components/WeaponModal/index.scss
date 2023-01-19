@@ -1,14 +1,41 @@
 .Weapon.DialogContent {
+  gap: $unit;
   min-width: 480px;
 
   @include breakpoint(phone) {
     min-width: inherit;
   }
 
+  .DialogHeader {
+    transition: 0.18s padding-top ease-in-out;
+    position: sticky;
+    top: 0;
+
+    &.Scrolled {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.34);
+      padding-top: $unit-2x;
+    }
+
+    img {
+      transition: 0.2s width ease-in-out;
+      width: $unit-6x !important;
+    }
+
+    .DialogTitle {
+      font-size: $font-large;
+    }
+
+    .SubTitle {
+      display: none;
+    }
+  }
+
   .mods {
     display: flex;
     flex-direction: column;
     gap: $unit * 4;
+    padding: 0 $unit-4x;
 
     section {
       display: flex;

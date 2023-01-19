@@ -263,7 +263,7 @@ const CharacterModal = ({
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={() => {}}
       >
-        <div className="DialogHeader">
+        <div className={headerClasses}>
           <img
             alt={gridCharacter.object.name[locale]}
             className="DialogImage"
@@ -289,6 +289,8 @@ const CharacterModal = ({
           {ringSelect()}
           {earringSelect()}
           {awakeningSelect()}
+        </div>
+        <div className="DialogFooter">
           <Button
             contained={true}
             onClick={updateCharacter}

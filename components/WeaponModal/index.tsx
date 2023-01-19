@@ -344,6 +344,11 @@ const WeaponModal = ({ gridWeapon, children }: Props) => {
         onEscapeKeyDown={onEscapeKeyDown}
       >
         <div className="DialogHeader">
+          <img
+            alt={gridWeapon.object.name[locale]}
+            className="DialogImage"
+            src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-square/${gridWeapon.object.granblue_id}.jpg`}
+          />
           <div className="DialogTop">
             <DialogTitle className="SubTitle">
               {t('modals.weapon.title')}
