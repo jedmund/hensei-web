@@ -1,21 +1,31 @@
-.Signup.DialogContent form {
-  display: flex;
-  flex-direction: column;
-  gap: calc($unit / 2);
-  margin-bottom: $unit;
+.Signup.DialogContent {
+  gap: $unit;
+  min-width: $unit * 52;
 
-  .terms {
-    color: $grey-50;
-    font-size: $font-small;
-    line-height: 1.2;
-    margin-top: $unit;
-    text-align: center;
+  .DialogHeader {
+    padding: $unit-4x $unit-3x;
+  }
 
-    a {
-      color: $blue;
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: calc($unit / 2);
+    margin-bottom: $unit-2x;
+    padding: 0 $unit-3x;
 
-      &:hover {
-        color: darken($blue, 30);
+    .terms {
+      color: $grey-50;
+      font-size: $font-small;
+      line-height: 1.2;
+      margin-top: $unit;
+      text-align: center;
+
+      a {
+        color: $blue;
+
+        &:hover {
+          color: darken($blue, 30);
+        }
       }
     }
   }

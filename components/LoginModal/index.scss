@@ -1,6 +1,16 @@
-.Login.DialogContent form {
-  display: flex;
-  flex-direction: column;
-  gap: calc($unit / 2);
-  margin-bottom: $unit;
+.Login.DialogContent {
+  gap: $unit;
+  min-width: $unit * 52;
+
+  .DialogHeader {
+    padding: $unit-4x $unit-3x;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: calc($unit / 2);
+    margin-bottom: $unit-3x;
+    padding: 0 $unit-3x;
+  }
 }
