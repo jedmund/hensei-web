@@ -210,6 +210,7 @@ const CharacterModal = ({
     appState.grid.characters[gridCharacter.position] = gridCharacter
 
     setOpen(false)
+    if (onOpenChange) onOpenChange(false)
   }
 
   function processError(error: any) {
@@ -271,7 +272,7 @@ const CharacterModal = ({
   }
 
   return (
-    <Dialog open={open} onOpenChange={openChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         className="Character"
