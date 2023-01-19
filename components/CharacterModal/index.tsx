@@ -156,6 +156,10 @@ const CharacterModal = ({
     })
   }
 
+  function handleCheckedChange(checked: boolean) {
+    setPerpetuity(checked)
+  }
+
   function receiveAwakeningValues(type: number, level: number) {
     setAwakeningType(type)
     setAwakeningLevel(level)
@@ -261,7 +265,7 @@ const CharacterModal = ({
     return (
       <section className="inline">
         <h3>{t('modals.characters.subtitles.permanent')}</h3>
-        <Switch />
+        <Switch onCheckedChange={handleCheckedChange} checked={perpetuity} />
       </section>
     )
   }
