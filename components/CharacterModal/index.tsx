@@ -1,8 +1,9 @@
 // Core dependencies
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
+import classNames from 'classnames'
 
 // UI dependencies
 import {
@@ -143,10 +144,45 @@ const CharacterModal = ({
         strength: overMastery[3].strength,
       },
       4: {
-        modifier: overMastery[4].modifier,
-        strength: overMastery[4].strength,
-      },
-    })
+    if (overMastery[1]) {
+      setRings({
+        ...rings,
+        1: {
+          modifier: 1,
+          strength: overMastery[1].strength,
+        },
+      })
+    }
+
+    if (overMastery[2]) {
+      setRings({
+        ...rings,
+        2: {
+          modifier: 2,
+          strength: overMastery[1].strength,
+        },
+      })
+    }
+
+    if (overMastery[3]) {
+      setRings({
+        ...rings,
+        3: {
+          modifier: overMastery[3].modifier,
+          strength: overMastery[3].strength,
+        },
+      })
+    }
+
+    if (overMastery[4]) {
+      setRings({
+        ...rings,
+        4: {
+          modifier: overMastery[4].modifier,
+          strength: overMastery[4].strength,
+        },
+      })
+    }
   }
 
   function receiveEarringValues(
@@ -176,10 +212,11 @@ const CharacterModal = ({
 
   // Prepare the GridWeaponObject to send to the server
   function prepareObject() {
+    console.log('Rings:')
+    console.log(rings)
+
     let object: GridCharacterObject = {
       character: {
-        ring_modifier1: rings[1].modifier,
-        ring_modifier2: rings[2].modifier,
         ring_modifier3: rings[3].modifier,
         ring_modifier4: rings[4].modifier,
         ring_strength1: rings[1].strength,
