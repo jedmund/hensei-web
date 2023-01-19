@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 
 // UI dependencies
-import SelectWithSelect from '~components/SelectWithSelect'
+import ExtendedMasterySelect from '~components/ExtendedMasterySelect'
 
 // Data
 import { overMastery } from '~data/overMastery'
@@ -127,7 +127,7 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
         const ringIndex = i + 1
         const ringStat = rings[ringIndex]
         return (
-          <SelectWithSelect
+          <ExtendedMasterySelect
             name={`ring-${ringIndex}`}
             object="ring"
             key={`ring-${ringIndex}`}

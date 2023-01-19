@@ -26,7 +26,7 @@ const defaultProps = {
   selectDisabled: false,
 }
 
-const SelectWithInput = ({
+const ExtendedMasterySelect = ({
   name,
   object,
   dataSet,
@@ -70,9 +70,6 @@ const SelectWithInput = ({
   function onClose() {
     setLeftSelectOpen(false)
     setRightSelectOpen(false)
-
-    setCurrentItemSkill(undefined)
-    setCurrentItemValue(0)
   }
 
   // Methods: Rendering
@@ -161,6 +158,6 @@ const SelectWithInput = ({
   )
 }
 
-SelectWithInput.defaultProps = defaultProps
+ExtendedMasterySelect.defaultProps = defaultProps
 
-export default SelectWithInput
+export default ExtendedMasterySelect
