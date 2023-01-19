@@ -50,16 +50,13 @@ const SelectWithInput = ({
   const [currentItemValue, setCurrentItemValue] = useState(rightSelectValue)
 
   // Hooks
+  // if (currentItemSkill) sendValues(currentItemSkill.id, currentItemValue)
 
   // Set default values from props
   useEffect(() => {
     setCurrentItemSkill(dataSet.find((sk) => sk.id === leftSelectValue))
     setCurrentItemValue(rightSelectValue)
   }, [leftSelectValue, rightSelectValue])
-
-  useEffect(() => {
-    if (currentItemSkill) sendValues(currentItemSkill.id, currentItemValue)
-  }, [currentItemSkill, currentItemValue])
 
   // Methods: UI state management
   function changeOpen(side: 'left' | 'right') {
@@ -120,6 +117,7 @@ const SelectWithInput = ({
   function handleRightSelectChange(rawValue: string) {
     const value = parseFloat(rawValue)
     setCurrentItemValue(value)
+    if (currentItemSkill) sendValues(currentItemSkill.id, value)
   }
 
   return (
