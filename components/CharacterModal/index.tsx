@@ -78,6 +78,11 @@ const CharacterModal = ({
   const [open, setOpen] = useState(false)
   const [formValid, setFormValid] = useState(false)
 
+  // Classes
+  const headerClasses = classNames({
+    DialogHeader: true,
+    Scrolled: scrolled,
+  })
   useEffect(() => {
     setOpen(modalOpen)
   }, [modalOpen])
