@@ -103,10 +103,21 @@ const CharacterModal = ({
   const [transcendenceStep, setTranscendenceStep] = useState(0)
 
   // Hooks
-  useEffect(() => {}, [])
+  useEffect(() => {
+    if (gridCharacter.aetherial_mastery) {
+      setEarring({
+        modifier: gridCharacter.aetherial_mastery.modifier,
+        strength: gridCharacter.aetherial_mastery.strength,
+      })
+    }
+
+    setAwakeningType(gridCharacter.awakening.type)
+    setAwakeningLevel(gridCharacter.awakening.level)
+    setPerpetuity(gridCharacter.perpetuity)
+  }, [gridCharacter])
 
   // Methods: UI state management
-  function openChange(open: boolean) {
+  function handleOpenChange(open: boolean) {
     setOpen(open)
     onOpenChange(open)
   }
