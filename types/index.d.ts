@@ -37,8 +37,8 @@ export type DetailsObject = {
 }
 
 export type ExtendedMastery = {
-  modifier: number
-  strength: number
+  modifier?: number
+  strength?: number
 }
 
 export type CharacterOverMastery = {
