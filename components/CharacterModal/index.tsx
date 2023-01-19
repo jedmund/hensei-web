@@ -39,19 +39,17 @@ import { CharacterOverMastery, ExtendedMastery } from '~types'
 
 interface GridCharacterObject {
   character: {
-    ring_modifier1: number
-    ring_modifier2: number
-    ring_modifier3: number
-    ring_modifier4: number
-    ring_strength1: number
-    ring_strength2: number
-    ring_strength3: number
-    ring_strength4: number
-    earring_modifier: number
-    earring_strength: number
-    awakening_type: number
-    awakening_level: number
+    ring1: ExtendedMastery
+    ring2: ExtendedMastery
+    ring3: ExtendedMastery
+    ring4: ExtendedMastery
+    earring: ExtendedMastery
+    awakening: {
+      type?: number
+      level?: number
+    }
     transcendence_step: number
+    perpetuity: boolean
   }
 }
 
