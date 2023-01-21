@@ -27,18 +27,10 @@ const RoadmapModal = () => {
       </DialogTrigger>
       <DialogContent
         className="Roadmap"
+        title={t('title')}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={() => {}}
       >
-        <div className="DialogHeader">
-          <DialogTitle className="DialogTitle">{t('title')}</DialogTitle>
-          <DialogClose className="DialogClose" asChild>
-            <span>
-              <CrossIcon />
-            </span>
-          </DialogClose>
-        </div>
-
         <div>
           <section className="notes">
             <p>{t('blurb')}</p>

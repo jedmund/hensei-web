@@ -1,6 +1,5 @@
 .Changelog.DialogContent {
   gap: 0;
-  padding-bottom: $unit-4x;
 
   & > div:not(.DialogHeader) {
     padding: 0 $unit-4x;
@@ -30,6 +29,11 @@
         display: grid;
         grid-template-rows: 1fr auto;
         gap: $unit;
+
+        & > h4 {
+          font-weight: $medium;
+          font-size: $font-regular;
+        }
       }
 
       .items {
@@ -66,6 +70,7 @@
 
     li {
       margin-bottom: $unit-half;
+      font-size: $font-regular;
     }
   }
 }

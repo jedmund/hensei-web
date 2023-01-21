@@ -346,7 +346,6 @@ const WeaponModal = ({
   }
 
   return (
-    // TODO: Refactor into Dialog component
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent

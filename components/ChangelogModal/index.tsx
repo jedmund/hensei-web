@@ -26,20 +26,10 @@ const ChangelogModal = () => {
       </DialogTrigger>
       <DialogContent
         className="Changelog"
+        title={t('menu.changelog')}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={() => {}}
       >
-        <div className="DialogHeader">
-          <DialogTitle className="DialogTitle">
-            {t('menu.changelog')}
-          </DialogTitle>
-          <DialogClose className="DialogClose" asChild>
-            <span>
-              <CrossIcon />
-            </span>
-          </DialogClose>
-        </div>
-
         <div className="updates">
           <section className="version" data-version="1.0">
             <div className="top">

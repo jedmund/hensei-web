@@ -29,19 +29,10 @@ const AboutModal = () => {
       </DialogTrigger>
       <DialogContent
         className="About"
+        title={t('menu.about')}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={() => {}}
       >
-        <div className="DialogHeader">
-          <DialogTitle className="DialogTitle">{t('menu.about')}</DialogTitle>
-          <DialogClose className="DialogClose" asChild>
-            <span>
-              <CrossIcon />
-            </span>
-          </DialogClose>
-        </div>
-
-        <div>
         <div className="sections">
           <section>
             <p>
