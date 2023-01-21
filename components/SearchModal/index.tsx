@@ -3,6 +3,7 @@ import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import cloneDeep from 'lodash.clonedeep'
 
 import api from '~utils/api'
 
@@ -19,19 +20,18 @@ import WeaponResult from '~components/WeaponResult'
 import SummonResult from '~components/SummonResult'
 import JobSkillResult from '~components/JobSkillResult'
 
+import type { DialogProps } from '@radix-ui/react-dialog'
 import type { SearchableObject, SearchableObjectArray } from '~types'
 
 import './index.scss'
 import CrossIcon from '~public/icons/Cross.svg'
-import cloneDeep from 'lodash.clonedeep'
 
-interface Props {
+interface Props extends DialogProps {
   send: (object: SearchableObject, position: number) => any
   placeholderText: string
   fromPosition: number
   job?: Job
   object: 'weapons' | 'characters' | 'summons' | 'job_skills'
-  children: React.ReactNode
 }
 
 const SearchModal = (props: Props) => {
@@ -59,6 +59,10 @@ const SearchModal = (props: Props) => {
   useEffect(() => {
     if (searchInput.current) searchInput.current.focus()
   }, [searchInput])
+
+  useEffect(() => {
+    if (props.open !== undefined) setOpen(props.open)
+  })
 
   function inputChanged(event: React.ChangeEvent<HTMLInputElement>) {
     const text = event.target.value
@@ -330,8 +334,10 @@ const SearchModal = (props: Props) => {
       setRecordCount(0)
       setCurrentPage(1)
       setOpen(false)
+      if (props.onOpenChange) props.onOpenChange(false)
     } else {
       setOpen(true)
+      if (props.onOpenChange) props.onOpenChange(true)
     }
   }
 
