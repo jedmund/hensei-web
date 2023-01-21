@@ -149,6 +149,19 @@
       flex-direction: column;
       padding: ($unit * 1.5) ($unit * $multiplier) $unit-3x;
       position: sticky;
+
+      .Buttons {
+        display: flex;
+        gap: $unit;
+
+        &.Span {
+          width: 100%;
+
+          .Button {
+            width: 100%;
+          }
+        }
+      }
     }
 
     .actions {
@@ -160,16 +173,23 @@
     &.Conflict {
       $weapon-diameter: 14rem;
 
-      & > p {
-        line-height: 1.2;
-        max-width: 400px;
+      .Content {
+        display: flex;
+        flex-direction: column;
+        gap: $unit-4x;
+        padding: $unit-4x $unit-4x $unit-2x $unit-4x;
 
-        strong {
-          font-weight: $bold;
-        }
-
-        &:lang(ja) {
+        & > p {
+          font-size: $font-regular;
           line-height: 1.4;
+
+          strong {
+            font-weight: $bold;
+          }
+
+          &:lang(ja) {
+            line-height: 1.4;
+          }
         }
       }
 

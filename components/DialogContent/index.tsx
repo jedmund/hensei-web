@@ -11,7 +11,7 @@ interface Props
     React.DialogHTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   > {
-  headerref: React.RefObject<HTMLDivElement>
+  headerref?: React.RefObject<HTMLDivElement>
   footerref?: React.RefObject<HTMLDivElement>
   onEscapeKeyDown: (event: KeyboardEvent) => void
   onOpenAutoFocus: (event: Event) => void
