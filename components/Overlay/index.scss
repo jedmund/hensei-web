@@ -6,6 +6,14 @@
   right: 0;
   bottom: 0;
   left: 0;
+  backdrop-filter: blur(5px) saturate(100%) brightness(80%) opacity(0);
+  animation: 0.24s ease-in fadeInFilter;
+  animation-fill-mode: forwards;
+
+  &.Job {
+    animation: none;
+    backdrop-filter: blur(5px) saturate(100%) brightness(80%) opacity(1);
+  }
 
   &.Visible {
     background: rgba(0, 0, 0, 0.6);

@@ -136,7 +136,7 @@ const JobSection = (props: Props) => {
         ) : (
           ''
         )}
-        <div className="Overlay" />
+        <div className="Job Overlay" />
       </div>
       <div className="JobDetails">
         {props.editable ? (

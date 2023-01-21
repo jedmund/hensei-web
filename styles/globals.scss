@@ -291,12 +291,12 @@ i.tag {
 @keyframes openModalDesktop {
   0% {
     opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
+    transform: scale(0.96);
   }
 
   100% {
     // opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
   }
 }
 
@@ -309,5 +309,15 @@ i.tag {
   100% {
     // opacity: 1;
     transform: translate(0, 30%);
+  }
+}
+
+@keyframes fadeInFilter {
+  from {
+    backdrop-filter: blur(5px) saturate(100%) brightness(80%) opacity(0);
+  }
+
+  to {
+    backdrop-filter: blur(5px) saturate(100%) brightness(80%) opacity(1);
   }
 }
