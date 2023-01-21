@@ -355,6 +355,7 @@ const WeaponModal = ({
       <DialogContent
         className="Weapon"
         headerref={headerRef}
+        footerref={footerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={onEscapeKeyDown}
       >
@@ -385,7 +386,7 @@ const WeaponModal = ({
           {gridWeapon.object.ax ? axSelect() : ''}
           {gridWeapon.awakening ? awakeningSelect() : ''}
         </div>
-        <div className="DialogFooter">
+        <div className="DialogFooter" ref={footerRef}>
           <Button
             contained={true}
             onClick={updateWeapon}
