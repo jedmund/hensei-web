@@ -1,7 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
-import * as Dialog from '@radix-ui/react-dialog'
+import {
+  Dialog,
+  DialogClose,
+  DialogTitle,
+  DialogTrigger,
+} from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import ShareIcon from '~public/icons/Share.svg'
@@ -13,49 +19,50 @@ const RoadmapModal = () => {
   const { t } = useTranslation('roadmap')
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>
+    <Dialog>
+      <DialogTrigger asChild>
         <li className="MenuItem">
           <span>{t('modals.roadmap.title')}</span>
         </li>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Content
-          className="Roadmap Dialog"
-          onOpenAutoFocus={(event) => event.preventDefault()}
-        >
-          <div className="DialogHeader">
-            <Dialog.Title className="DialogTitle">{t('title')}</Dialog.Title>
-            <Dialog.Close className="DialogClose" asChild>
-              <span>
-                <CrossIcon />
-              </span>
-            </Dialog.Close>
-          </div>
+      </DialogTrigger>
+      <DialogContent
+        className="Roadmap"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        onEscapeKeyDown={() => {}}
+      >
+        <div className="DialogHeader">
+          <DialogTitle className="DialogTitle">{t('title')}</DialogTitle>
+          <DialogClose className="DialogClose" asChild>
+            <span>
+              <CrossIcon />
+            </span>
+          </DialogClose>
+        </div>
 
-          <section>
-            <div className="top">
-              <h3 className="priority in_progress">{t('subtitle')}</h3>
-              <p>{t('blurb')}</p>
-              <p>{t('link.intro')}</p>
-              <div className="LinkItem">
-                <Link href="https://github.com/users/jedmund/projects/1/views/3">
-                  <a
-                    href="https://github.com/users/jedmund/projects/1/views/3"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <div className="Left">
-                      <GithubIcon />
-                      <h3>{t('link.title')}</h3>
-                    </div>
-                    <ShareIcon className="ShareIcon" />
-                  </a>
-                </Link>
-              </div>
+        <div>
+          <section className="notes">
+            <p>{t('blurb')}</p>
+            <p>{t('link.intro')}</p>
+            <div className="LinkItem">
+              <Link href="https://github.com/users/jedmund/projects/1/views/3">
+                <a
+                  href="https://github.com/users/jedmund/projects/1/views/3"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <div className="Left">
+                    <GithubIcon />
+                    <h3>{t('link.title')}</h3>
+                  </div>
+                  <ShareIcon className="ShareIcon" />
+                </a>
+              </Link>
             </div>
-            <div className="Separator" />
-            <ul className="notes">
+          </section>
+
+          <section className="features">
+            <h3 className="priority in_progress">{t('subtitle')}</h3>
+            <ul>
               <li>
                 <h4>{t('roadmap.item1.title')}</h4>
                 <p>{t('roadmap.item1.description')}</p>
@@ -82,10 +89,9 @@ const RoadmapModal = () => {
               </li>
             </ul>
           </section>
-        </Dialog.Content>
-        <Dialog.Overlay className="Overlay" />
-      </Dialog.Portal>
-    </Dialog.Root>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
