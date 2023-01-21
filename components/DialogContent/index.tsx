@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import classNames from 'classnames'
+import debounce from 'lodash.debounce'
 
 import Overlay from '~components/Overlay'
 import './index.scss'
-import debounce from 'lodash.debounce'
 
 interface Props
   extends React.DetailedHTMLProps<
