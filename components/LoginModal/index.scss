@@ -2,11 +2,10 @@
   gap: $unit;
   min-width: $unit * 52;
 
-  form {
+  .Fields {
     display: flex;
     flex-direction: column;
-    gap: calc($unit / 2);
-    margin-bottom: $unit-3x;
-    padding: 0 $unit-3x;
+    gap: $unit;
+    padding: 0 $unit-4x;
   }
 }

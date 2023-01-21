@@ -9,7 +9,7 @@ import setUserToken from '~utils/setUserToken'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
-import Input from '~components/LabelledInput'
+import Input from '~components/Input'
 import { Dialog, DialogTrigger, DialogClose } from '~components/Dialog'
 import DialogContent from '~components/DialogContent'
 import changeLanguage from '~utils/changeLanguage'
@@ -43,6 +43,7 @@ const LoginModal = () => {
   // Set up form refs
   const emailInput: React.RefObject<HTMLInputElement> = React.createRef()
   const passwordInput: React.RefObject<HTMLInputElement> = React.createRef()
+  const footerRef: React.RefObject<HTMLDivElement> = React.createRef()
   const form: React.RefObject<HTMLInputElement>[] = [emailInput, passwordInput]
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -199,6 +200,7 @@ const LoginModal = () => {
       </DialogTrigger>
       <DialogContent
         className="Login"
+        footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
@@ -212,29 +214,34 @@ const LoginModal = () => {
         </div>
 
         <form className="form" onSubmit={login}>
-          <Input
-            className="Bound"
-            name="email"
-            placeholder={t('modals.login.placeholders.email')}
-            onChange={handleChange}
-            error={errors.email}
-            ref={emailInput}
-          />
+          <div className="Fields">
+            <Input
+              className="Bound"
+              name="email"
+              placeholder={t('modals.login.placeholders.email')}
+              onChange={handleChange}
+              error={errors.email}
+              ref={emailInput}
+            />
 
-          <Input
-            className="Bound"
-            name="password"
-            placeholder={t('modals.login.placeholders.password')}
-            type="password"
-            onChange={handleChange}
-            error={errors.password}
-            ref={passwordInput}
-          />
-
-          <Button
-            disabled={!formValid}
-            text={t('modals.login.buttons.confirm')}
-          />
+            <Input
+              className="Bound"
+              name="password"
+              placeholder={t('modals.login.placeholders.password')}
+              type="password"
+              onChange={handleChange}
+              error={errors.password}
+              ref={passwordInput}
+            />
+          </div>
+          <div className="DialogFooter" ref={footerRef}>
+            <div className="Buttons Span">
+              <Button
+                disabled={!formValid}
+                text={t('modals.login.buttons.confirm')}
+              />
+            </div>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
