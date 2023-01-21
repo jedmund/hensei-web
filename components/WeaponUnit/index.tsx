@@ -480,11 +480,11 @@ const WeaponUnit = ({
       <Alert
         open={alertOpen}
         primaryAction={removeWeapon}
-        primaryActionText={t('modals.weapons.buttons.remove')}
+        primaryActionText={t('modals.weapon.buttons.remove')}
         cancelAction={() => setAlertOpen(false)}
         cancelActionText={t('buttons.cancel')}
         message={
-          <Trans i18nKey="modals.characters.messages.remove">
+          <Trans i18nKey="modals.weapons.messages.remove">
             Are you sure you want to remove{' '}
             <strong>{{ weapon: gridWeapon?.object.name[locale] }}</strong> from
             your team?

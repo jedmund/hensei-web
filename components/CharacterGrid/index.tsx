@@ -171,6 +171,15 @@ const CharacterGrid = (props: Props) => {
     setIncoming(undefined)
   }
 
+  async function removeCharacter(id: string) {
+    try {
+      const response = await api.endpoints.grid_characters.destroy({ id: id })
+      appState.grid.characters[response.data.position] = undefined
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   // Methods: Saving job and job skills
   const saveJob = async function (job?: Job) {
     const payload = {
@@ -371,6 +380,7 @@ const CharacterGrid = (props: Props) => {
                   position={i}
                   updateObject={receiveCharacterFromSearch}
                   updateUncap={initiateUncapUpdate}
+                  removeCharacter={removeCharacter}
                 />
               </li>
             )

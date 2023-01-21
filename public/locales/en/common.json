@@ -253,7 +253,8 @@
     "weapon": {
       "title": "Modify Weapon",
       "buttons": {
-        "confirm": "Save weapon"
+        "confirm": "Save weapon",
+        "remove": "Remove weapon"
       },
       "subtitles": {
         "element": "Element",

@@ -254,7 +254,8 @@
     "weapon": {
       "title": "武器変更",
       "buttons": {
-        "confirm": "武器を変更する"
+        "confirm": "武器を変更する",
+        "remove": "武器を削除する"
       },
       "subtitles": {
         "element": "属性",
