@@ -1,39 +1,36 @@
-import React from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { useLockedBody } from 'usehooks-ts'
 
 import './index.scss'
 
-interface Props
-  extends React.DetailedHTMLProps<
-    React.DialogHTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
+interface Props extends DialogPrimitive.DialogProps {}
 
-export const Dialog = React.forwardRef<HTMLDivElement, Props>(function dialog(
-  { children, ...props },
-  forwardedRef
-) {
+export const Dialog = ({ children, ...props }: PropsWithChildren<Props>) => {
   const [locked, setLocked] = useLockedBody(false, 'root')
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (props.open != undefined) {
+      toggleLocked(props.open)
+      setOpen(props.open)
+    }
+  }, [props.open])
 
   function toggleLocked(open: boolean) {
     setLocked(open)
   }
 
-  function onOpenChange(open: boolean) {
-    toggleLocked(open)
-    props.onOpenChange(open)
+  function handleOpenChange(open: boolean) {
+    if (props.onOpenChange) props.onOpenChange(open)
   }
 
   return (
-    <DialogPrimitive.Root open={props.open} onOpenChange={onOpenChange}>
+    <DialogPrimitive.Root open={props.open} onOpenChange={handleOpenChange}>
       {children}
     </DialogPrimitive.Root>
   )
-})
+}
 
 export const DialogTitle = DialogPrimitive.Title
 export const DialogTrigger = DialogPrimitive.Trigger
