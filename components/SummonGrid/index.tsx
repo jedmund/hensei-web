@@ -209,6 +209,23 @@ const SummonGrid = (props: Props) => {
     setPreviousUncapValues(newPreviousValues)
   }
 
+  async function removeSummon(id: string) {
+    try {
+      const response = await api.endpoints.grid_summons.destroy({ id: id })
+      const data = response.data
+
+      if (data.position === -1) {
+        appState.grid.summons.mainSummon = undefined
+      } else if (data.position === 6) {
+        appState.grid.summons.friendSummon = undefined
+      } else {
+        appState.grid.summons.allSummons[response.data.position] = undefined
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   // Render: JSX components
   const mainSummonElement = (
     <div className="LabeledUnit">
@@ -219,6 +236,7 @@ const SummonGrid = (props: Props) => {
         key="grid_main_summon"
         position={-1}
         unitType={0}
+        removeSummon={removeSummon}
         updateObject={receiveSummonFromSearch}
         updateUncap={initiateUncapUpdate}
       />
@@ -251,6 +269,7 @@ const SummonGrid = (props: Props) => {
                 editable={party.editable}
                 position={i}
                 unitType={1}
+                removeSummon={removeSummon}
                 updateObject={receiveSummonFromSearch}
                 updateUncap={initiateUncapUpdate}
               />
@@ -266,6 +285,7 @@ const SummonGrid = (props: Props) => {
       editable={party.editable}
       exists={false}
       offset={numSummons}
+      removeSummon={removeSummon}
       updateObject={receiveSummonFromSearch}
       updateUncap={initiateUncapUpdate}
     />
