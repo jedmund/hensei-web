@@ -1,103 +1,75 @@
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import cloneDeep from 'lodash.clonedeep'
 
 import SelectWithInput from '~components/SelectWithInput'
-import SelectItem from '~components/SelectItem'
-
-import classNames from 'classnames'
-
 import { weaponAwakening, characterAwakening } from '~data/awakening'
-import type { Awakening } from '~data/awakening'
 
 import './index.scss'
 
 interface Props {
   object: 'character' | 'weapon'
-  awakeningType?: number
-  awakeningLevel?: number
+  type?: number
+  level?: number
   onOpenChange?: (open: boolean) => void
   sendValidity: (isValid: boolean) => void
   sendValues: (type: number, level: number) => void
 }
 
 const AwakeningSelect = (props: Props) => {
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
-  const { t } = useTranslation('common')
-
-  const [open, setOpen] = useState(false)
-
-  // States
+  // Data states
   const [awakeningType, setAwakeningType] = useState(
-    props.object === 'weapon' ? -1 : 1
+    props.object === 'weapon' ? 0 : 1
   )
   const [awakeningLevel, setAwakeningLevel] = useState(1)
 
-  const [maxValue, setMaxValue] = useState(1)
-
-  const [error, setError] = useState('')
-
   // Data
-  const dataSet = () => {
-    if (props.object === 'character') return characterAwakening
-    else {
-      const weaponDataSet = weaponAwakening
+  const chooseDataset = () => {
+    let list: ItemSkill[] = []
 
-      weaponDataSet.unshift({
-        id: 0,
-        name: {
-          en: 'No awakening',
-          ja: '覚醒なし',
-        },
-        slug: 'no-awakening',
-        minValue: 0,
-        maxValue: 0,
-        fractional: false,
-      })
-
-      return weaponDataSet
+    switch (props.object) {
+      case 'character':
+        list = characterAwakening
+        break
+      case 'weapon':
+        // WARNING: Clonedeep is masking a deeper error
+        // which is running this method every time this component is rerendered
+        // causing multiple "No awakening" items to be added
+        const awakening = cloneDeep(weaponAwakening)
+        awakening.unshift({
+          id: 0,
+          name: {
+            en: 'No awakening',
+            ja: '覚醒なし',
+          },
+          slug: 'no-awakening',
+          minValue: 0,
+          maxValue: 0,
+          fractional: false,
+        })
+        list = awakening
+        break
     }
+
+    return list
   }
-
-  // Classes
-  const inputClasses = classNames({
-    Bound: true,
-    Hidden: awakeningType === -1,
-  })
-
-  const errorClasses = classNames({
-    errors: true,
-    visible: error !== '',
-  })
-
-  // Set max value based on object type
-  useEffect(() => {
-    if (props.object === 'character') setMaxValue(9)
-    else if (props.object === 'weapon') setMaxValue(15)
-  }, [props.object])
 
   // Set default awakening and level based on object type
   useEffect(() => {
-    let defaultAwakening = 1
-    if (props.object === 'weapon') defaultAwakening = -1
+    const defaultAwakening = props.object === 'weapon' ? 0 : 1
+    const type = props.type != undefined ? props.type : defaultAwakening
 
-    setAwakeningType(
-      props.awakeningType != undefined ? props.awakeningType : defaultAwakening
-    )
-    setAwakeningLevel(props.awakeningLevel ? props.awakeningLevel : 1)
-  }, [props.object, props.awakeningType, props.awakeningLevel])
+    setAwakeningType(type)
+    setAwakeningLevel(props.level ? props.level : 1)
+  }, [props.object, props.type, props.level])
 
   // Send validity of form when awakening level changes
   useEffect(() => {
-    props.sendValidity(awakeningLevel > 0 && error === '')
-  }, [props.sendValidity, awakeningLevel, error])
+    props.sendValidity(awakeningLevel > 0)
+  }, [props.sendValidity, awakeningLevel])
 
   // Classes
-  function changeOpen() {
-    setOpen(!open)
-    if (props.onOpenChange) props.onOpenChange(!open)
+  function changeOpen(open: boolean) {
+    if (props.onOpenChange) props.onOpenChange(open)
   }
 
   function handleValueChange(type: number, level: number) {
@@ -110,7 +82,7 @@ const AwakeningSelect = (props: Props) => {
     <div className="Awakening">
       <SelectWithInput
         object={`${props.object}_awakening`}
-        dataSet={dataSet()}
+        dataSet={chooseDataset()}
         selectValue={awakeningType}
         inputValue={awakeningLevel}
         onOpenChange={changeOpen}

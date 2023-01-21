@@ -64,7 +64,7 @@ const WeaponModal = ({ gridWeapon, children }: Props) => {
 
   const [element, setElement] = useState(-1)
 
-  const [awakeningType, setAwakeningType] = useState(-1)
+  const [awakeningType, setAwakeningType] = useState(0)
   const [awakeningLevel, setAwakeningLevel] = useState(1)
 
   const [primaryAxModifier, setPrimaryAxModifier] = useState(-1)
@@ -298,8 +298,8 @@ const WeaponModal = ({ gridWeapon, children }: Props) => {
         <h3>{t('modals.weapon.subtitles.awakening')}</h3>
         <AwakeningSelect
           object="weapon"
-          awakeningType={gridWeapon.awakening?.type}
-          awakeningLevel={gridWeapon.awakening?.level}
+          type={gridWeapon.awakening?.type}
+          level={gridWeapon.awakening?.level}
           onOpenChange={receiveAwakeningOpen}
           sendValidity={receiveValidity}
           sendValues={receiveAwakeningValues}

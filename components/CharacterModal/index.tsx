@@ -254,8 +254,8 @@ const CharacterModal = ({
         <h3>{t('modals.characters.subtitles.awakening')}</h3>
         <AwakeningSelect
           object="character"
-          awakeningType={awakeningType}
-          awakeningLevel={awakeningLevel}
+          type={awakeningType}
+          level={awakeningLevel}
           sendValidity={receiveValidity}
           sendValues={receiveAwakeningValues}
         />

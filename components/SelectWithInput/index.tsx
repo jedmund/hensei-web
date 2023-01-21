@@ -72,8 +72,11 @@ const SelectWithInput = ({
 
   // Set default values from props
   useEffect(() => {
-    setCurrentItemSkill(dataSet.find((sk) => sk.id === selectValue))
-    setFieldInputValue(inputValue)
+    const found = dataSet.find((sk) => sk.id === selectValue)
+    if (found) {
+      setCurrentItemSkill(found)
+      setFieldInputValue(inputValue)
+    }
   }, [selectValue, inputValue])
 
   // Methods: UI state management
@@ -98,14 +101,6 @@ const SelectWithInput = ({
       )
     })
 
-    if (object === 'weapon_awakening') {
-      options?.unshift(
-        <SelectItem key={-1} value={-1}>
-          {t(`${object}.no_type`)}
-        </SelectItem>
-      )
-    }
-
     return options
   }
 
@@ -113,12 +108,18 @@ const SelectWithInput = ({
   function handleSelectChange(rawValue: string) {
     const value = parseInt(rawValue)
     const skill = dataSet.find((sk) => sk.id === value)
-    setCurrentItemSkill(skill)
+
+    if (skill) {
+      setCurrentItemSkill(skill)
+      sendValues(skill.id, fieldInputValue)
+    }
   }
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const value = parseFloat(event.target.value)
     if (handleInputError(value)) setFieldInputValue(value)
+
+    if (currentItemSkill) sendValues(currentItemSkill.id, value)
   }
 
   // Methods: Handle error
@@ -169,7 +170,7 @@ const SelectWithInput = ({
           open={open}
           disabled={selectDisabled}
           onValueChange={handleSelectChange}
-          onOpenChange={() => changeOpen()}
+          onOpenChange={changeOpen}
           onClose={onClose}
           triggerClass="modal"
         >
