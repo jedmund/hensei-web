@@ -30,7 +30,9 @@ const AwakeningSelect = (props: Props) => {
   const [open, setOpen] = useState(false)
 
   // States
-  const [awakeningType, setAwakeningType] = useState(-1)
+  const [awakeningType, setAwakeningType] = useState(
+    props.object === 'weapon' ? -1 : 1
+  )
   const [awakeningLevel, setAwakeningLevel] = useState(1)
 
   const [maxValue, setMaxValue] = useState(1)
@@ -87,11 +89,6 @@ const AwakeningSelect = (props: Props) => {
     setAwakeningLevel(props.awakeningLevel ? props.awakeningLevel : 1)
   }, [props.object, props.awakeningType, props.awakeningLevel])
 
-  // Send awakening type and level when changed
-  useEffect(() => {
-    props.sendValues(awakeningType, awakeningLevel)
-  }, [props.sendValues, awakeningType, awakeningLevel])
-
   // Send validity of form when awakening level changes
   useEffect(() => {
     props.sendValidity(awakeningLevel > 0 && error === '')
@@ -103,6 +100,12 @@ const AwakeningSelect = (props: Props) => {
     if (props.onOpenChange) props.onOpenChange(!open)
   }
 
+  function handleValueChange(type: number, level: number) {
+    setAwakeningType(type)
+    setAwakeningLevel(level)
+    props.sendValues(type, level)
+  }
+
   return (
     <div className="Awakening">
       <SelectWithInput
@@ -112,7 +115,7 @@ const AwakeningSelect = (props: Props) => {
         inputValue={awakeningLevel}
         onOpenChange={changeOpen}
         sendValidity={props.sendValidity}
-        sendValues={props.sendValues}
+        sendValues={handleValueChange}
       />
     </div>
   )
