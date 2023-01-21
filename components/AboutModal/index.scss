@@ -9,6 +9,12 @@
     padding: 0 $unit-4x;
   }
 
+  .sections {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-2x;
+  }
+
   section {
     margin-bottom: $unit;
 

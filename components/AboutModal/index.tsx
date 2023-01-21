@@ -42,6 +42,7 @@ const AboutModal = () => {
         </div>
 
         <div>
+        <div className="sections">
           <section>
             <p>
               Granblue.team is a tool to save and share team comps for{' '}
