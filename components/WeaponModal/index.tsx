@@ -97,8 +97,10 @@ const WeaponModal = ({
   const headerRef = React.createRef<HTMLDivElement>()
   const footerRef = React.createRef<HTMLDivElement>()
 
+  // Hooks
   useEffect(() => {
     setOpen(modalOpen)
+    handleOpenChange(modalOpen)
   }, [modalOpen])
 
   useEffect(() => {
