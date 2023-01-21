@@ -458,13 +458,13 @@ const WeaponUnit = ({
             <ContextMenuContent align="start">
               {canBeModified(gridWeapon) ? (
                 <ContextMenuItem onSelect={openWeaponModal}>
-                  Modify weapon
+                  {t('context.modify.weapon')}
                 </ContextMenuItem>
               ) : (
                 ''
               )}
               <ContextMenuItem onSelect={openRemoveWeaponAlert}>
-                Remove from grid
+                {t('context.remove')}
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>

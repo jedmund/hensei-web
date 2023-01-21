@@ -32,6 +32,14 @@
     "new": "New",
     "wiki": "View more on gbf.wiki"
   },
+  "context": {
+    "modify": {
+      "character": "Modify character",
+      "summon": "Modify summon",
+      "weapon": "Modify weapon"
+    },
+    "remove": "Remove from grid"
+  },
   "filters": {
     "labels": {
       "element": "Element",

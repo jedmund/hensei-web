@@ -32,6 +32,14 @@
     "new": "作成",
     "wiki": "gbf.wikiで詳しく見る"
   },
+  "context": {
+    "modify": {
+      "character": "キャラクターを変更",
+      "summon": "召喚石を変更",
+      "weapon": "武器を変更"
+    },
+    "remove": "編成から削除"
+  },
   "filters": {
     "labels": {
       "element": "属性",

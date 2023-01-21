@@ -179,10 +179,10 @@ const CharacterUnit = ({
             </ContextMenuTrigger>
             <ContextMenuContent align="start">
               <ContextMenuItem onSelect={openCharacterModal}>
-                Modify character
+                {t('context.modify.character')}
               </ContextMenuItem>
               <ContextMenuItem onSelect={openRemoveCharacterAlert}>
-                Remove from grid
+                {t('context.remove')}
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
