@@ -16,6 +16,7 @@ import './index.scss'
 
 const ChangelogModal = () => {
   const { t } = useTranslation('common')
+  const headerRef = React.createRef<HTMLDivElement>()
 
   return (
     <Dialog>
@@ -27,9 +28,21 @@ const ChangelogModal = () => {
       <DialogContent
         className="Changelog"
         title={t('menu.changelog')}
+        headerref={headerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={() => {}}
       >
+        <div className="DialogHeader" ref={headerRef}>
+          <DialogTitle className="DialogTitle">
+            {t('menu.changelog')}
+          </DialogTitle>
+          <DialogClose className="DialogClose" asChild>
+            <span>
+              <CrossIcon />
+            </span>
+          </DialogClose>
+        </div>
+
         <div className="updates">
           <section className="version" data-version="1.0">
             <div className="top">

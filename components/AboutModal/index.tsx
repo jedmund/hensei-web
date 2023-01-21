@@ -19,6 +19,7 @@ import './index.scss'
 
 const AboutModal = () => {
   const { t } = useTranslation('common')
+  const headerRef = React.createRef<HTMLDivElement>()
 
   return (
     <Dialog>
@@ -29,11 +30,20 @@ const AboutModal = () => {
       </DialogTrigger>
       <DialogContent
         className="About"
-        title={t('menu.about')}
+        headerref={headerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={() => {}}
       >
-        <div className="sections">
+        <div className="DialogHeader" ref={headerRef}>
+          <DialogTitle className="DialogTitle">{t('menu.about')}</DialogTitle>
+          <DialogClose className="DialogClose" asChild>
+            <span>
+              <CrossIcon />
+            </span>
+          </DialogClose>
+        </div>
+
+        <div className="content">
           <section>
             <p>
               Granblue.team is a tool to save and share team comps for{' '}

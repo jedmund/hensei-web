@@ -81,44 +81,22 @@ const CharacterModal = ({
 
   // UI state
   const [open, setOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const [formValid, setFormValid] = useState(false)
+
+  // Refs
+  const headerRef = React.createRef<HTMLDivElement>()
+  const footerRef = React.createRef<HTMLDivElement>()
 
   // Classes
   const headerClasses = classNames({
     DialogHeader: true,
     Short: true,
-    Scrolled: scrolled,
   })
 
   // Callbacks and Hooks
-  const onScroll = useCallback((event: Event) => {
-    // const dialogContent = event.target as HTMLDivElement
-    // const { scrollTop } = dialogContent
-    // if (scrollTop > 150) {
-    //   console.log(scrollTop, scrollTop % 5)
-    //   if (scrollTop > 20) setScrolled(true)
-    //   else setScrolled(false)
-    //   console.log('scrollTop', scrollTop)
-    // }
-  }, [])
-
   useEffect(() => {
     setOpen(modalOpen)
   }, [modalOpen])
-
-  useEffect(() => {
-    //add eventlistener to window
-    // const dialogContent = document.querySelector('.DialogContent')
-    // if (dialogContent) {
-    //   dialogContent.addEventListener('scroll', onScroll, { passive: true })
-    //   // remove event on unmount to prevent a memory leak with the cleanup
-    //   return () => {
-    //     // what does passive do?
-    //     dialogContent.removeEventListener('scroll', onScroll)
-    //   }
-    // }
-  }, [])
 
   // Character properties: Perpetuity
   const [perpetuity, setPerpetuity] = useState(false)
@@ -309,10 +287,12 @@ const CharacterModal = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         className="Character"
+        headerref={headerRef}
+        footerref={footerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={() => {}}
       >
-        <div className={headerClasses}>
+        <div className={headerClasses} ref={headerRef}>
           <img
             alt={gridCharacter.object.name[locale]}
             className="DialogImage"
@@ -339,7 +319,7 @@ const CharacterModal = ({
           {earringSelect()}
           {awakeningSelect()}
         </div>
-        <div className="DialogFooter">
+        <div className="DialogFooter" ref={footerRef}>
           <Button
             contained={true}
             onClick={updateCharacter}

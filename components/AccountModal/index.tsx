@@ -85,6 +85,9 @@ const AccountModal = (props: Props) => {
   const [languageOpen, setLanguageOpen] = useState(false)
   const [themeOpen, setThemeOpen] = useState(false)
 
+  // Refs
+  const headerRef = React.createRef<HTMLDivElement>()
+
   // UI management
   function openChange(open: boolean) {
     setOpen(open)
@@ -286,10 +289,11 @@ const AccountModal = (props: Props) => {
       </DialogTrigger>
       <DialogContent
         className="Account"
+        headerref={headerRef}
         onOpenAutoFocus={(event: Event) => {}}
         onEscapeKeyDown={onEscapeKeyDown}
       >
-        <div className="DialogHeader">
+        <div className="DialogHeader" ref={headerRef}>
           <div className="DialogTop">
             <DialogTitle className="SubTitle">
               {t('modals.settings.title')}

@@ -93,6 +93,10 @@ const WeaponModal = ({
   const [ax2Open, setAx2Open] = useState(false)
   const [awakeningOpen, setAwakeningOpen] = useState(false)
 
+  // Refs
+  const headerRef = React.createRef<HTMLDivElement>()
+  const footerRef = React.createRef<HTMLDivElement>()
+
   useEffect(() => {
     setOpen(modalOpen)
   }, [modalOpen])
@@ -350,10 +354,11 @@ const WeaponModal = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         className="Weapon"
+        headerref={headerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={onEscapeKeyDown}
       >
-        <div className="DialogHeader Short">
+        <div className="DialogHeader Short" ref={headerRef}>
           <img
             alt={gridWeapon.object.name[locale]}
             className="DialogImage"

@@ -2,7 +2,7 @@
   gap: 0;
   padding-bottom: $unit;
 
-  & > div:not(.DialogHeader) {
+  .content {
     display: flex;
     flex-direction: column;
     gap: $unit-2x;
