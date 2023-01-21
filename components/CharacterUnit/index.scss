@@ -23,6 +23,17 @@
     display: flex;
   }
 
+  .Button {
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  &:hover .Button,
+  .Button.Clicked {
+    pointer-events: initial;
+    opacity: 1;
+  }
+
   h3,
   ul {
     display: none;

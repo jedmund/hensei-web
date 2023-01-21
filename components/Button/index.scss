@@ -8,6 +8,7 @@
   font-size: $font-button;
   font-weight: $normal;
   gap: 6px;
+  transition: 0.18s opacity ease-in-out;
 
   &:hover,
   &.Blended:hover,
