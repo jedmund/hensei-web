@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: $unit-2x;
   width: $unit * 64;
+  overflow-y: hidden;
 
   .Fields {
     display: flex;

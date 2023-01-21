@@ -87,6 +87,7 @@ const AccountModal = (props: Props) => {
 
   // Refs
   const headerRef = React.createRef<HTMLDivElement>()
+  const footerRef = React.createRef<HTMLDivElement>()
 
   // UI management
   function openChange(open: boolean) {
@@ -290,6 +291,7 @@ const AccountModal = (props: Props) => {
       <DialogContent
         className="Account"
         headerref={headerRef}
+        footerref={footerRef}
         onOpenAutoFocus={(event: Event) => {}}
         onEscapeKeyDown={onEscapeKeyDown}
       >
@@ -314,7 +316,7 @@ const AccountModal = (props: Props) => {
             {languageField()}
             {themeField()}
           </div>
-          <div className="DialogFooter">
+          <div className="DialogFooter" ref={footerRef}>
             <Button
               contained={true}
               text={t('modals.settings.buttons.confirm')}
