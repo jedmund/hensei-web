@@ -1,4 +1,6 @@
 .Dialog {
+  // animation: 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal none running
+  //   openModalDesktop;
   position: fixed;
   background: none;
   border: 0;
@@ -14,8 +16,6 @@
   .DialogContent {
     $multiplier: 4;
 
-    animation: 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal none running
-      openModalDesktop;
     background: var(--dialog-bg);
     border-radius: $card-corner;
     box-sizing: border-box;
@@ -24,9 +24,12 @@
     gap: $unit * $multiplier;
     height: auto;
     min-width: $unit * 48;
-    min-height: $unit-12x;
+    // min-height: $unit-12x;
+    overflow-y: scroll;
+    max-height: 80vh;
     min-width: 580px;
-    padding: $unit * $multiplier;
+    // padding: $unit * $multiplier;
+    position: relative;
 
     a:hover {
       text-decoration: underline;
@@ -46,10 +49,15 @@
     }
 
     .DialogHeader {
+      background: var(--dialog-bg);
       display: flex;
       align-items: center;
       gap: $unit-2x;
       justify-content: space-between;
+      padding: $unit-3x ($unit * $multiplier);
+      position: sticky;
+      top: 0;
+      z-index: 10;
 
       .left {
         display: flex;
@@ -117,6 +125,16 @@
     .DialogDescription {
       color: var(--text-secondary);
       flex-grow: 1;
+    }
+
+    .DialogFooter {
+      align-items: flex-end;
+      background: var(--dialog-bg);
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      padding: ($unit * 1.5) ($unit * $multiplier) $unit-3x;
+      position: sticky;
     }
 
     .actions {
