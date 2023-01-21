@@ -1,15 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { MouseEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { Trans, useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
+import Alert from '~components/Alert'
+import Button from '~components/Button'
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+} from '~components/ContextMenu'
+import ContextMenuItem from '~components/ContextMenuItem'
 import SearchModal from '~components/SearchModal'
 import SummonHovercard from '~components/SummonHovercard'
 import UncapIndicator from '~components/UncapIndicator'
-import PlusIcon from '~public/icons/Add.svg'
 
 import type { SearchableObject } from '~types'
 
+import PlusIcon from '~public/icons/Add.svg'
+import SettingsIcon from '~public/icons/Settings.svg'
 import './index.scss'
 
 interface Props {
@@ -17,39 +26,94 @@ interface Props {
   unitType: 0 | 1 | 2
   position: number
   editable: boolean
+  removeSummon: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
 }
 
-const SummonUnit = (props: Props) => {
+const SummonUnit = ({
+  gridSummon,
+  unitType,
+  position,
+  editable,
+  removeSummon: sendSummonToRemove,
+  updateObject,
+  updateUncap,
+}: Props) => {
+  // Translations and locale
   const { t } = useTranslation('common')
-
-  const [imageUrl, setImageUrl] = useState('')
-
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
+  // State: UI
+  const [searchModalOpen, setSearchModalOpen] = useState(false)
+  const [contextMenuOpen, setContextMenuOpen] = useState(false)
+  const [alertOpen, setAlertOpen] = useState(false)
+
+  // State: Other
+  const [imageUrl, setImageUrl] = useState('')
+
+  // Classes
   const classes = classNames({
     SummonUnit: true,
-    main: props.unitType == 0,
-    grid: props.unitType == 1,
-    friend: props.unitType == 2,
-    editable: props.editable,
-    filled: props.gridSummon !== undefined,
+    main: unitType == 0,
+    grid: unitType == 1,
+    friend: unitType == 2,
+    editable: editable,
+    filled: gridSummon !== undefined,
   })
 
-  const gridSummon = props.gridSummon
+  const buttonClasses = classNames({
+    Options: true,
+    Clicked: contextMenuOpen,
+  })
+
+  // Other
   const summon = gridSummon?.object
 
+  // Hooks
   useEffect(() => {
     generateImageUrl()
   })
 
+  // Methods: Open layer
+  function openSearchModal(event: MouseEvent<HTMLDivElement>) {
+    if (editable) setSearchModalOpen(true)
+  }
+
+  function openRemoveSummonAlert() {
+    setAlertOpen(true)
+  }
+
+  // Methods: Handle button clicked
+  function handleButtonClicked() {
+    setContextMenuOpen(!contextMenuOpen)
+  }
+
+  // Methods: Handle open change
+  function handleContextMenuOpenChange(open: boolean) {
+    if (!open) setContextMenuOpen(false)
+  }
+
+  function handleSearchModalOpenChange(open: boolean) {
+    setSearchModalOpen(open)
+  }
+
+  // Methods: Mutate data
+  function passUncapData(uncap: number) {
+    if (gridSummon) updateUncap(gridSummon.id, position, uncap)
+  }
+
+  function removeSummon() {
+    if (gridSummon) sendSummonToRemove(gridSummon.id)
+  }
+
+  // Methods: Image string generation
   function generateImageUrl() {
     let imgSrc = ''
-    if (props.gridSummon) {
-      const summon = props.gridSummon.object!
+    if (gridSummon) {
+      const summon = gridSummon.object!
 
       const upgradedSummons = [
         '2040094000',
@@ -71,12 +135,12 @@ const SummonUnit = (props: Props) => {
       let suffix = ''
       if (
         upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
-        props.gridSummon.uncap_level == 5
+        gridSummon.uncap_level == 5
       )
         suffix = '_02'
 
       // Generate the correct source for the summon
-      if (props.unitType == 0 || props.unitType == 2)
+      if (unitType == 0 || unitType == 2)
         imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${summon.granblue_id}${suffix}.jpg`
       else
         imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
@@ -86,27 +150,80 @@ const SummonUnit = (props: Props) => {
   }
 
   function placeholderImageUrl() {
-    return props.unitType == 0 || props.unitType == 2
+    return unitType == 0 || unitType == 2
       ? '/images/placeholders/placeholder-summon-main.png'
       : '/images/placeholders/placeholder-summon-grid.png'
   }
 
-  function passUncapData(uncap: number) {
-    if (props.gridSummon)
-      props.updateUncap(props.gridSummon.id, props.position, uncap)
+  // Methods: Layer element rendering
+  const contextMenu = () => {
+    if (editable && gridSummon && gridSummon.id) {
+      return (
+        <>
+          <ContextMenu onOpenChange={handleContextMenuOpenChange}>
+            <ContextMenuTrigger asChild>
+              <Button
+                accessoryIcon={<SettingsIcon />}
+                className={buttonClasses}
+                onClick={handleButtonClicked}
+              />
+            </ContextMenuTrigger>
+            <ContextMenuContent align="start">
+              <ContextMenuItem onSelect={openRemoveSummonAlert}>
+                {t('context.remove')}
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          {removeAlert()}
+        </>
+      )
+    }
   }
 
+  const removeAlert = () => {
+    return (
+      <Alert
+        open={alertOpen}
+        primaryAction={removeSummon}
+        primaryActionText={t('modals.summon.buttons.remove')}
+        cancelAction={() => setAlertOpen(false)}
+        cancelActionText={t('buttons.cancel')}
+        message={
+          <Trans i18nKey="modals.summons.messages.remove">
+            Are you sure you want to remove{' '}
+            <strong>{{ weapon: gridSummon?.object.name[locale] }}</strong> from
+            your team?
+          </Trans>
+        }
+      />
+    )
+  }
+
+  const searchModal = () => {
+    return (
+      <SearchModal
+        placeholderText={t('search.placeholders.summon')}
+        fromPosition={position}
+        object="summons"
+        open={searchModalOpen}
+        onOpenChange={handleSearchModalOpenChange}
+        send={updateObject}
+      />
+    )
+  }
+
+  // Methods: Core element rendering
   const image = (
-    <div className="SummonImage">
+    <div className="SummonImage" onClick={openSearchModal}>
       <img
-        alt={summon?.name.en}
+        alt={summon?.name[locale]}
         className={classNames({
           GridImage: true,
           Placeholder: imageUrl === '',
         })}
         src={imageUrl !== '' ? imageUrl : placeholderImageUrl()}
       />
-      {props.editable ? (
+      {editable ? (
         <span className="icon">
           <PlusIcon />
         </span>
@@ -116,41 +233,34 @@ const SummonUnit = (props: Props) => {
     </div>
   )
 
-  const editableImage = (
-    <SearchModal
-      placeholderText={t('search.placeholders.summon')}
-      fromPosition={props.position}
-      object="summons"
-      send={props.updateObject}
-    >
-      {image}
-    </SearchModal>
-  )
-
   const unitContent = (
-    <div className={classes}>
-      {props.editable ? editableImage : image}
-      {gridSummon ? (
-        <UncapIndicator
-          type="summon"
-          ulb={gridSummon.object.uncap.ulb || false}
-          flb={gridSummon.object.uncap.flb || false}
-          uncapLevel={gridSummon.uncap_level}
-          updateUncap={passUncapData}
-          special={false}
-        />
-      ) : (
-        ''
-      )}
-      <h3 className="SummonName">{summon?.name[locale]}</h3>
-    </div>
+    <>
+      <div className={classes}>
+        {contextMenu()}
+        {image}
+        {gridSummon ? (
+          <UncapIndicator
+            type="summon"
+            ulb={gridSummon.object.uncap.ulb || false}
+            flb={gridSummon.object.uncap.flb || false}
+            uncapLevel={gridSummon.uncap_level}
+            updateUncap={passUncapData}
+            special={false}
+          />
+        ) : (
+          ''
+        )}
+        <h3 className="SummonName">{summon?.name[locale]}</h3>
+      </div>
+      {searchModal()}
+    </>
   )
 
-  const withHovercard = (
+  const unitContentWithHovercard = (
     <SummonHovercard gridSummon={gridSummon!}>{unitContent}</SummonHovercard>
   )
 
-  return gridSummon && !props.editable ? withHovercard : unitContent
+  return gridSummon && !editable ? unitContentWithHovercard : unitContent
 }
 
 export default SummonUnit

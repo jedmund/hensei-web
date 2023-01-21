@@ -520,7 +520,7 @@ const WeaponUnit = ({
         </div>
       </div>
       <img
-        alt={weapon?.name.en}
+        alt={weapon?.name[locale]}
         className={classNames({
           GridImage: true,
           Placeholder: imageUrl === '',

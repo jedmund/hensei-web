@@ -251,6 +251,11 @@
         "password_confirm": "パスワード確認"
       }
     },
+    "summon": {
+      "buttons": {
+        "remove": "召喚石を削除する"
+      }
+    },
     "weapon": {
       "title": "武器変更",
       "buttons": {

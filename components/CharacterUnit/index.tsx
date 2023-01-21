@@ -230,7 +230,11 @@ const CharacterUnit = ({
   // Methods: Core element rendering
   const image = (
     <div className="CharacterImage" onClick={openSearchModal}>
-      <img alt={character?.name.en} className="grid_image" src={imageUrl} />
+      <img
+        alt={character?.name[locale]}
+        className="grid_image"
+        src={imageUrl}
+      />
       {editable ? (
         <span className="icon">
           <PlusIcon />

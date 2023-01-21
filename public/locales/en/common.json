@@ -250,6 +250,11 @@
         "password_confirm": "Password (again)"
       }
     },
+    "summon": {
+      "buttons": {
+        "remove": "Remove summon"
+      }
+    },
     "weapon": {
       "title": "Modify Weapon",
       "buttons": {
