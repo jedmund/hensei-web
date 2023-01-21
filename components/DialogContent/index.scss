@@ -28,7 +28,7 @@
     overflow-y: scroll;
     max-height: 80vh;
     min-width: 580px;
-    max-width: 50vw;
+    max-width: 42vw;
     // padding: $unit * $multiplier;
     position: relative;
 
@@ -55,10 +55,15 @@
       align-items: center;
       gap: $unit-2x;
       justify-content: space-between;
-      padding: $unit-3x ($unit * $multiplier);
+      padding: $unit-4x ($unit * $multiplier);
       position: sticky;
       top: 0;
       z-index: 10;
+
+      &.Short {
+        padding-top: $unit-3x;
+        padding-bottom: $unit-3x;
+      }
 
       .left {
         display: flex;

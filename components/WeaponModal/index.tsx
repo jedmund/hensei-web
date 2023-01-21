@@ -354,7 +354,7 @@ const WeaponModal = ({
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={onEscapeKeyDown}
       >
-        <div className="DialogHeader">
+        <div className="DialogHeader Short">
           <img
             alt={gridWeapon.object.name[locale]}
             className="DialogImage"

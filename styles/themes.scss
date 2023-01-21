@@ -13,6 +13,9 @@
 
   --separator-bg: #{$separator--bg--light};
 
+  --accent-blue: #{$accent--blue--light};
+  --accent-yellow: #{$accent--yellow--light};
+
   // Light - Menus
   --dialog-bg: #{$dialog--bg--light};
 
@@ -136,6 +139,9 @@
   --full-auto-text: #{$text--full--auto--dark};
 
   --separator-bg: #{$separator--bg--dark};
+
+  --accent-blue: #{$accent--blue--dark};
+  --accent-yellow: #{$accent--yellow--dark};
 
   // Dark - Dialogs
   --dialog-bg: #{$dialog--bg--dark};

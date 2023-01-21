@@ -2,10 +2,6 @@
   gap: $unit;
   min-width: $unit * 52;
 
-  .DialogHeader {
-    padding: $unit-4x $unit-3x;
-  }
-
   form {
     display: flex;
     flex-direction: column;

@@ -1,42 +1,28 @@
-.DialogWrapper {
-  position: fixed;
-  background: none;
-  border: 0;
-  inset: 0;
-  top: 0;
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-  min-width: 100vw;
-  overflow-y: auto;
-  color: inherit;
-}
+.About.DialogContent {
+  gap: 0;
+  padding-bottom: $unit;
 
-.About.Dialog {
-  top: 0;
-  animation: none;
-  transform: translate(-50%, 0);
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  margin-top: $unit-10x;
-
-  @include breakpoint(phone) {
-    border-radius: 0;
-    transform: none;
-    margin: 0;
+  & > div:not(.DialogHeader) {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-2x;
+    padding: 0 $unit-4x;
   }
 
   section {
     margin-bottom: $unit;
 
-    h2 {
+    & > h2 {
+      font-size: $font-medium;
+      font-weight: $medium;
       margin-bottom: $unit * 3;
     }
   }
 
-  .DialogDescription {
+  p {
+    color: var(--text-secondary);
     font-size: $font-regular;
-    line-height: 1.24;
+    line-height: 1.3;
     margin-bottom: $unit;
 
     &:last-of-type {
@@ -80,6 +66,12 @@
         display: flex;
         gap: $unit-2x;
         flex-grow: 1;
+
+        h3 {
+          font-weight: 600;
+          max-width: 70%;
+          line-height: 1.3;
+        }
       }
 
       svg {
@@ -97,18 +89,4 @@
       font-weight: $bold;
     }
   }
-}
-
-.ScrollingOverlay {
-  background: rgba(0 0 0 / 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: grid;
-  place-items: center;
-  overflow-y: auto;
-  z-index: 40;
-  padding-top: 10%;
 }

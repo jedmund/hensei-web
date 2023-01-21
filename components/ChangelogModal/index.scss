@@ -1,15 +1,71 @@
-h3.version {
-  color: $blue;
-  font-weight: $medium;
-  font-size: $font-medium;
-  margin-bottom: $unit;
-}
+.Changelog.DialogContent {
+  gap: 0;
+  padding-bottom: $unit-4x;
 
-.notes {
-  color: var(--text-primary);
-  list-style-type: disc;
+  & > div:not(.DialogHeader) {
+    padding: 0 $unit-4x;
+  }
 
-  li {
-    margin-bottom: $unit-half;
+  .updates {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-4x;
+  }
+
+  .version {
+    &.content {
+      .top h3 {
+        color: var(--accent-yellow);
+      }
+
+      .update {
+        display: flex;
+        flex-direction: column;
+        gap: $unit-2x;
+      }
+
+      .characters,
+      .weapons,
+      .summons {
+        display: grid;
+        grid-template-rows: 1fr auto;
+        gap: $unit;
+      }
+
+      .items {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: $unit-4x;
+      }
+    }
+
+    .top {
+      align-items: baseline;
+      display: flex;
+      gap: $unit-half;
+      margin-bottom: $unit-2x;
+
+      h3 {
+        color: var(--accent-blue);
+        font-weight: $medium;
+        font-size: $font-large;
+      }
+
+      time {
+        color: var(--text-secondary);
+        font-size: $font-small;
+        font-weight: $medium;
+      }
+    }
+  }
+
+  .notes {
+    color: var(--text-primary);
+    list-style-type: disc;
+    list-style-position: inside;
+
+    li {
+      margin-bottom: $unit-half;
+    }
   }
 }
