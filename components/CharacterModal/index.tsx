@@ -1,5 +1,10 @@
 // Core dependencies
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
@@ -56,7 +61,6 @@ interface GridCharacterObject {
 
 interface Props {
   gridCharacter: GridCharacter
-  children?: React.ReactNode
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -66,7 +70,7 @@ const CharacterModal = ({
   children,
   open: modalOpen,
   onOpenChange,
-}: Props) => {
+}: PropsWithChildren<Props>) => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
@@ -239,8 +243,8 @@ const CharacterModal = ({
         <SelectWithInput
           object="earring"
           dataSet={earringData}
-          selectValue={earring.modifier}
-          inputValue={earring.strength}
+          selectValue={earring.modifier ? earring.modifier : 0}
+          inputValue={earring.strength ? earring.strength : 0}
           sendValidity={receiveValidity}
           sendValues={receiveEarringValues}
         />
