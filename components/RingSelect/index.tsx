@@ -33,12 +33,14 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
   })
 
   useEffect(() => {
-    setRings({
-      1: gridCharacter.over_mastery[0],
-      2: gridCharacter.over_mastery[1],
-      3: gridCharacter.over_mastery[2],
-      4: gridCharacter.over_mastery[3],
-    })
+    if (gridCharacter.over_mastery) {
+      setRings({
+        1: gridCharacter.over_mastery[0],
+        2: gridCharacter.over_mastery[1],
+        3: gridCharacter.over_mastery[2],
+        4: gridCharacter.over_mastery[3],
+      })
+    }
   }, [gridCharacter])
 
   useEffect(() => {
