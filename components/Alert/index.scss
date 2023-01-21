@@ -15,9 +15,9 @@
   border-radius: $unit;
   display: flex;
   flex-direction: column;
-  gap: $unit;
-  min-width: $unit * 20;
-  max-width: $unit * 40;
+  gap: $unit-2x;
+  min-width: 20vw;
+  max-width: 30vw;
   padding: $unit * 4;
 
   .description {
@@ -33,26 +33,5 @@
     display: flex;
     align-self: flex-end;
     gap: $unit;
-  }
-
-  .Button {
-    font-size: $font-regular;
-    padding: ($unit * 1.5) ($unit * 2);
-    margin-top: $unit * 2;
-
-    &.btn-disabled {
-      background: $grey-90;
-      color: $grey-70;
-      cursor: not-allowed;
-    }
-
-    &:not(.btn-disabled) {
-      background: $grey-90;
-      color: $grey-50;
-
-      &:hover {
-        background: $grey-80;
-      }
-    }
   }
 }

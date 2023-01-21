@@ -30,6 +30,7 @@ const Alert = (props: Props) => {
             <div className="buttons">
               <AlertDialog.Cancel asChild>
                 <Button
+                  contained={true}
                   onClick={props.cancelAction}
                   text={props.cancelActionText}
                 />
@@ -37,6 +38,7 @@ const Alert = (props: Props) => {
               {props.primaryAction ? (
                 <AlertDialog.Action asChild>
                   <Button
+                    contained={true}
                     onClick={props.cancelAction}
                     text={props.primaryActionText}
                   />
