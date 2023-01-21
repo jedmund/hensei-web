@@ -304,14 +304,18 @@ const AccountModal = (props: Props) => {
         </div>
 
         <form onSubmit={update}>
-          {pictureField()}
-          {genderField()}
-          {languageField()}
-          {themeField()}
-          <Button
-            contained={true}
-            text={t('modals.settings.buttons.confirm')}
-          />
+          <div className="Fields">
+            {pictureField()}
+            {genderField()}
+            {languageField()}
+            {themeField()}
+          </div>
+          <div className="DialogFooter">
+            <Button
+              contained={true}
+              text={t('modals.settings.buttons.confirm')}
+            />
+          </div>
         </form>
       </DialogContent>
     </Dialog>
