@@ -9,7 +9,7 @@ import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import classNames from 'classnames'
 import reactStringReplace from 'react-string-replace'
 
-import * as AlertDialog from '@radix-ui/react-alert-dialog'
+import Alert from '~components/Alert'
 
 import Button from '~components/Button'
 import CharLimitedFieldset from '~components/CharLimitedFieldset'
@@ -40,9 +40,7 @@ interface Props {
   new: boolean
   editable: boolean
   updateCallback: (details: DetailsObject) => void
-  deleteCallback: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void
+  deleteCallback: () => void
 }
 
 const PartyDetails = (props: Props) => {
@@ -60,6 +58,7 @@ const PartyDetails = (props: Props) => {
 
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
+  const [alertOpen, setAlertOpen] = useState(false)
 
   const [chargeAttack, setChargeAttack] = useState(true)
   const [fullAuto, setFullAuto] = useState(false)
@@ -293,6 +292,14 @@ const PartyDetails = (props: Props) => {
     toggleDetails()
   }
 
+  function handleClick() {
+    setAlertOpen(!alertOpen)
+  }
+
+  function deleteParty() {
+    props.deleteCallback()
+  }
+
   function extractYoutubeVideoIds(text: string) {
     // Initialize an array to store the video IDs
     const videoIds = []
@@ -381,42 +388,18 @@ const PartyDetails = (props: Props) => {
     )
   }
 
-  const deleteButton = () => {
+  const deleteAlert = () => {
     if (party.editable) {
       return (
-        <AlertDialog.Root>
-          <AlertDialog.Trigger className="Button Blended medium destructive">
-            <span className="Accessory">
-              <CrossIcon />
-            </span>
-            <span className="Text">{t('buttons.delete')}</span>
-          </AlertDialog.Trigger>
-          <AlertDialog.Portal>
-            <AlertDialog.Overlay className="Overlay" />
-            <AlertDialog.Content className="Dialog">
-              <AlertDialog.Title className="DialogTitle">
-                {t('modals.delete_team.title')}
-              </AlertDialog.Title>
-              <AlertDialog.Description className="DialogDescription">
-                {t('modals.delete_team.description')}
-              </AlertDialog.Description>
-              <div className="actions">
-                <AlertDialog.Cancel className="Button modal">
-                  {t('modals.delete_team.buttons.cancel')}
-                </AlertDialog.Cancel>
-                <AlertDialog.Action
-                  className="Button modal destructive"
-                  onClick={(e) => props.deleteCallback(e)}
-                >
-                  {t('modals.delete_team.buttons.confirm')}
-                </AlertDialog.Action>
-              </div>
-            </AlertDialog.Content>
-          </AlertDialog.Portal>
-        </AlertDialog.Root>
+        <Alert
+          open={alertOpen}
+          primaryAction={deleteParty}
+          primaryActionText={t('modals.delete_team.buttons.confirm')}
+          cancelAction={() => setAlertOpen(false)}
+          cancelActionText={t('modals.delete_team.buttons.cancel')}
+          message={t('modals.delete_team.description')}
+        />
       )
-    } else {
-      return ''
     }
   }
 
@@ -553,7 +536,16 @@ const PartyDetails = (props: Props) => {
 
       <div className="bottom">
         <div className="left">
-          {router.pathname !== '/new' ? deleteButton() : ''}
+          {router.pathname !== '/new' ? (
+            <Button
+              accessoryIcon={<CrossIcon />}
+              className="Blended medium destructive"
+              onClick={handleClick}
+              text={t('buttons.delete')}
+            />
+          ) : (
+            ''
+          )}
         </div>
         <div className="right">
           <Button text={t('buttons.cancel')} onClick={toggleDetails} />
@@ -662,6 +654,7 @@ const PartyDetails = (props: Props) => {
       </div>
       {readOnly}
       {editable}
+      {deleteAlert()}
     </section>
   )
 }
