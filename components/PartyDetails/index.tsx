@@ -632,9 +632,7 @@ const PartyDetails = (props: Props) => {
     <section className="DetailsWrapper">
       <div className="PartyInfo">
         <div className="Left">
-          <h1 className={name === '' ? 'empty' : ''}>
-            {name !== '' ? name : 'Untitled'}
-          </h1>
+          <h1 className={name ? '' : 'empty'}>{name ? name : t('no_title')}</h1>
           <div className="attribution">
             {renderUserBlock()}
             {party.raid ? linkedRaidBlock(party.raid) : ''}
