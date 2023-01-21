@@ -1,10 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, MouseEvent } from 'react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { Trans, useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
+import Alert from '~components/Alert'
 import SearchModal from '~components/SearchModal'
 import WeaponModal from '~components/WeaponModal'
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+} from '~components/ContextMenu'
+import ContextMenuItem from '~components/ContextMenuItem'
 import WeaponHovercard from '~components/WeaponHovercard'
 import UncapIndicator from '~components/UncapIndicator'
 import Button from '~components/Button'
@@ -23,48 +30,147 @@ interface Props {
   unitType: 0 | 1
   position: number
   editable: boolean
+  removeWeapon: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
 }
 
-const WeaponUnit = (props: Props) => {
+const WeaponUnit = ({
+  gridWeapon,
+  unitType,
+  position,
+  editable,
+  removeWeapon: sendWeaponToRemove,
+  updateObject,
+  updateUncap,
+}: Props) => {
+  // Translations and locale
   const { t } = useTranslation('common')
-
-  const [imageUrl, setImageUrl] = useState('')
-
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
+  // State: UI
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false)
+  const [searchModalOpen, setSearchModalOpen] = useState(false)
+  const [contextMenuOpen, setContextMenuOpen] = useState(false)
+  const [alertOpen, setAlertOpen] = useState(false)
+
+  // State: Other
+  const [imageUrl, setImageUrl] = useState('')
+
+  // Classes
   const classes = classNames({
     WeaponUnit: true,
-    mainhand: props.unitType == 0,
-    grid: props.unitType == 1,
-    editable: props.editable,
-    filled: props.gridWeapon !== undefined,
-    empty: props.gridWeapon == undefined,
+    mainhand: unitType == 0,
+    grid: unitType == 1,
+    editable: editable,
+    filled: gridWeapon !== undefined,
+    empty: gridWeapon == undefined,
   })
 
-  const gridWeapon = props.gridWeapon
+  const buttonClasses = classNames({
+    Options: true,
+    Clicked: contextMenuOpen,
+  })
+
+  // Other
   const weapon = gridWeapon?.object
 
+  // Hooks
   useEffect(() => {
     generateImageUrl()
   })
 
+  // Methods: Convenience
+  function canBeModified(gridWeapon: GridWeapon) {
+    const weapon = gridWeapon.object
+
+    return (
+      weapon.ax ||
+      weapon.awakening ||
+      (weapon.series && [2, 3, 17, 22, 24].includes(weapon.series))
+    )
+  }
+
+  // Methods: Open layer
+  function openWeaponModal(event: Event) {
+    setDetailsModalOpen(true)
+  }
+
+  function openSearchModal(event: MouseEvent<HTMLDivElement>) {
+    if (editable) setSearchModalOpen(true)
+  }
+
+  function openRemoveWeaponAlert() {
+    setAlertOpen(true)
+  }
+
+  // Methods: Handle button clicked
+  function handleButtonClicked() {
+    setContextMenuOpen(!contextMenuOpen)
+  }
+
+  // Methods: Handle open change
+  function handleContextMenuOpenChange(open: boolean) {
+    if (!open) setContextMenuOpen(false)
+  }
+
+  function handleWeaponModalOpenChange(open: boolean) {
+    setDetailsModalOpen(open)
+  }
+
+  function handleSearchModalOpenChange(open: boolean) {
+    setSearchModalOpen(open)
+  }
+
+  // Methods: Mutate data
+  function passUncapData(index: number) {
+    if (gridWeapon) updateUncap(gridWeapon.id, position, index)
+  }
+
+  function removeWeapon() {
+    if (gridWeapon) sendWeaponToRemove(gridWeapon.id)
+  }
+
+  // Methods: Data fetching and manipulation
+  function getCanonicalAxSkill(index: number) {
+    if (
+      gridWeapon &&
+      gridWeapon.object.ax &&
+      gridWeapon.object.ax_type > 0 &&
+      gridWeapon.ax
+    ) {
+      const axOptions = ax[gridWeapon.object.ax_type - 1]
+      const weaponAxSkill: SimpleAxSkill = gridWeapon.ax[0]
+
+      let axSkill = axOptions.find((ax) => ax.id === weaponAxSkill.modifier)
+
+      if (index !== 0 && axSkill && axSkill.secondary) {
+        const weaponSubAxSkill: SimpleAxSkill = gridWeapon.ax[1]
+        axSkill = axSkill.secondary.find(
+          (ax) => ax.id === weaponSubAxSkill.modifier
+        )
+      }
+
+      return axSkill
+    } else return
+  }
+
+  // Methods: Image string generation
   function generateImageUrl() {
     let imgSrc = ''
-    if (props.gridWeapon) {
-      const weapon = props.gridWeapon.object!
+    if (gridWeapon) {
+      const weapon = gridWeapon.object!
 
-      if (props.unitType == 0) {
-        if (props.gridWeapon.object.element == 0 && props.gridWeapon.element)
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
+      if (unitType == 0) {
+        if (gridWeapon.object.element == 0 && gridWeapon.element)
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}_${gridWeapon.element}.jpg`
         else
           imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
       } else {
-        if (props.gridWeapon.object.element == 0 && props.gridWeapon.element)
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
+        if (gridWeapon.object.element == 0 && gridWeapon.element)
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${gridWeapon.element}.jpg`
         else
           imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
       }
@@ -74,29 +180,30 @@ const WeaponUnit = (props: Props) => {
   }
 
   function placeholderImageUrl() {
-    return props.unitType == 0
+    return unitType == 0
       ? '/images/placeholders/placeholder-weapon-main.png'
       : '/images/placeholders/placeholder-weapon-grid.png'
   }
 
+  // Methods: Image element rendering
   function awakeningImage() {
     if (
-      props.gridWeapon &&
-      props.gridWeapon.object.awakening &&
-      props.gridWeapon.awakening &&
-      props.gridWeapon.awakening.type > 0 &&
-      props.gridWeapon.awakening.type != null
+      gridWeapon &&
+      gridWeapon.object.awakening &&
+      gridWeapon.awakening &&
+      gridWeapon.awakening.type > 0 &&
+      gridWeapon.awakening.type != null
     ) {
       const awakening = weaponAwakening.find(
-        (awakening) => awakening.id === props.gridWeapon?.awakening?.type
+        (awakening) => awakening.id === gridWeapon?.awakening?.type
       )
       const name = awakening?.name[locale]
 
       return (
         <img
-          alt={`${name} Lv${props.gridWeapon.awakening.level}`}
+          alt={`${name} Lv${gridWeapon.awakening.level}`}
           className="Awakening"
-          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/weapon_${props.gridWeapon.awakening.type}.png`}
+          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/weapon_${gridWeapon.awakening.type}.png`}
         />
       )
     }
@@ -109,18 +216,18 @@ const WeaponUnit = (props: Props) => {
 
     // If there is a grid weapon, it is a Draconic Weapon and it has keys
     if (
-      props.gridWeapon &&
-      props.gridWeapon.object.series === 3 &&
-      props.gridWeapon.weapon_keys
+      gridWeapon &&
+      gridWeapon.object.series === 3 &&
+      gridWeapon.weapon_keys
     ) {
-      if (index === 0 && props.gridWeapon.weapon_keys[0]) {
-        altText = `${props.gridWeapon.weapon_keys[0].name[locale]}`
-        filename = `${props.gridWeapon.weapon_keys[0].slug}.png`
-      } else if (index === 1 && props.gridWeapon.weapon_keys[1]) {
-        altText = `${props.gridWeapon.weapon_keys[1].name[locale]}`
+      if (index === 0 && gridWeapon.weapon_keys[0]) {
+        altText = `${gridWeapon.weapon_keys[0].name[locale]}`
+        filename = `${gridWeapon.weapon_keys[0].slug}.png`
+      } else if (index === 1 && gridWeapon.weapon_keys[1]) {
+        altText = `${gridWeapon.weapon_keys[1].name[locale]}`
 
-        const element = props.gridWeapon.object.element
-        filename = `${props.gridWeapon.weapon_keys[1].slug}-${element}.png`
+        const element = gridWeapon.object.element
+        filename = `${gridWeapon.weapon_keys[1].slug}-${element}.png`
       }
 
       return (
@@ -137,12 +244,12 @@ const WeaponUnit = (props: Props) => {
   function telumaImages() {
     let images: JSX.Element[] = []
     if (
-      props.gridWeapon &&
-      props.gridWeapon.object.series === 3 &&
-      props.gridWeapon.weapon_keys &&
-      props.gridWeapon.weapon_keys.length > 0
+      gridWeapon &&
+      gridWeapon.object.series === 3 &&
+      gridWeapon.weapon_keys &&
+      gridWeapon.weapon_keys.length > 0
     ) {
-      for (let i = 0; i < props.gridWeapon.weapon_keys.length; i++) {
+      for (let i = 0; i < gridWeapon.weapon_keys.length; i++) {
         const image = telumaImage(i)
         if (image) images.push(image)
       }
@@ -158,27 +265,27 @@ const WeaponUnit = (props: Props) => {
 
     // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
     if (
-      props.gridWeapon &&
-      props.gridWeapon.object.series === 17 &&
-      props.gridWeapon.weapon_keys
+      gridWeapon &&
+      gridWeapon.object.series === 17 &&
+      gridWeapon.weapon_keys
     ) {
       if (
-        props.gridWeapon.weapon_keys[index] &&
-        (props.gridWeapon.weapon_keys[index].slot === 1 ||
-          props.gridWeapon.weapon_keys[index].slot === 2)
+        gridWeapon.weapon_keys[index] &&
+        (gridWeapon.weapon_keys[index].slot === 1 ||
+          gridWeapon.weapon_keys[index].slot === 2)
       ) {
-        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
-        filename = `${props.gridWeapon.weapon_keys[index].slug}.png`
+        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
+        filename = `${gridWeapon.weapon_keys[index].slug}.png`
       } else if (
-        props.gridWeapon.weapon_keys[index] &&
-        props.gridWeapon.weapon_keys[index].slot === 0
+        gridWeapon.weapon_keys[index] &&
+        gridWeapon.weapon_keys[index].slot === 0
       ) {
-        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
+        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
 
-        const weapon = props.gridWeapon.object.proficiency
+        const weapon = gridWeapon.object.proficiency
 
         const suffix = `${weapon}`
-        filename = `${props.gridWeapon.weapon_keys[index].slug}-${suffix}.png`
+        filename = `${gridWeapon.weapon_keys[index].slug}-${suffix}.png`
       }
     }
 
@@ -195,12 +302,12 @@ const WeaponUnit = (props: Props) => {
   function ultimaImages() {
     let images: JSX.Element[] = []
     if (
-      props.gridWeapon &&
-      props.gridWeapon.object.series === 17 &&
-      props.gridWeapon.weapon_keys &&
-      props.gridWeapon.weapon_keys.length > 0
+      gridWeapon &&
+      gridWeapon.object.series === 17 &&
+      gridWeapon.weapon_keys &&
+      gridWeapon.weapon_keys.length > 0
     ) {
-      for (let i = 0; i < props.gridWeapon.weapon_keys.length; i++) {
+      for (let i = 0; i < gridWeapon.weapon_keys.length; i++) {
         const image = ultimaImage(i)
         if (image) images.push(image)
       }
@@ -216,29 +323,29 @@ const WeaponUnit = (props: Props) => {
 
     // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
     if (
-      props.gridWeapon &&
-      props.gridWeapon.object.series === 2 &&
-      props.gridWeapon.weapon_keys
+      gridWeapon &&
+      gridWeapon.object.series === 2 &&
+      gridWeapon.weapon_keys
     ) {
       if (
-        props.gridWeapon.weapon_keys[index] &&
-        props.gridWeapon.weapon_keys[index].slot === 0
+        gridWeapon.weapon_keys[index] &&
+        gridWeapon.weapon_keys[index].slot === 0
       ) {
-        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
-        filename = `${props.gridWeapon.weapon_keys[index].slug}.png`
+        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
+        filename = `${gridWeapon.weapon_keys[index].slug}.png`
       } else if (
-        props.gridWeapon.weapon_keys[index] &&
-        props.gridWeapon.weapon_keys[index].slot === 1
+        gridWeapon.weapon_keys[index] &&
+        gridWeapon.weapon_keys[index].slot === 1
       ) {
-        altText = `${props.gridWeapon.weapon_keys[index].name[locale]}`
+        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
 
-        const element = props.gridWeapon.object.element
-        const mod = props.gridWeapon.object.name.en.includes('Repudiation')
+        const element = gridWeapon.object.element
+        const mod = gridWeapon.object.name.en.includes('Repudiation')
           ? 'primal'
           : 'magna'
 
         const suffix = `${mod}-${element}`
-        const weaponKey = props.gridWeapon.weapon_keys[index]
+        const weaponKey = gridWeapon.weapon_keys[index]
 
         if (
           [
@@ -250,9 +357,9 @@ const WeaponUnit = (props: Props) => {
             'chain-glorification',
           ].includes(weaponKey.slug)
         ) {
-          filename = `${props.gridWeapon.weapon_keys[index].slug}-${suffix}.png`
+          filename = `${gridWeapon.weapon_keys[index].slug}-${suffix}.png`
         } else {
-          filename = `${props.gridWeapon.weapon_keys[index].slug}.png`
+          filename = `${gridWeapon.weapon_keys[index].slug}.png`
         }
       }
 
@@ -270,12 +377,12 @@ const WeaponUnit = (props: Props) => {
   function opusImages() {
     let images: JSX.Element[] = []
     if (
-      props.gridWeapon &&
-      props.gridWeapon.object.series === 2 &&
-      props.gridWeapon.weapon_keys &&
-      props.gridWeapon.weapon_keys.length > 0
+      gridWeapon &&
+      gridWeapon.object.series === 2 &&
+      gridWeapon.weapon_keys &&
+      gridWeapon.weapon_keys.length > 0
     ) {
-      for (let i = 0; i < props.gridWeapon.weapon_keys.length; i++) {
+      for (let i = 0; i < gridWeapon.weapon_keys.length; i++) {
         const image = opusImage(i)
         if (image) images.push(image)
       }
@@ -288,13 +395,13 @@ const WeaponUnit = (props: Props) => {
     const axSkill = getCanonicalAxSkill(index)
 
     if (
-      props.gridWeapon &&
-      props.gridWeapon.object.ax &&
-      props.gridWeapon.object.ax_type > 0 &&
-      props.gridWeapon.ax &&
+      gridWeapon &&
+      gridWeapon.object.ax &&
+      gridWeapon.object.ax_type > 0 &&
+      gridWeapon.ax &&
       axSkill
     ) {
-      const altText = `${axSkill.name[locale]} Lv${props.gridWeapon.ax[index].strength}`
+      const altText = `${axSkill.name[locale]} Lv${gridWeapon.ax[index].strength}`
       return (
         <img
           alt={altText}
@@ -309,12 +416,12 @@ const WeaponUnit = (props: Props) => {
   function axImages() {
     let images: JSX.Element[] = []
     if (
-      props.gridWeapon &&
-      props.gridWeapon.object.ax &&
-      props.gridWeapon.ax &&
-      props.gridWeapon.ax.length > 0
+      gridWeapon &&
+      gridWeapon.object.ax &&
+      gridWeapon.ax &&
+      gridWeapon.ax.length > 0
     ) {
-      for (let i = 0; i < props.gridWeapon.ax.length; i++) {
+      for (let i = 0; i < gridWeapon.ax.length; i++) {
         const image = axImage(i)
         if (image) images.push(image)
       }
@@ -323,46 +430,86 @@ const WeaponUnit = (props: Props) => {
     return images
   }
 
-  function getCanonicalAxSkill(index: number) {
-    if (
-      props.gridWeapon &&
-      props.gridWeapon.object.ax &&
-      props.gridWeapon.object.ax_type > 0 &&
-      props.gridWeapon.ax
-    ) {
-      const axOptions = ax[props.gridWeapon.object.ax_type - 1]
-      const weaponAxSkill: SimpleAxSkill = props.gridWeapon.ax[0]
-
-      let axSkill = axOptions.find((ax) => ax.id === weaponAxSkill.modifier)
-
-      if (index !== 0 && axSkill && axSkill.secondary) {
-        const weaponSubAxSkill: SimpleAxSkill = props.gridWeapon.ax[1]
-        axSkill = axSkill.secondary.find(
-          (ax) => ax.id === weaponSubAxSkill.modifier
-        )
-      }
-
-      return axSkill
-    } else return
+  // Methods: Layer element rendering
+  const weaponModal = () => {
+    if (gridWeapon) {
+      return (
+        <WeaponModal
+          gridWeapon={gridWeapon}
+          open={detailsModalOpen}
+          onOpenChange={handleWeaponModalOpenChange}
+        />
+      )
+    }
   }
 
-  function passUncapData(index: number) {
-    if (props.gridWeapon)
-      props.updateUncap(props.gridWeapon.id, props.position, index)
+  const contextMenu = () => {
+    if (editable && gridWeapon && gridWeapon.id) {
+      return (
+        <>
+          <ContextMenu onOpenChange={handleContextMenuOpenChange}>
+            <ContextMenuTrigger asChild>
+              <Button
+                accessoryIcon={<SettingsIcon />}
+                className={buttonClasses}
+                onClick={handleButtonClicked}
+              />
+            </ContextMenuTrigger>
+            <ContextMenuContent align="start">
+              {canBeModified(gridWeapon) ? (
+                <ContextMenuItem onSelect={openWeaponModal}>
+                  Modify weapon
+                </ContextMenuItem>
+              ) : (
+                ''
+              )}
+              <ContextMenuItem onSelect={openRemoveWeaponAlert}>
+                Remove from grid
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          {weaponModal()}
+          {removeAlert()}
+        </>
+      )
+    }
   }
 
-  function canBeModified(gridWeapon: GridWeapon) {
-    const weapon = gridWeapon.object
-
+  const removeAlert = () => {
     return (
-      weapon.ax ||
-      weapon.awakening ||
-      (weapon.series && [2, 3, 17, 22, 24].includes(weapon.series))
+      <Alert
+        open={alertOpen}
+        primaryAction={removeWeapon}
+        primaryActionText={t('modals.weapons.buttons.remove')}
+        cancelAction={() => setAlertOpen(false)}
+        cancelActionText={t('buttons.cancel')}
+        message={
+          <Trans i18nKey="modals.characters.messages.remove">
+            Are you sure you want to remove{' '}
+            <strong>{{ weapon: gridWeapon?.object.name[locale] }}</strong> from
+            your team?
+          </Trans>
+        }
+      />
     )
   }
 
+  const searchModal = () => {
+    return (
+      <SearchModal
+        placeholderText={t('search.placeholders.weapon')}
+        fromPosition={position}
+        object="weapons"
+        open={searchModalOpen}
+        onOpenChange={handleSearchModalOpenChange}
+        send={updateObject}
+      />
+    )
+  }
+
+  // Methods: Core element rendering
   const image = (
-    <div className="WeaponImage">
+    <div className="WeaponImage" onClick={openSearchModal}>
       <div className="Modifiers">
         {awakeningImage()}
         <div className="Skills">
@@ -380,7 +527,7 @@ const WeaponUnit = (props: Props) => {
         })}
         src={imageUrl !== '' ? imageUrl : placeholderImageUrl()}
       />
-      {props.editable ? (
+      {editable ? (
         <span className="icon">
           <PlusIcon />
         </span>
@@ -390,51 +537,34 @@ const WeaponUnit = (props: Props) => {
     </div>
   )
 
-  const editableImage = (
-    <SearchModal
-      placeholderText={t('search.placeholders.weapon')}
-      fromPosition={props.position}
-      object="weapons"
-      send={props.updateObject}
-    >
-      {image}
-    </SearchModal>
-  )
-
   const unitContent = (
-    <div className={classes}>
-      {props.editable &&
-      gridWeapon &&
-      gridWeapon.id &&
-      canBeModified(gridWeapon) ? (
-        <WeaponModal gridWeapon={gridWeapon}>
-          <Button accessoryIcon={<SettingsIcon />} />
-        </WeaponModal>
-      ) : (
-        ''
-      )}
-      {props.editable ? editableImage : image}
-      {gridWeapon ? (
-        <UncapIndicator
-          type="weapon"
-          ulb={gridWeapon.object.uncap.ulb || false}
-          flb={gridWeapon.object.uncap.flb || false}
-          uncapLevel={gridWeapon.uncap_level}
-          updateUncap={passUncapData}
-          special={false}
-        />
-      ) : (
-        ''
-      )}
-      <h3 className="WeaponName">{weapon?.name[locale]}</h3>
-    </div>
+    <>
+      <div className={classes}>
+        {contextMenu()}
+        {image}
+        {gridWeapon && weapon ? (
+          <UncapIndicator
+            type="weapon"
+            ulb={gridWeapon.object.uncap.ulb || false}
+            flb={gridWeapon.object.uncap.flb || false}
+            uncapLevel={gridWeapon.uncap_level}
+            updateUncap={passUncapData}
+            special={false}
+          />
+        ) : (
+          ''
+        )}
+        <h3 className="WeaponName">{weapon?.name[locale]}</h3>
+      </div>
+      {searchModal()}
+    </>
   )
 
-  const withHovercard = (
+  const unitContentWithHovercard = (
     <WeaponHovercard gridWeapon={gridWeapon!}>{unitContent}</WeaponHovercard>
   )
 
-  return gridWeapon && !props.editable ? withHovercard : unitContent
+  return gridWeapon && !editable ? unitContentWithHovercard : unitContent
 }
 
 export default WeaponUnit

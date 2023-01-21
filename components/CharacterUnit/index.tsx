@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { MouseEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { Trans, useTranslation } from 'next-i18next'
-import classnames from 'classnames'
+import classNames from 'classnames'
 
 import Alert from '~components/Alert'
 import Button from '~components/Button'
@@ -30,52 +30,112 @@ interface Props {
   gridCharacter?: GridCharacter
   position: number
   editable: boolean
+  removeCharacter: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
-  removeCharacter: (id: string) => void
 }
 
-const CharacterUnit = (props: Props) => {
+const CharacterUnit = ({
+  gridCharacter,
+  position,
+  editable,
+  removeCharacter: sendCharacterToRemove,
+  updateObject,
+  updateUncap,
+}: Props) => {
+  // Translations and locale
   const { t } = useTranslation('common')
-
-  const { party, grid } = useSnapshot(appState)
-
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
-  const [imageUrl, setImageUrl] = useState('')
+  // State snapshot
+  const { party, grid } = useSnapshot(appState)
 
-  const classes = classnames({
-    CharacterUnit: true,
-    editable: props.editable,
-    filled: props.gridCharacter !== undefined,
-  })
-
-  const [modalOpen, setModalOpen] = useState(false)
+  // State: UI
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false)
+  const [searchModalOpen, setSearchModalOpen] = useState(false)
+  const [contextMenuOpen, setContextMenuOpen] = useState(false)
   const [alertOpen, setAlertOpen] = useState(false)
 
-  const gridCharacter = props.gridCharacter
+  // State: Other
+  const [imageUrl, setImageUrl] = useState('')
+
+  // Classes
+  const classes = classNames({
+    CharacterUnit: true,
+    editable: editable,
+    filled: gridCharacter !== undefined,
+  })
+
+  const buttonClasses = classNames({
+    Options: true,
+    Clicked: contextMenuOpen,
+  })
+
+  // Other
   const character = gridCharacter?.object
 
+  // Hooks
   useEffect(() => {
     generateImageUrl()
   })
 
+  // Methods: Open layer
+  function openCharacterModal(event: Event) {
+    setDetailsModalOpen(true)
+  }
+
+  function openSearchModal(event: MouseEvent<HTMLDivElement>) {
+    if (editable) setSearchModalOpen(true)
+  }
+
+  function openRemoveCharacterAlert() {
+    setAlertOpen(true)
+  }
+
+  // Methods: Handle button clicked
+  function handleButtonClicked() {
+    setContextMenuOpen(!contextMenuOpen)
+  }
+
+  // Methods: Handle open change
+  function handleCharacterModalOpenChange(open: boolean) {
+    setDetailsModalOpen(open)
+  }
+
+  function handleSearchModalOpenChange(open: boolean) {
+    setSearchModalOpen(open)
+  }
+
+  function handleContextMenuOpenChange(open: boolean) {
+    if (!open) setContextMenuOpen(false)
+  }
+
+  // Methods: Mutate data
+  function passUncapData(uncap: number) {
+    if (gridCharacter) updateUncap(gridCharacter.id, position, uncap)
+  }
+
+  function removeCharacter() {
+    if (gridCharacter) sendCharacterToRemove(gridCharacter.id)
+  }
+
+  // Methods: Image string generation
   function generateImageUrl() {
     let imgSrc = ''
 
-    if (props.gridCharacter) {
-      const character = props.gridCharacter.object!
+    if (gridCharacter) {
+      const character = gridCharacter.object!
 
       // Change the image based on the uncap level
       let suffix = '01'
-      if (props.gridCharacter.uncap_level == 6) suffix = '04'
-      else if (props.gridCharacter.uncap_level == 5) suffix = '03'
-      else if (props.gridCharacter.uncap_level > 2) suffix = '02'
+      if (gridCharacter.uncap_level == 6) suffix = '04'
+      else if (gridCharacter.uncap_level == 5) suffix = '03'
+      else if (gridCharacter.uncap_level > 2) suffix = '02'
 
       // Special casing for Lyria (and Young Cat eventually)
-      if (props.gridCharacter.object.granblue_id === '3030182000') {
+      if (gridCharacter.object.granblue_id === '3030182000') {
         let element = 1
         if (grid.weapons.mainWeapon && grid.weapons.mainWeapon.element) {
           element = grid.weapons.mainWeapon.element
@@ -92,49 +152,45 @@ const CharacterUnit = (props: Props) => {
     setImageUrl(imgSrc)
   }
 
-  function passUncapData(uncap: number) {
-    if (props.gridCharacter)
-      props.updateUncap(props.gridCharacter.id, props.position, uncap)
+  // Methods: Layer element rendering
+  const characterModal = () => {
+    if (gridCharacter) {
+      return (
+        <CharacterModal
+          gridCharacter={gridCharacter}
+          open={detailsModalOpen}
+          onOpenChange={handleCharacterModalOpenChange}
+        />
+      )
+    }
   }
 
-  const image = (
-    <div className="CharacterImage">
-      <img alt={character?.name.en} className="grid_image" src={imageUrl} />
-      {props.editable ? (
-        <span className="icon">
-          <PlusIcon />
-        </span>
-      ) : (
-        ''
-      )}
-    </div>
-  )
-
-  const editableImage = (
-    <SearchModal
-      placeholderText={t('search.placeholders.character')}
-      fromPosition={props.position}
-      object="characters"
-      send={props.updateObject}
-    >
-      {image}
-    </SearchModal>
-  )
-
-  function openCharacterModal(event: Event) {
-    setModalOpen(true)
-  }
-
-  function onCharacterModalOpenChange(open: boolean) {
-    setModalOpen(open)
-  }
-
-  function openRemoveCharacterAlert() {
-    setAlertOpen(true)
-  }
-
-  function removeCharacter() {
-    if (gridCharacter) props.removeCharacter(gridCharacter.id)
+  const contextMenu = () => {
+    if (editable && gridCharacter && gridCharacter.id) {
+      return (
+        <>
+          <ContextMenu onOpenChange={handleContextMenuOpenChange}>
+            <ContextMenuTrigger asChild>
+              <Button
+                accessoryIcon={<SettingsIcon />}
+                className={buttonClasses}
+                onClick={handleButtonClicked}
+              />
+            </ContextMenuTrigger>
+            <ContextMenuContent align="start">
+              <ContextMenuItem onSelect={openCharacterModal}>
+                Modify character
+              </ContextMenuItem>
+              <ContextMenuItem onSelect={openRemoveCharacterAlert}>
+                Remove from grid
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          {characterModal()}
+          {removeAlert()}
+        </>
+      )
+    }
   }
 
   const removeAlert = () => {
@@ -156,63 +212,65 @@ const CharacterUnit = (props: Props) => {
     )
   }
 
-  const contextMenu = () => {
-    if (props.editable && gridCharacter && gridCharacter.id) {
+  const searchModal = () => {
+    if (editable) {
       return (
-        <>
-          <ContextMenu>
-            <ContextMenuTrigger asChild>
-              <Button accessoryIcon={<SettingsIcon />} className="Options" />
-            </ContextMenuTrigger>
-            <ContextMenuContent align="start">
-              <ContextMenuItem onSelect={openCharacterModal}>
-                Modify character
-              </ContextMenuItem>
-              <ContextMenuItem onSelect={openRemoveCharacterAlert}>
-                Remove from grid
-              </ContextMenuItem>
-            </ContextMenuContent>
-          </ContextMenu>
-          <CharacterModal
-            gridCharacter={gridCharacter}
-            open={modalOpen}
-            onOpenChange={onCharacterModalOpenChange}
-          />
-          {removeAlert()}
-        </>
+        <SearchModal
+          placeholderText={t('search.placeholders.character')}
+          fromPosition={position}
+          object="characters"
+          open={searchModalOpen}
+          onOpenChange={handleSearchModalOpenChange}
+          send={updateObject}
+        />
       )
     }
   }
 
-  //
-
-  const unitContent = (
-    <div className={classes}>
-      {contextMenu()}
-      {props.editable ? editableImage : image}
-      {gridCharacter && character ? (
-        <UncapIndicator
-          type="character"
-          flb={character.uncap.flb || false}
-          ulb={character.uncap.ulb || false}
-          uncapLevel={gridCharacter.uncap_level}
-          updateUncap={passUncapData}
-          special={character.special}
-        />
+  // Methods: Core element rendering
+  const image = (
+    <div className="CharacterImage" onClick={openSearchModal}>
+      <img alt={character?.name.en} className="grid_image" src={imageUrl} />
+      {editable ? (
+        <span className="icon">
+          <PlusIcon />
+        </span>
       ) : (
         ''
       )}
-      <h3 className="CharacterName">{character?.name[locale]}</h3>
     </div>
   )
 
-  const withHovercard = (
+  const unitContent = (
+    <>
+      <div className={classes}>
+        {contextMenu()}
+        {image}
+        {gridCharacter && character ? (
+          <UncapIndicator
+            type="character"
+            flb={character.uncap.flb || false}
+            ulb={character.uncap.ulb || false}
+            uncapLevel={gridCharacter.uncap_level}
+            updateUncap={passUncapData}
+            special={character.special}
+          />
+        ) : (
+          ''
+        )}
+        <h3 className="CharacterName">{character?.name[locale]}</h3>
+      </div>
+      {searchModal()}
+    </>
+  )
+
+  const unitContentWithHovercard = (
     <CharacterHovercard gridCharacter={gridCharacter!}>
       {unitContent}
     </CharacterHovercard>
   )
 
-  return gridCharacter && !props.editable ? withHovercard : unitContent
+  return gridCharacter && !editable ? unitContentWithHovercard : unitContent
 }
 
 export default CharacterUnit

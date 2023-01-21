@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -40,10 +40,16 @@ interface GridWeaponObject {
 
 interface Props {
   gridWeapon: GridWeapon
-  children: React.ReactNode
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-const WeaponModal = ({ gridWeapon, children }: Props) => {
+const WeaponModal = ({
+  gridWeapon,
+  open: modalOpen,
+  children,
+  onOpenChange,
+}: PropsWithChildren<Props>) => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
@@ -86,6 +92,10 @@ const WeaponModal = ({ gridWeapon, children }: Props) => {
   const [ax1Open, setAx1Open] = useState(false)
   const [ax2Open, setAx2Open] = useState(false)
   const [awakeningOpen, setAwakeningOpen] = useState(false)
+
+  useEffect(() => {
+    setOpen(modalOpen)
+  }, [modalOpen])
 
   useEffect(() => {
     setElement(gridWeapon.element)
@@ -308,13 +318,14 @@ const WeaponModal = ({ gridWeapon, children }: Props) => {
     )
   }
 
-  function openChange(open: boolean) {
+  function handleOpenChange(open: boolean) {
     if (gridWeapon.object.ax || gridWeapon.object.awakening) {
       setFormValid(false)
     } else {
       setFormValid(true)
     }
     setOpen(open)
+    onOpenChange(open)
   }
 
   const anySelectOpen =
@@ -336,7 +347,7 @@ const WeaponModal = ({ gridWeapon, children }: Props) => {
 
   return (
     // TODO: Refactor into Dialog component
-    <Dialog open={open} onOpenChange={openChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         className="Weapon"
