@@ -62,6 +62,11 @@ const CharacterGrid = (props: Props) => {
     [key: number]: number | undefined
   }>({})
 
+  const [previousTranscendenceStages, setPreviousTranscendenceStages] =
+    useState<{
+      [key: number]: number | undefined
+    }>({})
+
   // Set the editable flag only on first load
   useEffect(() => {
     // If user is logged in and matches
@@ -298,21 +303,21 @@ const CharacterGrid = (props: Props) => {
       accountState.account.user &&
       party.user.id === accountState.account.user.id
     ) {
-      memoizeAction(id, position, uncapLevel)
+      memoizeUncapAction(id, position, uncapLevel)
 
       // Optimistically update UI
       updateUncapLevel(position, uncapLevel)
     }
   }
 
-  const memoizeAction = useCallback(
+  const memoizeUncapAction = useCallback(
     (id: string, position: number, uncapLevel: number) => {
-      debouncedAction(id, position, uncapLevel)
+      debouncedUncapAction(id, position, uncapLevel)
     },
     [props, previousUncapValues]
   )
 
-  const debouncedAction = useMemo(
+  const debouncedUncapAction = useMemo(
     () =>
       debounce((id, position, number) => {
         saveUncap(id, position, number)
@@ -338,6 +343,89 @@ const CharacterGrid = (props: Props) => {
     if (grid.characters[position]) {
       newPreviousValues[position] = grid.characters[position]?.uncap_level
       setPreviousUncapValues(newPreviousValues)
+    }
+  }
+
+  // Methods: Updating transcendence stage
+  // Note: Saves, but debouncing is not working properly
+  async function saveTranscendence(
+    id: string,
+    position: number,
+    stage: number
+  ) {
+    storePreviousTranscendenceStage(position)
+
+    try {
+      if (stage != previousTranscendenceStages[position])
+        // TODO: We can use the update character API
+        await api.endpoints.grid_characters
+          .update(id, { character: { transcendence_step: stage } })
+          .then((response) => {
+            storeGridCharacter(response.data)
+          })
+    } catch (error) {
+      console.error(error)
+
+      // Revert optimistic UI
+      updateTranscendenceStage(position, previousTranscendenceStages[position])
+
+      // Remove optimistic key
+      let newPreviousValues = { ...previousTranscendenceStages }
+      delete newPreviousValues[position]
+      setPreviousTranscendenceStages(newPreviousValues)
+    }
+  }
+
+  function initiateTranscendenceUpdate(
+    id: string,
+    position: number,
+    uncapLevel: number
+  ) {
+    if (
+      party.user &&
+      accountState.account.user &&
+      party.user.id === accountState.account.user.id
+    ) {
+      memoizeTranscendenceAction(id, position, uncapLevel)
+
+      // Optimistically update UI
+      updateTranscendenceStage(position, uncapLevel)
+    }
+  }
+
+  const memoizeTranscendenceAction = useCallback(
+    (id: string, position: number, stage: number) => {
+      debouncedTranscendenceAction(id, position, stage)
+    },
+    [props, previousTranscendenceStages]
+  )
+
+  const debouncedTranscendenceAction = useMemo(
+    () =>
+      debounce((id, position, number) => {
+        saveTranscendence(id, position, number)
+      }, 500),
+    [props, saveTranscendence]
+  )
+
+  const updateTranscendenceStage = (
+    position: number,
+    uncapLevel: number | undefined
+  ) => {
+    const character = appState.grid.characters[position]
+    if (character && uncapLevel) {
+      character.uncap_level = uncapLevel
+      appState.grid.characters[position] = character
+    }
+  }
+
+  function storePreviousTranscendenceStage(position: number) {
+    // Save the current value in case of an unexpected result
+    let newPreviousValues = { ...previousUncapValues }
+
+    if (grid.characters[position]) {
+      newPreviousValues[position] = grid.characters[position]?.uncap_level
+      setPreviousTranscendenceStages(newPreviousValues)
     }
   }
 
@@ -380,6 +468,7 @@ const CharacterGrid = (props: Props) => {
                   position={i}
                   updateObject={receiveCharacterFromSearch}
                   updateUncap={initiateUncapUpdate}
+                  updateTranscendence={initiateTranscendenceUpdate}
                   removeCharacter={removeCharacter}
                 />
               </li>
