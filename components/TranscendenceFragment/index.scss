@@ -1,0 +1,83 @@
+.Fragment {
+  $degrees: 72deg;
+
+  $origWidth: 29px;
+  $origHeight: 54px;
+
+  $scaledWidth: 12px;
+  $scaledHeight: calc(($scaledWidth / $origWidth) * $origHeight);
+
+  $scale: 1.2;
+
+  @include hidpiImage(
+    '/icons/transcendence/interactive/interactive-piece',
+    png,
+    $scaledWidth,
+    $scaledHeight
+  );
+
+  position: absolute;
+  z-index: 32;
+
+  aspect-ratio: 29 / 54;
+  height: $scaledHeight;
+  width: $scaledWidth;
+  opacity: 0;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &.Visible {
+    opacity: 1;
+  }
+
+  &.Stage1 {
+    top: 3px;
+    left: 18px;
+
+    // &:hover {
+    //   transform: scale($scale, $scale) translateY(-2px);
+    // }
+  }
+
+  &.Stage2 {
+    top: 10px;
+    left: 27px;
+    transform: rotate($degrees);
+
+    // &:hover {
+    //   transform: rotate($degrees) scale($scale, $scale) translateY(-2px);
+    // }
+  }
+
+  &.Stage3 {
+    top: 21px;
+    left: 24px;
+    transform: rotate($degrees * 2);
+
+    // &:hover {
+    //   transform: rotate($degrees * 2) scale($scale, $scale) translateY(-1px);
+    // }
+  }
+
+  &.Stage4 {
+    top: 21px;
+    left: 12px;
+    transform: rotate($degrees * 3);
+
+    // &:hover {
+    //   transform: rotate($degrees * 3) scale($scale, $scale) translateY(-1px);
+    // }
+  }
+
+  &.Stage5 {
+    top: 10px;
+    left: 8px;
+    transform: rotate($degrees * 4);
+
+    // &:hover {
+    //   transform: rotate($degrees * 4) scale($scale, $scale) translateY(-1px);
+    // }
+  }
+}
