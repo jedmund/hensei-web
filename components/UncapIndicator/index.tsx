@@ -1,20 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 import UncapStar from '~components/UncapStar'
+import TranscendenceStar from '~components/TranscendenceStar'
 
 import './index.scss'
+import TranscendencePopover from '~components/TranscendencePopover'
 
 interface Props {
   type: 'character' | 'weapon' | 'summon'
   rarity?: number
   uncapLevel?: number
+  transcendenceStep?: number
   flb: boolean
   ulb: boolean
+  xlb?: boolean
   special: boolean
   updateUncap?: (index: number) => void
+  updateTranscendence?: (index: number) => void
 }
 
 const UncapIndicator = (props: Props) => {
   const numStars = setNumStars()
+
+  const [popoverOpen, setPopoverOpen] = useState(false)
+
   function setNumStars() {
     let numStars
 
@@ -56,14 +64,16 @@ const UncapIndicator = (props: Props) => {
     }
   }
 
+  function openPopover() {
+    setPopoverOpen(true)
+  }
+
   const transcendence = (i: number) => {
     return (
-      <UncapStar
-        ulb={true}
-        empty={props.uncapLevel ? i >= props.uncapLevel : false}
+      <TranscendenceStar
         key={`star_${i}`}
-        index={i}
-        onClick={toggleStar}
+        interactive={false}
+        onClick={openPopover}
       />
     )
   }
@@ -106,23 +116,38 @@ const UncapIndicator = (props: Props) => {
     )
   }
 
+  const transcendencePopover = () => {
+    return props.type === 'character' || props.type === 'summon' ? (
+      <TranscendencePopover
+        open={popoverOpen}
+        stage={props.transcendenceStep ? props.transcendenceStep : 0}
+        sendValue={props.updateTranscendence}
+      />
+    ) : (
+      ''
+    )
+  }
+
   return (
-    <ul className="UncapIndicator">
-      {Array.from(Array(numStars)).map((x, i) => {
-        if (props.type === 'character' && i > 4) {
-          if (props.special) return ulb(i)
-          else return transcendence(i)
-        } else if (
-          (props.special && props.type === 'character' && i == 3) ||
-          (props.type === 'character' && i == 4) ||
-          (props.type !== 'character' && i > 2)
-        ) {
-          return flb(i)
-        } else {
-          return mlb(i)
-        }
-      })}
-    </ul>
+    <div className="Uncap">
+      <ul className="UncapIndicator">
+        {Array.from(Array(numStars)).map((x, i) => {
+          if (props.type === 'character' && i > 4) {
+            if (props.special) return ulb(i)
+            else return transcendence(i)
+          } else if (
+            (props.special && props.type === 'character' && i == 3) ||
+            (props.type === 'character' && i == 4) ||
+            (props.type !== 'character' && i > 2)
+          ) {
+            return flb(i)
+          } else {
+            return mlb(i)
+          }
+        })}
+      </ul>
+      {transcendencePopover()}
+    </div>
   )
 }
 
