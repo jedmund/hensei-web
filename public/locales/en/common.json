@@ -370,5 +370,6 @@
   "no_raid": "No raid",
   "no_user": "Anonymous",
   "no_job": "No class",
-  "no_value": "No value"
+  "no_value": "No value",
+  "level": "Level"
 }
