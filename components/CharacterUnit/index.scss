@@ -97,4 +97,34 @@
       font-size: $font-tiny;
     }
   }
+
+  &:hover .Perpetuity.Empty {
+    opacity: 1;
+  }
+
+  .Perpetuity {
+    position: absolute;
+    background-image: url('/icons/perpetuity/filled.svg');
+    background-size: $unit-4x $unit-4x;
+    z-index: 20;
+    top: $unit * -1;
+    right: $unit-3x;
+    width: $unit-4x;
+    height: $unit-4x;
+    transition: $duration-zoom opacity ease-in-out;
+
+    &:hover {
+      background-image: url('/icons/perpetuity/empty.svg');
+      cursor: pointer;
+    }
+
+    &.Empty {
+      background-image: url('/icons/perpetuity/empty.svg');
+      opacity: 0;
+
+      &:hover {
+        background-image: url('/icons/perpetuity/filled.svg');
+      }
+    }
+  }
 }

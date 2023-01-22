@@ -41,28 +41,17 @@ import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
 // Types
-import { CharacterOverMastery, ExtendedMastery } from '~types'
-
-interface GridCharacterObject {
-  character: {
-    ring1: ExtendedMastery
-    ring2: ExtendedMastery
-    ring3: ExtendedMastery
-    ring4: ExtendedMastery
-    earring: ExtendedMastery
-    awakening: {
-      type?: number
-      level?: number
-    }
-    transcendence_step: number
-    perpetuity: boolean
-  }
-}
+import {
+  CharacterOverMastery,
+  ExtendedMastery,
+  GridCharacterObject,
+} from '~types'
 
 interface Props {
   gridCharacter: GridCharacter
   open: boolean
   onOpenChange: (open: boolean) => void
+  updateCharacter: (object: GridCharacterObject) => Promise<any>
 }
 
 const CharacterModal = ({
@@ -70,6 +59,7 @@ const CharacterModal = ({
   children,
   open: modalOpen,
   onOpenChange,
+  updateCharacter,
 }: PropsWithChildren<Props>) => {
   const router = useRouter()
   const locale =
@@ -133,42 +123,6 @@ const CharacterModal = ({
     setPerpetuity(gridCharacter.perpetuity)
   }, [gridCharacter])
 
-  // Methods: UI state management
-  function handleOpenChange(open: boolean) {
-    setOpen(open)
-    onOpenChange(open)
-  }
-
-  // Methods: Receive data from components
-  function receiveRingValues(overMastery: CharacterOverMastery) {
-    setRings(overMastery)
-  }
-
-  function receiveEarringValues(
-    earringModifier: number,
-    earringStrength: number
-  ) {
-    setEarring({
-      modifier: earringModifier,
-      strength: earringStrength,
-    })
-  }
-
-  function handleCheckedChange(checked: boolean) {
-    setPerpetuity(checked)
-  }
-
-  function receiveAwakeningValues(type: number, level: number) {
-    setAwakeningType(type)
-    setAwakeningLevel(level)
-  }
-
-  function receiveValidity(isValid: boolean) {
-    setFormValid(isValid)
-  }
-
-  // Methods: Data syncing
-
   // Prepare the GridWeaponObject to send to the server
   function prepareObject() {
     let object: GridCharacterObject = {
@@ -205,27 +159,45 @@ const CharacterModal = ({
     return object
   }
 
-  // Send the GridWeaponObject to the server
-  async function updateCharacter() {
-    const updateObject = prepareObject()
-
-    return await api.endpoints.grid_characters
-      .update(gridCharacter.id, updateObject)
-      .then((response) => processResult(response))
-      .catch((error) => processError(error))
+  // Methods: UI state management
+  function handleOpenChange(open: boolean) {
+    setOpen(open)
+    onOpenChange(open)
   }
 
-  // Save the server's response to state
-  function processResult(response: AxiosResponse) {
-    const gridCharacter: GridCharacter = response.data
-    appState.grid.characters[gridCharacter.position] = gridCharacter
+  // Methods: Receive data from components
+  function receiveRingValues(overMastery: CharacterOverMastery) {
+    setRings(overMastery)
+  }
+
+  function receiveEarringValues(
+    earringModifier: number,
+    earringStrength: number
+  ) {
+    setEarring({
+      modifier: earringModifier,
+      strength: earringStrength,
+    })
+  }
+
+  function handleCheckedChange(checked: boolean) {
+    setPerpetuity(checked)
+  }
+
+  async function handleUpdateCharacter() {
+    await updateCharacter(prepareObject())
 
     setOpen(false)
     if (onOpenChange) onOpenChange(false)
   }
 
-  function processError(error: any) {
-    console.error(error)
+  function receiveAwakeningValues(type: number, level: number) {
+    setAwakeningType(type)
+    setAwakeningLevel(level)
+  }
+
+  function receiveValidity(isValid: boolean) {
+    setFormValid(isValid)
   }
 
   const ringSelect = () => {
@@ -322,7 +294,7 @@ const CharacterModal = ({
         <div className="DialogFooter" ref={footerRef}>
           <Button
             contained={true}
-            onClick={updateCharacter}
+            onClick={handleUpdateCharacter}
             disabled={!formValid}
             text={t('modals.characters.buttons.confirm')}
           />
