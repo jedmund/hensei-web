@@ -93,9 +93,37 @@ const SummonGrid = (props: Props) => {
       })
     } else {
       if (party.editable)
-        saveSummon(party.id, summon, position).then((response) =>
-          storeGridSummon(response.data)
-        )
+        saveSummon(party.id, summon, position)
+          .then((response) => handleSummonResponse(response.data))
+          .catch((error) => {
+            const code = error.response.status
+            const data = error.response.data
+            if (code === 422) {
+              if (data.code === 'incompatible_summon_for_position') {
+                // setShowIncompatibleAlert(true)
+              }
+            }
+          })
+    }
+  }
+
+  async function handleSummonResponse(data: any) {
+    if (data.hasOwnProperty('errors')) {
+    } else {
+      storeGridSummon(data.grid_summon)
+
+      // If we replaced an existing weapon, remove it from the grid
+      if (data.hasOwnProperty('meta') && data.meta['replaced'] !== undefined) {
+        const position = data.meta['replaced']
+
+        if (position == -1) {
+          appState.grid.summons.mainSummon = undefined
+        } else if (position == 6) {
+          appState.grid.summons.friendSummon = undefined
+        } else {
+          appState.grid.summons.allSummons[position] = undefined
+        }
+      }
     }
   }
 
