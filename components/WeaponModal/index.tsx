@@ -93,8 +93,10 @@ const WeaponModal = ({
   const [ax2Open, setAx2Open] = useState(false)
   const [awakeningOpen, setAwakeningOpen] = useState(false)
 
+  // Hooks
   useEffect(() => {
     setOpen(modalOpen)
+    handleOpenChange(modalOpen)
   }, [modalOpen])
 
   useEffect(() => {
@@ -346,7 +348,6 @@ const WeaponModal = ({
   }
 
   return (
-    // TODO: Refactor into Dialog component
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
@@ -354,7 +355,7 @@ const WeaponModal = ({
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={onEscapeKeyDown}
       >
-        <div className="DialogHeader">
+        <div className="DialogHeader Short">
           <img
             alt={gridWeapon.object.name[locale]}
             className="DialogImage"

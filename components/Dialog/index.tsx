@@ -23,6 +23,9 @@ export const Dialog = ({ children, ...props }: PropsWithChildren<Props>) => {
 
   function handleOpenChange(open: boolean) {
     if (props.onOpenChange) props.onOpenChange(open)
+    if (props.open === undefined) {
+      toggleLocked(open)
+    }
   }
 
   return (

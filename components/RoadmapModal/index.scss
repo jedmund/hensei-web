@@ -1,114 +1,117 @@
-.Roadmap.Dialog {
-  max-height: 60vh;
-  overflow-y: scroll;
+.Roadmap.DialogContent {
+  gap: 0;
+  padding-bottom: $unit-2x;
 
-  .top {
+  h3.priority {
+    font-weight: $medium;
+    font-size: $font-large;
+    margin-bottom: $unit-4x;
+
+    &.in_progress {
+      color: $yellow;
+    }
+
+    &.high {
+      color: $red;
+    }
+
+    &.mid {
+      color: $orange-10;
+    }
+
+    &.low {
+      color: $blue;
+    }
+  }
+
+  & > div:not(.DialogHeader) {
     display: flex;
     flex-direction: column;
-    gap: $unit;
+    gap: $unit-2x;
+    padding: 0 $unit-4x;
 
-    h3.priority {
-      font-weight: $medium;
-      font-size: $font-large;
-
-      &.in_progress {
-        color: $yellow;
-      }
-
-      &.high {
-        color: $red;
-      }
-
-      &.mid {
-        color: $orange-10;
-      }
-
-      &.low {
-        color: $blue;
-      }
-    }
-
-    p {
-      margin-bottom: $unit;
-    }
-
-    .LinkItem {
-      $diameter: $unit-6x;
-      border: 1px solid var(--link-item-bg);
-      border-radius: $card-corner;
-
-      &:hover {
-        background-color: var(--link-item-bg);
-
-        svg {
-          fill: var(--link-item-image-color-hover);
-        }
-      }
-
-      a {
-        display: flex;
-        padding: $unit-2x;
-
-        &:hover {
-          text-decoration: none;
-        }
-
-        .Left {
-          align-items: center;
-          display: flex;
-          gap: $unit-2x;
-          flex-grow: 1;
-        }
-
-        svg {
-          fill: var(--link-item-image-color);
-          width: $diameter;
-          height: auto;
-
-          &.ShareIcon {
-            width: $unit-4x;
-          }
-        }
-      }
-
-      h3 {
-        font-weight: $bold;
-        max-width: 70%;
-        line-height: 1.3;
-      }
-    }
-  }
-
-  .Separator {
-    background: var(--separator-bg);
-    border-radius: 2px;
-    margin: $unit-3x 0;
-    height: 2px;
-  }
-  p {
-    color: var(--text-secondary);
-
-    font-size: $font-regular;
-    line-height: 1.3;
-  }
-
-  .notes {
-    color: var(--text-primary);
-    list-style-type: none;
-
-    li {
+    section.notes {
       display: flex;
       flex-direction: column;
       gap: $unit;
       margin-bottom: $unit-2x;
 
-      h4 {
-        font-size: $font-medium;
-        font-weight: $bold;
+      p {
+        margin-bottom: $unit;
       }
 
-      p {
-        font-size: $font-regular;
+      .LinkItem {
+        $diameter: $unit-6x;
+        border: 1px solid var(--link-item-bg);
+        border-radius: $card-corner;
+
+        &:hover {
+          background-color: var(--link-item-bg);
+
+          svg {
+            fill: var(--link-item-image-color-hover);
+          }
+        }
+
+        a {
+          display: flex;
+          padding: $unit-2x;
+
+          &:hover {
+            text-decoration: none;
+          }
+
+          .Left {
+            align-items: center;
+            display: flex;
+            gap: $unit-2x;
+            flex-grow: 1;
+          }
+
+          svg {
+            fill: var(--link-item-image-color);
+            width: $diameter;
+            height: auto;
+
+            &.ShareIcon {
+              width: $unit-4x;
+            }
+          }
+        }
+
+        h3 {
+          font-weight: $bold;
+          max-width: 70%;
+          line-height: 1.3;
+        }
+      }
+    }
+
+    p {
+      color: var(--text-secondary);
+
+      font-size: $font-regular;
+      line-height: 1.3;
+    }
+
+    ul {
+      color: var(--text-primary);
+      list-style-type: none;
+
+      li {
+        display: flex;
+        flex-direction: column;
+        gap: $unit;
+        margin-bottom: $unit-2x;
+
+        h4 {
+          font-size: $font-medium;
+          font-weight: $bold;
+        }
+
+        p {
+          font-size: $font-regular;
+        }
       }
     }
   }

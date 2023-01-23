@@ -1,6 +1,14 @@
 import React from 'react'
 import { useTranslation } from 'next-i18next'
-import * as Dialog from '@radix-ui/react-dialog'
+
+import ChangelogUnit from '~components/ChangelogUnit'
+import {
+  Dialog,
+  DialogClose,
+  DialogTitle,
+  DialogTrigger,
+} from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 
 import CrossIcon from '~public/icons/Cross.svg'
 
@@ -10,45 +18,145 @@ const ChangelogModal = () => {
   const { t } = useTranslation('common')
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>
+    <Dialog>
+      <DialogTrigger asChild>
         <li className="MenuItem">
           <span>{t('modals.changelog.title')}</span>
         </li>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Content
-          className="Dialog"
-          onOpenAutoFocus={(event) => event.preventDefault()}
-        >
-          <div className="DialogHeader">
-            <Dialog.Title className="DialogTitle">
-              {t('menu.changelog')}
-            </Dialog.Title>
-            <Dialog.Close className="DialogClose" asChild>
-              <span>
-                <CrossIcon />
-              </span>
-            </Dialog.Close>
-          </div>
+      </DialogTrigger>
+      <DialogContent
+        className="Changelog"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        onEscapeKeyDown={() => {}}
+      >
+        <div className="DialogHeader">
+          <DialogTitle className="DialogTitle">
+            {t('menu.changelog')}
+          </DialogTitle>
+          <DialogClose className="DialogClose" asChild>
+            <span>
+              <CrossIcon />
+            </span>
+          </DialogClose>
+        </div>
 
-          <section>
-            <Dialog.Description className="DialogDescription">
-              <h3 className="version">1.0</h3>
-              <ul className="notes">
-                <li>First release!</li>
-                <li>Content update - Mid-December 2022 Flash Gala</li>
-                <li>You can embed Youtube videos now</li>
-                <li>Better clicking - right-click and open in a new tab</li>
-                <li>Manually set dark mode in Account Settings</li>
-                <li>Lots of bugs squashed</li>
-              </ul>
-            </Dialog.Description>
+        <div className="updates">
+          <section className="version" data-version="1.0">
+            <div className="top">
+              <h3>1.0.1</h3>
+              <time>2023/01/08</time>
+            </div>
+            <ul className="notes">
+              <li>Extra party fields: Full Auto, Clear Time, and more</li>
+              <li>Support for Youtube short URLs</li>
+              <li>Responsive grids and lots of other mobile fixes</li>
+              <li>Many other bug fixes</li>
+            </ul>
           </section>
-        </Dialog.Content>
-        <Dialog.Overlay className="Overlay" />
-      </Dialog.Portal>
-    </Dialog.Root>
+          <section className="content version" data-version="2022-12L">
+            <div className="top">
+              <h3>2022-12 Legend Festival</h3>
+              <time>2022/12/26</time>
+            </div>
+            <div className="update">
+              <section className="characters">
+                <h4>New characters</h4>
+                <div className="items">
+                  <ChangelogUnit
+                    name="Michael (Grand)"
+                    id="3040440000"
+                    type="character"
+                  />
+                  <ChangelogUnit
+                    name="Makura"
+                    id="3040441000"
+                    type="character"
+                  />
+                  <ChangelogUnit
+                    name="Ultimate Friday"
+                    id="3040442000"
+                    type="character"
+                  />
+                </div>
+              </section>
+              <section className="weapons">
+                <h4>New weapons</h4>
+                <div className="items">
+                  <ChangelogUnit
+                    name="Crimson Scale"
+                    id="1040315900"
+                    type="weapon"
+                  />
+                  <ChangelogUnit
+                    name="Leporidius"
+                    id="1040914500"
+                    type="weapon"
+                  />
+                  <ChangelogUnit
+                    name="FRIED Spear"
+                    id="1040218200"
+                    type="weapon"
+                  />
+                </div>
+              </section>
+              <section className="summons">
+                <h4>New summons</h4>
+                <div className="items">
+                  <ChangelogUnit name="Yatima" id="2040417000" type="summon" />
+                </div>
+              </section>
+            </div>
+          </section>
+          <section className="content version" data-version="2022-12F2">
+            <div className="top">
+              <h3>2022-12 Flash Gala</h3>
+              <time>2022/12/26</time>
+            </div>
+            <div className="update">
+              <section className="characters">
+                <h4>New characters</h4>
+                <div className="items">
+                  <ChangelogUnit
+                    name="Charlotta (Grand)"
+                    id="3040438000"
+                    type="character"
+                  />
+                  <ChangelogUnit name="Erin" id="3040439000" type="character" />
+                </div>
+              </section>
+              <section className="weapons">
+                <h4>New weapons</h4>
+                <div className="items">
+                  <ChangelogUnit
+                    name="Claíomh Solais Díon"
+                    id="1040024200"
+                    type="weapon"
+                  />
+                  <ChangelogUnit
+                    name="Crystal Edge"
+                    id="1040116500"
+                    type="weapon"
+                  />
+                </div>
+              </section>
+            </div>
+          </section>
+          <section className="version" data-version="1.0">
+            <div className="top">
+              <h3>1.0.0</h3>
+              <time>2022/12/26</time>
+            </div>
+            <ul className="notes">
+              <li>First release!</li>
+              <li>You can embed Youtube videos now</li>
+              <li>Better clicking - right-click and open in a new tab</li>
+              <li>Manually set dark mode in Account Settings</li>
+              <li>Lots of bugs squashed</li>
+            </ul>
+          </section>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
