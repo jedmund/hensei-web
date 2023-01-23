@@ -43,33 +43,6 @@ const TranscendencePopover = ({
   })
 
   useEffect(() => {
-    const handleClickOutside = (event: Event) => {
-      const target = event.target instanceof Element ? event.target : null
-
-      console.log('Handling click outside...?')
-
-      console.log(popoverRef.current)
-      console.log(open)
-
-      if (
-        popoverRef.current &&
-        target &&
-        !popoverRef.current.contains(target) &&
-        open &&
-        onOpenChange
-      ) {
-        onOpenChange(false)
-      }
-    }
-
-    document.addEventListener('click', handleClickOutside, true)
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside, true)
-    }
-  }, [onOpenChange])
-
-  useEffect(() => {
     if (open) popoverRef.current?.focus()
   }, [])
 
@@ -79,11 +52,6 @@ const TranscendencePopover = ({
 
   useEffect(() => {
     setOpen(popoverOpen)
-
-    if (popoverOpen) {
-      console.log(popoverRef.current)
-      popoverRef.current?.focus()
-    }
   }, [popoverOpen])
 
   function handleFragmentClicked(newStage: number) {

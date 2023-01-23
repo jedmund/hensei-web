@@ -51,7 +51,6 @@ const TranscendenceStar = ({
   })
 
   useEffect(() => {
-    console.log(`Setting visible stage to ${stage}`)
     setVisibleStage(stage)
     setCurrentStage(stage)
   }, [stage])
