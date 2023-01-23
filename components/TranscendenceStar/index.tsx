@@ -4,12 +4,16 @@ import classnames from 'classnames'
 import TranscendenceFragment from '~components/TranscendenceFragment'
 import './index.scss'
 
-interface Props {
+interface Props
+  extends React.DetailedHTMLProps<
+    React.DialogHTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  > {
   className?: string
   stage: number
   editable: boolean
   interactive: boolean
-  onClick?: () => void
+  onStarClick?: () => void
   onFragmentClick?: (newStage: number) => void
   onFragmentHover?: (newStage: number) => void
 }
@@ -21,7 +25,8 @@ const TranscendenceStar = ({
   interactive,
   stage,
   editable,
-  onClick,
+  tabIndex,
+  onStarClick,
   onFragmentClick,
   onFragmentHover,
 }: Props) => {
@@ -52,8 +57,8 @@ const TranscendenceStar = ({
   }, [stage])
 
   function handleClick() {
-    if (onClick) {
-      onClick()
+    if (onStarClick) {
+      onStarClick()
     }
   }
 
@@ -81,6 +86,7 @@ const TranscendenceStar = ({
       className={starClasses}
       onClick={editable ? handleClick : () => {}}
       onMouseLeave={interactive ? handleMouseLeave : () => {}}
+      tabIndex={tabIndex}
     >
       <div className="Fragments">
         {[...Array(NUM_FRAGMENTS)].map((e, i) => {

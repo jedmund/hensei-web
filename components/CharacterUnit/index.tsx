@@ -286,7 +286,11 @@ const CharacterUnit = ({
   }
 
   const image = (
-    <div className="CharacterImage" onClick={openSearchModal}>
+    <div
+      className="CharacterImage"
+      onClick={openSearchModal}
+      tabIndex={gridCharacter ? gridCharacter.position * 7 : 0}
+    >
       <img
         alt={character?.name[locale]}
         className="grid_image"
@@ -314,8 +318,9 @@ const CharacterUnit = ({
             flb={character.uncap.flb || false}
             ulb={character.uncap.ulb || false}
             uncapLevel={gridCharacter.uncap_level}
-            editable={editable}
             transcendenceStage={gridCharacter.transcendence_step}
+            position={gridCharacter.position}
+            editable={editable}
             updateUncap={passUncapData}
             updateTranscendence={passTranscendenceData}
             special={character.special}

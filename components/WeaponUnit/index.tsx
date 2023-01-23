@@ -548,6 +548,7 @@ const WeaponUnit = ({
             ulb={gridWeapon.object.uncap.ulb || false}
             flb={gridWeapon.object.uncap.flb || false}
             uncapLevel={gridWeapon.uncap_level}
+            position={gridWeapon.position}
             updateUncap={passUncapData}
             special={false}
           />

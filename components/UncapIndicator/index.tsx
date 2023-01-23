@@ -9,6 +9,7 @@ interface Props {
   type: 'character' | 'weapon' | 'summon'
   rarity?: number
   uncapLevel?: number
+  position: number
   transcendenceStage?: number
   editable: boolean
   flb: boolean
@@ -81,7 +82,8 @@ const UncapIndicator = (props: Props) => {
         stage={props.transcendenceStage}
         editable={props.editable}
         interactive={false}
-        onClick={() => togglePopover(true)}
+        onStarClick={() => togglePopover(true)}
+        tabIndex={props.position * 7 + i + 1}
       />
     )
   }
@@ -94,7 +96,8 @@ const UncapIndicator = (props: Props) => {
         empty={props.uncapLevel != null ? i >= props.uncapLevel : false}
         key={`star_${i}`}
         index={i}
-        onClick={toggleStar}
+        onStarClick={toggleStar}
+        tabIndex={props.position * 7 + i + 1}
       />
     )
   }
@@ -107,7 +110,8 @@ const UncapIndicator = (props: Props) => {
         empty={props.uncapLevel != null ? i >= props.uncapLevel : false}
         key={`star_${i}`}
         index={i}
-        onClick={toggleStar}
+        onStarClick={toggleStar}
+        tabIndex={props.position * 7 + i + 1}
       />
     )
   }
@@ -119,7 +123,8 @@ const UncapIndicator = (props: Props) => {
         empty={props.uncapLevel != null ? i >= props.uncapLevel : false}
         key={`star_${i}`}
         index={i}
-        onClick={toggleStar}
+        onStarClick={toggleStar}
+        tabIndex={props.position * 7 + i + 1}
       />
     )
   }
@@ -129,7 +134,9 @@ const UncapIndicator = (props: Props) => {
       <TranscendencePopover
         open={popoverOpen}
         stage={props.transcendenceStage ? props.transcendenceStage : 0}
+        onOpenChange={togglePopover}
         sendValue={sendTranscendenceStage}
+        tabIndex={props.position * 7 + 7 + 1}
       />
     ) : (
       ''

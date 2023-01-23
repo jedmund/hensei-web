@@ -5,10 +5,15 @@ import classNames from 'classnames'
 import TranscendenceStar from '~components/TranscendenceStar'
 import './index.scss'
 
-interface Props {
+interface Props
+  extends React.DetailedHTMLProps<
+    React.DialogHTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  > {
   className?: string
   open: boolean
   stage: number
+  onOpenChange?: (open: boolean) => void
   sendValue?: (stage: number) => void
 }
 
@@ -16,6 +21,8 @@ const TranscendencePopover = ({
   className,
   open: popoverOpen,
   stage,
+  tabIndex,
+  onOpenChange,
   sendValue,
 }: Props) => {
   const { t } = useTranslation('common')
@@ -52,8 +59,15 @@ const TranscendencePopover = ({
     setCurrentStage(newStage)
   }
 
+  function handleKeyPress(event: React.KeyboardEvent<HTMLDivElement>) {
+    console.log(`Key pressed, ${event.key}`)
+    if (event.key === 'Escape') {
+      if (onOpenChange) onOpenChange(false)
+    }
+  }
+
   return (
-    <div className={classes}>
+    <div className={classes} onKeyPress={handleKeyPress} tabIndex={tabIndex}>
       <TranscendenceStar
         className="Interactive Base"
         editable={true}

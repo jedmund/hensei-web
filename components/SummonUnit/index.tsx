@@ -244,6 +244,7 @@ const SummonUnit = ({
             ulb={gridSummon.object.uncap.ulb || false}
             flb={gridSummon.object.uncap.flb || false}
             uncapLevel={gridSummon.uncap_level}
+            position={gridSummon.position}
             updateUncap={passUncapData}
             special={false}
           />
