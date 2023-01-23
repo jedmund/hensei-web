@@ -9,7 +9,8 @@ interface Props {
   type: 'character' | 'weapon' | 'summon'
   rarity?: number
   uncapLevel?: number
-  transcendenceStep?: number
+  transcendenceStage?: number
+  editable: boolean
   flb: boolean
   ulb: boolean
   xlb?: boolean
@@ -64,16 +65,23 @@ const UncapIndicator = (props: Props) => {
     }
   }
 
-  function openPopover() {
-    setPopoverOpen(true)
+  function togglePopover(open: boolean) {
+    setPopoverOpen(open)
+  }
+
+  function sendTranscendenceStage(stage: number) {
+    if (props.updateTranscendence) props.updateTranscendence(stage)
+    togglePopover(false)
   }
 
   const transcendence = (i: number) => {
     return (
       <TranscendenceStar
         key={`star_${i}`}
+        stage={props.transcendenceStage}
+        editable={props.editable}
         interactive={false}
-        onClick={openPopover}
+        onClick={() => togglePopover(true)}
       />
     )
   }
@@ -120,8 +128,8 @@ const UncapIndicator = (props: Props) => {
     return props.type === 'character' || props.type === 'summon' ? (
       <TranscendencePopover
         open={popoverOpen}
-        stage={props.transcendenceStep ? props.transcendenceStep : 0}
-        sendValue={props.updateTranscendence}
+        stage={props.transcendenceStage ? props.transcendenceStage : 0}
+        sendValue={sendTranscendenceStage}
       />
     ) : (
       ''
@@ -149,6 +157,10 @@ const UncapIndicator = (props: Props) => {
       {transcendencePopover()}
     </div>
   )
+}
+
+UncapIndicator.defaultProps = {
+  editable: false,
 }
 
 export default UncapIndicator

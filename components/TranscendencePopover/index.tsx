@@ -27,7 +27,7 @@ const TranscendencePopover = ({
   const classes = classNames({
     Transcendence: true,
     Popover: true,
-    open: true, // This is hardcoded for now
+    open: open,
   })
 
   const levelClasses = classNames({
@@ -39,6 +39,7 @@ const TranscendencePopover = ({
   }, [stage])
 
   useEffect(() => {
+    console.log(`Setting popover state to ${popoverOpen}`)
     setOpen(popoverOpen)
   }, [popoverOpen])
 

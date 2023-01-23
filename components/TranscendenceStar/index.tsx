@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 
-import './index.scss'
 import TranscendenceFragment from '~components/TranscendenceFragment'
+import './index.scss'
 
 interface Props {
   className?: string
@@ -27,11 +27,18 @@ const TranscendenceStar = ({
 }: Props) => {
   const [visibleStage, setVisibleStage] = useState(0)
   const [currentStage, setCurrentStage] = useState(0)
+  const [immutable, setImmutable] = useState(false)
 
   // Classes
   const starClasses = classnames({
     TranscendenceStar: true,
-    Immutable: !editable,
+    Immutable: immutable,
+    Empty: stage === 0,
+    Stage1: stage === 1,
+    Stage2: stage === 2,
+    Stage3: stage === 3,
+    Stage4: stage === 4,
+    Stage5: stage === 5,
   })
 
   const baseImageClasses = classnames(className, {
@@ -39,6 +46,7 @@ const TranscendenceStar = ({
   })
 
   useEffect(() => {
+    console.log(`Setting visible stage to ${stage}`)
     setVisibleStage(stage)
     setCurrentStage(stage)
   }, [stage])
@@ -71,21 +79,23 @@ const TranscendenceStar = ({
   return (
     <li
       className={starClasses}
-      onClick={interactive ? handleClick : () => {}}
+      onClick={editable ? handleClick : () => {}}
       onMouseLeave={interactive ? handleMouseLeave : () => {}}
     >
       <div className="Fragments">
         {[...Array(NUM_FRAGMENTS)].map((e, i) => {
           const loopStage = i + 1
-          return (
+          return interactive ? (
             <TranscendenceFragment
               key={`fragment_${loopStage}`}
               stage={loopStage}
               visible={loopStage <= visibleStage}
               interactive={interactive}
-              onClick={interactive ? handleFragmentClick : () => {}}
-              onHover={interactive ? handleFragmentHover : () => {}}
+              onClick={handleFragmentClick}
+              onHover={handleFragmentHover}
             />
+          ) : (
+            ''
           )
         })}
       </div>

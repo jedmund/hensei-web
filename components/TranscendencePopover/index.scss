@@ -4,7 +4,7 @@
   border-radius: $card-corner;
   border: 0.5px solid rgba(0, 0, 0, 0.18);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.24);
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: $unit-half;
   width: 80px;
@@ -19,6 +19,7 @@
 
   &.open {
     opacity: 1;
+    display: flex;
   }
 
   h4 {

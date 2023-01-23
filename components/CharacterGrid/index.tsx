@@ -307,6 +307,10 @@ const CharacterGrid = (props: Props) => {
 
       // Optimistically update UI
       updateUncapLevel(position, uncapLevel)
+
+      if (uncapLevel < 6) {
+        updateTranscendenceStage(position, 0)
+      }
     }
   }
 
@@ -355,11 +359,17 @@ const CharacterGrid = (props: Props) => {
   ) {
     storePreviousTranscendenceStage(position)
 
+    const payload = {
+      character: {
+        uncap_level: stage > 0 ? 6 : 5,
+        transcendence_step: stage,
+      },
+    }
+
     try {
       if (stage != previousTranscendenceStages[position])
-        // TODO: We can use the update character API
         await api.endpoints.grid_characters
-          .update(id, { character: { transcendence_step: stage } })
+          .update(id, payload)
           .then((response) => {
             storeGridCharacter(response.data)
           })
@@ -379,17 +389,21 @@ const CharacterGrid = (props: Props) => {
   function initiateTranscendenceUpdate(
     id: string,
     position: number,
-    uncapLevel: number
+    stage: number
   ) {
     if (
       party.user &&
       accountState.account.user &&
       party.user.id === accountState.account.user.id
     ) {
-      memoizeTranscendenceAction(id, position, uncapLevel)
+      memoizeTranscendenceAction(id, position, stage)
 
       // Optimistically update UI
-      updateTranscendenceStage(position, uncapLevel)
+      updateTranscendenceStage(position, stage)
+
+      if (stage > 0) {
+        updateUncapLevel(position, 6)
+      }
     }
   }
 
@@ -410,11 +424,11 @@ const CharacterGrid = (props: Props) => {
 
   const updateTranscendenceStage = (
     position: number,
-    uncapLevel: number | undefined
+    stage: number | undefined
   ) => {
     const character = appState.grid.characters[position]
-    if (character && uncapLevel) {
-      character.uncap_level = uncapLevel
+    if (character && stage !== undefined) {
+      character.transcendence_step = stage
       appState.grid.characters[position] = character
     }
   }
