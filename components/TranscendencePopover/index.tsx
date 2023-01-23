@@ -63,14 +63,6 @@ const TranscendencePopover = ({
     setCurrentStage(newStage)
   }
 
-  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    console.log(`Key pressed, ${event.key}`)
-    console.log(window.event)
-    if (event.key === 'Escape') {
-      if (onOpenChange) onOpenChange(false)
-    }
-  }
-
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverAnchor>{children}</PopoverAnchor>
