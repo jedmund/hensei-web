@@ -334,6 +334,7 @@ const WeaponGrid = (props: Props) => {
       grid={appState.grid.weapons.allWeapons}
       editable={party.editable}
       offset={numWeapons}
+      removeWeapon={removeWeapon}
       updateObject={receiveWeaponFromSearch}
       updateUncap={initiateUncapUpdate}
     />

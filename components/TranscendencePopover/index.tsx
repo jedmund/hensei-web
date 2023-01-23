@@ -2,7 +2,11 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
-import { Popover, PopoverAnchor, PopoverContent } from '~components/Popover'
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+} from '~components/PopoverContent'
 import TranscendenceStar from '~components/TranscendenceStar'
 
 import './index.scss'
