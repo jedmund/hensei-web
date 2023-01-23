@@ -127,6 +127,26 @@ const JobSection = (props: Props) => {
     props.saveSkill(skill, position)
   }
 
+  const emptyJobLabel = (
+    <div className="JobName">
+      <h3>{t('no_job')}</h3>
+    </div>
+  )
+
+  const filledJobLabel = (
+    <div className="JobName">
+      <img
+        alt={job?.name[locale]}
+        src={`/images/job-icons/${job?.granblue_id}.png`}
+      />
+      <h3>{job?.name[locale]}</h3>
+    </div>
+  )
+
+  function jobLabel() {
+    return job ? filledJobLabel : emptyJobLabel
+  }
+
   // Render: JSX components
   return (
     <section id="Job">
@@ -146,13 +166,7 @@ const JobSection = (props: Props) => {
             ref={selectRef}
           />
         ) : (
-          <div className="JobName">
-            <img
-              alt={party.job.name[locale]}
-              src={`/images/job-icons/${party.job.granblue_id}.png`}
-            />
-            <h3>{party.job ? party.job.name[locale] : t('no_job')}</h3>
-          </div>
+          jobLabel()
         )}
 
         <ul className="JobSkills">
