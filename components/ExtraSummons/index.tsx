@@ -11,6 +11,7 @@ interface Props {
   exists: boolean
   found?: boolean
   offset: number
+  removeSummon: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
 }
@@ -31,6 +32,7 @@ const ExtraSummons = (props: Props) => {
                 editable={props.editable}
                 position={props.offset + i}
                 unitType={1}
+                removeSummon={props.removeSummon}
                 gridSummon={props.grid[props.offset + i]}
                 updateObject={props.updateObject}
                 updateUncap={props.updateUncap}

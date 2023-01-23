@@ -93,9 +93,37 @@ const SummonGrid = (props: Props) => {
       })
     } else {
       if (party.editable)
-        saveSummon(party.id, summon, position).then((response) =>
-          storeGridSummon(response.data)
-        )
+        saveSummon(party.id, summon, position)
+          .then((response) => handleSummonResponse(response.data))
+          .catch((error) => {
+            const code = error.response.status
+            const data = error.response.data
+            if (code === 422) {
+              if (data.code === 'incompatible_summon_for_position') {
+                // setShowIncompatibleAlert(true)
+              }
+            }
+          })
+    }
+  }
+
+  async function handleSummonResponse(data: any) {
+    if (data.hasOwnProperty('errors')) {
+    } else {
+      storeGridSummon(data.grid_summon)
+
+      // If we replaced an existing weapon, remove it from the grid
+      if (data.hasOwnProperty('meta') && data.meta['replaced'] !== undefined) {
+        const position = data.meta['replaced']
+
+        if (position == -1) {
+          appState.grid.summons.mainSummon = undefined
+        } else if (position == 6) {
+          appState.grid.summons.friendSummon = undefined
+        } else {
+          appState.grid.summons.allSummons[position] = undefined
+        }
+      }
     }
   }
 
@@ -209,6 +237,23 @@ const SummonGrid = (props: Props) => {
     setPreviousUncapValues(newPreviousValues)
   }
 
+  async function removeSummon(id: string) {
+    try {
+      const response = await api.endpoints.grid_summons.destroy({ id: id })
+      const data = response.data
+
+      if (data.position === -1) {
+        appState.grid.summons.mainSummon = undefined
+      } else if (data.position === 6) {
+        appState.grid.summons.friendSummon = undefined
+      } else {
+        appState.grid.summons.allSummons[response.data.position] = undefined
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   // Render: JSX components
   const mainSummonElement = (
     <div className="LabeledUnit">
@@ -219,6 +264,7 @@ const SummonGrid = (props: Props) => {
         key="grid_main_summon"
         position={-1}
         unitType={0}
+        removeSummon={removeSummon}
         updateObject={receiveSummonFromSearch}
         updateUncap={initiateUncapUpdate}
       />
@@ -251,6 +297,7 @@ const SummonGrid = (props: Props) => {
                 editable={party.editable}
                 position={i}
                 unitType={1}
+                removeSummon={removeSummon}
                 updateObject={receiveSummonFromSearch}
                 updateUncap={initiateUncapUpdate}
               />
@@ -266,6 +313,7 @@ const SummonGrid = (props: Props) => {
       editable={party.editable}
       exists={false}
       offset={numSummons}
+      removeSummon={removeSummon}
       updateObject={receiveSummonFromSearch}
       updateUncap={initiateUncapUpdate}
     />
