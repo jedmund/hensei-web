@@ -20,6 +20,7 @@ interface Props {
 }
 
 const PartySegmentedControl = (props: Props) => {
+  // Set up translations
   const { t } = useTranslation('common')
 
   const { party, grid } = useSnapshot(appState)
@@ -33,22 +34,16 @@ const PartySegmentedControl = (props: Props) => {
     switch (element) {
       case 1:
         return 'wind'
-        break
       case 2:
         return 'fire'
-        break
       case 3:
         return 'water'
-        break
       case 4:
         return 'earth'
-        break
       case 5:
         return 'dark'
-        break
       case 6:
         return 'light'
-        break
     }
   }
 
@@ -72,13 +67,6 @@ const PartySegmentedControl = (props: Props) => {
       })}
     >
       <SegmentedControl elementClass={getElement()}>
-        {/* <Segment
-                    groupName="grid"
-                    name="class"
-                    selected={props.selectedTab === GridType.Class}
-                    onClick={props.onClick}
-                >Class</Segment> */}
-
         <Segment
           groupName="grid"
           name="characters"

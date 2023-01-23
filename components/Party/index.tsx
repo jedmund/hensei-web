@@ -21,7 +21,12 @@ interface Props {
   new?: boolean
   team?: Party
   raids: Raid[][]
+  selectedTab: GridType
   pushHistory?: (path: string) => void
+}
+
+const defaultProps = {
+  selectedTab: GridType.Weapon,
 }
 
 const Party = (props: Props) => {
@@ -38,6 +43,11 @@ const Party = (props: Props) => {
     appState.grid = resetState.grid
     if (props.team) storeParty(props.team)
   }, [])
+
+  // Set selected tab from props
+  useEffect(() => {
+    setCurrentTab(props.selectedTab)
+  }, [props.selectedTab])
 
   // Methods: Creating a new party
   async function createParty(details?: DetailsObject) {
@@ -184,17 +194,22 @@ const Party = (props: Props) => {
 
   // Methods: Navigating with segmented control
   function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
+    const path = [
+      router.asPath.split('/').filter((el) => el != '')[1],
+      event.target.value,
+    ].join('/')
+
     switch (event.target.value) {
-      case 'class':
-        setCurrentTab(GridType.Class)
-        break
       case 'characters':
+        router.replace(path)
         setCurrentTab(GridType.Character)
         break
       case 'weapons':
+        router.replace(path)
         setCurrentTab(GridType.Weapon)
         break
       case 'summons':
+        router.replace(path)
         setCurrentTab(GridType.Summon)
         break
       default:
@@ -263,5 +278,7 @@ const Party = (props: Props) => {
     </React.Fragment>
   )
 }
+
+Party.defaultProps = defaultProps
 
 export default Party
