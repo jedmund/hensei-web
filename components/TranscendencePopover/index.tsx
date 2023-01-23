@@ -85,7 +85,7 @@ const TranscendencePopover = ({
         />
         <h4>
           <span>{t('level')}&nbsp;</span>
-          <span className={levelClasses}>{100 + 10 * currentStage}</span>
+          <span className={levelClasses}>{200 + 10 * currentStage}</span>
         </h4>
       </PopoverContent>
     </Popover>
