@@ -95,7 +95,7 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
                 key={i}
                 value={item.id}
                 altText={item.name[locale]}
-                iconSrc={`/images/job-icons/${item.granblue_id}.png`}
+                iconSrc={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${item.granblue_id}.png`}
               >
                 {item.name[locale]}
               </SelectItem>
@@ -116,7 +116,9 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
         value={currentJob ? currentJob.id : 'no-job'}
         altText={currentJob ? currentJob.name[locale] : ''}
         iconSrc={
-          currentJob ? `/images/job-icons/${currentJob.granblue_id}.png` : ''
+          currentJob
+            ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${currentJob.granblue_id}.png`
+            : ''
         }
         open={open}
         onClick={openJobSelect}
