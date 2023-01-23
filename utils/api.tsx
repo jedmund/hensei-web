@@ -138,7 +138,8 @@ class Api {
     return axios.post(resourceUrl, {
       [resource]: {
         id: id,
-        uncap_level: value
+        uncap_level: value,
+        transcendence_step: 0
       }
     })
   }
