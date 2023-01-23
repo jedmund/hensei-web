@@ -154,6 +154,32 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set headers for server-side requests
   setUserToken(req, res)
 
+  function getElement(party?: Party) {
+    if (party) {
+      const mainhand = party.weapons.find((weapon) => weapon.mainhand)
+      if (mainhand && mainhand.object.element === 0) {
+        return mainhand.element
+      } else {
+        return mainhand?.object.element
+      }
+    } else {
+      return 0
+    }
+  }
+
+  function elementEmoji(party?: Party) {
+    const element = getElement(party)
+
+    if (element === 0) return '⚪'
+    else if (element === 1) return '🟢'
+    else if (element === 2) return '🔴'
+    else if (element === 3) return '🔵'
+    else if (element === 4) return '🟤'
+    else if (element === 5) return '🟣'
+    else if (element === 6) return '🟡'
+    else return '⚪'
+  }
+
   try {
     let { raids, sortedRaids } = await api.endpoints.raids
       .getAll()
@@ -169,7 +195,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       .getAll()
       .then((response) => groupWeaponKeys(response.data))
 
-    let party: Party | null = null
+    let party: Party | undefined = undefined
     if (query.party) {
       let response = await api.endpoints.parties.getOne({
         id: query.party,
@@ -177,32 +203,6 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       party = response.data.party
     } else {
       console.log('No party code')
-    }
-
-    function getElement() {
-      if (party) {
-        const mainhand = party.weapons.find((weapon) => weapon.mainhand)
-        if (mainhand && mainhand.object.element === 0) {
-          return mainhand.element
-        } else {
-          return mainhand?.object.element
-        }
-      } else {
-        return 0
-      }
-    }
-
-    function elementEmoji() {
-      const element = getElement()
-
-      if (element === 0) return '⚪'
-      else if (element === 1) return '🟢'
-      else if (element === 2) return '🔴'
-      else if (element === 3) return '🔵'
-      else if (element === 4) return '🟤'
-      else if (element === 5) return '🟣'
-      else if (element === 6) return '🟡'
-      else return '⚪'
     }
 
     return {
@@ -214,7 +214,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
         sortedRaids: sortedRaids,
         weaponKeys: weaponKeys,
         meta: {
-          element: elementEmoji(),
+          element: elementEmoji(party),
         },
         ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
         // Will be passed to the page component as props
