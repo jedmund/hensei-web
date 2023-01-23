@@ -1,21 +1,16 @@
 .Transcendence.Popover {
   align-items: center;
-  background: var(--dialog-bg);
-  border-radius: $card-corner;
-  border: 0.5px solid rgba(0, 0, 0, 0.18);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.24);
-  display: none;
   flex-direction: column;
   gap: $unit-half;
+  display: flex;
   width: 80px;
   height: 80px;
   padding: $unit;
   justify-content: center;
-  position: absolute;
-  opacity: 0;
-  z-index: 31;
-  top: -32px;
-  right: -40px;
+  // position: absolute;
+  z-index: 32;
+  // top: -32px;
+  // right: -40px;
 
   &.open {
     opacity: 1;

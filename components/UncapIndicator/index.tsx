@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import UncapStar from '~components/UncapStar'
+import TranscendencePopover from '~components/TranscendencePopover'
 import TranscendenceStar from '~components/TranscendenceStar'
 
 import './index.scss'
-import TranscendencePopover from '~components/TranscendencePopover'
 
 interface Props {
   type: 'character' | 'weapon' | 'summon'
@@ -76,7 +76,24 @@ const UncapIndicator = (props: Props) => {
   }
 
   const transcendence = (i: number) => {
-    return (
+    return props.type === 'character' || props.type === 'summon' ? (
+      <TranscendencePopover
+        open={popoverOpen}
+        stage={props.transcendenceStage ? props.transcendenceStage : 0}
+        onOpenChange={togglePopover}
+        sendValue={sendTranscendenceStage}
+        tabIndex={props.position * 7 + 7 + 1}
+      >
+        <TranscendenceStar
+          key={`star_${i}`}
+          stage={props.transcendenceStage}
+          editable={props.editable}
+          interactive={false}
+          onStarClick={() => togglePopover(true)}
+          tabIndex={props.position * 7 + i + 1}
+        />
+      </TranscendencePopover>
+    ) : (
       <TranscendenceStar
         key={`star_${i}`}
         stage={props.transcendenceStage}
@@ -129,19 +146,7 @@ const UncapIndicator = (props: Props) => {
     )
   }
 
-  const transcendencePopover = () => {
-    return props.type === 'character' || props.type === 'summon' ? (
-      <TranscendencePopover
-        open={popoverOpen}
-        stage={props.transcendenceStage ? props.transcendenceStage : 0}
-        onOpenChange={togglePopover}
-        sendValue={sendTranscendenceStage}
-        tabIndex={props.position * 7 + 7 + 1}
-      />
-    ) : (
-      ''
-    )
-  }
+  const transcendencePopover = () => {}
 
   return (
     <div className="Uncap">

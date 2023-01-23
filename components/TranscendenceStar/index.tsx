@@ -82,7 +82,7 @@ const TranscendenceStar = ({
   }
 
   return (
-    <li
+    <div
       className={starClasses}
       onClick={editable ? handleClick : () => {}}
       onMouseLeave={interactive ? handleMouseLeave : () => {}}
@@ -106,7 +106,7 @@ const TranscendenceStar = ({
         })}
       </div>
       <i className={baseImageClasses} />
-    </li>
+    </div>
   )
 }
 
