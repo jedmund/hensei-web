@@ -29,6 +29,7 @@ interface Props {
   removeSummon: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
+  updateTranscendence: (id: string, position: number, stage: number) => void
 }
 
 const SummonUnit = ({
@@ -39,6 +40,7 @@ const SummonUnit = ({
   removeSummon: sendSummonToRemove,
   updateObject,
   updateUncap,
+  updateTranscendence,
 }: Props) => {
   // Translations and locale
   const { t } = useTranslation('common')
@@ -105,6 +107,10 @@ const SummonUnit = ({
     if (gridSummon) updateUncap(gridSummon.id, position, uncap)
   }
 
+  function passTranscendenceData(stage: number) {
+    if (gridSummon) updateTranscendence(gridSummon.id, position, stage)
+  }
+
   function removeSummon() {
     if (gridSummon) sendSummonToRemove(gridSummon.id)
   }
@@ -133,11 +139,14 @@ const SummonUnit = ({
       ]
 
       let suffix = ''
-      if (
+      if (gridSummon.object.uncap.xlb && gridSummon.uncap_level == 6) {
+        suffix = '_03'
+      } else if (
         upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
         gridSummon.uncap_level == 5
-      )
+      ) {
         suffix = '_02'
+      }
 
       // Generate the correct source for the summon
       if (unitType == 0 || unitType == 2)
@@ -243,8 +252,13 @@ const SummonUnit = ({
             type="summon"
             ulb={gridSummon.object.uncap.ulb || false}
             flb={gridSummon.object.uncap.flb || false}
+            xlb={gridSummon.object.uncap.xlb || false}
+            editable={editable}
             uncapLevel={gridSummon.uncap_level}
+            transcendenceStage={gridSummon.transcendence_step}
+            position={gridSummon.position}
             updateUncap={passUncapData}
+            updateTranscendence={passTranscendenceData}
             special={false}
           />
         ) : (

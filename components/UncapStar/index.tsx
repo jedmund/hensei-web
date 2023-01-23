@@ -3,13 +3,17 @@ import classnames from 'classnames'
 
 import './index.scss'
 
-interface Props {
+interface Props
+  extends React.DetailedHTMLProps<
+    React.DialogHTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  > {
   empty: boolean
   special: boolean
   flb: boolean
   ulb: boolean
   index: number
-  onClick: (index: number, empty: boolean) => void
+  onStarClick: (index: number, empty: boolean) => void
 }
 
 const UncapStar = (props: Props) => {
@@ -23,10 +27,12 @@ const UncapStar = (props: Props) => {
   })
 
   function clicked() {
-    props.onClick(props.index, props.empty)
+    props.onStarClick(props.index, props.empty)
   }
 
-  return <li className={classes} onClick={clicked}></li>
+  return (
+    <li className={classes} tabIndex={props.tabIndex} onClick={clicked}></li>
+  )
 }
 
 UncapStar.defaultProps = {

@@ -14,6 +14,7 @@ interface Props {
   removeSummon: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
+  updateTranscendence: (id: string, position: number, stage: number) => void
 }
 
 const ExtraSummons = (props: Props) => {
@@ -36,6 +37,7 @@ const ExtraSummons = (props: Props) => {
                 gridSummon={props.grid[props.offset + i]}
                 updateObject={props.updateObject}
                 updateUncap={props.updateUncap}
+                updateTranscendence={props.updateTranscendence}
               />
             </li>
           )

@@ -40,6 +40,7 @@ interface Props {
   removeCharacter: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
+  updateTranscendence: (id: string, position: number, stage: number) => void
 }
 
 const CharacterUnit = ({
@@ -49,6 +50,7 @@ const CharacterUnit = ({
   removeCharacter: sendCharacterToRemove,
   updateObject,
   updateUncap,
+  updateTranscendence,
 }: Props) => {
   // Translations and locale
   const { t } = useTranslation('common')
@@ -156,6 +158,10 @@ const CharacterUnit = ({
     if (gridCharacter) updateUncap(gridCharacter.id, position, uncap)
   }
 
+  function passTranscendenceData(stage: number) {
+    if (gridCharacter) updateTranscendence(gridCharacter.id, position, stage)
+  }
+
   function removeCharacter() {
     if (gridCharacter) sendCharacterToRemove(gridCharacter.id)
   }
@@ -169,8 +175,8 @@ const CharacterUnit = ({
 
       // Change the image based on the uncap level
       let suffix = '01'
-      if (gridCharacter.uncap_level == 6) suffix = '04'
-      else if (gridCharacter.uncap_level == 5) suffix = '03'
+      if (gridCharacter.transcendence_step > 0) suffix = '04'
+      else if (gridCharacter.uncap_level >= 5) suffix = '03'
       else if (gridCharacter.uncap_level > 2) suffix = '02'
 
       // Special casing for Lyria (and Young Cat eventually)
@@ -280,7 +286,11 @@ const CharacterUnit = ({
   }
 
   const image = (
-    <div className="CharacterImage" onClick={openSearchModal}>
+    <div
+      className="CharacterImage"
+      onClick={openSearchModal}
+      tabIndex={gridCharacter ? gridCharacter.position * 7 : 0}
+    >
       <img
         alt={character?.name[locale]}
         className="grid_image"
@@ -308,7 +318,11 @@ const CharacterUnit = ({
             flb={character.uncap.flb || false}
             ulb={character.uncap.ulb || false}
             uncapLevel={gridCharacter.uncap_level}
+            transcendenceStage={gridCharacter.transcendence_step}
+            position={gridCharacter.position}
+            editable={editable}
             updateUncap={passUncapData}
+            updateTranscendence={passTranscendenceData}
             special={character.special}
           />
         ) : (

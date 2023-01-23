@@ -371,5 +371,6 @@
   "no_raid": "マルチなし",
   "no_user": "無名",
   "no_job": "ジョブなし",
-  "no_value": "値なし"
+  "no_value": "値なし",
+  "level": "レベル"
 }

@@ -1,0 +1,108 @@
+.TranscendenceStar {
+  $size: 18px;
+  position: relative;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+
+  &.Immutable {
+    pointer-events: none;
+  }
+
+  &.Empty {
+    @include hidpiImage('/icons/transcendence/0/stage-0', png, $size, $size);
+  }
+
+  &.Stage1 {
+    @include hidpiImage('/icons/transcendence/1/stage-1', png, $size, $size);
+  }
+
+  &.Stage2 {
+    @include hidpiImage('/icons/transcendence/2/stage-2', png, $size, $size);
+  }
+
+  &.Stage3 {
+    @include hidpiImage('/icons/transcendence/3/stage-3', png, $size, $size);
+  }
+
+  &.Stage4 {
+    @include hidpiImage('/icons/transcendence/4/stage-4', png, $size, $size);
+  }
+
+  &.Stage5 {
+    @include hidpiImage('/icons/transcendence/5/stage-5', png, $size, $size);
+  }
+
+  .Figure {
+    $size: 18px;
+    background-repeat: no-repeat;
+    background-size: 54px 54px;
+    display: block;
+    height: $size;
+    width: $size;
+
+    &.Interactive.Base {
+      $size: $unit-6x;
+
+      @include hidpiImage(
+        '/icons/transcendence/interactive/interactive-base',
+        png,
+        $size,
+        $size
+      );
+
+      height: $size;
+      width: $size;
+
+      &:hover {
+        cursor: pointer;
+        transform: none;
+      }
+    }
+
+    &:hover {
+      transform: scale(1.2);
+    }
+
+    &.Stage1 {
+      background-image: url('/icons/transcendence/1/step-1@3x.png');
+
+      &:hover {
+        background-image: url('/icons/transcendence/1/step-1-hover@3x.png');
+      }
+    }
+
+    &.Stage2 {
+      background-image: url('/icons/transcendence/2/step-2@3x.png');
+
+      &:hover {
+        background-image: url('/icons/transcendence/2/step-2-hover@3x.png');
+      }
+    }
+
+    &.Stage3 {
+      background-image: url('/icons/transcendence/3/step-3@3x.png');
+
+      &:hover {
+        background-image: url('/icons/transcendence/3/step-3-hover@3x.png');
+      }
+    }
+
+    &.Stage4 {
+      background-image: url('/icons/transcendence/4/step-4@3x.png');
+
+      &:hover {
+        background-image: url('/icons/transcendence/4/step-4-hover@3x.png');
+      }
+    }
+
+    &.Stage5 {
+      background-image: url('/icons/transcendence/5/step-5@3x.png');
+
+      &:hover {
+        background-image: url('/icons/transcendence/5/step-5-hover@3x.png');
+      }
+    }
+  }
+}
