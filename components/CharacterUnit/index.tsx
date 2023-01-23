@@ -2,6 +2,7 @@ import React, { MouseEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { Trans, useTranslation } from 'next-i18next'
+import { AxiosResponse } from 'axios'
 import classNames from 'classnames'
 
 import Alert from '~components/Alert'
@@ -17,12 +18,18 @@ import ContextMenuItem from '~components/ContextMenuItem'
 import SearchModal from '~components/SearchModal'
 import UncapIndicator from '~components/UncapIndicator'
 
+import api from '~utils/api'
 import { appState } from '~utils/appState'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
 
-import type { SearchableObject } from '~types'
+// Types
+import type {
+  GridCharacterObject,
+  PerpetuityObject,
+  SearchableObject,
+} from '~types'
 
 import './index.scss'
 
@@ -99,6 +106,16 @@ const CharacterUnit = ({
     setContextMenuOpen(!contextMenuOpen)
   }
 
+  function handlePerpetuityClick() {
+    if (gridCharacter) {
+      let object: PerpetuityObject = {
+        character: { perpetuity: !gridCharacter.perpetuity },
+      }
+
+      updateCharacter(object)
+    }
+  }
+
   // Methods: Handle open change
   function handleCharacterModalOpenChange(open: boolean) {
     setDetailsModalOpen(open)
@@ -113,6 +130,28 @@ const CharacterUnit = ({
   }
 
   // Methods: Mutate data
+
+  // Send the GridWeaponObject to the server
+  async function updateCharacter(
+    object: GridCharacterObject | PerpetuityObject
+  ) {
+    if (gridCharacter)
+      return await api.endpoints.grid_characters
+        .update(gridCharacter.id, object)
+        .then((response) => processResult(response))
+        .catch((error) => processError(error))
+  }
+
+  // Save the server's response to state
+  function processResult(response: AxiosResponse) {
+    const gridCharacter: GridCharacter = response.data
+    appState.grid.characters[gridCharacter.position] = gridCharacter
+  }
+
+  function processError(error: any) {
+    console.error(error)
+  }
+
   function passUncapData(uncap: number) {
     if (gridCharacter) updateUncap(gridCharacter.id, position, uncap)
   }
@@ -160,6 +199,7 @@ const CharacterUnit = ({
           gridCharacter={gridCharacter}
           open={detailsModalOpen}
           onOpenChange={handleCharacterModalOpenChange}
+          updateCharacter={updateCharacter}
         />
       )
     }
@@ -228,6 +268,17 @@ const CharacterUnit = ({
   }
 
   // Methods: Core element rendering
+  const perpetuity = () => {
+    if (gridCharacter) {
+      const classes = classNames({
+        Perpetuity: true,
+        Empty: !gridCharacter.perpetuity,
+      })
+
+      return <i className={classes} onClick={handlePerpetuityClick} />
+    }
+  }
+
   const image = (
     <div className="CharacterImage" onClick={openSearchModal}>
       <img
@@ -249,6 +300,7 @@ const CharacterUnit = ({
     <>
       <div className={classes}>
         {contextMenu()}
+        {perpetuity()}
         {image}
         {gridCharacter && character ? (
           <UncapIndicator

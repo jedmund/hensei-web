@@ -48,3 +48,25 @@ export type CharacterOverMastery = {
   3: ExtendedMastery
   4: ExtendedMastery
 }
+
+interface GridCharacterObject {
+  character: {
+    ring1: ExtendedMastery
+    ring2: ExtendedMastery
+    ring3: ExtendedMastery
+    ring4: ExtendedMastery
+    earring: ExtendedMastery
+    awakening: {
+      type?: number
+      level?: number
+    }
+    transcendence_step: number
+    perpetuity: boolean
+  }
+}
+
+interface PerpetuityObject {
+  character: {
+    perpetuity: boolean
+  }
+}
