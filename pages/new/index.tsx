@@ -5,11 +5,12 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import Party from '~components/Party'
 
-import { appState } from '~utils/appState'
-import { groupWeaponKeys } from '~utils/groupWeaponKeys'
+import api from '~utils/api'
 import organizeRaids from '~utils/organizeRaids'
 import setUserToken from '~utils/setUserToken'
-import api from '~utils/api'
+import { appState } from '~utils/appState'
+import { groupWeaponKeys } from '~utils/groupWeaponKeys'
+import { printError } from '~utils/reportError'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { GroupedWeaponKeys } from '~utils/groupWeaponKeys'
@@ -82,32 +83,34 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set headers for server-side requests
   setUserToken(req, res)
 
-  let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll()
-    .then((response) => organizeRaids(response.data))
+  try {
+    let { raids, sortedRaids } = await api.endpoints.raids
+      .getAll()
+      .then((response) => organizeRaids(response.data))
 
-  let jobs = await api.endpoints.jobs
-    .getAll()
-    .then((response) => {
+    let jobs = await api.endpoints.jobs.getAll().then((response) => {
       return response.data
     })
 
-  let jobSkills = await api.allJobSkills().then((response) => response.data)
+    let jobSkills = await api.allJobSkills().then((response) => response.data)
 
-  let weaponKeys = await api.endpoints.weapon_keys
-    .getAll()
-    .then((response) => groupWeaponKeys(response.data))
+    let weaponKeys = await api.endpoints.weapon_keys
+      .getAll()
+      .then((response) => groupWeaponKeys(response.data))
 
-  return {
-    props: {
-      jobs: jobs,
-      jobSkills: jobSkills,
-      raids: raids,
-      sortedRaids: sortedRaids,
-      weaponKeys: weaponKeys,
-      ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
-      // Will be passed to the page component as props
-    },
+    return {
+      props: {
+        jobs: jobs,
+        jobSkills: jobSkills,
+        raids: raids,
+        sortedRaids: sortedRaids,
+        weaponKeys: weaponKeys,
+        ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
+        // Will be passed to the page component as props
+      },
+    }
+  } catch (error) {
+    printError(error, 'axios')
   }
 }
 
