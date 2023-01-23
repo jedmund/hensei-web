@@ -1,5 +1,6 @@
 interface Job {
   id: string
+  granblue_id: string
   row: string
   ml: boolean
   order: number
