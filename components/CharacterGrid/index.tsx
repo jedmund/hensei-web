@@ -274,6 +274,7 @@ const CharacterGrid = (props: Props) => {
   // Note: Saves, but debouncing is not working properly
   async function saveUncap(id: string, position: number, uncapLevel: number) {
     storePreviousUncapValue(position)
+    storePreviousTranscendenceStage(position)
 
     try {
       if (uncapLevel != previousUncapValues[position])
@@ -285,11 +286,17 @@ const CharacterGrid = (props: Props) => {
 
       // Revert optimistic UI
       updateUncapLevel(position, previousUncapValues[position])
+      updateTranscendenceStage(position, previousTranscendenceStages[position])
 
       // Remove optimistic key
-      let newPreviousValues = { ...previousUncapValues }
-      delete newPreviousValues[position]
-      setPreviousUncapValues(newPreviousValues)
+      let newPreviousTranscendenceStages = { ...previousTranscendenceStages }
+      let newPreviousUncapValues = { ...previousUncapValues }
+
+      delete newPreviousTranscendenceStages[position]
+      delete newPreviousUncapValues[position]
+
+      setPreviousTranscendenceStages(newPreviousTranscendenceStages)
+      setPreviousUncapValues(newPreviousUncapValues)
     }
   }
 
