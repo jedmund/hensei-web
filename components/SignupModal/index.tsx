@@ -9,7 +9,7 @@ import setUserToken from '~utils/setUserToken'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
-import Input from '~components/LabelledInput'
+import Input from '~components/Input'
 import { Dialog, DialogTrigger, DialogClose } from '~components/Dialog'
 import DialogContent from '~components/DialogContent'
 import CrossIcon from '~public/icons/Cross.svg'
@@ -49,6 +49,8 @@ const SignupModal = (props: Props) => {
   const emailInput = React.createRef<HTMLInputElement>()
   const passwordInput = React.createRef<HTMLInputElement>()
   const passwordConfirmationInput = React.createRef<HTMLInputElement>()
+  const footerRef = React.createRef<HTMLDivElement>()
+
   const form = [
     usernameInput,
     emailInput,
@@ -279,6 +281,7 @@ const SignupModal = (props: Props) => {
       </DialogTrigger>
       <DialogContent
         className="Signup"
+        footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
@@ -292,48 +295,54 @@ const SignupModal = (props: Props) => {
         </div>
 
         <form className="form" onSubmit={register}>
-          <Input
-            className="Bound"
-            name="username"
-            placeholder={t('modals.signup.placeholders.username')}
-            onChange={handleNameChange}
-            error={errors.username}
-            ref={usernameInput}
-          />
+          <div className="Fields">
+            <Input
+              className="Bound"
+              name="username"
+              placeholder={t('modals.signup.placeholders.username')}
+              onChange={handleNameChange}
+              error={errors.username}
+              ref={usernameInput}
+            />
 
-          <Input
-            className="Bound"
-            name="email"
-            placeholder={t('modals.signup.placeholders.email')}
-            onChange={handleNameChange}
-            error={errors.email}
-            ref={emailInput}
-          />
+            <Input
+              className="Bound"
+              name="email"
+              placeholder={t('modals.signup.placeholders.email')}
+              onChange={handleNameChange}
+              error={errors.email}
+              ref={emailInput}
+            />
 
-          <Input
-            className="Bound"
-            name="password"
-            placeholder={t('modals.signup.placeholders.password')}
-            type="password"
-            onChange={handlePasswordChange}
-            error={errors.password}
-            ref={passwordInput}
-          />
+            <Input
+              className="Bound"
+              name="password"
+              placeholder={t('modals.signup.placeholders.password')}
+              type="password"
+              onChange={handlePasswordChange}
+              error={errors.password}
+              ref={passwordInput}
+            />
 
-          <Input
-            className="Bound"
-            name="confirm_password"
-            placeholder={t('modals.signup.placeholders.password_confirm')}
-            type="password"
-            onChange={handlePasswordChange}
-            error={errors.passwordConfirmation}
-            ref={passwordConfirmationInput}
-          />
+            <Input
+              className="Bound"
+              name="confirm_password"
+              placeholder={t('modals.signup.placeholders.password_confirm')}
+              type="password"
+              onChange={handlePasswordChange}
+              error={errors.passwordConfirmation}
+              ref={passwordConfirmationInput}
+            />
+          </div>
 
-          <Button
-            disabled={!formValid}
-            text={t('modals.signup.buttons.confirm')}
-          />
+          <div className="DialogFooter" ref={footerRef}>
+            <div className="Buttons Span">
+              <Button
+                disabled={!formValid}
+                text={t('modals.signup.buttons.confirm')}
+              />
+            </div>
+          </div>
 
           <p className="terms">
             {/* <Trans i18nKey="modals.signup.agreement">

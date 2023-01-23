@@ -42,8 +42,10 @@ const SearchModal = (props: Props) => {
   // Set up translation
   const { t } = useTranslation('common')
 
-  let searchInput = React.createRef<HTMLInputElement>()
-  let scrollContainer = React.createRef<HTMLDivElement>()
+  // Refs
+  const headerRef = React.createRef<HTMLDivElement>()
+  const searchInput = React.createRef<HTMLInputElement>()
+  const scrollContainer = React.createRef<HTMLDivElement>()
 
   const [firstLoad, setFirstLoad] = useState(true)
   const [filters, setFilters] = useState<{ [key: string]: any }>()
@@ -356,10 +358,11 @@ const SearchModal = (props: Props) => {
       <DialogTrigger asChild>{props.children}</DialogTrigger>
       <DialogContent
         className="Search"
+        headerref={headerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
-        <div id="Header">
+        <div className="Search DialogHeader" ref={headerRef}>
           <div id="Bar">
             <Input
               autoComplete="off"

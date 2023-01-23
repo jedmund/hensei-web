@@ -12,6 +12,7 @@ import CharacterGrid from '~components/CharacterGrid'
 import api from '~utils/api'
 import { appState, initialAppState } from '~utils/appState'
 import { GridType } from '~utils/enums'
+import { retrieveCookies } from '~utils/retrieveCookies'
 import type { DetailsObject } from '~types'
 
 import './index.scss'
@@ -36,6 +37,9 @@ const Party = (props: Props) => {
   // Set up states
   const { party } = useSnapshot(appState)
   const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
+
+  // Retrieve cookies
+  const cookies = retrieveCookies()
 
   // Reset state on first load
   useEffect(() => {
@@ -107,13 +111,17 @@ const Party = (props: Props) => {
   }
 
   // Deleting the party
-  function deleteTeam(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  function deleteTeam() {
     if (appState.party.editable && appState.party.id) {
       api.endpoints.parties
         .destroy({ id: appState.party.id })
         .then(() => {
           // Push to route
-          router.push('/')
+          if (cookies && cookies.account.username) {
+            router.push(`/${cookies.account.username}`)
+          } else {
+            router.push('/')
+          }
 
           // Clean state
           const resetState = clonedeep(initialAppState)

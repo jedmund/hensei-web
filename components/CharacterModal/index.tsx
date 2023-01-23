@@ -83,11 +83,17 @@ const CharacterModal = ({
   const [open, setOpen] = useState(false)
   const [formValid, setFormValid] = useState(false)
 
+  // Refs
+  const headerRef = React.createRef<HTMLDivElement>()
+  const footerRef = React.createRef<HTMLDivElement>()
+
   // Classes
   const headerClasses = classNames({
     DialogHeader: true,
-    Scrolled: scrolled,
+    Short: true,
   })
+
+  // Callbacks and Hooks
   useEffect(() => {
     setOpen(modalOpen)
   }, [modalOpen])
@@ -281,10 +287,12 @@ const CharacterModal = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         className="Character"
+        headerref={headerRef}
+        footerref={footerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={() => {}}
       >
-        <div className={headerClasses}>
+        <div className={headerClasses} ref={headerRef}>
           <img
             alt={gridCharacter.object.name[locale]}
             className="DialogImage"
@@ -311,7 +319,7 @@ const CharacterModal = ({
           {earringSelect()}
           {awakeningSelect()}
         </div>
-        <div className="DialogFooter">
+        <div className="DialogFooter" ref={footerRef}>
           <Button
             contained={true}
             onClick={updateCharacter}

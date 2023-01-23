@@ -1,8 +1,7 @@
 .Changelog.DialogContent {
   gap: 0;
-  padding-bottom: $unit-4x;
 
-  & > div:not(.DialogHeader) {
+  .updates {
     padding: 0 $unit-4x;
   }
 
@@ -10,6 +9,7 @@
     display: flex;
     flex-direction: column;
     gap: $unit-4x;
+    margin-bottom: $unit-4x;
   }
 
   .version {
@@ -30,6 +30,11 @@
         display: grid;
         grid-template-rows: 1fr auto;
         gap: $unit;
+
+        & > h4 {
+          font-weight: $medium;
+          font-size: $font-regular;
+        }
       }
 
       .items {
@@ -66,6 +71,7 @@
 
     li {
       margin-bottom: $unit-half;
+      font-size: $font-regular;
     }
   }
 }

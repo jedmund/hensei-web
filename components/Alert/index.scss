@@ -2,7 +2,7 @@
   align-items: center;
   display: flex;
   justify-content: center;
-  position: absolute;
+  position: fixed;
   height: 100vh;
   width: 100vw;
   top: 0;
@@ -11,6 +11,8 @@
 }
 
 .Alert {
+  animation: $duration-modal-open cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal none
+    running openModalDesktop;
   background: var(--dialog-bg);
   border-radius: $unit;
   display: flex;

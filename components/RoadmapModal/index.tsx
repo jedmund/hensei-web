@@ -17,6 +17,7 @@ import './index.scss'
 
 const RoadmapModal = () => {
   const { t } = useTranslation('roadmap')
+  const headerRef = React.createRef<HTMLDivElement>()
 
   return (
     <Dialog>
@@ -27,10 +28,12 @@ const RoadmapModal = () => {
       </DialogTrigger>
       <DialogContent
         className="Roadmap"
+        title={t('title')}
+        headerref={headerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={() => {}}
       >
-        <div className="DialogHeader">
+        <div className="DialogHeader" ref={headerRef}>
           <DialogTitle className="DialogTitle">{t('title')}</DialogTitle>
           <DialogClose className="DialogClose" asChild>
             <span>
@@ -39,7 +42,7 @@ const RoadmapModal = () => {
           </DialogClose>
         </div>
 
-        <div>
+        <div className="content">
           <section className="notes">
             <p>{t('blurb')}</p>
             <p>{t('link.intro')}</p>
