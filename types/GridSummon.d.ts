@@ -5,4 +5,5 @@ interface GridSummon {
   position: number
   object: Summon
   uncap_level: number
+  transcendence_step: number
 }
