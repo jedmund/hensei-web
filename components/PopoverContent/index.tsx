@@ -15,7 +15,10 @@ export const PopoverAnchor = PopoverPrimitive.Anchor
 export const PopoverTrigger = PopoverPrimitive.Trigger
 
 export const PopoverContent = React.forwardRef<HTMLDivElement, Props>(
-  ({ children, ...props }: PropsWithChildren<Props>, forwardedRef) => {
+  function Popover(
+    { children, ...props }: PropsWithChildren<Props>,
+    forwardedRef
+  ) {
     const classes = classnames(props.className, {
       Popover: true,
     })

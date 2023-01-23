@@ -12,6 +12,7 @@ interface Props {
   editable: boolean
   found?: boolean
   offset: number
+  removeWeapon: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
 }
@@ -32,6 +33,7 @@ const ExtraWeapons = (props: Props) => {
                 position={props.offset + i}
                 unitType={1}
                 gridWeapon={props.grid[props.offset + i]}
+                removeWeapon={props.removeWeapon}
                 updateObject={props.updateObject}
                 updateUncap={props.updateUncap}
               />

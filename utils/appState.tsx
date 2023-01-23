@@ -4,6 +4,7 @@ import { GroupedWeaponKeys } from './groupWeaponKeys'
 
 const emptyJob: Job = {
   id: '-1',
+  granblue_id: '-1',
   row: '',
   ml: false,
   order: 0,

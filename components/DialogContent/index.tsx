@@ -17,7 +17,7 @@ interface Props
   onOpenAutoFocus: (event: Event) => void
 }
 
-const DialogContent = React.forwardRef<HTMLDivElement, Props>(function dialog(
+const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
   { children, ...props },
   forwardedRef
 ) {

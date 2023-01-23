@@ -646,6 +646,7 @@ const ax: ItemSkill[][] = [
           minValue: 1,
           maxValue: 2,
           suffix: '%',
+          fractional: false,
         },
         {
           name: {
