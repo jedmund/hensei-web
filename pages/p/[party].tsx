@@ -6,17 +6,17 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import Party from '~components/Party'
 
-import { appState } from '~utils/appState'
-import { groupWeaponKeys } from '~utils/groupWeaponKeys'
+import api from '~utils/api'
 import generateTitle from '~utils/generateTitle'
 import organizeRaids from '~utils/organizeRaids'
 import setUserToken from '~utils/setUserToken'
-import api from '~utils/api'
+import { appState } from '~utils/appState'
+import { groupWeaponKeys } from '~utils/groupWeaponKeys'
 import { GridType } from '~utils/enums'
+import { printError } from '~utils/reportError'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { GroupedWeaponKeys } from '~utils/groupWeaponKeys'
-import { useQueryState } from 'next-usequerystate'
 
 interface Props {
   party: Party
@@ -154,74 +154,74 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set headers for server-side requests
   setUserToken(req, res)
 
-  let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll()
-    .then((response) => organizeRaids(response.data))
+  try {
+    let { raids, sortedRaids } = await api.endpoints.raids
+      .getAll()
+      .then((response) => organizeRaids(response.data))
 
-  let jobs = await api.endpoints.jobs
-    .getAll()
-    .then((response) => {
+    let jobs = await api.endpoints.jobs.getAll().then((response) => {
       return response.data
     })
 
-  let jobSkills = await api
-    .allJobSkills()
-    .then((response) => response.data)
+    let jobSkills = await api.allJobSkills().then((response) => response.data)
 
-  let weaponKeys = await api.endpoints.weapon_keys
-    .getAll()
-    .then((response) => groupWeaponKeys(response.data))
+    let weaponKeys = await api.endpoints.weapon_keys
+      .getAll()
+      .then((response) => groupWeaponKeys(response.data))
 
-  let party: Party | null = null
-  if (query.party) {
-    let response = await api.endpoints.parties.getOne({
-      id: query.party
-    })
-    party = response.data.party
-  } else {
-    console.log('No party code')
-  }
-
-  function getElement() {
-    if (party) {
-      const mainhand = party.weapons.find((weapon) => weapon.mainhand)
-      if (mainhand && mainhand.object.element === 0) {
-        return mainhand.element
-      } else {
-        return mainhand?.object.element
-      }
+    let party: Party | null = null
+    if (query.party) {
+      let response = await api.endpoints.parties.getOne({
+        id: query.party,
+      })
+      party = response.data.party
     } else {
-      return 0
+      console.log('No party code')
     }
-  }
 
-  function elementEmoji() {
-    const element = getElement()
+    function getElement() {
+      if (party) {
+        const mainhand = party.weapons.find((weapon) => weapon.mainhand)
+        if (mainhand && mainhand.object.element === 0) {
+          return mainhand.element
+        } else {
+          return mainhand?.object.element
+        }
+      } else {
+        return 0
+      }
+    }
 
-    if (element === 0) return '⚪'
-    else if (element === 1) return '🟢'
-    else if (element === 2) return '🔴'
-    else if (element === 3) return '🔵'
-    else if (element === 4) return '🟤'
-    else if (element === 5) return '🟣'
-    else if (element === 6) return '🟡'
-    else return '⚪'
-  }
+    function elementEmoji() {
+      const element = getElement()
 
-  return {
-    props: {
-      party: party,
-      jobs: jobs,
-      jobSkills: jobSkills,
-      raids: raids,
-      sortedRaids: sortedRaids,
-      weaponKeys: weaponKeys,
-      meta: {
-        element: elementEmoji(),
+      if (element === 0) return '⚪'
+      else if (element === 1) return '🟢'
+      else if (element === 2) return '🔴'
+      else if (element === 3) return '🔵'
+      else if (element === 4) return '🟤'
+      else if (element === 5) return '🟣'
+      else if (element === 6) return '🟡'
+      else return '⚪'
+    }
+
+    return {
+      props: {
+        party: party,
+        jobs: jobs,
+        jobSkills: jobSkills,
+        raids: raids,
+        sortedRaids: sortedRaids,
+        weaponKeys: weaponKeys,
+        meta: {
+          element: elementEmoji(),
+        },
+        ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
+        // Will be passed to the page component as props
       },
-      ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
-      // Will be passed to the page component as props
-    },
+    }
+  } catch (error) {
+    printError(error, 'axios')
   }
 }
 

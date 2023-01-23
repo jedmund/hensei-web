@@ -16,6 +16,7 @@ import organizeRaids from '~utils/organizeRaids'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
+import { printError } from '~utils/reportError'
 
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
@@ -352,39 +353,43 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set headers for server-side requests
   setUserToken(req, res)
 
-  // Fetch and organize raids
-  let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll()
-    .then((response) => organizeRaids(response.data))
+  try {
+    // Fetch and organize raids
+    let { raids, sortedRaids } = await api.endpoints.raids
+      .getAll()
+      .then((response) => organizeRaids(response.data))
 
-  // Create filter object
-  const filters: FilterObject = extractFilters(query, raids)
-  const params = {
-    params: { ...filters },
-  }
+    // Create filter object
+    const filters: FilterObject = extractFilters(query, raids)
+    const params = {
+      params: { ...filters },
+    }
 
-  // Set up empty variables
-  let teams: Party[] | null = null
-  let meta: PaginationObject = emptyPaginationObject
+    // Set up empty variables
+    let teams: Party[] | null = null
+    let meta: PaginationObject = emptyPaginationObject
 
-  // Fetch initial set of saved parties
-  const response = await api.savedTeams(params)
+    // Fetch initial set of saved parties
+    const response = await api.savedTeams(params)
 
-  // Assign values to pass to props
-  teams = response.data.results
-  meta.count = response.data.meta.count
-  meta.totalPages = response.data.meta.total_pages
-  meta.perPage = response.data.meta.per_page
+    // Assign values to pass to props
+    teams = response.data.results
+    meta.count = response.data.meta.count
+    meta.totalPages = response.data.meta.total_pages
+    meta.perPage = response.data.meta.per_page
 
-  return {
-    props: {
-      teams: teams,
-      meta: meta,
-      raids: raids,
-      sortedRaids: sortedRaids,
-      ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
-      // Will be passed to the page component as props
-    },
+    return {
+      props: {
+        teams: teams,
+        meta: meta,
+        raids: raids,
+        sortedRaids: sortedRaids,
+        ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
+        // Will be passed to the page component as props
+      },
+    }
+  } catch (error) {
+    printError(error, 'axios')
   }
 }
 

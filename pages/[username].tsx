@@ -15,6 +15,7 @@ import organizeRaids from '~utils/organizeRaids'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
+import { printError } from '~utils/reportError'
 
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
@@ -350,50 +351,54 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set headers for server-side requests
   setUserToken(req, res)
 
-  // Fetch and organize raids
-  let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll()
-    .then((response) => organizeRaids(response.data))
+  try {
+    // Fetch and organize raids
+    let { raids, sortedRaids } = await api.endpoints.raids
+      .getAll()
+      .then((response) => organizeRaids(response.data))
 
-  // Create filter object
-  const filters: FilterObject = extractFilters(query, raids)
-  const params = {
-    params: { ...filters },
-  }
+    // Create filter object
+    const filters: FilterObject = extractFilters(query, raids)
+    const params = {
+      params: { ...filters },
+    }
 
-  // Set up empty variables
-  let user: User | null = null
-  let teams: Party[] | null = null
-  let meta: PaginationObject = emptyPaginationObject
+    // Set up empty variables
+    let user: User | null = null
+    let teams: Party[] | null = null
+    let meta: PaginationObject = emptyPaginationObject
 
-  // Perform a request only if we received a username
-  if (query.username) {
-    const response = await api.endpoints.users.getOne({
-      id: query.username,
-      params,
-    })
+    // Perform a request only if we received a username
+    if (query.username) {
+      const response = await api.endpoints.users.getOne({
+        id: query.username,
+        params,
+      })
 
-    // Assign values to pass to props
-    user = response.data.profile
+      // Assign values to pass to props
+      user = response.data.profile
 
-    if (response.data.profile.parties) teams = response.data.profile.parties
-    else teams = []
+      if (response.data.profile.parties) teams = response.data.profile.parties
+      else teams = []
 
-    meta.count = response.data.meta.count
-    meta.totalPages = response.data.meta.total_pages
-    meta.perPage = response.data.meta.per_page
-  }
+      meta.count = response.data.meta.count
+      meta.totalPages = response.data.meta.total_pages
+      meta.perPage = response.data.meta.per_page
+    }
 
-  return {
-    props: {
-      user: user,
-      teams: teams,
-      meta: meta,
-      raids: raids,
-      sortedRaids: sortedRaids,
-      ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
-      // Will be passed to the page component as props
-    },
+    return {
+      props: {
+        user: user,
+        teams: teams,
+        meta: meta,
+        raids: raids,
+        sortedRaids: sortedRaids,
+        ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
+        // Will be passed to the page component as props
+      },
+    }
+  } catch (error) {
+    printError(error, 'axios')
   }
 }
 
