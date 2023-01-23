@@ -57,7 +57,7 @@ const CharacterGrid = (props: Props) => {
   })
   const [errorMessage, setErrorMessage] = useState('')
 
-  // Create a temporary state to store previous character uncap values
+  // Create a temporary state to store previous weapon uncap values and transcendence stages
   const [previousUncapValues, setPreviousUncapValues] = useState<{
     [key: number]: number | undefined
   }>({})
@@ -357,6 +357,7 @@ const CharacterGrid = (props: Props) => {
     position: number,
     stage: number
   ) {
+    storePreviousUncapValue(position)
     storePreviousTranscendenceStage(position)
 
     const payload = {
@@ -377,12 +378,18 @@ const CharacterGrid = (props: Props) => {
       console.error(error)
 
       // Revert optimistic UI
+      updateUncapLevel(position, previousUncapValues[position])
       updateTranscendenceStage(position, previousTranscendenceStages[position])
 
       // Remove optimistic key
-      let newPreviousValues = { ...previousTranscendenceStages }
-      delete newPreviousValues[position]
-      setPreviousTranscendenceStages(newPreviousValues)
+      let newPreviousTranscendenceStages = { ...previousTranscendenceStages }
+      let newPreviousUncapValues = { ...previousUncapValues }
+
+      delete newPreviousTranscendenceStages[position]
+      delete newPreviousUncapValues[position]
+
+      setPreviousTranscendenceStages(newPreviousTranscendenceStages)
+      setPreviousUncapValues(newPreviousUncapValues)
     }
   }
 
