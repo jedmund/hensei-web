@@ -29,6 +29,7 @@ interface Props {
   removeSummon: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
+  updateTranscendence: (id: string, position: number, stage: number) => void
 }
 
 const SummonUnit = ({
@@ -39,6 +40,7 @@ const SummonUnit = ({
   removeSummon: sendSummonToRemove,
   updateObject,
   updateUncap,
+  updateTranscendence,
 }: Props) => {
   // Translations and locale
   const { t } = useTranslation('common')
@@ -103,6 +105,10 @@ const SummonUnit = ({
   // Methods: Mutate data
   function passUncapData(uncap: number) {
     if (gridSummon) updateUncap(gridSummon.id, position, uncap)
+  }
+
+  function passTranscendenceData(stage: number) {
+    if (gridSummon) updateTranscendence(gridSummon.id, position, stage)
   }
 
   function removeSummon() {
@@ -246,8 +252,10 @@ const SummonUnit = ({
             xlb={gridSummon.object.uncap.xlb || false}
             editable={editable}
             uncapLevel={gridSummon.uncap_level}
+            transcendenceStage={gridSummon.transcendence_step}
             position={gridSummon.position}
             updateUncap={passUncapData}
+            updateTranscendence={passTranscendenceData}
             special={false}
           />
         ) : (

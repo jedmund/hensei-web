@@ -377,6 +377,7 @@ const SummonGrid = (props: Props) => {
         removeSummon={removeSummon}
         updateObject={receiveSummonFromSearch}
         updateUncap={initiateUncapUpdate}
+        updateTranscendence={initiateTranscendenceUpdate}
       />
     </div>
   )
@@ -390,8 +391,10 @@ const SummonGrid = (props: Props) => {
         key="grid_friend_summon"
         position={6}
         unitType={2}
+        removeSummon={removeSummon}
         updateObject={receiveSummonFromSearch}
         updateUncap={initiateUncapUpdate}
+        updateTranscendence={initiateTranscendenceUpdate}
       />
     </div>
   )
@@ -411,6 +414,7 @@ const SummonGrid = (props: Props) => {
                 removeSummon={removeSummon}
                 updateObject={receiveSummonFromSearch}
                 updateUncap={initiateUncapUpdate}
+                updateTranscendence={initiateTranscendenceUpdate}
               />
             </li>
           )
@@ -428,6 +432,7 @@ const SummonGrid = (props: Props) => {
       removeSummon={removeSummon}
       updateObject={receiveSummonFromSearch}
       updateUncap={initiateUncapUpdate}
+      updateTranscendence={initiateTranscendenceUpdate}
     />
   )
 
