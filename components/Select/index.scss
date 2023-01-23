@@ -5,7 +5,7 @@
   border: none;
   display: flex;
   gap: $unit;
-  padding: $unit-2x $unit-2x;
+  padding: ($unit * 1.5) $unit-2x;
 
   &.modal {
     background-color: var(--select-modal-bg);
