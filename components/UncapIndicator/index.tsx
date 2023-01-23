@@ -47,7 +47,9 @@ const UncapIndicator = (props: Props) => {
         }
       }
     } else {
-      if (props.ulb) {
+      if (props.xlb) {
+        numStars = 6
+      } else if (props.ulb) {
         numStars = 5
       } else if (props.flb) {
         numStars = 4
@@ -76,13 +78,15 @@ const UncapIndicator = (props: Props) => {
   }
 
   const transcendence = (i: number) => {
+    const tabIndex = props.position * 7 + i + 1
     return props.type === 'character' || props.type === 'summon' ? (
       <TranscendencePopover
         open={popoverOpen}
         stage={props.transcendenceStage ? props.transcendenceStage : 0}
         onOpenChange={togglePopover}
         sendValue={sendTranscendenceStage}
-        tabIndex={props.position * 7 + 7 + 1}
+        key={`star_${i}`}
+        tabIndex={tabIndex}
       >
         <TranscendenceStar
           key={`star_${i}`}
@@ -90,7 +94,6 @@ const UncapIndicator = (props: Props) => {
           editable={props.editable}
           interactive={false}
           onStarClick={() => togglePopover(true)}
-          tabIndex={props.position * 7 + i + 1}
         />
       </TranscendencePopover>
     ) : (
@@ -99,8 +102,7 @@ const UncapIndicator = (props: Props) => {
         stage={props.transcendenceStage}
         editable={props.editable}
         interactive={false}
-        onStarClick={() => togglePopover(true)}
-        tabIndex={props.position * 7 + i + 1}
+        tabIndex={tabIndex}
       />
     )
   }
@@ -146,8 +148,6 @@ const UncapIndicator = (props: Props) => {
     )
   }
 
-  const transcendencePopover = () => {}
-
   return (
     <div className="Uncap">
       <ul className="UncapIndicator">
@@ -155,6 +155,8 @@ const UncapIndicator = (props: Props) => {
           if (props.type === 'character' && i > 4) {
             if (props.special) return ulb(i)
             else return transcendence(i)
+          } else if (props.type === 'summon' && i > 4) {
+            return transcendence(i)
           } else if (
             (props.special && props.type === 'character' && i == 3) ||
             (props.type === 'character' && i == 4) ||
@@ -166,7 +168,6 @@ const UncapIndicator = (props: Props) => {
           }
         })}
       </ul>
-      {transcendencePopover()}
     </div>
   )
 }
