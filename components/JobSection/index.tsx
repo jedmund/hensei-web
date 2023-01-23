@@ -146,7 +146,13 @@ const JobSection = (props: Props) => {
             ref={selectRef}
           />
         ) : (
-          <h3>{party.job ? party.job.name[locale] : t('no_job')}</h3>
+          <div className="JobName">
+            <img
+              alt={party.job.name[locale]}
+              src={`/images/job-icons/${party.job.granblue_id}.png`}
+            />
+            <h3>{party.job ? party.job.name[locale] : t('no_job')}</h3>
+          </div>
         )}
 
         <ul className="JobSkills">

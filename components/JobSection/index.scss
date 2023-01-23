@@ -28,10 +28,20 @@
     flex-direction: column;
     width: 100%;
 
-    h3 {
-      font-size: $font-medium;
-      font-weight: $medium;
+    .JobName {
+      align-items: center;
+      display: flex;
+      gap: $unit-half;
       padding: $unit 0 $unit * 2;
+
+      h3 {
+        font-size: $font-medium;
+        font-weight: $medium;
+      }
+
+      img {
+        width: $unit-4x;
+      }
     }
 
     select {
