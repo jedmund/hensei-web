@@ -4,6 +4,7 @@
   border-radius: $input-corner;
   border: none;
   display: flex;
+  gap: $unit;
   padding: $unit-2x $unit-2x;
 
   &.modal {
@@ -54,6 +55,11 @@
 
   &.Table {
     min-width: $unit * 30;
+  }
+
+  img {
+    width: $unit-4x;
+    height: auto;
   }
 
   .SelectIcon {
