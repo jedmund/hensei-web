@@ -139,11 +139,14 @@ const SummonUnit = ({
       ]
 
       let suffix = ''
-      if (
+      if (gridSummon.object.uncap.xlb && gridSummon.uncap_level == 6) {
+        suffix = '_03'
+      } else if (
         upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
         gridSummon.uncap_level == 5
-      )
+      ) {
         suffix = '_02'
+      }
 
       // Generate the correct source for the summon
       if (unitType == 0 || unitType == 2)
