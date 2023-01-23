@@ -32,6 +32,14 @@
     "new": "New",
     "wiki": "View more on gbf.wiki"
   },
+  "context": {
+    "modify": {
+      "character": "Modify character",
+      "summon": "Modify summon",
+      "weapon": "Modify weapon"
+    },
+    "remove": "Remove from grid"
+  },
   "filters": {
     "labels": {
       "element": "Element",
@@ -137,6 +145,22 @@
     "changelog": {
       "title": "Changelog"
     },
+    "characters": {
+      "title": "Character",
+      "subtitles": {
+        "ring": "Over Mastery",
+        "earring": "Aetherial Mastery",
+        "permanent": "Permanent Mastery",
+        "awakening": "Awakening"
+      },
+      "messages": {
+        "remove": "Are you sure you want to remove <strong>{{character}}</strong> from your team?"
+      },
+      "buttons": {
+        "confirm": "Save character",
+        "remove": "Remove character"
+      }
+    },
     "conflict": {
       "character": "Only one <strong>version of a character</strong> can be included in each party. Do you want to change your party members?",
       "weapon": {
@@ -229,7 +253,8 @@
     "weapon": {
       "title": "Modify Weapon",
       "buttons": {
-        "confirm": "Save weapon"
+        "confirm": "Save weapon",
+        "remove": "Remove weapon"
       },
       "subtitles": {
         "element": "Element",
@@ -339,5 +364,6 @@
   "no_title": "Untitled",
   "no_raid": "No raid",
   "no_user": "Anonymous",
-  "no_job": "No class"
+  "no_job": "No class",
+  "no_value": "No value"
 }

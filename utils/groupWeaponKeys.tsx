@@ -1,4 +1,4 @@
-import { weaponKeyGroups } from './weaponKeyGroups'
+import { weaponKeyGroups } from '../data/weaponKeyGroups'
 
 export type GroupedWeaponKeys = {
   [key: string]: WeaponKey[]

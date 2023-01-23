@@ -5,6 +5,7 @@
   gap: calc($unit / 2);
   // min-height: 320px;
   // max-width: 200px;
+  position: relative;
   margin-bottom: $unit * 4;
 
   &.editable .CharacterImage:hover {
@@ -20,6 +21,17 @@
 
   &.filled ul {
     display: flex;
+  }
+
+  .Button {
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  &:hover .Button,
+  .Button.Clicked {
+    pointer-events: initial;
+    opacity: 1;
   }
 
   h3,
@@ -57,9 +69,11 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transition: all 0.18s ease-in-out;
+    transition: $duration-zoom all ease-in-out;
     height: auto;
     width: 100%;
+    -webkit-user-select: none; /* Safari */
+    user-select: none;
 
     &:hover .icon svg {
       fill: var(--icon-secondary-hover);
@@ -72,6 +86,7 @@
       z-index: 1;
 
       svg {
+        transition: $duration-color-fade fill ease-in-out;
         fill: var(--icon-secondary);
       }
     }

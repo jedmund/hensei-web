@@ -146,7 +146,7 @@ const JobSection = (props: Props) => {
             ref={selectRef}
           />
         ) : (
-          <h3>{party.job?.name[locale]}</h3>
+          <h3>{party.job ? party.job.name[locale] : t('no_job')}</h3>
         )}
 
         <ul className="JobSkills">

@@ -32,6 +32,14 @@
     "new": "作成",
     "wiki": "gbf.wikiで詳しく見る"
   },
+  "context": {
+    "modify": {
+      "character": "キャラクターを変更",
+      "summon": "召喚石を変更",
+      "weapon": "武器を変更"
+    },
+    "remove": "編成から削除"
+  },
   "filters": {
     "labels": {
       "element": "属性",
@@ -137,6 +145,22 @@
     "changelog": {
       "title": "変更ログ"
     },
+    "characters": {
+      "title": "キャラクター",
+      "subtitles": {
+        "ring": "EXリミットボーナス",
+        "earring": "エーテリアルプラス",
+        "permanent": "マスタリーボーナス",
+        "awakening": "覚醒"
+      },
+      "messages": {
+        "remove": "<strong>{{character}}</strong>を編成から削除しますか？"
+      },
+      "buttons": {
+        "confirm": "キャラクターを変更する",
+        "remove": "キャラクターを削除する"
+      }
+    },
     "conflict": {
       "character": "<strong>同じ名前のキャラクター</strong>がパーティに編成されています。<br />以下のキャラクターを入れ替えますか？",
       "weapon": {
@@ -230,7 +254,8 @@
     "weapon": {
       "title": "武器変更",
       "buttons": {
-        "confirm": "武器を変更する"
+        "confirm": "武器を変更する",
+        "remove": "武器を削除する"
       },
       "subtitles": {
         "element": "属性",
@@ -340,5 +365,6 @@
   "no_title": "無題",
   "no_raid": "マルチなし",
   "no_user": "無名",
-  "no_job": "ジョブなし"
+  "no_job": "ジョブなし",
+  "no_value": "値なし"
 }

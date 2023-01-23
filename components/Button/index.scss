@@ -8,6 +8,7 @@
   font-size: $font-button;
   font-weight: $normal;
   gap: 6px;
+  transition: 0.18s opacity ease-in-out;
 
   &:hover,
   &.Blended:hover,
@@ -59,6 +60,14 @@
         }
       }
     }
+  }
+
+  &.Options {
+    box-shadow: 0px 1px 3px rgb(0 0 0 / 14%);
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    z-index: 3;
   }
 
   &:disabled {

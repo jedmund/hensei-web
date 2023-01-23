@@ -7,7 +7,7 @@ import SelectItem from '~components/SelectItem'
 
 import classNames from 'classnames'
 
-import { axData } from '~utils/axData'
+import ax from '~data/ax'
 
 import './index.scss'
 
@@ -155,7 +155,7 @@ const AXSelect = (props: Props) => {
 
       if (props.currentSkills[0].modifier > -1 && primaryAxValueInput.current) {
         const modifier = props.currentSkills[0].modifier
-        const axSkill = axData[props.axType - 1][modifier]
+        const axSkill = ax[props.axType - 1][modifier]
         setupInput(axSkill, primaryAxValueInput.current)
       }
     }
@@ -169,7 +169,7 @@ const AXSelect = (props: Props) => {
       props.currentSkills[1].modifier != null
     ) {
       const firstSkill = props.currentSkills[0]
-      const primaryAxSkill = axData[props.axType - 1][firstSkill.modifier]
+      const primaryAxSkill = ax[props.axType - 1][firstSkill.modifier]
       const secondaryAxSkill = findSecondaryAxSkill(
         primaryAxSkill,
         props.currentSkills[1]
@@ -185,7 +185,7 @@ const AXSelect = (props: Props) => {
   }
 
   function findSecondaryAxSkill(
-    axSkill: AxSkill | undefined,
+    axSkill: ItemSkill | undefined,
     skillAtIndex: SimpleAxSkill
   ) {
     if (axSkill)
@@ -213,7 +213,7 @@ const AXSelect = (props: Props) => {
   }
 
   function generateOptions(modifierSet: number) {
-    const axOptions = axData[props.axType - 1]
+    const axOptions = ax[props.axType - 1]
 
     let axOptionElements: React.ReactNode[] = []
     if (modifierSet == 0) {
@@ -264,7 +264,7 @@ const AXSelect = (props: Props) => {
       secondaryAxModifierSelect.current &&
       secondaryAxValueInput.current
     ) {
-      setupInput(axData[props.axType - 1][value], primaryAxValueInput.current)
+      setupInput(ax[props.axType - 1][value], primaryAxValueInput.current)
       setPrimaryAxValue(0)
       primaryAxValueInput.current.value = ''
 
@@ -280,7 +280,7 @@ const AXSelect = (props: Props) => {
     const value = parseInt(rawValue)
     setSecondaryAxModifier(value)
 
-    const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
+    const primaryAxSkill = ax[props.axType - 1][primaryAxModifier]
     const currentAxSkill = primaryAxSkill.secondary
       ? primaryAxSkill.secondary.find((skill) => skill.id == value)
       : undefined
@@ -304,7 +304,7 @@ const AXSelect = (props: Props) => {
   }
 
   function handlePrimaryErrors(value: number) {
-    const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
+    const primaryAxSkill = ax[props.axType - 1][primaryAxModifier]
     let newErrors = { ...errors }
 
     if (value < primaryAxSkill.minValue) {
@@ -333,7 +333,7 @@ const AXSelect = (props: Props) => {
   }
 
   function handleSecondaryErrors(value: number) {
-    const primaryAxSkill = axData[props.axType - 1][primaryAxModifier]
+    const primaryAxSkill = ax[props.axType - 1][primaryAxModifier]
     let newErrors = { ...errors }
 
     if (primaryAxSkill.secondary) {
@@ -373,7 +373,7 @@ const AXSelect = (props: Props) => {
     return newErrors.axValue2.length === 0
   }
 
-  function setupInput(ax: AxSkill | undefined, element: HTMLInputElement) {
+  function setupInput(ax: ItemSkill | undefined, element: HTMLInputElement) {
     if (ax) {
       const rangeString = `${ax.minValue}~${ax.maxValue}${ax.suffix || ''}`
 

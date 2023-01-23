@@ -1,4 +1,4 @@
-export const axData: AxSkill[][] = [
+const ax: ItemSkill[][] = [
   [
     {
       name: {
@@ -10,6 +10,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 3.5,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -20,6 +21,7 @@ export const axData: AxSkill[][] = [
           slug: 'ca-dmg',
           minValue: 2,
           maxValue: 4,
+          fractional: true,
           suffix: '%',
         },
         {
@@ -31,6 +33,7 @@ export const axData: AxSkill[][] = [
           slug: 'da',
           minValue: 1,
           maxValue: 2,
+          fractional: true,
           suffix: '%',
         },
         {
@@ -42,6 +45,7 @@ export const axData: AxSkill[][] = [
           slug: 'ta',
           minValue: 1,
           maxValue: 2,
+          fractional: true,
           suffix: '%',
         },
         {
@@ -53,6 +57,7 @@ export const axData: AxSkill[][] = [
           slug: 'skill-cap',
           minValue: 1,
           maxValue: 2,
+          fractional: true,
           suffix: '%',
         },
       ],
@@ -67,6 +72,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 8,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -77,6 +83,7 @@ export const axData: AxSkill[][] = [
           slug: 'hp',
           minValue: 1,
           maxValue: 3,
+          fractional: true,
           suffix: '%',
         },
         {
@@ -88,6 +95,7 @@ export const axData: AxSkill[][] = [
           slug: 'debuff',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
           suffix: '%',
         },
         {
@@ -99,6 +107,7 @@ export const axData: AxSkill[][] = [
           slug: 'healing',
           minValue: 2,
           maxValue: 5,
+          fractional: true,
           suffix: '%',
         },
         {
@@ -110,6 +119,7 @@ export const axData: AxSkill[][] = [
           slug: 'enmity',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
         },
       ],
     },
@@ -123,6 +133,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 11,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -133,6 +144,7 @@ export const axData: AxSkill[][] = [
           slug: 'def',
           minValue: 1,
           maxValue: 3,
+          fractional: true,
           suffix: '%',
         },
         {
@@ -144,6 +156,7 @@ export const axData: AxSkill[][] = [
           slug: 'debuff',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
           suffix: '%',
         },
         {
@@ -156,6 +169,7 @@ export const axData: AxSkill[][] = [
           minValue: 2,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -166,6 +180,7 @@ export const axData: AxSkill[][] = [
           slug: 'stamina',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
         },
       ],
     },
@@ -179,6 +194,7 @@ export const axData: AxSkill[][] = [
       minValue: 2,
       maxValue: 8.5,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -190,6 +206,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 1.5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -201,6 +218,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -212,6 +230,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 2,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -222,6 +241,7 @@ export const axData: AxSkill[][] = [
           slug: 'stamina',
           minValue: 1,
           maxValue: 3,
+          fractional: true,
         },
       ],
     },
@@ -235,6 +255,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 4,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -246,6 +267,7 @@ export const axData: AxSkill[][] = [
           minValue: 2,
           maxValue: 4,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -257,6 +279,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -268,6 +291,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 2,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -279,6 +303,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 2,
           suffix: '%',
+          fractional: true,
         },
       ],
     },
@@ -294,6 +319,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 3.5,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -305,6 +331,7 @@ export const axData: AxSkill[][] = [
           minValue: 2,
           maxValue: 8.5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -316,6 +343,7 @@ export const axData: AxSkill[][] = [
           minValue: 1.5,
           maxValue: 4,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -327,6 +355,7 @@ export const axData: AxSkill[][] = [
           minValue: 0.5,
           maxValue: 1.5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -337,6 +366,7 @@ export const axData: AxSkill[][] = [
           slug: 'skill-supp',
           minValue: 1,
           maxValue: 5,
+          fractional: false,
         },
       ],
     },
@@ -350,6 +380,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 8,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -361,6 +392,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -372,6 +404,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 3,
           suffix: '%',
+          fractional: false,
         },
         {
           name: {
@@ -383,6 +416,7 @@ export const axData: AxSkill[][] = [
           minValue: 2,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -393,6 +427,7 @@ export const axData: AxSkill[][] = [
           slug: 'enmity',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
         },
       ],
     },
@@ -406,6 +441,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 11,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -417,6 +453,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -428,6 +465,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 3,
           suffix: '%',
+          fractional: false,
         },
         {
           name: {
@@ -439,6 +477,7 @@ export const axData: AxSkill[][] = [
           minValue: 2,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -449,6 +488,7 @@ export const axData: AxSkill[][] = [
           slug: 'stamina',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
         },
       ],
     },
@@ -462,6 +502,7 @@ export const axData: AxSkill[][] = [
       minValue: 2,
       maxValue: 8.5,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -472,6 +513,7 @@ export const axData: AxSkill[][] = [
           slug: 'ta',
           minValue: 1.5,
           maxValue: 4,
+          fractional: true,
           suffix: '%',
         },
         {
@@ -483,6 +525,7 @@ export const axData: AxSkill[][] = [
           slug: 'skill-supp',
           minValue: 1,
           maxValue: 5,
+          fractional: false,
         },
         {
           name: {
@@ -493,6 +536,7 @@ export const axData: AxSkill[][] = [
           slug: 'ca-supp',
           minValue: 1,
           maxValue: 5,
+          fractional: false,
         },
         {
           name: {
@@ -503,6 +547,7 @@ export const axData: AxSkill[][] = [
           slug: 'stamina',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
         },
       ],
     },
@@ -516,6 +561,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 4,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -526,6 +572,7 @@ export const axData: AxSkill[][] = [
           slug: 'ca-supp',
           minValue: 1,
           maxValue: 5,
+          fractional: false,
         },
         {
           name: {
@@ -536,6 +583,7 @@ export const axData: AxSkill[][] = [
           slug: 'na-cap',
           minValue: 0.5,
           maxValue: 1.5,
+          fractional: true,
           suffix: '%',
         },
         {
@@ -547,6 +595,7 @@ export const axData: AxSkill[][] = [
           slug: 'stamina',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
         },
         {
           name: {
@@ -557,6 +606,7 @@ export const axData: AxSkill[][] = [
           slug: 'enmity',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
         },
       ],
     },
@@ -572,6 +622,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 3.5,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -583,6 +634,7 @@ export const axData: AxSkill[][] = [
           minValue: 2,
           maxValue: 4,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -605,6 +657,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 2,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -616,6 +669,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 2,
           suffix: '%',
+          fractional: true,
         },
       ],
     },
@@ -629,6 +683,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 8,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -640,6 +695,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 3,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -651,6 +707,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 3,
           suffix: '%',
+          fractional: false,
         },
         {
           name: {
@@ -662,6 +719,7 @@ export const axData: AxSkill[][] = [
           minValue: 2,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -672,6 +730,7 @@ export const axData: AxSkill[][] = [
           slug: 'enmity',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
         },
       ],
     },
@@ -685,6 +744,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 11,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -696,6 +756,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 3,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -707,6 +768,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 3,
           suffix: '%',
+          fractional: false,
         },
         {
           name: {
@@ -718,6 +780,7 @@ export const axData: AxSkill[][] = [
           minValue: 2,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -728,6 +791,7 @@ export const axData: AxSkill[][] = [
           slug: 'stamina',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
         },
       ],
     },
@@ -741,6 +805,7 @@ export const axData: AxSkill[][] = [
       minValue: 2,
       maxValue: 8.5,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -752,6 +817,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 1.5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -763,6 +829,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -774,6 +841,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 2,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -784,6 +852,7 @@ export const axData: AxSkill[][] = [
           slug: 'stamina',
           minValue: 1,
           maxValue: 3,
+          fractional: false,
         },
       ],
     },
@@ -797,6 +866,7 @@ export const axData: AxSkill[][] = [
       minValue: 1,
       maxValue: 4,
       suffix: '%',
+      fractional: true,
       secondary: [
         {
           name: {
@@ -808,6 +878,7 @@ export const axData: AxSkill[][] = [
           minValue: 2,
           maxValue: 4,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -819,6 +890,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 5,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -830,6 +902,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 2,
           suffix: '%',
+          fractional: true,
         },
         {
           name: {
@@ -841,6 +914,7 @@ export const axData: AxSkill[][] = [
           minValue: 1,
           maxValue: 2,
           suffix: '%',
+          fractional: true,
         },
       ],
     },
@@ -854,6 +928,7 @@ export const axData: AxSkill[][] = [
       minValue: 5,
       maxValue: 10,
       suffix: '%',
+      fractional: false,
     },
     {
       name: {
@@ -865,6 +940,9 @@ export const axData: AxSkill[][] = [
       minValue: 10,
       maxValue: 20,
       suffix: '%',
+      fractional: false,
     },
   ],
 ]
+
+export default ax

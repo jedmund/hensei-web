@@ -16,7 +16,7 @@ import {
   emptyWeaponSeriesState,
 } from '~utils/emptyStates'
 import { elements, proficiencies, rarities } from '~utils/stateValues'
-import { weaponSeries } from '~utils/weaponSeries'
+import { weaponSeries } from '~data/weaponSeries'
 
 interface Props {
   sendFilters: (filters: { [key: string]: number[] }) => void

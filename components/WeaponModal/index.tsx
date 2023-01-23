@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -7,11 +7,10 @@ import { AxiosResponse } from 'axios'
 import {
   Dialog,
   DialogClose,
-  DialogContent,
   DialogTitle,
   DialogTrigger,
 } from '~components/Dialog'
-
+import DialogContent from '~components/DialogContent'
 import AXSelect from '~components/AxSelect'
 import AwakeningSelect from '~components/AwakeningSelect'
 import ElementToggle from '~components/ElementToggle'
@@ -41,10 +40,16 @@ interface GridWeaponObject {
 
 interface Props {
   gridWeapon: GridWeapon
-  children: React.ReactNode
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-const WeaponModal = (props: Props) => {
+const WeaponModal = ({
+  gridWeapon,
+  open: modalOpen,
+  children,
+  onOpenChange,
+}: PropsWithChildren<Props>) => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
@@ -65,7 +70,7 @@ const WeaponModal = (props: Props) => {
 
   const [element, setElement] = useState(-1)
 
-  const [awakeningType, setAwakeningType] = useState(-1)
+  const [awakeningType, setAwakeningType] = useState(0)
   const [awakeningLevel, setAwakeningLevel] = useState(1)
 
   const [primaryAxModifier, setPrimaryAxModifier] = useState(-1)
@@ -89,10 +94,14 @@ const WeaponModal = (props: Props) => {
   const [awakeningOpen, setAwakeningOpen] = useState(false)
 
   useEffect(() => {
-    setElement(props.gridWeapon.element)
+    setOpen(modalOpen)
+  }, [modalOpen])
 
-    if (props.gridWeapon.weapon_keys) {
-      props.gridWeapon.weapon_keys.forEach((key) => {
+  useEffect(() => {
+    setElement(gridWeapon.element)
+
+    if (gridWeapon.weapon_keys) {
+      gridWeapon.weapon_keys.forEach((key) => {
         if (key.slot + 1 === 1) {
           setWeaponKey1(key)
         } else if (key.slot + 1 === 2) {
@@ -102,7 +111,7 @@ const WeaponModal = (props: Props) => {
         }
       })
     }
-  }, [props])
+  }, [gridWeapon])
 
   function receiveAxValues(
     primaryAxModifier: number,
@@ -133,29 +142,26 @@ const WeaponModal = (props: Props) => {
   function prepareObject() {
     let object: GridWeaponObject = { weapon: {} }
 
-    if (props.gridWeapon.object.element == 0) object.weapon.element = element
+    if (gridWeapon.object.element == 0) object.weapon.element = element
 
-    if (
-      [2, 3, 17, 24].includes(props.gridWeapon.object.series) &&
-      weaponKey1Id
-    ) {
+    if ([2, 3, 17, 24].includes(gridWeapon.object.series) && weaponKey1Id) {
       object.weapon.weapon_key1_id = weaponKey1Id
     }
 
-    if ([2, 3, 17].includes(props.gridWeapon.object.series) && weaponKey2Id)
+    if ([2, 3, 17].includes(gridWeapon.object.series) && weaponKey2Id)
       object.weapon.weapon_key2_id = weaponKey2Id
 
-    if (props.gridWeapon.object.series == 17 && weaponKey3Id)
+    if (gridWeapon.object.series == 17 && weaponKey3Id)
       object.weapon.weapon_key3_id = weaponKey3Id
 
-    if (props.gridWeapon.object.ax && props.gridWeapon.object.ax_type > 0) {
+    if (gridWeapon.object.ax && gridWeapon.object.ax_type > 0) {
       object.weapon.ax_modifier1 = primaryAxModifier
       object.weapon.ax_modifier2 = secondaryAxModifier
       object.weapon.ax_strength1 = primaryAxValue
       object.weapon.ax_strength2 = secondaryAxValue
     }
 
-    if (props.gridWeapon.object.awakening) {
+    if (gridWeapon.object.awakening) {
       object.weapon.awakening_type = awakeningType
       object.weapon.awakening_level = awakeningLevel
     }
@@ -166,7 +172,7 @@ const WeaponModal = (props: Props) => {
   async function updateWeapon() {
     const updateObject = prepareObject()
     return await api.endpoints.grid_weapons
-      .update(props.gridWeapon.id, updateObject, headers)
+      .update(gridWeapon.id, updateObject, headers)
       .then((response) => processResult(response))
       .catch((error) => processError(error))
   }
@@ -222,11 +228,11 @@ const WeaponModal = (props: Props) => {
     return (
       <section>
         <h3>{t('modals.weapon.subtitles.weapon_keys')}</h3>
-        {[2, 3, 17, 22].includes(props.gridWeapon.object.series) ? (
+        {[2, 3, 17, 22].includes(gridWeapon.object.series) ? (
           <WeaponKeySelect
             open={weaponKey1Open}
             currentValue={weaponKey1 != null ? weaponKey1 : undefined}
-            series={props.gridWeapon.object.series}
+            series={gridWeapon.object.series}
             slot={0}
             onOpenChange={() => openSelect(1)}
             onChange={receiveWeaponKey}
@@ -236,11 +242,11 @@ const WeaponModal = (props: Props) => {
           ''
         )}
 
-        {[2, 3, 17].includes(props.gridWeapon.object.series) ? (
+        {[2, 3, 17].includes(gridWeapon.object.series) ? (
           <WeaponKeySelect
             open={weaponKey2Open}
             currentValue={weaponKey2 != null ? weaponKey2 : undefined}
-            series={props.gridWeapon.object.series}
+            series={gridWeapon.object.series}
             slot={1}
             onOpenChange={() => openSelect(2)}
             onChange={receiveWeaponKey}
@@ -250,11 +256,11 @@ const WeaponModal = (props: Props) => {
           ''
         )}
 
-        {props.gridWeapon.object.series == 17 ? (
+        {gridWeapon.object.series == 17 ? (
           <WeaponKeySelect
             open={weaponKey3Open}
             currentValue={weaponKey3 != null ? weaponKey3 : undefined}
-            series={props.gridWeapon.object.series}
+            series={gridWeapon.object.series}
             slot={2}
             onOpenChange={() => openSelect(3)}
             onChange={receiveWeaponKey}
@@ -264,12 +270,11 @@ const WeaponModal = (props: Props) => {
           ''
         )}
 
-        {props.gridWeapon.object.series == 24 &&
-        props.gridWeapon.object.uncap.ulb ? (
+        {gridWeapon.object.series == 24 && gridWeapon.object.uncap.ulb ? (
           <WeaponKeySelect
             open={weaponKey4Open}
             currentValue={weaponKey1 != null ? weaponKey1 : undefined}
-            series={props.gridWeapon.object.series}
+            series={gridWeapon.object.series}
             slot={0}
             onOpenChange={() => openSelect(4)}
             onChange={receiveWeaponKey}
@@ -287,8 +292,8 @@ const WeaponModal = (props: Props) => {
       <section>
         <h3>{t('modals.weapon.subtitles.ax_skills')}</h3>
         <AXSelect
-          axType={props.gridWeapon.object.ax_type}
-          currentSkills={props.gridWeapon.ax}
+          axType={gridWeapon.object.ax_type}
+          currentSkills={gridWeapon.ax}
           onOpenChange={receiveAxOpen}
           sendValidity={receiveValidity}
           sendValues={receiveAxValues}
@@ -303,8 +308,8 @@ const WeaponModal = (props: Props) => {
         <h3>{t('modals.weapon.subtitles.awakening')}</h3>
         <AwakeningSelect
           object="weapon"
-          awakeningType={props.gridWeapon.awakening?.type}
-          awakeningLevel={props.gridWeapon.awakening?.level}
+          type={gridWeapon.awakening?.type}
+          level={gridWeapon.awakening?.level}
           onOpenChange={receiveAwakeningOpen}
           sendValidity={receiveValidity}
           sendValues={receiveAwakeningValues}
@@ -313,13 +318,14 @@ const WeaponModal = (props: Props) => {
     )
   }
 
-  function openChange(open: boolean) {
-    if (props.gridWeapon.object.ax || props.gridWeapon.object.awakening) {
+  function handleOpenChange(open: boolean) {
+    if (gridWeapon.object.ax || gridWeapon.object.awakening) {
       setFormValid(false)
     } else {
       setFormValid(true)
     }
     setOpen(open)
+    onOpenChange(open)
   }
 
   const anySelectOpen =
@@ -341,20 +347,25 @@ const WeaponModal = (props: Props) => {
 
   return (
     // TODO: Refactor into Dialog component
-    <Dialog open={open} onOpenChange={openChange}>
-      <DialogTrigger asChild>{props.children}</DialogTrigger>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
-        className="Weapon Dialog"
+        className="Weapon"
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={onEscapeKeyDown}
       >
         <div className="DialogHeader">
+          <img
+            alt={gridWeapon.object.name[locale]}
+            className="DialogImage"
+            src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-square/${gridWeapon.object.granblue_id}.jpg`}
+          />
           <div className="DialogTop">
             <DialogTitle className="SubTitle">
               {t('modals.weapon.title')}
             </DialogTitle>
             <DialogTitle className="DialogTitle">
-              {props.gridWeapon.object.name[locale]}
+              {gridWeapon.object.name[locale]}
             </DialogTitle>
           </div>
           <DialogClose className="DialogClose" asChild>
@@ -365,12 +376,12 @@ const WeaponModal = (props: Props) => {
         </div>
 
         <div className="mods">
-          {props.gridWeapon.object.element == 0 ? elementSelect() : ''}
-          {[2, 3, 17, 24].includes(props.gridWeapon.object.series)
-            ? keySelect()
-            : ''}
-          {props.gridWeapon.object.ax ? axSelect() : ''}
-          {props.gridWeapon.awakening ? awakeningSelect() : ''}
+          {gridWeapon.object.element == 0 ? elementSelect() : ''}
+          {[2, 3, 17, 24].includes(gridWeapon.object.series) ? keySelect() : ''}
+          {gridWeapon.object.ax ? axSelect() : ''}
+          {gridWeapon.awakening ? awakeningSelect() : ''}
+        </div>
+        <div className="DialogFooter">
           <Button
             contained={true}
             onClick={updateWeapon}

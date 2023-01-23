@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import { useTheme } from 'next-themes'
 
 import {
   Dialog,
   DialogClose,
-  DialogContent,
   DialogTitle,
   DialogTrigger,
 } from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 import Button from '~components/Button'
 import SelectItem from '~components/SelectItem'
 import PictureSelectItem from '~components/PictureSelectItem'
@@ -23,7 +24,6 @@ import { pictureData } from '~utils/pictureData'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
-import { useTheme } from 'next-themes'
 
 type StateVariables = {
   [key: string]: boolean
@@ -285,7 +285,7 @@ const AccountModal = (props: Props) => {
         </li>
       </DialogTrigger>
       <DialogContent
-        className="Account Dialog"
+        className="Account"
         onOpenAutoFocus={(event: Event) => {}}
         onEscapeKeyDown={onEscapeKeyDown}
       >
@@ -304,14 +304,18 @@ const AccountModal = (props: Props) => {
         </div>
 
         <form onSubmit={update}>
-          {pictureField()}
-          {genderField()}
-          {languageField()}
-          {themeField()}
-          <Button
-            contained={true}
-            text={t('modals.settings.buttons.confirm')}
-          />
+          <div className="Fields">
+            {pictureField()}
+            {genderField()}
+            {languageField()}
+            {themeField()}
+          </div>
+          <div className="DialogFooter">
+            <Button
+              contained={true}
+              text={t('modals.settings.buttons.confirm')}
+            />
+          </div>
         </form>
       </DialogContent>
     </Dialog>

@@ -8,7 +8,7 @@ import SelectItem from '~components/SelectItem'
 import SelectGroup from '~components/SelectGroup'
 
 import { appState } from '~utils/appState'
-import { jobGroups } from '~utils/jobGroups'
+import { jobGroups } from '~data/jobGroups'
 
 import './index.scss'
 

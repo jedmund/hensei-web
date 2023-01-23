@@ -7,18 +7,18 @@ import { useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
+import Alert from '~components/Alert'
 import WeaponUnit from '~components/WeaponUnit'
 import ExtraWeapons from '~components/ExtraWeapons'
+import WeaponConflictModal from '~components/WeaponConflictModal'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
+import { accountState } from '~utils/accountState'
 
 import type { DetailsObject, SearchableObject } from '~types'
 
 import './index.scss'
-import WeaponConflictModal from '~components/WeaponConflictModal'
-import Alert from '~components/Alert'
-import { accountState } from '~utils/accountState'
 
 // Props
 interface Props {
@@ -198,6 +198,21 @@ const WeaponGrid = (props: Props) => {
     setIncoming(undefined)
   }
 
+  async function removeWeapon(id: string) {
+    try {
+      const response = await api.endpoints.grid_weapons.destroy({ id: id })
+      const data = response.data
+
+      if (data.position === -1) {
+        appState.grid.weapons.mainWeapon = undefined
+      } else {
+        appState.grid.weapons.allWeapons[response.data.position] = undefined
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   // Methods: Updating uncap level
   // Note: Saves, but debouncing is not working properly
   async function saveUncap(id: string, position: number, uncapLevel: number) {
@@ -254,7 +269,7 @@ const WeaponGrid = (props: Props) => {
   )
 
   const updateUncapLevel = (position: number, uncapLevel: number) => {
-    console.log(`Updating uncap level at position ${position} to ${uncapLevel}`)
+    // console.log(`Updating uncap level at position ${position} to ${uncapLevel}`)
     if (appState.grid.weapons.mainWeapon && position == -1)
       appState.grid.weapons.mainWeapon.uncap_level = uncapLevel
     else {
@@ -292,6 +307,7 @@ const WeaponGrid = (props: Props) => {
       key="grid_mainhand"
       position={-1}
       unitType={0}
+      removeWeapon={removeWeapon}
       updateObject={receiveWeaponFromSearch}
       updateUncap={initiateUncapUpdate}
     />
@@ -305,6 +321,7 @@ const WeaponGrid = (props: Props) => {
           editable={party.editable}
           position={i}
           unitType={1}
+          removeWeapon={removeWeapon}
           updateObject={receiveWeaponFromSearch}
           updateUncap={initiateUncapUpdate}
         />

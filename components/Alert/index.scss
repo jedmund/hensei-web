@@ -7,46 +7,31 @@
   width: 100vw;
   top: 0;
   left: 0;
-  z-index: 21;
+  z-index: 31;
 }
 
 .Alert {
-  background: $grey-100;
+  background: var(--dialog-bg);
   border-radius: $unit;
   display: flex;
   flex-direction: column;
-  gap: $unit;
-  min-width: $unit * 20;
-  max-width: $unit * 40;
+  gap: $unit-2x;
+  min-width: 20vw;
+  max-width: 30vw;
   padding: $unit * 4;
 
   .description {
     font-size: $font-regular;
-    line-height: 1.26;
+    line-height: 1.4;
+
+    strong {
+      font-weight: $bold;
+    }
   }
 
   .buttons {
+    display: flex;
     align-self: flex-end;
-  }
-
-  .Button {
-    font-size: $font-regular;
-    padding: ($unit * 1.5) ($unit * 2);
-    margin-top: $unit * 2;
-
-    &.btn-disabled {
-      background: $grey-90;
-      color: $grey-70;
-      cursor: not-allowed;
-    }
-
-    &:not(.btn-disabled) {
-      background: $grey-90;
-      color: $grey-50;
-
-      &:hover {
-        background: $grey-80;
-      }
-    }
+    gap: $unit;
   }
 }

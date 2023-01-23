@@ -1,4 +1,4 @@
-import { elements, allElement } from '~utils/Element'
+import { elements, allElement } from '~data/elements'
 
 export default (query: { [index: string]: string }, raids: Raid[]) => {
   // Extract recency filter

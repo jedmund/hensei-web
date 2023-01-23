@@ -7,7 +7,7 @@ import * as HoverCard from '@radix-ui/react-hover-card'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
 
-import { axData } from '~utils/axData'
+import ax from '~data/ax'
 
 import './index.scss'
 
@@ -80,7 +80,7 @@ const WeaponHovercard = (props: Props) => {
   }
 
   const createPrimaryAxSkillString = () => {
-    const primaryAxSkills = axData[props.gridWeapon.object.ax_type - 1]
+    const primaryAxSkills = ax[props.gridWeapon.object.ax_type - 1]
 
     if (props.gridWeapon.ax) {
       const simpleAxSkill = props.gridWeapon.ax[0]
@@ -97,7 +97,7 @@ const WeaponHovercard = (props: Props) => {
   }
 
   const createSecondaryAxSkillString = () => {
-    const primaryAxSkills = axData[props.gridWeapon.object.ax_type - 1]
+    const primaryAxSkills = ax[props.gridWeapon.object.ax_type - 1]
 
     if (props.gridWeapon.ax) {
       const primarySimpleAxSkill = props.gridWeapon.ax[0]
