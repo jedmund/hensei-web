@@ -3,14 +3,11 @@
   flex-direction: column;
   gap: $unit-half;
   display: flex;
-  width: 80px;
-  height: 80px;
+  width: $unit-10x;
+  height: $unit-10x;
   padding: $unit;
   justify-content: center;
-  // position: absolute;
   z-index: 32;
-  // top: -32px;
-  // right: -40px;
 
   &.open {
     opacity: 1;
