@@ -91,7 +91,12 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
           .sort((a, b) => a.order - b.order)
           .map((item, i) => {
             return (
-              <SelectItem key={i} value={item.id}>
+              <SelectItem
+                key={i}
+                value={item.id}
+                altText={item.name[locale]}
+                iconSrc={`/images/job-icons/${item.granblue_id}.png`}
+              >
                 {item.name[locale]}
               </SelectItem>
             )
@@ -109,6 +114,10 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
     return (
       <Select
         value={currentJob ? currentJob.id : 'no-job'}
+        altText={currentJob ? currentJob.name[locale] : ''}
+        iconSrc={
+          currentJob ? `/images/job-icons/${currentJob.granblue_id}.png` : ''
+        }
         open={open}
         onClick={openJobSelect}
         onOpenChange={() => setOpen(!open)}

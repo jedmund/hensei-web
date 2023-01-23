@@ -14,6 +14,8 @@ interface Props
     React.SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
   > {
+  altText?: string
+  iconSrc?: string
   open: boolean
   trigger?: React.ReactNode
   children?: React.ReactNode
@@ -79,6 +81,7 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
         placeholder={props.placeholder}
         ref={forwardedRef}
       >
+        {props.iconSrc ? <img alt={props.altText} src={props.iconSrc} /> : ''}
         <RadixSelect.Value placeholder={props.placeholder} />
         {!props.disabled ? (
           <RadixSelect.Icon className="SelectIcon">
