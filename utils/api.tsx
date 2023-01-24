@@ -115,6 +115,11 @@ class Api {
     return axios.get(resourceUrl, params)
   }
 
+  jobAccessoriesForJob(jobId: string, params?: {}) {
+    const resourceUrl = `${this.url}/jobs/${jobId}/accessories`
+    return axios.get(resourceUrl, params)
+  }
+
   savedTeams(params: {}) {
     const resourceUrl = `${this.url}/parties/favorites`
     return axios.get(resourceUrl, params)
