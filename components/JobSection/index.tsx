@@ -19,9 +19,11 @@ import './index.scss'
 interface Props {
   job?: Job
   jobSkills: JobSkillObject
+  jobAccessory?: JobAccessory
   editable: boolean
   saveJob: (job?: Job) => void
   saveSkill: (skill: JobSkill, position: number) => void
+  saveAccessory: (accessory: JobAccessory) => void
 }
 
 const JobSection = (props: Props) => {
@@ -56,6 +58,7 @@ const JobSection = (props: Props) => {
       2: props.jobSkills[2],
       3: props.jobSkills[3],
     })
+    setCurrentAccessory(props.jobAccessory)
 
     if (selectRef.current && props.job) selectRef.current.value = props.job.id
   }, [props])
@@ -90,12 +93,11 @@ const JobSection = (props: Props) => {
 
   function handleAccessorySelected(value: string) {
     const accessory = accessories.find((accessory) => accessory.id === value)
-    if (accessory) setCurrentAccessory(accessory)
+    if (accessory) {
+      setCurrentAccessory(accessory)
+      props.saveAccessory(accessory)
+    }
   }
-
-  useEffect(() => {
-    console.log(currentAccessory)
-  }, [currentAccessory])
 
   function generateImageUrl() {
     let imgSrc = ''

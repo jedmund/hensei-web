@@ -55,6 +55,7 @@ const CharacterGrid = (props: Props) => {
     2: undefined,
     3: undefined,
   })
+  const [jobAccessory, setJobAccessory] = useState<JobAccessory>()
   const [errorMessage, setErrorMessage] = useState('')
 
   // Create a temporary state to store previous weapon uncap values and transcendence stages
@@ -81,6 +82,7 @@ const CharacterGrid = (props: Props) => {
   useEffect(() => {
     setJob(appState.party.job)
     setJobSkills(appState.party.jobSkills)
+    setJobAccessory(appState.party.accessory)
   }, [appState])
 
   // Initialize an array of current uncap values for each characters
@@ -186,7 +188,7 @@ const CharacterGrid = (props: Props) => {
   }
 
   // Methods: Saving job and job skills
-  const saveJob = async function (job?: Job) {
+  async function saveJob(job?: Job) {
     const payload = {
       party: {
         job_id: job ? job.id : -1,
@@ -214,7 +216,7 @@ const CharacterGrid = (props: Props) => {
     }
   }
 
-  const saveJobSkill = function (skill: JobSkill, position: number) {
+  function saveJobSkill(skill: JobSkill, position: number) {
     if (party.id && appState.party.editable) {
       const positionedKey = `skill${position}_id`
 
@@ -252,6 +254,29 @@ const CharacterGrid = (props: Props) => {
         })
     }
   }
+
+  async function saveAccessory(accessory: JobAccessory) {
+    const payload = {
+      party: {
+        accessory_id: accessory.id,
+      },
+    }
+
+    if (appState.party.id) {
+      const response = await api.endpoints.parties.update(
+        appState.party.id,
+        payload
+      )
+      const team = response.data
+
+      setJobAccessory(team.accessory)
+      appState.party.accessory = team.accessory
+    }
+  }
+
+  useEffect(() => {
+    console.log(jobAccessory)
+  }, [jobAccessory])
 
   // Methods: Helpers
   function characterUncapLevel(character: Character) {
@@ -474,9 +499,11 @@ const CharacterGrid = (props: Props) => {
         <JobSection
           job={job}
           jobSkills={jobSkills}
+          jobAccessory={jobAccessory}
           editable={party.editable}
           saveJob={saveJob}
           saveSkill={saveJobSkill}
+          saveAccessory={saveAccessory}
         />
         <CharacterConflictModal
           open={modalOpen}

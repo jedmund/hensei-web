@@ -52,8 +52,8 @@ const JobAccessoryPopover = ({
   }, [modalOpen])
 
   // Event handlers
-  function handleAccessorySelected() {
-    onAccessorySelected
+  function handleAccessorySelected(value: string) {
+    onAccessorySelected(value)
     closePopover()
   }
 
