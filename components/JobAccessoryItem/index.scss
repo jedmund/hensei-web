@@ -1,0 +1,48 @@
+.JobAccessoryItem {
+  background: none;
+  border-radius: $input-corner;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+  padding: $unit;
+  margin: 0;
+  width: 100%;
+
+  &[data-state='checked'] {
+    background: var(--input-bg-hover);
+
+    h4 {
+      color: var(--button-text-hover);
+    }
+  }
+
+  &:hover {
+    cursor: pointer;
+    background: var(--input-bg-hover);
+
+    img {
+      transform: scale(1.025);
+    }
+
+    h4 {
+      color: var(--button-text-hover);
+    }
+  }
+
+  h4 {
+    color: var(--button-text);
+    font-size: $font-small;
+    text-align: center;
+    width: 100%;
+  }
+
+  img {
+    border-radius: $item-corner;
+    width: 100%;
+    height: auto;
+    position: relative;
+    transition: $duration-zoom all ease-in-out;
+    z-index: 2;
+  }
+}

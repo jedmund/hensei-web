@@ -1,0 +1,10 @@
+.JobAccessory.Popover {
+  padding: $unit-2x;
+  width: 504px;
+
+  .Accessories {
+    display: grid;
+    gap: $unit;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+}

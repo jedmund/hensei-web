@@ -2,25 +2,41 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
+import { ACCESSORY_JOB_IDS } from '~utils/jobsWithAccessories'
+
 import Button from '~components/Button'
+import JobAccessoryPopover from '~components/JobAccessoryPopover'
+
 import ShieldIcon from '~public/icons/Shield.svg'
 import './index.scss'
 
 interface Props {
   job?: Job
+  currentAccessory?: JobAccessory
+  accessories?: JobAccessory[]
+  editable: boolean
   user?: User
-  onAccessoryButtonClicked: () => void
+  onAccessorySelected: (value: string) => void
 }
 
-const ACCESSORY_JOB_IDS = ['683ffee8-4ea2-432d-bc30-4865020ac9f4']
-
-const JobImage = ({ job, user, onAccessoryButtonClicked }: Props) => {
+const JobImage = ({
+  job,
+  currentAccessory,
+  editable,
+  accessories,
+  user,
+  onAccessorySelected,
+}: Props) => {
   // Localization
-  const { t } = useTranslation('common')
-
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+
+  // Component state
+  const [open, setOpen] = useState(false)
+
+  // Refs
+  const buttonRef = React.createRef<HTMLButtonElement>()
 
   // Static variables
   const imageUrl = () => {
@@ -38,20 +54,47 @@ const JobImage = ({ job, user, onAccessoryButtonClicked }: Props) => {
   const hasAccessory = job && ACCESSORY_JOB_IDS.includes(job.id)
   const image = <img alt={job?.name[locale]} src={imageUrl()} />
 
+  function handleAccessoryButtonClicked() {
+    setOpen(!open)
+  }
+
+  function handlePopoverOpenChanged(open: boolean) {
+    setOpen(open)
+  }
+
   // Elements
   const accessoryButton = () => {
     return (
       <Button
         accessoryIcon={<ShieldIcon />}
         className="JobAccessory"
-        onClick={onAccessoryButtonClicked}
+        onClick={handleAccessoryButtonClicked}
+        ref={buttonRef}
       />
     )
   }
 
+  const accessoryPopover = () => {
+    return job && accessories ? (
+      <JobAccessoryPopover
+        buttonref={buttonRef}
+        currentAccessory={currentAccessory}
+        accessories={accessories}
+        editable={editable}
+        open={open}
+        job={job}
+        onAccessorySelected={onAccessorySelected}
+        onOpenChange={handlePopoverOpenChanged}
+      >
+        {accessoryButton()}
+      </JobAccessoryPopover>
+    ) : (
+      ''
+    )
+  }
   return (
     <div className="JobImage">
-      {hasAccessory ? accessoryButton() : ''}
+      {hasAccessory ? accessoryPopover() : ''}
       {job && job.id !== '-1' ? image : ''}
       <div className="Job Overlay" />
     </div>

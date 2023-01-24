@@ -8,7 +8,9 @@ import JobImage from '~components/JobImage'
 import JobSkillItem from '~components/JobSkillItem'
 import SearchModal from '~components/SearchModal'
 
+import api from '~utils/api'
 import { appState } from '~utils/appState'
+import { ACCESSORY_JOB_IDS } from '~utils/jobsWithAccessories'
 import type { JobSkillObject, SearchableObject } from '~types'
 
 import './index.scss'
@@ -30,13 +32,19 @@ const JobSection = (props: Props) => {
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
+  // Data state
   const [job, setJob] = useState<Job>()
   const [imageUrl, setImageUrl] = useState('')
   const [numSkills, setNumSkills] = useState(4)
   const [skills, setSkills] = useState<{ [key: number]: JobSkill | undefined }>(
     []
   )
+  const [accessories, setAccessories] = useState<JobAccessory[]>([])
+  const [currentAccessory, setCurrentAccessory] = useState<
+    JobAccessory | undefined
+  >()
 
+  // Refs
   const selectRef = React.createRef<HTMLSelectElement>()
 
   useEffect(() => {
@@ -62,13 +70,32 @@ const JobSection = (props: Props) => {
         appState.party.job = job
       if (job.row === '1') setNumSkills(3)
       else setNumSkills(4)
+      fetchJobAccessories()
     }
   }, [job])
+
+  // Data fetching
+  async function fetchJobAccessories() {
+    if (job && ACCESSORY_JOB_IDS.includes(job.id)) {
+      const response = await api.jobAccessoriesForJob(job.id)
+      const jobAccessories: JobAccessory[] = response.data
+      setAccessories(jobAccessories)
+    }
+  }
 
   function receiveJob(job?: Job) {
     setJob(job)
     props.saveJob(job)
   }
+
+  function handleAccessorySelected(value: string) {
+    const accessory = accessories.find((accessory) => accessory.id === value)
+    if (accessory) setCurrentAccessory(accessory)
+  }
+
+  useEffect(() => {
+    console.log(currentAccessory)
+  }, [currentAccessory])
 
   function generateImageUrl() {
     let imgSrc = ''
@@ -133,8 +160,11 @@ const JobSection = (props: Props) => {
     <section id="Job">
       <JobImage
         job={party.job}
+        currentAccessory={currentAccessory}
+        accessories={accessories}
+        editable={props.editable}
         user={party.user}
-        onAccessoryButtonClicked={() => {}}
+        onAccessorySelected={handleAccessorySelected}
       />
       <div className="JobDetails">
         {props.editable ? (
