@@ -4,6 +4,7 @@ import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 
 import JobDropdown from '~components/JobDropdown'
+import JobImage from '~components/JobImage'
 import JobSkillItem from '~components/JobSkillItem'
 import SearchModal from '~components/SearchModal'
 
@@ -130,14 +131,11 @@ const JobSection = (props: Props) => {
   // Render: JSX components
   return (
     <section id="Job">
-      <div className="JobImage">
-        {party.job && party.job.id !== '-1' ? (
-          <img alt={party.job.name[locale]} src={imageUrl} />
-        ) : (
-          ''
-        )}
-        <div className="Job Overlay" />
-      </div>
+      <JobImage
+        job={party.job}
+        user={party.user}
+        onAccessoryButtonClicked={() => {}}
+      />
       <div className="JobDetails">
         {props.editable ? (
           <JobDropdown
