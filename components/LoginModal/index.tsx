@@ -133,7 +133,9 @@ const LoginModal = () => {
       token: resp.access_token,
     }
 
-    setCookie('account', cookieObj, { path: '/' })
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+    setCookie('account', cookieObj, { path: '/', expires: expiresAt })
 
     // Set Axios default headers
     setUserToken()
@@ -144,6 +146,9 @@ const LoginModal = () => {
     const user = response.data
 
     // Set user data in the user cookie
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
     setCookie(
       'user',
       {
@@ -153,7 +158,7 @@ const LoginModal = () => {
         gender: user.gender,
         theme: user.theme,
       },
-      { path: '/' }
+      { path: '/', expires: expiresAt }
     )
 
     // Set the user data in the account state

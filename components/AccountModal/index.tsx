@@ -156,7 +156,9 @@ const AccountModal = (props: Props) => {
             theme: user.theme,
           }
 
-          setCookie('user', cookieObj, { path: '/' })
+          const expiresAt = new Date()
+          expiresAt.setDate(expiresAt.getDate() + 60)
+          setCookie('user', cookieObj, { path: '/', expires: expiresAt })
 
           accountState.account.user = {
             id: user.id,

@@ -65,7 +65,11 @@ const HeaderMenu = (props: Props) => {
 
   function handleCheckedChange(value: boolean) {
     const language = value ? 'ja' : 'en'
-    setCookie('NEXT_LOCALE', language, { path: '/' })
+
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
+    setCookie('NEXT_LOCALE', language, { path: '/', expires: expiresAt })
     router.push(router.asPath, undefined, { locale: language })
   }
 
