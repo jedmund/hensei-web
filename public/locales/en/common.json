@@ -2,7 +2,7 @@
   "about": {
     "segmented_control": {
       "about": "About",
-      "changelog": "Updates",
+      "updates": "Updates",
       "roadmap": "Roadmap"
     }
   },

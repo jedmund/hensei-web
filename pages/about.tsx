@@ -11,7 +11,7 @@ import { AboutTabs } from '~utils/enums'
 import setUserToken from '~utils/setUserToken'
 
 import AboutPage from '~components/AboutPage'
-import ChangelogPage from '~components/ChangelogPage'
+import UpdatesPage from '~components/UpdatesPage'
 import RoadmapPage from '~components/RoadmapPage'
 import SegmentedControl from '~components/SegmentedControl'
 import Segment from '~components/Segment'
@@ -42,9 +42,9 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
         // router.replace(path)
         setCurrentTab(AboutTabs.About)
         break
-      case 'changelog':
+      case 'updates':
         // router.replace(path)
-        setCurrentTab(AboutTabs.Changelog)
+        setCurrentTab(AboutTabs.Updates)
         break
       case 'roadmap':
         // router.replace(path)
@@ -59,8 +59,8 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
     switch (currentTab) {
       case AboutTabs.About:
         return <AboutPage />
-      case AboutTabs.Changelog:
-        return <ChangelogPage />
+      case AboutTabs.Updates:
+        return <UpdatesPage />
       case AboutTabs.Roadmap:
         return <RoadmapPage />
     }
@@ -105,11 +105,11 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
           </Segment>
           <Segment
             groupName="about"
-            name="changelog"
-            selected={currentTab == AboutTabs.Changelog}
+            name="updates"
+            selected={currentTab == AboutTabs.Updates}
             onClick={handleTabClicked}
           >
-            {t('about.segmented_control.changelog')}
+            {t('about.segmented_control.updates')}
           </Segment>
           <Segment
             groupName="about"

@@ -9,11 +9,11 @@ import './index.scss'
 
 interface Props {}
 
-const ChangelogPage: React.FC<Props> = (props: Props) => {
+const UpdatesPage: React.FC<Props> = (props: Props) => {
   const { t: common } = useTranslation('common')
   return (
-    <div className="Changelog PageContent">
-      <h1>{common('about.segmented_control.changelog')}</h1>
+    <div className="Updates PageContent">
+      <h1>{common('about.segmented_control.updates')}</h1>
       <section className="version" data-version="1.0">
         <div className="top">
           <h3>1.0.1</h3>
@@ -119,4 +119,4 @@ const ChangelogPage: React.FC<Props> = (props: Props) => {
   )
 }
 
-export default ChangelogPage
+export default UpdatesPage

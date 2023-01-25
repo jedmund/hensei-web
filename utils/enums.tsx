@@ -22,6 +22,6 @@ export enum TeamElement {
 
 export enum AboutTabs {
   About,
-  Changelog,
+  Updates,
   Roadmap,
 }
