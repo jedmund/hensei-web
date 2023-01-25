@@ -10,6 +10,7 @@ import { accountState } from '~utils/accountState'
 import setUserToken from '~utils/setUserToken'
 
 import '../styles/globals.scss'
+import { ToastProvider, Viewport } from '@radix-ui/react-toast'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const accountCookie = getCookie('account')
@@ -43,9 +44,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ThemeProvider>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <ToastProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+        <Viewport className="ToastViewport" />
+      </ToastProvider>
     </ThemeProvider>
   )
 }
