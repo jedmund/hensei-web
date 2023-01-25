@@ -1,0 +1,64 @@
+.Changelog.PageContent {
+  .version {
+    &.content {
+      .top h3 {
+        color: var(--accent-yellow);
+      }
+
+      .update {
+        display: flex;
+        flex-direction: column;
+        gap: $unit-2x;
+      }
+
+      .characters,
+      .weapons,
+      .summons {
+        display: grid;
+        grid-template-rows: 1fr auto;
+        gap: $unit;
+
+        & > h4 {
+          font-weight: $medium;
+          font-size: $font-regular;
+        }
+      }
+
+      .items {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: $unit-4x;
+      }
+    }
+
+    .top {
+      align-items: baseline;
+      display: flex;
+      gap: $unit-half;
+      margin-bottom: $unit-2x;
+
+      h3 {
+        color: var(--accent-blue);
+        font-weight: $medium;
+        font-size: $font-large;
+      }
+
+      time {
+        color: var(--text-secondary);
+        font-size: $font-small;
+        font-weight: $medium;
+      }
+    }
+  }
+
+  .notes {
+    color: var(--text-primary);
+    list-style-type: disc;
+    list-style-position: inside;
+
+    li {
+      margin-bottom: $unit-half;
+      font-size: $font-regular;
+    }
+  }
+}

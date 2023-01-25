@@ -19,3 +19,9 @@ export enum TeamElement {
   Dark,
   Light,
 }
+
+export enum AboutTabs {
+  About,
+  Changelog,
+  Roadmap,
+}
