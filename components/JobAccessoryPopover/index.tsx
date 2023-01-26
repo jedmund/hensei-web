@@ -13,6 +13,7 @@ import {
 import JobAccessoryItem from '~components/JobAccessoryItem'
 
 import './index.scss'
+import classNames from 'classnames'
 
 interface Props {
   buttonref: React.RefObject<HTMLButtonElement>
@@ -46,6 +47,11 @@ const JobAccessoryPopover = ({
   // Component state
   const [open, setOpen] = useState(false)
 
+  const classes = classNames({
+    JobAccessory: true,
+    ReadOnly: !editable,
+  })
+
   // Hooks
   useEffect(() => {
     setOpen(modalOpen)
@@ -73,37 +79,62 @@ const JobAccessoryPopover = ({
   function closePopover() {
     onOpenChange(false)
   }
+
+  function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+  }
+
   const radioGroup = (
-    <RadioGroup.Root
-      className="Accessories"
-      onValueChange={handleAccessorySelected}
-    >
-      {accessories.map((accessory) => (
-        <JobAccessoryItem
-          accessory={accessory}
-          key={accessory.id}
-          selected={
-            currentAccessory && currentAccessory.id === accessory.id
-              ? true
-              : false
-          }
-        />
-      ))}
-    </RadioGroup.Root>
+    <>
+      <h3>
+        {capitalizeFirstLetter(
+          job.accessory_type === 1
+            ? `${t('accessories.paladin')}s`
+            : t('accessories.manadiver')
+        )}
+      </h3>
+      <RadioGroup.Root
+        className="Accessories"
+        onValueChange={handleAccessorySelected}
+      >
+        {accessories.map((accessory) => (
+          <JobAccessoryItem
+            accessory={accessory}
+            key={accessory.id}
+            selected={
+              currentAccessory && currentAccessory.id === accessory.id
+                ? true
+                : false
+            }
+          />
+        ))}
+      </RadioGroup.Root>
+    </>
   )
 
   const readOnly = currentAccessory ? (
-    <div className="JobAccessory">
-      <img
-        alt={currentAccessory.name[locale]}
-        src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/accessory-grid/${currentAccessory.granblue_id}.jpg`}
-      />
-      <h4>{currentAccessory.name[locale]}</h4>
+    <div className="EquippedAccessory">
+      <h3>
+        {t('equipped')}{' '}
+        {job.accessory_type === 1
+          ? `${t('accessories.paladin')}s`
+          : t('accessories.manadiver')}
+      </h3>
+      <div className="Accessory">
+        <img
+          alt={currentAccessory.name[locale]}
+          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/accessory-grid/${currentAccessory.granblue_id}.jpg`}
+        />
+        <h4>{currentAccessory.name[locale]}</h4>
+      </div>
     </div>
   ) : (
     <h3>
-      No shield selected
-      {/* {t('no_accessory', { job: job.name.en.replace(' ', '-').toLowerCase() })} */}
+      {t('no_accessory', {
+        accessory: t(
+          `accessories.${job.accessory_type === 1 ? 'paladin' : 'manadiver'}`
+        ),
+      })}
     </h3>
   )
 
@@ -111,7 +142,7 @@ const JobAccessoryPopover = ({
     <Popover open={open}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
-        className="JobAccessory"
+        className={classes}
         onEscapeKeyDown={closePopover}
         onPointerDownOutside={handlePointerDownOutside}
       >
