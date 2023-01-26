@@ -4,6 +4,14 @@
       "title": "Roadmap"
     }
   },
+  "toasts": {
+    "title": "New update",
+    "description": {
+      "content": "New items have been added from the latest Granblue Fantasy update.",
+      "feature": "Now you can remix other people's teams, add Character rings and earrings, set Shields and Manatura on parties, and more!"
+    },
+    "button": "Learn more"
+  },
   "title": "Roadmap",
   "subtitle": "Next update",
   "blurb": "I'm aiming for this update to release between late-January and early-February. I'm losing a week to top 2k in Guild Wars and after that I'm back at my full-time job, so progress will be a bit slower.",

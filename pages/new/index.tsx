@@ -6,6 +6,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Party from '~components/Party'
 
 import api from '~utils/api'
+import fetchLatestVersion from '~utils/fetchLatestVersion'
 import organizeRaids from '~utils/organizeRaids'
 import setUserToken from '~utils/setUserToken'
 import { appState } from '~utils/appState'
@@ -21,6 +22,7 @@ interface Props {
   raids: Raid[]
   sortedRaids: Raid[][]
   weaponKeys: GroupedWeaponKeys
+  version: AppUpdate
 }
 
 const NewRoute: React.FC<Props> = (props: Props) => {
@@ -41,6 +43,7 @@ const NewRoute: React.FC<Props> = (props: Props) => {
     appState.jobs = props.jobs
     appState.jobSkills = props.jobSkills
     appState.weaponKeys = props.weaponKeys
+    appState.version = props.version
   }
 
   return (
@@ -84,6 +87,10 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   setUserToken(req, res)
 
   try {
+    // Fetch latest version
+    const version = await fetchLatestVersion()
+
+    // Fetch and organize raids
     let { raids, sortedRaids } = await api.endpoints.raids
       .getAll()
       .then((response) => organizeRaids(response.data))
@@ -105,6 +112,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
         raids: raids,
         sortedRaids: sortedRaids,
         weaponKeys: weaponKeys,
+        version: version,
         ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
         // Will be passed to the page component as props
       },

@@ -79,6 +79,7 @@ interface AppState {
   jobs: Job[]
   jobSkills: JobSkill[]
   weaponKeys: GroupedWeaponKeys
+  version: AppUpdate
 }
 
 export const initialAppState: AppState = {
@@ -139,6 +140,11 @@ export const initialAppState: AppState = {
     teluma: [],
     gauph: [],
     emblem: [],
+  },
+  version: {
+    version: '0.0',
+    update_type: '',
+    updated_at: '',
   },
 }
 

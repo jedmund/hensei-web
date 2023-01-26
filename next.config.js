@@ -28,6 +28,14 @@ module.exports = {
         destination: '/new',
       },
       {
+        source: '/updates',
+        destination: '/about',
+      },
+      {
+        source: '/roadmap',
+        destination: '/about',
+      },
+      {
         source: '/p/:shortcode/characters',
         destination: '/p/:shortcode',
       },

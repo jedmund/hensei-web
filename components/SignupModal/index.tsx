@@ -91,7 +91,9 @@ const SignupModal = (props: Props) => {
       token: resp.token,
     }
 
-    setCookie('account', cookieObj, { path: '/' })
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+    setCookie('account', cookieObj, { path: '/', expires: expiresAt })
 
     // Set Axios default headers
     setUserToken()
@@ -106,6 +108,9 @@ const SignupModal = (props: Props) => {
     const user = response.data
 
     // Set user data in the user cookie
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
     setCookie(
       'user',
       {
@@ -115,7 +120,7 @@ const SignupModal = (props: Props) => {
         gender: user.gender,
         theme: user.theme,
       },
-      { path: '/' }
+      { path: '/', expires: expiresAt }
     )
 
     // Set the user data in the account state

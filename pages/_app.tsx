@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
-import { getCookie, getCookies } from 'cookies-next'
+import { useEffect } from 'react'
+import { getCookie } from 'cookies-next'
 import { appWithTranslation } from 'next-i18next'
-import { ThemeProvider, useTheme } from 'next-themes'
+import { ThemeProvider } from 'next-themes'
 
 import type { AppProps } from 'next/app'
 import Layout from '~components/Layout'
@@ -10,6 +10,7 @@ import { accountState } from '~utils/accountState'
 import setUserToken from '~utils/setUserToken'
 
 import '../styles/globals.scss'
+import { ToastProvider, Viewport } from '@radix-ui/react-toast'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const accountCookie = getCookie('account')
@@ -43,9 +44,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ThemeProvider>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <ToastProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+        <Viewport className="ToastViewport" />
+      </ToastProvider>
     </ThemeProvider>
   )
 }

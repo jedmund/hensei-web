@@ -6,7 +6,10 @@ export default function changeLanguage(
   newLanguage: string
 ) {
   if (newLanguage !== router.locale) {
-    setCookie('NEXT_LOCALE', newLanguage, { path: '/' })
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
+    setCookie('NEXT_LOCALE', newLanguage, { path: '/', expires: expiresAt })
     router.push(router.asPath, undefined, { locale: newLanguage })
   }
 }
