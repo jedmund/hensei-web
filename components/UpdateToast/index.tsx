@@ -42,7 +42,7 @@ const UpdateToast = ({
   }
 
   function handleButtonClicked() {
-    window.open('/about', '_blank')
+    window.open('/updates', '_blank')
     setToastCookie()
     onActionClicked()
   }
