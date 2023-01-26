@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
-
-import { ACCESSORY_JOB_IDS } from '~utils/jobsWithAccessories'
 
 import Button from '~components/Button'
 import JobAccessoryPopover from '~components/JobAccessoryPopover'
 
 import ShieldIcon from '~public/icons/Shield.svg'
+import ManaturaIcon from '~public/icons/Manatura.svg'
+
 import './index.scss'
 
 interface Props {
@@ -51,7 +50,7 @@ const JobImage = ({
     return source
   }
 
-  const hasAccessory = job && ACCESSORY_JOB_IDS.includes(job.id)
+  const hasAccessory = job && job.accessory
   const image = <img alt={job?.name[locale]} src={imageUrl()} />
 
   function handleAccessoryButtonClicked() {
@@ -64,9 +63,14 @@ const JobImage = ({
 
   // Elements
   const accessoryButton = () => {
+    let icon
+
+    if (job && job.accessory_type === 1) icon = <ShieldIcon />
+    else if (job && job.accessory_type === 2) icon = <ManaturaIcon />
+
     return (
       <Button
-        accessoryIcon={<ShieldIcon />}
+        accessoryIcon={icon}
         className="JobAccessory"
         onClick={handleAccessoryButtonClicked}
         ref={buttonRef}
