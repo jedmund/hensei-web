@@ -346,6 +346,9 @@
   },
   "page": {
     "titles": {
+      "about": "granblue.teamについて",
+      "updates": "変更ログ / granblue.team",
+      "roadmap": "ロードマップ / granblue.team",
       "discover": "編成を見出す / granblue.team",
       "new": "新しい編成 / granblue.team",
       "profile": "@{{username}}さんの作った編成 / granblue.team",
@@ -353,6 +356,9 @@
       "saved": "保存した編成"
     },
     "descriptions": {
+      "about": "granblue.teamについて / グランブルーファンタジーの編成を探したり保存したりできる",
+      "updates": "granblue.teamの最新変更について",
+      "roadmap": "granblue.teamの開発予定機能",
       "discover": "グランブルーファンタジーの編成をマルチ、属性、作った時間などで探したり保存したりできる",
       "new": "グランブルーファンタジーの編成を作成し、騎空士とシェアできるサイトgranblue.team",
       "profile": "@{{username}}の編成を調査し、マルチ、属性、または作った時間でフィルターする",

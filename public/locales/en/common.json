@@ -345,6 +345,9 @@
   },
   "page": {
     "titles": {
+      "about": "About granblue.team",
+      "updates": "Updates / granblue.team",
+      "roadmap": "Roadmap / granblue.team",
       "discover": "Discover teams / granblue.team",
       "new": "Create a new team / granblue.team",
       "profile": "@{{username}}'s Teams / granblue.team",
@@ -352,6 +355,9 @@
       "saved": "Your saved teams / granblue.team"
     },
     "descriptions": {
+      "about": "More about granblue.team / Save and discover teams to use in Granblue Fantasy",
+      "updates": "Latest updates to granblue.team",
+      "roadmap": "Upcoming planned features for granblue.team",
       "discover": "Save and discover teams to use in Granblue Fantasy and search by raid, element or recency",
       "new": "Create and theorycraft teams to use in Granblue Fantasy and share with the community",
       "profile": "Browse @{{username}}'s Teams and filter by raid, element or recency",
