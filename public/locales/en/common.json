@@ -1,4 +1,11 @@
 {
+  "about": {
+    "segmented_control": {
+      "about": "About",
+      "updates": "Updates",
+      "roadmap": "Roadmap"
+    }
+  },
   "alert": {
     "incompatible_weapon": "You've selected a weapon that can't be added to the Additional Weapon slots."
   },

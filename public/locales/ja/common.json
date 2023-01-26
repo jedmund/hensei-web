@@ -1,4 +1,11 @@
 {
+  "about": {
+    "segmented_control": {
+      "about": "サイトについて",
+      "updates": "変更ログ",
+      "roadmap": "ロードマップ"
+    }
+  },
   "alert": {
     "incompatible_weapon": "Additional Weaponsに装備できない武器を入れました。"
   },

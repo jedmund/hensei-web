@@ -1,14 +1,66 @@
-import type { ReactElement } from 'react'
+import { PropsWithChildren, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { add, format } from 'date-fns'
+import { getCookie } from 'cookies-next'
+
+import { appState } from '~utils/appState'
+
 import TopHeader from '~components/Header'
+import UpdateToast from '~components/UpdateToast'
 
-interface Props {
-  children: ReactElement
-}
+import './index.scss'
 
-const Layout = ({ children }: Props) => {
+interface Props {}
+
+const Layout = ({ children }: PropsWithChildren<Props>) => {
+  const router = useRouter()
+  const [updateToastOpen, setUpdateToastOpen] = useState(false)
+
+  useEffect(() => {
+    const cookie = getToastCookie()
+    const now = new Date()
+    const updatedAt = new Date(appState.version.updated_at)
+    const validUntil = add(updatedAt, { days: 7 })
+
+    if (now < validUntil && !cookie.seen) setUpdateToastOpen(true)
+  }, [])
+
+  function getToastCookie() {
+    const updatedAt = new Date(appState.version.updated_at)
+    const cookieValues = getCookie(`update-${format(updatedAt, 'yyyy-MM-dd')}`)
+    return cookieValues
+      ? (JSON.parse(cookieValues as string) as { seen: true })
+      : { seen: false }
+  }
+
+  function handleToastActionClicked() {
+    setUpdateToastOpen(false)
+  }
+
+  function handleToastClosed() {
+    setUpdateToastOpen(false)
+  }
+
+  const updateToast = () => {
+    const path = router.asPath.replaceAll('/', '')
+
+    return !['about', 'updates', 'roadmap'].includes(path) ? (
+      <UpdateToast
+        open={updateToastOpen}
+        updateType="feature"
+        onActionClicked={handleToastActionClicked}
+        onCloseClicked={handleToastClosed}
+        lastUpdated={appState.version.updated_at}
+      />
+    ) : (
+      ''
+    )
+  }
+
   return (
     <>
       <TopHeader />
+      {updateToast()}
       <main>{children}</main>
     </>
   )

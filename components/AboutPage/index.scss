@@ -1,0 +1,11 @@
+.About.PageContent {
+  .Links {
+    display: grid;
+    gap: $unit;
+    margin: $unit-2x 0;
+  }
+
+  div.LinkItem {
+    margin-top: $unit-2x;
+  }
+}

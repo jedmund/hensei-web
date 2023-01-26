@@ -24,6 +24,7 @@
     "axios": "^0.25.0",
     "classnames": "^2.3.1",
     "cookies-next": "^2.1.1",
+    "date-fns": "^2.29.3",
     "fix-date": "^1.1.6",
     "i18next": "^21.6.13",
     "i18next-browser-languagedetector": "^6.1.3",

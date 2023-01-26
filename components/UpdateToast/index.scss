@@ -1,0 +1,11 @@
+.Notice {
+  align-items: center;
+  border-radius: $card-corner;
+  background: blue;
+  display: flex;
+  padding: $unit;
+
+  p {
+    font-size: $font-small;
+  }
+}
