@@ -26,6 +26,7 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
   const { t } = useTranslation('common')
 
   const [currentTab, setCurrentTab] = useState<AboutTabs>(AboutTabs.About)
+  const [currentPage, setCurrentPage] = useState('')
 
   useEffect(() => {
     const parts = router.asPath.split('/')
@@ -34,31 +35,38 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
     switch (tab) {
       case 'about':
         setCurrentTab(AboutTabs.About)
+        setCurrentPage(parts[1])
         break
       case 'updates':
         setCurrentTab(AboutTabs.Updates)
+        setCurrentPage(parts[1])
         break
       case 'roadmap':
         setCurrentTab(AboutTabs.Roadmap)
+        setCurrentPage(parts[1])
         break
     }
   }, [router.asPath])
 
   function handleTabClicked(event: React.ChangeEvent<HTMLInputElement>) {
+    const parts = router.asPath.split('/')
     const path = `/${event.target.value}`
 
     switch (event.target.value) {
       case 'about':
         router.replace(path)
         setCurrentTab(AboutTabs.About)
+        setCurrentPage(parts[1])
         break
       case 'updates':
         router.replace(path)
         setCurrentTab(AboutTabs.Updates)
+        setCurrentPage(parts[1])
         break
       case 'roadmap':
         router.replace(path)
         setCurrentTab(AboutTabs.Roadmap)
+        setCurrentPage(parts[1])
         break
       default:
         break
@@ -80,26 +88,32 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
     <div id="About">
       <Head>
         {/* HTML */}
-        <title>{t('page.titles.about')}</title>
-        <meta name="description" content={t('page.descriptions.about')} />
+        <title>{t(`page.titles.${currentPage}`)}</title>
+        <meta
+          name="description"
+          content={t(`page.descriptions.${currentPage}`)}
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         {/* OpenGraph */}
-        <meta property="og:title" content={t('page.titles.about')} />
+        <meta property="og:title" content={t(`page.titles.${currentPage}`)} />
         <meta
           property="og:description"
           content={t('page.descriptions.about')}
         />
-        <meta property="og:url" content="https://app.granblue.team/about" />
+        <meta
+          property="og:url"
+          content={`https://app.granblue.team/${currentPage}`}
+        />
         <meta property="og:type" content="website" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="app.granblue.team" />
-        <meta name="twitter:title" content={t('page.titles.about')} />
+        <meta name="twitter:title" content={t(`page.titles.${currentPage}`)} />
         <meta
           name="twitter:description"
-          content={t('page.descriptions.about')}
+          content={t(`page.descriptions.${currentPage}`)}
         />
       </Head>
 
