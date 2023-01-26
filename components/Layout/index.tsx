@@ -26,11 +26,17 @@ const Layout = ({ children }: PropsWithChildren<Props>) => {
   }, [])
 
   function getToastCookie() {
-    const updatedAt = new Date(appState.version.updated_at)
-    const cookieValues = getCookie(`update-${format(updatedAt, 'yyyy-MM-dd')}`)
-    return cookieValues
-      ? (JSON.parse(cookieValues as string) as { seen: true })
-      : { seen: false }
+    if (appState.version.updated_at !== '') {
+      const updatedAt = new Date(appState.version.updated_at)
+      const cookieValues = getCookie(
+        `update-${format(updatedAt, 'yyyy-MM-dd')}`
+      )
+      return cookieValues
+        ? (JSON.parse(cookieValues as string) as { seen: true })
+        : { seen: false }
+    } else {
+      return { seen: false }
+    }
   }
 
   function handleToastActionClicked() {
