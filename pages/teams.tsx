@@ -12,8 +12,10 @@ import clonedeep from 'lodash.clonedeep'
 import api from '~utils/api'
 import setUserToken from '~utils/setUserToken'
 import extractFilters from '~utils/extractFilters'
+import fetchLatestVersion from '~utils/fetchLatestVersion'
 import organizeRaids from '~utils/organizeRaids'
 import useDidMountEffect from '~utils/useDidMountEffect'
+import { appState } from '~utils/appState'
 import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
 import { printError } from '~utils/reportError'
@@ -29,6 +31,7 @@ interface Props {
   teams?: Party[]
   meta: PaginationObject
   sortedRaids: Raid[][]
+  version: AppUpdate
 }
 
 const TeamsRoute: React.FC<Props> = (props: Props) => {
@@ -97,6 +100,7 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
       setTotalPages(props.meta.totalPages)
       setRecordCount(props.meta.count)
       replaceResults(props.meta.count, props.teams)
+      appState.version = props.version
     }
     setCurrentPage(1)
   }, [])
@@ -364,8 +368,11 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set headers for server-side requests
   setUserToken(req, res)
 
-  // Fetch and organize raids
   try {
+    // Fetch latest version
+    const version = await fetchLatestVersion()
+
+    // Fetch and organize raids
     let { raids, sortedRaids } = await api.endpoints.raids
       .getAll()
       .then((response) => organizeRaids(response.data))
@@ -395,6 +402,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
         meta: meta,
         raids: raids,
         sortedRaids: sortedRaids,
+        version: version,
         ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
         // Will be passed to the page component as props
       },
