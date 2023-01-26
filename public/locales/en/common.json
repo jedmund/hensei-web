@@ -6,6 +6,10 @@
       "roadmap": "Roadmap"
     }
   },
+  "accessories": {
+    "paladin": "shield",
+    "manadiver": "manatura"
+  },
   "alert": {
     "incompatible_weapon": "You've selected a weapon that can't be added to the Additional Weapon slots."
   },
@@ -378,7 +382,9 @@
     }
   },
   "extra_weapons": "Additional Weapons",
+  "equipped": "Equipped",
   "coming_soon": "Coming Soon",
+  "no_accessory": "No {{accessory}} equipped",
   "no_title": "Untitled",
   "no_raid": "No raid",
   "no_user": "Anonymous",
