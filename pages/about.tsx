@@ -1,12 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
-import api from '~utils/api'
-import { printError } from '~utils/reportError'
 import { AboutTabs } from '~utils/enums'
 import setUserToken from '~utils/setUserToken'
 
