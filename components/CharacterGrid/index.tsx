@@ -267,16 +267,11 @@ const CharacterGrid = (props: Props) => {
         appState.party.id,
         payload
       )
-      const team = response.data
-
+      const team = response.data.party
       setJobAccessory(team.accessory)
       appState.party.accessory = team.accessory
     }
   }
-
-  useEffect(() => {
-    console.log(jobAccessory)
-  }, [jobAccessory])
 
   // Methods: Helpers
   function characterUncapLevel(character: Character) {

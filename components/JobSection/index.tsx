@@ -79,7 +79,7 @@ const JobSection = (props: Props) => {
 
   // Data fetching
   async function fetchJobAccessories() {
-    if (job && ACCESSORY_JOB_IDS.includes(job.id)) {
+    if (job && job.accessory) {
       const response = await api.jobAccessoriesForJob(job.id)
       const jobAccessories: JobAccessory[] = response.data
       setAccessories(jobAccessories)
@@ -93,6 +93,7 @@ const JobSection = (props: Props) => {
 
   function handleAccessorySelected(value: string) {
     const accessory = accessories.find((accessory) => accessory.id === value)
+
     if (accessory) {
       setCurrentAccessory(accessory)
       props.saveAccessory(accessory)
