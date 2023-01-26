@@ -8,6 +8,7 @@ import ShieldIcon from '~public/icons/Shield.svg'
 import ManaturaIcon from '~public/icons/Manatura.svg'
 
 import './index.scss'
+import classNames from 'classnames'
 
 interface Props {
   job?: Job
@@ -53,6 +54,11 @@ const JobImage = ({
   const hasAccessory = job && job.accessory
   const image = <img alt={job?.name[locale]} src={imageUrl()} />
 
+  const classes = classNames({
+    JobAccessory: true,
+    Selected: open,
+  })
+
   function handleAccessoryButtonClicked() {
     setOpen(!open)
   }
@@ -71,7 +77,7 @@ const JobImage = ({
     return (
       <Button
         accessoryIcon={icon}
-        className="JobAccessory"
+        className={classes}
         onClick={handleAccessoryButtonClicked}
         ref={buttonRef}
       />

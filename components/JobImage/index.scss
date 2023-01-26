@@ -59,7 +59,8 @@
     height: auto;
     z-index: 10;
 
-    &:hover .Accessory svg {
+    &:hover .Accessory svg,
+    &.Selected .Accessory svg {
       fill: var(--button-text-hover);
     }
 
