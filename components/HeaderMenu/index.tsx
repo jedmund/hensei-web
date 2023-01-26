@@ -8,10 +8,7 @@ import { retrieveCookies, retrieveLocaleCookies } from '~utils/retrieveCookies'
 import Link from 'next/link'
 import * as Switch from '@radix-ui/react-switch'
 
-import AboutModal from '~components/AboutModal'
 import AccountModal from '~components/AccountModal'
-import ChangelogModal from '~components/ChangelogModal'
-import RoadmapModal from '~components/RoadmapModal'
 import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
 

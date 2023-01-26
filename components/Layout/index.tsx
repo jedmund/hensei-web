@@ -1,4 +1,5 @@
 import { PropsWithChildren, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { add, format } from 'date-fns'
 import { getCookie } from 'cookies-next'
 
@@ -12,6 +13,7 @@ import './index.scss'
 interface Props {}
 
 const Layout = ({ children }: PropsWithChildren<Props>) => {
+  const router = useRouter()
   const [updateToastOpen, setUpdateToastOpen] = useState(false)
 
   useEffect(() => {
@@ -35,21 +37,30 @@ const Layout = ({ children }: PropsWithChildren<Props>) => {
     setUpdateToastOpen(false)
   }
 
-  function handleToastOpenChanged(open: boolean) {
+  function handleToastClosed() {
     setUpdateToastOpen(false)
+  }
+
+  const updateToast = () => {
+    const path = router.asPath.replaceAll('/', '')
+
+    return !['about', 'updates', 'roadmap'].includes(path) ? (
+      <UpdateToast
+        open={updateToastOpen}
+        updateType="feature"
+        onActionClicked={handleToastActionClicked}
+        onCloseClicked={handleToastClosed}
+        lastUpdated={appState.version.updated_at}
+      />
+    ) : (
+      ''
+    )
   }
 
   return (
     <>
       <TopHeader />
-      {/* TODO: Don't show toast on about pages */}
-      <UpdateToast
-        open={updateToastOpen}
-        updateType="feature"
-        onActionClicked={handleToastActionClicked}
-        onOpenChange={handleToastOpenChanged}
-        lastUpdated={appState.version.updated_at}
-      />
+      {updateToast()}
       <main>{children}</main>
     </>
   )

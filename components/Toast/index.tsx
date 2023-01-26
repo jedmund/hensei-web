@@ -8,6 +8,7 @@ interface Props extends ToastPrimitive.ToastProps {
   className?: string
   title?: string
   content: string
+  onCloseClick: () => void
 }
 
 const Toast = ({
@@ -28,7 +29,7 @@ const Toast = ({
             <h3>{title}</h3>
           </ToastPrimitive.Title>
         )}
-        <ToastPrimitive.Close aria-label="Close">
+        <ToastPrimitive.Close aria-label="Close" onClick={props.onCloseClick}>
           <span aria-hidden>×</span>
         </ToastPrimitive.Close>
       </div>

@@ -15,7 +15,7 @@ interface Props {
   updateType: 'feature' | 'content'
   lastUpdated: string
   onActionClicked: () => void
-  onOpenChange: (open: boolean) => void
+  onCloseClicked: () => void
 }
 
 const UpdateToast = ({
@@ -23,7 +23,7 @@ const UpdateToast = ({
   updateType,
   lastUpdated,
   onActionClicked,
-  onOpenChange,
+  onCloseClicked,
 }: Props) => {
   const { t } = useTranslation('roadmap')
 
@@ -42,18 +42,14 @@ const UpdateToast = ({
   }
 
   function handleButtonClicked() {
-    // TODO: Set a timestamped cookie to not show
-    console.log('Primary button clicked')
     window.open('/about', '_blank')
     setToastCookie()
     onActionClicked()
   }
 
-  function handleOpenChanged(open: boolean) {
-    if (!open) {
-      setToastCookie()
-      onOpenChange(false)
-    }
+  function handleCloseClicked() {
+    setToastCookie()
+    onCloseClicked()
   }
 
   return (
@@ -63,7 +59,7 @@ const UpdateToast = ({
       content={t(`toasts.description.${updateType}`)}
       open={open}
       type="background"
-      onOpenChange={handleOpenChanged}
+      onCloseClick={handleCloseClicked}
     >
       <Button
         buttonSize="small"
