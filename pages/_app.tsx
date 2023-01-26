@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
-import { getCookie, getCookies } from 'cookies-next'
+import { useEffect } from 'react'
+import { getCookie } from 'cookies-next'
 import { appWithTranslation } from 'next-i18next'
-import { ThemeProvider, useTheme } from 'next-themes'
+import { ThemeProvider } from 'next-themes'
 
 import type { AppProps } from 'next/app'
 import Layout from '~components/Layout'
