@@ -114,9 +114,21 @@ const HeaderMenu = (props: Props) => {
           </li>
         </div>
         <div className="MenuGroup">
-          <AboutModal />
-          <ChangelogModal />
-          <RoadmapModal />
+          <li className="MenuItem">
+            <a href="/about" target="_blank">
+              {t('about.segmented_control.about')}
+            </a>
+          </li>
+          <li className="MenuItem">
+            <a href="/updates" target="_blank">
+              {t('about.segmented_control.updates')}
+            </a>
+          </li>
+          <li className="MenuItem">
+            <a href="/roadmap" target="_blank">
+              {t('about.segmented_control.roadmap')}
+            </a>
+          </li>
         </div>
         <div className="MenuGroup">
           <AccountModal
@@ -164,9 +176,21 @@ const HeaderMenu = (props: Props) => {
           </li>
         </div>
         <div className="MenuGroup">
-          <AboutModal />
-          <ChangelogModal />
-          <RoadmapModal />
+          <li className="MenuItem">
+            <a href="/about" target="_blank">
+              {t('about.segmented_control.about')}
+            </a>
+          </li>
+          <li className="MenuItem">
+            <a href="/updates" target="_blank">
+              {t('about.segmented_control.updates')}
+            </a>
+          </li>
+          <li className="MenuItem">
+            <a href="/roadmap" target="_blank">
+              {t('about.segmented_control.roadmap')}
+            </a>
+          </li>
         </div>
         <div className="MenuGroup">
           <LoginModal />
