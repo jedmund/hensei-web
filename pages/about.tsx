@@ -29,25 +29,37 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
 
   const [currentTab, setCurrentTab] = useState<AboutTabs>(AboutTabs.About)
 
-  function handleTabClicked(event: React.ChangeEvent<HTMLInputElement>) {
-    const path = [
-      router.asPath.split('/').filter((el) => el != '')[1],
-      event.target.value,
-    ].join('/')
+  useEffect(() => {
+    const parts = router.asPath.split('/')
+    const tab = parts[parts.length - 1]
 
-    // TODO: Decide if we want /about/changlog or /changelog
-    // TODO: Then, set up Next.js rewrites
-    switch (event.target.value) {
+    switch (tab) {
       case 'about':
-        // router.replace(path)
         setCurrentTab(AboutTabs.About)
         break
       case 'updates':
-        // router.replace(path)
         setCurrentTab(AboutTabs.Updates)
         break
       case 'roadmap':
-        // router.replace(path)
+        setCurrentTab(AboutTabs.Roadmap)
+        break
+    }
+  }, [router.asPath])
+
+  function handleTabClicked(event: React.ChangeEvent<HTMLInputElement>) {
+    const path = `/${event.target.value}`
+
+    switch (event.target.value) {
+      case 'about':
+        router.replace(path)
+        setCurrentTab(AboutTabs.About)
+        break
+      case 'updates':
+        router.replace(path)
+        setCurrentTab(AboutTabs.Updates)
+        break
+      case 'roadmap':
+        router.replace(path)
         setCurrentTab(AboutTabs.Roadmap)
         break
       default:
