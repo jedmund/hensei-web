@@ -2,15 +2,28 @@
   padding: $unit-2x;
   min-width: 40vw;
   max-width: 40vw;
+  max-height: 40vh;
+  overflow-y: scroll;
+  margin-left: $unit-2x;
+
+  h3 {
+    font-size: $font-regular;
+    font-weight: $medium;
+    margin: 0 0 $unit $unit;
+  }
+
+  &.ReadOnly {
+    min-width: inherit;
+    max-width: inherit;
+  }
 
   @include breakpoint(tablet) {
-    width: 100%;
+    width: initial;
     max-width: initial;
   }
 
   @include breakpoint(phone) {
-    padding: $unit;
-    width: 100%;
+    width: initial;
     max-width: initial;
   }
 
@@ -22,6 +35,33 @@
     @include breakpoint(tablet) {
       grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
       gap: 0;
+    }
+  }
+
+  .EquippedAccessory {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-2x;
+
+    h3 {
+      margin: 0;
+    }
+
+    .Accessory {
+      display: flex;
+      flex-direction: column;
+      gap: $unit;
+
+      h4 {
+        font-size: $font-small;
+        font-weight: $medium;
+        text-align: center;
+      }
+
+      img {
+        border-radius: $item-corner;
+        width: 150px;
+      }
     }
   }
 }
