@@ -131,7 +131,7 @@ export const initialAppState: AppState = {
   version: {
     version: '0.0',
     update_type: '',
-    updated_at: new Date(),
+    updated_at: '',
   },
 }
 
