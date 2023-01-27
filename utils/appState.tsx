@@ -16,6 +16,8 @@ const emptyJob: Job = {
     proficiency1: 0,
     proficiency2: 0,
   },
+  accessory: false,
+  accessory_type: 0,
 }
 
 interface AppState {
