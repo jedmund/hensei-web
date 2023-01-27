@@ -16,6 +16,9 @@
   --accent-blue: #{$accent--blue--light};
   --accent-yellow: #{$accent--yellow--light};
 
+  --selected-item-bg: #{$selected--item--bg--light};
+  --selected-item-bg-hover: #{$selected--item--bg--light--hover};
+
   // Light - Menus
   --dialog-bg: #{$dialog--bg--light};
 
@@ -142,6 +145,9 @@
 
   --accent-blue: #{$accent--blue--dark};
   --accent-yellow: #{$accent--yellow--dark};
+
+  --selected-item-bg: #{$selected--item--bg--dark};
+  --selected-item-bg-hover: #{$selected--item--bg--dark--hover};
 
   // Dark - Dialogs
   --dialog-bg: #{$dialog--bg--dark};

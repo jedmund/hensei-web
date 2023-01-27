@@ -10,7 +10,11 @@
   width: 100%;
 
   &[data-state='checked'] {
-    background: var(--input-bg-hover);
+    background: var(--selected-item-bg);
+
+    &:hover {
+      background: var(--selected-item-bg-hover);
+    }
 
     h4 {
       color: var(--button-text-hover);
