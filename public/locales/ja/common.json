@@ -6,6 +6,10 @@
       "roadmap": "ロードマップ"
     }
   },
+  "accessories": {
+    "paladin": "盾",
+    "manadiver": "マナベリ"
+  },
   "alert": {
     "incompatible_weapon": "Additional Weaponsに装備できない武器を入れました。"
   },
@@ -378,8 +382,10 @@
       "no_skill": "設定されていません"
     }
   },
+  "equipped": "装備した",
   "extra_weapons": "Additional Weapons",
   "coming_soon": "開発中",
+  "no_accessory": "{{accessory}}は装備していません",
   "no_title": "無題",
   "no_raid": "マルチなし",
   "no_user": "無名",

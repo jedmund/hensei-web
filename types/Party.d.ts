@@ -20,6 +20,7 @@ interface Party {
   chain_count?: number
   job: Job
   job_skills: JobSkillObject
+  accessory: JobAccessory
   shortcode: string
   extra: boolean
   favorited: boolean

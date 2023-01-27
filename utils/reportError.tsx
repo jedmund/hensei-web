@@ -13,7 +13,7 @@ export function printError(error: any, type?: string) {
   if (type === 'axios') {
     const response = handleAxiosError(error)
     console.log(`${response?.status} ${response?.statusText}`)
-    console.log(response?.data.toJSON())
+    console.log(response?.data)
   } else {
     console.log(handleError(error))
   }

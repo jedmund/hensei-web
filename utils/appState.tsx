@@ -18,6 +18,17 @@ const emptyJob: Job = {
   },
 }
 
+const emptyJobAccessory: JobAccessory = {
+  id: '-1',
+  granblue_id: '-1',
+  job: emptyJob,
+  name: {
+    en: '',
+    ja: '',
+  },
+  rarity: 0,
+}
+
 interface AppState {
   [key: string]: any
 
@@ -29,6 +40,7 @@ interface AppState {
     description: string | undefined
     job: Job
     jobSkills: JobSkillObject
+    accessory: JobAccessory
     raid: Raid | undefined
     element: number
     fullAuto: boolean
@@ -84,6 +96,7 @@ export const initialAppState: AppState = {
       2: undefined,
       3: undefined,
     },
+    accessory: emptyJobAccessory,
     raid: undefined,
     fullAuto: false,
     autoGuard: false,

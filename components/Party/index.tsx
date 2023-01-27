@@ -147,6 +147,7 @@ const Party = (props: Props) => {
     appState.party.updated_at = team.updated_at
     appState.party.job = team.job
     appState.party.jobSkills = team.job_skills
+    appState.party.accessory = team.accessory
 
     appState.party.id = team.id
     appState.party.extra = team.extra

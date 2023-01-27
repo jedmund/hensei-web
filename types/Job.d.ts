@@ -14,4 +14,6 @@ interface Job {
     proficiency2: number
   }
   base_job?: Job
+  accessory: boolean
+  accessory_type: number
 }
