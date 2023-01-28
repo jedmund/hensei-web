@@ -4,9 +4,10 @@ import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
+import Alert from '~components/Alert'
 import SummonUnit from '~components/SummonUnit'
 import ExtraSummons from '~components/ExtraSummons'
 
@@ -37,6 +38,10 @@ const SummonGrid = (props: Props) => {
 
   // Localization
   const { t } = useTranslation('common')
+
+  // Set up state for error handling
+  const [axiosError, setAxiosError] = useState<AxiosResponse>()
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false)
 
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
@@ -100,12 +105,12 @@ const SummonGrid = (props: Props) => {
         saveSummon(party.id, summon, position)
           .then((response) => handleSummonResponse(response.data))
           .catch((error) => {
-            const code = error.response.status
-            const data = error.response.data
-            if (code === 422) {
-              if (data.code === 'incompatible_summon_for_position') {
-                // setShowIncompatibleAlert(true)
-              }
+            const axiosError = error as AxiosError
+            const response = axiosError.response
+
+            if (response) {
+              setErrorAlertOpen(true)
+              setAxiosError(response)
             }
           })
     }
@@ -380,6 +385,19 @@ const SummonGrid = (props: Props) => {
   }
 
   // Render: JSX components
+  const errorAlert = () => {
+    console.log(axiosError?.status)
+    return (
+      <Alert
+        open={errorAlertOpen}
+        title={axiosError ? `${axiosError.status}` : 'Error'}
+        message={t(`errors.${axiosError?.statusText.toLowerCase()}`)}
+        cancelAction={() => setErrorAlertOpen(false)}
+        cancelActionText={t('buttons.confirm')}
+      />
+    )
+  }
+
   const mainSummonElement = (
     <div className="LabeledUnit">
       <div className="Label">{t('summons.main')}</div>
@@ -460,6 +478,7 @@ const SummonGrid = (props: Props) => {
       </div>
 
       {subAuraSummonElement}
+      {errorAlert()}
     </div>
   )
 }

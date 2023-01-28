@@ -59,6 +59,9 @@
       "rarity": "レアリティ"
     }
   },
+  "errors": {
+    "unauthorized": "行ったアクションを実行する権限がありません"
+  },
   "header": {
     "anonymous": "無名",
     "untitled_team": "{{username}}さんからの無題編成",

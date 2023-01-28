@@ -4,7 +4,7 @@ import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
 import Alert from '~components/Alert'
@@ -41,11 +41,15 @@ const WeaponGrid = (props: Props) => {
     ? JSON.parse(cookie as string)
     : null
 
+  // Set up state for error handling
+  const [axiosError, setAxiosError] = useState<AxiosResponse>()
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false)
+  const [showIncompatibleAlert, setShowIncompatibleAlert] = useState(false)
+
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
   const [slug, setSlug] = useState()
   const [modalOpen, setModalOpen] = useState(false)
-  const [showIncompatibleAlert, setShowIncompatibleAlert] = useState(false)
 
   // Set up state for conflict management
   const [incoming, setIncoming] = useState<Weapon>()
@@ -100,11 +104,21 @@ const WeaponGrid = (props: Props) => {
         saveWeapon(party.id, weapon, position)
           .then((response) => handleWeaponResponse(response.data))
           .catch((error) => {
-            const code = error.response.status
-            const data = error.response.data
-            if (code === 422) {
-              if (data.code === 'incompatible_weapon_for_position') {
+            const axiosError = error as AxiosError
+            const response = axiosError.response
+
+            if (response) {
+              const code = response.status
+              const data = response.data
+
+              if (
+                code === 422 &&
+                data.code === 'incompatible_weapon_for_position'
+              ) {
                 setShowIncompatibleAlert(true)
+              } else {
+                setErrorAlertOpen(true)
+                setAxiosError(response)
               }
             }
           })
@@ -362,9 +376,22 @@ const WeaponGrid = (props: Props) => {
         cancelAction={() => setShowIncompatibleAlert(!showIncompatibleAlert)}
         cancelActionText={t('buttons.confirm')}
         message={t('alert.incompatible_weapon')}
-      ></Alert>
+      />
     ) : (
       ''
+    )
+  }
+
+  const errorAlert = () => {
+    console.log(axiosError?.status)
+    return (
+      <Alert
+        open={errorAlertOpen}
+        title={axiosError ? `${axiosError.status}` : 'Error'}
+        message={t(`errors.${axiosError?.statusText.toLowerCase()}`)}
+        cancelAction={() => setErrorAlertOpen(false)}
+        cancelActionText={t('buttons.confirm')}
+      />
     )
   }
 
@@ -372,6 +399,7 @@ const WeaponGrid = (props: Props) => {
     <div id="WeaponGrid">
       {conflicts ? conflictModal() : ''}
       {incompatibleAlert()}
+      {errorAlert()}
       <div id="MainGrid">
         {mainhandElement}
         <ul id="Weapons">{weaponGridElement}</ul>

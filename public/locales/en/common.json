@@ -51,6 +51,9 @@
     },
     "remove": "Remove from grid"
   },
+  "errors": {
+    "unauthorized": "You don't have permission to perform that action"
+  },
   "filters": {
     "labels": {
       "element": "Element",

@@ -2,8 +2,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
 import Alert from '~components/Alert'
@@ -31,11 +32,18 @@ const CharacterGrid = (props: Props) => {
   // Constants
   const numCharacters: number = 5
 
+  // Localization
+  const { t } = useTranslation('common')
+
   // Cookies
   const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
+
+  // Set up state for error handling
+  const [axiosError, setAxiosError] = useState<AxiosResponse>()
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false)
 
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
@@ -111,7 +119,15 @@ const CharacterGrid = (props: Props) => {
       if (party.editable)
         saveCharacter(party.id, character, position)
           .then((response) => handleCharacterResponse(response.data))
-          .catch((error) => console.error(error))
+          .catch((error) => {
+            const axiosError = error as AxiosError
+            const response = axiosError.response
+
+            if (response) {
+              setErrorAlertOpen(true)
+              setAxiosError(response)
+            }
+          })
     }
   }
 
@@ -482,6 +498,19 @@ const CharacterGrid = (props: Props) => {
   }
 
   // Render: JSX components
+  const errorAlert = () => {
+    console.log(axiosError?.status)
+    return (
+      <Alert
+        open={errorAlertOpen}
+        title={axiosError ? `${axiosError.status}` : 'Error'}
+        message={t(`errors.${axiosError?.statusText.toLowerCase()}`)}
+        cancelAction={() => setErrorAlertOpen(false)}
+        cancelActionText={t('buttons.confirm')}
+      />
+    )
+  }
+
   return (
     <div>
       <Alert
@@ -526,6 +555,7 @@ const CharacterGrid = (props: Props) => {
           })}
         </ul>
       </div>
+      {errorAlert()}
     </div>
   )
 }
