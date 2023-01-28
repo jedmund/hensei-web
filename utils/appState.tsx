@@ -56,6 +56,8 @@ interface AppState {
     extra: boolean
     user: User | undefined
     favorited: boolean
+    remix: boolean
+    remixes: Party[]
     created_at: string
     updated_at: string
   }
@@ -113,6 +115,8 @@ export const initialAppState: AppState = {
     extra: false,
     user: undefined,
     favorited: false,
+    remix: false,
+    remixes: [],
     created_at: '',
     updated_at: '',
   },
