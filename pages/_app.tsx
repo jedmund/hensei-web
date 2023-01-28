@@ -44,7 +44,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ThemeProvider>
-      <ToastProvider>
+      <ToastProvider swipeDirection="right">
         <Layout>
           <Component {...pageProps} />
         </Layout>

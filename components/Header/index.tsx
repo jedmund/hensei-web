@@ -33,6 +33,7 @@ import Link from 'next/link'
 import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
 import AccountModal from '~components/AccountModal'
+import Toast from '~components/Toast'
 
 const Header = () => {
   // Localization
@@ -42,7 +43,7 @@ const Header = () => {
   const router = useRouter()
 
   // State management
-  const [open, setOpen] = useState(false)
+  const [copyToastOpen, setCopyToastOpen] = useState(false)
   const [leftMenuOpen, setLeftMenuOpen] = useState(false)
   const [rightMenuOpen, setRightMenuOpen] = useState(false)
 
@@ -50,16 +51,20 @@ const Header = () => {
   const { account } = useSnapshot(accountState)
   const { party } = useSnapshot(appState)
 
+  function handleCopyToastOpenChanged(open: boolean) {
+    setCopyToastOpen(open)
+  }
+
+  function handleCopyToastCloseClicked() {
+    setCopyToastOpen(false)
+  }
+
   function handleLeftMenuButtonClicked() {
     setLeftMenuOpen(!leftMenuOpen)
   }
 
   function handleRightMenuButtonClicked() {
     setRightMenuOpen(!rightMenuOpen)
-  }
-
-  function onClickOutsideMenu() {
-    setOpen(false)
   }
 
   function handleLeftMenuOpenChange(open: boolean) {
@@ -86,11 +91,15 @@ const Header = () => {
     el.select()
     document.execCommand('copy')
     el.remove()
+
+    setCopyToastOpen(true)
   }
 
-  function newParty() {
+  function handleNewParty(event: React.MouseEvent, path: string) {
+    event.preventDefault()
+
     // Push the root URL
-    router.push('/')
+    router.push(path)
 
     // Clean state
     const resetState = clonedeep(initialAppState)
@@ -100,6 +109,9 @@ const Header = () => {
 
     // Set party to be editable
     appState.party.editable = true
+
+    // Close right menu
+    closeRightMenu()
   }
 
   function logout() {
@@ -141,7 +153,7 @@ const Header = () => {
     else console.error('Failed to unsave team: No party ID')
   }
 
-  const title = () => {
+  const pageTitle = () => {
     let title = ''
     let hasAccessory = false
 
@@ -178,22 +190,7 @@ const Header = () => {
     )
   }
 
-  const saveButton = () => {
-    return (
-      <Button
-        leftAccessoryIcon={<SaveIcon />}
-        className={classNames({
-          Save: true,
-          Saved: party.favorited,
-        })}
-        blended={true}
-        text={party.favorited ? 'Saved' : 'Save'}
-        onClick={toggleFavorite}
-      />
-    )
-  }
-
-  const image = () => {
+  const profileImage = () => {
     let image
 
     const user = accountState.account.user
@@ -212,6 +209,34 @@ const Header = () => {
     }
 
     return image
+  }
+
+  const urlCopyToast = () => {
+    return (
+      <Toast
+        open={copyToastOpen}
+        duration={2400}
+        type="foreground"
+        content="This party's URL was copied to your clipboard"
+        onOpenChange={handleCopyToastOpenChanged}
+        onCloseClick={handleCopyToastCloseClicked}
+      />
+    )
+  }
+
+  const saveButton = () => {
+    return (
+      <Button
+        leftAccessoryIcon={<SaveIcon />}
+        className={classNames({
+          Save: true,
+          Saved: party.favorited,
+        })}
+        blended={true}
+        text={party.favorited ? 'Saved' : 'Save'}
+        onClick={toggleFavorite}
+      />
+    )
   }
 
   const left = () => {
@@ -235,7 +260,7 @@ const Header = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {title()}
+        {pageTitle()}
       </section>
     )
   }
@@ -249,13 +274,6 @@ const Header = () => {
           ? saveButton()
           : ''}
 
-        {/* <Button
-          leftAccessoryIcon={<AddIcon className="Add" />}
-          blended={true}
-          text={t('buttons.new')}
-          onClick={newParty}
-        /> */}
-
         <DropdownMenu
           open={rightMenuOpen}
           onOpenChange={handleRightMenuOpenChange}
@@ -263,7 +281,7 @@ const Header = () => {
           <DropdownMenuTrigger asChild>
             <Button
               className={classNames({ Active: rightMenuOpen })}
-              leftAccessoryIcon={image()}
+              leftAccessoryIcon={profileImage()}
               rightAccessoryIcon={<ArrowIcon />}
               rightAccessoryClassName="Arrow"
               onClick={handleRightMenuButtonClicked}
@@ -340,12 +358,15 @@ const Header = () => {
       items = (
         <>
           <DropdownMenuGroup className="MenuGroup">
-            <DropdownMenuItem className="MenuItem" onClick={closeRightMenu}>
-              <Link href={`/new` || ''} passHref>
+            <DropdownMenuItem className="MenuItem">
+              <Link
+                onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}
+                href="/new"
+              >
                 New party
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className="MenuItem" onClick={closeRightMenu}>
+            <DropdownMenuItem className="MenuItem">
               <Link href={`/${account.user.username}` || ''} passHref>
                 Your profile
               </Link>
@@ -377,7 +398,10 @@ const Header = () => {
         <>
           <DropdownMenuGroup className="MenuGroup">
             <DropdownMenuItem className="MenuItem">
-              <Link href={`/new` || ''} passHref>
+              <Link
+                onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}
+                href="/new"
+              >
                 New party
               </Link>
             </DropdownMenuItem>
@@ -398,6 +422,7 @@ const Header = () => {
     <nav id="Header">
       {left()}
       {right()}
+      {urlCopyToast()}
     </nav>
   )
 }
