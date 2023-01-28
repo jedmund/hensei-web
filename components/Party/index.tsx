@@ -156,6 +156,7 @@ const Party = (props: Props) => {
     appState.party.favorited = team.favorited
     appState.party.remix = team.remix
     appState.party.remixes = team.remixes
+    appState.party.sourceParty = team.source_party
     appState.party.created_at = team.created_at
     appState.party.updated_at = team.updated_at
 

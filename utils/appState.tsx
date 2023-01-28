@@ -58,6 +58,7 @@ interface AppState {
     favorited: boolean
     remix: boolean
     remixes: Party[]
+    sourceParty?: Party
     created_at: string
     updated_at: string
   }
@@ -117,6 +118,7 @@ export const initialAppState: AppState = {
     favorited: false,
     remix: false,
     remixes: [],
+    sourceParty: undefined,
     created_at: '',
     updated_at: '',
   },

@@ -18,6 +18,7 @@ interface Party {
   button_count?: number
   turn_count?: number
   chain_count?: number
+  source_party?: Party
   job: Job
   job_skills: JobSkillObject
   accessory: JobAccessory
