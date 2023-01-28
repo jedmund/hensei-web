@@ -76,7 +76,7 @@ const JobImage = ({
 
     return (
       <Button
-        accessoryIcon={icon}
+        leftAccessoryIcon={icon}
         className={classes}
         onClick={handleAccessoryButtonClicked}
         ref={buttonRef}

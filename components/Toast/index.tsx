@@ -17,22 +17,24 @@ const Toast = ({
   content,
   ...props
 }: PropsWithChildren<Props>) => {
+  const { onCloseClick, ...toastProps } = props
+
   const classes = classNames(props.className, {
     Toast: true,
   })
 
   return (
-    <ToastPrimitive.Root {...props} className={classes}>
-      <div className="Header">
-        {title && (
+    <ToastPrimitive.Root {...toastProps} className={classes}>
+      {title && (
+        <div className="Header">
           <ToastPrimitive.Title asChild>
             <h3>{title}</h3>
           </ToastPrimitive.Title>
-        )}
-        <ToastPrimitive.Close aria-label="Close" onClick={props.onCloseClick}>
-          <span aria-hidden>×</span>
-        </ToastPrimitive.Close>
-      </div>
+          <ToastPrimitive.Close aria-label="Close" onClick={onCloseClick}>
+            <span aria-hidden>×</span>
+          </ToastPrimitive.Close>
+        </div>
+      )}
       <ToastPrimitive.Description asChild>
         <p>{content}</p>
       </ToastPrimitive.Description>

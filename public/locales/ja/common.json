@@ -59,6 +59,9 @@
       "rarity": "レアリティ"
     }
   },
+  "errors": {
+    "unauthorized": "行ったアクションを実行する権限がありません"
+  },
   "header": {
     "anonymous": "無名",
     "untitled_team": "{{username}}さんからの無題編成",
@@ -385,6 +388,7 @@
   "equipped": "装備した",
   "extra_weapons": "Additional Weapons",
   "coming_soon": "開発中",
+  "new_party": "新しい編成",
   "no_accessory": "{{accessory}}は装備していません",
   "no_title": "無題",
   "no_raid": "マルチなし",

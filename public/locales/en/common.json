@@ -51,6 +51,9 @@
     },
     "remove": "Remove from grid"
   },
+  "errors": {
+    "unauthorized": "You don't have permission to perform that action"
+  },
   "filters": {
     "labels": {
       "element": "Element",
@@ -384,6 +387,7 @@
   "extra_weapons": "Additional Weapons",
   "equipped": "Equipped",
   "coming_soon": "Coming Soon",
+  "new_party": "New party",
   "no_accessory": "No {{accessory}} equipped",
   "no_title": "Untitled",
   "no_raid": "No raid",

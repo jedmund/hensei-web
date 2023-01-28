@@ -368,6 +368,15 @@ i.tag {
   }
 }
 
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 @keyframes openModalDesktop {
   0% {
     opacity: 0;
@@ -389,6 +398,24 @@ i.tag {
   100% {
     // opacity: 1;
     transform: translate(0, 30%);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(var(--radix-toast-swipe-end-x));
+  }
+  to {
+    transform: translateX(100%);
   }
 }
 

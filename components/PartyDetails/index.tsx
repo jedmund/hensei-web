@@ -538,7 +538,7 @@ const PartyDetails = (props: Props) => {
         <div className="left">
           {router.pathname !== '/new' ? (
             <Button
-              accessoryIcon={<CrossIcon />}
+              leftAccessoryIcon={<CrossIcon />}
               className="Blended medium destructive"
               onClick={handleClick}
               text={t('buttons.delete')}
@@ -550,7 +550,7 @@ const PartyDetails = (props: Props) => {
         <div className="right">
           <Button text={t('buttons.cancel')} onClick={toggleDetails} />
           <Button
-            accessoryIcon={<CheckIcon className="Check" />}
+            leftAccessoryIcon={<CheckIcon className="Check" />}
             text={t('buttons.save_info')}
             onClick={updateDetails}
           />
@@ -643,7 +643,7 @@ const PartyDetails = (props: Props) => {
         <div className="Right">
           {party.editable ? (
             <Button
-              accessoryIcon={<EditIcon />}
+              leftAccessoryIcon={<EditIcon />}
               text={t('buttons.show_info')}
               onClick={toggleDetails}
             />

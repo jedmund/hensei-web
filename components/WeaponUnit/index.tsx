@@ -450,7 +450,7 @@ const WeaponUnit = ({
           <ContextMenu onOpenChange={handleContextMenuOpenChange}>
             <ContextMenuTrigger asChild>
               <Button
-                accessoryIcon={<SettingsIcon />}
+                leftAccessoryIcon={<SettingsIcon />}
                 className={buttonClasses}
                 onClick={handleButtonClicked}
               />

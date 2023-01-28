@@ -1,9 +1,11 @@
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import classNames from 'classnames'
+
+import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 
 import * as RadioGroup from '@radix-ui/react-radio-group'
-
 import Button from '~components/Button'
 import {
   Popover,
@@ -13,7 +15,6 @@ import {
 import JobAccessoryItem from '~components/JobAccessoryItem'
 
 import './index.scss'
-import classNames from 'classnames'
 
 interface Props {
   buttonref: React.RefObject<HTMLButtonElement>
@@ -78,10 +79,6 @@ const JobAccessoryPopover = ({
 
   function closePopover() {
     onOpenChange(false)
-  }
-
-  function capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1)
   }
 
   const radioGroup = (
