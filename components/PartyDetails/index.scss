@@ -3,6 +3,7 @@
   flex-direction: column;
   margin: $unit-4x auto 0 auto;
   max-width: $grid-width;
+  padding-bottom: $unit-12x;
 
   @include breakpoint(phone) {
     padding: 0 $unit;
@@ -10,13 +11,13 @@
 
   .PartyDetails {
     display: none;
-    margin: 0 auto;
+    margin: 0 auto $unit-2x;
     max-width: $unit * 94;
     overflow: hidden;
     width: 100%;
 
     &.Visible {
-      margin-bottom: $unit-12x;
+      // margin-bottom: $unit-12x;
     }
 
     &.Editable {
@@ -269,15 +270,21 @@
     .Left {
       flex-grow: 1;
 
-      h1 {
-        font-size: $font-xlarge;
-        font-weight: $normal;
-        text-align: left;
+      .Header {
+        align-items: center;
+        display: flex;
+        gap: $unit;
         margin-bottom: $unit;
-        color: var(--text-primary);
 
-        &.empty {
-          color: var(--text-secondary);
+        h1 {
+          font-size: $font-xlarge;
+          font-weight: $normal;
+          text-align: left;
+          color: var(--text-primary);
+
+          &.empty {
+            color: var(--text-secondary);
+          }
         }
       }
 
@@ -329,6 +336,28 @@
 
       .no-user {
         background: $grey-80;
+      }
+    }
+  }
+
+  .Remixes {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-2x;
+    width: 752px;
+
+    h3 {
+      font-size: $font-medium;
+      font-weight: $medium;
+    }
+
+    .GridRepCollection {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      margin-left: $unit-2x * -1;
+      margin-right: $unit-2x * -1;
+
+      .GridRep {
+        min-width: 200px;
       }
     }
   }

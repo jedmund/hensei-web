@@ -39,6 +39,9 @@
     "show_info": "詳細を編集",
     "save_info": "詳細を保存",
     "hide_info": "詳細を非表示",
+    "remix": "リミックス",
+    "save": "保存する",
+    "saved": "保存",
     "menu": "メニュー",
     "new": "作成",
     "wiki": "gbf.wikiで詳しく見る"
@@ -385,6 +388,14 @@
       "no_skill": "設定されていません"
     }
   },
+  "toasts": {
+    "copied": "この編成のURLはクリップボードにコピーされました"
+  },
+  "tooltips": {
+    "remix": "この編成をコピーする",
+    "save": "この編成をアカウントに保存する",
+    "source": "オリジナルの編成へ"
+  },
   "equipped": "装備した",
   "extra_weapons": "Additional Weapons",
   "coming_soon": "開発中",
@@ -395,5 +406,6 @@
   "no_user": "無名",
   "no_job": "ジョブなし",
   "no_value": "値なし",
+  "remixes": "リミックスされた編成",
   "level": "レベル"
 }

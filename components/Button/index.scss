@@ -31,6 +31,15 @@
     background: transparent;
   }
 
+  &.IconButton.medium {
+    height: inherit;
+    padding: $unit-half;
+
+    &:hover {
+      background: none;
+    }
+  }
+
   &.Contained {
     background: var(--button-contained-bg);
 

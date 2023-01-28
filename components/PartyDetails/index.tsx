@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
+import clonedeep from 'lodash.clonedeep'
 
 import Linkify from 'react-linkify'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
@@ -10,17 +11,19 @@ import classNames from 'classnames'
 import reactStringReplace from 'react-string-replace'
 
 import Alert from '~components/Alert'
-
 import Button from '~components/Button'
 import CharLimitedFieldset from '~components/CharLimitedFieldset'
-import Input from '~components/Input'
 import DurationInput from '~components/DurationInput'
+import GridRepCollection from '~components/GridRepCollection'
+import GridRep from '~components/GridRep'
+import Input from '~components/Input'
+import RaidDropdown from '~components/RaidDropdown'
+import Switch from '~components/Switch'
+import Tooltip from '~components/Tooltip'
+import TextFieldset from '~components/TextFieldset'
 import Token from '~components/Token'
 
-import RaidDropdown from '~components/RaidDropdown'
-import TextFieldset from '~components/TextFieldset'
-import Switch from '~components/Switch'
-
+import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 import { appState } from '~utils/appState'
 import { formatTimeAgo } from '~utils/timeAgo'
@@ -29,6 +32,7 @@ import { youtube } from '~utils/youtube'
 import CheckIcon from '~public/icons/Check.svg'
 import CrossIcon from '~public/icons/Cross.svg'
 import EditIcon from '~public/icons/Edit.svg'
+import RemixIcon from '~public/icons/Remix.svg'
 
 import type { DetailsObject } from 'types'
 
@@ -68,6 +72,8 @@ const PartyDetails = (props: Props) => {
   const [chainCount, setChainCount] = useState<number | undefined>(undefined)
   const [turnCount, setTurnCount] = useState<number | undefined>(undefined)
   const [clearTime, setClearTime] = useState(0)
+
+  const [remixes, setRemixes] = useState<Party[]>([])
 
   const [raidSlug, setRaidSlug] = useState('')
   const [embeddedDescription, setEmbeddedDescription] =
@@ -111,6 +117,7 @@ const PartyDetails = (props: Props) => {
       setFullAuto(props.party.full_auto)
       setChargeAttack(props.party.charge_attack)
       setClearTime(props.party.clear_time)
+      setRemixes(props.party.remixes)
       if (props.party.turn_count) setTurnCount(props.party.turn_count)
       if (props.party.button_count) setButtonCount(props.party.button_count)
       if (props.party.chain_count) setChainCount(props.party.chain_count)
@@ -300,6 +307,49 @@ const PartyDetails = (props: Props) => {
     props.deleteCallback()
   }
 
+  // Methods: Navigation
+  function goTo(shortcode?: string) {
+    if (shortcode) router.push(`/p/${shortcode}`)
+  }
+
+  // Methods: Favorites
+  function toggleFavorite(teamId: string, favorited: boolean) {
+    if (favorited) unsaveFavorite(teamId)
+    else saveFavorite(teamId)
+  }
+
+  function saveFavorite(teamId: string) {
+    api.saveTeam({ id: teamId }).then((response) => {
+      if (response.status == 201) {
+        const index = remixes.findIndex((p) => p.id === teamId)
+        const party = remixes[index]
+
+        party.favorited = true
+
+        let clonedParties = clonedeep(remixes)
+        clonedParties[index] = party
+
+        setRemixes(clonedParties)
+      }
+    })
+  }
+
+  function unsaveFavorite(teamId: string) {
+    api.unsaveTeam({ id: teamId }).then((response) => {
+      if (response.status == 200) {
+        const index = remixes.findIndex((p) => p.id === teamId)
+        const party = remixes[index]
+
+        party.favorited = false
+
+        let clonedParties = clonedeep(remixes)
+        clonedParties[index] = party
+
+        setRemixes(clonedParties)
+      }
+    })
+  }
+
   function extractYoutubeVideoIds(text: string) {
     // Initialize an array to store the video IDs
     const videoIds = []
@@ -386,6 +436,28 @@ const PartyDetails = (props: Props) => {
         </Link>
       </div>
     )
+  }
+
+  function renderRemixes() {
+    return remixes.map((party, i) => {
+      return (
+        <GridRep
+          id={party.id}
+          shortcode={party.shortcode}
+          name={party.name}
+          createdAt={new Date(party.created_at)}
+          raid={party.raid}
+          grid={party.weapons}
+          user={party.user}
+          favorited={party.favorited}
+          fullAuto={party.full_auto}
+          key={`party-${i}`}
+          displayUser={true}
+          onClick={goTo}
+          onSave={toggleFavorite}
+        />
+      )
+    })
   }
 
   const deleteAlert = () => {
@@ -620,11 +692,35 @@ const PartyDetails = (props: Props) => {
     </section>
   )
 
+  const remixSection = () => {
+    return (
+      <section className="Remixes">
+        <h3>{t('remixes')}</h3>
+        {<GridRepCollection>{renderRemixes()}</GridRepCollection>}
+      </section>
+    )
+  }
+
   return (
     <section className="DetailsWrapper">
       <div className="PartyInfo">
         <div className="Left">
-          <h1 className={name ? '' : 'empty'}>{name ? name : t('no_title')}</h1>
+          <div className="Header">
+            <h1 className={name ? '' : 'empty'}>
+              {name ? name : t('no_title')}
+            </h1>
+            {party.remix && party.sourceParty ? (
+              <Tooltip content={t('tooltips.source')}>
+                <Button
+                  className="IconButton Blended"
+                  leftAccessoryIcon={<RemixIcon />}
+                  onClick={() => goTo(party.sourceParty?.shortcode)}
+                />
+              </Tooltip>
+            ) : (
+              ''
+            )}
+          </div>
           <div className="attribution">
             {renderUserBlock()}
             {party.raid ? linkedRaidBlock(party.raid) : ''}
@@ -654,6 +750,7 @@ const PartyDetails = (props: Props) => {
       </div>
       {readOnly}
       {editable}
+      {remixes && remixes.length > 0 ? remixSection() : ''}
       {deleteAlert()}
     </section>
   )

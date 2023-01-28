@@ -36,6 +36,7 @@ interface AppState {
 
   party: {
     id: string | undefined
+    shortcode: string | undefined
     editable: boolean
     detailsVisible: boolean
     name: string | undefined
@@ -55,6 +56,9 @@ interface AppState {
     extra: boolean
     user: User | undefined
     favorited: boolean
+    remix: boolean
+    remixes: Party[]
+    sourceParty?: Party
     created_at: string
     updated_at: string
   }
@@ -87,6 +91,7 @@ interface AppState {
 export const initialAppState: AppState = {
   party: {
     id: undefined,
+    shortcode: '',
     editable: false,
     detailsVisible: false,
     name: undefined,
@@ -111,6 +116,9 @@ export const initialAppState: AppState = {
     extra: false,
     user: undefined,
     favorited: false,
+    remix: false,
+    remixes: [],
+    sourceParty: undefined,
     created_at: '',
     updated_at: '',
   },

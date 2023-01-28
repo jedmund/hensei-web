@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import clonedeep from 'lodash.clonedeep'
 
 import Party from '~components/Party'
 
@@ -9,7 +11,7 @@ import api from '~utils/api'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import organizeRaids from '~utils/organizeRaids'
 import setUserToken from '~utils/setUserToken'
-import { appState } from '~utils/appState'
+import { appState, initialAppState } from '~utils/appState'
 import { groupWeaponKeys } from '~utils/groupWeaponKeys'
 import { printError } from '~utils/reportError'
 
@@ -29,6 +31,9 @@ const NewRoute: React.FC<Props> = (props: Props) => {
   // Import translations
   const { t } = useTranslation('common')
 
+  // Set up router
+  const router = useRouter()
+
   function callback(path: string) {
     // This is scuffed, how do we do this natively?
     window.history.replaceState(null, `Grid Tool`, `${path}`)
@@ -37,6 +42,16 @@ const NewRoute: React.FC<Props> = (props: Props) => {
   useEffect(() => {
     persistStaticData()
   }, [persistStaticData])
+
+  useEffect(() => {
+    // Clean state
+    const resetState = clonedeep(initialAppState)
+    Object.keys(resetState).forEach((key) => {
+      appState[key] = resetState[key]
+    })
+    // Set party to be editable
+    appState.party.editable = true
+  }, [])
 
   function persistStaticData() {
     appState.raids = props.raids
@@ -47,7 +62,7 @@ const NewRoute: React.FC<Props> = (props: Props) => {
   }
 
   return (
-    <React.Fragment>
+    <React.Fragment key={router.asPath}>
       <Head>
         {/* HTML */}
         <title>{t('page.titles.new')}</title>

@@ -9,7 +9,7 @@ import Link from 'next/link'
 
 import api from '~utils/api'
 import { accountState, initialAccountState } from '~utils/accountState'
-import { appState, initialAppState } from '~utils/appState'
+import { appState } from '~utils/appState'
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 
 import {
@@ -26,12 +26,14 @@ import AccountModal from '~components/AccountModal'
 import Toast from '~components/Toast'
 import Button from '~components/Button'
 
+import ArrowIcon from '~public/icons/Arrow.svg'
 import LinkIcon from '~public/icons/Link.svg'
 import MenuIcon from '~public/icons/Menu.svg'
-import ArrowIcon from '~public/icons/Arrow.svg'
+import RemixIcon from '~public/icons/Remix.svg'
 import SaveIcon from '~public/icons/Save.svg'
 
 import './index.scss'
+import Tooltip from '~components/Tooltip'
 
 const Header = () => {
   // Localization
@@ -83,10 +85,6 @@ const Header = () => {
     setRightMenuOpen(false)
   }
 
-  function handleSettingsOpenChanged(open: boolean) {
-    setRightMenuOpen(false)
-  }
-
   function copyToClipboard() {
     const el = document.createElement('input')
     el.value = window.location.href
@@ -105,15 +103,6 @@ const Header = () => {
 
     // Push the root URL
     router.push(path)
-
-    // Clean state
-    const resetState = clonedeep(initialAppState)
-    Object.keys(resetState).forEach((key) => {
-      appState[key] = resetState[key]
-    })
-
-    // Set party to be editable
-    appState.party.editable = true
 
     // Close right menu
     closeRightMenu()
@@ -156,6 +145,14 @@ const Header = () => {
         if (response.status == 200) appState.party.favorited = false
       })
     else console.error('Failed to unsave team: No party ID')
+  }
+
+  function remixTeam() {
+    if (party.shortcode)
+      api.remix(party.shortcode).then((response) => {
+        const remix = response.data.party
+        router.push(`/p/${remix.shortcode}`)
+      })
   }
 
   const pageTitle = () => {
@@ -219,7 +216,7 @@ const Header = () => {
         open={copyToastOpen}
         duration={2400}
         type="foreground"
-        content="This party's URL was copied to your clipboard"
+        content={t('toasts.copied')}
         onOpenChange={handleCopyToastOpenChanged}
         onCloseClick={handleCopyToastCloseClicked}
       />
@@ -228,16 +225,32 @@ const Header = () => {
 
   const saveButton = () => {
     return (
-      <Button
-        leftAccessoryIcon={<SaveIcon />}
-        className={classNames({
-          Save: true,
-          Saved: party.favorited,
-        })}
-        blended={true}
-        text={party.favorited ? 'Saved' : 'Save'}
-        onClick={toggleFavorite}
-      />
+      <Tooltip content={t('tooltips.save')}>
+        <Button
+          leftAccessoryIcon={<SaveIcon />}
+          className={classNames({
+            Save: true,
+            Saved: party.favorited,
+          })}
+          blended={true}
+          text={party.favorited ? t('buttons.saved') : t('buttons.save')}
+          onClick={toggleFavorite}
+        />
+      </Tooltip>
+    )
+  }
+
+  const remixButton = () => {
+    return (
+      <Tooltip content={t('tooltips.remix')}>
+        <Button
+          leftAccessoryIcon={<RemixIcon />}
+          className="Remix"
+          blended={true}
+          text={t('buttons.remix')}
+          onClick={remixTeam}
+        />
+      </Tooltip>
     )
   }
 
@@ -303,7 +316,7 @@ const Header = () => {
         (!party.user || party.user.id !== account.user.id)
           ? saveButton()
           : ''}
-
+        {router.route === '/p/[party]' ? remixButton() : ''}
         <DropdownMenu
           open={rightMenuOpen}
           onOpenChange={handleRightMenuOpenChange}

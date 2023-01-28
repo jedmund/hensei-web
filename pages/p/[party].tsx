@@ -70,7 +70,7 @@ const PartyRoute: React.FC<Props> = (props: Props) => {
   }
 
   return (
-    <React.Fragment>
+    <React.Fragment key={router.asPath}>
       <Party
         team={props.party}
         raids={props.sortedRaids}
