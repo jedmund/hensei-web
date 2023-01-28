@@ -113,6 +113,7 @@ const SummonUnit = ({
 
   function removeSummon() {
     if (gridSummon) sendSummonToRemove(gridSummon.id)
+    setAlertOpen(false)
   }
 
   // Methods: Image string generation
