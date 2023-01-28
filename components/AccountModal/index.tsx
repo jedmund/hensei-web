@@ -186,6 +186,7 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
             }
 
             setOpen(false)
+            if (props.onOpenChange) props.onOpenChange(false)
             changeLanguage(router, user.language)
           })
       }
