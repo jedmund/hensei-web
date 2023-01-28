@@ -138,6 +138,10 @@
 
     display: flex;
 
+    &.Arrow {
+      margin-top: $unit-half;
+    }
+
     svg {
       fill: var(--button-text);
       height: $dimension;

@@ -5,9 +5,16 @@
   justify-content: space-between;
   width: 100%;
 
-  #Right > div {
+  section {
     display: flex;
     gap: $unit;
+  }
+
+  img {
+    $diameter: 32px;
+    border-radius: calc($diameter / 2);
+    height: $diameter;
+    width: $diameter;
   }
 
   #DropdownWrapper {
@@ -20,7 +27,7 @@
     }
 
     &:hover {
-      padding-right: $unit-4x;
+      // padding-right: $unit-4x;
 
       .Button {
         background: var(--button-bg-hover);
