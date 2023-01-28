@@ -9,7 +9,7 @@ import Link from 'next/link'
 
 import api from '~utils/api'
 import { accountState, initialAccountState } from '~utils/accountState'
-import { appState, initialAppState } from '~utils/appState'
+import { appState } from '~utils/appState'
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 
 import {
@@ -84,10 +84,6 @@ const Header = () => {
     setRightMenuOpen(false)
   }
 
-  function handleSettingsOpenChanged(open: boolean) {
-    setRightMenuOpen(false)
-  }
-
   function copyToClipboard() {
     const el = document.createElement('input')
     el.value = window.location.href
@@ -106,15 +102,6 @@ const Header = () => {
 
     // Push the root URL
     router.push(path)
-
-    // Clean state
-    const resetState = clonedeep(initialAppState)
-    Object.keys(resetState).forEach((key) => {
-      appState[key] = resetState[key]
-    })
-
-    // Set party to be editable
-    appState.party.editable = true
 
     // Close right menu
     closeRightMenu()
