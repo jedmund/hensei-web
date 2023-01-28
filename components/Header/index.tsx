@@ -217,7 +217,7 @@ const Header = () => {
         open={copyToastOpen}
         duration={2400}
         type="foreground"
-        content="This party's URL was copied to your clipboard"
+        content={t('toasts.copied')}
         onOpenChange={handleCopyToastOpenChanged}
         onCloseClick={handleCopyToastCloseClicked}
       />
@@ -233,7 +233,7 @@ const Header = () => {
           Saved: party.favorited,
         })}
         blended={true}
-        text={party.favorited ? 'Saved' : 'Save'}
+        text={party.favorited ? t('buttons.saved') : t('buttons.save')}
         onClick={toggleFavorite}
       />
     )
@@ -245,7 +245,7 @@ const Header = () => {
         leftAccessoryIcon={<RemixIcon />}
         className="Remix"
         blended={true}
-        text="Remix"
+        text={t('buttons.remix')}
         onClick={remixTeam}
       />
     )

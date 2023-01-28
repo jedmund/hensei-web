@@ -39,6 +39,9 @@
     "show_info": "Edit info",
     "hide_info": "Hide info",
     "save_info": "Save info",
+    "remix": "Remix",
+    "save": "Save",
+    "saved": "Saved",
     "menu": "Menu",
     "new": "New",
     "wiki": "View more on gbf.wiki"
@@ -384,6 +387,9 @@
       "no_skill": "No skill"
     }
   },
+  "toasts": {
+    "copied": "This party's URL was copied to your clipboard"
+  },
   "extra_weapons": "Additional Weapons",
   "equipped": "Equipped",
   "coming_soon": "Coming Soon",
@@ -394,5 +400,6 @@
   "no_user": "Anonymous",
   "no_job": "No class",
   "no_value": "No value",
+  "remixes": "Remixes",
   "level": "Level"
 }
