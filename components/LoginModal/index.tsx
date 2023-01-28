@@ -199,9 +199,9 @@ const LoginModal = () => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>
-        <li className="MenuItem">
+        <div className="MenuItem">
           <span>{t('menu.login')}</span>
-        </li>
+        </div>
       </DialogTrigger>
       <DialogContent
         className="Login"

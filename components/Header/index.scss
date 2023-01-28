@@ -10,11 +10,16 @@
     gap: $unit;
   }
 
-  img {
+  img,
+  .placeholder {
     $diameter: 32px;
     border-radius: calc($diameter / 2);
     height: $diameter;
     width: $diameter;
+  }
+
+  .placeholder {
+    background: var(--placeholder-bg);
   }
 
   #DropdownWrapper {

@@ -280,9 +280,9 @@ const SignupModal = (props: Props) => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>
-        <li className="MenuItem">
+        <div className="MenuItem">
           <span>{t('menu.signup')}</span>
-        </li>
+        </div>
       </DialogTrigger>
       <DialogContent
         className="Signup"

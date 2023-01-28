@@ -225,7 +225,7 @@ const Header = () => {
         />
       )
     } else {
-      image = <img alt={t('no_user')} className="profile placeholder" />
+      image = <div className="profile placeholder" />
     }
 
     return image
@@ -395,7 +395,11 @@ const Header = () => {
       items = (
         <>
           <DropdownMenuGroup className="MenuGroup">
-            <DropdownMenuItem className="MenuItem">New party</DropdownMenuItem>
+            <DropdownMenuItem className="MenuItem">
+              <Link href={`/new` || ''} passHref>
+                New party
+              </Link>
+            </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup className="MenuGroup">

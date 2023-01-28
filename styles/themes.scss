@@ -19,6 +19,8 @@
   --selected-item-bg: #{$selected--item--bg--light};
   --selected-item-bg-hover: #{$selected--item--bg--light--hover};
 
+  --placeholder-bg: #{$grey-80};
+
   // Light - Menus
   --dialog-bg: #{$dialog--bg--light};
 
@@ -148,6 +150,8 @@
 
   --selected-item-bg: #{$selected--item--bg--dark};
   --selected-item-bg-hover: #{$selected--item--bg--dark--hover};
+
+  --placeholder-bg: #{$grey-40};
 
   // Dark - Dialogs
   --dialog-bg: #{$dialog--bg--dark};
