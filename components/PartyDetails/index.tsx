@@ -399,8 +399,8 @@ const PartyDetails = (props: Props) => {
     let username, picture, element
     if (accountState.account.authorized && props.new) {
       username = accountState.account.user?.username
-      picture = accountState.account.user?.picture
-      element = accountState.account.user?.element
+      picture = accountState.account.user?.avatar.picture
+      element = accountState.account.user?.avatar.element
     } else if (party.user && !props.new) {
       username = party.user.username
       picture = party.user.avatar.picture
