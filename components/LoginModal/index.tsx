@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
@@ -26,7 +26,12 @@ interface ErrorMap {
 const emailRegex =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-const LoginModal = () => {
+interface Props {
+  open: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+const LoginModal = (props: Props) => {
   const router = useRouter()
   const { t } = useTranslation('common')
 
@@ -45,6 +50,10 @@ const LoginModal = () => {
   const passwordInput: React.RefObject<HTMLInputElement> = React.createRef()
   const footerRef: React.RefObject<HTMLDivElement> = React.createRef()
   const form: React.RefObject<HTMLInputElement>[] = [emailInput, passwordInput]
+
+  useEffect(() => {
+    setOpen(props.open)
+  }, [props.open])
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target
@@ -185,6 +194,8 @@ const LoginModal = () => {
       email: '',
       password: '',
     })
+
+    if (props.onOpenChange) props.onOpenChange(open)
   }
 
   function onEscapeKeyDown(event: KeyboardEvent) {
@@ -198,11 +209,6 @@ const LoginModal = () => {
 
   return (
     <Dialog open={open} onOpenChange={openChange}>
-      <DialogTrigger asChild>
-        <div className="MenuItem">
-          <span>{t('menu.login')}</span>
-        </div>
-      </DialogTrigger>
       <DialogContent
         className="Login"
         footerref={footerRef}

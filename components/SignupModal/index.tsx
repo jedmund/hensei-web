@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -15,7 +15,10 @@ import DialogContent from '~components/DialogContent'
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
-interface Props {}
+interface Props {
+  open: boolean
+  onOpenChange?: (open: boolean) => void
+}
 
 interface ErrorMap {
   [index: string]: string
@@ -57,6 +60,10 @@ const SignupModal = (props: Props) => {
     passwordInput,
     passwordConfirmationInput,
   ]
+
+  useEffect(() => {
+    setOpen(props.open)
+  }, [props.open])
 
   function register(event: React.FormEvent) {
     event.preventDefault()
@@ -266,6 +273,8 @@ const SignupModal = (props: Props) => {
       password: '',
       passwordConfirmation: '',
     })
+
+    if (props.onOpenChange) props.onOpenChange(open)
   }
 
   function onEscapeKeyDown(event: KeyboardEvent) {
@@ -279,11 +288,6 @@ const SignupModal = (props: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={openChange}>
-      <DialogTrigger asChild>
-        <div className="MenuItem">
-          <span>{t('menu.signup')}</span>
-        </div>
-      </DialogTrigger>
       <DialogContent
         className="Signup"
         footerref={footerRef}

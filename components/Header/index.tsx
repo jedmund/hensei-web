@@ -5,22 +5,13 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
+import Link from 'next/link'
 
 import api from '~utils/api'
 import { accountState, initialAccountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 
-import Button from '~components/Button'
-import HeaderMenu from '~components/HeaderMenu'
-
-import AddIcon from '~public/icons/Add.svg'
-import LinkIcon from '~public/icons/Link.svg'
-import MenuIcon from '~public/icons/Menu.svg'
-import ArrowIcon from '~public/icons/Arrow.svg'
-import SaveIcon from '~public/icons/Save.svg'
-
-import './index.scss'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -29,11 +20,18 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '~components/DropdownMenuContent'
-import Link from 'next/link'
 import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
 import AccountModal from '~components/AccountModal'
 import Toast from '~components/Toast'
+import Button from '~components/Button'
+
+import LinkIcon from '~public/icons/Link.svg'
+import MenuIcon from '~public/icons/Menu.svg'
+import ArrowIcon from '~public/icons/Arrow.svg'
+import SaveIcon from '~public/icons/Save.svg'
+
+import './index.scss'
 
 const Header = () => {
   // Localization
@@ -44,6 +42,9 @@ const Header = () => {
 
   // State management
   const [copyToastOpen, setCopyToastOpen] = useState(false)
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const [signupModalOpen, setSignupModalOpen] = useState(false)
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false)
   const [leftMenuOpen, setLeftMenuOpen] = useState(false)
   const [rightMenuOpen, setRightMenuOpen] = useState(false)
 
@@ -79,6 +80,10 @@ const Header = () => {
   }
 
   function closeRightMenu() {
+    setRightMenuOpen(false)
+  }
+
+  function handleSettingsOpenChanged(open: boolean) {
     setRightMenuOpen(false)
   }
 
@@ -238,6 +243,34 @@ const Header = () => {
     )
   }
 
+  const settingsModal = () => {
+    const user = accountState.account.user
+
+    if (user) {
+      return (
+        <AccountModal
+          open={settingsModalOpen}
+          username={user.username}
+          picture={user.picture}
+          gender={user.gender}
+          language={user.language}
+          theme={user.theme}
+          onOpenChange={setSettingsModalOpen}
+        />
+      )
+    }
+  }
+
+  const loginModal = () => {
+    return <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
+  }
+
+  const signupModal = () => {
+    return (
+      <SignupModal open={signupModalOpen} onOpenChange={setSignupModalOpen} />
+    )
+  }
+
   const left = () => {
     return (
       <section>
@@ -374,16 +407,9 @@ const Header = () => {
           <DropdownMenuGroup className="MenuGroup">
             <DropdownMenuItem
               className="MenuItem"
-              onClick={closeRightMenu}
-              asChild
+              onClick={() => setSettingsModalOpen(true)}
             >
-              <AccountModal
-                username={account.user.username}
-                picture={account.user.picture}
-                gender={account.user.gender}
-                language={account.user.language}
-                theme={account.user.theme}
-              />
+              <span>{t('menu.settings')}</span>
             </DropdownMenuItem>
             <DropdownMenuItem className="MenuItem" onClick={logout}>
               <span>{t('menu.logout')}</span>
@@ -405,8 +431,18 @@ const Header = () => {
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup className="MenuGroup">
-            <LoginModal />
-            <SignupModal />
+            <DropdownMenuItem
+              className="MenuItem"
+              onClick={() => setLoginModalOpen(true)}
+            >
+              <span>Log in</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="MenuItem"
+              onClick={() => setSignupModalOpen(true)}
+            >
+              <span>Sign up</span>
+            </DropdownMenuItem>
           </DropdownMenuGroup>
         </>
       )
@@ -420,6 +456,9 @@ const Header = () => {
       {left()}
       {right()}
       {urlCopyToast()}
+      {settingsModal()}
+      {loginModal()}
+      {signupModal()}
     </nav>
   )
 }
