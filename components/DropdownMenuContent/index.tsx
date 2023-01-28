@@ -14,7 +14,10 @@ export const DropdownMenuGroup = DropdownMenuPrimitive.Group
 export const DropdownMenuSeparator = DropdownMenuPrimitive.Separator
 
 export const DropdownMenuContent = React.forwardRef<HTMLDivElement, Props>(
-  ({ children, ...props }: PropsWithChildren<Props>, forwardedRef) => {
+  function dropdownMenuContent(
+    { children, ...props }: PropsWithChildren<Props>,
+    forwardedRef
+  ) {
     const classes = classNames(props.className, {
       Menu: true,
     })
