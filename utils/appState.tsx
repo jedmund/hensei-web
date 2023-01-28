@@ -36,6 +36,7 @@ interface AppState {
 
   party: {
     id: string | undefined
+    shortcode: string | undefined
     editable: boolean
     detailsVisible: boolean
     name: string | undefined
@@ -87,6 +88,7 @@ interface AppState {
 export const initialAppState: AppState = {
   party: {
     id: undefined,
+    shortcode: '',
     editable: false,
     detailsVisible: false,
     name: undefined,

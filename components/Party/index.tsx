@@ -150,6 +150,7 @@ const Party = (props: Props) => {
     appState.party.accessory = team.accessory
 
     appState.party.id = team.id
+    appState.party.shortcode = team.shortcode
     appState.party.extra = team.extra
     appState.party.user = team.user
     appState.party.favorited = team.favorited
