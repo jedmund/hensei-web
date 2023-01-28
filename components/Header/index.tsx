@@ -146,6 +146,14 @@ const Header = () => {
     else console.error('Failed to unsave team: No party ID')
   }
 
+  function remixTeam() {
+    if (party.shortcode)
+      api.remix(party.shortcode).then((response) => {
+        const remix = response.data.party
+        router.push(`/p/${remix.shortcode}`)
+      })
+  }
+
   const pageTitle = () => {
     let title = ''
     let hasAccessory = false
@@ -238,7 +246,7 @@ const Header = () => {
         className="Remix"
         blended={true}
         text="Remix"
-        onClick={toggleFavorite}
+        onClick={remixTeam}
       />
     )
   }
@@ -305,7 +313,7 @@ const Header = () => {
         (!party.user || party.user.id !== account.user.id)
           ? saveButton()
           : ''}
-        {remixButton()}
+        {router.route === '/p/[party]' ? remixButton() : ''}
         <DropdownMenu
           open={rightMenuOpen}
           onOpenChange={handleRightMenuOpenChange}
