@@ -18,8 +18,10 @@ interface Party {
   button_count?: number
   turn_count?: number
   chain_count?: number
+  source_party?: Party
   job: Job
   job_skills: JobSkillObject
+  accessory: JobAccessory
   shortcode: string
   extra: boolean
   favorited: boolean
@@ -27,6 +29,8 @@ interface Party {
   weapons: Array<GridWeapon>
   summons: Array<GridSummon>
   user: User
+  remix: boolean
+  remixes: Party[]
   created_at: string
   updated_at: string
 }

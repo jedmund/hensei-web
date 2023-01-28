@@ -83,6 +83,11 @@ $accent--blue--dark: #6195f4;
 $accent--yellow--light: #c89d39;
 $accent--yellow--dark: #f9cc64;
 
+$selected--item--bg--dark: #f9cc645d;
+$selected--item--bg--dark--hover: #fcc33f81;
+$selected--item--bg--light: #f9cc645d;
+$selected--item--bg--light--hover: #ecbc4c6f;
+
 // Colors -- Elements
 $wind-text-00: #023e28;
 $wind-text-10: #006a43;
@@ -148,8 +153,8 @@ $dialog--bg--dark: $grey-25;
 // Color Definitions: Menu
 $menu--bg--light: $grey-100;
 $menu--bg--dark: $grey-10;
-$menu--text--light: $grey-90;
-$menu--text--dark: $grey-50;
+$menu--text--light: $grey-50;
+$menu--text--dark: $grey-60;
 $menu--separator--light: $grey-90;
 $menu--separator--dark: $grey-05;
 $menu--item--bg--light--hover: $grey-85;

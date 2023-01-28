@@ -2,8 +2,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
 import Alert from '~components/Alert'
@@ -31,11 +32,18 @@ const CharacterGrid = (props: Props) => {
   // Constants
   const numCharacters: number = 5
 
+  // Localization
+  const { t } = useTranslation('common')
+
   // Cookies
   const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
+
+  // Set up state for error handling
+  const [axiosError, setAxiosError] = useState<AxiosResponse>()
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false)
 
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
@@ -55,6 +63,7 @@ const CharacterGrid = (props: Props) => {
     2: undefined,
     3: undefined,
   })
+  const [jobAccessory, setJobAccessory] = useState<JobAccessory>()
   const [errorMessage, setErrorMessage] = useState('')
 
   // Create a temporary state to store previous weapon uncap values and transcendence stages
@@ -81,6 +90,7 @@ const CharacterGrid = (props: Props) => {
   useEffect(() => {
     setJob(appState.party.job)
     setJobSkills(appState.party.jobSkills)
+    setJobAccessory(appState.party.accessory)
   }, [appState])
 
   // Initialize an array of current uncap values for each characters
@@ -109,7 +119,15 @@ const CharacterGrid = (props: Props) => {
       if (party.editable)
         saveCharacter(party.id, character, position)
           .then((response) => handleCharacterResponse(response.data))
-          .catch((error) => console.error(error))
+          .catch((error) => {
+            const axiosError = error as AxiosError
+            const response = axiosError.response
+
+            if (response) {
+              setErrorAlertOpen(true)
+              setAxiosError(response)
+            }
+          })
     }
   }
 
@@ -186,7 +204,7 @@ const CharacterGrid = (props: Props) => {
   }
 
   // Methods: Saving job and job skills
-  const saveJob = async function (job?: Job) {
+  async function saveJob(job?: Job) {
     const payload = {
       party: {
         job_id: job ? job.id : -1,
@@ -214,7 +232,7 @@ const CharacterGrid = (props: Props) => {
     }
   }
 
-  const saveJobSkill = function (skill: JobSkill, position: number) {
+  function saveJobSkill(skill: JobSkill, position: number) {
     if (party.id && appState.party.editable) {
       const positionedKey = `skill${position}_id`
 
@@ -250,6 +268,24 @@ const CharacterGrid = (props: Props) => {
             setErrorMessage(message)
           }
         })
+    }
+  }
+
+  async function saveAccessory(accessory: JobAccessory) {
+    const payload = {
+      party: {
+        accessory_id: accessory.id,
+      },
+    }
+
+    if (appState.party.id) {
+      const response = await api.endpoints.parties.update(
+        appState.party.id,
+        payload
+      )
+      const team = response.data.party
+      setJobAccessory(team.accessory)
+      appState.party.accessory = team.accessory
     }
   }
 
@@ -462,6 +498,18 @@ const CharacterGrid = (props: Props) => {
   }
 
   // Render: JSX components
+  const errorAlert = () => {
+    return (
+      <Alert
+        open={errorAlertOpen}
+        title={axiosError ? `${axiosError.status}` : 'Error'}
+        message={t(`errors.${axiosError?.statusText.toLowerCase()}`)}
+        cancelAction={() => setErrorAlertOpen(false)}
+        cancelActionText={t('buttons.confirm')}
+      />
+    )
+  }
+
   return (
     <div>
       <Alert
@@ -474,9 +522,11 @@ const CharacterGrid = (props: Props) => {
         <JobSection
           job={job}
           jobSkills={jobSkills}
+          jobAccessory={jobAccessory}
           editable={party.editable}
           saveJob={saveJob}
           saveSkill={saveJobSkill}
+          saveAccessory={saveAccessory}
         />
         <CharacterConflictModal
           open={modalOpen}
@@ -504,6 +554,7 @@ const CharacterGrid = (props: Props) => {
           })}
         </ul>
       </div>
+      {errorAlert()}
     </div>
   )
 }

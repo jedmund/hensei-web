@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -15,7 +15,10 @@ import DialogContent from '~components/DialogContent'
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
-interface Props {}
+interface Props {
+  open: boolean
+  onOpenChange?: (open: boolean) => void
+}
 
 interface ErrorMap {
   [index: string]: string
@@ -58,6 +61,10 @@ const SignupModal = (props: Props) => {
     passwordConfirmationInput,
   ]
 
+  useEffect(() => {
+    setOpen(props.open)
+  }, [props.open])
+
   function register(event: React.FormEvent) {
     event.preventDefault()
 
@@ -91,7 +98,9 @@ const SignupModal = (props: Props) => {
       token: resp.token,
     }
 
-    setCookie('account', cookieObj, { path: '/' })
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+    setCookie('account', cookieObj, { path: '/', expires: expiresAt })
 
     // Set Axios default headers
     setUserToken()
@@ -106,24 +115,32 @@ const SignupModal = (props: Props) => {
     const user = response.data
 
     // Set user data in the user cookie
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
     setCookie(
       'user',
       {
-        picture: user.avatar.picture,
-        element: user.avatar.element,
+        avatar: {
+          picture: user.avatar.picture,
+          element: user.avatar.element,
+        },
         language: user.language,
         gender: user.gender,
         theme: user.theme,
       },
-      { path: '/' }
+      { path: '/', expires: expiresAt }
     )
 
     // Set the user data in the account state
     accountState.account.user = {
       id: user.id,
       username: user.username,
-      picture: user.avatar.picture,
-      element: user.avatar.element,
+      granblueId: '',
+      avatar: {
+        picture: user.avatar.picture,
+        element: user.avatar.element,
+      },
       gender: user.gender,
       language: user.language,
       theme: user.theme,
@@ -261,6 +278,8 @@ const SignupModal = (props: Props) => {
       password: '',
       passwordConfirmation: '',
     })
+
+    if (props.onOpenChange) props.onOpenChange(open)
   }
 
   function onEscapeKeyDown(event: KeyboardEvent) {
@@ -274,11 +293,6 @@ const SignupModal = (props: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={openChange}>
-      <DialogTrigger asChild>
-        <li className="MenuItem">
-          <span>{t('menu.signup')}</span>
-        </li>
-      </DialogTrigger>
       <DialogContent
         className="Signup"
         footerref={footerRef}

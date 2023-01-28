@@ -1,17 +1,4 @@
-.Changelog.DialogContent {
-  gap: 0;
-
-  .updates {
-    padding: 0 $unit-4x;
-  }
-
-  .updates {
-    display: flex;
-    flex-direction: column;
-    gap: $unit-4x;
-    margin-bottom: $unit-4x;
-  }
-
+.Updates.PageContent {
   .version {
     &.content {
       .top h3 {

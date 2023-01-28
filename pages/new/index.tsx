@@ -1,15 +1,19 @@
 import React, { useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import clonedeep from 'lodash.clonedeep'
 
 import Party from '~components/Party'
 
-import { appState } from '~utils/appState'
-import { groupWeaponKeys } from '~utils/groupWeaponKeys'
+import api from '~utils/api'
+import fetchLatestVersion from '~utils/fetchLatestVersion'
 import organizeRaids from '~utils/organizeRaids'
 import setUserToken from '~utils/setUserToken'
-import api from '~utils/api'
+import { appState, initialAppState } from '~utils/appState'
+import { groupWeaponKeys } from '~utils/groupWeaponKeys'
+import { printError } from '~utils/reportError'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { GroupedWeaponKeys } from '~utils/groupWeaponKeys'
@@ -20,11 +24,15 @@ interface Props {
   raids: Raid[]
   sortedRaids: Raid[][]
   weaponKeys: GroupedWeaponKeys
+  version: AppUpdate
 }
 
 const NewRoute: React.FC<Props> = (props: Props) => {
   // Import translations
   const { t } = useTranslation('common')
+
+  // Set up router
+  const router = useRouter()
 
   function callback(path: string) {
     // This is scuffed, how do we do this natively?
@@ -35,15 +43,26 @@ const NewRoute: React.FC<Props> = (props: Props) => {
     persistStaticData()
   }, [persistStaticData])
 
+  useEffect(() => {
+    // Clean state
+    const resetState = clonedeep(initialAppState)
+    Object.keys(resetState).forEach((key) => {
+      appState[key] = resetState[key]
+    })
+    // Set party to be editable
+    appState.party.editable = true
+  }, [])
+
   function persistStaticData() {
     appState.raids = props.raids
     appState.jobs = props.jobs
     appState.jobSkills = props.jobSkills
     appState.weaponKeys = props.weaponKeys
+    appState.version = props.version
   }
 
   return (
-    <React.Fragment>
+    <React.Fragment key={router.asPath}>
       <Head>
         {/* HTML */}
         <title>{t('page.titles.new')}</title>
@@ -82,32 +101,39 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set headers for server-side requests
   setUserToken(req, res)
 
-  let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll()
-    .then((response) => organizeRaids(response.data))
+  try {
+    // Fetch latest version
+    const version = await fetchLatestVersion()
 
-  let jobs = await api.endpoints.jobs
-    .getAll()
-    .then((response) => {
+    // Fetch and organize raids
+    let { raids, sortedRaids } = await api.endpoints.raids
+      .getAll()
+      .then((response) => organizeRaids(response.data))
+
+    let jobs = await api.endpoints.jobs.getAll().then((response) => {
       return response.data
     })
 
-  let jobSkills = await api.allJobSkills().then((response) => response.data)
+    let jobSkills = await api.allJobSkills().then((response) => response.data)
 
-  let weaponKeys = await api.endpoints.weapon_keys
-    .getAll()
-    .then((response) => groupWeaponKeys(response.data))
+    let weaponKeys = await api.endpoints.weapon_keys
+      .getAll()
+      .then((response) => groupWeaponKeys(response.data))
 
-  return {
-    props: {
-      jobs: jobs,
-      jobSkills: jobSkills,
-      raids: raids,
-      sortedRaids: sortedRaids,
-      weaponKeys: weaponKeys,
-      ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
-      // Will be passed to the page component as props
-    },
+    return {
+      props: {
+        jobs: jobs,
+        jobSkills: jobSkills,
+        raids: raids,
+        sortedRaids: sortedRaids,
+        weaponKeys: weaponKeys,
+        version: version,
+        ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
+        // Will be passed to the page component as props
+      },
+    }
+  } catch (error) {
+    printError(error, 'axios')
   }
 }
 

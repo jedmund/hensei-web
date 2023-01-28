@@ -115,6 +115,16 @@ class Api {
     return axios.get(resourceUrl, params)
   }
 
+  jobAccessoriesForJob(jobId: string, params?: {}) {
+    const resourceUrl = `${this.url}/jobs/${jobId}/accessories`
+    return axios.get(resourceUrl, params)
+  }
+
+  remix(shortcode: string, params?: {}) {
+    const resourceUrl = `${this.url}/parties/${shortcode}/remix`
+    return axios.post(resourceUrl, params)
+  }
+
   savedTeams(params: {}) {
     const resourceUrl = `${this.url}/parties/favorites`
     return axios.get(resourceUrl, params)
@@ -146,6 +156,11 @@ class Api {
   
   userInfo(id: string) {
     const resourceUrl = `${this.url}/users/info/${id}`
+    return axios.get(resourceUrl)
+  }
+
+  version() {
+    const resourceUrl = `${this.url}/version`
     return axios.get(resourceUrl)
   }
 }

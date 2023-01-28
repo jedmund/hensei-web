@@ -1,4 +1,15 @@
 {
+  "about": {
+    "segmented_control": {
+      "about": "About",
+      "updates": "Updates",
+      "roadmap": "Roadmap"
+    }
+  },
+  "accessories": {
+    "paladin": "shield",
+    "manadiver": "manatura"
+  },
   "alert": {
     "incompatible_weapon": "You've selected a weapon that can't be added to the Additional Weapon slots."
   },
@@ -28,6 +39,9 @@
     "show_info": "Edit info",
     "hide_info": "Hide info",
     "save_info": "Save info",
+    "remix": "Remix",
+    "save": "Save",
+    "saved": "Saved",
     "menu": "Menu",
     "new": "New",
     "wiki": "View more on gbf.wiki"
@@ -39,6 +53,9 @@
       "weapon": "Modify weapon"
     },
     "remove": "Remove from grid"
+  },
+  "errors": {
+    "unauthorized": "You don't have permission to perform that action"
   },
   "filters": {
     "labels": {
@@ -338,6 +355,9 @@
   },
   "page": {
     "titles": {
+      "about": "About granblue.team",
+      "updates": "Updates / granblue.team",
+      "roadmap": "Roadmap / granblue.team",
       "discover": "Discover teams / granblue.team",
       "new": "Create a new team / granblue.team",
       "profile": "@{{username}}'s Teams / granblue.team",
@@ -345,6 +365,9 @@
       "saved": "Your saved teams / granblue.team"
     },
     "descriptions": {
+      "about": "More about granblue.team / Save and discover teams to use in Granblue Fantasy",
+      "updates": "Latest updates to granblue.team",
+      "roadmap": "Upcoming planned features for granblue.team",
       "discover": "Save and discover teams to use in Granblue Fantasy and search by raid, element or recency",
       "new": "Create and theorycraft teams to use in Granblue Fantasy and share with the community",
       "profile": "Browse @{{username}}'s Teams and filter by raid, element or recency",
@@ -364,12 +387,24 @@
       "no_skill": "No skill"
     }
   },
+  "toasts": {
+    "copied": "This party's URL was copied to your clipboard"
+  },
+  "tooltips": {
+    "remix": "Make a copy of this team",
+    "save": "Save this team to your account",
+    "source": "Go to original team"
+  },
   "extra_weapons": "Additional Weapons",
+  "equipped": "Equipped",
   "coming_soon": "Coming Soon",
+  "new_party": "New party",
+  "no_accessory": "No {{accessory}} equipped",
   "no_title": "Untitled",
   "no_raid": "No raid",
   "no_user": "Anonymous",
   "no_job": "No class",
   "no_value": "No value",
+  "remixes": "Remixes",
   "level": "Level"
 }

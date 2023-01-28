@@ -1,11 +1,10 @@
 interface User {
   id: string
   username: string
-  granblueId: number
+  granblueId: string
   avatar: {
     picture: string
     element: string
   }
   gender: number
-  private: boolean
 }

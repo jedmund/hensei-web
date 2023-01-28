@@ -164,6 +164,7 @@ const CharacterUnit = ({
 
   function removeCharacter() {
     if (gridCharacter) sendCharacterToRemove(gridCharacter.id)
+    setAlertOpen(false)
   }
 
   // Methods: Image string generation
@@ -218,7 +219,7 @@ const CharacterUnit = ({
           <ContextMenu onOpenChange={handleContextMenuOpenChange}>
             <ContextMenuTrigger asChild>
               <Button
-                accessoryIcon={<SettingsIcon />}
+                leftAccessoryIcon={<SettingsIcon />}
                 className={buttonClasses}
                 onClick={handleButtonClicked}
               />

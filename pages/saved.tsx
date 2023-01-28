@@ -12,10 +12,13 @@ import clonedeep from 'lodash.clonedeep'
 import api from '~utils/api'
 import setUserToken from '~utils/setUserToken'
 import extractFilters from '~utils/extractFilters'
+import fetchLatestVersion from '~utils/fetchLatestVersion'
 import organizeRaids from '~utils/organizeRaids'
 import useDidMountEffect from '~utils/useDidMountEffect'
+import { appState } from '~utils/appState'
 import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
+import { printError } from '~utils/reportError'
 
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
@@ -29,6 +32,7 @@ interface Props {
   meta: PaginationObject
   raids: Raid[]
   sortedRaids: Raid[][]
+  version: AppUpdate
 }
 
 const SavedRoute: React.FC<Props> = (props: Props) => {
@@ -97,6 +101,7 @@ const SavedRoute: React.FC<Props> = (props: Props) => {
       setTotalPages(props.meta.totalPages)
       setRecordCount(props.meta.count)
       replaceResults(props.meta.count, props.teams)
+      appState.version = props.version
     }
     setCurrentPage(1)
   }, [])
@@ -352,39 +357,47 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set headers for server-side requests
   setUserToken(req, res)
 
-  // Fetch and organize raids
-  let { raids, sortedRaids } = await api.endpoints.raids
-    .getAll()
-    .then((response) => organizeRaids(response.data))
+  try {
+    // Fetch latest version
+    const version = await fetchLatestVersion()
 
-  // Create filter object
-  const filters: FilterObject = extractFilters(query, raids)
-  const params = {
-    params: { ...filters },
-  }
+    // Fetch and organize raids
+    let { raids, sortedRaids } = await api.endpoints.raids
+      .getAll()
+      .then((response) => organizeRaids(response.data))
 
-  // Set up empty variables
-  let teams: Party[] | null = null
-  let meta: PaginationObject = emptyPaginationObject
+    // Create filter object
+    const filters: FilterObject = extractFilters(query, raids)
+    const params = {
+      params: { ...filters },
+    }
 
-  // Fetch initial set of saved parties
-  const response = await api.savedTeams(params)
+    // Set up empty variables
+    let teams: Party[] | null = null
+    let meta: PaginationObject = emptyPaginationObject
 
-  // Assign values to pass to props
-  teams = response.data.results
-  meta.count = response.data.meta.count
-  meta.totalPages = response.data.meta.total_pages
-  meta.perPage = response.data.meta.per_page
+    // Fetch initial set of saved parties
+    const response = await api.savedTeams(params)
 
-  return {
-    props: {
-      teams: teams,
-      meta: meta,
-      raids: raids,
-      sortedRaids: sortedRaids,
-      ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
-      // Will be passed to the page component as props
-    },
+    // Assign values to pass to props
+    teams = response.data.results
+    meta.count = response.data.meta.count
+    meta.totalPages = response.data.meta.total_pages
+    meta.perPage = response.data.meta.per_page
+
+    return {
+      props: {
+        teams: teams,
+        meta: meta,
+        raids: raids,
+        sortedRaids: sortedRaids,
+        version: version,
+        ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
+        // Will be passed to the page component as props
+      },
+    }
+  } catch (error) {
+    printError(error, 'axios')
   }
 }
 

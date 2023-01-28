@@ -14,10 +14,11 @@ const SelectItem = React.forwardRef<HTMLDivElement, Props>(function selectItem(
   { children, value, iconSrc, altText, ...props },
   forwardedRef
 ) {
+  const { altText, iconSrc, ...rest } = props
   return (
     <Select.Item
       className={classNames('SelectItem', props.className)}
-      {...props}
+      {...rest}
       ref={forwardedRef}
       value={`${value}`}
     >

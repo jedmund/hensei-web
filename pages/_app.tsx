@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
-import { getCookie, getCookies } from 'cookies-next'
+import { useEffect } from 'react'
+import { getCookie } from 'cookies-next'
 import { appWithTranslation } from 'next-i18next'
-import { ThemeProvider, useTheme } from 'next-themes'
+import { ThemeProvider } from 'next-themes'
 
 import type { AppProps } from 'next/app'
 import Layout from '~components/Layout'
@@ -10,6 +10,8 @@ import { accountState } from '~utils/accountState'
 import setUserToken from '~utils/setUserToken'
 
 import '../styles/globals.scss'
+import { ToastProvider, Viewport } from '@radix-ui/react-toast'
+import { TooltipProvider } from '@radix-ui/react-tooltip'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const accountCookie = getCookie('account')
@@ -30,8 +32,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       accountState.account.user = {
         id: cookieData.account.userId,
         username: cookieData.account.username,
-        picture: cookieData.user.picture,
-        element: cookieData.user.element,
+        granblueId: '',
+        avatar: {
+          picture: cookieData.user.avatar.picture,
+          element: cookieData.user.avatar.element,
+        },
         gender: cookieData.user.gender,
         language: cookieData.user.language,
         theme: cookieData.user.theme,
@@ -43,9 +48,14 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ThemeProvider>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <ToastProvider swipeDirection="right">
+        <TooltipProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+          <Viewport className="ToastViewport" />
+        </TooltipProvider>
+      </ToastProvider>
     </ThemeProvider>
   )
 }

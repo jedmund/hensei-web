@@ -6,9 +6,10 @@ import './index.scss'
 
 interface Props
   extends React.DetailedHTMLProps<
-    React.DialogHTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {}
+      React.DialogHTMLAttributes<HTMLDivElement>,
+      HTMLDivElement
+    >,
+    PopoverPrimitive.PopoverContentProps {}
 
 export const Popover = PopoverPrimitive.Root
 export const PopoverAnchor = PopoverPrimitive.Anchor
@@ -26,15 +27,18 @@ export const PopoverContent = React.forwardRef<HTMLDivElement, Props>(
     return (
       <PopoverPrimitive.Portal>
         <PopoverPrimitive.Content
-          sideOffset={5}
           {...props}
           className={classes}
           ref={forwardedRef}
         >
           {children}
-          <PopoverPrimitive.Arrow />
+          <PopoverPrimitive.Arrow className="Arrow" />
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     )
   }
 )
+
+PopoverContent.defaultProps = {
+  sideOffset: 8,
+}

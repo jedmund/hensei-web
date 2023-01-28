@@ -142,8 +142,14 @@ const SearchModal = (props: Props) => {
       }
     }
 
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
     if (recents && recents.length > 5) recents.pop()
-    setCookie(`recent_${props.object}`, recents, { path: '/' })
+    setCookie(`recent_${props.object}`, recents, {
+      path: '/',
+      expires: expiresAt,
+    })
     sendData(result)
   }
 

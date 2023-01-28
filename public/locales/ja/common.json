@@ -1,4 +1,15 @@
 {
+  "about": {
+    "segmented_control": {
+      "about": "サイトについて",
+      "updates": "変更ログ",
+      "roadmap": "ロードマップ"
+    }
+  },
+  "accessories": {
+    "paladin": "盾",
+    "manadiver": "マナベリ"
+  },
   "alert": {
     "incompatible_weapon": "Additional Weaponsに装備できない武器を入れました。"
   },
@@ -28,6 +39,9 @@
     "show_info": "詳細を編集",
     "save_info": "詳細を保存",
     "hide_info": "詳細を非表示",
+    "remix": "リミックス",
+    "save": "保存する",
+    "saved": "保存",
     "menu": "メニュー",
     "new": "作成",
     "wiki": "gbf.wikiで詳しく見る"
@@ -47,6 +61,9 @@
       "proficiency": "武器種",
       "rarity": "レアリティ"
     }
+  },
+  "errors": {
+    "unauthorized": "行ったアクションを実行する権限がありません"
   },
   "header": {
     "anonymous": "無名",
@@ -339,6 +356,9 @@
   },
   "page": {
     "titles": {
+      "about": "granblue.teamについて",
+      "updates": "変更ログ / granblue.team",
+      "roadmap": "ロードマップ / granblue.team",
       "discover": "編成を見出す / granblue.team",
       "new": "新しい編成 / granblue.team",
       "profile": "@{{username}}さんの作った編成 / granblue.team",
@@ -346,6 +366,9 @@
       "saved": "保存した編成"
     },
     "descriptions": {
+      "about": "granblue.teamについて / グランブルーファンタジーの編成を探したり保存したりできる",
+      "updates": "granblue.teamの最新変更について",
+      "roadmap": "granblue.teamの開発予定機能",
       "discover": "グランブルーファンタジーの編成をマルチ、属性、作った時間などで探したり保存したりできる",
       "new": "グランブルーファンタジーの編成を作成し、騎空士とシェアできるサイトgranblue.team",
       "profile": "@{{username}}の編成を調査し、マルチ、属性、または作った時間でフィルターする",
@@ -365,12 +388,24 @@
       "no_skill": "設定されていません"
     }
   },
+  "toasts": {
+    "copied": "この編成のURLはクリップボードにコピーされました"
+  },
+  "tooltips": {
+    "remix": "この編成をコピーする",
+    "save": "この編成をアカウントに保存する",
+    "source": "オリジナルの編成へ"
+  },
+  "equipped": "装備した",
   "extra_weapons": "Additional Weapons",
   "coming_soon": "開発中",
+  "new_party": "新しい編成",
+  "no_accessory": "{{accessory}}は装備していません",
   "no_title": "無題",
   "no_raid": "マルチなし",
   "no_user": "無名",
   "no_job": "ジョブなし",
   "no_value": "値なし",
+  "remixes": "リミックスされた編成",
   "level": "レベル"
 }

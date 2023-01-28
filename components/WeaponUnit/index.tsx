@@ -131,6 +131,7 @@ const WeaponUnit = ({
 
   function removeWeapon() {
     if (gridWeapon) sendWeaponToRemove(gridWeapon.id)
+    setAlertOpen(false)
   }
 
   // Methods: Data fetching and manipulation
@@ -450,7 +451,7 @@ const WeaponUnit = ({
           <ContextMenu onOpenChange={handleContextMenuOpenChange}>
             <ContextMenuTrigger asChild>
               <Button
-                accessoryIcon={<SettingsIcon />}
+                leftAccessoryIcon={<SettingsIcon />}
                 className={buttonClasses}
                 onClick={handleButtonClicked}
               />

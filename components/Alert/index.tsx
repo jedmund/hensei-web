@@ -23,7 +23,11 @@ const Alert = (props: Props) => {
         <AlertDialog.Overlay className="Overlay" onClick={props.cancelAction} />
         <div className="AlertWrapper">
           <AlertDialog.Content className="Alert">
-            {props.title ? <AlertDialog.Title>Error</AlertDialog.Title> : ''}
+            {props.title ? (
+              <AlertDialog.Title>{props.title}</AlertDialog.Title>
+            ) : (
+              ''
+            )}
             <AlertDialog.Description className="description">
               {props.message}
             </AlertDialog.Description>

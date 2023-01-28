@@ -8,10 +8,7 @@ import { retrieveCookies, retrieveLocaleCookies } from '~utils/retrieveCookies'
 import Link from 'next/link'
 import * as Switch from '@radix-ui/react-switch'
 
-import AboutModal from '~components/AboutModal'
 import AccountModal from '~components/AccountModal'
-import ChangelogModal from '~components/ChangelogModal'
-import RoadmapModal from '~components/RoadmapModal'
 import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
 
@@ -65,7 +62,11 @@ const HeaderMenu = (props: Props) => {
 
   function handleCheckedChange(value: boolean) {
     const language = value ? 'ja' : 'en'
-    setCookie('NEXT_LOCALE', language, { path: '/' })
+
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
+    setCookie('NEXT_LOCALE', language, { path: '/', expires: expiresAt })
     router.push(router.asPath, undefined, { locale: language })
   }
 
@@ -110,9 +111,21 @@ const HeaderMenu = (props: Props) => {
           </li>
         </div>
         <div className="MenuGroup">
-          <AboutModal />
-          <ChangelogModal />
-          <RoadmapModal />
+          <li className="MenuItem">
+            <a href="/about" target="_blank">
+              {t('about.segmented_control.about')}
+            </a>
+          </li>
+          <li className="MenuItem">
+            <a href="/updates" target="_blank">
+              {t('about.segmented_control.updates')}
+            </a>
+          </li>
+          <li className="MenuItem">
+            <a href="/roadmap" target="_blank">
+              {t('about.segmented_control.roadmap')}
+            </a>
+          </li>
         </div>
         <div className="MenuGroup">
           <AccountModal
@@ -160,9 +173,21 @@ const HeaderMenu = (props: Props) => {
           </li>
         </div>
         <div className="MenuGroup">
-          <AboutModal />
-          <ChangelogModal />
-          <RoadmapModal />
+          <li className="MenuItem">
+            <a href="/about" target="_blank">
+              {t('about.segmented_control.about')}
+            </a>
+          </li>
+          <li className="MenuItem">
+            <a href="/updates" target="_blank">
+              {t('about.segmented_control.updates')}
+            </a>
+          </li>
+          <li className="MenuItem">
+            <a href="/roadmap" target="_blank">
+              {t('about.segmented_control.roadmap')}
+            </a>
+          </li>
         </div>
         <div className="MenuGroup">
           <LoginModal />
