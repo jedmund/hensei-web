@@ -131,6 +131,7 @@ const WeaponUnit = ({
 
   function removeWeapon() {
     if (gridWeapon) sendWeaponToRemove(gridWeapon.id)
+    setAlertOpen(false)
   }
 
   // Methods: Data fetching and manipulation

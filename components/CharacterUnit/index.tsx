@@ -164,6 +164,7 @@ const CharacterUnit = ({
 
   function removeCharacter() {
     if (gridCharacter) sendCharacterToRemove(gridCharacter.id)
+    setAlertOpen(false)
   }
 
   // Methods: Image string generation
