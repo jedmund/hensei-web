@@ -26,9 +26,10 @@ import AccountModal from '~components/AccountModal'
 import Toast from '~components/Toast'
 import Button from '~components/Button'
 
+import ArrowIcon from '~public/icons/Arrow.svg'
 import LinkIcon from '~public/icons/Link.svg'
 import MenuIcon from '~public/icons/Menu.svg'
-import ArrowIcon from '~public/icons/Arrow.svg'
+import RemixIcon from '~public/icons/Remix.svg'
 import SaveIcon from '~public/icons/Save.svg'
 
 import './index.scss'
@@ -243,6 +244,18 @@ const Header = () => {
     )
   }
 
+  const remixButton = () => {
+    return (
+      <Button
+        leftAccessoryIcon={<RemixIcon />}
+        className="Remix"
+        blended={true}
+        text="Remix"
+        onClick={toggleFavorite}
+      />
+    )
+  }
+
   const settingsModal = () => {
     const user = accountState.account.user
 
@@ -305,7 +318,7 @@ const Header = () => {
         (!party.user || party.user.id !== account.user.id)
           ? saveButton()
           : ''}
-
+        {remixButton()}
         <DropdownMenu
           open={rightMenuOpen}
           onOpenChange={handleRightMenuOpenChange}
