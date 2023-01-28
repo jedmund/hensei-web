@@ -32,8 +32,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       accountState.account.user = {
         id: cookieData.account.userId,
         username: cookieData.account.username,
-        picture: cookieData.user.picture,
-        element: cookieData.user.element,
+        granblueId: '',
+        avatar: {
+          picture: cookieData.user.avatar.picture,
+          element: cookieData.user.avatar.element,
+        },
         gender: cookieData.user.gender,
         language: cookieData.user.language,
         theme: cookieData.user.theme,

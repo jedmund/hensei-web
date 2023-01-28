@@ -121,8 +121,10 @@ const SignupModal = (props: Props) => {
     setCookie(
       'user',
       {
-        picture: user.avatar.picture,
-        element: user.avatar.element,
+        avatar: {
+          picture: user.avatar.picture,
+          element: user.avatar.element,
+        },
         language: user.language,
         gender: user.gender,
         theme: user.theme,
@@ -134,8 +136,11 @@ const SignupModal = (props: Props) => {
     accountState.account.user = {
       id: user.id,
       username: user.username,
-      picture: user.avatar.picture,
-      element: user.avatar.element,
+      granblueId: '',
+      avatar: {
+        picture: user.avatar.picture,
+        element: user.avatar.element,
+      },
       gender: user.gender,
       language: user.language,
       theme: user.theme,
