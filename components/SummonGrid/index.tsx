@@ -386,7 +386,6 @@ const SummonGrid = (props: Props) => {
 
   // Render: JSX components
   const errorAlert = () => {
-    console.log(axiosError?.status)
     return (
       <Alert
         open={errorAlertOpen}

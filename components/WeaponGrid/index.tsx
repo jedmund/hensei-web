@@ -383,7 +383,6 @@ const WeaponGrid = (props: Props) => {
   }
 
   const errorAlert = () => {
-    console.log(axiosError?.status)
     return (
       <Alert
         open={errorAlertOpen}
