@@ -41,16 +41,12 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
   },
   forwardedRef
 ) {
-  const classes = classNames(
-    {
-      Button: true,
-      Active: active,
-      Blended: blended,
-      Contained: contained,
-    },
-    buttonSize,
-    props.className
-  )
+  const classes = classNames(buttonSize, props.className, {
+    Button: true,
+    Active: active,
+    Blended: blended,
+    Contained: contained,
+  })
 
   const leftAccessoryClasses = classNames(leftAccessoryClassName, {
     Accessory: true,

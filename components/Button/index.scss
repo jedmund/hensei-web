@@ -43,7 +43,7 @@
       stroke: #ff4d4d;
     }
 
-    &.Active.Save {
+    &.Save {
       color: #ff4d4d;
 
       .Accessory svg {
@@ -99,24 +99,27 @@
     }
   }
 
-  &.save:hover {
-    color: #ff4d4d;
-
+  &.Save {
     .Accessory svg {
-      fill: #ff4d4d;
-      stroke: #ff4d4d;
+      fill: none;
+      stroke: var(--button-text);
     }
-  }
 
-  &.save.Active {
-    color: #ff4d4d;
+    &.Saved {
+      color: #ff4d4d;
+
+      .Accessory svg {
+        fill: #ff4d4d;
+        stroke: none;
+      }
+    }
 
     &:hover {
-      color: darken(#ff4d4d, 30);
+      color: #ff4d4d;
 
-      .icon svg {
-        fill: darken(#ff4d4d, 30);
-        stroke: darken(#ff4d4d, 30);
+      .Accessory svg {
+        fill: none;
+        stroke: #ff4d4d;
       }
     }
   }

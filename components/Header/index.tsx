@@ -179,24 +179,18 @@ const Header = () => {
   }
 
   const saveButton = () => {
-    if (party.favorited)
-      return (
-        <Button
-          leftAccessoryIcon={<SaveIcon />}
-          blended={true}
-          text="Saved"
-          onClick={toggleFavorite}
-        />
-      )
-    else
-      return (
-        <Button
-          leftAccessoryIcon={<SaveIcon />}
-          blended={true}
-          text="Save"
-          onClick={toggleFavorite}
-        />
-      )
+    return (
+      <Button
+        leftAccessoryIcon={<SaveIcon />}
+        className={classNames({
+          Save: true,
+          Saved: party.favorited,
+        })}
+        blended={true}
+        text={party.favorited ? 'Saved' : 'Save'}
+        onClick={toggleFavorite}
+      />
+    )
   }
 
   const image = () => {
