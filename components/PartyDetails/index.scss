@@ -270,15 +270,21 @@
     .Left {
       flex-grow: 1;
 
-      h1 {
-        font-size: $font-xlarge;
-        font-weight: $normal;
-        text-align: left;
+      .Header {
+        align-items: center;
+        display: flex;
+        gap: $unit;
         margin-bottom: $unit;
-        color: var(--text-primary);
 
-        &.empty {
-          color: var(--text-secondary);
+        h1 {
+          font-size: $font-xlarge;
+          font-weight: $normal;
+          text-align: left;
+          color: var(--text-primary);
+
+          &.empty {
+            color: var(--text-secondary);
+          }
         }
       }
 

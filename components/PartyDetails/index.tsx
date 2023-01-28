@@ -31,6 +31,7 @@ import { youtube } from '~utils/youtube'
 import CheckIcon from '~public/icons/Check.svg'
 import CrossIcon from '~public/icons/Cross.svg'
 import EditIcon from '~public/icons/Edit.svg'
+import RemixIcon from '~public/icons/Remix.svg'
 
 import type { DetailsObject } from 'types'
 
@@ -694,7 +695,7 @@ const PartyDetails = (props: Props) => {
   const remixSection = () => {
     return (
       <section className="Remixes">
-        <h3>Remixes</h3>
+        <h3>{t('remixes')}</h3>
         {<GridRepCollection>{renderRemixes()}</GridRepCollection>}
       </section>
     )
@@ -704,7 +705,21 @@ const PartyDetails = (props: Props) => {
     <section className="DetailsWrapper">
       <div className="PartyInfo">
         <div className="Left">
-          <h1 className={name ? '' : 'empty'}>{name ? name : t('no_title')}</h1>
+          <div className="Header">
+            <h1 className={name ? '' : 'empty'}>
+              {name ? name : t('no_title')}
+            </h1>
+            {party.remix && party.sourceParty ? (
+              <Link href={`/p/${party.sourceParty.shortcode}`} passHref>
+                <Button
+                  className="IconButton Blended"
+                  leftAccessoryIcon={<RemixIcon />}
+                />
+              </Link>
+            ) : (
+              ''
+            )}
+          </div>
           <div className="attribution">
             {renderUserBlock()}
             {party.raid ? linkedRaidBlock(party.raid) : ''}
