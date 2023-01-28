@@ -11,7 +11,7 @@ interface Props extends ComponentProps<'div'> {
 }
 
 const SelectItem = React.forwardRef<HTMLDivElement, Props>(function selectItem(
-  { children, ...props },
+  { children, value, iconSrc, altText, ...props },
   forwardedRef
 ) {
   const { altText, iconSrc, ...rest } = props
@@ -20,9 +20,9 @@ const SelectItem = React.forwardRef<HTMLDivElement, Props>(function selectItem(
       className={classNames('SelectItem', props.className)}
       {...rest}
       ref={forwardedRef}
-      value={`${props.value}`}
+      value={`${value}`}
     >
-      {props.iconSrc ? <img alt={props.altText} src={props.iconSrc} /> : ''}
+      {iconSrc ? <img alt={altText} src={iconSrc} /> : ''}
       <Select.ItemText>{children}</Select.ItemText>
     </Select.Item>
   )
