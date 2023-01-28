@@ -172,15 +172,11 @@ const Header = () => {
       }
     } else if (['weapons', 'summons', 'characters', 'new', ''].includes(path)) {
       title = t('new_party')
-    } else if (
-      ['about', 'updates', 'roadmap', 'saved', 'teams'].includes(path)
-    ) {
-      title = capitalizeFirstLetter(path)
     } else {
-      title = path
+      title = ''
     }
 
-    return (
+    return title !== '' ? (
       <Button
         blended={true}
         rightAccessoryIcon={
@@ -191,6 +187,8 @@ const Header = () => {
         text={title}
         onClick={copyToClipboard}
       />
+    ) : (
+      ''
     )
   }
 
