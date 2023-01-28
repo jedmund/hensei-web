@@ -750,7 +750,7 @@ const PartyDetails = (props: Props) => {
       </div>
       {readOnly}
       {editable}
-      {remixes.length > 0 ? remixSection() : ''}
+      {remixes && remixes.length > 0 ? remixSection() : ''}
       {deleteAlert()}
     </section>
   )
