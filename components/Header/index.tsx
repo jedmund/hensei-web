@@ -197,10 +197,10 @@ const Header = () => {
       image = (
         <img
           alt={user.username}
-          className={`profile ${user.element}`}
-          srcSet={`/profile/${user.picture}.png, 
-                      /profile/${user.picture}@2x.png 2x`}
-          src={`/profile/${user.picture}.png`}
+          className={`profile ${user.avatar.element}`}
+          srcSet={`/profile/${user.avatar.picture}.png, 
+                      /profile/${user.avatar.picture}@2x.png 2x`}
+          src={`/profile/${user.avatar.picture}.png`}
         />
       )
     } else {
@@ -262,7 +262,7 @@ const Header = () => {
         <AccountModal
           open={settingsModalOpen}
           username={user.username}
-          picture={user.picture}
+          picture={user.avatar.picture}
           gender={user.gender}
           language={user.language}
           theme={user.theme}

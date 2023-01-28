@@ -159,8 +159,10 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
             const user = response.data
 
             const cookieObj = {
-              picture: user.avatar.picture,
-              element: user.avatar.element,
+              avatar: {
+                picture: user.avatar.picture,
+                element: user.avatar.element,
+              },
               gender: user.gender,
               language: user.language,
               theme: user.theme,
@@ -173,14 +175,18 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
             accountState.account.user = {
               id: user.id,
               username: user.username,
-              picture: user.avatar.picture,
-              element: user.avatar.element,
+              granblueId: '',
+              avatar: {
+                picture: user.avatar.picture,
+                element: user.avatar.element,
+              },
               language: user.language,
               theme: user.theme,
               gender: user.gender,
             }
 
             setOpen(false)
+            if (props.onOpenChange) props.onOpenChange(false)
             changeLanguage(router, user.language)
           })
       }
