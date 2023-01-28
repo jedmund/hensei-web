@@ -158,7 +158,6 @@ const Header = () => {
     let hasAccessory = false
 
     const path = router.asPath.split('/')[1]
-    console.log(router.asPath.split('/'))
     if (path === 'p') {
       hasAccessory = true
       if (appState.party && appState.party.name) {
@@ -359,11 +358,10 @@ const Header = () => {
         <>
           <DropdownMenuGroup className="MenuGroup">
             <DropdownMenuItem className="MenuItem">
-              <Link
-                onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}
-                href="/new"
-              >
-                New party
+              <Link href="/new">
+                <a onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}>
+                  New party
+                </a>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem className="MenuItem">
@@ -398,11 +396,10 @@ const Header = () => {
         <>
           <DropdownMenuGroup className="MenuGroup">
             <DropdownMenuItem className="MenuItem">
-              <Link
-                onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}
-                href="/new"
-              >
-                New party
+              <Link href="/new">
+                <a onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}>
+                  New party
+                </a>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
