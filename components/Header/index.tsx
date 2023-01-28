@@ -141,18 +141,6 @@ const Header = () => {
     else console.error('Failed to unsave team: No party ID')
   }
 
-  const copyButton = () => {
-    if (router.route === '/p/[party]')
-      return (
-        <Button
-          leftAccessoryIcon={<LinkIcon className="stroke" />}
-          blended={true}
-          text={t('buttons.copy')}
-          onClick={copyToClipboard}
-        />
-      )
-  }
-
   const title = () => {
     let title = ''
     let hasAccessory = false
@@ -185,6 +173,7 @@ const Header = () => {
           ) : undefined
         }
         text={title}
+        onClick={copyToClipboard}
       />
     )
   }
@@ -265,8 +254,6 @@ const Header = () => {
         (!party.user || party.user.id !== account.user.id)
           ? saveButton()
           : ''}
-
-        {copyButton()}
 
         {/* <Button
           leftAccessoryIcon={<AddIcon className="Add" />}
