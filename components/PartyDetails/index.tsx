@@ -11,18 +11,19 @@ import classNames from 'classnames'
 import reactStringReplace from 'react-string-replace'
 
 import Alert from '~components/Alert'
-
 import Button from '~components/Button'
 import CharLimitedFieldset from '~components/CharLimitedFieldset'
-import Input from '~components/Input'
 import DurationInput from '~components/DurationInput'
-import Token from '~components/Token'
 import GridRepCollection from '~components/GridRepCollection'
 import GridRep from '~components/GridRep'
+import Input from '~components/Input'
 import RaidDropdown from '~components/RaidDropdown'
-import TextFieldset from '~components/TextFieldset'
 import Switch from '~components/Switch'
+import Tooltip from '~components/Tooltip'
+import TextFieldset from '~components/TextFieldset'
+import Token from '~components/Token'
 
+import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 import { appState } from '~utils/appState'
 import { formatTimeAgo } from '~utils/timeAgo'
@@ -36,7 +37,6 @@ import RemixIcon from '~public/icons/Remix.svg'
 import type { DetailsObject } from 'types'
 
 import './index.scss'
-import api from '~utils/api'
 
 // Props
 interface Props {
@@ -308,8 +308,8 @@ const PartyDetails = (props: Props) => {
   }
 
   // Methods: Navigation
-  function goTo(shortcode: string) {
-    router.push(`/p/${shortcode}`)
+  function goTo(shortcode?: string) {
+    if (shortcode) router.push(`/p/${shortcode}`)
   }
 
   // Methods: Favorites
@@ -710,12 +710,13 @@ const PartyDetails = (props: Props) => {
               {name ? name : t('no_title')}
             </h1>
             {party.remix && party.sourceParty ? (
-              <Link href={`/p/${party.sourceParty.shortcode}`} passHref>
+              <Tooltip content="Go to original team">
                 <Button
                   className="IconButton Blended"
                   leftAccessoryIcon={<RemixIcon />}
+                  onClick={() => goTo(party.sourceParty?.shortcode)}
                 />
-              </Link>
+              </Tooltip>
             ) : (
               ''
             )}
