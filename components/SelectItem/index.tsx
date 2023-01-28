@@ -11,7 +11,7 @@ interface Props extends ComponentProps<'div'> {
 }
 
 const SelectItem = React.forwardRef<HTMLDivElement, Props>(function selectItem(
-  { children, value, iconSrc, altText, ...props },
+  { children, value, ...props },
   forwardedRef
 ) {
   const { altText, iconSrc, ...rest } = props
