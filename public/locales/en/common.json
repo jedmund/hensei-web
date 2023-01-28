@@ -390,6 +390,11 @@
   "toasts": {
     "copied": "This party's URL was copied to your clipboard"
   },
+  "tooltips": {
+    "remix": "Make a copy of this team",
+    "save": "Save this team to your account",
+    "source": "Go to original team"
+  },
   "extra_weapons": "Additional Weapons",
   "equipped": "Equipped",
   "coming_soon": "Coming Soon",

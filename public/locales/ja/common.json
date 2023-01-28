@@ -391,6 +391,11 @@
   "toasts": {
     "copied": "この編成のURLはクリップボードにコピーされました"
   },
+  "tooltips": {
+    "remix": "この編成をコピーする",
+    "save": "この編成をアカウントに保存する",
+    "source": "オリジナルの編成へ"
+  },
   "equipped": "装備した",
   "extra_weapons": "Additional Weapons",
   "coming_soon": "開発中",

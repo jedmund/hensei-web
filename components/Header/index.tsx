@@ -33,6 +33,7 @@ import RemixIcon from '~public/icons/Remix.svg'
 import SaveIcon from '~public/icons/Save.svg'
 
 import './index.scss'
+import Tooltip from '~components/Tooltip'
 
 const Header = () => {
   // Localization
@@ -226,28 +227,32 @@ const Header = () => {
 
   const saveButton = () => {
     return (
-      <Button
-        leftAccessoryIcon={<SaveIcon />}
-        className={classNames({
-          Save: true,
-          Saved: party.favorited,
-        })}
-        blended={true}
-        text={party.favorited ? t('buttons.saved') : t('buttons.save')}
-        onClick={toggleFavorite}
-      />
+      <Tooltip content={t('tooltips.save')}>
+        <Button
+          leftAccessoryIcon={<SaveIcon />}
+          className={classNames({
+            Save: true,
+            Saved: party.favorited,
+          })}
+          blended={true}
+          text={party.favorited ? t('buttons.saved') : t('buttons.save')}
+          onClick={toggleFavorite}
+        />
+      </Tooltip>
     )
   }
 
   const remixButton = () => {
     return (
-      <Button
-        leftAccessoryIcon={<RemixIcon />}
-        className="Remix"
-        blended={true}
-        text={t('buttons.remix')}
-        onClick={remixTeam}
-      />
+      <Tooltip content={t('tooltips.remix')}>
+        <Button
+          leftAccessoryIcon={<RemixIcon />}
+          className="Remix"
+          blended={true}
+          text={t('buttons.remix')}
+          onClick={remixTeam}
+        />
+      </Tooltip>
     )
   }
 

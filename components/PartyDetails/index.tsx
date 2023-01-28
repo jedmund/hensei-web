@@ -710,7 +710,7 @@ const PartyDetails = (props: Props) => {
               {name ? name : t('no_title')}
             </h1>
             {party.remix && party.sourceParty ? (
-              <Tooltip content="Go to original team">
+              <Tooltip content={t('tooltips.source')}>
                 <Button
                   className="IconButton Blended"
                   leftAccessoryIcon={<RemixIcon />}
