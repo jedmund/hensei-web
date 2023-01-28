@@ -208,7 +208,7 @@ const GridRep = (props: Props) => {
             <a href="#">
               <Button
                 className="Save"
-                accessoryIcon={<SaveIcon className="stroke" />}
+                leftAccessoryIcon={<SaveIcon className="stroke" />}
                 active={props.favorited}
                 contained={true}
                 buttonSize="small"

@@ -8,7 +8,10 @@ interface Props
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
   > {
-  accessoryIcon?: React.ReactNode
+  leftAccessoryIcon?: React.ReactNode
+  leftAccessoryClassName?: string
+  rightAccessoryIcon?: React.ReactNode
+  rightAccessoryClassName?: string
   active?: boolean
   blended?: boolean
   contained?: boolean
@@ -24,7 +27,18 @@ const defaultProps = {
 }
 
 const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
-  { accessoryIcon, active, blended, contained, buttonSize, text, ...props },
+  {
+    leftAccessoryIcon,
+    leftAccessoryClassName,
+    rightAccessoryIcon,
+    rightAccessoryClassName,
+    active,
+    blended,
+    contained,
+    buttonSize,
+    text,
+    ...props
+  },
   forwardedRef
 ) {
   const classes = classNames(
@@ -38,8 +52,24 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
     props.className
   )
 
-  const hasAccessory = () => {
-    if (accessoryIcon) return <span className="Accessory">{accessoryIcon}</span>
+  const leftAccessoryClasses = classNames(leftAccessoryClassName, {
+    Accessory: true,
+    Left: true,
+  })
+
+  const rightAccessoryClasses = classNames(rightAccessoryClassName, {
+    Accessory: true,
+    Right: true,
+  })
+
+  const hasLeftAccessory = () => {
+    if (leftAccessoryIcon)
+      return <span className={leftAccessoryClasses}>{leftAccessoryIcon}</span>
+  }
+
+  const hasRightAccessory = () => {
+    if (rightAccessoryIcon)
+      return <span className={rightAccessoryClasses}>{rightAccessoryIcon}</span>
   }
 
   const hasText = () => {
@@ -48,8 +78,9 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
 
   return (
     <button {...props} className={classes} ref={forwardedRef}>
-      {hasAccessory()}
+      {hasLeftAccessory()}
       {hasText()}
+      {hasRightAccessory()}
     </button>
   )
 })
