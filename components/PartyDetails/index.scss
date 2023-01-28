@@ -3,6 +3,7 @@
   flex-direction: column;
   margin: $unit-4x auto 0 auto;
   max-width: $grid-width;
+  padding-bottom: $unit-12x;
 
   @include breakpoint(phone) {
     padding: 0 $unit;
@@ -10,13 +11,13 @@
 
   .PartyDetails {
     display: none;
-    margin: 0 auto;
+    margin: 0 auto $unit-2x;
     max-width: $unit * 94;
     overflow: hidden;
     width: 100%;
 
     &.Visible {
-      margin-bottom: $unit-12x;
+      // margin-bottom: $unit-12x;
     }
 
     &.Editable {
@@ -330,6 +331,23 @@
       .no-user {
         background: $grey-80;
       }
+    }
+  }
+
+  .Remixes {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-2x;
+
+    h3 {
+      font-size: $font-medium;
+      font-weight: $medium;
+    }
+
+    .GridRepCollection {
+      gap: $unit-2x;
+      margin-left: $unit-2x * -1;
+      margin-right: $unit-2x * -1;
     }
   }
 }

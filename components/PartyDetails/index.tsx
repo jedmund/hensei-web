@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
+import clonedeep from 'lodash.clonedeep'
 
 import Linkify from 'react-linkify'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
@@ -16,7 +17,8 @@ import CharLimitedFieldset from '~components/CharLimitedFieldset'
 import Input from '~components/Input'
 import DurationInput from '~components/DurationInput'
 import Token from '~components/Token'
-
+import GridRepCollection from '~components/GridRepCollection'
+import GridRep from '~components/GridRep'
 import RaidDropdown from '~components/RaidDropdown'
 import TextFieldset from '~components/TextFieldset'
 import Switch from '~components/Switch'
@@ -33,6 +35,7 @@ import EditIcon from '~public/icons/Edit.svg'
 import type { DetailsObject } from 'types'
 
 import './index.scss'
+import api from '~utils/api'
 
 // Props
 interface Props {
@@ -68,6 +71,8 @@ const PartyDetails = (props: Props) => {
   const [chainCount, setChainCount] = useState<number | undefined>(undefined)
   const [turnCount, setTurnCount] = useState<number | undefined>(undefined)
   const [clearTime, setClearTime] = useState(0)
+
+  const [remixes, setRemixes] = useState<Party[]>([])
 
   const [raidSlug, setRaidSlug] = useState('')
   const [embeddedDescription, setEmbeddedDescription] =
@@ -111,6 +116,7 @@ const PartyDetails = (props: Props) => {
       setFullAuto(props.party.full_auto)
       setChargeAttack(props.party.charge_attack)
       setClearTime(props.party.clear_time)
+      setRemixes(props.party.remixes)
       if (props.party.turn_count) setTurnCount(props.party.turn_count)
       if (props.party.button_count) setButtonCount(props.party.button_count)
       if (props.party.chain_count) setChainCount(props.party.chain_count)
@@ -300,6 +306,49 @@ const PartyDetails = (props: Props) => {
     props.deleteCallback()
   }
 
+  // Methods: Navigation
+  function goTo(shortcode: string) {
+    router.push(`/p/${shortcode}`)
+  }
+
+  // Methods: Favorites
+  function toggleFavorite(teamId: string, favorited: boolean) {
+    if (favorited) unsaveFavorite(teamId)
+    else saveFavorite(teamId)
+  }
+
+  function saveFavorite(teamId: string) {
+    api.saveTeam({ id: teamId }).then((response) => {
+      if (response.status == 201) {
+        const index = remixes.findIndex((p) => p.id === teamId)
+        const party = remixes[index]
+
+        party.favorited = true
+
+        let clonedParties = clonedeep(remixes)
+        clonedParties[index] = party
+
+        setRemixes(clonedParties)
+      }
+    })
+  }
+
+  function unsaveFavorite(teamId: string) {
+    api.unsaveTeam({ id: teamId }).then((response) => {
+      if (response.status == 200) {
+        const index = remixes.findIndex((p) => p.id === teamId)
+        const party = remixes[index]
+
+        party.favorited = false
+
+        let clonedParties = clonedeep(remixes)
+        clonedParties[index] = party
+
+        setRemixes(clonedParties)
+      }
+    })
+  }
+
   function extractYoutubeVideoIds(text: string) {
     // Initialize an array to store the video IDs
     const videoIds = []
@@ -386,6 +435,28 @@ const PartyDetails = (props: Props) => {
         </Link>
       </div>
     )
+  }
+
+  function renderRemixes() {
+    return remixes.map((party, i) => {
+      return (
+        <GridRep
+          id={party.id}
+          shortcode={party.shortcode}
+          name={party.name}
+          createdAt={new Date(party.created_at)}
+          raid={party.raid}
+          grid={party.weapons}
+          user={party.user}
+          favorited={party.favorited}
+          fullAuto={party.full_auto}
+          key={`party-${i}`}
+          displayUser={true}
+          onClick={goTo}
+          onSave={toggleFavorite}
+        />
+      )
+    })
   }
 
   const deleteAlert = () => {
@@ -620,6 +691,15 @@ const PartyDetails = (props: Props) => {
     </section>
   )
 
+  const remixSection = () => {
+    return (
+      <section className="Remixes">
+        <h3>Remixes</h3>
+        {<GridRepCollection>{renderRemixes()}</GridRepCollection>}
+      </section>
+    )
+  }
+
   return (
     <section className="DetailsWrapper">
       <div className="PartyInfo">
@@ -654,6 +734,7 @@ const PartyDetails = (props: Props) => {
       </div>
       {readOnly}
       {editable}
+      {remixes.length > 0 ? remixSection() : ''}
       {deleteAlert()}
     </section>
   )
