@@ -339,6 +339,18 @@
           font-size: $font-small;
         }
 
+        a:visited:not(.fire):not(.water):not(.wind):not(.earth):not(.dark):not(
+            .light
+          ) {
+          color: var(--text-primary);
+        }
+
+        a:hover:not(.fire):not(.water):not(.wind):not(.earth):not(.dark):not(
+            .light
+          ) {
+          color: $blue;
+        }
+
         & > *:not(:last-child):after {
           content: ' · ';
           margin: 0 calc($unit / 2);
