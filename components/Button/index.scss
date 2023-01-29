@@ -108,6 +108,17 @@
     padding: $unit * 1.5;
   }
 
+  @include breakpoint(phone) {
+    &.destructive {
+      background: $error;
+      color: $grey-100;
+
+      .Accessory svg {
+        fill: $grey-100;
+      }
+    }
+  }
+
   &.destructive:hover {
     background: $error;
     color: $grey-100;
