@@ -1,11 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import Head from 'next/head'
-
+import InfiniteScroll from 'react-infinite-scroll-component'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
-import InfiniteScroll from 'react-infinite-scroll-component'
-
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import clonedeep from 'lodash.clonedeep'
 
@@ -18,23 +15,35 @@ import useDidMountEffect from '~utils/useDidMountEffect'
 import { appState } from '~utils/appState'
 import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
-import { printError } from '~utils/reportError'
 
+import ErrorSection from '~components/ErrorSection'
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
+import TeamsHead from '~components/TeamsHead'
 
+import type { AxiosError } from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { FilterObject, PaginationObject } from '~types'
+import type {
+  FilterObject,
+  PageContextObj,
+  PaginationObject,
+  ResponseStatus,
+} from '~types'
 
 interface Props {
-  teams?: Party[]
-  meta: PaginationObject
-  sortedRaids: Raid[][]
+  context?: PageContextObj
   version: AppUpdate
+  error: boolean
+  status?: ResponseStatus
 }
 
-const TeamsRoute: React.FC<Props> = (props: Props) => {
+const TeamsRoute: React.FC<Props> = ({
+  context,
+  version,
+  error,
+  status,
+}: Props) => {
   // Set up router
   const router = useRouter()
 
@@ -96,11 +105,11 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
 
   // Set the initial parties from props
   useEffect(() => {
-    if (props.teams) {
-      setTotalPages(props.meta.totalPages)
-      setRecordCount(props.meta.count)
-      replaceResults(props.meta.count, props.teams)
-      appState.version = props.version
+    if (context && context.teams && context.pagination) {
+      setTotalPages(context.pagination.totalPages)
+      setRecordCount(context.pagination.count)
+      replaceResults(context.pagination.count, context.teams)
+      appState.version = version
     }
     setCurrentPage(1)
   }, [])
@@ -268,6 +277,16 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
     router.push(`/p/${shortcode}`)
   }
 
+  // Methods: Page component rendering
+  function pageHead() {
+    if (context && context.user) return <TeamsHead />
+  }
+
+  function pageError() {
+    if (status) return <ErrorSection status={status} />
+    else return <div />
+  }
+
   function renderParties() {
     return parties.map((party, i) => {
       return (
@@ -290,67 +309,45 @@ const TeamsRoute: React.FC<Props> = (props: Props) => {
     })
   }
 
-  return (
-    <div id="Teams">
-      <Head>
-        {/* HTML */}
-        <title>{t('page.titles.discover')}</title>
-        <meta name="description" content={t('page.descriptions.discover')} />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        {/* OpenGraph */}
-        <meta property="og:title" content={t('page.titles.discover')} />
-        <meta
-          property="og:description"
-          content={t('page.descriptions.discover')}
-        />
-        <meta property="og:url" content="https://app.granblue.team/teams" />
-        <meta property="og:type" content="website" />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:domain" content="app.granblue.team" />
-        <meta name="twitter:title" content={t('page.titles.discover')} />
-        <meta
-          name="twitter:description"
-          content={t('page.descriptions.discover')}
-        />
-      </Head>
-
-      <FilterBar
-        onFilter={receiveFilters}
-        scrolled={scrolled}
-        element={element}
-        raidSlug={raidSlug ? raidSlug : undefined}
-        recency={recency}
-      >
-        <h1>{t('teams.title')}</h1>
-      </FilterBar>
-
-      <section>
-        <InfiniteScroll
-          dataLength={parties && parties.length > 0 ? parties.length : 0}
-          next={() => setCurrentPage(currentPage + 1)}
-          hasMore={totalPages > currentPage}
-          loader={
-            <div id="NotFound">
-              <h2>Loading...</h2>
-            </div>
-          }
+  if (context) {
+    return (
+      <div id="Teams">
+        {pageHead()}
+        <FilterBar
+          onFilter={receiveFilters}
+          scrolled={scrolled}
+          element={element}
+          raidSlug={raidSlug ? raidSlug : undefined}
+          recency={recency}
         >
-          <GridRepCollection>{renderParties()}</GridRepCollection>
-        </InfiniteScroll>
+          <h1>{t('teams.title')}</h1>
+        </FilterBar>
 
-        {parties.length == 0 ? (
-          <div id="NotFound">
-            <h2>{t('teams.not_found')}</h2>
-          </div>
-        ) : (
-          ''
-        )}
-      </section>
-    </div>
-  )
+        <section>
+          <InfiniteScroll
+            dataLength={parties && parties.length > 0 ? parties.length : 0}
+            next={() => setCurrentPage(currentPage + 1)}
+            hasMore={totalPages > currentPage}
+            loader={
+              <div id="NotFound">
+                <h2>Loading...</h2>
+              </div>
+            }
+          >
+            <GridRepCollection>{renderParties()}</GridRepCollection>
+          </InfiniteScroll>
+
+          {parties.length == 0 ? (
+            <div id="NotFound">
+              <h2>{t('teams.not_found')}</h2>
+            </div>
+          ) : (
+            ''
+          )}
+        </section>
+      </div>
+    )
+  } else return pageError()
 }
 
 export const getServerSidePaths = async () => {
@@ -368,10 +365,10 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set headers for server-side requests
   setUserToken(req, res)
 
+  // Fetch latest version
+  const version = await fetchLatestVersion()
+  
   try {
-    // Fetch latest version
-    const version = await fetchLatestVersion()
-
     // Fetch and organize raids
     let { raids, sortedRaids } = await api.endpoints.raids
       .getAll()
@@ -384,31 +381,52 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     }
 
     // Set up empty variables
-    let teams: Party[] | null = null
-    let meta: PaginationObject = emptyPaginationObject
+    let teams: Party[] | undefined = undefined
+    let pagination: PaginationObject = emptyPaginationObject
 
     // Fetch initial set of parties
     const response = await api.endpoints.parties.getAll(params)
 
     // Assign values to pass to props
     teams = response.data.results
-    meta.count = response.data.meta.count
-    meta.totalPages = response.data.meta.total_pages
-    meta.perPage = response.data.meta.per_page
+    pagination.count = response.data.meta.count
+    pagination.totalPages = response.data.meta.total_pages
+    pagination.perPage = response.data.meta.per_page
 
+    // Consolidate data into context object
+    const context: PageContextObj = {
+      teams: teams,
+      raids: raids,
+      sortedRaids: sortedRaids,
+      pagination: pagination,
+    }
+
+    // Pass to the page component as props
     return {
       props: {
-        teams: teams,
-        meta: meta,
-        raids: raids,
-        sortedRaids: sortedRaids,
+        context: context,
         version: version,
+        error: false,
         ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
-        // Will be passed to the page component as props
       },
     }
   } catch (error) {
-    printError(error, 'axios')
+    // Extract the underlying Axios error
+    const axiosError = error as AxiosError
+    const response = axiosError.response
+
+    // Pass to the page component as props
+    return {
+      props: {
+        context: null,
+        error: true,
+        status: {
+          code: response?.status,
+          text: response?.statusText,
+        },
+        ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
+      },
+    }
   }
 }
 
