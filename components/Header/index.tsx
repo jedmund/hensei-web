@@ -95,16 +95,20 @@ const Header = () => {
   }
 
   function copyToClipboard() {
-    const el = document.createElement('input')
-    el.value = window.location.href
-    el.id = 'url-input'
-    document.body.appendChild(el)
+    const path = router.asPath.split('/')[1]
 
-    el.select()
-    document.execCommand('copy')
-    el.remove()
+    if (path === 'p') {
+      const el = document.createElement('input')
+      el.value = window.location.href
+      el.id = 'url-input'
+      document.body.appendChild(el)
 
-    setCopyToastOpen(true)
+      el.select()
+      document.execCommand('copy')
+      el.remove()
+
+      setCopyToastOpen(true)
+    }
   }
 
   function handleNewParty(event: React.MouseEvent, path: string) {
