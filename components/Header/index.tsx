@@ -68,13 +68,6 @@ const Header = () => {
 
   useEffect(() => () => unsubscribe(), [])
 
-  // Subscribe to router changes
-  useEffect(() => {
-    router.events.on('routeChangeStart', (url, { shallow }) => {
-      console.log(`routing to ${url}`, `is shallow routing: ${shallow}`)
-    })
-  }, [])
-
   // Methods: Event handlers (Buttons)
   function handleLeftMenuButtonClicked() {
     setLeftMenuOpen(!leftMenuOpen)
