@@ -130,6 +130,7 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
         onValueChange={handleChange}
         ref={ref}
         triggerClass="modal"
+        overlayVisible={false}
       >
         <SelectItem key="no-key" value="no-key">
           {emptyOption()}

@@ -173,6 +173,7 @@ const SelectWithInput = ({
           onOpenChange={changeOpen}
           onClose={onClose}
           triggerClass="modal"
+          overlayVisible={false}
         >
           {generateOptions()}
         </Select>

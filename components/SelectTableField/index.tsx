@@ -59,6 +59,7 @@ const SelectTableField = (props: Props) => {
           onClose={props.onClose}
           triggerClass={classNames({ Bound: true, Table: true })}
           value={value}
+          overlayVisible={false}
         >
           {props.children}
         </Select>
