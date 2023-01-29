@@ -42,6 +42,10 @@
     .Text {
       font-size: $font-small;
       font-weight: $bold;
+
+      @include breakpoint(phone) {
+        display: none;
+      }
     }
   }
 

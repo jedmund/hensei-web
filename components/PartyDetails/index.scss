@@ -258,7 +258,6 @@
   }
 
   .PartyInfo {
-    align-items: center;
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
@@ -269,10 +268,12 @@
     width: 100%;
 
     @include breakpoint(phone) {
+      flex-direction: column;
+      gap: $unit-2x;
       padding: 0 $unit;
     }
 
-    .Left {
+    & > .Left {
       flex-grow: 1;
 
       .Header {
@@ -312,6 +313,17 @@
         & > *:not(:last-child):after {
           content: ' · ';
           margin: 0 calc($unit / 2);
+        }
+      }
+    }
+
+    @include breakpoint(phone) {
+      .Right .Button {
+        justify-content: center;
+        width: 100%;
+
+        .Text {
+          width: auto;
         }
       }
     }
