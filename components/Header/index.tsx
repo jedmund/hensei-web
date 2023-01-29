@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useSnapshot } from 'valtio'
+import { subscribe, useSnapshot } from 'valtio'
+import { subscribeKey } from 'valtio/utils'
 import { deleteCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
@@ -49,11 +50,21 @@ const Header = () => {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false)
   const [leftMenuOpen, setLeftMenuOpen] = useState(false)
   const [rightMenuOpen, setRightMenuOpen] = useState(false)
+
+  const [name, setName] = useState('')
   const [originalName, setOriginalName] = useState('')
 
   // Snapshots
   const { account } = useSnapshot(accountState)
-  const { party } = useSnapshot(appState)
+  const { party: partySnapshot } = useSnapshot(appState)
+
+  const unsubscribe = subscribe(appState, () => {
+    const newName =
+      appState.party && appState.party.name ? appState.party.name : ''
+    setName(newName)
+  })
+
+  useEffect(() => () => unsubscribe(), [])
 
   function handleCopyToastOpenChanged(open: boolean) {
     setCopyToastOpen(open)
@@ -140,31 +151,31 @@ const Header = () => {
   }
 
   function toggleFavorite() {
-    if (party.favorited) unsaveFavorite()
+    if (partySnapshot.favorited) unsaveFavorite()
     else saveFavorite()
   }
 
   function saveFavorite() {
-    if (party.id)
-      api.saveTeam({ id: party.id }).then((response) => {
+    if (partySnapshot.id)
+      api.saveTeam({ id: partySnapshot.id }).then((response) => {
         if (response.status == 201) appState.party.favorited = true
       })
     else console.error('Failed to save team: No party ID')
   }
 
   function unsaveFavorite() {
-    if (party.id)
-      api.unsaveTeam({ id: party.id }).then((response) => {
+    if (partySnapshot.id)
+      api.unsaveTeam({ id: partySnapshot.id }).then((response) => {
         if (response.status == 200) appState.party.favorited = false
       })
     else console.error('Failed to unsave team: No party ID')
   }
 
   function remixTeam() {
-    setOriginalName(party.name ? party.name : t('no_title'))
+    setOriginalName(partySnapshot.name ? partySnapshot.name : t('no_title'))
 
-    if (party.shortcode)
-      api.remix(party.shortcode).then((response) => {
+    if (partySnapshot.shortcode)
+      api.remix(partySnapshot.shortcode).then((response) => {
         const remix = response.data.party
         router.push(`/p/${remix.shortcode}`)
         setRemixToastOpen(true)
@@ -265,10 +276,12 @@ const Header = () => {
           leftAccessoryIcon={<SaveIcon />}
           className={classNames({
             Save: true,
-            Saved: party.favorited,
+            Saved: partySnapshot.favorited,
           })}
           blended={true}
-          text={party.favorited ? t('buttons.saved') : t('buttons.save')}
+          text={
+            partySnapshot.favorited ? t('buttons.saved') : t('buttons.save')
+          }
           onClick={toggleFavorite}
         />
       </Tooltip>
@@ -348,7 +361,7 @@ const Header = () => {
       <section>
         {router.route === '/p/[party]' &&
         account.user &&
-        (!party.user || party.user.id !== account.user.id) &&
+        (!partySnapshot.user || partySnapshot.user.id !== account.user.id) &&
         !appState.errorCode
           ? saveButton()
           : ''}
