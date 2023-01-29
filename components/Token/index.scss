@@ -1,7 +1,7 @@
 .Token {
   background: var(--input-bg);
   border-radius: 99px;
-  display: inline;
+  display: inline-flex;
   font-size: $font-small;
   font-weight: $medium;
   min-width: 3rem;

@@ -715,6 +715,7 @@ const PartyDetails = (props: Props) => {
                   <Button
                     className="IconButton Blended"
                     leftAccessoryIcon={<RemixIcon />}
+                    text={t('tokens.remix')}
                     onClick={() => goTo(party.sourceParty?.shortcode)}
                   />
                 </Tooltip>

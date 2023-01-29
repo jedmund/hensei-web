@@ -399,6 +399,9 @@
   "toasts": {
     "copied": "This party's URL was copied to your clipboard"
   },
+  "tokens": {
+    "remix": "Remix"
+  },
   "tooltips": {
     "remix": "Make a copy of this team",
     "save": "Save this team to your account",
