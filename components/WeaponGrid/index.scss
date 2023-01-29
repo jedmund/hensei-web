@@ -4,6 +4,10 @@
   flex-direction: column;
   justify-content: center;
 
+  @include breakpoint(phone) {
+    margin: 0 2px;
+  }
+
   #MainGrid {
     display: grid;
     gap: $unit-3x;

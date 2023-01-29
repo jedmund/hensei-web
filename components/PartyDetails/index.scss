@@ -1,6 +1,7 @@
 .DetailsWrapper {
   display: flex;
   flex-direction: column;
+  gap: $unit-2x;
   margin: $unit-4x auto 0 auto;
   max-width: $grid-width;
 
@@ -293,13 +294,12 @@
     flex-direction: row;
     gap: $unit;
     margin: 0 auto;
-    margin-bottom: $unit * 2;
     max-width: $unit * 94;
     width: 100%;
 
     @include breakpoint(phone) {
       flex-direction: column;
-      gap: $unit-2x;
+      gap: $unit;
       padding: 0 $unit;
     }
 

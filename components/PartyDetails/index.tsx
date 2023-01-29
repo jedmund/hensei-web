@@ -743,17 +743,17 @@ const PartyDetails = (props: Props) => {
               )}
             </div>
           </div>
-          <div className="Right">
-            {party.editable ? (
+          {party.editable ? (
+            <div className="Right">
               <Button
                 leftAccessoryIcon={<EditIcon />}
                 text={t('buttons.show_info')}
                 onClick={toggleDetails}
               />
-            ) : (
-              <div />
-            )}
-          </div>
+            </div>
+          ) : (
+            ''
+          )}
         </div>
         {readOnly}
         {editable}
