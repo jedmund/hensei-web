@@ -5,6 +5,7 @@ import * as ToastPrimitive from '@radix-ui/react-toast'
 import './index.scss'
 
 interface Props extends ToastPrimitive.ToastProps {
+  altText: string
   className?: string
   title?: string
   content: React.ReactNode
@@ -12,6 +13,7 @@ interface Props extends ToastPrimitive.ToastProps {
 }
 
 const Toast = ({
+  altText,
   children,
   title,
   content,
@@ -39,7 +41,7 @@ const Toast = ({
         <p>{content}</p>
       </ToastPrimitive.Description>
       {children && (
-        <ToastPrimitive.Action asChild altText="">
+        <ToastPrimitive.Action asChild altText={altText}>
           {children}
         </ToastPrimitive.Action>
       )}

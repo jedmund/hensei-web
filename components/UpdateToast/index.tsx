@@ -54,6 +54,7 @@ const UpdateToast = ({
 
   return (
     <Toast
+      altText={t(`toasts.description.${updateType}`)}
       className={classes}
       title={t(`toasts.title`)}
       content={t(`toasts.description.${updateType}`)}
