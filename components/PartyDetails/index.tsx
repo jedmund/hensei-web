@@ -702,57 +702,60 @@ const PartyDetails = (props: Props) => {
   }
 
   return (
-    <section className="DetailsWrapper">
-      <div className="PartyInfo">
-        <div className="Left">
-          <div className="Header">
-            <h1 className={name ? '' : 'empty'}>
-              {name ? name : t('no_title')}
-            </h1>
-            {party.remix && party.sourceParty ? (
-              <Tooltip content={t('tooltips.source')}>
-                <Button
-                  className="IconButton Blended"
-                  leftAccessoryIcon={<RemixIcon />}
-                  onClick={() => goTo(party.sourceParty?.shortcode)}
-                />
-              </Tooltip>
-            ) : (
-              ''
-            )}
+    <>
+      <section className="DetailsWrapper">
+        <div className="PartyInfo">
+          <div className="Left">
+            <div className="Header">
+              <h1 className={name ? '' : 'empty'}>
+                {name ? name : t('no_title')}
+              </h1>
+              {party.remix && party.sourceParty ? (
+                <Tooltip content={t('tooltips.source')}>
+                  <Button
+                    className="IconButton Blended"
+                    leftAccessoryIcon={<RemixIcon />}
+                    onClick={() => goTo(party.sourceParty?.shortcode)}
+                  />
+                </Tooltip>
+              ) : (
+                ''
+              )}
+            </div>
+            <div className="attribution">
+              {renderUserBlock()}
+              {party.raid ? linkedRaidBlock(party.raid) : ''}
+              {party.created_at != '' ? (
+                <time
+                  className="last-updated"
+                  dateTime={new Date(party.created_at).toString()}
+                >
+                  {formatTimeAgo(new Date(party.created_at), locale)}
+                </time>
+              ) : (
+                ''
+              )}
+            </div>
           </div>
-          <div className="attribution">
-            {renderUserBlock()}
-            {party.raid ? linkedRaidBlock(party.raid) : ''}
-            {party.created_at != '' ? (
-              <time
-                className="last-updated"
-                dateTime={new Date(party.created_at).toString()}
-              >
-                {formatTimeAgo(new Date(party.created_at), locale)}
-              </time>
+          <div className="Right">
+            {party.editable ? (
+              <Button
+                leftAccessoryIcon={<EditIcon />}
+                text={t('buttons.show_info')}
+                onClick={toggleDetails}
+              />
             ) : (
-              ''
+              <div />
             )}
           </div>
         </div>
-        <div className="Right">
-          {party.editable ? (
-            <Button
-              leftAccessoryIcon={<EditIcon />}
-              text={t('buttons.show_info')}
-              onClick={toggleDetails}
-            />
-          ) : (
-            <div />
-          )}
-        </div>
-      </div>
-      {readOnly}
-      {editable}
+        {readOnly}
+        {editable}
+
+        {deleteAlert()}
+      </section>
       {remixes && remixes.length > 0 ? remixSection() : ''}
-      {deleteAlert()}
-    </section>
+    </>
   )
 }
 

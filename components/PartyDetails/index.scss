@@ -3,11 +3,6 @@
   flex-direction: column;
   margin: $unit-4x auto 0 auto;
   max-width: $grid-width;
-  padding-bottom: $unit-12x;
-
-  @include breakpoint(phone) {
-    padding: 0 $unit;
-  }
 
   .PartyDetails {
     display: none;
@@ -15,6 +10,10 @@
     max-width: $unit * 94;
     overflow: hidden;
     width: 100%;
+
+    @include breakpoint(phone) {
+      padding: 0 $unit;
+    }
 
     &.Visible {
       // margin-bottom: $unit-12x;
@@ -147,6 +146,7 @@
     }
 
     &.ReadOnly {
+      box-sizing: border-box;
       line-height: 1.4;
       white-space: pre-wrap;
 
@@ -259,6 +259,7 @@
 
   .PartyInfo {
     align-items: center;
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     gap: $unit;
@@ -266,6 +267,10 @@
     margin-bottom: $unit * 2;
     max-width: $unit * 94;
     width: 100%;
+
+    @include breakpoint(phone) {
+      padding: 0 $unit;
+    }
 
     .Left {
       flex-grow: 1;
@@ -339,25 +344,50 @@
       }
     }
   }
+}
 
-  .Remixes {
-    display: flex;
-    flex-direction: column;
-    gap: $unit-2x;
-    width: 752px;
+.Remixes {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-2x;
+  width: 752px;
 
-    h3 {
-      font-size: $font-medium;
-      font-weight: $medium;
+  @include breakpoint(tablet) {
+    gap: $unit;
+    width: 100%;
+  }
+
+  h3 {
+    font-size: $font-medium;
+    font-weight: $medium;
+
+    @include breakpoint(phone) {
+      padding: 0 $unit;
+    }
+  }
+
+  .GridRepCollection {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    margin-left: $unit-2x * -1;
+    margin-right: $unit-2x * -1;
+
+    @include breakpoint(tablet) {
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
     }
 
-    .GridRepCollection {
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      margin-left: $unit-2x * -1;
-      margin-right: $unit-2x * -1;
+    @include breakpoint(phone) {
+      grid-template-columns: 1fr;
+      margin-left: $unit * -1;
+      margin-right: $unit * -1;
+      max-width: inherit;
+      width: 100%;
+    }
 
-      .GridRep {
-        min-width: 200px;
+    .GridRep {
+      min-width: 200px;
+
+      @include breakpoint(phone) {
+        min-width: 360px;
       }
     }
   }
