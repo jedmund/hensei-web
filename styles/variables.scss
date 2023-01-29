@@ -65,9 +65,11 @@ $purple-90: #ecebff;
 $orange-00: #201710;
 $orange-10: #6b401b;
 $orange-30: #825b39;
+$orange-35: #885243;
 $orange-40: #925a2a;
 $orange-50: #a8703f;
 $orange-70: #d08f57;
+$orange-75: #ffb461;
 $orange-80: #facea7;
 $orange-90: #ffebd9;
 
@@ -253,6 +255,15 @@ $subaura--orange--card--bg--dark: $orange-30;
 $subaura--orange--primary--dark: $orange-00;
 $subaura--orange--secondary--dark: $orange-10;
 $subaura--orange--text--dark: $orange-70;
+
+// Color Definitions: Tokens
+$charge--attack--bg: $orange-75;
+$charge--attack--text: $orange-35;
+
+$full--auto--bg: $yellow-text-20;
+
+$auto--guard--bg: $purple-30;
+$auto--guard--text: $purple-10;
 
 // Color Definitions: Element Toggle
 $toggle--bg--light: $grey-90;

@@ -167,7 +167,8 @@
       .Details {
         display: flex;
         flex-direction: row;
-        gap: $unit-half;
+        flex-wrap: wrap;
+        gap: $unit;
         margin-bottom: $unit-2x;
       }
 

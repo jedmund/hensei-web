@@ -667,15 +667,20 @@ const PartyDetails = (props: Props) => {
   const readOnly = (
     <section className={readOnlyClasses}>
       <section className="Details">
-        {
-          <Token>
-            {`${t('party.details.labels.charge_attack')} ${
-              chargeAttack ? 'On' : 'Off'
-            }`}
-          </Token>
-        }
-        {fullAuto ? <Token>{t('party.details.labels.full_auto')}</Token> : ''}
-        {autoGuard ? <Token>{t('party.details.labels.auto_guard')}</Token> : ''}
+        <Token className={classNames({ ChargeAttack: true, On: chargeAttack })}>
+          {`${t('party.details.labels.charge_attack')} ${
+            chargeAttack ? 'On' : 'Off'
+          }`}
+        </Token>
+
+        <Token className={classNames({ FullAuto: true, On: fullAuto })}>
+          {`${t('party.details.labels.full_auto')} ${fullAuto ? 'On' : 'Off'}`}
+        </Token>
+
+        <Token className={classNames({ AutoGuard: true, On: autoGuard })}>
+          {`${t('party.details.labels.auto_guard')} ${fullAuto ? 'On' : 'Off'}`}
+        </Token>
+
         {turnCount ? (
           <Token>
             {t('party.details.turns.with_count', {
