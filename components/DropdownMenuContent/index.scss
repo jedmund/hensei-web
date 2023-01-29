@@ -4,10 +4,9 @@
   border-radius: 6px;
   box-shadow: 0 1px 4px rgb(0 0 0 / 8%);
   box-sizing: border-box;
-  min-width: 30vw;
+  width: 30vw;
+  max-width: 180px;
   margin: 0 $unit-2x;
-  // top: $unit-8x; // This shouldn't be hardcoded. How to calculate it?
-  // Also, add space that doesn't make the menu disappear if you move your mouse slowly
   z-index: 15;
 
   @include breakpoint(phone) {

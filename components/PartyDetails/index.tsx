@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ChangeEvent, KeyboardEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useSnapshot } from 'valtio'
+import { subscribe, useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 import clonedeep from 'lodash.clonedeep'
 
@@ -25,7 +25,7 @@ import Token from '~components/Token'
 
 import api from '~utils/api'
 import { accountState } from '~utils/accountState'
-import { appState } from '~utils/appState'
+import { appState, initialAppState } from '~utils/appState'
 import { formatTimeAgo } from '~utils/timeAgo'
 import { youtube } from '~utils/youtube'
 
@@ -123,6 +123,26 @@ const PartyDetails = (props: Props) => {
       if (props.party.chain_count) setChainCount(props.party.chain_count)
     }
   }, [props.party])
+
+  // Subscribe to router changes and reset state
+  // if the new route is a new team
+  useEffect(() => {
+    router.events.on('routeChangeStart', (url, { shallow }) => {
+      if (url === '/new' || url === '/') {
+        const party = initialAppState.party
+
+        setName(party.name ? party.name : '')
+        setAutoGuard(party.autoGuard)
+        setFullAuto(party.fullAuto)
+        setChargeAttack(party.chargeAttack)
+        setClearTime(party.clearTime)
+        setRemixes(party.remixes)
+        setTurnCount(party.turnCount)
+        setButtonCount(party.buttonCount)
+        setChainCount(party.chainCount)
+      }
+    })
+  }, [])
 
   useEffect(() => {
     // Extract the video IDs from the description
@@ -475,161 +495,163 @@ const PartyDetails = (props: Props) => {
     }
   }
 
-  const editable = (
-    <section className={editableClasses}>
-      <CharLimitedFieldset
-        fieldName="name"
-        placeholder="Name your team"
-        value={props.party?.name}
-        limit={50}
-        onChange={handleInputChange}
-        error={errors.name}
-        ref={nameInput}
-      />
-      <RaidDropdown
-        showAllRaidsOption={false}
-        currentRaid={props.party?.raid ? props.party?.raid.slug : undefined}
-        onChange={receiveRaid}
-      />
-      <ul className="SwitchToggleGroup DetailToggleGroup">
-        <li className="Ougi ToggleSection">
-          <label htmlFor="ougi">
-            <span>{t('party.details.labels.charge_attack')}</span>
-            <div>
-              <Switch
-                name="charge_attack"
-                onCheckedChange={handleChargeAttackChanged}
-                value={switchValue(chargeAttack)}
-                checked={chargeAttack}
-              />
-            </div>
-          </label>
-        </li>
-        <li className="FullAuto ToggleSection">
-          <label htmlFor="full_auto">
-            <span>{t('party.details.labels.full_auto')}</span>
-            <div>
-              <Switch
-                onCheckedChange={handleFullAutoChanged}
-                name="full_auto"
-                value={switchValue(fullAuto)}
-                checked={fullAuto}
-              />
-            </div>
-          </label>
-        </li>
-        <li className="AutoGuard ToggleSection">
-          <label htmlFor="auto_guard">
-            <span>{t('party.details.labels.auto_guard')}</span>
-            <div>
-              <Switch
-                onCheckedChange={handleAutoGuardChanged}
-                name="auto_guard"
-                value={switchValue(autoGuard)}
-                disabled={!fullAuto}
-                checked={autoGuard}
-              />
-            </div>
-          </label>
-        </li>
-      </ul>
-      <ul className="InputToggleGroup DetailToggleGroup">
-        <li className="InputSection">
-          <label htmlFor="auto_guard">
-            <span>{t('party.details.labels.button_chain')}</span>
-            <div className="Input Bound">
+  const editable = () => {
+    return (
+      <section className={editableClasses}>
+        <CharLimitedFieldset
+          fieldName="name"
+          placeholder="Name your team"
+          value={props.party?.name}
+          limit={50}
+          onChange={handleInputChange}
+          error={errors.name}
+          ref={nameInput}
+        />
+        <RaidDropdown
+          showAllRaidsOption={false}
+          currentRaid={props.party?.raid ? props.party?.raid.slug : undefined}
+          onChange={receiveRaid}
+        />
+        <ul className="SwitchToggleGroup DetailToggleGroup">
+          <li className="Ougi ToggleSection">
+            <label htmlFor="ougi">
+              <span>{t('party.details.labels.charge_attack')}</span>
+              <div>
+                <Switch
+                  name="charge_attack"
+                  onCheckedChange={handleChargeAttackChanged}
+                  value={switchValue(chargeAttack)}
+                  checked={chargeAttack}
+                />
+              </div>
+            </label>
+          </li>
+          <li className="FullAuto ToggleSection">
+            <label htmlFor="full_auto">
+              <span>{t('party.details.labels.full_auto')}</span>
+              <div>
+                <Switch
+                  onCheckedChange={handleFullAutoChanged}
+                  name="full_auto"
+                  value={switchValue(fullAuto)}
+                  checked={fullAuto}
+                />
+              </div>
+            </label>
+          </li>
+          <li className="AutoGuard ToggleSection">
+            <label htmlFor="auto_guard">
+              <span>{t('party.details.labels.auto_guard')}</span>
+              <div>
+                <Switch
+                  onCheckedChange={handleAutoGuardChanged}
+                  name="auto_guard"
+                  value={switchValue(autoGuard)}
+                  disabled={!fullAuto}
+                  checked={autoGuard}
+                />
+              </div>
+            </label>
+          </li>
+        </ul>
+        <ul className="InputToggleGroup DetailToggleGroup">
+          <li className="InputSection">
+            <label htmlFor="auto_guard">
+              <span>{t('party.details.labels.button_chain')}</span>
+              <div className="Input Bound">
+                <Input
+                  name="buttons"
+                  type="number"
+                  placeholder="0"
+                  value={`${buttonCount}`}
+                  min="0"
+                  max="99"
+                  onChange={handleButtonCountInput}
+                  onKeyDown={handleInputKeyDown}
+                />
+                <span>b</span>
+                <Input
+                  name="chains"
+                  type="number"
+                  placeholder="0"
+                  min="0"
+                  max="99"
+                  value={`${chainCount}`}
+                  onChange={handleChainCountInput}
+                  onKeyDown={handleInputKeyDown}
+                />
+                <span>c</span>
+              </div>
+            </label>
+          </li>
+          <li className="InputSection">
+            <label htmlFor="auto_guard">
+              <span>{t('party.details.labels.turn_count')}</span>
               <Input
-                name="buttons"
+                name="turn_count"
+                className="AlignRight Bound"
                 type="number"
+                step="1"
+                min="1"
+                max="999"
                 placeholder="0"
-                value={`${buttonCount}`}
-                min="0"
-                max="99"
-                onChange={handleButtonCountInput}
+                value={`${turnCount}`}
+                onChange={handleTurnCountInput}
                 onKeyDown={handleInputKeyDown}
               />
-              <span>b</span>
-              <Input
-                name="chains"
-                type="number"
-                placeholder="0"
-                min="0"
-                max="99"
-                value={`${chainCount}`}
-                onChange={handleChainCountInput}
-                onKeyDown={handleInputKeyDown}
-              />
-              <span>c</span>
-            </div>
-          </label>
-        </li>
-        <li className="InputSection">
-          <label htmlFor="auto_guard">
-            <span>{t('party.details.labels.turn_count')}</span>
-            <Input
-              name="turn_count"
-              className="AlignRight Bound"
-              type="number"
-              step="1"
-              min="1"
-              max="999"
-              placeholder="0"
-              value={`${turnCount}`}
-              onChange={handleTurnCountInput}
-              onKeyDown={handleInputKeyDown}
-            />
-          </label>
-        </li>
-        <li className="InputSection">
-          <label htmlFor="auto_guard">
-            <span>{t('party.details.labels.clear_time')}</span>
-            <div>
-              <DurationInput
-                name="clear_time"
-                className="Bound"
-                placeholder="00:00"
-                value={clearTime}
-                onValueChange={(value: number) => handleClearTimeInput(value)}
-              />
-            </div>
-          </label>
-        </li>
-      </ul>
-      <TextFieldset
-        fieldName="name"
-        placeholder={
-          'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 3 first\nGood luck with RNG!'
-        }
-        value={props.party?.description}
-        onChange={handleTextAreaChange}
-        error={errors.description}
-        ref={descriptionInput}
-      />
+            </label>
+          </li>
+          <li className="InputSection">
+            <label htmlFor="auto_guard">
+              <span>{t('party.details.labels.clear_time')}</span>
+              <div>
+                <DurationInput
+                  name="clear_time"
+                  className="Bound"
+                  placeholder="00:00"
+                  value={clearTime}
+                  onValueChange={(value: number) => handleClearTimeInput(value)}
+                />
+              </div>
+            </label>
+          </li>
+        </ul>
+        <TextFieldset
+          fieldName="name"
+          placeholder={
+            'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 3 first\nGood luck with RNG!'
+          }
+          value={props.party?.description}
+          onChange={handleTextAreaChange}
+          error={errors.description}
+          ref={descriptionInput}
+        />
 
-      <div className="bottom">
-        <div className="left">
-          {router.pathname !== '/new' ? (
+        <div className="bottom">
+          <div className="left">
+            {router.pathname !== '/new' ? (
+              <Button
+                leftAccessoryIcon={<CrossIcon />}
+                className="Blended medium destructive"
+                onClick={handleClick}
+                text={t('buttons.delete')}
+              />
+            ) : (
+              ''
+            )}
+          </div>
+          <div className="right">
+            <Button text={t('buttons.cancel')} onClick={toggleDetails} />
             <Button
-              leftAccessoryIcon={<CrossIcon />}
-              className="Blended medium destructive"
-              onClick={handleClick}
-              text={t('buttons.delete')}
+              leftAccessoryIcon={<CheckIcon className="Check" />}
+              text={t('buttons.save_info')}
+              onClick={updateDetails}
             />
-          ) : (
-            ''
-          )}
+          </div>
         </div>
-        <div className="right">
-          <Button text={t('buttons.cancel')} onClick={toggleDetails} />
-          <Button
-            leftAccessoryIcon={<CheckIcon className="Check" />}
-            text={t('buttons.save_info')}
-            onClick={updateDetails}
-          />
-        </div>
-      </div>
-    </section>
-  )
+      </section>
+    )
+  }
 
   const clearTimeString = () => {
     const minutes = Math.floor(clearTime / 60)
@@ -664,38 +686,46 @@ const PartyDetails = (props: Props) => {
     }
   }
 
-  const readOnly = (
-    <section className={readOnlyClasses}>
-      <section className="Details">
-        <Token className={classNames({ ChargeAttack: true, On: chargeAttack })}>
-          {`${t('party.details.labels.charge_attack')} ${
-            chargeAttack ? 'On' : 'Off'
-          }`}
-        </Token>
-
-        <Token className={classNames({ FullAuto: true, On: fullAuto })}>
-          {`${t('party.details.labels.full_auto')} ${fullAuto ? 'On' : 'Off'}`}
-        </Token>
-
-        <Token className={classNames({ AutoGuard: true, On: autoGuard })}>
-          {`${t('party.details.labels.auto_guard')} ${fullAuto ? 'On' : 'Off'}`}
-        </Token>
-
-        {turnCount ? (
-          <Token>
-            {t('party.details.turns.with_count', {
-              count: turnCount,
-            })}
+  const readOnly = () => {
+    return (
+      <section className={readOnlyClasses}>
+        <section className="Details">
+          <Token
+            className={classNames({ ChargeAttack: true, On: chargeAttack })}
+          >
+            {`${t('party.details.labels.charge_attack')} ${
+              chargeAttack ? 'On' : 'Off'
+            }`}
           </Token>
-        ) : (
-          ''
-        )}
-        {clearTime > 0 ? <Token>{clearTimeString()}</Token> : ''}
-        {buttonChainToken()}
+
+          <Token className={classNames({ FullAuto: true, On: fullAuto })}>
+            {`${t('party.details.labels.full_auto')} ${
+              fullAuto ? 'On' : 'Off'
+            }`}
+          </Token>
+
+          <Token className={classNames({ AutoGuard: true, On: autoGuard })}>
+            {`${t('party.details.labels.auto_guard')} ${
+              fullAuto ? 'On' : 'Off'
+            }`}
+          </Token>
+
+          {turnCount ? (
+            <Token>
+              {t('party.details.turns.with_count', {
+                count: turnCount,
+              })}
+            </Token>
+          ) : (
+            ''
+          )}
+          {clearTime > 0 ? <Token>{clearTimeString()}</Token> : ''}
+          {buttonChainToken()}
+        </section>
+        <Linkify>{embeddedDescription}</Linkify>
       </section>
-      <Linkify>{embeddedDescription}</Linkify>
-    </section>
-  )
+    )
+  }
 
   const remixSection = () => {
     return (
@@ -755,8 +785,8 @@ const PartyDetails = (props: Props) => {
             ''
           )}
         </div>
-        {readOnly}
-        {editable}
+        {readOnly()}
+        {editable()}
 
         {deleteAlert()}
       </section>
