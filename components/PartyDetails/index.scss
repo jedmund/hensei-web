@@ -4,7 +4,19 @@
   margin: $unit-4x auto 0 auto;
   max-width: $grid-width;
 
+  @include breakpoint(phone) {
+    .Button:not(.IconButton) {
+      justify-content: center;
+      width: 100%;
+
+      .Text {
+        width: auto;
+      }
+    }
+  }
+
   .PartyDetails {
+    box-sizing: border-box;
     display: none;
     margin: 0 auto $unit-2x;
     max-width: $unit * 94;
@@ -24,6 +36,7 @@
 
       &.Visible {
         display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       }
 
       fieldset {
@@ -37,6 +50,7 @@
       }
 
       .SelectTrigger {
+        padding: $unit-2x;
         width: 100%;
       }
 
@@ -45,12 +59,16 @@
         grid-template-columns: 1fr 1fr 1fr;
         gap: $unit;
 
+        @include breakpoint(phone) {
+          grid-template-columns: 1fr;
+        }
+
         .ToggleSection,
         .InputSection {
           align-items: center;
           display: flex;
           background: var(--card-bg);
-          border-radius: $card-corner;
+          border-radius: $input-corner;
 
           & > label {
             align-items: center;
@@ -133,6 +151,11 @@
         flex-direction: row;
         gap: $unit;
 
+        @include breakpoint(phone) {
+          flex-direction: column;
+          width: 100%;
+        }
+
         .left {
           flex-grow: 1;
         }
@@ -141,6 +164,12 @@
           display: flex;
           flex-direction: row;
           gap: $unit;
+
+          @include breakpoint(phone) {
+            .Button {
+              flex-grow: 1;
+            }
+          }
         }
       }
     }
@@ -314,17 +343,6 @@
         & > *:not(:last-child):after {
           content: ' · ';
           margin: 0 calc($unit / 2);
-        }
-      }
-    }
-
-    @include breakpoint(phone) {
-      .Right .Button {
-        justify-content: center;
-        width: 100%;
-
-        .Text {
-          width: auto;
         }
       }
     }
