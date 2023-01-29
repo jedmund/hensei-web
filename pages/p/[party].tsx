@@ -124,7 +124,8 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       .getAll()
       .then((response) => response.data)
 
-    let jobSkills = await api.allJobSkills().then((response) => response.data)
+    let jobSkills = await api.allJobSkills()
+      .then((response) => response.data)
 
     // Fetch and organize weapon keys
     let weaponKeys = await api.endpoints.weapon_keys
