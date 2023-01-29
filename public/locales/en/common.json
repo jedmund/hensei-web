@@ -54,9 +54,6 @@
     },
     "remove": "Remove from grid"
   },
-  "errors": {
-    "unauthorized": "You don't have permission to perform that action"
-  },
   "filters": {
     "labels": {
       "element": "Element",
@@ -93,6 +90,18 @@
       "dark": "Dark",
       "light": "Light"
     }
+  },
+  "errors": {
+    "internal_server_error": {
+      "title": "Internal Server Error",
+      "description": "The server reported a problem that we couldn't automatically recover from. Please try your request again."
+    },
+    "not_found": {
+      "title": "Not found",
+      "description": "The page you're looking for couldn't be found",
+      "button": "Create a new party"
+    },
+    "unauthorized": "You don't have permission to perform that action"
   },
   "proficiencies": {
     "sabre": "Sabre",

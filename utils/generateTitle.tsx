@@ -1,7 +1,7 @@
 import { useTranslation } from 'next-i18next'
 
 export default function generateTitle(
-  element: string,
+  element?: string,
   username?: string,
   name?: string
 ) {

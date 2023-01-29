@@ -63,6 +63,15 @@
     }
   },
   "errors": {
+    "internal_server_error": {
+      "title": "サーバーエラー",
+      "description": "サーバーから届いたエラーは自動的に復されなかったため、再びリクエストを行なってください"
+    },
+    "not_found": {
+      "title": "見つかりませんでした",
+      "description": "探しているページは見つかりませんでした",
+      "button": "新しい編成を作成"
+    },
     "unauthorized": "行ったアクションを実行する権限がありません"
   },
   "header": {
