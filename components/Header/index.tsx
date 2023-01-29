@@ -10,7 +10,7 @@ import Link from 'next/link'
 
 import api from '~utils/api'
 import { accountState, initialAccountState } from '~utils/accountState'
-import { appState } from '~utils/appState'
+import { appState, initialAppState } from '~utils/appState'
 
 import {
   DropdownMenu,
@@ -58,6 +58,8 @@ const Header = () => {
   const { account } = useSnapshot(accountState)
   const { party: partySnapshot } = useSnapshot(appState)
 
+  // Subscribe to app state to listen for party name and
+  // unsubscribe when component is unmounted
   const unsubscribe = subscribe(appState, () => {
     const newName =
       appState.party && appState.party.name ? appState.party.name : ''
@@ -66,22 +68,14 @@ const Header = () => {
 
   useEffect(() => () => unsubscribe(), [])
 
-  function handleCopyToastOpenChanged(open: boolean) {
-    setCopyToastOpen(open)
-  }
+  // Subscribe to router changes
+  useEffect(() => {
+    router.events.on('routeChangeStart', (url, { shallow }) => {
+      console.log(`routing to ${url}`, `is shallow routing: ${shallow}`)
+    })
+  }, [])
 
-  function handleCopyToastCloseClicked() {
-    setCopyToastOpen(false)
-  }
-
-  function handleRemixToastOpenChanged(open: boolean) {
-    setRemixToastOpen(open)
-  }
-
-  function handleRemixToastCloseClicked() {
-    setRemixToastOpen(false)
-  }
-
+  // Methods: Event handlers (Buttons)
   function handleLeftMenuButtonClicked() {
     setLeftMenuOpen(!leftMenuOpen)
   }
@@ -90,9 +84,11 @@ const Header = () => {
     setRightMenuOpen(!rightMenuOpen)
   }
 
+  // Methods: Event handlers (Menus)
   function handleLeftMenuOpenChange(open: boolean) {
     setLeftMenuOpen(open)
   }
+
   function handleRightMenuOpenChange(open: boolean) {
     setRightMenuOpen(open)
   }
@@ -103,6 +99,41 @@ const Header = () => {
 
   function closeRightMenu() {
     setRightMenuOpen(false)
+  }
+
+  // Methods: Event handlers (Copy toast)
+  function handleCopyToastOpenChanged(open: boolean) {
+    setCopyToastOpen(open)
+  }
+
+  function handleCopyToastCloseClicked() {
+    setCopyToastOpen(false)
+  }
+
+  // Methods: Event handlers (Remix toasts)
+  function handleRemixToastOpenChanged(open: boolean) {
+    setRemixToastOpen(open)
+  }
+
+  function handleRemixToastCloseClicked() {
+    setRemixToastOpen(false)
+  }
+
+  // Methods: Actions
+  function handleNewParty(event: React.MouseEvent, path: string) {
+    event.preventDefault()
+
+    // Clean state
+    const resetState = clonedeep(initialAppState)
+    Object.keys(resetState).forEach((key) => {
+      appState[key] = resetState[key]
+    })
+
+    // Push the root URL
+    router.push(path)
+
+    // Close right menu
+    closeRightMenu()
   }
 
   function copyToClipboard() {
@@ -122,16 +153,6 @@ const Header = () => {
     }
   }
 
-  function handleNewParty(event: React.MouseEvent, path: string) {
-    event.preventDefault()
-
-    // Push the root URL
-    router.push(path)
-
-    // Close right menu
-    closeRightMenu()
-  }
-
   function logout() {
     // Close menu
     closeRightMenu()
@@ -148,6 +169,17 @@ const Header = () => {
 
     router.reload()
     return false
+  }
+
+  function remixTeam() {
+    setOriginalName(partySnapshot.name ? partySnapshot.name : t('no_title'))
+
+    if (partySnapshot.shortcode)
+      api.remix(partySnapshot.shortcode).then((response) => {
+        const remix = response.data.party
+        router.push(`/p/${remix.shortcode}`)
+        setRemixToastOpen(true)
+      })
   }
 
   function toggleFavorite() {
@@ -171,17 +203,7 @@ const Header = () => {
     else console.error('Failed to unsave team: No party ID')
   }
 
-  function remixTeam() {
-    setOriginalName(partySnapshot.name ? partySnapshot.name : t('no_title'))
-
-    if (partySnapshot.shortcode)
-      api.remix(partySnapshot.shortcode).then((response) => {
-        const remix = response.data.party
-        router.push(`/p/${remix.shortcode}`)
-        setRemixToastOpen(true)
-      })
-  }
-
+  // Rendering: Elements
   const pageTitle = () => {
     let title = ''
     let hasAccessory = false
@@ -237,38 +259,7 @@ const Header = () => {
     return image
   }
 
-  const urlCopyToast = () => {
-    return (
-      <Toast
-        altText={t('toasts.copied')}
-        open={copyToastOpen}
-        duration={2400}
-        type="foreground"
-        content={t('toasts.copied')}
-        onOpenChange={handleCopyToastOpenChanged}
-        onCloseClick={handleCopyToastCloseClicked}
-      />
-    )
-  }
-
-  const remixToast = () => {
-    return (
-      <Toast
-        altText={t('toasts.remixed', { title: originalName })}
-        open={remixToastOpen}
-        duration={2400}
-        type="foreground"
-        content={
-          <Trans i18nKey="toasts.remixed">
-            You remixed <strong>{{ title: originalName }}</strong>
-          </Trans>
-        }
-        onOpenChange={handleRemixToastOpenChanged}
-        onCloseClick={handleRemixToastCloseClicked}
-      />
-    )
-  }
-
+  // Rendering: Buttons
   const saveButton = () => {
     return (
       <Tooltip content={t('tooltips.save')}>
@@ -302,6 +293,40 @@ const Header = () => {
     )
   }
 
+  // Rendering: Toasts
+  const urlCopyToast = () => {
+    return (
+      <Toast
+        altText={t('toasts.copied')}
+        open={copyToastOpen}
+        duration={2400}
+        type="foreground"
+        content={t('toasts.copied')}
+        onOpenChange={handleCopyToastOpenChanged}
+        onCloseClick={handleCopyToastCloseClicked}
+      />
+    )
+  }
+
+  const remixToast = () => {
+    return (
+      <Toast
+        altText={t('toasts.remixed', { title: originalName })}
+        open={remixToastOpen}
+        duration={2400}
+        type="foreground"
+        content={
+          <Trans i18nKey="toasts.remixed">
+            You remixed <strong>{{ title: originalName }}</strong>
+          </Trans>
+        }
+        onOpenChange={handleRemixToastOpenChanged}
+        onCloseClick={handleRemixToastCloseClicked}
+      />
+    )
+  }
+
+  // Rendering: Modals
   const settingsModal = () => {
     const user = accountState.account.user
 
@@ -330,6 +355,7 @@ const Header = () => {
     )
   }
 
+  // Rendering: Compositing
   const left = () => {
     return (
       <section>
