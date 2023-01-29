@@ -350,10 +350,17 @@
   display: flex;
   flex-direction: column;
   gap: $unit-2x;
-  width: 752px;
+  margin: 0 auto;
+  width: 720px;
 
   @include breakpoint(tablet) {
     gap: $unit;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  @include breakpoint(phone) {
+    max-width: inherit;
     width: 100%;
   }
 
@@ -373,6 +380,8 @@
 
     @include breakpoint(tablet) {
       grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      max-width: inherit;
+      width: 100%;
     }
 
     @include breakpoint(phone) {
