@@ -115,7 +115,7 @@ const JobSection = (props: Props) => {
 
   const canEditSkill = (skill?: JobSkill) => {
     // If there is a job and a skill present in the slot
-    if (job) {
+    if (job && job.id !== '-1') {
       // If the skill's job is one of the job's main skill
       if (skill && skill.job.id === job.id && skill.main) return false
 
