@@ -9,7 +9,14 @@
 
   --link-text-hover: #{$text--link--hover--light};
 
-  --full-auto-text: #{$text--full--auto--light};
+  --charge-attack-bg: #{$charge--attack--bg};
+  --charge-attack-text: #{$charge--attack--text};
+  --full-auto-bg: #{$full--auto--bg};
+  --full-auto-text: #{$charge--attack--text};
+  --auto-guard-bg: #{$auto--guard--bg};
+  --auto-guard-text: #{$auto--guard--text};
+
+  --full-auto-label-text: #{$text--full--auto--light};
 
   --separator-bg: #{$separator--bg--light};
 
@@ -141,7 +148,13 @@
 
   --link-text-hover: #{$text--link--hover--dark};
 
-  --full-auto-text: #{$text--full--auto--dark};
+  --charge-attack-bg: #{$charge--attack--bg};
+  --charge-attack-text: #{$charge--attack--text};
+
+  --full-auto-bg: #{$full--auto--bg};
+  --full-auto-text: #{$charge--attack--text};
+
+  --full-auto-label-text: #{$text--full--auto--dark};
 
   --separator-bg: #{$separator--bg--dark};
 

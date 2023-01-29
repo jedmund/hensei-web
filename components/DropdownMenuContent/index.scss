@@ -11,8 +11,7 @@
   z-index: 15;
 
   @include breakpoint(phone) {
-    left: $unit-2x;
-    right: $unit-2x;
+    min-width: 50vw;
   }
 }
 

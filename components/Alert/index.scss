@@ -22,6 +22,11 @@
   max-width: 30vw;
   padding: $unit * 4;
 
+  @include breakpoint(phone) {
+    max-width: inherit;
+    width: 60vw;
+  }
+
   .description {
     font-size: $font-regular;
     line-height: 1.4;

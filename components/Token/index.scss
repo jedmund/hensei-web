@@ -1,10 +1,25 @@
 .Token {
   background: var(--input-bg);
   border-radius: 99px;
-  display: inline;
+  display: inline-flex;
   font-size: $font-small;
   font-weight: $medium;
   min-width: 3rem;
   text-align: center;
-  padding: $unit-half $unit;
+  padding: $unit ($unit * 1.5);
+
+  &.ChargeAttack.On {
+    background: var(--charge-attack-bg);
+    color: var(--charge-attack-text);
+  }
+
+  &.FullAuto.On {
+    background: var(--full-auto-bg);
+    color: var(--full-auto-text);
+  }
+
+  &.AutoGuard.On {
+    background: var(--auto-guard-bg);
+    color: var(--auto-guard-text);
+  }
 }

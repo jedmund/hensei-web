@@ -1,10 +1,23 @@
 .DetailsWrapper {
   display: flex;
   flex-direction: column;
+  gap: $unit-2x;
   margin: $unit-4x auto 0 auto;
   max-width: $grid-width;
 
+  @include breakpoint(phone) {
+    .Button:not(.IconButton) {
+      justify-content: center;
+      width: 100%;
+
+      .Text {
+        width: auto;
+      }
+    }
+  }
+
   .PartyDetails {
+    box-sizing: border-box;
     display: none;
     margin: 0 auto $unit-2x;
     max-width: $unit * 94;
@@ -24,6 +37,7 @@
 
       &.Visible {
         display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       }
 
       fieldset {
@@ -37,6 +51,7 @@
       }
 
       .SelectTrigger {
+        padding: $unit-2x;
         width: 100%;
       }
 
@@ -45,12 +60,16 @@
         grid-template-columns: 1fr 1fr 1fr;
         gap: $unit;
 
+        @include breakpoint(phone) {
+          grid-template-columns: 1fr;
+        }
+
         .ToggleSection,
         .InputSection {
           align-items: center;
           display: flex;
           background: var(--card-bg);
-          border-radius: $card-corner;
+          border-radius: $input-corner;
 
           & > label {
             align-items: center;
@@ -133,6 +152,11 @@
         flex-direction: row;
         gap: $unit;
 
+        @include breakpoint(phone) {
+          flex-direction: column;
+          width: 100%;
+        }
+
         .left {
           flex-grow: 1;
         }
@@ -141,6 +165,12 @@
           display: flex;
           flex-direction: row;
           gap: $unit;
+
+          @include breakpoint(phone) {
+            .Button {
+              flex-grow: 1;
+            }
+          }
         }
       }
     }
@@ -167,7 +197,8 @@
       .Details {
         display: flex;
         flex-direction: row;
-        gap: $unit-half;
+        flex-wrap: wrap;
+        gap: $unit;
         margin-bottom: $unit-2x;
       }
 
@@ -258,21 +289,21 @@
   }
 
   .PartyInfo {
-    align-items: center;
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
     gap: $unit;
     margin: 0 auto;
-    margin-bottom: $unit * 2;
     max-width: $unit * 94;
     width: 100%;
 
     @include breakpoint(phone) {
+      flex-direction: column;
+      gap: $unit;
       padding: 0 $unit;
     }
 
-    .Left {
+    & > .Left {
       flex-grow: 1;
 
       .Header {

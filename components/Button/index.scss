@@ -38,6 +38,15 @@
     &:hover {
       background: none;
     }
+
+    .Text {
+      font-size: $font-small;
+      font-weight: $bold;
+
+      @include breakpoint(phone) {
+        display: none;
+      }
+    }
   }
 
   &.Contained {
@@ -97,6 +106,17 @@
 
   &.small {
     padding: $unit * 1.5;
+  }
+
+  @include breakpoint(phone) {
+    &.destructive {
+      background: $error;
+      color: $grey-100;
+
+      .Accessory svg {
+        fill: $grey-100;
+      }
+    }
   }
 
   &.destructive:hover {
