@@ -10,7 +10,6 @@ import Link from 'next/link'
 import api from '~utils/api'
 import { accountState, initialAccountState } from '~utils/accountState'
 import { appState } from '~utils/appState'
-import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 
 import {
   DropdownMenu,
@@ -303,7 +302,7 @@ const Header = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {pageTitle()}
+        {!appState.errorCode ? pageTitle() : ''}
       </section>
     )
   }
@@ -313,10 +312,13 @@ const Header = () => {
       <section>
         {router.route === '/p/[party]' &&
         account.user &&
-        (!party.user || party.user.id !== account.user.id)
+        (!party.user || party.user.id !== account.user.id) &&
+        !appState.errorCode
           ? saveButton()
           : ''}
-        {router.route === '/p/[party]' ? remixButton() : ''}
+        {router.route === '/p/[party]' && !appState.errorCode
+          ? remixButton()
+          : ''}
         <DropdownMenu
           open={rightMenuOpen}
           onOpenChange={handleRightMenuOpenChange}
