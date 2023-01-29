@@ -70,3 +70,18 @@ interface PerpetuityObject {
     perpetuity: boolean
   }
 }
+
+interface PageContextObj {
+  party?: Party
+  jobs: Job[]
+  jobSkills: JobSkill[]
+  raids: Raid[]
+  sortedRaids: Raid[][]
+  weaponKeys: GroupedWeaponKeys
+  meta: { [key: string]: string }
+}
+
+interface ResponseStatus {
+  code: number
+  text: string
+}
