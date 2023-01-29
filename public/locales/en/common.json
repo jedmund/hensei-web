@@ -397,7 +397,8 @@
     }
   },
   "toasts": {
-    "copied": "This party's URL was copied to your clipboard"
+    "copied": "This party's URL was copied to your clipboard",
+    "remixed": "You remixed {{title}}"
   },
   "tokens": {
     "remix": "Remixed"
