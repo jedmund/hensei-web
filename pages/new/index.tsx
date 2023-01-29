@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import clonedeep from 'lodash.clonedeep'
@@ -17,6 +17,7 @@ import { groupWeaponKeys } from '~utils/groupWeaponKeys'
 import type { AxiosError } from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { PageContextObj, ResponseStatus } from '~types'
+import { GridType } from '~utils/enums'
 
 interface Props {
   context?: PageContextObj
@@ -33,10 +34,28 @@ const NewRoute: React.FC<Props> = ({
 }: Props) => {
   // Set up router
   const router = useRouter()
+  const [selectedTab, setSelectedTab] = useState<GridType>(GridType.Weapon)
 
   function callback(path: string) {
     router.push(path, undefined, { shallow: true })
   }
+
+  useEffect(() => {
+    const parts = router.asPath.split('/')
+    const tab = parts[parts.length - 1]
+
+    switch (tab) {
+      case 'characters':
+        setSelectedTab(GridType.Character)
+        break
+      case 'weapons':
+        setSelectedTab(GridType.Weapon)
+        break
+      case 'summons':
+        setSelectedTab(GridType.Summon)
+        break
+    }
+  }, [router.asPath])
 
   useEffect(() => {
     if (context && context.jobs && context.jobSkills) {
@@ -72,7 +91,12 @@ const NewRoute: React.FC<Props> = ({
     return (
       <React.Fragment key={router.asPath}>
         {pageHead()}
-        <Party new={true} raids={context.sortedRaids} pushHistory={callback} />
+        <Party
+          new={true}
+          raids={context.sortedRaids}
+          pushHistory={callback}
+          selectedTab={selectedTab}
+        />
       </React.Fragment>
     )
   } else return pageError()
