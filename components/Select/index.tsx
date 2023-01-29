@@ -23,6 +23,7 @@ interface Props
   onValueChange?: (value: string) => void
   onClose?: () => void
   triggerClass?: string
+  overlayVisible?: boolean
 }
 
 const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
@@ -94,7 +95,10 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
 
       <RadixSelect.Portal className="Select">
         <>
-          <Overlay open={open} visible={false} />
+          <Overlay
+            open={open}
+            visible={props.overlayVisible != null ? props.overlayVisible : true}
+          />
 
           <RadixSelect.Content
             className="Select"
@@ -115,5 +119,9 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
     </RadixSelect.Root>
   )
 })
+
+Select.defaultProps = {
+  overlayVisible: true,
+}
 
 export default Select

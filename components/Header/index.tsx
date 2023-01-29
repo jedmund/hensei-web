@@ -229,6 +229,7 @@ const Header = () => {
   const urlCopyToast = () => {
     return (
       <Toast
+        altText={t('toasts.copied')}
         open={copyToastOpen}
         duration={2400}
         type="foreground"
@@ -242,6 +243,7 @@ const Header = () => {
   const remixToast = () => {
     return (
       <Toast
+        altText={t('toasts.remixed', { title: originalName })}
         open={remixToastOpen}
         duration={2400}
         type="foreground"

@@ -135,6 +135,7 @@ const ExtendedMasterySelect = ({
         onOpenChange={() => changeOpen('left')}
         onClose={onClose}
         triggerClass="Left modal"
+        overlayVisible={false}
       >
         {generateLeftOptions()}
       </Select>
@@ -146,6 +147,7 @@ const ExtendedMasterySelect = ({
         onValueChange={handleRightSelectChange}
         onOpenChange={() => changeOpen('right')}
         onClose={onClose}
+        overlayVisible={false}
         triggerClass={classNames({
           Right: true,
           modal: true,

@@ -410,6 +410,7 @@ const AXSelect = (props: Props) => {
             onOpenChange={() => openSelect(1)}
             onValueChange={handleAX1SelectChange}
             triggerClass="modal"
+            overlayVisible={false}
           >
             {generateOptions(0)}
           </Select>
@@ -439,6 +440,7 @@ const AXSelect = (props: Props) => {
             onValueChange={handleAX2SelectChange}
             triggerClass="modal"
             ref={secondaryAxModifierSelect}
+            overlayVisible={false}
           >
             {generateOptions(1)}
           </Select>
