@@ -72,13 +72,16 @@ interface PerpetuityObject {
 }
 
 interface PageContextObj {
+  user?: User
+  teams?: Party[]
   party?: Party
-  jobs: Job[]
-  jobSkills: JobSkill[]
+  jobs?: Job[]
+  jobSkills?: JobSkill[]
   raids: Raid[]
   sortedRaids: Raid[][]
-  weaponKeys: GroupedWeaponKeys
-  meta: { [key: string]: string }
+  weaponKeys?: GroupedWeaponKeys
+  pagination?: PaginationObject
+  meta?: { [key: string]: string }
 }
 
 interface ResponseStatus {
