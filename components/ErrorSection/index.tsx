@@ -18,7 +18,7 @@ const ErrorSection = ({ status }: Props) => {
   const [statusText, setStatusText] = useState('')
 
   useEffect(() => {
-    setStatusText(status.text.replace(' ', '_').toLowerCase())
+    setStatusText(status.text.replaceAll(' ', '_').toLowerCase())
   }, [status.text])
 
   const errorBody = () => {
