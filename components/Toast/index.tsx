@@ -7,7 +7,7 @@ import './index.scss'
 interface Props extends ToastPrimitive.ToastProps {
   className?: string
   title?: string
-  content: string
+  content: React.ReactNode
   onCloseClick: () => void
 }
 
@@ -39,7 +39,7 @@ const Toast = ({
         <p>{content}</p>
       </ToastPrimitive.Description>
       {children && (
-        <ToastPrimitive.Action asChild altText={content}>
+        <ToastPrimitive.Action asChild altText="">
           {children}
         </ToastPrimitive.Action>
       )}

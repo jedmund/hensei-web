@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import { deleteCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { Trans, useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
 import Link from 'next/link'
@@ -43,11 +43,13 @@ const Header = () => {
 
   // State management
   const [copyToastOpen, setCopyToastOpen] = useState(false)
+  const [remixToastOpen, setRemixToastOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [signupModalOpen, setSignupModalOpen] = useState(false)
   const [settingsModalOpen, setSettingsModalOpen] = useState(false)
   const [leftMenuOpen, setLeftMenuOpen] = useState(false)
   const [rightMenuOpen, setRightMenuOpen] = useState(false)
+  const [originalName, setOriginalName] = useState('')
 
   // Snapshots
   const { account } = useSnapshot(accountState)
@@ -59,6 +61,14 @@ const Header = () => {
 
   function handleCopyToastCloseClicked() {
     setCopyToastOpen(false)
+  }
+
+  function handleRemixToastOpenChanged(open: boolean) {
+    setRemixToastOpen(open)
+  }
+
+  function handleRemixToastCloseClicked() {
+    setRemixToastOpen(false)
   }
 
   function handleLeftMenuButtonClicked() {
@@ -147,10 +157,13 @@ const Header = () => {
   }
 
   function remixTeam() {
+    setOriginalName(party.name ? party.name : t('no_title'))
+
     if (party.shortcode)
       api.remix(party.shortcode).then((response) => {
         const remix = response.data.party
         router.push(`/p/${remix.shortcode}`)
+        setRemixToastOpen(true)
       })
   }
 
@@ -218,6 +231,23 @@ const Header = () => {
         content={t('toasts.copied')}
         onOpenChange={handleCopyToastOpenChanged}
         onCloseClick={handleCopyToastCloseClicked}
+      />
+    )
+  }
+
+  const remixToast = () => {
+    return (
+      <Toast
+        open={remixToastOpen}
+        duration={2400}
+        type="foreground"
+        content={
+          <Trans i18nKey="toasts.remixed">
+            You remixed <strong>{{ title: originalName }}</strong>
+          </Trans>
+        }
+        onOpenChange={handleRemixToastOpenChanged}
+        onCloseClick={handleRemixToastCloseClicked}
       />
     )
   }
@@ -469,6 +499,7 @@ const Header = () => {
       {left()}
       {right()}
       {urlCopyToast()}
+      {remixToast()}
       {settingsModal()}
       {loginModal()}
       {signupModal()}
