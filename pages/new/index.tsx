@@ -35,8 +35,7 @@ const NewRoute: React.FC<Props> = ({
   const router = useRouter()
 
   function callback(path: string) {
-    // This is scuffed, how do we do this natively?
-    window.history.replaceState(null, `Grid Tool`, `${path}`)
+    router.push(path, undefined, { shallow: true })
   }
 
   useEffect(() => {
