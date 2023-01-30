@@ -164,7 +164,7 @@ const WeaponGrid = (props: Props) => {
   }
 
   function storeGridWeapon(gridWeapon: GridWeapon) {
-    if (gridWeapon.position == -1) {
+    if (gridWeapon.position === -1) {
       appState.grid.weapons.mainWeapon = gridWeapon
       appState.party.element = gridWeapon.object.element
     } else {
