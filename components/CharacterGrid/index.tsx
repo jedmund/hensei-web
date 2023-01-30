@@ -47,7 +47,6 @@ const CharacterGrid = (props: Props) => {
 
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
-  const [slug, setSlug] = useState()
   const [modalOpen, setModalOpen] = useState(false)
 
   // Set up state for conflict management
