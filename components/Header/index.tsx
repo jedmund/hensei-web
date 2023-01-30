@@ -431,7 +431,7 @@ const Header = () => {
                   href={`/${accountState.account.user.username}` || ''}
                   passHref
                 >
-                  Your profile
+                  <span>{t('menu.profile')}</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
@@ -494,7 +494,7 @@ const Header = () => {
             </DropdownMenuItem>
             <DropdownMenuItem className="MenuItem">
               <Link href={`/${account.user.username}` || ''} passHref>
-                Your profile
+                <span>{t('menu.profile')}</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
