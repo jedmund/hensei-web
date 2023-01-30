@@ -95,7 +95,7 @@ const CharacterUnit = ({
     setDetailsModalOpen(true)
   }
 
-  function openSearchModal(event: MouseEvent<HTMLDivElement>) {
+  function openSearchModal() {
     if (editable) setSearchModalOpen(true)
   }
 
@@ -286,33 +286,50 @@ const CharacterUnit = ({
     }
   }
 
-  const image = (
-    <div
-      className="CharacterImage"
-      onClick={openSearchModal}
-      tabIndex={gridCharacter ? gridCharacter.position * 7 : 0}
-    >
+  const image = () => {
+    let image = (
       <img
         alt={character?.name[locale]}
         className="grid_image"
         src={imageUrl}
       />
-      {editable ? (
-        <span className="icon">
-          <PlusIcon />
-        </span>
-      ) : (
-        ''
-      )}
-    </div>
-  )
+    )
+
+    if (gridCharacter) {
+      image = (
+        <CharacterHovercard
+          gridCharacter={gridCharacter}
+          onTriggerClick={openSearchModal}
+        >
+          {image}
+        </CharacterHovercard>
+      )
+    }
+
+    return (
+      <div
+        className="CharacterImage"
+        tabIndex={gridCharacter ? gridCharacter.position * 7 : 0}
+        onClick={openSearchModal}
+      >
+        {image}
+        {editable ? (
+          <span className="icon">
+            <PlusIcon />
+          </span>
+        ) : (
+          ''
+        )}
+      </div>
+    )
+  }
 
   const unitContent = (
     <>
       <div className={classes}>
         {contextMenu()}
         {perpetuity()}
-        {image}
+        {image()}
         {gridCharacter && character ? (
           <UncapIndicator
             type="character"
@@ -335,13 +352,7 @@ const CharacterUnit = ({
     </>
   )
 
-  const unitContentWithHovercard = (
-    <CharacterHovercard gridCharacter={gridCharacter!}>
-      {unitContent}
-    </CharacterHovercard>
-  )
-
-  return gridCharacter && !editable ? unitContentWithHovercard : unitContent
+  return unitContent
 }
 
 export default CharacterUnit

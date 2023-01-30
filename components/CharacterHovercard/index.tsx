@@ -2,8 +2,11 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
-import * as HoverCard from '@radix-ui/react-hover-card'
-
+import {
+  Hovercard,
+  HovercardContent,
+  HovercardTrigger,
+} from '~components/Hovercard'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
 
@@ -12,6 +15,7 @@ import './index.scss'
 interface Props {
   gridCharacter: GridCharacter
   children: React.ReactNode
+  onTriggerClick: () => void
 }
 
 interface KeyNames {
@@ -67,58 +71,57 @@ const CharacterHovercard = (props: Props) => {
   }
 
   return (
-    <HoverCard.Root>
-      <HoverCard.Trigger>{props.children}</HoverCard.Trigger>
-      <HoverCard.Portal>
-        <HoverCard.Content className="Weapon Hovercard">
-          <div className="top">
-            <div className="title">
-              <h4>{props.gridCharacter.object.name[locale]}</h4>
-              <img
-                alt={props.gridCharacter.object.name[locale]}
-                src={characterImage()}
+    <Hovercard openDelay={350}>
+      <HovercardTrigger asChild onClick={props.onTriggerClick}>
+        {props.children}
+      </HovercardTrigger>
+      <HovercardContent className="Character">
+        <div className="top">
+          <div className="title">
+            <h4>{props.gridCharacter.object.name[locale]}</h4>
+            <img
+              alt={props.gridCharacter.object.name[locale]}
+              src={characterImage()}
+            />
+          </div>
+          <div className="subInfo">
+            <div className="icons">
+              <WeaponLabelIcon
+                labelType={Element[props.gridCharacter.object.element]}
               />
-            </div>
-            <div className="subInfo">
-              <div className="icons">
-                <WeaponLabelIcon
-                  labelType={Element[props.gridCharacter.object.element]}
-                />
+              <WeaponLabelIcon
+                labelType={
+                  Proficiency[
+                    props.gridCharacter.object.proficiency.proficiency1
+                  ]
+                }
+              />
+              {props.gridCharacter.object.proficiency.proficiency2 ? (
                 <WeaponLabelIcon
                   labelType={
                     Proficiency[
-                      props.gridCharacter.object.proficiency.proficiency1
+                      props.gridCharacter.object.proficiency.proficiency2
                     ]
                   }
                 />
-                {props.gridCharacter.object.proficiency.proficiency2 ? (
-                  <WeaponLabelIcon
-                    labelType={
-                      Proficiency[
-                        props.gridCharacter.object.proficiency.proficiency2
-                      ]
-                    }
-                  />
-                ) : (
-                  ''
-                )}
-              </div>
-              <UncapIndicator
-                type="character"
-                ulb={props.gridCharacter.object.uncap.ulb || false}
-                flb={props.gridCharacter.object.uncap.flb || false}
-                special={false}
-              />
+              ) : (
+                ''
+              )}
             </div>
+            <UncapIndicator
+              type="character"
+              ulb={props.gridCharacter.object.uncap.ulb || false}
+              flb={props.gridCharacter.object.uncap.flb || false}
+              special={false}
+            />
           </div>
+        </div>
 
-          <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-            {t('buttons.wiki')}
-          </a>
-          <HoverCard.Arrow />
-        </HoverCard.Content>
-      </HoverCard.Portal>
-    </HoverCard.Root>
+        <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
+          {t('buttons.wiki')}
+        </a>
+      </HovercardContent>
+    </Hovercard>
   )
 }
 

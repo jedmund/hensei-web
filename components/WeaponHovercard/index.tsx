@@ -2,8 +2,11 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
-import * as HoverCard from '@radix-ui/react-hover-card'
-
+import {
+  Hovercard,
+  HovercardContent,
+  HovercardTrigger,
+} from '~components/Hovercard'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
 
@@ -14,6 +17,7 @@ import './index.scss'
 interface Props {
   gridWeapon: GridWeapon
   children: React.ReactNode
+  onTriggerClick: () => void
 }
 
 interface KeyNames {
@@ -26,9 +30,10 @@ interface KeyNames {
 
 const WeaponHovercard = (props: Props) => {
   const router = useRouter()
-  const { t } = useTranslation('common')
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+
+  const { t } = useTranslation('common')
 
   const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
   const Proficiency = [
@@ -67,6 +72,7 @@ const WeaponHovercard = (props: Props) => {
     props.gridWeapon.object.element == 0 && props.gridWeapon.element
       ? Element[props.gridWeapon.element]
       : Element[props.gridWeapon.object.element]
+
   const wikiUrl = `https://gbf.wiki/${props.gridWeapon.object.name.en.replaceAll(
     ' ',
     '_'
@@ -189,64 +195,62 @@ const WeaponHovercard = (props: Props) => {
   )
 
   return (
-    <HoverCard.Root>
-      <HoverCard.Trigger>{props.children}</HoverCard.Trigger>
-      <HoverCard.Portal>
-        <HoverCard.Content className="Weapon Hovercard" side={hovercardSide()}>
-          <div className="top">
-            <div className="title">
-              <h4>{props.gridWeapon.object.name[locale]}</h4>
-              <img
-                alt={props.gridWeapon.object.name[locale]}
-                src={weaponImage()}
-              />
-            </div>
-            <div className="subInfo">
-              <div className="icons">
-                {props.gridWeapon.object.element !== 0 ||
-                (props.gridWeapon.object.element === 0 &&
-                  props.gridWeapon.element != null) ? (
-                  <WeaponLabelIcon
-                    labelType={
-                      props.gridWeapon.object.element === 0 &&
-                      props.gridWeapon.element !== 0
-                        ? Element[props.gridWeapon.element]
-                        : Element[props.gridWeapon.object.element]
-                    }
-                  />
-                ) : (
-                  ''
-                )}
-                <WeaponLabelIcon
-                  labelType={Proficiency[props.gridWeapon.object.proficiency]}
-                />
-              </div>
-              <UncapIndicator
-                type="weapon"
-                ulb={props.gridWeapon.object.uncap.ulb || false}
-                flb={props.gridWeapon.object.uncap.flb || false}
-                special={false}
-              />
-            </div>
+    <Hovercard openDelay={350}>
+      <HovercardTrigger asChild onClick={props.onTriggerClick}>
+        {props.children}
+      </HovercardTrigger>
+      <HovercardContent className="Weapon" side={hovercardSide()}>
+        <div className="top">
+          <div className="title">
+            <h4>{props.gridWeapon.object.name[locale]}</h4>
+            <img
+              alt={props.gridWeapon.object.name[locale]}
+              src={weaponImage()}
+            />
           </div>
+          <div className="subInfo">
+            <div className="icons">
+              {props.gridWeapon.object.element !== 0 ||
+              (props.gridWeapon.object.element === 0 &&
+                props.gridWeapon.element != null) ? (
+                <WeaponLabelIcon
+                  labelType={
+                    props.gridWeapon.object.element === 0 &&
+                    props.gridWeapon.element !== 0
+                      ? Element[props.gridWeapon.element]
+                      : Element[props.gridWeapon.object.element]
+                  }
+                />
+              ) : (
+                ''
+              )}
+              <WeaponLabelIcon
+                labelType={Proficiency[props.gridWeapon.object.proficiency]}
+              />
+            </div>
+            <UncapIndicator
+              type="weapon"
+              ulb={props.gridWeapon.object.uncap.ulb || false}
+              flb={props.gridWeapon.object.uncap.flb || false}
+              special={false}
+            />
+          </div>
+        </div>
 
-          {props.gridWeapon.object.ax &&
-          props.gridWeapon.ax &&
-          props.gridWeapon.ax[0].modifier &&
-          props.gridWeapon.ax[0].strength
-            ? axSection
-            : ''}
-          {props.gridWeapon.weapon_keys &&
-          props.gridWeapon.weapon_keys.length > 0
-            ? keysSection
-            : ''}
-          <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-            {t('buttons.wiki')}
-          </a>
-          <HoverCard.Arrow />
-        </HoverCard.Content>
-      </HoverCard.Portal>
-    </HoverCard.Root>
+        {props.gridWeapon.object.ax &&
+        props.gridWeapon.ax &&
+        props.gridWeapon.ax[0].modifier &&
+        props.gridWeapon.ax[0].strength
+          ? axSection
+          : ''}
+        {props.gridWeapon.weapon_keys && props.gridWeapon.weapon_keys.length > 0
+          ? keysSection
+          : ''}
+        <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
+          {t('buttons.wiki')}
+        </a>
+      </HovercardContent>
+    </Hovercard>
   )
 }
 

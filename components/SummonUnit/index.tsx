@@ -80,7 +80,7 @@ const SummonUnit = ({
   })
 
   // Methods: Open layer
-  function openSearchModal(event: MouseEvent<HTMLDivElement>) {
+  function openSearchModal() {
     if (editable) setSearchModalOpen(true)
   }
 
@@ -223,8 +223,8 @@ const SummonUnit = ({
   }
 
   // Methods: Core element rendering
-  const image = (
-    <div className="SummonImage" onClick={openSearchModal}>
+  const image = () => {
+    let image = (
       <img
         alt={summon?.name[locale]}
         className={classNames({
@@ -233,21 +233,38 @@ const SummonUnit = ({
         })}
         src={imageUrl !== '' ? imageUrl : placeholderImageUrl()}
       />
-      {editable ? (
-        <span className="icon">
-          <PlusIcon />
-        </span>
-      ) : (
-        ''
-      )}
-    </div>
-  )
+    )
+
+    if (gridSummon) {
+      image = (
+        <SummonHovercard
+          gridSummon={gridSummon}
+          onTriggerClick={openSearchModal}
+        >
+          {image}
+        </SummonHovercard>
+      )
+    }
+
+    return (
+      <div className="SummonImage" onClick={openSearchModal}>
+        {image}
+        {editable ? (
+          <span className="icon">
+            <PlusIcon />
+          </span>
+        ) : (
+          ''
+        )}
+      </div>
+    )
+  }
 
   const unitContent = (
     <>
       <div className={classes}>
         {contextMenu()}
-        {image}
+        {image()}
         {gridSummon ? (
           <UncapIndicator
             type="summon"
@@ -271,11 +288,7 @@ const SummonUnit = ({
     </>
   )
 
-  const unitContentWithHovercard = (
-    <SummonHovercard gridSummon={gridSummon!}>{unitContent}</SummonHovercard>
-  )
-
-  return gridSummon && !editable ? unitContentWithHovercard : unitContent
+  return unitContent
 }
 
 export default SummonUnit
