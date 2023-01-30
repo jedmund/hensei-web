@@ -519,7 +519,7 @@ const Header = () => {
             <DropdownMenuItem className="MenuItem">
               <Link href="/new">
                 <a onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}>
-                  New party
+                  {t('menu.new')}
                 </a>
               </Link>
             </DropdownMenuItem>
@@ -530,13 +530,13 @@ const Header = () => {
               className="MenuItem"
               onClick={() => setLoginModalOpen(true)}
             >
-              <span>Log in</span>
+              <span>{t('menu.login')}</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="MenuItem"
               onClick={() => setSignupModalOpen(true)}
             >
-              <span>Sign up</span>
+              <span>{t('menu.signup')}</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </>
