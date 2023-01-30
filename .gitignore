@@ -54,6 +54,7 @@ public/images/job*
 public/images/awakening*
 public/images/ax*
 public/images/accessory*
+public/images/mastery*
 
 # Typescript v1 declaration files
 typings/
