@@ -10,7 +10,6 @@ import SearchModal from '~components/SearchModal'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
-import { ACCESSORY_JOB_IDS } from '~utils/jobsWithAccessories'
 import type { JobSkillObject, SearchableObject } from '~types'
 
 import './index.scss'

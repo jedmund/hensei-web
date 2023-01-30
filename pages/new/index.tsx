@@ -65,14 +65,19 @@ const NewRoute: React.FC<Props> = ({
       appState.weaponKeys = context.weaponKeys
     }
     appState.version = version
-  }, [])
+  }, [context, version])
 
   useEffect(() => {
     // Clean state
     const resetState = clonedeep(initialAppState)
-    Object.keys(resetState).forEach((key) => {
-      appState[key] = resetState[key]
-    })
+    appState.party = resetState.party
+    appState.grid = resetState.grid
+
+    // Old method kept in case we need it later
+    // Object.keys(resetState).forEach((key) => {
+    //   appState[key] = resetState[key]
+    // })
+
     // Set party to be editable
     appState.party.editable = true
   }, [])
