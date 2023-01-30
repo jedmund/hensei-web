@@ -1,4 +1,19 @@
 .Character.HovercardContent {
+  .title .Image {
+    position: relative;
+
+    .Perpetuity {
+      position: absolute;
+      background-image: url('/icons/perpetuity/filled.svg');
+      background-size: $unit-3x $unit-3x;
+      z-index: 20;
+      top: $unit-half * -1;
+      right: $unit-3x;
+      width: $unit-3x;
+      height: $unit-3x;
+    }
+  }
+
   .Mastery {
     display: flex;
     flex-direction: column;

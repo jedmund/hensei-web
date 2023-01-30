@@ -65,6 +65,12 @@ const CharacterHovercard = (props: Props) => {
     window.open(url, '_blank')
   }
 
+  const perpetuity = () => {
+    if (props.gridCharacter && props.gridCharacter.perpetuity) {
+      return <i className="Perpetuity" />
+    }
+  }
+
   function characterImage() {
     let imgSrc = ''
 
@@ -223,10 +229,13 @@ const CharacterHovercard = (props: Props) => {
         <div className="top">
           <div className="title">
             <h4>{props.gridCharacter.object.name[locale]}</h4>
-            <img
-              alt={props.gridCharacter.object.name[locale]}
-              src={characterImage()}
-            />
+            <div className="Image">
+              {perpetuity()}
+              <img
+                alt={props.gridCharacter.object.name[locale]}
+                src={characterImage()}
+              />
+            </div>
           </div>
           <div className="subInfo">
             <div className="icons">
