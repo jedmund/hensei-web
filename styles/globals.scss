@@ -200,98 +200,6 @@ select {
   }
 }
 
-.Hovercard {
-  background: #222;
-  border-radius: $unit;
-  color: $grey-100;
-  display: flex;
-  flex-direction: column;
-  gap: $unit * 2;
-  padding: $unit * 2;
-  width: 300px;
-
-  .top {
-    display: flex;
-    flex-direction: column;
-    gap: calc($unit / 2);
-
-    .title {
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-      gap: $unit * 2;
-
-      h4 {
-        flex-grow: 1;
-        font-size: $font-medium;
-        line-height: 1.2;
-        min-width: 140px;
-      }
-
-      img {
-        height: auto;
-        width: 100px;
-      }
-    }
-
-    .subInfo {
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-      gap: $unit * 2;
-
-      .icons {
-        display: flex;
-        flex-direction: row;
-        flex-grow: 1;
-        gap: $unit;
-      }
-
-      .UncapIndicator {
-        width: 100px;
-      }
-    }
-  }
-
-  section {
-    h5 {
-      font-size: $font-small;
-      font-weight: $medium;
-      opacity: 0.7;
-
-      &.wind {
-        color: $wind-bg-20;
-      }
-
-      &.fire {
-        color: $fire-bg-20;
-      }
-
-      &.water {
-        color: $water-bg-20;
-      }
-
-      &.earth {
-        color: $earth-bg-20;
-      }
-
-      &.dark {
-        color: $dark-bg-10;
-      }
-
-      &.light {
-        color: $light-bg-20;
-      }
-    }
-  }
-
-  a.Button {
-    display: block;
-    padding: $unit * 1.5;
-    text-align: center;
-  }
-}
-
 #Teams,
 #Profile {
   display: flex;
@@ -447,17 +355,25 @@ i.tag {
     opacity: 0.6;
     transform: scale(1);
   }
-  70% {
-    opacity: 0.8;
+  65% {
+    opacity: 0.65;
     transform: scale(1.1);
+  }
+  70% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  75% {
+    opacity: 0.75;
+    transform: scale(0.98);
   }
   80% {
     opacity: 0.8;
-    transform: scale(1);
+    transform: scale(1.02);
   }
   90% {
-    opacity: 0.8;
-    transform: scale(0.95);
+    opacity: 0.9;
+    transform: scale(0.96);
   }
   100% {
     opacity: 1;

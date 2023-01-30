@@ -98,7 +98,7 @@ const WeaponUnit = ({
     setDetailsModalOpen(true)
   }
 
-  function openSearchModal(event: MouseEvent<HTMLDivElement>) {
+  function openSearchModal() {
     if (editable) setSearchModalOpen(true)
   }
 
@@ -509,17 +509,8 @@ const WeaponUnit = ({
   }
 
   // Methods: Core element rendering
-  const image = (
-    <div className="WeaponImage" onClick={openSearchModal}>
-      <div className="Modifiers">
-        {awakeningImage()}
-        <div className="Skills">
-          {axImages()}
-          {telumaImages()}
-          {opusImages()}
-          {ultimaImages()}
-        </div>
-      </div>
+  const image = () => {
+    const image = (
       <img
         alt={weapon?.name[locale]}
         className={classNames({
@@ -528,21 +519,44 @@ const WeaponUnit = ({
         })}
         src={imageUrl !== '' ? imageUrl : placeholderImageUrl()}
       />
-      {editable ? (
-        <span className="icon">
-          <PlusIcon />
-        </span>
-      ) : (
-        ''
-      )}
-    </div>
-  )
+    )
+
+    const content = (
+      <div className="WeaponImage" onClick={openSearchModal}>
+        <div className="Modifiers">
+          {awakeningImage()}
+          <div className="Skills">
+            {axImages()}
+            {telumaImages()}
+            {opusImages()}
+            {ultimaImages()}
+          </div>
+        </div>
+        {image}
+        {editable ? (
+          <span className="icon">
+            <PlusIcon />
+          </span>
+        ) : (
+          ''
+        )}
+      </div>
+    )
+
+    return gridWeapon ? (
+      <WeaponHovercard gridWeapon={gridWeapon} onTriggerClick={openSearchModal}>
+        {content}
+      </WeaponHovercard>
+    ) : (
+      content
+    )
+  }
 
   const unitContent = (
     <>
       <div className={classes}>
         {contextMenu()}
-        {image}
+        {image()}
         {gridWeapon && weapon ? (
           <UncapIndicator
             type="weapon"
@@ -562,11 +576,7 @@ const WeaponUnit = ({
     </>
   )
 
-  const unitContentWithHovercard = (
-    <WeaponHovercard gridWeapon={gridWeapon!}>{unitContent}</WeaponHovercard>
-  )
-
-  return gridWeapon && !editable ? unitContentWithHovercard : unitContent
+  return unitContent
 }
 
 export default WeaponUnit

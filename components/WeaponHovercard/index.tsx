@@ -2,18 +2,24 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
-import * as HoverCard from '@radix-ui/react-hover-card'
-
+import {
+  Hovercard,
+  HovercardContent,
+  HovercardTrigger,
+} from '~components/Hovercard'
+import Button from '~components/Button'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
 
 import ax from '~data/ax'
+import { weaponAwakening } from '~data/awakening'
 
 import './index.scss'
 
 interface Props {
   gridWeapon: GridWeapon
   children: React.ReactNode
+  onTriggerClick: () => void
 }
 
 interface KeyNames {
@@ -26,9 +32,10 @@ interface KeyNames {
 
 const WeaponHovercard = (props: Props) => {
   const router = useRouter()
-  const { t } = useTranslation('common')
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+
+  const { t } = useTranslation('common')
 
   const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
   const Proficiency = [
@@ -67,10 +74,18 @@ const WeaponHovercard = (props: Props) => {
     props.gridWeapon.object.element == 0 && props.gridWeapon.element
       ? Element[props.gridWeapon.element]
       : Element[props.gridWeapon.object.element]
+
   const wikiUrl = `https://gbf.wiki/${props.gridWeapon.object.name.en.replaceAll(
     ' ',
     '_'
   )}`
+
+  function goTo() {
+    const urlSafeName = props.gridWeapon.object.name.en.replaceAll(' ', '_')
+    const url = `https://gbf.wiki/${urlSafeName}`
+
+    window.open(url, '_blank')
+  }
 
   const hovercardSide = () => {
     if (props.gridWeapon.position == -1) return 'right'
@@ -127,6 +142,33 @@ const WeaponHovercard = (props: Props) => {
       return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
     else
       return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+  }
+
+  const awakeningSection = () => {
+    const gridAwakening = props.gridWeapon.awakening
+    const awakening = weaponAwakening.find(
+      (awakening) => awakening.id === gridAwakening?.type
+    )
+
+    if (gridAwakening && awakening) {
+      return (
+        <section className="awakening">
+          <h5 className={tintElement}>
+            {t('modals.weapon.subtitles.awakening')}
+          </h5>
+          <div>
+            <img
+              alt={awakening.name[locale]}
+              src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/weapon_${gridAwakening.type}.png`}
+            />
+            <span>
+              <strong>{`${awakening.name[locale]}`}</strong>&nbsp;
+              {`Lv${gridAwakening.level}`}
+            </span>
+          </div>
+        </section>
+      )
+    }
   }
 
   const keysSection = (
@@ -188,65 +230,71 @@ const WeaponHovercard = (props: Props) => {
     </section>
   )
 
-  return (
-    <HoverCard.Root>
-      <HoverCard.Trigger>{props.children}</HoverCard.Trigger>
-      <HoverCard.Portal>
-        <HoverCard.Content className="Weapon Hovercard" side={hovercardSide()}>
-          <div className="top">
-            <div className="title">
-              <h4>{props.gridWeapon.object.name[locale]}</h4>
-              <img
-                alt={props.gridWeapon.object.name[locale]}
-                src={weaponImage()}
-              />
-            </div>
-            <div className="subInfo">
-              <div className="icons">
-                {props.gridWeapon.object.element !== 0 ||
-                (props.gridWeapon.object.element === 0 &&
-                  props.gridWeapon.element != null) ? (
-                  <WeaponLabelIcon
-                    labelType={
-                      props.gridWeapon.object.element === 0 &&
-                      props.gridWeapon.element !== 0
-                        ? Element[props.gridWeapon.element]
-                        : Element[props.gridWeapon.object.element]
-                    }
-                  />
-                ) : (
-                  ''
-                )}
-                <WeaponLabelIcon
-                  labelType={Proficiency[props.gridWeapon.object.proficiency]}
-                />
-              </div>
-              <UncapIndicator
-                type="weapon"
-                ulb={props.gridWeapon.object.uncap.ulb || false}
-                flb={props.gridWeapon.object.uncap.flb || false}
-                special={false}
-              />
-            </div>
-          </div>
+  const wikiButton = (
+    <Button
+      className={tintElement}
+      text={t('buttons.wiki')}
+      onClick={goTo}
+      contained={true}
+    />
+  )
 
-          {props.gridWeapon.object.ax &&
-          props.gridWeapon.ax &&
-          props.gridWeapon.ax[0].modifier &&
-          props.gridWeapon.ax[0].strength
-            ? axSection
-            : ''}
-          {props.gridWeapon.weapon_keys &&
-          props.gridWeapon.weapon_keys.length > 0
-            ? keysSection
-            : ''}
-          <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-            {t('buttons.wiki')}
-          </a>
-          <HoverCard.Arrow />
-        </HoverCard.Content>
-      </HoverCard.Portal>
-    </HoverCard.Root>
+  return (
+    <Hovercard openDelay={350}>
+      <HovercardTrigger asChild onClick={props.onTriggerClick}>
+        {props.children}
+      </HovercardTrigger>
+      <HovercardContent className="Weapon" side={hovercardSide()}>
+        <div className="top">
+          <div className="title">
+            <h4>{props.gridWeapon.object.name[locale]}</h4>
+            <img
+              alt={props.gridWeapon.object.name[locale]}
+              src={weaponImage()}
+            />
+          </div>
+          <div className="subInfo">
+            <div className="icons">
+              {props.gridWeapon.object.element !== 0 ||
+              (props.gridWeapon.object.element === 0 &&
+                props.gridWeapon.element != null) ? (
+                <WeaponLabelIcon
+                  labelType={
+                    props.gridWeapon.object.element === 0 &&
+                    props.gridWeapon.element !== 0
+                      ? Element[props.gridWeapon.element]
+                      : Element[props.gridWeapon.object.element]
+                  }
+                />
+              ) : (
+                ''
+              )}
+              <WeaponLabelIcon
+                labelType={Proficiency[props.gridWeapon.object.proficiency]}
+              />
+            </div>
+            <UncapIndicator
+              type="weapon"
+              ulb={props.gridWeapon.object.uncap.ulb || false}
+              flb={props.gridWeapon.object.uncap.flb || false}
+              special={false}
+            />
+          </div>
+        </div>
+
+        {props.gridWeapon.object.ax &&
+        props.gridWeapon.ax &&
+        props.gridWeapon.ax[0].modifier &&
+        props.gridWeapon.ax[0].strength
+          ? axSection
+          : ''}
+        {awakeningSection()}
+        {props.gridWeapon.weapon_keys && props.gridWeapon.weapon_keys.length > 0
+          ? keysSection
+          : ''}
+        {wikiButton}
+      </HovercardContent>
+    </Hovercard>
   )
 }
 
