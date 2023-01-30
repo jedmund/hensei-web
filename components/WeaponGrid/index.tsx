@@ -183,9 +183,6 @@ const WeaponGrid = (props: Props) => {
           position: position,
         })
         .then((response) => {
-          // Store new character in state
-          storeGridWeapon(response.data)
-
           // Remove conflicting characters from state
           conflicts.forEach((c) => {
             if (appState.grid.weapons.mainWeapon?.object.id === c.id) {
@@ -195,6 +192,9 @@ const WeaponGrid = (props: Props) => {
               appState.grid.weapons.allWeapons[c.position] = undefined
             }
           })
+
+          // Store new character in state
+          storeGridWeapon(response.data.grid_weapon)
 
           // Reset conflict
           resetConflict()
