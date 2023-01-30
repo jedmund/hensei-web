@@ -1,5 +1,9 @@
 .Updates.PageContent {
   .version {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-2x;
+
     &.content {
       .top h3 {
         color: var(--accent-yellow);
@@ -47,6 +51,57 @@
         color: var(--text-secondary);
         font-size: $font-small;
         font-weight: $medium;
+      }
+    }
+
+    .Notes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(200px, 1fr));
+      gap: $unit-2x;
+
+      li {
+        display: flex;
+        flex-direction: column;
+        gap: $unit;
+
+        h3 {
+          font-weight: $bold;
+          font-size: $font-regular;
+        }
+
+        img {
+          aspect-ratio: 4 / 3;
+          background: var(--dialog-bg);
+          border-radius: $input-corner;
+          display: block;
+          width: 100%;
+        }
+
+        p {
+          color: var(--text-primary);
+          font-size: 14px;
+
+          code {
+            background: var(--button-bg);
+            border-radius: 2px;
+            font-family: monospace;
+            font-weight: $bold;
+            letter-spacing: 0.02rem;
+            padding: 1px;
+          }
+        }
+      }
+    }
+
+    .Bugs {
+      display: flex;
+      flex-direction: column;
+      list-style-type: disc;
+      list-style-position: inside;
+      gap: $unit;
+
+      li {
+        font-size: $font-regular;
       }
     }
   }
