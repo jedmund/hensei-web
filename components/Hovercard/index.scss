@@ -48,6 +48,10 @@
         flex-grow: 1;
         gap: $unit;
       }
+
+      .UncapIndicator {
+        min-width: 100px;
+      }
     }
   }
 

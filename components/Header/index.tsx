@@ -216,16 +216,18 @@ const Header = () => {
     }
 
     return title !== '' ? (
-      <Button
-        blended={true}
-        rightAccessoryIcon={
-          path === 'p' && hasAccessory ? (
-            <LinkIcon className="stroke" />
-          ) : undefined
-        }
-        text={title}
-        onClick={copyToClipboard}
-      />
+      <Tooltip content={t('tooltips.copy_url')}>
+        <Button
+          blended={true}
+          rightAccessoryIcon={
+            path === 'p' && hasAccessory ? (
+              <LinkIcon className="stroke" />
+            ) : undefined
+          }
+          text={title}
+          onClick={copyToClipboard}
+        />
+      </Tooltip>
     ) : (
       ''
     )
