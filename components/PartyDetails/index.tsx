@@ -403,7 +403,16 @@ const PartyDetails = (props: Props) => {
           src={`/profile/${picture}.png`}
         />
       )
-    else return <div className="no-user" />
+    else
+      return (
+        <img
+          alt={t('no_user')}
+          className={`profile anonymous`}
+          srcSet={`/profile/npc.png,
+                            /profile/npc@2x.png 2x`}
+          src={`/profile/npc.png`}
+        />
+      )
   }
 
   const userBlock = (username?: string, picture?: string, element?: string) => {
