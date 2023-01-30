@@ -152,15 +152,34 @@ const WeaponGrid = (props: Props) => {
     if (weapon.uncap.ulb) uncapLevel = 5
     else if (weapon.uncap.flb) uncapLevel = 4
 
-    return await api.endpoints.weapons.create({
-      weapon: {
-        party_id: partyId,
-        weapon_id: weapon.id,
-        position: position,
-        mainhand: position == -1,
-        uncap_level: uncapLevel,
-      },
-    })
+    let post = false
+    if (
+      position === -1 &&
+      (!appState.grid.weapons.mainWeapon ||
+        (appState.grid.weapons.mainWeapon &&
+          appState.grid.weapons.mainWeapon.object.id !== weapon.id))
+    ) {
+      post = true
+    } else if (
+      position !== -1 &&
+      (!appState.grid.weapons.allWeapons[position] ||
+        (appState.grid.weapons.allWeapons[position] &&
+          appState.grid.weapons.allWeapons[position]?.object.id !== weapon.id))
+    ) {
+      post = true
+    }
+
+    if (post) {
+      return await api.endpoints.weapons.create({
+        weapon: {
+          party_id: partyId,
+          weapon_id: weapon.id,
+          position: position,
+          mainhand: position == -1,
+          uncap_level: uncapLevel,
+        },
+      })
+    }
   }
 
   function storeGridWeapon(gridWeapon: GridWeapon) {
