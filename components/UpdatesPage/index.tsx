@@ -49,9 +49,9 @@ const UpdatesPage: React.FC<Props> = (props: Props) => {
               )}
               <h3>Remix parties</h3>
               <p>
-                See a team you want to try but don't have Yatima? Now you can
-                remix teams from other users to showcase substitutes, swap for
-                items you have, or just give it your own flavor.
+                See a team you want to try but don&apos;t have Yatima? Now you
+                can remix teams from other users to showcase substitutes, swap
+                for items you have, or just give it your own flavor.
               </p>
             </li>
             <li>
@@ -89,9 +89,9 @@ const UpdatesPage: React.FC<Props> = (props: Props) => {
               )}
               <h3>Character Mastery</h3>
               <p>
-                You can now add individual values for your character's rings,
-                earrings, and awakenings. Make sure to set your Perpetuity
-                Rings!
+                You can now add individual values for your character&apos;s
+                rings, earrings, and awakenings. Make sure to set your
+                Perpetuity Rings!
               </p>
             </li>
             <li>
