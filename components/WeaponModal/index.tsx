@@ -189,6 +189,7 @@ const WeaponModal = ({
     if (gridWeapon.mainhand) appState.grid.weapons.mainWeapon = gridWeapon
     else appState.grid.weapons.allWeapons[gridWeapon.position] = gridWeapon
 
+    if (onOpenChange) onOpenChange(false)
     setOpen(false)
   }
 

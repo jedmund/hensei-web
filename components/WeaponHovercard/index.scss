@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding-right: $unit * 2;
+    padding-right: $unit-2x;
 
     .axSkill {
       align-items: center;
@@ -36,6 +36,26 @@
     display: flex;
     flex-direction: column;
     font-size: $normal;
-    gap: calc($unit / 2);
+    gap: $unit-half;
+  }
+
+  .awakening {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-half;
+
+    & > div {
+      align-items: center;
+      display: flex;
+      gap: $unit-half;
+
+      img {
+        width: $unit-4x;
+      }
+
+      strong {
+        font-weight: $bold;
+      }
+    }
   }
 }

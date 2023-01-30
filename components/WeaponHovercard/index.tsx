@@ -11,6 +11,7 @@ import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
 
 import ax from '~data/ax'
+import { weaponAwakening } from '~data/awakening'
 
 import './index.scss'
 
@@ -135,6 +136,33 @@ const WeaponHovercard = (props: Props) => {
       return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
   }
 
+  const awakeningSection = () => {
+    const gridAwakening = props.gridWeapon.awakening
+    const awakening = weaponAwakening.find(
+      (awakening) => awakening.id === gridAwakening?.type
+    )
+
+    if (gridAwakening && awakening) {
+      return (
+        <section className="awakening">
+          <h5 className={tintElement}>
+            {t('modals.weapon.subtitles.awakening')}
+          </h5>
+          <div>
+            <img
+              alt={awakening.name[locale]}
+              src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/weapon_${gridAwakening.type}.png`}
+            />
+            <span>
+              <strong>{`${awakening.name[locale]}`}</strong>&nbsp;
+              {`Lv${gridAwakening.level}`}
+            </span>
+          </div>
+        </section>
+      )
+    }
+  }
+
   const keysSection = (
     <section className="weaponKeys">
       {WeaponKeyNames[props.gridWeapon.object.series] ? (
@@ -243,9 +271,11 @@ const WeaponHovercard = (props: Props) => {
         props.gridWeapon.ax[0].strength
           ? axSection
           : ''}
+        {awakeningSection()}
         {props.gridWeapon.weapon_keys && props.gridWeapon.weapon_keys.length > 0
           ? keysSection
           : ''}
+
         <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
           {t('buttons.wiki')}
         </a>
