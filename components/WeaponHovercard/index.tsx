@@ -7,6 +7,7 @@ import {
   HovercardContent,
   HovercardTrigger,
 } from '~components/Hovercard'
+import Button from '~components/Button'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
 
@@ -78,6 +79,13 @@ const WeaponHovercard = (props: Props) => {
     ' ',
     '_'
   )}`
+
+  function goTo() {
+    const urlSafeName = props.gridWeapon.object.name.en.replaceAll(' ', '_')
+    const url = `https://gbf.wiki/${urlSafeName}`
+
+    window.open(url, '_blank')
+  }
 
   const hovercardSide = () => {
     if (props.gridWeapon.position == -1) return 'right'
@@ -222,6 +230,15 @@ const WeaponHovercard = (props: Props) => {
     </section>
   )
 
+  const wikiButton = (
+    <Button
+      className={tintElement}
+      text={t('buttons.wiki')}
+      onClick={goTo}
+      contained={true}
+    />
+  )
+
   return (
     <Hovercard openDelay={350}>
       <HovercardTrigger asChild onClick={props.onTriggerClick}>
@@ -275,10 +292,7 @@ const WeaponHovercard = (props: Props) => {
         {props.gridWeapon.weapon_keys && props.gridWeapon.weapon_keys.length > 0
           ? keysSection
           : ''}
-
-        <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-          {t('buttons.wiki')}
-        </a>
+        {wikiButton}
       </HovercardContent>
     </Hovercard>
   )

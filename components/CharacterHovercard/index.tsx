@@ -1,12 +1,14 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import jconv from 'jconv'
 
 import {
   Hovercard,
   HovercardContent,
   HovercardTrigger,
 } from '~components/Hovercard'
+import Button from '~components/Button'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
 
@@ -15,10 +17,10 @@ import {
   aetherialMastery,
   permanentMastery,
 } from '~data/overMastery'
+import { characterAwakening } from '~data/awakening'
 import { ExtendedMastery } from '~types'
 
 import './index.scss'
-import { characterAwakening } from '~data/awakening'
 
 interface Props {
   gridCharacter: GridCharacter
@@ -55,10 +57,13 @@ const CharacterHovercard = (props: Props) => {
   ]
 
   const tintElement = Element[props.gridCharacter.object.element]
-  const wikiUrl = `https://gbf.wiki/${props.gridCharacter.object.name.en.replaceAll(
-    ' ',
-    '_'
-  )}`
+
+  function goTo() {
+    const urlSafeName = props.gridCharacter.object.name.en.replaceAll(' ', '_')
+    const url = `https://gbf.wiki/${urlSafeName}`
+
+    window.open(url, '_blank')
+  }
 
   function characterImage() {
     let imgSrc = ''
@@ -85,7 +90,7 @@ const CharacterHovercard = (props: Props) => {
 
     if (canonicalMastery) {
       return (
-        <li className="ExtendedMastery">
+        <li className="ExtendedMastery" key={canonicalMastery.id}>
           <img
             alt={canonicalMastery.name[locale]}
             src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/mastery/${canonicalMastery.slug}.png`}
@@ -200,6 +205,15 @@ const CharacterHovercard = (props: Props) => {
     }
   }
 
+  const wikiButton = (
+    <Button
+      className={tintElement}
+      text={t('buttons.wiki')}
+      onClick={goTo}
+      contained={true}
+    />
+  )
+
   return (
     <Hovercard openDelay={350}>
       <HovercardTrigger asChild onClick={props.onTriggerClick}>
@@ -242,19 +256,16 @@ const CharacterHovercard = (props: Props) => {
               type="character"
               ulb={props.gridCharacter.object.uncap.ulb || false}
               flb={props.gridCharacter.object.uncap.flb || false}
-              special={false}
+              transcendenceStage={props.gridCharacter.transcendence_step}
+              special={props.gridCharacter.object.special}
             />
           </div>
         </div>
+        {wikiButton}
         {awakeningSection()}
         {overMasterySection()}
         {aetherialMasterySection()}
         {permanentMasterySection()}
-        <section className="Footer">
-          <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-            {t('buttons.wiki')}
-          </a>
-        </section>
       </HovercardContent>
     </Hovercard>
   )

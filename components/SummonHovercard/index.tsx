@@ -7,6 +7,7 @@ import {
   HovercardContent,
   HovercardTrigger,
 } from '~components/Hovercard'
+import Button from '~components/Button'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
 
@@ -27,10 +28,13 @@ const SummonHovercard = (props: Props) => {
   const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 
   const tintElement = Element[props.gridSummon.object.element]
-  const wikiUrl = `https://gbf.wiki/${props.gridSummon.object.name.en.replaceAll(
-    ' ',
-    '_'
-  )}`
+
+  function goTo() {
+    const urlSafeName = props.gridSummon.object.name.en.replaceAll(' ', '_')
+    const url = `https://gbf.wiki/${urlSafeName}`
+
+    window.open(url, '_blank')
+  }
 
   function summonImage() {
     let imgSrc = ''
@@ -63,6 +67,15 @@ const SummonHovercard = (props: Props) => {
     return imgSrc
   }
 
+  const wikiButton = (
+    <Button
+      className={tintElement}
+      text={t('buttons.wiki')}
+      onClick={goTo}
+      contained={true}
+    />
+  )
+
   return (
     <Hovercard openDelay={350}>
       <HovercardTrigger asChild onClick={props.onTriggerClick}>
@@ -91,9 +104,7 @@ const SummonHovercard = (props: Props) => {
             />
           </div>
         </div>
-        <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-          {t('buttons.wiki')}
-        </a>
+        {wikiButton}
       </HovercardContent>
     </Hovercard>
   )
