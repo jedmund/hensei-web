@@ -403,7 +403,16 @@ const PartyDetails = (props: Props) => {
           src={`/profile/${picture}.png`}
         />
       )
-    else return <div className="no-user" />
+    else
+      return (
+        <img
+          alt={t('no_user')}
+          className={`profile anonymous`}
+          srcSet={`/profile/npc.png,
+                            /profile/npc@2x.png 2x`}
+          src={`/profile/npc.png`}
+        />
+      )
   }
 
   const userBlock = (username?: string, picture?: string, element?: string) => {
@@ -691,20 +700,36 @@ const PartyDetails = (props: Props) => {
       <section className={readOnlyClasses}>
         <section className="Details">
           <Token
-            className={classNames({ ChargeAttack: true, On: chargeAttack })}
+            className={classNames({
+              ChargeAttack: true,
+              On: chargeAttack,
+              Off: !chargeAttack,
+            })}
           >
             {`${t('party.details.labels.charge_attack')} ${
               chargeAttack ? 'On' : 'Off'
             }`}
           </Token>
 
-          <Token className={classNames({ FullAuto: true, On: fullAuto })}>
+          <Token
+            className={classNames({
+              FullAuto: true,
+              On: fullAuto,
+              Off: !fullAuto,
+            })}
+          >
             {`${t('party.details.labels.full_auto')} ${
               fullAuto ? 'On' : 'Off'
             }`}
           </Token>
 
-          <Token className={classNames({ AutoGuard: true, On: autoGuard })}>
+          <Token
+            className={classNames({
+              AutoGuard: true,
+              On: autoGuard,
+              Off: !autoGuard,
+            })}
+          >
             {`${t('party.details.labels.auto_guard')} ${
               fullAuto ? 'On' : 'Off'
             }`}

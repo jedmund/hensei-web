@@ -22,4 +22,8 @@
     background: var(--auto-guard-bg);
     color: var(--auto-guard-text);
   }
+
+  &.Off {
+    color: var(--text-secondary);
+  }
 }

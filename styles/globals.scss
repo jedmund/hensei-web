@@ -249,6 +249,10 @@ img.profile {
   &.light {
     background: $light-bg-20;
   }
+
+  &.anonymous {
+    background: var(--anonymous-bg);
+  }
 }
 
 i.tag {
