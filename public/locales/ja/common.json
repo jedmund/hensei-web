@@ -81,6 +81,7 @@
     "byline": "{{username}}さんからの{{partyName}}"
   },
   "rarities": {
+    "r": "R",
     "sr": "SR",
     "ssr": "SSR"
   },

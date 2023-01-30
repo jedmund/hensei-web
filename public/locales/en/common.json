@@ -69,6 +69,7 @@
     "byline": "{{partyName}} by {{username}}"
   },
   "rarities": {
+    "r": "R",
     "sr": "SR",
     "ssr": "SSR"
   },

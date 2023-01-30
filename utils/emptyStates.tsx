@@ -1,4 +1,8 @@
 export const emptyRarityState: RarityState = {
+  r: {
+    id: 1,
+    checked: false,
+  },
   sr: {
     id: 2,
     checked: false,

@@ -12,6 +12,7 @@ button.DropdownLabel {
   padding: $unit ($unit * 1.5) $unit $unit-2x;
 
   div {
+    align-items: center;
     display: flex;
     gap: $unit-half;
   }
