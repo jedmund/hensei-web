@@ -330,3 +330,54 @@ export const aetherialMastery: ItemSkill[] = [
     fractional: false,
   },
 ]
+
+export const permanentMastery: ItemSkill[] = [
+  {
+    name: {
+      en: 'Extended Mastery Star Cap',
+      ja: 'LB強化回数上限',
+    },
+    id: 1,
+    slug: 'star-cap',
+    minValue: 10,
+    maxValue: 10,
+    suffix: '',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'ATK',
+      ja: '攻撃',
+    },
+    id: 2,
+    slug: 'atk',
+    minValue: 10,
+    maxValue: 10,
+    suffix: '%',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'HP',
+      ja: 'HP',
+    },
+    id: 3,
+    slug: 'hp',
+    minValue: 10,
+    maxValue: 10,
+    suffix: '',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'DMG Cap',
+      ja: 'ダメージ上限',
+    },
+    id: 4,
+    slug: 'dmg-cap',
+    minValue: 5,
+    maxValue: 5,
+    suffix: '%',
+    fractional: false,
+  },
+]

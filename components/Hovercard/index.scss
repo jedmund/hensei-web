@@ -7,6 +7,8 @@
   display: flex;
   flex-direction: column;
   gap: $unit-2x;
+  max-height: 30vh;
+  overflow-y: scroll;
   padding: $unit-2x;
   width: 300px;
 

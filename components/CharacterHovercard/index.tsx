@@ -10,7 +10,15 @@ import {
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
 
+import {
+  overMastery,
+  aetherialMastery,
+  permanentMastery,
+} from '~data/overMastery'
+import { ExtendedMastery } from '~types'
+
 import './index.scss'
+import { characterAwakening } from '~data/awakening'
 
 interface Props {
   gridCharacter: GridCharacter
@@ -70,6 +78,128 @@ const CharacterHovercard = (props: Props) => {
     return imgSrc
   }
 
+  function masteryElement(dictionary: ItemSkill[], mastery: ExtendedMastery) {
+    const canonicalMastery = dictionary.find(
+      (item) => item.id === mastery.modifier
+    )
+
+    if (canonicalMastery) {
+      return (
+        <li className="ExtendedMastery">
+          <img
+            alt={canonicalMastery.name[locale]}
+            src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/mastery/${canonicalMastery.slug}.png`}
+          />
+          <span>
+            <strong>{canonicalMastery.name[locale]}</strong>&nbsp;
+            {`+${mastery.strength}${canonicalMastery.suffix}`}
+          </span>
+        </li>
+      )
+    }
+  }
+
+  const overMasterySection = () => {
+    if (props.gridCharacter && props.gridCharacter.over_mastery) {
+      return (
+        <section className="Mastery">
+          <h5 className={tintElement}>
+            {t('modals.characters.subtitles.ring')}
+          </h5>
+          <ul>
+            {[...Array(4)].map((e, i) => {
+              const ringIndex = i + 1
+              const ringStat: ExtendedMastery =
+                props.gridCharacter.over_mastery[i]
+              if (ringStat && ringStat.modifier && ringStat.modifier > 0) {
+                if (ringIndex === 1 || ringIndex === 2) {
+                  return masteryElement(overMastery.a, ringStat)
+                } else if (ringIndex === 3) {
+                  return masteryElement(overMastery.b, ringStat)
+                } else {
+                  return masteryElement(overMastery.c, ringStat)
+                }
+              }
+            })}
+          </ul>
+        </section>
+      )
+    }
+  }
+
+  const aetherialMasterySection = () => {
+    if (
+      props.gridCharacter &&
+      props.gridCharacter.aetherial_mastery &&
+      props.gridCharacter.aetherial_mastery.modifier > 0
+    ) {
+      return (
+        <section className="Mastery">
+          <h5 className={tintElement}>
+            {t('modals.characters.subtitles.earring')}
+          </h5>
+          <ul>
+            {masteryElement(
+              aetherialMastery,
+              props.gridCharacter.aetherial_mastery
+            )}
+          </ul>
+        </section>
+      )
+    }
+  }
+
+  const permanentMasterySection = () => {
+    if (props.gridCharacter && props.gridCharacter.perpetuity) {
+      return (
+        <section className="Mastery">
+          <h5 className={tintElement}>
+            {t('modals.characters.subtitles.permanent')}
+          </h5>
+          <ul>
+            {[...Array(4)].map((e, i) => {
+              return masteryElement(permanentMastery, {
+                modifier: i + 1,
+                strength: permanentMastery[i].maxValue,
+              })
+            })}
+          </ul>
+        </section>
+      )
+    }
+  }
+
+  const awakeningSection = () => {
+    const gridAwakening = props.gridCharacter.awakening
+    const awakening = characterAwakening.find(
+      (awakening) => awakening.id === gridAwakening?.type
+    )
+
+    if (gridAwakening && awakening) {
+      return (
+        <section className="Awakening">
+          <h5 className={tintElement}>
+            {t('modals.characters.subtitles.awakening')}
+          </h5>
+          <div>
+            {gridAwakening.type > 1 ? (
+              <img
+                alt={awakening.name[locale]}
+                src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/character_${gridAwakening.type}.jpg`}
+              />
+            ) : (
+              ''
+            )}
+            <span>
+              <strong>{`${awakening.name[locale]}`}</strong>&nbsp;
+              {`Lv${gridAwakening.level}`}
+            </span>
+          </div>
+        </section>
+      )
+    }
+  }
+
   return (
     <Hovercard openDelay={350}>
       <HovercardTrigger asChild onClick={props.onTriggerClick}>
@@ -116,10 +246,15 @@ const CharacterHovercard = (props: Props) => {
             />
           </div>
         </div>
-
-        <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-          {t('buttons.wiki')}
-        </a>
+        {awakeningSection()}
+        {overMasterySection()}
+        {aetherialMasterySection()}
+        {permanentMasterySection()}
+        <section className="Footer">
+          <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
+            {t('buttons.wiki')}
+          </a>
+        </section>
       </HovercardContent>
     </Hovercard>
   )
