@@ -19,6 +19,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from '~components/DropdownMenuContent'
 import LoginModal from '~components/LoginModal'
 import SignupModal from '~components/SignupModal'
@@ -248,7 +249,15 @@ const Header = () => {
         />
       )
     } else {
-      image = <div className="profile placeholder" />
+      image = (
+        <img
+          alt={t('no_user')}
+          className={`profile anonymous`}
+          srcSet={`/profile/npc.png, 
+                      /profile/npc@2x.png 2x`}
+          src={`/profile/npc.png`}
+        />
+      )
     }
 
     return image
@@ -473,6 +482,9 @@ const Header = () => {
       items = (
         <>
           <DropdownMenuGroup className="MenuGroup">
+            <DropdownMenuLabel className="MenuLabel">
+              {account.user ? `@${account.user.username}` : t('no_user')}
+            </DropdownMenuLabel>
             <DropdownMenuItem className="MenuItem">
               <Link href="/new">
                 <a onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}>
