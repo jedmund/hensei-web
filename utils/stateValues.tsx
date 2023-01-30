@@ -1,4 +1,4 @@
-export const rarities = ['sr', 'ssr']
+export const rarities = ['r', 'sr', 'ssr']
 
 export const elements = [
   'null',
