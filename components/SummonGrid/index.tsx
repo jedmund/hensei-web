@@ -45,7 +45,6 @@ const SummonGrid = (props: Props) => {
 
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
-  const [slug, setSlug] = useState()
 
   // Create a temporary state to store previous weapon uncap values and transcendence stages
   const [previousUncapValues, setPreviousUncapValues] = useState<{

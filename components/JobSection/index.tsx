@@ -10,7 +10,6 @@ import SearchModal from '~components/SearchModal'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
-import { ACCESSORY_JOB_IDS } from '~utils/jobsWithAccessories'
 import type { JobSkillObject, SearchableObject } from '~types'
 
 import './index.scss'
@@ -115,7 +114,7 @@ const JobSection = (props: Props) => {
 
   const canEditSkill = (skill?: JobSkill) => {
     // If there is a job and a skill present in the slot
-    if (job) {
+    if (job && job.id !== '-1') {
       // If the skill's job is one of the job's main skill
       if (skill && skill.job.id === job.id && skill.main) return false
 
