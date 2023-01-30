@@ -95,13 +95,15 @@ const WeaponGrid = (props: Props) => {
       const payload: DetailsObject = { extra: party.extra }
       props.createParty(payload).then((team) => {
         saveWeapon(team.id, weapon, position).then((response) => {
-          storeGridWeapon(response.data.grid_weapon)
+          if (response) storeGridWeapon(response.data.grid_weapon)
         })
       })
     } else {
       if (party.editable)
         saveWeapon(party.id, weapon, position)
-          .then((response) => handleWeaponResponse(response.data))
+          .then((response) => {
+            if (response) handleWeaponResponse(response.data)
+          })
           .catch((error) => {
             const axiosError = error as AxiosError
             const response = axiosError.response
