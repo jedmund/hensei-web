@@ -235,18 +235,7 @@ const SummonUnit = ({
       />
     )
 
-    if (gridSummon) {
-      image = (
-        <SummonHovercard
-          gridSummon={gridSummon}
-          onTriggerClick={openSearchModal}
-        >
-          {image}
-        </SummonHovercard>
-      )
-    }
-
-    return (
+    const content = (
       <div className="SummonImage" onClick={openSearchModal}>
         {image}
         {editable ? (
@@ -257,6 +246,14 @@ const SummonUnit = ({
           ''
         )}
       </div>
+    )
+
+    return gridSummon ? (
+      <SummonHovercard gridSummon={gridSummon} onTriggerClick={openSearchModal}>
+        {content}
+      </SummonHovercard>
+    ) : (
+      content
     )
   }
 

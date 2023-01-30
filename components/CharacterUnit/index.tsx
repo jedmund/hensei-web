@@ -295,18 +295,7 @@ const CharacterUnit = ({
       />
     )
 
-    if (gridCharacter) {
-      image = (
-        <CharacterHovercard
-          gridCharacter={gridCharacter}
-          onTriggerClick={openSearchModal}
-        >
-          {image}
-        </CharacterHovercard>
-      )
-    }
-
-    return (
+    const content = (
       <div
         className="CharacterImage"
         tabIndex={gridCharacter ? gridCharacter.position * 7 : 0}
@@ -321,6 +310,17 @@ const CharacterUnit = ({
           ''
         )}
       </div>
+    )
+
+    return gridCharacter ? (
+      <CharacterHovercard
+        gridCharacter={gridCharacter}
+        onTriggerClick={openSearchModal}
+      >
+        {content}
+      </CharacterHovercard>
+    ) : (
+      content
     )
   }
 
