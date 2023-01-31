@@ -23,9 +23,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   useEffect(() => {
-
-    if (accountCookie) {
     setHeaders()
+    if (cookieData.account && cookieData.account.token) {
       console.log(`Logged in as user "${cookieData.account.username}"`)
 
       accountState.account.authorized = true

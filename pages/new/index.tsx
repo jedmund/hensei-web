@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { v4 as uuidv4 } from 'uuid'
 import clonedeep from 'lodash.clonedeep'
 
 import ErrorSection from '~components/ErrorSection'
@@ -18,6 +19,7 @@ import type { AxiosError } from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { PageContextObj, ResponseStatus } from '~types'
 import { GridType } from '~utils/enums'
+import { setCookie } from 'cookies-next'
 
 interface Props {
   context?: PageContextObj
@@ -121,6 +123,22 @@ export const getServerSidePaths = async () => {
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
   // Set headers for API calls
   setHeaders(req, res)
+
+  // If there is no account entry in cookies, create a UUID and store it
+  if (!accountCookie(req, res)) {
+    const uuid = uuidv4()
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
+    const cookieObj = {
+      userId: uuid,
+      username: undefined,
+      token: undefined,
+    }
+
+    const options = req && res ? { req, res } : {}
+    setCookie('account', cookieObj, { path: '/', expires: expiresAt, ...options })
+  }
 
   // Fetch latest version
   const version = await fetchLatestVersion()
