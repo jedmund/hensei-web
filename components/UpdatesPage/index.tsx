@@ -32,151 +32,170 @@ const UpdatesPage: React.FC<Props> = (props: Props) => {
   return (
     <div className="Updates PageContent">
       <h1>{common('about.segmented_control.updates')}</h1>
-      <section className="version" data-version="1.1">
-        <div className="top">
+      <section className="Version" data-version="1.1">
+        <div className="Header">
           <h3>1.1.0</h3>
           <time>2023/02/06</time>
         </div>
-        <section>
-          <h2>New features</h2>
-          <ul className="Notes">
-            <li>
-              {image(
-                'Remix parties',
-                `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
-                'remix',
-                'jpg'
-              )}
-              <h3>Remix parties</h3>
-              <p>
-                See a team you want to try but don&apos;t have Yatima? Now you
-                can remix teams from other users to showcase substitutes, swap
-                for items you have, or just give it your own flavor.
-              </p>
-            </li>
-            <li>
-              {image(
-                'Transcendence',
-                `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
-                'transcendence',
-                'jpg'
-              )}
-              <h3>Transcendence</h3>
-              <p>
-                Now you can set the transcendence stage for Eternals and select
-                summons (namely, Bahamut).
-              </p>
-            </li>
-            <li>
-              {image(
-                'Shields and Manatura',
-                `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
-                'accessories',
-                'jpg'
-              )}
-              <h3>Shields and Manatura</h3>
-              <p>
-                When using Paladin or Manadiver, you can set their respective
-                Shield or Manatura from the button next to the main character.
-              </p>
-            </li>
-            <li>
-              {image(
-                'Character Mastery',
-                `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
-                'mastery',
-                'jpg'
-              )}
-              <h3>Character Mastery</h3>
-              <p>
-                You can now add individual values for your character&apos;s
-                rings, earrings, and awakenings. Make sure to set your
-                Perpetuity Rings!
-              </p>
-            </li>
-            <li>
-              {image(
-                'Updated team mechanics',
-                `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
-                'mechanics',
-                'jpg'
-              )}
-              <h3>Updated team mechanics</h3>
-              <p>Sorry, each party is only big enough for one Beelzebub.</p>
-            </li>
-            <li>
-              {image(
-                'R Characters',
-                `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
-                'rare',
-                'jpg'
-              )}
-              <h3>R Characters</h3>
-              <p>
-                R Characters have been added to the database for your
-                mem—Proving Grounds compositions.
-              </p>
-            </li>
-            <li>
-              {image(
-                'Unique URLs for team tabs',
-                `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
-                'urls',
-                'jpg'
-              )}
-              <h3>Unique URLs for team tabs</h3>
-              <p>
-                You can now link to individual tabs directly. The site will do
-                it for you when you copy a URL, or you can append{' '}
-                <code>/characters</code>, <code>/weapons</code> or{' '}
-                <code>/summons</code> manually.
-              </p>
-            </li>
-            <li>
-              {image(
-                'Redesigned navigation',
-                `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
-                'nav',
-                'jpg'
-              )}
-              <h3>Redesigned navigation</h3>
-              <p>
-                The top-navigation has been slightly redesigned. Click the party
-                name to copy its URL!
-              </p>
-            </li>
-            <li>
-              {image(
-                'Update toasts',
-                `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
-                'toasts',
-                'jpg'
-              )}
-              <h3>Update toasts</h3>
-              <p>
-                The site will now show an update in the bottom-right corner when
-                new features or content is added.
-              </p>
-            </li>
-          </ul>
-        </section>
-        <section>
-          <h2>Bug fixes</h2>
-          <ul className="Bugs">
-            <li>
-              Fixed a bug that caused users to be logged out whenever they
-              restarted their browser
-            </li>
-            <li>Fixed a bug that caused Dark Opus weapons to disappear</li>
-          </ul>
-        </section>
+        <div className="Contents">
+          <section>
+            <h2>New features</h2>
+            <ul className="Notes">
+              <li>
+                {image(
+                  'Remix parties',
+                  `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                  'remix',
+                  'jpg'
+                )}
+                <h3>Remix parties</h3>
+                <p>
+                  See a team you want to try but don&apos;t have Yatima? Now you
+                  can remix teams from other users to showcase substitutes, swap
+                  for items you have, or just give it your own flavor.
+                </p>
+              </li>
+              <li>
+                {image(
+                  'Edit parties without an account',
+                  `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                  'unauth',
+                  'jpg'
+                )}
+                <h3>No account editing</h3>
+                <p>
+                  Now you can edit parties you create later on, even if you
+                  don&apos;t make an account. You still won&apos;t have a
+                  profile, so make sure to bookmark them!
+                </p>
+              </li>
+              <li>
+                {image(
+                  'Transcendence',
+                  `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                  'transcendence',
+                  'jpg'
+                )}
+                <h3>Transcendence</h3>
+                <p>
+                  Now you can set the transcendence stage for Eternals and
+                  select summons (namely, Bahamut).
+                </p>
+              </li>
+              <li>
+                {image(
+                  'Shields and Manatura',
+                  `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                  'accessories',
+                  'jpg'
+                )}
+                <h3>Shields and Manatura</h3>
+                <p>
+                  When using Paladin or Manadiver, you can set their respective
+                  Shield or Manatura from the button next to the main character.
+                </p>
+              </li>
+              <li>
+                {image(
+                  'Character Mastery',
+                  `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                  'mastery',
+                  'jpg'
+                )}
+                <h3>Character Mastery</h3>
+                <p>
+                  You can now add individual values for your character&apos;s
+                  rings, earrings, and awakenings. Make sure to set your
+                  Perpetuity Rings!
+                </p>
+              </li>
+              <li>
+                {image(
+                  'Updated team mechanics',
+                  `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                  'mechanics',
+                  'jpg'
+                )}
+                <h3>Updated team mechanics</h3>
+                <p>Sorry, each party is only big enough for one Beelzebub.</p>
+              </li>
+              <li>
+                {image(
+                  'R Characters',
+                  `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                  'rare',
+                  'jpg'
+                )}
+                <h3>R Characters</h3>
+                <p>
+                  R Characters have been added to the database for your
+                  mem—Proving Grounds compositions.
+                </p>
+              </li>
+              <li>
+                {image(
+                  'Unique URLs for team tabs',
+                  `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                  'urls',
+                  'jpg'
+                )}
+                <h3>Unique URLs for team tabs</h3>
+                <p>
+                  You can now link to individual tabs directly. The site will do
+                  it for you when you copy a URL, or you can append{' '}
+                  <code>/characters</code>, <code>/weapons</code> or{' '}
+                  <code>/summons</code> manually.
+                </p>
+              </li>
+              <li>
+                {image(
+                  'Redesigned navigation',
+                  `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                  'nav',
+                  'jpg'
+                )}
+                <h3>Redesigned navigation</h3>
+                <p>
+                  The top-navigation has been slightly redesigned. Click the
+                  party name to copy its URL!
+                </p>
+              </li>
+              <li>
+                {image(
+                  'Update toasts',
+                  `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                  'toasts',
+                  'jpg'
+                )}
+                <h3>Update toasts</h3>
+                <p>
+                  The site will now show an update in the bottom-right corner
+                  when new features or content is added.
+                </p>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Bug fixes</h2>
+            <ul className="Bugs">
+              <li>
+                Fixed a bug that caused users to be logged out whenever they
+                restarted their browser
+              </li>
+              <li>
+                Fixed a bug that caused Dark Opus weapons to permanently
+                disappear when adding them to a party that already had one
+              </li>
+            </ul>
+          </section>
+        </div>
       </section>
-      <section className="content version" data-version="2022-12L">
-        <div className="top">
+      <section className="Content Version" data-version="2022-12L">
+        <div className="Header">
           <h3>2023-01 Flash Gala</h3>
           <time>2023/01/19</time>
         </div>
-        <div className="update">
+        <div className="Contents">
           <section className="characters">
             <h4>New characters</h4>
             <div className="items">
@@ -205,12 +224,12 @@ const UpdatesPage: React.FC<Props> = (props: Props) => {
           </section>
         </div>
       </section>
-      <section className="content version" data-version="2023-01U">
-        <div className="top">
+      <section className="Content Version" data-version="2023-01U">
+        <div className="Header">
           <h3>2023-01 Uncap</h3>
           <time>2023/01/06</time>
         </div>
-        <div className="update">
+        <div className="Contents">
           <section className="characters">
             <h4>Updated characters</h4>
             <div className="items">
@@ -224,24 +243,24 @@ const UpdatesPage: React.FC<Props> = (props: Props) => {
           </section>
         </div>
       </section>
-      <section className="version" data-version="1.0">
-        <div className="top">
+      <section className="Version" data-version="1.0">
+        <div className="Header">
           <h3>1.0.1</h3>
           <time>2023/01/08</time>
         </div>
-        <ul className="notes">
+        <ul className="Bare Contents">
           <li>Extra party fields: Full Auto, Clear Time, and more</li>
           <li>Support for Youtube short URLs</li>
           <li>Responsive grids and lots of other mobile fixes</li>
           <li>Many other bug fixes</li>
         </ul>
       </section>
-      <section className="content version" data-version="2022-12L">
-        <div className="top">
+      <section className="Content Version" data-version="2022-12L">
+        <div className="Header">
           <h3>2022-12 Legend Festival</h3>
           <time>2022/12/26</time>
         </div>
-        <div className="update">
+        <div className="Contents">
           <section className="characters">
             <h4>New characters</h4>
             <div className="items">
@@ -278,12 +297,12 @@ const UpdatesPage: React.FC<Props> = (props: Props) => {
           </section>
         </div>
       </section>
-      <section className="content version" data-version="2022-12F2">
-        <div className="top">
+      <section className="Content Version" data-version="2022-12F2">
+        <div className="Header">
           <h3>2022-12 Flash Gala</h3>
           <time>2022/12/26</time>
         </div>
-        <div className="update">
+        <div className="Contents">
           <section className="characters">
             <h4>New characters</h4>
             <div className="items">
@@ -312,12 +331,12 @@ const UpdatesPage: React.FC<Props> = (props: Props) => {
           </section>
         </div>
       </section>
-      <section className="version" data-version="1.0">
-        <div className="top">
+      <section className="Version" data-version="1.0">
+        <div className="Header">
           <h3>1.0.0</h3>
           <time>2022/12/26</time>
         </div>
-        <ul className="notes">
+        <ul className="Bare Contents">
           <li>First release!</li>
           <li>You can embed Youtube videos now</li>
           <li>Better clicking - right-click and open in a new tab</li>
