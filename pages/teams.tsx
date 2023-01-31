@@ -7,7 +7,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import clonedeep from 'lodash.clonedeep'
 
 import api from '~utils/api'
-import setUserToken from '~utils/setUserToken'
+import { setHeaders } from '~utils/userToken'
 import extractFilters from '~utils/extractFilters'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import organizeRaids from '~utils/organizeRaids'
@@ -363,7 +363,7 @@ export const getServerSidePaths = async () => {
 // prettier-ignore
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
   // Set headers for server-side requests
-  setUserToken(req, res)
+  setHeaders(req, res)
 
   // Fetch latest version
   const version = await fetchLatestVersion()

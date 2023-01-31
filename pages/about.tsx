@@ -6,7 +6,7 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import { AboutTabs } from '~utils/enums'
-import setUserToken from '~utils/setUserToken'
+import { setHeaders } from '~utils/userToken'
 
 import AboutPage from '~components/AboutPage'
 import UpdatesPage from '~components/UpdatesPage'
@@ -160,7 +160,7 @@ export const getServerSidePaths = async () => {
 // prettier-ignore
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
   // Set headers for server-side requests
-  setUserToken(req, res)
+  setHeaders(req, res)
 
   // Fetch and organize raids
   return {

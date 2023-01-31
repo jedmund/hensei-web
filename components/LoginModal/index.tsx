@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
 import api from '~utils/api'
-import setUserToken from '~utils/setUserToken'
+import { setHeaders } from '~utils/userToken'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
@@ -147,7 +147,7 @@ const LoginModal = (props: Props) => {
     setCookie('account', cookieObj, { path: '/', expires: expiresAt })
 
     // Set Axios default headers
-    setUserToken()
+    setHeaders()
   }
 
   function storeUserInfo(response: AxiosResponse) {

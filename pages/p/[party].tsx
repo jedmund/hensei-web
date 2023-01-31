@@ -10,7 +10,7 @@ import api from '~utils/api'
 import elementEmoji from '~utils/elementEmoji'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import organizeRaids from '~utils/organizeRaids'
-import setUserToken from '~utils/setUserToken'
+import { setHeaders } from '~utils/userToken'
 import { appState } from '~utils/appState'
 import { groupWeaponKeys } from '~utils/groupWeaponKeys'
 
@@ -108,7 +108,7 @@ export const getServerSidePaths = async () => {
 // prettier-ignore
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
   // Set headers for server-side requests
-  setUserToken(req, res)
+  setHeaders(req, res)
 
   // Fetch latest version
   const version = await fetchLatestVersion()

@@ -21,6 +21,7 @@ import './index.scss'
 // Props
 interface Props {
   new: boolean
+  editable: boolean
   summons?: GridSummon[]
   createParty: (details?: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
@@ -54,17 +55,6 @@ const SummonGrid = (props: Props) => {
     useState<{
       [key: number]: number
     }>({})
-
-  // Set the editable flag only on first load
-  useEffect(() => {
-    // If user is logged in and matches
-    if (
-      (accountData && party.user && accountData.userId === party.user.id) ||
-      props.new
-    )
-      appState.party.editable = true
-    else appState.party.editable = false
-  }, [props.new, accountData, party])
 
   // Initialize an array of current uncap values for each summon
   useEffect(() => {
@@ -100,7 +90,7 @@ const SummonGrid = (props: Props) => {
         )
       })
     } else {
-      if (party.editable)
+      if (props.editable)
         saveSummon(party.id, summon, position)
           .then((response) => handleSummonResponse(response.data))
           .catch((error) => {
@@ -401,7 +391,7 @@ const SummonGrid = (props: Props) => {
       <div className="Label">{t('summons.main')}</div>
       <SummonUnit
         gridSummon={grid.summons.mainSummon}
-        editable={party.editable}
+        editable={props.editable}
         key="grid_main_summon"
         position={-1}
         unitType={0}
@@ -418,7 +408,7 @@ const SummonGrid = (props: Props) => {
       <div className="Label Friend">{t('summons.friend')}</div>
       <SummonUnit
         gridSummon={grid.summons.friendSummon}
-        editable={party.editable}
+        editable={props.editable}
         key="grid_friend_summon"
         position={6}
         unitType={2}
@@ -439,7 +429,7 @@ const SummonGrid = (props: Props) => {
             <li key={`grid_unit_${i}`}>
               <SummonUnit
                 gridSummon={grid.summons.allSummons[i]}
-                editable={party.editable}
+                editable={props.editable}
                 position={i}
                 unitType={1}
                 removeSummon={removeSummon}
@@ -457,7 +447,7 @@ const SummonGrid = (props: Props) => {
   const subAuraSummonElement = (
     <ExtraSummons
       grid={grid.summons.allSummons}
-      editable={party.editable}
+      editable={props.editable}
       exists={false}
       offset={numSummons}
       removeSummon={removeSummon}
