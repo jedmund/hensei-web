@@ -1,4 +1,50 @@
 .About.PageContent {
+  $width: 520px;
+  padding-bottom: $unit-12x;
+
+  section {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    gap: $unit-2x;
+
+    .Hero {
+      position: absolute;
+      width: 40vw;
+      height: 80vh;
+      right: $unit-8x * -1;
+      top: $unit-4x * -1;
+      background-image: linear-gradient(
+          90deg,
+          rgba(245, 245, 245, 1) 0%,
+          rgba(245, 245, 245, 0) 50%,
+          rgba(245, 245, 245, 0) 70%,
+          rgba(245, 245, 245, 1) 100%
+        ),
+        linear-gradient(
+          rgba(245, 245, 245, 1) 0%,
+          rgba(245, 245, 245, 0) 40%,
+          rgba(245, 245, 245, 0) 78%,
+          rgba(245, 245, 245, 1) 100%
+        ),
+        url('https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/top/bg/bg_23.jpg');
+    }
+
+    p {
+      font-size: $font-medium;
+      max-width: $width;
+      line-height: 1.35;
+      z-index: 2;
+    }
+
+    h2 {
+      font-weight: $bold;
+      font-size: $font-medium;
+      margin: 0;
+      max-width: $width;
+      z-index: 2;
+    }
+  }
   .Links {
     display: grid;
     gap: $unit;
@@ -7,5 +53,10 @@
 
   div.LinkItem {
     margin-top: $unit-2x;
+  }
+
+  .LinkItem {
+    background: var(--dialog-bg);
+    max-width: calc($width / 3 * 2);
   }
 }
