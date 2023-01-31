@@ -59,7 +59,7 @@ const Party = (props: Props) => {
     if (details) payload = formatDetailsObject(details)
 
     return await api.endpoints.parties
-      .create(payload)
+      .create({ ...payload, ...localId() })
       .then((response) => storeParty(response.data.party))
   }
 
@@ -67,6 +67,14 @@ const Party = (props: Props) => {
   async function updateDetails(details: DetailsObject) {
     if (!appState.party.id) return await createParty(details)
     else updateParty(details)
+  }
+
+  function localId() {
+    const cookie = accountCookie()
+    const parsed = JSON.parse(cookie as string)
+    if (parsed && !parsed.token) {
+      return { local_id: parsed.userId }
+    } else return {}
   }
 
   function formatDetailsObject(details: DetailsObject) {
