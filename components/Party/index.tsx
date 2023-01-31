@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import clonedeep from 'lodash.clonedeep'
@@ -61,6 +62,7 @@ const Party = (props: Props) => {
       : null
 
     let editable = false
+    unsetEditKey()
 
     if (props.new) editable = true
 

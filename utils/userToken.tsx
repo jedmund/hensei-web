@@ -29,7 +29,6 @@ export const setHeaders = (
 export const setEditKey = (id: string, user?: User) => {
   if (!user) {
     const edit_key = get<string>(id)
-    console.log('Setting header...', edit_key)
     axios.defaults.headers.common['X-Edit-Key'] = edit_key
   } else {
     unsetEditKey()
