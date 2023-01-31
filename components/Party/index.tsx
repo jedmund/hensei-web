@@ -147,7 +147,7 @@ const Party = (props: Props) => {
   }
 
   // Methods: Storing party data
-  const storeParty = function (team: Party) {
+  const storeParty = function (team: any) {
     // Store the important party and state-keeping values in global state
     appState.party.name = team.name
     appState.party.description = team.description
@@ -170,6 +170,9 @@ const Party = (props: Props) => {
 
     appState.party.detailsVisible = false
 
+    // Store the edit key in local storage
+    if (team.edit_key) storeEditKey(team.id, team.edit_key)
+
     // Populate state
     storeCharacters(team.characters)
     storeWeapons(team.weapons)
@@ -189,6 +192,10 @@ const Party = (props: Props) => {
     }
 
     return team
+  }
+
+  const storeEditKey = (id: string, key: string) => {
+    ls(id, key)
   }
 
   const storeCharacters = (list: Array<GridCharacter>) => {
