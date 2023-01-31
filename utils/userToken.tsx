@@ -1,4 +1,5 @@
 import axios from 'axios'
+import ls, { get, set } from 'local-storage'
 import { getCookie } from 'cookies-next'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -23,4 +24,18 @@ export const setHeaders = (
   } else {
     delete axios.defaults.headers.common['Authorization']
   }
+}
+
+export const setEditKey = (id: string, user?: User) => {
+  if (!user) {
+    const edit_key = get<string>(id)
+    console.log('Setting header...', edit_key)
+    axios.defaults.headers.common['X-Edit-Key'] = edit_key
+  } else {
+    unsetEditKey()
+  }
+}
+
+export const unsetEditKey = () => {
+  delete axios.defaults.headers.common['X-Edit-Key']
 }
