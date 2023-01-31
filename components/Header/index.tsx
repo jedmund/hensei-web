@@ -210,8 +210,6 @@ const Header = () => {
       } else {
         title = t('no_title')
       }
-    } else if (['weapons', 'summons', 'characters', 'new', ''].includes(path)) {
-      title = t('new_party')
     } else {
       title = ''
     }
