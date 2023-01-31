@@ -73,7 +73,11 @@ const Party = (props: Props) => {
       } else {
         // Not authenticated
         if (!props.team.user && accountData.userId === props.team.local_id) {
+          // Set editable
           editable = true
+
+          // Also set edit key header
+          setEditKey(props.team.id, props.team.user)
         }
       }
     }
@@ -101,14 +105,6 @@ const Party = (props: Props) => {
   async function updateDetails(details: DetailsObject) {
     if (!appState.party.id) return await createParty(details)
     else updateParty(details)
-  }
-
-  function localId() {
-    const cookie = accountCookie()
-    const parsed = JSON.parse(cookie as string)
-    if (parsed && !parsed.token) {
-      return { local_id: parsed.userId }
-    } else return {}
   }
 
   function formatDetailsObject(details: DetailsObject) {
@@ -205,7 +201,10 @@ const Party = (props: Props) => {
     appState.party.detailsVisible = false
 
     // Store the edit key in local storage
-    if (team.edit_key) storeEditKey(team.id, team.edit_key)
+    if (team.edit_key) {
+      storeEditKey(team.id, team.edit_key)
+      setEditKey(team.id, team.user)
+    }
 
     // Populate state
     storeCharacters(team.characters)
@@ -287,6 +286,15 @@ const Party = (props: Props) => {
       default:
         break
     }
+  }
+
+  // Methods: Unauth validation
+  function localId() {
+    const cookie = accountCookie()
+    const parsed = JSON.parse(cookie as string)
+    if (parsed && !parsed.token) {
+      return { local_id: parsed.userId }
+    } else return {}
   }
 
   // Render: JSX components
