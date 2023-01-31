@@ -488,7 +488,7 @@ const Header = () => {
             <DropdownMenuItem className="MenuItem">
               <Link href="/new">
                 <a onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}>
-                  New party
+                  {t('menu.new')}
                 </a>
               </Link>
             </DropdownMenuItem>
