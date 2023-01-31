@@ -9,7 +9,7 @@ import api from '~utils/api'
 import extractFilters from '~utils/extractFilters'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import organizeRaids from '~utils/organizeRaids'
-import setUserToken from '~utils/setUserToken'
+import { setHeaders } from '~utils/userToken'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { appState } from '~utils/appState'
 import { elements, allElement } from '~data/elements'
@@ -329,7 +329,7 @@ export const getServerSidePaths = async () => {
 // prettier-ignore
 export const getServerSideProps = async ({ req, res, locale, query }: { req: NextApiRequest, res: NextApiResponse, locale: string, query: { [index: string]: string } }) => {
   // Set headers for server-side requests
-  setUserToken(req, res)
+  setHeaders(req, res)
 
   // Fetch latest version
   const version = await fetchLatestVersion()
