@@ -14,11 +14,11 @@ import api from '~utils/api'
 import { appState, initialAppState } from '~utils/appState'
 import { GridType } from '~utils/enums'
 import { retrieveCookies } from '~utils/retrieveCookies'
+import { accountCookie, setEditKey, unsetEditKey } from '~utils/userToken'
+
 import type { DetailsObject } from '~types'
 
 import './index.scss'
-import { accountCookie } from '~utils/userToken'
-import { getCookie } from 'cookies-next'
 
 // Props
 interface Props {
@@ -103,7 +103,7 @@ const Party = (props: Props) => {
 
   // Methods: Updating the party's details
   async function updateDetails(details: DetailsObject) {
-    if (!appState.party.id) return await createParty(details)
+    if (!props.team) return await createParty(details)
     else updateParty(details)
   }
 
@@ -130,9 +130,9 @@ const Party = (props: Props) => {
   async function updateParty(details: DetailsObject) {
     const payload = formatDetailsObject(details)
 
-    if (appState.party.id) {
+    if (props.team && props.team.id) {
       return await api.endpoints.parties
-        .update(appState.party.id, payload)
+        .update(props.team.id, payload)
         .then((response) => storeParty(response.data.party))
     }
   }
@@ -141,8 +141,8 @@ const Party = (props: Props) => {
     appState.party.extra = event.target.checked
 
     // Only save if this is a saved party
-    if (appState.party.id) {
-      api.endpoints.parties.update(appState.party.id, {
+    if (props.team && props.team.id) {
+      api.endpoints.parties.update(props.team.id, {
         party: { extra: event.target.checked },
       })
     }
@@ -150,9 +150,9 @@ const Party = (props: Props) => {
 
   // Deleting the party
   function deleteTeam() {
-    if (appState.party.editable && appState.party.id) {
+    if (props.team && editable) {
       api.endpoints.parties
-        .destroy({ id: appState.party.id })
+        .destroy({ id: props.team.id })
         .then(() => {
           // Push to route
           if (cookies && cookies.account.username) {
