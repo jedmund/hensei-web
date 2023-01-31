@@ -7,7 +7,7 @@ import type { AppProps } from 'next/app'
 import Layout from '~components/Layout'
 
 import { accountState } from '~utils/accountState'
-import setUserToken from '~utils/setUserToken'
+import { setHeaders } from '~utils/userToken'
 
 import '../styles/globals.scss'
 import { ToastProvider, Viewport } from '@radix-ui/react-toast'
@@ -23,9 +23,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   useEffect(() => {
-    setUserToken()
-
-    if (accountCookie) {
+    setHeaders()
+    if (cookieData.account && cookieData.account.token) {
       console.log(`Logged in as user "${cookieData.account.username}"`)
 
       accountState.account.authorized = true

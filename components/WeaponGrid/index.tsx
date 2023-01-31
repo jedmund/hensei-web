@@ -23,6 +23,7 @@ import './index.scss'
 // Props
 interface Props {
   new: boolean
+  editable: boolean
   weapons?: GridWeapon[]
   createParty: (details: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
@@ -60,17 +61,6 @@ const WeaponGrid = (props: Props) => {
     [key: number]: number
   }>({})
 
-  // Set the editable flag only on first load
-  useEffect(() => {
-    // If user is logged in and matches
-    if (
-      (accountData && party.user && accountData.userId === party.user.id) ||
-      props.new
-    )
-      appState.party.editable = true
-    else appState.party.editable = false
-  }, [props.new, accountData, party])
-
   // Initialize an array of current uncap values for each weapon
   useEffect(() => {
     let initialPreviousUncapValues: { [key: number]: number } = {}
@@ -99,7 +89,7 @@ const WeaponGrid = (props: Props) => {
         })
       })
     } else {
-      if (party.editable)
+      if (props.editable)
         saveWeapon(party.id, weapon, position)
           .then((response) => {
             if (response) handleWeaponResponse(response.data)
@@ -337,7 +327,7 @@ const WeaponGrid = (props: Props) => {
   const mainhandElement = (
     <WeaponUnit
       gridWeapon={appState.grid.weapons.mainWeapon}
-      editable={party.editable}
+      editable={props.editable}
       key="grid_mainhand"
       position={-1}
       unitType={0}
@@ -352,7 +342,7 @@ const WeaponGrid = (props: Props) => {
       <li key={`grid_unit_${i}`}>
         <WeaponUnit
           gridWeapon={appState.grid.weapons.allWeapons[i]}
-          editable={party.editable}
+          editable={props.editable}
           position={i}
           unitType={1}
           removeWeapon={removeWeapon}
@@ -366,7 +356,7 @@ const WeaponGrid = (props: Props) => {
   const extraGridElement = (
     <ExtraWeapons
       grid={appState.grid.weapons.allWeapons}
-      editable={party.editable}
+      editable={props.editable}
       offset={numWeapons}
       removeWeapon={removeWeapon}
       updateObject={receiveWeaponFromSearch}

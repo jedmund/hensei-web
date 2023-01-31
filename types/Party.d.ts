@@ -29,6 +29,7 @@ interface Party {
   weapons: Array<GridWeapon>
   summons: Array<GridSummon>
   user: User
+  local_id?: string
   remix: boolean
   remixes: Party[]
   created_at: string
