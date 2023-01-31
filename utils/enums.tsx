@@ -5,7 +5,6 @@ export enum ButtonType {
 }
 
 export enum GridType {
-  Class,
   Character,
   Weapon,
   Summon,

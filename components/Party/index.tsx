@@ -167,8 +167,18 @@ const Party = (props: Props) => {
     storeWeapons(team.weapons)
     storeSummons(team.summons)
 
+    // Create a string to send the user back to the tab they're currently on
+    let tab = ''
+    if (currentTab === GridType.Character) {
+      tab = 'characters'
+    } else if (currentTab === GridType.Summon) {
+      tab = 'summons'
+    }
+
     // Then, push the browser history to the new party's URL
-    if (props.pushHistory) props.pushHistory(`/p/${team.shortcode}`)
+    if (props.pushHistory) {
+      props.pushHistory(`/p/${team.shortcode}/${tab}`)
+    }
 
     return team
   }
