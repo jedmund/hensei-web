@@ -23,6 +23,7 @@ import './index.scss'
 // Props
 interface Props {
   new: boolean
+  editable: boolean
   characters?: GridCharacter[]
   createParty: (details?: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
@@ -75,17 +76,6 @@ const CharacterGrid = (props: Props) => {
       [key: number]: number | undefined
     }>({})
 
-  // Set the editable flag only on first load
-  useEffect(() => {
-    // If user is logged in and matches
-    if (
-      (accountData && party.user && accountData.userId === party.user.id) ||
-      props.new
-    )
-      appState.party.editable = true
-    else appState.party.editable = false
-  }, [props.new, accountData, party])
-
   useEffect(() => {
     setJob(appState.party.job)
     setJobSkills(appState.party.jobSkills)
@@ -115,7 +105,7 @@ const CharacterGrid = (props: Props) => {
           .catch((error) => console.error(error))
       })
     } else {
-      if (party.editable)
+      if (props.editable)
         saveCharacter(party.id, character, position)
           .then((response) => handleCharacterResponse(response.data))
           .catch((error) => {
@@ -232,7 +222,7 @@ const CharacterGrid = (props: Props) => {
   }
 
   function saveJobSkill(skill: JobSkill, position: number) {
-    if (party.id && appState.party.editable) {
+    if (party.id && props.editable) {
       const positionedKey = `skill${position}_id`
 
       let skillObject: {
@@ -522,7 +512,7 @@ const CharacterGrid = (props: Props) => {
           job={job}
           jobSkills={jobSkills}
           jobAccessory={jobAccessory}
-          editable={party.editable}
+          editable={props.editable}
           saveJob={saveJob}
           saveSkill={saveJobSkill}
           saveAccessory={saveAccessory}
@@ -541,7 +531,7 @@ const CharacterGrid = (props: Props) => {
               <li key={`grid_unit_${i}`}>
                 <CharacterUnit
                   gridCharacter={grid.characters[i]}
-                  editable={party.editable}
+                  editable={props.editable}
                   position={i}
                   updateObject={receiveCharacterFromSearch}
                   updateUncap={initiateUncapUpdate}

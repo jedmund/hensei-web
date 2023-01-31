@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import clonedeep from 'lodash.clonedeep'
+import ls from 'local-storage'
 
 import PartySegmentedControl from '~components/PartySegmentedControl'
 import PartyDetails from '~components/PartyDetails'
@@ -16,6 +17,8 @@ import { retrieveCookies } from '~utils/retrieveCookies'
 import type { DetailsObject } from '~types'
 
 import './index.scss'
+import { accountCookie } from '~utils/userToken'
+import { getCookie } from 'cookies-next'
 
 // Props
 interface Props {
@@ -36,6 +39,7 @@ const Party = (props: Props) => {
 
   // Set up states
   const { party } = useSnapshot(appState)
+  const [editable, setEditable] = useState(false)
   const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
 
   // Retrieve cookies
@@ -47,6 +51,36 @@ const Party = (props: Props) => {
     appState.grid = resetState.grid
     if (props.team) storeParty(props.team)
   }, [])
+
+  // Set editable on first load
+  useEffect(() => {
+    // Get cookie
+    const cookie = getCookie('account')
+    const accountData: AccountCookie = cookie
+      ? JSON.parse(cookie as string)
+      : null
+
+    let editable = false
+
+    if (props.new) editable = true
+
+    if (accountData && props.team && !props.new) {
+      if (accountData.token) {
+        // Authenticated
+        if (props.team.user && accountData.userId === props.team.user.id) {
+          editable = true
+        }
+      } else {
+        // Not authenticated
+        if (!props.team.user && accountData.userId === props.team.local_id) {
+          editable = true
+        }
+      }
+    }
+
+    appState.party.editable = editable
+    setEditable(editable)
+  })
 
   // Set selected tab from props
   useEffect(() => {
@@ -267,6 +301,7 @@ const Party = (props: Props) => {
   const weaponGrid = (
     <WeaponGrid
       new={props.new || false}
+      editable={editable}
       weapons={props.team?.weapons}
       createParty={createParty}
       pushHistory={props.pushHistory}
@@ -276,6 +311,7 @@ const Party = (props: Props) => {
   const summonGrid = (
     <SummonGrid
       new={props.new || false}
+      editable={editable}
       summons={props.team?.summons}
       createParty={createParty}
       pushHistory={props.pushHistory}
@@ -285,6 +321,7 @@ const Party = (props: Props) => {
   const characterGrid = (
     <CharacterGrid
       new={props.new || false}
+      editable={editable}
       characters={props.team?.characters}
       createParty={createParty}
       pushHistory={props.pushHistory}
