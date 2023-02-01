@@ -26,6 +26,8 @@ Next.js serves all assets out of the /public directory. In development we utiliz
 NEXT_PUBLIC_SIERO_IMG_URL='/images'
 ```
 
+#### Dependencies
+
 Once your `.env` is all set up, install all dependencies:
 
 ```bash
