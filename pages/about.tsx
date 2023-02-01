@@ -165,7 +165,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Fetch and organize raids
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
+      ...(await serverSideTranslations(locale, ['common', 'about', 'updates'])),
       // Will be passed to the page component as props
     },
   }

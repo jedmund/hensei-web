@@ -7,6 +7,7 @@
   min-width: 3rem;
   text-align: center;
   padding: $unit ($unit * 1.5);
+  user-select: none;
 
   &.ChargeAttack.On {
     background: var(--charge-attack-bg);

@@ -199,6 +199,7 @@ const LoginModal = (props: Props) => {
       email: '',
       password: '',
     })
+    setFormValid(false)
 
     if (props.onOpenChange) props.onOpenChange(open)
   }
@@ -253,6 +254,7 @@ const LoginModal = (props: Props) => {
           <div className="DialogFooter" ref={footerRef}>
             <div className="Buttons Span">
               <Button
+                contained={true}
                 disabled={!formValid}
                 text={t('modals.login.buttons.confirm')}
               />

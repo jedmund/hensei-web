@@ -138,33 +138,56 @@ select {
     margin-bottom: $unit * 3;
   }
 
-  p {
-    color: var(--text-secondary);
-    font-size: $font-regular;
+  p,
+  li {
+    color: var(--text-primary);
+    font-size: 14px;
     line-height: 1.3;
-    margin-bottom: $unit;
-
-    &:last-of-type {
-      margin-bottom: 0;
-    }
   }
 
   .LinkItem {
     $diameter: $unit-6x;
+    align-items: center;
+    background: var(--dialog-bg);
     border: 1px solid var(--link-item-bg);
     border-radius: $card-corner;
+    display: flex;
+    min-height: 82px;
+    transition: background $duration-zoom ease-in,
+      transform $duration-zoom ease-in;
 
     &:hover {
-      background-color: var(--link-item-bg);
+      background: var(--link-item-bg);
+      color: var(--text-primary);
 
-      svg {
-        fill: var(--link-item-image-color-hover);
+      .ShareIcon {
+        fill: var(--text-primary);
+        transform: translate($unit-half, calc(($unit * -1) / 2));
       }
+    }
+
+    &.Github {
+      .Left svg {
+        background: white;
+        border-radius: calc($diameter / 2);
+      }
+
+      &:hover {
+        .Left svg {
+          fill: #6e5494;
+        }
+      }
+    }
+
+    &.Discord:hover .Left svg {
+      fill: #5865f2;
     }
 
     a {
       display: flex;
+      justify-content: space-between;
       padding: $unit-2x;
+      width: 100%;
 
       &:hover {
         text-decoration: none;
@@ -187,6 +210,7 @@ select {
         fill: var(--link-item-image-color);
         width: $diameter;
         height: auto;
+        transition: fill $duration-zoom ease-in;
 
         &.ShareIcon {
           width: $unit-4x;

@@ -197,10 +197,14 @@ const JobSection = (props: Props) => {
           />
         ) : (
           <div className="JobName">
-            <img
-              alt={party.job.name[locale]}
-              src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${party.job.granblue_id}.png`}
-            />
+            {party.job ? (
+              <img
+                alt={party.job.name[locale]}
+                src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${party.job.granblue_id}.png`}
+              />
+            ) : (
+              ''
+            )}
             <h3>{party.job ? party.job.name[locale] : t('no_job')}</h3>
           </div>
         )}
