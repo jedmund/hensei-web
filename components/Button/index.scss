@@ -9,6 +9,7 @@
   font-weight: $normal;
   gap: 6px;
   transition: 0.18s opacity ease-in-out;
+  user-select: none;
 
   &:hover,
   &.Blended:hover,
