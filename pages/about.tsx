@@ -94,6 +94,7 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
           content={t(`page.descriptions.${currentPage}`)}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/x-icon" href="/images/favicon.png" />
 
         {/* OpenGraph */}
         <meta property="og:title" content={t(`page.titles.${currentPage}`)} />
