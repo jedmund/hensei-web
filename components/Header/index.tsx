@@ -471,7 +471,11 @@ const Header = () => {
         </DropdownMenuGroup>
         <DropdownMenuGroup className="MenuGroup">
           <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
-            <a href={locale == 'ja' ? '/ja/about' : '/about'} target="_blank">
+            <a
+              href={locale == 'ja' ? '/ja/about' : '/about'}
+              target="_blank"
+              rel="noreferrer"
+            >
               {t('about.segmented_control.about')}
             </a>
           </DropdownMenuItem>
@@ -479,6 +483,7 @@ const Header = () => {
             <a
               href={locale == 'ja' ? '/ja/updates' : '/updates'}
               target="_blank"
+              rel="noreferrer"
             >
               {t('about.segmented_control.updates')}
             </a>
@@ -487,6 +492,7 @@ const Header = () => {
             <a
               href={locale == 'ja' ? '/ja/roadmap' : '/roadmap'}
               target="_blank"
+              rel="noreferrer"
             >
               {t('about.segmented_control.roadmap')}
             </a>
