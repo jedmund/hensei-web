@@ -2,7 +2,7 @@
 
 # hensei-web
 
-**hensei-web** is the frontend for granblue.team, an app for saving and sharing teams for [Granblue Fantasy](https://game.granbluefantasy.jp).
+**hensei-web** is the frontend for [granblue.team](https://app.granblue.team/), an app for saving and sharing teams for [Granblue Fantasy](https://game.granbluefantasy.jp).
 
 ## Getting Started
 
