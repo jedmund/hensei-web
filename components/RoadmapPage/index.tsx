@@ -9,17 +9,18 @@ import GithubIcon from '~public/icons/github.svg'
 
 import './index.scss'
 
-interface Props {}
+const ROADMAP_ITEMS = 6
 
-const RoadmapPage: React.FC<Props> = (props: Props) => {
+const RoadmapPage = () => {
   const { t: common } = useTranslation('common')
-  const { t: roadmap } = useTranslation('roadmap')
+  const { t: about } = useTranslation('about')
+
   return (
     <div className="Roadmap PageContent">
       <h1>{common('about.segmented_control.roadmap')}</h1>
       <section className="notes">
-        <p>{roadmap('blurb')}</p>
-        <p>{roadmap('link.intro')}</p>
+        <p>{about('roadmap.blurb')}</p>
+        <p>{about('roadmap.link.intro')}</p>
         <div className="LinkItem">
           <Link href="https://github.com/users/jedmund/projects/1/views/3">
             <a
@@ -29,7 +30,7 @@ const RoadmapPage: React.FC<Props> = (props: Props) => {
             >
               <div className="Left">
                 <GithubIcon />
-                <h3>{roadmap('link.title')}</h3>
+                <h3>{about('roadmap.link.title')}</h3>
               </div>
               <ShareIcon className="ShareIcon" />
             </a>
@@ -38,32 +39,14 @@ const RoadmapPage: React.FC<Props> = (props: Props) => {
       </section>
 
       <section className="features">
-        <h3 className="priority in_progress">{roadmap('subtitle')}</h3>
+        <h3 className="priority in_progress">{about('roadmap.subtitle')}</h3>
         <ul>
-          <li>
-            <h4>{roadmap('roadmap.item1.title')}</h4>
-            <p>{roadmap('roadmap.item1.description')}</p>
-          </li>
-          <li>
-            <h4>{roadmap('roadmap.item2.title')}</h4>
-            <p>{roadmap('roadmap.item2.description')}</p>
-          </li>
-          <li>
-            <h4>{roadmap('roadmap.item3.title')}</h4>
-            <p>{roadmap('roadmap.item3.description')}</p>
-          </li>
-          <li>
-            <h4>{roadmap('roadmap.item4.title')}</h4>
-            <p>{roadmap('roadmap.item4.description')}</p>
-          </li>
-          <li>
-            <h4>{roadmap('roadmap.item5.title')}</h4>
-            <p>{roadmap('roadmap.item5.description')}</p>
-          </li>
-          <li>
-            <h4>{roadmap('roadmap.item6.title')}</h4>
-            <p>{roadmap('roadmap.item6.description')}</p>
-          </li>
+          {[...Array(ROADMAP_ITEMS)].map((e, i) => (
+            <li>
+              <h4>{about(`roadmap.items.${i}.title`)}</h4>
+              <p>{about(`roadmap.items.${i}.description`)}</p>
+            </li>
+          ))}
         </ul>
       </section>
     </div>

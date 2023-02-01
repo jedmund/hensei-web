@@ -12,13 +12,6 @@
     },
     "button": "Learn more"
   },
-  "title": "Roadmap",
-  "subtitle": "Next update",
-  "blurb": "The next major update is planned to come out in late-March to early-April, before the next Unite and Fight. I want to try to do some other things for a bit since I haven't been in a great place mentally, so development might be slower.",
-  "link": {
-    "intro": "You can see the full roadmap on Github below:",
-    "title": "granblue.team Roadmap"
-  },
   "about": {
     "subtitle": "Granblue.team is a tool to save and share team compositions for <2>Granblue Fantasy</2>, a social RPG from Cygames.",
     "explanation": [
@@ -51,33 +44,37 @@
     }
   },
   "roadmap": {
-    "item1": {
-      "title": "Account promotion",
-      "description": "Users that have created teams without an account will be able to create an account and retain access to all of their teams"
+    "subtitle": "Next update",
+    "blurb": "The next major update is planned to come out in late-March to early-April, before the next Unite and Fight. I want to try to do some other things for a bit since I haven't been in a great place mentally, so development might be slower.",
+    "link": {
+      "intro": "You can see the full roadmap on Github below:",
+      "title": "granblue.team Roadmap"
     },
-    "item2": {
-      "title": "Better filters",
-      "description": "You'll be able to filter by team parameters like Full Auto or how many button clicks, and also filter out teams with no name, teams from anonymous users, and so on"
-    },
-    "item3": {
-      "title": "Private and Unlisted teams",
-      "description": "If you just want to make a team for your own memo or to share with your crew and no one else, this update is for you"
-    },
-    "item4": {
-      "title": "Markdown in team descriptions",
-      "description": "If you're writing a lot of text in the description box, this update will give you tools to format it better"
-    },
-    "item5": {
-      "title": "Mention items",
-      "description": "This update will allow you to mention individual items, like @Ixaba or @Charlotta (Grand), to give more context or suggest substitutions in your team descriptions."
-    },
-    "item6": {
-      "title": "Embed tweets in team descriptions",
-      "description": "Similar to embedding Youtube videos, this update will allow you to paste the link to a tweet and have it automatically embed in the description"
-    },
-    "item7": {
-      "title": "",
-      "description": ""
-    }
+    "items": [
+      {
+        "title": "Account promotion",
+        "description": "Users that have created teams without an account will be able to create an account and retain access to all of their teams"
+      },
+      {
+        "title": "Better filters",
+        "description": "You'll be able to filter by team parameters like Full Auto or how many button clicks, and also filter out teams with no name, teams from anonymous users, and so on"
+      },
+      {
+        "title": "Private and Unlisted teams",
+        "description": "If you just want to make a team for your own memo or to share with your crew and no one else, this update is for you"
+      },
+      {
+        "title": "Mention items",
+        "description": "This update will allow you to mention individual items, like @Ixaba or @Charlotta (Grand), to give more context or suggest substitutions in your team descriptions."
+      },
+      {
+        "title": "Markdown in team descriptions",
+        "description": "If you're writing a lot of text in the description box, this update will give you tools to format it better"
+      },
+      {
+        "title": "Embed tweets in team descriptions",
+        "description": "Similar to embedding Youtube videos, this update will allow you to paste the link to a tweet and have it automatically embed in the description"
+      }
+    ]
   }
 }

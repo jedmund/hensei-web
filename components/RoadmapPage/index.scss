@@ -1,4 +1,5 @@
 .Roadmap.PageContent {
+  padding-bottom: $unit-12x;
   h3.priority {
     font-weight: $medium;
     font-size: $font-large;
@@ -83,6 +84,9 @@
   ul {
     color: var(--text-primary);
     list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $unit-3x;
 
     li {
       display: flex;
