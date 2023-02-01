@@ -8,7 +8,7 @@
 
 First, you have to set up your environment file. You should start with [.env.sample](https://github.com/jedmund/hensei-web/blob/staging/.env.sample), but here are some gotchas:
 
-### App URLs
+#### App URLs
 
 Don't add a trailing slash to these URLs!
 The API will run on port 3000 by default, but make sure to change these to match your instance of the API.
@@ -18,7 +18,7 @@ NEXT_PUBLIC_SIERO_API_URL='http://127.0.0.1:3000/api/v1'
 NEXT_PUBLIC_SIERO_OAUTH_URL='http://127.0.0.1:3000/oauth'
 ```
 
-### Asset URLs
+#### Asset URLs
 
 Next.js serves all assets out of the /public directory. In development we utilize this for all assets, but in production, you will want to host these images on a cloud storage provider like Amazon S3. Once you have that set up and you're running in a production environment, change this to the full bucket URL.
 
