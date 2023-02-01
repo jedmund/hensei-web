@@ -167,14 +167,9 @@ select {
     }
 
     &.Github {
-      .Left svg {
-        background: white;
-        border-radius: calc($diameter / 2);
-      }
-
       &:hover {
         .Left svg {
-          fill: #6e5494;
+          fill: var(--text-primary);
         }
       }
     }

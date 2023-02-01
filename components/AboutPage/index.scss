@@ -67,5 +67,10 @@
 
   .LinkItem {
     max-width: calc($width / 3 * 2);
+
+    @include breakpoint(phone) {
+      max-width: inherit;
+      width: 100%;
+    }
   }
 }

@@ -21,7 +21,7 @@ const RoadmapPage = () => {
       <section className="notes">
         <p>{about('roadmap.blurb')}</p>
         <p>{about('roadmap.link.intro')}</p>
-        <div className="LinkItem">
+        <div className="Github LinkItem">
           <Link href="https://github.com/users/jedmund/projects/1/views/3">
             <a
               href="https://github.com/users/jedmund/projects/1/views/3"
