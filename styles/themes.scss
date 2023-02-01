@@ -135,6 +135,10 @@
   --light-hover-bg: #{$light-bg-20};
   --light-text: #{$light-text-10};
   --light-hover-text: #{$light-text-20};
+
+  // Gradients
+  --hero-gradient: #{$hero--gradient--light};
+  --hero-gradient-overlay: #{$hero--gradient--light--overlay};
 }
 
 [data-theme='dark'] {
@@ -275,4 +279,8 @@
   --light-hover-bg: #{$light-bg-00};
   --light-text: #{$light-text-10};
   --light-hover-text: #{$light-text-00};
+
+  // Gradients
+  --hero-gradient: #{$hero--gradient--dark};
+  --hero-gradient-overlay: #{$hero--gradient--dark--overlay};
 }
