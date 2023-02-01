@@ -1,0 +1,81 @@
+{
+  "labels": {
+    "characters": "New characters",
+    "weapons": "New weapons",
+    "summons": "New summons",
+    "uncaps": "New uncaps",
+    "features": "New features"
+  },
+  "events": {
+    "legfest": "Legend Festival",
+    "flash": "Flash Gala",
+    "uncap": "Uncap"
+  },
+  "versions": {
+    "1.1.0": {
+      "features": [
+        {
+          "title": "Remix parties",
+          "blurb": "See a team you want to try but don't have Yatima? Now you can remix teams from other users to showcase substitutes, swap for items you have, or just give it your own flavor."
+        },
+        {
+          "title": "Accountless team editing",
+          "blurb": "Now you can edit parties you create later on, even if you don't make an account. You still won't have a profile, so make sure to bookmark them!"
+        },
+        {
+          "title": "Transcendence",
+          "blurb": "Now you can set the transcendence stage for Eternals and select summons (namely, Bahamut)."
+        },
+        {
+          "title": "Shields and Manatura",
+          "blurb": "When using Paladin or Manadiver, you can set their respective Shield or Manatura from the button next to the main character."
+        },
+        {
+          "title": "Character Mastery",
+          "blurb": "You can now add individual values for your character's rings, earrings, and awakenings. Make sure to set your Perpetuity Rings!"
+        },
+        {
+          "title": "Updated team mechanics",
+          "blurb": "Sorry, each party is only big enough for one Beelzebub."
+        },
+        {
+          "title": "R Characters",
+          "blurb": "R Characters have been added to the database for your mem—Proving Grounds compositions."
+        },
+        {
+          "title": "Unique URLs for team tabs",
+          "blurb": "You can now link to individual tabs directly. The site will do it for you when you copy a URL, or you can append /characters, /weapons or /summons manually."
+        },
+        {
+          "title": "Redesigned navigation",
+          "blurb": "The top-navigation has been slightly redesigned. Click the party name to copy its URL!"
+        },
+        {
+          "title": "Update toasts",
+          "blurb": "The site will now show an update in the bottom-right corner when new features or content is added."
+        }
+      ],
+      "bugs": [
+        "Fixed a bug that caused users to be logged out whenever they restarted their browser",
+        "Fixed a bug that caused Dark Opus weapons to permanently disappear when adding them to a party that already had one"
+      ]
+    },
+    "1.0.1": {
+      "features": [
+        "Extra party fields: Full Auto, Clear Time, and more",
+        "Support for Youtube short URLs",
+        "Responsive grids and lots of other mobile fixes",
+        "Many other bug fixes"
+      ]
+    },
+    "1.0.0": {
+      "features": [
+        "First release!",
+        "You can embed Youtube videos now",
+        "Better click behavior: right-click to open in a new tab",
+        "Manually set dark mode in Account Settings",
+        "Lots of bugs squashed"
+      ]
+    }
+  }
+}
