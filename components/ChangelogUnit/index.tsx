@@ -1,10 +1,11 @@
-import React from 'react'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import api from '~utils/api'
 
 import './index.scss'
 
 interface Props {
   id: string
-  name: string
   type: 'character' | 'summon' | 'weapon'
   image?: '01' | '02' | '03' | '04'
 }
@@ -17,8 +18,52 @@ const defaultProps = {
   image: '01',
 }
 
-const ChangelogUnit = ({ id, type, image, name }: Props) => {
-  function generateImageUrl() {
+const ChangelogUnit = ({ id, type, image }: Props) => {
+  // Router
+  const router = useRouter()
+  const locale =
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+
+  // State
+  const [item, setItem] = useState<Character | Weapon | Summon>()
+
+  // Hooks
+  useEffect(() => {
+    fetch()
+  }, [])
+
+  async function fetch() {
+    switch (type) {
+      case 'character':
+        const character = await fetchCharacter()
+        setItem(character.data)
+        break
+
+      case 'weapon':
+        const weapon = await fetchWeapon()
+        setItem(weapon.data)
+        break
+
+      case 'summon':
+        const summon = await fetchSummon()
+        setItem(summon.data)
+        break
+    }
+  }
+
+  async function fetchCharacter() {
+    return api.endpoints.characters.getOne({ id: id })
+  }
+
+  async function fetchWeapon() {
+    return api.endpoints.weapons.getOne({ id: id })
+  }
+
+  async function fetchSummon() {
+    return api.endpoints.summons.getOne({ id: id })
+  }
+
+  const imageUrl = () => {
     let src = ''
 
     switch (type) {
@@ -37,9 +82,9 @@ const ChangelogUnit = ({ id, type, image, name }: Props) => {
   }
 
   return (
-    <div className="ChangelogUnit">
-      <img alt={name} src={generateImageUrl()} />
-      <h4>{name}</h4>
+    <div className="ChangelogUnit" key={id}>
+      <img alt={item ? item.name[locale] : ''} src={imageUrl()} />
+      <h4>{item ? item.name[locale] : ''}</h4>
     </div>
   )
 }
