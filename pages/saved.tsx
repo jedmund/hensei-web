@@ -279,7 +279,7 @@ const SavedRoute: React.FC<Props> = ({
 
   // Methods: Page component rendering
   function pageHead() {
-    if (context && context.user) return <SavedHead />
+    return <SavedHead />
   }
 
   function pageError() {
