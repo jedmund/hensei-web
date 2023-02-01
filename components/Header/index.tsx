@@ -42,6 +42,8 @@ const Header = () => {
 
   // Router
   const router = useRouter()
+  const locale =
+    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
   // State management
   const [copyToastOpen, setCopyToastOpen] = useState(false)
@@ -469,17 +471,23 @@ const Header = () => {
         </DropdownMenuGroup>
         <DropdownMenuGroup className="MenuGroup">
           <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
-            <a href="/about" target="_blank">
+            <a href={locale == 'ja' ? '/ja/about' : '/about'} target="_blank">
               {t('about.segmented_control.about')}
             </a>
           </DropdownMenuItem>
           <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
-            <a href="/updates" target="_blank">
+            <a
+              href={locale == 'ja' ? '/ja/updates' : '/updates'}
+              target="_blank"
+            >
               {t('about.segmented_control.updates')}
             </a>
           </DropdownMenuItem>
           <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
-            <a href="/roadmap" target="_blank">
+            <a
+              href={locale == 'ja' ? '/ja/roadmap' : '/roadmap'}
+              target="_blank"
+            >
               {t('about.segmented_control.roadmap')}
             </a>
           </DropdownMenuItem>
