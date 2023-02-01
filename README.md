@@ -1,10 +1,12 @@
 ![Header image for hensei-web](README.png)
 
-hensei-web is the frontend for granblue.team, an app for saving and sharing teams for [Granblue Fantasy](https://game.granbluefantasy.jp).
+# hensei-web
+
+**hensei-web** is the frontend for granblue.team, an app for saving and sharing teams for [Granblue Fantasy](https://game.granbluefantasy.jp).
 
 ## Getting Started
 
-First, you have to set up your environment file. `.env.sample` is provided as an example, but here are the important bits with notes (you will still need to go to `.env.sample`!)
+First, you have to set up your environment file. You should start with [.env.sample](https://github.com/jedmund/hensei-web/blob/staging/.env.sample), but here are some gotchas:
 
 ### App URLs
 
@@ -42,7 +44,7 @@ yarn dev
 
 ## Assets
 
-The [hensei-api](https://github.com/jedmund/hensei-api) has tasks that will help you get assets, although some were crafted or renamed by hand. The front-end expects this folder structure inside of the `images` folder:
+The [hensei-api](https://github.com/jedmund/hensei-api) repository has tasks that will help you get assets, although some were crafted or renamed by hand. The front-end expects this folder structure inside of the `images` folder:
 
 ```
 root
