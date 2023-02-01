@@ -278,6 +278,7 @@ const SignupModal = (props: Props) => {
       password: '',
       passwordConfirmation: '',
     })
+    setFormValid(false)
 
     if (props.onOpenChange) props.onOpenChange(open)
   }

@@ -199,6 +199,7 @@ const LoginModal = (props: Props) => {
       email: '',
       password: '',
     })
+    setFormValid(false)
 
     if (props.onOpenChange) props.onOpenChange(open)
   }
