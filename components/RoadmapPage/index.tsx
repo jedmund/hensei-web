@@ -42,7 +42,7 @@ const RoadmapPage = () => {
         <h3 className="priority in_progress">{about('roadmap.subtitle')}</h3>
         <ul>
           {[...Array(ROADMAP_ITEMS)].map((e, i) => (
-            <li>
+            <li key={`roadmap-${i}`}>
               <h4>{about(`roadmap.items.${i}.title`)}</h4>
               <p>{about(`roadmap.items.${i}.description`)}</p>
             </li>
