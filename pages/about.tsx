@@ -8,6 +8,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { AboutTabs } from '~utils/enums'
 import { setHeaders } from '~utils/userToken'
 
+import AboutHead from '~components/AboutHead'
 import AboutPage from '~components/AboutPage'
 import UpdatesPage from '~components/UpdatesPage'
 import RoadmapPage from '~components/RoadmapPage'
@@ -16,7 +17,9 @@ import Segment from '~components/Segment'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-interface Props {}
+interface Props {
+  page?: string
+}
 
 const AboutRoute: React.FC<Props> = (props: Props) => {
   // Set up router
@@ -47,6 +50,12 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
         break
     }
   }, [router.asPath])
+
+  useEffect(() => {
+    if (props.page && ['about', 'updates', 'roadmap'].includes(props.page)) {
+      setCurrentPage(props.page)
+    }
+  }, [props.page])
 
   function handleTabClicked(event: React.ChangeEvent<HTMLInputElement>) {
     const parts = router.asPath.split('/')
@@ -84,40 +93,13 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
     }
   }
 
+  function pageHead() {
+    return <AboutHead page={currentPage} />
+  }
+
   return (
     <div id="About">
-      <Head>
-        {/* HTML */}
-        <title>{t(`page.titles.${currentPage}`)}</title>
-        <meta
-          name="description"
-          content={t(`page.descriptions.${currentPage}`)}
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" type="image/x-icon" href="/images/favicon.png" />
-
-        {/* OpenGraph */}
-        <meta property="og:title" content={t(`page.titles.${currentPage}`)} />
-        <meta
-          property="og:description"
-          content={t('page.descriptions.about')}
-        />
-        <meta
-          property="og:url"
-          content={`https://app.granblue.team/${currentPage}`}
-        />
-        <meta property="og:type" content="website" />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:domain" content="app.granblue.team" />
-        <meta name="twitter:title" content={t(`page.titles.${currentPage}`)} />
-        <meta
-          name="twitter:description"
-          content={t(`page.descriptions.${currentPage}`)}
-        />
-      </Head>
-
+      {pageHead()}
       <section>
         <SegmentedControl>
           <Segment
@@ -163,9 +145,9 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Set headers for server-side requests
   setHeaders(req, res)
 
-  // Fetch and organize raids
   return {
     props: {
+      page: req.url?.slice(1),
       ...(await serverSideTranslations(locale, ['common', 'about', 'updates'])),
       // Will be passed to the page component as props
     },
