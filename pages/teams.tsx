@@ -407,7 +407,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
         context: context,
         version: version,
         error: false,
-        ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
+        ...(await serverSideTranslations(locale, ['common'])),
       },
     }
   } catch (error) {
@@ -424,7 +424,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
           code: response?.status,
           text: response?.statusText,
         },
-        ...(await serverSideTranslations(locale, ['common', 'roadmap'])),
+        ...(await serverSideTranslations(locale, ['common'])),
       },
     }
   }
