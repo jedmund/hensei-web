@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { Trans, useTranslation } from 'next-i18next'
 
 import ShareIcon from '~public/icons/Share.svg'
 import DiscordIcon from '~public/icons/discord.svg'
@@ -14,42 +14,34 @@ interface Props {}
 
 const AboutPage: React.FC<Props> = (props: Props) => {
   const { t: common } = useTranslation('common')
+  const { t: about } = useTranslation('about')
+
   return (
     <div className="About PageContent">
       <h1>{common('about.segmented_control.about')}</h1>
       <section>
         <h2>
-          Granblue.team is a tool to save and share team compositions for{' '}
-          <a
-            href="https://game.granbluefantasy.jp"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Granblue Fantasy
-          </a>
-          , a social RPG from Cygames.
+          <Trans i18nKey="about:about.subtitle">
+            Granblue.team is a tool to save and share team compositions for{' '}
+            <a
+              href="https://game.granbluefantasy.jp"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Granblue Fantasy
+            </a>
+            , a social RPG from Cygames.
+          </Trans>
         </h2>
-
-        <p>
-          To get started, all you have to do is add an item to a team and a URL
-          will be created for you to share wherever you like, no account needed.
-        </p>
-
-        <p>
-          If you do make an account, you can save any teams you find for future
-          reference and keep all of your teams together in one place.
-        </p>
-
+        <p>{about('about.explanation.0')}</p>
+        <p>{about('about.explanation.1')}</p>
         <div className="Hero" />
       </section>
 
       <section>
-        <h2>Feedback</h2>
-        <p>
-          If you have a feature request, would like to report a bug, or are
-          enjoying the tool and want to say thanks, come hang out in Discord.
-        </p>
-        <p>Feedback and suggestions are greatly appreciated!</p>
+        <h2>{about('about.feedback.title')}</h2>
+        <p>{about('about.feedback.explanation')}</p>
+        <p>{about('about.feedback.solicit')}</p>
         <div className="Discord LinkItem">
           <Link href="https://discord.gg/qyZ5hGdPC8">
             <a
@@ -68,60 +60,62 @@ const AboutPage: React.FC<Props> = (props: Props) => {
       </section>
 
       <section>
-        <h2>Credits</h2>
+        <h2>{about('about.credits.title')}</h2>
         <p>
-          Granblue.team was built and is maintained by{' '}
-          <a
-            href="https://twitter.com/jedmund"
-            target="_blank"
-            rel="noreferrer"
-          >
-            @jedmund
-          </a>
-          .
+          <Trans i18nKey="about:about.credits.maintainer">
+            Granblue.team was built and is maintained by{' '}
+            <a
+              href="https://twitter.com/jedmund"
+              target="_blank"
+              rel="noreferrer"
+            >
+              @jedmund
+            </a>
+            .
+          </Trans>
         </p>
         <p>
-          Many thanks to{' '}
-          <a
-            href="https://twitter.com/lalalalinna"
-            target="_blank"
-            rel="noreferrer"
-          >
-            @lalalalinna
-          </a>{' '}
-          and{' '}
-          <a
-            href="https://twitter.com/tarngerine"
-            target="_blank"
-            rel="noreferrer"
-          >
-            @tarngerine
-          </a>
-          , who both provided a lot of help and advice as I was ramping up.
+          <Trans i18nKey="about:about.credits.assistance">
+            Many thanks to{' '}
+            <a
+              href="https://twitter.com/lalalalinna"
+              target="_blank"
+              rel="noreferrer"
+            >
+              @lalalalinna
+            </a>{' '}
+            and{' '}
+            <a
+              href="https://twitter.com/tarngerine"
+              target="_blank"
+              rel="noreferrer"
+            >
+              @tarngerine
+            </a>
+            , who both provided a lot of help and advice as I was ramping up.
+          </Trans>
         </p>
         <p>
-          Many thanks also go to everyone in{' '}
-          <a
-            href="https://game.granbluefantasy.jp/#guild/detail/1190185"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Fireplace
-          </a>{' '}
-          and the granblue-tools Discord for all of their help with with bug
-          testing, feature requests, and moral support. (P.S. We&apos;re
-          recruiting!)
+          <Trans i18nKey="about:about.credits.support">
+            Many thanks also go to everyone in{' '}
+            <a
+              href="https://game.granbluefantasy.jp/#guild/detail/1190185"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Fireplace
+            </a>{' '}
+            and the granblue-tools Discord for all of their help with with bug
+            testing, feature requests, and moral support. (P.S. We&apos;re
+            recruiting!)
+          </Trans>
         </p>
       </section>
 
       <section>
-        <h2>Contributing</h2>
+        <h2>{about('about.contributing.title')}</h2>
 
-        <p>
-          If you know how to program, this app is completely open-source.
-          There&apos;s an abundance of features to build and bugs to fix, so
-          help is always greatly appreciated!
-        </p>
+        <p>{about('about.contributing.explanation')}</p>
         <ul className="Links">
           <li className="Github LinkItem">
             <Link href="https://github.com/jedmund/hensei-api">
@@ -156,23 +150,25 @@ const AboutPage: React.FC<Props> = (props: Props) => {
         </ul>
       </section>
       <section>
-        <h2>License</h2>
+        <h2>{about('about.license.title')}</h2>
         <p>
-          This app is licensed under{' '}
-          <a
-            href="https://choosealicense.com/licenses/agpl-3.0/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            GNU AGPLv3
-          </a>
-          .
+          <Trans i18nKey="about:about.license.license">
+            This app is licensed under{' '}
+            <a
+              href="https://choosealicense.com/licenses/agpl-3.0/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GNU AGPLv3
+            </a>
+            .
+          </Trans>
         </p>
-        <p>
-          Plainly, that means you can download the source, modify it, and
-          redistribute it as long as you attribute this project, use the same
-          license, and keep your derivative work open source as well.
-        </p>
+        <p>{about('about.license.explanation')}</p>
+      </section>
+      <section>
+        <h2>{about('about.copyright.title')}</h2>
+        <p>{about('about.copyright.explanation')}</p>
       </section>
     </div>
   )
