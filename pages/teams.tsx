@@ -279,7 +279,7 @@ const TeamsRoute: React.FC<Props> = ({
 
   // Methods: Page component rendering
   function pageHead() {
-    if (context && context.user) return <TeamsHead />
+    return <TeamsHead />
   }
 
   function pageError() {

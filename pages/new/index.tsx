@@ -86,7 +86,7 @@ const NewRoute: React.FC<Props> = ({
 
   // Methods: Page component rendering
   function pageHead() {
-    if (context && context.user) return <NewHead />
+    return <NewHead />
   }
 
   function pageError() {
