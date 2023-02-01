@@ -50,7 +50,7 @@ const AboutPage: React.FC<Props> = (props: Props) => {
           enjoying the tool and want to say thanks, come hang out in Discord.
         </p>
         <p>Feedback and suggestions are greatly appreciated!</p>
-        <div className="LinkItem">
+        <div className="Discord LinkItem">
           <Link href="https://discord.gg/qyZ5hGdPC8">
             <a
               href="https://discord.gg/qyZ5hGdPC8"
@@ -109,7 +109,7 @@ const AboutPage: React.FC<Props> = (props: Props) => {
             Fireplace
           </a>{' '}
           and the granblue-tools Discord for all of their help with with bug
-          testing, feature requests, and more support. (P.S. We&apos;re
+          testing, feature requests, and moral support. (P.S. We&apos;re
           recruiting!)
         </p>
       </section>
@@ -117,8 +117,13 @@ const AboutPage: React.FC<Props> = (props: Props) => {
       <section>
         <h2>Contributing</h2>
 
+        <p>
+          If you know how to program, this app is completely open-source.
+          There&apos;s an abundance of features to build and bugs to fix, so
+          help is always greatly appreciated!
+        </p>
         <ul className="Links">
-          <li className="LinkItem">
+          <li className="Github LinkItem">
             <Link href="https://github.com/jedmund/hensei-api">
               <a
                 href="https://github.com/jedmund/hensei-api"
@@ -133,7 +138,7 @@ const AboutPage: React.FC<Props> = (props: Props) => {
               </a>
             </Link>
           </li>
-          <li className="LinkItem">
+          <li className="Github LinkItem">
             <Link href="https://github.com/jedmund/hensei-web">
               <a
                 href="https://github.com/jedmund/hensei-web"
@@ -153,7 +158,7 @@ const AboutPage: React.FC<Props> = (props: Props) => {
       <section>
         <h2>License</h2>
         <p>
-          This app is open source and licensed under{' '}
+          This app is licensed under{' '}
           <a
             href="https://choosealicense.com/licenses/agpl-3.0/"
             target="_blank"

@@ -29,10 +29,12 @@
 
     p {
       margin-bottom: $unit;
+      font-size: $font-medium;
     }
 
     .LinkItem {
       $diameter: $unit-6x;
+      background: var(--dialog-bg);
       border: 1px solid var(--link-item-bg);
       border-radius: $card-corner;
 
@@ -76,13 +78,6 @@
         line-height: 1.3;
       }
     }
-  }
-
-  p {
-    color: var(--text-secondary);
-
-    font-size: $font-regular;
-    line-height: 1.3;
   }
 
   ul {

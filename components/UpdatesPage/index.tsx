@@ -62,7 +62,7 @@ const UpdatesPage: React.FC<Props> = (props: Props) => {
                   'unauth',
                   'jpg'
                 )}
-                <h3>No account editing</h3>
+                <h3>Accountless team editing</h3>
                 <p>
                   Now you can edit parties you create later on, even if you
                   don&apos;t make an account. You still won&apos;t have a
