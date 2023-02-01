@@ -408,6 +408,7 @@
   },
   "tooltips": {
     "copy_url": "Copy the URL to this team",
+    "new": "Create a new team",
     "remix": "Make a copy of this team",
     "save": "Save this team to your account",
     "source": "Go to original team"

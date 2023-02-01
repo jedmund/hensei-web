@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { subscribe, useSnapshot } from 'valtio'
-import { subscribeKey } from 'valtio/utils'
 import { deleteCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
@@ -31,6 +30,7 @@ import ArrowIcon from '~public/icons/Arrow.svg'
 import LinkIcon from '~public/icons/Link.svg'
 import MenuIcon from '~public/icons/Menu.svg'
 import RemixIcon from '~public/icons/Remix.svg'
+import PlusIcon from '~public/icons/Add.svg'
 import SaveIcon from '~public/icons/Save.svg'
 
 import './index.scss'
@@ -114,19 +114,9 @@ const Header = () => {
   }
 
   // Methods: Actions
-  function handleNewParty(event: React.MouseEvent, path: string) {
+  function handleNewTeam(event: React.MouseEvent) {
     event.preventDefault()
-
-    // Clean state
-    const resetState = clonedeep(initialAppState)
-    Object.keys(resetState).forEach((key) => {
-      appState[key] = resetState[key]
-    })
-
-    // Push the root URL
-    router.push(path)
-
-    // Close right menu
+    newTeam()
     closeRightMenu()
   }
 
@@ -163,6 +153,17 @@ const Header = () => {
 
     router.reload()
     return false
+  }
+
+  function newTeam() {
+    // Clean state
+    const resetState = clonedeep(initialAppState)
+    Object.keys(resetState).forEach((key) => {
+      appState[key] = resetState[key]
+    })
+
+    // Push the root URL
+    router.push('/new')
   }
 
   function remixTeam() {
@@ -276,6 +277,20 @@ const Header = () => {
             partySnapshot.favorited ? t('buttons.saved') : t('buttons.save')
           }
           onClick={toggleFavorite}
+        />
+      </Tooltip>
+    )
+  }
+
+  const newButton = () => {
+    return (
+      <Tooltip content={t('tooltips.new')}>
+        <Button
+          leftAccessoryIcon={<PlusIcon />}
+          className="New"
+          blended={true}
+          text={t('buttons.new')}
+          onClick={newTeam}
         />
       </Tooltip>
     )
@@ -396,6 +411,7 @@ const Header = () => {
         {router.route === '/p/[party]' && !appState.errorCode
           ? remixButton()
           : ''}
+        {newButton()}
         <DropdownMenu
           open={rightMenuOpen}
           onOpenChange={handleRightMenuOpenChange}
@@ -484,13 +500,6 @@ const Header = () => {
               {account.user ? `@${account.user.username}` : t('no_user')}
             </DropdownMenuLabel>
             <DropdownMenuItem className="MenuItem">
-              <Link href="/new">
-                <a onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}>
-                  {t('menu.new')}
-                </a>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="MenuItem">
               <Link href={`/${account.user.username}` || ''} passHref>
                 <span>{t('menu.profile')}</span>
               </Link>
@@ -513,16 +522,6 @@ const Header = () => {
     } else {
       items = (
         <>
-          <DropdownMenuGroup className="MenuGroup">
-            <DropdownMenuItem className="MenuItem">
-              <Link href="/new">
-                <a onClick={(e: React.MouseEvent) => handleNewParty(e, '/new')}>
-                  {t('menu.new')}
-                </a>
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
           <DropdownMenuGroup className="MenuGroup">
             <DropdownMenuItem
               className="MenuItem"
