@@ -224,7 +224,7 @@ const CharacterHovercard = (props: Props) => {
       <HovercardTrigger asChild onClick={props.onTriggerClick}>
         {props.children}
       </HovercardTrigger>
-      <HovercardContent className="Character">
+      <HovercardContent className="Character" side="top">
         <div className="top">
           <div className="title">
             <h4>{props.gridCharacter.object.name[locale]}</h4>
