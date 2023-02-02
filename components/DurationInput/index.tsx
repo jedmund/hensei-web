@@ -1,8 +1,7 @@
-import React, { useState, ChangeEvent, KeyboardEvent, useEffect } from 'react'
+import React, { useState, ChangeEvent, KeyboardEvent } from 'react'
 import classNames from 'classnames'
 
 import Input from '~components/Input'
-
 import './index.scss'
 
 interface Props
@@ -15,50 +14,57 @@ interface Props
 }
 
 const DurationInput = React.forwardRef<HTMLInputElement, Props>(
-  function DurationInput(
-    { className, placeholder, value, onValueChange },
-    forwardedRef
-  ) {
+  function DurationInput({ className, value, onValueChange }, forwardedRef) {
+    // State
     const [duration, setDuration] = useState('')
+    const [minutesSelected, setMinutesSelected] = useState(false)
+    const [secondsSelected, setSecondsSelected] = useState(false)
 
-    useEffect(() => {
-      if (value > 0) setDuration(convertSecondsToString(value))
-    }, [value])
+    // Refs
+    const minutesRef = React.createRef<HTMLInputElement>()
+    const secondsRef = React.createRef<HTMLInputElement>()
 
-    function convertStringToSeconds(string: string) {
-      const parts = string.split(':')
-      const minutes = parseInt(parts[0])
-      const seconds = parseInt(parts[1])
+    // Event handlers: On value change
+    function handleMinutesChange(event: ChangeEvent<HTMLInputElement>) {
+      const minutes = parseInt(event.currentTarget.value)
+      const seconds = secondsRef.current
+        ? parseInt(secondsRef.current.value)
+        : 0
 
-      return minutes * 60 + seconds
+      handleChange(minutes, seconds)
     }
 
-    function convertSecondsToString(value: number) {
-      const minutes = Math.floor(value / 60)
-      const seconds = value - minutes * 60
+    function handleSecondsChange(event: ChangeEvent<HTMLInputElement>) {
+      const seconds = parseInt(event.currentTarget.value)
+      const minutes = minutesRef.current
+        ? parseInt(minutesRef.current.value)
+        : 0
 
-      const paddedMinutes = padNumber(`${minutes}`, '0', 2)
-
-      return `${paddedMinutes}:${seconds}`
+      handleChange(minutes, seconds)
     }
 
-    function padNumber(string: string, pad: string, length: number) {
-      return (new Array(length + 1).join(pad) + string).slice(-length)
+    function handleChange(minutes: number, seconds: number) {
+      onValueChange(minutes * 60 + seconds)
     }
 
-    function handleChange(event: ChangeEvent<HTMLInputElement>) {
-      const value = event.currentTarget.value
-      const durationInSeconds = convertStringToSeconds(value)
-      onValueChange(durationInSeconds)
+    // Event handler: Key presses
+    function handleKeyUp(event: KeyboardEvent<HTMLInputElement>) {
+      const input = event.currentTarget
+
+      if (input.selectionStart === 0 && input.selectionEnd === 2) {
+        if (input === minutesRef.current) {
+          setMinutesSelected(true)
+        } else if (input === secondsRef.current) {
+          setSecondsSelected(true)
+        }
+      }
     }
 
     function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
       if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
-        // Allow the key to be processed normally
         return
       }
 
-      // Get the current value
       const input = event.currentTarget
       let value = event.currentTarget.value
 
@@ -95,16 +101,28 @@ const DurationInput = React.forwardRef<HTMLInputElement, Props>(
         const isNumber = !isNaN(char)
 
         // Check if the character should be accepted or rejected
-        if (!isNumber || value.length >= 5) {
-          // Reject the character
-          event.preventDefault()
-        } else if (value.length === 2) {
-          // Insert a colon after the second digit
-          input.value = value + ':'
+        if (!isNumber || value.length >= 2) {
+          // Reject the character if the user doesn't have the entire string selected
+          if (!minutesSelected && input === minutesRef.current)
+            event.preventDefault()
+          else if (
+            !secondsSelected &&
+            input === secondsRef.current &&
+            getSeconds() > 9
+          )
+            event.preventDefault()
+          else {
+            setDuration(value)
+            setMinutesSelected(false)
+            setSecondsSelected(false)
+          }
+        } else {
+          setDuration(value)
         }
       }
     }
 
+    // Methods: Time manipulation
     function incrementTime(time: string): string {
       // Split the time into minutes and seconds
       let [minutes, seconds] = time.split(':').map(Number)
@@ -144,21 +162,54 @@ const DurationInput = React.forwardRef<HTMLInputElement, Props>(
       return `${minutes}:${seconds}`
     }
 
+    // Methods: Miscellaneous
+
+    function getMinutes() {
+      const minutes = Math.floor(value / 60)
+      return minutes
+    }
+
+    function getSeconds() {
+      const seconds = value % 60
+      return seconds
+    }
+
     return (
-      <Input
-        type="text"
-        className={classNames(
-          {
-            Duration: true,
-            AlignRight: true,
-          },
-          className
-        )}
-        value={duration}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-      />
+      <div className={classNames(className, { Duration: true })}>
+        <Input
+          ref={minutesRef}
+          type="text"
+          className={classNames(
+            {
+              AlignRight: true,
+            },
+            className
+          )}
+          value={getMinutes()}
+          onChange={handleMinutesChange}
+          onKeyUp={handleKeyUp}
+          onKeyDown={handleKeyDown}
+          placeholder="mm"
+          size={3}
+        />
+        <span>:</span>
+        <Input
+          ref={secondsRef}
+          type="text"
+          className={classNames(
+            {
+              AlignRight: true,
+            },
+            className
+          )}
+          value={`${getSeconds()}`.padStart(2, '0')}
+          onChange={handleSecondsChange}
+          onKeyUp={handleKeyUp}
+          onKeyDown={handleKeyDown}
+          placeholder="ss"
+          size={2}
+        />
+      </div>
     )
   }
 )
