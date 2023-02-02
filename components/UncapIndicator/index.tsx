@@ -149,7 +149,7 @@ const UncapIndicator = (props: Props) => {
   }
 
   return (
-    <div className="Uncap">
+    <div className="UncapWrapper">
       <ul className="UncapIndicator">
         {Array.from(Array(numStars)).map((x, i) => {
           if (props.type === 'character' && i > 4) {
