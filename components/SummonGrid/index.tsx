@@ -13,7 +13,6 @@ import ExtraSummons from '~components/ExtraSummons'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
-import { accountState } from '~utils/accountState'
 import type { DetailsObject, SearchableObject } from '~types'
 
 import './index.scss'
@@ -184,11 +183,7 @@ const SummonGrid = (props: Props) => {
     position: number,
     uncapLevel: number
   ) {
-    if (
-      party.user &&
-      accountState.account.user &&
-      party.user.id === accountState.account.user.id
-    ) {
+    if (props.editable) {
       memoizeUncapAction(id, position, uncapLevel)
 
       // Optimistically update UI
@@ -294,11 +289,7 @@ const SummonGrid = (props: Props) => {
     position: number,
     stage: number
   ) {
-    if (
-      party.user &&
-      accountState.account.user &&
-      party.user.id === accountState.account.user.id
-    ) {
+    if (props.editable) {
       memoizeTranscendenceAction(id, position, stage)
 
       // Optimistically update UI

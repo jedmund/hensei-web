@@ -16,7 +16,6 @@ import type { DetailsObject, JobSkillObject, SearchableObject } from '~types'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
-import { accountState } from '~utils/accountState'
 
 import './index.scss'
 
@@ -330,11 +329,7 @@ const CharacterGrid = (props: Props) => {
     position: number,
     uncapLevel: number
   ) {
-    if (
-      party.user &&
-      accountState.account.user &&
-      party.user.id === accountState.account.user.id
-    ) {
+    if (props.editable) {
       memoizeUncapAction(id, position, uncapLevel)
 
       // Optimistically update UI
@@ -430,11 +425,7 @@ const CharacterGrid = (props: Props) => {
     position: number,
     stage: number
   ) {
-    if (
-      party.user &&
-      accountState.account.user &&
-      party.user.id === accountState.account.user.id
-    ) {
+    if (props.editable) {
       memoizeTranscendenceAction(id, position, stage)
 
       // Optimistically update UI
