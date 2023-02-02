@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { subscribe, useSnapshot } from 'valtio'
-import { deleteCookie } from 'cookies-next'
+import { setCookie, deleteCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
 import classNames from 'classnames'
@@ -10,6 +10,7 @@ import Link from 'next/link'
 import api from '~utils/api'
 import { accountState, initialAccountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
+import { retrieveLocaleCookies } from '~utils/retrieveCookies'
 
 import {
   DropdownMenu,
@@ -25,6 +26,8 @@ import SignupModal from '~components/SignupModal'
 import AccountModal from '~components/AccountModal'
 import Toast from '~components/Toast'
 import Button from '~components/Button'
+import Tooltip from '~components/Tooltip'
+import * as Switch from '@radix-ui/react-switch'
 
 import ArrowIcon from '~public/icons/Arrow.svg'
 import LinkIcon from '~public/icons/Link.svg'
@@ -34,7 +37,6 @@ import PlusIcon from '~public/icons/Add.svg'
 import SaveIcon from '~public/icons/Save.svg'
 
 import './index.scss'
-import Tooltip from '~components/Tooltip'
 
 const Header = () => {
   // Localization
@@ -44,6 +46,7 @@ const Header = () => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const localeData = retrieveLocaleCookies()
 
   // State management
   const [copyToastOpen, setCopyToastOpen] = useState(false)
@@ -53,6 +56,7 @@ const Header = () => {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false)
   const [leftMenuOpen, setLeftMenuOpen] = useState(false)
   const [rightMenuOpen, setRightMenuOpen] = useState(false)
+  const [languageChecked, setLanguageChecked] = useState(false)
 
   const [name, setName] = useState('')
   const [originalName, setOriginalName] = useState('')
@@ -70,6 +74,11 @@ const Header = () => {
   })
 
   useEffect(() => () => unsubscribe(), [])
+
+  // Hooks
+  useEffect(() => {
+    setLanguageChecked(localeData === 'ja' ? true : false)
+  }, [localeData])
 
   // Methods: Event handlers (Buttons)
   function handleLeftMenuButtonClicked() {
@@ -120,6 +129,15 @@ const Header = () => {
     event.preventDefault()
     newTeam()
     closeRightMenu()
+  }
+
+  function changeLanguage(value: boolean) {
+    const language = value ? 'ja' : 'en'
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 120)
+
+    setCookie('NEXT_LOCALE', language, { path: '/', expires: expiresAt })
+    router.push(router.asPath, undefined, { locale: language })
   }
 
   function copyToClipboard() {
@@ -536,6 +554,20 @@ const Header = () => {
     } else {
       items = (
         <>
+          <DropdownMenuGroup className="MenuGroup">
+            <DropdownMenuItem className="MenuItem language">
+              <span>{t('menu.language')}</span>
+              <Switch.Root
+                className="Switch"
+                onCheckedChange={changeLanguage}
+                checked={languageChecked}
+              >
+                <Switch.Thumb className="Thumb" />
+                <span className="left">JP</span>
+                <span className="right">EN</span>
+              </Switch.Root>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
           <DropdownMenuGroup className="MenuGroup">
             <DropdownMenuItem
               className="MenuItem"
