@@ -401,7 +401,15 @@
   },
   "toasts": {
     "copied": "This party's URL was copied to your clipboard",
-    "remixed": "You remixed {{title}}"
+    "remixed": "You remixed {{title}}",
+    "update": {
+      "title": "New update",
+      "description": {
+        "content": "New items have been added from the latest Granblue Fantasy update.",
+        "feature": "Now you can remix other people's teams, add Character rings and earrings, set Shields and Manatura on teams, and more!"
+      },
+      "button": "Learn more"
+    }
   },
   "tokens": {
     "remix": "Remixed"

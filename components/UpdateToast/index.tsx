@@ -25,7 +25,7 @@ const UpdateToast = ({
   onActionClicked,
   onCloseClicked,
 }: Props) => {
-  const { t } = useTranslation('roadmap')
+  const { t } = useTranslation('common')
 
   const classes = classNames({
     Update: true,
@@ -54,10 +54,10 @@ const UpdateToast = ({
 
   return (
     <Toast
-      altText={t(`toasts.description.${updateType}`)}
+      altText={t(`toasts.update.description.${updateType}`)}
       className={classes}
-      title={t(`toasts.title`)}
-      content={t(`toasts.description.${updateType}`)}
+      title={t(`toasts.update.title`)}
+      content={t(`toasts.update.description.${updateType}`)}
       open={open}
       type="background"
       onCloseClick={handleCloseClicked}
@@ -66,7 +66,7 @@ const UpdateToast = ({
         buttonSize="small"
         contained={true}
         onClick={handleButtonClicked}
-        text={t('toasts.button')}
+        text={t('toasts.update.button')}
       />
     </Toast>
   )
