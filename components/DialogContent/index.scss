@@ -1,9 +1,11 @@
 .Dialog {
   position: fixed;
+  box-sizing: border-box;
   background: none;
   border: 0;
   inset: 0;
   display: grid;
+  padding: 0;
   place-items: center;
   min-height: 100vh;
   min-width: 100vw;
@@ -42,6 +44,8 @@
     @include breakpoint(phone) {
       animation: 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running
         openModalMobile;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
       min-width: inherit;
       min-height: 80vh;
       transform: initial;
