@@ -16,6 +16,7 @@ import './index.scss'
 interface Props {
   gridSummon: GridSummon
   children: React.ReactNode
+  side?: 'top' | 'right' | 'bottom' | 'left'
   onTriggerClick: () => void
 }
 
@@ -57,8 +58,14 @@ const SummonHovercard = (props: Props) => {
       if (
         upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
         props.gridSummon.uncap_level == 5
-      )
+      ) {
         suffix = '_02'
+      } else if (
+        props.gridSummon.object.uncap.xlb &&
+        props.gridSummon.transcendence_step > 0
+      ) {
+        suffix = '_03'
+      }
 
       // Generate the correct source for the summon
       imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
@@ -81,7 +88,7 @@ const SummonHovercard = (props: Props) => {
       <HovercardTrigger asChild onClick={props.onTriggerClick}>
         {props.children}
       </HovercardTrigger>
-      <HovercardContent className="Summon">
+      <HovercardContent className="Summon" side={props.side}>
         <div className="top">
           <div className="title">
             <h4>{props.gridSummon.object.name[locale]}</h4>
@@ -100,6 +107,8 @@ const SummonHovercard = (props: Props) => {
               type="summon"
               ulb={props.gridSummon.object.uncap.ulb || false}
               flb={props.gridSummon.object.uncap.flb || false}
+              xlb={props.gridSummon.object.uncap.xlb || false}
+              transcendenceStage={props.gridSummon.transcendence_step}
               special={false}
             />
           </div>
