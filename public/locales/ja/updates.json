@@ -3,7 +3,11 @@
     "characters": "新キャラクター",
     "weapons": "新武器",
     "summons": "新召喚石",
-    "uncaps": "新上限解放",
+    "uncaps": {
+      "characters": "キャラクターの新上限解放",
+      "weapons": "武器の新上限解放",
+      "summons": "召喚石の新上限解放"
+    },
     "features": "新機能"
   },
   "events": {

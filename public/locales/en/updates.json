@@ -3,7 +3,11 @@
     "characters": "New characters",
     "weapons": "New weapons",
     "summons": "New summons",
-    "uncaps": "New uncaps",
+    "uncaps": {
+      "characters": "New character uncaps",
+      "weapons": "New weapon uncaps",
+      "summons": "New summon uncaps"
+    },
     "features": "New features"
   },
   "events": {

@@ -88,7 +88,66 @@ const UpdatesPage = () => {
           </section>
         </div>
       </section>
-      <section className="Content Version" data-version="2022-12L">
+      <section className="Content Version" data-version="2023-02U">
+        <div className="Header">
+          <h3>{`${updates('events.date', {
+            year: 2023,
+            month: 2,
+          })}  ${updates('events.uncap')}`}</h3>
+          <time>2023/02/01</time>
+        </div>
+        <div className="Contents">
+          <section className="characters">
+            <h4>{updates('labels.uncaps.characters')}</h4>
+            <div className="items">
+              <ChangelogUnit id="3040136000" type="character" />
+              <ChangelogUnit id="3040219000" type="character" />
+            </div>
+          </section>
+          <section className="weapons">
+            <h4>{updates('labels.uncaps.weapons')}</h4>
+            <div className="items">
+              <ChangelogUnit id="1040511300" type="weapon" />
+              <ChangelogUnit id="1040412800" type="weapon" />
+            </div>
+          </section>
+          <section className="summons">
+            <h4>{updates('labels.uncaps.summons')}</h4>
+            <div className="items">
+              <ChangelogUnit id="2040234000" type="summon" />
+              <ChangelogUnit id="2040331000" type="summon" />
+            </div>
+          </section>
+        </div>
+      </section>
+      <section className="Content Version" data-version="2023-01F">
+        <div className="Header">
+          <h3>{`${updates('events.date', {
+            year: 2023,
+            month: 1,
+          })}  ${updates('events.legfest')}`}</h3>
+          <time>2023/01/31</time>
+        </div>
+        <div className="Contents">
+          <section className="characters">
+            <h4>{updates('labels.characters')}</h4>
+            <div className="items">
+              <ChangelogUnit id="3040445000" type="character" />
+              <ChangelogUnit id="3040446000" type="character" />
+            </div>
+          </section>
+          <section className="weapons">
+            <h4>{updates('labels.weapons')}</h4>
+            <div className="items">
+              <ChangelogUnit id="1040116700" type="weapon" />
+              <ChangelogUnit id="1040421400" type="weapon" />
+              <ChangelogUnit id="1040316000" type="weapon" />
+              <ChangelogUnit id="1030208000" type="weapon" />
+            </div>
+          </section>
+        </div>
+      </section>
+      <section className="Content Version" data-version="2023-01F">
         <div className="Header">
           <h3>{`${updates('events.date', {
             year: 2023,
@@ -123,7 +182,7 @@ const UpdatesPage = () => {
         </div>
         <div className="Contents">
           <section className="characters">
-            <h4>{updates('labels.uncaps')}</h4>
+            <h4>{updates('labels.uncaps.characters')}</h4>
             <div className="items">
               <ChangelogUnit id="3040196000" type="character" image="03" />
             </div>
