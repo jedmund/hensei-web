@@ -196,7 +196,7 @@ const WeaponGrid = (props: Props) => {
         .then((response) => {
           // Remove conflicting characters from state
           conflicts.forEach((c) => {
-            if (appState.grid.weapons.mainWeapon?.object.id === c.id) {
+            if (appState.grid.weapons.mainWeapon?.object.id === c.object.id) {
               appState.grid.weapons.mainWeapon = undefined
               appState.party.element = 0
             } else {
