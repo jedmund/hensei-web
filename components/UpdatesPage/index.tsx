@@ -16,7 +16,7 @@ const UpdatesPage = () => {
     '1.0.1': 4,
     '1.1.0': {
       updates: 10,
-      bugs: 2,
+      bugs: 3,
       images: [
         'remix',
         'unauth',
