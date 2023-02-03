@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
-import { useSnapshot } from 'valtio'
+import { subscribe, useSnapshot } from 'valtio'
 import clonedeep from 'lodash.clonedeep'
 import ls from 'local-storage'
 
@@ -20,6 +20,7 @@ import { accountCookie, setEditKey, unsetEditKey } from '~utils/userToken'
 import type { DetailsObject } from '~types'
 
 import './index.scss'
+import { accountState } from '~utils/accountState'
 
 // Props
 interface Props {
@@ -42,6 +43,7 @@ const Party = (props: Props) => {
   const { party } = useSnapshot(appState)
   const [editable, setEditable] = useState(false)
   const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
+  const [refresh, setRefresh] = useState(false)
 
   // Retrieve cookies
   const cookies = retrieveCookies()
@@ -52,6 +54,14 @@ const Party = (props: Props) => {
     appState.grid = resetState.grid
     if (props.team) storeParty(props.team)
   }, [])
+
+  // Subscribe to app state to listen for account changes and
+  // unsubscribe when component is unmounted
+  const unsubscribe = subscribe(accountState, () => {
+    setRefresh(true)
+  })
+
+  useEffect(() => () => unsubscribe(), [])
 
   // Set editable on first load
   useEffect(() => {
@@ -86,7 +96,7 @@ const Party = (props: Props) => {
 
     appState.party.editable = editable
     setEditable(editable)
-  })
+  }, [refresh])
 
   // Set selected tab from props
   useEffect(() => {
