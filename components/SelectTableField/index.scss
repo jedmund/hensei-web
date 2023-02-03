@@ -1,17 +1,47 @@
 .TableField {
   align-items: center;
   display: grid;
-  gap: $unit * 2;
+  gap: $unit-2x;
   grid-template-columns: 1fr auto;
 
-  &.Image {
-    grid-template-columns: 1fr auto 1fr;
+  @include breakpoint(phone) {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
   }
 
   .Left {
     display: flex;
-    flex-direction: column;
-    gap: calc($unit / 2);
+    flex-direction: row;
+    gap: $unit;
+    width: 100%;
+
+    .Info {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: center;
+      gap: $unit-half;
+    }
+
+    .Image {
+      display: none;
+
+      .preview {
+        $diameter: $unit-5x;
+        width: $diameter;
+        height: $diameter;
+
+        img {
+          width: $diameter;
+          height: $diameter;
+        }
+      }
+
+      @include breakpoint(phone) {
+        display: block;
+      }
+    }
 
     label {
       color: var(--text-tertiary);
@@ -27,6 +57,23 @@
       &.jp {
         max-width: 270px;
       }
+    }
+  }
+
+  .Right {
+    display: flex;
+    flex-direction: row;
+    gap: $unit-2x;
+    width: 100%;
+
+    @include breakpoint(phone) {
+      .Image {
+        display: none;
+      }
+    }
+
+    .SelectTrigger {
+      width: 100%;
     }
   }
 
