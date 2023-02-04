@@ -150,13 +150,10 @@ const GridRep = (props: Props) => {
 
   const linkedAttribution = () => (
     <Link href={`/${props.user ? props.user.username : '#'}`}>
-      <a
-        className={userClass}
-        href={`/${props.user ? props.user.username : '#'}`}
-      >
+      <span className={userClass}>
         {userImage()}
         {props.user ? props.user.username : t('no_user')}
-      </a>
+      </span>
     </Link>
   )
 
@@ -214,16 +211,14 @@ const GridRep = (props: Props) => {
         ((props.user && account.user && account.user.id !== props.user.id) ||
           !props.user) ? (
           <Link href="#">
-            <a href="#">
-              <Button
-                className="Save"
-                leftAccessoryIcon={<SaveIcon className="stroke" />}
-                active={props.favorited}
-                contained={true}
-                buttonSize="small"
-                onClick={sendSaveData}
-              />
-            </a>
+            <Button
+              className="Save"
+              leftAccessoryIcon={<SaveIcon className="stroke" />}
+              active={props.favorited}
+              contained={true}
+              buttonSize="small"
+              onClick={sendSaveData}
+            />
           </Link>
         ) : (
           ''
