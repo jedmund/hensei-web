@@ -65,7 +65,7 @@
     &.Save {
       color: #ff4d4d;
 
-      .Accessory svg {
+      &.Active .Accessory svg {
         fill: #ff4d4d;
         stroke: #ff4d4d;
       }
