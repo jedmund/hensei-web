@@ -16,8 +16,8 @@
   .DialogContent {
     $multiplier: 4;
 
-    animation: $duration-modal-open cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal
-      none running openModalDesktop;
+    // animation: $duration-modal-open cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal
+    // none running openModalDesktop;
     background: var(--dialog-bg);
     border-radius: $card-corner;
     box-sizing: border-box;
@@ -42,16 +42,19 @@
     }
 
     @include breakpoint(phone) {
-      animation: 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running
-        openModalMobile;
+      // animation: slideUp;
+      // animation-duration: 3s;
+      // animation-fill-mode: forwards;
+      // animation-play-state: running;
+      // animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
       min-width: inherit;
-      min-height: 80vh;
+      min-height: 90vh;
       transform: initial;
       left: 0;
       right: 0;
-      top: 0;
+      top: 5vh;
       height: auto;
       width: 100%;
     }
