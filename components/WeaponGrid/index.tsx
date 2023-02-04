@@ -14,7 +14,6 @@ import WeaponConflictModal from '~components/WeaponConflictModal'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
-import { accountState } from '~utils/accountState'
 
 import type { DetailsObject, SearchableObject } from '~types'
 
@@ -265,11 +264,7 @@ const WeaponGrid = (props: Props) => {
     position: number,
     uncapLevel: number
   ) {
-    if (
-      party.user &&
-      accountState.account.user &&
-      party.user.id === accountState.account.user.id
-    ) {
+    if (props.editable) {
       memoizeAction(id, position, uncapLevel)
 
       // Optimistically update UI
