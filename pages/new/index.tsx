@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { getCookie, setCookie } from 'cookies-next'
+import { get, set } from 'local-storage'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
 import { v4 as uuidv4 } from 'uuid'
 import clonedeep from 'lodash.clonedeep'
 
@@ -19,7 +21,6 @@ import type { AxiosError } from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { PageContextObj, ResponseStatus } from '~types'
 import { GridType } from '~utils/enums'
-import { setCookie } from 'cookies-next'
 
 interface Props {
   context?: PageContextObj
@@ -58,6 +59,13 @@ const NewRoute: React.FC<Props> = ({
         break
     }
   }, [router.asPath])
+
+  // Persist generated userId in storage
+  useEffect(() => {
+    const cookie = getCookie('account')
+    const data: AccountCookie = JSON.parse(cookie as string)
+    if (!get('userId') && data && !data.token) set('userId', data.userId)
+  }, [])
 
   useEffect(() => {
     if (context && context.jobs && context.jobSkills) {

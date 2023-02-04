@@ -120,9 +120,9 @@ class Api {
     return axios.get(resourceUrl, params)
   }
 
-  remix(shortcode: string, params?: {}) {
+  remix({ shortcode, body, params}: { shortcode: string, body?: {}, params?: {} }) {
     const resourceUrl = `${this.url}/parties/${shortcode}/remix`
-    return axios.post(resourceUrl, params)
+    return axios.post(resourceUrl, body, params)
   }
 
   savedTeams(params: {}) {

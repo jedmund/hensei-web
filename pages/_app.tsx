@@ -1,19 +1,34 @@
-import { useEffect } from 'react'
-import { getCookie } from 'cookies-next'
 import { appWithTranslation } from 'next-i18next'
+import { get } from 'local-storage'
+import { getCookie, setCookie } from 'cookies-next'
+import { subscribe } from 'valtio'
+import { useEffect, useState } from 'react'
 import { ThemeProvider } from 'next-themes'
 
-import type { AppProps } from 'next/app'
-import Layout from '~components/Layout'
-
 import { accountState } from '~utils/accountState'
+import { retrieveCookies } from '~utils/retrieveCookies'
 import { setHeaders } from '~utils/userToken'
 
-import '../styles/globals.scss'
 import { ToastProvider, Viewport } from '@radix-ui/react-toast'
 import { TooltipProvider } from '@radix-ui/react-tooltip'
 
+import Layout from '~components/Layout'
+
+import type { AppProps } from 'next/app'
+
+import '../styles/globals.scss'
+
 function MyApp({ Component, pageProps }: AppProps) {
+  const [refresh, setRefresh] = useState(false)
+
+  // Subscribe to app state to listen for account changes and
+  // unsubscribe when component is unmounted
+  const unsubscribe = subscribe(accountState, () => {
+    setRefresh(true)
+  })
+
+  useEffect(() => () => unsubscribe(), [])
+
   const accountCookie = getCookie('account')
   const userCookie = getCookie('user')
 
@@ -42,8 +57,36 @@ function MyApp({ Component, pageProps }: AppProps) {
       }
     } else {
       console.log(`You are not currently logged in.`)
+      setCookieFromLocalStorage()
     }
   }, [])
+
+  useEffect(() => {
+    setCookieFromLocalStorage()
+  }, [refresh])
+
+  function setCookieFromLocalStorage() {
+    const localUserId: string | null = get('userId')
+    const cookies = retrieveCookies()
+    if (
+      localUserId &&
+      (!cookies || (cookies && cookies.account && !cookies.account.token))
+    ) {
+      const expiresAt = new Date()
+      expiresAt.setDate(expiresAt.getDate() + 60)
+
+      const cookieObj = {
+        userId: localUserId,
+        username: undefined,
+        token: undefined,
+      }
+
+      setCookie('account', cookieObj, {
+        path: '/',
+        expires: expiresAt,
+      })
+    }
+  }
 
   return (
     <ThemeProvider>
