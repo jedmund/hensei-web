@@ -10,6 +10,7 @@ import Link from 'next/link'
 import api from '~utils/api'
 import { accountState, initialAccountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
+import { getLocalId } from '~utils/localId'
 import { retrieveLocaleCookies } from '~utils/retrieveCookies'
 
 import {
@@ -189,12 +190,16 @@ const Header = () => {
   function remixTeam() {
     setOriginalName(partySnapshot.name ? partySnapshot.name : t('no_title'))
 
-    if (partySnapshot.shortcode)
-      api.remix(partySnapshot.shortcode).then((response) => {
-        const remix = response.data.party
-        router.push(`/p/${remix.shortcode}`)
-        setRemixToastOpen(true)
-      })
+    if (partySnapshot.shortcode) {
+      const body = getLocalId()
+      api
+        .remix({ shortcode: partySnapshot.shortcode, body: body })
+        .then((response) => {
+          const remix = response.data.party
+          router.push(`/p/${remix.shortcode}`)
+          setRemixToastOpen(true)
+        })
+    }
   }
 
   function toggleFavorite() {

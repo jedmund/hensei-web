@@ -12,15 +12,16 @@ import SummonGrid from '~components/SummonGrid'
 import CharacterGrid from '~components/CharacterGrid'
 
 import api from '~utils/api'
+import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
+import { getLocalId } from '~utils/localId'
 import { GridType } from '~utils/enums'
 import { retrieveCookies } from '~utils/retrieveCookies'
-import { accountCookie, setEditKey, unsetEditKey } from '~utils/userToken'
+import { setEditKey, unsetEditKey } from '~utils/userToken'
 
 import type { DetailsObject } from '~types'
 
 import './index.scss'
-import { accountState } from '~utils/accountState'
 
 // Props
 interface Props {
@@ -109,7 +110,7 @@ const Party = (props: Props) => {
     if (details) payload = formatDetailsObject(details)
 
     return await api.endpoints.parties
-      .create({ ...payload, ...localId() })
+      .create({ ...payload, ...getLocalId() })
       .then((response) => storeParty(response.data.party))
   }
 
@@ -298,15 +299,6 @@ const Party = (props: Props) => {
       default:
         break
     }
-  }
-
-  // Methods: Unauth validation
-  function localId() {
-    const cookie = accountCookie()
-    const parsed = JSON.parse(cookie as string)
-    if (parsed && !parsed.token) {
-      return { local_id: parsed.userId }
-    } else return {}
   }
 
   // Render: JSX components
