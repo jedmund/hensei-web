@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
-import { useSnapshot } from 'valtio'
+import { subscribe, useSnapshot } from 'valtio'
 import clonedeep from 'lodash.clonedeep'
 import ls from 'local-storage'
 
@@ -12,10 +12,12 @@ import SummonGrid from '~components/SummonGrid'
 import CharacterGrid from '~components/CharacterGrid'
 
 import api from '~utils/api'
+import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
+import { getLocalId } from '~utils/localId'
 import { GridType } from '~utils/enums'
 import { retrieveCookies } from '~utils/retrieveCookies'
-import { accountCookie, setEditKey, unsetEditKey } from '~utils/userToken'
+import { setEditKey, unsetEditKey } from '~utils/userToken'
 
 import type { DetailsObject } from '~types'
 
@@ -42,6 +44,7 @@ const Party = (props: Props) => {
   const { party } = useSnapshot(appState)
   const [editable, setEditable] = useState(false)
   const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
+  const [refresh, setRefresh] = useState(false)
 
   // Retrieve cookies
   const cookies = retrieveCookies()
@@ -52,6 +55,14 @@ const Party = (props: Props) => {
     appState.grid = resetState.grid
     if (props.team) storeParty(props.team)
   }, [])
+
+  // Subscribe to app state to listen for account changes and
+  // unsubscribe when component is unmounted
+  const unsubscribe = subscribe(accountState, () => {
+    setRefresh(true)
+  })
+
+  useEffect(() => () => unsubscribe(), [])
 
   // Set editable on first load
   useEffect(() => {
@@ -86,7 +97,7 @@ const Party = (props: Props) => {
 
     appState.party.editable = editable
     setEditable(editable)
-  })
+  }, [refresh])
 
   // Set selected tab from props
   useEffect(() => {
@@ -99,7 +110,7 @@ const Party = (props: Props) => {
     if (details) payload = formatDetailsObject(details)
 
     return await api.endpoints.parties
-      .create({ ...payload, ...localId() })
+      .create({ ...payload, ...getLocalId() })
       .then((response) => storeParty(response.data.party))
   }
 
@@ -288,15 +299,6 @@ const Party = (props: Props) => {
       default:
         break
     }
-  }
-
-  // Methods: Unauth validation
-  function localId() {
-    const cookie = accountCookie()
-    const parsed = JSON.parse(cookie as string)
-    if (parsed && !parsed.token) {
-      return { local_id: parsed.userId }
-    } else return {}
   }
 
   // Render: JSX components
