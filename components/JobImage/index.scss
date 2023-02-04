@@ -18,8 +18,9 @@
   max-width: $width;
   overflow: hidden;
   position: relative;
-  width: $width;
   transition: box-shadow 0.15s ease-in-out;
+  width: $width;
+  z-index: 1;
 
   // prettier-ignore
   @media only screen 
@@ -45,7 +46,7 @@
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
-    z-index: 2;
+    z-index: 4;
   }
 
   .JobAccessory.Button {
@@ -74,6 +75,6 @@
   .Overlay {
     background: none;
     position: absolute;
-    z-index: 1;
+    z-index: 2;
   }
 }
