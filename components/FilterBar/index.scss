@@ -14,11 +14,16 @@
   top: $unit * 4;
   width: 100%;
   max-width: 996px;
+  min-height: 80px;
 
   @include breakpoint(tablet) {
     position: static;
     flex-direction: column;
     width: 100%;
+  }
+
+  @include breakpoint(phone) {
+    min-height: auto;
   }
 
   .Filters {
