@@ -1,13 +1,19 @@
-.Account.Dialog {
+.Account.DialogContent {
   display: flex;
   flex-direction: column;
-  gap: $unit * 2;
+  gap: $unit-2x;
   width: $unit * 64;
+  overflow-y: hidden;
 
-  form {
+  .Fields {
     display: flex;
     flex-direction: column;
-    gap: $unit * 2;
+    gap: $unit-2x;
+    padding: 0 $unit-4x;
+
+    @include breakpoint(phone) {
+      gap: $unit-4x;
+    }
   }
 
   .DialogDescription {

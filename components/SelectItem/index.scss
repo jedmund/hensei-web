@@ -1,7 +1,10 @@
 .SelectItem {
+  align-items: center;
   border-radius: $item-corner;
   border: 2px solid transparent;
   color: var(--text-tertiary);
+  display: flex;
+  gap: $unit;
   font-size: $font-regular;
   padding: ($unit * 1.5) $unit-2x;
 
@@ -23,5 +26,10 @@
 
   &:last-child {
     margin-bottom: $unit;
+  }
+
+  img {
+    width: $unit-4x;
+    height: auto;
   }
 }

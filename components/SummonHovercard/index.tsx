@@ -2,8 +2,12 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
-import * as HoverCard from '@radix-ui/react-hover-card'
-
+import {
+  Hovercard,
+  HovercardContent,
+  HovercardTrigger,
+} from '~components/Hovercard'
+import Button from '~components/Button'
 import WeaponLabelIcon from '~components/WeaponLabelIcon'
 import UncapIndicator from '~components/UncapIndicator'
 
@@ -12,6 +16,8 @@ import './index.scss'
 interface Props {
   gridSummon: GridSummon
   children: React.ReactNode
+  side?: 'top' | 'right' | 'bottom' | 'left'
+  onTriggerClick: () => void
 }
 
 const SummonHovercard = (props: Props) => {
@@ -23,10 +29,13 @@ const SummonHovercard = (props: Props) => {
   const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 
   const tintElement = Element[props.gridSummon.object.element]
-  const wikiUrl = `https://gbf.wiki/${props.gridSummon.object.name.en.replaceAll(
-    ' ',
-    '_'
-  )}`
+
+  function goTo() {
+    const urlSafeName = props.gridSummon.object.name.en.replaceAll(' ', '_')
+    const url = `https://gbf.wiki/${urlSafeName}`
+
+    window.open(url, '_blank')
+  }
 
   function summonImage() {
     let imgSrc = ''
@@ -49,8 +58,14 @@ const SummonHovercard = (props: Props) => {
       if (
         upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
         props.gridSummon.uncap_level == 5
-      )
+      ) {
         suffix = '_02'
+      } else if (
+        props.gridSummon.object.uncap.xlb &&
+        props.gridSummon.transcendence_step > 0
+      ) {
+        suffix = '_03'
+      }
 
       // Generate the correct source for the summon
       imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
@@ -59,40 +74,48 @@ const SummonHovercard = (props: Props) => {
     return imgSrc
   }
 
+  const wikiButton = (
+    <Button
+      className={tintElement}
+      text={t('buttons.wiki')}
+      onClick={goTo}
+      contained={true}
+    />
+  )
+
   return (
-    <HoverCard.Root>
-      <HoverCard.Trigger>{props.children}</HoverCard.Trigger>
-      <HoverCard.Portal>
-        <HoverCard.Content className="Weapon Hovercard">
-          <div className="top">
-            <div className="title">
-              <h4>{props.gridSummon.object.name[locale]}</h4>
-              <img
-                alt={props.gridSummon.object.name[locale]}
-                src={summonImage()}
-              />
-            </div>
-            <div className="subInfo">
-              <div className="icons">
-                <WeaponLabelIcon
-                  labelType={Element[props.gridSummon.object.element]}
-                />
-              </div>
-              <UncapIndicator
-                type="summon"
-                ulb={props.gridSummon.object.uncap.ulb || false}
-                flb={props.gridSummon.object.uncap.flb || false}
-                special={false}
-              />
-            </div>
+    <Hovercard openDelay={350}>
+      <HovercardTrigger asChild onClick={props.onTriggerClick}>
+        {props.children}
+      </HovercardTrigger>
+      <HovercardContent className="Summon" side={props.side}>
+        <div className="top">
+          <div className="title">
+            <h4>{props.gridSummon.object.name[locale]}</h4>
+            <img
+              alt={props.gridSummon.object.name[locale]}
+              src={summonImage()}
+            />
           </div>
-          <a className={`Button ${tintElement}`} href={wikiUrl} target="_new">
-            {t('buttons.wiki')}
-          </a>
-          <HoverCard.Arrow />
-        </HoverCard.Content>
-      </HoverCard.Portal>
-    </HoverCard.Root>
+          <div className="subInfo">
+            <div className="icons">
+              <WeaponLabelIcon
+                labelType={Element[props.gridSummon.object.element]}
+              />
+            </div>
+            <UncapIndicator
+              type="summon"
+              ulb={props.gridSummon.object.uncap.ulb || false}
+              flb={props.gridSummon.object.uncap.flb || false}
+              xlb={props.gridSummon.object.uncap.xlb || false}
+              transcendenceStage={props.gridSummon.transcendence_step}
+              special={false}
+            />
+          </div>
+        </div>
+        {wikiButton}
+      </HovercardContent>
+    </Hovercard>
   )
 }
 

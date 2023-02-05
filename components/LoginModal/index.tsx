@@ -1,22 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
 import api from '~utils/api'
-import setUserToken from '~utils/setUserToken'
+import { setHeaders } from '~utils/userToken'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
-import Input from '~components/LabelledInput'
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogClose,
-} from '~components/Dialog'
-
+import Input from '~components/Input'
+import { Dialog, DialogTrigger, DialogClose } from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 import changeLanguage from '~utils/changeLanguage'
 
 import CrossIcon from '~public/icons/Cross.svg'
@@ -31,7 +26,12 @@ interface ErrorMap {
 const emailRegex =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-const LoginModal = () => {
+interface Props {
+  open: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+const LoginModal = (props: Props) => {
   const router = useRouter()
   const { t } = useTranslation('common')
 
@@ -48,7 +48,12 @@ const LoginModal = () => {
   // Set up form refs
   const emailInput: React.RefObject<HTMLInputElement> = React.createRef()
   const passwordInput: React.RefObject<HTMLInputElement> = React.createRef()
+  const footerRef: React.RefObject<HTMLDivElement> = React.createRef()
   const form: React.RefObject<HTMLInputElement>[] = [emailInput, passwordInput]
+
+  useEffect(() => {
+    setOpen(props.open)
+  }, [props.open])
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target
@@ -137,10 +142,12 @@ const LoginModal = () => {
       token: resp.access_token,
     }
 
-    setCookie('account', cookieObj, { path: '/' })
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+    setCookie('account', cookieObj, { path: '/', expires: expiresAt })
 
     // Set Axios default headers
-    setUserToken()
+    setHeaders()
   }
 
   function storeUserInfo(response: AxiosResponse) {
@@ -148,24 +155,32 @@ const LoginModal = () => {
     const user = response.data
 
     // Set user data in the user cookie
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
     setCookie(
       'user',
       {
-        picture: user.avatar.picture,
-        element: user.avatar.element,
+        avatar: {
+          picture: user.avatar.picture,
+          element: user.avatar.element,
+        },
         language: user.language,
         gender: user.gender,
         theme: user.theme,
       },
-      { path: '/' }
+      { path: '/', expires: expiresAt }
     )
 
     // Set the user data in the account state
     accountState.account.user = {
       id: user.id,
       username: user.username,
-      picture: user.avatar.picture,
-      element: user.avatar.element,
+      granblueId: '',
+      avatar: {
+        picture: user.avatar.picture,
+        element: user.avatar.element,
+      },
       gender: user.gender,
       language: user.language,
       theme: user.theme,
@@ -184,6 +199,9 @@ const LoginModal = () => {
       email: '',
       password: '',
     })
+    setFormValid(false)
+
+    if (props.onOpenChange) props.onOpenChange(open)
   }
 
   function onEscapeKeyDown(event: KeyboardEvent) {
@@ -197,13 +215,9 @@ const LoginModal = () => {
 
   return (
     <Dialog open={open} onOpenChange={openChange}>
-      <DialogTrigger asChild>
-        <li className="MenuItem">
-          <span>{t('menu.login')}</span>
-        </li>
-      </DialogTrigger>
       <DialogContent
-        className="Login Dialog"
+        className="Login"
+        footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
@@ -217,29 +231,35 @@ const LoginModal = () => {
         </div>
 
         <form className="form" onSubmit={login}>
-          <Input
-            className="Bound"
-            name="email"
-            placeholder={t('modals.login.placeholders.email')}
-            onChange={handleChange}
-            error={errors.email}
-            ref={emailInput}
-          />
+          <div className="Fields">
+            <Input
+              className="Bound"
+              name="email"
+              placeholder={t('modals.login.placeholders.email')}
+              onChange={handleChange}
+              error={errors.email}
+              ref={emailInput}
+            />
 
-          <Input
-            className="Bound"
-            name="password"
-            placeholder={t('modals.login.placeholders.password')}
-            type="password"
-            onChange={handleChange}
-            error={errors.password}
-            ref={passwordInput}
-          />
-
-          <Button
-            disabled={!formValid}
-            text={t('modals.login.buttons.confirm')}
-          />
+            <Input
+              className="Bound"
+              name="password"
+              placeholder={t('modals.login.placeholders.password')}
+              type="password"
+              onChange={handleChange}
+              error={errors.password}
+              ref={passwordInput}
+            />
+          </div>
+          <div className="DialogFooter" ref={footerRef}>
+            <div className="Buttons Span">
+              <Button
+                contained={true}
+                disabled={!formValid}
+                text={t('modals.login.buttons.confirm')}
+              />
+            </div>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

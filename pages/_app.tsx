@@ -1,17 +1,34 @@
-import { useEffect, useState } from 'react'
-import { getCookie, getCookies } from 'cookies-next'
 import { appWithTranslation } from 'next-i18next'
-import { ThemeProvider, useTheme } from 'next-themes'
-
-import type { AppProps } from 'next/app'
-import Layout from '~components/Layout'
+import { get } from 'local-storage'
+import { getCookie, setCookie } from 'cookies-next'
+import { subscribe } from 'valtio'
+import { useEffect, useState } from 'react'
+import { ThemeProvider } from 'next-themes'
 
 import { accountState } from '~utils/accountState'
-import setUserToken from '~utils/setUserToken'
+import { retrieveCookies } from '~utils/retrieveCookies'
+import { setHeaders } from '~utils/userToken'
+
+import { ToastProvider, Viewport } from '@radix-ui/react-toast'
+import { TooltipProvider } from '@radix-ui/react-tooltip'
+
+import Layout from '~components/Layout'
+
+import type { AppProps } from 'next/app'
 
 import '../styles/globals.scss'
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const [refresh, setRefresh] = useState(false)
+
+  // Subscribe to app state to listen for account changes and
+  // unsubscribe when component is unmounted
+  const unsubscribe = subscribe(accountState, () => {
+    setRefresh(true)
+  })
+
+  useEffect(() => () => unsubscribe(), [])
+
   const accountCookie = getCookie('account')
   const userCookie = getCookie('user')
 
@@ -21,31 +38,66 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   useEffect(() => {
-    setUserToken()
-
-    if (accountCookie) {
+    setHeaders()
+    if (cookieData.account && cookieData.account.token) {
       console.log(`Logged in as user "${cookieData.account.username}"`)
 
       accountState.account.authorized = true
       accountState.account.user = {
         id: cookieData.account.userId,
         username: cookieData.account.username,
-        picture: cookieData.user.picture,
-        element: cookieData.user.element,
+        granblueId: '',
+        avatar: {
+          picture: cookieData.user.avatar.picture,
+          element: cookieData.user.avatar.element,
+        },
         gender: cookieData.user.gender,
         language: cookieData.user.language,
         theme: cookieData.user.theme,
       }
     } else {
       console.log(`You are not currently logged in.`)
+      setCookieFromLocalStorage()
     }
   }, [])
 
+  useEffect(() => {
+    setCookieFromLocalStorage()
+  }, [refresh])
+
+  function setCookieFromLocalStorage() {
+    const localUserId: string | null = get('userId')
+    const cookies = retrieveCookies()
+    if (
+      localUserId &&
+      (!cookies || (cookies && cookies.account && !cookies.account.token))
+    ) {
+      const expiresAt = new Date()
+      expiresAt.setDate(expiresAt.getDate() + 60)
+
+      const cookieObj = {
+        userId: localUserId,
+        username: undefined,
+        token: undefined,
+      }
+
+      setCookie('account', cookieObj, {
+        path: '/',
+        expires: expiresAt,
+      })
+    }
+  }
+
   return (
     <ThemeProvider>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <ToastProvider swipeDirection="right">
+        <TooltipProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+          <Viewport className="ToastViewport" />
+        </TooltipProvider>
+      </ToastProvider>
     </ThemeProvider>
   )
 }

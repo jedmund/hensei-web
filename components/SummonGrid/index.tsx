@@ -4,15 +4,15 @@ import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
+import Alert from '~components/Alert'
 import SummonUnit from '~components/SummonUnit'
 import ExtraSummons from '~components/ExtraSummons'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
-import { accountState } from '~utils/accountState'
 import type { DetailsObject, SearchableObject } from '~types'
 
 import './index.scss'
@@ -20,6 +20,7 @@ import './index.scss'
 // Props
 interface Props {
   new: boolean
+  editable: boolean
   summons?: GridSummon[]
   createParty: (details?: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
@@ -38,25 +39,21 @@ const SummonGrid = (props: Props) => {
   // Localization
   const { t } = useTranslation('common')
 
+  // Set up state for error handling
+  const [axiosError, setAxiosError] = useState<AxiosResponse>()
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false)
+
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
-  const [slug, setSlug] = useState()
 
-  // Create a temporary state to store previous weapon uncap value
+  // Create a temporary state to store previous weapon uncap values and transcendence stages
   const [previousUncapValues, setPreviousUncapValues] = useState<{
     [key: number]: number
   }>({})
-
-  // Set the editable flag only on first load
-  useEffect(() => {
-    // If user is logged in and matches
-    if (
-      (accountData && party.user && accountData.userId === party.user.id) ||
-      props.new
-    )
-      appState.party.editable = true
-    else appState.party.editable = false
-  }, [props.new, accountData, party])
+  const [previousTranscendenceStages, setPreviousTranscendenceStages] =
+    useState<{
+      [key: number]: number
+    }>({})
 
   // Initialize an array of current uncap values for each summon
   useEffect(() => {
@@ -92,10 +89,38 @@ const SummonGrid = (props: Props) => {
         )
       })
     } else {
-      if (party.editable)
-        saveSummon(party.id, summon, position).then((response) =>
-          storeGridSummon(response.data)
-        )
+      if (props.editable)
+        saveSummon(party.id, summon, position)
+          .then((response) => handleSummonResponse(response.data))
+          .catch((error) => {
+            const axiosError = error as AxiosError
+            const response = axiosError.response
+
+            if (response) {
+              setErrorAlertOpen(true)
+              setAxiosError(response)
+            }
+          })
+    }
+  }
+
+  async function handleSummonResponse(data: any) {
+    if (data.hasOwnProperty('errors')) {
+    } else {
+      storeGridSummon(data.grid_summon)
+
+      // If we replaced an existing weapon, remove it from the grid
+      if (data.hasOwnProperty('meta') && data.meta['replaced'] !== undefined) {
+        const position = data.meta['replaced']
+
+        if (position == -1) {
+          appState.grid.summons.mainSummon = undefined
+        } else if (position == 6) {
+          appState.grid.summons.friendSummon = undefined
+        } else {
+          appState.grid.summons.allSummons[position] = undefined
+        }
+      }
     }
   }
 
@@ -127,6 +152,7 @@ const SummonGrid = (props: Props) => {
   // Note: Saves, but debouncing is not working properly
   async function saveUncap(id: string, position: number, uncapLevel: number) {
     storePreviousUncapValue(position)
+    storePreviousTranscendenceStage(position)
 
     try {
       if (uncapLevel != previousUncapValues[position])
@@ -138,11 +164,17 @@ const SummonGrid = (props: Props) => {
 
       // Revert optimistic UI
       updateUncapLevel(position, previousUncapValues[position])
+      updateTranscendenceStage(position, previousTranscendenceStages[position])
 
       // Remove optimistic key
-      let newPreviousValues = { ...previousUncapValues }
-      delete newPreviousValues[position]
-      setPreviousUncapValues(newPreviousValues)
+      let newPreviousTranscendenceStages = { ...previousTranscendenceStages }
+      let newPreviousUncapValues = { ...previousUncapValues }
+
+      delete newPreviousTranscendenceStages[position]
+      delete newPreviousUncapValues[position]
+
+      setPreviousTranscendenceStages(newPreviousTranscendenceStages)
+      setPreviousUncapValues(newPreviousUncapValues)
     }
   }
 
@@ -151,26 +183,26 @@ const SummonGrid = (props: Props) => {
     position: number,
     uncapLevel: number
   ) {
-    if (
-      party.user &&
-      accountState.account.user &&
-      party.user.id === accountState.account.user.id
-    ) {
-      memoizeAction(id, position, uncapLevel)
+    if (props.editable) {
+      memoizeUncapAction(id, position, uncapLevel)
 
       // Optimistically update UI
       updateUncapLevel(position, uncapLevel)
+
+      if (uncapLevel < 6) {
+        updateTranscendenceStage(position, 0)
+      }
     }
   }
 
-  const memoizeAction = useCallback(
+  const memoizeUncapAction = useCallback(
     (id: string, position: number, uncapLevel: number) => {
-      debouncedAction(id, position, uncapLevel)
+      debouncedUncapAction(id, position, uncapLevel)
     },
     [props, previousUncapValues]
   )
 
-  const debouncedAction = useMemo(
+  const debouncedUncapAction = useMemo(
     () =>
       debounce((id, position, number) => {
         saveUncap(id, position, number)
@@ -209,18 +241,155 @@ const SummonGrid = (props: Props) => {
     setPreviousUncapValues(newPreviousValues)
   }
 
+  // Methods: Updating transcendence stage
+  // Note: Saves, but debouncing is not working properly
+  async function saveTranscendence(
+    id: string,
+    position: number,
+    stage: number
+  ) {
+    storePreviousUncapValue(position)
+    storePreviousTranscendenceStage(position)
+
+    const payload = {
+      summon: {
+        uncap_level: stage > 0 ? 6 : 5,
+        transcendence_step: stage,
+      },
+    }
+
+    try {
+      if (stage != previousTranscendenceStages[position])
+        await api.endpoints.grid_summons
+          .update(id, payload)
+          .then((response) => {
+            storeGridSummon(response.data.grid_summon)
+          })
+    } catch (error) {
+      console.error(error)
+
+      // Revert optimistic UI
+      updateUncapLevel(position, previousUncapValues[position])
+      updateTranscendenceStage(position, previousTranscendenceStages[position])
+
+      // Remove optimistic key
+      let newPreviousTranscendenceStages = { ...previousTranscendenceStages }
+      let newPreviousUncapValues = { ...previousUncapValues }
+
+      delete newPreviousTranscendenceStages[position]
+      delete newPreviousUncapValues[position]
+
+      setPreviousTranscendenceStages(newPreviousTranscendenceStages)
+      setPreviousUncapValues(newPreviousUncapValues)
+    }
+  }
+
+  function initiateTranscendenceUpdate(
+    id: string,
+    position: number,
+    stage: number
+  ) {
+    if (props.editable) {
+      memoizeTranscendenceAction(id, position, stage)
+
+      // Optimistically update UI
+      updateTranscendenceStage(position, stage)
+
+      if (stage > 0) {
+        updateUncapLevel(position, 6)
+      }
+    }
+  }
+
+  const memoizeTranscendenceAction = useCallback(
+    (id: string, position: number, stage: number) => {
+      debouncedTranscendenceAction(id, position, stage)
+    },
+    [props, previousTranscendenceStages]
+  )
+
+  const debouncedTranscendenceAction = useMemo(
+    () =>
+      debounce((id, position, number) => {
+        saveTranscendence(id, position, number)
+      }, 500),
+    [props, saveTranscendence]
+  )
+
+  const updateTranscendenceStage = (position: number, stage: number) => {
+    if (appState.grid.summons.mainSummon && position == -1)
+      appState.grid.summons.mainSummon.transcendence_step = stage
+    else if (appState.grid.summons.friendSummon && position == 6)
+      appState.grid.summons.friendSummon.transcendence_step = stage
+    else {
+      const summon = appState.grid.summons.allSummons[position]
+      if (summon) {
+        summon.transcendence_step = stage
+        appState.grid.summons.allSummons[position] = summon
+      }
+    }
+  }
+
+  function storePreviousTranscendenceStage(position: number) {
+    // Save the current value in case of an unexpected result
+    let newPreviousValues = { ...previousUncapValues }
+
+    if (appState.grid.summons.mainSummon && position == -1)
+      newPreviousValues[position] = appState.grid.summons.mainSummon.uncap_level
+    else if (appState.grid.summons.friendSummon && position == 6)
+      newPreviousValues[position] =
+        appState.grid.summons.friendSummon.uncap_level
+    else {
+      const summon = appState.grid.summons.allSummons[position]
+      newPreviousValues[position] = summon ? summon.uncap_level : 0
+    }
+
+    setPreviousUncapValues(newPreviousValues)
+  }
+
+  async function removeSummon(id: string) {
+    try {
+      const response = await api.endpoints.grid_summons.destroy({ id: id })
+      const data = response.data
+
+      if (data.position === -1) {
+        appState.grid.summons.mainSummon = undefined
+      } else if (data.position === 6) {
+        appState.grid.summons.friendSummon = undefined
+      } else {
+        appState.grid.summons.allSummons[response.data.position] = undefined
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   // Render: JSX components
+  const errorAlert = () => {
+    return (
+      <Alert
+        open={errorAlertOpen}
+        title={axiosError ? `${axiosError.status}` : 'Error'}
+        message={t(`errors.${axiosError?.statusText.toLowerCase()}`)}
+        cancelAction={() => setErrorAlertOpen(false)}
+        cancelActionText={t('buttons.confirm')}
+      />
+    )
+  }
+
   const mainSummonElement = (
     <div className="LabeledUnit">
       <div className="Label">{t('summons.main')}</div>
       <SummonUnit
         gridSummon={grid.summons.mainSummon}
-        editable={party.editable}
+        editable={props.editable}
         key="grid_main_summon"
         position={-1}
         unitType={0}
+        removeSummon={removeSummon}
         updateObject={receiveSummonFromSearch}
         updateUncap={initiateUncapUpdate}
+        updateTranscendence={initiateTranscendenceUpdate}
       />
     </div>
   )
@@ -230,15 +399,18 @@ const SummonGrid = (props: Props) => {
       <div className="Label Friend">{t('summons.friend')}</div>
       <SummonUnit
         gridSummon={grid.summons.friendSummon}
-        editable={party.editable}
+        editable={props.editable}
         key="grid_friend_summon"
         position={6}
         unitType={2}
+        removeSummon={removeSummon}
         updateObject={receiveSummonFromSearch}
         updateUncap={initiateUncapUpdate}
+        updateTranscendence={initiateTranscendenceUpdate}
       />
     </div>
   )
+
   const summonGridElement = (
     <div id="LabeledGrid">
       <div className="Label">{t('summons.summons')}</div>
@@ -248,11 +420,13 @@ const SummonGrid = (props: Props) => {
             <li key={`grid_unit_${i}`}>
               <SummonUnit
                 gridSummon={grid.summons.allSummons[i]}
-                editable={party.editable}
+                editable={props.editable}
                 position={i}
                 unitType={1}
+                removeSummon={removeSummon}
                 updateObject={receiveSummonFromSearch}
                 updateUncap={initiateUncapUpdate}
+                updateTranscendence={initiateTranscendenceUpdate}
               />
             </li>
           )
@@ -260,16 +434,20 @@ const SummonGrid = (props: Props) => {
       </ul>
     </div>
   )
+
   const subAuraSummonElement = (
     <ExtraSummons
       grid={grid.summons.allSummons}
-      editable={party.editable}
+      editable={props.editable}
       exists={false}
       offset={numSummons}
+      removeSummon={removeSummon}
       updateObject={receiveSummonFromSearch}
       updateUncap={initiateUncapUpdate}
+      updateTranscendence={initiateTranscendenceUpdate}
     />
   )
+
   return (
     <div>
       <div id="SummonGrid">
@@ -279,6 +457,7 @@ const SummonGrid = (props: Props) => {
       </div>
 
       {subAuraSummonElement}
+      {errorAlert()}
     </div>
   )
 }

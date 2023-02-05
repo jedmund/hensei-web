@@ -1,4 +1,5 @@
 @import '~meyer-reset-scss';
+@import 'keyframes.scss';
 @import 'themes.scss';
 
 html {
@@ -75,6 +76,7 @@ h2,
 h3,
 p {
   color: var(--text-primary);
+  line-height: 1.3;
 }
 
 h1 {
@@ -119,95 +121,102 @@ select {
   }
 }
 
-.Hovercard {
-  background: #222;
-  border-radius: $unit;
-  color: $grey-100;
+.PageContent {
   display: flex;
   flex-direction: column;
-  gap: $unit * 2;
-  padding: $unit * 2;
-  width: 300px;
+  gap: $unit-4x;
+  max-width: $grid-width;
+  margin: $unit-4x auto 0;
 
-  .top {
+  h1 {
+    font-size: $font-xxlarge;
+    text-align: left;
+  }
+
+  h2 {
+    font-size: $font-medium;
+    font-weight: $medium;
+    margin-bottom: $unit * 3;
+  }
+
+  p,
+  li {
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  .LinkItem {
+    $diameter: $unit-6x;
+    align-items: center;
+    background: var(--dialog-bg);
+    border: 1px solid var(--link-item-bg);
+    border-radius: $card-corner;
     display: flex;
-    flex-direction: column;
-    gap: calc($unit / 2);
+    min-height: 82px;
+    transition: background $duration-zoom ease-in,
+      transform $duration-zoom ease-in;
 
-    .title {
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-      gap: $unit * 2;
+    &:hover {
+      background: var(--link-item-bg);
+      color: var(--text-primary);
 
-      h4 {
-        flex-grow: 1;
-        font-size: $font-medium;
-        line-height: 1.2;
-        min-width: 140px;
-      }
-
-      img {
-        height: auto;
-        width: 100px;
+      .ShareIcon {
+        fill: var(--text-primary);
+        transform: translate($unit-half, calc(($unit * -1) / 2));
       }
     }
 
-    .subInfo {
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-      gap: $unit * 2;
+    &.Github {
+      &:hover {
+        .Left svg {
+          fill: var(--text-primary);
+        }
+      }
+    }
 
-      .icons {
+    &.Discord:hover .Left svg {
+      fill: #5865f2;
+    }
+
+    a {
+      display: flex;
+      justify-content: space-between;
+      padding: $unit-2x;
+      width: 100%;
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      .Left {
+        align-items: center;
         display: flex;
-        flex-direction: row;
+        gap: $unit-2x;
         flex-grow: 1;
-        gap: $unit;
+
+        h3 {
+          font-weight: 600;
+          max-width: 70%;
+          line-height: 1.3;
+        }
       }
 
-      .UncapIndicator {
-        width: 100px;
-      }
-    }
-  }
+      svg {
+        fill: var(--link-item-image-color);
+        width: $diameter;
+        height: auto;
+        transition: fill $duration-zoom ease-in;
 
-  section {
-    h5 {
-      font-size: $font-small;
-      font-weight: $medium;
-      opacity: 0.7;
-
-      &.wind {
-        color: $wind-bg-20;
-      }
-
-      &.fire {
-        color: $fire-bg-20;
-      }
-
-      &.water {
-        color: $water-bg-20;
-      }
-
-      &.earth {
-        color: $earth-bg-20;
-      }
-
-      &.dark {
-        color: $dark-bg-10;
-      }
-
-      &.light {
-        color: $light-bg-20;
+        &.ShareIcon {
+          width: $unit-4x;
+        }
       }
     }
-  }
 
-  a.Button {
-    display: block;
-    padding: $unit * 1.5;
-    text-align: center;
+    h3 {
+      font-weight: $bold;
+    }
   }
 }
 
@@ -260,6 +269,10 @@ img.profile {
   &.light {
     background: $light-bg-20;
   }
+
+  &.anonymous {
+    background: var(--anonymous-bg);
+  }
 }
 
 i.tag {
@@ -285,29 +298,5 @@ i.tag {
     display: grid;
     gap: 8px;
     grid-template-columns: 1fr 1fr;
-  }
-}
-
-@keyframes openModalDesktop {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
-  }
-
-  100% {
-    // opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-@keyframes openModalMobile {
-  0% {
-    opacity: 0;
-    transform: translate(0%, 100%);
-  }
-
-  100% {
-    // opacity: 1;
-    transform: translate(0, 30%);
   }
 }

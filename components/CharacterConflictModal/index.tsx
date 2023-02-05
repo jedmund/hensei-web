@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
 
-import { Dialog, DialogContent } from '~components/Dialog'
+import { Dialog } from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 import Button from '~components/Button'
 import Overlay from '~components/Overlay'
 
@@ -28,6 +29,9 @@ const CharacterConflictModal = (props: Props) => {
 
   // States
   const [open, setOpen] = useState(false)
+
+  // Refs
+  const footerRef = React.createRef<HTMLDivElement>()
 
   useEffect(() => {
     setOpen(props.open)
@@ -71,43 +75,53 @@ const CharacterConflictModal = (props: Props) => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
-        className="Conflict Dialog"
+        className="Conflict"
+        footerref={footerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={close}
       >
-        <p>
-          <Trans i18nKey="modals.conflict.character"></Trans>
-        </p>
-        <div className="CharacterDiagram Diagram">
-          <ul>
-            {props.conflictingCharacters?.map((character, i) => (
-              <li className="character" key={`conflict-${i}`}>
+        <div className="Content">
+          <p>
+            <Trans i18nKey="modals.conflict.character"></Trans>
+          </p>
+          <div className="CharacterDiagram Diagram">
+            <ul>
+              {props.conflictingCharacters?.map((character, i) => (
+                <li className="character" key={`conflict-${i}`}>
+                  <img
+                    alt={character.object.name[locale]}
+                    src={imageUrl(character.object, character.uncap_level)}
+                  />
+                  <span>{character.object.name[locale]}</span>
+                </li>
+              ))}
+            </ul>
+            <span className="arrow">&rarr;</span>
+            <div className="wrapper">
+              <div className="character">
                 <img
-                  alt={character.object.name[locale]}
-                  src={imageUrl(character.object, character.uncap_level)}
+                  alt={props.incomingCharacter?.name[locale]}
+                  src={imageUrl(props.incomingCharacter)}
                 />
-                <span>{character.object.name[locale]}</span>
-              </li>
-            ))}
-          </ul>
-          <span className="arrow">&rarr;</span>
-          <div className="wrapper">
-            <div className="character">
-              <img
-                alt={props.incomingCharacter?.name[locale]}
-                src={imageUrl(props.incomingCharacter)}
-              />
-              <span>{props.incomingCharacter?.name[locale]}</span>
+                <span>{props.incomingCharacter?.name[locale]}</span>
+              </div>
             </div>
           </div>
         </div>
-        <footer>
-          <Button onClick={close} text={t('buttons.cancel')} />
-          <Button
-            onClick={props.resolveConflict}
-            text={t('modals.conflict.buttons.confirm')}
-          />
-        </footer>
+        <div className="DialogFooter" ref={footerRef}>
+          <div className="Buttons Span">
+            <Button
+              contained={true}
+              onClick={close}
+              text={t('buttons.cancel')}
+            />
+            <Button
+              contained={true}
+              onClick={props.resolveConflict}
+              text={t('modals.conflict.buttons.confirm')}
+            />
+          </div>
+        </div>
       </DialogContent>
       <Overlay open={open} visible={true} />
     </Dialog>

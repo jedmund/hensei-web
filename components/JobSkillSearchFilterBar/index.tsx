@@ -44,6 +44,7 @@ const JobSkillSearchFilterBar = (props: Props) => {
         value={-1}
         triggerClass="Bound"
         open={open}
+        overlayVisible={false}
         onValueChange={onChange}
         onOpenChange={openSelect}
       >

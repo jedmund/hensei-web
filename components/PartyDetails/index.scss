@@ -1,22 +1,35 @@
 .DetailsWrapper {
   display: flex;
   flex-direction: column;
+  gap: $unit-2x;
   margin: $unit-4x auto 0 auto;
   max-width: $grid-width;
 
   @include breakpoint(phone) {
-    padding: 0 $unit;
+    .Button:not(.IconButton) {
+      justify-content: center;
+      width: 100%;
+
+      .Text {
+        width: auto;
+      }
+    }
   }
 
   .PartyDetails {
+    box-sizing: border-box;
     display: none;
-    margin: 0 auto;
+    margin: 0 auto $unit-2x;
     max-width: $unit * 94;
     overflow: hidden;
     width: 100%;
 
+    @include breakpoint(phone) {
+      padding: 0 $unit;
+    }
+
     &.Visible {
-      margin-bottom: $unit-12x;
+      // margin-bottom: $unit-12x;
     }
 
     &.Editable {
@@ -37,6 +50,7 @@
       }
 
       .SelectTrigger {
+        padding: $unit-2x;
         width: 100%;
       }
 
@@ -45,12 +59,16 @@
         grid-template-columns: 1fr 1fr 1fr;
         gap: $unit;
 
+        @include breakpoint(phone) {
+          grid-template-columns: 1fr;
+        }
+
         .ToggleSection,
         .InputSection {
           align-items: center;
           display: flex;
           background: var(--card-bg);
-          border-radius: $card-corner;
+          border-radius: $input-corner;
 
           & > label {
             align-items: center;
@@ -133,6 +151,11 @@
         flex-direction: row;
         gap: $unit;
 
+        @include breakpoint(phone) {
+          flex-direction: column;
+          width: 100%;
+        }
+
         .left {
           flex-grow: 1;
         }
@@ -141,11 +164,18 @@
           display: flex;
           flex-direction: row;
           gap: $unit;
+
+          @include breakpoint(phone) {
+            .Button {
+              flex-grow: 1;
+            }
+          }
         }
       }
     }
 
     &.ReadOnly {
+      box-sizing: border-box;
       line-height: 1.4;
       white-space: pre-wrap;
 
@@ -166,7 +196,8 @@
       .Details {
         display: flex;
         flex-direction: row;
-        gap: $unit-half;
+        flex-wrap: wrap;
+        gap: $unit;
         margin-bottom: $unit-2x;
       }
 
@@ -257,27 +288,38 @@
   }
 
   .PartyInfo {
-    align-items: center;
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     gap: $unit;
     margin: 0 auto;
-    margin-bottom: $unit * 2;
     max-width: $unit * 94;
     width: 100%;
 
-    .Left {
+    @include breakpoint(phone) {
+      flex-direction: column;
+      gap: $unit;
+      padding: 0 $unit;
+    }
+
+    & > .Left {
       flex-grow: 1;
 
-      h1 {
-        font-size: $font-xlarge;
-        font-weight: $normal;
-        text-align: left;
+      .Header {
+        align-items: center;
+        display: flex;
+        gap: $unit;
         margin-bottom: $unit;
-        color: var(--text-primary);
 
-        &.empty {
-          color: var(--text-secondary);
+        h1 {
+          font-size: $font-xlarge;
+          font-weight: $normal;
+          text-align: left;
+          color: var(--text-primary);
+
+          &.empty {
+            color: var(--text-secondary);
+          }
         }
       }
 
@@ -295,6 +337,18 @@
 
         time {
           font-size: $font-small;
+        }
+
+        a:visited:not(.fire):not(.water):not(.wind):not(.earth):not(.dark):not(
+            .light
+          ) {
+          color: var(--text-primary);
+        }
+
+        a:hover:not(.fire):not(.water):not(.wind):not(.earth):not(.dark):not(
+            .light
+          ) {
+          color: $blue;
         }
 
         & > *:not(:last-child):after {
@@ -329,6 +383,62 @@
 
       .no-user {
         background: $grey-80;
+      }
+    }
+  }
+}
+
+.Remixes {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-2x;
+  margin: 0 auto;
+  width: 720px;
+
+  @include breakpoint(tablet) {
+    gap: $unit;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  @include breakpoint(phone) {
+    max-width: inherit;
+    width: 100%;
+  }
+
+  h3 {
+    font-size: $font-medium;
+    font-weight: $medium;
+
+    @include breakpoint(phone) {
+      padding: 0 $unit;
+    }
+  }
+
+  .GridRepCollection {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    margin-left: $unit-2x * -1;
+    margin-right: $unit-2x * -1;
+
+    @include breakpoint(tablet) {
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      max-width: inherit;
+      width: 100%;
+    }
+
+    @include breakpoint(phone) {
+      grid-template-columns: 1fr;
+      margin-left: $unit * -1;
+      margin-right: $unit * -1;
+      max-width: inherit;
+      width: 100%;
+    }
+
+    .GridRep {
+      min-width: 200px;
+
+      @include breakpoint(phone) {
+        min-width: 360px;
       }
     }
   }

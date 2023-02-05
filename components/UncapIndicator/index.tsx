@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import UncapStar from '~components/UncapStar'
+import TranscendencePopover from '~components/TranscendencePopover'
+import TranscendenceStar from '~components/TranscendenceStar'
 
 import './index.scss'
 
@@ -7,14 +9,22 @@ interface Props {
   type: 'character' | 'weapon' | 'summon'
   rarity?: number
   uncapLevel?: number
+  position?: number
+  transcendenceStage?: number
+  editable: boolean
   flb: boolean
   ulb: boolean
+  xlb?: boolean
   special: boolean
   updateUncap?: (index: number) => void
+  updateTranscendence?: (index: number) => void
 }
 
 const UncapIndicator = (props: Props) => {
   const numStars = setNumStars()
+
+  const [popoverOpen, setPopoverOpen] = useState(false)
+
   function setNumStars() {
     let numStars
 
@@ -37,7 +47,9 @@ const UncapIndicator = (props: Props) => {
         }
       }
     } else {
-      if (props.ulb) {
+      if (props.xlb) {
+        numStars = 6
+      } else if (props.ulb) {
         numStars = 5
       } else if (props.flb) {
         numStars = 4
@@ -56,14 +68,41 @@ const UncapIndicator = (props: Props) => {
     }
   }
 
+  function togglePopover(open: boolean) {
+    setPopoverOpen(open)
+  }
+
+  function sendTranscendenceStage(stage: number) {
+    if (props.updateTranscendence) props.updateTranscendence(stage)
+    togglePopover(false)
+  }
+
   const transcendence = (i: number) => {
-    return (
-      <UncapStar
-        ulb={true}
-        empty={props.uncapLevel ? i >= props.uncapLevel : false}
+    const tabIndex = props.position ? props.position * 7 + i + 1 : 0
+    return props.type === 'character' || props.type === 'summon' ? (
+      <TranscendencePopover
+        open={popoverOpen}
+        stage={props.transcendenceStage ? props.transcendenceStage : 0}
+        onOpenChange={togglePopover}
+        sendValue={sendTranscendenceStage}
         key={`star_${i}`}
-        index={i}
-        onClick={toggleStar}
+        tabIndex={tabIndex}
+      >
+        <TranscendenceStar
+          key={`star_${i}`}
+          stage={props.transcendenceStage}
+          editable={props.editable}
+          interactive={false}
+          onStarClick={() => togglePopover(true)}
+        />
+      </TranscendencePopover>
+    ) : (
+      <TranscendenceStar
+        key={`star_${i}`}
+        stage={props.transcendenceStage}
+        editable={props.editable}
+        interactive={false}
+        tabIndex={tabIndex}
       />
     )
   }
@@ -76,7 +115,8 @@ const UncapIndicator = (props: Props) => {
         empty={props.uncapLevel != null ? i >= props.uncapLevel : false}
         key={`star_${i}`}
         index={i}
-        onClick={toggleStar}
+        onStarClick={toggleStar}
+        tabIndex={props.position ? props.position * 7 + i + 1 : 0}
       />
     )
   }
@@ -89,7 +129,8 @@ const UncapIndicator = (props: Props) => {
         empty={props.uncapLevel != null ? i >= props.uncapLevel : false}
         key={`star_${i}`}
         index={i}
-        onClick={toggleStar}
+        onStarClick={toggleStar}
+        tabIndex={props.position ? props.position * 7 + i + 1 : 0}
       />
     )
   }
@@ -101,29 +142,38 @@ const UncapIndicator = (props: Props) => {
         empty={props.uncapLevel != null ? i >= props.uncapLevel : false}
         key={`star_${i}`}
         index={i}
-        onClick={toggleStar}
+        onStarClick={toggleStar}
+        tabIndex={props.position ? props.position * 7 + i + 1 : 0}
       />
     )
   }
 
   return (
-    <ul className="UncapIndicator">
-      {Array.from(Array(numStars)).map((x, i) => {
-        if (props.type === 'character' && i > 4) {
-          if (props.special) return ulb(i)
-          else return transcendence(i)
-        } else if (
-          (props.special && props.type === 'character' && i == 3) ||
-          (props.type === 'character' && i == 4) ||
-          (props.type !== 'character' && i > 2)
-        ) {
-          return flb(i)
-        } else {
-          return mlb(i)
-        }
-      })}
-    </ul>
+    <div className="UncapWrapper">
+      <ul className="UncapIndicator">
+        {Array.from(Array(numStars)).map((x, i) => {
+          if (props.type === 'character' && i > 4) {
+            if (props.special) return ulb(i)
+            else return transcendence(i)
+          } else if (props.type === 'summon' && i > 4) {
+            return transcendence(i)
+          } else if (
+            (props.special && props.type === 'character' && i == 3) ||
+            (props.type === 'character' && i == 4) ||
+            (props.type !== 'character' && i > 2)
+          ) {
+            return flb(i)
+          } else {
+            return mlb(i)
+          }
+        })}
+      </ul>
+    </div>
   )
+}
+
+UncapIndicator.defaultProps = {
+  editable: false,
 }
 
 export default UncapIndicator

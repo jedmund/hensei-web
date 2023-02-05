@@ -9,9 +9,24 @@
 
   --link-text-hover: #{$text--link--hover--light};
 
-  --full-auto-text: #{$text--full--auto--light};
+  --charge-attack-bg: #{$charge--attack--bg};
+  --charge-attack-text: #{$charge--attack--text};
+  --full-auto-bg: #{$full--auto--bg};
+  --full-auto-text: #{$charge--attack--text};
+  --auto-guard-bg: #{$auto--guard--bg};
+  --auto-guard-text: #{$auto--guard--text};
+
+  --full-auto-label-text: #{$text--full--auto--light};
 
   --separator-bg: #{$separator--bg--light};
+
+  --accent-blue: #{$accent--blue--light};
+  --accent-yellow: #{$accent--yellow--light};
+
+  --selected-item-bg: #{$selected--item--bg--light};
+  --selected-item-bg-hover: #{$selected--item--bg--light--hover};
+  --anonymous-bg: #{$anonymous--bg--light};
+  --placeholder-bg: #{$grey-80};
 
   // Light - Menus
   --dialog-bg: #{$dialog--bg--light};
@@ -120,6 +135,10 @@
   --light-hover-bg: #{$light-bg-20};
   --light-text: #{$light-text-10};
   --light-hover-text: #{$light-text-20};
+
+  // Gradients
+  --hero-gradient: #{$hero--gradient--light};
+  --hero-gradient-overlay: #{$hero--gradient--light--overlay};
 }
 
 [data-theme='dark'] {
@@ -133,9 +152,24 @@
 
   --link-text-hover: #{$text--link--hover--dark};
 
-  --full-auto-text: #{$text--full--auto--dark};
+  --charge-attack-bg: #{$charge--attack--bg};
+  --charge-attack-text: #{$charge--attack--text};
+
+  --full-auto-bg: #{$full--auto--bg};
+  --full-auto-text: #{$charge--attack--text};
+
+  --full-auto-label-text: #{$text--full--auto--dark};
 
   --separator-bg: #{$separator--bg--dark};
+
+  --accent-blue: #{$accent--blue--dark};
+  --accent-yellow: #{$accent--yellow--dark};
+
+  --selected-item-bg: #{$selected--item--bg--dark};
+  --selected-item-bg-hover: #{$selected--item--bg--dark--hover};
+
+  --anonymous-bg: #{$anonymous--bg--dark};
+  --placeholder-bg: #{$grey-40};
 
   // Dark - Dialogs
   --dialog-bg: #{$dialog--bg--dark};
@@ -245,4 +279,8 @@
   --light-hover-bg: #{$light-bg-00};
   --light-text: #{$light-text-10};
   --light-hover-text: #{$light-text-00};
+
+  // Gradients
+  --hero-gradient: #{$hero--gradient--dark};
+  --hero-gradient-overlay: #{$hero--gradient--dark--overlay};
 }

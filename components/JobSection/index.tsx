@@ -4,9 +4,11 @@ import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 
 import JobDropdown from '~components/JobDropdown'
+import JobImage from '~components/JobImage'
 import JobSkillItem from '~components/JobSkillItem'
 import SearchModal from '~components/SearchModal'
 
+import api from '~utils/api'
 import { appState } from '~utils/appState'
 import type { JobSkillObject, SearchableObject } from '~types'
 
@@ -16,9 +18,11 @@ import './index.scss'
 interface Props {
   job?: Job
   jobSkills: JobSkillObject
+  jobAccessory?: JobAccessory
   editable: boolean
   saveJob: (job?: Job) => void
   saveSkill: (skill: JobSkill, position: number) => void
+  saveAccessory: (accessory: JobAccessory) => void
 }
 
 const JobSection = (props: Props) => {
@@ -29,13 +33,19 @@ const JobSection = (props: Props) => {
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
+  // Data state
   const [job, setJob] = useState<Job>()
   const [imageUrl, setImageUrl] = useState('')
   const [numSkills, setNumSkills] = useState(4)
   const [skills, setSkills] = useState<{ [key: number]: JobSkill | undefined }>(
     []
   )
+  const [accessories, setAccessories] = useState<JobAccessory[]>([])
+  const [currentAccessory, setCurrentAccessory] = useState<
+    JobAccessory | undefined
+  >()
 
+  // Refs
   const selectRef = React.createRef<HTMLSelectElement>()
 
   useEffect(() => {
@@ -47,6 +57,7 @@ const JobSection = (props: Props) => {
       2: props.jobSkills[2],
       3: props.jobSkills[3],
     })
+    setCurrentAccessory(props.jobAccessory)
 
     if (selectRef.current && props.job) selectRef.current.value = props.job.id
   }, [props])
@@ -61,12 +72,31 @@ const JobSection = (props: Props) => {
         appState.party.job = job
       if (job.row === '1') setNumSkills(3)
       else setNumSkills(4)
+      fetchJobAccessories()
     }
   }, [job])
+
+  // Data fetching
+  async function fetchJobAccessories() {
+    if (job && job.accessory) {
+      const response = await api.jobAccessoriesForJob(job.id)
+      const jobAccessories: JobAccessory[] = response.data
+      setAccessories(jobAccessories)
+    }
+  }
 
   function receiveJob(job?: Job) {
     setJob(job)
     props.saveJob(job)
+  }
+
+  function handleAccessorySelected(value: string) {
+    const accessory = accessories.find((accessory) => accessory.id === value)
+
+    if (accessory) {
+      setCurrentAccessory(accessory)
+      props.saveAccessory(accessory)
+    }
   }
 
   function generateImageUrl() {
@@ -84,7 +114,7 @@ const JobSection = (props: Props) => {
 
   const canEditSkill = (skill?: JobSkill) => {
     // If there is a job and a skill present in the slot
-    if (job) {
+    if (job && job.id !== '-1') {
       // If the skill's job is one of the job's main skill
       if (skill && skill.job.id === job.id && skill.main) return false
 
@@ -127,17 +157,37 @@ const JobSection = (props: Props) => {
     props.saveSkill(skill, position)
   }
 
+  const emptyJobLabel = (
+    <div className="JobName">
+      <h3>{t('no_job')}</h3>
+    </div>
+  )
+
+  const filledJobLabel = (
+    <div className="JobName">
+      <img
+        alt={job?.name[locale]}
+        src={`/images/job-icons/${job?.granblue_id}.png`}
+      />
+      <h3>{job?.name[locale]}</h3>
+    </div>
+  )
+
+  function jobLabel() {
+    return job ? filledJobLabel : emptyJobLabel
+  }
+
   // Render: JSX components
   return (
     <section id="Job">
-      <div className="JobImage">
-        {party.job && party.job.id !== '-1' ? (
-          <img alt={party.job.name[locale]} src={imageUrl} />
-        ) : (
-          ''
-        )}
-        <div className="Overlay" />
-      </div>
+      <JobImage
+        job={party.job}
+        currentAccessory={currentAccessory}
+        accessories={accessories}
+        editable={props.editable}
+        user={party.user}
+        onAccessorySelected={handleAccessorySelected}
+      />
       <div className="JobDetails">
         {props.editable ? (
           <JobDropdown
@@ -146,7 +196,17 @@ const JobSection = (props: Props) => {
             ref={selectRef}
           />
         ) : (
-          <h3>{party.job?.name[locale]}</h3>
+          <div className="JobName">
+            {party.job ? (
+              <img
+                alt={party.job.name[locale]}
+                src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${party.job.granblue_id}.png`}
+              />
+            ) : (
+              ''
+            )}
+            <h3>{party.job ? party.job.name[locale] : t('no_job')}</h3>
+          </div>
         )}
 
         <ul className="JobSkills">

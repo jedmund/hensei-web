@@ -35,3 +35,56 @@ export type DetailsObject = {
   job?: Job
   extra?: boolean
 }
+
+export type ExtendedMastery = {
+  modifier?: number
+  strength?: number
+}
+
+export type CharacterOverMastery = {
+  [key: number]: ExtendedMastery
+  1: ExtendedMastery
+  2: ExtendedMastery
+  3: ExtendedMastery
+  4: ExtendedMastery
+}
+
+interface GridCharacterObject {
+  character: {
+    ring1: ExtendedMastery
+    ring2: ExtendedMastery
+    ring3: ExtendedMastery
+    ring4: ExtendedMastery
+    earring: ExtendedMastery
+    awakening: {
+      type?: number
+      level?: number
+    }
+    transcendence_step: number
+    perpetuity: boolean
+  }
+}
+
+interface PerpetuityObject {
+  character: {
+    perpetuity: boolean
+  }
+}
+
+interface PageContextObj {
+  user?: User
+  teams?: Party[]
+  party?: Party
+  jobs?: Job[]
+  jobSkills?: JobSkill[]
+  raids: Raid[]
+  sortedRaids: Raid[][]
+  weaponKeys?: GroupedWeaponKeys
+  pagination?: PaginationObject
+  meta?: { [key: string]: string }
+}
+
+interface ResponseStatus {
+  code: number
+  text: string
+}

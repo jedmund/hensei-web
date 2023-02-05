@@ -1,0 +1,67 @@
+.JobAccessory.Popover {
+  padding: $unit-2x;
+  min-width: 40vw;
+  max-width: 40vw;
+  max-height: 40vh;
+  overflow-y: scroll;
+  margin-left: $unit-2x;
+
+  h3 {
+    font-size: $font-regular;
+    font-weight: $medium;
+    margin: 0 0 $unit $unit;
+  }
+
+  &.ReadOnly {
+    min-width: inherit;
+    max-width: inherit;
+  }
+
+  @include breakpoint(tablet) {
+    width: initial;
+    max-width: initial;
+  }
+
+  @include breakpoint(phone) {
+    width: initial;
+    max-width: initial;
+  }
+
+  .Accessories {
+    display: grid;
+    gap: $unit;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+
+    @include breakpoint(tablet) {
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+      gap: 0;
+    }
+  }
+
+  .EquippedAccessory {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-2x;
+
+    h3 {
+      margin: 0;
+    }
+
+    .Accessory {
+      display: flex;
+      flex-direction: column;
+      gap: $unit;
+
+      h4 {
+        font-size: $font-small;
+        font-weight: $medium;
+        text-align: center;
+      }
+
+      img {
+        border-radius: $item-corner;
+        width: 150px;
+      }
+    }
+  }
+}

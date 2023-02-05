@@ -1,0 +1,17 @@
+.ChangelogUnit {
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+
+  img {
+    border-radius: $input-corner;
+    width: 100%;
+  }
+
+  h4 {
+    font-size: $font-small;
+    font-weight: $medium;
+    text-align: center;
+    line-height: 1.4;
+  }
+}

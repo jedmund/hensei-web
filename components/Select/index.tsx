@@ -14,6 +14,8 @@ interface Props
     React.SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
   > {
+  altText?: string
+  iconSrc?: string
   open: boolean
   trigger?: React.ReactNode
   children?: React.ReactNode
@@ -21,6 +23,7 @@ interface Props
   onValueChange?: (value: string) => void
   onClose?: () => void
   triggerClass?: string
+  overlayVisible?: boolean
 }
 
 const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
@@ -29,6 +32,14 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
 ) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
+
+  const triggerClasses = classNames(
+    {
+      SelectTrigger: true,
+      Disabled: props.disabled,
+    },
+    props.triggerClass
+  )
 
   useEffect(() => {
     setOpen(props.open)
@@ -67,19 +78,27 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
       onOpenChange={props.onOpenChange}
     >
       <RadixSelect.Trigger
-        className={classNames('SelectTrigger', props.triggerClass)}
+        className={triggerClasses}
         placeholder={props.placeholder}
         ref={forwardedRef}
       >
+        {props.iconSrc ? <img alt={props.altText} src={props.iconSrc} /> : ''}
         <RadixSelect.Value placeholder={props.placeholder} />
-        <RadixSelect.Icon className="SelectIcon">
-          <ArrowIcon />
-        </RadixSelect.Icon>
+        {!props.disabled ? (
+          <RadixSelect.Icon className="SelectIcon">
+            <ArrowIcon />
+          </RadixSelect.Icon>
+        ) : (
+          ''
+        )}
       </RadixSelect.Trigger>
 
       <RadixSelect.Portal className="Select">
         <>
-          <Overlay open={open} visible={false} />
+          <Overlay
+            open={open}
+            visible={props.overlayVisible != null ? props.overlayVisible : true}
+          />
 
           <RadixSelect.Content
             className="Select"
@@ -100,5 +119,9 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
     </RadixSelect.Root>
   )
 })
+
+Select.defaultProps = {
+  overlayVisible: true,
+}
 
 export default Select

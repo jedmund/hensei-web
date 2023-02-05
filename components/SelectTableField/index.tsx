@@ -44,13 +44,15 @@ const SelectTableField = (props: Props) => {
   return (
     <div className={classNames({ TableField: true }, props.className)}>
       <div className="Left">
-        <h3>{props.label}</h3>
-        <p>{props.description}</p>
+        <div className="Info">
+          <h3>{props.label}</h3>
+          <p>{props.description}</p>
+        </div>
+        <div className="Image">{image()}</div>
       </div>
 
-      {image()}
-
       <div className="Right">
+        <div className="Image">{image()}</div>
         <Select
           name={props.name}
           open={props.open}
@@ -59,6 +61,7 @@ const SelectTableField = (props: Props) => {
           onClose={props.onClose}
           triggerClass={classNames({ Bound: true, Table: true })}
           value={value}
+          overlayVisible={false}
         >
           {props.children}
         </Select>

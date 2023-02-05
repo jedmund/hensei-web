@@ -8,6 +8,8 @@
   font-size: $font-button;
   font-weight: $normal;
   gap: 6px;
+  transition: 0.18s opacity ease-in-out;
+  user-select: none;
 
   &:hover,
   &.Blended:hover,
@@ -30,6 +32,24 @@
     background: transparent;
   }
 
+  &.IconButton.medium {
+    height: inherit;
+    padding: $unit-half;
+
+    &:hover {
+      background: none;
+    }
+
+    .Text {
+      font-size: $font-small;
+      font-weight: $bold;
+
+      @include breakpoint(phone) {
+        display: none;
+      }
+    }
+  }
+
   &.Contained {
     background: var(--button-contained-bg);
 
@@ -42,10 +62,10 @@
       stroke: #ff4d4d;
     }
 
-    &.Active.Save {
+    &.Save {
       color: #ff4d4d;
 
-      .Accessory svg {
+      &.Active .Accessory svg {
         fill: #ff4d4d;
         stroke: #ff4d4d;
       }
@@ -59,6 +79,14 @@
         }
       }
     }
+  }
+
+  &.Options {
+    box-shadow: 0px 1px 3px rgb(0 0 0 / 14%);
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    z-index: 3;
   }
 
   &:disabled {
@@ -81,6 +109,17 @@
     padding: $unit * 1.5;
   }
 
+  @include breakpoint(phone) {
+    &.destructive {
+      background: $error;
+      color: $grey-100;
+
+      .Accessory svg {
+        fill: $grey-100;
+      }
+    }
+  }
+
   &.destructive:hover {
     background: $error;
     color: $grey-100;
@@ -90,24 +129,27 @@
     }
   }
 
-  &.save:hover {
-    color: #ff4d4d;
-
+  &.Save {
     .Accessory svg {
-      fill: #ff4d4d;
-      stroke: #ff4d4d;
+      fill: none;
+      stroke: var(--button-text);
     }
-  }
 
-  &.save.Active {
-    color: #ff4d4d;
+    &.Saved {
+      color: #ff4d4d;
+
+      .Accessory svg {
+        fill: #ff4d4d;
+        stroke: none;
+      }
+    }
 
     &:hover {
-      color: darken(#ff4d4d, 30);
+      color: #ff4d4d;
 
-      .icon svg {
-        fill: darken(#ff4d4d, 30);
-        stroke: darken(#ff4d4d, 30);
+      .Accessory svg {
+        fill: none;
+        stroke: #ff4d4d;
       }
     }
   }
@@ -128,6 +170,10 @@
     $dimension: $unit-2x;
 
     display: flex;
+
+    &.Arrow {
+      margin-top: $unit-half;
+    }
 
     svg {
       fill: var(--button-text);

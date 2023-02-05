@@ -4,7 +4,8 @@
   border-radius: $input-corner;
   border: none;
   display: flex;
-  padding: $unit-2x $unit-2x;
+  gap: $unit;
+  padding: ($unit * 1.5) $unit-2x;
 
   &.modal {
     background-color: var(--select-modal-bg);
@@ -12,6 +13,10 @@
     &:hover {
       background-color: var(--select-modal-bg-hover);
     }
+  }
+
+  &.hidden {
+    display: none;
   }
 
   &:hover {
@@ -22,6 +27,11 @@
     &[data-placeholder] > span:not(.SelectIcon) {
       color: var(--text-primary);
     }
+  }
+
+  &.Disabled:hover {
+    background-color: var(--input-bg);
+    cursor: not-allowed;
   }
 
   &[data-placeholder] > span:not(.SelectIcon) {
@@ -45,6 +55,11 @@
 
   &.Table {
     min-width: $unit * 30;
+  }
+
+  img {
+    width: $unit-4x;
+    height: auto;
   }
 
   .SelectIcon {

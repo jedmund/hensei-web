@@ -3,16 +3,12 @@ import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import cloneDeep from 'lodash.clonedeep'
 
 import api from '~utils/api'
 
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogClose,
-} from '~components/Dialog'
-
+import { Dialog, DialogTrigger, DialogClose } from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 import Input from '~components/LabelledInput'
 import CharacterSearchFilterBar from '~components/CharacterSearchFilterBar'
 import WeaponSearchFilterBar from '~components/WeaponSearchFilterBar'
@@ -24,19 +20,18 @@ import WeaponResult from '~components/WeaponResult'
 import SummonResult from '~components/SummonResult'
 import JobSkillResult from '~components/JobSkillResult'
 
+import type { DialogProps } from '@radix-ui/react-dialog'
 import type { SearchableObject, SearchableObjectArray } from '~types'
 
 import './index.scss'
 import CrossIcon from '~public/icons/Cross.svg'
-import cloneDeep from 'lodash.clonedeep'
 
-interface Props {
+interface Props extends DialogProps {
   send: (object: SearchableObject, position: number) => any
   placeholderText: string
   fromPosition: number
   job?: Job
   object: 'weapons' | 'characters' | 'summons' | 'job_skills'
-  children: React.ReactNode
 }
 
 const SearchModal = (props: Props) => {
@@ -47,8 +42,10 @@ const SearchModal = (props: Props) => {
   // Set up translation
   const { t } = useTranslation('common')
 
-  let searchInput = React.createRef<HTMLInputElement>()
-  let scrollContainer = React.createRef<HTMLDivElement>()
+  // Refs
+  const headerRef = React.createRef<HTMLDivElement>()
+  const searchInput = React.createRef<HTMLInputElement>()
+  const scrollContainer = React.createRef<HTMLDivElement>()
 
   const [firstLoad, setFirstLoad] = useState(true)
   const [filters, setFilters] = useState<{ [key: string]: any }>()
@@ -64,6 +61,10 @@ const SearchModal = (props: Props) => {
   useEffect(() => {
     if (searchInput.current) searchInput.current.focus()
   }, [searchInput])
+
+  useEffect(() => {
+    if (props.open !== undefined) setOpen(props.open)
+  })
 
   function inputChanged(event: React.ChangeEvent<HTMLInputElement>) {
     const text = event.target.value
@@ -141,8 +142,14 @@ const SearchModal = (props: Props) => {
       }
     }
 
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
     if (recents && recents.length > 5) recents.pop()
-    setCookie(`recent_${props.object}`, recents, { path: '/' })
+    setCookie(`recent_${props.object}`, recents, {
+      path: '/',
+      expires: expiresAt,
+    })
     sendData(result)
   }
 
@@ -335,8 +342,10 @@ const SearchModal = (props: Props) => {
       setRecordCount(0)
       setCurrentPage(1)
       setOpen(false)
+      if (props.onOpenChange) props.onOpenChange(false)
     } else {
       setOpen(true)
+      if (props.onOpenChange) props.onOpenChange(true)
     }
   }
 
@@ -354,11 +363,12 @@ const SearchModal = (props: Props) => {
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{props.children}</DialogTrigger>
       <DialogContent
-        className="Search Dialog"
+        className="Search"
+        headerref={headerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
-        <div id="Header">
+        <div className="Search DialogHeader" ref={headerRef}>
           <div id="Bar">
             <Input
               autoComplete="off"

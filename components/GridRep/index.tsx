@@ -136,18 +136,24 @@ const GridRep = (props: Props) => {
           src={`/profile/${props.user.avatar.picture}.png`}
         />
       )
-    } else return <div className="no-user" />
+    } else
+      return (
+        <img
+          alt={t('no_user')}
+          className={`profile anonymous`}
+          srcSet={`/profile/npc.png,
+                            /profile/npc@2x.png 2x`}
+          src={`/profile/npc.png`}
+        />
+      )
   }
 
   const linkedAttribution = () => (
     <Link href={`/${props.user ? props.user.username : '#'}`}>
-      <a
-        className={userClass}
-        href={`/${props.user ? props.user.username : '#'}`}
-      >
+      <span className={userClass}>
         {userImage()}
         {props.user ? props.user.username : t('no_user')}
-      </a>
+      </span>
     </Link>
   )
 
@@ -205,16 +211,14 @@ const GridRep = (props: Props) => {
         ((props.user && account.user && account.user.id !== props.user.id) ||
           !props.user) ? (
           <Link href="#">
-            <a href="#">
-              <Button
-                className="Save"
-                accessoryIcon={<SaveIcon className="stroke" />}
-                active={props.favorited}
-                contained={true}
-                buttonSize="small"
-                onClick={sendSaveData}
-              />
-            </a>
+            <Button
+              className="Save"
+              leftAccessoryIcon={<SaveIcon className="stroke" />}
+              active={props.favorited}
+              contained={true}
+              buttonSize="small"
+              onClick={sendSaveData}
+            />
           </Link>
         ) : (
           ''

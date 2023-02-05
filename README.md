@@ -1,8 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+![Header image for hensei-web](README.png)
+
+# hensei-web
+
+**hensei-web** is the frontend for [granblue.team](https://app.granblue.team/), an app for saving and sharing teams for [Granblue Fantasy](https://game.granbluefantasy.jp).
 
 ## Getting Started
 
-First, run the development server:
+First, you have to set up your environment file. You should start with [.env.sample](https://github.com/jedmund/hensei-web/blob/staging/.env.sample), but here are some gotchas:
+
+#### App URLs
+
+Don't add a trailing slash to these URLs!
+The API will run on port 3000 by default, but make sure to change these to match your instance of the API.
+
+```
+NEXT_PUBLIC_SIERO_API_URL='http://127.0.0.1:3000/api/v1'
+NEXT_PUBLIC_SIERO_OAUTH_URL='http://127.0.0.1:3000/oauth'
+```
+
+#### Asset URLs
+
+Next.js serves all assets out of the /public directory. In development we utilize this for all assets, but in production, you will want to host these images on a cloud storage provider like Amazon S3. Once you have that set up and you're running in a production environment, change this to the full bucket URL.
+
+```
+NEXT_PUBLIC_SIERO_IMG_URL='/images'
+```
+
+#### Dependencies
+
+Once your `.env` is all set up, install all dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+Then, run the development server with:
 
 ```bash
 npm run dev
@@ -10,25 +44,28 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Assets
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+The [hensei-api](https://github.com/jedmund/hensei-api) repository has tasks that will help you get assets, although some were crafted or renamed by hand. The front-end expects this folder structure inside of the `images` folder:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+root
+├─ accessory-grid/
+├─ accessory-square/
+├─ awakening/
+├─ ax/
+├─ chara-main/
+├─ chara-grid/
+├─ chara-square/
+├─ jobs/
+├─ job-icons/
+├─ job-skills/
+├─ mastery/
+├─ summon-main/
+├─ summon-grid/
+├─ summon-square/
+├─ updates/
+├─ weapon-main/
+├─ weapon-grid/
+├─ weapon-square/
+```

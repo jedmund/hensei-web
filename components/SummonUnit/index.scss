@@ -2,6 +2,20 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  position: relative;
+  z-index: 0;
+
+  .Button {
+    pointer-events: none;
+    opacity: 0;
+    z-index: 10;
+  }
+
+  &:hover .Button,
+  .Button.Clicked {
+    pointer-events: initial;
+    opacity: 1;
+  }
 
   &.grid {
     // max-width: 148px;
@@ -42,7 +56,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transition: all 0.18s ease-in-out;
+    transition: $duration-zoom all ease-in-out;
 
     &:hover .icon svg {
       fill: var(--icon-secondary-hover);
@@ -55,6 +69,7 @@
       z-index: 1;
 
       svg {
+        transition: $duration-color-fade fill ease-in-out;
         fill: var(--icon-secondary);
       }
     }

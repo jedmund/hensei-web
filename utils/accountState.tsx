@@ -2,9 +2,12 @@ import { proxy } from 'valtio'
 
 export type UserState = {
   id: string
+  granblueId: string
   username: string
-  picture: string
-  element: string
+  avatar: {
+    picture: string
+    element: string
+  }
   gender: number
   language: string
   theme: string

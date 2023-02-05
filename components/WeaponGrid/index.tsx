@@ -4,11 +4,13 @@ import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
+import Alert from '~components/Alert'
 import WeaponUnit from '~components/WeaponUnit'
 import ExtraWeapons from '~components/ExtraWeapons'
+import WeaponConflictModal from '~components/WeaponConflictModal'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
@@ -16,13 +18,11 @@ import { appState } from '~utils/appState'
 import type { DetailsObject, SearchableObject } from '~types'
 
 import './index.scss'
-import WeaponConflictModal from '~components/WeaponConflictModal'
-import Alert from '~components/Alert'
-import { accountState } from '~utils/accountState'
 
 // Props
 interface Props {
   new: boolean
+  editable: boolean
   weapons?: GridWeapon[]
   createParty: (details: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
@@ -41,11 +41,14 @@ const WeaponGrid = (props: Props) => {
     ? JSON.parse(cookie as string)
     : null
 
+  // Set up state for error handling
+  const [axiosError, setAxiosError] = useState<AxiosResponse>()
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false)
+  const [showIncompatibleAlert, setShowIncompatibleAlert] = useState(false)
+
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
-  const [slug, setSlug] = useState()
   const [modalOpen, setModalOpen] = useState(false)
-  const [showIncompatibleAlert, setShowIncompatibleAlert] = useState(false)
 
   // Set up state for conflict management
   const [incoming, setIncoming] = useState<Weapon>()
@@ -56,17 +59,6 @@ const WeaponGrid = (props: Props) => {
   const [previousUncapValues, setPreviousUncapValues] = useState<{
     [key: number]: number
   }>({})
-
-  // Set the editable flag only on first load
-  useEffect(() => {
-    // If user is logged in and matches
-    if (
-      (accountData && party.user && accountData.userId === party.user.id) ||
-      props.new
-    )
-      appState.party.editable = true
-    else appState.party.editable = false
-  }, [props.new, accountData, party])
 
   // Initialize an array of current uncap values for each weapon
   useEffect(() => {
@@ -92,19 +84,31 @@ const WeaponGrid = (props: Props) => {
       const payload: DetailsObject = { extra: party.extra }
       props.createParty(payload).then((team) => {
         saveWeapon(team.id, weapon, position).then((response) => {
-          storeGridWeapon(response.data.grid_weapon)
+          if (response) storeGridWeapon(response.data.grid_weapon)
         })
       })
     } else {
-      if (party.editable)
+      if (props.editable)
         saveWeapon(party.id, weapon, position)
-          .then((response) => handleWeaponResponse(response.data))
+          .then((response) => {
+            if (response) handleWeaponResponse(response.data)
+          })
           .catch((error) => {
-            const code = error.response.status
-            const data = error.response.data
-            if (code === 422) {
-              if (data.code === 'incompatible_weapon_for_position') {
+            const axiosError = error as AxiosError
+            const response = axiosError.response
+
+            if (response) {
+              const code = response.status
+              const data = response.data
+
+              if (
+                code === 422 &&
+                data.code === 'incompatible_weapon_for_position'
+              ) {
                 setShowIncompatibleAlert(true)
+              } else {
+                setErrorAlertOpen(true)
+                setAxiosError(response)
               }
             }
           })
@@ -139,19 +143,38 @@ const WeaponGrid = (props: Props) => {
     if (weapon.uncap.ulb) uncapLevel = 5
     else if (weapon.uncap.flb) uncapLevel = 4
 
-    return await api.endpoints.weapons.create({
-      weapon: {
-        party_id: partyId,
-        weapon_id: weapon.id,
-        position: position,
-        mainhand: position == -1,
-        uncap_level: uncapLevel,
-      },
-    })
+    let post = false
+    if (
+      position === -1 &&
+      (!appState.grid.weapons.mainWeapon ||
+        (appState.grid.weapons.mainWeapon &&
+          appState.grid.weapons.mainWeapon.object.id !== weapon.id))
+    ) {
+      post = true
+    } else if (
+      position !== -1 &&
+      (!appState.grid.weapons.allWeapons[position] ||
+        (appState.grid.weapons.allWeapons[position] &&
+          appState.grid.weapons.allWeapons[position]?.object.id !== weapon.id))
+    ) {
+      post = true
+    }
+
+    if (post) {
+      return await api.endpoints.weapons.create({
+        weapon: {
+          party_id: partyId,
+          weapon_id: weapon.id,
+          position: position,
+          mainhand: position == -1,
+          uncap_level: uncapLevel,
+        },
+      })
+    }
   }
 
   function storeGridWeapon(gridWeapon: GridWeapon) {
-    if (gridWeapon.position == -1) {
+    if (gridWeapon.position === -1) {
       appState.grid.weapons.mainWeapon = gridWeapon
       appState.party.element = gridWeapon.object.element
     } else {
@@ -170,18 +193,18 @@ const WeaponGrid = (props: Props) => {
           position: position,
         })
         .then((response) => {
-          // Store new character in state
-          storeGridWeapon(response.data)
-
           // Remove conflicting characters from state
           conflicts.forEach((c) => {
-            if (appState.grid.weapons.mainWeapon?.object.id === c.id) {
+            if (appState.grid.weapons.mainWeapon?.object.id === c.object.id) {
               appState.grid.weapons.mainWeapon = undefined
               appState.party.element = 0
             } else {
               appState.grid.weapons.allWeapons[c.position] = undefined
             }
           })
+
+          // Store new character in state
+          storeGridWeapon(response.data.grid_weapon)
 
           // Reset conflict
           resetConflict()
@@ -196,6 +219,21 @@ const WeaponGrid = (props: Props) => {
     setPosition(-1)
     setConflicts([])
     setIncoming(undefined)
+  }
+
+  async function removeWeapon(id: string) {
+    try {
+      const response = await api.endpoints.grid_weapons.destroy({ id: id })
+      const data = response.data
+
+      if (data.position === -1) {
+        appState.grid.weapons.mainWeapon = undefined
+      } else {
+        appState.grid.weapons.allWeapons[response.data.position] = undefined
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   // Methods: Updating uncap level
@@ -226,11 +264,7 @@ const WeaponGrid = (props: Props) => {
     position: number,
     uncapLevel: number
   ) {
-    if (
-      party.user &&
-      accountState.account.user &&
-      party.user.id === accountState.account.user.id
-    ) {
+    if (props.editable) {
       memoizeAction(id, position, uncapLevel)
 
       // Optimistically update UI
@@ -254,7 +288,7 @@ const WeaponGrid = (props: Props) => {
   )
 
   const updateUncapLevel = (position: number, uncapLevel: number) => {
-    console.log(`Updating uncap level at position ${position} to ${uncapLevel}`)
+    // console.log(`Updating uncap level at position ${position} to ${uncapLevel}`)
     if (appState.grid.weapons.mainWeapon && position == -1)
       appState.grid.weapons.mainWeapon.uncap_level = uncapLevel
     else {
@@ -288,10 +322,11 @@ const WeaponGrid = (props: Props) => {
   const mainhandElement = (
     <WeaponUnit
       gridWeapon={appState.grid.weapons.mainWeapon}
-      editable={party.editable}
+      editable={props.editable}
       key="grid_mainhand"
       position={-1}
       unitType={0}
+      removeWeapon={removeWeapon}
       updateObject={receiveWeaponFromSearch}
       updateUncap={initiateUncapUpdate}
     />
@@ -302,9 +337,10 @@ const WeaponGrid = (props: Props) => {
       <li key={`grid_unit_${i}`}>
         <WeaponUnit
           gridWeapon={appState.grid.weapons.allWeapons[i]}
-          editable={party.editable}
+          editable={props.editable}
           position={i}
           unitType={1}
+          removeWeapon={removeWeapon}
           updateObject={receiveWeaponFromSearch}
           updateUncap={initiateUncapUpdate}
         />
@@ -315,8 +351,9 @@ const WeaponGrid = (props: Props) => {
   const extraGridElement = (
     <ExtraWeapons
       grid={appState.grid.weapons.allWeapons}
-      editable={party.editable}
+      editable={props.editable}
       offset={numWeapons}
+      removeWeapon={removeWeapon}
       updateObject={receiveWeaponFromSearch}
       updateUncap={initiateUncapUpdate}
     />
@@ -344,9 +381,21 @@ const WeaponGrid = (props: Props) => {
         cancelAction={() => setShowIncompatibleAlert(!showIncompatibleAlert)}
         cancelActionText={t('buttons.confirm')}
         message={t('alert.incompatible_weapon')}
-      ></Alert>
+      />
     ) : (
       ''
+    )
+  }
+
+  const errorAlert = () => {
+    return (
+      <Alert
+        open={errorAlertOpen}
+        title={axiosError ? `${axiosError.status}` : 'Error'}
+        message={t(`errors.${axiosError?.statusText.toLowerCase()}`)}
+        cancelAction={() => setErrorAlertOpen(false)}
+        cancelActionText={t('buttons.confirm')}
+      />
     )
   }
 
@@ -354,6 +403,7 @@ const WeaponGrid = (props: Props) => {
     <div id="WeaponGrid">
       {conflicts ? conflictModal() : ''}
       {incompatibleAlert()}
+      {errorAlert()}
       <div id="MainGrid">
         {mainhandElement}
         <ul id="Weapons">{weaponGridElement}</ul>

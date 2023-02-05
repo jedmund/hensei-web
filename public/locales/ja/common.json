@@ -1,4 +1,15 @@
 {
+  "about": {
+    "segmented_control": {
+      "about": "サイトについて",
+      "updates": "変更ログ",
+      "roadmap": "ロードマップ"
+    }
+  },
+  "accessories": {
+    "paladin": "盾",
+    "manadiver": "マナベリ"
+  },
   "alert": {
     "incompatible_weapon": "Additional Weaponsに装備できない武器を入れました。"
   },
@@ -28,9 +39,20 @@
     "show_info": "詳細を編集",
     "save_info": "詳細を保存",
     "hide_info": "詳細を非表示",
+    "remix": "リミックス",
+    "save": "保存する",
+    "saved": "保存",
     "menu": "メニュー",
     "new": "作成",
     "wiki": "gbf.wikiで詳しく見る"
+  },
+  "context": {
+    "modify": {
+      "character": "キャラクターを変更",
+      "summon": "召喚石を変更",
+      "weapon": "武器を変更"
+    },
+    "remove": "編成から削除"
   },
   "filters": {
     "labels": {
@@ -40,6 +62,18 @@
       "rarity": "レアリティ"
     }
   },
+  "errors": {
+    "internal_server_error": {
+      "title": "サーバーエラー",
+      "description": "サーバーから届いたエラーは自動的に復されなかったため、再びリクエストを行なってください"
+    },
+    "not_found": {
+      "title": "見つかりませんでした",
+      "description": "探しているページは見つかりませんでした",
+      "button": "新しい編成を作成"
+    },
+    "unauthorized": "行ったアクションを実行する権限がありません"
+  },
   "header": {
     "anonymous": "無名",
     "untitled_team": "{{username}}さんからの無題編成",
@@ -47,6 +81,7 @@
     "byline": "{{username}}さんからの{{partyName}}"
   },
   "rarities": {
+    "r": "R",
     "sr": "SR",
     "ssr": "SSR"
   },
@@ -136,6 +171,22 @@
     },
     "changelog": {
       "title": "変更ログ"
+    },
+    "characters": {
+      "title": "キャラクター",
+      "subtitles": {
+        "ring": "EXリミットボーナス",
+        "earring": "エーテリアルプラス",
+        "permanent": "マスタリーボーナス",
+        "awakening": "覚醒"
+      },
+      "messages": {
+        "remove": "<strong>{{character}}</strong>を編成から削除しますか？"
+      },
+      "buttons": {
+        "confirm": "キャラクターを変更する",
+        "remove": "キャラクターを削除する"
+      }
     },
     "conflict": {
       "character": "<strong>同じ名前のキャラクター</strong>がパーティに編成されています。<br />以下のキャラクターを入れ替えますか？",
@@ -227,10 +278,16 @@
         "password_confirm": "パスワード確認"
       }
     },
+    "summon": {
+      "buttons": {
+        "remove": "召喚石を削除する"
+      }
+    },
     "weapon": {
       "title": "武器変更",
       "buttons": {
-        "confirm": "武器を変更する"
+        "confirm": "武器を変更する",
+        "remove": "武器を削除する"
       },
       "subtitles": {
         "element": "属性",
@@ -246,7 +303,9 @@
     "guides": "攻略",
     "language": "言語",
     "login": "ログイン",
+    "profile": "プロフィール",
     "roadmap": "ロードマップ",
+    "new": "新しい編成",
     "saved": "保存した編成",
     "settings": "アカウント設定",
     "signup": "登録",
@@ -309,6 +368,9 @@
   },
   "page": {
     "titles": {
+      "about": "granblue.teamについて",
+      "updates": "変更ログ / granblue.team",
+      "roadmap": "ロードマップ / granblue.team",
       "discover": "編成を見出す / granblue.team",
       "new": "新しい編成 / granblue.team",
       "profile": "@{{username}}さんの作った編成 / granblue.team",
@@ -316,6 +378,9 @@
       "saved": "保存した編成"
     },
     "descriptions": {
+      "about": "granblue.teamについて / グランブルーファンタジーの編成を探したり保存したりできる",
+      "updates": "granblue.teamの最新変更について",
+      "roadmap": "granblue.teamの開発予定機能",
       "discover": "グランブルーファンタジーの編成をマルチ、属性、作った時間などで探したり保存したりできる",
       "new": "グランブルーファンタジーの編成を作成し、騎空士とシェアできるサイトgranblue.team",
       "profile": "@{{username}}の編成を調査し、マルチ、属性、または作った時間でフィルターする",
@@ -335,10 +400,38 @@
       "no_skill": "設定されていません"
     }
   },
+  "toasts": {
+    "copied": "この編成のURLはクリップボードにコピーされました",
+    "remixed": "{{title}}をリミックスしました",
+    "update": {
+      "title": "新アプデ",
+      "description": {
+        "content": "グランブルーファンタジーの新アプデのコンテンツが追加しました。",
+        "feature": "編成をリミックスしたり、キャラの指輪や耳飾りを付けたり、盾やマナベリを装備したりことをできるようにしました。"
+      },
+      "button": "詳細をみる"
+    }
+  },
+  "tokens": {
+    "remix": "リミックスされた"
+  },
+  "tooltips": {
+    "copy_url": "この編成のURLをコピーする",
+    "new": "新しい編成を作成する",
+    "remix": "この編成の複製を作成する",
+    "save": "この編成をアカウントに保存する",
+    "source": "オリジナルの編成へ"
+  },
+  "equipped": "装備した",
   "extra_weapons": "Additional Weapons",
   "coming_soon": "開発中",
+  "new_party": "新しい編成",
+  "no_accessory": "{{accessory}}は装備していません",
   "no_title": "無題",
   "no_raid": "マルチなし",
   "no_user": "無名",
-  "no_job": "ジョブなし"
+  "no_job": "ジョブなし",
+  "no_value": "値なし",
+  "remixes": "リミックスされた編成",
+  "level": "レベル"
 }

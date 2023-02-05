@@ -1,34 +1,38 @@
 import React, { useEffect, useState, ChangeEvent, KeyboardEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useSnapshot } from 'valtio'
+import { subscribe, useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
+import clonedeep from 'lodash.clonedeep'
 
 import Linkify from 'react-linkify'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import classNames from 'classnames'
 import reactStringReplace from 'react-string-replace'
 
-import * as AlertDialog from '@radix-ui/react-alert-dialog'
-
+import Alert from '~components/Alert'
 import Button from '~components/Button'
 import CharLimitedFieldset from '~components/CharLimitedFieldset'
-import Input from '~components/Input'
 import DurationInput from '~components/DurationInput'
+import GridRepCollection from '~components/GridRepCollection'
+import GridRep from '~components/GridRep'
+import Input from '~components/Input'
+import RaidDropdown from '~components/RaidDropdown'
+import Switch from '~components/Switch'
+import Tooltip from '~components/Tooltip'
+import TextFieldset from '~components/TextFieldset'
 import Token from '~components/Token'
 
-import RaidDropdown from '~components/RaidDropdown'
-import TextFieldset from '~components/TextFieldset'
-import Switch from '~components/Switch'
-
+import api from '~utils/api'
 import { accountState } from '~utils/accountState'
-import { appState } from '~utils/appState'
+import { appState, initialAppState } from '~utils/appState'
 import { formatTimeAgo } from '~utils/timeAgo'
 import { youtube } from '~utils/youtube'
 
 import CheckIcon from '~public/icons/Check.svg'
 import CrossIcon from '~public/icons/Cross.svg'
 import EditIcon from '~public/icons/Edit.svg'
+import RemixIcon from '~public/icons/Remix.svg'
 
 import type { DetailsObject } from 'types'
 
@@ -40,9 +44,7 @@ interface Props {
   new: boolean
   editable: boolean
   updateCallback: (details: DetailsObject) => void
-  deleteCallback: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void
+  deleteCallback: () => void
 }
 
 const PartyDetails = (props: Props) => {
@@ -60,6 +62,7 @@ const PartyDetails = (props: Props) => {
 
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
+  const [alertOpen, setAlertOpen] = useState(false)
 
   const [chargeAttack, setChargeAttack] = useState(true)
   const [fullAuto, setFullAuto] = useState(false)
@@ -69,6 +72,8 @@ const PartyDetails = (props: Props) => {
   const [chainCount, setChainCount] = useState<number | undefined>(undefined)
   const [turnCount, setTurnCount] = useState<number | undefined>(undefined)
   const [clearTime, setClearTime] = useState(0)
+
+  const [remixes, setRemixes] = useState<Party[]>([])
 
   const [raidSlug, setRaidSlug] = useState('')
   const [embeddedDescription, setEmbeddedDescription] =
@@ -112,11 +117,32 @@ const PartyDetails = (props: Props) => {
       setFullAuto(props.party.full_auto)
       setChargeAttack(props.party.charge_attack)
       setClearTime(props.party.clear_time)
+      setRemixes(props.party.remixes)
       if (props.party.turn_count) setTurnCount(props.party.turn_count)
       if (props.party.button_count) setButtonCount(props.party.button_count)
       if (props.party.chain_count) setChainCount(props.party.chain_count)
     }
   }, [props.party])
+
+  // Subscribe to router changes and reset state
+  // if the new route is a new team
+  useEffect(() => {
+    router.events.on('routeChangeStart', (url, { shallow }) => {
+      if (url === '/new' || url === '/') {
+        const party = initialAppState.party
+
+        setName(party.name ? party.name : '')
+        setAutoGuard(party.autoGuard)
+        setFullAuto(party.fullAuto)
+        setChargeAttack(party.chargeAttack)
+        setClearTime(party.clearTime)
+        setRemixes(party.remixes)
+        setTurnCount(party.turnCount)
+        setButtonCount(party.buttonCount)
+        setChainCount(party.chainCount)
+      }
+    })
+  }, [])
 
   useEffect(() => {
     // Extract the video IDs from the description
@@ -293,6 +319,57 @@ const PartyDetails = (props: Props) => {
     toggleDetails()
   }
 
+  function handleClick() {
+    setAlertOpen(!alertOpen)
+  }
+
+  function deleteParty() {
+    props.deleteCallback()
+  }
+
+  // Methods: Navigation
+  function goTo(shortcode?: string) {
+    if (shortcode) router.push(`/p/${shortcode}`)
+  }
+
+  // Methods: Favorites
+  function toggleFavorite(teamId: string, favorited: boolean) {
+    if (favorited) unsaveFavorite(teamId)
+    else saveFavorite(teamId)
+  }
+
+  function saveFavorite(teamId: string) {
+    api.saveTeam({ id: teamId }).then((response) => {
+      if (response.status == 201) {
+        const index = remixes.findIndex((p) => p.id === teamId)
+        const party = remixes[index]
+
+        party.favorited = true
+
+        let clonedParties = clonedeep(remixes)
+        clonedParties[index] = party
+
+        setRemixes(clonedParties)
+      }
+    })
+  }
+
+  function unsaveFavorite(teamId: string) {
+    api.unsaveTeam({ id: teamId }).then((response) => {
+      if (response.status == 200) {
+        const index = remixes.findIndex((p) => p.id === teamId)
+        const party = remixes[index]
+
+        party.favorited = false
+
+        let clonedParties = clonedeep(remixes)
+        clonedParties[index] = party
+
+        setRemixes(clonedParties)
+      }
+    })
+  }
+
   function extractYoutubeVideoIds(text: string) {
     // Initialize an array to store the video IDs
     const videoIds = []
@@ -326,7 +403,16 @@ const PartyDetails = (props: Props) => {
           src={`/profile/${picture}.png`}
         />
       )
-    else return <div className="no-user" />
+    else
+      return (
+        <img
+          alt={t('no_user')}
+          className={`profile anonymous`}
+          srcSet={`/profile/npc.png,
+                            /profile/npc@2x.png 2x`}
+          src={`/profile/npc.png`}
+        />
+      )
   }
 
   const userBlock = (username?: string, picture?: string, element?: string) => {
@@ -342,8 +428,8 @@ const PartyDetails = (props: Props) => {
     let username, picture, element
     if (accountState.account.authorized && props.new) {
       username = accountState.account.user?.username
-      picture = accountState.account.user?.picture
-      element = accountState.account.user?.element
+      picture = accountState.account.user?.avatar.picture
+      element = accountState.account.user?.avatar.element
     } else if (party.user && !props.new) {
       username = party.user.username
       picture = party.user.avatar.picture
@@ -381,191 +467,200 @@ const PartyDetails = (props: Props) => {
     )
   }
 
-  const deleteButton = () => {
+  function renderRemixes() {
+    return remixes.map((party, i) => {
+      return (
+        <GridRep
+          id={party.id}
+          shortcode={party.shortcode}
+          name={party.name}
+          createdAt={new Date(party.created_at)}
+          raid={party.raid}
+          grid={party.weapons}
+          user={party.user}
+          favorited={party.favorited}
+          fullAuto={party.full_auto}
+          key={`party-${i}`}
+          displayUser={true}
+          onClick={goTo}
+          onSave={toggleFavorite}
+        />
+      )
+    })
+  }
+
+  const deleteAlert = () => {
     if (party.editable) {
       return (
-        <AlertDialog.Root>
-          <AlertDialog.Trigger className="Button Blended medium destructive">
-            <span className="Accessory">
-              <CrossIcon />
-            </span>
-            <span className="Text">{t('buttons.delete')}</span>
-          </AlertDialog.Trigger>
-          <AlertDialog.Portal>
-            <AlertDialog.Overlay className="Overlay" />
-            <AlertDialog.Content className="Dialog">
-              <AlertDialog.Title className="DialogTitle">
-                {t('modals.delete_team.title')}
-              </AlertDialog.Title>
-              <AlertDialog.Description className="DialogDescription">
-                {t('modals.delete_team.description')}
-              </AlertDialog.Description>
-              <div className="actions">
-                <AlertDialog.Cancel className="Button modal">
-                  {t('modals.delete_team.buttons.cancel')}
-                </AlertDialog.Cancel>
-                <AlertDialog.Action
-                  className="Button modal destructive"
-                  onClick={(e) => props.deleteCallback(e)}
-                >
-                  {t('modals.delete_team.buttons.confirm')}
-                </AlertDialog.Action>
-              </div>
-            </AlertDialog.Content>
-          </AlertDialog.Portal>
-        </AlertDialog.Root>
+        <Alert
+          open={alertOpen}
+          primaryAction={deleteParty}
+          primaryActionText={t('modals.delete_team.buttons.confirm')}
+          cancelAction={() => setAlertOpen(false)}
+          cancelActionText={t('modals.delete_team.buttons.cancel')}
+          message={t('modals.delete_team.description')}
+        />
       )
-    } else {
-      return ''
     }
   }
 
-  const editable = (
-    <section className={editableClasses}>
-      <CharLimitedFieldset
-        fieldName="name"
-        placeholder="Name your team"
-        value={props.party?.name}
-        limit={50}
-        onChange={handleInputChange}
-        error={errors.name}
-        ref={nameInput}
-      />
-      <RaidDropdown
-        showAllRaidsOption={false}
-        currentRaid={props.party?.raid ? props.party?.raid.slug : undefined}
-        onChange={receiveRaid}
-      />
-      <ul className="SwitchToggleGroup DetailToggleGroup">
-        <li className="Ougi ToggleSection">
-          <label htmlFor="ougi">
-            <span>{t('party.details.labels.charge_attack')}</span>
-            <div>
-              <Switch
-                name="charge_attack"
-                onCheckedChange={handleChargeAttackChanged}
-                value={switchValue(chargeAttack)}
-                checked={chargeAttack}
-              />
-            </div>
-          </label>
-        </li>
-        <li className="FullAuto ToggleSection">
-          <label htmlFor="full_auto">
-            <span>{t('party.details.labels.full_auto')}</span>
-            <div>
-              <Switch
-                onCheckedChange={handleFullAutoChanged}
-                name="full_auto"
-                value={switchValue(fullAuto)}
-                checked={fullAuto}
-              />
-            </div>
-          </label>
-        </li>
-        <li className="AutoGuard ToggleSection">
-          <label htmlFor="auto_guard">
-            <span>{t('party.details.labels.auto_guard')}</span>
-            <div>
-              <Switch
-                onCheckedChange={handleAutoGuardChanged}
-                name="auto_guard"
-                value={switchValue(autoGuard)}
-                disabled={!fullAuto}
-                checked={autoGuard}
-              />
-            </div>
-          </label>
-        </li>
-      </ul>
-      <ul className="InputToggleGroup DetailToggleGroup">
-        <li className="InputSection">
-          <label htmlFor="auto_guard">
-            <span>{t('party.details.labels.button_chain')}</span>
-            <div className="Input Bound">
+  const editable = () => {
+    return (
+      <section className={editableClasses}>
+        <CharLimitedFieldset
+          fieldName="name"
+          placeholder="Name your team"
+          value={props.party?.name}
+          limit={50}
+          onChange={handleInputChange}
+          error={errors.name}
+          ref={nameInput}
+        />
+        <RaidDropdown
+          showAllRaidsOption={false}
+          currentRaid={props.party?.raid ? props.party?.raid.slug : undefined}
+          onChange={receiveRaid}
+        />
+        <ul className="SwitchToggleGroup DetailToggleGroup">
+          <li className="Ougi ToggleSection">
+            <label htmlFor="ougi">
+              <span>{t('party.details.labels.charge_attack')}</span>
+              <div>
+                <Switch
+                  name="charge_attack"
+                  onCheckedChange={handleChargeAttackChanged}
+                  value={switchValue(chargeAttack)}
+                  checked={chargeAttack}
+                />
+              </div>
+            </label>
+          </li>
+          <li className="FullAuto ToggleSection">
+            <label htmlFor="full_auto">
+              <span>{t('party.details.labels.full_auto')}</span>
+              <div>
+                <Switch
+                  onCheckedChange={handleFullAutoChanged}
+                  name="full_auto"
+                  value={switchValue(fullAuto)}
+                  checked={fullAuto}
+                />
+              </div>
+            </label>
+          </li>
+          <li className="AutoGuard ToggleSection">
+            <label htmlFor="auto_guard">
+              <span>{t('party.details.labels.auto_guard')}</span>
+              <div>
+                <Switch
+                  onCheckedChange={handleAutoGuardChanged}
+                  name="auto_guard"
+                  value={switchValue(autoGuard)}
+                  disabled={!fullAuto}
+                  checked={autoGuard}
+                />
+              </div>
+            </label>
+          </li>
+        </ul>
+        <ul className="InputToggleGroup DetailToggleGroup">
+          <li className="InputSection">
+            <label htmlFor="auto_guard">
+              <span>{t('party.details.labels.button_chain')}</span>
+              <div className="Input Bound">
+                <Input
+                  name="buttons"
+                  type="number"
+                  placeholder="0"
+                  value={`${buttonCount}`}
+                  min="0"
+                  max="99"
+                  onChange={handleButtonCountInput}
+                  onKeyDown={handleInputKeyDown}
+                />
+                <span>b</span>
+                <Input
+                  name="chains"
+                  type="number"
+                  placeholder="0"
+                  min="0"
+                  max="99"
+                  value={`${chainCount}`}
+                  onChange={handleChainCountInput}
+                  onKeyDown={handleInputKeyDown}
+                />
+                <span>c</span>
+              </div>
+            </label>
+          </li>
+          <li className="InputSection">
+            <label htmlFor="auto_guard">
+              <span>{t('party.details.labels.turn_count')}</span>
               <Input
-                name="buttons"
+                name="turn_count"
+                className="AlignRight Bound"
                 type="number"
+                step="1"
+                min="1"
+                max="999"
                 placeholder="0"
-                value={`${buttonCount}`}
-                min="0"
-                max="99"
-                onChange={handleButtonCountInput}
+                value={`${turnCount}`}
+                onChange={handleTurnCountInput}
                 onKeyDown={handleInputKeyDown}
               />
-              <span>b</span>
-              <Input
-                name="chains"
-                type="number"
-                placeholder="0"
-                min="0"
-                max="99"
-                value={`${chainCount}`}
-                onChange={handleChainCountInput}
-                onKeyDown={handleInputKeyDown}
-              />
-              <span>c</span>
-            </div>
-          </label>
-        </li>
-        <li className="InputSection">
-          <label htmlFor="auto_guard">
-            <span>{t('party.details.labels.turn_count')}</span>
-            <Input
-              name="turn_count"
-              className="AlignRight Bound"
-              type="number"
-              step="1"
-              min="1"
-              max="999"
-              placeholder="0"
-              value={`${turnCount}`}
-              onChange={handleTurnCountInput}
-              onKeyDown={handleInputKeyDown}
-            />
-          </label>
-        </li>
-        <li className="InputSection">
-          <label htmlFor="auto_guard">
-            <span>{t('party.details.labels.clear_time')}</span>
-            <div>
-              <DurationInput
-                name="clear_time"
-                className="Bound"
-                placeholder="00:00"
-                value={clearTime}
-                onValueChange={(value: number) => handleClearTimeInput(value)}
-              />
-            </div>
-          </label>
-        </li>
-      </ul>
-      <TextFieldset
-        fieldName="name"
-        placeholder={
-          'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 3 first\nGood luck with RNG!'
-        }
-        value={props.party?.description}
-        onChange={handleTextAreaChange}
-        error={errors.description}
-        ref={descriptionInput}
-      />
+            </label>
+          </li>
+          <li className="InputSection">
+            <label htmlFor="auto_guard">
+              <span>{t('party.details.labels.clear_time')}</span>
+              <div>
+                <DurationInput
+                  name="clear_time"
+                  className="Bound"
+                  placeholder="00:00"
+                  value={clearTime}
+                  onValueChange={(value: number) => handleClearTimeInput(value)}
+                />
+              </div>
+            </label>
+          </li>
+        </ul>
+        <TextFieldset
+          fieldName="name"
+          placeholder={
+            'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 3 first\nGood luck with RNG!'
+          }
+          value={props.party?.description}
+          onChange={handleTextAreaChange}
+          error={errors.description}
+          ref={descriptionInput}
+        />
 
-      <div className="bottom">
-        <div className="left">
-          {router.pathname !== '/new' ? deleteButton() : ''}
+        <div className="bottom">
+          <div className="left">
+            {router.pathname !== '/new' ? (
+              <Button
+                leftAccessoryIcon={<CrossIcon />}
+                className="Blended medium destructive"
+                onClick={handleClick}
+                text={t('buttons.delete')}
+              />
+            ) : (
+              ''
+            )}
+          </div>
+          <div className="right">
+            <Button text={t('buttons.cancel')} onClick={toggleDetails} />
+            <Button
+              leftAccessoryIcon={<CheckIcon className="Check" />}
+              text={t('buttons.save_info')}
+              onClick={updateDetails}
+            />
+          </div>
         </div>
-        <div className="right">
-          <Button text={t('buttons.cancel')} onClick={toggleDetails} />
-          <Button
-            accessoryIcon={<CheckIcon className="Check" />}
-            text={t('buttons.save_info')}
-            onClick={updateDetails}
-          />
-        </div>
-      </div>
-    </section>
-  )
+      </section>
+    )
+  }
 
   const clearTimeString = () => {
     const minutes = Math.floor(clearTime / 60)
@@ -600,71 +695,128 @@ const PartyDetails = (props: Props) => {
     }
   }
 
-  const readOnly = (
-    <section className={readOnlyClasses}>
-      <section className="Details">
-        {
-          <Token>
+  const readOnly = () => {
+    return (
+      <section className={readOnlyClasses}>
+        <section className="Details">
+          <Token
+            className={classNames({
+              ChargeAttack: true,
+              On: chargeAttack,
+              Off: !chargeAttack,
+            })}
+          >
             {`${t('party.details.labels.charge_attack')} ${
               chargeAttack ? 'On' : 'Off'
             }`}
           </Token>
-        }
-        {fullAuto ? <Token>{t('party.details.labels.full_auto')}</Token> : ''}
-        {autoGuard ? <Token>{t('party.details.labels.auto_guard')}</Token> : ''}
-        {turnCount ? (
-          <Token>
-            {t('party.details.turns.with_count', {
-              count: turnCount,
+
+          <Token
+            className={classNames({
+              FullAuto: true,
+              On: fullAuto,
+              Off: !fullAuto,
             })}
+          >
+            {`${t('party.details.labels.full_auto')} ${
+              fullAuto ? 'On' : 'Off'
+            }`}
           </Token>
-        ) : (
-          ''
-        )}
-        {clearTime > 0 ? <Token>{clearTimeString()}</Token> : ''}
-        {buttonChainToken()}
+
+          <Token
+            className={classNames({
+              AutoGuard: true,
+              On: autoGuard,
+              Off: !autoGuard,
+            })}
+          >
+            {`${t('party.details.labels.auto_guard')} ${
+              fullAuto ? 'On' : 'Off'
+            }`}
+          </Token>
+
+          {turnCount ? (
+            <Token>
+              {t('party.details.turns.with_count', {
+                count: turnCount,
+              })}
+            </Token>
+          ) : (
+            ''
+          )}
+          {clearTime > 0 ? <Token>{clearTimeString()}</Token> : ''}
+          {buttonChainToken()}
+        </section>
+        <Linkify>{embeddedDescription}</Linkify>
       </section>
-      <Linkify>{embeddedDescription}</Linkify>
-    </section>
-  )
+    )
+  }
+
+  const remixSection = () => {
+    return (
+      <section className="Remixes">
+        <h3>{t('remixes')}</h3>
+        {<GridRepCollection>{renderRemixes()}</GridRepCollection>}
+      </section>
+    )
+  }
 
   return (
-    <section className="DetailsWrapper">
-      <div className="PartyInfo">
-        <div className="Left">
-          <h1 className={name === '' ? 'empty' : ''}>
-            {name !== '' ? name : 'Untitled'}
-          </h1>
-          <div className="attribution">
-            {renderUserBlock()}
-            {party.raid ? linkedRaidBlock(party.raid) : ''}
-            {party.created_at != '' ? (
-              <time
-                className="last-updated"
-                dateTime={new Date(party.created_at).toString()}
-              >
-                {formatTimeAgo(new Date(party.created_at), locale)}
-              </time>
-            ) : (
-              ''
-            )}
+    <>
+      <section className="DetailsWrapper">
+        <div className="PartyInfo">
+          <div className="Left">
+            <div className="Header">
+              <h1 className={name ? '' : 'empty'}>
+                {name ? name : t('no_title')}
+              </h1>
+              {party.remix && party.sourceParty ? (
+                <Tooltip content={t('tooltips.source')}>
+                  <Button
+                    className="IconButton Blended"
+                    leftAccessoryIcon={<RemixIcon />}
+                    text={t('tokens.remix')}
+                    onClick={() => goTo(party.sourceParty?.shortcode)}
+                  />
+                </Tooltip>
+              ) : (
+                ''
+              )}
+            </div>
+            <div className="attribution">
+              {renderUserBlock()}
+              {party.raid ? linkedRaidBlock(party.raid) : ''}
+              {party.created_at != '' ? (
+                <time
+                  className="last-updated"
+                  dateTime={new Date(party.created_at).toString()}
+                >
+                  {formatTimeAgo(new Date(party.created_at), locale)}
+                </time>
+              ) : (
+                ''
+              )}
+            </div>
           </div>
-        </div>
-        <div className="Right">
           {party.editable ? (
-            <Button
-              accessoryIcon={<EditIcon />}
-              text={t('buttons.show_info')}
-              onClick={toggleDetails}
-            />
+            <div className="Right">
+              <Button
+                leftAccessoryIcon={<EditIcon />}
+                text={t('buttons.show_info')}
+                onClick={toggleDetails}
+              />
+            </div>
           ) : (
-            <div />
+            ''
           )}
         </div>
-      </div>
-      {readOnly}
-      {editable}
-    </section>
+        {readOnly()}
+        {editable()}
+
+        {deleteAlert()}
+      </section>
+      {remixes && remixes.length > 0 ? remixSection() : ''}
+    </>
   )
 }
 

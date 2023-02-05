@@ -8,7 +8,7 @@ import SelectItem from '~components/SelectItem'
 import SelectGroup from '~components/SelectGroup'
 
 import { appState } from '~utils/appState'
-import { jobGroups } from '~utils/jobGroups'
+import { jobGroups } from '~data/jobGroups'
 
 import './index.scss'
 
@@ -91,7 +91,12 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
           .sort((a, b) => a.order - b.order)
           .map((item, i) => {
             return (
-              <SelectItem key={i} value={item.id}>
+              <SelectItem
+                key={i}
+                value={item.id}
+                altText={item.name[locale]}
+                iconSrc={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${item.granblue_id}.png`}
+              >
                 {item.name[locale]}
               </SelectItem>
             )
@@ -109,6 +114,12 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
     return (
       <Select
         value={currentJob ? currentJob.id : 'no-job'}
+        altText={currentJob ? currentJob.name[locale] : ''}
+        iconSrc={
+          currentJob
+            ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${currentJob.granblue_id}.png`
+            : ''
+        }
         open={open}
         onClick={openJobSelect}
         onOpenChange={() => setOpen(!open)}

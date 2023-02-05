@@ -1,4 +1,15 @@
 {
+  "about": {
+    "segmented_control": {
+      "about": "About",
+      "updates": "Updates",
+      "roadmap": "Roadmap"
+    }
+  },
+  "accessories": {
+    "paladin": "shield",
+    "manadiver": "manatura"
+  },
   "alert": {
     "incompatible_weapon": "You've selected a weapon that can't be added to the Additional Weapon slots."
   },
@@ -28,9 +39,20 @@
     "show_info": "Edit info",
     "hide_info": "Hide info",
     "save_info": "Save info",
+    "remix": "Remix",
+    "save": "Save",
+    "saved": "Saved",
     "menu": "Menu",
     "new": "New",
     "wiki": "View more on gbf.wiki"
+  },
+  "context": {
+    "modify": {
+      "character": "Modify character",
+      "summon": "Modify summon",
+      "weapon": "Modify weapon"
+    },
+    "remove": "Remove from grid"
   },
   "filters": {
     "labels": {
@@ -47,6 +69,7 @@
     "byline": "{{partyName}} by {{username}}"
   },
   "rarities": {
+    "r": "R",
     "sr": "SR",
     "ssr": "SSR"
   },
@@ -68,6 +91,18 @@
       "dark": "Dark",
       "light": "Light"
     }
+  },
+  "errors": {
+    "internal_server_error": {
+      "title": "Internal Server Error",
+      "description": "The server reported a problem that we couldn't automatically recover from. Please try your request again."
+    },
+    "not_found": {
+      "title": "Not found",
+      "description": "The page you're looking for couldn't be found",
+      "button": "Create a new party"
+    },
+    "unauthorized": "You don't have permission to perform that action"
   },
   "proficiencies": {
     "sabre": "Sabre",
@@ -136,6 +171,22 @@
     },
     "changelog": {
       "title": "Changelog"
+    },
+    "characters": {
+      "title": "Character",
+      "subtitles": {
+        "ring": "Over Mastery",
+        "earring": "Aetherial Mastery",
+        "permanent": "Permanent Mastery",
+        "awakening": "Awakening"
+      },
+      "messages": {
+        "remove": "Are you sure you want to remove <strong>{{character}}</strong> from your team?"
+      },
+      "buttons": {
+        "confirm": "Save character",
+        "remove": "Remove character"
+      }
     },
     "conflict": {
       "character": "Only one <strong>version of a character</strong> can be included in each party. Do you want to change your party members?",
@@ -226,10 +277,16 @@
         "password_confirm": "Password (again)"
       }
     },
+    "summon": {
+      "buttons": {
+        "remove": "Remove summon"
+      }
+    },
     "weapon": {
       "title": "Modify Weapon",
       "buttons": {
-        "confirm": "Save weapon"
+        "confirm": "Save weapon",
+        "remove": "Remove weapon"
       },
       "subtitles": {
         "element": "Element",
@@ -246,6 +303,8 @@
     "language": "Language",
     "login": "Log in",
     "roadmap": "Roadmap",
+    "profile": "Your profile",
+    "new": "New party",
     "saved": "Saved",
     "settings": "Settings",
     "signup": "Sign up",
@@ -308,6 +367,9 @@
   },
   "page": {
     "titles": {
+      "about": "About granblue.team",
+      "updates": "Updates / granblue.team",
+      "roadmap": "Roadmap / granblue.team",
       "discover": "Discover teams / granblue.team",
       "new": "Create a new team / granblue.team",
       "profile": "@{{username}}'s Teams / granblue.team",
@@ -315,6 +377,9 @@
       "saved": "Your saved teams / granblue.team"
     },
     "descriptions": {
+      "about": "More about granblue.team / Save and discover teams to use in Granblue Fantasy",
+      "updates": "Latest updates to granblue.team",
+      "roadmap": "Upcoming planned features for granblue.team",
       "discover": "Save and discover teams to use in Granblue Fantasy and search by raid, element or recency",
       "new": "Create and theorycraft teams to use in Granblue Fantasy and share with the community",
       "profile": "Browse @{{username}}'s Teams and filter by raid, element or recency",
@@ -334,10 +399,38 @@
       "no_skill": "No skill"
     }
   },
+  "toasts": {
+    "copied": "This party's URL was copied to your clipboard",
+    "remixed": "You remixed {{title}}",
+    "update": {
+      "title": "New update",
+      "description": {
+        "content": "New items have been added from the latest Granblue Fantasy update.",
+        "feature": "Now you can remix other people's teams, add Character rings and earrings, set Shields and Manatura on teams, and more!"
+      },
+      "button": "Learn more"
+    }
+  },
+  "tokens": {
+    "remix": "Remixed"
+  },
+  "tooltips": {
+    "copy_url": "Copy the URL to this team",
+    "new": "Create a new team",
+    "remix": "Make a copy of this team",
+    "save": "Save this team to your account",
+    "source": "Go to original team"
+  },
   "extra_weapons": "Additional Weapons",
+  "equipped": "Equipped",
   "coming_soon": "Coming Soon",
+  "new_party": "New party",
+  "no_accessory": "No {{accessory}} equipped",
   "no_title": "Untitled",
   "no_raid": "No raid",
   "no_user": "Anonymous",
-  "no_job": "No class"
+  "no_job": "No class",
+  "no_value": "No value",
+  "remixes": "Remixes",
+  "level": "Level"
 }

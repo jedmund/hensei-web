@@ -2,8 +2,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
 import Alert from '~components/Alert'
@@ -15,13 +16,13 @@ import type { DetailsObject, JobSkillObject, SearchableObject } from '~types'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
-import { accountState } from '~utils/accountState'
 
 import './index.scss'
 
 // Props
 interface Props {
   new: boolean
+  editable: boolean
   characters?: GridCharacter[]
   createParty: (details?: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
@@ -31,15 +32,21 @@ const CharacterGrid = (props: Props) => {
   // Constants
   const numCharacters: number = 5
 
+  // Localization
+  const { t } = useTranslation('common')
+
   // Cookies
   const cookie = getCookie('account')
   const accountData: AccountCookie = cookie
     ? JSON.parse(cookie as string)
     : null
 
+  // Set up state for error handling
+  const [axiosError, setAxiosError] = useState<AxiosResponse>()
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false)
+
   // Set up state for view management
   const { party, grid } = useSnapshot(appState)
-  const [slug, setSlug] = useState()
   const [modalOpen, setModalOpen] = useState(false)
 
   // Set up state for conflict management
@@ -55,27 +62,23 @@ const CharacterGrid = (props: Props) => {
     2: undefined,
     3: undefined,
   })
+  const [jobAccessory, setJobAccessory] = useState<JobAccessory>()
   const [errorMessage, setErrorMessage] = useState('')
 
-  // Create a temporary state to store previous character uncap values
+  // Create a temporary state to store previous weapon uncap values and transcendence stages
   const [previousUncapValues, setPreviousUncapValues] = useState<{
     [key: number]: number | undefined
   }>({})
 
-  // Set the editable flag only on first load
-  useEffect(() => {
-    // If user is logged in and matches
-    if (
-      (accountData && party.user && accountData.userId === party.user.id) ||
-      props.new
-    )
-      appState.party.editable = true
-    else appState.party.editable = false
-  }, [props.new, accountData, party])
+  const [previousTranscendenceStages, setPreviousTranscendenceStages] =
+    useState<{
+      [key: number]: number | undefined
+    }>({})
 
   useEffect(() => {
     setJob(appState.party.job)
     setJobSkills(appState.party.jobSkills)
+    setJobAccessory(appState.party.accessory)
   }, [appState])
 
   // Initialize an array of current uncap values for each characters
@@ -101,10 +104,18 @@ const CharacterGrid = (props: Props) => {
           .catch((error) => console.error(error))
       })
     } else {
-      if (party.editable)
+      if (props.editable)
         saveCharacter(party.id, character, position)
           .then((response) => handleCharacterResponse(response.data))
-          .catch((error) => console.error(error))
+          .catch((error) => {
+            const axiosError = error as AxiosError
+            const response = axiosError.response
+
+            if (response) {
+              setErrorAlertOpen(true)
+              setAxiosError(response)
+            }
+          })
     }
   }
 
@@ -171,8 +182,17 @@ const CharacterGrid = (props: Props) => {
     setIncoming(undefined)
   }
 
+  async function removeCharacter(id: string) {
+    try {
+      const response = await api.endpoints.grid_characters.destroy({ id: id })
+      appState.grid.characters[response.data.position] = undefined
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   // Methods: Saving job and job skills
-  const saveJob = async function (job?: Job) {
+  async function saveJob(job?: Job) {
     const payload = {
       party: {
         job_id: job ? job.id : -1,
@@ -200,8 +220,8 @@ const CharacterGrid = (props: Props) => {
     }
   }
 
-  const saveJobSkill = function (skill: JobSkill, position: number) {
-    if (party.id && appState.party.editable) {
+  function saveJobSkill(skill: JobSkill, position: number) {
+    if (party.id && props.editable) {
       const positionedKey = `skill${position}_id`
 
       let skillObject: {
@@ -239,6 +259,24 @@ const CharacterGrid = (props: Props) => {
     }
   }
 
+  async function saveAccessory(accessory: JobAccessory) {
+    const payload = {
+      party: {
+        accessory_id: accessory.id,
+      },
+    }
+
+    if (appState.party.id) {
+      const response = await api.endpoints.parties.update(
+        appState.party.id,
+        payload
+      )
+      const team = response.data.party
+      setJobAccessory(team.accessory)
+      appState.party.accessory = team.accessory
+    }
+  }
+
   // Methods: Helpers
   function characterUncapLevel(character: Character) {
     let uncapLevel
@@ -260,6 +298,7 @@ const CharacterGrid = (props: Props) => {
   // Note: Saves, but debouncing is not working properly
   async function saveUncap(id: string, position: number, uncapLevel: number) {
     storePreviousUncapValue(position)
+    storePreviousTranscendenceStage(position)
 
     try {
       if (uncapLevel != previousUncapValues[position])
@@ -271,11 +310,17 @@ const CharacterGrid = (props: Props) => {
 
       // Revert optimistic UI
       updateUncapLevel(position, previousUncapValues[position])
+      updateTranscendenceStage(position, previousTranscendenceStages[position])
 
       // Remove optimistic key
-      let newPreviousValues = { ...previousUncapValues }
-      delete newPreviousValues[position]
-      setPreviousUncapValues(newPreviousValues)
+      let newPreviousTranscendenceStages = { ...previousTranscendenceStages }
+      let newPreviousUncapValues = { ...previousUncapValues }
+
+      delete newPreviousTranscendenceStages[position]
+      delete newPreviousUncapValues[position]
+
+      setPreviousTranscendenceStages(newPreviousTranscendenceStages)
+      setPreviousUncapValues(newPreviousUncapValues)
     }
   }
 
@@ -284,26 +329,26 @@ const CharacterGrid = (props: Props) => {
     position: number,
     uncapLevel: number
   ) {
-    if (
-      party.user &&
-      accountState.account.user &&
-      party.user.id === accountState.account.user.id
-    ) {
-      memoizeAction(id, position, uncapLevel)
+    if (props.editable) {
+      memoizeUncapAction(id, position, uncapLevel)
 
       // Optimistically update UI
       updateUncapLevel(position, uncapLevel)
+
+      if (uncapLevel < 6) {
+        updateTranscendenceStage(position, 0)
+      }
     }
   }
 
-  const memoizeAction = useCallback(
+  const memoizeUncapAction = useCallback(
     (id: string, position: number, uncapLevel: number) => {
-      debouncedAction(id, position, uncapLevel)
+      debouncedUncapAction(id, position, uncapLevel)
     },
     [props, previousUncapValues]
   )
 
-  const debouncedAction = useMemo(
+  const debouncedUncapAction = useMemo(
     () =>
       debounce((id, position, number) => {
         saveUncap(id, position, number)
@@ -332,11 +377,119 @@ const CharacterGrid = (props: Props) => {
     }
   }
 
+  // Methods: Updating transcendence stage
+  // Note: Saves, but debouncing is not working properly
+  async function saveTranscendence(
+    id: string,
+    position: number,
+    stage: number
+  ) {
+    storePreviousUncapValue(position)
+    storePreviousTranscendenceStage(position)
+
+    const payload = {
+      character: {
+        uncap_level: stage > 0 ? 6 : 5,
+        transcendence_step: stage,
+      },
+    }
+
+    try {
+      if (stage != previousTranscendenceStages[position])
+        await api.endpoints.grid_characters
+          .update(id, payload)
+          .then((response) => {
+            storeGridCharacter(response.data)
+          })
+    } catch (error) {
+      console.error(error)
+
+      // Revert optimistic UI
+      updateUncapLevel(position, previousUncapValues[position])
+      updateTranscendenceStage(position, previousTranscendenceStages[position])
+
+      // Remove optimistic key
+      let newPreviousTranscendenceStages = { ...previousTranscendenceStages }
+      let newPreviousUncapValues = { ...previousUncapValues }
+
+      delete newPreviousTranscendenceStages[position]
+      delete newPreviousUncapValues[position]
+
+      setPreviousTranscendenceStages(newPreviousTranscendenceStages)
+      setPreviousUncapValues(newPreviousUncapValues)
+    }
+  }
+
+  function initiateTranscendenceUpdate(
+    id: string,
+    position: number,
+    stage: number
+  ) {
+    if (props.editable) {
+      memoizeTranscendenceAction(id, position, stage)
+
+      // Optimistically update UI
+      updateTranscendenceStage(position, stage)
+
+      if (stage > 0) {
+        updateUncapLevel(position, 6)
+      }
+    }
+  }
+
+  const memoizeTranscendenceAction = useCallback(
+    (id: string, position: number, stage: number) => {
+      debouncedTranscendenceAction(id, position, stage)
+    },
+    [props, previousTranscendenceStages]
+  )
+
+  const debouncedTranscendenceAction = useMemo(
+    () =>
+      debounce((id, position, number) => {
+        saveTranscendence(id, position, number)
+      }, 500),
+    [props, saveTranscendence]
+  )
+
+  const updateTranscendenceStage = (
+    position: number,
+    stage: number | undefined
+  ) => {
+    const character = appState.grid.characters[position]
+    if (character && stage !== undefined) {
+      character.transcendence_step = stage
+      appState.grid.characters[position] = character
+    }
+  }
+
+  function storePreviousTranscendenceStage(position: number) {
+    // Save the current value in case of an unexpected result
+    let newPreviousValues = { ...previousUncapValues }
+
+    if (grid.characters[position]) {
+      newPreviousValues[position] = grid.characters[position]?.uncap_level
+      setPreviousTranscendenceStages(newPreviousValues)
+    }
+  }
+
   function cancelAlert() {
     setErrorMessage('')
   }
 
   // Render: JSX components
+  const errorAlert = () => {
+    return (
+      <Alert
+        open={errorAlertOpen}
+        title={axiosError ? `${axiosError.status}` : 'Error'}
+        message={t(`errors.${axiosError?.statusText.toLowerCase()}`)}
+        cancelAction={() => setErrorAlertOpen(false)}
+        cancelActionText={t('buttons.confirm')}
+      />
+    )
+  }
+
   return (
     <div>
       <Alert
@@ -349,9 +502,11 @@ const CharacterGrid = (props: Props) => {
         <JobSection
           job={job}
           jobSkills={jobSkills}
-          editable={party.editable}
+          jobAccessory={jobAccessory}
+          editable={props.editable}
           saveJob={saveJob}
           saveSkill={saveJobSkill}
+          saveAccessory={saveAccessory}
         />
         <CharacterConflictModal
           open={modalOpen}
@@ -367,16 +522,19 @@ const CharacterGrid = (props: Props) => {
               <li key={`grid_unit_${i}`}>
                 <CharacterUnit
                   gridCharacter={grid.characters[i]}
-                  editable={party.editable}
+                  editable={props.editable}
                   position={i}
                   updateObject={receiveCharacterFromSearch}
                   updateUncap={initiateUncapUpdate}
+                  updateTranscendence={initiateTranscendenceUpdate}
+                  removeCharacter={removeCharacter}
                 />
               </li>
             )
           })}
         </ul>
       </div>
+      {errorAlert()}
     </div>
   )
 }

@@ -5,7 +5,6 @@ export enum ButtonType {
 }
 
 export enum GridType {
-  Class,
   Character,
   Weapon,
   Summon,
@@ -18,4 +17,10 @@ export enum TeamElement {
   Earth,
   Dark,
   Light,
+}
+
+export enum AboutTabs {
+  About,
+  Updates,
+  Roadmap,
 }

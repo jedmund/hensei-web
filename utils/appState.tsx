@@ -1,9 +1,10 @@
 import { proxy } from 'valtio'
-import { JobSkillObject } from '~types'
+import { JobSkillObject, ResponseStatus } from '~types'
 import { GroupedWeaponKeys } from './groupWeaponKeys'
 
 const emptyJob: Job = {
   id: '-1',
+  granblue_id: '-1',
   row: '',
   ml: false,
   order: 0,
@@ -15,6 +16,19 @@ const emptyJob: Job = {
     proficiency1: 0,
     proficiency2: 0,
   },
+  accessory: false,
+  accessory_type: 0,
+}
+
+const emptyJobAccessory: JobAccessory = {
+  id: '-1',
+  granblue_id: '-1',
+  job: emptyJob,
+  name: {
+    en: '',
+    ja: '',
+  },
+  rarity: 0,
 }
 
 interface AppState {
@@ -22,12 +36,14 @@ interface AppState {
 
   party: {
     id: string | undefined
+    shortcode: string | undefined
     editable: boolean
     detailsVisible: boolean
     name: string | undefined
     description: string | undefined
     job: Job
     jobSkills: JobSkillObject
+    accessory: JobAccessory
     raid: Raid | undefined
     element: number
     fullAuto: boolean
@@ -40,6 +56,9 @@ interface AppState {
     extra: boolean
     user: User | undefined
     favorited: boolean
+    remix: boolean
+    remixes: Party[]
+    sourceParty?: Party
     created_at: string
     updated_at: string
   }
@@ -66,11 +85,14 @@ interface AppState {
   jobs: Job[]
   jobSkills: JobSkill[]
   weaponKeys: GroupedWeaponKeys
+  version: AppUpdate
+  status?: ResponseStatus
 }
 
 export const initialAppState: AppState = {
   party: {
     id: undefined,
+    shortcode: '',
     editable: false,
     detailsVisible: false,
     name: undefined,
@@ -82,6 +104,7 @@ export const initialAppState: AppState = {
       2: undefined,
       3: undefined,
     },
+    accessory: emptyJobAccessory,
     raid: undefined,
     fullAuto: false,
     autoGuard: false,
@@ -94,6 +117,9 @@ export const initialAppState: AppState = {
     extra: false,
     user: undefined,
     favorited: false,
+    remix: false,
+    remixes: [],
+    sourceParty: undefined,
     created_at: '',
     updated_at: '',
   },
@@ -126,6 +152,12 @@ export const initialAppState: AppState = {
     gauph: [],
     emblem: [],
   },
+  version: {
+    version: '0.0',
+    update_type: '',
+    updated_at: '',
+  },
+  status: undefined,
 }
 
 export const appState = proxy(initialAppState)

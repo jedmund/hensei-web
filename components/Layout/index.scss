@@ -1,0 +1,15 @@
+.ToastViewport {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  max-width: 100vw;
+  z-index: 2147483647;
+  padding: 25px;
+  gap: 10px;
+  margin: 0px;
+  list-style: none;
+  outline: none;
+}

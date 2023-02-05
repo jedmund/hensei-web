@@ -1,26 +1,24 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
 
 import api from '~utils/api'
-import setUserToken from '~utils/setUserToken'
+import { setHeaders } from '~utils/userToken'
 import { accountState } from '~utils/accountState'
 
 import Button from '~components/Button'
-import Input from '~components/LabelledInput'
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogClose,
-} from '~components/Dialog'
-
+import Input from '~components/Input'
+import { Dialog, DialogTrigger, DialogClose } from '~components/Dialog'
+import DialogContent from '~components/DialogContent'
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
-interface Props {}
+interface Props {
+  open: boolean
+  onOpenChange?: (open: boolean) => void
+}
 
 interface ErrorMap {
   [index: string]: string
@@ -54,12 +52,18 @@ const SignupModal = (props: Props) => {
   const emailInput = React.createRef<HTMLInputElement>()
   const passwordInput = React.createRef<HTMLInputElement>()
   const passwordConfirmationInput = React.createRef<HTMLInputElement>()
+  const footerRef = React.createRef<HTMLDivElement>()
+
   const form = [
     usernameInput,
     emailInput,
     passwordInput,
     passwordConfirmationInput,
   ]
+
+  useEffect(() => {
+    setOpen(props.open)
+  }, [props.open])
 
   function register(event: React.FormEvent) {
     event.preventDefault()
@@ -94,10 +98,12 @@ const SignupModal = (props: Props) => {
       token: resp.token,
     }
 
-    setCookie('account', cookieObj, { path: '/' })
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+    setCookie('account', cookieObj, { path: '/', expires: expiresAt })
 
     // Set Axios default headers
-    setUserToken()
+    setHeaders()
   }
 
   function fetchUserInfo(id: string) {
@@ -109,24 +115,32 @@ const SignupModal = (props: Props) => {
     const user = response.data
 
     // Set user data in the user cookie
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 60)
+
     setCookie(
       'user',
       {
-        picture: user.avatar.picture,
-        element: user.avatar.element,
+        avatar: {
+          picture: user.avatar.picture,
+          element: user.avatar.element,
+        },
         language: user.language,
         gender: user.gender,
         theme: user.theme,
       },
-      { path: '/' }
+      { path: '/', expires: expiresAt }
     )
 
     // Set the user data in the account state
     accountState.account.user = {
       id: user.id,
       username: user.username,
-      picture: user.avatar.picture,
-      element: user.avatar.element,
+      granblueId: '',
+      avatar: {
+        picture: user.avatar.picture,
+        element: user.avatar.element,
+      },
       gender: user.gender,
       language: user.language,
       theme: user.theme,
@@ -264,6 +278,9 @@ const SignupModal = (props: Props) => {
       password: '',
       passwordConfirmation: '',
     })
+    setFormValid(false)
+
+    if (props.onOpenChange) props.onOpenChange(open)
   }
 
   function onEscapeKeyDown(event: KeyboardEvent) {
@@ -277,13 +294,9 @@ const SignupModal = (props: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={openChange}>
-      <DialogTrigger asChild>
-        <li className="MenuItem">
-          <span>{t('menu.signup')}</span>
-        </li>
-      </DialogTrigger>
       <DialogContent
-        className="Signup Dialog"
+        className="Signup"
+        footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
@@ -297,48 +310,55 @@ const SignupModal = (props: Props) => {
         </div>
 
         <form className="form" onSubmit={register}>
-          <Input
-            className="Bound"
-            name="username"
-            placeholder={t('modals.signup.placeholders.username')}
-            onChange={handleNameChange}
-            error={errors.username}
-            ref={usernameInput}
-          />
+          <div className="Fields">
+            <Input
+              className="Bound"
+              name="username"
+              placeholder={t('modals.signup.placeholders.username')}
+              onChange={handleNameChange}
+              error={errors.username}
+              ref={usernameInput}
+            />
 
-          <Input
-            className="Bound"
-            name="email"
-            placeholder={t('modals.signup.placeholders.email')}
-            onChange={handleNameChange}
-            error={errors.email}
-            ref={emailInput}
-          />
+            <Input
+              className="Bound"
+              name="email"
+              placeholder={t('modals.signup.placeholders.email')}
+              onChange={handleNameChange}
+              error={errors.email}
+              ref={emailInput}
+            />
 
-          <Input
-            className="Bound"
-            name="password"
-            placeholder={t('modals.signup.placeholders.password')}
-            type="password"
-            onChange={handlePasswordChange}
-            error={errors.password}
-            ref={passwordInput}
-          />
+            <Input
+              className="Bound"
+              name="password"
+              placeholder={t('modals.signup.placeholders.password')}
+              type="password"
+              onChange={handlePasswordChange}
+              error={errors.password}
+              ref={passwordInput}
+            />
 
-          <Input
-            className="Bound"
-            name="confirm_password"
-            placeholder={t('modals.signup.placeholders.password_confirm')}
-            type="password"
-            onChange={handlePasswordChange}
-            error={errors.passwordConfirmation}
-            ref={passwordConfirmationInput}
-          />
+            <Input
+              className="Bound"
+              name="confirm_password"
+              placeholder={t('modals.signup.placeholders.password_confirm')}
+              type="password"
+              onChange={handlePasswordChange}
+              error={errors.passwordConfirmation}
+              ref={passwordConfirmationInput}
+            />
+          </div>
 
-          <Button
-            disabled={!formValid}
-            text={t('modals.signup.buttons.confirm')}
-          />
+          <div className="DialogFooter" ref={footerRef}>
+            <div className="Buttons Span">
+              <Button
+                contained={true}
+                disabled={!formValid}
+                text={t('modals.signup.buttons.confirm')}
+              />
+            </div>
+          </div>
 
           <p className="terms">
             {/* <Trans i18nKey="modals.signup.agreement">

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
-import { useSnapshot } from 'valtio'
+import { subscribe, useSnapshot } from 'valtio'
 import clonedeep from 'lodash.clonedeep'
+import ls from 'local-storage'
 
 import PartySegmentedControl from '~components/PartySegmentedControl'
 import PartyDetails from '~components/PartyDetails'
@@ -10,8 +12,13 @@ import SummonGrid from '~components/SummonGrid'
 import CharacterGrid from '~components/CharacterGrid'
 
 import api from '~utils/api'
+import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
+import { getLocalId } from '~utils/localId'
 import { GridType } from '~utils/enums'
+import { retrieveCookies } from '~utils/retrieveCookies'
+import { setEditKey, unsetEditKey } from '~utils/userToken'
+
 import type { DetailsObject } from '~types'
 
 import './index.scss'
@@ -21,7 +28,12 @@ interface Props {
   new?: boolean
   team?: Party
   raids: Raid[][]
+  selectedTab: GridType
   pushHistory?: (path: string) => void
+}
+
+const defaultProps = {
+  selectedTab: GridType.Weapon,
 }
 
 const Party = (props: Props) => {
@@ -30,7 +42,12 @@ const Party = (props: Props) => {
 
   // Set up states
   const { party } = useSnapshot(appState)
+  const [editable, setEditable] = useState(false)
   const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
+  const [refresh, setRefresh] = useState(false)
+
+  // Retrieve cookies
+  const cookies = retrieveCookies()
 
   // Reset state on first load
   useEffect(() => {
@@ -39,19 +56,67 @@ const Party = (props: Props) => {
     if (props.team) storeParty(props.team)
   }, [])
 
+  // Subscribe to app state to listen for account changes and
+  // unsubscribe when component is unmounted
+  const unsubscribe = subscribe(accountState, () => {
+    setRefresh(true)
+  })
+
+  useEffect(() => () => unsubscribe(), [])
+
+  // Set editable on first load
+  useEffect(() => {
+    // Get cookie
+    const cookie = getCookie('account')
+    const accountData: AccountCookie = cookie
+      ? JSON.parse(cookie as string)
+      : null
+
+    let editable = false
+    unsetEditKey()
+
+    if (props.new) editable = true
+
+    if (accountData && props.team && !props.new) {
+      if (accountData.token) {
+        // Authenticated
+        if (props.team.user && accountData.userId === props.team.user.id) {
+          editable = true
+        }
+      } else {
+        // Not authenticated
+        if (!props.team.user && accountData.userId === props.team.local_id) {
+          // Set editable
+          editable = true
+
+          // Also set edit key header
+          setEditKey(props.team.id, props.team.user)
+        }
+      }
+    }
+
+    appState.party.editable = editable
+    setEditable(editable)
+  }, [refresh])
+
+  // Set selected tab from props
+  useEffect(() => {
+    setCurrentTab(props.selectedTab)
+  }, [props.selectedTab])
+
   // Methods: Creating a new party
   async function createParty(details?: DetailsObject) {
     let payload = {}
     if (details) payload = formatDetailsObject(details)
 
     return await api.endpoints.parties
-      .create(payload)
+      .create({ ...payload, ...getLocalId() })
       .then((response) => storeParty(response.data.party))
   }
 
   // Methods: Updating the party's details
   async function updateDetails(details: DetailsObject) {
-    if (!appState.party.id) return await createParty(details)
+    if (!props.team) return await createParty(details)
     else updateParty(details)
   }
 
@@ -78,9 +143,9 @@ const Party = (props: Props) => {
   async function updateParty(details: DetailsObject) {
     const payload = formatDetailsObject(details)
 
-    if (appState.party.id) {
+    if (props.team && props.team.id) {
       return await api.endpoints.parties
-        .update(appState.party.id, payload)
+        .update(props.team.id, payload)
         .then((response) => storeParty(response.data.party))
     }
   }
@@ -89,21 +154,25 @@ const Party = (props: Props) => {
     appState.party.extra = event.target.checked
 
     // Only save if this is a saved party
-    if (appState.party.id) {
-      api.endpoints.parties.update(appState.party.id, {
+    if (props.team && props.team.id) {
+      api.endpoints.parties.update(props.team.id, {
         party: { extra: event.target.checked },
       })
     }
   }
 
   // Deleting the party
-  function deleteTeam(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    if (appState.party.editable && appState.party.id) {
+  function deleteTeam() {
+    if (props.team && editable) {
       api.endpoints.parties
-        .destroy({ id: appState.party.id })
+        .destroy({ id: props.team.id })
         .then(() => {
           // Push to route
-          router.push('/')
+          if (cookies && cookies.account.username) {
+            router.push(`/${cookies.account.username}`)
+          } else {
+            router.push('/')
+          }
 
           // Clean state
           const resetState = clonedeep(initialAppState)
@@ -121,7 +190,7 @@ const Party = (props: Props) => {
   }
 
   // Methods: Storing party data
-  const storeParty = function (team: Party) {
+  const storeParty = function (team: any) {
     // Store the important party and state-keeping values in global state
     appState.party.name = team.name
     appState.party.description = team.description
@@ -129,25 +198,50 @@ const Party = (props: Props) => {
     appState.party.updated_at = team.updated_at
     appState.party.job = team.job
     appState.party.jobSkills = team.job_skills
+    appState.party.accessory = team.accessory
 
     appState.party.id = team.id
+    appState.party.shortcode = team.shortcode
     appState.party.extra = team.extra
     appState.party.user = team.user
     appState.party.favorited = team.favorited
+    appState.party.remix = team.remix
+    appState.party.remixes = team.remixes
+    appState.party.sourceParty = team.source_party
     appState.party.created_at = team.created_at
     appState.party.updated_at = team.updated_at
 
     appState.party.detailsVisible = false
+
+    // Store the edit key in local storage
+    if (team.edit_key) {
+      storeEditKey(team.id, team.edit_key)
+      setEditKey(team.id, team.user)
+    }
 
     // Populate state
     storeCharacters(team.characters)
     storeWeapons(team.weapons)
     storeSummons(team.summons)
 
+    // Create a string to send the user back to the tab they're currently on
+    let tab = ''
+    if (currentTab === GridType.Character) {
+      tab = 'characters'
+    } else if (currentTab === GridType.Summon) {
+      tab = 'summons'
+    }
+
     // Then, push the browser history to the new party's URL
-    if (props.pushHistory) props.pushHistory(`/p/${team.shortcode}`)
+    if (props.pushHistory) {
+      props.pushHistory(`/p/${team.shortcode}/${tab}`)
+    }
 
     return team
+  }
+
+  const storeEditKey = (id: string, key: string) => {
+    ls(id, key)
   }
 
   const storeCharacters = (list: Array<GridCharacter>) => {
@@ -184,17 +278,22 @@ const Party = (props: Props) => {
 
   // Methods: Navigating with segmented control
   function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
+    const path = [
+      router.asPath.split('/').filter((el) => el != '')[1],
+      event.target.value,
+    ].join('/')
+
     switch (event.target.value) {
-      case 'class':
-        setCurrentTab(GridType.Class)
-        break
       case 'characters':
+        router.replace(path)
         setCurrentTab(GridType.Character)
         break
       case 'weapons':
+        router.replace(path)
         setCurrentTab(GridType.Weapon)
         break
       case 'summons':
+        router.replace(path)
         setCurrentTab(GridType.Summon)
         break
       default:
@@ -214,6 +313,7 @@ const Party = (props: Props) => {
   const weaponGrid = (
     <WeaponGrid
       new={props.new || false}
+      editable={editable}
       weapons={props.team?.weapons}
       createParty={createParty}
       pushHistory={props.pushHistory}
@@ -223,6 +323,7 @@ const Party = (props: Props) => {
   const summonGrid = (
     <SummonGrid
       new={props.new || false}
+      editable={editable}
       summons={props.team?.summons}
       createParty={createParty}
       pushHistory={props.pushHistory}
@@ -232,6 +333,7 @@ const Party = (props: Props) => {
   const characterGrid = (
     <CharacterGrid
       new={props.new || false}
+      editable={editable}
       characters={props.team?.characters}
       createParty={createParty}
       pushHistory={props.pushHistory}
@@ -263,5 +365,7 @@ const Party = (props: Props) => {
     </React.Fragment>
   )
 }
+
+Party.defaultProps = defaultProps
 
 export default Party

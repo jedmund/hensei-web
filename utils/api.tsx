@@ -115,6 +115,16 @@ class Api {
     return axios.get(resourceUrl, params)
   }
 
+  jobAccessoriesForJob(jobId: string, params?: {}) {
+    const resourceUrl = `${this.url}/jobs/${jobId}/accessories`
+    return axios.get(resourceUrl, params)
+  }
+
+  remix({ shortcode, body, params}: { shortcode: string, body?: {}, params?: {} }) {
+    const resourceUrl = `${this.url}/parties/${shortcode}/remix`
+    return axios.post(resourceUrl, body, params)
+  }
+
   savedTeams(params: {}) {
     const resourceUrl = `${this.url}/parties/favorites`
     return axios.get(resourceUrl, params)
@@ -138,7 +148,8 @@ class Api {
     return axios.post(resourceUrl, {
       [resource]: {
         id: id,
-        uncap_level: value
+        uncap_level: value,
+        transcendence_step: 0
       }
     })
   }
@@ -147,12 +158,22 @@ class Api {
     const resourceUrl = `${this.url}/users/info/${id}`
     return axios.get(resourceUrl)
   }
+
+  version() {
+    const resourceUrl = `${this.url}/version`
+    return axios.get(resourceUrl)
+  }
 }
 
 const api: Api = new Api({ url: process.env.NEXT_PUBLIC_SIERO_API_URL || 'https://localhost:3000/api/v1'})
 api.createEntity({ name: 'users' })
 api.createEntity({ name: 'parties' })
+api.createEntity({ name: 'characters' })
+api.createEntity({ name: 'weapons' })
+api.createEntity({ name: 'summons' })
+api.createEntity({ name: 'grid_characters' })
 api.createEntity({ name: 'grid_weapons' })
+api.createEntity({ name: 'grid_summons' })
 api.createEntity({ name: 'characters' })
 api.createEntity({ name: 'weapons' })
 api.createEntity({ name: 'summons' })
