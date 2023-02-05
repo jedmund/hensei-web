@@ -465,7 +465,7 @@ const Header = () => {
         {accountState.account.authorized && accountState.account.user ? (
           <>
             <DropdownMenuGroup className="MenuGroup">
-              <DropdownMenuItem className="MenuItem" onClick={closeRightMenu}>
+              <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
                 <Link
                   href={`/${accountState.account.user.username}` || ''}
                   passHref
@@ -536,7 +536,7 @@ const Header = () => {
             <DropdownMenuLabel className="MenuLabel">
               {account.user ? `@${account.user.username}` : t('no_user')}
             </DropdownMenuLabel>
-            <DropdownMenuItem className="MenuItem">
+            <DropdownMenuItem className="MenuItem" onClick={closeRightMenu}>
               <Link href={`/${account.user.username}` || ''} passHref>
                 <span>{t('menu.profile')}</span>
               </Link>
