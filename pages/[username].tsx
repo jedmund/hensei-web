@@ -21,6 +21,7 @@ import ErrorSection from '~components/ErrorSection'
 import FilterBar from '~components/FilterBar'
 import ProfileHead from '~components/ProfileHead'
 
+import type { AxiosError } from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type {
   FilterObject,
@@ -28,7 +29,6 @@ import type {
   PaginationObject,
   ResponseStatus,
 } from '~types'
-import { AxiosError } from 'axios'
 
 interface Props {
   context?: PageContextObj
@@ -160,7 +160,7 @@ const ProfileRoute: React.FC<Props> = ({
           .catch((error) => handleError(error))
       }
     },
-    [currentPage, parties, element, raid, recency]
+    [currentPage, username, parties, element, raid, recency]
   )
 
   function replaceResults(count: number, list: Party[]) {
@@ -194,7 +194,7 @@ const ProfileRoute: React.FC<Props> = ({
   useDidMountEffect(() => {
     setCurrentPage(1)
     fetchProfile({ replace: true })
-  }, [element, raid, recency])
+  }, [username, element, raid, recency])
 
   // When the page changes, fetch all teams again.
   useDidMountEffect(() => {
