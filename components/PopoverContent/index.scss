@@ -7,4 +7,5 @@
   outline: none;
   padding: $unit;
   transform-origin: var(--radix-popover-content-transform-origin);
+  z-index: 5;
 }
