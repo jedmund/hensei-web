@@ -63,7 +63,8 @@
       "bugs": [
         "Fixed a bug that caused users to be logged out whenever they restarted their browser",
         "Fixed a bug that caused Dark Opus weapons to permanently disappear when adding them to a party that already had one",
-        "Rebuilt the component for Clear Time in party details to have a more predictable user experience"
+        "Rebuilt the component for Clear Time in party details to have a more predictable user experience",
+        "Fixed a bug that made it so you could not set Row IV EMP skills in Row V"
       ]
     },
     "1.0.1": {
