@@ -8,7 +8,8 @@
       "weapons": "武器の新上限解放",
       "summons": "召喚石の新上限解放"
     },
-    "features": "新機能"
+    "features": "新機能",
+    "updates": "その他の更新"
   },
   "events": {
     "date": "{{year}}年{{month}}月",
@@ -17,6 +18,9 @@
     "uncap": "上限解放"
   },
   "versions": {
+    "2023-02-U2": {
+      "features": ["ブレイブウェポンとレヴァンスウェポンの公式名を追加"]
+    },
     "1.1.0": {
       "features": [
         {

@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
 import ChangelogUnit from '~components/ChangelogUnit'
@@ -30,6 +29,9 @@ const UpdatesPage = () => {
         'toasts',
       ],
     },
+    '202302U2': {
+      updates: 1,
+    },
   }
 
   function image(
@@ -53,6 +55,47 @@ const UpdatesPage = () => {
   return (
     <div className="Updates PageContent">
       <h1>{common('about.segmented_control.updates')}</h1>
+      <section className="Content Version" data-version="2023-02U2">
+        <div className="Header">
+          <h3>{`${updates('events.date', {
+            year: 2023,
+            month: 2,
+          })}  ${updates('events.uncap')}`}</h3>
+          <time>2023/02/06</time>
+        </div>
+        <div className="Contents">
+          <section className="characters">
+            <h4>{updates('labels.uncaps.characters')}</h4>
+            <div className="items">
+              <ChangelogUnit id="3040252000" type="character" image="03" />
+            </div>
+          </section>
+          <section className="weapons">
+            <h4>{updates('labels.uncaps.weapons')}</h4>
+            <div className="items">
+              <ChangelogUnit id="1040016100" type="weapon" />
+            </div>
+          </section>
+          <section className="weapons">
+            <h4>{updates('labels.weapons')}</h4>
+            <div className="items">
+              <ChangelogUnit id="1040617100" type="weapon" />
+            </div>
+          </section>
+        </div>
+        <div>
+          <section>
+            <h2>{updates('labels.updates')}</h2>
+            <ul className="Bare Contents">
+              {[...Array(versionUpdates['202302U2'])].map((e, i) => (
+                <li key={`2023-02-U2-${i}`}>
+                  {updates(`versions.2023-02-U2.features.${i}`)}
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+      </section>
       <section className="Version" data-version="1.1">
         <div className="Header">
           <h3>1.1.0</h3>
