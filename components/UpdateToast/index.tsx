@@ -12,7 +12,7 @@ import { useTranslation } from 'next-i18next'
 
 interface Props {
   open: boolean
-  updateType: 'feature' | 'content'
+  updateType: string
   lastUpdated: string
   onActionClicked: () => void
   onCloseClicked: () => void

@@ -53,7 +53,7 @@ const Layout = ({ children }: PropsWithChildren<Props>) => {
     return !['about', 'updates', 'roadmap'].includes(path) ? (
       <UpdateToast
         open={updateToastOpen}
-        updateType="feature"
+        updateType={appState.version.update_type}
         onActionClicked={handleToastActionClicked}
         onCloseClicked={handleToastClosed}
         lastUpdated={appState.version.updated_at}
