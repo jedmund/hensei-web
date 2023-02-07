@@ -8,7 +8,8 @@
       "weapons": "New weapon uncaps",
       "summons": "New summon uncaps"
     },
-    "features": "New features"
+    "features": "New features",
+    "updates": "Other updates"
   },
   "events": {
     "date": "{{month}}/{{year}}",
@@ -17,6 +18,9 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2023-02-U2": {
+      "features": ["Added official names for Proven Weapons and Revans Weapons"]
+    },
     "1.1.0": {
       "features": [
         {
