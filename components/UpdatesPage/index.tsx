@@ -55,6 +55,38 @@ const UpdatesPage = () => {
   return (
     <div className="Updates PageContent">
       <h1>{common('about.segmented_control.updates')}</h1>
+      <section className="Content Version" data-version="2023-02U3">
+        <div className="Header">
+          <h3>{`${updates('events.date', {
+            year: 2023,
+            month: 2,
+          })}  ${updates('events.uncap')}`}</h3>
+          <time>2023/02/12</time>
+        </div>
+        <div className="Contents">
+          <section className="characters">
+            <h4>{updates('labels.uncaps.characters')}</h4>
+            <div className="items">
+              <ChangelogUnit id="3040173000" type="character" image="03" />
+            </div>
+          </section>
+          <section className="weapons">
+            <h4>{updates('labels.uncaps.weapons')}</h4>
+            <div className="items">
+              <ChangelogUnit id="1040606800" type="weapon" />
+              <ChangelogUnit id="1040606900" type="weapon" />
+              <ChangelogUnit id="1040607000" type="weapon" />
+              <ChangelogUnit id="1040509500" type="weapon" />
+            </div>
+          </section>
+          <section className="summons">
+            <h4>{updates('labels.uncaps.summons')}</h4>
+            <div className="items">
+              <ChangelogUnit id="2040288000" type="summon" />
+            </div>
+          </section>
+        </div>
+      </section>
       <section className="Content Version" data-version="2023-02U2">
         <div className="Header">
           <h3>{`${updates('events.date', {
