@@ -55,6 +55,31 @@ const UpdatesPage = () => {
   return (
     <div className="Updates PageContent">
       <h1>{common('about.segmented_control.updates')}</h1>
+      <section className="Content Version" data-version="2023-02F">
+        <div className="Header">
+          <h3>{`${updates('events.date', {
+            year: 2023,
+            month: 2,
+          })}  ${updates('events.flash')}`}</h3>
+          <time>2023/02/14</time>
+        </div>
+        <div className="Contents">
+          <section className="characters">
+            <h4>{updates('labels.characters')}</h4>
+            <div className="items">
+              <ChangelogUnit id="3040447000" type="character" />
+              <ChangelogUnit id="3040448000" type="character" />
+            </div>
+          </section>
+          <section className="weapons">
+            <h4>{updates('labels.weapons')}</h4>
+            <div className="items">
+              <ChangelogUnit id="1040617200" type="weapon" />
+              <ChangelogUnit id="1040421500" type="weapon" />
+            </div>
+          </section>
+        </div>
+      </section>
       <section className="Content Version" data-version="2023-02U3">
         <div className="Header">
           <h3>{`${updates('events.date', {
