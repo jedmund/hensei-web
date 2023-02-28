@@ -2,6 +2,7 @@ import React from 'react'
 
 import { useTranslation } from 'next-i18next'
 
+import ContentUpdate from '~components/ContentUpdate'
 import ChangelogUnit from '~components/ChangelogUnit'
 
 import './index.scss'
@@ -55,104 +56,48 @@ const UpdatesPage = () => {
   return (
     <div className="Updates PageContent">
       <h1>{common('about.segmented_control.updates')}</h1>
-      <section className="Content Version" data-version="2023-02F">
-        <div className="Header">
-          <h3>{`${updates('events.date', {
-            year: 2023,
-            month: 2,
-          })}  ${updates('events.flash')}`}</h3>
-          <time>2023/02/14</time>
-        </div>
-        <div className="Contents">
-          <section className="characters">
-            <h4>{updates('labels.characters')}</h4>
-            <div className="items">
-              <ChangelogUnit id="3040447000" type="character" />
-              <ChangelogUnit id="3040448000" type="character" />
-            </div>
-          </section>
-          <section className="weapons">
-            <h4>{updates('labels.weapons')}</h4>
-            <div className="items">
-              <ChangelogUnit id="1040617200" type="weapon" />
-              <ChangelogUnit id="1040421500" type="weapon" />
-            </div>
-          </section>
-        </div>
-      </section>
-      <section className="Content Version" data-version="2023-02U3">
-        <div className="Header">
-          <h3>{`${updates('events.date', {
-            year: 2023,
-            month: 2,
-          })}  ${updates('events.uncap')}`}</h3>
-          <time>2023/02/12</time>
-        </div>
-        <div className="Contents">
-          <section className="characters">
-            <h4>{updates('labels.uncaps.characters')}</h4>
-            <div className="items">
-              <ChangelogUnit id="3040173000" type="character" image="03" />
-            </div>
-          </section>
-          <section className="weapons">
-            <h4>{updates('labels.uncaps.weapons')}</h4>
-            <div className="items">
-              <ChangelogUnit id="1040606800" type="weapon" />
-              <ChangelogUnit id="1040606900" type="weapon" />
-              <ChangelogUnit id="1040607000" type="weapon" />
-              <ChangelogUnit id="1040509500" type="weapon" />
-            </div>
-          </section>
-          <section className="summons">
-            <h4>{updates('labels.uncaps.summons')}</h4>
-            <div className="items">
-              <ChangelogUnit id="2040288000" type="summon" />
-            </div>
-          </section>
-        </div>
-      </section>
-      <section className="Content Version" data-version="2023-02U2">
-        <div className="Header">
-          <h3>{`${updates('events.date', {
-            year: 2023,
-            month: 2,
-          })}  ${updates('events.uncap')}`}</h3>
-          <time>2023/02/06</time>
-        </div>
-        <div className="Contents">
-          <section className="characters">
-            <h4>{updates('labels.uncaps.characters')}</h4>
-            <div className="items">
-              <ChangelogUnit id="3040252000" type="character" image="03" />
-            </div>
-          </section>
-          <section className="weapons">
-            <h4>{updates('labels.uncaps.weapons')}</h4>
-            <div className="items">
-              <ChangelogUnit id="1040016100" type="weapon" />
-            </div>
-          </section>
-          <section className="weapons">
-            <h4>{updates('labels.weapons')}</h4>
-            <div className="items">
-              <ChangelogUnit id="1040617100" type="weapon" />
-            </div>
-          </section>
-        </div>
-        <div>
-          <section>
-            <h2>{updates('labels.updates')}</h2>
-            <ul className="Bare Contents">
-              {[...Array(versionUpdates['202302U2'])].map((e, i) => (
-                <li key={`2023-02-U2-${i}`}>
-                  {updates(`versions.2023-02-U2.features.${i}`)}
-                </li>
-              ))}
-            </ul>
-          </section>
-        </div>
-      </section>
+      <ContentUpdate
+        version="2023-02L"
+        dateString="2023/02/27"
+        event="events.legfest"
+        newItems={{
+          character: ['3040450000', '3040449000'],
+          weapon: ['1040421600', '1040617300', '1040712200'],
+          summon: ['2040418000'],
+        }}
+      />
+      <ContentUpdate
+        version="2023-02F"
+        dateString="2023/02/14"
+        event="events.flash"
+        newItems={{
+          character: ['3040447000', '3040448000'],
+          weapon: ['1040617200', '1040421500'],
+        }}
+      />
+      <ContentUpdate
+        version="2023-02-U3"
+        dateString="2023/02/12"
+        event="events.uncap"
+        uncappedItems={{
+          character: ['3040173000'],
+          weapon: ['1040606800', '1040606900', '1040607000', '1040509500'],
+          summon: ['2040288000'],
+        }}
+      />
+      <ContentUpdate
+        version="2023-02-U2"
+        dateString="2023/02/06"
+        event="events.uncap"
+        newItems={{
+          weapon: ['1040016100'],
+        }}
+        numNotes={versionUpdates['202302U2'].updates}
+        uncappedItems={{
+          character: ['3040252000'],
+          weapon: ['1040617100', '1040016100'],
+        }}
+      />
       <section className="Version" data-version="1.1">
         <div className="Header">
           <h3>1.1.0</h3>
