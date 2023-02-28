@@ -35,7 +35,7 @@ const ContentUpdate = ({
     if (newItems && newItems[key]) {
       const items = newItems[key]
       elements = items
-        ? items.map((id) => {
+        ? items.map((id, i) => {
             return <ChangelogUnit id={id} type={key} key={`${key}-${i}`} />
           })
         : []
