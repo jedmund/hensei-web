@@ -59,7 +59,7 @@ const UpdatesPage = () => {
       <ContentUpdate
         version="2023-02L"
         dateString="2023/02/27"
-        event="events.flash"
+        event="events.legfest"
         newItems={{
           character: ['3040450000', '3040449000'],
           weapon: ['1040421600', '1040617300', '1040712200'],
