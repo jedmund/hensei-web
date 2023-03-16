@@ -15,7 +15,7 @@ export const raidGroups: RaidGroup[] = [
   },
   {
     name: {
-      en: 'Guild Wars',
+      en: 'Unite and Fight',
       ja: '星の古戦場',
     },
   },
