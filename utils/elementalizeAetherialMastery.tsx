@@ -40,6 +40,7 @@ export default function elementalizeAetherialMastery(
 
   elementalized.unshift({
     id: 0,
+    granblue_id: '',
     name: {
       en: 'No aetherial mastery',
       ja: 'エーテリアルプラス',
