@@ -79,7 +79,11 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
         keys[index].length > 0 &&
         keys[index].sort(sortByOrder).map((item, i) => {
           return (
-            <SelectItem key={i} value={item.id}>
+            <SelectItem
+              key={i}
+              value={item.id}
+              data-granblue-id={item.granblue_id}
+            >
               {item.name.en}
             </SelectItem>
           )
