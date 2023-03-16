@@ -2,7 +2,8 @@ interface Job {
   id: string
   granblue_id: string
   row: string
-  ml: boolean
+  master_level: boolean
+  ultimate_mastery: boolean
   order: number
   name: {
     [key: string]: string

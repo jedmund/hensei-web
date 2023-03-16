@@ -20,6 +20,8 @@ interface Party {
   chain_count?: number
   source_party?: Party
   job: Job
+  master_level?: number
+  ultimate_mastery?: number
   job_skills: JobSkillObject
   accessory: JobAccessory
   shortcode: string
