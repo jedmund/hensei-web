@@ -99,7 +99,12 @@ const RaidDropdown = React.forwardRef<HTMLSelectElement, Props>(
         sortedRaids.length > 0 &&
         sortedRaids[index].length > 0 &&
         sortedRaids[index]
-          .sort((a, b) => a.element - b.element)
+          .sort((a, b) => {
+            if (a.element > 0 && b.element > 0) return a.element - b.element
+            else if (a.name.en.includes('NM') && b.name.en.includes('NM'))
+              return a.level < b.level ? -1 : 1
+            else return a.name.en < b.name.en ? -1 : 1
+          })
           .map((item, i) => (
             <SelectItem key={i} value={item.slug}>
               {item.name[locale]}
