@@ -3,7 +3,6 @@ import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { subscribe, useSnapshot } from 'valtio'
 import clonedeep from 'lodash.clonedeep'
-import ls from 'local-storage'
 
 import PartySegmentedControl from '~components/PartySegmentedControl'
 import PartyDetails from '~components/PartyDetails'
@@ -17,7 +16,7 @@ import { appState, initialAppState } from '~utils/appState'
 import { getLocalId } from '~utils/localId'
 import { GridType } from '~utils/enums'
 import { retrieveCookies } from '~utils/retrieveCookies'
-import { setEditKey, unsetEditKey } from '~utils/userToken'
+import { setEditKey, storeEditKey, unsetEditKey } from '~utils/userToken'
 
 import type { DetailsObject } from '~types'
 
@@ -238,10 +237,6 @@ const Party = (props: Props) => {
     }
 
     return team
-  }
-
-  const storeEditKey = (id: string, key: string) => {
-    ls(id, key)
   }
 
   const storeCharacters = (list: Array<GridCharacter>) => {
