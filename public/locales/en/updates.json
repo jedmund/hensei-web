@@ -18,6 +18,15 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2023-03F": {
+      "features": [
+        "Added new class \"Yamato\"",
+        "Added Ultimate Mastery skills for classes: Berserker, Apsaras, Nekomancer, Kengo",
+        "Added raids for Dread Barrage",
+        "Renamed \"Guild Wars\" in raid list to \"Unite and Fight\"",
+        "Fixed sorting of raids for Dread Barrage and Unite and Fight"
+      ]
+    },
     "2023-02-U2": {
       "features": ["Added official names for Proven Weapons and Revans Weapons"]
     },
