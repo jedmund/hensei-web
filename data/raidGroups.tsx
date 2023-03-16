@@ -111,6 +111,12 @@ export const raidGroups: RaidGroup[] = [
   },
   {
     name: {
+      en: 'Dread Barrage',
+      ja: 'ドレッドバラージュ',
+    },
+  },
+  {
+    name: {
       en: 'Astrals',
       ja: '星の民',
     },
