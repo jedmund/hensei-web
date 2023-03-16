@@ -41,6 +41,7 @@ const AwakeningSelect = (props: Props) => {
             en: 'No awakening',
             ja: '覚醒なし',
           },
+          granblue_id: '',
           slug: 'no-awakening',
           minValue: 0,
           maxValue: 0,

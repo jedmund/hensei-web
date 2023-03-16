@@ -9,6 +9,7 @@ export type Awakening = {
 export const characterAwakening: ItemSkill[] = [
   {
     id: 1,
+    granblue_id: '',
     name: {
       en: 'Balanced',
       ja: 'バランス',
@@ -20,6 +21,7 @@ export const characterAwakening: ItemSkill[] = [
   },
   {
     id: 2,
+    granblue_id: '',
     name: {
       en: 'Attack',
       ja: '攻撃',
@@ -31,6 +33,7 @@ export const characterAwakening: ItemSkill[] = [
   },
   {
     id: 3,
+    granblue_id: '',
     name: {
       en: 'Defense',
       ja: '防御',
@@ -42,6 +45,7 @@ export const characterAwakening: ItemSkill[] = [
   },
   {
     id: 4,
+    granblue_id: '',
     name: {
       en: 'Multiattack',
       ja: '連続攻撃',
@@ -56,6 +60,7 @@ export const characterAwakening: ItemSkill[] = [
 export const weaponAwakening: ItemSkill[] = [
   {
     id: 1,
+    granblue_id: '',
     name: {
       en: 'Attack',
       ja: '攻撃',
@@ -67,6 +72,7 @@ export const weaponAwakening: ItemSkill[] = [
   },
   {
     id: 2,
+    granblue_id: '',
     name: {
       en: 'Defense',
       ja: '防御',
@@ -78,6 +84,7 @@ export const weaponAwakening: ItemSkill[] = [
   },
   {
     id: 3,
+    granblue_id: '',
     name: {
       en: 'Special',
       ja: '特殊',

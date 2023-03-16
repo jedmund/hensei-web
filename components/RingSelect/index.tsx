@@ -54,6 +54,7 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
         ja: 'EXリミットボーナスなし',
       },
       id: 0,
+      granblue_id: '',
       slug: 'no-bonus',
       minValue: 0,
       maxValue: 0,
