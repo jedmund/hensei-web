@@ -64,7 +64,7 @@ const UpdatesPage = () => {
           character: ['3040451000', '3040452000', '3040453000', '3040454000'],
           weapon: ['1040914600', '1040116800', '1040515900', '1040712300'],
         }}
-        numNotes={5}
+        numNotes={7}
       />
       <ContentUpdate
         version="2023-02L"

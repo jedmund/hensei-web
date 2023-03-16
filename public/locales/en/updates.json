@@ -24,7 +24,9 @@
         "Added Ultimate Mastery skills for classes: Berserker, Apsaras, Nekomancer, Kengo",
         "Added raids for Dread Barrage",
         "Renamed \"Guild Wars\" in raid list to \"Unite and Fight\"",
-        "Fixed sorting of raids for Dread Barrage and Unite and Fight"
+        "Fixed sorting of raids for Dread Barrage and Unite and Fight",
+        "Fixed character hovercard showing up behind class image",
+        "Fixed an issue where users couldn't edit remixed teams"
       ]
     },
     "2023-02-U2": {
