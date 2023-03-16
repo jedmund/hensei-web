@@ -117,9 +117,9 @@ const ContentUpdate = ({
         {uncapItemSection('summon')}
       </div>
       {numNotes > 0 ? (
-        <div>
+        <div className="Notes">
           <section>
-            <h2>{updates('labels.updates')}</h2>
+            <h4>{updates('labels.updates')}</h4>
             <ul className="Bare Contents">
               {[...Array(numNotes)].map((e, i) => (
                 <li key={`${version}-${i}`}>
