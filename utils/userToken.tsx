@@ -26,6 +26,10 @@ export const setHeaders = (
   }
 }
 
+export const storeEditKey = (id: string, key: string) => {
+  ls(id, key)
+}
+
 export const setEditKey = (id: string, user?: User) => {
   if (!user) {
     const edit_key = get<string>(id)

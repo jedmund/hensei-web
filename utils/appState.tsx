@@ -6,7 +6,8 @@ const emptyJob: Job = {
   id: '-1',
   granblue_id: '-1',
   row: '',
-  ml: false,
+  master_level: false,
+  ultimate_mastery: false,
   order: 0,
   name: {
     en: '',

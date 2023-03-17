@@ -12,6 +12,7 @@ import { accountState, initialAccountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 import { getLocalId } from '~utils/localId'
 import { retrieveLocaleCookies } from '~utils/retrieveCookies'
+import { setEditKey, storeEditKey } from '~utils/userToken'
 
 import {
   DropdownMenu,
@@ -196,6 +197,13 @@ const Header = () => {
         .remix({ shortcode: partySnapshot.shortcode, body: body })
         .then((response) => {
           const remix = response.data.party
+
+          // Store the edit key in local storage
+          if (remix.edit_key) {
+            storeEditKey(remix.id, remix.edit_key)
+            setEditKey(remix.id, remix.user)
+          }
+
           router.push(`/p/${remix.shortcode}`)
           setRemixToastOpen(true)
         })

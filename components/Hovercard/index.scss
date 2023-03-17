@@ -1,3 +1,7 @@
+div[data-radix-popper-content-wrapper] {
+  z-index: 10 !important;
+}
+
 .HovercardContent {
   animation: scaleIn $duration-zoom ease-out;
   transform-origin: var(--radix-hover-card-content-transform-origin);
