@@ -2,11 +2,15 @@ import React, { useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
+import FilterModal from '~components/FilterModal'
 import RaidDropdown from '~components/RaidDropdown'
-
-import './index.scss'
 import Select from '~components/Select'
 import SelectItem from '~components/SelectItem'
+import Button from '~components/Button'
+
+import FilterIcon from '~public/icons/Filter.svg'
+
+import './index.scss'
 
 interface Props {
   children: React.ReactNode
@@ -31,6 +35,8 @@ const FilterBar = (props: Props) => {
 
   const [recencyOpen, setRecencyOpen] = useState(false)
   const [elementOpen, setElementOpen] = useState(false)
+
+  const [filterModalOpen, setFilterModalOpen] = useState(false)
 
   // Set up classes object for showing shadow on scroll
   const classes = classNames({
@@ -66,81 +72,91 @@ const FilterBar = (props: Props) => {
   }
 
   return (
-    <div className={classes}>
-      {props.children}
-      <div className="Filters">
-        <Select
-          value={`${props.element}`}
-          open={elementOpen}
-          onOpenChange={() => onSelectChange('element')}
-          onValueChange={elementSelectChanged}
-          onClick={openElementSelect}
-        >
-          <SelectItem data-element="all" key={-1} value={-1}>
-            {t('elements.full.all')}
-          </SelectItem>
-          <SelectItem data-element="null" key={0} value={0}>
-            {t('elements.full.null')}
-          </SelectItem>
-          <SelectItem data-element="wind" key={1} value={1}>
-            {t('elements.full.wind')}
-          </SelectItem>
-          <SelectItem data-element="fire" key={2} value={2}>
-            {t('elements.full.fire')}
-          </SelectItem>
-          <SelectItem data-element="water" key={3} value={3}>
-            {t('elements.full.water')}
-          </SelectItem>
-          <SelectItem data-element="earth" key={4} value={4}>
-            {t('elements.full.earth')}
-          </SelectItem>
-          <SelectItem data-element="dark" key={5} value={5}>
-            {t('elements.full.dark')}
-          </SelectItem>
-          <SelectItem data-element="light" key={6} value={6}>
-            {t('elements.full.light')}
-          </SelectItem>
-        </Select>
+    <>
+      <div className={classes}>
+        {props.children}
+        <div className="Filters">
+          <Select
+            value={`${props.element}`}
+            open={elementOpen}
+            onOpenChange={() => onSelectChange('element')}
+            onValueChange={elementSelectChanged}
+            onClick={openElementSelect}
+          >
+            <SelectItem data-element="all" key={-1} value={-1}>
+              {t('elements.full.all')}
+            </SelectItem>
+            <SelectItem data-element="null" key={0} value={0}>
+              {t('elements.full.null')}
+            </SelectItem>
+            <SelectItem data-element="wind" key={1} value={1}>
+              {t('elements.full.wind')}
+            </SelectItem>
+            <SelectItem data-element="fire" key={2} value={2}>
+              {t('elements.full.fire')}
+            </SelectItem>
+            <SelectItem data-element="water" key={3} value={3}>
+              {t('elements.full.water')}
+            </SelectItem>
+            <SelectItem data-element="earth" key={4} value={4}>
+              {t('elements.full.earth')}
+            </SelectItem>
+            <SelectItem data-element="dark" key={5} value={5}>
+              {t('elements.full.dark')}
+            </SelectItem>
+            <SelectItem data-element="light" key={6} value={6}>
+              {t('elements.full.light')}
+            </SelectItem>
+          </Select>
 
-        <RaidDropdown
-          currentRaid={props.raidSlug}
-          defaultRaid="all"
-          showAllRaidsOption={true}
-          onChange={raidSelectChanged}
-        />
+          <RaidDropdown
+            currentRaid={props.raidSlug}
+            defaultRaid="all"
+            showAllRaidsOption={true}
+            onChange={raidSelectChanged}
+          />
 
-        <Select
-          value={`${props.recency}`}
-          trigger={'All time'}
-          open={recencyOpen}
-          onOpenChange={() => onSelectChange('recency')}
-          onValueChange={recencySelectChanged}
-          onClick={openRecencySelect}
-        >
-          <SelectItem key={-1} value={-1}>
-            {t('recency.all_time')}
-          </SelectItem>
-          <SelectItem key={86400} value={86400}>
-            {t('recency.last_day')}
-          </SelectItem>
-          <SelectItem key={604800} value={604800}>
-            {t('recency.last_week')}
-          </SelectItem>
-          <SelectItem key={2629746} value={2629746}>
-            {t('recency.last_month')}
-          </SelectItem>
-          <SelectItem key={7889238} value={7889238}>
-            {t('recency.last_3_months')}
-          </SelectItem>
-          <SelectItem key={15778476} value={15778476}>
-            {t('recency.last_6_months')}
-          </SelectItem>
-          <SelectItem key={31556952} value={31556952}>
-            {t('recency.last_year')}
-          </SelectItem>
-        </Select>
+          <Select
+            value={`${props.recency}`}
+            trigger={'All time'}
+            open={recencyOpen}
+            onOpenChange={() => onSelectChange('recency')}
+            onValueChange={recencySelectChanged}
+            onClick={openRecencySelect}
+          >
+            <SelectItem key={-1} value={-1}>
+              {t('recency.all_time')}
+            </SelectItem>
+            <SelectItem key={86400} value={86400}>
+              {t('recency.last_day')}
+            </SelectItem>
+            <SelectItem key={604800} value={604800}>
+              {t('recency.last_week')}
+            </SelectItem>
+            <SelectItem key={2629746} value={2629746}>
+              {t('recency.last_month')}
+            </SelectItem>
+            <SelectItem key={7889238} value={7889238}>
+              {t('recency.last_3_months')}
+            </SelectItem>
+            <SelectItem key={15778476} value={15778476}>
+              {t('recency.last_6_months')}
+            </SelectItem>
+            <SelectItem key={31556952} value={31556952}>
+              {t('recency.last_year')}
+            </SelectItem>
+          </Select>
+
+          <Button
+            className="Filter"
+            blended={true}
+            leftAccessoryIcon={<FilterIcon />}
+            onClick={() => setFilterModalOpen(true)}
+          />
+        </div>
       </div>
-    </div>
+      <FilterModal open={filterModalOpen} onOpenChange={setFilterModalOpen} />
+    </>
   )
 }
 

@@ -171,6 +171,11 @@
             width: 100%;
           }
         }
+
+        &.Spaced {
+          justify-content: space-between;
+          width: 100%;
+        }
       }
     }
 

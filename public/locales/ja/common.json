@@ -206,6 +206,13 @@
         "cancel": "キャンセル"
       }
     },
+    "filters": {
+      "title": "フィルター設定",
+      "buttons": {
+        "confirm": "フィルターを保存する",
+        "clear": "保存したフィルターをクリア"
+      }
+    },
     "login": {
       "title": "ログイン",
       "buttons": {

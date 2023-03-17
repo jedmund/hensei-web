@@ -206,6 +206,13 @@
         "cancel": "Nevermind"
       }
     },
+    "filters": {
+      "title": "Advanced filters",
+      "buttons": {
+        "confirm": "Save filters",
+        "clear": "Clear filters"
+      }
+    },
     "login": {
       "title": "Log in",
       "buttons": {
