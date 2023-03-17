@@ -14,7 +14,6 @@ import { defaultFilterset } from '~utils/defaultFilters'
 import FilterIcon from '~public/icons/Filter.svg'
 
 import './index.scss'
-import { getCookie } from 'cookies-next'
 
 interface Props {
   children: React.ReactNode
@@ -167,7 +166,7 @@ const FilterBar = (props: Props) => {
           </Select>
 
           <Button
-            className={filterButtonClasses}
+            className="Filter"
             blended={true}
             leftAccessoryIcon={<FilterIcon />}
             onClick={() => setFilterModalOpen(true)}
@@ -178,7 +177,7 @@ const FilterBar = (props: Props) => {
         defaultFilterSet={defaultFilterset}
         filterSet={advancedFilters}
         open={filterModalOpen}
-        onOpenChange={setFilterModalOpen}
+      <FilterModal open={filterModalOpen} onOpenChange={setFilterModalOpen} />
         sendAdvancedFilters={handleAdvancedFiltersChanged}
       />
     </>

@@ -23,7 +23,7 @@ import type { DialogProps } from '@radix-ui/react-dialog'
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
-interface Props extends DialogProps {
+interface Props extends DialogProps {}
   defaultFilterSet: FilterSet
   filterSet: FilterSet
   sendAdvancedFilters: (filters: FilterSet) => void
@@ -46,6 +46,7 @@ const FilterModal = (props: Props) => {
   const footerRef = React.createRef<HTMLDivElement>()
 
   // States
+  const [filters, setFilters] = useState<{ [key: string]: any }>()
   const [open, setOpen] = useState(false)
   const [chargeAttackOpen, setChargeAttackOpen] = useState(false)
   const [fullAutoOpen, setFullAutoOpen] = useState(false)
@@ -109,7 +110,7 @@ const FilterModal = (props: Props) => {
     setOriginalOnly(filterSet.original)
   }, [filterSet])
 
-  function openSelect(name: 'charge_attack' | 'full_auto' | 'auto_guard') {
+  function sendFilters() {
     setChargeAttackOpen(name === 'charge_attack' ? !chargeAttackOpen : false)
     setFullAutoOpen(name === 'full_auto' ? !fullAutoOpen : false)
     setAutoGuardOpen(name === 'auto_guard' ? !autoGuardOpen : false)
@@ -381,7 +382,7 @@ const FilterModal = (props: Props) => {
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{props.children}</DialogTrigger>
       <DialogContent
-        className="Filter"
+        className="Search"
         headerref={headerRef}
         footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
@@ -399,8 +400,8 @@ const FilterModal = (props: Props) => {
             </span>
           </DialogClose>
         </div>
-
-        <div className="Fields">
+        <form>
+          <div className="Fields"></div>
           {chargeAttackField()}
           {fullAutoField()}
           {autoGuardField()}
@@ -413,20 +414,20 @@ const FilterModal = (props: Props) => {
           {userQualityField()}
           {originalOnlyField()}
         </div>
-        <div className="DialogFooter" ref={footerRef}>
-          <div className="Buttons Spaced">
+          <div className="DialogFooter" ref={footerRef}>
+            <div className="Buttons Spaced">
             <Button
               blended={true}
-              text={t('modals.filters.buttons.clear')}
+              <Button blended={true} text={t('modals.filters.buttons.clear')} />
               onClick={resetFilters}
             />
-            <Button
-              contained={true}
-              text={t('modals.filters.buttons.confirm')}
-              onClick={saveFilters}
-            />
+              <Button
+                contained={true}
+                text={t('modals.filters.buttons.confirm')}
+              />
+            </div>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   )
