@@ -8,7 +8,7 @@ interface Props {
   name: string
   label: string
   description?: string
-  value: number
+  value?: number
   className?: string
   imageAlt?: string
   imageClass?: string

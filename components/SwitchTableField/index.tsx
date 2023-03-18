@@ -8,7 +8,7 @@ interface Props {
   name: string
   label: string
   description?: string
-  value: boolean
+  value?: boolean
   className?: string
   imageAlt?: string
   imageClass?: string
@@ -17,14 +17,14 @@ interface Props {
 }
 
 const SwitchTableField = (props: Props) => {
-  const [value, setValue] = useState(false)
+  const [value, setValue] = useState(props.value)
 
   useEffect(() => {
     if (value !== props.value) setValue(props.value)
   }, [props.value])
 
   useEffect(() => {
-    props.onValueChange(value)
+    if (value !== undefined) props.onValueChange(value)
   }, [value])
 
   function onValueChange(value: boolean) {
