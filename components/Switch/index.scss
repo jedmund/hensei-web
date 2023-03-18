@@ -14,7 +14,7 @@
   }
 
   &[data-state='checked'] {
-    background: $grey-15;
+    background: var(--accent-blue);
   }
 
   &:disabled {
