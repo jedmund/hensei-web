@@ -22,6 +22,8 @@ import type { DialogProps } from '@radix-ui/react-dialog'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
+import SwitchTableField from '~components/SwitchTableField'
+import InputTableField from '~components/InputTableField'
 
 interface Props extends DialogProps {}
   defaultFilterSet: FilterSet
@@ -48,10 +50,17 @@ const FilterModal = (props: Props) => {
   // States
   const [filters, setFilters] = useState<{ [key: string]: any }>()
   const [open, setOpen] = useState(false)
-  const [chargeAttackOpen, setChargeAttackOpen] = useState(false)
-  const [fullAutoOpen, setFullAutoOpen] = useState(false)
-  const [autoGuardOpen, setAutoGuardOpen] = useState(false)
-  const [filterSet, setFilterSet] = useState<FilterSet>({})
+
+  const [fullAuto, setFullAuto] = useState(false)
+  const [autoGuard, setAutoGuard] = useState(false)
+  const [chargeAttack, setChargeAttack] = useState(false)
+
+  const [minCharacterCount, setMinCharacterCount] = useState(3)
+  const [minWeaponCount, setMinWeaponCount] = useState(5)
+  const [minSummonCount, setMinSummonCount] = useState(2)
+
+  const [maxButtonsCount, setMaxButtonsCount] = useState(0)
+  const [maxTurnsCount, setMaxTurnsCount] = useState(0)
 
   // Filter states
   const [fullAuto, setFullAuto] = useState(props.defaultFilterSet.full_auto)
@@ -74,13 +83,13 @@ const FilterModal = (props: Props) => {
   const [maxTurnsCount, setMaxTurnsCount] = useState(
     props.defaultFilterSet.turn_count
   )
-  const [userQuality, setUserQuality] = useState(
+  const [userQuality, setUserQuality] = useState(false)
     props.defaultFilterSet.user_quality
   )
-  const [nameQuality, setNameQuality] = useState(
+  const [nameQuality, setNameQuality] = useState(false)
     props.defaultFilterSet.name_quality
   )
-  const [originalOnly, setOriginalOnly] = useState(
+  const [originalOnly, setOriginalOnly] = useState(false)
     props.defaultFilterSet.original
   )
 
@@ -262,11 +271,11 @@ const FilterModal = (props: Props) => {
 
   // Selects
   const fullAutoField = () => (
-    <SelectTableField
+    <SwitchTableField
       name="full_auto"
       label={t('modals.filters.labels.full_auto')}
       open={fullAutoOpen}
-      value={`${fullAuto}`}
+      value={fullAuto}
       onOpenChange={() => openSelect('full_auto')}
       onClose={() => setFullAutoOpen(false)}
       onChange={handleFullAutoValueChange}
@@ -280,15 +289,15 @@ const FilterModal = (props: Props) => {
       <SelectItem key="off" value="0">
         {t('modals.filters.options.off')}
       </SelectItem>
-    </SelectTableField>
+    />
   )
 
   const autoGuardField = () => (
-    <SelectTableField
+    <SwitchTableField
       name="auto_guard"
       label={t('modals.filters.labels.auto_guard')}
       open={autoGuardOpen}
-      value={`${autoGuard}`}
+      value={autoGuard}
       onOpenChange={() => openSelect('auto_guard')}
       onClose={() => setAutoGuardOpen(false)}
       onChange={handleAutoGuardValueChange}
@@ -302,15 +311,15 @@ const FilterModal = (props: Props) => {
       <SelectItem key="off" value="0">
         {t('modals.filters.options.off')}
       </SelectItem>
-    </SelectTableField>
+    />
   )
 
   const chargeAttackField = () => (
-    <SelectTableField
+    <SwitchTableField
       name="charge_attack"
       label={t('modals.filters.labels.charge_attack')}
       open={chargeAttackOpen}
-      value={`${chargeAttack}`}
+      value={chargeAttack}
       onOpenChange={() => openSelect('charge_attack')}
       onClose={() => setChargeAttackOpen(false)}
       onChange={handleChargeAttackValueChange}
@@ -324,7 +333,7 @@ const FilterModal = (props: Props) => {
       <SelectItem key="off" value="0">
         {t('modals.filters.options.off')}
       </SelectItem>
-    </SelectTableField>
+    />
   )
 
   // Switches
@@ -382,7 +391,7 @@ const FilterModal = (props: Props) => {
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{props.children}</DialogTrigger>
       <DialogContent
-        className="Search"
+        className="Filter"
         headerref={headerRef}
         footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
@@ -401,19 +410,19 @@ const FilterModal = (props: Props) => {
           </DialogClose>
         </div>
         <form>
-          <div className="Fields"></div>
-          {chargeAttackField()}
-          {fullAutoField()}
-          {autoGuardField()}
-          {maxButtonsField()}
-          {maxTurnsField()}
-          {minCharactersField()}
-          {minSummonsField()}
-          {minWeaponsField()}
-          {nameQualityField()}
-          {userQualityField()}
-          {originalOnlyField()}
-        </div>
+          <div className="Fields">
+            {chargeAttackField()}
+            {fullAutoField()}
+            {autoGuardField()}
+            {maxButtonsField()}
+            {maxTurnsField()}
+            {minCharactersField()}
+            {minSummonsField()}
+            {minWeaponsField()}
+            {nameQualityField()}
+            {userQualityField()}
+            {originalOnlyField()}
+          </div>
           <div className="DialogFooter" ref={footerRef}>
             <div className="Buttons Spaced">
             <Button

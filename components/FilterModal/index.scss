@@ -1,6 +1,6 @@
 .Dialog {
-  .Filter.DialogContent {
-    overflow: hidden;
+.Dialog .Filter.DialogContent {
+  overflow: hidden;
 
     .TableField .Right .SelectTrigger.Table {
       width: $unit-20x;
