@@ -4,12 +4,17 @@
   gap: $unit-2x;
   grid-template-columns: 1fr auto;
   justify-content: space-between;
+  padding: $unit-half 0;
   width: 100%;
 
   @include breakpoint(phone) {
     align-items: flex-start;
     display: flex;
     flex-direction: column;
+  }
+
+  &:hover .Left .Info h3 {
+    color: var(--accent-blue);
   }
 
   .Left {
