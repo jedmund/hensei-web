@@ -1,0 +1,42 @@
+.Slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+  width: $unit-20x;
+  height: 20px;
+
+  .SliderTrack {
+    background-color: var(--button-bg);
+    position: relative;
+    flex-grow: 1;
+    border-radius: 9999px;
+    height: 3px;
+  }
+}
+
+.SliderRange {
+  position: absolute;
+  background-color: var(--accent-blue);
+  border-radius: 9999px;
+  height: 100%;
+}
+
+.SliderThumb {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  box-shadow: 0 2px 10px var(--button-bg);
+  border-radius: 10px;
+
+  &:hover {
+    background-color: darken(white, 10%);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 5px rgba($accent--blue--light, 0.6);
+  }
+}
