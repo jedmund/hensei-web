@@ -11,6 +11,7 @@ import Button from '~components/Button'
 import FilterIcon from '~public/icons/Filter.svg'
 
 import './index.scss'
+import { getCookie } from 'cookies-next'
 
 interface Props {
   children: React.ReactNode
@@ -29,6 +30,32 @@ interface Props {
   }) => void
 }
 
+const DEFAULT_FULL_AUTO = false
+const DEFAULT_AUTO_GUARD = false
+const DEFAULT_CHARGE_ATTACK = false
+const DEFAULT_MAX_BUTTONS = 0
+const DEFAULT_MAX_TURNS = 0
+const DEFAULT_MIN_CHARACTERS = 3
+const DEFAULT_MIN_WEAPONS = 5
+const DEFAULT_MIN_SUMMONS = 2
+const DEFAULT_NAME_QUALITY = false
+const DEFAULT_USER_QUALITY = false
+const DEFAULT_ORIGINAL_ONLY = false
+
+const DEFAULT_FILTERSET: FilterSet = {
+  full_auto: DEFAULT_FULL_AUTO,
+  auto_guard: DEFAULT_AUTO_GUARD,
+  charge_attack: DEFAULT_CHARGE_ATTACK,
+  characters_count: DEFAULT_MIN_CHARACTERS,
+  weapons_count: DEFAULT_MIN_WEAPONS,
+  summons_count: DEFAULT_MIN_SUMMONS,
+  button_count: DEFAULT_MAX_BUTTONS,
+  turn_count: DEFAULT_MAX_TURNS,
+  name_quality: DEFAULT_NAME_QUALITY,
+  user_quality: DEFAULT_USER_QUALITY,
+  original: DEFAULT_ORIGINAL_ONLY,
+}
+
 const FilterBar = (props: Props) => {
   // Set up translation
   const { t } = useTranslation('common')
@@ -37,6 +64,12 @@ const FilterBar = (props: Props) => {
   const [elementOpen, setElementOpen] = useState(false)
 
   const [filterModalOpen, setFilterModalOpen] = useState(false)
+
+  // Fetch user's advanced filters
+  const filtersCookie = getCookie('filters')
+  const advancedFilters: FilterSet = filtersCookie
+    ? JSON.parse(filtersCookie as string)
+    : DEFAULT_FILTERSET
 
   // Set up classes object for showing shadow on scroll
   const classes = classNames({
@@ -155,7 +188,12 @@ const FilterBar = (props: Props) => {
           />
         </div>
       </div>
-      <FilterModal open={filterModalOpen} onOpenChange={setFilterModalOpen} />
+      <FilterModal
+        defaultFilterSet={DEFAULT_FILTERSET}
+        filterSet={advancedFilters}
+        open={filterModalOpen}
+        onOpenChange={setFilterModalOpen}
+      />
     </>
   )
 }

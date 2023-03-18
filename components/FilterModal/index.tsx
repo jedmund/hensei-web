@@ -21,19 +21,10 @@ import type { DialogProps } from '@radix-ui/react-dialog'
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
 
-interface Props extends DialogProps {}
-
-const DEFAULT_FULL_AUTO = false
-const DEFAULT_AUTO_GUARD = false
-const DEFAULT_CHARGE_ATTACK = false
-const DEFAULT_MAX_BUTTONS = 0
-const DEFAULT_MAX_TURNS = 0
-const DEFAULT_MIN_CHARACTERS = 3
-const DEFAULT_MIN_WEAPONS = 5
-const DEFAULT_MIN_SUMMONS = 2
-const DEFAULT_NAME_QUALITY = false
-const DEFAULT_USER_QUALITY = false
-const DEFAULT_ORIGINAL_ONLY = false
+interface Props extends DialogProps {
+  defaultFilterSet: FilterSet
+  filterSet: FilterSet
+}
 
 const MAX_CHARACTERS = 5
 const MAX_WEAPONS = 13
@@ -54,41 +45,68 @@ const FilterModal = (props: Props) => {
   // States
   const [open, setOpen] = useState(false)
 
-  const [fullAuto, setFullAuto] = useState(DEFAULT_FULL_AUTO)
-  const [autoGuard, setAutoGuard] = useState(DEFAULT_AUTO_GUARD)
-  const [chargeAttack, setChargeAttack] = useState(DEFAULT_CHARGE_ATTACK)
+  const [fullAuto, setFullAuto] = useState(props.filterSet.full_auto)
+  const [autoGuard, setAutoGuard] = useState(props.filterSet.auto_guard)
+  const [chargeAttack, setChargeAttack] = useState(
+    props.filterSet.charge_attack
+  )
 
   const [minCharacterCount, setMinCharacterCount] = useState(
-    DEFAULT_MIN_CHARACTERS
+    props.filterSet.characters_count
   )
-  const [minWeaponCount, setMinWeaponCount] = useState(DEFAULT_MIN_WEAPONS)
-  const [minSummonCount, setMinSummonCount] = useState(DEFAULT_MIN_SUMMONS)
+  const [minWeaponCount, setMinWeaponCount] = useState(
+    props.filterSet.weapons_count
+  )
+  const [minSummonCount, setMinSummonCount] = useState(
+    props.filterSet.summons_count
+  )
+  const [maxButtonsCount, setMaxButtonsCount] = useState(
+    props.filterSet.button_count
+  )
+  const [maxTurnsCount, setMaxTurnsCount] = useState(props.filterSet.turn_count)
 
-  const [maxButtonsCount, setMaxButtonsCount] = useState(DEFAULT_MAX_BUTTONS)
-  const [maxTurnsCount, setMaxTurnsCount] = useState(DEFAULT_MAX_TURNS)
-
-  const [userQuality, setUserQuality] = useState(DEFAULT_USER_QUALITY)
-  const [nameQuality, setNameQuality] = useState(DEFAULT_NAME_QUALITY)
-  const [originalOnly, setOriginalOnly] = useState(DEFAULT_ORIGINAL_ONLY)
+  const [userQuality, setUserQuality] = useState(props.filterSet.user_quality)
+  const [nameQuality, setNameQuality] = useState(props.filterSet.name_quality)
+  const [originalOnly, setOriginalOnly] = useState(props.filterSet.original)
 
   // Hooks
   useEffect(() => {
     if (props.open !== undefined) setOpen(props.open)
   })
 
+  function saveFilters() {
+    const filters = {
+      full_auto: fullAuto,
+      auto_guard: autoGuard,
+      charge_attack: chargeAttack,
+      characters_count: minCharacterCount,
+      weapons_count: minWeaponCount,
+      summons_count: minSummonCount,
+      button_count: maxButtonsCount,
+      turn_count: maxTurnsCount,
+      name_quality: nameQuality,
+      user_quality: userQuality,
+      original: originalOnly,
+    }
+
+    console.log(filters)
+
+    setCookie('filters', filters, { path: '/' })
+    // openChange()
+  }
 
   function resetFilters() {
-    setFullAuto(DEFAULT_FULL_AUTO)
-    setAutoGuard(DEFAULT_AUTO_GUARD)
-    setChargeAttack(DEFAULT_CHARGE_ATTACK)
-    setMinCharacterCount(DEFAULT_MIN_CHARACTERS)
-    setMinWeaponCount(DEFAULT_MIN_WEAPONS)
-    setMinSummonCount(DEFAULT_MIN_SUMMONS)
-    setMaxButtonsCount(DEFAULT_MAX_BUTTONS)
-    setMaxTurnsCount(DEFAULT_MAX_TURNS)
-    setUserQuality(DEFAULT_USER_QUALITY)
-    setNameQuality(DEFAULT_NAME_QUALITY)
-    setOriginalOnly(DEFAULT_ORIGINAL_ONLY)
+    setFullAuto(props.defaultFilterSet.full_auto)
+    setAutoGuard(props.defaultFilterSet.auto_guard)
+    setChargeAttack(props.defaultFilterSet.charge_attack)
+    setMinCharacterCount(props.defaultFilterSet.characters_count)
+    setMinWeaponCount(props.defaultFilterSet.weapons_count)
+    setMinSummonCount(props.defaultFilterSet.summons_count)
+    setMaxButtonsCount(props.defaultFilterSet.button_count)
+    setMaxTurnsCount(props.defaultFilterSet.turn_count)
+    setUserQuality(props.defaultFilterSet.user_quality)
+    setNameQuality(props.defaultFilterSet.name_quality)
+    setOriginalOnly(props.defaultFilterSet.original)
   }
 
   function openChange() {
