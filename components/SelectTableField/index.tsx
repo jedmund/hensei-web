@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 import Select from '~components/Select'
+import TableField from '~components/TableField'
 
 import './index.scss'
 
@@ -27,46 +28,27 @@ const SelectTableField = (props: Props) => {
     if (props.value) setValue(props.value)
   }, [props.value])
 
-  const image = () => {
-    return props.imageSrc && props.imageSrc.length > 0 ? (
-      <div className={`preview ${props.imageClass}`}>
-        <img
-          alt={props.imageAlt}
-          srcSet={props.imageSrc.join(', ')}
-          src={props.imageSrc[0]}
-        />
-      </div>
-    ) : (
-      ''
-    )
-  }
-
   return (
-    <div className={classNames({ TableField: true }, props.className)}>
-      <div className="Left">
-        <div className="Info">
-          <h3>{props.label}</h3>
-          <p>{props.description}</p>
-        </div>
-        <div className="Image">{image()}</div>
-      </div>
-
-      <div className="Right">
-        <div className="Image">{image()}</div>
-        <Select
-          name={props.name}
-          open={props.open}
-          onOpenChange={props.onOpenChange}
-          onValueChange={props.onChange}
-          onClose={props.onClose}
-          triggerClass={classNames({ Bound: true, Table: true })}
-          value={value}
-          overlayVisible={false}
-        >
-          {props.children}
-        </Select>
-      </div>
-    </div>
+    <TableField
+      name={props.name}
+      imageAlt={props.imageAlt}
+      imageClass={props.imageClass}
+      imageSrc={props.imageSrc}
+      label={props.label}
+    >
+      <Select
+        name={props.name}
+        open={props.open}
+        onOpenChange={props.onOpenChange}
+        onValueChange={props.onChange}
+        onClose={props.onClose}
+        triggerClass={classNames({ Bound: true, Table: true })}
+        value={value}
+        overlayVisible={false}
+      >
+        {props.children}
+      </Select>
+    </TableField>
   )
 }
 
