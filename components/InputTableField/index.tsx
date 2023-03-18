@@ -45,7 +45,7 @@ const InputTableField = (props: Props) => {
         className="Bound"
         placeholder={props.placeholder}
         type="number"
-        value={value ? `${value}` : ''}
+        value={`${value}`}
         step={1}
         onChange={onInputChange}
       />
