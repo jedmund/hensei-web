@@ -21,11 +21,11 @@ interface Props {
 }
 
 const SliderTableField = (props: Props) => {
-  const [value, setValue] = useState(props.value)
+  const [value, setValue] = useState(0)
 
   useEffect(() => {
     if (props.value !== undefined && props.value !== value)
-      setValue(props.value)
+    if (props.value) setValue(props.value)
   }, [props.value])
 
   useEffect(() => {
@@ -40,8 +40,12 @@ const SliderTableField = (props: Props) => {
     setValue(value[0])
   }
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function onInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setValue(parseInt(event.currentTarget?.value))
+  }
+
+  function onValueChange(value: number[]) {
+    setValue(value[0])
   }
 
   return (
@@ -58,8 +62,8 @@ const SliderTableField = (props: Props) => {
         min={props.min}
         max={props.max}
         step={props.step}
-        value={[value ? value : 0]}
-        onValueChange={handleValueChange}
+        value={[value]}
+        onValueChange={onValueChange}
         onValueCommit={handleValueCommit}
       />
       <Input
@@ -69,7 +73,7 @@ const SliderTableField = (props: Props) => {
         min={props.min}
         max={props.max}
         step={props.step}
-        onChange={handleInputChange}
+        onChange={onInputChange}
       />
     </TableField>
   )
