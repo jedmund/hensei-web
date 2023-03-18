@@ -22,14 +22,20 @@ import type { DialogProps } from '@radix-ui/react-dialog'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
-import SwitchTableField from '~components/SwitchTableField'
-import InputTableField from '~components/InputTableField'
 
 interface Props extends DialogProps {}
-  defaultFilterSet: FilterSet
-  filterSet: FilterSet
-  sendAdvancedFilters: (filters: FilterSet) => void
-}
+
+const DEFAULT_FULL_AUTO = false
+const DEFAULT_AUTO_GUARD = false
+const DEFAULT_CHARGE_ATTACK = false
+const DEFAULT_MAX_BUTTONS = 0
+const DEFAULT_MAX_TURNS = 0
+const DEFAULT_MIN_CHARACTERS = 3
+const DEFAULT_MIN_WEAPONS = 5
+const DEFAULT_MIN_SUMMONS = 2
+const DEFAULT_NAME_QUALITY = false
+const DEFAULT_USER_QUALITY = false
+const DEFAULT_ORIGINAL_ONLY = false
 
 const MAX_CHARACTERS = 5
 const MAX_WEAPONS = 13
@@ -48,12 +54,11 @@ const FilterModal = (props: Props) => {
   const footerRef = React.createRef<HTMLDivElement>()
 
   // States
-  const [filters, setFilters] = useState<{ [key: string]: any }>()
   const [open, setOpen] = useState(false)
 
-  const [fullAuto, setFullAuto] = useState(false)
-  const [autoGuard, setAutoGuard] = useState(false)
-  const [chargeAttack, setChargeAttack] = useState(false)
+  const [fullAuto, setFullAuto] = useState(DEFAULT_FULL_AUTO)
+  const [autoGuard, setAutoGuard] = useState(DEFAULT_AUTO_GUARD)
+  const [chargeAttack, setChargeAttack] = useState(DEFAULT_CHARGE_ATTACK)
 
   const [minCharacterCount, setMinCharacterCount] = useState(3)
   const [minWeaponCount, setMinWeaponCount] = useState(5)
@@ -69,27 +74,27 @@ const FilterModal = (props: Props) => {
     props.defaultFilterSet.charge_attack
   )
   const [minCharacterCount, setMinCharacterCount] = useState(
-    props.defaultFilterSet.characters_count
+    DEFAULT_MIN_CHARACTERS
   )
-  const [minWeaponCount, setMinWeaponCount] = useState(
+  const [minWeaponCount, setMinWeaponCount] = useState(DEFAULT_MIN_WEAPONS)
     props.defaultFilterSet.weapons_count
   )
-  const [minSummonCount, setMinSummonCount] = useState(
+  const [minSummonCount, setMinSummonCount] = useState(DEFAULT_MIN_SUMMONS)
     props.defaultFilterSet.summons_count
-  )
-  const [maxButtonsCount, setMaxButtonsCount] = useState(
+
+  const [maxButtonsCount, setMaxButtonsCount] = useState(DEFAULT_MAX_BUTTONS)
     props.defaultFilterSet.button_count
   )
-  const [maxTurnsCount, setMaxTurnsCount] = useState(
+  const [maxTurnsCount, setMaxTurnsCount] = useState(DEFAULT_MAX_TURNS)
     props.defaultFilterSet.turn_count
-  )
-  const [userQuality, setUserQuality] = useState(false)
+
+  const [userQuality, setUserQuality] = useState(DEFAULT_USER_QUALITY)
     props.defaultFilterSet.user_quality
   )
-  const [nameQuality, setNameQuality] = useState(false)
+  const [nameQuality, setNameQuality] = useState(DEFAULT_NAME_QUALITY)
     props.defaultFilterSet.name_quality
   )
-  const [originalOnly, setOriginalOnly] = useState(false)
+  const [originalOnly, setOriginalOnly] = useState(DEFAULT_ORIGINAL_ONLY)
     props.defaultFilterSet.original
   )
 
@@ -146,17 +151,17 @@ const FilterModal = (props: Props) => {
   }
 
   function resetFilters() {
-    setFullAuto(props.defaultFilterSet.full_auto)
-    setAutoGuard(props.defaultFilterSet.auto_guard)
-    setChargeAttack(props.defaultFilterSet.charge_attack)
-    setMinCharacterCount(props.defaultFilterSet.characters_count)
-    setMinWeaponCount(props.defaultFilterSet.weapons_count)
-    setMinSummonCount(props.defaultFilterSet.summons_count)
-    setMaxButtonsCount(props.defaultFilterSet.button_count)
-    setMaxTurnsCount(props.defaultFilterSet.turn_count)
-    setUserQuality(props.defaultFilterSet.user_quality)
-    setNameQuality(props.defaultFilterSet.name_quality)
-    setOriginalOnly(props.defaultFilterSet.original)
+    setFullAuto(DEFAULT_FULL_AUTO)
+    setAutoGuard(DEFAULT_AUTO_GUARD)
+    setChargeAttack(DEFAULT_CHARGE_ATTACK)
+    setMinCharacterCount(DEFAULT_MIN_CHARACTERS)
+    setMinWeaponCount(DEFAULT_MIN_WEAPONS)
+    setMinSummonCount(DEFAULT_MIN_SUMMONS)
+    setMaxButtonsCount(DEFAULT_MAX_BUTTONS)
+    setMaxTurnsCount(DEFAULT_MAX_TURNS)
+    setUserQuality(DEFAULT_USER_QUALITY)
+    setNameQuality(DEFAULT_NAME_QUALITY)
+    setOriginalOnly(DEFAULT_ORIGINAL_ONLY)
   }
 
   function openChange() {
@@ -179,19 +184,19 @@ const FilterModal = (props: Props) => {
   }
 
   // Value listeners
-  function handleChargeAttackValueChange(value: string) {
-    setChargeAttack(parseInt(value))
+  function handleChargeAttackValueChange(value: boolean) {
+    setChargeAttack(value)
   }
 
-  function handleFullAutoValueChange(value: string) {
-    const newValue = parseInt(value)
+  function handleFullAutoValueChange(value: boolean) {
+    setFullAuto(value)
     setFullAuto(newValue)
     if (newValue === 0 || (newValue === -1 && autoGuard === 1))
       setAutoGuard(newValue)
   }
 
-  function handleAutoGuardValueChange(value: string) {
-    const newValue = parseInt(value)
+  function handleAutoGuardValueChange(value: boolean) {
+    setAutoGuard(value)
     setAutoGuard(newValue)
     if (newValue === 1 || (newValue === -1 && fullAuto === 0))
       setFullAuto(newValue)
@@ -278,7 +283,7 @@ const FilterModal = (props: Props) => {
       value={fullAuto}
       onOpenChange={() => openSelect('full_auto')}
       onClose={() => setFullAutoOpen(false)}
-      onChange={handleFullAutoValueChange}
+      onValueChange={handleFullAutoValueChange}
     >
       <SelectItem key="on-off" value="-1">
         {t('modals.filters.options.on_and_off')}
@@ -300,7 +305,7 @@ const FilterModal = (props: Props) => {
       value={autoGuard}
       onOpenChange={() => openSelect('auto_guard')}
       onClose={() => setAutoGuardOpen(false)}
-      onChange={handleAutoGuardValueChange}
+      onValueChange={handleAutoGuardValueChange}
     >
       <SelectItem key="on-off" value="-1">
         {t('modals.filters.options.on_and_off')}
@@ -322,7 +327,7 @@ const FilterModal = (props: Props) => {
       value={chargeAttack}
       onOpenChange={() => openSelect('charge_attack')}
       onClose={() => setChargeAttackOpen(false)}
-      onChange={handleChargeAttackValueChange}
+      onValueChange={handleChargeAttackValueChange}
     >
       <SelectItem key="on-off" value="-1">
         {t('modals.filters.options.on_and_off')}
@@ -409,34 +414,34 @@ const FilterModal = (props: Props) => {
             </span>
           </DialogClose>
         </div>
-        <form>
-          <div className="Fields">
-            {chargeAttackField()}
-            {fullAutoField()}
-            {autoGuardField()}
-            {maxButtonsField()}
-            {maxTurnsField()}
-            {minCharactersField()}
-            {minSummonsField()}
-            {minWeaponsField()}
-            {nameQualityField()}
-            {userQualityField()}
-            {originalOnlyField()}
-          </div>
-          <div className="DialogFooter" ref={footerRef}>
-            <div className="Buttons Spaced">
+
+        <div className="Fields">
+          {chargeAttackField()}
+          {fullAutoField()}
+          {autoGuardField()}
+          {maxButtonsField()}
+          {maxTurnsField()}
+          {minCharactersField()}
+          {minSummonsField()}
+          {minWeaponsField()}
+          {nameQualityField()}
+          {userQualityField()}
+          {originalOnlyField()}
+        </div>
+        <div className="DialogFooter" ref={footerRef}>
+          <div className="Buttons Spaced">
             <Button
               blended={true}
-              <Button blended={true} text={t('modals.filters.buttons.clear')} />
+              text={t('modals.filters.buttons.clear')}
               onClick={resetFilters}
             />
-              <Button
-                contained={true}
-                text={t('modals.filters.buttons.confirm')}
-              />
-            </div>
+            <Button
+              contained={true}
+              text={t('modals.filters.buttons.confirm')}
+              onClick={saveFilters}
+            />
           </div>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   )
