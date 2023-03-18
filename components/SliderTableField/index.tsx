@@ -9,7 +9,7 @@ interface Props {
   name: string
   label: string
   description?: string
-  value: number
+  value?: number
   className?: string
   imageAlt?: string
   imageClass?: string
@@ -29,7 +29,7 @@ const SliderTableField = (props: Props) => {
   }, [props.value])
 
   useEffect(() => {
-    if (value !== props.value) props.onValueChange(value)
+    if (value !== undefined && value !== props.value) props.onValueChange(value)
   }, [value])
 
   function handleValueCommit(value: number[]) {
