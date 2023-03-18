@@ -2,9 +2,9 @@ interface FilterSet {
   element?: number
   raidSlug?: string
   recency?: number
-  full_auto?: number
-  auto_guard?: number
-  charge_attack?: number
+  full_auto?: boolean
+  auto_guard?: boolean
+  charge_attack?: boolean
   characters_count?: number
   weapons_count?: number
   summons_count?: number
