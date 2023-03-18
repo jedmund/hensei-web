@@ -8,7 +8,7 @@ interface Props {
   name: string
   label: string
   description?: string
-  value?: number
+  value: number
   className?: string
   imageAlt?: string
   imageClass?: string
@@ -20,8 +20,7 @@ const InputTableField = (props: Props) => {
   const [value, setValue] = useState(0)
 
   useEffect(() => {
-    if (props.value !== undefined && props.value !== value)
-      setValue(props.value)
+    if (props.value) setValue(props.value)
   }, [props.value])
 
   useEffect(() => {
