@@ -185,6 +185,17 @@
       width: 100%;
     }
 
+    .Fields {
+      display: flex;
+      flex-direction: column;
+      gap: $unit-2x;
+      padding: 0 $unit-4x;
+
+      @include breakpoint(phone) {
+        gap: $unit-4x;
+      }
+    }
+
     &.Conflict {
       $weapon-diameter: 14rem;
 
