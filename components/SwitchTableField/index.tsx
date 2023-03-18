@@ -17,10 +17,10 @@ interface Props {
 }
 
 const SwitchTableField = (props: Props) => {
-  const [value, setValue] = useState(props.value)
+  const [value, setValue] = useState(false)
 
   useEffect(() => {
-    if (value !== props.value) setValue(props.value)
+    if (props.value) setValue(props.value)
   }, [props.value])
 
   useEffect(() => {
