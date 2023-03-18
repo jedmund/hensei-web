@@ -9,7 +9,7 @@ interface Props {
   name: string
   label: string
   description?: string
-  value?: number
+  value: number
   className?: string
   imageAlt?: string
   imageClass?: string
@@ -17,14 +17,20 @@ interface Props {
   min: number
   max: number
   step: number
+  onValueChange: (value: number) => void
 }
 
 const SliderTableField = (props: Props) => {
   const [value, setValue] = useState(0)
 
   useEffect(() => {
-    if (props.value) setValue(props.value)
+    if (props.value !== undefined && props.value !== value)
+      setValue(props.value)
   }, [props.value])
+
+  useEffect(() => {
+    props.onValueChange(value)
+  }, [value])
 
   function onInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setValue(parseInt(event.currentTarget?.value))

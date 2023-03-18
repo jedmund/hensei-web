@@ -13,14 +13,20 @@ interface Props {
   imageAlt?: string
   imageClass?: string
   imageSrc?: string[]
+  onValueChange: (value: number) => void
 }
 
 const InputTableField = (props: Props) => {
   const [value, setValue] = useState(0)
 
   useEffect(() => {
-    if (props.value) setValue(props.value)
+    if (props.value !== undefined && props.value !== value)
+      setValue(props.value)
   }, [props.value])
+
+  useEffect(() => {
+    props.onValueChange(value)
+  }, [value])
 
   function onInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setValue(parseInt(event.currentTarget?.value))

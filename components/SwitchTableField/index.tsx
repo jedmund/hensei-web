@@ -8,19 +8,24 @@ interface Props {
   name: string
   label: string
   description?: string
-  value?: boolean
+  value: boolean
   className?: string
   imageAlt?: string
   imageClass?: string
   imageSrc?: string[]
+  onValueChange: (value: boolean) => void
 }
 
 const SwitchTableField = (props: Props) => {
   const [value, setValue] = useState(false)
 
   useEffect(() => {
-    if (props.value) setValue(props.value)
+    if (value !== props.value) setValue(props.value)
   }, [props.value])
+
+  useEffect(() => {
+    props.onValueChange(value)
+  }, [value])
 
   function onValueChange(value: boolean) {
     setValue(value)
