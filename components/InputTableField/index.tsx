@@ -8,6 +8,7 @@ interface Props {
   name: string
   label: string
   description?: string
+  placeholder?: string
   value?: number
   className?: string
   imageAlt?: string
@@ -42,8 +43,9 @@ const InputTableField = (props: Props) => {
     >
       <Input
         className="Bound"
+        placeholder={props.placeholder}
         type="number"
-        value={`${value}`}
+        value={value ? `${value}` : ''}
         step={1}
         onChange={onInputChange}
       />
