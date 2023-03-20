@@ -58,7 +58,7 @@ const SliderTableField = (props: Props) => {
         min={props.min}
         max={props.max}
         step={props.step}
-        value={[value]}
+        value={[value ? value : 0]}
         onValueChange={handleValueChange}
         onValueCommit={handleValueCommit}
       />
