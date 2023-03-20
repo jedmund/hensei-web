@@ -40,6 +40,11 @@
     }
 
     .Button.Filter.Blended {
+      &.FiltersActive .Accessory svg {
+        fill: var(--accent-blue);
+        stroke: none;
+      }
+
       &:hover {
         background: var(--button-bg);
       }
