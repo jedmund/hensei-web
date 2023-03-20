@@ -221,6 +221,11 @@
         "user_quality": "Hide anonymous users",
         "original_only": "Hide remixed teams"
       },
+      "options": {
+        "on": "On",
+        "off": "Off",
+        "on_and_off": "On and Off"
+      },
       "buttons": {
         "confirm": "Save filters",
         "clear": "Clear filters"
