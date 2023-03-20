@@ -23,16 +23,6 @@ interface Props {
   raidSlug?: string
   recency?: number
   onFilter: (filters: FilterSet) => void
-    element,
-    raidSlug,
-    recency,
-  }: {
-    element?: number
-    raidSlug?: string
-    recency?: number
-  }) => void
-}
-
 }
 
 const FilterBar = (props: Props) => {
@@ -43,12 +33,7 @@ const FilterBar = (props: Props) => {
   const [elementOpen, setElementOpen] = useState(false)
 
   const [filterModalOpen, setFilterModalOpen] = useState(false)
-
-  // Fetch user's advanced filters
-  const filtersCookie = getCookie('filters')
-  const advancedFilters: FilterSet = filtersCookie
-    ? JSON.parse(filtersCookie as string)
-    : DEFAULT_FILTERSET
+  const [advancedFilters, setAdvancedFilters] = useState<FilterSet>({})
 
   const [matchesDefaultFilters, setMatchesDefaultFilters] = useState(false)
   // Set up classes object for showing shadow on scroll
@@ -182,7 +167,7 @@ const FilterBar = (props: Props) => {
           </Select>
 
           <Button
-            className="Filter"
+            className={filterButtonClasses}
             blended={true}
             leftAccessoryIcon={<FilterIcon />}
             onClick={() => setFilterModalOpen(true)}
