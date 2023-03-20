@@ -26,6 +26,7 @@ import './index.scss'
 interface Props extends DialogProps {
   defaultFilterSet: FilterSet
   filterSet: FilterSet
+  sendAdvancedFilters: (filters: FilterSet) => void
 }
 
 const MAX_CHARACTERS = 5
@@ -49,13 +50,14 @@ const FilterModal = (props: Props) => {
   const [chargeAttackOpen, setChargeAttackOpen] = useState(false)
   const [fullAutoOpen, setFullAutoOpen] = useState(false)
   const [autoGuardOpen, setAutoGuardOpen] = useState(false)
+  const [filterSet, setFilterSet] = useState<FilterSet>({})
+
   // Filter states
   const [fullAuto, setFullAuto] = useState(props.defaultFilterSet.full_auto)
   const [autoGuard, setAutoGuard] = useState(props.defaultFilterSet.auto_guard)
   const [chargeAttack, setChargeAttack] = useState(
     props.defaultFilterSet.charge_attack
   )
-
   const [minCharacterCount, setMinCharacterCount] = useState(
     props.defaultFilterSet.characters_count
   )
@@ -86,30 +88,51 @@ const FilterModal = (props: Props) => {
     if (props.open !== undefined) setOpen(props.open)
   })
 
-  function saveFilters() {
-    const filters = {
-      full_auto: fullAuto,
-      auto_guard: autoGuard,
-      charge_attack: chargeAttack,
-      characters_count: minCharacterCount,
-      weapons_count: minWeaponCount,
-      summons_count: minSummonCount,
-      button_count: maxButtonsCount,
-      turn_count: maxTurnsCount,
-      name_quality: nameQuality,
-      user_quality: userQuality,
-      original: originalOnly,
-    }
+  useEffect(() => {
+    setFilterSet(props.filterSet)
+  }, [props.filterSet])
 
-    console.log(filters)
+  useEffect(() => {
+    setFullAuto(filterSet.full_auto)
+    setAutoGuard(filterSet.auto_guard)
+    setChargeAttack(filterSet.charge_attack)
+
+    setMinCharacterCount(filterSet.characters_count)
+    setMinSummonCount(filterSet.summons_count)
+    setMinWeaponCount(filterSet.weapons_count)
+
+    setMaxButtonsCount(filterSet.button_count)
+    setMaxTurnsCount(filterSet.turn_count)
+
+    setNameQuality(filterSet.name_quality)
+    setUserQuality(filterSet.user_quality)
+    setOriginalOnly(filterSet.original)
+  }, [filterSet])
+
   function openSelect(name: 'charge_attack' | 'full_auto' | 'auto_guard') {
     setChargeAttackOpen(name === 'charge_attack' ? !chargeAttackOpen : false)
     setFullAutoOpen(name === 'full_auto' ? !fullAutoOpen : false)
     setAutoGuardOpen(name === 'auto_guard' ? !autoGuardOpen : false)
   }
 
+  function saveFilters() {
+    const filters: FilterSet = {}
+    filters.full_auto = fullAuto
+    filters.auto_guard = autoGuard
+    filters.charge_attack = chargeAttack
+    filters.characters_count = minCharacterCount
+    filters.weapons_count = minWeaponCount
+    filters.summons_count = minSummonCount
+    filters.name_quality = nameQuality
+    filters.user_quality = userQuality
+    filters.original = originalOnly
+
+    if (maxButtonsCount) filters.button_count = maxButtonsCount
+    if (maxTurnsCount) filters.turn_count = maxTurnsCount
+
     setCookie('filters', filters, { path: '/' })
-    // openChange()
+    props.sendAdvancedFilters(filters)
+    openChange()
   }
 
   function resetFilters() {
@@ -336,6 +359,7 @@ const FilterModal = (props: Props) => {
     <InputTableField
       name="min_characters"
       description={t('modals.filters.descriptions.max_buttons')}
+      placeholder="0"
       label={t('modals.filters.labels.max_buttons')}
       value={maxButtonsCount}
       onValueChange={handleMaxButtonsCountValueChange}
@@ -346,6 +370,7 @@ const FilterModal = (props: Props) => {
     <InputTableField
       name="min_turns"
       description={t('modals.filters.descriptions.max_turns')}
+      placeholder="0"
       label={t('modals.filters.labels.max_turns')}
       value={maxTurnsCount}
       onValueChange={handleMaxTurnsCountValueChange}
