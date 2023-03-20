@@ -13,8 +13,10 @@ import DialogContent from '~components/DialogContent'
 
 import Button from '~components/Button'
 import InputTableField from '~components/InputTableField'
+import SelectTableField from '~components/SelectTableField'
 import SliderTableField from '~components/SliderTableField'
 import SwitchTableField from '~components/SwitchTableField'
+import SelectItem from '~components/SelectItem'
 
 import type { DialogProps } from '@radix-ui/react-dialog'
 
@@ -44,9 +46,12 @@ const FilterModal = (props: Props) => {
 
   // States
   const [open, setOpen] = useState(false)
-
-  const [fullAuto, setFullAuto] = useState(props.filterSet.full_auto)
-  const [autoGuard, setAutoGuard] = useState(props.filterSet.auto_guard)
+  const [chargeAttackOpen, setChargeAttackOpen] = useState(false)
+  const [fullAutoOpen, setFullAutoOpen] = useState(false)
+  const [autoGuardOpen, setAutoGuardOpen] = useState(false)
+  // Filter states
+  const [fullAuto, setFullAuto] = useState(props.defaultFilterSet.full_auto)
+  const [autoGuard, setAutoGuard] = useState(props.defaultFilterSet.auto_guard)
   const [chargeAttack, setChargeAttack] = useState(
     props.filterSet.charge_attack
   )
@@ -90,6 +95,11 @@ const FilterModal = (props: Props) => {
     }
 
     console.log(filters)
+  function openSelect(name: 'charge_attack' | 'full_auto' | 'auto_guard') {
+    setChargeAttackOpen(name === 'charge_attack' ? !chargeAttackOpen : false)
+    setFullAutoOpen(name === 'full_auto' ? !fullAutoOpen : false)
+    setAutoGuardOpen(name === 'auto_guard' ? !autoGuardOpen : false)
+  }
 
     setCookie('filters', filters, { path: '/' })
     // openChange()
@@ -129,16 +139,22 @@ const FilterModal = (props: Props) => {
   }
 
   // Value listeners
-  function handleChargeAttackValueChange(value: boolean) {
-    setChargeAttack(value)
+  function handleChargeAttackValueChange(value: string) {
+    setChargeAttack(parseInt(value))
   }
 
-  function handleFullAutoValueChange(value: boolean) {
-    setFullAuto(value)
+  function handleFullAutoValueChange(value: string) {
+    const newValue = parseInt(value)
+    setFullAuto(newValue)
+    if (newValue === 0 || (newValue === -1 && autoGuard === 1))
+      setAutoGuard(newValue)
   }
 
-  function handleAutoGuardValueChange(value: boolean) {
-    setAutoGuard(value)
+  function handleAutoGuardValueChange(value: string) {
+    const newValue = parseInt(value)
+    setAutoGuard(newValue)
+    if (newValue === 1 || (newValue === -1 && fullAuto === 0))
+      setFullAuto(newValue)
   }
 
   function handleMinCharactersValueChange(value: number) {
@@ -173,6 +189,7 @@ const FilterModal = (props: Props) => {
     setOriginalOnly(value)
   }
 
+  // Sliders
   const minCharactersField = () => (
     <SliderTableField
       name="min_characters"
@@ -212,33 +229,74 @@ const FilterModal = (props: Props) => {
     />
   )
 
+  // Selects
   const fullAutoField = () => (
-    <SwitchTableField
+    <SelectTableField
       name="full_auto"
       label={t('modals.filters.labels.full_auto')}
-      value={fullAuto}
-      onValueChange={handleFullAutoValueChange}
-    />
+      open={fullAutoOpen}
+      value={`${fullAuto}`}
+      onOpenChange={() => openSelect('full_auto')}
+      onClose={() => setFullAutoOpen(false)}
+      onChange={handleFullAutoValueChange}
+    >
+      <SelectItem key="on-off" value="-1">
+        {t('modals.filters.options.on_and_off')}
+      </SelectItem>
+      <SelectItem key="on" value="1">
+        {t('modals.filters.options.on')}
+      </SelectItem>
+      <SelectItem key="off" value="0">
+        {t('modals.filters.options.off')}
+      </SelectItem>
+    </SelectTableField>
   )
 
   const autoGuardField = () => (
-    <SwitchTableField
+    <SelectTableField
       name="auto_guard"
       label={t('modals.filters.labels.auto_guard')}
-      value={autoGuard}
-      onValueChange={handleAutoGuardValueChange}
-    />
+      open={autoGuardOpen}
+      value={`${autoGuard}`}
+      onOpenChange={() => openSelect('auto_guard')}
+      onClose={() => setAutoGuardOpen(false)}
+      onChange={handleAutoGuardValueChange}
+    >
+      <SelectItem key="on-off" value="-1">
+        {t('modals.filters.options.on_and_off')}
+      </SelectItem>
+      <SelectItem key="on" value="1">
+        {t('modals.filters.options.on')}
+      </SelectItem>
+      <SelectItem key="off" value="0">
+        {t('modals.filters.options.off')}
+      </SelectItem>
+    </SelectTableField>
   )
 
   const chargeAttackField = () => (
-    <SwitchTableField
+    <SelectTableField
       name="charge_attack"
       label={t('modals.filters.labels.charge_attack')}
-      value={chargeAttack}
-      onValueChange={handleChargeAttackValueChange}
-    />
+      open={chargeAttackOpen}
+      value={`${chargeAttack}`}
+      onOpenChange={() => openSelect('charge_attack')}
+      onClose={() => setChargeAttackOpen(false)}
+      onChange={handleChargeAttackValueChange}
+    >
+      <SelectItem key="on-off" value="-1">
+        {t('modals.filters.options.on_and_off')}
+      </SelectItem>
+      <SelectItem key="on" value="1">
+        {t('modals.filters.options.on')}
+      </SelectItem>
+      <SelectItem key="off" value="0">
+        {t('modals.filters.options.off')}
+      </SelectItem>
+    </SelectTableField>
   )
 
+  // Switches
   const nameQualityField = () => (
     <SwitchTableField
       name="name_quality"
@@ -266,6 +324,7 @@ const FilterModal = (props: Props) => {
     />
   )
 
+  // Inputs
   const maxButtonsField = () => (
     <InputTableField
       name="min_characters"
