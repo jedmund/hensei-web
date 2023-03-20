@@ -46,10 +46,9 @@ const FilterModal = (props: Props) => {
 
   // States
   const [open, setOpen] = useState(false)
-
-  const [fullAuto, setFullAuto] = useState(props.filterSet.full_auto)
-  const [autoGuard, setAutoGuard] = useState(props.filterSet.auto_guard)
-  const [chargeAttack, setChargeAttack] = useState(DEFAULT_CHARGE_ATTACK)
+  const [chargeAttackOpen, setChargeAttackOpen] = useState(false)
+  const [fullAutoOpen, setFullAutoOpen] = useState(false)
+  const [autoGuardOpen, setAutoGuardOpen] = useState(false)
 
   const [minCharacterCount, setMinCharacterCount] = useState(3)
   const [minWeaponCount, setMinWeaponCount] = useState(5)
@@ -140,7 +139,11 @@ const FilterModal = (props: Props) => {
     }
 
     console.log(filters)
-    if (maxTurnsCount) filters.turn_count = maxTurnsCount
+  function openSelect(name: 'charge_attack' | 'full_auto' | 'auto_guard') {
+    setChargeAttackOpen(name === 'charge_attack' ? !chargeAttackOpen : false)
+    setFullAutoOpen(name === 'full_auto' ? !fullAutoOpen : false)
+    setAutoGuardOpen(name === 'auto_guard' ? !autoGuardOpen : false)
+  }
 
     setCookie('filters', filters, { path: '/' })
     props.sendAdvancedFilters(filters)
@@ -181,19 +184,19 @@ const FilterModal = (props: Props) => {
   }
 
   // Value listeners
-  function handleChargeAttackValueChange(value: boolean) {
-    setChargeAttack(value)
+  function handleChargeAttackValueChange(value: string) {
+    setChargeAttack(parseInt(value))
   }
 
-  function handleFullAutoValueChange(value: boolean) {
-    setFullAuto(value)
+  function handleFullAutoValueChange(value: string) {
+    const newValue = parseInt(value)
     setFullAuto(newValue)
     if (newValue === 0 || (newValue === -1 && autoGuard === 1))
       setAutoGuard(newValue)
   }
 
-  function handleAutoGuardValueChange(value: boolean) {
-    setAutoGuard(value)
+  function handleAutoGuardValueChange(value: string) {
+    const newValue = parseInt(value)
     setAutoGuard(newValue)
     if (newValue === 1 || (newValue === -1 && fullAuto === 0))
       setFullAuto(newValue)
@@ -273,14 +276,14 @@ const FilterModal = (props: Props) => {
 
   // Selects
   const fullAutoField = () => (
-    <SwitchTableField
+    <SelectTableField
       name="full_auto"
       label={t('modals.filters.labels.full_auto')}
       open={fullAutoOpen}
-      value={fullAuto}
+      value={`${fullAuto}`}
       onOpenChange={() => openSelect('full_auto')}
       onClose={() => setFullAutoOpen(false)}
-      onValueChange={handleFullAutoValueChange}
+      onChange={handleFullAutoValueChange}
     >
       <SelectItem key="on-off" value="-1">
         {t('modals.filters.options.on_and_off')}
@@ -291,18 +294,18 @@ const FilterModal = (props: Props) => {
       <SelectItem key="off" value="0">
         {t('modals.filters.options.off')}
       </SelectItem>
-    />
+    </SelectTableField>
   )
 
   const autoGuardField = () => (
-    <SwitchTableField
+    <SelectTableField
       name="auto_guard"
       label={t('modals.filters.labels.auto_guard')}
       open={autoGuardOpen}
-      value={autoGuard}
+      value={`${autoGuard}`}
       onOpenChange={() => openSelect('auto_guard')}
       onClose={() => setAutoGuardOpen(false)}
-      onValueChange={handleAutoGuardValueChange}
+      onChange={handleAutoGuardValueChange}
     >
       <SelectItem key="on-off" value="-1">
         {t('modals.filters.options.on_and_off')}
@@ -313,18 +316,18 @@ const FilterModal = (props: Props) => {
       <SelectItem key="off" value="0">
         {t('modals.filters.options.off')}
       </SelectItem>
-    />
+    </SelectTableField>
   )
 
   const chargeAttackField = () => (
-    <SwitchTableField
+    <SelectTableField
       name="charge_attack"
       label={t('modals.filters.labels.charge_attack')}
       open={chargeAttackOpen}
-      value={chargeAttack}
+      value={`${chargeAttack}`}
       onOpenChange={() => openSelect('charge_attack')}
       onClose={() => setChargeAttackOpen(false)}
-      onValueChange={handleChargeAttackValueChange}
+      onChange={handleChargeAttackValueChange}
     >
       <SelectItem key="on-off" value="-1">
         {t('modals.filters.options.on_and_off')}
@@ -335,7 +338,7 @@ const FilterModal = (props: Props) => {
       <SelectItem key="off" value="0">
         {t('modals.filters.options.off')}
       </SelectItem>
-    />
+    </SelectTableField>
   )
 
   // Switches
