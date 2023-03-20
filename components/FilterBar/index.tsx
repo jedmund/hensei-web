@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
+import equals from 'fast-deep-equal'
 
 import FilterModal from '~components/FilterModal'
 import RaidDropdown from '~components/RaidDropdown'
@@ -21,17 +22,7 @@ interface Props {
   element?: number
   raidSlug?: string
   recency?: number
-  onFilter: ({
-    element,
-    raidSlug,
-    recency,
-  }: {
-    element?: number
-    raidSlug?: string
-    recency?: number
-  }) => void
-}
-
+  onFilter: (filters: FilterSet) => void
 }
 
 const FilterBar = (props: Props) => {
@@ -42,18 +33,30 @@ const FilterBar = (props: Props) => {
   const [elementOpen, setElementOpen] = useState(false)
 
   const [filterModalOpen, setFilterModalOpen] = useState(false)
+  const [advancedFilters, setAdvancedFilters] = useState<FilterSet>({})
 
-  // Fetch user's advanced filters
-  const filtersCookie = getCookie('filters')
-  const advancedFilters: FilterSet = filtersCookie
-    ? JSON.parse(filtersCookie as string)
-    : DEFAULT_FILTERSET
-
+  const [matchesDefaultFilters, setMatchesDefaultFilters] = useState(false)
   // Set up classes object for showing shadow on scroll
   const classes = classNames({
     FilterBar: true,
     shadow: props.scrolled,
   })
+
+  const filterButtonClasses = classNames({
+    Filter: true,
+    FiltersActive: !matchesDefaultFilters,
+  })
+
+  useEffect(() => {
+    // Fetch user's advanced filters
+    const filtersCookie = getCookie('filters')
+    if (filtersCookie) setAdvancedFilters(JSON.parse(filtersCookie as string))
+    else setAdvancedFilters(defaultFilterset)
+  }, [])
+
+  useEffect(() => {
+    setMatchesDefaultFilters(equals(advancedFilters, defaultFilterset))
+  }, [advancedFilters, defaultFilterset])
 
   function openElementSelect() {
     setElementOpen(!elementOpen)
@@ -65,16 +68,21 @@ const FilterBar = (props: Props) => {
 
   function elementSelectChanged(value: string) {
     const elementValue = parseInt(value)
-    props.onFilter({ element: elementValue })
+    props.onFilter({ element: elementValue, ...advancedFilters })
   }
 
   function recencySelectChanged(value: string) {
     const recencyValue = parseInt(value)
-    props.onFilter({ recency: recencyValue })
+    props.onFilter({ recency: recencyValue, ...advancedFilters })
   }
 
   function raidSelectChanged(slug?: string) {
-    props.onFilter({ raidSlug: slug })
+    props.onFilter({ raidSlug: slug, ...advancedFilters })
+  }
+
+  function handleAdvancedFiltersChanged(filters: FilterSet) {
+    setAdvancedFilters(filters)
+    props.onFilter(filters)
   }
 
   function onSelectChange(name: 'element' | 'recency') {
@@ -159,7 +167,7 @@ const FilterBar = (props: Props) => {
           </Select>
 
           <Button
-            className="Filter"
+            className={filterButtonClasses}
             blended={true}
             leftAccessoryIcon={<FilterIcon />}
             onClick={() => setFilterModalOpen(true)}
@@ -171,6 +179,7 @@ const FilterBar = (props: Props) => {
         filterSet={advancedFilters}
         open={filterModalOpen}
         onOpenChange={setFilterModalOpen}
+        sendAdvancedFilters={handleAdvancedFiltersChanged}
       />
     </>
   )
