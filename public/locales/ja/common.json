@@ -221,6 +221,11 @@
         "user_quality": "無名のユーザーなし",
         "original_only": "リミックスなし"
       },
+      "options": {
+        "on": "ON",
+        "off": "OFF",
+        "on_and_off": "両方"
+      },
       "buttons": {
         "confirm": "フィルターを保存する",
         "clear": "保存したフィルターをクリア"
