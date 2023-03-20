@@ -1,6 +1,11 @@
 .Dialog {
   .Filter.DialogContent {
     overflow: hidden;
+
+    .TableField .Right .SelectTrigger.Table {
+      width: $unit-20x;
+      min-width: auto;
+    }
   }
 
   .DialogFooter .Buttons .Button.Blended {
