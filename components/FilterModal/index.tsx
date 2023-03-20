@@ -26,6 +26,7 @@ import './index.scss'
 interface Props extends DialogProps {
   defaultFilterSet: FilterSet
   filterSet: FilterSet
+  sendAdvancedFilters: (filters: FilterSet) => void
 }
 
 const MAX_CHARACTERS = 5
@@ -50,7 +51,7 @@ const FilterModal = (props: Props) => {
   const [fullAutoOpen, setFullAutoOpen] = useState(false)
   const [autoGuardOpen, setAutoGuardOpen] = useState(false)
 
-  const [minCharacterCount, setMinCharacterCount] = useState(3)
+  const [filterSet, setFilterSet] = useState<FilterSet>({})
   const [minWeaponCount, setMinWeaponCount] = useState(5)
   const [minSummonCount, setMinSummonCount] = useState(2)
 
@@ -63,7 +64,6 @@ const FilterModal = (props: Props) => {
   const [chargeAttack, setChargeAttack] = useState(
     props.defaultFilterSet.charge_attack
   )
-
   const [minCharacterCount, setMinCharacterCount] = useState(
     props.defaultFilterSet.characters_count
   )
@@ -125,30 +125,23 @@ const FilterModal = (props: Props) => {
   }
 
   function saveFilters() {
-    const filters = {
-      full_auto: fullAuto,
-      auto_guard: autoGuard,
-      charge_attack: chargeAttack,
-      characters_count: minCharacterCount,
-      weapons_count: minWeaponCount,
-      summons_count: minSummonCount,
-      button_count: maxButtonsCount,
-      turn_count: maxTurnsCount,
-      name_quality: nameQuality,
-      user_quality: userQuality,
-      original: originalOnly,
-    }
+    const filters: FilterSet = {}
+    filters.full_auto = fullAuto
+    filters.auto_guard = autoGuard
+    filters.charge_attack = chargeAttack
+    filters.characters_count = minCharacterCount
+    filters.weapons_count = minWeaponCount
+    filters.summons_count = minSummonCount
+    filters.name_quality = nameQuality
+    filters.user_quality = userQuality
+    filters.original = originalOnly
 
-    console.log(filters)
-  function openSelect(name: 'charge_attack' | 'full_auto' | 'auto_guard') {
-    setChargeAttackOpen(name === 'charge_attack' ? !chargeAttackOpen : false)
-    setFullAutoOpen(name === 'full_auto' ? !fullAutoOpen : false)
-    setAutoGuardOpen(name === 'auto_guard' ? !autoGuardOpen : false)
-  }
+    if (maxButtonsCount) filters.button_count = maxButtonsCount
+    if (maxTurnsCount) filters.turn_count = maxTurnsCount
 
     setCookie('filters', filters, { path: '/' })
     props.sendAdvancedFilters(filters)
-    // openChange()
+    openChange()
   }
 
   function resetFilters() {
