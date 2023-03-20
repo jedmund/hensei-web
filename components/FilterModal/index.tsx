@@ -53,26 +53,33 @@ const FilterModal = (props: Props) => {
   const [fullAuto, setFullAuto] = useState(props.defaultFilterSet.full_auto)
   const [autoGuard, setAutoGuard] = useState(props.defaultFilterSet.auto_guard)
   const [chargeAttack, setChargeAttack] = useState(
-    props.filterSet.charge_attack
+    props.defaultFilterSet.charge_attack
   )
 
   const [minCharacterCount, setMinCharacterCount] = useState(
-    props.filterSet.characters_count
+    props.defaultFilterSet.characters_count
   )
   const [minWeaponCount, setMinWeaponCount] = useState(
-    props.filterSet.weapons_count
+    props.defaultFilterSet.weapons_count
   )
   const [minSummonCount, setMinSummonCount] = useState(
-    props.filterSet.summons_count
+    props.defaultFilterSet.summons_count
   )
   const [maxButtonsCount, setMaxButtonsCount] = useState(
-    props.filterSet.button_count
+    props.defaultFilterSet.button_count
   )
-  const [maxTurnsCount, setMaxTurnsCount] = useState(props.filterSet.turn_count)
-
-  const [userQuality, setUserQuality] = useState(props.filterSet.user_quality)
-  const [nameQuality, setNameQuality] = useState(props.filterSet.name_quality)
-  const [originalOnly, setOriginalOnly] = useState(props.filterSet.original)
+  const [maxTurnsCount, setMaxTurnsCount] = useState(
+    props.defaultFilterSet.turn_count
+  )
+  const [userQuality, setUserQuality] = useState(
+    props.defaultFilterSet.user_quality
+  )
+  const [nameQuality, setNameQuality] = useState(
+    props.defaultFilterSet.name_quality
+  )
+  const [originalOnly, setOriginalOnly] = useState(
+    props.defaultFilterSet.original
+  )
 
   // Hooks
   useEffect(() => {
