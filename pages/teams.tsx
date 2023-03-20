@@ -13,6 +13,7 @@ import fetchLatestVersion from '~utils/fetchLatestVersion'
 import organizeRaids from '~utils/organizeRaids'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { appState } from '~utils/appState'
+import { defaultFilterset } from '~utils/defaultFilters'
 import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
 
@@ -30,6 +31,7 @@ import type {
   PaginationObject,
   ResponseStatus,
 } from '~types'
+import { getCookie } from 'cookies-next'
 
 interface Props {
   context?: PageContextObj
@@ -82,6 +84,8 @@ const TeamsRoute: React.FC<Props> = ({
     parse: (query: string) => parseInt(query),
     serialize: (value) => `${value}`,
   })
+  const [advancedFilters, setAdvancedFilters] =
+    useState<FilterSet>(defaultFilterset)
 
   // Define transformers for element
   function parseElement(query: string) {
@@ -120,6 +124,16 @@ const TeamsRoute: React.FC<Props> = ({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Fetch the user's advanced filters
+  useEffect(() => {
+    const filtersCookie = getCookie('filters')
+    const filters = filtersCookie
+      ? JSON.parse(filtersCookie as string)
+      : defaultFilterset
+
+    setAdvancedFilters(filters)
+  }, [])
+
   // Handle errors
   const handleError = useCallback((error: any) => {
     if (error.response != null) {
@@ -138,6 +152,7 @@ const TeamsRoute: React.FC<Props> = ({
         raid: raid ? raid.id : undefined,
         recency: recency !== -1 ? recency : undefined,
         page: currentPage,
+        ...advancedFilters,
       }
 
       Object.keys(filters).forEach(
@@ -164,7 +179,7 @@ const TeamsRoute: React.FC<Props> = ({
         })
         .catch((error) => handleError(error))
     },
-    [currentPage, parties, element, raid, recency]
+    [currentPage, parties, element, raid, recency, advancedFilters]
   )
 
   function replaceResults(count: number, list: Party[]) {
@@ -198,7 +213,7 @@ const TeamsRoute: React.FC<Props> = ({
   useDidMountEffect(() => {
     setCurrentPage(1)
     fetchTeams({ replace: true })
-  }, [element, raid, recency])
+  }, [element, raid, recency, advancedFilters])
 
   // When the page changes, fetch all teams again.
   useDidMountEffect(() => {
@@ -208,25 +223,24 @@ const TeamsRoute: React.FC<Props> = ({
   }, [currentPage])
 
   // Receive filters from the filter bar
-  function receiveFilters({
-    element,
-    raidSlug,
-    recency,
-  }: {
-    element?: number
-    raidSlug?: string
-    recency?: number
-  }) {
-    if (element == 0) setElement(0, { shallow: true })
-    else if (element) setElement(element, { shallow: true })
+  function receiveFilters(filters: FilterSet) {
+    if (filters.element == 0) setElement(0, { shallow: true })
+    else if (filters.element) setElement(filters.element, { shallow: true })
 
-    if (raids && raidSlug) {
-      const raid = raids.find((raid) => raid.slug === raidSlug)
+    if (raids && filters.raidSlug) {
+      const raid = raids.find((raid) => raid.slug === filters.raidSlug)
       setRaid(raid)
-      setRaidSlug(raidSlug, { shallow: true })
+      setRaidSlug(filters.raidSlug, { shallow: true })
     }
 
-    if (recency) setRecency(recency, { shallow: true })
+    if (filters.recency) setRecency(filters.recency, { shallow: true })
+
+    delete filters.element
+    delete filters.raidSlug
+    delete filters.recency
+
+    console.log('Setting advanced filters in receiveFilters')
+    setAdvancedFilters(filters)
   }
 
   // Methods: Favorites
@@ -367,6 +381,10 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   // Fetch latest version
   const version = await fetchLatestVersion()
+
+  // Fetch user's advanced filters
+  const filtersCookie = getCookie('filters', { req: req, res: res })
+  const advancedFilters = filtersCookie ? JSON.parse(filtersCookie as string) : undefined
   
   try {
     // Fetch and organize raids
@@ -377,7 +395,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     // Create filter object
     const filters: FilterObject = extractFilters(query, raids)
     const params = {
-      params: { ...filters },
+      params: { ...filters, ...advancedFilters },
     }
 
     // Set up empty variables
