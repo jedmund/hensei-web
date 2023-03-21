@@ -62,12 +62,19 @@ const GridRep = (props: Props) => {
     const newWeapons = Array(numWeapons)
     const gridWeapons = Array(numWeapons)
 
+    let foundMainhand = false
     for (const [key, value] of Object.entries(props.grid)) {
-      if (value.position == -1) setMainhand(value.object)
-      else if (!value.mainhand && value.position != null) {
+      if (value.position == -1) {
+        setMainhand(value.object)
+        foundMainhand = true
+      } else if (!value.mainhand && value.position != null) {
         newWeapons[value.position] = value.object
         gridWeapons[value.position] = value
       }
+    }
+
+    if (!foundMainhand) {
+      setMainhand(undefined)
     }
 
     setWeapons(newWeapons)

@@ -35,9 +35,9 @@
   }
 
   & > .Grid {
-    aspect-ratio: 2/1;
+    aspect-ratio: 2/0.95;
     display: grid;
-    grid-template-columns: 1fr 3fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
+    grid-template-columns: 1fr 3.36fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
     grid-gap: $unit; /* add a gap of 8px between grid items */
 
     .Weapon {
@@ -49,6 +49,7 @@
       aspect-ratio: 73/153;
       display: grid;
       grid-column: 1 / 2; /* spans one column */
+      max-height: 140px;
     }
 
     .GridWeapons {
@@ -62,6 +63,8 @@
         1fr
       ); /* create 3 rows, each taking up 1 fraction */
       gap: $unit;
+      // column-gap: $unit;
+      // row-gap: $unit-2x;
     }
 
     .Grid.Weapon {
