@@ -731,7 +731,7 @@ const PartyDetails = (props: Props) => {
             })}
           >
             {`${t('party.details.labels.auto_guard')} ${
-              fullAuto ? 'On' : 'Off'
+              autoGuard ? 'On' : 'Off'
             }`}
           </Token>
 
