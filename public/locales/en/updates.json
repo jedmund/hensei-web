@@ -15,9 +15,16 @@
     "date": "{{month}}/{{year}}",
     "legfest": "Legend Festival",
     "flash": "Flash Gala",
+    "content": "Content Update",
     "uncap": "Uncap"
   },
   "versions": {
+    "2023-03U": {
+      "features": [
+        "Added Siete HL (raid)",
+        "Chaser name corrected (was 'Chase')"
+      ]
+    },
     "2023-03F": {
       "features": [
         "Added new class \"Yamato\"",
