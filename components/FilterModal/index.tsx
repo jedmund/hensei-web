@@ -50,13 +50,7 @@ const FilterModal = (props: Props) => {
   const [chargeAttackOpen, setChargeAttackOpen] = useState(false)
   const [fullAutoOpen, setFullAutoOpen] = useState(false)
   const [autoGuardOpen, setAutoGuardOpen] = useState(false)
-
   const [filterSet, setFilterSet] = useState<FilterSet>({})
-  const [minWeaponCount, setMinWeaponCount] = useState(5)
-  const [minSummonCount, setMinSummonCount] = useState(2)
-
-  const [maxButtonsCount, setMaxButtonsCount] = useState(0)
-  const [maxTurnsCount, setMaxTurnsCount] = useState(0)
 
   // Filter states
   const [fullAuto, setFullAuto] = useState(props.defaultFilterSet.full_auto)
@@ -71,11 +65,8 @@ const FilterModal = (props: Props) => {
     props.defaultFilterSet.weapons_count
   )
   const [minSummonCount, setMinSummonCount] = useState(
-    props.filterSet.summons_count
-  )
-  const [minSummonCount, setMinSummonCount] = useState(DEFAULT_MIN_SUMMONS)
     props.defaultFilterSet.summons_count
-
+  )
   const [maxButtonsCount, setMaxButtonsCount] = useState(
     props.defaultFilterSet.button_count
   )
@@ -118,7 +109,7 @@ const FilterModal = (props: Props) => {
     setOriginalOnly(filterSet.original)
   }, [filterSet])
 
-  function sendFilters() {
+  function openSelect(name: 'charge_attack' | 'full_auto' | 'auto_guard') {
     setChargeAttackOpen(name === 'charge_attack' ? !chargeAttackOpen : false)
     setFullAutoOpen(name === 'full_auto' ? !fullAutoOpen : false)
     setAutoGuardOpen(name === 'auto_guard' ? !autoGuardOpen : false)
