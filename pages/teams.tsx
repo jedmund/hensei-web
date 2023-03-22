@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { getCookie } from 'cookies-next'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -31,7 +32,6 @@ import type {
   PaginationObject,
   ResponseStatus,
 } from '~types'
-import { getCookie } from 'cookies-next'
 
 interface Props {
   context?: PageContextObj
@@ -239,7 +239,6 @@ const TeamsRoute: React.FC<Props> = ({
     delete filters.raidSlug
     delete filters.recency
 
-    console.log('Setting advanced filters in receiveFilters')
     setAdvancedFilters(filters)
   }
 

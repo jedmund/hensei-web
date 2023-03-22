@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { getCookie } from 'cookies-next'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -12,6 +13,7 @@ import organizeRaids from '~utils/organizeRaids'
 import { setHeaders } from '~utils/userToken'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { appState } from '~utils/appState'
+import { defaultFilterset } from '~utils/defaultFilters'
 import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
 
@@ -82,6 +84,8 @@ const ProfileRoute: React.FC<Props> = ({
     parse: (query: string) => parseInt(query),
     serialize: (value) => `${value}`,
   })
+  const [advancedFilters, setAdvancedFilters] =
+    useState<FilterSet>(defaultFilterset)
 
   // Define transformers for element
   function parseElement(query: string) {
@@ -120,6 +124,16 @@ const ProfileRoute: React.FC<Props> = ({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Fetch the user's advanced filters
+  useEffect(() => {
+    const filtersCookie = getCookie('filters')
+    const filters = filtersCookie
+      ? JSON.parse(filtersCookie as string)
+      : defaultFilterset
+
+    setAdvancedFilters(filters)
+  }, [])
+
   // Handle errors
   const handleError = useCallback((error: any) => {
     if (error.response != null) {
@@ -138,6 +152,7 @@ const ProfileRoute: React.FC<Props> = ({
           raid: raid ? raid.id : undefined,
           recency: recency != -1 ? recency : undefined,
           page: currentPage,
+          ...advancedFilters,
         },
       }
 
@@ -194,7 +209,7 @@ const ProfileRoute: React.FC<Props> = ({
   useDidMountEffect(() => {
     setCurrentPage(1)
     fetchProfile({ replace: true })
-  }, [username, element, raid, recency])
+  }, [username, element, raid, recency, advancedFilters])
 
   // When the page changes, fetch all teams again.
   useDidMountEffect(() => {
@@ -204,25 +219,23 @@ const ProfileRoute: React.FC<Props> = ({
   }, [currentPage])
 
   // Receive filters from the filter bar
-  function receiveFilters({
-    element,
-    raidSlug,
-    recency,
-  }: {
-    element?: number
-    raidSlug?: string
-    recency?: number
-  }) {
-    if (element == 0) setElement(0, { shallow: true })
-    else if (element) setElement(element, { shallow: true })
+  function receiveFilters(filters: FilterSet) {
+    if (filters.element == 0) setElement(0, { shallow: true })
+    else if (filters.element) setElement(filters.element, { shallow: true })
 
-    if (raids && raidSlug) {
-      const raid = raids.find((raid) => raid.slug === raidSlug)
+    if (raids && filters.raidSlug) {
+      const raid = raids.find((raid) => raid.slug === filters.raidSlug)
       setRaid(raid)
-      setRaidSlug(raidSlug, { shallow: true })
+      setRaidSlug(filters.raidSlug, { shallow: true })
     }
 
-    if (recency) setRecency(recency, { shallow: true })
+    if (filters.recency) setRecency(filters.recency, { shallow: true })
+
+    delete filters.element
+    delete filters.raidSlug
+    delete filters.recency
+
+    setAdvancedFilters(filters)
   }
 
   // Methods: Navigation
@@ -334,6 +347,12 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Fetch latest version
   const version = await fetchLatestVersion()
 
+  // Fetch user's advanced filters
+  const filtersCookie = getCookie('filters', { req: req, res: res })
+  const advancedFilters = filtersCookie
+    ? JSON.parse(filtersCookie as string)
+    : undefined
+
   try {
     // Fetch and organize raids
     let { raids, sortedRaids } = await api.endpoints.raids
@@ -343,7 +362,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     // Create filter object
     const filters: FilterObject = extractFilters(query, raids)
     const params = {
-      params: { ...filters },
+      params: { ...filters, ...advancedFilters },
     }
 
     // Set up empty variables
