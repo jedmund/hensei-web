@@ -179,7 +179,7 @@ const SavedRoute: React.FC<Props> = ({
         })
         .catch((error) => handleError(error))
     },
-    [currentPage, parties, element, raid, recency]
+    [currentPage, parties, element, raid, recency, advancedFilters]
   )
 
   function replaceResults(count: number, list: Party[]) {

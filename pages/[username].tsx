@@ -175,7 +175,7 @@ const ProfileRoute: React.FC<Props> = ({
           .catch((error) => handleError(error))
       }
     },
-    [currentPage, username, parties, element, raid, recency]
+    [currentPage, username, parties, element, raid, recency, advancedFilters]
   )
 
   function replaceResults(count: number, list: Party[]) {
