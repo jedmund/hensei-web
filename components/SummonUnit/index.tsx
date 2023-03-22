@@ -141,7 +141,14 @@ const SummonUnit = ({
 
       let suffix = ''
       if (gridSummon.object.uncap.xlb && gridSummon.uncap_level == 6) {
-        suffix = '_03'
+        if (
+          gridSummon.transcendence_step >= 1 &&
+          gridSummon.transcendence_step < 5
+        ) {
+          suffix = '_03'
+        } else if (gridSummon.transcendence_step === 5) {
+          suffix = '_04'
+        }
       } else if (
         upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
         gridSummon.uncap_level == 5

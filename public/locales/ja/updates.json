@@ -15,6 +15,7 @@
     "date": "{{year}}年{{month}}月",
     "legfest": "レジェンドフェス",
     "flash": "グランデフェス",
+    "content": "アップデート",
     "uncap": "上限解放"
   },
   "versions": {
