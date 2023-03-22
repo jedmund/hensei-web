@@ -139,8 +139,24 @@
     }
 
     .Properties {
+      .auto {
+        display: inline-flex;
+        gap: $unit-half;
+        flex-direction: row;
+        margin-left: $unit-half;
+      }
+
       .full_auto {
         color: var(--full-auto-label-text);
+      }
+
+      .auto_guard {
+        width: 12px;
+        height: 12px;
+
+        svg {
+          fill: var(--full-auto-label-text);
+        }
       }
     }
 

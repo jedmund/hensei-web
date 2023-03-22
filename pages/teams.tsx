@@ -313,6 +313,7 @@ const TeamsRoute: React.FC<Props> = ({
           user={party.user}
           favorited={party.favorited}
           fullAuto={party.full_auto}
+          autoGuard={party.auto_guard}
           key={`party-${i}`}
           displayUser={true}
           onClick={goTo}

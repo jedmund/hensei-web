@@ -272,6 +272,7 @@ const ProfileRoute: React.FC<Props> = ({
           grid={party.weapons}
           favorited={party.favorited}
           fullAuto={party.full_auto}
+          autoGuard={party.auto_guard}
           key={`party-${i}`}
           onClick={goTo}
         />
