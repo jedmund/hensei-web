@@ -59,7 +59,7 @@ const UpdatesPage = () => {
       <ContentUpdate
         version="2023-04U"
         dateString="2023/04/01"
-        event="events.update"
+        event="events.content"
         newItems={{
           character: ['3040457000'],
           summon: ['2040419000'],
@@ -90,6 +90,8 @@ const UpdatesPage = () => {
             '1040815300',
             '1040815400',
             '1040815000',
+            '1040024400',
+            '1030609400',
           ],
         }}
         numNotes={1}
