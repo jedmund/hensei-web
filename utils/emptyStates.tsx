@@ -204,6 +204,10 @@ export const emptyWeaponSeriesState: WeaponSeriesState = {
     id: 31,
     checked: false,
   },
+  world: {
+    id: 32,
+    checked: false,
+  },
 }
 
 export const emptyPaginationObject = {
