@@ -120,4 +120,8 @@ export const weaponSeries: WeaponSeries[] = [
     id: 31,
     slug: 'illustrious',
   },
+  {
+    id: 32,
+    slug: 'world',
+  },
 ]

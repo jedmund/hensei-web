@@ -19,6 +19,9 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2023-03U2": {
+      "features": ["Added new weapon series, World Series"]
+    },
     "2023-03U": {
       "features": [
         "Added Siete HL (raid)",
