@@ -12,7 +12,7 @@ import { formatTimeAgo } from '~utils/timeAgo'
 import Button from '~components/Button'
 
 import SaveIcon from '~public/icons/Save.svg'
-
+import ShieldIcon from '~public/icons/Shield.svg'
 import './index.scss'
 
 interface Props {
@@ -23,6 +23,7 @@ interface Props {
   grid: GridWeapon[]
   user?: User
   fullAuto: boolean
+  autoGuard: boolean
   favorited: boolean
   createdAt: Date
   displayUser?: boolean | false
@@ -62,12 +63,19 @@ const GridRep = (props: Props) => {
     const newWeapons = Array(numWeapons)
     const gridWeapons = Array(numWeapons)
 
+    let foundMainhand = false
     for (const [key, value] of Object.entries(props.grid)) {
-      if (value.position == -1) setMainhand(value.object)
-      else if (!value.mainhand && value.position != null) {
+      if (value.position == -1) {
+        setMainhand(value.object)
+        foundMainhand = true
+      } else if (!value.mainhand && value.position != null) {
         newWeapons[value.position] = value.object
         gridWeapons[value.position] = value
       }
+    }
+
+    if (!foundMainhand) {
+      setMainhand(undefined)
     }
 
     setWeapons(newWeapons)
@@ -164,6 +172,26 @@ const GridRep = (props: Props) => {
     </div>
   )
 
+  function fullAutoString() {
+    const fullAutoElement = (
+      <span className="full_auto">
+        {` · ${t('party.details.labels.full_auto')}`}
+      </span>
+    )
+
+    const autoGuardElement = (
+      <span className="auto_guard">
+        <ShieldIcon />
+      </span>
+    )
+
+    return (
+      <div className="auto">
+        {fullAutoElement}
+        {props.autoGuard ? autoGuardElement : ''}
+      </div>
+    )
+  }
   const details = (
     <div className="Details">
       <h2 className={titleClass}>{props.name ? props.name : t('no_title')}</h2>
@@ -172,13 +200,7 @@ const GridRep = (props: Props) => {
           <span className={raidClass}>
             {props.raid ? props.raid.name[locale] : t('no_raid')}
           </span>
-          {props.fullAuto ? (
-            <span className="full_auto">
-              {` · ${t('party.details.labels.full_auto')}`}
-            </span>
-          ) : (
-            ''
-          )}
+          {props.fullAuto ? fullAutoString() : ''}
         </div>
         <time className="last-updated" dateTime={props.createdAt.toISOString()}>
           {formatTimeAgo(props.createdAt, locale)}

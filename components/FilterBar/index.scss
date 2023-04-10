@@ -38,6 +38,24 @@
       flex-direction: column;
       width: 100%;
     }
+
+    .Button.Filter.Blended {
+      &.FiltersActive .Accessory svg {
+        fill: var(--accent-blue);
+        stroke: none;
+      }
+
+      &:hover {
+        background: var(--button-bg);
+      }
+
+      .Accessory svg {
+        fill: none;
+        stroke: var(--button-text);
+        width: 18px;
+        height: 18px;
+      }
+    }
   }
 
   &.shadow {

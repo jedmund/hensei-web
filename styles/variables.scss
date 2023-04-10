@@ -80,7 +80,9 @@ $yellow: #c89d39;
 $error: #d13a3a;
 
 $accent--blue--light: #275dc5;
+$accent--blue--light--focus: #0c398d;
 $accent--blue--dark: #6195f4;
+$accent--blue--dark--focus: #275dc5;
 
 $accent--yellow--light: #c89d39;
 $accent--yellow--dark: #f9cc64;
@@ -224,6 +226,17 @@ $grid--rep--hover--dark: $grey-10;
 $grid--border--color--light: $grey-80;
 $grid--border--color--dark: $grey-40;
 
+// Color Definitions: Slider
+$slider--thumb--bg--light: $grey-100;
+$slider--thumb--bg--dark: $grey-100;
+$slider--thumb--bg--light--hover: $grey-95;
+$slider--thumb--bg--dark--hover: $grey-95;
+$slider--thumb--shadow--light: $grey-70;
+$slider--thumb--shadow--dark: $grey-05;
+$slider--thumb--shadow--light--hover: $grey-50;
+$slider--thumb--shadow--dark--hover: $grey-00;
+
+// Color Definitions: Switch
 $switch--nub--bg--light: $grey-80;
 $switch--nub--bg--dark: $grey-30;
 
