@@ -27,4 +27,6 @@ const Slider = React.forwardRef<HTMLDivElement, Props & SliderProps>(
   }
 )
 
+Slider.displayName = 'Slider'
+
 export default Slider
