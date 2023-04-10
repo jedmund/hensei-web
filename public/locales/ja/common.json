@@ -207,6 +207,31 @@
         "cancel": "キャンセル"
       }
     },
+    "filters": {
+      "title": "フィルター設定",
+      "labels": {
+        "charge_attack": "奥義",
+        "full_auto": "フルオート",
+        "auto_guard": "オートガード",
+        "max_buttons": "最大ポチ数",
+        "max_turns": "最大ターン数",
+        "min_characters": "最小キャラクター数",
+        "min_summons": "最小召喚石数",
+        "min_weapons": "最小武器数",
+        "name_quality": "無題の編成なし",
+        "user_quality": "無名のユーザーなし",
+        "original_only": "リミックスなし"
+      },
+      "options": {
+        "on": "ON",
+        "off": "OFF",
+        "on_and_off": "両方"
+      },
+      "buttons": {
+        "confirm": "フィルターを保存する",
+        "clear": "保存したフィルターをクリア"
+      }
+    },
     "login": {
       "title": "ログイン",
       "buttons": {

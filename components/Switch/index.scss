@@ -9,12 +9,14 @@
   width: 58px;
   height: $height;
 
-  &:focus {
-    box-shadow: 0 0 0 2px $grey-15;
+  &:focus,
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--accent-blue-focus);
+    outline: none;
   }
 
   &[data-state='checked'] {
-    background: $grey-15;
+    background: var(--accent-blue);
   }
 
   &:disabled {

@@ -171,6 +171,11 @@
             width: 100%;
           }
         }
+
+        &.Spaced {
+          justify-content: space-between;
+          width: 100%;
+        }
       }
     }
 
@@ -178,6 +183,17 @@
       display: flex;
       justify-content: flex-end;
       width: 100%;
+    }
+
+    .Fields {
+      display: flex;
+      flex-direction: column;
+      gap: $unit-2x;
+      padding: 0 $unit-4x;
+
+      @include breakpoint(phone) {
+        gap: $unit-4x;
+      }
     }
 
     &.Conflict {

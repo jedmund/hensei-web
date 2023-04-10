@@ -21,6 +21,8 @@
   --separator-bg: #{$separator--bg--light};
 
   --accent-blue: #{$accent--blue--light};
+  --accent-blue-focus: #{$accent--blue--light--focus};
+
   --accent-yellow: #{$accent--yellow--light};
 
   --selected-item-bg: #{$selected--item--bg--light};
@@ -63,6 +65,12 @@
   --select-modal-bg-hover: #{$select--modal--bg--light--hover};
   --select-separator: #{$select--separator--light};
   --option-bg-hover: #{$option--bg--light--hover};
+
+  // Light - Sliders
+  --slider-thumb-bg: #{$slider--thumb--bg--light};
+  --slider-thumb-bg-hover: #{$slider--thumb--bg--light--hover};
+  --slider-thumb-shadow: #{$slider--thumb--shadow--light};
+  --slider-thumb-shadow-hover: #{$slider--thumb--shadow--light--hover};
 
   // Light - About
   --link-item-bg: #{$link--item--bg--light};
@@ -163,6 +171,8 @@
   --separator-bg: #{$separator--bg--dark};
 
   --accent-blue: #{$accent--blue--dark};
+  --accent-blue-focus: #{$accent--blue--dark--focus};
+
   --accent-yellow: #{$accent--yellow--dark};
 
   --selected-item-bg: #{$selected--item--bg--dark};
@@ -206,6 +216,12 @@
   --select-modal-bg-hover: #{$select--modal--bg--dark--hover};
   --select-separator: #{$select--separator--dark};
   --option-bg-hover: #{$option--bg--dark--hover};
+
+  // Dark - Sliders
+  --slider-thumb-bg: #{$slider--thumb--bg--dark};
+  --slider-thumb-bg-hover: #{$slider--thumb--bg--dark--hover};
+  --slider-thumb-shadow: #{$slider--thumb--shadow--dark};
+  --slider-thumb-shadow-hover: #{$slider--thumb--shadow--dark--hover};
 
   // Dark - About
   --link-item-bg: #{$link--item--bg--dark};

@@ -207,6 +207,31 @@
         "cancel": "Nevermind"
       }
     },
+    "filters": {
+      "title": "Advanced filters",
+      "labels": {
+        "charge_attack": "Charge Attack",
+        "full_auto": "Full Auto",
+        "auto_guard": "Auto Guard",
+        "max_buttons": "Maximum number of button presses",
+        "max_turns": "Maximum number of turns",
+        "min_characters": "Minimum number of characters",
+        "min_summons": "Minimum number of summons",
+        "min_weapons": "Minimum number of weapons",
+        "name_quality": "Hide untitled teams",
+        "user_quality": "Hide anonymous users",
+        "original_only": "Hide remixed teams"
+      },
+      "options": {
+        "on": "On",
+        "off": "Off",
+        "on_and_off": "On and Off"
+      },
+      "buttons": {
+        "confirm": "Save filters",
+        "clear": "Clear filters"
+      }
+    },
     "login": {
       "title": "Log in",
       "buttons": {
