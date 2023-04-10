@@ -404,8 +404,8 @@ const FilterModal = (props: Props) => {
           {chargeAttackField()}
           {fullAutoField()}
           {autoGuardField()}
-          {maxButtonsField()}
-          {maxTurnsField()}
+          {/* {maxButtonsField()} */}
+          {/* {maxTurnsField()} */}
           {minCharactersField()}
           {minSummonsField()}
           {minWeaponsField()}
