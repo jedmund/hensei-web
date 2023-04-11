@@ -64,45 +64,5 @@
     &:hover {
       transform: scale(1.2);
     }
-
-    &.Stage1 {
-      background-image: url('/icons/transcendence/1/step-1@3x.png');
-
-      &:hover {
-        background-image: url('/icons/transcendence/1/step-1-hover@3x.png');
-      }
-    }
-
-    &.Stage2 {
-      background-image: url('/icons/transcendence/2/step-2@3x.png');
-
-      &:hover {
-        background-image: url('/icons/transcendence/2/step-2-hover@3x.png');
-      }
-    }
-
-    &.Stage3 {
-      background-image: url('/icons/transcendence/3/step-3@3x.png');
-
-      &:hover {
-        background-image: url('/icons/transcendence/3/step-3-hover@3x.png');
-      }
-    }
-
-    &.Stage4 {
-      background-image: url('/icons/transcendence/4/step-4@3x.png');
-
-      &:hover {
-        background-image: url('/icons/transcendence/4/step-4-hover@3x.png');
-      }
-    }
-
-    &.Stage5 {
-      background-image: url('/icons/transcendence/5/step-5@3x.png');
-
-      &:hover {
-        background-image: url('/icons/transcendence/5/step-5-hover@3x.png');
-      }
-    }
   }
 }
