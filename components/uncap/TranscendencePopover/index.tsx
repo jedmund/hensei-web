@@ -16,6 +16,7 @@ interface Props
     React.DialogHTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   > {
+  type: 'character' | 'summon'
   open: boolean
   stage: number
   onOpenChange?: (open: boolean) => void
@@ -25,6 +26,7 @@ interface Props
 const TranscendencePopover = ({
   children,
   open: popoverOpen,
+  type,
   stage,
   tabIndex,
   onOpenChange,
@@ -33,7 +35,7 @@ const TranscendencePopover = ({
   const { t } = useTranslation('common')
 
   const [open, setOpen] = useState(false)
-
+  const [baseLevel, setBaseLevel] = useState(0)
   const [currentStage, setCurrentStage] = useState(0)
 
   const popoverRef = React.createRef<HTMLDivElement>()
@@ -51,8 +53,13 @@ const TranscendencePopover = ({
   }, [])
 
   useEffect(() => {
-    setCurrentStage(stage)
+    if (stage) setCurrentStage(stage)
   }, [stage])
+
+  useEffect(() => {
+    if (type === 'character') setBaseLevel(100)
+    else if (type === 'summon') setBaseLevel(200)
+  }, [type])
 
   useEffect(() => {
     setOpen(popoverOpen)
@@ -81,7 +88,7 @@ const TranscendencePopover = ({
         />
         <h4>
           <span>{t('level')}&nbsp;</span>
-          <span className={levelClasses}>{200 + 10 * currentStage}</span>
+          <span className={levelClasses}>{baseLevel + 10 * currentStage}</span>
         </h4>
       </PopoverContent>
     </Popover>
