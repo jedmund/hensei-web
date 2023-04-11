@@ -5,9 +5,9 @@ import equals from 'fast-deep-equal'
 
 import FilterModal from '~components/FilterModal'
 import RaidDropdown from '~components/RaidDropdown'
-import Select from '~components/Select'
-import SelectItem from '~components/SelectItem'
-import Button from '~components/Button'
+import Select from '~components/common/Select'
+import SelectItem from '~components/common/SelectItem'
+import Button from '~components/common/Button'
 
 import { defaultFilterset } from '~utils/defaultFilters'
 
