@@ -6,7 +6,7 @@ import { getCookie } from 'cookies-next'
 import { appState } from '~utils/appState'
 
 import TopHeader from '~components/Header'
-import UpdateToast from '~components/UpdateToast'
+import UpdateToast from '~components/about/UpdateToast'
 
 import './index.scss'
 

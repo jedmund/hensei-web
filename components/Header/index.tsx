@@ -22,13 +22,13 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuLabel,
-} from '~components/DropdownMenuContent'
-import LoginModal from '~components/LoginModal'
-import SignupModal from '~components/SignupModal'
-import AccountModal from '~components/AccountModal'
-import Toast from '~components/Toast'
-import Button from '~components/Button'
-import Tooltip from '~components/Tooltip'
+} from '~components/common/DropdownMenuContent'
+import LoginModal from '~components/auth/LoginModal'
+import SignupModal from '~components/auth/SignupModal'
+import AccountModal from '~components/auth/AccountModal'
+import Toast from '~components/common/Toast'
+import Button from '~components/common/Button'
+import Tooltip from '~components/common/Tooltip'
 import * as Switch from '@radix-ui/react-switch'
 
 import ArrowIcon from '~public/icons/Arrow.svg'

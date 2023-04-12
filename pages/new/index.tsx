@@ -7,8 +7,8 @@ import { v4 as uuidv4 } from 'uuid'
 import clonedeep from 'lodash.clonedeep'
 
 import ErrorSection from '~components/ErrorSection'
-import Party from '~components/Party'
-import NewHead from '~components/NewHead'
+import Party from '~components/party/Party'
+import NewHead from '~components/head/NewHead'
 
 import api from '~utils/api'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
