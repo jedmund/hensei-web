@@ -9,7 +9,7 @@ import 'fix-date'
 import { accountState } from '~utils/accountState'
 import { formatTimeAgo } from '~utils/timeAgo'
 
-import Button from '~components/Button'
+import Button from '~components/common/Button'
 
 import SaveIcon from '~public/icons/Save.svg'
 import ShieldIcon from '~public/icons/Shield.svg'

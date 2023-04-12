@@ -8,6 +8,12 @@
   height: $height;
   gap: calc($unit / 4);
   padding: calc($unit / 2);
+  flex-wrap: wrap;
+
+  @include breakpoint(phone) {
+    border-radius: $unit-2x;
+    height: auto;
+  }
 
   .ToggleItem {
     background: var(--toggle-bg);
@@ -16,7 +22,14 @@
     color: var(--input-secondary);
     flex-grow: 1;
     font-size: $font-regular;
-    padding: ($unit) $unit * 2;
+    padding-top: $unit;
+    padding-bottom: $unit;
+
+    @include breakpoint(phone) {
+      border-radius: $card-corner;
+      padding-left: $unit-2x;
+      padding-right: $unit-2x;
+    }
 
     &.ja {
       padding-top: 6px;

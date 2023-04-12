@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import Select from '~components/Select'
-import SelectItem from '~components/SelectItem'
-import SelectGroup from '~components/SelectGroup'
+import Select from '~components/common/Select'
+import SelectItem from '~components/common/SelectItem'
+import SelectGroup from '~components/common/SelectGroup'
 
 import api from '~utils/api'
 import organizeRaids from '~utils/organizeRaids'
