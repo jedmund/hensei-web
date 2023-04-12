@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
-import Party from '~components/Party'
+import Party from '~components/party/Party'
 import ErrorSection from '~components/ErrorSection'
-import PartyHead from '~components/PartyHead'
+import PartyHead from '~components/party/PartyHead'
 
 import api from '~utils/api'
 import elementEmoji from '~utils/elementEmoji'

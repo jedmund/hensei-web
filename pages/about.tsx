@@ -8,12 +8,12 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { AboutTabs } from '~utils/enums'
 import { setHeaders } from '~utils/userToken'
 
-import AboutHead from '~components/AboutHead'
-import AboutPage from '~components/AboutPage'
-import UpdatesPage from '~components/UpdatesPage'
-import RoadmapPage from '~components/RoadmapPage'
-import SegmentedControl from '~components/SegmentedControl'
-import Segment from '~components/Segment'
+import AboutHead from '~components/about/AboutHead'
+import AboutPage from '~components/about/AboutPage'
+import UpdatesPage from '~components/about/UpdatesPage'
+import RoadmapPage from '~components/about/RoadmapPage'
+import SegmentedControl from '~components/common/SegmentedControl'
+import Segment from '~components/common/Segment'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 

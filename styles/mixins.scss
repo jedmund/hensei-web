@@ -36,6 +36,7 @@
   $repeat: no-repeat
 ) {
   background: url($image + '.' + $extension) $repeat $position;
+  background-size: $width $height;
 
   @media screen and (-webkit-min-device-pixel-ratio: 2),
     screen and (min--moz-device-pixel-ratio: 2),

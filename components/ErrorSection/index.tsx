@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
 
-import Button from '~components/Button'
+import Button from '~components/common/Button'
 import { ResponseStatus } from '~types'
 
 import './index.scss'

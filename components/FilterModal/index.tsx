@@ -8,15 +8,15 @@ import {
   DialogTrigger,
   DialogClose,
   DialogTitle,
-} from '~components/Dialog'
-import DialogContent from '~components/DialogContent'
+} from '~components/common/Dialog'
+import DialogContent from '~components/common/DialogContent'
 
-import Button from '~components/Button'
-import InputTableField from '~components/InputTableField'
-import SelectTableField from '~components/SelectTableField'
-import SliderTableField from '~components/SliderTableField'
-import SwitchTableField from '~components/SwitchTableField'
-import SelectItem from '~components/SelectItem'
+import Button from '~components/common/Button'
+import InputTableField from '~components/common/InputTableField'
+import SelectTableField from '~components/common/SelectTableField'
+import SliderTableField from '~components/common/SliderTableField'
+import SwitchTableField from '~components/common/SwitchTableField'
+import SelectItem from '~components/common/SelectItem'
 
 import type { DialogProps } from '@radix-ui/react-dialog'
 
