@@ -12,7 +12,7 @@ div[data-radix-popper-content-wrapper] {
   flex-direction: column;
   gap: $unit-2x;
   max-height: 30vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: $unit-2x;
   width: 300px;
 
