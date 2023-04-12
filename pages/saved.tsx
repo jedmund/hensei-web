@@ -22,7 +22,7 @@ import ErrorSection from '~components/ErrorSection'
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 import FilterBar from '~components/FilterBar'
-import SavedHead from '~components/SavedHead'
+import SavedHead from '~components/head/SavedHead'
 
 import type { AxiosError } from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'

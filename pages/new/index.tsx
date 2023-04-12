@@ -8,7 +8,7 @@ import clonedeep from 'lodash.clonedeep'
 
 import ErrorSection from '~components/ErrorSection'
 import Party from '~components/party/Party'
-import NewHead from '~components/NewHead'
+import NewHead from '~components/head/NewHead'
 
 import api from '~utils/api'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
