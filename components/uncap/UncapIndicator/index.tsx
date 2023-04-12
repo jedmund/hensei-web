@@ -83,6 +83,7 @@ const UncapIndicator = (props: Props) => {
       <TranscendencePopover
         open={popoverOpen}
         stage={props.transcendenceStage ? props.transcendenceStage : 0}
+        type={props.type}
         onOpenChange={togglePopover}
         sendValue={sendTranscendenceStage}
         key={`star_${i}`}
