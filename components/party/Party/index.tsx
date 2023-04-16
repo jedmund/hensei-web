@@ -22,6 +22,11 @@ import type { DetailsObject } from '~types'
 
 import './index.scss'
 
+import WeaponRep from '~components/reps/WeaponRep'
+import CharacterRep from '~components/reps/CharacterRep'
+import SummonRep from '~components/reps/SummonRep'
+import PartyHeader from '../PartyHeader'
+
 // Props
 interface Props {
   new?: boolean
@@ -157,6 +162,29 @@ const Party = (props: Props) => {
       api.endpoints.parties.update(props.team.id, {
         party: { extra: event.target.checked },
       })
+    }
+  }
+
+  // Remixing the party
+  function remixTeam() {
+    // setOriginalName(partySnapshot.name ? partySnapshot.name : t('no_title'))
+
+    if (props.team && props.team.shortcode) {
+      const body = getLocalId()
+      api
+        .remix({ shortcode: props.team.shortcode, body: body })
+        .then((response) => {
+          const remix = response.data.party
+
+          // Store the edit key in local storage
+          if (remix.edit_key) {
+            storeEditKey(remix.id, remix.edit_key)
+            setEditKey(remix.id, remix.user)
+          }
+
+          router.push(`/p/${remix.shortcode}`)
+          // setRemixToastOpen(true)
+        })
     }
   }
 
@@ -348,14 +376,23 @@ const Party = (props: Props) => {
 
   return (
     <React.Fragment>
+      <PartyHeader
+        party={props.team}
+        new={props.new || false}
+        editable={party.editable}
+        deleteCallback={deleteTeam}
+        remixCallback={remixTeam}
+        updateCallback={updateDetails}
+      />
+
       {navigation}
+
       <section id="Party">{currentGrid()}</section>
       <PartyDetails
         party={props.team}
         new={props.new || false}
         editable={party.editable}
         updateCallback={updateDetails}
-        deleteCallback={deleteTeam}
       />
     </React.Fragment>
   )
