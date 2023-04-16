@@ -1,40 +1,27 @@
 import React, { useEffect, useState, ChangeEvent, KeyboardEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { subscribe, useSnapshot } from 'valtio'
+import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
-import clonedeep from 'lodash.clonedeep'
-
-import Linkify from 'react-linkify'
-import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import classNames from 'classnames'
-import reactStringReplace from 'react-string-replace'
 
-import Alert from '~components/common/Alert'
 import Button from '~components/common/Button'
 import CharLimitedFieldset from '~components/common/CharLimitedFieldset'
 import DurationInput from '~components/common/DurationInput'
-import GridRepCollection from '~components/GridRepCollection'
-import GridRep from '~components/GridRep'
 import Input from '~components/common/Input'
 import RaidDropdown from '~components/RaidDropdown'
 import Switch from '~components/common/Switch'
 import Tooltip from '~components/common/Tooltip'
-import TextFieldset from '~components/common/TextFieldset'
 import Token from '~components/common/Token'
 
 import PartyDropdown from '~components/party/PartyDropdown'
 
-import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 import { formatTimeAgo } from '~utils/timeAgo'
-import { youtube } from '~utils/youtube'
 
 import CheckIcon from '~public/icons/Check.svg'
-import CrossIcon from '~public/icons/Cross.svg'
 import EditIcon from '~public/icons/Edit.svg'
-import EllipsisIcon from '~public/icons/Ellipsis.svg'
 import RemixIcon from '~public/icons/Remix.svg'
 
 import type { DetailsObject } from 'types'
@@ -58,9 +45,6 @@ const PartyHeader = (props: Props) => {
   const router = useRouter()
   const locale = router.locale || 'en'
 
-  const youtubeUrlRegex =
-    /(?:https:\/\/www\.youtube\.com\/watch\?v=|https:\/\/youtu\.be\/)([\w-]+)/g
-
   const nameInput = React.createRef<HTMLInputElement>()
   const descriptionInput = React.createRef<HTMLTextAreaElement>()
 
@@ -77,11 +61,7 @@ const PartyHeader = (props: Props) => {
   const [turnCount, setTurnCount] = useState<number | undefined>(undefined)
   const [clearTime, setClearTime] = useState(0)
 
-  const [remixes, setRemixes] = useState<Party[]>([])
-
   const [raidSlug, setRaidSlug] = useState('')
-  const [embeddedDescription, setEmbeddedDescription] =
-    useState<React.ReactNode>()
 
   const readOnlyClasses = classNames({
     PartyDetails: true,
@@ -121,7 +101,6 @@ const PartyHeader = (props: Props) => {
       setFullAuto(props.party.full_auto)
       setChargeAttack(props.party.charge_attack)
       setClearTime(props.party.clear_time)
-      setRemixes(props.party.remixes)
       if (props.party.turn_count) setTurnCount(props.party.turn_count)
       if (props.party.button_count) setButtonCount(props.party.button_count)
       if (props.party.chain_count) setChainCount(props.party.chain_count)
@@ -140,46 +119,12 @@ const PartyHeader = (props: Props) => {
         setFullAuto(party.fullAuto)
         setChargeAttack(party.chargeAttack)
         setClearTime(party.clearTime)
-        setRemixes(party.remixes)
         setTurnCount(party.turnCount)
         setButtonCount(party.buttonCount)
         setChainCount(party.chainCount)
       }
     })
   }, [])
-
-  useEffect(() => {
-    // Extract the video IDs from the description
-    if (appState.party.description) {
-      const videoIds = extractYoutubeVideoIds(appState.party.description)
-
-      // Fetch the video titles for each ID
-      const fetchPromises = videoIds.map(({ id }) => fetchYoutubeData(id))
-
-      // Wait for all the video titles to be fetched
-      Promise.all(fetchPromises).then((videoTitles) => {
-        // Replace the video URLs in the description with LiteYoutubeEmbed elements
-        const newDescription = reactStringReplace(
-          appState.party.description,
-          youtubeUrlRegex,
-          (match, i) => (
-            <LiteYouTubeEmbed
-              key={`${match}-${i}`}
-              id={match}
-              title={videoTitles[i]}
-              wrapperClass="YoutubeWrapper"
-              playerClass="PlayerButton"
-            />
-          )
-        )
-
-        // Update the state with the new description
-        setEmbeddedDescription(newDescription)
-      })
-    } else {
-      setEmbeddedDescription('')
-    }
-  }, [appState.party.description])
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     event.preventDefault()
@@ -188,15 +133,6 @@ const PartyHeader = (props: Props) => {
     setName(value)
 
     let newErrors = errors
-    setErrors(newErrors)
-  }
-
-  function handleTextAreaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    event.preventDefault()
-
-    const { name, value } = event.target
-    let newErrors = errors
-
     setErrors(newErrors)
   }
 
@@ -275,12 +211,6 @@ const PartyHeader = (props: Props) => {
     }
   }
 
-  async function fetchYoutubeData(videoId: string) {
-    return await youtube
-      .getVideoById(videoId, { maxResults: 1 })
-      .then((data) => data.items[0].snippet.localized.title)
-  }
-
   function toggleDetails() {
     // Enabling this code will make live updates not work,
     // but I'm not sure why it's here, so we're not going to remove it.
@@ -323,77 +253,9 @@ const PartyHeader = (props: Props) => {
     toggleDetails()
   }
 
-  function handleClick() {
-    setAlertOpen(!alertOpen)
-  }
-
-  function deleteParty() {
-    props.deleteCallback()
-  }
-
   // Methods: Navigation
   function goTo(shortcode?: string) {
     if (shortcode) router.push(`/p/${shortcode}`)
-  }
-
-  // Methods: Favorites
-  function toggleFavorite(teamId: string, favorited: boolean) {
-    if (favorited) unsaveFavorite(teamId)
-    else saveFavorite(teamId)
-  }
-
-  function saveFavorite(teamId: string) {
-    api.saveTeam({ id: teamId }).then((response) => {
-      if (response.status == 201) {
-        const index = remixes.findIndex((p) => p.id === teamId)
-        const party = remixes[index]
-
-        party.favorited = true
-
-        let clonedParties = clonedeep(remixes)
-        clonedParties[index] = party
-
-        setRemixes(clonedParties)
-      }
-    })
-  }
-
-  function unsaveFavorite(teamId: string) {
-    api.unsaveTeam({ id: teamId }).then((response) => {
-      if (response.status == 200) {
-        const index = remixes.findIndex((p) => p.id === teamId)
-        const party = remixes[index]
-
-        party.favorited = false
-
-        let clonedParties = clonedeep(remixes)
-        clonedParties[index] = party
-
-        setRemixes(clonedParties)
-      }
-    })
-  }
-
-  function extractYoutubeVideoIds(text: string) {
-    // Initialize an array to store the video IDs
-    const videoIds = []
-
-    // Use the regular expression to find all the Youtube URLs in the text
-    let match
-    while ((match = youtubeUrlRegex.exec(text)) !== null) {
-      // Extract the video ID from the URL
-      const videoId = match[1]
-
-      // Add the video ID to the array, along with the character position of the URL
-      videoIds.push({
-        id: videoId,
-        url: match[0],
-        position: match.index,
-      })
-    }
-
-    // Return the array of video IDs
-    return videoIds
   }
 
   const userImage = (picture?: string, element?: string) => {
@@ -469,44 +331,6 @@ const PartyHeader = (props: Props) => {
         </Link>
       </div>
     )
-  }
-
-  function renderRemixes() {
-    return remixes.map((party, i) => {
-      return (
-        <GridRep
-          id={party.id}
-          shortcode={party.shortcode}
-          name={party.name}
-          createdAt={new Date(party.created_at)}
-          raid={party.raid}
-          grid={party.weapons}
-          user={party.user}
-          favorited={party.favorited}
-          fullAuto={party.full_auto}
-          autoGuard={party.auto_guard}
-          key={`party-${i}`}
-          displayUser={true}
-          onClick={goTo}
-          onSave={toggleFavorite}
-        />
-      )
-    })
-  }
-
-  const deleteAlert = () => {
-    if (party.editable) {
-      return (
-        <Alert
-          open={alertOpen}
-          primaryAction={deleteParty}
-          primaryActionText={t('modals.delete_team.buttons.confirm')}
-          cancelAction={() => setAlertOpen(false)}
-          cancelActionText={t('modals.delete_team.buttons.cancel')}
-          message={t('modals.delete_team.description')}
-        />
-      )
-    }
   }
 
   const editable = () => {
@@ -630,30 +454,8 @@ const PartyHeader = (props: Props) => {
             </label>
           </li>
         </ul>
-        <TextFieldset
-          fieldName="name"
-          placeholder={
-            'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 3 first\nGood luck with RNG!'
-          }
-          value={props.party?.description}
-          onChange={handleTextAreaChange}
-          error={errors.description}
-          ref={descriptionInput}
-        />
 
         <div className="bottom">
-          <div className="left">
-            {router.pathname !== '/new' ? (
-              <Button
-                leftAccessoryIcon={<CrossIcon />}
-                className="Blended medium destructive"
-                onClick={handleClick}
-                text={t('buttons.delete')}
-              />
-            ) : (
-              ''
-            )}
-          </div>
           <div className="right">
             <Button text={t('buttons.cancel')} onClick={toggleDetails} />
             <Button
@@ -756,15 +558,6 @@ const PartyHeader = (props: Props) => {
     )
   }
 
-  const remixSection = () => {
-    return (
-      <section className="Remixes">
-        <h3>{t('remixes')}</h3>
-        {<GridRepCollection>{renderRemixes()}</GridRepCollection>}
-      </section>
-    )
-  }
-
   return (
     <>
       <section className="DetailsWrapper">
@@ -821,8 +614,6 @@ const PartyHeader = (props: Props) => {
         </div>
         {readOnly()}
         {editable()}
-
-        {deleteAlert()}
       </section>
     </>
   )
