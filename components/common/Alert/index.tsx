@@ -12,6 +12,7 @@ interface Props {
   message: string | React.ReactNode
   primaryAction?: () => void
   primaryActionText?: string
+  primaryActionClassName?: string
   cancelAction: () => void
   cancelActionText: string
 }
@@ -22,7 +23,10 @@ const Alert = (props: Props) => {
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="Overlay" onClick={props.cancelAction} />
         <div className="AlertWrapper">
-          <AlertDialog.Content className="Alert">
+          <AlertDialog.Content
+            className="Alert"
+            onEscapeKeyDown={props.cancelAction}
+          >
             {props.title ? (
               <AlertDialog.Title>{props.title}</AlertDialog.Title>
             ) : (
@@ -42,6 +46,7 @@ const Alert = (props: Props) => {
               {props.primaryAction ? (
                 <AlertDialog.Action asChild>
                   <Button
+                    className={props.primaryActionClassName}
                     contained={true}
                     onClick={props.primaryAction}
                     text={props.primaryActionText}
