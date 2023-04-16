@@ -12,6 +12,11 @@ import { GridType } from '~utils/enums'
 
 import './index.scss'
 import classNames from 'classnames'
+import RepSegment from '~components/reps/RepSegment'
+import CharacterRep from '~components/reps/CharacterRep'
+import { accountState } from '~utils/accountState'
+import WeaponRep from '~components/reps/WeaponRep'
+import SummonRep from '~components/reps/SummonRep'
 
 interface Props {
   selectedTab: GridType
@@ -47,6 +52,57 @@ const PartySegmentedControl = (props: Props) => {
     }
   }
 
+  const characterSegment = () => {
+    return (
+      <RepSegment
+        controlGroup="grid"
+        inputName="characters"
+        name={t('party.segmented_control.characters')}
+        selected={props.selectedTab == GridType.Character}
+        onClick={props.onClick}
+      >
+        <CharacterRep
+          job={appState.party?.job}
+          element={appState.party?.element}
+          gender={
+            accountState.account.user ? accountState.account.user.gender : 0
+          }
+          grid={appState.grid.characters}
+        />
+      </RepSegment>
+    )
+  }
+
+  const weaponSegment = () => {
+    {
+      return (
+        <RepSegment
+          controlGroup="grid"
+          inputName="weapons"
+          name="Weapons"
+          selected={props.selectedTab == GridType.Weapon}
+          onClick={props.onClick}
+        >
+          <WeaponRep grid={appState.grid.weapons} />
+        </RepSegment>
+      )
+    }
+  }
+
+  const summonSegment = () => {
+    return (
+      <RepSegment
+        controlGroup="grid"
+        inputName="summons"
+        name="Summons"
+        selected={props.selectedTab == GridType.Summon}
+        onClick={props.onClick}
+      >
+        <SummonRep grid={appState.grid.summons} />
+      </RepSegment>
+    )
+  }
+
   const extraToggle = (
     <div className="ExtraSwitch">
       <span className="Text">Extra</span>
@@ -67,39 +123,16 @@ const PartySegmentedControl = (props: Props) => {
       })}
     >
       <SegmentedControl elementClass={getElement()}>
-        <Segment
-          groupName="grid"
-          name="characters"
-          selected={props.selectedTab == GridType.Character}
-          onClick={props.onClick}
-        >
-          {t('party.segmented_control.characters')}
-        </Segment>
-
-        <Segment
-          groupName="grid"
-          name="weapons"
-          selected={props.selectedTab == GridType.Weapon}
-          onClick={props.onClick}
-        >
-          {t('party.segmented_control.weapons')}
-        </Segment>
-
-        <Segment
-          groupName="grid"
-          name="summons"
-          selected={props.selectedTab == GridType.Summon}
-          onClick={props.onClick}
-        >
-          {t('party.segmented_control.summons')}
-        </Segment>
+        {characterSegment()}
+        {weaponSegment()}
+        {summonSegment()}
       </SegmentedControl>
 
-      {(() => {
+      {/* {(() => {
         if (party.editable && props.selectedTab == GridType.Weapon) {
           return extraToggle
         }
-      })()}
+      })()} */}
     </div>
   )
 }
