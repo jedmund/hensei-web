@@ -1,0 +1,46 @@
+.WeaponRep {
+  aspect-ratio: 2/0.95;
+  border-radius: $card-corner;
+  display: grid;
+  grid-template-columns: 1fr 3.39fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
+  grid-gap: $unit-half; /* add a gap of 8px between grid items */
+  height: $rep-height;
+
+  .Weapon {
+    background: var(--card-bg);
+    border-radius: 4px;
+  }
+
+  .Mainhand.Weapon {
+    aspect-ratio: 73/153;
+    display: grid;
+    grid-column: 1 / 2; /* spans one column */
+    max-height: 149px;
+  }
+
+  .GridWeapons {
+    display: grid; /* make the right-images container a grid */
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* create 3 columns, each taking up 1 fraction */
+    grid-template-rows: repeat(
+      3,
+      1fr
+    ); /* create 3 rows, each taking up 1 fraction */
+    gap: $unit-half;
+    // column-gap: $unit;
+    // row-gap: $unit-2x;
+  }
+
+  .Grid.Weapon {
+    aspect-ratio: 280 / 160;
+    display: grid;
+  }
+
+  .Mainhand.Weapon img[src*='jpg'],
+  .Grid.Weapon img[src*='jpg'] {
+    border-radius: 4px;
+    width: 100%;
+  }
+}
