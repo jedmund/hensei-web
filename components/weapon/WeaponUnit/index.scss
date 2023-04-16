@@ -176,6 +176,8 @@
   }
 
   .WeaponName {
+    font-size: $font-name;
+    line-height: 1.2;
     @include breakpoint(phone) {
       font-size: $font-tiny;
     }
