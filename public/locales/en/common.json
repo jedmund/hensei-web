@@ -248,6 +248,17 @@
         "password": "Password"
       }
     },
+    "remix_team": {
+      "title": "Remix team",
+      "description": {
+        "creator": "You're already the creator of <strong>{{name}}</strong>. Are you sure you want to make a copy by remixing it?",
+        "viewer": "Remixing a team makes a copy of it in your account so you can make your own changes.\n\nWould you like to remix <strong>{{name}}</strong>?"
+      },
+      "buttons": {
+        "confirm": "Yes, remix team",
+        "cancel": "Nevermind"
+      }
+    },
     "settings": {
       "title": "Account Settings",
       "labels": {

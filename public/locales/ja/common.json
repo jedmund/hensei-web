@@ -248,6 +248,17 @@
         "password": "パスワード"
       }
     },
+    "remix_team": {
+      "title": "編成をリミックス",
+      "description": {
+        "creator": "既に<strong>{{name}}</strong>の作家のため, 本当にリミックスでコピーを作成しますか？",
+        "viewer": "編成をリミックスすると変更をするために自アカウントにコピーを作成します。<strong>{{name}}</strong>をリミックスをしますか?"
+      },
+      "buttons": {
+        "confirm": "リミックス",
+        "cancel": "キャンセル"
+      }
+    },
     "settings": {
       "title": "アカウント設定",
       "labels": {
