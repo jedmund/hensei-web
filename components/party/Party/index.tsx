@@ -22,9 +22,6 @@ import type { DetailsObject } from '~types'
 
 import './index.scss'
 
-import WeaponRep from '~components/reps/WeaponRep'
-import CharacterRep from '~components/reps/CharacterRep'
-import SummonRep from '~components/reps/SummonRep'
 import PartyHeader from '../PartyHeader'
 
 // Props
@@ -139,8 +136,11 @@ const Party = (props: Props) => {
     if (details.turnCount) payload.turn_count = details.turnCount
     if (details.extra) payload.extra = details.extra
     if (details.job) payload.job_id = details.job.id
+    if (details.guidebook0_id) payload.guidebook0_id = details.guidebook0_id
+    if (details.guidebook1_id) payload.guidebook1_id = details.guidebook1_id
+    if (details.guidebook2_id) payload.guidebook2_id = details.guidebook2_id
 
-    if (Object.keys(payload).length > 1) return { party: payload }
+    if (Object.keys(payload).length >= 1) return { party: payload }
     else return {}
   }
 
@@ -154,14 +154,28 @@ const Party = (props: Props) => {
     }
   }
 
-  function checkboxChanged(event: React.ChangeEvent<HTMLInputElement>) {
-    appState.party.extra = event.target.checked
+  function checkboxChanged(enabled: boolean) {
+    appState.party.extra = enabled
 
     // Only save if this is a saved party
     if (props.team && props.team.id) {
       api.endpoints.parties.update(props.team.id, {
-        party: { extra: event.target.checked },
+        party: { extra: enabled },
       })
+    }
+  }
+
+  function updateGuidebook(book: Guidebook, position: number) {
+    const details: DetailsObject = {
+      guidebook0_id: position === 0 ? book.id : undefined,
+      guidebook1_id: position === 1 ? book.id : undefined,
+      guidebook2_id: position === 2 ? book.id : undefined,
+    }
+
+    if (props.team && props.team.id) {
+      updateParty(details)
+    } else {
+      createParty(details)
     }
   }
 
@@ -230,6 +244,7 @@ const Party = (props: Props) => {
     appState.party.id = team.id
     appState.party.shortcode = team.shortcode
     appState.party.extra = team.extra
+    appState.party.guidebooks = team.guidebooks
     appState.party.user = team.user
     appState.party.favorited = team.favorited
     appState.party.remix = team.remix
@@ -334,8 +349,11 @@ const Party = (props: Props) => {
       new={props.new || false}
       editable={editable}
       weapons={props.team?.weapons}
+      guidebooks={props.team?.guidebooks}
       createParty={createParty}
       pushHistory={props.pushHistory}
+      updateExtra={checkboxChanged}
+      updateGuidebook={updateGuidebook}
     />
   )
 
@@ -384,6 +402,7 @@ const Party = (props: Props) => {
       {navigation}
 
       <section id="Party">{currentGrid()}</section>
+
       <PartyDetails
         party={props.team}
         new={props.new || false}

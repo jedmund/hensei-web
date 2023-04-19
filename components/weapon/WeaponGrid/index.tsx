@@ -121,6 +121,13 @@ const WeaponGrid = (props: Props) => {
     }
   }
 
+  function receiveGuidebookFromSearch(
+    object: SearchableObject,
+    position: number
+  ) {
+    props.updateGuidebook(object as Guidebook, position)
+  }
+
   async function handleWeaponResponse(data: any) {
     if (data.hasOwnProperty('conflicts')) {
       if (data.incoming) setIncoming(data.incoming)

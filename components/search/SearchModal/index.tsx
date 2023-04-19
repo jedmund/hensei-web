@@ -19,6 +19,7 @@ import CharacterResult from '~components/character/CharacterResult'
 import WeaponResult from '~components/weapon/WeaponResult'
 import SummonResult from '~components/summon/SummonResult'
 import JobSkillResult from '~components/job/JobSkillResult'
+import GuidebookResult from '~components/extra/GuidebookResult'
 
 import type { DialogProps } from '@radix-ui/react-dialog'
 import type { SearchableObject, SearchableObjectArray } from '~types'
@@ -31,7 +32,7 @@ interface Props extends DialogProps {
   placeholderText: string
   fromPosition: number
   job?: Job
-  object: 'weapons' | 'characters' | 'summons' | 'job_skills'
+  object: 'weapons' | 'characters' | 'summons' | 'job_skills' | 'guidebooks'
 }
 
 const SearchModal = (props: Props) => {
@@ -184,7 +185,7 @@ const SearchModal = (props: Props) => {
     } else if (open && currentPage == 1) {
       fetchResults({ replace: true })
     }
-  }, [currentPage])
+  }, [open, currentPage])
 
   useEffect(() => {
     // Filters changed
@@ -219,6 +220,17 @@ const SearchModal = (props: Props) => {
     }
   }, [query])
 
+  useEffect(() => {
+    if (open && props.object === 'guidebooks') {
+      setCurrentPage(1)
+      fetchResults({ replace: true })
+    }
+  }, [query, open])
+
+  function incrementPage() {
+    setCurrentPage(currentPage + 1)
+  }
+
   function renderResults() {
     let jsx
 
@@ -235,12 +247,15 @@ const SearchModal = (props: Props) => {
       case 'job_skills':
         jsx = renderJobSkillSearchResults(results)
         break
+      case 'guidebooks':
+        jsx = renderGuidebookSearchResults(results)
+        break
     }
 
     return (
       <InfiniteScroll
         dataLength={results && results.length > 0 ? results.length : 0}
-        next={() => setCurrentPage(currentPage + 1)}
+        next={incrementPage}
         hasMore={totalPages > currentPage}
         scrollableTarget="Results"
         loader={<div className="footer">Loading...</div>}
@@ -334,6 +349,27 @@ const SearchModal = (props: Props) => {
     return jsx
   }
 
+  function renderGuidebookSearchResults(results: { [key: string]: any }) {
+    let jsx: React.ReactNode
+
+    const castResults: Guidebook[] = results as Guidebook[]
+    if (castResults && Object.keys(castResults).length > 0) {
+      jsx = castResults.map((result: Guidebook) => {
+        return (
+          <GuidebookResult
+            key={result.id}
+            data={result}
+            onClick={() => {
+              storeRecentResult(result)
+            }}
+          />
+        )
+      })
+    }
+
+    return jsx
+  }
+
   function openChange() {
     if (open) {
       setQuery('')
@@ -365,6 +401,7 @@ const SearchModal = (props: Props) => {
       <DialogContent
         className="Search"
         headerref={headerRef}
+        scrollable={false}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
