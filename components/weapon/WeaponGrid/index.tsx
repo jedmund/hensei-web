@@ -11,6 +11,8 @@ import classNames from 'classnames'
 import Alert from '~components/common/Alert'
 import WeaponUnit from '~components/weapon/WeaponUnit'
 import ExtraWeaponsGrid from '~components/extra/ExtraWeaponsGrid'
+import ExtraContainer from '~components/extra/ExtraContainer'
+import GuidebooksGrid from '~components/extra/GuidebooksGrid'
 import WeaponConflictModal from '~components/weapon/WeaponConflictModal'
 
 import api from '~utils/api'
@@ -25,8 +27,11 @@ interface Props {
   new: boolean
   editable: boolean
   weapons?: GridWeapon[]
+  guidebooks?: GuidebookList
   createParty: (details: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
+  updateExtra: (enabled: boolean) => void
+  updateGuidebook: (book: Guidebook, position: number) => void
 }
 
 const WeaponGrid = (props: Props) => {
@@ -365,6 +370,13 @@ const WeaponGrid = (props: Props) => {
         updateObject={receiveWeaponFromSearch}
         updateUncap={initiateUncapUpdate}
       />
+      <GuidebooksGrid
+        grid={appState.party.guidebooks}
+        editable={props.editable}
+        offset={numWeapons}
+        removeGuidebook={removeGuidebook}
+        updateObject={receiveGuidebookFromSearch}
+      />
     </ExtraContainer>
   )
 
@@ -418,9 +430,7 @@ const WeaponGrid = (props: Props) => {
         <ul id="Weapons">{weaponGridElement}</ul>
       </div>
 
-      {(() => {
-        return party.extra ? extraGridElement : ''
-      })()}
+      {extraElement}
     </div>
   )
 }
