@@ -232,6 +232,11 @@
         "clear": "保存したフィルターをクリア"
       }
     },
+    "guidebooks": {
+      "buttons": {
+        "remove": "導本を削除する"
+      }
+    },
     "login": {
       "title": "ログイン",
       "buttons": {

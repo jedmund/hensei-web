@@ -31,7 +31,7 @@ interface Props {
   createParty: (details: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
   updateExtra: (enabled: boolean) => void
-  updateGuidebook: (book: Guidebook, position: number) => void
+  updateGuidebook: (book: Guidebook | undefined, position: number) => void
 }
 
 const WeaponGrid = (props: Props) => {
@@ -247,6 +247,10 @@ const WeaponGrid = (props: Props) => {
     } catch (error) {
       console.error(error)
     }
+  }
+
+  async function removeGuidebook(position: number) {
+    props.updateGuidebook(undefined, position)
   }
 
   // Methods: Updating uncap level

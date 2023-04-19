@@ -164,7 +164,13 @@ const Party = (props: Props) => {
     }
   }
 
-  function updateGuidebook(book: Guidebook, position: number) {
+  function updateGuidebook(book: Guidebook | undefined, position: number) {
+    let id: string | undefined = ''
+
+    if (book) id = book.id
+    else if (!book) id = 'undefined'
+    else id = undefined
+
     const details: DetailsObject = {
       guidebook1_id: position === 1 ? id : undefined,
       guidebook2_id: position === 2 ? id : undefined,

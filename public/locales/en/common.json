@@ -232,6 +232,11 @@
         "clear": "Clear filters"
       }
     },
+    "guidebooks": {
+      "buttons": {
+        "remove": "Remove guidebook"
+      }
+    },
     "login": {
       "title": "Log in",
       "buttons": {

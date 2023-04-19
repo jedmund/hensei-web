@@ -23,7 +23,7 @@ interface Props {
   guidebook: Guidebook | undefined
   position: number
   editable: boolean
-  removeGuidebook: (id: string) => void
+  removeGuidebook: (position: number) => void
   updateObject: (object: SearchableObject, position: number) => void
 }
 
@@ -91,7 +91,7 @@ const GuidebookUnit = ({
 
   // Methods: Mutate data
   function removeGuidebook() {
-    if (guidebook) sendGuidebookToRemove(guidebook.id)
+    if (guidebook) sendGuidebookToRemove(position)
     setAlertOpen(false)
   }
 
@@ -136,7 +136,7 @@ const GuidebookUnit = ({
       <Alert
         open={alertOpen}
         primaryAction={removeGuidebook}
-        primaryActionText={t('modals.weapon.buttons.remove')}
+        primaryActionText={t('modals.guidebooks.buttons.remove')}
         cancelAction={() => setAlertOpen(false)}
         cancelActionText={t('buttons.cancel')}
         message={

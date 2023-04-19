@@ -13,7 +13,7 @@ interface Props {
   grid: GuidebookList
   editable: boolean
   offset: number
-  removeGuidebook: (id: string) => void
+  removeGuidebook: (position: number) => void
   updateObject: (object: SearchableObject, position: number) => void
 }
 
