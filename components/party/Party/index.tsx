@@ -326,11 +326,7 @@ const Party = (props: Props) => {
 
   // Render: JSX components
   const navigation = (
-    <PartySegmentedControl
-      selectedTab={currentTab}
-      onClick={segmentClicked}
-      onCheckboxChange={checkboxChanged}
-    />
+    <PartySegmentedControl selectedTab={currentTab} onClick={segmentClicked} />
   )
 
   const weaponGrid = (
