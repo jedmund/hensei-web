@@ -1,0 +1,47 @@
+.ExtraWeapons {
+  #ExtraWeaponGrid {
+    display: grid;
+    gap: $unit-3x;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    @include breakpoint(tablet) {
+      gap: $unit-2x;
+    }
+
+    @include breakpoint(phone) {
+      gap: $unit;
+    }
+
+    .WeaponUnit {
+      .WeaponImage {
+        background: var(--extra-purple-card-bg);
+
+        .icon svg {
+          fill: var(--extra-purple-secondary);
+        }
+      }
+    }
+  }
+
+  .ExtraGrid.Weapons {
+    background: var(--extra-purple-bg);
+    border-radius: $card-corner;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1.42fr 3fr;
+    justify-content: center;
+
+    @include breakpoint(tablet) {
+      left: auto;
+      max-width: auto;
+      width: 100%;
+    }
+
+    @include breakpoint(phone) {
+      display: flex;
+      gap: $unit-2x;
+      padding: $unit-2x;
+      flex-direction: column;
+    }
+  }
+}

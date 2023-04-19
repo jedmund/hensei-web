@@ -9,7 +9,7 @@ import debounce from 'lodash.debounce'
 
 import Alert from '~components/common/Alert'
 import WeaponUnit from '~components/weapon/WeaponUnit'
-import ExtraWeapons from '~components/weapon/ExtraWeapons'
+import ExtraWeaponsGrid from '~components/extra/ExtraWeaponsGrid'
 import WeaponConflictModal from '~components/weapon/WeaponConflictModal'
 
 import api from '~utils/api'
@@ -348,15 +348,19 @@ const WeaponGrid = (props: Props) => {
     )
   })
 
-  const extraGridElement = (
-    <ExtraWeapons
-      grid={appState.grid.weapons.allWeapons}
-      editable={props.editable}
-      offset={numWeapons}
-      removeWeapon={removeWeapon}
-      updateObject={receiveWeaponFromSearch}
-      updateUncap={initiateUncapUpdate}
-    />
+  const extraElement = (
+    <ExtraContainer>
+      <ExtraWeaponsGrid
+        grid={appState.grid.weapons.allWeapons}
+        enabled={appState.party.extra}
+        editable={props.editable}
+        offset={numWeapons}
+        removeWeapon={removeWeapon}
+        updateExtra={props.updateExtra}
+        updateObject={receiveWeaponFromSearch}
+        updateUncap={initiateUncapUpdate}
+      />
+    </ExtraContainer>
   )
 
   const conflictModal = () => {
