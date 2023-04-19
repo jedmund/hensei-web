@@ -60,8 +60,8 @@ const GuidebooksGrid = ({
           <li className={itemClasses} key={`grid_unit_${i}`}>
             <GuidebookUnit
               editable={editable}
-              position={i}
-              guidebook={grid[i]}
+              position={i + 1}
+              guidebook={grid[i + 1]}
               removeGuidebook={removeGuidebook}
               updateObject={updateObject}
             />

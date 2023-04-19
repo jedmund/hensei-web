@@ -135,9 +135,9 @@ const Party = (props: Props) => {
     if (details.turnCount) payload.turn_count = details.turnCount
     if (details.extra) payload.extra = details.extra
     if (details.job) payload.job_id = details.job.id
-    if (details.guidebook0_id) payload.guidebook0_id = details.guidebook0_id
     if (details.guidebook1_id) payload.guidebook1_id = details.guidebook1_id
     if (details.guidebook2_id) payload.guidebook2_id = details.guidebook2_id
+    if (details.guidebook3_id) payload.guidebook3_id = details.guidebook3_id
 
     if (Object.keys(payload).length >= 1) return { party: payload }
     else return {}
@@ -166,9 +166,9 @@ const Party = (props: Props) => {
 
   function updateGuidebook(book: Guidebook, position: number) {
     const details: DetailsObject = {
-      guidebook0_id: position === 0 ? book.id : undefined,
-      guidebook1_id: position === 1 ? book.id : undefined,
-      guidebook2_id: position === 2 ? book.id : undefined,
+      guidebook1_id: position === 1 ? id : undefined,
+      guidebook2_id: position === 2 ? id : undefined,
+      guidebook3_id: position === 3 ? id : undefined,
     }
 
     if (props.team && props.team.id) {
