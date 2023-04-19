@@ -331,6 +331,12 @@ const WeaponGrid = (props: Props) => {
     setPreviousUncapValues(newPreviousValues)
   }
 
+  // Methods: Convenience
+  const displayExtraContainer =
+    props.editable ||
+    appState.party.extra ||
+    Object.values(appState.party.guidebooks).every((el) => el === undefined)
+
   // Render: JSX components
   const mainhandElement = (
     <WeaponUnit
@@ -437,7 +443,7 @@ const WeaponGrid = (props: Props) => {
         <ul id="Weapons">{weaponGridElement}</ul>
       </div>
 
-      {extraElement}
+      {displayExtraContainer ? extraElement : ''}
     </div>
   )
 }
