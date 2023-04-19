@@ -6,6 +6,7 @@ import clonedeep from 'lodash.clonedeep'
 
 import PartySegmentedControl from '~components/party/PartySegmentedControl'
 import PartyDetails from '~components/party/PartyDetails'
+import PartyHeader from '~components/party/PartyHeader'
 import WeaponGrid from '~components/weapon/WeaponGrid'
 import SummonGrid from '~components/summon/SummonGrid'
 import CharacterGrid from '~components/character/CharacterGrid'
@@ -21,8 +22,6 @@ import { setEditKey, storeEditKey, unsetEditKey } from '~utils/userToken'
 import type { DetailsObject } from '~types'
 
 import './index.scss'
-
-import PartyHeader from '../PartyHeader'
 
 // Props
 interface Props {
