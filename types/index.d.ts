@@ -1,4 +1,9 @@
-export type SearchableObject = Character | Weapon | Summon | JobSkill
+export type SearchableObject =
+  | Character
+  | Weapon
+  | Summon
+  | JobSkill
+  | Guidebook
 export type SearchableObjectArray = (Character | Weapon | Summon | JobSkill)[]
 export type JobSkillObject = {
   [key: number]: JobSkill | undefined
