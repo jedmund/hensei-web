@@ -6,6 +6,7 @@ import { useTranslation } from 'next-i18next'
 
 import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
+import classNames from 'classnames'
 
 import Alert from '~components/common/Alert'
 import WeaponUnit from '~components/weapon/WeaponUnit'
@@ -333,8 +334,12 @@ const WeaponGrid = (props: Props) => {
   )
 
   const weaponGridElement = Array.from(Array(numWeapons)).map((x, i) => {
+    const itemClasses = classNames({
+      Empty: appState.grid.weapons.allWeapons[i] === undefined,
+    })
+
     return (
-      <li key={`grid_unit_${i}`}>
+      <li className={itemClasses} key={`grid_unit_${i}`}>
         <WeaponUnit
           gridWeapon={appState.grid.weapons.allWeapons[i]}
           editable={props.editable}

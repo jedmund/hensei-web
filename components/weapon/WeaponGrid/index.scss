@@ -49,7 +49,7 @@
     }
   }
 
-  li {
-    aspect-ratio: 1 / 1.035;
+  li:not(.Empty) {
+    // aspect-ratio: 1 / 1.035;
   }
 }
