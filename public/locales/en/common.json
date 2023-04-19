@@ -394,7 +394,8 @@
       "weapon": "Search for a weapon...",
       "summon": "Search for a summon...",
       "character": "Search for a character...",
-      "job_skill": "Search job skills..."
+      "job_skill": "Search job skills...",
+      "guidebook": "Search guidebooks..."
     }
   },
   "teams": {
@@ -459,6 +460,7 @@
     "source": "Go to original team"
   },
   "extra_weapons": "Additional Weapons",
+  "sephira_guidebooks": "Sephira Guidebooks",
   "equipped": "Equipped",
   "coming_soon": "Coming Soon",
   "new_party": "New party",
