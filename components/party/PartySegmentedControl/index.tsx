@@ -5,8 +5,6 @@ import { useTranslation } from 'next-i18next'
 import { appState } from '~utils/appState'
 
 import SegmentedControl from '~components/common/SegmentedControl'
-import Segment from '~components/common/Segment'
-import ToggleSwitch from '~components/common/ToggleSwitch'
 
 import { GridType } from '~utils/enums'
 
@@ -21,7 +19,6 @@ import SummonRep from '~components/reps/SummonRep'
 interface Props {
   selectedTab: GridType
   onClick: (event: React.ChangeEvent<HTMLInputElement>) => void
-  onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const PartySegmentedControl = (props: Props) => {
@@ -103,18 +100,6 @@ const PartySegmentedControl = (props: Props) => {
     )
   }
 
-  const extraToggle = (
-    <div className="ExtraSwitch">
-      <span className="Text">Extra</span>
-      <ToggleSwitch
-        name="ExtraSwitch"
-        editable={party.editable}
-        checked={party.extra}
-        onChange={props.onCheckboxChange}
-      />
-    </div>
-  )
-
   return (
     <div
       className={classNames({
@@ -127,12 +112,6 @@ const PartySegmentedControl = (props: Props) => {
         {weaponSegment()}
         {summonSegment()}
       </SegmentedControl>
-
-      {/* {(() => {
-        if (party.editable && props.selectedTab == GridType.Weapon) {
-          return extraToggle
-        }
-      })()} */}
     </div>
   )
 }
