@@ -452,8 +452,8 @@ const SummonGrid = (props: Props) => {
     <div>
       <div id="SummonGrid">
         {mainSummonElement}
-        {friendSummonElement}
         {summonGridElement}
+        {friendSummonElement}
       </div>
 
       {subAuraSummonElement}
