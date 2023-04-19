@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { subscribe, useSnapshot } from 'valtio'
+import { useTranslation } from 'next-i18next'
 import clonedeep from 'lodash.clonedeep'
 
+import Alert from '~components/common/Alert'
 import PartySegmentedControl from '~components/party/PartySegmentedControl'
 import PartyDetails from '~components/party/PartyDetails'
 import PartyHeader from '~components/party/PartyHeader'
@@ -40,11 +42,15 @@ const Party = (props: Props) => {
   // Set up router
   const router = useRouter()
 
+  // Localization
+  const { t } = useTranslation('common')
+
   // Set up states
   const { party } = useSnapshot(appState)
   const [editable, setEditable] = useState(false)
   const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
   const [refresh, setRefresh] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   // Retrieve cookies
   const cookies = retrieveCookies()
@@ -150,7 +156,18 @@ const Party = (props: Props) => {
       return await api.endpoints.parties
         .update(props.team.id, payload)
         .then((response) => storeParty(response.data.party))
+        .catch((error) => {
+          const data = error.response.data
+          if (data.errors && Object.keys(data.errors).includes('guidebooks')) {
+            const message = t('errors.validation.guidebooks')
+            setErrorMessage(message)
+          }
+        })
     }
+  }
+
+  function cancelAlert() {
+    setErrorMessage('')
   }
 
   function checkboxChanged(enabled: boolean) {
@@ -345,6 +362,17 @@ const Party = (props: Props) => {
   }
 
   // Render: JSX components
+  const errorAlert = () => {
+    return (
+      <Alert
+        open={errorMessage.length > 0}
+        message={errorMessage}
+        cancelAction={cancelAlert}
+        cancelActionText={t('buttons.confirm')}
+      />
+    )
+  }
+
   const navigation = (
     <PartySegmentedControl selectedTab={currentTab} onClick={segmentClicked} />
   )
@@ -395,6 +423,8 @@ const Party = (props: Props) => {
 
   return (
     <React.Fragment>
+      {errorAlert()}
+
       <PartyHeader
         party={props.team}
         new={props.new || false}

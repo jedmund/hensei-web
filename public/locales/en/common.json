@@ -102,6 +102,9 @@
       "description": "The page you're looking for couldn't be found",
       "button": "Create a new party"
     },
+    "validation": {
+      "guidebooks": "You cannot equip more than one of each Sephira Guidebook"
+    },
     "unauthorized": "You don't have permission to perform that action"
   },
   "proficiencies": {

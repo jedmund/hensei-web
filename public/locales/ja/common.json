@@ -72,6 +72,9 @@
       "description": "探しているページは見つかりませんでした",
       "button": "新しい編成を作成"
     },
+    "validation": {
+      "guidebooks": "セフィラ導本を複数個装備することはできません"
+    },
     "unauthorized": "行ったアクションを実行する権限がありません"
   },
   "header": {
