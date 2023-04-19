@@ -31,6 +31,8 @@
   & label {
     border-radius: $card-corner;
     display: block;
+    font-size: $font-small;
+    font-weight: $medium;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
