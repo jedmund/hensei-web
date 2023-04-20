@@ -23,10 +23,12 @@ import { formatTimeAgo } from '~utils/timeAgo'
 import CheckIcon from '~public/icons/Check.svg'
 import EditIcon from '~public/icons/Edit.svg'
 import RemixIcon from '~public/icons/Remix.svg'
+import SaveIcon from '~public/icons/Save.svg'
 
 import type { DetailsObject } from 'types'
 
 import './index.scss'
+import api from '~utils/api'
 
 // Props
 interface Props {
@@ -44,6 +46,8 @@ const PartyHeader = (props: Props) => {
   const { t } = useTranslation('common')
   const router = useRouter()
   const locale = router.locale || 'en'
+
+  const { party: partySnapshot } = useSnapshot(appState)
 
   const nameInput = React.createRef<HTMLInputElement>()
   const descriptionInput = React.createRef<HTMLTextAreaElement>()
@@ -232,6 +236,28 @@ const PartyHeader = (props: Props) => {
     else return 'off'
   }
 
+  // Actions: Favorites
+  function toggleFavorite() {
+    if (appState.party.favorited) unsaveFavorite()
+    else saveFavorite()
+  }
+
+  function saveFavorite() {
+    if (appState.party.id)
+      api.saveTeam({ id: appState.party.id }).then((response) => {
+        if (response.status == 201) appState.party.favorited = true
+      })
+    else console.error('Failed to save team: No party ID')
+  }
+
+  function unsaveFavorite() {
+    if (appState.party.id)
+      api.unsaveTeam({ id: appState.party.id }).then((response) => {
+        if (response.status == 200) appState.party.favorited = false
+      })
+    else console.error('Failed to unsave team: No party ID')
+  }
+
   function updateDetails(event: React.MouseEvent) {
     const descriptionValue = descriptionInput.current?.value
     const raid = raids.find((raid) => raid.slug === raidSlug)
@@ -333,6 +359,133 @@ const PartyHeader = (props: Props) => {
     )
   }
 
+  // Render: Tokens
+  const chargeAttackToken = (
+    <Token
+      className={classNames({
+        ChargeAttack: true,
+        On: chargeAttack,
+        Off: !chargeAttack,
+      })}
+    >
+      {`${t('party.details.labels.charge_attack')} ${
+        chargeAttack ? 'On' : 'Off'
+      }`}
+    </Token>
+  )
+
+  const fullAutoToken = (
+    <Token
+      className={classNames({
+        FullAuto: true,
+        On: fullAuto,
+        Off: !fullAuto,
+      })}
+    >
+      {`${t('party.details.labels.full_auto')} ${fullAuto ? 'On' : 'Off'}`}
+    </Token>
+  )
+
+  const autoGuardToken = (
+    <Token
+      className={classNames({
+        AutoGuard: true,
+        On: autoGuard,
+        Off: !autoGuard,
+      })}
+    >
+      {`${t('party.details.labels.auto_guard')} ${autoGuard ? 'On' : 'Off'}`}
+    </Token>
+  )
+
+  const turnCountToken = (
+    <Token>
+      {t('party.details.turns.with_count', {
+        count: turnCount,
+      })}
+    </Token>
+  )
+
+  const buttonChainToken = () => {
+    if (buttonCount || chainCount) {
+      let string = ''
+
+      if (buttonCount && buttonCount > 0) {
+        string += `${buttonCount}b`
+      }
+
+      if (!buttonCount && chainCount && chainCount > 0) {
+        string += `0${t('party.details.suffix.buttons')}${chainCount}${t(
+          'party.details.suffix.chains'
+        )}`
+      } else if (buttonCount && chainCount && chainCount > 0) {
+        string += `${chainCount}${t('party.details.suffix.chains')}`
+      } else if (buttonCount && !chainCount) {
+        string += `0${t('party.details.suffix.chains')}`
+      }
+
+      return <Token>{string}</Token>
+    }
+  }
+
+  const clearTimeToken = () => {
+    const minutes = Math.floor(clearTime / 60)
+    const seconds = clearTime - minutes * 60
+
+    let string = ''
+    if (minutes > 0)
+      string = `${minutes}${t('party.details.suffix.minutes')} ${seconds}${t(
+        'party.details.suffix.seconds'
+      )}`
+    else string = `${seconds}${t('party.details.suffix.seconds')}`
+
+    return <Token>{string}</Token>
+  }
+
+  function renderTokens() {
+    return (
+      <section className="Tokens">
+        {chargeAttackToken}
+        {fullAutoToken}
+        {autoGuardToken}
+        {turnCount ? turnCountToken : ''}
+        {clearTime > 0 ? clearTimeToken() : ''}
+        {buttonChainToken()}
+      </section>
+    )
+  }
+
+  // Render: Buttons
+  const saveButton = () => {
+    return (
+      <Tooltip content={t('tooltips.save')}>
+        <Button
+          leftAccessoryIcon={<SaveIcon />}
+          className={classNames({
+            Save: true,
+            Saved: partySnapshot.favorited,
+          })}
+          text={
+            appState.party.favorited ? t('buttons.saved') : t('buttons.save')
+          }
+          onClick={toggleFavorite}
+        />
+      </Tooltip>
+    )
+  }
+
+  const remixButton = () => {
+    return (
+      <Tooltip content={t('tooltips.remix')}>
+        <Button
+          leftAccessoryIcon={<RemixIcon />}
+          className="Remix"
+          text={t('buttons.remix')}
+          onClick={props.remixCallback}
+        />
+      </Tooltip>
+    )
+  }
   const editable = () => {
     return (
       <section className={editableClasses}>
@@ -469,93 +622,8 @@ const PartyHeader = (props: Props) => {
     )
   }
 
-  const clearTimeString = () => {
-    const minutes = Math.floor(clearTime / 60)
-    const seconds = clearTime - minutes * 60
-
-    if (minutes > 0)
-      return `${minutes}${t('party.details.suffix.minutes')} ${seconds}${t(
-        'party.details.suffix.seconds'
-      )}`
-    else return `${seconds}${t('party.details.suffix.seconds')}`
-  }
-
-  const buttonChainToken = () => {
-    if (buttonCount || chainCount) {
-      let string = ''
-
-      if (buttonCount && buttonCount > 0) {
-        string += `${buttonCount}b`
-      }
-
-      if (!buttonCount && chainCount && chainCount > 0) {
-        string += `0${t('party.details.suffix.buttons')}${chainCount}${t(
-          'party.details.suffix.chains'
-        )}`
-      } else if (buttonCount && chainCount && chainCount > 0) {
-        string += `${chainCount}${t('party.details.suffix.chains')}`
-      } else if (buttonCount && !chainCount) {
-        string += `0${t('party.details.suffix.chains')}`
-      }
-
-      return <Token>{string}</Token>
-    }
-  }
-
   const readOnly = () => {
-    return (
-      <section className={readOnlyClasses}>
-        <section className="Details">
-          <Token
-            className={classNames({
-              ChargeAttack: true,
-              On: chargeAttack,
-              Off: !chargeAttack,
-            })}
-          >
-            {`${t('party.details.labels.charge_attack')} ${
-              chargeAttack ? 'On' : 'Off'
-            }`}
-          </Token>
-
-          <Token
-            className={classNames({
-              FullAuto: true,
-              On: fullAuto,
-              Off: !fullAuto,
-            })}
-          >
-            {`${t('party.details.labels.full_auto')} ${
-              fullAuto ? 'On' : 'Off'
-            }`}
-          </Token>
-
-          <Token
-            className={classNames({
-              AutoGuard: true,
-              On: autoGuard,
-              Off: !autoGuard,
-            })}
-          >
-            {`${t('party.details.labels.auto_guard')} ${
-              autoGuard ? 'On' : 'Off'
-            }`}
-          </Token>
-
-          {turnCount ? (
-            <Token>
-              {t('party.details.turns.with_count', {
-                count: turnCount,
-              })}
-            </Token>
-          ) : (
-            ''
-          )}
-          {clearTime > 0 ? <Token>{clearTimeString()}</Token> : ''}
-          {buttonChainToken()}
-        </section>
-      </section>
-    )
+    return <section className={readOnlyClasses}>{renderTokens()}</section>
   }
 
   return (
@@ -609,7 +677,10 @@ const PartyHeader = (props: Props) => {
               />
             </div>
           ) : (
-            ''
+            <div className="Right">
+              {saveButton()}
+              {remixButton()}
+            </div>
           )}
         </div>
         {readOnly()}
