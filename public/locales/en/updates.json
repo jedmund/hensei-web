@@ -19,6 +19,14 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2023-05L": {
+      "features": ["A large update is in the works. Stay tuned!"]
+    },
+    "2023-05U": {
+      "features": [
+        "Added Ultimate Mastery skills for classes: Sage, Chaos Ruler, Elysian, Glorybringer, Runeslayer"
+      ]
+    },
     "2023-03U2": {
       "features": ["Added new weapon series, World Series"]
     },
