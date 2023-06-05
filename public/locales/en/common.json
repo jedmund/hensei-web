@@ -384,6 +384,9 @@
       }
     }
   },
+  "raids": {
+    "placeholder": "Select a raid..."
+  },
   "saved": {
     "title": "Your saved Teams",
     "loading": "Loading saved teams...",
@@ -403,7 +406,8 @@
       "summon": "Search for a summon...",
       "character": "Search for a character...",
       "job_skill": "Search job skills...",
-      "guidebook": "Search guidebooks..."
+      "guidebook": "Search guidebooks...",
+      "raid": "Search raids..."
     }
   },
   "teams": {

@@ -385,6 +385,9 @@
       }
     }
   },
+  "raids": {
+    "placeholder": "バトルを選択..."
+  },
   "saved": {
     "title": "保存した編成",
     "loading": "ロード中...",
