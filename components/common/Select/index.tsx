@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import Overlay from '~components/common/Overlay'
 
-import ArrowIcon from '~public/icons/Arrow.svg'
+import ChevronIcon from '~public/icons/Chevron.svg'
 
 import './index.scss'
 
@@ -86,7 +86,7 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
         <RadixSelect.Value placeholder={props.placeholder} />
         {!props.disabled ? (
           <RadixSelect.Icon className="SelectIcon">
-            <ArrowIcon />
+            <ChevronIcon />
           </RadixSelect.Icon>
         ) : (
           ''
@@ -107,11 +107,11 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
             onPointerDownOutside={onPointerDownOutside}
           >
             <RadixSelect.ScrollUpButton className="Scroll Up">
-              <ArrowIcon />
+              <ChevronIcon />
             </RadixSelect.ScrollUpButton>
             <RadixSelect.Viewport>{props.children}</RadixSelect.Viewport>
             <RadixSelect.ScrollDownButton className="Scroll Down">
-              <ArrowIcon />
+              <ChevronIcon />
             </RadixSelect.ScrollDownButton>
           </RadixSelect.Content>
         </>

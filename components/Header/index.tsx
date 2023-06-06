@@ -31,7 +31,7 @@ import Button from '~components/common/Button'
 import Tooltip from '~components/common/Tooltip'
 import * as Switch from '@radix-ui/react-switch'
 
-import ArrowIcon from '~public/icons/Arrow.svg'
+import ChevronIcon from '~public/icons/Chevron.svg'
 import LinkIcon from '~public/icons/Link.svg'
 import MenuIcon from '~public/icons/Menu.svg'
 import RemixIcon from '~public/icons/Remix.svg'
@@ -411,7 +411,7 @@ const Header = () => {
             <Button
               className={classNames({ Active: rightMenuOpen })}
               leftAccessoryIcon={profileImage()}
-              rightAccessoryIcon={<ArrowIcon />}
+              rightAccessoryIcon={<ChevronIcon />}
               rightAccessoryClassName="Arrow"
               onClick={handleRightMenuButtonClicked}
               blended={true}
