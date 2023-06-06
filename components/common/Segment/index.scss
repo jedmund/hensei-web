@@ -1,6 +1,7 @@
 .Segment {
   color: $grey-55;
   cursor: pointer;
+  flex-grow: 1;
   font-size: 1.4rem;
   font-weight: $normal;
   min-width: 100px;
