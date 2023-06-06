@@ -72,6 +72,26 @@
     padding: $unit;
     width: 100%;
 
+    .Button {
+      background: none;
+      padding: ($unit * 0.75) $unit-half $unit-half;
+      display: none;
+
+      &:hover svg {
+        fill: var(--text-primary);
+      }
+
+      &.Visible {
+        display: block;
+      }
+
+      svg {
+        fill: var(--text-tertiary);
+        width: $unit-2x;
+        height: $unit-2x;
+      }
+    }
+
     .Controls {
       display: flex;
       gap: $unit;

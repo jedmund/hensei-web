@@ -27,6 +27,7 @@ interface Props {
 
 import Button from '~components/common/Button'
 import ArrowIcon from '~public/icons/Arrow.svg'
+import CrossIcon from '~public/icons/Cross.svg'
 
 import './index.scss'
 import classNames from 'classnames'
@@ -128,6 +129,10 @@ const RaidCombobox = (props: Props) => {
       setScrolled(false)
     }
     setOpen(!open)
+  }
+
+  function clearSearch() {
+    setSearch('')
   }
 
   const linkClass = classNames({
@@ -261,12 +266,23 @@ const RaidCombobox = (props: Props) => {
     >
       <Command className="Raid Combobox">
         <div className="Header">
-          <CommandInput
-            className="Input Bound"
-            placeholder={t('search.placeholders.raid')}
-            value={search}
-            onValueChange={setSearch}
-          />
+          <div className="Bound Joined">
+            <CommandInput
+              className="Input"
+              placeholder={t('search.placeholders.raid')}
+              value={search}
+              onValueChange={setSearch}
+            />
+            <div
+              className={classNames({
+                Button: true,
+                Visible: search.length > 0,
+              })}
+              onClick={clearSearch}
+            >
+              <CrossIcon />
+            </div>
+          </div>
           {!search ? (
             <div className="Controls">
               <SegmentedControl blended={true}>
