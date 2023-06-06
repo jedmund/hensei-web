@@ -9,7 +9,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import api from '~utils/api'
 import extractFilters from '~utils/extractFilters'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
-import organizeRaids from '~utils/organizeRaids'
 import { setHeaders } from '~utils/userToken'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { appState } from '~utils/appState'
@@ -356,12 +355,12 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   try {
     // Fetch and organize raids
-    let { raids, sortedRaids } = await api.endpoints.raids
-      .getAll()
-      .then((response) => organizeRaids(response.data))
+    let raidGroups: RaidGroup[] = await api
+      .raidGroups()
+      .then((response) => response.data)
 
     // Create filter object
-    const filters: FilterObject = extractFilters(query, raids)
+    const filters: FilterObject = extractFilters(query, raidGroups)
     const params = {
       params: { ...filters, ...advancedFilters },
     }
@@ -393,8 +392,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     const context: PageContextObj = {
       user: user,
       teams: teams,
-      raids: raids,
-      sortedRaids: sortedRaids,
+      raidGroups: raidGroups,
       pagination: pagination,
     }
 

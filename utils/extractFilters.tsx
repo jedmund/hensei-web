@@ -1,6 +1,9 @@
 import { elements, allElement } from '~data/elements'
 
-export default (query: { [index: string]: string }, raids: Raid[]) => {
+export default (
+  query: { [index: string]: string },
+  raidGroups: RaidGroup[]
+) => {
   // Extract recency filter
   const recencyParam: number = parseInt(query.recency)
 
@@ -14,8 +17,9 @@ export default (query: { [index: string]: string }, raids: Raid[]) => {
         )
 
   // Extract raid filter
+  const allRaids = raidGroups.flatMap((group) => group.raids)
   const raidParam: string = query.raid
-  const raid: Raid | undefined = raids.find((r) => r.slug === raidParam)
+  const raid: Raid | undefined = allRaids.find((r) => r.slug === raidParam)
 
   // Return filter object
   return {
