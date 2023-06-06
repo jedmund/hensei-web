@@ -20,7 +20,9 @@ import api from '~utils/api'
 interface Props {
   showAllRaidsOption: boolean
   currentRaid?: Raid
+  currentRaidSlug?: string
   defaultRaid?: Raid
+  minimal?: boolean
   onChange?: (raid?: Raid) => void
   onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
@@ -55,13 +57,19 @@ const RaidCombobox = (props: Props) => {
 
   // Data state
   const [currentSection, setCurrentSection] = useState(1)
-  const [search, setSearch] = useState('')
+  const [query, setQuery] = useState('')
   const [sections, setSections] = useState<RaidGroup[][]>()
   const [currentRaid, setCurrentRaid] = useState<Raid>()
 
   // Refs
   const listRef = createRef<HTMLDivElement>()
-  const selectedRef = createRef<HTMLDivElement>()
+
+  function slugToRaid(slug: string) {
+    return appState.raidGroups
+      .filter((group) => group.section > 0)
+      .flatMap((group) => group.raids)
+      .find((raid) => raid.slug === slug)
+  }
 
   useEffect(() => {
     if (appState.party.raid) {
@@ -70,6 +78,12 @@ const RaidCombobox = (props: Props) => {
     }
   }, [])
 
+  useEffect(() => {
+    if (props.currentRaidSlug) {
+      setCurrentRaid(slugToRaid(props.currentRaidSlug))
+    }
+  })
+
   // Scroll to the top of the list when the user switches tabs
   useEffect(() => {
     if (listRef.current) listRef.current.scrollTop = 0
@@ -77,22 +91,15 @@ const RaidCombobox = (props: Props) => {
 
   const scrollToItem = useCallback(
     (node) => {
-      if (
-        !scrolled &&
-        open &&
-        currentRaid &&
-        listRef.current &&
-        node !== null
-      ) {
-        const listRect = listRef.current.getBoundingClientRect()
-        const itemRect = node.getBoundingClientRect()
-        const distance = itemRect.top - listRect.top
+      if (!scrolled && open && currentRaid && listRef.current && node) {
+        const { top: listTop } = listRef.current.getBoundingClientRect()
+        const { top: itemTop } = node.getBoundingClientRect()
 
-        listRef.current.scrollTop = distance
+        listRef.current.scrollTop = itemTop - listTop
         setScrolled(true)
       }
     },
-    [open, currentRaid, listRef]
+    [scrolled, open, currentRaid, listRef]
   )
 
   // Methods: Convenience methods
@@ -132,7 +139,7 @@ const RaidCombobox = (props: Props) => {
   }
 
   function clearSearch() {
-    setSearch('')
+    setQuery('')
   }
 
   const linkClass = classNames({
@@ -150,84 +157,193 @@ const RaidCombobox = (props: Props) => {
   }, [sortGroups])
 
   // Methods: Rendering
+
   function renderRaidSections() {
-    let sections = []
-    for (let i = 0; i < NUM_SECTIONS; i++) {
-      sections.push(renderRaidSection(i))
-    }
-    return sections
+    // Renders each raid section
+    return Array.from({ length: NUM_SECTIONS }, (_, i) => renderRaidSection(i))
   }
 
   function renderRaidSection(section: number) {
-    if (!sections || !sections[section]) return
-    else {
-      const currentSection = sections[section]
-      return currentSection
-        .sort((a, b) => {
-          if (sort === Sort.ASCENDING) return a.order - b.order
-          else return b.order - a.order
-        })
-        .map((group, i) => renderRaidGroup(section, i))
-    }
+    // Renders the specified raid section
+    const currentSection = sections?.[section]
+    if (!currentSection) return
+
+    const sortedGroups = currentSection.sort((a, b) => {
+      return sort === Sort.ASCENDING ? a.order - b.order : b.order - a.order
+    })
+
+    return sortedGroups.map((group, i) => renderRaidGroup(section, i))
   }
 
-  // Render JSX for each raid option, sorted into optgroups
   function renderRaidGroup(section: number, index: number) {
-    let options = []
+    // Renders the specified raid group
+    if (!sections?.[section]?.[index]) return
 
-    if (!sections || !sections[section] || !sections[section][index]) return
-    else {
-      const group = sections[section][index]
+    const group = sections[section][index]
+    const options = generateRaidItems(group.raids)
 
-      options = group.raids
-        .sort((a, b) => {
-          if (a.element > 0 && b.element > 0) return a.element - b.element
-          else if (a.name.en.includes('NM') && b.name.en.includes('NM'))
-            return a.level < b.level ? -1 : 1
-          else return a.name.en < b.name.en ? -1 : 1
-        })
-        .map((item, i) => renderRaidItem(item, i))
+    const groupClassName = classNames({
+      CommandGroup: true,
+      Hidden: group.section !== currentSection,
+    })
 
-      return (
-        <CommandGroup
-          data-section={group.section}
-          className={classNames({
-            CommandGroup: true,
-            Hidden: group.section !== currentSection,
-          })}
-          key={group.name[locale].toLowerCase().replace(' ', '-')}
-          heading={
-            <div className="Label">
-              {group.name[locale]}
-              <div className="Separator" />
-            </div>
-          }
-        >
-          {options}
-        </CommandGroup>
-      )
-    }
+    const heading = (
+      <div className="Label">
+        {group.name[locale]}
+        <div className="Separator" />
+      </div>
+    )
+
+    return (
+      <CommandGroup
+        data-section={group.section}
+        className={groupClassName}
+        key={group.name[locale].toLowerCase().replace(' ', '-')}
+        heading={heading}
+      >
+        {options}
+      </CommandGroup>
+    )
+  }
+
+  function generateRaidItems(raids: Raid[]) {
+    // Generates a list of RaidItem components from the specified raids
+    return raids
+      .sort((a, b) => {
+        if (a.element > 0 && b.element > 0) return a.element - b.element
+        if (a.name.en.includes('NM') && b.name.en.includes('NM'))
+          return a.level - b.level
+        return a.name.en.localeCompare(b.name.en)
+      })
+      .map((item, i) => renderRaidItem(item, i))
   }
 
   function renderRaidItem(raid: Raid, key: number) {
+    // Renders a RaidItem component for the specified raid
+    const isSelected = currentRaid?.id === raid.id
+    const isRef = isSelected ? scrollToItem : undefined
+    const imageUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/raids/${raid.slug}.png`
+
     return (
       <RaidItem
-        className={currentRaid && currentRaid.id === raid.id ? 'Selected' : ''}
-        icon={{
-          alt: raid.name[locale],
-          src: `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/raids/${raid.slug}.png`,
-        }}
+        className={isSelected ? 'Selected' : ''}
+        icon={{ alt: raid.name[locale], src: imageUrl }}
         extra={raid.group.extra}
         key={key}
-        selected={currentRaid?.id === raid.id}
-        ref={
-          currentRaid && currentRaid.id === raid.id ? scrollToItem : undefined
-        }
+        selected={isSelected}
+        ref={isRef}
         value={raid.slug}
         onSelect={() => handleValueChange(raid)}
       >
         {raid.name[locale]}
       </RaidItem>
+    )
+  }
+
+  function renderSegmentedControl() {
+    // Renders a SegmentedControl component for selecting raid sections.
+    return (
+      <SegmentedControl blended={true}>
+        <Segment
+          groupName="raid_section"
+          name="events"
+          selected={currentSection === 2}
+          onClick={() => setCurrentSection(2)}
+        >
+          {t('raids.sections.events')}
+        </Segment>
+        <Segment
+          groupName="raid_section"
+          name="raids"
+          selected={currentSection === 1}
+          onClick={() => setCurrentSection(1)}
+        >
+          {t('raids.sections.raids')}
+        </Segment>
+        <Segment
+          groupName="raid_section"
+          name="solo"
+          selected={currentSection === 3}
+          onClick={() => setCurrentSection(3)}
+        >
+          {t('raids.sections.solo')}
+        </Segment>
+      </SegmentedControl>
+    )
+  }
+
+  function renderSortButton() {
+    // Renders a Button for sorting raids and a Tooltip for explaining what it does.
+    return (
+      <Tooltip
+        content={
+          sort === Sort.ASCENDING
+            ? 'Lower difficulty battles first'
+            : 'Higher difficulty battles first'
+        }
+      >
+        <Button
+          blended={true}
+          buttonSize="small"
+          leftAccessoryIcon={<ArrowIcon />}
+          leftAccessoryClassName={sort === Sort.DESCENDING ? 'Flipped' : ''}
+          onClick={reverseSort}
+        />
+      </Tooltip>
+    )
+  }
+
+  function renderTriggerContent() {
+    // Renders the content for the Popover trigger.
+    if (currentRaid) {
+      const element = (
+        <>
+          {!props.minimal && (
+            <div className="Info">
+              <span className="Group">{currentRaid.group.name[locale]}</span>
+              <span className="Separator">/</span>
+              <span className={classNames({ Raid: true }, linkClass)}>
+                {currentRaid.name[locale]}
+              </span>
+            </div>
+          )}
+
+          {currentRaid.group.extra && !props.minimal && (
+            <i className="ExtraIndicator">EX</i>
+          )}
+        </>
+      )
+
+      return {
+        element,
+        rawValue: currentRaid.id,
+      }
+    }
+
+    return undefined
+  }
+
+  function renderSearchInput() {
+    // Renders the search input for the raid combobox
+    return (
+      <div className="Bound Joined">
+        <CommandInput
+          className="Input"
+          placeholder={t('search.placeholders.raid')}
+          value={query}
+          onValueChange={setQuery}
+        />
+        <div
+          className={classNames({
+            Button: true,
+            Clear: true,
+            Visible: query.length > 0,
+          })}
+          onClick={clearSearch}
+        >
+          <CrossIcon />
+        </div>
+      </div>
     )
   }
 
@@ -238,103 +354,20 @@ const RaidCombobox = (props: Props) => {
       onOpenChange={toggleOpen}
       placeholder={t('raids.placeholder')}
       trigger={{ className: 'Raid' }}
-      value={
-        currentRaid
-          ? {
-              element: (
-                <>
-                  <div className="Info">
-                    <span className="Group">
-                      {currentRaid?.group.name[locale]}
-                    </span>
-                    <span className="Separator">/</span>
-                    <span className={classNames({ Raid: true }, linkClass)}>
-                      {currentRaid?.name[locale]}
-                    </span>
-                  </div>
-                  {currentRaid.group.extra ? (
-                    <i className="ExtraIndicator">EX</i>
-                  ) : (
-                    ''
-                  )}
-                </>
-              ),
-              rawValue: currentRaid?.id,
-            }
-          : undefined
-      }
+      value={renderTriggerContent()}
     >
       <Command className="Raid Combobox">
         <div className="Header">
-          <div className="Bound Joined">
-            <CommandInput
-              className="Input"
-              placeholder={t('search.placeholders.raid')}
-              value={search}
-              onValueChange={setSearch}
-            />
-            <div
-              className={classNames({
-                Button: true,
-                Visible: search.length > 0,
-              })}
-              onClick={clearSearch}
-            >
-              <CrossIcon />
-            </div>
-          </div>
-          {!search ? (
+          {renderSearchInput()}
+          {!query && (
             <div className="Controls">
-              <SegmentedControl blended={true}>
-                <Segment
-                  groupName="raid_section"
-                  name="events"
-                  selected={currentSection === 2}
-                  onClick={() => setCurrentSection(2)}
-                >
-                  {t('raids.sections.events')}
-                </Segment>
-                <Segment
-                  groupName="raid_section"
-                  name="raids"
-                  selected={currentSection === 1}
-                  onClick={() => setCurrentSection(1)}
-                >
-                  {t('raids.sections.raids')}
-                </Segment>
-                <Segment
-                  groupName="raid_section"
-                  name="solo"
-                  selected={currentSection === 3}
-                  onClick={() => setCurrentSection(3)}
-                >
-                  {t('raids.sections.solo')}
-                </Segment>
-              </SegmentedControl>
-              <Tooltip
-                content={
-                  sort === Sort.ASCENDING
-                    ? 'Lower difficulty battles first'
-                    : 'Higher difficulty battles first'
-                }
-              >
-                <Button
-                  blended={true}
-                  buttonSize="small"
-                  leftAccessoryIcon={<ArrowIcon />}
-                  leftAccessoryClassName={
-                    sort === Sort.DESCENDING ? 'Flipped' : ''
-                  }
-                  onClick={reverseSort}
-                />
-              </Tooltip>
+              {renderSegmentedControl()}
+              {renderSortButton()}
             </div>
-          ) : (
-            ''
           )}
         </div>
         <div
-          className={classNames({ Raids: true, Searching: search !== '' })}
+          className={classNames({ Raids: true, Searching: query !== '' })}
           ref={listRef}
         >
           {renderRaidSections()}
@@ -342,6 +375,10 @@ const RaidCombobox = (props: Props) => {
       </Command>
     </Popover>
   )
+}
+
+RaidCombobox.defaultProps = {
+  minimal: false,
 }
 
 export default RaidCombobox
