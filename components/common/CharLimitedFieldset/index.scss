@@ -1,4 +1,4 @@
-.Limited {
+.Joined {
   $offset: 2px;
 
   align-items: center;
@@ -11,6 +11,14 @@
   padding-top: 2px;
   padding-bottom: 2px;
   padding-right: calc($unit-2x - $offset);
+
+  &.Bound {
+    background-color: var(--input-bound-bg);
+
+    &:hover {
+      background-color: var(--input-bound-bg-hover);
+    }
+  }
 
   &:focus-within {
     border: $offset solid $blue;
