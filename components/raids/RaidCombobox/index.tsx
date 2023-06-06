@@ -1,14 +1,9 @@
-import { createRef, useCallback, useEffect, useRef, useState } from 'react'
+import { createRef, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
+import classNames from 'classnames'
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from 'cmdk'
+import { Command, CommandGroup, CommandInput } from 'cmdk'
 import Popover from '~components/common/Popover'
 import SegmentedControl from '~components/common/SegmentedControl'
 import Segment from '~components/common/Segment'
@@ -16,6 +11,7 @@ import RaidItem from '~components/raids/RaidItem'
 import Tooltip from '~components/common/Tooltip'
 
 import api from '~utils/api'
+import { appState } from '~utils/appState'
 
 interface Props {
   showAllRaidsOption: boolean
@@ -32,8 +28,6 @@ import ArrowIcon from '~public/icons/Arrow.svg'
 import CrossIcon from '~public/icons/Cross.svg'
 
 import './index.scss'
-import classNames from 'classnames'
-import { appState } from '~utils/appState'
 
 const NUM_SECTIONS = 3
 
@@ -64,13 +58,16 @@ const RaidCombobox = (props: Props) => {
   // Refs
   const listRef = createRef<HTMLDivElement>()
 
-  function slugToRaid(slug: string) {
-    return appState.raidGroups
-      .filter((group) => group.section > 0)
-      .flatMap((group) => group.raids)
-      .find((raid) => raid.slug === slug)
-  }
+  // ----------------------------------------------
+  // Methods: Lifecycle Hooks
+  // ----------------------------------------------
 
+  // Fetch all raids on mount
+  useEffect(() => {
+    api.raidGroups().then((response) => sortGroups(response.data))
+  }, [])
+
+  // Set current raid and section when the component mounts
   useEffect(() => {
     if (appState.party.raid) {
       setCurrentRaid(appState.party.raid)
@@ -78,6 +75,7 @@ const RaidCombobox = (props: Props) => {
     }
   }, [])
 
+  // Update current raid when the currentRaidSlug prop changes
   useEffect(() => {
     if (props.currentRaidSlug) {
       setCurrentRaid(slugToRaid(props.currentRaidSlug))
@@ -86,9 +84,16 @@ const RaidCombobox = (props: Props) => {
 
   // Scroll to the top of the list when the user switches tabs
   useEffect(() => {
-    if (listRef.current) listRef.current.scrollTop = 0
+    if (listRef.current) {
+      listRef.current.scrollTop = 0
+    }
   }, [currentSection])
 
+  // ----------------------------------------------
+  // Methods: Event Handlers
+  // ----------------------------------------------
+
+  // Scroll to an item in the list when it is selected
   const scrollToItem = useCallback(
     (node) => {
       if (!scrolled && open && currentRaid && listRef.current && node) {
@@ -102,14 +107,13 @@ const RaidCombobox = (props: Props) => {
     [scrolled, open, currentRaid, listRef]
   )
 
-  // Methods: Convenience methods
-
+  // Reverse the sort order
   function reverseSort() {
     if (sort === Sort.ASCENDING) setSort(Sort.DESCENDING)
     else setSort(Sort.ASCENDING)
   }
 
-  // Sort raids into defined groups
+  // Sorts the raid groups into sections
   const sortGroups = useCallback(
     (groups: RaidGroup[]) => {
       const sections: [RaidGroup[], RaidGroup[], RaidGroup[]] = [[], [], []]
@@ -123,6 +127,7 @@ const RaidCombobox = (props: Props) => {
     [setSections]
   )
 
+  // Handle value change for the raid selection
   function handleValueChange(raid: Raid) {
     setCurrentRaid(raid)
     setOpen(false)
@@ -130,6 +135,7 @@ const RaidCombobox = (props: Props) => {
     if (props.onChange) props.onChange(raid)
   }
 
+  // Toggle the open state of the combobox
   function toggleOpen() {
     if (open) {
       if (currentRaid) setCurrentSection(currentRaid.group.section)
@@ -138,33 +144,22 @@ const RaidCombobox = (props: Props) => {
     setOpen(!open)
   }
 
+  // Clear the search query
   function clearSearch() {
     setQuery('')
   }
 
-  const linkClass = classNames({
-    wind: currentRaid && currentRaid.element == 1,
-    fire: currentRaid && currentRaid.element == 2,
-    water: currentRaid && currentRaid.element == 3,
-    earth: currentRaid && currentRaid.element == 4,
-    dark: currentRaid && currentRaid.element == 5,
-    light: currentRaid && currentRaid.element == 6,
-  })
-
-  // Fetch all raids on mount
-  useEffect(() => {
-    api.raidGroups().then((response) => sortGroups(response.data))
-  }, [sortGroups])
-
+  // ----------------------------------------------
   // Methods: Rendering
+  // ----------------------------------------------
 
+  // Renders each raid section
   function renderRaidSections() {
-    // Renders each raid section
     return Array.from({ length: NUM_SECTIONS }, (_, i) => renderRaidSection(i))
   }
 
+  // Renders the specified raid section
   function renderRaidSection(section: number) {
-    // Renders the specified raid section
     const currentSection = sections?.[section]
     if (!currentSection) return
 
@@ -175,8 +170,8 @@ const RaidCombobox = (props: Props) => {
     return sortedGroups.map((group, i) => renderRaidGroup(section, i))
   }
 
+  // Renders the specified raid group
   function renderRaidGroup(section: number, index: number) {
-    // Renders the specified raid group
     if (!sections?.[section]?.[index]) return
 
     const group = sections[section][index]
@@ -206,8 +201,8 @@ const RaidCombobox = (props: Props) => {
     )
   }
 
+  // Generates a list of RaidItem components from the specified raids
   function generateRaidItems(raids: Raid[]) {
-    // Generates a list of RaidItem components from the specified raids
     return raids
       .sort((a, b) => {
         if (a.element > 0 && b.element > 0) return a.element - b.element
@@ -218,8 +213,8 @@ const RaidCombobox = (props: Props) => {
       .map((item, i) => renderRaidItem(item, i))
   }
 
+  // Renders a RaidItem component for the specified raid
   function renderRaidItem(raid: Raid, key: number) {
-    // Renders a RaidItem component for the specified raid
     const isSelected = currentRaid?.id === raid.id
     const isRef = isSelected ? scrollToItem : undefined
     const imageUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/raids/${raid.slug}.png`
@@ -240,8 +235,8 @@ const RaidCombobox = (props: Props) => {
     )
   }
 
+  // Renders a SegmentedControl component for selecting raid sections.
   function renderSegmentedControl() {
-    // Renders a SegmentedControl component for selecting raid sections.
     return (
       <SegmentedControl blended={true}>
         <Segment
@@ -272,8 +267,9 @@ const RaidCombobox = (props: Props) => {
     )
   }
 
+  // Renders a Button for sorting raids and a Tooltip for explaining what it does.
+
   function renderSortButton() {
-    // Renders a Button for sorting raids and a Tooltip for explaining what it does.
     return (
       <Tooltip
         content={
@@ -293,8 +289,8 @@ const RaidCombobox = (props: Props) => {
     )
   }
 
+  // Renders the content for the Popover trigger.
   function renderTriggerContent() {
-    // Renders the content for the Popover trigger.
     if (currentRaid) {
       const element = (
         <>
@@ -323,8 +319,8 @@ const RaidCombobox = (props: Props) => {
     return undefined
   }
 
+  // Renders the search input for the raid combobox
   function renderSearchInput() {
-    // Renders the search input for the raid combobox
     return (
       <div className="Bound Joined">
         <CommandInput
@@ -347,6 +343,28 @@ const RaidCombobox = (props: Props) => {
     )
   }
 
+  // ----------------------------------------------
+  // Methods: Utility
+  // ----------------------------------------------
+  function slugToRaid(slug: string) {
+    return appState.raidGroups
+      .filter((group) => group.section > 0)
+      .flatMap((group) => group.raids)
+      .find((raid) => raid.slug === slug)
+  }
+
+  const linkClass = classNames({
+    wind: currentRaid && currentRaid.element == 1,
+    fire: currentRaid && currentRaid.element == 2,
+    water: currentRaid && currentRaid.element == 3,
+    earth: currentRaid && currentRaid.element == 4,
+    dark: currentRaid && currentRaid.element == 5,
+    light: currentRaid && currentRaid.element == 6,
+  })
+
+  // ----------------------------------------------
+  // Render
+  // ----------------------------------------------
   return (
     <Popover
       className="Flush"
