@@ -90,7 +90,7 @@ const Popover = React.forwardRef<HTMLDivElement, Props>(function Popover(
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Content
         className={classNames({ Popover: true }, props.className)}
-        sideOffset={8}
+        sideOffset={6}
         ref={forwardedRef}
       >
         {children}
