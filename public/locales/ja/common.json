@@ -54,40 +54,6 @@
     },
     "remove": "編成から削除"
   },
-  "filters": {
-    "labels": {
-      "element": "属性",
-      "series": "シリーズ",
-      "proficiency": "武器種",
-      "rarity": "レアリティ"
-    }
-  },
-  "errors": {
-    "internal_server_error": {
-      "title": "サーバーエラー",
-      "description": "サーバーから届いたエラーは自動的に復されなかったため、再びリクエストを行なってください"
-    },
-    "not_found": {
-      "title": "見つかりませんでした",
-      "description": "探しているページは見つかりませんでした",
-      "button": "新しい編成を作成"
-    },
-    "validation": {
-      "guidebooks": "セフィラ導本を複数個装備することはできません"
-    },
-    "unauthorized": "行ったアクションを実行する権限がありません"
-  },
-  "header": {
-    "anonymous": "無名",
-    "untitled_team": "{{username}}さんからの無題編成",
-    "new_team": "新編成",
-    "byline": "{{username}}さんからの{{partyName}}"
-  },
-  "rarities": {
-    "r": "R",
-    "sr": "SR",
-    "ssr": "SSR"
-  },
   "elements": {
     "null": "無",
     "wind": "風",
@@ -107,64 +73,62 @@
       "light": "光属性"
     }
   },
-  "proficiencies": {
-    "sabre": "剣",
-    "dagger": "短剣",
-    "spear": "槍",
-    "axe": "斧",
-    "staff": "杖",
-    "gun": "銃",
-    "melee": "拳",
-    "bow": "弓",
-    "harp": "琴",
-    "katana": "刀"
+  "errors": {
+    "internal_server_error": {
+      "title": "サーバーエラー",
+      "description": "サーバーから届いたエラーは自動的に復されなかったため、再びリクエストを行なってください"
+    },
+    "not_found": {
+      "title": "見つかりませんでした",
+      "description": "探しているページは見つかりませんでした",
+      "button": "新しい編成を作成"
+    },
+    "validation": {
+      "guidebooks": "セフィラ導本を複数個装備することはできません"
+    },
+    "unauthorized": "行ったアクションを実行する権限がありません"
   },
-  "series": {
-    "seraphic": "セラフィックウェポン",
-    "grand": "リミテッドシリーズ",
-    "opus": "終末の神器",
-    "draconic": "ドラコニックウェポン",
-    "primal": "プライマルシリーズ",
-    "olden_primal": "オールド・プライマルシリーズ",
-    "beast": "四象武器",
-    "omega": "マグナシリーズ",
-    "regalia": "レガリアシリーズ",
-    "militis": "ミーレスシリーズ",
-    "xeno": "六道武器",
-    "astral": "アストラルウェポン",
-    "rose": "ローズシリーズ",
-    "hollowsky": "虚ろなる神器",
-    "ultima": "オメガウェポン",
-    "bahamut": "バハムートウェポン",
-    "epic": "エピックウェポン",
-    "ennead": "エニアドシリーズ",
-    "cosmic": "コスモスシリーズ",
-    "ancestral": "アンセスタルシリーズ",
-    "superlative": "スペリオシリーズ",
-    "vintage": "ヴィンテージシリーズ",
-    "class_champion": "英雄武器",
-    "sephira": "セフィラン・オールドウェポン",
-    "new_world": "新世界の礎",
-    "revenant": "天星器",
-    "proving": "ブレイブウェポン",
-    "disaster": "レヴァンスウェポン",
-    "illustrious": "ルミナスシリーズ",
-    "world": "ワールドシリーズ"
+  "filters": {
+    "labels": {
+      "element": "属性",
+      "series": "シリーズ",
+      "proficiency": "武器種",
+      "rarity": "レアリティ"
+    }
   },
-  "recency": {
-    "all_time": "全ての期間",
-    "last_day": "1日",
-    "last_week": "7日",
-    "last_month": "1ヶ月",
-    "last_3_months": "3ヶ月",
-    "last_6_months": "6ヶ月",
-    "last_year": "1年"
+  "header": {
+    "anonymous": "無名",
+    "untitled_team": "{{username}}さんからの無題編成",
+    "new_team": "新編成",
+    "byline": "{{username}}さんからの{{partyName}}"
   },
-  "summons": {
-    "main": "メイン",
-    "friend": "フレンド",
-    "summons": "召喚石",
-    "subaura": "サブ加護召喚石"
+  "job_skills": {
+    "all": "全てのアビリティ",
+    "buffing": "強化アビリティ",
+    "debuffing": "弱体アビリティ",
+    "damaging": "ダメージアビリティ",
+    "healing": "回復アビリティ",
+    "emp": "リミットアビリティ",
+    "base": "ベースアビリティ",
+    "state": {
+      "selectable": "アビリティを選択",
+      "no_skill": "設定されていません"
+    }
+  },
+  "menu": {
+    "about": "このサイトについて",
+    "changelog": "変更ログ",
+    "guides": "攻略",
+    "language": "言語",
+    "login": "ログイン",
+    "profile": "プロフィール",
+    "roadmap": "ロードマップ",
+    "new": "新しい編成",
+    "saved": "保存した編成",
+    "settings": "アカウント設定",
+    "signup": "登録",
+    "teams": "編成一覧",
+    "logout": "ログアウト"
   },
   "modals": {
     "about": {
@@ -342,20 +306,26 @@
       }
     }
   },
-  "menu": {
-    "about": "このサイトについて",
-    "changelog": "変更ログ",
-    "guides": "攻略",
-    "language": "言語",
-    "login": "ログイン",
-    "profile": "プロフィール",
-    "roadmap": "ロードマップ",
-    "new": "新しい編成",
-    "saved": "保存した編成",
-    "settings": "アカウント設定",
-    "signup": "登録",
-    "teams": "編成一覧",
-    "logout": "ログアウト"
+  "page": {
+    "titles": {
+      "about": "granblue.teamについて",
+      "updates": "変更ログ / granblue.team",
+      "roadmap": "ロードマップ / granblue.team",
+      "discover": "編成を見出す / granblue.team",
+      "new": "新しい編成 / granblue.team",
+      "profile": "@{{username}}さんの作った編成 / granblue.team",
+      "team": "{{emoji}} {{teamName}}、{{username}}さんから / granblue.team",
+      "saved": "保存した編成"
+    },
+    "descriptions": {
+      "about": "granblue.teamについて / グランブルーファンタジーの編成を探したり保存したりできる",
+      "updates": "granblue.teamの最新変更について",
+      "roadmap": "granblue.teamの開発予定機能",
+      "discover": "グランブルーファンタジーの編成をマルチ、属性、作った時間などで探したり保存したりできる",
+      "new": "グランブルーファンタジーの編成を作成し、騎空士とシェアできるサイトgranblue.team",
+      "profile": "@{{username}}の編成を調査し、マルチ、属性、または作った時間でフィルターする",
+      "team": "granblue.teamで{{username}}さんが作った{{raidName}}の編成を調査できる"
+    }
   },
   "party": {
     "segmented_control": {
@@ -385,8 +355,39 @@
       }
     }
   },
+  "proficiencies": {
+    "sabre": "剣",
+    "dagger": "短剣",
+    "spear": "槍",
+    "axe": "斧",
+    "staff": "杖",
+    "gun": "銃",
+    "melee": "拳",
+    "bow": "弓",
+    "harp": "琴",
+    "katana": "刀"
+  },
   "raids": {
-    "placeholder": "バトルを選択..."
+    "placeholder": "バトルを選択...",
+    "sections": {
+      "raids": "マルチ",
+      "solo": "ソロ",
+      "events": "イベント"
+    }
+  },
+  "rarities": {
+    "r": "R",
+    "sr": "SR",
+    "ssr": "SSR"
+  },
+  "recency": {
+    "all_time": "全ての期間",
+    "last_day": "1日",
+    "last_week": "7日",
+    "last_month": "1ヶ月",
+    "last_3_months": "3ヶ月",
+    "last_6_months": "6ヶ月",
+    "last_year": "1年"
   },
   "saved": {
     "title": "保存した編成",
@@ -407,47 +408,52 @@
       "summon": "召喚石を検索...",
       "character": "キャラを検索...",
       "job_skill": "ジョブのスキルを検索...",
-      "guidebook": "導本を検索..."
+      "guidebook": "導本を検索...",
+      "raid": "バトルを検索..."
     }
+  },
+  "series": {
+    "seraphic": "セラフィックウェポン",
+    "grand": "リミテッドシリーズ",
+    "opus": "終末の神器",
+    "draconic": "ドラコニックウェポン",
+    "primal": "プライマルシリーズ",
+    "olden_primal": "オールド・プライマルシリーズ",
+    "beast": "四象武器",
+    "omega": "マグナシリーズ",
+    "regalia": "レガリアシリーズ",
+    "militis": "ミーレスシリーズ",
+    "xeno": "六道武器",
+    "astral": "アストラルウェポン",
+    "rose": "ローズシリーズ",
+    "hollowsky": "虚ろなる神器",
+    "ultima": "オメガウェポン",
+    "bahamut": "バハムートウェポン",
+    "epic": "エピックウェポン",
+    "ennead": "エニアドシリーズ",
+    "cosmic": "コスモスシリーズ",
+    "ancestral": "アンセスタルシリーズ",
+    "superlative": "スペリオシリーズ",
+    "vintage": "ヴィンテージシリーズ",
+    "class_champion": "英雄武器",
+    "sephira": "セフィラン・オールドウェポン",
+    "new_world": "新世界の礎",
+    "revenant": "天星器",
+    "proving": "ブレイブウェポン",
+    "disaster": "レヴァンスウェポン",
+    "illustrious": "ルミナスシリーズ",
+    "world": "ワールドシリーズ"
+  },
+  "summons": {
+    "main": "メイン",
+    "friend": "フレンド",
+    "summons": "召喚石",
+    "subaura": "サブ加護召喚石"
   },
   "teams": {
     "title": "編成一覧",
     "loading": "ロード中...",
     "not_found": "編成は見つかりませんでした"
-  },
-  "page": {
-    "titles": {
-      "about": "granblue.teamについて",
-      "updates": "変更ログ / granblue.team",
-      "roadmap": "ロードマップ / granblue.team",
-      "discover": "編成を見出す / granblue.team",
-      "new": "新しい編成 / granblue.team",
-      "profile": "@{{username}}さんの作った編成 / granblue.team",
-      "team": "{{emoji}} {{teamName}}、{{username}}さんから / granblue.team",
-      "saved": "保存した編成"
-    },
-    "descriptions": {
-      "about": "granblue.teamについて / グランブルーファンタジーの編成を探したり保存したりできる",
-      "updates": "granblue.teamの最新変更について",
-      "roadmap": "granblue.teamの開発予定機能",
-      "discover": "グランブルーファンタジーの編成をマルチ、属性、作った時間などで探したり保存したりできる",
-      "new": "グランブルーファンタジーの編成を作成し、騎空士とシェアできるサイトgranblue.team",
-      "profile": "@{{username}}の編成を調査し、マルチ、属性、または作った時間でフィルターする",
-      "team": "granblue.teamで{{username}}さんが作った{{raidName}}の編成を調査できる"
-    }
-  },
-  "job_skills": {
-    "all": "全てのアビリティ",
-    "buffing": "強化アビリティ",
-    "debuffing": "弱体アビリティ",
-    "damaging": "ダメージアビリティ",
-    "healing": "回復アビリティ",
-    "emp": "リミットアビリティ",
-    "base": "ベースアビリティ",
-    "state": {
-      "selectable": "アビリティを選択",
-      "no_skill": "設定されていません"
-    }
   },
   "toasts": {
     "copied": "この編成のURLはクリップボードにコピーされました",
