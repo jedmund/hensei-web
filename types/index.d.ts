@@ -83,8 +83,7 @@ interface PageContextObj {
   party?: Party
   jobs?: Job[]
   jobSkills?: JobSkill[]
-  raids: Raid[]
-  sortedRaids: Raid[][]
+  raidGroups: RaidGroup[]
   weaponKeys?: GroupedWeaponKeys
   pagination?: PaginationObject
   meta?: { [key: string]: string }
