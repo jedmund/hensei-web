@@ -34,7 +34,7 @@
     cursor: not-allowed;
   }
 
-  &[data-placeholder] > span:not(.SelectIcon) {
+  &[data-placeholder='true'] > span:not(.SelectIcon) {
     color: var(--text-secondary);
   }
 
@@ -74,7 +74,7 @@
 
 .Select {
   background: var(--select-bg);
-  border-radius: $input-corner;
+  border-radius: $card-corner;
   border: $hover-stroke;
   box-shadow: $hover-shadow;
   padding: 0 $unit;
