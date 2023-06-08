@@ -57,6 +57,14 @@ const UpdatesPage = () => {
     <div className="Updates PageContent">
       <h1>{common('about.segmented_control.updates')}</h1>
       <ContentUpdate
+        version="2023-06U1"
+        dateString="2023/06/07"
+        event="events.uncap"
+        uncappedItems={{
+          character: ['3040169000', '3040163000'],
+        }}
+      />
+      <ContentUpdate
         version="2023-05L"
         dateString="2023/05/31"
         event="events.legfest"
