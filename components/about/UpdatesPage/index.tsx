@@ -60,7 +60,7 @@ const UpdatesPage = () => {
         version="2023-06U1"
         dateString="2023/06/07"
         event="events.uncap"
-        newItems={{
+        uncappedItems={{
           character: ['3040169000', '3040163000'],
         }}
       />
