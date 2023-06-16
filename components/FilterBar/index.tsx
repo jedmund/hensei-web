@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 import equals from 'fast-deep-equal'
 
 import FilterModal from '~components/FilterModal'
-import RaidDropdown from '~components/RaidDropdown'
 import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
 import Button from '~components/common/Button'
@@ -15,6 +14,8 @@ import FilterIcon from '~public/icons/Filter.svg'
 
 import './index.scss'
 import { getCookie } from 'cookies-next'
+import RaidCombobox from '~components/raids/RaidCombobox'
+import { appState } from '~utils/appState'
 
 interface Props {
   children: React.ReactNode
@@ -28,6 +29,8 @@ interface Props {
 const FilterBar = (props: Props) => {
   // Set up translation
   const { t } = useTranslation('common')
+
+  const [currentRaid, setCurrentRaid] = useState<Raid>()
 
   const [recencyOpen, setRecencyOpen] = useState(false)
   const [elementOpen, setElementOpen] = useState(false)
@@ -46,6 +49,16 @@ const FilterBar = (props: Props) => {
     Filter: true,
     FiltersActive: !matchesDefaultFilters,
   })
+
+  // Convert raid slug to Raid object on mount
+  useEffect(() => {
+    const raid = appState.raidGroups
+      .filter((group) => group.section > 0)
+      .flatMap((group) => group.raids)
+      .find((raid) => raid.slug === props.raidSlug)
+
+    setCurrentRaid(raid)
+  }, [props.raidSlug])
 
   useEffect(() => {
     // Fetch user's advanced filters
@@ -76,8 +89,8 @@ const FilterBar = (props: Props) => {
     props.onFilter({ recency: recencyValue, ...advancedFilters })
   }
 
-  function raidSelectChanged(slug?: string) {
-    props.onFilter({ raidSlug: slug, ...advancedFilters })
+  function raidSelectChanged(raid?: Raid) {
+    props.onFilter({ raidSlug: raid?.slug, ...advancedFilters })
   }
 
   function handleAdvancedFiltersChanged(filters: FilterSet) {
@@ -90,6 +103,25 @@ const FilterBar = (props: Props) => {
     setRecencyOpen(name === 'recency' ? !recencyOpen : false)
   }
 
+  function generateSelectItems() {
+    const elements = [
+      { element: 'all', key: -1, value: -1, text: t('elements.full.all') },
+      { element: 'null', key: 0, value: 0, text: t('elements.full.null') },
+      { element: 'wind', key: 1, value: 1, text: t('elements.full.wind') },
+      { element: 'fire', key: 2, value: 2, text: t('elements.full.fire') },
+      { element: 'water', key: 3, value: 3, text: t('elements.full.water') },
+      { element: 'earth', key: 4, value: 4, text: t('elements.full.earth') },
+      { element: 'dark', key: 5, value: 5, text: t('elements.full.dark') },
+      { element: 'light', key: 6, value: 6, text: t('elements.full.light') },
+    ]
+
+    return elements.map(({ element, key, value, text }) => (
+      <SelectItem data-element={element} key={key} value={value}>
+        {text}
+      </SelectItem>
+    ))
+  }
+
   return (
     <>
       <div className={classes}>
@@ -97,47 +129,27 @@ const FilterBar = (props: Props) => {
         <div className="Filters">
           <Select
             value={`${props.element}`}
+            overlayVisible={false}
             open={elementOpen}
             onOpenChange={() => onSelectChange('element')}
             onValueChange={elementSelectChanged}
             onClick={openElementSelect}
           >
-            <SelectItem data-element="all" key={-1} value={-1}>
-              {t('elements.full.all')}
-            </SelectItem>
-            <SelectItem data-element="null" key={0} value={0}>
-              {t('elements.full.null')}
-            </SelectItem>
-            <SelectItem data-element="wind" key={1} value={1}>
-              {t('elements.full.wind')}
-            </SelectItem>
-            <SelectItem data-element="fire" key={2} value={2}>
-              {t('elements.full.fire')}
-            </SelectItem>
-            <SelectItem data-element="water" key={3} value={3}>
-              {t('elements.full.water')}
-            </SelectItem>
-            <SelectItem data-element="earth" key={4} value={4}>
-              {t('elements.full.earth')}
-            </SelectItem>
-            <SelectItem data-element="dark" key={5} value={5}>
-              {t('elements.full.dark')}
-            </SelectItem>
-            <SelectItem data-element="light" key={6} value={6}>
-              {t('elements.full.light')}
-            </SelectItem>
+            {generateSelectItems()}
           </Select>
 
-          <RaidDropdown
-            currentRaid={props.raidSlug}
+          <RaidCombobox
+            currentRaid={currentRaid}
             defaultRaid="all"
             showAllRaidsOption={true}
+            minimal={true}
             onChange={raidSelectChanged}
           />
 
           <Select
             value={`${props.recency}`}
             trigger={'All time'}
+            overlayVisible={false}
             open={recencyOpen}
             onOpenChange={() => onSelectChange('recency')}
             onValueChange={recencySelectChanged}
