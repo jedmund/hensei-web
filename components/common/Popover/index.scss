@@ -5,10 +5,10 @@
   border: 0.5px solid rgba(0, 0, 0, 0.18);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.24);
   outline: none;
-  overflow: hidden;
   padding: $unit;
   transform-origin: var(--radix-popover-content-transform-origin);
   width: var(--radix-popover-trigger-width);
+  min-width: 440px;
   z-index: 5;
 
   &.Flush {

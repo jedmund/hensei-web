@@ -66,9 +66,15 @@ a {
 button,
 input,
 textarea {
+  border: 2px solid transparent;
   font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
     sans-serif;
   font-size: $font-regular;
+}
+
+button:focus-visible {
+  border: 2px solid $blue;
+  outline: none;
 }
 
 h1,
