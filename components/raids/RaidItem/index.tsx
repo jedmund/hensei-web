@@ -12,8 +12,11 @@ interface Props {
   }
   extra: boolean
   selected: boolean
+  tabIndex?: number
   value: string | number
   onSelect: () => void
+  onArrowKeyPressed?: (direction: 'Up' | 'Down') => void
+  onEscapeKeyPressed?: () => void
 }
 const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
   function Item(
@@ -22,7 +25,10 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
       value,
       extra,
       selected,
+      tabIndex,
       children,
+      onEscapeKeyPressed,
+      onArrowKeyPressed,
       ...props
     }: PropsWithChildren<Props>,
     forwardedRef
@@ -32,12 +38,34 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
       props.className
     )
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Escape' && onEscapeKeyPressed) {
+        event.preventDefault()
+        onEscapeKeyPressed()
+      }
+
+      if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        event.preventDefault()
+        if (onArrowKeyPressed) {
+          console.log(event.key)
+          onArrowKeyPressed(event.key === 'ArrowUp' ? 'Up' : 'Down')
+        }
+      }
+
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        props.onSelect()
+      }
+    }
+
     return (
       <CommandItem
         {...props}
         className={classes}
+        tabIndex={tabIndex}
         value={`${value}`}
         onClick={props.onSelect}
+        onKeyDown={handleKeyDown}
         ref={forwardedRef}
       >
         {icon ? <img alt={icon.alt} src={icon.src} /> : ''}

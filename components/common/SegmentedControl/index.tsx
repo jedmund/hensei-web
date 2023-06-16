@@ -6,12 +6,14 @@ interface Props {
   className?: string
   elementClass?: string
   blended?: boolean
+  tabIndex?: number
 }
 
 const SegmentedControl: React.FC<Props> = ({
   className,
   elementClass,
   blended,
+  tabIndex,
   children,
 }) => {
   const classes = classNames(
@@ -23,7 +25,7 @@ const SegmentedControl: React.FC<Props> = ({
     elementClass
   )
   return (
-    <div className="SegmentedControlWrapper">
+    <div className="SegmentedControlWrapper" tabIndex={tabIndex}>
       <div className={classes}>{children}</div>
     </div>
   )
