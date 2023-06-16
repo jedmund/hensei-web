@@ -111,44 +111,28 @@ const RaidCombobox = (props: Props) => {
   // Handle Arrow key press event by focusing the list item above or below the current one based on the direction
   const handleArrowKeyPressed = useCallback(
     (direction: 'Up' | 'Down') => {
-      if (!listRef.current) return
+      const current = listRef.current?.querySelector(
+        '.Raid:focus'
+      ) as HTMLElement | null
 
-      // Get the currently focused item
-      const current = listRef.current.querySelector('.Raid:focus')
-
-      // Select the item above or below based on direction
       if (current) {
-        // If there is no item below, select the next parent element and then select the first element in that group
+        let next: Element | null | undefined
+
         if (direction === 'Down' && !current.nextElementSibling) {
           const nextParent =
             current.parentElement?.parentElement?.nextElementSibling
-          if (nextParent) {
-            const next = nextParent.querySelector('.Raid')
-            if (next) {
-              ;(next as HTMLElement).focus()
-            }
-          }
-        }
-
-        // If there is no item above, select the previous parent element and then select the first element in that group
-        if (direction === 'Up' && !current.previousElementSibling) {
+          next = nextParent?.querySelector('.Raid')
+        } else if (direction === 'Up' && !current.previousElementSibling) {
           const previousParent =
             current.parentElement?.parentElement?.previousElementSibling
-          if (previousParent) {
-            const next = previousParent.querySelector('.Raid:last-child')
-            if (next) {
-              ;(next as HTMLElement).focus()
-            }
-          }
+          next = previousParent?.querySelector('.Raid:last-child')
+        } else {
+          next =
+            direction === 'Up'
+              ? current.previousElementSibling
+              : current.nextElementSibling
         }
-      }
 
-      // Select the item above or below based on direction
-      if (current) {
-        const next =
-          direction === 'Up'
-            ? current.previousElementSibling
-            : current.nextElementSibling
         if (next) {
           ;(next as HTMLElement).focus()
         }
@@ -321,13 +305,6 @@ const RaidCombobox = (props: Props) => {
     const isRef = isSelected ? scrollToItem : undefined
     const imageUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/raids/${raid.slug}.png`
 
-    const sectionIndex = sections?.[currentSection - 1]?.findIndex((group) =>
-      group.raids.some((r) => r.id === raid.id)
-    )
-
-    const raidTabIndex =
-      sectionIndex !== undefined ? tabIndex + sectionIndex : -1
-
     return (
       <RaidItem
         className={isSelected ? 'Selected' : ''}
@@ -336,6 +313,7 @@ const RaidCombobox = (props: Props) => {
         key={key}
         selected={isSelected}
         ref={isRef}
+        role="listitem"
         tabIndex={0}
         value={raid.slug}
         onEscapeKeyPressed={handleEscapeKeyPressed}

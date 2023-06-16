@@ -1,10 +1,10 @@
 import React, { ComponentProps, PropsWithChildren } from 'react'
+import { useTranslation } from 'next-i18next'
 import { CommandItem } from '~components/common/Command'
-
-import './index.scss'
 import classNames from 'classnames'
+import './index.scss'
 
-interface Props {
+interface Props extends ComponentProps<'div'> {
   className?: string
   icon?: {
     alt: string
@@ -33,6 +33,8 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
     }: PropsWithChildren<Props>,
     forwardedRef
   ) {
+    const { t } = useTranslation('common')
+
     const classes = classNames(
       { SelectItem: true, Raid: true },
       props.className
