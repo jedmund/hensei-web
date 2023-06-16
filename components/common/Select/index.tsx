@@ -102,6 +102,8 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
 
           <RadixSelect.Content
             className="Select"
+            position="popper"
+            sideOffset={6}
             onCloseAutoFocus={onCloseAutoFocus}
             onEscapeKeyDown={onEscapeKeyDown}
             onPointerDownOutside={onPointerDownOutside}
