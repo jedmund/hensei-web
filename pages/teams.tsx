@@ -112,6 +112,7 @@ const TeamsRoute: React.FC<Props> = ({
       setTotalPages(context.pagination.totalPages)
       setRecordCount(context.pagination.count)
       replaceResults(context.pagination.count, context.teams)
+      appState.raidGroups = context.raidGroups
       appState.version = version
     }
     setCurrentPage(1)
