@@ -46,6 +46,9 @@
     "new": "New",
     "wiki": "View more on gbf.wiki"
   },
+  "combobox": {
+    "selected": "Selected"
+  },
   "context": {
     "modify": {
       "character": "Modify character",

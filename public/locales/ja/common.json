@@ -46,6 +46,9 @@
     "new": "作成",
     "wiki": "gbf.wikiで詳しく見る"
   },
+  "combobox": {
+    "selected": "選択済み"
+  },
   "context": {
     "modify": {
       "character": "キャラクターを変更",

@@ -72,7 +72,7 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
       >
         {icon ? <img alt={icon.alt} src={icon.src} /> : ''}
         <span className="Text">{children}</span>
-        {selected ? <i className="Selected">Selected</i> : ''}
+        {selected ? <i className="Selected">{t('combobox.selected')}</i> : ''}
         {extra ? <i className="ExtraIndicator">EX</i> : ''}
       </CommandItem>
     )
