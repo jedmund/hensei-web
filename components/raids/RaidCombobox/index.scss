@@ -42,6 +42,10 @@
         &:hover {
           background: var(--button-contained-bg);
         }
+
+        @include breakpoint(phone) {
+          width: auto;
+        }
       }
 
       .Flipped {
@@ -64,6 +68,10 @@
     height: 40vh;
     overflow-y: scroll;
     padding: 0 $unit;
+
+    @include breakpoint(phone) {
+      height: 28vh;
+    }
 
     &.Searching {
       .CommandGroup {

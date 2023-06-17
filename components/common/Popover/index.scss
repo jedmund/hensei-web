@@ -11,6 +11,10 @@
   min-width: 440px;
   z-index: 5;
 
+  @include breakpoint(phone) {
+    min-width: auto;
+  }
+
   &.Flush {
     padding: 0;
   }
