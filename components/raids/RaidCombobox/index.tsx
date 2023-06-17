@@ -84,6 +84,9 @@ const RaidCombobox = (props: Props) => {
   const [currentRaid, setCurrentRaid] = useState<Raid>()
   const [tabIndex, setTabIndex] = useState(NUM_ELEMENTS + 1)
 
+  // Data
+  const [farmingRaid, setFarmingRaid] = useState<Raid>()
+
   // Refs
   const listRef = createRef<HTMLDivElement>()
   const inputRef = createRef<HTMLInputElement>()
@@ -202,6 +205,8 @@ const RaidCombobox = (props: Props) => {
       groups.forEach((group) => {
         if (group.section > 0) sections[group.section - 1].push(group)
       })
+
+      setFarmingRaid(groups[0].raids[0])
 
       setSections(sections)
     },
@@ -322,22 +327,25 @@ const RaidCombobox = (props: Props) => {
 
   // Render the ungrouped raid group
   function renderUngroupedRaids() {
-    // Render the Untitled group with the allRaids inside of it first if the option is enabled
-    if (props.showAllRaidsOption) {
-      const ungroupedRaids = generateRaidItems([allRaidsOption])
+    let ungroupedRaids = farmingRaid ? [farmingRaid] : []
 
-      return (
-        <CommandGroup
-          data-section={untitledGroup.section}
-          className={classNames({
-            CommandGroup: true,
-          })}
-          key="ungrouped-raids"
-        >
-          {ungroupedRaids}
-        </CommandGroup>
-      )
+    if (props.showAllRaidsOption) {
+      ungroupedRaids.push(allRaidsOption)
     }
+
+    const options = generateRaidItems(ungroupedRaids)
+
+    return (
+      <CommandGroup
+        data-section={untitledGroup.section}
+        className={classNames({
+          CommandGroup: true,
+        })}
+        key="ungrouped-raids"
+      >
+        {options}
+      </CommandGroup>
+    )
   }
 
   // Generates a list of RaidItem components from the specified raids
