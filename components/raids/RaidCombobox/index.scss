@@ -1,68 +1,5 @@
-.DetailsWrapper .PartyDetails.Editable .Raid.SelectTrigger {
-  display: flex;
-  padding-top: 10px;
-  padding-bottom: 11px;
-  min-height: 51px;
-
-  .Value {
-    display: flex;
-    gap: $unit-half;
-    width: 100%;
-
-    .Info {
-      display: flex;
-      align-items: center;
-      gap: $unit-half;
-      flex-grow: 1;
-    }
-
-    .ExtraIndicator {
-      background: var(--extra-purple-bg);
-      border-radius: $full-corner;
-      color: var(--extra-purple-text);
-      display: flex;
-      font-weight: $bold;
-      font-size: $font-tiny;
-      width: $unit-3x;
-      height: $unit-3x;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .Group,
-    .Separator {
-      color: var(--text-tertiary);
-    }
-
-    .Raid.wind {
-      color: var(--wind-text);
-    }
-
-    .Raid.fire {
-      color: var(--fire-text);
-    }
-
-    .Raid.water {
-      color: var(--water-text);
-    }
-
-    .Raid.earth {
-      color: var(--earth-text);
-    }
-
-    .Raid.dark {
-      color: var(--dark-text);
-    }
-
-    .Raid.light {
-      color: var(--light-text);
-    }
-  }
-}
-
 .Combobox.Raid {
   box-sizing: border-box;
-  /* Temporary values */
 
   .Header {
     background: var(--dialog-bg);
@@ -174,6 +111,69 @@
     }
   }
 }
+
+.DetailsWrapper .PartyDetails.Editable .Raid.SelectTrigger {
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 11px;
+  min-height: 51px;
+
+  .Value {
+    display: flex;
+    gap: $unit-half;
+    width: 100%;
+
+    .Info {
+      display: flex;
+      align-items: center;
+      gap: $unit-half;
+      flex-grow: 1;
+    }
+
+    .ExtraIndicator {
+      background: var(--extra-purple-bg);
+      border-radius: $full-corner;
+      color: var(--extra-purple-text);
+      display: flex;
+      font-weight: $bold;
+      font-size: $font-tiny;
+      width: $unit-3x;
+      height: $unit-3x;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .Group,
+    .Separator {
+      color: var(--text-tertiary);
+    }
+
+    .Raid.wind {
+      color: var(--wind-text);
+    }
+
+    .Raid.fire {
+      color: var(--fire-text);
+    }
+
+    .Raid.water {
+      color: var(--water-text);
+    }
+
+    .Raid.earth {
+      color: var(--earth-text);
+    }
+
+    .Raid.dark {
+      color: var(--dark-text);
+    }
+
+    .Raid.light {
+      color: var(--light-text);
+    }
+  }
+}
+
 .Filters .SelectTrigger.Raid {
   & > span {
     overflow: hidden;

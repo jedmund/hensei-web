@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 import equals from 'fast-deep-equal'
@@ -140,7 +140,6 @@ const FilterBar = (props: Props) => {
 
           <RaidCombobox
             currentRaid={currentRaid}
-            defaultRaid="all"
             showAllRaidsOption={true}
             minimal={true}
             onChange={raidSelectChanged}

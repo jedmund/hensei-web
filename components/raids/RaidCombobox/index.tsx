@@ -36,6 +36,34 @@ enum Sort {
   DESCENDING,
 }
 
+// Set up empty raid for "All raids"
+const untitledGroup: RaidGroup = {
+  id: '0',
+  name: {
+    en: '',
+    ja: '',
+  },
+  section: 0,
+  order: 0,
+  extra: false,
+  raids: [],
+  difficulty: 0,
+  hl: false,
+}
+
+// Set up empty raid for "All raids"
+const allRaidsOption: Raid = {
+  id: '0',
+  name: {
+    en: 'All battles',
+    ja: '全てのバトル',
+  },
+  group: untitledGroup,
+  slug: 'all',
+  level: 0,
+  element: 0,
+}
+
 const RaidCombobox = (props: Props) => {
   // Set up router for locale
   const router = useRouter()
@@ -75,12 +103,15 @@ const RaidCombobox = (props: Props) => {
     if (appState.party.raid) {
       setCurrentRaid(appState.party.raid)
       setCurrentSection(appState.party.raid.group.section)
+    } else if (props.showAllRaidsOption && !currentRaid) {
+      setCurrentRaid(allRaidsOption)
     }
   }, [])
 
   // Set current raid and section when the current raid changes
   useEffect(() => {
     if (props.currentRaid) {
+      console.log('We are here with a raid')
       setCurrentRaid(props.currentRaid)
       setCurrentSection(props.currentRaid.group.section)
     }
@@ -224,7 +255,9 @@ const RaidCombobox = (props: Props) => {
   // Toggle the open state of the combobox
   function toggleOpen() {
     if (open) {
-      if (currentRaid) setCurrentSection(currentRaid.group.section)
+      if (currentRaid && currentRaid.slug !== 'all') {
+        setCurrentSection(currentRaid.group.section)
+      }
       setScrolled(false)
     }
     setOpen(!open)
@@ -285,6 +318,26 @@ const RaidCombobox = (props: Props) => {
         {options}
       </CommandGroup>
     )
+  }
+
+  // Render the ungrouped raid group
+  function renderUngroupedRaids() {
+    // Render the Untitled group with the allRaids inside of it first if the option is enabled
+    if (props.showAllRaidsOption) {
+      const ungroupedRaids = generateRaidItems([allRaidsOption])
+
+      return (
+        <CommandGroup
+          data-section={untitledGroup.section}
+          className={classNames({
+            CommandGroup: true,
+          })}
+          key="ungrouped-raids"
+        >
+          {ungroupedRaids}
+        </CommandGroup>
+      )
+    }
   }
 
   // Generates a list of RaidItem components from the specified raids
@@ -361,7 +414,6 @@ const RaidCombobox = (props: Props) => {
   }
 
   // Renders a Button for sorting raids and a Tooltip for explaining what it does.
-
   function renderSortButton() {
     return (
       <Tooltip
@@ -493,6 +545,7 @@ const RaidCombobox = (props: Props) => {
           tabIndex={6}
           onKeyDown={handleListKeyDown}
         >
+          {renderUngroupedRaids()}
           {renderRaidSections()}
         </div>
       </Command>
