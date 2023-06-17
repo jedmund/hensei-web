@@ -1,4 +1,9 @@
-export type SearchableObject = Character | Weapon | Summon | JobSkill
+export type SearchableObject =
+  | Character
+  | Weapon
+  | Summon
+  | JobSkill
+  | Guidebook
 export type SearchableObjectArray = (Character | Weapon | Summon | JobSkill)[]
 export type JobSkillObject = {
   [key: number]: JobSkill | undefined
@@ -21,7 +26,7 @@ export type PaginationObject = {
 }
 
 export type DetailsObject = {
-  [key: string]: boolean | number | string | Raid | undefined
+  [key: string]: boolean | number | string | string[] | Raid | undefined
   fullAuto?: boolean
   autoGuard?: boolean
   chargeAttack?: boolean
@@ -34,6 +39,7 @@ export type DetailsObject = {
   raid?: Raid
   job?: Job
   extra?: boolean
+  guidebooks?: string[]
 }
 
 export type ExtendedMastery = {

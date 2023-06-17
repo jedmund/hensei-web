@@ -55,6 +55,7 @@ interface AppState {
     turnCount?: number
     chainCount?: number
     extra: boolean
+    guidebooks: GuidebookList
     user: User | undefined
     favorited: boolean
     remix: boolean
@@ -116,6 +117,11 @@ export const initialAppState: AppState = {
     chainCount: undefined,
     element: 0,
     extra: false,
+    guidebooks: {
+      0: undefined,
+      1: undefined,
+      2: undefined,
+    },
     user: undefined,
     favorited: false,
     remix: false,

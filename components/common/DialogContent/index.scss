@@ -59,8 +59,12 @@
       width: 100%;
     }
 
-    .Scrollable {
-      overflow-y: auto;
+    .Container {
+      overflow-y: hidden;
+
+      &.Scrollable {
+        overflow-y: auto;
+      }
     }
 
     .DialogHeader {

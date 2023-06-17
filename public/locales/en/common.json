@@ -102,6 +102,9 @@
       "description": "The page you're looking for couldn't be found",
       "button": "Create a new party"
     },
+    "validation": {
+      "guidebooks": "You cannot equip more than one of each Sephira Guidebook"
+    },
     "unauthorized": "You don't have permission to perform that action"
   },
   "proficiencies": {
@@ -232,6 +235,11 @@
         "clear": "Clear filters"
       }
     },
+    "guidebooks": {
+      "buttons": {
+        "remove": "Remove guidebook"
+      }
+    },
     "login": {
       "title": "Log in",
       "buttons": {
@@ -246,6 +254,17 @@
       "placeholders": {
         "email": "Email address",
         "password": "Password"
+      }
+    },
+    "remix_team": {
+      "title": "Remix team",
+      "description": {
+        "creator": "You're already the creator of <strong>{{name}}</strong>. Are you sure you want to make a copy by remixing it?",
+        "viewer": "Remixing a team makes a copy of it in your account so you can make your own changes.\n\nWould you like to remix <strong>{{name}}</strong>?"
+      },
+      "buttons": {
+        "confirm": "Yes, remix team",
+        "cancel": "Nevermind"
       }
     },
     "settings": {
@@ -383,7 +402,8 @@
       "weapon": "Search for a weapon...",
       "summon": "Search for a summon...",
       "character": "Search for a character...",
-      "job_skill": "Search job skills..."
+      "job_skill": "Search job skills...",
+      "guidebook": "Search guidebooks..."
     }
   },
   "teams": {
@@ -448,6 +468,7 @@
     "source": "Go to original team"
   },
   "extra_weapons": "Additional Weapons",
+  "sephira_guidebooks": "Sephira Guidebooks",
   "equipped": "Equipped",
   "coming_soon": "Coming Soon",
   "new_party": "New party",

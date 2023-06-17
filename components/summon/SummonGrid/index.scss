@@ -1,6 +1,6 @@
 #SummonGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) 2fr;
+  grid-template-columns: 1.17fr 2fr 1.17fr;
   gap: $unit-3x;
   justify-content: center;
   margin: 0 auto;

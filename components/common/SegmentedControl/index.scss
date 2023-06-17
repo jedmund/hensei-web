@@ -1,17 +1,25 @@
 .SegmentedControlWrapper {
   display: flex;
   justify-content: center;
+
+  @include breakpoint(phone) {
+    width: 100%;
+  }
 }
 
 .SegmentedControl {
-  background: var(--card-bg);
-  border-radius: $unit * 3;
+  // border-radius: $unit * 3;
   display: inline-flex;
   padding: 3px;
   position: relative;
   user-select: none;
   overflow: hidden;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+  @include breakpoint(phone) {
+    background: var(--card-bg);
+    border-radius: 100px;
+  }
 
   &.fire {
     .Segment input:checked + label {

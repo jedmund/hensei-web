@@ -72,6 +72,9 @@
       "description": "探しているページは見つかりませんでした",
       "button": "新しい編成を作成"
     },
+    "validation": {
+      "guidebooks": "セフィラ導本を複数個装備することはできません"
+    },
     "unauthorized": "行ったアクションを実行する権限がありません"
   },
   "header": {
@@ -232,6 +235,11 @@
         "clear": "保存したフィルターをクリア"
       }
     },
+    "guidebooks": {
+      "buttons": {
+        "remove": "導本を削除する"
+      }
+    },
     "login": {
       "title": "ログイン",
       "buttons": {
@@ -246,6 +254,17 @@
       "placeholders": {
         "email": "メールアドレス",
         "password": "パスワード"
+      }
+    },
+    "remix_team": {
+      "title": "編成をリミックス",
+      "description": {
+        "creator": "既に<strong>{{name}}</strong>の作家のため, 本当にリミックスでコピーを作成しますか？",
+        "viewer": "編成をリミックスすると変更をするために自アカウントにコピーを作成します。<strong>{{name}}</strong>をリミックスをしますか?"
+      },
+      "buttons": {
+        "confirm": "リミックス",
+        "cancel": "キャンセル"
       }
     },
     "settings": {
@@ -384,7 +403,8 @@
       "weapon": "武器を検索...",
       "summon": "召喚石を検索...",
       "character": "キャラを検索...",
-      "job_skill": "ジョブのスキルを検索..."
+      "job_skill": "ジョブのスキルを検索...",
+      "guidebook": "導本を検索..."
     }
   },
   "teams": {
@@ -450,6 +470,7 @@
   },
   "equipped": "装備した",
   "extra_weapons": "Additional Weapons",
+  "sephira_guidebooks": "セフィラ導本",
   "coming_soon": "開発中",
   "new_party": "新しい編成",
   "no_accessory": "{{accessory}}は装備していません",

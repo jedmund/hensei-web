@@ -30,6 +30,7 @@
   .description {
     font-size: $font-regular;
     line-height: 1.4;
+    white-space: pre-line;
 
     strong {
       font-weight: $bold;
