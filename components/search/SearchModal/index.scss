@@ -61,6 +61,11 @@
   #Results {
     margin: 0;
     padding: 0 ($unit * 1.5);
+    padding-bottom: $unit * 1.5;
+
+    // Infinite scroll
+    overflow-y: auto;
+    max-height: 500px;
 
     @include breakpoint(phone) {
       max-height: inherit;

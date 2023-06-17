@@ -22,7 +22,12 @@
       width: 100%;
   }
 
+  @include breakpoint(phone) {
+    padding: 0;
+  }
+
   .SegmentedControl {
+    gap: $unit;
     flex-grow: 1;
 
     // prettier-ignore
@@ -31,6 +36,7 @@
     and (max-height: 920px) 
     and (-webkit-min-device-pixel-ratio: 2) {
       flex-grow: 1;
+      gap: 0;
       width: 100%;
       display: grid;
       grid-template-columns: auto auto auto;
