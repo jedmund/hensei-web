@@ -128,24 +128,35 @@ const Party = (props: Props) => {
   function formatDetailsObject(details: DetailsObject) {
     const payload: { [key: string]: any } = {}
 
-    if (details.name) payload.name = details.name
-    if (details.description) payload.description = details.description
-    if (details.raid) payload.raid_id = details.raid.id
-    if (details.chargeAttack) payload.charge_attack = details.chargeAttack
-    if (details.fullAuto) payload.full_auto = details.fullAuto
-    if (details.autoGuard) payload.auto_guard = details.autoGuard
-    if (details.clearTime) payload.clear_time = details.clearTime
-    if (details.buttonCount) payload.button_count = details.buttonCount
-    if (details.chainCount) payload.chain_count = details.chainCount
-    if (details.turnCount) payload.turn_count = details.turnCount
-    if (details.extra) payload.extra = details.extra
-    if (details.job) payload.job_id = details.job.id
-    if (details.guidebook1_id) payload.guidebook1_id = details.guidebook1_id
-    if (details.guidebook2_id) payload.guidebook2_id = details.guidebook2_id
-    if (details.guidebook3_id) payload.guidebook3_id = details.guidebook3_id
+    const mappings: { [key: string]: string } = {
+      name: 'name',
+      description: 'description',
+      raid: 'raid_id',
+      chargeAttack: 'charge_attack',
+      fullAuto: 'full_auto',
+      autoGuard: 'auto_guard',
+      clearTime: 'clear_time',
+      buttonCount: 'button_count',
+      chainCount: 'chain_count',
+      turnCount: 'turn_count',
+      extra: 'extra',
+      job: 'job_id',
+      guidebook1_id: 'guidebook1_id',
+      guidebook2_id: 'guidebook2_id',
+      guidebook3_id: 'guidebook3_id',
+    }
 
-    if (Object.keys(payload).length >= 1) return { party: payload }
-    else return {}
+    Object.entries(mappings).forEach(([key, value]) => {
+      if (details[key]) {
+        payload[value] = details[key]
+      }
+    })
+
+    if (Object.keys(payload).length >= 1) {
+      return { party: payload }
+    } else {
+      return {}
+    }
   }
 
   async function updateParty(details: DetailsObject) {
@@ -344,20 +355,19 @@ const Party = (props: Props) => {
 
     switch (event.target.value) {
       case 'characters':
-        router.replace(path)
         setCurrentTab(GridType.Character)
         break
       case 'weapons':
-        router.replace(path)
         setCurrentTab(GridType.Weapon)
         break
       case 'summons':
-        router.replace(path)
         setCurrentTab(GridType.Summon)
         break
       default:
         break
     }
+
+    router.replace(path, undefined, { shallow: true })
   }
 
   // Render: JSX components
