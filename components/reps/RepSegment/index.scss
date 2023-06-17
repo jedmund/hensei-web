@@ -45,6 +45,11 @@
       background: #fff;
     }
 
+    @include breakpoint(phone) {
+      border-radius: 100px;
+      padding-bottom: $unit;
+    }
+
     .Wrapper {
       display: flex;
       flex-direction: column;
@@ -60,5 +65,9 @@
   @include breakpoint(phone) {
     min-width: initial;
     width: 100%;
+
+    .Rep {
+      display: none;
+    }
   }
 }
