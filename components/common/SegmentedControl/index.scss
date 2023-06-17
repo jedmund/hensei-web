@@ -1,6 +1,10 @@
 .SegmentedControlWrapper {
   display: flex;
   justify-content: center;
+
+  @include breakpoint(phone) {
+    width: 100%;
+  }
 }
 
 .SegmentedControl {
@@ -14,6 +18,7 @@
 
   @include breakpoint(phone) {
     background: var(--card-bg);
+    border-radius: 100px;
   }
 
   &.Blended {

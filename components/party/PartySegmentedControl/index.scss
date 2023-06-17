@@ -22,6 +22,10 @@
       width: 100%;
   }
 
+  @include breakpoint(phone) {
+    padding: 0;
+  }
+
   .SegmentedControl {
     gap: $unit;
     flex-grow: 1;
