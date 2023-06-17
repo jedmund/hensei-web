@@ -1,5 +1,6 @@
 interface Raid {
   id: string
+  group: RaidGroup
   name: {
     [key: string]: string
     en: string
@@ -7,6 +8,5 @@ interface Raid {
   }
   slug: string
   level: number
-  group: number
   element: number
 }

@@ -57,6 +57,7 @@ public/images/accessory*
 public/images/mastery*
 public/images/updates*
 public/images/guidebooks*
+public/images/raids*
 
 # Typescript v1 declaration files
 typings/

@@ -32,7 +32,7 @@ const CharLimitedFieldset = React.forwardRef<HTMLInputElement, Props>(
 
     return (
       <fieldset className="Fieldset">
-        <div className="Limited">
+        <div className="Joined">
           <input
             autoComplete="off"
             className="Input"

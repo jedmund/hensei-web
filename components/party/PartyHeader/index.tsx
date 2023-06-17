@@ -9,7 +9,7 @@ import Button from '~components/common/Button'
 import CharLimitedFieldset from '~components/common/CharLimitedFieldset'
 import DurationInput from '~components/common/DurationInput'
 import Input from '~components/common/Input'
-import RaidDropdown from '~components/RaidDropdown'
+import RaidCombobox from '~components/raids/RaidCombobox'
 import Switch from '~components/common/Switch'
 import Tooltip from '~components/common/Tooltip'
 import Token from '~components/common/Token'
@@ -227,8 +227,8 @@ const PartyHeader = (props: Props) => {
     setOpen(!open)
   }
 
-  function receiveRaid(slug?: string) {
-    if (slug) setRaidSlug(slug)
+  function receiveRaid(raid?: Raid) {
+    if (raid) setRaidSlug(raid?.slug)
   }
 
   function switchValue(value: boolean) {
@@ -260,7 +260,8 @@ const PartyHeader = (props: Props) => {
 
   function updateDetails(event: React.MouseEvent) {
     const descriptionValue = descriptionInput.current?.value
-    const raid = raids.find((raid) => raid.slug === raidSlug)
+    const allRaids = appState.raidGroups.flatMap((group) => group.raids)
+    const raid = allRaids.find((raid) => raid.slug === raidSlug)
 
     const details: DetailsObject = {
       fullAuto: fullAuto,
@@ -498,9 +499,9 @@ const PartyHeader = (props: Props) => {
           error={errors.name}
           ref={nameInput}
         />
-        <RaidDropdown
+        <RaidCombobox
           showAllRaidsOption={false}
-          currentRaid={props.party?.raid ? props.party?.raid.slug : undefined}
+          currentRaid={props.party?.raid ? props.party?.raid : undefined}
           onChange={receiveRaid}
         />
         <ul className="SwitchToggleGroup DetailToggleGroup">
@@ -650,7 +651,7 @@ const PartyHeader = (props: Props) => {
             </div>
             <div className="attribution">
               {renderUserBlock()}
-              {party.raid ? linkedRaidBlock(party.raid) : ''}
+              {appState.party.raid ? linkedRaidBlock(appState.party.raid) : ''}
               {party.created_at != '' ? (
                 <time
                   className="last-updated"

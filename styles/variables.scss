@@ -56,6 +56,7 @@ $grey-100: white;
 
 // Purple -- Additional Weapons
 $purple-00: #25224e;
+$purple-05: #373278;
 $purple-10: #4f3c79;
 $purple-20: #635fb7;
 $purple-30: #8c86ff;
@@ -256,9 +257,10 @@ $extra--purple--card--bg--light: $purple-80;
 $extra--purple--primary--light: $purple-30;
 $extra--purple--secondary--light: $purple-40;
 $extra--purple--text--light: $purple-10;
+
 $extra--purple--bg--dark: $purple-20;
 $extra--purple--card--bg--dark: $purple-40;
-$extra--purple--primary--dark: $purple-00;
+$extra--purple--primary--dark: $purple-05;
 $extra--purple--secondary--dark: $purple-10;
 $extra--purple--text--dark: $purple-00;
 
@@ -282,6 +284,17 @@ $full--auto--bg: $yellow-text-20;
 
 $auto--guard--bg: $purple-30;
 $auto--guard--text: $purple-10;
+
+// Color Definitions: Pills
+$pill--bg--light: $grey-90;
+$pill--bg--light--hover: $grey-50;
+$pill--text--light: $grey-30;
+$pill--text--light--hover: $grey-100;
+
+$pill--bg--dark: $grey-00;
+$pill--bg--dark--hover: $grey-50;
+$pill--text--dark: $grey-100;
+$pill--text--dark--hover: $grey-00;
 
 // Color Definitions: Element Toggle
 $toggle--bg--light: $grey-90;
@@ -342,9 +355,10 @@ $scale-wide: scale(1.05, 1.05);
 $scale-tall: scale(1.012, 1.012);
 
 // Border radius
+$full-corner: 500px;
 $card-corner: $unit * 1.5;
 $input-corner: $unit;
-$item-corner: $unit-half;
+$item-corner: $unit;
 
 // Shadows
 $hover-stroke: 1px solid rgba(0, 0, 0, 0.1);

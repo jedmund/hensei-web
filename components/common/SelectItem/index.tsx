@@ -17,8 +17,8 @@ const SelectItem = React.forwardRef<HTMLDivElement, Props>(function selectItem(
   const { altText, iconSrc, ...rest } = props
   return (
     <Select.Item
-      className={classNames('SelectItem', props.className)}
       {...rest}
+      className={classNames({ SelectItem: true }, props.className)}
       ref={forwardedRef}
       value={`${value}`}
     >

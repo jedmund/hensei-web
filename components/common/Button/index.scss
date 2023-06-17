@@ -1,7 +1,7 @@
 .Button {
   align-items: center;
   background: var(--button-bg);
-  border: none;
+  border: 2px solid transparent;
   border-radius: $input-corner;
   color: var(--button-text);
   display: inline-flex;

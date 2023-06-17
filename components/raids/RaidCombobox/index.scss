@@ -1,0 +1,197 @@
+.Combobox.Raid {
+  box-sizing: border-box;
+
+  .Header {
+    background: var(--dialog-bg);
+    border-top-left-radius: $card-corner;
+    border-top-right-radius: $card-corner;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: $unit;
+    padding: $unit;
+    width: 100%;
+
+    .Clear.Button {
+      background: none;
+      padding: ($unit * 0.75) $unit-half $unit-half;
+      display: none;
+
+      &:hover svg {
+        fill: var(--text-primary);
+      }
+
+      &.Visible {
+        display: block;
+      }
+
+      svg {
+        fill: var(--text-tertiary);
+        width: $unit-2x;
+        height: $unit-2x;
+      }
+    }
+
+    .Controls {
+      display: flex;
+      gap: $unit;
+
+      .Button.Blended.small {
+        padding: $unit ($unit * 1.25);
+
+        &:hover {
+          background: var(--button-contained-bg);
+        }
+
+        @include breakpoint(phone) {
+          width: auto;
+        }
+      }
+
+      .Flipped {
+        transform: rotate(180deg);
+      }
+
+      .SegmentedControlWrapper {
+        flex-grow: 1;
+
+        .SegmentedControl {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .Raids {
+    border-bottom-left-radius: $card-corner;
+    border-bottom-right-radius: $card-corner;
+    height: 50vh;
+    overflow-y: scroll;
+    padding: 0 $unit;
+
+    @include breakpoint(phone) {
+      height: 28vh;
+    }
+
+    &.Searching {
+      .CommandGroup {
+        padding-top: 0;
+        padding-bottom: 0;
+
+        .Label {
+          display: none;
+        }
+
+        .SelectItem {
+          margin: 0;
+        }
+      }
+
+      .CommandGroup.Hidden {
+        display: block;
+      }
+    }
+
+    .CommandGroup {
+      &.Hidden {
+        display: none;
+      }
+
+      .Label {
+        align-items: center;
+        color: var(--text-tertiary);
+        display: flex;
+        flex-direction: row;
+        flex-shrink: 0;
+        font-size: $font-small;
+        font-weight: $medium;
+        gap: $unit;
+        padding: $unit $unit-2x $unit-half ($unit * 1.5);
+
+        .Separator {
+          background: var(--select-separator);
+          border-radius: 1px;
+          display: block;
+          flex-grow: 1;
+          height: 2px;
+        }
+      }
+    }
+  }
+}
+
+.DetailsWrapper .PartyDetails.Editable .Raid.SelectTrigger {
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 11px;
+  min-height: 51px;
+
+  .Value {
+    display: flex;
+    gap: $unit-half;
+    width: 100%;
+
+    .Info {
+      display: flex;
+      align-items: center;
+      gap: $unit-half;
+      flex-grow: 1;
+    }
+
+    .ExtraIndicator {
+      background: var(--extra-purple-bg);
+      border-radius: $full-corner;
+      color: var(--extra-purple-text);
+      display: flex;
+      font-weight: $bold;
+      font-size: $font-tiny;
+      width: $unit-3x;
+      height: $unit-3x;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .Group,
+    .Separator {
+      color: var(--text-tertiary);
+    }
+
+    .Raid.wind {
+      color: var(--wind-text);
+    }
+
+    .Raid.fire {
+      color: var(--fire-text);
+    }
+
+    .Raid.water {
+      color: var(--water-text);
+    }
+
+    .Raid.earth {
+      color: var(--earth-text);
+    }
+
+    .Raid.dark {
+      color: var(--dark-text);
+    }
+
+    .Raid.light {
+      color: var(--light-text);
+    }
+  }
+}
+
+.Filters .SelectTrigger.Raid {
+  & > span {
+    overflow: hidden;
+  }
+
+  .Raid {
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+  }
+}

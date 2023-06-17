@@ -2,7 +2,7 @@ import React from 'react'
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
-import ArrowIcon from '~public/icons/Arrow.svg'
+import ChevronIcon from '~public/icons/Chevron.svg'
 import './index.scss'
 
 interface Props {
@@ -22,7 +22,7 @@ const SearchFilter = (props: Props) => {
           <span className="count">{props.numSelected}</span>
         </div>
         <span className="icon">
-          <ArrowIcon />
+          <ChevronIcon />
         </span>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content className="Dropdown" sideOffset={4}>

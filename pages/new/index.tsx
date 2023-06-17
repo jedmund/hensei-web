@@ -12,7 +12,6 @@ import NewHead from '~components/head/NewHead'
 
 import api from '~utils/api'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
-import organizeRaids from '~utils/organizeRaids'
 import { accountCookie, setHeaders } from '~utils/userToken'
 import { appState, initialAppState } from '~utils/appState'
 import { groupWeaponKeys } from '~utils/groupWeaponKeys'
@@ -69,7 +68,7 @@ const NewRoute: React.FC<Props> = ({
 
   useEffect(() => {
     if (context && context.jobs && context.jobSkills) {
-      appState.raids = context.raids
+      appState.raids = context.raidGroups
       appState.jobs = context.jobs
       appState.jobSkills = context.jobSkills
       appState.weaponKeys = context.weaponKeys
@@ -106,12 +105,7 @@ const NewRoute: React.FC<Props> = ({
     return (
       <React.Fragment key={router.asPath}>
         {pageHead()}
-        <Party
-          new={true}
-          raids={context.sortedRaids}
-          pushHistory={callback}
-          selectedTab={selectedTab}
-        />
+        <Party new={true} pushHistory={callback} selectedTab={selectedTab} />
       </React.Fragment>
     )
   } else return pageError()
@@ -153,9 +147,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   try {
     // Fetch and organize raids
-    let { raids, sortedRaids } = await api.endpoints.raids
-      .getAll()
-      .then((response) => organizeRaids(response.data))
+    let raidGroups: RaidGroup[] = await api.raidGroups().then((response) => response.data)
 
     // Fetch jobs and job skills
     let jobs = await api.endpoints.jobs
@@ -174,8 +166,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     const context: PageContextObj = {
       jobs: jobs,
       jobSkills: jobSkills,
-      raids: raids,
-      sortedRaids: sortedRaids,
+      raidGroups: raidGroups,
       weaponKeys: weaponKeys,
     }
 

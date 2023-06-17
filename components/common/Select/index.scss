@@ -2,7 +2,7 @@
   align-items: center;
   background-color: var(--input-bg);
   border-radius: $input-corner;
-  border: none;
+  border: 2px solid transparent;
   display: flex;
   gap: $unit;
   padding: ($unit * 1.5) $unit-2x;
@@ -34,7 +34,7 @@
     cursor: not-allowed;
   }
 
-  &[data-placeholder] > span:not(.SelectIcon) {
+  &[data-placeholder='true'] > span:not(.SelectIcon) {
     color: var(--text-secondary);
   }
 
@@ -73,13 +73,13 @@
 }
 
 .Select {
-  background: var(--select-bg);
-  border-radius: $input-corner;
+  background: var(--dialog-bg);
+  border-radius: $card-corner;
   border: $hover-stroke;
   box-shadow: $hover-shadow;
   padding: 0 $unit;
   z-index: 40;
-
+  min-width: var(--radix-select-trigger-width);
   .Scroll.Up,
   .Scroll.Down {
     padding: $unit 0;
