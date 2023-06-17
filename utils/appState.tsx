@@ -83,7 +83,7 @@ interface AppState {
       summons: Summon[]
     }
   }
-  raids: Raid[]
+  raidGroups: RaidGroup[]
   jobs: Job[]
   jobSkills: JobSkill[]
   weaponKeys: GroupedWeaponKeys
@@ -149,7 +149,7 @@ export const initialAppState: AppState = {
       summons: [],
     },
   },
-  raids: [],
+  raidGroups: [],
   jobs: [],
   jobSkills: [],
   weaponKeys: {

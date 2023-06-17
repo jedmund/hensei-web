@@ -46,6 +46,9 @@
     "new": "New",
     "wiki": "View more on gbf.wiki"
   },
+  "combobox": {
+    "selected": "Selected"
+  },
   "context": {
     "modify": {
       "character": "Modify character",
@@ -53,25 +56,6 @@
       "weapon": "Modify weapon"
     },
     "remove": "Remove from grid"
-  },
-  "filters": {
-    "labels": {
-      "element": "Element",
-      "series": "Series",
-      "proficiency": "Proficiency",
-      "rarity": "Rarity"
-    }
-  },
-  "header": {
-    "anonymous": "Anonymous",
-    "untitled_team": "Untitled team by {{username}}",
-    "new_team": "New team",
-    "byline": "{{partyName}} by {{username}}"
-  },
-  "rarities": {
-    "r": "R",
-    "sr": "SR",
-    "ssr": "SSR"
   },
   "elements": {
     "null": "Null",
@@ -107,64 +91,47 @@
     },
     "unauthorized": "You don't have permission to perform that action"
   },
-  "proficiencies": {
-    "sabre": "Sabre",
-    "dagger": "Dagger",
-    "spear": "Spear",
-    "axe": "Axe",
-    "staff": "Staff",
-    "gun": "Gun",
-    "melee": "Melee",
-    "bow": "Bow",
-    "harp": "Harp",
-    "katana": "Katana"
+  "filters": {
+    "labels": {
+      "element": "Element",
+      "series": "Series",
+      "proficiency": "Proficiency",
+      "rarity": "Rarity"
+    }
   },
-  "series": {
-    "seraphic": "Seraphic",
-    "grand": "Grand",
-    "opus": "Dark Opus",
-    "draconic": "Draconic",
-    "primal": "Primal",
-    "olden_primal": "Olden Primal",
-    "beast": "Beast",
-    "omega": "Omega",
-    "regalia": "Regalia",
-    "militis": "Militis",
-    "xeno": "Xeno",
-    "astral": "Astral",
-    "rose": "Rose",
-    "hollowsky": "Hollowsky",
-    "ultima": "Ultima",
-    "bahamut": "Bahamut",
-    "epic": "Epic",
-    "ennead": "Ennead",
-    "cosmic": "Cosmic",
-    "ancestral": "Ancestral",
-    "superlative": "Superlative",
-    "vintage": "Vintage",
-    "class_champion": "Class Champion",
-    "sephira": "Sephira",
-    "new_world": "New World Foundation",
-    "revenant": "Revenant",
-    "proving": "Proven",
-    "disaster": "Revans",
-    "illustrious": "Illustrious",
-    "world": "World"
+  "header": {
+    "anonymous": "Anonymous",
+    "untitled_team": "Untitled team by {{username}}",
+    "new_team": "New team",
+    "byline": "{{partyName}} by {{username}}"
   },
-  "recency": {
-    "all_time": "All time",
-    "last_day": "Last day",
-    "last_week": "Last week",
-    "last_month": "Last month",
-    "last_3_months": "Last 3 months",
-    "last_6_months": "Last 6 months",
-    "last_year": "Last year"
+  "job_skills": {
+    "all": "All skills",
+    "buffing": "Buffing",
+    "debuffing": "Debuffing",
+    "damaging": "Damaging",
+    "healing": "Healing",
+    "emp": "Extended Mastery",
+    "base": "Base Skills",
+    "state": {
+      "selectable": "Select a skill",
+      "no_skill": "No skill"
+    }
   },
-  "summons": {
-    "main": "Main Summon",
-    "friend": "Friend Summon",
-    "summons": "Summons",
-    "subaura": "Sub Aura Summons"
+  "menu": {
+    "about": "About",
+    "changelog": "Changelog",
+    "guides": "Guides",
+    "language": "Language",
+    "login": "Log in",
+    "roadmap": "Roadmap",
+    "profile": "Your profile",
+    "new": "New party",
+    "saved": "Saved",
+    "settings": "Settings",
+    "signup": "Sign up",
+    "teams": "Teams",
+    "logout": "Logout"
   },
   "modals": {
     "about": {
@@ -341,20 +308,26 @@
       }
     }
   },
-  "menu": {
-    "about": "About",
-    "changelog": "Changelog",
-    "guides": "Guides",
-    "language": "Language",
-    "login": "Log in",
-    "roadmap": "Roadmap",
-    "profile": "Your profile",
-    "new": "New party",
-    "saved": "Saved",
-    "settings": "Settings",
-    "signup": "Sign up",
-    "teams": "Teams",
-    "logout": "Logout"
+  "page": {
+    "titles": {
+      "about": "About granblue.team",
+      "updates": "Updates / granblue.team",
+      "roadmap": "Roadmap / granblue.team",
+      "discover": "Discover teams / granblue.team",
+      "new": "Create a new team / granblue.team",
+      "profile": "@{{username}}'s Teams / granblue.team",
+      "team": "{{emoji}} {{teamName}} by {{username}} / granblue.team",
+      "saved": "Your saved teams / granblue.team"
+    },
+    "descriptions": {
+      "about": "More about granblue.team / Save and discover teams to use in Granblue Fantasy",
+      "updates": "Latest updates to granblue.team",
+      "roadmap": "Upcoming planned features for granblue.team",
+      "discover": "Save and discover teams to use in Granblue Fantasy and search by raid, element or recency",
+      "new": "Create and theorycraft teams to use in Granblue Fantasy and share with the community",
+      "profile": "Browse @{{username}}'s Teams and filter by raid, element or recency",
+      "team": "Browse this team for {{raidName}} by {{username}} and others on granblue.team"
+    }
   },
   "party": {
     "segmented_control": {
@@ -384,6 +357,40 @@
       }
     }
   },
+  "proficiencies": {
+    "sabre": "Sabre",
+    "dagger": "Dagger",
+    "spear": "Spear",
+    "axe": "Axe",
+    "staff": "Staff",
+    "gun": "Gun",
+    "melee": "Melee",
+    "bow": "Bow",
+    "harp": "Harp",
+    "katana": "Katana"
+  },
+  "raids": {
+    "placeholder": "Select a raid...",
+    "sections": {
+      "raids": "Raids",
+      "solo": "Solo",
+      "events": "Events"
+    }
+  },
+  "rarities": {
+    "r": "R",
+    "sr": "SR",
+    "ssr": "SSR"
+  },
+  "recency": {
+    "all_time": "All time",
+    "last_day": "Last day",
+    "last_week": "Last week",
+    "last_month": "Last month",
+    "last_3_months": "Last 3 months",
+    "last_6_months": "Last 6 months",
+    "last_year": "Last year"
+  },
   "saved": {
     "title": "Your saved Teams",
     "loading": "Loading saved teams...",
@@ -403,47 +410,52 @@
       "summon": "Search for a summon...",
       "character": "Search for a character...",
       "job_skill": "Search job skills...",
-      "guidebook": "Search guidebooks..."
+      "guidebook": "Search guidebooks...",
+      "raid": "Search battles..."
     }
+  },
+  "series": {
+    "seraphic": "Seraphic",
+    "grand": "Grand",
+    "opus": "Dark Opus",
+    "draconic": "Draconic",
+    "primal": "Primal",
+    "olden_primal": "Olden Primal",
+    "beast": "Beast",
+    "omega": "Omega",
+    "regalia": "Regalia",
+    "militis": "Militis",
+    "xeno": "Xeno",
+    "astral": "Astral",
+    "rose": "Rose",
+    "hollowsky": "Hollowsky",
+    "ultima": "Ultima",
+    "bahamut": "Bahamut",
+    "epic": "Epic",
+    "ennead": "Ennead",
+    "cosmic": "Cosmic",
+    "ancestral": "Ancestral",
+    "superlative": "Superlative",
+    "vintage": "Vintage",
+    "class_champion": "Class Champion",
+    "sephira": "Sephira",
+    "new_world": "New World Foundation",
+    "revenant": "Revenant",
+    "proving": "Proven",
+    "disaster": "Revans",
+    "illustrious": "Illustrious",
+    "world": "World"
+  },
+  "summons": {
+    "main": "Main Summon",
+    "friend": "Friend Summon",
+    "summons": "Summons",
+    "subaura": "Sub Aura Summons"
   },
   "teams": {
     "title": "Discover Teams",
     "loading": "Loading teams...",
     "not_found": "No teams found"
-  },
-  "page": {
-    "titles": {
-      "about": "About granblue.team",
-      "updates": "Updates / granblue.team",
-      "roadmap": "Roadmap / granblue.team",
-      "discover": "Discover teams / granblue.team",
-      "new": "Create a new team / granblue.team",
-      "profile": "@{{username}}'s Teams / granblue.team",
-      "team": "{{emoji}} {{teamName}} by {{username}} / granblue.team",
-      "saved": "Your saved teams / granblue.team"
-    },
-    "descriptions": {
-      "about": "More about granblue.team / Save and discover teams to use in Granblue Fantasy",
-      "updates": "Latest updates to granblue.team",
-      "roadmap": "Upcoming planned features for granblue.team",
-      "discover": "Save and discover teams to use in Granblue Fantasy and search by raid, element or recency",
-      "new": "Create and theorycraft teams to use in Granblue Fantasy and share with the community",
-      "profile": "Browse @{{username}}'s Teams and filter by raid, element or recency",
-      "team": "Browse this team for {{raidName}} by {{username}} and others on granblue.team"
-    }
-  },
-  "job_skills": {
-    "all": "All skills",
-    "buffing": "Buffing",
-    "debuffing": "Debuffing",
-    "damaging": "Damaging",
-    "healing": "Healing",
-    "emp": "Extended Mastery",
-    "base": "Base Skills",
-    "state": {
-      "selectable": "Select a skill",
-      "no_skill": "No skill"
-    }
   },
   "toasts": {
     "copied": "This party's URL was copied to your clipboard",

@@ -11,7 +11,6 @@ import api from '~utils/api'
 import { setHeaders } from '~utils/userToken'
 import extractFilters from '~utils/extractFilters'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
-import organizeRaids from '~utils/organizeRaids'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { appState } from '~utils/appState'
 import { defaultFilterset } from '~utils/defaultFilters'
@@ -390,12 +389,12 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   try {
     // Fetch and organize raids
-    let { raids, sortedRaids } = await api.endpoints.raids
-      .getAll()
-      .then((response) => organizeRaids(response.data))
+    let raidGroups: RaidGroup[] = await api
+      .raidGroups()
+      .then((response) => response.data)
 
     // Create filter object
-    const filters: FilterObject = extractFilters(query, raids)
+    const filters: FilterObject = extractFilters(query, raidGroups)
     const params = {
       params: { ...filters, ...advancedFilters  },
     }
@@ -416,8 +415,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     // Consolidate data into context object
     const context: PageContextObj = {
       teams: teams,
-      raids: raids,
-      sortedRaids: sortedRaids,
+      raidGroups: raidGroups,
       pagination: pagination,
     }
 

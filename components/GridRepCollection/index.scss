@@ -4,6 +4,7 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   margin: 0 auto;
   padding: 0;
+  padding-top: $unit-fourth;
   transition: opacity 0.14s ease-in-out;
   justify-items: center;
   width: 100%;

@@ -108,6 +108,12 @@
   --subaura-orange-secondary: #{$subaura--orange--secondary--light};
   --subaura-orange-text: #{$subaura--orange--text--light};
 
+  // Light - Pills
+  --pill-bg: #{$pill--bg--light};
+  --pill-bg-hover: #{$pill--bg--light--hover};
+  --pill-text: #{$pill--text--light};
+  --pill-text-hover: #{$pill--text--light--hover};
+
   // Light - Element Toggle
   --toggle-bg: #{$toggle--bg--light};
   --toggle-stroke: #{$toggle--stroke--light};
@@ -259,6 +265,12 @@
   --subaura-orange-secondary: #{$subaura--orange--secondary--dark};
   --subaura-orange-text: #{$subaura--orange--text--dark};
 
+  // Dark - Pills
+  --pill-bg: #{$pill--bg--dark};
+  --pill-bg-hover: #{$pill--bg--dark--hover};
+  --pill-text: #{$pill--text--dark};
+  --pill-text-hover: #{$pill--text--dark--hover};
+
   // Dark - Element Toggle
   --toggle-bg: #{$toggle--bg--dark};
   --toggle-stroke: #{$toggle--stroke--dark};
@@ -268,32 +280,32 @@
   // Element theming
   --wind-bg: #{$wind-bg-10};
   --wind-hover-bg: #{$wind-bg-00};
-  --wind-text: #{$wind-text-10};
+  --wind-text: #{$wind-text-20};
   --wind-hover-text: #{$wind-text-00};
 
   --fire-bg: #{$fire-bg-10};
   --fire-hover-bg: #{$fire-bg-00};
-  --fire-text: #{$fire-text-10};
+  --fire-text: #{$fire-text-20};
   --fire-hover-text: #{$fire-text-00};
 
   --water-bg: #{$water-bg-10};
   --water-hover-bg: #{$water-bg-00};
-  --water-text: #{$water-text-10};
+  --water-text: #{$water-text-20};
   --water-hover-text: #{$water-text-00};
 
   --earth-bg: #{$earth-bg-10};
   --earth-hover-bg: #{$earth-bg-00};
-  --earth-text: #{$earth-text-10};
+  --earth-text: #{$earth-text-20};
   --earth-hover-text: #{$earth-text-00};
 
   --dark-bg: #{$dark-bg-10};
   --dark-hover-bg: #{$dark-bg-00};
-  --dark-text: #{$dark-text-10};
+  --dark-text: #{$dark-text-20};
   --dark-hover-text: #{$dark-text-00};
 
   --light-bg: #{$light-bg-10};
   --light-hover-bg: #{$light-bg-00};
-  --light-text: #{$light-text-10};
+  --light-text: #{$light-text-20};
   --light-hover-text: #{$light-text-00};
 
   // Gradients

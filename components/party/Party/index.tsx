@@ -29,7 +29,6 @@ import './index.scss'
 interface Props {
   new?: boolean
   team?: Party
-  raids: Raid[][]
   selectedTab: GridType
   pushHistory?: (path: string) => void
 }

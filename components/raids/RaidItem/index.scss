@@ -1,0 +1,53 @@
+.SelectItem.Raid {
+  padding-top: $unit;
+  padding-bottom: $unit;
+  padding-left: $unit;
+
+  &:hover {
+    .ExtraIndicator {
+      background: var(--extra-purple-primary);
+      color: white;
+    }
+
+    .Selected {
+      background-color: var(--pill-bg-hover);
+      color: var(--pill-text-hover);
+    }
+  }
+
+  .Text {
+    flex-grow: 1;
+  }
+
+  .ExtraIndicator {
+    background: var(--extra-purple-bg);
+    border-radius: $full-corner;
+    color: var(--extra-purple-text);
+    display: flex;
+    font-weight: $bold;
+    font-size: $font-tiny;
+    width: $unit-3x;
+    height: $unit-3x;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .Selected {
+    background-color: var(--pill-bg);
+    color: var(--pill-text);
+    border-radius: $full-corner;
+    display: flex;
+    align-items: center;
+    font-size: $font-tiny;
+    font-weight: $bold;
+    padding: 0 $unit;
+    height: $unit-3x;
+  }
+
+  img {
+    background: var(--input-bound-bg);
+    border-radius: $unit-half;
+    width: $unit-10x;
+    height: 56px;
+  }
+}

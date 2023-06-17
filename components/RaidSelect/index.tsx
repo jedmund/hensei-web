@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as RadixSelect from '@radix-ui/react-select'
 import classNames from 'classnames'
 
@@ -7,6 +8,9 @@ import Overlay from '~components/common/Overlay'
 import ChevronIcon from '~public/icons/Chevron.svg'
 
 import './index.scss'
+import SegmentedControl from '~components/common/SegmentedControl'
+import Segment from '~components/common/Segment'
+import Input from '~components/common/Input'
 
 // Props
 interface Props
@@ -15,23 +19,31 @@ interface Props
     HTMLSelectElement
   > {
   altText?: string
+  currentSegment: number
   iconSrc?: string
   open: boolean
   trigger?: React.ReactNode
   children?: React.ReactNode
   onOpenChange?: () => void
   onValueChange?: (value: string) => void
+  onSegmentClick: (segment: number) => void
   onClose?: () => void
   triggerClass?: string
   overlayVisible?: boolean
 }
 
-const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
+const RaidSelect = React.forwardRef<HTMLButtonElement, Props>(function Select(
   props: Props,
   forwardedRef
 ) {
+  // Import translations
+  const { t } = useTranslation('common')
+
+  const searchInput = React.createRef<HTMLInputElement>()
+
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
+  const [query, setQuery] = useState('')
 
   const triggerClasses = classNames(
     {
@@ -101,20 +113,49 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
           />
 
           <RadixSelect.Content
-            className="Select"
-            position="popper"
-            sideOffset={6}
+            className="Raid Select"
             onCloseAutoFocus={onCloseAutoFocus}
             onEscapeKeyDown={onEscapeKeyDown}
             onPointerDownOutside={onPointerDownOutside}
           >
-            <RadixSelect.ScrollUpButton className="Scroll Up">
-              <ChevronIcon />
-            </RadixSelect.ScrollUpButton>
+            <div className="Top">
+              <Input
+                autoComplete="off"
+                className="Search Bound"
+                name="query"
+                placeholder={t('search.placeholders.raid')}
+                ref={searchInput}
+                value={query}
+                onChange={() => {}}
+              />
+              <SegmentedControl blended={true}>
+                <Segment
+                  groupName="raid_section"
+                  name="events"
+                  selected={props.currentSegment === 1}
+                  onClick={() => props.onSegmentClick(1)}
+                >
+                  {t('raids.sections.events')}
+                </Segment>
+                <Segment
+                  groupName="raid_section"
+                  name="raids"
+                  selected={props.currentSegment === 0}
+                  onClick={() => props.onSegmentClick(0)}
+                >
+                  {t('raids.sections.raids')}
+                </Segment>
+                <Segment
+                  groupName="raid_section"
+                  name="solo"
+                  selected={props.currentSegment === 2}
+                  onClick={() => props.onSegmentClick(2)}
+                >
+                  {t('raids.sections.solo')}
+                </Segment>
+              </SegmentedControl>
+            </div>
             <RadixSelect.Viewport>{props.children}</RadixSelect.Viewport>
-            <RadixSelect.ScrollDownButton className="Scroll Down">
-              <ChevronIcon />
-            </RadixSelect.ScrollDownButton>
           </RadixSelect.Content>
         </>
       </RadixSelect.Portal>
@@ -122,8 +163,8 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
   )
 })
 
-Select.defaultProps = {
+RaidSelect.defaultProps = {
   overlayVisible: true,
 }
 
-export default Select
+export default RaidSelect

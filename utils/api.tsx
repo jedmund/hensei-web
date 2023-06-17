@@ -120,6 +120,11 @@ class Api {
     return axios.get(resourceUrl, params)
   }
 
+  raidGroups(params?: {}) {
+    const resourceUrl = `${this.url}/raids/groups`
+    return axios.get(resourceUrl, params)
+  }
+
   remix({ shortcode, body, params}: { shortcode: string, body?: {}, params?: {} }) {
     const resourceUrl = `${this.url}/parties/${shortcode}/remix`
     return axios.post(resourceUrl, body, params)

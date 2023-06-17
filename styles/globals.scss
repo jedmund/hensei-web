@@ -66,9 +66,15 @@ a {
 button,
 input,
 textarea {
+  border: 2px solid transparent;
   font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
     sans-serif;
   font-size: $font-regular;
+}
+
+button:focus-visible {
+  border: 2px solid $blue;
+  outline: none;
 }
 
 h1,
@@ -298,5 +304,52 @@ i.tag {
     display: grid;
     gap: 8px;
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+.Joined {
+  $offset: 2px;
+
+  align-items: center;
+  background: var(--input-bg);
+  border-radius: $input-corner;
+  border: $offset solid transparent;
+  box-sizing: border-box;
+  display: flex;
+  gap: $unit;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: calc($unit-2x - $offset);
+
+  &.Bound {
+    background-color: var(--input-bound-bg);
+
+    &:hover {
+      background-color: var(--input-bound-bg-hover);
+    }
+  }
+
+  &:focus-within {
+    border: $offset solid $blue;
+    // box-shadow: 0 2px rgba(255, 255, 255, 1);
+  }
+
+  .Counter {
+    color: $grey-55;
+    font-weight: $bold;
+    line-height: 42px;
+  }
+
+  .Input {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: $unit * 1.5 $unit-2x;
+    padding-left: calc($unit-2x - $offset);
+
+    &:focus {
+      border: none;
+      outline: none;
+    }
   }
 }
