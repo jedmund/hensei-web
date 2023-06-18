@@ -5,7 +5,7 @@
 
   &:hover {
     .ExtraIndicator {
-      background: var(--extra-purple-primary);
+      background: var(--extra-purple-secondary);
       color: white;
     }
 
@@ -13,6 +13,11 @@
       background-color: var(--pill-bg-hover);
       color: var(--pill-text-hover);
     }
+  }
+
+  &.Selected .ExtraIndicator {
+    background: var(--extra-purple-secondary);
+    color: white;
   }
 
   .Text {

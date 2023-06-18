@@ -141,9 +141,9 @@
     }
 
     .ExtraIndicator {
-      background: var(--extra-purple-bg);
+      background: var(--extra-purple-secondary);
       border-radius: $full-corner;
-      color: var(--extra-purple-text);
+      color: $grey-100;
       display: flex;
       font-weight: $bold;
       font-size: $font-tiny;
