@@ -199,15 +199,17 @@ const FilterModal = (props: Props) => {
     setMinWeaponCount(value)
   }
 
-  function handleMaxButtonsCountValueChange(value: number) {
-    setMaxButtonsCount(value)
+  function handleMaxButtonsCountValueChange(value?: string) {
+    if (!value) return
+    setMaxButtonsCount(parseInt(value))
   }
 
-  function handleMaxTurnsCountValueChange(value: number) {
-    setMaxTurnsCount(value)
+  function handleMaxTurnsCountValueChange(value?: string) {
+    if (!value) return
+    setMaxTurnsCount(parseInt(value))
   }
 
-  function handleNameQualityValueChange(value: boolean) {
+  function handleNameQualityValueChange(value?: boolean) {
     setNameQuality(value)
   }
 
