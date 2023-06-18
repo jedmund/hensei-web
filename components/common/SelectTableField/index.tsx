@@ -31,6 +31,7 @@ const SelectTableField = (props: Props) => {
   return (
     <TableField
       name={props.name}
+      className="SelectField"
       imageAlt={props.imageAlt}
       imageClass={props.imageClass}
       imageSrc={props.imageSrc}
