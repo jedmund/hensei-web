@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
-import 'fix-date'
 
 import './index.scss'
 
@@ -17,7 +15,6 @@ const WEAPONS_COUNT = 9
 const WeaponRep = (props: Props) => {
   // Localization for alt tags
   const router = useRouter()
-  const { t } = useTranslation('common')
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 

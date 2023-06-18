@@ -117,14 +117,17 @@
     opacity: 1;
   }
 
-  &.main .QuickSummon,
-  &.friend .QuickSummon {
+  &.main .QuickSummon {
     $diameter: $unit-6x;
     background-size: $diameter $diameter;
     top: -2%;
     right: 28%;
     width: $diameter;
     height: $diameter;
+  }
+
+  &.friend .QuickSummon {
+    display: none;
   }
 
   &.grid .QuickSummon {

@@ -1,20 +1,25 @@
 import React from 'react'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
+import classNames from 'classnames'
 
 import { appState } from '~utils/appState'
+import { accountState } from '~utils/accountState'
 
 import SegmentedControl from '~components/common/SegmentedControl'
+import RepSegment from '~components/reps/RepSegment'
+import CharacterRep from '~components/reps/CharacterRep'
+import WeaponRep from '~components/reps/WeaponRep'
+import SummonRep from '~components/reps/SummonRep'
 
 import { GridType } from '~utils/enums'
 
 import './index.scss'
-import classNames from 'classnames'
-import RepSegment from '~components/reps/RepSegment'
-import CharacterRep from '~components/reps/CharacterRep'
-import { accountState } from '~utils/accountState'
-import WeaponRep from '~components/reps/WeaponRep'
-import SummonRep from '~components/reps/SummonRep'
+
+// Fix for valtio readonly array
+declare module 'valtio' {
+  function useSnapshot<T extends object>(p: T): T
+}
 
 interface Props {
   selectedTab: GridType
@@ -27,7 +32,7 @@ const PartySegmentedControl = (props: Props) => {
 
   const { party, grid } = useSnapshot(appState)
 
-  function getElement() {
+  const getElement = () => {
     let element: number = 0
     if (party.element == 0 && grid.weapons.mainWeapon)
       element = grid.weapons.mainWeapon.element
@@ -55,16 +60,16 @@ const PartySegmentedControl = (props: Props) => {
         controlGroup="grid"
         inputName="characters"
         name={t('party.segmented_control.characters')}
-        selected={props.selectedTab == GridType.Character}
+        selected={props.selectedTab === GridType.Character}
         onClick={props.onClick}
       >
         <CharacterRep
-          job={appState.party?.job}
-          element={appState.party?.element}
+          job={party.job}
+          element={party.element}
           gender={
             accountState.account.user ? accountState.account.user.gender : 0
           }
-          grid={appState.grid.characters}
+          grid={grid.characters}
         />
       </RepSegment>
     )
@@ -77,10 +82,10 @@ const PartySegmentedControl = (props: Props) => {
           controlGroup="grid"
           inputName="weapons"
           name="Weapons"
-          selected={props.selectedTab == GridType.Weapon}
+          selected={props.selectedTab === GridType.Weapon}
           onClick={props.onClick}
         >
-          <WeaponRep grid={appState.grid.weapons} />
+          <WeaponRep grid={grid.weapons} />
         </RepSegment>
       )
     }
@@ -92,10 +97,10 @@ const PartySegmentedControl = (props: Props) => {
         controlGroup="grid"
         inputName="summons"
         name="Summons"
-        selected={props.selectedTab == GridType.Summon}
+        selected={props.selectedTab === GridType.Summon}
         onClick={props.onClick}
       >
-        <SummonRep grid={appState.grid.summons} />
+        <SummonRep grid={grid.summons} />
       </RepSegment>
     )
   }

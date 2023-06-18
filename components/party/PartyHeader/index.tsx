@@ -57,7 +57,6 @@ const PartyHeader = (props: Props) => {
 
   const classes = classNames({
     PartyDetails: true,
-    ReadOnly: true,
   })
 
   const userClass = classNames({
