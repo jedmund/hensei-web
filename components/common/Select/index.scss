@@ -75,8 +75,8 @@
 .Select {
   background: var(--dialog-bg);
   border-radius: $card-corner;
-  border: $hover-stroke;
-  box-shadow: $hover-shadow;
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
   padding: 0 $unit;
   z-index: 40;
   min-width: var(--radix-select-trigger-width);
