@@ -47,6 +47,7 @@ const untitledGroup: RaidGroup = {
   section: 0,
   order: 0,
   extra: false,
+  guidebooks: false,
   raids: [],
   difficulty: 0,
   hl: false,
