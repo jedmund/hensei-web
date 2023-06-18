@@ -194,7 +194,6 @@ const DurationInput = React.forwardRef<HTMLInputElement, Props>(
           onKeyDown={handleKeyDown}
           placeholder="mm"
           size={3}
-          tabIndex={props.tabIndex}
         />
         <span>:</span>
         <Input
@@ -212,7 +211,6 @@ const DurationInput = React.forwardRef<HTMLInputElement, Props>(
           onKeyDown={handleKeyDown}
           placeholder="ss"
           size={2}
-          tabIndex={props.tabIndex ? props.tabIndex + 1 : undefined}
         />
       </div>
     )
