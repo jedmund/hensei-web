@@ -169,6 +169,39 @@
         "confirm": "Confirm"
       }
     },
+    "edit_team": {
+      "title": "Edit team details",
+      "segments": {
+        "basic_info": "Basic info",
+        "properties": "Battle settings"
+      },
+      "buttons": {
+        "add_field": "Add field",
+        "confirm": "Save details"
+      },
+      "labels": {
+        "name": "Name",
+        "description": "Description",
+        "raid": "Battle",
+        "extra": "Additional weapons",
+        "charge_attack": "Charge Attack",
+        "full_auto": "Full Auto",
+        "auto_guard": "Auto Guard",
+        "auto_summon": "Auto Summon",
+        "turn_count": "Number of turns",
+        "button_count": "Number of buttons pressed",
+        "chain_count": "Number of chains",
+        "clear_time": "Clear time"
+      },
+      "descriptions": {
+        "extra": "Additional weapons are controlled by the selected battle"
+      },
+      "placeholders": {
+        "name": "Name your team"
+      },
+      "extra_notice": "You can add additional weapons to this team",
+      "extra_notice_guidebooks": "You can add additional weapons and Sephira Guidebooks to this team"
+    },
     "delete_team": {
       "title": "Delete team",
       "description": "Are you sure you want to permanently delete this team?",
