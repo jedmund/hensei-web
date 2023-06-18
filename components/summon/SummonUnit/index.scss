@@ -112,4 +112,48 @@
       opacity: 0;
     }
   }
+
+  &:hover .QuickSummon.Empty {
+    opacity: 1;
+  }
+
+  &.main .QuickSummon,
+  &.friend .QuickSummon {
+    $diameter: $unit-6x;
+    background-size: $diameter $diameter;
+    top: -2%;
+    right: 28%;
+    width: $diameter;
+    height: $diameter;
+  }
+
+  &.grid .QuickSummon {
+    $diameter: $unit-5x;
+    background-size: $diameter $diameter;
+    top: -5%;
+    right: 22%;
+    width: $diameter;
+    height: $diameter;
+  }
+
+  .QuickSummon {
+    position: absolute;
+    background-image: url('/icons/quick_summon/filled.svg');
+    z-index: 20;
+    transition: $duration-zoom opacity ease-in-out;
+
+    &:hover {
+      background-image: url('/icons/quick_summon/empty.svg');
+      cursor: pointer;
+    }
+
+    &.Empty {
+      background-image: url('/icons/quick_summon/empty.svg');
+      opacity: 0;
+
+      &:hover {
+        background-image: url('/icons/quick_summon/filled.svg');
+      }
+    }
+  }
 }

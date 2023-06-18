@@ -1,7 +1,11 @@
 import React, { MouseEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
+import { AxiosResponse } from 'axios'
 import classNames from 'classnames'
+
+import api from '~utils/api'
+import { appState } from '~utils/appState'
 
 import Alert from '~components/common/Alert'
 import Button from '~components/common/Button'
@@ -93,6 +97,10 @@ const SummonUnit = ({
     setContextMenuOpen(!contextMenuOpen)
   }
 
+  function handleQuickSummonClick() {
+    if (gridSummon) updateQuickSummon(!gridSummon.quick_summon)
+  }
+
   // Methods: Handle open change
   function handleContextMenuOpenChange(open: boolean) {
     if (!open) setContextMenuOpen(false)
@@ -103,6 +111,38 @@ const SummonUnit = ({
   }
 
   // Methods: Mutate data
+
+  // Send the GridSummonObject to the server
+  async function updateQuickSummon(value: boolean) {
+    if (gridSummon)
+      return await api
+        .updateQuickSummon({ id: gridSummon.id, value: value })
+        .then((response) => processResult(response))
+        .catch((error) => processError(error))
+  }
+
+  // Save the server's response to state
+  function processResult(response: AxiosResponse) {
+    // TODO: We will have to update multiple grid summons at once
+    // because there can only be one at once.
+    // If a user sets a quick summon while one is already set,
+    // the previous one will be unset.
+    const gridSummons: GridSummon[] = response.data.summons
+    for (const gridSummon of gridSummons) {
+      if (gridSummon.main) {
+        appState.grid.summons.mainSummon = gridSummon
+      } else if (gridSummon.friend) {
+        appState.grid.summons.friendSummon = gridSummon
+      } else {
+        appState.grid.summons.allSummons[gridSummon.position] = gridSummon
+      }
+    }
+  }
+
+  function processError(error: any) {
+    console.error(error)
+  }
+
   function passUncapData(uncap: number) {
     if (gridSummon) updateUncap(gridSummon.id, position, uncap)
   }
@@ -230,6 +270,17 @@ const SummonUnit = ({
   }
 
   // Methods: Core element rendering
+  const quickSummon = () => {
+    if (gridSummon) {
+      const classes = classNames({
+        QuickSummon: true,
+        Empty: !gridSummon.quick_summon,
+      })
+
+      return <i className={classes} onClick={handleQuickSummonClick} />
+    }
+  }
+
   const image = () => {
     let image = (
       <img
@@ -268,6 +319,7 @@ const SummonUnit = ({
     <>
       <div className={classes}>
         {contextMenu()}
+        {quickSummon()}
         {image()}
         {gridSummon ? (
           <UncapIndicator
