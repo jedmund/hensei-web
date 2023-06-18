@@ -13,10 +13,7 @@
     gap: $unit-3x;
     grid-template-columns: 1.278fr 3fr;
     justify-items: center;
-    grid-template-areas:
-      'mainhand grid'
-      'mainhand grid'
-      'mainhand grid';
+    grid-template-areas: 'mainhand grid';
     max-width: $grid-width;
 
     @include breakpoint(tablet) {

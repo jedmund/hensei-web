@@ -375,28 +375,32 @@ const WeaponGrid = (props: Props) => {
     )
   })
 
-  const extraElement = (
-    <ExtraContainer>
-      {appState.party.raid && appState.party.raid.group.extra && (
-        <ExtraWeaponsGrid
-          grid={appState.grid.weapons.allWeapons}
-          editable={props.editable}
-          offset={numWeapons}
-          removeWeapon={removeWeapon}
-          updateObject={receiveWeaponFromSearch}
-          updateUncap={initiateUncapUpdate}
-        />
-      )}
-      {appState.party.raid && appState.party.raid.group.guidebooks && (
-        <GuidebooksGrid
-          grid={appState.party.guidebooks}
-          editable={props.editable}
-          removeGuidebook={removeGuidebook}
-          updateObject={receiveGuidebookFromSearch}
-        />
-      )}
-    </ExtraContainer>
-  )
+  const extraElement = () => {
+    if (appState.party.raid && appState.party.raid.group.extra) {
+      return (
+        <ExtraContainer>
+          {appState.party.raid && appState.party.raid.group.extra && (
+            <ExtraWeaponsGrid
+              grid={appState.grid.weapons.allWeapons}
+              editable={props.editable}
+              offset={numWeapons}
+              removeWeapon={removeWeapon}
+              updateObject={receiveWeaponFromSearch}
+              updateUncap={initiateUncapUpdate}
+            />
+          )}
+          {appState.party.raid && appState.party.raid.group.guidebooks && (
+            <GuidebooksGrid
+              grid={appState.party.guidebooks}
+              editable={props.editable}
+              removeGuidebook={removeGuidebook}
+              updateObject={receiveGuidebookFromSearch}
+            />
+          )}
+        </ExtraContainer>
+      )
+    }
+  }
 
   const conflictModal = () => {
     return incoming && conflicts ? (
@@ -448,7 +452,7 @@ const WeaponGrid = (props: Props) => {
         <ul id="Weapons">{weaponGridElement}</ul>
       </div>
 
-      {displayExtraContainer ? extraElement : ''}
+      {displayExtraContainer ? extraElement() : ''}
     </div>
   )
 }
