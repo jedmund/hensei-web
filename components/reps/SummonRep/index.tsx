@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
-import 'fix-date'
 
 import './index.scss'
 
@@ -18,7 +16,6 @@ const SUMMONS_COUNT = 4
 const SummonRep = (props: Props) => {
   // Localization for alt tags
   const router = useRouter()
-  const { t } = useTranslation('common')
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
@@ -159,8 +156,8 @@ const SummonRep = (props: Props) => {
       <ul className="GridSummons">
         {Array.from(Array(SUMMONS_COUNT)).map((x, i) => {
           return (
-            <li key={`summons-${i + 1}`} className="Grid Summon">
-              {generateGridImage(i + 1)}
+            <li key={`summons-${i}`} className="Grid Summon">
+              {generateGridImage(i)}
             </li>
           )
         })}
