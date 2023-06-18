@@ -352,7 +352,8 @@ const Party = (props: Props) => {
   function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
     const path = [
       // Enable when using Next.js Router
-      // router.asPath.split('/').filter((el) => el != '')[1],
+      'p',
+      router.asPath.split('/').filter((el) => el != '')[1],
       event.target.value,
     ].join('/')
 
@@ -371,9 +372,10 @@ const Party = (props: Props) => {
     }
 
     // Ideally, we would use the Next.js Router to replace the URL,
-    // but something about shallow routing isn't working so the page is refreshing
+    // but something about shallow routing isn't working so the page is refreshing.
+    // A consequence is that the browser push stack gets fucked
     // router.replace(path, undefined, { shallow: true })
-    history.pushState({}, '', path)
+    history.pushState({}, '', '/' + path)
   }
 
   // Render: JSX components
