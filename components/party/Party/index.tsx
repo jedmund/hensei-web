@@ -351,7 +351,8 @@ const Party = (props: Props) => {
   // Methods: Navigating with segmented control
   function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
     const path = [
-      router.asPath.split('/').filter((el) => el != '')[1],
+      // Enable when using Next.js Router
+      // router.asPath.split('/').filter((el) => el != '')[1],
       event.target.value,
     ].join('/')
 
@@ -369,7 +370,10 @@ const Party = (props: Props) => {
         break
     }
 
-    router.replace(path, undefined, { shallow: true })
+    // Ideally, we would use the Next.js Router to replace the URL,
+    // but something about shallow routing isn't working so the page is refreshing
+    // router.replace(path, undefined, { shallow: true })
+    history.pushState({}, '', path)
   }
 
   // Render: JSX components
