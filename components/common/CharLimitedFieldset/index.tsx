@@ -1,7 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, {
+  ForwardRefRenderFunction,
+  forwardRef,
+  useEffect,
+  useState,
+} from 'react'
+
+import classNames from 'classnames'
 import './index.scss'
 
-interface Props {
+interface Props extends React.HTMLProps<HTMLInputElement> {
   fieldName: string
   placeholder: string
   value?: string
@@ -11,47 +18,61 @@ interface Props {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const CharLimitedFieldset = React.forwardRef<HTMLInputElement, Props>(
-  function useFieldSet(props, ref) {
-    const fieldType = ['password', 'confirm_password'].includes(props.fieldName)
-      ? 'password'
-      : 'text'
+const CharLimitedFieldset: ForwardRefRenderFunction<HTMLInputElement, Props> = (
+  {
+    fieldName,
+    placeholder,
+    value,
+    limit,
+    error,
+    onBlur,
+    onChange: onInputChange,
+    ...props
+  },
+  ref
+) => {
+  // States
+  const [currentCount, setCurrentCount] = useState(
+    () => limit - (value || '').length
+  )
 
-    const [currentCount, setCurrentCount] = useState(0)
+  // Hooks
+  useEffect(() => {
+    setCurrentCount(limit - (value || '').length)
+  }, [limit, value])
 
-    useEffect(() => {
-      setCurrentCount(
-        props.value ? props.limit - props.value.length : props.limit
-      )
-    }, [props.limit, props.value])
-
-    function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-      setCurrentCount(props.limit - event.currentTarget.value.length)
-      if (props.onChange) props.onChange(event)
+  // Event handlers
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value: inputValue } = event.currentTarget
+    setCurrentCount(limit - inputValue.length)
+    if (onInputChange) {
+      onInputChange(event)
     }
-
-    return (
-      <fieldset className="Fieldset">
-        <div className="Joined">
-          <input
-            autoComplete="off"
-            className="Input"
-            type={fieldType}
-            name={props.fieldName}
-            placeholder={props.placeholder}
-            defaultValue={props.value || ''}
-            onBlur={props.onBlur}
-            onChange={onChange}
-            maxLength={props.limit}
-            ref={ref}
-            formNoValidate
-          />
-          <span className="Counter">{currentCount}</span>
-        </div>
-        {props.error.length > 0 && <p className="InputError">{props.error}</p>}
-      </fieldset>
-    )
   }
-)
 
-export default CharLimitedFieldset
+  // Rendering methods
+  return (
+    <fieldset className="Fieldset">
+      <div className={classNames({ Joined: true }, props.className)}>
+        <input
+          {...props}
+          autoComplete="off"
+          className="Input"
+          type={props.type}
+          name={fieldName}
+          placeholder={placeholder}
+          defaultValue={value || ''}
+          onBlur={onBlur}
+          onChange={handleInputChange}
+          maxLength={limit}
+          ref={ref}
+          formNoValidate
+        />
+        <span className="Counter">{currentCount}</span>
+      </div>
+      {error.length > 0 && <p className="InputError">{error}</p>}
+    </fieldset>
+  )
+}
+
+export default forwardRef(CharLimitedFieldset)
