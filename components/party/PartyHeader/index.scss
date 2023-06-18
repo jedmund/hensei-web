@@ -18,7 +18,9 @@
 
   .PartyDetails {
     box-sizing: border-box;
-    display: none;
+    display: block;
+    line-height: 1.4;
+    white-space: pre-wrap;
     margin: 0 auto $unit-2x;
     max-width: $unit * 94;
     overflow: hidden;
@@ -28,261 +30,105 @@
       padding: 0 $unit;
     }
 
-    &.Visible {
-      // margin-bottom: $unit-12x;
+    a:hover {
+      text-decoration: underline;
     }
 
-    &.Editable {
+    p {
+      font-size: $font-regular;
+      line-height: $font-regular * 1.2;
+      white-space: pre-line;
+    }
+
+    .Tokens {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
       gap: $unit;
-
-      &.Visible {
-        display: grid;
-      }
-
-      fieldset {
-        display: block;
-        width: 100%;
-
-        textarea {
-          min-height: $unit * 22;
-          width: 100%;
-        }
-      }
-
-      .SelectTrigger {
-        padding: $unit-2x;
-        width: 100%;
-      }
-
-      .DetailToggleGroup {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: $unit;
-
-        @include breakpoint(phone) {
-          grid-template-columns: 1fr;
-        }
-
-        .ToggleSection,
-        .InputSection {
-          align-items: center;
-          display: flex;
-          background: var(--card-bg);
-          border-radius: $input-corner;
-
-          & > label {
-            align-items: center;
-            display: flex;
-            font-size: $font-regular;
-            gap: $unit;
-            grid-template-columns: 2fr 1fr;
-            justify-content: space-between;
-            width: 100%;
-
-            & > span {
-              flex-grow: 1;
-            }
-          }
-        }
-
-        .ToggleSection {
-          padding: ($unit * 1.5) $unit-2x;
-        }
-
-        .InputSection {
-          padding: $unit-half $unit-2x;
-          padding-right: $unit-half;
-
-          .Input {
-            border-radius: 7px;
-          }
-
-          div.Input {
-            align-items: center;
-            border: 2px solid transparent;
-            box-sizing: border-box;
-            display: flex;
-            padding: $unit;
-
-            &:has(> input:focus) {
-              border: 2px solid $blue;
-              outline: none;
-            }
-
-            & > input {
-              background: transparent;
-              border: none;
-              padding: $unit 0;
-              text-align: right;
-              width: 2rem;
-
-              &:focus {
-                outline: none;
-                border: none;
-              }
-            }
-          }
-
-          label {
-            display: flex;
-            justify-content: space-between;
-
-            span {
-              flex-grow: 1;
-            }
-
-            .Input {
-              border-radius: 7px;
-              max-width: 10rem;
-            }
-
-            div {
-              display: flex;
-              flex-direction: row;
-              gap: $unit-half;
-              justify-content: right;
-            }
-          }
-        }
-      }
-
-      .bottom {
-        display: flex;
-        flex-direction: row;
-        gap: $unit;
-
-        @include breakpoint(phone) {
-          flex-direction: column;
-          width: 100%;
-        }
-
-        .left {
-          flex-grow: 1;
-        }
-
-        .right {
-          display: flex;
-          flex-direction: row;
-          gap: $unit;
-
-          @include breakpoint(phone) {
-            .Button {
-              flex-grow: 1;
-            }
-          }
-        }
-      }
+      margin-bottom: $unit-2x;
     }
 
-    &.ReadOnly {
-      box-sizing: border-box;
-      line-height: 1.4;
-      white-space: pre-wrap;
+    .YoutubeWrapper {
+      background-color: var(--card-bg);
+      border-radius: $card-corner;
+      margin: $unit 0;
+      position: relative;
+      display: block;
+      contain: content;
+      background-position: center center;
+      background-size: cover;
+      cursor: pointer;
+      width: 60%;
+      height: 60%;
 
-      &.Visible {
+      @include breakpoint(tablet) {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* gradient */
+      &::before {
+        content: '';
         display: block;
+        position: absolute;
+        top: 0;
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADGCAYAAAAT+OqFAAAAdklEQVQoz42QQQ7AIAgEF/T/D+kbq/RWAlnQyyazA4aoAB4FsBSA/bFjuF1EOL7VbrIrBuusmrt4ZZORfb6ehbWdnRHEIiITaEUKa5EJqUakRSaEYBJSCY2dEstQY7AuxahwXFrvZmWl2rh4JZ07z9dLtesfNj5q0FU3A5ObbwAAAABJRU5ErkJggg==);
+        background-position: top;
+        background-repeat: repeat-x;
+        height: 60px;
+        padding-bottom: 50px;
+        width: 100%;
+        transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
       }
 
-      a:hover {
-        text-decoration: underline;
-      }
-
-      p {
-        font-size: $font-regular;
-        line-height: $font-regular * 1.2;
-        white-space: pre-line;
-      }
-
-      .Tokens {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: $unit;
-        margin-bottom: $unit-2x;
-      }
-
-      .YoutubeWrapper {
-        background-color: var(--card-bg);
-        border-radius: $card-corner;
-        margin: $unit 0;
-        position: relative;
-        display: block;
-        contain: content;
-        background-position: center center;
-        background-size: cover;
-        cursor: pointer;
-        width: 60%;
-        height: 60%;
-
-        @include breakpoint(tablet) {
-          width: 100%;
-          height: 100%;
-        }
-
-        /* gradient */
-        &::before {
-          content: '';
-          display: block;
-          position: absolute;
-          top: 0;
-          background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADGCAYAAAAT+OqFAAAAdklEQVQoz42QQQ7AIAgEF/T/D+kbq/RWAlnQyyazA4aoAB4FsBSA/bFjuF1EOL7VbrIrBuusmrt4ZZORfb6ehbWdnRHEIiITaEUKa5EJqUakRSaEYBJSCY2dEstQY7AuxahwXFrvZmWl2rh4JZ07z9dLtesfNj5q0FU3A5ObbwAAAABJRU5ErkJggg==);
-          background-position: top;
-          background-repeat: repeat-x;
-          height: 60px;
-          padding-bottom: 50px;
-          width: 100%;
-          transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
-        }
-
-        /* responsive iframe with a 16:9 aspect ratio
+      /* responsive iframe with a 16:9 aspect ratio
            thanks https://css-tricks.com/responsive-iframes/
         */
-        &::after {
-          content: '';
-          display: block;
-          padding-bottom: calc(100% / (16 / 9));
-        }
+      &::after {
+        content: '';
+        display: block;
+        padding-bottom: calc(100% / (16 / 9));
+      }
 
-        &:hover > .PlayerButton {
-          opacity: 1;
-        }
+      &:hover > .PlayerButton {
+        opacity: 1;
+      }
 
-        & > iframe {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          top: 0;
-          left: 0;
-        }
+      & > iframe {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
 
-        /* Play button */
-        & > .PlayerButton {
-          background: none;
-          border: none;
-          background-image: url('/icons/youtube.svg');
-          width: 68px;
-          height: 68px;
-          opacity: 0.8;
-          transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
-        }
+      /* Play button */
+      & > .PlayerButton {
+        background: none;
+        border: none;
+        background-image: url('/icons/youtube.svg');
+        width: 68px;
+        height: 68px;
+        opacity: 0.8;
+        transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+      }
 
-        & > .PlayerButton,
-        & > .PlayerButton:before {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate3d(-50%, -50%, 0);
-        }
+      & > .PlayerButton,
+      & > .PlayerButton:before {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
 
-        /* Post-click styles */
-        &.lyt-activated {
-          cursor: unset;
-        }
-        &.lyt-activated::before,
-        &.lyt-activated > .PlayerButton {
-          opacity: 0;
-          pointer-events: none;
-        }
+      /* Post-click styles */
+      &.lyt-activated {
+        cursor: unset;
+      }
+      &.lyt-activated::before,
+      &.lyt-activated > .PlayerButton {
+        opacity: 0;
+        pointer-events: none;
       }
     }
   }
