@@ -414,7 +414,8 @@ const FilterModal = (props: Props) => {
           {originalOnlyField()}
         </div>
         <div className="DialogFooter" ref={footerRef}>
-          <div className="Buttons Spaced">
+          <div className="Left"></div>
+          <div className="Right Buttons Spaced">
             <Button
               blended={true}
               text={t('modals.filters.buttons.clear')}

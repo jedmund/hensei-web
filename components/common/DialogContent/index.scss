@@ -160,7 +160,8 @@
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.16);
       border-top: 1px solid rgba(0, 0, 0, 0.24);
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      justify-content: space-between;
       padding: ($unit * 1.5) ($unit * $multiplier) $unit-3x;
       position: sticky;
 
@@ -178,7 +179,6 @@
 
         &.Spaced {
           justify-content: space-between;
-          width: 100%;
         }
       }
     }
