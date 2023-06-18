@@ -135,6 +135,7 @@ const Party = (props: Props) => {
       chargeAttack: 'charge_attack',
       fullAuto: 'full_auto',
       autoGuard: 'auto_guard',
+      autoSummon: 'auto_summon',
       clearTime: 'clear_time',
       buttonCount: 'button_count',
       chainCount: 'chain_count',
