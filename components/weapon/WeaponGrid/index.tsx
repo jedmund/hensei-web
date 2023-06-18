@@ -380,11 +380,9 @@ const WeaponGrid = (props: Props) => {
       {appState.party.raid && appState.party.raid.group.extra && (
         <ExtraWeaponsGrid
           grid={appState.grid.weapons.allWeapons}
-          enabled={appState.party.extra}
           editable={props.editable}
           offset={numWeapons}
           removeWeapon={removeWeapon}
-          updateExtra={props.updateExtra}
           updateObject={receiveWeaponFromSearch}
           updateUncap={initiateUncapUpdate}
         />

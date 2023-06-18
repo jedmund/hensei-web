@@ -12,7 +12,6 @@ import './index.scss'
 interface Props {
   grid: GuidebookList
   editable: boolean
-  offset: number
   removeGuidebook: (position: number) => void
   updateObject: (object: SearchableObject, position: number) => void
 }
@@ -28,28 +27,12 @@ const GuidebooksGrid = ({
 }: Props) => {
   const { t } = useTranslation('common')
 
-  const [enabled, setEnabled] = useState(false)
-
   const classes = classNames({
     Guidebooks: true,
     ContainerItem: true,
-    Disabled: !enabled,
   })
 
-  useEffect(() => {
-    console.log('Grid updated')
-    if (hasGuidebooks()) setEnabled(true)
-  }, [grid])
-
-  function hasGuidebooks() {
-    return grid && (grid[0] || grid[1] || grid[2])
-  }
-
-  function onCheckedChange(checked: boolean) {
-    setEnabled(checked)
-  }
-
-  const enabledElement = (
+  const guidebooks = (
     <ul id="GuidebooksGrid">
       {Array.from(Array(EXTRA_WEAPONS_COUNT)).map((x, i) => {
         const itemClasses = classNames({
@@ -75,21 +58,12 @@ const GuidebooksGrid = ({
     <div className={classes}>
       <div className="Header">
         <h3>{t('sephira_guidebooks')}</h3>
-        {editable ? (
-          <Switch
-            name="Guidebooks"
-            checked={enabled}
-            onCheckedChange={onCheckedChange}
-          />
-        ) : (
-          ''
-        )}
       </div>
-      {enabled ? enabledElement : ''}
+      {guidebooks}
     </div>
   )
 
-  return editable || (enabled && !editable) ? guidebookElement : <div />
+  return guidebookElement
 }
 
 export default GuidebooksGrid
