@@ -206,7 +206,7 @@ const DurationInput = React.forwardRef<HTMLInputElement, Props>(
             },
             className
           )}
-          value={`${getSeconds()}`.padStart(2, '0')}
+          value={getSeconds() > 0 ? `${getSeconds()}`.padStart(2, '0') : ''}
           onChange={handleSecondsChange}
           onKeyUp={handleKeyUp}
           onKeyDown={handleKeyDown}
