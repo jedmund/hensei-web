@@ -10,6 +10,7 @@ interface Props {
   description?: string
   value?: boolean
   className?: string
+  tabIndex?: number
   imageAlt?: string
   imageClass?: string
   imageSrc?: string[]
@@ -43,6 +44,7 @@ const SwitchTableField = (props: Props) => {
       <Switch
         name={props.name}
         checked={value}
+        tabIndex={props.tabIndex}
         onCheckedChange={onValueChange}
       />
     </TableField>
