@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
+import classNames from 'classnames'
 import Switch from '~components/common/Switch'
 import TableField from '~components/common/TableField'
 
 import './index.scss'
 
-interface Props {
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
   name: string
   label: string
   description?: string
+  disabled?: boolean
   value?: boolean
   className?: string
   tabIndex?: number
@@ -32,10 +34,19 @@ const SwitchTableField = (props: Props) => {
     setValue(value)
   }
 
+  const classes = classNames(
+    {
+      SwitchTableField: true,
+      Disabled: props.disabled,
+    },
+    props.className
+  )
+
   return (
     <TableField
       name={props.name}
-      className="SwitchField"
+      description={props.description}
+      className={classes}
       imageAlt={props.imageAlt}
       imageClass={props.imageClass}
       imageSrc={props.imageSrc}
@@ -44,6 +55,7 @@ const SwitchTableField = (props: Props) => {
       <Switch
         name={props.name}
         checked={value}
+        disabled={props.disabled}
         tabIndex={props.tabIndex}
         onCheckedChange={onValueChange}
       />
