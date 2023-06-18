@@ -3,6 +3,7 @@
   display: grid;
   gap: $unit-2x;
   grid-template-columns: 1fr auto;
+  min-height: $unit-6x;
   justify-content: space-between;
   padding: $unit-half 0;
   width: 100%;
@@ -17,7 +18,30 @@
     color: var(--accent-blue);
   }
 
+  &.Numeric .Right > .Input,
+  &.Numeric .Right > .Duration {
+    text-align: right;
+    max-width: $unit-12x;
+    width: $unit-12x;
+  }
+
+  &.Numeric .Right > .Duration {
+    justify-content: flex-end;
+    box-sizing: border-box;
+  }
+
+  &.Disabled {
+    &:hover .Left .Info h3 {
+      color: var(--text-tertiary);
+    }
+
+    .Left .Info h3 {
+      color: var(--text-tertiary);
+    }
+  }
+
   .Left {
+    align-items: center;
     display: flex;
     flex-direction: row;
     gap: $unit;
@@ -59,7 +83,6 @@
       color: var(--text-secondary);
       font-size: $font-small;
       line-height: 1.1;
-      max-width: 300px;
 
       &.jp {
         max-width: 270px;
@@ -71,6 +94,7 @@
     align-items: center;
     display: flex;
     flex-direction: row;
+    justify-content: flex-end;
     gap: $unit-2x;
     width: 100%;
 

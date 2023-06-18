@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ChangeEvent, KeyboardEvent } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
@@ -6,21 +6,16 @@ import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
 import Button from '~components/common/Button'
-import CharLimitedFieldset from '~components/common/CharLimitedFieldset'
-import DurationInput from '~components/common/DurationInput'
-import Input from '~components/common/Input'
-import RaidCombobox from '~components/raids/RaidCombobox'
-import Switch from '~components/common/Switch'
 import Tooltip from '~components/common/Tooltip'
 import Token from '~components/common/Token'
 
+import EditPartyModal from '~components/party/EditPartyModal'
 import PartyDropdown from '~components/party/PartyDropdown'
 
 import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 import { formatTimeAgo } from '~utils/timeAgo'
 
-import CheckIcon from '~public/icons/Check.svg'
 import EditIcon from '~public/icons/Edit.svg'
 import RemixIcon from '~public/icons/Remix.svg'
 import SaveIcon from '~public/icons/Save.svg'
@@ -41,7 +36,7 @@ interface Props {
 }
 
 const PartyHeader = (props: Props) => {
-  const { party, raids } = useSnapshot(appState)
+  const { party } = useSnapshot(appState)
 
   const { t } = useTranslation('common')
   const router = useRouter()
@@ -49,12 +44,7 @@ const PartyHeader = (props: Props) => {
 
   const { party: partySnapshot } = useSnapshot(appState)
 
-  const nameInput = React.createRef<HTMLInputElement>()
-  const descriptionInput = React.createRef<HTMLTextAreaElement>()
-
-  const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
-  const [alertOpen, setAlertOpen] = useState(false)
 
   const [chargeAttack, setChargeAttack] = useState(true)
   const [fullAuto, setFullAuto] = useState(false)
@@ -65,18 +55,9 @@ const PartyHeader = (props: Props) => {
   const [turnCount, setTurnCount] = useState<number | undefined>(undefined)
   const [clearTime, setClearTime] = useState(0)
 
-  const [raidSlug, setRaidSlug] = useState('')
-
-  const readOnlyClasses = classNames({
+  const classes = classNames({
     PartyDetails: true,
     ReadOnly: true,
-    Visible: !open,
-  })
-
-  const editableClasses = classNames({
-    PartyDetails: true,
-    Editable: true,
-    Visible: open,
   })
 
   const userClass = classNames({
@@ -91,11 +72,6 @@ const PartyHeader = (props: Props) => {
     earth: party && party.element == 4,
     dark: party && party.element == 5,
     light: party && party.element == 6,
-  })
-
-  const [errors, setErrors] = useState<{ [key: string]: string }>({
-    name: '',
-    description: '',
   })
 
   useEffect(() => {
@@ -130,112 +106,6 @@ const PartyHeader = (props: Props) => {
     })
   }, [])
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    event.preventDefault()
-
-    const { name, value } = event.target
-    setName(value)
-
-    let newErrors = errors
-    setErrors(newErrors)
-  }
-
-  function handleChargeAttackChanged(checked: boolean) {
-    setChargeAttack(checked)
-  }
-
-  function handleFullAutoChanged(checked: boolean) {
-    setFullAuto(checked)
-  }
-
-  function handleAutoGuardChanged(checked: boolean) {
-    setAutoGuard(checked)
-  }
-
-  function handleClearTimeInput(value: number) {
-    if (!isNaN(value)) setClearTime(value)
-  }
-
-  function handleTurnCountInput(event: React.ChangeEvent<HTMLInputElement>) {
-    const value = parseInt(event.currentTarget.value)
-    if (!isNaN(value)) setTurnCount(value)
-  }
-
-  function handleButtonCountInput(event: ChangeEvent<HTMLInputElement>) {
-    const value = parseInt(event.currentTarget.value)
-    if (!isNaN(value)) setButtonCount(value)
-  }
-
-  function handleChainCountInput(event: ChangeEvent<HTMLInputElement>) {
-    const value = parseInt(event.currentTarget.value)
-    if (!isNaN(value)) setChainCount(value)
-  }
-
-  function handleInputKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
-      // Allow the key to be processed normally
-      return
-    }
-
-    // Get the current value
-    const input = event.currentTarget
-    let value = event.currentTarget.value
-
-    // Check if the key that was pressed is the backspace key
-    if (event.key === 'Backspace') {
-      // Remove the colon if the value is "12:"
-      if (value.length === 4) {
-        value = value.slice(0, -1)
-      }
-
-      // Allow the backspace key to be processed normally
-      input.value = value
-      return
-    }
-
-    // Check if the key that was pressed is the tab key
-    if (event.key === 'Tab') {
-      // Allow the tab key to be processed normally
-      return
-    }
-
-    // Get the character that was entered and check if it is numeric
-    const char = parseInt(event.key)
-    const isNumber = !isNaN(char)
-
-    // Check if the character should be accepted or rejected
-    const numberValue = parseInt(`${value}${char}`)
-    const minValue = parseInt(event.currentTarget.min)
-    const maxValue = parseInt(event.currentTarget.max)
-
-    if (!isNumber || numberValue < minValue || numberValue > maxValue) {
-      // Reject the character if it isn't a number,
-      // or if it exceeds the min and max values
-      event.preventDefault()
-    }
-  }
-
-  function toggleDetails() {
-    // Enabling this code will make live updates not work,
-    // but I'm not sure why it's here, so we're not going to remove it.
-
-    // if (name !== party.name) {
-    //   const resetName = party.name ? party.name : ''
-    //   setName(resetName)
-    //   if (nameInput.current) nameInput.current.value = resetName
-    // }
-    setOpen(!open)
-  }
-
-  function receiveRaid(raid?: Raid) {
-    if (raid) setRaidSlug(raid?.slug)
-  }
-
-  function switchValue(value: boolean) {
-    if (value) return 'on'
-    else return 'off'
-  }
-
   // Actions: Favorites
   function toggleFavorite() {
     if (appState.party.favorited) unsaveFavorite()
@@ -256,28 +126,6 @@ const PartyHeader = (props: Props) => {
         if (response.status == 200) appState.party.favorited = false
       })
     else console.error('Failed to unsave team: No party ID')
-  }
-
-  function updateDetails(event: React.MouseEvent) {
-    const descriptionValue = descriptionInput.current?.value
-    const allRaids = appState.raidGroups.flatMap((group) => group.raids)
-    const raid = allRaids.find((raid) => raid.slug === raidSlug)
-
-    const details: DetailsObject = {
-      fullAuto: fullAuto,
-      autoGuard: autoGuard,
-      chargeAttack: chargeAttack,
-      clearTime: clearTime,
-      buttonCount: buttonCount,
-      turnCount: turnCount,
-      chainCount: chainCount,
-      name: name,
-      description: descriptionValue,
-      raid: raid,
-    }
-
-    props.updateCallback(details)
-    toggleDetails()
   }
 
   // Methods: Navigation
@@ -487,145 +335,6 @@ const PartyHeader = (props: Props) => {
       </Tooltip>
     )
   }
-  const editable = () => {
-    return (
-      <section className={editableClasses}>
-        <CharLimitedFieldset
-          fieldName="name"
-          placeholder="Name your team"
-          value={props.party?.name}
-          limit={50}
-          onChange={handleInputChange}
-          error={errors.name}
-          ref={nameInput}
-        />
-        <RaidCombobox
-          showAllRaidsOption={false}
-          currentRaid={props.party?.raid ? props.party?.raid : undefined}
-          onChange={receiveRaid}
-        />
-        <ul className="SwitchToggleGroup DetailToggleGroup">
-          <li className="Ougi ToggleSection">
-            <label htmlFor="ougi">
-              <span>{t('party.details.labels.charge_attack')}</span>
-              <div>
-                <Switch
-                  name="charge_attack"
-                  onCheckedChange={handleChargeAttackChanged}
-                  value={switchValue(chargeAttack)}
-                  checked={chargeAttack}
-                />
-              </div>
-            </label>
-          </li>
-          <li className="FullAuto ToggleSection">
-            <label htmlFor="full_auto">
-              <span>{t('party.details.labels.full_auto')}</span>
-              <div>
-                <Switch
-                  onCheckedChange={handleFullAutoChanged}
-                  name="full_auto"
-                  value={switchValue(fullAuto)}
-                  checked={fullAuto}
-                />
-              </div>
-            </label>
-          </li>
-          <li className="AutoGuard ToggleSection">
-            <label htmlFor="auto_guard">
-              <span>{t('party.details.labels.auto_guard')}</span>
-              <div>
-                <Switch
-                  onCheckedChange={handleAutoGuardChanged}
-                  name="auto_guard"
-                  value={switchValue(autoGuard)}
-                  disabled={!fullAuto}
-                  checked={autoGuard}
-                />
-              </div>
-            </label>
-          </li>
-        </ul>
-        <ul className="InputToggleGroup DetailToggleGroup">
-          <li className="InputSection">
-            <label htmlFor="auto_guard">
-              <span>{t('party.details.labels.button_chain')}</span>
-              <div className="Input Bound">
-                <Input
-                  name="buttons"
-                  type="number"
-                  placeholder="0"
-                  value={`${buttonCount}`}
-                  min="0"
-                  max="99"
-                  onChange={handleButtonCountInput}
-                  onKeyDown={handleInputKeyDown}
-                />
-                <span>b</span>
-                <Input
-                  name="chains"
-                  type="number"
-                  placeholder="0"
-                  min="0"
-                  max="99"
-                  value={`${chainCount}`}
-                  onChange={handleChainCountInput}
-                  onKeyDown={handleInputKeyDown}
-                />
-                <span>c</span>
-              </div>
-            </label>
-          </li>
-          <li className="InputSection">
-            <label htmlFor="auto_guard">
-              <span>{t('party.details.labels.turn_count')}</span>
-              <Input
-                name="turn_count"
-                className="AlignRight Bound"
-                type="number"
-                step="1"
-                min="1"
-                max="999"
-                placeholder="0"
-                value={`${turnCount}`}
-                onChange={handleTurnCountInput}
-                onKeyDown={handleInputKeyDown}
-              />
-            </label>
-          </li>
-          <li className="InputSection">
-            <label htmlFor="auto_guard">
-              <span>{t('party.details.labels.clear_time')}</span>
-              <div>
-                <DurationInput
-                  name="clear_time"
-                  className="Bound"
-                  placeholder="00:00"
-                  value={clearTime}
-                  onValueChange={(value: number) => handleClearTimeInput(value)}
-                />
-              </div>
-            </label>
-          </li>
-        </ul>
-
-        <div className="bottom">
-          <div className="right">
-            <Button text={t('buttons.cancel')} onClick={toggleDetails} />
-            <Button
-              leftAccessoryIcon={<CheckIcon className="Check" />}
-              text={t('buttons.save_info')}
-              onClick={updateDetails}
-            />
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  const readOnly = () => {
-    return <section className={readOnlyClasses}>{renderTokens()}</section>
-  }
 
   return (
     <>
@@ -666,11 +375,15 @@ const PartyHeader = (props: Props) => {
           </div>
           {party.editable ? (
             <div className="Right">
-              <Button
-                leftAccessoryIcon={<EditIcon />}
-                text={t('buttons.show_info')}
-                onClick={toggleDetails}
-              />
+              <EditPartyModal
+                party={props.party}
+                updateCallback={props.updateCallback}
+              >
+                <Button
+                  leftAccessoryIcon={<EditIcon />}
+                  text={t('buttons.show_info')}
+                />
+              </EditPartyModal>
               <PartyDropdown
                 editable={props.editable}
                 deleteTeamCallback={props.deleteCallback}
@@ -684,8 +397,7 @@ const PartyHeader = (props: Props) => {
             </div>
           )}
         </div>
-        {readOnly()}
-        {editable()}
+        <section className={classes}>{renderTokens()}</section>
       </section>
     </>
   )

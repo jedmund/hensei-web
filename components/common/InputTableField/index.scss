@@ -1,4 +1,3 @@
-.InputField.TableField .Input {
+.InputField.TableField .Input[type='number'] {
   text-align: right;
-  width: $unit-8x;
 }

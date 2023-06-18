@@ -29,6 +29,7 @@ export type DetailsObject = {
   [key: string]: boolean | number | string | string[] | Raid | undefined
   fullAuto?: boolean
   autoGuard?: boolean
+  autoSummon?: boolean
   chargeAttack?: boolean
   clearTime?: number
   buttonCount?: number

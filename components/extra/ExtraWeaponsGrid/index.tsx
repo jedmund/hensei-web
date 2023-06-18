@@ -11,12 +11,10 @@ import classNames from 'classnames'
 // Props
 interface Props {
   grid: GridArray<GridWeapon>
-  enabled: boolean
   editable: boolean
   found?: boolean
   offset: number
   removeWeapon: (id: string) => void
-  updateExtra: (enabled: boolean) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
 }
@@ -26,12 +24,9 @@ const EXTRA_WEAPONS_COUNT = 3
 
 const ExtraWeaponsGrid = ({
   grid,
-  enabled,
   editable,
-  found,
   offset,
   removeWeapon,
-  updateExtra,
   updateObject,
   updateUncap,
 }: Props) => {
@@ -40,16 +35,9 @@ const ExtraWeaponsGrid = ({
   const classes = classNames({
     ExtraWeapons: true,
     ContainerItem: true,
-    Disabled: !enabled,
   })
 
-  function onCheckedChange(checked: boolean) {
-    updateExtra(checked)
-  }
-
-  const disabledElement = <></>
-
-  const enabledElement = (
+  const extraWeapons = (
     <ul id="ExtraWeaponGrid">
       {Array.from(Array(EXTRA_WEAPONS_COUNT)).map((x, i) => {
         const itemClasses = classNames({
@@ -77,17 +65,8 @@ const ExtraWeaponsGrid = ({
     <div className={classes}>
       <div className="Header">
         <h3>{t('extra_weapons')}</h3>
-        {editable ? (
-          <Switch
-            name="ExtraWeapons"
-            checked={enabled}
-            onCheckedChange={onCheckedChange}
-          />
-        ) : (
-          ''
-        )}
       </div>
-      {enabled ? enabledElement : ''}
+      {extraWeapons}
     </div>
   )
 }

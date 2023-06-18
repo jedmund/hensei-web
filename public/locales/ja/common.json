@@ -169,6 +169,35 @@
         "confirm": "入れ替える"
       }
     },
+    "edit_team": {
+      "title": "編成の詳細を編集",
+      "segments": {
+        "basic_info": "基本情報",
+        "properties": "バトル設定・結果"
+      },
+      "buttons": {
+        "add_field": "フィールドを追加",
+        "confirm": "詳細を保存する"
+      },
+      "labels": {
+        "name": "編成名",
+        "description": "説明",
+        "raid": "バトル",
+        "charge_attack": "奥義",
+        "full_auto": "フルオート",
+        "auto_guard": "オートガード",
+        "auto_summon": "オート召喚",
+        "turn_count": "経過ターン",
+        "button_count": "ポチ数",
+        "chain_count": "チェイン数",
+        "clear_time": "討伐時間"
+      },
+      "placeholders": {
+        "name": "編成に名前を付ける"
+      },
+      "extra_notice": "Additional Weapons枠に武器を装備することはできます",
+      "extra_notice_guidebooks": "Additional Weaponsまたはセフィラ導本を装備することはできます"
+    },
     "delete_team": {
       "title": "編成を削除しますか",
       "description": "編成を削除する操作は取り消せません。",

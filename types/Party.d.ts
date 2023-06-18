@@ -20,6 +20,7 @@ interface Party {
   raid: Raid
   full_auto: boolean
   auto_guard: boolean
+  auto_summon: boolean
   charge_attack: boolean
   clear_time: number
   button_count?: number

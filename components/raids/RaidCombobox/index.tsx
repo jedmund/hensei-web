@@ -18,6 +18,7 @@ interface Props {
   currentRaid?: Raid
   defaultRaid?: Raid
   minimal?: boolean
+  tabIndex?: number
   onChange?: (raid?: Raid) => void
   onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
@@ -46,6 +47,7 @@ const untitledGroup: RaidGroup = {
   section: 0,
   order: 0,
   extra: false,
+  guidebooks: false,
   raids: [],
   difficulty: 0,
   hl: false,
@@ -114,7 +116,6 @@ const RaidCombobox = (props: Props) => {
   // Set current raid and section when the current raid changes
   useEffect(() => {
     if (props.currentRaid) {
-      console.log('We are here with a raid')
       setCurrentRaid(props.currentRaid)
       setCurrentSection(props.currentRaid.group.section)
     }
@@ -183,7 +184,6 @@ const RaidCombobox = (props: Props) => {
         const { top: itemTop } = node.getBoundingClientRect()
 
         listRef.current.scrollTop = itemTop - listTop
-        console.log('Focusing node')
         node.focus()
         setScrolled(true)
       }
@@ -534,6 +534,7 @@ const RaidCombobox = (props: Props) => {
       onOpenChange={toggleOpen}
       placeholder={t('raids.placeholder')}
       trigger={{ className: 'Raid' }}
+      triggerTabIndex={props.tabIndex}
       value={renderTriggerContent()}
     >
       <Command className="Raid Combobox">

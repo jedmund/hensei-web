@@ -23,6 +23,7 @@ interface Props extends ComponentProps<'div'> {
     className?: string
     placeholder?: string
   }
+  triggerTabIndex?: number
   value?: {
     element: ReactNode
     rawValue: string
@@ -83,6 +84,7 @@ const Popover = React.forwardRef<HTMLDivElement, Props>(function Popover(
       <PopoverPrimitive.Trigger
         className={triggerClasses}
         data-placeholder={!props.value}
+        tabIndex={props.triggerTabIndex}
       >
         {icon}
         {value}

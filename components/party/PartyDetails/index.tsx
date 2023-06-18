@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 import clonedeep from 'lodash.clonedeep'
 
@@ -9,22 +8,12 @@ import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import classNames from 'classnames'
 import reactStringReplace from 'react-string-replace'
 
-import Button from '~components/common/Button'
 import GridRepCollection from '~components/GridRepCollection'
 import GridRep from '~components/GridRep'
-import Tooltip from '~components/common/Tooltip'
-import TextFieldset from '~components/common/TextFieldset'
 
 import api from '~utils/api'
-import { appState, initialAppState } from '~utils/appState'
-import { formatTimeAgo } from '~utils/timeAgo'
+import { appState } from '~utils/appState'
 import { youtube } from '~utils/youtube'
-
-import CheckIcon from '~public/icons/Check.svg'
-import CrossIcon from '~public/icons/Cross.svg'
-import EllipsisIcon from '~public/icons/Ellipsis.svg'
-import EditIcon from '~public/icons/Edit.svg'
-import RemixIcon from '~public/icons/Remix.svg'
 
 import type { DetailsObject } from 'types'
 
@@ -45,10 +34,7 @@ const PartyDetails = (props: Props) => {
   const youtubeUrlRegex =
     /(?:https:\/\/www\.youtube\.com\/watch\?v=|https:\/\/youtu\.be\/)([\w-]+)/g
 
-  const descriptionInput = React.createRef<HTMLTextAreaElement>()
-
   const [open, setOpen] = useState(false)
-  const [alertOpen, setAlertOpen] = useState(false)
 
   const [remixes, setRemixes] = useState<Party[]>([])
   const [embeddedDescription, setEmbeddedDescription] =
@@ -58,17 +44,6 @@ const PartyDetails = (props: Props) => {
     PartyDetails: true,
     ReadOnly: true,
     Visible: !open,
-  })
-
-  const editableClasses = classNames({
-    PartyDetails: true,
-    Editable: true,
-    Visible: open,
-  })
-
-  const [errors, setErrors] = useState<{ [key: string]: string }>({
-    name: '',
-    description: '',
   })
 
   useEffect(() => {
@@ -104,44 +79,10 @@ const PartyDetails = (props: Props) => {
     }
   }, [appState.party.description])
 
-  function handleTextAreaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    event.preventDefault()
-
-    const { name, value } = event.target
-    let newErrors = errors
-
-    setErrors(newErrors)
-  }
-
   async function fetchYoutubeData(videoId: string) {
     return await youtube
       .getVideoById(videoId, { maxResults: 1 })
       .then((data) => data.items[0].snippet.localized.title)
-  }
-
-  function toggleDetails() {
-    // Enabling this code will make live updates not work,
-    // but I'm not sure why it's here, so we're not going to remove it.
-
-    // if (name !== party.name) {
-    //   const resetName = party.name ? party.name : ''
-    //   setName(resetName)
-    //   if (nameInput.current) nameInput.current.value = resetName
-    // }
-    setOpen(!open)
-  }
-
-  function updateDetails(event: React.MouseEvent) {
-    const details: DetailsObject = {
-      description: descriptionInput.current?.value,
-    }
-
-    props.updateCallback(details)
-    toggleDetails()
-  }
-
-  function handleClick() {
-    setAlertOpen(!alertOpen)
   }
 
   // Methods: Navigation
@@ -232,46 +173,6 @@ const PartyDetails = (props: Props) => {
     })
   }
 
-  const editable = () => {
-    return (
-      <section className={editableClasses}>
-        <TextFieldset
-          fieldName="name"
-          placeholder={
-            'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 3 first\nGood luck with RNG!'
-          }
-          value={props.party?.description}
-          onChange={handleTextAreaChange}
-          error={errors.description}
-          ref={descriptionInput}
-        />
-
-        <div className="bottom">
-          <div className="left">
-            {router.pathname !== '/new' ? (
-              <Button
-                leftAccessoryIcon={<CrossIcon />}
-                className="Blended medium destructive"
-                onClick={handleClick}
-                text={t('buttons.delete')}
-              />
-            ) : (
-              ''
-            )}
-          </div>
-          <div className="right">
-            <Button text={t('buttons.cancel')} onClick={toggleDetails} />
-            <Button
-              leftAccessoryIcon={<CheckIcon className="Check" />}
-              text={t('buttons.save_info')}
-              onClick={updateDetails}
-            />
-          </div>
-        </div>
-      </section>
-    )
-  }
-
   const readOnly = () => {
     return (
       <section className={readOnlyClasses}>
@@ -291,10 +192,7 @@ const PartyDetails = (props: Props) => {
 
   return (
     <>
-      <section className="DetailsWrapper">
-        {readOnly()}
-        {editable()}
-      </section>
+      <section className="DetailsWrapper">{readOnly()}</section>
       {remixes && remixes.length > 0 ? remixSection() : ''}
     </>
   )

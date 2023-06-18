@@ -10,5 +10,6 @@ interface RaidGroup {
   section: number
   order: number
   extra: boolean
+  guidebooks: boolean
   hl: boolean
 }

@@ -119,6 +119,23 @@ const Party = (props: Props) => {
       .then((response) => storeParty(response.data.party))
   }
 
+  async function updateParty(details: DetailsObject) {
+    const payload = formatDetailsObject(details)
+
+    if (props.team && props.team.id) {
+      return await api.endpoints.parties
+        .update(props.team.id, payload)
+        .then((response) => storeParty(response.data.party))
+        .catch((error) => {
+          const data = error.response.data
+          if (data.errors && Object.keys(data.errors).includes('guidebooks')) {
+            const message = t('errors.validation.guidebooks')
+            setErrorMessage(message)
+          }
+        })
+    }
+  }
+
   // Methods: Updating the party's details
   async function updateDetails(details: DetailsObject) {
     if (!props.team) return await createParty(details)
@@ -131,10 +148,10 @@ const Party = (props: Props) => {
     const mappings: { [key: string]: string } = {
       name: 'name',
       description: 'description',
-      raid: 'raid_id',
       chargeAttack: 'charge_attack',
       fullAuto: 'full_auto',
       autoGuard: 'auto_guard',
+      autoSummon: 'auto_summon',
       clearTime: 'clear_time',
       buttonCount: 'button_count',
       chainCount: 'chain_count',
@@ -152,27 +169,12 @@ const Party = (props: Props) => {
       }
     })
 
+    if (details.raid) payload.raid_id = details.raid.id
+
     if (Object.keys(payload).length >= 1) {
       return { party: payload }
     } else {
       return {}
-    }
-  }
-
-  async function updateParty(details: DetailsObject) {
-    const payload = formatDetailsObject(details)
-
-    if (props.team && props.team.id) {
-      return await api.endpoints.parties
-        .update(props.team.id, payload)
-        .then((response) => storeParty(response.data.party))
-        .catch((error) => {
-          const data = error.response.data
-          if (data.errors && Object.keys(data.errors).includes('guidebooks')) {
-            const message = t('errors.validation.guidebooks')
-            setErrorMessage(message)
-          }
-        })
     }
   }
 

@@ -5,4 +5,8 @@
     text-align: right;
     width: $unit-8x;
   }
+
+  .Right {
+    justify-content: flex-end;
+  }
 }

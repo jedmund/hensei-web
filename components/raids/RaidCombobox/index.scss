@@ -65,7 +65,7 @@
   .Raids {
     border-bottom-left-radius: $card-corner;
     border-bottom-right-radius: $card-corner;
-    height: 50vh;
+    height: 36vh;
     overflow-y: scroll;
     padding: 0 $unit;
 
@@ -120,7 +120,9 @@
   }
 }
 
-.DetailsWrapper .PartyDetails.Editable .Raid.SelectTrigger {
+.DetailsWrapper .PartyDetails.Editable .Raid.SelectTrigger,
+.EditTeam .Raid.SelectTrigger {
+  background: var(--input-bound-bg);
   display: flex;
   padding-top: 10px;
   padding-bottom: 11px;
@@ -139,9 +141,9 @@
     }
 
     .ExtraIndicator {
-      background: var(--extra-purple-bg);
+      background: var(--extra-purple-secondary);
       border-radius: $full-corner;
-      color: var(--extra-purple-text);
+      color: $grey-100;
       display: flex;
       font-weight: $bold;
       font-size: $font-tiny;

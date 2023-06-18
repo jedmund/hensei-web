@@ -377,23 +377,24 @@ const WeaponGrid = (props: Props) => {
 
   const extraElement = (
     <ExtraContainer>
-      <ExtraWeaponsGrid
-        grid={appState.grid.weapons.allWeapons}
-        enabled={appState.party.extra}
-        editable={props.editable}
-        offset={numWeapons}
-        removeWeapon={removeWeapon}
-        updateExtra={props.updateExtra}
-        updateObject={receiveWeaponFromSearch}
-        updateUncap={initiateUncapUpdate}
-      />
-      <GuidebooksGrid
-        grid={appState.party.guidebooks}
-        editable={props.editable}
-        offset={numWeapons}
-        removeGuidebook={removeGuidebook}
-        updateObject={receiveGuidebookFromSearch}
-      />
+      {appState.party.raid && appState.party.raid.group.extra && (
+        <ExtraWeaponsGrid
+          grid={appState.grid.weapons.allWeapons}
+          editable={props.editable}
+          offset={numWeapons}
+          removeWeapon={removeWeapon}
+          updateObject={receiveWeaponFromSearch}
+          updateUncap={initiateUncapUpdate}
+        />
+      )}
+      {appState.party.raid && appState.party.raid.group.guidebooks && (
+        <GuidebooksGrid
+          grid={appState.party.guidebooks}
+          editable={props.editable}
+          removeGuidebook={removeGuidebook}
+          updateObject={receiveGuidebookFromSearch}
+        />
+      )}
     </ExtraContainer>
   )
 
