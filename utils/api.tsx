@@ -146,7 +146,13 @@ class Api {
     const resourceUrl = `${this.url}/favorites`
     return axios.delete(resourceUrl, { data: body, headers: params })
   }
-  
+
+  updateQuickSummon({ id, value, params }: { id: string, value: boolean, params?: {} }) {
+    const body = { summon: { id: id, quick_summon: value } }
+    const resourceUrl = `${this.url}/summons/update_quick_summon`
+    return axios.post(resourceUrl, body, { headers: params })
+  }
+
   updateUncap(resource: 'character'|'weapon'|'summon', id: string, value: number) {
     const pluralized = resource + 's'
     const resourceUrl = `${this.url}/${pluralized}/update_uncap`
