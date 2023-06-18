@@ -3,50 +3,60 @@ import Input from '~components/common/Input'
 import TableField from '~components/common/TableField'
 
 import './index.scss'
+import classNames from 'classnames'
 
-interface Props {
-  name: string
+interface Props
+  extends React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  > {
   label: string
   description?: string
-  placeholder?: string
-  value?: number
-  className?: string
   imageAlt?: string
   imageClass?: string
   imageSrc?: string[]
-  onValueChange: (value: number) => void
+  onValueChange: (value?: string) => void
 }
 
-const InputTableField = (props: Props) => {
-  const [value, setValue] = useState(0)
+const InputTableField = ({
+  label,
+  description,
+  imageAlt,
+  imageClass,
+  imageSrc,
+  ...props
+}: Props) => {
+  const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
-    if (props.value) setValue(props.value)
+    if (props.value) setInputValue(`${props.value}`)
   }, [props.value])
 
   useEffect(() => {
-    props.onValueChange(value)
-  }, [value])
+    props.onValueChange(inputValue)
+  }, [inputValue])
 
   function onInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setValue(parseInt(event.currentTarget?.value))
+    setInputValue(`${parseInt(event.currentTarget?.value)}`)
   }
 
   return (
     <TableField
-      name={props.name}
-      className="InputField"
-      imageAlt={props.imageAlt}
-      imageClass={props.imageClass}
-      imageSrc={props.imageSrc}
-      label={props.label}
+      {...props}
+      name={props.name || ''}
+      className={classNames({ InputField: true }, props.className)}
+      imageAlt={imageAlt}
+      imageClass={imageClass}
+      imageSrc={imageSrc}
+      label={label}
     >
       <Input
         className="Bound"
         placeholder={props.placeholder}
-        type="number"
-        value={value ? `${value}` : ''}
+        value={inputValue ? `${inputValue}` : ''}
         step={1}
+        tabIndex={props.tabIndex}
+        type={props.type}
         onChange={onInputChange}
       />
     </TableField>
