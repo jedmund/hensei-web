@@ -14,7 +14,10 @@ interface Props
 }
 
 const DurationInput = React.forwardRef<HTMLInputElement, Props>(
-  function DurationInput({ className, value, onValueChange }, forwardedRef) {
+  function DurationInput(
+    { className, value, onValueChange, ...props },
+    forwardedRef
+  ) {
     // State
     const [duration, setDuration] = useState('')
     const [minutesSelected, setMinutesSelected] = useState(false)
@@ -191,6 +194,7 @@ const DurationInput = React.forwardRef<HTMLInputElement, Props>(
           onKeyDown={handleKeyDown}
           placeholder="mm"
           size={3}
+          tabIndex={props.tabIndex}
         />
         <span>:</span>
         <Input
@@ -208,6 +212,7 @@ const DurationInput = React.forwardRef<HTMLInputElement, Props>(
           onKeyDown={handleKeyDown}
           placeholder="ss"
           size={2}
+          tabIndex={props.tabIndex ? props.tabIndex + 1 : undefined}
         />
       </div>
     )
