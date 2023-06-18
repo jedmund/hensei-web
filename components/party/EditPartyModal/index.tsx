@@ -270,10 +270,11 @@ const EditPartyModal = ({ party, updateCallback, ...props }: Props) => {
           placeholder={
             'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 3 first\nGood luck with RNG!'
           }
-          value={party?.description}
           onChange={handleTextAreaChanged}
           ref={descriptionInput}
-        />
+        >
+          {party ? party.description : ''}
+        </textarea>
       </div>
     )
   }
