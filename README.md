@@ -57,15 +57,21 @@ root
 ├─ chara-main/
 ├─ chara-grid/
 ├─ chara-square/
+├─ guidebooks/
 ├─ jobs/
 ├─ job-icons/
+├─ job-portraits/
 ├─ job-skills/
+├─ labels/
 ├─ mastery/
+├─ placeholders/
+├─ raids/
 ├─ summon-main/
 ├─ summon-grid/
 ├─ summon-square/
 ├─ updates/
 ├─ weapon-main/
 ├─ weapon-grid/
+├─ weapon-keys/
 ├─ weapon-square/
 ```
