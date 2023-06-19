@@ -93,7 +93,7 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
         )}
       </RadixSelect.Trigger>
 
-      <RadixSelect.Portal className="Select">
+      <RadixSelect.Portal className="SelectPortal">
         <>
           <Overlay
             open={open}
@@ -101,7 +101,7 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
           />
 
           <RadixSelect.Content
-            className="Select"
+            className={classNames({ Select: true }, props.className)}
             position="popper"
             sideOffset={6}
             onCloseAutoFocus={onCloseAutoFocus}
