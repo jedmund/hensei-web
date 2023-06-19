@@ -259,6 +259,23 @@ const CharacterGrid = (props: Props) => {
     }
   }
 
+  function removeJobSkill(position: number) {
+    if (party.id && props.editable) {
+      api
+        .removeJobSkill({ partyId: party.id, position: position })
+        .then((response) => {
+          // Update the current skills
+          const newSkills = response.data.job_skills
+          setJobSkills(newSkills)
+          appState.party.jobSkills = newSkills
+        })
+        .catch((error) => {
+          const data = error.response.data
+          console.log(data)
+        })
+    }
+  }
+
   async function saveAccessory(accessory: JobAccessory) {
     const payload = {
       party: {
@@ -506,6 +523,7 @@ const CharacterGrid = (props: Props) => {
           editable={props.editable}
           saveJob={saveJob}
           saveSkill={saveJobSkill}
+          removeSkill={removeJobSkill}
           saveAccessory={saveAccessory}
         />
         <CharacterConflictModal

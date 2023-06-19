@@ -124,7 +124,9 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
         onClick={openJobSelect}
         onOpenChange={() => setOpen(!open)}
         onValueChange={handleChange}
+        className="Job"
         triggerClass="Job"
+        overlayVisible={false}
       >
         <SelectItem key={-1} value="no-job">
           {t('no_job')}

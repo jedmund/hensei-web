@@ -105,6 +105,11 @@ class Api {
     return axios.put(resourceUrl, params)
   }
 
+  removeJobSkill({ partyId, position, params }: { partyId: string, position: number, params?: {} }) {
+    const resourceUrl = `${this.url}/parties/${partyId}/job_skills`
+    return axios.delete(resourceUrl, { data: { party: { skill_position: position } }, headers: params })
+  }
+
   allJobSkills(params?: {}) {
     const resourceUrl = `${this.url}/jobs/skills`
     return axios.get(resourceUrl, params)
