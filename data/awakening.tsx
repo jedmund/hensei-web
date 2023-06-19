@@ -7,4 +7,5 @@ export const NO_AWAKENING: Awakening = {
     jp: '覚醒なし',
   },
   slug: 'no-awakening',
+  order: 0,
 }
