@@ -23,6 +23,11 @@
     &:hover {
       background-color: var(--input-bound-bg-hover);
     }
+
+    &::placeholder {
+      /* Chrome, Firefox, Opera, Safari 10.1+ */
+      color: var(--text-tertiary) !important;
+    }
   }
 
   &.AlignRight {
@@ -43,7 +48,7 @@
   width: 0;
 }
 
-::placeholder {
+.Input::placeholder {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: var(--text-secondary) !important;
   opacity: 1; /* Firefox */

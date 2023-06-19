@@ -1,0 +1,9 @@
+.TableField.SwitchTableField {
+  &.Extra .Switch[data-state='checked'] {
+    background: var(--extra-purple-secondary);
+  }
+
+  .Right {
+    justify-content: end;
+  }
+}

@@ -32,7 +32,7 @@ const TableField = (props: Props) => {
       <div className="Left">
         <div className="Info">
           <h3>{props.label}</h3>
-          <p>{props.description}</p>
+          {props.description && <p>{props.description}</p>}
         </div>
         <div className="Image">{image()}</div>
       </div>

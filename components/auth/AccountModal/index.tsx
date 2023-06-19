@@ -330,10 +330,13 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
               {themeField()}
             </div>
             <div className="DialogFooter" ref={footerRef}>
-              <Button
-                contained={true}
-                text={t('modals.settings.buttons.confirm')}
-              />
+              <div className="Left"></div>
+              <div className="Right">
+                <Button
+                  contained={true}
+                  text={t('modals.settings.buttons.confirm')}
+                />
+              </div>
             </div>
           </form>
         </DialogContent>

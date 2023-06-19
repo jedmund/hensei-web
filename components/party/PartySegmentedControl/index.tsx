@@ -1,22 +1,29 @@
 import React from 'react'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
+import classNames from 'classnames'
 
 import { appState } from '~utils/appState'
+import { accountState } from '~utils/accountState'
 
 import SegmentedControl from '~components/common/SegmentedControl'
-import Segment from '~components/common/Segment'
-import ToggleSwitch from '~components/common/ToggleSwitch'
+import RepSegment from '~components/reps/RepSegment'
+import CharacterRep from '~components/reps/CharacterRep'
+import WeaponRep from '~components/reps/WeaponRep'
+import SummonRep from '~components/reps/SummonRep'
 
 import { GridType } from '~utils/enums'
 
 import './index.scss'
-import classNames from 'classnames'
+
+// Fix for valtio readonly array
+declare module 'valtio' {
+  function useSnapshot<T extends object>(p: T): T
+}
 
 interface Props {
   selectedTab: GridType
   onClick: (event: React.ChangeEvent<HTMLInputElement>) => void
-  onCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const PartySegmentedControl = (props: Props) => {
@@ -25,7 +32,7 @@ const PartySegmentedControl = (props: Props) => {
 
   const { party, grid } = useSnapshot(appState)
 
-  function getElement() {
+  const getElement = () => {
     let element: number = 0
     if (party.element == 0 && grid.weapons.mainWeapon)
       element = grid.weapons.mainWeapon.element
@@ -47,17 +54,56 @@ const PartySegmentedControl = (props: Props) => {
     }
   }
 
-  const extraToggle = (
-    <div className="ExtraSwitch">
-      <span className="Text">Extra</span>
-      <ToggleSwitch
-        name="ExtraSwitch"
-        editable={party.editable}
-        checked={party.extra}
-        onChange={props.onCheckboxChange}
-      />
-    </div>
-  )
+  const characterSegment = () => {
+    return (
+      <RepSegment
+        controlGroup="grid"
+        inputName="characters"
+        name={t('party.segmented_control.characters')}
+        selected={props.selectedTab === GridType.Character}
+        onClick={props.onClick}
+      >
+        <CharacterRep
+          job={party.job}
+          element={party.element}
+          gender={
+            accountState.account.user ? accountState.account.user.gender : 0
+          }
+          grid={grid.characters}
+        />
+      </RepSegment>
+    )
+  }
+
+  const weaponSegment = () => {
+    {
+      return (
+        <RepSegment
+          controlGroup="grid"
+          inputName="weapons"
+          name="Weapons"
+          selected={props.selectedTab === GridType.Weapon}
+          onClick={props.onClick}
+        >
+          <WeaponRep grid={grid.weapons} />
+        </RepSegment>
+      )
+    }
+  }
+
+  const summonSegment = () => {
+    return (
+      <RepSegment
+        controlGroup="grid"
+        inputName="summons"
+        name="Summons"
+        selected={props.selectedTab === GridType.Summon}
+        onClick={props.onClick}
+      >
+        <SummonRep grid={grid.summons} />
+      </RepSegment>
+    )
+  }
 
   return (
     <div
@@ -67,39 +113,10 @@ const PartySegmentedControl = (props: Props) => {
       })}
     >
       <SegmentedControl elementClass={getElement()}>
-        <Segment
-          groupName="grid"
-          name="characters"
-          selected={props.selectedTab == GridType.Character}
-          onClick={props.onClick}
-        >
-          {t('party.segmented_control.characters')}
-        </Segment>
-
-        <Segment
-          groupName="grid"
-          name="weapons"
-          selected={props.selectedTab == GridType.Weapon}
-          onClick={props.onClick}
-        >
-          {t('party.segmented_control.weapons')}
-        </Segment>
-
-        <Segment
-          groupName="grid"
-          name="summons"
-          selected={props.selectedTab == GridType.Summon}
-          onClick={props.onClick}
-        >
-          {t('party.segmented_control.summons')}
-        </Segment>
+        {characterSegment()}
+        {weaponSegment()}
+        {summonSegment()}
       </SegmentedControl>
-
-      {(() => {
-        if (party.editable && props.selectedTab == GridType.Weapon) {
-          return extraToggle
-        }
-      })()}
     </div>
   )
 }

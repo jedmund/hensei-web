@@ -1,0 +1,240 @@
+.DetailsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-2x;
+  margin: $unit-4x auto 0 auto;
+  max-width: $grid-width;
+
+  @include breakpoint(phone) {
+    .Button:not(.IconButton) {
+      justify-content: center;
+      width: 100%;
+
+      .Text {
+        width: auto;
+      }
+    }
+  }
+
+  .PartyDetails {
+    box-sizing: border-box;
+    display: block;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    margin: 0 auto $unit-2x;
+    max-width: $unit * 94;
+    overflow: hidden;
+    width: 100%;
+
+    @include breakpoint(phone) {
+      padding: 0 $unit;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    p {
+      font-size: $font-regular;
+      line-height: $font-regular * 1.2;
+      white-space: pre-line;
+    }
+
+    .Tokens {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: $unit;
+      margin-bottom: $unit-2x;
+    }
+
+    .YoutubeWrapper {
+      background-color: var(--card-bg);
+      border-radius: $card-corner;
+      margin: $unit 0;
+      position: relative;
+      display: block;
+      contain: content;
+      background-position: center center;
+      background-size: cover;
+      cursor: pointer;
+      width: 60%;
+      height: 60%;
+
+      @include breakpoint(tablet) {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* gradient */
+      &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADGCAYAAAAT+OqFAAAAdklEQVQoz42QQQ7AIAgEF/T/D+kbq/RWAlnQyyazA4aoAB4FsBSA/bFjuF1EOL7VbrIrBuusmrt4ZZORfb6ehbWdnRHEIiITaEUKa5EJqUakRSaEYBJSCY2dEstQY7AuxahwXFrvZmWl2rh4JZ07z9dLtesfNj5q0FU3A5ObbwAAAABJRU5ErkJggg==);
+        background-position: top;
+        background-repeat: repeat-x;
+        height: 60px;
+        padding-bottom: 50px;
+        width: 100%;
+        transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+      }
+
+      /* responsive iframe with a 16:9 aspect ratio
+           thanks https://css-tricks.com/responsive-iframes/
+        */
+      &::after {
+        content: '';
+        display: block;
+        padding-bottom: calc(100% / (16 / 9));
+      }
+
+      &:hover > .PlayerButton {
+        opacity: 1;
+      }
+
+      & > iframe {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      /* Play button */
+      & > .PlayerButton {
+        background: none;
+        border: none;
+        background-image: url('/icons/youtube.svg');
+        width: 68px;
+        height: 68px;
+        opacity: 0.8;
+        transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+      }
+
+      & > .PlayerButton,
+      & > .PlayerButton:before {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
+
+      /* Post-click styles */
+      &.lyt-activated {
+        cursor: unset;
+      }
+      &.lyt-activated::before,
+      &.lyt-activated > .PlayerButton {
+        opacity: 0;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .PartyInfo {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    gap: $unit;
+    margin: 0 auto;
+    max-width: $unit * 94;
+    width: 100%;
+
+    @include breakpoint(phone) {
+      flex-direction: column;
+      gap: $unit;
+      padding: 0 $unit;
+    }
+
+    & > .Right {
+      display: flex;
+      gap: $unit-half;
+    }
+
+    & > .Left {
+      flex-grow: 1;
+
+      .Header {
+        align-items: center;
+        display: flex;
+        gap: $unit;
+        margin-bottom: $unit;
+
+        h1 {
+          font-size: $font-xlarge;
+          font-weight: $normal;
+          text-align: left;
+          color: var(--text-primary);
+
+          &.empty {
+            color: var(--text-secondary);
+          }
+        }
+      }
+
+      .attribution {
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+
+        & > div {
+          align-items: center;
+          display: inline-flex;
+          font-size: $font-small;
+          height: 26px;
+        }
+
+        time {
+          font-size: $font-small;
+        }
+
+        a:visited:not(.fire):not(.water):not(.wind):not(.earth):not(.dark):not(
+            .light
+          ) {
+          color: var(--text-primary);
+        }
+
+        a:hover:not(.fire):not(.water):not(.wind):not(.earth):not(.dark):not(
+            .light
+          ) {
+          color: $blue;
+        }
+
+        & > *:not(:last-child):after {
+          content: ' · ';
+          margin: 0 calc($unit / 2);
+        }
+      }
+    }
+
+    .user {
+      align-items: center;
+      display: inline-flex;
+      gap: calc($unit / 2);
+      margin-top: 1px;
+
+      img,
+      .no-user {
+        $diameter: 24px;
+
+        border-radius: calc($diameter / 2);
+        height: $diameter;
+        width: $diameter;
+      }
+
+      img.gran {
+        background-color: #cee7fe;
+      }
+
+      img.djeeta {
+        background-color: #ffe1fe;
+      }
+
+      .no-user {
+        background: $grey-80;
+      }
+    }
+  }
+}

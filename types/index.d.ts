@@ -1,4 +1,9 @@
-export type SearchableObject = Character | Weapon | Summon | JobSkill
+export type SearchableObject =
+  | Character
+  | Weapon
+  | Summon
+  | JobSkill
+  | Guidebook
 export type SearchableObjectArray = (Character | Weapon | Summon | JobSkill)[]
 export type JobSkillObject = {
   [key: number]: JobSkill | undefined
@@ -21,9 +26,10 @@ export type PaginationObject = {
 }
 
 export type DetailsObject = {
-  [key: string]: boolean | number | string | Raid | undefined
+  [key: string]: boolean | number | string | string[] | Raid | undefined
   fullAuto?: boolean
   autoGuard?: boolean
+  autoSummon?: boolean
   chargeAttack?: boolean
   clearTime?: number
   buttonCount?: number
@@ -34,6 +40,7 @@ export type DetailsObject = {
   raid?: Raid
   job?: Job
   extra?: boolean
+  guidebooks?: string[]
 }
 
 export type ExtendedMastery = {
@@ -56,10 +63,8 @@ interface GridCharacterObject {
     ring3: ExtendedMastery
     ring4: ExtendedMastery
     earring: ExtendedMastery
-    awakening: {
-      type?: number
-      level?: number
-    }
+    awakening_id?: string
+    awakening_level?: number
     transcendence_step: number
     perpetuity: boolean
   }
@@ -77,8 +82,7 @@ interface PageContextObj {
   party?: Party
   jobs?: Job[]
   jobSkills?: JobSkill[]
-  raids: Raid[]
-  sortedRaids: Raid[][]
+  raidGroups: RaidGroup[]
   weaponKeys?: GroupedWeaponKeys
   pagination?: PaginationObject
   meta?: { [key: string]: string }

@@ -9,7 +9,6 @@ import PartyHead from '~components/party/PartyHead'
 import api from '~utils/api'
 import elementEmoji from '~utils/elementEmoji'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
-import organizeRaids from '~utils/organizeRaids'
 import { setHeaders } from '~utils/userToken'
 import { appState } from '~utils/appState'
 import { groupWeaponKeys } from '~utils/groupWeaponKeys'
@@ -57,7 +56,7 @@ const PartyRoute: React.FC<Props> = ({
   // Set the initial data from props
   useEffect(() => {
     if (context && !error) {
-      appState.raids = context.raids
+      appState.raidGroups = context.raidGroups
       appState.jobs = context.jobs ? context.jobs : []
       appState.jobSkills = context.jobSkills ? context.jobSkills : []
       appState.weaponKeys = context.weaponKeys
@@ -85,11 +84,7 @@ const PartyRoute: React.FC<Props> = ({
     return (
       <React.Fragment key={router.asPath}>
         {pageHead()}
-        <Party
-          team={context.party}
-          raids={context.sortedRaids}
-          selectedTab={selectedTab}
-        />
+        <Party team={context.party} selectedTab={selectedTab} />
       </React.Fragment>
     )
   } else return pageError()
@@ -115,9 +110,9 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   try {
     // Fetch and organize raids
-    let { raids, sortedRaids } = await api.endpoints.raids
-      .getAll()
-      .then((response) => organizeRaids(response.data))
+    let raidGroups: RaidGroup[] = await api
+      .raidGroups()
+      .then((response) => response.data)
 
     // Fetch jobs and job skills
     let jobs = await api.endpoints.jobs
@@ -148,8 +143,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       party: party,
       jobs: jobs,
       jobSkills: jobSkills,
-      raids: raids,
-      sortedRaids: sortedRaids,
+      raidGroups: raidGroups,
       weaponKeys: weaponKeys,
       meta: {
         element: elementEmoji(party),

@@ -105,6 +105,11 @@ class Api {
     return axios.put(resourceUrl, params)
   }
 
+  removeJobSkill({ partyId, position, params }: { partyId: string, position: number, params?: {} }) {
+    const resourceUrl = `${this.url}/parties/${partyId}/job_skills`
+    return axios.delete(resourceUrl, { data: { party: { skill_position: position } }, headers: params })
+  }
+
   allJobSkills(params?: {}) {
     const resourceUrl = `${this.url}/jobs/skills`
     return axios.get(resourceUrl, params)
@@ -117,6 +122,11 @@ class Api {
 
   jobAccessoriesForJob(jobId: string, params?: {}) {
     const resourceUrl = `${this.url}/jobs/${jobId}/accessories`
+    return axios.get(resourceUrl, params)
+  }
+
+  raidGroups(params?: {}) {
+    const resourceUrl = `${this.url}/raids/groups`
     return axios.get(resourceUrl, params)
   }
 
@@ -141,7 +151,13 @@ class Api {
     const resourceUrl = `${this.url}/favorites`
     return axios.delete(resourceUrl, { data: body, headers: params })
   }
-  
+
+  updateQuickSummon({ id, value, params }: { id: string, value: boolean, params?: {} }) {
+    const body = { summon: { id: id, quick_summon: value } }
+    const resourceUrl = `${this.url}/summons/update_quick_summon`
+    return axios.post(resourceUrl, body, { headers: params })
+  }
+
   updateUncap(resource: 'character'|'weapon'|'summon', id: string, value: number) {
     const pluralized = resource + 's'
     const resourceUrl = `${this.url}/${pluralized}/update_uncap`

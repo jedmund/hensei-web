@@ -1,7 +1,7 @@
 .Button {
   align-items: center;
   background: var(--button-bg);
-  border: none;
+  border: 2px solid transparent;
   border-radius: $input-corner;
   color: var(--button-text);
   display: inline-flex;
@@ -163,6 +163,15 @@
 
     &:hover {
       color: darken($error, 10);
+    }
+  }
+
+  &.Destructive {
+    background: $error;
+    color: white;
+
+    &:hover {
+      background: darken($error, 15);
     }
   }
 

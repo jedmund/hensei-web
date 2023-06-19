@@ -1,13 +1,7 @@
 // Core dependencies
-import React, {
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
-import { AxiosResponse } from 'axios'
 import classNames from 'classnames'
 
 // UI dependencies
@@ -20,14 +14,10 @@ import {
 import DialogContent from '~components/common/DialogContent'
 import Button from '~components/common/Button'
 import SelectWithInput from '~components/common/SelectWithInput'
-import AwakeningSelect from '~components/mastery/AwakeningSelect'
 import RingSelect from '~components/mastery/RingSelect'
 import Switch from '~components/common/Switch'
 
 // Utilities
-import api from '~utils/api'
-import { appState } from '~utils/appState'
-import { retrieveCookies } from '~utils/retrieveCookies'
 import elementalizeAetherialMastery from '~utils/elementalizeAetherialMastery'
 
 // Data
@@ -35,6 +25,8 @@ const emptyExtendedMastery: ExtendedMastery = {
   modifier: 0,
   strength: 0,
 }
+
+const MAX_AWAKENING_LEVEL = 9
 
 // Styles and icons
 import CrossIcon from '~public/icons/Cross.svg'
@@ -46,6 +38,7 @@ import {
   ExtendedMastery,
   GridCharacterObject,
 } from '~types'
+import AwakeningSelectWithInput from '~components/mastery/AwakeningSelectWithInput'
 
 interface Props {
   gridCharacter: GridCharacter
@@ -65,9 +58,6 @@ const CharacterModal = ({
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
   const { t } = useTranslation('common')
-
-  // Cookies
-  const cookies = retrieveCookies()
 
   // UI state
   const [open, setOpen] = useState(false)
@@ -103,8 +93,8 @@ const CharacterModal = ({
   const [earring, setEarring] = useState<ExtendedMastery>(emptyExtendedMastery)
 
   // Character properties: Awakening
-  const [awakeningType, setAwakeningType] = useState(0)
-  const [awakeningLevel, setAwakeningLevel] = useState(0)
+  const [awakening, setAwakening] = useState<Awakening>()
+  const [awakeningLevel, setAwakeningLevel] = useState(1)
 
   // Character properties: Transcendence
   const [transcendenceStep, setTranscendenceStep] = useState(0)
@@ -118,7 +108,7 @@ const CharacterModal = ({
       })
     }
 
-    setAwakeningType(gridCharacter.awakening.type)
+    setAwakening(gridCharacter.awakening.type)
     setAwakeningLevel(gridCharacter.awakening.level)
     setPerpetuity(gridCharacter.perpetuity)
   }, [gridCharacter])
@@ -147,13 +137,14 @@ const CharacterModal = ({
           modifier: earring.modifier,
           strength: earring.strength,
         },
-        awakening: {
-          type: awakeningType,
-          level: awakeningLevel,
-        },
         transcendence_step: transcendenceStep,
         perpetuity: perpetuity,
       },
+    }
+
+    if (awakening) {
+      object.character.awakening_id = awakening.id
+      object.character.awakening_level = awakeningLevel
     }
 
     return object
@@ -191,8 +182,8 @@ const CharacterModal = ({
     if (onOpenChange) onOpenChange(false)
   }
 
-  function receiveAwakeningValues(type: number, level: number) {
-    setAwakeningType(type)
+  function receiveAwakeningValues(id: string, level: number) {
+    setAwakening(gridCharacter.object.awakenings.find((a) => a.id === id))
     setAwakeningLevel(level)
   }
 
@@ -234,10 +225,16 @@ const CharacterModal = ({
     return (
       <section>
         <h3>{t('modals.characters.subtitles.awakening')}</h3>
-        <AwakeningSelect
-          object="character"
-          type={awakeningType}
-          level={awakeningLevel}
+        <AwakeningSelectWithInput
+          dataSet={gridCharacter.object.awakenings}
+          awakening={gridCharacter.awakening.type}
+          level={gridCharacter.awakening.level}
+          defaultAwakening={
+            gridCharacter.object.awakenings.find(
+              (a) => a.slug === 'character-balanced'
+            )!
+          }
+          maxLevel={MAX_AWAKENING_LEVEL}
           sendValidity={receiveValidity}
           sendValues={receiveAwakeningValues}
         />

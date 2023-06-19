@@ -12,7 +12,6 @@ import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
 import UncapIndicator from '~components/uncap/UncapIndicator'
 
 import ax from '~data/ax'
-import { weaponAwakening } from '~data/awakening'
 
 import './index.scss'
 
@@ -146,11 +145,8 @@ const WeaponHovercard = (props: Props) => {
 
   const awakeningSection = () => {
     const gridAwakening = props.gridWeapon.awakening
-    const awakening = weaponAwakening.find(
-      (awakening) => awakening.id === gridAwakening?.type
-    )
 
-    if (gridAwakening && awakening) {
+    if (gridAwakening) {
       return (
         <section className="awakening">
           <h5 className={tintElement}>
@@ -158,11 +154,11 @@ const WeaponHovercard = (props: Props) => {
           </h5>
           <div>
             <img
-              alt={awakening.name[locale]}
-              src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/weapon_${gridAwakening.type}.png`}
+              alt={gridAwakening.type.name[locale]}
+              src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${gridAwakening.type.slug}.png`}
             />
             <span>
-              <strong>{`${awakening.name[locale]}`}</strong>&nbsp;
+              <strong>{`${gridAwakening.type.name[locale]}`}</strong>&nbsp;
               {`Lv${gridAwakening.level}`}
             </span>
           </div>

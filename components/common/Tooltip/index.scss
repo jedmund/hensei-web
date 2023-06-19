@@ -3,6 +3,7 @@
   animation: scaleIn $duration-zoom ease-out;
   background: var(--dialog-bg);
   border-radius: $input-corner;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
   color: var(--text-tertiary);
   font-size: $font-tiny;
   font-weight: $medium;

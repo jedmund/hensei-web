@@ -70,4 +70,8 @@
   .SummonUnit .SummonImage .icon svg {
     fill: var(--subaura-orange-secondary);
   }
+
+  .SummonUnit .QuickSummon {
+    display: none;
+  }
 }

@@ -5,3 +5,11 @@
   gap: 8px;
   line-height: 34px;
 }
+
+nav.RepNavigation {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  margin-bottom: $unit-4x;
+  width: 100%;
+}

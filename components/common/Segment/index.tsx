@@ -6,11 +6,20 @@ interface Props {
   groupName: string
   name: string
   selected: boolean
+  tabIndex?: number
   children: string
   onClick: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const Segment: React.FC<Props> = (props: Props) => {
+  // Selects the segment when the user presses the spacebar
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLLabelElement>) => {
+    if (event.key === ' ') {
+      event.preventDefault()
+      event.currentTarget.click()
+    }
+  }
+
   return (
     <div className="Segment">
       <input
@@ -21,7 +30,13 @@ const Segment: React.FC<Props> = (props: Props) => {
         checked={props.selected}
         onChange={props.onClick}
       />
-      <label htmlFor={props.name}>{props.children}</label>
+      <label
+        htmlFor={props.name}
+        tabIndex={props.tabIndex}
+        onKeyDown={handleKeyDown}
+      >
+        {props.children}
+      </label>
     </div>
   )
 }

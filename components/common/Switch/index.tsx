@@ -36,6 +36,7 @@ const Switch = (props: Props) => {
       disabled={disabled}
       required={required}
       value={value}
+      tabIndex={props.tabIndex}
       onCheckedChange={onCheckedChange}
     >
       <RadixSwitch.Thumb className={thumbClasses} />

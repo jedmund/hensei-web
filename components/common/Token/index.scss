@@ -2,11 +2,11 @@
   background: var(--input-bg);
   border-radius: 99px;
   display: inline-flex;
-  font-size: $font-small;
-  font-weight: $medium;
+  font-size: $font-tiny;
+  font-weight: $bold;
   min-width: 3rem;
   text-align: center;
-  padding: $unit ($unit * 1.5);
+  padding: $unit-three-fourth ($unit * 1.5);
   user-select: none;
 
   &.ChargeAttack.On {

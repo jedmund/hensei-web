@@ -6,10 +6,13 @@ import { useTranslation } from 'next-i18next'
 
 import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
+import classNames from 'classnames'
 
 import Alert from '~components/common/Alert'
 import WeaponUnit from '~components/weapon/WeaponUnit'
-import ExtraWeapons from '~components/weapon/ExtraWeapons'
+import ExtraWeaponsGrid from '~components/extra/ExtraWeaponsGrid'
+import ExtraContainer from '~components/extra/ExtraContainer'
+import GuidebooksGrid from '~components/extra/GuidebooksGrid'
 import WeaponConflictModal from '~components/weapon/WeaponConflictModal'
 
 import api from '~utils/api'
@@ -24,8 +27,11 @@ interface Props {
   new: boolean
   editable: boolean
   weapons?: GridWeapon[]
+  guidebooks?: GuidebookList
   createParty: (details: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
+  updateExtra: (enabled: boolean) => void
+  updateGuidebook: (book: Guidebook | undefined, position: number) => void
 }
 
 const WeaponGrid = (props: Props) => {
@@ -113,6 +119,13 @@ const WeaponGrid = (props: Props) => {
             }
           })
     }
+  }
+
+  function receiveGuidebookFromSearch(
+    object: SearchableObject,
+    position: number
+  ) {
+    props.updateGuidebook(object as Guidebook, position)
   }
 
   async function handleWeaponResponse(data: any) {
@@ -236,6 +249,10 @@ const WeaponGrid = (props: Props) => {
     }
   }
 
+  async function removeGuidebook(position: number) {
+    props.updateGuidebook(undefined, position)
+  }
+
   // Methods: Updating uncap level
   // Note: Saves, but debouncing is not working properly
   async function saveUncap(id: string, position: number, uncapLevel: number) {
@@ -318,6 +335,12 @@ const WeaponGrid = (props: Props) => {
     setPreviousUncapValues(newPreviousValues)
   }
 
+  // Methods: Convenience
+  const displayExtraContainer =
+    props.editable ||
+    appState.party.extra ||
+    Object.values(appState.party.guidebooks).every((el) => el === undefined)
+
   // Render: JSX components
   const mainhandElement = (
     <WeaponUnit
@@ -333,8 +356,12 @@ const WeaponGrid = (props: Props) => {
   )
 
   const weaponGridElement = Array.from(Array(numWeapons)).map((x, i) => {
+    const itemClasses = classNames({
+      Empty: appState.grid.weapons.allWeapons[i] === undefined,
+    })
+
     return (
-      <li key={`grid_unit_${i}`}>
+      <li className={itemClasses} key={`grid_unit_${i}`}>
         <WeaponUnit
           gridWeapon={appState.grid.weapons.allWeapons[i]}
           editable={props.editable}
@@ -348,16 +375,32 @@ const WeaponGrid = (props: Props) => {
     )
   })
 
-  const extraGridElement = (
-    <ExtraWeapons
-      grid={appState.grid.weapons.allWeapons}
-      editable={props.editable}
-      offset={numWeapons}
-      removeWeapon={removeWeapon}
-      updateObject={receiveWeaponFromSearch}
-      updateUncap={initiateUncapUpdate}
-    />
-  )
+  const extraElement = () => {
+    if (appState.party.raid && appState.party.raid.group.extra) {
+      return (
+        <ExtraContainer>
+          {appState.party.raid && appState.party.raid.group.extra && (
+            <ExtraWeaponsGrid
+              grid={appState.grid.weapons.allWeapons}
+              editable={props.editable}
+              offset={numWeapons}
+              removeWeapon={removeWeapon}
+              updateObject={receiveWeaponFromSearch}
+              updateUncap={initiateUncapUpdate}
+            />
+          )}
+          {appState.party.raid && appState.party.raid.group.guidebooks && (
+            <GuidebooksGrid
+              grid={appState.party.guidebooks}
+              editable={props.editable}
+              removeGuidebook={removeGuidebook}
+              updateObject={receiveGuidebookFromSearch}
+            />
+          )}
+        </ExtraContainer>
+      )
+    }
+  }
 
   const conflictModal = () => {
     return incoming && conflicts ? (
@@ -409,9 +452,7 @@ const WeaponGrid = (props: Props) => {
         <ul id="Weapons">{weaponGridElement}</ul>
       </div>
 
-      {(() => {
-        return party.extra ? extraGridElement : ''
-      })()}
+      {displayExtraContainer ? extraElement() : ''}
     </div>
   )
 }

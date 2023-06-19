@@ -19,7 +19,6 @@ import Button from '~components/common/Button'
 import type { SearchableObject } from '~types'
 
 import ax from '~data/ax'
-import { weaponAwakening } from '~data/awakening'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
@@ -88,7 +87,7 @@ const WeaponUnit = ({
 
     return (
       weapon.ax ||
-      weapon.awakening ||
+      weapon.awakenings ||
       (weapon.series && [2, 3, 17, 22, 24].includes(weapon.series))
     )
   }
@@ -190,21 +189,16 @@ const WeaponUnit = ({
   function awakeningImage() {
     if (
       gridWeapon &&
-      gridWeapon.object.awakening &&
+      gridWeapon.object.awakenings &&
       gridWeapon.awakening &&
-      gridWeapon.awakening.type > 0 &&
-      gridWeapon.awakening.type != null
+      gridWeapon.awakening.type
     ) {
-      const awakening = weaponAwakening.find(
-        (awakening) => awakening.id === gridWeapon?.awakening?.type
-      )
-      const name = awakening?.name[locale]
-
+      const awakening = gridWeapon.awakening
       return (
         <img
-          alt={`${name} Lv${gridWeapon.awakening.level}`}
+          alt={`${awakening.type.name[locale]} Lv${gridWeapon.awakening.level}`}
           className="Awakening"
-          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/weapon_${gridWeapon.awakening.type}.png`}
+          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${gridWeapon.awakening.type.slug}.png`}
         />
       )
     }

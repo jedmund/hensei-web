@@ -55,6 +55,7 @@ interface AppState {
     turnCount?: number
     chainCount?: number
     extra: boolean
+    guidebooks: GuidebookList
     user: User | undefined
     favorited: boolean
     remix: boolean
@@ -82,7 +83,7 @@ interface AppState {
       summons: Summon[]
     }
   }
-  raids: Raid[]
+  raidGroups: RaidGroup[]
   jobs: Job[]
   jobSkills: JobSkill[]
   weaponKeys: GroupedWeaponKeys
@@ -116,6 +117,11 @@ export const initialAppState: AppState = {
     chainCount: undefined,
     element: 0,
     extra: false,
+    guidebooks: {
+      0: undefined,
+      1: undefined,
+      2: undefined,
+    },
     user: undefined,
     favorited: false,
     remix: false,
@@ -143,7 +149,7 @@ export const initialAppState: AppState = {
       summons: [],
     },
   },
-  raids: [],
+  raidGroups: [],
   jobs: [],
   jobSkills: [],
   weaponKeys: {

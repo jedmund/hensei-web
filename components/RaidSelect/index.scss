@@ -1,0 +1,22 @@
+.Raid.Select {
+  min-width: 420px;
+
+  .Top {
+    display: flex;
+    flex-direction: column;
+    gap: $unit;
+    padding: $unit 0;
+
+    .SegmentedControl {
+      width: 100%;
+    }
+
+    .Input.Bound {
+      background-color: var(--select-contained-bg);
+
+      &:hover {
+        background-color: var(--select-contained-bg-hover);
+      }
+    }
+  }
+}

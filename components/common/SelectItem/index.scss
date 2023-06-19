@@ -8,7 +8,8 @@
   font-size: $font-regular;
   padding: ($unit * 1.5) $unit-2x;
 
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: var(--option-bg-hover);
     color: var(--text-primary);
     cursor: pointer;

@@ -13,12 +13,13 @@ interface Props
   > {
   headerref?: React.RefObject<HTMLDivElement>
   footerref?: React.RefObject<HTMLDivElement>
+  scrollable?: boolean
   onEscapeKeyDown: (event: KeyboardEvent) => void
   onOpenAutoFocus: (event: Event) => void
 }
 
 const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
-  { children, ...props },
+  { scrollable, children, ...props },
   forwardedRef
 ) {
   // Classes
@@ -131,7 +132,13 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
           onEscapeKeyDown={props.onEscapeKeyDown}
           ref={forwardedRef}
         >
-          <div className="Scrollable" onScroll={handleScroll}>
+          <div
+            className={classNames({
+              Container: true,
+              Scrollable: scrollable,
+            })}
+            onScroll={handleScroll}
+          >
             {children}
           </div>
         </DialogPrimitive.Content>
@@ -140,5 +147,9 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
     </DialogPrimitive.Portal>
   )
 })
+
+DialogContent.defaultProps = {
+  scrollable: true,
+}
 
 export default DialogContent

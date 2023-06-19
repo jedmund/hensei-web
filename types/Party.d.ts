@@ -1,9 +1,16 @@
-type JobSkillObject = {
+type JobSkillList = {
   [key: number]: JobSkill | undefined
   0: JobSkill | undefined
   1: JobSkill | undefined
   2: JobSkill | undefined
   3: JobSkill | undefined
+}
+
+type GuidebookList = {
+  [key: number]: Guidebook | undefined
+  0: Guidebook | undefined
+  1: Guidebook | undefined
+  2: Guidebook | undefined
 }
 
 interface Party {
@@ -13,6 +20,7 @@ interface Party {
   raid: Raid
   full_auto: boolean
   auto_guard: boolean
+  auto_summon: boolean
   charge_attack: boolean
   clear_time: number
   button_count?: number
@@ -22,10 +30,11 @@ interface Party {
   job: Job
   master_level?: number
   ultimate_mastery?: number
-  job_skills: JobSkillObject
+  job_skills: JobSkillList
   accessory: JobAccessory
   shortcode: string
   extra: boolean
+  guidebooks: GuidebookList
   favorited: boolean
   characters: Array<GridCharacter>
   weapons: Array<GridWeapon>

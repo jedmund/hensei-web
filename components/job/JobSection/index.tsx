@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
+import classNames from 'classnames'
 
 import JobDropdown from '~components/job/JobDropdown'
 import JobImage from '~components/job/JobImage'
@@ -22,6 +23,7 @@ interface Props {
   editable: boolean
   saveJob: (job?: Job) => void
   saveSkill: (skill: JobSkill, position: number) => void
+  removeSkill: (position: number) => void
   saveAccessory: (accessory: JobAccessory) => void
 }
 
@@ -47,6 +49,12 @@ const JobSection = (props: Props) => {
 
   // Refs
   const selectRef = React.createRef<HTMLSelectElement>()
+
+  // Classes
+  const skillContainerClasses = classNames({
+    JobSkills: true,
+    editable: props.editable,
+  })
 
   useEffect(() => {
     // Set current job based on ID
@@ -126,9 +134,11 @@ const JobSection = (props: Props) => {
     return (
       <JobSkillItem
         skill={skills[index]}
+        position={index}
         editable={canEditSkill(skills[index])}
         key={`skill-${index}`}
         hasJob={job != undefined && job.id != '-1'}
+        removeJobSkill={props.removeSkill}
       />
     )
   }
@@ -173,10 +183,6 @@ const JobSection = (props: Props) => {
     </div>
   )
 
-  function jobLabel() {
-    return job ? filledJobLabel : emptyJobLabel
-  }
-
   // Render: JSX components
   return (
     <section id="Job">
@@ -209,7 +215,7 @@ const JobSection = (props: Props) => {
           </div>
         )}
 
-        <ul className="JobSkills">
+        <ul className={skillContainerClasses}>
           {[...Array(numSkills)].map((e, i) => (
             <li key={`job-${i}`}>
               {canEditSkill(skills[i])

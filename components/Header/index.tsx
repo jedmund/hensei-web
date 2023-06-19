@@ -31,7 +31,7 @@ import Button from '~components/common/Button'
 import Tooltip from '~components/common/Tooltip'
 import * as Switch from '@radix-ui/react-switch'
 
-import ArrowIcon from '~public/icons/Arrow.svg'
+import ChevronIcon from '~public/icons/Chevron.svg'
 import LinkIcon from '~public/icons/Link.svg'
 import MenuIcon from '~public/icons/Menu.svg'
 import RemixIcon from '~public/icons/Remix.svg'
@@ -296,25 +296,6 @@ const Header = () => {
   }
 
   // Rendering: Buttons
-  const saveButton = () => {
-    return (
-      <Tooltip content={t('tooltips.save')}>
-        <Button
-          leftAccessoryIcon={<SaveIcon />}
-          className={classNames({
-            Save: true,
-            Saved: partySnapshot.favorited,
-          })}
-          blended={true}
-          text={
-            partySnapshot.favorited ? t('buttons.saved') : t('buttons.save')
-          }
-          onClick={toggleFavorite}
-        />
-      </Tooltip>
-    )
-  }
-
   const newButton = () => {
     return (
       <Tooltip content={t('tooltips.new')}>
@@ -324,20 +305,6 @@ const Header = () => {
           blended={true}
           text={t('buttons.new')}
           onClick={newTeam}
-        />
-      </Tooltip>
-    )
-  }
-
-  const remixButton = () => {
-    return (
-      <Tooltip content={t('tooltips.remix')}>
-        <Button
-          leftAccessoryIcon={<RemixIcon />}
-          className="Remix"
-          blended={true}
-          text={t('buttons.remix')}
-          onClick={remixTeam}
         />
       </Tooltip>
     )
@@ -435,15 +402,6 @@ const Header = () => {
   const right = () => {
     return (
       <section>
-        {router.route === '/p/[party]' &&
-        account.user &&
-        (!partySnapshot.user || partySnapshot.user.id !== account.user.id) &&
-        !appState.errorCode
-          ? saveButton()
-          : ''}
-        {router.route === '/p/[party]' && !appState.errorCode
-          ? remixButton()
-          : ''}
         {newButton()}
         <DropdownMenu
           open={rightMenuOpen}
@@ -453,7 +411,7 @@ const Header = () => {
             <Button
               className={classNames({ Active: rightMenuOpen })}
               leftAccessoryIcon={profileImage()}
-              rightAccessoryIcon={<ArrowIcon />}
+              rightAccessoryIcon={<ChevronIcon />}
               rightAccessoryClassName="Arrow"
               onClick={handleRightMenuButtonClicked}
               blended={true}
