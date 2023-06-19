@@ -1,21 +1,43 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
-
+import { Trans, useTranslation } from 'next-i18next'
 import classNames from 'classnames'
-import PlusIcon from '~public/icons/Add.svg'
 
+import Alert from '~components/common/Alert'
+import Button from '~components/common/Button'
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+} from '~components/common/ContextMenu'
+import ContextMenuItem from '~components/common/ContextMenuItem'
+
+import EllipsisIcon from '~public/icons/Ellipsis.svg'
+import PlusIcon from '~public/icons/Add.svg'
 import './index.scss'
 
 // Props
 interface Props extends React.ComponentPropsWithoutRef<'div'> {
   skill?: JobSkill
+  position: number
   editable: boolean
   hasJob: boolean
+  removeJobSkill: (position: number) => void
 }
 
 const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
-  function useJobSkillItem({ ...props }, forwardedRef) {
+  function useJobSkillItem(
+    {
+      skill,
+      position,
+      editable,
+      hasJob,
+      removeJobSkill: sendJobSkillToRemove,
+      ...props
+    },
+    forwardedRef
+  ) {
+    // Set up translation
     const router = useRouter()
     const { t } = useTranslation('common')
     const locale =
@@ -23,31 +45,55 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
         ? router.locale
         : 'en'
 
+    // States: Component
+    const [alertOpen, setAlertOpen] = useState(false)
+    const [contextMenuOpen, setContextMenuOpen] = useState(false)
+
+    // Classes
     const classes = classNames({
       JobSkill: true,
-      editable: props.editable,
+      editable: editable,
     })
 
     const imageClasses = classNames({
-      placeholder: !props.skill,
-      editable: props.editable && props.hasJob,
+      placeholder: !skill,
+      editable: editable && hasJob,
     })
+
+    const buttonClasses = classNames({
+      Clicked: contextMenuOpen,
+    })
+
+    // Methods: Data mutation
+    function removeJobSkill() {
+      if (skill) sendJobSkillToRemove(position)
+      setAlertOpen(false)
+    }
+
+    // Methods: Context menu
+    function handleButtonClicked() {
+      setContextMenuOpen(!contextMenuOpen)
+    }
+
+    function handleContextMenuOpenChange(open: boolean) {
+      if (!open) setContextMenuOpen(false)
+    }
 
     const skillImage = () => {
       let jsx: React.ReactNode
 
-      if (props.skill) {
+      if (skill) {
         jsx = (
           <img
-            alt={props.skill.name[locale]}
+            alt={skill.name[locale]}
             className={imageClasses}
-            src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-skills/${props.skill.slug}.png`}
+            src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-skills/${skill.slug}.png`}
           />
         )
       } else {
         jsx = (
           <div className={imageClasses}>
-            {props.editable && props.hasJob ? <PlusIcon /> : ''}
+            {editable && hasJob ? <PlusIcon /> : ''}
           </div>
         )
       }
@@ -58,9 +104,9 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
     const label = () => {
       let jsx: React.ReactNode
 
-      if (props.skill) {
-        jsx = <p>{props.skill.name[locale]}</p>
-      } else if (props.editable && props.hasJob) {
+      if (skill) {
+        jsx = <p>{skill.name[locale]}</p>
+      } else if (editable && hasJob) {
         jsx = <p className="placeholder">{t('job_skills.state.selectable')}</p>
       } else {
         jsx = <p className="placeholder">{t('job_skills.state.no_skill')}</p>
@@ -69,10 +115,55 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       return jsx
     }
 
+    const removeAlert = () => {
+      return (
+        <Alert
+          open={alertOpen}
+          primaryAction={removeJobSkill}
+          primaryActionText={t('modals.job_skills.buttons.remove')}
+          cancelAction={() => setAlertOpen(false)}
+          cancelActionText={t('buttons.cancel')}
+          message={
+            <Trans i18nKey="modals.job_skills.messages.remove">
+              Are you sure you want to remove{' '}
+              <strong>{{ job_skill: skill?.name[locale] }}</strong> from your
+              team?
+            </Trans>
+          }
+        />
+      )
+    }
+
+    const contextMenu = () => {
+      return (
+        <>
+          <ContextMenu onOpenChange={handleContextMenuOpenChange}>
+            <ContextMenuTrigger asChild>
+              <Button
+                leftAccessoryIcon={<EllipsisIcon />}
+                className={buttonClasses}
+                blended={true}
+                onClick={handleButtonClicked}
+              />
+            </ContextMenuTrigger>
+            <ContextMenuContent align="start">
+              <ContextMenuItem onSelect={() => setAlertOpen(true)}>
+                {t('context.remove_job_skill')}
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          {removeAlert()}
+        </>
+      )
+    }
+
     return (
-      <div className={classes} onClick={props.onClick} ref={forwardedRef}>
-        {skillImage()}
-        {label()}
+      <div className={classes} ref={forwardedRef}>
+        <div className="Info" onClick={props.onClick} tabIndex={0}>
+          {skillImage()}
+          {label()}
+        </div>
+        {skill && editable && contextMenu()}
       </div>
     )
   }

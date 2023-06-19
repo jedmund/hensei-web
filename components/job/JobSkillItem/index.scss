@@ -1,47 +1,81 @@
+.JobSkills {
+  &.editable .JobSkill {
+    .Info {
+      padding: $unit-half * 1.5;
+
+      & > img,
+      & > div.placeholder {
+        width: $unit-4x;
+        height: $unit-4x;
+      }
+    }
+  }
+}
+
 .JobSkill {
   display: flex;
-  gap: $unit;
-  align-items: center;
+  align-items: stretch;
+  justify-content: space-between;
+
+  &.editable .Info:hover {
+    background-color: var(--button-bg-hover);
+  }
 
   &.editable:hover {
     cursor: pointer;
 
-    & > img.editable,
-    & > div.placeholder.editable {
-      border: $hover-stroke;
-      box-shadow: $hover-shadow;
-      cursor: pointer;
-      transform: $scale-tall;
-    }
+    .Info {
+      & > img.editable,
+      & > div.placeholder.editable {
+        border: $hover-stroke;
+        box-shadow: $hover-shadow;
+        cursor: pointer;
+        transform: $scale-tall;
+      }
 
-    & p.placeholder {
-      color: var(--text-tertiary-hover);
-    }
+      & p.placeholder {
+        color: var(--text-tertiary-hover);
+      }
 
-    & svg {
-      fill: var(--icon-secondary-hover);
+      & svg {
+        fill: var(--icon-secondary-hover);
+      }
     }
   }
 
-  & > img,
-  & > div.placeholder {
-    background: var(--card-bg);
-    border-radius: calc($unit / 2);
-    border: 1px solid rgba(0, 0, 0, 0);
-    width: $unit * 5;
-    height: $unit * 5;
-  }
-
-  & > div.placeholder {
-    display: flex;
+  .Info {
     align-items: center;
-    justify-content: center;
+    border-radius: $input-corner;
+    display: flex;
+    flex-grow: 1;
+    gap: $unit;
 
-    & > svg {
-      fill: var(--icon-secondary);
-      width: $unit * 2;
-      height: $unit * 2;
+    & > img,
+    & > div.placeholder {
+      background: var(--card-bg);
+      border-radius: calc($unit / 2);
+      border: 1px solid rgba(0, 0, 0, 0);
+      width: $unit-5x;
+      height: $unit-5x;
     }
+
+    & > div.placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      & > svg {
+        fill: var(--icon-secondary);
+        width: $unit-2x;
+        height: $unit-2x;
+      }
+    }
+  }
+
+  & > .Button {
+    justify-content: center;
+    max-width: $unit-6x;
+    height: auto;
   }
 
   p {
