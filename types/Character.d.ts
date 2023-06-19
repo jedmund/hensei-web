@@ -35,6 +35,7 @@ interface Character {
     proficiency1: number
     proficiency2: number
   }
+  awakenings: Awakening[]
   position?: number
   special: boolean
 }

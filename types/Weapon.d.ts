@@ -7,10 +7,11 @@ interface Weapon {
   proficiency: number
   max_level: number
   max_skill_level: number
+  max_awakening_level: number
   series: number
   ax: boolean
   ax_type: number
-  awakening: boolean
+  awakenings: Awakening[]
   name: {
     [key: string]: string
     en: string
