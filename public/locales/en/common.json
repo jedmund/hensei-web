@@ -55,7 +55,8 @@
       "summon": "Modify summon",
       "weapon": "Modify weapon"
     },
-    "remove": "Remove from grid"
+    "remove": "Remove from grid",
+    "remove_job_skill": "Remove class skill"
   },
   "elements": {
     "null": "Null",
@@ -238,6 +239,14 @@
     "guidebooks": {
       "buttons": {
         "remove": "Remove guidebook"
+      }
+    },
+    "job_skills": {
+      "messages": {
+        "remove": "Are you sure you want to remove <strong>{{job_skill}}</strong> from your team?"
+      },
+      "buttons": {
+        "remove": "Remove class skill"
       }
     },
     "login": {
@@ -442,7 +451,7 @@
       "weapon": "Search for a weapon...",
       "summon": "Search for a summon...",
       "character": "Search for a character...",
-      "job_skill": "Search job skills...",
+      "job_skill": "Search class skills...",
       "guidebook": "Search guidebooks...",
       "raid": "Search battles..."
     }

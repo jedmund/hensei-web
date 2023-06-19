@@ -55,7 +55,8 @@
       "summon": "召喚石を変更",
       "weapon": "武器を変更"
     },
-    "remove": "編成から削除"
+    "remove": "編成から削除",
+    "remove_job_skill": "ジョブスキルを削除"
   },
   "elements": {
     "null": "無",
@@ -234,6 +235,14 @@
     "guidebooks": {
       "buttons": {
         "remove": "導本を削除する"
+      }
+    },
+    "job_skills": {
+      "messages": {
+        "remove": "<strong>{{job_skill}}</strong>を編成から削除しますか？"
+      },
+      "buttons": {
+        "remove": "ジョブスキルを削除する"
       }
     },
     "login": {
