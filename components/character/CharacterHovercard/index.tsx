@@ -16,7 +16,6 @@ import {
   aetherialMastery,
   permanentMastery,
 } from '~data/overMastery'
-import { characterAwakening } from '~data/awakening'
 import { ExtendedMastery } from '~types'
 
 import './index.scss'
@@ -25,13 +24,6 @@ interface Props {
   gridCharacter: GridCharacter
   children: React.ReactNode
   onTriggerClick: () => void
-}
-
-interface KeyNames {
-  [key: string]: {
-    en: string
-    jp: string
-  }
 }
 
 const CharacterHovercard = (props: Props) => {
@@ -181,27 +173,20 @@ const CharacterHovercard = (props: Props) => {
 
   const awakeningSection = () => {
     const gridAwakening = props.gridCharacter.awakening
-    const awakening = characterAwakening.find(
-      (awakening) => awakening.id === gridAwakening?.type
-    )
 
-    if (gridAwakening && awakening) {
+    if (gridAwakening) {
       return (
         <section className="Awakening">
           <h5 className={tintElement}>
             {t('modals.characters.subtitles.awakening')}
           </h5>
           <div>
-            {gridAwakening.type > 1 ? (
-              <img
-                alt={awakening.name[locale]}
-                src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/character_${gridAwakening.type}.jpg`}
-              />
-            ) : (
-              ''
-            )}
+            <img
+              alt={gridAwakening.type.name[locale]}
+              src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${gridAwakening.type.slug}.jpg`}
+            />
             <span>
-              <strong>{`${awakening.name[locale]}`}</strong>&nbsp;
+              <strong>{`${gridAwakening.type.name[locale]}`}</strong>&nbsp;
               {`Lv${gridAwakening.level}`}
             </span>
           </div>

@@ -63,10 +63,8 @@ interface GridCharacterObject {
     ring3: ExtendedMastery
     ring4: ExtendedMastery
     earring: ExtendedMastery
-    awakening: {
-      type?: number
-      level?: number
-    }
+    awakening_id?: string
+    awakening_level?: number
     transcendence_step: number
     perpetuity: boolean
   }

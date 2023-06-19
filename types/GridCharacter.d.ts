@@ -7,7 +7,7 @@ interface GridCharacter {
   over_mastery: CharacterOverMastery
   aetherial_mastery: ExtendedMastery
   awakening: {
-    type: number
+    type: Awakening
     level: number
   }
   perpetuity: boolean
