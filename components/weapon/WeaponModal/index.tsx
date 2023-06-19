@@ -11,14 +11,15 @@ import {
   DialogTrigger,
 } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
+import AwakeningSelectWithInput from '~components/mastery/AwakeningSelectWithInput'
 import AXSelect from '~components/mastery/AxSelect'
-import AwakeningSelect from '~components/mastery/AwakeningSelect'
 import ElementToggle from '~components/ElementToggle'
 import WeaponKeySelect from '~components/weapon/WeaponKeySelect'
 import Button from '~components/common/Button'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
+import { NO_AWAKENING } from '~data/awakening'
 
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
@@ -33,7 +34,7 @@ interface GridWeaponObject {
     ax_modifier2?: number
     ax_strength1?: number
     ax_strength2?: number
-    awakening_type?: number
+    awakening_id?: string
     awakening_level?: Number
   }
 }
@@ -70,7 +71,7 @@ const WeaponModal = ({
 
   const [element, setElement] = useState(-1)
 
-  const [awakeningType, setAwakeningType] = useState(0)
+  const [awakening, setAwakening] = useState<Awakening>()
   const [awakeningLevel, setAwakeningLevel] = useState(1)
 
   const [primaryAxModifier, setPrimaryAxModifier] = useState(-1)
@@ -136,9 +137,10 @@ const WeaponModal = ({
     setFormValid(isValid)
   }
 
-  function receiveAwakeningValues(type: number, level: number) {
-    setAwakeningType(type)
+  function receiveAwakeningValues(id: string, level: number) {
+    setAwakening(gridWeapon.object.awakenings.find((a) => a.id === id))
     setAwakeningLevel(level)
+    setFormValid(true)
   }
 
   function receiveElementValue(element: string) {
@@ -167,8 +169,8 @@ const WeaponModal = ({
       object.weapon.ax_strength2 = secondaryAxValue
     }
 
-    if (gridWeapon.object.awakening) {
-      object.weapon.awakening_type = awakeningType
+    if (gridWeapon.object.awakenings) {
+      object.weapon.awakening_id = awakening?.id
       object.weapon.awakening_level = awakeningLevel
     }
 
@@ -313,10 +315,12 @@ const WeaponModal = ({
     return (
       <section>
         <h3>{t('modals.weapon.subtitles.awakening')}</h3>
-        <AwakeningSelect
-          object="weapon"
-          type={gridWeapon.awakening?.type}
+        <AwakeningSelectWithInput
+          dataSet={gridWeapon.object.awakenings}
+          awakening={gridWeapon.awakening?.type}
           level={gridWeapon.awakening?.level}
+          defaultAwakening={NO_AWAKENING}
+          maxLevel={gridWeapon.object.max_awakening_level}
           onOpenChange={receiveAwakeningOpen}
           sendValidity={receiveValidity}
           sendValues={receiveAwakeningValues}
@@ -326,7 +330,7 @@ const WeaponModal = ({
   }
 
   function handleOpenChange(open: boolean) {
-    if (gridWeapon.object.ax || gridWeapon.object.awakening) {
+    if (gridWeapon.object.ax || gridWeapon.object.awakenings) {
       setFormValid(false)
     } else {
       setFormValid(true)
@@ -387,7 +391,7 @@ const WeaponModal = ({
           {gridWeapon.object.element == 0 ? elementSelect() : ''}
           {[2, 3, 17, 24].includes(gridWeapon.object.series) ? keySelect() : ''}
           {gridWeapon.object.ax ? axSelect() : ''}
-          {gridWeapon.awakening ? awakeningSelect() : ''}
+          {gridWeapon.object.awakenings ? awakeningSelect() : ''}
         </div>
         <div className="DialogFooter" ref={footerRef}>
           <Button
