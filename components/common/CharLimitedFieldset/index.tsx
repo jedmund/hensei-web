@@ -56,6 +56,7 @@ const CharLimitedFieldset: ForwardRefRenderFunction<HTMLInputElement, Props> = (
       <div className={classNames({ Joined: true }, props.className)}>
         <input
           {...props}
+          data-1p-ignore
           autoComplete="off"
           className="Input"
           type={props.type}
