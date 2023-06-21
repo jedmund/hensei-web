@@ -394,12 +394,14 @@ const WeaponModal = ({
           {gridWeapon.object.awakenings ? awakeningSelect() : ''}
         </div>
         <div className="DialogFooter" ref={footerRef}>
-          <Button
-            contained={true}
-            onClick={updateWeapon}
-            disabled={!formValid}
-            text={t('modals.weapon.buttons.confirm')}
-          />
+          <div className="actions">
+            <Button
+              contained={true}
+              onClick={updateWeapon}
+              disabled={!formValid}
+              text={t('modals.weapon.buttons.confirm')}
+            />
+          </div>
         </div>
       </DialogContent>
     </Dialog>

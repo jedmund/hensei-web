@@ -105,19 +105,25 @@ const RaidCombobox = (props: Props) => {
 
   // Set current raid and section when the component mounts
   useEffect(() => {
-    if (appState.party.raid) {
-      setCurrentRaid(appState.party.raid)
-      setCurrentSection(appState.party.raid.group.section)
-    } else if (props.showAllRaidsOption && !currentRaid) {
-      setCurrentRaid(allRaidsOption)
-    }
+    // if (appState.party.raid) {
+    //   setCurrentRaid(appState.party.raid)
+    //   if (appState.party.raid.group.section > 0) {
+    //     setCurrentSection(appState.party.raid.group.section)
+    //   } else {
+    //     setCurrentSection(1)
+    //   }
+    // } else if (props.showAllRaidsOption && !currentRaid) {
+    //   setCurrentRaid(allRaidsOption)
+    // }
   }, [])
 
   // Set current raid and section when the current raid changes
   useEffect(() => {
     if (props.currentRaid) {
       setCurrentRaid(props.currentRaid)
-      setCurrentSection(props.currentRaid.group.section)
+      if (appState.party.raid && appState.party.raid.group.section > 0)
+        setCurrentSection(props.currentRaid.group.section)
+      else setCurrentSection(1)
     }
   }, [props.currentRaid])
 
@@ -260,7 +266,11 @@ const RaidCombobox = (props: Props) => {
   // Toggle the open state of the combobox
   function toggleOpen() {
     if (open) {
-      if (currentRaid && currentRaid.slug !== 'all') {
+      if (
+        currentRaid &&
+        currentRaid.slug !== 'all' &&
+        currentRaid.group.section > 0
+      ) {
         setCurrentSection(currentRaid.group.section)
       }
       setScrolled(false)
