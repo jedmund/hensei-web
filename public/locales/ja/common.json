@@ -93,6 +93,7 @@
     "unauthorized": "行ったアクションを実行する権限がありません"
   },
   "filters": {
+    "name": "フィルター",
     "labels": {
       "element": "属性",
       "series": "シリーズ",

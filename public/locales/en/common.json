@@ -93,6 +93,7 @@
     "unauthorized": "You don't have permission to perform that action"
   },
   "filters": {
+    "name": "Filter",
     "labels": {
       "element": "Element",
       "series": "Series",
