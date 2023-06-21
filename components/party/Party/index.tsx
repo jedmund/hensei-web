@@ -7,7 +7,7 @@ import clonedeep from 'lodash.clonedeep'
 
 import Alert from '~components/common/Alert'
 import PartySegmentedControl from '~components/party/PartySegmentedControl'
-import PartyDetails from '~components/party/PartyDetails'
+import PartyFooter from '~components/party/PartyFooter'
 import PartyHeader from '~components/party/PartyHeader'
 import WeaponGrid from '~components/weapon/WeaponGrid'
 import SummonGrid from '~components/summon/SummonGrid'
@@ -265,6 +265,15 @@ const Party = (props: Props) => {
     appState.party.jobSkills = team.job_skills
     appState.party.accessory = team.accessory
 
+    appState.party.chargeAttack = team.charge_attack
+    appState.party.fullAuto = team.full_auto
+    appState.party.autoGuard = team.auto_guard
+    appState.party.autoSummon = team.auto_summon
+    appState.party.clearTime = team.clear_time
+    appState.party.buttonCount = team.button_count
+    appState.party.chainCount = team.chain_count
+    appState.party.turnCount = team.turn_count
+
     appState.party.id = team.id
     appState.party.shortcode = team.shortcode
     appState.party.extra = team.extra
@@ -445,7 +454,7 @@ const Party = (props: Props) => {
 
       <section id="Party">{currentGrid()}</section>
 
-      <PartyDetails
+      <PartyFooter
         party={props.team}
         new={props.new || false}
         editable={party.editable}

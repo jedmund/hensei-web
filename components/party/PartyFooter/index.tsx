@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 import clonedeep from 'lodash.clonedeep'
 
@@ -27,9 +28,11 @@ interface Props {
   updateCallback: (details: DetailsObject) => void
 }
 
-const PartyDetails = (props: Props) => {
+const PartyFooter = (props: Props) => {
   const { t } = useTranslation('common')
   const router = useRouter()
+
+  const { party } = useSnapshot(appState)
 
   const youtubeUrlRegex =
     /(?:https:\/\/www\.youtube\.com\/watch\?v=|https:\/\/youtu\.be\/)([\w-]+)/g
@@ -40,16 +43,10 @@ const PartyDetails = (props: Props) => {
   const [embeddedDescription, setEmbeddedDescription] =
     useState<React.ReactNode>()
 
-  const readOnlyClasses = classNames({
-    PartyDetails: true,
-    ReadOnly: true,
-    Visible: !open,
-  })
-
   useEffect(() => {
     // Extract the video IDs from the description
-    if (appState.party.description) {
-      const videoIds = extractYoutubeVideoIds(appState.party.description)
+    if (party.description) {
+      const videoIds = extractYoutubeVideoIds(party.description)
 
       // Fetch the video titles for each ID
       const fetchPromises = videoIds.map(({ id }) => fetchYoutubeData(id))
@@ -58,7 +55,7 @@ const PartyDetails = (props: Props) => {
       Promise.all(fetchPromises).then((videoTitles) => {
         // Replace the video URLs in the description with LiteYoutubeEmbed elements
         const newDescription = reactStringReplace(
-          appState.party.description,
+          party.description,
           youtubeUrlRegex,
           (match, i) => (
             <LiteYouTubeEmbed
@@ -77,7 +74,7 @@ const PartyDetails = (props: Props) => {
     } else {
       setEmbeddedDescription('')
     }
-  }, [appState.party.description])
+  }, [party.description])
 
   async function fetchYoutubeData(videoId: string) {
     return await youtube
@@ -173,14 +170,6 @@ const PartyDetails = (props: Props) => {
     })
   }
 
-  const readOnly = () => {
-    return (
-      <section className={readOnlyClasses}>
-        <Linkify>{embeddedDescription}</Linkify>
-      </section>
-    )
-  }
-
   const remixSection = () => {
     return (
       <section className="Remixes">
@@ -192,10 +181,14 @@ const PartyDetails = (props: Props) => {
 
   return (
     <>
-      <section className="DetailsWrapper">{readOnly()}</section>
+      <section className="FooterWrapper">
+        <section className="PartyFooter">
+          <Linkify>{embeddedDescription}</Linkify>
+        </section>
+      </section>
       {remixes && remixes.length > 0 ? remixSection() : ''}
     </>
   )
 }
 
-export default PartyDetails
+export default PartyFooter

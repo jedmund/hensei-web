@@ -1,4 +1,4 @@
-.DetailsWrapper {
+.FooterWrapper {
   display: flex;
   flex-direction: column;
   gap: $unit-2x;
@@ -16,10 +16,13 @@
     }
   }
 
-  .PartyDetails {
+  .PartyFooter {
     box-sizing: border-box;
-    display: none;
+    line-height: 1.4;
+    white-space: pre-wrap;
     margin: 0 auto $unit-2x;
+    margin-bottom: $unit-12x;
+    min-height: 10vh;
     max-width: $unit * 94;
     overflow: hidden;
     width: 100%;
@@ -27,11 +30,6 @@
     @include breakpoint(phone) {
       padding: 0 $unit;
     }
-
-    &.Visible {
-      // margin-bottom: $unit-12x;
-    }
-
     &.Editable {
       gap: $unit;
 
@@ -174,115 +172,109 @@
       }
     }
 
-    &.ReadOnly {
-      box-sizing: border-box;
-      line-height: 1.4;
-      white-space: pre-wrap;
+    &.Visible {
+      display: block;
+    }
 
-      &.Visible {
+    a:hover {
+      text-decoration: underline;
+    }
+
+    p {
+      font-size: $font-regular;
+      line-height: $font-regular * 1.2;
+      white-space: pre-line;
+    }
+
+    .Details {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: $unit;
+      margin-bottom: $unit-2x;
+    }
+
+    .YoutubeWrapper {
+      background-color: var(--card-bg);
+      border-radius: $card-corner;
+      margin: $unit 0;
+      position: relative;
+      display: block;
+      contain: content;
+      background-position: center center;
+      background-size: cover;
+      cursor: pointer;
+      width: 60%;
+      height: 60%;
+
+      @include breakpoint(tablet) {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* gradient */
+      &::before {
+        content: '';
         display: block;
+        position: absolute;
+        top: 0;
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADGCAYAAAAT+OqFAAAAdklEQVQoz42QQQ7AIAgEF/T/D+kbq/RWAlnQyyazA4aoAB4FsBSA/bFjuF1EOL7VbrIrBuusmrt4ZZORfb6ehbWdnRHEIiITaEUKa5EJqUakRSaEYBJSCY2dEstQY7AuxahwXFrvZmWl2rh4JZ07z9dLtesfNj5q0FU3A5ObbwAAAABJRU5ErkJggg==);
+        background-position: top;
+        background-repeat: repeat-x;
+        height: 60px;
+        padding-bottom: 50px;
+        width: 100%;
+        transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
       }
 
-      a:hover {
-        text-decoration: underline;
-      }
-
-      p {
-        font-size: $font-regular;
-        line-height: $font-regular * 1.2;
-        white-space: pre-line;
-      }
-
-      .Details {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: $unit;
-        margin-bottom: $unit-2x;
-      }
-
-      .YoutubeWrapper {
-        background-color: var(--card-bg);
-        border-radius: $card-corner;
-        margin: $unit 0;
-        position: relative;
-        display: block;
-        contain: content;
-        background-position: center center;
-        background-size: cover;
-        cursor: pointer;
-        width: 60%;
-        height: 60%;
-
-        @include breakpoint(tablet) {
-          width: 100%;
-          height: 100%;
-        }
-
-        /* gradient */
-        &::before {
-          content: '';
-          display: block;
-          position: absolute;
-          top: 0;
-          background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADGCAYAAAAT+OqFAAAAdklEQVQoz42QQQ7AIAgEF/T/D+kbq/RWAlnQyyazA4aoAB4FsBSA/bFjuF1EOL7VbrIrBuusmrt4ZZORfb6ehbWdnRHEIiITaEUKa5EJqUakRSaEYBJSCY2dEstQY7AuxahwXFrvZmWl2rh4JZ07z9dLtesfNj5q0FU3A5ObbwAAAABJRU5ErkJggg==);
-          background-position: top;
-          background-repeat: repeat-x;
-          height: 60px;
-          padding-bottom: 50px;
-          width: 100%;
-          transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
-        }
-
-        /* responsive iframe with a 16:9 aspect ratio
+      /* responsive iframe with a 16:9 aspect ratio
            thanks https://css-tricks.com/responsive-iframes/
         */
-        &::after {
-          content: '';
-          display: block;
-          padding-bottom: calc(100% / (16 / 9));
-        }
+      &::after {
+        content: '';
+        display: block;
+        padding-bottom: calc(100% / (16 / 9));
+      }
 
-        &:hover > .PlayerButton {
-          opacity: 1;
-        }
+      &:hover > .PlayerButton {
+        opacity: 1;
+      }
 
-        & > iframe {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          top: 0;
-          left: 0;
-        }
+      & > iframe {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
 
-        /* Play button */
-        & > .PlayerButton {
-          background: none;
-          border: none;
-          background-image: url('/icons/youtube.svg');
-          width: 68px;
-          height: 68px;
-          opacity: 0.8;
-          transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
-        }
+      /* Play button */
+      & > .PlayerButton {
+        background: none;
+        border: none;
+        background-image: url('/icons/youtube.svg');
+        width: 68px;
+        height: 68px;
+        opacity: 0.8;
+        transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+      }
 
-        & > .PlayerButton,
-        & > .PlayerButton:before {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate3d(-50%, -50%, 0);
-        }
+      & > .PlayerButton,
+      & > .PlayerButton:before {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
 
-        /* Post-click styles */
-        &.lyt-activated {
-          cursor: unset;
-        }
-        &.lyt-activated::before,
-        &.lyt-activated > .PlayerButton {
-          opacity: 0;
-          pointer-events: none;
-        }
+      /* Post-click styles */
+      &.lyt-activated {
+        cursor: unset;
+      }
+      &.lyt-activated::before,
+      &.lyt-activated > .PlayerButton {
+        opacity: 0;
+        pointer-events: none;
       }
     }
   }
