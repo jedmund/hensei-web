@@ -58,6 +58,7 @@ public/images/mastery*
 public/images/updates*
 public/images/guidebooks*
 public/images/raids*
+public/images/gacha*
 
 # Typescript v1 declaration files
 typings/

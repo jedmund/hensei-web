@@ -102,6 +102,23 @@
     }
   }
 
+  .Filter.Button {
+    justify-content: center;
+
+    .Text {
+      display: none;
+      width: auto;
+
+      @include breakpoint(tablet) {
+        display: block;
+      }
+
+      @include breakpoint(phone) {
+        display: block;
+      }
+    }
+  }
+
   .UserInfo {
     align-items: center;
     display: flex;

@@ -181,6 +181,7 @@ const FilterBar = (props: Props) => {
             className={filterButtonClasses}
             blended={true}
             leftAccessoryIcon={<FilterIcon />}
+            text={t('filters.name')}
             onClick={() => setFilterModalOpen(true)}
           />
         </div>
