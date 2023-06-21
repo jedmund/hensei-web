@@ -49,6 +49,7 @@ const PartyHeader = (props: Props) => {
   const [chargeAttack, setChargeAttack] = useState(true)
   const [fullAuto, setFullAuto] = useState(false)
   const [autoGuard, setAutoGuard] = useState(false)
+  const [autoSummon, setAutoSummon] = useState(false)
 
   const [buttonCount, setButtonCount] = useState<number | undefined>(undefined)
   const [chainCount, setChainCount] = useState<number | undefined>(undefined)
@@ -78,6 +79,7 @@ const PartyHeader = (props: Props) => {
       setName(props.party.name)
       setAutoGuard(props.party.auto_guard)
       setFullAuto(props.party.full_auto)
+      setAutoSummon(props.party.auto_summon)
       setChargeAttack(props.party.charge_attack)
       setClearTime(props.party.clear_time)
       if (props.party.turn_count) setTurnCount(props.party.turn_count)
@@ -212,12 +214,12 @@ const PartyHeader = (props: Props) => {
     <Token
       className={classNames({
         ChargeAttack: true,
-        On: chargeAttack,
-        Off: !chargeAttack,
+        On: party.chargeAttack,
+        Off: !party.chargeAttack,
       })}
     >
       {`${t('party.details.labels.charge_attack')} ${
-        chargeAttack ? 'On' : 'Off'
+        party.chargeAttack ? 'On' : 'Off'
       }`}
     </Token>
   )
@@ -226,11 +228,13 @@ const PartyHeader = (props: Props) => {
     <Token
       className={classNames({
         FullAuto: true,
-        On: fullAuto,
-        Off: !fullAuto,
+        On: party.fullAuto,
+        Off: !party.fullAuto,
       })}
     >
-      {`${t('party.details.labels.full_auto')} ${fullAuto ? 'On' : 'Off'}`}
+      {`${t('party.details.labels.full_auto')} ${
+        party.fullAuto ? 'On' : 'Off'
+      }`}
     </Token>
   )
 
@@ -238,37 +242,57 @@ const PartyHeader = (props: Props) => {
     <Token
       className={classNames({
         AutoGuard: true,
-        On: autoGuard,
-        Off: !autoGuard,
+        On: party.autoGuard,
+        Off: !party.autoGuard,
       })}
     >
-      {`${t('party.details.labels.auto_guard')} ${autoGuard ? 'On' : 'Off'}`}
+      {`${t('party.details.labels.auto_guard')} ${
+        party.autoGuard ? 'On' : 'Off'
+      }`}
+    </Token>
+  )
+
+  const autoSummonToken = (
+    <Token
+      className={classNames({
+        AutoSummon: true,
+        On: party.autoSummon,
+        Off: !party.autoSummon,
+      })}
+    >
+      {`${t('party.details.labels.auto_summon')} ${
+        party.autoSummon ? 'On' : 'Off'
+      }`}
     </Token>
   )
 
   const turnCountToken = (
     <Token>
       {t('party.details.turns.with_count', {
-        count: turnCount,
+        count: party.turnCount,
       })}
     </Token>
   )
 
   const buttonChainToken = () => {
-    if (buttonCount || chainCount) {
+    if (party.buttonCount || party.chainCount) {
       let string = ''
 
-      if (buttonCount && buttonCount > 0) {
-        string += `${buttonCount}b`
+      if (party.buttonCount && party.buttonCount > 0) {
+        string += `${party.buttonCount}b`
       }
 
-      if (!buttonCount && chainCount && chainCount > 0) {
-        string += `0${t('party.details.suffix.buttons')}${chainCount}${t(
+      if (!party.buttonCount && party.chainCount && party.chainCount > 0) {
+        string += `0${t('party.details.suffix.buttons')}${party.chainCount}${t(
           'party.details.suffix.chains'
         )}`
-      } else if (buttonCount && chainCount && chainCount > 0) {
-        string += `${chainCount}${t('party.details.suffix.chains')}`
-      } else if (buttonCount && !chainCount) {
+      } else if (
+        party.buttonCount &&
+        party.chainCount &&
+        party.chainCount > 0
+      ) {
+        string += `${party.chainCount}${t('party.details.suffix.chains')}`
+      } else if (party.buttonCount && !party.chainCount) {
         string += `0${t('party.details.suffix.chains')}`
       }
 
@@ -277,8 +301,8 @@ const PartyHeader = (props: Props) => {
   }
 
   const clearTimeToken = () => {
-    const minutes = Math.floor(clearTime / 60)
-    const seconds = clearTime - minutes * 60
+    const minutes = Math.floor(party.clearTime / 60)
+    const seconds = party.clearTime - minutes * 60
 
     let string = ''
     if (minutes > 0)
@@ -296,8 +320,9 @@ const PartyHeader = (props: Props) => {
         {chargeAttackToken}
         {fullAutoToken}
         {autoGuardToken}
-        {turnCount ? turnCountToken : ''}
-        {clearTime > 0 ? clearTimeToken() : ''}
+        {autoSummonToken}
+        {party.turnCount ? turnCountToken : ''}
+        {party.clearTime > 0 ? clearTimeToken() : ''}
         {buttonChainToken()}
       </section>
     )
@@ -341,8 +366,8 @@ const PartyHeader = (props: Props) => {
         <div className="PartyInfo">
           <div className="Left">
             <div className="Header">
-              <h1 className={name ? '' : 'empty'}>
-                {name ? name : t('no_title')}
+              <h1 className={party.name ? '' : 'empty'}>
+                {party.name ? party.name : t('no_title')}
               </h1>
               {party.remix && party.sourceParty ? (
                 <Tooltip content={t('tooltips.source')}>
