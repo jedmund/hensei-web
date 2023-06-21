@@ -185,6 +185,10 @@
   }
 }
 
+.SelectTrigger.Raid .Value.Empty {
+  color: var(--text-tertiary);
+}
+
 .Filters .SelectTrigger.Raid {
   & > span {
     overflow: hidden;
