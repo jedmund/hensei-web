@@ -383,6 +383,7 @@
         "charge_attack": "Charge Attack",
         "full_auto": "Full Auto",
         "auto_guard": "Auto Guard",
+        "auto_summon": "Auto Summon",
         "turn_count": "Turn count",
         "button_chain": "Buttons/Chains",
         "clear_time": "Clear time"
