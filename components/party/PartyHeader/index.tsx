@@ -12,6 +12,7 @@ import Token from '~components/common/Token'
 import EditPartyModal from '~components/party/EditPartyModal'
 import PartyDropdown from '~components/party/PartyDropdown'
 
+import api from '~utils/api'
 import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 import { formatTimeAgo } from '~utils/timeAgo'
@@ -23,7 +24,6 @@ import SaveIcon from '~public/icons/Save.svg'
 import type { DetailsObject } from 'types'
 
 import './index.scss'
-import api from '~utils/api'
 
 // Props
 interface Props {
