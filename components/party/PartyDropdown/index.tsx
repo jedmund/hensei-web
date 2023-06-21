@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { subscribe, useSnapshot } from 'valtio'
-import { Trans, useTranslation } from 'next-i18next'
-import Link from 'next/link'
+import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
 // Dependencies: Common
@@ -125,7 +124,7 @@ const PartyDropdown = ({
 
   // Toasts / Copy URL
   function handleCopyToastOpenChanged(open: boolean) {
-    setCopyToastOpen(open)
+    setCopyToastOpen(!open)
   }
 
   function handleCopyToastCloseClicked() {
@@ -134,7 +133,7 @@ const PartyDropdown = ({
 
   // Toasts / Remix team
   function handleRemixToastOpenChanged(open: boolean) {
-    setRemixToastOpen(open)
+    setRemixToastOpen(!open)
   }
 
   function handleRemixToastCloseClicked() {
@@ -189,6 +188,17 @@ const PartyDropdown = ({
         open={remixAlertOpen}
         onOpenChange={handleRemixTeamAlertChange}
         remixCallback={remixTeamCallback}
+      />
+      <RemixedToast
+        open={remixToastOpen}
+        partyName={originalName}
+        onOpenChange={handleRemixToastOpenChanged}
+        onCloseClick={handleRemixToastCloseClicked}
+      />
+      <UrlCopiedToast
+        open={copyToastOpen}
+        onOpenChange={handleCopyToastOpenChanged}
+        onCloseClick={handleCopyToastCloseClicked}
       />
     </>
   )
