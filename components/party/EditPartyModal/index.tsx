@@ -74,25 +74,15 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
 
   // Hooks
   useEffect(() => {
-    if (!party) return
-
-    setName(party.name ? party.name : '')
-    setDescription(party.description ? party.description : '')
-    setRaid(party.raid)
-    setAutoGuard(party.autoGuard)
-    setAutoSummon(party.autoSummon)
-    setFullAuto(party.fullAuto)
-    setChargeAttack(party.chargeAttack)
-    setClearTime(party.clearTime)
-    if (party.turnCount) setTurnCount(party.turnCount)
-    if (party.buttonCount) setButtonCount(party.buttonCount)
-    if (party.chainCount) setChainCount(party.chainCount)
+    persistFromState()
   }, [party])
 
   // Methods: Event handlers (Dialog)
   function openChange() {
     if (open) {
       setOpen(false)
+      setCurrentSegment(0)
+      persistFromState()
       if (props.onOpenChange) props.onOpenChange(false)
     } else {
       setOpen(true)
@@ -183,6 +173,21 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
   }
 
   // Methods: Data methods
+  function persistFromState() {
+    if (!party) return
+    setName(party.name ? party.name : '')
+    setDescription(party.description ? party.description : '')
+    setRaid(party.raid)
+    setAutoGuard(party.autoGuard)
+    setAutoSummon(party.autoSummon)
+    setFullAuto(party.fullAuto)
+    setChargeAttack(party.chargeAttack)
+    setClearTime(party.clearTime)
+    if (party.turnCount) setTurnCount(party.turnCount)
+    if (party.buttonCount) setButtonCount(party.buttonCount)
+    if (party.chainCount) setChainCount(party.chainCount)
+  }
+
   function updateDetails(event: React.MouseEvent) {
     const descriptionValue = descriptionInput.current?.value
     const details: DetailsObject = {
