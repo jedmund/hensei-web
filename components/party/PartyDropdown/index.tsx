@@ -131,13 +131,18 @@ const PartyDropdown = ({
     setCopyToastOpen(false)
   }
 
-  // Toasts / Remix team
+  // Toasts: Remix team
   function handleRemixToastOpenChanged(open: boolean) {
     setRemixToastOpen(!open)
   }
 
   function handleRemixToastCloseClicked() {
     setRemixToastOpen(false)
+  }
+
+  function remixCallback() {
+    setRemixToastOpen(true)
+    remixTeamCallback()
   }
 
   const editableItems = () => {
@@ -184,17 +189,19 @@ const PartyDropdown = ({
 
       <RemixTeamAlert
         creator={editable}
-        name={partySnapshot.name ? partySnapshot.name : t('no_title')}
+        name={partySnapshot.name || t('no_title')}
         open={remixAlertOpen}
         onOpenChange={handleRemixTeamAlertChange}
-        remixCallback={remixTeamCallback}
+        remixCallback={remixCallback}
       />
+
       <RemixedToast
         open={remixToastOpen}
-        partyName={originalName}
+        partyName={partySnapshot.name || t('no_title')}
         onOpenChange={handleRemixToastOpenChanged}
         onCloseClick={handleRemixToastCloseClicked}
       />
+
       <UrlCopiedToast
         open={copyToastOpen}
         onOpenChange={handleCopyToastOpenChanged}

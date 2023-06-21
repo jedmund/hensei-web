@@ -24,6 +24,9 @@ import SaveIcon from '~public/icons/Save.svg'
 import type { DetailsObject } from 'types'
 
 import './index.scss'
+import RemixTeamAlert from '~components/dialogs/RemixTeamAlert'
+import RemixedToast from '~components/toasts/RemixedToast'
+import { set } from 'local-storage'
 
 // Props
 interface Props {
@@ -44,13 +47,16 @@ const PartyHeader = (props: Props) => {
 
   const { party: partySnapshot } = useSnapshot(appState)
 
-  const [name, setName] = useState('')
+  // State: Component
+  const [remixAlertOpen, setRemixAlertOpen] = useState(false)
+  const [remixToastOpen, setRemixToastOpen] = useState(false)
 
+  // State: Data
+  const [name, setName] = useState('')
   const [chargeAttack, setChargeAttack] = useState(true)
   const [fullAuto, setFullAuto] = useState(false)
   const [autoGuard, setAutoGuard] = useState(false)
   const [autoSummon, setAutoSummon] = useState(false)
-
   const [buttonCount, setButtonCount] = useState<number | undefined>(undefined)
   const [chainCount, setChainCount] = useState<number | undefined>(undefined)
   const [turnCount, setTurnCount] = useState<number | undefined>(undefined)
@@ -156,6 +162,32 @@ const PartyHeader = (props: Props) => {
         />
       )
   }
+
+  // Actions: Remix team
+  function remixTeamCallback() {
+    setRemixToastOpen(true)
+    props.remixCallback()
+  }
+
+  // Alerts: Remix team
+  function openRemixTeamAlert() {
+    setRemixAlertOpen(true)
+  }
+
+  function handleRemixTeamAlertChange(open: boolean) {
+    setRemixAlertOpen(open)
+  }
+
+  // Toasts: Remix team
+  function handleRemixToastOpenChanged(open: boolean) {
+    setRemixToastOpen(!open)
+  }
+
+  function handleRemixToastCloseClicked() {
+    setRemixToastOpen(false)
+  }
+
+  // Rendering
 
   const userBlock = (username?: string, picture?: string, element?: string) => {
     return (
@@ -354,7 +386,7 @@ const PartyHeader = (props: Props) => {
           leftAccessoryIcon={<RemixIcon />}
           className="Remix"
           text={t('buttons.remix')}
-          onClick={props.remixCallback}
+          onClick={openRemixTeamAlert}
         />
       </Tooltip>
     )
@@ -423,6 +455,21 @@ const PartyHeader = (props: Props) => {
         </div>
         <section className={classes}>{renderTokens()}</section>
       </section>
+
+      <RemixTeamAlert
+        creator={props.editable}
+        name={partySnapshot.name ? partySnapshot.name : t('no_title')}
+        open={remixAlertOpen}
+        onOpenChange={handleRemixTeamAlertChange}
+        remixCallback={remixTeamCallback}
+      />
+
+      <RemixedToast
+        open={remixToastOpen}
+        partyName={props.party?.name || t('no_title')}
+        onOpenChange={handleRemixToastOpenChanged}
+        onCloseClick={handleRemixToastCloseClicked}
+      />
     </>
   )
 }

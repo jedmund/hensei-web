@@ -46,7 +46,7 @@ const RemixTeamAlert = ({
           <Trans i18nKey="modals.remix_team.description.viewer">
             Remixing a team makes a copy of it in your account so you can make
             your own changes.\n\nWould you like to remix{' '}
-            <strong>{{ name: 'HEY' }}</strong>?
+            <strong>{{ name: name }}</strong>?
           </Trans>
         )
       }
