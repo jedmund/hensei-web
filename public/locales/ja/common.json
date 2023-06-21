@@ -93,6 +93,7 @@
     "unauthorized": "行ったアクションを実行する権限がありません"
   },
   "filters": {
+    "name": "フィルター",
     "labels": {
       "element": "属性",
       "series": "シリーズ",
@@ -380,6 +381,7 @@
         "charge_attack": "奥義",
         "full_auto": "フルオート",
         "auto_guard": "オートガード",
+        "auto_summon": "オート召喚",
         "turn_count": "経過ターン",
         "button_chain": "ポチチェイン",
         "clear_time": "討伐時間"

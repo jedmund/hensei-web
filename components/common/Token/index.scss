@@ -19,7 +19,8 @@
     color: var(--full-auto-text);
   }
 
-  &.AutoGuard.On {
+  &.AutoGuard.On,
+  &.AutoSummon.On {
     background: var(--auto-guard-bg);
     color: var(--auto-guard-text);
   }

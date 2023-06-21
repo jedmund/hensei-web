@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useSnapshot } from 'valtio'
 import { useTranslation } from 'react-i18next'
 
 import {
@@ -22,6 +23,8 @@ import TableField from '~components/common/TableField'
 import type { DetailsObject } from 'types'
 import type { DialogProps } from '@radix-ui/react-dialog'
 
+import { appState } from '~utils/appState'
+
 import CheckIcon from '~public/icons/Check.svg'
 import CrossIcon from '~public/icons/Cross.svg'
 import './index.scss'
@@ -31,13 +34,15 @@ interface Props extends DialogProps {
   updateCallback: (details: DetailsObject) => void
 }
 
-const EditPartyModal = ({ party, updateCallback, ...props }: Props) => {
+const EditPartyModal = ({ updateCallback, ...props }: Props) => {
   // Set up router
   const router = useRouter()
-  const locale = router.locale
 
   // Set up translation
   const { t } = useTranslation('common')
+
+  // Set up reactive state
+  const { party } = useSnapshot(appState)
 
   // Refs
   const headerRef = React.createRef<HTMLDivElement>()
@@ -54,6 +59,7 @@ const EditPartyModal = ({ party, updateCallback, ...props }: Props) => {
 
   // States: Data
   const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
   const [raid, setRaid] = useState<Raid>()
   const [extra, setExtra] = useState(false)
   const [chargeAttack, setChargeAttack] = useState(true)
@@ -68,24 +74,15 @@ const EditPartyModal = ({ party, updateCallback, ...props }: Props) => {
 
   // Hooks
   useEffect(() => {
-    if (!party) return
-
-    setName(party.name)
-    setRaid(party.raid)
-    setAutoGuard(party.auto_guard)
-    setAutoSummon(party.auto_summon)
-    setFullAuto(party.full_auto)
-    setChargeAttack(party.charge_attack)
-    setClearTime(party.clear_time)
-    if (party.turn_count) setTurnCount(party.turn_count)
-    if (party.button_count) setButtonCount(party.button_count)
-    if (party.chain_count) setChainCount(party.chain_count)
+    persistFromState()
   }, [party])
 
   // Methods: Event handlers (Dialog)
   function openChange() {
     if (open) {
       setOpen(false)
+      setCurrentSegment(0)
+      persistFromState()
       if (props.onOpenChange) props.onOpenChange(false)
     } else {
       setOpen(true)
@@ -176,6 +173,21 @@ const EditPartyModal = ({ party, updateCallback, ...props }: Props) => {
   }
 
   // Methods: Data methods
+  function persistFromState() {
+    if (!party) return
+    setName(party.name ? party.name : '')
+    setDescription(party.description ? party.description : '')
+    setRaid(party.raid)
+    setAutoGuard(party.autoGuard)
+    setAutoSummon(party.autoSummon)
+    setFullAuto(party.fullAuto)
+    setChargeAttack(party.chargeAttack)
+    setClearTime(party.clearTime)
+    if (party.turnCount) setTurnCount(party.turnCount)
+    if (party.buttonCount) setButtonCount(party.buttonCount)
+    if (party.chainCount) setChainCount(party.chainCount)
+  }
+
   function updateDetails(event: React.MouseEvent) {
     const descriptionValue = descriptionInput.current?.value
     const details: DetailsObject = {
@@ -272,9 +284,8 @@ const EditPartyModal = ({ party, updateCallback, ...props }: Props) => {
           }
           onChange={handleTextAreaChanged}
           ref={descriptionInput}
-        >
-          {party ? party.description : ''}
-        </textarea>
+          defaultValue={description}
+        />
       </div>
     )
   }

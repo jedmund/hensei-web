@@ -7,7 +7,6 @@ import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
 import Link from 'next/link'
 
-import api from '~utils/api'
 import { accountState, initialAccountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 import { getLocalId } from '~utils/localId'
@@ -32,11 +31,8 @@ import Tooltip from '~components/common/Tooltip'
 import * as Switch from '@radix-ui/react-switch'
 
 import ChevronIcon from '~public/icons/Chevron.svg'
-import LinkIcon from '~public/icons/Link.svg'
 import MenuIcon from '~public/icons/Menu.svg'
-import RemixIcon from '~public/icons/Remix.svg'
 import PlusIcon from '~public/icons/Add.svg'
-import SaveIcon from '~public/icons/Save.svg'
 
 import './index.scss'
 
@@ -51,7 +47,6 @@ const Header = () => {
   const localeData = retrieveLocaleCookies()
 
   // State management
-  const [copyToastOpen, setCopyToastOpen] = useState(false)
   const [remixToastOpen, setRemixToastOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [signupModalOpen, setSignupModalOpen] = useState(false)
@@ -64,7 +59,6 @@ const Header = () => {
   const [originalName, setOriginalName] = useState('')
 
   // Snapshots
-  const { account } = useSnapshot(accountState)
   const { party: partySnapshot } = useSnapshot(appState)
 
   // Subscribe to app state to listen for party name and
@@ -108,15 +102,6 @@ const Header = () => {
     setRightMenuOpen(false)
   }
 
-  // Methods: Event handlers (Copy toast)
-  function handleCopyToastOpenChanged(open: boolean) {
-    setCopyToastOpen(open)
-  }
-
-  function handleCopyToastCloseClicked() {
-    setCopyToastOpen(false)
-  }
-
   // Methods: Event handlers (Remix toasts)
   function handleRemixToastOpenChanged(open: boolean) {
     setRemixToastOpen(open)
@@ -140,23 +125,6 @@ const Header = () => {
 
     setCookie('NEXT_LOCALE', language, { path: '/', expires: expiresAt })
     router.push(router.asPath, undefined, { locale: language })
-  }
-
-  function copyToClipboard() {
-    const path = router.asPath.split('/')[1]
-
-    if (path === 'p') {
-      const el = document.createElement('input')
-      el.value = window.location.href
-      el.id = 'url-input'
-      document.body.appendChild(el)
-
-      el.select()
-      document.execCommand('copy')
-      el.remove()
-
-      setCopyToastOpen(true)
-    }
   }
 
   function logout() {
@@ -186,84 +154,6 @@ const Header = () => {
 
     // Push the root URL
     router.push('/new')
-  }
-
-  function remixTeam() {
-    setOriginalName(partySnapshot.name ? partySnapshot.name : t('no_title'))
-
-    if (partySnapshot.shortcode) {
-      const body = getLocalId()
-      api
-        .remix({ shortcode: partySnapshot.shortcode, body: body })
-        .then((response) => {
-          const remix = response.data.party
-
-          // Store the edit key in local storage
-          if (remix.edit_key) {
-            storeEditKey(remix.id, remix.edit_key)
-            setEditKey(remix.id, remix.user)
-          }
-
-          router.push(`/p/${remix.shortcode}`)
-          setRemixToastOpen(true)
-        })
-    }
-  }
-
-  function toggleFavorite() {
-    if (partySnapshot.favorited) unsaveFavorite()
-    else saveFavorite()
-  }
-
-  function saveFavorite() {
-    if (partySnapshot.id)
-      api.saveTeam({ id: partySnapshot.id }).then((response) => {
-        if (response.status == 201) appState.party.favorited = true
-      })
-    else console.error('Failed to save team: No party ID')
-  }
-
-  function unsaveFavorite() {
-    if (partySnapshot.id)
-      api.unsaveTeam({ id: partySnapshot.id }).then((response) => {
-        if (response.status == 200) appState.party.favorited = false
-      })
-    else console.error('Failed to unsave team: No party ID')
-  }
-
-  // Rendering: Elements
-  const pageTitle = () => {
-    let title = ''
-    let hasAccessory = false
-
-    const path = router.asPath.split('/')[1]
-    if (path === 'p') {
-      hasAccessory = true
-      if (appState.party && appState.party.name) {
-        title = appState.party.name
-      } else {
-        title = t('no_title')
-      }
-    } else {
-      title = ''
-    }
-
-    return title !== '' ? (
-      <Tooltip content={t('tooltips.copy_url')}>
-        <Button
-          blended={true}
-          rightAccessoryIcon={
-            path === 'p' && hasAccessory ? (
-              <LinkIcon className="stroke" />
-            ) : undefined
-          }
-          text={title}
-          onClick={copyToClipboard}
-        />
-      </Tooltip>
-    ) : (
-      ''
-    )
   }
 
   const profileImage = () => {
@@ -307,21 +197,6 @@ const Header = () => {
           onClick={newTeam}
         />
       </Tooltip>
-    )
-  }
-
-  // Rendering: Toasts
-  const urlCopyToast = () => {
-    return (
-      <Toast
-        altText={t('toasts.copied')}
-        open={copyToastOpen}
-        duration={2400}
-        type="foreground"
-        content={t('toasts.copied')}
-        onOpenChange={handleCopyToastOpenChanged}
-        onCloseClick={handleCopyToastCloseClicked}
-      />
     )
   }
 
@@ -394,7 +269,6 @@ const Header = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {!appState.errorCode ? pageTitle() : ''}
       </section>
     )
   }
@@ -564,8 +438,6 @@ const Header = () => {
     <nav id="Header">
       {left()}
       {right()}
-      {urlCopyToast()}
-      {remixToast()}
       {settingsModal()}
       {loginModal()}
       {signupModal()}

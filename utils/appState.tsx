@@ -49,6 +49,7 @@ interface AppState {
     element: number
     fullAuto: boolean
     autoGuard: boolean
+    autoSummon: boolean
     chargeAttack: boolean
     clearTime: number
     buttonCount?: number
@@ -110,6 +111,7 @@ export const initialAppState: AppState = {
     raid: undefined,
     fullAuto: false,
     autoGuard: false,
+    autoSummon: false,
     chargeAttack: true,
     clearTime: 0,
     buttonCount: undefined,

@@ -1,8 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Toast from '~components/common/Toast'
 import { Trans, useTranslation } from 'next-i18next'
-
-import './index.scss'
 
 interface Props {
   partyName: string
@@ -19,7 +17,9 @@ const RemixedToast = ({
   onCloseClick,
 }: Props) => {
   const { t } = useTranslation('common')
-
+  useEffect(() => {
+    console.log(partyName)
+  }, [])
   // Methods: Event handlers
   function handleOpenChange() {
     onOpenChange(open)

@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { subscribe, useSnapshot } from 'valtio'
-import { Trans, useTranslation } from 'next-i18next'
-import Link from 'next/link'
+import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
 // Dependencies: Common
@@ -125,20 +124,25 @@ const PartyDropdown = ({
 
   // Toasts / Copy URL
   function handleCopyToastOpenChanged(open: boolean) {
-    setCopyToastOpen(open)
+    setCopyToastOpen(!open)
   }
 
   function handleCopyToastCloseClicked() {
     setCopyToastOpen(false)
   }
 
-  // Toasts / Remix team
+  // Toasts: Remix team
   function handleRemixToastOpenChanged(open: boolean) {
-    setRemixToastOpen(open)
+    setRemixToastOpen(!open)
   }
 
   function handleRemixToastCloseClicked() {
     setRemixToastOpen(false)
+  }
+
+  function remixCallback() {
+    setRemixToastOpen(true)
+    remixTeamCallback()
   }
 
   const editableItems = () => {
@@ -185,10 +189,23 @@ const PartyDropdown = ({
 
       <RemixTeamAlert
         creator={editable}
-        name={partySnapshot.name ? partySnapshot.name : t('no_title')}
+        name={partySnapshot.name || t('no_title')}
         open={remixAlertOpen}
         onOpenChange={handleRemixTeamAlertChange}
-        remixCallback={remixTeamCallback}
+        remixCallback={remixCallback}
+      />
+
+      <RemixedToast
+        open={remixToastOpen}
+        partyName={partySnapshot.name || t('no_title')}
+        onOpenChange={handleRemixToastOpenChanged}
+        onCloseClick={handleRemixToastCloseClicked}
+      />
+
+      <UrlCopiedToast
+        open={copyToastOpen}
+        onOpenChange={handleCopyToastOpenChanged}
+        onCloseClick={handleCopyToastCloseClicked}
       />
     </>
   )

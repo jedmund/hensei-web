@@ -1,5 +1,6 @@
 .Combobox.Raid {
   box-sizing: border-box;
+  min-width: 440px;
 
   .Header {
     background: var(--dialog-bg);
@@ -182,6 +183,10 @@
       color: var(--light-text);
     }
   }
+}
+
+.SelectTrigger.Raid .Value.Empty {
+  color: var(--text-tertiary);
 }
 
 .Filters .SelectTrigger.Raid {
