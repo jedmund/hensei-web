@@ -1,7 +1,5 @@
 import React from 'react'
 import Toast from '~components/common/Toast'
-
-import './index.scss'
 import { useTranslation } from 'next-i18next'
 
 interface Props {
