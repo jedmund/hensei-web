@@ -22,9 +22,14 @@
   max-width: 30vw;
   padding: $unit * 4;
 
+  @include breakpoint(tablet) {
+    max-width: inherit;
+    max-width: 60vw;
+  }
+
   @include breakpoint(phone) {
     max-width: inherit;
-    width: 60vw;
+    width: 70vw;
   }
 
   .description {
@@ -41,5 +46,15 @@
     display: flex;
     align-self: flex-end;
     gap: $unit;
+
+    @include breakpoint(phone) {
+      flex-direction: column-reverse;
+      align-self: center;
+      width: 100%;
+
+      .Button {
+        width: 100%;
+      }
+    }
   }
 }
