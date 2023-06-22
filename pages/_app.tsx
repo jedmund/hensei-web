@@ -1,10 +1,13 @@
 import { appWithTranslation } from 'next-i18next'
+import Link from 'next/link'
+import { useTranslation } from 'next-i18next'
 import { get } from 'local-storage'
 import { getCookie, setCookie } from 'cookies-next'
 import { subscribe } from 'valtio'
 import { useEffect, useState } from 'react'
 import { ThemeProvider } from 'next-themes'
 
+import { appState } from '~utils/appState'
 import { accountState } from '~utils/accountState'
 import { retrieveCookies } from '~utils/retrieveCookies'
 import { setHeaders } from '~utils/userToken'
@@ -16,9 +19,12 @@ import Layout from '~components/Layout'
 
 import type { AppProps } from 'next/app'
 
+import DiscordIcon from '~public/icons/discord.svg'
+import ShareIcon from '~public/icons/Share.svg'
 import '../styles/globals.scss'
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const { t } = useTranslation('common')
   const [refresh, setRefresh] = useState(false)
 
   // Subscribe to app state to listen for account changes and
@@ -88,12 +94,47 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   }
 
+  const serverUnavailable = () => {
+    return (
+      <div className="ServerUnavailableWrapper">
+        <div className="ServerUnavailable">
+          <div className="Message">
+            <h1>{t('errors.server_unavailable.title')}</h1>
+            <p>{t('errors.server_unavailable.message')}</p>
+          </div>
+          <div className="Connect">
+            <p>{t('errors.server_unavailable.discord')}</p>
+            <div className="Discord LinkItem">
+              <Link href="https://discord.gg/qyZ5hGdPC8">
+                <a
+                  href="https://discord.gg/qyZ5hGdPC8"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <div className="Left">
+                    <DiscordIcon />
+                    <h3>granblue-tools</h3>
+                  </div>
+                  <ShareIcon className="ShareIcon" />
+                </a>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <ThemeProvider>
       <ToastProvider swipeDirection="right">
         <TooltipProvider>
           <Layout>
-            <Component {...pageProps} />
+            {appState.version ? (
+              serverUnavailable()
+            ) : (
+              <Component {...pageProps} />
+            )}
           </Layout>
           <Viewport className="ToastViewport" />
         </TooltipProvider>

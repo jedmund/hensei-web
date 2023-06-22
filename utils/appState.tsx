@@ -88,7 +88,7 @@ interface AppState {
   jobs: Job[]
   jobSkills: JobSkill[]
   weaponKeys: GroupedWeaponKeys
-  version: AppUpdate
+  version?: AppUpdate
   status?: ResponseStatus
 }
 

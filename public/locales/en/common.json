@@ -87,6 +87,11 @@
       "description": "The page you're looking for couldn't be found",
       "button": "Create a new party"
     },
+    "server_unavailable": {
+      "title": "Server unavailable",
+      "message": "We're having trouble connecting to the server right now",
+      "discord": "Join us on Discord for status updates"
+    },
     "validation": {
       "guidebooks": "You cannot equip more than one of each Sephira Guidebook"
     },

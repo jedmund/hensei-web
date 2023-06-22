@@ -17,16 +17,18 @@ const Layout = ({ children }: PropsWithChildren<Props>) => {
   const [updateToastOpen, setUpdateToastOpen] = useState(false)
 
   useEffect(() => {
-    const cookie = getToastCookie()
-    const now = new Date()
-    const updatedAt = new Date(appState.version.updated_at)
-    const validUntil = add(updatedAt, { days: 7 })
+    if (appState.version) {
+      const cookie = getToastCookie()
+      const now = new Date()
+      const updatedAt = new Date(appState.version.updated_at)
+      const validUntil = add(updatedAt, { days: 7 })
 
-    if (now < validUntil && !cookie.seen) setUpdateToastOpen(true)
+      if (now < validUntil && !cookie.seen) setUpdateToastOpen(true)
+    }
   }, [])
 
   function getToastCookie() {
-    if (appState.version.updated_at !== '') {
+    if (appState.version && appState.version.updated_at !== '') {
       const updatedAt = new Date(appState.version.updated_at)
       const cookieValues = getCookie(
         `update-${format(updatedAt, 'yyyy-MM-dd')}`
@@ -50,23 +52,32 @@ const Layout = ({ children }: PropsWithChildren<Props>) => {
   const updateToast = () => {
     const path = router.asPath.replaceAll('/', '')
 
-    return !['about', 'updates', 'roadmap'].includes(path) ? (
-      <UpdateToast
-        open={updateToastOpen}
-        updateType={appState.version.update_type}
-        onActionClicked={handleToastActionClicked}
-        onCloseClicked={handleToastClosed}
-        lastUpdated={appState.version.updated_at}
-      />
-    ) : (
-      ''
+    return (
+      !['about', 'updates', 'roadmap'].includes(path) &&
+      appState.version && (
+        <UpdateToast
+          open={updateToastOpen}
+          updateType={appState.version.update_type}
+          onActionClicked={handleToastActionClicked}
+          onCloseClicked={handleToastClosed}
+          lastUpdated={appState.version.updated_at}
+        />
+      )
+    )
+  }
+
+  const ServerAvailable = () => {
+    return (
+      <>
+        <TopHeader />
+        {updateToast()}
+      </>
     )
   }
 
   return (
     <>
-      <TopHeader />
-      {updateToast()}
+      {appState.version && ServerAvailable}
       <main>{children}</main>
     </>
   )
