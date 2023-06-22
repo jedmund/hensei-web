@@ -416,6 +416,7 @@
     "katana": "刀"
   },
   "raids": {
+    "all": "すべてのバトル",
     "placeholder": "バトルを選択...",
     "sections": {
       "raids": "マルチ",

@@ -185,7 +185,7 @@
   }
 }
 
-.SelectTrigger.Raid .Value.Empty {
+.SelectTrigger.Raid:not(.Highlighted) .Value.Empty {
   color: var(--text-tertiary);
 }
 
