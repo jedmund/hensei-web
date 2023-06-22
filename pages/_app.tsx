@@ -130,7 +130,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ToastProvider swipeDirection="right">
         <TooltipProvider>
           <Layout>
-            {appState.version ? (
+            {!appState.version ? (
               serverUnavailable()
             ) : (
               <Component {...pageProps} />

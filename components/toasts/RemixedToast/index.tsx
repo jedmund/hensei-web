@@ -17,9 +17,7 @@ const RemixedToast = ({
   onCloseClick,
 }: Props) => {
   const { t } = useTranslation('common')
-  useEffect(() => {
-    console.log(partyName)
-  }, [])
+
   // Methods: Event handlers
   function handleOpenChange() {
     onOpenChange(open)
