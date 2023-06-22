@@ -542,10 +542,15 @@ const RaidCombobox = (props: Props) => {
       className="Flush"
       open={open}
       onOpenChange={toggleOpen}
-      trigger={{ className: 'Raid' }}
       placeholder={
         props.showAllRaidsOption ? t('raids.all') : t('raids.placeholder')
       }
+      trigger={{
+        className: classNames({
+          Raid: true,
+          Highlighted: props.showAllRaidsOption,
+        }),
+      }}
       triggerTabIndex={props.tabIndex}
       value={renderTriggerContent()}
     >

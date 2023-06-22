@@ -21,9 +21,9 @@
 
   &:hover {
     background-color: var(--input-bg-hover);
-    color: var(--text-primary);
     cursor: pointer;
 
+    span:not(.SelectIcon),
     &[data-placeholder] > span:not(.SelectIcon) {
       color: var(--text-primary);
     }
@@ -69,6 +69,10 @@
     svg {
       fill: var(--icon-secondary);
     }
+  }
+
+  span:not(.SelectIcon) {
+    color: var(--text-secondary);
   }
 }
 
