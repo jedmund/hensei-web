@@ -152,6 +152,188 @@ select {
     line-height: 1.3;
   }
 
+  #Teams,
+  #Profile {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    gap: $unit * 2;
+  }
+
+  #NotFound {
+    height: 200px;
+    width: 400px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    h2 {
+      color: $grey-60;
+      font-size: $font-regular;
+      text-align: center;
+    }
+  }
+
+  img.profile {
+    background: $grey-90;
+
+    &.fire {
+      background: $fire-bg-20;
+    }
+
+    &.water {
+      background: $water-bg-20;
+    }
+
+    &.wind {
+      background: $wind-bg-20;
+    }
+
+    &.earth {
+      background: $earth-bg-20;
+    }
+
+    &.dark {
+      background: $dark-bg-10;
+    }
+
+    &.light {
+      background: $light-bg-20;
+    }
+
+    &.anonymous {
+      background: var(--anonymous-bg);
+    }
+  }
+
+  i.tag {
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    border-radius: calc($unit / 2);
+    font-size: 10px;
+    font-weight: $bold;
+    padding: 4px 6px;
+    text-transform: uppercase;
+  }
+
+  .infinite-scroll-component {
+    overflow: hidden !important;
+  }
+
+  .SearchFilterBar {
+    display: flex;
+    gap: $unit;
+    padding: 0 ($unit * 3);
+
+    @include breakpoint(phone) {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .Joined {
+    $offset: 2px;
+
+    align-items: center;
+    background: var(--input-bg);
+    border-radius: $input-corner;
+    border: $offset solid transparent;
+    box-sizing: border-box;
+    display: flex;
+    gap: $unit;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: calc($unit-2x - $offset);
+
+    &.Bound {
+      background-color: var(--input-bound-bg);
+
+      &:hover {
+        background-color: var(--input-bound-bg-hover);
+      }
+    }
+
+    &:focus-within {
+      border: $offset solid $blue;
+      // box-shadow: 0 2px rgba(255, 255, 255, 1);
+    }
+
+    .Counter {
+      color: $grey-55;
+      font-weight: $bold;
+      line-height: 42px;
+    }
+
+    .Input {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: $unit * 1.5 $unit-2x;
+      padding-left: calc($unit-2x - $offset);
+
+      &:focus {
+        border: none;
+        outline: none;
+      }
+    }
+  }
+}
+
+.ServerUnavailableWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+
+  .ServerUnavailable {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: $unit-6x;
+    margin: auto;
+    max-width: 440px;
+
+    .Message {
+      display: flex;
+      flex-direction: column;
+      gap: $unit;
+
+      h1 {
+        color: var(--text-primary);
+        font-size: $font-xxlarge;
+        font-weight: $bold;
+        text-align: center;
+      }
+
+      p {
+        color: var(--text-secondary);
+        font-size: $font-regular;
+        font-weight: $bold;
+        text-align: center;
+      }
+    }
+
+    .Connect {
+      color: var(--text-tertiary);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: $unit-2x;
+      width: 100%;
+
+      p {
+        text-align: center;
+      }
+
+      .LinkItem {
+        width: 100%;
+      }
+    }
+  }
+
   .LinkItem {
     $diameter: $unit-6x;
     align-items: center;
@@ -222,134 +404,6 @@ select {
 
     h3 {
       font-weight: $bold;
-    }
-  }
-}
-
-#Teams,
-#Profile {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  gap: $unit * 2;
-}
-
-#NotFound {
-  height: 200px;
-  width: 400px;
-  margin: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  h2 {
-    color: $grey-60;
-    font-size: $font-regular;
-    text-align: center;
-  }
-}
-
-img.profile {
-  background: $grey-90;
-
-  &.fire {
-    background: $fire-bg-20;
-  }
-
-  &.water {
-    background: $water-bg-20;
-  }
-
-  &.wind {
-    background: $wind-bg-20;
-  }
-
-  &.earth {
-    background: $earth-bg-20;
-  }
-
-  &.dark {
-    background: $dark-bg-10;
-  }
-
-  &.light {
-    background: $light-bg-20;
-  }
-
-  &.anonymous {
-    background: var(--anonymous-bg);
-  }
-}
-
-i.tag {
-  background: var(--tag-bg);
-  color: var(--tag-text);
-  border-radius: calc($unit / 2);
-  font-size: 10px;
-  font-weight: $bold;
-  padding: 4px 6px;
-  text-transform: uppercase;
-}
-
-.infinite-scroll-component {
-  overflow: hidden !important;
-}
-
-.SearchFilterBar {
-  display: flex;
-  gap: $unit;
-  padding: 0 ($unit * 3);
-
-  @include breakpoint(phone) {
-    display: grid;
-    gap: 8px;
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.Joined {
-  $offset: 2px;
-
-  align-items: center;
-  background: var(--input-bg);
-  border-radius: $input-corner;
-  border: $offset solid transparent;
-  box-sizing: border-box;
-  display: flex;
-  gap: $unit;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  padding-right: calc($unit-2x - $offset);
-
-  &.Bound {
-    background-color: var(--input-bound-bg);
-
-    &:hover {
-      background-color: var(--input-bound-bg-hover);
-    }
-  }
-
-  &:focus-within {
-    border: $offset solid $blue;
-    // box-shadow: 0 2px rgba(255, 255, 255, 1);
-  }
-
-  .Counter {
-    color: $grey-55;
-    font-weight: $bold;
-    line-height: 42px;
-  }
-
-  .Input {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: $unit * 1.5 $unit-2x;
-    padding-left: calc($unit-2x - $offset);
-
-    &:focus {
-      border: none;
-      outline: none;
     }
   }
 }

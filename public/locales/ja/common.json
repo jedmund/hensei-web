@@ -87,6 +87,11 @@
       "description": "探しているページは見つかりませんでした",
       "button": "新しい編成を作成"
     },
+    "server_unavailable": {
+      "title": "サーバーダウン",
+      "message": "現在サーバーがダウンしています。しばらくしてから再度お試しください",
+      "discord": "Discordでサービスの状態を確認する"
+    },
     "validation": {
       "guidebooks": "セフィラ導本を複数個装備することはできません"
     },
