@@ -419,6 +419,7 @@
     "katana": "Katana"
   },
   "raids": {
+    "all": "All battles",
     "placeholder": "Select a raid...",
     "sections": {
       "raids": "Raids",
