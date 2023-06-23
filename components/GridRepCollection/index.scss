@@ -3,6 +3,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   margin: 0 auto;
+  margin-top: $unit-2x;
   padding: 0;
   padding-top: $unit-fourth;
   transition: opacity 0.14s ease-in-out;
