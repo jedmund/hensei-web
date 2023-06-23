@@ -77,8 +77,7 @@ const Layout = ({ children }: PropsWithChildren<Props>) => {
 
   return (
     <>
-      {ServerAvailable()}
-      {/* {appState.version ? ServerAvailable() : ''} */}
+      {appState.version ? ServerAvailable() : ''}
       <main>{children}</main>
     </>
   )
