@@ -36,8 +36,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => () => unsubscribe(), [])
 
   useEffect(() => {
-    console.log('granblue.team version:')
-    console.log(appState.version)
+    console.log(`granblue.team version: ${appState.version?.version}`)
   }, [])
 
   const accountCookie = getCookie('account')
@@ -135,11 +134,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ToastProvider swipeDirection="right">
         <TooltipProvider>
           <Layout>
-            <Component {...pageProps} />
-            {/* {!appState.version ? (
+            {!appState.version ? (
               serverUnavailable()
             ) : (
-            )} */}
+              <Component {...pageProps} />
+            )}
           </Layout>
           <Viewport className="ToastViewport" />
         </TooltipProvider>

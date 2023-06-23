@@ -77,9 +77,7 @@ const Layout = ({ children }: PropsWithChildren<Props>) => {
 
   return (
     <>
-      {/* {appState.version ? ServerAvailable() : ''} */}
-      <TopHeader />
-      {updateToast()}
+      {appState.version ? ServerAvailable() : ''}
       <main>{children}</main>
     </>
   )
