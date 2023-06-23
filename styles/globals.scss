@@ -160,21 +160,6 @@ select {
     gap: $unit * 2;
   }
 
-  #NotFound {
-    height: 200px;
-    width: 400px;
-    margin: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    h2 {
-      color: $grey-60;
-      font-size: $font-regular;
-      text-align: center;
-    }
-  }
-
   img.profile {
     background: $grey-90;
 
@@ -205,16 +190,6 @@ select {
     &.anonymous {
       background: var(--anonymous-bg);
     }
-  }
-
-  i.tag {
-    background: var(--tag-bg);
-    color: var(--tag-text);
-    border-radius: calc($unit / 2);
-    font-size: 10px;
-    font-weight: $bold;
-    padding: 4px 6px;
-    text-transform: uppercase;
   }
 
   .infinite-scroll-component {
@@ -279,6 +254,16 @@ select {
       }
     }
   }
+}
+
+.MenuItem i.tag {
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  border-radius: calc($unit / 2);
+  font-size: 10px;
+  font-weight: $bold;
+  padding: 4px 6px;
+  text-transform: uppercase;
 }
 
 .ServerUnavailableWrapper {
@@ -405,5 +390,20 @@ select {
     h3 {
       font-weight: $bold;
     }
+  }
+}
+
+#NotFound {
+  height: 200px;
+  width: 400px;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  h2 {
+    color: $grey-60;
+    font-size: $font-regular;
+    text-align: center;
   }
 }
