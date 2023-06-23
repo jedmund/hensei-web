@@ -8,7 +8,7 @@ import ExtendedMasterySelect from '~components/mastery/ExtendedMasterySelect'
 import { overMastery } from '~data/overMastery'
 
 // Styles and icons
-import './index.scss'
+import styles from './index.module.scss'
 
 // Types
 import { CharacterOverMastery, ExtendedMastery } from '~types'

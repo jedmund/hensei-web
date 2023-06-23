@@ -1,7 +1,7 @@
 import React from 'react'
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 
-import './index.scss'
+import styles from './index.module.scss'
 import Button from '~components/common/Button'
 import Overlay from '~components/common/Overlay'
 

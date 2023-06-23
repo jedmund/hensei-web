@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react'
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {}

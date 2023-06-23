@@ -22,7 +22,7 @@ import { appState } from '~utils/appState'
 import { NO_AWAKENING } from '~data/awakening'
 
 import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface GridWeaponObject {
   weapon: {

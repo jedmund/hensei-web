@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import classNames from 'classnames'
 
 import * as ToastPrimitive from '@radix-ui/react-toast'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props extends ToastPrimitive.ToastProps {
   altText: string

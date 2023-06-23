@@ -13,7 +13,7 @@ import UncapIndicator from '~components/uncap/UncapIndicator'
 
 import ax from '~data/ax'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   gridWeapon: GridWeapon

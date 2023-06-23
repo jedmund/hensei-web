@@ -10,7 +10,7 @@ import classNames from 'classnames'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import ChevronIcon from '~public/icons/Chevron.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props extends ComponentProps<'div'> {
   open: boolean

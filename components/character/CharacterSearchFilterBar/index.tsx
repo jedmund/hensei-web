@@ -8,7 +8,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import SearchFilter from '~components/search/SearchFilter'
 import SearchFilterCheckboxItem from '~components/search/SearchFilterCheckboxItem'
 
-import './index.scss'
+import styles from './index.module.scss'
 import {
   emptyElementState,
   emptyProficiencyState,

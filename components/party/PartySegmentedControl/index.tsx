@@ -14,7 +14,7 @@ import SummonRep from '~components/reps/SummonRep'
 
 import { GridType } from '~utils/enums'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Fix for valtio readonly array
 declare module 'valtio' {

@@ -7,7 +7,7 @@ import JobAccessoryPopover from '~components/job/JobAccessoryPopover'
 import ShieldIcon from '~public/icons/Shield.svg'
 import ManaturaIcon from '~public/icons/Manatura.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 import classNames from 'classnames'
 
 interface Props {

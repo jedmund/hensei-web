@@ -13,7 +13,7 @@ import Button from '~components/common/Button'
 
 import SaveIcon from '~public/icons/Save.svg'
 import ShieldIcon from '~public/icons/Shield.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   shortcode: string

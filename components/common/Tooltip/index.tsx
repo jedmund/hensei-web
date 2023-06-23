@@ -3,7 +3,7 @@ import classNames from 'classnames'
 
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
-import './index.scss'
+import styles from './index.module.scss'
 interface Props extends TooltipPrimitive.TooltipContentProps {
   content: React.ReactNode
   open?: boolean

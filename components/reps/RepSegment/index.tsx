@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   controlGroup: string

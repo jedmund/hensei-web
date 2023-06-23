@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   labelType: string

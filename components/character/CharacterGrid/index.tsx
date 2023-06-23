@@ -17,7 +17,7 @@ import type { DetailsObject, JobSkillObject, SearchableObject } from '~types'
 import api from '~utils/api'
 import { appState } from '~utils/appState'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { SkillGroup, skillClassification } from '~data/skillGroups'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   data: JobSkill

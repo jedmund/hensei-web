@@ -30,7 +30,7 @@ const MAX_AWAKENING_LEVEL = 9
 
 // Styles and icons
 import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 // Types
 import {

@@ -23,7 +23,7 @@ import { setEditKey, storeEditKey, unsetEditKey } from '~utils/userToken'
 
 import type { DetailsObject } from '~types'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {

@@ -9,7 +9,7 @@ import Overlay from '~components/common/Overlay'
 
 import { appState } from '~utils/appState'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   open: boolean

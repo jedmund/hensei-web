@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent, KeyboardEvent } from 'react'
 import classNames from 'classnames'
 
 import Input from '~components/common/Input'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props
   extends React.DetailedHTMLProps<

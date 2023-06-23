@@ -1,7 +1,7 @@
 import React from 'react'
 import * as RadixSelect from '@radix-ui/react-select'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {

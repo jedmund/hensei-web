@@ -3,7 +3,7 @@ import React from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import CheckIcon from '~public/icons/Check.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   checked?: boolean

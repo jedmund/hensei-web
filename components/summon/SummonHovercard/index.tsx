@@ -11,7 +11,7 @@ import Button from '~components/common/Button'
 import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
 import UncapIndicator from '~components/uncap/UncapIndicator'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   gridSummon: GridSummon

@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import api from '~utils/api'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   id: string

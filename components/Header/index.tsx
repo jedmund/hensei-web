@@ -34,7 +34,7 @@ import ChevronIcon from '~public/icons/Chevron.svg'
 import MenuIcon from '~public/icons/Menu.svg'
 import PlusIcon from '~public/icons/Add.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 const Header = () => {
   // Localization

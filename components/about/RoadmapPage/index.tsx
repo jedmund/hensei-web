@@ -7,7 +7,7 @@ import { useTranslation } from 'next-i18next'
 import ShareIcon from '~public/icons/Share.svg'
 import GithubIcon from '~public/icons/github.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 const ROADMAP_ITEMS = 6
 

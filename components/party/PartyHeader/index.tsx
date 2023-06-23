@@ -23,7 +23,7 @@ import SaveIcon from '~public/icons/Save.svg'
 
 import type { DetailsObject } from 'types'
 
-import './index.scss'
+import styles from './index.module.scss'
 import RemixTeamAlert from '~components/dialogs/RemixTeamAlert'
 import RemixedToast from '~components/toasts/RemixedToast'
 import { set } from 'local-storage'

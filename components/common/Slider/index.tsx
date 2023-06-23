@@ -3,7 +3,7 @@ import * as SliderPrimitive from '@radix-ui/react-slider'
 import type { SliderProps } from '@radix-ui/react-slider'
 import classNames from 'classnames'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {}
 

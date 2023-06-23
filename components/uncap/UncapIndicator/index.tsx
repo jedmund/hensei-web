@@ -3,7 +3,7 @@ import UncapStar from '~components/uncap/UncapStar'
 import TranscendencePopover from '~components/uncap/TranscendencePopover'
 import TranscendenceStar from '~components/uncap/TranscendenceStar'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   type: 'character' | 'weapon' | 'summon'

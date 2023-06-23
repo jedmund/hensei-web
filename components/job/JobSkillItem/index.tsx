@@ -14,7 +14,7 @@ import ContextMenuItem from '~components/common/ContextMenuItem'
 
 import EllipsisIcon from '~public/icons/Ellipsis.svg'
 import PlusIcon from '~public/icons/Add.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props extends React.ComponentPropsWithoutRef<'div'> {

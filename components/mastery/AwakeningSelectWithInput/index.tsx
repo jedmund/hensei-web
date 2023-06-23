@@ -10,7 +10,7 @@ import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
 
 // Styles and icons
-import './index.scss'
+import styles from './index.module.scss'
 
 // Types
 interface Props {

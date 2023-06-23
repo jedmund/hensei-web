@@ -5,7 +5,7 @@ import WeaponUnit from '~components/weapon/WeaponUnit'
 
 import type { SearchableObject } from '~types'
 
-import './index.scss'
+import styles from './index.module.scss'
 import classNames from 'classnames'
 
 // Props

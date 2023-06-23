@@ -9,7 +9,7 @@ import classNames from 'classnames'
 
 import ax from '~data/ax'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface ErrorMap {
   [index: string]: string

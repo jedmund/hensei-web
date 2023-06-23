@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 
 import TranscendenceFragment from '~components/uncap/TranscendenceFragment'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props
   extends React.DetailedHTMLProps<

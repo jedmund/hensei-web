@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   sendFilters: (filters: { [key: string]: number }) => void

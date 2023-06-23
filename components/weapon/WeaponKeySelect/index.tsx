@@ -5,7 +5,7 @@ import SelectGroup from '~components/common/SelectGroup'
 import SelectItem from '~components/common/SelectItem'
 import api from '~utils/api'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {

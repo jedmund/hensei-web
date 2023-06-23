@@ -27,7 +27,7 @@ import { appState } from '~utils/appState'
 
 import CheckIcon from '~public/icons/Check.svg'
 import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props extends DialogProps {
   party?: Party

@@ -27,7 +27,7 @@ import Button from '~components/common/Button'
 import ArrowIcon from '~public/icons/Arrow.svg'
 import CrossIcon from '~public/icons/Cross.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 const NUM_SECTIONS = 3
 const NUM_ELEMENTS = 5

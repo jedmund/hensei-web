@@ -17,7 +17,7 @@ import type { SearchableObject } from '~types'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   guidebook: Guidebook | undefined

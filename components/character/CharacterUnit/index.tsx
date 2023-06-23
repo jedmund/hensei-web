@@ -31,7 +31,7 @@ import type {
   SearchableObject,
 } from '~types'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   gridCharacter?: GridCharacter

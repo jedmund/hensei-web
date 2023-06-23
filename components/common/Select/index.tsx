@@ -6,7 +6,7 @@ import Overlay from '~components/common/Overlay'
 
 import ChevronIcon from '~public/icons/Chevron.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props

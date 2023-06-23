@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import classNames from 'classnames'
 
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props extends HoverCardPrimitive.HoverCardContentProps {}
 

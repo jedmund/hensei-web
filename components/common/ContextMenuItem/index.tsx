@@ -2,7 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   className?: string

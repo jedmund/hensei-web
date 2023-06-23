@@ -2,7 +2,7 @@ import React, { ComponentProps, PropsWithChildren } from 'react'
 import { useTranslation } from 'next-i18next'
 import { CommandItem } from '~components/common/Command'
 import classNames from 'classnames'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props extends ComponentProps<'div'> {
   className?: string

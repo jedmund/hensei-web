@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import Select from '~components/common/Select'
 import TableField from '~components/common/TableField'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   name: string

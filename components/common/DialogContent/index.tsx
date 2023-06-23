@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import debounce from 'lodash.debounce'
 
 import Overlay from '~components/common/Overlay'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props
   extends React.DetailedHTMLProps<

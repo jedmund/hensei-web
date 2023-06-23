@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next'
 
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   currentElement: number

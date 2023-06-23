@@ -23,7 +23,7 @@ import { accountState } from '~utils/accountState'
 import { pictureData } from '~utils/pictureData'
 
 import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 type StateVariables = {
   [key: string]: boolean

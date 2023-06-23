@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 import classNames from 'classnames'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props extends DropdownMenuPrimitive.DropdownMenuContentProps {}
 

@@ -22,7 +22,7 @@ import ax from '~data/ax'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   gridWeapon: GridWeapon | undefined

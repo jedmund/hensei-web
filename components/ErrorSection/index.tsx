@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next'
 import Button from '~components/common/Button'
 import { ResponseStatus } from '~types'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   status: ResponseStatus

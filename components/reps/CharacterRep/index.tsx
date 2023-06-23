@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import 'fix-date'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   job?: Job

@@ -24,7 +24,7 @@ import GuidebookResult from '~components/extra/GuidebookResult'
 import type { DialogProps } from '@radix-ui/react-dialog'
 import type { SearchableObject, SearchableObjectArray } from '~types'
 
-import './index.scss'
+import styles from './index.module.scss'
 import CrossIcon from '~public/icons/Cross.svg'
 
 interface Props extends DialogProps {

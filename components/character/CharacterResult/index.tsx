@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import UncapIndicator from '~components/uncap/UncapIndicator'
 import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   data: Character

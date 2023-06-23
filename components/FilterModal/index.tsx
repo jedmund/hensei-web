@@ -21,7 +21,7 @@ import SelectItem from '~components/common/SelectItem'
 import type { DialogProps } from '@radix-ui/react-dialog'
 
 import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props extends DialogProps {
   defaultFilterSet: FilterSet

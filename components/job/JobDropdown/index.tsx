@@ -10,7 +10,7 @@ import SelectGroup from '~components/common/SelectGroup'
 import { appState } from '~utils/appState'
 import { jobGroups } from '~data/jobGroups'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {

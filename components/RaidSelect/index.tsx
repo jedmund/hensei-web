@@ -7,7 +7,7 @@ import Overlay from '~components/common/Overlay'
 
 import ChevronIcon from '~public/icons/Chevron.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 import SegmentedControl from '~components/common/SegmentedControl'
 import Segment from '~components/common/Segment'
 import Input from '~components/common/Input'

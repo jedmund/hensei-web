@@ -2,7 +2,7 @@ import React from 'react'
 import { useTranslation } from 'next-i18next'
 import ChangelogUnit from '~components/about/ChangelogUnit'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface UpdateObject {
   character?: string[]

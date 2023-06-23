@@ -6,7 +6,7 @@ import classNames from 'classnames'
 
 import type { SearchableObject } from '~types'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {

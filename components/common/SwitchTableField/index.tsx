@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import Switch from '~components/common/Switch'
 import TableField from '~components/common/TableField'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   name: string

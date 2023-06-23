@@ -9,7 +9,7 @@ import Overlay from '~components/common/Overlay'
 
 import mapWeaponSeries from '~utils/mapWeaponSeries'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   open: boolean

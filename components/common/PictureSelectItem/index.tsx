@@ -1,7 +1,7 @@
 import React, { ComponentProps } from 'react'
 import * as Select from '@radix-ui/react-select'
 
-import './index.scss'
+import styles from './index.module.scss'
 import classNames from 'classnames'
 
 interface Props extends ComponentProps<'div'> {

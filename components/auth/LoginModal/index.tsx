@@ -10,12 +10,12 @@ import { accountState } from '~utils/accountState'
 
 import Button from '~components/common/Button'
 import Input from '~components/common/Input'
-import { Dialog, DialogTrigger, DialogClose } from '~components/common/Dialog'
+import { Dialog, DialogClose } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
 import changeLanguage from '~utils/changeLanguage'
 
 import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface ErrorMap {
   [index: string]: string

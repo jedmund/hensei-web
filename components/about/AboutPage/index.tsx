@@ -6,7 +6,7 @@ import ShareIcon from '~public/icons/Share.svg'
 import DiscordIcon from '~public/icons/discord.svg'
 import GithubIcon from '~public/icons/github.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {}
 

@@ -3,7 +3,7 @@ import Input from '~components/common/Input'
 import Slider from '~components/common/Slider'
 import TableField from '~components/common/TableField'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   name: string

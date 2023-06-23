@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   visible: boolean

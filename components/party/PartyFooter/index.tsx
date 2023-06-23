@@ -18,7 +18,7 @@ import { youtube } from '~utils/youtube'
 
 import type { DetailsObject } from 'types'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {

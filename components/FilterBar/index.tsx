@@ -12,7 +12,7 @@ import { defaultFilterset } from '~utils/defaultFilters'
 
 import FilterIcon from '~public/icons/Filter.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 import { getCookie } from 'cookies-next'
 import RaidCombobox from '~components/raids/RaidCombobox'
 import { appState } from '~utils/appState'

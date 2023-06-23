@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 import * as RadioGroup from '@radix-ui/react-radio-group'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   accessory: JobAccessory

@@ -2,7 +2,7 @@ import React from 'react'
 import { useTranslation } from 'next-i18next'
 import SummonUnit from '~components/summon/SummonUnit'
 import { SearchableObject } from '~types'
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {

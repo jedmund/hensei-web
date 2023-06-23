@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next'
 import ContentUpdate from '~components/about/ContentUpdate'
 import ChangelogUnit from '~components/about/ChangelogUnit'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 const UpdatesPage = () => {
   const { t: common } = useTranslation('common')
