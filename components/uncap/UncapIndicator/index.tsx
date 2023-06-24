@@ -150,8 +150,8 @@ const UncapIndicator = (props: Props) => {
   }
 
   return (
-    <div className="UncapWrapper">
-      <ul className="UncapIndicator">
+    <div className={styles.wrapper}>
+      <ul className={styles.indicator}>
         {Array.from(Array(numStars)).map((x, i) => {
           if (props.type === 'character' && i > 4) {
             if (props.special) return ulb(i)

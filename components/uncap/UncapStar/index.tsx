@@ -18,12 +18,12 @@ interface Props
 
 const UncapStar = (props: Props) => {
   const classes = classnames({
-    UncapStar: true,
-    empty: props.empty,
-    special: props.special,
-    mlb: !props.special,
-    flb: props.flb,
-    ulb: props.ulb,
+    [styles.star]: true,
+    [styles.empty]: props.empty,
+    [styles.special]: props.special,
+    [styles.mlb]: !props.special,
+    [styles.flb]: props.flb,
+    [styles.ulb]: props.ulb,
   })
 
   function clicked() {

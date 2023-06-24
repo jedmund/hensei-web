@@ -1,18 +1,18 @@
-.UncapWrapper {
+.wrapper {
   position: relative;
-}
 
-.UncapIndicator {
-  display: flex;
-  flex-direction: row;
-  align-content: center;
-  justify-content: center;
-  gap: 2px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  .indicator {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    gap: 2px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 
-  &:hover {
-    cursor: pointer;
+    &:hover {
+      cursor: pointer;
+    }
   }
 }
