@@ -49,7 +49,6 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
       if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
         event.preventDefault()
         if (onArrowKeyPressed) {
-          console.log(event.key)
           onArrowKeyPressed(event.key === 'ArrowUp' ? 'Up' : 'Down')
         }
       }

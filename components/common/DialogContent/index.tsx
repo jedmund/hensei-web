@@ -93,11 +93,6 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
     const footer = props.footerref
 
     if (footer && footer.current) {
-      console.log(
-        scrollable,
-        scrollable?.clientHeight,
-        scrollable?.scrollHeight
-      )
       if (scrollable && scrollable.clientHeight >= scrollable.scrollHeight) {
         footer.current.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, 0)`
         footer.current.style.borderTopColor = `rgba(0, 0, 0, 0)`
