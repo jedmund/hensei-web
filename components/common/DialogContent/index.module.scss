@@ -1,4 +1,4 @@
-.Dialog {
+.dialog {
   position: fixed;
   box-sizing: border-box;
   background: none;
@@ -13,7 +13,7 @@
   color: inherit;
   z-index: 10;
 
-  .DialogContent {
+  .dialogContent {
     $multiplier: 4;
 
     // animation: $duration-modal-open cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal
@@ -59,134 +59,17 @@
       width: 100%;
     }
 
-    .Container {
+    .container {
       overflow-y: hidden;
 
-      &.Scrollable {
+      &.scrollable {
         overflow-y: auto;
-      }
-    }
-
-    .DialogHeader {
-      background: var(--dialog-bg);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0);
-      border-bottom: 1px solid rgba(0, 0, 0, 0);
-      display: flex;
-      align-items: center;
-      gap: $unit-2x;
-      justify-content: space-between;
-      padding: $unit-4x ($unit * $multiplier);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-
-      &.Short {
-        padding-top: $unit-3x;
-        padding-bottom: $unit-3x;
-      }
-
-      .left {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        gap: $unit;
-
-        p {
-          font-size: $font-small;
-          line-height: 1.25;
-        }
-      }
-
-      .DialogImage {
-        border-radius: $input-corner;
-        width: $unit-10x;
-      }
-    }
-
-    .DialogClose {
-      background: transparent;
-      border: none;
-
-      &:hover {
-        cursor: pointer;
-
-        svg {
-          fill: $error;
-        }
-      }
-
-      svg {
-        fill: $grey-50;
-        float: right;
-        height: 24px;
-        width: 24px;
-      }
-    }
-
-    .DialogTitle {
-      color: var(--text-primary);
-      font-size: $font-xlarge;
-
-      h1 {
-        color: var(--text-primary);
-        font-size: $font-xlarge;
-        font-weight: $medium;
-        text-align: left;
-      }
-    }
-
-    .DialogTop {
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      gap: calc($unit / 2);
-
-      .SubTitle {
-        color: var(--text-secondary);
-        font-size: $font-small;
-        font-weight: $medium;
       }
     }
 
     .DialogDescription {
       color: var(--text-secondary);
       flex-grow: 1;
-    }
-
-    .DialogFooter {
-      align-items: flex-end;
-      background: var(--dialog-bg);
-      bottom: 0;
-      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.16);
-      border-top: 1px solid rgba(0, 0, 0, 0.24);
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      padding: ($unit * 1.5) ($unit * $multiplier) $unit-3x;
-      position: sticky;
-
-      .Buttons {
-        display: flex;
-        gap: $unit;
-
-        &.Span {
-          width: 100%;
-
-          .Button {
-            width: 100%;
-          }
-        }
-
-        &.Spaced {
-          justify-content: space-between;
-        }
-      }
-    }
-
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      width: 100%;
     }
 
     .Fields {

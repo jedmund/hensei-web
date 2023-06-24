@@ -24,7 +24,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
 ) {
   // Classes
   const classes = classNames(props.className, {
-    DialogContent: true,
+    [styles.dialogContent]: true,
   })
 
   // Handlers
@@ -89,10 +89,15 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
 
   const calculateFooterShadow = debounce(() => {
     const boxShadowBase = '0 -2px 8px'
-    const scrollable = document.querySelector('.Scrollable')
+    const scrollable = document.querySelector(`.${styles.scrollValue}`)
     const footer = props.footerref
 
     if (footer && footer.current) {
+      console.log(
+        scrollable,
+        scrollable?.clientHeight,
+        scrollable?.scrollHeight
+      )
       if (scrollable && scrollable.clientHeight >= scrollable.scrollHeight) {
         footer.current.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, 0)`
         footer.current.style.borderTopColor = `rgba(0, 0, 0, 0)`
@@ -124,7 +129,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
 
   return (
     <DialogPrimitive.Portal>
-      <dialog className="Dialog">
+      <dialog className={styles.dialog}>
         <DialogPrimitive.Content
           {...props}
           className={classes}
@@ -134,8 +139,8 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
         >
           <div
             className={classNames({
-              Container: true,
-              Scrollable: scrollable,
+              [styles.container]: true,
+              [styles.scrollable]: scrollable,
             })}
             onScroll={handleScroll}
           >
