@@ -1,4 +1,4 @@
-.WeaponUnit {
+.unit {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -65,20 +65,20 @@
     }
   }
 
-  &.grid {
-    .WeaponImage {
+  &.weapon {
+    .image {
       list-style-type: none;
       width: 100%;
       height: auto;
 
-      .Awakening {
+      .awakening {
         width: 30%;
         height: auto;
         top: 14%;
         left: -3.5%;
       }
 
-      .Modifiers > .Skills {
+      .modifiers > .skills {
         bottom: 12%;
         left: -3.5%;
 
@@ -112,7 +112,7 @@
     text-align: center;
   }
 
-  .WeaponImage {
+  .image {
     background: var(--card-bg);
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: $unit;
@@ -128,14 +128,14 @@
       fill: var(--icon-secondary-hover);
     }
 
-    .Awakening {
+    .awakening {
       width: 100%;
       height: 100%;
       position: absolute;
       z-index: 3;
     }
 
-    .Modifiers {
+    .modifiers {
       display: flex;
       align-items: flex-end;
       width: 100%;
@@ -143,7 +143,7 @@
       position: absolute;
       z-index: 3;
 
-      .Skills {
+      .skills {
         display: flex;
         gap: $unit-fourth;
         justify-content: flex-end;

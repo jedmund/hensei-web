@@ -72,14 +72,14 @@ const CharacterUnit = ({
 
   // Classes
   const classes = classNames({
-    CharacterUnit: true,
-    editable: editable,
-    filled: gridCharacter !== undefined,
+    [styles.unit]: true,
+    [styles.editable]: editable,
+    [styles.filled]: gridCharacter !== undefined,
   })
 
   const buttonClasses = classNames({
-    Options: true,
-    Clicked: contextMenuOpen,
+    options: true,
+    clicked: contextMenuOpen,
   })
 
   // Other
@@ -278,8 +278,8 @@ const CharacterUnit = ({
   const perpetuity = () => {
     if (gridCharacter) {
       const classes = classNames({
-        Perpetuity: true,
-        Empty: !gridCharacter.perpetuity,
+        [styles.perpetuity]: true,
+        [styles.empty]: !gridCharacter.perpetuity,
       })
 
       return <i className={classes} onClick={handlePerpetuityClick} />
@@ -297,13 +297,13 @@ const CharacterUnit = ({
 
     const content = (
       <div
-        className="CharacterImage"
+        className={styles.image}
         tabIndex={gridCharacter ? gridCharacter.position * 7 : 0}
         onClick={openSearchModal}
       >
         {image}
         {editable ? (
-          <span className="icon">
+          <span className={styles.icon}>
             <PlusIcon />
           </span>
         ) : (
@@ -346,7 +346,7 @@ const CharacterUnit = ({
         ) : (
           ''
         )}
-        <h3 className="CharacterName">{character?.name[locale]}</h3>
+        <h3 className={styles.name}>{character?.name[locale]}</h3>
       </div>
       {searchModal()}
     </>

@@ -1,4 +1,4 @@
-.SummonUnit {
+.unit {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -26,7 +26,7 @@
       min-height: 15.9vw;
     }
 
-    .SummonImage {
+    .image {
       list-style-type: none;
       width: 100%;
     }
@@ -36,19 +36,19 @@
     margin-right: 0;
   }
 
-  &.main.editable .SummonImage:hover,
-  &.friend.editable .SummonImage:hover {
+  &.main.editable .image:hover,
+  &.friend.editable .image:hover {
     transform: $scale-tall;
   }
 
-  &.editable .SummonImage:hover {
+  &.editable .image:hover {
     border: $hover-stroke;
     box-shadow: $hover-shadow;
     cursor: pointer;
     transform: $scale-wide;
   }
 
-  .SummonImage {
+  .image {
     background: var(--card-bg);
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: $unit;
@@ -75,7 +75,7 @@
     }
   }
 
-  .SummonName {
+  .name {
     @include breakpoint(phone) {
       font-size: $font-tiny;
     }
@@ -113,11 +113,11 @@
     }
   }
 
-  &:hover .QuickSummon.Empty {
+  &:hover .quickSummon.empty {
     opacity: 1;
   }
 
-  &.main .QuickSummon {
+  &.main .quickSummon {
     $diameter: $unit-6x;
     background-size: $diameter $diameter;
     top: -2%;
@@ -126,11 +126,11 @@
     height: $diameter;
   }
 
-  &.friend .QuickSummon {
+  &.friend .quickSummon {
     display: none;
   }
 
-  &.grid .QuickSummon {
+  &.grid .quickSummon {
     $diameter: $unit-5x;
     background-size: $diameter $diameter;
     top: -5%;
@@ -139,7 +139,7 @@
     height: $diameter;
   }
 
-  .QuickSummon {
+  .quickSummon {
     position: absolute;
     background-image: url('/icons/quick_summon/filled.svg');
     z-index: 20;
@@ -150,7 +150,7 @@
       cursor: pointer;
     }
 
-    &.Empty {
+    &.empty {
       background-image: url('/icons/quick_summon/empty.svg');
       opacity: 0;
 

@@ -1,4 +1,4 @@
-.CharacterUnit {
+.unit {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -8,7 +8,7 @@
   position: relative;
   margin-bottom: $unit * 4;
 
-  &.editable .CharacterImage:hover {
+  &.editable .image:hover {
     border: $hover-stroke;
     box-shadow: $hover-shadow;
     cursor: pointer;
@@ -60,7 +60,7 @@
     z-index: 2;
   }
 
-  .CharacterImage {
+  .image {
     aspect-ratio: 131 / 273;
     background: var(--card-bg);
     border: 1px solid rgba(0, 0, 0, 0);
@@ -92,7 +92,7 @@
     }
   }
 
-  .CharacterName {
+  .name {
     @include breakpoint(phone) {
       font-size: $font-tiny;
     }
@@ -102,7 +102,7 @@
     opacity: 1;
   }
 
-  .Perpetuity {
+  .perpetuity {
     position: absolute;
     background-image: url('/icons/perpetuity/filled.svg');
     background-size: $unit-4x $unit-4x;
@@ -118,7 +118,7 @@
       cursor: pointer;
     }
 
-    &.Empty {
+    &.empty {
       background-image: url('/icons/perpetuity/empty.svg');
       opacity: 0;
 

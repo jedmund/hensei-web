@@ -62,17 +62,17 @@ const SummonUnit = ({
 
   // Classes
   const classes = classNames({
-    SummonUnit: true,
-    main: unitType == 0,
-    grid: unitType == 1,
-    friend: unitType == 2,
-    editable: editable,
-    filled: gridSummon !== undefined,
+    [styles.unit]: true,
+    [styles.main]: unitType == 0,
+    [styles.grid]: unitType == 1,
+    [styles.friend]: unitType == 2,
+    [styles.editable]: editable,
+    [styles.filled]: gridSummon !== undefined,
   })
 
   const buttonClasses = classNames({
-    Options: true,
-    Clicked: contextMenuOpen,
+    options: true,
+    clicked: contextMenuOpen,
   })
 
   // Other
@@ -273,8 +273,8 @@ const SummonUnit = ({
   const quickSummon = () => {
     if (gridSummon) {
       const classes = classNames({
-        QuickSummon: true,
-        Empty: !gridSummon.quick_summon,
+        [styles.quickSummon]: true,
+        [styles.empty]: !gridSummon.quick_summon,
       })
 
       return <i className={classes} onClick={handleQuickSummonClick} />
@@ -294,10 +294,10 @@ const SummonUnit = ({
     )
 
     const content = (
-      <div className="SummonImage" onClick={openSearchModal}>
+      <div className={styles.image} onClick={openSearchModal}>
         {image}
         {editable ? (
-          <span className="icon">
+          <span className={styles.icon}>
             <PlusIcon />
           </span>
         ) : (
@@ -338,7 +338,7 @@ const SummonUnit = ({
         ) : (
           ''
         )}
-        <h3 className="SummonName">{summon?.name[locale]}</h3>
+        <h3 className={styles.name}>{summon?.name[locale]}</h3>
       </div>
       {searchModal()}
     </>

@@ -60,12 +60,12 @@ const WeaponUnit = ({
 
   // Classes
   const classes = classNames({
-    WeaponUnit: true,
-    mainhand: unitType == 0,
-    grid: unitType == 1,
-    editable: editable,
-    filled: gridWeapon !== undefined,
-    empty: gridWeapon == undefined,
+    [styles.unit]: true,
+    [styles.mainhand]: unitType == 0,
+    [styles.weapon]: unitType == 1,
+    [styles.editable]: editable,
+    [styles.filled]: gridWeapon !== undefined,
+    [styles.empty]: gridWeapon == undefined,
   })
 
   const buttonClasses = classNames({
@@ -197,7 +197,7 @@ const WeaponUnit = ({
       return (
         <img
           alt={`${awakening.type.name[locale]} Lv${gridWeapon.awakening.level}`}
-          className="Awakening"
+          className={styles.awakening}
           src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${gridWeapon.awakening.type.slug}.png`}
         />
       )
@@ -229,7 +229,7 @@ const WeaponUnit = ({
         <img
           alt={altText}
           key={altText}
-          className="Skill"
+          className={styles.skill}
           src={`${baseUrl}${filename}`}
         />
       )
@@ -288,7 +288,7 @@ const WeaponUnit = ({
       <img
         alt={altText}
         key={altText}
-        className="Skill"
+        className={styles.skill}
         src={`${baseUrl}${filename}`}
       />
     )
@@ -362,7 +362,7 @@ const WeaponUnit = ({
         <img
           alt={altText}
           key={altText}
-          className="Skill"
+          className={styles.skill}
           src={`${baseUrl}${filename}`}
         />
       )
@@ -401,7 +401,7 @@ const WeaponUnit = ({
         <img
           alt={altText}
           key={altText}
-          className="Skill"
+          className={styles.skill}
           src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/ax/${axSkill.slug}.png`}
         />
       )
@@ -516,10 +516,10 @@ const WeaponUnit = ({
     )
 
     const content = (
-      <div className="WeaponImage" onClick={openSearchModal}>
-        <div className="Modifiers">
+      <div className={styles.image} onClick={openSearchModal}>
+        <div className={styles.modifiers}>
           {awakeningImage()}
-          <div className="Skills">
+          <div className={styles.skills}>
             {axImages()}
             {telumaImages()}
             {opusImages()}
@@ -528,7 +528,7 @@ const WeaponUnit = ({
         </div>
         {image}
         {editable ? (
-          <span className="icon">
+          <span className={styles.icon}>
             <PlusIcon />
           </span>
         ) : (
@@ -564,7 +564,7 @@ const WeaponUnit = ({
         ) : (
           ''
         )}
-        <h3 className="WeaponName">{weapon?.name[locale]}</h3>
+        <h3 className={styles.name}>{weapon?.name[locale]}</h3>
       </div>
       {searchModal()}
     </>
