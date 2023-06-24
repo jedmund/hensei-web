@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
+import { getCookie } from 'cookies-next'
 import classNames from 'classnames'
 import equals from 'fast-deep-equal'
 
 import FilterModal from '~components/FilterModal'
+import RaidCombobox from '~components/raids/RaidCombobox'
 import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
 import Button from '~components/common/Button'
 
+import { appState } from '~utils/appState'
 import { defaultFilterset } from '~utils/defaultFilters'
 
 import FilterIcon from '~public/icons/Filter.svg'
-
 import styles from './index.module.scss'
-import { getCookie } from 'cookies-next'
-import RaidCombobox from '~components/raids/RaidCombobox'
-import { appState } from '~utils/appState'
 
 interface Props {
   children: React.ReactNode
@@ -46,8 +45,8 @@ const FilterBar = (props: Props) => {
   })
 
   const filterButtonClasses = classNames({
-    Filter: true,
-    FiltersActive: !matchesDefaultFilters,
+    filter: true,
+    filtersActive: !matchesDefaultFilters,
   })
 
   // Convert raid slug to Raid object on mount
@@ -129,6 +128,10 @@ const FilterBar = (props: Props) => {
         <div className={styles.filters}>
           <Select
             value={`${props.element}`}
+            trigger={{
+              bound: true,
+              size: 'small',
+            }}
             overlayVisible={false}
             open={elementOpen}
             onOpenChange={() => onSelectChange('element')}
@@ -142,12 +145,16 @@ const FilterBar = (props: Props) => {
             currentRaid={currentRaid}
             showAllRaidsOption={true}
             minimal={true}
+            size="small"
             onChange={raidSelectChanged}
           />
 
           <Select
             value={`${props.recency}`}
-            trigger={'All time'}
+            trigger={{
+              bound: true,
+              size: 'small',
+            }}
             overlayVisible={false}
             open={recencyOpen}
             onOpenChange={() => onSelectChange('recency')}
@@ -182,6 +189,7 @@ const FilterBar = (props: Props) => {
             blended={true}
             leftAccessoryIcon={<FilterIcon />}
             text={t('filters.name')}
+            size="small"
             onClick={() => setFilterModalOpen(true)}
           />
         </div>

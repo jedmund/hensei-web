@@ -30,31 +30,12 @@
     display: flex;
     box-sizing: border-box;
     flex-direction: row;
-    flex-grow: 1;
     gap: $unit;
     width: auto;
 
     @include breakpoint(tablet) {
       flex-direction: column;
       width: 100%;
-    }
-
-    .Button.Filter.Blended {
-      &.FiltersActive .Accessory svg {
-        fill: var(--accent-blue);
-        stroke: none;
-      }
-
-      &:hover {
-        background: var(--button-bg);
-      }
-
-      .Accessory svg {
-        fill: none;
-        stroke: var(--button-text);
-        width: 18px;
-        height: 18px;
-      }
     }
   }
 
@@ -70,51 +51,11 @@
     text-align: left;
   }
 
-  select,
-  .SelectTrigger {
-    // background: url("/icons/Chevron.svg"), $grey-90;
-    // background-repeat: no-repeat;
-    // background-position-y: center;
-    // background-position-x: 95%;
-    // background-size: $unit * 1.5;
-    background-color: var(--select-contained-bg);
-    font-size: $font-small;
-    margin: 0;
-    max-width: 200px;
-
-    &:hover {
-      background-color: var(--select-contained-bg-hover);
-    }
-
-    @include breakpoint(tablet) {
-      width: 100%;
-      max-width: inherit;
-      text-align: center;
-    }
-  }
-
   .SelectTrigger {
     width: 100%;
 
     span {
       font-size: $font-small;
-    }
-  }
-
-  .Filter.Button {
-    justify-content: center;
-
-    .Text {
-      display: none;
-      width: auto;
-
-      @include breakpoint(tablet) {
-        display: block;
-      }
-
-      @include breakpoint(phone) {
-        display: block;
-      }
     }
   }
 
