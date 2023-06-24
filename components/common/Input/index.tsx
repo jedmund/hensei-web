@@ -8,6 +8,7 @@ interface Props
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   > {
+  bound?: boolean
   visible?: string
   error?: string
   label?: string
@@ -18,20 +19,26 @@ const defaultProps = {
 }
 
 const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
-  props: Props,
+  { value, visible, bound, error, label, ...props }: Props,
   forwardedRef
 ) {
   // States
   const [inputValue, setInputValue] = useState('')
 
   // Classes
-  const classes = classNames({ Input: true }, props.className)
+  const classes = classNames(
+    {
+      [styles.input]: true,
+      [styles.bound]: bound,
+    },
+    props.className
+  )
   const { defaultValue, ...inputProps } = props
 
   // Change value when prop updates
   useEffect(() => {
-    if (props.value) setInputValue(`${props.value}`)
-  }, [props.value])
+    if (value) setInputValue(`${value}`)
+  }, [value])
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(event.target.value)
@@ -49,9 +56,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
         onChange={handleChange}
         formNoValidate
       />
-      {props.error && props.error.length > 0 && (
-        <p className="InputError">{props.error}</p>
-      )}
+      {error && error.length > 0 && <p className="InputError">{error}</p>}
     </React.Fragment>
   )
 })
