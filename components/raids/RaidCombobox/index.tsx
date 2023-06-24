@@ -19,6 +19,7 @@ interface Props {
   defaultRaid?: Raid
   minimal?: boolean
   tabIndex?: number
+  size?: 'small' | 'medium' | 'large'
   onChange?: (raid?: Raid) => void
   onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
@@ -546,10 +547,12 @@ const RaidCombobox = (props: Props) => {
         props.showAllRaidsOption ? t('raids.all') : t('raids.placeholder')
       }
       trigger={{
+        bound: true,
         className: classNames({
           Raid: true,
           Highlighted: props.showAllRaidsOption,
         }),
+        size: props.size,
       }}
       triggerTabIndex={props.tabIndex}
       value={renderTriggerContent()}

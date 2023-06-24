@@ -121,27 +121,26 @@
   }
 }
 
-.DetailsWrapper .PartyDetails.Editable .Raid.SelectTrigger,
-.EditTeam .Raid.SelectTrigger {
+.trigger {
   background: var(--input-bound-bg);
   display: flex;
   padding-top: 10px;
   padding-bottom: 11px;
   min-height: 51px;
 
-  .Value {
+  .value {
     display: flex;
     gap: $unit-half;
     width: 100%;
 
-    .Info {
+    .info {
       display: flex;
       align-items: center;
       gap: $unit-half;
       flex-grow: 1;
     }
 
-    .ExtraIndicator {
+    .extraIndicator {
       background: var(--extra-purple-secondary);
       border-radius: $full-corner;
       color: $grey-100;
