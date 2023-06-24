@@ -11,6 +11,12 @@
   transition: 0.18s opacity ease-in-out;
   user-select: none;
 
+  .text {
+    color: inherit;
+    display: block;
+    width: 100%;
+  }
+
   &:hover,
   &.blended:hover,
   &.blended.active {
@@ -28,29 +34,12 @@
     }
   }
 
+  // Modifiers
   &.blended {
     background: transparent;
   }
 
-  &.iconButton.medium {
-    height: inherit;
-    padding: $unit-half;
-
-    &:hover {
-      background: none;
-    }
-
-    .text {
-      font-size: $font-small;
-      font-weight: $bold;
-
-      @include breakpoint(phone) {
-        display: none;
-      }
-    }
-  }
-
-  &.contained {
+  &.bound {
     background: var(--button-contained-bg);
 
     &:hover {
@@ -81,12 +70,123 @@
     }
   }
 
+  &.floating {
+    pointer-events: none;
+    position: absolute;
+    opacity: 0;
+    z-index: 99;
+  }
+
+  // Sizes
+  &.icon {
+    aspect-ratio: 1 / 1;
+
+    .text {
+      display: none;
+
+      @include breakpoint(tablet) {
+        display: block;
+      }
+
+      @include breakpoint(phone) {
+        display: block;
+      }
+    }
+  }
+
+  &.small {
+    font-size: $font-small;
+    padding: $unit * 1.5;
+  }
+
+  &.medium {
+    height: $unit * 5.5;
+    padding: ($unit * 1.5) $unit-2x;
+  }
+
+  &.large {
+    font-size: $font-large;
+    padding: $unit-2x $unit-3x;
+  }
+
+  // Special variations
+  &.filter {
+    &.filtersActive .accessory svg {
+      fill: var(--accent-blue);
+      stroke: none;
+    }
+
+    &:hover {
+      background: var(--button-bg);
+
+      .accessory svg {
+        fill: var(--button-text);
+      }
+    }
+
+    .accessory svg {
+      fill: none;
+      stroke: var(--button-text);
+    }
+  }
+
+  &.save {
+    .accessory svg {
+      fill: none;
+      stroke: var(--button-text);
+    }
+
+    &.saved {
+      color: $save-red;
+
+      .accessory svg {
+        fill: $save-red;
+        stroke: $save-red;
+      }
+
+      &:hover {
+        color: $save-red;
+
+        .accessory svg {
+          fill: none;
+          stroke: $save-red;
+        }
+      }
+    }
+
+    &:hover {
+      color: $save-red;
+
+      .accessory svg {
+        fill: $save-red;
+        stroke: $save-red;
+      }
+    }
+  }
+
+  &.iconButton.medium {
+    height: inherit;
+    padding: $unit-half;
+
+    &:hover {
+      background: none;
+    }
+
+    .text {
+      font-size: $font-small;
+      font-weight: $bold;
+
+      @include breakpoint(phone) {
+        display: none;
+      }
+    }
+  }
+
   &.options {
     box-shadow: 0px 1px 3px rgb(0 0 0 / 14%);
-    position: absolute;
+
     left: 8px;
     top: 8px;
-    z-index: 3;
   }
 
   &:disabled {
@@ -98,15 +198,6 @@
       color: var(--button-text-disabled);
       cursor: default;
     }
-  }
-
-  &.medium {
-    height: $unit * 5.5;
-    padding: ($unit * 1.5) $unit-2x;
-  }
-
-  &.small {
-    padding: $unit * 1.5;
   }
 
   @include breakpoint(phone) {
@@ -126,31 +217,6 @@
 
     .accessory svg {
       fill: $grey-100;
-    }
-  }
-
-  &.Save {
-    .accessory svg {
-      fill: none;
-      stroke: var(--button-text);
-    }
-
-    &.Saved {
-      color: #ff4d4d;
-
-      .accessory svg {
-        fill: #ff4d4d;
-        stroke: none;
-      }
-    }
-
-    &:hover {
-      color: #ff4d4d;
-
-      .accessory svg {
-        fill: none;
-        stroke: #ff4d4d;
-      }
     }
   }
 
@@ -318,10 +384,11 @@
       background: darken($light-bg-20, 10);
     }
   }
+}
 
-  .text {
-    color: inherit;
-    display: block;
-    width: 100%;
-  }
+// CSS modules suck
+:global(.unit:hover) .floating,
+:global(.unit) .floating.active {
+  pointer-events: initial;
+  opacity: 1;
 }

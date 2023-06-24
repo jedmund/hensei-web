@@ -14,8 +14,9 @@ interface Props
   rightAccessoryClassName?: string
   active?: boolean
   blended?: boolean
-  contained?: boolean
-  buttonSize?: 'small' | 'medium' | 'large'
+  bound?: boolean
+  floating?: boolean
+  size?: 'icon' | 'small' | 'medium' | 'large'
   text?: string
 }
 
@@ -23,6 +24,7 @@ const defaultProps = {
   active: false,
   blended: false,
   contained: false,
+  floating: false,
   buttonSize: 'medium' as const,
 }
 
@@ -34,22 +36,28 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
     rightAccessoryClassName,
     active,
     blended,
-    contained,
-    buttonSize,
+    floating,
+    bound,
+    size,
     text,
     ...props
   },
   forwardedRef
 ) {
-  const classes = classNames(buttonSize, props.className, {
-    [styles.button]: true,
-    [styles.active]: active,
-    [styles.blended]: blended,
-    [styles.contained]: contained,
-    [styles.small]: buttonSize === 'small',
-    [styles.medium]: buttonSize === 'medium',
-    [styles.large]: buttonSize === 'large',
-  })
+  const classes = classNames(
+    {
+      [styles.button]: true,
+      [styles.active]: active,
+      [styles.bound]: bound,
+      [styles.blended]: blended,
+      [styles.floating]: floating,
+      [styles.icon]: size === 'icon',
+      [styles.small]: size === 'small',
+      [styles.medium]: size === 'medium' || !size,
+      [styles.large]: size === 'large',
+    },
+    props.className?.split(' ').map((className) => styles[className])
+  )
 
   const leftAccessoryClasses = classNames(leftAccessoryClassName, {
     [styles.accessory]: true,
