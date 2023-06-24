@@ -25,5 +25,101 @@
   }
 }
 
+.trigger {
+  align-items: center;
+  background-color: var(--input-bg);
+  border-radius: $input-corner;
+  border: 2px solid transparent;
+  display: flex;
+  gap: $unit;
+  padding: ($unit * 1.5) $unit-2x;
+
+  &.small > .value {
+    font-size: $font-small;
+    margin: 0;
+    max-width: 200px;
+
+    @include breakpoint(tablet) {
+      width: 100%;
+      max-width: inherit;
+      text-align: center;
+    }
+  }
+
+  .value {
+    display: flex;
+    gap: $unit-half;
+    width: 100%;
+  }
+
+  &.modal {
+    background-color: var(--select-modal-bg);
+
+    &:hover {
+      background-color: var(--select-modal-bg-hover);
+    }
+  }
+
+  &.hidden {
+    display: none;
+  }
+
+  &:hover {
+    background-color: var(--input-bg-hover);
+    cursor: pointer;
+
+    span:not(.icon),
+    &[data-placeholder] > span:not(.icon) {
+      color: var(--text-primary);
+    }
+  }
+
+  &.disabled:hover {
+    background-color: var(--input-bg);
+    cursor: not-allowed;
+  }
+
+  &[data-placeholder='true'] > span:not(.icon) {
+    color: var(--text-secondary);
+  }
+
+  & > span:not(.icon) {
+    color: var(--text-primary);
+    flex-grow: 1;
+    font-size: $font-regular;
+    text-align: left;
+  }
+
+  &.bound {
+    background-color: var(--select-contained-bg);
+
+    &:hover {
+      background-color: var(--select-contained-bg-hover);
+    }
+  }
+
+  &.Table {
+    min-width: $unit * 30;
+  }
+
+  img {
+    width: $unit-4x;
+    height: auto;
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+
+    svg {
+      fill: var(--icon-secondary);
+    }
+  }
+
+  span:not(.icon) {
+    color: var(--text-secondary);
+  }
+}
+
 [data-radix-popper-content-wrapper] {
 }

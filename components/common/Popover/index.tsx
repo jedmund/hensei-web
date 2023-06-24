@@ -20,8 +20,10 @@ interface Props extends ComponentProps<'div'> {
     alt: string
   }
   trigger?: {
+    bound?: boolean
     className?: string
     placeholder?: string
+    size?: 'small' | 'medium' | 'large'
   }
   triggerTabIndex?: number
   value?: {
@@ -41,8 +43,12 @@ const Popover = React.forwardRef<HTMLDivElement, Props>(function Popover(
   // Element classes
   const triggerClasses = classNames(
     {
-      SelectTrigger: true,
-      Disabled: props.disabled,
+      [styles.trigger]: true,
+      [styles.disabled]: props.disabled,
+      [styles.bound]: props.trigger ? props.trigger.bound : false,
+      [styles.small]: props.trigger?.size === 'small',
+      [styles.medium]: !props.trigger || props.trigger?.size === 'medium',
+      [styles.large]: props.trigger?.size === 'large',
     },
     props.trigger?.className
   )
@@ -54,11 +60,18 @@ const Popover = React.forwardRef<HTMLDivElement, Props>(function Popover(
 
   // Elements
   const value = props.value ? (
-    <span className="Value" data-value={props.value?.rawValue}>
+    <span className={styles.value} data-value={props.value?.rawValue}>
       {props.value?.element}
     </span>
   ) : (
-    <span className="Value Empty">{props.placeholder}</span>
+    <span
+      className={classNames({
+        [styles.value]: true,
+        [styles.empty]: true,
+      })}
+    >
+      {props.placeholder}
+    </span>
   )
 
   const icon = props.icon ? (
@@ -68,7 +81,7 @@ const Popover = React.forwardRef<HTMLDivElement, Props>(function Popover(
   )
 
   const arrow = !props.disabled ? (
-    <i className="SelectIcon">
+    <i className={styles.icon}>
       <ChevronIcon />
     </i>
   ) : (
