@@ -17,17 +17,13 @@ export default function Tooltip({
   onOpenChange,
   ...props
 }: PropsWithChildren<Props>) {
-  const classes = classNames(props.className, {
-    Tooltip: true,
-  })
-
   return (
     <TooltipPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
       <TooltipPrimitive.Content
         side="top"
         align="center"
-        className={classes}
+        className={styles.tooltip}
         sideOffset={4}
         {...props}
       >
