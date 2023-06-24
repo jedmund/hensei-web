@@ -340,8 +340,8 @@ const PartyHeader = (props: Props) => {
         <Button
           leftAccessoryIcon={<SaveIcon />}
           className={classNames({
-            Save: true,
-            Saved: partySnapshot.favorited,
+            save: true,
+            saved: partySnapshot.favorited,
           })}
           text={
             appState.party.favorited ? t('buttons.saved') : t('buttons.save')
@@ -377,10 +377,10 @@ const PartyHeader = (props: Props) => {
               {party.remix && party.sourceParty ? (
                 <Tooltip content={t('tooltips.source')}>
                   <Button
-                    className="IconButton"
                     blended={true}
                     leftAccessoryIcon={<RemixIcon />}
                     text={t('tokens.remix')}
+                    size="icon"
                     onClick={() => goTo(party.sourceParty?.shortcode)}
                   />
                 </Tooltip>

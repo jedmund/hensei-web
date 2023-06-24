@@ -244,11 +244,14 @@ const GridRep = (props: Props) => {
           !props.user) ? (
           <Link href="#">
             <Button
-              className="Save"
+              className={classNames({
+                save: true,
+                saved: props.favorited,
+              })}
               leftAccessoryIcon={<SaveIcon className="stroke" />}
               active={props.favorited}
-              contained={true}
-              buttonSize="small"
+              bound={true}
+              size="small"
               onClick={sendSaveData}
             />
           </Link>
