@@ -106,18 +106,17 @@ const PartySegmentedControl = (props: Props) => {
   }
 
   return (
-    <div
+    <nav
       className={classNames({
-        PartyNavigation: true,
-        Editable: party.editable,
+        [styles.nav]: true,
       })}
     >
-      <SegmentedControl elementClass={getElement()}>
+      <SegmentedControl gap={true} grow={true} elementClass={getElement()}>
         {characterSegment()}
         {weaponSegment()}
         {summonSegment()}
       </SegmentedControl>
-    </div>
+    </nav>
   )
 }
 

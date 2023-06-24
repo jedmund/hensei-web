@@ -1,4 +1,4 @@
-.RepSegment {
+.segment {
   border-radius: $card-corner;
   color: $grey-55;
   cursor: pointer;
@@ -10,7 +10,7 @@
     background: var(--button-bg);
     color: var(--text-primary);
 
-    .Wrapper .Rep {
+    .wrapper > * {
       opacity: 1;
     }
   }
@@ -22,7 +22,7 @@
       background: var(--button-bg);
       color: var(--text-primary);
 
-      .Rep {
+      .wrapper > * {
         opacity: 1;
       }
     }
@@ -50,15 +50,10 @@
       padding-bottom: $unit;
     }
 
-    .Wrapper {
+    .wrapper {
       display: flex;
       flex-direction: column;
       gap: $unit;
-
-      .Rep {
-        transition: $duration-opacity-fade opacity ease-in;
-        opacity: 0.5;
-      }
     }
   }
 
@@ -66,7 +61,7 @@
     min-width: initial;
     width: 100%;
 
-    .Rep {
+    .rep {
       display: none;
     }
   }

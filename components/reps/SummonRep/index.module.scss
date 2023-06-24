@@ -1,23 +1,31 @@
-.SummonRep {
+.rep {
   aspect-ratio: 2/1.045;
   border-radius: $card-corner;
   display: grid;
   grid-template-columns: 1fr 2.25fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
   grid-gap: $unit-half; /* add a gap of 8px between grid items */
   height: $rep-height;
+  transition: $duration-opacity-fade opacity ease-in;
+  opacity: 0.5;
 
-  .Summon {
+  .summon,
+  .mainSummon {
     background: var(--card-bg);
     border-radius: 4px;
+
+    img[src*='jpg'] {
+      border-radius: 4px;
+      width: 100%;
+    }
   }
 
-  .Main.Summon {
+  .mainSummon {
     aspect-ratio: 56/97;
     display: grid;
     grid-column: 1 / 2; /* spans one column */
   }
 
-  .GridSummons {
+  .summons {
     display: grid; /* make the right-images container a grid */
     grid-template-columns: repeat(
       2,
@@ -32,14 +40,8 @@
     // row-gap: $unit-2x;
   }
 
-  .Grid.Summon {
+  .summon {
     aspect-ratio: 184 / 138;
     display: grid;
-  }
-
-  .Main.Summon img[src*='jpg'],
-  .Grid.Summon img[src*='jpg'] {
-    border-radius: 4px;
-    width: 100%;
   }
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import styles from './index.module.scss'
+import classNames from 'classnames'
 
 interface Props {
   grid: {
@@ -85,12 +86,12 @@ const WeaponRep = (props: Props) => {
 
   // Render
   return (
-    <div className="WeaponRep Rep">
-      <div className="Mainhand Weapon">{generateMainhandImage()}</div>
-      <ul className="GridWeapons">
+    <div className={styles.rep}>
+      <div className={styles.mainhand}>{generateMainhandImage()}</div>
+      <ul className={styles.weapons}>
         {Array.from(Array(WEAPONS_COUNT)).map((x, i) => {
           return (
-            <li key={`weapons-${i}`} className="Grid Weapon">
+            <li key={`weapons-${i}`} className={styles.weapon}>
               {generateGridImage(i)}
             </li>
           )

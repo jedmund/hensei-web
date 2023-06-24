@@ -6,6 +6,8 @@ interface Props {
   className?: string
   elementClass?: string
   blended?: boolean
+  grow?: boolean
+  gap?: boolean
   tabIndex?: number
 }
 
@@ -13,19 +15,23 @@ const SegmentedControl: React.FC<Props> = ({
   className,
   elementClass,
   blended,
+  grow,
+  gap,
   tabIndex,
   children,
 }) => {
   const classes = classNames(
     {
-      SegmentedControl: true,
-      Blended: blended,
+      [styles.segmentedControl]: true,
+      [styles.blended]: blended,
+      [styles.grow]: grow,
+      [styles.gap]: gap,
     },
     className,
     elementClass
   )
   return (
-    <div className="SegmentedControlWrapper" tabIndex={tabIndex}>
+    <div className={styles.wrapper} tabIndex={tabIndex}>
       <div className={classes}>{children}</div>
     </div>
   )
@@ -33,6 +39,8 @@ const SegmentedControl: React.FC<Props> = ({
 
 SegmentedControl.defaultProps = {
   blended: false,
+  grow: false,
+  gap: false,
 }
 
 export default SegmentedControl

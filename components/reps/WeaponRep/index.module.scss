@@ -1,23 +1,31 @@
-.WeaponRep {
+.rep {
   aspect-ratio: 2/0.955;
   border-radius: $card-corner;
   display: grid;
   grid-template-columns: 1fr 3.39fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
   grid-gap: $unit-half; /* add a gap of 8px between grid items */
   height: $rep-height;
+  transition: $duration-opacity-fade opacity ease-in;
+  opacity: 0.5;
 
-  .Weapon {
+  .mainhand,
+  .weapon {
     background: var(--card-bg);
     border-radius: 4px;
+
+    img[src*='jpg'] {
+      border-radius: 4px;
+      width: 100%;
+    }
   }
 
-  .Mainhand.Weapon {
+  .mainhand {
     aspect-ratio: 73/153;
     display: grid;
     grid-column: 1 / 2; /* spans one column */
   }
 
-  .GridWeapons {
+  .weapons {
     display: grid; /* make the right-images container a grid */
     grid-template-columns: repeat(
       3,
@@ -32,14 +40,8 @@
     // row-gap: $unit-2x;
   }
 
-  .Grid.Weapon {
+  .weapon {
     aspect-ratio: 280 / 160;
     display: grid;
-  }
-
-  .Mainhand.Weapon img[src*='jpg'],
-  .Grid.Weapon img[src*='jpg'] {
-    border-radius: 4px;
-    width: 100%;
   }
 }
