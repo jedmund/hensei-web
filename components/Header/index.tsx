@@ -10,25 +10,23 @@ import Link from 'next/link'
 import { accountState, initialAccountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 import { getLocalId } from '~utils/localId'
-import { retrieveLocaleCookies } from '~utils/retrieveCookies'
 import { setEditKey, storeEditKey } from '~utils/userToken'
 
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuLabel,
 } from '~components/common/DropdownMenuContent'
+import DropdownMenuGroup from '~components/common/DropdownMenuGroup'
+import DropdownMenuLabel from '~components/common/DropdownMenuLabel'
+import DropdownMenuItem from '~components/common/DropdownMenuItem'
+import LanguageSwitch from '~components/LanguageSwitch'
 import LoginModal from '~components/auth/LoginModal'
 import SignupModal from '~components/auth/SignupModal'
 import AccountModal from '~components/auth/AccountModal'
-import Toast from '~components/common/Toast'
 import Button from '~components/common/Button'
 import Tooltip from '~components/common/Tooltip'
-import * as Switch from '@radix-ui/react-switch'
 
 import ChevronIcon from '~public/icons/Chevron.svg'
 import MenuIcon from '~public/icons/Menu.svg'
@@ -44,7 +42,6 @@ const Header = () => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
-  const localeData = retrieveLocaleCookies()
 
   // State management
   const [remixToastOpen, setRemixToastOpen] = useState(false)
@@ -53,7 +50,6 @@ const Header = () => {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false)
   const [leftMenuOpen, setLeftMenuOpen] = useState(false)
   const [rightMenuOpen, setRightMenuOpen] = useState(false)
-  const [languageChecked, setLanguageChecked] = useState(false)
 
   const [name, setName] = useState('')
   const [originalName, setOriginalName] = useState('')
@@ -70,11 +66,6 @@ const Header = () => {
   })
 
   useEffect(() => () => unsubscribe(), [])
-
-  // Hooks
-  useEffect(() => {
-    setLanguageChecked(localeData === 'ja' ? true : false)
-  }, [localeData])
 
   // Methods: Event handlers (Buttons)
   function handleLeftMenuButtonClicked() {
@@ -102,29 +93,11 @@ const Header = () => {
     setRightMenuOpen(false)
   }
 
-  // Methods: Event handlers (Remix toasts)
-  function handleRemixToastOpenChanged(open: boolean) {
-    setRemixToastOpen(open)
-  }
-
-  function handleRemixToastCloseClicked() {
-    setRemixToastOpen(false)
-  }
-
   // Methods: Actions
   function handleNewTeam(event: React.MouseEvent) {
     event.preventDefault()
     newTeam()
     closeRightMenu()
-  }
-
-  function changeLanguage(value: boolean) {
-    const language = value ? 'ja' : 'en'
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 120)
-
-    setCookie('NEXT_LOCALE', language, { path: '/', expires: expiresAt })
-    router.push(router.asPath, undefined, { locale: language })
   }
 
   function logout() {
@@ -200,24 +173,6 @@ const Header = () => {
     )
   }
 
-  const remixToast = () => {
-    return (
-      <Toast
-        altText={t('toasts.remixed', { title: originalName })}
-        open={remixToastOpen}
-        duration={2400}
-        type="foreground"
-        content={
-          <Trans i18nKey="toasts.remixed">
-            You remixed <strong>{{ title: originalName }}</strong>
-          </Trans>
-        }
-        onOpenChange={handleRemixToastOpenChanged}
-        onCloseClick={handleRemixToastCloseClicked}
-      />
-    )
-  }
-
   // Rendering: Modals
   const settingsModal = () => {
     const user = accountState.account.user
@@ -251,16 +206,16 @@ const Header = () => {
   const left = () => {
     return (
       <section>
-        <div id="DropdownWrapper">
+        <div className={styles.dropdownWrapper}>
           <DropdownMenu
             open={leftMenuOpen}
             onOpenChange={handleLeftMenuOpenChange}
           >
             <DropdownMenuTrigger asChild>
               <Button
-                leftAccessoryIcon={<MenuIcon />}
-                className={classNames({ Active: leftMenuOpen })}
+                active={leftMenuOpen}
                 blended={true}
+                leftAccessoryIcon={<MenuIcon />}
                 onClick={handleLeftMenuButtonClicked}
               />
             </DropdownMenuTrigger>
@@ -304,8 +259,8 @@ const Header = () => {
       <>
         {accountState.account.authorized && accountState.account.user ? (
           <>
-            <DropdownMenuGroup className="MenuGroup">
-              <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={closeLeftMenu}>
                 <Link
                   href={`/${accountState.account.user.username}` || ''}
                   passHref
@@ -313,7 +268,7 @@ const Header = () => {
                   <span>{t('menu.profile')}</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
+              <DropdownMenuItem onClick={closeLeftMenu}>
                 <Link href={`/saved` || ''}>{t('menu.saved')}</Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -321,19 +276,19 @@ const Header = () => {
         ) : (
           ''
         )}
-        <DropdownMenuGroup className="MenuGroup">
-          <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
+        <DropdownMenuGroup>
+          <DropdownMenuItem onClick={closeLeftMenu}>
             <Link href="/teams">{t('menu.teams')}</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem className="MenuItem">
+          <DropdownMenuItem>
             <div>
               <span>{t('menu.guides')}</span>
               <i className="tag">{t('coming_soon')}</i>
             </div>
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuGroup className="MenuGroup">
-          <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
+        <DropdownMenuGroup>
+          <DropdownMenuItem onClick={closeLeftMenu}>
             <a
               href={locale == 'ja' ? '/ja/about' : '/about'}
               target="_blank"
@@ -342,7 +297,7 @@ const Header = () => {
               {t('about.segmented_control.about')}
             </a>
           </DropdownMenuItem>
-          <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
+          <DropdownMenuItem onClick={closeLeftMenu}>
             <a
               href={locale == 'ja' ? '/ja/updates' : '/updates'}
               target="_blank"
@@ -351,7 +306,7 @@ const Header = () => {
               {t('about.segmented_control.updates')}
             </a>
           </DropdownMenuItem>
-          <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
+          <DropdownMenuItem onClick={closeLeftMenu}>
             <a
               href={locale == 'ja' ? '/ja/roadmap' : '/roadmap'}
               target="_blank"
@@ -372,25 +327,25 @@ const Header = () => {
     if (account.authorized && account.user) {
       items = (
         <>
-          <DropdownMenuGroup className="MenuGroup">
-            <DropdownMenuLabel className="MenuLabel">
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>
               {account.user ? `@${account.user.username}` : t('no_user')}
             </DropdownMenuLabel>
-            <DropdownMenuItem className="MenuItem" onClick={closeRightMenu}>
+            <DropdownMenuItem onClick={closeRightMenu}>
               <Link href={`/${account.user.username}` || ''} passHref>
                 <span>{t('menu.profile')}</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuGroup className="MenuGroup">
+          <DropdownMenuGroup>
             <DropdownMenuItem
               className="MenuItem"
               onClick={() => setSettingsModalOpen(true)}
             >
               <span>{t('menu.settings')}</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="MenuItem" onClick={logout}>
+            <DropdownMenuItem onClick={logout}>
               <span>{t('menu.logout')}</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
@@ -399,18 +354,10 @@ const Header = () => {
     } else {
       items = (
         <>
-          <DropdownMenuGroup className="MenuGroup">
-            <DropdownMenuItem className="MenuItem language">
+          <DropdownMenuGroup>
+            <DropdownMenuItem className="language">
               <span>{t('menu.language')}</span>
-              <Switch.Root
-                className="Switch"
-                onCheckedChange={changeLanguage}
-                checked={languageChecked}
-              >
-                <Switch.Thumb className="Thumb" />
-                <span className="left">JP</span>
-                <span className="right">EN</span>
-              </Switch.Root>
+              <LanguageSwitch />
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuGroup className="MenuGroup">
@@ -435,7 +382,7 @@ const Header = () => {
   }
 
   return (
-    <nav id="Header">
+    <nav className={styles.header}>
       {left()}
       {right()}
       {settingsModal()}

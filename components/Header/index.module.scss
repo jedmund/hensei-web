@@ -1,4 +1,4 @@
-#Header {
+.header {
   display: flex;
   flex-direction: row;
   margin-bottom: $unit;
@@ -22,7 +22,7 @@
     background: var(--placeholder-bg);
   }
 
-  #DropdownWrapper {
+  .dropdownWrapper {
     display: inline-block;
     padding-bottom: $unit;
 
@@ -32,8 +32,6 @@
     }
 
     &:hover {
-      // padding-right: $unit-4x;
-
       .Button {
         background: var(--button-bg-hover);
         color: var(--button-text-hover);
