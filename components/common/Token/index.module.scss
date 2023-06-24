@@ -1,31 +1,32 @@
-.Token {
+.token {
   background: var(--input-bg);
   border-radius: 99px;
   display: inline-flex;
   font-size: $font-tiny;
   font-weight: $bold;
+  line-height: 1.4;
   min-width: 3rem;
   text-align: center;
   padding: $unit-three-fourth ($unit * 1.5);
   user-select: none;
 
-  &.ChargeAttack.On {
+  &.chargeAttack.on {
     background: var(--charge-attack-bg);
     color: var(--charge-attack-text);
   }
 
-  &.FullAuto.On {
+  &.fullAuto.on,
+  &.autoSummon.on {
     background: var(--full-auto-bg);
     color: var(--full-auto-text);
   }
 
-  &.AutoGuard.On,
-  &.AutoSummon.On {
+  &.autoGuard.on {
     background: var(--auto-guard-bg);
     color: var(--auto-guard-text);
   }
 
-  &.Off {
+  &.off {
     color: var(--text-secondary);
   }
 }
