@@ -1,4 +1,4 @@
-.Button {
+.button {
   align-items: center;
   background: var(--button-bg);
   border: 2px solid transparent;
@@ -12,13 +12,13 @@
   user-select: none;
 
   &:hover,
-  &.Blended:hover,
-  &.Blended.Active {
+  &.blended:hover,
+  &.blended.active {
     background: var(--button-bg-hover);
     cursor: pointer;
     color: var(--button-text-hover);
 
-    .Accessory svg {
+    .accessory svg {
       fill: var(--button-text-hover);
     }
 
@@ -28,11 +28,11 @@
     }
   }
 
-  &.Blended {
+  &.blended {
     background: transparent;
   }
 
-  &.IconButton.medium {
+  &.iconButton.medium {
     height: inherit;
     padding: $unit-half;
 
@@ -40,7 +40,7 @@
       background: none;
     }
 
-    .Text {
+    .text {
       font-size: $font-small;
       font-weight: $bold;
 
@@ -50,19 +50,19 @@
     }
   }
 
-  &.Contained {
+  &.contained {
     background: var(--button-contained-bg);
 
     &:hover {
       background: var(--button-contained-bg-hover);
     }
 
-    &.Save:hover .Accessory svg {
+    &.save:hover .Accessory svg {
       fill: #ff4d4d;
       stroke: #ff4d4d;
     }
 
-    &.Save {
+    &.save {
       color: #ff4d4d;
 
       &.Active .Accessory svg {
@@ -81,7 +81,7 @@
     }
   }
 
-  &.Options {
+  &.options {
     box-shadow: 0px 1px 3px rgb(0 0 0 / 14%);
     position: absolute;
     left: 8px;
@@ -124,13 +124,13 @@
     background: $error;
     color: $grey-100;
 
-    .Accessory svg {
+    .accessory svg {
       fill: $grey-100;
     }
   }
 
   &.Save {
-    .Accessory svg {
+    .accessory svg {
       fill: none;
       stroke: var(--button-text);
     }
@@ -138,7 +138,7 @@
     &.Saved {
       color: #ff4d4d;
 
-      .Accessory svg {
+      .accessory svg {
         fill: #ff4d4d;
         stroke: none;
       }
@@ -147,7 +147,7 @@
     &:hover {
       color: #ff4d4d;
 
-      .Accessory svg {
+      .accessory svg {
         fill: none;
         stroke: #ff4d4d;
       }
@@ -166,7 +166,7 @@
     }
   }
 
-  &.Destructive {
+  &.destructive {
     background: $error;
     color: white;
 
@@ -175,7 +175,7 @@
     }
   }
 
-  .Accessory {
+  .accessory {
     $dimension: $unit-2x;
 
     display: flex;
@@ -319,7 +319,7 @@
     }
   }
 
-  .Text {
+  .text {
     color: inherit;
     display: block;
     width: 100%;

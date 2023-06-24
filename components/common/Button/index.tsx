@@ -42,20 +42,23 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
   forwardedRef
 ) {
   const classes = classNames(buttonSize, props.className, {
-    Button: true,
-    Active: active,
-    Blended: blended,
-    Contained: contained,
+    [styles.button]: true,
+    [styles.active]: active,
+    [styles.blended]: blended,
+    [styles.contained]: contained,
+    [styles.small]: buttonSize === 'small',
+    [styles.medium]: buttonSize === 'medium',
+    [styles.large]: buttonSize === 'large',
   })
 
   const leftAccessoryClasses = classNames(leftAccessoryClassName, {
-    Accessory: true,
-    Left: true,
+    [styles.accessory]: true,
+    [styles.left]: true,
   })
 
   const rightAccessoryClasses = classNames(rightAccessoryClassName, {
-    Accessory: true,
-    Right: true,
+    [styles.accessory]: true,
+    [styles.right]: true,
   })
 
   const hasLeftAccessory = () => {
@@ -69,7 +72,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
   }
 
   const hasText = () => {
-    if (text) return <span className="Text">{text}</span>
+    if (text) return <span className={styles.text}>{text}</span>
   }
 
   return (
