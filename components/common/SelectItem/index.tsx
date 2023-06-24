@@ -6,23 +6,29 @@ import classNames from 'classnames'
 
 interface Props extends ComponentProps<'div'> {
   value: string | number
-  iconSrc?: string
-  altText?: string
+  icon?: {
+    src: string
+    alt: string
+  }
 }
 
 const SelectItem = React.forwardRef<HTMLDivElement, Props>(function selectItem(
-  { children, value, ...props },
+  { icon, value, children, ...props },
   forwardedRef
 ) {
-  const { altText, iconSrc, ...rest } = props
   return (
     <Select.Item
-      {...rest}
-      className={classNames({ SelectItem: true }, props.className)}
+      {...props}
+      className={classNames(
+        {
+          [styles.item]: true,
+        },
+        props.className
+      )}
       ref={forwardedRef}
       value={`${value}`}
     >
-      {iconSrc ? <img alt={altText} src={iconSrc} /> : ''}
+      {icon ? <img alt={icon.alt} src={icon.src} /> : ''}
       <Select.ItemText>{children}</Select.ItemText>
     </Select.Item>
   )
