@@ -1,11 +1,6 @@
-.Login.DialogContent {
+.fields {
+  display: flex;
+  flex-direction: column;
   gap: $unit;
-  // min-width: $unit * 52;
-
-  .Fields {
-    display: flex;
-    flex-direction: column;
-    gap: $unit;
-    padding: 0 $unit-4x;
-  }
+  padding: 0 $unit-4x;
 }

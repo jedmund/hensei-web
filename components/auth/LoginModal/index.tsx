@@ -10,12 +10,13 @@ import { accountState } from '~utils/accountState'
 
 import Button from '~components/common/Button'
 import Input from '~components/common/Input'
-import { Dialog, DialogClose } from '~components/common/Dialog'
+import { Dialog } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
 import changeLanguage from '~utils/changeLanguage'
 
-import CrossIcon from '~public/icons/Cross.svg'
 import styles from './index.module.scss'
+import DialogHeader from '~components/common/DialogHeader'
+import DialogFooter from '~components/common/DialogFooter'
 
 interface ErrorMap {
   [index: string]: string
@@ -221,19 +222,11 @@ const LoginModal = (props: Props) => {
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
-        <div className="DialogHeader">
-          <div className="DialogTitle">
-            <h1>{t('modals.login.title')}</h1>
-          </div>
-          <DialogClose className="DialogClose">
-            <CrossIcon />
-          </DialogClose>
-        </div>
-
-        <form className="form" onSubmit={login}>
-          <div className="Fields">
+        <DialogHeader title={t('modals.login.title')} />
+        <form onSubmit={login}>
+          <div className={styles.fields}>
             <Input
-              className="Bound"
+              bound={true}
               name="email"
               placeholder={t('modals.login.placeholders.email')}
               onChange={handleChange}
@@ -242,6 +235,7 @@ const LoginModal = (props: Props) => {
             />
 
             <Input
+              bound={true}
               className="Bound"
               name="password"
               placeholder={t('modals.login.placeholders.password')}
@@ -251,15 +245,17 @@ const LoginModal = (props: Props) => {
               ref={passwordInput}
             />
           </div>
-          <div className="DialogFooter" ref={footerRef}>
-            <div className="Buttons Span">
+          <DialogFooter
+            ref={footerRef}
+            rightElements={[
               <Button
                 contained={true}
                 disabled={!formValid}
+                key="confirm"
                 text={t('modals.login.buttons.confirm')}
-              />
-            </div>
-          </div>
+              />,
+            ]}
+          />
         </form>
       </DialogContent>
     </Dialog>
