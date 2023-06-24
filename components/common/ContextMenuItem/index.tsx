@@ -14,7 +14,7 @@ const ContextMenuItem = React.forwardRef<HTMLDivElement, Props>(
   function ContextMenu({ children, ...props }, forwardedRef) {
     const classes = classNames(
       {
-        ContextItem: true,
+        [styles.item]: true,
       },
       props.className
     )

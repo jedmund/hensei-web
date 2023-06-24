@@ -16,7 +16,7 @@ export const ContextMenuContent = React.forwardRef<HTMLDivElement, Props>(
   function ContextMenu({ children, ...props }, forwardedRef) {
     const classes = classNames(
       {
-        ContextMenu: true,
+        [styles.menu]: true,
       },
       props.className
     )
