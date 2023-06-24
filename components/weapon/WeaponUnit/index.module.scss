@@ -26,26 +26,26 @@
   &.mainhand {
     display: flex;
 
-    &.editable .WeaponImage:hover {
+    &.editable .image:hover {
       transform: $scale-tall;
     }
 
-    .WeaponImage {
+    .image {
       width: 100%;
       height: auto;
 
-      .Awakening {
+      .awakening {
         width: 40%;
         height: auto;
         top: 67%;
         left: -3.5%;
       }
 
-      .Modifiers > .Skills {
+      .modifiers > .skills {
         bottom: 12%;
         right: -3.5%;
 
-        & > .Skill {
+        & > .skill {
           width: 25%;
           height: auto;
         }
@@ -145,7 +145,7 @@
       width: 100%;
       z-index: 2;
 
-      &.Placeholder {
+      &.placeholder {
         opacity: 0;
       }
     }
@@ -163,9 +163,10 @@
     }
   }
 
-  .WeaponName {
+  .name {
     font-size: $font-name;
     line-height: 1.2;
+
     @include breakpoint(phone) {
       font-size: $font-tiny;
     }
