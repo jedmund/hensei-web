@@ -24,8 +24,8 @@ const Overlay = React.forwardRef<HTMLDivElement, Props>(function Overlay(
   const [visible, setVisible] = useState(open)
 
   const classes = classNames({
-    Overlay: true,
-    Visible: displayed,
+    [styles.overlay]: true,
+    [styles.visible]: displayed,
   })
 
   useEffect(() => {
@@ -45,7 +45,9 @@ const Overlay = React.forwardRef<HTMLDivElement, Props>(function Overlay(
     event.stopPropagation()
   }
 
-  return visible ? <div className={classes} onClick={handleClick} /> : null
+  return visible ? (
+    <div className={classes} onClick={handleClick} ref={forwardedRef} />
+  ) : null
 })
 
 Overlay.defaultProps = defaultProps
