@@ -41,8 +41,8 @@ const FilterBar = (props: Props) => {
   const [matchesDefaultFilters, setMatchesDefaultFilters] = useState(false)
   // Set up classes object for showing shadow on scroll
   const classes = classNames({
-    FilterBar: true,
-    shadow: props.scrolled,
+    [styles.filterBar]: true,
+    [styles.shadow]: props.scrolled,
   })
 
   const filterButtonClasses = classNames({
@@ -126,7 +126,7 @@ const FilterBar = (props: Props) => {
     <>
       <div className={classes}>
         {props.children}
-        <div className="Filters">
+        <div className={styles.filters}>
           <Select
             value={`${props.element}`}
             overlayVisible={false}
