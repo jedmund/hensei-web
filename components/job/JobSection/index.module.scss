@@ -1,4 +1,4 @@
-#Job {
+.job {
   box-sizing: border-box;
   display: flex;
   margin-bottom: $unit-3x;
@@ -22,13 +22,13 @@
     width: auto;
   }
 
-  .JobDetails {
+  .details {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     width: 100%;
 
-    .JobName {
+    .name {
       align-items: center;
       display: flex;
       gap: $unit-half;
@@ -48,12 +48,12 @@
       flex-grow: 0;
     }
 
-    .JobSkills {
+    .skills {
       flex-grow: 2;
     }
   }
 
-  .JobSkills {
+  .skills {
     display: flex;
     flex-direction: column;
 

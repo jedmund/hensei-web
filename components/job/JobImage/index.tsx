@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-
+import classNames from 'classnames'
 import Button from '~components/common/Button'
 import JobAccessoryPopover from '~components/job/JobAccessoryPopover'
 
@@ -8,7 +8,6 @@ import ShieldIcon from '~public/icons/Shield.svg'
 import ManaturaIcon from '~public/icons/Manatura.svg'
 
 import styles from './index.module.scss'
-import classNames from 'classnames'
 
 interface Props {
   job?: Job
@@ -103,10 +102,10 @@ const JobImage = ({
     )
   }
   return (
-    <div className="JobImage">
+    <div className={styles.image}>
       {hasAccessory ? accessoryPopover() : ''}
       {job && job.id !== '-1' ? image : ''}
-      <div className="Job Overlay" />
+      <div className={styles.overlay} />
     </div>
   )
 }

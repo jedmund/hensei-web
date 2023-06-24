@@ -52,8 +52,8 @@ const JobSection = (props: Props) => {
 
   // Classes
   const skillContainerClasses = classNames({
-    JobSkills: true,
-    editable: props.editable,
+    [styles.skills]: true,
+    [styles.editable]: props.editable,
   })
 
   useEffect(() => {
@@ -174,7 +174,7 @@ const JobSection = (props: Props) => {
   )
 
   const filledJobLabel = (
-    <div className="JobName">
+    <div className={styles.name}>
       <img
         alt={job?.name[locale]}
         src={`/images/job-icons/${job?.granblue_id}.png`}
@@ -185,7 +185,7 @@ const JobSection = (props: Props) => {
 
   // Render: JSX components
   return (
-    <section id="Job">
+    <section className={styles.job}>
       <JobImage
         job={party.job}
         currentAccessory={currentAccessory}
@@ -194,7 +194,7 @@ const JobSection = (props: Props) => {
         user={party.user}
         onAccessorySelected={handleAccessorySelected}
       />
-      <div className="JobDetails">
+      <div className={styles.details}>
         {props.editable ? (
           <JobDropdown
             currentJob={party.job?.id}
@@ -202,7 +202,7 @@ const JobSection = (props: Props) => {
             ref={selectRef}
           />
         ) : (
-          <div className="JobName">
+          <div className={styles.name}>
             {party.job ? (
               <img
                 alt={party.job.name[locale]}

@@ -1,6 +1,6 @@
-.JobSkills {
-  &.editable .JobSkill {
-    .Info {
+.skills {
+  &.editable .skill {
+    .info {
       padding: $unit-half * 1.5;
 
       & > img,
@@ -12,19 +12,19 @@
   }
 }
 
-.JobSkill {
+.skill {
   display: flex;
   align-items: stretch;
   justify-content: space-between;
 
-  &.editable .Info:hover {
+  &.editable .info:hover {
     background-color: var(--button-bg-hover);
   }
 
   &.editable:hover {
     cursor: pointer;
 
-    .Info {
+    .info {
       & > img.editable,
       & > div.placeholder.editable {
         border: $hover-stroke;
@@ -43,7 +43,7 @@
     }
   }
 
-  .Info {
+  .info {
     align-items: center;
     border-radius: $input-corner;
     display: flex;

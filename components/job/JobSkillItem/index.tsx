@@ -51,17 +51,17 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
 
     // Classes
     const classes = classNames({
-      JobSkill: true,
-      editable: editable,
+      [styles.skill]: true,
+      [styles.editable]: editable,
     })
 
     const imageClasses = classNames({
-      placeholder: !skill,
-      editable: editable && hasJob,
+      [styles.placeholder]: !skill,
+      [styles.editable]: editable && hasJob,
     })
 
     const buttonClasses = classNames({
-      Clicked: contextMenuOpen,
+      [styles.clicked]: contextMenuOpen,
     })
 
     // Methods: Data mutation
@@ -107,9 +107,15 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       if (skill) {
         jsx = <p>{skill.name[locale]}</p>
       } else if (editable && hasJob) {
-        jsx = <p className="placeholder">{t('job_skills.state.selectable')}</p>
+        jsx = (
+          <p className={styles.placeholder}>
+            {t('job_skills.state.selectable')}
+          </p>
+        )
       } else {
-        jsx = <p className="placeholder">{t('job_skills.state.no_skill')}</p>
+        jsx = (
+          <p className={styles.placeholder}>{t('job_skills.state.no_skill')}</p>
+        )
       }
 
       return jsx
@@ -159,7 +165,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
 
     return (
       <div className={classes} ref={forwardedRef}>
-        <div className="Info" onClick={props.onClick} tabIndex={0}>
+        <div className={styles.info} onClick={props.onClick} tabIndex={0}>
           {skillImage()}
           {label()}
         </div>
