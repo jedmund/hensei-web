@@ -226,30 +226,33 @@ const LoginModal = (props: Props) => {
         <form onSubmit={login}>
           <div className={styles.fields}>
             <Input
+              autoComplete="on"
               bound={true}
+              hide1Password={false}
               name="email"
               placeholder={t('modals.login.placeholders.email')}
-              onChange={handleChange}
+              type="email"
               error={errors.email}
               ref={emailInput}
+              onChange={handleChange}
             />
 
             <Input
               bound={true}
-              className="Bound"
+              hide1Password={false}
               name="password"
               placeholder={t('modals.login.placeholders.password')}
               type="password"
-              onChange={handleChange}
               error={errors.password}
               ref={passwordInput}
+              onChange={handleChange}
             />
           </div>
           <DialogFooter
             ref={footerRef}
             rightElements={[
               <Button
-                contained={true}
+                bound={true}
                 disabled={!formValid}
                 key="confirm"
                 text={t('modals.login.buttons.confirm')}

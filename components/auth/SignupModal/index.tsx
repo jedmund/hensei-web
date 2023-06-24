@@ -350,7 +350,7 @@ const SignupModal = (props: Props) => {
             ref={footerRef}
             rightElements={[
               <Button
-                contained={true}
+                bound={true}
                 disabled={!formValid}
                 key="confirm"
                 text={t('modals.signup.buttons.confirm')}
