@@ -12,19 +12,7 @@
     min-height: auto;
   }
 
-  .Button {
-    pointer-events: none;
-    opacity: 0;
-    z-index: 10;
-  }
-
-  &:hover .Button,
-  .Button.Clicked {
-    pointer-events: initial;
-    opacity: 1;
-  }
-
-  &.editable .WeaponImage:hover {
+  &.editable .image:hover {
     border: $hover-stroke;
     box-shadow: $hover-shadow;
     cursor: pointer;

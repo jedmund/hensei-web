@@ -62,17 +62,13 @@ const SummonUnit = ({
 
   // Classes
   const classes = classNames({
+    unit: true,
     [styles.unit]: true,
     [styles.main]: unitType == 0,
     [styles.grid]: unitType == 1,
     [styles.friend]: unitType == 2,
     [styles.editable]: editable,
     [styles.filled]: gridSummon !== undefined,
-  })
-
-  const buttonClasses = classNames({
-    options: true,
-    clicked: contextMenuOpen,
   })
 
   // Other
@@ -220,8 +216,10 @@ const SummonUnit = ({
           <ContextMenu onOpenChange={handleContextMenuOpenChange}>
             <ContextMenuTrigger asChild>
               <Button
+                active={contextMenuOpen}
+                floating={true}
+                className="options"
                 leftAccessoryIcon={<SettingsIcon />}
-                className={buttonClasses}
                 onClick={handleButtonClicked}
               />
             </ContextMenuTrigger>

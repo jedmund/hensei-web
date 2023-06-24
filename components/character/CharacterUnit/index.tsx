@@ -72,14 +72,10 @@ const CharacterUnit = ({
 
   // Classes
   const classes = classNames({
+    unit: true,
     [styles.unit]: true,
     [styles.editable]: editable,
     [styles.filled]: gridCharacter !== undefined,
-  })
-
-  const buttonClasses = classNames({
-    options: true,
-    clicked: contextMenuOpen,
   })
 
   // Other
@@ -219,8 +215,10 @@ const CharacterUnit = ({
           <ContextMenu onOpenChange={handleContextMenuOpenChange}>
             <ContextMenuTrigger asChild>
               <Button
+                active={contextMenuOpen}
+                floating={true}
                 leftAccessoryIcon={<SettingsIcon />}
-                className={buttonClasses}
+                className="options"
                 onClick={handleButtonClicked}
               />
             </ContextMenuTrigger>

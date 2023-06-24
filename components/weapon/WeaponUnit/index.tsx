@@ -60,17 +60,13 @@ const WeaponUnit = ({
 
   // Classes
   const classes = classNames({
+    unit: true,
     [styles.unit]: true,
     [styles.mainhand]: unitType == 0,
     [styles.weapon]: unitType == 1,
     [styles.editable]: editable,
     [styles.filled]: gridWeapon !== undefined,
     [styles.empty]: gridWeapon == undefined,
-  })
-
-  const buttonClasses = classNames({
-    Options: true,
-    Clicked: contextMenuOpen,
   })
 
   // Other
@@ -445,8 +441,10 @@ const WeaponUnit = ({
           <ContextMenu onOpenChange={handleContextMenuOpenChange}>
             <ContextMenuTrigger asChild>
               <Button
+                active={contextMenuOpen}
+                floating={true}
                 leftAccessoryIcon={<SettingsIcon />}
-                className={buttonClasses}
+                className="options"
                 onClick={handleButtonClicked}
               />
             </ContextMenuTrigger>
