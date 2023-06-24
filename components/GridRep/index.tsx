@@ -50,13 +50,23 @@ const GridRep = (props: Props) => {
   })
 
   const raidClass = classNames({
-    raid: true,
-    empty: !props.raid,
+    [styles.raid]: true,
+    [styles.empty]: !props.raid,
   })
 
   const userClass = classNames({
-    user: true,
-    empty: !props.user,
+    [styles.user]: true,
+    [styles.empty]: !props.user,
+  })
+
+  const mainhandClasses = classNames({
+    [styles.weapon]: true,
+    [styles.mainhand]: true,
+  })
+
+  const weaponClasses = classNames({
+    [styles.weapon]: true,
+    [styles.grid]: true,
   })
 
   useEffect(() => {
@@ -210,18 +220,18 @@ const GridRep = (props: Props) => {
   )
 
   const detailsWithUsername = (
-    <div className="Details">
-      <div className="top">
-        <div className="info">
+    <div className={styles.details}>
+      <div className={styles.top}>
+        <div className={styles.info}>
           <h2 className={titleClass}>
             {props.name ? props.name : t('no_title')}
           </h2>
-          <div className="Properties">
+          <div className={styles.properties}>
             <span className={raidClass}>
               {props.raid ? props.raid.name[locale] : t('no_raid')}
             </span>
             {props.fullAuto ? (
-              <span className="full_auto">
+              <span className={styles.fullAuto}>
                 {` · ${t('party.details.labels.full_auto')}`}
               </span>
             ) : (
@@ -246,7 +256,7 @@ const GridRep = (props: Props) => {
           ''
         )}
       </div>
-      <div className="bottom">
+      <div className={styles.bottom}>
         {props.user ? linkedAttribution() : unlinkedAttribution()}
 
         <time className="last-updated" dateTime={props.createdAt.toISOString()}>
@@ -258,15 +268,15 @@ const GridRep = (props: Props) => {
 
   return (
     <Link href={`/p/${props.shortcode}`}>
-      <a className="GridRep">
+      <a className={styles.gridRep}>
         {props.displayUser ? detailsWithUsername : details}
-        <div className="Grid">
-          <div className="Mainhand Weapon">{generateMainhandImage()}</div>
+        <div className={styles.weaponGrid}>
+          <div className={mainhandClasses}>{generateMainhandImage()}</div>
 
-          <ul className="GridWeapons">
+          <ul className={styles.weapons}>
             {Array.from(Array(numWeapons)).map((x, i) => {
               return (
-                <li key={`${props.shortcode}-${i}`} className="Grid Weapon">
+                <li key={`${props.shortcode}-${i}`} className={weaponClasses}>
                   {generateGridImage(i)}
                 </li>
               )

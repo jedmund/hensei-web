@@ -1,4 +1,4 @@
-.GridRep {
+.gridRep {
   aspect-ratio: 3/2;
   border-radius: $card-corner;
   box-sizing: border-box;
@@ -34,25 +34,25 @@
     }
   }
 
-  & > .Grid {
+  & > .weaponGrid {
     aspect-ratio: 2/0.95;
     display: grid;
     grid-template-columns: 1fr 3.36fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
     grid-gap: $unit; /* add a gap of 8px between grid items */
 
-    .Weapon {
+    .weapon {
       background: var(--card-bg);
       border-radius: 4px;
     }
 
-    .Mainhand.Weapon {
+    .mainhand.weapon {
       aspect-ratio: 73/153;
       display: grid;
       grid-column: 1 / 2; /* spans one column */
       max-height: 140px;
     }
 
-    .GridWeapons {
+    .weapons {
       display: grid; /* make the right-images container a grid */
       grid-template-columns: repeat(
         3,
@@ -67,19 +67,19 @@
       // row-gap: $unit-2x;
     }
 
-    .Grid.Weapon {
+    .grid.weapon {
       aspect-ratio: 280 / 160;
       display: grid;
     }
 
-    .Mainhand.Weapon img[src*='jpg'],
-    .Grid.Weapon img[src*='jpg'] {
+    .mainhand.weapon img[src*='jpg'],
+    .grid.weapon img[src*='jpg'] {
       border-radius: 4px;
       width: 100%;
     }
   }
 
-  .Details {
+  .details {
     display: flex;
     flex-direction: column;
     gap: calc($unit / 2);
@@ -126,7 +126,7 @@
       }
     }
 
-    .Properties,
+    .properties,
     .user {
       flex-grow: 1;
     }
@@ -138,7 +138,7 @@
       font-size: $font-small;
     }
 
-    .Properties {
+    .properties {
       .auto {
         display: inline-flex;
         gap: $unit-half;
@@ -146,11 +146,11 @@
         margin-left: $unit-half;
       }
 
-      .full_auto {
+      .fullAuto {
         color: var(--full-auto-label-text);
       }
 
-      .auto_guard {
+      .autoGuard {
         width: 12px;
         height: 12px;
 
