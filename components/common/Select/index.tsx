@@ -14,15 +14,21 @@ interface Props
     React.SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
   > {
-  altText?: string
-  iconSrc?: string
   open: boolean
-  trigger?: React.ReactNode
+  icon?: {
+    src: string
+    alt: string
+  }
+  trigger?: {
+    bound?: boolean
+    className?: string
+    placeholder?: string
+    size?: 'small' | 'medium' | 'large'
+  }
   children?: React.ReactNode
   onOpenChange?: () => void
   onValueChange?: (value: string) => void
   onClose?: () => void
-  triggerClass?: string
   overlayVisible?: boolean
 }
 
@@ -33,12 +39,20 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
 
-  const triggerClasses = classNames(
+  const triggerClasses = classNames({
+    [styles.trigger]: true,
+    [styles.disabled]: props.disabled,
+    [styles.bound]: props.trigger ? props.trigger.bound : false,
+    [styles.small]: props.trigger?.size === 'small',
+    [styles.medium]: !props.trigger || props.trigger?.size === 'medium',
+    [styles.large]: props.trigger?.size === 'large',
+  })
+
+  const selectClasses = classNames(
     {
-      SelectTrigger: true,
-      Disabled: props.disabled,
+      [styles.select]: true,
     },
-    props.triggerClass
+    props.className
   )
 
   useEffect(() => {
@@ -82,10 +96,10 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
         placeholder={props.placeholder}
         ref={forwardedRef}
       >
-        {props.iconSrc ? <img alt={props.altText} src={props.iconSrc} /> : ''}
-        <RadixSelect.Value placeholder={props.placeholder} />
+        {props.icon ? <img alt={props.icon.alt} src={props.icon.src} /> : ''}
+        <RadixSelect.Value placeholder={props.trigger?.placeholder} />
         {!props.disabled ? (
-          <RadixSelect.Icon className="SelectIcon">
+          <RadixSelect.Icon className={styles.icon}>
             <ChevronIcon />
           </RadixSelect.Icon>
         ) : (
@@ -93,7 +107,7 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
         )}
       </RadixSelect.Trigger>
 
-      <RadixSelect.Portal className="SelectPortal">
+      <RadixSelect.Portal>
         <>
           <Overlay
             open={open}
@@ -101,18 +115,28 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
           />
 
           <RadixSelect.Content
-            className={classNames({ Select: true }, props.className)}
+            className={selectClasses}
             position="popper"
             sideOffset={6}
             onCloseAutoFocus={onCloseAutoFocus}
             onEscapeKeyDown={onEscapeKeyDown}
             onPointerDownOutside={onPointerDownOutside}
           >
-            <RadixSelect.ScrollUpButton className="Scroll Up">
+            <RadixSelect.ScrollUpButton
+              className={classNames({
+                [styles.scroll]: true,
+                [styles.up]: true,
+              })}
+            >
               <ChevronIcon />
             </RadixSelect.ScrollUpButton>
             <RadixSelect.Viewport>{props.children}</RadixSelect.Viewport>
-            <RadixSelect.ScrollDownButton className="Scroll Down">
+            <RadixSelect.ScrollDownButton
+              className={classNames({
+                [styles.scroll]: true,
+                [styles.down]: true,
+              })}
+            >
               <ChevronIcon />
             </RadixSelect.ScrollDownButton>
           </RadixSelect.Content>

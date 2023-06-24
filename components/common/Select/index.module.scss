@@ -1,4 +1,4 @@
-.SelectTrigger {
+.trigger {
   align-items: center;
   background-color: var(--input-bg);
   border-radius: $input-corner;
@@ -6,6 +6,18 @@
   display: flex;
   gap: $unit;
   padding: ($unit * 1.5) $unit-2x;
+
+  &.small > span:not(.icon) {
+    font-size: $font-small;
+    margin: 0;
+    max-width: 200px;
+
+    @include breakpoint(tablet) {
+      width: 100%;
+      max-width: inherit;
+      text-align: center;
+    }
+  }
 
   &.modal {
     background-color: var(--select-modal-bg);
@@ -29,7 +41,7 @@
     }
   }
 
-  &.Disabled:hover {
+  &.disabled:hover {
     background-color: var(--input-bg);
     cursor: not-allowed;
   }
@@ -45,7 +57,7 @@
     text-align: left;
   }
 
-  &.Bound {
+  &.bound {
     background-color: var(--select-contained-bg);
 
     &:hover {
@@ -62,7 +74,7 @@
     height: auto;
   }
 
-  .SelectIcon {
+  .icon {
     display: flex;
     align-items: center;
 
@@ -71,12 +83,12 @@
     }
   }
 
-  span:not(.SelectIcon) {
+  span:not(.icon) {
     color: var(--text-secondary);
   }
 }
 
-.Select {
+.select {
   background: var(--dialog-bg);
   border-radius: $card-corner;
   border: 1px solid rgba(0, 0, 0, 0.24);
@@ -86,8 +98,8 @@
   max-height: 40vh;
   z-index: 40;
 
-  .Scroll.Up,
-  .Scroll.Down {
+  .scroll.up,
+  .scroll.down {
     padding: $unit 0;
     text-align: center;
 
@@ -100,7 +112,7 @@
     }
   }
 
-  .Scroll.Up {
+  .scroll.up {
     transform: scale(1, -1);
   }
 }
