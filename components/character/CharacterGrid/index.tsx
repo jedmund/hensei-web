@@ -515,7 +515,7 @@ const CharacterGrid = (props: Props) => {
         cancelAction={cancelAlert}
         cancelActionText={'Got it'}
       />
-      <div id="CharacterGrid">
+      <div className={styles.grid}>
         <JobSection
           job={job}
           jobSkills={jobSkills}
@@ -534,7 +534,7 @@ const CharacterGrid = (props: Props) => {
           resolveConflict={resolveConflict}
           resetConflict={resetConflict}
         />
-        <ul id="Characters">
+        <ul className={styles.characters}>
           {Array.from(Array(numCharacters)).map((x, i) => {
             return (
               <li key={`grid_unit_${i}`}>

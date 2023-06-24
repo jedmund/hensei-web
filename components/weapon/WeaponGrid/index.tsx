@@ -443,13 +443,13 @@ const WeaponGrid = (props: Props) => {
   }
 
   return (
-    <div id="WeaponGrid">
+    <div className={styles.wrapper}>
       {conflicts ? conflictModal() : ''}
       {incompatibleAlert()}
       {errorAlert()}
-      <div id="MainGrid">
+      <div className={styles.grid}>
         {mainhandElement}
-        <ul id="Weapons">{weaponGridElement}</ul>
+        <ul className={styles.weapons}>{weaponGridElement}</ul>
       </div>
 
       {displayExtraContainer ? extraElement() : ''}

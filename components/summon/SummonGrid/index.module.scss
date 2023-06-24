@@ -1,4 +1,4 @@
-#SummonGrid {
+.grid {
   display: grid;
   grid-template-columns: 1.17fr 2fr 1.17fr;
   gap: $unit-3x;
@@ -14,7 +14,7 @@
     gap: $unit;
   }
 
-  & .Label {
+  & .label {
     color: $grey-55;
     font-size: $font-tiny;
     font-weight: $medium;
@@ -25,13 +25,13 @@
     overflow: hidden;
 
     @include breakpoint(phone) {
-      &.Friend {
+      &.friend {
         max-width: 78px;
       }
     }
   }
 
-  #Summons {
+  .summons {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(0, 1fr));

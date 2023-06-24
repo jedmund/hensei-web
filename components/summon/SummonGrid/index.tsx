@@ -16,6 +16,7 @@ import { appState } from '~utils/appState'
 import type { DetailsObject, SearchableObject } from '~types'
 
 import styles from './index.module.scss'
+import classNames from 'classnames'
 
 // Props
 interface Props {
@@ -379,7 +380,7 @@ const SummonGrid = (props: Props) => {
 
   const mainSummonElement = (
     <div className="LabeledUnit">
-      <div className="Label">{t('summons.main')}</div>
+      <div className={styles.label}>{t('summons.main')}</div>
       <SummonUnit
         gridSummon={grid.summons.mainSummon}
         editable={props.editable}
@@ -396,7 +397,14 @@ const SummonGrid = (props: Props) => {
 
   const friendSummonElement = (
     <div className="LabeledUnit">
-      <div className="Label Friend">{t('summons.friend')}</div>
+      <div
+        className={classNames({
+          [styles.label]: true,
+          [styles.friend]: true,
+        })}
+      >
+        {t('summons.friend')}
+      </div>
       <SummonUnit
         gridSummon={grid.summons.friendSummon}
         editable={props.editable}
@@ -412,9 +420,9 @@ const SummonGrid = (props: Props) => {
   )
 
   const summonGridElement = (
-    <div id="LabeledGrid">
-      <div className="Label">{t('summons.summons')}</div>
-      <ul id="Summons">
+    <section>
+      <div className={styles.label}>{t('summons.summons')}</div>
+      <ul className={styles.summons}>
         {Array.from(Array(numSummons)).map((x, i) => {
           return (
             <li key={`grid_unit_${i}`}>
@@ -432,7 +440,7 @@ const SummonGrid = (props: Props) => {
           )
         })}
       </ul>
-    </div>
+    </section>
   )
 
   const subAuraSummonElement = (
@@ -449,8 +457,8 @@ const SummonGrid = (props: Props) => {
   )
 
   return (
-    <div>
-      <div id="SummonGrid">
+    <div className={styles.wrapper}>
+      <div className={styles.grid}>
         {mainSummonElement}
         {summonGridElement}
         {friendSummonElement}
