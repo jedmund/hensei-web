@@ -3,61 +3,79 @@ import classNames from 'classnames'
 
 import styles from './index.module.scss'
 
-interface Props
-  extends React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {
+interface Props extends React.ComponentProps<'input'> {
   bound?: boolean
-  visible?: string
-  error?: string
-  label?: string
+  hide1Password?: boolean
+  showCounter?: boolean
 }
 
 const defaultProps = {
-  visible: 'true',
+  bound: false,
+  hide1Password: true,
+  showCounter: false,
 }
 
-const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
-  { value, visible, bound, error, label, ...props }: Props,
+const Input = React.forwardRef<HTMLInputElement, Props>(function input(
+  { value, bound, showCounter, ...props }: Props,
   forwardedRef
 ) {
   // States
-  const [inputValue, setInputValue] = useState('')
+  const [currentCount, setCurrentCount] = useState(() =>
+    props.maxLength ? props.maxLength - (`${value}` || '').length : 0
+  )
 
   // Classes
-  const classes = classNames(
+  const wrapperClasses = classNames(
     {
-      [styles.input]: true,
-      [styles.bound]: bound,
+      [styles.wrapper]: showCounter,
+      [styles.input]: showCounter,
+      [styles.bound]: showCounter && bound,
     },
-    props.className
+    showCounter &&
+      props.className?.split(' ').map((className) => styles[className])
+  )
+
+  const inputClasses = classNames(
+    {
+      [styles.input]: !showCounter,
+      [styles.bound]: !showCounter && bound,
+    },
+    !showCounter &&
+      props.className?.split(' ').map((className) => styles[className])
   )
   const { defaultValue, ...inputProps } = props
 
-  // Change value when prop updates
+  // Hooks
   useEffect(() => {
-    if (value) setInputValue(`${value}`)
-  }, [value])
+    if (props.maxLength)
+      setCurrentCount(props.maxLength - (`${value}` || '').length)
+  }, [props.maxLength, value])
 
+  // Event handlers
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setInputValue(event.target.value)
     if (props.onChange) props.onChange(event)
   }
 
+  // Rendering
   return (
-    <React.Fragment>
+    <div className={wrapperClasses}>
       <input
         {...inputProps}
-        autoComplete="off"
-        className={classes}
-        value={inputValue}
-        ref={forwardedRef}
+        data-1p-ignore={props.hide1Password}
+        autoComplete={props.autoComplete}
+        className={inputClasses}
+        type={props.type}
+        name={props.name}
+        placeholder={props.placeholder}
+        defaultValue={value || ''}
+        onBlur={props.onBlur}
         onChange={handleChange}
+        maxLength={props.maxLength}
+        ref={forwardedRef}
         formNoValidate
       />
-      {error && error.length > 0 && <p className="InputError">{error}</p>}
-    </React.Fragment>
+      <span className={styles.counter}>{currentCount}</span>
+    </div>
   )
 })
 

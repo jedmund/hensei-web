@@ -5,8 +5,41 @@
   border-radius: $input-corner;
   box-sizing: border-box;
   display: block;
-  padding: calc($unit-2x - 2px);
   width: 100%;
+
+  &:not(.wrapper) {
+    padding: $unit * 1.5 $unit-2x;
+  }
+
+  &.wrapper {
+    $offset: 2px;
+
+    align-items: center;
+    background: var(--input-bg);
+    border-radius: $input-corner;
+    border: $offset solid transparent;
+    box-sizing: border-box;
+    position: relative;
+
+    .counter {
+      color: var(--text-tertiary);
+      display: block;
+      font-weight: $bold;
+      line-height: 42px;
+      position: absolute;
+      right: $unit-2x;
+      top: 0;
+    }
+
+    input {
+      background: transparent;
+      border-radius: $input-corner;
+      border: none;
+      box-sizing: border-box;
+      padding: $unit * 1.5 $unit-2x;
+      width: 100%;
+    }
+  }
 
   &[type='number']::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -23,11 +56,6 @@
     &:hover {
       background-color: var(--input-bound-bg-hover);
     }
-
-    &::placeholder {
-      /* Chrome, Firefox, Opera, Safari 10.1+ */
-      color: var(--text-tertiary) !important;
-    }
   }
 
   &.AlignRight {
@@ -39,17 +67,12 @@
   }
 }
 
-.inputError {
-  color: $error;
-  font-size: $font-tiny;
-  margin: $unit 0;
-  padding: calc($unit / 2) ($unit * 2);
-  min-width: 100%;
-  width: 0;
+.counter {
+  display: none;
 }
 
-.input::placeholder {
-  /* Chrome, Firefox, Opera, Safari 10.1+ */
+.input::placeholder,
+.input > input::placeholder {
   color: var(--text-secondary);
-  opacity: 1; /* Firefox */
+  opacity: 1;
 }
