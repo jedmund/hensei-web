@@ -62,13 +62,9 @@ const PartyHeader = (props: Props) => {
   const [turnCount, setTurnCount] = useState<number | undefined>(undefined)
   const [clearTime, setClearTime] = useState(0)
 
-  const classes = classNames({
-    PartyDetails: true,
-  })
-
   const userClass = classNames({
-    user: true,
-    empty: !party.user,
+    [styles.user]: true,
+    [styles.empty]: !party.user,
   })
 
   const linkClass = classNames({
@@ -243,13 +239,7 @@ const PartyHeader = (props: Props) => {
 
   // Render: Tokens
   const chargeAttackToken = (
-    <Token
-      className={classNames({
-        ChargeAttack: true,
-        On: party.chargeAttack,
-        Off: !party.chargeAttack,
-      })}
-    >
+    <Token active={party.chargeAttack} className="chargeAttack">
       {`${t('party.details.labels.charge_attack')} ${
         party.chargeAttack ? 'On' : 'Off'
       }`}
@@ -257,13 +247,7 @@ const PartyHeader = (props: Props) => {
   )
 
   const fullAutoToken = (
-    <Token
-      className={classNames({
-        FullAuto: true,
-        On: party.fullAuto,
-        Off: !party.fullAuto,
-      })}
-    >
+    <Token active={party.fullAuto} className="fullAuto">
       {`${t('party.details.labels.full_auto')} ${
         party.fullAuto ? 'On' : 'Off'
       }`}
@@ -271,13 +255,7 @@ const PartyHeader = (props: Props) => {
   )
 
   const autoGuardToken = (
-    <Token
-      className={classNames({
-        AutoGuard: true,
-        On: party.autoGuard,
-        Off: !party.autoGuard,
-      })}
-    >
+    <Token active className="autoGuard">
       {`${t('party.details.labels.auto_guard')} ${
         party.autoGuard ? 'On' : 'Off'
       }`}
@@ -285,13 +263,7 @@ const PartyHeader = (props: Props) => {
   )
 
   const autoSummonToken = (
-    <Token
-      className={classNames({
-        AutoSummon: true,
-        On: party.autoSummon,
-        Off: !party.autoSummon,
-      })}
-    >
+    <Token active={party.autoSummon} className="autoSummon">
       {`${t('party.details.labels.auto_summon')} ${
         party.autoSummon ? 'On' : 'Off'
       }`}
@@ -348,15 +320,16 @@ const PartyHeader = (props: Props) => {
 
   function renderTokens() {
     return (
-      <section className="Tokens">
+      <>
+        {' '}
         {chargeAttackToken}
         {fullAutoToken}
-        {autoGuardToken}
         {autoSummonToken}
+        {autoGuardToken}
         {party.turnCount ? turnCountToken : ''}
         {party.clearTime > 0 ? clearTimeToken() : ''}
         {buttonChainToken()}
-      </section>
+      </>
     )
   }
 
@@ -394,17 +367,18 @@ const PartyHeader = (props: Props) => {
 
   return (
     <>
-      <section className="DetailsWrapper">
-        <div className="PartyInfo">
-          <div className="Left">
-            <div className="Header">
+      <header className={styles.wrapper}>
+        <section className={styles.info}>
+          <div className={styles.left}>
+            <div className={styles.header}>
               <h1 className={party.name ? '' : 'empty'}>
                 {party.name ? party.name : t('no_title')}
               </h1>
               {party.remix && party.sourceParty ? (
                 <Tooltip content={t('tooltips.source')}>
                   <Button
-                    className="IconButton Blended"
+                    className="IconButton"
+                    blended={true}
                     leftAccessoryIcon={<RemixIcon />}
                     text={t('tokens.remix')}
                     onClick={() => goTo(party.sourceParty?.shortcode)}
@@ -414,12 +388,12 @@ const PartyHeader = (props: Props) => {
                 ''
               )}
             </div>
-            <div className="attribution">
+            <div className={styles.attribution}>
               {renderUserBlock()}
               {appState.party.raid ? linkedRaidBlock(appState.party.raid) : ''}
               {party.created_at != '' ? (
                 <time
-                  className="last-updated"
+                  className={styles.lastUpdated}
                   dateTime={new Date(party.created_at).toString()}
                 >
                   {formatTimeAgo(new Date(party.created_at), locale)}
@@ -430,7 +404,7 @@ const PartyHeader = (props: Props) => {
             </div>
           </div>
           {party.editable ? (
-            <div className="Right">
+            <div className={styles.right}>
               <EditPartyModal
                 party={props.party}
                 updateCallback={props.updateCallback}
@@ -447,14 +421,14 @@ const PartyHeader = (props: Props) => {
               />
             </div>
           ) : (
-            <div className="Right">
+            <div className={styles.right}>
               {saveButton()}
               {remixButton()}
             </div>
           )}
-        </div>
-        <section className={classes}>{renderTokens()}</section>
-      </section>
+        </section>
+        <section className={styles.tokens}>{renderTokens()}</section>
+      </header>
 
       <RemixTeamAlert
         creator={props.editable}

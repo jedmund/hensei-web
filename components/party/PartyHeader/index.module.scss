@@ -1,4 +1,4 @@
-.DetailsWrapper {
+.wrapper {
   display: flex;
   flex-direction: column;
   gap: $unit-2x;
@@ -16,7 +16,7 @@
     }
   }
 
-  .PartyDetails {
+  .details {
     box-sizing: border-box;
     display: block;
     line-height: 1.4;
@@ -38,14 +38,6 @@
       font-size: $font-regular;
       line-height: $font-regular * 1.2;
       white-space: pre-line;
-    }
-
-    .Tokens {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: $unit;
-      margin-bottom: $unit-2x;
     }
 
     .YoutubeWrapper {
@@ -133,7 +125,7 @@
     }
   }
 
-  .PartyInfo {
+  .info {
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
@@ -148,15 +140,10 @@
       padding: 0 $unit;
     }
 
-    & > .Right {
-      display: flex;
-      gap: $unit-half;
-    }
-
-    & > .Left {
+    & > .left {
       flex-grow: 1;
 
-      .Header {
+      .header {
         align-items: center;
         display: flex;
         gap: $unit;
@@ -186,6 +173,11 @@
           height: 26px;
         }
 
+        & > *:not(:last-child):after {
+          content: ' · ';
+          margin: 0 calc($unit / 2);
+        }
+
         time {
           font-size: $font-small;
         }
@@ -202,39 +194,34 @@
           color: $blue;
         }
 
-        & > *:not(:last-child):after {
-          content: ' · ';
-          margin: 0 calc($unit / 2);
+        .user {
+          align-items: center;
+          display: inline-flex;
+          gap: calc($unit / 2);
+          margin-top: 1px;
+
+          img {
+            $diameter: 24px;
+
+            border-radius: calc($diameter / 2);
+            height: $diameter;
+            width: $diameter;
+          }
         }
       }
     }
 
-    .user {
-      align-items: center;
-      display: inline-flex;
-      gap: calc($unit / 2);
-      margin-top: 1px;
-
-      img,
-      .no-user {
-        $diameter: 24px;
-
-        border-radius: calc($diameter / 2);
-        height: $diameter;
-        width: $diameter;
-      }
-
-      img.gran {
-        background-color: #cee7fe;
-      }
-
-      img.djeeta {
-        background-color: #ffe1fe;
-      }
-
-      .no-user {
-        background: $grey-80;
-      }
+    & > .right {
+      display: flex;
+      gap: $unit-half;
     }
+  }
+
+  .tokens {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $unit;
+    margin-bottom: $unit-2x;
   }
 }
