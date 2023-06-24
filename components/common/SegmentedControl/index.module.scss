@@ -23,10 +23,6 @@
     &.blended {
       background: var(--input-bound-bg);
       border-radius: $full-corner;
-
-      .Segment input:checked + label {
-        background: var(--card-bg);
-      }
     }
 
     &.grow {

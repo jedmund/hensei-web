@@ -26,6 +26,7 @@ const SegmentedControl: React.FC<Props> = ({
       [styles.blended]: blended,
       [styles.grow]: grow,
       [styles.gap]: gap,
+      blended: blended,
     },
     className,
     elementClass

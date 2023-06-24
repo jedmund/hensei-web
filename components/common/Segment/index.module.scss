@@ -1,4 +1,4 @@
-.Segment {
+.segment {
   color: $grey-55;
   cursor: pointer;
   flex-grow: 1;
@@ -39,4 +39,8 @@
     min-width: initial;
     width: 100%;
   }
+}
+
+:global(.blended) .segment input:checked + label {
+  background: var(--card-bg);
 }
