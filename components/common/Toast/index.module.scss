@@ -1,4 +1,4 @@
-.Toast {
+.toast {
   background: var(--dialog-bg);
   border-radius: $card-corner;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12), 0 0 1px rgba(0, 0, 0, 0.1);
@@ -28,7 +28,7 @@
     animation: slideRight 100ms ease-out;
   }
 
-  .Header {
+  .header {
     align-items: center;
     display: flex;
     justify-content: space-between;

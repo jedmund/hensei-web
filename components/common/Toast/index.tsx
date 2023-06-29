@@ -22,13 +22,13 @@ const Toast = ({
   const { onCloseClick, ...toastProps } = props
 
   const classes = classNames(props.className, {
-    Toast: true,
+    [styles.toast]: true,
   })
 
   return (
     <ToastPrimitive.Root {...toastProps} className={classes}>
       {title && (
-        <div className="Header">
+        <div className={styles.header}>
           <ToastPrimitive.Title asChild>
             <h3>{title}</h3>
           </ToastPrimitive.Title>
