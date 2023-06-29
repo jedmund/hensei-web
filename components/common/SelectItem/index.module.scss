@@ -29,8 +29,39 @@
     margin-bottom: $unit;
   }
 
-  img {
-    width: $unit-4x;
-    height: auto;
+  .preview {
+    $diameter: $unit-4x;
+    border-radius: $unit-2x;
+    width: $diameter;
+    height: $diameter;
+
+    img {
+      width: $diameter;
+      height: auto;
+    }
+
+    &.fire {
+      background: $fire-bg-20;
+    }
+
+    &.water {
+      background: $water-bg-20;
+    }
+
+    &.wind {
+      background: $wind-bg-20;
+    }
+
+    &.earth {
+      background: $earth-bg-20;
+    }
+
+    &.dark {
+      background: $dark-bg-10;
+    }
+
+    &.light {
+      background: $light-bg-20;
+    }
   }
 }

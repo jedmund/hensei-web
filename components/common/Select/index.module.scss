@@ -27,36 +27,6 @@
     }
   }
 
-  &.hidden {
-    display: none;
-  }
-
-  &:hover {
-    background-color: var(--input-bg-hover);
-    cursor: pointer;
-
-    span:not(.SelectIcon),
-    &[data-placeholder] > span:not(.SelectIcon) {
-      color: var(--text-primary);
-    }
-  }
-
-  &.disabled:hover {
-    background-color: var(--input-bg);
-    cursor: not-allowed;
-  }
-
-  &[data-placeholder='true'] > span:not(.SelectIcon) {
-    color: var(--text-secondary);
-  }
-
-  & > span:not(.SelectIcon) {
-    color: var(--text-primary);
-    flex-grow: 1;
-    font-size: $font-regular;
-    text-align: left;
-  }
-
   &.bound {
     background-color: var(--select-contained-bg);
 
@@ -65,8 +35,42 @@
     }
   }
 
-  &.Table {
+  &.table {
     min-width: $unit * 30;
+  }
+
+  &.hidden {
+    display: none;
+  }
+
+  &:hover {
+    background-color: var(--input-bg-hover);
+    cursor: pointer;
+
+    span:not(.icon),
+    &[data-placeholder] > span:not(.icon) {
+      color: var(--text-primary);
+    }
+
+    .icon svg {
+      fill: var(--text-primary);
+    }
+  }
+
+  &.disabled:hover {
+    background-color: var(--input-bg);
+    cursor: not-allowed;
+  }
+
+  &[data-placeholder='true'] > span:not(.icon) {
+    color: var(--text-secondary);
+  }
+
+  & > span:not(.icon) {
+    color: var(--text-primary);
+    flex-grow: 1;
+    font-size: $font-regular;
+    text-align: left;
   }
 
   img {
@@ -82,10 +86,6 @@
       fill: var(--icon-secondary);
     }
   }
-
-  span:not(.icon) {
-    color: var(--text-secondary);
-  }
 }
 
 .select {
@@ -97,6 +97,10 @@
   min-width: var(--radix-select-trigger-width);
   max-height: 40vh;
   z-index: 40;
+
+  &.bound {
+    background-color: var(--select-content-contained-bg);
+  }
 
   .scroll.up,
   .scroll.down {

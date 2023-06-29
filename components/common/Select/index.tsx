@@ -32,27 +32,34 @@ interface Props
   overlayVisible?: boolean
 }
 
-const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
+const Select = React.forwardRef<HTMLButtonElement, Props>(function select(
   props: Props,
   forwardedRef
 ) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
 
-  const triggerClasses = classNames({
-    [styles.trigger]: true,
-    [styles.disabled]: props.disabled,
-    [styles.bound]: props.trigger ? props.trigger.bound : false,
-    [styles.small]: props.trigger?.size === 'small',
-    [styles.medium]: !props.trigger || props.trigger?.size === 'medium',
-    [styles.large]: props.trigger?.size === 'large',
-  })
+  const triggerClasses = classNames(
+    {
+      [styles.trigger]: true,
+      [styles.disabled]: props.disabled,
+      [styles.bound]: props.trigger ? props.trigger.bound : false,
+      [styles.small]: props.trigger?.size === 'small',
+      [styles.medium]: !props.trigger || props.trigger?.size === 'medium',
+      [styles.large]: props.trigger?.size === 'large',
+    },
+    props.trigger?.className?.split(' ').map((className) => {
+      console.log('className', className)
+      return styles[className]
+    })
+  )
 
   const selectClasses = classNames(
     {
       [styles.select]: true,
+      [styles.bound]: props.trigger ? props.trigger.bound : false,
     },
-    props.className
+    props.className?.split(' ').map((className) => styles[className])
   )
 
   useEffect(() => {
