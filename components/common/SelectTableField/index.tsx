@@ -12,9 +12,11 @@ interface Props {
   open: boolean
   value?: string
   className?: string
-  imageAlt?: string
-  imageClass?: string
-  imageSrc?: string[]
+  image?: {
+    className?: String
+    alt?: string
+    src: string[]
+  }
   children: React.ReactNode
   onOpenChange: () => void
   onChange: (value: string) => void
@@ -31,10 +33,8 @@ const SelectTableField = (props: Props) => {
   return (
     <TableField
       name={props.name}
-      className="SelectField"
-      imageAlt={props.imageAlt}
-      imageClass={props.imageClass}
-      imageSrc={props.imageSrc}
+      image={props.image}
+      className="select"
       label={props.label}
     >
       <Select
@@ -43,9 +43,12 @@ const SelectTableField = (props: Props) => {
         onOpenChange={props.onOpenChange}
         onValueChange={props.onChange}
         onClose={props.onClose}
-        triggerClass={classNames({ Bound: true, Table: true })}
         value={value}
         overlayVisible={false}
+        trigger={{
+          bound: true,
+          className: 'table',
+        }}
       >
         {props.children}
       </Select>

@@ -1,4 +1,4 @@
-.TableField {
+.field {
   align-items: center;
   display: grid;
   gap: $unit-2x;
@@ -18,36 +18,36 @@
     color: var(--accent-blue);
   }
 
-  &.Numeric .Right > .Input,
-  &.Numeric .Right > .Duration {
+  &.numeric .right > .input,
+  &.numeric .right > .duration {
     text-align: right;
     max-width: $unit-12x;
     width: $unit-12x;
   }
 
-  &.Numeric .Right > .Duration {
+  &.numeric .right > .Duration {
     justify-content: flex-end;
     box-sizing: border-box;
   }
 
-  &.Disabled {
-    &:hover .Left .Info h3 {
+  &.disabled {
+    &:hover .left .info h3 {
       color: var(--text-tertiary);
     }
 
-    .Left .Info h3 {
+    .left .info h3 {
       color: var(--text-tertiary);
     }
   }
 
-  .Left {
+  .left {
     align-items: center;
     display: flex;
     flex-direction: row;
     gap: $unit;
     width: 100%;
 
-    .Info {
+    .info {
       display: flex;
       flex-direction: column;
       flex-grow: 1;
@@ -55,7 +55,7 @@
       gap: $unit-half;
     }
 
-    .Image {
+    .image {
       display: none;
 
       .preview {
@@ -90,7 +90,7 @@
     }
   }
 
-  .Right {
+  .right {
     align-items: center;
     display: flex;
     flex-direction: row;
@@ -99,12 +99,12 @@
     width: 100%;
 
     @include breakpoint(phone) {
-      .Image {
+      .image {
         display: none;
       }
     }
 
-    .SelectTrigger {
+    .trigger {
       width: 100%;
     }
   }
