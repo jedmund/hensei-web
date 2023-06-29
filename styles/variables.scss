@@ -48,6 +48,7 @@ $grey-50: #777;
 $grey-55: #888;
 $grey-60: #a9a9a9;
 $grey-70: #c6c6c6;
+$grey-75: #dcdcdc;
 $grey-80: #e9e9e9;
 $grey-85: #efefef;
 $grey-90: #f5f5f5;
@@ -210,10 +211,10 @@ $input--bound--bg--dark--hover: $grey-10;
 $select--bg--light: $grey-100;
 $select--bg--dark: $grey-10;
 
-$select--contained--bg--light: $grey-90;
+$select--contained--bg--light: $grey-85;
 $select--contained--bg--light--hover: $grey-80;
-$select--contained--bg--dark: $grey-05;
-$select--contained--bg--dark--hover: $grey-00;
+$select--contained--bg--dark: $grey-15;
+$select--contained--bg--dark--hover: $grey-10;
 
 $select--modal--bg--light: $grey-85;
 $select--modal--bg--light--hover: $grey-80;
@@ -223,14 +224,17 @@ $select--modal--bg--dark--hover: $grey-30;
 $select--separator--light: $grey-90;
 $select--separator--dark: $grey-05;
 
-$option--bg--light--hover: $grey-90;
+$option--bg--light--hover: $grey-75;
 $option--bg--dark--hover: $grey-00;
 
 $grid--rep--hover--light: $grey-100;
 $grid--rep--hover--dark: $grey-10;
 
-$grid--border--color--light: $grey-80;
+$grid--border--color--light: $grey-85;
 $grid--border--color--dark: $grey-40;
+
+$select--content--contained--bg--light: $grey-85;
+$select--content--contained--bg--dark: $grey-15;
 
 // Color Definitions: Slider
 $slider--thumb--bg--light: $grey-100;

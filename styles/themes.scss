@@ -64,6 +64,7 @@
   --select-modal-bg: #{$select--modal--bg--light};
   --select-modal-bg-hover: #{$select--modal--bg--light--hover};
   --select-separator: #{$select--separator--light};
+  --select-content-contained-bg: #{$select--content--contained--bg--light};
   --option-bg-hover: #{$option--bg--light--hover};
 
   // Light - Sliders
@@ -221,6 +222,7 @@
   --select-modal-bg: #{$select--modal--bg--dark};
   --select-modal-bg-hover: #{$select--modal--bg--dark--hover};
   --select-separator: #{$select--separator--dark};
+  --select-content-contained-bg: #{$select--content--contained--bg--dark};
   --option-bg-hover: #{$option--bg--dark--hover};
 
   // Dark - Sliders
