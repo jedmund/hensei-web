@@ -8,6 +8,10 @@
   transition: $duration-opacity-fade opacity ease-in;
   opacity: 0.5;
 
+  @include breakpoint(phone) {
+    display: none;
+  }
+
   .mainhand,
   .weapon {
     background: var(--card-bg);

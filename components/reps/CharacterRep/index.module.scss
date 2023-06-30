@@ -6,6 +6,10 @@
   transition: $duration-opacity-fade opacity ease-in;
   opacity: 0.5;
 
+  @include breakpoint(phone) {
+    display: none;
+  }
+
   .character,
   .protagonist {
     aspect-ratio: 16 / 33;
