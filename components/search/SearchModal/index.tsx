@@ -9,7 +9,7 @@ import api from '~utils/api'
 
 import { Dialog, DialogTrigger, DialogClose } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
-import Input from '~components/common/LabelledInput'
+import Input from '~components/common/Input'
 import CharacterSearchFilterBar from '~components/character/CharacterSearchFilterBar'
 import WeaponSearchFilterBar from '~components/weapon/WeaponSearchFilterBar'
 import SummonSearchFilterBar from '~components/summon/SummonSearchFilterBar'
@@ -395,55 +395,49 @@ const SearchModal = (props: Props) => {
     if (searchInput.current) searchInput.current.focus()
   }
 
+  const filterBar = () => {
+    if (props.object === 'characters') {
+      return <CharacterSearchFilterBar sendFilters={receiveFilters} />
+    } else if (props.object === 'weapons') {
+      return <WeaponSearchFilterBar sendFilters={receiveFilters} />
+    } else if (props.object === 'summons') {
+      return <SummonSearchFilterBar sendFilters={receiveFilters} />
+    } else if (props.object === 'job_skills') {
+      return <JobSkillSearchFilterBar sendFilters={receiveFilters} />
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{props.children}</DialogTrigger>
       <DialogContent
-        className="Search"
+        className="search"
         headerref={headerRef}
         scrollable={false}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
-        <div className="Search DialogHeader" ref={headerRef}>
-          <div id="Bar">
+        <header className={styles.header} ref={headerRef}>
+          <div className={styles.searchBar}>
             <Input
+              bound={true}
+              className="full"
               autoComplete="off"
-              className="Search Bound"
               name="query"
               placeholder={props.placeholderText}
               ref={searchInput}
               value={query}
               onChange={inputChanged}
             />
-            <DialogClose className="DialogClose" onClick={openChange}>
+            <DialogClose className={styles.close} onClick={openChange}>
               <CrossIcon />
             </DialogClose>
           </div>
-          {props.object === 'characters' ? (
-            <CharacterSearchFilterBar sendFilters={receiveFilters} />
-          ) : (
-            ''
-          )}
-          {props.object === 'weapons' ? (
-            <WeaponSearchFilterBar sendFilters={receiveFilters} />
-          ) : (
-            ''
-          )}
-          {props.object === 'summons' ? (
-            <SummonSearchFilterBar sendFilters={receiveFilters} />
-          ) : (
-            ''
-          )}
-          {props.object === 'job_skills' ? (
-            <JobSkillSearchFilterBar sendFilters={receiveFilters} />
-          ) : (
-            ''
-          )}
-        </div>
+          {filterBar()}
+        </header>
 
-        <div id="Results" ref={scrollContainer}>
-          <h5 className="total">
+        <div className={styles.results} ref={scrollContainer}>
+          <h5 className={styles.total}>
             {t('search.result_count', { record_count: recordCount })}
           </h5>
           {open ? renderResults() : ''}

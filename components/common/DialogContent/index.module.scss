@@ -16,8 +16,8 @@
   .dialogContent {
     $multiplier: 4;
 
-    // animation: $duration-modal-open cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal
-    // none running openModalDesktop;
+    animation: $duration-modal-open cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal
+      none running openModalDesktop;
     background: var(--dialog-bg);
     border-radius: $card-corner;
     box-sizing: border-box;
@@ -31,7 +31,7 @@
     // min-height: $unit-12x;
     overflow-y: auto;
     // height: 80vh;
-    max-height: 80vh;
+    // max-height: 80vh; // Having a max-height interferes with SearchModal scrolling
     min-width: 580px;
     max-width: 42vw;
     // padding: $unit * $multiplier;
@@ -42,11 +42,11 @@
     }
 
     @include breakpoint(phone) {
-      // animation: slideUp;
-      // animation-duration: 3s;
-      // animation-fill-mode: forwards;
-      // animation-play-state: running;
-      // animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      animation: slideUp;
+      animation-duration: 1s;
+      animation-fill-mode: forwards;
+      animation-play-state: running;
+      animation-timing-function: ease-out;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
       min-width: inherit;
@@ -57,6 +57,25 @@
       top: 5vh;
       height: auto;
       width: 100%;
+    }
+
+    &.search {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      min-height: 430px;
+      padding: 0;
+
+      @include breakpoint(phone) {
+        // animation: none;
+        min-width: inherit;
+        height: 90vh;
+
+        .container {
+          display: flex;
+          flex-direction: column;
+        }
+      }
     }
 
     .container {
@@ -185,6 +204,28 @@
           }
         }
       }
+    }
+  }
+
+  @keyframes openModalDesktop {
+    0% {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    100% {
+      // opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideUp {
+    0% {
+      transform: translate(0%, 100%);
+    }
+
+    100% {
+      transform: translate(0, 0%);
     }
   }
 }

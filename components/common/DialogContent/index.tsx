@@ -23,9 +23,12 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
   forwardedRef
 ) {
   // Classes
-  const classes = classNames(props.className, {
-    [styles.dialogContent]: true,
-  })
+  const classes = classNames(
+    {
+      [styles.dialogContent]: true,
+    },
+    props.className?.split(' ').map((className) => styles[className])
+  )
 
   // Handlers
   function handleScroll(event: React.UIEvent<HTMLDivElement, UIEvent>) {

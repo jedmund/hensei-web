@@ -1,96 +1,101 @@
-.Search.DialogContent {
-  box-sizing: border-box;
+.header {
+  align-items: inherit;
   display: flex;
   flex-direction: column;
-  min-height: 430px;
+  gap: $unit;
   padding: 0;
+  padding-bottom: $unit;
+  position: sticky;
+  top: 0;
+  left: 0;
 
-  @include breakpoint(phone) {
-    animation: none;
-    border-radius: 0;
-    min-width: inherit;
-    min-height: 100vh;
+  .close {
+    background: transparent;
+    border: none;
+
+    &:hover {
+      cursor: pointer;
+
+      svg {
+        fill: $error;
+      }
+    }
+
+    svg {
+      fill: $grey-50;
+      float: right;
+      height: 24px;
+      width: 24px;
+    }
   }
 
-  .DialogHeader.Search {
-    align-items: inherit;
+  .searchBar {
+    align-items: center;
+    border-top-left-radius: $unit;
+    border-top-right-radius: $unit;
     display: flex;
-    flex-direction: column;
-    gap: $unit;
-    padding: 0;
-    padding-bottom: $unit-2x;
+    gap: $unit * 2.5;
+    margin: 0;
+    padding: ($unit * 3) ($unit * 3) 0 ($unit * 3);
     position: sticky;
     top: 0;
-    left: 0;
 
-    #Bar {
-      align-items: center;
-      border-top-left-radius: $unit;
-      border-top-right-radius: $unit;
-      display: flex;
-      gap: $unit * 2.5;
-      margin: 0;
-      padding: ($unit * 3) ($unit * 3) 0 ($unit * 3);
-      position: sticky;
-      top: 0;
+    button {
+      background: transparent;
+      border: none;
+      height: 42px;
+      padding: 0;
+    }
 
-      button {
-        background: transparent;
-        border: none;
-        height: 42px;
-        padding: 0;
-      }
+    label {
+      width: 100%;
 
-      label {
-        width: 100%;
-
-        // .Input {
-        //   background: $grey-90;
-        //   border: none;
-        //   border-radius: calc($unit / 2);
-        //   box-sizing: border-box;
-        //   font-size: $font-regular;
-        //   padding: $unit * 1.5;
-        //   text-align: left;
-        //   width: 100%;
-        // }
-      }
+      // .Input {
+      //   background: $grey-90;
+      //   border: none;
+      //   border-radius: calc($unit / 2);
+      //   box-sizing: border-box;
+      //   font-size: $font-regular;
+      //   padding: $unit * 1.5;
+      //   text-align: left;
+      //   width: 100%;
+      // }
     }
   }
+}
 
-  #Results {
-    margin: 0;
-    padding: 0 ($unit * 1.5);
-    padding-bottom: $unit * 1.5;
+.results {
+  margin: 0;
+  padding: 0 ($unit * 1.5);
+  padding-bottom: $unit * 1.5;
 
-    // Infinite scroll
-    overflow-y: auto;
-    max-height: 500px;
+  // Infinite scroll
+  overflow-y: auto;
+  max-height: 500px;
 
-    @include breakpoint(phone) {
-      max-height: inherit;
-    }
+  @include breakpoint(phone) {
+    max-height: initial;
+  }
 
-    h5.total {
-      font-size: $font-regular;
-      font-weight: $normal;
-      color: var(--text-tertiary);
-      padding: $unit-half ($unit * 1.5);
-    }
+  h5.total {
+    font-size: $font-regular;
+    font-weight: $normal;
+    color: var(--text-tertiary);
+    padding: $unit-half ($unit * 1.5);
+  }
 
-    .footer {
-      align-items: center;
-      display: flex;
-      color: var(--text-tertiary);
-      font-size: $font-regular;
-      font-weight: $normal;
-      height: $unit-10x;
-      justify-content: center;
-    }
+  .footer {
+    align-items: center;
+    display: flex;
+    color: var(--text-tertiary);
+    font-size: $font-regular;
+    font-weight: $normal;
+    height: $unit-10x;
+    justify-content: center;
+  }
 
-    .WeaponResult:last-child {
-      margin-bottom: $unit * 1.5;
-    }
+  .WeaponResult:last-child {
+    margin-bottom: $unit * 1.5;
   }
 }
 
