@@ -23,9 +23,9 @@ interface Props
 const defaultProps = {
   active: false,
   blended: false,
-  contained: false,
+  bound: false,
   floating: false,
-  buttonSize: 'medium' as const,
+  size: 'medium' as const,
 }
 
 const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
@@ -59,15 +59,21 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
     props.className?.split(' ').map((className) => styles[className])
   )
 
-  const leftAccessoryClasses = classNames(leftAccessoryClassName, {
-    [styles.accessory]: true,
-    [styles.left]: true,
-  })
+  const leftAccessoryClasses = classNames(
+    {
+      [styles.accessory]: true,
+      [styles.left]: true,
+    },
+    leftAccessoryClassName?.split(' ').map((className) => styles[className])
+  )
 
-  const rightAccessoryClasses = classNames(rightAccessoryClassName, {
-    [styles.accessory]: true,
-    [styles.right]: true,
-  })
+  const rightAccessoryClasses = classNames(
+    {
+      [styles.accessory]: true,
+      [styles.right]: true,
+    },
+    rightAccessoryClassName?.split(' ').map((className) => styles[className])
+  )
 
   const hasLeftAccessory = () => {
     if (leftAccessoryIcon)

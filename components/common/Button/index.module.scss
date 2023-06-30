@@ -70,11 +70,42 @@
     }
   }
 
+  &.bound.blended {
+    background: var(--dialog-bg);
+
+    &:hover {
+      background: var(--input-bound-bg);
+    }
+  }
+
   &.floating {
     pointer-events: none;
     position: absolute;
     opacity: 0;
     z-index: 99;
+  }
+
+  &.jobAccessory.icon {
+    align-items: center;
+    border-radius: 99px;
+    justify-content: center;
+    position: relative;
+    padding: $unit * 1.5;
+    top: $unit;
+    left: $unit;
+    height: auto;
+    z-index: 10;
+
+    &:hover .accessory svg,
+    &.selected .accessory svg {
+      fill: var(--button-text-hover);
+    }
+
+    .accessory svg {
+      fill: var(--button-text);
+      width: $unit-3x;
+      height: auto;
+    }
   }
 
   // Sizes
@@ -246,8 +277,12 @@
 
     display: flex;
 
-    &.Arrow {
+    &.arrow {
       margin-top: $unit-half;
+    }
+
+    &.flipped {
+      transform: rotate(180deg);
     }
 
     svg {
