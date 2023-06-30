@@ -25,8 +25,19 @@ const Switch = (props: Props) => {
     value,
   } = props
 
-  const mainClasses = classNames({ Switch: true }, className)
-  const thumbClasses = classNames({ SwitchThumb: true }, thumbClass)
+  const mainClasses = classNames(
+    {
+      [styles.switch]: true,
+    },
+    className?.split(' ').map((c) => styles[c])
+  )
+
+  const thumbClasses = classNames(
+    {
+      [styles.thumb]: true,
+    },
+    thumbClass?.split(' ').map((c) => styles[c])
+  )
 
   return (
     <RadixSwitch.Root

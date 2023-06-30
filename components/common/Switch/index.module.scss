@@ -1,4 +1,4 @@
-.Switch {
+.switch {
   $height: 34px;
   background: $grey-70;
   border-radius: calc($height / 2);
@@ -33,7 +33,7 @@
   }
 }
 
-.SwitchThumb {
+.thumb {
   background: $grey-100;
   border-radius: 13px;
   display: block;

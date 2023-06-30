@@ -1,4 +1,4 @@
-.Slider {
+.slider {
   position: relative;
   display: flex;
   align-items: center;
@@ -7,7 +7,7 @@
   width: $unit-20x;
   height: 20px;
 
-  .SliderTrack {
+  .track {
     background-color: var(--button-bg);
     position: relative;
     flex-grow: 1;
@@ -16,14 +16,14 @@
   }
 }
 
-.SliderRange {
+.range {
   position: absolute;
   background-color: var(--accent-blue);
   border-radius: 9999px;
   height: 100%;
 }
 
-.SliderThumb {
+.thumb {
   display: block;
   width: 20px;
   height: 20px;

@@ -9,19 +9,20 @@ interface Props {}
 
 const Slider = React.forwardRef<HTMLDivElement, Props & SliderProps>(
   (props, forwardedRef) => {
-    const value = props.value || props.defaultValue
+    const classes = classNames(
+      {
+        [styles.slider]: true,
+      },
+      props.className?.split(' ').map((c) => styles[c])
+    )
 
     return (
-      <SliderPrimitive.Slider
-        {...props}
-        className={classNames({ Slider: true }, props.className)}
-        ref={forwardedRef}
-      >
-        <SliderPrimitive.Track className="SliderTrack">
-          <SliderPrimitive.Range className="SliderRange" />
+      <SliderPrimitive.Slider {...props} className={classes} ref={forwardedRef}>
+        <SliderPrimitive.Track className={styles.track}>
+          <SliderPrimitive.Range className={styles.range} />
         </SliderPrimitive.Track>
 
-        <SliderPrimitive.Thumb className="SliderThumb" />
+        <SliderPrimitive.Thumb className={styles.thumb} />
       </SliderPrimitive.Slider>
     )
   }
