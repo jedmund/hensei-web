@@ -1,4 +1,4 @@
-.FooterWrapper {
+.wrapper {
   display: flex;
   flex-direction: column;
   gap: $unit-2x;
@@ -6,7 +6,7 @@
   max-width: $grid-width;
 
   @include breakpoint(phone) {
-    .Button:not(.IconButton) {
+    .Button:not(.icon) {
       justify-content: center;
       width: 100%;
 
@@ -16,7 +16,8 @@
     }
   }
 
-  .PartyFooter {
+  .description,
+  .remixes {
     box-sizing: border-box;
     line-height: 1.4;
     white-space: pre-wrap;
@@ -30,150 +31,20 @@
     @include breakpoint(phone) {
       padding: 0 $unit;
     }
-    &.Editable {
-      gap: $unit;
 
-      &.Visible {
-        display: grid;
+    .noRemixes {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: $unit-2x;
+      margin: 0 auto;
+      padding: $unit-4x 0;
+
+      h3 {
+        font-size: $font-small;
+        font-weight: $medium;
+        text-align: center;
       }
-
-      fieldset {
-        display: block;
-        width: 100%;
-
-        textarea {
-          min-height: $unit * 22;
-          width: 100%;
-        }
-      }
-
-      .SelectTrigger {
-        padding: $unit-2x;
-        width: 100%;
-      }
-
-      .DetailToggleGroup {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: $unit;
-
-        @include breakpoint(phone) {
-          grid-template-columns: 1fr;
-        }
-
-        .ToggleSection,
-        .InputSection {
-          align-items: center;
-          display: flex;
-          background: var(--card-bg);
-          border-radius: $input-corner;
-
-          & > label {
-            align-items: center;
-            display: flex;
-            font-size: $font-regular;
-            gap: $unit;
-            grid-template-columns: 2fr 1fr;
-            justify-content: space-between;
-            width: 100%;
-
-            & > span {
-              flex-grow: 1;
-            }
-          }
-        }
-
-        .ToggleSection {
-          padding: ($unit * 1.5) $unit-2x;
-        }
-
-        .InputSection {
-          padding: $unit-half $unit-2x;
-          padding-right: $unit-half;
-
-          .Input {
-            border-radius: 7px;
-          }
-
-          div.Input {
-            align-items: center;
-            border: 2px solid transparent;
-            box-sizing: border-box;
-            display: flex;
-            padding: $unit;
-
-            &:has(> input:focus) {
-              border: 2px solid $blue;
-              outline: none;
-            }
-
-            & > input {
-              background: transparent;
-              border: none;
-              padding: $unit 0;
-              text-align: right;
-              width: 2rem;
-
-              &:focus {
-                outline: none;
-                border: none;
-              }
-            }
-          }
-
-          label {
-            display: flex;
-            justify-content: space-between;
-
-            span {
-              flex-grow: 1;
-            }
-
-            .Input {
-              border-radius: 7px;
-              max-width: 10rem;
-            }
-
-            div {
-              display: flex;
-              flex-direction: row;
-              gap: $unit-half;
-              justify-content: right;
-            }
-          }
-        }
-      }
-
-      .bottom {
-        display: flex;
-        flex-direction: row;
-        gap: $unit;
-
-        @include breakpoint(phone) {
-          flex-direction: column;
-          width: 100%;
-        }
-
-        .left {
-          flex-grow: 1;
-        }
-
-        .right {
-          display: flex;
-          flex-direction: row;
-          gap: $unit;
-
-          @include breakpoint(phone) {
-            .Button {
-              flex-grow: 1;
-            }
-          }
-        }
-      }
-    }
-
-    &.Visible {
-      display: block;
     }
 
     a:hover {

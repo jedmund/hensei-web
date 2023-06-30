@@ -106,6 +106,16 @@
       "rarity": "Rarity"
     }
   },
+  "footer": {
+    "description": {
+      "label": "Description",
+      "empty": "This team doesn't have a description"
+    },
+    "remixes": {
+      "label": "Remixes",
+      "empty": "No one has remixed this team yet"
+    }
+  },
   "header": {
     "anonymous": "Anonymous",
     "untitled_team": "Untitled team by {{username}}",
@@ -540,6 +550,5 @@
   "no_user": "Anonymous",
   "no_job": "No class",
   "no_value": "No value",
-  "remixes": "Remixes",
   "level": "Level"
 }

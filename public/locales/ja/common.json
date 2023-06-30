@@ -106,6 +106,16 @@
       "rarity": "レアリティ"
     }
   },
+  "footer": {
+    "description": {
+      "label": "説明",
+      "empty": "この編成には説明がありません"
+    },
+    "remixes": {
+      "label": "リミックス",
+      "empty": "この編成はリミックスされていません"
+    }
+  },
   "header": {
     "anonymous": "無名",
     "untitled_team": "{{username}}さんからの無題編成",
@@ -537,6 +547,5 @@
   "no_user": "無名",
   "no_job": "ジョブなし",
   "no_value": "値なし",
-  "remixes": "リミックスされた編成",
   "level": "レベル"
 }
