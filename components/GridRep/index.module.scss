@@ -1,5 +1,6 @@
 .gridRep {
   aspect-ratio: 3/2;
+  border: 1px solid transparent;
   border-radius: $card-corner;
   box-sizing: border-box;
   display: grid;
@@ -11,6 +12,7 @@
 
   &:hover {
     background: var(--grid-rep-hover);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 
     a {
       text-decoration: none;
@@ -82,11 +84,12 @@
   .details {
     display: flex;
     flex-direction: column;
-    gap: calc($unit / 2);
+    gap: $unit;
 
     h2 {
       color: var(--text-primary);
       font-size: $font-regular;
+      font-weight: $bold;
       overflow: hidden;
       padding-bottom: 1px;
       text-overflow: ellipsis;
@@ -117,16 +120,21 @@
       }
     }
 
+    .attributed,
     .bottom {
       display: flex;
-      flex-direction: row;
+      gap: $unit-half;
+      justify-content: space-between;
 
       a.user:hover {
         color: var(--link-text-hover);
       }
     }
 
-    .properties,
+    .bottom {
+      flex-direction: column;
+    }
+
     .user {
       flex-grow: 1;
     }
@@ -134,23 +142,44 @@
     .user,
     .raid,
     time {
-      color: $grey-55;
+      color: var(--text-tertiary);
       font-size: $font-small;
     }
 
+    time {
+      white-space: nowrap;
+    }
+
     .properties {
+      display: flex;
+      font-size: $font-small;
+      gap: $unit-half;
+
+      .raid {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
       .auto {
+        flex: 1;
         display: inline-flex;
         gap: $unit-half;
         flex-direction: row;
-        margin-left: $unit-half;
+        flex-wrap: nowrap;
       }
 
       .fullAuto {
         color: var(--full-auto-label-text);
+        white-space: nowrap;
+      }
+
+      .extra {
+        color: var(--extra-purple-light-text);
+        white-space: nowrap;
       }
 
       .autoGuard {
+        display: inline-block;
         width: 12px;
         height: 12px;
 
@@ -162,7 +191,6 @@
 
     .raid {
       color: var(--text-primary);
-      margin-bottom: calc($unit / 2);
 
       &.empty {
         color: var(--text-tertiary);
