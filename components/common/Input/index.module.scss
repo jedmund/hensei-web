@@ -1,3 +1,7 @@
+.full {
+  width: 100%;
+}
+
 .input {
   -webkit-font-smoothing: antialiased;
   background-color: var(--input-bg);
@@ -11,7 +15,7 @@
     padding: $unit * 1.5 $unit-2x;
   }
 
-  &.wrapper {
+  &.accessory {
     $offset: 2px;
 
     align-items: center;
@@ -25,7 +29,7 @@
       color: var(--text-tertiary);
       display: block;
       font-weight: $bold;
-      line-height: 42px;
+      line-height: 48px;
       position: absolute;
       right: $unit-2x;
       top: 0;
@@ -36,7 +40,7 @@
       border-radius: $input-corner;
       border: none;
       box-sizing: border-box;
-      padding: $unit * 1.5 $unit-2x;
+      padding: ($unit * 1.75) $unit-2x;
       width: 100%;
     }
   }
@@ -56,6 +60,10 @@
     &:hover {
       background-color: var(--input-bound-bg-hover);
     }
+  }
+
+  &.number {
+    min-width: $unit-8x;
   }
 
   &.AlignRight {

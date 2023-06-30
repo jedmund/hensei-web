@@ -27,12 +27,12 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
   // Classes
   const wrapperClasses = classNames(
     {
-      [styles.wrapper]: showCounter,
+      [styles.wrapper]: true,
+      [styles.accessory]: showCounter,
       [styles.input]: showCounter,
       [styles.bound]: showCounter && bound,
     },
-    showCounter &&
-      props.className?.split(' ').map((className) => styles[className])
+    props.className?.split(' ').map((className) => styles[className])
   )
 
   const inputClasses = classNames(
@@ -43,7 +43,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
     !showCounter &&
       props.className?.split(' ').map((className) => styles[className])
   )
-  const { defaultValue, ...inputProps } = props
+  const { defaultValue, hide1Password, ...inputProps } = props
 
   // Hooks
   useEffect(() => {
@@ -67,7 +67,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
         type={props.type}
         name={props.name}
         placeholder={props.placeholder}
-        defaultValue={value || ''}
+        value={value || ''}
         onBlur={props.onBlur}
         onChange={handleChange}
         maxLength={props.maxLength}
