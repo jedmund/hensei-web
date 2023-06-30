@@ -14,10 +14,6 @@
     flex-direction: column;
   }
 
-  &:hover .Left .Info h3 {
-    color: var(--accent-blue);
-  }
-
   &.numeric .right > .input,
   &.numeric .right > .duration {
     text-align: right;

@@ -13,9 +13,11 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
   value?: boolean
   className?: string
   tabIndex?: number
-  imageAlt?: string
-  imageClass?: string
-  imageSrc?: string[]
+  image?: {
+    className?: String
+    alt?: string
+    src: string[]
+  }
   onValueChange: (value: boolean) => void
 }
 
@@ -36,8 +38,8 @@ const SwitchTableField = (props: Props) => {
 
   const classes = classNames(
     {
-      SwitchTableField: true,
-      Disabled: props.disabled,
+      switch: true,
+      disabled: props.disabled,
     },
     props.className
   )
@@ -47,9 +49,7 @@ const SwitchTableField = (props: Props) => {
       name={props.name}
       description={props.description}
       className={classes}
-      imageAlt={props.imageAlt}
-      imageClass={props.imageClass}
-      imageSrc={props.imageSrc}
+      image={props.image}
       label={props.label}
     >
       <Switch

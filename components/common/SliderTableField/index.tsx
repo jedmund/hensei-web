@@ -11,9 +11,11 @@ interface Props {
   description?: string
   value?: number
   className?: string
-  imageAlt?: string
-  imageClass?: string
-  imageSrc?: string[]
+  image?: {
+    className?: String
+    alt?: string
+    src: string[]
+  }
   min: number
   max: number
   step: number
@@ -47,10 +49,8 @@ const SliderTableField = (props: Props) => {
   return (
     <TableField
       name={props.name}
-      className="SliderField"
-      imageAlt={props.imageAlt}
-      imageClass={props.imageClass}
-      imageSrc={props.imageSrc}
+      className="slider"
+      image={props.image}
       label={props.label}
     >
       <Slider
@@ -63,13 +63,15 @@ const SliderTableField = (props: Props) => {
         onValueCommit={handleValueCommit}
       />
       <Input
-        className="Bound"
+        className="number"
+        bound={true}
         type="number"
         value={`${value}`}
         min={props.min}
         max={props.max}
         step={props.step}
         onChange={handleInputChange}
+        hide1Password={false}
       />
     </TableField>
   )
