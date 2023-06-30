@@ -58,6 +58,13 @@
     "remove": "編成から削除",
     "remove_job_skill": "ジョブスキルを削除"
   },
+  "dropdown": {
+    "party": {
+      "copy": "編成のリンクをコピー",
+      "delete": "編成を削除",
+      "remix": "編成をリミックス"
+    }
+  },
   "elements": {
     "null": "無",
     "wind": "風",

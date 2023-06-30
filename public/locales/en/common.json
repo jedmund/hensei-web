@@ -58,6 +58,13 @@
     "remove": "Remove from grid",
     "remove_job_skill": "Remove class skill"
   },
+  "dropdown": {
+    "party": {
+      "copy": "Copy link to team",
+      "delete": "Delete team",
+      "remix": "Remix team"
+    }
+  },
   "elements": {
     "null": "Null",
     "wind": "Wind",
