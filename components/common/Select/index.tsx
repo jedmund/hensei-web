@@ -48,10 +48,7 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function select(
       [styles.medium]: !props.trigger || props.trigger?.size === 'medium',
       [styles.large]: props.trigger?.size === 'large',
     },
-    props.trigger?.className?.split(' ').map((className) => {
-      console.log('className', className)
-      return styles[className]
-    })
+    props.trigger?.className?.split(' ').map((className) => styles[className])
   )
 
   const selectClasses = classNames(
@@ -122,6 +119,7 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function select(
           />
 
           <RadixSelect.Content
+            align="center"
             className={selectClasses}
             position="popper"
             sideOffset={6}
