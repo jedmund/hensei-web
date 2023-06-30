@@ -1,4 +1,4 @@
-.JobSkillResult {
+.result {
   border-radius: 6px;
   display: flex;
   gap: $unit;
@@ -9,12 +9,12 @@
     background: var(--button-contained-bg);
     cursor: pointer;
 
-    .Info h5 {
+    .info h5 {
       color: var(--text-primary);
     }
   }
 
-  .Info {
+  .info {
     display: flex;
     flex-direction: row;
     gap: $unit-half;

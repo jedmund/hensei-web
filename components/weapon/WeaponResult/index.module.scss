@@ -1,4 +1,4 @@
-.WeaponResult {
+.result {
   border-radius: 6px;
   display: flex;
   gap: $unit;
@@ -8,7 +8,7 @@
     background: var(--button-contained-bg);
     cursor: pointer;
 
-    .Info h5 {
+    .info h5 {
       color: var(--text-primary);
     }
   }
@@ -21,7 +21,7 @@
     width: 120px;
   }
 
-  .Info {
+  .info {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -32,6 +32,7 @@
       display: inline-block;
       font-size: $font-medium;
       font-weight: $medium;
+      opacity: 1;
     }
 
     .UncapIndicator {

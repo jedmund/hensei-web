@@ -21,12 +21,12 @@ const SummonResult = (props: Props) => {
   const summon = props.data
 
   return (
-    <li className="SummonResult" onClick={props.onClick}>
+    <li className={styles.result} onClick={props.onClick}>
       <img
         alt={summon.name[locale]}
         src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`}
       />
-      <div className="Info">
+      <div className={styles.info}>
         <h5>{summon.name[locale]}</h5>
         <UncapIndicator
           type="summon"
@@ -34,7 +34,7 @@ const SummonResult = (props: Props) => {
           ulb={summon.uncap.ulb}
           special={false}
         />
-        <div className="tags">
+        <div className={styles.tags}>
           <WeaponLabelIcon labelType={Element[summon.element]} />
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import classNames from 'classnames'
 import { SkillGroup, skillClassification } from '~data/skillGroups'
 
 import styles from './index.module.scss'
@@ -22,17 +23,21 @@ const JobSkillResult = (props: Props) => {
     setGroup(skillClassification.find((group) => group.id === skill.color))
   }, [skill, setGroup, skillClassification])
 
+  const classes = classNames({
+    [styles.skill]: true,
+    [styles.pill]: true,
+    [styles[`${group?.name['en'].toLowerCase()}`]]: true,
+  })
+
   const jobSkillUrl = () =>
     `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-skills/${skill.slug}.png`
 
   return (
-    <li className="JobSkillResult" onClick={props.onClick}>
+    <li className={styles.result} onClick={props.onClick}>
       <img alt={skill.name[locale]} src={jobSkillUrl()} />
-      <div className="Info">
+      <div className={styles.info}>
         <h5>{skill.name[locale]}</h5>
-        <div className={`skill pill ${group?.name['en'].toLowerCase()}`}>
-          {group?.name[locale]}
-        </div>
+        <div className={classes}>{group?.name[locale]}</div>
       </div>
     </li>
   )

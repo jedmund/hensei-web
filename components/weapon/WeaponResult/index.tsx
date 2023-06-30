@@ -33,12 +33,12 @@ const WeaponResult = (props: Props) => {
   const weapon = props.data
 
   return (
-    <li className="WeaponResult" onClick={props.onClick}>
+    <li className={styles.result} onClick={props.onClick}>
       <img
         alt={weapon.name[locale]}
         src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`}
       />
-      <div className="Info">
+      <div className={styles.info}>
         <h5>{weapon.name[locale]}</h5>
         <UncapIndicator
           type="weapon"
@@ -46,7 +46,7 @@ const WeaponResult = (props: Props) => {
           ulb={weapon.uncap.ulb}
           special={false}
         />
-        <div className="tags">
+        <div className={styles.tags}>
           <WeaponLabelIcon labelType={Element[weapon.element]} />
           <WeaponLabelIcon labelType={Proficiency[weapon.proficiency]} />
         </div>
