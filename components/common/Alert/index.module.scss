@@ -1,4 +1,4 @@
-.AlertWrapper {
+.wrapper {
   align-items: center;
   display: flex;
   justify-content: center;
@@ -10,7 +10,17 @@
   z-index: 31;
 }
 
-.Alert {
+.overlay {
+  isolation: isolate;
+  position: fixed;
+  z-index: 9;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.alert {
   animation: $duration-modal-open cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal none
     running openModalDesktop;
   background: var(--dialog-bg);
@@ -52,9 +62,21 @@
       align-self: center;
       width: 100%;
 
-      .Button {
+      & > * {
         width: 100%;
       }
+    }
+  }
+
+  @keyframes openModalDesktop {
+    0% {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    100% {
+      // opacity: 1;
+      transform: scale(1);
     }
   }
 }

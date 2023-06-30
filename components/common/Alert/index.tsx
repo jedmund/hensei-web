@@ -21,44 +21,43 @@ const Alert = (props: Props) => {
   return (
     <AlertDialog.Root open={props.open}>
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="Overlay" onClick={props.cancelAction} />
-        <div className="AlertWrapper">
+        <Overlay
+          open={props.open}
+          visible={true}
+          onClick={props.cancelAction}
+        />
+        <div className={styles.wrapper}>
           <AlertDialog.Content
-            className="Alert"
+            className={styles.alert}
             onEscapeKeyDown={props.cancelAction}
           >
-            {props.title ? (
+            {props.title && (
               <AlertDialog.Title>{props.title}</AlertDialog.Title>
-            ) : (
-              ''
             )}
-            <AlertDialog.Description className="description">
+            <AlertDialog.Description className={styles.description}>
               {props.message}
             </AlertDialog.Description>
-            <div className="buttons">
+            <div className={styles.buttons}>
               <AlertDialog.Cancel asChild>
                 <Button
-                  contained={true}
+                  bound={true}
                   onClick={props.cancelAction}
                   text={props.cancelActionText}
                 />
               </AlertDialog.Cancel>
-              {props.primaryAction ? (
+              {props.primaryAction && (
                 <AlertDialog.Action asChild>
                   <Button
                     className={props.primaryActionClassName}
-                    contained={true}
+                    bound={true}
                     onClick={props.primaryAction}
                     text={props.primaryActionText}
                   />
                 </AlertDialog.Action>
-              ) : (
-                ''
               )}
             </div>
           </AlertDialog.Content>
         </div>
-        <Overlay open={props.open} visible={true} />
       </AlertDialog.Portal>
     </AlertDialog.Root>
   )

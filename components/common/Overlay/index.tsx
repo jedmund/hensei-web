@@ -5,6 +5,7 @@ import styles from './index.module.scss'
 interface Props {
   visible: boolean
   open: boolean
+  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
 const defaultProps = {
@@ -12,13 +13,7 @@ const defaultProps = {
 }
 
 const Overlay = React.forwardRef<HTMLDivElement, Props>(function Overlay(
-  {
-    visible: displayed,
-    open,
-  }: {
-    visible: boolean
-    open: boolean
-  },
+  { visible: displayed, open, onClick }: Props,
   forwardedRef
 ) {
   const [visible, setVisible] = useState(open)
@@ -42,7 +37,9 @@ const Overlay = React.forwardRef<HTMLDivElement, Props>(function Overlay(
   }, [open])
 
   function handleClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    event.stopPropagation()
+    // event.stopPropagation()
+    console.log('Hey!')
+    if (onClick) onClick(event)
   }
 
   return visible ? (

@@ -1,4 +1,5 @@
 .overlay {
+  pointer-events: auto;
   isolation: isolate;
   position: fixed;
   z-index: 9;
