@@ -1,20 +1,5 @@
-.Character.HovercardContent {
-  .title .Image {
-    position: relative;
-
-    .Perpetuity {
-      position: absolute;
-      background-image: url('/icons/perpetuity/filled.svg');
-      background-size: $unit-3x $unit-3x;
-      z-index: 20;
-      top: $unit-half * -1;
-      right: $unit-3x;
-      width: $unit-3x;
-      height: $unit-3x;
-    }
-  }
-
-  .Mastery {
+.content {
+  .mastery {
     display: flex;
     flex-direction: column;
     gap: $unit;
@@ -24,7 +9,7 @@
       flex-direction: column;
       gap: $unit-half;
 
-      .ExtendedMastery {
+      .extendedMastery {
         align-items: center;
         display: flex;
         gap: $unit-half;
@@ -40,7 +25,7 @@
     }
   }
 
-  .Awakening {
+  .awakening {
     display: flex;
     flex-direction: column;
     gap: $unit;

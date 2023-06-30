@@ -8,8 +8,7 @@ import {
   HovercardTrigger,
 } from '~components/common/Hovercard'
 import Button from '~components/common/Button'
-import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
-import UncapIndicator from '~components/uncap/UncapIndicator'
+import HovercardHeader from '~components/HovercardHeader'
 
 import styles from './index.module.scss'
 
@@ -79,7 +78,7 @@ const SummonHovercard = (props: Props) => {
       className={tintElement}
       text={t('buttons.wiki')}
       onClick={goTo}
-      contained={true}
+      bound={true}
     />
   )
 
@@ -88,31 +87,12 @@ const SummonHovercard = (props: Props) => {
       <HovercardTrigger asChild onClick={props.onTriggerClick}>
         {props.children}
       </HovercardTrigger>
-      <HovercardContent className="Summon" side={props.side}>
-        <div className="top">
-          <div className="title">
-            <h4>{props.gridSummon.object.name[locale]}</h4>
-            <img
-              alt={props.gridSummon.object.name[locale]}
-              src={summonImage()}
-            />
-          </div>
-          <div className="subInfo">
-            <div className="icons">
-              <WeaponLabelIcon
-                labelType={Element[props.gridSummon.object.element]}
-              />
-            </div>
-            <UncapIndicator
-              type="summon"
-              ulb={props.gridSummon.object.uncap.ulb || false}
-              flb={props.gridSummon.object.uncap.flb || false}
-              xlb={props.gridSummon.object.uncap.xlb || false}
-              transcendenceStage={props.gridSummon.transcendence_step}
-              special={false}
-            />
-          </div>
-        </div>
+      <HovercardContent side={props.side}>
+        <HovercardHeader
+          gridObject={props.gridSummon}
+          object={props.gridSummon.object}
+          type="summon"
+        />
         {wikiButton}
       </HovercardContent>
     </Hovercard>

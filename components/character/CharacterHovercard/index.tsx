@@ -19,6 +19,7 @@ import {
 import { ExtendedMastery } from '~types'
 
 import styles from './index.module.scss'
+import HovercardHeader from '~components/HovercardHeader'
 
 interface Props {
   gridCharacter: GridCharacter
@@ -33,20 +34,6 @@ const CharacterHovercard = (props: Props) => {
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
   const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
-  const Proficiency = [
-    'none',
-    'sword',
-    'dagger',
-    'axe',
-    'spear',
-    'bow',
-    'staff',
-    'fist',
-    'harp',
-    'gun',
-    'katana',
-  ]
-
   const tintElement = Element[props.gridCharacter.object.element]
 
   function goTo() {
@@ -56,30 +43,6 @@ const CharacterHovercard = (props: Props) => {
     window.open(url, '_blank')
   }
 
-  const perpetuity = () => {
-    if (props.gridCharacter && props.gridCharacter.perpetuity) {
-      return <i className="Perpetuity" />
-    }
-  }
-
-  function characterImage() {
-    let imgSrc = ''
-
-    if (props.gridCharacter) {
-      const character = props.gridCharacter.object
-
-      // Change the image based on the uncap level
-      let suffix = '01'
-      if (props.gridCharacter.uncap_level == 6) suffix = '04'
-      else if (props.gridCharacter.uncap_level == 5) suffix = '03'
-      else if (props.gridCharacter.uncap_level > 2) suffix = '02'
-
-      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_${suffix}.jpg`
-    }
-
-    return imgSrc
-  }
-
   function masteryElement(dictionary: ItemSkill[], mastery: ExtendedMastery) {
     const canonicalMastery = dictionary.find(
       (item) => item.id === mastery.modifier
@@ -87,7 +50,7 @@ const CharacterHovercard = (props: Props) => {
 
     if (canonicalMastery) {
       return (
-        <li className="ExtendedMastery" key={canonicalMastery.id}>
+        <li className={styles.extendedMastery} key={canonicalMastery.id}>
           <img
             alt={canonicalMastery.name[locale]}
             src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/mastery/${canonicalMastery.slug}.png`}
@@ -104,7 +67,7 @@ const CharacterHovercard = (props: Props) => {
   const overMasterySection = () => {
     if (props.gridCharacter && props.gridCharacter.over_mastery) {
       return (
-        <section className="Mastery">
+        <section className={styles.mastery}>
           <h5 className={tintElement}>
             {t('modals.characters.subtitles.ring')}
           </h5>
@@ -136,7 +99,7 @@ const CharacterHovercard = (props: Props) => {
       props.gridCharacter.aetherial_mastery.modifier > 0
     ) {
       return (
-        <section className="Mastery">
+        <section className={styles.mastery}>
           <h5 className={tintElement}>
             {t('modals.characters.subtitles.earring')}
           </h5>
@@ -154,7 +117,7 @@ const CharacterHovercard = (props: Props) => {
   const permanentMasterySection = () => {
     if (props.gridCharacter && props.gridCharacter.perpetuity) {
       return (
-        <section className="Mastery">
+        <section className={styles.mastery}>
           <h5 className={tintElement}>
             {t('modals.characters.subtitles.permanent')}
           </h5>
@@ -176,7 +139,7 @@ const CharacterHovercard = (props: Props) => {
 
     if (gridAwakening) {
       return (
-        <section className="Awakening">
+        <section className={styles.awakening}>
           <h5 className={tintElement}>
             {t('modals.characters.subtitles.awakening')}
           </h5>
@@ -200,7 +163,7 @@ const CharacterHovercard = (props: Props) => {
       className={tintElement}
       text={t('buttons.wiki')}
       onClick={goTo}
-      contained={true}
+      bound={true}
     />
   )
 
@@ -209,51 +172,12 @@ const CharacterHovercard = (props: Props) => {
       <HovercardTrigger asChild onClick={props.onTriggerClick}>
         {props.children}
       </HovercardTrigger>
-      <HovercardContent className="Character" side="top">
-        <div className="top">
-          <div className="title">
-            <h4>{props.gridCharacter.object.name[locale]}</h4>
-            <div className="Image">
-              {perpetuity()}
-              <img
-                alt={props.gridCharacter.object.name[locale]}
-                src={characterImage()}
-              />
-            </div>
-          </div>
-          <div className="subInfo">
-            <div className="icons">
-              <WeaponLabelIcon
-                labelType={Element[props.gridCharacter.object.element]}
-              />
-              <WeaponLabelIcon
-                labelType={
-                  Proficiency[
-                    props.gridCharacter.object.proficiency.proficiency1
-                  ]
-                }
-              />
-              {props.gridCharacter.object.proficiency.proficiency2 ? (
-                <WeaponLabelIcon
-                  labelType={
-                    Proficiency[
-                      props.gridCharacter.object.proficiency.proficiency2
-                    ]
-                  }
-                />
-              ) : (
-                ''
-              )}
-            </div>
-            <UncapIndicator
-              type="character"
-              ulb={props.gridCharacter.object.uncap.ulb || false}
-              flb={props.gridCharacter.object.uncap.flb || false}
-              transcendenceStage={props.gridCharacter.transcendence_step}
-              special={props.gridCharacter.object.special}
-            />
-          </div>
-        </div>
+      <HovercardContent className={styles.content} side="top">
+        <HovercardHeader
+          gridObject={props.gridCharacter}
+          object={props.gridCharacter.object}
+          type="character"
+        />
         {wikiButton}
         {awakeningSection()}
         {overMasterySection()}

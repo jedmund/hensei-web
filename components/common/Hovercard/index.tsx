@@ -14,7 +14,7 @@ export const HovercardContent = ({
   ...props
 }: PropsWithChildren<Props>) => {
   const classes = classNames(props.className, {
-    HovercardContent: true,
+    [styles.hovercard]: true,
   })
   return (
     <HoverCardPrimitive.Portal>

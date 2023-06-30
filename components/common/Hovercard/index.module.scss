@@ -1,12 +1,9 @@
-div[data-radix-popper-content-wrapper] {
-  z-index: 10 !important;
-}
-
-.HovercardContent {
+.hovercard {
   animation: scaleIn $duration-zoom ease-out;
   transform-origin: var(--radix-hover-card-content-transform-origin);
   background: var(--dialog-bg);
   border-radius: $card-corner;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
@@ -16,77 +13,47 @@ div[data-radix-popper-content-wrapper] {
   padding: $unit-2x;
   width: 300px;
 
-  .top {
-    display: flex;
-    flex-direction: column;
-    gap: calc($unit / 2);
-
-    .title {
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-      gap: $unit * 2;
-
-      h4 {
-        flex-grow: 1;
-        font-size: $font-medium;
-        line-height: 1.2;
-        min-width: 140px;
-      }
-
-      img {
-        height: auto;
-        width: 100px;
-      }
-    }
-
-    .subInfo {
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-      gap: $unit * 2;
-
-      .icons {
-        display: flex;
-        flex-direction: row;
-        flex-grow: 1;
-        gap: $unit;
-      }
-
-      .UncapIndicator {
-        min-width: 100px;
-      }
-    }
-  }
-
   section {
-    h5 {
-      font-size: $font-small;
-      font-weight: $medium;
-      opacity: 0.7;
-
-      &.wind {
-        color: $wind-bg-20;
+    @keyframes scaleIn {
+      0% {
+        opacity: 0;
+        transform: scale(0);
       }
-
-      &.fire {
-        color: $fire-bg-20;
+      20% {
+        opacity: 0.2;
+        transform: scale(0.4);
       }
-
-      &.water {
-        color: $water-bg-20;
+      40% {
+        opacity: 0.4;
+        transform: scale(0.8);
       }
-
-      &.earth {
-        color: $earth-bg-20;
+      60% {
+        opacity: 0.6;
+        transform: scale(1);
       }
-
-      &.dark {
-        color: $dark-bg-10;
+      65% {
+        opacity: 0.65;
+        transform: scale(1.1);
       }
-
-      &.light {
-        color: $light-bg-20;
+      70% {
+        opacity: 0.7;
+        transform: scale(1);
+      }
+      75% {
+        opacity: 0.75;
+        transform: scale(0.98);
+      }
+      80% {
+        opacity: 0.8;
+        transform: scale(1.02);
+      }
+      90% {
+        opacity: 0.9;
+        transform: scale(0.96);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
       }
     }
   }
