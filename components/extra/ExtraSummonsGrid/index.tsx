@@ -17,15 +17,15 @@ interface Props {
   updateTranscendence: (id: string, position: number, stage: number) => void
 }
 
-const ExtraSummons = (props: Props) => {
+const ExtraSummonsGrid = (props: Props) => {
   const numSummons: number = 2
 
   const { t } = useTranslation('common')
 
   return (
-    <div className="ExtraGrid Summons">
-      <span>{t('summons.subaura')}</span>
-      <ul id="ExtraSummons">
+    <div className={styles.container}>
+      <h3>{t('summons.subaura')}</h3>
+      <ul className={styles.grid}>
         {Array.from(Array(numSummons)).map((x, i) => {
           return (
             <li key={`grid_unit_${i}`}>
@@ -47,4 +47,4 @@ const ExtraSummons = (props: Props) => {
   )
 }
 
-export default ExtraSummons
+export default ExtraSummonsGrid

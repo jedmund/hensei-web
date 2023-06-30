@@ -1,4 +1,4 @@
-.ExtraGrid.Summons {
+.container {
   background: var(--subaura-orange-bg);
   border-radius: $input-corner;
   box-sizing: border-box;
@@ -30,7 +30,7 @@
     }
   }
 
-  & > span {
+  h3 {
     color: var(--subaura-orange-text);
     display: flex;
     align-items: center;
@@ -40,7 +40,7 @@
     text-align: center;
   }
 
-  #ExtraSummons {
+  .grid {
     display: grid;
     gap: $unit-3x;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -61,14 +61,6 @@
         min-height: 0;
       }
     }
-  }
-
-  .SummonUnit .SummonImage {
-    background: var(--subaura-orange-card-bg);
-  }
-
-  .SummonUnit .SummonImage .icon svg {
-    fill: var(--subaura-orange-secondary);
   }
 
   .SummonUnit .QuickSummon {
