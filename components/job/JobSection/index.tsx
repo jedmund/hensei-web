@@ -136,6 +136,7 @@ const JobSection = (props: Props) => {
         skill={skills[index]}
         position={index}
         editable={canEditSkill(skills[index])}
+        small={props.editable}
         key={`skill-${index}`}
         hasJob={job != undefined && job.id != '-1'}
         removeJobSkill={props.removeSkill}

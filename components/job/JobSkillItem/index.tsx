@@ -21,8 +21,13 @@ interface Props extends React.ComponentPropsWithoutRef<'div'> {
   skill?: JobSkill
   position: number
   editable: boolean
+  small?: boolean
   hasJob: boolean
   removeJobSkill: (position: number) => void
+}
+
+const defaultProps = {
+  small: false,
 }
 
 const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
@@ -31,6 +36,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       skill,
       position,
       editable,
+      small,
       hasJob,
       removeJobSkill: sendJobSkillToRemove,
       ...props
@@ -53,11 +59,18 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
     const classes = classNames({
       [styles.skill]: true,
       [styles.editable]: editable,
+      [styles.small]: small,
     })
 
     const imageClasses = classNames({
       [styles.placeholder]: !skill,
+      [styles.image]: true,
       [styles.editable]: editable && hasJob,
+    })
+
+    const labelClasses = classNames({
+      [styles.placeholder]: !skill,
+      [styles.text]: true,
     })
 
     const buttonClasses = classNames({
@@ -79,6 +92,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       if (!open) setContextMenuOpen(false)
     }
 
+    // Methods: Rendering
     const skillImage = () => {
       let jsx: React.ReactNode
 
@@ -107,11 +121,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       if (skill) {
         jsx = <p>{skill.name[locale]}</p>
       } else if (editable && hasJob) {
-        jsx = (
-          <p className={styles.placeholder}>
-            {t('job_skills.state.selectable')}
-          </p>
-        )
+        jsx = <p className={labelClasses}>{t('job_skills.state.selectable')}</p>
       } else {
         jsx = (
           <p className={styles.placeholder}>{t('job_skills.state.no_skill')}</p>
@@ -174,5 +184,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
     )
   }
 )
+
+JobSkillItem.defaultProps = defaultProps
 
 export default JobSkillItem

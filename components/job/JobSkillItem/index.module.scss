@@ -17,28 +17,42 @@
   align-items: stretch;
   justify-content: space-between;
 
-  &.editable .info:hover {
-    background-color: var(--button-bg-hover);
+  &.editable {
+    &:hover {
+      cursor: pointer;
+
+      .info {
+        &:hover {
+          background-color: var(--button-bg-hover);
+        }
+
+        & > img.editable,
+        & > div.placeholder.editable {
+          border: $hover-stroke;
+          box-shadow: $hover-shadow;
+          cursor: pointer;
+          transform: $scale-tall;
+        }
+
+        & p.placeholder {
+          color: var(--text-tertiary-hover);
+        }
+
+        & svg {
+          fill: var(--icon-secondary-hover);
+        }
+      }
+    }
   }
 
-  &.editable:hover {
-    cursor: pointer;
-
+  &.small {
     .info {
-      & > img.editable,
-      & > div.placeholder.editable {
-        border: $hover-stroke;
-        box-shadow: $hover-shadow;
-        cursor: pointer;
-        transform: $scale-tall;
-      }
+      padding: $unit-half * 1.5;
 
-      & p.placeholder {
-        color: var(--text-tertiary-hover);
-      }
-
-      & svg {
-        fill: var(--icon-secondary-hover);
+      .placeholder.image,
+      img {
+        width: $unit-4x;
+        height: $unit-4x;
       }
     }
   }

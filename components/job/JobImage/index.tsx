@@ -54,8 +54,8 @@ const JobImage = ({
   const image = <img alt={job?.name[locale]} src={imageUrl()} />
 
   const classes = classNames({
-    JobAccessory: true,
-    Selected: open,
+    jobAccessory: true,
+    selected: open,
   })
 
   function handleAccessoryButtonClicked() {
@@ -78,6 +78,7 @@ const JobImage = ({
         leftAccessoryIcon={icon}
         className={classes}
         onClick={handleAccessoryButtonClicked}
+        size="icon"
         ref={buttonRef}
       />
     )

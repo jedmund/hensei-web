@@ -25,6 +25,7 @@
   .details {
     box-sizing: border-box;
     display: flex;
+    gap: $unit;
     flex-direction: column;
     width: 100%;
 

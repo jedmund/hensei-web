@@ -49,29 +49,6 @@
     z-index: 2;
   }
 
-  .JobAccessory.Button {
-    align-items: center;
-    border-radius: 99px;
-    justify-content: center;
-    position: relative;
-    padding: $unit * 1.5;
-    top: $unit;
-    left: $unit;
-    height: auto;
-    z-index: 10;
-
-    &:hover .Accessory svg,
-    &.Selected .Accessory svg {
-      fill: var(--button-text-hover);
-    }
-
-    .Accessory svg {
-      fill: var(--button-text);
-      width: $unit-3x;
-      height: auto;
-    }
-  }
-
   .overlay {
     backdrop-filter: blur(5px) saturate(100%) brightness(80%) opacity(1);
     background: none;
