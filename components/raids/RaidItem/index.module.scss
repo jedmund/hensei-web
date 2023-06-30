@@ -1,33 +1,64 @@
-.SelectItem.Raid {
-  padding-top: $unit;
-  padding-bottom: $unit;
-  padding-left: $unit;
+.item {
+  align-items: center;
+  border-radius: $item-corner;
+  border: 2px solid transparent;
+  color: var(--text-tertiary);
+  display: flex;
+  gap: $unit;
+  font-size: $font-regular;
+  padding: $unit $unit-2x $unit $unit;
+
+  &:hover,
+  &:focus {
+    background-color: var(--option-bg-hover);
+    color: var(--text-primary);
+    cursor: pointer;
+    outline: none;
+  }
+
+  &:focus {
+    border: 2px solid $blue;
+    outline: none;
+  }
+
+  &:first-child {
+    margin-top: $unit;
+  }
+
+  &:last-child {
+    margin-bottom: $unit;
+  }
+
+  img {
+    width: $unit-4x;
+    height: auto;
+  }
 
   &:hover {
-    .ExtraIndicator {
+    .extraIndicator {
       background: var(--extra-purple-secondary);
       color: white;
     }
 
-    .Selected {
+    .selected {
       background-color: var(--pill-bg-hover);
       color: var(--pill-text-hover);
     }
   }
 
-  &.Selected .ExtraIndicator {
+  &.selected .extraIndicator {
     background: var(--extra-purple-secondary);
     color: white;
   }
 
-  .Text {
+  .text {
     flex-grow: 1;
   }
 
-  .ExtraIndicator {
+  .extraIndicator {
     background: var(--extra-purple-bg);
     border-radius: $full-corner;
-    color: var(--extra-purple-text);
+    color: var(--extra-purple-dark-text);
     display: flex;
     font-weight: $bold;
     font-size: $font-tiny;
@@ -37,7 +68,7 @@
     align-items: center;
   }
 
-  .Selected {
+  .selected {
     background-color: var(--pill-bg);
     color: var(--pill-text);
     border-radius: $full-corner;

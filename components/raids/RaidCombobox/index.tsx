@@ -95,6 +95,17 @@ const RaidCombobox = (props: Props) => {
   const inputRef = createRef<HTMLInputElement>()
   const sortButtonRef = createRef<HTMLButtonElement>()
 
+  // Classes
+  const comboboxClasses = classNames({
+    [styles.combobox]: true,
+    [styles.raid]: true,
+  })
+
+  const raidsClasses = classNames({
+    [styles.raids]: true,
+    [styles.searching]: query !== '',
+  })
+
   // ----------------------------------------------
   // Methods: Lifecycle Hooks
   // ----------------------------------------------
@@ -313,14 +324,14 @@ const RaidCombobox = (props: Props) => {
     const options = generateRaidItems(group.raids)
 
     const groupClassName = classNames({
-      CommandGroup: true,
-      Hidden: group.section !== currentSection,
+      [styles.group]: true,
+      [styles.hidden]: group.section !== currentSection,
     })
 
     const heading = (
-      <div className="Label">
+      <div className={styles.label}>
         {group.name[locale]}
-        <div className="Separator" />
+        <div className={styles.separator} />
       </div>
     )
 
@@ -350,7 +361,7 @@ const RaidCombobox = (props: Props) => {
       <CommandGroup
         data-section={untitledGroup.section}
         className={classNames({
-          CommandGroup: true,
+          [styles.group]: true,
         })}
         key="ungrouped-raids"
       >
@@ -379,7 +390,7 @@ const RaidCombobox = (props: Props) => {
 
     return (
       <RaidItem
-        className={isSelected ? 'Selected' : ''}
+        className={classNames({ [styles.selected]: isSelected })}
         icon={{ alt: raid.name[locale], src: imageUrl }}
         extra={raid.group.extra}
         key={key}
@@ -400,7 +411,7 @@ const RaidCombobox = (props: Props) => {
   // Renders a SegmentedControl component for selecting raid sections.
   function renderSegmentedControl() {
     return (
-      <SegmentedControl blended={true}>
+      <SegmentedControl blended={true} className="raid" wrapperClassName="raid">
         <Segment
           groupName="raid_section"
           name="events"
@@ -444,9 +455,10 @@ const RaidCombobox = (props: Props) => {
       >
         <Button
           blended={true}
-          buttonSize="small"
+          bound={true}
+          size="small"
           leftAccessoryIcon={<ArrowIcon />}
-          leftAccessoryClassName={sort === Sort.DESCENDING ? 'Flipped' : ''}
+          leftAccessoryClassName={sort === Sort.DESCENDING ? 'flipped' : ''}
           onClick={reverseSort}
           onKeyDown={handleSortButtonKeyDown}
           ref={sortButtonRef}
@@ -462,10 +474,19 @@ const RaidCombobox = (props: Props) => {
       const element = (
         <>
           {!props.minimal ? (
-            <div className="Info">
-              <span className="Group">{currentRaid.group.name[locale]}</span>
-              <span className="Separator">/</span>
-              <span className={classNames({ Raid: true }, linkClass)}>
+            <div className={styles.info}>
+              <span className={styles.group}>
+                {currentRaid.group.name[locale]}
+              </span>
+              <span className={styles.separator}>/</span>
+              <span
+                className={classNames(
+                  {
+                    [styles.raid]: true,
+                  },
+                  linkClass?.split(' ').map((className) => styles[className])
+                )}
+              >
                 {currentRaid.name[locale]}
               </span>
             </div>
@@ -476,7 +497,7 @@ const RaidCombobox = (props: Props) => {
           )}
 
           {currentRaid.group.extra && !props.minimal && (
-            <i className="ExtraIndicator">EX</i>
+            <i className={styles.extraIndicator}>EX</i>
           )}
         </>
       )
@@ -493,9 +514,9 @@ const RaidCombobox = (props: Props) => {
   // Renders the search input for the raid combobox
   function renderSearchInput() {
     return (
-      <div className="Bound Joined">
+      <div className={styles.wrapper}>
         <CommandInput
-          className="Input"
+          className={styles.input}
           placeholder={t('search.placeholders.raid')}
           tabIndex={1}
           ref={inputRef}
@@ -504,9 +525,9 @@ const RaidCombobox = (props: Props) => {
         />
         <div
           className={classNames({
-            Button: true,
-            Clear: true,
-            Visible: query.length > 0,
+            [styles.button]: true,
+            [styles.clear]: true,
+            [styles.visible]: query.length > 0,
           })}
           onClick={clearSearch}
         >
@@ -540,7 +561,7 @@ const RaidCombobox = (props: Props) => {
   // ----------------------------------------------
   return (
     <Popover
-      className="Flush"
+      className="raid flush"
       open={open}
       onOpenChange={toggleOpen}
       placeholder={
@@ -549,26 +570,26 @@ const RaidCombobox = (props: Props) => {
       trigger={{
         bound: true,
         className: classNames({
-          Raid: true,
-          Highlighted: props.showAllRaidsOption,
+          raid: true,
+          highlighted: props.showAllRaidsOption,
         }),
         size: props.size,
       }}
       triggerTabIndex={props.tabIndex}
       value={renderTriggerContent()}
     >
-      <Command className="Raid Combobox">
-        <div className="Header">
+      <Command className={comboboxClasses}>
+        <div className={styles.header}>
           {renderSearchInput()}
           {!query && (
-            <div className="Controls">
+            <div className={styles.controls}>
               {renderSegmentedControl()}
               {renderSortButton()}
             </div>
           )}
         </div>
         <div
-          className={classNames({ Raids: true, Searching: query !== '' })}
+          className={raidsClasses}
           ref={listRef}
           role="listbox"
           tabIndex={6}
