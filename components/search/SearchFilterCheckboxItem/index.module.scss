@@ -1,7 +1,7 @@
-.Item {
+.item {
   align-items: center;
   border-radius: calc($unit / 2);
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   font-size: $font-regular;
   line-height: 1.2;
   min-width: 100px;
@@ -23,7 +23,7 @@
     }
   }
 
-  .Indicator {
+  .indicator {
     $diameter: 20px;
 
     display: flex;

@@ -40,6 +40,10 @@ const WeaponSearchFilterBar = (props: Props) => {
     emptyWeaponSeriesState
   )
 
+  useEffect(() => {
+    sendFilters()
+  }, [rarityState, elementState, proficiencyState, seriesState])
+
   function rarityMenuOpened(open: boolean) {
     if (open) {
       setRarityMenu(true)
@@ -124,178 +128,141 @@ const WeaponSearchFilterBar = (props: Props) => {
     props.sendFilters(filters)
   }
 
-  const renderWeaponSeries = () => {
-    const numColumns = 3
+  const renderProficiencies = () => {
     return (
-      <React.Fragment>
-        {Array.from({ length: numColumns }, () => 0).map((x, i) => {
-          return renderWeaponSeriesGroup(i)
-        })}
-      </React.Fragment>
-    )
-  }
-
-  const renderWeaponSeriesGroup = (index: number) => {
-    return (
-      <DropdownMenu.Group className="Group" key={`Group-${index}`}>
-        {weaponSeries
-          .slice(
-            index * Math.ceil(weaponSeries.length / 3),
-            (index + 1) * Math.ceil(weaponSeries.length / 3)
+      <>
+        {proficiencies.map((x, i) => {
+          return (
+            <SearchFilterCheckboxItem
+              key={x}
+              onCheckedChange={handleProficiencyChange}
+              checked={proficiencyState[x].checked}
+              valueKey={x}
+            >
+              {t(`proficiencies.${x}`)}
+            </SearchFilterCheckboxItem>
           )
-          .map((x, i) => {
-            return renderSingleWeaponSeries(x.id, x.slug)
-          })}
-      </DropdownMenu.Group>
+        })}
+      </>
     )
   }
 
-  const renderSingleWeaponSeries = (id: number, slug: string) => {
+  const renderWeaponSeries = () => {
     return (
-      <SearchFilterCheckboxItem
-        key={slug}
-        onCheckedChange={handleSeriesChange}
-        checked={seriesState[slug].checked}
-        valueKey={slug}
-      >
-        {t(`series.${slug}`)}
-      </SearchFilterCheckboxItem>
+      <>
+        {weaponSeries.map((x, i) => {
+          return (
+            <SearchFilterCheckboxItem
+              key={x.slug}
+              onCheckedChange={handleSeriesChange}
+              checked={seriesState[x.slug].checked}
+              valueKey={x.slug}
+            >
+              {t(`series.${x.slug}`)}
+            </SearchFilterCheckboxItem>
+          )
+        })}
+      </>
     )
   }
 
-  useEffect(() => {
-    sendFilters()
-  }, [rarityState, elementState, proficiencyState, seriesState])
+  const rarityFilter = (
+    <SearchFilter
+      label={t('filters.labels.rarity')}
+      key="rarity"
+      display="list"
+      numSelected={
+        Object.values(rarityState)
+          .map((x) => x.checked)
+          .filter(Boolean).length
+      }
+      open={rarityMenu}
+      onOpenChange={rarityMenuOpened}
+    >
+      {Array.from(Array(rarities.length)).map((x, i) => {
+        return (
+          <SearchFilterCheckboxItem
+            key={rarities[i]}
+            onCheckedChange={handleRarityChange}
+            checked={rarityState[rarities[i]].checked}
+            valueKey={rarities[i]}
+          >
+            {t(`rarities.${rarities[i]}`)}
+          </SearchFilterCheckboxItem>
+        )
+      })}
+    </SearchFilter>
+  )
+
+  const elementFilter = (
+    <SearchFilter
+      label={t('filters.labels.element')}
+      key="element"
+      display="list"
+      numSelected={
+        Object.values(elementState)
+          .map((x) => x.checked)
+          .filter(Boolean).length
+      }
+      open={elementMenu}
+      onOpenChange={elementMenuOpened}
+    >
+      {Array.from(Array(elements.length)).map((x, i) => {
+        return (
+          <SearchFilterCheckboxItem
+            key={elements[i]}
+            onCheckedChange={handleElementChange}
+            checked={elementState[elements[i]].checked}
+            valueKey={elements[i]}
+          >
+            {t(`elements.${elements[i]}`)}
+          </SearchFilterCheckboxItem>
+        )
+      })}
+    </SearchFilter>
+  )
+
+  const proficiencyFilter = (
+    <SearchFilter
+      label={t('filters.labels.proficiency')}
+      key="proficiency"
+      display="grid"
+      numSelected={
+        Object.values(proficiencyState)
+          .map((x) => x.checked)
+          .filter(Boolean).length
+      }
+      open={proficiencyMenu}
+      onOpenChange={proficiencyMenuOpened}
+    >
+      {renderProficiencies()}
+    </SearchFilter>
+  )
+
+  const seriesFilter = (
+    <SearchFilter
+      label={t('filters.labels.series')}
+      key="series"
+      display="grid"
+      numSelected={
+        Object.values(seriesState)
+          .map((x) => x.checked)
+          .filter(Boolean).length
+      }
+      open={seriesMenu}
+      onOpenChange={seriesMenuOpened}
+    >
+      {renderWeaponSeries()}
+    </SearchFilter>
+  )
 
   return (
-    <div className="SearchFilterBar">
-      <SearchFilter
-        label={t('filters.labels.rarity')}
-        key="rarity"
-        numSelected={
-          Object.values(rarityState)
-            .map((x) => x.checked)
-            .filter(Boolean).length
-        }
-        open={rarityMenu}
-        onOpenChange={rarityMenuOpened}
-      >
-        <DropdownMenu.Label className="Label">
-          {t('filters.labels.rarity')}
-        </DropdownMenu.Label>
-        {Array.from(Array(rarities.length)).map((x, i) => {
-          return (
-            <SearchFilterCheckboxItem
-              key={rarities[i]}
-              onCheckedChange={handleRarityChange}
-              checked={rarityState[rarities[i]].checked}
-              valueKey={rarities[i]}
-            >
-              {t(`rarities.${rarities[i]}`)}
-            </SearchFilterCheckboxItem>
-          )
-        })}
-      </SearchFilter>
-
-      <SearchFilter
-        label={t('filters.labels.element')}
-        key="element"
-        numSelected={
-          Object.values(elementState)
-            .map((x) => x.checked)
-            .filter(Boolean).length
-        }
-        open={elementMenu}
-        onOpenChange={elementMenuOpened}
-      >
-        <DropdownMenu.Label className="Label">
-          {t('filters.labels.element')}
-        </DropdownMenu.Label>
-        {Array.from(Array(elements.length)).map((x, i) => {
-          return (
-            <SearchFilterCheckboxItem
-              key={elements[i]}
-              onCheckedChange={handleElementChange}
-              checked={elementState[elements[i]].checked}
-              valueKey={elements[i]}
-            >
-              {t(`elements.${elements[i]}`)}
-            </SearchFilterCheckboxItem>
-          )
-        })}
-      </SearchFilter>
-
-      <SearchFilter
-        label={t('filters.labels.proficiency')}
-        key="proficiency"
-        numSelected={
-          Object.values(proficiencyState)
-            .map((x) => x.checked)
-            .filter(Boolean).length
-        }
-        open={proficiencyMenu}
-        onOpenChange={proficiencyMenuOpened}
-      >
-        <DropdownMenu.Label className="Label">
-          {t('filters.labels.proficiency')}
-        </DropdownMenu.Label>
-        <section>
-          <DropdownMenu.Group className="Group">
-            {Array.from(Array(proficiencies.length / 2)).map((x, i) => {
-              return (
-                <SearchFilterCheckboxItem
-                  key={proficiencies[i]}
-                  onCheckedChange={handleProficiencyChange}
-                  checked={proficiencyState[proficiencies[i]].checked}
-                  valueKey={proficiencies[i]}
-                >
-                  {t(`proficiencies.${proficiencies[i]}`)}
-                </SearchFilterCheckboxItem>
-              )
-            })}
-          </DropdownMenu.Group>
-          <DropdownMenu.Group className="Group">
-            {Array.from(Array(proficiencies.length / 2)).map((x, i) => {
-              return (
-                <SearchFilterCheckboxItem
-                  key={proficiencies[i + proficiencies.length / 2]}
-                  onCheckedChange={handleProficiencyChange}
-                  checked={
-                    proficiencyState[
-                      proficiencies[i + proficiencies.length / 2]
-                    ].checked
-                  }
-                  valueKey={proficiencies[i + proficiencies.length / 2]}
-                >
-                  {t(
-                    `proficiencies.${
-                      proficiencies[i + proficiencies.length / 2]
-                    }`
-                  )}
-                </SearchFilterCheckboxItem>
-              )
-            })}
-          </DropdownMenu.Group>
-        </section>
-      </SearchFilter>
-
-      <SearchFilter
-        label={t('filters.labels.series')}
-        key="series"
-        numSelected={
-          Object.values(seriesState)
-            .map((x) => x.checked)
-            .filter(Boolean).length
-        }
-        open={seriesMenu}
-        onOpenChange={seriesMenuOpened}
-      >
-        <DropdownMenu.Label className="Label">
-          {t('filters.labels.series')}
-        </DropdownMenu.Label>
-        <section>{renderWeaponSeries()}</section>
-      </SearchFilter>
-    </div>
+    <section className={styles.filterBar}>
+      {rarityFilter}
+      {elementFilter}
+      {proficiencyFilter}
+      {seriesFilter}
+    </section>
   )
 }
 

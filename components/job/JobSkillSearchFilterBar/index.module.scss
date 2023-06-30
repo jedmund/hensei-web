@@ -1,3 +1,9 @@
 .SearchFilterBar .SelectTrigger {
   width: 100%;
 }
+
+.filterBar {
+  display: flex;
+  gap: $unit;
+  padding: $unit-half $unit-3x;
+}

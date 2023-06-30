@@ -39,10 +39,13 @@ const JobSkillSearchFilterBar = (props: Props) => {
   }, [currentGroup])
 
   return (
-    <div className="SearchFilterBar">
+    <div className={styles.filterBar}>
       <Select
         value={-1}
-        triggerClass="Bound"
+        trigger={{
+          bound: true,
+          className: 'full',
+        }}
         open={open}
         overlayVisible={false}
         onValueChange={onChange}

@@ -23,12 +23,12 @@ const SearchFilterCheckboxItem = (props: Props) => {
 
   return (
     <DropdownMenu.CheckboxItem
-      className="Item"
+      className={styles.item}
       checked={props.checked || false}
       onCheckedChange={handleCheckedChange}
       onSelect={(event) => event.preventDefault()}
     >
-      <DropdownMenu.ItemIndicator className="Indicator">
+      <DropdownMenu.ItemIndicator className={styles.indicator}>
         <CheckIcon />
       </DropdownMenu.ItemIndicator>
       {props.children}

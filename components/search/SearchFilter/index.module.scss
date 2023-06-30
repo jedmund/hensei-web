@@ -1,35 +1,54 @@
-button.DropdownLabel {
+.pill {
   align-items: center;
   background: var(--button-contained-bg);
   border: none;
   border-radius: $unit-2x;
-  color: var(--text-secondary);
+  border: 2px solid transparent;
   display: flex;
   font-size: $font-small;
   gap: $unit-half;
   flex-direction: row;
   justify-content: space-between;
-  padding: $unit ($unit * 1.5) $unit $unit-2x;
-
-  div {
-    align-items: center;
-    display: flex;
-    gap: $unit-half;
-  }
+  padding: $unit ($unit * 1.5);
 
   &:hover {
     background: var(--button-contained-bg-hover);
-    color: var(--text-primary);
     cursor: pointer;
+
+    .text {
+      color: var(--text-primary);
+    }
   }
 
-  .count {
-    color: var(--text-tertiary);
-    font-weight: $medium;
+  @include breakpoint(phone) {
+    justify-content: center;
   }
 
-  & > .icon {
-    $diameter: 16px;
+  .label {
+    justify-content: center;
+    flex: 1;
+
+    @include breakpoint(phone) {
+      &::before {
+        content: '';
+        display: block;
+        width: calc($unit-2x - 1px);
+      }
+    }
+
+    .text {
+      color: var(--text-tertiary);
+      font-weight: $bold;
+    }
+
+    .count {
+      color: var(--text-secondary);
+      font-weight: $medium;
+    }
+  }
+
+  .icon {
+    $diameter: $unit-2x;
     height: $diameter;
     width: $diameter;
 
@@ -39,16 +58,39 @@ button.DropdownLabel {
       }
     }
   }
+
+  div {
+    align-items: center;
+    display: flex;
+    gap: $unit-half;
+  }
 }
 
-.Dropdown {
+.dropdown {
   background: var(--button-contained-bg);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: $unit;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.18);
   display: flex;
   flex-direction: column;
+  gap: $unit;
   padding: $unit;
-  min-width: 120px;
+  overflow-y: scroll;
+  max-height: 60vh;
+
+  @include breakpoint(phone) {
+    width: calc(100vw - $unit-6x);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+  }
 
   & > span {
     overflow: hidden;
@@ -63,17 +105,5 @@ button.DropdownLabel {
     display: flex;
     flex-direction: row;
     gap: $unit;
-  }
-
-  .Group {
-    flex: 1 1 0px;
-    flex-direction: column;
-  }
-
-  .Label {
-    color: var(--text-tertiary);
-    font-size: $font-small;
-    margin-bottom: $unit-half;
-    padding: $unit-half 0 $unit $unit-half;
   }
 }
