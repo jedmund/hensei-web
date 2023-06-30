@@ -50,7 +50,14 @@ const Popover = React.forwardRef<HTMLDivElement, Props>(function Popover(
       [styles.medium]: !props.trigger || props.trigger?.size === 'medium',
       [styles.large]: props.trigger?.size === 'large',
     },
-    props.trigger?.className
+    props.trigger?.className?.split(' ').map((className) => styles[className])
+  )
+
+  const popoverClasses = classNames(
+    {
+      [styles.popover]: true,
+    },
+    props.className?.split(' ').map((className) => styles[className])
   )
 
   // Hooks
@@ -104,7 +111,7 @@ const Popover = React.forwardRef<HTMLDivElement, Props>(function Popover(
         {arrow}
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Content
-        className={classNames({ Popover: true }, props.className)}
+        className={popoverClasses}
         sideOffset={6}
         ref={forwardedRef}
       >
