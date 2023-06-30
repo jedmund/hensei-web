@@ -11,4 +11,47 @@
   padding: $unit * 1.5;
   z-index: 35;
   max-width: 200px;
+
+  @keyframes scaleIn {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    20% {
+      opacity: 0.2;
+      transform: scale(0.4);
+    }
+    40% {
+      opacity: 0.4;
+      transform: scale(0.8);
+    }
+    60% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    65% {
+      opacity: 0.65;
+      transform: scale(1.1);
+    }
+    70% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    75% {
+      opacity: 0.75;
+      transform: scale(0.98);
+    }
+    80% {
+      opacity: 0.8;
+      transform: scale(1.02);
+    }
+    90% {
+      opacity: 0.9;
+      transform: scale(0.96);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 }
