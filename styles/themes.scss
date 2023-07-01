@@ -58,11 +58,9 @@
   --input-bound-bg-hover: #{$input--bound--bg--light--hover};
 
   // Light - Selects
-  --select-bg: #{$select--bg--light};
-  --select-contained-bg: #{$select--contained--bg--light};
-  --select-contained-bg-hover: #{$select--contained--bg--light--hover};
-  --select-modal-bg: #{$select--modal--bg--light};
-  --select-modal-bg-hover: #{$select--modal--bg--light--hover};
+  --select-bg: #{$select--trigger--bg--light};
+  --select-contained-bg: #{$select--trigger--contained--bg--light};
+  --select-contained-bg-hover: #{$select--trigger--contained--bg--light--hover};
   --select-separator: #{$select--separator--light};
   --select-content-contained-bg: #{$select--content--contained--bg--light};
   --option-bg-hover: #{$option--bg--light--hover};
@@ -98,7 +96,9 @@
   --extra-purple-card-bg: #{$extra--purple--card--bg--light};
   --extra-purple-primary: #{$extra--purple--primary--light};
   --extra-purple-secondary: #{$extra--purple--secondary--light};
+  --extra-purple-light-text: #{$extra--purple--light--text--light};
   --extra-purple-text: #{$extra--purple--text--light};
+  --extra-purple-dark-text: #{$extra--purple--dark--text--dark};
 
   --switch-nub: #{$switch--nub--bg--light};
 
@@ -163,7 +163,7 @@
   --grid-rep-hover: #{$grid--rep--hover--dark};
 
   --card-bg: #{$page--element--bg--dark};
-  --bar-bg: #{$grey-10};
+  --bar-bg: #{$grey-20};
 
   --link-text-hover: #{$text--link--hover--dark};
 
@@ -216,11 +216,9 @@
   --input-bound-bg-hover: #{$input--bound--bg--dark--hover};
 
   // Dark - Selects
-  --select-bg: #{$select--bg--dark};
-  --select-contained-bg: #{$select--contained--bg--dark};
-  --select-contained-bg-hover: #{$select--contained--bg--dark--hover};
-  --select-modal-bg: #{$select--modal--bg--dark};
-  --select-modal-bg-hover: #{$select--modal--bg--dark--hover};
+  --select-bg: #{$select--trigger--bg--dark};
+  --select-contained-bg: #{$select--trigger--contained--bg--dark};
+  --select-contained-bg-hover: #{$select--trigger--contained--bg--dark--hover};
   --select-separator: #{$select--separator--dark};
   --select-content-contained-bg: #{$select--content--contained--bg--dark};
   --option-bg-hover: #{$option--bg--dark--hover};
@@ -256,7 +254,9 @@
   --extra-purple-card-bg: #{$extra--purple--card--bg--dark};
   --extra-purple-primary: #{$extra--purple--primary--dark};
   --extra-purple-secondary: #{$extra--purple--secondary--dark};
+  --extra-purple-text-light: #{$extra--purple--light--text--dark};
   --extra-purple-text: #{$extra--purple--text--dark};
+  --extra-purple-text-dark: #{$extra--purple--dark--text--dark};
 
   --switch-nub: #{$switch--nub--bg--dark};
 

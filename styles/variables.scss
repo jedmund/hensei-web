@@ -41,6 +41,7 @@ $grey-00: #000;
 $grey-05: #0a0a0a;
 $grey-10: #111;
 $grey-15: #191919;
+$grey-20: #212121;
 $grey-25: #232323;
 $grey-30: #2f2f2f;
 $grey-40: #444;
@@ -208,18 +209,16 @@ $input--bound--bg--dark: $grey-15;
 $input--bound--bg--dark--hover: $grey-10;
 
 // Color Definitions: Select
-$select--bg--light: $grey-100;
-$select--bg--dark: $grey-10;
+$select--trigger--bg--light: $grey-100;
+$select--trigger--bg--dark: $grey-10;
 
-$select--contained--bg--light: $grey-85;
-$select--contained--bg--light--hover: $grey-80;
-$select--contained--bg--dark: $grey-15;
-$select--contained--bg--dark--hover: $grey-10;
+$select--trigger--contained--bg--light: $grey-85;
+$select--trigger--contained--bg--light--hover: $grey-80;
+$select--trigger--contained--bg--dark: $grey-15;
+$select--trigger--contained--bg--dark--hover: $grey-10;
 
-$select--modal--bg--light: $grey-85;
-$select--modal--bg--light--hover: $grey-80;
-$select--modal--bg--dark: $grey-40;
-$select--modal--bg--dark--hover: $grey-30;
+$select--content--contained--bg--light: $grey-100;
+$select--content--contained--bg--dark: $grey-15;
 
 $select--separator--light: $grey-90;
 $select--separator--dark: $grey-05;
@@ -232,9 +231,6 @@ $grid--rep--hover--dark: $grey-10;
 
 $grid--border--color--light: $grey-85;
 $grid--border--color--dark: $grey-40;
-
-$select--content--contained--bg--light: $grey-85;
-$select--content--contained--bg--dark: $grey-15;
 
 // Color Definitions: Slider
 $slider--thumb--bg--light: $grey-100;
@@ -263,13 +259,17 @@ $extra--purple--bg--light: $purple-90;
 $extra--purple--card--bg--light: $purple-80;
 $extra--purple--primary--light: $purple-30;
 $extra--purple--secondary--light: $purple-40;
-$extra--purple--text--light: $purple-10;
+$extra--purple--light--text--light: $purple-40;
+$extra--purple--text--light: $purple-20;
+$extra--purple--dark--text--light: $purple-10;
 
 $extra--purple--bg--dark: $purple-20;
 $extra--purple--card--bg--dark: $purple-40;
 $extra--purple--primary--dark: $purple-05;
 $extra--purple--secondary--dark: $purple-10;
-$extra--purple--text--dark: $purple-00;
+$extra--purple--light--text--dark: $purple-30;
+$extra--purple--text--dark: $purple-20;
+$extra--purple--dark--text--dark: $purple-00;
 
 // Color Definitions: Subaura
 $subaura--orange--bg--light: $orange-90;
@@ -366,6 +366,7 @@ $full-corner: 500px;
 $card-corner: $unit * 1.5;
 $input-corner: $unit;
 $item-corner: $unit;
+$item-corner-small: $unit-half;
 
 // Shadows
 $hover-stroke: 1px solid rgba(0, 0, 0, 0.1);
