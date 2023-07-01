@@ -1,5 +1,5 @@
-.SelectGroup {
-  .Label {
+.group {
+  .label {
     align-items: center;
     color: var(--text-tertiary);
     display: flex;
@@ -14,7 +14,7 @@
       padding-top: $unit-2x;
     }
 
-    .Separator {
+    .separator {
       background: var(--select-separator);
       border-radius: 1px;
       display: block;

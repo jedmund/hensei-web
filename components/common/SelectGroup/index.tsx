@@ -17,10 +17,10 @@ const defaultProps = {
 const SelectGroup = (props: Props) => {
   return (
     <React.Fragment>
-      <RadixSelect.Group className="SelectGroup">
-        <RadixSelect.Label className="Label">
+      <RadixSelect.Group className={styles.group}>
+        <RadixSelect.Label className={styles.label}>
           {props.label}
-          <RadixSelect.Separator className="Separator" />
+          <RadixSelect.Separator className={styles.separator} />
         </RadixSelect.Label>
         {props.children}
       </RadixSelect.Group>
