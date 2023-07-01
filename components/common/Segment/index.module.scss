@@ -22,13 +22,18 @@
 
   & label {
     border-radius: $unit * 3;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    box-sizing: border-box;
+    height: 100%;
     white-space: nowrap;
     overflow: hidden;
     padding: 8px 12px;
     text-overflow: ellipsis;
     cursor: pointer;
+    transition: all 0.15s ease-in-out;
 
     &:before {
       background: #fff;
