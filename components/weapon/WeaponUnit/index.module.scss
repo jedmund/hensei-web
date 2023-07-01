@@ -70,10 +70,24 @@
         bottom: 12%;
         left: -3.5%;
 
-        & > .Skill {
+        & > .skill {
           width: 20%;
           height: auto;
         }
+      }
+    }
+  }
+
+  &.extra {
+    &:hover .icon svg {
+      fill: var(--extra-purple-primary);
+    }
+
+    .image {
+      background: var(--extra-purple-card-bg);
+
+      .icon svg {
+        fill: var(--extra-purple-secondary);
       }
     }
   }
@@ -103,7 +117,7 @@
   .image {
     background: var(--card-bg);
     border: 1px solid rgba(0, 0, 0, 0);
-    border-radius: $unit;
+    border-radius: $item-corner;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -114,6 +128,10 @@
 
     &:hover .icon svg {
       fill: var(--icon-secondary-hover);
+    }
+
+    @include breakpoint(phone) {
+      border-radius: $item-corner-small;
     }
 
     .awakening {

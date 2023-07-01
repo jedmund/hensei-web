@@ -62,6 +62,7 @@ const WeaponUnit = ({
   const classes = classNames({
     unit: true,
     [styles.unit]: true,
+    [styles.extra]: position >= 9,
     [styles.mainhand]: unitType == 0,
     [styles.weapon]: unitType == 1,
     [styles.editable]: editable,
@@ -506,8 +507,9 @@ const WeaponUnit = ({
       <img
         alt={weapon?.name[locale]}
         className={classNames({
-          GridImage: true,
-          Placeholder: imageUrl === '',
+          // TODO: Look into this gridImage class
+          [styles.gridImage]: true,
+          [styles.placeholder]: imageUrl === '',
         })}
         src={imageUrl !== '' ? imageUrl : placeholderImageUrl()}
       />
