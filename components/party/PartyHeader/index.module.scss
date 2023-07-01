@@ -6,6 +6,8 @@
   max-width: $grid-width;
 
   @include breakpoint(phone) {
+    margin-top: 0;
+
     .Button:not(.IconButton) {
       justify-content: center;
       width: 100%;
@@ -165,12 +167,15 @@
         align-items: center;
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
+        line-height: 1.4;
 
         & > div {
           align-items: center;
           display: inline-flex;
           font-size: $font-small;
           height: 26px;
+          white-space: nowrap;
         }
 
         & > *:not(:last-child):after {
@@ -186,6 +191,11 @@
             .light
           ) {
           color: var(--text-primary);
+        }
+
+        a {
+          display: flex;
+          align-items: center;
         }
 
         a:hover:not(.fire):not(.water):not(.wind):not(.earth):not(.dark):not(
@@ -214,6 +224,10 @@
     & > .right {
       display: flex;
       gap: $unit-half;
+
+      & > * {
+        flex-grow: 1;
+      }
     }
   }
 

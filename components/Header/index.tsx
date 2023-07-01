@@ -51,22 +51,6 @@ const Header = () => {
   const [leftMenuOpen, setLeftMenuOpen] = useState(false)
   const [rightMenuOpen, setRightMenuOpen] = useState(false)
 
-  const [name, setName] = useState('')
-  const [originalName, setOriginalName] = useState('')
-
-  // Snapshots
-  const { party: partySnapshot } = useSnapshot(appState)
-
-  // Subscribe to app state to listen for party name and
-  // unsubscribe when component is unmounted
-  const unsubscribe = subscribe(appState, () => {
-    const newName =
-      appState.party && appState.party.name ? appState.party.name : ''
-    setName(newName)
-  })
-
-  useEffect(() => () => unsubscribe(), [])
-
   // Methods: Event handlers (Buttons)
   function handleLeftMenuButtonClicked() {
     setLeftMenuOpen(!leftMenuOpen)
@@ -126,7 +110,7 @@ const Header = () => {
     })
 
     // Push the root URL
-    router.push('/new')
+    router.push('/new', undefined, { shallow: true })
   }
 
   const profileImage = () => {

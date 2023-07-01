@@ -444,7 +444,7 @@ const Party = (props: Props) => {
       <PartyHeader
         party={props.team}
         new={props.new || false}
-        editable={party.editable}
+        editable={props.new ? true : party.editable}
         deleteCallback={deleteTeam}
         remixCallback={remixTeam}
         updateCallback={updateDetails}

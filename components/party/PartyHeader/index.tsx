@@ -45,9 +45,6 @@ const PartyHeader = (props: Props) => {
   const router = useRouter()
   const locale = router.locale || 'en'
 
-  const isNewParty =
-    router.asPath === '/' || router.asPath.split('/')[1] === 'new'
-
   const { party: partySnapshot } = useSnapshot(appState)
 
   // State: Component
@@ -285,7 +282,7 @@ const PartyHeader = (props: Props) => {
         {fullAutoToken}
         {autoSummonToken}
         {autoGuardToken}
-        {party.turnCount && turnCountToken}
+        {party.turnCount !== undefined && turnCountToken}
         {party.clearTime > 0 && clearTimeToken()}
         {buttonChainToken()}
       </>
@@ -300,6 +297,7 @@ const PartyHeader = (props: Props) => {
           leftAccessoryIcon={<SaveIcon />}
           className={classNames({
             save: true,
+            grow: true,
             saved: partySnapshot.favorited,
           })}
           text={
@@ -316,7 +314,7 @@ const PartyHeader = (props: Props) => {
       <Tooltip content={t('tooltips.remix')}>
         <Button
           leftAccessoryIcon={<RemixIcon />}
-          className="Remix"
+          className="grow"
           text={t('buttons.remix')}
           onClick={openRemixTeamAlert}
         />
@@ -330,16 +328,17 @@ const PartyHeader = (props: Props) => {
         <section className={styles.info}>
           <div className={styles.left}>
             <div className={styles.header}>
-              <h1 className={party.name ? '' : 'empty'}>
+              <h1 className={party.name ? '' : styles.empty}>
                 {party.name ? party.name : t('no_title')}
               </h1>
               {party.remix && party.sourceParty && (
                 <Tooltip content={t('tooltips.source')}>
                   <Button
                     blended={true}
+                    className="remixed"
                     leftAccessoryIcon={<RemixIcon />}
                     text={t('tokens.remix')}
-                    size="icon"
+                    size="small"
                     onClick={() => goTo(party.sourceParty?.shortcode)}
                   />
                 </Tooltip>
@@ -358,18 +357,19 @@ const PartyHeader = (props: Props) => {
               )}
             </div>
           </div>
-          {party.editable ? (
+          {props.editable ? (
             <div className={styles.right}>
               <EditPartyModal
                 party={props.party}
                 updateCallback={props.updateCallback}
               >
                 <Button
+                  className="full"
                   leftAccessoryIcon={<EditIcon />}
                   text={t('buttons.show_info')}
                 />
               </EditPartyModal>
-              {!isNewParty && (
+              {!props.new && (
                 <PartyDropdown
                   editable={props.editable}
                   deleteTeamCallback={props.deleteCallback}
