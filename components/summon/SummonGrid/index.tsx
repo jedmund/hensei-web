@@ -3,20 +3,20 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
+import classNames from 'classnames'
 
 import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
 
 import Alert from '~components/common/Alert'
 import SummonUnit from '~components/summon/SummonUnit'
-import ExtraSummons from '~components/summon/ExtraSummons'
+import ExtraSummonsGrid from '~components/extra/ExtraSummonsGrid'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
 import type { DetailsObject, SearchableObject } from '~types'
 
 import styles from './index.module.scss'
-import classNames from 'classnames'
 
 // Props
 interface Props {
@@ -444,7 +444,7 @@ const SummonGrid = (props: Props) => {
   )
 
   const subAuraSummonElement = (
-    <ExtraSummons
+    <ExtraSummonsGrid
       grid={grid.summons.allSummons}
       editable={props.editable}
       exists={false}
