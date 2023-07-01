@@ -26,7 +26,7 @@
       min-height: 15.9vw;
     }
 
-    .image {
+    .content {
       list-style-type: none;
       width: 100%;
     }
@@ -36,19 +36,35 @@
     margin-right: 0;
   }
 
-  &.main.editable .image:hover,
-  &.friend.editable .image:hover {
+  &.main.editable .content:hover,
+  &.friend.editable .content:hover {
     transform: $scale-tall;
   }
 
-  &.editable .image:hover {
+  &.editable .content:hover {
     border: $hover-stroke;
     box-shadow: $hover-shadow;
     cursor: pointer;
     transform: $scale-wide;
   }
 
-  .image {
+  &.subaura {
+    min-height: 0;
+
+    .content {
+      background: var(--subaura-orange-card-bg);
+
+      &:hover .icon svg {
+        fill: var(--subaura-orange-primary);
+      }
+
+      .icon svg {
+        fill: var(--subaura-orange-secondary);
+      }
+    }
+  }
+
+  .content {
     background: var(--card-bg);
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: $unit;
@@ -108,7 +124,7 @@
     width: 100%;
     z-index: 2;
 
-    &.Placeholder {
+    &.placeholder {
       opacity: 0;
     }
   }

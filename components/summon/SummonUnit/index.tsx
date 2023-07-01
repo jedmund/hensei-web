@@ -67,6 +67,7 @@ const SummonUnit = ({
     [styles.main]: unitType == 0,
     [styles.grid]: unitType == 1,
     [styles.friend]: unitType == 2,
+    [styles.subaura]: position == 4 || position == 5,
     [styles.editable]: editable,
     [styles.filled]: gridSummon !== undefined,
   })
@@ -284,15 +285,15 @@ const SummonUnit = ({
       <img
         alt={summon?.name[locale]}
         className={classNames({
-          GridImage: true,
-          Placeholder: imageUrl === '',
+          [styles.image]: true,
+          [styles.placeholder]: imageUrl === '',
         })}
         src={imageUrl !== '' ? imageUrl : placeholderImageUrl()}
       />
     )
 
     const content = (
-      <div className={styles.image} onClick={openSearchModal}>
+      <div className={styles.content} onClick={openSearchModal}>
         {image}
         {editable ? (
           <span className={styles.icon}>
