@@ -165,20 +165,11 @@ const GridRep = (props: Props) => {
       )
   }
 
-  const linkedAttribution = () => (
-    <Link href={`/${props.user ? props.user.username : '#'}`}>
-      <span className={userClass}>
-        {userImage()}
-        {props.user ? props.user.username : t('no_user')}
-      </span>
-    </Link>
-  )
-
-  const unlinkedAttribution = () => (
-    <div className={userClass}>
+  const attribution = () => (
+    <span className={userClass}>
       {userImage()}
       {props.user ? props.user.username : t('no_user')}
-    </div>
+    </span>
   )
 
   function fullAutoString() {
@@ -244,7 +235,7 @@ const GridRep = (props: Props) => {
         )}
       </div>
       <div className={styles.attributed}>
-        {props.user ? linkedAttribution() : unlinkedAttribution()}
+        {attribution()}
 
         <time
           className={styles.lastUpdated}
