@@ -7,15 +7,25 @@
   gap: $unit;
   padding: ($unit * 1.5) $unit-2x;
 
-  &.small > span:not(.icon) {
-    font-size: $font-small;
-    margin: 0;
-    max-width: 200px;
+  &.small {
+    & > span:not(.icon) {
+      font-size: $font-small;
+      margin: 0;
+      max-width: 200px;
+    }
 
     @include breakpoint(tablet) {
-      width: 100%;
-      max-width: inherit;
-      text-align: center;
+      &::before {
+        content: '';
+        display: block;
+        width: calc($unit-2x - 1px);
+      }
+
+      & > span:not(.icon) {
+        width: 100%;
+        max-width: inherit;
+        text-align: center;
+      }
     }
   }
 

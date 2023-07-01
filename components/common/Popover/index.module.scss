@@ -43,15 +43,26 @@
     cursor: pointer;
   }
 
-  &.small > .value {
-    font-size: $font-small;
-    margin: 0;
-    max-width: 200px;
+  &.small {
+    & > .value {
+      font-size: $font-small;
+      margin: 0;
+      max-width: 200px;
+    }
 
     @include breakpoint(tablet) {
-      width: 100%;
-      max-width: inherit;
-      text-align: center;
+      &::before {
+        content: '';
+        display: block;
+        width: calc($unit-2x - 1px);
+      }
+
+      & > .value {
+        display: block;
+        width: 100%;
+        max-width: inherit;
+        text-align: center;
+      }
     }
   }
 
