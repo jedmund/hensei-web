@@ -5,18 +5,18 @@ import { useTranslation } from 'react-i18next'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
 import api from '~utils/api'
-import { setHeaders } from '~utils/userToken'
 import { accountState } from '~utils/accountState'
+import changeLanguage from '~utils/changeLanguage'
+import { setHeaders } from '~utils/userToken'
 
 import Button from '~components/common/Button'
 import Input from '~components/common/Input'
 import { Dialog } from '~components/common/Dialog'
-import DialogContent from '~components/common/DialogContent'
-import changeLanguage from '~utils/changeLanguage'
-
-import styles from './index.module.scss'
 import DialogHeader from '~components/common/DialogHeader'
 import DialogFooter from '~components/common/DialogFooter'
+import DialogContent from '~components/common/DialogContent'
+
+import styles from './index.module.scss'
 
 interface ErrorMap {
   [index: string]: string
@@ -217,7 +217,7 @@ const LoginModal = (props: Props) => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
-        className="Login"
+        className="login"
         footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}

@@ -11,10 +11,11 @@ import { accountState } from '~utils/accountState'
 import Button from '~components/common/Button'
 import Input from '~components/common/Input'
 import { Dialog } from '~components/common/Dialog'
-import DialogContent from '~components/common/DialogContent'
-import styles from './index.module.scss'
 import DialogHeader from '~components/common/DialogHeader'
 import DialogFooter from '~components/common/DialogFooter'
+import DialogContent from '~components/common/DialogContent'
+
+import styles from './index.module.scss'
 
 interface Props {
   open: boolean
@@ -296,7 +297,7 @@ const SignupModal = (props: Props) => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
-        className="Signup"
+        className="signup"
         footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
