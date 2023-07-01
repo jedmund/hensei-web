@@ -396,7 +396,7 @@ const WeaponModal = ({
         <div className="DialogFooter" ref={footerRef}>
           <div className="actions">
             <Button
-              contained={true}
+              bound={true}
               onClick={updateWeapon}
               disabled={!formValid}
               text={t('modals.weapon.buttons.confirm')}

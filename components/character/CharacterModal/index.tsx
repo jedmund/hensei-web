@@ -290,7 +290,7 @@ const CharacterModal = ({
         </div>
         <div className="DialogFooter" ref={footerRef}>
           <Button
-            contained={true}
+            bound={true}
             onClick={handleUpdateCharacter}
             disabled={!formValid}
             text={t('modals.characters.buttons.confirm')}

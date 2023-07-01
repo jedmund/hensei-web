@@ -63,8 +63,8 @@ const UpdateToast = ({
       onCloseClick={handleCloseClicked}
     >
       <Button
-        buttonSize="small"
-        contained={true}
+        size="small"
+        bound={true}
         onClick={handleButtonClicked}
         text={t('toasts.update.button')}
       />
