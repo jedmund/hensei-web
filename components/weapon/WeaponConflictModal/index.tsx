@@ -102,13 +102,9 @@ const WeaponConflictModal = (props: Props) => {
         </div>
         <div className="DialogFooter" ref={footerRef}>
           <div className="Buttons Span">
+            <Button bound={true} onClick={close} text={t('buttons.cancel')} />
             <Button
-              contained={true}
-              onClick={close}
-              text={t('buttons.cancel')}
-            />
-            <Button
-              contained={true}
+              bound={true}
               onClick={props.resolveConflict}
               text={t('modals.conflict.buttons.confirm')}
             />
