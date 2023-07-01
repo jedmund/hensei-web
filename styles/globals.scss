@@ -91,42 +91,50 @@ h1 {
   text-align: center;
 }
 
-select {
-  appearance: none;
-  background-color: var(--input-bound-bg);
-  background-image: url('/icons/Arrow.svg');
-  background-repeat: no-repeat;
-  background-position-y: center;
-  background-position-x: 97%;
-  background-size: $unit * 1.5;
-  border: none;
-  border-radius: 6px;
-  color: $grey-15;
-  margin-bottom: $unit;
-  font-size: $font-regular;
-  padding: 0 ($unit * 2);
-  height: $unit * 6;
-  width: 100%;
+h5 {
+  font-size: $font-small;
+  font-weight: $medium;
+  // opacity: 0.7;
 
-  &:hover {
-    background-color: var(--input-bg-hover);
-    cursor: pointer;
+  &.wind {
+    color: $wind-bg-20;
+  }
+
+  &.fire {
+    color: $fire-bg-20;
+  }
+
+  &.water {
+    color: $water-bg-20;
+  }
+
+  &.earth {
+    color: $earth-bg-20;
+  }
+
+  &.dark {
+    color: $dark-bg-10;
+  }
+
+  &.light {
+    color: $light-bg-20;
   }
 }
 
-#Content {
+// Used for collection pages
+#Teams,
+#Profile {
   display: flex;
+  height: 100%;
   flex-direction: column;
-  gap: $unit * 3;
-  margin-top: $unit * 3;
-  min-width: 752px;
+  gap: $unit * 2;
 
-  @include breakpoint(tablet) {
-    min-width: auto;
-    width: 100%;
+  h1 {
+    font-weight: $medium;
   }
 }
 
+// Used for static pages
 .PageContent {
   display: flex;
   flex-direction: column;
@@ -150,14 +158,6 @@ select {
     color: var(--text-primary);
     font-size: 14px;
     line-height: 1.3;
-  }
-
-  #Teams,
-  #Profile {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-    gap: $unit * 2;
   }
 
   img.profile {
@@ -256,6 +256,7 @@ select {
   }
 }
 
+// Used for server unavailable component
 .ServerUnavailableWrapper {
   display: flex;
   align-items: center;
@@ -308,81 +309,9 @@ select {
       }
     }
   }
-
-  .LinkItem {
-    $diameter: $unit-6x;
-    align-items: center;
-    background: var(--dialog-bg);
-    border: 1px solid var(--link-item-bg);
-    border-radius: $card-corner;
-    display: flex;
-    min-height: 82px;
-    transition: background $duration-zoom ease-in,
-      transform $duration-zoom ease-in;
-
-    &:hover {
-      background: var(--link-item-bg);
-      color: var(--text-primary);
-
-      .ShareIcon {
-        fill: var(--text-primary);
-        transform: translate($unit-half, calc(($unit * -1) / 2));
-      }
-    }
-
-    &.Github {
-      &:hover {
-        .Left svg {
-          fill: var(--text-primary);
-        }
-      }
-    }
-
-    &.Discord:hover .Left svg {
-      fill: #5865f2;
-    }
-
-    a {
-      display: flex;
-      justify-content: space-between;
-      padding: $unit-2x;
-      width: 100%;
-
-      &:hover {
-        text-decoration: none;
-      }
-
-      .Left {
-        align-items: center;
-        display: flex;
-        gap: $unit-2x;
-        flex-grow: 1;
-
-        h3 {
-          font-weight: 600;
-          max-width: 70%;
-          line-height: 1.3;
-        }
-      }
-
-      svg {
-        fill: var(--link-item-image-color);
-        width: $diameter;
-        height: auto;
-        transition: fill $duration-zoom ease-in;
-
-        &.ShareIcon {
-          width: $unit-4x;
-        }
-      }
-    }
-
-    h3 {
-      font-weight: $bold;
-    }
-  }
 }
 
+// Used when a resource can be found
 #NotFound {
   height: 200px;
   width: 400px;
@@ -398,6 +327,7 @@ select {
   }
 }
 
+// Used in _app.tsx
 .ToastViewport {
   position: fixed;
   bottom: 0px;
@@ -412,4 +342,8 @@ select {
   margin: 0px;
   list-style: none;
   outline: none;
+}
+
+div[data-radix-popper-content-wrapper] {
+  z-index: 100 !important;
 }
