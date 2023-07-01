@@ -1,0 +1,77 @@
+.item {
+  $diameter: $unit-6x;
+  align-items: center;
+  background: var(--dialog-bg);
+  border: 1px solid var(--link-item-bg);
+  border-radius: $card-corner;
+  display: flex;
+  min-height: 82px;
+  transition: background $duration-zoom ease-in,
+    transform $duration-zoom ease-in;
+
+  &:hover {
+    background: var(--link-item-bg);
+    color: var(--text-primary);
+
+    .shareIcon {
+      fill: var(--text-primary);
+      transform: translate($unit-half, calc(($unit * -1) / 2));
+    }
+  }
+
+  &.constrained {
+    max-width: 520px;
+
+    @include breakpoint(phone) {
+      max-width: inherit;
+      width: 100%;
+    }
+  }
+
+  &.github:hover .left .icon svg {
+    fill: var(--text-primary);
+  }
+
+  &.discord:hover .left .icon svg {
+    fill: #5865f2;
+  }
+
+  a {
+    display: flex;
+    justify-content: space-between;
+    padding: $unit-2x;
+    width: 100%;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    .left {
+      align-items: center;
+      display: flex;
+      gap: $unit-2x;
+      flex-grow: 1;
+
+      h3 {
+        font-weight: 600;
+        max-width: 70%;
+        line-height: 1.3;
+      }
+    }
+
+    svg {
+      fill: var(--link-item-image-color);
+      width: $diameter;
+      height: auto;
+      transition: fill $duration-zoom ease-in;
+
+      &.shareIcon {
+        width: $unit-4x;
+      }
+    }
+  }
+
+  h3 {
+    font-weight: $bold;
+  }
+}

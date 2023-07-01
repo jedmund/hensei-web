@@ -1,4 +1,4 @@
-.About.PageContent {
+.about {
   $width: 520px;
   padding-bottom: $unit-12x;
 
@@ -9,7 +9,7 @@
     gap: $unit-2x;
     z-index: 5;
 
-    .Hero {
+    .hero {
       position: absolute;
       width: 40vw;
       height: 80vh;
@@ -55,22 +55,10 @@
       z-index: 2;
     }
   }
-  .Links {
+
+  .links {
     display: grid;
     gap: $unit;
     margin: $unit-2x 0;
-  }
-
-  div.LinkItem {
-    margin-top: $unit-2x;
-  }
-
-  .LinkItem {
-    max-width: calc($width / 3 * 2);
-
-    @include breakpoint(phone) {
-      max-width: inherit;
-      width: 100%;
-    }
   }
 }

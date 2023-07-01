@@ -1,9 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
 
-import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import classNames from 'classnames'
 
+import LinkItem from '~components/about/LinkItem'
 import ShareIcon from '~public/icons/Share.svg'
 import GithubIcon from '~public/icons/github.svg'
 
@@ -15,31 +16,31 @@ const RoadmapPage = () => {
   const { t: common } = useTranslation('common')
   const { t: about } = useTranslation('about')
 
+  const classes = classNames(styles.roadmap, 'PageContent')
+
   return (
-    <div className="Roadmap PageContent">
+    <div className={classes}>
       <h1>{common('about.segmented_control.roadmap')}</h1>
-      <section className="notes">
+      <section className={styles.notes}>
         <p>{about('roadmap.blurb')}</p>
         <p>{about('roadmap.link.intro')}</p>
-        <div className="Github LinkItem">
-          <Link href="https://github.com/users/jedmund/projects/1/views/3">
-            <a
-              href="https://github.com/users/jedmund/projects/1/views/3"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div className="Left">
-                <GithubIcon />
-                <h3>{about('roadmap.link.title')}</h3>
-              </div>
-              <ShareIcon className="ShareIcon" />
-            </a>
-          </Link>
-        </div>
+        <LinkItem
+          className="github"
+          title={about('roadmap.link.title')}
+          link="https://github.com/users/jedmund/projects/1/views/3"
+          icon={<GithubIcon />}
+        />
       </section>
 
-      <section className="features">
-        <h3 className="priority in_progress">{about('roadmap.subtitle')}</h3>
+      <section className={styles.features}>
+        <h3
+          className={classNames({
+            [styles.priority]: true,
+            [styles.in_progress]: true,
+          })}
+        >
+          {about('roadmap.subtitle')}
+        </h3>
         <ul>
           {[...Array(ROADMAP_ITEMS)].map((e, i) => (
             <li key={`roadmap-${i}`}>

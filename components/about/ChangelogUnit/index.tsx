@@ -82,7 +82,7 @@ const ChangelogUnit = ({ id, type, image }: Props) => {
   }
 
   return (
-    <div className="ChangelogUnit" key={id}>
+    <div className={styles.unit} key={id}>
       <img alt={item ? item.name[locale] : ''} src={imageUrl()} />
       <h4>{item ? item.name[locale] : ''}</h4>
     </div>
