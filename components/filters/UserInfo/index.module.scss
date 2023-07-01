@@ -1,0 +1,46 @@
+.root {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  gap: $unit * 1.5;
+
+  img {
+    $diameter: $unit * 6;
+    border-radius: calc($diameter / 2);
+    height: $diameter;
+    width: $diameter;
+
+    &.gran {
+      background-color: #cee7fe;
+    }
+
+    &.djeeta {
+      background-color: #ffe1fe;
+    }
+
+    &.fire {
+      background: $fire-bg-20;
+    }
+
+    &.water {
+      background: $water-bg-20;
+    }
+
+    &.wind {
+      background: $wind-bg-20;
+    }
+
+    &.earth {
+      background: $earth-bg-20;
+    }
+
+    &.dark {
+      background: $dark-bg-10;
+    }
+
+    &.light {
+      background: $light-bg-20;
+    }
+  }
+}
