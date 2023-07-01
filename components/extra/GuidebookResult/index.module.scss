@@ -1,14 +1,15 @@
-.GuidebookResult {
+.result {
   border-radius: 6px;
   display: flex;
   gap: $unit;
   padding: $unit * 1.5;
+  align-items: center;
 
   &:hover {
     background: var(--button-contained-bg);
     cursor: pointer;
 
-    .Info h5 {
+    .info h5 {
       color: var(--text-primary);
     }
   }
@@ -21,7 +22,7 @@
     width: 90px;
   }
 
-  .Info {
+  .info {
     display: flex;
     flex-direction: column;
     flex-grow: 1;

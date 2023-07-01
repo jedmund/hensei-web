@@ -16,12 +16,12 @@ const GuidebookResult = (props: Props) => {
   const guidebook = props.data
 
   return (
-    <li className="GuidebookResult" onClick={props.onClick}>
+    <li className={styles.result} onClick={props.onClick}>
       <img
         alt={guidebook.name[locale]}
         src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/guidebooks/book_${guidebook.granblue_id}.png`}
       />
-      <div className="Info">
+      <div className={styles.info}>
         <h5>{guidebook.name[locale]}</h5>
         <p>{guidebook.description[locale]}</p>
       </div>

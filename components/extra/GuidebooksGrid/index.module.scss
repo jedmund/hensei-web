@@ -1,5 +1,5 @@
-.Guidebooks {
-  #GuidebooksGrid {
+.guidebooks {
+  .grid {
     display: grid;
     gap: $unit-3x;
     grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -1,4 +1,4 @@
-.GuidebookUnit {
+.unit {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -24,7 +24,7 @@
     opacity: 1;
   }
 
-  &.editable .GuidebookImage:hover {
+  &.editable .guidebookImage:hover {
     border: $hover-stroke;
     box-shadow: $hover-shadow;
     cursor: pointer;
@@ -57,7 +57,7 @@
     text-align: center;
   }
 
-  .GuidebookImage {
+  .guidebookImage {
     background: var(--extra-purple-card-bg);
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: $unit;
@@ -74,7 +74,7 @@
       width: 100%;
       z-index: 2;
 
-      &.Placeholder {
+      &.placeholder {
         opacity: 0;
       }
     }
@@ -92,7 +92,7 @@
     }
   }
 
-  .GuidebookName {
+  .name {
     font-size: $font-name;
     line-height: 1.2;
 
@@ -101,7 +101,7 @@
     }
   }
 
-  .GuidebookDescription {
+  .guidebookDescription {
     font-size: $font-small;
     line-height: 1.2;
     text-align: center;

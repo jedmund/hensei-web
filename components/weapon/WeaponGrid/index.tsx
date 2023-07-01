@@ -12,6 +12,7 @@ import Alert from '~components/common/Alert'
 import WeaponUnit from '~components/weapon/WeaponUnit'
 import ExtraWeaponsGrid from '~components/extra/ExtraWeaponsGrid'
 import ExtraContainer from '~components/extra/ExtraContainer'
+import ExtraContainerItem from '~components/extra/ExtraContainerItem'
 import GuidebooksGrid from '~components/extra/GuidebooksGrid'
 import WeaponConflictModal from '~components/weapon/WeaponConflictModal'
 
@@ -379,23 +380,30 @@ const WeaponGrid = (props: Props) => {
     if (appState.party.raid && appState.party.raid.group.extra) {
       return (
         <ExtraContainer>
-          {appState.party.raid && appState.party.raid.group.extra && (
-            <ExtraWeaponsGrid
-              grid={appState.grid.weapons.allWeapons}
-              editable={props.editable}
-              offset={numWeapons}
-              removeWeapon={removeWeapon}
-              updateObject={receiveWeaponFromSearch}
-              updateUncap={initiateUncapUpdate}
-            />
-          )}
+          <ExtraContainerItem title={t('extra_weapons')} className="weapons">
+            {appState.party.raid && appState.party.raid.group.extra && (
+              <ExtraWeaponsGrid
+                grid={appState.grid.weapons.allWeapons}
+                editable={props.editable}
+                offset={numWeapons}
+                removeWeapon={removeWeapon}
+                updateObject={receiveWeaponFromSearch}
+                updateUncap={initiateUncapUpdate}
+              />
+            )}
+          </ExtraContainerItem>
           {appState.party.raid && appState.party.raid.group.guidebooks && (
-            <GuidebooksGrid
-              grid={appState.party.guidebooks}
-              editable={props.editable}
-              removeGuidebook={removeGuidebook}
-              updateObject={receiveGuidebookFromSearch}
-            />
+            <ExtraContainerItem
+              title={t('sephira_guidebooks')}
+              className="guidebooks"
+            >
+              <GuidebooksGrid
+                grid={appState.party.guidebooks}
+                editable={props.editable}
+                removeGuidebook={removeGuidebook}
+                updateObject={receiveGuidebookFromSearch}
+              />
+            </ExtraContainerItem>
           )}
         </ExtraContainer>
       )

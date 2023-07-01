@@ -30,18 +30,11 @@ const ExtraWeaponsGrid = ({
   updateObject,
   updateUncap,
 }: Props) => {
-  const { t } = useTranslation('common')
-
-  const classes = classNames({
-    ExtraWeapons: true,
-    ContainerItem: true,
-  })
-
-  const extraWeapons = (
-    <ul id="ExtraWeaponGrid">
+  return (
+    <ul className={styles.grid}>
       {Array.from(Array(EXTRA_WEAPONS_COUNT)).map((x, i) => {
         const itemClasses = classNames({
-          Empty: grid[offset + i] === undefined,
+          [styles.empty]: grid[offset + i] === undefined,
         })
 
         return (
@@ -59,15 +52,6 @@ const ExtraWeaponsGrid = ({
         )
       })}
     </ul>
-  )
-
-  return (
-    <div className={classes}>
-      <div className="Header">
-        <h3>{t('extra_weapons')}</h3>
-      </div>
-      {extraWeapons}
-    </div>
   )
 }
 
