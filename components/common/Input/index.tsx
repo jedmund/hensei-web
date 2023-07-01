@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
-
 import styles from './index.module.scss'
 
 interface Props extends React.ComponentProps<'input'> {
   bound?: boolean
+  error?: string
+  label?: string
   hide1Password?: boolean
   showCounter?: boolean
 }
@@ -16,16 +17,17 @@ const defaultProps = {
 }
 
 const Input = React.forwardRef<HTMLInputElement, Props>(function input(
-  { value, bound, showCounter, ...props }: Props,
+  { value: initialValue, bound, label, error, showCounter, ...props }: Props,
   forwardedRef
 ) {
   // States
+  const [value, setValue] = useState(initialValue)
   const [currentCount, setCurrentCount] = useState(() =>
     props.maxLength ? props.maxLength - (`${value}` || '').length : 0
   )
 
   // Classes
-  const wrapperClasses = classNames(
+  const inputWrapperClasses = classNames(
     {
       [styles.wrapper]: true,
       [styles.accessory]: showCounter,
@@ -53,12 +55,13 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
 
   // Event handlers
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setValue(event.target.value)
     if (props.onChange) props.onChange(event)
   }
 
   // Rendering
-  return (
-    <div className={wrapperClasses}>
+  const input = (
+    <div className={inputWrapperClasses}>
       <input
         {...inputProps}
         data-1p-ignore={props.hide1Password}
@@ -67,7 +70,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
         type={props.type}
         name={props.name}
         placeholder={props.placeholder}
-        value={value || ''}
+        value={value}
         onBlur={props.onBlur}
         onChange={handleChange}
         maxLength={props.maxLength}
@@ -77,6 +80,16 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
       <span className={styles.counter}>{currentCount}</span>
     </div>
   )
+
+  const fieldset = (
+    <fieldset className={styles.fieldset}>
+      {label && <legend className={styles.legend}>{label}</legend>}
+      {input}
+      {error && <span className={styles.error}>{error}</span>}
+    </fieldset>
+  )
+
+  return fieldset
 })
 
 Input.defaultProps = defaultProps

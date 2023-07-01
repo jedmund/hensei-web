@@ -2,81 +2,124 @@
   width: 100%;
 }
 
-.input {
-  -webkit-font-smoothing: antialiased;
-  background-color: var(--input-bg);
-  border: 2px solid transparent;
-  border-radius: $input-corner;
-  box-sizing: border-box;
-  display: block;
-  width: 100%;
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-half;
 
-  &:not(.wrapper) {
-    padding: $unit * 1.5 $unit-2x;
+  &:last-child .error {
+    margin-bottom: 0;
   }
 
-  &.accessory {
-    $offset: 2px;
+  .error {
+    color: $error;
+    font-size: $font-small;
+    padding: calc($unit / 2) ($unit * 2);
+    min-width: 100%;
+    margin-bottom: $unit;
+    width: 0;
+  }
 
-    align-items: center;
-    background: var(--input-bg);
+  .input {
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--input-bg);
+    border: 2px solid transparent;
     border-radius: $input-corner;
-    border: $offset solid transparent;
     box-sizing: border-box;
-    position: relative;
+    color: var(--text-primary);
+    display: block;
+    font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
+      sans-serif;
+    font-size: $font-regular;
+    width: 100%;
 
-    .counter {
-      color: var(--text-tertiary);
-      display: block;
-      font-weight: $bold;
-      line-height: 48px;
-      position: absolute;
-      right: $unit-2x;
-      top: 0;
+    &:not(.wrapper) {
+      padding: $unit * 1.5 $unit-2x;
     }
 
-    input {
-      background: transparent;
+    &.accessory {
+      $offset: 2px;
+
+      align-items: center;
+      background: var(--input-bg);
       border-radius: $input-corner;
-      border: none;
+      border: $offset solid transparent;
       box-sizing: border-box;
-      padding: ($unit * 1.75) $unit-2x;
-      width: 100%;
+      position: relative;
+
+      .counter {
+        color: var(--text-tertiary);
+        display: block;
+        font-weight: $bold;
+        line-height: 48px;
+        position: absolute;
+        right: $unit-2x;
+        top: 0;
+      }
+
+      input {
+        background: transparent;
+        border-radius: $input-corner;
+        border: none;
+        box-sizing: border-box;
+        color: var(--text-primary);
+        padding: ($unit * 1.75) $unit-2x;
+        width: 100%;
+      }
+    }
+
+    &[type='number']::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    &:focus {
+      border: 2px solid $blue;
+      outline: none;
+    }
+
+    &.bound {
+      background-color: var(--input-bound-bg);
+
+      &:hover {
+        background-color: var(--input-bound-bg-hover);
+      }
+    }
+
+    &.duration {
+      background: transparent;
+      border: none;
+      padding: 0;
+      width: initial;
+      height: 100%;
+      padding: calc($unit-2x - 2px) 0;
+
+      &:hover {
+        background: transparent;
+      }
+
+      &:focus,
+      &:focus-visible {
+        border: none;
+      }
+    }
+
+    &.number {
+      text-align: right;
+      width: $unit-8x;
+    }
+
+    &.alignRight {
+      text-align: right;
+    }
+
+    &.hidden {
+      display: none;
     }
   }
 
-  &[type='number']::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
-
-  &:focus {
-    border: 2px solid $blue;
-    outline: none;
-  }
-
-  &.bound {
-    background-color: var(--input-bound-bg);
-
-    &:hover {
-      background-color: var(--input-bound-bg-hover);
-    }
-  }
-
-  &.number {
-    min-width: $unit-8x;
-  }
-
-  &.AlignRight {
-    text-align: right;
-  }
-
-  &.Hidden {
+  .counter {
     display: none;
   }
-}
-
-.counter {
-  display: none;
 }
 
 .input::placeholder,
