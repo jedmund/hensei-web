@@ -32,7 +32,8 @@
       padding: 0 $unit;
     }
 
-    .noRemixes {
+    .noRemixes,
+    .noDescription {
       align-items: center;
       display: flex;
       flex-direction: column;
@@ -45,10 +46,6 @@
         font-weight: $medium;
         text-align: center;
       }
-    }
-
-    a:hover {
-      text-decoration: underline;
     }
 
     p {
@@ -65,7 +62,7 @@
       margin-bottom: $unit-2x;
     }
 
-    .YoutubeWrapper {
+    .youtube {
       background-color: var(--card-bg);
       border-radius: $card-corner;
       margin: $unit 0;
@@ -120,7 +117,7 @@
       }
 
       /* Play button */
-      & > .PlayerButton {
+      & > .playerButton {
         background: none;
         border: none;
         background-image: url('/icons/youtube.svg');
@@ -130,8 +127,8 @@
         transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
       }
 
-      & > .PlayerButton,
-      & > .PlayerButton:before {
+      & > .playerButton,
+      & > .playerButton:before {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -143,7 +140,7 @@
         cursor: unset;
       }
       &.lyt-activated::before,
-      &.lyt-activated > .PlayerButton {
+      &.lyt-activated > .playerButton {
         opacity: 0;
         pointer-events: none;
       }

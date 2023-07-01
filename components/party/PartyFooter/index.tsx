@@ -22,6 +22,7 @@ import { youtube } from '~utils/youtube'
 import type { DetailsObject } from 'types'
 
 import RemixIcon from '~public/icons/Remix.svg'
+import EditIcon from '~public/icons/Edit.svg'
 import styles from './index.module.scss'
 
 // Props
@@ -41,9 +42,10 @@ const PartyFooter = (props: Props) => {
   const youtubeUrlRegex =
     /(?:https:\/\/www\.youtube\.com\/watch\?v=|https:\/\/youtu\.be\/)([\w-]+)/g
 
-  const [open, setOpen] = useState(false)
+  // State: UI
   const [currentSegment, setCurrentSegment] = useState(0)
 
+  // State: Data
   const [remixes, setRemixes] = useState<Party[]>([])
   const [embeddedDescription, setEmbeddedDescription] =
     useState<React.ReactNode>()
@@ -67,8 +69,8 @@ const PartyFooter = (props: Props) => {
               key={`${match}-${i}`}
               id={match}
               title={videoTitles[i]}
-              wrapperClass="YoutubeWrapper"
-              playerClass="PlayerButton"
+              wrapperClass={styles.youtube}
+              playerClass={styles.playerButton}
             />
           )
         )
@@ -168,14 +170,27 @@ const PartyFooter = (props: Props) => {
         selected={currentSegment === 1}
         onClick={() => setCurrentSegment(1)}
       >
-        {t('footer.remixes.label')}
+        {t('footer.remixes.label', { count: party?.remixes?.length })}
       </Segment>
     </SegmentedControl>
   )
 
   const descriptionSection = (
     <section className={styles.description}>
-      <Linkify>{embeddedDescription}</Linkify>
+      {party && party.description && party.description.length > 0 && (
+        <Linkify>{embeddedDescription}</Linkify>
+      )}
+      {(!party || !party.description) && (
+        <div className={styles.noDescription}>
+          <h3>{t('footer.description.empty')}</h3>
+          {props.editable && (
+            <Button
+              leftAccessoryIcon={<EditIcon />}
+              text={t('buttons.show_info')}
+            />
+          )}
+        </div>
+      )}
     </section>
   )
 
@@ -194,7 +209,7 @@ const PartyFooter = (props: Props) => {
   )
 
   function renderRemixes() {
-    return remixes.map((party, i) => {
+    return party?.remixes.map((party, i) => {
       return (
         <GridRep
           id={party.id}
