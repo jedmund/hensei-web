@@ -13,3 +13,14 @@
     padding-right: 0;
   }
 }
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-2x;
+  padding: 0 $unit-4x;
+
+  @include breakpoint(phone) {
+    gap: $unit-4x;
+  }
+}

@@ -3,6 +3,7 @@
   background: var(--bar-bg);
   border-radius: $card-corner;
   box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: row;
   gap: $unit-2x;
@@ -27,14 +28,20 @@
   }
 
   .filters {
-    display: flex;
+    display: grid;
+    grid-template-columns:
+      minmax($unit-20x, 1fr)
+      minmax($unit-20x, 1fr)
+      minmax($unit-20x, 1fr)
+      0.5fr;
     box-sizing: border-box;
     flex-direction: row;
     gap: $unit;
     width: auto;
 
     @include breakpoint(tablet) {
-      flex-direction: column;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
       width: 100%;
     }
   }
@@ -56,29 +63,6 @@
 
     span {
       font-size: $font-small;
-    }
-  }
-
-  .UserInfo {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
-    gap: $unit * 1.5;
-
-    img {
-      $diameter: $unit * 6;
-      border-radius: calc($diameter / 2);
-      height: $diameter;
-      width: $diameter;
-
-      &.gran {
-        background-color: #cee7fe;
-      }
-
-      &.djeeta {
-        background-color: #ffe1fe;
-      }
     }
   }
 }

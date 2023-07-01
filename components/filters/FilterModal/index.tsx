@@ -3,12 +3,9 @@ import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 
-import {
-  Dialog,
-  DialogTrigger,
-  DialogClose,
-  DialogTitle,
-} from '~components/common/Dialog'
+import { Dialog, DialogTrigger } from '~components/common/Dialog'
+import DialogHeader from '~components/common/DialogHeader'
+import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
 
 import Button from '~components/common/Button'
@@ -20,7 +17,6 @@ import SelectItem from '~components/common/SelectItem'
 
 import type { DialogProps } from '@radix-ui/react-dialog'
 
-import CrossIcon from '~public/icons/Cross.svg'
 import styles from './index.module.scss'
 
 interface Props extends DialogProps {
@@ -389,20 +385,8 @@ const FilterModal = (props: Props) => {
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
-        <div className="DialogHeader" ref={headerRef}>
-          <div className="DialogTop">
-            <DialogTitle className="DialogTitle">
-              {t('modals.filters.title')}
-            </DialogTitle>
-          </div>
-          <DialogClose className="DialogClose" asChild>
-            <span>
-              <CrossIcon />
-            </span>
-          </DialogClose>
-        </div>
-
-        <div className="Fields">
+        <DialogHeader title={t('modals.filters.title')} />
+        <div className={styles.fields}>
           {chargeAttackField()}
           {fullAutoField()}
           {autoGuardField()}
@@ -415,21 +399,23 @@ const FilterModal = (props: Props) => {
           {userQualityField()}
           {originalOnlyField()}
         </div>
-        <div className="DialogFooter" ref={footerRef}>
-          <div className="Left"></div>
-          <div className="Right Buttons Spaced">
+        <DialogFooter
+          ref={footerRef}
+          rightElements={[
             <Button
               blended={true}
+              key="clear"
               text={t('modals.filters.buttons.clear')}
               onClick={resetFilters}
-            />
+            />,
             <Button
-              contained={true}
+              bound={true}
+              key="confirm"
               text={t('modals.filters.buttons.confirm')}
               onClick={saveFilters}
-            />
-          </div>
-        </div>
+            />,
+          ]}
+        />
       </DialogContent>
     </Dialog>
   )

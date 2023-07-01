@@ -4,7 +4,7 @@ import { getCookie } from 'cookies-next'
 import classNames from 'classnames'
 import equals from 'fast-deep-equal'
 
-import FilterModal from '~components/FilterModal'
+import FilterModal from '~components/filters/FilterModal'
 import RaidCombobox from '~components/raids/RaidCombobox'
 import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
