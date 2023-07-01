@@ -45,7 +45,7 @@
       background: #fff;
     }
 
-    @include breakpoint(phone) {
+    @include breakpoint(small-tablet) {
       border-radius: 100px;
       padding-bottom: $unit;
     }
@@ -57,7 +57,7 @@
     }
   }
 
-  @include breakpoint(phone) {
+  @include breakpoint(small-tablet) {
     min-width: initial;
     width: 100%;
 

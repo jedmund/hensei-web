@@ -6,7 +6,7 @@
   transition: $duration-opacity-fade opacity ease-in;
   opacity: 0.5;
 
-  @include breakpoint(phone) {
+  @include breakpoint(small-tablet) {
     display: none;
   }
 
