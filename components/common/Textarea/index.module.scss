@@ -1,0 +1,42 @@
+.textarea {
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--input-bg);
+  border: 2px solid transparent;
+  border-radius: $input-corner;
+  box-sizing: border-box;
+  color: var(--text-primary);
+  display: block;
+  font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
+  font-size: $font-regular;
+  line-height: 1.4;
+  overflow: scroll;
+  min-height: $unit-10x;
+  padding: $unit * 1.5 $unit-2x;
+  white-space: pre-wrap;
+  width: 100%;
+
+  &:focus {
+    border: 2px solid $blue;
+    outline: none;
+  }
+
+  &.bound {
+    background-color: var(--input-bound-bg);
+
+    &:hover {
+      background-color: var(--input-bound-bg-hover);
+    }
+  }
+
+  &.editParty {
+    flex-grow: 1;
+  }
+
+  &[contenteditable='true']:empty:before {
+    content: attr(placeholder);
+    color: var(--text-secondary);
+    pointer-events: none;
+    display: block; /* For Firefox */
+  }
+}
