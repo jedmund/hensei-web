@@ -20,7 +20,7 @@ import { emptyPaginationObject } from '~utils/emptyStates'
 import ErrorSection from '~components/ErrorSection'
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
-import FilterBar from '~components/FilterBar'
+import FilterBar from '~components/filters/FilterBar'
 import SavedHead from '~components/head/SavedHead'
 
 import type { AxiosError } from 'axios'
@@ -314,7 +314,6 @@ const SavedRoute: React.FC<Props> = ({
           fullAuto={party.full_auto}
           autoGuard={party.auto_guard}
           key={`party-${i}`}
-          displayUser={true}
           onClick={goTo}
           onSave={toggleFavorite}
         />

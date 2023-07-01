@@ -19,8 +19,9 @@ import { emptyPaginationObject } from '~utils/emptyStates'
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
 import ErrorSection from '~components/ErrorSection'
-import FilterBar from '~components/FilterBar'
+import FilterBar from '~components/filters/FilterBar'
 import ProfileHead from '~components/head/ProfileHead'
+import UserInfo from '~components/filters/UserInfo'
 
 import type { AxiosError } from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -269,6 +270,7 @@ const ProfileRoute: React.FC<Props> = ({
           createdAt={new Date(party.created_at)}
           raid={party.raid}
           grid={party.weapons}
+          user={party.user}
           favorited={party.favorited}
           fullAuto={party.full_auto}
           autoGuard={party.auto_guard}
@@ -290,16 +292,7 @@ const ProfileRoute: React.FC<Props> = ({
           raidSlug={raidSlug ? raidSlug : undefined}
           recency={recency}
         >
-          <div className="UserInfo">
-            <img
-              alt={context.user?.avatar.picture}
-              className={`profile ${context.user?.avatar.element}`}
-              srcSet={`/profile/${context.user?.avatar.picture}.png,
-                                    /profile/${context.user?.avatar.picture}@2x.png 2x`}
-              src={`/profile/${context.user?.avatar.picture}.png`}
-            />
-            <h1>{context.user?.username}</h1>
-          </div>
+          <UserInfo user={context.user!} />
         </FilterBar>
 
         <section>
