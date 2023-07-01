@@ -2,20 +2,24 @@
   display: flex;
   justify-content: center;
 
-  @include breakpoint(phone) {
+  &.raid {
+    width: 100%;
+  }
+
+  @include breakpoint(small-tablet) {
     width: 100%;
   }
 
   .segmentedControl {
-    // border-radius: $unit * 3;
     display: inline-flex;
     padding: 3px;
     position: relative;
+    gap: $unit-half;
     user-select: none;
     overflow: hidden;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
-    @include breakpoint(phone) {
+    @include breakpoint(small-tablet) {
       background: var(--card-bg);
       border-radius: 100px;
     }
@@ -25,12 +29,21 @@
       border-radius: $full-corner;
     }
 
+    &.background {
+      background: var(--input-bg);
+      border-radius: $full-corner;
+    }
+
     &.grow {
       flex-grow: 1;
     }
 
     &.gap {
       gap: $unit;
+    }
+
+    &.raid {
+      width: 100%;
     }
 
     &.fire {
