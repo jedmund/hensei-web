@@ -100,14 +100,12 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function select(
         placeholder={props.placeholder}
         ref={forwardedRef}
       >
-        {props.icon ? <img alt={props.icon.alt} src={props.icon.src} /> : ''}
+        {props.icon?.src && <img alt={props.icon.alt} src={props.icon.src} />}
         <RadixSelect.Value placeholder={props.trigger?.placeholder} />
-        {!props.disabled ? (
+        {!props.disabled && (
           <RadixSelect.Icon className={styles.icon}>
             <ChevronIcon />
           </RadixSelect.Icon>
-        ) : (
-          ''
         )}
       </RadixSelect.Trigger>
 
