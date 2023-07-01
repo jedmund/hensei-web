@@ -13,13 +13,13 @@ const defaultProps = {
 
 export const DropdownMenuItem = React.forwardRef<HTMLDivElement, Props>(
   function dropdownMenuItem(
-    { children, ...props }: PropsWithChildren<Props>,
+    { children, destructive, ...props }: PropsWithChildren<Props>,
     forwardedRef
   ) {
     const classes = classNames(props.className, {
       [styles.menuItem]: true,
       [styles.language]: props.className?.includes('language'),
-      [styles.destructive]: props.destructive,
+      [styles.destructive]: destructive,
     })
 
     return (
