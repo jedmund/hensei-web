@@ -1,4 +1,4 @@
-section.Error {
+.error {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -9,14 +9,13 @@ section.Error {
   height: 60vh;
   text-align: center;
 
-  .Code {
+  .code {
     color: var(--text-secondary);
     font-size: $font-tiny;
     font-weight: $bold;
   }
 
-  .Button {
-    margin-top: $unit-2x;
-    width: fit-content;
+  p {
+    margin-bottom: $unit-4x;
   }
 }
