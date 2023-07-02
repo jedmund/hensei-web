@@ -111,10 +111,16 @@ const CharacterConflictModal = (props: Props) => {
         </div>
         <DialogFooter
           rightElements={[
-            <Button bound={true} onClick={close} text={t('buttons.cancel')} />,
+            <Button
+              bound={true}
+              onClick={close}
+              key="cancel"
+              text={t('buttons.cancel')}
+            />,
             <Button
               bound={true}
               onClick={props.resolveConflict}
+              key="confirm"
               text={t('modals.conflict.buttons.confirm')}
             />,
           ]}

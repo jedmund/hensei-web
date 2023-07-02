@@ -103,9 +103,15 @@ const WeaponConflictModal = (props: Props) => {
         </div>
         <DialogFooter
           rightElements={[
-            <Button bound={true} onClick={close} text={t('buttons.cancel')} />,
             <Button
               bound={true}
+              onClick={close}
+              key="cancel"
+              text={t('buttons.cancel')}
+            />,
+            <Button
+              bound={true}
+              key="confirm"
               onClick={props.resolveConflict}
               text={t('modals.conflict.buttons.confirm')}
             />,
