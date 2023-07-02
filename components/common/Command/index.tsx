@@ -20,7 +20,7 @@ interface CommandDialogProps extends DialogProps {}
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   return (
     <Dialog {...props}>
-      <DialogContent className={styles.dialogContent}>
+      <DialogContent className="DialogContent">
         <Command>{children}</Command>
       </DialogContent>
     </Dialog>
@@ -34,10 +34,7 @@ const CommandInput = forwardRef<
   <div>
     <CommandPrimitive.Input
       ref={ref}
-      className={classNames(
-        { CommandInput: true },
-        className?.split(' ').map((c) => styles[c])
-      )}
+      className={classNames({ CommandInput: true }, className)}
       {...props}
     />
   </div>
@@ -51,10 +48,7 @@ const CommandList = forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.List
     ref={ref}
-    className={classNames(
-      { CommandList: true },
-      className?.split(' ').map((c) => styles[c])
-    )}
+    className={classNames({ CommandList: true }, className)}
     {...props}
   />
 ))
@@ -65,7 +59,7 @@ const CommandEmpty = forwardRef<
   React.ElementRef<typeof CommandPrimitive.Empty>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
 >((props, ref) => (
-  <CommandPrimitive.Empty ref={ref} className={styles.empty} {...props} />
+  <CommandPrimitive.Empty ref={ref} className="CommandEmpty" {...props} />
 ))
 
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName
@@ -76,10 +70,7 @@ const CommandGroup = forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Group
     ref={ref}
-    className={classNames(
-      { CommandGroup: true },
-      className?.split(' ').map((c) => styles[c])
-    )}
+    className={classNames({ CommandGroup: true }, className)}
     {...props}
   />
 ))
@@ -92,10 +83,7 @@ const CommandSeparator = forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Separator
     ref={ref}
-    className={classNames(
-      { CommandSeparator: true },
-      className?.split(' ').map((c) => styles[c])
-    )}
+    className={classNames({ CommandSeparator: true }, className)}
     {...props}
   />
 ))
@@ -107,10 +95,7 @@ const CommandItem = forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Item
     ref={ref}
-    className={classNames(
-      { CommandItem: true },
-      className?.split(' ').map((c) => styles[c])
-    )}
+    className={classNames({ CommandItem: true }, className)}
     {...props}
   />
 ))
@@ -123,10 +108,7 @@ const CommandShortcut = ({
 }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-      className={classNames(
-        { CommandShortcut: true },
-        className?.split(' ').map((c) => styles[c])
-      )}
+      className={classNames({ CommandShortcut: true }, className)}
       {...props}
     />
   )
