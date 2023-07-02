@@ -62,7 +62,7 @@
 
   .close {
     background: transparent;
-    border: none;
+    border: 2px solid transparent;
 
     &:hover {
       cursor: pointer;
@@ -70,6 +70,11 @@
       svg {
         fill: $error;
       }
+    }
+
+    &:focus {
+      border-radius: $input-corner;
+      border: 2px solid $blue;
     }
 
     svg {

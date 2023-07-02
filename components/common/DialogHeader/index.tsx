@@ -1,6 +1,8 @@
 import React, { PropsWithChildren } from 'react'
 import classNames from 'classnames'
+
 import * as DialogPrimitive from '@radix-ui/react-dialog'
+
 import CrossIcon from '~public/icons/Cross.svg'
 import styles from './index.module.scss'
 
@@ -31,7 +33,7 @@ export const DialogHeader = React.forwardRef<HTMLDivElement, Props>(
           {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
           <div className={styles.title}>{title}</div>
         </div>
-        <DialogPrimitive.Close className={styles.close}>
+        <DialogPrimitive.Close className={styles.close} tabIndex={0}>
           <CrossIcon />
         </DialogPrimitive.Close>
       </header>
