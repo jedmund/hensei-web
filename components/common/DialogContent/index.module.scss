@@ -80,8 +80,11 @@
       }
     }
 
-    &.editParty,
     &.conflict {
+      max-height: 80vh;
+    }
+
+    &.editParty {
       min-height: 80vh;
 
       .container {
