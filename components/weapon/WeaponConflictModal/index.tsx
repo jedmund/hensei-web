@@ -4,6 +4,7 @@ import { Trans, useTranslation } from 'react-i18next'
 
 import { Dialog } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
+import DialogFooter from '~components/common/DialogFooter'
 import Button from '~components/common/Button'
 import Overlay from '~components/common/Overlay'
 
@@ -69,17 +70,17 @@ const WeaponConflictModal = (props: Props) => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
-        className="Conflict"
+        className="conflict"
         footerref={footerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={close}
       >
-        <div className="Content">
+        <div className={styles.content}>
           <p>{infoString()}</p>
-          <div className="WeaponDiagram Diagram">
+          <div className={styles.diagram}>
             <ul>
               {props.conflictingWeapons?.map((weapon, i) => (
-                <li className="weapon" key={`conflict-${i}`}>
+                <li className={styles.weapon} key={`conflict-${i}`}>
                   <img
                     alt={weapon.object.name[locale]}
                     src={imageUrl(weapon.object)}
@@ -88,9 +89,9 @@ const WeaponConflictModal = (props: Props) => {
                 </li>
               ))}
             </ul>
-            <span className="arrow">&rarr;</span>
-            <div className="wrapper">
-              <div className="weapon">
+            <span className={styles.arrow}>&rarr;</span>
+            <div className={styles.wrapper}>
+              <div className={styles.weapon}>
                 <img
                   alt={props.incomingWeapon?.name[locale]}
                   src={imageUrl(props.incomingWeapon)}
@@ -100,16 +101,16 @@ const WeaponConflictModal = (props: Props) => {
             </div>
           </div>
         </div>
-        <div className="DialogFooter" ref={footerRef}>
-          <div className="Buttons Span">
-            <Button bound={true} onClick={close} text={t('buttons.cancel')} />
+        <DialogFooter
+          rightElements={[
+            <Button bound={true} onClick={close} text={t('buttons.cancel')} />,
             <Button
               bound={true}
               onClick={props.resolveConflict}
               text={t('modals.conflict.buttons.confirm')}
-            />
-          </div>
-        </div>
+            />,
+          ]}
+        />
       </DialogContent>
       <Overlay open={open} visible={true} />
     </Dialog>

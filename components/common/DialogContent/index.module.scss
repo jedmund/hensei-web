@@ -80,7 +80,8 @@
       }
     }
 
-    &.editParty {
+    &.editParty,
+    &.conflict {
       min-height: 80vh;
 
       .container {

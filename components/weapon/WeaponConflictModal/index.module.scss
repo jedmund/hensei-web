@@ -1,0 +1,69 @@
+.content {
+  $weapon-diameter: 14rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: $unit-4x;
+  padding: $unit-4x $unit-4x $unit-2x $unit-4x;
+
+  & > p {
+    font-size: $font-regular;
+    line-height: 1.4;
+
+    strong {
+      font-weight: $bold;
+    }
+
+    &:lang(ja) {
+      line-height: 1.4;
+    }
+  }
+
+  .diagram {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: flex-start;
+
+    ul {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: $unit-2x;
+    }
+
+    .weapon {
+      display: flex;
+      flex-direction: column;
+      gap: $unit;
+      text-align: center;
+      width: $weapon-diameter;
+      font-weight: $medium;
+
+      img {
+        border-radius: 1rem;
+        width: $weapon-diameter;
+        height: auto;
+      }
+
+      span {
+        line-height: 1.3;
+      }
+    }
+
+    .wrapper {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .arrow {
+      align-items: center;
+      color: $grey-55;
+      display: flex;
+      font-size: 4rem;
+      text-align: center;
+      height: $weapon-diameter;
+      justify-content: center;
+    }
+  }
+}
