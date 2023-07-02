@@ -31,9 +31,10 @@
     // min-height: $unit-12x;
     overflow-y: auto;
     // height: 80vh;
-    // max-height: 80vh; // Having a max-height interferes with SearchModal scrolling
+    max-height: 60vh; // Having a max-height interferes with SearchModal scrolling
     min-width: 580px;
     max-width: 42vw;
+    width: 520px; // Using max/min-width messes with the Edit Party contenteditable div
     // padding: $unit * $multiplier;
     position: relative;
 
@@ -64,6 +65,7 @@
       display: flex;
       flex-direction: column;
       min-height: 430px;
+      max-height: none;
       padding: 0;
 
       @include breakpoint(phone) {
@@ -78,27 +80,21 @@
       }
     }
 
+    &.editParty {
+      min-height: 80vh;
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+    }
+
     .container {
       overflow-y: hidden;
 
       &.scrollable {
         overflow-y: auto;
-      }
-    }
-
-    .DialogDescription {
-      color: var(--text-secondary);
-      flex-grow: 1;
-    }
-
-    .Fields {
-      display: flex;
-      flex-direction: column;
-      gap: $unit-2x;
-      padding: 0 $unit-4x;
-
-      @include breakpoint(phone) {
-        gap: $unit-4x;
       }
     }
 
