@@ -59,13 +59,13 @@ const AwakeningSelectWithInput = ({
 
   // Classes
   const inputClasses = classNames({
-    Bound: true,
-    Hidden: currentAwakening === undefined || currentAwakening.id === '0',
+    fullHeight: true,
+    range: true,
   })
 
   const errorClasses = classNames({
-    errors: true,
-    visible: error !== '',
+    [styles.errors]: true,
+    [styles.visible]: error !== '',
   })
 
   // Hooks
@@ -138,7 +138,9 @@ const AwakeningSelectWithInput = ({
     let error = ''
 
     if (currentAwakening) {
-      if (value < 1) {
+      if (value && value % 1 != 0) {
+        error = t(`awakening.errors.value_not_whole`)
+      } else if (value < 1) {
         error = t(`awakening.errors.value_too_low`, {
           minValue: 1,
         })
@@ -146,8 +148,6 @@ const AwakeningSelectWithInput = ({
         error = t(`awakening.errors.value_too_high`, {
           maxValue: maxLevel,
         })
-      } else if (value % 1 != 0) {
-        error = t(`awakening.errors.value_not_whole`)
       } else if (!value || value <= 0) {
         error = t(`awakening.errors.value_empty`)
       } else {
@@ -160,7 +160,10 @@ const AwakeningSelectWithInput = ({
     if (error.length > 0) {
       sendValidity(false)
       return false
-    } else return true
+    } else {
+      sendValidity(true)
+      return true
+    }
   }
 
   const rangeString = () => {
@@ -176,8 +179,8 @@ const AwakeningSelectWithInput = ({
   }
 
   return (
-    <div className="SelectWithItem">
-      <div className="InputSet">
+    <div>
+      <div className={styles.set}>
         <Select
           key="awakening-type"
           value={`${awakening ? awakening.id : defaultAwakening.id}`}
@@ -186,7 +189,9 @@ const AwakeningSelectWithInput = ({
           onValueChange={handleSelectChange}
           onOpenChange={changeOpen}
           onClose={onClose}
-          triggerClass="modal"
+          trigger={{
+            className: 'grow',
+          }}
           overlayVisible={false}
         >
           {generateOptions()}
@@ -195,6 +200,11 @@ const AwakeningSelectWithInput = ({
         <Input
           value={level ? level : 1}
           className={inputClasses}
+          fieldsetClassName={classNames({
+            hidden:
+              currentAwakening === undefined || currentAwakening.id === '0',
+          })}
+          wrapperClassName="fullHeight"
           type="number"
           placeholder={rangeString()}
           min={1}
