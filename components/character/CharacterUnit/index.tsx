@@ -4,6 +4,7 @@ import { useSnapshot } from 'valtio'
 import { Trans, useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
 import classNames from 'classnames'
+import cloneDeep from 'lodash.clonedeep'
 
 import Alert from '~components/common/Alert'
 import Button from '~components/common/Button'
@@ -26,6 +27,7 @@ import SettingsIcon from '~public/icons/Settings.svg'
 
 // Types
 import type {
+  CharacterOverMastery,
   GridCharacterObject,
   PerpetuityObject,
   SearchableObject,
@@ -143,7 +145,20 @@ const CharacterUnit = ({
   // Save the server's response to state
   function processResult(response: AxiosResponse) {
     const gridCharacter: GridCharacter = response.data
-    appState.grid.characters[gridCharacter.position] = gridCharacter
+    let character = cloneDeep(gridCharacter)
+
+    if (character.over_mastery) {
+      const overMastery: CharacterOverMastery = {
+        1: gridCharacter.over_mastery[0],
+        2: gridCharacter.over_mastery[1],
+        3: gridCharacter.over_mastery[2],
+        4: gridCharacter.over_mastery[3],
+      }
+
+      character.over_mastery = overMastery
+    }
+
+    appState.grid.characters[gridCharacter.position] = character
   }
 
   function processError(error: any) {
