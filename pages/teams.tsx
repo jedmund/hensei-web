@@ -327,7 +327,9 @@ const TeamsRoute: React.FC<Props> = ({
       <div id="Teams">
         {pageHead()}
         <FilterBar
+          defaultFilterset={defaultFilterset}
           onFilter={receiveFilters}
+          persistFilters={true}
           scrolled={scrolled}
           element={element}
           raidSlug={raidSlug ? raidSlug : undefined}

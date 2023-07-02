@@ -13,7 +13,7 @@ import extractFilters from '~utils/extractFilters'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { appState } from '~utils/appState'
-import { defaultFilterset } from '~utils/defaultFilters'
+import { permissiveFilterset } from '~utils/defaultFilters'
 import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
 
@@ -84,7 +84,7 @@ const SavedRoute: React.FC<Props> = ({
     serialize: (value) => `${value}`,
   })
   const [advancedFilters, setAdvancedFilters] =
-    useState<FilterSet>(defaultFilterset)
+    useState<FilterSet>(permissiveFilterset)
 
   // Define transformers for element
   function parseElement(query: string) {
@@ -121,16 +121,6 @@ const SavedRoute: React.FC<Props> = ({
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Fetch the user's advanced filters
-  useEffect(() => {
-    const filtersCookie = getCookie('filters')
-    const filters = filtersCookie
-      ? JSON.parse(filtersCookie as string)
-      : defaultFilterset
-
-    setAdvancedFilters(filters)
   }, [])
 
   // Handle errors
@@ -326,7 +316,9 @@ const SavedRoute: React.FC<Props> = ({
       <div id="Teams">
         {pageHead()}
         <FilterBar
+          defaultFilterset={permissiveFilterset}
           onFilter={receiveFilters}
+          persistFilters={false}
           scrolled={scrolled}
           element={element}
           raidSlug={raidSlug ? raidSlug : undefined}
@@ -380,12 +372,6 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Fetch latest version
   const version = await fetchLatestVersion()
 
-  // Fetch user's advanced filters
-  const filtersCookie = getCookie('filters', { req: req, res: res })
-  const advancedFilters = filtersCookie
-    ? JSON.parse(filtersCookie as string)
-    : undefined
-
   try {
     // Fetch and organize raids
     let raidGroups: RaidGroup[] = await api
@@ -395,7 +381,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     // Create filter object
     const filters: FilterObject = extractFilters(query, raidGroups)
     const params = {
-      params: { ...filters, ...advancedFilters  },
+      params: { ...filters, ...permissiveFilterset  },
     }
 
     // Set up empty variables
