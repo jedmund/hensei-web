@@ -180,6 +180,7 @@ const CharacterGrid = (props: Props) => {
     setPosition(-1)
     setConflicts([])
     setIncoming(undefined)
+    setModalOpen(false)
   }
 
   async function removeCharacter(id: string) {
