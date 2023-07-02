@@ -65,6 +65,14 @@
       "remix": "Remix team"
     }
   },
+  "earring": {
+    "errors": {
+      "value_too_low": "{{name}} must be at least {{minValue}}",
+      "value_too_high": "{{name}} cannot be greater than {{maxValue}}",
+      "value_not_whole": "{{name}} must be a whole number",
+      "value_empty": "{{name}} must have a value"
+    }
+  },
   "elements": {
     "null": "Null",
     "wind": "Wind",

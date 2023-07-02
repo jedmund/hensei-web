@@ -65,6 +65,14 @@
       "remix": "編成をリミックス"
     }
   },
+  "earring": {
+    "errors": {
+      "value_too_low": "{{name}}は最低{{minValue}}を入力してください",
+      "value_too_high": "{{name}}は最大{{maxValue}}を入力してください",
+      "value_not_whole": "{{name}}は整数でなければなりません",
+      "value_empty": "{{name}}を入力してください"
+    }
+  },
   "elements": {
     "null": "無",
     "wind": "風",
