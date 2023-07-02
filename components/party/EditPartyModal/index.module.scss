@@ -1,56 +1,39 @@
-.EditTeam.DialogContent {
-  min-height: 80vh;
+.segmentedControlWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $unit 0;
+}
 
-  .Container.Scrollable {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
+.content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: $unit-2x;
+  height: 100%;
+  overflow: hidden;
 
-  .Content {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    gap: $unit-2x;
-  }
-
-  .Fields {
+  .fields {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     gap: $unit;
+    padding: 0 $unit-4x;
+    overflow: hidden;
+
+    &.scrollable {
+      overflow-y: auto;
+    }
   }
+}
 
-  .ExtraNotice {
-    background: var(--extra-purple-bg);
-    border-radius: $input-corner;
-    color: var(--extra-purple-text);
-    font-weight: $medium;
-    padding: $unit-2x;
-  }
+.extraNotice {
+  background: var(--extra-purple-bg);
+  border-radius: $input-corner;
+  font-weight: $medium;
+  padding: $unit-2x;
 
-  .DescriptionField {
-    display: flex;
-    flex-direction: column;
-    justify-content: inherit;
-    gap: $unit;
-    flex-grow: 1;
-
-    .Left {
-      flex-grow: 0;
-    }
-
-    textarea.Input {
-      flex-grow: 1;
-
-      &::placeholder {
-        color: var(--text-secondary);
-      }
-    }
-
-    .Image {
-      display: none;
-    }
+  p {
+    color: var(--extra-purple-dark-text);
   }
 }
