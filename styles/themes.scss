@@ -30,7 +30,11 @@
   --anonymous-bg: #{$anonymous--bg--light};
   --placeholder-bg: #{$grey-80};
 
-  // Light - Menus
+  // Light - Units
+  --unit-bg: #{$unit--bg--light};
+  --unit-bg-hover: #{$unit--bg--light--hover};
+
+  // Light - Dialogs
   --dialog-bg: #{$dialog--bg--light};
 
   // Light - Menus
@@ -39,6 +43,10 @@
   --menu-text: #{$menu--text--light};
   --menu-bg-item-hover: #{$menu--item--bg--light--hover};
   --menu-text-hover: #{$menu--text--light--hover};
+
+  // Light - Notices
+  --notice-bg: #{$notice--bg--light};
+  --notice-text: #{$notice--text--light};
 
   // Light - Buttons
   --button-bg: #{$button--bg--light};
@@ -188,6 +196,10 @@
   --anonymous-bg: #{$anonymous--bg--dark};
   --placeholder-bg: #{$grey-40};
 
+  // Dark - Units
+  --unit-bg: #{$unit--bg--dark};
+  --unit-bg-hover: #{$unit--bg--dark--hover};
+
   // Dark - Dialogs
   --dialog-bg: #{$dialog--bg--dark};
 
@@ -197,6 +209,10 @@
   --menu-separator: #{$menu--separator--dark};
   --menu-bg-item-hover: #{$menu--item--bg--dark--hover};
   --menu-text-hover: #{$menu--text--dark--hover};
+
+  // Dark - Notices
+  --notice-bg: #{$notice--bg--dark};
+  --notice-text: #{$notice--text--dark};
 
   // Dark - Buttons
   --button-bg: #{$button--bg--dark};

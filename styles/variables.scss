@@ -94,6 +94,15 @@ $accent--blue--dark--focus: #275dc5;
 
 $accent--yellow--light: #c89d39;
 $accent--yellow--dark: #f9cc64;
+$yellow-text-10: #a39200;
+$yellow-text-20: #ffed4c;
+
+$accent--yellow--00: #463805;
+$accent--yellow--20: #7f6a00;
+$accent--yellow--40: #a39200;
+$accent--yellow--60: #c89d39;
+$accent--yellow--80: #deb351;
+$accent--yellow--100: #f9cc64;
 
 $selected--item--bg--dark: #f9cc645d;
 $selected--item--bg--dark--hover: #fcc33f81;
@@ -143,9 +152,6 @@ $dark-bg-00: #d565fb55;
 $dark-bg-10: #d565fb;
 $dark-bg-20: #f2cdff;
 
-$yellow-text-10: #a39200;
-$yellow-text-20: #ffed4c;
-
 $page--bg--light: $grey-90;
 $page--bg--dark: $grey-15;
 
@@ -160,6 +166,13 @@ $separator--bg--dark: $grey-15;
 
 $anonymous--bg--light: $grey-80;
 $anonymous--bg--dark: $grey-40;
+
+// Color Definitions: Unit
+$unit--bg--light: $grey-100;
+$unit--bg--dark: $grey-20;
+
+$unit--bg--light--hover: $grey-90;
+$unit--bg--dark--hover: $grey-30;
 
 // Color Definitions: Dialog
 $dialog--bg--light: $grey-100;
@@ -176,6 +189,13 @@ $menu--item--bg--light--hover: $grey-85;
 $menu--item--bg--dark--hover: $grey-00;
 $menu--text--light--hover: $grey-100;
 $menu--text--dark--hover: $grey-15;
+
+// Color Definitions: Notices
+$notice--bg--light: $accent--yellow--100;
+$notice--bg--dark: $accent--yellow--00;
+
+$notice--text--light: $accent--yellow--20;
+$notice--text--dark: $accent--yellow--100;
 
 // Color Definitions: Button
 $button--bg--light: $grey-80;
@@ -195,7 +215,7 @@ $button--text--light--hover: $grey-40;
 $button--text--light--disabled: $grey-70;
 $button--text--dark: $grey-70;
 $button--text--dark--hover: $grey-100;
-$button--text--dark--disabled: $grey-40;
+$button--text--dark--disabled: $grey-50;
 
 // Color Definitions: Input
 $input--bg--light: $grey-100;
@@ -268,7 +288,7 @@ $extra--purple--card--bg--dark: $purple-40;
 $extra--purple--primary--dark: $purple-05;
 $extra--purple--secondary--dark: $purple-10;
 $extra--purple--light--text--dark: $purple-30;
-$extra--purple--text--dark: $purple-20;
+$extra--purple--text--dark: $purple-80;
 $extra--purple--dark--text--dark: $purple-00;
 
 // Color Definitions: Subaura
