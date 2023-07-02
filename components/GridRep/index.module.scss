@@ -18,13 +18,12 @@
       text-decoration: none;
     }
 
-    h2,
-    .Grid {
+    .weaponGrid {
       cursor: pointer;
-    }
 
-    .Grid .Weapon {
-      box-shadow: inset 0 0 0 1px var(--grid-border-color);
+      .weapon {
+        background: var(--unit-bg-hover);
+      }
     }
 
     @include breakpoint(phone) {
@@ -43,7 +42,7 @@
     grid-gap: $unit; /* add a gap of 8px between grid items */
 
     .weapon {
-      background: var(--card-bg);
+      background: var(--unit-bg);
       border-radius: 4px;
     }
 
@@ -51,7 +50,7 @@
       aspect-ratio: 73/153;
       display: grid;
       grid-column: 1 / 2; /* spans one column */
-      max-height: 153px;
+      height: calc(100% - $unit-fourth);
     }
 
     .weapons {
