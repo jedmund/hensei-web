@@ -125,7 +125,7 @@ const ExtendedMasterySelect = ({
   }
 
   return (
-    <div className="SelectSet">
+    <div className={styles.set}>
       <Select
         key={`${name}_type`}
         value={`${currentItemSkill ? currentItemSkill.id : 0}`}
@@ -134,7 +134,12 @@ const ExtendedMasterySelect = ({
         onValueChange={handleLeftSelectChange}
         onOpenChange={() => changeOpen('left')}
         onClose={onClose}
-        triggerClass="Left modal"
+        trigger={{
+          className: classNames({
+            left: true,
+            modal: true,
+          }),
+        }}
         overlayVisible={false}
       >
         {generateLeftOptions()}
@@ -148,11 +153,13 @@ const ExtendedMasterySelect = ({
         onOpenChange={() => changeOpen('right')}
         onClose={onClose}
         overlayVisible={false}
-        triggerClass={classNames({
-          Right: true,
-          modal: true,
-          hidden: currentItemSkill?.id === 0,
-        })}
+        trigger={{
+          className: classNames({
+            right: true,
+            modal: true,
+            hidden: currentItemSkill?.id === 0,
+          }),
+        }}
       >
         {generateRightOptions()}
       </Select>
