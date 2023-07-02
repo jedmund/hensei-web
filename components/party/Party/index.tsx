@@ -21,7 +21,7 @@ import { GridType } from '~utils/enums'
 import { retrieveCookies } from '~utils/retrieveCookies'
 import { setEditKey, storeEditKey, unsetEditKey } from '~utils/userToken'
 
-import type { DetailsObject } from '~types'
+import type { CharacterOverMastery, DetailsObject } from '~types'
 
 // Props
 interface Props {
@@ -316,8 +316,22 @@ const Party = (props: Props) => {
 
   const storeCharacters = (list: Array<GridCharacter>) => {
     list.forEach((object: GridCharacter) => {
-      if (object.position != null)
-        appState.grid.characters[object.position] = object
+      let character = clonedeep(object)
+
+      if (character.over_mastery) {
+        const overMastery: CharacterOverMastery = {
+          1: object.over_mastery[0],
+          2: object.over_mastery[1],
+          3: object.over_mastery[2],
+          4: object.over_mastery[3],
+        }
+
+        character.over_mastery = overMastery
+      }
+
+      if (character.position != null) {
+        appState.grid.characters[object.position] = character
+      }
     })
   }
 
