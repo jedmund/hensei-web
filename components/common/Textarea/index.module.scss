@@ -35,8 +35,9 @@
 
   &[contenteditable='true']:empty:before {
     content: attr(placeholder);
-    color: var(--text-secondary);
+    color: var(--text-tertiary);
     pointer-events: none;
+    white-space: pre;
     display: block; /* For Firefox */
   }
 }
