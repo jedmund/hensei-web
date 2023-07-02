@@ -22,6 +22,7 @@ const Alert = (props: Props) => {
     <AlertDialog.Root open={props.open}>
       <AlertDialog.Portal>
         <Overlay
+          className="alert"
           open={props.open}
           visible={true}
           onClick={props.cancelAction}

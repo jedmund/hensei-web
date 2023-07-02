@@ -8,6 +8,10 @@
   bottom: 0;
   left: 0;
 
+  &.alert {
+    z-index: 11;
+  }
+
   &.job {
     animation: none;
     backdrop-filter: blur(5px) saturate(100%) brightness(80%) opacity(1);

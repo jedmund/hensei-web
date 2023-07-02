@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import styles from './index.module.scss'
 
 interface Props {
+  className?: string
   visible: boolean
   open: boolean
   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
@@ -13,15 +14,18 @@ const defaultProps = {
 }
 
 const Overlay = React.forwardRef<HTMLDivElement, Props>(function Overlay(
-  { visible: displayed, open, onClick }: Props,
+  { className, visible: displayed, open, onClick }: Props,
   forwardedRef
 ) {
   const [visible, setVisible] = useState(open)
 
-  const classes = classNames({
-    [styles.overlay]: true,
-    [styles.visible]: displayed,
-  })
+  const classes = classNames(
+    {
+      [styles.overlay]: true,
+      [styles.visible]: displayed,
+    },
+    className?.split(' ').map((c) => styles[c])
+  )
 
   useEffect(() => {
     if (!open) {
@@ -38,7 +42,6 @@ const Overlay = React.forwardRef<HTMLDivElement, Props>(function Overlay(
 
   function handleClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     // event.stopPropagation()
-    console.log('Hey!')
     if (onClick) onClick(event)
   }
 
