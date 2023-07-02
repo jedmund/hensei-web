@@ -81,7 +81,7 @@ const PartySegmentedControl = (props: Props) => {
         <RepSegment
           controlGroup="grid"
           inputName="weapons"
-          name="Weapons"
+          name={t('party.segmented_control.weapons')}
           selected={props.selectedTab === GridType.Weapon}
           onClick={props.onClick}
         >
@@ -96,7 +96,7 @@ const PartySegmentedControl = (props: Props) => {
       <RepSegment
         controlGroup="grid"
         inputName="summons"
-        name="Summons"
+        name={t('party.segmented_control.summons')}
         selected={props.selectedTab === GridType.Summon}
         onClick={props.onClick}
       >
