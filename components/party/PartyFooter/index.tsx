@@ -14,6 +14,9 @@ import SegmentedControl from '~components/common/SegmentedControl'
 import Segment from '~components/common/Segment'
 import GridRepCollection from '~components/GridRepCollection'
 import GridRep from '~components/GridRep'
+import RemixTeamAlert from '~components/dialogs/RemixTeamAlert'
+import RemixedToast from '~components/toasts/RemixedToast'
+import EditPartyModal from '../EditPartyModal'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
@@ -30,6 +33,7 @@ interface Props {
   party?: Party
   new: boolean
   editable: boolean
+  remixCallback: () => void
   updateCallback: (details: DetailsObject) => void
 }
 
@@ -37,13 +41,15 @@ const PartyFooter = (props: Props) => {
   const { t } = useTranslation('common')
   const router = useRouter()
 
-  const { party } = useSnapshot(appState)
+  const { party: partySnapshot } = useSnapshot(appState)
 
   const youtubeUrlRegex =
     /(?:https:\/\/www\.youtube\.com\/watch\?v=|https:\/\/youtu\.be\/)([\w-]+)/g
 
-  // State: UI
+  // State: Component
   const [currentSegment, setCurrentSegment] = useState(0)
+  const [remixAlertOpen, setRemixAlertOpen] = useState(false)
+  const [remixToastOpen, setRemixToastOpen] = useState(false)
 
   // State: Data
   const [remixes, setRemixes] = useState<Party[]>([])
@@ -52,8 +58,8 @@ const PartyFooter = (props: Props) => {
 
   useEffect(() => {
     // Extract the video IDs from the description
-    if (party.description) {
-      const videoIds = extractYoutubeVideoIds(party.description)
+    if (partySnapshot.description) {
+      const videoIds = extractYoutubeVideoIds(partySnapshot.description)
 
       // Fetch the video titles for each ID
       const fetchPromises = videoIds.map(({ id }) => fetchYoutubeData(id))
@@ -62,7 +68,7 @@ const PartyFooter = (props: Props) => {
       Promise.all(fetchPromises).then((videoTitles) => {
         // Replace the video URLs in the description with LiteYoutubeEmbed elements
         const newDescription = reactStringReplace(
-          party.description,
+          partySnapshot.description,
           youtubeUrlRegex,
           (match, i) => (
             <LiteYouTubeEmbed
@@ -81,7 +87,7 @@ const PartyFooter = (props: Props) => {
     } else {
       setEmbeddedDescription('')
     }
-  }, [party.description])
+  }, [partySnapshot.description])
 
   async function fetchYoutubeData(videoId: string) {
     return await youtube
@@ -154,6 +160,30 @@ const PartyFooter = (props: Props) => {
     })
   }
 
+  // Actions: Remix team
+  function remixTeamCallback() {
+    setRemixToastOpen(true)
+    props.remixCallback()
+  }
+
+  // Alerts: Remix team
+  function openRemixTeamAlert() {
+    setRemixAlertOpen(true)
+  }
+
+  function handleRemixTeamAlertChange(open: boolean) {
+    setRemixAlertOpen(open)
+  }
+
+  // Toasts: Remix team
+  function handleRemixToastOpenChanged(open: boolean) {
+    setRemixToastOpen(!open)
+  }
+
+  function handleRemixToastCloseClicked() {
+    setRemixToastOpen(false)
+  }
+
   const segmentedControl = (
     <SegmentedControl className="background">
       <Segment
@@ -170,24 +200,31 @@ const PartyFooter = (props: Props) => {
         selected={currentSegment === 1}
         onClick={() => setCurrentSegment(1)}
       >
-        {t('footer.remixes.label', { count: party?.remixes?.length })}
+        {t('footer.remixes.label', { count: partySnapshot?.remixes?.length })}
       </Segment>
     </SegmentedControl>
   )
 
   const descriptionSection = (
     <section className={styles.description}>
-      {party && party.description && party.description.length > 0 && (
-        <Linkify>{embeddedDescription}</Linkify>
-      )}
-      {(!party || !party.description) && (
+      {partySnapshot &&
+        partySnapshot.description &&
+        partySnapshot.description.length > 0 && (
+          <Linkify>{embeddedDescription}</Linkify>
+        )}
+      {(!partySnapshot || !partySnapshot.description) && (
         <div className={styles.noDescription}>
           <h3>{t('footer.description.empty')}</h3>
           {props.editable && (
-            <Button
-              leftAccessoryIcon={<EditIcon />}
-              text={t('buttons.show_info')}
-            />
+            <EditPartyModal
+              party={props.party}
+              updateCallback={props.updateCallback}
+            >
+              <Button
+                leftAccessoryIcon={<EditIcon />}
+                text={t('buttons.show_info')}
+              />
+            </EditPartyModal>
           )}
         </div>
       )}
@@ -196,20 +233,24 @@ const PartyFooter = (props: Props) => {
 
   const remixesSection = (
     <section className={styles.remixes}>
-      {party?.remixes?.length > 0 && (
+      {partySnapshot?.remixes?.length > 0 && (
         <GridRepCollection>{renderRemixes()}</GridRepCollection>
       )}
-      {party?.remixes?.length === 0 && (
+      {partySnapshot?.remixes?.length === 0 && (
         <div className={styles.noRemixes}>
           <h3>{t('footer.remixes.empty')}</h3>
-          <Button leftAccessoryIcon={<RemixIcon />} text={t('buttons.remix')} />
+          <Button
+            leftAccessoryIcon={<RemixIcon />}
+            text={t('buttons.remix')}
+            onClick={openRemixTeamAlert}
+          />
         </div>
       )}
     </section>
   )
 
   function renderRemixes() {
-    return party?.remixes.map((party, i) => {
+    return partySnapshot?.remixes.map((party, i) => {
       return (
         <GridRep
           id={party.id}
@@ -237,6 +278,21 @@ const PartyFooter = (props: Props) => {
         {currentSegment === 0 && descriptionSection}
         {currentSegment === 1 && remixesSection}
       </div>
+
+      <RemixTeamAlert
+        creator={props.editable}
+        name={partySnapshot.name ? partySnapshot.name : t('no_title')}
+        open={remixAlertOpen}
+        onOpenChange={handleRemixTeamAlertChange}
+        remixCallback={remixTeamCallback}
+      />
+
+      <RemixedToast
+        open={remixToastOpen}
+        partyName={props.party?.name || t('no_title')}
+        onOpenChange={handleRemixToastOpenChanged}
+        onCloseClick={handleRemixToastCloseClicked}
+      />
     </>
   )
 }
