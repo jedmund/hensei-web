@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { getCookie, setCookie } from 'cookies-next'
+import { getCookie } from 'cookies-next'
 import { get, set } from 'local-storage'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import { v4 as uuidv4 } from 'uuid'
 import clonedeep from 'lodash.clonedeep'
 
 import ErrorSection from '~components/ErrorSection'
@@ -14,6 +13,7 @@ import api from '~utils/api'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import { accountCookie, setHeaders } from '~utils/userToken'
 import { appState, initialAppState } from '~utils/appState'
+import { createLocalId } from '~utils/localId'
 import { groupWeaponKeys } from '~utils/groupWeaponKeys'
 
 import type { AxiosError } from 'axios'
@@ -173,20 +173,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   setHeaders(req, res)
 
   // If there is no account entry in cookies, create a UUID and store it
-  if (!accountCookie(req, res)) {
-    const uuid = uuidv4()
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 60)
-
-    const cookieObj = {
-      userId: uuid,
-      username: undefined,
-      token: undefined,
-    }
-
-    const options = req && res ? { req, res } : {}
-    setCookie('account', cookieObj, { path: '/', expires: expiresAt, ...options })
-  }
+  createLocalId(req, res)
 
   // Fetch latest version
   const version = await fetchLatestVersion()
