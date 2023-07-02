@@ -14,6 +14,23 @@
   }
 }
 
+.notice {
+  background-color: var(--notice-bg);
+  border-radius: $input-corner;
+
+  padding: $unit-2x;
+  display: flex;
+  align-items: center;
+
+  p {
+    color: var(--notice-text);
+
+    strong {
+      font-weight: $bold;
+    }
+  }
+}
+
 .fields {
   display: flex;
   flex-direction: column;

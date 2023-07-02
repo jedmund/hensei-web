@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 
 import { Dialog, DialogTrigger } from '~components/common/Dialog'
 import DialogHeader from '~components/common/DialogHeader'
@@ -22,6 +22,7 @@ import styles from './index.module.scss'
 interface Props extends DialogProps {
   defaultFilterSet: FilterSet
   filterSet: FilterSet
+  persistFilters?: boolean
   sendAdvancedFilters: (filters: FilterSet) => void
 }
 
@@ -126,7 +127,10 @@ const FilterModal = (props: Props) => {
     if (maxButtonsCount) filters.button_count = maxButtonsCount
     if (maxTurnsCount) filters.turn_count = maxTurnsCount
 
-    setCookie('filters', filters, { path: '/' })
+    if (props.persistFilters) {
+      setCookie('filters', filters, { path: '/' })
+    }
+
     props.sendAdvancedFilters(filters)
     openChange()
   }
@@ -311,6 +315,7 @@ const FilterModal = (props: Props) => {
       onOpenChange={() => openSelect('charge_attack')}
       onClose={() => setChargeAttackOpen(false)}
       onChange={handleChargeAttackValueChange}
+      autoFocus={true}
     >
       <SelectItem key="on-off" value="-1">
         {t('modals.filters.options.on_and_off')}
@@ -375,6 +380,20 @@ const FilterModal = (props: Props) => {
     />
   )
 
+  const filterNotice = () => {
+    if (props.persistFilters) return null
+    return (
+      <div className={styles.notice}>
+        <p>
+          <Trans i18nKey="modals.filters.notice">
+            Filters set on <strong>user profiles</strong> and in{' '}
+            <strong>Your saved teams</strong> will not be saved
+          </Trans>
+        </p>
+      </div>
+    )
+  }
+
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{props.children}</DialogTrigger>
@@ -387,6 +406,7 @@ const FilterModal = (props: Props) => {
       >
         <DialogHeader title={t('modals.filters.title')} />
         <div className={styles.fields}>
+          {filterNotice()}
           {chargeAttackField()}
           {fullAutoField()}
           {autoGuardField()}
@@ -419,6 +439,10 @@ const FilterModal = (props: Props) => {
       </DialogContent>
     </Dialog>
   )
+}
+
+FilterModal.defaultProps = {
+  persistFilters: true,
 }
 
 export default FilterModal
