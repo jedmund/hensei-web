@@ -208,6 +208,7 @@
         "name": "編成名",
         "description": "説明",
         "raid": "バトル",
+        "extra": "Additional weapons",
         "charge_attack": "奥義",
         "full_auto": "フルオート",
         "auto_guard": "オートガード",
@@ -217,8 +218,12 @@
         "chain_count": "チェイン数",
         "clear_time": "討伐時間"
       },
+      "descriptions": {
+        "extra": "選択したバトルによってAdditional Weapons枠が表示される"
+      },
       "placeholders": {
-        "name": "編成に名前を付ける"
+        "name": "編成に名前を付ける",
+        "description": "編成についてのメモを書ける\n\nどんなムーブをしていますか?\n代用キャラや武器は？"
       },
       "extra_notice": "Additional Weapons枠に武器を装備することはできます",
       "extra_notice_guidebooks": "Additional Weaponsまたはセフィラ導本を装備することはできます"
@@ -246,6 +251,7 @@
         "user_quality": "無名のユーザーなし",
         "original_only": "リミックスなし"
       },
+      "notice": "フィルターは<strong>保存した編成</strong>と<strong>ユーザープロフィール</strong>には保存されません",
       "options": {
         "on": "ON",
         "off": "OFF",
@@ -253,7 +259,7 @@
       },
       "buttons": {
         "confirm": "フィルターを保存する",
-        "clear": "保存したフィルターをクリア"
+        "clear": "保存したフィルターをリセット"
       }
     },
     "guidebooks": {
@@ -540,9 +546,12 @@
   "tooltips": {
     "copy_url": "この編成のURLをコピーする",
     "new": "新しい編成を作成する",
-    "remix": "この編成の複製を作成する",
     "save": "この編成をアカウントに保存する",
-    "source": "オリジナルの編成へ"
+    "remix": {
+      "create": "この編成の複製を作成する",
+      "source": "原編成へ",
+      "deleted": "原編成は削除されました"
+    }
   },
   "equipped": "装備した",
   "extra_weapons": "Additional Weapons",
@@ -555,5 +564,6 @@
   "no_user": "無名",
   "no_job": "ジョブなし",
   "no_value": "値なし",
+  "loading": "ロード中...",
   "level": "レベル"
 }
