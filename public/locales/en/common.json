@@ -223,7 +223,8 @@
         "extra": "Additional weapons are controlled by the selected battle"
       },
       "placeholders": {
-        "name": "Name your team"
+        "name": "Name your team",
+        "description": "Write some helpful notes about your team\n\nWhat's the turn rotation?\nWhat are some good unit subtitutions?"
       },
       "extra_notice": "You can add additional weapons to this team",
       "extra_notice_guidebooks": "You can add additional weapons and Sephira Guidebooks to this team"
@@ -251,6 +252,7 @@
         "user_quality": "Hide anonymous users",
         "original_only": "Hide remixed teams"
       },
+      "notice": "Filters set on <strong>user profiles</strong> and in <strong>your saved teams</strong> will not be saved",
       "options": {
         "on": "On",
         "off": "Off",
@@ -258,7 +260,7 @@
       },
       "buttons": {
         "confirm": "Save filters",
-        "clear": "Clear filters"
+        "clear": "Reset to default"
       }
     },
     "guidebooks": {
@@ -544,9 +546,12 @@
   "tooltips": {
     "copy_url": "Copy the URL to this team",
     "new": "Create a new team",
-    "remix": "Make a copy of this team",
     "save": "Save this team to find later",
-    "source": "Go to original team"
+    "remix": {
+      "create": "Make a copy of this team",
+      "source": "Go to original team",
+      "deleted": "The original team has been deleted"
+    }
   },
   "extra_weapons": "Additional Weapons",
   "sephira_guidebooks": "Sephira Guidebooks",
@@ -559,5 +564,6 @@
   "no_user": "Anonymous",
   "no_job": "No class",
   "no_value": "No value",
+  "loading": "Loading...",
   "level": "Level"
 }
