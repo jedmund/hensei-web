@@ -1,6 +1,4 @@
 import React, { useState, ChangeEvent, KeyboardEvent } from 'react'
-import classNames from 'classnames'
-
 import Input from '~components/common/Input'
 import styles from './index.module.scss'
 
@@ -9,13 +7,14 @@ interface Props
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   > {
+  bound: boolean
   value: number
   onValueChange: (value: number) => void
 }
 
 const DurationInput = React.forwardRef<HTMLInputElement, Props>(
   function DurationInput(
-    { className, value, onValueChange, ...props },
+    { bound, className, value, onValueChange, ...props },
     forwardedRef
   ) {
     // State
@@ -178,16 +177,11 @@ const DurationInput = React.forwardRef<HTMLInputElement, Props>(
     }
 
     return (
-      <div className={classNames(className, { Duration: true })}>
+      <div className={styles.duration}>
         <Input
           ref={minutesRef}
           type="text"
-          className={classNames(
-            {
-              AlignRight: true,
-            },
-            className
-          )}
+          className="alignRight duration"
           value={getMinutes()}
           onChange={handleMinutesChange}
           onKeyUp={handleKeyUp}
@@ -199,12 +193,7 @@ const DurationInput = React.forwardRef<HTMLInputElement, Props>(
         <Input
           ref={secondsRef}
           type="text"
-          className={classNames(
-            {
-              AlignRight: true,
-            },
-            className
-          )}
+          className="alignRight duration"
           value={getSeconds() > 0 ? `${getSeconds()}`.padStart(2, '0') : ''}
           onChange={handleSecondsChange}
           onKeyUp={handleKeyUp}

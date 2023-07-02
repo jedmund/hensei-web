@@ -1,4 +1,4 @@
-.Duration {
+.duration {
   align-items: center;
   background: var(--input-bound-bg);
   border: 2px solid transparent;
@@ -13,23 +13,5 @@
   &:focus-within {
     border: 2px solid $blue;
     outline: none;
-  }
-
-  .Input {
-    background: transparent;
-    border: none;
-    padding: 0;
-    width: initial;
-    height: 100%;
-    padding: calc($unit-2x - 2px) 0;
-
-    &:hover {
-      background: transparent;
-    }
-
-    &:focus,
-    &:focus-visible {
-      border: none;
-    }
   }
 }
