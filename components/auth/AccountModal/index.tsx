@@ -10,25 +10,14 @@ import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
 import Button from '~components/common/Button'
 import SelectItem from '~components/common/SelectItem'
-import PictureSelectItem from '~components/common/PictureSelectItem'
 import SelectTableField from '~components/common/SelectTableField'
-// import * as Switch from '@radix-ui/react-switch'
 
 import api from '~utils/api'
 import changeLanguage from 'utils/changeLanguage'
 import { accountState } from '~utils/accountState'
 import { pictureData } from '~utils/pictureData'
 
-import CrossIcon from '~public/icons/Cross.svg'
 import styles from './index.module.scss'
-
-type StateVariables = {
-  [key: string]: boolean
-  picture: boolean
-  gender: boolean
-  language: boolean
-  theme: boolean
-}
 
 interface Props {
   open: boolean
@@ -55,23 +44,8 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
     const [mounted, setMounted] = useState(false)
     const { theme: appTheme, setTheme: setAppTheme } = useTheme()
 
-    // Cookies
-    const accountCookie = getCookie('account')
-    const userCookie = getCookie('user')
-
-    const cookieData = {
-      account: accountCookie ? JSON.parse(accountCookie as string) : undefined,
-      user: userCookie ? JSON.parse(userCookie as string) : undefined,
-    }
-
     // UI State
     const [open, setOpen] = useState(false)
-    const [selectOpenState, setSelectOpenState] = useState<StateVariables>({
-      picture: false,
-      gender: false,
-      language: false,
-      theme: false,
-    })
 
     // Values
     const [username, setUsername] = useState(props.username || '')
@@ -79,7 +53,6 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
     const [language, setLanguage] = useState(props.language || '')
     const [gender, setGender] = useState(props.gender || 0)
     const [theme, setTheme] = useState(props.theme || 'system')
-    // const [privateProfile, setPrivateProfile] = useState(false)
 
     // Setup
     const [pictureOpen, setPictureOpen] = useState(false)
@@ -145,7 +118,6 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
           language: language,
           gender: gender,
           theme: theme,
-          // private: privateProfile,
         },
       }
 

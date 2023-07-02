@@ -1,11 +1,9 @@
 import React from 'react'
-import Link from 'next/link'
 import { Trans, useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
 import LinkItem from '../LinkItem'
 
-import ShareIcon from '~public/icons/Share.svg'
 import DiscordIcon from '~public/icons/discord.svg'
 import GithubIcon from '~public/icons/github.svg'
 

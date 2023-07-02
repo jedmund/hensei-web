@@ -1,6 +1,4 @@
 import React, { PropsWithChildren } from 'react'
-import classNames from 'classnames'
-
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
 import styles from './index.module.scss'

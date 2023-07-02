@@ -1,7 +1,6 @@
 import React from 'react'
-import * as RadixSwitch from '@radix-ui/react-switch'
-
 import classNames from 'classnames'
+import * as RadixSwitch from '@radix-ui/react-switch'
 import styles from './index.module.scss'
 
 interface Props

@@ -32,7 +32,7 @@ export const PopoverContent = React.forwardRef<HTMLDivElement, Props>(
           ref={forwardedRef}
         >
           {children}
-          <PopoverPrimitive.Arrow className="Arrow" />
+          <PopoverPrimitive.Arrow className={styles.arrow} />
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     )

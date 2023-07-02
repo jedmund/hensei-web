@@ -3,7 +3,6 @@ import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
 import ContentUpdate from '~components/about/ContentUpdate'
-import ChangelogUnit from '~components/about/ChangelogUnit'
 
 import styles from './index.module.scss'
 

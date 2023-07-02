@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
-
 import cloneDeep from 'lodash.clonedeep'
-
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import SearchFilter from '~components/search/SearchFilter'
 import SearchFilterCheckboxItem from '~components/search/SearchFilterCheckboxItem'
 
-import styles from './index.module.scss'
 import {
   emptyElementState,
   emptyProficiencyState,
   emptyRarityState,
 } from '~utils/emptyStates'
 import { elements, proficiencies, rarities } from '~utils/stateValues'
+
+import styles from './index.module.scss'
 
 interface Props {
   sendFilters: (filters: { [key: string]: number[] }) => void

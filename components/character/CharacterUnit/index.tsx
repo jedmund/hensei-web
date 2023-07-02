@@ -1,4 +1,4 @@
-import React, { MouseEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { Trans, useTranslation } from 'next-i18next'
