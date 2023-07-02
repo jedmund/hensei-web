@@ -7,6 +7,10 @@
     margin-bottom: 0;
   }
 
+  &.hidden {
+    display: none;
+  }
+
   &.full {
     width: 100%;
   }
@@ -18,6 +22,10 @@
     min-width: 100%;
     margin-bottom: $unit;
     width: 0;
+  }
+
+  .fullHeight {
+    height: 100%;
   }
 
   .input {
@@ -107,12 +115,13 @@
       width: $unit-8x;
     }
 
-    &.alignRight {
+    &.range {
       text-align: right;
+      width: $unit-10x;
     }
 
-    &.hidden {
-      display: none;
+    &.alignRight {
+      text-align: right;
     }
   }
 
