@@ -33,16 +33,20 @@
       minmax($unit-20x, 1fr)
       minmax($unit-20x, 1fr)
       minmax($unit-20x, 1fr)
-      0.5fr;
+      auto;
     box-sizing: border-box;
     flex-direction: row;
     gap: $unit;
-    width: auto;
+    width: 75%;
 
     @include breakpoint(tablet) {
       grid-template-columns: 1fr;
       grid-template-rows: auto;
       width: 100%;
+    }
+
+    & > * {
+      min-width: 0;
     }
   }
 

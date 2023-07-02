@@ -11,12 +11,13 @@ import SelectItem from '~components/common/SelectItem'
 import Button from '~components/common/Button'
 
 import { appState } from '~utils/appState'
-import { defaultFilterset } from '~utils/defaultFilters'
 
 import FilterIcon from '~public/icons/Filter.svg'
 import styles from './index.module.scss'
 
 interface Props {
+  defaultFilterset: FilterSet
+  persistFilters?: boolean
   children: React.ReactNode
   scrolled: boolean
   element?: number
@@ -62,13 +63,14 @@ const FilterBar = (props: Props) => {
   useEffect(() => {
     // Fetch user's advanced filters
     const filtersCookie = getCookie('filters')
-    if (filtersCookie) setAdvancedFilters(JSON.parse(filtersCookie as string))
-    else setAdvancedFilters(defaultFilterset)
+    if (filtersCookie && props.persistFilters) {
+      setAdvancedFilters(JSON.parse(filtersCookie as string))
+    } else setAdvancedFilters(props.defaultFilterset)
   }, [])
 
   useEffect(() => {
-    setMatchesDefaultFilters(equals(advancedFilters, defaultFilterset))
-  }, [advancedFilters, defaultFilterset])
+    setMatchesDefaultFilters(equals(advancedFilters, props.defaultFilterset))
+  }, [advancedFilters, props.defaultFilterset])
 
   function openElementSelect() {
     setElementOpen(!elementOpen)
@@ -194,15 +196,21 @@ const FilterBar = (props: Props) => {
           />
         </div>
       </div>
+
       <FilterModal
-        defaultFilterSet={defaultFilterset}
+        defaultFilterSet={props.defaultFilterset}
         filterSet={advancedFilters}
+        persistFilters={props.persistFilters}
         open={filterModalOpen}
         onOpenChange={setFilterModalOpen}
         sendAdvancedFilters={handleAdvancedFiltersChanged}
       />
     </>
   )
+}
+
+FilterBar.defaultProps = {
+  persistFilters: true,
 }
 
 export default FilterBar
