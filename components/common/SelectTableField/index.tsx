@@ -1,11 +1,9 @@
-import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 import Select from '~components/common/Select'
 import TableField from '~components/common/TableField'
 
-import styles from './index.module.scss'
-
 interface Props {
+  autoFocus?: boolean
   name: string
   label: string
   description?: string
@@ -38,6 +36,7 @@ const SelectTableField = (props: Props) => {
       label={props.label}
     >
       <Select
+        autoFocus={props.autoFocus}
         name={props.name}
         open={props.open}
         onOpenChange={props.onOpenChange}

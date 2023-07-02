@@ -5,7 +5,6 @@ import classNames from 'classnames'
 import Overlay from '~components/common/Overlay'
 
 import ChevronIcon from '~public/icons/Chevron.svg'
-
 import styles from './index.module.scss'
 
 // Props
@@ -96,6 +95,7 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function select(
       onOpenChange={props.onOpenChange}
     >
       <RadixSelect.Trigger
+        autoFocus={props.autoFocus || false}
         className={triggerClasses}
         placeholder={props.placeholder}
         ref={forwardedRef}
