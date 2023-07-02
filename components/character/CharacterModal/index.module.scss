@@ -1,78 +1,32 @@
-.Character.DialogContent {
-  gap: $unit;
-  min-width: 480px;
+.mods {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-4x;
+  padding: 0 $unit-4x $unit-2x;
 
-  @include breakpoint(phone) {
-    min-width: inherit;
-  }
-
-  .DialogHeader {
-    transition: 0.18s padding-top ease-in-out;
-    position: sticky;
-    top: 0;
-
-    &.Scrolled {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.34);
-      padding-top: $unit-2x;
-    }
-
-    img {
-      transition: 0.2s width ease-in-out;
-      width: $unit-6x !important;
-    }
-
-    .DialogTitle {
-      font-size: $font-large;
-    }
-
-    .SubTitle {
-      display: none;
-    }
-  }
-
-  .mods {
+  section {
     display: flex;
     flex-direction: column;
-    gap: $unit-4x;
-    padding: 0 $unit-4x $unit-2x;
+    gap: $unit-half;
 
-    section {
-      display: flex;
-      flex-direction: column;
-      gap: $unit-half;
-
-      &.inline {
-        align-items: center;
-        flex-direction: row;
-        justify-content: space-between;
-
-        h3 {
-          margin: 0;
-        }
-      }
+    &.inline {
+      align-items: center;
+      flex-direction: row;
+      justify-content: space-between;
 
       h3 {
-        color: $grey-55;
-        font-size: $font-small;
-        margin-bottom: $unit;
-      }
-
-      select {
-        background-color: $grey-90;
+        margin: 0;
       }
     }
 
-    .Button {
-      font-size: $font-regular;
-      padding: ($unit * 1.5) ($unit-2x);
-      width: 100%;
+    h3 {
+      color: $grey-55;
+      font-size: $font-small;
+      margin-bottom: $unit;
+    }
 
-      &.btn-disabled {
-        background: $grey-90;
-        color: $grey-70;
-        cursor: not-allowed;
-      }
+    select {
+      background-color: $grey-90;
     }
   }
 }
