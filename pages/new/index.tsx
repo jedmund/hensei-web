@@ -36,10 +36,51 @@ const NewRoute: React.FC<Props> = ({
 }: Props) => {
   // Set up router
   const router = useRouter()
-  const [selectedTab, setSelectedTab] = useState<GridType>(GridType.Weapon)
 
   function callback(path: string) {
     router.push(path, undefined, { shallow: true })
+  }
+
+  const getCurrentTab = () => {
+    const parts = router.asPath.split('/')
+    const tab = parts[parts.length - 1]
+
+    switch (tab) {
+      case 'characters':
+        return GridType.Character
+      case 'weapons':
+        return GridType.Weapon
+      case 'summons':
+        return GridType.Summon
+      default:
+        return GridType.Weapon
+    }
+  }
+
+  const [selectedTab, setSelectedTab] = useState<GridType>(getCurrentTab())
+
+  const handleTabChange = (value: string) => {
+    const path = [
+      // Enable when using Next.js Router
+      // 'p',
+      router.asPath.split('/').filter((el) => el != '')[1],
+      value,
+    ].join('/')
+
+    switch (value) {
+      case 'characters':
+        setSelectedTab(GridType.Character)
+        break
+      case 'weapons':
+        setSelectedTab(GridType.Weapon)
+        break
+      case 'summons':
+        setSelectedTab(GridType.Summon)
+        break
+    }
+
+    if (router.asPath !== '/new' && router.asPath !== '/')
+      router.replace(path, undefined, { shallow: true })
   }
 
   useEffect(() => {
@@ -105,7 +146,12 @@ const NewRoute: React.FC<Props> = ({
     return (
       <React.Fragment key={router.asPath}>
         {pageHead()}
-        <Party new={true} pushHistory={callback} selectedTab={selectedTab} />
+        <Party
+          new={true}
+          pushHistory={callback}
+          selectedTab={selectedTab}
+          handleTabChanged={handleTabChange}
+        />
       </React.Fragment>
     )
   } else return pageError()
