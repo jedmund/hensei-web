@@ -421,7 +421,7 @@ const SearchModal = (props: Props) => {
           <div className={styles.searchBar}>
             <Input
               bound={true}
-              className="full"
+              fieldsetClassName="full"
               autoComplete="off"
               name="query"
               placeholder={props.placeholderText}
