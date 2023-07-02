@@ -345,7 +345,7 @@ const TeamsRoute: React.FC<Props> = ({
             hasMore={totalPages > currentPage}
             loader={
               <div id="NotFound">
-                <h2>Loading...</h2>
+                <h2>{t('loading')}</h2>
               </div>
             }
           >
