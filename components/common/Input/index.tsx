@@ -6,6 +6,8 @@ interface Props extends React.ComponentProps<'input'> {
   bound?: boolean
   error?: string
   label?: string
+  fieldsetClassName?: String
+  wrapperClassName?: string
   hide1Password?: boolean
   showCounter?: boolean
 }
@@ -17,7 +19,16 @@ const defaultProps = {
 }
 
 const Input = React.forwardRef<HTMLInputElement, Props>(function input(
-  { value: initialValue, bound, label, error, showCounter, ...props }: Props,
+  {
+    value: initialValue,
+    bound,
+    label,
+    error,
+    showCounter,
+    fieldsetClassName,
+    wrapperClassName,
+    ...props
+  }: Props,
   forwardedRef
 ) {
   // States
@@ -26,7 +37,18 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
     props.maxLength ? props.maxLength - (`${value}` || '').length : 0
   )
 
+  useEffect(() => {
+    setValue(initialValue)
+  }, [initialValue])
+
   // Classes
+  const fieldsetClasses = classNames(
+    {
+      [styles.fieldset]: true,
+    },
+    fieldsetClassName?.split(' ').map((className) => styles[className])
+  )
+
   const inputWrapperClasses = classNames(
     {
       [styles.wrapper]: true,
@@ -34,7 +56,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
       [styles.input]: showCounter,
       [styles.bound]: showCounter && bound,
     },
-    props.className?.split(' ').map((className) => styles[className])
+    wrapperClassName?.split(' ').map((className) => styles[className])
   )
 
   const inputClasses = classNames(
@@ -70,7 +92,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
         type={props.type}
         name={props.name}
         placeholder={props.placeholder}
-        value={value}
+        value={value || ''}
         onBlur={props.onBlur}
         onChange={handleChange}
         maxLength={props.maxLength}
@@ -82,7 +104,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(function input(
   )
 
   const fieldset = (
-    <fieldset className={styles.fieldset}>
+    <fieldset className={fieldsetClasses}>
       {label && <legend className={styles.legend}>{label}</legend>}
       {input}
       {error && <span className={styles.error}>{error}</span>}
