@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { subscribe, useSnapshot } from 'valtio'
-import { setCookie, deleteCookie } from 'cookies-next'
+import React, { useState } from 'react'
+import { deleteCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
-import { Trans, useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
 import Link from 'next/link'
 
 import { accountState, initialAccountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
-import { getLocalId } from '~utils/localId'
-import { setEditKey, storeEditKey } from '~utils/userToken'
 
 import {
   DropdownMenu,
@@ -44,7 +41,6 @@ const Header = () => {
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
   // State management
-  const [remixToastOpen, setRemixToastOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [signupModalOpen, setSignupModalOpen] = useState(false)
   const [settingsModalOpen, setSettingsModalOpen] = useState(false)
