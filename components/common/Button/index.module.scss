@@ -118,8 +118,31 @@
     }
   }
 
-  @include breakpoint(phone) {
-    &.remixed {
+  &.remixed.small {
+    padding: $unit-half * 1.5;
+
+    &:disabled {
+      background-color: var(--button-bg-disabled);
+
+      .accessory svg {
+        fill: var(--button-text-disabled);
+
+        &:hover {
+          fill: var(--button-text-disabled);
+        }
+      }
+    }
+
+    .accessory svg {
+      height: 12px;
+      width: 12px;
+    }
+
+    .text {
+      font-size: $font-tiny;
+    }
+
+    @include breakpoint(phone) {
       .text {
         display: none;
       }
