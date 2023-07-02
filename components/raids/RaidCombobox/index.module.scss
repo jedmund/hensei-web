@@ -214,21 +214,3 @@
 .raid.light {
   color: var(--light-text);
 }
-
-.SelectTrigger.Raid:not(.Highlighted) .Value.Empty {
-  color: var(--text-tertiary);
-}
-
-.Filters .SelectTrigger.Raid {
-  & > span {
-    overflow: hidden;
-  }
-
-  .Raid {
-    display: block;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    width: 100%;
-  }
-}

@@ -165,7 +165,7 @@ const RaidCombobox = (props: Props) => {
   const handleArrowKeyPressed = useCallback(
     (direction: 'Up' | 'Down') => {
       const current = listRef.current?.querySelector(
-        '.Raid:focus'
+        '.raid:focus'
       ) as HTMLElement | null
 
       if (current) {
@@ -174,11 +174,11 @@ const RaidCombobox = (props: Props) => {
         if (direction === 'Down' && !current.nextElementSibling) {
           const nextParent =
             current.parentElement?.parentElement?.nextElementSibling
-          next = nextParent?.querySelector('.Raid')
+          next = nextParent?.querySelector('.raid')
         } else if (direction === 'Up' && !current.previousElementSibling) {
           const previousParent =
             current.parentElement?.parentElement?.previousElementSibling
-          next = previousParent?.querySelector('.Raid:last-child')
+          next = previousParent?.querySelector('.raid:last-child')
         } else {
           next =
             direction === 'Up'
@@ -259,7 +259,7 @@ const RaidCombobox = (props: Props) => {
     else if (event.key === 'Enter') {
       event.preventDefault()
       if (listRef.current) {
-        const raid = listRef.current.querySelector('.Raid')
+        const raid = listRef.current.querySelector('.raid')
         if (raid) {
           ;(raid as HTMLElement).focus()
         }

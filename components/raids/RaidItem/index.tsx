@@ -36,6 +36,7 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
     const { t } = useTranslation('common')
 
     const classes = classNames({
+      raid: true,
       [styles.item]: true,
     })
 
