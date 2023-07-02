@@ -90,6 +90,11 @@
         fill: var(--extra-purple-secondary);
       }
     }
+
+    h3 {
+      font-weight: $medium;
+      color: var(--extra-purple-text);
+    }
   }
 
   &.filled h3 {
