@@ -235,24 +235,26 @@ const PartyHeader = (props: Props) => {
   )
 
   const buttonChainToken = () => {
-    if (party.buttonCount || party.chainCount) {
+    if (party.buttonCount !== undefined || party.chainCount !== undefined) {
       let string = ''
 
-      if (party.buttonCount && party.buttonCount > 0) {
+      if (party.buttonCount !== undefined) {
         string += `${party.buttonCount}b`
       }
 
-      if (!party.buttonCount && party.chainCount && party.chainCount > 0) {
+      if (party.buttonCount === undefined && party.chainCount !== undefined) {
         string += `0${t('party.details.suffix.buttons')}${party.chainCount}${t(
           'party.details.suffix.chains'
         )}`
       } else if (
-        party.buttonCount &&
-        party.chainCount &&
-        party.chainCount > 0
+        party.buttonCount !== undefined &&
+        party.chainCount !== undefined
       ) {
         string += `${party.chainCount}${t('party.details.suffix.chains')}`
-      } else if (party.buttonCount && !party.chainCount) {
+      } else if (
+        party.buttonCount !== undefined &&
+        party.chainCount === undefined
+      ) {
         string += `0${t('party.details.suffix.chains')}`
       }
 
@@ -311,12 +313,36 @@ const PartyHeader = (props: Props) => {
 
   const remixButton = () => {
     return (
-      <Tooltip content={t('tooltips.remix')}>
+      <Tooltip content={t('tooltips.remix.create')}>
         <Button
           leftAccessoryIcon={<RemixIcon />}
           className="grow"
           text={t('buttons.remix')}
           onClick={openRemixTeamAlert}
+        />
+      </Tooltip>
+    )
+  }
+
+  const remixedButton = () => {
+    const tooltipString =
+      party.remix && party.sourceParty
+        ? t('tooltips.remix.source')
+        : t('tooltips.remix.deleted')
+
+    const buttonAction =
+      party.sourceParty && (() => goTo(party.sourceParty?.shortcode))
+
+    return (
+      <Tooltip content={tooltipString}>
+        <Button
+          blended={true}
+          className="remixed"
+          leftAccessoryIcon={<RemixIcon />}
+          text={t('tokens.remix')}
+          size="small"
+          disabled={!party.sourceParty}
+          onClick={buttonAction}
         />
       </Tooltip>
     )
@@ -331,18 +357,7 @@ const PartyHeader = (props: Props) => {
               <h1 className={party.name ? '' : styles.empty}>
                 {party.name ? party.name : t('no_title')}
               </h1>
-              {party.remix && party.sourceParty && (
-                <Tooltip content={t('tooltips.source')}>
-                  <Button
-                    blended={true}
-                    className="remixed"
-                    leftAccessoryIcon={<RemixIcon />}
-                    text={t('tokens.remix')}
-                    size="small"
-                    onClick={() => goTo(party.sourceParty?.shortcode)}
-                  />
-                </Tooltip>
-              )}
+              {party.remix && remixedButton()}
             </div>
             <div className={styles.attribution}>
               {renderUserBlock()}

@@ -131,7 +131,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
-    gap: $unit;
+    gap: $unit-3x;
     margin: 0 auto;
     max-width: $unit * 94;
     width: 100%;
@@ -146,16 +146,16 @@
       flex-grow: 1;
 
       .header {
-        align-items: center;
-        display: flex;
-        gap: $unit;
         margin-bottom: $unit;
 
         h1 {
+          display: inline;
           font-size: $font-xlarge;
-          font-weight: $normal;
+          font-weight: $medium;
           text-align: left;
           color: var(--text-primary);
+          line-height: 40px;
+          margin-right: $unit;
 
           &.empty {
             color: var(--text-secondary);
@@ -224,6 +224,7 @@
     & > .right {
       display: flex;
       gap: $unit-half;
+      flex-shrink: 0;
 
       & > * {
         flex-grow: 1;
