@@ -80,6 +80,16 @@
     display: flex;
     gap: $unit-half;
     width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+    overflow: hidden;
+
+    & > span {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   &.bound {
