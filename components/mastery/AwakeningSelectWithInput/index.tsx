@@ -133,7 +133,6 @@ const AwakeningSelectWithInput = ({
   }
 
   // Methods: Handle error
-
   function handleInputError(value: number) {
     let error = ''
 
@@ -211,7 +210,6 @@ const AwakeningSelectWithInput = ({
           max={maxLevel}
           step="1"
           onChange={handleInputChange}
-          visible={awakening ? 'true' : 'false'}
           ref={inputRef}
         />
       </div>

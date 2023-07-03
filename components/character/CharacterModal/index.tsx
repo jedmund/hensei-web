@@ -249,6 +249,19 @@ const CharacterModal = ({
   }
 
   function close() {
+    setEarring({
+      modifier: gridCharacter.aetherial_mastery
+        ? gridCharacter.aetherial_mastery.modifier
+        : 0,
+      strength: gridCharacter.aetherial_mastery
+        ? gridCharacter.aetherial_mastery.strength
+        : 0,
+    })
+
+    setRings(gridCharacter.over_mastery || emptyExtendedMastery)
+    setAwakening(gridCharacter.awakening.type)
+    setAwakeningLevel(gridCharacter.awakening.level)
+
     setAlertOpen(false)
     setOpen(false)
     onOpenChange(false)
