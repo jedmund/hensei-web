@@ -112,6 +112,7 @@ const RaidCombobox = (props: Props) => {
   useEffect(() => {
     const sections: [RaidGroup[], RaidGroup[], RaidGroup[]] = [[], [], []]
 
+
     props.raidGroups.forEach((group) => {
       if (group.section > 0) sections[group.section - 1].push(group)
     })
