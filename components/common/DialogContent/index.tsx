@@ -92,7 +92,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
 
   const calculateFooterShadow = debounce(() => {
     const boxShadowBase = '0 -2px 8px'
-    const scrollable = document.querySelector(`.${styles.scrollValue}`)
+    const scrollable = document.querySelector(`.${styles.scrollable}`)
     const footer = props.footerref
 
     if (footer && footer.current) {
