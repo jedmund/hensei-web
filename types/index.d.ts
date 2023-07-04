@@ -70,6 +70,21 @@ interface GridCharacterObject {
   }
 }
 
+interface GridWeaponObject {
+  weapon: {
+    element?: number
+    weapon_key1_id?: string
+    weapon_key2_id?: string
+    weapon_key3_id?: string
+    ax_modifier1?: number
+    ax_modifier2?: number
+    ax_strength1?: number
+    ax_strength2?: number
+    awakening_id?: string
+    awakening_level?: Number
+  }
+}
+
 interface PerpetuityObject {
   character: {
     perpetuity: boolean

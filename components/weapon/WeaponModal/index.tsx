@@ -24,21 +24,6 @@ import { NO_AWAKENING } from '~data/awakening'
 import CrossIcon from '~public/icons/Cross.svg'
 import styles from './index.module.scss'
 
-interface GridWeaponObject {
-  weapon: {
-    element?: number
-    weapon_key1_id?: string
-    weapon_key2_id?: string
-    weapon_key3_id?: string
-    ax_modifier1?: number
-    ax_modifier2?: number
-    ax_strength1?: number
-    ax_strength2?: number
-    awakening_id?: string
-    awakening_level?: Number
-  }
-}
-
 interface Props {
   gridWeapon: GridWeapon
   open: boolean
