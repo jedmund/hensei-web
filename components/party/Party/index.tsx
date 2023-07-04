@@ -132,7 +132,7 @@ const Party = (props: Props) => {
   // Methods: Updating the party's details
   async function updateDetails(details: DetailsObject) {
     if (!props.team) return await createParty(details)
-    else updateParty(details)
+    else return await updateParty(details)
   }
 
   function formatDetailsObject(details: DetailsObject) {
@@ -254,7 +254,7 @@ const Party = (props: Props) => {
   const storeParty = function (team: any) {
     // Store the important party and state-keeping values in global state
     appState.party.name = team.name
-    appState.party.description = team.description
+    appState.party.description = team.description ? team.description : ''
     appState.party.raid = team.raid
     appState.party.updated_at = team.updated_at
     appState.party.job = team.job

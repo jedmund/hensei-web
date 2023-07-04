@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
@@ -35,7 +35,7 @@ interface Props {
   editable: boolean
   deleteCallback: () => void
   remixCallback: () => void
-  updateCallback: (details: DetailsObject) => void
+  updateCallback: (details: DetailsObject) => Promise<any>
 }
 
 const PartyHeader = (props: Props) => {
@@ -48,6 +48,7 @@ const PartyHeader = (props: Props) => {
   const { party: partySnapshot } = useSnapshot(appState)
 
   // State: Component
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const [remixAlertOpen, setRemixAlertOpen] = useState(false)
   const [remixToastOpen, setRemixToastOpen] = useState(false)
 
@@ -113,6 +114,11 @@ const PartyHeader = (props: Props) => {
           src={`/profile/npc.png`}
         />
       )
+  }
+
+  // Actions: Edit info
+  function handleDetailsOpenChange(open: boolean) {
+    setDetailsOpen(open)
   }
 
   // Actions: Remix team
@@ -375,8 +381,10 @@ const PartyHeader = (props: Props) => {
           {props.editable ? (
             <div className={styles.right}>
               <EditPartyModal
+                open={detailsOpen}
                 party={props.party}
-                updateCallback={props.updateCallback}
+                onOpenChange={handleDetailsOpenChange}
+                updateParty={props.updateCallback}
               >
                 <Button
                   className="full"

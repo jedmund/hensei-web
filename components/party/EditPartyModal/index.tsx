@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import classNames from 'classnames'
 import debounce from 'lodash.debounce'
 
+import Alert from '~components/common/Alert'
 import { Dialog, DialogTrigger } from '~components/common/Dialog'
 import DialogHeader from '~components/common/DialogHeader'
 import DialogFooter from '~components/common/DialogFooter'
@@ -29,14 +30,18 @@ import styles from './index.module.scss'
 import Input from '~components/common/Input'
 
 interface Props extends DialogProps {
+  open: boolean
   party?: Party
-  updateCallback: (details: DetailsObject) => void
+  onOpenChange?: (open: boolean) => void
+  updateParty: (details: DetailsObject) => Promise<any>
 }
 
-const EditPartyModal = ({ updateCallback, ...props }: Props) => {
-  // Set up router
-  const router = useRouter()
-
+const EditPartyModal = ({
+  open,
+  updateParty,
+  onOpenChange,
+  ...props
+}: Props) => {
   // Set up translation
   const { t } = useTranslation('common')
 
@@ -50,7 +55,7 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
   const descriptionInput = useRef<HTMLDivElement>(null)
 
   // States: Component
-  const [open, setOpen] = useState(false)
+  const [alertOpen, setAlertOpen] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({
     name: '',
     description: '',
@@ -84,21 +89,26 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
   }, [party])
 
   // Methods: Event handlers (Dialog)
-  function openChange() {
-    if (open) {
-      setOpen(false)
-      setCurrentSegment(0)
-      persistFromState()
-      if (props.onOpenChange) props.onOpenChange(false)
+  function handleOpenChange() {
+    if (hasBeenModified() && open) {
+      setAlertOpen(true)
+    } else if (!hasBeenModified() && open) {
+      close()
     } else {
-      setOpen(true)
-      if (props.onOpenChange) props.onOpenChange(true)
+      if (onOpenChange) onOpenChange(true)
     }
+  }
+
+  function close() {
+    setAlertOpen(false)
+    setCurrentSegment(0)
+    persistFromState()
+    if (onOpenChange) onOpenChange(false)
   }
 
   function onEscapeKeyDown(event: KeyboardEvent) {
     event.preventDefault()
-    openChange()
+    handleOpenChange()
   }
 
   function onOpenAutoFocus(event: Event) {
@@ -268,6 +278,36 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
     return low2 + ((high2 - low2) * (value - low1)) / (high1 - low1)
   }
 
+  // Methods: Modification checking
+  function hasBeenModified() {
+    const nameChanged = name !== party.name
+    const descriptionChanged =
+      descriptionInput.current?.innerHTML !== party.description
+    const raidChanged = raid !== party.raid
+    const chargeAttackChanged = chargeAttack !== party.chargeAttack
+    const fullAutoChanged = fullAuto !== party.fullAuto
+    const autoGuardChanged = autoGuard !== party.autoGuard
+    const autoSummonChanged = autoSummon !== party.autoSummon
+    const clearTimeChanged = clearTime !== party.clearTime
+    const turnCountChanged = turnCount !== party.turnCount
+    const buttonCountChanged = buttonCount !== party.buttonCount
+    const chainCountChanged = chainCount !== party.chainCount
+
+    return (
+      nameChanged ||
+      descriptionChanged ||
+      raidChanged ||
+      chargeAttackChanged ||
+      fullAutoChanged ||
+      autoGuardChanged ||
+      autoSummonChanged ||
+      clearTimeChanged ||
+      turnCountChanged ||
+      buttonCountChanged ||
+      chainCountChanged
+    )
+  }
+
   // Methods: Data methods
   function persistFromState() {
     if (!party) return
@@ -284,7 +324,7 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
     if (party.chainCount) setChainCount(party.chainCount)
   }
 
-  function updateDetails(event: React.MouseEvent) {
+  async function updateDetails(event: React.MouseEvent) {
     const descriptionValue = descriptionInput.current?.innerHTML
     const details: DetailsObject = {
       fullAuto: fullAuto,
@@ -301,11 +341,32 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
       extra: extra,
     }
 
-    updateCallback(details)
-    openChange()
+    await updateParty(details)
+    if (onOpenChange) onOpenChange(false)
   }
 
   // Methods: Rendering methods
+  const confirmationAlert = (
+    <Alert
+      message={
+        <span>
+          <Trans i18nKey="alerts.unsaved_changes.party">
+            You will lose all changes to your party{' '}
+            <strong>{{ objectName: party.name }}</strong> if you continue.
+            <br />
+            <br />
+            Are you sure you want to continue without saving?
+          </Trans>
+        </span>
+      }
+      open={alertOpen}
+      primaryActionText="Close"
+      primaryAction={close}
+      cancelActionText="Nevermind"
+      cancelAction={() => setAlertOpen(false)}
+    />
+  )
+
   const segmentedControl = (
     <nav className={styles.segmentedControlWrapper} ref={topContainerRef}>
       <SegmentedControl blended={true}>
@@ -499,45 +560,48 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
   )
 
   return (
-    <Dialog open={open} onOpenChange={openChange}>
-      <DialogTrigger asChild>{props.children}</DialogTrigger>
-      <DialogContent
-        className="editParty"
-        headerref={topContainerRef}
-        footerref={footerRef}
-        onEscapeKeyDown={onEscapeKeyDown}
-        onOpenAutoFocus={onOpenAutoFocus}
-      >
-        <DialogHeader title={t('modals.edit_team.title')} ref={headerRef} />
+    <>
+      {confirmationAlert}
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogTrigger asChild>{props.children}</DialogTrigger>
+        <DialogContent
+          className="editParty"
+          headerref={topContainerRef}
+          footerref={footerRef}
+          onEscapeKeyDown={onEscapeKeyDown}
+          onOpenAutoFocus={onOpenAutoFocus}
+        >
+          <DialogHeader title={t('modals.edit_team.title')} ref={headerRef} />
 
-        <div className={styles.content}>
-          {segmentedControl}
-          <div className={fieldsClasses} onScroll={handleScroll}>
-            {currentSegment === 0 && infoPage}
-            {currentSegment === 1 && propertiesPage}
+          <div className={styles.content}>
+            {segmentedControl}
+            <div className={fieldsClasses} onScroll={handleScroll}>
+              {currentSegment === 0 && infoPage}
+              {currentSegment === 1 && propertiesPage}
+            </div>
           </div>
-        </div>
 
-        <DialogFooter
-          ref={footerRef}
-          rightElements={[
-            <Button
-              bound={true}
-              key="cancel"
-              text={t('buttons.cancel')}
-              onClick={openChange}
-            />,
-            <Button
-              bound={true}
-              key="confirm"
-              rightAccessoryIcon={<CheckIcon />}
-              text={t('modals.edit_team.buttons.confirm')}
-              onClick={updateDetails}
-            />,
-          ]}
-        />
-      </DialogContent>
-    </Dialog>
+          <DialogFooter
+            ref={footerRef}
+            rightElements={[
+              <Button
+                bound={true}
+                key="cancel"
+                text={t('buttons.cancel')}
+                onClick={handleOpenChange}
+              />,
+              <Button
+                bound={true}
+                key="confirm"
+                rightAccessoryIcon={<CheckIcon />}
+                text={t('modals.edit_team.buttons.confirm')}
+                onClick={updateDetails}
+              />,
+            ]}
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
