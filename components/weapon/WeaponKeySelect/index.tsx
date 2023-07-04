@@ -3,69 +3,91 @@ import React, { useEffect, useState } from 'react'
 import Select from '~components/common/Select'
 import SelectGroup from '~components/common/SelectGroup'
 import SelectItem from '~components/common/SelectItem'
-import api from '~utils/api'
+
+import { appState } from '~utils/appState'
 
 import styles from './index.module.scss'
 
 // Props
 interface Props {
   open: boolean
-  currentValue?: WeaponKey
+  weaponKey?: WeaponKey
   series: number
   slot: number
-  onChange?: (value: string, slot: number) => void
+  onChange?: (value: WeaponKey, slot: number) => void
   onOpenChange: () => void
   onClose?: () => void
 }
 
+// Constants
+const pendulumNames = [
+  { en: 'Pendulum', jp: 'ペンデュラム' },
+  { en: 'Chain', jp: 'チェイン' },
+]
+
+const telumaNames = [{ en: 'Teluma', jp: 'テルマ' }]
+const emblemNames = [{ en: 'Emblem', jp: 'エンブレム' }]
+const gauphNames = [
+  { en: 'Gauph Key', jp: 'ガフスキー' },
+  { en: 'Ultima Key', jp: 'ガフスキーΩ' },
+  { en: 'Gate of Omnipotence', jp: 'ガフスキー' },
+]
+
+const emptyWeaponKey: WeaponKey = {
+  id: 'no-key',
+  granblue_id: '-1',
+  series: 0,
+  slot: 0,
+  slug: '',
+  group: 0,
+  order: 0,
+  name: { en: '', ja: '' },
+}
+
 const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
-  function useFieldSet(props, ref) {
-    const [open, setOpen] = useState(false)
+  function useFieldSet(
+    { open, weaponKey, series, slot, onChange, onOpenChange, onClose },
+    ref
+  ) {
     const [keys, setKeys] = useState<WeaponKey[][]>([])
 
-    const pendulumNames = [
-      { en: 'Pendulum', jp: 'ペンデュラム' },
-      { en: 'Chain', jp: 'チェイン' },
-    ]
-
-    const telumaNames = [{ en: 'Teluma', jp: 'テルマ' }]
-    const emblemNames = [{ en: 'Emblem', jp: 'エンブレム' }]
-    const gauphNames = [
-      { en: 'Gauph Key', jp: 'ガフスキー' },
-      { en: 'Ultima Key', jp: 'ガフスキーΩ' },
-      { en: 'Gate of Omnipotence', jp: 'ガフスキー' },
-    ]
-
     useEffect(() => {
-      const filterParams = {
-        params: {
-          series: props.series,
-          slot: props.slot,
-        },
+      const keys = flattenWeaponKeys()
+      const filteredKeys = filterWeaponKeys(keys)
+      setKeys(groupWeaponKeys(filteredKeys))
+    }, [series])
+
+    function flattenWeaponKeys() {
+      const keys: WeaponKey[] = []
+
+      for (let setName of Object.keys(appState.weaponKeys)) {
+        const set = appState.weaponKeys[setName]
+        set.map((key) => keys.push(key))
       }
 
-      function organizeWeaponKeys(weaponKeys: WeaponKey[]) {
-        const numGroups = Math.max.apply(
-          Math,
-          weaponKeys.map((key) => key.group)
-        )
-        let groupedKeys = []
-        for (let i = 0; i <= numGroups; i++) {
-          const values = weaponKeys.filter((key) => key.group == i)
-          if (values.length > 0) groupedKeys[i] = values
-        }
+      return keys
+    }
 
-        setKeys(groupedKeys.filter(() => true))
+    function filterWeaponKeys(weaponKeys: WeaponKey[]) {
+      // Filter weapon keys based on the series and slot provided
+      return weaponKeys.filter(
+        (key) => key.series == series && key.slot == slot
+      )
+    }
+
+    function groupWeaponKeys(weaponKeys: WeaponKey[]) {
+      const numGroups = Math.max.apply(
+        Math,
+        weaponKeys.map((key) => key.group)
+      )
+      let groupedKeys = []
+      for (let i = 0; i <= numGroups; i++) {
+        const values = weaponKeys.filter((key) => key.group == i)
+        if (values.length > 0) groupedKeys[i] = values
       }
 
-      function fetchWeaponKeys() {
-        api.endpoints.weapon_keys
-          .getAll(filterParams)
-          .then((response) => organizeWeaponKeys(response.data))
-      }
-
-      fetchWeaponKeys()
-    }, [props.series, props.slot])
+      return groupedKeys.filter(() => true)
+    }
 
     function weaponKeyGroup(index: number) {
       ;['α', 'β', 'γ', 'Δ'].sort((a, b) => a.localeCompare(b, 'el'))
@@ -90,19 +112,16 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
         })
 
       let name: { [key: string]: string } = {}
-      if (props.series == 2 && index == 0) name = pendulumNames[0]
-      else if (props.series == 2 && props.slot == 1 && index == 1)
-        name = pendulumNames[1]
-      else if (props.series == 3) name = telumaNames[0]
-      else if (props.series == 17) name = gauphNames[props.slot]
-      else if (props.series == 24) name = emblemNames[index]
+      if (series == 2 && index == 0) name = pendulumNames[0]
+      else if (series == 2 && slot == 1 && index == 1) name = pendulumNames[1]
+      else if (series === 3) name = telumaNames[0]
+      else if (series === 17) name = gauphNames[slot]
+      else if (series === 24) name = emblemNames[index]
 
       return (
         <SelectGroup
           key={index}
-          label={
-            props.series == 17 && props.slot == 2 ? name.en : `${name.en}s`
-          }
+          label={series == 17 && slot == 2 ? name.en : `${name.en}s`}
           separator={false}
         >
           {options}
@@ -111,32 +130,34 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
     }
 
     function handleChange(value: string) {
-      if (props.onChange) props.onChange(value, props.slot)
+      const keys = flattenWeaponKeys()
+      const found = keys.find((key) => key.id == value)
+      const weaponKey = found ? found : emptyWeaponKey
+      if (onChange) onChange(weaponKey, slot)
     }
 
     const emptyOption = () => {
       let name = ''
-      if (props.series == 2) name = pendulumNames[0].en
-      else if (props.series == 3) name = telumaNames[0].en
-      else if (props.series == 17) name = gauphNames[props.slot].en
-      else if (props.series == 24) name = emblemNames[0].en
+      if (series === 2) name = pendulumNames[0].en
+      else if (series === 3) name = telumaNames[0].en
+      else if (series === 17) name = gauphNames[slot].en
+      else if (series === 24) name = emblemNames[0].en
 
       return `No ${name}`
     }
 
     return (
       <Select
-        key={`weapon-key-${props.slot}`}
-        value={props.currentValue ? props.currentValue.id : 'no-key'}
-        open={props.open}
-        onClose={props.onClose}
-        onOpenChange={props.onOpenChange}
+        key={`weapon-key-${slot}`}
+        value={weaponKey ? weaponKey.id : emptyWeaponKey.id}
+        open={open}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
         onValueChange={handleChange}
         ref={ref}
-        triggerClass="modal"
         overlayVisible={false}
       >
-        <SelectItem key="no-key" value="no-key">
+        <SelectItem key={emptyWeaponKey.id} value={emptyWeaponKey.id}>
           {emptyOption()}
         </SelectItem>
         {Array.from(Array(keys?.length)).map((x, i) => {
