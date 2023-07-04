@@ -18,6 +18,27 @@ interface Props extends ComponentProps<'div'> {
   onArrowKeyPressed?: (direction: 'Up' | 'Down') => void
   onEscapeKeyPressed?: () => void
 }
+
+const placeholderSlugs = [
+  'all',
+  'farming',
+  'three-gauge',
+  'five-gauge',
+  'ex-plus',
+  'nm90',
+  'nm95',
+  'nm100',
+  'nm150',
+  'nm200',
+  '1-star',
+  '2-star',
+  '3-star',
+  '4-star',
+  '5-star',
+  'db95',
+  'db135',
+  'db175',
+]
 const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
   function Item(
     {
@@ -69,7 +90,11 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
         onKeyDown={handleKeyDown}
         ref={forwardedRef}
       >
-        {icon && <img alt={icon.alt} src={icon.src} />}
+        {placeholderSlugs.includes(`${value}`) ? (
+          <div className={styles.placeholder} />
+        ) : (
+          icon && <img alt={icon.alt} src={icon.src} />
+        )}
         <span className={styles.text}>{children}</span>
         {selected && (
           <i className={styles.selected}>{t('combobox.selected')}</i>
