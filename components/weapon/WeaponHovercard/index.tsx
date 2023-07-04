@@ -37,19 +37,6 @@ const WeaponHovercard = (props: Props) => {
   const { t } = useTranslation('common')
 
   const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
-  const Proficiency = [
-    'none',
-    'sword',
-    'dagger',
-    'axe',
-    'spear',
-    'bow',
-    'staff',
-    'fist',
-    'harp',
-    'gun',
-    'katana',
-  ]
   const WeaponKeyNames: KeyNames = {
     '2': {
       en: 'Pendulum',
@@ -73,11 +60,6 @@ const WeaponHovercard = (props: Props) => {
     props.gridWeapon.object.element == 0 && props.gridWeapon.element
       ? Element[props.gridWeapon.element]
       : Element[props.gridWeapon.object.element]
-
-  const wikiUrl = `https://gbf.wiki/${props.gridWeapon.object.name.en.replaceAll(
-    ' ',
-    '_'
-  )}`
 
   function goTo() {
     const urlSafeName = props.gridWeapon.object.name.en.replaceAll(' ', '_')
@@ -134,38 +116,22 @@ const WeaponHovercard = (props: Props) => {
     return ''
   }
 
-  function weaponImage() {
-    const weapon = props.gridWeapon.object
-
-    if (props.gridWeapon.object.element == 0 && props.gridWeapon.element)
-      return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
-    else
-      return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
-  }
-
-  const awakeningSection = () => {
-    const gridAwakening = props.gridWeapon.awakening
-
-    if (gridAwakening) {
-      return (
-        <section className={styles.awakening}>
-          <h5 className={tintElement}>
-            {t('modals.weapon.subtitles.awakening')}
-          </h5>
-          <div className={styles.skill}>
-            <img
-              alt={gridAwakening.type.name[locale]}
-              src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${gridAwakening.type.slug}.png`}
-            />
-            <span>
-              <strong>{`${gridAwakening.type.name[locale]}`}</strong>&nbsp;
-              {`Lv${gridAwakening.level}`}
-            </span>
-          </div>
-        </section>
-      )
-    }
-  }
+  const awakeningSection = (
+    <section className={styles.awakening}>
+      <h5 className={tintElement}>{t('modals.weapon.subtitles.awakening')}</h5>
+      <div className={styles.skill}>
+        <img
+          alt={props.gridWeapon.awakening?.type.name[locale]}
+          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${props.gridWeapon.awakening?.type.slug}.png`}
+        />
+        <span>
+          <strong>{`${props.gridWeapon.awakening?.type.name[locale]}`}</strong>
+          &nbsp;
+          {`Lv${props.gridWeapon.awakening?.level}`}
+        </span>
+      </div>
+    </section>
+  )
 
   const keysSection = (
     <section className={styles.weaponKeys}>
@@ -262,15 +228,14 @@ const WeaponHovercard = (props: Props) => {
           type="weapon"
         />
         {props.gridWeapon.object.ax &&
-        props.gridWeapon.ax &&
-        props.gridWeapon.ax[0].modifier &&
-        props.gridWeapon.ax[0].strength
-          ? axSection
-          : ''}
-        {awakeningSection()}
-        {props.gridWeapon.weapon_keys && props.gridWeapon.weapon_keys.length > 0
-          ? keysSection
-          : ''}
+          props.gridWeapon.ax &&
+          props.gridWeapon.ax[0].modifier !== undefined &&
+          props.gridWeapon.ax[0].strength !== undefined &&
+          axSection}
+        {props.gridWeapon.awakening && awakeningSection}
+        {props.gridWeapon.weapon_keys &&
+          props.gridWeapon.weapon_keys.length > 0 &&
+          keysSection}
         {wikiButton}
       </HovercardContent>
     </Hovercard>
