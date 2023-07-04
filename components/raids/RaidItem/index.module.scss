@@ -34,6 +34,14 @@
     height: auto;
   }
 
+  .placeholder {
+    aspect-ratio: 10 / 7;
+    background-color: var(--placeholder-bound-bg);
+    border-radius: $item-corner-small;
+    width: $unit-10x;
+    height: auto;
+  }
+
   &:hover {
     .extraIndicator {
       background: var(--extra-purple-secondary);
@@ -43,6 +51,10 @@
     .selected {
       background-color: var(--pill-bg-hover);
       color: var(--pill-text-hover);
+    }
+
+    .placeholder {
+      background-color: var(--placeholder-bound-bg-hover);
     }
   }
 
