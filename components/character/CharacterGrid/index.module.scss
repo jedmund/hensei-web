@@ -1,0 +1,39 @@
+.grid {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  max-width: $grid-width;
+
+  @include breakpoint(tablet) {
+    align-items: center;
+  }
+
+  .characters {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: $unit-3x;
+    margin: 0;
+    padding: 0;
+    max-width: $grid-width;
+    isolation: isolate;
+
+    @include breakpoint(tablet) {
+      gap: $unit-2x;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    // prettier-ignore
+    @media only screen 
+      and (max-width: 500px) 
+      and (max-height: 920px) 
+      and (-webkit-min-device-pixel-ratio: 2) {
+        gap: $unit;
+    }
+
+    & > li:last-child {
+      margin: 0;
+    }
+  }
+}

@@ -14,7 +14,7 @@ import SummonRep from '~components/reps/SummonRep'
 
 import { GridType } from '~utils/enums'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Fix for valtio readonly array
 declare module 'valtio' {
@@ -81,7 +81,7 @@ const PartySegmentedControl = (props: Props) => {
         <RepSegment
           controlGroup="grid"
           inputName="weapons"
-          name="Weapons"
+          name={t('party.segmented_control.weapons')}
           selected={props.selectedTab === GridType.Weapon}
           onClick={props.onClick}
         >
@@ -96,7 +96,7 @@ const PartySegmentedControl = (props: Props) => {
       <RepSegment
         controlGroup="grid"
         inputName="summons"
-        name="Summons"
+        name={t('party.segmented_control.summons')}
         selected={props.selectedTab === GridType.Summon}
         onClick={props.onClick}
       >
@@ -106,18 +106,17 @@ const PartySegmentedControl = (props: Props) => {
   }
 
   return (
-    <div
+    <nav
       className={classNames({
-        PartyNavigation: true,
-        Editable: party.editable,
+        [styles.nav]: true,
       })}
     >
-      <SegmentedControl elementClass={getElement()}>
+      <SegmentedControl gap={true} grow={true} elementClass={getElement()}>
         {characterSegment()}
         {weaponSegment()}
         {summonSegment()}
       </SegmentedControl>
-    </div>
+    </nav>
   )
 }
 

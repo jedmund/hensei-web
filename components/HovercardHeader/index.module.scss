@@ -1,0 +1,57 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: calc($unit / 2);
+
+  .title {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: $unit * 2;
+
+    h4 {
+      flex-grow: 1;
+      font-size: $font-medium;
+      line-height: 1.2;
+      min-width: 140px;
+    }
+
+    img {
+      height: auto;
+      width: 100px;
+    }
+
+    .image {
+      position: relative;
+
+      .perpetuity {
+        position: absolute;
+        background-image: url('/icons/perpetuity/filled.svg');
+        background-size: $unit-3x $unit-3x;
+        z-index: 20;
+        top: $unit-half * -1;
+        right: $unit-3x;
+        width: $unit-3x;
+        height: $unit-3x;
+      }
+    }
+  }
+
+  .subInfo {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: $unit * 2;
+
+    .icons {
+      display: flex;
+      flex-direction: row;
+      flex-grow: 1;
+      gap: $unit;
+    }
+
+    .UncapIndicator {
+      min-width: 100px;
+    }
+  }
+}

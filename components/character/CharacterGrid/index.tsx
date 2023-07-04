@@ -17,7 +17,7 @@ import type { DetailsObject, JobSkillObject, SearchableObject } from '~types'
 import api from '~utils/api'
 import { appState } from '~utils/appState'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {
@@ -180,6 +180,7 @@ const CharacterGrid = (props: Props) => {
     setPosition(-1)
     setConflicts([])
     setIncoming(undefined)
+    setModalOpen(false)
   }
 
   async function removeCharacter(id: string) {
@@ -515,7 +516,7 @@ const CharacterGrid = (props: Props) => {
         cancelAction={cancelAlert}
         cancelActionText={'Got it'}
       />
-      <div id="CharacterGrid">
+      <div className={styles.grid}>
         <JobSection
           job={job}
           jobSkills={jobSkills}
@@ -534,7 +535,7 @@ const CharacterGrid = (props: Props) => {
           resolveConflict={resolveConflict}
           resetConflict={resetConflict}
         />
-        <ul id="Characters">
+        <ul className={styles.characters}>
           {Array.from(Array(numCharacters)).map((x, i) => {
             return (
               <li key={`grid_unit_${i}`}>

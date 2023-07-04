@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   sendFilters: (filters: { [key: string]: number }) => void
@@ -39,10 +39,13 @@ const JobSkillSearchFilterBar = (props: Props) => {
   }, [currentGroup])
 
   return (
-    <div className="SearchFilterBar">
+    <div className={styles.filterBar}>
       <Select
         value={-1}
-        triggerClass="Bound"
+        trigger={{
+          bound: true,
+          className: 'full',
+        }}
         open={open}
         overlayVisible={false}
         onValueChange={onChange}

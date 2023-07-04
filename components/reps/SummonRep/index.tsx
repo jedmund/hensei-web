@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   grid: {
@@ -151,12 +151,12 @@ const SummonRep = (props: Props) => {
 
   // Render
   return (
-    <div className="SummonRep Rep">
-      <div className="Main Summon">{generateMainImage()}</div>
-      <ul className="GridSummons">
+    <div className={styles.rep}>
+      <div className={styles.mainSummon}>{generateMainImage()}</div>
+      <ul className={styles.summons}>
         {Array.from(Array(SUMMONS_COUNT)).map((x, i) => {
           return (
-            <li key={`summons-${i}`} className="Grid Summon">
+            <li key={`summons-${i}`} className={styles.summon}>
               {generateGridImage(i)}
             </li>
           )

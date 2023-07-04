@@ -10,8 +10,6 @@ import SelectGroup from '~components/common/SelectGroup'
 import { appState } from '~utils/appState'
 import { jobGroups } from '~data/jobGroups'
 
-import './index.scss'
-
 // Props
 interface Props {
   currentJob?: string
@@ -94,8 +92,12 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
               <SelectItem
                 key={i}
                 value={item.id}
-                altText={item.name[locale]}
-                iconSrc={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${item.granblue_id}.png`}
+                icon={{
+                  alt: item.name[locale],
+                  src: [
+                    `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${item.granblue_id}.png`,
+                  ],
+                }}
               >
                 {item.name[locale]}
               </SelectItem>
@@ -114,18 +116,20 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
     return (
       <Select
         value={currentJob ? currentJob.id : 'no-job'}
-        altText={currentJob ? currentJob.name[locale] : ''}
-        iconSrc={
-          currentJob
+        icon={{
+          alt: currentJob ? currentJob.name[locale] : '',
+          src: currentJob
             ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${currentJob.granblue_id}.png`
-            : ''
-        }
+            : '',
+        }}
         open={open}
         onClick={openJobSelect}
         onOpenChange={() => setOpen(!open)}
         onValueChange={handleChange}
-        className="Job"
-        triggerClass="Job"
+        className="job"
+        trigger={{
+          className: 'job',
+        }}
         overlayVisible={false}
       >
         <SelectItem key={-1} value="no-job">

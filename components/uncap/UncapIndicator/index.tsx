@@ -3,7 +3,7 @@ import UncapStar from '~components/uncap/UncapStar'
 import TranscendencePopover from '~components/uncap/TranscendencePopover'
 import TranscendenceStar from '~components/uncap/TranscendenceStar'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   type: 'character' | 'weapon' | 'summon'
@@ -150,8 +150,8 @@ const UncapIndicator = (props: Props) => {
   }
 
   return (
-    <div className="UncapWrapper">
-      <ul className="UncapIndicator">
+    <div className={styles.wrapper}>
+      <ul className={styles.indicator}>
         {Array.from(Array(numStars)).map((x, i) => {
           if (props.type === 'character' && i > 4) {
             if (props.special) return ulb(i)

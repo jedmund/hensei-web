@@ -17,7 +17,7 @@ import type { SearchableObject } from '~types'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   guidebook: Guidebook | undefined
@@ -50,10 +50,11 @@ const GuidebookUnit = ({
 
   // Classes
   const classes = classNames({
-    GuidebookUnit: true,
-    editable: editable,
-    filled: guidebook !== undefined,
-    empty: guidebook == undefined,
+    unit: true,
+    [styles.unit]: true,
+    [styles.editable]: editable,
+    [styles.filled]: guidebook !== undefined,
+    [styles.empty]: guidebook == undefined,
   })
 
   const buttonClasses = classNames({
@@ -114,8 +115,10 @@ const GuidebookUnit = ({
           <ContextMenu onOpenChange={handleContextMenuOpenChange}>
             <ContextMenuTrigger asChild>
               <Button
+                active={contextMenuOpen}
+                floating={true}
                 leftAccessoryIcon={<SettingsIcon />}
-                className={buttonClasses}
+                className="options"
                 onClick={handleButtonClicked}
               />
             </ContextMenuTrigger>
@@ -165,17 +168,17 @@ const GuidebookUnit = ({
 
   // Methods: Core element rendering
   const imageElement = (
-    <div className="GuidebookImage" onClick={openSearchModal}>
+    <div className={styles.guidebookImage} onClick={openSearchModal}>
       <img
         alt={guidebook?.name[locale]}
         className={classNames({
-          GridImage: true,
-          Placeholder: imageUrl === '',
+          [styles.image]: true,
+          [styles.placeholder]: imageUrl === '',
         })}
         src={imageUrl !== '' ? imageUrl : placeholderImageUrl}
       />
       {editable ? (
-        <span className="icon">
+        <span className={styles.icon}>
           <PlusIcon />
         </span>
       ) : (
@@ -189,7 +192,7 @@ const GuidebookUnit = ({
       <div className={classes}>
         {contextMenu()}
         {imageElement}
-        <h3 className="GuidebookName">{guidebook?.name[locale]}</h3>
+        <h3 className={styles.name}>{guidebook?.name[locale]}</h3>
       </div>
       {searchModal()}
     </>

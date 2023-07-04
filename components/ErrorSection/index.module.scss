@@ -1,0 +1,21 @@
+.error {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+  margin: 0 auto;
+  max-width: 30vw;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+
+  .code {
+    color: var(--text-secondary);
+    font-size: $font-tiny;
+    font-weight: $bold;
+  }
+
+  p {
+    margin-bottom: $unit-4x;
+  }
+}

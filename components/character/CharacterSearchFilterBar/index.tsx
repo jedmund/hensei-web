@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
-
 import cloneDeep from 'lodash.clonedeep'
-
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import SearchFilter from '~components/search/SearchFilter'
 import SearchFilterCheckboxItem from '~components/search/SearchFilterCheckboxItem'
 
-import './index.scss'
 import {
   emptyElementState,
   emptyProficiencyState,
   emptyRarityState,
 } from '~utils/emptyStates'
 import { elements, proficiencies, rarities } from '~utils/stateValues'
+
+import styles from './index.module.scss'
 
 interface Props {
   sendFilters: (filters: { [key: string]: number[] }) => void
@@ -144,121 +142,90 @@ const CharacterSearchFilterBar = (props: Props) => {
     return (
       <SearchFilter
         label={`${t('filters.labels.proficiency')} ${proficiency}`}
+        display="grid"
         numSelected={numSelected}
         open={open}
         onOpenChange={onOpenChange}
       >
-        <DropdownMenu.Label className="Label">{`${t(
-          'filters.labels.proficiency'
-        )} ${proficiency}`}</DropdownMenu.Label>
-        <section>
-          <DropdownMenu.Group className="Group">
-            {Array.from(Array(proficiencies.length / 2)).map((x, i) => {
-              const checked =
-                proficiency == 1
-                  ? proficiency1State[proficiencies[i]].checked
-                  : proficiency2State[proficiencies[i]].checked
+        {Array.from(Array(proficiencies.length)).map((x, i) => {
+          const checked =
+            proficiency == 1
+              ? proficiency1State[proficiencies[i]].checked
+              : proficiency2State[proficiencies[i]].checked
 
-              return (
-                <SearchFilterCheckboxItem
-                  key={proficiencies[i]}
-                  onCheckedChange={onCheckedChange}
-                  checked={checked}
-                  valueKey={proficiencies[i]}
-                >
-                  {t(`proficiencies.${proficiencies[i]}`)}
-                </SearchFilterCheckboxItem>
-              )
-            })}
-          </DropdownMenu.Group>
-          <DropdownMenu.Group className="Group">
-            {Array.from(Array(proficiencies.length / 2)).map((x, i) => {
-              const checked =
-                proficiency == 1
-                  ? proficiency1State[
-                      proficiencies[i + proficiencies.length / 2]
-                    ].checked
-                  : proficiency2State[
-                      proficiencies[i + proficiencies.length / 2]
-                    ].checked
-
-              return (
-                <SearchFilterCheckboxItem
-                  key={proficiencies[i + proficiencies.length / 2]}
-                  onCheckedChange={onCheckedChange}
-                  checked={checked}
-                  valueKey={proficiencies[i + proficiencies.length / 2]}
-                >
-                  {t(
-                    `proficiencies.${
-                      proficiencies[i + proficiencies.length / 2]
-                    }`
-                  )}
-                </SearchFilterCheckboxItem>
-              )
-            })}
-          </DropdownMenu.Group>
-        </section>
+          return (
+            <SearchFilterCheckboxItem
+              key={proficiencies[i]}
+              onCheckedChange={onCheckedChange}
+              checked={checked}
+              valueKey={proficiencies[i]}
+            >
+              {t(`proficiencies.${proficiencies[i]}`)}
+            </SearchFilterCheckboxItem>
+          )
+        })}
       </SearchFilter>
     )
   }
 
+  const rarityFilter = (
+    <SearchFilter
+      label={t('filters.labels.rarity')}
+      display="list"
+      numSelected={
+        Object.values(rarityState)
+          .map((x) => x.checked)
+          .filter(Boolean).length
+      }
+      open={rarityMenu}
+      onOpenChange={rarityMenuOpened}
+    >
+      {Array.from(Array(rarities.length)).map((x, i) => {
+        return (
+          <SearchFilterCheckboxItem
+            key={rarities[i]}
+            onCheckedChange={handleRarityChange}
+            checked={rarityState[rarities[i]].checked}
+            valueKey={rarities[i]}
+          >
+            {t(`rarities.${rarities[i]}`)}
+          </SearchFilterCheckboxItem>
+        )
+      })}
+    </SearchFilter>
+  )
+
+  const elementFilter = (
+    <SearchFilter
+      label={t('filters.labels.element')}
+      display="list"
+      numSelected={
+        Object.values(elementState)
+          .map((x) => x.checked)
+          .filter(Boolean).length
+      }
+      open={elementMenu}
+      onOpenChange={elementMenuOpened}
+    >
+      {Array.from(Array(elements.length)).map((x, i) => {
+        return (
+          <SearchFilterCheckboxItem
+            key={elements[i]}
+            onCheckedChange={handleElementChange}
+            checked={elementState[elements[i]].checked}
+            valueKey={elements[i]}
+          >
+            {t(`elements.${elements[i]}`)}
+          </SearchFilterCheckboxItem>
+        )
+      })}
+    </SearchFilter>
+  )
+
   return (
-    <div className="SearchFilterBar">
-      <SearchFilter
-        label={t('filters.labels.rarity')}
-        numSelected={
-          Object.values(rarityState)
-            .map((x) => x.checked)
-            .filter(Boolean).length
-        }
-        open={rarityMenu}
-        onOpenChange={rarityMenuOpened}
-      >
-        <DropdownMenu.Label className="Label">
-          {t('filters.labels.rarity')}
-        </DropdownMenu.Label>
-        {Array.from(Array(rarities.length)).map((x, i) => {
-          return (
-            <SearchFilterCheckboxItem
-              key={rarities[i]}
-              onCheckedChange={handleRarityChange}
-              checked={rarityState[rarities[i]].checked}
-              valueKey={rarities[i]}
-            >
-              {t(`rarities.${rarities[i]}`)}
-            </SearchFilterCheckboxItem>
-          )
-        })}
-      </SearchFilter>
-
-      <SearchFilter
-        label={t('filters.labels.element')}
-        numSelected={
-          Object.values(elementState)
-            .map((x) => x.checked)
-            .filter(Boolean).length
-        }
-        open={elementMenu}
-        onOpenChange={elementMenuOpened}
-      >
-        <DropdownMenu.Label className="Label">
-          {t('filters.labels.element')}
-        </DropdownMenu.Label>
-        {Array.from(Array(elements.length)).map((x, i) => {
-          return (
-            <SearchFilterCheckboxItem
-              key={elements[i]}
-              onCheckedChange={handleElementChange}
-              checked={elementState[elements[i]].checked}
-              valueKey={elements[i]}
-            >
-              {t(`elements.${elements[i]}`)}
-            </SearchFilterCheckboxItem>
-          )
-        })}
-      </SearchFilter>
-
+    <div className={styles.filterBar}>
+      {rarityFilter}
+      {elementFilter}
       {renderProficiencyFilter(1)}
       {renderProficiencyFilter(2)}
     </div>

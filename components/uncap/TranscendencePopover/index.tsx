@@ -9,7 +9,7 @@ import {
 } from '~components/common/PopoverContent'
 import TranscendenceStar from '~components/uncap/TranscendenceStar'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props
   extends React.DetailedHTMLProps<

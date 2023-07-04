@@ -21,15 +21,14 @@ import { GridType } from '~utils/enums'
 import { retrieveCookies } from '~utils/retrieveCookies'
 import { setEditKey, storeEditKey, unsetEditKey } from '~utils/userToken'
 
-import type { DetailsObject } from '~types'
-
-import './index.scss'
+import type { CharacterOverMastery, DetailsObject } from '~types'
 
 // Props
 interface Props {
   new?: boolean
   team?: Party
   selectedTab: GridType
+  handleTabChanged: (value: string) => void
   pushHistory?: (path: string) => void
 }
 
@@ -47,7 +46,6 @@ const Party = (props: Props) => {
   // Set up states
   const { party } = useSnapshot(appState)
   const [editable, setEditable] = useState(false)
-  const [currentTab, setCurrentTab] = useState<GridType>(GridType.Weapon)
   const [refresh, setRefresh] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -104,18 +102,13 @@ const Party = (props: Props) => {
     setEditable(editable)
   }, [refresh])
 
-  // Set selected tab from props
-  useEffect(() => {
-    setCurrentTab(props.selectedTab)
-  }, [props.selectedTab])
-
   // Methods: Creating a new party
   async function createParty(details?: DetailsObject) {
     let payload = {}
     if (details) payload = formatDetailsObject(details)
 
     return await api.endpoints.parties
-      .create({ ...payload, ...getLocalId() })
+      .create(payload)
       .then((response) => storeParty(response.data.party))
   }
 
@@ -139,7 +132,7 @@ const Party = (props: Props) => {
   // Methods: Updating the party's details
   async function updateDetails(details: DetailsObject) {
     if (!props.team) return await createParty(details)
-    else updateParty(details)
+    else return await updateParty(details)
   }
 
   function formatDetailsObject(details: DetailsObject) {
@@ -155,14 +148,17 @@ const Party = (props: Props) => {
     if (details.autoSummon != undefined)
       payload.auto_summon = details.autoSummon
     if (details.clearTime) payload.clear_time = details.clearTime
-    if (details.buttonCount) payload.button_count = details.buttonCount
-    if (details.chainCount) payload.chain_count = details.chainCount
-    if (details.turnCount) payload.turn_count = details.turnCount
+    if (details.buttonCount !== undefined)
+      payload.button_count = details.buttonCount
+    if (details.chainCount !== undefined)
+      payload.chain_count = details.chainCount
+    if (details.turnCount !== undefined) payload.turn_count = details.turnCount
     if (details.extra != undefined) payload.extra = details.extra
     if (details.job) payload.job_id = details.job.id
     if (details.guidebook1_id) payload.guidebook1_id = details.guidebook1_id
     if (details.guidebook2_id) payload.guidebook2_id = details.guidebook2_id
     if (details.guidebook3_id) payload.guidebook3_id = details.guidebook3_id
+    if (getLocalId()) payload.local_id = getLocalId()
 
     if (Object.keys(payload).length >= 1) return { party: payload }
     else return {}
@@ -208,7 +204,7 @@ const Party = (props: Props) => {
     // setOriginalName(partySnapshot.name ? partySnapshot.name : t('no_title'))
 
     if (props.team && props.team.shortcode) {
-      const body = getLocalId()
+      const body = { local_id: getLocalId() }
       api
         .remix({ shortcode: props.team.shortcode, body: body })
         .then((response) => {
@@ -258,7 +254,7 @@ const Party = (props: Props) => {
   const storeParty = function (team: any) {
     // Store the important party and state-keeping values in global state
     appState.party.name = team.name
-    appState.party.description = team.description
+    appState.party.description = team.description ? team.description : ''
     appState.party.raid = team.raid
     appState.party.updated_at = team.updated_at
     appState.party.job = team.job
@@ -270,9 +266,12 @@ const Party = (props: Props) => {
     appState.party.autoGuard = team.auto_guard
     appState.party.autoSummon = team.auto_summon
     appState.party.clearTime = team.clear_time
-    appState.party.buttonCount = team.button_count
-    appState.party.chainCount = team.chain_count
-    appState.party.turnCount = team.turn_count
+    appState.party.buttonCount =
+      team.button_count !== null ? team.button_count : undefined
+    appState.party.chainCount =
+      team.chain_count !== null ? team.chain_count : undefined
+    appState.party.turnCount =
+      team.turn_count !== null ? team.turn_count : undefined
 
     appState.party.id = team.id
     appState.party.shortcode = team.shortcode
@@ -301,9 +300,9 @@ const Party = (props: Props) => {
 
     // Create a string to send the user back to the tab they're currently on
     let tab = ''
-    if (currentTab === GridType.Character) {
+    if (props.selectedTab === GridType.Character) {
       tab = 'characters'
-    } else if (currentTab === GridType.Summon) {
+    } else if (props.selectedTab === GridType.Summon) {
       tab = 'summons'
     }
 
@@ -317,8 +316,22 @@ const Party = (props: Props) => {
 
   const storeCharacters = (list: Array<GridCharacter>) => {
     list.forEach((object: GridCharacter) => {
-      if (object.position != null)
-        appState.grid.characters[object.position] = object
+      let character = clonedeep(object)
+
+      if (character.over_mastery) {
+        const overMastery: CharacterOverMastery = {
+          1: object.over_mastery[0],
+          2: object.over_mastery[1],
+          3: object.over_mastery[2],
+          4: object.over_mastery[3],
+        }
+
+        character.over_mastery = overMastery
+      }
+
+      if (character.position != null) {
+        appState.grid.characters[object.position] = character
+      }
     })
   }
 
@@ -327,8 +340,12 @@ const Party = (props: Props) => {
       if (gridObject.mainhand) {
         appState.grid.weapons.mainWeapon = gridObject
         appState.party.element = gridObject.object.element
-      } else if (!gridObject.mainhand && gridObject.position != null) {
-        appState.grid.weapons.allWeapons[gridObject.position] = gridObject
+      } else if (!gridObject.mainhand && gridObject.position !== null) {
+        let weapon = clonedeep(gridObject)
+        if (weapon.object.element === 0 && weapon.element < 1)
+          weapon.element = gridObject.object.element
+
+        appState.grid.weapons.allWeapons[gridObject.position] = weapon
       }
     })
   }
@@ -349,32 +366,7 @@ const Party = (props: Props) => {
 
   // Methods: Navigating with segmented control
   function segmentClicked(event: React.ChangeEvent<HTMLInputElement>) {
-    const path = [
-      // Enable when using Next.js Router
-      'p',
-      router.asPath.split('/').filter((el) => el != '')[1],
-      event.target.value,
-    ].join('/')
-
-    switch (event.target.value) {
-      case 'characters':
-        setCurrentTab(GridType.Character)
-        break
-      case 'weapons':
-        setCurrentTab(GridType.Weapon)
-        break
-      case 'summons':
-        setCurrentTab(GridType.Summon)
-        break
-      default:
-        break
-    }
-
-    // Ideally, we would use the Next.js Router to replace the URL,
-    // but something about shallow routing isn't working so the page is refreshing.
-    // A consequence is that the browser push stack gets fucked
-    // router.replace(path, undefined, { shallow: true })
-    history.pushState({}, '', '/' + path)
+    props.handleTabChanged(event.target.value)
   }
 
   // Render: JSX components
@@ -390,7 +382,10 @@ const Party = (props: Props) => {
   }
 
   const navigation = (
-    <PartySegmentedControl selectedTab={currentTab} onClick={segmentClicked} />
+    <PartySegmentedControl
+      selectedTab={props.selectedTab}
+      onClick={segmentClicked}
+    />
   )
 
   const weaponGrid = (
@@ -427,7 +422,7 @@ const Party = (props: Props) => {
   )
 
   const currentGrid = () => {
-    switch (currentTab) {
+    switch (props.selectedTab) {
       case GridType.Character:
         return characterGrid
       case GridType.Weapon:
@@ -444,7 +439,7 @@ const Party = (props: Props) => {
       <PartyHeader
         party={props.team}
         new={props.new || false}
-        editable={party.editable}
+        editable={props.new ? true : party.editable}
         deleteCallback={deleteTeam}
         remixCallback={remixTeam}
         updateCallback={updateDetails}
@@ -458,6 +453,7 @@ const Party = (props: Props) => {
         party={props.team}
         new={props.new || false}
         editable={party.editable}
+        remixCallback={remixTeam}
         updateCallback={updateDetails}
       />
     </React.Fragment>

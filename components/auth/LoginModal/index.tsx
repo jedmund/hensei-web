@@ -5,17 +5,18 @@ import { useTranslation } from 'react-i18next'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
 import api from '~utils/api'
-import { setHeaders } from '~utils/userToken'
 import { accountState } from '~utils/accountState'
+import changeLanguage from '~utils/changeLanguage'
+import { setHeaders } from '~utils/userToken'
 
 import Button from '~components/common/Button'
 import Input from '~components/common/Input'
-import { Dialog, DialogTrigger, DialogClose } from '~components/common/Dialog'
+import { Dialog } from '~components/common/Dialog'
+import DialogHeader from '~components/common/DialogHeader'
+import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
-import changeLanguage from '~utils/changeLanguage'
 
-import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface ErrorMap {
   [index: string]: string
@@ -216,50 +217,48 @@ const LoginModal = (props: Props) => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
-        className="Login"
+        className="login"
         footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
-        <div className="DialogHeader">
-          <div className="DialogTitle">
-            <h1>{t('modals.login.title')}</h1>
-          </div>
-          <DialogClose className="DialogClose">
-            <CrossIcon />
-          </DialogClose>
-        </div>
-
-        <form className="form" onSubmit={login}>
-          <div className="Fields">
+        <DialogHeader title={t('modals.login.title')} />
+        <form onSubmit={login}>
+          <div className={styles.fields}>
             <Input
-              className="Bound"
+              autoComplete="on"
+              bound={true}
+              hide1Password={false}
               name="email"
               placeholder={t('modals.login.placeholders.email')}
-              onChange={handleChange}
+              type="email"
               error={errors.email}
               ref={emailInput}
+              onChange={handleChange}
             />
 
             <Input
-              className="Bound"
+              bound={true}
+              hide1Password={false}
               name="password"
               placeholder={t('modals.login.placeholders.password')}
               type="password"
-              onChange={handleChange}
               error={errors.password}
               ref={passwordInput}
+              onChange={handleChange}
             />
           </div>
-          <div className="DialogFooter" ref={footerRef}>
-            <div className="Buttons Span">
+          <DialogFooter
+            ref={footerRef}
+            rightElements={[
               <Button
-                contained={true}
+                bound={true}
                 disabled={!formValid}
+                key="confirm"
                 text={t('modals.login.buttons.confirm')}
-              />
-            </div>
-          </div>
+              />,
+            ]}
+          />
         </form>
       </DialogContent>
     </Dialog>

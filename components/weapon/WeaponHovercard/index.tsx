@@ -1,19 +1,19 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import classNames from 'classnames'
 
 import {
   Hovercard,
   HovercardContent,
   HovercardTrigger,
 } from '~components/common/Hovercard'
+import HovercardHeader from '~components/HovercardHeader'
 import Button from '~components/common/Button'
-import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
-import UncapIndicator from '~components/uncap/UncapIndicator'
 
 import ax from '~data/ax'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   gridWeapon: GridWeapon
@@ -37,19 +37,6 @@ const WeaponHovercard = (props: Props) => {
   const { t } = useTranslation('common')
 
   const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
-  const Proficiency = [
-    'none',
-    'sword',
-    'dagger',
-    'axe',
-    'spear',
-    'bow',
-    'staff',
-    'fist',
-    'harp',
-    'gun',
-    'katana',
-  ]
   const WeaponKeyNames: KeyNames = {
     '2': {
       en: 'Pendulum',
@@ -73,11 +60,6 @@ const WeaponHovercard = (props: Props) => {
     props.gridWeapon.object.element == 0 && props.gridWeapon.element
       ? Element[props.gridWeapon.element]
       : Element[props.gridWeapon.object.element]
-
-  const wikiUrl = `https://gbf.wiki/${props.gridWeapon.object.name.en.replaceAll(
-    ' ',
-    '_'
-  )}`
 
   function goTo() {
     const urlSafeName = props.gridWeapon.object.name.en.replaceAll(' ', '_')
@@ -134,41 +116,25 @@ const WeaponHovercard = (props: Props) => {
     return ''
   }
 
-  function weaponImage() {
-    const weapon = props.gridWeapon.object
-
-    if (props.gridWeapon.object.element == 0 && props.gridWeapon.element)
-      return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${props.gridWeapon.element}.jpg`
-    else
-      return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
-  }
-
-  const awakeningSection = () => {
-    const gridAwakening = props.gridWeapon.awakening
-
-    if (gridAwakening) {
-      return (
-        <section className="awakening">
-          <h5 className={tintElement}>
-            {t('modals.weapon.subtitles.awakening')}
-          </h5>
-          <div>
-            <img
-              alt={gridAwakening.type.name[locale]}
-              src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${gridAwakening.type.slug}.png`}
-            />
-            <span>
-              <strong>{`${gridAwakening.type.name[locale]}`}</strong>&nbsp;
-              {`Lv${gridAwakening.level}`}
-            </span>
-          </div>
-        </section>
-      )
-    }
-  }
+  const awakeningSection = (
+    <section className={styles.awakening}>
+      <h5 className={tintElement}>{t('modals.weapon.subtitles.awakening')}</h5>
+      <div className={styles.skill}>
+        <img
+          alt={props.gridWeapon.awakening?.type.name[locale]}
+          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${props.gridWeapon.awakening?.type.slug}.png`}
+        />
+        <span>
+          <strong>{`${props.gridWeapon.awakening?.type.name[locale]}`}</strong>
+          &nbsp;
+          {`Lv${props.gridWeapon.awakening?.level}`}
+        </span>
+      </div>
+    </section>
+  )
 
   const keysSection = (
-    <section className="weaponKeys">
+    <section className={styles.weaponKeys}>
       {WeaponKeyNames[props.gridWeapon.object.series] ? (
         <h5 className={tintElement}>
           {WeaponKeyNames[props.gridWeapon.object.series][locale]}
@@ -182,7 +148,7 @@ const WeaponHovercard = (props: Props) => {
         ? Array.from(Array(props.gridWeapon.weapon_keys.length)).map((x, i) => {
             return (
               <div
-                className="weaponKey"
+                className={styles.weaponKey}
                 key={props.gridWeapon.weapon_keys![i].id}
               >
                 <span>{props.gridWeapon.weapon_keys![i].name[locale]}</span>
@@ -194,29 +160,44 @@ const WeaponHovercard = (props: Props) => {
   )
 
   const axSection = (
-    <section className="axSkills">
+    <section className={styles.axSkills}>
       <h5 className={tintElement}>{t('modals.weapon.subtitles.ax_skills')}</h5>
-      <div className="skills">
-        <div className="primary axSkill">
-          <img
-            alt="AX1"
-            src={`/icons/ax/primary_${
-              props.gridWeapon.ax ? props.gridWeapon.ax[0].modifier : ''
-            }.png`}
-          />
+      <div className={styles.skills}>
+        <div
+          className={classNames({
+            [styles.axSkill]: true,
+            [styles.skill]: true,
+          })}
+        >
+          <div className={styles.axImageWrapper}>
+            <img
+              alt="AX1"
+              src={`/icons/ax/primary_${
+                props.gridWeapon.ax ? props.gridWeapon.ax[0].modifier : ''
+              }.png`}
+            />
+          </div>
           <span>{createPrimaryAxSkillString()}</span>
         </div>
 
         {props.gridWeapon.ax &&
         props.gridWeapon.ax[1].modifier &&
         props.gridWeapon.ax[1].strength ? (
-          <div className="secondary axSkill">
-            <img
-              alt="AX2"
-              src={`/icons/ax/secondary_${
-                props.gridWeapon.ax ? props.gridWeapon.ax[1].modifier : ''
-              }.png`}
-            />
+          <div
+            className={classNames({
+              [styles.secondary]: true,
+              [styles.axSkill]: true,
+              [styles.skill]: true,
+            })}
+          >
+            <div className={styles.axImageWrapper}>
+              <img
+                alt="AX2"
+                src={`/icons/ax/secondary_${
+                  props.gridWeapon.ax ? props.gridWeapon.ax[1].modifier : ''
+                }.png`}
+              />
+            </div>
             <span>{createSecondaryAxSkillString()}</span>
           </div>
         ) : (
@@ -231,7 +212,7 @@ const WeaponHovercard = (props: Props) => {
       className={tintElement}
       text={t('buttons.wiki')}
       onClick={goTo}
-      contained={true}
+      bound={true}
     />
   )
 
@@ -240,54 +221,21 @@ const WeaponHovercard = (props: Props) => {
       <HovercardTrigger asChild onClick={props.onTriggerClick}>
         {props.children}
       </HovercardTrigger>
-      <HovercardContent className="Weapon" side={hovercardSide()}>
-        <div className="top">
-          <div className="title">
-            <h4>{props.gridWeapon.object.name[locale]}</h4>
-            <img
-              alt={props.gridWeapon.object.name[locale]}
-              src={weaponImage()}
-            />
-          </div>
-          <div className="subInfo">
-            <div className="icons">
-              {props.gridWeapon.object.element !== 0 ||
-              (props.gridWeapon.object.element === 0 &&
-                props.gridWeapon.element != null) ? (
-                <WeaponLabelIcon
-                  labelType={
-                    props.gridWeapon.object.element === 0 &&
-                    props.gridWeapon.element !== 0
-                      ? Element[props.gridWeapon.element]
-                      : Element[props.gridWeapon.object.element]
-                  }
-                />
-              ) : (
-                ''
-              )}
-              <WeaponLabelIcon
-                labelType={Proficiency[props.gridWeapon.object.proficiency]}
-              />
-            </div>
-            <UncapIndicator
-              type="weapon"
-              ulb={props.gridWeapon.object.uncap.ulb || false}
-              flb={props.gridWeapon.object.uncap.flb || false}
-              special={false}
-            />
-          </div>
-        </div>
-
+      <HovercardContent className={styles.content} side={hovercardSide()}>
+        <HovercardHeader
+          gridObject={props.gridWeapon}
+          object={props.gridWeapon.object}
+          type="weapon"
+        />
         {props.gridWeapon.object.ax &&
-        props.gridWeapon.ax &&
-        props.gridWeapon.ax[0].modifier &&
-        props.gridWeapon.ax[0].strength
-          ? axSection
-          : ''}
-        {awakeningSection()}
-        {props.gridWeapon.weapon_keys && props.gridWeapon.weapon_keys.length > 0
-          ? keysSection
-          : ''}
+          props.gridWeapon.ax &&
+          props.gridWeapon.ax[0].modifier !== undefined &&
+          props.gridWeapon.ax[0].strength !== undefined &&
+          axSection}
+        {props.gridWeapon.awakening && awakeningSection}
+        {props.gridWeapon.weapon_keys &&
+          props.gridWeapon.weapon_keys.length > 0 &&
+          keysSection}
         {wikiButton}
       </HovercardContent>
     </Hovercard>

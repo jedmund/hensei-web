@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useTranslation } from 'next-i18next'
-import Switch from '~components/common/Switch'
-import GuidebookUnit from '../GuidebookUnit'
 import classNames from 'classnames'
+import GuidebookUnit from '../GuidebookUnit'
 
 import type { SearchableObject } from '~types'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {
@@ -28,12 +27,12 @@ const GuidebooksGrid = ({
   const { t } = useTranslation('common')
 
   const classes = classNames({
-    Guidebooks: true,
-    ContainerItem: true,
+    [styles.guidebooks]: true,
+    [styles.containerItem]: true,
   })
 
   const guidebooks = (
-    <ul id="GuidebooksGrid">
+    <ul className={styles.grid}>
       {Array.from(Array(EXTRA_WEAPONS_COUNT)).map((x, i) => {
         const itemClasses = classNames({
           Empty: grid && grid[i] === undefined,
@@ -54,14 +53,7 @@ const GuidebooksGrid = ({
     </ul>
   )
 
-  const guidebookElement = (
-    <div className={classes}>
-      <div className="Header">
-        <h3>{t('sephira_guidebooks')}</h3>
-      </div>
-      {guidebooks}
-    </div>
-  )
+  const guidebookElement = <div className={classes}>{guidebooks}</div>
 
   return guidebookElement
 }

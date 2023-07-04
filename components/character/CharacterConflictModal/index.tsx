@@ -4,12 +4,13 @@ import { Trans, useTranslation } from 'next-i18next'
 
 import { Dialog } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
+import DialogFooter from '~components/common/DialogFooter'
 import Button from '~components/common/Button'
 import Overlay from '~components/common/Overlay'
 
 import { appState } from '~utils/appState'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   open: boolean
@@ -75,19 +76,19 @@ const CharacterConflictModal = (props: Props) => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
-        className="Conflict"
+        className="conflict"
         footerref={footerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={close}
       >
-        <div className="Content">
+        <div className={styles.content}>
           <p>
             <Trans i18nKey="modals.conflict.character"></Trans>
           </p>
-          <div className="CharacterDiagram Diagram">
+          <div className={styles.diagram}>
             <ul>
               {props.conflictingCharacters?.map((character, i) => (
-                <li className="character" key={`conflict-${i}`}>
+                <li className={styles.character} key={`conflict-${i}`}>
                   <img
                     alt={character.object.name[locale]}
                     src={imageUrl(character.object, character.uncap_level)}
@@ -96,9 +97,9 @@ const CharacterConflictModal = (props: Props) => {
                 </li>
               ))}
             </ul>
-            <span className="arrow">&rarr;</span>
-            <div className="wrapper">
-              <div className="character">
+            <span className={styles.arrow}>&rarr;</span>
+            <div className={styles.wrapper}>
+              <div className={styles.character}>
                 <img
                   alt={props.incomingCharacter?.name[locale]}
                   src={imageUrl(props.incomingCharacter)}
@@ -108,20 +109,22 @@ const CharacterConflictModal = (props: Props) => {
             </div>
           </div>
         </div>
-        <div className="DialogFooter" ref={footerRef}>
-          <div className="Buttons Span">
+        <DialogFooter
+          rightElements={[
             <Button
-              contained={true}
+              bound={true}
               onClick={close}
+              key="cancel"
               text={t('buttons.cancel')}
-            />
+            />,
             <Button
-              contained={true}
+              bound={true}
               onClick={props.resolveConflict}
+              key="confirm"
               text={t('modals.conflict.buttons.confirm')}
-            />
-          </div>
-        </div>
+            />,
+          ]}
+        />
       </DialogContent>
       <Overlay open={open} visible={true} />
     </Dialog>

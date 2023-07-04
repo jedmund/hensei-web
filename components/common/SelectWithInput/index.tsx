@@ -10,7 +10,7 @@ import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
 
 // Styles and icons
-import './index.scss'
+import styles from './index.module.scss'
 
 // Types
 interface Props {
@@ -59,13 +59,13 @@ const SelectWithInput = ({
 
   // Classes
   const inputClasses = classNames({
-    Bound: true,
-    Hidden: currentItemSkill?.id === 0,
+    fullHeight: true,
+    range: true,
   })
 
   const errorClasses = classNames({
-    errors: true,
-    visible: error !== '',
+    [styles.errors]: true,
+    [styles.visible]: error !== '',
   })
 
   // Hooks
@@ -127,18 +127,24 @@ const SelectWithInput = ({
     let error = ''
 
     if (currentItemSkill) {
-      if (value < currentItemSkill.minValue) {
+      if (!currentItemSkill.fractional && value && value % 1 != 0) {
+        error = t(`${object}.errors.value_not_whole`, {
+          name: currentItemSkill.name[locale],
+        })
+      } else if (value < currentItemSkill.minValue) {
         error = t(`${object}.errors.value_too_low`, {
+          name: currentItemSkill.name[locale],
           minValue: currentItemSkill.minValue,
         })
       } else if (value > currentItemSkill.maxValue) {
         error = t(`${object}.errors.value_too_high`, {
+          name: currentItemSkill.name[locale],
           maxValue: currentItemSkill.maxValue,
         })
-      } else if (!currentItemSkill.fractional && value % 1 != 0) {
-        error = t(`${object}.errors.value_not_whole`)
       } else if (!value || value <= 0) {
-        error = t(`${object}.errors.value_empty`)
+        error = t(`${object}.errors.value_empty`, {
+          name: currentItemSkill.name[locale],
+        })
       } else {
         error = ''
       }
@@ -146,7 +152,13 @@ const SelectWithInput = ({
 
     setError(error)
 
-    return error.length === 0
+    if (error.length > 0) {
+      sendValidity(false)
+      return false
+    } else {
+      sendValidity(true)
+      return true
+    }
   }
 
   const rangeString = () => {
@@ -162,17 +174,20 @@ const SelectWithInput = ({
   }
 
   return (
-    <div className="SelectWithItem">
-      <div className="InputSet">
+    <div>
+      <div className={styles.set}>
         <Select
           key={`${currentItemSkill?.name.en}_type`}
           value={`${currentItemSkill ? currentItemSkill.id : 0}`}
           open={open}
+          trigger={{
+            bound: true,
+            className: 'grow',
+          }}
           disabled={selectDisabled}
           onValueChange={handleSelectChange}
           onOpenChange={changeOpen}
           onClose={onClose}
-          triggerClass="modal"
           overlayVisible={false}
         >
           {generateOptions()}
@@ -181,13 +196,17 @@ const SelectWithInput = ({
         <Input
           value={fieldInputValue}
           className={inputClasses}
+          fieldsetClassName={classNames({
+            hidden: currentItemSkill?.id === 0,
+          })}
+          wrapperClassName="fullHeight"
           type="number"
+          bound={true}
           placeholder={rangeString()}
           min={currentItemSkill?.minValue}
           max={currentItemSkill?.maxValue}
           step="1"
           onChange={handleInputChange}
-          visible={currentItemSkill ? 'true' : 'false'}
           ref={input}
         />
       </div>

@@ -1,9 +1,8 @@
 // Libraries
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import { subscribe, useSnapshot } from 'valtio'
+import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
-import classNames from 'classnames'
 
 // Dependencies: Common
 import Button from '~components/common/Button'
@@ -11,9 +10,9 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
 } from '~components/common/DropdownMenuContent'
+import DropdownMenuGroup from '~components/common/DropdownMenuGroup'
+import DropdownMenuItem from '~components/common/DropdownMenuItem'
 
 // Dependencies: Toasts
 import RemixedToast from '~components/toasts/RemixedToast'
@@ -24,12 +23,7 @@ import DeleteTeamAlert from '~components/dialogs/DeleteTeamAlert'
 import RemixTeamAlert from '~components/dialogs/RemixTeamAlert'
 
 // Dependencies: Utils
-import api from '~utils/api'
-import { accountState } from '~utils/accountState'
 import { appState } from '~utils/appState'
-import { getLocalId } from '~utils/localId'
-import { retrieveLocaleCookies } from '~utils/retrieveCookies'
-import { setEditKey, storeEditKey } from '~utils/userToken'
 
 // Dependencies: Icons
 import EllipsisIcon from '~public/icons/Ellipsis.svg'
@@ -51,9 +45,6 @@ const PartyDropdown = ({
 
   // Router
   const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
-  const localeData = retrieveLocaleCookies()
 
   const [open, setOpen] = useState(false)
 
@@ -63,22 +54,8 @@ const PartyDropdown = ({
   const [copyToastOpen, setCopyToastOpen] = useState(false)
   const [remixToastOpen, setRemixToastOpen] = useState(false)
 
-  const [name, setName] = useState('')
-  const [originalName, setOriginalName] = useState('')
-
   // Snapshots
-  const { account } = useSnapshot(accountState)
   const { party: partySnapshot } = useSnapshot(appState)
-
-  // Subscribe to app state to listen for party name and
-  // unsubscribe when component is unmounted
-  const unsubscribe = subscribe(appState, () => {
-    const newName =
-      appState.party && appState.party.name ? appState.party.name : ''
-    setName(newName)
-  })
-
-  useEffect(() => () => unsubscribe(), [])
 
   // Methods: Event handlers (Buttons)
   function handleButtonClicked() {
@@ -145,39 +122,37 @@ const PartyDropdown = ({
     remixTeamCallback()
   }
 
-  const editableItems = () => {
-    return (
-      <>
-        <DropdownMenuGroup className="MenuGroup">
-          <DropdownMenuItem className="MenuItem" onClick={copyToClipboard}>
-            <span>Copy link to team</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="MenuItem" onClick={openRemixTeamAlert}>
-            <span>Remix team</span>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuGroup className="MenuGroup">
-          <DropdownMenuItem className="MenuItem" onClick={openDeleteTeamAlert}>
-            <span className="destructive">Delete team</span>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </>
-    )
-  }
+  const items = (
+    <>
+      <DropdownMenuGroup>
+        <DropdownMenuItem onClick={copyToClipboard}>
+          <span>{t('dropdown.party.copy')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={openRemixTeamAlert}>
+          <span>{t('dropdown.party.remix')}</span>
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuGroup>
+        <DropdownMenuItem destructive={true} onClick={openDeleteTeamAlert}>
+          <span>{t('dropdown.party.delete')}</span>
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+    </>
+  )
 
   return (
     <>
-      <div id="DropdownWrapper">
+      <div className="dropdownWrapper">
         <DropdownMenu open={open} onOpenChange={handleOpenChange}>
           <DropdownMenuTrigger asChild>
             <Button
-              leftAccessoryIcon={<EllipsisIcon />}
-              className={classNames({ Active: open })}
+              active={open}
               blended={true}
+              leftAccessoryIcon={<EllipsisIcon />}
               onClick={handleButtonClicked}
             />
           </DropdownMenuTrigger>
-          <DropdownMenuContent>{editableItems()}</DropdownMenuContent>
+          <DropdownMenuContent>{items}</DropdownMenuContent>
         </DropdownMenu>
       </div>
 

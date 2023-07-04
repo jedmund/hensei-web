@@ -1,0 +1,19 @@
+.footer {
+  $multiplier: 4;
+
+  align-items: flex-end;
+  background: var(--dialog-bg);
+  bottom: -1px; // hack to fix content being visible 1px below
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: ($unit * 1.5) ($unit * $multiplier) $unit-3x;
+  position: sticky;
+  transition: box-shadow 0.1s ease-out, border-top 0.1s ease-out;
+
+  .left,
+  .right {
+    display: flex;
+    gap: $unit;
+  }
+}

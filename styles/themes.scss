@@ -30,7 +30,11 @@
   --anonymous-bg: #{$anonymous--bg--light};
   --placeholder-bg: #{$grey-80};
 
-  // Light - Menus
+  // Light - Units
+  --unit-bg: #{$unit--bg--light};
+  --unit-bg-hover: #{$unit--bg--light--hover};
+
+  // Light - Dialogs
   --dialog-bg: #{$dialog--bg--light};
 
   // Light - Menus
@@ -39,6 +43,10 @@
   --menu-text: #{$menu--text--light};
   --menu-bg-item-hover: #{$menu--item--bg--light--hover};
   --menu-text-hover: #{$menu--text--light--hover};
+
+  // Light - Notices
+  --notice-bg: #{$notice--bg--light};
+  --notice-text: #{$notice--text--light};
 
   // Light - Buttons
   --button-bg: #{$button--bg--light};
@@ -58,12 +66,11 @@
   --input-bound-bg-hover: #{$input--bound--bg--light--hover};
 
   // Light - Selects
-  --select-bg: #{$select--bg--light};
-  --select-contained-bg: #{$select--contained--bg--light};
-  --select-contained-bg-hover: #{$select--contained--bg--light--hover};
-  --select-modal-bg: #{$select--modal--bg--light};
-  --select-modal-bg-hover: #{$select--modal--bg--light--hover};
+  --select-bg: #{$select--trigger--bg--light};
+  --select-contained-bg: #{$select--trigger--contained--bg--light};
+  --select-contained-bg-hover: #{$select--trigger--contained--bg--light--hover};
   --select-separator: #{$select--separator--light};
+  --select-content-contained-bg: #{$select--content--contained--bg--light};
   --option-bg-hover: #{$option--bg--light--hover};
 
   // Light - Sliders
@@ -97,7 +104,9 @@
   --extra-purple-card-bg: #{$extra--purple--card--bg--light};
   --extra-purple-primary: #{$extra--purple--primary--light};
   --extra-purple-secondary: #{$extra--purple--secondary--light};
+  --extra-purple-light-text: #{$extra--purple--light--text--light};
   --extra-purple-text: #{$extra--purple--text--light};
+  --extra-purple-dark-text: #{$extra--purple--dark--text--dark};
 
   --switch-nub: #{$switch--nub--bg--light};
 
@@ -120,35 +129,42 @@
 
   --grid-border-color: #{$grid--border--color--light};
 
-  --wind-bg: #{$wind-bg-10};
-  --wind-hover-bg: #{$wind-bg-20};
-  --wind-text: #{$wind-text-10};
-  --wind-hover-text: #{$wind-text-20};
+  // Light - Element theming
+  --wind-bg: #{$wind--bg--light};
+  --wind-bg-hover: #{$wind--bg--hover--light};
+  --wind-text: #{$wind--text--light};
+  --wind-raid-text: #{$wind--text--raid--light};
+  --wind-text-hover: #{$wind--text--hover--light};
 
-  --fire-bg: #{$fire-bg-10};
-  --fire-hover-bg: #{$fire-bg-20};
-  --fire-text: #{$fire-text-10};
-  --fire-hover-text: #{$fire-text-20};
+  --fire-bg: #{$fire--bg--light};
+  --fire-bg-hover: #{$fire--bg--hover--light};
+  --fire-text: #{$fire--text--light};
+  --fire-raid-text: #{$fire--text--raid--light};
+  --fire-text-hover: #{$fire--text--hover--light};
 
-  --water-bg: #{$water-bg-10};
-  --water-hover-bg: #{$water-bg-20};
-  --water-text: #{$water-text-10};
-  --water-hover-text: #{$water-text-20};
+  --water-bg: #{$water--bg--light};
+  --water-bg-hover: #{$water--bg--hover--light};
+  --water-text: #{$water--text--light};
+  --water-raid-text: #{$water--text--raid--light};
+  --water-text-hover: #{$water--text--hover--light};
 
-  --earth-bg: #{$earth-bg-10};
-  --earth-hover-bg: #{$earth-bg-20};
-  --earth-text: #{$earth-text-10};
-  --earth-hover-text: #{$earth-text-20};
+  --earth-bg: #{$earth--bg--light};
+  --earth-bg-hover: #{$earth--bg--hover--light};
+  --earth-text: #{$earth--text--light};
+  --earth-raid-text: #{$earth--text--raid--light};
+  --earth-text-hover: #{$earth--text--hover--light};
 
-  --dark-bg: #{$dark-bg-10};
-  --dark-hover-bg: #{$dark-bg-20};
-  --dark-text: #{$dark-text-10};
-  --dark-hover-text: #{$dark-text-20};
+  --dark-bg: #{$dark--bg--light};
+  --dark-bg-hover: #{$dark--bg--hover--light};
+  --dark-text: #{$dark--text--light};
+  --dark-raid-text: #{$dark--text--raid--light};
+  --dark-text-hover: #{$dark--text--hover--light};
 
-  --light-bg: #{$light-bg-10};
-  --light-hover-bg: #{$light-bg-20};
-  --light-text: #{$light-text-10};
-  --light-hover-text: #{$light-text-20};
+  --light-bg: #{$light--bg--light};
+  --light-bg-hover: #{$light--bg--hover--light};
+  --light-text: #{$light--text--light};
+  --light-raid-text: #{$light--text--raid--light};
+  --light-text-hover: #{$light--text--hover--light};
 
   // Gradients
   --hero-gradient: #{$hero--gradient--light};
@@ -162,7 +178,7 @@
   --grid-rep-hover: #{$grid--rep--hover--dark};
 
   --card-bg: #{$page--element--bg--dark};
-  --bar-bg: #{$grey-10};
+  --bar-bg: #{$grey-20};
 
   --link-text-hover: #{$text--link--hover--dark};
 
@@ -187,6 +203,10 @@
   --anonymous-bg: #{$anonymous--bg--dark};
   --placeholder-bg: #{$grey-40};
 
+  // Dark - Units
+  --unit-bg: #{$unit--bg--dark};
+  --unit-bg-hover: #{$unit--bg--dark--hover};
+
   // Dark - Dialogs
   --dialog-bg: #{$dialog--bg--dark};
 
@@ -196,6 +216,10 @@
   --menu-separator: #{$menu--separator--dark};
   --menu-bg-item-hover: #{$menu--item--bg--dark--hover};
   --menu-text-hover: #{$menu--text--dark--hover};
+
+  // Dark - Notices
+  --notice-bg: #{$notice--bg--dark};
+  --notice-text: #{$notice--text--dark};
 
   // Dark - Buttons
   --button-bg: #{$button--bg--dark};
@@ -215,12 +239,11 @@
   --input-bound-bg-hover: #{$input--bound--bg--dark--hover};
 
   // Dark - Selects
-  --select-bg: #{$select--bg--dark};
-  --select-contained-bg: #{$select--contained--bg--dark};
-  --select-contained-bg-hover: #{$select--contained--bg--dark--hover};
-  --select-modal-bg: #{$select--modal--bg--dark};
-  --select-modal-bg-hover: #{$select--modal--bg--dark--hover};
+  --select-bg: #{$select--trigger--bg--dark};
+  --select-contained-bg: #{$select--trigger--contained--bg--dark};
+  --select-contained-bg-hover: #{$select--trigger--contained--bg--dark--hover};
   --select-separator: #{$select--separator--dark};
+  --select-content-contained-bg: #{$select--content--contained--bg--dark};
   --option-bg-hover: #{$option--bg--dark--hover};
 
   // Dark - Sliders
@@ -254,7 +277,9 @@
   --extra-purple-card-bg: #{$extra--purple--card--bg--dark};
   --extra-purple-primary: #{$extra--purple--primary--dark};
   --extra-purple-secondary: #{$extra--purple--secondary--dark};
+  --extra-purple-text-light: #{$extra--purple--light--text--dark};
   --extra-purple-text: #{$extra--purple--text--dark};
+  --extra-purple-text-dark: #{$extra--purple--dark--text--dark};
 
   --switch-nub: #{$switch--nub--bg--dark};
 
@@ -277,36 +302,42 @@
 
   --grid-border-color: #{$grid--border--color--dark};
 
-  // Element theming
-  --wind-bg: #{$wind-bg-10};
-  --wind-hover-bg: #{$wind-bg-00};
-  --wind-text: #{$wind-text-20};
-  --wind-hover-text: #{$wind-text-00};
+  // Dark - Element theming
+  --wind-bg: #{$wind--bg--dark};
+  --wind-bg-hover: #{$wind--bg--hover--dark};
+  --wind-text: #{$wind--text--dark};
+  --wind-raid-text: #{$wind--text--raid--dark};
+  --wind-text-hover: #{$wind--text--hover--dark};
 
-  --fire-bg: #{$fire-bg-10};
-  --fire-hover-bg: #{$fire-bg-00};
-  --fire-text: #{$fire-text-20};
-  --fire-hover-text: #{$fire-text-00};
+  --fire-bg: #{$fire--bg--dark};
+  --fire-bg-hover: #{$fire--bg--hover--dark};
+  --fire-text: #{$fire--text--dark};
+  --fire-raid-text: #{$fire--text--raid--dark};
+  --fire-text-hover: #{$fire--text--hover--dark};
 
-  --water-bg: #{$water-bg-10};
-  --water-hover-bg: #{$water-bg-00};
-  --water-text: #{$water-text-20};
-  --water-hover-text: #{$water-text-00};
+  --water-bg: #{$water--bg--dark};
+  --water-bg-hover: #{$water--bg--hover--dark};
+  --water-text: #{$water--text--dark};
+  --water-raid-text: #{$water--text--raid--dark};
+  --water-text-hover: #{$water--text--hover--dark};
 
-  --earth-bg: #{$earth-bg-10};
-  --earth-hover-bg: #{$earth-bg-00};
-  --earth-text: #{$earth-text-20};
-  --earth-hover-text: #{$earth-text-00};
+  --earth-bg: #{$earth--bg--dark};
+  --earth-bg-hover: #{$earth--bg--hover--dark};
+  --earth-text: #{$earth--text--dark};
+  --earth-raid-text: #{$earth--text--raid--dark};
+  --earth-text-hover: #{$earth--text--hover--dark};
 
-  --dark-bg: #{$dark-bg-10};
-  --dark-hover-bg: #{$dark-bg-00};
-  --dark-text: #{$dark-text-20};
-  --dark-hover-text: #{$dark-text-00};
+  --dark-bg: #{$dark--bg--dark};
+  --dark-bg-hover: #{$dark--bg--hover--dark};
+  --dark-text: #{$dark--text--dark};
+  --dark-raid-text: #{$dark--text--raid--dark};
+  --dark-text-hover: #{$dark--text--hover--dark};
 
-  --light-bg: #{$light-bg-10};
-  --light-hover-bg: #{$light-bg-00};
-  --light-text: #{$light-text-20};
-  --light-hover-text: #{$light-text-00};
+  --light-bg: #{$light--bg--dark};
+  --light-bg-hover: #{$light--bg--hover--dark};
+  --light-text: #{$light--text--dark};
+  --light-raid-text: #{$light--text--raid--dark};
+  --light-text-hover: #{$light--text--hover--dark};
 
   // Gradients
   --hero-gradient: #{$hero--gradient--dark};

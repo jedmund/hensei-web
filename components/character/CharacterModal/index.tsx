@@ -1,16 +1,12 @@
 // Core dependencies
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
-import classNames from 'classnames'
+import { Trans, useTranslation } from 'next-i18next'
+import isEqual from 'lodash/isEqual'
 
 // UI dependencies
-import {
-  Dialog,
-  DialogClose,
-  DialogTitle,
-  DialogTrigger,
-} from '~components/common/Dialog'
+import Alert from '~components/common/Alert'
+import { Dialog, DialogTrigger } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
 import Button from '~components/common/Button'
 import SelectWithInput from '~components/common/SelectWithInput'
@@ -29,8 +25,7 @@ const emptyExtendedMastery: ExtendedMastery = {
 const MAX_AWAKENING_LEVEL = 9
 
 // Styles and icons
-import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 // Types
 import {
@@ -39,6 +34,8 @@ import {
   GridCharacterObject,
 } from '~types'
 import AwakeningSelectWithInput from '~components/mastery/AwakeningSelectWithInput'
+import DialogHeader from '~components/common/DialogHeader'
+import DialogFooter from '~components/common/DialogFooter'
 
 interface Props {
   gridCharacter: GridCharacter
@@ -54,52 +51,39 @@ const CharacterModal = ({
   onOpenChange,
   updateCharacter,
 }: PropsWithChildren<Props>) => {
+  // Router and localization
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
   const { t } = useTranslation('common')
 
-  // UI state
+  // State: Component
   const [open, setOpen] = useState(false)
+  const [alertOpen, setAlertOpen] = useState(false)
   const [formValid, setFormValid] = useState(false)
 
-  // Refs
-  const headerRef = React.createRef<HTMLDivElement>()
-  const footerRef = React.createRef<HTMLDivElement>()
-
-  // Classes
-  const headerClasses = classNames({
-    DialogHeader: true,
-    Short: true,
-  })
-
-  // Callbacks and Hooks
-  useEffect(() => {
-    setOpen(modalOpen)
-  }, [modalOpen])
-
-  // Character properties: Perpetuity
+  // State: Data
   const [perpetuity, setPerpetuity] = useState(false)
-
-  // Character properties: Ring
   const [rings, setRings] = useState<CharacterOverMastery>({
     1: { ...emptyExtendedMastery, modifier: 1 },
     2: { ...emptyExtendedMastery, modifier: 2 },
     3: emptyExtendedMastery,
     4: emptyExtendedMastery,
   })
-
-  // Character properties: Earrings
   const [earring, setEarring] = useState<ExtendedMastery>(emptyExtendedMastery)
-
-  // Character properties: Awakening
   const [awakening, setAwakening] = useState<Awakening>()
   const [awakeningLevel, setAwakeningLevel] = useState(1)
-
-  // Character properties: Transcendence
   const [transcendenceStep, setTranscendenceStep] = useState(0)
 
+  // Refs
+  const headerRef = React.createRef<HTMLDivElement>()
+  const footerRef = React.createRef<HTMLDivElement>()
+
   // Hooks
+  useEffect(() => {
+    setOpen(modalOpen)
+  }, [modalOpen])
+
   useEffect(() => {
     if (gridCharacter.aetherial_mastery) {
       setEarring({
@@ -150,10 +134,80 @@ const CharacterModal = ({
     return object
   }
 
+  // Methods: Modification checking
+  function hasBeenModified() {
+    const rings = ringsChanged()
+    const aetherialMastery = aetherialMasteryChanged()
+    const awakening = awakeningChanged()
+
+    return (
+      rings ||
+      aetherialMastery ||
+      awakening ||
+      gridCharacter.perpetuity !== perpetuity
+    )
+  }
+
+  function ringsChanged() {
+    // Create an empty ExtendedMastery object
+    const emptyRingset: CharacterOverMastery = {
+      1: { ...emptyExtendedMastery, modifier: 1 },
+      2: { ...emptyExtendedMastery, modifier: 2 },
+      3: emptyExtendedMastery,
+      4: emptyExtendedMastery,
+    }
+
+    // Check if the current ringset is empty on the current GridCharacter and our local state
+    const isEmptyRingset =
+      gridCharacter.over_mastery === undefined && isEqual(emptyRingset, rings)
+
+    // Check if the ringset in local state is different from the one on the current GridCharacter
+    const ringsChanged = !isEqual(gridCharacter.over_mastery, rings)
+
+    // Return true if the ringset has been modified and is not empty
+    return ringsChanged && !isEmptyRingset
+  }
+
+  function aetherialMasteryChanged() {
+    // Create an empty ExtendedMastery object
+    const emptyAetherialMastery: ExtendedMastery = {
+      modifier: 0,
+      strength: 0,
+    }
+
+    // Check if the current earring is empty on the current GridCharacter and our local state
+    const isEmptyRingset =
+      gridCharacter.aetherial_mastery === undefined &&
+      isEqual(emptyAetherialMastery, earring)
+
+    // Check if the earring in local state is different from the one on the current GridCharacter
+    const aetherialMasteryChanged = !isEqual(
+      gridCharacter.aetherial_mastery,
+      earring
+    )
+
+    // Return true if the earring has been modified and is not empty
+    return aetherialMasteryChanged && !isEmptyRingset
+  }
+
+  function awakeningChanged() {
+    // Check if the awakening in local state is different from the one on the current GridCharacter
+    const awakeningChanged =
+      !isEqual(gridCharacter.awakening.type, awakening) ||
+      gridCharacter.awakening.level !== awakeningLevel
+
+    // Return true if the awakening has been modified and is not empty
+    return awakeningChanged
+  }
+
   // Methods: UI state management
   function handleOpenChange(open: boolean) {
-    setOpen(open)
-    onOpenChange(open)
+    if (hasBeenModified()) {
+      setAlertOpen(!open)
+    } else {
+      setOpen(open)
+      onOpenChange(open)
+    }
   }
 
   // Methods: Receive data from components
@@ -167,19 +221,8 @@ const CharacterModal = ({
   ) {
     setEarring({
       modifier: earringModifier,
-      strength: earringStrength,
+      strength: earringModifier > 0 ? earringStrength : 0,
     })
-  }
-
-  function handleCheckedChange(checked: boolean) {
-    setPerpetuity(checked)
-  }
-
-  async function handleUpdateCharacter() {
-    await updateCharacter(prepareObject())
-
-    setOpen(false)
-    if (onOpenChange) onOpenChange(false)
   }
 
   function receiveAwakeningValues(id: string, level: number) {
@@ -191,113 +234,161 @@ const CharacterModal = ({
     setFormValid(isValid)
   }
 
-  const ringSelect = () => {
-    return (
-      <section>
-        <h3>{t('modals.characters.subtitles.ring')}</h3>
-        <RingSelect
-          gridCharacter={gridCharacter}
-          sendValues={receiveRingValues}
-        />
-      </section>
-    )
+  // Methods: Event handlers
+  function handleCheckedChange(checked: boolean) {
+    setPerpetuity(checked)
   }
 
-  const earringSelect = () => {
-    const earringData = elementalizeAetherialMastery(gridCharacter)
+  async function handleUpdateCharacter() {
+    await updateCharacter(prepareObject())
 
-    return (
-      <section>
-        <h3>{t('modals.characters.subtitles.earring')}</h3>
-        <SelectWithInput
-          object="earring"
-          dataSet={earringData}
-          selectValue={earring.modifier ? earring.modifier : 0}
-          inputValue={earring.strength ? earring.strength : 0}
-          sendValidity={receiveValidity}
-          sendValues={receiveEarringValues}
-        />
-      </section>
-    )
+    setOpen(false)
+    if (onOpenChange) onOpenChange(false)
   }
 
-  const awakeningSelect = () => {
-    return (
-      <section>
-        <h3>{t('modals.characters.subtitles.awakening')}</h3>
-        <AwakeningSelectWithInput
-          dataSet={gridCharacter.object.awakenings}
-          awakening={gridCharacter.awakening.type}
-          level={gridCharacter.awakening.level}
-          defaultAwakening={
-            gridCharacter.object.awakenings.find(
-              (a) => a.slug === 'character-balanced'
-            )!
-          }
-          maxLevel={MAX_AWAKENING_LEVEL}
-          sendValidity={receiveValidity}
-          sendValues={receiveAwakeningValues}
-        />
-      </section>
-    )
+  function close() {
+    setEarring({
+      modifier: gridCharacter.aetherial_mastery
+        ? gridCharacter.aetherial_mastery.modifier
+        : 0,
+      strength: gridCharacter.aetherial_mastery
+        ? gridCharacter.aetherial_mastery.strength
+        : 0,
+    })
+
+    setRings(gridCharacter.over_mastery || emptyExtendedMastery)
+    setAwakening(gridCharacter.awakening.type)
+    setAwakeningLevel(gridCharacter.awakening.level)
+
+    setAlertOpen(false)
+    setOpen(false)
+    onOpenChange(false)
   }
 
-  const perpetuitySwitch = () => {
-    return (
-      <section className="inline">
-        <h3>{t('modals.characters.subtitles.permanent')}</h3>
-        <Switch onCheckedChange={handleCheckedChange} checked={perpetuity} />
-      </section>
-    )
-  }
+  // Constants: Rendering
+  const confirmationAlert = (
+    <Alert
+      message={
+        <span>
+          <Trans i18nKey="alerts.unsaved_changes.object">
+            You will lose all changes to{' '}
+            <strong>{{ objectName: gridCharacter.object.name[locale] }}</strong>{' '}
+            if you continue.
+            <br />
+            <br />
+            Are you sure you want to continue without saving?
+          </Trans>
+        </span>
+      }
+      open={alertOpen}
+      primaryActionText="Close"
+      primaryAction={close}
+      cancelActionText="Nevermind"
+      cancelAction={() => setAlertOpen(false)}
+    />
+  )
 
+  const ringSelect = (
+    <section>
+      <h3>{t('modals.characters.subtitles.ring')}</h3>
+      <RingSelect
+        gridCharacter={gridCharacter}
+        sendValues={receiveRingValues}
+      />
+    </section>
+  )
+
+  const earringSelect = (
+    <section>
+      <h3>{t('modals.characters.subtitles.earring')}</h3>
+      <SelectWithInput
+        object="earring"
+        dataSet={elementalizeAetherialMastery(gridCharacter)}
+        selectValue={
+          gridCharacter.aetherial_mastery
+            ? gridCharacter.aetherial_mastery.modifier
+            : 0
+        }
+        inputValue={
+          gridCharacter.aetherial_mastery
+            ? gridCharacter.aetherial_mastery.strength
+            : 0
+        }
+        sendValidity={receiveValidity}
+        sendValues={receiveEarringValues}
+      />
+    </section>
+  )
+
+  const awakeningSelect = (
+    <section>
+      <h3>{t('modals.characters.subtitles.awakening')}</h3>
+      <AwakeningSelectWithInput
+        dataSet={gridCharacter.object.awakenings}
+        awakening={gridCharacter.awakening.type}
+        level={gridCharacter.awakening.level}
+        defaultAwakening={
+          gridCharacter.object.awakenings.find(
+            (a) => a.slug === 'character-balanced'
+          )!
+        }
+        maxLevel={MAX_AWAKENING_LEVEL}
+        sendValidity={receiveValidity}
+        sendValues={receiveAwakeningValues}
+      />
+    </section>
+  )
+
+  const perpetuitySwitch = (
+    <section className={styles.inline}>
+      <h3>{t('modals.characters.subtitles.permanent')}</h3>
+      <Switch onCheckedChange={handleCheckedChange} checked={perpetuity} />
+    </section>
+  )
+
+  // Methods: Rendering
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent
-        className="Character"
-        headerref={headerRef}
-        footerref={footerRef}
-        onOpenAutoFocus={(event) => event.preventDefault()}
-        onEscapeKeyDown={() => {}}
-      >
-        <div className={headerClasses} ref={headerRef}>
-          <img
-            alt={gridCharacter.object.name[locale]}
-            className="DialogImage"
-            src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-square/${gridCharacter.object.granblue_id}_01.jpg`}
+    <>
+      {confirmationAlert}
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent
+          className="character"
+          headerref={headerRef}
+          footerref={footerRef}
+          onOpenAutoFocus={(event) => event.preventDefault()}
+          onEscapeKeyDown={() => {}}
+        >
+          <DialogHeader
+            ref={headerRef}
+            title={gridCharacter.object.name[locale]}
+            subtitle={t('modals.characters.title')}
+            image={{
+              src: `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-square/${gridCharacter.object.granblue_id}_01.jpg`,
+              alt: gridCharacter.object.name[locale],
+            }}
           />
-          <div className="DialogTop">
-            <DialogTitle className="SubTitle">
-              {t('modals.characters.title')}
-            </DialogTitle>
-            <DialogTitle className="DialogTitle">
-              {gridCharacter.object.name[locale]}
-            </DialogTitle>
-          </div>
-          <DialogClose className="DialogClose" asChild>
-            <span>
-              <CrossIcon />
-            </span>
-          </DialogClose>
-        </div>
-
-        <div className="mods">
-          {perpetuitySwitch()}
-          {ringSelect()}
-          {earringSelect()}
-          {awakeningSelect()}
-        </div>
-        <div className="DialogFooter" ref={footerRef}>
-          <Button
-            contained={true}
-            onClick={handleUpdateCharacter}
-            disabled={!formValid}
-            text={t('modals.characters.buttons.confirm')}
+          <section className={styles.mods}>
+            {perpetuitySwitch}
+            {ringSelect}
+            {earringSelect}
+            {awakeningSelect}
+          </section>
+          <DialogFooter
+            ref={footerRef}
+            rightElements={[
+              <Button
+                bound={true}
+                onClick={handleUpdateCharacter}
+                key="confirm"
+                disabled={!formValid}
+                text={t('modals.characters.buttons.confirm')}
+              />,
+            ]}
           />
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 

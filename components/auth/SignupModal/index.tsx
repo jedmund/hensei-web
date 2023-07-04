@@ -10,10 +10,12 @@ import { accountState } from '~utils/accountState'
 
 import Button from '~components/common/Button'
 import Input from '~components/common/Input'
-import { Dialog, DialogTrigger, DialogClose } from '~components/common/Dialog'
+import { Dialog } from '~components/common/Dialog'
+import DialogHeader from '~components/common/DialogHeader'
+import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
-import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
+
+import styles from './index.module.scss'
 
 interface Props {
   open: boolean
@@ -295,23 +297,16 @@ const SignupModal = (props: Props) => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
-        className="Signup"
+        className="signup"
         footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
-        <div className="DialogHeader">
-          <div className="DialogTitle">
-            <h1>{t('modals.signup.title')}</h1>
-          </div>
-          <DialogClose className="DialogClose">
-            <CrossIcon />
-          </DialogClose>
-        </div>
-
-        <form className="form" onSubmit={register}>
-          <div className="Fields">
+        <DialogHeader title={t('modals.signup.title')} />
+        <form onSubmit={register}>
+          <div className={styles.fields}>
             <Input
+              bound={true}
               className="Bound"
               name="username"
               placeholder={t('modals.signup.placeholders.username')}
@@ -321,6 +316,7 @@ const SignupModal = (props: Props) => {
             />
 
             <Input
+              bound={true}
               className="Bound"
               name="email"
               placeholder={t('modals.signup.placeholders.email')}
@@ -330,6 +326,7 @@ const SignupModal = (props: Props) => {
             />
 
             <Input
+              bound={true}
               className="Bound"
               name="password"
               placeholder={t('modals.signup.placeholders.password')}
@@ -340,7 +337,7 @@ const SignupModal = (props: Props) => {
             />
 
             <Input
-              className="Bound"
+              bound={true}
               name="confirm_password"
               placeholder={t('modals.signup.placeholders.password_confirm')}
               type="password"
@@ -350,15 +347,17 @@ const SignupModal = (props: Props) => {
             />
           </div>
 
-          <div className="DialogFooter" ref={footerRef}>
-            <div className="Buttons Span">
+          <DialogFooter
+            ref={footerRef}
+            rightElements={[
               <Button
-                contained={true}
+                bound={true}
                 disabled={!formValid}
+                key="confirm"
                 text={t('modals.signup.buttons.confirm')}
-              />
-            </div>
-          </div>
+              />,
+            ]}
+          />
 
           <p className="terms">
             {/* <Trans i18nKey="modals.signup.agreement">

@@ -1,0 +1,11 @@
+.item {
+  color: var(--menu-text);
+  font-size: $font-regular;
+  padding: ($unit * 1.5) $unit-2x;
+
+  &:hover {
+    background: var(--menu-bg-item-hover);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+}

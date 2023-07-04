@@ -1,0 +1,72 @@
+.filterBar {
+  align-items: center;
+  background: var(--bar-bg);
+  border-radius: $card-corner;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: row;
+  gap: $unit-2x;
+  margin: 0 auto;
+  margin-top: 7px; // Line up with HeaderMenu
+  padding: $unit * 2;
+  position: sticky;
+  transition: box-shadow 0.24s ease-in-out;
+  top: $unit * 4;
+  width: 100%;
+  max-width: 996px;
+  min-height: 80px;
+
+  @include breakpoint(tablet) {
+    position: static;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  @include breakpoint(phone) {
+    min-height: auto;
+  }
+
+  .filters {
+    display: grid;
+    grid-template-columns:
+      minmax($unit-20x, 1fr)
+      minmax($unit-20x, 1fr)
+      minmax($unit-20x, 1fr)
+      auto;
+    box-sizing: border-box;
+    flex-direction: row;
+    gap: $unit;
+    width: 75%;
+
+    @include breakpoint(tablet) {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      width: 100%;
+    }
+
+    & > * {
+      min-width: 0;
+    }
+  }
+
+  &.shadow {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+  }
+
+  h1 {
+    color: var(--text-primary);
+    font-size: $font-regular;
+    font-weight: $normal;
+    flex-grow: 1;
+    text-align: left;
+  }
+
+  .SelectTrigger {
+    width: 100%;
+
+    span {
+      font-size: $font-small;
+    }
+  }
+}

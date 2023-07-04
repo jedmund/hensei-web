@@ -2,8 +2,6 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { useLockedBody } from 'usehooks-ts'
 
-import './index.scss'
-
 interface Props extends DialogPrimitive.DialogProps {}
 
 export const Dialog = ({ children, ...props }: PropsWithChildren<Props>) => {

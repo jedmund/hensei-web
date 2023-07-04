@@ -1,0 +1,53 @@
+.switch {
+  $height: 34px;
+  background: $grey-70;
+  border-radius: calc($height / 2);
+  border: none;
+  padding-left: $unit-half;
+  padding-right: $unit-half;
+  position: relative;
+  width: 58px;
+  height: $height;
+
+  &:focus,
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--accent-blue-focus);
+    outline: none;
+  }
+
+  &[data-state='checked'] {
+    background: var(--accent-blue);
+  }
+
+  &:disabled {
+    box-shadow: none;
+
+    &:hover,
+    .SwitchThumb:hover {
+      cursor: not-allowed;
+    }
+
+    .SwitchThumb {
+      background: $grey-80;
+    }
+  }
+}
+
+.thumb {
+  background: $grey-100;
+  border-radius: 13px;
+  display: block;
+  height: 26px;
+  width: 26px;
+  transition: transform 100ms;
+  transform: translateX(0px);
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &[data-state='checked'] {
+    background: $grey-100;
+    transform: translateX(24px);
+  }
+}

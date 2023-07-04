@@ -3,7 +3,7 @@ import React from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import CheckIcon from '~public/icons/Check.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   checked?: boolean
@@ -23,12 +23,12 @@ const SearchFilterCheckboxItem = (props: Props) => {
 
   return (
     <DropdownMenu.CheckboxItem
-      className="Item"
+      className={styles.item}
       checked={props.checked || false}
       onCheckedChange={handleCheckedChange}
       onSelect={(event) => event.preventDefault()}
     >
-      <DropdownMenu.ItemIndicator className="Indicator">
+      <DropdownMenu.ItemIndicator className={styles.indicator}>
         <CheckIcon />
       </DropdownMenu.ItemIndicator>
       {props.children}

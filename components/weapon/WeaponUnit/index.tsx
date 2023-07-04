@@ -1,7 +1,12 @@
-import React, { useEffect, useState, MouseEvent } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
+import { AxiosResponse } from 'axios'
 import classNames from 'classnames'
+import clonedeep from 'lodash.clonedeep'
+
+import api from '~utils/api'
+import { appState } from '~utils/appState'
 
 import Alert from '~components/common/Alert'
 import SearchModal from '~components/search/SearchModal'
@@ -16,13 +21,13 @@ import WeaponHovercard from '~components/weapon/WeaponHovercard'
 import UncapIndicator from '~components/uncap/UncapIndicator'
 import Button from '~components/common/Button'
 
-import type { SearchableObject } from '~types'
+import type { GridWeaponObject, SearchableObject } from '~types'
 
 import ax from '~data/ax'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   gridWeapon: GridWeapon | undefined
@@ -60,17 +65,14 @@ const WeaponUnit = ({
 
   // Classes
   const classes = classNames({
-    WeaponUnit: true,
-    mainhand: unitType == 0,
-    grid: unitType == 1,
-    editable: editable,
-    filled: gridWeapon !== undefined,
-    empty: gridWeapon == undefined,
-  })
-
-  const buttonClasses = classNames({
-    Options: true,
-    Clicked: contextMenuOpen,
+    unit: true,
+    [styles.unit]: true,
+    [styles.extra]: position >= 9,
+    [styles.mainhand]: unitType == 0,
+    [styles.weapon]: unitType == 1,
+    [styles.editable]: editable,
+    [styles.filled]: gridWeapon !== undefined,
+    [styles.empty]: gridWeapon == undefined,
   })
 
   // Other
@@ -131,6 +133,36 @@ const WeaponUnit = ({
   function removeWeapon() {
     if (gridWeapon) sendWeaponToRemove(gridWeapon.id)
     setAlertOpen(false)
+  }
+
+  // Methods: Data fetching and manipulation
+
+  async function updateWeapon(object: GridWeaponObject) {
+    if (gridWeapon) {
+      return await api.endpoints.grid_weapons
+        .update(gridWeapon.id, object)
+        .then((response) => processResult(response))
+        .catch((error) => processError(error))
+    }
+  }
+
+  function processResult(response: AxiosResponse) {
+    const gridWeapon: GridWeapon = response.data
+
+    if (gridWeapon.mainhand) {
+      appState.grid.weapons.mainWeapon = gridWeapon
+      appState.party.element = gridWeapon.object.element
+    } else if (!gridWeapon.mainhand && gridWeapon.position !== null) {
+      let weapon = clonedeep(gridWeapon)
+      if (weapon.object.element === 0 && weapon.element < 1)
+        weapon.element = gridWeapon.object.element
+
+      appState.grid.weapons.allWeapons[gridWeapon.position] = weapon
+    }
+  }
+
+  function processError(error: any) {
+    console.error(error)
   }
 
   // Methods: Data fetching and manipulation
@@ -197,7 +229,7 @@ const WeaponUnit = ({
       return (
         <img
           alt={`${awakening.type.name[locale]} Lv${gridWeapon.awakening.level}`}
-          className="Awakening"
+          className={styles.awakening}
           src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${gridWeapon.awakening.type.slug}.png`}
         />
       )
@@ -229,7 +261,7 @@ const WeaponUnit = ({
         <img
           alt={altText}
           key={altText}
-          className="Skill"
+          className={styles.skill}
           src={`${baseUrl}${filename}`}
         />
       )
@@ -288,7 +320,7 @@ const WeaponUnit = ({
       <img
         alt={altText}
         key={altText}
-        className="Skill"
+        className={styles.skill}
         src={`${baseUrl}${filename}`}
       />
     )
@@ -362,7 +394,7 @@ const WeaponUnit = ({
         <img
           alt={altText}
           key={altText}
-          className="Skill"
+          className={styles.skill}
           src={`${baseUrl}${filename}`}
         />
       )
@@ -401,7 +433,7 @@ const WeaponUnit = ({
         <img
           alt={altText}
           key={altText}
-          className="Skill"
+          className={styles.skill}
           src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/ax/${axSkill.slug}.png`}
         />
       )
@@ -433,6 +465,7 @@ const WeaponUnit = ({
           gridWeapon={gridWeapon}
           open={detailsModalOpen}
           onOpenChange={handleWeaponModalOpenChange}
+          updateWeapon={updateWeapon}
         />
       )
     }
@@ -445,8 +478,10 @@ const WeaponUnit = ({
           <ContextMenu onOpenChange={handleContextMenuOpenChange}>
             <ContextMenuTrigger asChild>
               <Button
+                active={contextMenuOpen}
+                floating={true}
                 leftAccessoryIcon={<SettingsIcon />}
-                className={buttonClasses}
+                className="options"
                 onClick={handleButtonClicked}
               />
             </ContextMenuTrigger>
@@ -508,18 +543,19 @@ const WeaponUnit = ({
       <img
         alt={weapon?.name[locale]}
         className={classNames({
-          GridImage: true,
-          Placeholder: imageUrl === '',
+          // TODO: Look into this gridImage class
+          [styles.gridImage]: true,
+          [styles.placeholder]: imageUrl === '',
         })}
         src={imageUrl !== '' ? imageUrl : placeholderImageUrl()}
       />
     )
 
     const content = (
-      <div className="WeaponImage" onClick={openSearchModal}>
-        <div className="Modifiers">
+      <div className={styles.image} onClick={openSearchModal}>
+        <div className={styles.modifiers}>
           {awakeningImage()}
-          <div className="Skills">
+          <div className={styles.skills}>
             {axImages()}
             {telumaImages()}
             {opusImages()}
@@ -528,7 +564,7 @@ const WeaponUnit = ({
         </div>
         {image}
         {editable ? (
-          <span className="icon">
+          <span className={styles.icon}>
             <PlusIcon />
           </span>
         ) : (
@@ -564,7 +600,7 @@ const WeaponUnit = ({
         ) : (
           ''
         )}
-        <h3 className="WeaponName">{weapon?.name[locale]}</h3>
+        <h3 className={styles.name}>{weapon?.name[locale]}</h3>
       </div>
       {searchModal()}
     </>

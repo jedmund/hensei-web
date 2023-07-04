@@ -1,0 +1,216 @@
+.combobox.raid {
+  box-sizing: border-box;
+  min-width: 440px;
+
+  .header {
+    background: var(--dialog-bg);
+    border-top-left-radius: $card-corner;
+    border-top-right-radius: $card-corner;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: $unit;
+    padding: $unit;
+    width: 100%;
+
+    .input {
+      -webkit-font-smoothing: antialiased;
+      background-color: var(--input-bound-bg);
+      border: 2px solid transparent;
+      border-radius: $input-corner;
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+
+      &:not(.wrapper) {
+        padding: $unit * 1.5 $unit-2x;
+      }
+
+      &.wrapper {
+        $offset: 2px;
+
+        align-items: center;
+        background: var(--input-bg);
+        border-radius: $input-corner;
+        border: $offset solid transparent;
+        box-sizing: border-box;
+        position: relative;
+
+        .counter {
+          color: var(--text-tertiary);
+          display: block;
+          font-weight: $bold;
+          line-height: 42px;
+          position: absolute;
+          right: $unit-2x;
+          top: 0;
+        }
+
+        input {
+          background: transparent;
+          border-radius: $input-corner;
+          border: none;
+          box-sizing: border-box;
+          padding: $unit * 1.5 $unit-2x;
+          width: 100%;
+        }
+      }
+
+      &:focus {
+        border: 2px solid $blue;
+        outline: none;
+      }
+
+      &.bound {
+        background-color: var(--input-bound-bg);
+
+        &:hover {
+          background-color: var(--input-bound-bg-hover);
+        }
+      }
+    }
+
+    .clear.button {
+      background: none;
+      padding: ($unit * 0.75) $unit-half $unit-half;
+      display: none;
+
+      &:hover svg {
+        fill: var(--text-primary);
+      }
+
+      &.Visible {
+        display: block;
+      }
+
+      svg {
+        fill: var(--text-tertiary);
+        width: $unit-2x;
+        height: $unit-2x;
+      }
+    }
+
+    .controls {
+      display: flex;
+      gap: $unit;
+
+      .Button.Blended.small {
+        padding: $unit ($unit * 1.25);
+
+        &:hover {
+          background: var(--button-contained-bg);
+        }
+
+        @include breakpoint(phone) {
+          width: auto;
+        }
+      }
+    }
+  }
+
+  .raids {
+    border-bottom-left-radius: $card-corner;
+    border-bottom-right-radius: $card-corner;
+    height: 28vh;
+    overflow-y: scroll;
+    padding: 0 $unit;
+
+    @include breakpoint(phone) {
+      height: 28vh;
+    }
+
+    &.Searching {
+      .group {
+        padding-top: 0;
+        padding-bottom: 0;
+
+        .label {
+          display: none;
+        }
+
+        .item {
+          margin: 0;
+        }
+      }
+
+      .group.hidden {
+        display: block;
+      }
+    }
+
+    .group {
+      &.hidden {
+        display: none;
+      }
+
+      .label {
+        align-items: center;
+        color: var(--text-tertiary);
+        display: flex;
+        flex-direction: row;
+        flex-shrink: 0;
+        font-size: $font-small;
+        font-weight: $medium;
+        gap: $unit;
+        padding: $unit $unit-2x $unit-half ($unit * 1.5);
+
+        .separator {
+          background: var(--select-separator);
+          border-radius: 1px;
+          display: block;
+          flex-grow: 1;
+          height: 2px;
+        }
+      }
+    }
+  }
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  gap: $unit-half;
+  flex-grow: 1;
+}
+
+.extraIndicator {
+  background: var(--extra-purple-secondary);
+  border-radius: $full-corner;
+  color: $grey-100;
+  display: flex;
+  font-weight: $bold;
+  font-size: $font-tiny;
+  width: $unit-3x;
+  height: $unit-3x;
+  justify-content: center;
+  align-items: center;
+}
+
+.group,
+.separator {
+  color: var(--text-tertiary);
+}
+
+.raid.wind {
+  color: var(--wind-raid-text);
+}
+
+.raid.fire {
+  color: var(--fire-raid-text);
+}
+
+.raid.water {
+  color: var(--water-raid-text);
+}
+
+.raid.earth {
+  color: var(--earth-raid-text);
+}
+
+.raid.dark {
+  color: var(--dark-raid-text);
+}
+
+.raid.light {
+  color: var(--light-raid-text);
+}

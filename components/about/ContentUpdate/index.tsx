@@ -1,8 +1,9 @@
 import React from 'react'
 import { useTranslation } from 'next-i18next'
-import ChangelogUnit from '~components/about/ChangelogUnit'
+import classNames from 'classnames'
 
-import './index.scss'
+import ChangelogUnit from '~components/about/ChangelogUnit'
+import styles from './index.module.scss'
 
 interface UpdateObject {
   character?: string[]
@@ -51,9 +52,9 @@ const ContentUpdate = ({
       const items = newItems[key]
       section =
         items && items.length > 0 ? (
-          <section className={`${key}s`}>
+          <section className={styles[`${key}s`]}>
             <h4>{updates(`labels.${key}s`)}</h4>
-            <div className="items">{newItemElements(key)}</div>
+            <div className={styles.items}>{newItemElements(key)}</div>
           </section>
         ) : (
           ''
@@ -70,9 +71,9 @@ const ContentUpdate = ({
       elements = items
         ? items.map((id) => {
             return key === 'character' ? (
-              <ChangelogUnit id={id} type={key} image="03" />
+              <ChangelogUnit id={id} type={key} key={id} image="03" />
             ) : (
-              <ChangelogUnit id={id} type={key} />
+              <ChangelogUnit id={id} type={key} key={id} />
             )
           })
         : []
@@ -87,9 +88,9 @@ const ContentUpdate = ({
       const items = uncappedItems[key]
       section =
         items && items.length > 0 ? (
-          <section className={`${key}s`}>
+          <section className={styles[`${key}s`]}>
             <h4>{updates(`labels.uncaps.${key}s`)}</h4>
-            <div className="items">{uncapItemElements(key)}</div>
+            <div className={styles.items}>{uncapItemElements(key)}</div>
           </section>
         ) : (
           ''
@@ -100,15 +101,21 @@ const ContentUpdate = ({
   }
 
   return (
-    <section className="Content Version" data-version={version}>
-      <div className="Header">
+    <section
+      className={classNames({
+        [styles.content]: true,
+        [styles.version]: true,
+      })}
+      data-version={version}
+    >
+      <div className={styles.header}>
         <h3>{`${updates('events.date', {
           year: date.getFullYear(),
           month: `${date.getMonth() + 1}`.padStart(2, '0'),
         })}  ${updates(event)}`}</h3>
         <time>{dateString}</time>
       </div>
-      <div className="Contents">
+      <div className={styles.contents}>
         {newItemSection('character')}
         {uncapItemSection('character')}
         {newItemSection('weapon')}
@@ -117,10 +124,10 @@ const ContentUpdate = ({
         {uncapItemSection('summon')}
       </div>
       {numNotes > 0 ? (
-        <div className="Notes">
+        <div className={styles.notes}>
           <section>
             <h4>{updates('labels.updates')}</h4>
-            <ul className="Bare Contents">
+            <ul className={styles.list}>
               {[...Array(numNotes)].map((e, i) => (
                 <li key={`${version}-${i}`}>
                   {updates(`versions.${version}.features.${i}`)}

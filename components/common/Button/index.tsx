@@ -1,7 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props
   extends React.DetailedHTMLProps<
@@ -14,16 +14,18 @@ interface Props
   rightAccessoryClassName?: string
   active?: boolean
   blended?: boolean
-  contained?: boolean
-  buttonSize?: 'small' | 'medium' | 'large'
+  bound?: boolean
+  floating?: boolean
+  size?: 'icon' | 'small' | 'medium' | 'large'
   text?: string
 }
 
 const defaultProps = {
   active: false,
   blended: false,
-  contained: false,
-  buttonSize: 'medium' as const,
+  bound: false,
+  floating: false,
+  size: 'medium' as const,
 }
 
 const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
@@ -34,29 +36,44 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
     rightAccessoryClassName,
     active,
     blended,
-    contained,
-    buttonSize,
+    floating,
+    bound,
+    size,
     text,
     ...props
   },
   forwardedRef
 ) {
-  const classes = classNames(buttonSize, props.className, {
-    Button: true,
-    Active: active,
-    Blended: blended,
-    Contained: contained,
-  })
+  const classes = classNames(
+    {
+      [styles.button]: true,
+      [styles.active]: active,
+      [styles.bound]: bound,
+      [styles.blended]: blended,
+      [styles.floating]: floating,
+      [styles.icon]: size === 'icon',
+      [styles.small]: size === 'small',
+      [styles.medium]: size === 'medium' || !size,
+      [styles.large]: size === 'large',
+    },
+    props.className?.split(' ').map((className) => styles[className])
+  )
 
-  const leftAccessoryClasses = classNames(leftAccessoryClassName, {
-    Accessory: true,
-    Left: true,
-  })
+  const leftAccessoryClasses = classNames(
+    {
+      [styles.accessory]: true,
+      [styles.left]: true,
+    },
+    leftAccessoryClassName?.split(' ').map((className) => styles[className])
+  )
 
-  const rightAccessoryClasses = classNames(rightAccessoryClassName, {
-    Accessory: true,
-    Right: true,
-  })
+  const rightAccessoryClasses = classNames(
+    {
+      [styles.accessory]: true,
+      [styles.right]: true,
+    },
+    rightAccessoryClassName?.split(' ').map((className) => styles[className])
+  )
 
   const hasLeftAccessory = () => {
     if (leftAccessoryIcon)
@@ -69,7 +86,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(function button(
   }
 
   const hasText = () => {
-    if (text) return <span className="Text">{text}</span>
+    if (text) return <span className={styles.text}>{text}</span>
   }
 
   return (

@@ -1,12 +1,13 @@
 import React from 'react'
-import Link from 'next/link'
 import { Trans, useTranslation } from 'next-i18next'
+import classNames from 'classnames'
 
-import ShareIcon from '~public/icons/Share.svg'
+import LinkItem from '../LinkItem'
+
 import DiscordIcon from '~public/icons/discord.svg'
 import GithubIcon from '~public/icons/github.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {}
 
@@ -14,8 +15,10 @@ const AboutPage: React.FC<Props> = (props: Props) => {
   const { t: common } = useTranslation('common')
   const { t: about } = useTranslation('about')
 
+  const classes = classNames(styles.about, 'PageContent')
+
   return (
-    <div className="About PageContent">
+    <div className={classes}>
       <h1>{common('about.segmented_control.about')}</h1>
       <section>
         <h2>
@@ -33,28 +36,19 @@ const AboutPage: React.FC<Props> = (props: Props) => {
         </h2>
         <p>{about('about.explanation.0')}</p>
         <p>{about('about.explanation.1')}</p>
-        <div className="Hero" />
+        <div className={styles.hero} />
       </section>
 
       <section>
         <h2>{about('about.feedback.title')}</h2>
         <p>{about('about.feedback.explanation')}</p>
         <p>{about('about.feedback.solicit')}</p>
-        <div className="Discord LinkItem">
-          <Link href="https://discord.gg/qyZ5hGdPC8">
-            <a
-              href="https://discord.gg/qyZ5hGdPC8"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div className="Left">
-                <DiscordIcon />
-                <h3>granblue-tools</h3>
-              </div>
-              <ShareIcon className="ShareIcon" />
-            </a>
-          </Link>
-        </div>
+        <LinkItem
+          className="discord constrained"
+          title="granblue-tools"
+          link="https://discord.gg/qyZ5hGdPC8"
+          icon={<DiscordIcon />}
+        />
       </section>
 
       <section>
@@ -114,38 +108,20 @@ const AboutPage: React.FC<Props> = (props: Props) => {
         <h2>{about('about.contributing.title')}</h2>
 
         <p>{about('about.contributing.explanation')}</p>
-        <ul className="Links">
-          <li className="Github LinkItem">
-            <Link href="https://github.com/jedmund/hensei-api">
-              <a
-                href="https://github.com/jedmund/hensei-api"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <div className="Left">
-                  <GithubIcon />
-                  <h3>jedmund/hensei-api</h3>
-                </div>
-                <ShareIcon className="ShareIcon" />
-              </a>
-            </Link>
-          </li>
-          <li className="Github LinkItem">
-            <Link href="https://github.com/jedmund/hensei-web">
-              <a
-                href="https://github.com/jedmund/hensei-web"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <div className="Left">
-                  <GithubIcon />
-                  <h3>jedmund/hensei-web</h3>
-                </div>
-                <ShareIcon className="ShareIcon" />
-              </a>
-            </Link>
-          </li>
-        </ul>
+        <div className={styles.links}>
+          <LinkItem
+            className="github constrained"
+            title="jedmund/hensei-api"
+            link="https://github.com/jedmund/hensei-api"
+            icon={<GithubIcon />}
+          />
+          <LinkItem
+            className="github constrained"
+            title="jedmund/hensei-web"
+            link="https://github.com/jedmund/hensei-web"
+            icon={<GithubIcon />}
+          />
+        </div>
       </section>
       <section>
         <h2>{about('about.license.title')}</h2>

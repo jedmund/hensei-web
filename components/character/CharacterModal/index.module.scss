@@ -1,0 +1,32 @@
+.mods {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-4x;
+  padding: 0 $unit-4x $unit-2x;
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-half;
+
+    &.inline {
+      align-items: center;
+      flex-direction: row;
+      justify-content: space-between;
+
+      h3 {
+        margin: 0;
+      }
+    }
+
+    h3 {
+      color: $grey-55;
+      font-size: $font-small;
+      margin-bottom: $unit;
+    }
+
+    select {
+      background-color: $grey-90;
+    }
+  }
+}

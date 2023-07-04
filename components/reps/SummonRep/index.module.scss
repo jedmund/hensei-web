@@ -1,0 +1,51 @@
+.rep {
+  aspect-ratio: 2/1.045;
+  border-radius: $card-corner;
+  display: grid;
+  grid-template-columns: 1fr 2.25fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
+  grid-gap: $unit-half; /* add a gap of 8px between grid items */
+  height: $rep-height;
+  transition: $duration-opacity-fade opacity ease-in;
+  opacity: 0.5;
+
+  @include breakpoint(small-tablet) {
+    display: none;
+  }
+
+  .summon,
+  .mainSummon {
+    background: var(--card-bg);
+    border-radius: 4px;
+
+    img[src*='jpg'] {
+      border-radius: 4px;
+      width: 100%;
+    }
+  }
+
+  .mainSummon {
+    aspect-ratio: 56/97;
+    display: grid;
+    grid-column: 1 / 2; /* spans one column */
+  }
+
+  .summons {
+    display: grid; /* make the right-images container a grid */
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* create 3 columns, each taking up 1 fraction */
+    grid-template-rows: repeat(
+      2,
+      1fr
+    ); /* create 3 rows, each taking up 1 fraction */
+    gap: $unit-half;
+    // column-gap: $unit;
+    // row-gap: $unit-2x;
+  }
+
+  .summon {
+    aspect-ratio: 184 / 138;
+    display: grid;
+  }
+}

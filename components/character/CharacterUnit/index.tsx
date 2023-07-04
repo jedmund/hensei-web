@@ -1,9 +1,10 @@
-import React, { MouseEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { Trans, useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
 import classNames from 'classnames'
+import cloneDeep from 'lodash.clonedeep'
 
 import Alert from '~components/common/Alert'
 import Button from '~components/common/Button'
@@ -26,12 +27,13 @@ import SettingsIcon from '~public/icons/Settings.svg'
 
 // Types
 import type {
+  CharacterOverMastery,
   GridCharacterObject,
   PerpetuityObject,
   SearchableObject,
 } from '~types'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   gridCharacter?: GridCharacter
@@ -72,14 +74,10 @@ const CharacterUnit = ({
 
   // Classes
   const classes = classNames({
-    CharacterUnit: true,
-    editable: editable,
-    filled: gridCharacter !== undefined,
-  })
-
-  const buttonClasses = classNames({
-    Options: true,
-    Clicked: contextMenuOpen,
+    unit: true,
+    [styles.unit]: true,
+    [styles.editable]: editable,
+    [styles.filled]: gridCharacter !== undefined,
   })
 
   // Other
@@ -147,7 +145,20 @@ const CharacterUnit = ({
   // Save the server's response to state
   function processResult(response: AxiosResponse) {
     const gridCharacter: GridCharacter = response.data
-    appState.grid.characters[gridCharacter.position] = gridCharacter
+    let character = cloneDeep(gridCharacter)
+
+    if (character.over_mastery) {
+      const overMastery: CharacterOverMastery = {
+        1: gridCharacter.over_mastery[0],
+        2: gridCharacter.over_mastery[1],
+        3: gridCharacter.over_mastery[2],
+        4: gridCharacter.over_mastery[3],
+      }
+
+      character.over_mastery = overMastery
+    }
+
+    appState.grid.characters[gridCharacter.position] = character
   }
 
   function processError(error: any) {
@@ -219,8 +230,10 @@ const CharacterUnit = ({
           <ContextMenu onOpenChange={handleContextMenuOpenChange}>
             <ContextMenuTrigger asChild>
               <Button
+                active={contextMenuOpen}
+                floating={true}
                 leftAccessoryIcon={<SettingsIcon />}
-                className={buttonClasses}
+                className="options"
                 onClick={handleButtonClicked}
               />
             </ContextMenuTrigger>
@@ -278,8 +291,8 @@ const CharacterUnit = ({
   const perpetuity = () => {
     if (gridCharacter) {
       const classes = classNames({
-        Perpetuity: true,
-        Empty: !gridCharacter.perpetuity,
+        [styles.perpetuity]: true,
+        [styles.empty]: !gridCharacter.perpetuity,
       })
 
       return <i className={classes} onClick={handlePerpetuityClick} />
@@ -297,13 +310,13 @@ const CharacterUnit = ({
 
     const content = (
       <div
-        className="CharacterImage"
+        className={styles.image}
         tabIndex={gridCharacter ? gridCharacter.position * 7 : 0}
         onClick={openSearchModal}
       >
         {image}
         {editable ? (
-          <span className="icon">
+          <span className={styles.icon}>
             <PlusIcon />
           </span>
         ) : (
@@ -346,7 +359,7 @@ const CharacterUnit = ({
         ) : (
           ''
         )}
-        <h3 className="CharacterName">{character?.name[locale]}</h3>
+        <h3 className={styles.name}>{character?.name[locale]}</h3>
       </div>
       {searchModal()}
     </>

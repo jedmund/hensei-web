@@ -101,7 +101,7 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
     <div id="About">
       {pageHead()}
       <section>
-        <SegmentedControl>
+        <SegmentedControl blended={true}>
           <Segment
             groupName="about"
             name="about"

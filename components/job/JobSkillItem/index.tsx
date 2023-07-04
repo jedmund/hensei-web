@@ -14,15 +14,20 @@ import ContextMenuItem from '~components/common/ContextMenuItem'
 
 import EllipsisIcon from '~public/icons/Ellipsis.svg'
 import PlusIcon from '~public/icons/Add.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props extends React.ComponentPropsWithoutRef<'div'> {
   skill?: JobSkill
   position: number
   editable: boolean
+  small?: boolean
   hasJob: boolean
   removeJobSkill: (position: number) => void
+}
+
+const defaultProps = {
+  small: false,
 }
 
 const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
@@ -31,6 +36,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       skill,
       position,
       editable,
+      small,
       hasJob,
       removeJobSkill: sendJobSkillToRemove,
       ...props
@@ -51,17 +57,24 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
 
     // Classes
     const classes = classNames({
-      JobSkill: true,
-      editable: editable,
+      [styles.skill]: true,
+      [styles.editable]: editable,
+      [styles.small]: small,
     })
 
     const imageClasses = classNames({
-      placeholder: !skill,
-      editable: editable && hasJob,
+      [styles.placeholder]: !skill,
+      [styles.image]: true,
+      [styles.editable]: editable && hasJob,
+    })
+
+    const labelClasses = classNames({
+      [styles.placeholder]: !skill,
+      [styles.text]: true,
     })
 
     const buttonClasses = classNames({
-      Clicked: contextMenuOpen,
+      [styles.clicked]: contextMenuOpen,
     })
 
     // Methods: Data mutation
@@ -79,6 +92,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       if (!open) setContextMenuOpen(false)
     }
 
+    // Methods: Rendering
     const skillImage = () => {
       let jsx: React.ReactNode
 
@@ -107,9 +121,11 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       if (skill) {
         jsx = <p>{skill.name[locale]}</p>
       } else if (editable && hasJob) {
-        jsx = <p className="placeholder">{t('job_skills.state.selectable')}</p>
+        jsx = <p className={labelClasses}>{t('job_skills.state.selectable')}</p>
       } else {
-        jsx = <p className="placeholder">{t('job_skills.state.no_skill')}</p>
+        jsx = (
+          <p className={styles.placeholder}>{t('job_skills.state.no_skill')}</p>
+        )
       }
 
       return jsx
@@ -159,7 +175,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
 
     return (
       <div className={classes} ref={forwardedRef}>
-        <div className="Info" onClick={props.onClick} tabIndex={0}>
+        <div className={styles.info} onClick={props.onClick} tabIndex={0}>
           {skillImage()}
           {label()}
         </div>
@@ -168,5 +184,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
     )
   }
 )
+
+JobSkillItem.defaultProps = defaultProps
 
 export default JobSkillItem

@@ -1,0 +1,43 @@
+.Dialog {
+  .Filter.DialogContent {
+    overflow: hidden;
+
+    .TableField .Right .SelectTrigger.Table {
+      width: $unit-20x;
+      min-width: auto;
+    }
+  }
+
+  .DialogFooter .Buttons .Button.Blended {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.notice {
+  background-color: var(--notice-bg);
+  border-radius: $input-corner;
+
+  padding: $unit-2x;
+  display: flex;
+  align-items: center;
+
+  p {
+    color: var(--notice-text);
+
+    strong {
+      font-weight: $bold;
+    }
+  }
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-2x;
+  padding: 0 $unit-4x;
+
+  @include breakpoint(phone) {
+    gap: $unit-4x;
+  }
+}

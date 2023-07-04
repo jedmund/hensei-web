@@ -1,0 +1,22 @@
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+  padding: $unit-fourth $unit-4x;
+}
+
+.terms {
+  color: $grey-50;
+  font-size: $font-small;
+  line-height: 1.2;
+  margin-top: $unit;
+  text-align: center;
+
+  a {
+    color: $blue;
+
+    &:hover {
+      color: darken($blue, 30);
+    }
+  }
+}

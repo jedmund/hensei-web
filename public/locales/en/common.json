@@ -11,6 +11,11 @@
     "manadiver": "manatura"
   },
   "alert": {
+    "confirm_logout": "Are you sure you want to log out?",
+    "unsaved_changes": {
+      "party": "You will lose all changes to your party <strong>{objectName}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?",
+      "object": "You will lose all changes to <strong>{objectName}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?"
+    },
     "incompatible_weapon": "You've selected a weapon that can't be added to the Additional Weapon slots."
   },
   "ax": {
@@ -58,6 +63,21 @@
     "remove": "Remove from grid",
     "remove_job_skill": "Remove class skill"
   },
+  "dropdown": {
+    "party": {
+      "copy": "Copy link to team",
+      "delete": "Delete team",
+      "remix": "Remix team"
+    }
+  },
+  "earring": {
+    "errors": {
+      "value_too_low": "{{name}} must be at least {{minValue}}",
+      "value_too_high": "{{name}} cannot be greater than {{maxValue}}",
+      "value_not_whole": "{{name}} must be a whole number",
+      "value_empty": "{{name}} must have a value"
+    }
+  },
   "elements": {
     "null": "Null",
     "wind": "Wind",
@@ -104,6 +124,18 @@
       "series": "Series",
       "proficiency": "Proficiency",
       "rarity": "Rarity"
+    }
+  },
+  "footer": {
+    "description": {
+      "label": "Description",
+      "empty": "This team doesn't have a description"
+    },
+    "remixes": {
+      "label_zero": "Remixes",
+      "label_one": "{{count}} Remix",
+      "label_other": "{{count}} Remixes",
+      "empty": "No one has remixed this team yet"
     }
   },
   "header": {
@@ -204,7 +236,8 @@
         "extra": "Additional weapons are controlled by the selected battle"
       },
       "placeholders": {
-        "name": "Name your team"
+        "name": "Name your team",
+        "description": "Write some helpful notes about your team\n\nWhat's the turn rotation?\nWhat are some good unit subtitutions?"
       },
       "extra_notice": "You can add additional weapons to this team",
       "extra_notice_guidebooks": "You can add additional weapons and Sephira Guidebooks to this team"
@@ -232,6 +265,7 @@
         "user_quality": "Hide anonymous users",
         "original_only": "Hide remixed teams"
       },
+      "notice": "Filters set on <strong>user profiles</strong> and in <strong>your saved teams</strong> will not be saved",
       "options": {
         "on": "On",
         "off": "Off",
@@ -239,7 +273,7 @@
       },
       "buttons": {
         "confirm": "Save filters",
-        "clear": "Clear filters"
+        "clear": "Reset to default"
       }
     },
     "guidebooks": {
@@ -525,9 +559,12 @@
   "tooltips": {
     "copy_url": "Copy the URL to this team",
     "new": "Create a new team",
-    "remix": "Make a copy of this team",
-    "save": "Save this team to your account",
-    "source": "Go to original team"
+    "save": "Save this team to find later",
+    "remix": {
+      "create": "Make a copy of this team",
+      "source": "Go to original team",
+      "deleted": "The original team has been deleted"
+    }
   },
   "extra_weapons": "Additional Weapons",
   "sephira_guidebooks": "Sephira Guidebooks",
@@ -540,6 +577,6 @@
   "no_user": "Anonymous",
   "no_job": "No class",
   "no_value": "No value",
-  "remixes": "Remixes",
+  "loading": "Loading...",
   "level": "Level"
 }

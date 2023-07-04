@@ -1,0 +1,65 @@
+.job {
+  box-sizing: border-box;
+  display: flex;
+  margin-bottom: $unit-3x;
+  width: 100%;
+
+  // prettier-ignore
+  @media only screen 
+      and (max-width: 800px) 
+      and (max-height: 920px) 
+      and (-webkit-min-device-pixel-ratio: 2) {
+        align-items: center;
+        flex-direction: column;
+        gap: $unit;
+        justify-content: center;
+        width: 100%;
+        // max-width: 447px;
+  }
+
+  select {
+    flex-grow: 1;
+    width: auto;
+  }
+
+  .details {
+    box-sizing: border-box;
+    display: flex;
+    gap: $unit;
+    flex-direction: column;
+    width: 100%;
+
+    .name {
+      align-items: center;
+      display: flex;
+      gap: $unit-half;
+      padding: $unit 0 $unit * 2;
+
+      h3 {
+        font-size: $font-medium;
+        font-weight: $medium;
+      }
+
+      img {
+        width: $unit-4x;
+      }
+    }
+
+    select {
+      flex-grow: 0;
+    }
+
+    .skills {
+      flex-grow: 2;
+    }
+  }
+
+  .skills {
+    display: flex;
+    flex-direction: column;
+
+    &:not(.editable) {
+      gap: $unit;
+    }
+  }
+}

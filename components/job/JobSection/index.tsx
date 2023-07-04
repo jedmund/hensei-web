@@ -13,7 +13,7 @@ import api from '~utils/api'
 import { appState } from '~utils/appState'
 import type { JobSkillObject, SearchableObject } from '~types'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {
@@ -52,8 +52,8 @@ const JobSection = (props: Props) => {
 
   // Classes
   const skillContainerClasses = classNames({
-    JobSkills: true,
-    editable: props.editable,
+    [styles.skills]: true,
+    [styles.editable]: props.editable,
   })
 
   useEffect(() => {
@@ -136,6 +136,7 @@ const JobSection = (props: Props) => {
         skill={skills[index]}
         position={index}
         editable={canEditSkill(skills[index])}
+        small={props.editable}
         key={`skill-${index}`}
         hasJob={job != undefined && job.id != '-1'}
         removeJobSkill={props.removeSkill}
@@ -174,7 +175,7 @@ const JobSection = (props: Props) => {
   )
 
   const filledJobLabel = (
-    <div className="JobName">
+    <div className={styles.name}>
       <img
         alt={job?.name[locale]}
         src={`/images/job-icons/${job?.granblue_id}.png`}
@@ -185,7 +186,7 @@ const JobSection = (props: Props) => {
 
   // Render: JSX components
   return (
-    <section id="Job">
+    <section className={styles.job}>
       <JobImage
         job={party.job}
         currentAccessory={currentAccessory}
@@ -194,7 +195,7 @@ const JobSection = (props: Props) => {
         user={party.user}
         onAccessorySelected={handleAccessorySelected}
       />
-      <div className="JobDetails">
+      <div className={styles.details}>
         {props.editable ? (
           <JobDropdown
             currentJob={party.job?.id}
@@ -202,7 +203,7 @@ const JobSection = (props: Props) => {
             ref={selectRef}
           />
         ) : (
-          <div className="JobName">
+          <div className={styles.name}>
             {party.job ? (
               <img
                 alt={party.job.name[locale]}

@@ -1,0 +1,23 @@
+.mods {
+  display: flex;
+  flex-direction: column;
+  gap: $unit * 4;
+  padding: 0 $unit-4x;
+  margin-bottom: $unit-fourth;
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: calc($unit / 2);
+
+    h3 {
+      color: $grey-55;
+      font-size: $font-small;
+      margin-bottom: $unit;
+    }
+
+    select {
+      background-color: $grey-90;
+    }
+  }
+}

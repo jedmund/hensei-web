@@ -11,6 +11,9 @@
     "manadiver": "マナベリ"
   },
   "alert": {
+    "confirm_logout": "ログアウトしますか",
+    "unsaved_changes_party": "<strong>「{objectName}」</strong>という編成の変更は保存していません。<br/><br/>変更を保存せずに続けますか？",
+    "unsaved_changes_object": "<strong>「{objectName}」</strong>の変更は保存していません。<br/><br/>変更を保存せずに続けますか？",
     "incompatible_weapon": "Additional Weaponsに装備できない武器を入れました。"
   },
   "ax": {
@@ -58,6 +61,21 @@
     "remove": "編成から削除",
     "remove_job_skill": "ジョブスキルを削除"
   },
+  "dropdown": {
+    "party": {
+      "copy": "編成のリンクをコピー",
+      "delete": "編成を削除",
+      "remix": "編成をリミックス"
+    }
+  },
+  "earring": {
+    "errors": {
+      "value_too_low": "{{name}}は最低{{minValue}}を入力してください",
+      "value_too_high": "{{name}}は最大{{maxValue}}を入力してください",
+      "value_not_whole": "{{name}}は整数でなければなりません",
+      "value_empty": "{{name}}を入力してください"
+    }
+  },
   "elements": {
     "null": "無",
     "wind": "風",
@@ -104,6 +122,17 @@
       "series": "シリーズ",
       "proficiency": "武器種",
       "rarity": "レアリティ"
+    }
+  },
+  "footer": {
+    "description": {
+      "label": "説明",
+      "empty": "この編成には説明がありません"
+    },
+    "remixes": {
+      "label_zero": "リミックス",
+      "label": "リミックス: {{count}}個",
+      "empty": "この編成はリミックスされていません"
     }
   },
   "header": {
@@ -190,6 +219,7 @@
         "name": "編成名",
         "description": "説明",
         "raid": "バトル",
+        "extra": "Additional weapons",
         "charge_attack": "奥義",
         "full_auto": "フルオート",
         "auto_guard": "オートガード",
@@ -199,8 +229,12 @@
         "chain_count": "チェイン数",
         "clear_time": "討伐時間"
       },
+      "descriptions": {
+        "extra": "選択したバトルによってAdditional Weapons枠が表示される"
+      },
       "placeholders": {
-        "name": "編成に名前を付ける"
+        "name": "編成に名前を付ける",
+        "description": "編成についてのメモを書ける\n\nどんなムーブをしていますか?\n代用キャラや武器は？"
       },
       "extra_notice": "Additional Weapons枠に武器を装備することはできます",
       "extra_notice_guidebooks": "Additional Weaponsまたはセフィラ導本を装備することはできます"
@@ -228,6 +262,7 @@
         "user_quality": "無名のユーザーなし",
         "original_only": "リミックスなし"
       },
+      "notice": "フィルターは<strong>保存した編成</strong>と<strong>ユーザープロフィール</strong>には保存されません",
       "options": {
         "on": "ON",
         "off": "OFF",
@@ -235,7 +270,7 @@
       },
       "buttons": {
         "confirm": "フィルターを保存する",
-        "clear": "保存したフィルターをクリア"
+        "clear": "保存したフィルターをリセット"
       }
     },
     "guidebooks": {
@@ -522,9 +557,12 @@
   "tooltips": {
     "copy_url": "この編成のURLをコピーする",
     "new": "新しい編成を作成する",
-    "remix": "この編成の複製を作成する",
     "save": "この編成をアカウントに保存する",
-    "source": "オリジナルの編成へ"
+    "remix": {
+      "create": "この編成の複製を作成する",
+      "source": "原編成へ",
+      "deleted": "原編成は削除されました"
+    }
   },
   "equipped": "装備した",
   "extra_weapons": "Additional Weapons",
@@ -537,6 +575,6 @@
   "no_user": "無名",
   "no_job": "ジョブなし",
   "no_value": "値なし",
-  "remixes": "リミックスされた編成",
+  "loading": "ロード中...",
   "level": "レベル"
 }

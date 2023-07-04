@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import Input from '~components/common/Input'
 import TableField from '~components/common/TableField'
 
-import './index.scss'
-import classNames from 'classnames'
+import styles from './index.module.scss'
 
 interface Props
   extends React.DetailedHTMLProps<
@@ -44,18 +43,21 @@ const InputTableField = ({
     <TableField
       {...props}
       name={props.name || ''}
-      className={classNames({ InputField: true }, props.className)}
-      imageAlt={imageAlt}
-      imageClass={imageClass}
-      imageSrc={imageSrc}
+      className={styles.nameField}
+      image={{
+        alt: imageAlt,
+        className: imageClass,
+        src: imageSrc ? imageSrc : [],
+      }}
       label={label}
     >
       <Input
-        className="Bound"
+        className={props.className}
         placeholder={props.placeholder}
         value={inputValue ? `${inputValue}` : ''}
         step={1}
         tabIndex={props.tabIndex}
+        bound={true}
         type={props.type}
         onChange={onInputChange}
       />

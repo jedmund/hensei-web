@@ -34,7 +34,6 @@ const PartyRoute: React.FC<Props> = ({
   // Set up state to save selected tab and
   // update when router changes
   const router = useRouter()
-  const [selectedTab, setSelectedTab] = useState<GridType>(GridType.Weapon)
 
   useEffect(() => {
     const parts = router.asPath.split('/')
@@ -51,7 +50,49 @@ const PartyRoute: React.FC<Props> = ({
         setSelectedTab(GridType.Summon)
         break
     }
-  }, [router.asPath])
+  }, [])
+
+  const getCurrentTab = () => {
+    const parts = router.asPath.split('/')
+    const tab = parts[parts.length - 1]
+
+    switch (tab) {
+      case 'characters':
+        return GridType.Character
+      case 'weapons':
+        return GridType.Weapon
+      case 'summons':
+        return GridType.Summon
+      default:
+        return GridType.Weapon
+    }
+  }
+
+  const [selectedTab, setSelectedTab] = useState<GridType>(getCurrentTab())
+
+  const handleTabChange = (value: string) => {
+    const path = [
+      // Enable when using Next.js Router
+      // 'p',
+      router.asPath.split('/').filter((el) => el != '')[1],
+      value,
+    ].join('/')
+
+    switch (value) {
+      case 'characters':
+        setSelectedTab(GridType.Character)
+        break
+      case 'weapons':
+        setSelectedTab(GridType.Weapon)
+        break
+      case 'summons':
+        setSelectedTab(GridType.Summon)
+        break
+    }
+
+    if (router.asPath !== '/new' && router.asPath !== '/')
+      router.replace(path, undefined, { shallow: true })
+  }
 
   // Set the initial data from props
   useEffect(() => {
@@ -84,7 +125,11 @@ const PartyRoute: React.FC<Props> = ({
     return (
       <React.Fragment key={router.asPath}>
         {pageHead()}
-        <Party team={context.party} selectedTab={selectedTab} />
+        <Party
+          team={context.party}
+          selectedTab={selectedTab}
+          handleTabChanged={handleTabChange}
+        />
       </React.Fragment>
     )
   } else return pageError()

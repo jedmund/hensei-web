@@ -8,7 +8,7 @@ import ExtendedMasterySelect from '~components/mastery/ExtendedMasterySelect'
 import { overMastery } from '~data/overMastery'
 
 // Styles and icons
-import './index.scss'
+import styles from './index.module.scss'
 
 // Types
 import { CharacterOverMastery, ExtendedMastery } from '~types'
@@ -35,10 +35,10 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
   useEffect(() => {
     if (gridCharacter.over_mastery) {
       setRings({
-        1: gridCharacter.over_mastery[0],
-        2: gridCharacter.over_mastery[1],
-        3: gridCharacter.over_mastery[2],
-        4: gridCharacter.over_mastery[3],
+        1: gridCharacter.over_mastery[1],
+        2: gridCharacter.over_mastery[2],
+        3: gridCharacter.over_mastery[3],
+        4: gridCharacter.over_mastery[4],
       })
     }
   }, [gridCharacter])
@@ -78,7 +78,7 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
   }
 
   function receiveRingValues(index: number, left: number, right: number) {
-    console.log(`Receiving values from ${index}: ${left} ${right}`)
+    // console.log(`Receiving values from ${index}: ${left} ${right}`)
     if (index == 1 || index == 2) {
       setSyncedRingValues(index, right)
     } else if (index == 3 && left == 0) {
@@ -105,41 +105,45 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
   }
 
   function setSyncedRingValues(index: 1 | 2, value: number) {
-    console.log(`Setting synced value for ${index} with value ${value}`)
+    // console.log(`Setting synced value for ${index} with value ${value}`)
     const atkValues = (dataSet(1)[0] as ItemSkill).values ?? []
     const hpValues = (dataSet(2)[0] as ItemSkill).values ?? []
 
-    let found = index === 1 ? atkValues.indexOf(value) : hpValues.indexOf(value)
+    const found =
+      index === 1 ? atkValues.indexOf(value) : hpValues.indexOf(value)
+    const atkValue = atkValues[found] ?? 0
+    const hpValue = hpValues[found] ?? 0
 
     setRings({
       ...rings,
       1: {
         modifier: 1,
-        strength: atkValues[found],
+        strength: atkValue,
       },
       2: {
         modifier: 2,
-        strength: hpValues[found],
+        strength: hpValue,
       },
     })
   }
 
   return (
-    <div className="Rings">
+    <div className={styles.rings}>
       {[...Array(4)].map((e, i) => {
-        const ringIndex = i + 1
-        const ringStat = rings[ringIndex]
+        const index = i + 1
+        const ringStat = rings[index]
+
         return (
           <ExtendedMasterySelect
-            name={`ring-${ringIndex}`}
+            name={`ring-${index}`}
             object="ring"
-            key={`ring-${ringIndex}`}
-            dataSet={dataSet(ringIndex)}
-            leftSelectDisabled={i === 0 || i === 1}
+            key={`ring-${index}`}
+            dataSet={dataSet(index)}
+            leftSelectDisabled={index === 1 || index === 2}
             leftSelectValue={ringStat.modifier ? ringStat.modifier : 0}
             rightSelectValue={ringStat.strength ? ringStat.strength : 0}
             sendValues={(left: number, right: number) => {
-              receiveRingValues(ringIndex, left, right)
+              receiveRingValues(index, left, right)
             }}
           />
         )
