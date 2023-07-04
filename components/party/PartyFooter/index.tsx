@@ -59,37 +59,35 @@ const PartyFooter = (props: Props) => {
     useState<React.ReactNode>()
 
   useEffect(() => {
-    // Extract the video IDs from the description
     if (partySnapshot.description) {
-      const videoIds = extractYoutubeVideoIds(partySnapshot.description)
-
-      // Fetch the video titles for each ID
-      const fetchPromises = videoIds.map(({ id }) => fetchYoutubeData(id))
-
-      // Wait for all the video titles to be fetched
-      Promise.all(fetchPromises).then((videoTitles) => {
-        // Replace the video URLs in the description with LiteYoutubeEmbed elements
-        const newDescription = reactStringReplace(
-          partySnapshot.description,
-          youtubeUrlRegex,
-          (match, i) => (
-            <LiteYouTubeEmbed
-              key={`${match}-${i}`}
-              id={match}
-              title={videoTitles[i]}
-              wrapperClass={styles.youtube}
-              playerClass={styles.playerButton}
-            />
-          )
-        )
-
-        // Update the state with the new description
-        setEmbeddedDescription(newDescription)
-      })
+      const purified = DOMPurify.sanitize(partySnapshot.description)
+      setSanitizedDescription(purified)
     } else {
       setEmbeddedDescription('')
     }
   }, [partySnapshot.description])
+
+  // Extract the video IDs from the description
+  // const videoIds = extractYoutubeVideoIds(partySnapshot.description)
+  // Fetch the video titles for each ID
+  // const fetchPromises = videoIds.map(({ id }) => fetchYoutubeData(id))
+  // // Wait for all the video titles to be fetched
+  // Promise.all(fetchPromises).then((videoTitles) => {
+  //   // Replace the video URLs in the description with LiteYoutubeEmbed elements
+  //   const newDescription = reactStringReplace(
+  //     partySnapshot.description,
+  //     youtubeUrlRegex,
+  //     (match, i) => (
+  //       <LiteYouTubeEmbed
+  //         key={`${match}-${i}`}
+  //         id={match}
+  //         title={videoTitles[i]}
+  //         wrapperClass={styles.youtube}
+  //         playerClass={styles.playerButton}
+  //       />
+  //     )
+  //   )
+  // Update the state with the new description
 
   async function fetchYoutubeData(videoId: string) {
     return await youtube
