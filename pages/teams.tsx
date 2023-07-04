@@ -340,7 +340,7 @@ const TeamsRoute: React.FC<Props> = ({
             next={() => setCurrentPage(currentPage + 1)}
             hasMore={totalPages > currentPage}
             loader={
-              <div id="NotFound">
+              <div className="notFound">
                 <h2>{t('loading')}</h2>
               </div>
             }
@@ -349,7 +349,7 @@ const TeamsRoute: React.FC<Props> = ({
           </InfiniteScroll>
 
           {parties.length == 0 ? (
-            <div id="NotFound">
+            <div className="notFound">
               <h2>{t('teams.not_found')}</h2>
             </div>
           ) : (
