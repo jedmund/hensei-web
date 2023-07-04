@@ -11,6 +11,7 @@
     "manadiver": "manatura"
   },
   "alert": {
+    "confirm_logout": "Are you sure you want to log out?",
     "unsaved_changes": {
       "party": "You will lose all changes to your party <strong>{objectName}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?",
       "object": "You will lose all changes to <strong>{objectName}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?"
