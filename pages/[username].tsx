@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { getCookie } from 'cookies-next'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -53,13 +52,12 @@ const ProfileRoute: React.FC<Props> = ({
   const { t } = useTranslation('common')
 
   // Set up app-specific states
-  const [raidsLoading, setRaidsLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
   // Set up page-specific states
   const [parties, setParties] = useState<Party[]>([])
   const [raids, setRaids] = useState<Raid[]>()
-  const [raid, setRaid] = useState<Raid>()
 
   // Set up infinite scrolling-related states
   const [recordCount, setRecordCount] = useState(0)
@@ -74,9 +72,15 @@ const ProfileRoute: React.FC<Props> = ({
     parse: (query: string) => parseElement(query),
     serialize: (value) => serializeElement(value),
   })
-  const [raidSlug, setRaidSlug] = useQueryState('raid', {
+  const [raid, setRaid] = useQueryState('raid', {
     defaultValue: 'all',
     history: 'push',
+    parse: (query: string) => {
+      const raids = context?.raidGroups.flatMap((group) => group.raids)
+      const raid = raids?.find((r: Raid) => r.slug === query)
+      return raid ? raid.id : 'all'
+    },
+    serialize: (value) => value,
   })
   const [recency, setRecency] = useQueryState('recency', {
     defaultValue: -1,
@@ -113,6 +117,7 @@ const ProfileRoute: React.FC<Props> = ({
       setTotalPages(context.pagination.totalPages)
       setRecordCount(context.pagination.count)
       replaceResults(context.pagination.count, context.teams)
+      appState.raidGroups = context.raidGroups
       appState.version = version
     }
     setCurrentPage(1)
@@ -139,7 +144,7 @@ const ProfileRoute: React.FC<Props> = ({
       const filters = {
         params: {
           element: element != -1 ? element : undefined,
-          raid: raid ? raid.id : undefined,
+          raid: raid === 'all' ? undefined : raid,
           recency: recency != -1 ? recency : undefined,
           page: currentPage,
           ...advancedFilters,
@@ -183,14 +188,8 @@ const ProfileRoute: React.FC<Props> = ({
   // Fetch all raids on mount, then find the raid in the URL if present
   useEffect(() => {
     api.endpoints.raids.getAll().then((response) => {
-      setRaids(response.data)
-
-      setRaidsLoading(false)
-
-      const raid = response.data.find((r: Raid) => r.slug === raidSlug)
-      setRaid(raid)
-
-      return raid
+      const raids = appState.raidGroups.flatMap((group) => group.raids)
+      setRaids(raids)
     })
   }, [setRaids])
 
@@ -198,7 +197,12 @@ const ProfileRoute: React.FC<Props> = ({
   // fetch all teams again.
   useDidMountEffect(() => {
     setCurrentPage(1)
-    fetchProfile({ replace: true })
+
+    if (mounted) {
+      fetchProfile({ replace: true })
+    }
+
+    setMounted(true)
   }, [username, element, raid, recency, advancedFilters])
 
   // When the page changes, fetch all teams again.
@@ -206,25 +210,18 @@ const ProfileRoute: React.FC<Props> = ({
     // Current page changed
     if (currentPage > 1) fetchProfile({ replace: false })
     else if (currentPage == 1) fetchProfile({ replace: true })
+    setMounted(true)
   }, [currentPage])
 
   // Receive filters from the filter bar
   function receiveFilters(filters: FilterSet) {
     if (filters.element == 0) setElement(0, { shallow: true })
     else if (filters.element) setElement(filters.element, { shallow: true })
-
-    if (raids && filters.raidSlug) {
-      const raid = raids.find((raid) => raid.slug === filters.raidSlug)
-      setRaid(raid)
-      setRaidSlug(filters.raidSlug, { shallow: true })
-    }
-
     if (filters.recency) setRecency(filters.recency, { shallow: true })
+    if (filters.raid) setRaid(filters.raid, { shallow: true })
+  }
 
-    delete filters.element
-    delete filters.raidSlug
-    delete filters.recency
-
+  function receiveAdvancedFilters(filters: FilterSet) {
     setAdvancedFilters(filters)
   }
 
@@ -273,15 +270,16 @@ const ProfileRoute: React.FC<Props> = ({
 
   if (context) {
     return (
-      <div id="Profile">
+      <div className="profile">
         {pageHead()}
         <FilterBar
           defaultFilterset={permissiveFilterset}
+          onAdvancedFilter={receiveAdvancedFilters}
           onFilter={receiveFilters}
           persistFilters={false}
           scrolled={scrolled}
           element={element}
-          raidSlug={raidSlug ? raidSlug : undefined}
+          raid={raid}
           recency={recency}
         >
           <UserInfo user={context.user!} />

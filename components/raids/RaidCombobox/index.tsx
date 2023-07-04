@@ -112,7 +112,7 @@ const RaidCombobox = (props: Props) => {
 
   // Fetch all raids on mount
   useEffect(() => {
-    api.raidGroups().then((response) => sortGroups(response.data))
+    sortGroups(appState.raidGroups)
   }, [])
 
   // Set current raid and section when the component mounts
@@ -136,6 +136,8 @@ const RaidCombobox = (props: Props) => {
       if (appState.party.raid && appState.party.raid.group.section > 0)
         setCurrentSection(props.currentRaid.group.section)
       else setCurrentSection(1)
+    } else {
+      setCurrentRaid(undefined)
     }
   }, [props.currentRaid])
 
@@ -224,7 +226,9 @@ const RaidCombobox = (props: Props) => {
         if (group.section > 0) sections[group.section - 1].push(group)
       })
 
-      setFarmingRaid(groups[0].raids[0])
+      if (groups[0]) {
+        setFarmingRaid(groups[0].raids[0])
+      }
 
       setSections(sections)
     },

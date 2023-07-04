@@ -21,9 +21,10 @@ interface Props {
   children: React.ReactNode
   scrolled: boolean
   element?: number
-  raidSlug?: string
+  raid?: string
   recency?: number
   onFilter: (filters: FilterSet) => void
+  onAdvancedFilter: (filters: FilterSet) => void
 }
 
 const FilterBar = (props: Props) => {
@@ -55,10 +56,10 @@ const FilterBar = (props: Props) => {
     const raid = appState.raidGroups
       .filter((group) => group.section > 0)
       .flatMap((group) => group.raids)
-      .find((raid) => raid.slug === props.raidSlug)
+      .find((raid) => raid.id === props.raid)
 
     setCurrentRaid(raid)
-  }, [props.raidSlug])
+  }, [props.raid])
 
   useEffect(() => {
     // Fetch user's advanced filters
@@ -91,12 +92,12 @@ const FilterBar = (props: Props) => {
   }
 
   function raidSelectChanged(raid?: Raid) {
-    props.onFilter({ raidSlug: raid?.slug, ...advancedFilters })
+    props.onFilter({ raid: raid?.slug, ...advancedFilters })
   }
 
   function handleAdvancedFiltersChanged(filters: FilterSet) {
     setAdvancedFilters(filters)
-    props.onFilter(filters)
+    props.onAdvancedFilter(filters)
   }
 
   function onSelectChange(name: 'element' | 'recency') {

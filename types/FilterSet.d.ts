@@ -1,6 +1,6 @@
 interface FilterSet {
   element?: number
-  raidSlug?: string
+  raid?: string
   recency?: number
   full_auto?: number
   auto_guard?: number
