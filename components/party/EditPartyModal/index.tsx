@@ -12,6 +12,7 @@ import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
 import Button from '~components/common/Button'
 import DurationInput from '~components/common/DurationInput'
+import Input from '~components/common/Input'
 import InputTableField from '~components/common/InputTableField'
 import RaidCombobox from '~components/raids/RaidCombobox'
 import SegmentedControl from '~components/common/SegmentedControl'
@@ -20,6 +21,7 @@ import SwitchTableField from '~components/common/SwitchTableField'
 import TableField from '~components/common/TableField'
 import Textarea from '~components/common/Textarea'
 
+import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 import type { DetailsObject } from 'types'
 import type { DialogProps } from '@radix-ui/react-dialog'
 
@@ -27,7 +29,6 @@ import { appState } from '~utils/appState'
 
 import CheckIcon from '~public/icons/Check.svg'
 import styles from './index.module.scss'
-import Input from '~components/common/Input'
 
 interface Props extends DialogProps {
   open: boolean
@@ -286,8 +287,13 @@ const EditPartyModal = ({
 
   // Methods: Modification checking
   function hasBeenModified() {
-    const nameChanged = name !== party.name
-    const descriptionChanged = description !== party.description
+    const nameChanged =
+      name !== party.name && !(name === '' && party.name === undefined)
+
+    const descriptionChanged =
+      description !== party.description &&
+      !(description === '' && party.description === undefined)
+
     const raidChanged = raid !== party.raid
     const chargeAttackChanged = chargeAttack !== party.chargeAttack
     const fullAutoChanged = fullAuto !== party.fullAuto
@@ -357,7 +363,12 @@ const EditPartyModal = ({
         <span>
           <Trans i18nKey="alerts.unsaved_changes.party">
             You will lose all changes to your party{' '}
-            <strong>{{ objectName: party.name }}</strong> if you continue.
+            <strong>
+              {{
+                objectName: name || capitalizeFirstLetter(t('untitled')),
+              }}
+            </strong>{' '}
+            if you continue.
             <br />
             <br />
             Are you sure you want to continue without saving?
