@@ -246,16 +246,21 @@ const EditPartyModal = ({
 
   const calculateFooterShadow = debounce(() => {
     const boxShadowBase = '0 -2px 8px'
-    const scrollable = document.querySelector(`.${styles.scrollValue}`)
+    const scrollable = document.querySelector(`.${styles.scrollable}`)
     const footer = footerRef
 
     if (footer && footer.current) {
-      if (scrollable && scrollable.clientHeight >= scrollable.scrollHeight) {
+      if (scrollable) {
+        if (scrollable.clientHeight >= scrollable.scrollHeight) {
+          footer.current.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, 0)`
+          footer.current.style.borderTopColor = `rgba(0, 0, 0, 0)`
+        } else {
+          footer.current.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, 0.16)`
+          footer.current.style.borderTopColor = `rgba(0, 0, 0, 0.24)`
+        }
+      } else {
         footer.current.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, 0)`
         footer.current.style.borderTopColor = `rgba(0, 0, 0, 0)`
-      } else {
-        footer.current.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, 0.16)`
-        footer.current.style.borderTopColor = `rgba(0, 0, 0, 0.24)`
       }
     }
   }, 100)
@@ -566,8 +571,6 @@ const EditPartyModal = ({
         <DialogTrigger asChild>{props.children}</DialogTrigger>
         <DialogContent
           className="editParty"
-          headerref={topContainerRef}
-          footerref={footerRef}
           onEscapeKeyDown={onEscapeKeyDown}
           onOpenAutoFocus={onOpenAutoFocus}
         >
