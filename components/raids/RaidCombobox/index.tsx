@@ -112,15 +112,26 @@ const RaidCombobox = (props: Props) => {
 
   // Fetch all raids on mount
   useEffect(() => {
-    sortGroups(appState.raidGroups)
+    const sections: [RaidGroup[], RaidGroup[], RaidGroup[]] = [[], [], []]
+
+    appState.raidGroups.forEach((group) => {
+      if (group.section > 0) sections[group.section - 1].push(group)
+    })
+
+    if (appState.raidGroups[0]) {
+      setFarmingRaid(appState.raidGroups[0].raids[0])
+    }
+
+    setSections(sections)
   }, [])
 
   // Set current section when the current raid changes
   useEffect(() => {
-    console.log('Raid has changed')
     if (props.currentRaid) {
+      setCurrentRaid(props.currentRaid)
       setCurrentSection(props.currentRaid.group.section)
     } else {
+      setCurrentRaid(undefined)
       setCurrentSection(1)
     }
   }, [props.currentRaid])
@@ -200,24 +211,6 @@ const RaidCombobox = (props: Props) => {
     if (sort === Sort.ASCENDING) setSort(Sort.DESCENDING)
     else setSort(Sort.ASCENDING)
   }
-
-  // Sorts the raid groups into sections
-  const sortGroups = useCallback(
-    (groups: RaidGroup[]) => {
-      const sections: [RaidGroup[], RaidGroup[], RaidGroup[]] = [[], [], []]
-
-      groups.forEach((group) => {
-        if (group.section > 0) sections[group.section - 1].push(group)
-      })
-
-      if (groups[0]) {
-        setFarmingRaid(groups[0].raids[0])
-      }
-
-      setSections(sections)
-    },
-    [setSections]
-  )
 
   const handleSortButtonKeyDown = (
     event: React.KeyboardEvent<HTMLButtonElement>
