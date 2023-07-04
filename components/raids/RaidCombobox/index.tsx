@@ -115,29 +115,13 @@ const RaidCombobox = (props: Props) => {
     sortGroups(appState.raidGroups)
   }, [])
 
-  // Set current raid and section when the component mounts
+  // Set current section when the current raid changes
   useEffect(() => {
-    // if (appState.party.raid) {
-    //   setCurrentRaid(appState.party.raid)
-    //   if (appState.party.raid.group.section > 0) {
-    //     setCurrentSection(appState.party.raid.group.section)
-    //   } else {
-    //     setCurrentSection(1)
-    //   }
-    // } else if (props.showAllRaidsOption && !currentRaid) {
-    //   setCurrentRaid(allRaidsOption)
-    // }
-  }, [])
-
-  // Set current raid and section when the current raid changes
-  useEffect(() => {
+    console.log('Raid has changed')
     if (props.currentRaid) {
-      setCurrentRaid(props.currentRaid)
-      if (appState.party.raid && appState.party.raid.group.section > 0)
-        setCurrentSection(props.currentRaid.group.section)
-      else setCurrentSection(1)
+      setCurrentSection(props.currentRaid.group.section)
     } else {
-      setCurrentRaid(undefined)
+      setCurrentSection(1)
     }
   }, [props.currentRaid])
 
