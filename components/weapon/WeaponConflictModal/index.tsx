@@ -4,12 +4,13 @@ import { Trans, useTranslation } from 'react-i18next'
 
 import { Dialog } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
+import DialogFooter from '~components/common/DialogFooter'
 import Button from '~components/common/Button'
 import Overlay from '~components/common/Overlay'
 
 import mapWeaponSeries from '~utils/mapWeaponSeries'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   open: boolean
@@ -69,17 +70,17 @@ const WeaponConflictModal = (props: Props) => {
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
-        className="Conflict"
+        className="conflict"
         footerref={footerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={close}
       >
-        <div className="Content">
+        <div className={styles.content}>
           <p>{infoString()}</p>
-          <div className="WeaponDiagram Diagram">
+          <div className={styles.diagram}>
             <ul>
               {props.conflictingWeapons?.map((weapon, i) => (
-                <li className="weapon" key={`conflict-${i}`}>
+                <li className={styles.weapon} key={`conflict-${i}`}>
                   <img
                     alt={weapon.object.name[locale]}
                     src={imageUrl(weapon.object)}
@@ -88,9 +89,9 @@ const WeaponConflictModal = (props: Props) => {
                 </li>
               ))}
             </ul>
-            <span className="arrow">&rarr;</span>
-            <div className="wrapper">
-              <div className="weapon">
+            <span className={styles.arrow}>&rarr;</span>
+            <div className={styles.wrapper}>
+              <div className={styles.weapon}>
                 <img
                   alt={props.incomingWeapon?.name[locale]}
                   src={imageUrl(props.incomingWeapon)}
@@ -100,20 +101,22 @@ const WeaponConflictModal = (props: Props) => {
             </div>
           </div>
         </div>
-        <div className="DialogFooter" ref={footerRef}>
-          <div className="Buttons Span">
+        <DialogFooter
+          rightElements={[
             <Button
-              contained={true}
+              bound={true}
               onClick={close}
+              key="cancel"
               text={t('buttons.cancel')}
-            />
+            />,
             <Button
-              contained={true}
+              bound={true}
+              key="confirm"
               onClick={props.resolveConflict}
               text={t('modals.conflict.buttons.confirm')}
-            />
-          </div>
-        </div>
+            />,
+          ]}
+        />
       </DialogContent>
       <Overlay open={open} visible={true} />
     </Dialog>

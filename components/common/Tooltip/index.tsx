@@ -1,9 +1,7 @@
 import React, { PropsWithChildren } from 'react'
-import classNames from 'classnames'
-
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
-import './index.scss'
+import styles from './index.module.scss'
 interface Props extends TooltipPrimitive.TooltipContentProps {
   content: React.ReactNode
   open?: boolean
@@ -17,17 +15,13 @@ export default function Tooltip({
   onOpenChange,
   ...props
 }: PropsWithChildren<Props>) {
-  const classes = classNames(props.className, {
-    Tooltip: true,
-  })
-
   return (
     <TooltipPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
       <TooltipPrimitive.Content
         side="top"
         align="center"
-        className={classes}
+        className={styles.tooltip}
         sideOffset={4}
         {...props}
       >

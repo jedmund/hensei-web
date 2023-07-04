@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import debounce from 'lodash.debounce'
 
 import Overlay from '~components/common/Overlay'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props
   extends React.DetailedHTMLProps<
@@ -23,9 +23,12 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
   forwardedRef
 ) {
   // Classes
-  const classes = classNames(props.className, {
-    DialogContent: true,
-  })
+  const classes = classNames(
+    {
+      [styles.dialogContent]: true,
+    },
+    props.className?.split(' ').map((className) => styles[className])
+  )
 
   // Handlers
   function handleScroll(event: React.UIEvent<HTMLDivElement, UIEvent>) {
@@ -89,7 +92,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
 
   const calculateFooterShadow = debounce(() => {
     const boxShadowBase = '0 -2px 8px'
-    const scrollable = document.querySelector('.Scrollable')
+    const scrollable = document.querySelector(`.${styles.scrollable}`)
     const footer = props.footerref
 
     if (footer && footer.current) {
@@ -124,7 +127,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
 
   return (
     <DialogPrimitive.Portal>
-      <dialog className="Dialog">
+      <dialog className={styles.dialog}>
         <DialogPrimitive.Content
           {...props}
           className={classes}
@@ -134,8 +137,8 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
         >
           <div
             className={classNames({
-              Container: true,
-              Scrollable: scrollable,
+              [styles.container]: true,
+              [styles.scrollable]: scrollable,
             })}
             onScroll={handleScroll}
           >

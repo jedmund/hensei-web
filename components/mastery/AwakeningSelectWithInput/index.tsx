@@ -10,7 +10,7 @@ import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
 
 // Styles and icons
-import './index.scss'
+import styles from './index.module.scss'
 
 // Types
 interface Props {
@@ -59,13 +59,13 @@ const AwakeningSelectWithInput = ({
 
   // Classes
   const inputClasses = classNames({
-    Bound: true,
-    Hidden: currentAwakening === undefined || currentAwakening.id === '0',
+    fullHeight: true,
+    range: true,
   })
 
   const errorClasses = classNames({
-    errors: true,
-    visible: error !== '',
+    [styles.errors]: true,
+    [styles.visible]: error !== '',
   })
 
   // Hooks
@@ -125,20 +125,19 @@ const AwakeningSelectWithInput = ({
     const input = inputRef.current
     if (input && !handleInputError(parseFloat(input.value))) return
 
-    setCurrentLevel(parseInt(event.target.value))
-    sendValues(
-      currentAwakening ? currentAwakening.id : '0',
-      parseInt(event.target.value)
-    )
+    const newLevel = parseInt(event.target.value)
+    setCurrentLevel(newLevel)
+    sendValues(currentAwakening ? currentAwakening.id : '0', newLevel)
   }
 
   // Methods: Handle error
-
   function handleInputError(value: number) {
     let error = ''
 
     if (currentAwakening) {
-      if (value < 1) {
+      if (value && value % 1 != 0) {
+        error = t(`awakening.errors.value_not_whole`)
+      } else if (value < 1) {
         error = t(`awakening.errors.value_too_low`, {
           minValue: 1,
         })
@@ -146,8 +145,6 @@ const AwakeningSelectWithInput = ({
         error = t(`awakening.errors.value_too_high`, {
           maxValue: maxLevel,
         })
-      } else if (value % 1 != 0) {
-        error = t(`awakening.errors.value_not_whole`)
       } else if (!value || value <= 0) {
         error = t(`awakening.errors.value_empty`)
       } else {
@@ -160,7 +157,10 @@ const AwakeningSelectWithInput = ({
     if (error.length > 0) {
       sendValidity(false)
       return false
-    } else return true
+    } else {
+      sendValidity(true)
+      return true
+    }
   }
 
   const rangeString = () => {
@@ -176,8 +176,8 @@ const AwakeningSelectWithInput = ({
   }
 
   return (
-    <div className="SelectWithItem">
-      <div className="InputSet">
+    <div>
+      <div className={styles.set}>
         <Select
           key="awakening-type"
           value={`${awakening ? awakening.id : defaultAwakening.id}`}
@@ -186,7 +186,10 @@ const AwakeningSelectWithInput = ({
           onValueChange={handleSelectChange}
           onOpenChange={changeOpen}
           onClose={onClose}
-          triggerClass="modal"
+          trigger={{
+            bound: true,
+            className: 'grow',
+          }}
           overlayVisible={false}
         >
           {generateOptions()}
@@ -195,13 +198,18 @@ const AwakeningSelectWithInput = ({
         <Input
           value={level ? level : 1}
           className={inputClasses}
+          fieldsetClassName={classNames({
+            hidden:
+              currentAwakening === undefined || currentAwakening.id === '0',
+          })}
+          wrapperClassName="fullHeight"
+          bound={true}
           type="number"
           placeholder={rangeString()}
           min={1}
           max={maxLevel}
           step="1"
           onChange={handleInputChange}
-          visible={awakening ? 'true' : 'false'}
           ref={inputRef}
         />
       </div>

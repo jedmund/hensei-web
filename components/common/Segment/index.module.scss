@@ -1,0 +1,51 @@
+.segment {
+  color: $grey-55;
+  cursor: pointer;
+  flex-grow: 1;
+  font-size: 1.4rem;
+  font-weight: $normal;
+  min-width: 100px;
+
+  &:hover label {
+    background: var(--page-hover);
+    color: var(--text-primary);
+  }
+
+  & input {
+    display: none;
+
+    &:checked + label {
+      background: var(--background);
+      color: var(--text-primary);
+    }
+  }
+
+  & label {
+    border-radius: $unit * 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    height: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 8px 12px;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+
+    &:before {
+      background: #fff;
+    }
+  }
+
+  @include breakpoint(phone) {
+    min-width: initial;
+    width: 100%;
+  }
+}
+
+:global(.blended) .segment input:checked + label {
+  background: var(--card-bg);
+}

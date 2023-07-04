@@ -1,6 +1,5 @@
 import React from 'react'
-
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   groupName: string
@@ -21,7 +20,7 @@ const Segment: React.FC<Props> = (props: Props) => {
   }
 
   return (
-    <div className="Segment">
+    <div className={styles.segment}>
       <input
         name={props.groupName}
         id={props.name}

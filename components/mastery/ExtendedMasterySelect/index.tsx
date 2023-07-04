@@ -9,7 +9,7 @@ import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
 
 // Styles and icons
-import './index.scss'
+import styles from './index.module.scss'
 
 // Types
 interface Props {
@@ -125,7 +125,7 @@ const ExtendedMasterySelect = ({
   }
 
   return (
-    <div className="SelectSet">
+    <div className={styles.set}>
       <Select
         key={`${name}_type`}
         value={`${currentItemSkill ? currentItemSkill.id : 0}`}
@@ -134,7 +134,13 @@ const ExtendedMasterySelect = ({
         onValueChange={handleLeftSelectChange}
         onOpenChange={() => changeOpen('left')}
         onClose={onClose}
-        triggerClass="Left modal"
+        trigger={{
+          bound: true,
+          className: classNames({
+            left: true,
+            modal: true,
+          }),
+        }}
         overlayVisible={false}
       >
         {generateLeftOptions()}
@@ -148,11 +154,14 @@ const ExtendedMasterySelect = ({
         onOpenChange={() => changeOpen('right')}
         onClose={onClose}
         overlayVisible={false}
-        triggerClass={classNames({
-          Right: true,
-          modal: true,
-          hidden: currentItemSkill?.id === 0,
-        })}
+        trigger={{
+          bound: true,
+          className: classNames({
+            right: true,
+            modal: true,
+            hidden: currentItemSkill?.id === 0,
+          }),
+        }}
       >
         {generateRightOptions()}
       </Select>

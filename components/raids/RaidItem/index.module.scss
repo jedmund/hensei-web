@@ -1,0 +1,89 @@
+.item {
+  align-items: center;
+  border-radius: $item-corner;
+  border: 2px solid transparent;
+  color: var(--text-tertiary);
+  display: flex;
+  gap: $unit;
+  font-size: $font-regular;
+  padding: $unit $unit-2x $unit $unit;
+
+  &:hover,
+  &:focus {
+    background-color: var(--menu-bg-item-hover);
+    color: var(--text-primary);
+    cursor: pointer;
+    outline: none;
+  }
+
+  &:focus {
+    border: 2px solid $blue;
+    outline: none;
+  }
+
+  &:first-child {
+    margin-top: $unit;
+  }
+
+  &:last-child {
+    margin-bottom: $unit;
+  }
+
+  img {
+    width: $unit-4x;
+    height: auto;
+  }
+
+  &:hover {
+    .extraIndicator {
+      background: var(--extra-purple-secondary);
+      color: white;
+    }
+
+    .selected {
+      background-color: var(--pill-bg-hover);
+      color: var(--pill-text-hover);
+    }
+  }
+
+  &.selected .extraIndicator {
+    background: var(--extra-purple-secondary);
+    color: white;
+  }
+
+  .text {
+    flex-grow: 1;
+  }
+
+  .extraIndicator {
+    background: var(--extra-purple-bg);
+    border-radius: $full-corner;
+    color: var(--extra-purple-dark-text);
+    display: flex;
+    font-weight: $bold;
+    font-size: $font-tiny;
+    width: $unit-3x;
+    height: $unit-3x;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .selected {
+    background-color: var(--pill-bg);
+    color: var(--pill-text);
+    border-radius: $full-corner;
+    display: flex;
+    align-items: center;
+    font-size: $font-tiny;
+    font-weight: $bold;
+    padding: 0 $unit;
+    height: $unit-3x;
+  }
+
+  img {
+    background: var(--input-bound-bg);
+    border-radius: $unit-half;
+    width: $unit-10x;
+    height: 56px;
+  }
+}

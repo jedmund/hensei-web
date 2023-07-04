@@ -1,20 +1,20 @@
-import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 import Select from '~components/common/Select'
 import TableField from '~components/common/TableField'
 
-import './index.scss'
-
 interface Props {
+  autoFocus?: boolean
   name: string
   label: string
   description?: string
   open: boolean
   value?: string
   className?: string
-  imageAlt?: string
-  imageClass?: string
-  imageSrc?: string[]
+  image?: {
+    className?: String
+    alt?: string
+    src: string[]
+  }
   children: React.ReactNode
   onOpenChange: () => void
   onChange: (value: string) => void
@@ -31,21 +31,23 @@ const SelectTableField = (props: Props) => {
   return (
     <TableField
       name={props.name}
-      className="SelectField"
-      imageAlt={props.imageAlt}
-      imageClass={props.imageClass}
-      imageSrc={props.imageSrc}
+      image={props.image}
+      className="select"
       label={props.label}
     >
       <Select
+        autoFocus={props.autoFocus}
         name={props.name}
         open={props.open}
         onOpenChange={props.onOpenChange}
         onValueChange={props.onChange}
         onClose={props.onClose}
-        triggerClass={classNames({ Bound: true, Table: true })}
         value={value}
         overlayVisible={false}
+        trigger={{
+          bound: true,
+          className: 'table',
+        }}
       >
         {props.children}
       </Select>

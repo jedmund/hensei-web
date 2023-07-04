@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { getCookie } from 'cookies-next'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -13,14 +12,14 @@ import extractFilters from '~utils/extractFilters'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import useDidMountEffect from '~utils/useDidMountEffect'
 import { appState } from '~utils/appState'
-import { defaultFilterset } from '~utils/defaultFilters'
+import { permissiveFilterset } from '~utils/defaultFilters'
 import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
 
 import ErrorSection from '~components/ErrorSection'
 import GridRep from '~components/GridRep'
 import GridRepCollection from '~components/GridRepCollection'
-import FilterBar from '~components/FilterBar'
+import FilterBar from '~components/filters/FilterBar'
 import SavedHead from '~components/head/SavedHead'
 
 import type { AxiosError } from 'axios'
@@ -52,13 +51,12 @@ const SavedRoute: React.FC<Props> = ({
   const { t } = useTranslation('common')
 
   // Set up app-specific states
-  const [raidsLoading, setRaidsLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
   // Set up page-specific states
   const [parties, setParties] = useState<Party[]>([])
   const [raids, setRaids] = useState<Raid[]>()
-  const [raid, setRaid] = useState<Raid>()
 
   // Set up infinite scrolling-related states
   const [recordCount, setRecordCount] = useState(0)
@@ -73,9 +71,15 @@ const SavedRoute: React.FC<Props> = ({
     parse: (query: string) => parseElement(query),
     serialize: (value) => serializeElement(value),
   })
-  const [raidSlug, setRaidSlug] = useQueryState('raid', {
+  const [raid, setRaid] = useQueryState('raid', {
     defaultValue: 'all',
     history: 'push',
+    parse: (query: string) => {
+      const raids = context?.raidGroups.flatMap((group) => group.raids)
+      const raid = raids?.find((r: Raid) => r.slug === query)
+      return raid ? raid.id : 'all'
+    },
+    serialize: (value) => value,
   })
   const [recency, setRecency] = useQueryState('recency', {
     defaultValue: -1,
@@ -84,7 +88,7 @@ const SavedRoute: React.FC<Props> = ({
     serialize: (value) => `${value}`,
   })
   const [advancedFilters, setAdvancedFilters] =
-    useState<FilterSet>(defaultFilterset)
+    useState<FilterSet>(permissiveFilterset)
 
   // Define transformers for element
   function parseElement(query: string) {
@@ -112,6 +116,7 @@ const SavedRoute: React.FC<Props> = ({
       setTotalPages(context.pagination.totalPages)
       setRecordCount(context.pagination.count)
       replaceResults(context.pagination.count, context.teams)
+      appState.raidGroups = context.raidGroups
       appState.version = version
     }
     setCurrentPage(1)
@@ -121,16 +126,6 @@ const SavedRoute: React.FC<Props> = ({
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Fetch the user's advanced filters
-  useEffect(() => {
-    const filtersCookie = getCookie('filters')
-    const filters = filtersCookie
-      ? JSON.parse(filtersCookie as string)
-      : defaultFilterset
-
-    setAdvancedFilters(filters)
   }, [])
 
   // Handle errors
@@ -148,7 +143,7 @@ const SavedRoute: React.FC<Props> = ({
         [key: string]: any
       } = {
         element: element !== -1 ? element : undefined,
-        raid: raid ? raid.id : undefined,
+        raid: raid === 'all' ? undefined : raid,
         recency: recency !== -1 ? recency : undefined,
         page: currentPage,
         ...advancedFilters,
@@ -196,14 +191,8 @@ const SavedRoute: React.FC<Props> = ({
   // Fetch all raids on mount, then find the raid in the URL if present
   useEffect(() => {
     api.endpoints.raids.getAll().then((response) => {
-      setRaids(response.data)
-
-      setRaidsLoading(false)
-
-      const raid = response.data.find((r: Raid) => r.slug === raidSlug)
-      setRaid(raid)
-
-      return raid
+      const raids = appState.raidGroups.flatMap((group) => group.raids)
+      setRaids(raids)
     })
   }, [setRaids])
 
@@ -211,7 +200,12 @@ const SavedRoute: React.FC<Props> = ({
   // fetch all teams again.
   useDidMountEffect(() => {
     setCurrentPage(1)
-    fetchTeams({ replace: true })
+
+    if (mounted) {
+      fetchTeams({ replace: true })
+    }
+
+    setMounted(true)
   }, [element, raid, recency, advancedFilters])
 
   // When the page changes, fetch all teams again.
@@ -219,25 +213,18 @@ const SavedRoute: React.FC<Props> = ({
     // Current page changed
     if (currentPage > 1) fetchTeams({ replace: false })
     else if (currentPage == 1) fetchTeams({ replace: true })
+    setMounted(true)
   }, [currentPage])
 
   // Receive filters from the filter bar
   function receiveFilters(filters: FilterSet) {
     if (filters.element == 0) setElement(0, { shallow: true })
     else if (filters.element) setElement(filters.element, { shallow: true })
-
-    if (raids && filters.raidSlug) {
-      const raid = raids.find((raid) => raid.slug === filters.raidSlug)
-      setRaid(raid)
-      setRaidSlug(filters.raidSlug, { shallow: true })
-    }
-
     if (filters.recency) setRecency(filters.recency, { shallow: true })
+    if (filters.raid) setRaid(filters.raid, { shallow: true })
+  }
 
-    delete filters.element
-    delete filters.raidSlug
-    delete filters.recency
-
+  function receiveAdvancedFilters(filters: FilterSet) {
     setAdvancedFilters(filters)
   }
 
@@ -314,7 +301,6 @@ const SavedRoute: React.FC<Props> = ({
           fullAuto={party.full_auto}
           autoGuard={party.auto_guard}
           key={`party-${i}`}
-          displayUser={true}
           onClick={goTo}
           onSave={toggleFavorite}
         />
@@ -324,13 +310,16 @@ const SavedRoute: React.FC<Props> = ({
 
   if (context) {
     return (
-      <div id="Teams">
+      <div className="teams">
         {pageHead()}
         <FilterBar
+          defaultFilterset={permissiveFilterset}
           onFilter={receiveFilters}
+          onAdvancedFilter={receiveAdvancedFilters}
+          persistFilters={false}
           scrolled={scrolled}
           element={element}
-          raidSlug={raidSlug ? raidSlug : undefined}
+          raid={raid}
           recency={recency}
         >
           <h1>{t('saved.title')}</h1>
@@ -342,8 +331,8 @@ const SavedRoute: React.FC<Props> = ({
             next={() => setCurrentPage(currentPage + 1)}
             hasMore={totalPages > currentPage}
             loader={
-              <div id="NotFound">
-                <h2>Loading...</h2>
+              <div className="notFound">
+                <h2>{t('loading')}</h2>
               </div>
             }
           >
@@ -351,7 +340,7 @@ const SavedRoute: React.FC<Props> = ({
           </InfiniteScroll>
 
           {parties.length == 0 ? (
-            <div id="NotFound">
+            <div className="notFound">
               <h2>{t('saved.not_found')}</h2>
             </div>
           ) : (
@@ -381,12 +370,6 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Fetch latest version
   const version = await fetchLatestVersion()
 
-  // Fetch user's advanced filters
-  const filtersCookie = getCookie('filters', { req: req, res: res })
-  const advancedFilters = filtersCookie
-    ? JSON.parse(filtersCookie as string)
-    : undefined
-
   try {
     // Fetch and organize raids
     let raidGroups: RaidGroup[] = await api
@@ -396,7 +379,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     // Create filter object
     const filters: FilterObject = extractFilters(query, raidGroups)
     const params = {
-      params: { ...filters, ...advancedFilters  },
+      params: { ...filters, ...permissiveFilterset  },
     }
 
     // Set up empty variables

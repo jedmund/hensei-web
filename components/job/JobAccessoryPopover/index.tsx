@@ -14,7 +14,7 @@ import {
 } from '~components/common/PopoverContent'
 import JobAccessoryItem from '~components/job/JobAccessoryItem'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   buttonref: React.RefObject<HTMLButtonElement>

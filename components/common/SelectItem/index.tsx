@@ -1,28 +1,48 @@
 import React, { ComponentProps } from 'react'
+import classNames from 'classnames'
 import * as Select from '@radix-ui/react-select'
 
-import './index.scss'
-import classNames from 'classnames'
+import styles from './index.module.scss'
 
 interface Props extends ComponentProps<'div'> {
   value: string | number
-  iconSrc?: string
-  altText?: string
+  element?: string
+  icon?: {
+    src: string[]
+    alt: string
+  }
 }
 
 const SelectItem = React.forwardRef<HTMLDivElement, Props>(function selectItem(
-  { children, value, ...props },
+  { icon, value, children, ...props },
   forwardedRef
 ) {
-  const { altText, iconSrc, ...rest } = props
+  const itemClasses = classNames(
+    {
+      [styles.item]: true,
+    },
+    props.className?.split(' ').map((className) => styles[className])
+  )
+
+  const wrapperClasses = classNames(
+    {
+      [styles.preview]: true,
+    },
+    props.element && styles[props.element]
+  )
+
   return (
     <Select.Item
-      {...rest}
-      className={classNames({ SelectItem: true }, props.className)}
+      {...props}
+      className={itemClasses}
       ref={forwardedRef}
       value={`${value}`}
     >
-      {iconSrc ? <img alt={altText} src={iconSrc} /> : ''}
+      {icon && (
+        <div className={wrapperClasses}>
+          <img alt={icon.alt} src={icon.src[0]} srcSet={icon.src.join(', ')} />
+        </div>
+      )}
       <Select.ItemText>{children}</Select.ItemText>
     </Select.Item>
   )

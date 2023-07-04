@@ -1,0 +1,66 @@
+.star {
+  $size: 18px;
+  background-repeat: no-repeat;
+  background-size: $size;
+  display: block;
+  height: $size;
+  width: $size;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+
+  &.empty,
+  &.empty.mlb,
+  &.empty.flb,
+  &.empty.ulb,
+  &.empty.special {
+    background-image: url('/icons/uncap/empty@3x.png');
+
+    &:hover {
+      background-image: url('/icons/uncap/empty-hover@3x.png');
+    }
+  }
+
+  &.mlb {
+    background-image: url('/icons/uncap/yellow@3x.png');
+
+    &:hover {
+      background-image: url('/icons/uncap/yellow-hover@3x.png');
+    }
+  }
+
+  &.special {
+    background-image: url('/icons/uncap/red@3x.png');
+
+    &:hover {
+      background: url('/icons/uncap/red-hover@3x.png');
+    }
+  }
+
+  &.flb {
+    background-image: url('/icons/uncap/blue@3x.png');
+
+    &:hover {
+      background-image: url('/icons/uncap/blue-hover@3x.png');
+    }
+  }
+
+  &.ulb {
+    background-image: url('/icons/uncap/purple@3x.png');
+
+    &:hover {
+      background-image: url('/icons/uncap/purple-hover@3x.png');
+    }
+  }
+
+  @include breakpoint(phone) {
+    background-size: cover;
+    height: 14px;
+    width: 14px;
+
+    &:hover {
+      transform: scale(1);
+    }
+  }
+}

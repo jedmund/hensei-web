@@ -8,8 +8,6 @@ import { appState } from '~utils/appState'
 import TopHeader from '~components/Header'
 import UpdateToast from '~components/toasts/UpdateToast'
 
-import './index.scss'
-
 interface Props {}
 
 const Layout = ({ children }: PropsWithChildren<Props>) => {

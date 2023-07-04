@@ -1,0 +1,109 @@
+.unit {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: $unit-half;
+  position: relative;
+  width: 100%;
+  height: auto;
+  z-index: 0;
+
+  @include breakpoint(tablet) {
+    min-height: auto;
+  }
+
+  .Button {
+    pointer-events: none;
+    opacity: 0;
+    z-index: 10;
+  }
+
+  &:hover .Button,
+  .Button.Clicked {
+    pointer-events: initial;
+    opacity: 1;
+  }
+
+  &.editable .guidebookImage:hover {
+    border: $hover-stroke;
+    box-shadow: $hover-shadow;
+    cursor: pointer;
+    transform: $scale-wide;
+  }
+
+  &.empty {
+    min-height: auto;
+  }
+
+  &.filled h3 {
+    display: block;
+  }
+
+  &.filled ul {
+    display: flex;
+  }
+
+  & h3,
+  & ul {
+    display: none;
+  }
+
+  h3 {
+    color: var(--text-primary);
+    font-size: $font-button;
+    font-weight: $normal;
+    line-height: 1.1;
+    margin: 0;
+    text-align: center;
+  }
+
+  .guidebookImage {
+    background: var(--extra-purple-card-bg);
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: $unit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: calc($unit / 4);
+    overflow: hidden;
+    position: relative;
+    transition: $duration-zoom all ease-in-out;
+
+    img {
+      position: relative;
+      width: 100%;
+      z-index: 2;
+
+      &.placeholder {
+        opacity: 0;
+      }
+    }
+
+    .icon {
+      position: absolute;
+      height: $unit * 3;
+      width: $unit * 3;
+      z-index: 1;
+
+      svg {
+        transition: $duration-color-fade fill ease-in-out;
+        fill: var(--extra-purple-secondary);
+      }
+    }
+  }
+
+  .name {
+    font-size: $font-name;
+    line-height: 1.2;
+
+    @include breakpoint(phone) {
+      font-size: $font-tiny;
+    }
+  }
+
+  .guidebookDescription {
+    font-size: $font-small;
+    line-height: 1.2;
+    text-align: center;
+  }
+}

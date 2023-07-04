@@ -1,0 +1,18 @@
+.container {
+  background: var(--extra-purple-bg);
+  border-radius: $card-corner;
+  display: flex;
+  margin: $unit-4x auto 0;
+  flex-direction: column;
+  max-width: calc($grid-width + $unit-2x);
+  width: 100%;
+  // gap: $unit;
+
+  & > * {
+    border-bottom: 2px solid var(--background);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}

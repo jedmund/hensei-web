@@ -1,7 +1,7 @@
 import React from 'react'
 import * as RadixSelect from '@radix-ui/react-select'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props {
@@ -17,10 +17,10 @@ const defaultProps = {
 const SelectGroup = (props: Props) => {
   return (
     <React.Fragment>
-      <RadixSelect.Group className="SelectGroup">
-        <RadixSelect.Label className="Label">
+      <RadixSelect.Group className={styles.group}>
+        <RadixSelect.Label className={styles.label}>
           {props.label}
-          <RadixSelect.Separator className="Separator" />
+          <RadixSelect.Separator className={styles.separator} />
         </RadixSelect.Label>
         {props.children}
       </RadixSelect.Group>

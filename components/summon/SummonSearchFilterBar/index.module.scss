@@ -1,0 +1,11 @@
+.filterBar {
+  display: flex;
+  gap: $unit;
+  padding: $unit-half $unit-3x;
+
+  @include breakpoint(phone) {
+    display: grid;
+    gap: $unit;
+    grid-template-columns: 1fr 1fr;
+  }
+}

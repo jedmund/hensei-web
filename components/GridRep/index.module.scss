@@ -1,0 +1,226 @@
+.gridRep {
+  aspect-ratio: 3/2;
+  border: 1px solid transparent;
+  border-radius: $card-corner;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: $unit;
+  padding: $unit-2x;
+  min-width: 320px;
+  width: 100%;
+
+  &:hover {
+    background: var(--grid-rep-hover);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+
+    a {
+      text-decoration: none;
+    }
+
+    .weaponGrid {
+      cursor: pointer;
+
+      .weapon {
+        background: var(--unit-bg-hover);
+      }
+    }
+
+    @include breakpoint(phone) {
+      background: inherit;
+
+      .Grid .Weapon {
+        box-shadow: none;
+      }
+    }
+  }
+
+  & > .weaponGrid {
+    aspect-ratio: 2/0.95;
+    display: grid;
+    grid-template-columns: 1fr 3.36fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
+    grid-gap: $unit; /* add a gap of 8px between grid items */
+
+    .weapon {
+      background: var(--unit-bg);
+      border-radius: 4px;
+    }
+
+    .mainhand.weapon {
+      aspect-ratio: 73/153;
+      display: grid;
+      grid-column: 1 / 2; /* spans one column */
+      height: calc(100% - $unit-fourth);
+    }
+
+    .weapons {
+      display: grid; /* make the right-images container a grid */
+      grid-template-columns: repeat(
+        3,
+        1fr
+      ); /* create 3 columns, each taking up 1 fraction */
+      grid-template-rows: repeat(
+        3,
+        1fr
+      ); /* create 3 rows, each taking up 1 fraction */
+      gap: $unit;
+      // column-gap: $unit;
+      // row-gap: $unit-2x;
+    }
+
+    .grid.weapon {
+      aspect-ratio: 280 / 160;
+      display: grid;
+    }
+
+    .mainhand.weapon img[src*='jpg'],
+    .grid.weapon img[src*='jpg'] {
+      border-radius: 4px;
+      width: 100%;
+    }
+  }
+
+  .details {
+    display: flex;
+    flex-direction: column;
+    gap: $unit;
+
+    h2 {
+      color: var(--text-primary);
+      font-size: $font-regular;
+      font-weight: $bold;
+      overflow: hidden;
+      padding-bottom: 1px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 258px; // Can we not do this?
+
+      &.empty {
+        color: var(--text-tertiary);
+      }
+    }
+
+    .top {
+      display: flex;
+      flex-direction: row;
+      gap: calc($unit / 2);
+      align-items: center;
+
+      .info {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: calc($unit / 2);
+      }
+
+      button svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    .attributed,
+    .bottom {
+      display: flex;
+      gap: $unit-half;
+      justify-content: space-between;
+
+      a.user:hover {
+        color: var(--link-text-hover);
+      }
+    }
+
+    .bottom {
+      flex-direction: column;
+    }
+
+    .user {
+      flex-grow: 1;
+    }
+
+    .user,
+    .raid,
+    time {
+      color: var(--text-tertiary);
+      font-size: $font-small;
+    }
+
+    time {
+      white-space: nowrap;
+    }
+
+    .properties {
+      display: flex;
+      font-size: $font-small;
+      gap: $unit-half;
+
+      .raid {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .auto {
+        flex: 1;
+        display: inline-flex;
+        gap: $unit-half;
+        flex-direction: row;
+        flex-wrap: nowrap;
+      }
+
+      .fullAuto {
+        color: var(--full-auto-label-text);
+        white-space: nowrap;
+      }
+
+      .extra {
+        color: var(--extra-purple-light-text);
+        white-space: nowrap;
+      }
+
+      .autoGuard {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+
+        svg {
+          fill: var(--full-auto-label-text);
+        }
+      }
+    }
+
+    .raid {
+      color: var(--text-primary);
+
+      &.empty {
+        color: var(--text-tertiary);
+      }
+    }
+
+    .user {
+      display: flex;
+      gap: calc($unit / 2);
+      align-items: center;
+
+      img,
+      .no-user {
+        $diameter: 18px;
+
+        border-radius: calc($diameter / 2);
+        height: $diameter;
+        width: $diameter;
+      }
+
+      img.gran {
+        background-color: #cee7fe;
+      }
+
+      img.djeeta {
+        background-color: #ffe1fe;
+      }
+
+      .no-user {
+        background: $grey-80;
+      }
+    }
+  }
+}

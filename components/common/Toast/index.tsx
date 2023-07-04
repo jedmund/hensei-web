@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import classNames from 'classnames'
 
 import * as ToastPrimitive from '@radix-ui/react-toast'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props extends ToastPrimitive.ToastProps {
   altText: string
@@ -22,13 +22,13 @@ const Toast = ({
   const { onCloseClick, ...toastProps } = props
 
   const classes = classNames(props.className, {
-    Toast: true,
+    [styles.toast]: true,
   })
 
   return (
     <ToastPrimitive.Root {...toastProps} className={classes}>
       {title && (
-        <div className="Header">
+        <div className={styles.header}>
           <ToastPrimitive.Title asChild>
             <h3>{title}</h3>
           </ToastPrimitive.Title>

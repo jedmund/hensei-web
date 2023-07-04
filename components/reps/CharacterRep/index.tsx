@@ -3,7 +3,8 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import 'fix-date'
 
-import './index.scss'
+import styles from './index.module.scss'
+import classNames from 'classnames'
 
 interface Props {
   job?: Job
@@ -109,17 +110,20 @@ const CharacterRep = (props: Props) => {
 
   // Render
   return (
-    <div className="CharacterRep Rep">
-      <ul className="GridCharacters">
+    <div className={styles.rep}>
+      <ul className={styles.characters}>
         <li
           key="characters-job"
-          className={`Grid Character MC ${numberToElement()}`}
+          className={classNames({
+            [styles.protagonist]: true,
+            [styles[`${numberToElement()}`]]: true,
+          })}
         >
           {generateMCImage()}
         </li>
         {Array.from(Array(CHARACTERS_COUNT)).map((x, i) => {
           return (
-            <li key={`characters-${i}`} className="Grid Character">
+            <li key={`characters-${i}`} className={styles.character}>
               {generateGridImage(i)}
             </li>
           )

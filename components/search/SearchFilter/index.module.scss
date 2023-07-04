@@ -1,0 +1,109 @@
+.pill {
+  align-items: center;
+  background: var(--button-contained-bg);
+  border: none;
+  border-radius: $unit-2x;
+  border: 2px solid transparent;
+  display: flex;
+  font-size: $font-small;
+  gap: $unit-half;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: $unit ($unit * 1.5);
+
+  &:hover {
+    background: var(--button-contained-bg-hover);
+    cursor: pointer;
+
+    .text {
+      color: var(--text-primary);
+    }
+  }
+
+  @include breakpoint(phone) {
+    justify-content: center;
+  }
+
+  .label {
+    justify-content: center;
+    flex: 1;
+
+    @include breakpoint(phone) {
+      &::before {
+        content: '';
+        display: block;
+        width: calc($unit-2x - 1px);
+      }
+    }
+
+    .text {
+      color: var(--text-tertiary);
+      font-weight: $bold;
+    }
+
+    .count {
+      color: var(--text-secondary);
+      font-weight: $medium;
+    }
+  }
+
+  .icon {
+    $diameter: $unit-2x;
+    height: $diameter;
+    width: $diameter;
+
+    svg {
+      path {
+        fill: $grey-60;
+      }
+    }
+  }
+
+  div {
+    align-items: center;
+    display: flex;
+    gap: $unit-half;
+  }
+}
+
+.dropdown {
+  background: var(--button-contained-bg);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: $unit;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+  padding: $unit;
+  overflow-y: scroll;
+  max-height: 60vh;
+
+  @include breakpoint(phone) {
+    width: calc(100vw - $unit-6x);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  & > span {
+    overflow: hidden;
+
+    svg {
+      fill: var(--button-contained-bg);
+      filter: drop-shadow(0px 0px 1px rgb(0 0 0 / 0.18));
+    }
+  }
+
+  section {
+    display: flex;
+    flex-direction: row;
+    gap: $unit;
+  }
+}

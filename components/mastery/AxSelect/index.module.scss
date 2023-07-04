@@ -1,0 +1,27 @@
+.ax {
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+
+  .set {
+    &.hidden {
+      display: none;
+    }
+
+    .errors {
+      color: $error;
+      display: none;
+      padding: $unit 0;
+
+      &.visible {
+        display: block;
+      }
+    }
+
+    .fields {
+      display: flex;
+      flex-direction: row;
+      gap: $unit;
+    }
+  }
+}

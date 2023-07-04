@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import UncapIndicator from '~components/uncap/UncapIndicator'
 import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   data: Character
@@ -31,9 +31,9 @@ const CharacterResult = (props: Props) => {
   }
 
   return (
-    <li className="CharacterResult" onClick={props.onClick}>
+    <li className={styles.result} onClick={props.onClick}>
       <img alt={character.name[locale]} src={characterUrl()} />
-      <div className="Info">
+      <div className={styles.info}>
         <h5>{character.name[locale]}</h5>
         <UncapIndicator
           type="character"
@@ -41,7 +41,7 @@ const CharacterResult = (props: Props) => {
           ulb={character.uncap.ulb}
           special={character.special}
         />
-        <div className="tags">
+        <div className={styles.tags}>
           <WeaponLabelIcon labelType={Element[character.element]} />
         </div>
       </div>

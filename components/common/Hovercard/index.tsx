@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import classNames from 'classnames'
 
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props extends HoverCardPrimitive.HoverCardContentProps {}
 
@@ -14,7 +14,7 @@ export const HovercardContent = ({
   ...props
 }: PropsWithChildren<Props>) => {
   const classes = classNames(props.className, {
-    HovercardContent: true,
+    [styles.hovercard]: true,
   })
   return (
     <HoverCardPrimitive.Portal>

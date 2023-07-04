@@ -1,0 +1,180 @@
+.unit {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  z-index: 0;
+
+  .Button {
+    pointer-events: none;
+    opacity: 0;
+    z-index: 10;
+  }
+
+  &:hover .Button,
+  .Button.Clicked {
+    pointer-events: initial;
+    opacity: 1;
+  }
+
+  &.grid {
+    // max-width: 148px;
+    // min-height: 141px;
+    min-height: 180px;
+
+    @include breakpoint(tablet) {
+      min-height: 15.9vw;
+    }
+
+    .content {
+      list-style-type: none;
+      width: 100%;
+    }
+  }
+
+  &.friend {
+    margin-right: 0;
+  }
+
+  &.main.editable .content:hover,
+  &.friend.editable .content:hover {
+    transform: $scale-tall;
+  }
+
+  &.editable .content:hover {
+    border: $hover-stroke;
+    box-shadow: $hover-shadow;
+    cursor: pointer;
+    transform: $scale-wide;
+  }
+
+  &.subaura {
+    min-height: 0;
+
+    .content {
+      background: var(--subaura-orange-card-bg);
+
+      &:hover .icon svg {
+        fill: var(--subaura-orange-primary);
+      }
+
+      .icon svg {
+        fill: var(--subaura-orange-secondary);
+      }
+    }
+  }
+
+  .content {
+    background: var(--card-bg);
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: $unit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: $duration-zoom all ease-in-out;
+
+    &:hover .icon svg {
+      fill: var(--icon-secondary-hover);
+    }
+
+    .icon {
+      position: absolute;
+      height: $unit * 3;
+      width: $unit * 3;
+      z-index: 1;
+
+      svg {
+        transition: $duration-color-fade fill ease-in-out;
+        fill: var(--icon-secondary);
+      }
+    }
+  }
+
+  .name {
+    @include breakpoint(phone) {
+      font-size: $font-tiny;
+    }
+  }
+
+  &.filled h3 {
+    display: block;
+  }
+
+  &.filled ul {
+    display: flex;
+  }
+
+  h3,
+  ul {
+    display: none;
+  }
+
+  h3 {
+    color: var(--text-primary);
+    font-size: $font-regular;
+    font-weight: $normal;
+    line-height: 1.1;
+    margin: 0;
+    text-align: center;
+  }
+
+  img {
+    position: relative;
+    width: 100%;
+    z-index: 2;
+
+    &.placeholder {
+      opacity: 0;
+    }
+  }
+
+  &:hover .quickSummon.empty {
+    opacity: 1;
+  }
+
+  &.main .quickSummon {
+    $diameter: $unit-6x;
+    background-size: $diameter $diameter;
+    top: -2%;
+    right: 28%;
+    width: $diameter;
+    height: $diameter;
+  }
+
+  &.friend .quickSummon,
+  &.subaura .quickSummon {
+    display: none;
+  }
+
+  &.grid .quickSummon {
+    $diameter: $unit-5x;
+    background-size: $diameter $diameter;
+    top: -5%;
+    right: 22%;
+    width: $diameter;
+    height: $diameter;
+  }
+
+  .quickSummon {
+    position: absolute;
+    background-image: url('/icons/quick_summon/filled.svg');
+    z-index: 20;
+    transition: $duration-zoom opacity ease-in-out;
+
+    &:hover {
+      background-image: url('/icons/quick_summon/empty.svg');
+      cursor: pointer;
+    }
+
+    &.empty {
+      background-image: url('/icons/quick_summon/empty.svg');
+      opacity: 0;
+
+      &:hover {
+        background-image: url('/icons/quick_summon/filled.svg');
+      }
+    }
+  }
+}

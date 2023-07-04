@@ -2,7 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props
   extends React.DetailedHTMLProps<
@@ -16,7 +16,7 @@ export const ContextMenuContent = React.forwardRef<HTMLDivElement, Props>(
   function ContextMenu({ children, ...props }, forwardedRef) {
     const classes = classNames(
       {
-        ContextMenu: true,
+        [styles.menu]: true,
       },
       props.className
     )

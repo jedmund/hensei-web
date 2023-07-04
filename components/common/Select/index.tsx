@@ -5,8 +5,7 @@ import classNames from 'classnames'
 import Overlay from '~components/common/Overlay'
 
 import ChevronIcon from '~public/icons/Chevron.svg'
-
-import './index.scss'
+import styles from './index.module.scss'
 
 // Props
 interface Props
@@ -14,15 +13,21 @@ interface Props
     React.SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
   > {
-  altText?: string
-  iconSrc?: string
   open: boolean
-  trigger?: React.ReactNode
+  icon?: {
+    src: string
+    alt: string
+  }
+  trigger?: {
+    bound?: boolean
+    className?: string
+    placeholder?: string
+    size?: 'small' | 'medium' | 'large'
+  }
   children?: React.ReactNode
   onOpenChange?: () => void
   onValueChange?: (value: string) => void
   onClose?: () => void
-  triggerClass?: string
   overlayVisible?: boolean
 }
 
@@ -35,10 +40,22 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
 
   const triggerClasses = classNames(
     {
-      SelectTrigger: true,
-      Disabled: props.disabled,
+      [styles.trigger]: true,
+      [styles.disabled]: props.disabled,
+      [styles.bound]: props.trigger ? props.trigger.bound : false,
+      [styles.small]: props.trigger?.size === 'small',
+      [styles.medium]: !props.trigger || props.trigger?.size === 'medium',
+      [styles.large]: props.trigger?.size === 'large',
     },
-    props.triggerClass
+    props.trigger?.className?.split(' ').map((className) => styles[className])
+  )
+
+  const selectClasses = classNames(
+    {
+      [styles.select]: true,
+      [styles.bound]: props.trigger ? props.trigger.bound : false,
+    },
+    props.className?.split(' ').map((className) => styles[className])
   )
 
   useEffect(() => {
@@ -78,22 +95,21 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
       onOpenChange={props.onOpenChange}
     >
       <RadixSelect.Trigger
+        autoFocus={props.autoFocus || false}
         className={triggerClasses}
         placeholder={props.placeholder}
         ref={forwardedRef}
       >
-        {props.iconSrc ? <img alt={props.altText} src={props.iconSrc} /> : ''}
-        <RadixSelect.Value placeholder={props.placeholder} />
-        {!props.disabled ? (
-          <RadixSelect.Icon className="SelectIcon">
+        {props.icon?.src && <img alt={props.icon.alt} src={props.icon.src} />}
+        <RadixSelect.Value placeholder={props.trigger?.placeholder} />
+        {!props.disabled && (
+          <RadixSelect.Icon className={styles.icon}>
             <ChevronIcon />
           </RadixSelect.Icon>
-        ) : (
-          ''
         )}
       </RadixSelect.Trigger>
 
-      <RadixSelect.Portal className="SelectPortal">
+      <RadixSelect.Portal>
         <>
           <Overlay
             open={open}
@@ -101,18 +117,29 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
           />
 
           <RadixSelect.Content
-            className={classNames({ Select: true }, props.className)}
+            align="center"
+            className={selectClasses}
             position="popper"
             sideOffset={6}
             onCloseAutoFocus={onCloseAutoFocus}
             onEscapeKeyDown={onEscapeKeyDown}
             onPointerDownOutside={onPointerDownOutside}
           >
-            <RadixSelect.ScrollUpButton className="Scroll Up">
+            <RadixSelect.ScrollUpButton
+              className={classNames({
+                [styles.scroll]: true,
+                [styles.up]: true,
+              })}
+            >
               <ChevronIcon />
             </RadixSelect.ScrollUpButton>
             <RadixSelect.Viewport>{props.children}</RadixSelect.Viewport>
-            <RadixSelect.ScrollDownButton className="Scroll Down">
+            <RadixSelect.ScrollDownButton
+              className={classNames({
+                [styles.scroll]: true,
+                [styles.down]: true,
+              })}
+            >
               <ChevronIcon />
             </RadixSelect.ScrollDownButton>
           </RadixSelect.Content>

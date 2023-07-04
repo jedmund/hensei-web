@@ -1,0 +1,197 @@
+.unit {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: $unit-half;
+  position: relative;
+  width: 100%;
+  height: auto;
+  z-index: 0;
+
+  @include breakpoint(tablet) {
+    min-height: auto;
+  }
+
+  &.editable .image:hover {
+    border: $hover-stroke;
+    box-shadow: $hover-shadow;
+    cursor: pointer;
+    transform: $scale-wide;
+  }
+
+  &.empty {
+    min-height: auto;
+  }
+
+  &.mainhand {
+    display: flex;
+
+    &.editable .image:hover {
+      transform: $scale-tall;
+    }
+
+    .image {
+      width: 100%;
+      height: auto;
+
+      .awakening {
+        width: 40%;
+        height: auto;
+        top: 67%;
+        left: -3.5%;
+      }
+
+      .modifiers > .skills {
+        bottom: 12%;
+        right: -3.5%;
+
+        & > .skill {
+          width: 25%;
+          height: auto;
+        }
+      }
+    }
+  }
+
+  &.weapon {
+    .image {
+      list-style-type: none;
+      width: 100%;
+      height: auto;
+
+      .awakening {
+        width: 30%;
+        height: auto;
+        top: 14%;
+        left: -3.5%;
+      }
+
+      .modifiers > .skills {
+        bottom: 12%;
+        left: -3.5%;
+
+        & > .skill {
+          width: 20%;
+          height: auto;
+        }
+      }
+    }
+  }
+
+  &.extra {
+    &:hover .icon svg {
+      fill: var(--extra-purple-primary);
+    }
+
+    .image {
+      background: var(--extra-purple-card-bg);
+
+      .icon svg {
+        fill: var(--extra-purple-secondary);
+      }
+    }
+
+    h3 {
+      font-weight: $medium;
+      color: var(--extra-purple-text);
+    }
+  }
+
+  &.filled h3 {
+    display: block;
+  }
+
+  &.filled ul {
+    display: flex;
+  }
+
+  & h3,
+  & ul {
+    display: none;
+  }
+
+  h3 {
+    color: var(--text-primary);
+    font-size: $font-button;
+    font-weight: $normal;
+    line-height: 1.1;
+    margin: 0;
+    text-align: center;
+  }
+
+  .image {
+    background: var(--card-bg);
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: $item-corner;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: calc($unit / 4);
+    overflow: hidden;
+    position: relative;
+    transition: $duration-zoom all ease-in-out;
+
+    &:hover .icon svg {
+      fill: var(--icon-secondary-hover);
+    }
+
+    @include breakpoint(phone) {
+      border-radius: $item-corner-small;
+    }
+
+    .awakening {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: 3;
+    }
+
+    .modifiers {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: 3;
+
+      .skills {
+        display: flex;
+        gap: $unit-fourth;
+        justify-content: flex-end;
+        padding: $unit-half;
+        width: 100%;
+      }
+    }
+
+    img {
+      position: relative;
+      width: 100%;
+      z-index: 2;
+
+      &.placeholder {
+        opacity: 0;
+      }
+    }
+
+    .icon {
+      position: absolute;
+      height: $unit * 3;
+      width: $unit * 3;
+      z-index: 1;
+
+      svg {
+        transition: $duration-color-fade fill ease-in-out;
+        fill: var(--icon-secondary);
+      }
+    }
+  }
+
+  .name {
+    font-size: $font-name;
+    line-height: 1.2;
+
+    @include breakpoint(phone) {
+      font-size: $font-tiny;
+    }
+  }
+}

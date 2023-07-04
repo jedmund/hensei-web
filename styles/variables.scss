@@ -41,6 +41,7 @@ $grey-00: #000;
 $grey-05: #0a0a0a;
 $grey-10: #111;
 $grey-15: #191919;
+$grey-20: #212121;
 $grey-25: #232323;
 $grey-30: #2f2f2f;
 $grey-40: #444;
@@ -48,6 +49,7 @@ $grey-50: #777;
 $grey-55: #888;
 $grey-60: #a9a9a9;
 $grey-70: #c6c6c6;
+$grey-75: #dcdcdc;
 $grey-80: #e9e9e9;
 $grey-85: #efefef;
 $grey-90: #f5f5f5;
@@ -60,7 +62,8 @@ $purple-05: #373278;
 $purple-10: #4f3c79;
 $purple-20: #635fb7;
 $purple-30: #8c86ff;
-$purple-40: #7471c7;
+$purple-40: #a49ffe;
+$purple-50: #b6b2fc;
 $purple-80: #d5d3f6;
 $purple-90: #ecebff;
 
@@ -82,6 +85,8 @@ $red: #ff6161;
 $yellow: #c89d39;
 $error: #d13a3a;
 
+$save-red: #ff4d4d;
+
 $accent--blue--light: #275dc5;
 $accent--blue--light--focus: #0c398d;
 $accent--blue--dark: #6195f4;
@@ -89,6 +94,15 @@ $accent--blue--dark--focus: #275dc5;
 
 $accent--yellow--light: #c89d39;
 $accent--yellow--dark: #f9cc64;
+$yellow-text-10: #a39200;
+$yellow-text-20: #ffed4c;
+
+$accent--yellow--00: #463805;
+$accent--yellow--20: #7f6a00;
+$accent--yellow--40: #a39200;
+$accent--yellow--60: #c89d39;
+$accent--yellow--80: #deb351;
+$accent--yellow--100: #f9cc64;
 
 $selected--item--bg--dark: #f9cc645d;
 $selected--item--bg--dark--hover: #fcc33f81;
@@ -97,49 +111,52 @@ $selected--item--bg--light--hover: #ecbc4c6f;
 
 // Colors -- Elements
 $wind-text-00: #023e28;
-$wind-text-10: #006a43;
-$wind-text-20: #1dc688;
-$wind-bg-00: #4cffbf55;
-$wind-bg-10: #00b551;
+$wind-text-10: #00492f;
+$wind-text-20: #006a45;
+$wind-text-30: #1dc688;
+$wind-bg-00: #30c372;
+$wind-bg-10: #3ee489;
 $wind-bg-20: #cdffed;
 
 $fire-text-00: #3f0202;
-$fire-text-10: #6e0000;
-$fire-text-20: #ec5c5c;
-$fire-bg-00: #ff4d4d55;
-$fire-bg-10: #ff4d4d;
+$fire-text-10: #3e0000;
+$fire-text-20: #700101;
+$fire-text-30: #ec5c5c;
+$fire-bg-00: #e05555;
+$fire-bg-10: #fa6d6d;
 $fire-bg-20: #ffcdcd;
 
 $water-text-00: #03263b;
 $water-text-10: #004b77;
-$water-text-20: #5cb7ec;
-$water-bg-00: #6cc9ff55;
+$water-text-20: #00639c;
+$water-text-30: #5cb7ec;
+$water-bg-00: #4aabe3;
 $water-bg-10: #6cc9ff;
 $water-bg-20: #cdedff;
 
 $earth-text-00: #321602;
 $earth-text-10: #662a00;
-$earth-text-20: #ec985c;
-$earth-bg-00: #fd9f5b55;
+$earth-text-20: #913d01;
+$earth-text-30: #ec985c;
+$earth-bg-00: #df8849;
 $earth-bg-10: #fd9f5b;
 $earth-bg-20: #ffe2cd;
 
-$light-text-00: #433d02;
-$light-text-10: #716500;
-$light-text-20: #c5b20c;
-$light-bg-00: #ffed4c55;
-$light-bg-10: #d9c50f;
+$light-text-00: #3d3700;
+$light-text-10: #4b4300;
+$light-text-20: #706500;
+$light-text-30: #c5b20c;
+$light-bg-00: #cab91c;
+$light-bg-10: #e8d633;
 $light-bg-20: #fffacd;
 
-$dark-text-00: #260134;
-$dark-text-10: #560075;
-$dark-text-20: #c65cec;
-$dark-bg-00: #d565fb55;
-$dark-bg-10: #d565fb;
+$dark-text-00: #23002f;
+$dark-text-10: #3e0054;
+$dark-text-20: #5b017b;
+$dark-text-30: #c65cec;
+$dark-bg-00: #ba63d8;
+$dark-bg-10: #de7bff;
 $dark-bg-20: #f2cdff;
-
-$yellow-text-10: #a39200;
-$yellow-text-20: #ffed4c;
 
 $page--bg--light: $grey-90;
 $page--bg--dark: $grey-15;
@@ -156,6 +173,13 @@ $separator--bg--dark: $grey-15;
 $anonymous--bg--light: $grey-80;
 $anonymous--bg--dark: $grey-40;
 
+// Color Definitions: Unit
+$unit--bg--light: $grey-100;
+$unit--bg--dark: $grey-20;
+
+$unit--bg--light--hover: $grey-90;
+$unit--bg--dark--hover: $grey-30;
+
 // Color Definitions: Dialog
 $dialog--bg--light: $grey-100;
 $dialog--bg--dark: $grey-25;
@@ -171,6 +195,13 @@ $menu--item--bg--light--hover: $grey-85;
 $menu--item--bg--dark--hover: $grey-00;
 $menu--text--light--hover: $grey-100;
 $menu--text--dark--hover: $grey-15;
+
+// Color Definitions: Notices
+$notice--bg--light: $accent--yellow--100;
+$notice--bg--dark: $accent--yellow--00;
+
+$notice--text--light: $accent--yellow--20;
+$notice--text--dark: $accent--yellow--100;
 
 // Color Definitions: Button
 $button--bg--light: $grey-80;
@@ -190,7 +221,7 @@ $button--text--light--hover: $grey-40;
 $button--text--light--disabled: $grey-70;
 $button--text--dark: $grey-70;
 $button--text--dark--hover: $grey-100;
-$button--text--dark--disabled: $grey-40;
+$button--text--dark--disabled: $grey-50;
 
 // Color Definitions: Input
 $input--bg--light: $grey-100;
@@ -204,29 +235,27 @@ $input--bound--bg--dark: $grey-15;
 $input--bound--bg--dark--hover: $grey-10;
 
 // Color Definitions: Select
-$select--bg--light: $grey-100;
-$select--bg--dark: $grey-10;
+$select--trigger--bg--light: $grey-100;
+$select--trigger--bg--dark: $grey-10;
 
-$select--contained--bg--light: $grey-90;
-$select--contained--bg--light--hover: $grey-80;
-$select--contained--bg--dark: $grey-05;
-$select--contained--bg--dark--hover: $grey-00;
+$select--trigger--contained--bg--light: $grey-85;
+$select--trigger--contained--bg--light--hover: $grey-80;
+$select--trigger--contained--bg--dark: $grey-15;
+$select--trigger--contained--bg--dark--hover: $grey-10;
 
-$select--modal--bg--light: $grey-85;
-$select--modal--bg--light--hover: $grey-80;
-$select--modal--bg--dark: $grey-40;
-$select--modal--bg--dark--hover: $grey-30;
+$select--content--contained--bg--light: $grey-100;
+$select--content--contained--bg--dark: $grey-15;
 
 $select--separator--light: $grey-90;
 $select--separator--dark: $grey-05;
 
-$option--bg--light--hover: $grey-90;
+$option--bg--light--hover: $grey-75;
 $option--bg--dark--hover: $grey-00;
 
 $grid--rep--hover--light: $grey-100;
 $grid--rep--hover--dark: $grey-10;
 
-$grid--border--color--light: $grey-80;
+$grid--border--color--light: $grey-85;
 $grid--border--color--dark: $grey-40;
 
 // Color Definitions: Slider
@@ -256,13 +285,17 @@ $extra--purple--bg--light: $purple-90;
 $extra--purple--card--bg--light: $purple-80;
 $extra--purple--primary--light: $purple-30;
 $extra--purple--secondary--light: $purple-40;
-$extra--purple--text--light: $purple-10;
+$extra--purple--light--text--light: $purple-40;
+$extra--purple--text--light: $purple-20;
+$extra--purple--dark--text--light: $purple-10;
 
 $extra--purple--bg--dark: $purple-20;
 $extra--purple--card--bg--dark: $purple-40;
 $extra--purple--primary--dark: $purple-05;
 $extra--purple--secondary--dark: $purple-10;
-$extra--purple--text--dark: $purple-00;
+$extra--purple--light--text--dark: $purple-30;
+$extra--purple--text--dark: $purple-80;
+$extra--purple--dark--text--dark: $purple-00;
 
 // Color Definitions: Subaura
 $subaura--orange--bg--light: $orange-90;
@@ -282,7 +315,7 @@ $charge--attack--text: $orange-35;
 
 $full--auto--bg: $yellow-text-20;
 
-$auto--guard--bg: $purple-30;
+$auto--guard--bg: $purple-50;
 $auto--guard--text: $purple-10;
 
 // Color Definitions: Pills
@@ -334,6 +367,102 @@ $tag--bg--dark: $grey-00;
 $tag--text--light: $grey-100;
 $tag--text--dark: $grey-50;
 
+// Color Definitions: Element / Wind
+$wind--bg--light: $wind-bg-10;
+$wind--bg--dark: $wind-bg-10;
+
+$wind--bg--hover--light: $wind-bg-00;
+$wind--bg--hover--dark: $wind-bg-00;
+
+$wind--text--light: $wind-text-20;
+$wind--text--dark: $wind-text-20;
+
+$wind--text--raid--light: $wind-text-20;
+$wind--text--raid--dark: $wind-bg-10;
+
+$wind--text--hover--light: $wind-text-00;
+$wind--text--hover--dark: $wind-text-00;
+
+// Color Definitions: Element / Fire
+$fire--bg--light: $fire-bg-10;
+$fire--bg--dark: $fire-bg-10;
+
+$fire--bg--hover--light: $fire-bg-00;
+$fire--bg--hover--dark: $fire-bg-00;
+
+$fire--text--light: $fire-text-20;
+$fire--text--dark: $fire-text-10;
+
+$fire--text--raid--light: $fire-text-20;
+$fire--text--raid--dark: $fire-bg-10;
+
+$fire--text--hover--light: $fire-text-00;
+$fire--text--hover--dark: $fire-text-00;
+
+// Color Definitions: Element / Water
+$water--bg--light: $water-bg-10;
+$water--bg--dark: $water-bg-10;
+
+$water--bg--hover--light: $water-bg-00;
+$water--bg--hover--dark: $water-bg-00;
+
+$water--text--light: $water-text-20;
+$water--text--dark: $water-text-10;
+
+$water--text--raid--light: $water-text-20;
+$water--text--raid--dark: $water-bg-10;
+
+$water--text--hover--light: $water-text-00;
+$water--text--hover--dark: $water-text-00;
+
+// Color Definitions: Element / Earth
+$earth--bg--light: $earth-bg-10;
+$earth--bg--dark: $earth-bg-10;
+
+$earth--bg--hover--light: $earth-bg-00;
+$earth--bg--hover--dark: $earth-bg-00;
+
+$earth--text--light: $earth-text-20;
+$earth--text--dark: $earth-text-10;
+
+$earth--text--raid--light: $earth-text-20;
+$earth--text--raid--dark: $earth-bg-10;
+
+$earth--text--hover--light: $earth-text-00;
+$earth--text--hover--dark: $earth-text-00;
+
+// Color Definitions: Element / Dark
+$dark--bg--light: $dark-bg-10;
+$dark--bg--dark: $dark-bg-10;
+
+$dark--bg--hover--light: $dark-bg-00;
+$dark--bg--hover--dark: $dark-bg-00;
+
+$dark--text--light: $dark-text-20;
+$dark--text--dark: $dark-text-10;
+
+$dark--text--raid--light: $dark-text-20;
+$dark--text--raid--dark: $dark-bg-10;
+
+$dark--text--hover--light: $dark-text-00;
+$dark--text--hover--dark: $dark-text-00;
+
+// Color Definitions: Element / Light
+$light--bg--light: $light-bg-10;
+$light--bg--dark: $light-bg-10;
+
+$light--bg--hover--light: $light-bg-00;
+$light--bg--hover--dark: $light-bg-00;
+
+$light--text--light: $light-text-20;
+$light--text--dark: $light-text-10;
+
+$light--text--raid--light: $light-text-20;
+$light--text--raid--dark: $light-bg-10;
+
+$light--text--hover--light: $light-text-00;
+$light--text--hover--dark: $light-text-00;
+
 // Font-weight
 $normal: 400;
 $medium: 500;
@@ -359,6 +488,7 @@ $full-corner: 500px;
 $card-corner: $unit * 1.5;
 $input-corner: $unit;
 $item-corner: $unit;
+$item-corner-small: $unit-half;
 
 // Shadows
 $hover-stroke: 1px solid rgba(0, 0, 0, 0.1);

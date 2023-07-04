@@ -1,0 +1,68 @@
+.result {
+  border-radius: 6px;
+  display: flex;
+  gap: $unit;
+  padding: $unit * 1.5;
+
+  &:hover {
+    background: var(--button-contained-bg);
+    cursor: pointer;
+
+    .info h5 {
+      color: var(--text-primary);
+    }
+  }
+
+  img {
+    background: var(--card-bg);
+    border-radius: 6px;
+    display: inline-block;
+    height: 72px;
+    width: 120px;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: $unit-half;
+
+    h5 {
+      color: var(--text-tertiary);
+      display: inline-block;
+      font-size: $font-medium;
+      font-weight: $medium;
+      opacity: 1;
+    }
+
+    .UncapIndicator {
+      justify-content: left;
+      pointer-events: none;
+    }
+
+    .stars {
+      display: inline-block;
+      color: #ffa15e;
+      font-size: $font-xlarge;
+
+      & > span {
+        color: #65daff;
+      }
+    }
+
+    .tags {
+      display: flex;
+      flex-direction: row;
+      gap: calc($unit / 2);
+
+      .WeaponLabelIcon {
+        $aspect-ratio: calc(25 / 60);
+        $height: 22px;
+        background-size: calc($height / $aspect-ratio) $height;
+        background-repeat: no-repeat;
+        height: $height;
+        width: calc($height/ $aspect-ratio);
+      }
+    }
+  }
+}

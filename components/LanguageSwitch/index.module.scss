@@ -1,0 +1,56 @@
+.languageSwitch {
+  $height: 24px;
+
+  background: $grey-60;
+  border-radius: calc($height / 2);
+  border: none;
+  position: relative;
+  width: 44px;
+  height: $height;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  .thumb {
+    $diameter: 18px;
+
+    background: $grey-100;
+    border-radius: calc($diameter / 2);
+    display: block;
+    height: $diameter;
+    width: $diameter;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    z-index: 3;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &[data-state='checked'] {
+      background: $grey-100;
+      left: 23px;
+    }
+  }
+
+  .left,
+  .right {
+    color: $grey-100;
+    font-size: 10px;
+    font-weight: $bold;
+    position: absolute;
+    z-index: 2;
+  }
+
+  .left {
+    top: 6px;
+    left: 6px;
+  }
+
+  .right {
+    top: 6px;
+    right: 5px;
+  }
+}

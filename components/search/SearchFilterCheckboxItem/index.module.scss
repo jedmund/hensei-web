@@ -1,0 +1,42 @@
+.item {
+  align-items: center;
+  border-radius: calc($unit / 2);
+  color: var(--text-tertiary);
+  font-size: $font-regular;
+  line-height: 1.2;
+  min-width: 100px;
+  position: relative;
+  padding: $unit;
+  padding-left: $unit * 3.5;
+
+  &:hover {
+    background: var(--button-contained-bg-hover);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  &[data-state='checked'] {
+    background: var(--button-contained-bg-hover);
+
+    svg {
+      fill: var(--text-secondary);
+    }
+  }
+
+  .indicator {
+    $diameter: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: calc($unit / 2);
+    height: $diameter;
+    width: $diameter;
+
+    svg {
+      height: $diameter;
+      width: $diameter;
+    }
+  }
+}

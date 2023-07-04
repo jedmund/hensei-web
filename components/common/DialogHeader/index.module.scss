@@ -1,0 +1,87 @@
+.header {
+  $multiplier: 4;
+
+  background: var(--dialog-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0);
+  border-bottom: 1px solid rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: center;
+  gap: $unit-2x;
+  justify-content: space-between;
+  padding: $unit-4x ($unit * $multiplier);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  &.short {
+    padding-top: $unit-3x;
+    padding-bottom: $unit-3x;
+  }
+
+  .top {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: calc($unit / 2);
+  }
+
+  .left {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: $unit;
+
+    p {
+      font-size: $font-small;
+      line-height: 1.25;
+    }
+  }
+
+  .title {
+    color: var(--text-primary);
+    font-size: $font-xlarge;
+
+    h1 {
+      color: var(--text-primary);
+      font-size: $font-xlarge;
+      font-weight: $medium;
+      text-align: left;
+    }
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: $font-small;
+    font-weight: $medium;
+  }
+
+  .image {
+    border-radius: $input-corner;
+    width: $unit-10x;
+  }
+
+  .close {
+    background: transparent;
+    border: 2px solid transparent;
+
+    &:hover {
+      cursor: pointer;
+
+      svg {
+        fill: $error;
+      }
+    }
+
+    &:focus {
+      border-radius: $input-corner;
+      border: 2px solid $blue;
+    }
+
+    svg {
+      fill: $grey-50;
+      float: right;
+      height: 24px;
+      width: 24px;
+    }
+  }
+}

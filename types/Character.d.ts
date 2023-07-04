@@ -31,10 +31,7 @@ interface Character {
     race1: number
     race2: number
   }
-  proficiency: {
-    proficiency1: number
-    proficiency2: number
-  }
+  proficiency: number[]
   awakenings: Awakening[]
   position?: number
   special: boolean

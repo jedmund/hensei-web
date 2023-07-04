@@ -1,40 +1,36 @@
-import React, { useEffect, useState } from 'react'
-import { subscribe, useSnapshot } from 'valtio'
-import { setCookie, deleteCookie } from 'cookies-next'
+import React, { useState } from 'react'
+import { deleteCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
-import { Trans, useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
 import Link from 'next/link'
 
 import { accountState, initialAccountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
-import { getLocalId } from '~utils/localId'
-import { retrieveLocaleCookies } from '~utils/retrieveCookies'
-import { setEditKey, storeEditKey } from '~utils/userToken'
 
+import Alert from '~components/common/Alert'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuLabel,
 } from '~components/common/DropdownMenuContent'
+import DropdownMenuGroup from '~components/common/DropdownMenuGroup'
+import DropdownMenuLabel from '~components/common/DropdownMenuLabel'
+import DropdownMenuItem from '~components/common/DropdownMenuItem'
+import LanguageSwitch from '~components/LanguageSwitch'
 import LoginModal from '~components/auth/LoginModal'
 import SignupModal from '~components/auth/SignupModal'
 import AccountModal from '~components/auth/AccountModal'
-import Toast from '~components/common/Toast'
 import Button from '~components/common/Button'
 import Tooltip from '~components/common/Tooltip'
-import * as Switch from '@radix-ui/react-switch'
 
 import ChevronIcon from '~public/icons/Chevron.svg'
 import MenuIcon from '~public/icons/Menu.svg'
 import PlusIcon from '~public/icons/Add.svg'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 const Header = () => {
   // Localization
@@ -44,37 +40,14 @@ const Header = () => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
-  const localeData = retrieveLocaleCookies()
 
   // State management
-  const [remixToastOpen, setRemixToastOpen] = useState(false)
+  const [alertOpen, setAlertOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [signupModalOpen, setSignupModalOpen] = useState(false)
   const [settingsModalOpen, setSettingsModalOpen] = useState(false)
   const [leftMenuOpen, setLeftMenuOpen] = useState(false)
   const [rightMenuOpen, setRightMenuOpen] = useState(false)
-  const [languageChecked, setLanguageChecked] = useState(false)
-
-  const [name, setName] = useState('')
-  const [originalName, setOriginalName] = useState('')
-
-  // Snapshots
-  const { party: partySnapshot } = useSnapshot(appState)
-
-  // Subscribe to app state to listen for party name and
-  // unsubscribe when component is unmounted
-  const unsubscribe = subscribe(appState, () => {
-    const newName =
-      appState.party && appState.party.name ? appState.party.name : ''
-    setName(newName)
-  })
-
-  useEffect(() => () => unsubscribe(), [])
-
-  // Hooks
-  useEffect(() => {
-    setLanguageChecked(localeData === 'ja' ? true : false)
-  }, [localeData])
 
   // Methods: Event handlers (Buttons)
   function handleLeftMenuButtonClicked() {
@@ -102,29 +75,11 @@ const Header = () => {
     setRightMenuOpen(false)
   }
 
-  // Methods: Event handlers (Remix toasts)
-  function handleRemixToastOpenChanged(open: boolean) {
-    setRemixToastOpen(open)
-  }
-
-  function handleRemixToastCloseClicked() {
-    setRemixToastOpen(false)
-  }
-
   // Methods: Actions
   function handleNewTeam(event: React.MouseEvent) {
     event.preventDefault()
     newTeam()
     closeRightMenu()
-  }
-
-  function changeLanguage(value: boolean) {
-    const language = value ? 'ja' : 'en'
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 120)
-
-    setCookie('NEXT_LOCALE', language, { path: '/', expires: expiresAt })
-    router.push(router.asPath, undefined, { locale: language })
   }
 
   function logout() {
@@ -153,15 +108,14 @@ const Header = () => {
     })
 
     // Push the root URL
-    router.push('/new')
+    router.push('/new', undefined, { shallow: true })
   }
 
+  // Methods: Rendering
   const profileImage = () => {
-    let image
-
     const user = accountState.account.user
     if (accountState.account.authorized && user) {
-      image = (
+      return (
         <img
           alt={user.username}
           className={`profile ${user.avatar.element}`}
@@ -171,7 +125,7 @@ const Header = () => {
         />
       )
     } else {
-      image = (
+      return (
         <img
           alt={t('no_user')}
           className={`profile anonymous`}
@@ -181,266 +135,253 @@ const Header = () => {
         />
       )
     }
-
-    return image
   }
 
   // Rendering: Buttons
-  const newButton = () => {
-    return (
-      <Tooltip content={t('tooltips.new')}>
-        <Button
-          leftAccessoryIcon={<PlusIcon />}
-          className="New"
-          blended={true}
-          text={t('buttons.new')}
-          onClick={newTeam}
-        />
-      </Tooltip>
-    )
-  }
-
-  const remixToast = () => {
-    return (
-      <Toast
-        altText={t('toasts.remixed', { title: originalName })}
-        open={remixToastOpen}
-        duration={2400}
-        type="foreground"
-        content={
-          <Trans i18nKey="toasts.remixed">
-            You remixed <strong>{{ title: originalName }}</strong>
-          </Trans>
-        }
-        onOpenChange={handleRemixToastOpenChanged}
-        onCloseClick={handleRemixToastCloseClicked}
+  const newButton = (
+    <Tooltip content={t('tooltips.new')}>
+      <Button
+        leftAccessoryIcon={<PlusIcon />}
+        className="New"
+        blended={true}
+        text={t('buttons.new')}
+        onClick={newTeam}
       />
-    )
-  }
+    </Tooltip>
+  )
 
   // Rendering: Modals
-  const settingsModal = () => {
-    const user = accountState.account.user
+  const logoutConfirmationAlert = (
+    <Alert
+      message={t('alert.confirm_logout')}
+      open={alertOpen}
+      primaryActionText="Log out"
+      primaryAction={logout}
+      cancelActionText="Nevermind"
+      cancelAction={() => setAlertOpen(false)}
+    />
+  )
 
-    if (user) {
-      return (
+  const settingsModal = (
+    <>
+      {accountState.account.user && (
         <AccountModal
           open={settingsModalOpen}
-          username={user.username}
-          picture={user.avatar.picture}
-          gender={user.gender}
-          language={user.language}
-          theme={user.theme}
+          username={accountState.account.user.username}
+          picture={accountState.account.user.avatar.picture}
+          gender={accountState.account.user.gender}
+          language={accountState.account.user.language}
+          theme={accountState.account.user.theme}
           onOpenChange={setSettingsModalOpen}
         />
-      )
-    }
-  }
+      )}
+    </>
+  )
 
-  const loginModal = () => {
-    return <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
-  }
+  const loginModal = (
+    <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
+  )
 
-  const signupModal = () => {
-    return (
-      <SignupModal open={signupModalOpen} onOpenChange={setSignupModalOpen} />
-    )
-  }
+  const signupModal = (
+    <SignupModal open={signupModalOpen} onOpenChange={setSignupModalOpen} />
+  )
 
   // Rendering: Compositing
-  const left = () => {
-    return (
-      <section>
-        <div id="DropdownWrapper">
-          <DropdownMenu
-            open={leftMenuOpen}
-            onOpenChange={handleLeftMenuOpenChange}
-          >
-            <DropdownMenuTrigger asChild>
-              <Button
-                leftAccessoryIcon={<MenuIcon />}
-                className={classNames({ Active: leftMenuOpen })}
-                blended={true}
-                onClick={handleLeftMenuButtonClicked}
-              />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="Left">
-              {leftMenuItems()}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </section>
-    )
-  }
+  const authorizedLeftItems = (
+    <>
+      {accountState.account.user && (
+        <>
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={closeLeftMenu}>
+              <Link
+                href={`/${accountState.account.user.username}` || ''}
+                passHref
+              >
+                <span>{t('menu.profile')}</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={closeLeftMenu}>
+              <Link href={`/saved` || ''}>{t('menu.saved')}</Link>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </>
+      )}
+    </>
+  )
+  const leftMenuItems = (
+    <>
+      {accountState.account.authorized &&
+        accountState.account.user &&
+        authorizedLeftItems}
 
-  const right = () => {
-    return (
-      <section>
-        {newButton()}
+      <DropdownMenuGroup>
+        <DropdownMenuItem onClick={closeLeftMenu}>
+          <Link href="/teams">{t('menu.teams')}</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <div>
+            <span>{t('menu.guides')}</span>
+            <i className="tag">{t('coming_soon')}</i>
+          </div>
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuGroup>
+        <DropdownMenuItem onClick={closeLeftMenu}>
+          <a
+            href={locale == 'ja' ? '/ja/about' : '/about'}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t('about.segmented_control.about')}
+          </a>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={closeLeftMenu}>
+          <a
+            href={locale == 'ja' ? '/ja/updates' : '/updates'}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t('about.segmented_control.updates')}
+          </a>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={closeLeftMenu}>
+          <a
+            href={locale == 'ja' ? '/ja/roadmap' : '/roadmap'}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t('about.segmented_control.roadmap')}
+          </a>
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+    </>
+  )
+
+  const left = (
+    <section>
+      <div className={styles.dropdownWrapper}>
         <DropdownMenu
-          open={rightMenuOpen}
-          onOpenChange={handleRightMenuOpenChange}
+          open={leftMenuOpen}
+          onOpenChange={handleLeftMenuOpenChange}
         >
           <DropdownMenuTrigger asChild>
             <Button
-              className={classNames({ Active: rightMenuOpen })}
-              leftAccessoryIcon={profileImage()}
-              rightAccessoryIcon={<ChevronIcon />}
-              rightAccessoryClassName="Arrow"
-              onClick={handleRightMenuButtonClicked}
+              active={leftMenuOpen}
               blended={true}
+              leftAccessoryIcon={<MenuIcon />}
+              onClick={handleLeftMenuButtonClicked}
             />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="Right">
-            {rightMenuItems()}
+          <DropdownMenuContent className="Left">
+            {leftMenuItems}
           </DropdownMenuContent>
         </DropdownMenu>
-      </section>
-    )
-  }
+      </div>
+    </section>
+  )
 
-  const leftMenuItems = () => {
-    return (
-      <>
-        {accountState.account.authorized && accountState.account.user ? (
-          <>
-            <DropdownMenuGroup className="MenuGroup">
-              <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
-                <Link
-                  href={`/${accountState.account.user.username}` || ''}
-                  passHref
-                >
-                  <span>{t('menu.profile')}</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
-                <Link href={`/saved` || ''}>{t('menu.saved')}</Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </>
-        ) : (
-          ''
-        )}
-        <DropdownMenuGroup className="MenuGroup">
-          <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
-            <Link href="/teams">{t('menu.teams')}</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="MenuItem">
-            <div>
-              <span>{t('menu.guides')}</span>
-              <i className="tag">{t('coming_soon')}</i>
-            </div>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuGroup className="MenuGroup">
-          <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
-            <a
-              href={locale == 'ja' ? '/ja/about' : '/about'}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {t('about.segmented_control.about')}
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
-            <a
-              href={locale == 'ja' ? '/ja/updates' : '/updates'}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {t('about.segmented_control.updates')}
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="MenuItem" onClick={closeLeftMenu}>
-            <a
-              href={locale == 'ja' ? '/ja/roadmap' : '/roadmap'}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {t('about.segmented_control.roadmap')}
-            </a>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </>
-    )
-  }
-
-  const rightMenuItems = () => {
-    let items
-
-    const account = accountState.account
-    if (account.authorized && account.user) {
-      items = (
+  const authorizedRightItems = (
+    <>
+      {accountState.account.user && (
         <>
-          <DropdownMenuGroup className="MenuGroup">
-            <DropdownMenuLabel className="MenuLabel">
-              {account.user ? `@${account.user.username}` : t('no_user')}
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>
+              {`@${accountState.account.user.username}`}
             </DropdownMenuLabel>
-            <DropdownMenuItem className="MenuItem" onClick={closeRightMenu}>
-              <Link href={`/${account.user.username}` || ''} passHref>
+            <DropdownMenuItem onClick={closeRightMenu}>
+              <Link
+                href={`/${accountState.account.user.username}` || ''}
+                passHref
+              >
                 <span>{t('menu.profile')}</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuGroup className="MenuGroup">
+          <DropdownMenuGroup>
             <DropdownMenuItem
               className="MenuItem"
               onClick={() => setSettingsModalOpen(true)}
             >
               <span>{t('menu.settings')}</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="MenuItem" onClick={logout}>
+            <DropdownMenuItem
+              onClick={() => setAlertOpen(true)}
+              destructive={true}
+            >
               <span>{t('menu.logout')}</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </>
-      )
-    } else {
-      items = (
-        <>
-          <DropdownMenuGroup className="MenuGroup">
-            <DropdownMenuItem className="MenuItem language">
-              <span>{t('menu.language')}</span>
-              <Switch.Root
-                className="Switch"
-                onCheckedChange={changeLanguage}
-                checked={languageChecked}
-              >
-                <Switch.Thumb className="Thumb" />
-                <span className="left">JP</span>
-                <span className="right">EN</span>
-              </Switch.Root>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuGroup className="MenuGroup">
-            <DropdownMenuItem
-              className="MenuItem"
-              onClick={() => setLoginModalOpen(true)}
-            >
-              <span>{t('menu.login')}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="MenuItem"
-              onClick={() => setSignupModalOpen(true)}
-            >
-              <span>{t('menu.signup')}</span>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </>
-      )
-    }
+      )}
+    </>
+  )
 
-    return items
-  }
+  const unauthorizedRightItems = (
+    <>
+      <DropdownMenuGroup>
+        <DropdownMenuItem className="language">
+          <span>{t('menu.language')}</span>
+          <LanguageSwitch />
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuGroup className="MenuGroup">
+        <DropdownMenuItem
+          className="MenuItem"
+          onClick={() => setLoginModalOpen(true)}
+        >
+          <span>{t('menu.login')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="MenuItem"
+          onClick={() => setSignupModalOpen(true)}
+        >
+          <span>{t('menu.signup')}</span>
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+    </>
+  )
+
+  const rightMenuItems = (
+    <>
+      {accountState.account.authorized && accountState.account.user
+        ? authorizedRightItems
+        : unauthorizedRightItems}
+    </>
+  )
+
+  const right = (
+    <section>
+      {newButton}
+      <DropdownMenu
+        open={rightMenuOpen}
+        onOpenChange={handleRightMenuOpenChange}
+      >
+        <DropdownMenuTrigger asChild>
+          <Button
+            className={classNames({ Active: rightMenuOpen })}
+            leftAccessoryIcon={profileImage()}
+            rightAccessoryIcon={<ChevronIcon />}
+            rightAccessoryClassName="Arrow"
+            onClick={handleRightMenuButtonClicked}
+            blended={true}
+          />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="Right">
+          {rightMenuItems}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </section>
+  )
 
   return (
-    <nav id="Header">
-      {left()}
-      {right()}
-      {settingsModal()}
-      {loginModal()}
-      {signupModal()}
+    <nav className={styles.header}>
+      {left}
+      {right}
+      {logoutConfirmationAlert}
+      {settingsModal}
+      {loginModal}
+      {signupModal}
     </nav>
   )
 }

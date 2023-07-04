@@ -1,0 +1,137 @@
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-half;
+
+  &:last-child .error {
+    margin-bottom: 0;
+  }
+
+  &.hidden {
+    display: none;
+  }
+
+  &.full {
+    width: 100%;
+  }
+
+  .error {
+    color: $error;
+    font-size: $font-small;
+    padding: calc($unit / 2) ($unit * 2);
+    min-width: 100%;
+    margin-bottom: $unit;
+    width: 0;
+  }
+
+  .fullHeight {
+    height: 100%;
+  }
+
+  .input {
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--input-bg);
+    border-radius: $input-corner;
+    border: none;
+    box-sizing: border-box;
+    color: var(--text-primary);
+    display: block;
+    font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
+      sans-serif;
+    font-size: $font-regular;
+    width: 100%;
+
+    &:not(.wrapper) {
+      padding: ($unit * 1.5) $unit-2x;
+    }
+
+    &.accessory {
+      $offset: 2px;
+
+      align-items: center;
+      background: var(--input-bg);
+      border-radius: $input-corner;
+      box-sizing: border-box;
+      position: relative;
+
+      .counter {
+        color: var(--text-tertiary);
+        display: block;
+        font-weight: $bold;
+        line-height: 48px;
+        position: absolute;
+        right: $unit-2x;
+        top: 0;
+      }
+
+      input {
+        background: transparent;
+        border-radius: $input-corner;
+        border: 2px solid transparent;
+        box-sizing: border-box;
+        color: var(--text-primary);
+        padding: ($unit * 1.75) $unit-2x;
+        width: 100%;
+
+        &:focus {
+          border: 2px solid $blue;
+          outline: none;
+        }
+      }
+    }
+
+    &[type='number']::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    &.bound {
+      background-color: var(--input-bound-bg);
+
+      &:hover {
+        background-color: var(--input-bound-bg-hover);
+      }
+    }
+
+    &.duration {
+      background: transparent;
+      border: none;
+      padding: 0;
+      width: initial;
+      height: 100%;
+      padding: calc($unit-2x - 2px) 0;
+
+      &:hover {
+        background: transparent;
+      }
+
+      &:focus,
+      &:focus-visible {
+        border: none;
+      }
+    }
+
+    &.number {
+      text-align: right;
+      width: $unit-8x;
+    }
+
+    &.range {
+      text-align: right;
+      width: $unit-12x;
+    }
+
+    &.alignRight {
+      text-align: right;
+    }
+  }
+
+  .counter {
+    display: none;
+  }
+}
+
+.input::placeholder,
+.input > input::placeholder {
+  color: var(--text-tertiary);
+  opacity: 1;
+}

@@ -13,7 +13,7 @@ import Button from '~components/common/Button'
 
 import SaveIcon from '~public/icons/Save.svg'
 import ShieldIcon from '~public/icons/Shield.svg'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   shortcode: string
@@ -26,7 +26,6 @@ interface Props {
   autoGuard: boolean
   favorited: boolean
   createdAt: Date
-  displayUser?: boolean | false
   onClick: (shortcode: string) => void
   onSave?: (partyId: string, favorited: boolean) => void
 }
@@ -50,13 +49,23 @@ const GridRep = (props: Props) => {
   })
 
   const raidClass = classNames({
-    raid: true,
-    empty: !props.raid,
+    [styles.raid]: true,
+    [styles.empty]: !props.raid,
   })
 
   const userClass = classNames({
-    user: true,
-    empty: !props.user,
+    [styles.user]: true,
+    [styles.empty]: !props.user,
+  })
+
+  const mainhandClasses = classNames({
+    [styles.weapon]: true,
+    [styles.mainhand]: true,
+  })
+
+  const weaponClasses = classNames({
+    [styles.weapon]: true,
+    [styles.grid]: true,
   })
 
   useEffect(() => {
@@ -156,76 +165,52 @@ const GridRep = (props: Props) => {
       )
   }
 
-  const linkedAttribution = () => (
-    <Link href={`/${props.user ? props.user.username : '#'}`}>
-      <span className={userClass}>
-        {userImage()}
-        {props.user ? props.user.username : t('no_user')}
-      </span>
-    </Link>
-  )
-
-  const unlinkedAttribution = () => (
-    <div className={userClass}>
+  const attribution = () => (
+    <span className={userClass}>
       {userImage()}
       {props.user ? props.user.username : t('no_user')}
-    </div>
+    </span>
   )
 
   function fullAutoString() {
     const fullAutoElement = (
-      <span className="full_auto">
+      <span className={styles.fullAuto}>
         {` · ${t('party.details.labels.full_auto')}`}
       </span>
     )
 
     const autoGuardElement = (
-      <span className="auto_guard">
+      <span className={styles.autoGuard}>
         <ShieldIcon />
       </span>
     )
 
     return (
-      <div className="auto">
+      <div className={styles.auto}>
         {fullAutoElement}
         {props.autoGuard ? autoGuardElement : ''}
       </div>
     )
   }
-  const details = (
-    <div className="Details">
-      <h2 className={titleClass}>{props.name ? props.name : t('no_title')}</h2>
-      <div className="bottom">
-        <div className="Properties">
-          <span className={raidClass}>
-            {props.raid ? props.raid.name[locale] : t('no_raid')}
-          </span>
-          {props.fullAuto ? fullAutoString() : ''}
-        </div>
-        <time className="last-updated" dateTime={props.createdAt.toISOString()}>
-          {formatTimeAgo(props.createdAt, locale)}
-        </time>
-      </div>
-    </div>
-  )
 
   const detailsWithUsername = (
-    <div className="Details">
-      <div className="top">
-        <div className="info">
+    <div className={styles.details}>
+      <div className={styles.top}>
+        <div className={styles.info}>
           <h2 className={titleClass}>
             {props.name ? props.name : t('no_title')}
           </h2>
-          <div className="Properties">
+          <div className={styles.properties}>
             <span className={raidClass}>
               {props.raid ? props.raid.name[locale] : t('no_raid')}
             </span>
-            {props.fullAuto ? (
-              <span className="full_auto">
+            {props.fullAuto && (
+              <span className={styles.fullAuto}>
                 {` · ${t('party.details.labels.full_auto')}`}
               </span>
-            ) : (
-              ''
+            )}
+            {props.raid && props.raid.group.extra && (
+              <span className={styles.extra}>{` · EX`}</span>
             )}
           </div>
         </div>
@@ -234,11 +219,14 @@ const GridRep = (props: Props) => {
           !props.user) ? (
           <Link href="#">
             <Button
-              className="Save"
+              className={classNames({
+                save: true,
+                saved: props.favorited,
+              })}
               leftAccessoryIcon={<SaveIcon className="stroke" />}
               active={props.favorited}
-              contained={true}
-              buttonSize="small"
+              bound={true}
+              size="small"
               onClick={sendSaveData}
             />
           </Link>
@@ -246,10 +234,13 @@ const GridRep = (props: Props) => {
           ''
         )}
       </div>
-      <div className="bottom">
-        {props.user ? linkedAttribution() : unlinkedAttribution()}
+      <div className={styles.attributed}>
+        {attribution()}
 
-        <time className="last-updated" dateTime={props.createdAt.toISOString()}>
+        <time
+          className={styles.lastUpdated}
+          dateTime={props.createdAt.toISOString()}
+        >
           {formatTimeAgo(props.createdAt, locale)}
         </time>
       </div>
@@ -258,15 +249,15 @@ const GridRep = (props: Props) => {
 
   return (
     <Link href={`/p/${props.shortcode}`}>
-      <a className="GridRep">
-        {props.displayUser ? detailsWithUsername : details}
-        <div className="Grid">
-          <div className="Mainhand Weapon">{generateMainhandImage()}</div>
+      <a className={styles.gridRep}>
+        {detailsWithUsername}
+        <div className={styles.weaponGrid}>
+          <div className={mainhandClasses}>{generateMainhandImage()}</div>
 
-          <ul className="GridWeapons">
+          <ul className={styles.weapons}>
             {Array.from(Array(numWeapons)).map((x, i) => {
               return (
-                <li key={`${props.shortcode}-${i}`} className="Grid Weapon">
+                <li key={`${props.shortcode}-${i}`} className={weaponClasses}>
                   {generateGridImage(i)}
                 </li>
               )

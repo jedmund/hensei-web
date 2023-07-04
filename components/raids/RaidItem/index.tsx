@@ -1,8 +1,8 @@
 import React, { ComponentProps, PropsWithChildren } from 'react'
 import { useTranslation } from 'next-i18next'
-import { CommandItem } from '~components/common/Command'
 import classNames from 'classnames'
-import './index.scss'
+import { CommandItem } from '~components/common/Command'
+import styles from './index.module.scss'
 
 interface Props extends ComponentProps<'div'> {
   className?: string
@@ -35,10 +35,10 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
   ) {
     const { t } = useTranslation('common')
 
-    const classes = classNames(
-      { SelectItem: true, Raid: true },
-      props.className
-    )
+    const classes = classNames({
+      raid: true,
+      [styles.item]: true,
+    })
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (event.key === 'Escape' && onEscapeKeyPressed) {
@@ -49,7 +49,6 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
       if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
         event.preventDefault()
         if (onArrowKeyPressed) {
-          console.log(event.key)
           onArrowKeyPressed(event.key === 'ArrowUp' ? 'Up' : 'Down')
         }
       }
@@ -70,10 +69,12 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
         onKeyDown={handleKeyDown}
         ref={forwardedRef}
       >
-        {icon ? <img alt={icon.alt} src={icon.src} /> : ''}
-        <span className="Text">{children}</span>
-        {selected ? <i className="Selected">{t('combobox.selected')}</i> : ''}
-        {extra ? <i className="ExtraIndicator">EX</i> : ''}
+        {icon && <img alt={icon.alt} src={icon.src} />}
+        <span className={styles.text}>{children}</span>
+        {selected && (
+          <i className={styles.selected}>{t('combobox.selected')}</i>
+        )}
+        {extra && <i className={styles.extraIndicator}>EX</i>}
       </CommandItem>
     )
   }

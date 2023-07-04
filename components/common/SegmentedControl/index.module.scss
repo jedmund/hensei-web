@@ -1,0 +1,121 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+
+  &.raid {
+    width: 100%;
+  }
+
+  @include breakpoint(small-tablet) {
+    width: 100%;
+  }
+
+  .segmentedControl {
+    display: inline-flex;
+    padding: 3px;
+    position: relative;
+    gap: $unit-half;
+    user-select: none;
+    overflow: hidden;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+    @include breakpoint(small-tablet) {
+      background: var(--card-bg);
+      border-radius: 100px;
+    }
+
+    &.blended {
+      background: var(--input-bound-bg);
+      border-radius: $full-corner;
+    }
+
+    &.background {
+      background: var(--input-bg);
+      border-radius: $full-corner;
+    }
+
+    &.grow {
+      flex-grow: 1;
+    }
+
+    &.gap {
+      gap: $unit;
+    }
+
+    &.raid {
+      width: 100%;
+    }
+
+    &.fire {
+      .Segment input:checked + label {
+        background: var(--fire-bg);
+        color: var(--fire-text);
+      }
+
+      .Segment:hover label {
+        background: var(--fire-hover-bg);
+        color: var(--fire-hover-text);
+      }
+    }
+
+    &.water {
+      .Segment input:checked + label {
+        background: var(--water-bg);
+        color: var(--water-text);
+      }
+
+      .Segment:hover label {
+        background: var(--water-hover-bg);
+        color: var(--water-hover-text);
+      }
+    }
+
+    &.earth {
+      .Segment input:checked + label {
+        background: var(--earth-bg);
+        color: var(--earth-text);
+      }
+
+      .Segment:hover label {
+        background: var(--earth-hover-bg);
+        color: var(--earth-hover-text);
+      }
+    }
+
+    &.wind {
+      .Segment input:checked + label {
+        background: var(--wind-bg);
+        color: var(--wind-text);
+      }
+
+      .Segment:hover label {
+        background: var(--wind-hover-bg);
+        color: var(--wind-hover-text);
+      }
+    }
+
+    &.light {
+      .Segment input:checked + label {
+        background: var(--light-bg);
+        color: var(--light-text);
+      }
+
+      .Segment:hover label {
+        background: var(--light-hover-bg);
+        color: var(--light-hover-text);
+      }
+    }
+
+    &.dark {
+      .Segment input:checked + label {
+        background: var(--dark-bg);
+        color: var(--dark-text);
+      }
+
+      .Segment:hover label {
+        background: var(--dark-hover-bg);
+        color: var(--dark-hover-text);
+      }
+    }
+  }
+}

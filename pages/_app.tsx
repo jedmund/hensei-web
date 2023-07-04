@@ -25,6 +25,7 @@ import '../styles/globals.scss'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { t } = useTranslation('common')
+  const [mounted, setMounted] = useState(false)
   const [refresh, setRefresh] = useState(false)
 
   // Subscribe to app state to listen for account changes and

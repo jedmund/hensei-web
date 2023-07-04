@@ -4,34 +4,20 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { useTheme } from 'next-themes'
 
-import {
-  Dialog,
-  DialogClose,
-  DialogTitle,
-  DialogTrigger,
-} from '~components/common/Dialog'
+import { Dialog } from '~components/common/Dialog'
+import DialogHeader from '~components/common/DialogHeader'
+import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
 import Button from '~components/common/Button'
 import SelectItem from '~components/common/SelectItem'
-import PictureSelectItem from '~components/common/PictureSelectItem'
 import SelectTableField from '~components/common/SelectTableField'
-// import * as Switch from '@radix-ui/react-switch'
 
 import api from '~utils/api'
 import changeLanguage from 'utils/changeLanguage'
 import { accountState } from '~utils/accountState'
 import { pictureData } from '~utils/pictureData'
 
-import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
-
-type StateVariables = {
-  [key: string]: boolean
-  picture: boolean
-  gender: boolean
-  language: boolean
-  theme: boolean
-}
+import styles from './index.module.scss'
 
 interface Props {
   open: boolean
@@ -58,23 +44,8 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
     const [mounted, setMounted] = useState(false)
     const { theme: appTheme, setTheme: setAppTheme } = useTheme()
 
-    // Cookies
-    const accountCookie = getCookie('account')
-    const userCookie = getCookie('user')
-
-    const cookieData = {
-      account: accountCookie ? JSON.parse(accountCookie as string) : undefined,
-      user: userCookie ? JSON.parse(userCookie as string) : undefined,
-    }
-
     // UI State
     const [open, setOpen] = useState(false)
-    const [selectOpenState, setSelectOpenState] = useState<StateVariables>({
-      picture: false,
-      gender: false,
-      language: false,
-      theme: false,
-    })
 
     // Values
     const [username, setUsername] = useState(props.username || '')
@@ -82,7 +53,6 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
     const [language, setLanguage] = useState(props.language || '')
     const [gender, setGender] = useState(props.gender || 0)
     const [theme, setTheme] = useState(props.theme || 'system')
-    // const [privateProfile, setPrivateProfile] = useState(false)
 
     // Setup
     const [pictureOpen, setPictureOpen] = useState(false)
@@ -148,7 +118,6 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
           language: language,
           gender: gender,
           theme: theme,
-          // private: privateProfile,
         },
       }
 
@@ -197,17 +166,20 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
       .sort((a, b) => (a.name.en > b.name.en ? 1 : -1))
       .map((item, i) => {
         return (
-          <PictureSelectItem
+          <SelectItem
             key={`picture-${i}`}
             element={item.element}
-            src={[
-              `/profile/${item.filename}.png`,
-              `/profile/${item.filename}@2x.png 2x`,
-            ]}
+            icon={{
+              alt: item.name[locale],
+              src: [
+                `/profile/${item.filename}.png`,
+                `/profile/${item.filename}@2x.png 2x`,
+              ],
+            }}
             value={item.filename}
           >
             {item.name[locale]}
-          </PictureSelectItem>
+          </SelectItem>
         )
       })
 
@@ -215,15 +187,17 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
       <SelectTableField
         name="picture"
         description={t('modals.settings.descriptions.picture')}
-        className="Image"
+        className="image"
         label={t('modals.settings.labels.picture')}
+        image={{
+          className: pictureData.find((i) => i.filename === picture)?.element,
+          src: [`/profile/${picture}.png`, `/profile/${picture}@2x.png 2x`],
+          alt: pictureData.find((i) => i.filename === picture)?.name[locale],
+        }}
         open={pictureOpen}
         onOpenChange={() => openSelect('picture')}
         onChange={handlePictureChange}
         onClose={() => setPictureOpen(false)}
-        imageAlt={t('modals.settings.labels.image_alt')}
-        imageClass={pictureData.find((i) => i.filename === picture)?.element}
-        imageSrc={[`/profile/${picture}.png`, `/profile/${picture}@2x.png 2x`]}
         value={picture}
       >
         {pictureOptions}
@@ -308,36 +282,29 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
           onOpenAutoFocus={(event: Event) => {}}
           onEscapeKeyDown={onEscapeKeyDown}
         >
-          <div className="DialogHeader" ref={headerRef}>
-            <div className="DialogTop">
-              <DialogTitle className="SubTitle">
-                {t('modals.settings.title')}
-              </DialogTitle>
-              <DialogTitle className="DialogTitle">@{username}</DialogTitle>
-            </div>
-            <DialogClose className="DialogClose" asChild>
-              <span>
-                <CrossIcon />
-              </span>
-            </DialogClose>
-          </div>
+          <DialogHeader
+            title={`@${username}`}
+            subtitle={t('modals.settings.title')}
+          />
 
           <form onSubmit={update}>
-            <div className="Fields">
+            <div className={styles.fields}>
               {pictureField()}
               {genderField()}
               {languageField()}
               {themeField()}
             </div>
-            <div className="DialogFooter" ref={footerRef}>
-              <div className="Left"></div>
-              <div className="Right">
+
+            <DialogFooter
+              ref={footerRef}
+              rightElements={[
                 <Button
-                  contained={true}
+                  bound={true}
+                  key="confirm"
                   text={t('modals.settings.buttons.confirm')}
-                />
-              </div>
-            </div>
+                />,
+              ]}
+            />
           </form>
         </DialogContent>
       </Dialog>

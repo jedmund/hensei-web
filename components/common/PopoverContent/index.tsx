@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import classnames from 'classnames'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props
   extends React.DetailedHTMLProps<
@@ -32,7 +32,7 @@ export const PopoverContent = React.forwardRef<HTMLDivElement, Props>(
           ref={forwardedRef}
         >
           {children}
-          <PopoverPrimitive.Arrow className="Arrow" />
+          <PopoverPrimitive.Arrow className={styles.arrow} />
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     )

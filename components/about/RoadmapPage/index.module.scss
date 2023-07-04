@@ -1,0 +1,61 @@
+.roadmap {
+  padding-bottom: $unit-12x;
+
+  h3.priority {
+    font-weight: $medium;
+    font-size: $font-large;
+    margin-bottom: $unit-4x;
+
+    &.in_progress {
+      color: $yellow;
+    }
+
+    &.high {
+      color: $red;
+    }
+
+    &.mid {
+      color: $orange-10;
+    }
+
+    &.low {
+      color: $blue;
+    }
+  }
+
+  .notes {
+    display: flex;
+    flex-direction: column;
+    gap: $unit;
+    margin-bottom: $unit-2x;
+
+    p {
+      margin-bottom: $unit;
+      font-size: $font-medium;
+    }
+  }
+
+  ul {
+    color: var(--text-primary);
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $unit-3x;
+
+    li {
+      display: flex;
+      flex-direction: column;
+      gap: $unit;
+      margin-bottom: $unit-2x;
+
+      h4 {
+        font-size: $font-medium;
+        font-weight: $bold;
+      }
+
+      p {
+        font-size: $font-regular;
+      }
+    }
+  }
+}

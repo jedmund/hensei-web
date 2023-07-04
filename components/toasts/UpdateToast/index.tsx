@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import Button from '~components/common/Button'
 import Toast from '~components/common/Toast'
 
-import './index.scss'
+import styles from './index.module.scss'
 import { useTranslation } from 'next-i18next'
 
 interface Props {
@@ -63,8 +63,8 @@ const UpdateToast = ({
       onCloseClick={handleCloseClicked}
     >
       <Button
-        buttonSize="small"
-        contained={true}
+        size="small"
+        bound={true}
         onClick={handleButtonClicked}
         text={t('toasts.update.button')}
       />

@@ -3,17 +3,17 @@ import Input from '~components/common/Input'
 import Slider from '~components/common/Slider'
 import TableField from '~components/common/TableField'
 
-import './index.scss'
-
 interface Props {
   name: string
   label: string
   description?: string
   value?: number
   className?: string
-  imageAlt?: string
-  imageClass?: string
-  imageSrc?: string[]
+  image?: {
+    className?: String
+    alt?: string
+    src: string[]
+  }
   min: number
   max: number
   step: number
@@ -24,12 +24,9 @@ const SliderTableField = (props: Props) => {
   const [value, setValue] = useState(props.value)
 
   useEffect(() => {
-    if (props.value !== undefined && props.value !== value)
-      setValue(props.value)
-  }, [props.value])
-
-  useEffect(() => {
-    if (value !== undefined && value !== props.value) props.onValueChange(value)
+    if (value !== undefined && value !== props.value) {
+      props.onValueChange(value)
+    }
   }, [value])
 
   function handleValueCommit(value: number[]) {
@@ -47,10 +44,8 @@ const SliderTableField = (props: Props) => {
   return (
     <TableField
       name={props.name}
-      className="SliderField"
-      imageAlt={props.imageAlt}
-      imageClass={props.imageClass}
-      imageSrc={props.imageSrc}
+      className="slider"
+      image={props.image}
       label={props.label}
     >
       <Slider
@@ -58,18 +53,20 @@ const SliderTableField = (props: Props) => {
         min={props.min}
         max={props.max}
         step={props.step}
-        value={[value ? value : 0]}
+        value={[props.value ? props.value : 0]}
         onValueChange={handleValueChange}
         onValueCommit={handleValueCommit}
       />
       <Input
-        className="Bound"
+        className="number"
+        bound={true}
         type="number"
-        value={`${value}`}
+        value={`${props.value}`}
         min={props.min}
         max={props.max}
         step={props.step}
         onChange={handleInputChange}
+        hide1Password={false}
       />
     </TableField>
   )

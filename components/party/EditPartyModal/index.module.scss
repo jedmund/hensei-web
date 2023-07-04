@@ -1,0 +1,38 @@
+.segmentedControlWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $unit 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  overflow: hidden;
+
+  .fields {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: $unit;
+    padding: 0 $unit-4x;
+    overflow: hidden;
+
+    &.scrollable {
+      overflow-y: auto;
+    }
+  }
+}
+
+.extraNotice {
+  background: var(--extra-purple-bg);
+  border-radius: $input-corner;
+  font-weight: $medium;
+  padding: $unit-2x;
+
+  p {
+    color: var(--extra-purple-dark-text);
+  }
+}

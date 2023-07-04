@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
@@ -17,16 +17,16 @@ import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 import { formatTimeAgo } from '~utils/timeAgo'
 
+import RemixTeamAlert from '~components/dialogs/RemixTeamAlert'
+import RemixedToast from '~components/toasts/RemixedToast'
+
 import EditIcon from '~public/icons/Edit.svg'
 import RemixIcon from '~public/icons/Remix.svg'
 import SaveIcon from '~public/icons/Save.svg'
 
 import type { DetailsObject } from 'types'
 
-import './index.scss'
-import RemixTeamAlert from '~components/dialogs/RemixTeamAlert'
-import RemixedToast from '~components/toasts/RemixedToast'
-import { set } from 'local-storage'
+import styles from './index.module.scss'
 
 // Props
 interface Props {
@@ -35,7 +35,7 @@ interface Props {
   editable: boolean
   deleteCallback: () => void
   remixCallback: () => void
-  updateCallback: (details: DetailsObject) => void
+  updateCallback: (details: DetailsObject) => Promise<any>
 }
 
 const PartyHeader = (props: Props) => {
@@ -48,27 +48,13 @@ const PartyHeader = (props: Props) => {
   const { party: partySnapshot } = useSnapshot(appState)
 
   // State: Component
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const [remixAlertOpen, setRemixAlertOpen] = useState(false)
   const [remixToastOpen, setRemixToastOpen] = useState(false)
 
-  // State: Data
-  const [name, setName] = useState('')
-  const [chargeAttack, setChargeAttack] = useState(true)
-  const [fullAuto, setFullAuto] = useState(false)
-  const [autoGuard, setAutoGuard] = useState(false)
-  const [autoSummon, setAutoSummon] = useState(false)
-  const [buttonCount, setButtonCount] = useState<number | undefined>(undefined)
-  const [chainCount, setChainCount] = useState<number | undefined>(undefined)
-  const [turnCount, setTurnCount] = useState<number | undefined>(undefined)
-  const [clearTime, setClearTime] = useState(0)
-
-  const classes = classNames({
-    PartyDetails: true,
-  })
-
   const userClass = classNames({
-    user: true,
-    empty: !party.user,
+    [styles.user]: true,
+    [styles.empty]: !party.user,
   })
 
   const linkClass = classNames({
@@ -79,39 +65,6 @@ const PartyHeader = (props: Props) => {
     dark: party && party.element == 5,
     light: party && party.element == 6,
   })
-
-  useEffect(() => {
-    if (props.party) {
-      setName(props.party.name)
-      setAutoGuard(props.party.auto_guard)
-      setFullAuto(props.party.full_auto)
-      setAutoSummon(props.party.auto_summon)
-      setChargeAttack(props.party.charge_attack)
-      setClearTime(props.party.clear_time)
-      if (props.party.turn_count) setTurnCount(props.party.turn_count)
-      if (props.party.button_count) setButtonCount(props.party.button_count)
-      if (props.party.chain_count) setChainCount(props.party.chain_count)
-    }
-  }, [props.party])
-
-  // Subscribe to router changes and reset state
-  // if the new route is a new team
-  useEffect(() => {
-    router.events.on('routeChangeStart', (url, { shallow }) => {
-      if (url === '/new' || url === '/') {
-        const party = initialAppState.party
-
-        setName(party.name ? party.name : '')
-        setAutoGuard(party.autoGuard)
-        setFullAuto(party.fullAuto)
-        setChargeAttack(party.chargeAttack)
-        setClearTime(party.clearTime)
-        setTurnCount(party.turnCount)
-        setButtonCount(party.buttonCount)
-        setChainCount(party.chainCount)
-      }
-    })
-  }, [])
 
   // Actions: Favorites
   function toggleFavorite() {
@@ -161,6 +114,11 @@ const PartyHeader = (props: Props) => {
           src={`/profile/npc.png`}
         />
       )
+  }
+
+  // Actions: Edit info
+  function handleDetailsOpenChange(open: boolean) {
+    setDetailsOpen(open)
   }
 
   // Actions: Remix team
@@ -243,13 +201,7 @@ const PartyHeader = (props: Props) => {
 
   // Render: Tokens
   const chargeAttackToken = (
-    <Token
-      className={classNames({
-        ChargeAttack: true,
-        On: party.chargeAttack,
-        Off: !party.chargeAttack,
-      })}
-    >
+    <Token active={party.chargeAttack} className="chargeAttack">
       {`${t('party.details.labels.charge_attack')} ${
         party.chargeAttack ? 'On' : 'Off'
       }`}
@@ -257,13 +209,7 @@ const PartyHeader = (props: Props) => {
   )
 
   const fullAutoToken = (
-    <Token
-      className={classNames({
-        FullAuto: true,
-        On: party.fullAuto,
-        Off: !party.fullAuto,
-      })}
-    >
+    <Token active={party.fullAuto} className="fullAuto">
       {`${t('party.details.labels.full_auto')} ${
         party.fullAuto ? 'On' : 'Off'
       }`}
@@ -271,13 +217,7 @@ const PartyHeader = (props: Props) => {
   )
 
   const autoGuardToken = (
-    <Token
-      className={classNames({
-        AutoGuard: true,
-        On: party.autoGuard,
-        Off: !party.autoGuard,
-      })}
-    >
+    <Token active={party.autoGuard} className="autoGuard">
       {`${t('party.details.labels.auto_guard')} ${
         party.autoGuard ? 'On' : 'Off'
       }`}
@@ -285,13 +225,7 @@ const PartyHeader = (props: Props) => {
   )
 
   const autoSummonToken = (
-    <Token
-      className={classNames({
-        AutoSummon: true,
-        On: party.autoSummon,
-        Off: !party.autoSummon,
-      })}
-    >
+    <Token active={party.autoSummon} className="autoSummon">
       {`${t('party.details.labels.auto_summon')} ${
         party.autoSummon ? 'On' : 'Off'
       }`}
@@ -307,24 +241,26 @@ const PartyHeader = (props: Props) => {
   )
 
   const buttonChainToken = () => {
-    if (party.buttonCount || party.chainCount) {
+    if (party.buttonCount !== undefined || party.chainCount !== undefined) {
       let string = ''
 
-      if (party.buttonCount && party.buttonCount > 0) {
+      if (party.buttonCount !== undefined) {
         string += `${party.buttonCount}b`
       }
 
-      if (!party.buttonCount && party.chainCount && party.chainCount > 0) {
+      if (party.buttonCount === undefined && party.chainCount !== undefined) {
         string += `0${t('party.details.suffix.buttons')}${party.chainCount}${t(
           'party.details.suffix.chains'
         )}`
       } else if (
-        party.buttonCount &&
-        party.chainCount &&
-        party.chainCount > 0
+        party.buttonCount !== undefined &&
+        party.chainCount !== undefined
       ) {
         string += `${party.chainCount}${t('party.details.suffix.chains')}`
-      } else if (party.buttonCount && !party.chainCount) {
+      } else if (
+        party.buttonCount !== undefined &&
+        party.chainCount === undefined
+      ) {
         string += `0${t('party.details.suffix.chains')}`
       }
 
@@ -348,15 +284,16 @@ const PartyHeader = (props: Props) => {
 
   function renderTokens() {
     return (
-      <section className="Tokens">
+      <>
+        {' '}
         {chargeAttackToken}
         {fullAutoToken}
-        {autoGuardToken}
         {autoSummonToken}
-        {party.turnCount ? turnCountToken : ''}
-        {party.clearTime > 0 ? clearTimeToken() : ''}
+        {autoGuardToken}
+        {party.turnCount !== undefined && turnCountToken}
+        {party.clearTime > 0 && clearTimeToken()}
         {buttonChainToken()}
-      </section>
+      </>
     )
   }
 
@@ -367,8 +304,9 @@ const PartyHeader = (props: Props) => {
         <Button
           leftAccessoryIcon={<SaveIcon />}
           className={classNames({
-            Save: true,
-            Saved: partySnapshot.favorited,
+            save: true,
+            grow: true,
+            saved: partySnapshot.favorited,
           })}
           text={
             appState.party.favorited ? t('buttons.saved') : t('buttons.save')
@@ -381,10 +319,10 @@ const PartyHeader = (props: Props) => {
 
   const remixButton = () => {
     return (
-      <Tooltip content={t('tooltips.remix')}>
+      <Tooltip content={t('tooltips.remix.create')}>
         <Button
           leftAccessoryIcon={<RemixIcon />}
-          className="Remix"
+          className="grow"
           text={t('buttons.remix')}
           onClick={openRemixTeamAlert}
         />
@@ -392,69 +330,85 @@ const PartyHeader = (props: Props) => {
     )
   }
 
+  const remixedButton = () => {
+    const tooltipString =
+      party.remix && party.sourceParty
+        ? t('tooltips.remix.source')
+        : t('tooltips.remix.deleted')
+
+    const buttonAction =
+      party.sourceParty && (() => goTo(party.sourceParty?.shortcode))
+
+    return (
+      <Tooltip content={tooltipString}>
+        <Button
+          blended={true}
+          className="remixed"
+          leftAccessoryIcon={<RemixIcon />}
+          text={t('tokens.remix')}
+          size="small"
+          disabled={!party.sourceParty}
+          onClick={buttonAction}
+        />
+      </Tooltip>
+    )
+  }
+
   return (
     <>
-      <section className="DetailsWrapper">
-        <div className="PartyInfo">
-          <div className="Left">
-            <div className="Header">
-              <h1 className={party.name ? '' : 'empty'}>
+      <header className={styles.wrapper}>
+        <section className={styles.info}>
+          <div className={styles.left}>
+            <div className={styles.header}>
+              <h1 className={party.name ? '' : styles.empty}>
                 {party.name ? party.name : t('no_title')}
               </h1>
-              {party.remix && party.sourceParty ? (
-                <Tooltip content={t('tooltips.source')}>
-                  <Button
-                    className="IconButton Blended"
-                    leftAccessoryIcon={<RemixIcon />}
-                    text={t('tokens.remix')}
-                    onClick={() => goTo(party.sourceParty?.shortcode)}
-                  />
-                </Tooltip>
-              ) : (
-                ''
-              )}
+              {party.remix && remixedButton()}
             </div>
-            <div className="attribution">
+            <div className={styles.attribution}>
               {renderUserBlock()}
-              {appState.party.raid ? linkedRaidBlock(appState.party.raid) : ''}
-              {party.created_at != '' ? (
+              {appState.party.raid && linkedRaidBlock(appState.party.raid)}
+              {party.created_at != '' && (
                 <time
-                  className="last-updated"
+                  className={styles.lastUpdated}
                   dateTime={new Date(party.created_at).toString()}
                 >
                   {formatTimeAgo(new Date(party.created_at), locale)}
                 </time>
-              ) : (
-                ''
               )}
             </div>
           </div>
-          {party.editable ? (
-            <div className="Right">
+          {props.editable ? (
+            <div className={styles.right}>
               <EditPartyModal
+                open={detailsOpen}
                 party={props.party}
-                updateCallback={props.updateCallback}
+                onOpenChange={handleDetailsOpenChange}
+                updateParty={props.updateCallback}
               >
                 <Button
+                  className="full"
                   leftAccessoryIcon={<EditIcon />}
                   text={t('buttons.show_info')}
                 />
               </EditPartyModal>
-              <PartyDropdown
-                editable={props.editable}
-                deleteTeamCallback={props.deleteCallback}
-                remixTeamCallback={props.remixCallback}
-              />
+              {!props.new && (
+                <PartyDropdown
+                  editable={props.editable}
+                  deleteTeamCallback={props.deleteCallback}
+                  remixTeamCallback={props.remixCallback}
+                />
+              )}
             </div>
           ) : (
-            <div className="Right">
+            <div className={styles.right}>
               {saveButton()}
               {remixButton()}
             </div>
           )}
-        </div>
-        <section className={classes}>{renderTokens()}</section>
-      </section>
+        </section>
+        <section className={styles.tokens}>{renderTokens()}</section>
+      </header>
 
       <RemixTeamAlert
         creator={props.editable}

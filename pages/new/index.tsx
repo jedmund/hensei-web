@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { getCookie, setCookie } from 'cookies-next'
+import { getCookie } from 'cookies-next'
 import { get, set } from 'local-storage'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import { v4 as uuidv4 } from 'uuid'
 import clonedeep from 'lodash.clonedeep'
 
 import ErrorSection from '~components/ErrorSection'
@@ -14,6 +13,7 @@ import api from '~utils/api'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import { accountCookie, setHeaders } from '~utils/userToken'
 import { appState, initialAppState } from '~utils/appState'
+import { createLocalId } from '~utils/localId'
 import { groupWeaponKeys } from '~utils/groupWeaponKeys'
 
 import type { AxiosError } from 'axios'
@@ -36,10 +36,51 @@ const NewRoute: React.FC<Props> = ({
 }: Props) => {
   // Set up router
   const router = useRouter()
-  const [selectedTab, setSelectedTab] = useState<GridType>(GridType.Weapon)
 
   function callback(path: string) {
     router.push(path, undefined, { shallow: true })
+  }
+
+  const getCurrentTab = () => {
+    const parts = router.asPath.split('/')
+    const tab = parts[parts.length - 1]
+
+    switch (tab) {
+      case 'characters':
+        return GridType.Character
+      case 'weapons':
+        return GridType.Weapon
+      case 'summons':
+        return GridType.Summon
+      default:
+        return GridType.Weapon
+    }
+  }
+
+  const [selectedTab, setSelectedTab] = useState<GridType>(getCurrentTab())
+
+  const handleTabChange = (value: string) => {
+    const path = [
+      // Enable when using Next.js Router
+      // 'p',
+      router.asPath.split('/').filter((el) => el != '')[1],
+      value,
+    ].join('/')
+
+    switch (value) {
+      case 'characters':
+        setSelectedTab(GridType.Character)
+        break
+      case 'weapons':
+        setSelectedTab(GridType.Weapon)
+        break
+      case 'summons':
+        setSelectedTab(GridType.Summon)
+        break
+    }
+
+    if (router.asPath !== '/new' && router.asPath !== '/')
+      router.replace(path, undefined, { shallow: true })
   }
 
   useEffect(() => {
@@ -105,7 +146,12 @@ const NewRoute: React.FC<Props> = ({
     return (
       <React.Fragment key={router.asPath}>
         {pageHead()}
-        <Party new={true} pushHistory={callback} selectedTab={selectedTab} />
+        <Party
+          new={true}
+          pushHistory={callback}
+          selectedTab={selectedTab}
+          handleTabChanged={handleTabChange}
+        />
       </React.Fragment>
     )
   } else return pageError()
@@ -127,20 +173,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   setHeaders(req, res)
 
   // If there is no account entry in cookies, create a UUID and store it
-  if (!accountCookie(req, res)) {
-    const uuid = uuidv4()
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 60)
-
-    const cookieObj = {
-      userId: uuid,
-      username: undefined,
-      token: undefined,
-    }
-
-    const options = req && res ? { req, res } : {}
-    setCookie('account', cookieObj, { path: '/', expires: expiresAt, ...options })
-  }
+  createLocalId(req, res)
 
   // Fetch latest version
   const version = await fetchLatestVersion()

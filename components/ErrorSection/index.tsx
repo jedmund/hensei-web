@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next'
 import Button from '~components/common/Button'
 import { ResponseStatus } from '~types'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props {
   status: ResponseStatus
@@ -24,7 +24,7 @@ const ErrorSection = ({ status }: Props) => {
   const errorBody = () => {
     return (
       <>
-        <div className="Code">{status.code}</div>
+        <div className={styles.code}>{status.code}</div>
         <h1>{t(`errors.${statusText}.title`)}</h1>
         <p>{t(`errors.${statusText}.description`)}</p>
       </>
@@ -32,7 +32,7 @@ const ErrorSection = ({ status }: Props) => {
   }
 
   return (
-    <section className="Error">
+    <section className={styles.error}>
       {errorBody()}
       {[401, 404].includes(status.code) ? (
         <Link href="/new">

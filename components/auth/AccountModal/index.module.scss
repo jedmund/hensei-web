@@ -1,0 +1,20 @@
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-2x;
+  padding: 0 $unit-4x;
+
+  @include breakpoint(phone) {
+    gap: $unit-4x;
+  }
+
+  .DialogDescription {
+    font-size: $font-regular;
+    line-height: 1.24;
+    margin-bottom: $unit;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+}

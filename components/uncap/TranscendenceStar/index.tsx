@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 
 import TranscendenceFragment from '~components/uncap/TranscendenceFragment'
-import './index.scss'
+import styles from './index.module.scss'
 
 interface Props
   extends React.DetailedHTMLProps<
@@ -36,18 +36,18 @@ const TranscendenceStar = ({
 
   // Classes
   const starClasses = classnames({
-    TranscendenceStar: true,
-    Immutable: immutable,
-    Empty: stage === 0,
-    Stage1: stage === 1,
-    Stage2: stage === 2,
-    Stage3: stage === 3,
-    Stage4: stage === 4,
-    Stage5: stage === 5,
+    [styles.star]: true,
+    [styles.immutable]: immutable,
+    [styles.empty]: stage === 0,
+    [styles.stage1]: stage === 1,
+    [styles.stage2]: stage === 2,
+    [styles.stage3]: stage === 3,
+    [styles.stage4]: stage === 4,
+    [styles.stage5]: stage === 5,
   })
 
   const baseImageClasses = classnames(className, {
-    Figure: true,
+    [styles.figure]: true,
   })
 
   useEffect(() => {

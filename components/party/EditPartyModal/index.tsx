@@ -1,17 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
+import classNames from 'classnames'
+import debounce from 'lodash.debounce'
 
-import {
-  Dialog,
-  DialogTrigger,
-  DialogClose,
-  DialogTitle,
-} from '~components/common/Dialog'
+import Alert from '~components/common/Alert'
+import { Dialog, DialogTrigger } from '~components/common/Dialog'
+import DialogHeader from '~components/common/DialogHeader'
+import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
 import Button from '~components/common/Button'
-import CharLimitedFieldset from '~components/common/CharLimitedFieldset'
 import DurationInput from '~components/common/DurationInput'
 import InputTableField from '~components/common/InputTableField'
 import RaidCombobox from '~components/raids/RaidCombobox'
@@ -19,6 +18,7 @@ import SegmentedControl from '~components/common/SegmentedControl'
 import Segment from '~components/common/Segment'
 import SwitchTableField from '~components/common/SwitchTableField'
 import TableField from '~components/common/TableField'
+import Textarea from '~components/common/Textarea'
 
 import type { DetailsObject } from 'types'
 import type { DialogProps } from '@radix-ui/react-dialog'
@@ -26,18 +26,22 @@ import type { DialogProps } from '@radix-ui/react-dialog'
 import { appState } from '~utils/appState'
 
 import CheckIcon from '~public/icons/Check.svg'
-import CrossIcon from '~public/icons/Cross.svg'
-import './index.scss'
+import styles from './index.module.scss'
+import Input from '~components/common/Input'
 
 interface Props extends DialogProps {
+  open: boolean
   party?: Party
-  updateCallback: (details: DetailsObject) => void
+  onOpenChange?: (open: boolean) => void
+  updateParty: (details: DetailsObject) => Promise<any>
 }
 
-const EditPartyModal = ({ updateCallback, ...props }: Props) => {
-  // Set up router
-  const router = useRouter()
-
+const EditPartyModal = ({
+  open,
+  updateParty,
+  onOpenChange,
+  ...props
+}: Props) => {
   // Set up translation
   const { t } = useTranslation('common')
 
@@ -46,11 +50,12 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
 
   // Refs
   const headerRef = React.createRef<HTMLDivElement>()
+  const topContainerRef = React.createRef<HTMLDivElement>()
   const footerRef = React.createRef<HTMLDivElement>()
-  const descriptionInput = useRef<HTMLTextAreaElement>(null)
+  const descriptionInput = useRef<HTMLDivElement>(null)
 
   // States: Component
-  const [open, setOpen] = useState(false)
+  const [alertOpen, setAlertOpen] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({
     name: '',
     description: '',
@@ -72,27 +77,38 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
   const [turnCount, setTurnCount] = useState<number | undefined>(undefined)
   const [clearTime, setClearTime] = useState(0)
 
+  // Classes
+  const fieldsClasses = classNames({
+    [styles.fields]: true,
+    [styles.scrollable]: currentSegment === 1,
+  })
+
   // Hooks
   useEffect(() => {
     persistFromState()
   }, [party])
 
   // Methods: Event handlers (Dialog)
-  function openChange() {
-    if (open) {
-      setOpen(false)
-      setCurrentSegment(0)
-      persistFromState()
-      if (props.onOpenChange) props.onOpenChange(false)
+  function handleOpenChange() {
+    if (hasBeenModified() && open) {
+      setAlertOpen(true)
+    } else if (!hasBeenModified() && open) {
+      close()
     } else {
-      setOpen(true)
-      if (props.onOpenChange) props.onOpenChange(true)
+      if (onOpenChange) onOpenChange(true)
     }
+  }
+
+  function close() {
+    setAlertOpen(false)
+    setCurrentSegment(0)
+    persistFromState()
+    if (onOpenChange) onOpenChange(false)
   }
 
   function onEscapeKeyDown(event: KeyboardEvent) {
     event.preventDefault()
-    openChange()
+    handleOpenChange()
   }
 
   function onOpenAutoFocus(event: Event) {
@@ -152,14 +168,10 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
     if (!isNaN(numericalValue)) setChainCount(numericalValue)
   }
 
-  function handleTextAreaChanged(
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) {
+  function handleTextAreaChanged(event: React.ChangeEvent<HTMLDivElement>) {
     event.preventDefault()
-
-    const { name, value } = event.target
+    setDescription(event.target.innerHTML)
     let newErrors = errors
-
     setErrors(newErrors)
   }
 
@@ -170,6 +182,135 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
       if (raid.group.extra) setExtra(true)
       else setExtra(false)
     }
+  }
+
+  // Handlers
+  function handleScroll(event: React.UIEvent<HTMLDivElement, UIEvent>) {
+    const scrollTop = event.currentTarget.scrollTop
+    const scrollHeight = event.currentTarget.scrollHeight
+    const clientHeight = event.currentTarget.clientHeight
+
+    if (topContainerRef && topContainerRef.current)
+      manipulateHeaderShadow(topContainerRef.current, scrollTop)
+
+    if (footerRef && footerRef.current)
+      manipulateFooterShadow(
+        footerRef.current,
+        scrollTop,
+        scrollHeight,
+        clientHeight
+      )
+  }
+
+  function manipulateHeaderShadow(header: HTMLDivElement, scrollTop: number) {
+    const boxShadowBase = '0 2px 8px'
+    const maxValue = 50
+
+    if (scrollTop >= 0) {
+      const input = scrollTop > maxValue ? maxValue : scrollTop
+
+      const boxShadowOpacity = mapRange(input, 0, maxValue, 0.0, 0.16)
+      const borderOpacity = mapRange(input, 0, maxValue, 0.0, 0.24)
+
+      header.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, ${boxShadowOpacity})`
+      header.style.borderBottomColor = `rgba(0, 0, 0, ${borderOpacity})`
+    }
+  }
+
+  function manipulateFooterShadow(
+    footer: HTMLDivElement,
+    scrollTop: number,
+    scrollHeight: number,
+    clientHeight: number
+  ) {
+    const boxShadowBase = '0 -2px 8px'
+    const minValue = scrollHeight - 200
+    const currentScroll = scrollTop + clientHeight
+
+    if (currentScroll >= minValue) {
+      const input = currentScroll < minValue ? minValue : currentScroll
+
+      const boxShadowOpacity = mapRange(
+        input,
+        minValue,
+        scrollHeight,
+        0.16,
+        0.0
+      )
+      const borderOpacity = mapRange(input, minValue, scrollHeight, 0.24, 0.0)
+
+      footer.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, ${boxShadowOpacity})`
+      footer.style.borderTopColor = `rgba(0, 0, 0, ${borderOpacity})`
+    }
+  }
+
+  const calculateFooterShadow = debounce(() => {
+    const boxShadowBase = '0 -2px 8px'
+    const scrollable = document.querySelector(`.${styles.scrollable}`)
+    const footer = footerRef
+
+    if (footer && footer.current) {
+      if (scrollable) {
+        if (scrollable.clientHeight >= scrollable.scrollHeight) {
+          footer.current.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, 0)`
+          footer.current.style.borderTopColor = `rgba(0, 0, 0, 0)`
+        } else {
+          footer.current.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, 0.16)`
+          footer.current.style.borderTopColor = `rgba(0, 0, 0, 0.24)`
+        }
+      } else {
+        footer.current.style.boxShadow = `${boxShadowBase} rgba(0, 0, 0, 0)`
+        footer.current.style.borderTopColor = `rgba(0, 0, 0, 0)`
+      }
+    }
+  }, 100)
+
+  useEffect(() => {
+    window.addEventListener('resize', calculateFooterShadow)
+    calculateFooterShadow()
+
+    return () => {
+      window.removeEventListener('resize', calculateFooterShadow)
+    }
+  }, [calculateFooterShadow])
+
+  function mapRange(
+    value: number,
+    low1: number,
+    high1: number,
+    low2: number,
+    high2: number
+  ) {
+    return low2 + ((high2 - low2) * (value - low1)) / (high1 - low1)
+  }
+
+  // Methods: Modification checking
+  function hasBeenModified() {
+    const nameChanged = name !== party.name
+    const descriptionChanged = description !== party.description
+    const raidChanged = raid !== party.raid
+    const chargeAttackChanged = chargeAttack !== party.chargeAttack
+    const fullAutoChanged = fullAuto !== party.fullAuto
+    const autoGuardChanged = autoGuard !== party.autoGuard
+    const autoSummonChanged = autoSummon !== party.autoSummon
+    const clearTimeChanged = clearTime !== party.clearTime
+    const turnCountChanged = turnCount !== party.turnCount
+    const buttonCountChanged = buttonCount !== party.buttonCount
+    const chainCountChanged = chainCount !== party.chainCount
+
+    return (
+      nameChanged ||
+      descriptionChanged ||
+      raidChanged ||
+      chargeAttackChanged ||
+      fullAutoChanged ||
+      autoGuardChanged ||
+      autoSummonChanged ||
+      clearTimeChanged ||
+      turnCountChanged ||
+      buttonCountChanged ||
+      chainCountChanged
+    )
   }
 
   // Methods: Data methods
@@ -188,8 +329,8 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
     if (party.chainCount) setChainCount(party.chainCount)
   }
 
-  function updateDetails(event: React.MouseEvent) {
-    const descriptionValue = descriptionInput.current?.value
+  async function updateDetails(event: React.MouseEvent) {
+    const descriptionValue = descriptionInput.current?.innerHTML
     const details: DetailsObject = {
       fullAuto: fullAuto,
       autoGuard: autoGuard,
@@ -205,13 +346,34 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
       extra: extra,
     }
 
-    updateCallback(details)
-    openChange()
+    await updateParty(details)
+    if (onOpenChange) onOpenChange(false)
   }
 
   // Methods: Rendering methods
-  const segmentedControl = () => {
-    return (
+  const confirmationAlert = (
+    <Alert
+      message={
+        <span>
+          <Trans i18nKey="alerts.unsaved_changes.party">
+            You will lose all changes to your party{' '}
+            <strong>{{ objectName: party.name }}</strong> if you continue.
+            <br />
+            <br />
+            Are you sure you want to continue without saving?
+          </Trans>
+        </span>
+      }
+      open={alertOpen}
+      primaryActionText="Close"
+      primaryAction={close}
+      cancelActionText="Nevermind"
+      cancelAction={() => setAlertOpen(false)}
+    />
+  )
+
+  const segmentedControl = (
+    <nav className={styles.segmentedControlWrapper} ref={topContainerRef}>
       <SegmentedControl blended={true}>
         <Segment
           groupName="edit_nav"
@@ -232,256 +394,217 @@ const EditPartyModal = ({ updateCallback, ...props }: Props) => {
           {t('modals.edit_team.segments.properties')}
         </Segment>
       </SegmentedControl>
-    )
-  }
+    </nav>
+  )
 
-  const nameField = () => {
-    return (
-      <CharLimitedFieldset
-        className="Bound"
-        fieldName="name"
-        placeholder="Name your team"
-        value={name}
-        limit={50}
-        onChange={handleInputChange}
-        error={errors.name}
-      />
-    )
-  }
+  const nameField = (
+    <Input
+      name="name"
+      placeholder="Name your team"
+      autoFocus={true}
+      value={name}
+      maxLength={50}
+      bound={true}
+      showCounter={true}
+      onChange={handleInputChange}
+    />
+  )
 
-  const raidField = () => {
-    return (
-      <RaidCombobox
-        showAllRaidsOption={false}
-        currentRaid={raid}
-        onChange={receiveRaid}
-      />
-    )
-  }
+  const raidField = (
+    <RaidCombobox
+      showAllRaidsOption={false}
+      currentRaid={raid}
+      onChange={receiveRaid}
+    />
+  )
 
   const extraNotice = () => {
     if (extra) {
       return (
-        <div className="ExtraNotice">
-          <span className="ExtraNoticeText">
+        <div className={styles.extraNotice}>
+          <p>
             {raid && raid.group.guidebooks
               ? t('modals.edit_team.extra_notice_guidebooks')
               : t('modals.edit_team.extra_notice')}
-          </span>
+          </p>
         </div>
       )
     }
   }
 
-  const descriptionField = () => {
-    return (
-      <div className="DescriptionField">
-        <textarea
-          className="Input Bound"
-          name="description"
-          placeholder={
-            'Write your notes here\n\n\nWatch out for the 50% trigger!\nMake sure to click Fediel’s 3 first\nGood luck with RNG!'
-          }
-          onChange={handleTextAreaChanged}
-          ref={descriptionInput}
-          defaultValue={description}
-        />
-      </div>
-    )
-  }
+  const descriptionField = (
+    <Textarea
+      className="editParty"
+      bound={true}
+      placeholder={t('modals.edit_team.placeholders.description')}
+      value={description}
+      onInput={handleTextAreaChanged}
+      ref={descriptionInput}
+    />
+  )
 
-  const chargeAttackField = () => {
-    return (
-      <SwitchTableField
-        name="charge_attack"
-        label={t('modals.edit_team.labels.charge_attack')}
-        value={chargeAttack}
-        onValueChange={handleChargeAttackChanged}
-      />
-    )
-  }
+  const chargeAttackField = (
+    <SwitchTableField
+      name="charge_attack"
+      label={t('modals.edit_team.labels.charge_attack')}
+      value={chargeAttack}
+      onValueChange={handleChargeAttackChanged}
+    />
+  )
 
-  const fullAutoField = () => {
-    return (
-      <SwitchTableField
-        name="full_auto"
-        label={t('modals.edit_team.labels.full_auto')}
-        value={fullAuto}
-        onValueChange={handleFullAutoChanged}
-      />
-    )
-  }
+  const fullAutoField = (
+    <SwitchTableField
+      name="full_auto"
+      label={t('modals.edit_team.labels.full_auto')}
+      value={fullAuto}
+      onValueChange={handleFullAutoChanged}
+    />
+  )
 
-  const autoGuardField = () => {
-    return (
-      <SwitchTableField
-        name="auto_guard"
-        label={t('modals.edit_team.labels.auto_guard')}
-        value={autoGuard}
-        onValueChange={handleAutoGuardChanged}
-      />
-    )
-  }
+  const autoGuardField = (
+    <SwitchTableField
+      name="auto_guard"
+      label={t('modals.edit_team.labels.auto_guard')}
+      value={autoGuard}
+      onValueChange={handleAutoGuardChanged}
+    />
+  )
 
-  const autoSummonField = () => {
-    return (
-      <SwitchTableField
-        name="auto_summon"
-        label={t('modals.edit_team.labels.auto_summon')}
-        value={autoSummon}
-        onValueChange={handleAutoSummonChanged}
-      />
-    )
-  }
+  const autoSummonField = (
+    <SwitchTableField
+      name="auto_summon"
+      label={t('modals.edit_team.labels.auto_summon')}
+      value={autoSummon}
+      onValueChange={handleAutoSummonChanged}
+    />
+  )
 
-  const extraField = () => {
-    return (
-      <SwitchTableField
-        name="extra"
-        className="Extra"
-        label={t('modals.edit_team.labels.extra')}
-        description={t('modals.edit_team.descriptions.extra')}
-        value={extra}
-        disabled={true}
-        onValueChange={handleExtraChanged}
-      />
-    )
-  }
+  const extraField = (
+    <SwitchTableField
+      name="extra"
+      className="Extra"
+      label={t('modals.edit_team.labels.extra')}
+      description={t('modals.edit_team.descriptions.extra')}
+      value={extra}
+      disabled={true}
+      onValueChange={handleExtraChanged}
+    />
+  )
 
-  const clearTimeField = () => {
-    return (
-      <TableField
-        className="Numeric"
+  const clearTimeField = (
+    <TableField
+      name="clear_time"
+      label={t('modals.edit_team.labels.clear_time')}
+    >
+      <DurationInput
         name="clear_time"
-        label={t('modals.edit_team.labels.clear_time')}
-      >
-        <DurationInput
-          name="clear_time"
-          className="Bound"
-          value={clearTime}
-          onValueChange={(value: number) => handleClearTimeChanged(value)}
-        />
-      </TableField>
-    )
-  }
-
-  const turnCountField = () => {
-    return (
-      <InputTableField
-        name="turn_count"
-        className="Numeric"
-        label={t('modals.edit_team.labels.turn_count')}
-        placeholder="0"
-        type="number"
-        value={turnCount}
-        onValueChange={handleTurnCountChanged}
+        bound={true}
+        value={clearTime}
+        onValueChange={(value: number) => handleClearTimeChanged(value)}
       />
-    )
-  }
+    </TableField>
+  )
 
-  const buttonCountField = () => {
-    return (
-      <InputTableField
-        name="button_count"
-        className="Numeric"
-        label={t('modals.edit_team.labels.button_count')}
-        placeholder="0"
-        type="number"
-        value={buttonCount}
-        onValueChange={handleButtonCountChanged}
-      />
-    )
-  }
+  const turnCountField = (
+    <InputTableField
+      name="turn_count"
+      className="number"
+      label={t('modals.edit_team.labels.turn_count')}
+      placeholder="0"
+      type="number"
+      value={turnCount}
+      onValueChange={handleTurnCountChanged}
+    />
+  )
 
-  const chainCountField = () => {
-    return (
-      <InputTableField
-        name="chain_count"
-        className="Numeric"
-        label={t('modals.edit_team.labels.chain_count')}
-        placeholder="0"
-        type="number"
-        value={chainCount}
-        onValueChange={handleChainCountChanged}
-      />
-    )
-  }
+  const buttonCountField = (
+    <InputTableField
+      name="button_count"
+      className="number"
+      label={t('modals.edit_team.labels.button_count')}
+      placeholder="0"
+      type="number"
+      value={buttonCount}
+      onValueChange={handleButtonCountChanged}
+    />
+  )
 
-  const infoPage = () => {
-    return (
-      <>
-        {nameField()}
-        {raidField()}
-        {extraNotice()}
-        {descriptionField()}
-      </>
-    )
-  }
+  const chainCountField = (
+    <InputTableField
+      name="chain_count"
+      className="number"
+      label={t('modals.edit_team.labels.chain_count')}
+      placeholder="0"
+      type="number"
+      value={chainCount}
+      onValueChange={handleChainCountChanged}
+    />
+  )
 
-  const propertiesPage = () => {
-    return (
-      <>
-        {chargeAttackField()}
-        {fullAutoField()}
-        {autoSummonField()}
-        {autoGuardField()}
-        {extraField()}
-        {clearTimeField()}
-        {turnCountField()}
-        {buttonCountField()}
-        {chainCountField()}
-      </>
-    )
-  }
+  const infoPage = (
+    <>
+      {nameField}
+      {raidField}
+      {extraNotice()}
+      {descriptionField}
+    </>
+  )
+
+  const propertiesPage = (
+    <>
+      {chargeAttackField}
+      {fullAutoField}
+      {autoSummonField}
+      {autoGuardField}
+      {extraField}
+      {clearTimeField}
+      {turnCountField}
+      {buttonCountField}
+      {chainCountField}
+    </>
+  )
 
   return (
-    <Dialog open={open} onOpenChange={openChange}>
-      <DialogTrigger asChild>{props.children}</DialogTrigger>
-      <DialogContent
-        className="EditTeam"
-        headerref={headerRef}
-        footerref={footerRef}
-        onEscapeKeyDown={onEscapeKeyDown}
-        onOpenAutoFocus={onOpenAutoFocus}
-      >
-        <div className="DialogHeader" ref={headerRef}>
-          <div className="DialogTop">
-            <DialogTitle className="DialogTitle">
-              {t('modals.edit_team.title')}
-            </DialogTitle>
-          </div>
-          <DialogClose className="DialogClose" asChild>
-            <span>
-              <CrossIcon />
-            </span>
-          </DialogClose>
-        </div>
+    <>
+      {confirmationAlert}
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogTrigger asChild>{props.children}</DialogTrigger>
+        <DialogContent
+          className="editParty"
+          onEscapeKeyDown={onEscapeKeyDown}
+          onOpenAutoFocus={onOpenAutoFocus}
+        >
+          <DialogHeader title={t('modals.edit_team.title')} ref={headerRef} />
 
-        <div className="Content">
-          {segmentedControl()}
-          <div className="Fields">
-            {currentSegment === 0 && infoPage()}
-            {currentSegment === 1 && propertiesPage()}
+          <div className={styles.content}>
+            {segmentedControl}
+            <div className={fieldsClasses} onScroll={handleScroll}>
+              {currentSegment === 0 && infoPage}
+              {currentSegment === 1 && propertiesPage}
+            </div>
           </div>
-        </div>
-        <div className="DialogFooter" ref={footerRef}>
-          <div className="Left"></div>
-          <div className="Right Buttons Spaced">
-            <Button
-              contained={true}
-              text={t('buttons.cancel')}
-              onClick={openChange}
-            />
-            <Button
-              contained={true}
-              rightAccessoryIcon={<CheckIcon />}
-              text={t('modals.edit_team.buttons.confirm')}
-              onClick={updateDetails}
-            />
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+
+          <DialogFooter
+            ref={footerRef}
+            rightElements={[
+              <Button
+                bound={true}
+                key="cancel"
+                text={t('buttons.cancel')}
+                onClick={handleOpenChange}
+              />,
+              <Button
+                bound={true}
+                key="confirm"
+                rightAccessoryIcon={<CheckIcon />}
+                text={t('modals.edit_team.buttons.confirm')}
+                onClick={updateDetails}
+              />,
+            ]}
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 

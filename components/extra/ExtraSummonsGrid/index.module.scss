@@ -1,0 +1,69 @@
+.container {
+  background: var(--subaura-orange-bg);
+  border-radius: $input-corner;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 2.32fr 2fr;
+  justify-content: center;
+  margin: 20px auto;
+  max-width: calc($grid-width + 20px);
+  padding: $unit-3x $unit-3x $unit-3x 0;
+  position: relative;
+  left: 9px;
+
+  @include breakpoint(tablet) {
+    left: auto;
+    max-width: $grid-width;
+    padding: $unit-2x;
+    width: 100%;
+  }
+
+  @include breakpoint(phone) {
+    display: flex;
+    gap: $unit-2x;
+    padding: $unit-2x;
+    flex-direction: column;
+
+    #ExtraSummons {
+      max-width: 50vw;
+      margin: 0 auto;
+    }
+  }
+
+  h3 {
+    color: var(--subaura-orange-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .grid {
+    display: grid;
+    gap: $unit-3x;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    @include breakpoint(tablet) {
+      gap: $unit-2x;
+    }
+
+    @include breakpoint(phone) {
+      gap: $unit;
+    }
+
+    & > li {
+      list-style: none;
+      min-height: 0;
+
+      .SummonUnit {
+        min-height: 0;
+      }
+    }
+  }
+
+  .SummonUnit .QuickSummon {
+    display: none;
+  }
+}

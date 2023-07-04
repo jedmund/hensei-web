@@ -5,7 +5,7 @@ import { Command as CommandPrimitive } from 'cmdk'
 import { Dialog } from '../Dialog'
 import { DialogContent, DialogProps } from '@radix-ui/react-dialog'
 
-import './index.scss'
+import styles from './index.module.scss'
 
 const Command = forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
