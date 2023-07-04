@@ -33,12 +33,14 @@ import styles from './index.module.scss'
 interface Props extends DialogProps {
   open: boolean
   party?: Party
+  raidGroups: RaidGroup[]
   onOpenChange?: (open: boolean) => void
   updateParty: (details: DetailsObject) => Promise<any>
 }
 
 const EditPartyModal = ({
   open,
+  raidGroups,
   updateParty,
   onOpenChange,
   ...props
@@ -425,6 +427,7 @@ const EditPartyModal = ({
     <RaidCombobox
       showAllRaidsOption={false}
       currentRaid={raid}
+      raidGroups={raidGroups}
       onChange={receiveRaid}
     />
   )

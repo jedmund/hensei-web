@@ -278,6 +278,7 @@ const ProfileRoute: React.FC<Props> = ({
           scrolled={scrolled}
           element={element}
           raid={raid}
+          raidGroups={context.raidGroups}
           recency={recency}
         >
           <UserInfo user={context.user!} />

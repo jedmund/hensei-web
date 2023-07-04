@@ -318,6 +318,7 @@ const SavedRoute: React.FC<Props> = ({
           scrolled={scrolled}
           element={element}
           raid={raid}
+          raidGroups={context.raidGroups}
           recency={recency}
         >
           <h1>{t('saved.title')}</h1>

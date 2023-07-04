@@ -22,6 +22,7 @@ interface Props {
   scrolled: boolean
   element?: number
   raid?: string
+  raidGroups: RaidGroup[]
   recency?: number
   onFilter: (filters: FilterSet) => void
   onAdvancedFilter: (filters: FilterSet) => void
@@ -147,6 +148,7 @@ const FilterBar = (props: Props) => {
           <RaidCombobox
             currentRaid={currentRaid}
             showAllRaidsOption={true}
+            raidGroups={props.raidGroups}
             minimal={true}
             size="small"
             onChange={raidSelectChanged}

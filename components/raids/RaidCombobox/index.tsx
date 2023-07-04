@@ -1,4 +1,4 @@
-import { createRef, useCallback, useEffect, useState, useRef } from 'react'
+import { createRef, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
@@ -9,20 +9,6 @@ import SegmentedControl from '~components/common/SegmentedControl'
 import Segment from '~components/common/Segment'
 import RaidItem from '~components/raids/RaidItem'
 import Tooltip from '~components/common/Tooltip'
-
-import api from '~utils/api'
-import { appState } from '~utils/appState'
-
-interface Props {
-  showAllRaidsOption: boolean
-  currentRaid?: Raid
-  defaultRaid?: Raid
-  minimal?: boolean
-  tabIndex?: number
-  size?: 'small' | 'medium' | 'large'
-  onChange?: (raid?: Raid) => void
-  onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
-}
 
 import Button from '~components/common/Button'
 import ArrowIcon from '~public/icons/Arrow.svg'
@@ -65,6 +51,18 @@ const allRaidsOption: Raid = {
   slug: 'all',
   level: 0,
   element: 0,
+}
+
+interface Props {
+  showAllRaidsOption: boolean
+  currentRaid?: Raid
+  defaultRaid?: Raid
+  raidGroups: RaidGroup[]
+  minimal?: boolean
+  tabIndex?: number
+  size?: 'small' | 'medium' | 'large'
+  onChange?: (raid?: Raid) => void
+  onBlur?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
 const RaidCombobox = (props: Props) => {
@@ -114,12 +112,13 @@ const RaidCombobox = (props: Props) => {
   useEffect(() => {
     const sections: [RaidGroup[], RaidGroup[], RaidGroup[]] = [[], [], []]
 
-    appState.raidGroups.forEach((group) => {
+
+    props.raidGroups.forEach((group) => {
       if (group.section > 0) sections[group.section - 1].push(group)
     })
 
-    if (appState.raidGroups[0]) {
-      setFarmingRaid(appState.raidGroups[0].raids[0])
+    if (props.raidGroups[0]) {
+      setFarmingRaid(props.raidGroups[0].raids[0])
     }
 
     setSections(sections)
@@ -521,13 +520,6 @@ const RaidCombobox = (props: Props) => {
   // ----------------------------------------------
   // Methods: Utility
   // ----------------------------------------------
-  function slugToRaid(slug: string) {
-    return appState.raidGroups
-      .filter((group) => group.section > 0)
-      .flatMap((group) => group.raids)
-      .find((raid) => raid.slug === slug)
-  }
-
   const linkClass = classNames({
     wind: currentRaid && currentRaid.element == 1,
     fire: currentRaid && currentRaid.element == 2,
