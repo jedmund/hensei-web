@@ -154,7 +154,8 @@ const WeaponUnit = ({
       appState.party.element = gridWeapon.object.element
     } else if (!gridWeapon.mainhand && gridWeapon.position !== null) {
       let weapon = clonedeep(gridWeapon)
-      weapon.element = gridWeapon.object.element
+      if (weapon.object.element === 0 && weapon.element < 1)
+        weapon.element = gridWeapon.object.element
 
       appState.grid.weapons.allWeapons[gridWeapon.position] = weapon
     }

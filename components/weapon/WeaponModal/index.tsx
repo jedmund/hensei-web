@@ -100,6 +100,12 @@ const WeaponModal = ({
       setAwakening(gridWeapon.awakening.type)
       setAwakeningLevel(gridWeapon.awakening.level)
     }
+
+    if (gridWeapon.object.ax || gridWeapon.object.awakenings) {
+      setFormValid(false)
+    } else {
+      setFormValid(true)
+    }
   }, [gridWeapon])
 
   // Methods: Data retrieval
@@ -126,6 +132,7 @@ const WeaponModal = ({
   // Receive values from AwakeningSelectWithInput
   function receiveAwakeningValues(id: string, level: number) {
     setAwakening(gridWeapon.object.awakenings.find((a) => a.id === id))
+    console.log(level)
     setAwakeningLevel(level)
     setFormValid(true)
   }
@@ -233,12 +240,6 @@ const WeaponModal = ({
     if (modalOpen && hasBeenModified()) {
       setAlertOpen(true)
     } else {
-      if (gridWeapon.object.ax || gridWeapon.object.awakenings) {
-        setFormValid(false)
-      } else {
-        setFormValid(true)
-      }
-
       onOpenChange(open)
     }
   }
@@ -264,7 +265,6 @@ const WeaponModal = ({
   }
 
   function elementChanged() {
-    if (gridWeapon.object.element === 0 && gridWeapon.element) return false
     return element !== gridWeapon.element
   }
 
@@ -329,6 +329,12 @@ const WeaponModal = ({
       !isEqual(gridWeapon.awakening.type, awakening) ||
       gridWeapon.awakening.level !== awakeningLevel
 
+    console.log(
+      gridWeapon.awakening.type,
+      awakening,
+      gridWeapon.awakening.level,
+      awakeningLevel
+    )
     // Return true if the awakening has been modified and is not empty
     return awakeningChanged
   }
