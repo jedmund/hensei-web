@@ -1,7 +1,12 @@
-import React, { useEffect, useState, MouseEvent } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
+import { AxiosResponse } from 'axios'
 import classNames from 'classnames'
+import clonedeep from 'lodash.clonedeep'
+
+import api from '~utils/api'
+import { appState } from '~utils/appState'
 
 import Alert from '~components/common/Alert'
 import SearchModal from '~components/search/SearchModal'
@@ -16,7 +21,7 @@ import WeaponHovercard from '~components/weapon/WeaponHovercard'
 import UncapIndicator from '~components/uncap/UncapIndicator'
 import Button from '~components/common/Button'
 
-import type { SearchableObject } from '~types'
+import type { GridWeaponObject, SearchableObject } from '~types'
 
 import ax from '~data/ax'
 
@@ -128,6 +133,35 @@ const WeaponUnit = ({
   function removeWeapon() {
     if (gridWeapon) sendWeaponToRemove(gridWeapon.id)
     setAlertOpen(false)
+  }
+
+  // Methods: Data fetching and manipulation
+
+  async function updateWeapon(object: GridWeaponObject) {
+    if (gridWeapon) {
+      return await api.endpoints.grid_weapons
+        .update(gridWeapon.id, object)
+        .then((response) => processResult(response))
+        .catch((error) => processError(error))
+    }
+  }
+
+  function processResult(response: AxiosResponse) {
+    const gridWeapon: GridWeapon = response.data
+
+    if (gridWeapon.mainhand) {
+      appState.grid.weapons.mainWeapon = gridWeapon
+      appState.party.element = gridWeapon.object.element
+    } else if (!gridWeapon.mainhand && gridWeapon.position !== null) {
+      let weapon = clonedeep(gridWeapon)
+      weapon.element = gridWeapon.object.element
+
+      appState.grid.weapons.allWeapons[gridWeapon.position] = weapon
+    }
+  }
+
+  function processError(error: any) {
+    console.error(error)
   }
 
   // Methods: Data fetching and manipulation
@@ -430,6 +464,7 @@ const WeaponUnit = ({
           gridWeapon={gridWeapon}
           open={detailsModalOpen}
           onOpenChange={handleWeaponModalOpenChange}
+          updateWeapon={updateWeapon}
         />
       )
     }
