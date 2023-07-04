@@ -111,45 +111,51 @@ $selected--item--bg--light--hover: #ecbc4c6f;
 
 // Colors -- Elements
 $wind-text-00: #023e28;
-$wind-text-10: #006a43;
-$wind-text-20: #1dc688;
+$wind-text-10: #00492f;
+$wind-text-20: #008758;
+$wind-text-30: #1dc688;
 $wind-bg-00: #4cffbf55;
-$wind-bg-10: #00b551;
+$wind-bg-10: #3ee489;
 $wind-bg-20: #cdffed;
 
 $fire-text-00: #3f0202;
-$fire-text-10: #6e0000;
-$fire-text-20: #ec5c5c;
+$fire-text-10: #3e0000;
+$fire-text-20: #880000;
+$fire-text-30: #ec5c5c;
 $fire-bg-00: #ff4d4d55;
-$fire-bg-10: #ff4d4d;
+$fire-bg-10: #ff7f7f;
 $fire-bg-20: #ffcdcd;
 
 $water-text-00: #03263b;
 $water-text-10: #004b77;
-$water-text-20: #5cb7ec;
+$water-text-20: #00639c;
+$water-text-30: #5cb7ec;
 $water-bg-00: #6cc9ff55;
 $water-bg-10: #6cc9ff;
 $water-bg-20: #cdedff;
 
 $earth-text-00: #321602;
 $earth-text-10: #662a00;
-$earth-text-20: #ec985c;
+$earth-text-20: #913d01;
+$earth-text-30: #ec985c;
 $earth-bg-00: #fd9f5b55;
 $earth-bg-10: #fd9f5b;
 $earth-bg-20: #ffe2cd;
 
 $light-text-00: #433d02;
-$light-text-10: #716500;
-$light-text-20: #c5b20c;
+$light-text-10: #564d00;
+$light-text-20: #817400;
+$light-text-30: #c5b20c;
 $light-bg-00: #ffed4c55;
-$light-bg-10: #d9c50f;
+$light-bg-10: #e8d633;
 $light-bg-20: #fffacd;
 
 $dark-text-00: #260134;
-$dark-text-10: #560075;
-$dark-text-20: #c65cec;
+$dark-text-10: #4c0068;
+$dark-text-20: #6c0093;
+$dark-text-30: #c65cec;
 $dark-bg-00: #d565fb55;
-$dark-bg-10: #d565fb;
+$dark-bg-10: #de7bff;
 $dark-bg-20: #f2cdff;
 
 $page--bg--light: $grey-90;
@@ -360,6 +366,102 @@ $tag--bg--light: $grey-60;
 $tag--bg--dark: $grey-00;
 $tag--text--light: $grey-100;
 $tag--text--dark: $grey-50;
+
+// Color Definitions: Element / Wind
+$wind--bg--light: $wind-bg-10;
+$wind--bg--dark: $wind-bg-10;
+
+$wind--bg--hover--light: $wind-bg-20;
+$wind--bg--hover--dark: $wind-bg-00;
+
+$wind--text--light: $wind-text-20;
+$wind--text--dark: $wind-bg-10;
+
+$wind--text--bg--light: $wind-text-10;
+$wind--text--bg--dark: $wind-text-10;
+
+$wind--text--hover--light: $wind-text-10;
+$wind--text--hover--dark: $wind-text-00;
+
+// Color Definitions: Element / Fire
+$fire--bg--light: $fire-bg-10;
+$fire--bg--dark: $fire-bg-10;
+
+$fire--bg--hover--light: $fire-bg-20;
+$fire--bg--hover--dark: $fire-bg-00;
+
+$fire--text--light: $fire-text-20;
+$fire--text--dark: $fire-bg-10;
+
+$fire--text--bg--light: $fire-text-10;
+$fire--text--bg--dark: $fire-text-10;
+
+$fire--text--hover--light: $fire-text-10;
+$fire--text--hover--dark: $fire-text-00;
+
+// Color Definitions: Element / Water
+$water--bg--light: $water-bg-10;
+$water--bg--dark: $water-bg-10;
+
+$water--bg--hover--light: $water-bg-20;
+$water--bg--hover--dark: $water-bg-00;
+
+$water--text--light: $water-text-20;
+$water--text--dark: $water-bg-10;
+
+$water--text--bg--light: $water-text-10;
+$water--text--bg--dark: $water-text-10;
+
+$water--text--hover--light: $water-text-10;
+$water--text--hover--dark: $water-text-00;
+
+// Color Definitions: Element / Earth
+$earth--bg--light: $earth-bg-10;
+$earth--bg--dark: $earth-bg-10;
+
+$earth--bg--hover--light: $earth-bg-20;
+$earth--bg--hover--dark: $earth-bg-00;
+
+$earth--text--light: $earth-text-20;
+$earth--text--dark: $earth-bg-10;
+
+$earth--text--bg--light: $earth-text-10;
+$earth--text--bg--dark: $earth-text-10;
+
+$earth--text--hover--light: $earth-text-10;
+$earth--text--hover--dark: $earth-text-00;
+
+// Color Definitions: Element / Dark
+$dark--bg--light: $dark-bg-10;
+$dark--bg--dark: $dark-bg-10;
+
+$dark--bg--hover--light: $dark-bg-20;
+$dark--bg--hover--dark: $dark-bg-00;
+
+$dark--text--light: $dark-text-20;
+$dark--text--dark: $dark-bg-10;
+
+$dark--text--bg--light: $dark-text-10;
+$dark--text--bg--dark: $dark-text-10;
+
+$dark--text--hover--light: $dark-text-10;
+$dark--text--hover--dark: $dark-text-00;
+
+// Color Definitions: Element / Light
+$light--bg--light: $light-bg-10;
+$light--bg--dark: $light-bg-10;
+
+$light--bg--hover--light: $light-bg-20;
+$light--bg--hover--dark: $light-bg-00;
+
+$light--text--light: $light-text-20;
+$light--text--dark: $light-bg-10;
+
+$light--text--bg--light: $light-text-10;
+$light--text--bg--dark: $light-text-10;
+
+$light--text--hover--light: $light-text-10;
+$light--text--hover--dark: $light-text-00;
 
 // Font-weight
 $normal: 400;
