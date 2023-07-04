@@ -170,6 +170,7 @@ const EditPartyModal = ({
 
   function handleTextAreaChanged(event: React.ChangeEvent<HTMLDivElement>) {
     event.preventDefault()
+    setDescription(event.target.innerHTML)
     let newErrors = errors
     setErrors(newErrors)
   }
@@ -281,8 +282,7 @@ const EditPartyModal = ({
   // Methods: Modification checking
   function hasBeenModified() {
     const nameChanged = name !== party.name
-    const descriptionChanged =
-      descriptionInput.current?.innerHTML !== party.description
+    const descriptionChanged = description !== party.description
     const raidChanged = raid !== party.raid
     const chargeAttackChanged = chargeAttack !== party.chargeAttack
     const fullAutoChanged = fullAuto !== party.fullAuto
