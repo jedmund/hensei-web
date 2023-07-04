@@ -1,15 +1,14 @@
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
-import { AxiosResponse } from 'axios'
+import { Trans, useTranslation } from 'next-i18next'
+import { isEqual } from 'lodash'
 
-import {
-  Dialog,
-  DialogClose,
-  DialogTitle,
-  DialogTrigger,
-} from '~components/common/Dialog'
+import { GridWeaponObject } from '~types'
+import Alert from '~components/common/Alert'
+import { Dialog, DialogTrigger } from '~components/common/Dialog'
+import DialogHeader from '~components/common/DialogHeader'
+import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
 import AwakeningSelectWithInput from '~components/mastery/AwakeningSelectWithInput'
 import AXSelect from '~components/mastery/AxSelect'
@@ -17,17 +16,15 @@ import ElementToggle from '~components/ElementToggle'
 import WeaponKeySelect from '~components/weapon/WeaponKeySelect'
 import Button from '~components/common/Button'
 
-import api from '~utils/api'
-import { appState } from '~utils/appState'
 import { NO_AWAKENING } from '~data/awakening'
 
-import CrossIcon from '~public/icons/Cross.svg'
 import styles from './index.module.scss'
 
 interface Props {
   gridWeapon: GridWeapon
   open: boolean
   onOpenChange: (open: boolean) => void
+  updateWeapon: (object: GridWeaponObject) => Promise<any>
 }
 
 const WeaponModal = ({
@@ -35,6 +32,7 @@ const WeaponModal = ({
   open: modalOpen,
   children,
   onOpenChange,
+  updateWeapon,
 }: PropsWithChildren<Props>) => {
   const router = useRouter()
   const locale =
@@ -50,27 +48,11 @@ const WeaponModal = ({
     ? { Authorization: `Bearer ${accountData.token}` }
     : {}
 
-  // State
-  const [open, setOpen] = useState(false)
+  // State: Component
+  const [alertOpen, setAlertOpen] = useState(false)
   const [formValid, setFormValid] = useState(false)
 
-  const [element, setElement] = useState(-1)
-
-  const [awakening, setAwakening] = useState<Awakening>()
-  const [awakeningLevel, setAwakeningLevel] = useState(1)
-
-  const [primaryAxModifier, setPrimaryAxModifier] = useState(-1)
-  const [secondaryAxModifier, setSecondaryAxModifier] = useState(-1)
-  const [primaryAxValue, setPrimaryAxValue] = useState(0.0)
-  const [secondaryAxValue, setSecondaryAxValue] = useState(0.0)
-
-  const [weaponKey1, setWeaponKey1] = useState<WeaponKey | undefined>()
-  const [weaponKey2, setWeaponKey2] = useState<WeaponKey | undefined>()
-  const [weaponKey3, setWeaponKey3] = useState<WeaponKey | undefined>()
-  const [weaponKey1Id, setWeaponKey1Id] = useState('')
-  const [weaponKey2Id, setWeaponKey2Id] = useState('')
-  const [weaponKey3Id, setWeaponKey3Id] = useState('')
-
+  // State: Selects
   const [weaponKey1Open, setWeaponKey1Open] = useState(false)
   const [weaponKey2Open, setWeaponKey2Open] = useState(false)
   const [weaponKey3Open, setWeaponKey3Open] = useState(false)
@@ -79,16 +61,26 @@ const WeaponModal = ({
   const [ax2Open, setAx2Open] = useState(false)
   const [awakeningOpen, setAwakeningOpen] = useState(false)
 
+  // State: Data
+
+  const [element, setElement] = useState<number>(0)
+  const [awakening, setAwakening] = useState<Awakening>()
+  const [awakeningLevel, setAwakeningLevel] = useState(1)
+  const [primaryAxModifier, setPrimaryAxModifier] = useState(-1)
+  const [secondaryAxModifier, setSecondaryAxModifier] = useState(-1)
+  const [primaryAxValue, setPrimaryAxValue] = useState(0.0)
+  const [secondaryAxValue, setSecondaryAxValue] = useState(0.0)
+  const [weaponKey1, setWeaponKey1] = useState<WeaponKey | undefined>()
+  const [weaponKey2, setWeaponKey2] = useState<WeaponKey | undefined>()
+  const [weaponKey3, setWeaponKey3] = useState<WeaponKey | undefined>()
+
   // Refs
   const headerRef = React.createRef<HTMLDivElement>()
   const footerRef = React.createRef<HTMLDivElement>()
 
   // Hooks
-  useEffect(() => {
-    setOpen(modalOpen)
-    handleOpenChange(modalOpen)
-  }, [modalOpen])
 
+  // Set up modal data state when the gridWeapon changes
   useEffect(() => {
     setElement(gridWeapon.element)
 
@@ -105,6 +97,14 @@ const WeaponModal = ({
     }
   }, [gridWeapon])
 
+  // Methods: Data retrieval
+
+  // Receive values from ElementToggle
+  function receiveElementValue(elementId: number) {
+    setElement(elementId)
+  }
+
+  // Receive values from AXSelect
   function receiveAxValues(
     primaryAxModifier: number,
     primaryAxValue: number,
@@ -118,34 +118,40 @@ const WeaponModal = ({
     setSecondaryAxValue(secondaryAxValue)
   }
 
-  function receiveValidity(isValid: boolean) {
-    setFormValid(isValid)
-  }
-
+  // Receive values from AwakeningSelectWithInput
   function receiveAwakeningValues(id: string, level: number) {
     setAwakening(gridWeapon.object.awakenings.find((a) => a.id === id))
     setAwakeningLevel(level)
     setFormValid(true)
   }
 
-  function receiveElementValue(element: string) {
-    setElement(parseInt(element))
+  // Receive values from WeaponKeySelect
+  function receiveWeaponKey(value: WeaponKey, slot: number) {
+    if (slot === 0) setWeaponKey1(value)
+    if (slot === 1) setWeaponKey2(value)
+    if (slot === 2) setWeaponKey3(value)
   }
 
+  // Receive form validity from child components
+  function receiveValidity(isValid: boolean) {
+    setFormValid(isValid)
+  }
+
+  // Methods: Data submission
   function prepareObject() {
     let object: GridWeaponObject = { weapon: {} }
 
     if (gridWeapon.object.element == 0) object.weapon.element = element
 
-    if ([2, 3, 17, 24].includes(gridWeapon.object.series) && weaponKey1Id) {
-      object.weapon.weapon_key1_id = weaponKey1Id
+    if ([2, 3, 17, 24].includes(gridWeapon.object.series) && weaponKey1) {
+      object.weapon.weapon_key1_id = weaponKey1.id
     }
 
-    if ([2, 3, 17].includes(gridWeapon.object.series) && weaponKey2Id)
-      object.weapon.weapon_key2_id = weaponKey2Id
+    if ([2, 3, 17].includes(gridWeapon.object.series) && weaponKey2)
+      object.weapon.weapon_key2_id = weaponKey2.id
 
-    if (gridWeapon.object.series == 17 && weaponKey3Id)
-      object.weapon.weapon_key3_id = weaponKey3Id
+    if (gridWeapon.object.series == 17 && weaponKey3)
+      object.weapon.weapon_key3_id = weaponKey3.id
 
     if (gridWeapon.object.ax && gridWeapon.object.ax_type > 0) {
       object.weapon.ax_modifier1 = primaryAxModifier
@@ -162,45 +168,20 @@ const WeaponModal = ({
     return object
   }
 
-  async function updateWeapon() {
-    const updateObject = prepareObject()
-    return await api.endpoints.grid_weapons
-      .update(gridWeapon.id, updateObject, headers)
-      .then((response) => processResult(response))
-      .catch((error) => processError(error))
-  }
-
-  function processResult(response: AxiosResponse) {
-    const gridWeapon: GridWeapon = response.data
-
-    if (gridWeapon.mainhand) appState.grid.weapons.mainWeapon = gridWeapon
-    else appState.grid.weapons.allWeapons[gridWeapon.position] = gridWeapon
-
+  async function handleUpdateWeapon() {
+    await updateWeapon(prepareObject())
     if (onOpenChange) onOpenChange(false)
-    setOpen(false)
   }
 
-  function processError(error: any) {
-    console.error(error)
-  }
-
-  function receiveWeaponKey(value: string, slot: number) {
-    if (slot === 0) setWeaponKey1Id(value)
-    if (slot === 1) setWeaponKey2Id(value)
-    if (slot === 2) setWeaponKey3Id(value)
-  }
-
-  const elementSelect = () => {
-    return (
-      <section>
-        <h3>{t('modals.weapon.subtitles.element')}</h3>
-        <ElementToggle
-          currentElement={element}
-          sendValue={receiveElementValue}
-        />
-      </section>
-    )
-  }
+  // Methods: Event handlers
+  const anySelectOpen =
+    weaponKey1Open ||
+    weaponKey2Open ||
+    weaponKey3Open ||
+    weaponKey4Open ||
+    ax1Open ||
+    ax2Open ||
+    awakeningOpen
 
   function openSelect(index: 1 | 2 | 3 | 4) {
     setWeaponKey1Open(index === 1 ? !weaponKey1Open : false)
@@ -218,178 +199,305 @@ const WeaponModal = ({
     setAwakeningOpen(isOpen)
   }
 
-  const keySelect = () => {
-    return (
-      <section>
-        <h3>{t('modals.weapon.subtitles.weapon_keys')}</h3>
-        {[2, 3, 17, 22].includes(gridWeapon.object.series) ? (
-          <WeaponKeySelect
-            open={weaponKey1Open}
-            currentValue={weaponKey1 != null ? weaponKey1 : undefined}
-            series={gridWeapon.object.series}
-            slot={0}
-            onOpenChange={() => openSelect(1)}
-            onChange={receiveWeaponKey}
-            onClose={() => setWeaponKey1Open(false)}
-          />
-        ) : (
-          ''
-        )}
-
-        {[2, 3, 17].includes(gridWeapon.object.series) ? (
-          <WeaponKeySelect
-            open={weaponKey2Open}
-            currentValue={weaponKey2 != null ? weaponKey2 : undefined}
-            series={gridWeapon.object.series}
-            slot={1}
-            onOpenChange={() => openSelect(2)}
-            onChange={receiveWeaponKey}
-            onClose={() => setWeaponKey2Open(false)}
-          />
-        ) : (
-          ''
-        )}
-
-        {gridWeapon.object.series == 17 ? (
-          <WeaponKeySelect
-            open={weaponKey3Open}
-            currentValue={weaponKey3 != null ? weaponKey3 : undefined}
-            series={gridWeapon.object.series}
-            slot={2}
-            onOpenChange={() => openSelect(3)}
-            onChange={receiveWeaponKey}
-            onClose={() => setWeaponKey3Open(false)}
-          />
-        ) : (
-          ''
-        )}
-
-        {gridWeapon.object.series == 24 && gridWeapon.object.uncap.ulb ? (
-          <WeaponKeySelect
-            open={weaponKey4Open}
-            currentValue={weaponKey1 != null ? weaponKey1 : undefined}
-            series={gridWeapon.object.series}
-            slot={0}
-            onOpenChange={() => openSelect(4)}
-            onChange={receiveWeaponKey}
-            onClose={() => setWeaponKey4Open(false)}
-          />
-        ) : (
-          ''
-        )}
-      </section>
+  function close() {
+    // Reset values
+    setElement(gridWeapon.element)
+    setWeaponKey1(
+      gridWeapon.weapon_keys && gridWeapon.weapon_keys[0]
+        ? gridWeapon.weapon_keys[0]
+        : undefined
     )
-  }
-
-  const axSelect = () => {
-    return (
-      <section>
-        <h3>{t('modals.weapon.subtitles.ax_skills')}</h3>
-        <AXSelect
-          axType={gridWeapon.object.ax_type}
-          currentSkills={gridWeapon.ax}
-          onOpenChange={receiveAxOpen}
-          sendValidity={receiveValidity}
-          sendValues={receiveAxValues}
-        />
-      </section>
+    setWeaponKey2(
+      gridWeapon.weapon_keys && gridWeapon.weapon_keys[1]
+        ? gridWeapon.weapon_keys[1]
+        : undefined
     )
-  }
-
-  const awakeningSelect = () => {
-    return (
-      <section>
-        <h3>{t('modals.weapon.subtitles.awakening')}</h3>
-        <AwakeningSelectWithInput
-          dataSet={gridWeapon.object.awakenings}
-          awakening={gridWeapon.awakening?.type}
-          level={gridWeapon.awakening?.level}
-          defaultAwakening={NO_AWAKENING}
-          maxLevel={gridWeapon.object.max_awakening_level}
-          onOpenChange={receiveAwakeningOpen}
-          sendValidity={receiveValidity}
-          sendValues={receiveAwakeningValues}
-        />
-      </section>
+    setWeaponKey3(
+      gridWeapon.weapon_keys && gridWeapon.weapon_keys[2]
+        ? gridWeapon.weapon_keys[2]
+        : undefined
     )
+    setAwakening(gridWeapon.awakening?.type)
+    setAwakeningLevel(gridWeapon.awakening?.level || 1)
+
+    setAlertOpen(false)
+    onOpenChange(false)
   }
 
   function handleOpenChange(open: boolean) {
-    if (gridWeapon.object.ax || gridWeapon.object.awakenings) {
-      setFormValid(false)
-    } else {
-      setFormValid(true)
-    }
-    setOpen(open)
-    onOpenChange(open)
-  }
+    console.log(`Modal is currently open? ${open}`)
 
-  const anySelectOpen =
-    weaponKey1Open ||
-    weaponKey2Open ||
-    weaponKey3Open ||
-    weaponKey4Open ||
-    ax1Open ||
-    ax2Open ||
-    awakeningOpen
+    if (modalOpen && hasBeenModified()) {
+      setAlertOpen(true)
+    } else {
+      if (gridWeapon.object.ax || gridWeapon.object.awakenings) {
+        setFormValid(false)
+      } else {
+        setFormValid(true)
+      }
+
+      onOpenChange(open)
+    }
+  }
 
   function onEscapeKeyDown(event: KeyboardEvent) {
     if (anySelectOpen) {
       return event.preventDefault()
+    } else if (hasBeenModified()) {
+      setAlertOpen(true)
     } else {
-      setOpen(false)
+      close()
     }
   }
 
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent
-        className="Weapon"
-        headerref={headerRef}
-        footerref={footerRef}
-        onOpenAutoFocus={(event) => event.preventDefault()}
-        onEscapeKeyDown={onEscapeKeyDown}
-      >
-        <div className="DialogHeader Short" ref={headerRef}>
-          <img
-            alt={gridWeapon.object.name[locale]}
-            className="DialogImage"
-            src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-square/${gridWeapon.object.granblue_id}.jpg`}
-          />
-          <div className="DialogTop">
-            <DialogTitle className="SubTitle">
-              {t('modals.weapon.title')}
-            </DialogTitle>
-            <DialogTitle className="DialogTitle">
-              {gridWeapon.object.name[locale]}
-            </DialogTitle>
-          </div>
-          <DialogClose className="DialogClose" asChild>
-            <span>
-              <CrossIcon />
-            </span>
-          </DialogClose>
-        </div>
+  // Methods: Modification checking
+  function hasBeenModified() {
+    return (
+      elementChanged() ||
+      weaponKeysChanged() ||
+      axChanged() ||
+      awakeningChanged()
+    )
+  }
 
-        <div className="mods">
-          {gridWeapon.object.element == 0 ? elementSelect() : ''}
-          {[2, 3, 17, 24].includes(gridWeapon.object.series) ? keySelect() : ''}
-          {gridWeapon.object.ax ? axSelect() : ''}
-          {gridWeapon.object.awakenings ? awakeningSelect() : ''}
-        </div>
-        <div className="DialogFooter" ref={footerRef}>
-          <div className="actions">
-            <Button
-              bound={true}
-              onClick={updateWeapon}
-              disabled={!formValid}
-              text={t('modals.weapon.buttons.confirm')}
-            />
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+  function elementChanged() {
+    if (gridWeapon.object.element === 0 && gridWeapon.element) return false
+    return element !== gridWeapon.element
+  }
+
+  function weaponKeyChanged(index: number) {
+    // Get the correct key ID from the given index and
+    // reset it to an empty string if it's 'no-key'
+    let weaponKey =
+      index === 0 ? weaponKey1 : index === 1 ? weaponKey2 : weaponKey3
+    if (weaponKey && weaponKey.id === 'no-key') weaponKey = undefined
+
+    // If the key is empty and the gridWeapon has no keys, nothing has changed
+    if (weaponKey === undefined && !gridWeapon.weapon_keys) return false
+
+    // If the key is not empty but the gridWeapon has no keys, the key has changed
+    if (
+      weaponKey !== undefined &&
+      gridWeapon.weapon_keys &&
+      gridWeapon.weapon_keys.length === 0
+    )
+      return true
+
+    // If gridWeapon has a key at the current index, but it doesn't match the key ID,
+    // then the key has changed
+    const weaponKeyChanged =
+      weaponKey &&
+      gridWeapon.weapon_keys &&
+      gridWeapon.weapon_keys[index] &&
+      weaponKey.id !== gridWeapon.weapon_keys[index].id
+
+    return weaponKeyChanged
+  }
+
+  function weaponKeysChanged() {
+    if (!gridWeapon.weapon_keys) return false
+
+    const weaponKey1Changed = weaponKeyChanged(0)
+    const weaponKey2Changed = weaponKeyChanged(1)
+    const weaponKey3Changed = weaponKeyChanged(2)
+
+    return weaponKey1Changed || weaponKey2Changed || weaponKey3Changed
+  }
+
+  function axChanged() {
+    if (!gridWeapon.ax) return false
+
+    const ax1Changed =
+      gridWeapon.ax[0].modifier !== primaryAxModifier ||
+      gridWeapon.ax[0].strength !== primaryAxValue
+    // console.log(`Has ax 1 changed? ${ax1Changed}`)
+
+    const ax2Changed =
+      gridWeapon.ax[1].modifier !== secondaryAxModifier ||
+      gridWeapon.ax[1].strength !== secondaryAxValue
+    // console.log(`Has ax 2 changed? ${ax2Changed}`)
+
+    return ax1Changed || ax2Changed
+  }
+
+  function awakeningChanged() {
+    if (!gridWeapon.awakening) return false
+
+    // Check if the awakening in local state is different from the one on the current GridCharacter
+    const awakeningChanged =
+      !isEqual(gridWeapon.awakening.type, awakening) ||
+      gridWeapon.awakening.level !== awakeningLevel
+    // console.log(`Has awakening changed? ${awakeningChanged}`)
+
+    // Return true if the awakening has been modified and is not empty
+    return awakeningChanged
+  }
+
+  // Methods: Rendering
+  const elementSelect = (
+    <section>
+      <h3>{t('modals.weapon.subtitles.element')}</h3>
+      <ElementToggle
+        currentElement={gridWeapon.element}
+        sendValue={receiveElementValue}
+      />
+    </section>
+  )
+
+  const keySelect = (
+    <section>
+      <h3>{t('modals.weapon.subtitles.weapon_keys')}</h3>
+      {[2, 3, 17, 22].includes(gridWeapon.object.series) ? (
+        <WeaponKeySelect
+          open={weaponKey1Open}
+          weaponKey={weaponKey1}
+          series={gridWeapon.object.series}
+          slot={0}
+          onOpenChange={() => openSelect(1)}
+          onChange={receiveWeaponKey}
+          onClose={() => setWeaponKey1Open(false)}
+        />
+      ) : (
+        ''
+      )}
+
+      {[2, 3, 17].includes(gridWeapon.object.series) ? (
+        <WeaponKeySelect
+          open={weaponKey2Open}
+          weaponKey={weaponKey2}
+          series={gridWeapon.object.series}
+          slot={1}
+          onOpenChange={() => openSelect(2)}
+          onChange={receiveWeaponKey}
+          onClose={() => setWeaponKey2Open(false)}
+        />
+      ) : (
+        ''
+      )}
+
+      {gridWeapon.object.series == 17 ? (
+        <WeaponKeySelect
+          open={weaponKey3Open}
+          weaponKey={weaponKey3}
+          series={gridWeapon.object.series}
+          slot={2}
+          onOpenChange={() => openSelect(3)}
+          onChange={receiveWeaponKey}
+          onClose={() => setWeaponKey3Open(false)}
+        />
+      ) : (
+        ''
+      )}
+
+      {gridWeapon.object.series == 24 && gridWeapon.object.uncap.ulb ? (
+        <WeaponKeySelect
+          open={weaponKey4Open}
+          weaponKey={weaponKey1}
+          series={gridWeapon.object.series}
+          slot={0}
+          onOpenChange={() => openSelect(4)}
+          onChange={receiveWeaponKey}
+          onClose={() => setWeaponKey4Open(false)}
+        />
+      ) : (
+        ''
+      )}
+    </section>
+  )
+
+  const axSelect = (
+    <section>
+      <h3>{t('modals.weapon.subtitles.ax_skills')}</h3>
+      <AXSelect
+        axType={gridWeapon.object.ax_type}
+        currentSkills={gridWeapon.ax}
+        onOpenChange={receiveAxOpen}
+        sendValidity={receiveValidity}
+        sendValues={receiveAxValues}
+      />
+    </section>
+  )
+
+  const awakeningSelect = (
+    <section>
+      <h3>{t('modals.weapon.subtitles.awakening')}</h3>
+      <AwakeningSelectWithInput
+        dataSet={gridWeapon.object.awakenings}
+        awakening={gridWeapon.awakening?.type}
+        level={gridWeapon.awakening?.level}
+        defaultAwakening={NO_AWAKENING}
+        maxLevel={gridWeapon.object.max_awakening_level}
+        onOpenChange={receiveAwakeningOpen}
+        sendValidity={receiveValidity}
+        sendValues={receiveAwakeningValues}
+      />
+    </section>
+  )
+
+  const confirmationAlert = (
+    <Alert
+      message={
+        <span>
+          <Trans i18nKey="alerts.unsaved_changes.object">
+            You will lose all changes to{' '}
+            <strong>{{ objectName: gridWeapon.object.name[locale] }}</strong> if
+            you continue.
+            <br />
+            <br />
+            Are you sure you want to continue without saving?
+          </Trans>
+        </span>
+      }
+      open={alertOpen}
+      primaryActionText="Close"
+      primaryAction={close}
+      cancelActionText="Nevermind"
+      cancelAction={() => setAlertOpen(false)}
+    />
+  )
+
+  return (
+    <>
+      {confirmationAlert}
+      <Dialog open={modalOpen} onOpenChange={handleOpenChange}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent
+          className="Weapon"
+          headerref={headerRef}
+          footerref={footerRef}
+          onOpenAutoFocus={(event) => event.preventDefault()}
+          onEscapeKeyDown={onEscapeKeyDown}
+        >
+          <DialogHeader
+            ref={headerRef}
+            title={gridWeapon.object.name[locale]}
+            subtitle={t('modals.characters.title')}
+            image={{
+              src: `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-square/${gridWeapon.object.granblue_id}.jpg`,
+              alt: gridWeapon.object.name[locale],
+            }}
+          />
+          <section className={styles.mods}>
+            {gridWeapon.object.element == 0 && elementSelect}
+            {[2, 3, 17, 24].includes(gridWeapon.object.series) && keySelect}
+            {gridWeapon.object.ax && axSelect}
+            {gridWeapon.object.awakenings && awakeningSelect}
+          </section>
+          <DialogFooter
+            ref={footerRef}
+            rightElements={[
+              <Button
+                bound={true}
+                onClick={handleUpdateWeapon}
+                key="confirm"
+                disabled={!formValid}
+                text={t('modals.weapon.buttons.confirm')}
+              />,
+            ]}
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
