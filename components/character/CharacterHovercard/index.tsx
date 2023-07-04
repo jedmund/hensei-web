@@ -144,10 +144,12 @@ const CharacterHovercard = (props: Props) => {
             {t('modals.characters.subtitles.awakening')}
           </h5>
           <div>
-            <img
-              alt={gridAwakening.type.name[locale]}
-              src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${gridAwakening.type.slug}.jpg`}
-            />
+            {gridAwakening.type.slug !== 'character-balanced' && (
+              <img
+                alt={gridAwakening.type.name[locale]}
+                src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/awakening/${gridAwakening.type.slug}.jpg`}
+              />
+            )}
             <span>
               <strong>{`${gridAwakening.type.name[locale]}`}</strong>&nbsp;
               {`Lv${gridAwakening.level}`}
