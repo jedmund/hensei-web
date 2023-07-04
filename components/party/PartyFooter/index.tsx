@@ -2,12 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
-import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
-
-import Linkify from 'react-linkify'
-import LiteYouTubeEmbed from 'react-lite-youtube-embed'
-import reactStringReplace from 'react-string-replace'
+import DOMPurify from 'dompurify'
 
 import Button from '~components/common/Button'
 import SegmentedControl from '~components/common/SegmentedControl'
@@ -55,15 +51,14 @@ const PartyFooter = (props: Props) => {
 
   // State: Data
   const [remixes, setRemixes] = useState<Party[]>([])
-  const [embeddedDescription, setEmbeddedDescription] =
-    useState<React.ReactNode>()
+  const [sanitizedDescription, setSanitizedDescription] = useState('')
 
   useEffect(() => {
     if (partySnapshot.description) {
       const purified = DOMPurify.sanitize(partySnapshot.description)
       setSanitizedDescription(purified)
     } else {
-      setEmbeddedDescription('')
+      setSanitizedDescription('')
     }
   }, [partySnapshot.description])
 
@@ -211,14 +206,17 @@ const PartyFooter = (props: Props) => {
   )
 
   const descriptionSection = (
-    <section className={styles.description}>
+    <>
       {partySnapshot &&
         partySnapshot.description &&
         partySnapshot.description.length > 0 && (
-          <Linkify>{embeddedDescription}</Linkify>
+          <section
+            className={styles.description}
+            dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
+          />
         )}
       {(!partySnapshot || !partySnapshot.description) && (
-        <div className={styles.noDescription}>
+        <section className={styles.noDescription}>
           <h3>{t('footer.description.empty')}</h3>
           {props.editable && (
             <EditPartyModal
@@ -234,9 +232,9 @@ const PartyFooter = (props: Props) => {
               />
             </EditPartyModal>
           )}
-        </div>
+        </section>
       )}
-    </section>
+    </>
   )
 
   const remixesSection = (
