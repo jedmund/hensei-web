@@ -340,8 +340,11 @@ const Party = (props: Props) => {
       if (gridObject.mainhand) {
         appState.grid.weapons.mainWeapon = gridObject
         appState.party.element = gridObject.object.element
-      } else if (!gridObject.mainhand && gridObject.position != null) {
-        appState.grid.weapons.allWeapons[gridObject.position] = gridObject
+      } else if (!gridObject.mainhand && gridObject.position !== null) {
+        let weapon = clonedeep(gridObject)
+        weapon.element = gridObject.object.element
+
+        appState.grid.weapons.allWeapons[gridObject.position] = weapon
       }
     })
   }
