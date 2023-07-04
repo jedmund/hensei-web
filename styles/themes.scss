@@ -131,34 +131,40 @@
 
   // Light - Element theming
   --wind-bg: #{$wind--bg--light};
-  --wind-hover-bg: #{$wind--bg--hover--light};
+  --wind-bg-hover: #{$wind--bg--hover--light};
   --wind-text: #{$wind--text--light};
-  --wind-hover-text: #{$wind--text--hover--light};
+  --wind-raid-text: #{$wind--text--raid--light};
+  --wind-text-hover: #{$wind--text--hover--light};
 
   --fire-bg: #{$fire--bg--light};
-  --fire-hover-bg: #{$fire--bg--hover--light};
+  --fire-bg-hover: #{$fire--bg--hover--light};
   --fire-text: #{$fire--text--light};
-  --fire-hover-text: #{$fire--text--hover--light};
+  --fire-raid-text: #{$fire--text--raid--light};
+  --fire-text-hover: #{$fire--text--hover--light};
 
   --water-bg: #{$water--bg--light};
-  --water-hover-bg: #{$water--bg--hover--light};
+  --water-bg-hover: #{$water--bg--hover--light};
   --water-text: #{$water--text--light};
-  --water-hover-text: #{$water--text--hover--light};
+  --water-raid-text: #{$water--text--raid--light};
+  --water-text-hover: #{$water--text--hover--light};
 
   --earth-bg: #{$earth--bg--light};
-  --earth-hover-bg: #{$earth--bg--hover--light};
+  --earth-bg-hover: #{$earth--bg--hover--light};
   --earth-text: #{$earth--text--light};
-  --earth-hover-text: #{$earth--text--hover--light};
+  --earth-raid-text: #{$earth--text--raid--light};
+  --earth-text-hover: #{$earth--text--hover--light};
 
   --dark-bg: #{$dark--bg--light};
-  --dark-hover-bg: #{$dark--bg--hover--light};
+  --dark-bg-hover: #{$dark--bg--hover--light};
   --dark-text: #{$dark--text--light};
-  --dark-hover-text: #{$dark--text--hover--light};
+  --dark-raid-text: #{$dark--text--raid--light};
+  --dark-text-hover: #{$dark--text--hover--light};
 
   --light-bg: #{$light--bg--light};
-  --light-hover-bg: #{$light--bg--hover--light};
+  --light-bg-hover: #{$light--bg--hover--light};
   --light-text: #{$light--text--light};
-  --light-hover-text: #{$light--text--hover--light};
+  --light-raid-text: #{$light--text--raid--light};
+  --light-text-hover: #{$light--text--hover--light};
 
   // Gradients
   --hero-gradient: #{$hero--gradient--light};
@@ -298,40 +304,40 @@
 
   // Dark - Element theming
   --wind-bg: #{$wind--bg--dark};
-  --wind-hover-bg: #{$wind--bg--hover--dark};
+  --wind-bg-hover: #{$wind--bg--hover--dark};
   --wind-text: #{$wind--text--dark};
-  --wind-text-bg: #{$wind--text--bg--dark};
-  --wind-hover-text: #{$wind--text--hover--dark};
+  --wind-raid-text: #{$wind--text--raid--dark};
+  --wind-text-hover: #{$wind--text--hover--dark};
 
   --fire-bg: #{$fire--bg--dark};
-  --fire-hover-bg: #{$fire--bg--hover--dark};
+  --fire-bg-hover: #{$fire--bg--hover--dark};
   --fire-text: #{$fire--text--dark};
-  --fire-text-bg: #{$fire--text--bg--dark};
-  --fire-hover-text: #{$fire--text--hover--dark};
+  --fire-raid-text: #{$fire--text--raid--dark};
+  --fire-text-hover: #{$fire--text--hover--dark};
 
   --water-bg: #{$water--bg--dark};
-  --water-hover-bg: #{$water--bg--hover--dark};
+  --water-bg-hover: #{$water--bg--hover--dark};
   --water-text: #{$water--text--dark};
-  --water-text-bg: #{$water--text--bg--dark};
-  --water-hover-text: #{$water--text--hover--dark};
+  --water-raid-text: #{$water--text--raid--dark};
+  --water-text-hover: #{$water--text--hover--dark};
 
   --earth-bg: #{$earth--bg--dark};
-  --earth-hover-bg: #{$earth--bg--hover--dark};
+  --earth-bg-hover: #{$earth--bg--hover--dark};
   --earth-text: #{$earth--text--dark};
-  --earth-text-bg: #{$earth--text--bg--dark};
-  --earth-hover-text: #{$earth--text--hover--dark};
+  --earth-raid-text: #{$earth--text--raid--dark};
+  --earth-text-hover: #{$earth--text--hover--dark};
 
   --dark-bg: #{$dark--bg--dark};
-  --dark-hover-bg: #{$dark--bg--hover--dark};
+  --dark-bg-hover: #{$dark--bg--hover--dark};
   --dark-text: #{$dark--text--dark};
-  --dark-text-bg: #{$dark--text--bg--dark};
-  --dark-hover-text: #{$dark--text--hover--dark};
+  --dark-raid-text: #{$dark--text--raid--dark};
+  --dark-text-hover: #{$dark--text--hover--dark};
 
   --light-bg: #{$light--bg--dark};
-  --light-hover-bg: #{$light--bg--hover--dark};
+  --light-bg-hover: #{$light--bg--hover--dark};
   --light-text: #{$light--text--dark};
-  --light-text-bg: #{$light--text--bg--dark};
-  --light-hover-text: #{$light--text--hover--dark};
+  --light-raid-text: #{$light--text--raid--dark};
+  --light-text-hover: #{$light--text--hover--dark};
 
   // Gradients
   --hero-gradient: #{$hero--gradient--dark};

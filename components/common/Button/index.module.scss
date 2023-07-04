@@ -11,6 +11,7 @@
   gap: 6px;
   transition: 0.18s opacity ease-in-out;
   user-select: none;
+  transition: background-color 0.18s ease-out, color 0.18s ease-out;
 
   .text {
     align-items: center;
@@ -396,22 +397,13 @@
     }
   }
 
-  &.null {
-    background: $grey-90;
-    color: $grey-55;
-
-    &:hover {
-      background: $grey-70;
-      color: $grey-15;
-    }
-  }
-
   &.wind {
     background: var(--wind-bg);
     color: var(--wind-text);
 
     &:hover {
       background: var(--wind-bg-hover);
+      color: var(--wind-text-hover);
     }
   }
 
@@ -421,6 +413,7 @@
 
     &:hover {
       background: var(--fire-bg-hover);
+      color: var(--fire-text-hover);
     }
   }
 
@@ -430,6 +423,7 @@
 
     &:hover {
       background: var(--water-bg-hover);
+      color: var(--water-text-hover);
     }
   }
 
@@ -439,6 +433,7 @@
 
     &:hover {
       background: var(--earth-bg-hover);
+      color: var(--earth-text-hover);
     }
   }
 
@@ -448,6 +443,7 @@
 
     &:hover {
       background: var(--dark-bg-hover);
+      color: var(--dark-text-hover);
     }
   }
 
@@ -457,6 +453,7 @@
 
     &:hover {
       background: var(--light-bg-hover);
+      color: var(--light-text-hover);
     }
   }
 }
