@@ -95,6 +95,11 @@ const WeaponModal = ({
         }
       })
     }
+
+    if (gridWeapon.awakening) {
+      setAwakening(gridWeapon.awakening.type)
+      setAwakeningLevel(gridWeapon.awakening.level)
+    }
   }, [gridWeapon])
 
   // Methods: Data retrieval
@@ -225,8 +230,6 @@ const WeaponModal = ({
   }
 
   function handleOpenChange(open: boolean) {
-    console.log(`Modal is currently open? ${open}`)
-
     if (modalOpen && hasBeenModified()) {
       setAlertOpen(true)
     } else {
@@ -310,12 +313,10 @@ const WeaponModal = ({
     const ax1Changed =
       gridWeapon.ax[0].modifier !== primaryAxModifier ||
       gridWeapon.ax[0].strength !== primaryAxValue
-    // console.log(`Has ax 1 changed? ${ax1Changed}`)
 
     const ax2Changed =
       gridWeapon.ax[1].modifier !== secondaryAxModifier ||
       gridWeapon.ax[1].strength !== secondaryAxValue
-    // console.log(`Has ax 2 changed? ${ax2Changed}`)
 
     return ax1Changed || ax2Changed
   }
@@ -327,7 +328,6 @@ const WeaponModal = ({
     const awakeningChanged =
       !isEqual(gridWeapon.awakening.type, awakening) ||
       gridWeapon.awakening.level !== awakeningLevel
-    // console.log(`Has awakening changed? ${awakeningChanged}`)
 
     // Return true if the awakening has been modified and is not empty
     return awakeningChanged
