@@ -150,6 +150,7 @@ const NewRoute: React.FC<Props> = ({
           new={true}
           pushHistory={callback}
           selectedTab={selectedTab}
+          raidGroups={context.raidGroups}
           handleTabChanged={handleTabChange}
         />
       </React.Fragment>

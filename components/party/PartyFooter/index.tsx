@@ -33,6 +33,7 @@ interface Props {
   party?: Party
   new: boolean
   editable: boolean
+  raidGroups: RaidGroup[]
   remixCallback: () => void
   updateCallback: (details: DetailsObject) => Promise<any>
 }
@@ -225,6 +226,7 @@ const PartyFooter = (props: Props) => {
             <EditPartyModal
               open={detailsOpen}
               party={props.party}
+              raidGroups={props.raidGroups}
               onOpenChange={handleDetailsOpenChange}
               updateParty={props.updateCallback}
             >

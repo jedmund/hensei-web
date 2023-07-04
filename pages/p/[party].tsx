@@ -128,6 +128,7 @@ const PartyRoute: React.FC<Props> = ({
         <Party
           team={context.party}
           selectedTab={selectedTab}
+          raidGroups={context.raidGroups}
           handleTabChanged={handleTabChange}
         />
       </React.Fragment>

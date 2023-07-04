@@ -28,6 +28,7 @@ interface Props {
   new?: boolean
   team?: Party
   selectedTab: GridType
+  raidGroups: RaidGroup[]
   handleTabChanged: (value: string) => void
   pushHistory?: (path: string) => void
 }
@@ -440,6 +441,7 @@ const Party = (props: Props) => {
         party={props.team}
         new={props.new || false}
         editable={props.new ? true : party.editable}
+        raidGroups={props.raidGroups}
         deleteCallback={deleteTeam}
         remixCallback={remixTeam}
         updateCallback={updateDetails}
@@ -453,6 +455,7 @@ const Party = (props: Props) => {
         party={props.team}
         new={props.new || false}
         editable={party.editable}
+        raidGroups={props.raidGroups}
         remixCallback={remixTeam}
         updateCallback={updateDetails}
       />
