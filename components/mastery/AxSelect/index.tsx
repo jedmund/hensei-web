@@ -1,7 +1,8 @@
-import React, { ForwardedRef, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
+import Input from '~components/common/Input'
 import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
 
@@ -45,14 +46,19 @@ const AXSelect = (props: Props) => {
     axValue2: '',
   })
 
+  const inputClasses = classNames({
+    fullHeight: true,
+    range: true,
+  })
+
   const primaryErrorClasses = classNames({
-    errors: true,
-    visible: errors.axValue1.length > 0,
+    [styles.errors]: true,
+    [styles.visible]: errors.axValue1.length > 0,
   })
 
   const secondaryErrorClasses = classNames({
-    errors: true,
-    visible: errors.axValue2.length > 0,
+    [styles.errors]: true,
+    [styles.visible]: errors.axValue2.length > 0,
   })
 
   // Refs
@@ -139,8 +145,8 @@ const AXSelect = (props: Props) => {
 
   // Classes
   const secondarySetClasses = classNames({
-    AXSet: true,
-    hidden: primaryAxModifier < 0,
+    [styles.set]: true,
+    [styles.hidden]: primaryAxModifier < 0,
   })
 
   function setupAx1() {
@@ -271,7 +277,7 @@ const AXSelect = (props: Props) => {
       // Reset the secondary AX modifier, reset the AX value and hide the input
       setSecondaryAxModifier(-1)
       setSecondaryAxValue(0)
-      secondaryAxValueInput.current.className = 'Input Contained'
+      // secondaryAxValueInput.current.className = 'Input Contained'
       secondaryAxValueInput.current.value = ''
     }
   }
@@ -377,7 +383,7 @@ const AXSelect = (props: Props) => {
     if (ax) {
       const rangeString = `${ax.minValue}~${ax.maxValue}${ax.suffix || ''}`
 
-      element.className = 'Input Bound Visible'
+      // element.className = 'Input Bound Visible'
       element.disabled = false
       element.placeholder = rangeString
       element.min = `${ax.minValue}`
@@ -386,12 +392,12 @@ const AXSelect = (props: Props) => {
     } else {
       if (primaryAxValueInput.current && secondaryAxValueInput.current) {
         if (primaryAxValueInput.current == element) {
-          primaryAxValueInput.current.className = 'Input Contained'
+          // primaryAxValueInput.current.className = 'Input Contained'
           primaryAxValueInput.current.disabled = true
           primaryAxValueInput.current.placeholder = ''
         }
 
-        secondaryAxValueInput.current.className = 'Input Contained'
+        // secondaryAxValueInput.current.className = 'Input Contained'
         secondaryAxValueInput.current.disabled = true
         secondaryAxValueInput.current.placeholder = ''
       }
@@ -399,24 +405,31 @@ const AXSelect = (props: Props) => {
   }
 
   return (
-    <div className="AXSelect">
-      <div className="AXSet">
-        <div className="fields">
+    <div className={styles.ax}>
+      <div className={styles.set}>
+        <div className={styles.fields}>
           <Select
             key="ax1"
             value={`${primaryAxModifier}`}
             open={openAX1}
+            trigger={{
+              className: 'grow',
+            }}
             onClose={() => onClose(1)}
             onOpenChange={() => openSelect(1)}
             onValueChange={handleAX1SelectChange}
-            triggerClass="modal"
             overlayVisible={false}
           >
             {generateOptions(0)}
           </Select>
 
-          <input
-            defaultValue={
+          <Input
+            className={inputClasses}
+            wrapperClassName="fullHeight"
+            fieldsetClassName={classNames({
+              hidden: primaryAxModifier < 0,
+            })}
+            value={
               props.currentSkills && props.currentSkills[0]
                 ? props.currentSkills[0].strength
                 : 0
@@ -430,22 +443,29 @@ const AXSelect = (props: Props) => {
       </div>
 
       <div className={secondarySetClasses}>
-        <div className="fields">
+        <div className={styles.fields}>
           <Select
             key="ax2"
             value={`${secondaryAxModifier}`}
             open={openAX2}
+            trigger={{
+              className: 'grow',
+            }}
             onClose={() => onClose(2)}
             onOpenChange={() => openSelect(2)}
             onValueChange={handleAX2SelectChange}
-            triggerClass="modal"
             ref={secondaryAxModifierSelect}
             overlayVisible={false}
           >
             {generateOptions(1)}
           </Select>
-          <input
-            defaultValue={
+          <Input
+            className={inputClasses}
+            wrapperClassName="fullHeight"
+            fieldsetClassName={classNames({
+              hidden: secondaryAxModifier < 0,
+            })}
+            value={
               props.currentSkills && props.currentSkills[1]
                 ? props.currentSkills[1].strength
                 : 0

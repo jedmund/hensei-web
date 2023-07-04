@@ -1,9 +1,9 @@
-.AXSelect {
+.ax {
   display: flex;
   flex-direction: column;
   gap: $unit;
 
-  .AXSet {
+  .set {
     &.hidden {
       display: none;
     }
@@ -22,26 +22,6 @@
       display: flex;
       flex-direction: row;
       gap: $unit;
-
-      .SelectTrigger {
-        flex-grow: 1;
-        margin: 0;
-      }
-
-      input {
-        -webkit-font-smoothing: antialiased;
-        border: none;
-        border-radius: $input-corner;
-        box-sizing: border-box;
-        display: none;
-        text-align: right;
-        min-width: $unit-14x;
-        width: 100px;
-
-        &.Visible {
-          display: block;
-        }
-      }
     }
   }
 }
