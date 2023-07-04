@@ -96,27 +96,27 @@ h5 {
   // opacity: 0.7;
 
   &.wind {
-    color: $wind-bg-20;
+    color: var(--wind-text);
   }
 
   &.fire {
-    color: $fire-bg-20;
+    color: var(--fire-text);
   }
 
   &.water {
-    color: $water-bg-20;
+    color: var(--water-text);
   }
 
   &.earth {
-    color: $earth-bg-20;
+    color: var(--earth-text);
   }
 
   &.dark {
-    color: $dark-bg-10;
+    color: var(--dark-text);
   }
 
   &.light {
-    color: $light-bg-20;
+    color: var(--light-text);
   }
 }
 

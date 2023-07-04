@@ -407,56 +407,56 @@
   }
 
   &.wind {
-    background: $wind-bg-20;
-    color: $wind-text-10;
+    background: var(--wind-bg);
+    color: var(--wind-text);
 
     &:hover {
-      background: darken($wind-bg-20, 10);
+      background: var(--wind-bg-hover);
     }
   }
 
   &.fire {
-    background: $fire-bg-20;
-    color: $fire-text-10;
+    background: var(--fire-bg);
+    color: var(--fire-text);
 
     &:hover {
-      background: darken($fire-bg-20, 10);
+      background: var(--fire-bg-hover);
     }
   }
 
   &.water {
-    background: $water-bg-20;
-    color: $water-text-10;
+    background: var(--water-bg);
+    color: var(--water-text);
 
     &:hover {
-      background: darken($water-bg-20, 10);
+      background: var(--water-bg-hover);
     }
   }
 
   &.earth {
-    background: $earth-bg-20;
-    color: $earth-text-10;
+    background: var(--earth-bg);
+    color: var(--earth-text);
 
     &:hover {
-      background: darken($earth-bg-20, 10);
+      background: var(--earth-bg-hover);
     }
   }
 
   &.dark {
-    background: $dark-bg-10;
-    color: $dark-text-10;
+    background: var(--dark-bg);
+    color: var(--dark-text);
 
     &:hover {
-      background: darken($dark-bg-10, 10);
+      background: var(--dark-bg-hover);
     }
   }
 
   &.light {
-    background: $light-bg-20;
-    color: $light-text-10;
+    background: var(--light-bg);
+    color: var(--light-text);
 
     &:hover {
-      background: darken($light-bg-20, 10);
+      background: var(--light-bg-hover);
     }
   }
 }
