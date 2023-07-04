@@ -1,7 +1,7 @@
 // Core dependencies
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { Trans, useTranslation } from 'next-i18next'
 import isEqual from 'lodash/isEqual'
 
 // UI dependencies
@@ -57,16 +57,10 @@ const CharacterModal = ({
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
   const { t } = useTranslation('common')
 
-  // UI state
-  const [open, setOpen] = useState(false)
-  const [formValid, setFormValid] = useState(false)
-
-  // Refs
-  const headerRef = React.createRef<HTMLDivElement>()
-  const footerRef = React.createRef<HTMLDivElement>()
-
   // State: Component
+  const [open, setOpen] = useState(false)
   const [alertOpen, setAlertOpen] = useState(false)
+  const [formValid, setFormValid] = useState(false)
 
   // State: Data
   const [perpetuity, setPerpetuity] = useState(false)
@@ -80,6 +74,10 @@ const CharacterModal = ({
   const [awakening, setAwakening] = useState<Awakening>()
   const [awakeningLevel, setAwakeningLevel] = useState(1)
   const [transcendenceStep, setTranscendenceStep] = useState(0)
+
+  // Refs
+  const headerRef = React.createRef<HTMLDivElement>()
+  const footerRef = React.createRef<HTMLDivElement>()
 
   // Hooks
   useEffect(() => {
@@ -136,7 +134,7 @@ const CharacterModal = ({
     return object
   }
 
-  // Methods: Convenience
+  // Methods: Modification checking
   function hasBeenModified() {
     const rings = ringsChanged()
     const aetherialMastery = aetherialMasteryChanged()
@@ -272,11 +270,14 @@ const CharacterModal = ({
     <Alert
       message={
         <span>
-          You will lose all changes to{' '}
-          <strong>{gridCharacter.object.name[locale]}</strong> if you continue.
-          <br />
-          <br />
-          Are you sure you want to continue without saving?
+          <Trans i18nKey="alerts.unsaved_changes.object">
+            You will lose all changes to{' '}
+            <strong>{{ objectName: gridCharacter.object.name[locale] }}</strong>{' '}
+            if you continue.
+            <br />
+            <br />
+            Are you sure you want to continue without saving?
+          </Trans>
         </span>
       }
       open={alertOpen}
