@@ -8,7 +8,7 @@ interface Props extends React.ComponentProps<'div'> {
   value?: string
 }
 
-const Textarea = React.forwardRef<HTMLDivElement, Props>(function textarea(
+const Textarea = React.forwardRef<HTMLDivElement, Props>(function Textarea(
   { bound, value: initialValue, ...props }: Props,
   forwardedRef
 ) {

@@ -8,7 +8,7 @@ import styles from './index.module.scss'
 interface Props extends SwitchPrimitive.SwitchProps {}
 
 export const LanguageSwitch = React.forwardRef<HTMLButtonElement, Props>(
-  function languageSwitch(
+  function LanguageSwitch(
     { children }: PropsWithChildren<Props>,
     forwardedRef
   ) {

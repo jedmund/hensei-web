@@ -34,7 +34,7 @@ interface Props {
   new: boolean
   editable: boolean
   remixCallback: () => void
-  updateCallback: (details: DetailsObject) => void
+  updateCallback: (details: DetailsObject) => Promise<any>
 }
 
 const PartyFooter = (props: Props) => {
@@ -48,6 +48,7 @@ const PartyFooter = (props: Props) => {
 
   // State: Component
   const [currentSegment, setCurrentSegment] = useState(0)
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const [remixAlertOpen, setRemixAlertOpen] = useState(false)
   const [remixToastOpen, setRemixToastOpen] = useState(false)
 
@@ -160,6 +161,11 @@ const PartyFooter = (props: Props) => {
     })
   }
 
+  // Actions: Edit info
+  function handleDetailsOpenChange(open: boolean) {
+    setDetailsOpen(open)
+  }
+
   // Actions: Remix team
   function remixTeamCallback() {
     setRemixToastOpen(true)
@@ -217,8 +223,10 @@ const PartyFooter = (props: Props) => {
           <h3>{t('footer.description.empty')}</h3>
           {props.editable && (
             <EditPartyModal
+              open={detailsOpen}
               party={props.party}
-              updateCallback={props.updateCallback}
+              onOpenChange={handleDetailsOpenChange}
+              updateParty={props.updateCallback}
             >
               <Button
                 leftAccessoryIcon={<EditIcon />}

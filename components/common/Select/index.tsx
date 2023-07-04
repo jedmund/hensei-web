@@ -31,7 +31,7 @@ interface Props
   overlayVisible?: boolean
 }
 
-const Select = React.forwardRef<HTMLButtonElement, Props>(function select(
+const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
   props: Props,
   forwardedRef
 ) {

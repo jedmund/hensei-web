@@ -18,7 +18,7 @@ const defaultProps = {
   showCounter: false,
 }
 
-const Input = React.forwardRef<HTMLInputElement, Props>(function input(
+const Input = React.forwardRef<HTMLInputElement, Props>(function Input(
   {
     value: initialValue,
     bound,
