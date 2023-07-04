@@ -187,10 +187,8 @@ const ProfileRoute: React.FC<Props> = ({
 
   // Fetch all raids on mount, then find the raid in the URL if present
   useEffect(() => {
-    api.endpoints.raids.getAll().then((response) => {
-      const raids = appState.raidGroups.flatMap((group) => group.raids)
-      setRaids(raids)
-    })
+    const raids = appState.raidGroups.flatMap((group) => group.raids)
+    setRaids(raids)
   }, [setRaids])
 
   // When the element, raid or recency filter changes,

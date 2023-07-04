@@ -109,7 +109,7 @@ const NewRoute: React.FC<Props> = ({
 
   useEffect(() => {
     if (context && context.jobs && context.jobSkills) {
-      appState.raids = context.raidGroups
+      appState.raidGroups = context.raidGroups
       appState.jobs = context.jobs
       appState.jobSkills = context.jobSkills
       appState.weaponKeys = context.weaponKeys
