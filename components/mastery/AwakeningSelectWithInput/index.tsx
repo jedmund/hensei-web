@@ -125,11 +125,9 @@ const AwakeningSelectWithInput = ({
     const input = inputRef.current
     if (input && !handleInputError(parseFloat(input.value))) return
 
-    setCurrentLevel(parseInt(event.target.value))
-    sendValues(
-      currentAwakening ? currentAwakening.id : '0',
-      parseInt(event.target.value)
-    )
+    const newLevel = parseInt(event.target.value)
+    setCurrentLevel(newLevel)
+    sendValues(currentAwakening ? currentAwakening.id : '0', newLevel)
   }
 
   // Methods: Handle error
