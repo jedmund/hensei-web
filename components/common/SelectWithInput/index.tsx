@@ -181,6 +181,7 @@ const SelectWithInput = ({
           value={`${currentItemSkill ? currentItemSkill.id : 0}`}
           open={open}
           trigger={{
+            bound: true,
             className: 'grow',
           }}
           disabled={selectDisabled}
@@ -200,6 +201,7 @@ const SelectWithInput = ({
           })}
           wrapperClassName="fullHeight"
           type="number"
+          bound={true}
           placeholder={rangeString()}
           min={currentItemSkill?.minValue}
           max={currentItemSkill?.maxValue}

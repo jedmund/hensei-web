@@ -154,6 +154,9 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
         onClose={onClose}
         onOpenChange={onOpenChange}
         onValueChange={handleChange}
+        trigger={{
+          bound: true,
+        }}
         ref={ref}
         overlayVisible={false}
       >

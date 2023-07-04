@@ -135,6 +135,7 @@ const ExtendedMasterySelect = ({
         onOpenChange={() => changeOpen('left')}
         onClose={onClose}
         trigger={{
+          bound: true,
           className: classNames({
             left: true,
             modal: true,
@@ -154,6 +155,7 @@ const ExtendedMasterySelect = ({
         onClose={onClose}
         overlayVisible={false}
         trigger={{
+          bound: true,
           className: classNames({
             right: true,
             modal: true,

@@ -413,6 +413,7 @@ const AXSelect = (props: Props) => {
             value={`${primaryAxModifier}`}
             open={openAX1}
             trigger={{
+              bound: true,
               className: 'grow',
             }}
             onClose={() => onClose(1)}
@@ -429,6 +430,7 @@ const AXSelect = (props: Props) => {
             fieldsetClassName={classNames({
               hidden: primaryAxModifier < 0,
             })}
+            bound={true}
             value={
               props.currentSkills && props.currentSkills[0]
                 ? props.currentSkills[0].strength
@@ -449,6 +451,7 @@ const AXSelect = (props: Props) => {
             value={`${secondaryAxModifier}`}
             open={openAX2}
             trigger={{
+              bound: true,
               className: 'grow',
             }}
             onClose={() => onClose(2)}
@@ -465,6 +468,7 @@ const AXSelect = (props: Props) => {
             fieldsetClassName={classNames({
               hidden: secondaryAxModifier < 0,
             })}
+            bound={true}
             value={
               props.currentSkills && props.currentSkills[1]
                 ? props.currentSkills[1].strength

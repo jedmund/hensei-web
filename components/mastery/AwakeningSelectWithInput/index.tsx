@@ -189,6 +189,7 @@ const AwakeningSelectWithInput = ({
           onOpenChange={changeOpen}
           onClose={onClose}
           trigger={{
+            bound: true,
             className: 'grow',
           }}
           overlayVisible={false}
@@ -204,6 +205,7 @@ const AwakeningSelectWithInput = ({
               currentAwakening === undefined || currentAwakening.id === '0',
           })}
           wrapperClassName="fullHeight"
+          bound={true}
           type="number"
           placeholder={rangeString()}
           min={1}
