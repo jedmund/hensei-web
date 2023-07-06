@@ -101,5 +101,10 @@
     "sass-loader": "^13.2.2",
     "storybook": "latest",
     "typescript": "^4.5.5"
+  },
+  "overrides": {
+    "@tiptap/extension-mention": {
+      "@tiptap/suggestion": "2.0.0-beta.91"
+    }
   }
 }
