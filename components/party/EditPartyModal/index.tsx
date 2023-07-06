@@ -433,7 +433,7 @@ const EditPartyModal = ({
   const nameField = (
     <Input
       name="name"
-      placeholder="Name your team"
+      placeholder={t('modals.edit_team.placeholders.name')}
       autoFocus={true}
       value={name}
       maxLength={50}
