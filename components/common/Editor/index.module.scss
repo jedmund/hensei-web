@@ -61,6 +61,44 @@
       font-style: italic;
     }
 
+    ul {
+      padding: 0 $unit-2x;
+      list-style-type: disc;
+    }
+
+    ol {
+      padding: 0 $unit-2x;
+      list-style-type: decimal;
+    }
+
+    h1 {
+      font-size: $font-xlarge;
+      font-weight: $medium;
+      margin: $unit 0;
+      text-align: left;
+    }
+
+    h2 {
+      font-size: $font-large;
+      font-weight: $medium;
+      margin: $unit 0;
+      text-align: left;
+    }
+
+    h3 {
+      font-size: $font-regular;
+      font-weight: $medium;
+      margin: $unit 0;
+      text-align: left;
+    }
+
+    mark {
+      border-radius: $item-corner-small;
+      background: var(--highlight-bg);
+      color: var(--highlight-text);
+      padding: 1px $unit-fourth;
+    }
+
     iframe {
       background: var(--input-bound-bg);
       border-radius: $card-corner;
@@ -179,26 +217,6 @@
     gap: $unit-half;
     padding: $unit;
     z-index: 10;
-
-    button {
-      background: var(--toolbar-item-bg);
-      border-radius: $bubble-menu-item-corner;
-      color: var(--toolbar-item-text);
-      font-weight: $medium;
-      font-size: $font-small;
-      padding: $unit-half $unit;
-
-      &:hover {
-        background: var(--toolbar-item-bg-hover);
-        color: var(--toolbar-item-text-hover);
-        cursor: pointer;
-      }
-
-      &.active {
-        background: var(--toolbar-item-bg-active);
-        color: var(--toolbar-item-text-active);
-      }
-    }
 
     .divider {
       background: var(--toolbar-divider-bg);
