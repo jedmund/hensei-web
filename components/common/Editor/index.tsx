@@ -1,4 +1,4 @@
-import { ComponentProps, useCallback } from 'react'
+import { ComponentProps, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -8,6 +8,7 @@ import CustomMention from '~extensions/CustomMention'
 import classNames from 'classnames'
 
 import { mentionSuggestionOptions } from '~utils/mentionSuggestions'
+import { Editor as TiptapEditor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
 
 import styles from './index.module.scss'
@@ -30,6 +31,8 @@ const Editor = ({
   const router = useRouter()
   const locale = router.locale || 'en'
 
+  const [editor, setEditor] = useState<TiptapEditor | undefined>(undefined)
+
   function isJSON(content?: string) {
     if (!content) return false
 
@@ -40,6 +43,51 @@ const Editor = ({
     }
     return true
   }
+
+  useEffect(() => {
+    editor?.destroy()
+    const newEditor: TiptapEditor = new TiptapEditor({
+      content: formatContent(content),
+      editable: editable,
+      editorProps: {
+        attributes: {
+          class: classNames(
+            {
+              [styles.editor]: true,
+              [styles.bound]: bound,
+            },
+            className?.split(' ').map((c) => styles[c])
+          ),
+        },
+      },
+      extensions: [
+        StarterKit,
+        Link,
+        CustomMention.configure({
+          renderLabel({ options, node }) {
+            return `${node.attrs.id.name[locale] ?? node.attrs.id.granblue_en}`
+          },
+          suggestion: mentionSuggestionOptions,
+          HTMLAttributes: {
+            class: classNames({
+              [styles.mention]: true,
+            }),
+          },
+        }),
+        Youtube.configure({
+          inline: false,
+          modestBranding: true,
+          interfaceLanguage: locale,
+        }),
+      ],
+      onUpdate: ({ editor }) => {
+        const json = editor.getJSON()
+        if (onUpdate) onUpdate(json)
+      },
+    })
+
+    setEditor(newEditor)
+  }, [content])
 
   function formatContent(content?: string) {
     if (!content) return ''
@@ -58,46 +106,6 @@ const Editor = ({
       return formatted
     }
   }
-
-  const editor = useEditor({
-    content: formatContent(content),
-    editable: editable,
-    editorProps: {
-      attributes: {
-        class: classNames(
-          {
-            [styles.editor]: true,
-            [styles.bound]: bound,
-          },
-          className?.split(' ').map((c) => styles[c])
-        ),
-      },
-    },
-    extensions: [
-      StarterKit,
-      Link,
-      CustomMention.configure({
-        renderLabel({ options, node }) {
-          return `${node.attrs.id.name[locale] ?? node.attrs.id.granblue_en}`
-        },
-        suggestion: mentionSuggestionOptions,
-        HTMLAttributes: {
-          class: classNames({
-            [styles.mention]: true,
-          }),
-        },
-      }),
-      Youtube.configure({
-        inline: false,
-        modestBranding: true,
-        interfaceLanguage: locale,
-      }),
-    ],
-    onUpdate: ({ editor }) => {
-      const json = editor.getJSON()
-      if (onUpdate) onUpdate(json)
-    },
-  })
 
   const setLink = useCallback(() => {
     const previousUrl = editor?.getAttributes('link').href
