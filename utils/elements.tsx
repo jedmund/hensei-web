@@ -63,11 +63,3 @@ export const elements: GranblueElement[] = [
     slug: 'light',
   },
 ]
-
-export function numberToElement(value: number) {
-  return elements.find((element) => element.id === value) || elements[0]
-}
-
-export function stringToElement(value: string) {
-  return elements.find((element) => element.name.en === value)
-}
