@@ -466,17 +466,6 @@ const EditPartyModal = ({
     }
   }
 
-  const descriptionField = (
-    <Textarea
-      className="editParty"
-      bound={true}
-      placeholder={t('modals.edit_team.placeholders.description')}
-      value={description}
-      onInput={handleTextAreaChanged}
-      ref={descriptionInput}
-    />
-  )
-
   const editorField = (
     <Editor
       bound={true}
