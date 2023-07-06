@@ -476,6 +476,15 @@ const EditPartyModal = ({
     />
   )
 
+  const editorField = (
+    <Editor
+      bound={true}
+      content={description}
+      editable={true}
+      onUpdate={handleEditorUpdate}
+    />
+  )
+
   const chargeAttackField = (
     <SwitchTableField
       name="charge_attack"
