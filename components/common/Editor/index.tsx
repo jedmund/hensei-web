@@ -7,10 +7,10 @@ import Youtube from '@tiptap/extension-youtube'
 import CustomMention from '~extensions/CustomMention'
 import classNames from 'classnames'
 
+import { mentionSuggestionOptions } from '~utils/mentionSuggestions'
 import type { JSONContent } from '@tiptap/core'
 
 import styles from './index.module.scss'
-import { mentionSuggestionOptions } from '~components/Suggestion'
 
 interface Props extends ComponentProps<'div'> {
   bound: boolean
@@ -30,7 +30,37 @@ const Editor = ({
   const router = useRouter()
   const locale = router.locale || 'en'
 
+  function isJSON(content?: string) {
+    if (!content) return false
+
+    try {
+      JSON.parse(content)
+    } catch (e) {
+      return false
+    }
+    return true
+  }
+
+  function formatContent(content?: string) {
+    if (!content) return ''
+    if (isJSON(content)) return JSON.parse(content)
+    else {
+      // Otherwise, create a new <p> tag after each double newline.
+      // Add < br /> tags for single newlines.
+      // Add a < br /> after each paragraph.
+      const paragraphs = content.split('\n\n')
+      const formatted = paragraphs
+        .map((p) => {
+          const lines = p.split('\n')
+          return lines.join('<br />')
+        })
+        .join('</p><br /><p>')
+      return formatted
+    }
+  }
+
   const editor = useEditor({
+    content: formatContent(content),
     editable: editable,
     editorProps: {
       attributes: {
@@ -63,7 +93,6 @@ const Editor = ({
         interfaceLanguage: locale,
       }),
     ],
-    content: content ? JSON.parse(content) : '',
     onUpdate: ({ editor }) => {
       const json = editor.getJSON()
       if (onUpdate) onUpdate(json)
