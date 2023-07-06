@@ -14,7 +14,7 @@ interface Props
   imageAlt?: string
   imageClass?: string
   imageSrc?: string[]
-  onValueChange: (value?: string) => void
+  onValueChange: (value?: string | number | readonly string[]) => void
 }
 
 const InputTableField = ({
@@ -25,10 +25,12 @@ const InputTableField = ({
   imageSrc,
   ...props
 }: Props) => {
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState<
+    string | number | readonly string[]
+  >()
 
   useEffect(() => {
-    if (props.value) setInputValue(`${props.value}`)
+    if (props.value !== undefined) setInputValue(props.value)
   }, [props.value])
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const InputTableField = ({
       <Input
         className={props.className}
         placeholder={props.placeholder}
-        value={inputValue ? `${inputValue}` : ''}
+        value={inputValue !== undefined ? inputValue : ''}
         step={1}
         tabIndex={props.tabIndex}
         bound={true}

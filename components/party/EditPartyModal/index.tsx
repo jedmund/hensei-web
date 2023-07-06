@@ -132,7 +132,6 @@ const EditPartyModal = ({
   }
 
   function handleEditorUpdate(content: JSONContent) {
-    console.log('Editor updated')
     setDescription(JSON.stringify(content))
   }
 
@@ -160,22 +159,23 @@ const EditPartyModal = ({
     if (!isNaN(value)) setClearTime(value)
   }
 
-  function handleTurnCountChanged(value?: string) {
-    if (!value) return
-    const numericalValue = parseInt(value)
-    if (!isNaN(numericalValue)) setTurnCount(numericalValue)
+  function handleTurnCountChanged(value?: string | number | readonly string[]) {
+    if (value === null || value === undefined) return
+    setTurnCount(value as number)
   }
 
-  function handleButtonCountChanged(value?: string) {
-    if (!value) return
-    const numericalValue = parseInt(value)
-    if (!isNaN(numericalValue)) setButtonCount(numericalValue)
+  function handleButtonCountChanged(
+    value?: string | number | readonly string[]
+  ) {
+    if (value === null || value === undefined) return
+    setButtonCount(value as number)
   }
 
-  function handleChainCountChanged(value?: string) {
-    if (!value) return
-    const numericalValue = parseInt(value)
-    if (!isNaN(numericalValue)) setChainCount(numericalValue)
+  function handleChainCountChanged(
+    value?: string | number | readonly string[]
+  ) {
+    if (value === null || value === undefined) return
+    setChainCount(value as number)
   }
 
   function handleTextAreaChanged(event: React.ChangeEvent<HTMLDivElement>) {
@@ -298,7 +298,6 @@ const EditPartyModal = ({
   function hasBeenModified() {
     const nameChanged =
       name !== party.name && !(name === '' && party.name === undefined)
-
     const descriptionChanged =
       description !== party.description &&
       !(description === '' && party.description === undefined)
@@ -312,6 +311,21 @@ const EditPartyModal = ({
     const turnCountChanged = turnCount !== party.turnCount
     const buttonCountChanged = buttonCount !== party.buttonCount
     const chainCountChanged = chainCount !== party.chainCount
+
+    // Debugging for if you need to check if a value is being changed
+    // console.log(`
+    // nameChanged: ${nameChanged}\n
+    // descriptionChanged: ${descriptionChanged}\n
+    // raidChanged: ${raidChanged}\n
+    // chargeAttackChanged: ${chargeAttackChanged}\n
+    // fullAutoChanged: ${fullAutoChanged}\n
+    // autoGuardChanged: ${autoGuardChanged}\n
+    // autoSummonChanged: ${autoSummonChanged}\n
+    // clearTimeChanged: ${clearTimeChanged}\n
+    // turnCountChanged: ${turnCountChanged}\n
+    // buttonCountChanged: ${buttonCountChanged}\n
+    // chainCountChanged: ${chainCountChanged}\n
+    // `)
 
     return (
       nameChanged ||
@@ -339,9 +353,9 @@ const EditPartyModal = ({
     setFullAuto(party.fullAuto)
     setChargeAttack(party.chargeAttack)
     setClearTime(party.clearTime)
-    if (party.turnCount) setTurnCount(party.turnCount)
-    if (party.buttonCount) setButtonCount(party.buttonCount)
-    if (party.chainCount) setChainCount(party.chainCount)
+    if (party.turnCount !== undefined) setTurnCount(party.turnCount)
+    if (party.buttonCount !== undefined) setButtonCount(party.buttonCount)
+    if (party.chainCount !== undefined) setChainCount(party.chainCount)
   }
 
   async function updateDetails(event: React.MouseEvent) {
