@@ -261,11 +261,9 @@ const SummonGrid = (props: Props) => {
 
     try {
       if (stage != previousTranscendenceStages[position])
-        await api.endpoints.grid_summons
-          .update(id, payload)
-          .then((response) => {
-            storeGridSummon(response.data.grid_summon)
-          })
+        await api.updateTranscendence('summon', id, stage).then((response) => {
+          storeGridSummon(response.data.grid_summon)
+        })
     } catch (error) {
       console.error(error)
 

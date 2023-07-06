@@ -2,8 +2,8 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
+import { Popover } from '@radix-ui/react-popover'
 import {
-  Popover,
   PopoverAnchor,
   PopoverContent,
 } from '~components/common/PopoverContent'
@@ -40,12 +40,8 @@ const TranscendencePopover = ({
 
   const popoverRef = React.createRef<HTMLDivElement>()
 
-  const classes = classNames({
-    Transcendence: true,
-  })
-
   const levelClasses = classNames({
-    Pending: stage != currentStage,
+    [styles.pending]: stage != currentStage,
   })
 
   useEffect(() => {
@@ -77,16 +73,20 @@ const TranscendencePopover = ({
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverAnchor>{children}</PopoverAnchor>
-      <PopoverContent className={classes} ref={popoverRef} tabIndex={tabIndex}>
+      <PopoverContent
+        className={styles.transcendence}
+        ref={popoverRef}
+        tabIndex={tabIndex}
+      >
         <TranscendenceStar
-          className="Interactive Base"
+          className="interactive base"
           editable={true}
           interactive={true}
           stage={stage}
           onFragmentClick={handleFragmentClicked}
           onFragmentHover={handleFragmentHovered}
         />
-        <h4>
+        <h4 className="name">
           <span>{t('level')}&nbsp;</span>
           <span className={levelClasses}>{baseLevel + 10 * currentStage}</span>
         </h4>

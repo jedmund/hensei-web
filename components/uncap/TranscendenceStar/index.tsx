@@ -46,9 +46,12 @@ const TranscendenceStar = ({
     [styles.stage5]: stage === 5,
   })
 
-  const baseImageClasses = classnames(className, {
-    [styles.figure]: true,
-  })
+  const baseImageClasses = classnames(
+    {
+      [styles.figure]: true,
+    },
+    className?.split(' ').map((c) => styles[c])
+  )
 
   useEffect(() => {
     setVisibleStage(stage)
@@ -87,7 +90,7 @@ const TranscendenceStar = ({
       onMouseLeave={interactive ? handleMouseLeave : () => {}}
       tabIndex={tabIndex}
     >
-      <div className="Fragments">
+      <div className={styles.fragments}>
         {[...Array(NUM_FRAGMENTS)].map((e, i) => {
           const loopStage = i + 1
           return interactive ? (

@@ -179,6 +179,17 @@ class Api {
       }
     })
   }
+
+  updateTranscendence(resource: 'character'|'summon', id: string, value: number) {
+    const pluralized = resource + 's'
+    const resourceUrl = `${this.url}/${pluralized}/update_uncap`
+    return axios.post(resourceUrl, {
+      [resource]: {
+        id: id,
+        transcendence_step: value
+      }
+    })
+  }
   
   userInfo(id: string) {
     const resourceUrl = `${this.url}/users/info/${id}`
