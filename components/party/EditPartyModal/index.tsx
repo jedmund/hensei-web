@@ -471,6 +471,7 @@ const EditPartyModal = ({
       bound={true}
       content={description}
       editable={true}
+      key={props.party?.shortcode}
       onUpdate={handleEditorUpdate}
     />
   )
