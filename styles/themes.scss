@@ -159,6 +159,14 @@
   --grid-border-color: #{$grid--border--color--light};
 
   // Light - Element theming
+  --null-bg: #{$null--bg--light};
+  --null-bg-hover: #{$null--bg--hover--light};
+  --null-text: #{$null--text--light};
+  --null-raid-text: #{$null--text--raid--light};
+  --null-text-hover: #{$null--text--hover--light};
+  --null-shadow: #{$null--shadow--light};
+  --null-shadow-hover: #{$null--shadow--light--hover};
+
   --wind-bg: #{$wind--bg--light};
   --wind-bg-hover: #{$wind--bg--hover--light};
   --wind-text: #{$wind--text--light};
@@ -373,6 +381,14 @@
   --grid-border-color: #{$grid--border--color--dark};
 
   // Dark - Element theming
+  --null-bg: #{$null--bg--dark};
+  --null-bg-hover: #{$null--bg--hover--dark};
+  --null-text: #{$null--text--dark};
+  --null-raid-text: #{$null--text--raid--dark};
+  --null-text-hover: #{$null--text--hover--dark};
+  --null-shadow: #{$null--shadow--dark};
+  --null-shadow-hover: #{$null--shadow--dark--hover};
+
   --wind-bg: #{$wind--bg--dark};
   --wind-bg-hover: #{$wind--bg--hover--dark};
   --wind-text: #{$wind--text--dark};
