@@ -54,9 +54,9 @@ root
 ├─ accessory-square/
 ├─ awakening/
 ├─ ax/
-├─ chara-main/
-├─ chara-grid/
-├─ chara-square/
+├─ character-main/
+├─ character-grid/
+├─ character-square/
 ├─ guidebooks/
 ├─ jobs/
 ├─ job-icons/

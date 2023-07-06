@@ -203,7 +203,7 @@ const CharacterUnit = ({
         suffix = `${suffix}_0${element}`
       }
 
-      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-main/${character.granblue_id}_${suffix}.jpg`
+      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblue_id}_${suffix}.jpg`
     }
 
     setImageUrl(imgSrc)

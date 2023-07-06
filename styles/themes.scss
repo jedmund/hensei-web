@@ -44,6 +44,25 @@
   --menu-bg-item-hover: #{$menu--item--bg--light--hover};
   --menu-text-hover: #{$menu--text--light--hover};
 
+  // Light - Formatting menu
+  --formatting-menu-bg: #{$formatting--menu--bg--light};
+  --formatting-menu-item-bg: #{$formatting--menu--item--bg--light};
+  --formatting-menu-item-bg-hover: #{$formatting--menu--item--bg--light--hover};
+  --formatting-menu-item-bg-active: #{$formatting--menu--item--bg--dark--active};
+  --formatting-menu-item-text: #{$formatting--menu--item--text--light};
+  --formatting-menu-item-text-hover: #{$formatting--menu--item--text--light--hover};
+  --formatting-menu-item-text-active: #{$formatting--menu--item--text--dark--active};
+
+  // Light - Toolbar
+  --toolbar-bg: #{$toolbar--bg--light};
+  --toolbar-divider-bg: #{$toolbar--divider--bg--light};
+  --toolbar-item-bg: #{$toolbar--item--bg--light};
+  --toolbar-item-bg-hover: #{$toolbar--item--bg--light--hover};
+  --toolbar-item-bg-active: #{$toolbar--item--bg--light--active};
+  --toolbar-item-text: #{$toolbar--item--text--light};
+  --toolbar-item-text-hover: #{$toolbar--item--text--light--hover};
+  --toolbar-item-text-active: #{$toolbar--item--text--light--active};
+
   // Light - Placeholders
   --placeholder-bound-bg: #{$placeholder--bound--bg--light};
   --placeholder-bound-bg-hover: #{$placeholder--bound--bg--light--hover};
@@ -139,36 +158,48 @@
   --wind-text: #{$wind--text--light};
   --wind-raid-text: #{$wind--text--raid--light};
   --wind-text-hover: #{$wind--text--hover--light};
+  --wind-shadow: #{$wind--shadow--light};
+  --wind-shadow-hover: #{$wind--shadow--light--hover};
 
   --fire-bg: #{$fire--bg--light};
   --fire-bg-hover: #{$fire--bg--hover--light};
   --fire-text: #{$fire--text--light};
   --fire-raid-text: #{$fire--text--raid--light};
   --fire-text-hover: #{$fire--text--hover--light};
+  --fire-shadow: #{$fire--shadow--light};
+  --fire-shadow-hover: #{$fire--shadow--light--hover};
 
   --water-bg: #{$water--bg--light};
   --water-bg-hover: #{$water--bg--hover--light};
   --water-text: #{$water--text--light};
   --water-raid-text: #{$water--text--raid--light};
   --water-text-hover: #{$water--text--hover--light};
+  --water-shadow: #{$water--shadow--light};
+  --water-shadow-hover: #{$water--shadow--light--hover};
 
   --earth-bg: #{$earth--bg--light};
   --earth-bg-hover: #{$earth--bg--hover--light};
   --earth-text: #{$earth--text--light};
   --earth-raid-text: #{$earth--text--raid--light};
   --earth-text-hover: #{$earth--text--hover--light};
+  --earth-shadow: #{$earth--shadow--light};
+  --earth-shadow-hover: #{$earth--shadow--light--hover};
 
   --dark-bg: #{$dark--bg--light};
   --dark-bg-hover: #{$dark--bg--hover--light};
   --dark-text: #{$dark--text--light};
   --dark-raid-text: #{$dark--text--raid--light};
   --dark-text-hover: #{$dark--text--hover--light};
+  --dark-shadow: #{$dark--shadow--light};
+  --dark-shadow-hover: #{$dark--shadow--light--hover};
 
   --light-bg: #{$light--bg--light};
   --light-bg-hover: #{$light--bg--hover--light};
   --light-text: #{$light--text--light};
   --light-raid-text: #{$light--text--raid--light};
   --light-text-hover: #{$light--text--hover--light};
+  --light-shadow: #{$light--shadow--light};
+  --light-shadow-hover: #{$light--shadow--light--hover};
 
   // Gradients
   --hero-gradient: #{$hero--gradient--light};
@@ -220,6 +251,25 @@
   --menu-separator: #{$menu--separator--dark};
   --menu-bg-item-hover: #{$menu--item--bg--dark--hover};
   --menu-text-hover: #{$menu--text--dark--hover};
+
+  // Dark - Formatting menu
+  --formatting-menu-bg: #{$formatting--menu--bg--dark};
+  --formatting-menu-item-bg: #{$formatting--menu--item--bg--dark};
+  --formatting-menu-item-bg-hover: #{$formatting--menu--item--bg--dark--hover};
+  --formatting-menu-item-bg-active: #{$formatting--menu--item--bg--dark--active};
+  --formatting-menu-item-text: #{$formatting--menu--item--text--dark};
+  --formatting-menu-item-text-hover: #{$formatting--menu--item--text--dark--hover};
+  --formatting-menu-item-text-active: #{$formatting--menu--item--text--dark--active};
+
+  // Dark - Toolbar
+  --toolbar-bg: #{$toolbar--bg--dark};
+  --toolbar-divider-bg: #{$toolbar--divider--bg--dark};
+  --toolbar-item-bg: #{$toolbar--item--bg--dark};
+  --toolbar-item-bg-hover: #{$toolbar--item--bg--dark--hover};
+  --toolbar-item-bg-active: #{$toolbar--item--bg--dark--active};
+  --toolbar-item-text: #{$toolbar--item--text--dark};
+  --toolbar-item-text-hover: #{$toolbar--item--text--dark--hover};
+  --toolbar-item-text-active: #{$toolbar--item--text--dark--active};
 
   // Dark - Placeholders
   --placeholder-bound-bg: #{$placeholder--bound--bg--dark};
@@ -316,36 +366,48 @@
   --wind-text: #{$wind--text--dark};
   --wind-raid-text: #{$wind--text--raid--dark};
   --wind-text-hover: #{$wind--text--hover--dark};
+  --wind-shadow: #{$wind--shadow--dark};
+  --wind-shadow-hover: #{$wind--shadow--dark--hover};
 
   --fire-bg: #{$fire--bg--dark};
   --fire-bg-hover: #{$fire--bg--hover--dark};
   --fire-text: #{$fire--text--dark};
   --fire-raid-text: #{$fire--text--raid--dark};
   --fire-text-hover: #{$fire--text--hover--dark};
+  --fire-shadow: #{$fire--shadow--dark};
+  --fire-shadow-hover: #{$fire--shadow--dark--hover};
 
   --water-bg: #{$water--bg--dark};
   --water-bg-hover: #{$water--bg--hover--dark};
   --water-text: #{$water--text--dark};
   --water-raid-text: #{$water--text--raid--dark};
   --water-text-hover: #{$water--text--hover--dark};
+  --water-shadow: #{$water--shadow--dark};
+  --water-shadow-hover: #{$water--shadow--dark--hover};
 
   --earth-bg: #{$earth--bg--dark};
   --earth-bg-hover: #{$earth--bg--hover--dark};
   --earth-text: #{$earth--text--dark};
   --earth-raid-text: #{$earth--text--raid--dark};
   --earth-text-hover: #{$earth--text--hover--dark};
+  --earth-shadow: #{$earth--shadow--dark};
+  --earth-shadow-hover: #{$earth--shadow--dark--hover};
 
   --dark-bg: #{$dark--bg--dark};
   --dark-bg-hover: #{$dark--bg--hover--dark};
   --dark-text: #{$dark--text--dark};
   --dark-raid-text: #{$dark--text--raid--dark};
   --dark-text-hover: #{$dark--text--hover--dark};
+  --dark-shadow: #{$dark--shadow--dark};
+  --dark-shadow-hover: #{$dark--shadow--dark--hover};
 
   --light-bg: #{$light--bg--dark};
   --light-bg-hover: #{$light--bg--hover--dark};
   --light-text: #{$light--text--dark};
   --light-raid-text: #{$light--text--raid--dark};
   --light-text-hover: #{$light--text--hover--dark};
+  --light-shadow: #{$light--shadow--dark};
+  --light-shadow-hover: #{$light--shadow--dark--hover};
 
   // Gradients
   --hero-gradient: #{$hero--gradient--dark};

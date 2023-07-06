@@ -6,12 +6,13 @@ import classNames from 'classnames'
 import debounce from 'lodash.debounce'
 
 import Alert from '~components/common/Alert'
+import Button from '~components/common/Button'
 import { Dialog, DialogTrigger } from '~components/common/Dialog'
 import DialogHeader from '~components/common/DialogHeader'
 import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
-import Button from '~components/common/Button'
 import DurationInput from '~components/common/DurationInput'
+import Editor from '~components/common/Editor'
 import Input from '~components/common/Input'
 import InputTableField from '~components/common/InputTableField'
 import RaidCombobox from '~components/raids/RaidCombobox'
@@ -24,6 +25,7 @@ import Textarea from '~components/common/Textarea'
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 import type { DetailsObject } from 'types'
 import type { DialogProps } from '@radix-ui/react-dialog'
+import type { JSONContent } from '@tiptap/core'
 
 import { appState } from '~utils/appState'
 
@@ -129,6 +131,10 @@ const EditPartyModal = ({
     setErrors(newErrors)
   }
 
+  function handleEditorUpdate(content: JSONContent) {
+    setDescription(JSON.stringify(content))
+  }
+
   function handleChargeAttackChanged(checked: boolean) {
     setChargeAttack(checked)
   }
@@ -153,22 +159,23 @@ const EditPartyModal = ({
     if (!isNaN(value)) setClearTime(value)
   }
 
-  function handleTurnCountChanged(value?: string) {
-    if (!value) return
-    const numericalValue = parseInt(value)
-    if (!isNaN(numericalValue)) setTurnCount(numericalValue)
+  function handleTurnCountChanged(value?: string | number | readonly string[]) {
+    if (value === null || value === undefined) return
+    setTurnCount(value as number)
   }
 
-  function handleButtonCountChanged(value?: string) {
-    if (!value) return
-    const numericalValue = parseInt(value)
-    if (!isNaN(numericalValue)) setButtonCount(numericalValue)
+  function handleButtonCountChanged(
+    value?: string | number | readonly string[]
+  ) {
+    if (value === null || value === undefined) return
+    setButtonCount(value as number)
   }
 
-  function handleChainCountChanged(value?: string) {
-    if (!value) return
-    const numericalValue = parseInt(value)
-    if (!isNaN(numericalValue)) setChainCount(numericalValue)
+  function handleChainCountChanged(
+    value?: string | number | readonly string[]
+  ) {
+    if (value === null || value === undefined) return
+    setChainCount(value as number)
   }
 
   function handleTextAreaChanged(event: React.ChangeEvent<HTMLDivElement>) {
@@ -291,7 +298,6 @@ const EditPartyModal = ({
   function hasBeenModified() {
     const nameChanged =
       name !== party.name && !(name === '' && party.name === undefined)
-
     const descriptionChanged =
       description !== party.description &&
       !(description === '' && party.description === undefined)
@@ -305,6 +311,21 @@ const EditPartyModal = ({
     const turnCountChanged = turnCount !== party.turnCount
     const buttonCountChanged = buttonCount !== party.buttonCount
     const chainCountChanged = chainCount !== party.chainCount
+
+    // Debugging for if you need to check if a value is being changed
+    // console.log(`
+    // nameChanged: ${nameChanged}\n
+    // descriptionChanged: ${descriptionChanged}\n
+    // raidChanged: ${raidChanged}\n
+    // chargeAttackChanged: ${chargeAttackChanged}\n
+    // fullAutoChanged: ${fullAutoChanged}\n
+    // autoGuardChanged: ${autoGuardChanged}\n
+    // autoSummonChanged: ${autoSummonChanged}\n
+    // clearTimeChanged: ${clearTimeChanged}\n
+    // turnCountChanged: ${turnCountChanged}\n
+    // buttonCountChanged: ${buttonCountChanged}\n
+    // chainCountChanged: ${chainCountChanged}\n
+    // `)
 
     return (
       nameChanged ||
@@ -332,13 +353,12 @@ const EditPartyModal = ({
     setFullAuto(party.fullAuto)
     setChargeAttack(party.chargeAttack)
     setClearTime(party.clearTime)
-    if (party.turnCount) setTurnCount(party.turnCount)
-    if (party.buttonCount) setButtonCount(party.buttonCount)
-    if (party.chainCount) setChainCount(party.chainCount)
+    if (party.turnCount !== undefined) setTurnCount(party.turnCount)
+    if (party.buttonCount !== undefined) setButtonCount(party.buttonCount)
+    if (party.chainCount !== undefined) setChainCount(party.chainCount)
   }
 
   async function updateDetails(event: React.MouseEvent) {
-    const descriptionValue = descriptionInput.current?.innerHTML
     const details: DetailsObject = {
       fullAuto: fullAuto,
       autoGuard: autoGuard,
@@ -349,7 +369,7 @@ const EditPartyModal = ({
       turnCount: turnCount,
       chainCount: chainCount,
       name: name,
-      description: descriptionValue,
+      description: description,
       raid: raid,
       extra: extra,
     }
@@ -457,6 +477,15 @@ const EditPartyModal = ({
     />
   )
 
+  const editorField = (
+    <Editor
+      bound={true}
+      content={description}
+      editable={true}
+      onUpdate={handleEditorUpdate}
+    />
+  )
+
   const chargeAttackField = (
     <SwitchTableField
       name="charge_attack"
@@ -560,7 +589,7 @@ const EditPartyModal = ({
       {nameField}
       {raidField}
       {extraNotice()}
-      {descriptionField}
+      {editorField}
     </>
   )
 
