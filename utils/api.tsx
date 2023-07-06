@@ -69,6 +69,15 @@ class Api {
       }
     })
   }
+
+  searchAll(query: string) {
+    const resourceUrl = `${this.url}/search`
+    return axios.post(`${resourceUrl}`, {
+      search: {
+        query: query,
+      }
+    })
+  }
   
   check(resource: string, value: string) {
     const resourceUrl = `${this.url}/check/${resource}`
