@@ -47,7 +47,9 @@ function transform(object: RawSearchResponse) {
 
 export const mentionSuggestionOptions: MentionOptions['suggestion'] = {
   items: async ({ query }): Promise<MentionSuggestion[]> => {
-    const locale = getCookie('NEXT_LOCALE') ?? 'en'
+    const locale = getCookie('NEXT_LOCALE')
+      ? (getCookie('NEXT_LOCALE') as string)
+      : 'en'
     const response = await api.searchAll(query, locale)
     const results = response.data.results
 
