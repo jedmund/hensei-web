@@ -485,6 +485,7 @@
       "start_typing": "{{object}}名を入力してください",
       "min_length": "3文字以上を入力してください",
       "no_results": "'{{query}}'の検索結果が見つかりませんでした",
+      "no_results_generic": "検索結果が見つかりませんでした",
       "end_results": "検索結果これ以上ありません"
     },
     "placeholders": {
