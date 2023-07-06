@@ -1,0 +1,234 @@
+.wrapper {
+  border-radius: $input-corner;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+
+  &.bound {
+    background-color: var(--input-bg);
+    height: 350px; // Temporary
+  }
+
+  & > div {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .editor {
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
+    color: var(--text-primary);
+    display: block;
+    flex-grow: 1;
+    font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
+      sans-serif;
+    font-size: $font-regular;
+    line-height: 1.4;
+    overflow: scroll;
+    padding: $unit * 1.5 $unit-2x;
+    white-space: pre-wrap;
+    width: 100%;
+
+    &:focus {
+      // border: 2px solid $blue;
+      outline: none;
+    }
+
+    &.bound {
+      background-color: var(--input-bound-bg);
+
+      &:hover {
+        background-color: var(--input-bound-bg-hover);
+      }
+    }
+
+    &.editParty {
+      border-bottom-left-radius: $input-corner;
+      border-bottom-right-radius: $input-corner;
+    }
+
+    a:hover {
+      cursor: pointer;
+    }
+
+    strong {
+      font-weight: $bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    iframe {
+      background: var(--input-bound-bg);
+      border-radius: $card-corner;
+      min-width: 200px;
+      min-height: 200px;
+      display: block;
+      outline: 0px solid transparent;
+      margin: $unit 0;
+
+      &:hover {
+        background: var(--input-bound-bg-hover);
+      }
+    }
+
+    .mention {
+      border-radius: $item-corner-small;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 1px 0px rgba(0, 0, 0, 0.25);
+      background: var(--card-bg);
+      color: var(--text-primary);
+      font-weight: $medium;
+      font-size: 15px;
+      padding: 1px $unit-half;
+
+      &:hover {
+        background: var(--card-bg-hover);
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      &[data-element='fire'] {
+        background: var(--fire-bg);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+          0 1px 0px var(--fire-shadow);
+        color: var(--fire-text);
+
+        &:hover {
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            0 1px 0px var(--fire-shadow-hover);
+          color: var(--fire-text-hover);
+        }
+      }
+
+      &[data-element='water'] {
+        background: var(--water-bg);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+          0 1px 0px var(--water-shadow);
+        color: var(--water-text);
+
+        &:hover {
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            0 1px 0px var(--water-shadow-hover);
+          color: var(--water-text-hover);
+        }
+      }
+
+      &[data-element='earth'] {
+        background: var(--earth-bg);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+          0 1px 0px var(--earth-shadow);
+        color: var(--earth-text);
+
+        &:hover {
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            0 1px 0px var(--earth-shadow-hover);
+          color: var(--earth-text-hover);
+        }
+      }
+
+      &[data-element='wind'] {
+        background: var(--wind-bg);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+          0 1px 0px var(--wind-shadow);
+        color: var(--wind-text);
+
+        &:hover {
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            0 1px 0px var(--wind-shadow-hover);
+          color: var(--wind-text-hover);
+        }
+      }
+
+      &[data-element='dark'] {
+        background: var(--dark-bg);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+          0 1px 0px var(--dark-shadow);
+        color: var(--dark-text);
+
+        &:hover {
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            0 1px 0px var(--dark-shadow-hover);
+          color: var(--dark-text-hover);
+        }
+      }
+
+      &[data-element='light'] {
+        background: var(--light-bg);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+          0 1px 0px var(--light-shadow);
+        color: var(--light-text);
+
+        &:hover {
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            0 1px 0px var(--light-shadow-hover);
+          color: var(--light-text-hover);
+        }
+      }
+    }
+  }
+
+  .toolbar {
+    background: var(--toolbar-bg);
+    position: sticky;
+    align-items: center;
+    display: flex;
+    gap: $unit-half;
+    padding: $unit;
+    z-index: 10;
+
+    button {
+      background: var(--toolbar-item-bg);
+      border-radius: $bubble-menu-item-corner;
+      color: var(--toolbar-item-text);
+      font-weight: $medium;
+      font-size: $font-small;
+      padding: $unit-half $unit;
+
+      &:hover {
+        background: var(--toolbar-item-bg-hover);
+        color: var(--toolbar-item-text-hover);
+        cursor: pointer;
+      }
+
+      &.active {
+        background: var(--toolbar-item-bg-active);
+        color: var(--toolbar-item-text-active);
+      }
+    }
+
+    .divider {
+      background: var(--toolbar-divider-bg);
+      border-radius: $full-corner;
+      height: calc($unit-2x + $unit-half);
+      width: $unit-fourth;
+    }
+  }
+}
+
+.menu {
+  background: var(--formatting-menu-bg);
+  border-radius: $bubble-menu-corner;
+  padding: $unit-half;
+
+  button {
+    background: var(--formatting-menu-item-bg);
+    border-radius: $bubble-menu-item-corner;
+    color: var(--formatting-menu-item-text);
+    font-weight: $medium;
+    font-size: $font-small;
+
+    &:hover {
+      background: var(--formatting-menu-item-bg-hover);
+      color: var(--formatting-menu-item-text-hover);
+    }
+
+    &:active {
+      background: var(--formatting-menu-item-bg-active);
+      color: var(--formatting-menu-item-text-active);
+    }
+  }
+}

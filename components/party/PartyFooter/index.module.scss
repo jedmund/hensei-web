@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: $unit-2x;
-  margin: $unit-4x auto 0 auto;
+  margin: $unit-4x auto $unit-10x auto;
   max-width: $grid-width;
 
   @include breakpoint(phone) {
@@ -22,30 +22,13 @@
     line-height: 1.4;
     white-space: pre-wrap;
     margin: 0 auto $unit-2x;
-    margin-bottom: $unit-12x;
-    min-height: 10vh;
+    min-height: 20vh;
     max-width: $unit * 94;
     overflow: hidden;
     width: 100%;
 
     @include breakpoint(phone) {
       padding: 0 $unit;
-    }
-
-    .noRemixes,
-    .noDescription {
-      align-items: center;
-      display: flex;
-      flex-direction: column;
-      gap: $unit-2x;
-      margin: 0 auto;
-      padding: $unit-4x 0;
-
-      h3 {
-        font-size: $font-small;
-        font-weight: $medium;
-        text-align: center;
-      }
     }
 
     p {
@@ -144,6 +127,23 @@
         opacity: 0;
         pointer-events: none;
       }
+    }
+  }
+
+  .noRemixes,
+  .noDescription {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 20vh;
+    gap: $unit-2x;
+    margin: 0 auto;
+    padding: $unit-4x 0;
+
+    h3 {
+      font-size: $font-small;
+      font-weight: $medium;
+      text-align: center;
     }
   }
 

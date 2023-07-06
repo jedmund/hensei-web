@@ -95,9 +95,9 @@ const CharacterRep = (props: Props) => {
       else if (gridCharacter.uncap_level > 2) suffix = '02'
 
       if (character.element == 0) {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-main/${character.granblue_id}_${props.element}.jpg`
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblue_id}_${props.element}.jpg`
       } else {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-main/${character.granblue_id}_${suffix}.jpg`
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblue_id}_${suffix}.jpg`
       }
     }
 

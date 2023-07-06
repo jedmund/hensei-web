@@ -336,6 +336,53 @@ $pill--bg--dark--hover: $grey-50;
 $pill--text--dark: $grey-100;
 $pill--text--dark--hover: $grey-00;
 
+// Color Definitions: Formatting menu
+$formatting--menu--bg--light: $grey-30;
+$formatting--menu--bg--dark: $grey-10;
+
+$formatting--menu--item--bg--light: $grey-30;
+$formatting--menu--item--bg--dark: $grey-20;
+
+$formatting--menu--item--bg--light--hover: $grey-40;
+$formatting--menu--item--bg--dark--hover: $grey-30;
+
+$formatting--menu--item--bg--light--active: $grey-50;
+$formatting--menu--item--bg--dark--active: $grey-40;
+
+$formatting--menu--item--text--light: $grey-100;
+$formatting--menu--item--text--dark: $grey-00;
+
+$formatting--menu--item--text--light--hover: $grey-100;
+$formatting--menu--item--text--dark--hover: $grey-00;
+
+$formatting--menu--item--text--light--active: $grey-100;
+$formatting--menu--item--text--dark--active: $grey-00;
+
+// Color Definitions: Toolbar
+$toolbar--bg--light: $grey-75;
+$toolbar--bg--dark: $grey-10;
+
+$toolbar--divider--bg--light: $grey-70;
+$toolbar--divider--bg--dark: $grey-20;
+
+$toolbar--item--bg--light: $grey-75;
+$toolbar--item--bg--dark: $grey-20;
+
+$toolbar--item--bg--light--hover: $grey-70;
+$toolbar--item--bg--dark--hover: $grey-30;
+
+$toolbar--item--bg--light--active: $accent--blue--light;
+$toolbar--item--bg--dark--active: $accent--blue--dark;
+
+$toolbar--item--text--light: $grey-40;
+$toolbar--item--text--dark: $grey-80;
+
+$toolbar--item--text--light--hover: $grey-30;
+$toolbar--item--text--dark--hover: $grey-90;
+
+$toolbar--item--text--light--active: $grey-100;
+$toolbar--item--text--dark--active: $grey-00;
+
 // Color Definitions: Element Toggle
 $toggle--bg--light: $grey-90;
 $toggle--bg--dark: $grey-15;
@@ -390,6 +437,12 @@ $wind--text--raid--dark: $wind-bg-10;
 $wind--text--hover--light: $wind-text-00;
 $wind--text--hover--dark: $wind-text-00;
 
+$wind--shadow--light: fade-out($wind-text-20, 0.3);
+$wind--shadow--dark: fade-out($wind-text-20, 0.3);
+
+$wind--shadow--light--hover: fade-out($wind-text-00, 0.3);
+$wind--shadow--dark--hover: fade-out($wind-text-00, 0.3);
+
 // Color Definitions: Element / Fire
 $fire--bg--light: $fire-bg-10;
 $fire--bg--dark: $fire-bg-10;
@@ -405,6 +458,12 @@ $fire--text--raid--dark: $fire-bg-10;
 
 $fire--text--hover--light: $fire-text-00;
 $fire--text--hover--dark: $fire-text-00;
+
+$fire--shadow--light: fade-out($fire-text-20, 0.3);
+$fire--shadow--dark: fade-out($fire-text-20, 0.3);
+
+$fire--shadow--light--hover: fade-out($fire-text-00, 0.3);
+$fire--shadow--dark--hover: fade-out($fire-text-00, 0.3);
 
 // Color Definitions: Element / Water
 $water--bg--light: $water-bg-10;
@@ -422,6 +481,12 @@ $water--text--raid--dark: $water-bg-10;
 $water--text--hover--light: $water-text-00;
 $water--text--hover--dark: $water-text-00;
 
+$water--shadow--light: fade-out($water-text-20, 0.3);
+$water--shadow--dark: fade-out($water-text-20, 0.3);
+
+$water--shadow--light--hover: fade-out($water-text-00, 0.3);
+$water--shadow--dark--hover: fade-out($water-text-00, 0.3);
+
 // Color Definitions: Element / Earth
 $earth--bg--light: $earth-bg-10;
 $earth--bg--dark: $earth-bg-10;
@@ -437,6 +502,12 @@ $earth--text--raid--dark: $earth-bg-10;
 
 $earth--text--hover--light: $earth-text-00;
 $earth--text--hover--dark: $earth-text-00;
+
+$earth--shadow--light: fade-out($earth-text-20, 0.3);
+$earth--shadow--dark: fade-out($earth-text-20, 0.3);
+
+$earth--shadow--light--hover: fade-out($earth-text-00, 0.3);
+$earth--shadow--dark--hover: fade-out($earth-text-00, 0.3);
 
 // Color Definitions: Element / Dark
 $dark--bg--light: $dark-bg-10;
@@ -454,6 +525,12 @@ $dark--text--raid--dark: $dark-bg-10;
 $dark--text--hover--light: $dark-text-00;
 $dark--text--hover--dark: $dark-text-00;
 
+$dark--shadow--light: fade-out($dark-text-20, 0.3);
+$dark--shadow--dark: fade-out($dark-text-20, 0.3);
+
+$dark--shadow--light--hover: fade-out($dark-text-00, 0.3);
+$dark--shadow--dark--hover: fade-out($dark-text-00, 0.3);
+
 // Color Definitions: Element / Light
 $light--bg--light: $light-bg-10;
 $light--bg--dark: $light-bg-10;
@@ -469,6 +546,12 @@ $light--text--raid--dark: $light-bg-10;
 
 $light--text--hover--light: $light-text-00;
 $light--text--hover--dark: $light-text-00;
+
+$light--shadow--light: fade-out($light-text-20, 0.3);
+$light--shadow--dark: fade-out($light-text-20, 0.3);
+
+$light--shadow--light--hover: fade-out($light-text-00, 0.3);
+$light--shadow--dark--hover: fade-out($light-text-00, 0.3);
 
 // Font-weight
 $normal: 400;
@@ -496,6 +579,9 @@ $card-corner: $unit * 1.5;
 $input-corner: $unit;
 $item-corner: $unit;
 $item-corner-small: $unit-half;
+
+$bubble-menu-corner: $unit;
+$bubble-menu-item-corner: $unit-half * 1.5;
 
 // Shadows
 $hover-stroke: 1px solid rgba(0, 0, 0, 0.1);

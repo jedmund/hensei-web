@@ -51,7 +51,7 @@ const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
     else if (gridCharacter.uncap_level == 5) suffix = '03'
     else if (gridCharacter.uncap_level > 2) suffix = '02'
 
-    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${character.granblue_id}_${suffix}.jpg`
+    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-grid/${character.granblue_id}_${suffix}.jpg`
   }
 
   const summonImage = () => {

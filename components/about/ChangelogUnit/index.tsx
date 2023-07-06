@@ -68,7 +68,7 @@ const ChangelogUnit = ({ id, type, image }: Props) => {
 
     switch (type) {
       case 'character':
-        src = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-grid/${id}_${image}.jpg`
+        src = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-grid/${id}_${image}.jpg`
         break
       case 'weapon':
         src = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${id}.jpg`

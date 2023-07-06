@@ -487,6 +487,7 @@
       "start_typing": "Start typing the name of a {{object}}",
       "min_length": "Type at least 3 characters",
       "no_results": "No results found for '{{query}}'",
+      "no_results_generic": "No results found",
       "end_results": "No more results"
     },
     "placeholders": {
