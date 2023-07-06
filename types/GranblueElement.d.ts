@@ -6,4 +6,5 @@ interface GranblueElement {
     en: string
     ja: string
   }
+  slug: string
 }
