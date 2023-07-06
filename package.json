@@ -72,6 +72,11 @@
     "valtio": "^1.3.0",
     "youtube-api-v3-wrapper": "^2.3.0"
   },
+  "overrides": {
+    "@tiptap/extension-mention": {
+      "@tiptap/suggestion": "2.0.0-beta.91"
+    }
+  },
   "devDependencies": {
     "@storybook/addon-essentials": "latest",
     "@storybook/addon-interactions": "latest",
