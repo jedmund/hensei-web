@@ -44,25 +44,13 @@ const Editor = ({
   const router = useRouter()
   const locale = router.locale || 'en'
 
-  // const [editor, setEditor] = useState<TiptapEditor | undefined>(undefined)
-
-  function isJSON(content?: string) {
-    if (!content) return false
-
-    try {
-      JSON.parse(content)
-    } catch (e) {
-      return false
-    }
-    return true
-  }
-
   useEffect(() => {
     // console.log('Recreating editor...')
     // editor?.destroy()
     // setEditor(newEditor)
   }, [content])
 
+  // Setup: Editor
   const editor = useEditor({
     content: formatContent(content),
     editable: editable,
@@ -109,6 +97,18 @@ const Editor = ({
     },
   })
 
+  // Methods: Convenience
+  function isJSON(content?: string) {
+    if (!content) return false
+
+    try {
+      JSON.parse(content)
+    } catch (e) {
+      return false
+    }
+    return true
+  }
+
   function formatContent(content?: string) {
     if (!content) return ''
     if (isJSON(content)) return JSON.parse(content)
@@ -127,6 +127,7 @@ const Editor = ({
     }
   }
 
+  // Methods: Actions
   const setLink = useCallback(() => {
     const previousUrl = editor?.getAttributes('link').href
     const url = window.prompt('URL', previousUrl)
@@ -159,6 +160,7 @@ const Editor = ({
     }
   }
 
+  // Methods: Rendering
   if (!editor) {
     return null
   }
