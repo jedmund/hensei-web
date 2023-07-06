@@ -115,6 +115,7 @@ const Party = (props: Props) => {
     return await api.endpoints.parties.create(payload).then((response) => {
       storeParty(response.data.party)
       setUpdatedParty(response.data.party)
+      return Promise.resolve(response.data.party)
     })
   }
 
@@ -127,6 +128,7 @@ const Party = (props: Props) => {
         .then((response) => {
           storeParty(response.data.party)
           setUpdatedParty(response.data.party)
+          return Promise.resolve(response.data.party)
         })
         .catch((error) => {
           const data = error.response.data
