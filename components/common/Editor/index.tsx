@@ -41,13 +41,12 @@ const Editor = ({
   onUpdate,
   ...props
 }: Props) => {
+  // Hooks: Router
   const router = useRouter()
   const locale = router.locale || 'en'
 
   useEffect(() => {
-    // console.log('Recreating editor...')
-    // editor?.destroy()
-    // setEditor(newEditor)
+    editor?.commands.setContent(formatContent(content))
   }, [content])
 
   // Setup: Editor
