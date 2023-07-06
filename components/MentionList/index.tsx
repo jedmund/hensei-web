@@ -96,14 +96,18 @@ export const MentionList = forwardRef<MentionRef, Props>(
               key={index}
               onClick={() => selectItem(index)}
             >
-              <img
-                alt={item.name[locale]}
-                src={
-                  item.type === 'character'
-                    ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/${item.type}-square/${item.granblue_id}_01.jpg`
-                    : `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/${item.type}-square/${item.granblue_id}.jpg`
-                }
-              />
+              <div className={styles[item.type]}>
+                <img
+                  alt={item.name[locale]}
+                  src={
+                    item.type === 'character'
+                      ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/${item.type}-square/${item.granblue_id}_01.jpg`
+                      : item.type === 'job'
+                      ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${item.granblue_id}.png`
+                      : `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/${item.type}-square/${item.granblue_id}.jpg`
+                  }
+                />
+              </div>
               <span>{item.name[locale]}</span>
             </button>
           ))

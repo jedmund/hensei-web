@@ -30,6 +30,19 @@
     color: var(--text-primary);
   }
 
+  .job {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $unit-4x;
+    height: $unit-4x;
+
+    img {
+      width: $unit-3x;
+      height: auto;
+    }
+  }
+
   img {
     border-radius: $item-corner-small;
     width: $unit-4x;
