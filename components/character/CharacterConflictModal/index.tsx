@@ -60,7 +60,7 @@ const CharacterConflictModal = (props: Props) => {
       suffix = `${suffix}_0${element}`
     }
 
-    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-square/${character?.granblue_id}_${suffix}.jpg`
+    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-square/${character?.granblue_id}_${suffix}.jpg`
   }
 
   function openChange(open: boolean) {

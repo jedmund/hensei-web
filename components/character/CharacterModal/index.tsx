@@ -364,7 +364,7 @@ const CharacterModal = ({
             title={gridCharacter.object.name[locale]}
             subtitle={t('modals.characters.title')}
             image={{
-              src: `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/chara-square/${gridCharacter.object.granblue_id}_01.jpg`,
+              src: `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-square/${gridCharacter.object.granblue_id}_01.jpg`,
               alt: gridCharacter.object.name[locale],
             }}
           />
