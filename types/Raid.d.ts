@@ -8,5 +8,5 @@ interface Raid {
   }
   slug: string
   level: number
-  element: number
+  element: GranblueElement
 }
