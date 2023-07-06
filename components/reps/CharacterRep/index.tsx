@@ -74,10 +74,11 @@ const CharacterRep = (props: Props) => {
       source = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-portraits/${slug}_${gender}.png`
     }
 
-    return props.job && props.job.id !== '-1' ? (
-      <img alt={props.job ? props.job?.name[locale] : ''} src={source} />
-    ) : (
-      ''
+    return (
+      props.job &&
+      props.job.id !== '-1' && (
+        <img alt={props.job ? props.job?.name[locale] : ''} src={source} />
+      )
     )
   }
 
@@ -117,6 +118,7 @@ const CharacterRep = (props: Props) => {
           className={classNames({
             [styles.protagonist]: true,
             [styles[`${numberToElement()}`]]: true,
+            [styles.empty]: !props.job || props.job.id === '-1',
           })}
         >
           {generateMCImage()}

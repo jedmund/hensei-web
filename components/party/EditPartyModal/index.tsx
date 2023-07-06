@@ -466,14 +466,13 @@ const EditPartyModal = ({
     }
   }
 
-  const descriptionField = (
-    <Textarea
-      className="editParty"
+  const editorField = (
+    <Editor
       bound={true}
-      placeholder={t('modals.edit_team.placeholders.description')}
-      value={description}
-      onInput={handleTextAreaChanged}
-      ref={descriptionInput}
+      content={props.party?.description}
+      editable={true}
+      key={props.party?.shortcode}
+      onUpdate={handleEditorUpdate}
     />
   )
 

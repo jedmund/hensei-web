@@ -79,6 +79,13 @@ $orange-75: #ffb461;
 $orange-80: #facea7;
 $orange-90: #ffebd9;
 
+// Yellow -- Highlights
+$yellow-10: #4d3703;
+$yellow-30: #956d11;
+$yellow-50: #c8a657;
+$yellow-70: #fedc8d;
+$yellow-90: #ffed4c;
+
 // Colors -- Interface
 $blue: #275dc5;
 $red: #ff6161;
@@ -96,6 +103,7 @@ $accent--yellow--light: #c89d39;
 $accent--yellow--dark: #f9cc64;
 $yellow-text-10: #a39200;
 $yellow-text-20: #ffed4c;
+$highlight-yellow: #ffed4c55;
 
 $accent--yellow--00: #463805;
 $accent--yellow--20: #7f6a00;
@@ -382,6 +390,19 @@ $toolbar--item--text--dark--hover: $grey-90;
 
 $toolbar--item--text--light--active: $grey-100;
 $toolbar--item--text--dark--active: $grey-00;
+
+// Color Definitions: Highlights
+$highlight--bg--light: $yellow-70;
+$highlight--bg--dark: $yellow-50;
+
+$highlight--bg--light--hover: $yellow-50;
+$highlight--bg--dark--hover: $yellow-70;
+
+$highlight--text--light: $yellow-30;
+$highlight--text--dark: $yellow-10;
+
+$highlight--text--light--hover: $yellow-10;
+$highlight--text--dark--hover: $yellow-30;
 
 // Color Definitions: Element Toggle
 $toggle--bg--light: $grey-90;

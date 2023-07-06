@@ -63,6 +63,12 @@
   --toolbar-item-text-hover: #{$toolbar--item--text--light--hover};
   --toolbar-item-text-active: #{$toolbar--item--text--light--active};
 
+  // Light - Highlights
+  --highlight-bg: #{$highlight--bg--light};
+  --highlight-bg-hover: #{$highlight--bg--light--hover};
+  --highlight-text: #{$highlight--text--light};
+  --highlight-text-hover: #{$highlight--text--light--hover};
+
   // Light - Placeholders
   --placeholder-bound-bg: #{$placeholder--bound--bg--light};
   --placeholder-bound-bg-hover: #{$placeholder--bound--bg--light--hover};
@@ -270,6 +276,12 @@
   --toolbar-item-text: #{$toolbar--item--text--dark};
   --toolbar-item-text-hover: #{$toolbar--item--text--dark--hover};
   --toolbar-item-text-active: #{$toolbar--item--text--dark--active};
+
+  // Dark - Highlights
+  --highlight-bg: #{$highlight--bg--dark};
+  --highlight-bg-hover: #{$highlight--bg--dark--hover};
+  --highlight-text: #{$highlight--text--dark};
+  --highlight-text-hover: #{$highlight--text--dark--hover};
 
   // Dark - Placeholders
   --placeholder-bound-bg: #{$placeholder--bound--bg--dark};
