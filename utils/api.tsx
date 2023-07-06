@@ -70,11 +70,12 @@ class Api {
     })
   }
 
-  searchAll(query: string) {
+  searchAll(query: string, locale: string) {
     const resourceUrl = `${this.url}/search`
     return axios.post(`${resourceUrl}`, {
       search: {
         query: query,
+        locale: locale
       }
     })
   }

@@ -2,6 +2,7 @@ import { ReactRenderer } from '@tiptap/react'
 import { MentionOptions } from '@tiptap/extension-mention'
 import { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion'
 import tippy, { Instance as TippyInstance } from 'tippy.js'
+import { getCookie } from 'cookies-next'
 
 import {
   MentionList,
@@ -10,6 +11,7 @@ import {
 } from '~components/MentionList'
 import api from '~utils/api'
 import { numberToElement } from '~utils/elements'
+import { get } from 'http'
 
 interface RawSearchResponse {
   searchable_type: string
@@ -45,7 +47,8 @@ function transform(object: RawSearchResponse) {
 
 export const mentionSuggestionOptions: MentionOptions['suggestion'] = {
   items: async ({ query }): Promise<MentionSuggestion[]> => {
-    const response = await api.searchAll(query)
+    const locale = getCookie('NEXT_LOCALE') ?? 'en'
+    const response = await api.searchAll(query, locale)
     const results = response.data.results
 
     return results
