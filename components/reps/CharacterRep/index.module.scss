@@ -75,5 +75,9 @@
       background: var(--dark-hover-bg);
       border-color: var(--dark-bg);
     }
+
+    &.empty {
+      background: var(--card-bg);
+    }
   }
 }
