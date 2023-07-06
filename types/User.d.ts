@@ -7,4 +7,6 @@ interface User {
     element: string
   }
   gender: number
+  language: string
+  theme: string
 }
