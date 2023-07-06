@@ -24,7 +24,13 @@ const ToolbarIcon = ({ editor, action, level, icon, onClick }: Props) => {
   })
 
   return (
-    <Tooltip content={t(`toolbar.tooltips.${action}`)}>
+    <Tooltip
+      content={
+        level
+          ? t(`toolbar.tooltips.${action}`, { level: level })
+          : t(`toolbar.tooltips.${action}`)
+      }
+    >
       <button onClick={onClick} className={classes}>
         {icon}
       </button>
