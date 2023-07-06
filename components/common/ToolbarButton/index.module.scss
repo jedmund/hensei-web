@@ -1,0 +1,36 @@
+.button {
+  background: var(--toolbar-item-bg);
+  border-radius: $bubble-menu-item-corner;
+  color: var(--toolbar-item-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: $medium;
+  font-size: $font-small;
+  padding: $unit-half;
+
+  &:hover {
+    background: var(--toolbar-item-bg-hover);
+    color: var(--toolbar-item-text-hover);
+    cursor: pointer;
+
+    svg {
+      fill: var(--text-primary);
+    }
+  }
+
+  &.active {
+    background: var(--toolbar-item-bg-active);
+    color: var(--toolbar-item-text-active);
+
+    svg {
+      fill: white;
+    }
+  }
+
+  svg {
+    fill: var(--text-tertiary);
+    height: $unit-2x;
+    width: $unit-2x;
+  }
+}

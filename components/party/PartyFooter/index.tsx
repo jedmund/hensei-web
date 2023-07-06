@@ -208,10 +208,13 @@ const PartyFooter = (props: Props) => {
 
   const descriptionSection = (
     <>
-      {partySnapshot &&
-        partySnapshot.description &&
-        partySnapshot.description.length > 0 && (
-          <Editor content={appState.party.description} />
+      {props.party &&
+        props.party.description &&
+        props.party.description.length > 0 && (
+          <Editor
+            content={props.party.description}
+            key={props.party?.shortcode}
+          />
         )}
       {(!partySnapshot || !partySnapshot.description) && (
         <section className={styles.noDescription}>
