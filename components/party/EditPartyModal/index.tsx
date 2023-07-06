@@ -469,7 +469,7 @@ const EditPartyModal = ({
   const editorField = (
     <Editor
       bound={true}
-      content={description}
+      content={props.party?.description}
       editable={true}
       key={props.party?.shortcode}
       onUpdate={handleEditorUpdate}
