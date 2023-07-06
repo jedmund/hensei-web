@@ -211,7 +211,7 @@ const PartyFooter = (props: Props) => {
       {partySnapshot &&
         partySnapshot.description &&
         partySnapshot.description.length > 0 && (
-          <Editor content={partySnapshot.description} />
+          <Editor content={appState.party.description} />
         )}
       {(!partySnapshot || !partySnapshot.description) && (
         <section className={styles.noDescription}>
