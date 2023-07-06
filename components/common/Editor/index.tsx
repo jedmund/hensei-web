@@ -1,6 +1,6 @@
 import { ComponentProps, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, Editor as TiptapEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Youtube from '@tiptap/extension-youtube'
@@ -8,7 +8,6 @@ import CustomMention from '~extensions/CustomMention'
 import classNames from 'classnames'
 
 import { mentionSuggestionOptions } from '~utils/mentionSuggestions'
-import { Editor as TiptapEditor } from '@tiptap/core'
 import type { JSONContent } from '@tiptap/core'
 
 import styles from './index.module.scss'
