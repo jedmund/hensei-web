@@ -23,6 +23,7 @@ import type { DetailsObject } from 'types'
 import RemixIcon from '~public/icons/Remix.svg'
 import EditIcon from '~public/icons/Edit.svg'
 import styles from './index.module.scss'
+import Editor from '~components/common/Editor'
 
 // Props
 interface Props {
@@ -210,10 +211,7 @@ const PartyFooter = (props: Props) => {
       {partySnapshot &&
         partySnapshot.description &&
         partySnapshot.description.length > 0 && (
-          <section
-            className={styles.description}
-            dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
-          />
+          <Editor content={partySnapshot.description} />
         )}
       {(!partySnapshot || !partySnapshot.description) && (
         <section className={styles.noDescription}>

@@ -6,12 +6,13 @@ import classNames from 'classnames'
 import debounce from 'lodash.debounce'
 
 import Alert from '~components/common/Alert'
+import Button from '~components/common/Button'
 import { Dialog, DialogTrigger } from '~components/common/Dialog'
 import DialogHeader from '~components/common/DialogHeader'
 import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
-import Button from '~components/common/Button'
 import DurationInput from '~components/common/DurationInput'
+import Editor from '~components/common/Editor'
 import Input from '~components/common/Input'
 import InputTableField from '~components/common/InputTableField'
 import RaidCombobox from '~components/raids/RaidCombobox'
@@ -24,6 +25,7 @@ import Textarea from '~components/common/Textarea'
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 import type { DetailsObject } from 'types'
 import type { DialogProps } from '@radix-ui/react-dialog'
+import type { JSONContent } from '@tiptap/core'
 
 import { appState } from '~utils/appState'
 
@@ -127,6 +129,11 @@ const EditPartyModal = ({
 
     let newErrors = errors
     setErrors(newErrors)
+  }
+
+  function handleEditorUpdate(content: JSONContent) {
+    console.log('Editor updated')
+    setDescription(JSON.stringify(content))
   }
 
   function handleChargeAttackChanged(checked: boolean) {
@@ -338,7 +345,6 @@ const EditPartyModal = ({
   }
 
   async function updateDetails(event: React.MouseEvent) {
-    const descriptionValue = descriptionInput.current?.innerHTML
     const details: DetailsObject = {
       fullAuto: fullAuto,
       autoGuard: autoGuard,
@@ -349,7 +355,7 @@ const EditPartyModal = ({
       turnCount: turnCount,
       chainCount: chainCount,
       name: name,
-      description: descriptionValue,
+      description: description,
       raid: raid,
       extra: extra,
     }
@@ -457,6 +463,15 @@ const EditPartyModal = ({
     />
   )
 
+  const editorField = (
+    <Editor
+      bound={true}
+      content={description}
+      editable={true}
+      onUpdate={handleEditorUpdate}
+    />
+  )
+
   const chargeAttackField = (
     <SwitchTableField
       name="charge_attack"
@@ -560,7 +575,7 @@ const EditPartyModal = ({
       {nameField}
       {raidField}
       {extraNotice()}
-      {descriptionField}
+      {editorField}
     </>
   )
 
