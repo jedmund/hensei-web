@@ -1,6 +1,6 @@
 import * as Element from './ElementTransformer'
 
-// Transforms API response to Party object
+// Transforms API response to Weapon object
 export function toObject(data: any): Weapon {
   return {
     type: 'weapon',
