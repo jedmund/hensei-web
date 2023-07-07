@@ -90,8 +90,8 @@ const PartyRoute: React.FC<Props> = ({
         break
     }
 
-    if (router.asPath !== '/new' && router.asPath !== '/')
-      router.replace(path, undefined, { shallow: true })
+    // if (router.asPath !== '/new' && router.asPath !== '/')
+    //   router.replace(path, undefined, { shallow: true })
   }
 
   // Set the initial data from props
