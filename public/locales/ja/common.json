@@ -555,6 +555,19 @@
   "tokens": {
     "remix": "リミックスされた"
   },
+  "toolbar": {
+    "tooltips": {
+      "bold": "太字",
+      "italic": "斜体",
+      "strike": "取り消し線",
+      "highlight": "ハイライト",
+      "link": "リンクを挿入",
+      "youtube": "Youtube動画を埋め込む",
+      "heading": "見出し {{level}}",
+      "bulletList": "箇条書き",
+      "orderedList": "番号リスト"
+    }
+  },
   "tooltips": {
     "copy_url": "この編成のURLをコピーする",
     "new": "新しい編成を作成する",

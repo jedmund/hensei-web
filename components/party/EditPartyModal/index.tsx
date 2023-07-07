@@ -297,7 +297,8 @@ const EditPartyModal = ({
   // Methods: Modification checking
   function hasBeenModified() {
     const nameChanged =
-      name !== party.name && !(name === '' && party.name === undefined)
+      name !== party.name &&
+      !(name === '' && (party.name === undefined || party.name === null))
     const descriptionChanged =
       description !== party.description &&
       !(description === '' && party.description === undefined)
@@ -433,7 +434,7 @@ const EditPartyModal = ({
   const nameField = (
     <Input
       name="name"
-      placeholder="Name your team"
+      placeholder={t('modals.edit_team.placeholders.name')}
       autoFocus={true}
       value={name}
       maxLength={50}
