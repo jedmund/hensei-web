@@ -10,7 +10,7 @@ export function toObject(data: any): User {
     gender: data.gender,
     language: data.language,
     theme: data.theme,
-  } as User
+  }
 }
 
 // Transforms User object into API parameters

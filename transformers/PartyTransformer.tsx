@@ -40,7 +40,7 @@ export function toObject(data: any): Party {
     },
     raid: Raid.toObject(data.raid),
     guidebooks: data.guidebooks,
-  } as Party
+  }
 }
 
 // Transforms Party object into API parameters

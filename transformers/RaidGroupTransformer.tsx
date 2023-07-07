@@ -1,7 +1,7 @@
 import * as Raid from './RaidTransformer'
 
 // Transforms API response to RaidGroup object
-export function toObject(data: any) {
+export function toObject(data: any): RaidGroup {
   return {
     id: data.id,
     name: {
@@ -15,5 +15,5 @@ export function toObject(data: any) {
     extra: data.extra,
     guidebooks: data.guidebooks,
     hl: data.hl,
-  } as RaidGroup
+  }
 }
