@@ -557,6 +557,19 @@
   "tokens": {
     "remix": "Remixed"
   },
+  "toolbar": {
+    "tooltips": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "strike": "Strikethrough",
+      "highlight": "Highlight",
+      "link": "Add a link",
+      "youtube": "Add a Youtube video",
+      "heading": "Heading {{level}}",
+      "bulletList": "Bullet list",
+      "orderedList": "Numbered list"
+    }
+  },
   "tooltips": {
     "copy_url": "Copy the URL to this team",
     "new": "Create a new team",

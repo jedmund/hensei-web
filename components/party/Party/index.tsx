@@ -46,6 +46,7 @@ const Party = (props: Props) => {
 
   // Set up states
   const { party } = useSnapshot(appState)
+  const [updatedParty, setUpdatedParty] = useState<Party | undefined>()
   const [editable, setEditable] = useState(false)
   const [refresh, setRefresh] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -57,7 +58,10 @@ const Party = (props: Props) => {
   useEffect(() => {
     const resetState = clonedeep(initialAppState)
     appState.grid = resetState.grid
-    if (props.team) storeParty(props.team)
+    if (props.team) {
+      storeParty(props.team)
+      setUpdatedParty(props.team)
+    }
   }, [])
 
   // Subscribe to app state to listen for account changes and
@@ -108,9 +112,11 @@ const Party = (props: Props) => {
     let payload = {}
     if (details) payload = formatDetailsObject(details)
 
-    return await api.endpoints.parties
-      .create(payload)
-      .then((response) => storeParty(response.data.party))
+    return await api.endpoints.parties.create(payload).then((response) => {
+      storeParty(response.data.party)
+      setUpdatedParty(response.data.party)
+      return Promise.resolve(response.data.party)
+    })
   }
 
   async function updateParty(details: DetailsObject) {
@@ -119,7 +125,11 @@ const Party = (props: Props) => {
     if (props.team && props.team.id) {
       return await api.endpoints.parties
         .update(props.team.id, payload)
-        .then((response) => storeParty(response.data.party))
+        .then((response) => {
+          storeParty(response.data.party)
+          setUpdatedParty(response.data.party)
+          return Promise.resolve(response.data.party)
+        })
         .catch((error) => {
           const data = error.response.data
           if (data.errors && Object.keys(data.errors).includes('guidebooks')) {
@@ -438,7 +448,7 @@ const Party = (props: Props) => {
       {errorAlert()}
 
       <PartyHeader
-        party={props.team}
+        party={updatedParty}
         new={props.new || false}
         editable={props.new ? true : party.editable}
         raidGroups={props.raidGroups}
@@ -452,7 +462,7 @@ const Party = (props: Props) => {
       <section id="Party">{currentGrid()}</section>
 
       <PartyFooter
-        party={props.team}
+        party={updatedParty}
         new={props.new || false}
         editable={party.editable}
         raidGroups={props.raidGroups}

@@ -36,6 +36,14 @@
       outline: none;
     }
 
+    p.empty:first-child::before {
+      color: var(--text-tertiary);
+      content: attr(data-placeholder);
+      float: left;
+      height: 0;
+      pointer-events: none;
+    }
+
     &.bound {
       background-color: var(--input-bound-bg);
 
@@ -61,6 +69,45 @@
       font-style: italic;
     }
 
+    ul {
+      padding: 0 $unit-2x;
+      list-style-type: disc;
+    }
+
+    ol {
+      padding: 0 $unit-2x;
+      list-style-type: decimal;
+    }
+
+    h1 {
+      font-size: $font-xlarge;
+      font-weight: $medium;
+      margin: $unit-2x 0;
+      text-align: left;
+    }
+
+    h2 {
+      font-size: $font-large;
+      font-weight: $medium;
+      margin: $unit-2x 0;
+      text-align: left;
+    }
+
+    h3 {
+      font-size: $font-regular;
+      font-weight: $medium;
+      margin: $unit-2x 0;
+      text-align: left;
+    }
+
+    mark {
+      border-radius: $item-corner-small;
+      background: var(--highlight-bg);
+      color: var(--highlight-text);
+      font-weight: $normal;
+      padding: 1px $unit-fourth;
+    }
+
     iframe {
       background: var(--input-bound-bg);
       border-radius: $card-corner;
@@ -78,15 +125,18 @@
     .mention {
       border-radius: $item-corner-small;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
-        0 1px 0px rgba(0, 0, 0, 0.25);
-      background: var(--card-bg);
+        0 1px 0px var(--null-shadow);
+      background: var(--null-bg);
       color: var(--text-primary);
       font-weight: $medium;
       font-size: 15px;
       padding: 1px $unit-half;
+      transition: all 0.1s ease-out;
 
       &:hover {
-        background: var(--card-bg-hover);
+        background: var(--null-bg-hover);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+          0 1px 0px var(--null-shadow-hover);
         text-decoration: none;
         cursor: pointer;
       }
@@ -98,6 +148,7 @@
         color: var(--fire-text);
 
         &:hover {
+          background: var(--fire-bg-hover);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--fire-shadow-hover);
           color: var(--fire-text-hover);
@@ -111,6 +162,7 @@
         color: var(--water-text);
 
         &:hover {
+          background: var(--water-bg-hover);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--water-shadow-hover);
           color: var(--water-text-hover);
@@ -124,6 +176,7 @@
         color: var(--earth-text);
 
         &:hover {
+          background: var(--earth-bg-hover);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--earth-shadow-hover);
           color: var(--earth-text-hover);
@@ -150,6 +203,7 @@
         color: var(--dark-text);
 
         &:hover {
+          background: var(--dark-bg-hover);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--dark-shadow-hover);
           color: var(--dark-text-hover);
@@ -163,6 +217,7 @@
         color: var(--light-text);
 
         &:hover {
+          background: var(--light-bg-hover);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--light-shadow-hover);
           color: var(--light-text-hover);
@@ -179,26 +234,6 @@
     gap: $unit-half;
     padding: $unit;
     z-index: 10;
-
-    button {
-      background: var(--toolbar-item-bg);
-      border-radius: $bubble-menu-item-corner;
-      color: var(--toolbar-item-text);
-      font-weight: $medium;
-      font-size: $font-small;
-      padding: $unit-half $unit;
-
-      &:hover {
-        background: var(--toolbar-item-bg-hover);
-        color: var(--toolbar-item-text-hover);
-        cursor: pointer;
-      }
-
-      &.active {
-        background: var(--toolbar-item-bg-active);
-        color: var(--toolbar-item-text-active);
-      }
-    }
 
     .divider {
       background: var(--toolbar-divider-bg);

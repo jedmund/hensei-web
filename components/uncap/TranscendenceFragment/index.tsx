@@ -1,5 +1,5 @@
 import React from 'react'
-import classnames from 'classnames'
+import classNames from 'classnames'
 
 import styles from './index.module.scss'
 
@@ -18,14 +18,14 @@ const TranscendenceFragment = ({
   onClick,
   onHover,
 }: Props) => {
-  const classes = classnames({
-    Fragment: true,
-    Visible: visible,
-    Stage1: stage === 1,
-    Stage2: stage === 2,
-    Stage3: stage === 3,
-    Stage4: stage === 4,
-    Stage5: stage === 5,
+  const classes = classNames({
+    [styles.fragment]: true,
+    [styles.visible]: visible,
+    [styles.stage1]: stage === 1,
+    [styles.stage2]: stage === 2,
+    [styles.stage3]: stage === 3,
+    [styles.stage4]: stage === 4,
+    [styles.stage5]: stage === 5,
   })
 
   function handleClick() {

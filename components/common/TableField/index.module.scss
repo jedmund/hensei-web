@@ -36,6 +36,14 @@
     }
   }
 
+  &.switch {
+    @include breakpoint(phone) {
+      align-items: center;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
   .left {
     align-items: center;
     display: flex;

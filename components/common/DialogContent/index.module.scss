@@ -13,6 +13,14 @@
   color: inherit;
   z-index: 10;
 
+  @include breakpoint(phone) {
+    place-items: flex-end;
+    overflow-y: hidden;
+
+    &.filter {
+    }
+  }
+
   .dialogContent {
     $multiplier: 4;
 
@@ -51,11 +59,11 @@
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
       min-width: inherit;
-      min-height: 90vh;
+      min-height: inherit;
       transform: initial;
       left: 0;
       right: 0;
-      top: 5vh;
+      top: $unit-10x;
       height: auto;
       width: 100%;
     }
@@ -101,110 +109,6 @@
         overflow-y: auto;
       }
     }
-
-    &.Conflict {
-      $weapon-diameter: 14rem;
-
-      .Content {
-        display: flex;
-        flex-direction: column;
-        gap: $unit-4x;
-        padding: $unit-4x $unit-4x $unit-2x $unit-4x;
-
-        & > p {
-          font-size: $font-regular;
-          line-height: 1.4;
-
-          strong {
-            font-weight: $bold;
-          }
-
-          &:lang(ja) {
-            line-height: 1.4;
-          }
-        }
-      }
-
-      .weapon,
-      .character {
-        display: flex;
-        flex-direction: column;
-        gap: $unit;
-        text-align: center;
-        width: $weapon-diameter;
-        font-weight: $medium;
-
-        img {
-          border-radius: 1rem;
-          width: $weapon-diameter;
-          height: auto;
-        }
-
-        span {
-          line-height: 1.3;
-        }
-      }
-
-      .Diagram {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: flex-start;
-
-        &.CharacterDiagram {
-          align-items: center;
-        }
-
-        ul {
-          align-items: center;
-          display: flex;
-          flex-direction: column;
-          gap: $unit-2x;
-        }
-
-        .wrapper {
-          display: flex;
-          justify-content: center;
-          width: 100%;
-        }
-
-        .arrow {
-          align-items: center;
-          color: $grey-55;
-          display: flex;
-          font-size: 4rem;
-          text-align: center;
-          height: $weapon-diameter;
-          justify-content: center;
-        }
-      }
-
-      footer {
-        display: flex;
-        flex-direction: row;
-        gap: $unit;
-
-        .Button {
-          font-size: $font-regular;
-          padding: ($unit * 1.5) ($unit * 2);
-          width: 100%;
-
-          &.btn-disabled {
-            background: $grey-90;
-            color: $grey-70;
-            cursor: not-allowed;
-          }
-
-          &:not(.btn-disabled) {
-            background: $grey-90;
-            color: $grey-50;
-
-            &:hover {
-              background: $grey-80;
-            }
-          }
-        }
-      }
-    }
   }
 
   @keyframes openModalDesktop {
@@ -221,11 +125,20 @@
 
   @keyframes slideUp {
     0% {
-      transform: translate(0%, 100%);
+      transform: translateY(400px);
+      animation-timing-function: ease-out;
     }
-
+    60% {
+      transform: translateY(-30px);
+      animation-timing-function: ease-in;
+    }
+    80% {
+      transform: translateY(10px);
+      animation-timing-function: ease-out;
+    }
     100% {
-      transform: translate(0, 0%);
+      transform: translateY(0px);
+      animation-timing-function: ease-in;
     }
   }
 }

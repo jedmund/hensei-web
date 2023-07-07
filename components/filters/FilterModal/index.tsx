@@ -402,7 +402,8 @@ const FilterModal = (props: Props) => {
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{props.children}</DialogTrigger>
       <DialogContent
-        className="Filter"
+        className="filter"
+        wrapperClassName="filter"
         headerref={headerRef}
         footerref={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
