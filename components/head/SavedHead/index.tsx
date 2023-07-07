@@ -9,7 +9,7 @@ const SavedHead = () => {
   return (
     <Head>
       <title>{t('page.titles.saved')}</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
       <link rel="icon" type="image/x-icon" href="/images/favicon.png" />
 
       <meta property="og:title" content={t('page.titles.saved')} />

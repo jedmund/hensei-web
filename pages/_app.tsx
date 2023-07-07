@@ -1,4 +1,5 @@
 import { appWithTranslation } from 'next-i18next'
+import Head from 'next/head'
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
 import { get } from 'local-storage'
@@ -131,20 +132,28 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <ThemeProvider>
-      <ToastProvider swipeDirection="right">
-        <TooltipProvider>
-          <Layout>
-            {!appState.version ? (
-              serverUnavailable()
-            ) : (
-              <Component {...pageProps} />
-            )}
-          </Layout>
-          <Viewport className="ToastViewport" />
-        </TooltipProvider>
-      </ToastProvider>
-    </ThemeProvider>
+    <>
+      <Head>
+        <meta
+          name="viewport"
+          content="viewport-fit=cover, width=device-width, initial-scale=1.0"
+        />
+      </Head>
+      <ThemeProvider>
+        <ToastProvider swipeDirection="right">
+          <TooltipProvider>
+            <Layout>
+              {!appState.version ? (
+                serverUnavailable()
+              ) : (
+                <Component {...pageProps} />
+              )}
+            </Layout>
+            <Viewport className="ToastViewport" />
+          </TooltipProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    </>
   )
 }
 
