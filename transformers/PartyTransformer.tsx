@@ -1,3 +1,5 @@
+import * as Job from './JobTransformer'
+import * as JobAccessory from './JobAccessoryTransformer'
 import * as Raid from './RaidTransformer'
 import * as User from './UserTransformer'
 
@@ -22,11 +24,11 @@ export function toObject(data: any): Party {
       chainCount: data.chain_count,
     },
     protagonist: {
-      job: data.job,
+      job: Job.toObject(data.job),
       skills: data.job_skills,
       masterLevel: data.master_level,
       ultimateMastery: data.ultimate_mastery,
-      accessory: data.accessory,
+      accessory: JobAccessory.toObject(data.accessory),
     },
     social: {
       favorited: data.favorited,

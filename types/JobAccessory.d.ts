@@ -1,6 +1,6 @@
 interface JobAccessory {
   id: string
-  granblue_id: string
+  granblueId: string
   job: Job
   name: {
     [key: string]: string

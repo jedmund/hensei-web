@@ -1,10 +1,7 @@
 interface Job {
   id: string
-  granblue_id: string
-  row: string
-  master_level: boolean
-  ultimate_mastery: boolean
-  order: number
+  granblueId: string
+  baseJob?: Job
   name: {
     [key: string]: string
     en: string
@@ -14,7 +11,10 @@ interface Job {
     proficiency1: number
     proficiency2: number
   }
-  base_job?: Job
+  row: string
+  masterLevel: boolean
+  ultimateMastery: boolean
+  order: number
   accessory: boolean
   accessory_type: number
 }
