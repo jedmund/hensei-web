@@ -20,14 +20,9 @@ interface Props {
 }
 
 const SummonHovercard = (props: Props) => {
-  const router = useRouter()
   const { t } = useTranslation('common')
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
-  const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
-
-  const tintElement = Element[props.gridSummon.object.element]
+  const tintElement = props.gridSummon.object.element.slug
 
   function goTo() {
     const urlSafeName = props.gridSummon.object.name.en.replaceAll(' ', '_')
@@ -55,19 +50,19 @@ const SummonHovercard = (props: Props) => {
 
       let suffix = ''
       if (
-        upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
-        props.gridSummon.uncap_level == 5
+        upgradedSummons.indexOf(summon.granblueId.toString()) != -1 &&
+        props.gridSummon.uncapLevel == 5
       ) {
         suffix = '_02'
       } else if (
         props.gridSummon.object.uncap.xlb &&
-        props.gridSummon.transcendence_step > 0
+        props.gridSummon.transcendenceStep > 0
       ) {
         suffix = '_03'
       }
 
       // Generate the correct source for the summon
-      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
+      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblueId}${suffix}.jpg`
     }
 
     return imgSrc

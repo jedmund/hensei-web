@@ -10,12 +10,12 @@ import {
   MentionSuggestion,
 } from '~components/MentionList'
 import api from '~utils/api'
-import { numberToElement } from '~utils/elements'
+import * as ElementTransformer from '~transformers/ElementTransformer'
 import { get } from 'http'
 
 interface RawSearchResponse {
   searchable_type: string
-  granblue_id: string
+  granblueId: string
   name_en: string
   name_jp: string
   element: number
@@ -28,7 +28,7 @@ interface SearchResponse {
     ja: string
   }
   type: string
-  granblue_id: string
+  granblueId: string
   element: GranblueElement
 }
 
@@ -39,8 +39,8 @@ function transform(object: RawSearchResponse) {
       ja: object.name_jp,
     },
     type: object.searchable_type.toLowerCase(),
-    granblue_id: object.granblue_id,
-    element: numberToElement(object.element),
+    granblueId: object.granblueId,
+    element: ElementTransformer.toObject(object.element),
   }
   return result
 }
@@ -57,7 +57,7 @@ export const mentionSuggestionOptions: MentionOptions['suggestion'] = {
       .map((rawObject: RawSearchResponse, index: number) => {
         const object = transform(rawObject)
         return {
-          granblue_id: object.granblue_id,
+          granblueId: object.granblueId,
           element: object.element,
           type: object.type,
           name: {

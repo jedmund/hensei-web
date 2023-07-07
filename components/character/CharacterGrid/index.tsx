@@ -23,7 +23,7 @@ import styles from './index.module.scss'
 interface Props {
   new: boolean
   editable: boolean
-  characters?: GridCharacter[]
+  characters?: GridArray<GridCharacter>
   createParty: (details?: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
 }
@@ -76,16 +76,16 @@ const CharacterGrid = (props: Props) => {
     }>({})
 
   useEffect(() => {
-    setJob(appState.party.job)
-    setJobSkills(appState.party.jobSkills)
-    setJobAccessory(appState.party.accessory)
+    setJob(appState.party.protagonist.job)
+    setJobSkills(appState.party.protagonist.skills)
+    setJobAccessory(appState.party.protagonist.accessory)
   }, [appState])
 
   // Initialize an array of current uncap values for each characters
   useEffect(() => {
     let initialPreviousUncapValues: { [key: number]: number } = {}
-    Object.values(appState.grid.characters).map((o) => {
-      o ? (initialPreviousUncapValues[o.position] = o.uncap_level) : 0
+    Object.values(appState.party.grid.characters).map((o) => {
+      o ? (initialPreviousUncapValues[o.position] = o.uncapLevel) : 0
     })
     setPreviousUncapValues(initialPreviousUncapValues)
   }, [appState.grid.characters])
@@ -140,7 +140,7 @@ const CharacterGrid = (props: Props) => {
         party_id: partyId,
         character_id: character.id,
         position: position,
-        uncap_level: characterUncapLevel(character),
+        uncapLevel: characterUncapLevel(character),
       },
     })
   }
@@ -214,10 +214,10 @@ const CharacterGrid = (props: Props) => {
       const team = response.data
 
       setJob(team.job)
-      appState.party.job = team.job
+      appState.party.protagonist.job = team.job
 
       setJobSkills(team.job_skills)
-      appState.party.jobSkills = team.job_skills
+      appState.party.protagonist.skills = team.job_skills
     }
   }
 
@@ -244,7 +244,7 @@ const CharacterGrid = (props: Props) => {
           // Update the current skills
           const newSkills = response.data.job_skills
           setJobSkills(newSkills)
-          appState.party.jobSkills = newSkills
+          appState.party.protagonist.skills = newSkills
         })
         .catch((error) => {
           const data = error.response.data
@@ -268,7 +268,7 @@ const CharacterGrid = (props: Props) => {
           // Update the current skills
           const newSkills = response.data.job_skills
           setJobSkills(newSkills)
-          appState.party.jobSkills = newSkills
+          appState.party.protagonist.skills = newSkills
         })
         .catch((error) => {
           const data = error.response.data
@@ -291,7 +291,7 @@ const CharacterGrid = (props: Props) => {
       )
       const team = response.data.party
       setJobAccessory(team.accessory)
-      appState.party.accessory = team.accessory
+      appState.party.protagonist.accessory = team.accessory
     }
   }
 
@@ -380,7 +380,7 @@ const CharacterGrid = (props: Props) => {
   ) => {
     const character = appState.grid.characters[position]
     if (character && uncapLevel) {
-      character.uncap_level = uncapLevel
+      character.uncapLevel = uncapLevel
       appState.grid.characters[position] = character
     }
   }
@@ -390,7 +390,7 @@ const CharacterGrid = (props: Props) => {
     let newPreviousValues = { ...previousUncapValues }
 
     if (grid.characters[position]) {
-      newPreviousValues[position] = grid.characters[position]?.uncap_level
+      newPreviousValues[position] = grid.characters[position]?.uncapLevel
       setPreviousUncapValues(newPreviousValues)
     }
   }
@@ -407,7 +407,7 @@ const CharacterGrid = (props: Props) => {
 
     const payload = {
       character: {
-        uncap_level: stage > 0 ? 6 : 5,
+        uncapLevel: stage > 0 ? 6 : 5,
         transcendence_step: stage,
       },
     }
@@ -476,7 +476,7 @@ const CharacterGrid = (props: Props) => {
   ) => {
     const character = appState.grid.characters[position]
     if (character && stage !== undefined) {
-      character.transcendence_step = stage
+      character.transcendenceStep = stage
       appState.grid.characters[position] = character
     }
   }
@@ -486,7 +486,7 @@ const CharacterGrid = (props: Props) => {
     let newPreviousValues = { ...previousUncapValues }
 
     if (grid.characters[position]) {
-      newPreviousValues[position] = grid.characters[position]?.uncap_level
+      newPreviousValues[position] = grid.characters[position]?.uncapLevel
       setPreviousTranscendenceStages(newPreviousValues)
     }
   }

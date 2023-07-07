@@ -35,7 +35,7 @@ const gauphNames = [
 
 const emptyWeaponKey: WeaponKey = {
   id: 'no-key',
-  granblue_id: '-1',
+  granblueId: '-1',
   series: 0,
   slot: 0,
   slug: '',
@@ -104,7 +104,7 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
             <SelectItem
               key={i}
               value={item.id}
-              data-granblue-id={item.granblue_id}
+              data-granblue-id={item.granblueId}
             >
               {item.name.en}
             </SelectItem>

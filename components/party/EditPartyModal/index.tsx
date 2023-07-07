@@ -304,14 +304,14 @@ const EditPartyModal = ({
       !(description === '' && party.description === undefined)
 
     const raidChanged = raid !== party.raid
-    const chargeAttackChanged = chargeAttack !== party.chargeAttack
-    const fullAutoChanged = fullAuto !== party.fullAuto
-    const autoGuardChanged = autoGuard !== party.autoGuard
-    const autoSummonChanged = autoSummon !== party.autoSummon
-    const clearTimeChanged = clearTime !== party.clearTime
-    const turnCountChanged = turnCount !== party.turnCount
-    const buttonCountChanged = buttonCount !== party.buttonCount
-    const chainCountChanged = chainCount !== party.chainCount
+    const chargeAttackChanged = chargeAttack !== party.details.chargeAttack
+    const fullAutoChanged = fullAuto !== party.details.fullAuto
+    const autoGuardChanged = autoGuard !== party.details.autoGuard
+    const autoSummonChanged = autoSummon !== party.details.autoSummon
+    const clearTimeChanged = clearTime !== party.details.clearTime
+    const turnCountChanged = turnCount !== party.details.turnCount
+    const buttonCountChanged = buttonCount !== party.details.buttonCount
+    const chainCountChanged = chainCount !== party.details.chainCount
 
     // Debugging for if you need to check if a value is being changed
     // console.log(`
@@ -349,14 +349,17 @@ const EditPartyModal = ({
     setName(party.name ? party.name : '')
     setDescription(party.description ? party.description : '')
     setRaid(party.raid)
-    setAutoGuard(party.autoGuard)
-    setAutoSummon(party.autoSummon)
-    setFullAuto(party.fullAuto)
-    setChargeAttack(party.chargeAttack)
-    setClearTime(party.clearTime)
-    if (party.turnCount !== undefined) setTurnCount(party.turnCount)
-    if (party.buttonCount !== undefined) setButtonCount(party.buttonCount)
-    if (party.chainCount !== undefined) setChainCount(party.chainCount)
+    setAutoGuard(party.details.autoGuard)
+    setAutoSummon(party.details.autoSummon)
+    setFullAuto(party.details.fullAuto)
+    setChargeAttack(party.details.chargeAttack)
+    setClearTime(party.details.clearTime)
+    if (party.details.turnCount !== undefined)
+      setTurnCount(party.details.turnCount)
+    if (party.details.buttonCount !== undefined)
+      setButtonCount(party.details.buttonCount)
+    if (party.details.chainCount !== undefined)
+      setChainCount(party.details.chainCount)
   }
 
   async function updateDetails(event: React.MouseEvent) {

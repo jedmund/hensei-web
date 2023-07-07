@@ -95,7 +95,7 @@ const SummonUnit = ({
   }
 
   function handleQuickSummonClick() {
-    if (gridSummon) updateQuickSummon(!gridSummon.quick_summon)
+    if (gridSummon) updateQuickSummon(!gridSummon.quickSummon)
   }
 
   // Methods: Handle open change
@@ -177,27 +177,27 @@ const SummonUnit = ({
       ]
 
       let suffix = ''
-      if (gridSummon.object.uncap.xlb && gridSummon.uncap_level == 6) {
+      if (gridSummon.object.uncap.xlb && gridSummon.uncapLevel == 6) {
         if (
-          gridSummon.transcendence_step >= 1 &&
-          gridSummon.transcendence_step < 5
+          gridSummon.transcendenceStep >= 1 &&
+          gridSummon.transcendenceStep < 5
         ) {
           suffix = '_03'
-        } else if (gridSummon.transcendence_step === 5) {
+        } else if (gridSummon.transcendenceStep === 5) {
           suffix = '_04'
         }
       } else if (
-        upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
-        gridSummon.uncap_level == 5
+        upgradedSummons.indexOf(summon.granblueId.toString()) != -1 &&
+        gridSummon.uncapLevel == 5
       ) {
         suffix = '_02'
       }
 
       // Generate the correct source for the summon
       if (unitType == 0 || unitType == 2)
-        imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${summon.granblue_id}${suffix}.jpg`
+        imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${summon.granblueId}${suffix}.jpg`
       else
-        imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
+        imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblueId}${suffix}.jpg`
     }
 
     setImageUrl(imgSrc)
@@ -273,7 +273,7 @@ const SummonUnit = ({
     if (gridSummon) {
       const classes = classNames({
         [styles.quickSummon]: true,
-        [styles.empty]: !gridSummon.quick_summon,
+        [styles.empty]: !gridSummon.quickSummon,
       })
 
       return <i className={classes} onClick={handleQuickSummonClick} />
@@ -327,8 +327,8 @@ const SummonUnit = ({
             flb={gridSummon.object.uncap.flb || false}
             xlb={gridSummon.object.uncap.xlb || false}
             editable={editable}
-            uncapLevel={gridSummon.uncap_level}
-            transcendenceStage={gridSummon.transcendence_step}
+            uncapLevel={gridSummon.uncapLevel}
+            transcendenceStage={gridSummon.transcendenceStep}
             position={gridSummon.position}
             updateUncap={passUncapData}
             updateTranscendence={passTranscendenceData}

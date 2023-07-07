@@ -2,14 +2,13 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
+import Button from '~components/common/Button'
 import {
   Hovercard,
   HovercardContent,
   HovercardTrigger,
 } from '~components/common/Hovercard'
-import Button from '~components/common/Button'
-import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
-import UncapIndicator from '~components/uncap/UncapIndicator'
+import HovercardHeader from '~components/HovercardHeader'
 
 import {
   overMastery,
@@ -19,7 +18,6 @@ import {
 import { ExtendedMastery } from '~types'
 
 import styles from './index.module.scss'
-import HovercardHeader from '~components/HovercardHeader'
 
 interface Props {
   gridCharacter: GridCharacter
@@ -33,8 +31,7 @@ const CharacterHovercard = (props: Props) => {
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
-  const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
-  const tintElement = Element[props.gridCharacter.object.element]
+  const tintElement = props.gridCharacter.object.element.slug
 
   function goTo() {
     const urlSafeName = props.gridCharacter.object.name.en.replaceAll(' ', '_')
@@ -65,7 +62,7 @@ const CharacterHovercard = (props: Props) => {
   }
 
   const overMasterySection = () => {
-    if (props.gridCharacter && props.gridCharacter.over_mastery) {
+    if (props.gridCharacter && props.gridCharacter.mastery.overMastery) {
       return (
         <section className={styles.mastery}>
           <h5 className={tintElement}>
@@ -75,7 +72,7 @@ const CharacterHovercard = (props: Props) => {
             {[...Array(4)].map((e, i) => {
               const ringIndex = i + 1
               const ringStat: ExtendedMastery =
-                props.gridCharacter.over_mastery[i]
+                props.gridCharacter.mastery.overMastery[i]
               if (ringStat && ringStat.modifier && ringStat.modifier > 0) {
                 if (ringIndex === 1 || ringIndex === 2) {
                   return masteryElement(overMastery.a, ringStat)
@@ -95,8 +92,8 @@ const CharacterHovercard = (props: Props) => {
   const aetherialMasterySection = () => {
     if (
       props.gridCharacter &&
-      props.gridCharacter.aetherial_mastery &&
-      props.gridCharacter.aetherial_mastery.modifier > 0
+      props.gridCharacter.mastery.aetherialMastery &&
+      props.gridCharacter.mastery.aetherialMastery.modifier > 0
     ) {
       return (
         <section className={styles.mastery}>
@@ -106,7 +103,7 @@ const CharacterHovercard = (props: Props) => {
           <ul>
             {masteryElement(
               aetherialMastery,
-              props.gridCharacter.aetherial_mastery
+              props.gridCharacter.mastery.aetherialMastery
             )}
           </ul>
         </section>
@@ -115,7 +112,7 @@ const CharacterHovercard = (props: Props) => {
   }
 
   const permanentMasterySection = () => {
-    if (props.gridCharacter && props.gridCharacter.perpetuity) {
+    if (props.gridCharacter && props.gridCharacter.mastery.perpetuity) {
       return (
         <section className={styles.mastery}>
           <h5 className={tintElement}>
@@ -135,7 +132,7 @@ const CharacterHovercard = (props: Props) => {
   }
 
   const awakeningSection = () => {
-    const gridAwakening = props.gridCharacter.awakening
+    const gridAwakening = props.gridCharacter.mastery.awakening
 
     if (gridAwakening) {
       return (

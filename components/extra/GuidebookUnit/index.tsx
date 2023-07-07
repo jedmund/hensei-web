@@ -99,7 +99,7 @@ const GuidebookUnit = ({
   // Methods: Image string generation
   function generateImageUrl() {
     let imgSrc = guidebook
-      ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/guidebooks/book_${guidebook.granblue_id}.png`
+      ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/guidebooks/book_${guidebook.granblueId}.png`
       : ''
 
     setImageUrl(imgSrc)

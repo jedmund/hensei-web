@@ -85,27 +85,28 @@ const JobImage = ({
   }
 
   const accessoryPopover = () => {
-    return job && accessories ? (
-      <JobAccessoryPopover
-        buttonref={buttonRef}
-        currentAccessory={currentAccessory}
-        accessories={accessories}
-        editable={editable}
-        open={open}
-        job={job}
-        onAccessorySelected={onAccessorySelected}
-        onOpenChange={handlePopoverOpenChanged}
-      >
-        {accessoryButton()}
-      </JobAccessoryPopover>
-    ) : (
-      ''
+    return (
+      job &&
+      accessories && (
+        <JobAccessoryPopover
+          buttonref={buttonRef}
+          currentAccessory={currentAccessory}
+          accessories={accessories}
+          editable={editable}
+          open={open}
+          job={job}
+          onAccessorySelected={onAccessorySelected}
+          onOpenChange={handlePopoverOpenChanged}
+        >
+          {accessoryButton()}
+        </JobAccessoryPopover>
+      )
     )
   }
   return (
     <div className={styles.image}>
-      {hasAccessory ? accessoryPopover() : ''}
-      {job && job.id !== '-1' ? image : ''}
+      {hasAccessory && accessoryPopover()}
+      {job && job.id !== '-1' && image}
       <div className={styles.overlay} />
     </div>
   )

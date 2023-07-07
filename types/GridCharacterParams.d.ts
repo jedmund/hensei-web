@@ -1,7 +1,7 @@
 interface GridCharacterParams {
   character_id: string
   position?: number
-  uncap_level?: number
+  uncapLevel?: number
   transcendence_step?: number
   ring1?: ExtendedMastery
   ring2?: ExtendedMastery

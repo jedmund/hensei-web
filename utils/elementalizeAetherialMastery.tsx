@@ -1,11 +1,13 @@
-import { elements } from '~data/elements'
+import { elements } from '~utils/elements'
 import { aetherialMastery } from '~data/overMastery'
 
 export default function elementalizeAetherialMastery(
   gridCharacter: GridCharacter
 ) {
   const elementalized = aetherialMastery.map((modifier) => {
-    const element = elements.find((a) => a.id === gridCharacter.object.element)
+    const element = elements.find(
+      (a) => a.id === gridCharacter.object.element.id
+    )
 
     const oppositeElement = elements.find((b) => {
       if (element) return b.id === element.opposite_id
@@ -40,7 +42,7 @@ export default function elementalizeAetherialMastery(
 
   elementalized.unshift({
     id: 0,
-    granblue_id: '',
+    granblueId: '',
     name: {
       en: 'No aetherial mastery',
       ja: 'エーテリアルプラス',

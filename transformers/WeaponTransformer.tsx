@@ -6,7 +6,7 @@ export function toObject(data: any): Weapon {
   return {
     type: 'weapon',
     id: data.id,
-    granblueId: data.granblue_id,
+    granblueId: data.granblueId,
     name: {
       en: data.name.en,
       ja: data.name.jp,

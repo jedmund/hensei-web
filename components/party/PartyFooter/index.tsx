@@ -130,7 +130,7 @@ const PartyFooter = (props: Props) => {
         const index = remixes.findIndex((p) => p.id === teamId)
         const party = remixes[index]
 
-        party.favorited = true
+        party.social.favorited = true
 
         let clonedParties = clonedeep(remixes)
         clonedParties[index] = party
@@ -146,7 +146,7 @@ const PartyFooter = (props: Props) => {
         const index = remixes.findIndex((p) => p.id === teamId)
         const party = remixes[index]
 
-        party.favorited = false
+        party.social.favorited = false
 
         let clonedParties = clonedeep(remixes)
         clonedParties[index] = party
@@ -201,7 +201,9 @@ const PartyFooter = (props: Props) => {
         selected={currentSegment === 1}
         onClick={() => setCurrentSegment(1)}
       >
-        {t('footer.remixes.label', { count: partySnapshot?.remixes?.length })}
+        {t('footer.remixes.label', {
+          count: partySnapshot?.social.remixes?.length,
+        })}
       </Segment>
     </SegmentedControl>
   )
@@ -240,10 +242,10 @@ const PartyFooter = (props: Props) => {
 
   const remixesSection = (
     <section className={styles.remixes}>
-      {partySnapshot?.remixes?.length > 0 && (
+      {partySnapshot?.social.remixes?.length > 0 && (
         <GridRepCollection>{renderRemixes()}</GridRepCollection>
       )}
-      {partySnapshot?.remixes?.length === 0 && (
+      {partySnapshot?.social.remixes?.length === 0 && (
         <div className={styles.noRemixes}>
           <h3>{t('footer.remixes.empty')}</h3>
           <Button
@@ -257,19 +259,19 @@ const PartyFooter = (props: Props) => {
   )
 
   function renderRemixes() {
-    return partySnapshot?.remixes.map((party, i) => {
+    return partySnapshot?.social.remixes.map((party, i) => {
       return (
         <GridRep
           id={party.id}
           shortcode={party.shortcode}
           name={party.name}
-          createdAt={new Date(party.created_at)}
+          createdAt={new Date(party.timestamps.createdAt)}
           raid={party.raid}
-          grid={party.weapons}
+          weapons={party.grid.weapons}
           user={party.user}
-          favorited={party.favorited}
-          fullAuto={party.full_auto}
-          autoGuard={party.auto_guard}
+          favorited={party.social.favorited}
+          fullAuto={party.details.fullAuto}
+          autoGuard={party.details.autoGuard}
           key={`party-${i}`}
           onClick={goTo}
           onSave={toggleFavorite}

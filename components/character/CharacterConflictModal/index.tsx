@@ -9,6 +9,7 @@ import Button from '~components/common/Button'
 import Overlay from '~components/common/Overlay'
 
 import { appState } from '~utils/appState'
+import { ElementMap } from '~utils/elements'
 
 import styles from './index.module.scss'
 
@@ -46,21 +47,22 @@ const CharacterConflictModal = (props: Props) => {
     else if (uncap > 2) suffix = '02'
 
     // Special casing for Lyria (and Young Cat eventually)
-    if (character?.granblue_id === '3030182000') {
-      let element = 1
+    if (character?.granblueId === '3030182000') {
+      let element: GranblueElement | undefined
+
       if (
         appState.grid.weapons.mainWeapon &&
         appState.grid.weapons.mainWeapon.element
       ) {
         element = appState.grid.weapons.mainWeapon.element
-      } else if (appState.party.element != 0) {
-        element = appState.party.element
+      } else {
+        element = ElementMap.wind
       }
 
-      suffix = `${suffix}_0${element}`
+      suffix = `${suffix}_0${element?.id}`
     }
 
-    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-square/${character?.granblue_id}_${suffix}.jpg`
+    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-square/${character?.granblueId}_${suffix}.jpg`
   }
 
   function openChange(open: boolean) {
@@ -91,7 +93,7 @@ const CharacterConflictModal = (props: Props) => {
                 <li className={styles.character} key={`conflict-${i}`}>
                   <img
                     alt={character.object.name[locale]}
-                    src={imageUrl(character.object, character.uncap_level)}
+                    src={imageUrl(character.object, character.uncapLevel)}
                   />
                   <span>{character.object.name[locale]}</span>
                 </li>

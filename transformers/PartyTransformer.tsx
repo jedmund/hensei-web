@@ -1,3 +1,4 @@
+import * as Grid from './GridTransformer'
 import * as Job from './JobTransformer'
 import * as JobAccessory from './JobAccessoryTransformer'
 import * as JobSkill from './JobSkillTransformer'
@@ -13,6 +14,12 @@ export function toObject(data: any): Party {
     description: data.description,
     shortcode: data.shortcode,
     user: User.toObject(data.user),
+    editable: data.editable ?? false,
+    grid: Grid.toObject({
+      characters: data.characters,
+      summons: data.summons,
+      weapons: data.weapons,
+    }),
     details: {
       extra: data.extra,
       fullAuto: data.full_auto,
@@ -61,7 +68,7 @@ export function toParams(party: Party): PartyParams {
     button_count: party.details.buttonCount,
     turn_count: party.details.turnCount,
     chain_count: party.details.chainCount,
-    raid_id: party.raid.id,
+    raid_id: party.raid?.id,
     job_id: party.protagonist.job.id,
     master_level: party.protagonist.masterLevel,
     ultimate_mastery: party.protagonist.ultimateMastery,

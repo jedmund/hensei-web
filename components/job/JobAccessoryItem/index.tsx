@@ -18,13 +18,13 @@ const JobAccessoryItem = ({ accessory, selected }: Props) => {
 
   return (
     <RadioGroup.Item
-      className="JobAccessoryItem"
+      className={styles.item}
       data-state={selected ? 'checked' : 'unchecked'}
       value={accessory.id}
     >
       <img
         alt={accessory.name[locale]}
-        src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/accessory-grid/${accessory.granblue_id}.jpg`}
+        src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/accessory-grid/${accessory.granblueId}.jpg`}
       />
       <h4>{accessory.name[locale]}</h4>
     </RadioGroup.Item>

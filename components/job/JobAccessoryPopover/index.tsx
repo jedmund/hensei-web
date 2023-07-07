@@ -6,7 +6,6 @@ import classNames from 'classnames'
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 
 import * as RadioGroup from '@radix-ui/react-radio-group'
-import Button from '~components/common/Button'
 import {
   Popover,
   PopoverTrigger,
@@ -91,7 +90,7 @@ const JobAccessoryPopover = ({
         )}
       </h3>
       <RadioGroup.Root
-        className="Accessories"
+        className={styles.accessories}
         onValueChange={handleAccessorySelected}
       >
         {accessories.map((accessory) => (
@@ -110,17 +109,17 @@ const JobAccessoryPopover = ({
   )
 
   const readOnly = currentAccessory ? (
-    <div className="EquippedAccessory">
+    <div className={styles.equipped}>
       <h3>
         {t('equipped')}{' '}
         {job.accessory_type === 1
           ? `${t('accessories.paladin')}s`
           : t('accessories.manadiver')}
       </h3>
-      <div className="Accessory">
+      <div className={styles.accessory}>
         <img
           alt={currentAccessory.name[locale]}
-          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/accessory-grid/${currentAccessory.granblue_id}.jpg`}
+          src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/accessory-grid/${currentAccessory.granblueId}.jpg`}
         />
         <h4>{currentAccessory.name[locale]}</h4>
       </div>

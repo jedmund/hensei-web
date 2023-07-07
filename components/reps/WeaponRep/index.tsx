@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-
+import { ElementMap } from '~utils/elements'
 import styles from './index.module.scss'
-import classNames from 'classnames'
 
 interface Props {
   grid: {
@@ -53,14 +52,14 @@ const WeaponRep = (props: Props) => {
     let url = ''
 
     if (mainhand && mainhand.object) {
-      if (mainhand.object.element == 0 && mainhand.element) {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.object.granblue_id}_${mainhand.element}.jpg`
+      if (mainhand.object.element === ElementMap.null && mainhand.element) {
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.object.granblueId}_${mainhand.element}.jpg`
       } else {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.object.granblue_id}.jpg`
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.object.granblueId}.jpg`
       }
     }
 
-    return mainhand ? <img alt={mainhand.object.name[locale]} src={url} /> : ''
+    return mainhand && <img alt={mainhand.object.name[locale]} src={url} />
   }
 
   function generateGridImage(position: number) {
@@ -70,17 +69,17 @@ const WeaponRep = (props: Props) => {
     const gridWeapon = grid[position]
 
     if (weapon && gridWeapon) {
-      if (weapon.element == 0 && gridWeapon.element) {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${gridWeapon.element}.jpg`
+      if (weapon.element === ElementMap.null && gridWeapon.element) {
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblueId}_${gridWeapon.element}.jpg`
       } else {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblueId}.jpg`
       }
     }
 
-    return weapons[position] ? (
-      <img alt={weapons[position]?.name[locale]} src={url} />
-    ) : (
-      ''
+    return (
+      weapons[position] && (
+        <img alt={weapons[position]?.name[locale]} src={url} />
+      )
     )
   }
 

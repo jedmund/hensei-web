@@ -5,7 +5,7 @@ interface ItemSkill {
     ja: string
   }
   id: number
-  granblue_id: string
+  granblueId: string
   slug: string
   minValue: number
   maxValue: number

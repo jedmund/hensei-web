@@ -10,7 +10,7 @@ export function toObject(data: any): GridWeapon {
     object: Weapon.toObject(data.object),
     position: data.position,
     mainhand: data.mainhand,
-    uncapLevel: data.uncap_level,
+    uncapLevel: data.uncapLevel,
     element: Element.toObject(data.element),
     weaponKeys: data.weapon_keys.map((key: any) => WeaponKey.toObject(key)),
     ax: data.ax,
@@ -26,7 +26,7 @@ export function toParams(data: GridWeapon): GridWeaponParams {
   return {
     weapon_id: data.id,
     position: data.position,
-    uncap_level: data.uncapLevel,
+    uncapLevel: data.uncapLevel,
     element: data.element.id,
     weapon_key1_id: data.weaponKeys?.[0].id,
     weapon_key2_id: data.weaponKeys?.[1].id,

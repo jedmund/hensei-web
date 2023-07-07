@@ -22,12 +22,16 @@ import { appState } from '~utils/appState'
 import type { DetailsObject, SearchableObject } from '~types'
 
 import styles from './index.module.scss'
+import { ElementMap } from '~utils/elements'
 
 // Props
 interface Props {
   new: boolean
   editable: boolean
-  weapons?: GridWeapon[]
+  weapons?: {
+    mainWeapon?: GridWeapon
+    allWeapons: GridArray<GridWeapon>
+  }
   guidebooks?: GuidebookList
   createParty: (details: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
@@ -73,10 +77,10 @@ const WeaponGrid = (props: Props) => {
 
     if (appState.grid.weapons.mainWeapon)
       initialPreviousUncapValues[-1] =
-        appState.grid.weapons.mainWeapon.uncap_level
+        appState.grid.weapons.mainWeapon.uncapLevel
 
-    Object.values(appState.grid.weapons.allWeapons).map((o) =>
-      o ? (initialPreviousUncapValues[o.position] = o.uncap_level) : 0
+    Object.values(appState.party.grid.weapons.allWeapons).map((o) =>
+      o ? (initialPreviousUncapValues[o.position] = o.uncapLevel) : 0
     )
 
     setPreviousUncapValues(initialPreviousUncapValues)
@@ -88,7 +92,7 @@ const WeaponGrid = (props: Props) => {
     if (position == 1) appState.party.element = weapon.element
 
     if (!party.id) {
-      const payload: DetailsObject = { extra: party.extra }
+      const payload: DetailsObject = { extra: party.details.extra }
       props.createParty(payload).then((team) => {
         saveWeapon(team.id, weapon, position).then((response) => {
           if (response) storeGridWeapon(response.data.grid_weapon)
@@ -144,7 +148,7 @@ const WeaponGrid = (props: Props) => {
 
         if (position == -1) {
           appState.grid.weapons.mainWeapon = undefined
-          appState.party.element = 0
+          appState.party.element = ElementMap.null
         } else {
           appState.grid.weapons.allWeapons[position] = undefined
         }
@@ -181,7 +185,7 @@ const WeaponGrid = (props: Props) => {
           weapon_id: weapon.id,
           position: position,
           mainhand: position == -1,
-          uncap_level: uncapLevel,
+          uncapLevel: uncapLevel,
         },
       })
     }
@@ -211,7 +215,7 @@ const WeaponGrid = (props: Props) => {
           conflicts.forEach((c) => {
             if (appState.grid.weapons.mainWeapon?.object.id === c.object.id) {
               appState.grid.weapons.mainWeapon = undefined
-              appState.party.element = 0
+              appState.party.element = ElementMap.null
             } else {
               appState.grid.weapons.allWeapons[c.position] = undefined
             }
@@ -308,11 +312,11 @@ const WeaponGrid = (props: Props) => {
   const updateUncapLevel = (position: number, uncapLevel: number) => {
     // console.log(`Updating uncap level at position ${position} to ${uncapLevel}`)
     if (appState.grid.weapons.mainWeapon && position == -1)
-      appState.grid.weapons.mainWeapon.uncap_level = uncapLevel
+      appState.grid.weapons.mainWeapon.uncapLevel = uncapLevel
     else {
       const weapon = appState.grid.weapons.allWeapons[position]
       if (weapon) {
-        weapon.uncap_level = uncapLevel
+        weapon.uncapLevel = uncapLevel
         appState.grid.weapons.allWeapons[position] = weapon
       }
     }
@@ -323,11 +327,11 @@ const WeaponGrid = (props: Props) => {
     let newPreviousValues = { ...previousUncapValues }
 
     if (appState.grid.weapons.mainWeapon && position == -1) {
-      newPreviousValues[position] = appState.grid.weapons.mainWeapon.uncap_level
+      newPreviousValues[position] = appState.grid.weapons.mainWeapon.uncapLevel
     } else {
       const weapon = appState.grid.weapons.allWeapons[position]
       if (weapon) {
-        newPreviousValues[position] = weapon.uncap_level
+        newPreviousValues[position] = weapon.uncapLevel
       } else {
         newPreviousValues[position] = 0
       }
@@ -339,7 +343,7 @@ const WeaponGrid = (props: Props) => {
   // Methods: Convenience
   const displayExtraContainer =
     props.editable ||
-    appState.party.extra ||
+    appState.party.details.extra ||
     Object.values(appState.party.guidebooks).every((el) => el === undefined)
 
   // Render: JSX components
@@ -411,30 +415,31 @@ const WeaponGrid = (props: Props) => {
   }
 
   const conflictModal = () => {
-    return incoming && conflicts ? (
-      <WeaponConflictModal
-        open={modalOpen}
-        incomingWeapon={incoming}
-        conflictingWeapons={conflicts}
-        desiredPosition={position}
-        resolveConflict={resolveConflict}
-        resetConflict={resetConflict}
-      />
-    ) : (
-      ''
+    return (
+      incoming &&
+      conflicts && (
+        <WeaponConflictModal
+          open={modalOpen}
+          incomingWeapon={incoming}
+          conflictingWeapons={conflicts}
+          desiredPosition={position}
+          resolveConflict={resolveConflict}
+          resetConflict={resetConflict}
+        />
+      )
     )
   }
 
   const incompatibleAlert = () => {
-    return showIncompatibleAlert ? (
-      <Alert
-        open={showIncompatibleAlert}
-        cancelAction={() => setShowIncompatibleAlert(!showIncompatibleAlert)}
-        cancelActionText={t('buttons.confirm')}
-        message={t('alert.incompatible_weapon')}
-      />
-    ) : (
-      ''
+    return (
+      showIncompatibleAlert && (
+        <Alert
+          open={showIncompatibleAlert}
+          cancelAction={() => setShowIncompatibleAlert(!showIncompatibleAlert)}
+          cancelActionText={t('buttons.confirm')}
+          message={t('alert.incompatible_weapon')}
+        />
+      )
     )
   }
 

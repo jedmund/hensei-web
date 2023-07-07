@@ -4,7 +4,7 @@ import * as Job from './JobTransformer'
 export function toObject(data: any): JobAccessory {
   return {
     id: data.id,
-    granblueId: data.granblue_id,
+    granblueId: data.granblueId,
     name: {
       en: data.name.en,
       ja: data.name.jp,

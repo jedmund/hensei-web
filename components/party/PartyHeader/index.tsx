@@ -59,24 +59,24 @@ const PartyHeader = (props: Props) => {
   })
 
   const linkClass = classNames({
-    wind: party && party.element == 1,
-    fire: party && party.element == 2,
-    water: party && party.element == 3,
-    earth: party && party.element == 4,
-    dark: party && party.element == 5,
-    light: party && party.element == 6,
+    wind: party.element && party.element.slug === 'wind',
+    fire: party.element && party.element.slug === 'fire',
+    water: party.element && party.element.slug === 'water',
+    earth: party.element && party.element.slug === 'earth',
+    dark: party.element && party.element.slug === 'dark',
+    light: party.element && party.element.slug === 'light',
   })
 
   // Actions: Favorites
   function toggleFavorite() {
-    if (appState.party.favorited) unsaveFavorite()
+    if (appState.party.social.favorited) unsaveFavorite()
     else saveFavorite()
   }
 
   function saveFavorite() {
     if (appState.party.id)
       api.saveTeam({ id: appState.party.id }).then((response) => {
-        if (response.status == 201) appState.party.favorited = true
+        if (response.status == 201) appState.party.social.favorited = true
       })
     else console.error('Failed to save team: No party ID')
   }
@@ -84,7 +84,7 @@ const PartyHeader = (props: Props) => {
   function unsaveFavorite() {
     if (appState.party.id)
       api.unsaveTeam({ id: appState.party.id }).then((response) => {
-        if (response.status == 200) appState.party.favorited = false
+        if (response.status == 200) appState.party.social.favorited = false
       })
     else console.error('Failed to unsave team: No party ID')
   }
@@ -202,33 +202,33 @@ const PartyHeader = (props: Props) => {
 
   // Render: Tokens
   const chargeAttackToken = (
-    <Token active={party.chargeAttack} className="chargeAttack">
+    <Token active={party.details.chargeAttack} className="chargeAttack">
       {`${t('party.details.labels.charge_attack')} ${
-        party.chargeAttack ? 'On' : 'Off'
+        party.details.chargeAttack ? 'On' : 'Off'
       }`}
     </Token>
   )
 
   const fullAutoToken = (
-    <Token active={party.fullAuto} className="fullAuto">
+    <Token active={party.details.fullAuto} className="fullAuto">
       {`${t('party.details.labels.full_auto')} ${
-        party.fullAuto ? 'On' : 'Off'
+        party.details.fullAuto ? 'On' : 'Off'
       }`}
     </Token>
   )
 
   const autoGuardToken = (
-    <Token active={party.autoGuard} className="autoGuard">
+    <Token active={party.details.autoGuard} className="autoGuard">
       {`${t('party.details.labels.auto_guard')} ${
-        party.autoGuard ? 'On' : 'Off'
+        party.details.autoGuard ? 'On' : 'Off'
       }`}
     </Token>
   )
 
   const autoSummonToken = (
-    <Token active={party.autoSummon} className="autoSummon">
+    <Token active={party.details.autoSummon} className="autoSummon">
       {`${t('party.details.labels.auto_summon')} ${
-        party.autoSummon ? 'On' : 'Off'
+        party.details.autoSummon ? 'On' : 'Off'
       }`}
     </Token>
   )
@@ -236,31 +236,39 @@ const PartyHeader = (props: Props) => {
   const turnCountToken = (
     <Token>
       {t('party.details.turns.with_count', {
-        count: party.turnCount,
+        count: party.details.turnCount,
       })}
     </Token>
   )
 
   const buttonChainToken = () => {
-    if (party.buttonCount !== undefined || party.chainCount !== undefined) {
+    if (
+      party.details.buttonCount !== undefined ||
+      party.details.chainCount !== undefined
+    ) {
       let string = ''
 
-      if (party.buttonCount !== undefined) {
-        string += `${party.buttonCount}b`
+      if (party.details.buttonCount !== undefined) {
+        string += `${party.details.buttonCount}b`
       }
 
-      if (party.buttonCount === undefined && party.chainCount !== undefined) {
-        string += `0${t('party.details.suffix.buttons')}${party.chainCount}${t(
+      if (
+        party.details.buttonCount === undefined &&
+        party.details.chainCount !== undefined
+      ) {
+        string += `0${t('party.details.suffix.buttons')}${
+          party.details.chainCount
+        }${t('party.details.suffix.chains')}`
+      } else if (
+        party.details.buttonCount !== undefined &&
+        party.details.chainCount !== undefined
+      ) {
+        string += `${party.details.chainCount}${t(
           'party.details.suffix.chains'
         )}`
       } else if (
-        party.buttonCount !== undefined &&
-        party.chainCount !== undefined
-      ) {
-        string += `${party.chainCount}${t('party.details.suffix.chains')}`
-      } else if (
-        party.buttonCount !== undefined &&
-        party.chainCount === undefined
+        party.details.buttonCount !== undefined &&
+        party.details.chainCount === undefined
       ) {
         string += `0${t('party.details.suffix.chains')}`
       }
@@ -270,8 +278,8 @@ const PartyHeader = (props: Props) => {
   }
 
   const clearTimeToken = () => {
-    const minutes = Math.floor(party.clearTime / 60)
-    const seconds = party.clearTime - minutes * 60
+    const minutes = Math.floor(party.details.clearTime / 60)
+    const seconds = party.details.clearTime - minutes * 60
 
     let string = ''
     if (minutes > 0)
@@ -291,8 +299,8 @@ const PartyHeader = (props: Props) => {
         {fullAutoToken}
         {autoSummonToken}
         {autoGuardToken}
-        {party.turnCount !== undefined && turnCountToken}
-        {party.clearTime > 0 && clearTimeToken()}
+        {party.details.turnCount !== undefined && turnCountToken}
+        {party.details.clearTime > 0 && clearTimeToken()}
         {buttonChainToken()}
       </>
     )
@@ -307,10 +315,12 @@ const PartyHeader = (props: Props) => {
           className={classNames({
             save: true,
             grow: true,
-            saved: partySnapshot.favorited,
+            saved: partySnapshot.social.favorited,
           })}
           text={
-            appState.party.favorited ? t('buttons.saved') : t('buttons.save')
+            appState.party.social.favorited
+              ? t('buttons.saved')
+              : t('buttons.save')
           }
           onClick={toggleFavorite}
         />
@@ -333,12 +343,13 @@ const PartyHeader = (props: Props) => {
 
   const remixedButton = () => {
     const tooltipString =
-      party.remix && party.sourceParty
+      party.social.remix && party.social.sourceParty
         ? t('tooltips.remix.source')
         : t('tooltips.remix.deleted')
 
     const buttonAction =
-      party.sourceParty && (() => goTo(party.sourceParty?.shortcode))
+      party.social.sourceParty &&
+      (() => goTo(party.social.sourceParty?.shortcode))
 
     return (
       <Tooltip content={tooltipString}>
@@ -348,7 +359,7 @@ const PartyHeader = (props: Props) => {
           leftAccessoryIcon={<RemixIcon />}
           text={t('tokens.remix')}
           size="small"
-          disabled={!party.sourceParty}
+          disabled={!party.social.sourceParty}
           onClick={buttonAction}
         />
       </Tooltip>
@@ -364,17 +375,17 @@ const PartyHeader = (props: Props) => {
               <h1 className={party.name ? '' : styles.empty}>
                 {party.name ? party.name : t('no_title')}
               </h1>
-              {party.remix && remixedButton()}
+              {party.social.remix && remixedButton()}
             </div>
             <div className={styles.attribution}>
               {renderUserBlock()}
               {appState.party.raid && linkedRaidBlock(appState.party.raid)}
-              {party.created_at != '' && (
+              {party.timestamps.createdAt != '' && (
                 <time
                   className={styles.lastUpdated}
-                  dateTime={new Date(party.created_at).toString()}
+                  dateTime={new Date(party.timestamps.createdAt).toString()}
                 >
-                  {formatTimeAgo(new Date(party.created_at), locale)}
+                  {formatTimeAgo(new Date(party.timestamps.createdAt), locale)}
                 </time>
               )}
             </div>

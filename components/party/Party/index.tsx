@@ -22,11 +22,12 @@ import { retrieveCookies } from '~utils/retrieveCookies'
 import { setEditKey, storeEditKey, unsetEditKey } from '~utils/userToken'
 
 import type { CharacterOverMastery, DetailsObject } from '~types'
+import { ElementMap } from '~utils/elements'
 
 // Props
 interface Props {
   new?: boolean
-  team?: Party
+  party?: Party
   selectedTab: GridType
   raidGroups: RaidGroup[]
   handleTabChanged: (value: string) => void
@@ -58,9 +59,9 @@ const Party = (props: Props) => {
   useEffect(() => {
     const resetState = clonedeep(initialAppState)
     appState.grid = resetState.grid
-    if (props.team) {
-      storeParty(props.team)
-      setUpdatedParty(props.team)
+    if (props.party) {
+      storeParty(props.party)
+      setUpdatedParty(props.party)
     }
   }, [])
 
@@ -85,20 +86,20 @@ const Party = (props: Props) => {
 
     if (props.new) editable = true
 
-    if (accountData && props.team && !props.new) {
+    if (accountData && props.party && !props.new) {
       if (accountData.token) {
         // Authenticated
-        if (props.team.user && accountData.userId === props.team.user.id) {
+        if (props.party.user && accountData.userId === props.party.user.id) {
           editable = true
         }
       } else {
         // Not authenticated
-        if (!props.team.user && accountData.userId === props.team.local_id) {
+        if (!props.party.user && accountData.userId === props.party.localId) {
           // Set editable
           editable = true
 
           // Also set edit key header
-          setEditKey(props.team.id, props.team.user)
+          setEditKey(props.party.id, props.party.user)
         }
       }
     }
@@ -122,9 +123,9 @@ const Party = (props: Props) => {
   async function updateParty(details: DetailsObject) {
     const payload = formatDetailsObject(details)
 
-    if (props.team && props.team.id) {
+    if (props.party && props.party.id) {
       return await api.endpoints.parties
-        .update(props.team.id, payload)
+        .update(props.party.id, payload)
         .then((response) => {
           storeParty(response.data.party)
           setUpdatedParty(response.data.party)
@@ -142,7 +143,7 @@ const Party = (props: Props) => {
 
   // Methods: Updating the party's details
   async function updateDetails(details: DetailsObject) {
-    if (!props.team) return await createParty(details)
+    if (!props.party) return await createParty(details)
     else return await updateParty(details)
   }
 
@@ -180,11 +181,11 @@ const Party = (props: Props) => {
   }
 
   function checkboxChanged(enabled: boolean) {
-    appState.party.extra = enabled
+    appState.party.details.extra = enabled
 
     // Only save if this is a saved party
-    if (props.team && props.team.id) {
-      api.endpoints.parties.update(props.team.id, {
+    if (props.party && props.party.id) {
+      api.endpoints.parties.update(props.party.id, {
         party: { extra: enabled },
       })
     }
@@ -203,7 +204,7 @@ const Party = (props: Props) => {
       guidebook3_id: position === 3 ? id : undefined,
     }
 
-    if (props.team && props.team.id) {
+    if (props.party && props.party.id) {
       updateParty(details)
     } else {
       createParty(details)
@@ -214,10 +215,10 @@ const Party = (props: Props) => {
   function remixTeam() {
     // setOriginalName(partySnapshot.name ? partySnapshot.name : t('no_title'))
 
-    if (props.team && props.team.shortcode) {
+    if (props.party && props.party.shortcode) {
       const body = { local_id: getLocalId() }
       api
-        .remix({ shortcode: props.team.shortcode, body: body })
+        .remix({ shortcode: props.party.shortcode, body: body })
         .then((response) => {
           const remix = response.data.party
 
@@ -235,9 +236,9 @@ const Party = (props: Props) => {
 
   // Deleting the party
   function deleteTeam() {
-    if (props.team && editable) {
+    if (props.party && editable) {
       api.endpoints.parties
-        .destroy({ id: props.team.id })
+        .destroy({ id: props.party.id })
         .then(() => {
           // Push to route
           if (cookies && cookies.account.username) {
@@ -267,36 +268,33 @@ const Party = (props: Props) => {
     appState.party.name = team.name
     appState.party.description = team.description ? team.description : ''
     appState.party.raid = team.raid
-    appState.party.updated_at = team.updated_at
-    appState.party.job = team.job
-    appState.party.jobSkills = team.job_skills
-    appState.party.accessory = team.accessory
+    appState.party.protagonist.job = team.job
+    appState.party.protagonist.skills = team.job_skills
+    appState.party.protagonist.accessory = team.accessory
 
-    appState.party.chargeAttack = team.charge_attack
-    appState.party.fullAuto = team.full_auto
-    appState.party.autoGuard = team.auto_guard
-    appState.party.autoSummon = team.auto_summon
-    appState.party.clearTime = team.clear_time
-    appState.party.buttonCount =
+    appState.party.details.chargeAttack = team.charge_attack
+    appState.party.details.fullAuto = team.full_auto
+    appState.party.details.autoGuard = team.auto_guard
+    appState.party.details.autoSummon = team.auto_summon
+    appState.party.details.clearTime = team.clear_time
+    appState.party.details.buttonCount =
       team.button_count !== null ? team.button_count : undefined
-    appState.party.chainCount =
+    appState.party.details.chainCount =
       team.chain_count !== null ? team.chain_count : undefined
-    appState.party.turnCount =
+    appState.party.details.turnCount =
       team.turn_count !== null ? team.turn_count : undefined
 
     appState.party.id = team.id
     appState.party.shortcode = team.shortcode
-    appState.party.extra = team.extra
+    appState.party.details.extra = team.extra
     appState.party.guidebooks = team.guidebooks
     appState.party.user = team.user
-    appState.party.favorited = team.favorited
-    appState.party.remix = team.remix
-    appState.party.remixes = team.remixes
-    appState.party.sourceParty = team.source_party
-    appState.party.created_at = team.created_at
-    appState.party.updated_at = team.updated_at
-
-    appState.party.detailsVisible = false
+    appState.party.social.favorited = team.favorited
+    appState.party.social.remix = team.remix
+    appState.party.social.remixes = team.remixes
+    appState.party.social.sourceParty = team.source_party
+    appState.party.timestamps.createdAt = team.created_at
+    appState.party.timestamps.updatedAt = team.updated_at
 
     // Store the edit key in local storage
     if (team.edit_key) {
@@ -329,15 +327,15 @@ const Party = (props: Props) => {
     list.forEach((object: GridCharacter) => {
       let character = clonedeep(object)
 
-      if (character.over_mastery) {
+      if (character.mastery.overMastery) {
         const overMastery: CharacterOverMastery = {
-          1: object.over_mastery[0],
-          2: object.over_mastery[1],
-          3: object.over_mastery[2],
-          4: object.over_mastery[3],
+          1: object.mastery.overMastery[0],
+          2: object.mastery.overMastery[1],
+          3: object.mastery.overMastery[2],
+          4: object.mastery.overMastery[3],
         }
 
-        character.over_mastery = overMastery
+        character.mastery.overMastery = overMastery
       }
 
       if (character.position != null) {
@@ -353,7 +351,10 @@ const Party = (props: Props) => {
         appState.party.element = gridObject.object.element
       } else if (!gridObject.mainhand && gridObject.position !== null) {
         let weapon = clonedeep(gridObject)
-        if (weapon.object.element === 0 && weapon.element < 1)
+        if (
+          weapon.object.element === ElementMap.null &&
+          weapon.element === ElementMap.null
+        )
           weapon.element = gridObject.object.element
 
         appState.grid.weapons.allWeapons[gridObject.position] = weapon
@@ -403,8 +404,8 @@ const Party = (props: Props) => {
     <WeaponGrid
       new={props.new || false}
       editable={editable}
-      weapons={props.team?.weapons}
-      guidebooks={props.team?.guidebooks}
+      weapons={props.party?.grid.weapons}
+      guidebooks={props.party?.guidebooks}
       createParty={createParty}
       pushHistory={props.pushHistory}
       updateExtra={checkboxChanged}
@@ -416,7 +417,7 @@ const Party = (props: Props) => {
     <SummonGrid
       new={props.new || false}
       editable={editable}
-      summons={props.team?.summons}
+      summons={props.party?.grid.summons}
       createParty={createParty}
       pushHistory={props.pushHistory}
     />
@@ -426,7 +427,7 @@ const Party = (props: Props) => {
     <CharacterGrid
       new={props.new || false}
       editable={editable}
-      characters={props.team?.characters}
+      characters={props.party?.grid.characters}
       createParty={createParty}
       pushHistory={props.pushHistory}
     />

@@ -17,6 +17,7 @@ import WeaponKeySelect from '~components/weapon/WeaponKeySelect'
 import Button from '~components/common/Button'
 
 import { NO_AWAKENING } from '~data/awakening'
+import { ElementMap } from '~utils/elements'
 
 import styles from './index.module.scss'
 
@@ -63,7 +64,7 @@ const WeaponModal = ({
 
   // State: Data
 
-  const [element, setElement] = useState<number>(0)
+  const [element, setElement] = useState<GranblueElement>(ElementMap.null)
   const [awakening, setAwakening] = useState<Awakening>()
   const [awakeningLevel, setAwakeningLevel] = useState(1)
   const [primaryAxModifier, setPrimaryAxModifier] = useState(-1)
@@ -84,8 +85,8 @@ const WeaponModal = ({
   useEffect(() => {
     setElement(gridWeapon.element)
 
-    if (gridWeapon.weapon_keys) {
-      gridWeapon.weapon_keys.forEach((key) => {
+    if (gridWeapon.weaponKeys) {
+      gridWeapon.weaponKeys.forEach((key) => {
         if (key.slot + 1 === 1) {
           setWeaponKey1(key)
         } else if (key.slot + 1 === 2) {
@@ -111,8 +112,8 @@ const WeaponModal = ({
   // Methods: Data retrieval
 
   // Receive values from ElementToggle
-  function receiveElementValue(elementId: number) {
-    setElement(elementId)
+  function receiveElementValue(element: GranblueElement) {
+    setElement(element)
   }
 
   // Receive values from AXSelect
@@ -153,7 +154,8 @@ const WeaponModal = ({
   function prepareObject() {
     let object: GridWeaponObject = { weapon: {} }
 
-    if (gridWeapon.object.element == 0) object.weapon.element = element
+    if (gridWeapon.object.element === ElementMap.null)
+      object.weapon.element = element.id
 
     if ([2, 3, 17, 24].includes(gridWeapon.object.series) && weaponKey1) {
       object.weapon.weapon_key1_id = weaponKey1.id
@@ -165,7 +167,7 @@ const WeaponModal = ({
     if (gridWeapon.object.series == 17 && weaponKey3)
       object.weapon.weapon_key3_id = weaponKey3.id
 
-    if (gridWeapon.object.ax && gridWeapon.object.ax_type > 0) {
+    if (gridWeapon.object.ax && gridWeapon.object.axType > 0) {
       object.weapon.ax_modifier1 = primaryAxModifier
       object.weapon.ax_modifier2 = secondaryAxModifier
       object.weapon.ax_strength1 = primaryAxValue
@@ -215,18 +217,18 @@ const WeaponModal = ({
     // Reset values
     setElement(gridWeapon.element)
     setWeaponKey1(
-      gridWeapon.weapon_keys && gridWeapon.weapon_keys[0]
-        ? gridWeapon.weapon_keys[0]
+      gridWeapon.weaponKeys && gridWeapon.weaponKeys[0]
+        ? gridWeapon.weaponKeys[0]
         : undefined
     )
     setWeaponKey2(
-      gridWeapon.weapon_keys && gridWeapon.weapon_keys[1]
-        ? gridWeapon.weapon_keys[1]
+      gridWeapon.weaponKeys && gridWeapon.weaponKeys[1]
+        ? gridWeapon.weaponKeys[1]
         : undefined
     )
     setWeaponKey3(
-      gridWeapon.weapon_keys && gridWeapon.weapon_keys[2]
-        ? gridWeapon.weapon_keys[2]
+      gridWeapon.weaponKeys && gridWeapon.weaponKeys[2]
+        ? gridWeapon.weaponKeys[2]
         : undefined
     )
     setAwakening(gridWeapon.awakening?.type)
@@ -276,13 +278,13 @@ const WeaponModal = ({
     if (weaponKey && weaponKey.id === 'no-key') weaponKey = undefined
 
     // If the key is empty and the gridWeapon has no keys, nothing has changed
-    if (weaponKey === undefined && !gridWeapon.weapon_keys) return false
+    if (weaponKey === undefined && !gridWeapon.weaponKeys) return false
 
     // If the key is not empty but the gridWeapon has no keys, the key has changed
     if (
       weaponKey !== undefined &&
-      gridWeapon.weapon_keys &&
-      gridWeapon.weapon_keys.length === 0
+      gridWeapon.weaponKeys &&
+      gridWeapon.weaponKeys.length === 0
     )
       return true
 
@@ -290,15 +292,15 @@ const WeaponModal = ({
     // then the key has changed
     const weaponKeyChanged =
       weaponKey &&
-      gridWeapon.weapon_keys &&
-      gridWeapon.weapon_keys[index] &&
-      weaponKey.id !== gridWeapon.weapon_keys[index].id
+      gridWeapon.weaponKeys &&
+      gridWeapon.weaponKeys[index] &&
+      weaponKey.id !== gridWeapon.weaponKeys[index].id
 
     return weaponKeyChanged
   }
 
   function weaponKeysChanged() {
-    if (!gridWeapon.weapon_keys) return false
+    if (!gridWeapon.weaponKeys) return false
 
     const weaponKey1Changed = weaponKeyChanged(0)
     const weaponKey2Changed = weaponKeyChanged(1)
@@ -415,7 +417,7 @@ const WeaponModal = ({
     <section>
       <h3>{t('modals.weapon.subtitles.ax_skills')}</h3>
       <AXSelect
-        axType={gridWeapon.object.ax_type}
+        axType={gridWeapon.object.axType}
         currentSkills={gridWeapon.ax}
         onOpenChange={receiveAxOpen}
         sendValidity={receiveValidity}
@@ -432,7 +434,7 @@ const WeaponModal = ({
         awakening={gridWeapon.awakening?.type}
         level={gridWeapon.awakening?.level}
         defaultAwakening={NO_AWAKENING}
-        maxLevel={gridWeapon.object.max_awakening_level}
+        maxLevel={gridWeapon.object.maxAwakeningLevel}
         onOpenChange={receiveAwakeningOpen}
         sendValidity={receiveValidity}
         sendValues={receiveAwakeningValues}
@@ -479,12 +481,12 @@ const WeaponModal = ({
             title={gridWeapon.object.name[locale]}
             subtitle={t('modals.characters.title')}
             image={{
-              src: `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-square/${gridWeapon.object.granblue_id}.jpg`,
+              src: `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-square/${gridWeapon.object.granblueId}.jpg`,
               alt: gridWeapon.object.name[locale],
             }}
           />
           <section className={styles.mods}>
-            {gridWeapon.object.element == 0 && elementSelect}
+            {gridWeapon.object.element === ElementMap.null && elementSelect}
             {[2, 3, 17, 24].includes(gridWeapon.object.series) && keySelect}
             {gridWeapon.object.ax && axSelect}
             {gridWeapon.object.awakenings && awakeningSelect}

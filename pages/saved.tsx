@@ -238,7 +238,7 @@ const SavedRoute: React.FC<Props> = ({
         const index = parties.findIndex((p) => p.id === teamId)
         const party = parties[index]
 
-        party.favorited = true
+        party.social.favorited = true
 
         let clonedParties = clonedeep(parties)
         clonedParties[index] = party
@@ -254,7 +254,7 @@ const SavedRoute: React.FC<Props> = ({
         const index = parties.findIndex((p) => p.id === teamId)
         const party = parties[index]
 
-        party.favorited = false
+        party.social.favorited = false
 
         let clonedParties = clonedeep(parties)
         clonedParties.splice(index, 1)
@@ -291,13 +291,13 @@ const SavedRoute: React.FC<Props> = ({
           id={party.id}
           shortcode={party.shortcode}
           name={party.name}
-          createdAt={new Date(party.created_at)}
+          createdAt={new Date(party.timestamps.createdAt)}
           raid={party.raid}
-          grid={party.weapons}
+          weapons={party.grid.weapons}
           user={party.user}
-          favorited={party.favorited}
-          fullAuto={party.full_auto}
-          autoGuard={party.auto_guard}
+          favorited={party.social.favorited}
+          fullAuto={party.details.fullAuto}
+          autoGuard={party.details.autoGuard}
           key={`party-${i}`}
           onClick={goTo}
           onSave={toggleFavorite}

@@ -63,3 +63,13 @@ export const elements: GranblueElement[] = [
     slug: 'light',
   },
 ]
+
+export class ElementMap {
+  public static null = elements[0]
+  public static wind = elements[1]
+  public static fire = elements[2]
+  public static water = elements[3]
+  public static earth = elements[4]
+  public static dark = elements[5]
+  public static light = elements[6]
+}

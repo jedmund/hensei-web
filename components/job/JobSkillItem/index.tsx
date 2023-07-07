@@ -107,7 +107,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
       } else {
         jsx = (
           <div className={imageClasses}>
-            {editable && hasJob ? <PlusIcon /> : ''}
+            {editable && hasJob && <PlusIcon />}
           </div>
         )
       }

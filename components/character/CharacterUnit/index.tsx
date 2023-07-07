@@ -21,6 +21,7 @@ import UncapIndicator from '~components/uncap/UncapIndicator'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
+import { ElementMap } from '~utils/elements'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
@@ -109,7 +110,7 @@ const CharacterUnit = ({
   function handlePerpetuityClick() {
     if (gridCharacter) {
       let object: PerpetuityObject = {
-        character: { perpetuity: !gridCharacter.perpetuity },
+        character: { perpetuity: !gridCharacter.mastery.perpetuity },
       }
 
       updateCharacter(object)
@@ -147,15 +148,15 @@ const CharacterUnit = ({
     const gridCharacter: GridCharacter = response.data
     let character = cloneDeep(gridCharacter)
 
-    if (character.over_mastery) {
+    if (character.mastery.overMastery) {
       const overMastery: CharacterOverMastery = {
-        1: gridCharacter.over_mastery[0],
-        2: gridCharacter.over_mastery[1],
-        3: gridCharacter.over_mastery[2],
-        4: gridCharacter.over_mastery[3],
+        1: gridCharacter.mastery.overMastery[0],
+        2: gridCharacter.mastery.overMastery[1],
+        3: gridCharacter.mastery.overMastery[2],
+        4: gridCharacter.mastery.overMastery[3],
       }
 
-      character.over_mastery = overMastery
+      character.mastery.overMastery = overMastery
     }
 
     appState.grid.characters[gridCharacter.position] = character
@@ -187,23 +188,24 @@ const CharacterUnit = ({
 
       // Change the image based on the uncap level
       let suffix = '01'
-      if (gridCharacter.transcendence_step > 0) suffix = '04'
-      else if (gridCharacter.uncap_level >= 5) suffix = '03'
-      else if (gridCharacter.uncap_level > 2) suffix = '02'
+      if (gridCharacter.transcendenceStep > 0) suffix = '04'
+      else if (gridCharacter.uncapLevel >= 5) suffix = '03'
+      else if (gridCharacter.uncapLevel > 2) suffix = '02'
 
       // Special casing for Lyria (and Young Cat eventually)
-      if (gridCharacter.object.granblue_id === '3030182000') {
-        let element = 1
+      if (gridCharacter.object.granblueId === '3030182000') {
+        let element: GranblueElement | undefined
+
         if (grid.weapons.mainWeapon && grid.weapons.mainWeapon.element) {
           element = grid.weapons.mainWeapon.element
-        } else if (party.element != 0) {
-          element = party.element
+        } else {
+          element = ElementMap.wind
         }
 
         suffix = `${suffix}_0${element}`
       }
 
-      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblue_id}_${suffix}.jpg`
+      imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblueId}_${suffix}.jpg`
     }
 
     setImageUrl(imgSrc)
@@ -292,7 +294,7 @@ const CharacterUnit = ({
     if (gridCharacter) {
       const classes = classNames({
         [styles.perpetuity]: true,
-        [styles.empty]: !gridCharacter.perpetuity,
+        [styles.empty]: !gridCharacter.mastery.perpetuity,
       })
 
       return <i className={classes} onClick={handlePerpetuityClick} />
@@ -348,8 +350,8 @@ const CharacterUnit = ({
             type="character"
             flb={character.uncap.flb || false}
             ulb={character.uncap.ulb || false}
-            uncapLevel={gridCharacter.uncap_level}
-            transcendenceStage={gridCharacter.transcendence_step}
+            uncapLevel={gridCharacter.uncapLevel}
+            transcendenceStage={gridCharacter.transcendenceStep}
             position={gridCharacter.position}
             editable={editable}
             updateUncap={passUncapData}

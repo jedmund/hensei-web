@@ -12,6 +12,7 @@ import CharacterRep from '~components/reps/CharacterRep'
 import WeaponRep from '~components/reps/WeaponRep'
 import SummonRep from '~components/reps/SummonRep'
 
+import { ElementMap } from '~utils/elements'
 import { GridType } from '~utils/enums'
 
 import styles from './index.module.scss'
@@ -33,23 +34,24 @@ const PartySegmentedControl = (props: Props) => {
   const { party, grid } = useSnapshot(appState)
 
   const getElement = () => {
-    let element: number = 0
-    if (party.element == 0 && grid.weapons.mainWeapon)
+    let element: GranblueElement
+    if (party.element === ElementMap.null && grid.weapons.mainWeapon)
       element = grid.weapons.mainWeapon.element
-    else element = party.element
+    else if (party.element) element = party.element
+    else element = ElementMap.null
 
     switch (element) {
-      case 1:
+      case ElementMap.wind:
         return 'wind'
-      case 2:
+      case ElementMap.fire:
         return 'fire'
-      case 3:
+      case ElementMap.water:
         return 'water'
-      case 4:
+      case ElementMap.earth:
         return 'earth'
-      case 5:
+      case ElementMap.dark:
         return 'dark'
-      case 6:
+      case ElementMap.light:
         return 'light'
     }
   }
@@ -64,7 +66,7 @@ const PartySegmentedControl = (props: Props) => {
         onClick={props.onClick}
       >
         <CharacterRep
-          job={party.job}
+          job={party.protagonist.job}
           element={party.element}
           gender={
             accountState.account.user ? accountState.account.user.gender : 0

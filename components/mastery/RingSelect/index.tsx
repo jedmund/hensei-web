@@ -33,12 +33,12 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
   })
 
   useEffect(() => {
-    if (gridCharacter.over_mastery) {
+    if (gridCharacter.mastery.overMastery) {
       setRings({
-        1: gridCharacter.over_mastery[1],
-        2: gridCharacter.over_mastery[2],
-        3: gridCharacter.over_mastery[3],
-        4: gridCharacter.over_mastery[4],
+        1: gridCharacter.mastery.overMastery[1],
+        2: gridCharacter.mastery.overMastery[2],
+        3: gridCharacter.mastery.overMastery[3],
+        4: gridCharacter.mastery.overMastery[4],
       })
     }
   }, [gridCharacter])
@@ -54,7 +54,7 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
         ja: 'EXリミットボーナスなし',
       },
       id: 0,
-      granblue_id: '',
+      granblueId: '',
       slug: 'no-bonus',
       minValue: 0,
       maxValue: 0,

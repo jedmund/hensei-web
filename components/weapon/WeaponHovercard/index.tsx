@@ -12,6 +12,7 @@ import HovercardHeader from '~components/HovercardHeader'
 import Button from '~components/common/Button'
 
 import ax from '~data/ax'
+import { ElementMap } from '~utils/elements'
 
 import styles from './index.module.scss'
 
@@ -36,7 +37,6 @@ const WeaponHovercard = (props: Props) => {
 
   const { t } = useTranslation('common')
 
-  const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
   const WeaponKeyNames: KeyNames = {
     '2': {
       en: 'Pendulum',
@@ -57,9 +57,10 @@ const WeaponHovercard = (props: Props) => {
   }
 
   const tintElement =
-    props.gridWeapon.object.element == 0 && props.gridWeapon.element
-      ? Element[props.gridWeapon.element]
-      : Element[props.gridWeapon.object.element]
+    props.gridWeapon.object.element === ElementMap.null &&
+    props.gridWeapon.element
+      ? props.gridWeapon.element.slug
+      : props.gridWeapon.object.element.slug
 
   function goTo() {
     const urlSafeName = props.gridWeapon.object.name.en.replaceAll(' ', '_')
@@ -76,7 +77,7 @@ const WeaponHovercard = (props: Props) => {
   }
 
   const createPrimaryAxSkillString = () => {
-    const primaryAxSkills = ax[props.gridWeapon.object.ax_type - 1]
+    const primaryAxSkills = ax[props.gridWeapon.object.axType - 1]
 
     if (props.gridWeapon.ax) {
       const simpleAxSkill = props.gridWeapon.ax[0]
@@ -93,7 +94,7 @@ const WeaponHovercard = (props: Props) => {
   }
 
   const createSecondaryAxSkillString = () => {
-    const primaryAxSkills = ax[props.gridWeapon.object.ax_type - 1]
+    const primaryAxSkills = ax[props.gridWeapon.object.axType - 1]
 
     if (props.gridWeapon.ax) {
       const primarySimpleAxSkill = props.gridWeapon.ax[0]
@@ -135,27 +136,24 @@ const WeaponHovercard = (props: Props) => {
 
   const keysSection = (
     <section className={styles.weaponKeys}>
-      {WeaponKeyNames[props.gridWeapon.object.series] ? (
+      {WeaponKeyNames[props.gridWeapon.object.series] && (
         <h5 className={tintElement}>
           {WeaponKeyNames[props.gridWeapon.object.series][locale]}
           {locale === 'en' ? 's' : ''}
         </h5>
-      ) : (
-        ''
       )}
 
-      {props.gridWeapon.weapon_keys
-        ? Array.from(Array(props.gridWeapon.weapon_keys.length)).map((x, i) => {
-            return (
-              <div
-                className={styles.weaponKey}
-                key={props.gridWeapon.weapon_keys![i].id}
-              >
-                <span>{props.gridWeapon.weapon_keys![i].name[locale]}</span>
-              </div>
-            )
-          })
-        : ''}
+      {props.gridWeapon.weaponKeys &&
+        Array.from(Array(props.gridWeapon.weaponKeys?.length)).map((x, i) => {
+          return (
+            <div
+              className={styles.weaponKey}
+              key={props.gridWeapon.weaponKeys![i].id}
+            >
+              <span>{props.gridWeapon.weaponKeys![i].name[locale]}</span>
+            </div>
+          )
+        })}
     </section>
   )
 
@@ -181,28 +179,26 @@ const WeaponHovercard = (props: Props) => {
         </div>
 
         {props.gridWeapon.ax &&
-        props.gridWeapon.ax[1].modifier &&
-        props.gridWeapon.ax[1].strength ? (
-          <div
-            className={classNames({
-              [styles.secondary]: true,
-              [styles.axSkill]: true,
-              [styles.skill]: true,
-            })}
-          >
-            <div className={styles.axImageWrapper}>
-              <img
-                alt="AX2"
-                src={`/icons/ax/secondary_${
-                  props.gridWeapon.ax ? props.gridWeapon.ax[1].modifier : ''
-                }.png`}
-              />
+          props.gridWeapon.ax[1].modifier &&
+          props.gridWeapon.ax[1].strength && (
+            <div
+              className={classNames({
+                [styles.secondary]: true,
+                [styles.axSkill]: true,
+                [styles.skill]: true,
+              })}
+            >
+              <div className={styles.axImageWrapper}>
+                <img
+                  alt="AX2"
+                  src={`/icons/ax/secondary_${
+                    props.gridWeapon.ax ? props.gridWeapon.ax[1].modifier : ''
+                  }.png`}
+                />
+              </div>
+              <span>{createSecondaryAxSkillString()}</span>
             </div>
-            <span>{createSecondaryAxSkillString()}</span>
-          </div>
-        ) : (
-          ''
-        )}
+          )}
       </div>
     </section>
   )
@@ -233,8 +229,8 @@ const WeaponHovercard = (props: Props) => {
           props.gridWeapon.ax[0].strength !== undefined &&
           axSection}
         {props.gridWeapon.awakening && awakeningSection}
-        {props.gridWeapon.weapon_keys &&
-          props.gridWeapon.weapon_keys.length > 0 &&
+        {props.gridWeapon.weaponKeys &&
+          props.gridWeapon.weaponKeys.length > 0 &&
           keysSection}
         {wikiButton}
       </HovercardContent>

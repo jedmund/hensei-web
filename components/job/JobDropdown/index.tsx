@@ -39,8 +39,8 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
 
     // Set current job from state on mount
     useEffect(() => {
-      if (party.job?.id !== '-1') {
-        setCurrentJob(party.job)
+      if (party.protagonist.job?.id !== '-1') {
+        setCurrentJob(party.protagonist.job)
       }
     }, [])
 
@@ -95,7 +95,7 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
                 icon={{
                   alt: item.name[locale],
                   src: [
-                    `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${item.granblue_id}.png`,
+                    `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${item.granblueId}.png`,
                   ],
                 }}
               >
@@ -119,7 +119,7 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
         icon={{
           alt: currentJob ? currentJob.name[locale] : '',
           src: currentJob
-            ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${currentJob.granblue_id}.png`
+            ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${currentJob.granblueId}.png`
             : '',
         }}
         open={open}

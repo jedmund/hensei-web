@@ -3,13 +3,15 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import 'fix-date'
 
+import { ElementMap } from '~utils/elements'
+
 import styles from './index.module.scss'
 import classNames from 'classnames'
 
 interface Props {
   job?: Job
   gender?: number
-  element?: number
+  element?: GranblueElement
   grid: GridArray<GridCharacter>
 }
 
@@ -47,17 +49,17 @@ const CharacterRep = (props: Props) => {
   // Convert element to string
   function numberToElement() {
     switch (props.element) {
-      case 1:
+      case ElementMap.wind:
         return 'wind'
-      case 2:
+      case ElementMap.fire:
         return 'fire'
-      case 3:
+      case ElementMap.water:
         return 'water'
-      case 4:
+      case ElementMap.earth:
         return 'earth'
-      case 5:
+      case ElementMap.dark:
         return 'dark'
-      case 6:
+      case ElementMap.light:
         return 'light'
       default:
         return ''
@@ -91,21 +93,21 @@ const CharacterRep = (props: Props) => {
     if (character && gridCharacter) {
       // Change the image based on the uncap level
       let suffix = '01'
-      if (gridCharacter.transcendence_step > 0) suffix = '04'
-      else if (gridCharacter.uncap_level >= 5) suffix = '03'
-      else if (gridCharacter.uncap_level > 2) suffix = '02'
+      if (gridCharacter.transcendenceStep > 0) suffix = '04'
+      else if (gridCharacter.uncapLevel >= 5) suffix = '03'
+      else if (gridCharacter.uncapLevel > 2) suffix = '02'
 
-      if (character.element == 0) {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblue_id}_${props.element}.jpg`
+      if (character.element === ElementMap.null) {
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblueId}_${props.element}.jpg`
       } else {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblue_id}_${suffix}.jpg`
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblueId}_${suffix}.jpg`
       }
     }
 
-    return characters[position] ? (
-      <img alt={characters[position]?.name[locale]} src={url} />
-    ) : (
-      ''
+    return (
+      characters[position] && (
+        <img alt={characters[position]?.name[locale]} src={url} />
+      )
     )
   }
 

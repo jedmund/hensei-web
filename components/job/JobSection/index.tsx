@@ -76,8 +76,11 @@ const JobSection = (props: Props) => {
 
   useEffect(() => {
     if (job) {
-      if ((party.job && job.id != party.job.id) || !party.job)
-        appState.party.job = job
+      if (
+        (party.protagonist.job && job.id != party.protagonist.job.id) ||
+        !party.protagonist.job
+      )
+        appState.party.protagonist.job = job
       if (job.row === '1') setNumSkills(3)
       else setNumSkills(4)
       fetchJobAccessories()
@@ -178,7 +181,7 @@ const JobSection = (props: Props) => {
     <div className={styles.name}>
       <img
         alt={job?.name[locale]}
-        src={`/images/job-icons/${job?.granblue_id}.png`}
+        src={`/images/job-icons/${job?.granblueId}.png`}
       />
       <h3>{job?.name[locale]}</h3>
     </div>
@@ -188,7 +191,7 @@ const JobSection = (props: Props) => {
   return (
     <section className={styles.job}>
       <JobImage
-        job={party.job}
+        job={party.protagonist.job}
         currentAccessory={currentAccessory}
         accessories={accessories}
         editable={props.editable}
@@ -198,21 +201,23 @@ const JobSection = (props: Props) => {
       <div className={styles.details}>
         {props.editable ? (
           <JobDropdown
-            currentJob={party.job?.id}
+            currentJob={party.protagonist.job?.id}
             onChange={receiveJob}
             ref={selectRef}
           />
         ) : (
           <div className={styles.name}>
-            {party.job ? (
+            {party.protagonist.job && (
               <img
-                alt={party.job.name[locale]}
-                src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${party.job.granblue_id}.png`}
+                alt={party.protagonist.job.name[locale]}
+                src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${party.protagonist.job.granblueId}.png`}
               />
-            ) : (
-              ''
             )}
-            <h3>{party.job ? party.job.name[locale] : t('no_job')}</h3>
+            <h3>
+              {party.protagonist.job
+                ? party.protagonist.job.name[locale]
+                : t('no_job')}
+            </h3>
           </div>
         )}
 

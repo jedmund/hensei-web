@@ -6,7 +6,7 @@ export function toObject(data: any): Character {
   return {
     type: 'character',
     id: data.id,
-    granblueId: data.granblue_id,
+    granblueId: data.granblueId,
     characterId: data.character_id,
     name: {
       en: data.name.en,

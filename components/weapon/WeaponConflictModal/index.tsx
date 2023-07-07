@@ -39,7 +39,7 @@ const WeaponConflictModal = (props: Props) => {
   }, [setOpen, props.open])
 
   function imageUrl(weapon?: Weapon) {
-    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-square/${weapon?.granblue_id}.jpg`
+    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-square/${weapon?.granblueId}.jpg`
   }
 
   function openChange(open: boolean) {

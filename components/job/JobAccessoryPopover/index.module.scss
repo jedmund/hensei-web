@@ -12,7 +12,7 @@
     margin: 0 0 $unit $unit;
   }
 
-  &.ReadOnly {
+  &.readOnly {
     min-width: inherit;
     max-width: inherit;
   }
@@ -27,7 +27,7 @@
     max-width: initial;
   }
 
-  .Accessories {
+  .accessories {
     display: grid;
     gap: $unit;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -38,7 +38,7 @@
     }
   }
 
-  .EquippedAccessory {
+  .equipped {
     display: flex;
     flex-direction: column;
     gap: $unit-2x;
@@ -47,7 +47,7 @@
       margin: 0;
     }
 
-    .Accessory {
+    .accessory {
       display: flex;
       flex-direction: column;
       gap: $unit;

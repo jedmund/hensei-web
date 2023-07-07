@@ -19,7 +19,10 @@ interface Party {
   name: string
   description: string
   shortcode: string
-  user: User
+  user?: User
+  editable: boolean
+  element?: GranblueElement
+  grid: Grid
   details: {
     extra: boolean
     fullAuto: boolean
@@ -44,7 +47,7 @@ interface Party {
     remix: boolean
     remixes: Party[]
   }
-  raid: Raid
+  raid?: Raid
   guidebooks: GuidebookList
   timestamps: {
     createdAt: string

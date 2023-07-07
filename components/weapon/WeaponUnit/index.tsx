@@ -24,6 +24,7 @@ import Button from '~components/common/Button'
 import type { GridWeaponObject, SearchableObject } from '~types'
 
 import ax from '~data/ax'
+import { ElementMap } from '~utils/elements'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
@@ -154,7 +155,10 @@ const WeaponUnit = ({
       appState.party.element = gridWeapon.object.element
     } else if (!gridWeapon.mainhand && gridWeapon.position !== null) {
       let weapon = clonedeep(gridWeapon)
-      if (weapon.object.element === 0 && weapon.element < 1)
+      if (
+        weapon.object.element === ElementMap.null &&
+        weapon.element === ElementMap.null
+      )
         weapon.element = gridWeapon.object.element
 
       appState.grid.weapons.allWeapons[gridWeapon.position] = weapon
@@ -170,10 +174,10 @@ const WeaponUnit = ({
     if (
       gridWeapon &&
       gridWeapon.object.ax &&
-      gridWeapon.object.ax_type > 0 &&
+      gridWeapon.object.axType > 0 &&
       gridWeapon.ax
     ) {
-      const axOptions = ax[gridWeapon.object.ax_type - 1]
+      const axOptions = ax[gridWeapon.object.axType - 1]
       const weaponAxSkill: SimpleAxSkill = gridWeapon.ax[0]
 
       let axSkill = axOptions.find((ax) => ax.id === weaponAxSkill.modifier)
@@ -196,15 +200,15 @@ const WeaponUnit = ({
       const weapon = gridWeapon.object!
 
       if (unitType == 0) {
-        if (gridWeapon.object.element == 0 && gridWeapon.element)
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}_${gridWeapon.element}.jpg`
+        if (gridWeapon.object.element === ElementMap.null && gridWeapon.element)
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblueId}_${gridWeapon.element}.jpg`
         else
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblueId}.jpg`
       } else {
-        if (gridWeapon.object.element == 0 && gridWeapon.element)
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${gridWeapon.element}.jpg`
+        if (gridWeapon.object.element === ElementMap.null && gridWeapon.element)
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblueId}_${gridWeapon.element}.jpg`
         else
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblueId}.jpg`
       }
     }
 
@@ -242,19 +246,15 @@ const WeaponUnit = ({
     let altText = ''
 
     // If there is a grid weapon, it is a Draconic Weapon and it has keys
-    if (
-      gridWeapon &&
-      gridWeapon.object.series === 3 &&
-      gridWeapon.weapon_keys
-    ) {
-      if (index === 0 && gridWeapon.weapon_keys[0]) {
-        altText = `${gridWeapon.weapon_keys[0].name[locale]}`
-        filename = `${gridWeapon.weapon_keys[0].slug}.png`
-      } else if (index === 1 && gridWeapon.weapon_keys[1]) {
-        altText = `${gridWeapon.weapon_keys[1].name[locale]}`
+    if (gridWeapon && gridWeapon.object.series === 3 && gridWeapon.weaponKeys) {
+      if (index === 0 && gridWeapon.weaponKeys[0]) {
+        altText = `${gridWeapon.weaponKeys[0].name[locale]}`
+        filename = `${gridWeapon.weaponKeys[0].slug}.png`
+      } else if (index === 1 && gridWeapon.weaponKeys[1]) {
+        altText = `${gridWeapon.weaponKeys[1].name[locale]}`
 
         const element = gridWeapon.object.element
-        filename = `${gridWeapon.weapon_keys[1].slug}-${element}.png`
+        filename = `${gridWeapon.weaponKeys[1].slug}-${element}.png`
       }
 
       return (
@@ -273,10 +273,10 @@ const WeaponUnit = ({
     if (
       gridWeapon &&
       gridWeapon.object.series === 3 &&
-      gridWeapon.weapon_keys &&
-      gridWeapon.weapon_keys.length > 0
+      gridWeapon.weaponKeys &&
+      gridWeapon.weaponKeys.length > 0
     ) {
-      for (let i = 0; i < gridWeapon.weapon_keys.length; i++) {
+      for (let i = 0; i < gridWeapon.weaponKeys.length; i++) {
         const image = telumaImage(i)
         if (image) images.push(image)
       }
@@ -294,25 +294,25 @@ const WeaponUnit = ({
     if (
       gridWeapon &&
       gridWeapon.object.series === 17 &&
-      gridWeapon.weapon_keys
+      gridWeapon.weaponKeys
     ) {
       if (
-        gridWeapon.weapon_keys[index] &&
-        (gridWeapon.weapon_keys[index].slot === 1 ||
-          gridWeapon.weapon_keys[index].slot === 2)
+        gridWeapon.weaponKeys[index] &&
+        (gridWeapon.weaponKeys[index].slot === 1 ||
+          gridWeapon.weaponKeys[index].slot === 2)
       ) {
-        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
-        filename = `${gridWeapon.weapon_keys[index].slug}.png`
+        altText = `${gridWeapon.weaponKeys[index].name[locale]}`
+        filename = `${gridWeapon.weaponKeys[index].slug}.png`
       } else if (
-        gridWeapon.weapon_keys[index] &&
-        gridWeapon.weapon_keys[index].slot === 0
+        gridWeapon.weaponKeys[index] &&
+        gridWeapon.weaponKeys[index].slot === 0
       ) {
-        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
+        altText = `${gridWeapon.weaponKeys[index].name[locale]}`
 
         const weapon = gridWeapon.object.proficiency
 
         const suffix = `${weapon}`
-        filename = `${gridWeapon.weapon_keys[index].slug}-${suffix}.png`
+        filename = `${gridWeapon.weaponKeys[index].slug}-${suffix}.png`
       }
     }
 
@@ -331,10 +331,10 @@ const WeaponUnit = ({
     if (
       gridWeapon &&
       gridWeapon.object.series === 17 &&
-      gridWeapon.weapon_keys &&
-      gridWeapon.weapon_keys.length > 0
+      gridWeapon.weaponKeys &&
+      gridWeapon.weaponKeys.length > 0
     ) {
-      for (let i = 0; i < gridWeapon.weapon_keys.length; i++) {
+      for (let i = 0; i < gridWeapon.weaponKeys.length; i++) {
         const image = ultimaImage(i)
         if (image) images.push(image)
       }
@@ -349,22 +349,18 @@ const WeaponUnit = ({
     let altText = ''
 
     // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
-    if (
-      gridWeapon &&
-      gridWeapon.object.series === 2 &&
-      gridWeapon.weapon_keys
-    ) {
+    if (gridWeapon && gridWeapon.object.series === 2 && gridWeapon.weaponKeys) {
       if (
-        gridWeapon.weapon_keys[index] &&
-        gridWeapon.weapon_keys[index].slot === 0
+        gridWeapon.weaponKeys[index] &&
+        gridWeapon.weaponKeys[index].slot === 0
       ) {
-        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
-        filename = `${gridWeapon.weapon_keys[index].slug}.png`
+        altText = `${gridWeapon.weaponKeys[index].name[locale]}`
+        filename = `${gridWeapon.weaponKeys[index].slug}.png`
       } else if (
-        gridWeapon.weapon_keys[index] &&
-        gridWeapon.weapon_keys[index].slot === 1
+        gridWeapon.weaponKeys[index] &&
+        gridWeapon.weaponKeys[index].slot === 1
       ) {
-        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
+        altText = `${gridWeapon.weaponKeys[index].name[locale]}`
 
         const element = gridWeapon.object.element
         const mod = gridWeapon.object.name.en.includes('Repudiation')
@@ -372,7 +368,7 @@ const WeaponUnit = ({
           : 'magna'
 
         const suffix = `${mod}-${element}`
-        const weaponKey = gridWeapon.weapon_keys[index]
+        const weaponKey = gridWeapon.weaponKeys[index]
 
         if (
           [
@@ -384,9 +380,9 @@ const WeaponUnit = ({
             'chain-glorification',
           ].includes(weaponKey.slug)
         ) {
-          filename = `${gridWeapon.weapon_keys[index].slug}-${suffix}.png`
+          filename = `${gridWeapon.weaponKeys[index].slug}-${suffix}.png`
         } else {
-          filename = `${gridWeapon.weapon_keys[index].slug}.png`
+          filename = `${gridWeapon.weaponKeys[index].slug}.png`
         }
       }
 
@@ -406,10 +402,10 @@ const WeaponUnit = ({
     if (
       gridWeapon &&
       gridWeapon.object.series === 2 &&
-      gridWeapon.weapon_keys &&
-      gridWeapon.weapon_keys.length > 0
+      gridWeapon.weaponKeys &&
+      gridWeapon.weaponKeys.length > 0
     ) {
-      for (let i = 0; i < gridWeapon.weapon_keys.length; i++) {
+      for (let i = 0; i < gridWeapon.weaponKeys.length; i++) {
         const image = opusImage(i)
         if (image) images.push(image)
       }
@@ -424,7 +420,7 @@ const WeaponUnit = ({
     if (
       gridWeapon &&
       gridWeapon.object.ax &&
-      gridWeapon.object.ax_type > 0 &&
+      gridWeapon.object.axType > 0 &&
       gridWeapon.ax &&
       axSkill
     ) {
@@ -592,7 +588,7 @@ const WeaponUnit = ({
             type="weapon"
             ulb={gridWeapon.object.uncap.ulb || false}
             flb={gridWeapon.object.uncap.flb || false}
-            uncapLevel={gridWeapon.uncap_level}
+            uncapLevel={gridWeapon.uncapLevel}
             position={gridWeapon.position}
             updateUncap={passUncapData}
             special={false}

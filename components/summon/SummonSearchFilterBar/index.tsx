@@ -3,8 +3,6 @@ import { useTranslation } from 'next-i18next'
 
 import cloneDeep from 'lodash.clonedeep'
 
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-
 import SearchFilter from '~components/search/SearchFilter'
 import SearchFilterCheckboxItem from '~components/search/SearchFilterCheckboxItem'
 

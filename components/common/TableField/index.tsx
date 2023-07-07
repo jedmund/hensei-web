@@ -23,25 +23,26 @@ const TableField = (props: Props) => {
   )
 
   const image = () => {
-    return props.image && props.image.src.length > 0 ? (
-      <div
-        className={classNames(
-          {
-            [styles.preview]: true,
-          },
-          props.image.className
-            ?.split(' ')
-            .map((className) => styles[className])
-        )}
-      >
-        <img
-          alt={props.image.alt}
-          srcSet={props.image.src.join(', ')}
-          src={props.image.src[0]}
-        />
-      </div>
-    ) : (
-      ''
+    return (
+      props.image &&
+      props.image.src.length > 0 && (
+        <div
+          className={classNames(
+            {
+              [styles.preview]: true,
+            },
+            props.image.className
+              ?.split(' ')
+              .map((className) => styles[className])
+          )}
+        >
+          <img
+            alt={props.image.alt}
+            srcSet={props.image.src.join(', ')}
+            src={props.image.src[0]}
+          />
+        </div>
+      )
     )
   }
 

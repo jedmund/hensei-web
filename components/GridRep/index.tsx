@@ -8,6 +8,7 @@ import 'fix-date'
 
 import { accountState } from '~utils/accountState'
 import { formatTimeAgo } from '~utils/timeAgo'
+import { ElementMap } from '~utils/elements'
 
 import Button from '~components/common/Button'
 
@@ -19,8 +20,11 @@ interface Props {
   shortcode: string
   id: string
   name: string
-  raid: Raid
-  grid: GridWeapon[]
+  raid?: Raid
+  weapons: {
+    mainWeapon?: GridWeapon
+    allWeapons: GridArray<GridWeapon>
+  }
   user?: User
   fullAuto: boolean
   autoGuard: boolean
@@ -69,27 +73,10 @@ const GridRep = (props: Props) => {
   })
 
   useEffect(() => {
-    const newWeapons = Array(numWeapons)
-    const gridWeapons = Array(numWeapons)
-
-    let foundMainhand = false
-    for (const [key, value] of Object.entries(props.grid)) {
-      if (value.position == -1) {
-        setMainhand(value.object)
-        foundMainhand = true
-      } else if (!value.mainhand && value.position != null) {
-        newWeapons[value.position] = value.object
-        gridWeapons[value.position] = value
-      }
-    }
-
-    if (!foundMainhand) {
-      setMainhand(undefined)
-    }
-
-    setWeapons(newWeapons)
-    setGrid(gridWeapons)
-  }, [props.grid])
+    setMainhand(props.weapons.mainWeapon?.object)
+    setWeapons(Object.values(props.weapons.allWeapons).map((w) => w?.object))
+    setGrid(props.weapons.allWeapons)
+  }, [props.weapons])
 
   function navigate() {
     props.onClick(props.shortcode)
@@ -99,22 +86,16 @@ const GridRep = (props: Props) => {
     let url = ''
 
     if (mainhand) {
-      const weapon = Object.values(props.grid).find(
-        (w) => w && w.object.id === mainhand.id
-      )
+      const weapon = props.weapons.mainWeapon
 
-      if (mainhand.element == 0 && weapon && weapon.element) {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}_${weapon.element}.jpg`
+      if (mainhand.element === ElementMap.null && weapon && weapon.element) {
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblueId}_${weapon.element}.jpg`
       } else {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}.jpg`
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblueId}.jpg`
       }
     }
 
-    return mainhand && props.grid[0] ? (
-      <img alt={mainhand.name[locale]} src={url} />
-    ) : (
-      ''
-    )
+    return mainhand && <img alt={mainhand.name[locale]} src={url} />
   }
 
   function generateGridImage(position: number) {
@@ -124,17 +105,17 @@ const GridRep = (props: Props) => {
     const gridWeapon = grid[position]
 
     if (weapon && gridWeapon) {
-      if (weapon.element == 0 && gridWeapon.element) {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${gridWeapon.element}.jpg`
+      if (weapon.element === ElementMap.null && gridWeapon.element) {
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblueId}_${gridWeapon.element}.jpg`
       } else {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblueId}.jpg`
       }
     }
 
-    return weapons[position] ? (
-      <img alt={weapons[position]?.name[locale]} src={url} />
-    ) : (
-      ''
+    return (
+      weapons[position] && (
+        <img alt={weapons[position]?.name[locale]} src={url} />
+      )
     )
   }
 
@@ -215,24 +196,22 @@ const GridRep = (props: Props) => {
           </div>
         </div>
         {account.authorized &&
-        ((props.user && account.user && account.user.id !== props.user.id) ||
-          !props.user) ? (
-          <Link href="#">
-            <Button
-              className={classNames({
-                save: true,
-                saved: props.favorited,
-              })}
-              leftAccessoryIcon={<SaveIcon className="stroke" />}
-              active={props.favorited}
-              bound={true}
-              size="small"
-              onClick={sendSaveData}
-            />
-          </Link>
-        ) : (
-          ''
-        )}
+          ((props.user && account.user && account.user.id !== props.user.id) ||
+            !props.user) && (
+            <Link href="#">
+              <Button
+                className={classNames({
+                  save: true,
+                  saved: props.favorited,
+                })}
+                leftAccessoryIcon={<SaveIcon className="stroke" />}
+                active={props.favorited}
+                bound={true}
+                size="small"
+                onClick={sendSaveData}
+              />
+            </Link>
+          )}
       </div>
       <div className={styles.attributed}>
         {attribution()}

@@ -7,7 +7,7 @@ export function toObject(data: any): GridCharacter {
     id: data.id,
     object: Character.toObject(data.object),
     position: data.position,
-    uncapLevel: data.uncap_level,
+    uncapLevel: data.uncapLevel,
     transcendenceStep: data.transcendence_step,
     mastery: {
       overMastery: data.over_mastery,
@@ -26,7 +26,7 @@ export function toParams(data: GridCharacter): GridCharacterParams {
   return {
     character_id: data.id,
     position: data.position,
-    uncap_level: data.uncapLevel,
+    uncapLevel: data.uncapLevel,
     transcendence_step: data.transcendenceStep,
     ring1: data.mastery.overMastery[1],
     ring2: data.mastery.overMastery[2],

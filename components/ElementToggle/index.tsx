@@ -3,12 +3,13 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
+import * as ElementTransformer from '~transformers/ElementTransformer'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import styles from './index.module.scss'
 
 interface Props {
-  currentElement: number
-  sendValue: (value: number) => void
+  currentElement: GranblueElement
+  sendValue: (value: GranblueElement) => void
 }
 
 const ElementToggle = ({ currentElement, sendValue, ...props }: Props) => {
@@ -24,7 +25,7 @@ const ElementToggle = ({ currentElement, sendValue, ...props }: Props) => {
 
   // Methods: Handlers
   const handleElementChange = (value: string) => {
-    const newElement = parseInt(value)
+    const newElement = ElementTransformer.toObject(parseInt(value))
     setElement(newElement)
     sendValue(newElement)
   }

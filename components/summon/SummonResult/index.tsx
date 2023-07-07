@@ -11,8 +11,6 @@ interface Props {
   onClick: () => void
 }
 
-const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
-
 const SummonResult = (props: Props) => {
   const router = useRouter()
   const locale =
@@ -24,7 +22,7 @@ const SummonResult = (props: Props) => {
     <li className={styles.result} onClick={props.onClick}>
       <img
         alt={summon.name[locale]}
-        src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}.jpg`}
+        src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblueId}.jpg`}
       />
       <div className={styles.info}>
         <h5>{summon.name[locale]}</h5>
@@ -35,7 +33,7 @@ const SummonResult = (props: Props) => {
           special={false}
         />
         <div className={styles.tags}>
-          <WeaponLabelIcon labelType={Element[summon.element]} />
+          <WeaponLabelIcon labelType={summon.element.slug} />
         </div>
       </div>
     </li>

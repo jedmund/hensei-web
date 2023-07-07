@@ -18,7 +18,7 @@ export type MentionRef = {
 }
 
 export type MentionSuggestion = {
-  granblue_id: string
+  granblueId: string
   name: {
     [key: string]: string
     en: string
@@ -101,10 +101,10 @@ export const MentionList = forwardRef<MentionRef, Props>(
                   alt={item.name[locale]}
                   src={
                     item.type === 'character'
-                      ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/${item.type}-square/${item.granblue_id}_01.jpg`
+                      ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/${item.type}-square/${item.granblueId}_01.jpg`
                       : item.type === 'job'
-                      ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${item.granblue_id}.png`
-                      : `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/${item.type}-square/${item.granblue_id}.jpg`
+                      ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${item.granblueId}.png`
+                      : `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/${item.type}-square/${item.granblueId}.jpg`
                   }
                 />
               </div>

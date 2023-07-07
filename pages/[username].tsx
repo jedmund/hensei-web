@@ -22,6 +22,8 @@ import FilterBar from '~components/filters/FilterBar'
 import ProfileHead from '~components/head/ProfileHead'
 import UserInfo from '~components/filters/UserInfo'
 
+import * as RaidGroupTransformer from '~transformers/RaidGroupTransformer'
+
 import type { AxiosError } from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type {
@@ -175,7 +177,11 @@ const ProfileRoute: React.FC<Props> = ({
 
   function replaceResults(count: number, list: Party[]) {
     if (count > 0) {
-      setParties(list.sort((a, b) => (a.created_at > b.created_at ? -1 : 1)))
+      setParties(
+        list.sort((a, b) =>
+          a.timestamps.createdAt > b.timestamps.createdAt ? -1 : 1
+        )
+      )
     } else {
       setParties([])
     }
@@ -252,13 +258,13 @@ const ProfileRoute: React.FC<Props> = ({
           id={party.id}
           shortcode={party.shortcode}
           name={party.name}
-          createdAt={new Date(party.created_at)}
+          createdAt={new Date(party.timestamps.createdAt)}
           raid={party.raid}
-          grid={party.weapons}
+          weapons={party.grid.weapons}
           user={party.user}
-          favorited={party.favorited}
-          fullAuto={party.full_auto}
-          autoGuard={party.auto_guard}
+          favorited={party.social.favorited}
+          fullAuto={party.details.fullAuto}
+          autoGuard={party.details.autoGuard}
           key={`party-${i}`}
           onClick={goTo}
         />
@@ -331,9 +337,11 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   try {
     // Fetch and organize raids
-    let raidGroups: RaidGroup[] = await api
+    const raidGroups: RaidGroup[] = await api
       .raidGroups()
-      .then((response) => response.data)
+      .then((response) =>
+        response.data.map((group: any) => RaidGroupTransformer.toObject(group))
+      )
 
     // Create filter object
     const filters: FilterObject = extractFilters(query, raidGroups)

@@ -2,7 +2,7 @@
 export function toObject(data: any): Job {
   return {
     id: data.id,
-    granblueId: data.granblue_id,
+    granblueId: data.granblueId,
     name: {
       en: data.name.en,
       ja: data.name.jp,

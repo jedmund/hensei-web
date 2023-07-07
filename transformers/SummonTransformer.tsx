@@ -5,7 +5,7 @@ export function toObject(data: any): Summon {
   return {
     type: 'summon',
     id: data.id,
-    granblueId: data.granblue_id,
+    granblueId: data.granblueId,
     name: {
       en: data.name.en,
       ja: data.name.jp,

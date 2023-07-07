@@ -11,7 +11,6 @@ interface Props {
   onClick: () => void
 }
 
-const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 const Proficiency = [
   'none',
   'sword',
@@ -36,7 +35,7 @@ const WeaponResult = (props: Props) => {
     <li className={styles.result} onClick={props.onClick}>
       <img
         alt={weapon.name[locale]}
-        src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`}
+        src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblueId}.jpg`}
       />
       <div className={styles.info}>
         <h5>{weapon.name[locale]}</h5>
@@ -47,7 +46,7 @@ const WeaponResult = (props: Props) => {
           special={false}
         />
         <div className={styles.tags}>
-          <WeaponLabelIcon labelType={Element[weapon.element]} />
+          <WeaponLabelIcon labelType={weapon.element.slug} />
           <WeaponLabelIcon labelType={Proficiency[weapon.proficiency]} />
         </div>
       </div>

@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 
 import UncapIndicator from '~components/uncap/UncapIndicator'
 import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
+import { ElementMap } from '~utils/elements'
 
 import styles from './index.module.scss'
 
@@ -34,10 +35,11 @@ const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
   const overlay = () => {
     if (type === 'character') {
       const gridCharacter = gridObject as GridCharacter
-      if (gridCharacter.perpetuity) return <i className={styles.perpetuity} />
+      if (gridCharacter.mastery.perpetuity)
+        return <i className={styles.perpetuity} />
     } else if (type === 'summon') {
       const gridSummon = gridObject as GridSummon
-      if (gridSummon.quick_summon) return <i className={styles.quickSummon} />
+      if (gridSummon.quickSummon) return <i className={styles.quickSummon} />
     }
   }
 
@@ -47,11 +49,11 @@ const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
 
     // Change the image based on the uncap level
     let suffix = '01'
-    if (gridCharacter.uncap_level == 6) suffix = '04'
-    else if (gridCharacter.uncap_level == 5) suffix = '03'
-    else if (gridCharacter.uncap_level > 2) suffix = '02'
+    if (gridCharacter.uncapLevel == 6) suffix = '04'
+    else if (gridCharacter.uncapLevel == 5) suffix = '03'
+    else if (gridCharacter.uncapLevel > 2) suffix = '02'
 
-    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-grid/${character.granblue_id}_${suffix}.jpg`
+    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-grid/${character.granblueId}_${suffix}.jpg`
   }
 
   const summonImage = () => {
@@ -71,29 +73,29 @@ const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
 
     let suffix = ''
     if (
-      upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
-      gridSummon.uncap_level == 5
+      upgradedSummons.indexOf(summon.granblueId.toString()) != -1 &&
+      gridSummon.uncapLevel == 5
     ) {
       suffix = '_02'
     } else if (
       gridSummon.object.uncap.xlb &&
-      gridSummon.transcendence_step > 0
+      gridSummon.transcendenceStep > 0
     ) {
       suffix = '_03'
     }
 
     // Generate the correct source for the summon
-    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
+    return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblueId}${suffix}.jpg`
   }
 
   const weaponImage = () => {
     const gridWeapon = gridObject as GridWeapon
     const weapon = object as Weapon
 
-    if (gridWeapon.object.element == 0 && gridWeapon.element)
-      return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${gridWeapon.element}.jpg`
+    if (gridWeapon.object.element === ElementMap.null && gridWeapon.element)
+      return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblueId}_${gridWeapon.element}.jpg`
     else
-      return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+      return `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblueId}.jpg`
   }
 
   const image = () => {
@@ -118,7 +120,7 @@ const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
       </div>
       <div className={styles.subInfo}>
         <div className={styles.icons}>
-          <WeaponLabelIcon labelType={Element[object.element]} />
+          <WeaponLabelIcon labelType={object.element.slug} />
           {'proficiency' in object && Array.isArray(object.proficiency) && (
             <WeaponLabelIcon labelType={Proficiency[object.proficiency[0]]} />
           )}
@@ -136,9 +138,7 @@ const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
           ulb={object.uncap.ulb || false}
           flb={object.uncap.flb || false}
           transcendenceStage={
-            'transcendence_step' in gridObject
-              ? gridObject.transcendence_step
-              : 0
+            'transcendenceStep' in gridObject ? gridObject.transcendenceStep : 0
           }
           special={'special' in object ? object.special : false}
         />

@@ -3,6 +3,8 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
 
+import { ElementMap } from '~utils/elements'
+
 import { Command, CommandGroup, CommandInput } from 'cmdk'
 import Popover from '~components/common/Popover'
 import SegmentedControl from '~components/common/SegmentedControl'
@@ -50,7 +52,7 @@ const allRaidsOption: Raid = {
   group: untitledGroup,
   slug: 'all',
   level: 0,
-  element: 0,
+  element: ElementMap.null,
 }
 
 interface Props {
@@ -111,7 +113,6 @@ const RaidCombobox = (props: Props) => {
   // Fetch all raids on mount
   useEffect(() => {
     const sections: [RaidGroup[], RaidGroup[], RaidGroup[]] = [[], [], []]
-
 
     props.raidGroups.forEach((group) => {
       if (group.section > 0) sections[group.section - 1].push(group)
@@ -354,7 +355,8 @@ const RaidCombobox = (props: Props) => {
   function generateRaidItems(raids: Raid[]) {
     return raids
       .sort((a, b) => {
-        if (a.element > 0 && b.element > 0) return a.element - b.element
+        if (a.element.id > 0 && b.element.id > 0)
+          return a.element.id - b.element.id
         if (a.name.en.includes('NM') && b.name.en.includes('NM'))
           return a.level - b.level
         return a.name.en.localeCompare(b.name.en)
@@ -521,12 +523,12 @@ const RaidCombobox = (props: Props) => {
   // Methods: Utility
   // ----------------------------------------------
   const linkClass = classNames({
-    wind: currentRaid && currentRaid.element == 1,
-    fire: currentRaid && currentRaid.element == 2,
-    water: currentRaid && currentRaid.element == 3,
-    earth: currentRaid && currentRaid.element == 4,
-    dark: currentRaid && currentRaid.element == 5,
-    light: currentRaid && currentRaid.element == 6,
+    wind: currentRaid && currentRaid.element == ElementMap.wind,
+    fire: currentRaid && currentRaid.element == ElementMap.fire,
+    water: currentRaid && currentRaid.element == ElementMap.water,
+    earth: currentRaid && currentRaid.element == ElementMap.earth,
+    dark: currentRaid && currentRaid.element == ElementMap.dark,
+    light: currentRaid && currentRaid.element == ElementMap.light,
   })
 
   // ----------------------------------------------

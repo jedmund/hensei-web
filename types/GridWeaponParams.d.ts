@@ -1,7 +1,7 @@
 interface GridWeaponParams {
   weapon_id: string
   position?: number
-  uncap_level?: number
+  uncapLevel?: number
   element?: number
   weapon_key1_id?: string
   weapon_key2_id?: string

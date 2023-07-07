@@ -85,16 +85,16 @@ const CharacterModal = ({
   }, [modalOpen])
 
   useEffect(() => {
-    if (gridCharacter.aetherial_mastery) {
+    if (gridCharacter.mastery.aetherialMastery) {
       setEarring({
-        modifier: gridCharacter.aetherial_mastery.modifier,
-        strength: gridCharacter.aetherial_mastery.strength,
+        modifier: gridCharacter.mastery.aetherialMastery.modifier,
+        strength: gridCharacter.mastery.aetherialMastery.strength,
       })
     }
 
-    setAwakening(gridCharacter.awakening.type)
-    setAwakeningLevel(gridCharacter.awakening.level)
-    setPerpetuity(gridCharacter.perpetuity)
+    setAwakening(gridCharacter.mastery.awakening.type)
+    setAwakeningLevel(gridCharacter.mastery.awakening.level)
+    setPerpetuity(gridCharacter.mastery.perpetuity)
   }, [gridCharacter])
 
   // Prepare the GridWeaponObject to send to the server
@@ -144,7 +144,7 @@ const CharacterModal = ({
       rings ||
       aetherialMastery ||
       awakening ||
-      gridCharacter.perpetuity !== perpetuity
+      gridCharacter.mastery.perpetuity !== perpetuity
     )
   }
 
@@ -159,10 +159,11 @@ const CharacterModal = ({
 
     // Check if the current ringset is empty on the current GridCharacter and our local state
     const isEmptyRingset =
-      gridCharacter.over_mastery === undefined && isEqual(emptyRingset, rings)
+      gridCharacter.mastery.overMastery === undefined &&
+      isEqual(emptyRingset, rings)
 
     // Check if the ringset in local state is different from the one on the current GridCharacter
-    const ringsChanged = !isEqual(gridCharacter.over_mastery, rings)
+    const ringsChanged = !isEqual(gridCharacter.mastery.overMastery, rings)
 
     // Return true if the ringset has been modified and is not empty
     return ringsChanged && !isEmptyRingset
@@ -177,12 +178,12 @@ const CharacterModal = ({
 
     // Check if the current earring is empty on the current GridCharacter and our local state
     const isEmptyRingset =
-      gridCharacter.aetherial_mastery === undefined &&
+      gridCharacter.mastery.aetherialMastery === undefined &&
       isEqual(emptyAetherialMastery, earring)
 
     // Check if the earring in local state is different from the one on the current GridCharacter
     const aetherialMasteryChanged = !isEqual(
-      gridCharacter.aetherial_mastery,
+      gridCharacter.mastery.aetherialMastery,
       earring
     )
 
@@ -193,8 +194,8 @@ const CharacterModal = ({
   function awakeningChanged() {
     // Check if the awakening in local state is different from the one on the current GridCharacter
     const awakeningChanged =
-      !isEqual(gridCharacter.awakening.type, awakening) ||
-      gridCharacter.awakening.level !== awakeningLevel
+      !isEqual(gridCharacter.mastery.awakening.type, awakening) ||
+      gridCharacter.mastery.awakening.level !== awakeningLevel
 
     // Return true if the awakening has been modified and is not empty
     return awakeningChanged
@@ -248,17 +249,17 @@ const CharacterModal = ({
 
   function close() {
     setEarring({
-      modifier: gridCharacter.aetherial_mastery
-        ? gridCharacter.aetherial_mastery.modifier
+      modifier: gridCharacter.mastery.aetherialMastery
+        ? gridCharacter.mastery.aetherialMastery.modifier
         : 0,
-      strength: gridCharacter.aetherial_mastery
-        ? gridCharacter.aetherial_mastery.strength
+      strength: gridCharacter.mastery.aetherialMastery
+        ? gridCharacter.mastery.aetherialMastery.strength
         : 0,
     })
 
-    setRings(gridCharacter.over_mastery || emptyExtendedMastery)
-    setAwakening(gridCharacter.awakening.type)
-    setAwakeningLevel(gridCharacter.awakening.level)
+    setRings(gridCharacter.mastery.overMastery || emptyExtendedMastery)
+    setAwakening(gridCharacter.mastery.awakening.type)
+    setAwakeningLevel(gridCharacter.mastery.awakening.level)
 
     setAlertOpen(false)
     setOpen(false)
@@ -305,13 +306,13 @@ const CharacterModal = ({
         object="earring"
         dataSet={elementalizeAetherialMastery(gridCharacter)}
         selectValue={
-          gridCharacter.aetherial_mastery
-            ? gridCharacter.aetherial_mastery.modifier
+          gridCharacter.mastery.aetherialMastery
+            ? gridCharacter.mastery.aetherialMastery.modifier
             : 0
         }
         inputValue={
-          gridCharacter.aetherial_mastery
-            ? gridCharacter.aetherial_mastery.strength
+          gridCharacter.mastery.aetherialMastery
+            ? gridCharacter.mastery.aetherialMastery.strength
             : 0
         }
         sendValidity={receiveValidity}
@@ -325,8 +326,8 @@ const CharacterModal = ({
       <h3>{t('modals.characters.subtitles.awakening')}</h3>
       <AwakeningSelectWithInput
         dataSet={gridCharacter.object.awakenings}
-        awakening={gridCharacter.awakening.type}
-        level={gridCharacter.awakening.level}
+        awakening={gridCharacter.mastery.awakening.type}
+        level={gridCharacter.mastery.awakening.level}
         defaultAwakening={
           gridCharacter.object.awakenings.find(
             (a) => a.slug === 'character-balanced'
@@ -364,7 +365,7 @@ const CharacterModal = ({
             title={gridCharacter.object.name[locale]}
             subtitle={t('modals.characters.title')}
             image={{
-              src: `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-square/${gridCharacter.object.granblue_id}_01.jpg`,
+              src: `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-square/${gridCharacter.object.granblueId}_01.jpg`,
               alt: gridCharacter.object.name[locale],
             }}
           />

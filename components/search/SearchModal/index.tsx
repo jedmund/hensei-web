@@ -126,7 +126,7 @@ const SearchModal = (props: Props) => {
       if (
         !recents.find(
           (item) =>
-            (item as Weapon).granblue_id === (result as Weapon).granblue_id
+            (item as Weapon).granblueId === (result as Weapon).granblueId
         )
       ) {
         recents.unshift(result as Weapon)
@@ -136,7 +136,7 @@ const SearchModal = (props: Props) => {
       if (
         !recents.find(
           (item) =>
-            (item as Summon).granblue_id === (result as Summon).granblue_id
+            (item as Summon).granblueId === (result as Summon).granblueId
         )
       ) {
         recents.unshift(result as Summon)

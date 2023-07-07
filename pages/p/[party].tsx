@@ -11,7 +11,13 @@ import elementEmoji from '~utils/elementEmoji'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import { setHeaders } from '~utils/userToken'
 import { appState } from '~utils/appState'
-import { groupWeaponKeys } from '~utils/groupWeaponKeys'
+import { GroupedWeaponKeys, groupWeaponKeys } from '~utils/groupWeaponKeys'
+
+import * as JobTransformer from '~transformers/JobTransformer'
+import * as JobSkillTransformer from '~transformers/JobTransformer'
+import * as PartyTransformer from '~transformers/PartyTransformer'
+import * as RaidGroupTransformer from '~transformers/RaidGroupTransformer'
+import * as WeaponKeyTransformer from '~transformers/WeaponKeyTransformer'
 
 import { GridType } from '~utils/enums'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -126,7 +132,7 @@ const PartyRoute: React.FC<Props> = ({
       <React.Fragment key={router.asPath}>
         {pageHead()}
         <Party
-          team={context.party}
+          party={context.party}
           selectedTab={selectedTab}
           raidGroups={context.raidGroups}
           handleTabChanged={handleTabChange}
@@ -156,33 +162,38 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   try {
     // Fetch and organize raids
-    let raidGroups: RaidGroup[] = await api
+    const raidGroups: RaidGroup[] = await api
       .raidGroups()
-      .then((response) => response.data)
+      .then((response) => response.data.map((group: any) => RaidGroupTransformer.toObject(group)))
 
     // Fetch jobs and job skills
-    let jobs = await api.endpoints.jobs
+    const jobs: Job[] = await api.endpoints.jobs
       .getAll()
-      .then((response) => response.data)
+      .then((response) =>
+        response.data.map((job: any) => JobTransformer.toObject(job))
+      )
 
-    let jobSkills = await api.allJobSkills()
-      .then((response) => response.data)
+    const jobSkills: JobSkill[] = await api
+      .allJobSkills()
+      .then((response) =>
+        response.data.map((skill: any) => JobSkillTransformer.toObject(skill))
+      )
 
     // Fetch and organize weapon keys
-    let weaponKeys = await api.endpoints.weapon_keys
+    const weaponKeys: GroupedWeaponKeys = await api.endpoints.weapon_keys
       .getAll()
-      .then((response) => groupWeaponKeys(response.data))
+      .then((response) =>
+        response.data.map((key: any) => WeaponKeyTransformer.toObject(key))
+      )
+      .then((keys) => groupWeaponKeys(keys))
+      
 
     // Fetch the party
-    let party: Party | undefined = undefined
-    if (query.party) {
-      let response = await api.endpoints.parties.getOne({
-        id: query.party,
-      })
-      party = response.data.party
-    } else {
-      console.error('No party code')
-    }
+    if (!query.party) throw new Error('No party code')
+    
+    const party: Party | undefined = await api.endpoints.parties.getOne({
+      id: query.party,
+    }).then((response) => PartyTransformer.toObject(response.data.party))
 
     // Consolidate data into context object
     const context: PageContextObj = {
@@ -206,6 +217,8 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       },
     }
   } catch (error) {
+    console.error(error)
+
     // Extract the underlying Axios error
     const axiosError = error as AxiosError
     const response = axiosError.response

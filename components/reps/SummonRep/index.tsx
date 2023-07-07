@@ -70,31 +70,27 @@ const SummonRep = (props: Props) => {
     if (mainSummon) {
       // Change the image based on the uncap level
       let suffix = ''
-      if (mainSummon.object.uncap.xlb && mainSummon.uncap_level == 6) {
+      if (mainSummon.object.uncap.xlb && mainSummon.uncapLevel == 6) {
         if (
-          mainSummon.transcendence_step >= 1 &&
-          mainSummon.transcendence_step < 5
+          mainSummon.transcendenceStep >= 1 &&
+          mainSummon.transcendenceStep < 5
         ) {
           suffix = '_03'
-        } else if (mainSummon.transcendence_step === 5) {
+        } else if (mainSummon.transcendenceStep === 5) {
           suffix = '_04'
         }
       } else if (
-        upgradedSummons.indexOf(mainSummon.object.granblue_id.toString()) !=
+        upgradedSummons.indexOf(mainSummon.object.granblueId.toString()) !=
           -1 &&
-        mainSummon.uncap_level == 5
+        mainSummon.uncapLevel == 5
       ) {
         suffix = '_02'
       }
 
-      url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${mainSummon.object.granblue_id}${suffix}.jpg`
+      url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${mainSummon.object.granblueId}${suffix}.jpg`
     }
 
-    return mainSummon ? (
-      <img alt={mainSummon.object.name[locale]} src={url} />
-    ) : (
-      ''
-    )
+    return mainSummon && <img alt={mainSummon.object.name[locale]} src={url} />
   }
 
   function generateGridImage(position: number) {
@@ -123,29 +119,29 @@ const SummonRep = (props: Props) => {
     if (summon && gridSummon) {
       // Change the image based on the uncap level
       let suffix = ''
-      if (gridSummon.object.uncap.xlb && gridSummon.uncap_level == 6) {
+      if (gridSummon.object.uncap.xlb && gridSummon.uncapLevel == 6) {
         if (
-          gridSummon.transcendence_step >= 1 &&
-          gridSummon.transcendence_step < 5
+          gridSummon.transcendenceStep >= 1 &&
+          gridSummon.transcendenceStep < 5
         ) {
           suffix = '_03'
-        } else if (gridSummon.transcendence_step === 5) {
+        } else if (gridSummon.transcendenceStep === 5) {
           suffix = '_04'
         }
       } else if (
-        upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
-        gridSummon.uncap_level == 5
+        upgradedSummons.indexOf(summon.granblueId.toString()) != -1 &&
+        gridSummon.uncapLevel == 5
       ) {
         suffix = '_02'
       }
 
-      url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
+      url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblueId}${suffix}.jpg`
     }
 
-    return summons[position] ? (
-      <img alt={summons[position]?.name[locale]} src={url} />
-    ) : (
-      ''
+    return (
+      summons[position] && (
+        <img alt={summons[position]?.name[locale]} src={url} />
+      )
     )
   }
 

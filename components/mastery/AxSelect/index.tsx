@@ -225,7 +225,7 @@ const AXSelect = (props: Props) => {
     if (modifierSet == 0) {
       axOptionElements = axOptions.map((ax, i) => {
         return (
-          <SelectItem key={i} value={ax.id} data-granblue-id={ax.granblue_id}>
+          <SelectItem key={i} value={ax.id} data-granblue-id={ax.granblueId}>
             {ax.name[locale]}
           </SelectItem>
         )

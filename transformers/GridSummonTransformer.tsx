@@ -8,7 +8,7 @@ export function toObject(data: any): GridSummon {
     position: data.position,
     main: data.main,
     friend: data.friend,
-    uncapLevel: data.uncap_level,
+    uncapLevel: data.uncapLevel,
     transcendenceStep: data.transcendence_step,
     quickSummon: data.quick_summon,
   }
@@ -19,7 +19,7 @@ export function toParams(data: GridSummon): GridSummonParams {
   return {
     summon_id: data.id,
     position: data.position,
-    uncap_level: data.uncapLevel,
+    uncapLevel: data.uncapLevel,
     transcendence_step: data.transcendenceStep,
     quick_summon: data.quickSummon,
   }
