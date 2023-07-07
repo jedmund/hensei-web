@@ -2,7 +2,7 @@
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'next-i18next'
-import isEqual from 'lodash/isEqual'
+import { isEqual } from 'lodash'
 
 // UI dependencies
 import Alert from '~components/common/Alert'
