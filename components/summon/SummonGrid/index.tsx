@@ -49,7 +49,7 @@ const SummonGrid = (props: Props) => {
   const [errorAlertOpen, setErrorAlertOpen] = useState(false)
 
   // Set up state for view management
-  const { party, grid } = useSnapshot(appState)
+  const { party } = useSnapshot(appState)
 
   // Create a temporary state to store previous weapon uncap values and transcendence stages
   const [previousUncapValues, setPreviousUncapValues] = useState<{
@@ -64,13 +64,13 @@ const SummonGrid = (props: Props) => {
   useEffect(() => {
     let initialPreviousUncapValues: { [key: number]: number } = {}
 
-    if (appState.grid.summons.mainSummon)
+    if (appState.party.grid.summons.mainSummon)
       initialPreviousUncapValues[-1] =
-        appState.grid.summons.mainSummon.uncapLevel
+        appState.party.grid.summons.mainSummon.uncapLevel
 
-    if (appState.grid.summons.friendSummon)
+    if (appState.party.grid.summons.friendSummon)
       initialPreviousUncapValues[6] =
-        appState.grid.summons.friendSummon.uncapLevel
+        appState.party.grid.summons.friendSummon.uncapLevel
 
     Object.values(appState.party.grid.summons.allSummons).map((o) =>
       o ? (initialPreviousUncapValues[o.position] = o.uncapLevel) : 0
@@ -78,9 +78,9 @@ const SummonGrid = (props: Props) => {
 
     setPreviousUncapValues(initialPreviousUncapValues)
   }, [
-    appState.grid.summons.mainSummon,
-    appState.grid.summons.friendSummon,
-    appState.grid.summons.allSummons,
+    appState.party.grid.summons.mainSummon,
+    appState.party.grid.summons.friendSummon,
+    appState.party.grid.summons.allSummons,
   ])
 
   // Methods: Adding an object from search
@@ -119,11 +119,11 @@ const SummonGrid = (props: Props) => {
         const position = data.meta['replaced']
 
         if (position == -1) {
-          appState.grid.summons.mainSummon = undefined
+          appState.party.grid.summons.mainSummon = undefined
         } else if (position == 6) {
-          appState.grid.summons.friendSummon = undefined
+          appState.party.grid.summons.friendSummon = undefined
         } else {
-          appState.grid.summons.allSummons[position] = undefined
+          appState.party.grid.summons.allSummons[position] = undefined
         }
       }
     }
@@ -147,10 +147,12 @@ const SummonGrid = (props: Props) => {
   }
 
   function storeGridSummon(gridSummon: GridSummon) {
-    if (gridSummon.position == -1) appState.grid.summons.mainSummon = gridSummon
+    if (gridSummon.position == -1)
+      appState.party.grid.summons.mainSummon = gridSummon
     else if (gridSummon.position == 6)
-      appState.grid.summons.friendSummon = gridSummon
-    else appState.grid.summons.allSummons[gridSummon.position] = gridSummon
+      appState.party.grid.summons.friendSummon = gridSummon
+    else
+      appState.party.grid.summons.allSummons[gridSummon.position] = gridSummon
   }
 
   // Methods: Updating uncap level
@@ -216,15 +218,15 @@ const SummonGrid = (props: Props) => {
   )
 
   const updateUncapLevel = (position: number, uncapLevel: number) => {
-    if (appState.grid.summons.mainSummon && position == -1)
-      appState.grid.summons.mainSummon.uncapLevel = uncapLevel
-    else if (appState.grid.summons.friendSummon && position == 6)
-      appState.grid.summons.friendSummon.uncapLevel = uncapLevel
+    if (appState.party.grid.summons.mainSummon && position == -1)
+      appState.party.grid.summons.mainSummon.uncapLevel = uncapLevel
+    else if (appState.party.grid.summons.friendSummon && position == 6)
+      appState.party.grid.summons.friendSummon.uncapLevel = uncapLevel
     else {
-      const summon = appState.grid.summons.allSummons[position]
+      const summon = appState.party.grid.summons.allSummons[position]
       if (summon) {
         summon.uncapLevel = uncapLevel
-        appState.grid.summons.allSummons[position] = summon
+        appState.party.grid.summons.allSummons[position] = summon
       }
     }
   }
@@ -233,13 +235,14 @@ const SummonGrid = (props: Props) => {
     // Save the current value in case of an unexpected result
     let newPreviousValues = { ...previousUncapValues }
 
-    if (appState.grid.summons.mainSummon && position == -1)
-      newPreviousValues[position] = appState.grid.summons.mainSummon.uncapLevel
-    else if (appState.grid.summons.friendSummon && position == 6)
+    if (appState.party.grid.summons.mainSummon && position == -1)
       newPreviousValues[position] =
-        appState.grid.summons.friendSummon.uncapLevel
+        appState.party.grid.summons.mainSummon.uncapLevel
+    else if (appState.party.grid.summons.friendSummon && position == 6)
+      newPreviousValues[position] =
+        appState.party.grid.summons.friendSummon.uncapLevel
     else {
-      const summon = appState.grid.summons.allSummons[position]
+      const summon = appState.party.grid.summons.allSummons[position]
       newPreviousValues[position] = summon ? summon.uncapLevel : 0
     }
 
@@ -320,15 +323,15 @@ const SummonGrid = (props: Props) => {
   )
 
   const updateTranscendenceStage = (position: number, stage: number) => {
-    if (appState.grid.summons.mainSummon && position == -1)
-      appState.grid.summons.mainSummon.transcendenceStep = stage
-    else if (appState.grid.summons.friendSummon && position == 6)
-      appState.grid.summons.friendSummon.transcendenceStep = stage
+    if (appState.party.grid.summons.mainSummon && position == -1)
+      appState.party.grid.summons.mainSummon.transcendenceStep = stage
+    else if (appState.party.grid.summons.friendSummon && position == 6)
+      appState.party.grid.summons.friendSummon.transcendenceStep = stage
     else {
-      const summon = appState.grid.summons.allSummons[position]
+      const summon = appState.party.grid.summons.allSummons[position]
       if (summon) {
         summon.transcendenceStep = stage
-        appState.grid.summons.allSummons[position] = summon
+        appState.party.grid.summons.allSummons[position] = summon
       }
     }
   }
@@ -337,13 +340,14 @@ const SummonGrid = (props: Props) => {
     // Save the current value in case of an unexpected result
     let newPreviousValues = { ...previousUncapValues }
 
-    if (appState.grid.summons.mainSummon && position == -1)
-      newPreviousValues[position] = appState.grid.summons.mainSummon.uncapLevel
-    else if (appState.grid.summons.friendSummon && position == 6)
+    if (appState.party.grid.summons.mainSummon && position == -1)
       newPreviousValues[position] =
-        appState.grid.summons.friendSummon.uncapLevel
+        appState.party.grid.summons.mainSummon.uncapLevel
+    else if (appState.party.grid.summons.friendSummon && position == 6)
+      newPreviousValues[position] =
+        appState.party.grid.summons.friendSummon.uncapLevel
     else {
-      const summon = appState.grid.summons.allSummons[position]
+      const summon = appState.party.grid.summons.allSummons[position]
       newPreviousValues[position] = summon ? summon.uncapLevel : 0
     }
 
@@ -356,11 +360,12 @@ const SummonGrid = (props: Props) => {
       const data = response.data
 
       if (data.position === -1) {
-        appState.grid.summons.mainSummon = undefined
+        appState.party.grid.summons.mainSummon = undefined
       } else if (data.position === 6) {
-        appState.grid.summons.friendSummon = undefined
+        appState.party.grid.summons.friendSummon = undefined
       } else {
-        appState.grid.summons.allSummons[response.data.position] = undefined
+        appState.party.grid.summons.allSummons[response.data.position] =
+          undefined
       }
     } catch (error) {
       console.error(error)
@@ -384,7 +389,7 @@ const SummonGrid = (props: Props) => {
     <div className="LabeledUnit">
       <div className={styles.label}>{t('summons.main')}</div>
       <SummonUnit
-        gridSummon={grid.summons.mainSummon}
+        gridSummon={party.grid.summons.mainSummon}
         editable={props.editable}
         key="grid_main_summon"
         position={-1}
@@ -408,7 +413,7 @@ const SummonGrid = (props: Props) => {
         {t('summons.friend')}
       </div>
       <SummonUnit
-        gridSummon={grid.summons.friendSummon}
+        gridSummon={party.grid.summons.friendSummon}
         editable={props.editable}
         key="grid_friend_summon"
         position={6}
@@ -429,7 +434,7 @@ const SummonGrid = (props: Props) => {
           return (
             <li key={`grid_unit_${i}`}>
               <SummonUnit
-                gridSummon={grid.summons.allSummons[i]}
+                gridSummon={party.grid.summons.allSummons[i]}
                 editable={props.editable}
                 position={i}
                 unitType={1}
@@ -447,7 +452,7 @@ const SummonGrid = (props: Props) => {
 
   const subAuraSummonElement = (
     <ExtraSummonsGrid
-      grid={grid.summons.allSummons}
+      grid={party.grid.summons.allSummons}
       editable={props.editable}
       exists={false}
       offset={numSummons}

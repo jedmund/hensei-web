@@ -75,16 +75,19 @@ const WeaponGrid = (props: Props) => {
   useEffect(() => {
     let initialPreviousUncapValues: { [key: number]: number } = {}
 
-    if (appState.grid.weapons.mainWeapon)
+    if (appState.party.grid.weapons.mainWeapon)
       initialPreviousUncapValues[-1] =
-        appState.grid.weapons.mainWeapon.uncapLevel
+        appState.party.grid.weapons.mainWeapon.uncapLevel
 
     Object.values(appState.party.grid.weapons.allWeapons).map((o) =>
       o ? (initialPreviousUncapValues[o.position] = o.uncapLevel) : 0
     )
 
     setPreviousUncapValues(initialPreviousUncapValues)
-  }, [appState.grid.weapons.mainWeapon, appState.grid.weapons.allWeapons])
+  }, [
+    appState.party.grid.weapons.mainWeapon,
+    appState.party.grid.weapons.allWeapons,
+  ])
 
   // Methods: Adding an object from search
   function receiveWeaponFromSearch(object: SearchableObject, position: number) {
@@ -147,10 +150,10 @@ const WeaponGrid = (props: Props) => {
         const position = data.meta['replaced']
 
         if (position == -1) {
-          appState.grid.weapons.mainWeapon = undefined
+          appState.party.grid.weapons.mainWeapon = undefined
           appState.party.element = ElementMap.null
         } else {
-          appState.grid.weapons.allWeapons[position] = undefined
+          appState.party.grid.weapons.allWeapons[position] = undefined
         }
       }
     }
@@ -164,16 +167,17 @@ const WeaponGrid = (props: Props) => {
     let post = false
     if (
       position === -1 &&
-      (!appState.grid.weapons.mainWeapon ||
-        (appState.grid.weapons.mainWeapon &&
-          appState.grid.weapons.mainWeapon.object.id !== weapon.id))
+      (!appState.party.grid.weapons.mainWeapon ||
+        (appState.party.grid.weapons.mainWeapon &&
+          appState.party.grid.weapons.mainWeapon.object.id !== weapon.id))
     ) {
       post = true
     } else if (
       position !== -1 &&
-      (!appState.grid.weapons.allWeapons[position] ||
-        (appState.grid.weapons.allWeapons[position] &&
-          appState.grid.weapons.allWeapons[position]?.object.id !== weapon.id))
+      (!appState.party.grid.weapons.allWeapons[position] ||
+        (appState.party.grid.weapons.allWeapons[position] &&
+          appState.party.grid.weapons.allWeapons[position]?.object.id !==
+            weapon.id))
     ) {
       post = true
     }
@@ -193,11 +197,11 @@ const WeaponGrid = (props: Props) => {
 
   function storeGridWeapon(gridWeapon: GridWeapon) {
     if (gridWeapon.position === -1) {
-      appState.grid.weapons.mainWeapon = gridWeapon
+      appState.party.grid.weapons.mainWeapon = gridWeapon
       appState.party.element = gridWeapon.object.element
     } else {
       // Store the grid unit at the correct position
-      appState.grid.weapons.allWeapons[gridWeapon.position] = gridWeapon
+      appState.party.grid.weapons.allWeapons[gridWeapon.position] = gridWeapon
     }
   }
 
@@ -213,11 +217,13 @@ const WeaponGrid = (props: Props) => {
         .then((response) => {
           // Remove conflicting characters from state
           conflicts.forEach((c) => {
-            if (appState.grid.weapons.mainWeapon?.object.id === c.object.id) {
-              appState.grid.weapons.mainWeapon = undefined
+            if (
+              appState.party.grid.weapons.mainWeapon?.object.id === c.object.id
+            ) {
+              appState.party.grid.weapons.mainWeapon = undefined
               appState.party.element = ElementMap.null
             } else {
-              appState.grid.weapons.allWeapons[c.position] = undefined
+              appState.party.grid.weapons.allWeapons[c.position] = undefined
             }
           })
 
@@ -245,9 +251,10 @@ const WeaponGrid = (props: Props) => {
       const data = response.data
 
       if (data.position === -1) {
-        appState.grid.weapons.mainWeapon = undefined
+        appState.party.grid.weapons.mainWeapon = undefined
       } else {
-        appState.grid.weapons.allWeapons[response.data.position] = undefined
+        appState.party.grid.weapons.allWeapons[response.data.position] =
+          undefined
       }
     } catch (error) {
       console.error(error)
@@ -311,13 +318,13 @@ const WeaponGrid = (props: Props) => {
 
   const updateUncapLevel = (position: number, uncapLevel: number) => {
     // console.log(`Updating uncap level at position ${position} to ${uncapLevel}`)
-    if (appState.grid.weapons.mainWeapon && position == -1)
-      appState.grid.weapons.mainWeapon.uncapLevel = uncapLevel
+    if (appState.party.grid.weapons.mainWeapon && position == -1)
+      appState.party.grid.weapons.mainWeapon.uncapLevel = uncapLevel
     else {
-      const weapon = appState.grid.weapons.allWeapons[position]
+      const weapon = appState.party.grid.weapons.allWeapons[position]
       if (weapon) {
         weapon.uncapLevel = uncapLevel
-        appState.grid.weapons.allWeapons[position] = weapon
+        appState.party.grid.weapons.allWeapons[position] = weapon
       }
     }
   }
@@ -326,10 +333,11 @@ const WeaponGrid = (props: Props) => {
     // Save the current value in case of an unexpected result
     let newPreviousValues = { ...previousUncapValues }
 
-    if (appState.grid.weapons.mainWeapon && position == -1) {
-      newPreviousValues[position] = appState.grid.weapons.mainWeapon.uncapLevel
+    if (appState.party.grid.weapons.mainWeapon && position == -1) {
+      newPreviousValues[position] =
+        appState.party.grid.weapons.mainWeapon.uncapLevel
     } else {
-      const weapon = appState.grid.weapons.allWeapons[position]
+      const weapon = appState.party.grid.weapons.allWeapons[position]
       if (weapon) {
         newPreviousValues[position] = weapon.uncapLevel
       } else {
@@ -349,7 +357,7 @@ const WeaponGrid = (props: Props) => {
   // Render: JSX components
   const mainhandElement = (
     <WeaponUnit
-      gridWeapon={appState.grid.weapons.mainWeapon}
+      gridWeapon={appState.party.grid.weapons.mainWeapon}
       editable={props.editable}
       key="grid_mainhand"
       position={-1}
@@ -362,13 +370,13 @@ const WeaponGrid = (props: Props) => {
 
   const weaponGridElement = Array.from(Array(numWeapons)).map((x, i) => {
     const itemClasses = classNames({
-      Empty: appState.grid.weapons.allWeapons[i] === undefined,
+      Empty: appState.party.grid.weapons.allWeapons[i] === undefined,
     })
 
     return (
       <li className={itemClasses} key={`grid_unit_${i}`}>
         <WeaponUnit
-          gridWeapon={appState.grid.weapons.allWeapons[i]}
+          gridWeapon={appState.party.grid.weapons.allWeapons[i]}
           editable={props.editable}
           position={i}
           unitType={1}
@@ -381,13 +389,13 @@ const WeaponGrid = (props: Props) => {
   })
 
   const extraElement = () => {
-    if (appState.party.raid && appState.party.raid.group.extra) {
+    if (appState.party.raid && appState.party.raid.group?.extra) {
       return (
         <ExtraContainer>
           <ExtraContainerItem title={t('extra_weapons')} className="weapons">
             {appState.party.raid && appState.party.raid.group.extra && (
               <ExtraWeaponsGrid
-                grid={appState.grid.weapons.allWeapons}
+                grid={appState.party.grid.weapons.allWeapons}
                 editable={props.editable}
                 offset={numWeapons}
                 removeWeapon={removeWeapon}

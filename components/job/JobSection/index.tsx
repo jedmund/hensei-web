@@ -11,14 +11,14 @@ import SearchModal from '~components/search/SearchModal'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
-import type { JobSkillObject, SearchableObject } from '~types'
+import type { SearchableObject } from '~types'
 
 import styles from './index.module.scss'
 
 // Props
 interface Props {
   job?: Job
-  jobSkills: JobSkillObject
+  jobSkills: JobSkillList
   jobAccessory?: JobAccessory
   editable: boolean
   saveJob: (job?: Job) => void

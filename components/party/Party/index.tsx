@@ -58,7 +58,7 @@ const Party = (props: Props) => {
   // Reset state on first load
   useEffect(() => {
     const resetState = clonedeep(initialAppState)
-    appState.grid = resetState.grid
+    appState.party.grid = resetState.party.grid
     if (props.party) {
       storeParty(props.party)
       setUpdatedParty(props.party)
@@ -268,10 +268,12 @@ const Party = (props: Props) => {
     appState.party.name = team.name
     appState.party.description = team.description ? team.description : ''
     appState.party.raid = team.raid
-    appState.party.protagonist.job = team.job
-    appState.party.protagonist.skills = team.job_skills
-    appState.party.protagonist.accessory = team.accessory
-
+    appState.party.protagonist.job = team.protagonist.job
+    appState.party.protagonist.skills = team.protagonist.skills
+    appState.party.protagonist.accessory = team.protagonist.accessory
+    appState.party.protagonist.masterLevel = team.protagonist.master_level
+    appState.party.protagonist.ultimateMastery =
+      team.protagonist.ultimate_mastery
     appState.party.details.chargeAttack = team.charge_attack
     appState.party.details.fullAuto = team.full_auto
     appState.party.details.autoGuard = team.auto_guard
@@ -296,16 +298,13 @@ const Party = (props: Props) => {
     appState.party.timestamps.createdAt = team.created_at
     appState.party.timestamps.updatedAt = team.updated_at
 
+    appState.party.grid = team.grid
+
     // Store the edit key in local storage
     if (team.edit_key) {
       storeEditKey(team.id, team.edit_key)
       setEditKey(team.id, team.user)
     }
-
-    // Populate state
-    storeCharacters(team.characters)
-    storeWeapons(team.weapons)
-    storeSummons(team.summons)
 
     // Create a string to send the user back to the tab they're currently on
     let tab = ''
@@ -324,56 +323,56 @@ const Party = (props: Props) => {
   }
 
   const storeCharacters = (list: Array<GridCharacter>) => {
-    list.forEach((object: GridCharacter) => {
-      let character = clonedeep(object)
-
-      if (character.mastery.overMastery) {
-        const overMastery: CharacterOverMastery = {
-          1: object.mastery.overMastery[0],
-          2: object.mastery.overMastery[1],
-          3: object.mastery.overMastery[2],
-          4: object.mastery.overMastery[3],
-        }
-
-        character.mastery.overMastery = overMastery
-      }
-
-      if (character.position != null) {
-        appState.grid.characters[object.position] = character
-      }
-    })
+    // list.forEach((object: GridCharacter) => {
+    //   let character = clonedeep(object)
+    //   if (character.mastery.overMastery) {
+    //     const overMastery: CharacterOverMastery = {
+    //       1: object.mastery.overMastery[0],
+    //       2: object.mastery.overMastery[1],
+    //       3: object.mastery.overMastery[2],
+    //       4: object.mastery.overMastery[3],
+    //     }
+    //     character.mastery.overMastery = overMastery
+    //   }
+    //   if (character.position != null) {
+    //     appState.grid.characters[object.position] = character
+    //   }
+    // })
   }
 
-  const storeWeapons = (list: Array<GridWeapon>) => {
-    list.forEach((gridObject: GridWeapon) => {
-      if (gridObject.mainhand) {
-        appState.grid.weapons.mainWeapon = gridObject
-        appState.party.element = gridObject.object.element
-      } else if (!gridObject.mainhand && gridObject.position !== null) {
-        let weapon = clonedeep(gridObject)
-        if (
-          weapon.object.element === ElementMap.null &&
-          weapon.element === ElementMap.null
-        )
-          weapon.element = gridObject.object.element
-
-        appState.grid.weapons.allWeapons[gridObject.position] = weapon
-      }
-    })
+  const storeWeapons = (
+    allWeapons: Array<GridWeapon>,
+    mainWeapon?: GridWeapon
+  ) => {
+    // appState.grid.weapons.mainWeapon = mainWeapon
+    // list.forEach((gridObject: GridWeapon) => {
+    //   if (gridObject.mainhand) {
+    //     appState.grid.weapons.mainWeapon = gridObject
+    //     appState.party.element = gridObject.object.element
+    //   } else if (!gridObject.mainhand && gridObject.position !== null) {
+    //     let weapon = clonedeep(gridObject)
+    //     if (
+    //       weapon.object.element === ElementMap.null &&
+    //       weapon.element === ElementMap.null
+    //     )
+    //       weapon.element = gridObject.object.element
+    //     appState.grid.weapons.allWeapons[gridObject.position] = weapon
+    //   }
+    // })
   }
 
   const storeSummons = (list: Array<GridSummon>) => {
-    list.forEach((gridObject: GridSummon) => {
-      if (gridObject.main) appState.grid.summons.mainSummon = gridObject
-      else if (gridObject.friend)
-        appState.grid.summons.friendSummon = gridObject
-      else if (
-        !gridObject.main &&
-        !gridObject.friend &&
-        gridObject.position != null
-      )
-        appState.grid.summons.allSummons[gridObject.position] = gridObject
-    })
+    // list.forEach((gridObject: GridSummon) => {
+    //   if (gridObject.main) appState.grid.summons.mainSummon = gridObject
+    //   else if (gridObject.friend)
+    //     appState.grid.summons.friendSummon = gridObject
+    //   else if (
+    //     !gridObject.main &&
+    //     !gridObject.friend &&
+    //     gridObject.position != null
+    //   )
+    //     appState.grid.summons.allSummons[gridObject.position] = gridObject
+    // })
   }
 
   // Methods: Navigating with segmented control

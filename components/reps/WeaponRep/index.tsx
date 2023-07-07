@@ -5,7 +5,7 @@ import styles from './index.module.scss'
 
 interface Props {
   grid: {
-    mainWeapon: GridWeapon | undefined
+    mainWeapon?: GridWeapon | undefined
     allWeapons: GridArray<GridWeapon>
   }
 }

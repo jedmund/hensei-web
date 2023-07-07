@@ -31,12 +31,12 @@ const PartySegmentedControl = (props: Props) => {
   // Set up translations
   const { t } = useTranslation('common')
 
-  const { party, grid } = useSnapshot(appState)
+  const { party } = useSnapshot(appState)
 
   const getElement = () => {
     let element: GranblueElement
-    if (party.element === ElementMap.null && grid.weapons.mainWeapon)
-      element = grid.weapons.mainWeapon.element
+    if (party.element === ElementMap.null && party.grid.weapons.mainWeapon)
+      element = party.grid.weapons.mainWeapon?.element
     else if (party.element) element = party.element
     else element = ElementMap.null
 
@@ -71,7 +71,7 @@ const PartySegmentedControl = (props: Props) => {
           gender={
             accountState.account.user ? accountState.account.user.gender : 0
           }
-          grid={grid.characters}
+          grid={party.grid.characters}
         />
       </RepSegment>
     )
@@ -87,7 +87,7 @@ const PartySegmentedControl = (props: Props) => {
           selected={props.selectedTab === GridType.Weapon}
           onClick={props.onClick}
         >
-          <WeaponRep grid={grid.weapons} />
+          <WeaponRep grid={party.grid.weapons} />
         </RepSegment>
       )
     }
@@ -102,7 +102,7 @@ const PartySegmentedControl = (props: Props) => {
         selected={props.selectedTab === GridType.Summon}
         onClick={props.onClick}
       >
-        <SummonRep grid={grid.summons} />
+        <SummonRep grid={party.grid.summons} />
       </RepSegment>
     )
   }

@@ -5,8 +5,8 @@ import styles from './index.module.scss'
 
 interface Props {
   grid: {
-    mainSummon: GridSummon | undefined
-    friendSummon: GridSummon | undefined
+    mainSummon?: GridSummon | undefined
+    friendSummon?: GridSummon | undefined
     allSummons: GridArray<GridSummon>
   }
 }
