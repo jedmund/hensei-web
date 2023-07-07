@@ -63,6 +63,10 @@
 
   &.table {
     min-width: $unit * 30;
+
+    @include breakpoint(phone) {
+      width: 100%;
+    }
   }
 
   &.hidden {
