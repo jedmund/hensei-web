@@ -297,7 +297,8 @@ const EditPartyModal = ({
   // Methods: Modification checking
   function hasBeenModified() {
     const nameChanged =
-      name !== party.name && !(name === '' && party.name === undefined)
+      name !== party.name &&
+      !(name === '' && (party.name === undefined || party.name === null))
     const descriptionChanged =
       description !== party.description &&
       !(description === '' && party.description === undefined)
