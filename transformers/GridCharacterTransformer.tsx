@@ -1,3 +1,4 @@
+import * as Awakening from './AwakeningTransformer'
 import * as Character from './CharacterTransformer'
 
 // Transforms API response to GridCharacter object

@@ -3,7 +3,7 @@ interface Awakening {
   name: {
     [key: string]: string
     en: string
-    jp: string
+    ja: string
   }
   slug: string
   object_type?: string

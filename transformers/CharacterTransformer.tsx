@@ -1,3 +1,4 @@
+import * as Awakening from './AwakeningTransformer'
 import * as Element from './ElementTransformer'
 
 // Transforms API response to Character object

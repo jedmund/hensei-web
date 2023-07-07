@@ -1,6 +1,6 @@
 interface WeaponKey {
   id: string
-  granblue_id: string
+  granblueId: string
   name: {
     [key: string]: string
     en: string

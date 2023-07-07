@@ -1,5 +1,6 @@
 import * as Job from './JobTransformer'
 import * as JobAccessory from './JobAccessoryTransformer'
+import * as JobSkill from './JobSkillTransformer'
 import * as Raid from './RaidTransformer'
 import * as User from './UserTransformer'
 
@@ -25,7 +26,7 @@ export function toObject(data: any): Party {
     },
     protagonist: {
       job: Job.toObject(data.job),
-      skills: data.job_skills,
+      skills: data.job_skills.map((skill: any) => JobSkill.toObject(skill)),
       masterLevel: data.master_level,
       ultimateMastery: data.ultimate_mastery,
       accessory: JobAccessory.toObject(data.accessory),
@@ -33,8 +34,8 @@ export function toObject(data: any): Party {
     social: {
       favorited: data.favorited,
       remix: data.remix,
-      remixes: data.remixes,
-      sourceParty: data.source_party,
+      remixes: data.remixes.map((remix: any) => toObject(remix)),
+      sourceParty: toObject(data.source_party),
     },
     timestamps: {
       createdAt: data.created_at,

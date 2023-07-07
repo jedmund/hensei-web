@@ -1,5 +1,7 @@
+import * as Awakening from './AwakeningTransformer'
 import * as Element from './ElementTransformer'
 import * as Weapon from './WeaponTransformer'
+import * as WeaponKey from './WeaponKeyTransformer'
 
 // Transforms API response to GridWeapon object
 export function toObject(data: any): GridWeapon {
