@@ -1,9 +1,12 @@
 import { ComponentProps, useCallback, useEffect } from 'react'
-import { useRouter } from 'next/router'
 import { useEditor, EditorContent } from '@tiptap/react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Highlight from '@tiptap/extension-highlight'
+import Placeholder from '@tiptap/extension-placeholder'
 import Typography from '@tiptap/extension-typography'
 import Youtube from '@tiptap/extension-youtube'
 import CustomMention from '~extensions/CustomMention'
@@ -45,6 +48,8 @@ const Editor = ({
   const router = useRouter()
   const locale = router.locale || 'en'
 
+  const { t } = useTranslation('common')
+
   useEffect(() => {
     editor?.commands.setContent(formatContent(content))
   }, [content])
@@ -72,6 +77,10 @@ const Editor = ({
       }),
       Link,
       Highlight,
+      Placeholder.configure({
+        emptyEditorClass: styles.empty,
+        placeholder: t('modals.edit_team.placeholders.description'),
+      }),
       Typography,
       CustomMention.configure({
         renderLabel({ options, node }) {
