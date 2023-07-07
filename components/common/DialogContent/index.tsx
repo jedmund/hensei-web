@@ -11,6 +11,7 @@ interface Props
     React.DialogHTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   > {
+  wrapperClassName?: string
   headerref?: React.RefObject<HTMLDivElement>
   footerref?: React.RefObject<HTMLDivElement>
   scrollable?: boolean
@@ -127,7 +128,16 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
 
   return (
     <DialogPrimitive.Portal>
-      <dialog className={styles.dialog}>
+      <dialog
+        className={classNames(
+          {
+            [styles.dialog]: true,
+          },
+          props.wrapperClassName
+            ?.split(' ')
+            .map((className) => styles[className])
+        )}
+      >
         <DialogPrimitive.Content
           {...props}
           className={classes}

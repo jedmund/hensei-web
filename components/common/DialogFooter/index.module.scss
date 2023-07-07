@@ -16,4 +16,11 @@
     display: flex;
     gap: $unit;
   }
+
+  @include breakpoint(phone) {
+    position: fixed;
+    bottom: $unit-14x;
+    left: 0;
+    right: 0;
+  }
 }

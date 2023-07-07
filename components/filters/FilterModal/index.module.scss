@@ -39,5 +39,6 @@
 
   @include breakpoint(phone) {
     gap: $unit-4x;
+    margin-bottom: $unit * 24;
   }
 }

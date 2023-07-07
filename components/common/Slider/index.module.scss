@@ -14,6 +14,10 @@
     border-radius: 9999px;
     height: 3px;
   }
+
+  &.table {
+    flex-grow: 1;
+  }
 }
 
 .range {
