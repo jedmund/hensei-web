@@ -13,6 +13,10 @@
   color: inherit;
   z-index: 10;
 
+  @include breakpoint(phone) {
+    place-items: flex-end;
+  }
+
   .dialogContent {
     $multiplier: 4;
 
@@ -51,11 +55,11 @@
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
       min-width: inherit;
-      min-height: 90vh;
+      min-height: inherit;
       transform: initial;
       left: 0;
       right: 0;
-      top: 5vh;
+      top: $unit-10x;
       height: auto;
       width: 100%;
     }
@@ -145,39 +149,6 @@
         }
       }
 
-      .Diagram {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: flex-start;
-
-        &.CharacterDiagram {
-          align-items: center;
-        }
-
-        ul {
-          align-items: center;
-          display: flex;
-          flex-direction: column;
-          gap: $unit-2x;
-        }
-
-        .wrapper {
-          display: flex;
-          justify-content: center;
-          width: 100%;
-        }
-
-        .arrow {
-          align-items: center;
-          color: $grey-55;
-          display: flex;
-          font-size: 4rem;
-          text-align: center;
-          height: $weapon-diameter;
-          justify-content: center;
-        }
-      }
-
       footer {
         display: flex;
         flex-direction: row;
@@ -221,11 +192,20 @@
 
   @keyframes slideUp {
     0% {
-      transform: translate(0%, 100%);
+      transform: translateY(400px);
+      animation-timing-function: ease-out;
     }
-
+    60% {
+      transform: translateY(-30px);
+      animation-timing-function: ease-in;
+    }
+    80% {
+      transform: translateY(10px);
+      animation-timing-function: ease-out;
+    }
     100% {
-      transform: translate(0, 0%);
+      transform: translateY(0px);
+      animation-timing-function: ease-in;
     }
   }
 }
