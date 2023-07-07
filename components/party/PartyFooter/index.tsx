@@ -16,7 +16,6 @@ import EditPartyModal from '../EditPartyModal'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
-import { youtube } from '~utils/youtube'
 
 import type { DetailsObject } from 'types'
 
@@ -39,10 +38,7 @@ const PartyFooter = (props: Props) => {
   const { t } = useTranslation('common')
   const router = useRouter()
 
-  const { party: partySnapshot } = useSnapshot(appState)
-
-  const youtubeUrlRegex =
-    /(?:https:\/\/www\.youtube\.com\/watch\?v=|https:\/\/youtu\.be\/)([\w-]+)/g
+  const { party } = useSnapshot(appState)
 
   // State: Component
   const [currentSegment, setCurrentSegment] = useState(0)
@@ -55,67 +51,17 @@ const PartyFooter = (props: Props) => {
   const [sanitizedDescription, setSanitizedDescription] = useState('')
 
   useEffect(() => {
-    if (partySnapshot.description) {
-      const purified = DOMPurify.sanitize(partySnapshot.description)
+    if (party.description) {
+      const purified = DOMPurify.sanitize(party.description)
       setSanitizedDescription(purified)
     } else {
       setSanitizedDescription('')
     }
-  }, [partySnapshot.description])
-
-  // Extract the video IDs from the description
-  // const videoIds = extractYoutubeVideoIds(partySnapshot.description)
-  // Fetch the video titles for each ID
-  // const fetchPromises = videoIds.map(({ id }) => fetchYoutubeData(id))
-  // // Wait for all the video titles to be fetched
-  // Promise.all(fetchPromises).then((videoTitles) => {
-  //   // Replace the video URLs in the description with LiteYoutubeEmbed elements
-  //   const newDescription = reactStringReplace(
-  //     partySnapshot.description,
-  //     youtubeUrlRegex,
-  //     (match, i) => (
-  //       <LiteYouTubeEmbed
-  //         key={`${match}-${i}`}
-  //         id={match}
-  //         title={videoTitles[i]}
-  //         wrapperClass={styles.youtube}
-  //         playerClass={styles.playerButton}
-  //       />
-  //     )
-  //   )
-  // Update the state with the new description
-
-  async function fetchYoutubeData(videoId: string) {
-    return await youtube
-      .getVideoById(videoId, { maxResults: 1 })
-      .then((data) => data.items[0].snippet.localized.title)
-  }
+  }, [party.description])
 
   // Methods: Navigation
   function goTo(shortcode?: string) {
     if (shortcode) router.push(`/p/${shortcode}`)
-  }
-
-  function extractYoutubeVideoIds(text: string) {
-    // Initialize an array to store the video IDs
-    const videoIds = []
-
-    // Use the regular expression to find all the Youtube URLs in the text
-    let match
-    while ((match = youtubeUrlRegex.exec(text)) !== null) {
-      // Extract the video ID from the URL
-      const videoId = match[1]
-
-      // Add the video ID to the array, along with the character position of the URL
-      videoIds.push({
-        id: videoId,
-        url: match[0],
-        position: match.index,
-      })
-    }
-
-    // Return the array of video IDs
-    return videoIds
   }
 
   // Methods: Favorites
@@ -202,7 +148,7 @@ const PartyFooter = (props: Props) => {
         onClick={() => setCurrentSegment(1)}
       >
         {t('footer.remixes.label', {
-          count: partySnapshot?.social.remixes?.length,
+          count: party?.social.remixes?.length ?? 0,
         })}
       </Segment>
     </SegmentedControl>
@@ -218,7 +164,7 @@ const PartyFooter = (props: Props) => {
             key={props.party?.shortcode}
           />
         )}
-      {(!partySnapshot || !partySnapshot.description) && (
+      {(!party || !party.description) && (
         <section className={styles.noDescription}>
           <h3>{t('footer.description.empty')}</h3>
           {props.editable && (
@@ -242,10 +188,10 @@ const PartyFooter = (props: Props) => {
 
   const remixesSection = (
     <section className={styles.remixes}>
-      {partySnapshot?.social.remixes?.length > 0 && (
+      {party?.social.remixes?.length > 0 && (
         <GridRepCollection>{renderRemixes()}</GridRepCollection>
       )}
-      {partySnapshot?.social.remixes?.length === 0 && (
+      {party?.social.remixes?.length === 0 && (
         <div className={styles.noRemixes}>
           <h3>{t('footer.remixes.empty')}</h3>
           <Button
@@ -259,7 +205,7 @@ const PartyFooter = (props: Props) => {
   )
 
   function renderRemixes() {
-    return partySnapshot?.social.remixes.map((party, i) => {
+    return party?.social.remixes.map((party, i) => {
       return (
         <GridRep
           id={party.id}
@@ -290,7 +236,7 @@ const PartyFooter = (props: Props) => {
 
       <RemixTeamAlert
         creator={props.editable}
-        name={partySnapshot.name ? partySnapshot.name : t('no_title')}
+        name={party.name ? party.name : t('no_title')}
         open={remixAlertOpen}
         onOpenChange={handleRemixTeamAlertChange}
         remixCallback={remixTeamCallback}

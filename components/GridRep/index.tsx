@@ -20,12 +20,12 @@ interface Props {
   shortcode: string
   id: string
   name: string
-  raid?: Raid
+  raid: Raid | null
   weapons: {
-    mainWeapon?: GridWeapon
-    allWeapons: GridArray<GridWeapon>
-  }
-  user?: User
+    mainWeapon: GridWeapon | null
+    allWeapons: GridArray<GridWeapon> | null
+  } | null
+  user: User | null
   fullAuto: boolean
   autoGuard: boolean
   favorited: boolean

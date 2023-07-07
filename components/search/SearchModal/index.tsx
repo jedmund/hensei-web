@@ -15,6 +15,12 @@ import WeaponSearchFilterBar from '~components/weapon/WeaponSearchFilterBar'
 import SummonSearchFilterBar from '~components/summon/SummonSearchFilterBar'
 import JobSkillSearchFilterBar from '~components/job/JobSkillSearchFilterBar'
 
+import * as WeaponTransformer from '~transformers/WeaponTransformer'
+import * as SummonTransformer from '~transformers/SummonTransformer'
+import * as CharacterTransformer from '~transformers/CharacterTransformer'
+import * as JobSkillTransformer from '~transformers/JobSkillTransformer'
+import * as GuidebookTransformer from '~transformers/GuidebookTransformer'
+
 import CharacterResult from '~components/character/CharacterResult'
 import WeaponResult from '~components/weapon/WeaponResult'
 import SummonResult from '~components/summon/SummonResult'
@@ -270,13 +276,14 @@ const SearchModal = (props: Props) => {
 
     const castResults: Weapon[] = results as Weapon[]
     if (castResults && Object.keys(castResults).length > 0) {
-      jsx = castResults.map((result: Weapon) => {
+      jsx = castResults.map((result: any) => {
+        const weapon = WeaponTransformer.toObject(result)
         return (
           <WeaponResult
-            key={result.id}
-            data={result}
+            key={weapon.id}
+            data={weapon}
             onClick={() => {
-              storeRecentResult(result)
+              storeRecentResult(weapon)
             }}
           />
         )
@@ -291,13 +298,14 @@ const SearchModal = (props: Props) => {
 
     const castResults: Summon[] = results as Summon[]
     if (castResults && Object.keys(castResults).length > 0) {
-      jsx = castResults.map((result: Summon) => {
+      jsx = castResults.map((result: any) => {
+        const summon = SummonTransformer.toObject(result)
         return (
           <SummonResult
-            key={result.id}
-            data={result}
+            key={summon.id}
+            data={summon}
             onClick={() => {
-              storeRecentResult(result)
+              storeRecentResult(summon)
             }}
           />
         )
@@ -312,13 +320,14 @@ const SearchModal = (props: Props) => {
 
     const castResults: Character[] = results as Character[]
     if (castResults && Object.keys(castResults).length > 0) {
-      jsx = castResults.map((result: Character) => {
+      jsx = castResults.map((result: any) => {
+        const character = CharacterTransformer.toObject(result)
         return (
           <CharacterResult
-            key={result.id}
-            data={result}
+            key={character.id}
+            data={character}
             onClick={() => {
-              storeRecentResult(result)
+              storeRecentResult(character)
             }}
           />
         )
@@ -334,12 +343,13 @@ const SearchModal = (props: Props) => {
     const castResults: JobSkill[] = results as JobSkill[]
     if (castResults && Object.keys(castResults).length > 0) {
       jsx = castResults.map((result: JobSkill) => {
+        const jobSkill = JobSkillTransformer.toObject(result)
         return (
           <JobSkillResult
-            key={result.id}
-            data={result}
+            key={jobSkill.id}
+            data={jobSkill}
             onClick={() => {
-              storeRecentResult(result)
+              storeRecentResult(jobSkill)
             }}
           />
         )
@@ -355,12 +365,13 @@ const SearchModal = (props: Props) => {
     const castResults: Guidebook[] = results as Guidebook[]
     if (castResults && Object.keys(castResults).length > 0) {
       jsx = castResults.map((result: Guidebook) => {
+        const guidebook = GuidebookTransformer.toObject(result)
         return (
           <GuidebookResult
-            key={result.id}
-            data={result}
+            key={guidebook.id}
+            data={guidebook}
             onClick={() => {
-              storeRecentResult(result)
+              storeRecentResult(guidebook)
             }}
           />
         )

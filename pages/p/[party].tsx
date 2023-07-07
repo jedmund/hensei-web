@@ -193,8 +193,12 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
     const party: Party | undefined = await api.endpoints.parties.getOne({
       id: query.party,
-    }).then((response) => PartyTransformer.toObject(response.data.party))
+    }).then((response) => 
+      PartyTransformer.toObject(response.data.party)
+    )
 
+    console.log(party)
+    
     // Consolidate data into context object
     const context: PageContextObj = {
       party: party,

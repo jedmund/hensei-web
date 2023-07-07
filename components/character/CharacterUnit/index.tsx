@@ -22,6 +22,7 @@ import UncapIndicator from '~components/uncap/UncapIndicator'
 import api from '~utils/api'
 import { appState } from '~utils/appState'
 import { ElementMap } from '~utils/elements'
+import * as GridCharacterTransformer from '~transformers/GridCharacterTransformer'
 
 import PlusIcon from '~public/icons/Add.svg'
 import SettingsIcon from '~public/icons/Settings.svg'
@@ -37,7 +38,7 @@ import type {
 import styles from './index.module.scss'
 
 interface Props {
-  gridCharacter?: GridCharacter
+  gridCharacter: GridCharacter | null
   position: number
   editable: boolean
   removeCharacter: (id: string) => void
@@ -145,7 +146,9 @@ const CharacterUnit = ({
 
   // Save the server's response to state
   function processResult(response: AxiosResponse) {
-    const gridCharacter: GridCharacter = response.data
+    const gridCharacter: GridCharacter = GridCharacterTransformer.toObject(
+      response.data
+    )
     let character = cloneDeep(gridCharacter)
 
     if (character.mastery.overMastery) {
@@ -159,7 +162,7 @@ const CharacterUnit = ({
       character.mastery.overMastery = overMastery
     }
 
-    appState.grid.characters[gridCharacter.position] = character
+    appState.party.grid.characters[gridCharacter.position] = character
   }
 
   function processError(error: any) {
@@ -188,7 +191,11 @@ const CharacterUnit = ({
 
       // Change the image based on the uncap level
       let suffix = '01'
-      if (gridCharacter.transcendenceStep > 0) suffix = '04'
+      if (
+        gridCharacter.transcendenceStep &&
+        gridCharacter.transcendenceStep > 0
+      )
+        suffix = '04'
       else if (gridCharacter.uncapLevel >= 5) suffix = '03'
       else if (gridCharacter.uncapLevel > 2) suffix = '02'
 

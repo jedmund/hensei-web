@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import UncapStar from '~components/uncap/UncapStar'
 import TranscendencePopover from '~components/uncap/TranscendencePopover'
 import TranscendenceStar from '~components/uncap/TranscendenceStar'
@@ -82,7 +82,11 @@ const UncapIndicator = (props: Props) => {
     return props.type === 'character' || props.type === 'summon' ? (
       <TranscendencePopover
         open={popoverOpen}
-        stage={props.transcendenceStage ? props.transcendenceStage : 0}
+        stage={
+          props.transcendenceStage && props.transcendenceStage !== null
+            ? props.transcendenceStage
+            : 0
+        }
         type={props.type}
         onOpenChange={togglePopover}
         sendValue={sendTranscendenceStage}

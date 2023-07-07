@@ -38,7 +38,7 @@ const TranscendenceStar = ({
   const starClasses = classnames({
     [styles.star]: true,
     [styles.immutable]: immutable,
-    [styles.empty]: stage === 0,
+    [styles.empty]: true,
     [styles.stage1]: stage === 1,
     [styles.stage2]: stage === 2,
     [styles.stage3]: stage === 3,

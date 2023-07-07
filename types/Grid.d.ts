@@ -1,12 +1,12 @@
 interface Grid {
   weapons: {
-    mainWeapon?: GridWeapon | undefined
-    allWeapons: GridArray<GridWeapon>
+    mainWeapon: GridWeapon | null
+    allWeapons: GridArray<GridWeapon> | null
   }
   summons: {
-    mainSummon?: GridSummon | undefined
-    friendSummon?: GridSummon | undefined
-    allSummons: GridArray<GridSummon>
+    mainSummon: GridSummon | null
+    friendSummon: GridSummon | null
+    allSummons: GridArray<GridSummon> | null
   }
-  characters: GridArray<GridCharacter>
+  characters: GridArray<GridCharacter> | null
 }

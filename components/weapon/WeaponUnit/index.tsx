@@ -31,7 +31,7 @@ import SettingsIcon from '~public/icons/Settings.svg'
 import styles from './index.module.scss'
 
 interface Props {
-  gridWeapon: GridWeapon | undefined
+  gridWeapon: GridWeapon | null
   unitType: 0 | 1
   position: number
   editable: boolean

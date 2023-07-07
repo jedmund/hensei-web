@@ -14,6 +14,7 @@ import ExtraSummonsGrid from '~components/extra/ExtraSummonsGrid'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
+import * as GridSummonTransformer from '~transformers/GridSummonTransformer'
 import type { DetailsObject, SearchableObject } from '~types'
 
 import styles from './index.module.scss'
@@ -119,11 +120,11 @@ const SummonGrid = (props: Props) => {
         const position = data.meta['replaced']
 
         if (position == -1) {
-          appState.party.grid.summons.mainSummon = undefined
+          appState.party.grid.summons.mainSummon = null
         } else if (position == 6) {
-          appState.party.grid.summons.friendSummon = undefined
+          appState.party.grid.summons.friendSummon = null
         } else {
-          appState.party.grid.summons.allSummons[position] = undefined
+          appState.party.grid.summons.allSummons[position] = null
         }
       }
     }
@@ -146,7 +147,9 @@ const SummonGrid = (props: Props) => {
     })
   }
 
-  function storeGridSummon(gridSummon: GridSummon) {
+  function storeGridSummon(data: GridSummon) {
+    const gridSummon = GridSummonTransformer.toObject(data)
+
     if (gridSummon.position == -1)
       appState.party.grid.summons.mainSummon = gridSummon
     else if (gridSummon.position == 6)
@@ -360,12 +363,11 @@ const SummonGrid = (props: Props) => {
       const data = response.data
 
       if (data.position === -1) {
-        appState.party.grid.summons.mainSummon = undefined
+        appState.party.grid.summons.mainSummon = null
       } else if (data.position === 6) {
-        appState.party.grid.summons.friendSummon = undefined
+        appState.party.grid.summons.friendSummon = null
       } else {
-        appState.party.grid.summons.allSummons[response.data.position] =
-          undefined
+        appState.party.grid.summons.allSummons[response.data.position] = null
       }
     } catch (error) {
       console.error(error)

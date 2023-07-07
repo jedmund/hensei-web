@@ -12,12 +12,16 @@ export function toObject(data: any): GridWeapon {
     mainhand: data.mainhand,
     uncapLevel: data.uncap_level,
     element: Element.toObject(data.element),
-    weaponKeys: data.weapon_keys.map((key: any) => WeaponKey.toObject(key)),
-    ax: data.ax,
-    awakening: {
-      type: Awakening.toObject(data.awakening.type),
-      level: data.awakening.awakening_level,
-    },
+    weaponKeys: data.weapon_keys
+      ? data.weapon_keys.map((key: any) => WeaponKey.toObject(key))
+      : null,
+    ax: data.ax ? data.ax : null,
+    awakening: data.awakening
+      ? {
+          type: Awakening.toObject(data.awakening.type),
+          level: data.awakening.awakening_level,
+        }
+      : null,
   }
 }
 

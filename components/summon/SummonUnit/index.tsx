@@ -6,6 +6,7 @@ import classNames from 'classnames'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
+import * as GridSummonTransformer from '~transformers/GridSummonTransformer'
 
 import Alert from '~components/common/Alert'
 import Button from '~components/common/Button'
@@ -26,7 +27,7 @@ import SettingsIcon from '~public/icons/Settings.svg'
 import styles from './index.module.scss'
 
 interface Props {
-  gridSummon: GridSummon | undefined
+  gridSummon: GridSummon | null
   unitType: 0 | 1 | 2
   position: number
   editable: boolean
@@ -125,13 +126,23 @@ const SummonUnit = ({
     // If a user sets a quick summon while one is already set,
     // the previous one will be unset.
     const gridSummons: GridSummon[] = response.data.summons
+
+    const mainSummon = gridSummons.find((summon) =>
+      GridSummonTransformer.toObject(summon)
+    )
+    const friendSummon = gridSummons.find((summon) =>
+      GridSummonTransformer.toObject(summon)
+    )
+
     for (const gridSummon of gridSummons) {
       if (gridSummon.main) {
-        appState.grid.summons.mainSummon = gridSummon
+        appState.grid.summons.mainSummon = mainSummon
       } else if (gridSummon.friend) {
-        appState.grid.summons.friendSummon = gridSummon
+        appState.grid.summons.friendSummon = friendSummon
       } else {
-        appState.grid.summons.allSummons[gridSummon.position] = gridSummon
+        appState.party.grid.summons.allSummons[gridSummon.position] = gridSummon
+          ? GridSummonTransformer.toObject(gridSummon)
+          : null
       }
     }
   }
@@ -157,8 +168,7 @@ const SummonUnit = ({
   function generateImageUrl() {
     let imgSrc = ''
     if (gridSummon) {
-      const summon = gridSummon.object!
-
+      const summon = gridSummon.object
       const upgradedSummons = [
         '2040094000',
         '2040100000',
@@ -179,6 +189,7 @@ const SummonUnit = ({
       let suffix = ''
       if (gridSummon.object.uncap.xlb && gridSummon.uncapLevel == 6) {
         if (
+          gridSummon.transcendenceStep &&
           gridSummon.transcendenceStep >= 1 &&
           gridSummon.transcendenceStep < 5
         ) {
@@ -187,7 +198,7 @@ const SummonUnit = ({
           suffix = '_04'
         }
       } else if (
-        upgradedSummons.indexOf(summon.granblueId.toString()) != -1 &&
+        upgradedSummons.indexOf(summon.granblueId) != -1 &&
         gridSummon.uncapLevel == 5
       ) {
         suffix = '_02'

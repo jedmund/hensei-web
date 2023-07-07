@@ -18,6 +18,7 @@ import WeaponConflictModal from '~components/weapon/WeaponConflictModal'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
+import * as GridWeaponTransformer from '~transformers/GridWeaponTransformer'
 
 import type { DetailsObject, SearchableObject } from '~types'
 
@@ -58,7 +59,7 @@ const WeaponGrid = (props: Props) => {
   const [showIncompatibleAlert, setShowIncompatibleAlert] = useState(false)
 
   // Set up state for view management
-  const { party, grid } = useSnapshot(appState)
+  const { party } = useSnapshot(appState)
   const [modalOpen, setModalOpen] = useState(false)
 
   // Set up state for conflict management
@@ -150,10 +151,10 @@ const WeaponGrid = (props: Props) => {
         const position = data.meta['replaced']
 
         if (position == -1) {
-          appState.party.grid.weapons.mainWeapon = undefined
+          appState.party.grid.weapons.mainWeapon = null
           appState.party.element = ElementMap.null
         } else {
-          appState.party.grid.weapons.allWeapons[position] = undefined
+          appState.party.grid.weapons.allWeapons[position] = null
         }
       }
     }
@@ -195,7 +196,8 @@ const WeaponGrid = (props: Props) => {
     }
   }
 
-  function storeGridWeapon(gridWeapon: GridWeapon) {
+  function storeGridWeapon(data: GridWeapon) {
+    const gridWeapon = GridWeaponTransformer.toObject(data)
     if (gridWeapon.position === -1) {
       appState.party.grid.weapons.mainWeapon = gridWeapon
       appState.party.element = gridWeapon.object.element
@@ -220,10 +222,10 @@ const WeaponGrid = (props: Props) => {
             if (
               appState.party.grid.weapons.mainWeapon?.object.id === c.object.id
             ) {
-              appState.party.grid.weapons.mainWeapon = undefined
+              appState.party.grid.weapons.mainWeapon = null
               appState.party.element = ElementMap.null
             } else {
-              appState.party.grid.weapons.allWeapons[c.position] = undefined
+              appState.party.grid.weapons.allWeapons[c.position] = null
             }
           })
 
@@ -251,10 +253,9 @@ const WeaponGrid = (props: Props) => {
       const data = response.data
 
       if (data.position === -1) {
-        appState.party.grid.weapons.mainWeapon = undefined
+        appState.party.grid.weapons.mainWeapon = null
       } else {
-        appState.party.grid.weapons.allWeapons[response.data.position] =
-          undefined
+        appState.party.grid.weapons.allWeapons[response.data.position] = null
       }
     } catch (error) {
       console.error(error)
@@ -376,7 +377,7 @@ const WeaponGrid = (props: Props) => {
     return (
       <li className={itemClasses} key={`grid_unit_${i}`}>
         <WeaponUnit
-          gridWeapon={appState.party.grid.weapons.allWeapons[i]}
+          gridWeapon={party.grid.weapons.allWeapons[i]}
           editable={props.editable}
           position={i}
           unitType={1}

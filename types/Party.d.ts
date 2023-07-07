@@ -15,11 +15,12 @@ type GuidebookList = {
 
 interface Party {
   id: string
-  localId?: string
+  localId: string | null
+  editKey: string | null
   name: string
   description: string
   shortcode: string
-  user?: User
+  user: User | null
   editable: boolean
   element?: GranblueElement
   grid: Grid
@@ -28,26 +29,26 @@ interface Party {
     fullAuto: boolean
     autoGuard: boolean
     autoSummon: boolean
-    chargeAttack: boolean
-    clearTime: number
-    buttonCount?: number
-    turnCount?: number
-    chainCount?: number
+    chargeAttack: boolean | null
+    clearTime: number | null
+    buttonCount: number | null
+    turnCount: number | null
+    chainCount: number | null
   }
   protagonist: {
     job?: Job
-    skills: JobSkillList
-    masterLevel?: number
-    ultimateMastery?: number
-    accessory?: JobAccessory
+    skills: JobSkillList | null
+    masterLevel: number | null
+    ultimateMastery: number | null
+    accessory: JobAccessory | null
   }
   social: {
     favorited: boolean
-    sourceParty?: Party
+    sourceParty: Party | null
     remix: boolean
     remixes: Party[]
   }
-  raid?: Raid
+  raid: Raid | null
   guidebooks: GuidebookList
   timestamps: {
     createdAt: string

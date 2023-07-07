@@ -16,6 +16,8 @@ import type { DetailsObject, JobSkillObject, SearchableObject } from '~types'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
+import * as CharacterTransformer from '~transformers/CharacterTransformer'
+import * as GridCharacterTransformer from '~transformers/GridCharacterTransformer'
 
 import styles from './index.module.scss'
 
@@ -121,8 +123,10 @@ const CharacterGrid = (props: Props) => {
 
   async function handleCharacterResponse(data: any) {
     if (data.hasOwnProperty('conflicts')) {
-      setIncoming(data.incoming)
-      setConflicts(data.conflicts)
+      setIncoming(CharacterTransformer.toObject(data.incoming))
+      setConflicts(
+        data.conflicts.map((c: any) => GridCharacterTransformer.toObject(c))
+      )
       setPosition(data.position)
       setModalOpen(true)
     } else {
@@ -145,7 +149,8 @@ const CharacterGrid = (props: Props) => {
     })
   }
 
-  function storeGridCharacter(gridCharacter: GridCharacter) {
+  function storeGridCharacter(data: any) {
+    const gridCharacter = GridCharacterTransformer.toObject(data)
     appState.party.grid.characters[gridCharacter.position] = gridCharacter
   }
 
@@ -164,7 +169,7 @@ const CharacterGrid = (props: Props) => {
 
           // Remove conflicting characters from state
           conflicts.forEach(
-            (c) => (appState.party.grid.characters[c.position] = undefined)
+            (c) => (appState.party.grid.characters[c.position] = null)
           )
 
           // Reset conflict
@@ -186,7 +191,7 @@ const CharacterGrid = (props: Props) => {
   async function removeCharacter(id: string) {
     try {
       const response = await api.endpoints.grid_characters.destroy({ id: id })
-      appState.party.grid.characters[response.data.position] = undefined
+      appState.party.grid.characters[response.data.position] = null
     } catch (error) {
       console.error(error)
     }

@@ -18,6 +18,7 @@ import { accountState } from '~utils/accountState'
 import { appState, initialAppState } from '~utils/appState'
 import { getLocalId } from '~utils/localId'
 import { GridType } from '~utils/enums'
+import * as PartyTransformer from '~transformers/PartyTransformer'
 import { retrieveCookies } from '~utils/retrieveCookies'
 import { setEditKey, storeEditKey, unsetEditKey } from '~utils/userToken'
 
@@ -220,11 +221,11 @@ const Party = (props: Props) => {
       api
         .remix({ shortcode: props.party.shortcode, body: body })
         .then((response) => {
-          const remix = response.data.party
+          const remix = PartyTransformer.toObject(response.data.party)
 
           // Store the edit key in local storage
-          if (remix.edit_key) {
-            storeEditKey(remix.id, remix.edit_key)
+          if (remix.editKey) {
+            storeEditKey(remix.id, remix.editKey)
             setEditKey(remix.id, remix.user)
           }
 
@@ -275,30 +276,31 @@ const Party = (props: Props) => {
     appState.party.protagonist.ultimateMastery =
       team.protagonist.ultimate_mastery
     appState.party.details.chargeAttack = team.charge_attack
-    appState.party.details.fullAuto = team.full_auto
-    appState.party.details.autoGuard = team.auto_guard
-    appState.party.details.autoSummon = team.auto_summon
-    appState.party.details.clearTime = team.clear_time
+    appState.party.details.fullAuto = team.details.full_auto
+    appState.party.details.autoGuard = team.details.auto_guard
+    appState.party.details.autoSummon = team.details.auto_summon
+    appState.party.details.clearTime = team.details.clear_time
     appState.party.details.buttonCount =
-      team.button_count !== null ? team.button_count : undefined
+      team.details.button_count !== null ? team.details.button_count : undefined
     appState.party.details.chainCount =
-      team.chain_count !== null ? team.chain_count : undefined
+      team.details.chain_count !== null ? team.details.chain_count : undefined
     appState.party.details.turnCount =
-      team.turn_count !== null ? team.turn_count : undefined
+      team.details.turn_count !== null ? team.details.turn_count : undefined
 
     appState.party.id = team.id
     appState.party.shortcode = team.shortcode
-    appState.party.details.extra = team.extra
+    appState.party.details.extra = team.details.extra
     appState.party.guidebooks = team.guidebooks
     appState.party.user = team.user
-    appState.party.social.favorited = team.favorited
-    appState.party.social.remix = team.remix
-    appState.party.social.remixes = team.remixes
-    appState.party.social.sourceParty = team.source_party
+    appState.party.social.favorited = team.social.favorited
+    appState.party.social.remix = team.social.remix
+    appState.party.social.remixes = team.social.remixes
+    appState.party.social.sourceParty = team.social.sourceParty
     appState.party.timestamps.createdAt = team.created_at
     appState.party.timestamps.updatedAt = team.updated_at
 
     appState.party.grid = team.grid
+    console.log(team.grid)
 
     // Store the edit key in local storage
     if (team.edit_key) {

@@ -1,1 +1,1 @@
-type GridArray<T> = { [key: number]: T | undefined }
+type GridArray<T> = { [key: number]: T | null }

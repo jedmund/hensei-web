@@ -40,6 +40,7 @@ const CharacterResult = (props: Props) => {
           flb={character.uncap.flb}
           ulb={character.uncap.ulb}
           special={character.special}
+          transcendenceStage={character.uncap.ulb ? 5 : 0}
         />
         <div className={styles.tags}>
           <WeaponLabelIcon labelType={character.element.slug} />

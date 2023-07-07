@@ -28,8 +28,11 @@ const SummonResult = (props: Props) => {
         <h5>{summon.name[locale]}</h5>
         <UncapIndicator
           type="summon"
-          flb={summon.uncap.flb}
-          ulb={summon.uncap.ulb}
+          ulb={summon.uncap.ulb || false}
+          flb={summon.uncap.flb || false}
+          xlb={summon.uncap.xlb || false}
+          uncapLevel={6}
+          transcendenceStage={5}
           special={false}
         />
         <div className={styles.tags}>

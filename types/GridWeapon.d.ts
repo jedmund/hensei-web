@@ -7,8 +7,8 @@ interface GridWeapon {
   element: GranblueElement
   weaponKeys?: WeaponKey[]
   ax?: SimpleAxSkill[]
-  awakening?: {
+  awakening: {
     type: Awakening
     level: number
-  }
+  } | null
 }
