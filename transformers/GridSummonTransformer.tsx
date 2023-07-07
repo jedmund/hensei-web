@@ -8,8 +8,8 @@ export function toObject(data: any): GridSummon {
     position: data.position,
     main: data.main,
     friend: data.friend,
-    uncapLevel: data.uncapLevel,
-    transcendenceStep: data.transcendence_step,
+    uncapLevel: data.uncap_level,
+    transcendenceStep: data.transcendence_step ? data.transcendence_step : null,
     quickSummon: data.quick_summon,
   }
 }

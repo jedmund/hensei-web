@@ -10,7 +10,7 @@ export function toObject(data: any): GridWeapon {
     object: Weapon.toObject(data.object),
     position: data.position,
     mainhand: data.mainhand,
-    uncapLevel: data.uncapLevel,
+    uncapLevel: data.uncap_level,
     element: Element.toObject(data.element),
     weaponKeys: data.weapon_keys.map((key: any) => WeaponKey.toObject(key)),
     ax: data.ax,

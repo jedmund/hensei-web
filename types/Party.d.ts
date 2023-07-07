@@ -35,11 +35,11 @@ interface Party {
     chainCount?: number
   }
   protagonist: {
-    job: Job
+    job?: Job
     skills: JobSkillList
     masterLevel?: number
     ultimateMastery?: number
-    accessory: JobAccessory
+    accessory?: JobAccessory
   }
   social: {
     favorited: boolean

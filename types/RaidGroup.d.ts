@@ -5,7 +5,7 @@ interface RaidGroup {
     en: string
     ja: string
   }
-  raids: Raid[]
+  raids?: Raid[]
   difficulty: number
   section: number
   order: number

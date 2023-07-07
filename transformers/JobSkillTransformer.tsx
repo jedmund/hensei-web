@@ -6,7 +6,7 @@ export function toObject(data: any): JobSkill {
     id: data.id,
     name: {
       en: data.name.en,
-      ja: data.name.jp,
+      ja: data.name.ja,
     },
     job: Job.toObject(data.job),
     slug: data.slug,

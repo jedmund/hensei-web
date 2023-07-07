@@ -2,10 +2,10 @@
 export function toObject(data: any): WeaponKey {
   return {
     id: data.id,
-    granblueId: data.granblueId,
+    granblueId: data.granblue_id,
     name: {
       en: data.name.en,
-      ja: data.name.jp,
+      ja: data.name.ja,
     },
     slug: data.slug,
     series: data.series,

@@ -1,6 +1,6 @@
 interface Raid {
   id: string
-  group: RaidGroup
+  group?: RaidGroup
   name: {
     [key: string]: string
     en: string

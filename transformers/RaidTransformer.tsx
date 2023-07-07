@@ -5,10 +5,10 @@ import * as RaidGroup from './RaidGroupTransformer'
 export function toObject(data: any): Raid {
   return {
     id: data.id,
-    group: RaidGroup.toObject(data.group),
+    group: data.group && RaidGroup.toObject(data.group),
     name: {
-      en: data.name_en,
-      ja: data.name_jp,
+      en: data.name.en,
+      ja: data.name.ja,
     },
     element: Element.toObject(data.element),
     level: data.level,

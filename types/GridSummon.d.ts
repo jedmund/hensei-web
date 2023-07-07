@@ -5,6 +5,6 @@ interface GridSummon {
   position: number
   object: Summon
   uncapLevel: number
-  transcendenceStep: number
+  transcendenceStep?: number
   quickSummon: boolean
 }

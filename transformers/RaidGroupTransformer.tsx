@@ -5,10 +5,12 @@ export function toObject(data: any): RaidGroup {
   return {
     id: data.id,
     name: {
-      en: data.name_en,
-      ja: data.name_jp,
+      en: data.name.en,
+      ja: data.name.ja,
     },
-    raids: data.raids.map((raid: any) => Raid.toObject(raid)),
+    raids: data.raids
+      ? data.raids.map((raid: any) => Raid.toObject(raid))
+      : null,
     difficulty: data.difficulty,
     section: data.section,
     order: data.order,

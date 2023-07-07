@@ -1,7 +1,6 @@
 interface Job {
   id: string
   granblueId: string
-  baseJob?: Job
   name: {
     [key: string]: string
     en: string

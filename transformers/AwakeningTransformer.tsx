@@ -4,7 +4,7 @@ export function toObject(data: any): Awakening {
     id: data.id,
     name: {
       en: data.name.en,
-      ja: data.name.jp,
+      ja: data.name.ja,
     },
     slug: data.slug,
     object_type: data.object_type,

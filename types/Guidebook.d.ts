@@ -4,11 +4,11 @@ interface Guidebook {
   name: {
     [key: string]: string
     en: string
-    jp: string
+    ja: string
   }
   description: {
     [key: string]: string
     en: string
-    jp: string
+    ja: string
   }
 }

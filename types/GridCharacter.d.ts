@@ -3,13 +3,13 @@ interface GridCharacter {
   position: number
   object: Character
   uncapLevel: number
-  transcendenceStep: number
+  transcendenceStep?: number
   mastery: {
-    overMastery: CharacterOverMastery
-    aetherialMastery: ExtendedMastery
+    overMastery?: CharacterOverMastery
+    aetherialMastery?: ExtendedMastery
     awakening: {
       type: Awakening
-      level: number
+      level?: number
     }
     perpetuity: boolean
   }

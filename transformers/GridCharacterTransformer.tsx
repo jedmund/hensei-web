@@ -7,14 +7,16 @@ export function toObject(data: any): GridCharacter {
     id: data.id,
     object: Character.toObject(data.object),
     position: data.position,
-    uncapLevel: data.uncapLevel,
-    transcendenceStep: data.transcendence_step,
+    uncapLevel: data.uncap_level,
+    transcendenceStep: data.transcendence_step ? data.transcendence_step : null,
     mastery: {
-      overMastery: data.over_mastery,
-      aetherialMastery: data.aetherial_mastery,
+      overMastery: data.over_mastery
+        ? data.over_mastery
+        : [null, null, null, null],
+      aetherialMastery: data.aetherial_mastery ? data.aetherial_mastery : null,
       awakening: {
         type: Awakening.toObject(data.awakening.type),
-        level: data.awakening.awakening_level,
+        level: data.awakening.level,
       },
       perpetuity: data.perpetuity,
     },

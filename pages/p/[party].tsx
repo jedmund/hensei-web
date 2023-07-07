@@ -14,7 +14,7 @@ import { appState } from '~utils/appState'
 import { GroupedWeaponKeys, groupWeaponKeys } from '~utils/groupWeaponKeys'
 
 import * as JobTransformer from '~transformers/JobTransformer'
-import * as JobSkillTransformer from '~transformers/JobTransformer'
+import * as JobSkillTransformer from '~transformers/JobSkillTransformer'
 import * as PartyTransformer from '~transformers/PartyTransformer'
 import * as RaidGroupTransformer from '~transformers/RaidGroupTransformer'
 import * as WeaponKeyTransformer from '~transformers/WeaponKeyTransformer'
@@ -171,7 +171,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
       .getAll()
       .then((response) =>
         response.data.map((job: any) => JobTransformer.toObject(job))
-      )
+    )
 
     const jobSkills: JobSkill[] = await api
       .allJobSkills()
@@ -190,7 +190,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
     // Fetch the party
     if (!query.party) throw new Error('No party code')
-    
+
     const party: Party | undefined = await api.endpoints.parties.getOne({
       id: query.party,
     }).then((response) => PartyTransformer.toObject(response.data.party))

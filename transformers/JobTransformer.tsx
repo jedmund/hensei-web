@@ -2,19 +2,18 @@
 export function toObject(data: any): Job {
   return {
     id: data.id,
-    granblueId: data.granblueId,
+    granblueId: data.granblue_id,
     name: {
       en: data.name.en,
-      ja: data.name.jp,
+      ja: data.name.ja,
     },
-    baseJob: toObject(data.base_job),
     row: data.row,
     order: data.order,
     masterLevel: data.master_level,
     ultimateMastery: data.ultimate_mastery,
     proficiency: {
-      proficiency1: data.proficiency1,
-      proficiency2: data.proficiency2,
+      proficiency1: data.proficiency?.[0] ?? null,
+      proficiency2: data.proficiency?.[1] ?? null,
     },
     accessory: data.accessory,
     accessory_type: data.accessory_type,
