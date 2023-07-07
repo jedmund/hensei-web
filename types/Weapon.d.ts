@@ -1,16 +1,16 @@
 interface Weapon {
   type: 'weapon'
-
   id: string
-  granblue_id: number
-  element: number
+  granblueId: number
+  element: GranblueElement
   proficiency: number
-  max_level: number
-  max_skill_level: number
-  max_awakening_level: number
+  rarity: number
+  maxLevel: number
+  maxSkillLevel: number
+  maxAwakeningLevel: number
   series: number
   ax: boolean
-  ax_type: number
+  axType: number
   awakenings: Awakening[]
   name: {
     [key: string]: string
@@ -18,20 +18,19 @@ interface Weapon {
     ja: string
   }
   hp: {
-    min_hp: number
-    max_hp: number
-    max_hp_flb: number
-    max_hp_ulb: number
+    min: number
+    max: number
+    flb: number
+    ulb: number
   }
   atk: {
-    min_atk: number
-    max_atk: number
-    max_atk_flb: number
-    max_atk_ulb: number
+    min: number
+    max: number
+    flb: number
+    ulb: number
   }
   uncap: {
     flb: boolean
     ulb: boolean
   }
-  position?: number
 }

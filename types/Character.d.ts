@@ -1,27 +1,27 @@
 interface Character {
   type: 'character'
-
   id: string
-  granblue_id: string
-  character_id: readonly number[]
-  element: number
+  granblueId: string
+  characterId: number[]
+  element: GranblueElement
   rarity: number
   gender: number
-  max_level: number
   name: {
     [key: string]: string
     en: string
     ja: string
   }
   hp: {
-    min_hp: number
-    max_hp: number
-    max_hp_flb: number
+    min: number
+    max: number
+    flb: number
+    ulb: number
   }
   atk: {
-    min_atk: number
-    max_atk: number
-    max_atk_flb: number
+    min: number
+    max: number
+    flb: number
+    ulb: number
   }
   uncap: {
     flb: boolean
@@ -33,6 +33,5 @@ interface Character {
   }
   proficiency: number[]
   awakenings: Awakening[]
-  position?: number
   special: boolean
 }
