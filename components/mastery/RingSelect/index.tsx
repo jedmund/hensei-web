@@ -19,11 +19,11 @@ const emptyRing: ExtendedMastery = {
 }
 
 interface Props {
-  gridCharacter: GridCharacter
+  rings: CharacterOverMastery
   sendValues: (overMastery: CharacterOverMastery) => void
 }
 
-const RingSelect = ({ gridCharacter, sendValues }: Props) => {
+const RingSelect = ({ rings: overMastery, sendValues }: Props) => {
   // Ring value states
   const [rings, setRings] = useState<CharacterOverMastery>({
     1: { ...emptyRing, modifier: 1 },
@@ -33,15 +33,13 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
   })
 
   useEffect(() => {
-    if (gridCharacter.mastery.overMastery) {
-      setRings({
-        1: gridCharacter.mastery.overMastery[1],
-        2: gridCharacter.mastery.overMastery[2],
-        3: gridCharacter.mastery.overMastery[3],
-        4: gridCharacter.mastery.overMastery[4],
-      })
-    }
-  }, [gridCharacter])
+    setRings({
+      1: overMastery[1],
+      2: overMastery[2],
+      3: overMastery[3],
+      4: overMastery[4],
+    })
+  }, [overMastery])
 
   useEffect(() => {
     sendValues(rings)
@@ -80,6 +78,7 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
   function receiveRingValues(index: number, left: number, right: number) {
     // console.log(`Receiving values from ${index}: ${left} ${right}`)
     if (index == 1 || index == 2) {
+      console.log('1 or 2')
       setSyncedRingValues(index, right)
     } else if (index == 3 && left == 0) {
       setRings({
@@ -132,6 +131,7 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
       {[...Array(4)].map((e, i) => {
         const index = i + 1
         const ringStat = rings[index]
+        console.log(ringStat)
 
         return (
           <ExtendedMasterySelect
@@ -140,8 +140,8 @@ const RingSelect = ({ gridCharacter, sendValues }: Props) => {
             key={`ring-${index}`}
             dataSet={dataSet(index)}
             leftSelectDisabled={index === 1 || index === 2}
-            leftSelectValue={ringStat.modifier ? ringStat.modifier : 0}
-            rightSelectValue={ringStat.strength ? ringStat.strength : 0}
+            leftSelectValue={ringStat?.modifier ? ringStat?.modifier : 0}
+            rightSelectValue={ringStat?.strength ? ringStat?.strength : 0}
             sendValues={(left: number, right: number) => {
               receiveRingValues(index, left, right)
             }}

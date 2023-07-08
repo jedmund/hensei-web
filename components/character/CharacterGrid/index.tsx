@@ -20,6 +20,7 @@ import * as CharacterTransformer from '~transformers/CharacterTransformer'
 import * as GridCharacterTransformer from '~transformers/GridCharacterTransformer'
 
 import styles from './index.module.scss'
+import { use } from 'i18next'
 
 // Props
 interface Props {
@@ -78,15 +79,35 @@ const CharacterGrid = (props: Props) => {
     }>({})
 
   useEffect(() => {
+    console.log('loading chara grid')
+  }, [])
+
+  useEffect(() => {
     setJob(appState.party.protagonist.job)
-    setJobSkills(appState.party.protagonist.skills)
-    setJobAccessory(appState.party.protagonist.accessory)
-  }, [appState])
+    setJobSkills(
+      appState.party.protagonist.skills
+        ? appState.party.protagonist.skills
+        : {
+            0: undefined,
+            1: undefined,
+            2: undefined,
+            3: undefined,
+          }
+    )
+    setJobAccessory(
+      appState.party.protagonist.accessory
+        ? appState.party.protagonist.accessory
+        : undefined
+    )
+  }, [])
 
   // Initialize an array of current uncap values for each characters
   useEffect(() => {
     let initialPreviousUncapValues: { [key: number]: number } = {}
-    Object.values(appState.party.grid.characters).map((o) => {
+    const values = appState.party.grid.characters
+      ? appState.party.grid.characters
+      : {}
+    Object.values(values).map((o) => {
       o ? (initialPreviousUncapValues[o.position] = o.uncapLevel) : 0
     })
     setPreviousUncapValues(initialPreviousUncapValues)
@@ -151,7 +172,11 @@ const CharacterGrid = (props: Props) => {
 
   function storeGridCharacter(data: any) {
     const gridCharacter = GridCharacterTransformer.toObject(data)
-    appState.party.grid.characters[gridCharacter.position] = gridCharacter
+
+    appState.party.grid.characters = {
+      ...appState.party.grid.characters,
+      [gridCharacter.position]: gridCharacter,
+    }
   }
 
   async function resolveConflict() {
@@ -169,7 +194,11 @@ const CharacterGrid = (props: Props) => {
 
           // Remove conflicting characters from state
           conflicts.forEach(
-            (c) => (appState.party.grid.characters[c.position] = null)
+            (c) =>
+              (appState.party.grid.characters = {
+                ...appState.party.grid.characters,
+                [c.position]: null,
+              })
           )
 
           // Reset conflict
@@ -191,7 +220,10 @@ const CharacterGrid = (props: Props) => {
   async function removeCharacter(id: string) {
     try {
       const response = await api.endpoints.grid_characters.destroy({ id: id })
-      appState.party.grid.characters[response.data.position] = null
+      appState.party.grid.characters = {
+        ...appState.party.grid.characters,
+        [response.data.position]: null,
+      }
     } catch (error) {
       console.error(error)
     }
@@ -383,10 +415,13 @@ const CharacterGrid = (props: Props) => {
     position: number,
     uncapLevel: number | undefined
   ) => {
-    const character = appState.party.grid.characters[position]
+    const character = appState.party.grid.characters?.[position]
     if (character && uncapLevel) {
       character.uncapLevel = uncapLevel
-      appState.party.grid.characters[position] = character
+      appState.party.grid.characters = {
+        ...appState.party.grid.characters,
+        [position]: character,
+      }
     }
   }
 
@@ -394,7 +429,7 @@ const CharacterGrid = (props: Props) => {
     // Save the current value in case of an unexpected result
     let newPreviousValues = { ...previousUncapValues }
 
-    if (party.grid.characters[position]) {
+    if (party.grid.characters && party.grid.characters[position]) {
       newPreviousValues[position] = party.grid.characters[position]?.uncapLevel
       setPreviousUncapValues(newPreviousValues)
     }
@@ -479,10 +514,13 @@ const CharacterGrid = (props: Props) => {
     position: number,
     stage: number | undefined
   ) => {
-    const character = appState.party.grid.characters[position]
+    const character = appState.party.grid.characters?.[position]
     if (character && stage !== undefined) {
       character.transcendenceStep = stage
-      appState.party.grid.characters[position] = character
+      appState.party.grid.characters = {
+        ...appState.party.grid.characters,
+        [position]: character,
+      }
     }
   }
 
@@ -490,7 +528,7 @@ const CharacterGrid = (props: Props) => {
     // Save the current value in case of an unexpected result
     let newPreviousValues = { ...previousUncapValues }
 
-    if (party.grid.characters[position]) {
+    if (party.grid.characters && party.grid.characters[position]) {
       newPreviousValues[position] = party.grid.characters[position]?.uncapLevel
       setPreviousTranscendenceStages(newPreviousValues)
     }
@@ -545,7 +583,9 @@ const CharacterGrid = (props: Props) => {
             return (
               <li key={`grid_unit_${i}`}>
                 <CharacterUnit
-                  gridCharacter={party.grid.characters[i]}
+                  gridCharacter={
+                    party.grid.characters ? party.grid.characters[i] : null
+                  }
                   editable={props.editable}
                   position={i}
                   updateObject={receiveCharacterFromSearch}

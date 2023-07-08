@@ -24,19 +24,19 @@ export function toObject(data: any): Grid {
 
   return {
     characters: data.characters
-      ? mapToGridArray(data.characters, GridCharacter.toObject)
+      ? mapToGridArrayWithTransformer(data.characters, GridCharacter.toObject)
       : null,
     summons: {
       mainSummon: mainSummon ? GridSummon.toObject(mainSummon) : null,
       friendSummon: friendSummon ? GridSummon.toObject(friendSummon) : null,
       allSummons: allSummons
-        ? mapToGridArray(allSummons, GridSummon.toObject)
+        ? mapToGridArrayWithTransformer(allSummons, GridSummon.toObject)
         : null,
     },
     weapons: {
       mainWeapon: mainWeapon ? GridWeapon.toObject(mainWeapon) : null,
       allWeapons: data.weapons
-        ? mapToGridArray(data.weapons, GridWeapon.toObject)
+        ? mapToGridArrayWithTransformer(data.weapons, GridWeapon.toObject)
         : null,
     },
   }
@@ -53,7 +53,7 @@ function removeItem<T>(arr: Array<T>, values: T[]): Array<T> {
   return arr
 }
 
-function mapToGridArray<T>(
+export function mapToGridArrayWithTransformer<T>(
   arr: any[],
   transformer: (data: any) => T
 ): GridArray<T> {

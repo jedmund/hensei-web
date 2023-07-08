@@ -22,6 +22,13 @@ const emptyExtendedMastery: ExtendedMastery = {
   strength: 0,
 }
 
+const emptyRingset: CharacterOverMastery = {
+  1: { ...emptyExtendedMastery, modifier: 1 },
+  2: { ...emptyExtendedMastery, modifier: 2 },
+  3: emptyExtendedMastery,
+  4: emptyExtendedMastery,
+}
+
 const MAX_AWAKENING_LEVEL = 9
 
 // Styles and icons
@@ -85,6 +92,15 @@ const CharacterModal = ({
   }, [modalOpen])
 
   useEffect(() => {
+    console.log('Setting up grid character')
+    console.log(gridCharacter)
+
+    if (gridCharacter.mastery.overMastery) {
+      setRings(gridCharacter.mastery.overMastery)
+    } else {
+      setRings(emptyRingset)
+    }
+
     if (gridCharacter.mastery.aetherialMastery) {
       setEarring({
         modifier: gridCharacter.mastery.aetherialMastery.modifier,
@@ -93,7 +109,11 @@ const CharacterModal = ({
     }
 
     setAwakening(gridCharacter.mastery.awakening.type)
-    setAwakeningLevel(gridCharacter.mastery.awakening.level)
+    setAwakeningLevel(
+      gridCharacter.mastery.awakening.level
+        ? gridCharacter.mastery.awakening.level
+        : 1
+    )
     setPerpetuity(gridCharacter.mastery.perpetuity)
   }, [gridCharacter])
 
@@ -149,14 +169,6 @@ const CharacterModal = ({
   }
 
   function ringsChanged() {
-    // Create an empty ExtendedMastery object
-    const emptyRingset: CharacterOverMastery = {
-      1: { ...emptyExtendedMastery, modifier: 1 },
-      2: { ...emptyExtendedMastery, modifier: 2 },
-      3: emptyExtendedMastery,
-      4: emptyExtendedMastery,
-    }
-
     // Check if the current ringset is empty on the current GridCharacter and our local state
     const isEmptyRingset =
       gridCharacter.mastery.overMastery === undefined &&
@@ -259,7 +271,11 @@ const CharacterModal = ({
 
     setRings(gridCharacter.mastery.overMastery || emptyExtendedMastery)
     setAwakening(gridCharacter.mastery.awakening.type)
-    setAwakeningLevel(gridCharacter.mastery.awakening.level)
+    setAwakeningLevel(
+      gridCharacter.mastery.awakening.level
+        ? gridCharacter.mastery.awakening.level
+        : 1
+    )
 
     setAlertOpen(false)
     setOpen(false)

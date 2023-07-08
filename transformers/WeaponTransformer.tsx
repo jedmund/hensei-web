@@ -35,9 +35,9 @@ export function toObject(data: any): Weapon {
     },
     ax: data.ax,
     axType: data.ax_type,
-    awakenings: data.awakenings.map((awakening: any) =>
-      Awakening.toObject(awakening)
-    ),
+    awakenings: data.awakenings
+      ? data.awakenings.map((awakening: any) => Awakening.toObject(awakening))
+      : null,
     maxAwakeningLevel: data.max_awakening_level,
   }
 }

@@ -12,7 +12,18 @@ export function toObject(data: any): GridCharacter {
     mastery: {
       overMastery: data.over_mastery
         ? data.over_mastery
-        : [null, null, null, null],
+        : [
+            {
+              modifier: 1,
+              strength: 0,
+            },
+            {
+              modifier: 2,
+              strength: 0,
+            },
+            null,
+            null,
+          ],
       aetherialMastery: data.aetherial_mastery ? data.aetherial_mastery : null,
       awakening: {
         type: Awakening.toObject(data.awakening.type),

@@ -9,6 +9,7 @@ import 'fix-date'
 import { accountState } from '~utils/accountState'
 import { formatTimeAgo } from '~utils/timeAgo'
 import { ElementMap } from '~utils/elements'
+import { mapToGridArray } from '~utils/mapToGridArray'
 
 import Button from '~components/common/Button'
 
@@ -73,9 +74,18 @@ const GridRep = (props: Props) => {
   })
 
   useEffect(() => {
-    setMainhand(props.weapons.mainWeapon?.object)
-    setWeapons(Object.values(props.weapons.allWeapons).map((w) => w?.object))
-    setGrid(props.weapons.allWeapons)
+    if (props.weapons && props.weapons.mainWeapon) {
+      setMainhand(props.weapons.mainWeapon?.object)
+    }
+
+    if (props.weapons && props.weapons.allWeapons) {
+      setWeapons(
+        mapToGridArray(
+          Object.values(props.weapons.allWeapons).map((w) => w?.object)
+        )
+      )
+      setGrid(props.weapons.allWeapons)
+    }
   }, [props.weapons])
 
   function navigate() {
@@ -86,7 +96,7 @@ const GridRep = (props: Props) => {
     let url = ''
 
     if (mainhand) {
-      const weapon = props.weapons.mainWeapon
+      const weapon = props.weapons?.mainWeapon
 
       if (mainhand.element === ElementMap.null && weapon && weapon.element) {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblueId}_${weapon.element}.jpg`
@@ -190,7 +200,7 @@ const GridRep = (props: Props) => {
                 {` · ${t('party.details.labels.full_auto')}`}
               </span>
             )}
-            {props.raid && props.raid.group.extra && (
+            {props.raid && props.raid.group?.extra && (
               <span className={styles.extra}>{` · EX`}</span>
             )}
           </div>
