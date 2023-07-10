@@ -11,7 +11,7 @@ import {
 } from '~components/MentionList'
 import api from '~utils/api'
 import { numberToElement } from '~utils/elements'
-import { get } from 'http'
+import { SuggestionOptions } from '~extensions/CustomSuggestion'
 
 interface RawSearchResponse {
   searchable_type: string
@@ -44,8 +44,8 @@ function transform(object: RawSearchResponse) {
   }
   return result
 }
-
-export const mentionSuggestionOptions: MentionOptions['suggestion'] = {
+//
+export const mentionSuggestionOptions: Omit<SuggestionOptions, 'editor'> = {
   items: async ({ query }): Promise<MentionSuggestion[]> => {
     const locale = getCookie('NEXT_LOCALE')
       ? (getCookie('NEXT_LOCALE') as string)
@@ -103,6 +103,10 @@ export const mentionSuggestionOptions: MentionOptions['suggestion'] = {
         if (props.event.key === 'Escape') {
           popup?.hide()
           return true
+        }
+
+        if (props.event.key === 'Tab') {
+          popup?.hide()
         }
 
         if (!component?.ref) {
