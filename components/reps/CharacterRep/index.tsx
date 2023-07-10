@@ -17,10 +17,7 @@ const CHARACTERS_COUNT = 3
 
 const CharacterRep = (props: Props) => {
   // Localization for alt tags
-  const router = useRouter()
-  const { t } = useTranslation('common')
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = useRouter().locale || 'en'
 
   // Component state
   const [characters, setCharacters] = useState<GridArray<Character>>({})
@@ -95,8 +92,15 @@ const CharacterRep = (props: Props) => {
       else if (gridCharacter.uncap_level >= 5) suffix = '03'
       else if (gridCharacter.uncap_level > 2) suffix = '02'
 
-      if (character.element == 0) {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblue_id}_${props.element}.jpg`
+      let element = props.element
+      if (element === 0 && character.element !== 0) {
+        element = character.element
+      } else if (element === 0 && character.element === 0) {
+        element = 1
+      }
+
+      if (character.element === 0) {
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblue_id}_${suffix}_0${element}.jpg`
       } else {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblue_id}_${suffix}.jpg`
       }

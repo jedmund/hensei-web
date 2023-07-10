@@ -192,11 +192,11 @@ const CharacterUnit = ({
       else if (gridCharacter.uncap_level > 2) suffix = '02'
 
       // Special casing for Lyria (and Young Cat eventually)
-      if (gridCharacter.object.granblue_id === '3030182000') {
+      if (character.element === 0) {
         let element = 1
         if (grid.weapons.mainWeapon && grid.weapons.mainWeapon.element) {
           element = grid.weapons.mainWeapon.element
-        } else if (party.element != 0) {
+        } else if (party.element !== 0) {
           element = party.element
         }
 
