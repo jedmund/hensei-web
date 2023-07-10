@@ -277,8 +277,8 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
       <Dialog open={open} onOpenChange={openChange}>
         <DialogContent
           className="Account"
-          headerref={headerRef}
-          footerref={footerRef}
+          headerRef={headerRef}
+          footerRef={footerRef}
           onOpenAutoFocus={(event: Event) => {}}
           onEscapeKeyDown={onEscapeKeyDown}
         >

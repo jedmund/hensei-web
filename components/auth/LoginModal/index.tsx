@@ -218,7 +218,7 @@ const LoginModal = (props: Props) => {
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
         className="login"
-        footerref={footerRef}
+        footerRef={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >

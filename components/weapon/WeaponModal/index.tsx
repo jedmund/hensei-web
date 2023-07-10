@@ -469,8 +469,8 @@ const WeaponModal = ({
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent
           className="Weapon"
-          headerref={headerRef}
-          footerref={footerRef}
+          headerRef={headerRef}
+          footerRef={footerRef}
           onOpenAutoFocus={(event) => event.preventDefault()}
           onEscapeKeyDown={onEscapeKeyDown}
         >

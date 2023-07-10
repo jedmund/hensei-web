@@ -354,8 +354,8 @@ const CharacterModal = ({
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent
           className="character"
-          headerref={headerRef}
-          footerref={footerRef}
+          headerRef={headerRef}
+          footerRef={footerRef}
           onOpenAutoFocus={(event) => event.preventDefault()}
           onEscapeKeyDown={() => {}}
         >
