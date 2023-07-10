@@ -44,6 +44,10 @@
     }
   }
 
+  &.mention {
+    grid-template-columns: 1fr 2fr;
+  }
+
   .left {
     align-items: center;
     display: flex;

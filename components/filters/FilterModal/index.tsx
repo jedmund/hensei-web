@@ -18,6 +18,7 @@ import SelectItem from '~components/common/SelectItem'
 import type { DialogProps } from '@radix-ui/react-dialog'
 
 import styles from './index.module.scss'
+import MentionTableField from '~components/common/MentionTableField'
 
 interface Props extends DialogProps {
   defaultFilterSet: FilterSet
@@ -47,6 +48,8 @@ const FilterModal = (props: Props) => {
   const [chargeAttackOpen, setChargeAttackOpen] = useState(false)
   const [fullAutoOpen, setFullAutoOpen] = useState(false)
   const [autoGuardOpen, setAutoGuardOpen] = useState(false)
+  const [inclusions, setInclusions] = useState<string[]>([])
+  const [exclusions, setExclusions] = useState<string[]>([])
   const [filterSet, setFilterSet] = useState<FilterSet>({})
 
   // Filter states
@@ -130,6 +133,9 @@ const FilterModal = (props: Props) => {
     if (props.persistFilters) {
       setCookie('filters', filters, { path: '/' })
     }
+
+    if (inclusions.length > 0) filters.includes = inclusions.join(',')
+    if (exclusions.length > 0) filters.excludes = exclusions.join(',')
 
     props.sendAdvancedFilters(filters)
     openChange()
@@ -384,6 +390,27 @@ const FilterModal = (props: Props) => {
     />
   )
 
+  // Inclusions and exclusions
+  const inclusionField = (
+    <MentionTableField
+      name="inclusion"
+      description={t('modals.filters.descriptions.inclusion')}
+      placeholder={t('modals.filters.placeholders.included')}
+      label={t('modals.filters.labels.inclusion')}
+      onUpdate={(value) => setInclusions(value)}
+    />
+  )
+
+  const exclusionField = (
+    <MentionTableField
+      name="exclusion"
+      description={t('modals.filters.descriptions.exclusion')}
+      placeholder={t('modals.filters.placeholders.excluded')}
+      label={t('modals.filters.labels.exclusion')}
+      onUpdate={(value) => setExclusions(value)}
+    />
+  )
+
   const filterNotice = () => {
     if (props.persistFilters) return null
     return (
@@ -404,14 +431,16 @@ const FilterModal = (props: Props) => {
       <DialogContent
         className="filter"
         wrapperClassName="filter"
-        headerref={headerRef}
-        footerref={footerRef}
+        headerRef={headerRef}
+        footerRef={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
         <DialogHeader title={t('modals.filters.title')} />
         <div className={styles.fields}>
           {filterNotice()}
+          {inclusionField}
+          {exclusionField}
           {chargeAttackField()}
           {fullAutoField()}
           {autoGuardField()}
