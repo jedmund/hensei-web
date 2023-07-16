@@ -67,6 +67,17 @@ const UpdatesPage = () => {
         }}
       />
       <ContentUpdate
+        version="2023-07U"
+        dateString="2023/07/08"
+        event="events.uncap"
+        newItems={{
+          weapon: ['1040218500'],
+        }}
+        uncappedItems={{
+          character: ['3040102000'],
+        }}
+      />
+      <ContentUpdate
         version="2023-06L"
         dateString="2023/06/29"
         event="events.legfest"
