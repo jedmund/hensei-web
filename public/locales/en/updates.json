@@ -20,7 +20,7 @@
   },
   "versions": {
     "2023-08F": {
-      "features": "Added new class \"Street King\""
+      "features": ["Added new class \"Street King\""]
     },
     "2023-05L": {
       "features": ["A large update is in the works. Stay tuned!"]
