@@ -11,7 +11,7 @@ import classNames from 'classnames'
 
 import styles from './index.module.scss'
 
-type Props = Pick<SuggestionProps, 'items' | 'command'>
+type Props = Pick<SuggestionProps, 'items' | 'command' | 'query'>
 
 export type MentionRef = {
   onKeyDown: (props: { event: KeyboardEvent }) => boolean
@@ -113,7 +113,9 @@ export const MentionList = forwardRef<MentionRef, Props>(
           ))
         ) : (
           <div className={styles.noResult}>
-            {t('search.errors.no_results_generic')}
+            {props.query.length < 3
+              ? t('search.errors.type')
+              : t('search.errors.no_results_generic')}
           </div>
         )}
       </div>
