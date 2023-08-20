@@ -12,13 +12,8 @@ interface Props
     HTMLDivElement
   > {
   wrapperClassName?: string
-<<<<<<< HEAD
   headerRef?: React.RefObject<HTMLDivElement>
   footerRef?: React.RefObject<HTMLDivElement>
-=======
-  headerref?: React.RefObject<HTMLDivElement>
-  footerref?: React.RefObject<HTMLDivElement>
->>>>>>> main
   scrollable?: boolean
   onEscapeKeyDown: (event: KeyboardEvent) => void
   onOpenAutoFocus: (event: Event) => void
