@@ -395,7 +395,7 @@ const FilterModal = (props: Props) => {
     <MentionTableField
       name="inclusion"
       description={t('modals.filters.descriptions.inclusion')}
-      placeholder={t('modals.filters.placeholders.included')}
+      placeholder={t('modals.filters.placeholders.inclusion')}
       label={t('modals.filters.labels.inclusion')}
       onUpdate={(value) => setInclusions(value)}
     />
@@ -405,7 +405,7 @@ const FilterModal = (props: Props) => {
     <MentionTableField
       name="exclusion"
       description={t('modals.filters.descriptions.exclusion')}
-      placeholder={t('modals.filters.placeholders.excluded')}
+      placeholder={t('modals.filters.placeholders.exclusion')}
       label={t('modals.filters.labels.exclusion')}
       onUpdate={(value) => setExclusions(value)}
     />
