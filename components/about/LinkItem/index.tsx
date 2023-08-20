@@ -21,7 +21,7 @@ const LinkItem = ({ icon, title, link, className, ...props }: Props) => {
 
   return (
     <div className={classes}>
-      <Link href={link}>
+      <Link legacyBehavior href={link}>
         <a href={link} target="_blank" rel="noreferrer">
           <div className={styles.left}>
             <i className={styles.icon}>{icon}</i>
