@@ -10,8 +10,7 @@ html {
 body {
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
-  font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
-    sans-serif;
+  font-family: var(--font-family);
   font-size: 1.4rem;
   height: 100%;
   padding: $unit-2x !important;
@@ -26,6 +25,7 @@ body {
 }
 
 main {
+  font-family: var(--font-goalking);
   min-height: 90%;
 }
 
@@ -66,8 +66,7 @@ button,
 input,
 textarea {
   border: 2px solid transparent;
-  font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
-    sans-serif;
+  font-family: var(--font-family);
   font-size: $font-regular;
 }
 

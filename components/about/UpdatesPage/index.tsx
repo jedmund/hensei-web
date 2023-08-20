@@ -58,6 +58,67 @@ const UpdatesPage = () => {
     <div className={classes}>
       <h1>{common('about.segmented_control.updates')}</h1>
       <ContentUpdate
+        version="2023-08F"
+        dateString="2023/08/16"
+        event="events.flash"
+        newItems={{
+          character: ['3040478000', '3040479000', '3040480000'],
+          weapon: ['1040915400', '1040024800', '1040422000'],
+          summon: ['2040423000'],
+        }}
+        uncappedItems={{
+          character: ['3040161000', '3040165000'],
+        }}
+        numNotes={1}
+      />
+      <ContentUpdate
+        version="2023-08U"
+        dateString="2023/08/11"
+        event="events.content"
+        newItems={{
+          character: ['3040476000', '3040477000'],
+          weapon: ['1040117100'],
+          summon: ['2040422000', '2040421000'],
+        }}
+      />
+      <ContentUpdate
+        version="2023-07L"
+        dateString="2023/07/31"
+        event="events.legfest"
+        newItems={{
+          character: ['3040472000', '3040474000', '3040475000', '3040473000'],
+          weapon: [
+            '1040815800',
+            '1040024700',
+            '1040516200',
+            '1040218600',
+            '1040617600',
+            '1030305800',
+          ],
+          summon: ['2040420000'],
+        }}
+      />
+      <ContentUpdate
+        version="2023-07F"
+        dateString="2023/07/15"
+        event="events.flash"
+        newItems={{
+          character: ['3040470000', '3040471000'],
+          weapon: ['1040316300', '1040516100'],
+        }}
+      />
+      <ContentUpdate
+        version="2023-07U"
+        dateString="2023/07/08"
+        event="events.uncap"
+        newItems={{
+          weapon: ['1040218500'],
+        }}
+        uncappedItems={{
+          character: ['3040102000'],
+        }}
+      />
+      <ContentUpdate
         version="2023-06L"
         dateString="2023/06/29"
         event="events.legfest"

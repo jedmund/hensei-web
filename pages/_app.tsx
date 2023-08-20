@@ -1,6 +1,8 @@
 import { appWithTranslation } from 'next-i18next'
 import Head from 'next/head'
 import Link from 'next/link'
+import localFont from '@next/font/local'
+import { useIsomorphicLayoutEffect } from 'react-use'
 import { useTranslation } from 'next-i18next'
 import { get } from 'local-storage'
 import { getCookie, setCookie } from 'cookies-next'
@@ -22,12 +24,22 @@ import type { AppProps } from 'next/app'
 
 import DiscordIcon from '~public/icons/discord.svg'
 import ShareIcon from '~public/icons/Share.svg'
+
+const goalking = localFont({
+  src: './fonts/gk-variable.woff2',
+  fallback: ['system-ui', 'inter', 'helvetica neue', 'sans-serif'],
+  variable: '--font-goalking',
+})
 import '../styles/globals.scss'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { t } = useTranslation('common')
   const [mounted, setMounted] = useState(false)
   const [refresh, setRefresh] = useState(false)
+
+  useIsomorphicLayoutEffect(() => {
+    document.body.style.setProperty('--font-family', goalking.style.fontFamily)
+  }, [])
 
   // Subscribe to app state to listen for account changes and
   // unsubscribe when component is unmounted
@@ -111,7 +123,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <div className="Connect">
             <p>{t('errors.server_unavailable.discord')}</p>
             <div className="Discord LinkItem">
-              <Link href="https://discord.gg/qyZ5hGdPC8">
+              <Link legacyBehavior href="https://discord.gg/qyZ5hGdPC8">
                 <a
                   href="https://discord.gg/qyZ5hGdPC8"
                   target="_blank"

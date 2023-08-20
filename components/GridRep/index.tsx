@@ -248,7 +248,7 @@ const GridRep = (props: Props) => {
   )
 
   return (
-    <Link href={`/p/${props.shortcode}`}>
+    <Link legacyBehavior href={`/p/${props.shortcode}`}>
       <a className={styles.gridRep}>
         {detailsWithUsername}
         <div className={styles.weaponGrid}>
