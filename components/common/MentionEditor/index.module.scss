@@ -55,6 +55,11 @@
       margin: $unit-fourth;
       transition: all 0.1s ease-out;
 
+      :global(.remove) {
+        display: none;
+        padding: 0 $unit-half;
+      }
+
       &:hover {
         background: var(--null-bg-hover);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
@@ -63,17 +68,33 @@
         cursor: pointer;
       }
 
+      &:focus {
+        outline: 2px solid blue;
+
+        :global(.remove) {
+          display: block;
+        }
+      }
+
       &[data-element='fire'] {
         background: var(--fire-bg);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
           0 1px 0px var(--fire-shadow);
         color: var(--fire-text);
 
+        :global(.remove) {
+          color: var(--fire-text);
+        }
+
         &:hover {
           background: var(--fire-bg-hover);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--fire-shadow-hover);
           color: var(--fire-text-hover);
+        }
+
+        &:focus {
+          outline: 2px solid var(--fire-shadow-hover);
         }
       }
 
@@ -83,11 +104,19 @@
           0 1px 0px var(--water-shadow);
         color: var(--water-text);
 
+        :global(.remove) {
+          color: var(--water-text);
+        }
+
         &:hover {
           background: var(--water-bg-hover);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--water-shadow-hover);
           color: var(--water-text-hover);
+        }
+
+        &:focus {
+          outline: 2px solid var(--water-shadow-hover);
         }
       }
 
@@ -97,11 +126,19 @@
           0 1px 0px var(--earth-shadow);
         color: var(--earth-text);
 
+        :global(.remove) {
+          color: var(--earth-text);
+        }
+
         &:hover {
           background: var(--earth-bg-hover);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--earth-shadow-hover);
           color: var(--earth-text-hover);
+        }
+
+        &:focus {
+          outline: 2px solid var(--earth-shadow-hover);
         }
       }
 
@@ -111,10 +148,18 @@
           0 1px 0px var(--wind-shadow);
         color: var(--wind-text);
 
+        :global(.remove) {
+          color: var(--wind-text);
+        }
+
         &:hover {
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--wind-shadow-hover);
           color: var(--wind-text-hover);
+        }
+
+        &:focus {
+          outline: 2px solid var(--wind-shadow-hover);
         }
       }
 
@@ -124,11 +169,19 @@
           0 1px 0px var(--dark-shadow);
         color: var(--dark-text);
 
+        :global(.remove) {
+          color: var(--dark-text);
+        }
+
         &:hover {
           background: var(--dark-bg-hover);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--dark-shadow-hover);
           color: var(--dark-text-hover);
+        }
+
+        &:focus {
+          outline: 2px solid var(--dark-shadow-hover);
         }
       }
 
@@ -138,11 +191,19 @@
           0 1px 0px var(--light-shadow);
         color: var(--light-text);
 
+        :global(.remove) {
+          color: var(--light-text);
+        }
+
         &:hover {
           background: var(--light-bg-hover);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
             0 1px 0px var(--light-shadow-hover);
           color: var(--light-text-hover);
+        }
+
+        &:focus {
+          outline: 2px solid var(--light-shadow-hover);
         }
       }
     }

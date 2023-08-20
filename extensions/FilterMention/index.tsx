@@ -117,6 +117,17 @@ export const FilterMention = Node.create<MentionOptions>({
   },
 
   renderHTML({ node, HTMLAttributes }) {
+    const removeButton = [
+      'span',
+      {
+        class: 'remove',
+        onclick: () => {
+          // Add functionality for the button click here
+        },
+      },
+      '\u00D7', // Unicode for the multiplication symbol
+    ]
+
     return [
       'div',
       mergeAttributes(
@@ -130,6 +141,7 @@ export const FilterMention = Node.create<MentionOptions>({
         options: this.options,
         node,
       }),
+      removeButton,
     ]
   },
 
