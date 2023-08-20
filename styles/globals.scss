@@ -66,8 +66,7 @@ button,
 input,
 textarea {
   border: 2px solid transparent;
-  font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial,
-    sans-serif;
+  font-family: var(--font-family);
   font-size: $font-regular;
 }
 
