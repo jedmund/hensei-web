@@ -1,0 +1,150 @@
+.gridRep {
+  aspect-ratio: 3/2;
+  border: 1px solid transparent;
+  border-radius: $card-corner;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: $unit;
+  padding: $unit-2x;
+  min-width: 320px;
+  width: 100%;
+
+  .placeholder {
+    // background: var(--placeholder-bg);
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background-color: #f6f7f8;
+    background: linear-gradient(
+      to right,
+      var(--placeholder-bg) 8%,
+      var(--placeholder-bg-accent) 18%,
+      var(--placeholder-bg) 33%
+    );
+    background-size: 1200px 104px;
+
+    &.small {
+      border-radius: calc($font-small / 2);
+      height: $font-small;
+    }
+
+    &.regular {
+      border-radius: calc($font-regular / 2);
+      height: $font-regular;
+    }
+  }
+
+  & > .weaponGrid {
+    aspect-ratio: 2/0.95;
+    display: grid;
+    grid-template-columns: 1fr 3.36fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
+    grid-gap: $unit; /* add a gap of 8px between grid items */
+
+    .weapon {
+      border-radius: $item-corner-small;
+    }
+
+    .mainhand.weapon {
+      aspect-ratio: 73/153;
+      display: grid;
+      grid-column: 1 / 2; /* spans one column */
+      height: calc(100% - $unit-fourth);
+    }
+
+    .weapons {
+      display: grid; /* make the right-images container a grid */
+      grid-template-columns: repeat(
+        3,
+        1fr
+      ); /* create 3 columns, each taking up 1 fraction */
+      grid-template-rows: repeat(
+        3,
+        1fr
+      ); /* create 3 rows, each taking up 1 fraction */
+      gap: $unit;
+      // column-gap: $unit;
+      // row-gap: $unit-2x;
+    }
+
+    .grid.weapon {
+      aspect-ratio: 280 / 160;
+      display: grid;
+    }
+
+    .mainhand.weapon img[src*='jpg'],
+    .grid.weapon img[src*='jpg'] {
+      border-radius: 4px;
+      width: 100%;
+    }
+  }
+
+  .details {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-half;
+
+    .top {
+      display: flex;
+      flex-direction: row;
+      gap: calc($unit / 2);
+      align-items: center;
+
+      .info {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: calc($unit / 2);
+
+        .title {
+          width: 100%;
+        }
+      }
+    }
+
+    .attributed {
+      display: flex;
+      gap: $unit-half;
+      align-items: center;
+      justify-content: space-between;
+
+      .user {
+        display: flex;
+        flex-grow: 1;
+        gap: calc($unit / 2);
+        align-items: center;
+
+        .image {
+          $diameter: 18px;
+
+          border-radius: calc($diameter / 2);
+          height: $diameter;
+          width: $diameter;
+        }
+
+        .text {
+          border-radius: calc($font-small / 2);
+          height: $font-small;
+          width: 40%;
+        }
+      }
+
+      .timestamp {
+        width: 20%;
+      }
+    }
+  }
+}
+
+@keyframes placeHolderShimmer {
+  $width: 400px;
+
+  0% {
+    background-position: ($width * -1) 0;
+  }
+  100% {
+    background-position: $width 0;
+  }
+}
