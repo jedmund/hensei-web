@@ -1,0 +1,358 @@
+.menu {
+  background: #fff;
+  border-radius: $item-corner;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0px 10px 20px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  color: rgba(0, 0, 0, 0.8);
+  overflow: scroll;
+  padding: $unit-half;
+  pointer-events: all;
+  position: relative;
+  width: 200px;
+  z-index: 999;
+
+  :global(.dropdown-item.disabled) {
+    align-items: center;
+    color: var(--text-tertiary);
+    display: flex;
+    font-size: $font-small;
+    min-height: $unit-5x;
+    padding-left: $unit;
+  }
+
+  a:hover {
+    text-decoration: none !important;
+  }
+
+  [aria-selected='true'] .item {
+    background: var(--menu-bg-item-hover);
+    color: var(--text-primary);
+  }
+
+  .item {
+    align-items: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: $item-corner-small;
+    color: var(--text-tertiary);
+    font-size: $font-small;
+    font-weight: $medium;
+    display: flex;
+    gap: $unit;
+    margin: 0;
+    padding: $unit-half $unit;
+    text-align: left;
+
+    &:hover,
+    &.selected {
+      background: var(--menu-bg-item-hover);
+      color: var(--text-primary);
+    }
+
+    .job {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: $unit-4x;
+      height: $unit-4x;
+
+      img {
+        width: $unit-3x;
+        height: auto;
+      }
+    }
+
+    img {
+      border-radius: $item-corner-small;
+      width: $unit-4x;
+      height: $unit-4x;
+    }
+  }
+}
+
+.typeahead {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  display: block;
+  flex-grow: 1;
+  font-size: $font-regular;
+  white-space: pre-wrap;
+  max-width: 240px;
+  width: 100%;
+
+  :global(.rbt-input) {
+    background-color: var(--input-bound-bg);
+    border-radius: $input-corner;
+    color: var(--text-primary);
+    padding: ($unit * 1.5) $unit-2x;
+    min-height: 26px;
+
+    &:hover {
+      background-color: var(--input-bound-bg-hover);
+    }
+
+    &:focus,
+    &:global(.focus) {
+      outline: 2px solid #275dc5;
+    }
+  }
+
+  :global(.rbt-input-wrapper) {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 30px;
+    margin-bottom: -4px;
+    margin-top: -1px;
+    overflow: hidden;
+
+    :global(.rbt-input-hint) {
+      color: var(--text-tertiary) !important;
+    }
+  }
+}
+
+.token {
+  border-radius: $item-corner-small;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 1px 0px var(--null-shadow);
+  background: var(--null-bg);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  font-weight: $medium;
+  font-size: 15px;
+  padding: 1px $unit-half 1px $unit;
+  margin: $unit-fourth;
+  transition: all 0.1s ease-out;
+
+  white-space: nowrap;
+  overflow: hidden;
+
+  :global(.rbt-token-label) {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  :global(.rbt-token-remove-button) {
+    background: none;
+    border: none;
+    font-weight: $bold;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    :global(.visually-hidden) {
+      display: none;
+    }
+  }
+
+  $outline: 2px solid rgba(255, 255, 255, 0.35);
+
+  &:hover {
+    background: var(--null-bg-hover);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 1px 0px var(--null-shadow-hover);
+    text-decoration: none;
+  }
+
+  &[data-element='fire'] {
+    background: var(--fire-bg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 1px 0px var(--fire-shadow);
+    color: var(--fire-text);
+
+    :global(.rbt-token-remove-button) {
+      color: var(--fire-text);
+
+      &:hover {
+        color: var(--fire-text-hover);
+      }
+    }
+
+    &:hover {
+      background: var(--fire-bg-hover);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 1px 0px var(--fire-shadow-hover);
+      color: var(--fire-text-hover);
+    }
+
+    &:focus {
+      background: var(--fire-text);
+      box-shadow: none;
+      color: var(--fire-bg);
+      outline: $outline;
+
+      :global(.rbt-token-remove-button) {
+        color: var(--fire-bg);
+      }
+    }
+  }
+
+  &[data-element='water'] {
+    background: var(--water-bg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 1px 0px var(--water-shadow);
+    color: var(--water-text);
+
+    :global(.rbt-token-remove-button) {
+      color: var(--water-text);
+
+      &:hover {
+        color: var(--water-text-hover);
+      }
+    }
+
+    &:hover {
+      background: var(--water-bg-hover);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 1px 0px var(--water-shadow-hover);
+      color: var(--water-text-hover);
+    }
+
+    &:focus {
+      background: var(--water-text);
+      box-shadow: none;
+      color: var(--water-bg);
+      outline: $outline;
+
+      :global(.rbt-token-remove-button) {
+        color: var(--water-bg);
+      }
+    }
+  }
+
+  &[data-element='earth'] {
+    background: var(--earth-bg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 1px 0px var(--earth-shadow);
+    color: var(--earth-text);
+
+    :global(.rbt-token-remove-button) {
+      color: var(--earth-text);
+
+      &:hover {
+        color: var(--earth-text-hover);
+      }
+    }
+
+    &:hover {
+      background: var(--earth-bg-hover);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 1px 0px var(--earth-shadow-hover);
+      color: var(--earth-text-hover);
+    }
+
+    &:focus {
+      background: var(--earth-text);
+      box-shadow: none;
+      color: var(--earth-bg);
+      outline: $outline;
+
+      :global(.rbt-token-remove-button) {
+        color: var(--earth-bg);
+      }
+    }
+  }
+
+  &[data-element='wind'] {
+    background: var(--wind-bg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 1px 0px var(--wind-shadow);
+    color: var(--wind-text);
+
+    :global(.rbt-token-remove-button) {
+      color: var(--wind-text);
+
+      &:hover {
+        color: var(--wind-text-hover);
+      }
+    }
+
+    &:hover {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 1px 0px var(--wind-shadow-hover);
+      color: var(--wind-text-hover);
+    }
+
+    &:focus {
+      background: var(--wind-text);
+      box-shadow: none;
+      color: var(--wind-bg);
+      outline: $outline;
+
+      :global(.rbt-token-remove-button) {
+        color: var(--wind-bg);
+      }
+    }
+  }
+
+  &[data-element='dark'] {
+    background: var(--dark-bg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 1px 0px var(--dark-shadow);
+    color: var(--dark-text);
+
+    :global(.rbt-token-remove-button) {
+      color: var(--dark-text);
+
+      &:hover {
+        color: var(--dark-text-hover);
+      }
+    }
+
+    &:hover {
+      background: var(--dark-bg-hover);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 1px 0px var(--dark-shadow-hover);
+      color: var(--dark-text-hover);
+    }
+
+    &:focus {
+      background: var(--dark-text);
+      box-shadow: none;
+      color: var(--dark-bg);
+      outline: 2px solid rgba(255, 255, 255, 0.65);
+
+      :global(.rbt-token-remove-button) {
+        color: var(--dark-bg);
+      }
+    }
+  }
+
+  &[data-element='light'] {
+    background: var(--light-bg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 1px 0px var(--light-shadow);
+    color: var(--light-text);
+
+    :global(.rbt-token-remove-button) {
+      color: var(--light-text);
+
+      &:hover {
+        color: var(--light-text-hover);
+      }
+    }
+
+    &:hover {
+      background: var(--light-bg-hover);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 1px 0px var(--light-shadow-hover);
+      color: var(--light-text-hover);
+    }
+
+    &:focus {
+      background: var(--light-text);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        0 1px 0px var(--light-shadow-hover);
+      color: var(--light-bg);
+      outline: $outline;
+
+      :global(.rbt-token-remove-button) {
+        color: var(--light-bg);
+      }
+    }
+  }
+}
