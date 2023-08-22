@@ -384,6 +384,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   // Fetch user's advanced filters
   const filtersCookie = getCookie('filters', { req: req, res: res })
   const advancedFilters = filtersCookie ? JSON.parse(filtersCookie as string) : undefined
+  const convertedFilters = advancedFilters ? convertAdvancedFilters(advancedFilters) : undefined
   
   try {
     // Fetch and organize raids
@@ -394,7 +395,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     // Create filter object
     const filters: FilterObject = extractFilters(query, raidGroups)
     const params = {
-      params: { ...filters, ...convertAdvancedFilters(advancedFilters) },
+      params: { ...filters, ...convertedFilters },
     }
 
     // Set up empty variables
