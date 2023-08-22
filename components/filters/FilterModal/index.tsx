@@ -456,22 +456,16 @@ const FilterModal = (props: Props) => {
           {filterNotice()}
           <section>
             <div className={styles.header}>
-              <h3>Team items</h3>
-              <p>
-                Show or hide teams that have specific characters, weapons, or
-                summons
-              </p>
+              <h3>{t('modals.filters.headers.items.name')}</h3>
+              <p>{t('modals.filters.headers.items.description')}</p>
             </div>
             {inclusionField}
             {exclusionField}
           </section>
           <section>
             <div className={styles.header}>
-              <h3>Team details</h3>
-              <p>
-                Filter teams by various properties, like full auto or button
-                presses
-              </p>
+              <h3>{t('modals.filters.headers.details.name')}</h3>
+              <p>{t('modals.filters.headers.details.description')}</p>
             </div>
             {chargeAttackField()}
             {fullAutoField()}

@@ -249,6 +249,16 @@
     },
     "filters": {
       "title": "フィルター設定",
+      "headers": {
+        "items": {
+          "name": "アイテムをフィルター",
+          "description": "キャラクター・武器・召喚石が編成に包含・除外されているかに基づいて表示する"
+        },
+        "details": {
+          "name": "詳細をフィルター",
+          "description": "フルオートやポチなどの編成詳細に基づいて表示する"
+        }
+      },
       "labels": {
         "charge_attack": "奥義",
         "full_auto": "フルオート",
@@ -261,8 +271,8 @@
         "name_quality": "無題の編成なし",
         "user_quality": "無名のユーザーなし",
         "original_only": "リミックスなし",
-        "inclusion": "アイテムを包含",
-        "exclusion": "アイテムを除外"
+        "inclusion": "包含されているアイテム",
+        "exclusion": "除外されているアイテムめn"
       },
       "notice": "フィルターは<strong>保存した編成</strong>と<strong>ユーザープロフィール</strong>には保存されません",
       "options": {
@@ -273,6 +283,11 @@
       "placeholders": {
         "inclusion": "〇〇が入っている",
         "exclusion": "〇〇が入っていない"
+      },
+      "prompts": {
+        "type": "入力してください",
+        "searching": "検索中...",
+        "not_found": "見つかりませんでした"
       },
       "buttons": {
         "confirm": "フィルターを保存する",

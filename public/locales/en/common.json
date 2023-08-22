@@ -252,6 +252,16 @@
     },
     "filters": {
       "title": "Advanced filters",
+      "headers": {
+        "items": {
+          "name": "Filter items",
+          "description": "Show or hide teams that have specific characters, weapons, or summons"
+        },
+        "details": {
+          "name": "Filter details",
+          "description": "Filter teams by various properties, like full auto or button presses"
+        }
+      },
       "labels": {
         "charge_attack": "Charge Attack",
         "full_auto": "Full Auto",
@@ -264,8 +274,8 @@
         "name_quality": "Hide untitled teams",
         "user_quality": "Hide anonymous users",
         "original_only": "Hide remixed teams",
-        "inclusion": "Including items",
-        "exclusion": "Excluding items"
+        "inclusion": "Show teams with these items",
+        "exclusion": "Hide teams with these items"
       },
       "notice": "Filters set on <strong>user profiles</strong> and in <strong>your saved teams</strong> will not be saved",
       "options": {
@@ -274,8 +284,13 @@
         "on_and_off": "On and Off"
       },
       "placeholders": {
-        "inclusion": "Parties that have...",
-        "exclusion": "Parties that don't have..."
+        "inclusion": "Teams that have...",
+        "exclusion": "Teams that don't have..."
+      },
+      "prompts": {
+        "type": "Start typing...",
+        "searching": "Searching...",
+        "not_found": "No results found"
       },
       "buttons": {
         "confirm": "Save filters",

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { getCookie } from 'cookies-next'
+import { useTranslation } from 'next-i18next'
+
 import type {
   Option,
   RenderTokenProps,
@@ -47,6 +49,7 @@ const MentionTypeahead = ({
   exclusions,
   ...props
 }: Props) => {
+  const { t } = useTranslation('common')
   const locale = getCookie('NEXT_LOCALE')
     ? (getCookie('NEXT_LOCALE') as string)
     : 'en'
@@ -100,7 +103,11 @@ const MentionTypeahead = ({
 
   function renderMenu(results: Option[], menuProps: RenderMenuProps) {
     return (
-      <Menu {...menuProps} className={styles.menu} emptyLabel="No items found">
+      <Menu
+        {...menuProps}
+        className={styles.menu}
+        emptyLabel={t('modals.filters.prompts.not_found')}
+      >
         {results.map((option, index) => (
           <MenuItem key={index} option={option} position={index}>
             {renderMenuItemChild(option)}
@@ -163,8 +170,8 @@ const MentionTypeahead = ({
       useCache={false}
       placeholder={placeholder}
       positionFixed={true}
-      promptText={'Start typing...'}
-      searchText={'Searching...'}
+      promptText={t('modals.filters.prompts.type')}
+      searchText={t('modals.filters.prompts.searching')}
       renderMenu={renderMenu}
       renderMenuItemChildren={renderMenuItemChild}
       renderToken={renderToken}
