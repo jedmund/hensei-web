@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useTranslation } from 'next-i18next'
@@ -14,6 +15,7 @@ import {
   RenderMenuProps,
   Token,
 } from 'react-bootstrap-typeahead'
+import Typeahead from 'react-bootstrap-typeahead/types/core/Typeahead'
 
 import api from '~utils/api'
 import { numberToElement } from '~utils/elements'
@@ -41,14 +43,10 @@ interface RawSearchResponse {
   element: number
 }
 
-const MentionTypeahead = ({
-  label,
-  description,
-  placeholder,
-  inclusions,
-  exclusions,
-  ...props
-}: Props) => {
+const MentionTypeahead = React.forwardRef<Typeahead, Props>(function Typeahead(
+  { label, description, placeholder, inclusions, exclusions, ...props }: Props,
+  forwardedRef
+) {
   const { t } = useTranslation('common')
   const locale = getCookie('NEXT_LOCALE')
     ? (getCookie('NEXT_LOCALE') as string)
@@ -159,6 +157,7 @@ const MentionTypeahead = ({
   return (
     <AsyncTypeahead
       multiple
+      ref={forwardedRef}
       className={styles.typeahead}
       id={label}
       align="left"
@@ -166,7 +165,6 @@ const MentionTypeahead = ({
       labelKey={(option) => (option as MentionItem).name[locale]}
       defaultSelected={inclusions}
       filterBy={() => true}
-      minLength={3}
       onSearch={handleSearch}
       options={options}
       useCache={false}
@@ -181,6 +179,6 @@ const MentionTypeahead = ({
       onChange={(selected) => props.onUpdate(selected as MentionItem[])}
     />
   )
-}
+})
 
 export default MentionTypeahead
