@@ -149,7 +149,7 @@
     }
   }
 
-  $outline: 2px solid rgba(255, 255, 255, 0.35);
+  $outline: 2px solid var(--transparent-stroke);
 
   &:hover {
     background: var(--null-bg-hover);
@@ -314,7 +314,7 @@
       background: var(--dark-text);
       box-shadow: none;
       color: var(--dark-bg);
-      outline: 2px solid rgba(255, 255, 255, 0.65);
+      outline: $outline;
 
       :global(.rbt-token-remove-button) {
         color: var(--dark-bg);
