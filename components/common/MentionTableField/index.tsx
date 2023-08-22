@@ -1,8 +1,5 @@
-import { useEffect, useState } from 'react'
-import MentionEditor from '~components/common/MentionEditor'
 import TableField from '~components/common/TableField'
-
-import styles from './index.module.scss'
+import MentionTypeahead from '../MentionTypeahead'
 
 interface Props
   extends React.DetailedHTMLProps<
@@ -12,25 +9,33 @@ interface Props
   label: string
   description?: string
   placeholder?: string
-  onUpdate: (content: string[]) => void
+  inclusions: MentionItem[]
+  exclusions: MentionItem[]
+  onUpdate: (content: MentionItem[]) => void
 }
 
 const MentionTableField = ({
   label,
   description,
   placeholder,
+  inclusions,
+  exclusions,
   ...props
 }: Props) => {
   return (
     <TableField
       {...props}
       name={props.name || ''}
+      description={description}
       className="mention"
       label={label}
     >
-      <MentionEditor
-        bound={true}
+      <MentionTypeahead
+        label={label}
+        description={description}
         placeholder={placeholder}
+        inclusions={inclusions}
+        exclusions={exclusions}
         onUpdate={props.onUpdate}
       />
     </TableField>
