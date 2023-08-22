@@ -412,7 +412,7 @@ const SearchModal = (props: Props) => {
       <DialogTrigger asChild>{props.children}</DialogTrigger>
       <DialogContent
         className="search"
-        headerref={headerRef}
+        headerRef={headerRef}
         scrollable={false}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}

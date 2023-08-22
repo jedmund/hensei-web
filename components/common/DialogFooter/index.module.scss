@@ -10,6 +10,7 @@
   padding: ($unit * 1.5) ($unit * $multiplier) $unit-3x;
   position: sticky;
   transition: box-shadow 0.1s ease-out, border-top 0.1s ease-out;
+  z-index: 10;
 
   .left,
   .right {

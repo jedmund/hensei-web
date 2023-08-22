@@ -18,6 +18,8 @@ import SelectItem from '~components/common/SelectItem'
 import type { DialogProps } from '@radix-ui/react-dialog'
 
 import styles from './index.module.scss'
+import MentionTableField from '~components/common/MentionTableField'
+import classNames from 'classnames'
 
 interface Props extends DialogProps {
   defaultFilterSet: FilterSet
@@ -47,6 +49,8 @@ const FilterModal = (props: Props) => {
   const [chargeAttackOpen, setChargeAttackOpen] = useState(false)
   const [fullAutoOpen, setFullAutoOpen] = useState(false)
   const [autoGuardOpen, setAutoGuardOpen] = useState(false)
+  const [inclusions, setInclusions] = useState<MentionItem[]>([])
+  const [exclusions, setExclusions] = useState<MentionItem[]>([])
   const [filterSet, setFilterSet] = useState<FilterSet>({})
 
   // Filter states
@@ -82,11 +86,17 @@ const FilterModal = (props: Props) => {
 
   // Hooks
   useEffect(() => {
-    if (props.open !== undefined) setOpen(props.open)
+    if (props.open !== undefined) {
+      setOpen(props.open)
+
+      // When should we reset the filter state?
+    }
   })
 
   useEffect(() => {
     setFilterSet(props.filterSet)
+    setInclusions(props.filterSet.includes || [])
+    setExclusions(props.filterSet.excludes || [])
   }, [props.filterSet])
 
   useEffect(() => {
@@ -126,6 +136,9 @@ const FilterModal = (props: Props) => {
 
     if (maxButtonsCount) filters.button_count = maxButtonsCount
     if (maxTurnsCount) filters.turn_count = maxTurnsCount
+
+    if (inclusions.length > 0) filters.includes = inclusions
+    if (exclusions.length > 0) filters.excludes = exclusions
 
     if (props.persistFilters) {
       setCookie('filters', filters, { path: '/' })
@@ -384,6 +397,37 @@ const FilterModal = (props: Props) => {
     />
   )
 
+  // Inclusions and exclusions
+  function storeInclusions(value: MentionItem[]) {
+    setInclusions(value)
+  }
+
+  function storeExclusions(value: MentionItem[]) {
+    setExclusions(value)
+  }
+
+  const inclusionField = (
+    <MentionTableField
+      name="inclusion"
+      inclusions={inclusions}
+      exclusions={exclusions}
+      placeholder={t('modals.filters.placeholders.inclusion')}
+      label={t('modals.filters.labels.inclusion')}
+      onUpdate={storeInclusions}
+    />
+  )
+
+  const exclusionField = (
+    <MentionTableField
+      name="exclusion"
+      inclusions={exclusions}
+      exclusions={inclusions}
+      placeholder={t('modals.filters.placeholders.exclusion')}
+      label={t('modals.filters.labels.exclusion')}
+      onUpdate={storeExclusions}
+    />
+  )
+
   const filterNotice = () => {
     if (props.persistFilters) return null
     return (
@@ -404,25 +448,39 @@ const FilterModal = (props: Props) => {
       <DialogContent
         className="filter"
         wrapperClassName="filter"
-        headerref={headerRef}
-        footerref={footerRef}
+        headerRef={headerRef}
+        footerRef={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >
         <DialogHeader title={t('modals.filters.title')} />
         <div className={styles.fields}>
           {filterNotice()}
-          {chargeAttackField()}
-          {fullAutoField()}
-          {autoGuardField()}
-          {/* {maxButtonsField()} */}
-          {/* {maxTurnsField()} */}
-          {minCharactersField()}
-          {minSummonsField()}
-          {minWeaponsField()}
-          {nameQualityField()}
-          {userQualityField()}
-          {originalOnlyField()}
+          <section>
+            <div className={styles.header}>
+              <h3>{t('modals.filters.headers.items.name')}</h3>
+              <p>{t('modals.filters.headers.items.description')}</p>
+            </div>
+            {inclusionField}
+            {exclusionField}
+          </section>
+          <section>
+            <div className={styles.header}>
+              <h3>{t('modals.filters.headers.details.name')}</h3>
+              <p>{t('modals.filters.headers.details.description')}</p>
+            </div>
+            {chargeAttackField()}
+            {fullAutoField()}
+            {autoGuardField()}
+            {/* {maxButtonsField()} */}
+            {/* {maxTurnsField()} */}
+            {minCharactersField()}
+            {minSummonsField()}
+            {minWeaponsField()}
+            {nameQualityField()}
+            {userQualityField()}
+            {originalOnlyField()}
+          </section>
         </div>
         <DialogFooter
           ref={footerRef}

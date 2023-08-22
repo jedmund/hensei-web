@@ -14,6 +14,22 @@
   }
 }
 
+.header {
+  h3 {
+    font-size: $font-medium;
+    font-weight: $bold;
+  }
+
+  p {
+    font-size: $font-small;
+  }
+
+  &.border {
+    border-top: 1px solid var(--text-tertiary);
+    padding-top: $unit-2x;
+  }
+}
+
 .notice {
   background-color: var(--notice-bg);
   border-radius: $input-corner;
@@ -34,11 +50,16 @@
 .fields {
   display: flex;
   flex-direction: column;
-  gap: $unit-2x;
-  padding: 0 $unit-4x;
+  gap: $unit-4x;
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-2x;
+    padding: 0 $unit-4x;
 
-  @include breakpoint(phone) {
-    gap: $unit-4x;
-    margin-bottom: $unit * 24;
+    @include breakpoint(phone) {
+      gap: $unit-4x;
+      margin-bottom: $unit * 24;
+    }
   }
 }

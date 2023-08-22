@@ -1,6 +1,5 @@
+import type { JSONContent } from '@tiptap/core'
 import { ReactRenderer } from '@tiptap/react'
-import { MentionOptions } from '@tiptap/extension-mention'
-import { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion'
 import tippy, { Instance as TippyInstance } from 'tippy.js'
 import { getCookie } from 'cookies-next'
 
@@ -11,7 +10,7 @@ import {
 } from '~components/MentionList'
 import api from '~utils/api'
 import { numberToElement } from '~utils/elements'
-import { get } from 'http'
+import { SuggestionOptions } from '~extensions/CustomSuggestion'
 
 interface RawSearchResponse {
   searchable_type: string
@@ -45,12 +44,22 @@ function transform(object: RawSearchResponse) {
   return result
 }
 
-export const mentionSuggestionOptions: MentionOptions['suggestion'] = {
-  items: async ({ query }): Promise<MentionSuggestion[]> => {
+function parseMentions(data: JSONContent) {
+  const mentions: string[] = (data.content || []).flatMap(parseMentions)
+  if (data.type === 'mention') {
+    const granblueId = data.attrs?.id.granblue_id
+    mentions.push(granblueId)
+  }
+
+  return [...new Set(mentions)]
+}
+
+export const mentionSuggestionOptions: Omit<SuggestionOptions, 'editor'> = {
+  items: async ({ query, editor }): Promise<MentionSuggestion[]> => {
     const locale = getCookie('NEXT_LOCALE')
       ? (getCookie('NEXT_LOCALE') as string)
       : 'en'
-    const response = await api.searchAll(query, locale)
+    const response = await api.searchAll(query, [], locale)
     const results = response.data.results
 
     return results
@@ -72,13 +81,16 @@ export const mentionSuggestionOptions: MentionOptions['suggestion'] = {
   render: () => {
     let component: ReactRenderer<MentionRef> | undefined
     let popup: TippyInstance | undefined
-
     return {
       onStart: (props) => {
         component = new ReactRenderer(MentionList, {
           props,
           editor: props.editor,
         })
+
+        console.log('in onStart')
+        const rect = props.clientRect?.()
+        console.log(rect)
 
         popup = tippy('body', {
           getReferenceClientRect: props.clientRect,
@@ -103,6 +115,10 @@ export const mentionSuggestionOptions: MentionOptions['suggestion'] = {
         if (props.event.key === 'Escape') {
           popup?.hide()
           return true
+        }
+
+        if (props.event.key === 'Tab') {
+          popup?.hide()
         }
 
         if (!component?.ref) {

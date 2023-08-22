@@ -158,9 +158,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               {!appState.version ? (
                 serverUnavailable()
               ) : (
-                <main>
-                  <Component {...pageProps} />
-                </main>
+                <Component {...pageProps} />
               )}
             </Layout>
             <Viewport className="ToastViewport" />

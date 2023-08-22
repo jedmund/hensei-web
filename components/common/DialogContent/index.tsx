@@ -12,15 +12,15 @@ interface Props
     HTMLDivElement
   > {
   wrapperClassName?: string
-  headerref?: React.RefObject<HTMLDivElement>
-  footerref?: React.RefObject<HTMLDivElement>
+  headerRef?: React.RefObject<HTMLDivElement>
+  footerRef?: React.RefObject<HTMLDivElement>
   scrollable?: boolean
   onEscapeKeyDown: (event: KeyboardEvent) => void
   onOpenAutoFocus: (event: Event) => void
 }
 
 const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
-  { scrollable, children, ...props },
+  { scrollable, wrapperClassName, headerRef, footerRef, children, ...props },
   forwardedRef
 ) {
   // Classes
@@ -37,12 +37,12 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
     const scrollHeight = event.currentTarget.scrollHeight
     const clientHeight = event.currentTarget.clientHeight
 
-    if (props.headerref && props.headerref.current)
-      manipulateHeaderShadow(props.headerref.current, scrollTop)
+    if (headerRef && headerRef.current)
+      manipulateHeaderShadow(headerRef.current, scrollTop)
 
-    if (props.footerref && props.footerref.current)
+    if (footerRef && footerRef.current)
       manipulateFooterShadow(
-        props.footerref.current,
+        footerRef.current,
         scrollTop,
         scrollHeight,
         clientHeight
@@ -94,7 +94,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
   const calculateFooterShadow = debounce(() => {
     const boxShadowBase = '0 -2px 8px'
     const scrollable = document.querySelector(`.${styles.scrollable}`)
-    const footer = props.footerref
+    const footer = footerRef
 
     if (footer && footer.current) {
       if (scrollable && scrollable.clientHeight >= scrollable.scrollHeight) {
@@ -133,9 +133,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, Props>(function Dialog(
           {
             [styles.dialog]: true,
           },
-          props.wrapperClassName
-            ?.split(' ')
-            .map((className) => styles[className])
+          wrapperClassName?.split(' ').map((className) => styles[className])
         )}
       >
         <DialogPrimitive.Content

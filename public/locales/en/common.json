@@ -252,6 +252,16 @@
     },
     "filters": {
       "title": "Advanced filters",
+      "headers": {
+        "items": {
+          "name": "Filter items",
+          "description": "Show or hide teams that have specific characters, weapons, or summons"
+        },
+        "details": {
+          "name": "Filter details",
+          "description": "Filter teams by various properties, like full auto or button presses"
+        }
+      },
       "labels": {
         "charge_attack": "Charge Attack",
         "full_auto": "Full Auto",
@@ -263,13 +273,24 @@
         "min_weapons": "Minimum number of weapons",
         "name_quality": "Hide untitled teams",
         "user_quality": "Hide anonymous users",
-        "original_only": "Hide remixed teams"
+        "original_only": "Hide remixed teams",
+        "inclusion": "Show teams with these items",
+        "exclusion": "Hide teams with these items"
       },
       "notice": "Filters set on <strong>user profiles</strong> and in <strong>your saved teams</strong> will not be saved",
       "options": {
         "on": "On",
         "off": "Off",
         "on_and_off": "On and Off"
+      },
+      "placeholders": {
+        "inclusion": "Teams that have...",
+        "exclusion": "Teams that don't have..."
+      },
+      "prompts": {
+        "type": "Start typing...",
+        "searching": "Searching...",
+        "not_found": "No results found"
       },
       "buttons": {
         "confirm": "Save filters",
@@ -488,7 +509,8 @@
       "min_length": "Type at least 3 characters",
       "no_results": "No results found for '{{query}}'",
       "no_results_generic": "No results found",
-      "end_results": "No more results"
+      "end_results": "No more results",
+      "type": "Keep typing..."
     },
     "placeholders": {
       "weapon": "Search for a weapon...",

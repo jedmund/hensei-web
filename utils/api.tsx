@@ -70,11 +70,15 @@ class Api {
     })
   }
 
-  searchAll(query: string, locale: string) {
+  searchAll(query: string, exclude: string[], locale: string) {
     const resourceUrl = `${this.url}/search`
+    // Also send list of Granblue IDs 
+    // so the backend can exclude opposites and duplicates
+    // Maybe store them in state???
     return axios.post(`${resourceUrl}`, {
       search: {
         query: query,
+        exclude: exclude,
         locale: locale
       }
     })

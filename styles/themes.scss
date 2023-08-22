@@ -30,6 +30,8 @@
   --anonymous-bg: #{$anonymous--bg--light};
   --placeholder-bg: #{$grey-80};
 
+  --transparent-stroke: #{$transparent--stroke--light};
+
   // Light - Units
   --unit-bg: #{$unit--bg--light};
   --unit-bg-hover: #{$unit--bg--light--hover};
@@ -251,6 +253,8 @@
 
   --anonymous-bg: #{$anonymous--bg--dark};
   --placeholder-bg: #{$grey-40};
+
+  --transparent-stroke: #{$transparent--stroke--dark};
 
   // Dark - Units
   --unit-bg: #{$unit--bg--dark};

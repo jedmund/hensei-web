@@ -71,7 +71,7 @@ const WeaponConflictModal = (props: Props) => {
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
         className="conflict"
-        footerref={footerRef}
+        footerRef={footerRef}
         onOpenAutoFocus={(event) => event.preventDefault()}
         onEscapeKeyDown={close}
       >

@@ -298,7 +298,7 @@ const SignupModal = (props: Props) => {
     <Dialog open={open} onOpenChange={openChange}>
       <DialogContent
         className="signup"
-        footerref={footerRef}
+        footerRef={footerRef}
         onEscapeKeyDown={onEscapeKeyDown}
         onOpenAutoFocus={onOpenAutoFocus}
       >

@@ -249,6 +249,16 @@
     },
     "filters": {
       "title": "フィルター設定",
+      "headers": {
+        "items": {
+          "name": "アイテムをフィルター",
+          "description": "キャラクター・武器・召喚石が編成に包含・除外されているかに基づいて表示する"
+        },
+        "details": {
+          "name": "詳細をフィルター",
+          "description": "フルオートやポチなどの編成詳細に基づいて表示する"
+        }
+      },
       "labels": {
         "charge_attack": "奥義",
         "full_auto": "フルオート",
@@ -260,13 +270,24 @@
         "min_weapons": "最小武器数",
         "name_quality": "無題の編成なし",
         "user_quality": "無名のユーザーなし",
-        "original_only": "リミックスなし"
+        "original_only": "リミックスなし",
+        "inclusion": "包含されているアイテム",
+        "exclusion": "除外されているアイテムめn"
       },
       "notice": "フィルターは<strong>保存した編成</strong>と<strong>ユーザープロフィール</strong>には保存されません",
       "options": {
         "on": "ON",
         "off": "OFF",
         "on_and_off": "両方"
+      },
+      "placeholders": {
+        "inclusion": "〇〇が入っている",
+        "exclusion": "〇〇が入っていない"
+      },
+      "prompts": {
+        "type": "入力してください",
+        "searching": "検索中...",
+        "not_found": "見つかりませんでした"
       },
       "buttons": {
         "confirm": "フィルターを保存する",
@@ -486,7 +507,8 @@
       "min_length": "3文字以上を入力してください",
       "no_results": "'{{query}}'の検索結果が見つかりませんでした",
       "no_results_generic": "検索結果が見つかりませんでした",
-      "end_results": "検索結果これ以上ありません"
+      "end_results": "検索結果これ以上ありません",
+      "type": "もっと入力してください"
     },
     "placeholders": {
       "weapon": "武器を検索...",
