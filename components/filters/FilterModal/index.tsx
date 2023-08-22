@@ -19,6 +19,7 @@ import type { DialogProps } from '@radix-ui/react-dialog'
 
 import styles from './index.module.scss'
 import MentionTableField from '~components/common/MentionTableField'
+import classNames from 'classnames'
 
 interface Props extends DialogProps {
   defaultFilterSet: FilterSet
@@ -48,8 +49,8 @@ const FilterModal = (props: Props) => {
   const [chargeAttackOpen, setChargeAttackOpen] = useState(false)
   const [fullAutoOpen, setFullAutoOpen] = useState(false)
   const [autoGuardOpen, setAutoGuardOpen] = useState(false)
-  const [inclusions, setInclusions] = useState<string[]>([])
-  const [exclusions, setExclusions] = useState<string[]>([])
+  const [inclusions, setInclusions] = useState<MentionItem[]>([])
+  const [exclusions, setExclusions] = useState<MentionItem[]>([])
   const [filterSet, setFilterSet] = useState<FilterSet>({})
 
   // Filter states
@@ -85,7 +86,11 @@ const FilterModal = (props: Props) => {
 
   // Hooks
   useEffect(() => {
-    if (props.open !== undefined) setOpen(props.open)
+    if (props.open !== undefined) {
+      setOpen(props.open)
+
+      // When should we reset the filter state?
+    }
   })
 
   useEffect(() => {
@@ -134,8 +139,8 @@ const FilterModal = (props: Props) => {
       setCookie('filters', filters, { path: '/' })
     }
 
-    if (inclusions.length > 0) filters.includes = inclusions.join(',')
-    if (exclusions.length > 0) filters.excludes = exclusions.join(',')
+    if (inclusions.length > 0) filters.includes = inclusions
+    if (exclusions.length > 0) filters.excludes = exclusions
 
     props.sendAdvancedFilters(filters)
     openChange()
@@ -391,23 +396,33 @@ const FilterModal = (props: Props) => {
   )
 
   // Inclusions and exclusions
+  function storeInclusions(value: MentionItem[]) {
+    setInclusions(value)
+  }
+
+  function storeExclusions(value: MentionItem[]) {
+    setExclusions(value)
+  }
+
   const inclusionField = (
     <MentionTableField
       name="inclusion"
-      description={t('modals.filters.descriptions.inclusion')}
+      inclusions={inclusions}
+      exclusions={exclusions}
       placeholder={t('modals.filters.placeholders.inclusion')}
       label={t('modals.filters.labels.inclusion')}
-      onUpdate={(value) => setInclusions(value)}
+      onUpdate={storeInclusions}
     />
   )
 
   const exclusionField = (
     <MentionTableField
       name="exclusion"
-      description={t('modals.filters.descriptions.exclusion')}
+      inclusions={exclusions}
+      exclusions={inclusions}
       placeholder={t('modals.filters.placeholders.exclusion')}
       label={t('modals.filters.labels.exclusion')}
-      onUpdate={(value) => setExclusions(value)}
+      onUpdate={storeExclusions}
     />
   )
 
@@ -439,19 +454,37 @@ const FilterModal = (props: Props) => {
         <DialogHeader title={t('modals.filters.title')} />
         <div className={styles.fields}>
           {filterNotice()}
-          {inclusionField}
-          {exclusionField}
-          {chargeAttackField()}
-          {fullAutoField()}
-          {autoGuardField()}
-          {/* {maxButtonsField()} */}
-          {/* {maxTurnsField()} */}
-          {minCharactersField()}
-          {minSummonsField()}
-          {minWeaponsField()}
-          {nameQualityField()}
-          {userQualityField()}
-          {originalOnlyField()}
+          <section>
+            <div className={styles.header}>
+              <h3>Team items</h3>
+              <p>
+                Show or hide teams that have specific characters, weapons, or
+                summons
+              </p>
+            </div>
+            {inclusionField}
+            {exclusionField}
+          </section>
+          <section>
+            <div className={styles.header}>
+              <h3>Team details</h3>
+              <p>
+                Filter teams by various properties, like full auto or button
+                presses
+              </p>
+            </div>
+            {chargeAttackField()}
+            {fullAutoField()}
+            {autoGuardField()}
+            {/* {maxButtonsField()} */}
+            {/* {maxTurnsField()} */}
+            {minCharactersField()}
+            {minSummonsField()}
+            {minWeaponsField()}
+            {nameQualityField()}
+            {userQualityField()}
+            {originalOnlyField()}
+          </section>
         </div>
         <DialogFooter
           ref={footerRef}
