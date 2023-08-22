@@ -54,15 +54,13 @@ const MentionTypeahead = ({
     ? (getCookie('NEXT_LOCALE') as string)
     : 'en'
 
-  console.log(inclusions)
-
   const [isLoading, setIsLoading] = useState(false)
   const [options, setOptions] = useState<Option[]>([])
 
   async function handleSearch(query: string) {
     setIsLoading(true)
 
-    const exclude = [...inclusions, ...exclusions]
+    const exclude = transformIntoString([...inclusions, ...exclusions])
 
     const response = await api.searchAll(query, exclude, locale)
     const results = response.data.results
@@ -71,7 +69,7 @@ const MentionTypeahead = ({
     setOptions(mapResults(results))
   }
 
-  function transform(object: RawSearchResponse) {
+  function transformIntoMentionItem(object: RawSearchResponse) {
     const result: MentionItem = {
       name: {
         en: object.name_en,
@@ -84,10 +82,14 @@ const MentionTypeahead = ({
     return result
   }
 
+  function transformIntoString(list: MentionItem[]) {
+    return list.map((item) => item.granblue_id)
+  }
+
   function mapResults(results: RawSearchResponse[]) {
     return results
       .map((rawObject: RawSearchResponse) => {
-        const object = transform(rawObject)
+        const object = transformIntoMentionItem(rawObject)
         return {
           granblue_id: object.granblue_id,
           element: object.element,

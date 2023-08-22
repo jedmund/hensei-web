@@ -13,6 +13,6 @@ interface FilterSet {
   name_quality?: boolean
   user_quality?: boolean
   original?: boolean
-  includes?: string
-  excludes?: string
+  includes?: MentionItem[]
+  excludes?: MentionItem[]
 }

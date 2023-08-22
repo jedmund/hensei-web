@@ -95,6 +95,8 @@ const FilterModal = (props: Props) => {
 
   useEffect(() => {
     setFilterSet(props.filterSet)
+    setInclusions(props.filterSet.includes || [])
+    setExclusions(props.filterSet.excludes || [])
   }, [props.filterSet])
 
   useEffect(() => {
@@ -135,12 +137,12 @@ const FilterModal = (props: Props) => {
     if (maxButtonsCount) filters.button_count = maxButtonsCount
     if (maxTurnsCount) filters.turn_count = maxTurnsCount
 
+    if (inclusions.length > 0) filters.includes = inclusions
+    if (exclusions.length > 0) filters.excludes = exclusions
+
     if (props.persistFilters) {
       setCookie('filters', filters, { path: '/' })
     }
-
-    if (inclusions.length > 0) filters.includes = inclusions
-    if (exclusions.length > 0) filters.excludes = exclusions
 
     props.sendAdvancedFilters(filters)
     openChange()

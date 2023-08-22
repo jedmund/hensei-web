@@ -16,6 +16,7 @@ import { appState } from '~utils/appState'
 import { defaultFilterset } from '~utils/defaultFilters'
 import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
+import { convertAdvancedFilters } from '~utils/convertAdvancedFilters'
 
 import ErrorSection from '~components/ErrorSection'
 import GridRep from '~components/GridRep'
@@ -157,7 +158,7 @@ const TeamsRoute: React.FC<Props> = ({
         raid: raid === 'all' ? undefined : raid,
         recency: recency !== -1 ? recency : undefined,
         page: currentPage,
-        ...advancedFilters,
+        ...convertAdvancedFilters(advancedFilters),
       }
 
       Object.keys(filters).forEach(
@@ -393,7 +394,7 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     // Create filter object
     const filters: FilterObject = extractFilters(query, raidGroups)
     const params = {
-      params: { ...filters, ...advancedFilters },
+      params: { ...filters, ...convertAdvancedFilters(advancedFilters) },
     }
 
     // Set up empty variables
