@@ -9,6 +9,16 @@
   padding: $unit-2x;
   min-width: 320px;
   width: 100%;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+
+  &.visible {
+    opacity: 1;
+  }
+
+  &.hidden {
+    opacity: 0;
+  }
 
   &:hover {
     background: var(--grid-rep-hover);

@@ -28,7 +28,9 @@
   --selected-item-bg: #{$selected--item--bg--light};
   --selected-item-bg-hover: #{$selected--item--bg--light--hover};
   --anonymous-bg: #{$anonymous--bg--light};
+
   --placeholder-bg: #{$grey-80};
+  --placeholder-bg-accent: #{$grey-75};
 
   --transparent-stroke: #{$transparent--stroke--light};
 
@@ -252,7 +254,9 @@
   --selected-item-bg-hover: #{$selected--item--bg--dark--hover};
 
   --anonymous-bg: #{$anonymous--bg--dark};
+
   --placeholder-bg: #{$grey-40};
+  --placeholder-bg-accent: #{$grey-45};
 
   --transparent-stroke: #{$transparent--stroke--dark};
 

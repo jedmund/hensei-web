@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'react-i18next'
@@ -10,16 +10,16 @@ import DialogContent from '~components/common/DialogContent'
 
 import Button from '~components/common/Button'
 import InputTableField from '~components/common/InputTableField'
+import MentionTableField from '~components/common/MentionTableField'
 import SelectTableField from '~components/common/SelectTableField'
 import SliderTableField from '~components/common/SliderTableField'
 import SwitchTableField from '~components/common/SwitchTableField'
 import SelectItem from '~components/common/SelectItem'
 
 import type { DialogProps } from '@radix-ui/react-dialog'
+import Typeahead from 'react-bootstrap-typeahead/types/core/Typeahead'
 
 import styles from './index.module.scss'
-import MentionTableField from '~components/common/MentionTableField'
-import classNames from 'classnames'
 
 interface Props extends DialogProps {
   defaultFilterSet: FilterSet
@@ -43,6 +43,8 @@ const FilterModal = (props: Props) => {
   // Refs
   const headerRef = React.createRef<HTMLDivElement>()
   const footerRef = React.createRef<HTMLDivElement>()
+  const inclusionRef = useRef<Typeahead>(null)
+  const exclusionRef = useRef<Typeahead>(null)
 
   // States
   const [open, setOpen] = useState(false)
@@ -88,7 +90,6 @@ const FilterModal = (props: Props) => {
   useEffect(() => {
     if (props.open !== undefined) {
       setOpen(props.open)
-
       // When should we reset the filter state?
     }
   })
@@ -160,6 +161,12 @@ const FilterModal = (props: Props) => {
     setUserQuality(props.defaultFilterSet.user_quality)
     setNameQuality(props.defaultFilterSet.name_quality)
     setOriginalOnly(props.defaultFilterSet.original)
+
+    setInclusions([])
+    inclusionRef.current?.clear()
+
+    setExclusions([])
+    exclusionRef.current?.clear()
   }
 
   function openChange() {
@@ -413,6 +420,7 @@ const FilterModal = (props: Props) => {
       exclusions={exclusions}
       placeholder={t('modals.filters.placeholders.inclusion')}
       label={t('modals.filters.labels.inclusion')}
+      typeaheadRef={inclusionRef}
       onUpdate={storeInclusions}
     />
   )
@@ -424,6 +432,7 @@ const FilterModal = (props: Props) => {
       exclusions={inclusions}
       placeholder={t('modals.filters.placeholders.exclusion')}
       label={t('modals.filters.labels.exclusion')}
+      typeaheadRef={exclusionRef}
       onUpdate={storeExclusions}
     />
   )

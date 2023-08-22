@@ -40,10 +40,16 @@ const GridRep = (props: Props) => {
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
+  const [visible, setVisible] = useState(false)
   const [mainhand, setMainhand] = useState<Weapon>()
   const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
   const [grid, setGrid] = useState<GridArray<GridWeapon>>({})
 
+  const gridRepStyles = classNames({
+    [styles.gridRep]: true,
+    [styles.visible]: visible,
+    [styles.hidden]: !visible,
+  })
   const titleClass = classNames({
     empty: !props.name,
   })
@@ -67,6 +73,14 @@ const GridRep = (props: Props) => {
     [styles.weapon]: true,
     [styles.grid]: true,
   })
+
+  useEffect(() => {
+    setVisible(false) // Trigger fade out
+    const timeout = setTimeout(() => {
+      setVisible(true) // Trigger fade in
+    }, 300) // You can adjust the timing based on your preference
+    return () => clearTimeout(timeout)
+  }, [])
 
   useEffect(() => {
     const newWeapons = Array(numWeapons)
@@ -249,7 +263,7 @@ const GridRep = (props: Props) => {
 
   return (
     <Link legacyBehavior href={`/p/${props.shortcode}`}>
-      <a className={styles.gridRep}>
+      <a className={gridRepStyles}>
         {detailsWithUsername}
         <div className={styles.weaponGrid}>
           <div className={mainhandClasses}>{generateMainhandImage()}</div>

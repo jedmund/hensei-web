@@ -1,5 +1,6 @@
 import TableField from '~components/common/TableField'
 import MentionTypeahead from '../MentionTypeahead'
+import Typeahead from 'react-bootstrap-typeahead/types/core/Typeahead'
 
 interface Props
   extends React.DetailedHTMLProps<
@@ -11,6 +12,7 @@ interface Props
   placeholder?: string
   inclusions: MentionItem[]
   exclusions: MentionItem[]
+  typeaheadRef: React.Ref<Typeahead>
   onUpdate: (content: MentionItem[]) => void
 }
 
@@ -20,6 +22,7 @@ const MentionTableField = ({
   placeholder,
   inclusions,
   exclusions,
+  typeaheadRef,
   ...props
 }: Props) => {
   return (
@@ -31,6 +34,7 @@ const MentionTableField = ({
       label={label}
     >
       <MentionTypeahead
+        ref={typeaheadRef}
         label={label}
         description={description}
         placeholder={placeholder}

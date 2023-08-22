@@ -17,8 +17,9 @@ import { elements, allElement } from '~data/elements'
 import { emptyPaginationObject } from '~utils/emptyStates'
 
 import ErrorSection from '~components/ErrorSection'
-import GridRep from '~components/GridRep'
-import GridRepCollection from '~components/GridRepCollection'
+import GridRep from '~components/reps/GridRep'
+import GridRepCollection from '~components/reps/GridRepCollection'
+import LoadingRep from '~components/reps/LoadingRep'
 import FilterBar from '~components/filters/FilterBar'
 import SavedHead from '~components/head/SavedHead'
 
@@ -306,6 +307,27 @@ const SavedRoute: React.FC<Props> = ({
     })
   }
 
+  function renderLoading(number: number) {
+    return (
+      <GridRepCollection>
+        {Array.from(Array(number)).map((x, i) => (
+          <LoadingRep key={`loading-${i}`} />
+        ))}
+      </GridRepCollection>
+    )
+  }
+
+  const renderInfiniteScroll = (
+    <InfiniteScroll
+      dataLength={parties && parties.length > 0 ? parties.length : 0}
+      next={() => setCurrentPage(currentPage + 1)}
+      hasMore={totalPages > currentPage}
+      loader={renderLoading(3)}
+    >
+      <GridRepCollection>{renderParties()}</GridRepCollection>
+    </InfiniteScroll>
+  )
+
   if (context) {
     return (
       <div className="teams">
@@ -325,18 +347,7 @@ const SavedRoute: React.FC<Props> = ({
         </FilterBar>
 
         <section>
-          <InfiniteScroll
-            dataLength={parties && parties.length > 0 ? parties.length : 0}
-            next={() => setCurrentPage(currentPage + 1)}
-            hasMore={totalPages > currentPage}
-            loader={
-              <div className="notFound">
-                <h2>{t('loading')}</h2>
-              </div>
-            }
-          >
-            <GridRepCollection>{renderParties()}</GridRepCollection>
-          </InfiniteScroll>
+          {renderInfiniteScroll}
 
           {parties.length == 0 ? (
             <div className="notFound">

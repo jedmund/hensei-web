@@ -19,8 +19,9 @@ import { emptyPaginationObject } from '~utils/emptyStates'
 import { convertAdvancedFilters } from '~utils/convertAdvancedFilters'
 
 import ErrorSection from '~components/ErrorSection'
-import GridRep from '~components/GridRep'
-import GridRepCollection from '~components/GridRepCollection'
+import GridRep from '~components/reps/GridRep'
+import GridRepCollection from '~components/reps/GridRepCollection'
+import LoadingRep from '~components/reps/LoadingRep'
 import FilterBar from '~components/filters/FilterBar'
 import TeamsHead from '~components/head/TeamsHead'
 
@@ -55,6 +56,7 @@ const TeamsRoute: React.FC<Props> = ({
   // Set up app-specific states
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Set up page-specific states
   const [parties, setParties] = useState<Party[]>([])
@@ -122,6 +124,8 @@ const TeamsRoute: React.FC<Props> = ({
       appState.version = version
     }
     setCurrentPage(1)
+
+    setIsLoading(false)
   }, [])
 
   // Add scroll event listener for shadow on FilterBar on mount
@@ -151,6 +155,8 @@ const TeamsRoute: React.FC<Props> = ({
 
   const fetchTeams = useCallback(
     ({ replace }: { replace: boolean }) => {
+      setIsLoading(true)
+
       const filters: {
         [key: string]: any
       } = {
@@ -182,6 +188,10 @@ const TeamsRoute: React.FC<Props> = ({
 
           if (replace) replaceResults(meta.count, results)
           else appendResults(results)
+        })
+        .then(() => {
+          console.log('You are here')
+          setIsLoading(false)
         })
         .catch((error) => handleError(error))
     },
@@ -318,6 +328,27 @@ const TeamsRoute: React.FC<Props> = ({
     })
   }
 
+  function renderLoading(number: number) {
+    return (
+      <GridRepCollection>
+        {Array.from(Array(number)).map((x, i) => (
+          <LoadingRep key={`loading-${i}`} />
+        ))}
+      </GridRepCollection>
+    )
+  }
+
+  const renderInfiniteScroll = (
+    <InfiniteScroll
+      dataLength={parties && parties.length > 0 ? parties.length : 0}
+      next={() => setCurrentPage(currentPage + 1)}
+      hasMore={totalPages > currentPage}
+      loader={renderLoading(3)}
+    >
+      <GridRepCollection>{renderParties()}</GridRepCollection>
+    </InfiniteScroll>
+  )
+
   if (context) {
     return (
       <div className="teams">
@@ -336,28 +367,7 @@ const TeamsRoute: React.FC<Props> = ({
           <h1>{t('teams.title')}</h1>
         </FilterBar>
 
-        <section>
-          <InfiniteScroll
-            dataLength={parties && parties.length > 0 ? parties.length : 0}
-            next={() => setCurrentPage(currentPage + 1)}
-            hasMore={totalPages > currentPage}
-            loader={
-              <div className="notFound">
-                <h2>{t('loading')}</h2>
-              </div>
-            }
-          >
-            <GridRepCollection>{renderParties()}</GridRepCollection>
-          </InfiniteScroll>
-
-          {parties.length == 0 ? (
-            <div className="notFound">
-              <h2>{t('teams.not_found')}</h2>
-            </div>
-          ) : (
-            ''
-          )}
-        </section>
+        <section>{renderInfiniteScroll}</section>
       </div>
     )
   } else return pageError()
