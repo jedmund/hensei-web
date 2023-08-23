@@ -271,6 +271,7 @@ const PartyFooter = (props: Props) => {
           fullAuto={party.full_auto}
           autoGuard={party.auto_guard}
           key={`party-${i}`}
+          loading={false}
           onClick={goTo}
           onSave={toggleFavorite}
         />
