@@ -457,15 +457,17 @@ const SearchModal = (props: Props) => {
             <h5 className={styles.total}>
               {t('search.result_count', { record_count: recordCount })}
             </h5>
-            <div className={styles.viewSwitcher}>
-              <span>View: </span>
-              <button className={newestViewClasses} onClick={showNewest}>
-                Newest
-              </button>
-              <button className={recentViewClasses} onClick={showRecent}>
-                Recently used
-              </button>
-            </div>
+            {(props.object === 'weapons' || props.object === 'summons') && (
+              <div className={styles.viewSwitcher}>
+                <span>View: </span>
+                <button className={newestViewClasses} onClick={showNewest}>
+                  Newest
+                </button>
+                <button className={recentViewClasses} onClick={showRecent}>
+                  Recently used
+                </button>
+              </div>
+            )}
           </div>
           {open ? renderResults() : ''}
         </div>
