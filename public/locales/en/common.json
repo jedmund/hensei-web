@@ -512,6 +512,11 @@
       "end_results": "No more results",
       "type": "Keep typing..."
     },
+    "labels": {
+      "view": "View:",
+      "newest": "Newly added",
+      "recently_used": "Recently used"
+    },
     "placeholders": {
       "weapon": "Search for a weapon...",
       "summon": "Search for a summon...",
