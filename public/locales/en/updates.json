@@ -19,6 +19,42 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "1.2.0": {
+      "features": [
+        {
+          "title": "New party navigation",
+          "blurb": "Get a peek into all the aspects of a team quickly with new mini-units at the top of the page."
+        },
+        {
+          "title": "Rich text editing",
+          "blurb": "Now you can use rich text when writing team descriptions. Add bold, italics, links, and more!"
+        },
+        {
+          "title": "Mentions",
+          "blurb": "You can also link to individual items in your descriptions. Type @ followed by the name of the item."
+        },
+        {
+          "title": "Inclusion and Exclusion",
+          "blurb": "Sick of seeing Ereshkigal? Now you can filter teams by which items appear—or don't appear—in them."
+        },
+        {
+          "title": "Redesigned battle selection",
+          "blurb": "Battle selection has been revamped. Search for a battle by name, or filter by whether it's solo, a raid, or event-based."
+        },
+        {
+          "title": "Search views",
+          "blurb": "Now you can choose to see either recently used items or the newest items when adding weapons and summons"
+        },
+        {
+          "title": "Quick summons",
+          "blurb": "Specify which summon is set as the quick summon and specify auto-summon settings in Battle settings."
+        },
+        {
+          "title": "Grand awakenings",
+          "blurb": "Now you can set which Grand weapons you spent cages on for a little extra power."
+        }
+      ]
+    },
     "2023-08F": {
       "features": ["Added new class \"Street King\""]
     },

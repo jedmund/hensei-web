@@ -31,6 +31,20 @@ const UpdatesPage = () => {
         'toasts',
       ],
     },
+    '1.2.0': {
+      updates: 8,
+      bugs: 0,
+      images: [
+        'party-redesign',
+        'rich-text',
+        'mentions',
+        'include-exclude',
+        'raid-search',
+        'search-views',
+        'quick-summon',
+        'grand-awakening',
+      ],
+    },
     '202302U2': {
       updates: 1,
     },
@@ -57,6 +71,41 @@ const UpdatesPage = () => {
   return (
     <div className={classes}>
       <h1>{common('about.segmented_control.updates')}</h1>
+      <section className={styles.version} data-version="1.1">
+        <div className={styles.header}>
+          <h3>1.2.0</h3>
+          <time>2023/08/25</time>
+        </div>
+        <div className={styles.contents}>
+          <section>
+            <h2>{updates('labels.features')}</h2>
+            <ul className={styles.features}>
+              {[...Array(versionUpdates['1.2.0'].updates)].map((e, i) => (
+                <li key={`1.2.0-update-${i}`}>
+                  {image(
+                    updates(`versions.1.2.0.features.${i}.title`),
+                    `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                    versionUpdates['1.2.0'].images[i],
+                    'jpg'
+                  )}
+                  <h3>{updates(`versions.1.2.0.features.${i}.title`)}</h3>
+                  <p>{updates(`versions.1.2.0.features.${i}.blurb`)}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+          <section>
+            <h2>Bug fixes</h2>
+            <ul className={styles.bugs}>
+              {[...Array(versionUpdates['1.2.0'].bugs)].map((e, i) => (
+                <li key={`1.2.0-bugfix-${i}`}>
+                  {updates(`versions.1.2.0.bugs.${i}`)}
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+      </section>
       <ContentUpdate
         version="2023-08F"
         dateString="2023/08/16"
