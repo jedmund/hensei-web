@@ -155,7 +155,7 @@ const TeamsRoute: React.FC<Props> = ({
 
   const fetchTeams = useCallback(
     ({ replace }: { replace: boolean }) => {
-      setIsLoading(true)
+      if (replace) setIsLoading(true)
 
       const filters: {
         [key: string]: any
@@ -186,12 +186,10 @@ const TeamsRoute: React.FC<Props> = ({
           setTotalPages(meta.total_pages)
           setRecordCount(meta.count)
 
-          if (replace) replaceResults(meta.count, results)
-          else appendResults(results)
-        })
-        .then(() => {
-          console.log('You are here')
-          setIsLoading(false)
+          if (replace) {
+            replaceResults(meta.count, results)
+            setIsLoading(false)
+          } else appendResults(results)
         })
         .catch((error) => handleError(error))
     },
@@ -321,6 +319,7 @@ const TeamsRoute: React.FC<Props> = ({
           fullAuto={party.full_auto}
           autoGuard={party.auto_guard}
           key={`party-${i}`}
+          loading={isLoading}
           onClick={goTo}
           onSave={toggleFavorite}
         />
