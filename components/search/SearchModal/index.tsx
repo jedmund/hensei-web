@@ -26,6 +26,7 @@ import type { SearchableObject, SearchableObjectArray } from '~types'
 
 import styles from './index.module.scss'
 import CrossIcon from '~public/icons/Cross.svg'
+import classNames from 'classnames'
 
 interface Props extends DialogProps {
   send: (object: SearchableObject, position: number) => any
@@ -57,7 +58,19 @@ const SearchModal = (props: Props) => {
   // Pagination states
   const [recordCount, setRecordCount] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
+  const [currentView, setCurrentView] = useState(0)
   const [totalPages, setTotalPages] = useState(1)
+
+  // Classes
+  const newestViewClasses = classNames({
+    [styles.link]: true,
+    [styles.active]: currentView === 0,
+  })
+
+  const recentViewClasses = classNames({
+    [styles.link]: true,
+    [styles.active]: currentView === 1,
+  })
 
   useEffect(() => {
     if (searchInput.current) searchInput.current.focus()
@@ -119,6 +132,7 @@ const SearchModal = (props: Props) => {
     const cookieObj: SearchableObjectArray = cookie
       ? JSON.parse(cookie as string)
       : []
+
     let recents: SearchableObjectArray = []
 
     if (props.object === 'weapons') {
@@ -188,31 +202,6 @@ const SearchModal = (props: Props) => {
   }, [open, currentPage])
 
   useEffect(() => {
-    // Filters changed
-    const key = `recent_${props.object}`
-    const cookie = getCookie(key)
-    const cookieObj: Weapon[] | Summon[] | Character[] = cookie
-      ? JSON.parse(cookie as string)
-      : []
-
-    if (open) {
-      if (
-        firstLoad &&
-        cookieObj &&
-        cookieObj.length > 0 &&
-        !extraPositions().includes(props.fromPosition)
-      ) {
-        setResults(cookieObj)
-        setRecordCount(cookieObj.length)
-        setFirstLoad(false)
-      } else {
-        setCurrentPage(1)
-        fetchResults({ replace: true })
-      }
-    }
-  }, [filters])
-
-  useEffect(() => {
     // Query changed
     if (open && query.length != 1) {
       setCurrentPage(1)
@@ -229,6 +218,33 @@ const SearchModal = (props: Props) => {
 
   function incrementPage() {
     setCurrentPage(currentPage + 1)
+  }
+
+  function showNewest() {
+    if (currentView !== 0) {
+      setCurrentView(0)
+
+      setCurrentPage(1)
+      fetchResults({ replace: true })
+    }
+  }
+
+  function showRecent() {
+    if (currentView !== 1) {
+      setCurrentView(1)
+
+      // Fetch recently used items
+      const key = `recent_${props.object}`
+      const cookie = getCookie(key)
+      const cookieObj: Weapon[] | Summon[] | Character[] = cookie
+        ? JSON.parse(cookie as string)
+        : []
+
+      // Set the view
+      setResults(cookieObj)
+      setRecordCount(cookieObj.length)
+      setFirstLoad(false)
+    }
   }
 
   function renderResults() {
@@ -437,9 +453,20 @@ const SearchModal = (props: Props) => {
         </header>
 
         <div className={styles.results} ref={scrollContainer}>
-          <h5 className={styles.total}>
-            {t('search.result_count', { record_count: recordCount })}
-          </h5>
+          <div className={styles.totalRow}>
+            <h5 className={styles.total}>
+              {t('search.result_count', { record_count: recordCount })}
+            </h5>
+            <div className={styles.viewSwitcher}>
+              <span>View: </span>
+              <button className={newestViewClasses} onClick={showNewest}>
+                Newest
+              </button>
+              <button className={recentViewClasses} onClick={showRecent}>
+                Recently used
+              </button>
+            </div>
+          </div>
           {open ? renderResults() : ''}
         </div>
       </DialogContent>

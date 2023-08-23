@@ -16,9 +16,6 @@
   @include breakpoint(phone) {
     place-items: flex-end;
     overflow-y: hidden;
-
-    &.filter {
-    }
   }
 
   .dialogContent {
@@ -72,7 +69,7 @@
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      min-height: 430px;
+      height: 60vh;
       max-height: none;
       padding: 0;
 
@@ -93,7 +90,8 @@
     }
 
     &.editParty {
-      min-height: 80vh;
+      // min-height: 80vh;
+      height: 60vh;
 
       .container {
         display: flex;
@@ -103,6 +101,8 @@
     }
 
     .container {
+      display: flex;
+      flex-direction: column;
       overflow-y: hidden;
 
       &.scrollable {

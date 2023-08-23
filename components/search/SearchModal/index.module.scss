@@ -1,5 +1,6 @@
 .header {
   align-items: inherit;
+  border-bottom: 1px solid var(--button-contained-bg);
   display: flex;
   flex-direction: column;
   gap: $unit;
@@ -65,23 +66,57 @@
 }
 
 .results {
+  flex-grow: 1;
   margin: 0;
-  padding: 0 ($unit * 1.5);
+  padding: $unit-2x ($unit * 1.5) 0;
   padding-bottom: $unit * 1.5;
 
   // Infinite scroll
   overflow-y: auto;
-  max-height: 500px;
 
   @include breakpoint(phone) {
     max-height: initial;
   }
 
-  h5.total {
-    font-size: $font-regular;
-    font-weight: $normal;
-    color: var(--text-tertiary);
-    padding: $unit-half ($unit * 1.5);
+  .totalRow {
+    font-size: $font-small;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: $unit-half;
+
+    h5.total {
+      font-weight: $bold;
+      color: var(--text-tertiary);
+      padding: $unit-half ($unit * 1.5);
+    }
+
+    .viewSwitcher {
+      align-items: center;
+      display: flex;
+
+      span {
+        color: var(--text-tertiary);
+        margin-right: $unit-half;
+      }
+
+      .link {
+        background: none;
+        border-radius: $item-corner-small;
+        color: var(--text-secondary);
+        display: inline-block;
+        font-size: $font-small;
+
+        &:hover {
+          background: var(--button-contained-bg);
+          cursor: pointer;
+          text-decoration: none;
+        }
+
+        &.active {
+          font-weight: $bold;
+        }
+      }
+    }
   }
 
   .footer {
