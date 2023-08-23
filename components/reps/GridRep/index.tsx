@@ -25,6 +25,7 @@ interface Props {
   fullAuto: boolean
   autoGuard: boolean
   favorited: boolean
+  loading: boolean
   createdAt: Date
   onClick: (shortcode: string) => void
   onSave?: (partyId: string, favorited: boolean) => void
@@ -73,6 +74,17 @@ const GridRep = (props: Props) => {
     [styles.weapon]: true,
     [styles.grid]: true,
   })
+
+  useEffect(() => {
+    if (props.loading) {
+      setVisible(false)
+    } else {
+      const timeout = setTimeout(() => {
+        setVisible(true)
+      }, 150)
+      return () => clearTimeout(timeout)
+    }
+  }, [props.loading])
 
   useEffect(() => {
     setVisible(false) // Trigger fade out

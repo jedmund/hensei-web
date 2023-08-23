@@ -10,14 +10,15 @@
   min-width: 320px;
   width: 100%;
   opacity: 1;
-  transition: opacity 0.3s ease-in-out;
 
   &.visible {
+    transition: opacity 0.3s ease-in-out;
     opacity: 1;
   }
 
   &.hidden {
     opacity: 0;
+    transition: opacity 0.12s ease-in-out;
   }
 
   &:hover {

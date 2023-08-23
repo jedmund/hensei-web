@@ -54,6 +54,7 @@ const SavedRoute: React.FC<Props> = ({
   // Set up app-specific states
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Set up page-specific states
   const [parties, setParties] = useState<Party[]>([])
@@ -140,6 +141,8 @@ const SavedRoute: React.FC<Props> = ({
 
   const fetchTeams = useCallback(
     ({ replace }: { replace: boolean }) => {
+      if (replace) setIsLoading(true)
+
       const filters: {
         [key: string]: any
       } = {
@@ -169,8 +172,10 @@ const SavedRoute: React.FC<Props> = ({
           setTotalPages(meta.total_pages)
           setRecordCount(meta.count)
 
-          if (replace) replaceResults(meta.count, results)
-          else appendResults(results)
+          if (replace) {
+            setIsLoading(false)
+            replaceResults(meta.count, results)
+          } else appendResults(results)
         })
         .catch((error) => handleError(error))
     },
@@ -300,6 +305,7 @@ const SavedRoute: React.FC<Props> = ({
           fullAuto={party.full_auto}
           autoGuard={party.auto_guard}
           key={`party-${i}`}
+          loading={isLoading}
           onClick={goTo}
           onSave={toggleFavorite}
         />
