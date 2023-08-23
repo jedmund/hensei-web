@@ -510,6 +510,11 @@
       "end_results": "検索結果これ以上ありません",
       "type": "もっと入力してください"
     },
+    "labels": {
+      "view": "表示:",
+      "newest": "最新発表",
+      "recently_used": "最近使用"
+    },
     "placeholders": {
       "weapon": "武器を検索...",
       "summon": "召喚石を検索...",

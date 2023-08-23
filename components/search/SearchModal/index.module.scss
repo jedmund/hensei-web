@@ -93,6 +93,7 @@
     .viewSwitcher {
       align-items: center;
       display: flex;
+      gap: $unit-fourth;
 
       span {
         color: var(--text-tertiary);
@@ -113,6 +114,7 @@
         }
 
         &.active {
+          background: var(--button-contained-bg);
           font-weight: $bold;
         }
       }

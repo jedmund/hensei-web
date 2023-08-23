@@ -459,12 +459,12 @@ const SearchModal = (props: Props) => {
             </h5>
             {(props.object === 'weapons' || props.object === 'summons') && (
               <div className={styles.viewSwitcher}>
-                <span>View: </span>
+                <span>{t('search.labels.view')}</span>
                 <button className={newestViewClasses} onClick={showNewest}>
-                  Newest
+                  {t('search.labels.newest')}
                 </button>
                 <button className={recentViewClasses} onClick={showRecent}>
-                  Recently used
+                  {t('search.labels.recently_used')}
                 </button>
               </div>
             )}
