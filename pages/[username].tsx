@@ -55,6 +55,7 @@ const ProfileRoute: React.FC<Props> = ({
   // Set up app-specific states
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Set up page-specific states
   const [parties, setParties] = useState<Party[]>([])
@@ -142,6 +143,8 @@ const ProfileRoute: React.FC<Props> = ({
 
   const fetchProfile = useCallback(
     ({ replace }: { replace: boolean }) => {
+      if (replace) setIsLoading(true)
+
       const filters = {
         params: {
           element: element != -1 ? element : undefined,
@@ -165,8 +168,10 @@ const ProfileRoute: React.FC<Props> = ({
             setTotalPages(meta.total_pages)
             setRecordCount(meta.count)
 
-            if (replace) replaceResults(meta.count, results)
-            else appendResults(results)
+            if (replace) {
+              setIsLoading(false)
+              replaceResults(meta.count, results)
+            } else appendResults(results)
           })
           .catch((error) => handleError(error))
       }
@@ -261,6 +266,7 @@ const ProfileRoute: React.FC<Props> = ({
           fullAuto={party.full_auto}
           autoGuard={party.auto_guard}
           key={`party-${i}`}
+          loading={isLoading}
           onClick={goTo}
         />
       )
