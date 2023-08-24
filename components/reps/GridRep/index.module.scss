@@ -11,6 +11,10 @@
   width: 100%;
   opacity: 1;
 
+  @include breakpoint(phone) {
+    padding-bottom: $unit-2x;
+  }
+
   &.visible {
     transition: opacity 0.3s ease-in-out;
     opacity: 1;
@@ -357,6 +361,10 @@
     margin-bottom: $unit-fourth;
     justify-content: center;
     opacity: 0;
+
+    @include breakpoint(phone) {
+      display: none;
+    }
 
     li {
       flex-grow: 1;
