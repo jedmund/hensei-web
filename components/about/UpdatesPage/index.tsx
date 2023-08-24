@@ -3,6 +3,8 @@ import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
 import ContentUpdate from '~components/about/ContentUpdate'
+import LinkItem from '../LinkItem'
+import DiscordIcon from '~public/icons/discord.svg'
 
 import styles from './index.module.scss'
 
@@ -79,6 +81,19 @@ const UpdatesPage = () => {
         <div className={styles.contents}>
           <section>
             <h2>{updates('labels.features')}</h2>
+            <div className={styles.foreword}>
+              {updates('versions.1.2.0.notes')
+                .split('\n')
+                .map((item) => (
+                  <p>{item}</p>
+                ))}
+              <LinkItem
+                className="discord constrained update"
+                title="granblue-tools"
+                link="https://discord.gg/qyZ5hGdPC8"
+                icon={<DiscordIcon />}
+              />
+            </div>
             <ul className={styles.features}>
               {[...Array(versionUpdates['1.2.0'].updates)].map((e, i) => (
                 <li key={`1.2.0-update-${i}`}>
