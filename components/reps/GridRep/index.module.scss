@@ -60,8 +60,47 @@
     display: flex;
     justify-content: space-between;
 
+    .protagonist {
+      border-width: 1px;
+      border-style: solid;
+
+      &.fire {
+        background: var(--fire-portrait-bg);
+        border-color: var(--fire-bg);
+      }
+
+      &.water {
+        background: var(--water-portrait-bg);
+        border-color: var(--water-bg);
+      }
+
+      &.wind {
+        background: var(--wind-portrait-bg);
+        border-color: var(--wind-bg);
+      }
+
+      &.earth {
+        background: var(--earth-portrait-bg);
+        border-color: var(--earth-bg);
+      }
+
+      &.light {
+        background: var(--light-portrait-bg);
+        border-color: var(--light-bg);
+      }
+
+      &.dark {
+        background: var(--dark-portrait-bg);
+        border-color: var(--dark-bg);
+      }
+
+      &.empty {
+        background: var(--card-bg);
+      }
+    }
+
     .grid {
-      background: var(--unit-bg);
+      background: var(--background);
       border-radius: $item-corner-small;
       aspect-ratio: 69/142;
       list-style: none;
@@ -120,14 +159,14 @@
   }
 
   .summonGrid {
-    aspect-ratio: 2/0.95;
+    aspect-ratio: 2/0.94;
     display: flex;
     gap: $unit;
     justify-content: space-between;
 
     .summon,
     .mainSummon {
-      background: var(--card-bg);
+      background: var(--background);
       border-radius: $item-corner-small;
 
       img {
@@ -153,7 +192,7 @@
         1fr
       ); /* create 3 rows, each taking up 1 fraction */
       gap: $unit;
-      aspect-ratio: 130/100;
+      aspect-ratio: 83/100;
       // column-gap: $unit;
       // row-gap: $unit-2x;
     }

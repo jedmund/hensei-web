@@ -24,7 +24,7 @@ interface Props {
 
 const GridRep = ({ party, loading, onClick, onSave }: Props) => {
   const numWeapons: number = 9
-  const numSummons: number = 4
+  const numSummons: number = 6
 
   const { account } = useSnapshot(accountState)
 
@@ -36,7 +36,7 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
   const [visible, setVisible] = useState(false)
   const [currentView, setCurrentView] = useState<
     'characters' | 'weapons' | 'summons'
-  >('summons')
+  >('weapons')
 
   const [mainhand, setMainhand] = useState<Weapon>()
   const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
@@ -46,6 +46,7 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
     {}
   )
   const [mainSummon, setMainSummon] = useState<GridSummon>()
+  const [friendSummon, setFriendSummon] = useState<GridSummon>()
   const [summons, setSummons] = useState<GridArray<Summon>>({})
   const [summonGrid, setSummonGrid] = useState<GridArray<GridSummon>>({})
 
@@ -84,6 +85,8 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
   const protagonistClasses = classNames({
     [styles.protagonist]: true,
     [styles.grid]: true,
+    [styles[`${numberToElement()}`]]: true,
+    [styles.empty]: !party.job || party.job.id === '-1',
   })
 
   const characterClasses = classNames({
@@ -157,12 +160,11 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
     const gridSummons = Array(numSummons)
 
     if (party.summons) {
-      let foundMainSummon = false
-
       for (const [key, value] of Object.entries(party.summons)) {
         if (value.main) {
           setMainSummon(value)
-          foundMainSummon = true
+        } else if (value.friend) {
+          setFriendSummon(value)
         } else if (!value.main && !value.friend && value.position != null) {
           newSummons[value.position] = value.object
           gridSummons[value.position] = value
@@ -173,6 +175,26 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
       setSummonGrid(gridSummons)
     }
   }, [party])
+
+  // Convert element to string
+  function numberToElement() {
+    switch (mainhand?.element || weaponGrid[0]?.element) {
+      case 1:
+        return 'wind'
+      case 2:
+        return 'fire'
+      case 3:
+        return 'water'
+      case 4:
+        return 'earth'
+      case 5:
+        return 'dark'
+      case 6:
+        return 'light'
+      default:
+        return ''
+    }
+  }
 
   // Methods: Image generation
 
@@ -268,7 +290,7 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
     }
   }
 
-  function generateMainSummonImage() {
+  function generateMainSummonImage(position: 'main' | 'friend') {
     let url = ''
 
     const upgradedSummons = [
@@ -288,37 +310,35 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
       '2040047000',
     ]
 
-    if (mainSummon) {
+    const summon = position === 'main' ? mainSummon : friendSummon
+
+    if (summon) {
       // Change the image based on the uncap level
       let suffix = ''
-      if (mainSummon.object.uncap.xlb && mainSummon.uncap_level == 6) {
-        if (
-          mainSummon.transcendence_step >= 1 &&
-          mainSummon.transcendence_step < 5
-        ) {
+      if (summon.object.uncap.xlb && summon.uncap_level == 6) {
+        if (summon.transcendence_step >= 1 && summon.transcendence_step < 5) {
           suffix = '_03'
-        } else if (mainSummon.transcendence_step === 5) {
+        } else if (summon.transcendence_step === 5) {
           suffix = '_04'
         }
       } else if (
-        upgradedSummons.indexOf(mainSummon.object.granblue_id.toString()) !=
-          -1 &&
-        mainSummon.uncap_level == 5
+        upgradedSummons.indexOf(summon.object.granblue_id.toString()) != -1 &&
+        summon.uncap_level == 5
       ) {
         suffix = '_02'
       }
 
-      url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${mainSummon.object.granblue_id}${suffix}.jpg`
+      url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${summon.object.granblue_id}${suffix}.jpg`
     }
 
-    return mainSummon && <img alt={mainSummon.object.name[locale]} src={url} />
+    return summon && <img alt={summon.object.name[locale]} src={url} />
   }
 
   function generateSummonGridImage(position: number) {
     let url = ''
 
-    const gridSummon = party.summons[position]
-    const summon = gridSummon.object
+    const gridSummon = summonGrid[position]
+    const summon = gridSummon?.object
 
     const upgradedSummons = [
       '2040094000',
@@ -436,7 +456,7 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
 
   const renderSummonGrid = (
     <div className={styles.summonGrid}>
-      <div className={styles.mainSummon}>{generateMainSummonImage()}</div>
+      <div className={styles.mainSummon}>{generateMainSummonImage('main')}</div>
       <ul className={styles.summons}>
         {Array.from(Array(numSummons)).map((x, i) => {
           return (
@@ -446,6 +466,9 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
           )
         })}
       </ul>
+      <div className={styles.mainSummon}>
+        {generateMainSummonImage('friend')}
+      </div>
     </div>
   )
 
@@ -508,7 +531,11 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
   }
 
   return (
-    <Link href={`/p/${party.shortcode}`} className={gridRepClasses}>
+    <Link
+      href={`/p/${party.shortcode}`}
+      className={gridRepClasses}
+      onMouseLeave={() => changeView('weapons')}
+    >
       {detailsWithUsername}
       <div className={styles.gridContainer}>
         {currentView === 'characters'
@@ -523,7 +550,6 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
             [styles.active]: currentView === 'characters',
           })}
           onMouseEnter={() => changeView('characters')}
-          onMouseLeave={() => changeView('weapons')}
         >
           <div className={styles.indicator} />
           <span>Characters</span>
@@ -542,7 +568,6 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
             [styles.active]: currentView === 'summons',
           })}
           onMouseEnter={() => changeView('summons')}
-          onMouseLeave={() => changeView('weapons')}
         >
           <div className={styles.indicator} />
           <span>Summons</span>
