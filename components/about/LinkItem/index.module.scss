@@ -28,6 +28,10 @@
     }
   }
 
+  &.constrained.update {
+    max-width: 360px;
+  }
+
   &.github:hover .left .icon svg {
     fill: var(--text-primary);
   }

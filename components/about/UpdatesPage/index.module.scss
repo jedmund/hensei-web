@@ -17,6 +17,16 @@
       flex-direction: column;
       gap: $unit-4x;
 
+      .foreword {
+        margin-bottom: $unit-4x;
+
+        p {
+          font-size: $font-regular;
+          line-height: 1.32;
+          margin-bottom: $unit-2x;
+        }
+      }
+
       .features {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
