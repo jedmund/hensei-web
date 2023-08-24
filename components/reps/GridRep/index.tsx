@@ -16,23 +16,15 @@ import ShieldIcon from '~public/icons/Shield.svg'
 import styles from './index.module.scss'
 
 interface Props {
-  shortcode: string
-  id: string
-  name: string
-  raid: Raid
-  grid: GridWeapon[]
-  user?: User
-  fullAuto: boolean
-  autoGuard: boolean
-  favorited: boolean
+  party: Party
   loading: boolean
-  createdAt: Date
   onClick: (shortcode: string) => void
   onSave?: (partyId: string, favorited: boolean) => void
 }
 
-const GridRep = (props: Props) => {
+const GridRep = ({ party, loading, onClick, onSave }: Props) => {
   const numWeapons: number = 9
+  const numSummons: number = 6
 
   const { account } = useSnapshot(accountState)
 
@@ -42,27 +34,42 @@ const GridRep = (props: Props) => {
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
 
   const [visible, setVisible] = useState(false)
+  const [currentView, setCurrentView] = useState<
+    'characters' | 'weapons' | 'summons'
+  >('weapons')
+
   const [mainhand, setMainhand] = useState<Weapon>()
   const [weapons, setWeapons] = useState<GridArray<Weapon>>({})
-  const [grid, setGrid] = useState<GridArray<GridWeapon>>({})
+  const [weaponGrid, setWeaponGrid] = useState<GridArray<GridWeapon>>({})
+  const [characters, setCharacters] = useState<GridArray<Character>>({})
+  const [characterGrid, setCharacterGrid] = useState<GridArray<GridCharacter>>(
+    {}
+  )
+  const [mainSummon, setMainSummon] = useState<GridSummon>()
+  const [friendSummon, setFriendSummon] = useState<GridSummon>()
+  const [summons, setSummons] = useState<GridArray<Summon>>({})
+  const [summonGrid, setSummonGrid] = useState<GridArray<GridSummon>>({})
 
-  const gridRepStyles = classNames({
+  // Style construction
+
+  const gridRepClasses = classNames({
     [styles.gridRep]: true,
     [styles.visible]: visible,
     [styles.hidden]: !visible,
   })
+
   const titleClass = classNames({
-    empty: !props.name,
+    empty: !party.name,
   })
 
   const raidClass = classNames({
     [styles.raid]: true,
-    [styles.empty]: !props.raid,
+    [styles.empty]: !party.raid,
   })
 
   const userClass = classNames({
     [styles.user]: true,
-    [styles.empty]: !props.user,
+    [styles.empty]: !party.user,
   })
 
   const mainhandClasses = classNames({
@@ -75,8 +82,22 @@ const GridRep = (props: Props) => {
     [styles.grid]: true,
   })
 
+  const protagonistClasses = classNames({
+    [styles.protagonist]: true,
+    [styles.grid]: true,
+    [styles[`${numberToElement()}`]]: true,
+    [styles.empty]: !party.job || party.job.id === '-1',
+  })
+
+  const characterClasses = classNames({
+    [styles.character]: true,
+    [styles.grid]: true,
+  })
+
+  // Hooks
+
   useEffect(() => {
-    if (props.loading) {
+    if (loading) {
       setVisible(false)
     } else {
       const timeout = setTimeout(() => {
@@ -84,7 +105,7 @@ const GridRep = (props: Props) => {
       }, 150)
       return () => clearTimeout(timeout)
     }
-  }, [props.loading])
+  }, [loading])
 
   useEffect(() => {
     setVisible(false) // Trigger fade out
@@ -99,7 +120,7 @@ const GridRep = (props: Props) => {
     const gridWeapons = Array(numWeapons)
 
     let foundMainhand = false
-    for (const [key, value] of Object.entries(props.grid)) {
+    for (const [key, value] of Object.entries(party.weapons)) {
       if (value.position == -1) {
         setMainhand(value.object)
         foundMainhand = true
@@ -114,18 +135,74 @@ const GridRep = (props: Props) => {
     }
 
     setWeapons(newWeapons)
-    setGrid(gridWeapons)
-  }, [props.grid])
+    setWeaponGrid(gridWeapons)
+  }, [party])
 
-  function navigate() {
-    props.onClick(props.shortcode)
+  useEffect(() => {
+    const newCharacters = Array(3)
+    const gridCharacters = Array(3)
+
+    if (party.characters) {
+      for (const [key, value] of Object.entries(party.characters)) {
+        if (value.position != null) {
+          newCharacters[value.position] = value.object
+          gridCharacters[value.position] = value
+        }
+      }
+
+      setCharacters(newCharacters)
+      setCharacterGrid(gridCharacters)
+    }
+  }, [party])
+
+  useEffect(() => {
+    const newSummons = Array(numSummons)
+    const gridSummons = Array(numSummons)
+
+    if (party.summons) {
+      for (const [key, value] of Object.entries(party.summons)) {
+        if (value.main) {
+          setMainSummon(value)
+        } else if (value.friend) {
+          setFriendSummon(value)
+        } else if (!value.main && !value.friend && value.position != null) {
+          newSummons[value.position] = value.object
+          gridSummons[value.position] = value
+        }
+      }
+
+      setSummons(newSummons)
+      setSummonGrid(gridSummons)
+    }
+  }, [party])
+
+  // Convert element to string
+  function numberToElement() {
+    switch (mainhand?.element || weaponGrid[0]?.element) {
+      case 1:
+        return 'wind'
+      case 2:
+        return 'fire'
+      case 3:
+        return 'water'
+      case 4:
+        return 'earth'
+      case 5:
+        return 'dark'
+      case 6:
+        return 'light'
+      default:
+        return ''
+    }
   }
+
+  // Methods: Image generation
 
   function generateMainhandImage() {
     let url = ''
 
     if (mainhand) {
-      const weapon = Object.values(props.grid).find(
+      const weapon = Object.values(party.weapons).find(
         (w) => w && w.object.id === mainhand.id
       )
 
@@ -136,18 +213,18 @@ const GridRep = (props: Props) => {
       }
     }
 
-    return mainhand && props.grid[0] ? (
+    return mainhand && party.weapons[0] ? (
       <img alt={mainhand.name[locale]} src={url} />
     ) : (
       ''
     )
   }
 
-  function generateGridImage(position: number) {
+  function generateWeaponGridImage(position: number) {
     let url = ''
 
     const weapon = weapons[position]
-    const gridWeapon = grid[position]
+    const gridWeapon = weaponGrid[position]
 
     if (weapon && gridWeapon) {
       if (weapon.element == 0 && gridWeapon.element) {
@@ -164,19 +241,163 @@ const GridRep = (props: Props) => {
     )
   }
 
+  function generateMCImage() {
+    let source = ''
+
+    if (party.job) {
+      const slug = party.job.name.en.replaceAll(' ', '-').toLowerCase()
+      const gender = party.user?.gender == 1 ? 'b' : 'a'
+      source = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-portraits/${slug}_${gender}.png`
+    }
+
+    return (
+      party.job &&
+      party.job.id !== '-1' && (
+        <img alt={party.job ? party.job?.name[locale] : ''} src={source} />
+      )
+    )
+  }
+
+  function generateCharacterGridImage(position: number) {
+    let url = ''
+
+    const gridCharacter = characterGrid[position]
+    const character = characters[position]
+
+    if (character && gridCharacter) {
+      // Change the image based on the uncap level
+      let suffix = '01'
+      if (gridCharacter.transcendence_step > 0) suffix = '04'
+      else if (gridCharacter.uncap_level >= 5) suffix = '03'
+      else if (gridCharacter.uncap_level > 2) suffix = '02'
+
+      if (gridCharacter.object.granblue_id === '3030182000') {
+        let element = 1
+        if (mainhand && mainhand.element) {
+          element = mainhand.element
+        }
+
+        suffix = `${suffix}_0${element}`
+      }
+
+      const url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-main/${character.granblue_id}_${suffix}.jpg`
+
+      return (
+        characters[position] && (
+          <img alt={characters[position]?.name[locale]} src={url} />
+        )
+      )
+    }
+  }
+
+  function generateMainSummonImage(position: 'main' | 'friend') {
+    let url = ''
+
+    const upgradedSummons = [
+      '2040094000',
+      '2040100000',
+      '2040080000',
+      '2040098000',
+      '2040090000',
+      '2040084000',
+      '2040003000',
+      '2040056000',
+      '2040020000',
+      '2040034000',
+      '2040028000',
+      '2040027000',
+      '2040046000',
+      '2040047000',
+    ]
+
+    const summon = position === 'main' ? mainSummon : friendSummon
+
+    if (summon) {
+      // Change the image based on the uncap level
+      let suffix = ''
+      if (summon.object.uncap.xlb && summon.uncap_level == 6) {
+        if (summon.transcendence_step >= 1 && summon.transcendence_step < 5) {
+          suffix = '_03'
+        } else if (summon.transcendence_step === 5) {
+          suffix = '_04'
+        }
+      } else if (
+        upgradedSummons.indexOf(summon.object.granblue_id.toString()) != -1 &&
+        summon.uncap_level == 5
+      ) {
+        suffix = '_02'
+      }
+
+      url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-main/${summon.object.granblue_id}${suffix}.jpg`
+    }
+
+    return summon && <img alt={summon.object.name[locale]} src={url} />
+  }
+
+  function generateSummonGridImage(position: number) {
+    let url = ''
+
+    const gridSummon = summonGrid[position]
+    const summon = gridSummon?.object
+
+    const upgradedSummons = [
+      '2040094000',
+      '2040100000',
+      '2040080000',
+      '2040098000',
+      '2040090000',
+      '2040084000',
+      '2040003000',
+      '2040056000',
+      '2040020000',
+      '2040034000',
+      '2040028000',
+      '2040027000',
+      '2040046000',
+      '2040047000',
+    ]
+
+    if (summon && gridSummon) {
+      // Change the image based on the uncap level
+      let suffix = ''
+      if (gridSummon.object.uncap.xlb && gridSummon.uncap_level == 6) {
+        if (
+          gridSummon.transcendence_step >= 1 &&
+          gridSummon.transcendence_step < 5
+        ) {
+          suffix = '_03'
+        } else if (gridSummon.transcendence_step === 5) {
+          suffix = '_04'
+        }
+      } else if (
+        upgradedSummons.indexOf(summon.granblue_id.toString()) != -1 &&
+        gridSummon.uncap_level == 5
+      ) {
+        suffix = '_02'
+      }
+
+      url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${summon.granblue_id}${suffix}.jpg`
+    }
+    return (
+      summons[position] && (
+        <img alt={summons[position]?.name[locale]} src={url} />
+      )
+    )
+  }
+
   function sendSaveData() {
-    if (props.onSave) props.onSave(props.id, props.favorited)
+    if (onSave) onSave(party.id, party.favorited)
   }
 
   const userImage = () => {
-    if (props.user && props.user.avatar) {
+    if (party.user && party.user.avatar) {
       return (
         <img
-          alt={props.user.avatar.picture}
-          className={`profile ${props.user.avatar.element}`}
-          srcSet={`/profile/${props.user.avatar.picture}.png,
-                              /profile/${props.user.avatar.picture}@2x.png 2x`}
-          src={`/profile/${props.user.avatar.picture}.png`}
+          alt={party.user.avatar.picture}
+          className={`profile ${party.user.avatar.element}`}
+          srcSet={`/profile/${party.user.avatar.picture}.png,
+                              /profile/${party.user.avatar.picture}@2x.png 2x`}
+          src={`/profile/${party.user.avatar.picture}.png`}
         />
       )
     } else
@@ -194,63 +415,95 @@ const GridRep = (props: Props) => {
   const attribution = () => (
     <span className={userClass}>
       {userImage()}
-      {props.user ? props.user.username : t('no_user')}
+      {party.user ? party.user.username : t('no_user')}
     </span>
   )
 
-  function fullAutoString() {
-    const fullAutoElement = (
-      <span className={styles.fullAuto}>
-        {` · ${t('party.details.labels.full_auto')}`}
-      </span>
-    )
+  const renderWeaponGrid = (
+    <div className={styles.weaponGrid}>
+      <div className={mainhandClasses}>{generateMainhandImage()}</div>
 
-    const autoGuardElement = (
-      <span className={styles.autoGuard}>
-        <ShieldIcon />
-      </span>
-    )
+      <ul className={styles.weapons}>
+        {Array.from(Array(numWeapons)).map((x, i) => {
+          return (
+            <li
+              key={`${party.shortcode}-weapon-${i}`}
+              className={weaponClasses}
+            >
+              {generateWeaponGridImage(i)}
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
 
-    return (
-      <div className={styles.auto}>
-        {fullAutoElement}
-        {props.autoGuard ? autoGuardElement : ''}
+  const renderCharacterGrid = (
+    <div className={styles.characterGrid}>
+      <div className={protagonistClasses}>{generateMCImage()}</div>
+      {Array.from(Array(3)).map((x, i) => {
+        return (
+          <li
+            key={`${party.shortcode}-chara-${i}`}
+            className={characterClasses}
+          >
+            {generateCharacterGridImage(i)}
+          </li>
+        )
+      })}
+    </div>
+  )
+
+  const renderSummonGrid = (
+    <div className={styles.summonGrid}>
+      <div className={styles.mainSummon}>{generateMainSummonImage('main')}</div>
+      <ul className={styles.summons}>
+        {Array.from(Array(numSummons)).map((x, i) => {
+          return (
+            <li key={`summons-${i}`} className={styles.summon}>
+              {generateSummonGridImage(i)}
+            </li>
+          )
+        })}
+      </ul>
+      <div className={styles.mainSummon}>
+        {generateMainSummonImage('friend')}
       </div>
-    )
-  }
+    </div>
+  )
 
   const detailsWithUsername = (
     <div className={styles.details}>
       <div className={styles.top}>
         <div className={styles.info}>
           <h2 className={titleClass}>
-            {props.name ? props.name : t('no_title')}
+            {party.name ? party.name : t('no_title')}
           </h2>
           <div className={styles.properties}>
             <span className={raidClass}>
-              {props.raid ? props.raid.name[locale] : t('no_raid')}
+              {party.raid ? party.raid.name[locale] : t('no_raid')}
             </span>
-            {props.fullAuto && (
+            {party.full_auto && (
               <span className={styles.fullAuto}>
                 {` · ${t('party.details.labels.full_auto')}`}
               </span>
             )}
-            {props.raid && props.raid.group.extra && (
+            {party.raid && party.raid.group.extra && (
               <span className={styles.extra}>{` · EX`}</span>
             )}
           </div>
         </div>
         {account.authorized &&
-        ((props.user && account.user && account.user.id !== props.user.id) ||
-          !props.user) ? (
+        ((party.user && account.user && account.user.id !== party.user.id) ||
+          !party.user) ? (
           <Link href="#">
             <Button
               className={classNames({
                 save: true,
-                saved: props.favorited,
+                saved: party.favorited,
               })}
               leftAccessoryIcon={<SaveIcon className="stroke" />}
-              active={props.favorited}
+              active={party.favorited}
               bound={true}
               size="small"
               onClick={sendSaveData}
@@ -265,32 +518,61 @@ const GridRep = (props: Props) => {
 
         <time
           className={styles.lastUpdated}
-          dateTime={props.createdAt.toISOString()}
+          dateTime={new Date(party.created_at).toISOString()}
         >
-          {formatTimeAgo(props.createdAt, locale)}
+          {formatTimeAgo(new Date(party.created_at), locale)}
         </time>
       </div>
     </div>
   )
 
-  return (
-    <Link legacyBehavior href={`/p/${props.shortcode}`}>
-      <a className={gridRepStyles}>
-        {detailsWithUsername}
-        <div className={styles.weaponGrid}>
-          <div className={mainhandClasses}>{generateMainhandImage()}</div>
+  function changeView(view: 'characters' | 'weapons' | 'summons') {
+    setCurrentView(view)
+  }
 
-          <ul className={styles.weapons}>
-            {Array.from(Array(numWeapons)).map((x, i) => {
-              return (
-                <li key={`${props.shortcode}-${i}`} className={weaponClasses}>
-                  {generateGridImage(i)}
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      </a>
+  return (
+    <Link
+      href={`/p/${party.shortcode}`}
+      className={gridRepClasses}
+      onMouseLeave={() => changeView('weapons')}
+    >
+      {detailsWithUsername}
+      <div className={styles.gridContainer}>
+        {currentView === 'characters'
+          ? renderCharacterGrid
+          : currentView === 'summons'
+          ? renderSummonGrid
+          : renderWeaponGrid}
+      </div>
+      <ul className={styles.indicators}>
+        <li
+          className={classNames({
+            [styles.active]: currentView === 'characters',
+          })}
+          onMouseEnter={() => changeView('characters')}
+        >
+          <div className={styles.indicator} />
+          <span>Characters</span>
+        </li>
+        <li
+          className={classNames({
+            [styles.active]: currentView === 'weapons',
+          })}
+          onMouseEnter={() => changeView('weapons')}
+        >
+          <div className={styles.indicator} />
+          <span>Weapons</span>
+        </li>
+        <li
+          className={classNames({
+            [styles.active]: currentView === 'summons',
+          })}
+          onMouseEnter={() => changeView('summons')}
+        >
+          <div className={styles.indicator} />
+          <span>Summons</span>
+        </li>
+      </ul>
     </Link>
   )
 }
