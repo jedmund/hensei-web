@@ -12,9 +12,15 @@
   },
   "alert": {
     "confirm_logout": "ログアウトしますか",
-    "unsaved_changes_party": "<strong>「{objectName}」</strong>という編成の変更は保存していません。<br/><br/>変更を保存せずに続けますか？",
-    "unsaved_changes_object": "<strong>「{objectName}」</strong>の変更は保存していません。<br/><br/>変更を保存せずに続けますか？",
-    "incompatible_weapon": "Additional Weaponsに装備できない武器を入れました。"
+    "incompatible_weapon": "Additional Weaponsに装備できない武器を入れました。",
+    "unsaved_changes": {
+      "party": "<strong>「{{objectName}}」</strong>という編成の変更は保存していません。<br/><br/>変更を保存せずに続けますか？",
+      "object": "<strong>「{{objectName}}」</strong>の変更は保存していません。<br/><br/>変更を保存せずに続けますか？",
+      "buttons": {
+        "confirm": "変更せずに続ける",
+        "cancel": "キャンセル"
+      }
+    }
   },
   "ax": {
     "no_skill": "EXスキルなし",

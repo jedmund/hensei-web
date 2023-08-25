@@ -12,11 +12,15 @@
   },
   "alert": {
     "confirm_logout": "Are you sure you want to log out?",
+    "incompatible_weapon": "You've selected a weapon that can't be added to the Additional Weapon slots.",
     "unsaved_changes": {
-      "party": "You will lose all changes to your party <strong>{objectName}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?",
-      "object": "You will lose all changes to <strong>{objectName}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?"
-    },
-    "incompatible_weapon": "You've selected a weapon that can't be added to the Additional Weapon slots."
+      "party": "You will lose all changes to your party <strong>{{objectName}}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?",
+      "object": "You will lose all changes to <strong>{{objectName}}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?",
+      "buttons": {
+        "confirm": "Continue without saving",
+        "cancel": "Nevermind"
+      }
+    }
   },
   "ax": {
     "no_skill": "No AX Skill",
