@@ -25,7 +25,6 @@
     display: flex;
     gap: $unit-2x;
     font-size: $font-regular;
-    justify-content: space-between;
     padding: $unit-4x;
     overflow: hidden;
 
@@ -37,6 +36,24 @@
 
     p {
       color: var(--notice-text);
+      flex-grow: 1;
+    }
+
+    .icon {
+      align-items: center;
+      background-color: var(--notice-button-bg);
+      border-radius: $full-corner;
+      display: flex;
+      justify-content: center;
+      height: $unit-6x;
+      width: $unit-6x;
+      flex-shrink: 0;
+
+      svg {
+        fill: var(--notice-text);
+        width: $unit-3x;
+        height: $unit-3x;
+      }
     }
 
     .buttons {

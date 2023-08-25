@@ -19,16 +19,18 @@ import { formatTimeAgo } from '~utils/timeAgo'
 
 import RemixTeamAlert from '~components/dialogs/RemixTeamAlert'
 import RemixedToast from '~components/toasts/RemixedToast'
+import PartyVisibilityDialog from '~components/party/PartyVisibilityDialog'
+import UrlCopiedToast from '~components/toasts/UrlCopiedToast'
 
 import EditIcon from '~public/icons/Edit.svg'
 import RemixIcon from '~public/icons/Remix.svg'
 import SaveIcon from '~public/icons/Save.svg'
+import PrivateIcon from '~public/icons/Private.svg'
+import UnlistedIcon from '~public/icons/Unlisted.svg'
 
 import type { DetailsObject } from 'types'
 
 import styles from './index.module.scss'
-import PartyVisibilityDialog from '../PartyVisibilityDialog'
-import UrlCopiedToast from '~components/toasts/UrlCopiedToast'
 
 // Props
 interface Props {
@@ -331,6 +333,9 @@ const PartyHeader = (props: Props) => {
   // Render: Notice
   const unlistedNotice = (
     <div className={styles.notice}>
+      <div className={styles.icon}>
+        <UnlistedIcon />
+      </div>
       <p>{t('party.notices.unlisted')}</p>
       <div className={styles.buttons}>
         <Button
@@ -353,6 +358,9 @@ const PartyHeader = (props: Props) => {
 
   const privateNotice = (
     <div className={styles.notice}>
+      <div className={styles.icon}>
+        <PrivateIcon />
+      </div>
       <p>{t('party.notices.private')}</p>
       <div className={styles.buttons}>
         <Button
