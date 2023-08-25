@@ -19,10 +19,14 @@ import { formatTimeAgo } from '~utils/timeAgo'
 
 import RemixTeamAlert from '~components/dialogs/RemixTeamAlert'
 import RemixedToast from '~components/toasts/RemixedToast'
+import PartyVisibilityDialog from '~components/party/PartyVisibilityDialog'
+import UrlCopiedToast from '~components/toasts/UrlCopiedToast'
 
 import EditIcon from '~public/icons/Edit.svg'
 import RemixIcon from '~public/icons/Remix.svg'
 import SaveIcon from '~public/icons/Save.svg'
+import PrivateIcon from '~public/icons/Private.svg'
+import UnlistedIcon from '~public/icons/Unlisted.svg'
 
 import type { DetailsObject } from 'types'
 
@@ -50,8 +54,10 @@ const PartyHeader = (props: Props) => {
 
   // State: Component
   const [detailsOpen, setDetailsOpen] = useState(false)
+  const [copyToastOpen, setCopyToastOpen] = useState(false)
   const [remixAlertOpen, setRemixAlertOpen] = useState(false)
   const [remixToastOpen, setRemixToastOpen] = useState(false)
+  const [visibilityDialogOpen, setVisibilityDialogOpen] = useState(false)
 
   const userClass = classNames({
     [styles.user]: true,
@@ -122,10 +128,27 @@ const PartyHeader = (props: Props) => {
     setDetailsOpen(open)
   }
 
+  // Dialogs: Visibility
+  function visibilityDialogCallback() {
+    setVisibilityDialogOpen(true)
+  }
+
+  function handleVisibilityDialogChange(open: boolean) {
+    setVisibilityDialogOpen(open)
+  }
+
   // Actions: Remix team
   function remixTeamCallback() {
     setRemixToastOpen(true)
     props.remixCallback()
+  }
+
+  // Actions: Copy URL
+  function copyToClipboard() {
+    if (router.asPath.split('/')[1] === 'p') {
+      navigator.clipboard.writeText(window.location.href)
+      setCopyToastOpen(true)
+    }
   }
 
   // Alerts: Remix team
@@ -144,6 +167,15 @@ const PartyHeader = (props: Props) => {
 
   function handleRemixToastCloseClicked() {
     setRemixToastOpen(false)
+  }
+
+  // Toasts / Copy URL
+  function handleCopyToastOpenChanged(open: boolean) {
+    setCopyToastOpen(!open)
+  }
+
+  function handleCopyToastCloseClicked() {
+    setCopyToastOpen(false)
   }
 
   // Rendering
@@ -298,6 +330,50 @@ const PartyHeader = (props: Props) => {
     )
   }
 
+  // Render: Notice
+  const unlistedNotice = (
+    <div className={styles.notice}>
+      <div className={styles.icon}>
+        <UnlistedIcon />
+      </div>
+      <p>{t('party.notices.unlisted')}</p>
+      <div className={styles.buttons}>
+        <Button
+          bound={true}
+          className="notice no-shrink"
+          key="copy_link"
+          text={t('party.notices.buttons.copy_link')}
+          onClick={copyToClipboard}
+        />
+        <Button
+          bound={true}
+          className="notice no-shrink"
+          key="change_visibility"
+          text={t('party.notices.buttons.change_visibility')}
+          onClick={() => handleVisibilityDialogChange(true)}
+        />
+      </div>
+    </div>
+  )
+
+  const privateNotice = (
+    <div className={styles.notice}>
+      <div className={styles.icon}>
+        <PrivateIcon />
+      </div>
+      <p>{t('party.notices.private')}</p>
+      <div className={styles.buttons}>
+        <Button
+          bound={true}
+          className="notice"
+          key="change_visibility"
+          text={t('party.notices.buttons.change_visibility')}
+          onClick={() => handleVisibilityDialogChange(true)}
+        />
+      </div>
+    </div>
+  )
+
   // Render: Buttons
   const saveButton = () => {
     return (
@@ -358,6 +434,8 @@ const PartyHeader = (props: Props) => {
   return (
     <>
       <header className={styles.wrapper}>
+        {party.visibility == 2 && unlistedNotice}
+        {party.visibility == 3 && privateNotice}
         <section className={styles.info}>
           <div className={styles.left}>
             <div className={styles.header}>
@@ -399,6 +477,7 @@ const PartyHeader = (props: Props) => {
                   editable={props.editable}
                   deleteTeamCallback={props.deleteCallback}
                   remixTeamCallback={props.remixCallback}
+                  teamVisibilityCallback={visibilityDialogCallback}
                 />
               )}
             </div>
@@ -411,6 +490,13 @@ const PartyHeader = (props: Props) => {
         </section>
         <section className={styles.tokens}>{renderTokens()}</section>
       </header>
+
+      <PartyVisibilityDialog
+        open={visibilityDialogOpen}
+        value={party.visibility as 1 | 2 | 3}
+        onOpenChange={handleVisibilityDialogChange}
+        updateParty={props.updateCallback}
+      />
 
       <RemixTeamAlert
         creator={props.editable}
@@ -425,6 +511,12 @@ const PartyHeader = (props: Props) => {
         partyName={props.party?.name || t('no_title')}
         onOpenChange={handleRemixToastOpenChanged}
         onCloseClick={handleRemixToastCloseClicked}
+      />
+
+      <UrlCopiedToast
+        open={copyToastOpen}
+        onOpenChange={handleCopyToastOpenChanged}
+        onCloseClick={handleCopyToastCloseClicked}
       />
     </>
   )

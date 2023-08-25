@@ -43,6 +43,7 @@ interface Party {
   local_id?: string
   remix: boolean
   remixes: Party[]
+  visibility: number
   created_at: string
   updated_at: string
 }

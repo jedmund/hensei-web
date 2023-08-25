@@ -10,8 +10,11 @@ import { accountState } from '~utils/accountState'
 import { formatTimeAgo } from '~utils/timeAgo'
 
 import Button from '~components/common/Button'
+import Tooltip from '~components/common/Tooltip'
 
 import SaveIcon from '~public/icons/Save.svg'
+import PrivateIcon from '~public/icons/Private.svg'
+import UnlistedIcon from '~public/icons/Unlisted.svg'
 import ShieldIcon from '~public/icons/Shield.svg'
 import styles from './index.module.scss'
 
@@ -472,6 +475,48 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
     </div>
   )
 
+  const favoriteButton = (
+    <Link href="#">
+      <Button
+        className={classNames({
+          save: true,
+          saved: party.favorited,
+        })}
+        leftAccessoryIcon={<SaveIcon className="stroke" />}
+        active={party.favorited}
+        bound={true}
+        size="small"
+        onClick={sendSaveData}
+      />
+    </Link>
+  )
+
+  function buttonArea() {
+    if (
+      account.authorized &&
+      ((party.user && account.user && account.user.id !== party.user.id) ||
+        !party.user)
+    ) {
+      return favoriteButton
+    } else if (party.visibility === 2) {
+      return (
+        <Tooltip content={t('party.tooltips.unlisted')}>
+          <span className={styles.icon}>
+            <UnlistedIcon />
+          </span>
+        </Tooltip>
+      )
+    } else if (party.visibility === 3) {
+      return (
+        <Tooltip content={t('party.tooltips.private')}>
+          <span className={styles.icon}>
+            <PrivateIcon />
+          </span>
+        </Tooltip>
+      )
+    }
+  }
+
   const detailsWithUsername = (
     <div className={styles.details}>
       <div className={styles.top}>
@@ -493,25 +538,7 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
             )}
           </div>
         </div>
-        {account.authorized &&
-        ((party.user && account.user && account.user.id !== party.user.id) ||
-          !party.user) ? (
-          <Link href="#">
-            <Button
-              className={classNames({
-                save: true,
-                saved: party.favorited,
-              })}
-              leftAccessoryIcon={<SaveIcon className="stroke" />}
-              active={party.favorited}
-              bound={true}
-              size="small"
-              onClick={sendSaveData}
-            />
-          </Link>
-        ) : (
-          ''
-        )}
+        {buttonArea()}
       </div>
       <div className={styles.attributed}>
         {attribution()}

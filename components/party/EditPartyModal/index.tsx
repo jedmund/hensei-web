@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { Trans, useTranslation } from 'react-i18next'
 import classNames from 'classnames'
@@ -20,7 +19,6 @@ import SegmentedControl from '~components/common/SegmentedControl'
 import Segment from '~components/common/Segment'
 import SwitchTableField from '~components/common/SwitchTableField'
 import TableField from '~components/common/TableField'
-import Textarea from '~components/common/Textarea'
 
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 import type { DetailsObject } from 'types'
@@ -384,7 +382,7 @@ const EditPartyModal = ({
     <Alert
       message={
         <span>
-          <Trans i18nKey="alerts.unsaved_changes.party">
+          <Trans i18nKey="alert.unsaved_changes.party">
             You will lose all changes to your party{' '}
             <strong>
               {{
@@ -399,9 +397,9 @@ const EditPartyModal = ({
         </span>
       }
       open={alertOpen}
-      primaryActionText="Close"
+      primaryActionText={t('alert.unsaved_changes.buttons.confirm')}
       primaryAction={close}
-      cancelActionText="Nevermind"
+      cancelActionText={t('alert.unsaved_changes.buttons.cancel')}
       cancelAction={() => setAlertOpen(false)}
     />
   )

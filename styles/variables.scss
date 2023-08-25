@@ -107,10 +107,13 @@ $yellow-text-20: #ffed4c;
 $highlight-yellow: #ffed4c55;
 
 $accent--yellow--00: #463805;
-$accent--yellow--20: #7f6a00;
+$accent--yellow--10: #6c5a01;
+$accent--yellow--20: #776300;
 $accent--yellow--40: #a39200;
 $accent--yellow--60: #c89d39;
+$accent--yellow--70: #d1aa4f;
 $accent--yellow--80: #deb351;
+$accent--yellow--90: #e6bd5e;
 $accent--yellow--100: #f9cc64;
 
 $selected--item--bg--dark: #f9cc645d;
@@ -221,6 +224,18 @@ $notice--bg--dark: $accent--yellow--00;
 
 $notice--text--light: $accent--yellow--20;
 $notice--text--dark: $accent--yellow--100;
+
+$notice--button--bg--light: $accent--yellow--80;
+$notice--button--bg--dark: $accent--yellow--20;
+
+$notice--button--bg--light--hover: $accent--yellow--70;
+$notice--button--bg--dark--hover: $accent--yellow--10;
+
+$notice--button--text--light: $accent--yellow--10;
+$notice--button--text--dark: $accent--yellow--90;
+
+$notice--button--text--light--hover: $accent--yellow--00;
+$notice--button--text--dark--hover: $accent--yellow--100;
 
 // Color Definitions: Button
 $button--bg--light: $grey-80;
@@ -439,6 +454,19 @@ $icon--secondary--color--light: $grey-70;
 $icon--secondary--color--dark: $grey-50;
 $icon--secondary--hover--light: $grey-50;
 $icon--secondary--hover--dark: $grey-70;
+
+// Color Definitions: Radio Buttons
+$radio--bg--light: $grey-75;
+$radio--bg--dark: $grey-10;
+
+$radio--bg--light--hover: $grey-70;
+$radio--bg--dark--hover: $grey-00;
+
+$radio--active--bg--light: $accent--blue--light;
+$radio--active--bg--dark: $accent--blue--dark;
+
+$radio--active--bg--light--hover: $accent--blue--light--focus;
+$radio--active--bg--dark--hover: $accent--blue--dark--focus;
 
 // Color Definitions: Tag
 $tag--bg--light: $grey-60;

@@ -46,6 +46,10 @@
     flex-grow: 1;
   }
 
+  &.no-shrink {
+    flex-shrink: 0;
+  }
+
   &.blended {
     background: transparent;
   }
@@ -301,6 +305,15 @@
 
     &:hover {
       color: darken($error, 10);
+    }
+  }
+
+  &.notice {
+    background-color: var(--notice-button-bg);
+    color: var(--notice-button-text);
+
+    &:hover {
+      background-color: var(--notice-button-bg-hover);
     }
   }
 

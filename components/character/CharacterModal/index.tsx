@@ -270,7 +270,7 @@ const CharacterModal = ({
     <Alert
       message={
         <span>
-          <Trans i18nKey="alerts.unsaved_changes.object">
+          <Trans i18nKey="alert.unsaved_changes.object">
             You will lose all changes to{' '}
             <strong>{{ objectName: gridCharacter.object.name[locale] }}</strong>{' '}
             if you continue.
@@ -281,9 +281,9 @@ const CharacterModal = ({
         </span>
       }
       open={alertOpen}
-      primaryActionText="Close"
+      primaryActionText={t('alert.unsaved_changes.buttons.confirm')}
       primaryAction={close}
-      cancelActionText="Nevermind"
+      cancelActionText={t('alert.unsaved_changes.buttons.cancel')}
       cancelAction={() => setAlertOpen(false)}
     />
   )
