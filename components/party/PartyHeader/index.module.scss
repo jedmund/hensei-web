@@ -18,6 +18,41 @@
     }
   }
 
+  .notice {
+    align-items: center;
+    background: var(--notice-bg);
+    border-radius: $card-corner;
+    display: flex;
+    gap: $unit-2x;
+    font-size: $font-regular;
+    justify-content: space-between;
+    padding: $unit-4x;
+    overflow: hidden;
+
+    @include breakpoint(small-tablet) {
+      flex-direction: column;
+      gap: $unit;
+      padding: $unit-2x;
+    }
+
+    p {
+      color: var(--notice-text);
+    }
+
+    .buttons {
+      justify-content: flex-end;
+      display: flex;
+      flex-shrink: 0;
+      gap: $unit;
+
+      @include breakpoint(small-tablet) {
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+      }
+    }
+  }
+
   .details {
     box-sizing: border-box;
     display: block;

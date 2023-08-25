@@ -1,5 +1,5 @@
 // Libraries
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
@@ -33,12 +33,14 @@ interface Props {
   editable: boolean
   deleteTeamCallback: () => void
   remixTeamCallback: () => void
+  teamVisibilityCallback: () => void
 }
 
 const PartyDropdown = ({
   editable,
   deleteTeamCallback,
   remixTeamCallback,
+  teamVisibilityCallback,
 }: Props) => {
   // Localization
   const { t } = useTranslation('common')
@@ -80,6 +82,11 @@ const PartyDropdown = ({
   }
 
   // Methods: Event handlers
+
+  // Dialogs / Visibility
+  function visibilityCallback() {
+    teamVisibilityCallback()
+  }
 
   // Alerts / Delete team
   function openDeleteTeamAlert() {
@@ -125,6 +132,9 @@ const PartyDropdown = ({
   const items = (
     <>
       <DropdownMenuGroup>
+        <DropdownMenuItem onClick={visibilityCallback}>
+          <span>{t('dropdown.party.visibility')}</span>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={copyToClipboard}>
           <span>{t('dropdown.party.copy')}</span>
         </DropdownMenuItem>
