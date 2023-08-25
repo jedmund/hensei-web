@@ -1,0 +1,83 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-4x;
+  padding: 0 $unit-4x $unit-2x;
+
+  .description {
+    color: var(--text-primary);
+    font-size: $font-regular;
+  }
+
+  .radioGroup {
+    display: flex;
+    flex-direction: column;
+    gap: $unit-2x;
+
+    .radioSet {
+      display: flex;
+      gap: $unit;
+
+      .radioItem {
+        align-items: center;
+        background: var(--radio-button-bg);
+        border-radius: $full-corner;
+        border: none;
+        display: flex;
+        border: 2px solid transparent;
+        box-sizing: border-box;
+        justify-content: center;
+        height: $unit-4x;
+        width: $unit-4x;
+        min-height: $unit-4x;
+        min-width: $unit-4x;
+
+        &:focus {
+          outline: 2px solid var(--radio-active-bg);
+
+          &:hover {
+            outline-color: var(--radio-active-bg-hover);
+          }
+        }
+
+        [data-state='checked'] {
+          background-color: var(--radio-active-bg);
+          border-radius: $full-corner;
+          display: block;
+          height: $unit-2x;
+          width: $unit-2x;
+        }
+
+        &[data-state='checked']:hover [data-state='checked'] {
+          background-color: var(--radio-active-bg-hover);
+        }
+
+        &:hover {
+          background: var(--radio-button-bg-hover);
+          cursor: pointer;
+        }
+      }
+
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: $unit-half;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        h4 {
+          color: var(--text-primary);
+          font-size: $font-regular;
+          font-weight: $bold;
+        }
+
+        p {
+          color: var(--text-tertiary);
+          font-size: $font-small;
+        }
+      }
+    }
+  }
+}
