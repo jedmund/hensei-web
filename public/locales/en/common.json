@@ -69,6 +69,7 @@
   },
   "dropdown": {
     "party": {
+      "visibility": "Change team visibility",
       "copy": "Copy link to team",
       "delete": "Delete team",
       "remix": "Remix team"
@@ -401,6 +402,33 @@
         "remove": "Remove summon"
       }
     },
+    "team_visibility": {
+      "title": "Change team visibility",
+      "label": "Team visibility",
+      "description": "Change who can see this team and where it shows up on the site",
+      "alerts": {
+        "unsaved_changes": {
+          "message": "Are you sure you want to continue without changing your team's visibility?",
+          "buttons": {
+            "confirm": "Continue without saving",
+            "cancel": "Nevermind"
+          }
+        }
+      },
+      "options": {
+        "public": "Public",
+        "unlisted": "Unlisted",
+        "private": "Private"
+      },
+      "descriptions": {
+        "public": "Visible to everyone and appears on the Teams page",
+        "unlisted": "Only visible to people with the link and does not appear on the Teams page",
+        "private": "Only visible to you and does not appear on the Teams page"
+      },
+      "buttons": {
+        "confirm": "Change visibility"
+      }
+    },
     "weapon": {
       "title": "Modify Weapon",
       "buttons": {
@@ -462,6 +490,14 @@
       "turns": {
         "with_count_one": "{{count}} turn",
         "with_count_other": "{{count}} turns"
+      }
+    },
+    "notices": {
+      "unlisted": "This party is unlisted. Only people with the link with can see it.",
+      "private": "This party is private. Only you can see it.",
+      "buttons": {
+        "copy_link": "Copy link",
+        "change_visibility": "Change visibility"
       }
     }
   },

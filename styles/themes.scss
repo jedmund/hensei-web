@@ -81,6 +81,11 @@
   --notice-bg: #{$notice--bg--light};
   --notice-text: #{$notice--text--light};
 
+  --notice-button-bg: #{$notice--button--bg--light};
+  --notice-button-bg-hover: #{$notice--button--bg--light--hover};
+  --notice-button-text: #{$notice--button--text--light};
+  --notice-button-text-hover: #{$notice--button--text--light--hover};
+
   // Light - Buttons
   --button-bg: #{$button--bg--light};
   --button-bg-hover: #{$button--bg--light--hover};
@@ -111,6 +116,13 @@
   --slider-thumb-bg-hover: #{$slider--thumb--bg--light--hover};
   --slider-thumb-shadow: #{$slider--thumb--shadow--light};
   --slider-thumb-shadow-hover: #{$slider--thumb--shadow--light--hover};
+
+  // Light - Radio Buttons
+  --radio-button-bg: #{$radio--bg--light};
+  --radio-button-bg-hover: #{$radio--bg--light--hover};
+
+  --radio-active-bg: #{$radio--active--bg--light};
+  --radio-active-bg-hover: #{$radio--active--bg--light--hover};
 
   // Light - About
   --link-item-bg: #{$link--item--bg--light};
@@ -313,6 +325,11 @@
   --notice-bg: #{$notice--bg--dark};
   --notice-text: #{$notice--text--dark};
 
+  --notice-button-bg: #{$notice--button--bg--dark};
+  --notice-button-bg-hover: #{$notice--button--bg--dark--hover};
+  --notice-button-text: #{$notice--button--text--dark};
+  --notice-button-text-hover: #{$notice--button--text--dark--hover};
+
   // Dark - Buttons
   --button-bg: #{$button--bg--dark};
   --button-bg-hover: #{$button--bg--dark--hover};
@@ -343,6 +360,13 @@
   --slider-thumb-bg-hover: #{$slider--thumb--bg--dark--hover};
   --slider-thumb-shadow: #{$slider--thumb--shadow--dark};
   --slider-thumb-shadow-hover: #{$slider--thumb--shadow--dark--hover};
+
+  // Dark - Radio Buttons
+  --radio-button-bg: #{$radio--bg--dark};
+  --radio-button-bg-hover: #{$radio--bg--dark--hover};
+
+  --radio-active-bg: #{$radio--active--bg--dark};
+  --radio-active-bg-hover: #{$radio--active--bg--dark--hover};
 
   // Dark - About
   --link-item-bg: #{$link--item--bg--dark};

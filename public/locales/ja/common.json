@@ -69,6 +69,7 @@
   },
   "dropdown": {
     "party": {
+      "visibility": "編成のプライバシー設定を変更",
       "copy": "編成のリンクをコピー",
       "delete": "編成を削除",
       "remix": "編成をリミックス"
@@ -401,6 +402,33 @@
         "remove": "召喚石を削除する"
       }
     },
+    "team_visibility": {
+      "title": "編成のプライバシー設定を変更",
+      "label": "プライバシー設定",
+      "description": "この編成は誰が共有できるかと編成一覧に表示されるかを変更できます",
+      "alerts": {
+        "unsaved_changes": {
+          "message": "編成のプライバシー設定を変更せずに続けますか？",
+          "buttons": {
+            "confirm": "変更せずに続ける",
+            "cancel": "キャンセル"
+          }
+        }
+      },
+      "options": {
+        "public": "公開",
+        "unlisted": "限定公開",
+        "private": "非公開"
+      },
+      "descriptions": {
+        "public": "誰でも自由に共有可能。編成一覧に表示します。",
+        "unlisted": "リンクが知っている人のみが共有可能。編成一覧に表示しません。",
+        "private": "自分自身だけが可視。編成一覧に表示しません。"
+      },
+      "buttons": {
+        "confirm": "プライバシー設定を変更"
+      }
+    },
     "weapon": {
       "title": "武器変更",
       "buttons": {
@@ -462,6 +490,14 @@
       "turns": {
         "with_count_one": "{{count}}ターン",
         "with_count_other": "{{count}}ターン"
+      }
+    },
+    "notices": {
+      "unlisted": "この編成は限定公開でリンクが知っている人のみが共有可能",
+      "private": "この編成は未公開で自分自身だけが可視",
+      "buttons": {
+        "copy_link": "リンクをコピー",
+        "change_visibility": "プライバシー設定を変更"
       }
     }
   },
