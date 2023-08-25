@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSnapshot } from 'valtio'
-import { Trans, useTranslation } from 'react-i18next'
-import classNames from 'classnames'
+import { useTranslation } from 'react-i18next'
 import debounce from 'lodash.debounce'
 
 import * as RadioGroup from '@radix-ui/react-radio-group'
@@ -12,10 +11,8 @@ import DialogHeader from '~components/common/DialogHeader'
 import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
 
-import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
 import type { DetailsObject } from 'types'
 import type { DialogProps } from '@radix-ui/react-dialog'
-import type { JSONContent } from '@tiptap/core'
 
 import { appState } from '~utils/appState'
 
