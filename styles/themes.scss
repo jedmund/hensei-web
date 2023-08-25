@@ -81,6 +81,11 @@
   --notice-bg: #{$notice--bg--light};
   --notice-text: #{$notice--text--light};
 
+  --notice-button-bg: #{$notice--button--bg--light};
+  --notice-button-bg-hover: #{$notice--button--bg--light--hover};
+  --notice-button-text: #{$notice--button--text--light};
+  --notice-button-text-hover: #{$notice--button--text--light--hover};
+
   // Light - Buttons
   --button-bg: #{$button--bg--light};
   --button-bg-hover: #{$button--bg--light--hover};
@@ -111,6 +116,13 @@
   --slider-thumb-bg-hover: #{$slider--thumb--bg--light--hover};
   --slider-thumb-shadow: #{$slider--thumb--shadow--light};
   --slider-thumb-shadow-hover: #{$slider--thumb--shadow--light--hover};
+
+  // Light - Radio Buttons
+  --radio-button-bg: #{$radio--bg--light};
+  --radio-button-bg-hover: #{$radio--bg--light--hover};
+
+  --radio-active-bg: #{$radio--active--bg--light};
+  --radio-active-bg-hover: #{$radio--active--bg--light--hover};
 
   // Light - About
   --link-item-bg: #{$link--item--bg--light};
@@ -173,6 +185,7 @@
 
   --wind-bg: #{$wind--bg--light};
   --wind-bg-hover: #{$wind--bg--hover--light};
+  --wind-portrait-bg: #{$wind--portrait--bg--light};
   --wind-text: #{$wind--text--light};
   --wind-raid-text: #{$wind--text--raid--light};
   --wind-text-hover: #{$wind--text--hover--light};
@@ -181,6 +194,7 @@
 
   --fire-bg: #{$fire--bg--light};
   --fire-bg-hover: #{$fire--bg--hover--light};
+  --fire-portrait-bg: #{$fire--portrait--bg--light};
   --fire-text: #{$fire--text--light};
   --fire-raid-text: #{$fire--text--raid--light};
   --fire-text-hover: #{$fire--text--hover--light};
@@ -189,6 +203,7 @@
 
   --water-bg: #{$water--bg--light};
   --water-bg-hover: #{$water--bg--hover--light};
+  --water-portrait-bg: #{$water--portrait--bg--light};
   --water-text: #{$water--text--light};
   --water-raid-text: #{$water--text--raid--light};
   --water-text-hover: #{$water--text--hover--light};
@@ -197,6 +212,7 @@
 
   --earth-bg: #{$earth--bg--light};
   --earth-bg-hover: #{$earth--bg--hover--light};
+  --earth-portrait-bg: #{$earth--portrait--bg--light};
   --earth-text: #{$earth--text--light};
   --earth-raid-text: #{$earth--text--raid--light};
   --earth-text-hover: #{$earth--text--hover--light};
@@ -205,6 +221,7 @@
 
   --dark-bg: #{$dark--bg--light};
   --dark-bg-hover: #{$dark--bg--hover--light};
+  --dark-portrait-bg: #{$dark--portrait--bg--light};
   --dark-text: #{$dark--text--light};
   --dark-raid-text: #{$dark--text--raid--light};
   --dark-text-hover: #{$dark--text--hover--light};
@@ -213,6 +230,7 @@
 
   --light-bg: #{$light--bg--light};
   --light-bg-hover: #{$light--bg--hover--light};
+  --light-portrait-bg: #{$light--portrait--bg--light};
   --light-text: #{$light--text--light};
   --light-raid-text: #{$light--text--raid--light};
   --light-text-hover: #{$light--text--hover--light};
@@ -307,6 +325,11 @@
   --notice-bg: #{$notice--bg--dark};
   --notice-text: #{$notice--text--dark};
 
+  --notice-button-bg: #{$notice--button--bg--dark};
+  --notice-button-bg-hover: #{$notice--button--bg--dark--hover};
+  --notice-button-text: #{$notice--button--text--dark};
+  --notice-button-text-hover: #{$notice--button--text--dark--hover};
+
   // Dark - Buttons
   --button-bg: #{$button--bg--dark};
   --button-bg-hover: #{$button--bg--dark--hover};
@@ -337,6 +360,13 @@
   --slider-thumb-bg-hover: #{$slider--thumb--bg--dark--hover};
   --slider-thumb-shadow: #{$slider--thumb--shadow--dark};
   --slider-thumb-shadow-hover: #{$slider--thumb--shadow--dark--hover};
+
+  // Dark - Radio Buttons
+  --radio-button-bg: #{$radio--bg--dark};
+  --radio-button-bg-hover: #{$radio--bg--dark--hover};
+
+  --radio-active-bg: #{$radio--active--bg--dark};
+  --radio-active-bg-hover: #{$radio--active--bg--dark--hover};
 
   // Dark - About
   --link-item-bg: #{$link--item--bg--dark};
@@ -399,6 +429,7 @@
 
   --wind-bg: #{$wind--bg--dark};
   --wind-bg-hover: #{$wind--bg--hover--dark};
+  --wind-portrait-bg: #{$wind--portrait--bg--dark};
   --wind-text: #{$wind--text--dark};
   --wind-raid-text: #{$wind--text--raid--dark};
   --wind-text-hover: #{$wind--text--hover--dark};
@@ -407,6 +438,7 @@
 
   --fire-bg: #{$fire--bg--dark};
   --fire-bg-hover: #{$fire--bg--hover--dark};
+  --fire-portrait-bg: #{$fire--portrait--bg--dark};
   --fire-text: #{$fire--text--dark};
   --fire-raid-text: #{$fire--text--raid--dark};
   --fire-text-hover: #{$fire--text--hover--dark};
@@ -415,6 +447,7 @@
 
   --water-bg: #{$water--bg--dark};
   --water-bg-hover: #{$water--bg--hover--dark};
+  --water-portrait-bg: #{$water--portrait--bg--dark};
   --water-text: #{$water--text--dark};
   --water-raid-text: #{$water--text--raid--dark};
   --water-text-hover: #{$water--text--hover--dark};
@@ -423,6 +456,7 @@
 
   --earth-bg: #{$earth--bg--dark};
   --earth-bg-hover: #{$earth--bg--hover--dark};
+  --earth-portrait-bg: #{$earth--portrait--bg--dark};
   --earth-text: #{$earth--text--dark};
   --earth-raid-text: #{$earth--text--raid--dark};
   --earth-text-hover: #{$earth--text--hover--dark};
@@ -431,6 +465,7 @@
 
   --dark-bg: #{$dark--bg--dark};
   --dark-bg-hover: #{$dark--bg--hover--dark};
+  --dark-portrait-bg: #{$dark--portrait--bg--dark};
   --dark-text: #{$dark--text--dark};
   --dark-raid-text: #{$dark--text--raid--dark};
   --dark-text-hover: #{$dark--text--hover--dark};
@@ -439,6 +474,7 @@
 
   --light-bg: #{$light--bg--dark};
   --light-bg-hover: #{$light--bg--hover--dark};
+  --light-portrait-bg: #{$light--portrait--bg--dark};
   --light-text: #{$light--text--dark};
   --light-raid-text: #{$light--text--raid--dark};
   --light-text-hover: #{$light--text--hover--dark};

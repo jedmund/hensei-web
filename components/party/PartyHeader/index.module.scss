@@ -18,6 +18,58 @@
     }
   }
 
+  .notice {
+    align-items: center;
+    background: var(--notice-bg);
+    border-radius: $card-corner;
+    display: flex;
+    gap: $unit-2x;
+    font-size: $font-regular;
+    padding: $unit-4x;
+    overflow: hidden;
+
+    @include breakpoint(small-tablet) {
+      flex-direction: column;
+      gap: $unit;
+      padding: $unit-2x;
+    }
+
+    p {
+      color: var(--notice-text);
+      flex-grow: 1;
+    }
+
+    .icon {
+      align-items: center;
+      background-color: var(--notice-button-bg);
+      border-radius: $full-corner;
+      display: flex;
+      justify-content: center;
+      height: $unit-6x;
+      width: $unit-6x;
+      flex-shrink: 0;
+
+      svg {
+        fill: var(--notice-text);
+        width: $unit-3x;
+        height: $unit-3x;
+      }
+    }
+
+    .buttons {
+      justify-content: flex-end;
+      display: flex;
+      flex-shrink: 0;
+      gap: $unit;
+
+      @include breakpoint(small-tablet) {
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+      }
+    }
+  }
+
   .details {
     box-sizing: border-box;
     display: block;

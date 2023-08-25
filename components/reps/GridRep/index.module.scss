@@ -6,10 +6,14 @@
   display: grid;
   grid-template-rows: 1fr 1fr;
   gap: $unit;
-  padding: $unit-2x;
+  padding: $unit-2x $unit-2x 0 $unit-2x;
   min-width: 320px;
   width: 100%;
   opacity: 1;
+
+  @include breakpoint(phone) {
+    padding-bottom: $unit-2x;
+  }
 
   &.visible {
     transition: opacity 0.3s ease-in-out;
@@ -29,6 +33,10 @@
       text-decoration: none;
     }
 
+    .indicators {
+      opacity: 1;
+    }
+
     .weaponGrid {
       cursor: pointer;
 
@@ -46,7 +54,70 @@
     }
   }
 
-  & > .weaponGrid {
+  .gridContainer {
+    aspect-ratio: 2/0.95;
+    width: 100%;
+  }
+
+  .characterGrid {
+    aspect-ratio: 2/0.95;
+    display: flex;
+    justify-content: space-between;
+
+    .protagonist {
+      border-width: 1px;
+      border-style: solid;
+
+      &.fire {
+        background: var(--fire-portrait-bg);
+        border-color: var(--fire-bg);
+      }
+
+      &.water {
+        background: var(--water-portrait-bg);
+        border-color: var(--water-bg);
+      }
+
+      &.wind {
+        background: var(--wind-portrait-bg);
+        border-color: var(--wind-bg);
+      }
+
+      &.earth {
+        background: var(--earth-portrait-bg);
+        border-color: var(--earth-bg);
+      }
+
+      &.light {
+        background: var(--light-portrait-bg);
+        border-color: var(--light-bg);
+      }
+
+      &.dark {
+        background: var(--dark-portrait-bg);
+        border-color: var(--dark-bg);
+      }
+
+      &.empty {
+        background: var(--card-bg);
+      }
+    }
+
+    .grid {
+      background: var(--background);
+      border-radius: $item-corner-small;
+      aspect-ratio: 69/142;
+      list-style: none;
+      height: calc(100% - $unit-half);
+
+      img {
+        border-radius: $item-corner-small;
+        width: 100%;
+      }
+    }
+  }
+
+  .weaponGrid {
     aspect-ratio: 2/0.95;
     display: grid;
     grid-template-columns: 1fr 3.36fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
@@ -54,7 +125,7 @@
 
     .weapon {
       background: var(--unit-bg);
-      border-radius: 4px;
+      border-radius: $item-corner-small;
     }
 
     .mainhand.weapon {
@@ -91,6 +162,51 @@
     }
   }
 
+  .summonGrid {
+    aspect-ratio: 2/0.94;
+    display: flex;
+    gap: $unit;
+    justify-content: space-between;
+
+    .summon,
+    .mainSummon {
+      background: var(--background);
+      border-radius: $item-corner-small;
+
+      img {
+        border-radius: $item-corner-small;
+        width: 100%;
+      }
+    }
+
+    .mainSummon {
+      aspect-ratio: 56/97;
+      display: grid;
+      grid-column: 1 / 2; /* spans one column */
+    }
+
+    .summons {
+      display: grid; /* make the right-images container a grid */
+      grid-template-columns: repeat(
+        2,
+        1fr
+      ); /* create 3 columns, each taking up 1 fraction */
+      grid-template-rows: repeat(
+        2,
+        1fr
+      ); /* create 3 rows, each taking up 1 fraction */
+      gap: $unit;
+      aspect-ratio: 83/100;
+      // column-gap: $unit;
+      // row-gap: $unit-2x;
+    }
+
+    .summon {
+      aspect-ratio: 184 / 138;
+      display: grid;
+    }
+  }
+
   .details {
     display: flex;
     flex-direction: column;
@@ -104,6 +220,7 @@
       padding-bottom: 1px;
       text-overflow: ellipsis;
       white-space: nowrap;
+      min-height: 24px;
       max-width: 258px; // Can we not do this?
 
       &.empty {
@@ -122,6 +239,18 @@
         flex-direction: column;
         flex-grow: 1;
         gap: calc($unit / 2);
+      }
+
+      .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: $unit * 2.5;
+        height: $unit * 2.5;
+
+        svg {
+          fill: var(--text-tertiary);
+        }
       }
 
       button svg {
@@ -157,6 +286,7 @@
     }
 
     time {
+      line-height: 18px;
       white-space: nowrap;
     }
 
@@ -231,6 +361,43 @@
 
       .no-user {
         background: $grey-80;
+      }
+    }
+  }
+
+  .indicators {
+    display: flex;
+    flex-direction: row;
+    gap: $unit;
+    margin-top: $unit * -1;
+    margin-bottom: $unit-fourth;
+    justify-content: center;
+    opacity: 0;
+
+    @include breakpoint(phone) {
+      display: none;
+    }
+
+    li {
+      flex-grow: 1;
+      text-indent: -9999px;
+      padding: $unit 0;
+
+      .indicator {
+        transition: background-color 0.12s ease-in-out;
+        height: $unit;
+        border-radius: $unit-half;
+        background-color: var(--button-contained-bg-hover);
+      }
+
+      span {
+        text-indent: -9999px;
+        position: absolute;
+      }
+
+      &:hover .indicator,
+      &.active .indicator {
+        background-color: var(--text-secondary);
       }
     }
   }

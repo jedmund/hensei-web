@@ -41,6 +41,7 @@ export type DetailsObject = {
   job?: Job
   extra?: boolean
   guidebooks?: string[]
+  visibility?: number
 }
 
 export type ExtendedMastery = {

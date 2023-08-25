@@ -169,6 +169,7 @@ const Party = (props: Props) => {
     if (details.guidebook1_id) payload.guidebook1_id = details.guidebook1_id
     if (details.guidebook2_id) payload.guidebook2_id = details.guidebook2_id
     if (details.guidebook3_id) payload.guidebook3_id = details.guidebook3_id
+    if (details.visibility) payload.visibility = details.visibility
     if (getLocalId()) payload.local_id = getLocalId()
 
     if (Object.keys(payload).length >= 1) return { party: payload }
@@ -292,6 +293,7 @@ const Party = (props: Props) => {
     appState.party.favorited = team.favorited
     appState.party.remix = team.remix
     appState.party.remixes = team.remixes
+    appState.party.visibility = team.visibility
     appState.party.sourceParty = team.source_party
     appState.party.created_at = team.created_at
     appState.party.updated_at = team.updated_at

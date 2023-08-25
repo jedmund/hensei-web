@@ -47,32 +47,32 @@
     }
 
     &.fire {
-      background: var(--fire-hover-bg);
+      background: var(--fire-portrait-bg);
       border-color: var(--fire-bg);
     }
 
     &.water {
-      background: var(--water-hover-bg);
+      background: var(--water-portrait-bg);
       border-color: var(--water-bg);
     }
 
     &.wind {
-      background: var(--wind-hover-bg);
+      background: var(--wind-portrait-bg);
       border-color: var(--wind-bg);
     }
 
     &.earth {
-      background: var(--earth-hover-bg);
+      background: var(--earth-portrait-bg);
       border-color: var(--earth-bg);
     }
 
     &.light {
-      background: var(--light-hover-bg);
+      background: var(--light-portrait-bg);
       border-color: var(--light-bg);
     }
 
     &.dark {
-      background: var(--dark-hover-bg);
+      background: var(--dark-portrait-bg);
       border-color: var(--dark-bg);
     }
 
