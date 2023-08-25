@@ -487,6 +487,7 @@
         "minutes": "分",
         "seconds": "秒"
       },
+
       "turns": {
         "with_count_one": "{{count}}ターン",
         "with_count_other": "{{count}}ターン"
@@ -499,6 +500,10 @@
         "copy_link": "リンクをコピー",
         "change_visibility": "プライバシー設定を変更"
       }
+    },
+    "tooltips": {
+      "unlisted": "この編成は限定公開",
+      "private": "この編成は未公開"
     }
   },
   "proficiencies": {

@@ -241,6 +241,18 @@
         gap: calc($unit / 2);
       }
 
+      .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: $unit * 2.5;
+        height: $unit * 2.5;
+
+        svg {
+          fill: var(--text-tertiary);
+        }
+      }
+
       button svg {
         width: 14px;
         height: 14px;

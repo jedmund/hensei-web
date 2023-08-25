@@ -499,6 +499,10 @@
         "copy_link": "Copy link",
         "change_visibility": "Change visibility"
       }
+    },
+    "tooltips": {
+      "unlisted": "This party is unlisted",
+      "private": "This party is private"
     }
   },
   "proficiencies": {
