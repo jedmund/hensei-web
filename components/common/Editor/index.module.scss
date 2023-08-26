@@ -24,7 +24,8 @@
     flex-grow: 1;
     font-size: $font-regular;
     line-height: 1.4;
-    overflow: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: $unit * 1.5 $unit-2x;
     white-space: pre-wrap;
     width: 100%;
