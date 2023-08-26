@@ -34,10 +34,11 @@ const UpdatesPage = () => {
       ],
     },
     '1.2.0': {
-      updates: 8,
+      updates: 9,
       bugs: 0,
       images: [
         'party-redesign',
+        'visibility',
         'rich-text',
         'mentions',
         'include-exclude',
