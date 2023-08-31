@@ -34,9 +34,10 @@ const UpdatesPage = () => {
       ],
     },
     '1.2.0': {
-      updates: 9,
+      updates: 10,
       bugs: 0,
       images: [
+        'party-peek',
         'party-redesign',
         'visibility',
         'rich-text',
@@ -74,7 +75,16 @@ const UpdatesPage = () => {
   return (
     <div className={classes}>
       <h1>{common('about.segmented_control.updates')}</h1>
-      <section className={styles.version} data-version="1.1">
+      <ContentUpdate
+        version="2023-08L"
+        dateString="2023/08/31"
+        event="events.legfest"
+        newItems={{
+          character: ['3040481000', '3040482000'],
+          weapon: ['1040218700', '1040617700', '1040712700', '1030406400'],
+        }}
+      />
+      <section className={styles.version} data-version="1.2">
         <div className={styles.header}>
           <h3>1.2.0</h3>
           <time>2023/08/25</time>
@@ -82,19 +92,6 @@ const UpdatesPage = () => {
         <div className={styles.contents}>
           <section>
             <h2>{updates('labels.features')}</h2>
-            <div className={styles.foreword}>
-              {updates('versions.1.2.0.notes')
-                .split('\n')
-                .map((item) => (
-                  <p>{item}</p>
-                ))}
-              <LinkItem
-                className="discord constrained update"
-                title="granblue-tools"
-                link="https://discord.gg/qyZ5hGdPC8"
-                icon={<DiscordIcon />}
-              />
-            </div>
             <ul className={styles.features}>
               {[...Array(versionUpdates['1.2.0'].updates)].map((e, i) => (
                 <li key={`1.2.0-update-${i}`}>
@@ -109,8 +106,22 @@ const UpdatesPage = () => {
                 </li>
               ))}
             </ul>
+            <div className={styles.foreword}>
+              <h2>Developer notes</h2>
+              {updates('versions.1.2.0.notes')
+                .split('\n')
+                .map((item) => (
+                  <p>{item}</p>
+                ))}
+              <LinkItem
+                className="discord constrained update"
+                title="granblue-tools"
+                link="https://discord.gg/qyZ5hGdPC8"
+                icon={<DiscordIcon />}
+              />
+            </div>
           </section>
-          <section>
+          {/* <section>
             <h2>Bug fixes</h2>
             <ul className={styles.bugs}>
               {[...Array(versionUpdates['1.2.0'].bugs)].map((e, i) => (
@@ -119,7 +130,7 @@ const UpdatesPage = () => {
                 </li>
               ))}
             </ul>
-          </section>
+          </section> */}
         </div>
       </section>
       <ContentUpdate
