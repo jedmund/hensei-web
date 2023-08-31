@@ -19,6 +19,51 @@
     "uncap": "上限解放"
   },
   "versions": {
+    "1.2.0": {
+      "notes": "I'm very bad at writing actual release notes, so this is a consolidation of the bigger features released in the last six months. Don't worry: there's some new stuff here too!\nThe next features (in no particular order) will be: a way to define roles and substitutions for characters, a collection tracker and hopefully making progress on guides. That's a lot, but I'll chip away at it bit by bit.\nAs always, if you have any feedback, feel free to reach out in the granblue-tools Discord. Thanks for using granblue.team!",
+      "features": [
+        {
+          "title": "編成を除いてみよう",
+          "blurb": "編成の下側にマウスをロールオーバーするとキャラクターや召喚石が編成を開けずに覗ける"
+        },
+        {
+          "title": "編成の部分が簡単に見える",
+          "blurb": "編成ページの上側にあるリニュアルで編成の部分が覗ける"
+        },
+        {
+          "title": "編成のプライバシーを設定",
+          "blurb": "編成のプライバシー設定を限定公開・未公開に設定できる"
+        },
+        {
+          "title": "リッチテキスト編集",
+          "blurb": "編成の詳細を書く時リッチテキストで編集できるようになった"
+        },
+        {
+          "title": "＠でメンション",
+          "blurb": "キャラクター・武器・召喚石を編成詳細でメンションできる"
+        },
+        {
+          "title": "包含・除外",
+          "blurb": "編成がどんなアイテムが組んでいるかでフィルターできる"
+        },
+        {
+          "title": "バトル選択ボックスがリニューアル",
+          "blurb": "バトルを名前で検索、ソロ・マルチ・イベントでフィルターできる"
+        },
+        {
+          "title": "検索ボックスに２つのビュー選択肢",
+          "blurb": "編成のアイテムを検索すると最近追加したアイテムか最近使用したアイテムでソートできる"
+        },
+        {
+          "title": "クイック召喚",
+          "blurb": "クイック召喚に使用する召喚石を選択し、編成詳細にオート召喚の設定が変更できる"
+        },
+        {
+          "title": "リミテッド武器の覚醒",
+          "blurb": "リミッテッド武器の覚醒レベルが入力できるようになった"
+        }
+      ]
+    },
     "2023-08F": {
       "features": "新ジョブ「キング」を追加"
     },

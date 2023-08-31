@@ -19,6 +19,51 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "1.2.0": {
+      "notes": "I'm very bad at writing actual release notes, so this is a consolidation of the bigger features released in the last six months. Don't worry: there's some new stuff here too!\nThe next features (in no particular order) will be: a way to define roles and substitutions for characters, a collection tracker and hopefully making progress on guides. That's a lot, but I'll chip away at it bit by bit.\nAs always, if you have any feedback, feel free to reach out in the granblue-tools Discord. Thanks for using granblue.team!",
+      "features": [
+        {
+          "title": "Take a peek into teams",
+          "blurb": "Hover over the bottom of a team to see the characters and summons without opening it."
+        },
+        {
+          "title": "New team navigation",
+          "blurb": "You can also peek into all the views of a team with the new design at the top of the teams page."
+        },
+        {
+          "title": "Control who can see your team",
+          "blurb": "You can now set teams to be public, private, or only visible to people with the link."
+        },
+        {
+          "title": "Rich text editing",
+          "blurb": "Now you can use rich text when writing team descriptions. Add bold, italics, links, and more!"
+        },
+        {
+          "title": "Mentions",
+          "blurb": "You can also link to individual items in your descriptions. Type @ followed by the name of the item."
+        },
+        {
+          "title": "Inclusion and Exclusion",
+          "blurb": "Sick of seeing Ereshkigal? Now you can filter teams by which items appear—or don't appear—in them."
+        },
+        {
+          "title": "Redesigned battle selection",
+          "blurb": "Battle selection has been revamped. Search for a battle by name, or filter by whether it's solo, a raid, or event-based."
+        },
+        {
+          "title": "Search views",
+          "blurb": "Now you can choose to see either recently used items or the newest items when adding weapons and summons"
+        },
+        {
+          "title": "Quick summons",
+          "blurb": "Specify which summon is set as the quick summon and specify auto-summon settings in Battle settings."
+        },
+        {
+          "title": "Grand awakenings",
+          "blurb": "Now you can set which Grand weapons you spent cages on for a little extra power."
+        }
+      ]
+    },
     "2023-08F": {
       "features": ["Added new class \"Street King\""]
     },

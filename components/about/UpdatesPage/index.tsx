@@ -3,6 +3,8 @@ import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
 import ContentUpdate from '~components/about/ContentUpdate'
+import LinkItem from '../LinkItem'
+import DiscordIcon from '~public/icons/discord.svg'
 
 import styles from './index.module.scss'
 
@@ -31,6 +33,22 @@ const UpdatesPage = () => {
         'toasts',
       ],
     },
+    '1.2.0': {
+      updates: 10,
+      bugs: 0,
+      images: [
+        'party-peek',
+        'party-redesign',
+        'visibility',
+        'rich-text',
+        'mentions',
+        'include-exclude',
+        'raid-search',
+        'search-views',
+        'quick-summon',
+        'grand-awakening',
+      ],
+    },
     '202302U2': {
       updates: 1,
     },
@@ -57,6 +75,64 @@ const UpdatesPage = () => {
   return (
     <div className={classes}>
       <h1>{common('about.segmented_control.updates')}</h1>
+      <ContentUpdate
+        version="2023-08L"
+        dateString="2023/08/31"
+        event="events.legfest"
+        newItems={{
+          character: ['3040481000', '3040482000'],
+          weapon: ['1040218700', '1040617700', '1040712700', '1030406400'],
+        }}
+      />
+      <section className={styles.version} data-version="1.2">
+        <div className={styles.header}>
+          <h3>1.2.0</h3>
+          <time>2023/08/25</time>
+        </div>
+        <div className={styles.contents}>
+          <section>
+            <h2>{updates('labels.features')}</h2>
+            <ul className={styles.features}>
+              {[...Array(versionUpdates['1.2.0'].updates)].map((e, i) => (
+                <li key={`1.2.0-update-${i}`}>
+                  {image(
+                    updates(`versions.1.2.0.features.${i}.title`),
+                    `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
+                    versionUpdates['1.2.0'].images[i],
+                    'jpg'
+                  )}
+                  <h3>{updates(`versions.1.2.0.features.${i}.title`)}</h3>
+                  <p>{updates(`versions.1.2.0.features.${i}.blurb`)}</p>
+                </li>
+              ))}
+            </ul>
+            <div className={styles.foreword}>
+              <h2>Developer notes</h2>
+              {updates('versions.1.2.0.notes')
+                .split('\n')
+                .map((item) => (
+                  <p>{item}</p>
+                ))}
+              <LinkItem
+                className="discord constrained update"
+                title="granblue-tools"
+                link="https://discord.gg/qyZ5hGdPC8"
+                icon={<DiscordIcon />}
+              />
+            </div>
+          </section>
+          {/* <section>
+            <h2>Bug fixes</h2>
+            <ul className={styles.bugs}>
+              {[...Array(versionUpdates['1.2.0'].bugs)].map((e, i) => (
+                <li key={`1.2.0-bugfix-${i}`}>
+                  {updates(`versions.1.2.0.bugs.${i}`)}
+                </li>
+              ))}
+            </ul>
+          </section> */}
+        </div>
+      </section>
       <ContentUpdate
         version="2023-08F"
         dateString="2023/08/16"
