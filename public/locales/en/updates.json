@@ -23,8 +23,12 @@
       "notes": "I'm very bad at writing actual release notes, so this is a consolidation of the bigger features released in the last six months. Don't worry: there's some new stuff here too!\nThe next features (in no particular order) will be: a way to define roles and substitutions for characters, a collection tracker and hopefully making progress on guides. That's a lot, but I'll chip away at it bit by bit.\nAs always, if you have any feedback, feel free to reach out in the granblue-tools Discord. Thanks for using granblue.team!",
       "features": [
         {
-          "title": "New party navigation",
-          "blurb": "Get a peek into all the aspects of a team quickly with new mini-units at the top of the page."
+          "title": "Take a peek into teams",
+          "blurb": "Hover over the bottom of a team to see the characters and summons without opening it."
+        },
+        {
+          "title": "New team navigation",
+          "blurb": "You can also peek into all the views of a team with the new design at the top of the teams page."
         },
         {
           "title": "Control who can see your team",
