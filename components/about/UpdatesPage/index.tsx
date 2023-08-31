@@ -134,6 +134,14 @@ const UpdatesPage = () => {
         </div>
       </section>
       <ContentUpdate
+        version="2023-08U"
+        dateString="2023/08/22"
+        event="events.uncap"
+        uncappedItems={{
+          summon: ['2040185000', '2040225000', '2040205000', '2040261000'],
+        }}
+      />
+      <ContentUpdate
         version="2023-08F"
         dateString="2023/08/16"
         event="events.flash"
