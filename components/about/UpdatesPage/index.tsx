@@ -110,8 +110,8 @@ const UpdatesPage = () => {
               <h2>Developer notes</h2>
               {updates('versions.1.2.0.notes')
                 .split('\n')
-                .map((item) => (
-                  <p>{item}</p>
+                .map((item, i) => (
+                  <p key={`note-${i}`}>{item}</p>
                 ))}
               <LinkItem
                 className="discord constrained update"
