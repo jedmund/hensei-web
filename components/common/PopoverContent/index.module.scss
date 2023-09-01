@@ -54,6 +54,40 @@
   }
 }
 
+.transcendence {
+  display: flex;
+  flex-direction: column;
+  gap: $unit-half;
+  align-items: center;
+  justify-content: center;
+  width: $unit-10x;
+  height: $unit-10x;
+
+  animation: scaleIn $duration-zoom ease-out;
+  background: var(--dialog-bg);
+  border-radius: $card-corner;
+  border: 0.5px solid rgba(0, 0, 0, 0.18);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.24);
+  outline: none;
+  padding: $unit;
+  transform-origin: var(--radix-popover-content-transform-origin);
+  z-index: 32;
+
+  &.open {
+    opacity: 1;
+    display: flex;
+  }
+
+  h4 {
+    font-size: $font-small;
+    font-weight: $medium;
+  }
+
+  .pending {
+    color: $yellow;
+  }
+}
+
 .arrow {
   fill: var(--dialog-bg);
   filter: drop-shadow(0px 1px 1px rgb(0 0 0 / 0.18));
