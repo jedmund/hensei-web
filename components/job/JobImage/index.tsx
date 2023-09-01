@@ -93,6 +93,7 @@ const JobImage = ({
         editable={editable}
         open={open}
         job={job}
+        key={`accessory-${open}`}
         onAccessorySelected={onAccessorySelected}
         onOpenChange={handlePopoverOpenChanged}
       >

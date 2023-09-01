@@ -29,7 +29,7 @@
   flex-direction: column;
   gap: $unit-2x;
   min-width: 20vw;
-  max-width: 32vw;
+  max-width: 40vw;
   padding: $unit * 4;
 
   @include breakpoint(tablet) {

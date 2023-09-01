@@ -229,8 +229,8 @@ const WeaponHovercard = (props: Props) => {
         />
         {props.gridWeapon.object.ax &&
           props.gridWeapon.ax &&
-          props.gridWeapon.ax[0].modifier !== undefined &&
-          props.gridWeapon.ax[0].strength !== undefined &&
+          props.gridWeapon.ax[0].modifier !== null &&
+          props.gridWeapon.ax[0].strength !== null &&
           axSection}
         {props.gridWeapon.awakening && awakeningSection}
         {props.gridWeapon.weapon_keys &&

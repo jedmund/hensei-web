@@ -75,7 +75,8 @@ const CharacterHovercard = (props: Props) => {
             {[...Array(4)].map((e, i) => {
               const ringIndex = i + 1
               const ringStat: ExtendedMastery =
-                props.gridCharacter.over_mastery[i]
+                props.gridCharacter.over_mastery[ringIndex]
+
               if (ringStat && ringStat.modifier && ringStat.modifier > 0) {
                 if (ringIndex === 1 || ringIndex === 2) {
                   return masteryElement(overMastery.a, ringStat)

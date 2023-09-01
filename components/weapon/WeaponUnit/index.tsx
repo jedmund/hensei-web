@@ -448,7 +448,8 @@ const WeaponUnit = ({
       gridWeapon.ax &&
       gridWeapon.ax.length > 0
     ) {
-      for (let i = 0; i < gridWeapon.ax.length; i++) {
+      const numSkills = gridWeapon.ax[1].modifier ? 2 : 1
+      for (let i = 0; i < numSkills; i++) {
         const image = axImage(i)
         if (image) images.push(image)
       }

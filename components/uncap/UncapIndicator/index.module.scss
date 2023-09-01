@@ -1,6 +1,11 @@
 .wrapper {
   display: flex;
 
+  &.hovercard {
+    min-width: 100px;
+    justify-content: center;
+  }
+
   .indicator {
     display: flex;
     flex-direction: row;

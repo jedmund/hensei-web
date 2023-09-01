@@ -4,8 +4,9 @@ import TranscendencePopover from '~components/uncap/TranscendencePopover'
 import TranscendenceStar from '~components/uncap/TranscendenceStar'
 
 import styles from './index.module.scss'
+import classNames from 'classnames'
 
-interface Props {
+interface Props extends React.ComponentProps<'div'> {
   type: 'character' | 'weapon' | 'summon'
   rarity?: number
   uncapLevel?: number
@@ -24,6 +25,15 @@ const UncapIndicator = (props: Props) => {
   const numStars = setNumStars()
 
   const [popoverOpen, setPopoverOpen] = useState(false)
+
+  const transcendenceStarRef = React.createRef<HTMLDivElement>()
+
+  const classes = classNames(
+    {
+      [styles.wrapper]: true,
+    },
+    props.className?.split(' ').map((className) => styles[className])
+  )
 
   function setNumStars() {
     let numStars
@@ -74,7 +84,11 @@ const UncapIndicator = (props: Props) => {
 
   function sendTranscendenceStage(stage: number) {
     if (props.updateTranscendence) props.updateTranscendence(stage)
-    togglePopover(false)
+    setPopoverOpen(false)
+  }
+
+  function handleStarClicked() {
+    if (props.editable) togglePopover(!popoverOpen)
   }
 
   const transcendence = (i: number) => {
@@ -82,25 +96,27 @@ const UncapIndicator = (props: Props) => {
     return props.type === 'character' || props.type === 'summon' ? (
       <TranscendencePopover
         open={popoverOpen}
-        stage={props.transcendenceStage ? props.transcendenceStage : 0}
+        stage={props.transcendenceStage || 0}
         type={props.type}
         onOpenChange={togglePopover}
         sendValue={sendTranscendenceStage}
-        key={`star_${i}`}
+        key={`popover_${i}_${popoverOpen}`}
+        starRef={transcendenceStarRef}
         tabIndex={tabIndex}
       >
         <TranscendenceStar
           key={`star_${i}`}
-          stage={props.transcendenceStage}
+          stage={props.transcendenceStage || 0}
           editable={props.editable}
           interactive={false}
-          onStarClick={() => togglePopover(true)}
+          ref={transcendenceStarRef}
+          onStarClick={handleStarClicked}
         />
       </TranscendencePopover>
     ) : (
       <TranscendenceStar
         key={`star_${i}`}
-        stage={props.transcendenceStage}
+        stage={props.transcendenceStage || 0}
         editable={props.editable}
         interactive={false}
         tabIndex={tabIndex}
@@ -150,7 +166,7 @@ const UncapIndicator = (props: Props) => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={classes}>
       <ul className={styles.indicator}>
         {Array.from(Array(numStars)).map((x, i) => {
           if (props.type === 'character' && i > 4) {

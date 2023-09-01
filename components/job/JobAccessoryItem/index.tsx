@@ -18,7 +18,7 @@ const JobAccessoryItem = ({ accessory, selected }: Props) => {
 
   return (
     <RadioGroup.Item
-      className="JobAccessoryItem"
+      className={styles.item}
       data-state={selected ? 'checked' : 'unchecked'}
       value={accessory.id}
     >

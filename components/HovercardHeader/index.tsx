@@ -4,6 +4,7 @@ import UncapIndicator from '~components/uncap/UncapIndicator'
 import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
 
 import styles from './index.module.scss'
+import classNames from 'classnames'
 
 interface Props {
   gridObject: GridCharacter | GridSummon | GridWeapon
@@ -107,6 +108,61 @@ const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
     }
   }
 
+  const summonProficiency = (
+    <div className={styles.icons}>
+      <WeaponLabelIcon labelType={Element[object.element]} size="small" />
+    </div>
+  )
+
+  const weaponProficiency = (
+    <div className={styles.icons}>
+      <WeaponLabelIcon labelType={Element[object.element]} size="small" />
+      {'proficiency' in object && !Array.isArray(object.proficiency) && (
+        <WeaponLabelIcon
+          labelType={Proficiency[object.proficiency]}
+          size="small"
+        />
+      )}
+    </div>
+  )
+
+  const characterProficiency = (
+    <div
+      className={classNames({
+        [styles.icons]: true,
+      })}
+    >
+      <WeaponLabelIcon labelType={Element[object.element]} size="small" />
+
+      {'proficiency' in object && Array.isArray(object.proficiency) && (
+        <WeaponLabelIcon
+          labelType={Proficiency[object.proficiency[0]]}
+          size="small"
+        />
+      )}
+
+      {'proficiency' in object &&
+        Array.isArray(object.proficiency) &&
+        object.proficiency.length > 1 && (
+          <WeaponLabelIcon
+            labelType={Proficiency[object.proficiency[1]]}
+            size="small"
+          />
+        )}
+    </div>
+  )
+
+  function proficiency() {
+    switch (type) {
+      case 'character':
+        return characterProficiency
+      case 'summon':
+        return summonProficiency
+      case 'weapon':
+        return weaponProficiency
+    }
+  }
+
   return (
     <header className={styles.root}>
       <div className={styles.title}>
@@ -117,21 +173,9 @@ const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
         </div>
       </div>
       <div className={styles.subInfo}>
-        <div className={styles.icons}>
-          <WeaponLabelIcon labelType={Element[object.element]} />
-          {'proficiency' in object && Array.isArray(object.proficiency) && (
-            <WeaponLabelIcon labelType={Proficiency[object.proficiency[0]]} />
-          )}
-          {'proficiency' in object && !Array.isArray(object.proficiency) && (
-            <WeaponLabelIcon labelType={Proficiency[object.proficiency]} />
-          )}
-          {'proficiency' in object &&
-            Array.isArray(object.proficiency) &&
-            object.proficiency.length > 1 && (
-              <WeaponLabelIcon labelType={Proficiency[object.proficiency[1]]} />
-            )}
-        </div>
+        {proficiency()}
         <UncapIndicator
+          className="hovercard"
           type={type}
           ulb={object.uncap.ulb || false}
           flb={object.uncap.flb || false}

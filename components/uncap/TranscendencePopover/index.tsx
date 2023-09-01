@@ -17,6 +17,7 @@ interface Props
     HTMLDivElement
   > {
   type: 'character' | 'summon'
+  starRef: React.RefObject<HTMLDivElement>
   open: boolean
   stage: number
   onOpenChange?: (open: boolean) => void
@@ -24,8 +25,9 @@ interface Props
 }
 
 const TranscendencePopover = ({
-  children,
   open: popoverOpen,
+  starRef,
+  children,
   type,
   stage,
   tabIndex,
@@ -45,8 +47,8 @@ const TranscendencePopover = ({
   })
 
   useEffect(() => {
-    if (open) popoverRef.current?.focus()
-  }, [])
+    setOpen(popoverOpen)
+  }, [popoverOpen])
 
   useEffect(() => {
     if (stage) setCurrentStage(stage)
@@ -57,10 +59,6 @@ const TranscendencePopover = ({
     else if (type === 'summon') setBaseLevel(200)
   }, [type])
 
-  useEffect(() => {
-    setOpen(popoverOpen)
-  }, [popoverOpen])
-
   function handleFragmentClicked(newStage: number) {
     setCurrentStage(newStage)
     if (sendValue) sendValue(newStage)
@@ -70,13 +68,33 @@ const TranscendencePopover = ({
     setCurrentStage(newStage)
   }
 
+  function closePopover() {
+    setOpen(false)
+    if (onOpenChange) onOpenChange(false)
+  }
+
+  function handlePointerDownOutside(
+    event: CustomEvent<{ originalEvent: PointerEvent }>
+  ) {
+    const target = event.detail.originalEvent.target as Element
+    if (
+      target &&
+      starRef.current &&
+      target.closest('.TranscendenceStar') !== starRef.current
+    ) {
+      closePopover()
+    }
+  }
+
   return (
-    <Popover open={open} onOpenChange={onOpenChange}>
+    <Popover open={open}>
       <PopoverAnchor>{children}</PopoverAnchor>
       <PopoverContent
-        className={styles.transcendence}
+        className="transcendence"
         ref={popoverRef}
         tabIndex={tabIndex}
+        onEscapeKeyDown={closePopover}
+        onPointerDownOutside={handlePointerDownOutside}
       >
         <TranscendenceStar
           className="interactive base"

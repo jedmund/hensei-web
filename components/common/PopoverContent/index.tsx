@@ -20,9 +20,13 @@ export const PopoverContent = React.forwardRef<HTMLDivElement, Props>(
     { children, ...props }: PropsWithChildren<Props>,
     forwardedRef
   ) {
-    const classes = classnames(props.className, {
-      Popover: true,
-    })
+    const classes = classnames(
+      {
+        [styles.popover]: true,
+      },
+      props.className?.split(' ').map((a) => styles[a])
+    )
+
 
     return (
       <PopoverPrimitive.Portal>
