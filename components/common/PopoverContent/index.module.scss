@@ -1,3 +1,59 @@
+.popover {
+  animation: scaleIn $duration-zoom ease-out;
+  background: var(--dialog-bg);
+  border-radius: $card-corner;
+  border: 0.5px solid rgba(0, 0, 0, 0.18);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.24);
+  outline: none;
+  padding: $unit;
+  transform-origin: var(--radix-popover-content-transform-origin);
+  width: var(--radix-popover-trigger-width);
+  z-index: 5;
+
+  @include breakpoint(phone) {
+    min-width: auto;
+  }
+
+  &.raid {
+    width: auto;
+  }
+
+  &.flush {
+    padding: 0;
+  }
+}
+
+.jobAccessory {
+  padding: $unit-2x;
+  min-width: 40vw;
+  max-width: 40vw;
+  max-height: 40vh;
+  overflow-y: auto;
+  overflow-x: none;
+  margin-left: $unit-2x;
+
+  h3 {
+    font-size: $font-regular;
+    font-weight: $medium;
+    margin: 0 0 $unit $unit;
+  }
+
+  &.readOnly {
+    min-width: inherit;
+    max-width: inherit;
+  }
+
+  @include breakpoint(tablet) {
+    width: initial;
+    max-width: initial;
+  }
+
+  @include breakpoint(phone) {
+    width: initial;
+    max-width: initial;
+  }
+}
+
 .arrow {
   fill: var(--dialog-bg);
   filter: drop-shadow(0px 1px 1px rgb(0 0 0 / 0.18));

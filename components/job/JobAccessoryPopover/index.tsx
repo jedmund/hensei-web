@@ -49,8 +49,8 @@ const JobAccessoryPopover = ({
   const [open, setOpen] = useState(false)
 
   const classes = classNames({
-    JobAccessory: true,
-    ReadOnly: !editable,
+    jobAccessory: true,
+    readOnly: !editable,
   })
 
   // Hooks
@@ -91,7 +91,7 @@ const JobAccessoryPopover = ({
         )}
       </h3>
       <RadioGroup.Root
-        className="Accessories"
+        className={styles.accessories}
         onValueChange={handleAccessorySelected}
       >
         {accessories.map((accessory) => (
@@ -110,14 +110,14 @@ const JobAccessoryPopover = ({
   )
 
   const readOnly = currentAccessory ? (
-    <div className="EquippedAccessory">
+    <div className={styles.equippedAccessory}>
       <h3>
         {t('equipped')}{' '}
         {job.accessory_type === 1
           ? `${t('accessories.paladin')}s`
           : t('accessories.manadiver')}
       </h3>
-      <div className="Accessory">
+      <div className={styles.accessory}>
         <img
           alt={currentAccessory.name[locale]}
           src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/accessory-grid/${currentAccessory.granblue_id}.jpg`}
