@@ -48,7 +48,12 @@
       display: flex;
       flex-direction: row;
       flex-grow: 0;
-      gap: $unit;
+      gap: $unit-half;
+
+      .proficiencies {
+        display: flex;
+        gap: $unit;
+      }
     }
   }
 }

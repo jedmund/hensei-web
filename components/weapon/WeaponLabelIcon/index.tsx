@@ -6,6 +6,7 @@ import styles from './index.module.scss'
 
 interface Props {
   labelType: string
+  size: 'small' | 'normal'
 }
 
 const WeaponLabelIcon = (props: Props) => {
@@ -13,12 +14,17 @@ const WeaponLabelIcon = (props: Props) => {
 
   const classes = classNames({
     [styles.icon]: true,
+    [styles.small]: props.size === 'small',
     [styles[props.labelType]]: true,
     [styles.en]: router.locale === 'en',
     [styles.ja]: router.locale === 'ja',
   })
 
   return <i className={classes} />
+}
+
+WeaponLabelIcon.defaultProps = {
+  size: 'normal',
 }
 
 export default WeaponLabelIcon

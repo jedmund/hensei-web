@@ -4,6 +4,12 @@
   height: 25px;
   width: 60px;
 
+  &.small {
+    background-size: 50px 20px;
+    height: 20px;
+    width: 50px;
+  }
+
   /* Elements */
 
   &.fire.en {
