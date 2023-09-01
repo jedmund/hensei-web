@@ -41,17 +41,14 @@
     align-items: center;
     display: flex;
     flex-direction: row;
-    gap: $unit * 2;
+    justify-content: space-between;
+    gap: $unit-2x;
 
     .icons {
       display: flex;
       flex-direction: row;
-      flex-grow: 1;
+      flex-grow: 0;
       gap: $unit;
-    }
-
-    .UncapIndicator {
-      min-width: 100px;
     }
   }
 }

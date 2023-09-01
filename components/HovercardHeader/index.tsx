@@ -132,6 +132,7 @@ const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
             )}
         </div>
         <UncapIndicator
+          className="hovercard"
           type={type}
           ulb={object.uncap.ulb || false}
           flb={object.uncap.flb || false}

@@ -4,8 +4,9 @@ import TranscendencePopover from '~components/uncap/TranscendencePopover'
 import TranscendenceStar from '~components/uncap/TranscendenceStar'
 
 import styles from './index.module.scss'
+import classNames from 'classnames'
 
-interface Props {
+interface Props extends React.ComponentProps<'div'> {
   type: 'character' | 'weapon' | 'summon'
   rarity?: number
   uncapLevel?: number
@@ -24,6 +25,13 @@ const UncapIndicator = (props: Props) => {
   const numStars = setNumStars()
 
   const [popoverOpen, setPopoverOpen] = useState(false)
+
+  const classes = classNames(
+    {
+      [styles.wrapper]: true,
+    },
+    props.className?.split(' ').map((className) => styles[className])
+  )
 
   function setNumStars() {
     let numStars
@@ -150,7 +158,7 @@ const UncapIndicator = (props: Props) => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={classes}>
       <ul className={styles.indicator}>
         {Array.from(Array(numStars)).map((x, i) => {
           if (props.type === 'character' && i > 4) {
