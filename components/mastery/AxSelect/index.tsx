@@ -70,8 +70,12 @@ const AXSelect = (props: Props) => {
   // States
   const [primaryAxModifier, setPrimaryAxModifier] = useState(-1)
   const [secondaryAxModifier, setSecondaryAxModifier] = useState(-1)
-  const [primaryAxValue, setPrimaryAxValue] = useState(0.0)
-  const [secondaryAxValue, setSecondaryAxValue] = useState(0.0)
+  const [primaryAxValue, setPrimaryAxValue] = useState(
+    props.currentSkills ? props.currentSkills[0].strength : 0.0
+  )
+  const [secondaryAxValue, setSecondaryAxValue] = useState(
+    props.currentSkills ? props.currentSkills[1].strength : 0.0
+  )
 
   useEffect(() => {
     setupAx1()
@@ -146,7 +150,10 @@ const AXSelect = (props: Props) => {
   // Classes
   const secondarySetClasses = classNames({
     [styles.set]: true,
-    [styles.hidden]: primaryAxModifier < 0,
+    [styles.hidden]:
+      primaryAxModifier < 0 ||
+      primaryAxModifier === 18 ||
+      primaryAxModifier === 19,
   })
 
   function setupAx1() {
@@ -270,9 +277,12 @@ const AXSelect = (props: Props) => {
       secondaryAxModifierSelect.current &&
       secondaryAxValueInput.current
     ) {
-      setupInput(ax[props.axType - 1][value], primaryAxValueInput.current)
+      setupInput(
+        ax[props.axType - 1].find((ax) => ax.id === value),
+        primaryAxValueInput.current
+      )
+
       setPrimaryAxValue(0)
-      primaryAxValueInput.current.value = ''
 
       // Reset the secondary AX modifier, reset the AX value and hide the input
       setSecondaryAxModifier(-1)
@@ -302,7 +312,7 @@ const AXSelect = (props: Props) => {
     const value = parseFloat(event.target.value)
     let newErrors = { ...errors }
 
-    if (primaryAxValueInput.current == event.target) {
+    if (primaryAxValueInput.current === event.target) {
       if (handlePrimaryErrors(value)) setPrimaryAxValue(value)
     } else {
       if (handleSecondaryErrors(value)) setSecondaryAxValue(value)
@@ -310,16 +320,18 @@ const AXSelect = (props: Props) => {
   }
 
   function handlePrimaryErrors(value: number) {
-    const primaryAxSkill = ax[props.axType - 1][primaryAxModifier]
+    const primaryAxSkill = ax[props.axType - 1].find(
+      (ax) => ax.id === primaryAxModifier
+    )
     let newErrors = { ...errors }
 
-    if (value < primaryAxSkill.minValue) {
+    if (primaryAxSkill && value < primaryAxSkill.minValue) {
       newErrors.axValue1 = t('ax.errors.value_too_low', {
         name: primaryAxSkill.name[locale],
         minValue: primaryAxSkill.minValue,
         suffix: primaryAxSkill.suffix ? primaryAxSkill.suffix : '',
       })
-    } else if (value > primaryAxSkill.maxValue) {
+    } else if (primaryAxSkill && value > primaryAxSkill.maxValue) {
       newErrors.axValue1 = t('ax.errors.value_too_high', {
         name: primaryAxSkill.name[locale],
         maxValue: primaryAxSkill.maxValue,
@@ -327,7 +339,7 @@ const AXSelect = (props: Props) => {
       })
     } else if (!value || value <= 0) {
       newErrors.axValue1 = t('ax.errors.value_empty', {
-        name: primaryAxSkill.name[locale],
+        name: primaryAxSkill?.name[locale],
       })
     } else {
       newErrors.axValue1 = ''
@@ -380,6 +392,7 @@ const AXSelect = (props: Props) => {
   }
 
   function setupInput(ax: ItemSkill | undefined, element: HTMLInputElement) {
+    console.log(ax)
     if (ax) {
       const rangeString = `${ax.minValue}~${ax.maxValue}${ax.suffix || ''}`
 
@@ -431,11 +444,7 @@ const AXSelect = (props: Props) => {
               hidden: primaryAxModifier < 0,
             })}
             bound={true}
-            value={
-              props.currentSkills && props.currentSkills[0]
-                ? props.currentSkills[0].strength
-                : 0
-            }
+            value={primaryAxValue}
             type="number"
             onChange={handleInputChange}
             ref={primaryAxValueInput}
@@ -469,11 +478,7 @@ const AXSelect = (props: Props) => {
               hidden: secondaryAxModifier < 0,
             })}
             bound={true}
-            value={
-              props.currentSkills && props.currentSkills[1]
-                ? props.currentSkills[1].strength
-                : 0
-            }
+            value={secondaryAxValue}
             type="number"
             onChange={handleInputChange}
             ref={secondaryAxValueInput}
