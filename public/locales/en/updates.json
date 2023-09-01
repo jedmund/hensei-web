@@ -19,6 +19,16 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "1.2.1": {
+      "bugs": [
+        "Job accessory popover has been fixed, so Paladin shields and Manadiver manatura can be selected again",
+        "The AX skill section no longer shows up in the weapon hovercard if no AX skills are set",
+        "The top of the character hovercard has been slightly refined",
+        "Fixed a bug that prevented all character over mastery (ring) bonuses from being displayed",
+        "Fixed a bug that reset a character's transcendence level if their mastery values are set",
+        "Fixed a bug that prevented setting the value for Rupee Gain or EXP Gain AX skills on weapons"
+      ]
+    },
     "1.2.0": {
       "notes": "I'm very bad at writing actual release notes, so this is a consolidation of the bigger features released in the last six months. Don't worry: there's some new stuff here too!\nThe next features (in no particular order) will be: a way to define roles and substitutions for characters, a collection tracker and hopefully making progress on guides. That's a lot, but I'll chip away at it bit by bit.\nAs always, if you have any feedback, feel free to reach out in the granblue-tools Discord. Thanks for using granblue.team!",
       "features": [

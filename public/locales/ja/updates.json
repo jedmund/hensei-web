@@ -19,6 +19,16 @@
     "uncap": "上限解放"
   },
   "versions": {
+    "1.2.1": {
+      "bugs": [
+        "ジョブアクセサリーのメニューが修正され、パラディンの盾やマナダイバーのマナベリーが再び選択できるようになりました",
+        "EXスキルが設定されていない場合、武器ホバーカードにEXスキルの項目が表示されなくなりました",
+        "キャラクターホバーカードのトップが少し洗練されました",
+        "キャラクターホバーカードにリミットボーナスを全部表示しないバグを修正しました",
+        "キャラクターのボーナス値が設定されている場合、キャラクターの超越レベルがリセットされるバグを修正しました",
+        "武器にルピーUPまたはEXP UPのEXスキルの値を設定できないバグを修正しました"
+      ]
+    },
     "1.2.0": {
       "notes": "I'm very bad at writing actual release notes, so this is a consolidation of the bigger features released in the last six months. Don't worry: there's some new stuff here too!\nThe next features (in no particular order) will be: a way to define roles and substitutions for characters, a collection tracker and hopefully making progress on guides. That's a lot, but I'll chip away at it bit by bit.\nAs always, if you have any feedback, feel free to reach out in the granblue-tools Discord. Thanks for using granblue.team!",
       "features": [

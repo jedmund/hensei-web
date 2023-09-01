@@ -4,12 +4,19 @@
   .version {
     display: flex;
     flex-direction: column;
-    gap: $unit-2x;
 
     &.content {
       .header h3 {
         color: var(--accent-yellow);
       }
+    }
+
+    .bugs {
+      display: flex;
+      flex-direction: column;
+      list-style-type: disc;
+      gap: $unit-half;
+      padding-left: $unit-2x;
     }
 
     .contents {
@@ -120,14 +127,6 @@
         h2 {
           margin: 0;
         }
-      }
-
-      .Bugs {
-        display: flex;
-        flex-direction: column;
-        list-style-type: disc;
-        gap: $unit-half;
-        padding-left: $unit-2x;
       }
     }
   }

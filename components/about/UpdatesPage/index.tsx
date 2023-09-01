@@ -52,6 +52,9 @@ const UpdatesPage = () => {
     '202302U2': {
       updates: 1,
     },
+    '1.2.1': {
+      bugs: 5,
+    },
   }
 
   function image(
@@ -75,6 +78,20 @@ const UpdatesPage = () => {
   return (
     <div className={classes}>
       <h1>{common('about.segmented_control.updates')}</h1>
+      <section className={styles.version} data-version="1.2.1">
+        <div className={styles.header}>
+          <h3>1.2.1</h3>
+          <time>2023/09/01</time>
+        </div>
+        <h2>Bug fixes</h2>
+        <ul className={styles.bugs}>
+          {[...Array(versionUpdates['1.2.1'].bugs)].map((e, i) => (
+            <li key={`1.2.1-bugfix-${i}`}>
+              {updates(`versions.1.2.1.bugs.${i}`)}
+            </li>
+          ))}
+        </ul>
+      </section>
       <ContentUpdate
         version="2023-08L"
         dateString="2023/08/31"
