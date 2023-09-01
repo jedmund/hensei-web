@@ -73,7 +73,9 @@ const CharacterModal = ({
   const [earring, setEarring] = useState<ExtendedMastery>(emptyExtendedMastery)
   const [awakening, setAwakening] = useState<Awakening>()
   const [awakeningLevel, setAwakeningLevel] = useState(1)
-  const [transcendenceStep, setTranscendenceStep] = useState(0)
+  const [transcendenceStep, setTranscendenceStep] = useState(
+    gridCharacter.transcendence_step
+  )
 
   // Refs
   const headerRef = React.createRef<HTMLDivElement>()
