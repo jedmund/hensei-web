@@ -65,11 +65,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     setHeaders()
     if (cookieData.account && cookieData.account.token) {
       console.log(`Logged in as user "${cookieData.account.username}"`)
-
       accountState.account.authorized = true
       accountState.account.user = {
         id: cookieData.account.userId,
         username: cookieData.account.username,
+        role: cookieData.account.role,
         granblueId: '',
         avatar: {
           picture: cookieData.user.avatar.picture,
@@ -78,6 +78,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         gender: cookieData.user.gender,
         language: cookieData.user.language,
         theme: cookieData.user.theme,
+        bahamut: cookieData.user.bahamut,
       }
     } else {
       console.log(`You are not currently logged in.`)
@@ -101,6 +102,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
       const cookieObj = {
         userId: localUserId,
+        role: 1,
         username: undefined,
         token: undefined,
       }

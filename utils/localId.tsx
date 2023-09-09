@@ -1,4 +1,4 @@
-import { accountCookie } from './userToken'
+import { retrieveCookie } from './userToken'
 import { v4 as uuidv4 } from 'uuid'
 import { setCookie } from 'cookies-next'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -8,7 +8,7 @@ export const createLocalId = (
   res: NextApiResponse | undefined = undefined
 ) => {
   // If there is no account entry in cookies, create a UUID and store it
-  if (!accountCookie(req, res)) {
+  if (!retrieveCookie('account', req, res)) {
     const uuid = uuidv4()
     const expiresAt = new Date()
     expiresAt.setDate(expiresAt.getDate() + 60)
@@ -16,6 +16,7 @@ export const createLocalId = (
     const cookieObj = {
       userId: uuid,
       username: undefined,
+      role: 1,
       token: undefined,
     }
 
@@ -31,7 +32,7 @@ export const createLocalId = (
 }
 
 export const getLocalId = () => {
-  const cookie = accountCookie()
+  const cookie = retrieveCookie('account')
   if (cookie) {
     const parsed = JSON.parse(cookie as string)
     if (parsed && !parsed.token)

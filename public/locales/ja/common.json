@@ -120,7 +120,10 @@
     "validation": {
       "guidebooks": "セフィラ導本を複数個装備することはできません"
     },
-    "unauthorized": "行ったアクションを実行する権限がありません"
+    "unauthorized": {
+      "title": "権限がありません",
+      "description": "行ったアクションを実行する権限がありません"
+    }
   },
   "filters": {
     "name": "フィルター",
@@ -348,7 +351,8 @@
         "language": "言語",
         "gender": "主人公",
         "private": "プライベート",
-        "theme": "表示"
+        "theme": "表示",
+        "admin": "バハムートモード"
       },
       "descriptions": {
         "picture": "名前の隣に表示する",
