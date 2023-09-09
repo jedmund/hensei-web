@@ -78,6 +78,15 @@ const UpdatesPage = () => {
   return (
     <div className={classes}>
       <h1>{common('about.segmented_control.updates')}</h1>
+      <ContentUpdate
+        version="2023-09U"
+        dateString="2023/09/07"
+        event="events.content"
+        newItems={{
+          weapon: ['1040117000', '1040516300'],
+        }}
+        numNotes={1}
+      />
       <section className={styles.version} data-version="1.2.1">
         <div className={styles.header}>
           <h3>1.2.1</h3>

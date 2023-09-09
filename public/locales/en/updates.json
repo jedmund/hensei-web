@@ -19,6 +19,9 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2023-09U": {
+      "features": ["Added new Manatura \"Ouroboros Mino\""]
+    },
     "1.2.1": {
       "bugs": [
         "Job accessory popover has been fixed, so Paladin shields and Manadiver manatura can be selected again",
