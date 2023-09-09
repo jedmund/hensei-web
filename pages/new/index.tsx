@@ -11,7 +11,7 @@ import NewHead from '~components/head/NewHead'
 
 import api from '~utils/api'
 import fetchLatestVersion from '~utils/fetchLatestVersion'
-import { accountCookie, setHeaders } from '~utils/userToken'
+import { setHeaders } from '~utils/userToken'
 import { appState, initialAppState } from '~utils/appState'
 import { createLocalId } from '~utils/localId'
 import { groupWeaponKeys } from '~utils/groupWeaponKeys'
