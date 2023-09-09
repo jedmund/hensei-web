@@ -172,6 +172,12 @@ const Header = () => {
           gender={accountState.account.user.gender}
           language={accountState.account.user.language}
           theme={accountState.account.user.theme}
+          role={accountState.account.user.role}
+          bahamutMode={
+            accountState.account.user.role === 9
+              ? accountState.account.user.bahamut
+              : false
+          }
           onOpenChange={setSettingsModalOpen}
         />
       )}
@@ -375,14 +381,19 @@ const Header = () => {
   )
 
   return (
-    <nav className={styles.header}>
-      {left}
-      {right}
-      {logoutConfirmationAlert}
-      {settingsModal}
-      {loginModal}
-      {signupModal}
-    </nav>
+    <>
+      {accountState.account.user?.bahamut && (
+        <div className={styles.bahamut}>Bahamut Mode is active</div>
+      )}
+      <nav className={styles.header}>
+        {left}
+        {right}
+        {logoutConfirmationAlert}
+        {settingsModal}
+        {loginModal}
+        {signupModal}
+      </nav>
+    </>
   )
 }
 

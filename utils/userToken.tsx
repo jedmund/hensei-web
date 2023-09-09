@@ -3,12 +3,13 @@ import ls, { get, set } from 'local-storage'
 import { getCookie } from 'cookies-next'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-export const accountCookie = (
+export const retrieveCookie = (
+  name: string,
   req: NextApiRequest | undefined = undefined,
   res: NextApiResponse | undefined = undefined
 ) => {
   const options = req && res ? { req, res } : {}
-  const cookie = getCookie('account', options)
+  const cookie = getCookie(name, options)
   return cookie ? cookie : undefined
 }
 
@@ -16,13 +17,24 @@ export const setHeaders = (
   req: NextApiRequest | undefined = undefined,
   res: NextApiResponse | undefined = undefined
 ) => {
-  const cookie = accountCookie(req, res)
-  if (cookie) {
-    const parsed = JSON.parse(cookie as string)
-    if (parsed.token)
-      axios.defaults.headers.common['Authorization'] = `Bearer ${parsed.token}`
+  const accountCookie = retrieveCookie('account', req, res)
+  const userCookie = retrieveCookie('user', req, res)
+
+  if (accountCookie && userCookie) {
+    const account = JSON.parse(accountCookie as string)
+    const user = JSON.parse(userCookie as string)
+
+    if (account.token)
+      axios.defaults.headers.common['Authorization'] = `Bearer ${account.token}`
+
+    if (account.role === 9 && user.bahamut)
+      axios.defaults.headers.common['X-Admin-Mode'] = 'true'
+    else {
+      delete axios.defaults.headers.common['X-Admin-Mode']
+    }
   } else {
     delete axios.defaults.headers.common['Authorization']
+    delete axios.defaults.headers.common['X-Admin-Mode']
   }
 }
 

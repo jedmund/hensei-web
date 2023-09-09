@@ -18,6 +18,7 @@ import { accountState } from '~utils/accountState'
 import { pictureData } from '~utils/pictureData'
 
 import styles from './index.module.scss'
+import SwitchTableField from '~components/common/SwitchTableField'
 
 interface Props {
   open: boolean
@@ -27,6 +28,8 @@ interface Props {
   language?: string
   theme?: string
   private?: boolean
+  role?: number
+  bahamutMode?: boolean
   onOpenChange?: (open: boolean) => void
 }
 
@@ -53,6 +56,7 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
     const [language, setLanguage] = useState(props.language || '')
     const [gender, setGender] = useState(props.gender || 0)
     const [theme, setTheme] = useState(props.theme || 'system')
+    const [bahamutMode, setBahamutMode] = useState(props.bahamutMode || false)
 
     // Setup
     const [pictureOpen, setPictureOpen] = useState(false)
@@ -135,6 +139,7 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
               gender: user.gender,
               language: user.language,
               theme: user.theme,
+              bahamut: bahamutMode,
             }
 
             const expiresAt = new Date()
@@ -145,6 +150,7 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
               id: user.id,
               username: user.username,
               granblueId: '',
+              role: user.role,
               avatar: {
                 picture: user.avatar.picture,
                 element: user.avatar.element,
@@ -152,11 +158,13 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
               language: user.language,
               theme: user.theme,
               gender: user.gender,
+              bahamut: bahamutMode,
             }
 
             setOpen(false)
             if (props.onOpenChange) props.onOpenChange(false)
             changeLanguage(router, user.language)
+            if (props.bahamutMode != bahamutMode) router.reload()
           })
       }
     }
@@ -265,6 +273,15 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
       </SelectTableField>
     )
 
+    const adminField = () => (
+      <SwitchTableField
+        name="admin"
+        label={t('modals.settings.labels.admin')}
+        value={props.bahamutMode}
+        onValueChange={(value: boolean) => setBahamutMode(value)}
+      />
+    )
+
     useEffect(() => {
       setMounted(true)
     }, [])
@@ -293,6 +310,7 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
               {genderField()}
               {languageField()}
               {themeField()}
+              {props.role === 9 && adminField()}
             </div>
 
             <DialogFooter

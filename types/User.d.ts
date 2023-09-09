@@ -7,4 +7,5 @@ interface User {
     element: string
   }
   gender: number
+  role: number
 }

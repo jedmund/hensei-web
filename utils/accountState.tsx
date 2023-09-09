@@ -4,6 +4,7 @@ export type UserState = {
   id: string
   granblueId: string
   username: string
+  role: number
   avatar: {
     picture: string
     element: string
@@ -11,6 +12,7 @@ export type UserState = {
   gender: number
   language: string
   theme: string
+  bahamut: boolean
 }
 
 interface AccountState {

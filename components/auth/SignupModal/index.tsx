@@ -97,6 +97,7 @@ const SignupModal = (props: Props) => {
     const cookieObj: AccountCookie = {
       userId: resp.id,
       username: resp.username,
+      role: resp.role,
       token: resp.token,
     }
 
@@ -130,6 +131,7 @@ const SignupModal = (props: Props) => {
         language: user.language,
         gender: user.gender,
         theme: user.theme,
+        bahamut: false,
       },
       { path: '/', expires: expiresAt }
     )
@@ -139,6 +141,7 @@ const SignupModal = (props: Props) => {
       id: user.id,
       username: user.username,
       granblueId: '',
+      role: user.role,
       avatar: {
         picture: user.avatar.picture,
         element: user.avatar.element,
@@ -146,6 +149,7 @@ const SignupModal = (props: Props) => {
       gender: user.gender,
       language: user.language,
       theme: user.theme,
+      bahamut: false,
     }
 
     console.log('Authorizing account...')

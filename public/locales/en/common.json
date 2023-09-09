@@ -120,7 +120,10 @@
     "validation": {
       "guidebooks": "You cannot equip more than one of each Sephira Guidebook"
     },
-    "unauthorized": "You don't have permission to perform that action"
+    "unauthorized": {
+      "title": "Unauthorized",
+      "description": "You don't have permission to perform that action"
+    }
   },
   "filters": {
     "name": "Filter",
@@ -349,7 +352,8 @@
         "language": "Language",
         "gender": "Main Character",
         "private": "Private",
-        "theme": "Theme"
+        "theme": "Theme",
+        "admin": "Bahamut Mode"
       },
       "descriptions": {
         "picture": "Displayed next to your name",
