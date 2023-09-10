@@ -26,6 +26,7 @@ import AccountModal from '~components/auth/AccountModal'
 import Button from '~components/common/Button'
 import Tooltip from '~components/common/Tooltip'
 
+import BahamutIcon from '~public/icons/Bahamut.svg'
 import ChevronIcon from '~public/icons/Chevron.svg'
 import MenuIcon from '~public/icons/Menu.svg'
 import PlusIcon from '~public/icons/Add.svg'
@@ -383,7 +384,10 @@ const Header = () => {
   return (
     <>
       {accountState.account.user?.bahamut && (
-        <div className={styles.bahamut}>Bahamut Mode is active</div>
+        <div className={styles.bahamut}>
+          <BahamutIcon />
+          <p>Bahamut Mode is active</p>
+        </div>
       )}
       <nav className={styles.header}>
         {left}

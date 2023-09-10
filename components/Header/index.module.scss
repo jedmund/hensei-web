@@ -1,12 +1,29 @@
 .bahamut {
+  $negative-margin: $unit * -2;
+
+  align-items: center;
   background: #2b4683;
-  color: white;
+  box-sizing: border-box;
+  display: flex;
+  gap: $unit;
+  justify-content: center;
   text-align: center;
   font-weight: $bold;
-  padding: $unit;
-  border-radius: $full-corner;
-  margin-bottom: $unit;
-  width: 100%;
+  padding: $unit-2x;
+  margin-top: $negative-margin;
+  margin-left: $negative-margin;
+  margin-right: $negative-margin;
+  margin-bottom: $unit-2x;
+  width: 100vw;
+
+  p {
+    color: white;
+  }
+
+  svg {
+    width: 1.2em;
+    fill: white;
+  }
 }
 
 .header {
