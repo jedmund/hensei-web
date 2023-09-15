@@ -212,6 +212,13 @@
     flex-direction: column;
     gap: $unit;
 
+    .buttonArea {
+      display: flex;
+      flex-direction: row;
+      gap: $unit;
+      justify-content: center;
+    }
+
     h2 {
       color: var(--text-primary);
       font-size: $font-regular;
@@ -241,15 +248,23 @@
         gap: calc($unit / 2);
       }
 
-      .icon {
+      .iconWrapper {
+        width: $unit-5x;
+        height: $unit-5x;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: $unit * 2.5;
-        height: $unit * 2.5;
 
-        svg {
-          fill: var(--text-tertiary);
+        .icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: $unit * 2.5;
+          height: $unit * 2.5;
+
+          svg {
+            fill: var(--text-tertiary);
+          }
         }
       }
 

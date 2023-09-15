@@ -491,31 +491,31 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
     </Link>
   )
 
-  function buttonArea() {
-    if (
-      account.authorized &&
-      ((party.user && account.user && account.user.id !== party.user.id) ||
-        !party.user)
-    ) {
-      return favoriteButton
-    } else if (party.visibility === 2) {
-      return (
-        <Tooltip content={t('party.tooltips.unlisted')}>
-          <span className={styles.icon}>
-            <UnlistedIcon />
-          </span>
-        </Tooltip>
-      )
-    } else if (party.visibility === 3) {
-      return (
-        <Tooltip content={t('party.tooltips.private')}>
-          <span className={styles.icon}>
-            <PrivateIcon />
-          </span>
-        </Tooltip>
-      )
-    }
-  }
+  const renderFavoriteButton =
+    account.authorized &&
+    ((party.user && account.user && account.user.id !== party.user.id) ||
+      !party.user) &&
+    favoriteButton
+
+  const renderVisibilityIcon = party.visibility === 2 && (
+    <Tooltip content={t('party.tooltips.unlisted')}>
+      <div className={styles.iconWrapper}>
+        <span className={styles.icon}>
+          <UnlistedIcon />
+        </span>
+      </div>
+    </Tooltip>
+  )
+
+  const renderPrivateIcon = party.visibility === 3 && (
+    <Tooltip content={t('party.tooltips.private')}>
+      <div className={styles.iconWrapper}>
+        <span className={styles.icon}>
+          <PrivateIcon />
+        </span>
+      </div>
+    </Tooltip>
+  )
 
   const detailsWithUsername = (
     <div className={styles.details}>
@@ -538,7 +538,11 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
             )}
           </div>
         </div>
-        {buttonArea()}
+        <div className={styles.buttonArea}>
+          {renderPrivateIcon}
+          {renderVisibilityIcon}
+          {renderFavoriteButton}
+        </div>
       </div>
       <div className={styles.attributed}>
         {attribution()}
