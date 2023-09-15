@@ -19,6 +19,11 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2023-09F": {
+      "features": [
+        "Added Ultimate Mastery skills for classes: Warlock, Chrysaor, Lumberjack, Robin Hood, and Doctor"
+      ]
+    },
     "2023-09U": {
       "features": ["Added new Manatura \"Ouroboros Mino\""]
     },
