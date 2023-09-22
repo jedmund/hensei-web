@@ -53,6 +53,16 @@ module.exports = {
       },
     ]
   },
+  async redirects() {
+    return [
+      {
+        source: '/transfer/version',
+        destination:
+          'https://raw.githubusercontent.com/Vazkii/hensei-transfer/main/version',
+        permanent: true,
+      },
+    ]
+  },
   webpack(config) {
     // Set up alias for styles
     config.resolve.alias = {
