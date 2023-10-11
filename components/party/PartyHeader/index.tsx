@@ -345,13 +345,15 @@ const PartyHeader = (props: Props) => {
           text={t('party.notices.buttons.copy_link')}
           onClick={copyToClipboard}
         />
-        <Button
-          bound={true}
-          className="notice no-shrink"
-          key="change_visibility"
-          text={t('party.notices.buttons.change_visibility')}
-          onClick={() => handleVisibilityDialogChange(true)}
-        />
+        {party.editable && (
+          <Button
+            bound={true}
+            className="notice no-shrink"
+            key="change_visibility"
+            text={t('party.notices.buttons.change_visibility')}
+            onClick={() => handleVisibilityDialogChange(true)}
+          />
+        )}
       </div>
     </div>
   )
@@ -362,15 +364,17 @@ const PartyHeader = (props: Props) => {
         <PrivateIcon />
       </div>
       <p>{t('party.notices.private')}</p>
-      <div className={styles.buttons}>
-        <Button
-          bound={true}
-          className="notice"
-          key="change_visibility"
-          text={t('party.notices.buttons.change_visibility')}
-          onClick={() => handleVisibilityDialogChange(true)}
-        />
-      </div>
+      {party.editable && (
+        <div className={styles.buttons}>
+          <Button
+            bound={true}
+            className="notice"
+            key="change_visibility"
+            text={t('party.notices.buttons.change_visibility')}
+            onClick={() => handleVisibilityDialogChange(true)}
+          />
+        </div>
+      )}
     </div>
   )
 

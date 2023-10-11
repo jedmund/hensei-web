@@ -143,7 +143,7 @@ const Party = (props: Props) => {
   // Methods: Updating the party's details
   async function updateDetails(details: DetailsObject) {
     if (!props.team) return await createParty(details)
-    else return await updateParty(details)
+    else if (party.editable) return await updateParty(details)
   }
 
   function formatDetailsObject(details: DetailsObject) {
