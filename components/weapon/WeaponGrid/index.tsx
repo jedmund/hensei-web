@@ -31,7 +31,6 @@ interface Props {
   guidebooks?: GuidebookList
   createParty: (details: DetailsObject) => Promise<Party>
   pushHistory?: (path: string) => void
-  updateExtra: (enabled: boolean) => void
   updateGuidebook: (book: Guidebook | undefined, position: number) => void
 }
 
