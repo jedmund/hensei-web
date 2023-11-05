@@ -164,7 +164,6 @@ const Party = (props: Props) => {
     if (details.chainCount !== undefined)
       payload.chain_count = details.chainCount
     if (details.turnCount !== undefined) payload.turn_count = details.turnCount
-    if (details.extra != undefined) payload.extra = details.extra
     if (details.job) payload.job_id = details.job.id
     if (details.guidebook1_id) payload.guidebook1_id = details.guidebook1_id
     if (details.guidebook2_id) payload.guidebook2_id = details.guidebook2_id
@@ -178,17 +177,6 @@ const Party = (props: Props) => {
 
   function cancelAlert() {
     setErrorMessage('')
-  }
-
-  function checkboxChanged(enabled: boolean) {
-    appState.party.extra = enabled
-
-    // Only save if this is a saved party
-    if (props.team && props.team.id) {
-      api.endpoints.parties.update(props.team.id, {
-        party: { extra: enabled },
-      })
-    }
   }
 
   function updateGuidebook(book: Guidebook | undefined, position: number) {
@@ -409,7 +397,6 @@ const Party = (props: Props) => {
       guidebooks={props.team?.guidebooks}
       createParty={createParty}
       pushHistory={props.pushHistory}
-      updateExtra={checkboxChanged}
       updateGuidebook={updateGuidebook}
     />
   )
