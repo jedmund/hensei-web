@@ -79,6 +79,77 @@ const UpdatesPage = () => {
     <div className={classes}>
       <h1>{common('about.segmented_control.updates')}</h1>
       <ContentUpdate
+        version="2023-11F"
+        dateString="2023/11/17"
+        event="events.flash"
+        newItems={{
+          weapon: ['1040117800', '1040516600', '1040025300'],
+          character: ['3040492000', '3040493000', '3040494000'],
+        }}
+      />
+      <ContentUpdate
+        version="2023-11U2"
+        dateString="2023/11/14"
+        event="events.uncap"
+        uncappedItems={{
+          character: ['3040212000'],
+        }}
+      />
+      <ContentUpdate
+        version="2023-11U"
+        dateString="2023/11/09"
+        event="events.content"
+        newItems={{
+          weapon: [
+            '1040025200',
+            '1040316800',
+            '1040316900',
+            '1040025100',
+            '1040712900',
+            '1040713000',
+            '1040915900',
+            '1040617900',
+            '1040618000',
+            '1040117700',
+            '1040316600',
+            '1040316700',
+            '1040422300',
+            '1040816000',
+            '1040816100',
+            '1040916000',
+            '1040117500',
+            '1040117600',
+          ],
+        }}
+        numNotes={1}
+      />
+      <ContentUpdate
+        version="2023-10L"
+        dateString="2023/10/31"
+        event="events.legfest"
+        newItems={{
+          weapon: ['1040915800', '1040117400', '1040915700', '1030804500'],
+          character: ['3040490000', '3040491000'],
+          summon: ['2040424000'],
+        }}
+      />
+      <ContentUpdate
+        version="2023-10U"
+        dateString="2023/10/23"
+        event="events.content"
+        newItems={{
+          weapon: [
+            '1040422200',
+            '1040815900',
+            '1040316500',
+            '1040712800',
+            '1040516500',
+            '1040915600',
+          ],
+        }}
+        numNotes={1}
+      />
+      <ContentUpdate
         version="2023-10F"
         dateString="2023/10/18"
         event="events.flash"

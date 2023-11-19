@@ -19,6 +19,16 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2023-11U": {
+      "features": [
+        "Added Ultimate Mastery skills for classes: Bandit Tycoon, Nighthound, Monk, and Rising Force"
+      ]
+    },
+    "2023-10U": {
+      "features": [
+        "Draconic Weapons Providence are not properly implemented yet and cannot be placed into teams with Dark Opus Weapons"
+      ]
+    },
     "2023-09F": {
       "features": [
         "Added Ultimate Mastery skills for classes: Warlock, Chrysaor, Lumberjack, Robin Hood, and Doctor"
