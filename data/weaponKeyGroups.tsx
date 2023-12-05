@@ -49,4 +49,12 @@ export const weaponKeyGroups: WeaponKeyGroup[] = [
       ja: 'エンブレム',
     },
   },
+  {
+    id: 5,
+    slug: 'providence',
+    name: {
+      en: 'Providence Teluma',
+      ja: 'オリジンステルマ',
+    },
+  },
 ]
