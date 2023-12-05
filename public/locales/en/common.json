@@ -191,7 +191,7 @@
       "title": "Changelog"
     },
     "characters": {
-      "title": "Character",
+      "title": "Modify character",
       "subtitles": {
         "ring": "Over Mastery",
         "earring": "Aetherial Mastery",
@@ -434,7 +434,7 @@
       }
     },
     "weapon": {
-      "title": "Modify Weapon",
+      "title": "Modify weapon",
       "buttons": {
         "confirm": "Save weapon",
         "remove": "Remove weapon"
