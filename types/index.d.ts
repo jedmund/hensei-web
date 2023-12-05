@@ -39,7 +39,6 @@ export type DetailsObject = {
   description?: string
   raid?: Raid
   job?: Job
-  extra?: boolean
   guidebooks?: string[]
   visibility?: number
 }
