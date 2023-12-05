@@ -27,6 +27,7 @@ import type { SearchableObject, SearchableObjectArray } from '~types'
 import styles from './index.module.scss'
 import CrossIcon from '~public/icons/Cross.svg'
 import classNames from 'classnames'
+import useDidMountEffect from '~utils/useDidMountEffect'
 
 interface Props extends DialogProps {
   send: (object: SearchableObject, position: number) => any
@@ -79,6 +80,23 @@ const SearchModal = (props: Props) => {
   useEffect(() => {
     if (props.open !== undefined) setOpen(props.open)
   })
+
+  useDidMountEffect(() => {
+    // Only show extra or subaura objects if invoked from those positions
+    if (extraPositions().includes(props.fromPosition)) {
+      if (props.object === 'weapons') {
+        setFilters({
+          extra: true,
+          ...filters,
+        })
+      } else if (props.object === 'summons') {
+        setFilters({
+          subaura: true,
+          ...filters,
+        })
+      }
+    }
+  }, [open])
 
   function inputChanged(event: React.ChangeEvent<HTMLInputElement>) {
     const text = event.target.value
@@ -185,8 +203,17 @@ const SearchModal = (props: Props) => {
 
     // Only show extra or subaura objects if invoked from those positions
     if (extraPositions().includes(props.fromPosition)) {
-      if (props.object === 'weapons') filters.extra = true
-      else if (props.object === 'summons') filters.subaura = true
+      if (props.object === 'weapons') {
+        setFilters({
+          extra: true,
+          ...filters,
+        })
+      } else if (props.object === 'summons') {
+        setFilters({
+          subaura: true,
+          ...filters,
+        })
+      }
     }
 
     setFilters(filters)
