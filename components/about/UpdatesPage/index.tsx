@@ -91,6 +91,7 @@ const UpdatesPage = () => {
             '1040815000',
           ],
         }}
+        numNotes={2}
       />
       <ContentUpdate
         version="2023-12F"
