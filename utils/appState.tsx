@@ -162,6 +162,7 @@ export const initialAppState: AppState = {
     teluma: [],
     gauph: [],
     emblem: [],
+    providence: [],
   },
   version: {
     version: '0.0',
