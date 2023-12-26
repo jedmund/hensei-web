@@ -19,6 +19,12 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2023-12U2": {
+      "features": [
+        "Sorry for the longer spaces between updates—life has been a bit busy. Work has gotten a lot busier, I have more social obligations, and am working on another app. I haven't abandoned granblue.team though. Thanks for your patience!",
+        "Finally fixed the logic that determines when a conflict occurs between Dark Opus Weapons, Draconic Weapons and Draconic Providence Weapons"
+      ]
+    },
     "2023-11U": {
       "features": [
         "Added Ultimate Mastery skills for classes: Bandit Tycoon, Nighthound, Monk, and Rising Force"
