@@ -90,7 +90,7 @@ const WeaponUnit = ({
     return (
       weapon.ax ||
       weapon.awakenings ||
-      (weapon.series && [2, 3, 17, 22, 24].includes(weapon.series))
+      (weapon.series && [2, 3, 17, 22, 24, 34].includes(weapon.series))
     )
   }
 

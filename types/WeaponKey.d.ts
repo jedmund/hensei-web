@@ -7,7 +7,7 @@ interface WeaponKey {
     ja: string
   }
   slug: string
-  series: integer
+  series: integer[]
   slot: integer
   group: integer
   order: integer

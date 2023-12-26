@@ -32,11 +32,12 @@ const gauphNames = [
   { en: 'Ultima Key', jp: 'ガフスキーΩ' },
   { en: 'Gate of Omnipotence', jp: 'ガフスキー' },
 ]
+const providenceNames = [{ en: 'Providence Teluma', jp: 'オリジンステルマ' }]
 
 const emptyWeaponKey: WeaponKey = {
   id: 'no-key',
   granblue_id: '-1',
-  series: 0,
+  series: [0],
   slot: 0,
   slug: '',
   group: 0,
@@ -71,7 +72,7 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
     function filterWeaponKeys(weaponKeys: WeaponKey[]) {
       // Filter weapon keys based on the series and slot provided
       return weaponKeys.filter(
-        (key) => key.series == series && key.slot == slot
+        (key) => key.series.includes(series) && key.slot == slot
       )
     }
 
@@ -114,7 +115,7 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
       let name: { [key: string]: string } = {}
       if (series == 2 && index == 0) name = pendulumNames[0]
       else if (series == 2 && slot == 1 && index == 1) name = pendulumNames[1]
-      else if (series === 3) name = telumaNames[0]
+      else if (series === 3 || series === 34) name = telumaNames[0]
       else if (series === 17) name = gauphNames[slot]
       else if (series === 24) name = emblemNames[index]
 
@@ -139,7 +140,7 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
     const emptyOption = () => {
       let name = ''
       if (series === 2) name = pendulumNames[0].en
-      else if (series === 3) name = telumaNames[0].en
+      else if (series === 3 || series === 34) name = telumaNames[0].en
       else if (series === 17) name = gauphNames[slot].en
       else if (series === 24) name = emblemNames[0].en
 

@@ -56,7 +56,7 @@ const WeaponConflictModal = (props: Props) => {
     const series = props.incomingWeapon.series
     const seriesSlug = t(`series.${mapWeaponSeries(series)}`)
 
-    return [2, 3].includes(series) ? (
+    return [2, 3, 34].includes(series) ? (
       <Trans i18nKey="modals.conflict.weapon.opus-draconic"></Trans>
     ) : (
       <Trans i18nKey="modals.conflict.weapon.generic">

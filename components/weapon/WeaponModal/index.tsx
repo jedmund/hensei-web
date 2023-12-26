@@ -155,11 +155,11 @@ const WeaponModal = ({
 
     if (gridWeapon.object.element == 0) object.weapon.element = element
 
-    if ([2, 3, 17, 24].includes(gridWeapon.object.series) && weaponKey1) {
+    if ([2, 3, 17, 24, 34].includes(gridWeapon.object.series) && weaponKey1) {
       object.weapon.weapon_key1_id = weaponKey1.id
     }
 
-    if ([2, 3, 17].includes(gridWeapon.object.series) && weaponKey2)
+    if ([2, 3, 17, 34].includes(gridWeapon.object.series) && weaponKey2)
       object.weapon.weapon_key2_id = weaponKey2.id
 
     if (gridWeapon.object.series == 17 && weaponKey3)
@@ -353,7 +353,7 @@ const WeaponModal = ({
   const keySelect = (
     <section>
       <h3>{t('modals.weapon.subtitles.weapon_keys')}</h3>
-      {[2, 3, 17, 22].includes(gridWeapon.object.series) ? (
+      {[2, 3, 17, 22, 34].includes(gridWeapon.object.series) ? (
         <WeaponKeySelect
           open={weaponKey1Open}
           weaponKey={weaponKey1}
@@ -367,7 +367,7 @@ const WeaponModal = ({
         ''
       )}
 
-      {[2, 3, 17].includes(gridWeapon.object.series) ? (
+      {[2, 3, 17, 34].includes(gridWeapon.object.series) ? (
         <WeaponKeySelect
           open={weaponKey2Open}
           weaponKey={weaponKey2}
@@ -381,7 +381,7 @@ const WeaponModal = ({
         ''
       )}
 
-      {gridWeapon.object.series == 17 ? (
+      {[17, 34].includes(gridWeapon.object.series) ? (
         <WeaponKeySelect
           open={weaponKey3Open}
           weaponKey={weaponKey3}
@@ -477,7 +477,7 @@ const WeaponModal = ({
           <DialogHeader
             ref={headerRef}
             title={gridWeapon.object.name[locale]}
-            subtitle={t('modals.characters.title')}
+            subtitle={t('modals.weapon.title')}
             image={{
               src: `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-square/${gridWeapon.object.granblue_id}.jpg`,
               alt: gridWeapon.object.name[locale],
@@ -485,7 +485,7 @@ const WeaponModal = ({
           />
           <section className={styles.mods}>
             {gridWeapon.object.element == 0 && elementSelect}
-            {[2, 3, 17, 24].includes(gridWeapon.object.series) && keySelect}
+            {[2, 3, 17, 24, 34].includes(gridWeapon.object.series) && keySelect}
             {gridWeapon.object.ax && axSelect}
             {gridWeapon.object.awakenings && awakeningSelect}
           </section>

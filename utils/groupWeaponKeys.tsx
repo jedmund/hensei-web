@@ -7,6 +7,7 @@ export type GroupedWeaponKeys = {
   teluma: WeaponKey[]
   gauph: WeaponKey[]
   emblem: WeaponKey[]
+  providence: WeaponKey[]
 }
 
 export function groupWeaponKeys(keys: WeaponKey[]) {
@@ -21,6 +22,7 @@ export function groupWeaponKeys(keys: WeaponKey[]) {
     teluma: [],
     gauph: [],
     emblem: [],
+    providence: [],
   }
 
   for (let i = 0; i <= numGroups; i++) {
