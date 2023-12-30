@@ -178,6 +178,7 @@
   --null-bg: #{$null--bg--light};
   --null-bg-hover: #{$null--bg--hover--light};
   --null-text: #{$null--text--light};
+  --null-text-contrast: #{$null--text--light};
   --null-raid-text: #{$null--text--raid--light};
   --null-text-hover: #{$null--text--hover--light};
   --null-shadow: #{$null--shadow--light};
@@ -196,6 +197,7 @@
   --fire-bg-hover: #{$fire--bg--hover--light};
   --fire-portrait-bg: #{$fire--portrait--bg--light};
   --fire-text: #{$fire--text--light};
+  --fire-text-contrast: #{$fire--text--light};
   --fire-raid-text: #{$fire--text--raid--light};
   --fire-text-hover: #{$fire--text--hover--light};
   --fire-shadow: #{$fire--shadow--light};
@@ -205,6 +207,7 @@
   --water-bg-hover: #{$water--bg--hover--light};
   --water-portrait-bg: #{$water--portrait--bg--light};
   --water-text: #{$water--text--light};
+  --water-text-contrast: #{$water--text--light};
   --water-raid-text: #{$water--text--raid--light};
   --water-text-hover: #{$water--text--hover--light};
   --water-shadow: #{$water--shadow--light};
@@ -214,6 +217,7 @@
   --earth-bg-hover: #{$earth--bg--hover--light};
   --earth-portrait-bg: #{$earth--portrait--bg--light};
   --earth-text: #{$earth--text--light};
+  --earth-text-contrast: #{$earth--text--light};
   --earth-raid-text: #{$earth--text--raid--light};
   --earth-text-hover: #{$earth--text--hover--light};
   --earth-shadow: #{$earth--shadow--light};
@@ -223,6 +227,7 @@
   --dark-bg-hover: #{$dark--bg--hover--light};
   --dark-portrait-bg: #{$dark--portrait--bg--light};
   --dark-text: #{$dark--text--light};
+  --dark-text-contrast: #{$dark--text--light};
   --dark-raid-text: #{$dark--text--raid--light};
   --dark-text-hover: #{$dark--text--hover--light};
   --dark-shadow: #{$dark--shadow--light};
@@ -232,6 +237,7 @@
   --light-bg-hover: #{$light--bg--hover--light};
   --light-portrait-bg: #{$light--portrait--bg--light};
   --light-text: #{$light--text--light};
+  --light-text-contrast: #{$light--text--light};
   --light-raid-text: #{$light--text--raid--light};
   --light-text-hover: #{$light--text--hover--light};
   --light-shadow: #{$light--shadow--light};
@@ -422,6 +428,7 @@
   --null-bg: #{$null--bg--dark};
   --null-bg-hover: #{$null--bg--hover--dark};
   --null-text: #{$null--text--dark};
+  --null-contrast-text: #{$null--text--contrast};
   --null-raid-text: #{$null--text--raid--dark};
   --null-text-hover: #{$null--text--hover--dark};
   --null-shadow: #{$null--shadow--dark};
@@ -432,6 +439,7 @@
   --wind-portrait-bg: #{$wind--portrait--bg--dark};
   --wind-text: #{$wind--text--dark};
   --wind-raid-text: #{$wind--text--raid--dark};
+  --wind-text-contrast: #{$wind--text--contrast};
   --wind-text-hover: #{$wind--text--hover--dark};
   --wind-shadow: #{$wind--shadow--dark};
   --wind-shadow-hover: #{$wind--shadow--dark--hover};
@@ -440,6 +448,7 @@
   --fire-bg-hover: #{$fire--bg--hover--dark};
   --fire-portrait-bg: #{$fire--portrait--bg--dark};
   --fire-text: #{$fire--text--dark};
+  --fire-text-contrast: #{$fire--text--contrast};
   --fire-raid-text: #{$fire--text--raid--dark};
   --fire-text-hover: #{$fire--text--hover--dark};
   --fire-shadow: #{$fire--shadow--dark};
@@ -449,6 +458,7 @@
   --water-bg-hover: #{$water--bg--hover--dark};
   --water-portrait-bg: #{$water--portrait--bg--dark};
   --water-text: #{$water--text--dark};
+  --water-text-contrast: #{$water--text--contrast};
   --water-raid-text: #{$water--text--raid--dark};
   --water-text-hover: #{$water--text--hover--dark};
   --water-shadow: #{$water--shadow--dark};
@@ -458,6 +468,7 @@
   --earth-bg-hover: #{$earth--bg--hover--dark};
   --earth-portrait-bg: #{$earth--portrait--bg--dark};
   --earth-text: #{$earth--text--dark};
+  --earth-text-contrast: #{$earth--text--contrast};
   --earth-raid-text: #{$earth--text--raid--dark};
   --earth-text-hover: #{$earth--text--hover--dark};
   --earth-shadow: #{$earth--shadow--dark};
@@ -467,6 +478,7 @@
   --dark-bg-hover: #{$dark--bg--hover--dark};
   --dark-portrait-bg: #{$dark--portrait--bg--dark};
   --dark-text: #{$dark--text--dark};
+  --dark-text-contrast: #{$dark--text--contrast};
   --dark-raid-text: #{$dark--text--raid--dark};
   --dark-text-hover: #{$dark--text--hover--dark};
   --dark-shadow: #{$dark--shadow--dark};
@@ -476,6 +488,7 @@
   --light-bg-hover: #{$light--bg--hover--dark};
   --light-portrait-bg: #{$light--portrait--bg--dark};
   --light-text: #{$light--text--dark};
+  --light-text-contrast: #{$light--text--contrast};
   --light-raid-text: #{$light--text--raid--dark};
   --light-text-hover: #{$light--text--hover--dark};
   --light-shadow: #{$light--shadow--dark};

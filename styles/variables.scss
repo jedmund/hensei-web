@@ -485,7 +485,8 @@ $wind--bg--hover--light: $wind-bg-00;
 $wind--bg--hover--dark: $wind-bg-00;
 
 $wind--text--light: $wind-text-20;
-$wind--text--dark: $wind-text-20;
+$wind--text--dark: $wind-text-30;
+$wind--text--contrast: $wind-text-10;
 
 $wind--text--raid--light: $wind-text-20;
 $wind--text--raid--dark: $wind-bg-10;
@@ -508,6 +509,7 @@ $null--bg--hover--dark: $grey-30;
 
 $null--text--light: $grey-40;
 $null--text--dark: $grey-90;
+$null--text--contrast: $grey-90;
 
 $null--text--raid--light: $grey-40;
 $null--text--raid--dark: $grey-90;
@@ -532,7 +534,8 @@ $fire--bg--hover--light: $fire-bg-00;
 $fire--bg--hover--dark: $fire-bg-00;
 
 $fire--text--light: $fire-text-20;
-$fire--text--dark: $fire-text-10;
+$fire--text--dark: $fire-text-30;
+$fire--text--contrast: $fire-text-10;
 
 $fire--text--raid--light: $fire-text-20;
 $fire--text--raid--dark: $fire-bg-10;
@@ -557,7 +560,8 @@ $water--bg--hover--light: $water-bg-00;
 $water--bg--hover--dark: $water-bg-00;
 
 $water--text--light: $water-text-20;
-$water--text--dark: $water-text-10;
+$water--text--dark: $water-text-30;
+$water--text--contrast: $water-text-10;
 
 $water--text--raid--light: $water-text-20;
 $water--text--raid--dark: $water-bg-10;
@@ -582,7 +586,8 @@ $earth--bg--hover--light: $earth-bg-00;
 $earth--bg--hover--dark: $earth-bg-00;
 
 $earth--text--light: $earth-text-20;
-$earth--text--dark: $earth-text-10;
+$earth--text--dark: $earth-text-30;
+$earth--text--contrast: $earth-text-10;
 
 $earth--text--raid--light: $earth-text-20;
 $earth--text--raid--dark: $earth-bg-10;
@@ -607,7 +612,8 @@ $dark--bg--hover--light: $dark-bg-00;
 $dark--bg--hover--dark: $dark-bg-00;
 
 $dark--text--light: $dark-text-20;
-$dark--text--dark: $dark-text-10;
+$dark--text--dark: $dark-text-30;
+$dark--text--contrast: $dark-text-10;
 
 $dark--text--raid--light: $dark-text-20;
 $dark--text--raid--dark: $dark-bg-10;
@@ -632,7 +638,8 @@ $light--bg--hover--light: $light-bg-00;
 $light--bg--hover--dark: $light-bg-00;
 
 $light--text--light: $light-text-20;
-$light--text--dark: $light-text-10;
+$light--text--dark: $light-text-30;
+$light--text--contrast: $light-text-10;
 
 $light--text--raid--light: $light-text-20;
 $light--text--raid--dark: $light-bg-10;
