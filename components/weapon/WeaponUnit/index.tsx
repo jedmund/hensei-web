@@ -238,23 +238,22 @@ const WeaponUnit = ({
 
   function telumaImage(index: number) {
     const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
-    let filename = ''
-    let altText = ''
 
     // If there is a grid weapon, it is a Draconic Weapon and it has keys
     if (
       gridWeapon &&
-      gridWeapon.object.series === 3 &&
+      (gridWeapon.object.series === 3 || gridWeapon.object.series == 34) &&
       gridWeapon.weapon_keys
     ) {
-      if (index === 0 && gridWeapon.weapon_keys[0]) {
-        altText = `${gridWeapon.weapon_keys[0].name[locale]}`
-        filename = `${gridWeapon.weapon_keys[0].slug}.png`
-      } else if (index === 1 && gridWeapon.weapon_keys[1]) {
-        altText = `${gridWeapon.weapon_keys[1].name[locale]}`
+      const weaponKey = gridWeapon.weapon_keys[index]
+      const altText = weaponKey.name[locale]
+      let filename = `${weaponKey.slug}`
 
-        const element = gridWeapon.object.element
-        filename = `${gridWeapon.weapon_keys[1].slug}-${element}.png`
+      if (
+        index === 1 ||
+        (index === 2 && parseInt(weaponKey.granblue_id) === 15008)
+      ) {
+        filename += `-${gridWeapon.object.element}`
       }
 
       return (
@@ -262,7 +261,7 @@ const WeaponUnit = ({
           alt={altText}
           key={altText}
           className={styles.skill}
-          src={`${baseUrl}${filename}`}
+          src={`${baseUrl}${filename}.png`}
         />
       )
     }
@@ -272,7 +271,7 @@ const WeaponUnit = ({
     let images: JSX.Element[] = []
     if (
       gridWeapon &&
-      gridWeapon.object.series === 3 &&
+      (gridWeapon.object.series === 3 || gridWeapon.object.series === 34) &&
       gridWeapon.weapon_keys &&
       gridWeapon.weapon_keys.length > 0
     ) {
@@ -287,8 +286,6 @@ const WeaponUnit = ({
 
   function ultimaImage(index: number) {
     const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
-    let filename = ''
-    let altText = ''
 
     // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
     if (
@@ -296,34 +293,23 @@ const WeaponUnit = ({
       gridWeapon.object.series === 17 &&
       gridWeapon.weapon_keys
     ) {
-      if (
-        gridWeapon.weapon_keys[index] &&
-        (gridWeapon.weapon_keys[index].slot === 1 ||
-          gridWeapon.weapon_keys[index].slot === 2)
-      ) {
-        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
-        filename = `${gridWeapon.weapon_keys[index].slug}.png`
-      } else if (
-        gridWeapon.weapon_keys[index] &&
-        gridWeapon.weapon_keys[index].slot === 0
-      ) {
-        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
+      const weaponKey = gridWeapon.weapon_keys[index]
+      const altText = weaponKey.name[locale]
+      let filename = weaponKey.slug
 
-        const weapon = gridWeapon.object.proficiency
-
-        const suffix = `${weapon}`
-        filename = `${gridWeapon.weapon_keys[index].slug}-${suffix}.png`
+      if (weaponKey.slot === 0) {
+        filename += `-${gridWeapon.object.proficiency}`
       }
-    }
 
-    return (
-      <img
-        alt={altText}
-        key={altText}
-        className={styles.skill}
-        src={`${baseUrl}${filename}`}
-      />
-    )
+      return (
+        <img
+          alt={altText}
+          key={altText}
+          className={styles.skill}
+          src={`${baseUrl}${filename}.png`}
+        />
+      )
+    }
   }
 
   function ultimaImages() {
@@ -345,8 +331,6 @@ const WeaponUnit = ({
 
   function opusImage(index: number) {
     const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
-    let filename = ''
-    let altText = ''
 
     // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
     if (
@@ -354,39 +338,26 @@ const WeaponUnit = ({
       gridWeapon.object.series === 2 &&
       gridWeapon.weapon_keys
     ) {
-      if (
-        gridWeapon.weapon_keys[index] &&
-        gridWeapon.weapon_keys[index].slot === 0
-      ) {
-        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
-        filename = `${gridWeapon.weapon_keys[index].slug}.png`
-      } else if (
-        gridWeapon.weapon_keys[index] &&
-        gridWeapon.weapon_keys[index].slot === 1
-      ) {
-        altText = `${gridWeapon.weapon_keys[index].name[locale]}`
+      const weaponKey = gridWeapon.weapon_keys[index]
+      const altText = weaponKey.name[locale]
+      let filename = weaponKey.slug
 
+      if (weaponKey.slot === 1) {
         const element = gridWeapon.object.element
         const mod = gridWeapon.object.name.en.includes('Repudiation')
           ? 'primal'
           : 'magna'
+        const suffixes = [
+          'pendulum-strength',
+          'pendulum-zeal',
+          'pendulum-strife',
+          'chain-temperament',
+          'chain-restoration',
+          'chain-glorification',
+        ]
 
-        const suffix = `${mod}-${element}`
-        const weaponKey = gridWeapon.weapon_keys[index]
-
-        if (
-          [
-            'pendulum-strength',
-            'pendulum-zeal',
-            'pendulum-strife',
-            'chain-temperament',
-            'chain-restoration',
-            'chain-glorification',
-          ].includes(weaponKey.slug)
-        ) {
-          filename = `${gridWeapon.weapon_keys[index].slug}-${suffix}.png`
-        } else {
-          filename = `${gridWeapon.weapon_keys[index].slug}.png`
+        if (suffixes.includes(weaponKey.slug)) {
+          filename += `-${mod}-${element}`
         }
       }
 
@@ -395,7 +366,7 @@ const WeaponUnit = ({
           alt={altText}
           key={altText}
           className={styles.skill}
-          src={`${baseUrl}${filename}`}
+          src={`${baseUrl}${filename}.png`}
         />
       )
     }
