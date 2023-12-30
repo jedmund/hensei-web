@@ -54,6 +54,10 @@ const WeaponHovercard = (props: Props) => {
       en: 'Emblem',
       ja: 'エンブレム',
     },
+    '34': {
+      en: 'Teluma',
+      ja: 'テルマ',
+    },
   }
 
   const tintElement =
@@ -73,6 +77,100 @@ const WeaponHovercard = (props: Props) => {
     else if ([6, 7, 8, 9, 10, 11].includes(props.gridWeapon.position))
       return 'top'
     else return 'bottom'
+  }
+
+  function telumaImage(index: number) {
+    const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
+
+    // If there is a grid weapon, it is a Draconic Weapon and it has keys
+    if (
+      (props.gridWeapon.object.series === 3 ||
+        props.gridWeapon.object.series == 34) &&
+      props.gridWeapon.weapon_keys
+    ) {
+      const weaponKey = props.gridWeapon.weapon_keys[index]
+      const altText = weaponKey.name[locale]
+      let filename = `${weaponKey.slug}`
+
+      if (
+        index === 1 ||
+        (index === 2 && parseInt(weaponKey.granblue_id) === 15008)
+      ) {
+        filename += `-${props.gridWeapon.object.element}`
+      }
+
+      return (
+        <img
+          alt={altText}
+          key={altText}
+          className={styles.skill}
+          src={`${baseUrl}${filename}.png`}
+        />
+      )
+    }
+  }
+
+  function opusImage(index: number) {
+    const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
+
+    // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
+    if (props.gridWeapon.object.series === 2 && props.gridWeapon.weapon_keys) {
+      const weaponKey = props.gridWeapon.weapon_keys[index]
+      const altText = weaponKey.name[locale]
+      let filename = weaponKey.slug
+
+      if (weaponKey.slot === 1) {
+        const element = props.gridWeapon.object.element
+        const mod = props.gridWeapon.object.name.en.includes('Repudiation')
+          ? 'primal'
+          : 'magna'
+        const suffixes = [
+          'pendulum-strength',
+          'pendulum-zeal',
+          'pendulum-strife',
+          'chain-temperament',
+          'chain-restoration',
+          'chain-glorification',
+        ]
+
+        if (suffixes.includes(weaponKey.slug)) {
+          filename += `-${mod}-${element}`
+        }
+      }
+
+      return (
+        <img
+          alt={altText}
+          key={altText}
+          className={styles.skill}
+          src={`${baseUrl}${filename}.png`}
+        />
+      )
+    }
+  }
+
+  function ultimaImage(index: number) {
+    const baseUrl = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-keys/`
+
+    // If there is a grid weapon, it is a Dark Opus Weapon and it has keys
+    if (props.gridWeapon.object.series === 17 && props.gridWeapon.weapon_keys) {
+      const weaponKey = props.gridWeapon.weapon_keys[index]
+      const altText = weaponKey.name[locale]
+      let filename = weaponKey.slug
+
+      if (weaponKey.slot === 0) {
+        filename += `-${props.gridWeapon.object.proficiency}`
+      }
+
+      return (
+        <img
+          alt={altText}
+          key={altText}
+          className={styles.skill}
+          src={`${baseUrl}${filename}.png`}
+        />
+      )
+    }
   }
 
   const createPrimaryAxSkillString = () => {
@@ -135,27 +233,27 @@ const WeaponHovercard = (props: Props) => {
 
   const keysSection = (
     <section className={styles.weaponKeys}>
-      {WeaponKeyNames[props.gridWeapon.object.series] ? (
+      {WeaponKeyNames[props.gridWeapon.object.series] && (
         <h5 className={tintElement}>
           {WeaponKeyNames[props.gridWeapon.object.series][locale]}
-          {locale === 'en' ? 's' : ''}
+          {locale === 'en' && 's'}
         </h5>
-      ) : (
-        ''
       )}
 
-      {props.gridWeapon.weapon_keys
-        ? Array.from(Array(props.gridWeapon.weapon_keys.length)).map((x, i) => {
-            return (
-              <div
-                className={styles.weaponKey}
-                key={props.gridWeapon.weapon_keys![i].id}
-              >
-                <span>{props.gridWeapon.weapon_keys![i].name[locale]}</span>
-              </div>
-            )
-          })
-        : ''}
+      {props.gridWeapon.weapon_keys?.map((weaponKey, i) => (
+        <div className={styles.weaponKey} key={weaponKey.id}>
+          {[3, 34].includes(props.gridWeapon.object.series) && (
+            <i className={styles.icon}>{telumaImage(i)}</i>
+          )}
+          {props.gridWeapon.object.series === 17 && (
+            <i className={styles.icon}>{ultimaImage(i)}</i>
+          )}
+          {props.gridWeapon.object.series === 2 && (
+            <i className={styles.icon}>{opusImage(i)}</i>
+          )}
+          <span>{weaponKey.name[locale]}</span>
+        </div>
+      ))}
     </section>
   )
 

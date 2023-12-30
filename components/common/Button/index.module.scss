@@ -412,7 +412,7 @@
 
   &.wind {
     background: var(--wind-bg);
-    color: var(--wind-text);
+    color: var(--wind-text-contrast);
 
     &:hover {
       background: var(--wind-bg-hover);
@@ -422,7 +422,7 @@
 
   &.fire {
     background: var(--fire-bg);
-    color: var(--fire-text);
+    color: var(--fire-text-contrast);
 
     &:hover {
       background: var(--fire-bg-hover);
@@ -432,7 +432,7 @@
 
   &.water {
     background: var(--water-bg);
-    color: var(--water-text);
+    color: var(--water-text-contrast);
 
     &:hover {
       background: var(--water-bg-hover);
@@ -442,7 +442,7 @@
 
   &.earth {
     background: var(--earth-bg);
-    color: var(--earth-text);
+    color: var(--earth-text-contrast);
 
     &:hover {
       background: var(--earth-bg-hover);
@@ -452,7 +452,7 @@
 
   &.dark {
     background: var(--dark-bg);
-    color: var(--dark-text);
+    color: var(--dark-text-contrast);
 
     &:hover {
       background: var(--dark-bg-hover);
@@ -462,7 +462,7 @@
 
   &.light {
     background: var(--light-bg);
-    color: var(--light-text);
+    color: var(--light-text-contrast);
 
     &:hover {
       background: var(--light-bg-hover);
