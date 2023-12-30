@@ -66,6 +66,22 @@
     display: flex;
     flex-direction: column;
     font-size: $normal;
-    gap: $unit-half;
+    gap: $unit;
+
+    .weaponKey {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      gap: $unit;
+
+      .icon img {
+        width: $unit-3x;
+        height: $unit-3x;
+      }
+
+      span {
+        font-weight: $medium;
+      }
+    }
   }
 }
