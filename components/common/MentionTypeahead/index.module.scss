@@ -162,10 +162,10 @@
     background: var(--fire-bg);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
       0 1px 0px var(--fire-shadow);
-    color: var(--fire-text);
+    color: var(--fire-text-contrast);
 
     :global(.rbt-token-remove-button) {
-      color: var(--fire-text);
+      color: var(--fire-text-contrast);
 
       &:hover {
         color: var(--fire-text-hover);
@@ -180,7 +180,7 @@
     }
 
     &:focus {
-      background: var(--fire-text);
+      background: var(--fire-text-contrast);
       box-shadow: none;
       color: var(--fire-bg);
       outline: $outline;
@@ -195,10 +195,10 @@
     background: var(--water-bg);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
       0 1px 0px var(--water-shadow);
-    color: var(--water-text);
+    color: var(--water-text-contrast);
 
     :global(.rbt-token-remove-button) {
-      color: var(--water-text);
+      color: var(--water-text-contrast);
 
       &:hover {
         color: var(--water-text-hover);
@@ -213,7 +213,7 @@
     }
 
     &:focus {
-      background: var(--water-text);
+      background: var(--water-text-contrast);
       box-shadow: none;
       color: var(--water-bg);
       outline: $outline;
@@ -228,10 +228,10 @@
     background: var(--earth-bg);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
       0 1px 0px var(--earth-shadow);
-    color: var(--earth-text);
+    color: var(--earth-text-contrast);
 
     :global(.rbt-token-remove-button) {
-      color: var(--earth-text);
+      color: var(--earth-text-contrast);
 
       &:hover {
         color: var(--earth-text-hover);
@@ -246,7 +246,7 @@
     }
 
     &:focus {
-      background: var(--earth-text);
+      background: var(--earth-text-contrast);
       box-shadow: none;
       color: var(--earth-bg);
       outline: $outline;
@@ -261,10 +261,10 @@
     background: var(--wind-bg);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
       0 1px 0px var(--wind-shadow);
-    color: var(--wind-text);
+    color: var(--wind-text-contrast);
 
     :global(.rbt-token-remove-button) {
-      color: var(--wind-text);
+      color: var(--wind-text-contrast);
 
       &:hover {
         color: var(--wind-text-hover);
@@ -278,7 +278,7 @@
     }
 
     &:focus {
-      background: var(--wind-text);
+      background: var(--wind-text-contrast);
       box-shadow: none;
       color: var(--wind-bg);
       outline: $outline;
@@ -293,10 +293,10 @@
     background: var(--dark-bg);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
       0 1px 0px var(--dark-shadow);
-    color: var(--dark-text);
+    color: var(--dark-text-contrast);
 
     :global(.rbt-token-remove-button) {
-      color: var(--dark-text);
+      color: var(--dark-text-contrast);
 
       &:hover {
         color: var(--dark-text-hover);
@@ -311,7 +311,7 @@
     }
 
     &:focus {
-      background: var(--dark-text);
+      background: var(--dark-text-contrast);
       box-shadow: none;
       color: var(--dark-bg);
       outline: $outline;
@@ -326,10 +326,10 @@
     background: var(--light-bg);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
       0 1px 0px var(--light-shadow);
-    color: var(--light-text);
+    color: var(--light-text-contrast);
 
     :global(.rbt-token-remove-button) {
-      color: var(--light-text);
+      color: var(--light-text-contrast);
 
       &:hover {
         color: var(--light-text-hover);
@@ -344,7 +344,7 @@
     }
 
     &:focus {
-      background: var(--light-text);
+      background: var(--light-text-contrast);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
         0 1px 0px var(--light-shadow-hover);
       color: var(--light-bg);
