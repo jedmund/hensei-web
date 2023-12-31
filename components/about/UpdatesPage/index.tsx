@@ -79,6 +79,31 @@ const UpdatesPage = () => {
     <div className={classes}>
       <h1>{common('about.segmented_control.updates')}</h1>
       <ContentUpdate
+        version="2023-12L"
+        dateString="2023/12/31"
+        event="events.legend"
+        newItems={{
+          weapon: ['1040119000', '1040618200', '1040317000'],
+          character: ['3040502000', '3040501000', '3040503000'],
+          summon: ['2040425000'],
+        }}
+      />
+      <ContentUpdate
+        version="2023-12U2"
+        dateString="2023/12/19"
+        event="events.content"
+        uncappedItems={{
+          weapon: [
+            '1040815100',
+            '1040815200',
+            '1040815300',
+            '1040815400',
+            '1040815000',
+          ],
+        }}
+        numNotes={2}
+      />
+      <ContentUpdate
         version="2023-12F2"
         dateString="2023/12/28"
         event="events.flash"
