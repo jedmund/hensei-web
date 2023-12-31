@@ -89,27 +89,13 @@ const UpdatesPage = () => {
         }}
       />
       <ContentUpdate
-        version="2023-12U2"
-        dateString="2023/12/19"
-        event="events.content"
-        uncappedItems={{
-          weapon: [
-            '1040815100',
-            '1040815200',
-            '1040815300',
-            '1040815400',
-            '1040815000',
-          ],
-        }}
-        numNotes={2}
-      />
-      <ContentUpdate
         version="2023-12F2"
         dateString="2023/12/28"
         event="events.flash"
         newItems={{
-          weapon: ['1040218900', '1040618100'],
+          weapon: ['1040218900', '1040618100', '1040025500', '1030305900'],
           character: ['3040499000', '3040500000'],
+          summon: ['2040427000'],
         }}
       />
       <ContentUpdate
