@@ -144,7 +144,7 @@
         background: var(--fire-bg);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
           0 1px 0px var(--fire-shadow);
-        color: var(--fire-text);
+        color: var(--fire-text-contrast);
 
         &:hover {
           background: var(--fire-bg-hover);
@@ -158,7 +158,7 @@
         background: var(--water-bg);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
           0 1px 0px var(--water-shadow);
-        color: var(--water-text);
+        color: var(--water-text-contrast);
 
         &:hover {
           background: var(--water-bg-hover);
@@ -172,7 +172,7 @@
         background: var(--earth-bg);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
           0 1px 0px var(--earth-shadow);
-        color: var(--earth-text);
+        color: var(--earth-text-contrast);
 
         &:hover {
           background: var(--earth-bg-hover);
@@ -186,7 +186,7 @@
         background: var(--wind-bg);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
           0 1px 0px var(--wind-shadow);
-        color: var(--wind-text);
+        color: var(--wind-text-contrast);
 
         &:hover {
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
@@ -199,7 +199,7 @@
         background: var(--dark-bg);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
           0 1px 0px var(--dark-shadow);
-        color: var(--dark-text);
+        color: var(--dark-text-contrast);
 
         &:hover {
           background: var(--dark-bg-hover);
@@ -213,7 +213,7 @@
         background: var(--light-bg);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
           0 1px 0px var(--light-shadow);
-        color: var(--light-text);
+        color: var(--light-text-contrast);
 
         &:hover {
           background: var(--light-bg-hover);
