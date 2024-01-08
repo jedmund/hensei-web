@@ -21,7 +21,8 @@
   "versions": {
     "2024-01U": {
       "features": [
-        "Fixed a bug that prevented logged out users from creating teams if they started from the Character or Summon tabs"
+        "Fixed a bug that prevented logged out users from creating teams if they started from the Character or Summon tabs",
+        "Fixed a bug that prevented filtering the Teams, Saved, and Profile pages without selecting a filter twice"
       ]
     },
     "2023-12U2": {
