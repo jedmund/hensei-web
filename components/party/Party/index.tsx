@@ -80,6 +80,7 @@ const Party = (props: Props) => {
       ? JSON.parse(cookie as string)
       : null
 
+    // Unset edit key and make the party not editable on first load
     let editable = false
     unsetEditKey()
 
@@ -98,7 +99,7 @@ const Party = (props: Props) => {
           editable = true
 
           // Also set edit key header
-          setEditKey(props.team.id, props.team.user)
+          setEditKey(props.team.id)
         }
       }
     }
@@ -109,8 +110,7 @@ const Party = (props: Props) => {
 
   // Methods: Creating a new party
   async function createParty(details?: DetailsObject) {
-    let payload = {}
-    if (details) payload = formatDetailsObject(details)
+    let payload = formatDetailsObject(details ?? {})
 
     return await api.endpoints.parties.create(payload).then((response) => {
       storeParty(response.data.party)
@@ -213,7 +213,7 @@ const Party = (props: Props) => {
           // Store the edit key in local storage
           if (remix.edit_key) {
             storeEditKey(remix.id, remix.edit_key)
-            setEditKey(remix.id, remix.user)
+            setEditKey(remix.id)
           }
 
           router.push(`/p/${remix.shortcode}`)
@@ -288,10 +288,15 @@ const Party = (props: Props) => {
 
     appState.party.detailsVisible = false
 
-    // Store the edit key in local storage
-    if (team.edit_key) {
-      storeEditKey(team.id, team.edit_key)
-      setEditKey(team.id, team.user)
+    // Handle the state of the edit key
+    if (!team.user) {
+      if (team.edit_key) {
+        storeEditKey(team.id, team.edit_key)
+      } else if (team.local_id) {
+        setEditKey(team.local_id)
+      }
+    } else {
+      unsetEditKey()
     }
 
     // Populate state

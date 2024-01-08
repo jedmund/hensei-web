@@ -19,6 +19,11 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2024-01U": {
+      "features": [
+        "Fixed a bug that prevented logged out users from creating teams if they started from the Character or Summon tabs"
+      ]
+    },
     "2023-12U2": {
       "features": [
         "Sorry for the longer spaces between updates—life has been a bit busy. Work has gotten a lot busier, I have more social obligations, and am working on another app. I haven't abandoned granblue.team though. Thanks for your patience!",
