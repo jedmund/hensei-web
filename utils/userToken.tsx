@@ -39,16 +39,14 @@ export const setHeaders = (
 }
 
 export const storeEditKey = (id: string, key: string) => {
-  ls(id, key)
+  const stored = set(id, key)
+  if (stored) setEditKey(id)
+  return stored
 }
 
-export const setEditKey = (id: string, user?: User) => {
-  if (!user) {
-    const edit_key = get<string>(id)
-    axios.defaults.headers.common['X-Edit-Key'] = edit_key
-  } else {
-    unsetEditKey()
-  }
+export const setEditKey = (id: string) => {
+  const edit_key = get<string>(id)
+  axios.defaults.headers.common['X-Edit-Key'] = edit_key
 }
 
 export const unsetEditKey = () => {
