@@ -184,6 +184,30 @@ const JobSection = (props: Props) => {
     </div>
   )
 
+  const renderJobDropdown = () => {
+    if (props.editable) {
+      return (
+        <JobDropdown
+          currentJob={party.job?.id}
+          onChange={receiveJob}
+          ref={selectRef}
+        />
+      )
+    } else {
+      return (
+        <div className={styles.name}>
+          {party.job && (
+            <img
+              alt={party.job.name[locale]}
+              src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${party.job.granblue_id}.png`}
+            />
+          )}
+          <h3>{party.job ? party.job.name[locale] : t('no_job')}</h3>
+        </div>
+      )
+    }
+  }
+
   // Render: JSX components
   return (
     <section className={styles.job}>
@@ -196,25 +220,7 @@ const JobSection = (props: Props) => {
         onAccessorySelected={handleAccessorySelected}
       />
       <div className={styles.details}>
-        {props.editable ? (
-          <JobDropdown
-            currentJob={party.job?.id}
-            onChange={receiveJob}
-            ref={selectRef}
-          />
-        ) : (
-          <div className={styles.name}>
-            {party.job ? (
-              <img
-                alt={party.job.name[locale]}
-                src={`${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/job-icons/${party.job.granblue_id}.png`}
-              />
-            ) : (
-              ''
-            )}
-            <h3>{party.job ? party.job.name[locale] : t('no_job')}</h3>
-          </div>
-        )}
+        {renderJobDropdown()}
 
         <ul className={skillContainerClasses}>
           {[...Array(numSkills)].map((e, i) => (
