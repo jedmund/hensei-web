@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { getCookie } from 'cookies-next'
-import { queryTypes, useQueryState } from 'next-usequerystate'
+import { useQueryState } from 'nuqs'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
