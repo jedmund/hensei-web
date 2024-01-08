@@ -88,7 +88,7 @@ const UpdatesPage = () => {
         uncappedItems={{
           character: ['3040167000', '3040166000'],
         }}
-        numNotes={1}
+        numNotes={2}
       />
       <ContentUpdate
         version="2023-12L"
