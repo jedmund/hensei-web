@@ -313,4 +313,12 @@ export const pictureData: Picture[] = [
     filename: 'vajra',
     element: 'water',
   },
+  {
+    name: {
+      en: 'Lucilius',
+      ja: 'ルシファー',
+    },
+    filename: 'lucilius',
+    element: 'dark',
+  },
 ]
