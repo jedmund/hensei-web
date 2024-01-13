@@ -32,6 +32,7 @@ interface Weapon {
   uncap: {
     flb: boolean
     ulb: boolean
+    transcendence: boolean
   }
   position?: number
 }
