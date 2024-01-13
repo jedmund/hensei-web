@@ -77,7 +77,7 @@ const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
     ) {
       suffix = '_02'
     } else if (
-      gridSummon.object.uncap.xlb &&
+      gridSummon.object.uncap.transcendence &&
       gridSummon.transcendence_step > 0
     ) {
       suffix = '_03'

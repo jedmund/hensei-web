@@ -318,7 +318,7 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
     if (summon) {
       // Change the image based on the uncap level
       let suffix = ''
-      if (summon.object.uncap.xlb && summon.uncap_level == 6) {
+      if (summon.object.uncap.transcendence && summon.uncap_level == 6) {
         if (summon.transcendence_step >= 1 && summon.transcendence_step < 5) {
           suffix = '_03'
         } else if (summon.transcendence_step === 5) {
@@ -363,7 +363,10 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
     if (summon && gridSummon) {
       // Change the image based on the uncap level
       let suffix = ''
-      if (gridSummon.object.uncap.xlb && gridSummon.uncap_level == 6) {
+      if (
+        <gridSummon className="object uncap transc"></gridSummon> &&
+        gridSummon.uncap_level == 6
+      ) {
         if (
           gridSummon.transcendence_step >= 1 &&
           gridSummon.transcendence_step < 5

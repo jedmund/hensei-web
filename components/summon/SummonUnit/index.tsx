@@ -177,7 +177,10 @@ const SummonUnit = ({
       ]
 
       let suffix = ''
-      if (gridSummon.object.uncap.xlb && gridSummon.uncap_level == 6) {
+      if (
+        gridSummon.object.uncap.transcendence &&
+        gridSummon.uncap_level == 6
+      ) {
         if (
           gridSummon.transcendence_step >= 1 &&
           gridSummon.transcendence_step < 5
@@ -320,12 +323,12 @@ const SummonUnit = ({
         {contextMenu()}
         {quickSummon()}
         {image()}
-        {gridSummon ? (
+        {gridSummon && (
           <UncapIndicator
             type="summon"
             ulb={gridSummon.object.uncap.ulb || false}
             flb={gridSummon.object.uncap.flb || false}
-            xlb={gridSummon.object.uncap.xlb || false}
+            transcendence={gridSummon.object.uncap.transcendence || false}
             editable={editable}
             uncapLevel={gridSummon.uncap_level}
             transcendenceStage={gridSummon.transcendence_step}
@@ -334,8 +337,6 @@ const SummonUnit = ({
             updateTranscendence={passTranscendenceData}
             special={false}
           />
-        ) : (
-          ''
         )}
         <h3 className={styles.name}>{summon?.name[locale]}</h3>
       </div>
