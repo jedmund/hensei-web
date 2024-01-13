@@ -17,6 +17,7 @@ interface Props {
   removeWeapon: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
+  updateTranscendence: (id: string, position: number, stage: number) => void
 }
 
 // Constants
@@ -29,6 +30,7 @@ const ExtraWeaponsGrid = ({
   removeWeapon,
   updateObject,
   updateUncap,
+  updateTranscendence,
 }: Props) => {
   return (
     <ul className={styles.grid}>
@@ -47,6 +49,7 @@ const ExtraWeaponsGrid = ({
               removeWeapon={removeWeapon}
               updateObject={updateObject}
               updateUncap={updateUncap}
+              updateTranscendence={updateTranscendence}
             />
           </li>
         )
