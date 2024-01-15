@@ -37,6 +37,7 @@ interface Props {
   removeWeapon: (id: string) => void
   updateObject: (object: SearchableObject, position: number) => void
   updateUncap: (id: string, position: number, uncap: number) => void
+  updateTranscendence: (id: string, position: number, stage: number) => void
 }
 
 const WeaponUnit = ({
@@ -47,6 +48,7 @@ const WeaponUnit = ({
   removeWeapon: sendWeaponToRemove,
   updateObject,
   updateUncap,
+  updateTranscendence,
 }: Props) => {
   // Translations and locale
   const { t } = useTranslation('common')
@@ -128,6 +130,10 @@ const WeaponUnit = ({
   // Methods: Mutate data
   function passUncapData(index: number) {
     if (gridWeapon) updateUncap(gridWeapon.id, position, index)
+  }
+
+  function passTranscendenceData(stage: number) {
+    if (gridWeapon) updateTranscendence(gridWeapon.id, position, stage)
   }
 
   function removeWeapon() {
@@ -559,18 +565,20 @@ const WeaponUnit = ({
       <div className={classes}>
         {contextMenu()}
         {image()}
-        {gridWeapon && weapon ? (
+        {gridWeapon && (
           <UncapIndicator
             type="weapon"
             ulb={gridWeapon.object.uncap.ulb || false}
             flb={gridWeapon.object.uncap.flb || false}
+            transcendence={gridWeapon.object.uncap.transcendence || false}
+            editable={editable}
             uncapLevel={gridWeapon.uncap_level}
+            transcendenceStage={gridWeapon.transcendence_step}
             position={gridWeapon.position}
             updateUncap={passUncapData}
+            updateTranscendence={passTranscendenceData}
             special={false}
           />
-        ) : (
-          ''
         )}
         <h3 className={styles.name}>{weapon?.name[locale]}</h3>
       </div>

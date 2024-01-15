@@ -60,7 +60,7 @@ const SummonHovercard = (props: Props) => {
       ) {
         suffix = '_02'
       } else if (
-        props.gridSummon.object.uncap.xlb &&
+        props.gridSummon.object.uncap.transcendence &&
         props.gridSummon.transcendence_step > 0
       ) {
         suffix = '_03'

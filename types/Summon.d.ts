@@ -27,7 +27,7 @@ interface Summon {
   uncap: {
     flb: boolean
     ulb: boolean
-    xlb: boolean
+    transcendence: boolean
   }
   position?: number
 }

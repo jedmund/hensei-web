@@ -65,6 +65,10 @@ const WeaponGrid = (props: Props) => {
   const [previousUncapValues, setPreviousUncapValues] = useState<{
     [key: number]: number
   }>({})
+  const [previousTranscendenceStages, setPreviousTranscendenceStages] =
+    useState<{
+      [key: number]: number
+    }>({})
 
   // Initialize an array of current uncap values for each weapon
   useEffect(() => {
@@ -90,13 +94,16 @@ const WeaponGrid = (props: Props) => {
       const payload: DetailsObject = { extra: party.extra }
       props.createParty(payload).then((team) => {
         saveWeapon(team.id, weapon, position).then((response) => {
-          if (response) storeGridWeapon(response.data.grid_weapon)
+          if (response && response.data.grid_weapon) {
+            storeGridWeapon(response.data.grid_weapon)
+          }
         })
       })
     } else {
       if (props.editable)
         saveWeapon(party.id, weapon, position)
           .then((response) => {
+            console.log(response)
             if (response) handleWeaponResponse(response.data)
           })
           .catch((error) => {
@@ -135,7 +142,12 @@ const WeaponGrid = (props: Props) => {
       if (data.position) setPosition(data.position)
       setModalOpen(true)
     } else {
-      storeGridWeapon(data.grid_weapon)
+      if (data.grid_weapon) {
+        storeGridWeapon(data.grid_weapon)
+      } else {
+        console.error('No grid weapon returned')
+        console.log(data)
+      }
 
       // If we replaced an existing weapon, remove it from the grid
       if (data.hasOwnProperty('meta') && data.meta['replaced'] !== undefined) {
@@ -217,7 +229,12 @@ const WeaponGrid = (props: Props) => {
           })
 
           // Store new character in state
-          storeGridWeapon(response.data.grid_weapon)
+          if (response.data.grid_weapon)
+            storeGridWeapon(response.data.grid_weapon)
+          else {
+            console.error('No grid weapon returned')
+            console.log(response.data)
+          }
 
           // Reset conflict
           resetConflict()
@@ -335,6 +352,110 @@ const WeaponGrid = (props: Props) => {
     setPreviousUncapValues(newPreviousValues)
   }
 
+  // Methods: Updating transcendence stage
+  // Note: Saves, but debouncing is not working properly
+  async function saveTranscendence(
+    id: string,
+    position: number,
+    stage: number
+  ) {
+    storePreviousUncapValue(position)
+    storePreviousTranscendenceStage(position)
+
+    const payload = {
+      weapon: {
+        uncap_level: stage > 0 ? 6 : 5,
+        transcendence_step: stage,
+      },
+    }
+
+    try {
+      if (stage != previousTranscendenceStages[position])
+        await api.updateTranscendence('weapon', id, stage).then((response) => {
+          storeGridWeapon(response.data.grid_weapon)
+        })
+    } catch (error) {
+      console.error(error)
+
+      // Revert optimistic UI
+      updateUncapLevel(position, previousUncapValues[position])
+      updateTranscendenceStage(position, previousTranscendenceStages[position])
+
+      // Remove optimistic key
+      let newPreviousTranscendenceStages = { ...previousTranscendenceStages }
+      let newPreviousUncapValues = { ...previousUncapValues }
+
+      delete newPreviousTranscendenceStages[position]
+      delete newPreviousUncapValues[position]
+
+      setPreviousTranscendenceStages(newPreviousTranscendenceStages)
+      setPreviousUncapValues(newPreviousUncapValues)
+    }
+  }
+
+  function initiateTranscendenceUpdate(
+    id: string,
+    position: number,
+    stage: number
+  ) {
+    if (props.editable) {
+      memoizeTranscendenceAction(id, position, stage)
+
+      // Optimistically update UI
+      updateTranscendenceStage(position, stage)
+
+      if (stage > 0) {
+        updateUncapLevel(position, 6)
+      }
+    }
+  }
+
+  const memoizeTranscendenceAction = useCallback(
+    (id: string, position: number, stage: number) => {
+      debouncedTranscendenceAction(id, position, stage)
+    },
+    [props, previousTranscendenceStages]
+  )
+
+  const debouncedTranscendenceAction = useMemo(
+    () =>
+      debounce((id, position, number) => {
+        saveTranscendence(id, position, number)
+      }, 500),
+    [props, saveTranscendence]
+  )
+
+  const updateTranscendenceStage = (position: number, stage: number) => {
+    // console.log(`Updating uncap level at position ${position} to ${uncapLevel}`)
+    if (appState.grid.weapons.mainWeapon && position == -1)
+      appState.grid.weapons.mainWeapon.transcendence_step = stage
+    else {
+      const weapon = appState.grid.weapons.allWeapons[position]
+      if (weapon) {
+        weapon.transcendence_step = stage
+        appState.grid.weapons.allWeapons[position] = weapon
+      }
+    }
+  }
+
+  function storePreviousTranscendenceStage(position: number) {
+    // Save the current value in case of an unexpected result
+    let newPreviousValues = { ...previousUncapValues }
+
+    if (appState.grid.weapons.mainWeapon && position == -1) {
+      newPreviousValues[position] = appState.grid.weapons.mainWeapon.uncap_level
+    } else {
+      const weapon = appState.grid.weapons.allWeapons[position]
+      if (weapon) {
+        newPreviousValues[position] = weapon.uncap_level
+      } else {
+        newPreviousValues[position] = 0
+      }
+    }
+
+    setPreviousUncapValues(newPreviousValues)
+  }
+
   // Methods: Convenience
   const displayExtraContainer =
     props.editable ||
@@ -352,6 +473,7 @@ const WeaponGrid = (props: Props) => {
       removeWeapon={removeWeapon}
       updateObject={receiveWeaponFromSearch}
       updateUncap={initiateUncapUpdate}
+      updateTranscendence={initiateTranscendenceUpdate}
     />
   )
 
@@ -370,6 +492,7 @@ const WeaponGrid = (props: Props) => {
           removeWeapon={removeWeapon}
           updateObject={receiveWeaponFromSearch}
           updateUncap={initiateUncapUpdate}
+          updateTranscendence={initiateTranscendenceUpdate}
         />
       </li>
     )
@@ -388,6 +511,7 @@ const WeaponGrid = (props: Props) => {
                 removeWeapon={removeWeapon}
                 updateObject={receiveWeaponFromSearch}
                 updateUncap={initiateUncapUpdate}
+                updateTranscendence={initiateTranscendenceUpdate}
               />
             )}
           </ExtraContainerItem>

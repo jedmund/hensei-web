@@ -16,7 +16,7 @@ interface Props
     React.DialogHTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   > {
-  type: 'character' | 'summon'
+  type: 'character' | 'summon' | 'weapon'
   starRef: React.RefObject<HTMLDivElement>
   open: boolean
   stage: number
@@ -56,7 +56,7 @@ const TranscendencePopover = ({
 
   useEffect(() => {
     if (type === 'character') setBaseLevel(100)
-    else if (type === 'summon') setBaseLevel(200)
+    else if (['weapon', 'summon'].includes(type)) setBaseLevel(200)
   }, [type])
 
   function handleFragmentClicked(newStage: number) {

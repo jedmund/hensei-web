@@ -15,7 +15,7 @@ interface Props extends React.ComponentProps<'div'> {
   editable: boolean
   flb: boolean
   ulb: boolean
-  xlb?: boolean
+  transcendence?: boolean
   special: boolean
   updateUncap?: (index: number) => void
   updateTranscendence?: (index: number) => void
@@ -57,7 +57,7 @@ const UncapIndicator = (props: Props) => {
         }
       }
     } else {
-      if (props.xlb) {
+      if (props.transcendence) {
         numStars = 6
       } else if (props.ulb) {
         numStars = 5
@@ -93,7 +93,7 @@ const UncapIndicator = (props: Props) => {
 
   const transcendence = (i: number) => {
     const tabIndex = props.position ? props.position * 7 + i + 1 : 0
-    return props.type === 'character' || props.type === 'summon' ? (
+    return (
       <TranscendencePopover
         open={popoverOpen}
         stage={props.transcendenceStage || 0}
@@ -113,14 +113,6 @@ const UncapIndicator = (props: Props) => {
           onStarClick={handleStarClicked}
         />
       </TranscendencePopover>
-    ) : (
-      <TranscendenceStar
-        key={`star_${i}`}
-        stage={props.transcendenceStage || 0}
-        editable={props.editable}
-        interactive={false}
-        tabIndex={tabIndex}
-      />
     )
   }
 
@@ -165,25 +157,33 @@ const UncapIndicator = (props: Props) => {
     )
   }
 
+  const renderStar = (i: number) => {
+    if (props.type === 'weapon' && i > 4) {
+      return transcendence(i)
+    }
+
+    if (props.type === 'character' && i > 4) {
+      return props.special ? ulb(i) : transcendence(i)
+    }
+
+    if (props.type === 'summon' && i > 4) {
+      return transcendence(i)
+    }
+    if (
+      (props.special && props.type === 'character' && i === 3) ||
+      (props.type === 'character' && i === 4) ||
+      (props.type !== 'character' && i > 2)
+    ) {
+      return flb(i)
+    }
+
+    return mlb(i)
+  }
+
   return (
     <div className={classes}>
       <ul className={styles.indicator}>
-        {Array.from(Array(numStars)).map((x, i) => {
-          if (props.type === 'character' && i > 4) {
-            if (props.special) return ulb(i)
-            else return transcendence(i)
-          } else if (props.type === 'summon' && i > 4) {
-            return transcendence(i)
-          } else if (
-            (props.special && props.type === 'character' && i == 3) ||
-            (props.type === 'character' && i == 4) ||
-            (props.type !== 'character' && i > 2)
-          ) {
-            return flb(i)
-          } else {
-            return mlb(i)
-          }
-        })}
+        {Array.from(Array(numStars)).map((_, i) => renderStar(i))}
       </ul>
     </div>
   )

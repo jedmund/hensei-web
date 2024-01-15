@@ -70,7 +70,10 @@ const SummonRep = (props: Props) => {
     if (mainSummon) {
       // Change the image based on the uncap level
       let suffix = ''
-      if (mainSummon.object.uncap.xlb && mainSummon.uncap_level == 6) {
+      if (
+        mainSummon.object.uncap.transcendence &&
+        mainSummon.uncap_level == 6
+      ) {
         if (
           mainSummon.transcendence_step >= 1 &&
           mainSummon.transcendence_step < 5
@@ -123,7 +126,10 @@ const SummonRep = (props: Props) => {
     if (summon && gridSummon) {
       // Change the image based on the uncap level
       let suffix = ''
-      if (gridSummon.object.uncap.xlb && gridSummon.uncap_level == 6) {
+      if (
+        gridSummon.object.uncap.transcendence &&
+        gridSummon.uncap_level == 6
+      ) {
         if (
           gridSummon.transcendence_step >= 1 &&
           gridSummon.transcendence_step < 5
