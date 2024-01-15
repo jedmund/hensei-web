@@ -363,10 +363,7 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
     if (summon && gridSummon) {
       // Change the image based on the uncap level
       let suffix = ''
-      if (
-        <gridSummon className="object uncap transc"></gridSummon> &&
-        gridSummon.uncap_level == 6
-      ) {
+      if (gridSummon.transcendence_step >= 1 && gridSummon.uncap_level == 6) {
         if (
           gridSummon.transcendence_step >= 1 &&
           gridSummon.transcendence_step < 5
