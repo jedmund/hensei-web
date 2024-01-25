@@ -209,10 +209,23 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
         (w) => w && w.object.id === mainhand.id
       )
 
+      let suffix = ''
+      if (
+        weapon &&
+        weapon.object.uncap.transcendence &&
+        weapon.uncap_level == 6
+      ) {
+        if (weapon.transcendence_step >= 1 && weapon.transcendence_step < 5) {
+          suffix = '_02'
+        } else if (weapon.transcendence_step === 5) {
+          suffix = '_03'
+        }
+      }
+
       if (mainhand.element == 0 && weapon && weapon.element) {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}_${weapon.element}.jpg`
       } else {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}.jpg`
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${mainhand.granblue_id}${suffix}.jpg`
       }
     }
 
@@ -230,10 +243,22 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
     const gridWeapon = weaponGrid[position]
 
     if (weapon && gridWeapon) {
+      let suffix = ''
+      if (weapon.uncap.transcendence && gridWeapon.uncap_level == 6) {
+        if (
+          gridWeapon.transcendence_step >= 1 &&
+          gridWeapon.transcendence_step < 5
+        ) {
+          suffix = '_02'
+        } else if (gridWeapon.transcendence_step === 5) {
+          suffix = '_03'
+        }
+      }
+
       if (weapon.element == 0 && gridWeapon.element) {
         url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${gridWeapon.element}.jpg`
       } else {
-        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+        url = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}${suffix}.jpg`
       }
     }
 
