@@ -17,6 +17,7 @@ interface Props {
   event: string
   newItems?: UpdateObject
   uncappedItems?: UpdateObject
+  transcendedItems?: UpdateObject
   numNotes: number
 }
 const ContentUpdate = ({
@@ -25,6 +26,7 @@ const ContentUpdate = ({
   event,
   newItems,
   uncappedItems,
+  transcendedItems,
   numNotes,
 }: Props) => {
   const { t: updates } = useTranslation('updates')
@@ -100,6 +102,42 @@ const ContentUpdate = ({
     return section
   }
 
+  function transcendItemElements(key: 'character' | 'weapon' | 'summon') {
+    let elements: React.ReactNode[] = []
+    if (transcendedItems && transcendedItems[key]) {
+      const items = transcendedItems[key]
+      elements = items
+        ? items.map((id) => {
+            return key === 'character' || key === 'summon' ? (
+              <ChangelogUnit id={id} type={key} key={id} image="04" />
+            ) : (
+              <ChangelogUnit id={id} type={key} key={id} image="03" />
+            )
+          })
+        : []
+    }
+    return elements
+  }
+
+  function transcendItemSection(key: 'character' | 'weapon' | 'summon') {
+    let section: React.ReactNode = ''
+
+    if (transcendedItems && transcendedItems[key]) {
+      const items = transcendedItems[key]
+      section =
+        items && items.length > 0 ? (
+          <section className={styles[`${key}s`]}>
+            <h4>{updates(`labels.transcends.${key}s`)}</h4>
+            <div className={styles.items}>{transcendItemElements(key)}</div>
+          </section>
+        ) : (
+          ''
+        )
+    }
+
+    return section
+  }
+
   return (
     <section
       className={classNames({
@@ -118,10 +156,13 @@ const ContentUpdate = ({
       <div className={styles.contents}>
         {newItemSection('character')}
         {uncapItemSection('character')}
+        {transcendItemSection('character')}
         {newItemSection('weapon')}
         {uncapItemSection('weapon')}
+        {transcendItemSection('weapon')}
         {newItemSection('summon')}
         {uncapItemSection('summon')}
+        {transcendItemSection('summon')}
       </div>
       {numNotes > 0 ? (
         <div className={styles.notes}>

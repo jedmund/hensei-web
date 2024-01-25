@@ -71,10 +71,16 @@ const ChangelogUnit = ({ id, type, image }: Props) => {
         src = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/character-grid/${id}_${image}.jpg`
         break
       case 'weapon':
-        src = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${id}.jpg`
+        src =
+          image === '03'
+            ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${id}_${image}.jpg`
+            : `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${id}.jpg`
         break
       case 'summon':
-        src = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${id}.jpg`
+        src =
+          image === '04'
+            ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${id}_${image}.jpg`
+            : `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${id}.jpg`
         break
     }
 
