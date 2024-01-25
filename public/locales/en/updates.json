@@ -8,6 +8,11 @@
       "weapons": "New weapon uncaps",
       "summons": "New summon uncaps"
     },
+    "transcends": {
+      "characters": "New character transcendence",
+      "weapons": "New weapon transcendence",
+      "summons": "New summon transcendence"
+    },
     "features": "New features",
     "updates": "Other updates"
   },

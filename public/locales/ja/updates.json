@@ -8,6 +8,11 @@
       "weapons": "武器の新上限解放",
       "summons": "召喚石の新上限解放"
     },
+    "transcends": {
+      "characters": "キャラクターの新限界超越",
+      "weapons": "武器の新限界超越",
+      "summons": "召喚石の新限界超越"
+    },
     "features": "新機能",
     "updates": "その他の更新"
   },
