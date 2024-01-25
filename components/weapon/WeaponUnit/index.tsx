@@ -201,16 +201,27 @@ const WeaponUnit = ({
     if (gridWeapon) {
       const weapon = gridWeapon.object!
 
+      let suffix = ''
+      if (weapon.uncap.transcendence && gridWeapon.uncap_level == 6) {
+        if (
+          gridWeapon.transcendence_step >= 1 &&
+          gridWeapon.transcendence_step < 5
+        ) {
+          suffix = '_02'
+        } else if (gridWeapon.transcendence_step === 5) {
+          suffix = '_03'
+        }
+      }
       if (unitType == 0) {
         if (gridWeapon.object.element == 0 && gridWeapon.element)
           imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}_${gridWeapon.element}.jpg`
         else
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}.jpg`
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-main/${weapon.granblue_id}${suffix}.jpg`
       } else {
         if (gridWeapon.object.element == 0 && gridWeapon.element)
           imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}_${gridWeapon.element}.jpg`
         else
-          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}.jpg`
+          imgSrc = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/weapon-grid/${weapon.granblue_id}${suffix}.jpg`
       }
     }
 
