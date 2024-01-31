@@ -24,6 +24,12 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2024-01L": {
+      "features": [
+        "Added Ultimate Mastery skills for classes: Cavalier, Relic Buster, Yamato, and Masquerade",
+        "Fixed a bug where Telumas could be set on the third slot of Draconic Providence weapons"
+      ]
+    },
     "2024-01U": {
       "features": [
         "Fixed a bug that prevented logged out users from creating teams if they started from the Character or Summon tabs",

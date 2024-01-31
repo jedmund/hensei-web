@@ -79,6 +79,16 @@ const UpdatesPage = () => {
     <div className={classes}>
       <h1>{common('about.segmented_control.updates')}</h1>
       <ContentUpdate
+        version="2024-01L"
+        dateString="2024/01/31"
+        event="events.legfest"
+        newItems={{
+          character: ['3040509000', '3040510000'],
+          weapon: ['1040025700', '1040422500', '1040317100', '1030406600'],
+        }}
+        numNotes={1}
+      />
+      <ContentUpdate
         version="2024-01U3"
         dateString="2024/01/18"
         event="events.content"
