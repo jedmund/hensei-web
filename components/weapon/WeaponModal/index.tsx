@@ -162,7 +162,7 @@ const WeaponModal = ({
     if ([2, 3, 17, 34].includes(gridWeapon.object.series) && weaponKey2)
       object.weapon.weapon_key2_id = weaponKey2.id
 
-    if ([17, 34].includes(gridWeapon.object.series) && weaponKey3)
+    if ([17].includes(gridWeapon.object.series) && weaponKey3)
       object.weapon.weapon_key3_id = weaponKey3.id
 
     if (gridWeapon.object.ax && gridWeapon.object.ax_type > 0) {
@@ -381,7 +381,7 @@ const WeaponModal = ({
         ''
       )}
 
-      {[17, 34].includes(gridWeapon.object.series) ? (
+      {[17].includes(gridWeapon.object.series) ? (
         <WeaponKeySelect
           open={weaponKey3Open}
           weaponKey={weaponKey3}
