@@ -6,7 +6,7 @@ import styles from './index.module.scss'
 
 interface Props {
   id: string
-  type: 'character' | 'summon' | 'weapon'
+  type: 'character' | 'summon' | 'weapon' | 'raid' | 'job'
   image?: '01' | '02' | '03' | '04'
 }
 
@@ -48,6 +48,11 @@ const ChangelogUnit = ({ id, type, image }: Props) => {
         const summon = await fetchSummon()
         setItem(summon.data)
         break
+
+      case 'raid':
+        const raid = await fetchRaid()
+        setItem(raid.data)
+        break
     }
   }
 
@@ -61,6 +66,10 @@ const ChangelogUnit = ({ id, type, image }: Props) => {
 
   async function fetchSummon() {
     return api.endpoints.summons.getOne({ id: id })
+  }
+
+  async function fetchRaid() {
+    return api.endpoints.raids.getOne({ id: id })
   }
 
   const imageUrl = () => {
@@ -81,6 +90,10 @@ const ChangelogUnit = ({ id, type, image }: Props) => {
           image === '04'
             ? `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${id}_${image}.jpg`
             : `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/summon-grid/${id}.jpg`
+        break
+
+      case 'raid':
+        src = `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/raids/${id}.png`
         break
     }
 
