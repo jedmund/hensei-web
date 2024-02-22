@@ -486,7 +486,7 @@ const SearchModal = (props: Props) => {
           {filterBar()}
         </header>
 
-        <div className={styles.results} ref={scrollContainer}>
+        <div id="Results" className={styles.results} ref={scrollContainer}>
           <div className={styles.totalRow}>
             <h5 className={styles.total}>
               {t('search.result_count', { record_count: recordCount })}
@@ -503,7 +503,7 @@ const SearchModal = (props: Props) => {
               </div>
             )}
           </div>
-          {open ? renderResults() : ''}
+          {open && renderResults()}
         </div>
       </DialogContent>
     </Dialog>
