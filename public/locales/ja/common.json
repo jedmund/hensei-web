@@ -123,6 +123,10 @@
     "unauthorized": {
       "title": "権限がありません",
       "description": "行ったアクションを実行する権限がありません"
+    },
+    "unspecified_error": {
+      "title": "エラー",
+      "description": "エラーが発生しました"
     }
   },
   "filters": {
