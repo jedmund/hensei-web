@@ -31,7 +31,7 @@
     .characters,
     .weapons,
     .summons,
-    .raids,
+    .raids {
       display: grid;
       grid-template-rows: auto 1fr;
       gap: $unit;
