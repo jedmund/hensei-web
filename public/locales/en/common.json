@@ -123,6 +123,10 @@
     "unauthorized": {
       "title": "Unauthorized",
       "description": "You don't have permission to perform that action"
+    },
+    "unspecified_error": {
+      "title": "Something went wrong",
+      "description": "You shouldn't see this message. Please try again later."
     }
   },
   "filters": {

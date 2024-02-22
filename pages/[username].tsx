@@ -399,8 +399,8 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
         context: null,
         error: true,
         status: {
-          code: response?.status,
-          text: response?.statusText,
+          code: response ? response.status : -999,
+          text: response ? response.statusText : 'unspecified_error',
         },
         ...(await serverSideTranslations(locale, ['common'])),
       },

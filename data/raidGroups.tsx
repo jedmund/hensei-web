@@ -133,4 +133,10 @@ export const raidGroups: RaidGroup[] = [
       ja: 'スーパーアルティメット',
     },
   },
+  {
+    name: {
+      en: 'Nine-Star Raids',
+      ja: '★★★★★★★★★',
+    },
+  },
 ]

@@ -18,6 +18,7 @@ interface Props {
   newItems?: UpdateObject
   uncappedItems?: UpdateObject
   transcendedItems?: UpdateObject
+  raidItems?: string[]
   numNotes: number
 }
 const ContentUpdate = ({
@@ -27,6 +28,7 @@ const ContentUpdate = ({
   newItems,
   uncappedItems,
   transcendedItems,
+  raidItems,
   numNotes,
 }: Props) => {
   const { t: updates } = useTranslation('updates')
@@ -138,6 +140,33 @@ const ContentUpdate = ({
     return section
   }
 
+  function newRaidSection() {
+    let section: React.ReactNode = ''
+
+    if (raidItems) {
+      section = raidItems && raidItems.length > 0 && (
+        <section className={styles['raids']}>
+          <h4>{updates(`labels.raids`)}</h4>
+          <div className={styles.items}>{raidItemElements()}</div>
+        </section>
+      )
+    }
+
+    return section
+  }
+
+  function raidItemElements() {
+    let elements: React.ReactNode[] = []
+
+    if (raidItems) {
+      elements = raidItems.map((id) => {
+        return <ChangelogUnit id={id} type="raid" key={id} />
+      })
+    }
+
+    return elements
+  }
+
   return (
     <section
       className={classNames({
@@ -163,6 +192,7 @@ const ContentUpdate = ({
         {newItemSection('summon')}
         {uncapItemSection('summon')}
         {transcendItemSection('summon')}
+        {newRaidSection()}
       </div>
       {numNotes > 0 ? (
         <div className={styles.notes}>

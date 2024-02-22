@@ -13,6 +13,8 @@
       "weapons": "New weapon transcendence",
       "summons": "New summon transcendence"
     },
+    "jobs": "New classes",
+    "raids": "New raids",
     "features": "New features",
     "updates": "Other updates"
   },
@@ -24,6 +26,13 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2024-02U": {
+      "features": [
+        "Added new class: Onmyoji",
+        "Fixed a bug that prevented filtering job skills by category",
+        "Fixed a bug that prevented infinite scrolling in search results"
+      ]
+    },
     "2024-01L": {
       "features": [
         "Added Ultimate Mastery skills for classes: Cavalier, Relic Buster, Yamato, and Masquerade",
@@ -62,7 +71,7 @@
     },
     "1.2.1": {
       "bugs": [
-        "Job accessory popover has been fixed, so Paladin shields and Manadiver manatura can be selected again",
+        "Class accessory popover has been fixed, so Paladin shields and Manadiver manatura can be selected again",
         "The AX skill section no longer shows up in the weapon hovercard if no AX skills are set",
         "The top of the character hovercard has been slightly refined",
         "Fixed a bug that prevented all character over mastery (ring) bonuses from being displayed",
