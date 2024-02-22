@@ -243,6 +243,13 @@ const SearchModal = (props: Props) => {
     }
   }, [query, open])
 
+  useEffect(() => {
+    if (open && props.object === 'job_skills') {
+      setCurrentPage(1)
+      fetchResults({ replace: true })
+    }
+  }, [filters, open])
+
   function incrementPage() {
     setCurrentPage(currentPage + 1)
   }
