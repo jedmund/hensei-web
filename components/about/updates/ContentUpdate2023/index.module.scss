@@ -1,0 +1,133 @@
+.updates {
+  padding-bottom: $unit-12x;
+
+  .version {
+    display: flex;
+    flex-direction: column;
+
+    &.content {
+      .header h3 {
+        color: var(--accent-yellow);
+      }
+    }
+
+    .bugs {
+      display: flex;
+      flex-direction: column;
+      list-style-type: disc;
+      gap: $unit-half;
+      padding-left: $unit-2x;
+    }
+
+    .contents {
+      display: flex;
+      flex-direction: column;
+      gap: $unit-4x;
+
+      .foreword {
+        margin-top: $unit-4x;
+
+        p {
+          font-size: $font-regular;
+          line-height: 1.32;
+          margin-bottom: $unit-2x;
+        }
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: $unit-2x;
+
+        li {
+          display: flex;
+          flex-direction: column;
+          gap: $unit;
+
+          h3 {
+            font-weight: $bold;
+            margin-top: $unit-half;
+          }
+
+          img {
+            aspect-ratio: 4 / 3;
+            background: var(--dialog-bg);
+            border-radius: $input-corner;
+            display: block;
+            width: 100%;
+          }
+
+          code {
+            background: var(--button-bg);
+            border-radius: 2px;
+            font-family: monospace;
+            font-weight: $bold;
+            letter-spacing: 0.02rem;
+            padding: 1px;
+          }
+        }
+      }
+    }
+
+    .header {
+      align-items: baseline;
+      display: flex;
+      gap: $unit-half;
+      margin-bottom: $unit-2x;
+
+      h3 {
+        color: var(--accent-blue);
+        font-weight: $medium;
+        font-size: $font-large;
+      }
+
+      time {
+        color: var(--text-secondary);
+        font-size: $font-small;
+        font-weight: $medium;
+      }
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      color: var(--text-primary);
+      list-style-type: disc;
+      list-style-position: inside;
+      gap: $unit-half;
+
+      li {
+        font-size: 14px;
+      }
+    }
+
+    .Contents {
+      display: flex;
+      flex-direction: column;
+      gap: $unit-4x;
+
+      &.Bare {
+        display: flex;
+        flex-direction: column;
+        color: var(--text-primary);
+        list-style-type: disc;
+        list-style-position: inside;
+        gap: $unit-half;
+
+        li {
+          font-size: 14px;
+        }
+      }
+
+      section {
+        display: flex;
+        flex-direction: column;
+        gap: $unit-2x;
+
+        h2 {
+          margin: 0;
+        }
+      }
+    }
+  }
+}
