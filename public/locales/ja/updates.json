@@ -13,6 +13,9 @@
       "weapons": "武器の新限界超越",
       "summons": "召喚石の新限界超越"
     },
+    "awakened": {
+      "weapons": "武器の新覚醒"
+    },
     "jobs": "新ジョブ",
     "raids": "新マルチバトル",
     "features": "新機能",

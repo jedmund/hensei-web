@@ -13,6 +13,9 @@
       "weapons": "New weapon transcendence",
       "summons": "New summon transcendence"
     },
+    "awakened": {
+      "weapons": "New weapon awakenings"
+    },
     "jobs": "New classes",
     "raids": "New raids",
     "features": "New features",
