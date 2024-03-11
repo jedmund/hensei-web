@@ -79,6 +79,45 @@ const UpdatesPage = () => {
     <div className={classes}>
       <h1>{common('about.segmented_control.updates')}</h1>
       <ContentUpdate
+        version="2024-03U"
+        dateString="2024/03/10"
+        event="events.content"
+        transcendedItems={{
+          summon: [
+            '2040090000',
+            '2040098000',
+            '2040100000',
+            '2040084000',
+            '2040080000',
+            '2040094000',
+          ],
+        }}
+        uncappedItems={{
+          weapon: [
+            '1040516200',
+            '1040915300',
+            '1040116500',
+            '1040815800',
+            '1040710900',
+            '1040024700',
+            '1040712600',
+            '1040116100',
+            '1040712300',
+            '1040806000',
+            '1040515900',
+            '1040616800',
+          ],
+        }}
+        awakenedItems={[
+          '1040906400',
+          '1040708700',
+          '1040212700',
+          '1040910000',
+          '1040014300',
+          '1040207000',
+        ]}
+      />
+      <ContentUpdate
         version="2024-02L"
         dateString="2024/02/29"
         event="events.legfest"

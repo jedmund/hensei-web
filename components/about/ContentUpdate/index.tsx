@@ -18,6 +18,7 @@ interface Props {
   newItems?: UpdateObject
   uncappedItems?: UpdateObject
   transcendedItems?: UpdateObject
+  awakenedItems?: string[]
   raidItems?: string[]
   numNotes: number
 }
@@ -28,6 +29,7 @@ const ContentUpdate = ({
   newItems,
   uncappedItems,
   transcendedItems,
+  awakenedItems,
   raidItems,
   numNotes,
 }: Props) => {
@@ -155,6 +157,31 @@ const ContentUpdate = ({
     return section
   }
 
+  function awakenedItemElements() {
+    let elements: React.ReactNode[] = []
+    if (awakenedItems) {
+      elements = awakenedItems.map((id) => {
+        return <ChangelogUnit id={id} type="weapon" key={id} />
+      })
+    }
+    return elements
+  }
+
+  function awakenedItemSection() {
+    let section: React.ReactNode = ''
+
+    if (awakenedItems && awakenedItems.length > 0) {
+      section = (
+        <section className={styles['weapons']}>
+          <h4>{updates(`labels.awakened.weapons`)}</h4>
+          <div className={styles.items}>{awakenedItemElements()}</div>
+        </section>
+      )
+    }
+
+    return section
+  }
+
   function raidItemElements() {
     let elements: React.ReactNode[] = []
 
@@ -192,6 +219,7 @@ const ContentUpdate = ({
         {newItemSection('summon')}
         {uncapItemSection('summon')}
         {transcendItemSection('summon')}
+        {awakenedItemSection()}
         {newRaidSection()}
       </div>
       {numNotes > 0 ? (
