@@ -266,10 +266,10 @@ const WeaponUnit = ({
       const altText = weaponKey.name[locale]
       let filename = `${weaponKey.slug}`
 
-      if (
-        index === 1 ||
-        (index === 2 && parseInt(weaponKey.granblue_id) === 15008)
-      ) {
+      let elementalTelumas = [15008, 16001, 16002]
+      let granblueId = parseInt(weaponKey.granblue_id)
+
+      if (elementalTelumas.includes(granblueId)) {
         filename += `-${gridWeapon.object.element}`
       }
 
