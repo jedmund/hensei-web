@@ -244,7 +244,7 @@ const SearchModal = (props: Props) => {
   }, [query, open])
 
   useEffect(() => {
-    if (open && props.object === 'job_skills') {
+    if (open) {
       setCurrentPage(1)
       fetchResults({ replace: true })
     }
