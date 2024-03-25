@@ -29,6 +29,13 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2024-03U3": {
+      "features": [
+        "Added new raids: Tiamat Aura Omega (Impossible) and Luminiera Credo Omega (Impossible)",
+        "When searching for characters, weapons, and summons, results will now show the item can be transcended",
+        "When searching for summons, results will now show whether the summon has a subaura"
+      ]
+    },
     "2024-02U": {
       "features": [
         "Added new class: Onmyoji",
