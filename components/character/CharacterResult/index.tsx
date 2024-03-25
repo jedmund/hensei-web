@@ -39,6 +39,8 @@ const CharacterResult = (props: Props) => {
           type="character"
           flb={character.uncap.flb}
           ulb={character.uncap.ulb}
+          transcendence={character.uncap.transcendence}
+          transcendenceStage={5}
           special={character.special}
         />
         <div className={styles.tags}>

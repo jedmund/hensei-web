@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 
 import UncapIndicator from '~components/uncap/UncapIndicator'
 import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
+import CheckIcon from '~public/icons/Check.svg'
 
 import styles from './index.module.scss'
 
@@ -32,10 +33,16 @@ const SummonResult = (props: Props) => {
           type="summon"
           flb={summon.uncap.flb}
           ulb={summon.uncap.ulb}
+          transcendence={summon.uncap.transcendence}
+          transcendenceStage={5}
           special={false}
         />
         <div className={styles.tags}>
           <WeaponLabelIcon labelType={Element[summon.element]} />
+          <div className={styles.subaura}>
+            <CheckIcon />
+            <span>Subaura</span>
+          </div>
         </div>
       </div>
     </li>
