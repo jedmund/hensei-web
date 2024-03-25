@@ -39,7 +39,7 @@ const CharacterResult = (props: Props) => {
           type="character"
           flb={character.uncap.flb}
           ulb={character.uncap.ulb}
-          transcendence={character.uncap.transcendence}
+          transcendence={character.uncap.ulb}
           transcendenceStage={5}
           special={character.special}
         />
