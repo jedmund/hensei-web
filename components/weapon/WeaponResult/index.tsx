@@ -44,6 +44,8 @@ const WeaponResult = (props: Props) => {
           type="weapon"
           flb={weapon.uncap.flb}
           ulb={weapon.uncap.ulb}
+          transcendence={weapon.uncap.transcendence}
+          transcendenceStage={5}
           special={false}
         />
         <div className={styles.tags}>
