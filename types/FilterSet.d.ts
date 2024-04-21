@@ -16,3 +16,8 @@ interface FilterSet {
   includes?: MentionItem[]
   excludes?: MentionItem[]
 }
+
+interface ConvertedFilters extends Omit<FilterSet, 'includes' | 'excludes'> {
+  includes: string
+  excludes: string
+}

@@ -27,7 +27,7 @@ import type { SearchableObject, SearchableObjectArray } from '~types'
 import styles from './index.module.scss'
 import CrossIcon from '~public/icons/Cross.svg'
 import classNames from 'classnames'
-import useDidMountEffect from '~utils/useDidMountEffect'
+import useDidMountEffect from '~hooks/useDidMountEffect'
 
 interface Props extends DialogProps {
   send: (object: SearchableObject, position: number) => any
