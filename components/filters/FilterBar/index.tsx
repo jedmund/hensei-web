@@ -19,7 +19,6 @@ interface Props {
   defaultFilterset: FilterSet
   persistFilters?: boolean
   children: React.ReactNode
-  scrolled: boolean
   element?: number
   raid?: string
   raidGroups: RaidGroup[]
@@ -31,6 +30,8 @@ interface Props {
 const FilterBar = (props: Props) => {
   // Set up translation
   const { t } = useTranslation('common')
+
+  const [scrolled, setScrolled] = useState(false)
 
   const [currentRaid, setCurrentRaid] = useState<Raid>()
 
@@ -44,13 +45,24 @@ const FilterBar = (props: Props) => {
   // Set up classes object for showing shadow on scroll
   const classes = classNames({
     [styles.filterBar]: true,
-    [styles.shadow]: props.scrolled,
+    [styles.shadow]: scrolled,
   })
 
   const filterButtonClasses = classNames({
     filter: true,
     filtersActive: !matchesDefaultFilters,
   })
+
+  // Add scroll event listener for shadow on FilterBar on mount
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  function handleScroll() {
+    if (window.scrollY > 90) setScrolled(true)
+    else setScrolled(false)
+  }
 
   // Convert raid slug to Raid object on mount
   useEffect(() => {

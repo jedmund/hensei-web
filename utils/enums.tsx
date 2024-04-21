@@ -24,3 +24,9 @@ export enum AboutTabs {
   Updates,
   Roadmap,
 }
+
+export enum CollectionPage {
+  Teams,
+  Profile,
+  Saved,
+}
