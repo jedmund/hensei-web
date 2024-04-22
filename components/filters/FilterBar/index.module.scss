@@ -16,6 +16,7 @@
   width: 100%;
   max-width: 996px;
   min-height: 80px;
+  z-index: 999;
 
   @include breakpoint(tablet) {
     position: static;
