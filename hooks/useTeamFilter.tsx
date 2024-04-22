@@ -171,7 +171,7 @@ export const useTeamFilter = (
     isFetching,
     setFetching,
     fetchError,
-    fetchTeams,
+    fetch,
     processTeams,
     currentPage,
     setCurrentPage,

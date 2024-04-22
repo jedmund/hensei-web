@@ -8,7 +8,6 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 // Hooks
 import { useFavorites } from '~hooks/useFavorites'
 import { useTeamFilter } from '~hooks/useTeamFilter'
-import useDidMountEffect from '~hooks/useDidMountEffect'
 
 // Utils
 import fetchLatestVersion from '~utils/fetchLatestVersion'
@@ -75,7 +74,7 @@ const ProfileRoute: React.FC<Props> = ({
     isFetching,
     setFetching,
     fetchError,
-    fetchTeams,
+    fetch,
     processTeams,
     setPagination,
   } = useTeamFilter(CollectionPage.Profile, context)
@@ -83,20 +82,17 @@ const ProfileRoute: React.FC<Props> = ({
   const { toggleFavorite } = useFavorites(parties, setParties)
 
   // Set the initial parties from props
-  useDidMountEffect(() => {
+  useEffect(() => {
     if (context) {
-      if (context.teams && context.pagination) {
-        processTeams(context.teams, true)
-        setPagination(context.pagination)
+      fetch(true)
 
-        appState.raidGroups = context.raidGroups
-        appState.version = version
-      }
+      appState.raidGroups = context.raidGroups
+      appState.version = version
     }
 
     setCurrentPage(1)
     setFetching(false)
-  }, [context])
+  }, [])
 
   // Fetch all raids on mount, then find the raid in the URL if present
   useEffect(() => {
