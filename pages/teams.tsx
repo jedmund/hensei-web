@@ -14,14 +14,9 @@ import useDidMountEffect from '~hooks/useDidMountEffect'
 // Utils
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import { appState } from '~utils/appState'
-import { convertAdvancedFilters } from '~utils/convertAdvancedFilters'
 import { defaultFilterset } from '~utils/defaultFilters'
 import { setHeaders } from '~utils/userToken'
-import {
-  fetchParties,
-  fetchRaidGroupsAndFilters,
-  parseAdvancedFilters,
-} from '~utils/serverSideUtils'
+import { fetchRaidGroups } from '~utils/serverSideUtils'
 
 // Types
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -205,16 +200,11 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   const version = await fetchLatestVersion()
 
   try {
-    const advancedFilters = parseAdvancedFilters(req, res)
-    const convertedFilters = advancedFilters
-      ? convertAdvancedFilters(advancedFilters)
-      : undefined
-    const { raidGroups, filters } = await fetchRaidGroupsAndFilters(query)
-    const { teams, pagination } = await fetchParties(filters, convertedFilters)
+    const raidGroups = await fetchRaidGroups()
 
     return {
       props: {
-        context: { teams, raidGroups, pagination },
+        context: { raidGroups },
         version,
         error: false,
         ...(await serverSideTranslations(locale, ['common'])),

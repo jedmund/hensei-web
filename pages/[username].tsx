@@ -13,14 +13,12 @@ import useDidMountEffect from '~hooks/useDidMountEffect'
 // Utils
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import { appState } from '~utils/appState'
-import { convertAdvancedFilters } from '~utils/convertAdvancedFilters'
 import { CollectionPage } from '~utils/enums'
 import { permissiveFilterset } from '~utils/defaultFilters'
 import { setHeaders } from '~utils/userToken'
 import {
   fetchRaidGroupsAndFilters,
   fetchUserProfile,
-  parseAdvancedFilters,
 } from '~utils/serverSideUtils'
 
 // Types
@@ -230,16 +228,11 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
     // Perform a request only if we received a username
     if (query.username) {
-      const { user, teams, pagination } = await fetchUserProfile(
-        query.username,
-        filters
-      )
+      const { user } = await fetchUserProfile(query.username, {})
 
       context = {
         user: user,
-        teams: teams,
         raidGroups: raidGroups,
-        pagination: pagination,
       }
     }
 

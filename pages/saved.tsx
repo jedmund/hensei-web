@@ -13,15 +13,10 @@ import useDidMountEffect from '~hooks/useDidMountEffect'
 // Utils
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import { appState } from '~utils/appState'
-import { convertAdvancedFilters } from '~utils/convertAdvancedFilters'
 import { CollectionPage } from '~utils/enums'
 import { permissiveFilterset } from '~utils/defaultFilters'
 import { setHeaders } from '~utils/userToken'
-import {
-  fetchRaidGroupsAndFilters,
-  fetchSaved,
-  parseAdvancedFilters,
-} from '~utils/serverSideUtils'
+import { fetchRaidGroups } from '~utils/serverSideUtils'
 
 // Types
 import type { AxiosError } from 'axios'
@@ -222,12 +217,11 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
 
   try {
     // We don't pre-load advanced filters here
-    const { raidGroups, filters } = await fetchRaidGroupsAndFilters(query)
-    const { teams, pagination } = await fetchSaved(filters)
+    const raidGroups= await fetchRaidGroups()
 
     return {
       props: {
-        context: { teams, raidGroups, pagination },
+        context: { raidGroups },
         version,
         error: false,
         ...(await serverSideTranslations(locale, ['common'])),
