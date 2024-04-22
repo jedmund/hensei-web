@@ -6,8 +6,8 @@
   display: grid;
   grid-template-rows: 1fr 1fr;
   gap: $unit;
-  padding: $unit-2x $unit-2x 0 $unit-2x;
   min-width: 320px;
+  position: relative;
   width: 100%;
   opacity: 1;
 
@@ -52,6 +52,22 @@
         box-shadow: none;
       }
     }
+  }
+
+  a {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-gap: 8px;
+    gap: 8px;
+    padding: $unit-2x $unit-2x 0 $unit-2x;
+  }
+
+  button {
+    position: absolute;
+    z-index: 2;
+    right: $unit;
+    top: $unit;
+    width: 44px;
   }
 
   .gridContainer {
