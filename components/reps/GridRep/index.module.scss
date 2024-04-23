@@ -259,6 +259,7 @@
         flex-direction: column;
         flex-grow: 1;
         gap: calc($unit / 2);
+        max-width: calc(100% - 44px - $unit);
       }
 
       .iconWrapper {
