@@ -3,9 +3,6 @@
   border: 1px solid transparent;
   border-radius: $card-corner;
   box-sizing: border-box;
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  gap: $unit;
   min-width: 320px;
   position: relative;
   width: 100%;
@@ -65,8 +62,8 @@
   button {
     position: absolute;
     z-index: 2;
-    right: $unit;
-    top: $unit;
+    right: $unit-2x;
+    top: $unit-2x;
     width: 44px;
   }
 
@@ -134,9 +131,9 @@
   }
 
   .weaponGrid {
-    aspect-ratio: 2/0.95;
+    aspect-ratio: 2/0.8;
     display: grid;
-    grid-template-columns: 1fr 3.36fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
+    grid-template-columns: 1fr 3.6fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
     grid-gap: $unit; /* add a gap of 8px between grid items */
 
     .weapon {

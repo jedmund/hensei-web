@@ -561,10 +561,12 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
             )}
           </div>
         </div>
-        <div className={styles.buttonArea}>
-          {renderPrivateIcon}
-          {renderVisibilityIcon}
-        </div>
+        {[2, 3].includes(party.visibility) && (
+          <div className={styles.buttonArea}>
+            {renderPrivateIcon}
+            {renderVisibilityIcon}
+          </div>
+        )}
       </div>
       <div className={styles.attributed}>
         {attribution()}
