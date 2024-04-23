@@ -586,7 +586,7 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
   }
 
   return (
-    <div className={gridRepClasses}>
+    <div className={gridRepClasses} title={party.name}>
       {renderFavoriteButton}
       <Link
         href={`/p/${party.shortcode}`}

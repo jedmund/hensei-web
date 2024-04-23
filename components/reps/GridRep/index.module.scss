@@ -68,12 +68,12 @@
   }
 
   .gridContainer {
-    aspect-ratio: 2/0.95;
+    aspect-ratio: 2.1/1;
     width: 100%;
   }
 
   .characterGrid {
-    aspect-ratio: 2/0.95;
+    aspect-ratio: 2.1/1;
     display: flex;
     justify-content: space-between;
 
@@ -121,7 +121,7 @@
       border-radius: $item-corner-small;
       aspect-ratio: 69/142;
       list-style: none;
-      height: calc(100% - $unit-half);
+      height: calc(100% - $unit);
 
       img {
         border-radius: $item-corner-small;
@@ -131,9 +131,9 @@
   }
 
   .weaponGrid {
-    aspect-ratio: 2/0.8;
+    aspect-ratio: 3.25/1;
     display: grid;
-    grid-template-columns: 1fr 3.6fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
+    grid-template-columns: 1fr 3.55fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
     grid-gap: $unit; /* add a gap of 8px between grid items */
 
     .weapon {
@@ -145,7 +145,7 @@
       aspect-ratio: 73/153;
       display: grid;
       grid-column: 1 / 2; /* spans one column */
-      height: calc(100% - $unit-fourth);
+      height: 100%;
     }
 
     .weapons {
@@ -176,7 +176,7 @@
   }
 
   .summonGrid {
-    aspect-ratio: 2/0.94;
+    aspect-ratio: 2/0.91;
     display: flex;
     gap: $unit;
     justify-content: space-between;
@@ -259,6 +259,7 @@
         flex-direction: column;
         flex-grow: 1;
         gap: calc($unit / 2);
+        max-width: calc(100% - 44px - $unit);
       }
 
       .iconWrapper {

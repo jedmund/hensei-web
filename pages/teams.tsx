@@ -63,7 +63,8 @@ const TeamsRoute: React.FC<Props> = ({
     recordCount,
     parties,
     setParties,
-    isFetching,
+    loaded,
+    fetching,
     setFetching,
     fetchError,
     fetch,
@@ -126,7 +127,7 @@ const TeamsRoute: React.FC<Props> = ({
       <GridRep
         party={party}
         key={`party-${i}`}
-        loading={isFetching}
+        loading={fetching}
         onClick={() => goTo(party.shortcode)}
         onSave={(teamId, favorited) => toggleFavorite(teamId, favorited)}
       />
@@ -145,7 +146,12 @@ const TeamsRoute: React.FC<Props> = ({
 
   const renderInfiniteScroll = (
     <>
-      {parties.length === 0 && renderLoading(3)}
+      {parties.length === 0 && !loaded && renderLoading(3)}
+      {parties.length === 0 && loaded && (
+        <div className="notFound">
+          <h2>There are no teams with your specified filters</h2>
+        </div>
+      )}
       <InfiniteScroll
         dataLength={parties && parties.length > 0 ? parties.length : 0}
         next={() => setCurrentPage(currentPage + 1)}

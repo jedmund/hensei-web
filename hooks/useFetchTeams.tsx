@@ -9,7 +9,8 @@ export const useFetchTeams = (
   setTotalPages: (value: number) => void,
   setRecordCount: (value: number) => void
 ) => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const [fetching, setFetching] = useState(false)
   const [error, setError] = useState(false)
 
   function parseTeams(response: { [key: string]: any }, replace: boolean) {
@@ -17,15 +18,17 @@ export const useFetchTeams = (
 
     setTotalPages(meta.total_pages)
     setRecordCount(meta.count)
+    setLoaded(true)
 
     if (replace) {
       replaceResults(parties)
-      setIsLoading(false)
+      setFetching(false)
     } else appendResults(parties)
   }
 
   function parseError(error: any) {
-    setIsLoading(false)
+    setLoaded(true)
+    setFetching(false)
     setError(true)
   }
 
@@ -62,7 +65,7 @@ export const useFetchTeams = (
 
   const fetchTeams = useCallback(
     ({ replace } = { replace: false }) => {
-      if (replace) setIsLoading(true)
+      if (replace) setFetching(true)
 
       const params = createParams()
 
@@ -89,7 +92,7 @@ export const useFetchTeams = (
       username: string | undefined
       replace: boolean
     }) => {
-      if (replace) setIsLoading(true)
+      if (replace) setFetching(true)
 
       const params = createParams()
 
@@ -115,7 +118,7 @@ export const useFetchTeams = (
 
   const fetchSaved = useCallback(
     ({ replace } = { replace: false }) => {
-      if (replace) setIsLoading(true)
+      if (replace) setFetching(true)
 
       const params = createParams()
 
@@ -139,8 +142,9 @@ export const useFetchTeams = (
     fetchProfile,
     fetchSaved,
     processTeams,
-    isLoading,
-    setIsLoading,
+    loaded,
+    fetching,
+    setFetching,
     error,
   }
 }
