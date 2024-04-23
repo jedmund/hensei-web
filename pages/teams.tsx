@@ -32,7 +32,6 @@ import { CollectionPage } from '~utils/enums'
 
 interface Props {
   context?: PageContextObj
-  query: { [key: string]: string }
   version: AppUpdate
   error: boolean
   status?: ResponseStatus
@@ -40,7 +39,6 @@ interface Props {
 
 const TeamsRoute: React.FC<Props> = ({
   context,
-  query,
   version,
   error,
   status,
@@ -212,7 +210,6 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     return {
       props: {
         context: { raidGroups },
-        query,
         version,
         error: false,
         ...(await serverSideTranslations(locale, ['common'])),
