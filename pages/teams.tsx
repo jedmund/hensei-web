@@ -144,14 +144,17 @@ const TeamsRoute: React.FC<Props> = ({
   }
 
   const renderInfiniteScroll = (
-    <InfiniteScroll
-      dataLength={parties && parties.length > 0 ? parties.length : 0}
-      next={() => setCurrentPage(currentPage + 1)}
-      hasMore={totalPages > currentPage}
-      loader={renderLoading(3)}
-    >
-      <GridRepCollection>{renderParties()}</GridRepCollection>
-    </InfiniteScroll>
+    <>
+      {parties.length === 0 && renderLoading(3)}
+      <InfiniteScroll
+        dataLength={parties && parties.length > 0 ? parties.length : 0}
+        next={() => setCurrentPage(currentPage + 1)}
+        hasMore={totalPages > currentPage}
+        loader={renderLoading(3)}
+      >
+        <GridRepCollection>{renderParties()}</GridRepCollection>
+      </InfiniteScroll>
+    </>
   )
 
   if (context) {
