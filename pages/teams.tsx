@@ -9,19 +9,13 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 // Hooks
 import { useFavorites } from '~hooks/useFavorites'
 import { useTeamFilter } from '~hooks/useTeamFilter'
-import useDidMountEffect from '~hooks/useDidMountEffect'
 
 // Utils
 import fetchLatestVersion from '~utils/fetchLatestVersion'
 import { appState } from '~utils/appState'
-import { convertAdvancedFilters } from '~utils/convertAdvancedFilters'
 import { defaultFilterset } from '~utils/defaultFilters'
 import { setHeaders } from '~utils/userToken'
-import {
-  fetchParties,
-  fetchRaidGroupsAndFilters,
-  parseAdvancedFilters,
-} from '~utils/serverSideUtils'
+import { fetchRaidGroups } from '~utils/serverSideUtils'
 
 // Types
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -72,7 +66,7 @@ const TeamsRoute: React.FC<Props> = ({
     isFetching,
     setFetching,
     fetchError,
-    fetchTeams,
+    fetch,
     processTeams,
     setPagination,
   } = useTeamFilter(CollectionPage.Teams, context)
@@ -80,20 +74,17 @@ const TeamsRoute: React.FC<Props> = ({
   const { toggleFavorite } = useFavorites(parties, setParties)
 
   // Set the initial parties from props
-  useDidMountEffect(() => {
+  useEffect(() => {
     if (context) {
-      if (context.teams && context.pagination) {
-        processTeams(context.teams, true)
-        setPagination(context.pagination)
+      fetch(true)
 
-        appState.raidGroups = context.raidGroups
-        appState.version = version
-      }
+      appState.raidGroups = context.raidGroups
+      appState.version = version
     }
 
     setCurrentPage(1)
     setFetching(false)
-  }, [context])
+  }, [])
 
   // Fetch all raids on mount, then find the raid in the URL if present
   useEffect(() => {
@@ -153,14 +144,17 @@ const TeamsRoute: React.FC<Props> = ({
   }
 
   const renderInfiniteScroll = (
-    <InfiniteScroll
-      dataLength={parties && parties.length > 0 ? parties.length : 0}
-      next={() => setCurrentPage(currentPage + 1)}
-      hasMore={totalPages > currentPage}
-      loader={renderLoading(3)}
-    >
-      <GridRepCollection>{renderParties()}</GridRepCollection>
-    </InfiniteScroll>
+    <>
+      {parties.length === 0 && renderLoading(3)}
+      <InfiniteScroll
+        dataLength={parties && parties.length > 0 ? parties.length : 0}
+        next={() => setCurrentPage(currentPage + 1)}
+        hasMore={totalPages > currentPage}
+        loader={renderLoading(3)}
+      >
+        <GridRepCollection>{renderParties()}</GridRepCollection>
+      </InfiniteScroll>
+    </>
   )
 
   if (context) {
@@ -205,16 +199,11 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
   const version = await fetchLatestVersion()
 
   try {
-    const advancedFilters = parseAdvancedFilters(req, res)
-    const convertedFilters = advancedFilters
-      ? convertAdvancedFilters(advancedFilters)
-      : undefined
-    const { raidGroups, filters } = await fetchRaidGroupsAndFilters(query)
-    const { teams, pagination } = await fetchParties(filters, convertedFilters)
+    const raidGroups = await fetchRaidGroups()
 
     return {
       props: {
-        context: { teams, raidGroups, pagination },
+        context: { raidGroups },
         version,
         error: false,
         ...(await serverSideTranslations(locale, ['common'])),

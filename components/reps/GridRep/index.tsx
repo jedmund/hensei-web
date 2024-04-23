@@ -501,19 +501,17 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
   )
 
   const favoriteButton = (
-    <Link href="#">
-      <Button
-        className={classNames({
-          save: true,
-          saved: party.favorited,
-        })}
-        leftAccessoryIcon={<SaveIcon className="stroke" />}
-        active={party.favorited}
-        bound={true}
-        size="small"
-        onClick={sendSaveData}
-      />
-    </Link>
+    <Button
+      className={classNames({
+        save: true,
+        saved: party.favorited,
+      })}
+      leftAccessoryIcon={<SaveIcon className="stroke" />}
+      active={party.favorited}
+      bound={true}
+      size="small"
+      onClick={sendSaveData}
+    />
   )
 
   const renderFavoriteButton =
@@ -563,11 +561,12 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
             )}
           </div>
         </div>
-        <div className={styles.buttonArea}>
-          {renderPrivateIcon}
-          {renderVisibilityIcon}
-          {renderFavoriteButton}
-        </div>
+        {[2, 3].includes(party.visibility) && (
+          <div className={styles.buttonArea}>
+            {renderPrivateIcon}
+            {renderVisibilityIcon}
+          </div>
+        )}
       </div>
       <div className={styles.attributed}>
         {attribution()}
@@ -587,49 +586,51 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
   }
 
   return (
-    <Link
-      href={`/p/${party.shortcode}`}
-      className={gridRepClasses}
-      onMouseLeave={() => changeView('weapons')}
-    >
-      {detailsWithUsername}
-      <div className={styles.gridContainer}>
-        {currentView === 'characters'
-          ? renderCharacterGrid
-          : currentView === 'summons'
-          ? renderSummonGrid
-          : renderWeaponGrid}
-      </div>
-      <ul className={styles.indicators}>
-        <li
-          className={classNames({
-            [styles.active]: currentView === 'characters',
-          })}
-          onMouseEnter={() => changeView('characters')}
-        >
-          <div className={styles.indicator} />
-          <span>Characters</span>
-        </li>
-        <li
-          className={classNames({
-            [styles.active]: currentView === 'weapons',
-          })}
-          onMouseEnter={() => changeView('weapons')}
-        >
-          <div className={styles.indicator} />
-          <span>Weapons</span>
-        </li>
-        <li
-          className={classNames({
-            [styles.active]: currentView === 'summons',
-          })}
-          onMouseEnter={() => changeView('summons')}
-        >
-          <div className={styles.indicator} />
-          <span>Summons</span>
-        </li>
-      </ul>
-    </Link>
+    <div className={gridRepClasses}>
+      {renderFavoriteButton}
+      <Link
+        href={`/p/${party.shortcode}`}
+        onMouseLeave={() => changeView('weapons')}
+      >
+        {detailsWithUsername}
+        <div className={styles.gridContainer}>
+          {currentView === 'characters'
+            ? renderCharacterGrid
+            : currentView === 'summons'
+            ? renderSummonGrid
+            : renderWeaponGrid}
+        </div>
+        <ul className={styles.indicators}>
+          <li
+            className={classNames({
+              [styles.active]: currentView === 'characters',
+            })}
+            onMouseEnter={() => changeView('characters')}
+          >
+            <div className={styles.indicator} />
+            <span>Characters</span>
+          </li>
+          <li
+            className={classNames({
+              [styles.active]: currentView === 'weapons',
+            })}
+            onMouseEnter={() => changeView('weapons')}
+          >
+            <div className={styles.indicator} />
+            <span>Weapons</span>
+          </li>
+          <li
+            className={classNames({
+              [styles.active]: currentView === 'summons',
+            })}
+            onMouseEnter={() => changeView('summons')}
+          >
+            <div className={styles.indicator} />
+            <span>Summons</span>
+          </li>
+        </ul>
+      </Link>
+    </div>
   )
 }
 

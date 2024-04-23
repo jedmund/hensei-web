@@ -23,6 +23,10 @@ export async function fetchRaidGroupsAndFilters(query: {
   return { raidGroups, filters }
 }
 
+export async function fetchRaidGroups() {
+  return await api.raidGroups().then((response) => response.data)
+}
+
 // Fetch initial set of parties
 export async function fetchParties(
   filters: FilterObject,
