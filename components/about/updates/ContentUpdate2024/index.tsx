@@ -8,6 +8,34 @@ const ContentUpdate2024 = () => {
   return (
     <>
       <ContentUpdate
+        version="2024-05U1"
+        dateString="2024/05/02"
+        event="events.content"
+        newItems={{
+          weapon: [
+            '1040026100',
+            '1040317400',
+            '1040423100',
+            '1040119500',
+            '1040618800',
+            '1040916300',
+          ],
+        }}
+        transcendedItems={{
+          summon: ['2040034000', '2040046000'],
+        }}
+        numNotes={4}
+      />
+      <ContentUpdate
+        version="2024-04L"
+        dateString="2024/04/30"
+        event="events.legfest"
+        newItems={{
+          character: ['3040529000', '3040530000'],
+          weapon: ['1040219200', '1040119400', '1040618700', '1030109000'],
+        }}
+      />
+      <ContentUpdate
         version="2024-04U2"
         dateString="2024/04/21"
         event="events.content"
