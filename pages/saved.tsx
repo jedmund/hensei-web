@@ -132,7 +132,7 @@ const SavedRoute: React.FC<Props> = ({
         <GridRep
           party={party}
           key={`party-${i}`}
-          loading={isFetching}
+          loading={fetching}
           onClick={goTo}
           onSave={toggleFavorite}
         />
