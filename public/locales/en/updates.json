@@ -29,6 +29,14 @@
     "uncap": "Uncap"
   },
   "versions": {
+    "2024-05U1": {
+      "features": [
+        "Added new raids: Colossus Ira Omega (Impossible) and Celeste Ater Omega (Impossible)",
+        "Pendulum of Extremity, Pendulum of Sagacity, and Pendulum of Supremacy added (I kept forgetting about these)",
+        "Only Dark Opus Weapons at Transcendence Lv3 or higher can equip the new Pendulums",
+        "Fixed a bug where users could not set the awakening level on some Grand weapons"
+      ]
+    },
     "2024-03U3": {
       "features": [
         "Added new raids: Tiamat Aura Omega (Impossible) and Luminiera Credo Omega (Impossible)",

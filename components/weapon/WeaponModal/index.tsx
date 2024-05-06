@@ -50,6 +50,12 @@ const WeaponModal = ({
 
   // State: Component
   const [alertOpen, setAlertOpen] = useState(false)
+  const [keysValid, setKeysValid] = useState<boolean[]>([
+    true,
+    true,
+    true,
+    true,
+  ])
   const [formValid, setFormValid] = useState(false)
 
   // State: Selects
@@ -149,6 +155,12 @@ const WeaponModal = ({
     setFormValid(isValid)
   }
 
+  function receiveKeyValidity(isValid: boolean, slot: number) {
+    const newKeysValid = keysValid
+    newKeysValid[slot] = isValid
+    setKeysValid(newKeysValid)
+  }
+
   // Methods: Data submission
   function prepareObject() {
     let object: GridWeaponObject = { weapon: {} }
@@ -159,8 +171,16 @@ const WeaponModal = ({
       object.weapon.weapon_key1_id = weaponKey1.id
     }
 
-    if ([2, 3, 17, 34].includes(gridWeapon.object.series) && weaponKey2)
+    if ([2, 3, 17, 34].includes(gridWeapon.object.series) && weaponKey2) {
       object.weapon.weapon_key2_id = weaponKey2.id
+
+      if (
+        ['14005', '14006', '14007'].includes(weaponKey2.granblue_id) &&
+        gridWeapon.transcendence_step < 3
+      ) {
+        object.weapon.weapon_key2_id = undefined
+      }
+    }
 
     if ([17].includes(gridWeapon.object.series) && weaponKey3)
       object.weapon.weapon_key3_id = weaponKey3.id
@@ -356,12 +376,14 @@ const WeaponModal = ({
       {[2, 3, 17, 22, 34].includes(gridWeapon.object.series) ? (
         <WeaponKeySelect
           open={weaponKey1Open}
+          gridWeapon={gridWeapon}
           weaponKey={weaponKey1}
           series={gridWeapon.object.series}
           slot={0}
           onOpenChange={() => openSelect(1)}
           onChange={receiveWeaponKey}
           onClose={() => setWeaponKey1Open(false)}
+          sendValidity={(valid: boolean) => receiveKeyValidity(valid, 0)}
         />
       ) : (
         ''
@@ -370,12 +392,14 @@ const WeaponModal = ({
       {[2, 3, 17, 34].includes(gridWeapon.object.series) ? (
         <WeaponKeySelect
           open={weaponKey2Open}
+          gridWeapon={gridWeapon}
           weaponKey={weaponKey2}
           series={gridWeapon.object.series}
           slot={1}
           onOpenChange={() => openSelect(2)}
           onChange={receiveWeaponKey}
           onClose={() => setWeaponKey2Open(false)}
+          sendValidity={(valid: boolean) => receiveKeyValidity(valid, 1)}
         />
       ) : (
         ''
@@ -384,12 +408,14 @@ const WeaponModal = ({
       {[17].includes(gridWeapon.object.series) ? (
         <WeaponKeySelect
           open={weaponKey3Open}
+          gridWeapon={gridWeapon}
           weaponKey={weaponKey3}
           series={gridWeapon.object.series}
           slot={2}
           onOpenChange={() => openSelect(3)}
           onChange={receiveWeaponKey}
           onClose={() => setWeaponKey3Open(false)}
+          sendValidity={(valid: boolean) => receiveKeyValidity(valid, 2)}
         />
       ) : (
         ''
@@ -398,12 +424,14 @@ const WeaponModal = ({
       {gridWeapon.object.series == 24 && gridWeapon.object.uncap.ulb ? (
         <WeaponKeySelect
           open={weaponKey4Open}
+          gridWeapon={gridWeapon}
           weaponKey={weaponKey1}
           series={gridWeapon.object.series}
           slot={0}
           onOpenChange={() => openSelect(4)}
           onChange={receiveWeaponKey}
           onClose={() => setWeaponKey4Open(false)}
+          sendValidity={(valid: boolean) => receiveKeyValidity(valid, 4)}
         />
       ) : (
         ''
@@ -496,7 +524,7 @@ const WeaponModal = ({
                 bound={true}
                 onClick={handleUpdateWeapon}
                 key="confirm"
-                disabled={!formValid}
+                disabled={!formValid || keysValid.includes(false)}
                 text={t('modals.weapon.buttons.confirm')}
               />,
             ]}

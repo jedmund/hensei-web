@@ -1,0 +1,9 @@
+.errors {
+  color: $error;
+  display: none;
+  padding: $unit 0;
+
+  &.visible {
+    display: block;
+  }
+}

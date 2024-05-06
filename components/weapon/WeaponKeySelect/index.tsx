@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+import classNames from 'classnames'
 
 import Select from '~components/common/Select'
 import SelectGroup from '~components/common/SelectGroup'
@@ -11,12 +14,14 @@ import styles from './index.module.scss'
 // Props
 interface Props {
   open: boolean
+  gridWeapon: GridWeapon
   weaponKey?: WeaponKey
   series: number
   slot: number
   onChange?: (value: WeaponKey, slot: number) => void
   onOpenChange: () => void
   onClose?: () => void
+  sendValidity: (isValid: boolean) => void
 }
 
 // Constants
@@ -47,10 +52,33 @@ const emptyWeaponKey: WeaponKey = {
 
 const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
   function useFieldSet(
-    { open, weaponKey, series, slot, onChange, onOpenChange, onClose },
+    {
+      open,
+      gridWeapon,
+      weaponKey,
+      series,
+      slot,
+      onChange,
+      onOpenChange,
+      onClose,
+      sendValidity,
+    },
     ref
   ) {
+    const router = useRouter()
+    const locale =
+      router.locale && ['en', 'ja'].includes(router.locale)
+        ? router.locale
+        : 'en'
+    const { t } = useTranslation('common')
+
     const [keys, setKeys] = useState<WeaponKey[][]>([])
+    const [error, setError] = useState('')
+
+    const errorClasses = classNames({
+      [styles.errors]: true,
+      [styles.visible]: error !== '',
+    })
 
     useEffect(() => {
       const keys = flattenWeaponKeys()
@@ -134,7 +162,18 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
       const keys = flattenWeaponKeys()
       const found = keys.find((key) => key.id == value)
       const weaponKey = found ? found : emptyWeaponKey
-      if (onChange) onChange(weaponKey, slot)
+
+      if (
+        ['14005', '14006', '14007'].includes(`${weaponKey.granblue_id}`) &&
+        gridWeapon.transcendence_step < 3
+      ) {
+        setError(`${weaponKey.name[locale]} requires 3rd Transcendence`)
+        sendValidity(false)
+      } else if (onChange) {
+        setError('')
+        onChange(weaponKey, slot)
+        sendValidity(true)
+      }
     }
 
     const emptyOption = () => {
@@ -148,26 +187,29 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
     }
 
     return (
-      <Select
-        key={`weapon-key-${slot}`}
-        value={weaponKey ? weaponKey.id : emptyWeaponKey.id}
-        open={open}
-        onClose={onClose}
-        onOpenChange={onOpenChange}
-        onValueChange={handleChange}
-        trigger={{
-          bound: true,
-        }}
-        ref={ref}
-        overlayVisible={false}
-      >
-        <SelectItem key={emptyWeaponKey.id} value={emptyWeaponKey.id}>
-          {emptyOption()}
-        </SelectItem>
-        {Array.from(Array(keys?.length)).map((x, i) => {
-          return weaponKeyGroup(i)
-        })}
-      </Select>
+      <>
+        <Select
+          key={`weapon-key-${slot}`}
+          value={weaponKey ? weaponKey.id : emptyWeaponKey.id}
+          open={open}
+          onClose={onClose}
+          onOpenChange={onOpenChange}
+          onValueChange={handleChange}
+          trigger={{
+            bound: true,
+          }}
+          ref={ref}
+          overlayVisible={false}
+        >
+          <SelectItem key={emptyWeaponKey.id} value={emptyWeaponKey.id}>
+            {emptyOption()}
+          </SelectItem>
+          {Array.from(Array(keys?.length)).map((x, i) => {
+            return weaponKeyGroup(i)
+          })}
+        </Select>
+        <p className={errorClasses}>{error}</p>
+      </>
     )
   }
 )
