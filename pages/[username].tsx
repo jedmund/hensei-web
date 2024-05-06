@@ -137,7 +137,7 @@ const ProfileRoute: React.FC<Props> = ({
         <GridRep
           party={party}
           key={`party-${i}`}
-          loading={isFetching}
+          loading={fetching}
           onClick={goTo}
           onSave={(teamId, favorited) => toggleFavorite(teamId, favorited)}
         />
