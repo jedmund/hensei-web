@@ -19,7 +19,7 @@ const PartyHead = ({ party, meta }: Props) => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
-  const previewUrl = api.previewUrl(party.shortcode)
+  const previewUrl = api.previewUrl(party.id)
 
   return (
     <Head>

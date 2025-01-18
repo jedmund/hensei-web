@@ -139,8 +139,8 @@ class Api {
     return axios.get(resourceUrl, params)
   }
 
-  previewUrl(shortcode: string): string {
-    return `${this.url}/parties/${shortcode}/preview`
+  previewUrl(id: string): string {
+    return `${this.url}/parties/${id}/preview`
   }
 
   raidGroups(params?: {}) {
