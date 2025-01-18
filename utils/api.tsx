@@ -139,6 +139,10 @@ class Api {
     return axios.get(resourceUrl, params)
   }
 
+  previewUrl(shortcode: string): string {
+    return `${this.url}/parties/${shortcode}/preview`
+  }
+
   raidGroups(params?: {}) {
     const resourceUrl = `${this.url}/raids/groups`
     return axios.get(resourceUrl, params)
