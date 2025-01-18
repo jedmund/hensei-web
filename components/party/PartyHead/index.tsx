@@ -2,6 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import api from '~utils/api'
 
 import generateTitle from '~utils/generateTitle'
 
@@ -18,6 +19,7 @@ const PartyHead = ({ party, meta }: Props) => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const previewUrl = api.previewUrl(party.shortcode)
 
   return (
     <Head>
@@ -52,6 +54,7 @@ const PartyHead = ({ party, meta }: Props) => {
         content={`https://app.granblue.team/p/${party.shortcode}`}
       />
       <meta property="og:type" content="website" />
+      <meta property="og:image" content={previewUrl} />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -67,6 +70,7 @@ const PartyHead = ({ party, meta }: Props) => {
           raidName: party.raid ? party.raid.name[locale] : '',
         })}
       />
+      <meta name="twitter:image" content={previewUrl} />
     </Head>
   )
 }
