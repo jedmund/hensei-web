@@ -19,7 +19,9 @@ const PartyHead = ({ party, meta }: Props) => {
   const router = useRouter()
   const locale =
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
-  const previewUrl = api.previewUrl(party.id)
+  const previewUrl = `${
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://granblue.team'
+  }/preview/${party.shortcode}`
 
   return (
     <Head>
@@ -55,6 +57,8 @@ const PartyHead = ({ party, meta }: Props) => {
       />
       <meta property="og:type" content="website" />
       <meta property="og:image" content={previewUrl} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
