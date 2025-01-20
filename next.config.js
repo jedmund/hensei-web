@@ -36,6 +36,10 @@ module.exports = {
         destination: '/about',
       },
       {
+        source: '/p/:shortcode/preview',
+        destination: '/api/preview/:shortcode',
+      },
+      {
         source: '/p/:shortcode/characters',
         destination: '/p/:shortcode',
       },
