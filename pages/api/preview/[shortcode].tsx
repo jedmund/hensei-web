@@ -14,7 +14,7 @@ export default async function handler(
   try {
     const response = await axios({
       method: 'GET',
-      url: `${process.env.API_URL}/api/v1/parties/${shortcode}/preview`,
+      url: `${process.env.NEXT_PUBLIC_SIERO_API_URL}/parties/${shortcode}/preview`,
       responseType: 'arraybuffer',
       headers: {
         Accept: 'image/png',
