@@ -324,13 +324,13 @@ const Party = (props: Props) => {
     list.forEach((object: GridCharacter) => {
       let character = clonedeep(object)
 
-      if (character.over_mastery) {
-        const overMastery: CharacterOverMastery = {
-          1: object.over_mastery[0],
-          2: object.over_mastery[1],
-          3: object.over_mastery[2],
-          4: object.over_mastery[3],
-        }
+      if (character.over_mastery && character.over_mastery) {
+        const overMastery: CharacterOverMastery = [
+          object.over_mastery[0],
+          object.over_mastery[1],
+          object.over_mastery[2],
+          object.over_mastery[3],
+        ]
 
         character.over_mastery = overMastery
       }
