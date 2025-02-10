@@ -65,7 +65,7 @@ const CharacterHovercard = (props: Props) => {
   }
 
   const overMasterySection = () => {
-    if (props.gridCharacter && props.gridCharacter.over_mastery) {
+    if (props.gridCharacter && props.gridCharacter.over_mastery.length > 0) {
       return (
         <section className={styles.mastery}>
           <h5 className={tintElement}>
@@ -73,14 +73,13 @@ const CharacterHovercard = (props: Props) => {
           </h5>
           <ul>
             {[...Array(4)].map((e, i) => {
-              const ringIndex = i + 1
               const ringStat: ExtendedMastery =
-                props.gridCharacter.over_mastery[ringIndex]
+                props.gridCharacter.over_mastery[i]
 
               if (ringStat && ringStat.modifier && ringStat.modifier > 0) {
-                if (ringIndex === 1 || ringIndex === 2) {
+                if (i === 0 || i === 1) {
                   return masteryElement(overMastery.a, ringStat)
-                } else if (ringIndex === 3) {
+                } else if (i === 2) {
                   return masteryElement(overMastery.b, ringStat)
                 } else {
                   return masteryElement(overMastery.c, ringStat)
@@ -96,8 +95,9 @@ const CharacterHovercard = (props: Props) => {
   const aetherialMasterySection = () => {
     if (
       props.gridCharacter &&
+      props.gridCharacter.over_mastery &&
       props.gridCharacter.aetherial_mastery &&
-      props.gridCharacter.aetherial_mastery.modifier > 0
+      props.gridCharacter.aetherial_mastery?.modifier > 0
     ) {
       return (
         <section className={styles.mastery}>
@@ -136,9 +136,8 @@ const CharacterHovercard = (props: Props) => {
   }
 
   const awakeningSection = () => {
-    const gridAwakening = props.gridCharacter.awakening
-
-    if (gridAwakening) {
+    if (props.gridCharacter.awakening) {
+      const gridAwakening = props.gridCharacter.awakening
       return (
         <section className={styles.awakening}>
           <h5 className={tintElement}>

@@ -1,4 +1,3 @@
-// Core dependencies
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
@@ -73,7 +72,8 @@ const AwakeningSelectWithInput = ({
     setCurrentAwakening(awakening)
     setCurrentLevel(level ? level : 1)
 
-    if (awakening) sendValidity(true)
+    // If there is an awakening (even if it's the default) we consider the field valid.
+    if (awakening || defaultAwakening) sendValidity(true)
   }, [])
 
   // Methods: UI state management
@@ -90,35 +90,32 @@ const AwakeningSelectWithInput = ({
 
   // Methods: Rendering
   function generateOptions() {
-    const sortedDataSet = [...dataSet].sort((a, b) => {
-      return a.order - b.order
-    })
-
-    let options: React.ReactNode[] = sortedDataSet.map((awakening, i) => {
-      return generateItem(awakening)
-    })
-
+    const sortedDataSet = [...dataSet].sort((a, b) => a.order - b.order)
+    let options: React.ReactNode[] = sortedDataSet.map((awakening) =>
+      generateItem(awakening)
+    )
     if (!dataSet.includes(defaultAwakening))
       options.unshift(generateItem(defaultAwakening))
-
     return options
   }
 
   function generateItem(awakening: Awakening) {
     return (
-      <SelectItem key={awakening.slug} value={awakening.id}>
+      <SelectItem key={awakening.slug} value={awakening.slug}>
         {awakening.name[locale]}
       </SelectItem>
     )
   }
 
   // Methods: User input detection
-  function handleSelectChange(id: string) {
+  function handleSelectChange(value: string) {
+    // Here, value is the awakening slug.
     const input = inputRef.current
     if (input && !handleInputError(parseFloat(input.value))) return
 
-    setCurrentAwakening(dataSet.find((awakening) => awakening.id === id))
-    sendValues(id, currentLevel)
+    const selectedAwakening = dataSet.find((a) => a.slug === value)
+    setCurrentAwakening(selectedAwakening)
+    sendValues(value, currentLevel)
   }
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -127,7 +124,10 @@ const AwakeningSelectWithInput = ({
 
     const newLevel = parseInt(event.target.value)
     setCurrentLevel(newLevel)
-    sendValues(currentAwakening ? currentAwakening.id : '0', newLevel)
+    sendValues(
+      currentAwakening ? currentAwakening.slug : defaultAwakening.slug,
+      newLevel
+    )
   }
 
   // Methods: Handle error
@@ -135,16 +135,12 @@ const AwakeningSelectWithInput = ({
     let error = ''
 
     if (currentAwakening) {
-      if (value && value % 1 != 0) {
+      if (value && value % 1 !== 0) {
         error = t(`awakening.errors.value_not_whole`)
       } else if (value < 1) {
-        error = t(`awakening.errors.value_too_low`, {
-          minValue: 1,
-        })
+        error = t(`awakening.errors.value_too_low`, { minValue: 1 })
       } else if (value > maxLevel) {
-        error = t(`awakening.errors.value_too_high`, {
-          maxValue: maxLevel,
-        })
+        error = t(`awakening.errors.value_too_high`, { maxValue: maxLevel })
       } else if (!value || value <= 0) {
         error = t(`awakening.errors.value_empty`)
       } else {
@@ -165,13 +161,9 @@ const AwakeningSelectWithInput = ({
 
   const rangeString = () => {
     let placeholder = ''
-
-    if (awakening) {
-      const minValue = 1
-      const maxValue = maxLevel
-      placeholder = `${minValue}~${maxValue}`
+    if (currentAwakening) {
+      placeholder = `1~${maxLevel}`
     }
-
     return placeholder
   }
 
@@ -180,7 +172,8 @@ const AwakeningSelectWithInput = ({
       <div className={styles.set}>
         <Select
           key="awakening-type"
-          value={`${awakening ? awakening.id : defaultAwakening.id}`}
+          // Use the slug as the value
+          value={`${awakening ? awakening.slug : defaultAwakening.slug}`}
           open={open}
           disabled={selectDisabled}
           onValueChange={handleSelectChange}
@@ -200,7 +193,8 @@ const AwakeningSelectWithInput = ({
           className={inputClasses}
           fieldsetClassName={classNames({
             hidden:
-              currentAwakening === undefined || currentAwakening.id === '0',
+              currentAwakening === undefined ||
+              currentAwakening.slug === defaultAwakening.slug,
           })}
           wrapperClassName="fullHeight"
           bound={true}

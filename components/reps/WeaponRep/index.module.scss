@@ -1,51 +1,67 @@
+// Overall container – never taller than $rep-height:
 .rep {
-  aspect-ratio: 2/0.955;
-  border-radius: $card-corner;
-  display: grid;
-  grid-template-columns: 1fr 3.39fr; /* left column takes up 1 fraction, right column takes up 3 fractions */
-  grid-gap: $unit-half; /* add a gap of 8px between grid items */
   height: $rep-height;
-  transition: $duration-opacity-fade opacity ease-in;
-  opacity: 0.5;
+  display: grid;
+  // First column: mainhand width = $rep-height * (200/420)
+  // Second column: weapons grid – its width will be auto (we calculate it below)
+  grid-template-columns:
+    calc(#{$rep-height} * (200 / 420))
+    auto;
+  gap: $unit-half;
+  box-sizing: border-box;
+}
 
-  @include breakpoint(small-tablet) {
-    display: none;
+/* --- Mainhand image --- */
+.mainhand {
+  background: var(--card-bg);
+  border-radius: 4px;
+  height: 100%;
+  width: 100%; // takes the grid column’s computed width
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; // or "cover" if you prefer cropping
   }
+}
 
-  .mainhand,
-  .weapon {
-    background: var(--card-bg);
-    border-radius: 4px;
+/* --- Weapons grid --- */
+.weapons {
+  /* Reset default UL spacing */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  height: 100%;
 
-    img[src*='jpg'] {
-      border-radius: 4px;
-      width: 100%;
-    }
-  }
+  display: grid;
+  // We know there will be 3 columns and 3 rows.
+  // Each row's height is one-third of $rep-height:
+  // Subtract the 2 vertical gaps from the total height before dividing:
+  grid-template-rows: repeat(
+    3,
+    calc((#{$rep-height} - (2 * #{$unit-half})) / 3)
+  );
+  // Each column's width is calculated as: (cell height * (280/160))
+  grid-template-columns: repeat(
+    3,
+    calc((#{$rep-height} - (2 * #{$unit-half})) / 3 * (280 / 160))
+  );
+  gap: $unit-half;
+}
 
-  .mainhand {
-    aspect-ratio: 73/153;
-    display: grid;
-    grid-column: 1 / 2; /* spans one column */
-  }
+/* Each grid cell (a .weapon) */
+.weapon {
+  background: var(--card-bg);
+  border-radius: 4px;
+  overflow: hidden;
+  // Center the image (or placeholder) within the cell:
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  .weapons {
-    display: grid; /* make the right-images container a grid */
-    grid-template-columns: repeat(
-      3,
-      1fr
-    ); /* create 3 columns, each taking up 1 fraction */
-    grid-template-rows: repeat(
-      3,
-      1fr
-    ); /* create 3 rows, each taking up 1 fraction */
-    gap: $unit-half;
-    // column-gap: $unit;
-    // row-gap: $unit-2x;
-  }
-
-  .weapon {
-    aspect-ratio: 280 / 160;
-    display: grid;
+  img {
+    width: 100%;
+    height: 100%;
   }
 }

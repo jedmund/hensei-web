@@ -48,23 +48,25 @@ export type ExtendedMastery = {
   strength?: number
 }
 
-export type CharacterOverMastery = {
-  [key: number]: ExtendedMastery
-  1: ExtendedMastery
-  2: ExtendedMastery
-  3: ExtendedMastery
-  4: ExtendedMastery
+export type CharacterOverMastery = ExtendedMastery[]
+
+export interface MasteryBonuses {
+  awakening?: {
+    type: Awakening
+    level: number
+  }
+  over_mastery?: CharacterOverMastery
+  aetherial_mastery?: ExtendedMastery
 }
 
-interface GridCharacterObject {
+export interface GridCharacterObject {
   character: {
-    ring1: ExtendedMastery
-    ring2: ExtendedMastery
-    ring3: ExtendedMastery
-    ring4: ExtendedMastery
+    rings: ExtendedMastery[]
     earring: ExtendedMastery
-    awakening_id?: string
-    awakening_level?: number
+    awakening?: {
+      id: string
+      level: number
+    }
     transcendence_step: number
     perpetuity: boolean
   }

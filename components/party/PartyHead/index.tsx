@@ -21,7 +21,7 @@ const PartyHead = ({ party, meta }: Props) => {
     router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
   const previewUrl = `${
     process.env.NEXT_PUBLIC_SITE_URL || 'https://granblue.team'
-  }/preview/${party.shortcode}`
+  }/p/${party.shortcode}/preview`
 
   return (
     <Head>

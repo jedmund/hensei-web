@@ -136,13 +136,12 @@ const WeaponModal = ({
   }
 
   // Receive values from AwakeningSelectWithInput
-  function receiveAwakeningValues(id: string, level: number) {
-    setAwakening(gridWeapon.object.awakenings.find((a) => a.id === id))
-    console.log(level)
+  function receiveAwakeningValues(slug: string, level: number) {
+    // Look up the awakening by its slug, since the select sends a slug.
+    setAwakening(gridWeapon.object.awakenings.find((a) => a.slug === slug))
     setAwakeningLevel(level)
     setFormValid(true)
   }
-
   // Receive values from WeaponKeySelect
   function receiveWeaponKey(value: WeaponKey, slot: number) {
     if (slot === 0) setWeaponKey1(value)

@@ -44,6 +44,13 @@ interface Props {
   updateCharacter: (object: GridCharacterObject) => Promise<any>
 }
 
+const AWAKENING_MAP: { [key: string]: string } = {
+  'character-balanced': 'b1847c82-ece0-4d7a-8af1-c7868d90f34a',
+  'character-atk': '6e233877-8cda-4c8f-a091-3db6f68749e2',
+  'character-def': 'c95441de-f949-4a62-b02b-101aa2e0a638',
+  'character-multi': 'e36b0573-79c3-4dd2-9524-c95def4bbb1a',
+}
+
 const CharacterModal = ({
   gridCharacter,
   children,
@@ -64,12 +71,7 @@ const CharacterModal = ({
 
   // State: Data
   const [perpetuity, setPerpetuity] = useState(false)
-  const [rings, setRings] = useState<CharacterOverMastery>({
-    1: { ...emptyExtendedMastery, modifier: 1 },
-    2: { ...emptyExtendedMastery, modifier: 2 },
-    3: emptyExtendedMastery,
-    4: emptyExtendedMastery,
-  })
+  const [rings, setRings] = useState<CharacterOverMastery>([])
   const [earring, setEarring] = useState<ExtendedMastery>(emptyExtendedMastery)
   const [awakening, setAwakening] = useState<Awakening>()
   const [awakeningLevel, setAwakeningLevel] = useState(1)
@@ -94,46 +96,36 @@ const CharacterModal = ({
       })
     }
 
-    setAwakening(gridCharacter.awakening.type)
-    setAwakeningLevel(gridCharacter.awakening.level)
+    if (gridCharacter.awakening) {
+      setAwakening(gridCharacter.awakening.type)
+      setAwakeningLevel(gridCharacter.awakening.level)
+    }
     setPerpetuity(gridCharacter.perpetuity)
   }, [gridCharacter])
 
   // Prepare the GridWeaponObject to send to the server
-  function prepareObject() {
-    let object: GridCharacterObject = {
+  function prepareObject(): GridCharacterObject {
+    return {
       character: {
-        ring1: {
-          modifier: rings[1].modifier,
-          strength: rings[1].strength,
-        },
-        ring2: {
-          modifier: rings[2].modifier,
-          strength: rings[2].strength,
-        },
-        ring3: {
-          modifier: rings[3].modifier,
-          strength: rings[3].strength,
-        },
-        ring4: {
-          modifier: rings[4].modifier,
-          strength: rings[4].strength,
-        },
+        rings: rings, // your local rings array
         earring: {
           modifier: earring.modifier,
-          strength: earring.strength,
+          strength:
+            earring.modifier && earring.modifier > 0 ? earring.strength : 0,
         },
+        // Only include awakening if one is set.
+        ...(awakening
+          ? {
+              awakening: {
+                id: awakening.id,
+                level: awakeningLevel,
+              },
+            }
+          : {}),
         transcendence_step: transcendenceStep,
         perpetuity: perpetuity,
       },
     }
-
-    if (awakening) {
-      object.character.awakening_id = awakening.id
-      object.character.awakening_level = awakeningLevel
-    }
-
-    return object
   }
 
   // Methods: Modification checking
@@ -152,12 +144,12 @@ const CharacterModal = ({
 
   function ringsChanged() {
     // Create an empty ExtendedMastery object
-    const emptyRingset: CharacterOverMastery = {
-      1: { ...emptyExtendedMastery, modifier: 1 },
-      2: { ...emptyExtendedMastery, modifier: 2 },
-      3: emptyExtendedMastery,
-      4: emptyExtendedMastery,
-    }
+    const emptyRingset: CharacterOverMastery = [
+      { ...emptyExtendedMastery, modifier: 1 },
+      { ...emptyExtendedMastery, modifier: 2 },
+      emptyExtendedMastery,
+      emptyExtendedMastery,
+    ]
 
     // Check if the current ringset is empty on the current GridCharacter and our local state
     const isEmptyRingset =
@@ -195,8 +187,8 @@ const CharacterModal = ({
   function awakeningChanged() {
     // Check if the awakening in local state is different from the one on the current GridCharacter
     const awakeningChanged =
-      !isEqual(gridCharacter.awakening.type, awakening) ||
-      gridCharacter.awakening.level !== awakeningLevel
+      !isEqual(gridCharacter.awakening?.type, awakening) ||
+      gridCharacter.awakening?.level !== awakeningLevel
 
     // Return true if the awakening has been modified and is not empty
     return awakeningChanged
@@ -227,8 +219,26 @@ const CharacterModal = ({
     })
   }
 
-  function receiveAwakeningValues(id: string, level: number) {
-    setAwakening(gridCharacter.object.awakenings.find((a) => a.id === id))
+  function receiveAwakeningValues(slug: string, level: number) {
+    const mappedId = AWAKENING_MAP[slug] || null
+    const existingAwakening = gridCharacter.object.awakenings.find(
+      (a) => a.slug === slug
+    )
+
+    if (existingAwakening && mappedId) {
+      setAwakening({
+        ...existingAwakening,
+        id: mappedId,
+      })
+    } else {
+      setAwakening({
+        id: mappedId || '',
+        slug,
+        name: { en: '', jp: '' },
+        order: 0,
+      })
+    }
+
     setAwakeningLevel(level)
   }
 
@@ -307,13 +317,13 @@ const CharacterModal = ({
         object="earring"
         dataSet={elementalizeAetherialMastery(gridCharacter)}
         selectValue={
-          gridCharacter.aetherial_mastery
-            ? gridCharacter.aetherial_mastery.modifier
+          gridCharacter.over_mastery && gridCharacter.aetherial_mastery
+            ? gridCharacter.aetherial_mastery?.modifier
             : 0
         }
         inputValue={
-          gridCharacter.aetherial_mastery
-            ? gridCharacter.aetherial_mastery.strength
+          gridCharacter.over_mastery && gridCharacter.aetherial_mastery
+            ? gridCharacter.aetherial_mastery?.strength
             : 0
         }
         sendValidity={receiveValidity}

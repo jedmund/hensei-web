@@ -148,12 +148,12 @@ const CharacterUnit = ({
     let character = cloneDeep(gridCharacter)
 
     if (character.over_mastery) {
-      const overMastery: CharacterOverMastery = {
-        1: gridCharacter.over_mastery[0],
-        2: gridCharacter.over_mastery[1],
-        3: gridCharacter.over_mastery[2],
-        4: gridCharacter.over_mastery[3],
-      }
+      const overMastery: CharacterOverMastery = [
+        gridCharacter.over_mastery[0],
+        gridCharacter.over_mastery[1],
+        gridCharacter.over_mastery[2],
+        gridCharacter.over_mastery[3],
+      ]
 
       character.over_mastery = overMastery
     }
