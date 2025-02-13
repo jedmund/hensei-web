@@ -65,7 +65,11 @@ const CharacterHovercard = (props: Props) => {
   }
 
   const overMasterySection = () => {
-    if (props.gridCharacter && props.gridCharacter.over_mastery.length > 0) {
+    if (
+      props.gridCharacter &&
+      props.gridCharacter.over_mastery &&
+      props.gridCharacter.over_mastery.length > 0
+    ) {
       return (
         <section className={styles.mastery}>
           <h5 className={tintElement}>
