@@ -199,8 +199,8 @@ class Api {
     })
   }
   
-  userInfo(id: string) {
-    const resourceUrl = `${this.url}/users/info/${id}`
+  userInfo(username: string) {
+    const resourceUrl = `${this.url}/users/info/${username}`
     return axios.get(resourceUrl)
   }
 

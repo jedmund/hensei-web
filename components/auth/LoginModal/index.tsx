@@ -111,9 +111,9 @@ const LoginModal = (props: Props) => {
         .login(body)
         .then((response) => {
           storeCookieInfo(response)
-          return response.data.user.id
+          return response.data.user.username
         })
-        .then((id) => fetchUserInfo(id))
+        .then((username) => fetchUserInfo(username))
         .then((infoResponse) => storeUserInfo(infoResponse))
         .catch((error: Error | AxiosError) => {
           if (axios.isAxiosError(error)) {
@@ -131,8 +131,8 @@ const LoginModal = (props: Props) => {
     }
   }
 
-  function fetchUserInfo(id: string) {
-    return api.userInfo(id)
+  function fetchUserInfo(username: string) {
+    return api.userInfo(username)
   }
 
   function storeCookieInfo(response: AxiosResponse) {
