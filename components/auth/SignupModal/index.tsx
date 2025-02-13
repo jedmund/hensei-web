@@ -85,9 +85,9 @@ const SignupModal = (props: Props) => {
         .create(body)
         .then((response) => {
           storeCookieInfo(response)
-          return response.data.id
+          return response.data.username
         })
-        .then((id) => fetchUserInfo(id))
+        .then((username) => fetchUserInfo(username))
         .then((infoResponse) => storeUserInfo(infoResponse))
   }
 
@@ -109,8 +109,8 @@ const SignupModal = (props: Props) => {
     setHeaders()
   }
 
-  function fetchUserInfo(id: string) {
-    return api.userInfo(id)
+  function fetchUserInfo(username: string) {
+    return api.userInfo(username)
   }
 
   function storeUserInfo(response: AxiosResponse) {
