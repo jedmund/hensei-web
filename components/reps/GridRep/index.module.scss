@@ -70,6 +70,7 @@
   .gridContainer {
     aspect-ratio: 2.1/1;
     width: 100%;
+    align-self: start;
   }
 
   .characterGrid {
@@ -179,44 +180,42 @@
     aspect-ratio: 2/0.91;
     display: flex;
     gap: $unit;
-    justify-content: space-between;
-
-    .summon,
-    .mainSummon {
-      background: var(--background);
-      border-radius: $item-corner-small;
-
-      img {
-        border-radius: $item-corner-small;
-        width: 100%;
-      }
-    }
+    width: 100%;
+    height: 100%;
 
     .mainSummon {
       aspect-ratio: 56/97;
       display: grid;
-      grid-column: 1 / 2; /* spans one column */
+      flex-shrink: 0;
+      background: var(--unit-bg);
+      border-radius: $item-corner-small;
+
+      img {
+        border-radius: 4px;
+        width: 100%;
+        height: 100%;
+      }
     }
 
     .summons {
-      display: grid; /* make the right-images container a grid */
-      grid-template-columns: repeat(
-        2,
-        1fr
-      ); /* create 3 columns, each taking up 1 fraction */
-      grid-template-rows: repeat(
-        2,
-        1fr
-      ); /* create 3 rows, each taking up 1 fraction */
+      display: grid;
+      flex-shrink: 1;
+      grid-template-rows: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: $unit;
-      aspect-ratio: 83/100;
-      // column-gap: $unit;
-      // row-gap: $unit-2x;
     }
 
     .summon {
-      aspect-ratio: 184 / 138;
+      aspect-ratio: 184/138;
       display: grid;
+      background: var(--unit-bg);
+      border-radius: $item-corner-small;
+
+      img {
+        border-radius: 4px;
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 
