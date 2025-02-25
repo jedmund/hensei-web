@@ -100,13 +100,19 @@ const CharacterGrid = (props: Props) => {
     if (!party.id) {
       props.createParty().then((team) => {
         saveCharacter(team.id, character, position)
-          .then((response) => storeGridCharacter(response.data))
+          .then((response) => {
+            const data = response.data['grid_character']
+            storeGridCharacter(data)
+          })
           .catch((error) => console.error(error))
       })
     } else {
       if (props.editable)
         saveCharacter(party.id, character, position)
-          .then((response) => handleCharacterResponse(response.data))
+          .then((response) => {
+            const data = response.data['grid_character']
+            handleCharacterResponse(data)
+          })
           .catch((error) => {
             const axiosError = error as AxiosError
             const response = axiosError.response
@@ -126,6 +132,7 @@ const CharacterGrid = (props: Props) => {
       setPosition(data.position)
       setModalOpen(true)
     } else {
+      console.log(data)
       storeGridCharacter(data)
     }
   }
