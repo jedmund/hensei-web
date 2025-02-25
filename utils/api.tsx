@@ -210,7 +210,7 @@ class Api {
   }
 }
 
-const api: Api = new Api({ url: process.env.NEXT_PUBLIC_SIERO_API_URL || 'https://localhost:3000/api/v1'})
+const api: Api = new Api({ url: process.env.NEXT_PUBLIC_SIERO_API_URL || 'https://localhost:3000/v1'})
 api.createEntity({ name: 'users' })
 api.createEntity({ name: 'parties' })
 api.createEntity({ name: 'characters' })
