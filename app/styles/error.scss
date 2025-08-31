@@ -1,0 +1,77 @@
+// Error page styles
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 60px); // Adjust for header height
+  padding: 2rem;
+  text-align: center;
+}
+
+.error-content {
+  max-width: 600px;
+  padding: 2rem;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+    color: var(--text-color-secondary);
+    line-height: 1.5;
+  }
+}
+
+.error-message {
+  background-color: var(--background-color-secondary);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  
+  .error-digest {
+    font-size: 0.875rem;
+    color: var(--text-color-tertiary);
+    margin-top: 0.5rem;
+  }
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  
+  .button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+    
+    &.primary {
+      background-color: var(--primary-color);
+      color: white;
+      
+      &:hover {
+        background-color: var(--primary-color-hover);
+      }
+    }
+    
+    &.secondary {
+      background-color: var(--background-color-tertiary);
+      color: var(--text-color);
+      
+      &:hover {
+        background-color: var(--background-color-quaternary);
+      }
+    }
+  }
+}

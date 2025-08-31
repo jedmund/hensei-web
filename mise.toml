@@ -1,0 +1,56 @@
+min_version = "2024.9.5"
+
+[env]
+PROJECT_NAME = "{{ config_root | basename }}"
+NODE_ENV = "development"
+
+# Enable relative paths for imports.
+NODE_PATH='src/'
+
+# App URLs
+# Don't add a trailing slash to these URLs.
+NEXT_PUBLIC_SIERO_API_URL='http://127.0.0.1:3000/api/v1'
+NEXT_PUBLIC_SIERO_OAUTH_URL='http://127.0.0.1:3000/oauth'
+NEXT_PUBLIC_SIERO_IMG_URL='/images/'
+
+# You will have to use a Google account to acquire a Youtube API key
+# or embeds will not work!
+NEXT_PUBLIC_YOUTUBE_API_KEY='AIzaSyB8D2IM5C4JDhEC5IcY-Sdzr-TAvw-ZlX4'
+
+[tools]
+node = "lts"
+npm = "{{ get_env(name='NPM_VERSION', default='8') }}"
+
+[tasks.install]
+description = "Install Node.js dependencies"
+run = "npm install"
+
+[tasks.dev]
+description = "Run the Next.js development server"
+alias = "d"
+run = "npm run dev"
+
+[tasks.build]
+description = "Build the Next.js application"
+alias = "b"
+run = "npm run build"
+
+[tasks.start]
+description = "Start the Next.js production server"
+alias = "s"
+run = "npm run start"
+
+[tasks.lint]
+description = "Run linting"
+alias = "l"
+run = "npm run lint"
+
+[tasks.storybook]
+description = "Start Storybook"
+alias = "sb"
+run = "npm run storybook"
+
+[tasks.build-storybook]
+description = "Build Storybook static files"
+alias = "bs"
+run = "npm run build-storybook"
