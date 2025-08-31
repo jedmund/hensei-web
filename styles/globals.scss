@@ -1,5 +1,6 @@
 @import '~meyer-reset-scss';
 @import 'themes.scss';
+@import '../app/styles/error.scss';
 
 html {
   background-color: var(--background);
