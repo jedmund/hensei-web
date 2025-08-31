@@ -16,6 +16,8 @@ const httpClient = axios.create({
   // Keep connections alive to reduce socket churn
   httpAgent: new http.Agent({ keepAlive: true, maxSockets: 50 }),
   httpsAgent: new https.Agent({ keepAlive: true, maxSockets: 50 }),
+  // Do not throw on HTTP status by default; let callers handle
+  validateStatus: () => true,
 });
 
 // Utility to get auth token from cookies on the server
