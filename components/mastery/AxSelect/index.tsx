@@ -1,5 +1,6 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 import { useTranslation } from 'next-i18next'
 
 import Input from '~components/common/Input'
@@ -32,9 +33,7 @@ interface Props {
 }
 
 const AXSelect = (props: Props) => {
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
   const { t } = useTranslation('common')
 
   const [openAX1, setOpenAX1] = useState(false)

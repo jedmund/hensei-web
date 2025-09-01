@@ -1,5 +1,6 @@
+'use client'
 import React, { useState } from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 import { Trans, useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
@@ -44,10 +45,8 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
     forwardedRef
   ) {
     // Set up translation
-    const router = useRouter()
     const { t } = useTranslation('common')
-    const locale =
-      router.locale && ['en', 'ja'].includes(router.locale)
+    const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
         ? router.locale
         : 'en'
 

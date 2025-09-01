@@ -1,5 +1,6 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 
@@ -21,9 +22,8 @@ type GroupedJob = { [key: string]: Job[] }
 
 const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
   function useFieldSet(props, ref) {
-    // Set up router for locale
-    const router = useRouter()
-    const locale = router.locale || 'en'
+    // Set up locale from cookie
+    const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
     // Set up translation
     const { t } = useTranslation('common')

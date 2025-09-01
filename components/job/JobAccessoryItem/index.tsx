@@ -1,5 +1,6 @@
+'use client'
 import React from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 
 import * as RadioGroup from '@radix-ui/react-radio-group'
 
@@ -12,9 +13,7 @@ interface Props {
 
 const JobAccessoryItem = ({ accessory, selected }: Props) => {
   // Localization
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   return (
     <RadioGroup.Item

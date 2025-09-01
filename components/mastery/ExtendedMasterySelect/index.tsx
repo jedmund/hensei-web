@@ -1,6 +1,7 @@
+'use client'
 // Core dependencies
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
@@ -35,9 +36,7 @@ const ExtendedMasterySelect = ({
   rightSelectValue,
   sendValues,
 }: Props) => {
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
   const { t } = useTranslation('common')
 
   // UI state

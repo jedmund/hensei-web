@@ -1,5 +1,6 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
@@ -31,9 +32,7 @@ const JobSection = (props: Props) => {
   const { party } = useSnapshot(appState)
   const { t } = useTranslation('common')
 
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // Data state
   const [job, setJob] = useState<Job>()
