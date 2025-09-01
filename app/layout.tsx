@@ -1,12 +1,11 @@
 import { Metadata } from 'next'
 import localFont from 'next/font/local'
-import { ToastProvider, Viewport } from '@radix-ui/react-toast'
-import { TooltipProvider } from '@radix-ui/react-tooltip'
-import { ThemeProvider } from 'next-themes'
+import { Viewport } from '@radix-ui/react-toast'
 
 import '../styles/globals.scss'
 
 // Components
+import Providers from './components/Providers'
 import Header from './components/Header'
 import UpdateToastClient from './components/UpdateToastClient'
 
@@ -32,16 +31,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={goalking.variable}>
       <body className={goalking.className}>
-        <ThemeProvider>
-          <ToastProvider swipeDirection="right">
-            <TooltipProvider>
-              <Header />
-              <UpdateToastClient />
-              <main>{children}</main>
-              <Viewport className="ToastViewport" />
-            </TooltipProvider>
-          </ToastProvider>
-        </ThemeProvider>
+        <Providers>
+          <Header />
+          <UpdateToastClient />
+          <main>{children}</main>
+          <Viewport className="ToastViewport" />
+        </Providers>
       </body>
     </html>
   )
