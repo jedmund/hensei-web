@@ -1,6 +1,9 @@
+'use client'
+
 // Core dependencies
 import React, { PropsWithChildren, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { getCookie } from 'cookies-next'
 import { Trans, useTranslation } from 'next-i18next'
 import isEqual from 'lodash/isEqual'
 
@@ -60,8 +63,11 @@ const CharacterModal = ({
 }: PropsWithChildren<Props>) => {
   // Router and localization
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const routerLocale = getCookie('NEXT_LOCALE')
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    routerLocale && ['en', 'ja'].includes(routerLocale) ? routerLocale : 'en'
   const { t } = useTranslation('common')
 
   // State: Component

@@ -1,5 +1,8 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { getCookie } from 'cookies-next'
 import { Trans, useTranslation } from 'next-i18next'
 
 import { Dialog } from '~components/common/Dialog'
@@ -24,9 +27,12 @@ interface Props {
 const CharacterConflictModal = (props: Props) => {
   // Localization
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { t } = useTranslation('common')
+  const routerLocale = getCookie('NEXT_LOCALE')
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    routerLocale && ['en', 'ja'].includes(routerLocale) ? routerLocale : 'en'
 
   // States
   const [open, setOpen] = useState(false)

@@ -1,5 +1,8 @@
+'use client'
+
 import React from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { getCookie } from 'cookies-next'
 
 import UncapIndicator from '~components/uncap/UncapIndicator'
 import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
@@ -15,8 +18,11 @@ const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 
 const CharacterResult = (props: Props) => {
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const routerLocale = getCookie('NEXT_LOCALE')
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    routerLocale && ['en', 'ja'].includes(routerLocale) ? routerLocale : 'en'
 
   const character = props.data
 
