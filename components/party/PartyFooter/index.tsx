@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 import clonedeep from 'lodash.clonedeep'

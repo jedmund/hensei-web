@@ -1,6 +1,9 @@
+'use client'
+
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
@@ -48,7 +51,8 @@ const PartyHeader = (props: Props) => {
 
   const { t } = useTranslation('common')
   const router = useRouter()
-  const locale = router.locale || 'en'
+  const pathname = usePathname()
+  const locale = getCookie('NEXT_LOCALE') || 'en'
 
   const { party: partySnapshot } = useSnapshot(appState)
 
@@ -145,7 +149,7 @@ const PartyHeader = (props: Props) => {
 
   // Actions: Copy URL
   function copyToClipboard() {
-    if (router.asPath.split('/')[1] === 'p') {
+    if (pathname.split('/')[1] === 'p') {
       navigator.clipboard.writeText(window.location.href)
       setCopyToastOpen(true)
     }
