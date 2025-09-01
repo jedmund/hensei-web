@@ -1,6 +1,8 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
-import { setCookie } from 'cookies-next'
-import { useRouter } from 'next/router'
+import { setCookie, getCookie } from 'cookies-next'
+import { useRouter } from 'next/navigation'
 import { useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
 
@@ -70,13 +72,16 @@ const SignupModal = (props: Props) => {
   function register(event: React.FormEvent) {
     event.preventDefault()
 
+    // In App Router, locale is typically handled via cookies or headers
+    const currentLocale = getCookie('NEXT_LOCALE') as string || 'en'
+
     const body = {
       user: {
         username: usernameInput.current?.value,
         email: emailInput.current?.value,
         password: passwordInput.current?.value,
         password_confirmation: passwordConfirmationInput.current?.value,
-        language: router.locale,
+        language: currentLocale,
       },
     }
 
