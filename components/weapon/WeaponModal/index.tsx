@@ -1,6 +1,7 @@
+'use client'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { Trans, useTranslation } from 'next-i18next'
 import { isEqual } from 'lodash'
 
@@ -36,7 +37,9 @@ const WeaponModal = ({
 }: PropsWithChildren<Props>) => {
   const router = useRouter()
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    getCookie('NEXT_LOCALE') && ['en', 'ja'].includes(getCookie('NEXT_LOCALE') as string) 
+      ? (getCookie('NEXT_LOCALE') as string) 
+      : 'en'
   const { t } = useTranslation('common')
 
   // Cookies

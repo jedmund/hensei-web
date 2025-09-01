@@ -1,6 +1,8 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { Trans, useTranslation } from 'react-i18next'
+import { getCookie } from 'cookies-next'
 
 import { Dialog } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
@@ -26,7 +28,9 @@ const WeaponConflictModal = (props: Props) => {
   const router = useRouter()
   const { t } = useTranslation('common')
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    getCookie('NEXT_LOCALE') && ['en', 'ja'].includes(getCookie('NEXT_LOCALE') as string) 
+      ? (getCookie('NEXT_LOCALE') as string) 
+      : 'en'
 
   // States
   const [open, setOpen] = useState(false)

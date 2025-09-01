@@ -1,9 +1,11 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { Trans, useTranslation } from 'next-i18next'
 import { AxiosResponse } from 'axios'
 import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
+import { getCookie } from 'cookies-next'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
@@ -54,7 +56,9 @@ const WeaponUnit = ({
   const { t } = useTranslation('common')
   const router = useRouter()
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    getCookie('NEXT_LOCALE') && ['en', 'ja'].includes(getCookie('NEXT_LOCALE') as string) 
+      ? (getCookie('NEXT_LOCALE') as string) 
+      : 'en'
 
   // State: UI
   const [detailsModalOpen, setDetailsModalOpen] = useState(false)

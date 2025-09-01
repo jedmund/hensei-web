@@ -1,5 +1,7 @@
+'use client'
 import React from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
+import { getCookie } from 'cookies-next'
 
 import UncapIndicator from '~components/uncap/UncapIndicator'
 import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
@@ -17,7 +19,9 @@ const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 const SummonResult = (props: Props) => {
   const router = useRouter()
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    getCookie('NEXT_LOCALE') && ['en', 'ja'].includes(getCookie('NEXT_LOCALE') as string) 
+      ? (getCookie('NEXT_LOCALE') as string) 
+      : 'en'
 
   const summon = props.data
 
