@@ -1,6 +1,7 @@
+'use client'
 import { ComponentProps, useCallback, useEffect } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 import { useTranslation } from 'next-i18next'
 
 import StarterKit from '@tiptap/starter-kit'
@@ -44,9 +45,8 @@ const Editor = ({
   onUpdate,
   ...props
 }: Props) => {
-  // Hooks: Router
-  const router = useRouter()
-  const locale = router.locale || 'en'
+  // Hooks: Locale
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   const { t } = useTranslation('common')
 

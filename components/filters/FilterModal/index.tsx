@@ -1,6 +1,6 @@
+'use client'
 import React, { useEffect, useRef, useState } from 'react'
 import { getCookie, setCookie } from 'cookies-next'
-import { useRouter } from 'next/router'
 import { Trans, useTranslation } from 'react-i18next'
 
 import { Dialog, DialogTrigger } from '~components/common/Dialog'
@@ -33,9 +33,8 @@ const MAX_WEAPONS = 13
 const MAX_SUMMONS = 8
 
 const FilterModal = (props: Props) => {
-  // Set up router
-  const router = useRouter()
-  const locale = router.locale
+  // Set up locale
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // Set up translation
   const { t } = useTranslation('common')

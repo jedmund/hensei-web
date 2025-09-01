@@ -1,3 +1,4 @@
+'use client'
 import React, {
   forwardRef,
   useEffect,
@@ -5,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { useTranslation } from 'next-i18next'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 import { SuggestionProps } from '@tiptap/suggestion'
 import classNames from 'classnames'
 
@@ -34,8 +35,7 @@ interface MentionProps extends SuggestionProps {
 
 export const MentionList = forwardRef<MentionRef, Props>(
   ({ items, ...props }: Props, forwardedRef) => {
-    const router = useRouter()
-    const locale = router.locale || 'en'
+    const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
     const { t } = useTranslation('common')
 

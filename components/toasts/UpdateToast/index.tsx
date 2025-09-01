@@ -1,5 +1,5 @@
+'use client'
 import React from 'react'
-import { useRouter } from 'next/router'
 import { setCookie } from 'cookies-next'
 import { add, format } from 'date-fns'
 import classNames from 'classnames'

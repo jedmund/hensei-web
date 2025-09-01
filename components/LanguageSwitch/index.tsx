@@ -1,5 +1,7 @@
+'use client'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { setCookie } from 'cookies-next'
 import { retrieveLocaleCookies } from '~utils/retrieveCookies'
 import * as SwitchPrimitive from '@radix-ui/react-switch'
@@ -14,6 +16,7 @@ export const LanguageSwitch = React.forwardRef<HTMLButtonElement, Props>(
   ) {
     // Router and locale data
     const router = useRouter()
+    const pathname = usePathname()
     const localeData = retrieveLocaleCookies()
 
     // State
@@ -30,7 +33,7 @@ export const LanguageSwitch = React.forwardRef<HTMLButtonElement, Props>(
       expiresAt.setDate(expiresAt.getDate() + 120)
 
       setCookie('NEXT_LOCALE', language, { path: '/', expires: expiresAt })
-      router.push(router.asPath, undefined, { locale: language })
+      router.refresh()
     }
 
     return (

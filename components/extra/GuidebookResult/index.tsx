@@ -1,5 +1,6 @@
+'use client'
 import React from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 
 import styles from './index.module.scss'
 
@@ -9,9 +10,7 @@ interface Props {
 }
 
 const GuidebookResult = (props: Props) => {
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   const guidebook = props.data
 

@@ -1,5 +1,6 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 import { Trans, useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
@@ -36,9 +37,7 @@ const GuidebookUnit = ({
 }: Props) => {
   // Translations and locale
   const { t } = useTranslation('common')
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // State: UI
   const [searchModalOpen, setSearchModalOpen] = useState(false)

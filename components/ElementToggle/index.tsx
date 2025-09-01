@@ -1,5 +1,6 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 import { useTranslation } from 'next-i18next'
 import classNames from 'classnames'
 
@@ -12,10 +13,8 @@ interface Props {
 }
 
 const ElementToggle = ({ currentElement, sendValue, ...props }: Props) => {
-  // Router and localization
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  // Localization
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   const { t } = useTranslation('common')
 
