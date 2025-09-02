@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 
 // Components
 import Party from '~/components/party/Party'
@@ -66,15 +67,13 @@ const NewPartyClient: React.FC<Props> = ({
     )
   }
   
-  return (
-    <Party 
-      new={true}
-      selectedTab={selectedTab}
-      raidGroups={raidGroups}
-      handleTabChanged={handleTabChanged}
-      pushHistory={pushHistory}
-    />
-  )
+  // Temporarily use wrapper to debug
+  const PartyWrapper = dynamic(() => import('./PartyWrapper'), {
+    ssr: false,
+    loading: () => <div>Loading...</div>
+  })
+  
+  return <PartyWrapper raidGroups={raidGroups} />
 }
 
 export default NewPartyClient

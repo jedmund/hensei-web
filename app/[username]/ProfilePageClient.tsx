@@ -7,7 +7,6 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 // Components
 import FilterBar from '~/components/filters/FilterBar'
-import ProfileHead from '~/components/head/ProfileHead'
 import GridRep from '~/components/reps/GridRep'
 import GridRepCollection from '~/components/reps/GridRepCollection'
 import LoadingRep from '~/components/reps/LoadingRep'
@@ -213,8 +212,6 @@ const ProfilePageClient: React.FC<Props> = ({
   
   return (
     <>
-      <ProfileHead username={initialData.user.username} />
-      
       <FilterBar
         defaultFilterset={defaultFilterset}
         onFilter={receiveFilters}

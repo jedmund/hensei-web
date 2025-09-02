@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 // Components
 import FilterBar from '~/components/filters/FilterBar'
-import SavedHead from '~/components/head/SavedHead'
 import GridRep from '~/components/reps/GridRep'
 import GridRepCollection from '~/components/reps/GridRepCollection'
 import LoadingRep from '~/components/reps/LoadingRep'
@@ -177,8 +176,6 @@ const SavedPageClient: React.FC<Props> = ({
   
   return (
     <>
-      <SavedHead />
-      
       <FilterBar
         defaultFilterset={defaultFilterset}
         onFilter={receiveFilters}

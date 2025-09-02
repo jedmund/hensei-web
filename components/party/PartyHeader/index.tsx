@@ -35,6 +35,7 @@ import type { DetailsObject } from '~types'
 
 import styles from './index.module.scss'
 
+
 // Props
 interface Props {
   party?: Party
