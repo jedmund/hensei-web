@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/navigation'
 
 // Utils
 import { appState } from '~/utils/appState'
+import { GridType } from '~/utils/enums'
 
 // Components
 import Party from '~/components/party/Party'
@@ -21,6 +22,9 @@ const PartyPageClient: React.FC<Props> = ({ party, raidGroups }) => {
   const router = useRouter()
   const { t } = useTranslation('common')
   
+  // State for tab management
+  const [selectedTab, setSelectedTab] = useState<GridType>(GridType.Weapon)
+  
   // Initialize app state
   useEffect(() => {
     if (party) {
@@ -29,44 +33,17 @@ const PartyPageClient: React.FC<Props> = ({ party, raidGroups }) => {
     }
   }, [party, raidGroups])
   
-  // Handle remix action
-  async function handleRemix() {
-    if (!party || !party.shortcode) return
-    
-    try {
-      const response = await fetch(`/api/parties/${party.shortcode}/remix`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      
-      const data = await response.json()
-      
-      if (data && data.shortcode) {
-        // Navigate to the new remixed party
-        router.push(`/p/${data.shortcode}`)
-      }
-    } catch (error) {
-      console.error('Error remixing party', error)
-    }
+  // Handle tab change
+  const handleTabChanged = (value: string) => {
+    const tabType = parseInt(value) as GridType
+    setSelectedTab(tabType)
   }
   
-  // Handle deletion action
-  async function handleDelete() {
-    if (!party || !party.shortcode) return
-    
-    try {
-      await fetch(`/api/parties/${party.shortcode}`, {
-        method: 'DELETE'
-      })
-      
-      // Navigate to teams page after deletion
-      router.push('/teams')
-    } catch (error) {
-      console.error('Error deleting party', error)
-    }
+  // Navigation helper (not used for existing parties but required by interface)
+  const pushHistory = (path: string) => {
+    router.push(path)
   }
+  
   
   // Error case
   if (!party) {
@@ -83,9 +60,11 @@ const PartyPageClient: React.FC<Props> = ({ party, raidGroups }) => {
   return (
     <>
       <Party 
-        party={party}
-        onRemix={handleRemix}
-        onDelete={handleDelete}
+        team={party}
+        selectedTab={selectedTab}
+        raidGroups={raidGroups}
+        handleTabChanged={handleTabChanged}
+        pushHistory={pushHistory}
       />
       <PartyFooter party={party} />
     </>

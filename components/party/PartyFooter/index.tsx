@@ -20,7 +20,7 @@ import api from '~utils/api'
 import { appState } from '~utils/appState'
 import { youtube } from '~utils/youtube'
 
-import type { DetailsObject } from 'types'
+import type { DetailsObject } from '~types'
 
 import RemixIcon from '~public/icons/Remix.svg'
 import EditIcon from '~public/icons/Edit.svg'

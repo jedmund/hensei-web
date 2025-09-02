@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/navigation'
 
 // Components
-import NewHead from '~/components/head/NewHead'
 import Party from '~/components/party/Party'
 import ErrorSection from '~/components/ErrorSection'
 
@@ -13,6 +12,7 @@ import ErrorSection from '~/components/ErrorSection'
 import { appState, initialAppState } from '~/utils/appState'
 import { accountState } from '~/utils/accountState'
 import clonedeep from 'lodash.clonedeep'
+import { GridType } from '~/utils/enums'
 
 interface Props {
   raidGroups: any[]; // Replace with proper RaidGroup type
@@ -25,6 +25,9 @@ const NewPartyClient: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation('common')
   const router = useRouter()
+  
+  // State for tab management
+  const [selectedTab, setSelectedTab] = useState<GridType>(GridType.Weapon)
   
   // Initialize app state for a new party
   useEffect(() => {
@@ -40,40 +43,17 @@ const NewPartyClient: React.FC<Props> = ({
     }
   }, [raidGroups])
   
-  // Handle save action
-  async function handleSave(shouldNavigate = true) {
-    try {
-      // Prepare party data
-      const party = {
-        name: appState.parties[0]?.name || '',
-        description: appState.parties[0]?.description || '',
-        visibility: appState.parties[0]?.visibility || 'public',
-        element: appState.parties[0]?.element || 1, // Default to Wind
-        raid_id: appState.parties[0]?.raid?.id
-      }
-      
-      // Save the party
-      const response = await fetch('/api/parties', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ party })
-      })
-      
-      const data = await response.json()
-      
-      if (data && data.shortcode && shouldNavigate) {
-        // Navigate to the new party page
-        router.push(`/p/${data.shortcode}`)
-      }
-      
-      return data
-    } catch (error) {
-      console.error('Error saving party', error)
-      return null
-    }
+  // Handle tab change
+  const handleTabChanged = (value: string) => {
+    const tabType = parseInt(value) as GridType
+    setSelectedTab(tabType)
   }
+  
+  // Navigation helper for Party component
+  const pushHistory = (path: string) => {
+    router.push(path)
+  }
+  
   
   if (error) {
     return (
@@ -87,14 +67,13 @@ const NewPartyClient: React.FC<Props> = ({
   }
   
   return (
-    <>
-      <NewHead />
-      <Party 
-        party={appState.parties[0] || { name: t('new_party'), element: 1 }}
-        isNew={true}
-        onSave={handleSave}
-      />
-    </>
+    <Party 
+      new={true}
+      selectedTab={selectedTab}
+      raidGroups={raidGroups}
+      handleTabChanged={handleTabChanged}
+      pushHistory={pushHistory}
+    />
   )
 }
 

@@ -21,7 +21,7 @@ import SwitchTableField from '~components/common/SwitchTableField'
 import TableField from '~components/common/TableField'
 
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
-import type { DetailsObject } from 'types'
+import type { DetailsObject } from '~types'
 import type { DialogProps } from '@radix-ui/react-dialog'
 import type { JSONContent } from '@tiptap/core'
 

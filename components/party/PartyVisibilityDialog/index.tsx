@@ -11,7 +11,7 @@ import DialogHeader from '~components/common/DialogHeader'
 import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
 
-import type { DetailsObject } from 'types'
+import type { DetailsObject } from '~types'
 import type { DialogProps } from '@radix-ui/react-dialog'
 
 import { appState } from '~utils/appState'

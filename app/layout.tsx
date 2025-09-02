@@ -1,6 +1,6 @@
-import { Metadata } from 'next'
+import { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
-import { Viewport } from '@radix-ui/react-toast'
+import { Viewport as ToastViewport } from '@radix-ui/react-toast'
 
 import '../styles/globals.scss'
 
@@ -13,7 +13,13 @@ import UpdateToastClient from './components/UpdateToastClient'
 export const metadata: Metadata = {
   title: 'granblue.team',
   description: 'Create, save, and share Granblue Fantasy party compositions',
-  viewport: 'viewport-fit=cover, width=device-width, initial-scale=1.0',
+}
+
+// Viewport configuration (Next.js 13+ requires separate export)
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 }
 
 // Font
@@ -35,7 +41,7 @@ export default function RootLayout({
           <Header />
           <UpdateToastClient />
           <main>{children}</main>
-          <Viewport className="ToastViewport" />
+          <ToastViewport className="ToastViewport" />
         </Providers>
       </body>
     </html>

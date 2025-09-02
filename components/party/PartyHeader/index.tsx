@@ -31,7 +31,7 @@ import SaveIcon from '~public/icons/Save.svg'
 import PrivateIcon from '~public/icons/Private.svg'
 import UnlistedIcon from '~public/icons/Unlisted.svg'
 
-import type { DetailsObject } from 'types'
+import type { DetailsObject } from '~types'
 
 import styles from './index.module.scss'
 
