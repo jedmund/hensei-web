@@ -22,19 +22,17 @@ const AboutPage: React.FC<Props> = (props: Props) => {
       <h1>{common('about.segmented_control.about')}</h1>
       <section>
         <h2>
-          {/* TODO: Refactor to about.rich() */}
-          {about("about.subtitle")}
-          {/* <Trans i18nKey="about:about.subtitle">
-            Granblue.team is a tool to save and share team compositions for{' '}
-            <a
-              href="https://game.granbluefantasy.jp"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Granblue Fantasy
-            </a>
-            , a social RPG from Cygames.
-          </Trans> */}
+          {about.rich('about.subtitle', {
+            gameLink: (chunks) => (
+              <a
+                href="https://game.granbluefantasy.jp"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {chunks}
+              </a>
+            )
+          })}
         </h2>
         <p>{about('about.explanation.0')}</p>
         <p>{about('about.explanation.1')}</p>
@@ -56,59 +54,52 @@ const AboutPage: React.FC<Props> = (props: Props) => {
       <section>
         <h2>{about('about.credits.title')}</h2>
         <p>
-          {/* TODO: Refactor to about.rich() */}
-          {about('about.credits.maintainer')}
-          {/* <Trans i18nKey="about:about.credits.maintainer">
-            Granblue.team was built and is maintained by{' '}
-            <a
-              href="https://twitter.com/jedmund"
-              target="_blank"
-              rel="noreferrer"
-            >
-              @jedmund
-            </a>
-            .
-          </Trans> */}
+          {about.rich('about.credits.maintainer', {
+            link: (chunks) => (
+              <a
+                href="https://twitter.com/jedmund"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {chunks}
+              </a>
+            )
+          })}
         </p>
         <p>
-          {/* TODO: Refactor to about.rich() */}
-          {about('about.credits.assistance')}
-          {/* <Trans i18nKey="about:about.credits.assistance">
-            Many thanks to{' '}
-            <a
-              href="https://twitter.com/lalalalinna"
-              target="_blank"
-              rel="noreferrer"
-            >
-              @lalalalinna
-            </a>{' '}
-            and{' '}
-            <a
-              href="https://twitter.com/tarngerine"
-              target="_blank"
-              rel="noreferrer"
-            >
-              @tarngerine
-            </a>
-            , who both provided a lot of help and advice as I was ramping up.
-          </Trans> */}
+          {about.rich('about.credits.assistance', {
+            link1: (chunks) => (
+              <a
+                href="https://twitter.com/lalalalinna"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {chunks}
+              </a>
+            ),
+            link2: (chunks) => (
+              <a
+                href="https://twitter.com/tarngerine"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {chunks}
+              </a>
+            )
+          })}
         </p>
         <p>
-          {/* TODO: Refactor to about.rich() */}
-          {about('about.credits.support')}
-          {/* <Trans i18nKey="about:about.credits.support">
-            Many thanks also go to everyone in{' '}
-            <a
-              href="https://game.granbluefantasy.jp/#guild/detail/1190185"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Fireplace
-            </a>{' '}
-            and the granblue-tools Discord for all of their help with with bug
-            testing, feature requests, and moral support. (P.S. We&apos;re
-            recruiting!)
-          </Trans> */}
+          {about.rich('about.credits.support', {
+            link: (chunks) => (
+              <a
+                href="https://game.granbluefantasy.jp/#guild/detail/1190185"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {chunks}
+              </a>
+            )
+          })}
         </p>
       </section>
 
@@ -134,19 +125,17 @@ const AboutPage: React.FC<Props> = (props: Props) => {
       <section>
         <h2>{about('about.license.title')}</h2>
         <p>
-          {/* TODO: Refactor to about.rich() */}
-          {about('about.license.license')}
-          {/* <Trans i18nKey="about:about.license.license">
-            This app is licensed under{' '}
-            <a
-              href="https://choosealicense.com/licenses/agpl-3.0/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GNU AGPLv3
-            </a>
-            .
-          </Trans> */}
+          {about.rich('about.license.license', {
+            link: (chunks) => (
+              <a
+                href="https://choosealicense.com/licenses/agpl-3.0/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {chunks}
+              </a>
+            )
+          })}
         </p>
         <p>{about('about.license.explanation')}</p>
       </section>

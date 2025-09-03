@@ -5,7 +5,7 @@
     }
   },
   "about": {
-    "subtitle": "Granblue.team is a tool to save and share team compositions for <2>Granblue Fantasy</2>, a social RPG from Cygames.",
+    "subtitle": "Granblue.team is a tool to save and share team compositions for <gameLink>Granblue Fantasy</gameLink>, a social RPG from Cygames.",
     "explanation": [
       "To get started, all you have to do is add an item to a team and a URL will be created for you to share wherever you like, no account needed.",
       "If you do make an account, you can save any teams you find for future reference and keep all of your teams together in one place."
@@ -17,9 +17,9 @@
     },
     "credits": {
       "title": "Credits",
-      "maintainer": "Granblue.team was built and is maintained by <2>@jedmund</2>.",
-      "assistance": "Many thanks to <2>@lalalalinna</2> and <6>@tarngerine</6>, who both provided a lot of help and advice as I was ramping up.",
-      "support": "Many thanks also go to everyone in <2>Fireplace</2> and the granblue-tools Discord for all of their help with with bug testing, feature requests, and moral support. (P.S. We're recruiting!)"
+      "maintainer": "Granblue.team was built and is maintained by <link>@jedmund</link>.",
+      "assistance": "Many thanks to <link1>@lalalalinna</link1> and <link2>@tarngerine</link2>, who both provided a lot of help and advice as I was ramping up.",
+      "support": "Many thanks also go to everyone in <link>Fireplace</link> and the granblue-tools Discord for all of their help with with bug testing, feature requests, and moral support. (P.S. We're recruiting!)"
     },
     "contributing": {
       "title": "Contributing",
@@ -27,7 +27,7 @@
     },
     "license": {
       "title": "License",
-      "license": "This app is licensed under <2>GNU AGPLv3</2>.",
+      "license": "This app is licensed under <link>GNU AGPLv3</link>.",
       "explanation": "Plainly, that means you can download the source, modify it, and redistribute it as long as you attribute this project, use the same license, and keep your derivative work open source as well."
     },
     "copyright": {
