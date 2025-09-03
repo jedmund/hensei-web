@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 
 import { useTranslations } from 'next-intl'
@@ -11,8 +13,8 @@ import styles from './index.module.scss'
 const ROADMAP_ITEMS = 6
 
 const RoadmapPage = () => {
-  const { t: common } = useTranslation('common')
-  const { t: about } = useTranslation('about')
+  const common = useTranslations('common')
+  const about = useTranslations('about')
 
   const classes = classNames(styles.roadmap, 'PageContent')
 
