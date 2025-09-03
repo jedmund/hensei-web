@@ -29,12 +29,12 @@ export default async function TeamsPage({
     
     // Prepare data for client component
     const initialData = {
-      teams: teamsData.parties || [],
-      raidGroups: raidGroupsData.raid_groups || [],
+      teams: teamsData.results || [],
+      raidGroups: raidGroupsData || [],
       pagination: {
-        current_page: teamsData.pagination?.current_page || 1,
-        total_pages: teamsData.pagination?.total_pages || 1,
-        record_count: teamsData.pagination?.record_count || 0
+        current_page: page,
+        total_pages: teamsData.meta?.total_pages || 1,
+        record_count: teamsData.meta?.count || 0
       }
     };
     
