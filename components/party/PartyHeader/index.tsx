@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react'
 import { Link } from '~/i18n/navigation'
-import { useRouter, usePathname, useSearchParams } from '~/i18n/navigation'
+import { useRouter, usePathname } from '~/i18n/navigation'
+import { useSearchParams } from 'next/navigation'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
 import { useTranslations } from 'next-intl'

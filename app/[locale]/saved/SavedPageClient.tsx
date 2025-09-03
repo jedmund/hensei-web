@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { useRouter, useSearchParams } from '~/i18n/navigation'
+import { useRouter } from '~/i18n/navigation'
+import { useSearchParams } from 'next/navigation'
 
 // Components
 import FilterBar from '~/components/filters/FilterBar'
