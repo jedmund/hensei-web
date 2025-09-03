@@ -87,7 +87,7 @@
     "2023-09U": {
       "features": ["Added new Manatura \"Ouroboros Mino\""]
     },
-    "1.2.1": {
+    "v1_2_1": {
       "bugs": [
         "Class accessory popover has been fixed, so Paladin shields and Manadiver manatura can be selected again",
         "The AX skill section no longer shows up in the weapon hovercard if no AX skills are set",
@@ -97,7 +97,7 @@
         "Fixed a bug that prevented setting the value for Rupee Gain or EXP Gain AX skills on weapons"
       ]
     },
-    "1.2.0": {
+    "v1_2_0": {
       "notes": "I'm very bad at writing actual release notes, so this is a consolidation of the bigger features released in the last six months. Don't worry: there's some new stuff here too!\nThe next features (in no particular order) will be: a way to define roles and substitutions for characters, a collection tracker and hopefully making progress on guides. That's a lot, but I'll chip away at it bit by bit.\nAs always, if you have any feedback, feel free to reach out in the granblue-tools Discord. Thanks for using granblue.team!",
       "features": [
         {
@@ -176,7 +176,7 @@
     "2023-02-U2": {
       "features": ["Added official names for Proven Weapons and Revans Weapons"]
     },
-    "1.1.0": {
+    "v1_1_0": {
       "features": [
         {
           "title": "Remix parties",
@@ -226,7 +226,7 @@
         "Fixed a bug that made it so you could not set Row IV EMP skills in Row V"
       ]
     },
-    "1.0.1": {
+    "v1_0_1": {
       "features": [
         "Extra party fields: Full Auto, Clear Time, and more",
         "Support for Youtube short URLs",
@@ -234,7 +234,7 @@
         "Many other bug fixes"
       ]
     },
-    "1.0.0": {
+    "v1_0_0": {
       "features": [
         "First release!",
         "You can embed Youtube videos now",

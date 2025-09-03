@@ -203,7 +203,7 @@
         "awakening": "Awakening"
       },
       "messages": {
-        "remove": "Are you sure you want to remove <strong>{{character}}</strong> from your team?"
+        "remove": "Are you sure you want to remove <strong>{character}</strong> from your team?"
       },
       "buttons": {
         "confirm": "Save character",
@@ -310,13 +310,16 @@
       }
     },
     "guidebooks": {
+      "messages": {
+        "remove": "Are you sure you want to remove <strong>{guidebook}</strong> from your team?"
+      },
       "buttons": {
         "remove": "Remove guidebook"
       }
     },
     "job_skills": {
       "messages": {
-        "remove": "Are you sure you want to remove <strong>{{job_skill}}</strong> from your team?"
+        "remove": "Are you sure you want to remove <strong>{job_skill}</strong> from your team?"
       },
       "buttons": {
         "remove": "Remove class skill"
@@ -341,8 +344,8 @@
     "remix_team": {
       "title": "Remix team",
       "description": {
-        "creator": "You're already the creator of <strong>{{name}}</strong>. Are you sure you want to make a copy by remixing it?",
-        "viewer": "Remixing a team makes a copy of it in your account so you can make your own changes.\n\nWould you like to remix <strong>{{name}}</strong>?"
+        "creator": "You're already the creator of <strong>{name}</strong>. Are you sure you want to make a copy by remixing it?",
+        "viewer": "Remixing a team makes a copy of it in your account so you can make your own changes.\n\nWould you like to remix <strong>{name}</strong>?"
       },
       "buttons": {
         "confirm": "Yes, remix team",
@@ -406,6 +409,9 @@
       }
     },
     "summon": {
+      "messages": {
+        "remove": "Are you sure you want to remove <strong>{summon}</strong> from your team?"
+      },
       "buttons": {
         "remove": "Remove summon"
       }
@@ -439,6 +445,9 @@
     },
     "weapon": {
       "title": "Modify weapon",
+      "messages": {
+        "remove": "Are you sure you want to remove <strong>{weapon}</strong> from your team?"
+      },
       "buttons": {
         "confirm": "Save weapon",
         "remove": "Remove weapon"
@@ -623,7 +632,7 @@
   },
   "toasts": {
     "copied": "This party's URL was copied to your clipboard",
-    "remixed": "You remixed {{title}}",
+    "remixed": "You remixed <strong>{title}</strong>",
     "update": {
       "title": "New update",
       "description": {
