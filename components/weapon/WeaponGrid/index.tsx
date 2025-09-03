@@ -566,7 +566,9 @@ const WeaponGrid = (props: Props) => {
       <Alert
         open={errorAlertOpen}
         title={axiosError ? `${axiosError.status}` : 'Error'}
-        message={t(`errors.${axiosError?.statusText.toLowerCase()}`)}
+        message={axiosError?.statusText && axiosError.statusText !== 'undefined' 
+          ? t(`errors.${axiosError.statusText.toLowerCase()}`) 
+          : t('errors.internal_server_error.description')}
         cancelAction={() => setErrorAlertOpen(false)}
         cancelActionText={t('buttons.confirm')}
       />
