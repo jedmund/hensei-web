@@ -25,13 +25,12 @@ const PartyPageClient: React.FC<Props> = ({ party, raidGroups }) => {
   // State for tab management
   const [selectedTab, setSelectedTab] = useState<GridType>(GridType.Weapon)
   
-  // Initialize app state
+  // Initialize raid groups
   useEffect(() => {
-    if (party) {
-      appState.parties[0] = party
+    if (raidGroups) {
       appState.raidGroups = raidGroups
     }
-  }, [party, raidGroups])
+  }, [raidGroups])
   
   // Handle tab change
   const handleTabChanged = (value: string) => {
