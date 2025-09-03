@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 import cloneDeep from 'lodash.clonedeep'
 
@@ -21,7 +21,7 @@ interface Props {
 }
 
 const WeaponSearchFilterBar = (props: Props) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const [rarityMenu, setRarityMenu] = useState(false)
   const [elementMenu, setElementMenu] = useState(false)

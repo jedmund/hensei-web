@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 import { AxiosError, AxiosResponse } from 'axios'
 import debounce from 'lodash.debounce'
@@ -39,7 +39,7 @@ const WeaponGrid = (props: Props) => {
   const numWeapons: number = 9
 
   // Localization
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Cookies
   const cookie = getCookie('account')

@@ -1,11 +1,11 @@
 import React from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import ContentUpdate from '~components/about/ContentUpdate'
 
 import styles from './index.module.scss'
 
 const ContentUpdate2022 = () => {
-  const { t: updates } = useTranslation('updates')
+  const updates = useTranslations('updates')
 
   const versionUpdates = {
     '1.0.0': 5,
@@ -42,7 +42,7 @@ const ContentUpdate2022 = () => {
         <ul className={styles.list}>
           {[...Array(versionUpdates['1.0.0'])].map((e, i) => (
             <li key={`1.0.0-update-${i}`}>
-              {updates(`versions.1.0.0.features.${i}`)}
+              {updates(`versions.v1_0_0.features.${i}`)}
             </li>
           ))}
         </ul>

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import { getCookie } from 'cookies-next'
 import classNames from 'classnames'
 import 'fix-date'
@@ -32,7 +32,7 @@ const GridRep = ({ party, loading, onClick, onSave }: Props) => {
 
   const { account } = useSnapshot(accountState)
 
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   const [visible, setVisible] = useState(false)

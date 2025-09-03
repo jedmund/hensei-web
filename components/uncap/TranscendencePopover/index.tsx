@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import { Popover } from '@radix-ui/react-popover'
@@ -34,7 +34,7 @@ const TranscendencePopover = ({
   onOpenChange,
   sendValue,
 }: PropsWithChildren<Props>) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const [open, setOpen] = useState(false)
   const [baseLevel, setBaseLevel] = useState(0)

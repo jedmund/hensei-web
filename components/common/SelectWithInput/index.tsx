@@ -2,7 +2,7 @@
 // Core dependencies
 import React, { useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 // UI Dependencies
@@ -41,7 +41,7 @@ const SelectWithInput = ({
   sendValues,
 }: Props) => {
   const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // UI state
   const [open, setOpen] = useState(false)

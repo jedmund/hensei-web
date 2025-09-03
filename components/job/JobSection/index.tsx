@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import JobDropdown from '~components/job/JobDropdown'
@@ -30,7 +30,7 @@ interface Props {
 
 const JobSection = (props: Props) => {
   const { party } = useSnapshot(appState)
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 

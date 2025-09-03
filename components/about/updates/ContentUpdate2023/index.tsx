@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import ContentUpdate from '~components/about/ContentUpdate'
 import LinkItem from '../../LinkItem'
 import DiscordIcon from '~public/icons/discord.svg'
@@ -7,7 +7,7 @@ import DiscordIcon from '~public/icons/discord.svg'
 import styles from './index.module.scss'
 
 const ContentUpdate2023 = () => {
-  const { t: updates } = useTranslation('updates')
+  const updates = useTranslations('updates')
 
   const versionUpdates = {
     '1.0.1': 4,
@@ -263,7 +263,7 @@ const ContentUpdate2023 = () => {
         <ul className={styles.bugs}>
           {[...Array(versionUpdates['1.2.1'].bugs)].map((e, i) => (
             <li key={`1.2.1-bugfix-${i}`}>
-              {updates(`versions.1.2.1.bugs.${i}`)}
+              {updates(`versions.v1_2_1.bugs.${i}`)}
             </li>
           ))}
         </ul>
@@ -289,19 +289,19 @@ const ContentUpdate2023 = () => {
               {[...Array(versionUpdates['1.2.0'].updates)].map((e, i) => (
                 <li key={`1.2.0-update-${i}`}>
                   {image(
-                    updates(`versions.1.2.0.features.${i}.title`),
+                    updates(`versions.v1_2_0.features.${i}.title`),
                     `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
                     versionUpdates['1.2.0'].images[i],
                     'jpg'
                   )}
-                  <h3>{updates(`versions.1.2.0.features.${i}.title`)}</h3>
-                  <p>{updates(`versions.1.2.0.features.${i}.blurb`)}</p>
+                  <h3>{updates(`versions.v1_2_0.features.${i}.title`)}</h3>
+                  <p>{updates(`versions.v1_2_0.features.${i}.blurb`)}</p>
                 </li>
               ))}
             </ul>
             <div className={styles.foreword}>
               <h2>Developer notes</h2>
-              {updates('versions.1.2.0.notes')
+              {updates('versions.v1_2_0.notes')
                 .split('\n')
                 .map((item, i) => (
                   <p key={`note-${i}`}>{item}</p>
@@ -319,7 +319,7 @@ const ContentUpdate2023 = () => {
             <ul className={styles.bugs}>
               {[...Array(versionUpdates['1.2.0'].bugs)].map((e, i) => (
                 <li key={`1.2.0-bugfix-${i}`}>
-                  {updates(`versions.1.2.0.bugs.${i}`)}
+                  {updates(`versions.v1_2_0.bugs.${i}`)}
                 </li>
               ))}
             </ul>
@@ -601,13 +601,13 @@ const ContentUpdate2023 = () => {
               {[...Array(versionUpdates['1.1.0'].updates)].map((e, i) => (
                 <li key={`1.1.0-update-${i}`}>
                   {image(
-                    updates(`versions.1.1.0.features.${i}.title`),
+                    updates(`versions.v1_1_0.features.${i}.title`),
                     `${process.env.NEXT_PUBLIC_SIERO_IMG_URL}/updates`,
                     versionUpdates['1.1.0'].images[i],
                     'jpg'
                   )}
-                  <h3>{updates(`versions.1.1.0.features.${i}.title`)}</h3>
-                  <p>{updates(`versions.1.1.0.features.${i}.blurb`)}</p>
+                  <h3>{updates(`versions.v1_1_0.features.${i}.title`)}</h3>
+                  <p>{updates(`versions.v1_1_0.features.${i}.blurb`)}</p>
                 </li>
               ))}
             </ul>
@@ -617,7 +617,7 @@ const ContentUpdate2023 = () => {
             <ul className={styles.bugs}>
               {[...Array(versionUpdates['1.1.0'].bugs)].map((e, i) => (
                 <li key={`1.1.0-bugfix-${i}`}>
-                  {updates(`versions.1.1.0.bugs.${i}`)}
+                  {updates(`versions.v1_1_0.bugs.${i}`)}
                 </li>
               ))}
             </ul>
@@ -671,7 +671,7 @@ const ContentUpdate2023 = () => {
         <ul className={styles.list}>
           {[...Array(versionUpdates['1.0.1'])].map((e, i) => (
             <li key={`1.0.1-update-${i}`}>
-              {updates(`versions.1.0.1.features.${i}`)}
+              {updates(`versions.v1_0_1.features.${i}`)}
             </li>
           ))}
         </ul>

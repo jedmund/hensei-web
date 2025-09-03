@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { deleteCookie, getCookie } from 'cookies-next'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
 import Link from 'next/link'
@@ -35,7 +35,7 @@ import styles from './index.module.scss'
 
 const Header = () => {
   // Localization
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Locale
   const locale = (getCookie('NEXT_LOCALE') as string) || 'en'

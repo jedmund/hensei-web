@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import clonedeep from 'lodash.clonedeep'
 import DOMPurify from 'dompurify'
 
@@ -38,7 +38,7 @@ interface Props {
 }
 
 const PartyFooter = (props: Props) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const router = useRouter()
 
   const { party: partySnapshot } = useSnapshot(appState)

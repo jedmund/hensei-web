@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 import { getCookie } from 'cookies-next'
 
@@ -72,7 +72,7 @@ const WeaponKeySelect = React.forwardRef<HTMLButtonElement, Props>(
       getCookie('NEXT_LOCALE') && ['en', 'ja'].includes(getCookie('NEXT_LOCALE') as string) 
         ? (getCookie('NEXT_LOCALE') as string) 
         : 'en'
-    const { t } = useTranslation('common')
+    const t = useTranslations('common')
 
     const [keys, setKeys] = useState<WeaponKey[][]>([])
     const [error, setError] = useState('')

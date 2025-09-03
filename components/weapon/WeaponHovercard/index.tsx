@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 import { getCookie } from 'cookies-next'
 
@@ -38,7 +38,7 @@ const WeaponHovercard = (props: Props) => {
       ? (getCookie('NEXT_LOCALE') as string) 
       : 'en'
 
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
   const WeaponKeyNames: KeyNames = {

@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { getCookie } from 'cookies-next'
-import { Trans, useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import Alert from '~components/common/Alert'
@@ -45,7 +45,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
     forwardedRef
   ) {
     // Set up translation
-    const { t } = useTranslation('common')
+    const t = useTranslations('common')
     const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
         ? router.locale
         : 'en'
@@ -139,11 +139,12 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
           cancelAction={() => setAlertOpen(false)}
           cancelActionText={t('buttons.cancel')}
           message={
-            <Trans i18nKey="modals.job_skills.messages.remove">
-              Are you sure you want to remove{' '}
-              <strong>{{ job_skill: skill?.name[locale] }}</strong> from your
-              team?
-            </Trans>
+            <>
+              {t.rich('modals.job_skills.messages.remove', {
+                job_skill: skill?.name[locale],
+                strong: (chunks) => <strong>{chunks}</strong>
+              })}
+            </>
           }
         />
       )

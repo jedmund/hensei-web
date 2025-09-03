@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import { AxiosError, AxiosResponse } from 'axios'
@@ -38,7 +38,7 @@ const SummonGrid = (props: Props) => {
     : null
 
   // Localization
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Set up state for error handling
   const [axiosError, setAxiosError] = useState<AxiosResponse>()

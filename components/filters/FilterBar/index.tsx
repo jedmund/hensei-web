@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import { getCookie } from 'cookies-next'
 import classNames from 'classnames'
 import equals from 'fast-deep-equal'
@@ -29,7 +29,7 @@ interface Props {
 
 const FilterBar = (props: Props) => {
   // Set up translation
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const [scrolled, setScrolled] = useState(false)
 

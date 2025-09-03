@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 // Dependencies: Common
 import Button from '~components/common/Button'
@@ -45,7 +45,7 @@ const PartyDropdown = ({
   teamVisibilityCallback,
 }: Props) => {
   // Localization
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Router
   const router = useRouter()

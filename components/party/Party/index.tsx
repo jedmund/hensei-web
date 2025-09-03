@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/navigation'
 import { subscribe, useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import clonedeep from 'lodash.clonedeep'
 
 import Alert from '~components/common/Alert'
@@ -44,7 +44,7 @@ const Party = (props: Props) => {
   const router = useRouter()
 
   // Localization
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Set up states
   const { party } = useSnapshot(appState)

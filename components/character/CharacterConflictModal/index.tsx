@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { getCookie } from 'cookies-next'
-import { Trans, useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 import { Dialog } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
@@ -29,7 +29,7 @@ const CharacterConflictModal = (props: Props) => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const routerLocale = getCookie('NEXT_LOCALE')
   const locale =
     routerLocale && ['en', 'ja'].includes(routerLocale) ? routerLocale : 'en'
@@ -89,7 +89,9 @@ const CharacterConflictModal = (props: Props) => {
       >
         <div className={styles.content}>
           <p>
-            <Trans i18nKey="modals.conflict.character"></Trans>
+            {t.rich('modals.conflict.character', {
+              strong: (chunks) => <strong>{chunks}</strong>
+            })}
           </p>
           <div className={styles.diagram}>
             <ul>

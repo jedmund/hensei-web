@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import Switch from '~components/common/Switch'
 import WeaponUnit from '~components/weapon/WeaponUnit'
 

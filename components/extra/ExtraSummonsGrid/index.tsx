@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import SummonUnit from '~components/summon/SummonUnit'
 import { SearchableObject } from '~types'
 import styles from './index.module.scss'
@@ -20,7 +20,7 @@ interface Props {
 const ExtraSummonsGrid = (props: Props) => {
   const numSummons: number = 2
 
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   return (
     <div className={styles.container}>

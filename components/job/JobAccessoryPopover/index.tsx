@@ -1,7 +1,7 @@
 'use client'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
@@ -40,7 +40,7 @@ const JobAccessoryPopover = ({
   onOpenChange,
 }: PropsWithChildren<Props>) => {
   // Localization
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 

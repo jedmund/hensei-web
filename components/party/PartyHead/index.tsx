@@ -3,7 +3,7 @@
 import React from 'react'
 import Head from 'next/head'
 import { getCookie } from 'cookies-next'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import api from '~utils/api'
 
 import generateTitle from '~utils/generateTitle'
@@ -15,7 +15,7 @@ interface Props {
 
 const PartyHead = ({ party, meta }: Props) => {
   // Import translations
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Get locale from cookie
   const cookieLocale = getCookie('NEXT_LOCALE') as string

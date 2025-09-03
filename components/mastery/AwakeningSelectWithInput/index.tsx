@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 // UI Dependencies
@@ -42,7 +42,7 @@ const AwakeningSelectWithInput = ({
 }: Props) => {
   // Set up translations
   const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // State: Component
   const [open, setOpen] = useState(false)

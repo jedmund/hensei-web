@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
 import { getCookie, setCookie } from 'cookies-next'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslations } from 'next-intl'
 
 import { Dialog, DialogTrigger } from '~components/common/Dialog'
 import DialogHeader from '~components/common/DialogHeader'
@@ -37,7 +37,7 @@ const FilterModal = (props: Props) => {
   const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // Set up translation
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Refs
   const headerRef = React.createRef<HTMLDivElement>()
@@ -441,10 +441,12 @@ const FilterModal = (props: Props) => {
     return (
       <div className={styles.notice}>
         <p>
-          <Trans i18nKey="modals.filters.notice">
+          {/* TODO: Refactor to t.rich() */}
+          {/* <Trans i18nKey="modals.filters.notice">
             Filters set on <strong>user profiles</strong> and in{' '}
             <strong>Your saved teams</strong> will not be saved
-          </Trans>
+          </Trans> */}
+          {t('modals.filters.notice')}
         </p>
       </div>
     )

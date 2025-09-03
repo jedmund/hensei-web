@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 import GuidebookUnit from '../GuidebookUnit'
 
@@ -24,7 +24,7 @@ const GuidebooksGrid = ({
   removeGuidebook,
   updateObject,
 }: Props) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const classes = classNames({
     [styles.guidebooks]: true,

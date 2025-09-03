@@ -1,9 +1,9 @@
 import React from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import ContentUpdate from '~components/about/ContentUpdate'
 
 const ContentUpdate2024 = () => {
-  const { t: updates } = useTranslation('updates')
+  const updates = useTranslations('updates')
 
   return (
     <>

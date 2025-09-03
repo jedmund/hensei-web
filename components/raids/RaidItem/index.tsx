@@ -1,5 +1,5 @@
 import React, { ComponentProps, PropsWithChildren } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 import { CommandItem } from '~components/common/Command'
 import styles from './index.module.scss'
@@ -54,7 +54,7 @@ const RaidItem = React.forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
     }: PropsWithChildren<Props>,
     forwardedRef
   ) {
-    const { t } = useTranslation('common')
+    const t = useTranslations('common')
 
     const classes = classNames({
       raid: true,

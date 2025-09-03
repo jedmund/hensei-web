@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 import Button from '~components/common/Button'
 import { ResponseStatus } from '~types'
@@ -13,7 +13,7 @@ interface Props {
 
 const ErrorSection = ({ status }: Props) => {
   // Import translations
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const [statusText, setStatusText] = useState('')
 

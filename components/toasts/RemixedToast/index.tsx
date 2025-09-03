@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import Toast from '~components/common/Toast'
-import { Trans, useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   partyName: string
@@ -16,7 +16,7 @@ const RemixedToast = ({
   onOpenChange,
   onCloseClick,
 }: Props) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Methods: Event handlers
   function handleOpenChange() {
@@ -34,9 +34,12 @@ const RemixedToast = ({
       duration={2400}
       type="foreground"
       content={
-        <Trans i18nKey="toasts.remixed">
-          You remixed <strong>{{ title: partyName }}</strong>
-        </Trans>
+        <>
+          {t.rich('toasts.remixed', {
+            title: partyName,
+            strong: (chunks) => <strong>{chunks}</strong>
+          })}
+        </>
       }
       onOpenChange={handleOpenChange}
       onCloseClick={handleCloseClick}

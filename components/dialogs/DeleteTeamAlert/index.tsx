@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import Alert from '~components/common/Alert'
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const DeleteTeamAlert = ({ open, deleteCallback, onOpenChange }: Props) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   function deleteParty() {
     deleteCallback()

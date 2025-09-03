@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
-import Link from 'next/link'
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { Link } from '~/i18n/navigation'
+import { useRouter, usePathname, useSearchParams } from '~/i18n/navigation'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import Button from '~components/common/Button'
@@ -50,7 +50,7 @@ interface Props {
 const PartyHeader = (props: Props) => {
   const { party } = useSnapshot(appState)
 
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const router = useRouter()
   const pathname = usePathname()
   const locale = getCookie('NEXT_LOCALE') || 'en'

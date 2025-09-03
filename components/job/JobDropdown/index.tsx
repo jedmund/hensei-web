@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
@@ -26,7 +26,7 @@ const JobDropdown = React.forwardRef<HTMLSelectElement, Props>(
     const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
     // Set up translation
-    const { t } = useTranslation('common')
+    const t = useTranslations('common')
 
     // Create snapshot of app state
     const { party } = useSnapshot(appState)

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { getCookie } from 'cookies-next'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 import type {
   Option,
@@ -47,7 +47,7 @@ const MentionTypeahead = React.forwardRef<Typeahead, Props>(function Typeahead(
   { label, description, placeholder, inclusions, exclusions, ...props }: Props,
   forwardedRef
 ) {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const locale = getCookie('NEXT_LOCALE')
     ? (getCookie('NEXT_LOCALE') as string)
     : 'en'

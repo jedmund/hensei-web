@@ -2,7 +2,7 @@
 import { ComponentProps, useCallback, useEffect } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { getCookie } from 'cookies-next'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
@@ -48,7 +48,7 @@ const Editor = ({
   // Hooks: Locale
   const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   useEffect(() => {
     editor?.commands.setContent(formatContent(content))

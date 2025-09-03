@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import { appState } from '~utils/appState'
@@ -28,7 +28,7 @@ interface Props {
 
 const PartySegmentedControl = (props: Props) => {
   // Set up translations
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const { party, grid } = useSnapshot(appState)
 

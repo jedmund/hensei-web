@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { getCookie, setCookie } from 'cookies-next'
 import { useRouter } from 'next/navigation'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import { useTheme } from 'next-themes'
 
 import { Dialog } from '~components/common/Dialog'
@@ -38,7 +38,7 @@ interface Props {
 const AccountModal = React.forwardRef<HTMLDivElement, Props>(
   function AccountModal(props: Props, forwardedRef) {
     // Localization
-    const { t } = useTranslation('common')
+    const t = useTranslations('common')
     const router = useRouter()
     // In App Router, locale is handled via cookies
     const currentLocale = getCookie('NEXT_LOCALE') as string || 'en'

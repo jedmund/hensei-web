@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import ChangelogUnit from '~components/about/ChangelogUnit'
@@ -33,7 +33,7 @@ const ContentUpdate = ({
   raidItems,
   numNotes,
 }: Props) => {
-  const { t: updates } = useTranslation('updates')
+  const updates = useTranslations('updates')
 
   const date = new Date(dateString)
 

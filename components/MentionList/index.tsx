@@ -5,7 +5,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import { getCookie } from 'cookies-next'
 import { SuggestionProps } from '@tiptap/suggestion'
 import classNames from 'classnames'
@@ -37,7 +37,7 @@ export const MentionList = forwardRef<MentionRef, Props>(
   ({ items, ...props }: Props, forwardedRef) => {
     const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
-    const { t } = useTranslation('common')
+    const t = useTranslations('common')
 
     const [selectedIndex, setSelectedIndex] = useState(0)
 

@@ -1,10 +1,10 @@
 import React from 'react'
 import Head from 'next/head'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 const TeamsHead = () => {
   // Import translations
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   return (
     <Head>

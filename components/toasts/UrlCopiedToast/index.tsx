@@ -1,6 +1,6 @@
 import React from 'react'
 import Toast from '~components/common/Toast'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   open: boolean
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const UrlCopiedToast = ({ open, onOpenChange, onCloseClick }: Props) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Methods: Event handlers
   function handleOpenChange() {

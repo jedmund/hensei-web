@@ -3,7 +3,7 @@
 import React from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { getCookie } from 'cookies-next'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 import {
   Hovercard,
@@ -34,7 +34,7 @@ const CharacterHovercard = (props: Props) => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const routerLocale = getCookie('NEXT_LOCALE')
   const locale =
     routerLocale && ['en', 'ja'].includes(routerLocale) ? routerLocale : 'en'
