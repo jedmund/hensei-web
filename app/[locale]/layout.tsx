@@ -12,6 +12,7 @@ import Providers from '../components/Providers'
 import Header from '../components/Header'
 import UpdateToastClient from '../components/UpdateToastClient'
 import VersionHydrator from '../components/VersionHydrator'
+import AccountStateInitializer from '~components/AccountStateInitializer'
 
 // Generate static params for all locales
 export function generateStaticParams() {
@@ -67,6 +68,7 @@ export default async function LocaleLayout({
       <body className={goalking.className}>
         <NextIntlClientProvider messages={messages}>
           <Providers>
+            <AccountStateInitializer />
             <Header />
             <VersionHydrator version={version} />
             <UpdateToastClient initialVersion={version} />

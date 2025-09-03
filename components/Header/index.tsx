@@ -2,6 +2,8 @@
 import React, { useState } from 'react'
 import { deleteCookie, getCookie } from 'cookies-next'
 import { useTranslations } from 'next-intl'
+import { useRouter } from '~/i18n/navigation'
+import { useSnapshot } from 'valtio'
 import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
 import Link from 'next/link'
@@ -36,9 +38,13 @@ import styles from './index.module.scss'
 const Header = () => {
   // Localization
   const t = useTranslations('common')
+  const router = useRouter()
 
   // Locale
   const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
+
+  // Subscribe to account state changes
+  const accountSnap = useSnapshot(accountState)
 
   // State management
   const [alertOpen, setAlertOpen] = useState(false)
@@ -95,7 +101,7 @@ const Header = () => {
       if (key !== 'language') accountState[key] = resetState[key]
     })
 
-    router.reload()
+    router.refresh()
     return false
   }
 
@@ -112,8 +118,8 @@ const Header = () => {
 
   // Methods: Rendering
   const profileImage = () => {
-    const user = accountState.account.user
-    if (accountState.account.authorized && user) {
+    const user = accountSnap.account.user
+    if (accountSnap.account.authorized && user) {
       return (
         <img
           alt={user.username}
@@ -126,7 +132,7 @@ const Header = () => {
     } else {
       return (
         <img
-          alt={t('no_user')}
+          alt={t('header.anonymous')}
           className={`profile anonymous`}
           srcSet={`/profile/npc.png, 
                       /profile/npc@2x.png 2x`}
@@ -163,18 +169,18 @@ const Header = () => {
 
   const settingsModal = (
     <>
-      {accountState.account.user && (
+      {accountSnap.account.user && (
         <AccountModal
           open={settingsModalOpen}
-          username={accountState.account.user.username}
-          picture={accountState.account.user.avatar.picture}
-          gender={accountState.account.user.gender}
-          language={accountState.account.user.language}
-          theme={accountState.account.user.theme}
-          role={accountState.account.user.role}
+          username={accountSnap.account.user.username}
+          picture={accountSnap.account.user.avatar.picture}
+          gender={accountSnap.account.user.gender}
+          language={accountSnap.account.user.language}
+          theme={accountSnap.account.user.theme}
+          role={accountSnap.account.user.role}
           bahamutMode={
-            accountState.account.user.role === 9
-              ? accountState.account.user.bahamut
+            accountSnap.account.user.role === 9
+              ? accountSnap.account.user.bahamut
               : false
           }
           onOpenChange={setSettingsModalOpen}
@@ -194,12 +200,12 @@ const Header = () => {
   // Rendering: Compositing
   const authorizedLeftItems = (
     <>
-      {accountState.account.user && (
+      {accountSnap.account.user && (
         <>
           <DropdownMenuGroup>
             <DropdownMenuItem onClick={closeLeftMenu}>
               <Link
-                href={`/${accountState.account.user.username}` || ''}
+                href={`/${accountSnap.account.user.username}` || ''}
               >
                 <span>{t('menu.profile')}</span>
               </Link>
@@ -214,8 +220,8 @@ const Header = () => {
   )
   const leftMenuItems = (
     <>
-      {accountState.account.authorized &&
-        accountState.account.user &&
+      {accountSnap.account.authorized &&
+        accountSnap.account.user &&
         authorizedLeftItems}
 
       <DropdownMenuGroup>
@@ -286,15 +292,15 @@ const Header = () => {
 
   const authorizedRightItems = (
     <>
-      {accountState.account.user && (
+      {accountSnap.account.user && (
         <>
           <DropdownMenuGroup>
             <DropdownMenuLabel>
-              {`@${accountState.account.user.username}`}
+              {`@${accountSnap.account.user.username}`}
             </DropdownMenuLabel>
             <DropdownMenuItem onClick={closeRightMenu}>
               <Link
-                href={`/${accountState.account.user.username}` || ''}
+                href={`/${accountSnap.account.user.username}` || ''}
               >
                 <span>{t('menu.profile')}</span>
               </Link>
@@ -347,7 +353,7 @@ const Header = () => {
 
   const rightMenuItems = (
     <>
-      {accountState.account.authorized && accountState.account.user
+      {accountSnap.account.authorized && accountSnap.account.user
         ? authorizedRightItems
         : unauthorizedRightItems}
     </>
@@ -379,7 +385,7 @@ const Header = () => {
 
   return (
     <>
-      {accountState.account.user?.bahamut && (
+      {accountSnap.account.user?.bahamut && (
         <div className={styles.bahamut}>
           <BahamutIcon />
           <p>Bahamut Mode is active</p>
