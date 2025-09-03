@@ -87,3 +87,6 @@ typings/
 .DS_Store
 *.tsbuildinfo
 codebase.md
+
+# PRDs
+prd/
