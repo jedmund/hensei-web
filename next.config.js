@@ -1,14 +1,15 @@
 /** @type {import('next').NextConfig} */
 const path = require('path')
-const { i18n } = require('./next-i18next.config')
+const createNextIntlPlugin = require('next-intl/plugin')
 
-module.exports = {
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
+
+const nextConfig = {
   reactStrictMode: true,
   sassOptions: {
     prependData: '@import "variables";',
     includePaths: [path.join(__dirname, 'styles')],
   },
-  i18n,
   async rewrites() {
     return [
       {
@@ -116,3 +117,5 @@ module.exports = {
     return config
   },
 }
+
+module.exports = withNextIntl(nextConfig)
