@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '~/i18n/navigation'
 
 // Utils
 import { appState } from '~/utils/appState'
@@ -20,7 +20,7 @@ interface Props {
 
 const PartyPageClient: React.FC<Props> = ({ party, raidGroups }) => {
   const router = useRouter()
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   
   // State for tab management
   const [selectedTab, setSelectedTab] = useState<GridType>(GridType.Weapon)

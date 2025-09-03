@@ -1,13 +1,15 @@
 import { Metadata } from 'next'
-import Link from 'next/link'
-import { useTranslation } from 'next-i18next'
+import { Link } from '~/i18n/navigation'
+import { getTranslations } from 'next-intl/server'
 
 export const metadata: Metadata = {
   title: 'Page not found / granblue.team',
   description: 'The page you were looking for could not be found'
 }
 
-export default function NotFound() {
+export default async function NotFound() {
+  const t = await getTranslations('common')
+  
   return (
     <div className="error-container">
       <div className="error-content">

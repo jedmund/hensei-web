@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '~/i18n/navigation'
 import dynamic from 'next/dynamic'
 
 // Components
@@ -24,7 +24,7 @@ const NewPartyClient: React.FC<Props> = ({
   raidGroups,
   error = false
 }) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const router = useRouter()
   
   // State for tab management

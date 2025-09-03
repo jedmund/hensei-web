@@ -1,28 +1,27 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter, useSearchParams } from '~/i18n/navigation'
 import InfiniteScroll from 'react-infinite-scroll-component'
+
+// Hooks
+import { useFavorites } from '~/hooks/useFavorites'
+import { useTeamFilter } from '~/hooks/useTeamFilter'
+
+// Utils
+import { appState } from '~/utils/appState'
+import { defaultFilterset } from '~/utils/defaultFilters'
+import { CollectionPage } from '~/utils/enums'
 
 // Components
 import FilterBar from '~/components/filters/FilterBar'
 import GridRep from '~/components/reps/GridRep'
 import GridRepCollection from '~/components/reps/GridRepCollection'
 import LoadingRep from '~/components/reps/LoadingRep'
-import UserInfo from '~/components/filters/UserInfo'
-
-// Utils
-import { defaultFilterset } from '~/utils/defaultFilters'
-import { appState } from '~/utils/appState'
+import ErrorSection from '~/components/ErrorSection'
 
 // Types
-interface Pagination {
-  current_page: number;
-  total_pages: number;
-  record_count: number;
-}
-
 interface Party {
   id: string;
   shortcode: string;
@@ -31,20 +30,14 @@ interface Party {
   // Add other properties as needed
 }
 
-interface User {
-  id: string;
-  username: string;
-  avatar: {
-    picture: string;
-    element: string;
-  };
-  gender: string;
-  // Add other properties as needed
+interface Pagination {
+  current_page: number;
+  total_pages: number;
+  record_count: number;
 }
 
 interface Props {
   initialData: {
-    user: User;
     teams: Party[];
     raidGroups: any[];
     pagination: Pagination;
@@ -52,15 +45,17 @@ interface Props {
   initialElement?: number;
   initialRaid?: string;
   initialRecency?: string;
+  error?: boolean;
 }
 
-const ProfilePageClient: React.FC<Props> = ({ 
+const TeamsPageClient: React.FC<Props> = ({ 
   initialData, 
   initialElement,
   initialRaid,
-  initialRecency
+  initialRecency,
+  error = false
 }) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -74,14 +69,17 @@ const ProfilePageClient: React.FC<Props> = ({
   const [element, setElement] = useState(initialElement || 0)
   const [raid, setRaid] = useState(initialRaid || '')
   const [recency, setRecency] = useState(initialRecency || '')
-  
+  const [advancedFilters, setAdvancedFilters] = useState({})
+
+  const { toggleFavorite } = useFavorites(parties, setParties)
+
   // Initialize app state with raid groups
   useEffect(() => {
     if (initialData.raidGroups.length > 0) {
       appState.raidGroups = initialData.raidGroups
     }
   }, [initialData.raidGroups])
-  
+
   // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString())
@@ -110,20 +108,19 @@ const ProfilePageClient: React.FC<Props> = ({
     const currentQuery = searchParams.toString()
     
     if (newQueryString !== currentQuery) {
-      router.push(`/${initialData.user.username}${newQueryString ? `?${newQueryString}` : ''}`)
+      router.push(`/teams${newQueryString ? `?${newQueryString}` : ''}`)
     }
-  }, [element, raid, recency, router, searchParams, initialData.user.username])
-  
-  // Load more parties when scrolling
-  async function loadMoreParties() {
+  }, [element, raid, recency, router, searchParams])
+
+  // Load more teams when scrolling
+  async function loadMoreTeams() {
     if (fetching || currentPage >= totalPages) return
     
     setFetching(true)
     
     try {
       // Construct URL for fetching more data
-      const url = new URL(`/api/parties`, window.location.origin)
-      url.searchParams.set('username', initialData.user.username)
+      const url = new URL('/api/parties', window.location.origin)
       url.searchParams.set('page', (currentPage + 1).toString())
       
       if (element) url.searchParams.set('element', element.toString())
@@ -140,12 +137,12 @@ const ProfilePageClient: React.FC<Props> = ({
         setRecordCount(data.pagination?.record_count || recordCount)
       }
     } catch (error) {
-      console.error('Error loading more parties', error)
+      console.error('Error loading more teams', error)
     } finally {
       setFetching(false)
     }
   }
-  
+
   // Receive filters from the filter bar
   function receiveFilters(filters: FilterSet) {
     if ('element' in filters) {
@@ -161,12 +158,18 @@ const ProfilePageClient: React.FC<Props> = ({
     // Reset to page 1 when filters change
     setCurrentPage(1)
   }
-  
+
+  function receiveAdvancedFilters(filters: FilterSet) {
+    setAdvancedFilters(filters)
+    // Reset to page 1 when filters change
+    setCurrentPage(1)
+  }
+
   // Methods: Navigation
-  function goToParty(shortcode: string) {
+  function goTo(shortcode: string) {
     router.push(`/p/${shortcode}`)
   }
-  
+
   // Page component rendering methods
   function renderParties() {
     return parties.map((party, i) => (
@@ -174,11 +177,12 @@ const ProfilePageClient: React.FC<Props> = ({
         party={party}
         key={`party-${i}`}
         loading={fetching}
-        onClick={() => goToParty(party.shortcode)}
+        onClick={() => goTo(party.shortcode)}
+        onSave={(teamId, favorited) => toggleFavorite(teamId, favorited)}
       />
     ))
   }
-  
+
   function renderLoading(number: number) {
     return (
       <GridRepCollection>
@@ -188,7 +192,18 @@ const ProfilePageClient: React.FC<Props> = ({
       </GridRepCollection>
     )
   }
-  
+
+  if (error) {
+    return (
+      <ErrorSection 
+        status={{ 
+          code: 500, 
+          text: 'internal_server_error' 
+        }} 
+      />
+    )
+  }
+
   const renderInfiniteScroll = (
     <>
       {parties.length === 0 && !loaded && renderLoading(3)}
@@ -200,7 +215,7 @@ const ProfilePageClient: React.FC<Props> = ({
       {parties.length > 0 && (
         <InfiniteScroll
           dataLength={parties.length}
-          next={loadMoreParties}
+          next={loadMoreTeams}
           hasMore={totalPages > currentPage}
           loader={renderLoading(3)}
         >
@@ -209,29 +224,25 @@ const ProfilePageClient: React.FC<Props> = ({
       )}
     </>
   )
-  
+
   return (
     <>
       <FilterBar
         defaultFilterset={defaultFilterset}
         onFilter={receiveFilters}
-        persistFilters={false}
+        onAdvancedFilter={receiveAdvancedFilters}
+        persistFilters={true}
         element={element}
         raid={raid}
         raidGroups={initialData.raidGroups}
         recency={recency}
       >
-        <UserInfo 
-          name={initialData.user.username}
-          picture={initialData.user.avatar.picture}
-          element={initialData.user.avatar.element}
-          gender={initialData.user.gender}
-        />
+        <h1>{t('teams.title')}</h1>
       </FilterBar>
-      
+
       <section>{renderInfiniteScroll}</section>
     </>
   )
 }
 
-export default ProfilePageClient
+export default TeamsPageClient
