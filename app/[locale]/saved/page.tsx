@@ -50,7 +50,7 @@ export default async function SavedPage({
     ])
     
     // Filter teams by element/raid if needed
-    let filteredTeams = savedTeamsData.parties || [];
+    let filteredTeams = savedTeamsData.results || [];
     
     if (element) {
       filteredTeams = filteredTeams.filter(party => party.element === element)
@@ -63,8 +63,8 @@ export default async function SavedPage({
     // Prepare data for client component
     const initialData = {
       teams: filteredTeams,
-      raidGroups: raidGroupsData.raid_groups || [],
-      totalCount: savedTeamsData.parties?.length || 0
+      raidGroups: raidGroupsData || [],
+      totalCount: savedTeamsData.results?.length || 0
     }
     
     return (

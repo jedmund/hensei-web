@@ -1,7 +1,7 @@
+'use client'
 import React, { useState } from 'react'
-import { deleteCookie } from 'cookies-next'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { deleteCookie, getCookie } from 'cookies-next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
 import Link from 'next/link'
@@ -35,12 +35,10 @@ import styles from './index.module.scss'
 
 const Header = () => {
   // Localization
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
-  // Router
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  // Locale
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // State management
   const [alertOpen, setAlertOpen] = useState(false)

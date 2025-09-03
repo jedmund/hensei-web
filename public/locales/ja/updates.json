@@ -87,7 +87,7 @@
     "2023-09U": {
       "features": ["マナベリー「ウロボロス・ミニステル」を追加"]
     },
-    "1.2.1": {
+    "v1_2_1": {
       "bugs": [
         "ジョブアクセサリーのメニューが修正され、パラディンの盾やマナダイバーのマナベリーが再び選択できるようになりました",
         "EXスキルが設定されていない場合、武器ホバーカードにEXスキルの項目が表示されなくなりました",
@@ -97,7 +97,7 @@
         "武器にルピーUPまたはEXP UPのEXスキルの値を設定できないバグを修正しました"
       ]
     },
-    "1.2.0": {
+    "v1_2_0": {
       "notes": "I'm very bad at writing actual release notes, so this is a consolidation of the bigger features released in the last six months. Don't worry: there's some new stuff here too!\nThe next features (in no particular order) will be: a way to define roles and substitutions for characters, a collection tracker and hopefully making progress on guides. That's a lot, but I'll chip away at it bit by bit.\nAs always, if you have any feedback, feel free to reach out in the granblue-tools Discord. Thanks for using granblue.team!",
       "features": [
         {
@@ -170,7 +170,7 @@
     "2023-02-U2": {
       "features": ["ブレイブウェポンとレヴァンスウェポンの公式名を追加"]
     },
-    "1.1.0": {
+    "v1_1_0": {
       "features": [
         {
           "title": "編成をリミックス",
@@ -220,7 +220,7 @@
         "クラス４のリミットボーナススキルをクラス５に装備できない不具合を修正"
       ]
     },
-    "1.0.1": {
+    "v1_0_1": {
       "features": [
         "編成にフルオート、討伐時間などを入力できるようになりました",
         "YouTubeの短いURLを入力できるようになりましたSupport for Youtube short URLs",
@@ -228,7 +228,7 @@
         "その他のバグを多め修正"
       ]
     },
-    "1.0.0": {
+    "v1_0_0": {
       "features": [
         "初アップデート！",
         "YouTubeの動画を埋め込めるようになりました",

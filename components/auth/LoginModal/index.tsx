@@ -1,7 +1,9 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
 import { setCookie } from 'cookies-next'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
 import api from '~utils/api'
@@ -35,7 +37,7 @@ interface Props {
 
 const LoginModal = (props: Props) => {
   const router = useRouter()
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Set up form states and error handling
   const [formValid, setFormValid] = useState(false)

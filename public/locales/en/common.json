@@ -14,8 +14,8 @@
     "confirm_logout": "Are you sure you want to log out?",
     "incompatible_weapon": "You've selected a weapon that can't be added to the Additional Weapon slots.",
     "unsaved_changes": {
-      "party": "You will lose all changes to your party <strong>{{objectName}}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?",
-      "object": "You will lose all changes to <strong>{{objectName}}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?",
+      "party": "You will lose all changes to your party <strong>{objectName}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?",
+      "object": "You will lose all changes to <strong>{objectName}</strong> if you continue.<br/><br/>Are you sure you want to continue without saving?",
       "buttons": {
         "confirm": "Continue without saving",
         "cancel": "Nevermind"
@@ -25,17 +25,17 @@
   "ax": {
     "no_skill": "No AX Skill",
     "errors": {
-      "value_too_low": "{{name}} must be at least {{minValue}}{{suffix}}",
-      "value_too_high": "{{name}} cannot be greater than {{maxValue}}{{suffix}}",
-      "value_not_whole": "{{name}} must be a whole number",
-      "value_empty": "{{name}} must have a value"
+      "value_too_low": "{name} must be at least {minValue}{suffix}",
+      "value_too_high": "{name} cannot be greater than {maxValue}{suffix}",
+      "value_not_whole": "{name} must be a whole number",
+      "value_empty": "{name} must have a value"
     }
   },
   "awakening": {
     "no_type": "No awakening",
     "errors": {
-      "value_too_low": "Awakening level must be at least {{minValue}}",
-      "value_too_high": "Awakening level cannot be greater than {{maxValue}}",
+      "value_too_low": "Awakening level must be at least {minValue}",
+      "value_too_high": "Awakening level cannot be greater than {maxValue}",
       "value_not_whole": "Awakening level must be a whole number",
       "value_empty": "Awakening must have a level"
     }
@@ -77,10 +77,10 @@
   },
   "earring": {
     "errors": {
-      "value_too_low": "{{name}} must be at least {{minValue}}",
-      "value_too_high": "{{name}} cannot be greater than {{maxValue}}",
-      "value_not_whole": "{{name}} must be a whole number",
-      "value_empty": "{{name}} must have a value"
+      "value_too_low": "{name} must be at least {minValue}",
+      "value_too_high": "{name} cannot be greater than {maxValue}",
+      "value_not_whole": "{name} must be a whole number",
+      "value_empty": "{name} must have a value"
     }
   },
   "elements": {
@@ -144,17 +144,15 @@
       "empty": "This team doesn't have a description"
     },
     "remixes": {
-      "label_zero": "Remixes",
-      "label_one": "{{count}} Remix",
-      "label_other": "{{count}} Remixes",
+      "label": "{count, plural, =0 {Remixes} =1 {# Remix} other {# Remixes}}",
       "empty": "No one has remixed this team yet"
     }
   },
   "header": {
     "anonymous": "Anonymous",
-    "untitled_team": "Untitled team by {{username}}",
+    "untitled_team": "Untitled team by {username}",
     "new_team": "New team",
-    "byline": "{{partyName}} by {{username}}"
+    "byline": "{partyName} by {username}"
   },
   "job_skills": {
     "all": "All skills",
@@ -203,7 +201,7 @@
         "awakening": "Awakening"
       },
       "messages": {
-        "remove": "Are you sure you want to remove <strong>{{character}}</strong> from your team?"
+        "remove": "Are you sure you want to remove <strong>{character}</strong> from your team?"
       },
       "buttons": {
         "confirm": "Save character",
@@ -213,7 +211,7 @@
     "conflict": {
       "character": "Only one <strong>version of a character</strong> can be included in each party. Do you want to change your party members?",
       "weapon": {
-        "generic": "Only one weapon from the <strong>{{series}} Series</strong> can be included in each party. Do you want to change your weapons?",
+        "generic": "Only one weapon from the <strong>{series} Series</strong> can be included in each party. Do you want to change your weapons?",
         "opus-draconic": "Only one <strong>Dark Opus</strong> or <strong>Draconic Weapon</strong> can be included in each party. Do you want to change your weapons?"
       },
       "buttons": {
@@ -310,13 +308,16 @@
       }
     },
     "guidebooks": {
+      "messages": {
+        "remove": "Are you sure you want to remove <strong>{guidebook}</strong> from your team?"
+      },
       "buttons": {
         "remove": "Remove guidebook"
       }
     },
     "job_skills": {
       "messages": {
-        "remove": "Are you sure you want to remove <strong>{{job_skill}}</strong> from your team?"
+        "remove": "Are you sure you want to remove <strong>{job_skill}</strong> from your team?"
       },
       "buttons": {
         "remove": "Remove class skill"
@@ -341,8 +342,8 @@
     "remix_team": {
       "title": "Remix team",
       "description": {
-        "creator": "You're already the creator of <strong>{{name}}</strong>. Are you sure you want to make a copy by remixing it?",
-        "viewer": "Remixing a team makes a copy of it in your account so you can make your own changes.\n\nWould you like to remix <strong>{{name}}</strong>?"
+        "creator": "You're already the creator of <strong>{name}</strong>. Are you sure you want to make a copy by remixing it?",
+        "viewer": "Remixing a team makes a copy of it in your account so you can make your own changes.\n\nWould you like to remix <strong>{name}</strong>?"
       },
       "buttons": {
         "confirm": "Yes, remix team",
@@ -388,7 +389,7 @@
       },
       "agreement": "By signing up, I agree to the <br/><2>Privacy Policy</2> and <1>Usage Guidelines</1>.",
       "errors": {
-        "field_in_use": "This {{field}} is already in use",
+        "field_in_use": "This {field} is already in use",
         "empty_email": "Please enter your email",
         "invalid_email": "That email address is not valid",
         "username_too_short": "Username must be at least 3 characters",
@@ -406,6 +407,9 @@
       }
     },
     "summon": {
+      "messages": {
+        "remove": "Are you sure you want to remove <strong>{summon}</strong> from your team?"
+      },
       "buttons": {
         "remove": "Remove summon"
       }
@@ -439,6 +443,9 @@
     },
     "weapon": {
       "title": "Modify weapon",
+      "messages": {
+        "remove": "Are you sure you want to remove <strong>{weapon}</strong> from your team?"
+      },
       "buttons": {
         "confirm": "Save weapon",
         "remove": "Remove weapon"
@@ -458,8 +465,8 @@
       "roadmap": "Roadmap / granblue.team",
       "discover": "Discover teams / granblue.team",
       "new": "Create a new team / granblue.team",
-      "profile": "@{{username}}'s Teams / granblue.team",
-      "team": "{{emoji}} {{teamName}} by {{username}} / granblue.team",
+      "profile": "@{username}'s Teams / granblue.team",
+      "team": "{emoji} {teamName} by {username} / granblue.team",
       "saved": "Your saved teams / granblue.team"
     },
     "descriptions": {
@@ -468,8 +475,8 @@
       "roadmap": "Upcoming planned features for granblue.team",
       "discover": "Save and discover teams to use in Granblue Fantasy and search by raid, element or recency",
       "new": "Create and theorycraft teams to use in Granblue Fantasy and share with the community",
-      "profile": "Browse @{{username}}'s Teams and filter by raid, element or recency",
-      "team": "Browse this team for {{raidName}} by {{username}} and others on granblue.team"
+      "profile": "Browse @{username}'s Teams and filter by raid, element or recency",
+      "team": "Browse this team for {raidName} by {username} and others on granblue.team"
     }
   },
   "party": {
@@ -496,8 +503,7 @@
         "seconds": "s"
       },
       "turns": {
-        "with_count_one": "{{count}} turn",
-        "with_count_other": "{{count}} turns"
+        "with_count": "{count, plural, =1 {# turn} other {# turns}}"
       }
     },
     "notices": {
@@ -555,11 +561,11 @@
   },
   "search": {
     "recent": "Recently added",
-    "result_count": "{{record_count}} results",
+    "result_count": "{record_count} results",
     "errors": {
-      "start_typing": "Start typing the name of a {{object}}",
+      "start_typing": "Start typing the name of a {object}",
       "min_length": "Type at least 3 characters",
-      "no_results": "No results found for '{{query}}'",
+      "no_results": "No results found for '{query}'",
       "no_results_generic": "No results found",
       "end_results": "No more results",
       "type": "Keep typing..."
@@ -623,7 +629,8 @@
   },
   "toasts": {
     "copied": "This party's URL was copied to your clipboard",
-    "remixed": "You remixed {{title}}",
+    "remixed": "You remixed <strong>{title}</strong>",
+    "remixed_alt": "You remixed {title}",
     "update": {
       "title": "New update",
       "description": {
@@ -644,7 +651,7 @@
       "highlight": "Highlight",
       "link": "Add a link",
       "youtube": "Add a Youtube video",
-      "heading": "Heading {{level}}",
+      "heading": "Heading {level}",
       "bulletList": "Bullet list",
       "orderedList": "Numbered list"
     }
@@ -664,7 +671,7 @@
   "equipped": "Equipped",
   "coming_soon": "Coming Soon",
   "new_party": "New party",
-  "no_accessory": "No {{accessory}} equipped",
+  "no_accessory": "No {accessory} equipped",
   "no_title": "Untitled",
   "no_raid": "No raid",
   "no_user": "Anonymous",

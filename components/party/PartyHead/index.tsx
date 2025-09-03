@@ -1,7 +1,9 @@
+'use client'
+
 import React from 'react'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { getCookie } from 'cookies-next'
+import { useTranslations } from 'next-intl'
 import api from '~utils/api'
 
 import generateTitle from '~utils/generateTitle'
@@ -13,12 +15,12 @@ interface Props {
 
 const PartyHead = ({ party, meta }: Props) => {
   // Import translations
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
-  // Set up router
-  const router = useRouter()
+  // Get locale from cookie
+  const cookieLocale = getCookie('NEXT_LOCALE') as string
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    cookieLocale && ['en', 'ja'].includes(cookieLocale) ? cookieLocale : 'en'
   const previewUrl = `${
     process.env.NEXT_PUBLIC_SITE_URL || 'https://granblue.team'
   }/p/${party.shortcode}/preview`

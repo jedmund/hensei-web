@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   page: string
@@ -8,7 +8,7 @@ interface Props {
 
 const AboutHead = ({ page }: Props) => {
   // Import translations
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // State
   const [currentPage, setCurrentPage] = useState('about')

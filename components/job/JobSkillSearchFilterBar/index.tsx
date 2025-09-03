@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from 'next-intl'
 
 import Select from '~components/common/Select'
 import SelectItem from '~components/common/SelectItem'
@@ -12,7 +12,7 @@ interface Props {
 
 const JobSkillSearchFilterBar = (props: Props) => {
   // Set up translation
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const [open, setOpen] = useState(false)
   const [currentGroup, setCurrentGroup] = useState(-1)

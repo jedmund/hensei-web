@@ -1,6 +1,9 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { Trans, useTranslation } from 'next-i18next'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { getCookie } from 'cookies-next'
+import { useTranslations } from 'next-intl'
 
 import { Dialog } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
@@ -24,9 +27,12 @@ interface Props {
 const CharacterConflictModal = (props: Props) => {
   // Localization
   const router = useRouter()
-  const { t } = useTranslation('common')
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const t = useTranslations('common')
+  const routerLocale = getCookie('NEXT_LOCALE')
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    routerLocale && ['en', 'ja'].includes(routerLocale) ? routerLocale : 'en'
 
   // States
   const [open, setOpen] = useState(false)
@@ -83,7 +89,9 @@ const CharacterConflictModal = (props: Props) => {
       >
         <div className={styles.content}>
           <p>
-            <Trans i18nKey="modals.conflict.character"></Trans>
+            {t.rich('modals.conflict.character', {
+              strong: (chunks) => <strong>{chunks}</strong>
+            })}
           </p>
           <div className={styles.diagram}>
             <ul>

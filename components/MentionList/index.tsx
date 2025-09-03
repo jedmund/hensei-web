@@ -1,11 +1,12 @@
+'use client'
 import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
   useState,
 } from 'react'
-import { useTranslation } from 'next-i18next'
-import { useRouter } from 'next/router'
+import { useTranslations } from 'next-intl'
+import { getCookie } from 'cookies-next'
 import { SuggestionProps } from '@tiptap/suggestion'
 import classNames from 'classnames'
 
@@ -34,10 +35,9 @@ interface MentionProps extends SuggestionProps {
 
 export const MentionList = forwardRef<MentionRef, Props>(
   ({ items, ...props }: Props, forwardedRef) => {
-    const router = useRouter()
-    const locale = router.locale || 'en'
+    const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
-    const { t } = useTranslation('common')
+    const t = useTranslations('common')
 
     const [selectedIndex, setSelectedIndex] = useState(0)
 

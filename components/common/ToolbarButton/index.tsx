@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import { Editor } from '@tiptap/react'
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const ToolbarIcon = ({ editor, action, level, icon, onClick }: Props) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const classes = classNames({
     [styles.button]: true,
     [styles.active]: level

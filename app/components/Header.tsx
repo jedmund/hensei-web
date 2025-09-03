@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react'
 import { deleteCookie } from 'cookies-next'
-import { useRouter } from 'next/navigation'
-import { useTranslation } from 'next-i18next'
+import { useRouter } from '~/i18n/navigation'
+import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
-import Link from 'next/link'
+import { Link } from '~/i18n/navigation'
 
 import { accountState, initialAccountState } from '~/utils/accountState'
 import { appState, initialAppState } from '~/utils/appState'
@@ -37,11 +38,11 @@ import styles from '~/components/Header/index.module.scss'
 
 const Header = () => {
   // Localization
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
+  const locale = useLocale()
 
   // Router
   const router = useRouter()
-  const locale = 'en' // TODO: Update when implementing internationalization with App Router
 
   // State management
   const [alertOpen, setAlertOpen] = useState(false)

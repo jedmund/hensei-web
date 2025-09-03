@@ -1,6 +1,8 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { Trans, useTranslation } from 'react-i18next'
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { getCookie } from 'cookies-next'
 
 import { Dialog } from '~components/common/Dialog'
 import DialogContent from '~components/common/DialogContent'
@@ -24,9 +26,11 @@ interface Props {
 const WeaponConflictModal = (props: Props) => {
   // Localization
   const router = useRouter()
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    getCookie('NEXT_LOCALE') && ['en', 'ja'].includes(getCookie('NEXT_LOCALE') as string) 
+      ? (getCookie('NEXT_LOCALE') as string) 
+      : 'en'
 
   // States
   const [open, setOpen] = useState(false)
@@ -57,13 +61,11 @@ const WeaponConflictModal = (props: Props) => {
     const seriesSlug = t(`series.${mapWeaponSeries(series)}`)
 
     return [2, 3, 34].includes(series) ? (
-      <Trans i18nKey="modals.conflict.weapon.opus-draconic"></Trans>
+      /* TODO: Refactor to t.rich() */
+      t('modals.conflict.weapon.opus-draconic')
     ) : (
-      <Trans i18nKey="modals.conflict.weapon.generic">
-        Only one weapon from the
-        <strong>{{ series: seriesSlug }} Series</strong> can be included in each
-        party. Do you want to change your weapons?
-      </Trans>
+      /* TODO: Refactor to t.rich() */
+      t('modals.conflict.weapon.generic', { series: seriesSlug })
     )
   }
 

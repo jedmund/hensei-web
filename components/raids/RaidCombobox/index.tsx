@@ -1,6 +1,7 @@
+'use client'
 import { createRef, useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
+import { getCookie } from 'cookies-next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import { Command, CommandGroup, CommandInput } from 'cmdk'
@@ -66,12 +67,11 @@ interface Props {
 }
 
 const RaidCombobox = (props: Props) => {
-  // Set up router for locale
-  const router = useRouter()
-  const locale = router.locale || 'en'
+  // Set up locale from cookie
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // Set up translations
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Component state
   const [open, setOpen] = useState(false)

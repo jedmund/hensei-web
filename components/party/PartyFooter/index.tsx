@@ -1,7 +1,9 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import clonedeep from 'lodash.clonedeep'
 import DOMPurify from 'dompurify'
 
@@ -18,7 +20,7 @@ import api from '~utils/api'
 import { appState } from '~utils/appState'
 import { youtube } from '~utils/youtube'
 
-import type { DetailsObject } from 'types'
+import type { DetailsObject } from '~types'
 
 import RemixIcon from '~public/icons/Remix.svg'
 import EditIcon from '~public/icons/Edit.svg'
@@ -36,7 +38,7 @@ interface Props {
 }
 
 const PartyFooter = (props: Props) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const router = useRouter()
 
   const { party: partySnapshot } = useSnapshot(appState)

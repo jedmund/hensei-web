@@ -1,7 +1,8 @@
+'use client'
 // Core dependencies
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { getCookie } from 'cookies-next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 // UI Dependencies
@@ -39,10 +40,8 @@ const SelectWithInput = ({
   sendValidity,
   sendValues,
 }: Props) => {
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
-  const { t } = useTranslation('common')
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
+  const t = useTranslations('common')
 
   // UI state
   const [open, setOpen] = useState(false)

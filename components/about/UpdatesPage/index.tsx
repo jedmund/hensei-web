@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import ContentUpdate2022 from '../updates/ContentUpdate2022'
@@ -9,8 +9,8 @@ import ContentUpdate2024 from '../updates/ContentUpdate2024'
 import styles from './index.module.scss'
 
 const UpdatesPage = () => {
-  const { t: common } = useTranslation('common')
-  const { t: updates } = useTranslation('updates')
+  const common = useTranslations('common')
+  const updates = useTranslations('updates')
 
   const classes = classNames(styles.updates, 'PageContent')
 

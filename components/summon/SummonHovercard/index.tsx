@@ -1,6 +1,8 @@
+'use client'
 import React from 'react'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { getCookie } from 'cookies-next'
 
 import {
   Hovercard,
@@ -21,9 +23,11 @@ interface Props {
 
 const SummonHovercard = (props: Props) => {
   const router = useRouter()
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    getCookie('NEXT_LOCALE') && ['en', 'ja'].includes(getCookie('NEXT_LOCALE') as string) 
+      ? (getCookie('NEXT_LOCALE') as string) 
+      : 'en'
 
   const Element = ['null', 'wind', 'fire', 'water', 'earth', 'dark', 'light']
 

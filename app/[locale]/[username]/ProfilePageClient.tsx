@@ -1,13 +1,13 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '~/i18n/navigation'
+import { useSearchParams } from 'next/navigation'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 // Components
 import FilterBar from '~/components/filters/FilterBar'
-import ProfileHead from '~/components/head/ProfileHead'
 import GridRep from '~/components/reps/GridRep'
 import GridRepCollection from '~/components/reps/GridRepCollection'
 import LoadingRep from '~/components/reps/LoadingRep'
@@ -61,7 +61,7 @@ const ProfilePageClient: React.FC<Props> = ({
   initialRaid,
   initialRecency
 }) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -213,8 +213,6 @@ const ProfilePageClient: React.FC<Props> = ({
   
   return (
     <>
-      <ProfileHead username={initialData.user.username} />
-      
       <FilterBar
         defaultFilterset={defaultFilterset}
         onFilter={receiveFilters}

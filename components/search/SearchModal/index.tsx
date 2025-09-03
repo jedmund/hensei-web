@@ -1,7 +1,7 @@
+'use client'
 import React, { useEffect, useState } from 'react'
 import { getCookie, setCookie } from 'cookies-next'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from 'next-intl'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import cloneDeep from 'lodash.clonedeep'
 
@@ -38,12 +38,11 @@ interface Props extends DialogProps {
 }
 
 const SearchModal = (props: Props) => {
-  // Set up router
-  const router = useRouter()
-  const locale = router.locale
+  // Set up locale from cookie
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // Set up translation
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Refs
   const headerRef = React.createRef<HTMLDivElement>()

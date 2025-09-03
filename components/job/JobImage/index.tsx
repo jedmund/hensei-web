@@ -1,5 +1,6 @@
+'use client'
 import React, { useState } from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 import classNames from 'classnames'
 import Button from '~components/common/Button'
 import JobAccessoryPopover from '~components/job/JobAccessoryPopover'
@@ -27,9 +28,7 @@ const JobImage = ({
   onAccessorySelected,
 }: Props) => {
   // Localization
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // Component state
   const [open, setOpen] = useState(false)

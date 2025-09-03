@@ -1,6 +1,7 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { getCookie } from 'cookies-next'
+import { useTranslations } from 'next-intl'
 import 'fix-date'
 
 import styles from './index.module.scss'
@@ -17,10 +18,8 @@ const CHARACTERS_COUNT = 3
 
 const CharacterRep = (props: Props) => {
   // Localization for alt tags
-  const router = useRouter()
-  const { t } = useTranslation('common')
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const t = useTranslations('common')
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // Component state
   const [characters, setCharacters] = useState<GridArray<Character>>({})

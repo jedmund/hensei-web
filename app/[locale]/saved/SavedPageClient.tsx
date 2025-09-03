@@ -1,12 +1,12 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '~/i18n/navigation'
+import { useSearchParams } from 'next/navigation'
 
 // Components
 import FilterBar from '~/components/filters/FilterBar'
-import SavedHead from '~/components/head/SavedHead'
 import GridRep from '~/components/reps/GridRep'
 import GridRepCollection from '~/components/reps/GridRepCollection'
 import LoadingRep from '~/components/reps/LoadingRep'
@@ -44,7 +44,7 @@ const SavedPageClient: React.FC<Props> = ({
   initialRecency,
   error = false
 }) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -177,8 +177,6 @@ const SavedPageClient: React.FC<Props> = ({
   
   return (
     <>
-      <SavedHead />
-      
       <FilterBar
         defaultFilterset={defaultFilterset}
         onFilter={receiveFilters}

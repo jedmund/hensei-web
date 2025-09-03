@@ -1,5 +1,6 @@
-import { useRouter } from 'next/router'
+'use client'
 import React, { useEffect, useState } from 'react'
+import { getCookie } from 'cookies-next'
 import api from '~utils/api'
 
 import styles from './index.module.scss'
@@ -19,10 +20,8 @@ const defaultProps = {
 }
 
 const ChangelogUnit = ({ id, type, image }: Props) => {
-  // Router
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  // Locale
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // State
   const [item, setItem] = useState<Character | Weapon | Summon>()

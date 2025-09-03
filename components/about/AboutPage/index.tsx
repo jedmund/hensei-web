@@ -1,5 +1,5 @@
 import React from 'react'
-import { Trans, useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import LinkItem from '../LinkItem'
@@ -12,8 +12,8 @@ import styles from './index.module.scss'
 interface Props {}
 
 const AboutPage: React.FC<Props> = (props: Props) => {
-  const { t: common } = useTranslation('common')
-  const { t: about } = useTranslation('about')
+  const common = useTranslations('common')
+  const about = useTranslations('about')
 
   const classes = classNames(styles.about, 'PageContent')
 
@@ -22,7 +22,9 @@ const AboutPage: React.FC<Props> = (props: Props) => {
       <h1>{common('about.segmented_control.about')}</h1>
       <section>
         <h2>
-          <Trans i18nKey="about:about.subtitle">
+          {/* TODO: Refactor to about.rich() */}
+          {about("about.subtitle")}
+          {/* <Trans i18nKey="about:about.subtitle">
             Granblue.team is a tool to save and share team compositions for{' '}
             <a
               href="https://game.granbluefantasy.jp"
@@ -32,7 +34,7 @@ const AboutPage: React.FC<Props> = (props: Props) => {
               Granblue Fantasy
             </a>
             , a social RPG from Cygames.
-          </Trans>
+          </Trans> */}
         </h2>
         <p>{about('about.explanation.0')}</p>
         <p>{about('about.explanation.1')}</p>
@@ -54,7 +56,9 @@ const AboutPage: React.FC<Props> = (props: Props) => {
       <section>
         <h2>{about('about.credits.title')}</h2>
         <p>
-          <Trans i18nKey="about:about.credits.maintainer">
+          {/* TODO: Refactor to about.rich() */}
+          {about('about.credits.maintainer')}
+          {/* <Trans i18nKey="about:about.credits.maintainer">
             Granblue.team was built and is maintained by{' '}
             <a
               href="https://twitter.com/jedmund"
@@ -64,10 +68,12 @@ const AboutPage: React.FC<Props> = (props: Props) => {
               @jedmund
             </a>
             .
-          </Trans>
+          </Trans> */}
         </p>
         <p>
-          <Trans i18nKey="about:about.credits.assistance">
+          {/* TODO: Refactor to about.rich() */}
+          {about('about.credits.assistance')}
+          {/* <Trans i18nKey="about:about.credits.assistance">
             Many thanks to{' '}
             <a
               href="https://twitter.com/lalalalinna"
@@ -85,10 +91,12 @@ const AboutPage: React.FC<Props> = (props: Props) => {
               @tarngerine
             </a>
             , who both provided a lot of help and advice as I was ramping up.
-          </Trans>
+          </Trans> */}
         </p>
         <p>
-          <Trans i18nKey="about:about.credits.support">
+          {/* TODO: Refactor to about.rich() */}
+          {about('about.credits.support')}
+          {/* <Trans i18nKey="about:about.credits.support">
             Many thanks also go to everyone in{' '}
             <a
               href="https://game.granbluefantasy.jp/#guild/detail/1190185"
@@ -100,7 +108,7 @@ const AboutPage: React.FC<Props> = (props: Props) => {
             and the granblue-tools Discord for all of their help with with bug
             testing, feature requests, and moral support. (P.S. We&apos;re
             recruiting!)
-          </Trans>
+          </Trans> */}
         </p>
       </section>
 
@@ -126,7 +134,9 @@ const AboutPage: React.FC<Props> = (props: Props) => {
       <section>
         <h2>{about('about.license.title')}</h2>
         <p>
-          <Trans i18nKey="about:about.license.license">
+          {/* TODO: Refactor to about.rich() */}
+          {about('about.license.license')}
+          {/* <Trans i18nKey="about:about.license.license">
             This app is licensed under{' '}
             <a
               href="https://choosealicense.com/licenses/agpl-3.0/"
@@ -136,7 +146,7 @@ const AboutPage: React.FC<Props> = (props: Props) => {
               GNU AGPLv3
             </a>
             .
-          </Trans>
+          </Trans> */}
         </p>
         <p>{about('about.license.explanation')}</p>
       </section>

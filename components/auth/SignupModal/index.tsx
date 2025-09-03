@@ -1,7 +1,9 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
-import { setCookie } from 'cookies-next'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { setCookie, getCookie } from 'cookies-next'
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { AxiosResponse } from 'axios'
 
 import api from '~utils/api'
@@ -35,7 +37,7 @@ const emailRegex =
 
 const SignupModal = (props: Props) => {
   const router = useRouter()
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Set up form states and error handling
   const [formValid, setFormValid] = useState(false)
@@ -70,13 +72,16 @@ const SignupModal = (props: Props) => {
   function register(event: React.FormEvent) {
     event.preventDefault()
 
+    // In App Router, locale is typically handled via cookies or headers
+    const currentLocale = getCookie('NEXT_LOCALE') as string || 'en'
+
     const body = {
       user: {
         username: usernameInput.current?.value,
         email: emailInput.current?.value,
         password: passwordInput.current?.value,
         password_confirmation: passwordConfirmationInput.current?.value,
-        language: router.locale,
+        language: currentLocale,
       },
     }
 

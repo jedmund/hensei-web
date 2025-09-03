@@ -1,5 +1,5 @@
+'use client'
 import React from 'react'
-import { useRouter } from 'next/router'
 import { setCookie } from 'cookies-next'
 import { add, format } from 'date-fns'
 import classNames from 'classnames'
@@ -8,7 +8,7 @@ import Button from '~components/common/Button'
 import Toast from '~components/common/Toast'
 
 import styles from './index.module.scss'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   open: boolean
@@ -25,7 +25,7 @@ const UpdateToast = ({
   onActionClicked,
   onCloseClicked,
 }: Props) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   const classes = classNames({
     Update: true,

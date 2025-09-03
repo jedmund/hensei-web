@@ -1,7 +1,10 @@
+'use client'
+
 // Core dependencies
 import React, { PropsWithChildren, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { Trans, useTranslation } from 'next-i18next'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { getCookie } from 'cookies-next'
+import { useTranslations } from 'next-intl'
 import isEqual from 'lodash/isEqual'
 
 // UI dependencies
@@ -60,9 +63,12 @@ const CharacterModal = ({
 }: PropsWithChildren<Props>) => {
   // Router and localization
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const routerLocale = getCookie('NEXT_LOCALE')
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
-  const { t } = useTranslation('common')
+    routerLocale && ['en', 'ja'].includes(routerLocale) ? routerLocale : 'en'
+  const t = useTranslations('common')
 
   // State: Component
   const [open, setOpen] = useState(false)
@@ -281,16 +287,13 @@ const CharacterModal = ({
   const confirmationAlert = (
     <Alert
       message={
-        <span>
-          <Trans i18nKey="alert.unsaved_changes.object">
-            You will lose all changes to{' '}
-            <strong>{{ objectName: gridCharacter.object.name[locale] }}</strong>{' '}
-            if you continue.
-            <br />
-            <br />
-            Are you sure you want to continue without saving?
-          </Trans>
-        </span>
+        <>
+          {t.rich('alert.unsaved_changes.object', {
+            objectName: gridCharacter.object.name[locale],
+            strong: (chunks) => <strong>{chunks}</strong>,
+            br: () => <br />
+          })}
+        </>
       }
       open={alertOpen}
       primaryActionText={t('alert.unsaved_changes.buttons.confirm')}

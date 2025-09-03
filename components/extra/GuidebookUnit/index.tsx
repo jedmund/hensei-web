@@ -1,6 +1,7 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { Trans, useTranslation } from 'next-i18next'
+import { getCookie } from 'cookies-next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import Alert from '~components/common/Alert'
@@ -35,10 +36,8 @@ const GuidebookUnit = ({
   updateObject,
 }: Props) => {
   // Translations and locale
-  const { t } = useTranslation('common')
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const t = useTranslations('common')
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // State: UI
   const [searchModalOpen, setSearchModalOpen] = useState(false)
@@ -143,11 +142,12 @@ const GuidebookUnit = ({
         cancelAction={() => setAlertOpen(false)}
         cancelActionText={t('buttons.cancel')}
         message={
-          <Trans i18nKey="modals.guidebooks.messages.remove">
-            Are you sure you want to remove{' '}
-            <strong>{{ guidebook: guidebook?.name[locale] }}</strong> from your
-            team?
-          </Trans>
+          <>
+            {t.rich('modals.guidebooks.messages.remove', {
+              guidebook: guidebook?.name[locale],
+              strong: (chunks) => <strong>{chunks}</strong>
+            })}
+          </>
         }
       />
     )

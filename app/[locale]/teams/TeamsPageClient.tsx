@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '~/i18n/navigation'
+import { useSearchParams } from 'next/navigation'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 // Hooks
@@ -55,7 +56,7 @@ const TeamsPageClient: React.FC<Props> = ({
   initialRecency,
   error = false
 }) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const router = useRouter()
   const searchParams = useSearchParams()
   

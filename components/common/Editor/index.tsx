@@ -1,7 +1,8 @@
+'use client'
 import { ComponentProps, useCallback, useEffect } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { getCookie } from 'cookies-next'
+import { useTranslations } from 'next-intl'
 
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
@@ -44,11 +45,10 @@ const Editor = ({
   onUpdate,
   ...props
 }: Props) => {
-  // Hooks: Router
-  const router = useRouter()
-  const locale = router.locale || 'en'
+  // Hooks: Locale
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   useEffect(() => {
     editor?.commands.setContent(formatContent(content))

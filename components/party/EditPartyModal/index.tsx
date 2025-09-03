@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSnapshot } from 'valtio'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 import debounce from 'lodash.debounce'
 
@@ -21,7 +21,7 @@ import SwitchTableField from '~components/common/SwitchTableField'
 import TableField from '~components/common/TableField'
 
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
-import type { DetailsObject } from 'types'
+import type { DetailsObject } from '~types'
 import type { DialogProps } from '@radix-ui/react-dialog'
 import type { JSONContent } from '@tiptap/core'
 
@@ -46,7 +46,7 @@ const EditPartyModal = ({
   ...props
 }: Props) => {
   // Set up translation
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Set up reactive state
   const { party } = useSnapshot(appState)
@@ -382,18 +382,10 @@ const EditPartyModal = ({
     <Alert
       message={
         <span>
-          <Trans i18nKey="alert.unsaved_changes.party">
-            You will lose all changes to your party{' '}
-            <strong>
-              {{
-                objectName: name || capitalizeFirstLetter(t('untitled')),
-              }}
-            </strong>{' '}
-            if you continue.
-            <br />
-            <br />
-            Are you sure you want to continue without saving?
-          </Trans>
+          {/* TODO: Refactor to t.rich() */}
+          {t('alert.unsaved_changes.party', {
+            objectName: name || capitalizeFirstLetter(t('untitled'))
+          })}
         </span>
       }
       open={alertOpen}

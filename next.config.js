@@ -1,14 +1,15 @@
 /** @type {import('next').NextConfig} */
 const path = require('path')
-const { i18n } = require('./next-i18next.config')
+const createNextIntlPlugin = require('next-intl/plugin')
 
-module.exports = {
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
+
+const nextConfig = {
   reactStrictMode: true,
   sassOptions: {
     prependData: '@import "variables";',
     includePaths: [path.join(__dirname, 'styles')],
   },
-  i18n,
   async rewrites() {
     return [
       {
@@ -75,10 +76,37 @@ module.exports = {
     }
 
     // Set up rules for SVG files
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ['@svgr/webpack'],
-    })
+    const fileLoaderRule = config.module.rules.find((rule) =>
+      rule.test?.test?.('.svg'),
+    )
+
+    if (fileLoaderRule) {
+      config.module.rules.push(
+        // Reapply the existing rule, but only for svg imports ending in ?url
+        {
+          ...fileLoaderRule,
+          test: /\.svg$/i,
+          resourceQuery: /url/, // *.svg?url
+        },
+        // Convert all other *.svg imports to React components
+        {
+          test: /\.svg$/i,
+          issuer: /\.[jt]sx?$/,
+          resourceQuery: { not: /url/ }, // exclude if *.svg?url
+          use: ['@svgr/webpack'],
+        },
+      )
+
+      // Modify the file loader rule to ignore *.svg, since we have it handled now.
+      fileLoaderRule.exclude = /\.svg$/i
+    } else {
+      // If no file loader rule exists, just add our SVG handler
+      config.module.rules.push({
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: ['@svgr/webpack'],
+      })
+    }
 
     // Disable CSS modules
     // config.module.rules[2].oneOf.forEach((one) => {
@@ -89,3 +117,5 @@ module.exports = {
     return config
   },
 }
+
+module.exports = withNextIntl(nextConfig)

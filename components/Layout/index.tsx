@@ -1,5 +1,6 @@
+'use client'
 import { PropsWithChildren, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import { add, format } from 'date-fns'
 import { getCookie } from 'cookies-next'
 
@@ -11,7 +12,7 @@ import UpdateToast from '~components/toasts/UpdateToast'
 interface Props {}
 
 const Layout = ({ children }: PropsWithChildren<Props>) => {
-  const router = useRouter()
+  const pathname = usePathname()
   const [updateToastOpen, setUpdateToastOpen] = useState(false)
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const Layout = ({ children }: PropsWithChildren<Props>) => {
   }
 
   const updateToast = () => {
-    const path = router.asPath.replaceAll('/', '')
+    const path = pathname.replaceAll('/', '')
 
     return (
       !['about', 'updates', 'roadmap'].includes(path) &&

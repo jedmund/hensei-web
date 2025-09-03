@@ -1,7 +1,8 @@
+'use client'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
-import { useRouter } from 'next/router'
-import { Trans, useTranslation } from 'next-i18next'
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { isEqual } from 'lodash'
 
 import { GridWeaponObject } from '~types'
@@ -36,8 +37,10 @@ const WeaponModal = ({
 }: PropsWithChildren<Props>) => {
   const router = useRouter()
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
-  const { t } = useTranslation('common')
+    getCookie('NEXT_LOCALE') && ['en', 'ja'].includes(getCookie('NEXT_LOCALE') as string) 
+      ? (getCookie('NEXT_LOCALE') as string) 
+      : 'en'
+  const t = useTranslations('common')
 
   // Cookies
   const cookie = getCookie('account')
@@ -470,16 +473,13 @@ const WeaponModal = ({
   const confirmationAlert = (
     <Alert
       message={
-        <span>
-          <Trans i18nKey="alert.unsaved_changes.object">
-            You will lose all changes to{' '}
-            <strong>{{ objectName: gridWeapon.object.name[locale] }}</strong> if
-            you continue.
-            <br />
-            <br />
-            Are you sure you want to continue without saving?
-          </Trans>
-        </span>
+        <>
+          {t.rich('alert.unsaved_changes.object', {
+            objectName: gridWeapon.object.name[locale],
+            strong: (chunks) => <strong>{chunks}</strong>,
+            br: () => <br />
+          })}
+        </>
       }
       open={alertOpen}
       primaryActionText={t('alert.unsaved_changes.buttons.confirm')}

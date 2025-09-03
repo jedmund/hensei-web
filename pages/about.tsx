@@ -3,6 +3,7 @@ import Head from 'next/head'
 
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
+import { NextIntlClientProvider } from 'next-intl'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import { AboutTabs } from '~utils/enums'
@@ -19,6 +20,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 interface Props {
   page?: string
+  messages: Record<string, any>
 }
 
 const AboutRoute: React.FC<Props> = (props: Props) => {
@@ -100,35 +102,37 @@ const AboutRoute: React.FC<Props> = (props: Props) => {
   return (
     <div id="About">
       {pageHead()}
-      <section>
-        <SegmentedControl blended={true}>
-          <Segment
-            groupName="about"
-            name="about"
-            selected={currentTab == AboutTabs.About}
-            onClick={handleTabClicked}
-          >
-            {t('about.segmented_control.about')}
-          </Segment>
-          <Segment
-            groupName="about"
-            name="updates"
-            selected={currentTab == AboutTabs.Updates}
-            onClick={handleTabClicked}
-          >
-            {t('about.segmented_control.updates')}
-          </Segment>
-          <Segment
-            groupName="about"
-            name="roadmap"
-            selected={currentTab == AboutTabs.Roadmap}
-            onClick={handleTabClicked}
-          >
-            {t('about.segmented_control.roadmap')}
-          </Segment>
-        </SegmentedControl>
-        {currentSection()}
-      </section>
+      <NextIntlClientProvider messages={props.messages}>
+        <section>
+          <SegmentedControl blended={true}>
+            <Segment
+              groupName="about"
+              name="about"
+              selected={currentTab == AboutTabs.About}
+              onClick={handleTabClicked}
+            >
+              {t('about.segmented_control.about')}
+            </Segment>
+            <Segment
+              groupName="about"
+              name="updates"
+              selected={currentTab == AboutTabs.Updates}
+              onClick={handleTabClicked}
+            >
+              {t('about.segmented_control.updates')}
+            </Segment>
+            <Segment
+              groupName="about"
+              name="roadmap"
+              selected={currentTab == AboutTabs.Roadmap}
+              onClick={handleTabClicked}
+            >
+              {t('about.segmented_control.roadmap')}
+            </Segment>
+          </SegmentedControl>
+          {currentSection()}
+        </section>
+      </NextIntlClientProvider>
     </div>
   )
 }
@@ -149,6 +153,12 @@ export const getServerSideProps = async ({ req, res, locale, query }: { req: Nex
     props: {
       page: req.url?.slice(1),
       ...(await serverSideTranslations(locale, ['common', 'about', 'updates'])),
+      // Provide next-intl messages for child components using next-intl
+      messages: {
+        common: (await import(`../public/locales/${locale}/common.json`)).default,
+        about: (await import(`../public/locales/${locale}/about.json`)).default,
+        updates: (await import(`../public/locales/${locale}/updates.json`)).default,
+      },
       // Will be passed to the page component as props
     },
   }

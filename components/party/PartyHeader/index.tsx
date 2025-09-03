@@ -1,8 +1,12 @@
+'use client'
+
 import React, { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { Link } from '~/i18n/navigation'
+import { useRouter, usePathname } from '~/i18n/navigation'
+import { useSearchParams } from 'next/navigation'
+import { getCookie } from 'cookies-next'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import Button from '~components/common/Button'
@@ -28,9 +32,10 @@ import SaveIcon from '~public/icons/Save.svg'
 import PrivateIcon from '~public/icons/Private.svg'
 import UnlistedIcon from '~public/icons/Unlisted.svg'
 
-import type { DetailsObject } from 'types'
+import type { DetailsObject } from '~types'
 
 import styles from './index.module.scss'
+
 
 // Props
 interface Props {
@@ -46,9 +51,10 @@ interface Props {
 const PartyHeader = (props: Props) => {
   const { party } = useSnapshot(appState)
 
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const router = useRouter()
-  const locale = router.locale || 'en'
+  const pathname = usePathname()
+  const locale = getCookie('NEXT_LOCALE') || 'en'
 
   const { party: partySnapshot } = useSnapshot(appState)
 
@@ -145,7 +151,7 @@ const PartyHeader = (props: Props) => {
 
   // Actions: Copy URL
   function copyToClipboard() {
-    if (router.asPath.split('/')[1] === 'p') {
+    if (pathname.split('/')[1] === 'p') {
       navigator.clipboard.writeText(window.location.href)
       setCopyToastOpen(true)
     }

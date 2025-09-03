@@ -1,8 +1,10 @@
+'use client'
+
 // Libraries
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname } from 'next/navigation'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 
 // Dependencies: Common
 import Button from '~components/common/Button'
@@ -43,10 +45,11 @@ const PartyDropdown = ({
   teamVisibilityCallback,
 }: Props) => {
   // Localization
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Router
   const router = useRouter()
+  const pathname = usePathname()
 
   const [open, setOpen] = useState(false)
 
@@ -75,7 +78,7 @@ const PartyDropdown = ({
 
   // Method: Actions
   function copyToClipboard() {
-    if (router.asPath.split('/')[1] === 'p') {
+    if (pathname.split('/')[1] === 'p') {
       navigator.clipboard.writeText(window.location.href)
       setCopyToastOpen(true)
     }

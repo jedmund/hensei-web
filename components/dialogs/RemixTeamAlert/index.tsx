@@ -1,5 +1,5 @@
 import React from 'react'
-import { Trans, useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import Alert from '~components/common/Alert'
 
 interface Props {
@@ -17,7 +17,7 @@ const RemixTeamAlert = ({
   remixCallback,
   onOpenChange,
 }: Props) => {
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   function remixParty() {
     remixCallback()
@@ -36,18 +36,19 @@ const RemixTeamAlert = ({
       cancelActionText={t('modals.remix_team.buttons.cancel')}
       message={
         creator ? (
-          <Trans i18nKey="modals.remix_team.description.creator">
-            Remixing a team makes a copy of it in your account so you can make
-            your own changes.\n\nYou&apos;re already the creator of{' '}
-            <strong>{{ name: name }}</strong>, are you sure you want to remix
-            it?
-          </Trans>
+          <>
+            {t.rich('modals.remix_team.description.creator', {
+              name: name,
+              strong: (chunks) => <strong>{chunks}</strong>
+            })}
+          </>
         ) : (
-          <Trans i18nKey="modals.remix_team.description.viewer">
-            Remixing a team makes a copy of it in your account so you can make
-            your own changes.\n\nWould you like to remix{' '}
-            <strong>{{ name: name }}</strong>?
-          </Trans>
+          <>
+            {t.rich('modals.remix_team.description.viewer', {
+              name: name,
+              strong: (chunks) => <strong>{chunks}</strong>
+            })}
+          </>
         )
       }
     />

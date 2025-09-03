@@ -1,7 +1,9 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
 import { getCookie, setCookie } from 'cookies-next'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useTheme } from 'next-themes'
 
 import { Dialog } from '~components/common/Dialog'
@@ -36,12 +38,11 @@ interface Props {
 const AccountModal = React.forwardRef<HTMLDivElement, Props>(
   function AccountModal(props: Props, forwardedRef) {
     // Localization
-    const { t } = useTranslation('common')
+    const t = useTranslations('common')
     const router = useRouter()
-    const locale =
-      router.locale && ['en', 'ja'].includes(router.locale)
-        ? router.locale
-        : 'en'
+    // In App Router, locale is handled via cookies
+    const currentLocale = getCookie('NEXT_LOCALE') as string || 'en'
+    const locale = ['en', 'ja'].includes(currentLocale) ? currentLocale : 'en'
 
     // useEffect only runs on the client, so now we can safely show the UI
     const [mounted, setMounted] = useState(false)
@@ -164,7 +165,7 @@ const AccountModal = React.forwardRef<HTMLDivElement, Props>(
             setOpen(false)
             if (props.onOpenChange) props.onOpenChange(false)
             changeLanguage(router, user.language)
-            if (props.bahamutMode != bahamutMode) router.reload()
+            if (props.bahamutMode != bahamutMode) router.refresh()
           })
       }
     }

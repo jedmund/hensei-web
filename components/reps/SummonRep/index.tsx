@@ -1,5 +1,6 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { getCookie } from 'cookies-next'
 
 import styles from './index.module.scss'
 
@@ -15,9 +16,7 @@ const SUMMONS_COUNT = 4
 
 const SummonRep = (props: Props) => {
   // Localization for alt tags
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // Component state
   const [mainSummon, setMainSummon] = useState<GridSummon>()

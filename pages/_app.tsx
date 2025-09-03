@@ -1,7 +1,7 @@
 import { appWithTranslation } from 'next-i18next'
 import Head from 'next/head'
 import Link from 'next/link'
-import localFont from '@next/font/local'
+import localFont from 'next/font/local'
 import { useIsomorphicLayoutEffect } from 'react-use'
 import { useTranslation } from 'next-i18next'
 import { get } from 'local-storage'

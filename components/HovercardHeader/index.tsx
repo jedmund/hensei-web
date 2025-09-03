@@ -1,4 +1,5 @@
-import { useRouter } from 'next/router'
+'use client'
+import { getCookie } from 'cookies-next'
 
 import UncapIndicator from '~components/uncap/UncapIndicator'
 import WeaponLabelIcon from '~components/weapon/WeaponLabelIcon'
@@ -28,9 +29,7 @@ const Proficiency = [
 ]
 
 const HovercardHeader = ({ gridObject, object, type, ...props }: Props) => {
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   const overlay = () => {
     if (type === 'character') {

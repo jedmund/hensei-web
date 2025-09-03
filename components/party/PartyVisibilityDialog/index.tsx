@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSnapshot } from 'valtio'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from 'next-intl'
 import debounce from 'lodash.debounce'
 
 import * as RadioGroup from '@radix-ui/react-radio-group'
@@ -11,7 +11,7 @@ import DialogHeader from '~components/common/DialogHeader'
 import DialogFooter from '~components/common/DialogFooter'
 import DialogContent from '~components/common/DialogContent'
 
-import type { DetailsObject } from 'types'
+import type { DetailsObject } from '~types'
 import type { DialogProps } from '@radix-ui/react-dialog'
 
 import { appState } from '~utils/appState'
@@ -33,7 +33,7 @@ const EditPartyModal = ({
   ...props
 }: Props) => {
   // Set up translation
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
   // Set up reactive state
   const { party } = useSnapshot(appState)

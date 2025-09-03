@@ -1,9 +1,11 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { Trans, useTranslation } from 'next-i18next'
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { AxiosResponse } from 'axios'
 import classNames from 'classnames'
 import clonedeep from 'lodash.clonedeep'
+import { getCookie } from 'cookies-next'
 
 import api from '~utils/api'
 import { appState } from '~utils/appState'
@@ -51,10 +53,12 @@ const WeaponUnit = ({
   updateTranscendence,
 }: Props) => {
   // Translations and locale
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
   const router = useRouter()
   const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+    getCookie('NEXT_LOCALE') && ['en', 'ja'].includes(getCookie('NEXT_LOCALE') as string) 
+      ? (getCookie('NEXT_LOCALE') as string) 
+      : 'en'
 
   // State: UI
   const [detailsModalOpen, setDetailsModalOpen] = useState(false)
@@ -503,11 +507,12 @@ const WeaponUnit = ({
         cancelAction={() => setAlertOpen(false)}
         cancelActionText={t('buttons.cancel')}
         message={
-          <Trans i18nKey="modals.weapons.messages.remove">
-            Are you sure you want to remove{' '}
-            <strong>{{ weapon: gridWeapon?.object.name[locale] }}</strong> from
-            your team?
-          </Trans>
+          <>
+            {t.rich('modals.weapon.messages.remove', {
+              weapon: gridWeapon?.object.name[locale],
+              strong: (chunks) => <strong>{chunks}</strong>
+            })}
+          </>
         }
       />
     )

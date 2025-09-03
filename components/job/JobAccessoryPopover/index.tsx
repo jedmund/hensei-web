@@ -1,6 +1,7 @@
+'use client'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { getCookie } from 'cookies-next'
+import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
 import capitalizeFirstLetter from '~utils/capitalizeFirstLetter'
@@ -39,11 +40,9 @@ const JobAccessoryPopover = ({
   onOpenChange,
 }: PropsWithChildren<Props>) => {
   // Localization
-  const { t } = useTranslation('common')
+  const t = useTranslations('common')
 
-  const router = useRouter()
-  const locale =
-    router.locale && ['en', 'ja'].includes(router.locale) ? router.locale : 'en'
+  const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
 
   // Component state
   const [open, setOpen] = useState(false)
