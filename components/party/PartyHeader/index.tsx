@@ -221,8 +221,8 @@ const PartyHeader = (props: Props) => {
   ) => {
     return (
       <div>
-        <Link legacyBehavior href={`/${username}`} passHref>
-          <a className={linkClass}>{userBlock(username, picture, element)}</a>
+        <Link href={`/${username}`} className={linkClass}>
+          {userBlock(username, picture, element)}
         </Link>
       </div>
     )
@@ -231,8 +231,8 @@ const PartyHeader = (props: Props) => {
   const linkedRaidBlock = (raid: Raid) => {
     return (
       <div>
-        <Link legacyBehavior href={`/teams?raid=${raid.slug}`} passHref>
-          <a className={`Raid ${linkClass}`}>{raid.name[locale]}</a>
+        <Link href={`/teams?raid=${raid.slug}`} className={`Raid ${linkClass}`}>
+          {raid.name[locale]}
         </Link>
       </div>
     )

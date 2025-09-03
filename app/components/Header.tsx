@@ -204,7 +204,6 @@ const Header = () => {
             <DropdownMenuItem onClick={closeLeftMenu}>
               <Link
                 href={`/${accountState.account.user.username}` || ''}
-                passHref
               >
                 <span>{t('menu.profile')}</span>
               </Link>
@@ -300,7 +299,6 @@ const Header = () => {
             <DropdownMenuItem onClick={closeRightMenu}>
               <Link
                 href={`/${accountState.account.user.username}` || ''}
-                passHref
               >
                 <span>{t('menu.profile')}</span>
               </Link>

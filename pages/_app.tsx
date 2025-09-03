@@ -1,6 +1,5 @@
 import { appWithTranslation } from 'next-i18next'
 import Head from 'next/head'
-import Link from 'next/link'
 import localFont from 'next/font/local'
 import { useIsomorphicLayoutEffect } from 'react-use'
 import { useTranslation } from 'next-i18next'
@@ -125,19 +124,17 @@ function MyApp({ Component, pageProps }: AppProps) {
           <div className="Connect">
             <p>{t('errors.server_unavailable.discord')}</p>
             <div className="Discord LinkItem">
-              <Link legacyBehavior href="https://discord.gg/qyZ5hGdPC8">
-                <a
-                  href="https://discord.gg/qyZ5hGdPC8"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <div className="Left">
-                    <DiscordIcon />
-                    <h3>granblue-tools</h3>
-                  </div>
-                  <ShareIcon className="ShareIcon" />
-                </a>
-              </Link>
+              <a
+                href="https://discord.gg/qyZ5hGdPC8"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="Left">
+                  <DiscordIcon />
+                  <h3>granblue-tools</h3>
+                </div>
+                <ShareIcon className="ShareIcon" />
+              </a>
             </div>
           </div>
         </div>
