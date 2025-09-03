@@ -47,8 +47,6 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
     // Set up translation
     const t = useTranslations('common')
     const locale = (getCookie('NEXT_LOCALE') as string) || 'en'
-        ? router.locale
-        : 'en'
 
     // States: Component
     const [alertOpen, setAlertOpen] = useState(false)
