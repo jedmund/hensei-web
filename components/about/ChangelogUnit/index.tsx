@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { getCookie } from 'cookies-next'
-import api from '~utils/api'
 
 import styles from './index.module.scss'
 
@@ -28,47 +27,39 @@ const ChangelogUnit = ({ id, type, image }: Props) => {
 
   // Hooks
   useEffect(() => {
-    fetch()
-  }, [])
+    fetchItem()
+  }, [id, type])
 
-  async function fetch() {
-    switch (type) {
-      case 'character':
-        const character = await fetchCharacter()
-        setItem(character.data)
-        break
-
-      case 'weapon':
-        const weapon = await fetchWeapon()
-        setItem(weapon.data)
-        break
-
-      case 'summon':
-        const summon = await fetchSummon()
-        setItem(summon.data)
-        break
-
-      case 'raid':
-        const raid = await fetchRaid()
-        setItem(raid.data)
-        break
+  async function fetchItem() {
+    try {
+      let endpoint = ''
+      
+      switch (type) {
+        case 'character':
+          endpoint = `/api/characters/${id}`
+          break
+        case 'weapon':
+          endpoint = `/api/weapons/${id}`
+          break
+        case 'summon':
+          endpoint = `/api/summons/${id}`
+          break
+        case 'raid':
+          endpoint = `/api/raids/${id}`
+          break
+        default:
+          return
+      }
+      
+      const response = await fetch(endpoint)
+      
+      if (response.ok) {
+        const data = await response.json()
+        setItem(data)
+      }
+    } catch (error) {
+      console.error(`Error fetching ${type} ${id}:`, error)
     }
-  }
-
-  async function fetchCharacter() {
-    return api.endpoints.characters.getOne({ id: id })
-  }
-
-  async function fetchWeapon() {
-    return api.endpoints.weapons.getOne({ id: id })
-  }
-
-  async function fetchSummon() {
-    return api.endpoints.summons.getOne({ id: id })
-  }
-
-  async function fetchRaid() {
-    return api.endpoints.raids.getOne({ id: id })
   }
 
   const imageUrl = () => {

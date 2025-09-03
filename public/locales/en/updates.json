@@ -1,4 +1,5 @@
 {
+  "noUpdates": "No updates available for this year",
   "labels": {
     "characters": "New characters",
     "weapons": "New weapons",
@@ -22,7 +23,7 @@
     "updates": "Other updates"
   },
   "events": {
-    "date": "{{month}}/{{year}}",
+    "date": "{month}/{year}",
     "legfest": "Legend Festival",
     "flash": "Flash Gala",
     "content": "Content Update",
