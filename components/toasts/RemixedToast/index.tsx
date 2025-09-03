@@ -29,7 +29,7 @@ const RemixedToast = ({
 
   return (
     <Toast
-      altText={t('toasts.remixed', { title: partyName })}
+      altText={t('toasts.remixed_alt', { title: partyName })}
       open={open}
       duration={2400}
       type="foreground"
