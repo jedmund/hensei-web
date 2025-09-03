@@ -62,6 +62,32 @@ export async function getUserInfo(username: string) {
   }
 }
 
+// Get user profile with teams (combines user info and teams)
+export async function getUserProfile(username: string, params?: {
+  element?: number;
+  raid?: string;
+  recency?: string;
+  page?: number;
+}) {
+  try {
+    const queryParams: Record<string, string> = {};
+    if (params?.element) queryParams.element = params.element.toString();
+    if (params?.raid) queryParams.raid_id = params.raid;
+    if (params?.recency) queryParams.recency = params.recency;
+    if (params?.page) queryParams.page = params.page.toString();
+
+    let endpoint = `/users/${username}`;
+    const queryString = new URLSearchParams(queryParams).toString();
+    if (queryString) endpoint += `?${queryString}`;
+
+    const data = await fetchFromApi(endpoint);
+    return data;
+  } catch (error) {
+    console.error(`Failed to fetch user profile for ${username}`, error);
+    throw error;
+  }
+}
+
 // Get raid groups
 export async function getRaidGroups() {
   try {
