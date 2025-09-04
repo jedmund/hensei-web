@@ -2,6 +2,9 @@ import { Metadata } from 'next'
 import { Link } from '~/i18n/navigation'
 import { getTranslations } from 'next-intl/server'
 
+// Force dynamic rendering to avoid useContext issues during static generation
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Page not found / granblue.team',
   description: 'The page you were looking for could not be found'

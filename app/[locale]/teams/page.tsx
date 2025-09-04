@@ -3,6 +3,9 @@ import React from 'react'
 import { getTeams as fetchTeams, getRaidGroups } from '~/app/lib/data'
 import TeamsPageClient from './TeamsPageClient'
 
+// Force dynamic rendering because we use searchParams
+export const dynamic = 'force-dynamic'
+
 // Metadata
 export const metadata: Metadata = {
   title: 'Discover teams / granblue.team',

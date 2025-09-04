@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fetchFromApi, postToApi, PartySchema } from '~/app/lib/api-utils';
 
+// Force dynamic rendering because we use searchParams and cookies
+export const dynamic = 'force-dynamic';
+
 // GET handler for fetching parties with filters
 export async function GET(request: NextRequest) {
   try {

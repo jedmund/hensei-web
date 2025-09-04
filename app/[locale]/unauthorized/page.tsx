@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 
+// Force dynamic rendering to avoid useContext issues during static generation
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Unauthorized / granblue.team',
   description: "You don't have permission to perform that action"

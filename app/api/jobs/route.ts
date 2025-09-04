@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchFromApi } from '~/app/lib/api-utils'
 
+// Force dynamic rendering because we use searchParams
+export const dynamic = 'force-dynamic'
+
 // GET handler for fetching all jobs
 export async function GET(request: NextRequest) {
   try {

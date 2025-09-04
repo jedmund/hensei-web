@@ -1,5 +1,8 @@
 import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
+
+// Force dynamic rendering to avoid useContext issues during static generation
+export const dynamic = 'force-dynamic'
 import RoadmapPageClient from './RoadmapPageClient'
 
 export async function generateMetadata({
