@@ -270,7 +270,7 @@ const CharacterUnit = ({
         message={
           <>
             {t.rich('modals.characters.messages.remove', {
-              character: gridCharacter?.object.name[locale],
+              character: gridCharacter?.object.name[locale] || '',
               strong: (chunks) => <strong>{chunks}</strong>
             })}
           </>

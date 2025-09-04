@@ -49,15 +49,18 @@ export async function POST(request: NextRequest) {
     }
     
     // Handle specific API errors
-    if (error.response?.data?.error) {
-      const apiError = error.response.data.error
-      
-      // Username or email already in use
-      if (apiError.includes('username') || apiError.includes('email')) {
-        return NextResponse.json(
-          { error: apiError },
-          { status: 409 } // Conflict
-        )
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as any
+      if (axiosError.response?.data?.error) {
+        const apiError = axiosError.response.data.error
+        
+        // Username or email already in use
+        if (apiError.includes('username') || apiError.includes('email')) {
+          return NextResponse.json(
+            { error: apiError },
+            { status: 409 } // Conflict
+          )
+        }
       }
     }
     

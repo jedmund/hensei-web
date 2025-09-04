@@ -77,7 +77,7 @@ const Popover = React.forwardRef<HTMLDivElement, Props>(function Popover(
         [styles.empty]: true,
       })}
     >
-      {props.placeholder}
+      {props.trigger?.placeholder}
     </span>
   )
 

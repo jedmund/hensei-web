@@ -84,11 +84,14 @@ export async function POST(request: NextRequest) {
     }
     
     // For authentication errors
-    if (error.response?.status === 401) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      )
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as any
+      if (axiosError.response?.status === 401) {
+        return NextResponse.json(
+          { error: 'Invalid email or password' },
+          { status: 401 }
+        )
+      }
     }
     
     console.error('Login error:', error)

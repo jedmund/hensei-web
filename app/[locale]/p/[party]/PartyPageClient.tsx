@@ -77,7 +77,14 @@ const PartyPageClient: React.FC<Props> = ({ party, raidGroups }) => {
         handleTabChanged={handleTabChanged}
         pushHistory={pushHistory}
       />
-      <PartyFooter party={party} />
+      <PartyFooter 
+        party={party} 
+        new={false}
+        editable={false}
+        raidGroups={raidGroups}
+        remixCallback={() => {}}
+        updateCallback={async () => ({})}
+      />
     </>
   )
 }

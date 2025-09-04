@@ -86,7 +86,7 @@ const Editor = ({
         renderLabel({ options, node }) {
           return `${node.attrs.id.name[locale] ?? node.attrs.id.granblue_en}`
         },
-        suggestion: mentionSuggestionOptions,
+        suggestion: mentionSuggestionOptions as any,
         HTMLAttributes: {
           class: classNames({
             [styles.mention]: true,

@@ -24,25 +24,6 @@ interface Pagination {
   record_count: number;
 }
 
-interface Party {
-  id: string;
-  shortcode: string;
-  name: string;
-  element: number;
-  // Add other properties as needed
-}
-
-interface User {
-  id: string;
-  username: string;
-  avatar: {
-    picture: string;
-    element: string;
-  };
-  gender: string;
-  // Add other properties as needed
-}
-
 interface Props {
   initialData: {
     user: User;
@@ -74,7 +55,7 @@ const ProfilePageClient: React.FC<Props> = ({
   const [fetching, setFetching] = useState(false)
   const [element, setElement] = useState(initialElement || 0)
   const [raid, setRaid] = useState(initialRaid || '')
-  const [recency, setRecency] = useState(initialRecency || '')
+  const [recency, setRecency] = useState(initialRecency ? parseInt(initialRecency, 10) : 0)
   
   // Initialize app state with raid groups
   useEffect(() => {
@@ -85,7 +66,7 @@ const ProfilePageClient: React.FC<Props> = ({
   
   // Update URL when filters change
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams(searchParams?.toString() ?? '')
     
     // Update or remove parameters based on filter values
     if (element) {
@@ -101,14 +82,14 @@ const ProfilePageClient: React.FC<Props> = ({
     }
     
     if (recency) {
-      params.set('recency', recency)
+      params.set('recency', recency.toString())
     } else {
       params.delete('recency')
     }
     
     // Only update URL if filters are changed
     const newQueryString = params.toString()
-    const currentQuery = searchParams.toString()
+    const currentQuery = searchParams?.toString() ?? ''
     
     if (newQueryString !== currentQuery) {
       router.push(`/${initialData.user.username}${newQueryString ? `?${newQueryString}` : ''}`)
@@ -128,7 +109,7 @@ const ProfilePageClient: React.FC<Props> = ({
       
       if (element) url.searchParams.set('element', element.toString())
       if (raid) url.searchParams.set('raid_id', raid)
-      if (recency) url.searchParams.set('recency', recency)
+      if (recency) url.searchParams.set('recency', recency.toString())
       
       const response = await fetch(url.toString(), {
         headers: {
@@ -163,7 +144,7 @@ const ProfilePageClient: React.FC<Props> = ({
       setElement(filters.element || 0)
     }
     if ('recency' in filters) {
-      setRecency(filters.recency || '')
+      setRecency(filters.recency || 0)
     }
     if ('raid' in filters) {
       setRaid(filters.raid || '')
@@ -226,6 +207,7 @@ const ProfilePageClient: React.FC<Props> = ({
       <FilterBar
         defaultFilterset={defaultFilterset}
         onFilter={receiveFilters}
+        onAdvancedFilter={receiveFilters}
         persistFilters={false}
         element={element}
         raid={raid}

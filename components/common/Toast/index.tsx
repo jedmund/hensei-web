@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import * as ToastPrimitive from '@radix-ui/react-toast'
 import styles from './index.module.scss'
 
-interface Props extends ToastPrimitive.ToastProps {
+interface Props extends Omit<ToastPrimitive.ToastProps, 'content'> {
   altText: string
   className?: string
   title?: string
