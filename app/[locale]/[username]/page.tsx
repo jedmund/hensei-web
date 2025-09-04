@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getUserProfile, getRaidGroups } from '~/app/lib/data'
+import { getUserInfo, getTeams, getRaidGroups } from '~/app/lib/data'
 import ProfilePageClient from './ProfilePageClient'
 
 // Dynamic metadata
@@ -10,10 +10,10 @@ export async function generateMetadata({
   params: { username: string }
 }): Promise<Metadata> {
   try {
-    const userProfileData = await getUserProfile(params.username, { page: 1 })
+    const userData = await getUserInfo(params.username)
     
     // If user doesn't exist, use default metadata
-    if (!userProfileData || !userProfileData.profile) {
+    if (!userData || !userData.user) {
       return {
         title: 'User not found / granblue.team',
         description: 'This user could not be found'
@@ -47,33 +47,25 @@ export default async function ProfilePage({
     const page = searchParams.page ? parseInt(searchParams.page, 10) : 1;
     
     // Parallel fetch data with Promise.all for better performance
-    const [userProfileData, raidGroupsData] = await Promise.all([
-      getUserProfile(params.username, { element, raid, recency, page }),
+    const [userData, teamsData, raidGroupsData] = await Promise.all([
+      getUserInfo(params.username),
+      getTeams({ username: params.username, element, raid, recency, page }),
       getRaidGroups()
     ])
     
     // If user doesn't exist, show 404
-    if (!userProfileData || !userProfileData.profile) {
+    if (!userData || !userData.user) {
       notFound()
     }
     
-    // Extract user and teams from the profile response
-    const user = userProfileData.profile
-    const teams = userProfileData.profile.parties || []
-    
     const initialData = {
-      user: {
-        id: user.id,
-        username: user.username,
-        avatar: user.avatar,
-        gender: user.gender
-      },
-      teams: teams,
+      user: userData.user,
+      teams: teamsData.results || [],
       raidGroups: raidGroupsData || [],
       pagination: {
         current_page: page,
-        total_pages: userProfileData.meta?.total_pages || 1,
-        record_count: userProfileData.meta?.count || 0
+        total_pages: teamsData.meta?.total_pages || 1,
+        record_count: teamsData.meta?.count || 0
       }
     }
     
