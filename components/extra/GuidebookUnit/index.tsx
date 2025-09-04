@@ -144,7 +144,7 @@ const GuidebookUnit = ({
         message={
           <>
             {t.rich('modals.guidebooks.messages.remove', {
-              guidebook: guidebook?.name[locale],
+              guidebook: guidebook?.name[locale] || '',
               strong: (chunks) => <strong>{chunks}</strong>
             })}
           </>

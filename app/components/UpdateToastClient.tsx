@@ -54,7 +54,7 @@ export default function UpdateToastClient({ initialVersion }: UpdateToastClientP
     setUpdateToastOpen(false)
   }
   
-  const path = pathname.replaceAll('/', '')
+  const path = pathname?.replaceAll('/', '') || ''
 
   // Only render toast if we have valid version data with update_type
   if (!['about', 'updates', 'roadmap'].includes(path) && effectiveVersion && effectiveVersion.update_type) {

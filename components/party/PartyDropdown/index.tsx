@@ -78,7 +78,7 @@ const PartyDropdown = ({
 
   // Method: Actions
   function copyToClipboard() {
-    if (pathname.split('/')[1] === 'p') {
+    if (pathname?.split('/')[1] === 'p') {
       navigator.clipboard.writeText(window.location.href)
       setCopyToastOpen(true)
     }

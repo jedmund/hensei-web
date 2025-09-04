@@ -49,7 +49,7 @@ const Layout = ({ children }: PropsWithChildren<Props>) => {
   }
 
   const updateToast = () => {
-    const path = pathname.replaceAll('/', '')
+    const path = pathname?.replaceAll('/', '') || ''
 
     return (
       !['about', 'updates', 'roadmap'].includes(path) &&

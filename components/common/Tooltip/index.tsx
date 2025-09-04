@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
 import styles from './index.module.scss'
-interface Props extends TooltipPrimitive.TooltipContentProps {
+interface Props extends Omit<TooltipPrimitive.TooltipContentProps, 'content'> {
   content: React.ReactNode
   open?: boolean
   onOpenChange?: (open: boolean) => void

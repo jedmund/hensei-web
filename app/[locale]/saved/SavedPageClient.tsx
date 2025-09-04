@@ -17,13 +17,6 @@ import { defaultFilterset } from '~/utils/defaultFilters'
 import { appState } from '~/utils/appState'
 
 // Types
-interface Party {
-  id: string;
-  shortcode: string;
-  name: string;
-  element: number;
-  // Add other properties as needed
-}
 
 interface Props {
   initialData: {
@@ -52,7 +45,7 @@ const SavedPageClient: React.FC<Props> = ({
   const [parties, setParties] = useState<Party[]>(initialData.teams)
   const [element, setElement] = useState(initialElement || 0)
   const [raid, setRaid] = useState(initialRaid || '')
-  const [recency, setRecency] = useState(initialRecency || '')
+  const [recency, setRecency] = useState(initialRecency ? parseInt(initialRecency, 10) : 0)
   const [fetching, setFetching] = useState(false)
   
   // Initialize app state with raid groups
@@ -64,7 +57,7 @@ const SavedPageClient: React.FC<Props> = ({
   
   // Update URL when filters change
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams(searchParams?.toString() ?? '')
     
     // Update or remove parameters based on filter values
     if (element) {
@@ -80,14 +73,14 @@ const SavedPageClient: React.FC<Props> = ({
     }
     
     if (recency) {
-      params.set('recency', recency)
+      params.set('recency', recency.toString())
     } else {
       params.delete('recency')
     }
     
     // Only update URL if filters are changed
     const newQueryString = params.toString()
-    const currentQuery = searchParams.toString()
+    const currentQuery = searchParams?.toString() ?? ''
     
     if (newQueryString !== currentQuery) {
       router.push(`/saved${newQueryString ? `?${newQueryString}` : ''}`)
@@ -100,7 +93,7 @@ const SavedPageClient: React.FC<Props> = ({
       setElement(filters.element || 0)
     }
     if ('recency' in filters) {
-      setRecency(filters.recency || '')
+      setRecency(filters.recency || 0)
     }
     if ('raid' in filters) {
       setRaid(filters.raid || '')
@@ -180,6 +173,7 @@ const SavedPageClient: React.FC<Props> = ({
       <FilterBar
         defaultFilterset={defaultFilterset}
         onFilter={receiveFilters}
+        onAdvancedFilter={receiveFilters}
         persistFilters={false}
         element={element}
         raid={raid}

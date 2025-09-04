@@ -254,7 +254,7 @@ const SummonUnit = ({
         message={
           <>
             {t.rich('modals.summon.messages.remove', {
-              summon: gridSummon?.object.name[locale],
+              summon: gridSummon?.object.name[locale] || '',
               strong: (chunks) => <strong>{chunks}</strong>
             })}
           </>

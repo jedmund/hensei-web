@@ -338,7 +338,7 @@ const AXSelect = (props: Props) => {
       })
     } else if (!value || value <= 0) {
       newErrors.axValue1 = t('ax.errors.value_empty', {
-        name: primaryAxSkill?.name[locale],
+        name: primaryAxSkill?.name[locale] || '',
       })
     } else {
       newErrors.axValue1 = ''

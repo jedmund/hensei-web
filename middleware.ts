@@ -1,13 +1,10 @@
 import createMiddleware from 'next-intl/middleware'
-import {locales, defaultLocale, type Locale} from './i18n.config'
+import {routing} from './i18n/routing'
+import {locales, type Locale} from './i18n.config'
 import {NextResponse} from 'next/server'
 import type {NextRequest} from 'next/server'
 
-const intl = createMiddleware({
-  locales,
-  defaultLocale,
-  localePrefix: 'as-needed' // Show locale in URL when not default
-})
+const intl = createMiddleware(routing)
 
 const PROTECTED_PATHS = ['/saved', '/profile'] as const
 const MIXED_AUTH_PATHS = ['/api/parties', '/p/'] as const

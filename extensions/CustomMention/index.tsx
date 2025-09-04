@@ -16,10 +16,11 @@ export default Mention.extend({
         this.options.HTMLAttributes,
         HTMLAttributes
       ),
-      this.options.renderLabel({
+      this.options.renderLabel?.({
         options: this.options,
         node,
-      }),
+        suggestion: null,
+      }) || '',
     ]
   },
 })

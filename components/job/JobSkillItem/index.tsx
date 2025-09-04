@@ -139,7 +139,7 @@ const JobSkillItem = React.forwardRef<HTMLDivElement, Props>(
           message={
             <>
               {t.rich('modals.job_skills.messages.remove', {
-                job_skill: skill?.name[locale],
+                job_skill: skill?.name[locale] || '',
                 strong: (chunks) => <strong>{chunks}</strong>
               })}
             </>

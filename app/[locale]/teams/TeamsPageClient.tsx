@@ -23,14 +23,6 @@ import LoadingRep from '~/components/reps/LoadingRep'
 import ErrorSection from '~/components/ErrorSection'
 
 // Types
-interface Party {
-  id: string;
-  shortcode: string;
-  name: string;
-  element: number;
-  // Add other properties as needed
-}
-
 interface Pagination {
   current_page: number;
   total_pages: number;
@@ -69,7 +61,7 @@ const TeamsPageClient: React.FC<Props> = ({
   const [fetching, setFetching] = useState(false)
   const [element, setElement] = useState(initialElement || 0)
   const [raid, setRaid] = useState(initialRaid || '')
-  const [recency, setRecency] = useState(initialRecency || '')
+  const [recency, setRecency] = useState(initialRecency ? parseInt(initialRecency, 10) : 0)
   const [advancedFilters, setAdvancedFilters] = useState({})
 
   const { toggleFavorite } = useFavorites(parties, setParties)
@@ -83,7 +75,7 @@ const TeamsPageClient: React.FC<Props> = ({
 
   // Update URL when filters change
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams(searchParams?.toString() ?? '')
     
     // Update or remove parameters based on filter values
     if (element) {
@@ -99,14 +91,14 @@ const TeamsPageClient: React.FC<Props> = ({
     }
     
     if (recency) {
-      params.set('recency', recency)
+      params.set('recency', recency.toString())
     } else {
       params.delete('recency')
     }
     
     // Only update URL if filters are changed
     const newQueryString = params.toString()
-    const currentQuery = searchParams.toString()
+    const currentQuery = searchParams?.toString() ?? ''
     
     if (newQueryString !== currentQuery) {
       router.push(`/teams${newQueryString ? `?${newQueryString}` : ''}`)
@@ -126,7 +118,7 @@ const TeamsPageClient: React.FC<Props> = ({
       
       if (element) url.searchParams.set('element', element.toString())
       if (raid) url.searchParams.set('raid', raid)
-      if (recency) url.searchParams.set('recency', recency)
+      if (recency) url.searchParams.set('recency', recency.toString())
       
       const response = await fetch(url.toString())
       const data = await response.json()
@@ -150,7 +142,7 @@ const TeamsPageClient: React.FC<Props> = ({
       setElement(filters.element || 0)
     }
     if ('recency' in filters) {
-      setRecency(filters.recency || '')
+      setRecency(filters.recency || 0)
     }
     if ('raid' in filters) {
       setRaid(filters.raid || '')

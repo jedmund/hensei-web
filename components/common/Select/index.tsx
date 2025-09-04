@@ -97,7 +97,6 @@ const Select = React.forwardRef<HTMLButtonElement, Props>(function Select(
       <RadixSelect.Trigger
         autoFocus={props.autoFocus || false}
         className={triggerClasses}
-        placeholder={props.placeholder}
         ref={forwardedRef}
       >
         {props.icon?.src && <img alt={props.icon.alt} src={props.icon.src} />}

@@ -53,11 +53,11 @@ export default async function SavedPage({
     let filteredTeams = savedTeamsData.results || [];
     
     if (element) {
-      filteredTeams = filteredTeams.filter(party => party.element === element)
+      filteredTeams = filteredTeams.filter((party: any) => party.element === element)
     }
     
     if (raid) {
-      filteredTeams = filteredTeams.filter(party => party.raid?.id === raid)
+      filteredTeams = filteredTeams.filter((party: any) => party.raid?.id === raid)
     }
     
     // Prepare data for client component

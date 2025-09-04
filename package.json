@@ -9,11 +9,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "node scripts/patch-next-intl.js",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": "20.x",
     "npm": ">=10.0.0"
   },
   "dependencies": {
