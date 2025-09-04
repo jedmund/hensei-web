@@ -59,6 +59,8 @@ public/images/updates*
 public/images/guidebooks*
 public/images/raids*
 public/images/gacha*
+public/images/previews*
+public/image/profiles*
 
 # Typescript v1 declaration files
 typings/
