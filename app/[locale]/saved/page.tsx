@@ -4,6 +4,9 @@ import { cookies } from 'next/headers'
 import { getFavorites, getRaidGroups } from '~/app/lib/data'
 import SavedPageClient from './SavedPageClient'
 
+// Force dynamic rendering because we use cookies and searchParams
+export const dynamic = 'force-dynamic'
+
 // Metadata
 export const metadata: Metadata = {
   title: 'Your saved teams / granblue.team',

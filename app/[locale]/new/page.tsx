@@ -2,6 +2,9 @@ import { Metadata } from 'next'
 import { getRaidGroups } from '~/app/lib/data'
 import NewPartyClient from './NewPartyClient'
 
+// Force dynamic rendering because getRaidGroups uses cookies
+export const dynamic = 'force-dynamic'
+
 // Metadata
 export const metadata: Metadata = {
   title: 'Create a new team / granblue.team',

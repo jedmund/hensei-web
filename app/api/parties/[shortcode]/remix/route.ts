@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { postToApi, revalidate } from '~/app/lib/api-utils';
 
+// Force dynamic rendering because postToApi uses cookies
+export const dynamic = 'force-dynamic';
+
 // POST handler for remixing a party
 export async function POST(
   request: NextRequest,

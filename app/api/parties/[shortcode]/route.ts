@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fetchFromApi, putToApi, deleteFromApi, revalidate, PartySchema } from '~/app/lib/api-utils';
 
+// Force dynamic rendering because fetchFromApi uses cookies
+export const dynamic = 'force-dynamic';
+
 // GET handler for fetching a single party by shortcode
 export async function GET(
   request: NextRequest, 
