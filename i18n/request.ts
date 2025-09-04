@@ -1,11 +1,12 @@
 import {getRequestConfig} from 'next-intl/server'
-import {locales, defaultLocale, type Locale} from '../i18n.config'
+import {routing} from './routing'
+import {type Locale} from '../i18n.config'
 
 // next-intl v4: global request config used by getMessages()
 export default getRequestConfig(async ({requestLocale}) => {
   let locale = (await requestLocale) as Locale | null;
-  if (!locale || !locales.includes(locale)) {
-    locale = defaultLocale;
+  if (!locale || !routing.locales.includes(locale)) {
+    locale = routing.defaultLocale;
   }
 
   // Load only i18n namespaces; exclude content data with dotted keys

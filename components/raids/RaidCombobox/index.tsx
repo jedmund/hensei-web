@@ -192,7 +192,7 @@ const RaidCombobox = (props: Props) => {
 
   // Scroll to an item in the list when it is selected
   const scrollToItem = useCallback(
-    (node) => {
+    (node: HTMLElement | null) => {
       if (!scrolled && open && currentRaid && listRef.current && node) {
         const { top: listTop } = listRef.current.getBoundingClientRect()
         const { top: itemTop } = node.getBoundingClientRect()
@@ -537,11 +537,9 @@ const RaidCombobox = (props: Props) => {
       className="raid flush"
       open={open}
       onOpenChange={toggleOpen}
-      placeholder={
-        props.showAllRaidsOption ? t('raids.all') : t('raids.placeholder')
-      }
       trigger={{
         bound: true,
+        placeholder: props.showAllRaidsOption ? t('raids.all') : t('raids.placeholder'),
         className: classNames({
           raid: true,
           highlighted: props.showAllRaidsOption,

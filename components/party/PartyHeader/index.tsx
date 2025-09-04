@@ -274,7 +274,7 @@ const PartyHeader = (props: Props) => {
   const turnCountToken = (
     <Token>
       {t('party.details.turns.with_count', {
-        count: party.turnCount,
+        count: party.turnCount || 0,
       })}
     </Token>
   )

@@ -112,11 +112,11 @@ const WeaponGrid = (props: Props) => {
 
             if (response) {
               const code = response.status
-              const data = response.data
+              const data = response.data as any
 
               if (
                 code === 422 &&
-                data.code === 'incompatible_weapon_for_position'
+                data?.code === 'incompatible_weapon_for_position'
               ) {
                 setShowIncompatibleAlert(true)
               } else {

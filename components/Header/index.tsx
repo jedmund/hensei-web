@@ -113,7 +113,7 @@ const Header = () => {
     })
 
     // Push the root URL
-    router.push('/new', undefined, { shallow: true })
+    router.push('/new')
   }
 
   // Methods: Rendering

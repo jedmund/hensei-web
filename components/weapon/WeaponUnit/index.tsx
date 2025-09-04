@@ -509,7 +509,7 @@ const WeaponUnit = ({
         message={
           <>
             {t.rich('modals.weapon.messages.remove', {
-              weapon: gridWeapon?.object.name[locale],
+              weapon: gridWeapon?.object.name[locale] || '',
               strong: (chunks) => <strong>{chunks}</strong>
             })}
           </>
