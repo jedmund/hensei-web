@@ -18,7 +18,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
     <div className="error-container">
       <div className="error-content">
         <h1>Internal Server Error</h1>
-        <p>The server reported a problem that we couldn't automatically recover from.</p>
+        <p>The server reported a problem that we couldn&apos;t automatically recover from.</p>
         <div className="error-message">
           <p>{error.message || 'An unexpected error occurred'}</p>
           {error.digest && <p className="error-digest">Error ID: {error.digest}</p>}

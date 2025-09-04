@@ -14,7 +14,7 @@ export default async function NotFound() {
     <div className="error-container">
       <div className="error-content">
         <h1>Not Found</h1>
-        <p>The page you're looking for couldn't be found</p>
+        <p>The page you&apos;re looking for couldn&apos;t be found</p>
         <div className="error-actions">
           <Link href="/new" className="button primary">
             Create a new party
