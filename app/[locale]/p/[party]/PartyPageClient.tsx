@@ -34,7 +34,19 @@ const PartyPageClient: React.FC<Props> = ({ party, raidGroups }) => {
   
   // Handle tab change
   const handleTabChanged = (value: string) => {
-    const tabType = parseInt(value) as GridType
+    let tabType: GridType
+    switch (value) {
+      case 'characters':
+        tabType = GridType.Character
+        break
+      case 'summons':
+        tabType = GridType.Summon
+        break
+      case 'weapons':
+      default:
+        tabType = GridType.Weapon
+        break
+    }
     setSelectedTab(tabType)
   }
   
