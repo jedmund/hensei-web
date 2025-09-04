@@ -14,7 +14,8 @@ const UpdatesPage = () => {
 
   const classes = classNames(styles.updates, 'PageContent')
 
-  const [activeYear, setActiveYear] = useState(new Date().getFullYear())
+  // Default to most recent year with content (2024)
+  const [activeYear, setActiveYear] = useState(2024)
   const getYearButtonClass = (year: number) =>
     classNames({
       [styles.yearButton]: true,

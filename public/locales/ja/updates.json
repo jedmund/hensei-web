@@ -1,4 +1,5 @@
 {
+  "noUpdates": "この年のアップデートはありません",
   "labels": {
     "characters": "新キャラクター",
     "weapons": "新武器",
@@ -22,7 +23,7 @@
     "updates": "その他の更新"
   },
   "events": {
-    "date": "{{year}}年{{month}}月",
+    "date": "{year}年{month}月",
     "legfest": "レジェンドフェス",
     "flash": "グランデフェス",
     "content": "アップデート",

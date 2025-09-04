@@ -122,23 +122,33 @@ const ProfilePageClient: React.FC<Props> = ({
     setFetching(true)
     
     try {
-      // Construct URL for fetching more data
-      const url = new URL(`/api/parties`, window.location.origin)
-      url.searchParams.set('username', initialData.user.username)
+      // Construct URL for fetching more data - using the users endpoint
+      const url = new URL(`${process.env.NEXT_PUBLIC_SIERO_API_URL}/users/${initialData.user.username}`, window.location.origin)
       url.searchParams.set('page', (currentPage + 1).toString())
       
       if (element) url.searchParams.set('element', element.toString())
-      if (raid) url.searchParams.set('raid', raid)
+      if (raid) url.searchParams.set('raid_id', raid)
       if (recency) url.searchParams.set('recency', recency)
       
-      const response = await fetch(url.toString())
+      const response = await fetch(url.toString(), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       const data = await response.json()
       
-      if (data.parties && Array.isArray(data.parties)) {
-        setParties([...parties, ...data.parties])
-        setCurrentPage(data.pagination?.current_page || currentPage + 1)
-        setTotalPages(data.pagination?.total_pages || totalPages)
-        setRecordCount(data.pagination?.record_count || recordCount)
+      // Extract parties from the profile response
+      const newParties = data.profile?.parties || []
+      
+      if (newParties.length > 0) {
+        setParties([...parties, ...newParties])
+        
+        // Update pagination from meta
+        if (data.meta) {
+          setCurrentPage(currentPage + 1)
+          setTotalPages(data.meta.total_pages || totalPages)
+          setRecordCount(data.meta.count || recordCount)
+        }
       }
     } catch (error) {
       console.error('Error loading more parties', error)
@@ -222,12 +232,7 @@ const ProfilePageClient: React.FC<Props> = ({
         raidGroups={initialData.raidGroups}
         recency={recency}
       >
-        <UserInfo 
-          name={initialData.user.username}
-          picture={initialData.user.avatar.picture}
-          element={initialData.user.avatar.element}
-          gender={initialData.user.gender}
-        />
+        <UserInfo user={initialData.user} />
       </FilterBar>
       
       <section>{renderInfiniteScroll}</section>

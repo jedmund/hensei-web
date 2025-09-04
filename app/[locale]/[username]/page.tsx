@@ -58,7 +58,6 @@ export default async function ProfilePage({
       notFound()
     }
     
-    // Prepare data for client component
     const initialData = {
       user: userData.user,
       teams: teamsData.results || [],

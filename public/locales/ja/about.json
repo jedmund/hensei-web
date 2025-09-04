@@ -5,7 +5,7 @@
     }
   },
   "about": {
-    "subtitle": "Granblue.teamは<2>グランブルーファンタジー</2>の編成を作成・保存・共有するサイトです。",
+    "subtitle": "Granblue.teamは<gameLink>グランブルーファンタジー</gameLink>の編成を作成・保存・共有するサイトです。",
     "explanation": [
       "新しい編成にキャラクター・武器・召喚石を追加するだけで、好きな場所で共有できるURLが作成されます—アカウントなしで！",
       "しかしアカウントを作れば、見つけた編成を保存して今後の参考の参考にすることができますし、すべての編成を1つの場所にまとめておくことができます。"
@@ -17,9 +17,9 @@
     },
     "credits": {
       "title": "謝意",
-      "maintainer": "Granblue.teamの創造者・維持者は<2>@jedmund</2>.",
-      "assistance": "<2>@lalalalinna</2>さんと<6>@tarngerine</6>さんがプロジェクト開始の時にたくさん助かりました。",
-      "support": "<2>Fireplace</2>団（アナザーver)とgranblue-toolsのDiscordの皆さんの協力も感謝しています。(募集中です！)"
+      "maintainer": "Granblue.teamの創造者・維持者は<link>@jedmund</link>.",
+      "assistance": "<link1>@lalalalinna</link1>さんと<link2>@tarngerine</link2>さんがプロジェクト開始の時にたくさん助かりました。",
+      "support": "<link>Fireplace</link>団（アナザーver)とgranblue-toolsのDiscordの皆さんの協力も感謝しています。(募集中です！)"
     },
     "contributing": {
       "title": "協力",
@@ -27,7 +27,7 @@
     },
     "license": {
       "title": "ライセンス",
-      "license": "このサイトは<2>GNU AGPLv3</2>のライセンスで提供されています.",
+      "license": "このサイトは<link>GNU AGPLv3</link>のライセンスで提供されています.",
       "explanation": "派生のプロジェクトを作成したら、このプロジェクトをちゃんとリンクしてリンクし・派生のプロジェクトもオープンソースで同じライセンスで提供されたら、自由にソースコードをダウンロド・改変・再配布を許可されています。"
     },
     "copyright": {
