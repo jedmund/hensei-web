@@ -3,6 +3,7 @@ import localFont from 'next/font/local'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { Viewport as ToastViewport } from '@radix-ui/react-toast'
+import { cookies } from 'next/headers'
 import { locales } from '../../i18n.config'
 
 import '../../styles/globals.scss'
@@ -12,6 +13,7 @@ import Providers from '../components/Providers'
 import Header from '../components/Header'
 import UpdateToastClient from '../components/UpdateToastClient'
 import VersionHydrator from '../components/VersionHydrator'
+import AccountStateInitializer from '~components/AccountStateInitializer'
 
 // Generate static params for all locales
 export function generateStaticParams() {
@@ -48,6 +50,28 @@ export default async function LocaleLayout({
   // Load messages for the locale
   const messages = await getMessages()
   
+  // Parse auth cookies on server
+  const cookieStore = cookies()
+  const accountCookie = cookieStore.get('account')
+  const userCookie = cookieStore.get('user')
+  
+  let initialAuthData = null
+  if (accountCookie && userCookie) {
+    try {
+      const accountData = JSON.parse(accountCookie.value)
+      const userData = JSON.parse(userCookie.value)
+      
+      if (accountData && accountData.token) {
+        initialAuthData = {
+          account: accountData,
+          user: userData
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing auth cookies on server:', error)
+    }
+  }
+  
   // Fetch version data on the server
   let version = null
   try {
@@ -67,6 +91,7 @@ export default async function LocaleLayout({
       <body className={goalking.className}>
         <NextIntlClientProvider messages={messages}>
           <Providers>
+            <AccountStateInitializer initialAuthData={initialAuthData} />
             <Header />
             <VersionHydrator version={version} />
             <UpdateToastClient initialVersion={version} />
