@@ -1,4 +1,4 @@
-interface CheckedState {
-  id: number
-  checked: boolean
+export interface CheckedState {
+	id: number
+	checked: boolean
 }

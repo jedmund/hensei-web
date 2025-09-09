@@ -1,4 +1,4 @@
-interface SimpleAxSkill {
-  modifier: number
-  strength: number
+export interface SimpleAxSkill {
+	modifier: number
+	strength: number
 }

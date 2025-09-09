@@ -1,5 +1,5 @@
-interface RarityState {
-  [key: string]: CheckedState
-  sr: CheckedState
-  ssr: CheckedState
+export interface RarityState {
+	[key: string]: CheckedState
+	sr: CheckedState
+	ssr: CheckedState
 }

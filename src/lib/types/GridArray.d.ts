@@ -1,1 +1,1 @@
-type GridArray<T> = { [key: number]: T | undefined }
+export type GridArray<T> = { [key: number]: T | undefined }

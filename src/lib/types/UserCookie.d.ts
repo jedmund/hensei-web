@@ -1,7 +1,7 @@
-interface UserCookie {
-  picture: string
-  element: string
-  language: string
-  gender: number
-  theme: string
+export interface UserCookie {
+	picture: string
+	element: string
+	language: string
+	gender: number
+	theme: string
 }
