@@ -1,7 +1,10 @@
 <script lang="ts">
-	import favicon from '$lib/assets/favicon.svg';
+	import favicon from '$lib/assets/favicon.svg'
+	import 'modern-normalize/modern-normalize.css'
 
-	let { children } = $props();
+	export const prerender = false
+
+	let { children } = $props()
 </script>
 
 <svelte:head>
