@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { json } from '@sveltejs/kit'
-import { PUBLIC_SIERO_OAUTH_URL } from '$env/static/public'
+import { OAUTH_BASE } from '$lib/config'
 import {
 	getRefreshFromCookies,
 	setAccountCookie,
@@ -27,7 +27,7 @@ export const POST: RequestHandler = async ({ cookies, fetch, url }) => {
 		return json({ error: 'no_refresh_token' }, { status: 401 })
 	}
 
-	const res = await fetch(`${PUBLIC_SIERO_OAUTH_URL}/token`, {
+	const res = await fetch(`${OAUTH_BASE}/token`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
