@@ -1,19 +1,33 @@
 {
 	"extends": "./.svelte-kit/tsconfig.json",
+
+	// Only put things here that you truly want to override globally.
 	"compilerOptions": {
-		"allowJs": true,
-		"checkJs": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"sourceMap": true,
+		/* Strictness */
 		"strict": true,
-		"moduleResolution": "bundler"
-	}
-	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias
-	// except $lib which is handled by https://svelte.dev/docs/kit/configuration#files
-	//
-	// To make changes to top-level options such as include and exclude, we recommend extending
-	// the generated config; see https://svelte.dev/docs/kit/configuration#typescript
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true,
+		"useUnknownInCatchVariables": true,
+		"forceConsistentCasingInFileNames": true,
+
+		/* Module resolution for Vite/SvelteKit */
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+
+		/* JS interop (keep if you import CJS libs) */
+		"esModuleInterop": true,
+
+		/* JS files (keep if you have any .js) */
+		"allowJs": true,
+		"checkJs": false,
+
+		/* Build ergonomics */
+		"skipLibCheck": true,
+		"sourceMap": true
+
+		// Avoid "paths" here—SvelteKit manages them via svelte.config.js -> kit.alias
+		// Adding "paths" would override $app/* & $lib/* from the generated config.
+	},
+
+	"include": ["src/**/*.svelte", "src/**/*.ts", "src/**/*.d.ts"]
 }
