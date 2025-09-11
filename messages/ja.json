@@ -1,4 +1,12 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from ja!"
+	"hello_world": "Hello, {name} from ja!",
+
+	"nav_gallery": "ギャラリー",
+	"nav_collection": "コレクション",
+	"nav_login": "ログイン",
+	"nav_settings": "設定",
+	"nav_logout": "ログアウト",
+	"nav_account_aria": "アカウント",
+	"nav_menu_button": "メニュー"
 }
