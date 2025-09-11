@@ -27,3 +27,6 @@ src/lib/paraglide
 
 *storybook.log
 storybook-static
+
+# Assets
+static/
