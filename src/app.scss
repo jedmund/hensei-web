@@ -1,0 +1,60 @@
+// Import themes
+@use 'themes/themes';
+@use 'themes/spacing';
+
+html {
+	background-color: var(--background);
+	font-size: 62.5%;
+	// height: 100%;
+}
+
+body {
+	-webkit-font-smoothing: antialiased;
+	box-sizing: border-box;
+	font-family: var(--font-family);
+	font-size: 1.4rem;
+	height: 100%;
+	padding: spacing.$unit-2x !important;
+
+	&.no-scroll {
+		overflow: hidden;
+	}
+}
+
+main {
+	max-width: 820px;
+	margin: 0 auto;
+	padding: 0 spacing.$unit-2x;
+	width: 100%;
+
+	// Responsive padding for smaller screens
+	@media (max-width: 768px) {
+		padding: 0 spacing.$unit;
+	}
+}
+
+// Utility classes for different container widths
+.content--wide {
+	max-width: 1200px;
+}
+
+.content--narrow {
+	max-width: 600px;
+}
+
+.content--full {
+	max-width: none;
+	padding: 0;
+}
+
+// Global variables
+$primary-color: #007bff;
+$font-size-base: 16px;
+
+// Global mixins
+@mixin button-reset {
+	border: none;
+	background: none;
+	padding: 0;
+	cursor: pointer;
+}

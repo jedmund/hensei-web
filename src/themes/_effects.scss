@@ -1,0 +1,69 @@
+// Shadows
+$hover-stroke: 1px solid rgba(0, 0, 0, 0.1);
+$hover-shadow: rgba(0, 0, 0, 0.08) 0px 0px 14px;
+
+// Durations
+$duration-modal-open: 0.48s;
+$duration-color-fade: 0.24s;
+$duration-zoom: 0.18s;
+$duration-opacity-fade: 0.12s;
+
+// Gradients
+$hero--gradient--light:
+	linear-gradient(
+		90deg,
+		rgba(245, 245, 245, 1) 5%,
+		rgba(245, 245, 245, 0.2) 50%,
+		rgba(245, 245, 245, 0.2) 70%,
+		rgba(245, 245, 245, 1) 95%
+	),
+	linear-gradient(
+		rgba(245, 245, 245, 1) 5%,
+		rgba(245, 245, 245, 0.4) 40%,
+		rgba(245, 245, 245, 0.4) 78%,
+		rgba(245, 245, 245, 1) 95%
+	);
+$hero--gradient--light--overlay:
+	linear-gradient(
+		90deg,
+		rgba(245, 245, 245, 1) 0%,
+		rgba(245, 245, 245, 0) 50%,
+		rgba(245, 245, 245, 0) 70%,
+		rgba(245, 245, 245, 1) 95%
+	),
+	linear-gradient(
+		rgba(245, 245, 245, 1) 0%,
+		rgba(245, 245, 245, 0) 40%,
+		rgba(245, 245, 245, 0) 78%,
+		rgba(245, 245, 245, 1) 95%
+	);
+
+$hero--gradient--dark:
+	linear-gradient(
+		90deg,
+		rgba(25, 25, 25, 1) 5%,
+		rgba(25, 25, 25, 0.2) 50%,
+		rgba(25, 25, 25, 0.2) 70%,
+		rgba(25, 25, 25, 1) 95%
+	),
+	linear-gradient(
+		rgba(25, 25, 25, 1) 5%,
+		rgba(25, 25, 25, 0.4) 40%,
+		rgba(25, 25, 25, 0.4) 78%,
+		rgba(25, 25, 25, 1) 95%
+	);
+
+$hero--gradient--dark--overlay:
+	linear-gradient(
+		90deg,
+		rgba(25, 25, 25, 1) 0%,
+		rgba(25, 25, 25, 0) 50%,
+		rgba(25, 25, 25, 0) 70%,
+		rgba(25, 25, 25, 1) 95%
+	),
+	linear-gradient(
+		rgba(25, 25, 25, 1) 0%,
+		rgba(25, 25, 25, 0) 40%,
+		rgba(25, 25, 25, 0) 78%,
+		rgba(25, 25, 25, 1) 95%
+	);

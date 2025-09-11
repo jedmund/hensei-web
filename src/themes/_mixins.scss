@@ -1,0 +1,68 @@
+// use with @include
+@mixin breakpoint($breakpoint) {
+	$phone-width: 450px;
+	$phone-height: 1280px;
+
+	$small-tablet-width: 750px;
+	$small-tablet-height: 1024px;
+
+	$tablet-width: 1024px;
+	$tablet-height: 1024px;
+
+	@if $breakpoint == tablet {
+		// prettier-ignore
+		@media only screen 
+      and (max-width: $tablet-width)
+      and (max-height: $tablet-height)
+      and (-webkit-min-device-pixel-ratio: 2) {
+        @content;
+      }
+	}
+
+	@if $breakpoint == small-tablet {
+		// prettier-ignore
+		@media only screen 
+      and (max-width: $small-tablet-width)
+      and (max-height: $small-tablet-height)
+      and (-webkit-min-device-pixel-ratio: 2) {
+        @content;
+      }
+	}
+
+	@if $breakpoint == phone {
+		// prettier-ignore
+		@media only screen 
+       and (max-width: $phone-width) 
+       and (max-height: $phone-height) 
+       and (-webkit-min-device-pixel-ratio: 2) {
+        @content;
+       }
+	}
+}
+
+@mixin hidpiImage($image, $extension, $width, $height, $position: center, $repeat: no-repeat) {
+	background: url($image + '.' + $extension) $repeat $position;
+	background-size: $width $height;
+
+	@media screen and (-webkit-min-device-pixel-ratio: 2),
+		screen and (min--moz-device-pixel-ratio: 2),
+		screen and (-moz-min-device-pixel-ratio: 2),
+		screen and (-o-min-device-pixel-ratio: 2/1),
+		screen and (min-device-pixel-ratio: 2),
+		screen and (min-resolution: 192dpi),
+		screen and (min-resolution: 2dppx) {
+		background: url($image + '@2x' + '.' + $extension) $repeat $position;
+		background-size: $width $height;
+	}
+
+	@media screen and (-webkit-min-device-pixel-ratio: 3),
+		screen and (min--moz-device-pixel-ratio: 3),
+		screen and (-moz-min-device-pixel-ratio: 3),
+		screen and (-o-min-device-pixel-ratio: 3/1),
+		screen and (min-device-pixel-ratio: 3),
+		screen and (min-resolution: 216dpi),
+		screen and (min-resolution: 3dppx) {
+		background: url($image + '@3x' + '.' + $extension) $repeat $position;
+		background-size: $width $height;
+	}
+}

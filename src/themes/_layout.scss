@@ -1,0 +1,15 @@
+@use 'spacing';
+
+// Scale factors
+$scale-wide: scale(1.05, 1.05);
+$scale-tall: scale(1.012, 1.012);
+
+// Border radius
+$full-corner: 500px;
+$card-corner: spacing.$unit * 1.5;
+$input-corner: spacing.$unit;
+$item-corner: spacing.$unit;
+$item-corner-small: spacing.$unit-half;
+
+$bubble-menu-corner: spacing.$unit;
+$bubble-menu-item-corner: spacing.$unit-half * 1.5;

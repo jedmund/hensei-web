@@ -1,0 +1,618 @@
+@use 'sass:color';
+
+// Colors
+$grey-00: #000;
+$grey-05: #0a0a0a;
+$grey-10: #111;
+$grey-15: #191919;
+$grey-20: #212121;
+$grey-25: #232323;
+$grey-30: #2f2f2f;
+$grey-40: #444;
+$grey-45: #515151;
+$grey-50: #777;
+$grey-55: #888;
+$grey-60: #a9a9a9;
+$grey-70: #c6c6c6;
+$grey-75: #dcdcdc;
+$grey-80: #e9e9e9;
+$grey-85: #efefef;
+$grey-90: #f5f5f5;
+$grey-95: #fafafa;
+$grey-100: white;
+
+// Purple -- Additional Weapons
+$purple-00: #25224e;
+$purple-05: #373278;
+$purple-10: #4f3c79;
+$purple-20: #635fb7;
+$purple-30: #8c86ff;
+$purple-40: #a49ffe;
+$purple-50: #b6b2fc;
+$purple-80: #d5d3f6;
+$purple-90: #ecebff;
+
+// Orange -- Subaura Summons
+$orange-00: #201710;
+$orange-10: #6b401b;
+$orange-30: #825b39;
+$orange-35: #885243;
+$orange-40: #925a2a;
+$orange-50: #a8703f;
+$orange-70: #d08f57;
+$orange-75: #ffb461;
+$orange-80: #facea7;
+$orange-90: #ffebd9;
+
+// Yellow -- Highlights
+$yellow-10: #4d3703;
+$yellow-30: #956d11;
+$yellow-50: #c8a657;
+$yellow-70: #fedc8d;
+$yellow-90: #ffed4c;
+
+// Colors -- Interface
+$blue: #275dc5;
+$red: #ff6161;
+$yellow: #c89d39;
+$error: #d13a3a;
+
+$save-red: #ff4d4d;
+
+$accent--blue--light: #275dc5;
+$accent--blue--light--focus: #0c398d;
+$accent--blue--dark: #6195f4;
+$accent--blue--dark--focus: #275dc5;
+
+$accent--yellow--light: #c89d39;
+$accent--yellow--dark: #f9cc64;
+$yellow-text-10: #a39200;
+$yellow-text-20: #ffed4c;
+$highlight-yellow: #ffed4c55;
+
+$accent--yellow--00: #463805;
+$accent--yellow--10: #6c5a01;
+$accent--yellow--20: #776300;
+$accent--yellow--40: #a39200;
+$accent--yellow--60: #c89d39;
+$accent--yellow--70: #d1aa4f;
+$accent--yellow--80: #deb351;
+$accent--yellow--90: #e6bd5e;
+$accent--yellow--100: #f9cc64;
+
+$selected--item--bg--dark: #f9cc645d;
+$selected--item--bg--dark--hover: #fcc33f81;
+$selected--item--bg--light: #f9cc645d;
+$selected--item--bg--light--hover: #ecbc4c6f;
+
+// Colors -- Elements
+$wind-text-00: #023e28;
+$wind-text-10: #00492f;
+$wind-text-20: #006a45;
+$wind-text-30: #1dc688;
+$wind-bg-00: #30c372;
+$wind-bg-10: #3ee489;
+$wind-bg-20: #cdffed;
+
+$fire-text-00: #3f0202;
+$fire-text-10: #3e0000;
+$fire-text-20: #700101;
+$fire-text-30: #ec5c5c;
+$fire-bg-00: #e05555;
+$fire-bg-10: #fa6d6d;
+$fire-bg-20: #ffcdcd;
+
+$water-text-00: #03263b;
+$water-text-10: #004b77;
+$water-text-20: #00639c;
+$water-text-30: #5cb7ec;
+$water-bg-00: #4aabe3;
+$water-bg-10: #6cc9ff;
+$water-bg-20: #cdedff;
+
+$earth-text-00: #321602;
+$earth-text-10: #662a00;
+$earth-text-20: #913d01;
+$earth-text-30: #ec985c;
+$earth-bg-00: #df8849;
+$earth-bg-10: #fd9f5b;
+$earth-bg-20: #ffe2cd;
+
+$light-text-00: #3d3700;
+$light-text-10: #4b4300;
+$light-text-20: #706500;
+$light-text-30: #c5b20c;
+$light-bg-00: #cab91c;
+$light-bg-10: #e8d633;
+$light-bg-20: #fffacd;
+
+$dark-text-00: #23002f;
+$dark-text-10: #3e0054;
+$dark-text-20: #5b017b;
+$dark-text-30: #c65cec;
+$dark-bg-00: #ba63d8;
+$dark-bg-10: #de7bff;
+$dark-bg-20: #f2cdff;
+
+$transparent--stroke--light: rgba(0, 0, 0, 0.9);
+$transparent--stroke--dark: rgba(255, 255, 255, 0.35);
+
+$page--bg--light: $grey-90;
+$page--bg--dark: $grey-15;
+
+$page--hover--light: $grey-90;
+$page--hover--dark: $grey-30;
+
+$page--element--bg--light: $grey-70;
+$page--element--bg--dark: $grey-40;
+
+$separator--bg--light: $grey-90;
+$separator--bg--dark: $grey-15;
+
+$anonymous--bg--light: $grey-80;
+$anonymous--bg--dark: $grey-40;
+
+// Color Definitions: Unit
+$unit--bg--light: $grey-100;
+$unit--bg--dark: $grey-20;
+
+$unit--bg--light--hover: $grey-90;
+$unit--bg--dark--hover: $grey-30;
+
+// Color Definitions: Dialog
+$dialog--bg--light: $grey-100;
+$dialog--bg--dark: $grey-25;
+
+// Color Definitions: Menu
+$menu--bg--light: $grey-100;
+$menu--bg--dark: $grey-10;
+$menu--text--light: $grey-50;
+$menu--text--dark: $grey-60;
+$menu--separator--light: $grey-90;
+$menu--separator--dark: $grey-05;
+$menu--item--bg--light--hover: $grey-85;
+$menu--item--bg--dark--hover: $grey-00;
+$menu--text--light--hover: $grey-100;
+$menu--text--dark--hover: $grey-15;
+
+// Color Definitions: Placeholders
+$placeholder--bound--bg--light: $grey-80;
+$placeholder--bound--bg--dark: $grey-30;
+
+$placeholder--bound--bg--light--hover: $grey-75;
+$placeholder--bound--bg--dark--hover: $grey-20;
+
+// Color Definitions: Notices
+$notice--bg--light: $accent--yellow--100;
+$notice--bg--dark: $accent--yellow--00;
+
+$notice--text--light: $accent--yellow--20;
+$notice--text--dark: $accent--yellow--100;
+
+$notice--button--bg--light: $accent--yellow--80;
+$notice--button--bg--dark: $accent--yellow--20;
+
+$notice--button--bg--light--hover: $accent--yellow--70;
+$notice--button--bg--dark--hover: $accent--yellow--10;
+
+$notice--button--text--light: $accent--yellow--10;
+$notice--button--text--dark: $accent--yellow--90;
+
+$notice--button--text--light--hover: $accent--yellow--00;
+$notice--button--text--dark--hover: $accent--yellow--100;
+
+// Color Definitions: Button
+$button--bg--light: $grey-80;
+$button--bg--light--hover: $grey-100;
+$button--bg--light--disabled: $grey-80;
+$button--contained--bg--light: $grey-85;
+$button--contained--bg--light--hover: $grey-80;
+
+$button--bg--dark: $grey-00;
+$button--bg--dark--hover: $grey-05;
+$button--bg--dark--disabled: $grey-30;
+$button--contained--bg--dark: $grey-15;
+$button--contained--bg--dark--hover: $grey-05;
+
+$button--text--light: $grey-55;
+$button--text--light--hover: $grey-40;
+$button--text--light--disabled: $grey-70;
+$button--text--dark: $grey-70;
+$button--text--dark--hover: $grey-100;
+$button--text--dark--disabled: $grey-50;
+
+// Color Definitions: Input
+$input--bg--light: $grey-100;
+$input--bg--light--hover: $grey-95;
+$input--bg--dark: $grey-40;
+$input--bg--dark--hover: $grey-30;
+
+$input--bound--bg--light: $grey-85;
+$input--bound--bg--light--hover: $grey-80;
+$input--bound--bg--dark: $grey-15;
+$input--bound--bg--dark--hover: $grey-10;
+
+// Color Definitions: Select
+$select--trigger--bg--light: $grey-100;
+$select--trigger--bg--dark: $grey-10;
+
+$select--trigger--contained--bg--light: $grey-85;
+$select--trigger--contained--bg--light--hover: $grey-80;
+$select--trigger--contained--bg--dark: $grey-15;
+$select--trigger--contained--bg--dark--hover: $grey-10;
+
+$select--content--contained--bg--light: $grey-100;
+$select--content--contained--bg--dark: $grey-15;
+
+$select--separator--light: $grey-90;
+$select--separator--dark: $grey-05;
+
+$option--bg--light--hover: $grey-75;
+$option--bg--dark--hover: $grey-00;
+
+$grid--rep--hover--light: $grey-100;
+$grid--rep--hover--dark: $grey-10;
+
+$grid--border--color--light: $grey-85;
+$grid--border--color--dark: $grey-40;
+
+// Color Definitions: Slider
+$slider--thumb--bg--light: $grey-100;
+$slider--thumb--bg--dark: $grey-100;
+$slider--thumb--bg--light--hover: $grey-95;
+$slider--thumb--bg--dark--hover: $grey-95;
+$slider--thumb--shadow--light: $grey-70;
+$slider--thumb--shadow--dark: $grey-05;
+$slider--thumb--shadow--light--hover: $grey-50;
+$slider--thumb--shadow--dark--hover: $grey-00;
+
+// Color Definitions: Switch
+$switch--nub--bg--light: $grey-80;
+$switch--nub--bg--dark: $grey-30;
+
+// Color Definitions: Link Items
+$link--item--bg--light: $grey-80;
+$link--item--bg--dark: $grey-30;
+$link--item--bg--image--light: $grey-60;
+$link--item--bg--image--dark: $grey-60;
+$link--item--bg--image--light--hover: $grey-40;
+$link--item--bg--image--dark--hover: $grey-80;
+
+// Color Definitions: Additional Weapons
+$extra--purple--bg--light: $purple-90;
+$extra--purple--card--bg--light: $purple-80;
+$extra--purple--primary--light: $purple-30;
+$extra--purple--secondary--light: $purple-40;
+$extra--purple--light--text--light: $purple-40;
+$extra--purple--text--light: $purple-20;
+$extra--purple--dark--text--light: $purple-10;
+
+$extra--purple--bg--dark: $purple-20;
+$extra--purple--card--bg--dark: $purple-40;
+$extra--purple--primary--dark: $purple-05;
+$extra--purple--secondary--dark: $purple-10;
+$extra--purple--light--text--dark: $purple-30;
+$extra--purple--text--dark: $purple-80;
+$extra--purple--dark--text--dark: $purple-00;
+
+// Color Definitions: Subaura
+$subaura--orange--bg--light: $orange-90;
+$subaura--orange--card--bg--light: $orange-80;
+$subaura--orange--primary--light: $orange-30;
+$subaura--orange--secondary--light: $orange-50;
+$subaura--orange--text--light: $orange-30;
+$subaura--orange--bg--dark: $orange-10;
+$subaura--orange--card--bg--dark: $orange-30;
+$subaura--orange--primary--dark: $orange-00;
+$subaura--orange--secondary--dark: $orange-10;
+$subaura--orange--text--dark: $orange-70;
+
+// Color Definitions: Tokens
+$charge--attack--bg: $orange-75;
+$charge--attack--text: $orange-35;
+
+$full--auto--bg: $yellow-text-20;
+
+$auto--guard--bg: $purple-50;
+$auto--guard--text: $purple-10;
+
+// Color Definitions: Pills
+$pill--bg--light: $grey-90;
+$pill--bg--light--hover: $grey-50;
+$pill--text--light: $grey-30;
+$pill--text--light--hover: $grey-100;
+
+$pill--bg--dark: $grey-00;
+$pill--bg--dark--hover: $grey-50;
+$pill--text--dark: $grey-100;
+$pill--text--dark--hover: $grey-00;
+
+// Color Definitions: Formatting menu
+$formatting--menu--bg--light: $grey-30;
+$formatting--menu--bg--dark: $grey-10;
+
+$formatting--menu--item--bg--light: $grey-30;
+$formatting--menu--item--bg--dark: $grey-20;
+
+$formatting--menu--item--bg--light--hover: $grey-40;
+$formatting--menu--item--bg--dark--hover: $grey-30;
+
+$formatting--menu--item--bg--light--active: $grey-50;
+$formatting--menu--item--bg--dark--active: $grey-40;
+
+$formatting--menu--item--text--light: $grey-100;
+$formatting--menu--item--text--dark: $grey-00;
+
+$formatting--menu--item--text--light--hover: $grey-100;
+$formatting--menu--item--text--dark--hover: $grey-00;
+
+$formatting--menu--item--text--light--active: $grey-100;
+$formatting--menu--item--text--dark--active: $grey-00;
+
+// Color Definitions: Toolbar
+$toolbar--bg--light: $grey-75;
+$toolbar--bg--dark: $grey-10;
+
+$toolbar--divider--bg--light: $grey-70;
+$toolbar--divider--bg--dark: $grey-20;
+
+$toolbar--item--bg--light: $grey-75;
+$toolbar--item--bg--dark: $grey-20;
+
+$toolbar--item--bg--light--hover: $grey-70;
+$toolbar--item--bg--dark--hover: $grey-30;
+
+$toolbar--item--bg--light--active: $accent--blue--light;
+$toolbar--item--bg--dark--active: $accent--blue--dark;
+
+$toolbar--item--text--light: $grey-40;
+$toolbar--item--text--dark: $grey-80;
+
+$toolbar--item--text--light--hover: $grey-30;
+$toolbar--item--text--dark--hover: $grey-90;
+
+$toolbar--item--text--light--active: $grey-100;
+$toolbar--item--text--dark--active: $grey-00;
+
+// Color Definitions: Highlights
+$highlight--bg--light: $yellow-70;
+$highlight--bg--dark: $yellow-50;
+
+$highlight--bg--light--hover: $yellow-50;
+$highlight--bg--dark--hover: $yellow-70;
+
+$highlight--text--light: $yellow-30;
+$highlight--text--dark: $yellow-10;
+
+$highlight--text--light--hover: $yellow-10;
+$highlight--text--dark--hover: $yellow-30;
+
+// Color Definitions: Element Toggle
+$toggle--bg--light: $grey-90;
+$toggle--bg--dark: $grey-15;
+
+$toggle--stroke--light: rgba(0, 0, 0, 0.14);
+$toggle--stroke--dark: rgba(0, 0, 0, 0.8);
+
+// Color Definitions: Text
+$text--primary--color--light: $grey-40;
+$text--primary--color--dark: $grey-90;
+
+$text--secondary--color--light: $grey-60;
+$text--secondary--color--dark: $grey-70;
+
+$text--tertiary--color--light: $grey-50;
+$text--tertiary--color--dark: $grey-50;
+
+$text--tertiary--hover--light: $grey-40;
+$text--tertiary--hover--dark: $grey-70;
+
+$text--link--hover--light: $grey-40;
+$text--link--hover--dark: $grey-100;
+
+$text--full--auto--light: $yellow-text-10;
+$text--full--auto--dark: $yellow-text-20;
+
+// Color Definitions: Icon
+$icon--secondary--color--light: $grey-70;
+$icon--secondary--color--dark: $grey-50;
+$icon--secondary--hover--light: $grey-50;
+$icon--secondary--hover--dark: $grey-70;
+
+// Color Definitions: Radio Buttons
+$radio--bg--light: $grey-75;
+$radio--bg--dark: $grey-10;
+
+$radio--bg--light--hover: $grey-70;
+$radio--bg--dark--hover: $grey-00;
+
+$radio--active--bg--light: $accent--blue--light;
+$radio--active--bg--dark: $accent--blue--dark;
+
+$radio--active--bg--light--hover: $accent--blue--light--focus;
+$radio--active--bg--dark--hover: $accent--blue--dark--focus;
+
+// Color Definitions: Tag
+$tag--bg--light: $grey-60;
+$tag--bg--dark: $grey-00;
+$tag--text--light: $grey-100;
+$tag--text--dark: $grey-50;
+
+// Color Definitions: Element / Wind
+$wind--bg--light: $wind-bg-10;
+$wind--bg--dark: $wind-bg-10;
+
+$wind--portrait--bg--light: $wind-bg-20;
+$wind--portrait--bg--dark: $wind-bg-20;
+
+$wind--bg--hover--light: $wind-bg-00;
+$wind--bg--hover--dark: $wind-bg-00;
+
+$wind--text--light: $wind-text-20;
+$wind--text--dark: $wind-text-30;
+$wind--text--contrast: $wind-text-10;
+
+$wind--text--raid--light: $wind-text-20;
+$wind--text--raid--dark: $wind-bg-10;
+
+$wind--text--hover--light: $wind-text-00;
+$wind--text--hover--dark: $wind-text-00;
+
+$wind--shadow--light: color.adjust($wind-text-20, $alpha: -0.3);
+$wind--shadow--dark: color.adjust($wind-text-20, $alpha: -0.3);
+
+$wind--shadow--light--hover: color.adjust($wind-text-00, $alpha: -0.3);
+$wind--shadow--dark--hover: color.adjust($wind-text-00, $alpha: -0.3);
+
+// Color Definitions: Element / Null
+$null--bg--light: $grey-75;
+$null--bg--dark: $grey-40;
+
+$null--bg--hover--light: $grey-70;
+$null--bg--hover--dark: $grey-30;
+
+$null--text--light: $grey-40;
+$null--text--dark: $grey-90;
+$null--text--contrast: $grey-90;
+
+$null--text--raid--light: $grey-40;
+$null--text--raid--dark: $grey-90;
+
+$null--text--hover--light: $grey-20;
+$null--text--hover--dark: $grey-90;
+
+$null--shadow--light: color.adjust($grey-60, $alpha: -0.3);
+$null--shadow--dark: color.adjust($grey-25, $alpha: -0.3);
+
+$null--shadow--light--hover: color.adjust($grey-50, $alpha: -0.3);
+$null--shadow--dark--hover: color.adjust($grey-10, $alpha: -0.3);
+
+// Color Definitions: Element / Fire
+$fire--bg--light: $fire-bg-10;
+$fire--bg--dark: $fire-bg-10;
+
+$fire--portrait--bg--light: $fire-bg-20;
+$fire--portrait--bg--dark: $fire-bg-20;
+
+$fire--bg--hover--light: $fire-bg-00;
+$fire--bg--hover--dark: $fire-bg-00;
+
+$fire--text--light: $fire-text-20;
+$fire--text--dark: $fire-text-30;
+$fire--text--contrast: $fire-text-10;
+
+$fire--text--raid--light: $fire-text-20;
+$fire--text--raid--dark: $fire-bg-10;
+
+$fire--text--hover--light: $fire-text-00;
+$fire--text--hover--dark: $fire-text-00;
+
+$fire--shadow--light: color.adjust($fire-text-20, $alpha: -0.3);
+$fire--shadow--dark: color.adjust($fire-text-20, $alpha: -0.3);
+
+$fire--shadow--light--hover: color.adjust($fire-text-00, $alpha: -0.3);
+$fire--shadow--dark--hover: color.adjust($fire-text-00, $alpha: -0.3);
+
+// Color Definitions: Element / Water
+$water--bg--light: $water-bg-10;
+$water--bg--dark: $water-bg-10;
+
+$water--portrait--bg--light: $water-bg-20;
+$water--portrait--bg--dark: $water-bg-20;
+
+$water--bg--hover--light: $water-bg-00;
+$water--bg--hover--dark: $water-bg-00;
+
+$water--text--light: $water-text-20;
+$water--text--dark: $water-text-30;
+$water--text--contrast: $water-text-10;
+
+$water--text--raid--light: $water-text-20;
+$water--text--raid--dark: $water-bg-10;
+
+$water--text--hover--light: $water-text-00;
+$water--text--hover--dark: $water-text-00;
+
+$water--shadow--light: color.adjust($water-text-20, $alpha: -0.3);
+$water--shadow--dark: color.adjust($water-text-20, $alpha: -0.3);
+
+$water--shadow--light--hover: color.adjust($water-text-00, $alpha: -0.3);
+$water--shadow--dark--hover: color.adjust($water-text-00, $alpha: -0.3);
+
+// Color Definitions: Element / Earth
+$earth--bg--light: $earth-bg-10;
+$earth--bg--dark: $earth-bg-10;
+
+$earth--portrait--bg--light: $earth-bg-20;
+$earth--portrait--bg--dark: $earth-bg-20;
+
+$earth--bg--hover--light: $earth-bg-00;
+$earth--bg--hover--dark: $earth-bg-00;
+
+$earth--text--light: $earth-text-20;
+$earth--text--dark: $earth-text-30;
+$earth--text--contrast: $earth-text-10;
+
+$earth--text--raid--light: $earth-text-20;
+$earth--text--raid--dark: $earth-bg-10;
+
+$earth--text--hover--light: $earth-text-00;
+$earth--text--hover--dark: $earth-text-00;
+
+$earth--shadow--light: color.adjust($earth-text-20, $alpha: -0.3);
+$earth--shadow--dark: color.adjust($earth-text-20, $alpha: -0.3);
+
+$earth--shadow--light--hover: color.adjust($earth-text-00, $alpha: -0.3);
+$earth--shadow--dark--hover: color.adjust($earth-text-00, $alpha: -0.3);
+
+// Color Definitions: Element / Dark
+$dark--bg--light: $dark-bg-10;
+$dark--bg--dark: $dark-bg-10;
+
+$dark--portrait--bg--light: $dark-bg-20;
+$dark--portrait--bg--dark: $dark-bg-20;
+
+$dark--bg--hover--light: $dark-bg-00;
+$dark--bg--hover--dark: $dark-bg-00;
+
+$dark--text--light: $dark-text-20;
+$dark--text--dark: $dark-text-30;
+$dark--text--contrast: $dark-text-10;
+
+$dark--text--raid--light: $dark-text-20;
+$dark--text--raid--dark: $dark-bg-10;
+
+$dark--text--hover--light: $dark-text-00;
+$dark--text--hover--dark: $dark-text-00;
+
+$dark--shadow--light: color.adjust($dark-text-20, $alpha: -0.3);
+$dark--shadow--dark: color.adjust($dark-text-20, $alpha: -0.3);
+
+$dark--shadow--light--hover: color.adjust($dark-text-00, $alpha: -0.3);
+$dark--shadow--dark--hover: color.adjust($dark-text-00, $alpha: -0.3);
+
+// Color Definitions: Element / Light
+$light--bg--light: $light-bg-10;
+$light--bg--dark: $light-bg-10;
+
+$light--portrait--bg--light: $light-bg-20;
+$light--portrait--bg--dark: $light-bg-20;
+
+$light--bg--hover--light: $light-bg-00;
+$light--bg--hover--dark: $light-bg-00;
+
+$light--text--light: $light-text-20;
+$light--text--dark: $light-text-30;
+$light--text--contrast: $light-text-10;
+
+$light--text--raid--light: $light-text-20;
+$light--text--raid--dark: $light-bg-10;
+
+$light--text--hover--light: $light-text-00;
+$light--text--hover--dark: $light-text-00;
+
+$light--shadow--light: color.adjust($light-text-20, $alpha: -0.3);
+$light--shadow--dark: color.adjust($light-text-20, $alpha: -0.3);
+
+$light--shadow--light--hover: color.adjust($light-text-00, $alpha: -0.3);
+$light--shadow--dark--hover: color.adjust($light-text-00, $alpha: -0.3);
