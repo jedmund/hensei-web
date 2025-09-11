@@ -1,0 +1,144 @@
+@use '../../themes/spacing';
+@use '../../themes/mixins';
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: spacing.$unit;
+  font-family: var(--font-family);
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  position: relative;
+  white-space: nowrap;
+  text-decoration: none;
+  line-height: 1;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--accent-blue-focus);
+  }
+}
+
+// Variants
+.primary {
+  background-color: var(--button-contained-bg);
+  color: var(--button-text);
+
+  &:hover:not(:disabled) {
+    background-color: var(--button-contained-bg-hover);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}
+
+.secondary {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--separator-bg);
+
+  &:hover:not(:disabled) {
+    background-color: var(--button-bg-hover);
+    color: var(--button-text-hover);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}
+
+.ghost {
+  background-color: transparent;
+  color: var(--text-secondary);
+
+  &:hover:not(:disabled) {
+    background-color: var(--button-bg);
+    color: var(--text-primary);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}
+
+.text {
+  background-color: transparent;
+  color: var(--accent-blue);
+  padding: 0;
+  min-height: auto;
+
+  &:hover:not(:disabled) {
+    color: var(--accent-blue-focus);
+    text-decoration: underline;
+  }
+
+  &:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+// Sizes
+.small {
+  padding: spacing.$unit spacing.$unit-2x;
+  font-size: 1.2rem;
+  min-height: 28px;
+
+  &.iconOnly {
+    padding: spacing.$unit;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.medium {
+  padding: spacing.$unit-2x spacing.$unit-3x;
+  font-size: 1.4rem;
+  min-height: 36px;
+
+  &.iconOnly {
+    padding: spacing.$unit-2x;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.large {
+  padding: spacing.$unit-2x spacing.$unit-4x;
+  font-size: 1.6rem;
+  min-height: 44px;
+
+  &.iconOnly {
+    padding: spacing.$unit-2x;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+// Icon positioning
+.iconLeft {
+  flex-direction: row;
+}
+
+.iconRight {
+  flex-direction: row-reverse;
+}
+
+.iconOnly {
+  gap: 0;
+  aspect-ratio: 1;
+}
+
+// Full width
+.fullWidth {
+  width: 100%;
+}
