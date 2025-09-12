@@ -30,3 +30,6 @@ storybook-static
 
 # Assets
 static/
+
+# Inlang cache
+project.inlang/cache/
