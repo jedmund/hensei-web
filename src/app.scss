@@ -1,6 +1,11 @@
 // Import themes
 @use 'themes/themes';
 @use 'themes/spacing';
+@use 'themes/tooltip';
+
+:root {
+	--main-max-width: 820px; // Default max-width for main content
+}
 
 html {
 	background-color: var(--background);
@@ -28,10 +33,11 @@ ul {
 }
 
 main {
-	max-width: 820px;
+	max-width: var(--main-max-width);
 	margin: 0 auto;
 	padding: 0 spacing.$unit-2x;
 	width: 100%;
+	transition: max-width 0.3s ease;
 
 	// Responsive padding for smaller screens
 	@media (max-width: 768px) {

@@ -4,14 +4,12 @@
 	import '$src/app.scss'
 
 	import Navigation from '$lib/components/Navigation.svelte'
+	import { Tooltip } from 'bits-ui'
 
 	// Get `data` and `children` from the router via $props()
+	// Use a more flexible type that allows additional properties from child pages
 	const { data, children } = $props<{
-		data: {
-			isAuthenticated: boolean
-			account: { username: string; userId: string; role: number } | null
-			currentUser: unknown | null
-		}
+		data: any  // Allow any data to pass through from child pages
 		children: () => any
 	}>()
 </script>
@@ -20,7 +18,9 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<main>
-	<Navigation isAuthenticated={data?.isAuthenticated} username={data?.account?.username} />
-	{@render children?.()}
-</main>
+<Tooltip.Provider>
+	<main>
+		<Navigation isAuthenticated={data?.isAuthenticated} username={data?.account?.username} />
+		{@render children?.()}
+	</main>
+</Tooltip.Provider>

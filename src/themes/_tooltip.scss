@@ -1,0 +1,17 @@
+@use 'layout';
+@use 'typography';
+@use 'spacing';
+
+// Global tooltip styles for bits-ui
+[data-tooltip-content] {
+	background: var(--tooltip-bg, #2a2a2a);
+	color: var(--tooltip-text, white);
+	padding: spacing.$unit-half spacing.$unit;
+	border-radius: layout.$item-corner-small;
+	font-size: typography.$font-small;
+	font-weight: typography.$medium;
+	z-index: 1000;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	max-width: 250px;
+	line-height: 1.4;
+}

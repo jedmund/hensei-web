@@ -1,15 +1,16 @@
 <script lang="ts">
-	import type { PartyView } from '$lib/api/schemas/party'
+	import type { Party } from '$lib/types/api/party'
 	import WeaponRep from '$lib/components/reps/WeaponRep.svelte'
 	import SummonRep from '$lib/components/reps/SummonRep.svelte'
 	import CharacterRep from '$lib/components/reps/CharacterRep.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 
-	export let party: PartyView
+	export let party: Party
 	export let href: string = `/teams/${party.shortcode}`
 	export let loading = false
 
-	let currentView: 'weapons' | 'summons' | 'characters' = 'summons'
+	let currentView: 'weapons' | 'summons' | 'characters' = 'weapons'
 
 	function displayName(input: any): string {
 		if (!input) return '—'
@@ -24,7 +25,7 @@
 	class={`gridRep ${loading ? 'hidden' : 'visible'}`}
 	role="link"
 	tabindex="0"
-	on:mouseleave={() => (currentView = 'summons')}
+	on:mouseleave={() => (currentView = 'weapons')}
 >
 	<a {href} data-sveltekit-preload-data="hover">
 		<div class="info">
@@ -36,19 +37,31 @@
 
 				<div class="pills">
 					{#if party.chargeAttack}
-						<span class="pill chargeAttack" title="Charge Attack">
-							<Icon name="charge-attack" size={16} />
-						</span>
+						<Tooltip content="Charge Attack">
+							{#snippet children()}
+								<span class="pill chargeAttack">
+									<Icon name="charge-attack" size={16} />
+								</span>
+							{/snippet}
+						</Tooltip>
 					{/if}
 					{#if party.fullAuto}
-						<span class="pill fullAuto" title="Full Auto">
-							<Icon name="full-auto" size={16} />
-						</span>
+						<Tooltip content="Full Auto">
+							{#snippet children()}
+								<span class="pill fullAuto">
+									<Icon name="full-auto" size={16} />
+								</span>
+							{/snippet}
+						</Tooltip>
 					{/if}
 					{#if party.raid?.group?.extra}
-						<span class="pill extra" title="Extra">
-							<Icon name="extra-grid" size={16} />
-						</span>
+						<Tooltip content="Extra">
+							{#snippet children()}
+								<span class="pill extra">
+									<Icon name="extra-grid" size={16} />
+								</span>
+							{/snippet}
+						</Tooltip>
 					{/if}
 				</div>
 			</div>
@@ -121,7 +134,7 @@
 
 			&:hover {
 				background: var(--grid-rep-hover);
-				border-color: rgba(0, 0, 0, 0.1);
+				box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
 			}
 
 			&:hover .indicators {
@@ -227,7 +240,6 @@
 
 		li {
 			flex-grow: 1;
-			padding: $unit 0;
 			position: relative;
 
 			&:hover .indicator,
