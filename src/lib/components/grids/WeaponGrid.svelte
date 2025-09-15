@@ -1,44 +1,28 @@
+<svelte:options runes={true} />
+
 <script lang="ts">
-  import type { GridWeaponItemView } from '$lib/api/schemas/party'
+  import type { GridWeapon } from '$lib/types/api/party'
 
-  export let weapons: GridWeaponItemView[] = []
-  export let raidExtra: boolean | undefined = undefined
-  export let showGuidebooks: boolean | undefined = undefined
-  export let guidebooks: Record<string, any> | undefined = undefined
-
-  function displayName(input: any): string {
-    if (!input) return '—'
-    const maybe = input.name ?? input
-    if (typeof maybe === 'string') return maybe
-    if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-    return '—'
+  interface Props {
+    weapons?: GridWeapon[]
+    raidExtra?: boolean
+    showGuidebooks?: boolean
+    guidebooks?: Record<string, any>
   }
 
-  function weaponImageUrl(w?: GridWeaponItemView): string {
-    const id = (w as any)?.object?.granblueId
-    const isMain = !!(w && ((w as any).mainhand || (w as any).position === -1))
-    if (!id) return isMain
-      ? '/images/placeholders/placeholder-weapon-main.png'
-      : '/images/placeholders/placeholder-weapon-grid.png'
-
-    const folder = isMain ? 'weapon-main' : 'weapon-grid'
-
-    // Neutral element override: if object.element == 0 and instance element present, append _<element>
-    const objElement = (w as any)?.object?.element
-    const instElement = (w as any)?.element
-    if (objElement === 0 && instElement) {
-      return `/images/${folder}/${id}_${instElement}.jpg`
-    }
-
-    // For local static images, transcendence variants are not split by suffix; use base
-    return `/images/${folder}/${id}.jpg`
-  }
+  let {
+    weapons = [],
+    raidExtra = undefined,
+    showGuidebooks = undefined,
+    guidebooks = undefined
+  }: Props = $props()
 
   import WeaponUnit from '$lib/components/units/WeaponUnit.svelte'
   import ExtraWeapons from '$lib/components/extra/ExtraWeaponsGrid.svelte'
   import Guidebooks from '$lib/components/extra/GuidebooksGrid.svelte'
-  const mainhand = weapons.find((w) => (w as any).mainhand || w.position === -1)
-  const grid = Array.from({ length: 9 }, (_, i) => weapons.find((w) => w.position === i))
+
+  let mainhand = $derived(weapons.find((w) => (w as any).mainhand || w.position === -1))
+  let grid = $derived(Array.from({ length: 9 }, (_, i) => weapons.find((w) => w.position === i)))
 </script>
 
 <div class="wrapper">

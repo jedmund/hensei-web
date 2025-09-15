@@ -1,28 +1,20 @@
+<svelte:options runes={true} />
+
 <script lang="ts">
-  import type { GridSummonItemView } from '$lib/api/schemas/party'
+  import type { GridSummon } from '$lib/types/api/party'
 
-  export let summons: GridSummonItemView[] = []
+  interface Props {
+    summons?: GridSummon[]
+  }
 
-  function displayName(input: any): string {
-    if (!input) return '—'
-    const maybe = input.name ?? input
-    if (typeof maybe === 'string') return maybe
-    if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-    return '—'
-  }
-  function summonImageUrl(s?: GridSummonItemView): string {
-    const id = (s as any)?.object?.granblueId
-    const isMain = s?.main || s?.position === -1 || s?.friend || s?.position === 6
-    if (!id) return isMain ? '/images/placeholders/placeholder-summon-main.png' : '/images/placeholders/placeholder-summon-grid.png'
-    const folder = isMain ? 'summon-main' : 'summon-grid'
-    return `/images/${folder}/${id}.jpg`
-  }
+  let { summons = [] }: Props = $props()
 
   import SummonUnit from '$lib/components/units/SummonUnit.svelte'
   import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
-  const main = summons.find((s) => s.main || s.position === -1)
-  const friend = summons.find((s) => s.friend || s.position === 6)
-  const grid = Array.from({ length: 4 }, (_, i) => summons.find((s) => s.position === i))
+
+  let main = $derived(summons.find((s) => s.main || s.position === -1))
+  let friend = $derived(summons.find((s) => s.friend || s.position === 6))
+  let grid = $derived(Array.from({ length: 4 }, (_, i) => summons.find((s) => s.position === i)))
 </script>
 
 <div class="wrapper">
