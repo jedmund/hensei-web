@@ -14,37 +14,8 @@ const MinimalCamelPartySchema = z
   })
   .passthrough()
 
-// Minimal TS types for UI (grid view)
-export type LocalizedName = string | { en?: string | null; ja?: string | null }
-export interface NamedObject { name?: LocalizedName | null; [k: string]: unknown }
-export interface GridWeaponItemView { position: number; mainhand?: boolean | null; object?: NamedObject | null; [k: string]: unknown }
-export interface GridSummonItemView { position: number; main?: boolean | null; friend?: boolean | null; quickSummon?: boolean | null; object?: NamedObject | null; [k: string]: unknown }
-export interface GridCharacterItemView { position: number; perpetuity?: boolean | null; transcendenceStep?: number | null; object?: NamedObject | null; [k: string]: unknown }
-
-export interface PartyView {
-  id: string
-  shortcode: string
-  name?: string | null
-  description?: string | null
-  user?: { id?: string | null } | null
-  localId?: string | null
-  favorited?: boolean
-  fullAuto?: boolean
-  autoGuard?: boolean
-  autoSummon?: boolean
-  chargeAttack?: boolean
-  clearTime?: number
-  buttonCount?: number
-  chainCount?: number
-  turnCount?: number
-  visibility?: number
-  raid?: { name?: LocalizedName | null; group?: { difficulty?: number | null; extra?: boolean | null; guidebooks?: boolean | null; [k: string]: unknown } | null; [k: string]: unknown } | null
-  job?: { name?: LocalizedName | null; [k: string]: unknown } | null
-  weapons: GridWeaponItemView[]
-  summons: GridSummonItemView[]
-  characters: GridCharacterItemView[]
-  [k: string]: unknown
-}
+// NOTE: These old types are deprecated - use types from $lib/types/api/party instead
+// Keeping minimal exports for backward compatibility during migration
 
 // Helper for localized names
 const LocalizedNameSchema = z.union([
@@ -493,47 +464,13 @@ export type RaidGroup = CamelCasedKeysDeep<z.infer<typeof RaidGroupSchema>>
 export type User = CamelCasedKeysDeep<z.infer<typeof UserSchema>>
 export type Guidebook = CamelCasedKeysDeep<z.infer<typeof GuidebookSchema>>
 
-// Helper: parse raw API party (snake_case) and convert to camelCase
-export function parseParty(input: unknown): Party {
-  // Step 1: convert server snake_case to client camelCase
-  const camel = snakeToCamel(input) as Record<string, unknown>
-  // Step 2: validate only minimal, core fields and pass through the rest
-  const parsed = MinimalCamelPartySchema.parse(camel) as any
+// Import transformation from client
+import { transformResponse } from '../client'
+import type { Party as CleanParty } from '$lib/types/api/party'
 
-  // Step 3: minimally validate grids and coerce to arrays for UI safety
-  const grids = MinimalGridsSchema.safeParse(camel)
-  if (grids.success) {
-    parsed.weapons = grids.data.weapons ?? []
-    parsed.summons = grids.data.summons ?? []
-    parsed.characters = grids.data.characters ?? []
-  } else {
-    parsed.weapons = Array.isArray(parsed.weapons) ? parsed.weapons : []
-    parsed.summons = Array.isArray(parsed.summons) ? parsed.summons : []
-    parsed.characters = Array.isArray(parsed.characters) ? parsed.characters : []
-  }
-
-  // Step 4: minimally validate header associations (raid/job)
-  const hdr = MinimalHeaderSchema.safeParse(camel)
-  if (hdr.success) {
-    if (hdr.data.raid !== undefined) parsed.raid = hdr.data.raid
-    if (hdr.data.job !== undefined) parsed.job = hdr.data.job
-  }
-
-  // Step 5: core scalars with safe defaults for UI
-  const scal = MinimalScalarsSchema.safeParse(camel)
-  const pick = <T>(v: T | null | undefined, d: T) => (v ?? d)
-  if (scal.success) {
-    parsed.favorited = pick(scal.data.favorited ?? (parsed as any).favorited, false)
-    parsed.fullAuto = pick(scal.data.fullAuto ?? (parsed as any).fullAuto, false)
-    parsed.autoGuard = pick(scal.data.autoGuard ?? (parsed as any).autoGuard, false)
-    parsed.autoSummon = pick(scal.data.autoSummon ?? (parsed as any).autoSummon, false)
-    parsed.chargeAttack = pick(scal.data.chargeAttack ?? (parsed as any).chargeAttack, true)
-    parsed.clearTime = pick(scal.data.clearTime ?? (parsed as any).clearTime, 0)
-    parsed.buttonCount = pick(scal.data.buttonCount ?? (parsed as any).buttonCount, 0)
-    parsed.chainCount = pick(scal.data.chainCount ?? (parsed as any).chainCount, 0)
-    parsed.turnCount = pick(scal.data.turnCount ?? (parsed as any).turnCount, 0)
-    parsed.visibility = pick(scal.data.visibility ?? (parsed as any).visibility, 1)
-  }
-
-  return parsed as Party
+// Helper: parse raw API party (snake_case) and convert to clean types
+export function parseParty(input: unknown): CleanParty {
+  // Use the unified transformation from the API client
+  // This handles both snake_case → camelCase and object → entity name mapping
+  return transformResponse<CleanParty>(input)
 }
