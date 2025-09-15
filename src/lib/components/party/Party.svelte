@@ -1,26 +1,47 @@
 <script lang="ts">
   import { onMount, getContext, setContext } from 'svelte'
-  import type { PartyView } from '$lib/api/schemas/party'
+  import type { Party } from '$lib/types/api/party'
   import { PartyService } from '$lib/services/party.service'
   import { GridService } from '$lib/services/grid.service'
   import { ConflictService } from '$lib/services/conflict.service'
+  import { apiClient } from '$lib/api/client'
   import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
   import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
   import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
-  
+  import SearchSidebar from '$lib/components/panels/SearchSidebar.svelte'
+  import type { SearchResult } from '$lib/api/resources/search'
+
   interface Props {
-    initial: PartyView
-    canEditServer?: boolean
+    party?: Party
+    canEdit?: boolean
     authUserId?: string
   }
 
-  let { initial, canEditServer = false, authUserId }: Props = $props()
+  let { party: initial, canEdit: canEditServer = false, authUserId }: Props = $props()
 
   // Per-route local state using Svelte 5 runes
-  let party = $state<PartyView>(initial)
+  const defaultParty: Party = {
+    id: 'new',
+    shortcode: 'new',
+    name: '',
+    description: '',
+    weapons: [],
+    summons: [],
+    characters: []
+  }
+
+  // Initialize party state with proper validation
+  let party = $state<Party>(
+    initial?.id && initial?.id !== 'new' && Array.isArray(initial?.weapons)
+      ? initial
+      : defaultParty
+  )
   let activeTab = $state<'weapons' | 'summons' | 'characters'>('weapons')
   let loading = $state(false)
   let error = $state<string | null>(null)
+  let pickerOpen = $state(false)
+  let pickerTitle = $state('Search')
+  let selectedSlot = $state<number>(0)
   
   // Services
   const partyService = new PartyService(fetch)
@@ -57,17 +78,17 @@
     return result.canEdit
   })
   
-  // Tab configuration
-  const tabs = [
-    { key: 'weapons', label: 'Weapons', count: party.weapons?.length || 0 },
-    { key: 'summons', label: 'Summons', count: party.summons?.length || 0 },
-    { key: 'characters', label: 'Characters', count: party.characters?.length || 0 }
-  ] as const
+  // Tab configuration - use function to avoid state capture
+  const tabs = $derived([
+    { key: 'weapons' as const, label: 'Weapons', count: (party?.weapons ?? []).length },
+    { key: 'summons' as const, label: 'Summons', count: (party?.summons ?? []).length },
+    { key: 'characters' as const, label: 'Characters', count: (party?.characters ?? []).length }
+  ])
 
   // Derived elements for character image logic
-  const mainWeapon = $derived(() => party.weapons.find(w => (w as any)?.mainhand || (w as any)?.position === -1))
-  const mainWeaponElement = $derived(() => (mainWeapon as any)?.element ?? (mainWeapon as any)?.object?.element)
-  const partyElement = $derived(() => (party as any)?.element)
+  const mainWeapon = $derived(() => (party?.weapons ?? []).find(w => w?.mainhand || w?.position === -1))
+  const mainWeaponElement = $derived(() => mainWeapon?.element ?? mainWeapon?.weapon?.element)
+  const partyElement = $derived(() => party?.element)
 
   function selectTab(key: typeof tabs[number]['key']) {
     activeTab = key
@@ -96,10 +117,10 @@
   
   async function toggleFavorite() {
     if (!authUserId) return // Must be logged in to favorite
-    
+
     loading = true
     error = null
-    
+
     try {
       if (party.favorited) {
         await partyService.unfavorite(party.id)
@@ -118,23 +139,110 @@
   async function remixParty() {
     loading = true
     error = null
-    
+
     try {
       const result = await partyService.remix(
         party.shortcode,
         localId,
         editKey || undefined
       )
-      
+
       // Store new edit key if returned
       if (result.editKey) {
         editKey = result.editKey
       }
-      
+
       // Navigate to new party
       window.location.href = `/teams/${result.party.shortcode}`
     } catch (err: any) {
       error = err.message || 'Failed to remix party'
+    } finally {
+      loading = false
+    }
+  }
+
+  // Handle adding items from the search sidebar
+  async function handleAddItems(items: SearchResult[]) {
+    if (items.length === 0 || !canEdit()) return
+
+    const item = items[0]
+    loading = true
+    error = null
+
+    try {
+      // Determine which slot to use
+      let targetSlot = selectedSlot
+
+      // Call appropriate API based on current tab
+      if (activeTab === 'weapons') {
+        await apiClient.addWeapon(party.id, item.granblue_id, targetSlot, {
+          mainhand: targetSlot === -1
+        })
+      } else if (activeTab === 'summons') {
+        await apiClient.addSummon(party.id, item.granblue_id, targetSlot, {
+          main: targetSlot === -1,
+          friend: targetSlot === 6
+        })
+      } else if (activeTab === 'characters') {
+        await apiClient.addCharacter(party.id, item.granblue_id, targetSlot)
+      }
+
+      // Refresh party data
+      const updated = await partyService.getByShortcode(party.shortcode)
+      party = updated
+
+      // Find next empty slot for continuous adding
+      let nextEmptySlot = -999 // sentinel value meaning no empty slot found
+
+      if (activeTab === 'weapons') {
+        // Check mainhand first (position -1)
+        if (!party.weapons.find(w => w.position === -1 || w.mainhand)) {
+          nextEmptySlot = -1
+        } else {
+          // Check grid slots 0-8
+          for (let i = 0; i < 9; i++) {
+            if (!party.weapons.find(w => w.position === i)) {
+              nextEmptySlot = i
+              break
+            }
+          }
+        }
+      } else if (activeTab === 'summons') {
+        // Check main summon first (position -1)
+        if (!party.summons.find(s => s.position === -1 || s.main)) {
+          nextEmptySlot = -1
+        } else {
+          // Check grid slots 0-5
+          for (let i = 0; i < 6; i++) {
+            if (!party.summons.find(s => s.position === i)) {
+              nextEmptySlot = i
+              break
+            }
+          }
+          // Check friend summon (position 6)
+          if (nextEmptySlot === -999 && !party.summons.find(s => s.position === 6 || s.friend)) {
+            nextEmptySlot = 6
+          }
+        }
+      } else if (activeTab === 'characters') {
+        // Check character slots 0-4
+        for (let i = 0; i < 5; i++) {
+          if (!party.characters.find(c => c.position === i)) {
+            nextEmptySlot = i
+            break
+          }
+        }
+      }
+
+      // If there's another empty slot, update selectedSlot to it
+      // Otherwise close the picker (grid is full)
+      if (nextEmptySlot !== -999) {
+        selectedSlot = nextEmptySlot
+      } else {
+        pickerOpen = false
+      }
+    } catch (err: any) {
+      error = err.message || 'Failed to add item'
     } finally {
       loading = false
     }
@@ -144,21 +252,61 @@
   onMount(() => {
     // Get or create local ID
     localId = partyService.getLocalId()
-    
+
     // Get edit key for this party if it exists
     editKey = partyService.getEditKey(party.shortcode)
+
+    // No longer need to verify party data integrity after hydration
+    // since $state.raw prevents the hydration mismatch
   })
-  
+
+  // Create client-side wrappers for grid operations using API client
+  const clientGridService = {
+    async removeWeapon(partyId: string, gridWeaponId: string, _editKey?: string) {
+      await apiClient.removeWeapon(partyId, gridWeaponId)
+      // Reload party data
+      const updated = await partyService.getByShortcode(party.shortcode)
+      return updated
+    },
+    async removeSummon(partyId: string, gridSummonId: string, _editKey?: string) {
+      await apiClient.removeSummon(partyId, gridSummonId)
+      // Reload party data
+      const updated = await partyService.getByShortcode(party.shortcode)
+      return updated
+    },
+    async removeCharacter(partyId: string, gridCharacterId: string, _editKey?: string) {
+      await apiClient.removeCharacter(partyId, gridCharacterId)
+      // Reload party data
+      const updated = await partyService.getByShortcode(party.shortcode)
+      return updated
+    }
+  }
+
   // Provide services to child components via context
   setContext('party', {
     getParty: () => party,
     updateParty: (p: PartyView) => party = p,
     canEdit: () => canEdit(),
-    services: { partyService, gridService, conflictService }
+    getEditKey: () => editKey,
+    services: {
+      partyService,
+      gridService: clientGridService, // Use client-side wrapper
+      conflictService
+    },
+    openPicker: (opts: { type: 'weapon' | 'summon' | 'character'; position: number; item?: any }) => {
+      if (!canEdit()) return
+      selectedSlot = opts.position
+      activeTab = opts.type === 'weapon' ? 'weapons' :
+                  opts.type === 'summon' ? 'summons' : 'characters'
+      pickerTitle = `Search ${opts.type}s`
+      pickerOpen = true
+    }
   })
 </script>
 
-<section class="party-container">
+<div class="page-wrap" class:with-panel={pickerOpen}>
+  <div class="track">
+    <section class="party-container">
   <header class="party-header">
     <div class="party-info">
       <h1>{party.name || '(untitled party)'}</h1>
@@ -190,7 +338,17 @@
       </button>
     </div>
   </header>
-  
+
+  {#if canEdit()}
+    <div class="edit-status">
+      ✏️ You can edit this party - Click on any slot to add or replace items
+    </div>
+  {:else}
+    <div class="edit-status readonly">
+      🔒 Read-only
+    </div>
+  {/if}
+
   {#if party.raid}
     <div class="raid-info">
       <span class="raid-name">
@@ -239,19 +397,23 @@
     {/if}
   </div>
   
-  {#if canEdit()}
-    <footer class="party-footer">
-      <p class="edit-indicator">✏️ You can edit this party</p>
-    </footer>
-  {/if}
-</section>
+
+    </section>
+    <SearchSidebar
+      open={pickerOpen}
+      type={activeTab === 'weapons' ? 'weapon' :
+            activeTab === 'summons' ? 'summon' : 'character'}
+      onClose={() => (pickerOpen = false)}
+      onAddItems={handleAddItems}
+      canAddMore={true}
+    />
+  </div>
+</div>
 
 <style>
-  .party-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
-  }
+  .page-wrap { position: relative; --panel-w: 380px; overflow-x: auto; }
+  .track { display: flex; gap: 0; align-items: flex-start; }
+  .party-container { width: 1200px; margin: 0 auto; padding: 1rem; }
   
   .party-header {
     display: flex;
@@ -305,6 +467,26 @@
     cursor: not-allowed;
   }
   
+  .edit-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    background: #e8f0ff;
+    border: 1px solid #3366ff;
+    border-radius: 6px;
+    color: #3366ff;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    &.readonly {
+      background: #f5f5f5;
+      border-color: #ccc;
+      color: #666;
+    }
+  }
+
   .raid-info {
     display: flex;
     gap: 1rem;
@@ -373,21 +555,10 @@
     border-radius: 8px;
     text-align: center;
   }
-  
+
   .grid-placeholder ul {
     text-align: left;
     max-width: 400px;
     margin: 1rem auto;
-  }
-  
-  .party-footer {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-  }
-  
-  .edit-indicator {
-    color: #3366ff;
-    font-size: 0.9rem;
   }
 </style>
