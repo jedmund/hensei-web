@@ -1,4 +1,4 @@
-import type { Party } from '$lib/api/schemas/party'
+import type { Party } from '$lib/types/api/party'
 import * as partiesApi from '$lib/api/resources/parties'
 import type { FetchLike } from '$lib/api/core'
 
@@ -11,6 +11,7 @@ export interface EditabilityResult {
 export interface PartyUpdatePayload {
   name?: string | null
   description?: string | null
+  element?: number
   raidId?: string
   chargeAttack?: boolean
   fullAuto?: boolean
@@ -41,10 +42,20 @@ export class PartyService {
   /**
    * Create a new party
    */
-  async create(payload: PartyUpdatePayload, editKey?: string): Promise<Party> {
+  async create(payload: PartyUpdatePayload, editKey?: string): Promise<{
+    party: Party
+    editKey?: string
+  }> {
     const headers = this.buildHeaders(editKey)
     const apiPayload = this.mapToApiPayload(payload)
-    return partiesApi.create(this.fetch, apiPayload, headers)
+    const result = await partiesApi.create(this.fetch, apiPayload, headers)
+
+    // Store edit key if returned
+    if (result.editKey && typeof window !== 'undefined') {
+      localStorage.setItem(`edit_key_${result.party.shortcode}`, result.editKey)
+    }
+
+    return result
   }
   
   /**
@@ -193,9 +204,10 @@ export class PartyService {
   
   private mapToApiPayload(payload: PartyUpdatePayload): Partial<Party> {
     const mapped: any = {}
-    
+
     if (payload.name !== undefined) mapped.name = payload.name
     if (payload.description !== undefined) mapped.description = payload.description
+    if (payload.element !== undefined) mapped.element = payload.element
     if (payload.raidId !== undefined) mapped.raid = { id: payload.raidId }
     if (payload.chargeAttack !== undefined) mapped.chargeAttack = payload.chargeAttack
     if (payload.fullAuto !== undefined) mapped.fullAuto = payload.fullAuto
@@ -208,7 +220,7 @@ export class PartyService {
     if (payload.jobId !== undefined) mapped.job = { id: payload.jobId }
     if (payload.visibility !== undefined) mapped.visibility = payload.visibility
     if (payload.localId !== undefined) mapped.localId = payload.localId
-    
+
     return mapped
   }
 }

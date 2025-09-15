@@ -1,4 +1,4 @@
-import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/api/schemas/party'
+import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
 import * as partiesApi from '$lib/api/resources/parties'
 import type { FetchLike } from '$lib/api/core'
 
