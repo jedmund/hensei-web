@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { PartyView } from '$lib/api/schemas/party'
+  import type { Party } from '$lib/types/api/party'
   import GridRep from '$lib/components/reps/GridRep.svelte'
 
-  export let items: PartyView[] = []
+  export let items: Party[] = []
 </script>
 
 {#if items.length === 0}
