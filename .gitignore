@@ -33,3 +33,6 @@ static/
 
 # Inlang cache
 project.inlang/cache/
+
+# Documentation
+docs/
