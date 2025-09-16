@@ -14,6 +14,9 @@ importers:
       bits-ui:
         specifier: ^2.9.6
         version: 2.9.6(@internationalized/date@3.9.0)(svelte@5.38.7)
+      fluid-dnd:
+        specifier: ^2.6.2
+        version: 2.6.2
       modern-normalize:
         specifier: ^3.0.1
         version: 3.0.1
@@ -1337,6 +1340,9 @@ packages:
 
   flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
+
+  fluid-dnd@2.6.2:
+    resolution: {integrity: sha512-NB11wa6QmKkelLi/PrV95nfXM0oA3lrynQD91VrLbhk2BEfH7PLTUMjqlSkavu+fqPlPVCL8HFhYsfv9GVqd7Q==}
 
   fsevents@2.3.2:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
@@ -3331,6 +3337,8 @@ snapshots:
       keyv: 4.5.4
 
   flatted@3.3.3: {}
+
+  fluid-dnd@2.6.2: {}
 
   fsevents@2.3.2:
     optional: true
