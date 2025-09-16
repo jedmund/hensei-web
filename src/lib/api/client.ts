@@ -537,6 +537,183 @@ export class APIClient {
   }
 
   /**
+   * Update weapon position (drag-drop)
+   */
+  async updateWeaponPosition(
+    partyId: string,
+    weaponId: string,
+    position: number,
+    container?: string
+  ): Promise<any> {
+    const editKey = this.getEditKey(partyId)
+
+    const response = await fetch(`/api/parties/${partyId}/grid_weapons/${weaponId}/position`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(editKey ? { 'X-Edit-Key': editKey } : {})
+      },
+      body: JSON.stringify({
+        position,
+        ...(container ? { container } : {})
+      })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || `Failed to update weapon position: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return transformResponse(data.party || data)
+  }
+
+  /**
+   * Swap two weapons (drag-drop)
+   */
+  async swapWeapons(partyId: string, sourceId: string, targetId: string): Promise<any> {
+    const editKey = this.getEditKey(partyId)
+
+    const response = await fetch(`/api/parties/${partyId}/grid_weapons/swap`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(editKey ? { 'X-Edit-Key': editKey } : {})
+      },
+      body: JSON.stringify({
+        source_id: sourceId,
+        target_id: targetId
+      })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || `Failed to swap weapons: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return transformResponse(data.party || data)
+  }
+
+  /**
+   * Update character position (drag-drop)
+   */
+  async updateCharacterPosition(
+    partyId: string,
+    characterId: string,
+    position: number,
+    container?: string
+  ): Promise<any> {
+    const editKey = this.getEditKey(partyId)
+
+    const response = await fetch(`/api/parties/${partyId}/grid_characters/${characterId}/position`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(editKey ? { 'X-Edit-Key': editKey } : {})
+      },
+      body: JSON.stringify({
+        position,
+        ...(container ? { container } : {})
+      })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || `Failed to update character position: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return transformResponse(data.party || data)
+  }
+
+  /**
+   * Swap two characters (drag-drop)
+   */
+  async swapCharacters(partyId: string, sourceId: string, targetId: string): Promise<any> {
+    const editKey = this.getEditKey(partyId)
+
+    const response = await fetch(`/api/parties/${partyId}/grid_characters/swap`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(editKey ? { 'X-Edit-Key': editKey } : {})
+      },
+      body: JSON.stringify({
+        source_id: sourceId,
+        target_id: targetId
+      })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || `Failed to swap characters: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return transformResponse(data.party || data)
+  }
+
+  /**
+   * Update summon position (drag-drop)
+   */
+  async updateSummonPosition(
+    partyId: string,
+    summonId: string,
+    position: number,
+    container?: string
+  ): Promise<any> {
+    const editKey = this.getEditKey(partyId)
+
+    const response = await fetch(`/api/parties/${partyId}/grid_summons/${summonId}/position`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(editKey ? { 'X-Edit-Key': editKey } : {})
+      },
+      body: JSON.stringify({
+        position,
+        ...(container ? { container } : {})
+      })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || `Failed to update summon position: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return transformResponse(data.party || data)
+  }
+
+  /**
+   * Swap two summons (drag-drop)
+   */
+  async swapSummons(partyId: string, sourceId: string, targetId: string): Promise<any> {
+    const editKey = this.getEditKey(partyId)
+
+    const response = await fetch(`/api/parties/${partyId}/grid_summons/swap`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(editKey ? { 'X-Edit-Key': editKey } : {})
+      },
+      body: JSON.stringify({
+        source_id: sourceId,
+        target_id: targetId
+      })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || `Failed to swap summons: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return transformResponse(data.party || data)
+  }
+
+  /**
    * Get local ID for anonymous users
    */
   getLocalId(): string {

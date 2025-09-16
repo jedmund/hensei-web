@@ -4,6 +4,9 @@
 	import type { GridSummon } from '$lib/types/api/party'
 	import { getContext } from 'svelte'
 	import type { PartyContext } from '$lib/services/party.service'
+	import type { DragDropContext } from '$lib/composables/drag-drop.svelte'
+	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
+	import DropZone from '$lib/components/dnd/DropZone.svelte'
 
 	interface Props {
 		summons?: GridSummon[]
@@ -15,9 +18,21 @@
 	import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
 
 	const ctx = getContext<PartyContext>('party')
+	const dragContext = getContext<DragDropContext | undefined>('drag-drop')
 
 	let main = $derived(summons.find((s) => s.main || s.position === -1))
 	let friend = $derived(summons.find((s) => s.friend || s.position === 6))
+
+	// Create array for sub-summons (positions 0-3)
+	let subSummonSlots = $derived(() => {
+		const slots: (GridSummon | undefined)[] = Array(4).fill(undefined)
+		summons.forEach(summon => {
+			if (summon.position >= 0 && summon.position < 4) {
+				slots[summon.position] = summon
+			}
+		})
+		return slots
+	})
 </script>
 
 <div class="wrapper">
@@ -30,13 +45,32 @@
 		<section>
 			<div class="label">Summons</div>
 			<ul class="summons">
-				{#each Array(4) as _, i}
-					{@const summon = summons.find((s) => s.position === i)}
+				{#each subSummonSlots() as summon, i}
 					<li
 						aria-label={`Summon slot ${i}`}
 						class:Empty={!summon}
 					>
-						<SummonUnit item={summon} position={i} />
+						{#if dragContext}
+							<DropZone
+								container="main-summons"
+								position={i}
+								type="summon"
+								item={summon}
+								canDrop={ctx?.canEdit() ?? false}
+							>
+								<DraggableItem
+									item={summon}
+									container="main-summons"
+									position={i}
+									type="summon"
+									canDrag={!!summon && (ctx?.canEdit() ?? false)}
+								>
+									<SummonUnit item={summon} position={i} />
+								</DraggableItem>
+							</DropZone>
+						{:else}
+							<SummonUnit item={summon} position={i} />
+						{/if}
 					</li>
 				{/each}
 			</ul>

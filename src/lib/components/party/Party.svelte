@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount, getContext, setContext } from 'svelte'
-  import type { Party } from '$lib/types/api/party'
+  import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
   import { PartyService } from '$lib/services/party.service'
   import { GridService } from '$lib/services/grid.service'
   import { ConflictService } from '$lib/services/conflict.service'
   import { apiClient } from '$lib/api/client'
+  import { createDragDropContext, type DragOperation } from '$lib/composables/drag-drop.svelte'
   import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
   import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
   import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
@@ -50,6 +51,136 @@
   const partyService = new PartyService(fetch)
   const gridService = new GridService(fetch)
   const conflictService = new ConflictService(fetch)
+
+  // Create drag-drop context
+  const dragContext = createDragDropContext({
+    onLocalUpdate: async (operation) => {
+      console.log('📝 Drag operation:', operation)
+      await handleDragOperation(operation)
+    },
+    onValidate: (source, target) => {
+      // Type must match
+      if (source.type !== target.type) return false
+
+      // Characters: Sequential filling
+      if (source.type === 'character' && target.container === 'main-characters') {
+        // For now, allow any position (we'll handle sequential filling in the operation)
+        return true
+      }
+
+      // Weapons: Mainhand not draggable
+      if (target.type === 'weapon' && target.position === -1) return false
+
+      // Summons: Main/Friend not draggable
+      if (target.type === 'summon' && (target.position === -1 || target.position === 6)) return false
+
+      return true
+    }
+  })
+
+  // Handle drag operations
+  async function handleDragOperation(operation: DragOperation) {
+    if (!canEdit()) return
+
+    const { source, target } = operation
+
+    try {
+      loading = true
+      let updated: Party | null = null
+
+      if (operation.type === 'swap') {
+        // Handle swapping items between positions
+        updated = await handleSwap(source, target)
+      } else if (operation.type === 'move') {
+        // Handle moving to empty position
+        updated = await handleMove(source, target)
+      }
+
+      // Update party with returned data from API
+      if (updated) {
+        party = updated
+      }
+    } catch (err: any) {
+      error = err.message || 'Failed to update party'
+      console.error('Drag operation failed:', err)
+    } finally {
+      loading = false
+      dragContext.clearQueue()
+    }
+  }
+
+  async function handleSwap(source: any, target: any): Promise<Party> {
+    if (!party.id || party.id === 'new') {
+      throw new Error('Cannot swap items in unsaved party')
+    }
+
+    // Both source and target should have items for swap
+    if (!source.itemId || !target.itemId) {
+      throw new Error('Invalid swap operation - missing items')
+    }
+
+    // Call appropriate API based on type
+    if (source.type === 'weapon') {
+      const updated = await apiClient.swapWeapons(party.id, source.itemId, target.itemId)
+      return updated
+    } else if (source.type === 'character') {
+      const updated = await apiClient.swapCharacters(party.id, source.itemId, target.itemId)
+      return updated
+    } else if (source.type === 'summon') {
+      const updated = await apiClient.swapSummons(party.id, source.itemId, target.itemId)
+      return updated
+    }
+
+    throw new Error(`Unknown item type: ${source.type}`)
+  }
+
+  async function handleMove(source: any, target: any): Promise<Party> {
+    if (!party.id || party.id === 'new') {
+      throw new Error('Cannot move items in unsaved party')
+    }
+
+    // Source should have an item, target should be empty
+    if (!source.itemId || target.itemId) {
+      throw new Error('Invalid move operation')
+    }
+
+    // Determine container based on target position
+    let container: string | undefined
+
+    if (source.type === 'character') {
+      // Characters: positions 0-4 are main, 5-6 are extra
+      container = target.position >= 5 ? 'extra' : 'main'
+      const updated = await apiClient.updateCharacterPosition(
+        party.id,
+        source.itemId,
+        target.position,
+        container
+      )
+      return updated
+    } else if (source.type === 'weapon') {
+      // Weapons: positions 0-8 are main, 9+ are extra
+      container = target.position >= 9 ? 'extra' : 'main'
+      const updated = await apiClient.updateWeaponPosition(
+        party.id,
+        source.itemId,
+        target.position,
+        container
+      )
+      return updated
+    } else if (source.type === 'summon') {
+      // Summons: positions 0-3 are sub, 4-5 are subaura
+      container = target.position >= 4 ? 'subaura' : 'main'
+      const updated = await apiClient.updateSummonPosition(
+        party.id,
+        source.itemId,
+        target.position,
+        container
+      )
+      return updated
+    }
+
+    throw new Error(`Unknown item type: ${source.type}`)
+  }
 
   // Localized name helper: accepts either an object with { name: { en, ja } }
   // or a direct { en, ja } map, or a plain string.
@@ -329,7 +460,7 @@
   // Provide services to child components via context
   setContext('party', {
     getParty: () => party,
-    updateParty: (p: PartyView) => party = p,
+    updateParty: (p: Party) => party = p,
     canEdit: () => canEdit(),
     getEditKey: () => editKey,
     services: {
@@ -346,6 +477,9 @@
       pickerOpen = true
     }
   })
+
+  // Provide drag-drop context to child components
+  setContext('drag-drop', dragContext)
 </script>
 
 <div class="page-wrap" class:with-panel={pickerOpen}>

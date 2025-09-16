@@ -4,6 +4,9 @@
 	import type { GridWeapon } from '$lib/types/api/party'
 	import { getContext } from 'svelte'
 	import type { PartyContext } from '$lib/services/party.service'
+	import type { DragDropContext } from '$lib/composables/drag-drop.svelte'
+	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
+	import DropZone from '$lib/components/dnd/DropZone.svelte'
 
 	interface Props {
 		weapons?: GridWeapon[]
@@ -24,8 +27,20 @@
 	import Guidebooks from '$lib/components/extra/GuidebooksGrid.svelte'
 
 	const ctx = getContext<PartyContext>('party')
+	const dragContext = getContext<DragDropContext | undefined>('drag-drop')
 
 	let mainhand = $derived(weapons.find((w) => (w as any).mainhand || w.position === -1))
+
+	// Create array for sub-weapons (positions 0-8)
+	let subWeaponSlots = $derived(() => {
+		const slots: (GridWeapon | undefined)[] = Array(9).fill(undefined)
+		weapons.forEach(weapon => {
+			if (weapon.position >= 0 && weapon.position < 9) {
+				slots[weapon.position] = weapon
+			}
+		})
+		return slots
+	})
 </script>
 
 <div class="wrapper">
@@ -35,14 +50,33 @@
 		</div>
 
 		<ul class="weapons" aria-label="Weapon Grid">
-			{#each Array(9) as _, i}
-				{@const weapon = weapons.find((w) => w.position === i)}
+			{#each subWeaponSlots() as weapon, i}
 				<li
 					aria-label={weapon ? `Weapon ${i}` : `Empty slot ${i}`}
 					data-index={i}
 					class={weapon ? '' : 'Empty'}
 				>
-					<WeaponUnit item={weapon} position={i} />
+					{#if dragContext}
+						<DropZone
+							container="main-weapons"
+							position={i}
+							type="weapon"
+							item={weapon}
+							canDrop={ctx?.canEdit() ?? false}
+						>
+							<DraggableItem
+								item={weapon}
+								container="main-weapons"
+								position={i}
+								type="weapon"
+								canDrag={!!weapon && (ctx?.canEdit() ?? false)}
+							>
+								<WeaponUnit item={weapon} position={i} />
+							</DraggableItem>
+						</DropZone>
+					{:else}
+						<WeaponUnit item={weapon} position={i} />
+					{/if}
 				</li>
 			{/each}
 		</ul>
