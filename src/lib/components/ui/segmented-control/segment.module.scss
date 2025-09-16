@@ -1,0 +1,65 @@
+@use 'themes/spacing';
+@use 'themes/colors';
+@use 'themes/typography';
+@use 'themes/layout';
+@use 'themes/mixins';
+
+.segment {
+  color: colors.$grey-55;
+  cursor: pointer;
+  flex-grow: 1;
+  font-size: typography.$font-regular;
+  font-weight: typography.$normal;
+  min-width: 100px;
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: center;
+  outline: none;
+
+  &:hover .label {
+    background: var(--page-hover);
+    color: var(--text-primary);
+  }
+
+  &[data-state='checked'] .label {
+    background: var(--background);
+    color: var(--text-primary);
+  }
+
+  &:focus-visible .label {
+    outline: 2px solid colors.$blue;
+    outline-offset: 2px;
+  }
+
+  @include mixins.breakpoint(phone) {
+    min-width: initial;
+    width: 100%;
+  }
+}
+
+.label {
+  border-radius: spacing.$unit * 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  height: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 8px 12px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.indicator {
+  display: none;
+}
+
+// Blended variant styles
+:global(.blended) .segment[data-state='checked'] .label {
+  background: var(--card-bg);
+}

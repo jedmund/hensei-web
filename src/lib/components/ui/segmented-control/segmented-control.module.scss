@@ -1,0 +1,127 @@
+@use 'themes/spacing';
+@use 'themes/colors';
+@use 'themes/layout';
+@use 'themes/mixins';
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+
+  &.raid {
+    width: 100%;
+  }
+
+  @include mixins.breakpoint(small-tablet) {
+    width: 100%;
+  }
+}
+
+.segmentedControl {
+  display: inline-flex;
+  padding: 3px;
+  position: relative;
+  gap: spacing.$unit-half;
+  user-select: none;
+  overflow: hidden;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+  @include mixins.breakpoint(small-tablet) {
+    background: var(--card-bg);
+    border-radius: 100px;
+  }
+
+  &.blended {
+    background: var(--input-bound-bg);
+    border-radius: layout.$full-corner;
+  }
+
+  &.background {
+    background: var(--input-bg);
+    border-radius: layout.$full-corner;
+  }
+
+  &.grow {
+    flex-grow: 1;
+  }
+
+  &.gap {
+    gap: spacing.$unit;
+  }
+
+  &.raid {
+    width: 100%;
+  }
+
+  // Element colors
+  &.fire {
+    [data-state='checked'] {
+      background: var(--fire-bg);
+      color: var(--fire-text);
+    }
+
+    button:hover {
+      background: var(--fire-hover-bg);
+      color: var(--fire-hover-text);
+    }
+  }
+
+  &.water {
+    [data-state='checked'] {
+      background: var(--water-bg);
+      color: var(--water-text);
+    }
+
+    button:hover {
+      background: var(--water-hover-bg);
+      color: var(--water-hover-text);
+    }
+  }
+
+  &.earth {
+    [data-state='checked'] {
+      background: var(--earth-bg);
+      color: var(--earth-text);
+    }
+
+    button:hover {
+      background: var(--earth-hover-bg);
+      color: var(--earth-hover-text);
+    }
+  }
+
+  &.wind {
+    [data-state='checked'] {
+      background: var(--wind-bg);
+      color: var(--wind-text);
+    }
+
+    button:hover {
+      background: var(--wind-hover-bg);
+      color: var(--wind-hover-text);
+    }
+  }
+
+  &.light {
+    [data-state='checked'] {
+      background: var(--light-bg);
+      color: var(--light-text);
+    }
+
+    button:hover {
+      background: var(--light-hover-bg);
+      color: var(--light-hover-text);
+    }
+  }
+
+  &.dark {
+    [data-state='checked'] {
+      background: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    button:hover {
+      background: var(--dark-hover-bg);
+      color: var(--dark-hover-text);
+    }
+  }
+}
