@@ -3,6 +3,8 @@
   import type { Party } from '$lib/types/api/party'
   import { getContext } from 'svelte'
   import Icon from '$lib/components/Icon.svelte'
+  import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
+  import { ContextMenu as ContextMenuBase } from 'bits-ui'
 
   interface Props {
     item?: GridCharacter
@@ -55,35 +57,92 @@
 
   async function remove() {
     if (!item?.id) return
-    const party = ctx.getParty()
-    const editKey = ctx.getEditKey()
-    const updated = await ctx.services.gridService.removeCharacter(party.id, item.id as any, editKey || undefined)
-    ctx.updateParty(updated)
+    try {
+      const party = ctx.getParty()
+      const editKey = ctx.getEditKey()
+      const updated = await ctx.services.gridService.removeCharacter(party.id, item.id as any, editKey || undefined)
+      if (updated) {
+        ctx.updateParty(updated)
+      }
+    } catch (err) {
+      console.error('Error removing character:', err)
+    }
+  }
+
+  function viewDetails() {
+    // TODO: Implement view details modal
+    console.log('View details for:', item)
+  }
+
+  function replace() {
+    if (ctx?.openPicker) {
+      ctx.openPicker({ type: 'character', position, item })
+    }
   }
 
 
 </script>
 
 <div class="unit" class:empty={!item}>
-  {#key (item ? (item as any).id ?? position : `empty-${position}`)}
-    <div
-      class="frame character cell"
-      class:editable={ctx?.canEdit()}
-      on:click={() => ctx?.openPicker && ctx.openPicker({ type: 'character', position, item })}
-    >
-      <img class="image" class:placeholder={!item || !(item?.character?.granblueId || (item as any)?.object?.granblueId)} alt={item ? displayName(item?.character || (item as any)?.object) : ''} src={imageUrl()} />
-      {#if !item && ctx?.canEdit()}
-        <span class="icon">
-          <Icon name="plus" size={24} />
-        </span>
-      {/if}
-      {#if ctx.canEdit() && item?.id}
-        <div class="actions">
-          <button class="remove" title="Remove" on:click|stopPropagation={remove}>×</button>
-        </div>
-      {/if}
-    </div>
-  {/key}
+  {#if item}
+    <ContextMenu>
+      {#snippet children()}
+        {#key (item as any).id ?? position}
+          <div
+            class="frame character cell"
+            class:editable={ctx?.canEdit()}
+            onclick={() => ctx?.canEdit() && replace()}
+          >
+            <img
+              class="image"
+              class:placeholder={!(item?.character?.granblueId || (item as any)?.object?.granblueId)}
+              alt={displayName(item?.character || (item as any)?.object)}
+              src={imageUrl()}
+            />
+            {#if ctx?.canEdit() && item?.id}
+              <div class="actions">
+                <button class="remove" title="Remove" onclick={(e) => { e.stopPropagation(); remove() }}>×</button>
+              </div>
+            {/if}
+          </div>
+        {/key}
+      {/snippet}
+
+      {#snippet menu()}
+        <ContextMenuBase.Item class="context-menu-item" onclick={viewDetails}>
+          View Details
+        </ContextMenuBase.Item>
+        {#if ctx?.canEdit()}
+          <ContextMenuBase.Item class="context-menu-item" onclick={replace}>
+            Replace
+          </ContextMenuBase.Item>
+          <ContextMenuBase.Separator class="context-menu-separator" />
+          <ContextMenuBase.Item class="context-menu-item danger" onclick={remove}>
+            Remove
+          </ContextMenuBase.Item>
+        {/if}
+      {/snippet}
+    </ContextMenu>
+  {:else}
+    {#key `empty-${position}`}
+      <div
+        class="frame character cell"
+        class:editable={ctx?.canEdit()}
+        onclick={() => ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'character', position, item })}
+      >
+        <img
+          class="image placeholder"
+          alt=""
+          src="/images/placeholders/placeholder-weapon-grid.png"
+        />
+        {#if ctx?.canEdit()}
+          <span class="icon">
+            <Icon name="plus" size={24} />
+          </span>
+        {/if}
+      </div>
+    {/key}
+  {/if}
   <div class="name">{item ? displayName(item?.character || (item as any)?.object) : ''}</div>
 </div>
 

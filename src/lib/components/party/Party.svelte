@@ -10,6 +10,7 @@
   import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
   import SearchSidebar from '$lib/components/panels/SearchSidebar.svelte'
   import type { SearchResult } from '$lib/api/resources/search'
+  import Dialog from '$lib/components/ui/Dialog.svelte'
 
   interface Props {
     party?: Party
@@ -42,6 +43,8 @@
   let pickerOpen = $state(false)
   let pickerTitle = $state('Search')
   let selectedSlot = $state<number>(0)
+  let editDialogOpen = $state(false)
+  let editingTitle = $state('')
   
   // Services
   const partyService = new PartyService(fetch)
@@ -93,23 +96,49 @@
   function selectTab(key: typeof tabs[number]['key']) {
     activeTab = key
   }
-  
+
+  // Edit dialog functions
+  function openEditDialog() {
+    if (!canEdit()) return
+    editingTitle = party.name || ''
+    editDialogOpen = true
+  }
+
+  async function savePartyTitle() {
+    if (!canEdit()) return
+
+    try {
+      loading = true
+      error = null
+
+      // Update party title via API
+      const updated = await updatePartyDetails({ name: editingTitle })
+      if (updated) {
+        party = updated
+        editDialogOpen = false
+      }
+    } catch (err: any) {
+      error = err.message || 'Failed to update party title'
+    } finally {
+      loading = false
+    }
+  }
+
   // Party operations
   async function updatePartyDetails(updates: Partial<Party>) {
-    if (!canEdit()) return
-    
+    if (!canEdit()) return null
+
     loading = true
     error = null
-    
+
     try {
-      const updated = await partyService.update(
-        party.id,
-        updates,
-        editKey || undefined
-      )
+      // Use apiClient for client-side updates (handles edit keys automatically)
+      const updated = await apiClient.updateParty(party.id, updates)
       party = updated
+      return updated
     } catch (err: any) {
       error = err.message || 'Failed to update party'
+      return null
     } finally {
       loading = false
     }
@@ -263,22 +292,37 @@
   // Create client-side wrappers for grid operations using API client
   const clientGridService = {
     async removeWeapon(partyId: string, gridWeaponId: string, _editKey?: string) {
-      await apiClient.removeWeapon(partyId, gridWeaponId)
-      // Reload party data
-      const updated = await partyService.getByShortcode(party.shortcode)
-      return updated
+      try {
+        await apiClient.removeWeapon(partyId, gridWeaponId)
+        // Reload party data
+        const updated = await partyService.getByShortcode(party.shortcode)
+        return updated
+      } catch (err) {
+        console.error('Failed to remove weapon:', err)
+        throw err
+      }
     },
     async removeSummon(partyId: string, gridSummonId: string, _editKey?: string) {
-      await apiClient.removeSummon(partyId, gridSummonId)
-      // Reload party data
-      const updated = await partyService.getByShortcode(party.shortcode)
-      return updated
+      try {
+        await apiClient.removeSummon(partyId, gridSummonId)
+        // Reload party data
+        const updated = await partyService.getByShortcode(party.shortcode)
+        return updated
+      } catch (err) {
+        console.error('Failed to remove summon:', err)
+        throw err
+      }
     },
     async removeCharacter(partyId: string, gridCharacterId: string, _editKey?: string) {
-      await apiClient.removeCharacter(partyId, gridCharacterId)
-      // Reload party data
-      const updated = await partyService.getByShortcode(party.shortcode)
-      return updated
+      try {
+        await apiClient.removeCharacter(partyId, gridCharacterId)
+        // Reload party data
+        const updated = await partyService.getByShortcode(party.shortcode)
+        return updated
+      } catch (err) {
+        console.error('Failed to remove character:', err)
+        throw err
+      }
     }
   }
 
@@ -314,23 +358,34 @@
         <p class="description">{party.description}</p>
       {/if}
     </div>
-    
+
     <div class="party-actions">
+      {#if canEdit()}
+        <button
+          class="edit-btn"
+          onclick={openEditDialog}
+          disabled={loading}
+          aria-label="Edit party details"
+        >
+          Edit
+        </button>
+      {/if}
+
       {#if authUserId}
-        <button 
+        <button
           class="favorite-btn"
           class:favorited={party.favorited}
-          on:click={toggleFavorite}
+          onclick={toggleFavorite}
           disabled={loading}
           aria-label={party.favorited ? 'Remove from favorites' : 'Add to favorites'}
         >
           {party.favorited ? '★' : '☆'}
         </button>
       {/if}
-      
-      <button 
+
+      <button
         class="remix-btn"
-        on:click={remixParty}
+        onclick={remixParty}
         disabled={loading}
         aria-label="Remix this party"
       >
@@ -366,7 +421,7 @@
         class="tab-btn"
         aria-pressed={activeTab === t.key}
         class:active={activeTab === t.key}
-        on:click={() => selectTab(t.key)}
+        onclick={() => selectTab(t.key)}
       >
         {t.label}
         {#if t.count > 0}
@@ -410,6 +465,39 @@
   </div>
 </div>
 
+<!-- Edit Dialog -->
+<Dialog bind:open={editDialogOpen} title="Edit Party Details">
+  {#snippet children()}
+    <div class="edit-form">
+      <label for="party-title">Party Title</label>
+      <input
+        id="party-title"
+        type="text"
+        bind:value={editingTitle}
+        placeholder="Enter party title..."
+        disabled={loading}
+      />
+    </div>
+  {/snippet}
+
+  {#snippet footer()}
+    <button
+      class="btn-secondary"
+      onclick={() => (editDialogOpen = false)}
+      disabled={loading}
+    >
+      Cancel
+    </button>
+    <button
+      class="btn-primary"
+      onclick={savePartyTitle}
+      disabled={loading || !editingTitle.trim()}
+    >
+      {loading ? 'Saving...' : 'Save'}
+    </button>
+  {/snippet}
+</Dialog>
+
 <style>
   .page-wrap { position: relative; --panel-w: 380px; overflow-x: auto; }
   .track { display: flex; gap: 0; align-items: flex-start; }
@@ -437,6 +525,7 @@
     gap: 0.5rem;
   }
   
+  .edit-btn,
   .favorite-btn,
   .remix-btn {
     padding: 0.5rem 1rem;
@@ -445,6 +534,10 @@
     background: white;
     cursor: pointer;
     transition: all 0.2s;
+  }
+
+  .edit-btn {
+    padding: 0.5rem 1rem;
   }
   
   .favorite-btn {
@@ -456,11 +549,13 @@
     color: gold;
   }
   
+  .edit-btn:hover,
   .favorite-btn:hover,
   .remix-btn:hover {
     background: #f5f5f5;
   }
-  
+
+  .edit-btn:disabled,
   .favorite-btn:disabled,
   .remix-btn:disabled {
     opacity: 0.5;
@@ -560,5 +655,76 @@
     text-align: left;
     max-width: 400px;
     margin: 1rem auto;
+  }
+
+  /* Edit form styles */
+  .edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .edit-form label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #666);
+  }
+
+  .edit-form input {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .edit-form input:focus {
+    outline: none;
+    border-color: var(--focus-ring, #3366ff);
+  }
+
+  .edit-form input:disabled {
+    background: #f5f5f5;
+    opacity: 0.7;
+  }
+
+  /* Dialog buttons */
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--button-primary-bg, #3366ff);
+    color: white;
+    border: none;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--button-primary-hover, #2855cc);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background: white;
+    color: var(--text-primary, #333);
+    border: 1px solid var(--border-color, #ddd);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: #f5f5f5;
+  }
+
+  .btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 </style>
