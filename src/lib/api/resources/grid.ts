@@ -47,6 +47,35 @@ export async function addWeapon(
   return res.json()
 }
 
+export async function updateWeapon(
+  fetch: FetchLike,
+  partyId: string,
+  gridWeaponId: string,
+  updates: {
+    position?: number
+    uncapLevel?: number
+    transcendenceStep?: number
+    element?: number
+  },
+  headers?: Record<string, string>
+): Promise<any> {
+  const res = await fetch(buildUrl(`/grid_weapons/${gridWeaponId}`), {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers
+    },
+    body: JSON.stringify({ weapon: updates })
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to update weapon: ${res.statusText}`)
+  }
+
+  return res.json()
+}
+
 export async function removeWeapon(
   fetch: FetchLike,
   partyId: string,
@@ -113,6 +142,35 @@ export async function addSummon(
   return res.json()
 }
 
+export async function updateSummon(
+  fetch: FetchLike,
+  partyId: string,
+  gridSummonId: string,
+  updates: {
+    position?: number
+    quickSummon?: boolean
+    uncapLevel?: number
+    transcendenceStep?: number
+  },
+  headers?: Record<string, string>
+): Promise<any> {
+  const res = await fetch(buildUrl(`/grid_summons/${gridSummonId}`), {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers
+    },
+    body: JSON.stringify({ summon: updates })
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to update summon: ${res.statusText}`)
+  }
+
+  return res.json()
+}
+
 export async function removeSummon(
   fetch: FetchLike,
   partyId: string,
@@ -170,6 +228,35 @@ export async function addCharacter(
 
   if (!res.ok) {
     throw new Error(`Failed to add character: ${res.statusText}`)
+  }
+
+  return res.json()
+}
+
+export async function updateCharacter(
+  fetch: FetchLike,
+  partyId: string,
+  gridCharacterId: string,
+  updates: {
+    position?: number
+    uncapLevel?: number
+    transcendenceStep?: number
+    perpetuity?: boolean
+  },
+  headers?: Record<string, string>
+): Promise<any> {
+  const res = await fetch(buildUrl(`/grid_characters/${gridCharacterId}`), {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers
+    },
+    body: JSON.stringify({ character: updates })
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to update character: ${res.statusText}`)
   }
 
   return res.json()

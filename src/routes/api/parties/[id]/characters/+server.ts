@@ -50,14 +50,13 @@ export const DELETE: RequestHandler = async ({ request, params, fetch }) => {
     const body = await request.json()
     const editKey = request.headers.get('X-Edit-Key')
 
-    // Forward to Rails API
-    const response = await fetch(buildUrl('/characters'), {
+    // Forward to Rails API - use grid_characters endpoint with the ID
+    const response = await fetch(buildUrl(`/grid_characters/${body.gridCharacterId}`), {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         ...(editKey ? { 'X-Edit-Key': editKey } : {})
-      },
-      body: JSON.stringify({ grid_character_id: body.gridCharacterId })
+      }
     })
 
     if (response.ok) {

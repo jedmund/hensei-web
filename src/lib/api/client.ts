@@ -243,7 +243,11 @@ export class APIClient {
       throw new Error(error.error || `Failed to update party: ${response.statusText}`)
     }
 
-    return response.json()
+    const data = await response.json()
+    // The API returns { party: { ... } }, extract the party object
+    const party = data.party || data
+    // Transform the response to match our clean types
+    return transformResponse(party)
   }
 
   /**
@@ -299,10 +303,44 @@ export class APIClient {
   }
 
   /**
+   * Update a weapon in a party
+   */
+  async updateWeapon(
+    partyId: string,
+    gridWeaponId: string,
+    updates: {
+      position?: number
+      uncapLevel?: number
+      transcendenceStep?: number
+      element?: number
+    }
+  ): Promise<any> {
+    const editKey = this.getEditKey(partyId)
+
+    const response = await fetch(`/api/parties/${partyId}/weapons/${gridWeaponId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(editKey ? { 'X-Edit-Key': editKey } : {})
+      },
+      body: JSON.stringify(updates)
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || `Failed to update weapon: ${response.statusText}`)
+    }
+
+    return response.json()
+  }
+
+  /**
    * Remove a weapon from a party
    */
   async removeWeapon(partyId: string, gridWeaponId: string): Promise<void> {
     const editKey = this.getEditKey(partyId)
+
+    console.log('Removing weapon:', { partyId, gridWeaponId, editKey })
 
     const response = await fetch(`/api/parties/${partyId}/weapons`, {
       method: 'DELETE',
@@ -314,7 +352,16 @@ export class APIClient {
     })
 
     if (!response.ok) {
-      const error = await response.json()
+      console.error('Remove weapon failed:', response.status, response.statusText)
+      // Try to get the response text to see what the server is returning
+      const text = await response.text()
+      console.error('Response body:', text)
+      let error = { error: 'Failed to remove weapon' }
+      try {
+        error = JSON.parse(text)
+      } catch (e) {
+        // Not JSON, use the text as is
+      }
       throw new Error(error.error || `Failed to remove weapon: ${response.statusText}`)
     }
   }
@@ -352,6 +399,38 @@ export class APIClient {
   }
 
   /**
+   * Update a summon in a party
+   */
+  async updateSummon(
+    partyId: string,
+    gridSummonId: string,
+    updates: {
+      position?: number
+      quickSummon?: boolean
+      uncapLevel?: number
+      transcendenceStep?: number
+    }
+  ): Promise<any> {
+    const editKey = this.getEditKey(partyId)
+
+    const response = await fetch(`/api/parties/${partyId}/summons/${gridSummonId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(editKey ? { 'X-Edit-Key': editKey } : {})
+      },
+      body: JSON.stringify(updates)
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || `Failed to update summon: ${response.statusText}`)
+    }
+
+    return response.json()
+  }
+
+  /**
    * Remove a summon from a party
    */
   async removeSummon(partyId: string, gridSummonId: string): Promise<void> {
@@ -367,7 +446,7 @@ export class APIClient {
     })
 
     if (!response.ok) {
-      const error = await response.json()
+      const error = await response.json().catch(() => ({ error: 'Failed to remove summon' }))
       throw new Error(error.error || `Failed to remove summon: ${response.statusText}`)
     }
   }
@@ -405,6 +484,38 @@ export class APIClient {
   }
 
   /**
+   * Update a character in a party
+   */
+  async updateCharacter(
+    partyId: string,
+    gridCharacterId: string,
+    updates: {
+      position?: number
+      uncapLevel?: number
+      transcendenceStep?: number
+      perpetuity?: boolean
+    }
+  ): Promise<any> {
+    const editKey = this.getEditKey(partyId)
+
+    const response = await fetch(`/api/parties/${partyId}/characters/${gridCharacterId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(editKey ? { 'X-Edit-Key': editKey } : {})
+      },
+      body: JSON.stringify(updates)
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || `Failed to update character: ${response.statusText}`)
+    }
+
+    return response.json()
+  }
+
+  /**
    * Remove a character from a party
    */
   async removeCharacter(partyId: string, gridCharacterId: string): Promise<void> {
@@ -420,7 +531,7 @@ export class APIClient {
     })
 
     if (!response.ok) {
-      const error = await response.json()
+      const error = await response.json().catch(() => ({ error: 'Failed to remove character' }))
       throw new Error(error.error || `Failed to remove character: ${response.statusText}`)
     }
   }

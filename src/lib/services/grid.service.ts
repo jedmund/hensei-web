@@ -109,6 +109,30 @@ export class GridService {
     )
   }
   
+  async updateWeapon(
+    partyId: string,
+    gridWeaponId: string,
+    updates: {
+      position?: number
+      uncapLevel?: number
+      transcendenceStep?: number
+      element?: number
+    },
+    editKey?: string
+  ): Promise<Party> {
+    const payload = {
+      id: gridWeaponId,
+      ...updates
+    }
+
+    return partiesApi.updateWeaponGrid(
+      this.fetch,
+      partyId,
+      payload,
+      this.buildHeaders(editKey)
+    )
+  }
+
   async moveWeapon(
     partyId: string,
     gridWeaponId: string,
@@ -119,7 +143,7 @@ export class GridService {
       id: gridWeaponId,
       position: newPosition
     }
-    
+
     return partiesApi.updateWeaponGrid(
       this.fetch,
       partyId,
@@ -223,7 +247,31 @@ export class GridService {
       id: gridSummonId,
       _destroy: true
     }
-    
+
+    return partiesApi.updateSummonGrid(
+      this.fetch,
+      partyId,
+      payload,
+      this.buildHeaders(editKey)
+    )
+  }
+
+  async updateSummon(
+    partyId: string,
+    gridSummonId: string,
+    updates: {
+      position?: number
+      quickSummon?: boolean
+      uncapLevel?: number
+      transcendenceStep?: number
+    },
+    editKey?: string
+  ): Promise<Party> {
+    const payload = {
+      id: gridSummonId,
+      ...updates
+    }
+
     return partiesApi.updateSummonGrid(
       this.fetch,
       partyId,
@@ -331,7 +379,31 @@ export class GridService {
       id: gridCharacterId,
       _destroy: true
     }
-    
+
+    return partiesApi.updateCharacterGrid(
+      this.fetch,
+      partyId,
+      payload,
+      this.buildHeaders(editKey)
+    )
+  }
+
+  async updateCharacter(
+    partyId: string,
+    gridCharacterId: string,
+    updates: {
+      position?: number
+      uncapLevel?: number
+      transcendenceStep?: number
+      perpetuity?: boolean
+    },
+    editKey?: string
+  ): Promise<Party> {
+    const payload = {
+      id: gridCharacterId,
+      ...updates
+    }
+
     return partiesApi.updateCharacterGrid(
       this.fetch,
       partyId,
