@@ -6,7 +6,16 @@ import { fileURLToPath, URL } from 'node:url'
 export default defineConfig({
 	resolve: {
 		alias: {
-			$src: fileURLToPath(new URL('./src', import.meta.url))
+			$src: fileURLToPath(new URL('./src', import.meta.url)),
+			$themes: fileURLToPath(new URL('./src/themes', import.meta.url))
+		}
+	},
+	css: {
+		preprocessorOptions: {
+			scss: {
+				api: 'modern-compiler',
+				loadPaths: [fileURLToPath(new URL('./src', import.meta.url))]
+			}
 		}
 	},
 	assetsInclude: ['**/*.svg'],
