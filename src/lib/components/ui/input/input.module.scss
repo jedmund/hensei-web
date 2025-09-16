@@ -1,0 +1,207 @@
+@use 'themes/spacing';
+@use 'themes/colors';
+@use 'themes/typography';
+@use 'themes/layout';
+@use 'themes/mixins';
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: spacing.$unit-half;
+
+  &:last-child .error {
+    margin-bottom: 0;
+  }
+
+  &.hidden {
+    display: none;
+  }
+
+  &.full {
+    width: 100%;
+  }
+
+  .label {
+    color: var(--text-primary);
+    font-size: typography.$font-small;
+    font-weight: typography.$medium;
+    margin-bottom: spacing.$unit-half;
+
+    .required {
+      color: colors.$error;
+      margin-left: spacing.$unit-fourth;
+    }
+  }
+
+  .error {
+    color: colors.$error;
+    font-size: typography.$font-small;
+    padding: calc(spacing.$unit / 2) (spacing.$unit * 2);
+    min-width: 100%;
+    margin-bottom: spacing.$unit;
+    width: 0;
+  }
+
+  .fullHeight {
+    height: 100%;
+  }
+
+  .input {
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--input-bg);
+    border-radius: layout.$input-corner;
+    border: none;
+    box-sizing: border-box;
+    color: var(--text-primary);
+    display: block;
+    font-family: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: typography.$font-regular;
+    width: 100%;
+
+    &:not(.wrapper) {
+      padding: (spacing.$unit * 1.5) spacing.$unit-2x;
+    }
+
+    &.accessory,
+    &.wrapper {
+      $offset: 2px;
+
+      align-items: center;
+      background: var(--input-bg);
+      border-radius: layout.$input-corner;
+      box-sizing: border-box;
+      position: relative;
+      display: flex;
+      padding: 0;
+
+      .counter {
+        color: var(--text-tertiary);
+        display: block;
+        font-weight: typography.$bold;
+        line-height: 48px;
+        position: absolute;
+        right: spacing.$unit-2x;
+        top: 0;
+        pointer-events: none;
+      }
+
+      input {
+        background: transparent;
+        border-radius: layout.$input-corner;
+        border: 2px solid transparent;
+        box-sizing: border-box;
+        color: var(--text-primary);
+        padding: (spacing.$unit * 1.75) spacing.$unit-2x;
+        width: 100%;
+        font-size: typography.$font-regular;
+        font-family: inherit;
+
+        &:focus {
+          border: 2px solid colors.$blue;
+          outline: none;
+        }
+      }
+
+      .iconLeft,
+      .iconRight {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        pointer-events: none;
+        color: var(--text-secondary);
+
+        svg {
+          fill: currentColor;
+        }
+      }
+
+      .iconLeft {
+        left: spacing.$unit-2x;
+      }
+
+      .iconRight {
+        right: spacing.$unit-2x;
+      }
+
+      &:has(.iconLeft) input {
+        padding-left: spacing.$unit-5x;
+      }
+
+      &:has(.iconRight) input {
+        padding-right: spacing.$unit-5x;
+      }
+
+      &:has(.counter) input {
+        padding-right: spacing.$unit-8x;
+      }
+    }
+
+    &[type='number']::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    &.bound {
+      background-color: var(--input-bound-bg);
+
+      &:hover {
+        background-color: var(--input-bound-bg-hover);
+      }
+    }
+
+    &.duration {
+      background: transparent;
+      border: none;
+      padding: 0;
+      width: initial;
+      height: 100%;
+      padding: calc(spacing.$unit-2x - 2px) 0;
+
+      &:hover {
+        background: transparent;
+      }
+
+      &:focus,
+      &:focus-visible {
+        border: none;
+      }
+    }
+
+    &.number {
+      text-align: right;
+      width: spacing.$unit-8x;
+    }
+
+    &.range {
+      text-align: right;
+      width: spacing.$unit-12x;
+    }
+
+    &.alignRight {
+      text-align: right;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: var(--input-bg-hover);
+    }
+
+    &:focus {
+      border: 2px solid colors.$blue;
+      outline: none;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .counter {
+    display: none;
+  }
+}
+
+.input::placeholder,
+.input > input::placeholder {
+  color: var(--text-tertiary);
+  opacity: 1;
+}
