@@ -3,18 +3,24 @@
 <script lang="ts">
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
-	import Button from './Button.svelte'
+	import Button from './ui/button/Button.svelte'
 	import Icon from './Icon.svelte'
 	import { DropdownMenu } from 'bits-ui'
 
 	// Props from layout data
-	const { username: usernameProp, isAuthenticated: isAuthProp } = $props<{
+	const {
+		username: usernameProp,
+		isAuthenticated: isAuthProp,
+		role: roleProp
+	} = $props<{
 		username?: string | null
 		isAuthenticated?: boolean
+		role?: number | null
 	}>()
 
 	const username = $derived(usernameProp ?? '')
 	const isAuth = $derived(Boolean(isAuthProp))
+	const role = $derived(roleProp ?? null)
 
 	// Localized links
 	const galleryHref = $derived(localizeHref('/teams/explore'))
@@ -22,6 +28,7 @@
 	const meHref = $derived(localizeHref('/me'))
 	const loginHref = $derived(localizeHref('/login'))
 	const settingsHref = $derived(localizeHref('/settings'))
+	const databaseHref = $derived(localizeHref('/database'))
 	const newTeamHref = $derived(localizeHref('/teams/new'))
 </script>
 
@@ -49,6 +56,11 @@
 						<DropdownMenu.Item class="dropdown-item" href={settingsHref}>
 							{m.nav_settings()}
 						</DropdownMenu.Item>
+						{#if role !== null && role >= 7}
+							<DropdownMenu.Item class="dropdown-item" href={databaseHref}>
+								Database
+							</DropdownMenu.Item>
+						{/if}
 						{#if isAuth}
 							<DropdownMenu.Item class="dropdown-item" asChild>
 								<form method="post" action="/auth/logout">
