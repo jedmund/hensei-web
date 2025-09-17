@@ -10,7 +10,9 @@
   import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
   import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
   import SearchSidebar from '$lib/components/panels/SearchSidebar.svelte'
+  import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
   import type { SearchResult } from '$lib/api/resources/search'
+  import { GridType } from '$lib/types/enums'
   import Dialog from '$lib/components/ui/Dialog.svelte'
 
   interface Props {
@@ -38,7 +40,7 @@
       ? initial
       : defaultParty
   )
-  let activeTab = $state<'weapons' | 'summons' | 'characters'>('weapons')
+  let activeTab = $state<GridType>(GridType.Weapon)
   let loading = $state(false)
   let error = $state<string | null>(null)
   let pickerOpen = $state(false)
@@ -212,20 +214,13 @@
     return result.canEdit
   })
   
-  // Tab configuration - use function to avoid state capture
-  const tabs = $derived([
-    { key: 'weapons' as const, label: 'Weapons', count: (party?.weapons ?? []).length },
-    { key: 'summons' as const, label: 'Summons', count: (party?.summons ?? []).length },
-    { key: 'characters' as const, label: 'Characters', count: (party?.characters ?? []).length }
-  ])
-
   // Derived elements for character image logic
   const mainWeapon = $derived(() => (party?.weapons ?? []).find(w => w?.mainhand || w?.position === -1))
   const mainWeaponElement = $derived(() => mainWeapon?.element ?? mainWeapon?.weapon?.element)
   const partyElement = $derived(() => party?.element)
 
-  function selectTab(key: typeof tabs[number]['key']) {
-    activeTab = key
+  function handleTabChange(tab: GridType) {
+    activeTab = tab
   }
 
   // Edit dialog functions
@@ -334,16 +329,16 @@
       let targetSlot = selectedSlot
 
       // Call appropriate API based on current tab
-      if (activeTab === 'weapons') {
+      if (activeTab === GridType.Weapon) {
         await apiClient.addWeapon(party.id, item.granblue_id, targetSlot, {
           mainhand: targetSlot === -1
         })
-      } else if (activeTab === 'summons') {
+      } else if (activeTab === GridType.Summon) {
         await apiClient.addSummon(party.id, item.granblue_id, targetSlot, {
           main: targetSlot === -1,
           friend: targetSlot === 6
         })
-      } else if (activeTab === 'characters') {
+      } else if (activeTab === GridType.Character) {
         await apiClient.addCharacter(party.id, item.granblue_id, targetSlot)
       }
 
@@ -354,7 +349,7 @@
       // Find next empty slot for continuous adding
       let nextEmptySlot = -999 // sentinel value meaning no empty slot found
 
-      if (activeTab === 'weapons') {
+      if (activeTab === GridType.Weapon) {
         // Check mainhand first (position -1)
         if (!party.weapons.find(w => w.position === -1 || w.mainhand)) {
           nextEmptySlot = -1
@@ -367,7 +362,7 @@
             }
           }
         }
-      } else if (activeTab === 'summons') {
+      } else if (activeTab === GridType.Summon) {
         // Check main summon first (position -1)
         if (!party.summons.find(s => s.position === -1 || s.main)) {
           nextEmptySlot = -1
@@ -384,7 +379,7 @@
             nextEmptySlot = 6
           }
         }
-      } else if (activeTab === 'characters') {
+      } else if (activeTab === GridType.Character) {
         // Check character slots 0-4
         for (let i = 0; i < 5; i++) {
           if (!party.characters.find(c => c.position === i)) {
@@ -471,8 +466,8 @@
     openPicker: (opts: { type: 'weapon' | 'summon' | 'character'; position: number; item?: any }) => {
       if (!canEdit()) return
       selectedSlot = opts.position
-      activeTab = opts.type === 'weapon' ? 'weapons' :
-                  opts.type === 'summon' ? 'summons' : 'characters'
+      activeTab = opts.type === 'weapon' ? GridType.Weapon :
+                  opts.type === 'summon' ? GridType.Summon : GridType.Character
       pickerTitle = `Search ${opts.type}s`
       pickerOpen = true
     }
@@ -549,21 +544,12 @@
     </div>
   {/if}
 
-  <nav class="party-tabs" aria-label="Party sections">
-    {#each tabs as t}
-      <button
-        class="tab-btn"
-        aria-pressed={activeTab === t.key}
-        class:active={activeTab === t.key}
-        onclick={() => selectTab(t.key)}
-      >
-        {t.label}
-        {#if t.count > 0}
-          <span class="count">({t.count})</span>
-        {/if}
-      </button>
-    {/each}
-  </nav>
+  <PartySegmentedControl
+    selectedTab={activeTab}
+    onTabChange={handleTabChange}
+    party={party}
+    class="party-tabs"
+  />
   
   {#if error}
     <div class="error-message" role="alert">
@@ -572,14 +558,14 @@
   {/if}
 
   <div class="party-content">
-    {#if activeTab === 'weapons'}
-      <WeaponGrid 
-        weapons={party.weapons} 
+    {#if activeTab === GridType.Weapon}
+      <WeaponGrid
+        weapons={party.weapons}
         raidExtra={(party as any)?.raid?.group?.extra}
         showGuidebooks={(party as any)?.raid?.group?.guidebooks}
         guidebooks={(party as any)?.guidebooks}
       />
-    {:else if activeTab === 'summons'}
+    {:else if activeTab === GridType.Summon}
       <SummonGrid summons={party.summons} />
     {:else}
       <CharacterGrid characters={party.characters} mainWeaponElement={mainWeaponElement} partyElement={partyElement} />
@@ -590,8 +576,8 @@
     </section>
     <SearchSidebar
       open={pickerOpen}
-      type={activeTab === 'weapons' ? 'weapon' :
-            activeTab === 'summons' ? 'summon' : 'character'}
+      type={activeTab === GridType.Weapon ? 'weapon' :
+            activeTab === GridType.Summon ? 'summon' : 'character'}
       onClose={() => (pickerOpen = false)}
       onAddItems={handleAddItems}
       canAddMore={true}
@@ -729,42 +715,7 @@
   .raid-name {
     font-weight: 600;
   }
-  
-  .party-tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #eee;
-  }
-  
-  .tab-btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.2s;
-  }
-  
-  .tab-btn.active {
-    color: #3366ff;
-  }
-  
-  .tab-btn.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #3366ff;
-  }
-  
-  .tab-btn .count {
-    color: #999;
-    font-size: 0.9em;
-  }
-  
+
   .error-message {
     padding: 0.75rem;
     background: #fee;
@@ -773,22 +724,9 @@
     color: #c00;
     margin-bottom: 1rem;
   }
-  
+
   .party-content {
     min-height: 400px;
-  }
-  
-  .grid-placeholder {
-    padding: 2rem;
-    background: #f9f9f9;
-    border-radius: 8px;
-    text-align: center;
-  }
-
-  .grid-placeholder ul {
-    text-align: left;
-    max-width: 400px;
-    margin: 1rem auto;
   }
 
   /* Edit form styles */

@@ -5,6 +5,8 @@
   import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
   import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
   import SearchSidebar from '$lib/components/panels/SearchSidebar.svelte'
+  import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
+  import { GridType } from '$lib/types/enums'
   import { setContext } from 'svelte'
   import type { SearchResult } from '$lib/api/resources/search'
   import { apiClient } from '$lib/api/client'
@@ -17,15 +19,10 @@
   const currentUser = $derived($page.data?.currentUser)
 
   // Local, client-only state for tab selection (Svelte 5 runes)
-  let activeTab = $state<'weapons' | 'summons' | 'characters'>('weapons')
-  const tabs = [
-    { key: 'weapons', label: 'Weapons' },
-    { key: 'summons', label: 'Summons' },
-    { key: 'characters', label: 'Characters' }
-  ] as const
+  let activeTab = $state<GridType>(GridType.Weapon)
 
-  function selectTab(key: typeof tabs[number]['key']) {
-    activeTab = key
+  function selectTab(gridType: GridType) {
+    activeTab = gridType
     sidebarOpen = true // Auto-open sidebar when switching tabs
   }
 
@@ -66,8 +63,8 @@
   let isCharacterGridFull = $derived(characters.length >= 5) // 5 character slots
 
   let canAddMore = $derived(
-    activeTab === 'weapons' ? !isWeaponGridFull :
-    activeTab === 'summons' ? !isSummonGridFull :
+    activeTab === GridType.Weapon ? !isWeaponGridFull :
+    activeTab === GridType.Summon ? !isSummonGridFull :
     !isCharacterGridFull
   )
 
@@ -118,7 +115,7 @@
         try {
           console.log('Adding item to party:', { partyId, itemId: firstItem.id, type: activeTab, position })
 
-          if (activeTab === 'weapons') {
+          if (activeTab === GridType.Weapon) {
             // Use selectedSlot if available, otherwise default to mainhand
             if (selectedSlot === null) position = -1
             const addResult = await apiClient.addWeapon(
@@ -141,7 +138,7 @@
               },
               mainhand: position === -1
             }]
-          } else if (activeTab === 'summons') {
+          } else if (activeTab === GridType.Summon) {
             // Use selectedSlot if available, otherwise default to main summon
             if (selectedSlot === null) position = -1
             const addResult = await apiClient.addSummon(
@@ -165,7 +162,7 @@
               main: position === -1,
               friend: position === 6
             }]
-          } else if (activeTab === 'characters') {
+          } else if (activeTab === GridType.Character) {
             // Use selectedSlot if available, otherwise default to first slot
             if (selectedSlot === null) position = 0
             const addResult = await apiClient.addCharacter(
@@ -251,7 +248,7 @@
           const item = items[i]
           let position = -1 // Default position
 
-          if (activeTab === 'weapons') {
+          if (activeTab === GridType.Weapon) {
             // Use selectedSlot for first item if available
             if (i === 0 && selectedSlot !== null && !weapons.find(w => w.position === selectedSlot)) {
               position = selectedSlot
@@ -283,7 +280,7 @@
               },
               mainhand: position === -1
             }]
-          } else if (activeTab === 'summons') {
+          } else if (activeTab === GridType.Summon) {
             // Use selectedSlot for first item if available
             if (i === 0 && selectedSlot !== null && !summons.find(s => s.position === selectedSlot)) {
               position = selectedSlot
@@ -316,7 +313,7 @@
               main: position === -1,
               friend: position === 6
             }]
-          } else if (activeTab === 'characters') {
+          } else if (activeTab === GridType.Character) {
             // Use selectedSlot for first item if available
             if (i === 0 && selectedSlot !== null && !characters.find(c => c.position === selectedSlot)) {
               position = selectedSlot
@@ -359,7 +356,7 @@
     }
 
     // Original local-only adding logic (before party creation)
-    if (activeTab === 'weapons') {
+    if (activeTab === GridType.Weapon) {
       // Add weapons to empty slots
       const emptySlots = Array.from({ length: 10 }, (_, i) => i - 1) // -1 for mainhand, 0-8 for grid
         .filter(i => !weapons.find(w => w.position === i))
@@ -391,7 +388,7 @@
         weapons = [...weapons, newWeapon]
       })
       console.log('Updated weapons array:', weapons)
-    } else if (activeTab === 'summons') {
+    } else if (activeTab === GridType.Summon) {
       // Add summons to empty slots
       const emptySlots = [-1, 0, 1, 2, 3, 6] // main, 4 grid slots, friend
         .filter(i => !summons.find(s => s.position === i))
@@ -421,7 +418,7 @@
           friend: position === 6
         }]
       })
-    } else if (activeTab === 'characters') {
+    } else if (activeTab === GridType.Character) {
       // Add characters to empty slots
       const emptySlots = Array.from({ length: 5 }, (_, i) => i)
         .filter(i => !characters.find(c => c.position === i))
@@ -515,23 +512,23 @@
         </button>
       </header>
 
-      <nav class="party-tabs" aria-label="Party sections">
-        {#each tabs as t}
-          <button
-            class="tab-btn"
-            aria-pressed={activeTab === t.key}
-            class:active={activeTab === t.key}
-            on:click={() => selectTab(t.key)}
-          >
-            {t.label}
-          </button>
-        {/each}
-      </nav>
+      <PartySegmentedControl
+        value={activeTab}
+        onValueChange={selectTab}
+        party={{
+          element: 0,
+          job: undefined,
+          characters,
+          weapons,
+          summons
+        }}
+        userGender={currentUser?.gender}
+      />
 
       <div class="party-content">
-        {#if activeTab === 'weapons'}
+        {#if activeTab === GridType.Weapon}
           <WeaponGrid {weapons} />
-        {:else if activeTab === 'summons'}
+        {:else if activeTab === GridType.Summon}
           <SummonGrid {summons} />
         {:else}
           <CharacterGrid {characters} />
@@ -541,7 +538,7 @@
 
     <SearchSidebar
       open={sidebarOpen}
-      type={activeTab === 'weapons' ? 'weapon' : activeTab === 'summons' ? 'summon' : 'character'}
+      type={activeTab === GridType.Weapon ? 'weapon' : activeTab === GridType.Summon ? 'summon' : 'character'}
       onClose={() => sidebarOpen = false}
       onAddItems={handleAddItems}
       canAddMore={canAddMore}
@@ -627,36 +624,6 @@
 
   .toggle-sidebar:hover {
     background: #2857e0;
-  }
-
-  .party-tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #eee;
-  }
-
-  .tab-btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.2s;
-  }
-
-  .tab-btn.active {
-    color: #3366ff;
-  }
-
-  .tab-btn.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #3366ff;
   }
 
   .party-content {
