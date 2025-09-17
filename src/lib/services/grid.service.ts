@@ -1,5 +1,6 @@
 import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
 import * as partiesApi from '$lib/api/resources/parties'
+import * as gridApi from '$lib/api/resources/grid'
 import type { FetchLike } from '$lib/api/core'
 
 export interface GridOperation {
@@ -171,27 +172,15 @@ export class GridService {
   }
   
   async updateWeaponUncap(
-    partyId: string,
     gridWeaponId: string,
-    uncapLevel: number,
-    transcendenceLevel: number,
+    uncapLevel?: number,
+    transcendenceStep?: number,
     editKey?: string
-  ): Promise<Party> {
-    const payload = {
-      id: gridWeaponId,
+  ): Promise<any> {
+    return gridApi.updateWeaponUncap(
+      gridWeaponId,
       uncapLevel,
-      transcendenceLevel
-    }
-    
-    // Set uncap to 6 when transcending
-    if (transcendenceLevel > 0 && uncapLevel < 6) {
-      payload.uncapLevel = 6
-    }
-    
-    return partiesApi.updateWeaponGrid(
-      this.fetch,
-      partyId,
-      payload,
+      transcendenceStep,
       this.buildHeaders(editKey)
     )
   }
@@ -281,27 +270,15 @@ export class GridService {
   }
   
   async updateSummonUncap(
-    partyId: string,
     gridSummonId: string,
-    uncapLevel: number,
-    transcendenceLevel: number,
+    uncapLevel?: number,
+    transcendenceStep?: number,
     editKey?: string
-  ): Promise<Party> {
-    const payload = {
-      id: gridSummonId,
+  ): Promise<any> {
+    return gridApi.updateSummonUncap(
+      gridSummonId,
       uncapLevel,
-      transcendenceLevel
-    }
-    
-    // Set uncap to 6 when transcending
-    if (transcendenceLevel > 0 && uncapLevel < 6) {
-      payload.uncapLevel = 6
-    }
-    
-    return partiesApi.updateSummonGrid(
-      this.fetch,
-      partyId,
-      payload,
+      transcendenceStep,
       this.buildHeaders(editKey)
     )
   }
@@ -413,24 +390,15 @@ export class GridService {
   }
   
   async updateCharacterUncap(
-    partyId: string,
     gridCharacterId: string,
-    uncapLevel: number,
-    transcendenceLevel: number,
-    perpetuity: boolean,
+    uncapLevel?: number,
+    transcendenceStep?: number,
     editKey?: string
-  ): Promise<Party> {
-    const payload = {
-      id: gridCharacterId,
+  ): Promise<any> {
+    return gridApi.updateCharacterUncap(
+      gridCharacterId,
       uncapLevel,
-      transcendenceLevel,
-      perpetuity
-    }
-    
-    return partiesApi.updateCharacterGrid(
-      this.fetch,
-      partyId,
-      payload,
+      transcendenceStep,
       this.buildHeaders(editKey)
     )
   }

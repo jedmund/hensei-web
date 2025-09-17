@@ -99,7 +99,10 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		if (e.pointerType === 'touch') {
 			initiateTouchDrag(e, item, source, type)
 		} else {
-			startDrag(item, { ...source, type })
+			// For mouse, don't start drag immediately - wait for actual drag movement
+			// This prevents the dragging class from being applied on simple clicks
+			state.touchState.touchStartPos = { x: e.clientX, y: e.clientY }
+			state.touchState.currentTouch = { item, source, type }
 		}
 	}
 
@@ -123,9 +126,19 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 			Math.pow(e.clientY - state.touchState.touchStartPos.y, 2)
 		)
 
-		if (distance > state.touchState.touchThreshold && state.touchState.longPressTimer) {
+		// For touch events, cancel long press if moved too much
+		if (e.pointerType === 'touch' && distance > state.touchState.touchThreshold && state.touchState.longPressTimer) {
 			clearTimeout(state.touchState.longPressTimer)
 			state.touchState.longPressTimer = null
+		}
+
+		// For mouse events, start dragging after threshold movement
+		if (e.pointerType === 'mouse' && !state.isDragging && state.touchState.currentTouch) {
+			if (distance > state.touchState.touchThreshold) {
+				const { item, source, type } = state.touchState.currentTouch
+				startDrag(item, { ...source, type })
+				state.touchState.currentTouch = null
+			}
 		}
 	}
 
@@ -135,6 +148,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 			state.touchState.longPressTimer = null
 		}
 		state.touchState.touchStartPos = null
+		state.touchState.currentTouch = null
 	}
 
 	function startDrag(item: GridItem, source: DragSource) {

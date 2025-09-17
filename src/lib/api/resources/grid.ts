@@ -282,3 +282,97 @@ export async function removeCharacter(
     throw new Error(`Failed to remove character: ${res.statusText}`)
   }
 }
+
+// Uncap update methods - these use special endpoints
+export async function updateCharacterUncap(
+  gridCharacterId: string,
+  uncapLevel?: number,
+  transcendenceStep?: number,
+  headers?: Record<string, string>
+): Promise<any> {
+  const body = {
+    character: {
+      id: gridCharacterId,
+      ...(uncapLevel !== undefined && { uncap_level: uncapLevel }),
+      ...(transcendenceStep !== undefined && { transcendence_step: transcendenceStep })
+    }
+  }
+
+  const res = await fetch('/api/uncap/characters', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers
+    },
+    body: JSON.stringify(body)
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to update character uncap: ${res.statusText}`)
+  }
+
+  return res.json()
+}
+
+export async function updateWeaponUncap(
+  gridWeaponId: string,
+  uncapLevel?: number,
+  transcendenceStep?: number,
+  headers?: Record<string, string>
+): Promise<any> {
+  const body = {
+    weapon: {
+      id: gridWeaponId,
+      ...(uncapLevel !== undefined && { uncap_level: uncapLevel }),
+      ...(transcendenceStep !== undefined && { transcendence_step: transcendenceStep })
+    }
+  }
+
+  const res = await fetch('/api/uncap/weapons', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers
+    },
+    body: JSON.stringify(body)
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to update weapon uncap: ${res.statusText}`)
+  }
+
+  return res.json()
+}
+
+export async function updateSummonUncap(
+  gridSummonId: string,
+  uncapLevel?: number,
+  transcendenceStep?: number,
+  headers?: Record<string, string>
+): Promise<any> {
+  const body = {
+    summon: {
+      id: gridSummonId,
+      ...(uncapLevel !== undefined && { uncap_level: uncapLevel }),
+      ...(transcendenceStep !== undefined && { transcendence_step: transcendenceStep })
+    }
+  }
+
+  const res = await fetch('/api/uncap/summons', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers
+    },
+    body: JSON.stringify(body)
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to update summon uncap: ${res.statusText}`)
+  }
+
+  return res.json()
+}
