@@ -9,6 +9,7 @@
 	import type { IColumn, IRow } from 'wx-svelte-grid'
 	import { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 	import { onMount } from 'svelte'
+	import { goto } from '$app/navigation'
 
 	interface Props {
 		resource: 'weapons' | 'characters' | 'summons'
@@ -67,7 +68,22 @@
 		api = apiRef
 		// Connect provider to grid
 		api.setNext(provider)
+
+		// Add row click handler
+		api.on("select-row", (ev: any) => {
+			console.log("Row selected:", ev)
+			const rowId = ev.id
+			if (rowId) {
+				// Find the row data to get the granblue_id
+				const rowData = data.find((item: any) => item.id === rowId)
+				if (rowData && rowData.granblue_id) {
+					console.log(`Navigating to: /database/${resource}/${rowData.granblue_id}`)
+					goto(`/database/${resource}/${rowData.granblue_id}`)
+				}
+			}
+		})
 	}
+
 
 	// Handle pagination
 	const handlePrevPage = () => {
@@ -352,6 +368,7 @@
 
 	:global(.wx-grid .wx-row:hover) {
 		background: #f8f9fa;
+		cursor: pointer;
 	}
 
 	// Element color classes
