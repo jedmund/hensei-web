@@ -5,6 +5,7 @@
   import Icon from '$lib/components/Icon.svelte'
   import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
   import { ContextMenu as ContextMenuBase } from 'bits-ui'
+  import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
   interface Props {
     item?: GridCharacter
@@ -33,15 +34,12 @@
   }
   // Use $derived to ensure consistent computation between server and client
   let imageUrl = $derived(() => {
-    // Handle both new structure (item.character) and old structure (item.object) for compatibility
-    const characterData = item?.character || (item as any)?.object
-
-    // If no item or no granblueId, return placeholder
-    if (!item || !characterData?.granblueId) {
+    // If no item or no character with granblueId, return placeholder
+    if (!item || !item.character?.granblueId) {
       return '/images/placeholders/placeholder-weapon-grid.png'
     }
 
-    const id = characterData.granblueId
+    const id = item.character.granblueId
     const uncap = item?.uncapLevel ?? 0
     const transStep = item?.transcendenceStep ?? 0
     let suffix = '01'
@@ -87,7 +85,7 @@
   {#if item}
     <ContextMenu>
       {#snippet children()}
-        {#key (item as any).id ?? position}
+        {#key item?.id ?? position}
           <div
             class="frame character cell"
             class:editable={ctx?.canEdit()}
@@ -95,8 +93,8 @@
           >
             <img
               class="image"
-              class:placeholder={!(item?.character?.granblueId || (item as any)?.object?.granblueId)}
-              alt={displayName(item?.character || (item as any)?.object)}
+              class:placeholder={!item?.character?.granblueId}
+              alt={displayName(item?.character)}
               src={imageUrl()}
             />
             {#if ctx?.canEdit() && item?.id}
@@ -143,7 +141,46 @@
       </div>
     {/key}
   {/if}
-  <div class="name">{item ? displayName(item?.character || (item as any)?.object) : ''}</div>
+  {#if item}
+    <UncapIndicator
+      type="character"
+      uncapLevel={item.uncapLevel}
+      transcendenceStage={item.transcendenceStep}
+      special={item.character?.special}
+      flb={item.character?.uncap?.flb}
+      ulb={item.character?.uncap?.ulb}
+      editable={ctx?.canEdit()}
+      updateUncap={async (level) => {
+        if (!item?.id || !ctx) return
+        try {
+          const editKey = ctx.getEditKey()
+          const updated = await ctx.services.gridService.updateCharacterUncap(item.id, level, undefined, editKey || undefined)
+          if (updated) {
+            ctx.updateParty(updated)
+          }
+        } catch (err) {
+          console.error('Failed to update character uncap:', err)
+          // TODO: Show user-friendly error notification
+        }
+      }}
+      updateTranscendence={async (stage) => {
+        if (!item?.id || !ctx) return
+        try {
+          const editKey = ctx.getEditKey()
+          // When setting transcendence > 0, also set uncap to max (6)
+          const maxUncap = stage > 0 ? 6 : undefined
+          const updated = await ctx.services.gridService.updateCharacterUncap(item.id, maxUncap, stage, editKey || undefined)
+          if (updated) {
+            ctx.updateParty(updated)
+          }
+        } catch (err) {
+          console.error('Failed to update character transcendence:', err)
+          // TODO: Show user-friendly error notification
+        }
+      }}
+    />
+  {/if}
+  <div class="name">{item ? displayName(item?.character) : ''}</div>
 </div>
 
 <style lang="scss">

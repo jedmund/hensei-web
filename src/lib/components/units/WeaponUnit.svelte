@@ -5,6 +5,7 @@
   import Icon from '$lib/components/Icon.svelte'
   import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
   import { ContextMenu as ContextMenuBase } from 'bits-ui'
+  import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
   interface Props {
     item?: GridWeapon
@@ -36,19 +37,16 @@
     // Check position first for main weapon determination
     const isMain = position === -1 || item?.mainhand
 
-    // Handle both new structure (item.weapon) and old structure (item.object) for compatibility
-    const weaponData = item?.weapon || (item as any)?.object
-
-    // If no item or no granblueId, return placeholder
-    if (!item || !weaponData?.granblueId) {
+    // If no item or no weapon with granblueId, return placeholder
+    if (!item || !item.weapon?.granblueId) {
       return isMain
         ? '/images/placeholders/placeholder-weapon-main.png'
         : '/images/placeholders/placeholder-weapon-grid.png'
     }
 
-    const id = weaponData.granblueId
+    const id = item.weapon.granblueId
     const folder = isMain ? 'weapon-main' : 'weapon-grid'
-    const objElement = weaponData?.element
+    const objElement = item.weapon?.element
     const instElement = item?.element
 
     if (objElement === 0 && instElement) {
@@ -89,7 +87,7 @@
   {#if item}
     <ContextMenu>
       {#snippet children()}
-        {#key (item as any).id ?? position}
+        {#key item?.id ?? position}
           <div
             class="frame weapon"
             class:main={item?.mainhand || position === -1}
@@ -98,8 +96,8 @@
           >
             <img
               class="image"
-              class:placeholder={!(item?.weapon?.granblueId || (item as any)?.object?.granblueId)}
-              alt={displayName(item?.weapon || (item as any)?.object)}
+              class:placeholder={!item?.weapon?.granblueId}
+              alt={displayName(item?.weapon)}
               src={imageUrl()}
             />
             {#if ctx?.canEdit() && item?.id}
@@ -151,7 +149,46 @@
       </div>
     {/key}
   {/if}
-  <div class="name">{item ? displayName(item?.weapon || (item as any)?.object) : ''}</div>
+  {#if item}
+    <UncapIndicator
+      type="weapon"
+      uncapLevel={item.uncapLevel}
+      transcendenceStage={item.transcendenceStep}
+      flb={item.weapon?.uncap?.flb}
+      ulb={item.weapon?.uncap?.ulb}
+      transcendence={item.weapon?.uncap?.transcendence}
+      editable={ctx?.canEdit()}
+      updateUncap={async (level) => {
+        if (!item?.id || !ctx) return
+        try {
+          const editKey = ctx.getEditKey()
+          const updated = await ctx.services.gridService.updateWeaponUncap(item.id, level, undefined, editKey || undefined)
+          if (updated) {
+            ctx.updateParty(updated)
+          }
+        } catch (err) {
+          console.error('Failed to update weapon uncap:', err)
+          // TODO: Show user-friendly error notification
+        }
+      }}
+      updateTranscendence={async (stage) => {
+        if (!item?.id || !ctx) return
+        try {
+          const editKey = ctx.getEditKey()
+          // When setting transcendence > 0, also set uncap to max (6)
+          const maxUncap = stage > 0 ? 6 : undefined
+          const updated = await ctx.services.gridService.updateWeaponUncap(item.id, maxUncap, stage, editKey || undefined)
+          if (updated) {
+            ctx.updateParty(updated)
+          }
+        } catch (err) {
+          console.error('Failed to update weapon transcendence:', err)
+          // TODO: Show user-friendly error notification
+        }
+      }}
+    />
+  {/if}
+  <div class="name">{item ? displayName(item?.weapon) : ''}</div>
 </div>
 
 <style lang="scss">

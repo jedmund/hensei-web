@@ -5,6 +5,7 @@
   import Icon from '$lib/components/Icon.svelte'
   import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
   import { ContextMenu as ContextMenuBase } from 'bits-ui'
+  import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
   interface Props {
     item?: GridSummon
@@ -34,17 +35,14 @@
     // Check position first for main/friend summon determination
     const isMain = position === -1 || position === 6 || item?.main || item?.friend
 
-    // Handle both new structure (item.summon) and old structure (item.object) for compatibility
-    const summonData = item?.summon || (item as any)?.object
-
-    // If no item or no granblueId, return placeholder
-    if (!item || !summonData?.granblueId) {
+    // If no item or no summon with granblueId, return placeholder
+    if (!item || !item.summon?.granblueId) {
       return isMain
         ? '/images/placeholders/placeholder-summon-main.png'
         : '/images/placeholders/placeholder-summon-grid.png'
     }
 
-    const id = summonData.granblueId
+    const id = item.summon.granblueId
     const folder = isMain ? 'summon-main' : 'summon-grid'
     return `/images/${folder}/${id}.jpg`
   })
@@ -81,7 +79,7 @@
   {#if item}
     <ContextMenu>
       {#snippet children()}
-        {#key (item as any).id ?? position}
+        {#key item?.id ?? position}
           <div
             class="frame summon"
             class:main={item?.main || position === -1}
@@ -92,8 +90,8 @@
           >
             <img
               class="image"
-              class:placeholder={!(item?.summon?.granblueId || (item as any)?.object?.granblueId)}
-              alt={displayName(item?.summon || (item as any)?.object)}
+              class:placeholder={!item?.summon?.granblueId}
+              alt={displayName(item?.summon)}
               src={imageUrl()}
             />
             {#if ctx?.canEdit() && item?.id}
@@ -149,7 +147,46 @@
       </div>
     {/key}
   {/if}
-  <div class="name">{item ? displayName(item?.summon || (item as any)?.object) : ''}</div>
+  {#if item}
+    <UncapIndicator
+      type="summon"
+      uncapLevel={item.uncapLevel}
+      transcendenceStage={item.transcendenceStep}
+      flb={item.summon?.uncap?.flb}
+      ulb={item.summon?.uncap?.ulb}
+      transcendence={item.summon?.uncap?.transcendence}
+      editable={ctx?.canEdit()}
+      updateUncap={async (level) => {
+        if (!item?.id || !ctx) return
+        try {
+          const editKey = ctx.getEditKey()
+          const updated = await ctx.services.gridService.updateSummonUncap(item.id, level, undefined, editKey || undefined)
+          if (updated) {
+            ctx.updateParty(updated)
+          }
+        } catch (err) {
+          console.error('Failed to update summon uncap:', err)
+          // TODO: Show user-friendly error notification
+        }
+      }}
+      updateTranscendence={async (stage) => {
+        if (!item?.id || !ctx) return
+        try {
+          const editKey = ctx.getEditKey()
+          // When setting transcendence > 0, also set uncap to max (6)
+          const maxUncap = stage > 0 ? 6 : undefined
+          const updated = await ctx.services.gridService.updateSummonUncap(item.id, maxUncap, stage, editKey || undefined)
+          if (updated) {
+            ctx.updateParty(updated)
+          }
+        } catch (err) {
+          console.error('Failed to update summon transcendence:', err)
+          // TODO: Show user-friendly error notification
+        }
+      }}
+    />
+  {/if}
+  <div class="name">{item ? displayName(item?.summon) : ''}</div>
 </div>
 
 <style lang="scss">
