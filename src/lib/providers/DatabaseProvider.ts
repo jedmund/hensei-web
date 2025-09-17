@@ -23,6 +23,7 @@ export class DatabaseProvider extends RestDataProvider {
 	private apiUrl: string
 	private totalCount: number = 0
 	private totalPages: number = 1
+	private searchQuery: string = ''
 
 	constructor(options: DatabaseProviderOptions) {
 		const apiUrl = `${API_BASE}/search/${options.resource}`
@@ -47,17 +48,20 @@ export class DatabaseProvider extends RestDataProvider {
 		const perPage = params?.per_page || this.pageSize
 
 		try {
-			const url = new URL(this.apiUrl)
-			url.searchParams.set('page', page.toString())
-
-			const response = await fetch(url.toString(), {
+			const response = await fetch(this.apiUrl, {
 				method: 'POST',
 				credentials: 'include',
 				headers: {
 					'Content-Type': 'application/json',
 					'X-Per-Page': perPage.toString()
 				},
-				body: JSON.stringify({})
+				body: JSON.stringify({
+					search: {
+						page: page,
+						per_page: perPage,
+						...(this.searchQuery && this.searchQuery.length >= 2 && { query: this.searchQuery })
+					}
+				})
 			})
 
 			if (!response.ok) {
@@ -108,5 +112,18 @@ export class DatabaseProvider extends RestDataProvider {
 	async setPageSize(size: number) {
 		this.pageSize = size
 		return this.getData({ page: 1, per_page: size })
+	}
+
+	// Set search query
+	setSearchQuery(query: string) {
+		this.searchQuery = query
+		// Reset to first page when search changes
+		this.currentPage = 1
+	}
+
+	// Clear search
+	clearSearch() {
+		this.searchQuery = ''
+		this.currentPage = 1
 	}
 }
