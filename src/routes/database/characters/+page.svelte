@@ -5,6 +5,8 @@
 	import type { IColumn } from 'wx-svelte-grid'
 	import CharacterImageCell from '$lib/components/database/cells/CharacterImageCell.svelte'
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
+	import CharacterUncapCell from '$lib/components/database/cells/CharacterUncapCell.svelte'
+	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
 
 	// Column configuration for characters
@@ -43,10 +45,17 @@
 			cell: ElementCell
 		},
 		{
-			id: 'max_level',
-			header: 'Max Level',
-			width: 80,
-			sort: true
+			id: 'uncap',
+			header: 'Uncap',
+			width: 160,
+			cell: CharacterUncapCell
+		},
+		{
+			id: 'last_updated',
+			header: 'Last Updated',
+			width: 120,
+			sort: true,
+			cell: LastUpdatedCell
 		}
 	]
 </script>

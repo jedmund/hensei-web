@@ -6,6 +6,8 @@
 	import WeaponImageCell from '$lib/components/database/cells/WeaponImageCell.svelte'
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import ProficiencyCell from '$lib/components/database/cells/ProficiencyCell.svelte'
+	import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
+	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
 
 	// Column configuration for weapons
@@ -51,10 +53,17 @@
 			cell: ProficiencyCell
 		},
 		{
-			id: 'max_level',
-			header: 'Max Level',
-			width: 80,
-			sort: true
+			id: 'uncap',
+			header: 'Uncap',
+			width: 160,
+			cell: WeaponUncapCell
+		},
+		{
+			id: 'last_updated',
+			header: 'Last Updated',
+			width: 120,
+			sort: true,
+			cell: LastUpdatedCell
 		}
 	]
 </script>

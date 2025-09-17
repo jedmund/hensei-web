@@ -8,7 +8,7 @@
 	import { Grid } from 'wx-svelte-grid'
 	import type { IColumn, IRow } from 'wx-svelte-grid'
 	import { DatabaseProvider } from '$lib/providers/DatabaseProvider'
-	import { onMount } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	import { goto } from '$app/navigation'
 
 	interface Props {
@@ -31,6 +31,7 @@
 	let total = $state(0)
 	let searchTerm = $state('')
 	let pageSize = $state(initialPageSize)
+	let searchTimeout: ReturnType<typeof setTimeout> | undefined
 
 	// Create provider
 	const provider = new DatabaseProvider({ resource, pageSize: initialPageSize })
@@ -101,30 +102,30 @@
 	const handlePageSizeChange = async (event: Event) => {
 		const target = event.target as HTMLSelectElement
 		const newPageSize = Number(target.value)
+		pageSize = newPageSize  // Update local state immediately
 		await provider.setPageSize(newPageSize)
 		loadData(1)
 	}
 
-	// Filter data based on search
-	const filteredData = $derived.by(() => {
-		if (!searchTerm) return data
+	// Handle search with debounce
+	const handleSearch = (term: string) => {
+		// Clear existing timeout
+		if (searchTimeout) {
+			clearTimeout(searchTimeout)
+		}
 
-		const term = searchTerm.toLowerCase()
-		return data.filter(item => {
-			// Search in name
-			if (item.name) {
-				const name = typeof item.name === 'string'
-					? item.name
-					: item.name.en || item.name.ja || ''
-				if (name.toLowerCase().includes(term)) return true
-			}
+		// Set new timeout for debounced search
+		searchTimeout = setTimeout(() => {
+			provider.setSearchQuery(term)
+			loadData(1) // Reset to first page when searching
+		}, 300) // 300ms debounce
+	}
 
-			// Search in other string fields
-			return Object.values(item).some(value =>
-				typeof value === 'string' && value.toLowerCase().includes(term)
-			)
-		})
+	// Watch for search term changes
+	$effect(() => {
+		handleSearch(searchTerm)
 	})
+
 
 	// Computed values
 	const startItem = $derived((currentPage - 1) * pageSize + 1)
@@ -133,6 +134,13 @@
 	// Load initial data
 	onMount(() => {
 		loadData()
+	})
+
+	// Clean up timeout on destroy
+	onDestroy(() => {
+		if (searchTimeout) {
+			clearTimeout(searchTimeout)
+		}
 	})
 </script>
 
@@ -166,7 +174,7 @@
 		{/if}
 
 		<Grid
-			data={filteredData}
+			data={data}
 			{columns}
 			{init}
 			sizes={{ rowHeight: 80 }}

@@ -46,7 +46,9 @@
 					<img
 						src={getWeaponImage(weapon)}
 						alt={getWeaponName(weapon.name)}
-						onerror={(e) => { e.currentTarget.src = '/images/placeholders/placeholder-weapon-main.png' }}
+						onerror={(e) => {
+							e.currentTarget.src = '/images/placeholders/placeholder-weapon-main.png'
+						}}
 					/>
 				</div>
 				<div class="weapon-info">
@@ -188,7 +190,9 @@
 		}
 	}
 
-	.loading, .error, .not-found {
+	.loading,
+	.error,
+	.not-found {
 		text-align: center;
 		padding: spacing.$unit * 4;
 
@@ -257,7 +261,7 @@
 					gap: spacing.$unit * 0.5;
 
 					.label {
-						font-weight: typography.$semibold;
+						font-weight: typography.$medium;
 						color: #666;
 						min-width: 100px;
 					}
@@ -266,12 +270,14 @@
 						color: #333;
 					}
 
-					.element-display, .proficiency-display {
+					.element-display,
+					.proficiency-display {
 						display: flex;
 						align-items: center;
 						gap: spacing.$unit * 0.25;
 
-						.element-icon, .proficiency-icon {
+						.element-icon,
+						.proficiency-icon {
 							width: 25px;
 							height: auto;
 						}
@@ -281,7 +287,8 @@
 		}
 	}
 
-	.weapon-details, .weapon-skills {
+	.weapon-details,
+	.weapon-skills {
 		padding: spacing.$unit * 2;
 		border-bottom: 1px solid #e5e5e5;
 
@@ -309,7 +316,7 @@
 				border-radius: 4px;
 
 				.label {
-					font-weight: typography.$semibold;
+					font-weight: typography.$medium;
 					color: #666;
 				}
 
@@ -331,7 +338,7 @@
 
 				.skill-name {
 					font-size: typography.$font-medium;
-					font-weight: typography.$semibold;
+					font-weight: typography.$medium;
 					margin: 0 0 spacing.$unit * 0.5 0;
 					color: #333;
 				}
@@ -362,7 +369,8 @@
 			}
 		}
 
-		.details-grid, .skills-grid {
+		.details-grid,
+		.skills-grid {
 			grid-template-columns: 1fr;
 		}
 	}

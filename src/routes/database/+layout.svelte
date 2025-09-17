@@ -1,10 +1,26 @@
 <script lang="ts">
   import { localizeHref } from '$lib/paraglide/runtime'
+  import { onMount } from 'svelte'
 
   const baseHref = localizeHref('/database')
   const summonsHref = localizeHref('/database/summons')
   const charactersHref = localizeHref('/database/characters')
   const weaponsHref = localizeHref('/database/weapons')
+
+  // Apply wider layout to the main element for database pages
+  onMount(() => {
+    const main = document.querySelector('main')
+    if (main) {
+      main.classList.add('database-layout')
+    }
+
+    return () => {
+      const main = document.querySelector('main')
+      if (main) {
+        main.classList.remove('database-layout')
+      }
+    }
+  })
 </script>
 
 <section class="db-nav">

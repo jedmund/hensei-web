@@ -5,6 +5,8 @@
 	import type { IColumn } from 'wx-svelte-grid'
 	import SummonImageCell from '$lib/components/database/cells/SummonImageCell.svelte'
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
+	import SummonUncapCell from '$lib/components/database/cells/SummonUncapCell.svelte'
+	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
 
 	// Column configuration for summons
@@ -43,10 +45,17 @@
 			cell: ElementCell
 		},
 		{
-			id: 'max_level',
-			header: 'Max Level',
-			width: 80,
-			sort: true
+			id: 'uncap',
+			header: 'Uncap',
+			width: 160,
+			cell: SummonUncapCell
+		},
+		{
+			id: 'last_updated',
+			header: 'Last Updated',
+			width: 120,
+			sort: true,
+			cell: LastUpdatedCell
 		}
 	]
 </script>
