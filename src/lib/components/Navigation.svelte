@@ -3,6 +3,7 @@
 <script lang="ts">
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
+	import { page } from '$app/stores'
 	import Button from './ui/button/Button.svelte'
 	import Icon from './Icon.svelte'
 	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
@@ -31,50 +32,101 @@
 	const settingsHref = $derived(localizeHref('/settings'))
 	const databaseHref = $derived(localizeHref('/database'))
 	const newTeamHref = $derived(localizeHref('/teams/new'))
+
+	// Database-specific links
+	const databaseCharactersHref = $derived(localizeHref('/database/characters'))
+	const databaseWeaponsHref = $derived(localizeHref('/database/weapons'))
+	const databaseSummonsHref = $derived(localizeHref('/database/summons'))
+
+	// Database route detection
+	const isDatabaseRoute = $derived($page.url.pathname.startsWith(localizeHref('/database')))
+
+	// Function to check if a database nav item is selected
+	function isDatabaseNavSelected(href: string): boolean {
+		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/')
+	}
 </script>
 
 <nav aria-label="Global">
-	<ul role="list">
-		<li><a href={galleryHref}>{m.nav_gallery()}</a></li>
-		<li><a href={collectionHref}>{m.nav_collection()}</a></li>
+	{#if isDatabaseRoute}
+		<!-- Database navigation mode -->
+		<div class="database-nav">
+			<!-- Back button and Database label -->
+			<ul role="list" class="database-back-section">
+				<li>
+					<a href={galleryHref} class="database-back-button" aria-label="Back to gallery">
+						<Icon name="arrow-left" size={14} />
+					</a>
+				</li>
+				<li>
+					<span class="database-label">Database</span>
+				</li>
+			</ul>
 
-		<li>
-			{#if isAuth}
-				<a href={meHref} aria-label="Your account">{username}</a>
-			{:else}
-				<a href={loginHref} aria-label="Login">{m.nav_login()}</a>
-			{/if}
-		</li>
+			<!-- Database sub-navigation -->
+			<ul role="list" class="database-subnav">
+				<li>
+					<a
+						href={databaseCharactersHref}
+						class:selected={isDatabaseNavSelected(databaseCharactersHref)}
+					>
+						Characters
+					</a>
+				</li>
+				<li>
+					<a href={databaseWeaponsHref} class:selected={isDatabaseNavSelected(databaseWeaponsHref)}>
+						Weapons
+					</a>
+				</li>
+				<li>
+					<a href={databaseSummonsHref} class:selected={isDatabaseNavSelected(databaseSummonsHref)}>
+						Summons
+					</a>
+				</li>
+			</ul>
+		</div>
+	{:else}
+		<!-- Normal navigation mode -->
+		<ul role="list">
+			<li><a href={galleryHref}>{m.nav_gallery()}</a></li>
+			<li><a href={collectionHref}>{m.nav_collection()}</a></li>
 
-		<li>
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger class="nav-more-trigger">
-					<Icon name="ellipsis" size={14} />
-				</DropdownMenu.Trigger>
+			<li>
+				{#if isAuth}
+					<a href={meHref} aria-label="Your account">{username}</a>
+				{:else}
+					<a href={loginHref} aria-label="Login">{m.nav_login()}</a>
+				{/if}
+			</li>
 
-				<DropdownMenu.Portal>
-					<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-						<DropdownItem href={settingsHref}>
-							{m.nav_settings()}
-						</DropdownItem>
-						{#if role !== null && role >= 7}
-							<DropdownItem href={databaseHref}>
-								Database
+			<li>
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger class="nav-more-trigger">
+						<Icon name="ellipsis" size={14} />
+					</DropdownMenu.Trigger>
+
+					<DropdownMenu.Portal>
+						<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
+							<DropdownItem href={settingsHref}>
+								{m.nav_settings()}
 							</DropdownItem>
-						{/if}
-						{#if isAuth}
-							<DropdownMenu.Separator class="dropdown-separator" />
-							<DropdownItem asChild>
-								<form method="post" action="/auth/logout">
-									<button type="submit">{m.nav_logout()}</button>
-								</form>
-							</DropdownItem>
-						{/if}
-					</DropdownMenu.Content>
-				</DropdownMenu.Portal>
-			</DropdownMenu.Root>
-		</li>
-	</ul>
+							{#if role !== null && role >= 7}
+								<DropdownItem href={databaseHref}>Database</DropdownItem>
+							{/if}
+							{#if isAuth}
+								<DropdownMenu.Separator class="dropdown-separator" />
+								<DropdownItem asChild>
+									<form method="post" action="/auth/logout">
+										<button type="submit">{m.nav_logout()}</button>
+									</form>
+								</DropdownItem>
+							{/if}
+						</DropdownMenu.Content>
+					</DropdownMenu.Portal>
+				</DropdownMenu.Root>
+			</li>
+		</ul>
+	{/if}
 	<Button
 		icon="plus"
 		iconOnly
@@ -86,6 +138,7 @@
 </nav>
 
 <style lang="scss">
+	@use '$src/themes/colors' as colors;
 	@use '$src/themes/themes' as themes;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
@@ -101,7 +154,6 @@
 			background-color: var(--menu-bg);
 			border-radius: layout.$full-corner;
 			display: flex;
-			gap: spacing.$unit-half;
 			flex-direction: row;
 			padding: spacing.$unit-half;
 			list-style: none;
@@ -124,6 +176,96 @@
 
 				&:visited {
 					color: var(--menu-text);
+				}
+
+				&.selected {
+					background-color: var(--menu-bg-item-selected, var(--menu-bg-item-hover));
+					font-weight: typography.$bold;
+				}
+			}
+		}
+
+		// Database navigation mode
+		.database-nav {
+			display: flex;
+			gap: spacing.$unit;
+			align-items: center;
+
+			.database-back-section {
+				ul {
+					background-color: var(--menu-bg);
+					border-radius: layout.$full-corner;
+					display: flex;
+					flex-direction: row;
+					padding: spacing.$unit-half;
+					list-style: none;
+				}
+
+				.database-back-button {
+					border-radius: layout.$full-corner;
+					color: colors.$grey-50;
+					font-size: typography.$font-small;
+					font-weight: typography.$medium;
+					text-decoration: none;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					padding: spacing.$unit (spacing.$unit * 1.5);
+
+					&:hover {
+						color: colors.$grey-30;
+					}
+				}
+
+				.database-label {
+					border-radius: layout.$full-corner;
+					color: var(--menu-text);
+					font-size: typography.$font-small;
+					font-weight: typography.$medium;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					padding: spacing.$unit calc(spacing.$unit * 1.5) spacing.$unit spacing.$unit;
+
+					&.selected {
+						background-color: var(--menu-bg-item-selected, var(--menu-bg-item-hover));
+						font-weight: typography.$bold;
+					}
+				}
+			}
+
+			.database-subnav {
+				background-color: var(--menu-bg);
+				border-radius: layout.$full-corner;
+				display: flex;
+				gap: spacing.$unit-half;
+				flex-direction: row;
+				padding: spacing.$unit-half;
+				list-style: none;
+
+				a {
+					border-radius: layout.$full-corner;
+					color: var(--menu-text);
+					font-size: typography.$font-small;
+					font-weight: typography.$medium;
+					text-decoration: none;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					padding: spacing.$unit (spacing.$unit * 1.5);
+
+					&:hover {
+						background-color: var(--menu-bg-item-hover);
+					}
+
+					&:visited {
+						color: var(--menu-text);
+					}
+
+					&.selected {
+						background-color: var(--menu-bg-item-selected, var(--menu-bg-item-hover));
+						font-weight: typography.$bold;
+					}
 				}
 			}
 		}
