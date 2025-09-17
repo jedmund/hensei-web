@@ -59,13 +59,14 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/effects' as *;
 
 	:global(.dialog-overlay) {
 		position: fixed;
 		inset: 0;
 		background: rgba(0, 0, 0, 0.5);
 		z-index: 100;
-		animation: fade-in 0.15s ease-out;
+		animation: fade-in $duration-quick ease-out;
 	}
 
 	:global(.dialog-content) {
@@ -80,7 +81,7 @@
 		max-height: 90vh;
 		width: 500px;
 		z-index: 101;
-		animation: slide-up 0.2s ease-out;
+		animation: slide-up $duration-standard ease-out;
 		display: flex;
 		flex-direction: column;
 	}
@@ -105,18 +106,18 @@
 		position: absolute;
 		right: $unit;
 		top: $unit;
-		width: 32px;
-		height: 32px;
+		width: $unit-4x;
+		height: $unit-4x;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		border: none;
 		background: transparent;
-		font-size: 24px;
+		font-size: $unit-3x;
 		color: var(--text-secondary);
 		cursor: pointer;
 		border-radius: $item-corner-small;
-		transition: all 0.2s;
+		@include smooth-transition($duration-standard, all);
 
 		&:hover {
 			background: var(--button-contained-bg-hover);

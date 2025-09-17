@@ -30,6 +30,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/effects' as *;
 
 	:global(.context-menu) {
 		background: var(--app-bg, white);
@@ -37,9 +38,9 @@
 		border-radius: $card-corner;
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 		padding: $unit-half;
-		min-width: 180px;
+		min-width: calc($unit * 22.5);
 		z-index: 200;
-		animation: slideIn 0.15s ease-out;
+		animation: slideIn $duration-quick ease-out;
 	}
 
 	:global(.context-menu-item) {
@@ -51,7 +52,7 @@
 		display: flex;
 		align-items: center;
 		gap: $unit;
-		transition: background 0.2s;
+		@include smooth-transition($duration-standard, background);
 
 		&:hover {
 			background: var(--button-contained-bg-hover, #f5f5f5);
@@ -76,7 +77,7 @@
 	@keyframes slideIn {
 		from {
 			opacity: 0;
-			transform: translateY(-2px);
+			transform: translateY(-$unit-fourth);
 		}
 		to {
 			opacity: 1;

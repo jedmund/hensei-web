@@ -2,8 +2,6 @@
 <svelte:options runes={true} />
 <script lang="ts">
 	import { Checkbox as CheckboxPrimitive } from 'bits-ui';
-	import { Check, Minus } from 'lucide-svelte';
-	import styles from './checkbox.module.scss';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 
 	interface Props extends Omit<HTMLButtonAttributes, 'value'> {
@@ -37,16 +35,8 @@
 		}
 	});
 
-	const sizeClasses = {
-		small: styles.small,
-		medium: styles.medium,
-		large: styles.large
-	};
-
-	const variantClasses = {
-		default: '',
-		bound: styles.bound
-	};
+	const sizeClass = $derived(size);
+	const variantClass = $derived(variant === 'bound' ? 'bound' : '');
 </script>
 
 <CheckboxPrimitive.Root
@@ -55,14 +45,115 @@
 	{required}
 	{name}
 	{value}
-	class={`${styles.checkbox} ${sizeClasses[size]} ${variantClasses[variant]} ${className || ''}`}
+	class="checkbox {sizeClass} {variantClass} {className || ''}"
 	{...restProps}
 >
-	<CheckboxPrimitive.Indicator class={styles.indicator}>
+	<CheckboxPrimitive.Indicator class="indicator">
 		{#if checked === 'indeterminate'}
-			<Minus class={styles.icon} />
-		{:else}
-			<Check class={styles.icon} />
+			<span class="icon">−</span>
+		{:else if checked}
+			<span class="icon">✓</span>
 		{/if}
 	</CheckboxPrimitive.Indicator>
 </CheckboxPrimitive.Root>
+
+<style lang="scss">
+	@use '$src/themes/spacing' as *;
+	@use '$src/themes/colors' as *;
+	@use '$src/themes/layout' as *;
+	@use '$src/themes/typography' as *;
+	@use '$src/themes/effects' as *;
+
+	.checkbox {
+		background-color: var(--input-bg);
+		border: 2px solid var(--separator-bg);
+		border-radius: $item-corner-small;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		@include smooth-transition($duration-zoom, all);
+
+		&:hover:not(:disabled) {
+			background-color: var(--input-bg-hover);
+			border-color: var(--separator-bg-hover);
+		}
+
+		&:focus,
+		&:focus-visible {
+			@include focus-ring($blue);
+		}
+
+		&[data-state='checked'],
+		&[data-state='indeterminate'] {
+			background-color: var(--accent-blue);
+			border-color: var(--accent-blue);
+
+			&:hover:not(:disabled) {
+				background-color: var(--accent-blue-hover);
+				border-color: var(--accent-blue-hover);
+			}
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.5;
+		}
+
+		&.bound {
+			background-color: var(--input-bound-bg);
+
+			&:hover:not(:disabled) {
+				background-color: var(--input-bound-bg-hover);
+			}
+
+			&[data-state='checked'],
+			&[data-state='indeterminate'] {
+				background-color: var(--accent-blue);
+				border-color: var(--accent-blue);
+			}
+		}
+	}
+
+	// Size variations
+	.small {
+		width: $unit-2x;
+		height: $unit-2x;
+
+		.icon {
+			width: calc($unit * 1.5);
+			height: calc($unit * 1.5);
+		}
+	}
+
+	.medium {
+		width: calc($unit * 2.5);
+		height: calc($unit * 2.5);
+
+		.icon {
+			width: calc($unit * 1.75);
+			height: calc($unit * 1.75);
+		}
+	}
+
+	.large {
+		width: $unit-3x;
+		height: $unit-3x;
+
+		.icon {
+			width: calc($unit * 2.25);
+			height: calc($unit * 2.25);
+		}
+	}
+
+	.indicator {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+	}
+
+	.icon {
+		stroke-width: 3;
+	}
+</style>
