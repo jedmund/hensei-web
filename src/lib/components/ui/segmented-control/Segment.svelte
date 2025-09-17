@@ -1,7 +1,7 @@
 <!-- Segment Component -->
+<svelte:options runes={true} />
 <script lang="ts">
 	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui';
-	import { cn } from '$lib/utils.js';
 	import styles from './segment.module.scss';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 
@@ -13,16 +13,20 @@
 	let {
 		value,
 		class: className,
-		children,
+		children: content,
 		...restProps
 	}: Props = $props();
 </script>
 
 <RadioGroupPrimitive.Item
 	{value}
-	class={cn(styles.segment, className)}
+	class={`${styles.segment} ${className || ''}`}
 	{...restProps}
 >
-	<RadioGroupPrimitive.ItemIndicator class={styles.indicator} />
-	<span class={styles.label}>{children}</span>
+	{#snippet children({ checked })}
+		{#if checked}
+			<div class={styles.indicator}></div>
+		{/if}
+		<span class={styles.label}>{@render content?.()}</span>
+	{/snippet}
 </RadioGroupPrimitive.Item>

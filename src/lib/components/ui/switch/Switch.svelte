@@ -1,7 +1,7 @@
 <!-- Switch Component -->
+<svelte:options runes={true} />
 <script lang="ts">
 	import { Switch as SwitchPrimitive } from 'bits-ui';
-	import { cn } from '$lib/utils.js';
 	import styles from './switch.module.scss';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 
@@ -28,9 +28,11 @@
 		...restProps
 	}: Props = $props();
 
-	$: if (onCheckedChange && checked !== undefined) {
-		onCheckedChange(checked);
-	}
+	$effect(() => {
+		if (onCheckedChange && checked !== undefined) {
+			onCheckedChange(checked);
+		}
+	});
 </script>
 
 <SwitchPrimitive.Root
@@ -39,8 +41,8 @@
 	{required}
 	{name}
 	{value}
-	class={cn(styles.switch, className)}
+	class={`${styles.switch} ${className || ''}`}
 	{...restProps}
 >
-	<SwitchPrimitive.Thumb class={cn(styles.thumb, thumbClass)} />
+	<SwitchPrimitive.Thumb class={`${styles.thumb} ${thumbClass || ''}`} />
 </SwitchPrimitive.Root>

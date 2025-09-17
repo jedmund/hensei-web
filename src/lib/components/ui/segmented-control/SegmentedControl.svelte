@@ -1,7 +1,7 @@
 <!-- SegmentedControl Component -->
+<svelte:options runes={true} />
 <script lang="ts">
 	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui';
-	import { cn } from '$lib/utils.js';
 	import styles from './segmented-control.module.scss';
 	import type { HTMLDivAttributes } from 'svelte/elements';
 
@@ -29,9 +29,11 @@
 		...restProps
 	}: Props = $props();
 
-	$: if (onValueChange && value !== undefined) {
-		onValueChange(value);
-	}
+	$effect(() => {
+		if (onValueChange && value !== undefined) {
+			onValueChange(value);
+		}
+	});
 
 	const variantClasses = {
 		default: '',
@@ -49,21 +51,12 @@
 	};
 </script>
 
-<div class={cn(styles.wrapper, wrapperClass)}>
+<div class={`${styles.wrapper} ${wrapperClass || ''}`}>
 	<RadioGroupPrimitive.Root
 		bind:value
-		class={cn(
-			styles.segmentedControl,
-			variantClasses[variant],
-			element && elementClasses[element],
-			{
-				[styles.grow]: grow,
-				[styles.gap]: gap
-			},
-			className
-		)}
+		class={`${styles.segmentedControl} ${variantClasses[variant]} ${element ? elementClasses[element] : ''} ${grow ? styles.grow : ''} ${gap ? styles.gap : ''} ${className || ''}`}
 		{...restProps}
 	>
-		{children}
+		{@render children?.()}
 	</RadioGroupPrimitive.Root>
 </div>

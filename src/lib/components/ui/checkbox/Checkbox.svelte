@@ -1,8 +1,8 @@
 <!-- Checkbox Component -->
+<svelte:options runes={true} />
 <script lang="ts">
 	import { Checkbox as CheckboxPrimitive } from 'bits-ui';
 	import { Check, Minus } from 'lucide-svelte';
-	import { cn } from '$lib/utils.js';
 	import styles from './checkbox.module.scss';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 
@@ -31,9 +31,11 @@
 		...restProps
 	}: Props = $props();
 
-	$: if (onCheckedChange && checked !== undefined) {
-		onCheckedChange(checked);
-	}
+	$effect(() => {
+		if (onCheckedChange && checked !== undefined) {
+			onCheckedChange(checked);
+		}
+	});
 
 	const sizeClasses = {
 		small: styles.small,
@@ -53,12 +55,7 @@
 	{required}
 	{name}
 	{value}
-	class={cn(
-		styles.checkbox,
-		sizeClasses[size],
-		variantClasses[variant],
-		className
-	)}
+	class={`${styles.checkbox} ${sizeClasses[size]} ${variantClasses[variant]} ${className || ''}`}
 	{...restProps}
 >
 	<CheckboxPrimitive.Indicator class={styles.indicator}>
