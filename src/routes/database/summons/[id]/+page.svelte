@@ -4,6 +4,10 @@
 	import { goto } from '$app/navigation'
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getElementLabel, getElementIcon } from '$lib/utils/element'
+	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
+	import DetailItem from '$lib/components/ui/DetailItem.svelte'
+	import DetailsHeader from '$lib/components/ui/DetailsHeader.svelte'
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()
@@ -11,101 +15,78 @@
 	// Get summon from server data
 	const summon = $derived(data.summon)
 
-	// Helper function to get summon name
-	function getSummonName(nameObj: any): string {
-		if (!nameObj) return 'Unknown Summon'
-		if (typeof nameObj === 'string') return nameObj
-		return nameObj.en || nameObj.ja || 'Unknown Summon'
-	}
-
 	// Helper function to get summon image
 	function getSummonImage(summon: any): string {
 		if (!summon?.granblue_id) return '/images/placeholders/placeholder-summon-main.png'
-		return `/images/summon-main/${summon.granblue_id}.jpg`
+		return `/images/summon-grid/${summon.granblue_id}.jpg`
 	}
+
+	// Calculate uncap properties for the indicator
+	const uncap = $derived(summon?.uncap ?? {})
+	const flb = $derived(uncap.flb ?? false)
+	const ulb = $derived(uncap.ulb ?? false)
+	const transcendence = $derived(uncap.transcendence ?? false)
+
+	// Calculate maximum uncap level based on available uncaps
+	// Summons: 3 base + FLB + ULB + transcendence
+	const getMaxUncapLevel = () => {
+		return transcendence ? 6 : ulb ? 5 : flb ? 4 : 3
+	}
+
+	const uncapLevel = $derived(getMaxUncapLevel())
+	// For details view, show maximum transcendence stage when available
+	const transcendenceStage = $derived(transcendence ? 5 : 0)
 </script>
 
 <div class="summon-detail">
-	<div class="page-header">
-		<button class="back-button" onclick={() => goto('/database/summons')}>
-			← Back to Summons
-		</button>
-		<h1>Summon Details</h1>
-	</div>
-
 	{#if summon}
 		<div class="summon-content">
-			<div class="summon-hero">
-				<div class="summon-image">
-					<img
-						src={getSummonImage(summon)}
-						alt={getSummonName(summon.name)}
-						onerror={(e) => { e.currentTarget.src = '/images/placeholders/placeholder-summon-main.png' }}
-					/>
-				</div>
-				<div class="summon-info">
-					<h2 class="summon-name">{getSummonName(summon.name)}</h2>
-					<div class="summon-meta">
-						<div class="meta-item">
-							<span class="label">Rarity:</span>
-							<span class="value">{getRarityLabel(summon.rarity)}</span>
-						</div>
-						<div class="meta-item">
-							<span class="label">Element:</span>
-							<div class="element-display">
-								{#if summon.element}
-									<img
-										src={getElementIcon(summon.element)}
-										alt={getElementLabel(summon.element)}
-										class="element-icon"
-									/>
-									<span class="value">{getElementLabel(summon.element)}</span>
-								{:else}
-									<span class="value">—</span>
-								{/if}
-							</div>
-						</div>
-						<div class="meta-item">
-							<span class="label">Max Level:</span>
-							<span class="value">{summon.max_level || '—'}</span>
-						</div>
-						<div class="meta-item">
-							<span class="label">Granblue ID:</span>
-							<span class="value">{summon.granblue_id || '—'}</span>
-						</div>
-					</div>
-				</div>
-			</div>
+			<DetailsHeader type="summon" item={summon} image={getSummonImage(summon)} />
 
-			<div class="summon-details">
-				<h3>Stats</h3>
-				<div class="details-grid">
-					<div class="detail-item">
-						<span class="label">Base HP:</span>
-						<span class="value">{summon.base_hp || '—'}</span>
-					</div>
-					<div class="detail-item">
-						<span class="label">Base Attack:</span>
-						<span class="value">{summon.base_attack || '—'}</span>
-					</div>
-					<div class="detail-item">
-						<span class="label">Max HP:</span>
-						<span class="value">{summon.max_hp || '—'}</span>
-					</div>
-					<div class="detail-item">
-						<span class="label">Max Attack:</span>
-						<span class="value">{summon.max_attack || '—'}</span>
-					</div>
-					<div class="detail-item">
-						<span class="label">Plus Bonus:</span>
-						<span class="value">{summon.plus_bonus ? 'Yes' : 'No'}</span>
-					</div>
-					<div class="detail-item">
-						<span class="label">Series:</span>
-						<span class="value">{summon.series || '—'}</span>
-					</div>
-				</div>
-			</div>
+			<DetailsContainer title="HP Stats">
+				<DetailItem label="Base HP" value={summon.hp?.min_hp} />
+				<DetailItem label="Max HP" value={summon.hp?.max_hp} />
+				{#if flb}
+					<DetailItem label="Max HP (FLB)" value={summon.hp?.max_hp_flb} />
+				{/if}
+				{#if ulb}
+					<DetailItem label="Max HP (ULB)" value={summon.hp?.max_hp_ulb} />
+				{/if}
+				{#if transcendence}
+					<DetailItem label="Max HP (XLB)" value={summon.hp?.max_hp_xlb} />
+				{/if}
+			</DetailsContainer>
+
+			<DetailsContainer title="Attack Stats">
+				<DetailItem label="Base Attack" value={summon.atk?.min_atk} />
+				<DetailItem label="Max Attack" value={summon.atk?.max_atk} />
+				{#if flb}
+					<DetailItem label="Max Attack (FLB)" value={summon.atk?.max_atk_flb} />
+				{/if}
+				{#if ulb}
+					<DetailItem label="Max Attack (ULB)" value={summon.atk?.max_atk_ulb} />
+				{/if}
+				{#if transcendence}
+					<DetailItem label="Max Attack (XLB)" value={summon.atk?.max_atk_xlb} />
+				{/if}
+			</DetailsContainer>
+
+			<DetailsContainer title="Details">
+				<DetailItem label="Series" value={summon.series} />
+				{#if summon.uncap}
+					<DetailItem label="Uncap">
+						<UncapIndicator
+							type="summon"
+							{uncapLevel}
+							{transcendenceStage}
+							{flb}
+							{ulb}
+							{transcendence}
+							editable={false}
+						/>
+					</DetailItem>
+				{/if}
+			</DetailsContainer>
 
 			<div class="summon-abilities">
 				<h3>Call Effect</h3>
@@ -159,22 +140,22 @@
 </div>
 
 <style lang="scss">
+	@use '$src/themes/colors' as colors;
+	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
 	.summon-detail {
-		padding: spacing.$unit * 2;
-		max-width: 1200px;
-		margin: 0 auto;
+		padding: spacing.$unit-2x 0;
 	}
 
 	.page-header {
-		margin-bottom: spacing.$unit * 2;
+		margin-bottom: spacing.$unit-2x;
 
 		.back-button {
 			background: #f8f9fa;
 			border: 1px solid #dee2e6;
-			padding: spacing.$unit * 0.5 spacing.$unit;
+			padding: spacing.$unit-half spacing.$unit;
 			border-radius: 4px;
 			cursor: pointer;
 			font-size: typography.$font-small;
@@ -193,22 +174,15 @@
 		}
 	}
 
-	.loading,
-	.error,
 	.not-found {
 		text-align: center;
 		padding: spacing.$unit * 4;
-
-		.loading-spinner {
-			font-size: typography.$font-medium;
-			color: #666;
-		}
 
 		button {
 			background: #007bff;
 			color: white;
 			border: none;
-			padding: spacing.$unit * 0.5 spacing.$unit;
+			padding: spacing.$unit-half spacing.$unit;
 			border-radius: 4px;
 			cursor: pointer;
 			margin-top: spacing.$unit;
@@ -226,71 +200,8 @@
 		overflow: hidden;
 	}
 
-	.summon-hero {
-		display: flex;
-		gap: spacing.$unit * 2;
-		padding: spacing.$unit * 2;
-		border-bottom: 1px solid #e5e5e5;
-
-		.summon-image {
-			flex-shrink: 0;
-
-			img {
-				width: 200px;
-				height: auto;
-				border-radius: 8px;
-				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-			}
-		}
-
-		.summon-info {
-			flex: 1;
-
-			.summon-name {
-				font-size: typography.$font-xlarge;
-				font-weight: typography.$bold;
-				margin: 0 0 spacing.$unit 0;
-				color: #333;
-			}
-
-			.summon-meta {
-				display: flex;
-				flex-direction: column;
-				gap: spacing.$unit * 0.5;
-
-				.meta-item {
-					display: flex;
-					align-items: center;
-					gap: spacing.$unit * 0.5;
-
-					.label {
-						font-weight: typography.$medium;
-						color: #666;
-						min-width: 100px;
-					}
-
-					.value {
-						color: #333;
-					}
-
-					.element-display {
-						display: flex;
-						align-items: center;
-						gap: spacing.$unit * 0.25;
-
-						.element-icon {
-							width: 25px;
-							height: auto;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	.summon-details,
 	.summon-abilities {
-		padding: spacing.$unit * 2;
+		padding: spacing.$unit-2x;
 		border-bottom: 1px solid #e5e5e5;
 
 		&:last-child {
@@ -301,30 +212,6 @@
 			font-size: typography.$font-large;
 			font-weight: typography.$bold;
 			margin: 0 0 spacing.$unit 0;
-		}
-
-		.details-grid {
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-			gap: spacing.$unit;
-
-			.detail-item {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				padding: spacing.$unit * 0.5;
-				background: #f8f9fa;
-				border-radius: 4px;
-
-				.label {
-					font-weight: typography.$medium;
-					color: #666;
-				}
-
-				.value {
-					color: #333;
-				}
-			}
 		}
 
 		.abilities-section {
@@ -360,20 +247,6 @@
 				font-style: italic;
 				padding: spacing.$unit;
 			}
-		}
-	}
-
-	@media (max-width: 768px) {
-		.summon-hero {
-			flex-direction: column;
-
-			.summon-image img {
-				width: 150px;
-			}
-		}
-
-		.details-grid {
-			grid-template-columns: 1fr;
 		}
 	}
 </style>
