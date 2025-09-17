@@ -30,11 +30,13 @@ export interface DragOperation {
 		container: string
 		position: number
 		itemId: string
+		type?: GridItemType
 	}
 	target: {
 		container: string
 		position: number
 		itemId?: string
+		type?: GridItemType
 	}
 	status: 'pending' | 'synced' | 'failed'
 	retryCount: number
@@ -192,7 +194,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		return 'move'
 	}
 
-	function endDrag(targetHasItem: boolean = false) {
+	function endDrag(targetItem?: GridItem) {
 		try {
 			console.group('🏁 Drag End')
 			console.log('Final state:', { ...state })
@@ -200,17 +202,19 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 			if (state.validDrop && state.draggedItem && state.hoveredOver) {
 				const operation: DragOperation = {
 					id: crypto.randomUUID(),
-					type: determineOperationType(state.draggedItem.source, state.hoveredOver, targetHasItem),
+					type: determineOperationType(state.draggedItem.source, state.hoveredOver, !!targetItem),
 					timestamp: Date.now(),
 					source: {
 						container: state.draggedItem.source.container,
 						position: state.draggedItem.source.position,
-						itemId: state.draggedItem.data.id
+						itemId: state.draggedItem.data.id,
+						type: state.draggedItem.source.type
 					},
 					target: {
 						container: state.hoveredOver.container,
 						position: state.hoveredOver.position,
-						itemId: targetHasItem ? 'has-item' : undefined
+						itemId: targetItem?.id || undefined,
+						type: state.hoveredOver.type
 					},
 					status: 'pending',
 					retryCount: 0
@@ -316,7 +320,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		}
 
 		console.groupEnd()
-		endDrag(!!targetItem)
+		endDrag(targetItem)
 		return true
 	}
 
