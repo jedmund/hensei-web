@@ -1,59 +1,30 @@
 <script lang="ts">
-  import { localizeHref } from '$lib/paraglide/runtime'
-  import { onMount } from 'svelte'
+	import { localizeHref } from '$lib/paraglide/runtime'
+	import { onMount } from 'svelte'
+	import { page } from '$app/stores'
+	import type { PageData } from './$types'
 
-  const baseHref = localizeHref('/database')
-  const summonsHref = localizeHref('/database/summons')
-  const charactersHref = localizeHref('/database/characters')
-  const weaponsHref = localizeHref('/database/weapons')
+	const { data, children }: { data: PageData; children: () => any } = $props()
 
-  // Apply wider layout to the main element for database pages
-  onMount(() => {
-    const main = document.querySelector('main')
-    if (main) {
-      main.classList.add('database-layout')
-    }
+	const baseHref = localizeHref('/database')
+	const summonsHref = localizeHref('/database/summons')
+	const charactersHref = localizeHref('/database/characters')
+	const weaponsHref = localizeHref('/database/weapons')
 
-    return () => {
-      const main = document.querySelector('main')
-      if (main) {
-        main.classList.remove('database-layout')
-      }
-    }
-  })
+	// Function to check if a nav item is selected based on current path
+	function isSelected(href: string): boolean {
+		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/')
+	}
+
+	// Get user's element for styling
+	const userElement = $derived((data as any)?.user?.element || 'null')
 </script>
 
-<section class="db-nav">
-  <nav>
-    <a href={summonsHref}>Summons</a>
-    <a href={charactersHref}>Characters</a>
-    <a href={weaponsHref}>Weapons</a>
-  </nav>
-</section>
-
-<slot />
+{@render children?.()}
 
 <style lang="scss">
-  @use '$src/themes/layout' as layout;
-  @use '$src/themes/spacing' as spacing;
-  @use '$src/themes/typography' as typography;
-
-  .db-nav {
-    margin: spacing.$unit 0;
-    nav {
-      display: flex;
-      gap: spacing.$unit-half;
-      a {
-        text-decoration: none;
-        color: var(--menu-text);
-        background: var(--menu-bg);
-        padding: spacing.$unit (spacing.$unit * 1.5);
-        border-radius: layout.$full-corner;
-        font-size: typography.$font-small;
-        font-weight: typography.$medium;
-      }
-      a:hover { background: var(--menu-bg-item-hover); }
-    }
-  }
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
+	@use '$src/themes/colors' as colors;
 </style>
-
