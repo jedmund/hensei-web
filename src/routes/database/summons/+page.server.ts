@@ -2,15 +2,15 @@ import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ locals }) => {
-  // Enforce authorization at individual page level
-  if (!locals.session.isAuthenticated) {
-    throw redirect(302, '/login')
-  }
+	// Enforce authorization at individual page level
+	if (!locals.session.isAuthenticated) {
+		throw redirect(302, '/login')
+	}
 
-  const role = locals.session.account?.role ?? 0
-  if (role < 7) {
-    throw redirect(302, '/')
-  }
+	const role = locals.session.account?.role ?? 0
+	if (role < 7) {
+		throw redirect(302, '/')
+	}
 
-  return {}
+	return {}
 }

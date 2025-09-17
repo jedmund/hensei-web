@@ -1,32 +1,19 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import type { PageData } from './$types'
-	import DatabaseGrid from '$lib/components/database/DatabaseGrid.svelte'
-	import { goto } from '$app/navigation'
-	import { page as pageStore } from '$app/state'
+	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import type { IColumn } from 'wx-svelte-grid'
 	import WeaponImageCell from '$lib/components/database/cells/WeaponImageCell.svelte'
-	import {
-		elementLabel,
-		elementClass
-	} from '$lib/utils/database'
+	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
+	import ProficiencyCell from '$lib/components/database/cells/ProficiencyCell.svelte'
+	import { getRarityLabel } from '$lib/utils/rarity'
 
-	const { data }: { data: PageData } = $props()
-
-	console.log('[Weapons Page] Received data:', data)
-	console.log('[Weapons Page] Items count:', data.items?.length || 0)
-
-	// Add console logging to debug
-	console.log('[Weapons Page] Sample item:', data.items?.[0])
-	console.log('[Weapons Page] Sample name:', data.items?.[0]?.name)
-
-	// Convert data to SVAR Grid format - column id must match data property
+	// Column configuration for weapons
 	const columns: IColumn[] = [
 		{
 			id: 'granblue_id',
 			header: 'Image',
-			width: 60,
+			width: 80,
 			cell: WeaponImageCell
 		},
 		{
@@ -46,21 +33,22 @@
 			id: 'rarity',
 			header: 'Rarity',
 			width: 80,
-			sort: true
+			sort: true,
+			template: (rarity) => getRarityLabel(rarity)
 		},
 		{
 			id: 'element',
 			header: 'Element',
 			width: 100,
 			sort: true,
-			htmlEnable: true,
-			template: (element) => {
-				const label = elementLabel(element)
-				const className = elementClass(element)
-				return className
-					? `<span class="${className}">${label}</span>`
-					: label
-			}
+			cell: ElementCell
+		},
+		{
+			id: 'proficiency',
+			header: 'Proficiency',
+			width: 100,
+			sort: true,
+			cell: ProficiencyCell
 		},
 		{
 			id: 'max_level',
@@ -69,20 +57,6 @@
 			sort: true
 		}
 	]
-
-	// Handle pagination
-	const handlePageChange = (newPage: number) => {
-		const url = new URL(pageStore.url)
-		url.searchParams.set('page', newPage.toString())
-		goto(url.toString())
-	}
-
-	const handlePageSizeChange = (newPageSize: number) => {
-		const url = new URL(pageStore.url)
-		url.searchParams.set('page', '1')
-		url.searchParams.set('per_page', newPageSize.toString())
-		goto(url.toString())
-	}
 </script>
 
 <div class="database-page">
@@ -91,16 +65,10 @@
 		<p class="subtitle">Browse and search all available weapons</p>
 	</div>
 
-	<DatabaseGrid
-		data={data.items}
+	<DatabaseGridWithProvider
+		resource="weapons"
 		{columns}
-		page={data.page}
-		totalPages={data.totalPages}
-		pageSize={data.pageSize}
-		total={data.total}
-		onPageChange={handlePageChange}
-		onPageSizeChange={handlePageSizeChange}
-		loading={false}
+		pageSize={20}
 	/>
 </div>
 
