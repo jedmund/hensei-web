@@ -8,5 +8,9 @@
 	"nav_settings": "Settings",
 	"nav_logout": "Log out",
 	"nav_account_aria": "Your account",
-	"nav_menu_button": "Menu"
+	"nav_menu_button": "Menu",
+
+	"party_segmented_control_characters": "Characters",
+	"party_segmented_control_weapons": "Weapons",
+	"party_segmented_control_summons": "Summons"
 }

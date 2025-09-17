@@ -8,5 +8,9 @@
 	"nav_settings": "設定",
 	"nav_logout": "ログアウト",
 	"nav_account_aria": "アカウント",
-	"nav_menu_button": "メニュー"
+	"nav_menu_button": "メニュー",
+
+	"party_segmented_control_characters": "キャラ",
+	"party_segmented_control_weapons": "武器",
+	"party_segmented_control_summons": "召喚石"
 }
