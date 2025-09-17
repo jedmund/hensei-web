@@ -1,22 +1,26 @@
 <script lang="ts">
 	import type { Party, GridSummon } from '$lib/types/api/party'
 
-	export let party: Party
-	export let extendedView = false
+	interface Props {
+		party?: Party
+		summons?: GridSummon[]
+		extendedView?: boolean
+	}
 
-	const summons = party.summons || []
-	const main: GridSummon | undefined = summons.find(
-		(s: GridSummon) => s?.main || s?.position === -1
+	let { party, summons: directSummons, extendedView = false }: Props = $props()
+
+	// Use direct summons if provided, otherwise get from party
+	const summons = $derived(directSummons || party?.summons || [])
+	const main = $derived(summons.find((s: GridSummon) => s?.main || s?.position === -1))
+	const friend = $derived(
+		extendedView ? summons.find((s: GridSummon) => s?.friend || s?.position === -2) : undefined
 	)
-	const friend: GridSummon | undefined = extendedView
-		? summons.find((s: GridSummon) => s?.friend || s?.position === -2)
-		: undefined
 
 	// In standard view: show positions 0-3 (4 summons)
 	// In extended view: show positions 0-5 (6 summons including subauras)
-	const gridLength = extendedView ? 6 : 4
-	const grid = Array.from({ length: gridLength }, (_, i) =>
-		summons.find((s: GridSummon) => s?.position === i)
+	const gridLength = $derived(extendedView ? 6 : 4)
+	const grid = $derived(
+		Array.from({ length: gridLength }, (_, i) => summons.find((s: GridSummon) => s?.position === i))
 	)
 
 	function summonImageUrl(s?: GridSummon, isMain = false): string {
@@ -64,11 +68,20 @@
 		width: 100%;
 		height: 100%;
 		display: grid;
-		gap: calc($unit-half + 1px);
+		gap: $unit-half;
+
+		// Standard view layout: main summon | 4 grid summons
+		grid-template-columns: 0.96fr 2.2fr;
+		grid-template-rows: 1fr;
 
 		// Extended view layout: main summon | 6 grid summons | friend summon
 		&.extended {
+			gap: calc($unit-half + 1px);
 			grid-template-columns: auto 1fr auto;
+
+			.mainSummon {
+				min-width: 69px;
+			}
 
 			.mainSummon,
 			.friendSummon {
@@ -111,6 +124,8 @@
 		.mainSummon {
 			@include rep.aspect(56, 97);
 			display: grid;
+			max-width: 70px;
+			height: auto;
 		}
 
 		.summons {
@@ -118,6 +133,7 @@
 			margin: 0;
 			padding: 0;
 			list-style: none;
+			align-content: center; // Center the grid vertically
 		}
 
 		.summon {

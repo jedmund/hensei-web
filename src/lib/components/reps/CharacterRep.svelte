@@ -1,34 +1,35 @@
 <script lang="ts">
 	import type { Party, GridWeapon, GridCharacter } from '$lib/types/api/party'
-	export let party: Party
+	import { getElementClass } from '$lib/types/enums'
 
-	const characters = party.characters || []
-	const grid = Array.from({ length: 3 }, (_, i) =>
-		characters.find((c: GridCharacter) => c?.position === i)
-	)
-
-	function protagonistClass(): string {
-		const main: GridWeapon | undefined = (party.weapons || []).find(
-			(w: GridWeapon) => w?.mainhand || w?.position === -1
-		)
-		const el = main?.element ?? main?.weapon?.element
-		switch (el) {
-			case 1:
-				return 'wind'
-			case 2:
-				return 'fire'
-			case 3:
-				return 'water'
-			case 4:
-				return 'earth'
-			case 5:
-				return 'dark'
-			case 6:
-				return 'light'
-			default:
-				return ''
-		}
+	interface Props {
+		party?: Party
+		characters?: GridCharacter[]
+		jobId?: string
+		element?: number
+		gender?: number
 	}
+
+	let { party, characters: directCharacters, jobId, element, gender }: Props = $props()
+
+	// Use direct characters if provided, otherwise get from party
+	const characters = $derived(directCharacters || party?.characters || [])
+	const grid = $derived(Array.from({ length: 3 }, (_, i) =>
+		characters.find((c: GridCharacter) => c?.position === i)
+	))
+
+	const protagonistClass = $derived(
+		// If element is directly provided, use it
+		element ? getElementClass(element) :
+		// Otherwise try to get from party's mainhand weapon
+		party ? (() => {
+			const main: GridWeapon | undefined = (party.weapons || []).find(
+				(w: GridWeapon) => w?.mainhand || w?.position === -1
+			)
+			const el = main?.element ?? main?.weapon?.element
+			return getElementClass(el) || ''
+		})() : ''
+	)
 
 	function characterImageUrl(c?: GridCharacter): string {
 		const id = c?.character?.granblueId
@@ -39,7 +40,7 @@
 		if (trans > 0) suffix = '04'
 		else if (uncap >= 5) suffix = '03'
 		else if (uncap > 2) suffix = '02'
-		if (String(id) === '3030182000') {
+		if (String(id) === '3030182000' && party) {
 			const main: GridWeapon | undefined = (party.weapons || []).find(
 				(w: GridWeapon) => w?.mainhand || w?.position === -1
 			)
@@ -52,7 +53,7 @@
 
 <div class="rep">
 	<ul class="characters">
-		<li class={`protagonist ${protagonistClass()}`} class:empty={!protagonistClass()}></li>
+		<li class={`protagonist ${protagonistClass}`} class:empty={!protagonistClass}></li>
 		{#each grid as c, i}
 			<li class="character" class:empty={!c}>
 				{#if c}<img

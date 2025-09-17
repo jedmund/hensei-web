@@ -1,14 +1,18 @@
 <script lang="ts">
 	import type { Party, GridWeapon } from '$lib/types/api/party'
 
-	export let party: Party
+	interface Props {
+		party?: Party
+		weapons?: GridWeapon[]
+	}
 
-	const weapons = party.weapons || []
-	const mainhand: GridWeapon | undefined = weapons.find(
-		(w: GridWeapon) => w?.mainhand || w?.position === -1
-	)
-	const grid = Array.from({ length: 9 }, (_, i) =>
-		weapons.find((w: GridWeapon) => w?.position === i)
+	let { party, weapons: directWeapons }: Props = $props()
+
+	// Use direct weapons if provided, otherwise get from party
+	const weapons = $derived(directWeapons || party?.weapons || [])
+	const mainhand = $derived(weapons.find((w: GridWeapon) => w?.mainhand || w?.position === -1))
+	const grid = $derived(
+		Array.from({ length: 9 }, (_, i) => weapons.find((w: GridWeapon) => w?.position === i))
 	)
 
 	function weaponImageUrl(w?: GridWeapon, isMain = false): string {
@@ -79,7 +83,7 @@
 		.weapons {
 			display: flex;
 			flex-direction: column;
-			gap: $unit-half;
+			gap: $unit;
 			height: 100%;
 
 			.weapon-row {
