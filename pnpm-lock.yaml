@@ -20,6 +20,9 @@ importers:
       modern-normalize:
         specifier: ^3.0.1
         version: 3.0.1
+      wx-grid-data-provider:
+        specifier: ^2.2.0
+        version: 2.2.0
       wx-svelte-grid:
         specifier: ^2.0.0
         version: 2.2.0

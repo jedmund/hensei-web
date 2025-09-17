@@ -18,6 +18,7 @@ export interface SearchParams {
   locale?: 'en' | 'ja'
   exclude?: string[]
   page?: number
+  per?: number
   filters?: {
     element?: number[]
     rarity?: number[]
@@ -43,9 +44,15 @@ export interface SearchResult {
 
 export interface SearchResponse {
   results: SearchResult[]
-  total: number
-  page: number
-  total_pages: number
+  total?: number
+  page?: number
+  total_pages?: number
+  meta?: {
+    count: number
+    page: number
+    per_page: number
+    total_pages: number
+  }
 }
 
 export function searchAll(
@@ -72,7 +79,8 @@ export function searchWeapons(
 ): Promise<SearchResponse> {
   const body: any = {
     locale: params.locale || 'en',
-    page: params.page || 1
+    page: params.page || 1,
+    per: params.per || undefined
   }
 
   // Only include query if it's provided and not empty
@@ -92,7 +100,13 @@ export function searchWeapons(
   }
 
   const url = `${API_BASE}/search/weapons`
-  return searchJson(fetchFn, url, body)
+  console.log('[searchWeapons] Making request to:', url)
+  console.log('[searchWeapons] Request body:', body)
+
+  return searchJson(fetchFn, url, body).then(response => {
+    console.log('[searchWeapons] Response received:', response)
+    return response
+  })
 }
 
 export function searchCharacters(
@@ -102,7 +116,8 @@ export function searchCharacters(
 ): Promise<SearchResponse> {
   const body: any = {
     locale: params.locale || 'en',
-    page: params.page || 1
+    page: params.page || 1,
+    per: params.per || undefined
   }
 
   // Only include query if it's provided and not empty
@@ -132,7 +147,8 @@ export function searchSummons(
 ): Promise<SearchResponse> {
   const body: any = {
     locale: params.locale || 'en',
-    page: params.page || 1
+    page: params.page || 1,
+    per: params.per || undefined
   }
 
   // Only include query if it's provided and not empty

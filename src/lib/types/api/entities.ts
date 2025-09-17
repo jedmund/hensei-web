@@ -47,9 +47,10 @@ export interface Character {
   element: number
   rarity: number
   maxLevel: number
-  flb: boolean
-  ulb: boolean
-  transcendence: boolean
+  uncap: {
+    flb: boolean
+    ulb: boolean
+  }
   special: boolean
   recruits: string | null
 }
@@ -62,9 +63,11 @@ export interface Summon {
   element: number
   rarity: number
   maxLevel: number
-  flb: boolean
-  ulb: boolean
-  transcendence: boolean
+  uncap: {
+    flb: boolean
+    ulb: boolean
+    transcendence: boolean
+  }
   subaura: boolean
   hp: {
     minHp: number

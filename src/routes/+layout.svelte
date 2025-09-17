@@ -20,7 +20,7 @@
 
 <Tooltip.Provider>
 	<main>
-		<Navigation isAuthenticated={data?.isAuthenticated} username={data?.account?.username} />
+		<Navigation isAuthenticated={data?.isAuthenticated} username={data?.account?.username} role={data?.account?.role} />
 		{@render children?.()}
 	</main>
 </Tooltip.Provider>

@@ -5,6 +5,7 @@
 	import { m } from '$lib/paraglide/messages'
 	import Button from './ui/button/Button.svelte'
 	import Icon from './Icon.svelte'
+	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
 	import { DropdownMenu } from 'bits-ui'
 
 	// Props from layout data
@@ -53,20 +54,21 @@
 
 				<DropdownMenu.Portal>
 					<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-						<DropdownMenu.Item class="dropdown-item" href={settingsHref}>
+						<DropdownItem href={settingsHref}>
 							{m.nav_settings()}
-						</DropdownMenu.Item>
+						</DropdownItem>
 						{#if role !== null && role >= 7}
-							<DropdownMenu.Item class="dropdown-item" href={databaseHref}>
+							<DropdownItem href={databaseHref}>
 								Database
-							</DropdownMenu.Item>
+							</DropdownItem>
 						{/if}
 						{#if isAuth}
-							<DropdownMenu.Item class="dropdown-item" asChild>
+							<DropdownMenu.Separator class="dropdown-separator" />
+							<DropdownItem asChild>
 								<form method="post" action="/auth/logout">
 									<button type="submit">{m.nav_logout()}</button>
 								</form>
-							</DropdownMenu.Item>
+							</DropdownItem>
 						{/if}
 					</DropdownMenu.Content>
 				</DropdownMenu.Portal>
@@ -214,43 +216,10 @@
 		}
 	}
 
-	:global(.dropdown-item) {
-		display: flex;
-		align-items: center;
-		padding: spacing.$unit (spacing.$unit * 1.5);
-		border-radius: 6px;
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		color: var(--menu-text);
-		cursor: pointer;
-		outline: none;
-		transition: background-color 0.15s ease;
-		user-select: none;
-		text-decoration: none;
-
-		&:hover {
-			background-color: var(--menu-bg-item-hover);
-		}
-
-		&:focus-visible {
-			background-color: var(--menu-bg-item-hover);
-			outline: 2px solid var(--accent-blue-focus);
-			outline-offset: -2px;
-		}
-
-		form {
-			width: 100%;
-		}
-
-		button {
-			width: 100%;
-			text-align: left;
-			background: none;
-			border: none;
-			color: inherit;
-			font: inherit;
-			cursor: inherit;
-			padding: 0;
-		}
+	// Dropdown separator styles
+	:global(.dropdown-separator) {
+		height: 1px;
+		background-color: var(--menu-border, rgba(0, 0, 0, 0.1));
+		margin: spacing.$unit-half 0;
 	}
 </style>

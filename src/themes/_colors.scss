@@ -616,3 +616,10 @@ $light--shadow--dark: color.adjust($light-text-20, $alpha: -0.3);
 
 $light--shadow--light--hover: color.adjust($light-text-00, $alpha: -0.3);
 $light--shadow--dark--hover: color.adjust($light-text-00, $alpha: -0.3);
+
+// Focus ring styles (commonly used with $blue)
+@mixin focus-ring($color: $blue, $width: 2px) {
+	outline: none;
+	border: $width solid $color;
+	box-shadow: 0 0 0 2px rgba($color, 0.2);
+}

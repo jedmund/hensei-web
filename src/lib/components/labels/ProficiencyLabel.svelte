@@ -31,20 +31,12 @@
 		vertical-align: middle;
 		object-fit: contain;
 
-		&.natural {
-			// Display at natural size (34px height)
-			height: 34px;
-			width: auto;
-		}
-
 		&.small {
-			// Half of natural size
-			height: 17px;
+			height: 20px;
 			width: auto;
 		}
 
 		&.medium {
-			// ~75% of natural size
 			height: 25px;
 			width: auto;
 		}
@@ -56,7 +48,6 @@
 		}
 
 		&.xlarge {
-			// 1.5x natural size
 			height: 51px;
 			width: auto;
 		}

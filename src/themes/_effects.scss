@@ -1,3 +1,5 @@
+@use 'sass:list';
+
 // Shadows
 $hover-stroke: 1px solid rgba(0, 0, 0, 0.1);
 $hover-shadow: rgba(0, 0, 0, 0.08) 0px 0px 14px;
@@ -7,6 +9,9 @@ $duration-modal-open: 0.48s;
 $duration-color-fade: 0.24s;
 $duration-zoom: 0.18s;
 $duration-opacity-fade: 0.12s;
+$duration-instant: 100ms; // For immediate feedback (switch toggle)
+$duration-quick: 0.15s; // For quick transitions (dropdowns, menus)
+$duration-standard: 0.2s; // For standard animations (modals, segments)
 
 // Gradients
 $hero--gradient--light:
@@ -67,3 +72,16 @@ $hero--gradient--dark--overlay:
 		rgba(25, 25, 25, 0) 78%,
 		rgba(25, 25, 25, 1) 95%
 	);
+
+// Smooth transition helper mixin
+@mixin smooth-transition($duration: $duration-zoom, $properties...) {
+	@if list.length($properties) == 0 {
+		transition: $duration all ease-out;
+	} @else {
+		$transitions: ();
+		@each $prop in $properties {
+			$transitions: list.append($transitions, $duration #{$prop} ease-out, comma);
+		}
+		transition: $transitions;
+	}
+}

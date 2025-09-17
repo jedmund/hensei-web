@@ -5,7 +5,6 @@
 	import Switch from '$lib/components/ui/switch/Switch.svelte';
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte';
 	import { SegmentedControl, Segment } from '$lib/components/ui/segmented-control';
-	import { Heart, Save, Settings, ChevronRight, Search, User } from 'lucide-svelte';
 
 	let inputValue = $state('');
 	let selectValue = $state('option1');
@@ -40,16 +39,16 @@
 			<Button size="small">Small</Button>
 			<Button size="medium">Medium</Button>
 			<Button size="large">Large</Button>
-			<Button size="icon"><Settings /></Button>
+			<Button size="icon">⚙️</Button>
 		</div>
 	</section>
 
 	<section>
 		<h2>Button with Icons</h2>
 		<div class="row">
-			<Button leftIcon={Save}>Save</Button>
-			<Button rightIcon={ChevronRight}>Continue</Button>
-			<Button leftIcon={Heart} rightIcon={ChevronRight}>Favorite</Button>
+			<Button>Save</Button>
+			<Button>Continue →</Button>
+			<Button>❤️ Favorite →</Button>
 		</div>
 	</section>
 
@@ -92,14 +91,12 @@
 			/>
 
 			<Input
-				placeholder="With left icon"
-				leftIcon={Search}
+				placeholder="Search..."
 				label="Search Input"
 			/>
 
 			<Input
-				placeholder="With right icon"
-				rightIcon={User}
+				placeholder="Enter username"
 				label="User Input"
 			/>
 

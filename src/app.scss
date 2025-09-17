@@ -43,6 +43,11 @@ main {
 	@media (max-width: 768px) {
 		padding: 0 spacing.$unit;
 	}
+
+	// Wider layout for database pages
+	&.database-layout {
+		max-width: 1400px;
+	}
 }
 
 // Utility classes for different container widths

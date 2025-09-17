@@ -14,7 +14,7 @@
 </script>
 
 <div class="proficiency-cell">
-	<ProficiencyLabel {proficiency} size="large" />
+	<ProficiencyLabel {proficiency} size="small" />
 </div>
 
 <style lang="scss">
