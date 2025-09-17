@@ -166,6 +166,88 @@ export async function deleteParty(
 	}
 }
 
+/**
+ * List public parties for explore page
+ */
+export async function list(
+	fetch: FetchLike,
+	params?: {
+		page?: number
+		per_page?: number
+		raid_id?: string
+		element?: number
+	}
+): Promise<{
+	items: Party[]
+	total: number
+	totalPages: number
+	perPage: number
+}> {
+	const searchParams = new URLSearchParams()
+	if (params?.page) searchParams.set('page', params.page.toString())
+	if (params?.per_page) searchParams.set('per_page', params.per_page.toString())
+	if (params?.raid_id) searchParams.set('raid_id', params.raid_id)
+	if (params?.element) searchParams.set('element', params.element.toString())
+
+	const url = buildUrl('/parties', searchParams)
+	console.log('[parties.list] Requesting URL:', url)
+	console.log('[parties.list] With params:', params)
+
+	// Use fetch directly to get the Response object for better error handling
+	const res = await fetch(url, {
+		credentials: 'include',
+		headers: { 'Content-Type': 'application/json' }
+	})
+	console.log('[parties.list] Response status:', res.status, res.statusText)
+
+	if (!res.ok) {
+		const error = await parseError(res)
+		console.error('[parties.list] API error:', {
+			url,
+			status: res.status,
+			statusText: res.statusText,
+			message: error.message,
+			details: error.details
+		})
+		throw error
+	}
+
+	let json: any
+	try {
+		json = await res.json()
+		console.log('[parties.list] Raw response:', JSON.stringify(json, null, 2).substring(0, 500))
+	} catch (e) {
+		console.error('[parties.list] Failed to parse JSON response:', e)
+		throw new Error(`Failed to parse JSON response from ${url}: ${e}`)
+	}
+
+	const result = PaginatedPartiesSchema.safeParse(json)
+
+	if (result.success) {
+		return {
+			items: result.data.results.map(parseParty),
+			total: result.data.meta?.count || 0,
+			totalPages: result.data.meta?.total_pages || 1,
+			perPage: result.data.meta?.per_page || 20
+		}
+	}
+
+	// Fallback for non-paginated response
+	const fallback = PartiesResponseSchema.safeParse(json)
+	if (fallback.success) {
+		return {
+			items: fallback.data.parties.map(parseParty),
+			total: fallback.data.total || fallback.data.parties.length,
+			totalPages: 1,
+			perPage: fallback.data.parties.length
+		}
+	}
+
+	const errorMsg = `Invalid response format from API at ${url}. Response: ${JSON.stringify(json, null, 2).substring(0, 500)}`
+	console.error('[parties.list] Parse error:', errorMsg)
+	throw new Error(errorMsg)
+}
+
 export async function getUserParties(
 	fetch: FetchLike,
 	username: string,
@@ -321,12 +403,22 @@ export async function updateCharacterGrid(
 }
 
 // Error parsing
-async function parseError(res: Response): Promise<Error & { status: number; details?: any[] }> {
+async function parseError(res: Response): Promise<Error & { status: number; details?: any[]; url?: string }> {
 	let message = 'Request failed'
 	let details: any[] = []
+	const url = res.url
+
+	console.error('[parseError] Parsing error response:', {
+		url: res.url,
+		status: res.status,
+		statusText: res.statusText,
+		headers: res.headers ? Object.fromEntries(res.headers.entries()) : 'No headers'
+	})
 
 	try {
 		const errorData = await res.json()
+		console.error('[parseError] Error response body:', errorData)
+
 		if (errorData.error) {
 			message = errorData.error
 		} else if (errorData.errors) {
@@ -344,15 +436,19 @@ async function parseError(res: Response): Promise<Error & { status: number; deta
 				details = Object.entries(errorData.errors)
 			}
 		}
-	} catch {
+	} catch (e) {
 		// If JSON parsing fails, use status text
-		message = res.statusText || message
+		console.error('[parseError] Failed to parse error JSON:', e)
+		message = `${res.status} ${res.statusText || 'Request failed'} at ${url}`
 	}
 
-	const error = new Error(message) as Error & { status: number; details?: any[] }
+	const error = new Error(message) as Error & { status: number; details?: any[]; url?: string }
 	error.status = res.status
 	if (details.length > 0) {
 		error.details = details
+	}
+	if (url) {
+		error.url = url
 	}
 	return error
 }
