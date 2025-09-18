@@ -26,6 +26,7 @@
 
 	// Localized links
 	const galleryHref = $derived(localizeHref('/teams/explore'))
+	const guidesHref = $derived(localizeHref('/guides'))
 	const collectionHref = $derived(localizeHref('/collection'))
 	const meHref = $derived(localizeHref('/me'))
 	const loginHref = $derived(localizeHref('/login'))
@@ -89,6 +90,7 @@
 		<!-- Normal navigation mode -->
 		<ul role="list">
 			<li><a href={galleryHref}>{m.nav_gallery()}</a></li>
+			<li><a href={guidesHref}>Guides</a></li>
 			<li><a href={collectionHref}>{m.nav_collection()}</a></li>
 
 			<li>
@@ -139,6 +141,7 @@
 
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
+	@use '$src/themes/effects' as effects;
 	@use '$src/themes/themes' as themes;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
@@ -152,6 +155,8 @@
 
 		ul {
 			background-color: var(--menu-bg);
+			border: effects.$page-border;
+			box-shadow: effects.$page-elevation;
 			border-radius: layout.$full-corner;
 			display: flex;
 			flex-direction: row;
