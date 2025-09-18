@@ -2,8 +2,11 @@ import type { PageServerLoad } from './$types'
 import { get } from '$lib/api/core'
 import { error } from '@sveltejs/kit'
 
-export const load: PageServerLoad = async ({ params, fetch }) => {
+export const load: PageServerLoad = async ({ params, fetch, parent }) => {
 	try {
+		// Get parent data to access role
+		const parentData = await parent()
+
 		const summon = await get(fetch, `/summons/${params.id}`)
 
 		if (!summon) {
@@ -11,7 +14,8 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 		}
 
 		return {
-			summon
+			summon,
+			role: parentData.role
 		}
 	} catch (err) {
 		console.error('Failed to load summon:', err)
