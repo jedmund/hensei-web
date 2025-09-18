@@ -8,6 +8,13 @@ export function getRarityLabel(rarity: number): string {
 	return RARITY_LABELS[rarity] || '—'
 }
 
+export function getRarityOptions() {
+	return Object.entries(RARITY_LABELS).map(([value, label]) => ({
+		value: Number(value),
+		label
+	}))
+}
+
 export function getRarityClass(rarity: number): string {
 	switch (rarity) {
 		case 1:
