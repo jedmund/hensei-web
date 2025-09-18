@@ -1,16 +1,17 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
-	import type { IColumn } from 'wx-svelte-grid'
+	// Svelte components
 	import CharacterImageCell from '$lib/components/database/cells/CharacterImageCell.svelte'
-	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import CharacterUncapCell from '$lib/components/database/cells/CharacterUncapCell.svelte'
+	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
+	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
+
+	// Utilities
 	import { getRarityLabel } from '$lib/utils/rarity'
 
-	// Column configuration for characters
-	const columns: IColumn[] = [
+	const columns = [
 		{
 			id: 'granblue_id',
 			header: 'Image',
@@ -22,8 +23,7 @@
 			header: 'Name',
 			flexgrow: 1,
 			sort: true,
-			template: (nameObj) => {
-				// nameObj is the name property itself, not the full item
+			template: (nameObj: { en: any; ja: any }) => {
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
 				// Handle {en: "...", ja: "..."} structure
@@ -35,7 +35,7 @@
 			header: 'Rarity',
 			width: 80,
 			sort: true,
-			template: (rarity) => getRarityLabel(rarity)
+			template: (rarity: number) => getRarityLabel(rarity)
 		},
 		{
 			id: 'element',
@@ -60,7 +60,7 @@
 	]
 </script>
 
-<div class="database-page">
+<div class="page">
 	<DatabaseGridWithProvider resource="characters" {columns} pageSize={20} />
 </div>
 
@@ -69,24 +69,9 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
-	.database-page {
+	.page {
 		padding: spacing.$unit-2x 0;
 		max-width: 1400px;
 		margin: 0 auto;
-	}
-
-	.page-header {
-		margin-bottom: spacing.$unit-2x;
-
-		h1 {
-			font-size: typography.$font-xxlarge;
-			font-weight: typography.$bold;
-			margin-bottom: spacing.$unit-half;
-		}
-
-		.subtitle {
-			font-size: typography.$font-regular;
-			color: colors.$grey-50;
-		}
 	}
 </style>
