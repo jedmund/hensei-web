@@ -1,5 +1,15 @@
 @use 'sass:list';
 
+// Borders
+$page-border: 0.5px solid rgba(0, 0, 0, 0.18);
+$dialog-border: 0.5px solid rgba(0, 0, 0, 0.18);
+$card-border: 0.5px solid rgba(0, 0, 0, 0.18);
+
+// Elevation
+$page-elevation: 0 0 4px rgba(0, 0, 0, 0.06);
+$dialog-elevation: 0 1px 8px rgba(0, 0, 0, 0.16);
+$card-elevation: 0 1px 3px rgba(0, 0, 0, 0.1);
+
 // Shadows
 $hover-stroke: 1px solid rgba(0, 0, 0, 0.1);
 $hover-shadow: rgba(0, 0, 0, 0.08) 0px 0px 14px;

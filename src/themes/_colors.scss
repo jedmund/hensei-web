@@ -202,10 +202,10 @@ $notice--button--text--light--hover: $accent--yellow--00;
 $notice--button--text--dark--hover: $accent--yellow--100;
 
 // Color Definitions: Button
-$button--bg--light: $grey-80;
-$button--bg--light--hover: $grey-100;
-$button--bg--light--disabled: $grey-80;
-$button--contained--bg--light: $grey-85;
+$button--bg--light: $grey-85;
+$button--bg--light--hover: $grey-80;
+$button--bg--light--disabled: $grey-70;
+$button--contained--bg--light: $grey-90;
 $button--contained--bg--light--hover: $grey-80;
 
 $button--bg--dark: $grey-00;
@@ -214,9 +214,9 @@ $button--bg--dark--disabled: $grey-30;
 $button--contained--bg--dark: $grey-15;
 $button--contained--bg--dark--hover: $grey-05;
 
-$button--text--light: $grey-55;
-$button--text--light--hover: $grey-40;
-$button--text--light--disabled: $grey-70;
+$button--text--light: $grey-40;
+$button--text--light--hover: $grey-30;
+$button--text--light--disabled: $grey-50;
 $button--text--dark: $grey-70;
 $button--text--dark--hover: $grey-100;
 $button--text--dark--disabled: $grey-50;
@@ -227,8 +227,8 @@ $input--bg--light--hover: $grey-95;
 $input--bg--dark: $grey-40;
 $input--bg--dark--hover: $grey-30;
 
-$input--bound--bg--light: $grey-85;
-$input--bound--bg--light--hover: $grey-80;
+$input--bound--bg--light: $grey-90;
+$input--bound--bg--light--hover: $grey-85;
 $input--bound--bg--dark: $grey-15;
 $input--bound--bg--dark--hover: $grey-10;
 
