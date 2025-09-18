@@ -17,11 +17,7 @@
 		pageSize?: number
 	}
 
-	const {
-		resource,
-		columns,
-		pageSize: initialPageSize = 20
-	}: Props = $props()
+	const { resource, columns, pageSize: initialPageSize = 20 }: Props = $props()
 
 	// State
 	let data = $state<any[]>([])
@@ -71,8 +67,8 @@
 		api.setNext(provider)
 
 		// Add row click handler
-		api.on("select-row", (ev: any) => {
-			console.log("Row selected:", ev)
+		api.on('select-row', (ev: any) => {
+			console.log('Row selected:', ev)
 			const rowId = ev.id
 			if (rowId) {
 				// Find the row data to get the granblue_id
@@ -84,7 +80,6 @@
 			}
 		})
 	}
-
 
 	// Handle pagination
 	const handlePrevPage = () => {
@@ -102,7 +97,7 @@
 	const handlePageSizeChange = async (event: Event) => {
 		const target = event.target as HTMLSelectElement
 		const newPageSize = Number(target.value)
-		pageSize = newPageSize  // Update local state immediately
+		pageSize = newPageSize // Update local state immediately
 		await provider.setPageSize(newPageSize)
 		loadData(1)
 	}
@@ -126,7 +121,6 @@
 		handleSearch(searchTerm)
 	})
 
-
 	// Computed values
 	const startItem = $derived((currentPage - 1) * pageSize + 1)
 	const endItem = $derived(Math.min(currentPage * pageSize, total))
@@ -144,16 +138,9 @@
 	})
 </script>
 
-<div class="database-grid">
-	<div class="grid-controls">
-		<div class="search-bar">
-			<input
-				type="text"
-				placeholder="Search..."
-				bind:value={searchTerm}
-				class="search-input"
-			/>
-		</div>
+<div class="grid">
+	<div class="controls">
+		<input type="text" placeholder="Search..." bind:value={searchTerm} />
 
 		<div class="page-size-selector">
 			<label for="page-size">Show:</label>
@@ -173,12 +160,7 @@
 			</div>
 		{/if}
 
-		<Grid
-			data={data}
-			{columns}
-			{init}
-			sizes={{ rowHeight: 80 }}
-		/>
+		<Grid {data} {columns} {init} sizes={{ rowHeight: 80 }} />
 	</div>
 
 	<div class="grid-footer">
@@ -191,11 +173,7 @@
 		</div>
 
 		<div class="pagination-controls">
-			<button
-				class="pagination-button"
-				onclick={handlePrevPage}
-				disabled={currentPage <= 1}
-			>
+			<button class="pagination-button" onclick={handlePrevPage} disabled={currentPage <= 1}>
 				Previous
 			</button>
 
@@ -215,59 +193,62 @@
 </div>
 
 <style lang="scss">
+	@use '$src/themes/effects' as effects;
+	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
-	.database-grid {
+	.grid {
 		width: 100%;
-		background: white;
-		border-radius: 8px;
+		background: var(--card-bg);
+		border: 0.5px solid rgba(0, 0, 0, 0.18);
+		border-radius: layout.$page-corner;
+		box-shadow: effects.$page-elevation;
 		overflow: hidden;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-	}
 
-	.grid-controls {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: spacing.$unit;
-		border-bottom: 1px solid #e5e5e5;
-		gap: spacing.$unit;
-
-		.search-bar {
-			flex: 1;
-			max-width: 300px;
-		}
-
-		.search-input {
-			width: 100%;
-			padding: spacing.$unit * 0.5 spacing.$unit;
-			border: 1px solid #ddd;
-			border-radius: 4px;
-			font-size: typography.$font-small;
-
-			&:focus {
-				outline: none;
-				border-color: #007bff;
-			}
-		}
-
-		.page-size-selector {
+		.controls {
 			display: flex;
+			justify-content: space-between;
 			align-items: center;
-			gap: spacing.$unit * 0.5;
+			padding: spacing.$unit;
+			border-bottom: 1px solid #e5e5e5;
+			gap: spacing.$unit;
 
-			label {
-				font-size: typography.$font-small;
+			input {
+				padding: spacing.$unit spacing.$unit-2x;
+				background: var(--input-bound-bg);
+				border: none;
+				border-radius: layout.$item-corner;
+				font-size: typography.$font-medium;
+				width: 100%;
+
+				&:hover {
+					background: var(--input-bound-bg-hover);
+				}
+
+				&:focus {
+					outline: none;
+					border-color: #007bff;
+				}
 			}
 
-			select {
-				padding: spacing.$unit * 0.25 spacing.$unit * 0.5;
-				border: 1px solid #ddd;
-				border-radius: 4px;
-				font-size: typography.$font-small;
-				background: white;
-				cursor: pointer;
+			.page-size-selector {
+				display: flex;
+				align-items: center;
+				gap: spacing.$unit * 0.5;
+
+				label {
+					font-size: typography.$font-small;
+				}
+
+				select {
+					padding: spacing.$unit * 0.25 spacing.$unit * 0.5;
+					border: 1px solid #ddd;
+					border-radius: 4px;
+					font-size: typography.$font-small;
+					background: white;
+					cursor: pointer;
+				}
 			}
 		}
 	}
@@ -380,12 +361,24 @@
 	}
 
 	// Element color classes
-	:global(.element-fire) { color: #ff6b6b; }
-	:global(.element-water) { color: #4dabf7; }
-	:global(.element-earth) { color: #51cf66; }
-	:global(.element-wind) { color: #69db7c; }
-	:global(.element-light) { color: #ffd43b; }
-	:global(.element-dark) { color: #845ef7; }
+	:global(.element-fire) {
+		color: #ff6b6b;
+	}
+	:global(.element-water) {
+		color: #4dabf7;
+	}
+	:global(.element-earth) {
+		color: #51cf66;
+	}
+	:global(.element-wind) {
+		color: #69db7c;
+	}
+	:global(.element-light) {
+		color: #ffd43b;
+	}
+	:global(.element-dark) {
+		color: #845ef7;
+	}
 
 	// Database image styling - removed to allow cells to control sizing
 </style>
