@@ -14,7 +14,7 @@
 	import type { SearchResult } from '$lib/api/resources/search'
 	import { GridType } from '$lib/types/enums'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
-	import Button from '$lib/components/ui/button/Button.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	interface Props {
 		party?: Party

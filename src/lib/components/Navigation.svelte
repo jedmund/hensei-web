@@ -4,7 +4,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
-	import Button from './ui/button/Button.svelte'
+	import Button from './ui/Button.svelte'
 	import Icon from './Icon.svelte'
 	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
 	import { DropdownMenu } from 'bits-ui'
