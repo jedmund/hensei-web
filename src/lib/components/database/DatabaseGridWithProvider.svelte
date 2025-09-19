@@ -26,6 +26,7 @@
 	let totalPages = $state(1)
 	let total = $state(0)
 	let searchTerm = $state('')
+	let lastSearchTerm = $state('')
 	let pageSize = $state(initialPageSize)
 	let searchTimeout: ReturnType<typeof setTimeout> | undefined
 
@@ -109,11 +110,27 @@
 			clearTimeout(searchTimeout)
 		}
 
-		// Set new timeout for debounced search
+		const trimmed = term.trim()
+
+		// Avoid triggering a fetch on initial mount when search is empty
+		// Only clear search and reload if we previously had a non-empty query
+		if (trimmed.length < 2) {
+			if (lastSearchTerm !== '') {
+				searchTimeout = setTimeout(() => {
+					provider.clearSearch()
+					lastSearchTerm = ''
+					loadData(1)
+				}, 300)
+			}
+			return
+		}
+
+		// Debounced search when user has typed enough characters
 		searchTimeout = setTimeout(() => {
-			provider.setSearchQuery(term)
+			lastSearchTerm = trimmed
+			provider.setSearchQuery(trimmed)
 			loadData(1) // Reset to first page when searching
-		}, 300) // 300ms debounce
+		}, 300)
 	}
 
 	// Watch for search term changes
