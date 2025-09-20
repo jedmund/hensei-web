@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import type { IRow } from 'wx-svelte-grid'
-	import { getSummonImageUrl } from '$lib/utils/database'
+	import { getSummonImage } from '$lib/features/database/detail/image'
 
 	interface Props {
 		row: IRow
@@ -12,7 +12,7 @@
 </script>
 
 <div class="image-cell">
-	<img src={getSummonImageUrl(row.granblue_id)} alt="" class="database-image" />
+	<img src={getSummonImage(row.granblueId, 'square')} alt="" class="database-image" />
 </div>
 
 <style lang="scss">

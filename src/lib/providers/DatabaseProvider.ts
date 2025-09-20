@@ -1,7 +1,6 @@
 import { RestDataProvider } from 'wx-grid-data-provider'
-import { PUBLIC_SIERO_API_URL } from '$env/static/public'
-
-const API_BASE = PUBLIC_SIERO_API_URL || 'http://localhost:3000'
+import { searchAdapter } from '$lib/api/adapters/search.adapter'
+import type { SearchParams } from '$lib/api/adapters/search.adapter'
 
 interface DatabaseProviderOptions {
 	resource: 'weapons' | 'characters' | 'summons'
@@ -19,18 +18,16 @@ interface APIResponse {
 }
 
 export class DatabaseProvider extends RestDataProvider {
-	private resource: string
+	private resource: 'weapons' | 'characters' | 'summons'
 	private pageSize: number
 	private currentPage: number = 1
-	private apiUrl: string
 	private totalCount: number = 0
 	private totalPages: number = 1
 	private searchQuery: string = ''
 
 	constructor(options: DatabaseProviderOptions) {
-		const apiUrl = `${API_BASE}/search/${options.resource}`
-
-		super(apiUrl, (item) => {
+		// Pass a dummy URL to parent since we'll override getData
+		super('dummy', (item) => {
 			// Normalize data if needed
 			if (item.name && typeof item.name === 'object') {
 				// Ensure name is accessible for display
@@ -39,7 +36,6 @@ export class DatabaseProvider extends RestDataProvider {
 			return item
 		})
 
-		this.apiUrl = apiUrl
 		this.resource = options.resource
 		this.pageSize = options.pageSize || 20
 	}
@@ -50,36 +46,37 @@ export class DatabaseProvider extends RestDataProvider {
 		const perPage = params?.per_page || this.pageSize
 
 		try {
-			const response = await fetch(this.apiUrl, {
-				method: 'POST',
-				credentials: 'include',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-Per-Page': perPage.toString()
-				},
-				body: JSON.stringify({
-					search: {
-						page: page,
-						per_page: perPage,
-						...(this.searchQuery && this.searchQuery.length >= 2 && { query: this.searchQuery })
-					}
-				})
-			})
-
-			if (!response.ok) {
-				throw new Error(`API request failed: ${response.statusText}`)
+			// Prepare search params
+			const searchParams: SearchParams = {
+				page: page,
+				per: perPage,
+				...(this.searchQuery && this.searchQuery.length >= 2 && { query: this.searchQuery })
 			}
 
-			const result = await response.json()
+			// Use the appropriate search method based on resource type
+			let result
+			switch (this.resource) {
+				case 'weapons':
+					result = await searchAdapter.searchWeapons(searchParams)
+					break
+				case 'characters':
+					result = await searchAdapter.searchCharacters(searchParams)
+					break
+				case 'summons':
+					result = await searchAdapter.searchSummons(searchParams)
+					break
+				default:
+					throw new Error(`Unknown resource type: ${this.resource}`)
+			}
 
 			// Store metadata for pagination
 			this.currentPage = page
 			if (result.meta) {
 				this.totalCount = result.meta.count || 0
-				this.totalPages = result.meta.total_pages || 1
+				this.totalPages = result.meta.totalPages || 1
 				// Update pageSize if it's different from the response
-				if (result.meta.per_page) {
-					this.pageSize = result.meta.per_page
+				if (result.meta.perPage) {
+					this.pageSize = result.meta.perPage
 				}
 			}
 

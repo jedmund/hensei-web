@@ -212,7 +212,7 @@ export class SearchAdapter extends BaseAdapter {
 			body: JSON.stringify(body),
 			credentials: 'omit',
 			// Cache search results for 5 minutes by default
-			cache: params.query ? 300000 : 0 // Don't cache empty searches
+			cacheTTL: params.query ? 300000 : 0 // Don't cache empty searches
 		})
 	}
 
@@ -234,7 +234,7 @@ export class SearchAdapter extends BaseAdapter {
 			method: 'POST',
 			body: JSON.stringify(body),
 			credentials: 'omit',
-			cache: params.query ? 300000 : 0
+			cacheTTL: params.query ? 300000 : 0
 		})
 	}
 
@@ -256,7 +256,7 @@ export class SearchAdapter extends BaseAdapter {
 			method: 'POST',
 			body: JSON.stringify(body),
 			credentials: 'omit',
-			cache: params.query ? 300000 : 0
+			cacheTTL: params.query ? 300000 : 0
 		})
 	}
 
@@ -277,7 +277,7 @@ export class SearchAdapter extends BaseAdapter {
 			method: 'POST',
 			body: JSON.stringify(body),
 			credentials: 'omit',
-			cache: params.query ? 300000 : 0
+			cacheTTL: params.query ? 300000 : 0
 		})
 	}
 

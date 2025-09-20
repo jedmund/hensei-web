@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import type { IRow } from 'wx-svelte-grid'
-	import { getCharacterImageUrl } from '$lib/utils/database'
+	import { getCharacterImage } from '$lib/features/database/detail/image'
 
 	interface Props {
 		row: IRow
@@ -12,7 +12,7 @@
 </script>
 
 <div class="image-cell">
-	<img src={getCharacterImageUrl(row.granblue_id)} alt="" class="database-image" />
+	<img src={getCharacterImage(row.granblueId, '01', 'square')} alt="" class="database-image" />
 </div>
 
 <style lang="scss">
