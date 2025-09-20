@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import { buildUrl } from '$lib/api/core'
+import { buildApiUrl, extractHeaders, handleApiError } from '../../../../_utils'
 
 /**
  * PUT /api/parties/[id]/summons/[summonId] - Update summon in party
@@ -17,7 +17,7 @@ export const PUT: RequestHandler = async ({ request, params, fetch }) => {
     }
 
     // Forward to Rails API
-    const response = await fetch(buildUrl(`/grid_summons/${params.summonId}`), {
+    const response = await fetch(buildApiUrl(`/grid_summons/${params.summonId}`), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

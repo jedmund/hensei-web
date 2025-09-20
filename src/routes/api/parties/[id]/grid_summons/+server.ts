@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import { buildUrl } from '$lib/api/core'
+import { buildApiUrl, extractHeaders, handleApiError } from '../../../_utils'
 
 /**
  * POST /api/parties/[id]/grid_summons - Add summon to party
@@ -12,7 +12,7 @@ export const POST: RequestHandler = async ({ request, params, fetch, cookies }) 
 		const editKey = request.headers.get('X-Edit-Key')
 
 		// Forward to Rails API
-		const response = await fetch(buildUrl('/summons'), {
+		const response = await fetch(buildApiUrl('/summons'), {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

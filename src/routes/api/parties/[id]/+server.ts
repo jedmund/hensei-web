@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import { buildUrl } from '$lib/api/core'
+import { buildApiUrl, extractHeaders, handleApiError } from '../../_utils'
 
 /**
  * PUT /api/parties/[id] - Update a party
@@ -11,41 +11,31 @@ export const PUT: RequestHandler = async ({ request, params, fetch }) => {
   try {
     const { id } = params
     const body = await request.json()
-    const editKey = request.headers.get('X-Edit-Key')
+    const headers = extractHeaders(request)
 
     // Forward to Rails API
-    const response = await fetch(buildUrl(`/parties/${id}`), {
+    const response = await fetch(buildApiUrl(`/parties/${id}`), {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(editKey ? { 'X-Edit-Key': editKey } : {})
-      },
+      headers,
       body: JSON.stringify(body)
     })
 
     const data = await response.json()
     return json(data, { status: response.status })
   } catch (error) {
-    console.error('Error updating party:', error)
-    return json(
-      { error: 'Failed to update party' },
-      { status: 500 }
-    )
+    return json(handleApiError(error, 'update party'), { status: 500 })
   }
 }
 
 export const DELETE: RequestHandler = async ({ request, params, fetch }) => {
   try {
     const { id } = params
-    const editKey = request.headers.get('X-Edit-Key')
+    const headers = extractHeaders(request)
 
     // Forward to Rails API
-    const response = await fetch(buildUrl(`/parties/${id}`), {
+    const response = await fetch(buildApiUrl(`/parties/${id}`), {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(editKey ? { 'X-Edit-Key': editKey } : {})
-      }
+      headers
     })
 
     if (response.ok) {
@@ -57,10 +47,6 @@ export const DELETE: RequestHandler = async ({ request, params, fetch }) => {
     const errorData = await response.json().catch(() => ({}))
     return json(errorData, { status: response.status })
   } catch (error) {
-    console.error('Error deleting party:', error)
-    return json(
-      { error: 'Failed to delete party' },
-      { status: 500 }
-    )
+    return json(handleApiError(error, 'delete party'), { status: 500 })
   }
 }

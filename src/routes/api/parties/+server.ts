@@ -1,8 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import { buildUrl } from '$lib/api/core'
-import { PUBLIC_SIERO_API_URL } from '$env/static/public'
-
-const API_BASE = new URL(PUBLIC_SIERO_API_URL || 'http://localhost:3000').href
+import { buildApiUrl, extractHeaders, handleApiError } from '../_utils'
 
 /**
  * POST /api/parties - Create a new party
@@ -11,33 +8,19 @@ const API_BASE = new URL(PUBLIC_SIERO_API_URL || 'http://localhost:3000').href
 export const POST: RequestHandler = async ({ request, fetch }) => {
   try {
     const body = await request.json()
-    const editKey = request.headers.get('X-Edit-Key')
+    const headers = extractHeaders(request)
 
     // Forward to Rails API
     // The server-side fetch will automatically add Bearer token if user is authenticated
-    const response = await fetch(buildUrl('/parties'), {
+    const response = await fetch(buildApiUrl('/parties'), {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(editKey ? { 'X-Edit-Key': editKey } : {})
-      },
+      headers,
       body: JSON.stringify(body)
     })
 
     const data = await response.json()
-
-    // If creation was successful and returned an edit key, include it in response
-    if (response.ok) {
-      return json(data, { status: response.status })
-    }
-
-    // Forward error response
     return json(data, { status: response.status })
   } catch (error) {
-    console.error('Error creating party:', error)
-    return json(
-      { error: 'Failed to create party' },
-      { status: 500 }
-    )
+    return json(handleApiError(error, 'create party'), { status: 500 })
   }
 }

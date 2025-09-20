@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import { buildUrl } from '$lib/api/core'
+import { buildApiUrl, extractHeaders, handleApiError } from '../../../../_utils'
 
 /**
  * PUT /api/parties/[id]/characters/[characterId] - Update character in party
@@ -17,7 +17,7 @@ export const PUT: RequestHandler = async ({ request, params, fetch }) => {
     }
 
     // Forward to Rails API
-    const response = await fetch(buildUrl(`/grid_characters/${params.characterId}`), {
+    const response = await fetch(buildApiUrl(`/grid_characters/${params.characterId}`), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

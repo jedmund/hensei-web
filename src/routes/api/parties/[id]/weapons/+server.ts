@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import { buildUrl } from '$lib/api/core'
+import { buildApiUrl, extractHeaders, handleApiError } from '../../../_utils'
 
 /**
  * POST /api/parties/[id]/weapons - Add weapon to party
@@ -26,7 +26,7 @@ export const POST: RequestHandler = async ({ request, params, fetch }) => {
     }
 
     // Forward to Rails API
-    const response = await fetch(buildUrl('/weapons'), {
+    const response = await fetch(buildApiUrl('/weapons'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export const POST: RequestHandler = async ({ request, params, fetch }) => {
     const data = await response.json()
     return json(data, { status: response.status })
   } catch (error) {
-    console.error('Error adding weapon:', error)
+    return json(handleApiError(error, 'adding weapon'), { status: 500 })
     return json(
       { error: 'Failed to add weapon' },
       { status: 500 }
@@ -54,7 +54,7 @@ export const DELETE: RequestHandler = async ({ request, params, fetch }) => {
     console.log('DELETE weapon request:', { body, params })
 
     // Forward to Rails API - use grid_weapons endpoint with the ID
-    const response = await fetch(buildUrl(`/grid_weapons/${body.gridWeaponId}`), {
+    const response = await fetch(buildApiUrl(`/grid_weapons/${body.gridWeaponId}`), {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export const DELETE: RequestHandler = async ({ request, params, fetch }) => {
     const errorData = await response.json().catch(() => ({}))
     return json(errorData, { status: response.status })
   } catch (error) {
-    console.error('Error removing weapon:', error)
+    return json(handleApiError(error, 'removing weapon'), { status: 500 })
     return json(
       { error: 'Failed to remove weapon' },
       { status: 500 }

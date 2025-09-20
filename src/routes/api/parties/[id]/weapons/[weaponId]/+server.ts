@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import { buildUrl } from '$lib/api/core'
+import { buildApiUrl, extractHeaders, handleApiError } from '../../../../_utils'
 
 /**
  * PUT /api/parties/[id]/weapons/[weaponId] - Update weapon in party
@@ -17,7 +17,7 @@ export const PUT: RequestHandler = async ({ request, params, fetch }) => {
     }
 
     // Forward to Rails API
-    const response = await fetch(buildUrl(`/grid_weapons/${params.weaponId}`), {
+    const response = await fetch(buildApiUrl(`/grid_weapons/${params.weaponId}`), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export const PUT: RequestHandler = async ({ request, params, fetch }) => {
     const data = await response.json()
     return json(data, { status: response.status })
   } catch (error) {
-    console.error('Error updating weapon:', error)
+    return json(handleApiError(error, 'updating weapon'), { status: 500 })
     return json(
       { error: 'Failed to update weapon' },
       { status: 500 }

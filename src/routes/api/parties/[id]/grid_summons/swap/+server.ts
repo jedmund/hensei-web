@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { buildUrl } from '$lib/api/core'
+import { buildApiUrl, extractHeaders, handleApiError } from '../../../../_utils'
 
 export const POST: RequestHandler = async ({ params, request, fetch, cookies }) => {
 	const { id: partyId } = params
@@ -9,7 +9,7 @@ export const POST: RequestHandler = async ({ params, request, fetch, cookies }) 
 
 	// Forward the request to the Rails API
 	const apiResponse = await fetch(
-		buildUrl(`/parties/${partyId}/grid_summons/swap`),
+		buildApiUrl(`/parties/${partyId}/grid_summons/swap`),
 		{
 			method: 'POST',
 			headers: {

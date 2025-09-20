@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import { buildUrl } from '$lib/api/core'
+import { buildApiUrl, extractHeaders, handleApiError } from '../../../_utils'
 
 /**
  * POST /api/parties/[id]/characters - Add character to party
@@ -25,7 +25,7 @@ export const POST: RequestHandler = async ({ request, params, fetch }) => {
     }
 
     // Forward to Rails API
-    const response = await fetch(buildUrl('/characters'), {
+    const response = await fetch(buildApiUrl('/characters'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ export const DELETE: RequestHandler = async ({ request, params, fetch }) => {
     const editKey = request.headers.get('X-Edit-Key')
 
     // Forward to Rails API - use grid_characters endpoint with the ID
-    const response = await fetch(buildUrl(`/grid_characters/${body.gridCharacterId}`), {
+    const response = await fetch(buildApiUrl(`/grid_characters/${body.gridCharacterId}`), {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

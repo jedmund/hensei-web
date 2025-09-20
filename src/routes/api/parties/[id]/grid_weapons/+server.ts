@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import { buildUrl } from '$lib/api/core'
+import { buildApiUrl, extractHeaders, handleApiError } from '../../../_utils'
 
 /**
  * POST /api/parties/[id]/grid_weapons - Add weapon to party
@@ -9,16 +9,15 @@ import { buildUrl } from '$lib/api/core'
 export const POST: RequestHandler = async ({ request, params, fetch, cookies }) => {
 	try {
 		const body = await request.json()
-		const editKey = request.headers.get('X-Edit-Key')
+		const headers = {
+			...extractHeaders(request),
+			Authorization: `Bearer ${cookies.get('access_token')}`
+		}
 
 		// Forward to Rails API
-		const response = await fetch(buildUrl('/weapons'), {
+		const response = await fetch(buildApiUrl('/weapons'), {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${cookies.get('access_token')}`,
-				...(editKey ? { 'X-Edit-Key': editKey } : {})
-			},
+			headers,
 			body: JSON.stringify({
 				weapon: {
 					party_id: params.id,
@@ -30,10 +29,6 @@ export const POST: RequestHandler = async ({ request, params, fetch, cookies }) 
 		const data = await response.json()
 		return json(data, { status: response.status })
 	} catch (error) {
-		console.error('Error adding weapon:', error)
-		return json(
-			{ error: 'Failed to add weapon' },
-			{ status: 500 }
-		)
+		return json(handleApiError(error, 'add weapon'), { status: 500 })
 	}
 }

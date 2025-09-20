@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import { buildUrl } from '$lib/api/core'
+import { buildApiUrl, extractHeaders, handleApiError } from '../../_utils'
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
@@ -7,7 +7,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		const editKey = request.headers.get('X-Edit-Key')
 
 		// Forward to Rails API with automatic auth via handleFetch
-		const response = await fetch(buildUrl('/characters/update_uncap'), {
+		const response = await fetch(buildApiUrl('/characters/update_uncap'), {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
