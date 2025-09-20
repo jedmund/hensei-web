@@ -30,8 +30,26 @@ export type {
 	GridUpdateResponse
 } from './party.adapter'
 
-// export { GridAdapter } from './grid.adapter'
-// export { EntityAdapter } from './entity.adapter'
+export { GridAdapter, gridAdapter } from './grid.adapter'
+export type {
+	GridWeapon,
+	GridCharacter,
+	GridSummon,
+	CreateGridWeaponParams,
+	CreateGridCharacterParams,
+	CreateGridSummonParams,
+	UpdateUncapParams,
+	UpdatePositionParams,
+	SwapPositionsParams,
+	ResolveConflictParams
+} from './grid.adapter'
+
+export { EntityAdapter, entityAdapter } from './entity.adapter'
+export type {
+	Weapon,
+	Character,
+	Summon
+} from './entity.adapter'
 
 // Reactive resources using Svelte 5 runes
 export * from './resources'
