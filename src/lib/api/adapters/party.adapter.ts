@@ -153,70 +153,40 @@ export interface ListUserPartiesParams {
 }
 
 /**
- * Parameters for updating grid items
+ * Grid operation for batch updates
  */
-export interface UpdateGridParams<T> {
-	shortcode: string
-	updates: T[]
+export interface GridOperation {
+	type: 'move' | 'swap' | 'remove'
+	entity: 'weapon' | 'character' | 'summon'
+	id?: string
+	sourceId?: string
+	targetId?: string
+	position?: number
+	container?: string
 }
 
 /**
- * Grid weapon update structure
+ * Options for grid update operation
  */
-export interface GridWeaponUpdate {
-	id?: string
-	position: number
-	weaponId: string
-	mainhand?: boolean
-	uncapLevel?: number
-	transcendenceStage?: number
-	weaponKeys?: Array<{
+export interface GridUpdateOptions {
+	maintainCharacterSequence?: boolean
+	validateBeforeExecute?: boolean
+}
+
+/**
+ * Response from grid update operation
+ */
+export interface GridUpdateResponse {
+	party: Party
+	operationsApplied: number
+	changes: Array<{
+		entity: string
 		id: string
-		slot: number
+		action: string
+		from?: number
+		to?: number
+		with?: string
 	}>
-	_destroy?: boolean
-}
-
-/**
- * Grid summon update structure
- */
-export interface GridSummonUpdate {
-	id?: string
-	position: number
-	summonId: string
-	quickSummon?: boolean
-	transcendenceStage?: number
-	_destroy?: boolean
-}
-
-/**
- * Grid character update structure
- */
-export interface GridCharacterUpdate {
-	id?: string
-	position: number
-	characterId: string
-	uncapLevel?: number
-	transcendenceStage?: number
-	perpetualModifiers?: Record<string, any>
-	awakenings?: Array<{
-		id: string
-		level: number
-	}>
-	_destroy?: boolean
-}
-
-/**
- * Conflict resolution result
- */
-export interface ConflictResolution {
-	conflicts: Array<{
-		type: 'weapon' | 'summon' | 'character'
-		position: number
-		existing: any
-		new: any
-	}>
-	resolved: boolean
 }
 
 /**
@@ -295,46 +265,19 @@ export class PartyAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Updates grid weapons for a party
+	 * Performs atomic batch grid updates
+	 * Supports move, swap, and remove operations on grid items
 	 */
-	async updateGridWeapons(
-		params: UpdateGridParams<GridWeaponUpdate>
-	): Promise<{ gridWeapons: GridWeapon[]; conflicts?: ConflictResolution }> {
-		const { shortcode, updates } = params
-		return this.request(`/parties/${shortcode}/grid_weapons`, {
-			method: 'PATCH',
+	async gridUpdate(
+		shortcode: string,
+		operations: GridOperation[],
+		options?: GridUpdateOptions
+	): Promise<GridUpdateResponse> {
+		return this.request(`/parties/${shortcode}/grid_update`, {
+			method: 'POST',
 			body: {
-				grid_weapons: updates
-			}
-		})
-	}
-
-	/**
-	 * Updates grid summons for a party
-	 */
-	async updateGridSummons(
-		params: UpdateGridParams<GridSummonUpdate>
-	): Promise<{ gridSummons: GridSummon[]; conflicts?: ConflictResolution }> {
-		const { shortcode, updates } = params
-		return this.request(`/parties/${shortcode}/grid_summons`, {
-			method: 'PATCH',
-			body: {
-				grid_summons: updates
-			}
-		})
-	}
-
-	/**
-	 * Updates grid characters for a party
-	 */
-	async updateGridCharacters(
-		params: UpdateGridParams<GridCharacterUpdate>
-	): Promise<{ gridCharacters: GridCharacter[]; conflicts?: ConflictResolution }> {
-		const { shortcode, updates } = params
-		return this.request(`/parties/${shortcode}/grid_characters`, {
-			method: 'PATCH',
-			body: {
-				grid_characters: updates
+				operations,
+				options
 			}
 		})
 	}
@@ -344,19 +287,77 @@ export class PartyAdapter extends BaseAdapter {
 	 */
 	async updateJob(
 		shortcode: string,
-		jobId: string,
-		skills?: Array<{ id: string; slot: number }>,
-		accessoryId?: string
+		jobId: string
 	): Promise<Party> {
-		return this.request<Party>(`/parties/${shortcode}`, {
-			method: 'PATCH',
+		return this.request<Party>(`/parties/${shortcode}/jobs`, {
+			method: 'PUT',
 			body: {
-				party: {
-					job_id: jobId,
-					...(skills && { job_skills_attributes: skills }),
-					...(accessoryId && { job_accessory_id: accessoryId })
-				}
+				job_id: jobId
 			}
+		})
+	}
+
+	/**
+	 * Updates job skills for a party
+	 */
+	async updateJobSkills(
+		shortcode: string,
+		skills: Array<{ id: string; slot: number }>
+	): Promise<Party> {
+		return this.request<Party>(`/parties/${shortcode}/job_skills`, {
+			method: 'PUT',
+			body: {
+				skills
+			}
+		})
+	}
+
+	/**
+	 * Removes a job skill from a party
+	 */
+	async removeJobSkill(
+		shortcode: string,
+		skillSlot: number
+	): Promise<Party> {
+		return this.request<Party>(`/parties/${shortcode}/job_skills`, {
+			method: 'DELETE',
+			body: {
+				slot: skillSlot
+			}
+		})
+	}
+
+	/**
+	 * Gets party preview image
+	 */
+	async getPreview(shortcode: string): Promise<Blob> {
+		return this.request<Blob>(`/parties/${shortcode}/preview`, {
+			method: 'GET',
+			headers: {
+				'Accept': 'image/png'
+			}
+		})
+	}
+
+	/**
+	 * Gets party preview status
+	 */
+	async getPreviewStatus(shortcode: string): Promise<{
+		state: string
+		generatedAt?: string
+		readyForPreview: boolean
+	}> {
+		return this.request(`/parties/${shortcode}/preview_status`, {
+			method: 'GET'
+		})
+	}
+
+	/**
+	 * Regenerates party preview
+	 */
+	async regeneratePreview(shortcode: string): Promise<{ status: string }> {
+		return this.request(`/parties/${shortcode}/regenerate_preview`, {
+			method: 'POST'
 		})
 	}
 

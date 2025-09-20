@@ -25,11 +25,9 @@ export type {
 	CreatePartyParams,
 	UpdatePartyParams,
 	ListUserPartiesParams,
-	UpdateGridParams,
-	GridWeaponUpdate,
-	GridSummonUpdate,
-	GridCharacterUpdate,
-	ConflictResolution
+	GridOperation,
+	GridUpdateOptions,
+	GridUpdateResponse
 } from './party.adapter'
 
 // export { GridAdapter } from './grid.adapter'

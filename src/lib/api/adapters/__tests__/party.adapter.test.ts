@@ -7,7 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { PartyAdapter } from '../party.adapter'
-import type { Party, GridWeapon, GridSummon, GridCharacter } from '../party.adapter'
+import type { Party } from '../party.adapter'
 
 describe('PartyAdapter', () => {
 	let adapter: PartyAdapter
@@ -202,188 +202,78 @@ describe('PartyAdapter', () => {
 	})
 
 	describe('grid management', () => {
-		it('should update grid weapons', async () => {
-			const mockGridWeapons: GridWeapon[] = [
-				{
-					id: 'gw-1',
-					position: 1,
-					mainhand: true,
-					uncapLevel: 5,
-					transcendenceStage: 0,
-					weaponKeys: [],
-					weapon: {
-						id: 'weapon-1',
-						granblueId: 'w-1',
-						name: { en: 'Sword' },
-						element: 1,
-						rarity: 5
-					}
-				}
-			]
-
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					grid_weapons: mockGridWeapons.map(gw => ({
-						...gw,
-						uncap_level: gw.uncapLevel,
-						transcendence_stage: gw.transcendenceStage,
-						weapon_keys: gw.weaponKeys
-					}))
-				})
-			})
-
-			const result = await adapter.updateGridWeapons({
-				shortcode: 'ABC123',
-				updates: [
+		it('should perform batch grid updates', async () => {
+			const mockResponse = {
+				party: mockParty,
+				operations_applied: 2,
+				changes: [
 					{
-						position: 1,
-						weaponId: 'weapon-1',
-						mainhand: true,
-						uncapLevel: 5
+						entity: 'weapon',
+						id: 'gw-1',
+						action: 'moved',
+						from: 1,
+						to: 2
+					},
+					{
+						entity: 'character',
+						id: 'gc-1',
+						action: 'swapped',
+						with: 'gc-2'
 					}
 				]
-			})
-
-			expect(result.gridWeapons).toEqual(mockGridWeapons)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/parties/ABC123/grid_weapons',
-				expect.objectContaining({
-					method: 'PATCH',
-					body: JSON.stringify({
-						grid_weapons: [
-							{
-								position: 1,
-								weapon_id: 'weapon-1',
-								mainhand: true,
-								uncap_level: 5
-							}
-						]
-					})
-				})
-			)
-		})
-
-		it('should update grid summons', async () => {
-			const mockGridSummons: GridSummon[] = [
-				{
-					id: 'gs-1',
-					position: 1,
-					quickSummon: true,
-					transcendenceStage: 2,
-					summon: {
-						id: 'summon-1',
-						granblueId: 's-1',
-						name: { en: 'Bahamut' },
-						element: 6,
-						rarity: 5
-					}
-				}
-			]
-
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					grid_summons: mockGridSummons.map(gs => ({
-						...gs,
-						quick_summon: gs.quickSummon,
-						transcendence_stage: gs.transcendenceStage
-					}))
-				})
-			})
-
-			const result = await adapter.updateGridSummons({
-				shortcode: 'ABC123',
-				updates: [
-					{
-						position: 1,
-						summonId: 'summon-1',
-						quickSummon: true,
-						transcendenceStage: 2
-					}
-				]
-			})
-
-			expect(result.gridSummons).toEqual(mockGridSummons)
-		})
-
-		it('should update grid characters', async () => {
-			const mockGridCharacters: GridCharacter[] = [
-				{
-					id: 'gc-1',
-					position: 1,
-					uncapLevel: 5,
-					transcendenceStage: 1,
-					character: {
-						id: 'char-1',
-						granblueId: 'c-1',
-						name: { en: 'Katalina' },
-						element: 2,
-						rarity: 5
-					}
-				}
-			]
-
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					grid_characters: mockGridCharacters.map(gc => ({
-						...gc,
-						uncap_level: gc.uncapLevel,
-						transcendence_stage: gc.transcendenceStage
-					}))
-				})
-			})
-
-			const result = await adapter.updateGridCharacters({
-				shortcode: 'ABC123',
-				updates: [
-					{
-						position: 1,
-						characterId: 'char-1',
-						uncapLevel: 5,
-						transcendenceStage: 1
-					}
-				]
-			})
-
-			expect(result.gridCharacters).toEqual(mockGridCharacters)
-		})
-
-		it('should handle grid conflicts', async () => {
-			const conflictResponse = {
-				grid_weapons: [],
-				conflicts: {
-					conflicts: [
-						{
-							type: 'weapon',
-							position: 1,
-							existing: { id: 'weapon-1' },
-							new: { id: 'weapon-2' }
-						}
-					],
-					resolved: false
-				}
 			}
 
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => conflictResponse
+				json: async () => mockResponse
 			})
 
-			const result = await adapter.updateGridWeapons({
-				shortcode: 'ABC123',
-				updates: [
-					{
-						position: 1,
-						weaponId: 'weapon-2'
-					}
-				]
-			})
+			const operations = [
+				{
+					type: 'move' as const,
+					entity: 'weapon' as const,
+					id: 'gw-1',
+					position: 2
+				},
+				{
+					type: 'swap' as const,
+					entity: 'character' as const,
+					sourceId: 'gc-1',
+					targetId: 'gc-2'
+				}
+			]
 
-			expect(result.conflicts).toBeDefined()
-			expect(result.conflicts?.resolved).toBe(false)
-			expect(result.conflicts?.conflicts).toHaveLength(1)
+			const result = await adapter.gridUpdate(
+				'ABC123',
+				operations,
+				{ maintainCharacterSequence: true }
+			)
+
+			expect(result.operationsApplied).toBe(2)
+			expect(result.changes).toHaveLength(2)
+			expect(global.fetch).toHaveBeenCalledWith(
+				'https://api.example.com/parties/ABC123/grid_update',
+				expect.objectContaining({
+					method: 'POST',
+					body: JSON.stringify({
+						operations: [
+							{
+								type: 'move',
+								entity: 'weapon',
+								id: 'gw-1',
+								position: 2
+							},
+							{
+								type: 'swap',
+								entity: 'character',
+								source_id: 'gc-1',
+								target_id: 'gc-2'
+							}
+						],
+						options: { maintain_character_sequence: true }
+					})
+				})
+			)
 		})
 	})
 
@@ -394,17 +284,7 @@ describe('PartyAdapter', () => {
 				job: {
 					id: 'job-2',
 					name: { en: 'Mage' },
-					skills: [
-						{
-							id: 'skill-2',
-							name: { en: 'Fireball' },
-							slot: 1
-						}
-					],
-					accessory: {
-						id: 'acc-1',
-						name: { en: 'Magic Ring' }
-					}
+					skills: []
 				}
 			}
 
@@ -413,24 +293,55 @@ describe('PartyAdapter', () => {
 				json: async () => updatedParty
 			})
 
-			const result = await adapter.updateJob(
+			const result = await adapter.updateJob('ABC123', 'job-2')
+
+			expect(result).toEqual(updatedParty)
+			expect(global.fetch).toHaveBeenCalledWith(
+				'https://api.example.com/parties/ABC123/jobs',
+				expect.objectContaining({
+					method: 'PUT',
+					body: JSON.stringify({
+						job_id: 'job-2'
+					})
+				})
+			)
+		})
+
+		it('should update job skills', async () => {
+			const updatedParty = {
+				...mockParty,
+				job: {
+					...mockParty.job!,
+					skills: [
+						{ id: 'skill-1', name: { en: 'Rage' }, slot: 1 },
+						{ id: 'skill-2', name: { en: 'Heal' }, slot: 2 }
+					]
+				}
+			}
+
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => updatedParty
+			})
+
+			const result = await adapter.updateJobSkills(
 				'ABC123',
-				'job-2',
-				[{ id: 'skill-2', slot: 1 }],
-				'acc-1'
+				[
+					{ id: 'skill-1', slot: 1 },
+					{ id: 'skill-2', slot: 2 }
+				]
 			)
 
 			expect(result).toEqual(updatedParty)
 			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/parties/ABC123',
+				'https://api.example.com/parties/ABC123/job_skills',
 				expect.objectContaining({
-					method: 'PATCH',
+					method: 'PUT',
 					body: JSON.stringify({
-						party: {
-							job_id: 'job-2',
-							job_skills_attributes: [{ id: 'skill-2', slot: 1 }],
-							job_accessory_id: 'acc-1'
-						}
+						skills: [
+							{ id: 'skill-1', slot: 1 },
+							{ id: 'skill-2', slot: 2 }
+						]
 					})
 				})
 			)
