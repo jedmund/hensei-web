@@ -56,8 +56,8 @@ export class UserAdapter extends BaseAdapter {
       items,
       page,
       total: response.meta?.count,
-      totalPages: response.meta?.total_pages,
-      perPage: response.meta?.per_page
+      totalPages: response.meta?.total_pages || response.meta?.totalPages,
+      perPage: response.meta?.per_page || response.meta?.perPage
     }
   }
 
@@ -77,7 +77,8 @@ export class UserAdapter extends BaseAdapter {
     const response = await this.request<{
       results: Party[]
       total: number
-      total_pages: number
+      total_pages?: number
+      totalPages?: number
       per?: number
     }>('/parties/favorites', { params })
 
@@ -85,7 +86,7 @@ export class UserAdapter extends BaseAdapter {
       items: response.results,
       page,
       total: response.total,
-      totalPages: response.total_pages,
+      totalPages: response.total_pages || response.totalPages || 1,
       perPage: response.per || 20
     }
   }
@@ -114,10 +115,15 @@ export class UserAdapter extends BaseAdapter {
    * Update user profile
    */
   async updateProfile(updates: Partial<UserInfo>): Promise<UserInfo> {
-    return this.request<UserInfo>('/users/me', {
+    const result = await this.request<UserInfo>('/users/me', {
       method: 'PUT',
       body: JSON.stringify(updates)
     })
+
+    // Clear cache for current user after update
+    this.clearCache('/users/me')
+
+    return result
   }
 
   /**
