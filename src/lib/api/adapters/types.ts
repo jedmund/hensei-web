@@ -36,14 +36,20 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
 	/** Query parameters to append to the URL */
 	params?: Record<string, any>
 
+	/** Alternative alias for query parameters */
+	query?: Record<string, any>
+
 	/** Request timeout in milliseconds. Overrides the adapter's default timeout */
 	timeout?: number
 
 	/** Number of retry attempts for this specific request */
 	retries?: number
 
-	/** Cache duration for this request in milliseconds. Only applies to GET requests */
+	/** Cache duration for this request in milliseconds */
 	cache?: number
+
+	/** Alternative alias for cache duration */
+	cacheTTL?: number
 
 	/** Request body. Can be any serializable value */
 	body?: any
@@ -75,8 +81,11 @@ export interface AdapterError {
  * Used for endpoints that return paginated data
  */
 export interface PaginatedResponse<T> {
-	/** Array of items for the current page */
-	items: T[]
+	/** Array of items for the current page (can be 'results' or 'items') */
+	results: T[]
+
+	/** Alternative key for items */
+	items?: T[]
 
 	/** Total number of items across all pages */
 	total: number
@@ -88,10 +97,10 @@ export interface PaginatedResponse<T> {
 	totalPages: number
 
 	/** Number of items per page */
-	perPage: number
+	perPage?: number
 
 	/** Whether there are more pages available */
-	hasMore: boolean
+	hasMore?: boolean
 
 	/** Cursor or page number for the next page, if available */
 	nextCursor?: string | number

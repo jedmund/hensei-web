@@ -10,6 +10,9 @@
 export { SearchResource, createSearchResource } from './search.resource.svelte'
 export type { SearchResourceOptions } from './search.resource.svelte'
 
+export { PartyResource, createPartyResource } from './party.resource.svelte'
+export type { PartyResourceOptions } from './party.resource.svelte'
+
 // Future resources will be added here
-// export { PartyResource, createPartyResource } from './party.resource.svelte'
 // export { GridResource, createGridResource } from './grid.resource.svelte'
+// export { EntityResource, createEntityResource } from './entity.resource.svelte'

@@ -87,14 +87,14 @@ export abstract class BaseAdapter {
 		path: string,
 		options: RequestOptions = {}
 	): Promise<T> {
-		// Build the full URL with query parameters
-		const url = this.buildURL(path, options.params)
+		// Build the full URL with query parameters (support both params and query)
+		const url = this.buildURL(path, options.query || options.params)
 
 		// Generate a unique ID for this request (used for cancellation and caching)
 		const requestId = this.generateRequestId(path, options.method, options.body as string)
 
-		// Check cache first if caching is enabled
-		const cacheTime = options.cache ?? this.options.cacheTime
+		// Check cache first if caching is enabled (support both cache and cacheTTL)
+		const cacheTime = options.cacheTTL ?? options.cache ?? this.options.cacheTime
 		// Allow caching for any method if explicitly set
 		if (cacheTime > 0) {
 			const cached = this.getFromCache(requestId)
@@ -122,13 +122,18 @@ export abstract class BaseAdapter {
 		}
 
 		// Transform request body from camelCase to snake_case if present
-		if (options.body && typeof options.body === 'string') {
-			try {
-				const bodyData = JSON.parse(options.body)
-				fetchOptions.body = JSON.stringify(this.transformRequest(bodyData))
-			} catch {
-				// If body is not valid JSON, use as-is
-				fetchOptions.body = options.body
+		if (options.body) {
+			if (typeof options.body === 'object') {
+				// Body is an object, transform and stringify
+				fetchOptions.body = JSON.stringify(this.transformRequest(options.body))
+			} else if (typeof options.body === 'string') {
+				try {
+					const bodyData = JSON.parse(options.body)
+					fetchOptions.body = JSON.stringify(this.transformRequest(bodyData))
+				} catch {
+					// If body is not valid JSON, use as-is
+					fetchOptions.body = options.body
+				}
 			}
 		}
 
@@ -140,7 +145,7 @@ export abstract class BaseAdapter {
 			const data = await response.json()
 			const transformed = this.transformResponse<T>(data)
 
-			// Cache the successful response if caching is enabled
+			// Cache the successful response if caching is enabled (use cacheTTL or cache)
 			if (cacheTime > 0) {
 				this.setCache(requestId, transformed, cacheTime)
 			}
@@ -348,7 +353,10 @@ export abstract class BaseAdapter {
 	private addQueryParams(url: URL, params?: Record<string, any>): void {
 		if (!params) return
 
-		Object.entries(params).forEach(([key, value]) => {
+		// Transform query parameters from camelCase to snake_case
+		const transformed = this.transformRequest(params)
+
+		Object.entries(transformed).forEach(([key, value]) => {
 			// Skip undefined and null values
 			if (value === undefined || value === null) return
 
