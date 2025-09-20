@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@tanstack/svelte-query':
-        specifier: ^5.87.1
-        version: 5.87.1(svelte@5.38.7)
       bits-ui:
         specifier: ^2.9.6
         version: 2.9.6(@internationalized/date@3.9.0)(svelte@5.38.7)
@@ -20,6 +17,9 @@ importers:
       modern-normalize:
         specifier: ^3.0.1
         version: 3.0.1
+      runed:
+        specifier: ^0.31.1
+        version: 0.31.1(svelte@5.38.7)
       wx-grid-data-provider:
         specifier: ^2.2.0
         version: 2.2.0
@@ -801,14 +801,6 @@ packages:
 
   '@swc/helpers@0.5.17':
     resolution: {integrity: sha512-5IKx/Y13RsYd+sauPb2x+U/xZikHjolzfuDgTAl/Tdf3Q8rslRvC19NKDLgAJQ6wsqADk10ntlv08nPFw/gO/A==}
-
-  '@tanstack/query-core@5.87.1':
-    resolution: {integrity: sha512-HOFHVvhOCprrWvtccSzc7+RNqpnLlZ5R6lTmngb8aq7b4rc2/jDT0w+vLdQ4lD9bNtQ+/A4GsFXy030Gk4ollA==}
-
-  '@tanstack/svelte-query@5.87.1':
-    resolution: {integrity: sha512-kQ3j+A6y+4SeF9rs8ww8K4Oq8/E0zRg5YRJ9RMWCEOzhnL3GrJAshjC9fhfho8uGm7a1SbsHbJ2C1PpvL8w2qQ==}
-    peerDependencies:
-      svelte: ^3.54.0 || ^4.0.0 || ^5.0.0
 
   '@testing-library/dom@10.4.1':
     resolution: {integrity: sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==}
@@ -1766,6 +1758,11 @@ packages:
 
   runed@0.29.2:
     resolution: {integrity: sha512-0cq6cA6sYGZwl/FvVqjx9YN+1xEBu9sDDyuWdDW1yWX7JF2wmvmVKfH+hVCZs+csW+P3ARH92MjI3H9QTagOQA==}
+    peerDependencies:
+      svelte: ^5.7.0
+
+  runed@0.31.1:
+    resolution: {integrity: sha512-v3czcTnO+EJjiPvD4dwIqfTdHLZ8oH0zJheKqAHh9QMViY7Qb29UlAMRpX7ZtHh7AFqV60KmfxaJ9QMy+L1igQ==}
     peerDependencies:
       svelte: ^5.7.0
 
@@ -2793,13 +2790,6 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@tanstack/query-core@5.87.1': {}
-
-  '@tanstack/svelte-query@5.87.1(svelte@5.38.7)':
-    dependencies:
-      '@tanstack/query-core': 5.87.1
-      svelte: 5.38.7
-
   '@testing-library/dom@10.4.1':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -3738,6 +3728,11 @@ snapshots:
       queue-microtask: 1.2.3
 
   runed@0.29.2(svelte@5.38.7):
+    dependencies:
+      esm-env: 1.2.2
+      svelte: 5.38.7
+
+  runed@0.31.1(svelte@5.38.7):
     dependencies:
       esm-env: 1.2.2
       svelte: 5.38.7
