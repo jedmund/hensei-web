@@ -4,6 +4,8 @@
 	import '$src/app.scss'
 
 	import Navigation from '$lib/components/Navigation.svelte'
+	import Sidebar from '$lib/components/ui/Sidebar.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
 
 	// Get `data` and `children` from the router via $props()
@@ -19,8 +21,38 @@
 </svelte:head>
 
 <Tooltip.Provider>
-	<main>
-		<Navigation isAuthenticated={data?.isAuthenticated} username={data?.account?.username} role={data?.account?.role} />
-		{@render children?.()}
-	</main>
+	<div class="app-container">
+		<main class:sidebar-open={sidebar.isOpen}>
+			<Navigation isAuthenticated={data?.isAuthenticated} username={data?.account?.username} role={data?.account?.role} />
+			{@render children?.()}
+		</main>
+
+		<Sidebar
+			open={sidebar.isOpen}
+			title={sidebar.title}
+			onclose={() => sidebar.close()}
+		>
+			{#if sidebar.content}
+				{@render sidebar.content()}
+			{/if}
+		</Sidebar>
+	</div>
 </Tooltip.Provider>
+
+<style lang="scss">
+	@use '$src/themes/effects' as *;
+
+	.app-container {
+		display: flex;
+		min-height: 100vh;
+		width: 100%;
+		overflow-x: hidden;
+	}
+
+	main {
+		flex: 1;
+		min-width: 0;
+		overflow-x: auto;
+		transition: margin-right $duration-slide ease-in-out;
+	}
+</style>

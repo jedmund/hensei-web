@@ -19,7 +19,6 @@ body {
 	font-family: var(--font-family);
 	font-size: 1.4rem;
 	height: 100%;
-	padding: spacing.$unit-2x !important;
 
 	&.no-scroll {
 		overflow: hidden;
