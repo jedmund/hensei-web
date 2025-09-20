@@ -1,8 +1,20 @@
-import { buildUrl, type FetchLike } from '$lib/api/core'
-
 /**
- * Grid API resource functions for managing party items
+ * Grid API resource functions - Facade layer for migration
+ *
+ * This module provides backward compatibility during the migration
+ * from api/core to the adapter pattern. Services can continue using
+ * these functions while we migrate them incrementally.
  */
+
+import { gridAdapter } from '$lib/api/adapters'
+import type {
+	GridWeapon,
+	GridCharacter,
+	GridSummon
+} from '$lib/api/adapters'
+
+// FetchLike type for backward compatibility
+export type FetchLike = typeof fetch
 
 // Weapon grid operations
 export async function addWeapon(
@@ -17,34 +29,15 @@ export async function addWeapon(
     element?: number
   },
   headers?: Record<string, string>
-): Promise<any> {
-  const body = {
-    weapon: {
-      party_id: partyId,
-      weapon_id: weaponId,
-      position,
-      mainhand: position === -1 || options?.mainhand,
-      uncap_level: options?.uncapLevel ?? 3,
-      transcendence_step: options?.transcendenceStep ?? 0,
-      element: options?.element
-    }
-  }
-
-  const res = await fetch(buildUrl('/weapons'), {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify(body)
+): Promise<GridWeapon> {
+  return gridAdapter.createWeapon({
+    partyId,
+    weaponId,
+    position,
+    mainhand: position === -1 || options?.mainhand,
+    uncapLevel: options?.uncapLevel ?? 3,
+    transcendenceStage: options?.transcendenceStep ?? 0
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to add weapon: ${res.statusText}`)
-  }
-
-  return res.json()
 }
 
 export async function updateWeapon(
@@ -58,22 +51,13 @@ export async function updateWeapon(
     element?: number
   },
   headers?: Record<string, string>
-): Promise<any> {
-  const res = await fetch(buildUrl(`/grid_weapons/${gridWeaponId}`), {
-    method: 'PUT',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify({ weapon: updates })
+): Promise<GridWeapon> {
+  return gridAdapter.updateWeapon(gridWeaponId, {
+    position: updates.position,
+    uncapLevel: updates.uncapLevel,
+    transcendenceStage: updates.transcendenceStep,
+    element: updates.element
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to update weapon: ${res.statusText}`)
-  }
-
-  return res.json()
 }
 
 export async function removeWeapon(
@@ -82,19 +66,10 @@ export async function removeWeapon(
   gridWeaponId: string,
   headers?: Record<string, string>
 ): Promise<void> {
-  const res = await fetch(buildUrl('/weapons'), {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify({ grid_weapon_id: gridWeaponId })
+  return gridAdapter.deleteWeapon({
+    id: gridWeaponId,
+    partyId
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to remove weapon: ${res.statusText}`)
-  }
 }
 
 // Summon grid operations
@@ -111,35 +86,17 @@ export async function addSummon(
     transcendenceStep?: number
   },
   headers?: Record<string, string>
-): Promise<any> {
-  const body = {
-    summon: {
-      party_id: partyId,
-      summon_id: summonId,
-      position,
-      main: position === -1 || options?.main,
-      friend: position === 6 || options?.friend,
-      quick_summon: options?.quickSummon ?? false,
-      uncap_level: options?.uncapLevel ?? 3,
-      transcendence_step: options?.transcendenceStep ?? 0
-    }
-  }
-
-  const res = await fetch(buildUrl('/summons'), {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify(body)
+): Promise<GridSummon> {
+  return gridAdapter.createSummon({
+    partyId,
+    summonId,
+    position,
+    main: position === -1 || options?.main,
+    friend: position === 6 || options?.friend,
+    quickSummon: options?.quickSummon ?? false,
+    uncapLevel: options?.uncapLevel ?? 3,
+    transcendenceStage: options?.transcendenceStep ?? 0
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to add summon: ${res.statusText}`)
-  }
-
-  return res.json()
 }
 
 export async function updateSummon(
@@ -153,22 +110,13 @@ export async function updateSummon(
     transcendenceStep?: number
   },
   headers?: Record<string, string>
-): Promise<any> {
-  const res = await fetch(buildUrl(`/grid_summons/${gridSummonId}`), {
-    method: 'PUT',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify({ summon: updates })
+): Promise<GridSummon> {
+  return gridAdapter.updateSummon(gridSummonId, {
+    position: updates.position,
+    quickSummon: updates.quickSummon,
+    uncapLevel: updates.uncapLevel,
+    transcendenceStage: updates.transcendenceStep
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to update summon: ${res.statusText}`)
-  }
-
-  return res.json()
 }
 
 export async function removeSummon(
@@ -177,19 +125,10 @@ export async function removeSummon(
   gridSummonId: string,
   headers?: Record<string, string>
 ): Promise<void> {
-  const res = await fetch(buildUrl('/summons'), {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify({ grid_summon_id: gridSummonId })
+  return gridAdapter.deleteSummon({
+    id: gridSummonId,
+    partyId
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to remove summon: ${res.statusText}`)
-  }
 }
 
 // Character grid operations
@@ -204,33 +143,14 @@ export async function addCharacter(
     perpetuity?: boolean
   },
   headers?: Record<string, string>
-): Promise<any> {
-  const body = {
-    character: {
-      party_id: partyId,
-      character_id: characterId,
-      position,
-      uncap_level: options?.uncapLevel ?? 3,
-      transcendence_step: options?.transcendenceStep ?? 0,
-      perpetuity: options?.perpetuity ?? false
-    }
-  }
-
-  const res = await fetch(buildUrl('/characters'), {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify(body)
+): Promise<GridCharacter> {
+  return gridAdapter.createCharacter({
+    partyId,
+    characterId,
+    position,
+    uncapLevel: options?.uncapLevel ?? 3,
+    transcendenceStage: options?.transcendenceStep ?? 0
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to add character: ${res.statusText}`)
-  }
-
-  return res.json()
 }
 
 export async function updateCharacter(
@@ -244,22 +164,13 @@ export async function updateCharacter(
     perpetuity?: boolean
   },
   headers?: Record<string, string>
-): Promise<any> {
-  const res = await fetch(buildUrl(`/grid_characters/${gridCharacterId}`), {
-    method: 'PUT',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify({ character: updates })
+): Promise<GridCharacter> {
+  return gridAdapter.updateCharacter(gridCharacterId, {
+    position: updates.position,
+    uncapLevel: updates.uncapLevel,
+    transcendenceStage: updates.transcendenceStep,
+    perpetualModifiers: updates.perpetuity ? {} : undefined
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to update character: ${res.statusText}`)
-  }
-
-  return res.json()
 }
 
 export async function removeCharacter(
@@ -268,19 +179,10 @@ export async function removeCharacter(
   gridCharacterId: string,
   headers?: Record<string, string>
 ): Promise<void> {
-  const res = await fetch(buildUrl('/characters'), {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify({ grid_character_id: gridCharacterId })
+  return gridAdapter.deleteCharacter({
+    id: gridCharacterId,
+    partyId
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to remove character: ${res.statusText}`)
-  }
 }
 
 // Uncap update methods - these use special endpoints
@@ -289,30 +191,16 @@ export async function updateCharacterUncap(
   uncapLevel?: number,
   transcendenceStep?: number,
   headers?: Record<string, string>
-): Promise<any> {
-  const body = {
-    character: {
-      id: gridCharacterId,
-      ...(uncapLevel !== undefined && { uncap_level: uncapLevel }),
-      ...(transcendenceStep !== undefined && { transcendence_step: transcendenceStep })
-    }
-  }
-
-  const res = await fetch('/api/uncap/characters', {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify(body)
+): Promise<GridCharacter> {
+  // For uncap updates, we need the partyId which isn't passed here
+  // This is a limitation of the current API design
+  // For now, we'll use the update method with a fake partyId
+  return gridAdapter.updateCharacterUncap({
+    id: gridCharacterId,
+    partyId: 'unknown', // This is a hack - the API should be redesigned
+    uncapLevel: uncapLevel ?? 3,
+    transcendenceStep
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to update character uncap: ${res.statusText}`)
-  }
-
-  return res.json()
 }
 
 export async function updateWeaponUncap(
@@ -320,30 +208,13 @@ export async function updateWeaponUncap(
   uncapLevel?: number,
   transcendenceStep?: number,
   headers?: Record<string, string>
-): Promise<any> {
-  const body = {
-    weapon: {
-      id: gridWeaponId,
-      ...(uncapLevel !== undefined && { uncap_level: uncapLevel }),
-      ...(transcendenceStep !== undefined && { transcendence_step: transcendenceStep })
-    }
-  }
-
-  const res = await fetch('/api/uncap/weapons', {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify(body)
+): Promise<GridWeapon> {
+  return gridAdapter.updateWeaponUncap({
+    id: gridWeaponId,
+    partyId: 'unknown', // This is a hack - the API should be redesigned
+    uncapLevel: uncapLevel ?? 3,
+    transcendenceStep
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to update weapon uncap: ${res.statusText}`)
-  }
-
-  return res.json()
 }
 
 export async function updateSummonUncap(
@@ -351,28 +222,11 @@ export async function updateSummonUncap(
   uncapLevel?: number,
   transcendenceStep?: number,
   headers?: Record<string, string>
-): Promise<any> {
-  const body = {
-    summon: {
-      id: gridSummonId,
-      ...(uncapLevel !== undefined && { uncap_level: uncapLevel }),
-      ...(transcendenceStep !== undefined && { transcendence_step: transcendenceStep })
-    }
-  }
-
-  const res = await fetch('/api/uncap/summons', {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    },
-    body: JSON.stringify(body)
+): Promise<GridSummon> {
+  return gridAdapter.updateSummonUncap({
+    id: gridSummonId,
+    partyId: 'unknown', // This is a hack - the API should be redesigned
+    uncapLevel: uncapLevel ?? 3,
+    transcendenceStep
   })
-
-  if (!res.ok) {
-    throw new Error(`Failed to update summon uncap: ${res.statusText}`)
-  }
-
-  return res.json()
 }

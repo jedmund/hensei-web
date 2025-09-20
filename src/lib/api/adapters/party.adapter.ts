@@ -362,6 +362,28 @@ export class PartyAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Favorite a party
+	 */
+	async favorite(shortcode: string): Promise<void> {
+		await this.request(`/parties/${shortcode}/favorite`, {
+			method: 'POST'
+		})
+		// Clear cache for the party to reflect updated state
+		this.clearCache(`/parties/${shortcode}`)
+	}
+
+	/**
+	 * Unfavorite a party
+	 */
+	async unfavorite(shortcode: string): Promise<void> {
+		await this.request(`/parties/${shortcode}/unfavorite`, {
+			method: 'DELETE'
+		})
+		// Clear cache for the party to reflect updated state
+		this.clearCache(`/parties/${shortcode}`)
+	}
+
+	/**
 	 * Clears the cache for party-related data
 	 */
 	clearPartyCache(shortcode?: string) {
