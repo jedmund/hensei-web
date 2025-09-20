@@ -104,7 +104,7 @@
 		<span class="accessory">
 			{@render leftAccessory()}
 		</span>
-	{:else if hasLeftIcon}
+	{:else if hasLeftIcon && !iconOnly}
 		<span class="accessory">
 			<Icon name={icon} size={iconSizes[size]} />
 		</span>
@@ -122,7 +122,7 @@
 		<span class="accessory">
 			{@render rightAccessory()}
 		</span>
-	{:else if hasRightIcon}
+	{:else if hasRightIcon && !iconOnly}
 		<span class="accessory">
 			<Icon name={icon} size={iconSizes[size]} />
 		</span>
