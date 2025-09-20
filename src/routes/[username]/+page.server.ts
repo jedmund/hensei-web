@@ -1,10 +1,9 @@
 import type { PageServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
-import { profile } from '$lib/api/resources/users'
+import { userAdapter } from '$lib/api/adapters'
 import { parseParty } from '$lib/api/schemas/party'
-import * as partiesApi from '$lib/api/resources/parties'
 
-export const load: PageServerLoad = async ({ fetch, params, url, depends, locals }) => {
+export const load: PageServerLoad = async ({ params, url, depends, locals }) => {
   depends('app:profile')
   const username = params.username
   const pageParam = url.searchParams.get('page')
@@ -14,11 +13,20 @@ export const load: PageServerLoad = async ({ fetch, params, url, depends, locals
 
   try {
     if (tab === 'favorites' && isOwner) {
-      const fav = await partiesApi.favorites(fetch as any, { page })
-      return { user: { username } as any, items: fav.items, page: fav.page, total: fav.total, totalPages: fav.totalPages, perPage: fav.perPage, tab, isOwner }
+      const fav = await userAdapter.getFavorites({ page })
+      return {
+        user: { username } as any,
+        items: fav.items,
+        page: fav.page,
+        total: fav.total,
+        totalPages: fav.totalPages,
+        perPage: fav.perPage,
+        tab,
+        isOwner
+      }
     }
 
-    const { user, items, total, totalPages, perPage } = await profile(fetch as any, username, page)
+    const { user, items, total, totalPages, perPage } = await userAdapter.getProfile(username, page)
     const parties = items.map((p) => parseParty(p))
     return { user, items: parties, page, total, totalPages, perPage, tab, isOwner }
   } catch (e: any) {

@@ -51,5 +51,12 @@ export type {
 	Summon
 } from './entity.adapter'
 
+export { UserAdapter, userAdapter } from './user.adapter'
+export type {
+	UserInfo,
+	UserProfile,
+	UserProfileResponse
+} from './user.adapter'
+
 // Reactive resources using Svelte 5 runes
 export * from './resources'

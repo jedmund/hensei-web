@@ -1,8 +1,8 @@
 import type { PageServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
-import * as parties from '$lib/api/resources/parties'
+import { partyAdapter } from '$lib/api/adapters'
 
-export const load: PageServerLoad = async ({ fetch, url, depends }) => {
+export const load: PageServerLoad = async ({ url, depends }) => {
   depends('app:parties:list')
 
   const pageParam = url.searchParams.get('page')
@@ -12,9 +12,16 @@ export const load: PageServerLoad = async ({ fetch, url, depends }) => {
   console.log('[explore/+page.server.ts] Full URL:', url.toString())
 
   try {
-    const { items, total, totalPages, perPage } = await parties.list(fetch, { page })
-    console.log('[explore/+page.server.ts] Successfully loaded', items.length, 'parties')
-    return { items, page, total, totalPages, perPage }
+    const response = await partyAdapter.list({ page })
+    console.log('[explore/+page.server.ts] Successfully loaded', response.results.length, 'parties')
+
+    return {
+      items: response.results,
+      page,
+      total: response.total,
+      totalPages: response.totalPages,
+      perPage: response.per || 20
+    }
   } catch (e: any) {
     console.error('[explore/+page.server.ts] Failed to load teams:', {
       error: e,
