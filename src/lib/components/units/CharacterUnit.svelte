@@ -6,6 +6,7 @@
   import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
   import { ContextMenu as ContextMenuBase } from 'bits-ui'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+  import { getCharacterImage } from '$lib/features/database/detail/image'
 
   interface Props {
     item?: GridCharacter
@@ -33,24 +34,27 @@
     return '—'
   }
   // Use $derived to ensure consistent computation between server and client
-  let imageUrl = $derived(() => {
+  let imageUrl = $derived.by(() => {
     // If no item or no character with granblueId, return placeholder
     if (!item || !item.character?.granblueId) {
-      return '/images/placeholders/placeholder-weapon-grid.png'
+      return getCharacterImage(null, undefined, 'main')
     }
 
     const id = item.character.granblueId
     const uncap = item?.uncapLevel ?? 0
     const transStep = item?.transcendenceStep ?? 0
-    let suffix = '01'
-    if (transStep > 0) suffix = '04'
-    else if (uncap >= 5) suffix = '03'
-    else if (uncap > 2) suffix = '02'
+    let pose = '01'
+    if (transStep > 0) pose = '04'
+    else if (uncap >= 5) pose = '03'
+    else if (uncap > 2) pose = '02'
+
+    // Special handling for Gran/Djeeta (3030182000) - element-specific poses
     if (String(id) === '3030182000') {
       let element = mainWeaponElement || partyElement || 1
-      suffix = `${suffix}_0${element}`
+      pose = `${pose}_0${element}`
     }
-    return `/images/character-main/${id}_${suffix}.jpg`
+
+    return getCharacterImage(id, pose, 'main')
   })
 
   async function remove() {
@@ -95,7 +99,7 @@
               class="image"
               class:placeholder={!item?.character?.granblueId}
               alt={displayName(item?.character)}
-              src={imageUrl()}
+              src={imageUrl}
             />
             {#if ctx?.canEdit() && item?.id}
               <div class="actions">

@@ -10,6 +10,7 @@
 
 import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions } from './types'
+import { DEFAULT_ADAPTER_CONFIG } from './config'
 
 /**
  * Canonical weapon data from the game
@@ -108,14 +109,6 @@ export interface Summon {
  * Entity adapter for accessing canonical game data
  */
 export class EntityAdapter extends BaseAdapter {
-	constructor(options?: AdapterOptions) {
-		super({
-			...options,
-			baseURL: options?.baseURL || '/api/v1',
-			// Cache entity data for longer since it rarely changes
-			cacheTime: options?.cacheTime || 300000 // 5 minutes default
-		})
-	}
 
 	/**
 	 * Gets canonical weapon data by ID
@@ -190,4 +183,4 @@ export class EntityAdapter extends BaseAdapter {
 /**
  * Default entity adapter instance
  */
-export const entityAdapter = new EntityAdapter()
+export const entityAdapter = new EntityAdapter(DEFAULT_ADAPTER_CONFIG)

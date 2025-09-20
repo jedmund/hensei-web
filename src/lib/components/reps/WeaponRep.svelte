@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Party, GridWeapon } from '$lib/types/api/party'
+	import { getWeaponImage } from '$lib/features/database/detail/image'
 
 	interface Props {
 		party?: Party
@@ -8,21 +9,19 @@
 
 	let { party, weapons: directWeapons }: Props = $props()
 
-	// Use direct weapons if provided, otherwise get from party
+	// Use direct weapons if provided, otherwise get from party (note: API returns weapons after transformation)
 	const weapons = $derived(directWeapons || party?.weapons || [])
 	const mainhand = $derived(weapons.find((w: GridWeapon) => w?.mainhand || w?.position === -1))
 	const grid = $derived(
 		Array.from({ length: 9 }, (_, i) => weapons.find((w: GridWeapon) => w?.position === i))
 	)
 
+
 	function weaponImageUrl(w?: GridWeapon, isMain = false): string {
-		const id = w?.weapon?.granblueId
-		if (!id) return ''
-		const folder = isMain ? 'weapon-main' : 'weapon-grid'
-		const objElement = w?.weapon?.element
-		const instElement = w?.element
-		if (objElement === 0 && instElement) return `/images/${folder}/${id}_${instElement}.jpg`
-		return `/images/${folder}/${id}.jpg`
+		const variant = isMain ? 'main' : 'grid'
+		// For weapons with null element that have an instance element, use it
+		const element = (w?.weapon?.element === 0 && w?.element) ? w.element : undefined
+		return getWeaponImage(w?.weapon?.granblueId, variant, element)
 	}
 </script>
 

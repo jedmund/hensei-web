@@ -7,7 +7,7 @@
  * @module adapters/resources/party
  */
 
-import { PartyAdapter, type Party, type CreatePartyParams, type UpdatePartyParams } from '../party.adapter'
+import { PartyAdapter, partyAdapter, type Party, type CreatePartyParams, type UpdatePartyParams } from '../party.adapter'
 import type { AdapterError } from '../types'
 
 /**
@@ -88,7 +88,7 @@ export class PartyResource {
 	private activeRequests = new Map<string, AbortController>()
 
 	constructor(options: PartyResourceOptions = {}) {
-		this.adapter = options.adapter || new PartyAdapter()
+		this.adapter = options.adapter || partyAdapter
 		this.optimistic = options.optimistic ?? true
 	}
 

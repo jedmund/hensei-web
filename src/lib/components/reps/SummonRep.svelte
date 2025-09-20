@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Party, GridSummon } from '$lib/types/api/party'
+	import { getSummonImage } from '$lib/features/database/detail/image'
 
 	interface Props {
 		party?: Party
@@ -9,8 +10,8 @@
 
 	let { party, summons: directSummons, extendedView = false }: Props = $props()
 
-	// Use direct summons if provided, otherwise get from party
-	const summons = $derived(directSummons || party?.summons || [])
+	// Use direct summons if provided, otherwise get from party (note: API returns gridSummons)
+	const summons = $derived(directSummons || party?.gridSummons || [])
 	const main = $derived(summons.find((s: GridSummon) => s?.main || s?.position === -1))
 	const friend = $derived(
 		extendedView ? summons.find((s: GridSummon) => s?.friend || s?.position === -2) : undefined

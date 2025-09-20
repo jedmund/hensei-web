@@ -9,6 +9,7 @@
 
 import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions } from './types'
+import { DEFAULT_ADAPTER_CONFIG } from './config'
 
 /**
  * Common grid item structure
@@ -143,12 +144,6 @@ export interface ResolveConflictParams {
  * Grid adapter for managing user's grid item instances
  */
 export class GridAdapter extends BaseAdapter {
-	constructor(options?: AdapterOptions) {
-		super({
-			...options,
-			baseURL: options?.baseURL || '/api/v1'
-		})
-	}
 
 	// Weapon operations
 
@@ -401,4 +396,4 @@ export class GridAdapter extends BaseAdapter {
 /**
  * Default grid adapter instance
  */
-export const gridAdapter = new GridAdapter()
+export const gridAdapter = new GridAdapter(DEFAULT_ADAPTER_CONFIG)

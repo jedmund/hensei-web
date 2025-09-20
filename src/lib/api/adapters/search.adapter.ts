@@ -9,6 +9,7 @@
 
 import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions, SearchFilters } from './types'
+import { DEFAULT_ADAPTER_CONFIG } from './config'
 
 /**
  * Search parameters for entity queries
@@ -293,4 +294,4 @@ export class SearchAdapter extends BaseAdapter {
  * Default singleton instance for search operations
  * Use this for most search needs unless you need custom configuration
  */
-export const searchAdapter = new SearchAdapter()
+export const searchAdapter = new SearchAdapter(DEFAULT_ADAPTER_CONFIG)

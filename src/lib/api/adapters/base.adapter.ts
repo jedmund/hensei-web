@@ -9,7 +9,7 @@
  */
 
 import { snakeToCamel, camelToSnake } from '../schemas/transforms'
-import { API_BASE } from '../core'
+import { transformResponse, transformRequest } from '../client'
 import type { AdapterOptions, RequestOptions, AdapterError } from './types'
 import {
 	createErrorFromStatus,
@@ -57,8 +57,10 @@ export abstract class BaseAdapter {
 	 * @param options.onError - Global error handler callback
 	 */
 	constructor(options: AdapterOptions = {}) {
+		// Default to localhost if no baseURL provided
+		const baseURL = options.baseURL ?? 'http://localhost:3000/api/v1'
 		this.options = {
-			baseURL: options.baseURL ?? API_BASE,
+			baseURL,
 			timeout: options.timeout ?? 30000,
 			retries: options.retries ?? 3,
 			cacheTime: options.cacheTime ?? 0,
@@ -174,34 +176,34 @@ export abstract class BaseAdapter {
 	}
 
 	/**
-	 * Transforms response data from snake_case to camelCase
+	 * Transforms response data from snake_case to camelCase and object->entity
 	 *
 	 * @template T - The expected response type
 	 * @param data - Raw response data from the API
-	 * @returns Transformed data with camelCase property names
+	 * @returns Transformed data with camelCase property names and proper entity fields
 	 */
 	protected transformResponse<T>(data: any): T {
 		if (data === null || data === undefined) {
 			return data
 		}
 
-		// Apply snake_case to camelCase transformation
-		return snakeToCamel(data) as T
+		// Apply full transformation: snake_case->camelCase and object->entity
+		return transformResponse<T>(data)
 	}
 
 	/**
-	 * Transforms request data from camelCase to snake_case
+	 * Transforms request data from camelCase to snake_case and entity->object
 	 *
-	 * @param data - Request data with camelCase property names
-	 * @returns Transformed data with snake_case property names
+	 * @param data - Request data with camelCase property names and entity fields
+	 * @returns Transformed data with snake_case property names and object fields
 	 */
 	protected transformRequest(data: any): any {
 		if (data === null || data === undefined) {
 			return data
 		}
 
-		// Apply camelCase to snake_case transformation
-		return camelToSnake(data)
+		// Apply full transformation: entity->object and camelCase->snake_case
+		return transformRequest(data)
 	}
 
 	/**

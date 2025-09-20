@@ -6,6 +6,7 @@
   import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
   import { ContextMenu as ContextMenuBase } from 'bits-ui'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+  import { getWeaponImage } from '$lib/features/database/detail/image'
 
   interface Props {
     item?: GridWeapon
@@ -33,26 +34,14 @@
   }
 
   // Use $derived to ensure consistent computation between server and client
-  let imageUrl = $derived(() => {
-    // Check position first for main weapon determination
+  let imageUrl = $derived.by(() => {
     const isMain = position === -1 || item?.mainhand
+    const variant = isMain ? 'main' : 'grid'
 
-    // If no item or no weapon with granblueId, return placeholder
-    if (!item || !item.weapon?.granblueId) {
-      return isMain
-        ? '/images/placeholders/placeholder-weapon-main.png'
-        : '/images/placeholders/placeholder-weapon-grid.png'
-    }
+    // For weapons with null element that have an instance element, use it
+    const element = (item?.weapon?.element === 0 && item?.element) ? item.element : undefined
 
-    const id = item.weapon.granblueId
-    const folder = isMain ? 'weapon-main' : 'weapon-grid'
-    const objElement = item.weapon?.element
-    const instElement = item?.element
-
-    if (objElement === 0 && instElement) {
-      return `/images/${folder}/${id}_${instElement}.jpg`
-    }
-    return `/images/${folder}/${id}.jpg`
+    return getWeaponImage(item?.weapon?.granblueId, variant, element)
   })
 
   async function remove() {
@@ -98,7 +87,7 @@
               class="image"
               class:placeholder={!item?.weapon?.granblueId}
               alt={displayName(item?.weapon)}
-              src={imageUrl()}
+              src={imageUrl}
             />
             {#if ctx?.canEdit() && item?.id}
               <div class="actions">

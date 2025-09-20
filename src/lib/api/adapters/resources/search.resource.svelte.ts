@@ -8,7 +8,7 @@
  */
 
 import { debounced } from 'runed'
-import { SearchAdapter, type SearchParams, type SearchResponse } from '../search.adapter'
+import { SearchAdapter, searchAdapter, type SearchParams, type SearchResponse } from '../search.adapter'
 import type { AdapterError } from '../types'
 
 /**
@@ -93,7 +93,7 @@ export class SearchResource {
 	private activeRequests = new Map<string, AbortController>()
 
 	constructor(options: SearchResourceOptions = {}) {
-		this.adapter = options.adapter || new SearchAdapter()
+		this.adapter = options.adapter || searchAdapter
 		this.debounceMs = options.debounceMs || 300
 		this.baseParams = options.initialParams || {}
 	}

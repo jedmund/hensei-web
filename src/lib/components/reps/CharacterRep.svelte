@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Party, GridWeapon, GridCharacter } from '$lib/types/api/party'
 	import { getElementClass } from '$lib/types/enums'
+	import { getCharacterImage } from '$lib/features/database/detail/image'
 
 	interface Props {
 		party?: Party
@@ -12,8 +13,8 @@
 
 	let { party, characters: directCharacters, jobId, element, gender }: Props = $props()
 
-	// Use direct characters if provided, otherwise get from party
-	const characters = $derived(directCharacters || party?.characters || [])
+	// Use direct characters if provided, otherwise get from party (note: API returns gridCharacters)
+	const characters = $derived(directCharacters || party?.gridCharacters || [])
 	const grid = $derived(Array.from({ length: 3 }, (_, i) =>
 		characters.find((c: GridCharacter) => c?.position === i)
 	))
@@ -23,7 +24,7 @@
 		element ? getElementClass(element) :
 		// Otherwise try to get from party's mainhand weapon
 		party ? (() => {
-			const main: GridWeapon | undefined = (party.weapons || []).find(
+			const main: GridWeapon | undefined = (party.gridWeapons || []).find(
 				(w: GridWeapon) => w?.mainhand || w?.position === -1
 			)
 			const el = main?.element ?? main?.weapon?.element

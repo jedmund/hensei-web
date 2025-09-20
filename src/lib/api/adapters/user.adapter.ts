@@ -1,5 +1,6 @@
 import { BaseAdapter } from './base.adapter'
 import type { Party } from '$lib/types/api/party'
+import { DEFAULT_ADAPTER_CONFIG } from './config'
 
 export interface UserInfo {
   id: string
@@ -134,4 +135,4 @@ export class UserAdapter extends BaseAdapter {
   }
 }
 
-export const userAdapter = new UserAdapter()
+export const userAdapter = new UserAdapter(DEFAULT_ADAPTER_CONFIG)

@@ -6,6 +6,7 @@
   import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
   import { ContextMenu as ContextMenuBase } from 'bits-ui'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+  import { getSummonImage } from '$lib/features/database/detail/image'
 
   interface Props {
     item?: GridSummon
@@ -31,20 +32,12 @@
     return '—'
   }
   // Use $derived to ensure consistent computation between server and client
-  let imageUrl = $derived(() => {
+  let imageUrl = $derived.by(() => {
     // Check position first for main/friend summon determination
     const isMain = position === -1 || position === 6 || item?.main || item?.friend
+    const variant = isMain ? 'main' : 'grid'
 
-    // If no item or no summon with granblueId, return placeholder
-    if (!item || !item.summon?.granblueId) {
-      return isMain
-        ? '/images/placeholders/placeholder-summon-main.png'
-        : '/images/placeholders/placeholder-summon-grid.png'
-    }
-
-    const id = item.summon.granblueId
-    const folder = isMain ? 'summon-main' : 'summon-grid'
-    return `/images/${folder}/${id}.jpg`
+    return getSummonImage(item?.summon?.granblueId, variant)
   })
 
   async function remove() {
@@ -92,7 +85,7 @@
               class="image"
               class:placeholder={!item?.summon?.granblueId}
               alt={displayName(item?.summon)}
-              src={imageUrl()}
+              src={imageUrl}
             />
             {#if ctx?.canEdit() && item?.id}
               <div class="actions">

@@ -10,6 +10,7 @@
 
 import { BaseAdapter } from './base.adapter'
 import type { RequestOptions, AdapterOptions, PaginatedResponse } from './types'
+import { DEFAULT_ADAPTER_CONFIG } from './config'
 
 /**
  * Party data structure
@@ -253,6 +254,17 @@ export class PartyAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Lists all public parties (explore page)
+	 */
+	async list(params: { page?: number; per?: number } = {}): Promise<PaginatedResponse<Party>> {
+		return this.request<PaginatedResponse<Party>>('/parties', {
+			method: 'GET',
+			query: params,
+			cacheTTL: 30000 // Cache for 30 seconds
+		})
+	}
+
+	/**
 	 * Lists parties for a specific user
 	 */
 	async listUserParties(params: ListUserPartiesParams): Promise<PaginatedResponse<Party>> {
@@ -401,4 +413,4 @@ export class PartyAdapter extends BaseAdapter {
 /**
  * Default party adapter instance
  */
-export const partyAdapter = new PartyAdapter()
+export const partyAdapter = new PartyAdapter(DEFAULT_ADAPTER_CONFIG)
