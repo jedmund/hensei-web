@@ -12,7 +12,7 @@
 	// Column configuration for summons
 	const columns: IColumn[] = [
 		{
-			id: 'granblue_id',
+			id: 'granblueId',
 			header: 'Image',
 			width: 80,
 			cell: SummonImageCell

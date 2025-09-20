@@ -13,7 +13,7 @@
 
 	const columns = [
 		{
-			id: 'granblue_id',
+			id: 'granblueId',
 			header: 'Image',
 			width: 80,
 			cell: CharacterImageCell

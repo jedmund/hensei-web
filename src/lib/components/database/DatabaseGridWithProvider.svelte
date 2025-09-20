@@ -72,11 +72,11 @@
 			console.log('Row selected:', ev)
 			const rowId = ev.id
 			if (rowId) {
-				// Find the row data to get the granblue_id
+				// Find the row data to get the granblueId
 				const rowData = data.find((item: any) => item.id === rowId)
-				if (rowData && rowData.granblue_id) {
-					console.log(`Navigating to: /database/${resource}/${rowData.granblue_id}`)
-					goto(`/database/${resource}/${rowData.granblue_id}`)
+				if (rowData && rowData.granblueId) {
+					console.log(`Navigating to: /database/${resource}/${rowData.granblueId}`)
+					goto(`/database/${resource}/${rowData.granblueId}`)
 				}
 			}
 		})

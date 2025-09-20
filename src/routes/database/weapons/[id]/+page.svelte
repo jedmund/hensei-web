@@ -18,13 +18,13 @@
 
 	// Helper function to get weapon image
 	function getWeaponImage(weapon: any): string {
-		if (!weapon?.granblue_id) return '/images/placeholders/placeholder-weapon-main.png'
+		if (!weapon?.granblueId) return '/images/placeholders/placeholder-weapon-main.png'
 
 		// Handle element-specific weapons (primal weapons)
-		if (weapon.element === 0 && weapon.instance_element) {
-			return `/images/weapon-grid/${weapon.granblue_id}_${weapon.instance_element}.jpg`
+		if (weapon.element === 0 && weapon.instanceElement) {
+			return `/images/weapon-grid/${weapon.granblueId}_${weapon.instanceElement}.jpg`
 		}
-		return `/images/weapon-grid/${weapon.granblue_id}.jpg`
+		return `/images/weapon-grid/${weapon.granblueId}.jpg`
 	}
 
 	// Calculate uncap properties for the indicator
@@ -50,8 +50,8 @@
 			<DetailsHeader type="weapon" item={weapon} image={getWeaponImage(weapon)} />
 
 			<DetailsContainer title="Level & Skill">
-				<DetailItem label="Max Level" value={weapon.max_level} />
-				<DetailItem label="Max Skill Level" value={weapon.skill_level_cap} />
+				<DetailItem label="Max Level" value={weapon.maxLevel} />
+				<DetailItem label="Max Skill Level" value={weapon.skillLevelCap} />
 				{#if weapon.uncap}
 					<DetailItem label="Uncap">
 						<UncapIndicator
@@ -68,24 +68,24 @@
 			</DetailsContainer>
 
 			<DetailsContainer title="HP Stats">
-				<DetailItem label="Base HP" value={weapon.hp?.min_hp} />
-				<DetailItem label="Max HP" value={weapon.hp?.max_hp} />
+				<DetailItem label="Base HP" value={weapon.hp?.minHp} />
+				<DetailItem label="Max HP" value={weapon.hp?.maxHp} />
 				{#if flb}
-					<DetailItem label="Max HP (FLB)" value={weapon.hp?.max_hp_flb} />
+					<DetailItem label="Max HP (FLB)" value={weapon.hp?.maxHpFlb} />
 				{/if}
 				{#if ulb}
-					<DetailItem label="Max HP (ULB)" value={weapon.hp?.max_hp_ulb} />
+					<DetailItem label="Max HP (ULB)" value={weapon.hp?.maxHpUlb} />
 				{/if}
 			</DetailsContainer>
 
 			<DetailsContainer title="Attack Stats">
-				<DetailItem label="Base Attack" value={weapon.atk?.min_atk} />
-				<DetailItem label="Max Attack" value={weapon.atk?.max_atk} />
+				<DetailItem label="Base Attack" value={weapon.atk?.minAtk} />
+				<DetailItem label="Max Attack" value={weapon.atk?.maxAtk} />
 				{#if flb}
-					<DetailItem label="Max Attack (FLB)" value={weapon.atk?.max_atk_flb} />
+					<DetailItem label="Max Attack (FLB)" value={weapon.atk?.maxAtkFlb} />
 				{/if}
 				{#if ulb}
-					<DetailItem label="Max Attack (ULB)" value={weapon.atk?.max_atk_ulb} />
+					<DetailItem label="Max Attack (ULB)" value={weapon.atk?.maxAtkUlb} />
 				{/if}
 			</DetailsContainer>
 

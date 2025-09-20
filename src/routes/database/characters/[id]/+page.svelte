@@ -38,7 +38,7 @@
 	// Editable fields - create reactive state for each field
 	let editData = $state({
 		name: character?.name || '',
-		granblue_id: character?.granblue_id || '',
+		granblueId: character?.granblueId || '',
 		rarity: character?.rarity || 1,
 		element: character?.element || 0,
 		race1: character?.race?.[0] ?? null,
@@ -46,12 +46,12 @@
 		gender: character?.gender || 0,
 		proficiency1: character?.proficiency?.[0] || 0,
 		proficiency2: character?.proficiency?.[1] || 0,
-		min_hp: character?.hp?.min_hp || 0,
-		max_hp: character?.hp?.max_hp || 0,
-		max_hp_flb: character?.hp?.max_hp_flb || 0,
-		min_atk: character?.atk?.min_atk || 0,
-		max_atk: character?.atk?.max_atk || 0,
-		max_atk_flb: character?.atk?.max_atk_flb || 0,
+		minHp: character?.hp?.minHp || 0,
+		maxHp: character?.hp?.maxHp || 0,
+		maxHpFlb: character?.hp?.maxHpFlb || 0,
+		minAtk: character?.atk?.minAtk || 0,
+		maxAtk: character?.atk?.maxAtk || 0,
+		maxAtkFlb: character?.atk?.maxAtkFlb || 0,
 		flb: character?.uncap?.flb || false,
 		ulb: character?.uncap?.ulb || false,
 		transcendence: character?.uncap?.transcendence || false,
@@ -63,7 +63,7 @@
 		if (character) {
 			editData = {
 				name: character.name || '',
-				granblue_id: character.granblue_id || '',
+				granblueId: character.granblueId || '',
 				rarity: character.rarity || 1,
 				element: character.element || 0,
 				race1: character.race?.[0] ?? null,
@@ -71,12 +71,12 @@
 				gender: character.gender || 0,
 				proficiency1: character.proficiency?.[0] || 0,
 				proficiency2: character.proficiency?.[1] || 0,
-				min_hp: character.hp?.min_hp || 0,
-				max_hp: character.hp?.max_hp || 0,
-				max_hp_flb: character.hp?.max_hp_flb || 0,
-				min_atk: character.atk?.min_atk || 0,
-				max_atk: character.atk?.max_atk || 0,
-				max_atk_flb: character.atk?.max_atk_flb || 0,
+				minHp: character.hp?.minHp || 0,
+				maxHp: character.hp?.maxHp || 0,
+				maxHpFlb: character.hp?.maxHpFlb || 0,
+				minAtk: character.atk?.minAtk || 0,
+				maxAtk: character.atk?.maxAtk || 0,
+				maxAtkFlb: character.atk?.maxAtkFlb || 0,
 				flb: character.uncap?.flb || false,
 				ulb: character.uncap?.ulb || false,
 				transcendence: character.uncap?.transcendence || false,
@@ -101,7 +101,7 @@
 		if (!editMode && character) {
 			editData = {
 				name: character.name || '',
-				granblue_id: character.granblue_id || '',
+				granblueId: character.granblueId || '',
 				rarity: character.rarity || 1,
 				element: character.element || 0,
 				race1: character.race?.[0] ?? null,
@@ -109,12 +109,12 @@
 				gender: character.gender || 0,
 				proficiency1: character.proficiency?.[0] || 0,
 				proficiency2: character.proficiency?.[1] || 0,
-				min_hp: character.hp?.min_hp || 0,
-				max_hp: character.hp?.max_hp || 0,
-				max_hp_flb: character.hp?.max_hp_flb || 0,
-				min_atk: character.atk?.min_atk || 0,
-				max_atk: character.atk?.max_atk || 0,
-				max_atk_flb: character.atk?.max_atk_flb || 0,
+				minHp: character.hp?.minHp || 0,
+				maxHp: character.hp?.maxHp || 0,
+				maxHpFlb: character.hp?.maxHpFlb || 0,
+				minAtk: character.atk?.minAtk || 0,
+				maxAtk: character.atk?.maxAtk || 0,
+				maxAtkFlb: character.atk?.maxAtkFlb || 0,
 				flb: character.uncap?.flb || false,
 				ulb: character.uncap?.ulb || false,
 				transcendence: character.uncap?.transcendence || false,
@@ -132,21 +132,21 @@
 			// Prepare the data for API
 			const payload = {
 				name: editData.name,
-				granblue_id: editData.granblue_id,
+				granblue_id: editData.granblueId,
 				rarity: editData.rarity,
 				element: editData.element,
 				race: [editData.race1, editData.race2].filter(r => r !== null && r !== undefined),
 				gender: editData.gender,
 				proficiency: [editData.proficiency1, editData.proficiency2],
 				hp: {
-					min_hp: editData.min_hp,
-					max_hp: editData.max_hp,
-					max_hp_flb: editData.max_hp_flb
+					min_hp: editData.minHp,
+					max_hp: editData.maxHp,
+					max_hp_flb: editData.maxHpFlb
 				},
 				atk: {
-					min_atk: editData.min_atk,
-					max_atk: editData.max_atk,
-					max_atk_flb: editData.max_atk_flb
+					min_atk: editData.minAtk,
+					max_atk: editData.maxAtk,
+					max_atk_flb: editData.maxAtkFlb
 				},
 				uncap: {
 					flb: editData.flb,
@@ -183,8 +183,8 @@
 
 	// Helper function to get character image
 	function getCharacterImage(character: any): string {
-		if (!character?.granblue_id) return '/images/placeholders/placeholder-character-main.png'
-		return `/images/character-grid/${character.granblue_id}_01.jpg`
+		if (!character?.granblueId) return '/images/placeholders/placeholder-character-main.png'
+		return `/images/character-grid/${character.granblueId}_01.jpg`
 	}
 
 	// Calculate uncap properties for the indicator
@@ -240,13 +240,13 @@
 					/>
 					<DetailItem
 						label="Granblue ID"
-						bind:value={editData.granblue_id}
+						bind:value={editData.granblueId}
 						editable={true}
 						type="text"
 					/>
 				{:else}
 					<DetailItem label="Rarity" value={getRarityLabel(character.rarity)} />
-					<DetailItem label="Granblue ID" value={character.granblue_id} />
+					<DetailItem label="Granblue ID" value={character.granblueId} />
 				{/if}
 			</DetailsContainer>
 			<DetailsContainer title="Details">
@@ -341,30 +341,30 @@
 				{#if editMode}
 					<DetailItem
 						label="Base HP"
-						bind:value={editData.min_hp}
+						bind:value={editData.minHp}
 						editable={true}
 						type="number"
 						placeholder="0"
 					/>
 					<DetailItem
 						label="Max HP"
-						bind:value={editData.max_hp}
+						bind:value={editData.maxHp}
 						editable={true}
 						type="number"
 						placeholder="0"
 					/>
 					<DetailItem
 						label="Max HP (FLB)"
-						bind:value={editData.max_hp_flb}
+						bind:value={editData.maxHpFlb}
 						editable={true}
 						type="number"
 						placeholder="0"
 					/>
 				{:else}
-					<DetailItem label="Base HP" value={character.hp?.min_hp} />
-					<DetailItem label="Max HP" value={character.hp?.max_hp} />
+					<DetailItem label="Base HP" value={character.hp?.minHp} />
+					<DetailItem label="Max HP" value={character.hp?.maxHp} />
 					{#if flb}
-						<DetailItem label="Max HP (FLB)" value={character.hp?.max_hp_flb} />
+						<DetailItem label="Max HP (FLB)" value={character.hp?.maxHpFlb} />
 					{/if}
 				{/if}
 			</DetailsContainer>
@@ -373,30 +373,30 @@
 				{#if editMode}
 					<DetailItem
 						label="Base Attack"
-						bind:value={editData.min_atk}
+						bind:value={editData.minAtk}
 						editable={true}
 						type="number"
 						placeholder="0"
 					/>
 					<DetailItem
 						label="Max Attack"
-						bind:value={editData.max_atk}
+						bind:value={editData.maxAtk}
 						editable={true}
 						type="number"
 						placeholder="0"
 					/>
 					<DetailItem
 						label="Max Attack (FLB)"
-						bind:value={editData.max_atk_flb}
+						bind:value={editData.maxAtkFlb}
 						editable={true}
 						type="number"
 						placeholder="0"
 					/>
 				{:else}
-					<DetailItem label="Base Attack" value={character.atk?.min_atk} />
-					<DetailItem label="Max Attack" value={character.atk?.max_atk} />
+					<DetailItem label="Base Attack" value={character.atk?.minAtk} />
+					<DetailItem label="Max Attack" value={character.atk?.maxAtk} />
 					{#if flb}
-						<DetailItem label="Max Attack (FLB)" value={character.atk?.max_atk_flb} />
+						<DetailItem label="Max Attack (FLB)" value={character.atk?.maxAtkFlb} />
 					{/if}
 				{/if}
 			</DetailsContainer>

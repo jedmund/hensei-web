@@ -17,8 +17,8 @@
 
 	// Helper function to get summon image
 	function getSummonImage(summon: any): string {
-		if (!summon?.granblue_id) return '/images/placeholders/placeholder-summon-main.png'
-		return `/images/summon-grid/${summon.granblue_id}.jpg`
+		if (!summon?.granblueId) return '/images/placeholders/placeholder-summon-main.png'
+		return `/images/summon-grid/${summon.granblueId}.jpg`
 	}
 
 	// Calculate uncap properties for the indicator
@@ -44,30 +44,30 @@
 			<DetailsHeader type="summon" item={summon} image={getSummonImage(summon)} />
 
 			<DetailsContainer title="HP Stats">
-				<DetailItem label="Base HP" value={summon.hp?.min_hp} />
-				<DetailItem label="Max HP" value={summon.hp?.max_hp} />
+				<DetailItem label="Base HP" value={summon.hp?.minHp} />
+				<DetailItem label="Max HP" value={summon.hp?.maxHp} />
 				{#if flb}
-					<DetailItem label="Max HP (FLB)" value={summon.hp?.max_hp_flb} />
+					<DetailItem label="Max HP (FLB)" value={summon.hp?.maxHpFlb} />
 				{/if}
 				{#if ulb}
-					<DetailItem label="Max HP (ULB)" value={summon.hp?.max_hp_ulb} />
+					<DetailItem label="Max HP (ULB)" value={summon.hp?.maxHpUlb} />
 				{/if}
 				{#if transcendence}
-					<DetailItem label="Max HP (XLB)" value={summon.hp?.max_hp_xlb} />
+					<DetailItem label="Max HP (XLB)" value={summon.hp?.maxHpXlb} />
 				{/if}
 			</DetailsContainer>
 
 			<DetailsContainer title="Attack Stats">
-				<DetailItem label="Base Attack" value={summon.atk?.min_atk} />
-				<DetailItem label="Max Attack" value={summon.atk?.max_atk} />
+				<DetailItem label="Base Attack" value={summon.atk?.minAtk} />
+				<DetailItem label="Max Attack" value={summon.atk?.maxAtk} />
 				{#if flb}
-					<DetailItem label="Max Attack (FLB)" value={summon.atk?.max_atk_flb} />
+					<DetailItem label="Max Attack (FLB)" value={summon.atk?.maxAtkFlb} />
 				{/if}
 				{#if ulb}
-					<DetailItem label="Max Attack (ULB)" value={summon.atk?.max_atk_ulb} />
+					<DetailItem label="Max Attack (ULB)" value={summon.atk?.maxAtkUlb} />
 				{/if}
 				{#if transcendence}
-					<DetailItem label="Max Attack (XLB)" value={summon.atk?.max_atk_xlb} />
+					<DetailItem label="Max Attack (XLB)" value={summon.atk?.maxAtkXlb} />
 				{/if}
 			</DetailsContainer>
 
@@ -91,11 +91,11 @@
 			<div class="summon-abilities">
 				<h3>Call Effect</h3>
 				<div class="abilities-section">
-					{#if summon.call_name || summon.call_description}
+					{#if summon.callName || summon.callDescription}
 						<div class="ability-item">
-							<h4 class="ability-name">{summon.call_name || 'Call Effect'}</h4>
+							<h4 class="ability-name">{summon.callName || 'Call Effect'}</h4>
 							<p class="ability-description">
-								{summon.call_description || 'No description available'}
+								{summon.callDescription || 'No description available'}
 							</p>
 						</div>
 					{:else}
@@ -105,11 +105,11 @@
 
 				<h3>Aura Effect</h3>
 				<div class="abilities-section">
-					{#if summon.aura_name || summon.aura_description}
+					{#if summon.auraName || summon.auraDescription}
 						<div class="ability-item">
-							<h4 class="ability-name">{summon.aura_name || 'Aura Effect'}</h4>
+							<h4 class="ability-name">{summon.auraName || 'Aura Effect'}</h4>
 							<p class="ability-description">
-								{summon.aura_description || 'No description available'}
+								{summon.auraDescription || 'No description available'}
 							</p>
 						</div>
 					{:else}
@@ -117,13 +117,13 @@
 					{/if}
 				</div>
 
-				{#if summon.sub_aura_name || summon.sub_aura_description}
+				{#if summon.subAuraName || summon.subAuraDescription}
 					<h3>Sub Aura Effect</h3>
 					<div class="abilities-section">
 						<div class="ability-item">
-							<h4 class="ability-name">{summon.sub_aura_name || 'Sub Aura Effect'}</h4>
+							<h4 class="ability-name">{summon.subAuraName || 'Sub Aura Effect'}</h4>
 							<p class="ability-description">
-								{summon.sub_aura_description || 'No description available'}
+								{summon.subAuraDescription || 'No description available'}
 							</p>
 						</div>
 					</div>

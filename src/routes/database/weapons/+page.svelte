@@ -13,7 +13,7 @@
 	// Column configuration for weapons
 	const columns: IColumn[] = [
 		{
-			id: 'granblue_id',
+			id: 'granblueId',
 			header: 'Image',
 			width: 80,
 			cell: WeaponImageCell
