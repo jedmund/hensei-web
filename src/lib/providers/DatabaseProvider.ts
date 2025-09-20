@@ -1,5 +1,7 @@
 import { RestDataProvider } from 'wx-grid-data-provider'
-import { API_BASE } from '$lib/api/core'
+import { PUBLIC_SIERO_API_URL } from '$env/static/public'
+
+const API_BASE = PUBLIC_SIERO_API_URL || 'http://localhost:3000'
 
 interface DatabaseProviderOptions {
 	resource: 'weapons' | 'characters' | 'summons'

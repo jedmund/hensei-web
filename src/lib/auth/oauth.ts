@@ -1,4 +1,3 @@
-import type { FetchLike } from '$lib/api/core'
 import { OAUTH_BASE } from '$lib/config'
 
 export interface OAuthLoginResponse {
@@ -13,8 +12,9 @@ export interface OAuthLoginResponse {
 		role: number
 	}
 }
+
 export async function passwordGrantLogin(
-	fetchFn: FetchLike,
+	fetchFn: typeof fetch,
 	body: { email: string; password: string; grant_type: 'password' }
 ): Promise<OAuthLoginResponse> {
 	const url = `${OAUTH_BASE}/token`
