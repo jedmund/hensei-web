@@ -16,21 +16,21 @@
 
 		const dates: Date[] = []
 
-		// Check for date fields in the API response
-		if (item.release_date) {
-			const date = new Date(item.release_date)
+		// Check for date fields in the API response (camelCase after transformation)
+		if (item.releaseDate) {
+			const date = new Date(item.releaseDate)
 			if (!isNaN(date.getTime())) dates.push(date)
 		}
-		if (item.flb_date) {
-			const date = new Date(item.flb_date)
+		if (item.flbDate) {
+			const date = new Date(item.flbDate)
 			if (!isNaN(date.getTime())) dates.push(date)
 		}
-		if (item.ulb_date) {
-			const date = new Date(item.ulb_date)
+		if (item.ulbDate) {
+			const date = new Date(item.ulbDate)
 			if (!isNaN(date.getTime())) dates.push(date)
 		}
-		if (item.transcendence_date) {
-			const date = new Date(item.transcendence_date)
+		if (item.transcendenceDate) {
+			const date = new Date(item.transcendenceDate)
 			if (!isNaN(date.getTime())) dates.push(date)
 		}
 
@@ -61,14 +61,14 @@
 		const lastTime = lastDate.getTime()
 
 		// Compare timestamps to determine which date field matches
-		if (item.transcendence_date) {
-			const transcendDate = new Date(item.transcendence_date)
+		if (item.transcendenceDate) {
+			const transcendDate = new Date(item.transcendenceDate)
 			if (!isNaN(transcendDate.getTime()) && transcendDate.getTime() === lastTime) {
 				return 'Transcendence'
 			}
 		}
-		if (item.ulb_date) {
-			const ulbDate = new Date(item.ulb_date)
+		if (item.ulbDate) {
+			const ulbDate = new Date(item.ulbDate)
 			if (!isNaN(ulbDate.getTime()) && ulbDate.getTime() === lastTime) {
 				// Characters with transcendence have their "ULB" date but it's actually transcendence
 				// Check if this is a character by looking for character-specific fields
@@ -77,14 +77,14 @@
 				return isCharacter ? 'Transcendence' : 'ULB'
 			}
 		}
-		if (item.flb_date) {
-			const flbDate = new Date(item.flb_date)
+		if (item.flbDate) {
+			const flbDate = new Date(item.flbDate)
 			if (!isNaN(flbDate.getTime()) && flbDate.getTime() === lastTime) {
 				return 'FLB'
 			}
 		}
-		if (item.release_date) {
-			const releaseDate = new Date(item.release_date)
+		if (item.releaseDate) {
+			const releaseDate = new Date(item.releaseDate)
 			if (!isNaN(releaseDate.getTime()) && releaseDate.getTime() === lastTime) {
 				return 'Release'
 			}
