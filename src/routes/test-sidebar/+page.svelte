@@ -3,9 +3,38 @@
 <script lang="ts">
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import { openSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
+	import type { SearchResult } from '$lib/api/adapters/search.adapter'
 
-	function openSearchSidebar() {
-		sidebar.open('Search', searchContent)
+	let selectedItems = $state<SearchResult[]>([])
+
+	function handleAddItems(items: SearchResult[]) {
+		selectedItems = [...selectedItems, ...items]
+		console.log('Added items:', items)
+	}
+
+	function openWeaponSearch() {
+		openSearchSidebar({
+			type: 'weapon',
+			onAddItems: handleAddItems,
+			canAddMore: true
+		})
+	}
+
+	function openCharacterSearch() {
+		openSearchSidebar({
+			type: 'character',
+			onAddItems: handleAddItems,
+			canAddMore: true
+		})
+	}
+
+	function openSummonSearch() {
+		openSearchSidebar({
+			type: 'summon',
+			onAddItems: handleAddItems,
+			canAddMore: true
+		})
 	}
 
 	function openDetailsSidebar() {
@@ -22,8 +51,14 @@
 	<p>Click the buttons below to test different sidebar configurations:</p>
 
 	<div class="button-group">
-		<Button variant="primary" onclick={openSearchSidebar}>
-			Open Search Sidebar
+		<Button variant="primary" onclick={openWeaponSearch}>
+			Search Weapons
+		</Button>
+		<Button variant="primary" onclick={openCharacterSearch}>
+			Search Characters
+		</Button>
+		<Button variant="primary" onclick={openSummonSearch}>
+			Search Summons
 		</Button>
 		<Button variant="secondary" onclick={openDetailsSidebar}>
 			Open Details Sidebar
@@ -33,6 +68,17 @@
 		</Button>
 	</div>
 
+	{#if selectedItems.length > 0}
+		<div class="selected-items">
+			<h3>Selected Items ({selectedItems.length})</h3>
+			<ul>
+				{#each selectedItems as item}
+					<li>{item.name?.en || item.name?.ja || item.name || 'Unknown'}</li>
+				{/each}
+			</ul>
+		</div>
+	{/if}
+
 	<div class="content">
 		<h2>Main Content Area</h2>
 		<p>This content will shrink when the sidebar opens, creating a two-pane layout.</p>
@@ -40,17 +86,6 @@
 		<p>On mobile devices, the sidebar will overlay the main content instead of shrinking it.</p>
 	</div>
 </div>
-
-{#snippet searchContent()}
-	<div class="sidebar-demo-content">
-		<input type="text" placeholder="Search..." class="search-input" />
-		<div class="search-results">
-			<div class="result-item">Result 1</div>
-			<div class="result-item">Result 2</div>
-			<div class="result-item">Result 3</div>
-		</div>
-	</div>
-{/snippet}
 
 {#snippet detailsContent()}
 	<div class="sidebar-demo-content">
@@ -108,6 +143,29 @@
 		gap: $unit;
 		margin: $unit-2x 0;
 		flex-wrap: wrap;
+	}
+
+	.selected-items {
+		margin: $unit-2x 0;
+		padding: $unit-2x;
+		background: var(--bg-secondary);
+		border-radius: 8px;
+
+		h3 {
+			margin: 0 0 $unit 0;
+			font-size: $font-medium;
+			color: var(--text-primary);
+		}
+
+		ul {
+			margin: 0;
+			padding-left: $unit-2x;
+
+			li {
+				color: var(--text-secondary);
+				margin-bottom: $unit-half;
+			}
+		}
 	}
 
 	.content {

@@ -32,7 +32,9 @@
 			title={sidebar.title}
 			onclose={() => sidebar.close()}
 		>
-			{#if sidebar.content}
+			{#if sidebar.component}
+				<svelte:component this={sidebar.component} {...sidebar.componentProps} />
+			{:else if sidebar.content}
 				{@render sidebar.content()}
 			{/if}
 		</Sidebar>
