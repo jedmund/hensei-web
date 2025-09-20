@@ -10,8 +10,8 @@
 
 	let { party, summons: directSummons, extendedView = false }: Props = $props()
 
-	// Use direct summons if provided, otherwise get from party (note: API returns gridSummons)
-	const summons = $derived(directSummons || party?.gridSummons || [])
+	// Use direct summons if provided, otherwise get from party
+	const summons = $derived(directSummons || party?.summons || [])
 	const main = $derived(summons.find((s: GridSummon) => s?.main || s?.position === -1))
 	const friend = $derived(
 		extendedView ? summons.find((s: GridSummon) => s?.friend || s?.position === -2) : undefined
@@ -27,8 +27,8 @@
 	function summonImageUrl(s?: GridSummon, isMain = false): string {
 		const id = s?.summon?.granblueId
 		if (!id) return ''
-		const folder = isMain ? 'summon-main' : 'summon-grid'
-		return `/images/${folder}/${id}.jpg`
+		const size = isMain ? 'main' : 'grid'
+		return getSummonImage(id, size)
 	}
 </script>
 
