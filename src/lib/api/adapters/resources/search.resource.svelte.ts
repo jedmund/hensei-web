@@ -7,7 +7,7 @@
  * @module adapters/resources/search
  */
 
-import { debounced } from 'runed'
+import { useDebounce } from 'runed'
 import { SearchAdapter, searchAdapter, type SearchParams, type SearchResponse } from '../search.adapter'
 import type { AdapterError } from '../types'
 
@@ -152,8 +152,14 @@ export class SearchResource {
 			}
 		}
 
-		// Return debounced version
-		return debounced(searchFn, this.debounceMs)
+		// Create a debounced wrapper using useDebounce
+		const debouncedSearch = useDebounce(
+			(params: SearchParams) => searchFn(params),
+			() => this.debounceMs
+		)
+
+		// Return a function that calls the debounced search
+		return (params: SearchParams) => debouncedSearch(params)
 	}
 
 	// Create debounced search methods

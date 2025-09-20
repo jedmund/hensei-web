@@ -46,9 +46,9 @@ export interface Party {
 			name: Record<string, string>
 		}
 	}
-	gridWeapons: GridWeapon[]
-	gridSummons: GridSummon[]
-	gridCharacters: GridCharacter[]
+	weapons: GridWeapon[]
+	summons: GridSummon[]
+	characters: GridCharacter[]
 	guidebook?: {
 		id: string
 		title: string
@@ -195,31 +195,30 @@ export interface GridUpdateResponse {
  */
 export class PartyAdapter extends BaseAdapter {
 	constructor(options?: AdapterOptions) {
-		super({
-			...options,
-			baseURL: options?.baseURL || '/api/v1'
-		})
+		super(options)
 	}
 
 	/**
 	 * Creates a new party
 	 */
 	async create(params: CreatePartyParams): Promise<Party> {
-		return this.request<Party>('/parties', {
+		const response = await this.request<{ party: Party }>('/parties', {
 			method: 'POST',
 			body: {
 				party: params
 			}
 		})
+		return response.party
 	}
 
 	/**
 	 * Gets a party by shortcode
 	 */
 	async getByShortcode(shortcode: string): Promise<Party> {
-		return this.request<Party>(`/parties/${shortcode}`, {
+		const response = await this.request<{ party: Party }>(`/parties/${shortcode}`, {
 			cacheTTL: 60000 // Cache for 1 minute
 		})
+		return response.party
 	}
 
 	/**
@@ -227,12 +226,13 @@ export class PartyAdapter extends BaseAdapter {
 	 */
 	async update(params: UpdatePartyParams): Promise<Party> {
 		const { shortcode, ...updateParams } = params
-		return this.request<Party>(`/parties/${shortcode}`, {
+		const response = await this.request<{ party: Party }>(`/parties/${shortcode}`, {
 			method: 'PATCH',
 			body: {
 				party: updateParams
 			}
 		})
+		return response.party
 	}
 
 	/**
@@ -248,9 +248,10 @@ export class PartyAdapter extends BaseAdapter {
 	 * Creates a remix (copy) of an existing party
 	 */
 	async remix(shortcode: string): Promise<Party> {
-		return this.request<Party>(`/parties/${shortcode}/remix`, {
+		const response = await this.request<{ party: Party }>(`/parties/${shortcode}/remix`, {
 			method: 'POST'
 		})
+		return response.party
 	}
 
 	/**
