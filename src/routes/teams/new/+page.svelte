@@ -4,7 +4,7 @@
   import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
   import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
   import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
-  import SearchSidebar from '$lib/components/panels/SearchSidebar.svelte'
+  import { openSearchSidebar, closeSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
   import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
   import { GridType } from '$lib/types/enums'
   import { setContext } from 'svelte'
@@ -21,16 +21,45 @@
   // Local, client-only state for tab selection (Svelte 5 runes)
   let activeTab = $state<GridType>(GridType.Weapon)
 
+  // Open search sidebar on mount
+  let hasOpenedSidebar = $state(false)
+  $effect(() => {
+    if (!hasOpenedSidebar) {
+      hasOpenedSidebar = true
+      // Small delay to let the page render first
+      setTimeout(() => {
+        openSearchSidebar({
+          type: 'weapon',
+          onAddItems: handleAddItems,
+          canAddMore: true
+        })
+      }, 100)
+    }
+  })
+
   function selectTab(gridType: GridType) {
     activeTab = gridType
-    sidebarOpen = true // Auto-open sidebar when switching tabs
+    // Open sidebar when switching tabs
+    openSearchSidebar({
+      type: gridType === GridType.Weapon ? 'weapon' :
+            gridType === GridType.Summon ? 'summon' :
+            'character',
+      onAddItems: handleAddItems,
+      canAddMore: !isGridFull(gridType)
+    })
+  }
+
+  // Helper to check if a grid is full
+  function isGridFull(gridType: GridType): boolean {
+    if (gridType === GridType.Weapon) return weapons.length >= 10
+    if (gridType === GridType.Summon) return summons.length >= 6
+    return characters.length >= 5
   }
 
   // Grid state
   let weapons = $state<any[]>([])
   let summons = $state<any[]>([])
   let characters = $state<any[]>([])
-  let sidebarOpen = $state(true) // Start with sidebar open
   let selectedSlot = $state<number | null>(null)
   let isFirstItemForSlot = false // Track if this is the first item after clicking empty cell
 
@@ -45,17 +74,6 @@
   let errorMessage = $state('')
   let errorDetails = $state<string[]>([])
 
-  // Update CSS variable when sidebar opens/closes
-  $effect(() => {
-    if (typeof document !== 'undefined') {
-      const root = document.documentElement
-      if (sidebarOpen) {
-        root.style.setProperty('--main-max-width', '1140px')
-      } else {
-        root.style.setProperty('--main-max-width', '820px')
-      }
-    }
-  })
 
   // Calculate if grids are full
   let isWeaponGridFull = $derived(weapons.length >= 10) // 1 mainhand + 9 grid slots
@@ -494,7 +512,15 @@
     },
     openPicker: (opts: { type: 'weapon' | 'summon' | 'character'; position: number; item?: any }) => {
       selectedSlot = opts.position
-      sidebarOpen = true
+      openSearchSidebar({
+        type: opts.type,
+        onAddItems: handleAddItems,
+        canAddMore: !isGridFull(
+          opts.type === 'weapon' ? GridType.Weapon :
+          opts.type === 'summon' ? GridType.Summon :
+          GridType.Character
+        )
+      })
     }
   })
 </script>
@@ -507,8 +533,14 @@
           <h1>Create a new team</h1>
           <p class="description">Search and click items to add them to your grid</p>
         </div>
-        <button class="toggle-sidebar" on:click={() => sidebarOpen = !sidebarOpen}>
-          {sidebarOpen ? 'Hide' : 'Show'} Search
+        <button class="toggle-sidebar" on:click={() => openSearchSidebar({
+          type: activeTab === GridType.Weapon ? 'weapon' :
+                activeTab === GridType.Summon ? 'summon' :
+                'character',
+          onAddItems: handleAddItems,
+          canAddMore: !isGridFull(activeTab)
+        })}>
+          Open Search
         </button>
       </header>
 
@@ -535,14 +567,6 @@
         {/if}
       </div>
     </section>
-
-    <SearchSidebar
-      open={sidebarOpen}
-      type={activeTab === GridType.Weapon ? 'weapon' : activeTab === GridType.Summon ? 'summon' : 'character'}
-      onClose={() => sidebarOpen = false}
-      onAddItems={handleAddItems}
-      canAddMore={canAddMore}
-    />
   </div>
 </main>
 

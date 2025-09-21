@@ -9,7 +9,7 @@
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
 	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
 	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
-	import SearchSidebar from '$lib/components/panels/SearchSidebar.svelte'
+	import { openSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
 	import type { SearchResult } from '$lib/api/resources/search'
 	import { GridType } from '$lib/types/enums'
@@ -42,8 +42,6 @@
 	let activeTab = $state<GridType>(GridType.Weapon)
 	let loading = $state(false)
 	let error = $state<string | null>(null)
-	let pickerOpen = $state(false)
-	let pickerTitle = $state('Search')
 	let selectedSlot = $state<number>(0)
 	let editDialogOpen = $state(false)
 	let editingTitle = $state('')
@@ -383,12 +381,10 @@
 			}
 
 			// If there's another empty slot, update selectedSlot to it
-			// Otherwise close the picker (grid is full)
 			if (nextEmptySlot !== -999) {
 				selectedSlot = nextEmptySlot
-			} else {
-				pickerOpen = false
 			}
+			// Note: Sidebar stays open for continuous adding
 		} catch (err: any) {
 			error = err.message || 'Failed to add item'
 		} finally {
@@ -577,8 +573,13 @@
 					: opts.type === 'summon'
 						? GridType.Summon
 						: GridType.Character
-			pickerTitle = `Search ${opts.type}s`
-			pickerOpen = true
+
+			// Open the search sidebar with the appropriate type
+			openSearchSidebar({
+				type: opts.type,
+				onAddItems: handleAddItems,
+				canAddMore: true
+			})
 		}
 	})
 
@@ -586,7 +587,7 @@
 	setContext('drag-drop', dragContext)
 </script>
 
-<div class="page-wrap" class:with-panel={pickerOpen}>
+<div class="page-wrap">
 	<div class="track">
 		<section class="party-container">
 			<header class="party-header">
@@ -680,17 +681,6 @@
 				{/if}
 			</div>
 		</section>
-		<SearchSidebar
-			open={pickerOpen}
-			type={activeTab === GridType.Weapon
-				? 'weapon'
-				: activeTab === GridType.Summon
-					? 'summon'
-					: 'character'}
-			onClose={() => (pickerOpen = false)}
-			onAddItems={handleAddItems}
-			canAddMore={true}
-		/>
 	</div>
 </div>
 

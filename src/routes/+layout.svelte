@@ -7,6 +7,7 @@
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
+	import { beforeNavigate } from '$app/navigation'
 
 	// Get `data` and `children` from the router via $props()
 	// Use a more flexible type that allows additional properties from child pages
@@ -14,6 +15,11 @@
 		data: any  // Allow any data to pass through from child pages
 		children: () => any
 	}>()
+
+	// Close sidebar when navigating to a different page
+	beforeNavigate(() => {
+		sidebar.close()
+	})
 </script>
 
 <svelte:head>
