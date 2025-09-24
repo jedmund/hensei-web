@@ -14,6 +14,7 @@
 	import { GridType } from '$lib/types/enums'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
 	import { openDescriptionSidebar } from '$lib/features/description/openDescriptionSidebar.svelte.ts'
 	import { DropdownMenu } from 'bits-ui'
@@ -764,16 +765,8 @@
 
 				<div class="party-actions">
 					<DropdownMenu.Root>
-						<DropdownMenu.Trigger>
-							<Button
-								variant="subtle"
-								iconOnly
-								shape="circular"
-								size="medium"
-								icon="ellipsis"
-								as="span"
-								aria-label="Open actions menu"
-							/>
+						<DropdownMenu.Trigger class="party-actions-trigger" aria-label="Open actions menu">
+							<Icon name="ellipsis" size={16} />
 						</DropdownMenu.Trigger>
 
 						<DropdownMenu.Portal>
@@ -1049,6 +1042,36 @@
 	.party-actions {
 		display: flex;
 		gap: $unit-half;
+	}
+
+	// Style the dropdown trigger button
+	:global(.party-actions-trigger) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		padding: 0;
+		border-radius: 50%;
+		background-color: transparent;
+		color: var(--text-secondary);
+		border: none;
+		cursor: pointer;
+		transition: background-color 0.2s ease, color 0.2s ease;
+		outline: none;
+
+		&:hover {
+			background-color: var(--button-subtle-bg-hover);
+			color: var(--text-primary);
+		}
+
+		&:focus-visible {
+			box-shadow: 0 0 0 2px var(--accent-blue-focus);
+		}
+
+		&:active {
+			background-color: var(--button-subtle-bg-active);
+		}
 	}
 
 	// Cards container
