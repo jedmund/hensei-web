@@ -15,6 +15,8 @@
 		contained?: boolean
 		/** Element color theme */
 		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+		/** Use element styling (overrides variant colors) */
+		elementStyle?: boolean
 		/** Whether button is active */
 		active?: boolean
 		/** Save button behavior */
@@ -56,6 +58,7 @@
 		size = 'medium',
 		contained = false,
 		element,
+		elementStyle = false,
 		active = false,
 		save = false,
 		saved = false,
@@ -77,7 +80,6 @@
 
 	// Normalize shape aliases
 	const normalizedShape = $derived(shape === 'circle' ? 'circular' : shape)
-	const renderAs = $derived(as ? as : href ? 'a' : 'button')
 
 	const iconSizes = {
 		icon: 16,
@@ -93,6 +95,7 @@
 			size,
 			contained && 'contained',
 			element,
+			elementStyle && element && 'element-styled',
 			active && 'active',
 			save && 'save',
 			saved && 'saved',
@@ -110,74 +113,35 @@
 	const hasRightIcon = $derived(icon && iconPosition === 'right')
 </script>
 
-{#if renderAs === 'button'}
-	<ButtonPrimitive.Root class={buttonClass} {disabled} {href} {onclick} {...restProps}>
-		{#if leftAccessory}
-			<span class="accessory">
-				{@render leftAccessory()}
-			</span>
-		{:else if hasLeftIcon && !iconOnly}
-			<span class="accessory">
-				<Icon name={icon} size={iconSizes[size]} />
-			</span>
-		{/if}
-
-		{#if children && !iconOnly}
-			<span class="text">
-				{@render children()}
-			</span>
-		{:else if iconOnly && icon}
+<ButtonPrimitive.Root class={buttonClass} {disabled} {href} {onclick} {...restProps}>
+	{#if leftAccessory}
+		<span class="accessory">
+			{@render leftAccessory()}
+		</span>
+	{:else if hasLeftIcon && !iconOnly}
+		<span class="accessory">
 			<Icon name={icon} size={iconSizes[size]} />
-		{/if}
+		</span>
+	{/if}
 
-		{#if rightAccessory}
-			<span class="accessory">
-				{@render rightAccessory()}
-			</span>
-		{:else if hasRightIcon && !iconOnly}
-			<span class="accessory">
-				<Icon name={icon} size={iconSizes[size]} />
-			</span>
-		{/if}
-	</ButtonPrimitive.Root>
-{:else}
-	<svelte:element
-		this={renderAs}
-		class={buttonClass}
-		href={renderAs === 'a' ? href : undefined}
-		aria-disabled={disabled}
-		on:click={onclick}
-		{...restProps}
-	>
-		{#if leftAccessory}
-			<span class="accessory">
-				{@render leftAccessory()}
-			</span>
-		{:else if hasLeftIcon && !iconOnly}
-			<span class="accessory">
-				<Icon name={icon} size={iconSizes[size]} />
-			</span>
-		{/if}
+	{#if children && !iconOnly}
+		<span class="text">
+			{@render children()}
+		</span>
+	{:else if iconOnly && icon}
+		<Icon name={icon} size={iconSizes[size]} />
+	{/if}
 
-		{#if children && !iconOnly}
-			<span class="text">
-				{@render children()}
-			</span>
-		{:else if iconOnly && icon}
+	{#if rightAccessory}
+		<span class="accessory">
+			{@render rightAccessory()}
+		</span>
+	{:else if hasRightIcon && !iconOnly}
+		<span class="accessory">
 			<Icon name={icon} size={iconSizes[size]} />
-		{/if}
-
-		{#if rightAccessory}
-			<span class="accessory">
-				{@render rightAccessory()}
-			</span>
-		{:else if hasRightIcon && !iconOnly}
-			<span class="accessory">
-				<Icon name={icon} size={iconSizes[size]} />
-			</span>
-		{/if}
-	</svelte:element>
-{/if}
+		</span>
+	{/if}
+</ButtonPrimitive.Root>
 
 <style lang="scss">
 	@use 'sass:color';
@@ -245,6 +209,15 @@
 			fill: currentColor;
 			height: 1em;
 			width: 1em;
+		}
+	}
+
+	// Ensure icons inherit button text color
+	:global([data-button-root] .icon) {
+		color: inherit;
+
+		svg {
+			fill: currentColor;
 		}
 	}
 
@@ -384,24 +357,26 @@
 		width: 100%;
 	}
 
+	// Icon only buttons - must come after size definitions for proper specificity
 	:global([data-button-root].iconOnly) {
 		gap: 0;
 		aspect-ratio: 1;
+		padding: calc($unit * 1.5); // Default square padding
 
 		&.small {
-			padding: $unit;
+			padding: $unit !important; // Override size padding
 			width: calc($unit * 3.5);
 			height: calc($unit * 3.5);
 		}
 
 		&.medium {
-			padding: calc($unit * 1.5);
+			padding: calc($unit * 1.5) !important; // Override size padding
 			width: calc($unit * 5.5);
 			height: calc($unit * 5.5);
 		}
 
 		&.large {
-			padding: $unit-2x;
+			padding: $unit-2x !important; // Override size padding
 			width: calc($unit * 6.5);
 			height: calc($unit * 6.5);
 		}
@@ -435,8 +410,63 @@
 		}
 	}
 
-	// Element colors
-	:global([data-button-root].wind) {
+	// Element colors - when elementStyle is true, use the new button-specific variables
+	:global([data-button-root].element-styled.wind) {
+		background: var(--wind-button-bg);
+		color: white;
+
+		&:hover:not(:disabled) {
+			background: var(--wind-bg-hover);
+		}
+	}
+
+	:global([data-button-root].element-styled.fire) {
+		background: var(--fire-button-bg);
+		color: white;
+
+		&:hover:not(:disabled) {
+			background: var(--fire-bg-hover);
+		}
+	}
+
+	:global([data-button-root].element-styled.water) {
+		background: var(--water-button-bg);
+		color: white;
+
+		&:hover:not(:disabled) {
+			background: var(--water-bg-hover);
+		}
+	}
+
+	:global([data-button-root].element-styled.earth) {
+		background: var(--earth-button-bg);
+		color: white;
+
+		&:hover:not(:disabled) {
+			background: var(--earth-bg-hover);
+		}
+	}
+
+	:global([data-button-root].element-styled.dark) {
+		background: var(--dark-button-bg);
+		color: white;
+
+		&:hover:not(:disabled) {
+			background: var(--dark-bg-hover);
+		}
+	}
+
+	:global([data-button-root].element-styled.light) {
+		background: var(--light-button-bg);
+		color: black;
+
+		&:hover:not(:disabled) {
+			background: var(--light-bg-hover);
+		}
+	}
+
+	// Keep non-styled element classes for backward compatibility
+	:global([data-button-root].wind:not(.element-styled)) {
 		background: var(--wind-bg);
 		color: var(--wind-text-contrast);
 
@@ -445,7 +475,7 @@
 		}
 	}
 
-	:global([data-button-root].fire) {
+	:global([data-button-root].fire:not(.element-styled)) {
 		background: var(--fire-bg);
 		color: var(--fire-text-contrast);
 
@@ -454,7 +484,7 @@
 		}
 	}
 
-	:global([data-button-root].water) {
+	:global([data-button-root].water:not(.element-styled)) {
 		background: var(--water-bg);
 		color: var(--water-text-contrast);
 
@@ -463,7 +493,7 @@
 		}
 	}
 
-	:global([data-button-root].earth) {
+	:global([data-button-root].earth:not(.element-styled)) {
 		background: var(--earth-bg);
 		color: var(--earth-text-contrast);
 
@@ -472,7 +502,7 @@
 		}
 	}
 
-	:global([data-button-root].dark) {
+	:global([data-button-root].dark:not(.element-styled)) {
 		background: var(--dark-bg);
 		color: var(--dark-text-contrast);
 
@@ -481,7 +511,7 @@
 		}
 	}
 
-	:global([data-button-root].light) {
+	:global([data-button-root].light:not(.element-styled)) {
 		background: var(--light-bg);
 		color: var(--light-text-contrast);
 
