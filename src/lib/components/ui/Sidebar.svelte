@@ -21,7 +21,7 @@
 	const { open = false, title, onclose, children, headerActions }: Props = $props()
 </script>
 
-<aside class="sidebar" class:open style:--sidebar-width={open ? SIDEBAR_WIDTH : '0'}>
+<aside class="sidebar" class:open style:--sidebar-width={SIDEBAR_WIDTH}>
 	{#if title}
 		<SidebarHeader {title} {onclose} actions={headerActions} />
 	{/if}
@@ -50,41 +50,55 @@
 		display: flex;
 		flex-direction: column;
 		flex-shrink: 0;
-		width: 0;
+		width: var(--sidebar-width);
 		overflow: hidden;
-		transition: width $duration-slide ease-in-out;
+		transform: translateX(100%);
+		opacity: 0;
+		transition:
+			transform $duration-slide ease-in-out,
+			opacity $duration-slide ease-in-out;
 		z-index: 50;
 
 		&.open {
-			width: var(--sidebar-width);
+			transform: translateX(0);
+			opacity: 1;
 		}
 
 		.sidebar-content {
 			flex: 1;
 			overflow-y: auto;
 			overflow-x: hidden;
-			padding: $unit-2x;
 
 			// Smooth scrolling
 			scroll-behavior: smooth;
 
-			// Better scrollbar styling to match main content
+			// Use overlay scrollbars that auto-hide
+			overflow-y: overlay;
+
+			// Thin, minimal scrollbar styling
 			&::-webkit-scrollbar {
-				width: 8px;
+				width: 10px;
 			}
 
 			&::-webkit-scrollbar-track {
-				background: var(--bg-secondary, #f1f1f1);
+				background: transparent;
 			}
 
 			&::-webkit-scrollbar-thumb {
-				background: var(--border-primary, #888);
-				border-radius: 4px;
+				background: rgba(0, 0, 0, 0.2);
+				border-radius: 10px;
+				border: 2px solid transparent;
+				background-clip: padding-box;
 
 				&:hover {
-					background: var(--text-secondary, #555);
+					background: rgba(0, 0, 0, 0.4);
+					background-clip: padding-box;
 				}
 			}
+
+			// Firefox scrollbar styling
+			scrollbar-width: thin;
+			scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 
 			// Improve mobile scrolling performance
 			@media (max-width: 768px) {
@@ -95,17 +109,10 @@
 		// Mobile styles - overlay approach
 		@media (max-width: 768px) {
 			z-index: 100;
-			transform: translateX(100%);
-			transition:
-				transform $duration-slide ease-in-out,
-				width 0s;
 			width: 90vw !important;
 			max-width: 400px;
 			box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
-
-			&.open {
-				transform: translateX(0);
-			}
+			// Mobile already uses transform, no additional changes needed
 		}
 	}
 </style>

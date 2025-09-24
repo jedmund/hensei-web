@@ -1,5 +1,9 @@
 @use 'spacing';
 
+// Navigation and header heights
+$nav-height: 76px;
+$nav-height-mobile: 60px;
+
 // Scale factors
 $scale-wide: scale(1.05, 1.05);
 $scale-tall: scale(1.012, 1.012);

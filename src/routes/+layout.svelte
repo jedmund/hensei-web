@@ -46,11 +46,11 @@
 
 <Tooltip.Provider>
 	<div class="app-container" class:sidebar-open={sidebar.isOpen}>
-		<div class="nav-wrapper">
-			<Navigation isAuthenticated={data?.isAuthenticated} username={data?.account?.username} role={data?.account?.role} />
-		</div>
-
 		<div class="main-pane">
+			<div class="nav-blur-background"></div>
+			<div class="main-navigation">
+				<Navigation isAuthenticated={data?.isAuthenticated} username={data?.account?.username} role={data?.account?.role} />
+			</div>
 			<main class="main-content">
 				{@render children?.()}
 			</main>
@@ -87,23 +87,26 @@
 		position: relative;
 		overflow: hidden;
 
-		// Fixed navigation wrapper with blur effect
-		.nav-wrapper {
-			position: fixed;
-			top: 0;
-			left: 0;
-			right: 0;
-			z-index: 100;
-			width: 100vw;
+		// Main pane with content
+		.main-pane {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+			transition: margin-right $duration-slide ease-in-out;
+			position: relative;
+			height: 100%;
 
-			// Single blur layer with gradient mask for progressive effect
-			&::before {
-				content: '';
-				position: absolute;
+			// Blur background that shifts with main pane
+			.nav-blur-background {
+				position: fixed;
 				top: 0;
 				left: 0;
 				right: 0;
 				height: 80px; // Taller to test the progressive effect
+				z-index: 1; // Lower z-index so scrollbar appears above
+				pointer-events: none;
+				transition: right $duration-slide ease-in-out;
 
 				// Color gradient for the background
 				background: linear-gradient(
@@ -131,67 +134,80 @@
 					black 40%,
 					transparent 100%
 				);
-
-				pointer-events: none;
-				z-index: 1;
 			}
 
-			// Navigation content above the blur layer
-			:global(nav) {
-				position: relative;
-				z-index: 2;
+			// Navigation wrapper - fixed but shifts with main-pane
+			.main-navigation {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				z-index: 10; // Above blur but below scrollbar
+				transition: right $duration-slide ease-in-out;
+				pointer-events: auto;
 			}
-		}
 
-		// Main pane with content
-		.main-pane {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			min-width: 0;
-			transition: margin-right $duration-slide ease-in-out;
-			position: relative;
-			height: 100%;
-
-			// Main content area with independent scroll - content starts at top
+			// Main content area with independent scroll
 			.main-content {
 				flex: 1;
 				overflow-y: auto;
 				overflow-x: hidden;
 				position: relative;
-				padding-top: 56px; // Space for fixed navigation to match blur height
+				padding-top: 80px; // Space for fixed navigation (matching test height)
+				z-index: 2; // Ensure scrollbar is above blur background
 
 				// Smooth scrolling
 				scroll-behavior: smooth;
 
-				// Better scrollbar styling
+				// Use overlay scrollbars that auto-hide on macOS
+				overflow-y: overlay;
+
+				// Thin, minimal scrollbar styling
 				&::-webkit-scrollbar {
-					width: 8px;
+					width: 10px;
 				}
 
 				&::-webkit-scrollbar-track {
-					background: var(--bg-secondary, #f1f1f1);
+					background: transparent;
 				}
 
 				&::-webkit-scrollbar-thumb {
-					background: var(--border-primary, #888);
-					border-radius: 4px;
+					background: rgba(0, 0, 0, 0.2);
+					border-radius: 10px;
+					border: 2px solid transparent;
+					background-clip: padding-box;
 
 					&:hover {
-						background: var(--text-secondary, #555);
+						background: rgba(0, 0, 0, 0.4);
+						background-clip: padding-box;
 					}
 				}
+
+				// Firefox scrollbar styling
+				scrollbar-width: thin;
+				scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 			}
 		}
 
-		// When sidebar is open, adjust main pane width
+		// When sidebar is open, adjust main pane and navigation
 		&.sidebar-open {
 			.main-pane {
 				margin-right: var(--sidebar-width, 420px);
 
+				// Blur background and navigation shift with the main pane
+				.nav-blur-background,
+				.main-navigation {
+					right: var(--sidebar-width, 420px);
+				}
+
 				// Mobile: don't adjust margin, use overlay
 				@media (max-width: 768px) {
 					margin-right: 0;
+
+					.nav-blur-background,
+					.main-navigation {
+						right: 0; // Don't shift on mobile
+					}
 				}
 			}
 		}

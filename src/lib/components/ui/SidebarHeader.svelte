@@ -18,55 +18,71 @@
 </script>
 
 <div class="sidebar-header">
+	<div class="header-left">
+		{#if actions}
+			{@render actions()}
+		{/if}
+	</div>
+
 	<h2 class="sidebar-title">{title}</h2>
 
-	{#if actions}
-		<div class="header-actions">
-			{@render actions()}
-		</div>
-	{/if}
-
-	{#if onclose}
-		<button
-			onclick={onclose}
-			class="close-button"
-			aria-label="Close sidebar"
-		>
-			{@html closeIcon}
-		</button>
-	{/if}
+	<div class="header-right">
+		{#if onclose}
+			<button onclick={onclose} class="close-button" aria-label="Close sidebar">
+				{@html closeIcon}
+			</button>
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/layout' as *;
 
 	.sidebar-header {
 		display: flex;
 		align-items: center;
-		gap: $unit;
+		justify-content: space-between;
+		min-height: $nav-height;
 		padding: $unit-2x;
 		border-bottom: 1px solid var(--border-primary);
 		flex-shrink: 0;
 		background: var(--bg-primary);
 
-		.sidebar-title {
-			flex: 1;
-			margin: 0;
-			font-size: $font-large;
-			font-weight: $bold;
-			color: var(--text-primary);
+		// Match mobile navigation height
+		@media (max-width: 768px) {
+			min-height: $nav-height-mobile;
 		}
 
-		.header-actions {
+		.header-left,
+		.header-right {
+			width: 32px; // Same width as close button for balance
+			flex-shrink: 0;
 			display: flex;
-			gap: $unit;
 			align-items: center;
+			justify-content: center;
+		}
+
+		.header-left {
+			justify-content: flex-start;
+		}
+
+		.header-right {
+			justify-content: flex-end;
+		}
+
+		.sidebar-title {
+			margin: 0;
+			font-size: $font-regular;
+			font-weight: $medium;
+			color: var(--text-primary);
+			text-align: center;
+			flex: 1;
 		}
 
 		.close-button {
-			margin-left: $unit;
 			padding: $unit;
 			background: transparent;
 			border: none;
@@ -76,10 +92,11 @@
 			justify-content: center;
 			border-radius: 4px;
 			color: var(--text-secondary);
-			transition: background-color 0.2s, color 0.2s;
+			transition:
+				background-color 0.2s,
+				color 0.2s;
 			width: 32px;
 			height: 32px;
-			flex-shrink: 0;
 
 			:global(svg) {
 				width: 14px;
