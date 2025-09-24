@@ -9,21 +9,31 @@
 	import Icon from './Icon.svelte'
 	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
 	import { DropdownMenu } from 'bits-ui'
+	import type { UserCookie } from '$lib/types/UserCookie'
+	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 
 	// Props from layout data
 	const {
-		username: usernameProp,
-		isAuthenticated: isAuthProp,
-		role: roleProp
+		account,
+		currentUser,
+		isAuthenticated: isAuthProp
 	} = $props<{
-		username?: string | null
+		account?: {
+			userId: string
+			username: string
+			role: number
+		} | null
+		currentUser?: UserCookie | null
 		isAuthenticated?: boolean
-		role?: number | null
 	}>()
 
-	const username = $derived(usernameProp ?? '')
+	const username = $derived(account?.username ?? '')
 	const isAuth = $derived(Boolean(isAuthProp))
-	const role = $derived(roleProp ?? null)
+	const role = $derived(account?.role ?? null)
+	// Element from UserCookie is already a string like "fire", "water", etc.
+	const userElement = $derived(
+		currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
+	)
 
 	// Localized links
 	const galleryHref = $derived(localizeHref('/teams/explore'))
@@ -35,6 +45,13 @@
 	const databaseHref = $derived(localizeHref('/database'))
 	const newTeamHref = $derived(localizeHref('/teams/new'))
 
+	// Get the element class for styling
+	const elementClass = $derived(userElement ? `element-${userElement}` : '')
+
+	// Get the user's avatar URLs
+	const avatarSrc = $derived(getAvatarSrc(currentUser?.picture))
+	const avatarSrcSet = $derived(getAvatarSrcSet(currentUser?.picture))
+
 	// Database-specific links
 	const databaseCharactersHref = $derived(localizeHref('/database/characters'))
 	const databaseWeaponsHref = $derived(localizeHref('/database/weapons'))
@@ -43,10 +60,28 @@
 	// Database route detection
 	const isDatabaseRoute = $derived($page.url.pathname.startsWith(localizeHref('/database')))
 
+	// Function to check if a nav item is selected
+	function isNavSelected(href: string): boolean {
+		const path = $page.url.pathname
+
+		// For gallery/teams, we need to check for /teams paths
+		if (href === galleryHref) {
+			return path === href || path.startsWith(localizeHref('/teams'))
+		}
+
+		// Exact match or starts with href + /
+		return path === href || path.startsWith(href + '/')
+	}
+
 	// Function to check if a database nav item is selected
 	function isDatabaseNavSelected(href: string): boolean {
 		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/')
 	}
+
+	// Check if the user profile link is selected
+	const isProfileSelected = $derived(
+		isAuth && ($page.url.pathname === meHref || $page.url.pathname === localizeHref(`/${username}`))
+	)
 
 	// Handle logout
 	async function handleLogout() {
@@ -66,7 +101,7 @@
 	}
 </script>
 
-<nav aria-label="Global">
+<nav aria-label="Global" class={elementClass}>
 	{#if isDatabaseRoute}
 		<!-- Database navigation mode -->
 		<div class="database-nav">
@@ -107,15 +142,40 @@
 	{:else}
 		<!-- Normal navigation mode -->
 		<ul role="list">
-			<li><a href={galleryHref}>{m.nav_gallery()}</a></li>
-			<li><a href={guidesHref}>Guides</a></li>
-			<li><a href={collectionHref}>{m.nav_collection()}</a></li>
+			<li>
+				<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
+			</li>
+			<li><a href={guidesHref} class:selected={isNavSelected(guidesHref)}>Guides</a></li>
+			<li>
+				<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
+					>{m.nav_collection()}</a
+				>
+			</li>
 
 			<li>
 				{#if isAuth}
-					<a href={meHref} aria-label="Your account">{username}</a>
+					<a
+						href={meHref}
+						class:selected={isProfileSelected}
+						aria-label="Your account"
+						class="profile-link"
+					>
+						{#if avatarSrc}
+							<img
+								src={avatarSrc}
+								srcset={avatarSrcSet}
+								alt={username}
+								class="user-avatar"
+								width="24"
+								height="24"
+							/>
+						{/if}
+						<span>{username}</span>
+					</a>
 				{:else}
-					<a href={loginHref} aria-label="Login">{m.nav_login()}</a>
+					<a href={loginHref} class:selected={isNavSelected(loginHref)} aria-label="Login"
+						>{m.nav_login()}</a
+					>
 				{/if}
 			</li>
 
@@ -145,15 +205,17 @@
 			</li>
 		</ul>
 	{/if}
-    <Button
-        icon="plus"
-        iconOnly
-        shape="circle"
-        variant="primary"
-        class="new-team-button"
-        aria-label="New team"
-        href={newTeamHref}
-    />
+	<Button
+		icon="plus"
+		iconOnly
+		shape="circle"
+		variant="primary"
+		element={userElement}
+		elementStyle={Boolean(userElement)}
+		class="new-team-button"
+		aria-label="New team"
+		href={newTeamHref}
+	/>
 </nav>
 
 <style lang="scss">
@@ -191,8 +253,14 @@
 			border-radius: layout.$full-corner;
 			display: flex;
 			flex-direction: row;
+			gap: spacing.$unit-quarter;
 			padding: spacing.$unit-half;
 			list-style: none;
+
+			li {
+				display: flex;
+				align-items: stretch;
+			}
 
 			a {
 				border-radius: layout.$full-corner;
@@ -274,7 +342,7 @@
 				background-color: var(--menu-bg);
 				border-radius: layout.$full-corner;
 				display: flex;
-				gap: spacing.$unit-half;
+				gap: spacing.$unit-quarter;
 				flex-direction: row;
 				padding: spacing.$unit-half;
 				list-style: none;
@@ -307,6 +375,20 @@
 		}
 	}
 
+	// Profile link with avatar
+	.profile-link {
+		display: flex !important;
+		align-items: center;
+		gap: spacing.$unit-half;
+
+		.user-avatar {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			object-fit: cover;
+		}
+	}
+
 	// Style the nav buttons to match link dimensions
 	:global(.nav-item-button) {
 		display: flex;
@@ -332,7 +414,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: spacing.$unit (spacing.$unit * 1.5);
+		align-self: stretch; // Make it stretch to full height
+		padding: spacing.$unit calc(spacing.$unit * 1.5 + 1px);
 		border-radius: layout.$full-corner;
 		background-color: transparent;
 		color: var(--menu-text);
@@ -355,6 +438,62 @@
 	:global(.new-team-button) {
 		// Only add styles that are specific overrides, not duplicates
 		// The Button component already handles size, shape, colors, etc.
+	}
+
+	// Element-specific SELECTED states for navigation links
+	// Hover states remain the default grey (defined in base styles above)
+	nav.element-wind {
+		ul a.selected,
+		.database-nav a.selected {
+			background-color: var(--wind-nav-selected-bg);
+			color: var(--wind-nav-selected-text);
+			font-weight: typography.$bold;
+		}
+	}
+
+	nav.element-fire {
+		ul a.selected,
+		.database-nav a.selected {
+			background-color: var(--fire-nav-selected-bg);
+			color: var(--fire-nav-selected-text);
+			font-weight: typography.$bold;
+		}
+	}
+
+	nav.element-water {
+		ul a.selected,
+		.database-nav a.selected {
+			background-color: var(--water-nav-selected-bg);
+			color: var(--water-nav-selected-text);
+			font-weight: typography.$bold;
+		}
+	}
+
+	nav.element-earth {
+		ul a.selected,
+		.database-nav a.selected {
+			background-color: var(--earth-nav-selected-bg);
+			color: var(--earth-nav-selected-text);
+			font-weight: typography.$bold;
+		}
+	}
+
+	nav.element-dark {
+		ul a.selected,
+		.database-nav a.selected {
+			background-color: var(--dark-nav-selected-bg);
+			color: var(--dark-nav-selected-text);
+			font-weight: typography.$bold;
+		}
+	}
+
+	nav.element-light {
+		ul a.selected,
+		.database-nav a.selected {
+			background-color: var(--light-nav-selected-bg);
+			color: var(--light-nav-selected-text);
+			font-weight: typography.$bold;
+		}
 	}
 
 	// Dropdown menu styles

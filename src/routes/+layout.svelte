@@ -49,7 +49,11 @@
 		<div class="main-pane">
 			<div class="nav-blur-background"></div>
 			<div class="main-navigation">
-				<Navigation isAuthenticated={data?.isAuthenticated} username={data?.account?.username} role={data?.account?.role} />
+				<Navigation
+				isAuthenticated={data?.isAuthenticated}
+				account={data?.account}
+				currentUser={data?.currentUser}
+			/>
 			</div>
 			<main class="main-content">
 				{@render children?.()}
@@ -103,7 +107,7 @@
 				top: 0;
 				left: 0;
 				right: 0;
-				height: 80px; // Taller to test the progressive effect
+				height: 81px; // Matches $nav-height
 				z-index: 1; // Lower z-index so scrollbar appears above
 				pointer-events: none;
 				transition: right $duration-slide ease-in-out;
@@ -153,7 +157,7 @@
 				overflow-y: auto;
 				overflow-x: hidden;
 				position: relative;
-				padding-top: 80px; // Space for fixed navigation (matching test height)
+				padding-top: 81px; // Space for fixed navigation (matches $nav-height)
 				z-index: 2; // Ensure scrollbar is above blur background
 
 				// Smooth scrolling
