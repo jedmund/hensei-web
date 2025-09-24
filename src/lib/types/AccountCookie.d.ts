@@ -3,4 +3,5 @@ export interface AccountCookie {
 	username: string
 	token: string
 	role: number
+	expires_at?: string // ISO string of when the token expires
 }

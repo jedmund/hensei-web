@@ -10,7 +10,8 @@ export function buildCookies(oauth: OAuthLoginResponse, info: UserInfoResponse) 
 		userId: info.id,
 		username: info.username,
 		token: oauth.access_token,
-		role: info.role
+		role: info.role,
+		expires_at: accessTokenExpiresAt.toISOString()
 	}
 
 	const user: UserCookie = {

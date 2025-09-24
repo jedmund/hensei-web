@@ -9,6 +9,11 @@ declare global {
 				user: UserCookie | null
 				isAuthenticated: boolean
 			}
+			auth: {
+				accessToken: string
+				user: UserCookie | null
+				expiresAt: string
+			} | null
 		}
 		// interface PageData {}
 		// interface PageState {}

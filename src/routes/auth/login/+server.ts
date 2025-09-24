@@ -2,7 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit'
 import { json } from '@sveltejs/kit'
 import { z } from 'zod'
 import { passwordGrantLogin } from '$lib/auth/oauth'
-import { users } from '$lib/api/resources/users'
+import { UserAdapter } from '$lib/api/adapters'
 import { buildCookies } from '$lib/auth/map'
 import { setAccountCookie, setUserCookie, setRefreshCookie } from '$lib/auth/cookies'
 
@@ -23,7 +23,9 @@ export const POST: RequestHandler = async ({ request, cookies, url, fetch }) => 
 	try {
 		const oauth = await passwordGrantLogin(fetch, parsed.data)
 
-		const info = await users.info(fetch, oauth.user.username, {
+		// Create a UserAdapter instance and pass the auth token
+		const userAdapter = new UserAdapter()
+		const info = await userAdapter.getInfo(oauth.user.username, {
 			headers: {
 				Authorization: `Bearer ${oauth.access_token}`
 			}
@@ -36,7 +38,14 @@ export const POST: RequestHandler = async ({ request, cookies, url, fetch }) => 
 		setUserCookie(cookies, user, { secure, expires: accessTokenExpiresAt })
 		setRefreshCookie(cookies, refresh, { secure, expires: accessTokenExpiresAt })
 
-		return json({ success: true, user: { username: info.username, avatar: info.avatar } })
+		// Return access token for client-side storage
+		return json({
+			success: true,
+			user: { username: info.username, avatar: info.avatar },
+			access_token: oauth.access_token,
+			expires_in: oauth.expires_in,
+			expires_at: accessTokenExpiresAt.toISOString()
+		})
 	} catch (e: any) {
 		if (String(e?.message) === 'unauthorized') {
 			return json({ error: 'Invalid email or password' }, { status: 401 })

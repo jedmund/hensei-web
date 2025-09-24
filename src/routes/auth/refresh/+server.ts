@@ -68,6 +68,13 @@ export const POST: RequestHandler = async ({ cookies, fetch, url }) => {
 	return json({
 		success: true,
 		username: data.user.username,
-		expires_at: accessTokenExpiresAt.toISOString()
+		access_token: data.access_token,
+		expires_in: data.expires_in,
+		expires_at: accessTokenExpiresAt.toISOString(),
+		user: {
+			id: data.user.id,
+			username: data.user.username,
+			role: data.user.role
+		}
 	})
 }

@@ -8,11 +8,29 @@ export const handleSession: Handle = async ({ event, resolve }) => {
 	const account = getAccountFromCookies(event.cookies)
 	const user = getUserFromCookies(event.cookies)
 
+	// Debug logging for auth issues
+	if (account) {
+		console.log('[hooks.server] Account cookie found:', {
+			hasToken: !!account.token,
+			hasExpiresAt: !!account.expires_at,
+			username: account.username
+		})
+	}
+
 	event.locals.session = {
 		account,
 		user,
 		isAuthenticated: Boolean(account?.token)
 	}
+
+	// Pass auth data for client-side auth store initialization
+	event.locals.auth = account?.token
+		? {
+				accessToken: account.token,
+				user: user,
+				expiresAt: account.expires_at
+		  }
+		: null
 
 	return resolve(event)
 }

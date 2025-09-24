@@ -12,9 +12,20 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	const currentUser = locals.session.user ?? null
 	const isAuthenticated = locals.session.isAuthenticated
 
+	// Debug logging for auth data
+	if (locals.auth) {
+		console.log('[+layout.server] Auth data being passed to client:', {
+			hasToken: !!locals.auth.accessToken,
+			hasUser: !!locals.auth.user,
+			hasExpiresAt: !!locals.auth.expiresAt
+		})
+	}
+
 	return {
 		isAuthenticated,
 		account,
-		currentUser
+		currentUser,
+		// Pass auth data for client-side store initialization
+		auth: locals.auth
 	}
 }
