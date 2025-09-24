@@ -22,6 +22,7 @@ $medium-screen: 768px;
 $unit: 8px;
 
 $unit-fourth: calc($unit / 4);
+$unit-quarter: calc($unit / 4); // 2px - alias for unit-fourth
 $unit-half: calc($unit / 2);
 $unit-three-quarter: calc($unit * 0.75); // 6px - common gap/small spacing
 $unit-three-fourth: calc($unit / 4) * 3;

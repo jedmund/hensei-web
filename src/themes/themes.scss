@@ -215,6 +215,33 @@
 	--null-shadow: #{colors.$null--shadow--light};
 	--null-shadow-hover: #{colors.$null--shadow--light--hover};
 
+	// Light - Element button colors
+	--null-button-bg: #{colors.$grey-55};
+	--wind-button-bg: #{colors.$wind-text-30};
+	--fire-button-bg: #{colors.$fire-text-30};
+	--water-button-bg: #{colors.$water-text-30};
+	--earth-button-bg: #{colors.$earth-text-20};
+	--light-button-bg: #{colors.$light-text-30};
+	--dark-button-bg: #{colors.$dark-text-30};
+
+	// Light - Element navigation selected background
+	--null-nav-selected-bg: #{colors.$grey-85};
+	--wind-nav-selected-bg: #{colors.$wind-bg-20};
+	--fire-nav-selected-bg: #{colors.$fire-bg-20};
+	--water-nav-selected-bg: #{colors.$water-bg-20};
+	--earth-nav-selected-bg: #{colors.$earth-bg-20};
+	--light-nav-selected-bg: #{colors.$light-bg-20};
+	--dark-nav-selected-bg: #{colors.$dark-bg-20};
+
+	// Light - Element navigation selected text
+	--null-nav-selected-text: #{colors.$grey-40};
+	--wind-nav-selected-text: #{colors.$wind-text-20};
+	--fire-nav-selected-text: #{colors.$fire-text-20};
+	--water-nav-selected-text: #{colors.$water-text-10};
+	--earth-nav-selected-text: #{colors.$earth-text-15};
+	--light-nav-selected-text: #{colors.$light-text-20};
+	--dark-nav-selected-text: #{colors.$dark-text-20};
+
 	--wind-bg: #{colors.$wind--bg--light};
 	--wind-bg-hover: #{colors.$wind--bg--hover--light};
 	--wind-portrait-bg: #{colors.$wind--portrait--bg--light};
@@ -465,6 +492,33 @@
 	--null-text-hover: #{colors.$null--text--hover--dark};
 	--null-shadow: #{colors.$null--shadow--dark};
 	--null-shadow-hover: #{colors.$null--shadow--dark--hover};
+
+	// Dark - Element button colors (same as light theme)
+	--null-button-bg: #{colors.$grey-55};
+	--wind-button-bg: #{colors.$wind-text-30};
+	--fire-button-bg: #{colors.$fire-text-30};
+	--water-button-bg: #{colors.$water-text-30};
+	--earth-button-bg: #{colors.$earth-text-20};
+	--light-button-bg: #{colors.$light-text-30};
+	--dark-button-bg: #{colors.$dark-text-30};
+
+	// Dark - Element navigation selected background (same as light theme)
+	--null-nav-selected-bg: #{colors.$grey-85};
+	--wind-nav-selected-bg: #{colors.$wind-bg-20};
+	--fire-nav-selected-bg: #{colors.$fire-bg-20};
+	--water-nav-selected-bg: #{colors.$water-bg-20};
+	--earth-nav-selected-bg: #{colors.$earth-bg-20};
+	--light-nav-selected-bg: #{colors.$light-bg-20};
+	--dark-nav-selected-bg: #{colors.$dark-bg-20};
+
+	// Dark - Element navigation selected text (same as light theme)
+	--null-nav-selected-text: #{colors.$grey-40};
+	--wind-nav-selected-text: #{colors.$wind-text-20};
+	--fire-nav-selected-text: #{colors.$fire-text-20};
+	--water-nav-selected-text: #{colors.$water-text-10};
+	--earth-nav-selected-text: #{colors.$earth-text-15};
+	--light-nav-selected-text: #{colors.$light-text-20};
+	--dark-nav-selected-text: #{colors.$dark-text-20};
 
 	--wind-bg: #{colors.$wind--bg--dark};
 	--wind-bg-hover: #{colors.$wind--bg--hover--dark};
