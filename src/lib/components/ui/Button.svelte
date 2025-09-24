@@ -8,7 +8,7 @@
 
 	interface Props {
 		/** Button variant style */
-		variant?: 'primary' | 'secondary' | 'ghost' | 'text' | 'destructive' | 'notice'
+		variant?: 'primary' | 'secondary' | 'ghost' | 'text' | 'destructive' | 'notice' | 'subtle'
 		/** Button size */
 		size?: 'small' | 'medium' | 'large' | 'icon'
 		/** Whether button is contained */
@@ -43,6 +43,10 @@
 		href?: string
 		/** Click handler */
 		onclick?: () => void
+		/** Shape of the button corners */
+		shape?: 'default' | 'circular' | 'circle' | 'pill'
+		/** Element tag override (for slots/triggers) */
+		as?: 'button' | 'a' | 'span'
 		/** Any additional HTML attributes */
 		[key: string]: any
 	}
@@ -66,8 +70,14 @@
 		disabled = false,
 		href,
 		onclick,
+		shape = 'default',
+		as,
 		...restProps
 	}: Props = $props()
+
+	// Normalize shape aliases
+	const normalizedShape = $derived(shape === 'circle' ? 'circular' : shape)
+	const renderAs = $derived(as ? as : href ? 'a' : 'button')
 
 	const iconSizes = {
 		icon: 16,
@@ -88,6 +98,7 @@
 			saved && 'saved',
 			fullWidth && 'full',
 			iconOnly && 'iconOnly',
+			normalizedShape !== 'default' && normalizedShape,
 			className
 		]
 			.filter(Boolean)
@@ -99,35 +110,74 @@
 	const hasRightIcon = $derived(icon && iconPosition === 'right')
 </script>
 
-<ButtonPrimitive.Root class={buttonClass} {disabled} {href} {onclick} {...restProps}>
-	{#if leftAccessory}
-		<span class="accessory">
-			{@render leftAccessory()}
-		</span>
-	{:else if hasLeftIcon && !iconOnly}
-		<span class="accessory">
-			<Icon name={icon} size={iconSizes[size]} />
-		</span>
-	{/if}
+{#if renderAs === 'button'}
+	<ButtonPrimitive.Root class={buttonClass} {disabled} {href} {onclick} {...restProps}>
+		{#if leftAccessory}
+			<span class="accessory">
+				{@render leftAccessory()}
+			</span>
+		{:else if hasLeftIcon && !iconOnly}
+			<span class="accessory">
+				<Icon name={icon} size={iconSizes[size]} />
+			</span>
+		{/if}
 
-	{#if children && !iconOnly}
-		<span class="text">
-			{@render children()}
-		</span>
-	{:else if iconOnly && icon}
-		<Icon name={icon} size={iconSizes[size]} />
-	{/if}
-
-	{#if rightAccessory}
-		<span class="accessory">
-			{@render rightAccessory()}
-		</span>
-	{:else if hasRightIcon && !iconOnly}
-		<span class="accessory">
+		{#if children && !iconOnly}
+			<span class="text">
+				{@render children()}
+			</span>
+		{:else if iconOnly && icon}
 			<Icon name={icon} size={iconSizes[size]} />
-		</span>
-	{/if}
-</ButtonPrimitive.Root>
+		{/if}
+
+		{#if rightAccessory}
+			<span class="accessory">
+				{@render rightAccessory()}
+			</span>
+		{:else if hasRightIcon && !iconOnly}
+			<span class="accessory">
+				<Icon name={icon} size={iconSizes[size]} />
+			</span>
+		{/if}
+	</ButtonPrimitive.Root>
+{:else}
+	<svelte:element
+		this={renderAs}
+		class={buttonClass}
+		href={renderAs === 'a' ? href : undefined}
+		aria-disabled={disabled}
+		on:click={onclick}
+		{...restProps}
+	>
+		{#if leftAccessory}
+			<span class="accessory">
+				{@render leftAccessory()}
+			</span>
+		{:else if hasLeftIcon && !iconOnly}
+			<span class="accessory">
+				<Icon name={icon} size={iconSizes[size]} />
+			</span>
+		{/if}
+
+		{#if children && !iconOnly}
+			<span class="text">
+				{@render children()}
+			</span>
+		{:else if iconOnly && icon}
+			<Icon name={icon} size={iconSizes[size]} />
+		{/if}
+
+		{#if rightAccessory}
+			<span class="accessory">
+				{@render rightAccessory()}
+			</span>
+		{:else if hasRightIcon && !iconOnly}
+			<span class="accessory">
+				<Icon name={icon} size={iconSizes[size]} />
+			</span>
+		{/if}
+	</svelte:element>
+{/if}
 
 <style lang="scss">
 	@use 'sass:color';
@@ -229,6 +279,22 @@
 		}
 	}
 
+	// Subtle variant: card-like with border
+	:global([data-button-root].subtle) {
+		background-color: var(--card-bg);
+		color: var(--text-primary);
+		border: 1px solid var(--button-bg);
+
+		&:hover:not(:disabled) {
+			background-color: var(--button-bg-hover);
+			border-color: var(--button-bg-hover);
+		}
+
+		&:focus-visible {
+			@include focus-ring($blue);
+		}
+	}
+
 	:global([data-button-root].text) {
 		background-color: transparent;
 		color: var(--accent-blue);
@@ -288,6 +354,15 @@
 		padding: calc($unit * 1.5);
 		height: calc($unit * 5.5);
 		width: calc($unit * 5.5);
+	}
+
+	// Shapes
+	:global([data-button-root].circular) {
+		border-radius: 999px;
+	}
+
+	:global([data-button-root].pill) {
+		border-radius: 999px;
 	}
 
 	// Modifiers
