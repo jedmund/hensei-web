@@ -1,19 +1,18 @@
+import { getCharacterImage, getWeaponImage, getSummonImage } from './images'
+
 export function getCharacterImageUrl(gbid?: string | number): string {
-	if (!gbid) return '/images/placeholders/placeholder-character-grid.png'
 	// Use local square images for database tables
-	return `/images/character-square/${gbid}_01.jpg`
+	return getCharacterImage(gbid, 'square', '01')
 }
 
 export function getWeaponImageUrl(gbid?: string | number): string {
-	if (!gbid) return '/images/placeholders/placeholder-weapon-grid.png'
 	// Use local square images for database tables
-	return `/images/weapon-square/${gbid}.jpg`
+	return getWeaponImage(gbid, 'square')
 }
 
 export function getSummonImageUrl(gbid?: string | number): string {
-	if (!gbid) return '/images/placeholders/placeholder-summon-main.png'
 	// Use local square images for database tables
-	return `/images/summon-square/${gbid}.jpg`
+	return getSummonImage(gbid, 'square')
 }
 
 export function getItemName(item: { name?: string | { en?: string; ja?: string } }): string {
