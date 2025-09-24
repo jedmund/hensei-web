@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
+	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 
 	const { data } = $props() as { data: PageData }
 	const page = data.page || 1
@@ -9,14 +10,8 @@
 	const isOwner = data.isOwner || false
 
 	const avatarFile = data.user?.avatar?.picture || ''
-	function ensurePng(name: string) {
-		return /\.png$/i.test(name) ? name : `${name}.png`
-	}
-	function to2x(name: string) {
-		return /\.png$/i.test(name) ? name.replace(/\.png$/i, '@2x.png') : `${name}@2x.png`
-	}
-	const avatarSrc = avatarFile ? `/profile/${ensurePng(avatarFile)}` : ''
-	const avatarSrcSet = avatarFile ? `${avatarSrc} 1x, /profile/${to2x(avatarFile)} 2x` : ''
+	const avatarSrc = getAvatarSrc(avatarFile)
+	const avatarSrcSet = getAvatarSrcSet(avatarFile)
 </script>
 
 <section class="profile">
