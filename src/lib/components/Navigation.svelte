@@ -66,7 +66,7 @@
 
 		// For gallery/teams, we need to check for /teams paths
 		if (href === galleryHref) {
-			return path === href || path.startsWith(localizeHref('/teams'))
+			return path === href
 		}
 
 		// Exact match or starts with href + /
