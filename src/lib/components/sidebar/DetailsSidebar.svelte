@@ -5,6 +5,7 @@
   import { getProficiencyLabel } from '$lib/utils/proficiency'
   import { getRaceLabel } from '$lib/utils/race'
   import { getGenderLabel } from '$lib/utils/gender'
+  import { getCharacterDetailImage, getWeaponBaseImage, getSummonDetailImage, getCharacterPose } from '$lib/utils/images'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
   interface Props {
@@ -52,26 +53,17 @@
     (item as GridSummon).transcendenceStep
   )
 
-  // Get image URL based on type
+  // Get image URL based on type using detail/base variants
   function getImageUrl(): string {
-    if (!itemData?.granblueId) {
-      return type === 'character' ? '/images/placeholders/placeholder-character-main.png' :
-             type === 'weapon' ? '/images/placeholders/placeholder-weapon-main.png' :
-             '/images/placeholders/placeholder-summon-main.png'
-    }
-
-    const id = itemData.granblueId
+    const id = itemData?.granblueId
 
     if (type === 'character') {
-      let pose = '01'
-      if (gridTranscendence && gridTranscendence > 0) pose = '04'
-      else if (gridUncapLevel && gridUncapLevel >= 5) pose = '03'
-      else if (gridUncapLevel && gridUncapLevel > 2) pose = '02'
-      return `/images/character-main/${id}_${pose}.jpg`
+      const pose = getCharacterPose(gridUncapLevel, gridTranscendence)
+      return getCharacterDetailImage(id, pose)
     } else if (type === 'weapon') {
-      return `/images/weapon-main/${id}.jpg`
+      return getWeaponBaseImage(id)
     } else {
-      return `/images/summon-main/${id}.jpg`
+      return getSummonDetailImage(id)
     }
   }
 </script>
