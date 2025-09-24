@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation'
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getElementLabel, getElementIcon } from '$lib/utils/element'
+	import { getSummonImage } from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -15,10 +16,9 @@
 	// Get summon from server data
 	const summon = $derived(data.summon)
 
-	// Helper function to get summon image
-	function getSummonImage(summon: any): string {
-		if (!summon?.granblueId) return '/images/placeholders/placeholder-summon-main.png'
-		return `/images/summon-grid/${summon.granblueId}.jpg`
+	// Helper function to get summon grid image
+	function getSummonGridImage(summon: any): string {
+		return getSummonImage(summon?.granblueId, 'grid')
 	}
 
 	// Calculate uncap properties for the indicator
@@ -41,7 +41,7 @@
 <div class="summon-detail">
 	{#if summon}
 		<div class="summon-content">
-			<DetailsHeader type="summon" item={summon} image={getSummonImage(summon)} />
+			<DetailsHeader type="summon" item={summon} image={getSummonGridImage(summon)} />
 
 			<DetailsContainer title="HP Stats">
 				<DetailItem label="Base HP" value={summon.hp?.minHp} />

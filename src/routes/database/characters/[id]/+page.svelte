@@ -18,6 +18,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import DetailsHeader from '$lib/components/ui/DetailsHeader.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import { getCharacterImage } from '$lib/utils/images'
 
 	// Types
 	import type { PageData } from './$types'
@@ -182,9 +183,9 @@
 	}
 
 	// Helper function to get character image
-	function getCharacterImage(character: any): string {
-		if (!character?.granblueId) return '/images/placeholders/placeholder-character-main.png'
-		return `/images/character-grid/${character.granblueId}_01.jpg`
+	// Helper function for character grid image
+	function getCharacterGridImage(character: any): string {
+		return getCharacterImage(character?.granblueId, 'grid', '01')
 	}
 
 	// Calculate uncap properties for the indicator
@@ -208,7 +209,7 @@
 			<DetailsHeader
 				type="character"
 				item={character}
-				image={getCharacterImage(character)}
+				image={getCharacterGridImage(character)}
 				onEdit={toggleEditMode}
 				showEdit={canEdit}
 				{editMode}

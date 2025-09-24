@@ -5,6 +5,7 @@
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getElementLabel, getElementIcon } from '$lib/utils/element'
 	import { getProficiencyLabel, getProficiencyIcon } from '$lib/utils/proficiency'
+	import { getWeaponGridImage } from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -16,15 +17,9 @@
 	// Get weapon from server data
 	const weapon = $derived(data.weapon)
 
-	// Helper function to get weapon image
+	// Helper function to get weapon grid image
 	function getWeaponImage(weapon: any): string {
-		if (!weapon?.granblueId) return '/images/placeholders/placeholder-weapon-main.png'
-
-		// Handle element-specific weapons (primal weapons)
-		if (weapon.element === 0 && weapon.instanceElement) {
-			return `/images/weapon-grid/${weapon.granblueId}_${weapon.instanceElement}.jpg`
-		}
-		return `/images/weapon-grid/${weapon.granblueId}.jpg`
+		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement)
 	}
 
 	// Calculate uncap properties for the indicator
