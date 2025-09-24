@@ -233,6 +233,15 @@
 	--light-nav-selected-bg: #{colors.$light-bg-20};
 	--dark-nav-selected-bg: #{colors.$dark-bg-20};
 
+	// Item detail backgrounds (same colors as nav selected)
+	--null-item-detail-bg: #{colors.$grey-85};
+	--wind-item-detail-bg: #{colors.$wind-bg-20};
+	--fire-item-detail-bg: #{colors.$fire-bg-20};
+	--water-item-detail-bg: #{colors.$water-bg-20};
+	--earth-item-detail-bg: #{colors.$earth-bg-20};
+	--light-item-detail-bg: #{colors.$light-bg-20};
+	--dark-item-detail-bg: #{colors.$dark-bg-20};
+
 	// Light - Element navigation selected text
 	--null-nav-selected-text: #{colors.$grey-40};
 	--wind-nav-selected-text: #{colors.$wind-text-20};
@@ -510,6 +519,15 @@
 	--earth-nav-selected-bg: #{colors.$earth-bg-20};
 	--light-nav-selected-bg: #{colors.$light-bg-20};
 	--dark-nav-selected-bg: #{colors.$dark-bg-20};
+
+	// Item detail backgrounds (same colors as nav selected)
+	--null-item-detail-bg: #{colors.$grey-85};
+	--wind-item-detail-bg: #{colors.$wind-bg-20};
+	--fire-item-detail-bg: #{colors.$fire-bg-20};
+	--water-item-detail-bg: #{colors.$water-bg-20};
+	--earth-item-detail-bg: #{colors.$earth-bg-20};
+	--light-item-detail-bg: #{colors.$light-bg-20};
+	--dark-item-detail-bg: #{colors.$dark-bg-20};
 
 	// Dark - Element navigation selected text (same as light theme)
 	--null-nav-selected-text: #{colors.$grey-40};
