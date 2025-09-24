@@ -679,11 +679,6 @@
 </Dialog.Root>
 
 <style>
-	/* Override the main element's padding for this page */
-	:global(main) {
-		padding: 0 !important;
-	}
-
 	.page-container {
 		display: flex;
 		gap: 0;
