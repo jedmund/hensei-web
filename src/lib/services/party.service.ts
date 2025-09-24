@@ -1,5 +1,7 @@
 import type { Party } from '$lib/types/api/party'
 import { partyAdapter } from '$lib/api/adapters'
+import { authStore } from '$lib/stores/auth.store'
+import { browser } from '$app/environment'
 
 export interface EditabilityResult {
   canEdit: boolean
@@ -36,6 +38,13 @@ export class PartyService {
    */
   async getByShortcode(shortcode: string): Promise<Party> {
     return partyAdapter.getByShortcode(shortcode)
+  }
+
+  /**
+   * Clear party cache for a specific shortcode
+   */
+  clearPartyCache(shortcode: string): void {
+    partyAdapter.clearPartyCache(shortcode)
   }
   
   /**
@@ -114,8 +123,77 @@ export class PartyService {
    * Delete a party
    */
   async delete(id: string, editKey?: string): Promise<void> {
+    // The API expects the party ID, not shortcode, for delete
+    // We need to make a direct request with the ID
     const headers = this.buildHeaders(editKey)
-    return partyAdapter.delete(id, headers)
+
+    // Get auth token from authStore
+    const authHeaders: Record<string, string> = {}
+    if (browser) {
+      const token = await authStore.checkAndRefresh()
+      if (token) {
+        authHeaders['Authorization'] = `Bearer ${token}`
+      }
+    }
+
+    const finalHeaders = {
+      'Content-Type': 'application/json',
+      ...authHeaders,
+      ...headers
+    }
+
+    const url = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'}/parties/${id}`
+
+    console.log('[PartyService] DELETE Request Details:', {
+      url,
+      method: 'DELETE',
+      headers: finalHeaders,
+      credentials: 'include',
+      partyId: id,
+      hasEditKey: !!editKey,
+      hasAuthToken: !!authHeaders['Authorization']
+    })
+
+    // Make direct API call since adapter expects shortcode but API needs ID
+    const response = await fetch(url, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: finalHeaders
+    })
+
+    console.log('[PartyService] DELETE Response:', {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok,
+      headers: Object.fromEntries(response.headers.entries())
+    })
+
+    if (!response.ok) {
+      // Try to parse error body for more details
+      let errorBody = null
+      try {
+        const contentType = response.headers.get('content-type')
+        if (contentType && contentType.includes('application/json')) {
+          errorBody = await response.json()
+        } else {
+          errorBody = await response.text()
+        }
+      } catch (e) {
+        console.error('[PartyService] Could not parse error response body:', e)
+      }
+
+      console.error('[PartyService] DELETE Failed:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorBody,
+        url,
+        partyId: id
+      })
+
+      throw new Error(`Failed to delete party: ${response.status} ${response.statusText}${errorBody ? ` - ${JSON.stringify(errorBody)}` : ''}`)
+    }
+
+    console.log('[PartyService] DELETE Success - Party deleted:', id)
   }
   
   /**

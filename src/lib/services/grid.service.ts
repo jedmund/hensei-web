@@ -1,5 +1,6 @@
 import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
 import { gridAdapter, partyAdapter } from '$lib/api/adapters'
+import { getDefaultMaxUncapLevel } from '$lib/utils/uncap'
 
 export interface GridOperation {
   type: 'add' | 'replace' | 'remove' | 'move' | 'swap'
@@ -32,21 +33,31 @@ export class GridService {
     partyId: string,
     weaponId: string,
     position: number,
-    editKey?: string
+    editKey?: string,
+    options?: { mainhand?: boolean; shortcode?: string }
   ): Promise<GridUpdateResult> {
     try {
       const gridWeapon = await gridAdapter.createWeapon({
         partyId,
         weaponId,
         position,
-        uncapLevel: 0,
+        mainhand: options?.mainhand,
+        uncapLevel: getDefaultMaxUncapLevel('weapon'),
         transcendenceStage: 0
-      })
+      }, this.buildHeaders(editKey))
 
-      // Fetch updated party to return
-      const party = await partyAdapter.getByShortcode(partyId)
-      return { party }
+      console.log('[GridService] Created grid weapon:', gridWeapon)
+
+      // Clear party cache if shortcode provided
+      if (options?.shortcode) {
+        partyAdapter.clearPartyCache(options.shortcode)
+      }
+
+      // Return success without fetching party - the caller should refresh if needed
+      // partyId is a UUID, not a shortcode, so we can't fetch here
+      return { party: null as any }
     } catch (error: any) {
+      console.error('[GridService] Error creating weapon:', error)
       if (error.type === 'conflict') {
         return {
           party: null as any, // Will be handled by conflict resolution
@@ -61,14 +72,15 @@ export class GridService {
     partyId: string,
     gridWeaponId: string,
     newWeaponId: string,
-    editKey?: string
+    editKey?: string,
+    options?: { shortcode?: string }
   ): Promise<GridUpdateResult> {
     try {
       // First remove the old weapon
-      await gridAdapter.deleteWeapon({ id: gridWeaponId, partyId })
+      await gridAdapter.deleteWeapon({ id: gridWeaponId, partyId }, this.buildHeaders(editKey))
 
-      // Then add the new one
-      const result = await this.addWeapon(partyId, newWeaponId, 0, editKey)
+      // Then add the new one (pass shortcode along)
+      const result = await this.addWeapon(partyId, newWeaponId, 0, editKey, options)
       return result
     } catch (error: any) {
       if (error.type === 'conflict') {
@@ -84,12 +96,18 @@ export class GridService {
   async removeWeapon(
     partyId: string,
     gridWeaponId: string,
-    editKey?: string
-  ): Promise<Party> {
-    await gridAdapter.deleteWeapon({ id: gridWeaponId, partyId })
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
+    await gridAdapter.deleteWeapon({ id: gridWeaponId, partyId }, this.buildHeaders(editKey))
 
-    // Return updated party
-    return partyAdapter.getByShortcode(partyId)
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
   }
 
   async updateWeapon(
@@ -101,50 +119,71 @@ export class GridService {
       transcendenceStep?: number
       element?: number
     },
-    editKey?: string
-  ): Promise<Party> {
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
     await gridAdapter.updateWeapon(gridWeaponId, {
       position: updates.position,
       uncapLevel: updates.uncapLevel,
       transcendenceStage: updates.transcendenceStep,
       element: updates.element
-    })
+    }, this.buildHeaders(editKey))
 
-    // Return updated party
-    return partyAdapter.getByShortcode(partyId)
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
   }
 
   async moveWeapon(
     partyId: string,
     gridWeaponId: string,
     newPosition: number,
-    editKey?: string
-  ): Promise<Party> {
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
     await gridAdapter.updateWeaponPosition({
       partyId,
       id: gridWeaponId,
       position: newPosition
-    })
+    }, this.buildHeaders(editKey))
 
-    return partyAdapter.getByShortcode(partyId)
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
   }
 
   async swapWeapons(
     partyId: string,
     gridWeaponId1: string,
     gridWeaponId2: string,
-    editKey?: string
-  ): Promise<Party> {
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
     await gridAdapter.swapWeapons({
       partyId,
       sourceId: gridWeaponId1,
       targetId: gridWeaponId2
-    })
+    }, this.buildHeaders(editKey))
 
-    return partyAdapter.getByShortcode(partyId)
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
   }
 
   async updateWeaponUncap(
+    partyId: string,
     gridWeaponId: string,
     uncapLevel?: number,
     transcendenceStep?: number,
@@ -152,10 +191,10 @@ export class GridService {
   ): Promise<any> {
     return gridAdapter.updateWeaponUncap({
       id: gridWeaponId,
-      partyId: 'unknown', // This is a design issue - needs partyId
+      partyId,
       uncapLevel: uncapLevel ?? 3,
       transcendenceStep
-    })
+    }, this.buildHeaders(editKey))
   }
 
   // Summon Grid Operations
@@ -164,40 +203,59 @@ export class GridService {
     partyId: string,
     summonId: string,
     position: number,
-    editKey?: string
+    editKey?: string,
+    options?: { main?: boolean; friend?: boolean; shortcode?: string }
   ): Promise<Party> {
-    await gridAdapter.createSummon({
+    const gridSummon = await gridAdapter.createSummon({
       partyId,
       summonId,
       position,
-      uncapLevel: 0,
+      main: options?.main,
+      friend: options?.friend,
+      uncapLevel: getDefaultMaxUncapLevel('summon'),
       transcendenceStage: 0
-    })
+    }, this.buildHeaders(editKey))
 
-    return partyAdapter.getByShortcode(partyId)
+    console.log('[GridService] Created grid summon:', gridSummon)
+
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - partyId is UUID not shortcode
+    return null as any
   }
 
   async replaceSummon(
     partyId: string,
     gridSummonId: string,
     newSummonId: string,
-    editKey?: string
+    editKey?: string,
+    options?: { shortcode?: string }
   ): Promise<Party> {
     // First remove the old summon
-    await gridAdapter.deleteSummon({ id: gridSummonId, partyId })
+    await gridAdapter.deleteSummon({ id: gridSummonId, partyId }, this.buildHeaders(editKey))
 
-    // Then add the new one
-    return this.addSummon(partyId, newSummonId, 0, editKey)
+    // Then add the new one (pass shortcode along)
+    return this.addSummon(partyId, newSummonId, 0, editKey, { ...options })
   }
 
   async removeSummon(
     partyId: string,
     gridSummonId: string,
-    editKey?: string
-  ): Promise<Party> {
-    await gridAdapter.deleteSummon({ id: gridSummonId, partyId })
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
+    await gridAdapter.deleteSummon({ id: gridSummonId, partyId }, this.buildHeaders(editKey))
 
-    return partyAdapter.getByShortcode(partyId)
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
   }
 
   async updateSummon(
@@ -209,19 +267,71 @@ export class GridService {
       uncapLevel?: number
       transcendenceStep?: number
     },
-    editKey?: string
-  ): Promise<Party> {
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
     await gridAdapter.updateSummon(gridSummonId, {
       position: updates.position,
       quickSummon: updates.quickSummon,
       uncapLevel: updates.uncapLevel,
       transcendenceStage: updates.transcendenceStep
-    })
+    }, this.buildHeaders(editKey))
 
-    return partyAdapter.getByShortcode(partyId)
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
+  }
+
+  async moveSummon(
+    partyId: string,
+    gridSummonId: string,
+    newPosition: number,
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
+    await gridAdapter.updateSummonPosition({
+      partyId,
+      id: gridSummonId,
+      position: newPosition
+    }, this.buildHeaders(editKey))
+
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
+  }
+
+  async swapSummons(
+    partyId: string,
+    gridSummonId1: string,
+    gridSummonId2: string,
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
+    await gridAdapter.swapSummons({
+      partyId,
+      sourceId: gridSummonId1,
+      targetId: gridSummonId2
+    }, this.buildHeaders(editKey))
+
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
   }
 
   async updateSummonUncap(
+    partyId: string,
     gridSummonId: string,
     uncapLevel?: number,
     transcendenceStep?: number,
@@ -229,10 +339,10 @@ export class GridService {
   ): Promise<any> {
     return gridAdapter.updateSummonUncap({
       id: gridSummonId,
-      partyId: 'unknown', // This is a design issue - needs partyId
+      partyId,
       uncapLevel: uncapLevel ?? 3,
       transcendenceStep
-    })
+    }, this.buildHeaders(editKey))
   }
 
   // Character Grid Operations
@@ -241,19 +351,27 @@ export class GridService {
     partyId: string,
     characterId: string,
     position: number,
-    editKey?: string
+    editKey?: string,
+    options?: { shortcode?: string }
   ): Promise<GridUpdateResult> {
     try {
-      await gridAdapter.createCharacter({
+      const gridCharacter = await gridAdapter.createCharacter({
         partyId,
         characterId,
         position,
-        uncapLevel: 0,
+        uncapLevel: getDefaultMaxUncapLevel('character'),
         transcendenceStage: 0
-      })
+      }, this.buildHeaders(editKey))
 
-      const party = await partyAdapter.getByShortcode(partyId)
-      return { party }
+      console.log('[GridService] Created grid character:', gridCharacter)
+
+      // Clear party cache if shortcode provided
+      if (options?.shortcode) {
+        partyAdapter.clearPartyCache(options.shortcode)
+      }
+
+      // Don't fetch - partyId is UUID not shortcode
+      return { party: null as any }
     } catch (error: any) {
       if (error.type === 'conflict') {
         return {
@@ -269,14 +387,15 @@ export class GridService {
     partyId: string,
     gridCharacterId: string,
     newCharacterId: string,
-    editKey?: string
+    editKey?: string,
+    options?: { shortcode?: string }
   ): Promise<GridUpdateResult> {
     try {
       // First remove the old character
-      await gridAdapter.deleteCharacter({ id: gridCharacterId, partyId })
+      await gridAdapter.deleteCharacter({ id: gridCharacterId, partyId }, this.buildHeaders(editKey))
 
-      // Then add the new one
-      return this.addCharacter(partyId, newCharacterId, 0, editKey)
+      // Then add the new one (pass shortcode along)
+      return this.addCharacter(partyId, newCharacterId, 0, editKey, options)
     } catch (error: any) {
       if (error.type === 'conflict') {
         return {
@@ -291,11 +410,18 @@ export class GridService {
   async removeCharacter(
     partyId: string,
     gridCharacterId: string,
-    editKey?: string
-  ): Promise<Party> {
-    await gridAdapter.deleteCharacter({ id: gridCharacterId, partyId })
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
+    await gridAdapter.deleteCharacter({ id: gridCharacterId, partyId }, this.buildHeaders(editKey))
 
-    return partyAdapter.getByShortcode(partyId)
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
   }
 
   async updateCharacter(
@@ -307,19 +433,71 @@ export class GridService {
       transcendenceStep?: number
       perpetuity?: boolean
     },
-    editKey?: string
-  ): Promise<Party> {
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
     await gridAdapter.updateCharacter(gridCharacterId, {
       position: updates.position,
       uncapLevel: updates.uncapLevel,
       transcendenceStage: updates.transcendenceStep,
       perpetualModifiers: updates.perpetuity ? {} : undefined
-    })
+    }, this.buildHeaders(editKey))
 
-    return partyAdapter.getByShortcode(partyId)
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
+  }
+
+  async moveCharacter(
+    partyId: string,
+    gridCharacterId: string,
+    newPosition: number,
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
+    await gridAdapter.updateCharacterPosition({
+      partyId,
+      id: gridCharacterId,
+      position: newPosition
+    }, this.buildHeaders(editKey))
+
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
+  }
+
+  async swapCharacters(
+    partyId: string,
+    gridCharacterId1: string,
+    gridCharacterId2: string,
+    editKey?: string,
+    options?: { shortcode?: string }
+  ): Promise<Party | null> {
+    await gridAdapter.swapCharacters({
+      partyId,
+      sourceId: gridCharacterId1,
+      targetId: gridCharacterId2
+    }, this.buildHeaders(editKey))
+
+    // Clear party cache if shortcode provided
+    if (options?.shortcode) {
+      partyAdapter.clearPartyCache(options.shortcode)
+    }
+
+    // Don't fetch - let caller handle refresh
+    return null
   }
 
   async updateCharacterUncap(
+    partyId: string,
     gridCharacterId: string,
     uncapLevel?: number,
     transcendenceStep?: number,
@@ -327,10 +505,10 @@ export class GridService {
   ): Promise<any> {
     return gridAdapter.updateCharacterUncap({
       id: gridCharacterId,
-      partyId: 'unknown', // This is a design issue - needs partyId
+      partyId,
       uncapLevel: uncapLevel ?? 3,
       transcendenceStep
-    })
+    }, this.buildHeaders(editKey))
   }
 
   // Drag and Drop Helpers

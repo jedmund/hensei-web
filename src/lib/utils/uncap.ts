@@ -39,3 +39,22 @@ export function getCharacterMaxUncapLevel(character: CharacterUncapData): number
 	const { special, uncap } = character
 	return getMaxUncapLevel(special, uncap.flb, uncap.ulb)
 }
+
+/**
+ * Get the default max uncap level for an item type (without transcendence)
+ * @param type - The type of item (character, weapon, or summon)
+ * @returns The default maximum uncap level
+ */
+export function getDefaultMaxUncapLevel(type: 'character' | 'weapon' | 'summon'): number {
+	switch (type) {
+		case 'character':
+			// Most characters can go to 5* (uncap level 5)
+			return 5
+		case 'weapon':
+		case 'summon':
+			// Weapons and summons typically max at 3* without transcendence
+			return 3
+		default:
+			return 3
+	}
+}
