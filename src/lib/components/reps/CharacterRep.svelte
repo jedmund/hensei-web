@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Party, GridWeapon, GridCharacter } from '$lib/types/api/party'
 	import { getElementClass } from '$lib/types/enums'
-	import { getCharacterImage } from '$lib/features/database/detail/image'
+	import { getCharacterImageWithPose } from '$lib/utils/images'
 
 	interface Props {
 		party?: Party
@@ -35,21 +35,24 @@
 	function characterImageUrl(c?: GridCharacter): string {
 		const id = c?.character?.granblueId
 		if (!id) return ''
-		const uncap = c?.uncapLevel ?? 0
-		const trans = c?.transcendenceStep ?? 0
-		let suffix = '01'
-		if (trans > 0) suffix = '04'
-		else if (uncap >= 5) suffix = '03'
-		else if (uncap > 2) suffix = '02'
-		if (String(id) === '3030182000' && party) {
+
+		// Get mainhand weapon element for Gran/Djeeta
+		let mainWeaponElement: number | undefined
+		if (party) {
 			const main: GridWeapon | undefined = (party.weapons || []).find(
 				(w: GridWeapon) => w?.mainhand || w?.position === -1
 			)
-			const el = main?.element ?? main?.weapon?.element ?? 1
-			suffix = `${suffix}_0${el}`
-			return `/images/character-main/${id}_${suffix}.jpg`
+			mainWeaponElement = main?.element ?? main?.weapon?.element
 		}
-		return getCharacterImage(id, suffix, 'main')
+
+		return getCharacterImageWithPose(
+			id,
+			'main',
+			c?.uncapLevel ?? 0,
+			c?.transcendenceStep ?? 0,
+			mainWeaponElement,
+			undefined // partyElement not used here
+		)
 	}
 </script>
 
