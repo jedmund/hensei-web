@@ -4,6 +4,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
+	import { goto } from '$app/navigation'
 	import Button from './ui/Button.svelte'
 	import Icon from './Icon.svelte'
 	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
@@ -45,6 +46,23 @@
 	// Function to check if a database nav item is selected
 	function isDatabaseNavSelected(href: string): boolean {
 		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/')
+	}
+
+	// Handle logout
+	async function handleLogout() {
+		try {
+			const response = await fetch('/auth/logout', {
+				method: 'POST',
+				credentials: 'include'
+			})
+
+			if (response.ok) {
+				// Navigate to login page after successful logout
+				await goto('/login')
+			}
+		} catch (error) {
+			console.error('Logout failed:', error)
+		}
 	}
 </script>
 
@@ -118,9 +136,7 @@
 							{#if isAuth}
 								<DropdownMenu.Separator class="dropdown-separator" />
 								<DropdownItem asChild>
-									<form method="post" action="/auth/logout">
-										<button type="submit">{m.nav_logout()}</button>
-									</form>
+									<button onclick={handleLogout}>{m.nav_logout()}</button>
 								</DropdownItem>
 							{/if}
 						</DropdownMenu.Content>
@@ -152,7 +168,20 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		padding-top: spacing.$unit-2x;
+		padding: spacing.$unit-2x;
+		max-width: var(--main-max-width);
+		margin: 0 auto;
+		width: 100%;
+
+		// Match database layout width
+		&.database-layout {
+			max-width: 1400px;
+		}
+
+		// Responsive padding
+		@media (max-width: 768px) {
+			padding: spacing.$unit;
+		}
 
 		ul {
 			background-color: var(--menu-bg);

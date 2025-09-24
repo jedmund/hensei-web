@@ -7,6 +7,7 @@
   import { ContextMenu as ContextMenuBase } from 'bits-ui'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
   import { getSummonImage } from '$lib/features/database/detail/image'
+  import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 
   interface Props {
     item?: GridSummon
@@ -55,8 +56,11 @@
   }
 
   function viewDetails() {
-    // TODO: Implement view details modal
-    console.log('View details for:', item)
+    if (!item) return
+    openDetailsSidebar({
+      type: 'summon',
+      item
+    })
   }
 
   function replace() {
@@ -79,7 +83,7 @@
             class:friend={item?.friend || position === 6}
             class:cell={!((item?.main || position === -1) || (item?.friend || position === 6))}
             class:editable={ctx?.canEdit()}
-            onclick={() => ctx?.canEdit() && replace()}
+            onclick={() => viewDetails()}
           >
             <img
               class="image"
@@ -212,20 +216,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 
-    &.editable {
-      cursor: pointer;
-
-      &:hover {
-        border-color: var(--primary-color, #0066cc);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        transform: scale(1.02);
-      }
-    }
-
-    &.summon.main.editable:hover,
-    &.summon.friend.editable:hover {
-      transform: scale(1.01);
+    &:hover {
+      opacity: 0.95;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
   }
 

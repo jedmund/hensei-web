@@ -6,7 +6,7 @@
 </script>
 
 {#if data?.party}
-	<Party party={data.party} canEdit={data.canEdit || false} />
+	<Party party={data.party} canEdit={data.canEdit || false} authUserId={data.authUserId} />
 {:else}
 	<div>
 		<h1>Party not found</h1>

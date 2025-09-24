@@ -4,7 +4,6 @@
 	import { PartyService } from '$lib/services/party.service'
 	import { GridService } from '$lib/services/grid.service'
 	import { ConflictService } from '$lib/services/conflict.service'
-	import { apiClient } from '$lib/api/client'
 	import { createDragDropContext, type DragOperation } from '$lib/composables/drag-drop.svelte'
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
 	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
@@ -15,6 +14,8 @@
 	import { GridType } from '$lib/types/enums'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
+	import { openDescriptionSidebar } from '$lib/features/description/openDescriptionSidebar.svelte.ts'
 
 	interface Props {
 		party?: Party
@@ -47,8 +48,8 @@
 	let editingTitle = $state('')
 
 	// Services
-	const partyService = new PartyService(fetch)
-	const gridService = new GridService(fetch)
+	const partyService = new PartyService()
+	const gridService = new GridService()
 	const conflictService = new ConflictService(fetch)
 
 	// Create drag-drop context
@@ -119,17 +120,33 @@
 			throw new Error('Invalid swap operation - missing items')
 		}
 
-		// Call appropriate API based on type
+		// Call appropriate grid service method based on type
 		if (source.type === 'weapon') {
-			const updated = await apiClient.swapWeapons(party.id, source.itemId, target.itemId)
-			return updated
+			await gridService.moveWeapon(party.id, source.itemId, target.position, editKey || undefined, {
+				shortcode: party.shortcode
+			})
 		} else if (source.type === 'character') {
-			const updated = await apiClient.swapCharacters(party.id, source.itemId, target.itemId)
-			return updated
+			await gridService.moveCharacter(
+				party.id,
+				source.itemId,
+				target.position,
+				editKey || undefined,
+				{
+					shortcode: party.shortcode
+				}
+			)
 		} else if (source.type === 'summon') {
-			const updated = await apiClient.swapSummons(party.id, source.itemId, target.itemId)
-			return updated
+			await gridService.moveSummon(party.id, source.itemId, target.position, editKey || undefined, {
+				shortcode: party.shortcode
+			})
+		} else {
+			throw new Error(`Unknown item type: ${source.type}`)
 		}
+
+		// Clear cache and refresh party data
+		partyService.clearPartyCache(party.shortcode)
+		const updated = await partyService.getByShortcode(party.shortcode)
+		return updated
 
 		throw new Error(`Unknown item type: ${source.type}`)
 	}
@@ -144,42 +161,31 @@
 			throw new Error('Invalid move operation')
 		}
 
-		// Determine container based on target position
-		let container: string | undefined
-
+		// Call appropriate grid service method based on type
 		if (source.type === 'character') {
-			// Characters: positions 0-4 are main, 5-6 are extra
-			container = target.position >= 5 ? 'extra' : 'main'
-			const updated = await apiClient.updateCharacterPosition(
+			await gridService.moveCharacter(
 				party.id,
 				source.itemId,
 				target.position,
-				container
+				editKey || undefined,
+				{ shortcode: party.shortcode }
 			)
-			return updated
 		} else if (source.type === 'weapon') {
-			// Weapons: positions 0-8 are main, 9+ are extra
-			container = target.position >= 9 ? 'extra' : 'main'
-			const updated = await apiClient.updateWeaponPosition(
-				party.id,
-				source.itemId,
-				target.position,
-				container
-			)
-			return updated
+			await gridService.moveWeapon(party.id, source.itemId, target.position, editKey || undefined, {
+				shortcode: party.shortcode
+			})
 		} else if (source.type === 'summon') {
-			// Summons: positions 0-3 are sub, 4-5 are subaura
-			container = target.position >= 4 ? 'subaura' : 'main'
-			const updated = await apiClient.updateSummonPosition(
-				party.id,
-				source.itemId,
-				target.position,
-				container
-			)
-			return updated
+			await gridService.moveSummon(party.id, source.itemId, target.position, editKey || undefined, {
+				shortcode: party.shortcode
+			})
+		} else {
+			throw new Error(`Unknown item type: ${source.type}`)
 		}
 
-		throw new Error(`Unknown item type: ${source.type}`)
+		// Clear cache and refresh party data
+		partyService.clearPartyCache(party.shortcode)
+		const updated = await partyService.getByShortcode(party.shortcode)
+		return updated
 	}
 
 	// Localized name helper: accepts either an object with { name: { en, ja } }
@@ -253,8 +259,8 @@
 		error = null
 
 		try {
-			// Use apiClient for client-side updates (handles edit keys automatically)
-			const updated = await apiClient.updateParty(party.id, updates)
+			// Use partyService for client-side updates
+			const updated = await partyService.update(party.id, updates, editKey || undefined)
 			party = updated
 			return updated
 		} catch (err: any) {
@@ -307,6 +313,44 @@
 		}
 	}
 
+	let deleteDialogOpen = $state(false)
+	let deleting = $state(false)
+
+	function openDescriptionPanel() {
+		openDescriptionSidebar({
+			title: party.name || '(untitled party)',
+			description: party.description,
+			canEdit: canEdit(),
+			onEdit: openEditDialog
+		})
+	}
+
+	async function deleteParty() {
+		// Only allow deletion if user owns the party
+		if (party.user?.id !== authUserId) return
+
+		try {
+			deleting = true
+			error = null
+
+			// Delete the party - API expects the ID, not shortcode
+			await partyService.delete(party.id, editKey || undefined)
+
+			// Navigate to user's own profile page after deletion
+			if (party.user?.username) {
+				window.location.href = `/${party.user.username}`
+			} else {
+				// Fallback to /me for logged-in users
+				window.location.href = '/me'
+			}
+		} catch (err: any) {
+			error = err.message || 'Failed to delete party'
+			deleteDialogOpen = false
+		} finally {
+			deleting = false
+		}
+	}
+
 	// Handle adding items from the search sidebar
 	async function handleAddItems(items: SearchResult[]) {
 		if (items.length === 0 || !canEdit()) return
@@ -319,19 +363,28 @@
 			// Determine which slot to use
 			let targetSlot = selectedSlot
 
-			// Call appropriate API based on current tab
+			// Call appropriate grid service method based on current tab
+			// Use granblue_id (snake_case) as that's what the search API returns
+			const itemId = item.granblue_id || item.granblueId
 			if (activeTab === GridType.Weapon) {
-				await apiClient.addWeapon(party.id, item.granblue_id, targetSlot, {
-					mainhand: targetSlot === -1
+				await gridService.addWeapon(party.id, itemId, targetSlot, editKey || undefined, {
+					mainhand: targetSlot === -1,
+					shortcode: party.shortcode
 				})
 			} else if (activeTab === GridType.Summon) {
-				await apiClient.addSummon(party.id, item.granblue_id, targetSlot, {
+				await gridService.addSummon(party.id, itemId, targetSlot, editKey || undefined, {
 					main: targetSlot === -1,
-					friend: targetSlot === 6
+					friend: targetSlot === 6,
+					shortcode: party.shortcode
 				})
 			} else if (activeTab === GridType.Character) {
-				await apiClient.addCharacter(party.id, item.granblue_id, targetSlot)
+				await gridService.addCharacter(party.id, itemId, targetSlot, editKey || undefined, {
+					shortcode: party.shortcode
+				})
 			}
+
+			// Clear cache before refreshing to ensure fresh data
+			partyService.clearPartyCache(party.shortcode)
 
 			// Refresh party data
 			const updated = await partyService.getByShortcode(party.shortcode)
@@ -408,10 +461,17 @@
 	const clientGridService = {
 		async removeWeapon(partyId: string, gridWeaponId: string, _editKey?: string) {
 			try {
-				await apiClient.removeWeapon(partyId, gridWeaponId)
-				// Reload party data
-				const updated = await partyService.getByShortcode(party.shortcode)
-				return updated
+				// Remove returns null, so we need to update local state
+				await gridService.removeWeapon(partyId, gridWeaponId, editKey || undefined, {
+					shortcode: party.shortcode
+				})
+
+				// Update local state by removing the weapon
+				const updatedParty = { ...party }
+				if (updatedParty.weapons) {
+					updatedParty.weapons = updatedParty.weapons.filter((w: any) => w.id !== gridWeaponId)
+				}
+				return updatedParty
 			} catch (err) {
 				console.error('Failed to remove weapon:', err)
 				throw err
@@ -419,10 +479,17 @@
 		},
 		async removeSummon(partyId: string, gridSummonId: string, _editKey?: string) {
 			try {
-				await apiClient.removeSummon(partyId, gridSummonId)
-				// Reload party data
-				const updated = await partyService.getByShortcode(party.shortcode)
-				return updated
+				// Remove returns null, so we need to update local state
+				await gridService.removeSummon(partyId, gridSummonId, editKey || undefined, {
+					shortcode: party.shortcode
+				})
+
+				// Update local state by removing the summon
+				const updatedParty = { ...party }
+				if (updatedParty.summons) {
+					updatedParty.summons = updatedParty.summons.filter((s: any) => s.id !== gridSummonId)
+				}
+				return updatedParty
 			} catch (err) {
 				console.error('Failed to remove summon:', err)
 				throw err
@@ -430,10 +497,19 @@
 		},
 		async removeCharacter(partyId: string, gridCharacterId: string, _editKey?: string) {
 			try {
-				await apiClient.removeCharacter(partyId, gridCharacterId)
-				// Reload party data
-				const updated = await partyService.getByShortcode(party.shortcode)
-				return updated
+				// Remove returns null, so we need to update local state
+				await gridService.removeCharacter(partyId, gridCharacterId, editKey || undefined, {
+					shortcode: party.shortcode
+				})
+
+				// Update local state by removing the character
+				const updatedParty = { ...party }
+				if (updatedParty.characters) {
+					updatedParty.characters = updatedParty.characters.filter(
+						(c: any) => c.id !== gridCharacterId
+					)
+				}
+				return updatedParty
 			} catch (err) {
 				console.error('Failed to remove character:', err)
 				throw err
@@ -442,7 +518,12 @@
 		async updateWeapon(partyId: string, gridWeaponId: string, updates: any, _editKey?: string) {
 			try {
 				// Use the grid service to update weapon
-				const updated = await gridService.updateWeapon(partyId, gridWeaponId, updates, editKey || undefined)
+				const updated = await gridService.updateWeapon(
+					partyId,
+					gridWeaponId,
+					updates,
+					editKey || undefined
+				)
 				return updated
 			} catch (err) {
 				console.error('Failed to update weapon:', err)
@@ -452,38 +533,67 @@
 		async updateSummon(partyId: string, gridSummonId: string, updates: any, _editKey?: string) {
 			try {
 				// Use the grid service to update summon
-				const updated = await gridService.updateSummon(partyId, gridSummonId, updates, editKey || undefined)
+				const updated = await gridService.updateSummon(
+					partyId,
+					gridSummonId,
+					updates,
+					editKey || undefined
+				)
 				return updated
 			} catch (err) {
 				console.error('Failed to update summon:', err)
 				throw err
 			}
 		},
-		async updateCharacter(partyId: string, gridCharacterId: string, updates: any, _editKey?: string) {
+		async updateCharacter(
+			partyId: string,
+			gridCharacterId: string,
+			updates: any,
+			_editKey?: string
+		) {
 			try {
 				// Use the grid service to update character
-				const updated = await gridService.updateCharacter(partyId, gridCharacterId, updates, editKey || undefined)
+				const updated = await gridService.updateCharacter(
+					partyId,
+					gridCharacterId,
+					updates,
+					editKey || undefined
+				)
 				return updated
 			} catch (err) {
 				console.error('Failed to update character:', err)
 				throw err
 			}
 		},
-		async updateCharacterUncap(gridCharacterId: string, uncapLevel?: number, transcendenceStep?: number, _editKey?: string) {
+		async updateCharacterUncap(
+			gridCharacterId: string,
+			uncapLevel?: number,
+			transcendenceStep?: number,
+			_editKey?: string
+		) {
 			try {
-				const response = await gridService.updateCharacterUncap(gridCharacterId, uncapLevel, transcendenceStep, editKey || undefined)
-				// The API returns {grid_character: {...}} with the updated item only
+				const response = await gridService.updateCharacterUncap(
+					party.id,
+					gridCharacterId,
+					uncapLevel,
+					transcendenceStep,
+					editKey || undefined
+				)
+				// The API returns {gridCharacter: {...}} with the updated item only (transformed to camelCase)
 				// We need to update just that character in the current party state
-				if (response.grid_character) {
+				if (response.gridCharacter || response.grid_character) {
+					const updatedChar = response.gridCharacter || response.grid_character
 					const updatedParty = { ...party }
 					if (updatedParty.characters) {
-						const charIndex = updatedParty.characters.findIndex((c: any) => c.id === gridCharacterId)
+						const charIndex = updatedParty.characters.findIndex(
+							(c: any) => c.id === gridCharacterId
+						)
 						if (charIndex !== -1) {
 							// Preserve the character object reference but update uncap fields
 							updatedParty.characters[charIndex] = {
 								...updatedParty.characters[charIndex],
-								uncapLevel: response.grid_character.uncap_level,
-								transcendenceStep: response.grid_character.transcendence_step
+								uncapLevel: updatedChar.uncapLevel ?? updatedChar.uncap_level,
+								transcendenceStep: updatedChar.transcendenceStep ?? updatedChar.transcendence_step
 							}
 							return updatedParty
 						}
@@ -495,12 +605,24 @@
 				throw err
 			}
 		},
-		async updateWeaponUncap(gridWeaponId: string, uncapLevel?: number, transcendenceStep?: number, _editKey?: string) {
+		async updateWeaponUncap(
+			gridWeaponId: string,
+			uncapLevel?: number,
+			transcendenceStep?: number,
+			_editKey?: string
+		) {
 			try {
-				const response = await gridService.updateWeaponUncap(gridWeaponId, uncapLevel, transcendenceStep, editKey || undefined)
-				// The API returns {grid_weapon: {...}} with the updated item only
+				const response = await gridService.updateWeaponUncap(
+					party.id,
+					gridWeaponId,
+					uncapLevel,
+					transcendenceStep,
+					editKey || undefined
+				)
+				// The API returns {gridWeapon: {...}} with the updated item only (transformed to camelCase)
 				// We need to update just that weapon in the current party state
-				if (response.grid_weapon) {
+				if (response.gridWeapon || response.grid_weapon) {
+					const updatedWeapon = response.gridWeapon || response.grid_weapon
 					const updatedParty = { ...party }
 					if (updatedParty.weapons) {
 						const weaponIndex = updatedParty.weapons.findIndex((w: any) => w.id === gridWeaponId)
@@ -508,8 +630,9 @@
 							// Preserve the weapon object reference but update uncap fields
 							updatedParty.weapons[weaponIndex] = {
 								...updatedParty.weapons[weaponIndex],
-								uncapLevel: response.grid_weapon.uncap_level,
-								transcendenceStep: response.grid_weapon.transcendence_step
+								uncapLevel: updatedWeapon.uncapLevel ?? updatedWeapon.uncap_level,
+								transcendenceStep:
+									updatedWeapon.transcendenceStep ?? updatedWeapon.transcendence_step
 							}
 							return updatedParty
 						}
@@ -521,12 +644,24 @@
 				throw err
 			}
 		},
-		async updateSummonUncap(gridSummonId: string, uncapLevel?: number, transcendenceStep?: number, _editKey?: string) {
+		async updateSummonUncap(
+			gridSummonId: string,
+			uncapLevel?: number,
+			transcendenceStep?: number,
+			_editKey?: string
+		) {
 			try {
-				const response = await gridService.updateSummonUncap(gridSummonId, uncapLevel, transcendenceStep, editKey || undefined)
-				// The API returns {grid_summon: {...}} with the updated item only
+				const response = await gridService.updateSummonUncap(
+					party.id,
+					gridSummonId,
+					uncapLevel,
+					transcendenceStep,
+					editKey || undefined
+				)
+				// The API returns {gridSummon: {...}} with the updated item only (transformed to camelCase)
 				// We need to update just that summon in the current party state
-				if (response.grid_summon) {
+				if (response.gridSummon || response.grid_summon) {
+					const updatedSummon = response.gridSummon || response.grid_summon
 					const updatedParty = { ...party }
 					if (updatedParty.summons) {
 						const summonIndex = updatedParty.summons.findIndex((s: any) => s.id === gridSummonId)
@@ -534,8 +669,9 @@
 							// Preserve the summon object reference but update uncap fields
 							updatedParty.summons[summonIndex] = {
 								...updatedParty.summons[summonIndex],
-								uncapLevel: response.grid_summon.uncap_level,
-								transcendenceStep: response.grid_summon.transcendence_step
+								uncapLevel: updatedSummon.uncapLevel ?? updatedSummon.uncap_level,
+								transcendenceStep:
+									updatedSummon.transcendenceStep ?? updatedSummon.transcendence_step
 							}
 							return updatedParty
 						}
@@ -593,8 +729,34 @@
 			<header class="party-header">
 				<div class="party-info">
 					<h1>{party.name || '(untitled party)'}</h1>
-					{#if party.description}
-						<p class="description">{party.description}</p>
+					{#if party.user}
+						{@const avatarFile = party.user.avatar?.picture || ''}
+						{@const ensurePng = (name: string) => (/\.png$/i.test(name) ? name : `${name}.png`)}
+						{@const to2x = (name: string) =>
+							/\.png$/i.test(name) ? name.replace(/\.png$/i, '@2x.png') : `${name}@2x.png`}
+						{@const avatarSrc = avatarFile ? `/profile/${ensurePng(avatarFile)}` : ''}
+						{@const avatarSrcSet = avatarFile
+							? `${avatarSrc} 1x, /profile/${to2x(avatarFile)} 2x`
+							: ''}
+						<div class="creator">
+							<a href="/{party.user.username}" class="creator-link">
+								<div class="avatar-wrapper {party.user.avatar?.element || ''}">
+									{#if party.user.avatar?.picture}
+										<img
+											class="avatar"
+											alt={`Avatar of ${party.user.username}`}
+											src={avatarSrc}
+											srcset={avatarSrcSet}
+											width="40"
+											height="40"
+										/>
+									{:else}
+										<div class="avatar-placeholder" aria-hidden="true"></div>
+									{/if}
+								</div>
+								<span class="username">@{party.user.username}</span>
+							</a>
+						</div>
 					{/if}
 				</div>
 
@@ -629,26 +791,52 @@
 					>
 						Remix
 					</Button>
+
+					{#if party.user?.id === authUserId}
+						<Button
+							variant="destructive"
+							onclick={() => (deleteDialogOpen = true)}
+							disabled={loading}
+							aria-label="Delete this party"
+						>
+							Delete
+						</Button>
+					{/if}
 				</div>
 			</header>
 
-			{#if canEdit()}
-				<div class="edit-status">
-					✏️ You can edit this party - Click on any slot to add or replace items
-				</div>
-			{:else}
-				<div class="edit-status readonly">🔒 Read-only</div>
-			{/if}
+			{#if party.description || party.raid}
+				<div class="cards">
+					{#if party.description}
+						<div
+							class="description-card clickable"
+							onclick={openDescriptionPanel}
+							role="button"
+							tabindex="0"
+							onkeydown={(e) => e.key === 'Enter' && openDescriptionPanel()}
+							aria-label="View full description"
+						>
+							<h2 class="card-label">Description</h2>
+							<div class="card-content">
+								<DescriptionRenderer content={party.description} truncate={true} maxLines={4} />
+							</div>
+						</div>
+					{/if}
 
-			{#if party.raid}
-				<div class="raid-info">
-					<span class="raid-name">
-						{typeof party.raid.name === 'string'
-							? party.raid.name
-							: party.raid.name?.en || party.raid.name?.ja || 'Unknown Raid'}
-					</span>
-					{#if party.raid.group}
-						<span class="raid-difficulty">Difficulty: {party.raid.group.difficulty}</span>
+					{#if party.raid}
+						<div class="raid-card">
+							<h2 class="card-label">Raid</h2>
+							<div class="raid-content">
+								<span class="raid-name">
+									{typeof party.raid.name === 'string'
+										? party.raid.name
+										: party.raid.name?.en || party.raid.name?.ja || 'Unknown Raid'}
+								</span>
+								{#if party.raid.group}
+									<span class="raid-difficulty">Difficulty: {party.raid.group.difficulty}</span>
+								{/if}
+							</div>
+						</div>
 					{/if}
 				</div>
 			{/if}
@@ -709,197 +897,363 @@
 	{/snippet}
 </Dialog>
 
-<style>
+<!-- Delete Confirmation Dialog -->
+<Dialog bind:open={deleteDialogOpen} title="Delete Party">
+	{#snippet children()}
+		<div class="delete-confirmation">
+			<p>Are you sure you want to delete this party?</p>
+			<p><strong>{party.name || 'Unnamed Party'}</strong></p>
+			<p class="warning">⚠️ This action cannot be undone.</p>
+		</div>
+	{/snippet}
+
+	{#snippet footer()}
+		<button class="btn-secondary" onclick={() => (deleteDialogOpen = false)} disabled={deleting}>
+			Cancel
+		</button>
+		<button class="btn-danger" onclick={deleteParty} disabled={deleting}>
+			{deleting ? 'Deleting...' : 'Delete Party'}
+		</button>
+	{/snippet}
+</Dialog>
+
+<style lang="scss">
+	@use '$src/themes/typography' as *;
+	@use '$src/themes/colors' as *;
+	@use '$src/themes/spacing' as *;
+	@use '$src/themes/effects' as *;
+	@use '$src/themes/layout' as *;
+
 	.page-wrap {
 		position: relative;
 		--panel-w: 380px;
 		overflow-x: auto;
 	}
+
 	.track {
 		display: flex;
 		gap: 0;
 		align-items: flex-start;
 	}
+
 	.party-container {
 		width: 1200px;
 		margin: 0 auto;
-		padding: 1rem;
+		padding: $unit-half;
 	}
 
 	.party-header {
 		display: flex;
 		justify-content: space-between;
 		align-items: start;
-		margin-bottom: 1rem;
+		margin-bottom: $unit-half;
+		padding: $unit-4x 0;
 	}
 
-	.party-info h1 {
-		margin: 0 0 0.5rem 0;
-		font-size: 1.5rem;
+	.party-info {
+		h1 {
+			margin: 0 0 $unit-fourth 0;
+			font-size: $font-xlarge;
+			font-weight: $bold;
+			line-height: 1.2;
+		}
 	}
 
-	.description {
-		color: #666;
-		margin: 0;
+	.creator {
+		margin-top: $unit-half;
+
+		&-link {
+			display: inline-flex;
+			align-items: center;
+			gap: $unit-three-quarter;
+			text-decoration: none;
+			color: var(--text-tertiary);
+			@include smooth-transition($duration-standard, color);
+
+			&:hover {
+				color: var(--text-tertiary-hover);
+
+				.avatar-wrapper {
+					transform: scale(1.05);
+				}
+			}
+		}
+	}
+
+	.avatar-wrapper {
+		width: $unit-5x;
+		height: $unit-5x;
+		border-radius: 50%;
+		overflow: hidden;
+		background: var(--card-bg);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		@include smooth-transition($duration-zoom, transform);
+
+		&.wind {
+			background: var(--wind-bg);
+		}
+
+		&.fire {
+			background: var(--fire-bg);
+		}
+
+		&.water {
+			background: var(--water-bg);
+		}
+
+		&.earth {
+			background: var(--earth-bg);
+		}
+
+		&.light {
+			background: var(--light-bg);
+		}
+
+		&.dark {
+			background: var(--dark-bg);
+		}
+
+		.avatar {
+			width: $unit-4x + $unit-half;
+			height: $unit-4x + $unit-half;
+			border-radius: 50%;
+			object-fit: cover;
+		}
+
+		.avatar-placeholder {
+			width: $unit-4x + $unit-half;
+			height: $unit-4x + $unit-half;
+			border-radius: 50%;
+			background: var(--placeholder-bg);
+		}
+	}
+
+	.username {
+		font-size: $font-medium;
+		font-weight: $medium;
 	}
 
 	.party-actions {
 		display: flex;
-		gap: 0.5rem;
+		gap: $unit-half;
 	}
 
-	.edit-btn,
-	.favorite-btn,
-	.remix-btn {
-		padding: 0.5rem 1rem;
-		border: 1px solid #ccc;
-		border-radius: 6px;
-		background: white;
-		cursor: pointer;
-		transition: all 0.2s;
-	}
-
-	.edit-btn {
-		padding: 0.5rem 1rem;
-	}
-
-	.favorite-btn {
-		font-size: 1.2rem;
-		padding: 0.5rem;
-	}
-
-	.favorite-btn.favorited {
-		color: gold;
-	}
-
-	.edit-btn:hover,
-	.favorite-btn:hover,
-	.remix-btn:hover {
-		background: #f5f5f5;
-	}
-
-	.edit-btn:disabled,
-	.favorite-btn:disabled,
-	.remix-btn:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	.edit-status {
+	// Cards container
+	.cards {
 		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		margin-bottom: 1rem;
-		padding: 0.75rem 1rem;
-		background: #e8f0ff;
-		border: 1px solid #3366ff;
-		border-radius: 6px;
-		color: #3366ff;
-		font-size: 0.9rem;
-		font-weight: 500;
+		gap: $unit-2x;
+		margin-bottom: $unit-2x;
 
-		&.readonly {
-			background: #f5f5f5;
-			border-color: #ccc;
-			color: #666;
+		// Individual card styles
+		.description-card,
+		.raid-card {
+			flex: 1;
+			min-width: 0; // Allow flexbox to shrink items
+			background: var(--card-bg);
+			border: 0.5px solid var(--button-bg);
+			border-radius: $card-corner;
+			padding: $unit-2x;
+			// box-shadow: $card-elevation;
+			text-align: left;
+
+			.card-label {
+				margin: 0 0 $unit 0;
+				font-size: $font-small;
+				font-weight: $bold;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				color: var(--text-secondary);
+			}
+
+			.card-text {
+				margin: 0;
+				color: var(--text-primary);
+				font-size: $font-regular;
+				line-height: 1.5;
+
+				// Text truncation after 3 lines
+				display: -webkit-box;
+				-webkit-line-clamp: 3;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.card-content {
+				margin: 0;
+				color: var(--text-primary);
+			}
+
+			.card-hint {
+				display: none;
+				margin-top: $unit;
+				font-size: $font-small;
+				color: var(--accent-blue);
+				font-weight: $medium;
+			}
+
+			&.clickable {
+				cursor: pointer;
+				@include smooth-transition($duration-quick, box-shadow);
+
+				&:hover {
+					box-shadow: $card-elevation-hover;
+				}
+			}
+		}
+
+		// Specific styling for raid card
+		.raid-card {
+			flex: 0 0 auto;
+			min-width: 250px;
+
+			.raid-content {
+				display: flex;
+				flex-direction: column;
+				gap: $unit-half;
+			}
+
+			.raid-name {
+				font-weight: $bold;
+				color: var(--text-primary);
+				font-size: $font-regular;
+			}
+
+			.raid-difficulty {
+				color: var(--text-secondary);
+				font-size: $font-small;
+			}
+		}
+
+		// Description card takes up more space
+		.description-card {
+			flex: 2;
+			max-width: 600px;
 		}
 	}
 
-	.raid-info {
-		display: flex;
-		gap: 1rem;
-		margin-bottom: 1rem;
-		padding: 0.5rem;
-		background: #f9f9f9;
-		border-radius: 4px;
-		font-size: 0.9rem;
-	}
-
-	.raid-name {
-		font-weight: 600;
-	}
-
 	.error-message {
-		padding: 0.75rem;
-		background: #fee;
-		border: 1px solid #fcc;
-		border-radius: 4px;
-		color: #c00;
-		margin-bottom: 1rem;
+		padding: $unit-three-quarter;
+		background: rgba(209, 58, 58, 0.1); // Using raw value since CSS variables don't work in rgba()
+		border: 1px solid rgba(209, 58, 58, 0.3);
+		border-radius: $unit-half;
+		color: $error;
+		margin-bottom: $unit;
+		font-size: $font-small;
 	}
 
 	.party-content {
 		min-height: 400px;
 	}
 
-	/* Edit form styles */
+	// Edit form styles
 	.edit-form {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: $unit-half;
+
+		label {
+			font-weight: $medium;
+			font-size: $font-small;
+			color: var(--text-secondary);
+		}
+
+		input {
+			padding: $unit-three-quarter;
+			border: 1px solid var(--button-bg);
+			border-radius: $unit-three-quarter;
+			font-size: $font-regular;
+			background: var(--input-bg);
+			@include smooth-transition($duration-quick, border-color, background);
+
+			&:hover {
+				background: var(--input-bg-hover);
+			}
+
+			&:focus {
+				outline: none;
+				border-color: var(--accent-blue);
+				box-shadow: 0 0 0 2px rgba(39, 93, 197, 0.1); // Using raw value since CSS variables don't work in rgba()
+			}
+
+			&:disabled {
+				background: var(--button-bg);
+				opacity: 0.7;
+				cursor: not-allowed;
+			}
+		}
 	}
 
-	.edit-form label {
-		font-weight: 500;
-		font-size: 0.9rem;
-		color: var(--text-secondary, #666);
-	}
-
-	.edit-form input {
-		padding: 0.75rem;
-		border: 1px solid var(--border-color, #ddd);
-		border-radius: 6px;
-		font-size: 1rem;
-		transition: border-color 0.2s;
-	}
-
-	.edit-form input:focus {
-		outline: none;
-		border-color: var(--focus-ring, #3366ff);
-	}
-
-	.edit-form input:disabled {
-		background: #f5f5f5;
-		opacity: 0.7;
-	}
-
-	/* Dialog buttons */
+	// Dialog buttons (shared styles)
 	.btn-primary,
-	.btn-secondary {
-		padding: 0.75rem 1.5rem;
-		border-radius: 6px;
-		font-weight: 500;
+	.btn-secondary,
+	.btn-danger {
+		padding: $unit-three-quarter $unit-2x;
+		border-radius: $unit-three-quarter;
+		font-weight: $medium;
 		cursor: pointer;
-		transition: all 0.2s;
+		@include smooth-transition($duration-standard, all);
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
 	}
 
 	.btn-primary {
-		background: var(--button-primary-bg, #3366ff);
+		background: var(--accent-blue);
 		color: white;
 		border: none;
-	}
 
-	.btn-primary:hover:not(:disabled) {
-		background: var(--button-primary-hover, #2855cc);
-	}
-
-	.btn-primary:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
+		&:hover:not(:disabled) {
+			background: var(--accent-blue-focus);
+		}
 	}
 
 	.btn-secondary {
-		background: white;
-		color: var(--text-primary, #333);
-		border: 1px solid var(--border-color, #ddd);
+		background: var(--card-bg);
+		color: var(--text-primary);
+		border: 1px solid var(--button-bg);
+
+		&:hover:not(:disabled) {
+			background: var(--button-bg-hover);
+			border-color: var(--button-bg-hover);
+		}
 	}
 
-	.btn-secondary:hover:not(:disabled) {
-		background: #f5f5f5;
+	.btn-danger {
+		background: $error;
+		color: white;
+		border: none;
+
+		&:hover:not(:disabled) {
+			background: darken($error, 10%);
+		}
 	}
 
-	.btn-secondary:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
+	// Delete confirmation styles
+	.delete-confirmation {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+		text-align: center;
+		padding: $unit 0;
+
+		p {
+			margin: 0;
+		}
+
+		strong {
+			color: var(--text-primary);
+			font-size: $font-medium;
+		}
+
+		.warning {
+			color: $error;
+			font-size: $font-small;
+			margin-top: $unit-half;
+		}
 	}
 </style>

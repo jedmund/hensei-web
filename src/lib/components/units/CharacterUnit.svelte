@@ -7,6 +7,7 @@
   import { ContextMenu as ContextMenuBase } from 'bits-ui'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
   import { getCharacterImage } from '$lib/features/database/detail/image'
+  import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 
   interface Props {
     item?: GridCharacter
@@ -23,6 +24,7 @@
     canEdit: () => boolean
     getEditKey: () => string | null
     services: { gridService: any; partyService: any }
+    openPicker?: (opts: { type: 'character' | 'weapon' | 'summon'; position: number; item?: any }) => void
   }
   const ctx = getContext<PartyCtx>('party')
 
@@ -72,8 +74,11 @@
   }
 
   function viewDetails() {
-    // TODO: Implement view details modal
-    console.log('View details for:', item)
+    if (!item) return
+    openDetailsSidebar({
+      type: 'character',
+      item
+    })
   }
 
   function replace() {
@@ -93,7 +98,7 @@
           <div
             class="frame character cell"
             class:editable={ctx?.canEdit()}
-            onclick={() => ctx?.canEdit() && replace()}
+            onclick={() => viewDetails()}
           >
             <img
               class="image"
@@ -217,15 +222,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 
-    &.editable {
-      cursor: pointer;
-
-      &:hover {
-        border-color: var(--primary-color, #0066cc);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        transform: scale(1.01);
-      }
+    &:hover {
+      opacity: 0.95;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
   }
 
