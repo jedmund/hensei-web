@@ -145,14 +145,15 @@
 			</li>
 		</ul>
 	{/if}
-	<Button
-		icon="plus"
-		iconOnly
-		variant="primary"
-		class="new-team-button"
-		aria-label="New team"
-		href={newTeamHref}
-	/>
+    <Button
+        icon="plus"
+        iconOnly
+        shape="circle"
+        variant="primary"
+        class="new-team-button"
+        aria-label="New team"
+        href={newTeamHref}
+    />
 </nav>
 
 <style lang="scss">
@@ -350,23 +351,10 @@
 	}
 
 	// Style the new team button as a prominent circular button
+	// Remove redundant styles that the Button component already handles
 	:global(.new-team-button) {
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-		padding: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background-color: var(--button-contained-bg);
-		color: var(--button-text);
-		border: none;
-		cursor: pointer;
-		transition: background-color 0.2s ease;
-
-		&:hover {
-			background-color: var(--button-contained-bg-hover);
-		}
+		// Only add styles that are specific overrides, not duplicates
+		// The Button component already handles size, shape, colors, etc.
 	}
 
 	// Dropdown menu styles

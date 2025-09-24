@@ -16,6 +16,8 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
 	import { openDescriptionSidebar } from '$lib/features/description/openDescriptionSidebar.svelte.ts'
+	import { DropdownMenu } from 'bits-ui'
+	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 
 	interface Props {
 		party?: Party
@@ -761,47 +763,50 @@
 				</div>
 
 				<div class="party-actions">
-					{#if canEdit()}
-						<Button
-							variant="secondary"
-							onclick={openEditDialog}
-							disabled={loading}
-							aria-label="Edit party details"
-						>
-							Edit
-						</Button>
-					{/if}
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							<Button
+								variant="subtle"
+								iconOnly
+								shape="circular"
+								size="medium"
+								icon="ellipsis"
+								as="span"
+								aria-label="Open actions menu"
+							/>
+						</DropdownMenu.Trigger>
 
-					{#if authUserId}
-						<Button
-							variant="secondary"
-							onclick={toggleFavorite}
-							disabled={loading}
-							aria-label={party.favorited ? 'Remove from favorites' : 'Add to favorites'}
-						>
-							{party.favorited ? '★' : '☆'}
-						</Button>
-					{/if}
+						<DropdownMenu.Portal>
+							<DropdownMenu.Content class="dropdown-content" sideOffset={6} align="end">
+								{#if canEdit()}
+									<DropdownItem asChild>
+										<button onclick={openEditDialog} disabled={loading}>Edit</button>
+									</DropdownItem>
+								{/if}
 
-					<Button
-						variant="secondary"
-						onclick={remixParty}
-						disabled={loading}
-						aria-label="Remix this party"
-					>
-						Remix
-					</Button>
+								{#if authUserId}
+									<DropdownItem asChild>
+										<button onclick={toggleFavorite} disabled={loading}>
+											{party.favorited ? 'Remove from favorites' : 'Add to favorites'}
+										</button>
+									</DropdownItem>
+								{/if}
 
-					{#if party.user?.id === authUserId}
-						<Button
-							variant="destructive"
-							onclick={() => (deleteDialogOpen = true)}
-							disabled={loading}
-							aria-label="Delete this party"
-						>
-							Delete
-						</Button>
-					{/if}
+								<DropdownItem asChild>
+									<button onclick={remixParty} disabled={loading}>Remix</button>
+								</DropdownItem>
+
+								{#if party.user?.id === authUserId}
+									<DropdownMenu.Separator class="dropdown-separator" />
+									<DropdownItem asChild>
+										<button onclick={() => (deleteDialogOpen = true)} disabled={loading}>
+											Delete
+										</button>
+									</DropdownItem>
+								{/if}
+							</DropdownMenu.Content>
+						</DropdownMenu.Portal>
+					</DropdownMenu.Root>
 				</div>
 			</header>
 
