@@ -18,6 +18,8 @@ import {
 	calculateRetryDelay,
 	CancelledError
 } from './errors'
+import { authStore } from '$lib/stores/auth.store'
+import { browser } from '$app/environment'
 
 /**
  * Base adapter class that all resource-specific adapters extend from.
@@ -45,6 +47,9 @@ export abstract class BaseAdapter {
 
 	/** Configuration options for the adapter */
 	protected options: Required<AdapterOptions>
+
+	/** Flag to disable caching entirely */
+	protected disableCache: boolean = false
 
 	/**
 	 * Creates a new adapter instance
@@ -97,8 +102,8 @@ export abstract class BaseAdapter {
 
 		// Check cache first if caching is enabled (support both cache and cacheTTL)
 		const cacheTime = options.cacheTTL ?? options.cache ?? this.options.cacheTime
-		// Allow caching for any method if explicitly set
-		if (cacheTime > 0) {
+		// Allow caching for any method if explicitly set (unless cache is disabled)
+		if (!this.disableCache && cacheTime > 0) {
 			const cached = this.getFromCache(requestId)
 			if (cached !== null) {
 				return cached as T
@@ -112,26 +117,53 @@ export abstract class BaseAdapter {
 		const controller = new AbortController()
 		this.abortControllers.set(requestId, controller)
 
+		// Get Bearer token from auth store (only in browser)
+		let authHeaders: Record<string, string> = {}
+		if (browser) {
+			const token = await authStore.checkAndRefresh()
+			if (token) {
+				authHeaders['Authorization'] = `Bearer ${token}`
+			} else {
+				console.warn('[BaseAdapter] No auth token available in authStore for request:', path)
+			}
+		}
+
 		// Prepare request options
 		const fetchOptions: RequestInit = {
-			credentials: 'include', // Default: Include cookies for authentication
 			...options, // Allow overriding defaults
+			credentials: 'include', // Still include cookies for CORS and refresh token
 			signal: controller.signal,
 			headers: {
 				'Content-Type': 'application/json',
+				...authHeaders,
 				...(options.headers || {})
 			}
+		}
+
+		// Debug logging for auth issues
+		if (browser && path.includes('grid_')) {
+			console.log('[BaseAdapter] Request to:', path, 'Headers:', fetchOptions.headers)
 		}
 
 		// Transform request body from camelCase to snake_case if present
 		if (options.body) {
 			if (typeof options.body === 'object') {
 				// Body is an object, transform and stringify
-				fetchOptions.body = JSON.stringify(this.transformRequest(options.body))
+				const transformed = this.transformRequest(options.body)
+				fetchOptions.body = JSON.stringify(transformed)
+				// Debug logging for 422 errors
+				if (browser && path.includes('grid_')) {
+					console.log('[BaseAdapter] Request body:', transformed)
+				}
 			} else if (typeof options.body === 'string') {
 				try {
 					const bodyData = JSON.parse(options.body)
-					fetchOptions.body = JSON.stringify(this.transformRequest(bodyData))
+					const transformed = this.transformRequest(bodyData)
+					fetchOptions.body = JSON.stringify(transformed)
+					// Debug logging for 422 errors
+					if (browser && path.includes('grid_')) {
+						console.log('[BaseAdapter] Request body:', transformed)
+					}
 				} catch {
 					// If body is not valid JSON, use as-is
 					fetchOptions.body = options.body
@@ -145,10 +177,17 @@ export abstract class BaseAdapter {
 
 			// Parse and transform the response
 			const data = await response.json()
+
+			// Debug logging for grid operations
+			if (browser && path.includes('grid_')) {
+				console.log('[BaseAdapter] Response status:', response.status)
+				console.log('[BaseAdapter] Response data:', data)
+			}
+
 			const transformed = this.transformResponse<T>(data)
 
 			// Cache the successful response if caching is enabled (use cacheTTL or cache)
-			if (cacheTime > 0) {
+			if (!this.disableCache && cacheTime > 0) {
 				this.setCache(requestId, transformed, cacheTime)
 			}
 
@@ -340,10 +379,32 @@ export abstract class BaseAdapter {
 		// Build URL from base URL and path
 		const baseURL = this.options.baseURL.replace(/\/$/, '') // Remove trailing slash
 		const cleanPath = path.startsWith('/') ? path : `/${path}`
-		const url = new URL(`${baseURL}${cleanPath}`)
+		const fullPath = `${baseURL}${cleanPath}`
 
-		this.addQueryParams(url, params)
-		return url.toString()
+		// Check if we have a relative URL (starts with /)
+		if (baseURL.startsWith('/')) {
+			// For relative URLs, we need to provide a base for the URL constructor
+			// but we'll return just the relative path for fetch
+			if (typeof window !== 'undefined') {
+				// In browser, use window.location.origin for URL construction
+				const url = new URL(fullPath, window.location.origin)
+				this.addQueryParams(url, params)
+				// Return just the pathname and search for relative fetch
+				return `${url.pathname}${url.search}`
+			} else {
+				// On server, construct the query string manually for relative paths
+				if (params && Object.keys(params).length > 0) {
+					const queryString = new URLSearchParams(this.transformRequest(params)).toString()
+					return `${fullPath}?${queryString}`
+				}
+				return fullPath
+			}
+		} else {
+			// For absolute base URLs, use the normal URL constructor
+			const url = new URL(fullPath)
+			this.addQueryParams(url, params)
+			return url.toString()
+		}
 	}
 
 	/**

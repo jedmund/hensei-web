@@ -1,5 +1,6 @@
 import { BaseAdapter } from './base.adapter'
 import type { Party } from '$lib/types/api/party'
+import type { RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 
 export interface UserInfo {
@@ -36,8 +37,8 @@ export class UserAdapter extends BaseAdapter {
   /**
    * Get user information
    */
-  async getInfo(username: string): Promise<UserInfo> {
-    return this.request<UserInfo>(`/users/info/${encodeURIComponent(username)}`)
+  async getInfo(username: string, options?: RequestOptions): Promise<UserInfo> {
+    return this.request<UserInfo>(`/users/info/${encodeURIComponent(username)}`, options)
   }
 
   /**

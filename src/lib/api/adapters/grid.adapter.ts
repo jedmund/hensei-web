@@ -115,10 +115,10 @@ export interface UpdateUncapParams {
  * Parameters for updating positions
  */
 export interface UpdatePositionParams {
-	partyId: string
-	id: string
-	position: number
-	container?: string
+    partyId: string
+    id: string
+    position: number
+    container?: string
 }
 
 /**
@@ -150,196 +150,259 @@ export class GridAdapter extends BaseAdapter {
 	/**
 	 * Creates a new grid weapon instance
 	 */
-	async createWeapon(params: CreateGridWeaponParams): Promise<GridWeapon> {
-		return this.request<GridWeapon>('/grid_weapons', {
-			method: 'POST',
-			body: params
-		})
-	}
+    async createWeapon(params: CreateGridWeaponParams, headers?: Record<string, string>): Promise<GridWeapon> {
+        return this.request<GridWeapon>('/grid_weapons', {
+            method: 'POST',
+            body: { weapon: params },
+            headers
+        })
+    }
 
 	/**
 	 * Updates a grid weapon instance
 	 */
-	async updateWeapon(id: string, params: Partial<GridWeapon>): Promise<GridWeapon> {
-		return this.request<GridWeapon>(`/grid_weapons/${id}`, {
-			method: 'PUT',
-			body: params
-		})
-	}
+    async updateWeapon(id: string, params: Partial<GridWeapon>, headers?: Record<string, string>): Promise<GridWeapon> {
+        return this.request<GridWeapon>(`/grid_weapons/${id}`, {
+            method: 'PUT',
+            body: { weapon: params },
+            headers
+        })
+    }
 
 	/**
 	 * Deletes a grid weapon instance
 	 */
-	async deleteWeapon(params: { id?: string; partyId: string; position?: number }): Promise<void> {
-		return this.request<void>('/grid_weapons', {
-			method: 'DELETE',
-			body: params
-		})
-	}
+    async deleteWeapon(params: { id?: string; partyId: string; position?: number }, headers?: Record<string, string>): Promise<void> {
+        // If we have an ID, use it in the URL (standard Rails REST)
+        if (params.id) {
+            return this.request<void>(`/grid_weapons/${params.id}`, {
+                method: 'DELETE',
+                headers
+            })
+        }
+        // Otherwise, send params in body for position-based delete
+        return this.request<void>('/grid_weapons/delete_by_position', {
+            method: 'DELETE',
+            body: params,
+            headers
+        })
+    }
 
 	/**
 	 * Updates weapon uncap level
 	 */
-	async updateWeaponUncap(params: UpdateUncapParams): Promise<GridWeapon> {
-		return this.request<GridWeapon>('/grid_weapons/update_uncap', {
-			method: 'POST',
-			body: params
-		})
-	}
+    async updateWeaponUncap(params: UpdateUncapParams, headers?: Record<string, string>): Promise<GridWeapon> {
+        return this.request<GridWeapon>('/grid_weapons/update_uncap', {
+            method: 'POST',
+            body: {
+                weapon: {
+                    id: params.id,
+                    partyId: params.partyId,
+                    uncapLevel: params.uncapLevel,
+                    transcendenceStep: params.transcendenceStep
+                }
+            },
+            headers
+        })
+    }
 
 	/**
 	 * Resolves weapon conflicts
 	 */
-	async resolveWeaponConflict(params: ResolveConflictParams): Promise<GridWeapon> {
-		return this.request<GridWeapon>('/grid_weapons/resolve', {
-			method: 'POST',
-			body: params
-		})
-	}
+    async resolveWeaponConflict(params: ResolveConflictParams, headers?: Record<string, string>): Promise<GridWeapon> {
+        return this.request<GridWeapon>('/grid_weapons/resolve', {
+            method: 'POST',
+            body: { resolve: params },
+            headers
+        })
+    }
 
 	/**
 	 * Updates weapon position
 	 */
-	async updateWeaponPosition(params: UpdatePositionParams): Promise<GridWeapon> {
-		const { partyId, id, ...positionData } = params
-		return this.request<GridWeapon>(`/parties/${partyId}/grid_weapons/${id}/position`, {
-			method: 'PUT',
-			body: positionData
-		})
-	}
+    async updateWeaponPosition(params: UpdatePositionParams, headers?: Record<string, string>): Promise<GridWeapon> {
+        const { id, position, container, partyId } = params
+        return this.request<GridWeapon>(`/parties/${partyId}/grid_weapons/${id}/position`, {
+            method: 'PUT',
+            body: { position, container },
+            headers
+        })
+    }
 
 	/**
 	 * Swaps two weapon positions
 	 */
-	async swapWeapons(params: SwapPositionsParams): Promise<{
-		source: GridWeapon
-		target: GridWeapon
-	}> {
-		const { partyId, ...swapData } = params
-		return this.request(`/parties/${partyId}/grid_weapons/swap`, {
-			method: 'POST',
-			body: swapData
-		})
-	}
+    async swapWeapons(params: SwapPositionsParams, headers?: Record<string, string>): Promise<{
+        source: GridWeapon
+        target: GridWeapon
+    }> {
+        const { partyId, sourceId, targetId } = params
+        return this.request(`/parties/${partyId}/grid_weapons/swap`, {
+            method: 'POST',
+            body: { source_id: sourceId, target_id: targetId },
+            headers
+        })
+    }
 
 	// Character operations
 
 	/**
 	 * Creates a new grid character instance
 	 */
-	async createCharacter(params: CreateGridCharacterParams): Promise<GridCharacter> {
-		return this.request<GridCharacter>('/grid_characters', {
-			method: 'POST',
-			body: params
-		})
-	}
+    async createCharacter(params: CreateGridCharacterParams, headers?: Record<string, string>): Promise<GridCharacter> {
+        return this.request<GridCharacter>('/grid_characters', {
+            method: 'POST',
+            body: { character: params },
+            headers
+        })
+    }
 
 	/**
 	 * Updates a grid character instance
 	 */
-	async updateCharacter(id: string, params: Partial<GridCharacter>): Promise<GridCharacter> {
-		return this.request<GridCharacter>(`/grid_characters/${id}`, {
-			method: 'PUT',
-			body: params
-		})
-	}
+    async updateCharacter(id: string, params: Partial<GridCharacter>, headers?: Record<string, string>): Promise<GridCharacter> {
+        return this.request<GridCharacter>(`/grid_characters/${id}`, {
+            method: 'PUT',
+            body: { character: params },
+            headers
+        })
+    }
 
 	/**
 	 * Deletes a grid character instance
 	 */
-	async deleteCharacter(params: { id?: string; partyId: string; position?: number }): Promise<void> {
-		return this.request<void>('/grid_characters', {
-			method: 'DELETE',
-			body: params
-		})
-	}
+    async deleteCharacter(params: { id?: string; partyId: string; position?: number }, headers?: Record<string, string>): Promise<void> {
+        // If we have an ID, use it in the URL (standard Rails REST)
+        if (params.id) {
+            return this.request<void>(`/grid_characters/${params.id}`, {
+                method: 'DELETE',
+                headers
+            })
+        }
+        // Otherwise, send params in body for position-based delete
+        return this.request<void>('/grid_characters/delete_by_position', {
+            method: 'DELETE',
+            body: params,
+            headers
+        })
+    }
 
 	/**
 	 * Updates character uncap level
 	 */
-	async updateCharacterUncap(params: UpdateUncapParams): Promise<GridCharacter> {
-		return this.request<GridCharacter>('/grid_characters/update_uncap', {
-			method: 'POST',
-			body: params
-		})
-	}
+    async updateCharacterUncap(params: UpdateUncapParams, headers?: Record<string, string>): Promise<GridCharacter> {
+        return this.request<GridCharacter>('/grid_characters/update_uncap', {
+            method: 'POST',
+            body: {
+                character: {
+                    id: params.id,
+                    partyId: params.partyId,
+                    uncapLevel: params.uncapLevel,
+                    transcendenceStep: params.transcendenceStep
+                }
+            },
+            headers
+        })
+    }
 
 	/**
 	 * Resolves character conflicts
 	 */
-	async resolveCharacterConflict(params: ResolveConflictParams): Promise<GridCharacter> {
-		return this.request<GridCharacter>('/grid_characters/resolve', {
-			method: 'POST',
-			body: params
-		})
-	}
+    async resolveCharacterConflict(params: ResolveConflictParams, headers?: Record<string, string>): Promise<GridCharacter> {
+        return this.request<GridCharacter>('/grid_characters/resolve', {
+            method: 'POST',
+            body: { resolve: params },
+            headers
+        })
+    }
 
 	/**
 	 * Updates character position
 	 */
-	async updateCharacterPosition(params: UpdatePositionParams): Promise<GridCharacter> {
-		const { partyId, id, ...positionData } = params
-		return this.request<GridCharacter>(`/parties/${partyId}/grid_characters/${id}/position`, {
-			method: 'PUT',
-			body: positionData
-		})
-	}
+    async updateCharacterPosition(params: UpdatePositionParams, headers?: Record<string, string>): Promise<GridCharacter> {
+        const { id, position, container, partyId } = params
+        return this.request<GridCharacter>(`/parties/${partyId}/grid_characters/${id}/position`, {
+            method: 'PUT',
+            body: { position, container },
+            headers
+        })
+    }
 
 	/**
 	 * Swaps two character positions
 	 */
-	async swapCharacters(params: SwapPositionsParams): Promise<{
-		source: GridCharacter
-		target: GridCharacter
-	}> {
-		const { partyId, ...swapData } = params
-		return this.request(`/parties/${partyId}/grid_characters/swap`, {
-			method: 'POST',
-			body: swapData
-		})
-	}
+    async swapCharacters(params: SwapPositionsParams, headers?: Record<string, string>): Promise<{
+        source: GridCharacter
+        target: GridCharacter
+    }> {
+        const { partyId, sourceId, targetId } = params
+        return this.request(`/parties/${partyId}/grid_characters/swap`, {
+            method: 'POST',
+            body: { source_id: sourceId, target_id: targetId },
+            headers
+        })
+    }
 
 	// Summon operations
 
 	/**
 	 * Creates a new grid summon instance
 	 */
-	async createSummon(params: CreateGridSummonParams): Promise<GridSummon> {
-		return this.request<GridSummon>('/grid_summons', {
-			method: 'POST',
-			body: params
-		})
-	}
+    async createSummon(params: CreateGridSummonParams, headers?: Record<string, string>): Promise<GridSummon> {
+        return this.request<GridSummon>('/grid_summons', {
+            method: 'POST',
+            body: { summon: params },
+            headers
+        })
+    }
 
 	/**
 	 * Updates a grid summon instance
 	 */
-	async updateSummon(id: string, params: Partial<GridSummon>): Promise<GridSummon> {
-		return this.request<GridSummon>(`/grid_summons/${id}`, {
-			method: 'PUT',
-			body: params
-		})
-	}
+    async updateSummon(id: string, params: Partial<GridSummon>, headers?: Record<string, string>): Promise<GridSummon> {
+        return this.request<GridSummon>(`/grid_summons/${id}`, {
+            method: 'PUT',
+            body: { summon: params },
+            headers
+        })
+    }
 
 	/**
 	 * Deletes a grid summon instance
 	 */
-	async deleteSummon(params: { id?: string; partyId: string; position?: number }): Promise<void> {
-		return this.request<void>('/grid_summons', {
-			method: 'DELETE',
-			body: params
-		})
-	}
+    async deleteSummon(params: { id?: string; partyId: string; position?: number }, headers?: Record<string, string>): Promise<void> {
+        // If we have an ID, use it in the URL (standard Rails REST)
+        if (params.id) {
+            return this.request<void>(`/grid_summons/${params.id}`, {
+                method: 'DELETE',
+                headers
+            })
+        }
+        // Otherwise, send params in body for position-based delete
+        return this.request<void>('/grid_summons/delete_by_position', {
+            method: 'DELETE',
+            body: params,
+            headers
+        })
+    }
 
 	/**
 	 * Updates summon uncap level
 	 */
-	async updateSummonUncap(params: UpdateUncapParams): Promise<GridSummon> {
-		return this.request<GridSummon>('/grid_summons/update_uncap', {
-			method: 'POST',
-			body: params
-		})
-	}
+    async updateSummonUncap(params: UpdateUncapParams, headers?: Record<string, string>): Promise<GridSummon> {
+        return this.request<GridSummon>('/grid_summons/update_uncap', {
+            method: 'POST',
+            body: {
+                summon: {
+                    id: params.id,
+                    partyId: params.partyId,
+                    uncapLevel: params.uncapLevel,
+                    transcendenceStep: params.transcendenceStep
+                }
+            },
+            headers
+        })
+    }
 
 	/**
 	 * Updates summon quick summon setting
@@ -359,27 +422,29 @@ export class GridAdapter extends BaseAdapter {
 	/**
 	 * Updates summon position
 	 */
-	async updateSummonPosition(params: UpdatePositionParams): Promise<GridSummon> {
-		const { partyId, id, ...positionData } = params
-		return this.request<GridSummon>(`/parties/${partyId}/grid_summons/${id}/position`, {
-			method: 'PUT',
-			body: positionData
-		})
-	}
+    async updateSummonPosition(params: UpdatePositionParams, headers?: Record<string, string>): Promise<GridSummon> {
+        const { id, position, container, partyId } = params
+        return this.request<GridSummon>(`/parties/${partyId}/grid_summons/${id}/position`, {
+            method: 'PUT',
+            body: { position, container },
+            headers
+        })
+    }
 
 	/**
 	 * Swaps two summon positions
 	 */
-	async swapSummons(params: SwapPositionsParams): Promise<{
-		source: GridSummon
-		target: GridSummon
-	}> {
-		const { partyId, ...swapData } = params
-		return this.request(`/parties/${partyId}/grid_summons/swap`, {
-			method: 'POST',
-			body: swapData
-		})
-	}
+    async swapSummons(params: SwapPositionsParams, headers?: Record<string, string>): Promise<{
+        source: GridSummon
+        target: GridSummon
+    }> {
+        const { partyId, sourceId, targetId } = params
+        return this.request(`/parties/${partyId}/grid_summons/swap`, {
+            method: 'POST',
+            body: { source_id: sourceId, target_id: targetId },
+            headers
+        })
+    }
 
 	/**
 	 * Clears grid-specific cache

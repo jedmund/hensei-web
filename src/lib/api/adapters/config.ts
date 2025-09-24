@@ -5,10 +5,10 @@ import { PUBLIC_SIERO_API_URL } from '$env/static/public'
 
 /**
  * Get the base URL for API requests
- * Handles both server and client environments
+ * Always use direct API URL for both server and client
  */
 export function getApiBaseUrl(): string {
-	// Use environment variable if available, otherwise default to localhost
+	// Always use direct API URL
 	const base = PUBLIC_SIERO_API_URL || 'http://localhost:3000'
 	return `${base}/api/v1`
 }
