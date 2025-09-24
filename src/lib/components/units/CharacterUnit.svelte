@@ -6,7 +6,7 @@
   import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
   import { ContextMenu as ContextMenuBase } from 'bits-ui'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-  import { getCharacterImage } from '$lib/features/database/detail/image'
+  import { getCharacterImageWithPose } from '$lib/utils/images'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 
   interface Props {
@@ -39,24 +39,17 @@
   let imageUrl = $derived.by(() => {
     // If no item or no character with granblueId, return placeholder
     if (!item || !item.character?.granblueId) {
-      return getCharacterImage(null, undefined, 'main')
+      return getCharacterImageWithPose(null, 'main', 0, 0)
     }
 
-    const id = item.character.granblueId
-    const uncap = item?.uncapLevel ?? 0
-    const transStep = item?.transcendenceStep ?? 0
-    let pose = '01'
-    if (transStep > 0) pose = '04'
-    else if (uncap >= 5) pose = '03'
-    else if (uncap > 2) pose = '02'
-
-    // Special handling for Gran/Djeeta (3030182000) - element-specific poses
-    if (String(id) === '3030182000') {
-      let element = mainWeaponElement || partyElement || 1
-      pose = `${pose}_0${element}`
-    }
-
-    return getCharacterImage(id, pose, 'main')
+    return getCharacterImageWithPose(
+      item.character.granblueId,
+      'main',
+      item?.uncapLevel ?? 0,
+      item?.transcendenceStep ?? 0,
+      mainWeaponElement,
+      partyElement
+    )
   })
 
   async function remove() {
