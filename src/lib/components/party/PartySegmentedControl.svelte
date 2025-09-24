@@ -17,13 +17,7 @@
 		class?: string
 	}
 
-	let {
-		selectedTab = GridType.Character,
-		onTabChange,
-		party,
-		class: className
-	}: Props = $props()
-
+	let { selectedTab = GridType.Character, onTabChange, party, class: className }: Props = $props()
 
 	// Handle value changes
 	let value = $state(selectedTab)
@@ -44,12 +38,7 @@
 </script>
 
 <nav class={className}>
-	<SegmentedControl
-		bind:value
-		onValueChange={handleValueChange}
-		gap={true}
-		grow={true}
-	>
+	<SegmentedControl bind:value onValueChange={handleValueChange} gap={true} grow={true}>
 		<RepSegment
 			value={GridType.Character}
 			label={m.party_segmented_control_characters()}
@@ -82,8 +71,9 @@
 </nav>
 
 <style lang="scss">
+	@use '$src/themes/spacing' as *;
+
 	nav {
 		width: 100%;
-		margin-bottom: 1rem;
 	}
 </style>

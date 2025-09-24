@@ -95,7 +95,6 @@
 	}
 
 	.actions-section {
-		margin-top: $unit-2x;
 		padding: $unit-2x;
 		padding-bottom: $unit-2x;
 		border-top: 1px solid var(--button-bg);

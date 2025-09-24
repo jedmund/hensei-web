@@ -747,14 +747,14 @@
 											alt={`Avatar of ${party.user.username}`}
 											src={avatarSrc}
 											srcset={avatarSrcSet}
-											width="40"
-											height="40"
+											width="32"
+											height="32"
 										/>
 									{:else}
 										<div class="avatar-placeholder" aria-hidden="true"></div>
 									{/if}
 								</div>
-								<span class="username">@{party.user.username}</span>
+								<span class="username">{party.user.username}</span>
 							</a>
 						</div>
 					{/if}
@@ -940,17 +940,23 @@
 		width: 1200px;
 		margin: 0 auto;
 		padding: $unit-half;
+		gap: $unit-2x;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.party-header {
 		display: flex;
 		justify-content: space-between;
 		align-items: start;
-		margin-bottom: $unit-half;
-		padding: $unit-4x 0;
+		vertical-align: middle;
+		align-items: center;
+		padding: $unit-2x 0;
 	}
 
 	.party-info {
+		flex-grow: 1;
+
 		h1 {
 			margin: 0 0 $unit-fourth 0;
 			font-size: $font-xlarge;
@@ -981,8 +987,8 @@
 	}
 
 	.avatar-wrapper {
-		width: $unit-5x;
-		height: $unit-5x;
+		width: $unit-4x;
+		height: $unit-4x;
 		border-radius: 50%;
 		overflow: hidden;
 		background: var(--card-bg);
@@ -1031,7 +1037,7 @@
 	}
 
 	.username {
-		font-size: $font-medium;
+		font-size: $font-regular;
 		font-weight: $medium;
 	}
 
@@ -1044,7 +1050,6 @@
 	.cards {
 		display: flex;
 		gap: $unit-2x;
-		margin-bottom: $unit-2x;
 
 		// Individual card styles
 		.description-card,

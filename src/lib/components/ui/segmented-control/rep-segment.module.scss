@@ -10,7 +10,7 @@
 	padding: 0;
 	background: transparent;
 	border: none;
-	border-radius: $item-corner;
+	border-radius: $card-corner;
 	cursor: pointer;
 	transition: all 0.2s ease;
 
@@ -37,7 +37,7 @@
 	position: absolute;
 	inset: 0;
 	background: $grey-100;
-	border-radius: $item-corner;
+	border-radius: $card-corner;
 	opacity: 0;
 	transition: opacity 0.2s ease;
 
