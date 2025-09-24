@@ -30,6 +30,7 @@
 	--spacing-2xl: #{spacing.$unit-14x};
 
 	--background: #{colors.$page--bg--light};
+	--background-rgb: 245, 245, 245; // RGB values for grey-90
 	--page-hover: #{colors.$page--hover--light};
 
 	--grid-rep-hover: #{colors.$grid--rep--hover--light};
@@ -280,6 +281,7 @@
 
 [data-theme='dark'] {
 	--background: #{colors.$page--bg--dark};
+	--background-rgb: 25, 25, 25; // RGB values for grey-15
 	--page-hover: #{colors.$page--hover--dark};
 
 	--grid-rep-hover: #{colors.$grid--rep--hover--dark};

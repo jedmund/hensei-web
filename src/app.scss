@@ -10,7 +10,7 @@
 html {
 	background-color: var(--background);
 	font-size: 62.5%;
-	// height: 100%;
+	height: 100%;
 }
 
 body {
@@ -19,6 +19,8 @@ body {
 	font-family: var(--font-family);
 	font-size: 1.4rem;
 	height: 100%;
+	margin: 0;
+	overflow: hidden; // Prevent body scroll since we handle scrolling in layout
 
 	&.no-scroll {
 		overflow: hidden;
@@ -31,20 +33,24 @@ ul {
 	list-style: none;
 }
 
-main {
-	max-width: var(--main-max-width);
-	margin: 0 auto;
-	width: 100%;
-	transition: max-width 0.3s ease;
+// Main content styling - now applied within the scrollable container
+.main-content {
+	> * {
+		max-width: var(--main-max-width);
+		margin: 0 auto;
+		width: 100%;
+		padding: 0 spacing.$unit-2x; // Only horizontal padding, vertical handled by layout
+		transition: max-width 0.3s ease;
 
-	// Responsive padding for smaller screens
-	@media (max-width: 768px) {
-		padding: 0 spacing.$unit;
-	}
+		// Responsive padding for smaller screens
+		@media (max-width: 768px) {
+			padding: 0 spacing.$unit;
+		}
 
-	// Wider layout for database pages
-	&.database-layout {
-		max-width: 1400px;
+		// Wider layout for database pages
+		&.database-layout {
+			max-width: 1400px;
+		}
 	}
 }
 
