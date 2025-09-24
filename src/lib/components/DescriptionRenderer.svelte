@@ -19,7 +19,7 @@
 
 			// Apply marks (formatting)
 			if (node.marks) {
-				node.marks.forEach(mark => {
+				node.marks.forEach((mark) => {
 					switch (mark.type) {
 						case 'bold':
 							text = `<strong>${text}</strong>`
@@ -79,7 +79,7 @@
 				return `<blockquote>${quoteContent}</blockquote>`
 
 			case 'codeBlock':
-				const codeContent = (node.content || []).map(n => n.text || '').join('')
+				const codeContent = (node.content || []).map((n) => n.text || '').join('')
 				return `<pre><code>${codeContent}</code></pre>`
 
 			case 'hardBreak':
@@ -89,9 +89,44 @@
 				return '<hr>'
 
 			case 'youtube':
-				// For now, show a link to the video in truncated view
 				const videoUrl = node.attrs?.src || ''
-				return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">📹 View Video</a></p>`
+				// Extract video ID from various YouTube URL formats
+				let videoId = ''
+
+				// Handle different YouTube URL formats
+				const patterns = [
+					/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+					/youtube\.com\/watch\?.*v=([^&\n?#]+)/
+				]
+
+				for (const pattern of patterns) {
+					const match = videoUrl.match(pattern)
+					if (match) {
+						videoId = match[1]
+						break
+					}
+				}
+
+				// If we couldn't extract an ID, fall back to link
+				if (!videoId) {
+					return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">📹 View Video</a></p>`
+				}
+
+				// For truncated view, show a link instead of embed
+				if (truncate) {
+					return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">📹 View Video</a></p>`
+				}
+
+				// Embed YouTube video with responsive iframe
+				return `<div class="video-wrapper">
+					<iframe
+						src="https://www.youtube.com/embed/${videoId}"
+						title="YouTube video"
+						frameborder="0"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+						allowfullscreen
+					></iframe>
+				</div>`
 
 			case 'mention':
 				// Handle game item mentions
@@ -133,11 +168,7 @@
 	const parsedHTML = $derived(parseContent(content))
 </script>
 
-<div
-	class="description-content"
-	class:truncate
-	style={truncate ? `--max-lines: ${maxLines}` : ''}
->
+<div class="description-content" class:truncate style={truncate ? `--max-lines: ${maxLines}` : ''}>
 	{@html parsedHTML}
 </div>
 
@@ -145,6 +176,7 @@
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as *;
 
 	.description-content {
 		color: var(--text-primary);
@@ -161,7 +193,9 @@
 				}
 			}
 
-			h1, h2, h3 {
+			h1,
+			h2,
+			h3 {
 				font-weight: $bold;
 				margin: $unit 0 $unit-half 0;
 			}
@@ -178,11 +212,13 @@
 				font-size: $font-medium;
 			}
 
-			strong, b {
+			strong,
+			b {
 				font-weight: $bold;
 			}
 
-			em, i {
+			em,
+			i {
 				font-style: italic;
 			}
 
@@ -199,7 +235,7 @@
 				background: rgba(255, 237, 76, 0.3);
 				color: var(--text-primary);
 				padding: 0 $unit-fourth;
-				border-radius: 2px;
+				border-radius: $input-corner;
 				font-weight: $medium;
 			}
 
@@ -213,7 +249,8 @@
 				}
 			}
 
-			ul, ol {
+			ul,
+			ol {
 				margin: 0 0 $unit 0;
 				padding-left: $unit-3x;
 			}
@@ -225,7 +262,7 @@
 			code {
 				background: var(--button-bg);
 				padding: 2px $unit-half;
-				border-radius: 3px;
+				border-radius: $input-corner;
 				font-family: monospace;
 				font-size: 0.9em;
 			}
@@ -233,7 +270,7 @@
 			pre {
 				background: var(--button-bg);
 				padding: $unit;
-				border-radius: $unit-half;
+				border-radius: $card-corner;
 				overflow-x: auto;
 				margin: $unit 0;
 
@@ -256,6 +293,27 @@
 				border-top: 1px solid var(--button-bg);
 				margin: $unit-2x 0;
 			}
+
+			// Responsive YouTube video embed
+			.video-wrapper {
+				position: relative;
+				padding-bottom: 56.25%; // 16:9 aspect ratio
+				height: 0;
+				overflow: hidden;
+				margin: $unit 0;
+				border-radius: $card-corner;
+				background: var(--button-bg);
+
+				iframe {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					border: 0;
+					border-radius: $card-corner;
+				}
+			}
 		}
 
 		&.truncate {
@@ -267,7 +325,10 @@
 
 			// Hide block elements that might break truncation
 			:global {
-				pre, blockquote, ul, ol {
+				pre,
+				blockquote,
+				ul,
+				ol {
 					display: inline;
 				}
 			}
