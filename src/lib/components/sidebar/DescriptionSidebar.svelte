@@ -14,40 +14,25 @@
 
 <div class="description-sidebar">
 	<div class="content-section">
-		{#if title}
-			<div class="party-title">
-				<h2>{title}</h2>
-			</div>
-		{/if}
-
-		{#if description}
-			<div class="description-content">
-				<DescriptionRenderer content={description} truncate={false} />
-			</div>
-		{:else}
-			<div class="empty-state">
-				<p>No description available for this party.</p>
-				{#if canEdit}
-					<Button
-						variant="primary"
-						onclick={onEdit}
-					>
-						Add Description
-					</Button>
-				{/if}
-			</div>
-		{/if}
+		<div class="content-inner">
+			{#if description}
+				<div class="description-content">
+					<DescriptionRenderer content={description} truncate={false} />
+				</div>
+			{:else}
+				<div class="empty-state">
+					<p>No description available for this party.</p>
+					{#if canEdit}
+						<Button variant="primary" onclick={onEdit}>Add Description</Button>
+					{/if}
+				</div>
+			{/if}
+		</div>
 	</div>
 
 	{#if canEdit && description}
 		<div class="actions-section">
-			<Button
-				variant="secondary"
-				onclick={onEdit}
-				class="edit-button"
-			>
-				Edit Description
-			</Button>
+			<Button variant="secondary" onclick={onEdit} class="edit-button">Edit Description</Button>
 		</div>
 	{/if}
 </div>
@@ -62,35 +47,14 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-		padding: $unit-2x;
 		color: var(--text-primary);
 	}
 
 	.content-section {
 		flex: 1;
 		overflow-y: auto;
-	}
 
-	.party-title {
-		margin-bottom: $unit-3x;
-		padding-bottom: $unit-2x;
-		border-bottom: 1px solid var(--button-bg);
-
-		h2 {
-			margin: 0;
-			font-size: $font-xlarge;
-			font-weight: $bold;
-			color: var(--text-primary);
-			line-height: 1.2;
-		}
-	}
-
-	.description-content {
-		// Allow the content to scroll if it's very long
-		overflow-y: auto;
-		padding-right: $unit;
-
-		// Custom scrollbar styling
+		// Custom scrollbar styling - on the outer container
 		&::-webkit-scrollbar {
 			width: 6px;
 		}
@@ -108,6 +72,10 @@
 				background: var(--text-primary);
 			}
 		}
+	}
+
+	.content-inner {
+		padding: 0 $unit-2x;
 	}
 
 	.empty-state {
@@ -128,7 +96,8 @@
 
 	.actions-section {
 		margin-top: $unit-2x;
-		padding-top: $unit-2x;
+		padding: $unit-2x;
+		padding-bottom: $unit-2x;
 		border-top: 1px solid var(--button-bg);
 
 		:global(.edit-button) {

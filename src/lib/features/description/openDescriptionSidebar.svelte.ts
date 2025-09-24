@@ -11,8 +11,8 @@ interface DescriptionSidebarOptions {
 export function openDescriptionSidebar(options: DescriptionSidebarOptions) {
 	const { title, description, canEdit = false, onEdit } = options
 
-	// Open the sidebar with the description component
-	sidebar.openWithComponent('Description', DescriptionSidebar, {
+	// Open the sidebar with the party title as the header
+	sidebar.openWithComponent(title, DescriptionSidebar, {
 		title,
 		description,
 		canEdit,
