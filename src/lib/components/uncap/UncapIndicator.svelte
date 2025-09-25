@@ -80,6 +80,7 @@
 				type: 'transcendence',
 				props: {
 					stage: transcendenceStage,
+					type,
 					editable,
 					interactive: editable,
 					onFragmentClick: editable ? handleTranscendenceUpdate : undefined
