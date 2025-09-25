@@ -46,7 +46,10 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
 	retries?: number
 
 	/** Cache duration for this request in milliseconds */
-	cache?: number
+	cacheTime?: number
+
+	/** Request cache mode */
+	cache?: RequestCache
 
 	/** Alternative alias for cache duration */
 	cacheTTL?: number

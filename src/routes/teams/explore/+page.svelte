@@ -1,11 +1,37 @@
 <script lang="ts">
   import type { PageData } from './$types'
+  import { browser } from '$app/environment'
+  import InfiniteScroll from '$lib/components/InfiniteScroll.svelte'
   import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
+  import { createInfiniteScrollResource } from '$lib/api/adapters/resources/infiniteScroll.resource.svelte'
+  import { partyAdapter } from '$lib/api/adapters'
 
   const { data } = $props() as { data: PageData }
 
-  const page = data.page || 1
-  const totalPages = data.totalPages || undefined
+  // Create infinite scroll resource
+  const exploreResource = createInfiniteScrollResource({
+    fetcher: (page) => partyAdapter.list({ page }),
+    initialData: data.items,
+    initialPage: data.page || 1,
+    initialTotalPages: data.totalPages,
+    initialTotal: data.total,
+    pageSize: data.perPage || 20,
+    threshold: 300,
+    debounceMs: 200,
+    maxItems: 500 // Limit for performance
+  })
+
+  // Initialize with SSR data on client
+  $effect(() => {
+    if (browser && data.items && !exploreResource.items.length) {
+      exploreResource.initFromSSR({
+        items: data.items,
+        page: data.page || 1,
+        totalPages: data.totalPages,
+        total: data.total
+      })
+    }
+  })
 </script>
 
 <section class="explore">
@@ -13,23 +39,54 @@
     <h1>Explore Teams</h1>
   </header>
 
-  <ExploreGrid items={data.items} />
+  <InfiniteScroll resource={exploreResource} class="explore-grid">
+    <ExploreGrid items={exploreResource.items} />
 
-  <nav class="pagination" aria-label="Pagination">
-    {#if page > 1}
-      <a rel="prev" href={`?page=${page - 1}`} data-sveltekit-preload-data="hover">Previous</a>
-    {/if}
-    {#if totalPages && page < totalPages}
-      <a rel="next" href={`?page=${page + 1}`} data-sveltekit-preload-data="hover">Next</a>
-    {/if}
-  </nav>
+    {#snippet emptySnippet()}
+      <div class="empty">
+        <p>No teams found</p>
+      </div>
+    {/snippet}
+
+    {#snippet endSnippet()}
+      <div class="end">
+        <p>You've reached the end of all teams!</p>
+      </div>
+    {/snippet}
+
+    {#snippet errorSnippet(error)}
+      <div class="error">
+        <p>Failed to load teams: {error.message || 'Unknown error'}</p>
+      </div>
+    {/snippet}
+  </InfiniteScroll>
 </section>
 
 <style lang="scss">
   @use '$src/themes/spacing' as *;
+  @use '$src/themes/colors' as *;
 
-  .explore { padding: $unit-2x 0; }
-  h1 { margin: 0 0 $unit-2x 0; }
-  .pagination { display: flex; gap: $unit-2x; padding: $unit-2x 0; }
-  .pagination a { text-decoration: none; }
+  .explore {
+    padding: $unit-2x 0;
+  }
+
+  h1 {
+    margin: 0 0 $unit-2x 0;
+  }
+
+  .empty,
+  .end,
+  .error {
+    text-align: center;
+    padding: $unit-4x;
+    color: var(--text-secondary);
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .error {
+    color: var(--text-error, #dc2626);
+  }
 </style>

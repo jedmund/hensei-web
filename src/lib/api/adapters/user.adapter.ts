@@ -48,7 +48,7 @@ export class UserAdapter extends BaseAdapter {
     const params = page > 1 ? { page } : undefined
     const response = await this.request<{
       profile: UserProfile
-      meta?: { count?: number; total_pages?: number; per_page?: number }
+      meta?: { count?: number; total_pages?: number; totalPages?: number; per_page?: number; perPage?: number }
     }>(`/users/${encodeURIComponent(username)}`, { params })
 
     const items = Array.isArray(response.profile?.parties) ? response.profile.parties : []
@@ -60,6 +60,27 @@ export class UserAdapter extends BaseAdapter {
       total: response.meta?.count,
       totalPages: response.meta?.total_pages || response.meta?.totalPages,
       perPage: response.meta?.per_page || response.meta?.perPage
+    }
+  }
+
+  /**
+   * Get user profile parties (for infinite scroll)
+   * Returns in standard paginated format
+   */
+  async getProfileParties(username: string, page = 1): Promise<{
+    results: Party[]
+    page: number
+    total: number
+    totalPages: number
+    perPage: number
+  }> {
+    const response = await this.getProfile(username, page)
+    return {
+      results: response.items,
+      page: response.page,
+      total: response.total || 0,
+      totalPages: response.totalPages || 1,
+      perPage: response.perPage || 20
     }
   }
 
