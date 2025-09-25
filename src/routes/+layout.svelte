@@ -7,7 +7,7 @@
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
-	import { beforeNavigate } from '$app/navigation'
+	import { beforeNavigate, afterNavigate } from '$app/navigation'
 	import { authStore } from '$lib/stores/auth.store'
 	import { browser } from '$app/environment'
 
@@ -17,6 +17,12 @@
 		data: any  // Allow any data to pass through from child pages
 		children: () => any
 	}>()
+
+	// Reference to the scrolling container
+	let mainContent: HTMLElement | undefined;
+
+	// Store scroll positions for each visited route
+	const scrollPositions = new Map<string, number>();
 
     // Initialize auth store from server data immediately on load to ensure
     // Authorization headers are available for client-side API calls
@@ -34,10 +40,65 @@
         }
     }
 
-	// Close sidebar when navigating to a different page
-	beforeNavigate(() => {
+	// Save scroll position before navigating away and close sidebar
+	beforeNavigate(({ from }) => {
+		// Close sidebar when navigating
 		sidebar.close()
+
+		// Save scroll position for the current route
+		if (from && mainContent) {
+			const key = from.url.pathname + from.url.search;
+			scrollPositions.set(key, mainContent.scrollTop);
+		}
 	})
+
+	// Handle scroll restoration or reset after navigation
+	afterNavigate(({ from, to, type }) => {
+		if (!mainContent) return;
+
+		// Use requestAnimationFrame to ensure DOM has updated
+		requestAnimationFrame(() => {
+			const key = to.url.pathname + to.url.search;
+
+			// Only restore scroll for browser back/forward navigation
+			if (type === 'popstate' && scrollPositions.has(key)) {
+				// User clicked back/forward button - restore their position
+				mainContent.scrollTop = scrollPositions.get(key) || 0;
+			} else {
+				// Any other navigation type (link, goto, enter, etc.) - go to top
+				mainContent.scrollTop = 0;
+			}
+		});
+	})
+
+	// Optional: Export snapshot for session persistence
+	export const snapshot = {
+		capture: () => {
+			if (!mainContent) return { scroll: 0, positions: [] };
+			return {
+				scroll: mainContent.scrollTop,
+				positions: Array.from(scrollPositions.entries())
+			};
+		},
+		restore: (data: any) => {
+			if (!data || !mainContent) return;
+
+			// Restore saved positions map
+			if (data.positions) {
+				scrollPositions.clear();
+				data.positions.forEach(([key, value]: [string, number]) => {
+					scrollPositions.set(key, value);
+				});
+			}
+
+			// Restore current scroll position after DOM is ready
+			if (browser) {
+				requestAnimationFrame(() => {
+					if (mainContent) mainContent.scrollTop = data.scroll || 0;
+				});
+			}
+		}
+	};
 </script>
 
 <svelte:head>
@@ -55,7 +116,7 @@
 				currentUser={data?.currentUser}
 			/>
 			</div>
-			<main class="main-content">
+			<main class="main-content" bind:this={mainContent}>
 				{@render children?.()}
 			</main>
 		</div>
@@ -160,8 +221,8 @@
 				padding-top: 81px; // Space for fixed navigation (matches $nav-height)
 				z-index: 2; // Ensure scrollbar is above blur background
 
-				// Smooth scrolling
-				scroll-behavior: smooth;
+				// Note: scroll-behavior removed to prevent unwanted animations
+				// Scroll is controlled programmatically in the script
 
 				// Use overlay scrollbars that auto-hide on macOS
 				overflow-y: overlay;
