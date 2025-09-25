@@ -35,4 +35,4 @@ static/
 project.inlang/cache/
 
 # Documentation
-docs/
+docs/src/routes/test/
