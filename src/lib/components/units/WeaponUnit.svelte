@@ -8,6 +8,7 @@
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
   import { getWeaponImage } from '$lib/features/database/detail/image'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+  import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages } from '$lib/utils/modifiers'
 
   interface Props {
     item?: GridWeapon
@@ -44,6 +45,23 @@
 
     return getWeaponImage(item?.weapon?.granblueId, variant, element)
   })
+
+  // Get awakening image URL using utility
+  let awakeningImage = $derived(getAwakeningImage(item?.awakening))
+
+  // Get weapon key images using utility
+  let weaponKeyImages = $derived(
+    getWeaponKeyImages(
+      item?.weaponKeys,
+      item?.weapon?.element,
+      item?.weapon?.proficiency,
+      item?.weapon?.series,
+      item?.weapon?.name
+    )
+  )
+
+  // Get AX skill images using utility
+  let axSkillImages = $derived(getAxSkillImages(item?.ax))
 
   async function remove() {
     if (!item?.id) return
@@ -88,20 +106,29 @@
             class:editable={ctx?.canEdit()}
             onclick={() => viewDetails()}
           >
+            <div class="modifiers">
+              {#if awakeningImage}
+                <img
+                  class="awakening"
+                  src={awakeningImage}
+                  alt={`${item?.awakening?.type?.name?.en || 'Awakening'} Lv${item?.awakening?.level || 0}`}
+                />
+              {/if}
+              <div class="skills">
+                {#each axSkillImages as skill}
+                  <img class="skill" src={skill.url} alt={skill.alt} />
+                {/each}
+                {#each weaponKeyImages as skill}
+                  <img class="skill" src={skill.url} alt={skill.alt} />
+                {/each}
+              </div>
+            </div>
             <img
               class="image"
               class:placeholder={!item?.weapon?.granblueId}
               alt={displayName(item?.weapon)}
               src={imageUrl}
             />
-            {#if ctx?.canEdit() && item?.id}
-              <div class="actions">
-                <button class="remove" title="Remove" onclick={(e) => { e.stopPropagation(); remove() }}>×</button>
-              </div>
-            {/if}
-            {#if item?.mainhand || position === -1}
-              <span class="badge">Main</span>
-            {/if}
           </div>
         {/key}
       {/snippet}
@@ -256,35 +283,62 @@
     color: $grey-50;
   }
 
-  .actions {
+  .modifiers {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    display: flex;
-    gap: 6px;
+    width: 100%;
+    height: 100%;
     z-index: 3;
+    pointer-events: none;
+
+    .awakening {
+      position: absolute;
+      width: 30%;
+      height: auto;
+    }
+
+    .skills {
+      position: absolute;
+      display: flex;
+      gap: calc($unit / 4);
+      padding: calc($unit / 2);
+
+      .skill {
+        width: 20%;
+        height: auto;
+      }
+    }
   }
 
-  .remove {
-    background: rgba(0,0,0,.6);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-    cursor: pointer;
+  // Position modifiers for grid weapons
+  .frame.weapon.cell {
+    .awakening {
+      top: 14%;
+      left: -3.5%;
+    }
+
+    .skills {
+      bottom: 2%;
+      right: 2%;
+      justify-content: flex-end;
+    }
   }
 
-  .badge {
-    position: absolute;
-    left: 6px;
-    top: 6px;
-    background: #333;
-    color: #fff;
-    font-size: 11px;
-    padding: 2px 6px;
-    border-radius: 10px;
-    z-index: 3;
+  // Position modifiers for main weapons
+  .frame.weapon.main {
+    .awakening {
+      width: 40%;
+      top: 67%;
+      left: -3.5%;
+    }
+
+    .skills {
+      bottom: 12%;
+      right: -3.5%;
+      justify-content: flex-end;
+
+      .skill {
+        width: 25%;
+      }
+    }
   }
 </style>
