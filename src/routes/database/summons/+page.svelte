@@ -71,7 +71,6 @@
 
 	.database-page {
 		padding: spacing.$unit-2x 0;
-		max-width: 1400px;
 		margin: 0 auto;
 	}
 
