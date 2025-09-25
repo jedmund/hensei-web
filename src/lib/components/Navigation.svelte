@@ -11,6 +11,7 @@
 	import { DropdownMenu } from 'bits-ui'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+	import UserSettingsModal from './UserSettingsModal.svelte'
 
 	// Props from layout data
 	const {
@@ -82,6 +83,9 @@
 	const isProfileSelected = $derived(
 		isAuth && ($page.url.pathname === meHref || $page.url.pathname === localizeHref(`/${username}`))
 	)
+
+	// Settings modal state
+	let settingsModalOpen = $state(false)
 
 	// Handle logout
 	async function handleLogout() {
@@ -187,8 +191,10 @@
 
 					<DropdownMenu.Portal>
 						<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-							<DropdownItem href={settingsHref}>
-								{m.nav_settings()}
+							<DropdownItem asChild>
+								<button onclick={() => (settingsModalOpen = true)}>
+									{m.nav_settings()}
+								</button>
 							</DropdownItem>
 							{#if role !== null && role >= 7}
 								<DropdownItem href={databaseHref}>Database</DropdownItem>
@@ -218,6 +224,18 @@
 	/>
 </nav>
 
+<!-- Settings Modal -->
+{#if isAuth && account && currentUser}
+	<UserSettingsModal
+		bind:open={settingsModalOpen}
+		onOpenChange={(open) => (settingsModalOpen = open)}
+		{username}
+		userId={account.userId}
+		user={currentUser}
+		role={role ?? 0}
+	/>
+{/if}
+
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/effects' as effects;
@@ -231,7 +249,7 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		padding: spacing.$unit-2x;
+		padding: spacing.$unit-2x 0;
 		max-width: var(--main-max-width);
 		margin: 0 auto;
 		width: 100%;
@@ -296,6 +314,8 @@
 			align-items: center;
 
 			.database-back-section {
+				min-height: 49px;
+
 				ul {
 					background-color: var(--menu-bg);
 					border-radius: layout.$full-corner;
@@ -346,6 +366,7 @@
 				flex-direction: row;
 				padding: spacing.$unit-half;
 				list-style: none;
+				min-height: 49px;
 
 				a {
 					border-radius: layout.$full-corner;

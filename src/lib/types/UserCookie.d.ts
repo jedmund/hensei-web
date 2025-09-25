@@ -4,4 +4,5 @@ export interface UserCookie {
 	language: string
 	gender: number
 	theme: string
+	bahamut?: boolean
 }
