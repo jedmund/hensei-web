@@ -11,6 +11,7 @@
 import { BaseAdapter } from './base.adapter'
 import type { RequestOptions, AdapterOptions, PaginatedResponse } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
+import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
 
 /**
  * Party data structure
@@ -58,66 +59,11 @@ export interface Party {
 	updatedAt: string
 }
 
-/**
- * Grid weapon structure
- */
-export interface GridWeapon {
-	id: string
-	position: number
-	mainhand: boolean
-	uncapLevel: number
-	transcendenceStage: number
-	weaponKeys: Array<{
-		id: string
-		slot: number
-	}>
-	weapon: {
-		id: string
-		granblueId: string
-		name: Record<string, string>
-		element: number
-		rarity: number
-	}
-}
+// GridWeapon type is imported from types/api/party
 
-/**
- * Grid summon structure
- */
-export interface GridSummon {
-	id: string
-	position: number
-	quickSummon: boolean
-	transcendenceStage: number
-	summon: {
-		id: string
-		granblueId: string
-		name: Record<string, string>
-		element: number
-		rarity: number
-	}
-}
+// GridSummon type is imported from types/api/party
 
-/**
- * Grid character structure
- */
-export interface GridCharacter {
-	id: string
-	position: number
-	uncapLevel: number
-	transcendenceStage: number
-	perpetualModifiers?: Record<string, any>
-	awakenings?: Array<{
-		id: string
-		level: number
-	}>
-	character: {
-		id: string
-		granblueId: string
-		name: Record<string, string>
-		element: number
-		rarity: number
-	}
-}
+// GridCharacter type is imported from types/api/party
 
 /**
  * Parameters for creating a new party

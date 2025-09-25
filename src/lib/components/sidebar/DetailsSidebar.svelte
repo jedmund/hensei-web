@@ -345,7 +345,7 @@
 
 			{#if modificationStatus.hasRings}
 				<ModificationSection title="Over Mastery Rings" visible={true}>
-					{#each (char.rings || char.over_mastery || []) as ring}
+					{#each (char.over_mastery || []) as ring}
 						<StatModifierItem
 							label={formatRingStat(ring.modifier, ring.strength).split('+')[0].trim()}
 							value={`+${ring.strength}`}
@@ -356,7 +356,7 @@
 			{/if}
 
 			{#if modificationStatus.hasEarring}
-				{@const earring = char.earring || char.aetherial_mastery}
+				{@const earring = char.aetherial_mastery}
 				{#if earring}
 					<ModificationSection title="Aetherial Mastery" visible={true}>
 						<StatModifierItem

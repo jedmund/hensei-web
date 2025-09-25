@@ -40,9 +40,8 @@ export function detectModifications(
     const char = item as GridCharacter
 
     status.hasAwakening = !!char.awakening
-    status.hasRings = !!(char.rings && char.rings.length > 0) ||
-                      !!(char.over_mastery && char.over_mastery.length > 0)
-    status.hasEarring = !!char.earring || !!char.aetherial_mastery
+    status.hasRings = !!(char.over_mastery && char.over_mastery.length > 0)
+    status.hasEarring = !!char.aetherial_mastery
     status.hasPerpetuity = !!char.perpetuity
     status.hasTranscendence = !!(char.transcendenceStep && char.transcendenceStep > 0)
     status.hasUncapLevel = char.uncapLevel !== undefined && char.uncapLevel !== null

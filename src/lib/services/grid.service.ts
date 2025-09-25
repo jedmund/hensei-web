@@ -43,7 +43,7 @@ export class GridService {
         position,
         mainhand: options?.mainhand,
         uncapLevel: getDefaultMaxUncapLevel('weapon'),
-        transcendenceStage: 0
+        transcendenceStep: 0
       }, this.buildHeaders(editKey))
 
       console.log('[GridService] Created grid weapon:', gridWeapon)
@@ -125,7 +125,7 @@ export class GridService {
     await gridAdapter.updateWeapon(gridWeaponId, {
       position: updates.position,
       uncapLevel: updates.uncapLevel,
-      transcendenceStage: updates.transcendenceStep,
+      transcendenceStep: updates.transcendenceStep,
       element: updates.element
     }, this.buildHeaders(editKey))
 
@@ -360,7 +360,7 @@ export class GridService {
         characterId,
         position,
         uncapLevel: getDefaultMaxUncapLevel('character'),
-        transcendenceStage: 0
+        transcendenceStep: 0
       }, this.buildHeaders(editKey))
 
       console.log('[GridService] Created grid character:', gridCharacter)
@@ -435,12 +435,12 @@ export class GridService {
     },
     editKey?: string,
     options?: { shortcode?: string }
-  ): Promise<Party | null> {
-    await gridAdapter.updateCharacter(gridCharacterId, {
+  ): Promise<GridCharacter | null> {
+    const updated = await gridAdapter.updateCharacter(gridCharacterId, {
       position: updates.position,
       uncapLevel: updates.uncapLevel,
-      transcendenceStage: updates.transcendenceStep,
-      perpetualModifiers: updates.perpetuity ? {} : undefined
+      transcendenceStep: updates.transcendenceStep,
+      perpetuity: updates.perpetuity
     }, this.buildHeaders(editKey))
 
     // Clear party cache if shortcode provided
@@ -448,8 +448,8 @@ export class GridService {
       partyAdapter.clearPartyCache(options.shortcode)
     }
 
-    // Don't fetch - let caller handle refresh
-    return null
+    // Return the updated character
+    return updated
   }
 
   async moveCharacter(

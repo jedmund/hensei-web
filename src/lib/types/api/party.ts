@@ -44,8 +44,6 @@ export interface GridCharacter {
   transcendenceStep?: number
   character: Character  // Named properly, not "object"
   awakening?: Awakening
-  rings?: Array<{ modifier: number; strength: number }>
-  earring?: { modifier: number; strength: number }
   aetherial_mastery?: { modifier: number; strength: number }
   over_mastery?: Array<{ modifier: number; strength: number }>
 }

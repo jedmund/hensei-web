@@ -9,65 +9,10 @@
 
 import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions } from './types'
+import type { GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 
-/**
- * Common grid item structure
- */
-interface BaseGridItem {
-	id: string
-	partyId: string
-	position: number
-	uncapLevel?: number
-	transcendenceStage?: number
-}
-
-/**
- * Grid weapon specific fields
- */
-export interface GridWeapon extends BaseGridItem {
-	weaponId: string
-	mainhand?: boolean
-	element?: number
-	weaponKeys?: Array<{
-		id: string
-		slot: number
-	}>
-	axModifier1?: string
-	axModifier2?: string
-	axStrength1?: number
-	axStrength2?: number
-	awakeningId?: string
-	awakeningLevel?: number
-}
-
-/**
- * Grid character specific fields
- */
-export interface GridCharacter extends BaseGridItem {
-	characterId: string
-	perpetualModifiers?: Record<string, any>
-	awakeningId?: string
-	awakeningLevel?: number
-	rings?: Array<{
-		modifier: string
-		strength: number
-	}>
-	earring?: {
-		modifier: string
-		strength: number
-	}
-}
-
-/**
- * Grid summon specific fields
- */
-export interface GridSummon extends BaseGridItem {
-	summonId: string
-	main?: boolean
-	friend?: boolean
-	quickSummon?: boolean
-}
+// GridWeapon, GridCharacter, and GridSummon types are imported from types/api/party
 
 /**
  * Parameters for creating grid items
@@ -78,7 +23,7 @@ export interface CreateGridWeaponParams {
 	position: number
 	mainhand?: boolean
 	uncapLevel?: number
-	transcendenceStage?: number
+	transcendenceStep?: number
 }
 
 export interface CreateGridCharacterParams {
@@ -86,7 +31,7 @@ export interface CreateGridCharacterParams {
 	characterId: string
 	position: number
 	uncapLevel?: number
-	transcendenceStage?: number
+	transcendenceStep?: number
 }
 
 export interface CreateGridSummonParams {
@@ -97,7 +42,7 @@ export interface CreateGridSummonParams {
 	friend?: boolean
 	quickSummon?: boolean
 	uncapLevel?: number
-	transcendenceStage?: number
+	transcendenceStep?: number
 }
 
 /**
@@ -151,22 +96,24 @@ export class GridAdapter extends BaseAdapter {
 	 * Creates a new grid weapon instance
 	 */
     async createWeapon(params: CreateGridWeaponParams, headers?: Record<string, string>): Promise<GridWeapon> {
-        return this.request<GridWeapon>('/grid_weapons', {
+        const response = await this.request<{ gridWeapon: GridWeapon }>('/grid_weapons', {
             method: 'POST',
             body: { weapon: params },
             headers
         })
+        return response.gridWeapon
     }
 
 	/**
 	 * Updates a grid weapon instance
 	 */
     async updateWeapon(id: string, params: Partial<GridWeapon>, headers?: Record<string, string>): Promise<GridWeapon> {
-        return this.request<GridWeapon>(`/grid_weapons/${id}`, {
+        const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${id}`, {
             method: 'PUT',
             body: { weapon: params },
             headers
         })
+        return response.gridWeapon
     }
 
 	/**
@@ -192,7 +139,7 @@ export class GridAdapter extends BaseAdapter {
 	 * Updates weapon uncap level
 	 */
     async updateWeaponUncap(params: UpdateUncapParams, headers?: Record<string, string>): Promise<GridWeapon> {
-        return this.request<GridWeapon>('/grid_weapons/update_uncap', {
+        const response = await this.request<{ gridWeapon: GridWeapon }>('/grid_weapons/update_uncap', {
             method: 'POST',
             body: {
                 weapon: {
@@ -204,17 +151,19 @@ export class GridAdapter extends BaseAdapter {
             },
             headers
         })
+        return response.gridWeapon
     }
 
 	/**
 	 * Resolves weapon conflicts
 	 */
     async resolveWeaponConflict(params: ResolveConflictParams, headers?: Record<string, string>): Promise<GridWeapon> {
-        return this.request<GridWeapon>('/grid_weapons/resolve', {
+        const response = await this.request<{ gridWeapon: GridWeapon }>('/grid_weapons/resolve', {
             method: 'POST',
             body: { resolve: params },
             headers
         })
+        return response.gridWeapon
     }
 
 	/**
@@ -222,11 +171,12 @@ export class GridAdapter extends BaseAdapter {
 	 */
     async updateWeaponPosition(params: UpdatePositionParams, headers?: Record<string, string>): Promise<GridWeapon> {
         const { id, position, container, partyId } = params
-        return this.request<GridWeapon>(`/parties/${partyId}/grid_weapons/${id}/position`, {
+        const response = await this.request<{ gridWeapon: GridWeapon }>(`/parties/${partyId}/grid_weapons/${id}/position`, {
             method: 'PUT',
             body: { position, container },
             headers
         })
+        return response.gridWeapon
     }
 
 	/**
@@ -250,22 +200,24 @@ export class GridAdapter extends BaseAdapter {
 	 * Creates a new grid character instance
 	 */
     async createCharacter(params: CreateGridCharacterParams, headers?: Record<string, string>): Promise<GridCharacter> {
-        return this.request<GridCharacter>('/grid_characters', {
+        const response = await this.request<{ gridCharacter: GridCharacter }>('/grid_characters', {
             method: 'POST',
             body: { character: params },
             headers
         })
+        return response.gridCharacter
     }
 
 	/**
 	 * Updates a grid character instance
 	 */
     async updateCharacter(id: string, params: Partial<GridCharacter>, headers?: Record<string, string>): Promise<GridCharacter> {
-        return this.request<GridCharacter>(`/grid_characters/${id}`, {
+        const response = await this.request<{ gridCharacter: GridCharacter }>(`/grid_characters/${id}`, {
             method: 'PUT',
             body: { character: params },
             headers
         })
+        return response.gridCharacter
     }
 
 	/**
@@ -291,7 +243,7 @@ export class GridAdapter extends BaseAdapter {
 	 * Updates character uncap level
 	 */
     async updateCharacterUncap(params: UpdateUncapParams, headers?: Record<string, string>): Promise<GridCharacter> {
-        return this.request<GridCharacter>('/grid_characters/update_uncap', {
+        const response = await this.request<{ gridCharacter: GridCharacter }>('/grid_characters/update_uncap', {
             method: 'POST',
             body: {
                 character: {
@@ -303,17 +255,19 @@ export class GridAdapter extends BaseAdapter {
             },
             headers
         })
+        return response.gridCharacter
     }
 
 	/**
 	 * Resolves character conflicts
 	 */
     async resolveCharacterConflict(params: ResolveConflictParams, headers?: Record<string, string>): Promise<GridCharacter> {
-        return this.request<GridCharacter>('/grid_characters/resolve', {
+        const response = await this.request<{ gridCharacter: GridCharacter }>('/grid_characters/resolve', {
             method: 'POST',
             body: { resolve: params },
             headers
         })
+        return response.gridCharacter
     }
 
 	/**
@@ -321,11 +275,12 @@ export class GridAdapter extends BaseAdapter {
 	 */
     async updateCharacterPosition(params: UpdatePositionParams, headers?: Record<string, string>): Promise<GridCharacter> {
         const { id, position, container, partyId } = params
-        return this.request<GridCharacter>(`/parties/${partyId}/grid_characters/${id}/position`, {
+        const response = await this.request<{ gridCharacter: GridCharacter }>(`/parties/${partyId}/grid_characters/${id}/position`, {
             method: 'PUT',
             body: { position, container },
             headers
         })
+        return response.gridCharacter
     }
 
 	/**
@@ -349,22 +304,24 @@ export class GridAdapter extends BaseAdapter {
 	 * Creates a new grid summon instance
 	 */
     async createSummon(params: CreateGridSummonParams, headers?: Record<string, string>): Promise<GridSummon> {
-        return this.request<GridSummon>('/grid_summons', {
+        const response = await this.request<{ gridSummon: GridSummon }>('/grid_summons', {
             method: 'POST',
             body: { summon: params },
             headers
         })
+        return response.gridSummon
     }
 
 	/**
 	 * Updates a grid summon instance
 	 */
     async updateSummon(id: string, params: Partial<GridSummon>, headers?: Record<string, string>): Promise<GridSummon> {
-        return this.request<GridSummon>(`/grid_summons/${id}`, {
+        const response = await this.request<{ gridSummon: GridSummon }>(`/grid_summons/${id}`, {
             method: 'PUT',
             body: { summon: params },
             headers
         })
+        return response.gridSummon
     }
 
 	/**
@@ -390,7 +347,7 @@ export class GridAdapter extends BaseAdapter {
 	 * Updates summon uncap level
 	 */
     async updateSummonUncap(params: UpdateUncapParams, headers?: Record<string, string>): Promise<GridSummon> {
-        return this.request<GridSummon>('/grid_summons/update_uncap', {
+        const response = await this.request<{ gridSummon: GridSummon }>('/grid_summons/update_uncap', {
             method: 'POST',
             body: {
                 summon: {
@@ -402,6 +359,7 @@ export class GridAdapter extends BaseAdapter {
             },
             headers
         })
+        return response.gridSummon
     }
 
 	/**
@@ -424,11 +382,12 @@ export class GridAdapter extends BaseAdapter {
 	 */
     async updateSummonPosition(params: UpdatePositionParams, headers?: Record<string, string>): Promise<GridSummon> {
         const { id, position, container, partyId } = params
-        return this.request<GridSummon>(`/parties/${partyId}/grid_summons/${id}/position`, {
+        const response = await this.request<{ gridSummon: GridSummon }>(`/parties/${partyId}/grid_summons/${id}/position`, {
             method: 'PUT',
             body: { position, container },
             headers
         })
+        return response.gridSummon
     }
 
 	/**
