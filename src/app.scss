@@ -39,7 +39,6 @@ ul {
 		max-width: var(--main-max-width);
 		margin: 0 auto;
 		width: 100%;
-		padding: 0 spacing.$unit-2x; // Only horizontal padding, vertical handled by layout
 		transition: max-width 0.3s ease;
 
 		// Responsive padding for smaller screens
