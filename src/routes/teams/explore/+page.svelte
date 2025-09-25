@@ -15,10 +15,10 @@
     initialPage: data.page || 1,
     initialTotalPages: data.totalPages,
     initialTotal: data.total,
-    pageSize: data.perPage || 20,
     threshold: 300,
     debounceMs: 200,
-    maxItems: 500 // Limit for performance
+    maxItems: 500, // Limit for performance
+    debug: false // Disable debug logging
   })
 
   // Initialize with SSR data on client

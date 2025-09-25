@@ -212,6 +212,7 @@ export class InfiniteScrollResource<T> {
 
 		try {
 			const response = await this.fetcher(nextPage, this.abortController.signal)
+			this.log('API response:', response)
 
 			// Append new items
 			this.items = [...this.items, ...response.results]

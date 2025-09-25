@@ -260,11 +260,26 @@ export class PartyAdapter extends BaseAdapter {
 	 * Lists all public parties (explore page)
 	 */
 	async list(params: { page?: number; per?: number } = {}): Promise<PaginatedResponse<Party>> {
-		return this.request<PaginatedResponse<Party>>('/parties', {
+		const response = await this.request<{
+			results: Party[]
+			meta?: {
+				count?: number
+				totalPages?: number
+				perPage?: number
+			}
+		}>('/parties', {
 			method: 'GET',
 			query: params,
 			cacheTTL: 30000 // Cache for 30 seconds
 		})
+
+		return {
+			results: response.results,
+			page: params.page || 1,
+			total: response.meta?.count || 0,
+			totalPages: response.meta?.totalPages || 1,
+			perPage: response.meta?.perPage || 20
+		}
 	}
 
 	/**

@@ -8,19 +8,16 @@ export const load: PageServerLoad = async ({ url, depends }) => {
   const pageParam = url.searchParams.get('page')
   const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1
 
-  console.log('[explore/+page.server.ts] Loading explore page with page:', page)
-  console.log('[explore/+page.server.ts] Full URL:', url.toString())
 
   try {
     const response = await partyAdapter.list({ page })
-    console.log('[explore/+page.server.ts] Successfully loaded', response.results.length, 'parties')
 
     return {
       items: response.results,
       page,
       total: response.total,
       totalPages: response.totalPages,
-      perPage: response.per || 20
+      perPage: response.perPage || response.per || 20
     }
   } catch (e: any) {
     console.error('[explore/+page.server.ts] Failed to load teams:', {

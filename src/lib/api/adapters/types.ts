@@ -102,6 +102,9 @@ export interface PaginatedResponse<T> {
 	/** Number of items per page */
 	perPage?: number
 
+	/** Alternative key for items per page (API might return this) */
+	per?: number
+
 	/** Whether there are more pages available */
 	hasMore?: boolean
 
