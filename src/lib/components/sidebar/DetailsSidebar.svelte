@@ -12,6 +12,20 @@
 		getCharacterPose
 	} from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import { detectModifications } from '$lib/utils/modificationDetector'
+	import {
+		formatRingStat,
+		formatEarringStat,
+		formatAxSkill,
+		getWeaponKeyTitle,
+		getElementName
+	} from '$lib/utils/modificationFormatters'
+	import DetailsSidebarSegmentedControl from './modifications/DetailsSidebarSegmentedControl.svelte'
+	import ModificationSection from './modifications/ModificationSection.svelte'
+	import AwakeningDisplay from './modifications/AwakeningDisplay.svelte'
+	import WeaponKeysList from './modifications/WeaponKeysList.svelte'
+	import StatModifierItem from './modifications/StatModifierItem.svelte'
+	import UncapStatusDisplay from './modifications/UncapStatusDisplay.svelte'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -19,6 +33,9 @@
 	}
 
 	let { type, item }: Props = $props()
+
+	let selectedView = $state<'canonical' | 'user'>('canonical')
+	let modificationStatus = $derived(detectModifications(type, item))
 
 	// Helper to get the actual item data
 	function getItemData() {
@@ -96,6 +113,13 @@
 		<img src={getImageUrl()} alt={displayName(itemData)} class="item-image {type}" />
 	</div>
 
+	<DetailsSidebarSegmentedControl
+		hasModifications={modificationStatus.hasModifications}
+		bind:selectedView
+	/>
+
+	{#if selectedView === 'canonical'}
+	<div class="canonical-view">
 	<div class="details-section">
 		<h3>Basic Information</h3>
 		<div class="detail-row">
@@ -291,6 +315,172 @@
 			</div>
 		</div>
 	{/if}
+	</div>
+	{:else}
+	<div class="user-version-view">
+		<ModificationSection title="Uncap & Transcendence" visible={true}>
+			<UncapStatusDisplay
+				{type}
+				uncapLevel={gridUncapLevel}
+				transcendenceStep={gridTranscendence}
+				special={itemData?.special}
+				flb={itemData?.uncap?.flb}
+				ulb={itemData?.uncap?.ulb}
+				transcendence={itemData?.uncap?.transcendence}
+			/>
+		</ModificationSection>
+
+		{#if type === 'character'}
+			{@const char = item as GridCharacter}
+
+			{#if modificationStatus.hasAwakening}
+				<ModificationSection title="Awakening" visible={true}>
+					<AwakeningDisplay
+						awakening={char.awakening}
+						size="medium"
+						showLevel={false}
+					/>
+				</ModificationSection>
+			{/if}
+
+			{#if modificationStatus.hasRings}
+				<ModificationSection title="Over Mastery Rings" visible={true}>
+					{#each (char.rings || char.over_mastery || []) as ring}
+						<StatModifierItem
+							label={formatRingStat(ring.modifier, ring.strength).split('+')[0].trim()}
+							value={`+${ring.strength}`}
+							suffix={ring.modifier <= 2 ? '' : '%'}
+						/>
+					{/each}
+				</ModificationSection>
+			{/if}
+
+			{#if modificationStatus.hasEarring}
+				{@const earring = char.earring || char.aetherial_mastery}
+				{#if earring}
+					<ModificationSection title="Aetherial Mastery" visible={true}>
+						<StatModifierItem
+							label={formatEarringStat(earring.modifier, earring.strength).split('+')[0].trim()}
+							value={`+${earring.strength}`}
+							suffix={earring.modifier <= 3 ? '' : '%'}
+							variant="enhanced"
+						/>
+					</ModificationSection>
+				{/if}
+			{/if}
+
+			{#if modificationStatus.hasPerpetuity}
+				<ModificationSection title="Status" visible={true}>
+					<StatModifierItem
+						label="Perpetuity"
+						value="Active"
+						variant="max"
+					/>
+				</ModificationSection>
+			{/if}
+
+		{:else if type === 'weapon'}
+			{@const weapon = item as GridWeapon}
+
+			{#if modificationStatus.hasAwakening && weapon.awakening}
+				<ModificationSection title="Awakening" visible={true}>
+					<AwakeningDisplay
+						awakening={weapon.awakening}
+						size="medium"
+						showLevel={true}
+					/>
+				</ModificationSection>
+			{/if}
+
+			{#if modificationStatus.hasWeaponKeys}
+				<ModificationSection title={getWeaponKeyTitle(weapon.weapon?.series)} visible={true}>
+					<WeaponKeysList
+						weaponKeys={weapon.weaponKeys}
+						weaponData={weapon.weapon}
+						layout="list"
+					/>
+				</ModificationSection>
+			{/if}
+
+			{#if modificationStatus.hasAxSkills && weapon.ax}
+				<ModificationSection title="AX Skills" visible={true}>
+					{#each weapon.ax as axSkill}
+						<StatModifierItem
+							label={formatAxSkill(axSkill).split('+')[0].trim()}
+							value={`+${axSkill.strength}`}
+							suffix={axSkill.modifier <= 2 ? '' : '%'}
+							variant="enhanced"
+						/>
+					{/each}
+				</ModificationSection>
+			{/if}
+
+			{#if modificationStatus.hasElement && weapon.element}
+				<ModificationSection title="Element Override" visible={true}>
+					<StatModifierItem
+						label="Instance Element"
+						value={getElementName(weapon.element)}
+					/>
+				</ModificationSection>
+			{/if}
+
+		{:else if type === 'summon'}
+			{@const summon = item as GridSummon}
+
+			{#if modificationStatus.hasQuickSummon || modificationStatus.hasFriendSummon}
+				<ModificationSection title="Summon Status" visible={true}>
+					{#if summon.quickSummon}
+						<StatModifierItem
+							label="Quick Summon"
+							value="Enabled"
+							variant="enhanced"
+						/>
+					{/if}
+					{#if summon.friend}
+						<StatModifierItem
+							label="Friend Summon"
+							value="Yes"
+						/>
+					{/if}
+				</ModificationSection>
+			{/if}
+		{/if}
+
+		<ModificationSection title="Basic Information" visible={true}>
+			<div class="detail-row">
+				<span class="label">Rarity</span>
+				<span class="value">{getRarityLabel(itemData?.rarity)}</span>
+			</div>
+			<div class="detail-row">
+				<span class="label">Element</span>
+				<span class="value">{getElementLabel(itemData?.element)}</span>
+			</div>
+
+			{#if type === 'character'}
+				{#if itemData?.race && itemData.race.length > 0}
+					<div class="detail-row">
+						<span class="label">Race</span>
+						<span class="value">
+							{itemData.race
+								.map((r) => getRaceLabel(r))
+								.filter(Boolean)
+								.join(', ') || '—'}
+						</span>
+					</div>
+				{/if}
+				<div class="detail-row">
+					<span class="label">Gender</span>
+					<span class="value">{getGenderLabel(itemData?.gender)}</span>
+				</div>
+			{:else if type === 'weapon'}
+				<div class="detail-row">
+					<span class="label">Proficiency</span>
+					<span class="value">{getProficiencyLabel(itemData?.proficiency?.[0])}</span>
+				</div>
+			{/if}
+		</ModificationSection>
+	</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -300,7 +490,7 @@
 	@use '$src/themes/layout' as layout;
 
 	.details-sidebar {
-		padding: 0 spacing.$unit-2x spacing.$unit-2x;
+		padding: 0 0 spacing.$unit-2x;
 		color: var(--text-primary, colors.$grey-10);
 		display: flex;
 		flex-direction: column;
@@ -438,5 +628,16 @@
 			color: var(--color-success, #4caf50);
 			font-size: typography.$font-large;
 		}
+	}
+
+	.canonical-view,
+	.user-version-view {
+		padding: 0 spacing.$unit-2x spacing.$unit-2x;
+	}
+
+	.user-version-view {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-2x;
 	}
 </style>
