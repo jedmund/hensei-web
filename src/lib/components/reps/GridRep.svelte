@@ -164,6 +164,7 @@
 		flex-direction: column;
 		gap: $unit-fourth;
 		padding: $unit-half 0;
+		min-width: 0; /* Critical: allows flex child to shrink below content size */
 
 		h2 {
 			color: var(--text-primary);
@@ -174,6 +175,7 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			margin: 0;
+			line-height: 1.2;
 
 			&.empty {
 				color: var(--text-tertiary);
