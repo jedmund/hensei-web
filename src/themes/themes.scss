@@ -191,6 +191,10 @@
 	--icon-secondary: #{colors.$icon--secondary--color--light};
 	--icon-secondary-hover: #{colors.$icon--secondary--hover--light};
 
+	// Light - Danger/Error
+	--danger: #{colors.$error};
+	--danger-bg: #{colors.$error--bg--light};
+
 	// Light - Tags
 	--tag-bg: #{colors.$tag--bg--light};
 	--tag-text: #{colors.$tag--text--light};
@@ -515,6 +519,10 @@
 	// Dark - Icons
 	--icon-secondary: #{colors.$icon--secondary--color--dark};
 	--icon-secondary-hover: #{colors.$icon--secondary--hover--dark};
+
+	// Dark - Danger/Error
+	--danger: #{colors.$error};
+	--danger-bg: #{colors.$error--bg--dark};
 
 	// Dark - Tags
 	--tag-bg: #{colors.$tag--bg--dark};

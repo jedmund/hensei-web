@@ -56,6 +56,8 @@ $blue: #275dc5;
 $red: #ff6161;
 $yellow: #c89d39;
 $error: #d13a3a;
+$error--bg--light: #fce8e8;
+$error--bg--dark: #3d1515;
 
 $save-red: #ff4d4d;
 
@@ -173,7 +175,7 @@ $menu--bg--light: $grey-100;
 $menu--bg--dark: $grey-10;
 $menu--text--light: $grey-50;
 $menu--text--dark: $grey-60;
-$menu--separator--light: $grey-90;
+$menu--separator--light: $grey-80;
 $menu--separator--dark: $grey-05;
 $menu--item--bg--light--hover: $grey-85;
 $menu--item--bg--dark--hover: $grey-00;
