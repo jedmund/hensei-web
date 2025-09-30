@@ -2,14 +2,26 @@
  * Utility functions for weapon and character modifiers (awakenings, weapon keys, AX skills)
  */
 
-import type { Awakening, WeaponKey, SimpleAxSkill } from '$lib/types'
+import type { Awakening } from '$lib/types/Awakening'
+import type { WeaponKey } from '$lib/types/WeaponKey'
+import type { SimpleAxSkill } from '$lib/types/SimpleAxSkill'
 
 /**
  * Get the image URL for an awakening type
  */
 export function getAwakeningImage(awakening?: { type?: Awakening; level?: number }): string | null {
 	if (!awakening?.type?.slug) return null
-	return `/images/awakening/${awakening.type.slug}.png`
+
+	const slug = awakening.type.slug
+
+	// No image for Balanced awakening type (character only)
+	if (slug === 'character-balanced') return null
+
+	// Character awakenings are JPG, weapon awakenings are PNG
+	const isCharacterAwakening = slug.startsWith('character-')
+	const extension = isCharacterAwakening ? 'jpg' : 'png'
+
+	return `/images/awakening/${slug}.${extension}`
 }
 
 /**

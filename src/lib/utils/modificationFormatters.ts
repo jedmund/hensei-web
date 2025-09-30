@@ -1,43 +1,5 @@
 import type { SimpleAxSkill } from '$lib/types/api/entities'
-
-const RING_STAT_NAMES: Record<number, string> = {
-  1: 'HP',
-  2: 'Attack',
-  3: 'Double Attack',
-  4: 'Triple Attack',
-  5: 'Elemental Attack',
-  6: 'Critical Hit',
-  7: 'Skill Damage',
-  8: 'Skill DMG Cap',
-  9: 'Ougi Damage',
-  10: 'Ougi DMG Cap',
-  11: 'Chain Burst DMG',
-  12: 'Chain Burst Cap',
-  13: 'Healing',
-  14: 'Healing Cap',
-  15: 'Stamina',
-  16: 'Enmity',
-  17: 'Debuff Success'
-}
-
-const EARRING_STAT_NAMES: Record<number, string> = {
-  1: 'HP',
-  2: 'Attack',
-  3: 'Defense',
-  4: 'Double Attack',
-  5: 'Triple Attack',
-  6: 'Elemental Attack',
-  7: 'Critical Hit',
-  8: 'Skill Damage',
-  9: 'Skill DMG Cap',
-  10: 'Ougi Damage',
-  11: 'Ougi DMG Cap',
-  12: 'Auto Attack Cap',
-  13: 'Chain Burst DMG',
-  14: 'Chain Burst Cap',
-  15: 'Healing',
-  16: 'Healing Cap'
-}
+import { getRingStat, getEarringStat, getElementalizedEarringStat } from './masteryUtils'
 
 const AX_SKILL_NAMES: Record<number, string> = {
   1: 'Attack',
@@ -53,16 +15,33 @@ const AX_SKILL_NAMES: Record<number, string> = {
   11: 'Critical Hit'
 }
 
-export function formatRingStat(modifier: number, strength: number): string {
-  const statName = RING_STAT_NAMES[modifier] || `Unknown (${modifier})`
-  const suffix = modifier <= 2 ? '' : '%'
-  return `${statName} +${strength}${suffix}`
+export function formatRingStat(
+  modifier: number,
+  strength: number,
+  locale: 'en' | 'ja' = 'en'
+): string {
+  const stat = getRingStat(modifier)
+  if (!stat) return `Unknown +${strength}`
+
+  const statName = stat.name[locale]
+  return `${statName} +${strength}${stat.suffix}`
 }
 
-export function formatEarringStat(modifier: number, strength: number): string {
-  const statName = EARRING_STAT_NAMES[modifier] || `Unknown (${modifier})`
-  const suffix = modifier <= 3 ? '' : '%'
-  return `${statName} +${strength}${suffix}`
+export function formatEarringStat(
+  modifier: number,
+  strength: number,
+  locale: 'en' | 'ja' = 'en',
+  characterElement?: number
+): string {
+  // Use elementalized version if element is provided and it's an element-specific stat
+  const stat = characterElement !== undefined && (modifier === 3 || modifier === 4)
+    ? getElementalizedEarringStat(modifier, characterElement, locale)
+    : getEarringStat(modifier)
+
+  if (!stat) return `Unknown +${strength}`
+
+  const statName = stat.name[locale]
+  return `${statName} +${strength}${stat.suffix}`
 }
 
 export function formatAxSkill(ax: SimpleAxSkill): string {
