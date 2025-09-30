@@ -94,7 +94,7 @@
 
 </script>
 
-<div class="unit" class:empty={!item}>
+<div class="unit" class:empty={!item} class:extra={position >= 9}>
   {#if item}
     <ContextMenu>
       {#snippet children()}
@@ -103,6 +103,7 @@
             class="frame weapon"
             class:main={item?.mainhand || position === -1}
             class:cell={!(item?.mainhand || position === -1)}
+            class:extra={position >= 9}
             class:editable={ctx?.canEdit()}
             onclick={() => viewDetails()}
           >
@@ -154,6 +155,7 @@
         class="frame weapon"
         class:main={position === -1}
         class:cell={position !== -1}
+        class:extra={position >= 9}
         class:editable={ctx?.canEdit()}
         onclick={() => ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'weapon', position, item })}
       >
@@ -228,6 +230,25 @@
 
     &.empty .name {
       display: none;
+    }
+
+    &.extra {
+      .frame {
+        background: var(--extra-purple-card-bg);
+      }
+
+      .icon {
+        color: var(--extra-purple-secondary);
+      }
+
+      &:hover .icon {
+        color: var(--extra-purple-primary);
+      }
+
+      .name {
+        font-weight: $medium;
+        color: var(--extra-purple-text);
+      }
     }
   }
 
