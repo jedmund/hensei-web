@@ -1,21 +1,33 @@
 <script lang="ts">
   import SummonUnit from '$lib/components/units/SummonUnit.svelte'
-  import type { GridSummonItemView } from '$lib/api/schemas/party'
+  import type { GridSummon } from '$lib/types/api/party'
 
-  export let summons: GridSummonItemView[] = []
-  export let offset = 4
+  interface Props {
+    summons?: GridSummon[]
+    offset?: number
+  }
+
+  let { summons = [], offset = 4 }: Props = $props()
+
+  // Find summons by position (4 and 5 for subaura)
+  let subauraSlots = $derived(() => {
+    return [
+      summons.find(s => s.position === offset),
+      summons.find(s => s.position === offset + 1)
+    ]
+  })
 </script>
 
 <div class="container">
   <h3>Subaura</h3>
   <ul class="grid" id="ExtraSummons">
-    {#each [0,1] as i}
+    {#each subauraSlots() as summon, i}
       <li>
-        <SummonUnit item={summons[offset + i]} position={offset + i} />
+        <SummonUnit item={summon} position={offset + i} />
       </li>
     {/each}
   </ul>
-  
+
 </div>
 
 <style lang="scss">
