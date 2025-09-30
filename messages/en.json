@@ -12,5 +12,11 @@
 
 	"party_segmented_control_characters": "Characters",
 	"party_segmented_control_weapons": "Weapons",
-	"party_segmented_control_summons": "Summons"
+	"party_segmented_control_summons": "Summons",
+
+	"job_selection_title": "Select Job",
+	"job_selection_search_placeholder": "Search jobs...",
+
+	"skill_selection_title": "Select Skill",
+	"skill_selection_search_placeholder": "Search skills..."
 }

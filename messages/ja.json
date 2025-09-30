@@ -12,5 +12,11 @@
 
 	"party_segmented_control_characters": "キャラ",
 	"party_segmented_control_weapons": "武器",
-	"party_segmented_control_summons": "召喚石"
+	"party_segmented_control_summons": "召喚石",
+
+	"job_selection_title": "ジョブ選択",
+	"job_selection_search_placeholder": "ジョブを検索...",
+
+	"skill_selection_title": "スキル選択",
+	"skill_selection_search_placeholder": "スキルを検索..."
 }
