@@ -1,5 +1,6 @@
 import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
-import { gridAdapter, partyAdapter } from '$lib/api/adapters'
+import { gridAdapter } from '$lib/api/adapters/grid.adapter'
+import { partyAdapter } from '$lib/api/adapters/party.adapter'
 import { getDefaultMaxUncapLevel } from '$lib/utils/uncap'
 
 export interface GridOperation {

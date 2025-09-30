@@ -45,7 +45,7 @@
 			selected={value === GridType.Character}
 		>
 			<CharacterRep
-				jobId={party.job?.id}
+				job={party.job}
 				element={party.element}
 				gender={userGender}
 				characters={party.characters}

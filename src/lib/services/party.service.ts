@@ -1,5 +1,5 @@
 import type { Party } from '$lib/types/api/party'
-import { partyAdapter } from '$lib/api/adapters'
+import { partyAdapter } from '$lib/api/adapters/party.adapter'
 import { authStore } from '$lib/stores/auth.store'
 import { browser } from '$app/environment'
 

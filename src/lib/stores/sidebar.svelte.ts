@@ -9,6 +9,7 @@ interface SidebarState {
 	content?: Snippet
 	component?: Component
 	componentProps?: Record<string, any>
+	scrollable?: boolean
 }
 
 class SidebarStore {
@@ -17,23 +18,26 @@ class SidebarStore {
 		title: undefined,
 		content: undefined,
 		component: undefined,
-		componentProps: undefined
+		componentProps: undefined,
+		scrollable: true
 	})
 
-	open(title?: string, content?: Snippet) {
+	open(title?: string, content?: Snippet, scrollable = true) {
 		this.state.open = true
 		this.state.title = title
 		this.state.content = content
 		this.state.component = undefined
 		this.state.componentProps = undefined
+		this.state.scrollable = scrollable
 	}
 
-	openWithComponent(title: string, component: Component, props?: Record<string, any>) {
+	openWithComponent(title: string, component: Component, props?: Record<string, any>, scrollable = true) {
 		this.state.open = true
 		this.state.title = title
 		this.state.component = component
 		this.state.componentProps = props
 		this.state.content = undefined
+		this.state.scrollable = scrollable
 	}
 
 	close() {
@@ -73,6 +77,10 @@ class SidebarStore {
 
 	get componentProps() {
 		return this.state.componentProps
+	}
+
+	get scrollable() {
+		return this.state.scrollable ?? true
 	}
 }
 

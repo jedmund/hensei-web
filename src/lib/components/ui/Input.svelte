@@ -4,8 +4,8 @@
 	import Icon from '../Icon.svelte'
 
 	interface Props extends HTMLInputAttributes {
-		variant?: 'default' | 'bound' | 'duration' | 'number' | 'range'
-		bound?: boolean
+		variant?: 'default' | 'contained' | 'duration' | 'number' | 'range'
+		contained?: boolean
 		error?: string
 		label?: string
 		leftIcon?: string
@@ -21,7 +21,7 @@
 
 	let {
 		variant = 'default',
-		bound = false,
+		contained = false,
 		error,
 		label,
 		leftIcon,
@@ -54,7 +54,7 @@
 	const inputClasses = $derived(
 		[
 			'input',
-			(variant === 'bound' || bound) && 'bound',
+			(variant === 'contained' || contained) && 'contained',
 			variant === 'duration' && 'duration',
 			variant === 'number' && 'number',
 			variant === 'range' && 'range',
@@ -276,7 +276,7 @@
 				@include smooth-transition($duration-quick, border-color);
 
 				&:focus {
-					@include focus-ring($blue);
+					// @include focus-ring($blue);
 				}
 			}
 
@@ -312,20 +312,24 @@
 			&:has(.counter) input {
 				padding-right: $unit-8x;
 			}
+
+			input {
+				border: 2px solid transparent;
+			}
 		}
 
 		&[type='number']::-webkit-inner-spin-button {
 			-webkit-appearance: none;
 		}
 
-		&.bound {
+		&.contained {
 			background-color: var(--input-bound-bg);
 
 			&:hover:not(:disabled) {
 				background-color: var(--input-bound-bg-hover);
 			}
 
-			// For wrapper variant with bound
+			// For wrapper variant with contained
 			&.wrapper {
 				background-color: var(--input-bound-bg);
 
@@ -367,12 +371,12 @@
 			text-align: right;
 		}
 
-		&:hover:not(:disabled):not(.bound) {
+		&:hover:not(:disabled):not(.contained) {
 			background-color: var(--input-bg-hover);
 		}
 
 		&:focus {
-			@include focus-ring($blue);
+			// @include focus-ring($blue);
 		}
 
 		&:disabled {
@@ -400,7 +404,7 @@
 			-webkit-appearance: none;
 		}
 
-		&.bound {
+		&.contained {
 			background-color: var(--input-bound-bg);
 
 			&:hover:not(:disabled) {
@@ -443,12 +447,12 @@
 			height: 100%;
 		}
 
-		&:hover:not(:disabled):not(.bound) {
+		&:hover:not(:disabled):not(.contained) {
 			background-color: var(--input-bg-hover);
 		}
 
 		&:focus {
-			@include focus-ring($blue);
+			// @include focus-ring($blue);
 		}
 
 		&:disabled {

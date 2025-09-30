@@ -16,9 +16,11 @@
 		children?: Snippet
 		/** Optional header actions */
 		headerActions?: Snippet
+		/** Whether the sidebar content should scroll. Default true. */
+		scrollable?: boolean
 	}
 
-	const { open = false, title, onclose, children, headerActions }: Props = $props()
+	const { open = false, title, onclose, children, headerActions, scrollable = true }: Props = $props()
 </script>
 
 <aside class="sidebar" class:open style:--sidebar-width={SIDEBAR_WIDTH}>
@@ -26,7 +28,7 @@
 		<SidebarHeader {title} {onclose} actions={headerActions} />
 	{/if}
 
-	<div class="sidebar-content">
+	<div class="sidebar-content" class:scrollable>
 		{#if children}
 			{@render children()}
 		{/if}
@@ -42,13 +44,14 @@
 
 	.sidebar {
 		position: fixed;
-		top: 0;
-		right: 0;
-		height: 100vh;
-		background: var(--bg-primary);
-		border-left: 1px solid var(--border-primary);
+		top: $unit-2x;
+		right: $unit-2x;
+		height: calc(100vh - #{$unit-2x} - #{$unit-2x}); // 100vh minus top and bottom insets
+		box-sizing: border-box;
+		background: var(--sidebar-bg);
 		display: flex;
 		flex-direction: column;
+		border-radius: $page-corner;
 		flex-shrink: 0;
 		width: var(--sidebar-width);
 		overflow: hidden;
@@ -58,6 +61,8 @@
 			transform $duration-slide ease-in-out,
 			opacity $duration-slide ease-in-out;
 		z-index: 50;
+		box-shadow: $page-elevation;
+		border: 1px solid rgba(0, 0, 0, 0.14);
 
 		&.open {
 			transform: translateX(0);
@@ -66,43 +71,50 @@
 
 		.sidebar-content {
 			flex: 1;
-			overflow-y: auto;
-			overflow-x: hidden;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
 
-			// Smooth scrolling
-			scroll-behavior: smooth;
+			// When scrollable, enable scrolling with nice scrollbars
+			&.scrollable {
+				overflow-y: auto;
+				overflow-x: hidden;
 
-			// Use overlay scrollbars that auto-hide
-			overflow-y: overlay;
+				// Smooth scrolling
+				scroll-behavior: smooth;
 
-			// Thin, minimal scrollbar styling
-			&::-webkit-scrollbar {
-				width: 10px;
-			}
+				// Use overlay scrollbars that auto-hide
+				overflow-y: overlay;
 
-			&::-webkit-scrollbar-track {
-				background: transparent;
-			}
-
-			&::-webkit-scrollbar-thumb {
-				background: rgba(0, 0, 0, 0.2);
-				border-radius: 10px;
-				border: 2px solid transparent;
-				background-clip: padding-box;
-
-				&:hover {
-					background: rgba(0, 0, 0, 0.4);
-					background-clip: padding-box;
+				// Thin, minimal scrollbar styling
+				&::-webkit-scrollbar {
+					width: 10px;
 				}
-			}
 
-			// Firefox scrollbar styling
-			scrollbar-width: thin;
-			scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+				&::-webkit-scrollbar-track {
+					background: transparent;
+				}
 
-			// Improve mobile scrolling performance
-			@media (max-width: 768px) {
-				-webkit-overflow-scrolling: touch;
+				&::-webkit-scrollbar-thumb {
+					background: rgba(0, 0, 0, 0.2);
+					border-radius: 10px;
+					border: 2px solid transparent;
+					background-clip: padding-box;
+
+					&:hover {
+						background: rgba(0, 0, 0, 0.4);
+						background-clip: padding-box;
+					}
+				}
+
+				// Firefox scrollbar styling
+				scrollbar-width: thin;
+				scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+				// Improve mobile scrolling performance
+				@media (max-width: 768px) {
+					-webkit-overflow-scrolling: touch;
+				}
 			}
 		}
 

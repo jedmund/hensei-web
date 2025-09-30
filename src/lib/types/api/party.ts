@@ -43,9 +43,12 @@ export interface GridCharacter {
   perpetuity?: boolean
   transcendenceStep?: number
   character: Character  // Named properly, not "object"
-  awakening?: Awakening
-  aetherial_mastery?: { modifier: number; strength: number }
-  over_mastery?: Array<{ modifier: number; strength: number }>
+  awakening?: {
+    type: Awakening
+    level: number
+  }
+  aetherialMastery?: { modifier: number; strength: number }
+  overMastery?: Array<{ modifier: number; strength: number }>
 }
 
 // GridSummon from GridSummonBlueprint

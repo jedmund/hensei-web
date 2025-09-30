@@ -1,5 +1,5 @@
 import type { Party, GridWeapon, GridCharacter } from '$lib/types/api/party'
-import { gridAdapter } from '$lib/api/adapters'
+import { gridAdapter } from '$lib/api/adapters/grid.adapter'
 
 export interface ConflictData {
   conflicts: string[]

@@ -55,12 +55,12 @@
 					bind:value
 					type="number"
 					variant="number"
-					bound={true}
+					contained={true}
 					{placeholder}
 					alignRight={true}
 				/>
 			{:else}
-				<Input bind:value type="text" bound={true} {placeholder} alignRight={true} />
+				<Input bind:value type="text" contained={true} {placeholder} alignRight={true} />
 			{/if}
 		</div>
 	{:else if children}

@@ -45,7 +45,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		min-height: $nav-height;
 		padding: $unit-2x;
 		border-bottom: 1px solid var(--border-primary);
 		flex-shrink: 0;

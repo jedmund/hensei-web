@@ -125,6 +125,7 @@
 			open={sidebar.isOpen}
 			title={sidebar.title}
 			onclose={() => sidebar.close()}
+			scrollable={sidebar.scrollable}
 		>
 			{#if sidebar.component}
 				<svelte:component this={sidebar.component} {...sidebar.componentProps} />

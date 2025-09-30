@@ -20,13 +20,15 @@
   function getAwakeningData() {
     if (!awakening) return null
 
-    if ('type' in awakening && awakening.type) {
+    // Check if it's the awakening object with type and level
+    if (typeof awakening === 'object' && 'type' in awakening) {
       return {
         type: awakening.type,
-        level: awakening.level || 0
+        level: awakening.level ?? 0
       }
     }
 
+    // Otherwise it's just the Awakening type itself
     return {
       type: awakening as Awakening,
       level: 0
@@ -38,13 +40,17 @@
   let displayName = $derived(awakeningData?.type?.name?.en || awakeningData?.type?.name?.ja || 'Awakening')
 </script>
 
-{#if awakeningData && imageUrl}
+{#if awakeningData}
   <div class="awakening-display {size}">
-    <img
-      src={imageUrl}
-      alt={displayName}
-      class="awakening-icon"
-    />
+    {#if imageUrl}
+      <img
+        src={imageUrl}
+        alt={displayName}
+        class="awakening-icon"
+      />
+    {:else}
+      <div class="awakening-icon placeholder"></div>
+    {/if}
     <div class="awakening-info">
       <span class="awakening-name">{displayName}</span>
       {#if showLevel && awakeningData.level !== undefined}
@@ -86,6 +92,13 @@
     .awakening-icon {
       border-radius: layout.$item-corner-small;
       flex-shrink: 0;
+
+      &.placeholder {
+        background: colors.$grey-70;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
 
     .awakening-info {

@@ -6,8 +6,8 @@
 -->
 
 <script lang="ts">
-	import { createSearchResource } from '$lib/api/adapters'
-	import type { SearchResult } from '$lib/api/adapters'
+	import { createSearchResource } from '$lib/api/adapters/resources/search.resource.svelte'
+	import type { SearchResult } from '$lib/api/adapters/search.adapter'
 
 	// Create a search resource with debouncing
 	const search = createSearchResource({
