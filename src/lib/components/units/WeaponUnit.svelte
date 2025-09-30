@@ -4,11 +4,12 @@
   import { getContext } from 'svelte'
   import Icon from '$lib/components/Icon.svelte'
   import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
-  import { ContextMenu as ContextMenuBase } from 'bits-ui'
+  import { ContextMenu as ContextMenuBase, DropdownMenu as DropdownMenuBase } from 'bits-ui'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
   import { getWeaponImage } from '$lib/features/database/detail/image'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
   import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages } from '$lib/utils/modifiers'
+  import * as m from '$lib/paraglide/messages'
 
   interface Props {
     item?: GridWeapon
@@ -96,7 +97,7 @@
 
 <div class="unit" class:empty={!item} class:extra={position >= 9}>
   {#if item}
-    <ContextMenu>
+    <ContextMenu showGearButton={true}>
       {#snippet children()}
         {#key item?.id ?? position}
           <div
@@ -134,18 +135,33 @@
         {/key}
       {/snippet}
 
-      {#snippet menu()}
+      {#snippet contextMenu()}
         <ContextMenuBase.Item class="context-menu-item" onclick={viewDetails}>
-          View Details
+          {m.context_view_details()}
         </ContextMenuBase.Item>
         {#if ctx?.canEdit()}
           <ContextMenuBase.Item class="context-menu-item" onclick={replace}>
-            Replace
+            {m.context_replace()}
           </ContextMenuBase.Item>
           <ContextMenuBase.Separator class="context-menu-separator" />
           <ContextMenuBase.Item class="context-menu-item danger" onclick={remove}>
-            Remove
+            {m.context_remove()}
           </ContextMenuBase.Item>
+        {/if}
+      {/snippet}
+
+      {#snippet dropdownMenu()}
+        <DropdownMenuBase.Item class="dropdown-menu-item" onclick={viewDetails}>
+          {m.context_view_details()}
+        </DropdownMenuBase.Item>
+        {#if ctx?.canEdit()}
+          <DropdownMenuBase.Item class="dropdown-menu-item" onclick={replace}>
+            {m.context_replace()}
+          </DropdownMenuBase.Item>
+          <DropdownMenuBase.Separator class="dropdown-menu-separator" />
+          <DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={remove}>
+            {m.context_remove()}
+          </DropdownMenuBase.Item>
         {/if}
       {/snippet}
     </ContextMenu>
@@ -218,6 +234,7 @@
   @use '$src/themes/colors' as *;
   @use '$src/themes/typography' as *;
   @use '$src/themes/spacing' as *;
+  @use '$src/themes/layout' as *;
   @use '$src/themes/rep' as rep;
 
   .unit {
@@ -265,13 +282,21 @@
     justify-content: center;
     cursor: pointer;
 
-    &:hover {
+    &.editable:hover {
       opacity: 0.95;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transform: $scale-wide;
     }
   }
 
-  .frame.weapon.main { @include rep.aspect(rep.$weapon-main-w, rep.$weapon-main-h); }
+  .frame.weapon.main {
+    @include rep.aspect(rep.$weapon-main-w, rep.$weapon-main-h);
+
+    &.editable:hover {
+      transform: $scale-tall;
+    }
+  }
+
   .frame.weapon.cell { @include rep.aspect(rep.$weapon-cell-w, rep.$weapon-cell-h); }
 
   .image {

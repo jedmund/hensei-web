@@ -4,10 +4,11 @@
   import { getContext } from 'svelte'
   import Icon from '$lib/components/Icon.svelte'
   import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
-  import { ContextMenu as ContextMenuBase } from 'bits-ui'
+  import { ContextMenu as ContextMenuBase, DropdownMenu as DropdownMenuBase } from 'bits-ui'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
   import { getSummonImage } from '$lib/features/database/detail/image'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+  import * as m from '$lib/paraglide/messages'
 
   interface Props {
     item?: GridSummon
@@ -34,9 +35,10 @@
   }
   // Use $derived to ensure consistent computation between server and client
   let imageUrl = $derived.by(() => {
-    // Check position first for main/friend summon determination
-    const isMain = position === -1 || position === 6 || item?.main || item?.friend
-    const variant = isMain ? 'main' : 'grid'
+    // Only position -1 (main) and position 6 (friend) use main-sized images
+    // All other positions (0-5) including subaura (4-5) use grid-sized images
+    const isMainSized = position === -1 || position === 6 || item?.main || item?.friend
+    const variant = isMainSized ? 'main' : 'grid'
 
     return getSummonImage(item?.summon?.granblueId, variant)
   })
@@ -74,7 +76,7 @@
 
 <div class="unit" class:empty={!item}>
   {#if item}
-    <ContextMenu>
+    <ContextMenu showGearButton={true}>
       {#snippet children()}
         {#key item?.id ?? position}
           <div
@@ -91,11 +93,6 @@
               alt={displayName(item?.summon)}
               src={imageUrl}
             />
-            {#if ctx?.canEdit() && item?.id}
-              <div class="actions">
-                <button class="remove" title="Remove" onclick={(e) => { e.stopPropagation(); remove() }}>×</button>
-              </div>
-            {/if}
             {#if item?.main || position === -1}
               <span class="badge">Main</span>
             {/if}
@@ -106,18 +103,33 @@
         {/key}
       {/snippet}
 
-      {#snippet menu()}
+      {#snippet contextMenu()}
         <ContextMenuBase.Item class="context-menu-item" onclick={viewDetails}>
-          View Details
+          {m.context_view_details()}
         </ContextMenuBase.Item>
         {#if ctx?.canEdit()}
           <ContextMenuBase.Item class="context-menu-item" onclick={replace}>
-            Replace
+            {m.context_replace()}
           </ContextMenuBase.Item>
           <ContextMenuBase.Separator class="context-menu-separator" />
           <ContextMenuBase.Item class="context-menu-item danger" onclick={remove}>
-            Remove
+            {m.context_remove()}
           </ContextMenuBase.Item>
+        {/if}
+      {/snippet}
+
+      {#snippet dropdownMenu()}
+        <DropdownMenuBase.Item class="dropdown-menu-item" onclick={viewDetails}>
+          {m.context_view_details()}
+        </DropdownMenuBase.Item>
+        {#if ctx?.canEdit()}
+          <DropdownMenuBase.Item class="dropdown-menu-item" onclick={replace}>
+            {m.context_replace()}
+          </DropdownMenuBase.Item>
+          <DropdownMenuBase.Separator class="dropdown-menu-separator" />
+          <DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={remove}>
+            {m.context_remove()}
+          </DropdownMenuBase.Item>
         {/if}
       {/snippet}
     </ContextMenu>
@@ -261,26 +273,6 @@
     font-size: $font-small;
     text-align: center;
     color: $grey-50;
-  }
-
-  .actions {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    display: flex;
-    gap: 6px;
-    z-index: 3;
-  }
-
-  .remove {
-    background: rgba(0,0,0,.6);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-    cursor: pointer;
   }
 
   .badge {

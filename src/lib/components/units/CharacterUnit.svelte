@@ -5,13 +5,14 @@
 	import { getContext } from 'svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
-	import { ContextMenu as ContextMenuBase } from 'bits-ui'
+	import { ContextMenu as ContextMenuBase, DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
 	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { getJobPortraitUrl, Gender } from '$lib/utils/jobUtils'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		item?: GridCharacter
@@ -141,35 +142,42 @@
 
 <div class="unit" class:empty={!item}>
 	{#if item}
-		<ContextMenu>
+		<ContextMenu showGearButton={true}>
 			{#snippet children()}
 				{#key item?.id ?? position}
 					<div
 						class="frame character cell"
+						class:protagonist={position === 0}
 						class:editable={ctx?.canEdit()}
 						onclick={() => viewDetails()}
 					>
-						{#if ctx?.canEdit()}
-							<button
-								class="perpetuity"
-								class:active={item.perpetuity}
-								onclick={togglePerpetuity}
-								title={item.perpetuity ? 'Remove Perpetuity Ring' : 'Add Perpetuity Ring'}
-							>
-								<img class="perpetuity-icon filled" src={perpetuityFilled} alt="Perpetuity Ring" />
+						{#if position !== 0}
+							{#if ctx?.canEdit()}
+								<button
+									class="perpetuity"
+									class:active={item.perpetuity}
+									onclick={togglePerpetuity}
+									title={item.perpetuity ? 'Remove Perpetuity Ring' : 'Add Perpetuity Ring'}
+								>
+									<img
+										class="perpetuity-icon filled"
+										src={perpetuityFilled}
+										alt="Perpetuity Ring"
+									/>
+									<img
+										class="perpetuity-icon empty"
+										src={perpetuityEmpty}
+										alt="Add Perpetuity Ring"
+									/>
+								</button>
+							{:else if item.perpetuity}
 								<img
-									class="perpetuity-icon empty"
-									src={perpetuityEmpty}
-									alt="Add Perpetuity Ring"
+									class="perpetuity static"
+									src={perpetuityFilled}
+									alt="Perpetuity Ring"
+									title="Perpetuity Ring"
 								/>
-							</button>
-						{:else if item.perpetuity}
-							<img
-								class="perpetuity static"
-								src={perpetuityFilled}
-								alt="Perpetuity Ring"
-								title="Perpetuity Ring"
-							/>
+							{/if}
 						{/if}
 						<img
 							class="image"
@@ -182,18 +190,33 @@
 				{/key}
 			{/snippet}
 
-			{#snippet menu()}
+			{#snippet contextMenu()}
 				<ContextMenuBase.Item class="context-menu-item" onclick={viewDetails}>
-					View Details
+					{m.context_view_details()}
 				</ContextMenuBase.Item>
 				{#if ctx?.canEdit()}
 					<ContextMenuBase.Item class="context-menu-item" onclick={replace}>
-						Replace
+						{m.context_replace()}
 					</ContextMenuBase.Item>
 					<ContextMenuBase.Separator class="context-menu-separator" />
 					<ContextMenuBase.Item class="context-menu-item danger" onclick={remove}>
-						Remove
+						{m.context_remove()}
 					</ContextMenuBase.Item>
+				{/if}
+			{/snippet}
+
+			{#snippet dropdownMenu()}
+				<DropdownMenuBase.Item class="dropdown-menu-item" onclick={viewDetails}>
+					{m.context_view_details()}
+				</DropdownMenuBase.Item>
+				{#if ctx?.canEdit()}
+					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={replace}>
+						{m.context_replace()}
+					</DropdownMenuBase.Item>
+					<DropdownMenuBase.Separator class="dropdown-menu-separator" />
+					<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={remove}>
+						{m.context_remove()}
+					</DropdownMenuBase.Item>
 				{/if}
 			{/snippet}
 		</ContextMenu>
@@ -213,8 +236,8 @@
 					class="image"
 					class:placeholder={!isProtagonist || !job}
 					class:protagonist={isProtagonist}
-					alt={isProtagonist && job ? job.name.en : ""}
-					src={isProtagonist ? imageUrl : "/images/placeholders/placeholder-weapon-grid.png"}
+					alt={isProtagonist && job ? job.name.en : ''}
+					src={isProtagonist ? imageUrl : '/images/placeholders/placeholder-weapon-grid.png'}
 				/>
 				{#if ctx?.canEdit()}
 					<span class="icon">
@@ -318,6 +341,13 @@
 
 	.frame.character.cell {
 		@include rep.aspect(rep.$char-cell-w, rep.$char-cell-h);
+
+		&.protagonist {
+			background-image: url('/images/relief.png'), linear-gradient(to right, #000, #484440, #000);
+			background-size: cover;
+			background-position: center -20px;
+			background-repeat: no-repeat;
+		}
 	}
 
 	.image {
