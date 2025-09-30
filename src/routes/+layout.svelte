@@ -220,6 +220,7 @@
 				overflow-x: hidden;
 				position: relative;
 				padding-top: 81px; // Space for fixed navigation (matches $nav-height)
+				padding-bottom: 20vh; // Extra space at bottom for comfortable scrolling
 				z-index: 2; // Ensure scrollbar is above blur background
 
 				// Note: scroll-behavior removed to prevent unwanted animations
