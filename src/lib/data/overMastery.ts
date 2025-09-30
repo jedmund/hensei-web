@@ -1,0 +1,429 @@
+const overMasteryPrimary: ItemSkill[] = [
+  {
+    name: {
+      en: 'ATK',
+      ja: '攻撃',
+    },
+    id: 1,
+    granblue_id: '',
+    slug: 'atk',
+    minValue: 300,
+    maxValue: 3000,
+    suffix: '',
+    fractional: false,
+    values: [300, 600, 900, 1200, 1500, 1800, 2100, 2400, 2700, 3000],
+  },
+  {
+    name: {
+      en: 'HP',
+      ja: 'HP',
+    },
+    id: 2,
+    granblue_id: '',
+    slug: 'hp',
+    minValue: 150,
+    maxValue: 1500,
+    suffix: '',
+    fractional: false,
+    values: [150, 300, 450, 600, 750, 900, 1050, 1200, 1350, 1500],
+  },
+]
+
+const overMasterySecondary: ItemSkill[] = [
+  {
+    name: {
+      en: 'Debuff Success',
+      ja: '弱体成功率',
+    },
+    id: 3,
+    granblue_id: '',
+    slug: 'debuff-success',
+    minValue: 6,
+    maxValue: 15,
+    suffix: '%',
+    fractional: false,
+    values: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  },
+  {
+    name: {
+      en: 'Skill DMG Cap',
+      ja: 'アビダメ上限',
+    },
+    id: 4,
+    granblue_id: '',
+    slug: 'skill-cap',
+    minValue: 6,
+    maxValue: 15,
+    suffix: '%',
+    fractional: false,
+    values: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  },
+  {
+    name: {
+      en: 'C.A. DMG',
+      ja: '奥義ダメージ',
+    },
+    id: 5,
+    granblue_id: '',
+    slug: 'ca-dmg',
+    minValue: 10,
+    maxValue: 30,
+    suffix: '%',
+    fractional: false,
+    values: [10, 12, 14, 16, 18, 20, 22, 24, 27, 30],
+  },
+  {
+    name: {
+      en: 'C.A. DMG Cap',
+      ja: '奥義ダメージ上限',
+    },
+    id: 6,
+    granblue_id: '',
+    slug: 'ca-cap',
+    minValue: 6,
+    maxValue: 15,
+    suffix: '%',
+    fractional: false,
+    values: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  },
+  {
+    name: {
+      en: 'Stamina',
+      ja: '渾身',
+    },
+    id: 7,
+    granblue_id: '',
+    slug: 'stamina',
+    minValue: 1,
+    maxValue: 10,
+    suffix: '',
+    fractional: false,
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  },
+  {
+    name: {
+      en: 'Enmity',
+      ja: '背水',
+    },
+    id: 8,
+    granblue_id: '',
+    slug: 'enmity',
+    minValue: 1,
+    maxValue: 10,
+    suffix: '',
+    fractional: false,
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  },
+  {
+    name: {
+      en: 'Critical Hit',
+      ja: 'クリティカル確率',
+    },
+    id: 9,
+    granblue_id: '',
+    slug: 'crit',
+    minValue: 10,
+    maxValue: 30,
+    suffix: '%',
+    fractional: false,
+    values: [10, 12, 14, 16, 18, 20, 22, 24, 27, 30],
+  },
+]
+
+const overMasteryTertiary: ItemSkill[] = [
+  {
+    name: {
+      en: 'Double Attack',
+      ja: 'ダブルアタック確率',
+    },
+    id: 10,
+    granblue_id: '',
+    slug: 'da',
+    minValue: 6,
+    maxValue: 15,
+    suffix: '%',
+    fractional: false,
+    values: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  },
+  {
+    name: {
+      en: 'Triple Attack',
+      ja: 'トリプルアタック確率',
+    },
+    id: 11,
+    granblue_id: '',
+    slug: 'ta',
+    minValue: 1,
+    maxValue: 10,
+    suffix: '%',
+    fractional: false,
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  },
+  {
+    name: {
+      en: 'DEF',
+      ja: '防御',
+    },
+    id: 12,
+    granblue_id: '',
+    slug: 'def',
+    minValue: 6,
+    maxValue: 20,
+    suffix: '%',
+    fractional: false,
+    values: [6, 7, 8, 9, 10, 12, 14, 16, 18, 20],
+  },
+  {
+    name: {
+      en: 'Healing',
+      ja: '回復性能',
+    },
+    id: 13,
+    granblue_id: '',
+    slug: 'heal',
+    minValue: 3,
+    maxValue: 30,
+    suffix: '%',
+    fractional: false,
+    values: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30],
+  },
+  {
+    name: {
+      en: 'Debuff Resistance',
+      ja: '弱体耐性',
+    },
+    id: 14,
+    granblue_id: '',
+    slug: 'debuff-resist',
+    minValue: 6,
+    maxValue: 15,
+    suffix: '%',
+    fractional: false,
+    values: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  },
+  {
+    name: {
+      en: 'Dodge',
+      ja: '回避',
+    },
+    id: 15,
+    granblue_id: '',
+    slug: 'dodge',
+    minValue: 1,
+    maxValue: 10,
+    suffix: '%',
+    fractional: false,
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  },
+]
+
+export const overMastery = {
+  a: overMasteryPrimary,
+  b: overMasterySecondary,
+  c: overMasteryTertiary,
+}
+
+export const aetherialMastery: ItemSkill[] = [
+  {
+    name: {
+      en: 'Double Attack',
+      ja: 'ダブルアタック確率',
+    },
+    id: 1,
+    granblue_id: '',
+    slug: 'da',
+    minValue: 10,
+    maxValue: 17,
+    suffix: '%',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'Triple Attack',
+      ja: 'トリプルアタック確率',
+    },
+    id: 2,
+    granblue_id: '',
+    slug: 'ta',
+    minValue: 5,
+    maxValue: 12,
+    suffix: '%',
+    fractional: false,
+  },
+  {
+    name: {
+      en: '{Element} ATK Up',
+      ja: '{属性}攻撃',
+    },
+    id: 3,
+    granblue_id: '',
+    slug: 'element-atk',
+    minValue: 15,
+    maxValue: 22,
+    suffix: '%',
+    fractional: false,
+  },
+  {
+    name: {
+      en: '{Element} Resistance',
+      ja: '{属性}軽減',
+    },
+    id: 4,
+    granblue_id: '',
+    slug: 'element-resist',
+    minValue: 5,
+    maxValue: 12,
+    suffix: '%',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'Stamina',
+      ja: '渾身',
+    },
+    id: 5,
+    granblue_id: '',
+    slug: 'stamina',
+    minValue: 5,
+    maxValue: 12,
+    suffix: '',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'Enmity',
+      ja: '背水',
+    },
+    id: 6,
+    granblue_id: '',
+    slug: 'enmity',
+    minValue: 5,
+    maxValue: 12,
+    suffix: '',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'Supplemental DMG',
+      ja: '与ダメ上昇',
+    },
+    id: 7,
+    granblue_id: '',
+    slug: 'supplemental',
+    minValue: 5,
+    maxValue: 12,
+    suffix: '',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'Critical Hit',
+      ja: 'クリティカル',
+    },
+    id: 8,
+    granblue_id: '',
+    slug: 'crit',
+    minValue: 18,
+    maxValue: 35,
+    suffix: '%',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'Counters on Dodge',
+      ja: 'カウンター(回避)',
+    },
+    id: 9,
+    granblue_id: '',
+    slug: 'counter-dodge',
+    minValue: 5,
+    maxValue: 12,
+    suffix: '%',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'Counters on DMG',
+      ja: 'カウンター(被ダメ)',
+    },
+    id: 10,
+    granblue_id: '',
+    slug: 'counter-dmg',
+    minValue: 10,
+    maxValue: 17,
+    suffix: '%',
+    fractional: false,
+  },
+]
+
+export const permanentMastery: ItemSkill[] = [
+  {
+    name: {
+      en: 'Extended Mastery Star Cap',
+      ja: 'LB強化回数上限',
+    },
+    id: 1,
+    granblue_id: '',
+    slug: 'star-cap',
+    minValue: 10,
+    maxValue: 10,
+    suffix: '',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'ATK',
+      ja: '攻撃',
+    },
+    id: 2,
+    granblue_id: '',
+    slug: 'atk',
+    minValue: 10,
+    maxValue: 10,
+    suffix: '%',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'HP',
+      ja: 'HP',
+    },
+    id: 3,
+    granblue_id: '',
+    slug: 'hp',
+    minValue: 10,
+    maxValue: 10,
+    suffix: '',
+    fractional: false,
+  },
+  {
+    name: {
+      en: 'DMG Cap',
+      ja: 'ダメージ上限',
+    },
+    id: 4,
+    granblue_id: '',
+    slug: 'dmg-cap',
+    minValue: 5,
+    maxValue: 5,
+    suffix: '%',
+    fractional: false,
+  },
+]
+
+// Type for ItemSkill
+export interface ItemSkill {
+  name: {
+    en: string
+    ja: string
+  }
+  id: number
+  granblue_id: string
+  slug: string
+  minValue: number
+  maxValue: number
+  suffix: string
+  fractional: boolean
+  values?: number[]
+}
+

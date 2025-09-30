@@ -19,6 +19,10 @@
 	import { openDescriptionSidebar } from '$lib/features/description/openDescriptionSidebar.svelte.ts'
 	import { DropdownMenu } from 'bits-ui'
 	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
+	import JobSection from '$lib/components/job/JobSection.svelte'
+	import { Gender } from '$lib/utils/jobUtils'
+	import { openJobSelectionSidebar, openJobSkillSelectionSidebar } from '$lib/features/job/openJobSidebar.svelte'
+	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 
 	interface Props {
 		party?: Party
@@ -351,6 +355,197 @@
 			deleteDialogOpen = false
 		} finally {
 			deleting = false
+		}
+	}
+
+	// Handle job selection
+	async function handleSelectJob() {
+		if (!canEdit()) return
+
+		openJobSelectionSidebar({
+			currentJobId: party.job?.id,
+			onSelectJob: async (job) => {
+				loading = true
+				error = null
+
+				try {
+					// Update job via API
+					const updated = await partyAdapter.updateJob(party.id, job.id)
+					party = updated
+				} catch (e) {
+					error = e instanceof Error ? e.message : 'Failed to update job'
+					console.error('Failed to update job:', e)
+				} finally {
+					loading = false
+				}
+			}
+		})
+	}
+
+	// Handle job skill selection
+	async function handleSelectJobSkill(slot: number) {
+		if (!canEdit()) return
+
+		openJobSkillSelectionSidebar({
+			job: party.job,
+			currentSkills: party.jobSkills,
+			targetSlot: slot,
+			onSelectSkill: async (skill) => {
+				loading = true
+				error = null
+
+				try {
+					// Update skills with the new skill in the slot
+					const updatedSkills = { ...party.jobSkills }
+					updatedSkills[slot as keyof typeof updatedSkills] = skill
+
+					console.log('[Party] Current jobSkills:', party.jobSkills)
+					console.log('[Party] Updated jobSkills object:', updatedSkills)
+					console.log('[Party] Slot being updated:', slot)
+					console.log('[Party] New skill:', skill)
+
+					// Convert skills object to array format expected by API
+					const skillsArray = Object.entries(updatedSkills)
+						.filter(([_, skill]) => skill !== null && skill !== undefined)
+						.map(([slotKey, skill]) => ({
+							id: skill!.id,
+							slot: parseInt(slotKey)
+						}))
+
+					console.log('[Party] Skills array to send:', skillsArray)
+
+					const updated = await partyAdapter.updateJobSkills(
+						party.id,
+						skillsArray
+					)
+					party = updated
+				} catch (e: any) {
+					// Extract detailed error message from nested structure
+					let errorDetails = e?.details
+
+					// Navigate through nested details structure
+					while (errorDetails?.details) {
+						errorDetails = errorDetails.details
+					}
+
+					if (errorDetails?.errors) {
+						if (errorDetails.errors.message) {
+							// Simple message format
+							error = errorDetails.errors.message
+						} else {
+							// Field-based errors
+							const errorMessages = Object.entries(errorDetails.errors)
+								.map(([field, messages]) => {
+									if (Array.isArray(messages)) {
+										return messages.join(', ')
+									}
+									return String(messages)
+								})
+								.join('; ')
+							error = errorMessages || e.message || 'Failed to update skill'
+						}
+					} else {
+						error = e?.message || 'Failed to update skill'
+					}
+					console.error('Failed to update skill:', e)
+				} finally {
+					loading = false
+				}
+			},
+			onRemoveSkill: async () => {
+				loading = true
+				error = null
+
+				try {
+					// Remove skill from slot
+					const updatedSkills = { ...party.jobSkills }
+					delete updatedSkills[slot as keyof typeof updatedSkills]
+
+					console.log('[Party] Removing skill from slot:', slot)
+					console.log('[Party] Current jobSkills:', party.jobSkills)
+					console.log('[Party] Updated jobSkills after removal:', updatedSkills)
+
+					// Convert skills object to array format expected by API
+					const skillsArray = Object.entries(updatedSkills)
+						.filter(([_, skill]) => skill !== null && skill !== undefined)
+						.map(([slotKey, skill]) => ({
+							id: skill!.id,
+							slot: parseInt(slotKey)
+						}))
+
+					console.log('[Party] Skills array to send after removal:', skillsArray)
+
+					const updated = await partyAdapter.updateJobSkills(
+						party.id,
+						skillsArray
+					)
+					party = updated
+				} catch (e: any) {
+					// Extract detailed error message from nested structure
+					let errorDetails = e?.details
+
+					// Navigate through nested details structure
+					while (errorDetails?.details) {
+						errorDetails = errorDetails.details
+					}
+
+					if (errorDetails?.errors) {
+						if (errorDetails.errors.message) {
+							// Simple message format
+							error = errorDetails.errors.message
+						} else {
+							// Field-based errors
+							const errorMessages = Object.entries(errorDetails.errors)
+								.map(([field, messages]) => {
+									if (Array.isArray(messages)) {
+										return messages.join(', ')
+									}
+									return String(messages)
+								})
+								.join('; ')
+							error = errorMessages || e.message || 'Failed to remove skill'
+						}
+					} else {
+						error = e?.message || 'Failed to remove skill'
+					}
+					console.error('Failed to remove skill:', e)
+				} finally {
+					loading = false
+				}
+			}
+		})
+	}
+
+	// Handle removing a skill directly
+	async function handleRemoveJobSkill(slot: number) {
+		if (!canEdit()) return
+
+		loading = true
+		error = null
+
+		try {
+			// Remove skill from slot
+			const updatedSkills = { ...party.jobSkills }
+			delete updatedSkills[slot as keyof typeof updatedSkills]
+
+			// Convert skills object to array format expected by API
+			const skillsArray = Object.entries(updatedSkills)
+				.filter(([_, skill]) => skill !== null && skill !== undefined)
+				.map(([slotKey, skill]) => ({
+					id: skill!.id,
+					slot: parseInt(slotKey)
+				}))
+
+			const updated = await partyAdapter.updateJobSkills(
+				party.id,
+				skillsArray
+			)
+			party = updated
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Failed to remove skill'
+			console.error('Failed to remove skill:', e)
+		} finally {
+			loading = false
 		}
 	}
 
@@ -863,7 +1058,29 @@
 				{:else if activeTab === GridType.Summon}
 					<SummonGrid summons={party.summons} />
 				{:else}
-					<CharacterGrid characters={party.characters} {mainWeaponElement} {partyElement} />
+					<div class="character-tab-content">
+						<JobSection
+							job={party.job}
+							jobSkills={party.jobSkills}
+							accessory={party.accessory}
+							canEdit={canEdit()}
+							gender={Gender.Gran}
+							element={mainWeaponElement}
+							onSelectJob={handleSelectJob}
+							onSelectSkill={handleSelectJobSkill}
+							onRemoveSkill={handleRemoveJobSkill}
+							onSelectAccessory={() => {
+								// TODO: Open accessory selection sidebar
+								console.log('Open accessory selection sidebar')
+							}}
+						/>
+						<CharacterGrid
+							characters={party.characters}
+							{mainWeaponElement}
+							{partyElement}
+							job={party.job}
+						/>
+					</div>
 				{/if}
 			</div>
 		</section>
@@ -1179,6 +1396,12 @@
 
 	.party-content {
 		min-height: 400px;
+	}
+
+	.character-tab-content {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
 	}
 
 	// Edit form styles
