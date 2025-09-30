@@ -96,7 +96,7 @@ $wind-bg-20: #cdffed;
 
 $fire-text-00: #3f0202;
 $fire-text-10: #3e0000;
-$fire-text-20: #6E0000;
+$fire-text-20: #6e0000;
 $fire-text-30: #ec5c5c;
 $fire-bg-00: #e05555;
 $fire-bg-10: #fa6d6d;
@@ -113,7 +113,7 @@ $water-bg-20: #cdedff;
 $earth-text-00: #321602;
 $earth-text-10: #662a00;
 $earth-text-15: #863504;
-$earth-text-20: #8E3C0B;
+$earth-text-20: #8e3c0b;
 $earth-text-30: #ec985c;
 $earth-bg-00: #df8849;
 $earth-bg-10: #fd9f5b;
@@ -122,7 +122,7 @@ $earth-bg-20: #ffe2cd;
 $light-text-00: #3d3700;
 $light-text-10: #4b4300;
 $light-text-20: #715100;
-$light-text-30: #C59C0C;
+$light-text-30: #c59c0c;
 $light-bg-00: #cab91c;
 $light-bg-10: #e8d633;
 $light-bg-20: #fffacd;
@@ -159,6 +159,10 @@ $unit--bg--dark: $grey-20;
 
 $unit--bg--light--hover: $grey-90;
 $unit--bg--dark--hover: $grey-30;
+
+// Color Definitions: Sidebar
+$sidebar--bg--light: $grey-100;
+$sidebar--bg--dark: $grey-20;
 
 // Color Definitions: Dialog
 $dialog--bg--light: $grey-100;
@@ -221,6 +225,28 @@ $button--text--light--disabled: $grey-50;
 $button--text--dark: $grey-70;
 $button--text--dark--hover: $grey-100;
 $button--text--dark--disabled: $grey-50;
+
+// Color Definitions: Button Secondary (for tier selector)
+$button--secondary--bg--light: $grey-90;
+$button--secondary--bg--light--hover: $grey-85;
+$button--secondary--text--light: $grey-50;
+$button--secondary--text--light--hover: $grey-40;
+
+$button--secondary--bg--dark: $grey-25;
+$button--secondary--bg--dark--hover: $grey-30;
+$button--secondary--text--dark: $grey-60;
+$button--secondary--text--dark--hover: $grey-70;
+
+// Color Definitions: Button Primary (for selected tiers)
+$button--primary--bg--light: $accent--blue--light;
+$button--primary--bg--light--hover: $accent--blue--light--focus;
+$button--primary--text--light: $grey-100;
+$button--primary--border--light: $accent--blue--light;
+
+$button--primary--bg--dark: $accent--blue--dark;
+$button--primary--bg--dark--hover: $accent--blue--dark--focus;
+$button--primary--text--dark: $grey-10;
+$button--primary--border--dark: $accent--blue--dark;
 
 // Color Definitions: Input
 $input--bg--light: $grey-100;
@@ -395,6 +421,13 @@ $toggle--bg--dark: $grey-15;
 $toggle--stroke--light: rgba(0, 0, 0, 0.14);
 $toggle--stroke--dark: rgba(0, 0, 0, 0.8);
 
+// Color Definitions: Borders
+$border--subtle--light: $grey-85;
+$border--subtle--dark: $grey-30;
+
+$border--medium--light: $grey-80;
+$border--medium--dark: $grey-40;
+
 // Color Definitions: Text
 $text--primary--color--light: $grey-40;
 $text--primary--color--dark: $grey-90;
@@ -438,6 +471,41 @@ $tag--bg--light: $grey-60;
 $tag--bg--dark: $grey-00;
 $tag--text--light: $grey-100;
 $tag--text--dark: $grey-50;
+
+// Color Definitions: Segmented Control
+// Variant 1: White background control with light gray segments (blended)
+$segmented--control--blended--bg--light: $grey-100;
+$segmented--control--blended--bg--dark: $grey-20;
+$segmented--control--blended--segment--bg--light: $grey-90;
+$segmented--control--blended--segment--bg--hover--light: $grey-85;
+$segmented--control--blended--segment--bg--checked--light: $grey-85;
+$segmented--control--blended--segment--text--light: $grey-60;
+$segmented--control--blended--segment--text--hover--light: $grey-50;
+$segmented--control--blended--segment--text--checked--light: $grey-40;
+
+$segmented--control--blended--segment--bg--dark: $grey-30;
+$segmented--control--blended--segment--bg--hover--dark: $grey-40;
+$segmented--control--blended--segment--bg--checked--dark: $grey-40;
+$segmented--control--blended--segment--text--dark: $grey-60;
+$segmented--control--blended--segment--text--hover--dark: $grey-70;
+$segmented--control--blended--segment--text--checked--dark: $grey-90;
+
+// Variant 2: Light background control with white segments (background)
+$segmented--control--background--bg--light: $grey-90;
+$segmented--control--background--bg--dark: $grey-15;
+$segmented--control--background--segment--bg--light: transparent;
+$segmented--control--background--segment--bg--hover--light: $grey-85;
+$segmented--control--background--segment--bg--checked--light: $grey-100;
+$segmented--control--background--segment--text--light: $grey-60;
+$segmented--control--background--segment--text--hover--light: $grey-50;
+$segmented--control--background--segment--text--checked--light: $grey-40;
+
+$segmented--control--background--segment--bg--dark: transparent;
+$segmented--control--background--segment--bg--hover--dark: $grey-20;
+$segmented--control--background--segment--bg--checked--dark: $grey-30;
+$segmented--control--background--segment--text--dark: $grey-60;
+$segmented--control--background--segment--text--hover--dark: $grey-70;
+$segmented--control--background--segment--text--checked--dark: $grey-90;
 
 // Color Definitions: Element / Wind
 $wind--bg--light: $wind-bg-10;

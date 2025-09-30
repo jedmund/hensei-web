@@ -31,6 +31,8 @@
 
 	--background: #{colors.$page--bg--light};
 	--background-rgb: 245, 245, 245; // RGB values for grey-90
+
+	--page-bg: #{colors.$page--bg--light};
 	--page-hover: #{colors.$page--hover--light};
 
 	--grid-rep-hover: #{colors.$grid--rep--hover--light};
@@ -68,6 +70,9 @@
 	// Light - Units
 	--unit-bg: #{colors.$unit--bg--light};
 	--unit-bg-hover: #{colors.$unit--bg--light--hover};
+
+	// Light - Sidebar
+	--sidebar-bg: #{colors.$sidebar--bg--light};
 
 	// Light - Dialogs
 	--dialog-bg: #{colors.$dialog--bg--light};
@@ -128,6 +133,17 @@
 	--button-text-hover: #{colors.$button--text--light--hover};
 	--button-text-disabled: #{colors.$button--text--light--disabled};
 
+	// Light - Button variants
+	--button-secondary-bg: #{colors.$button--secondary--bg--light};
+	--button-secondary-bg-hover: #{colors.$button--secondary--bg--light--hover};
+	--button-secondary-text: #{colors.$button--secondary--text--light};
+	--button-secondary-text-hover: #{colors.$button--secondary--text--light--hover};
+
+	--button-primary-bg: #{colors.$button--primary--bg--light};
+	--button-primary-bg-hover: #{colors.$button--primary--bg--light--hover};
+	--button-primary-text: #{colors.$button--primary--text--light};
+	--button-primary-border: #{colors.$button--primary--border--light};
+
 	// Light - Inputs
 	--input-bg: #{colors.$input--bg--light};
 	--input-bg-hover: #{colors.$input--bg--light--hover};
@@ -160,6 +176,10 @@
 	--link-item-image-color: #{colors.$link--item--bg--image--light};
 	--link-item-image-color-hover: #{colors.$link--item--bg--image--light--hover};
 
+	// Light - Borders
+	--border-subtle: #{colors.$border--subtle--light};
+	--border-medium: #{colors.$border--medium--light};
+
 	// Light - Text
 	--text-primary: #{colors.$text--primary--color--light};
 	--text-secondary: #{colors.$text--secondary--color--light};
@@ -174,6 +194,25 @@
 	// Light - Tags
 	--tag-bg: #{colors.$tag--bg--light};
 	--tag-text: #{colors.$tag--text--light};
+
+	// Light - Segmented Controls
+	// Variant 1: Blended (white bg with gray segments)
+	--segmented-control-blended-bg: #{colors.$segmented--control--blended--bg--light};
+	--segmented-control-blended-segment-bg: #{colors.$segmented--control--blended--segment--bg--light};
+	--segmented-control-blended-segment-bg-hover: #{colors.$segmented--control--blended--segment--bg--hover--light};
+	--segmented-control-blended-segment-bg-checked: #{colors.$segmented--control--blended--segment--bg--checked--light};
+	--segmented-control-blended-segment-text: #{colors.$segmented--control--blended--segment--text--light};
+	--segmented-control-blended-segment-text-hover: #{colors.$segmented--control--blended--segment--text--hover--light};
+	--segmented-control-blended-segment-text-checked: #{colors.$segmented--control--blended--segment--text--checked--light};
+
+	// Variant 2: Background (light bg with white segments)
+	--segmented-control-background-bg: #{colors.$segmented--control--background--bg--light};
+	--segmented-control-background-segment-bg: #{colors.$segmented--control--background--segment--bg--light};
+	--segmented-control-background-segment-bg-hover: #{colors.$segmented--control--background--segment--bg--hover--light};
+	--segmented-control-background-segment-bg-checked: #{colors.$segmented--control--background--segment--bg--checked--light};
+	--segmented-control-background-segment-text: #{colors.$segmented--control--background--segment--text--light};
+	--segmented-control-background-segment-text-hover: #{colors.$segmented--control--background--segment--text--hover--light};
+	--segmented-control-background-segment-text-checked: #{colors.$segmented--control--background--segment--text--checked--light};
 
 	// Light - Extra Weapons
 	--extra-purple-bg: #{colors.$extra--purple--bg--light};
@@ -319,6 +358,7 @@
 	--background: #{colors.$page--bg--dark};
 	--background-rgb: 25, 25, 25; // RGB values for grey-15
 	--page-hover: #{colors.$page--hover--dark};
+	--page-bg: #{colors.$page--bg--dark};
 
 	--grid-rep-hover: #{colors.$grid--rep--hover--dark};
 
@@ -355,6 +395,9 @@
 	// Dark - Units
 	--unit-bg: #{colors.$unit--bg--dark};
 	--unit-bg-hover: #{colors.$unit--bg--dark--hover};
+
+	// Dark - Sidebar
+	--sidebar-bg: #{colors.$sidebar--bg--dark};
 
 	// Dark - Dialogs
 	--dialog-bg: #{colors.$dialog--bg--dark};
@@ -415,6 +458,17 @@
 	--button-text-hover: #{colors.$button--text--dark--hover};
 	--button-text-disabled: #{colors.$button--text--dark--disabled};
 
+	// Dark - Button variants
+	--button-secondary-bg: #{colors.$button--secondary--bg--dark};
+	--button-secondary-bg-hover: #{colors.$button--secondary--bg--dark--hover};
+	--button-secondary-text: #{colors.$button--secondary--text--dark};
+	--button-secondary-text-hover: #{colors.$button--secondary--text--dark--hover};
+
+	--button-primary-bg: #{colors.$button--primary--bg--dark};
+	--button-primary-bg-hover: #{colors.$button--primary--bg--dark--hover};
+	--button-primary-text: #{colors.$button--primary--text--dark};
+	--button-primary-border: #{colors.$button--primary--border--dark};
+
 	// Dark - Inputs
 	--input-bg: #{colors.$input--bg--dark};
 	--input-bg-hover: #{colors.$input--bg--dark--hover};
@@ -447,6 +501,10 @@
 	--link-item-image-color: #{colors.$link--item--bg--image--dark};
 	--link-item-image-color-hover: #{colors.$link--item--bg--image--dark--hover};
 
+	// Dark - Borders
+	--border-subtle: #{colors.$border--subtle--dark};
+	--border-medium: #{colors.$border--medium--dark};
+
 	// Dark - Text
 	--text-primary: #{colors.$text--primary--color--dark};
 	--text-secondary: #{colors.$text--secondary--color--dark};
@@ -461,6 +519,25 @@
 	// Dark - Tags
 	--tag-bg: #{colors.$tag--bg--dark};
 	--tag-text: #{colors.$tag--text--dark};
+
+	// Dark - Segmented Controls
+	// Variant 1: Blended (dark bg with lighter segments)
+	--segmented-control-blended-bg: #{colors.$segmented--control--blended--bg--dark};
+	--segmented-control-blended-segment-bg: #{colors.$segmented--control--blended--segment--bg--dark};
+	--segmented-control-blended-segment-bg-hover: #{colors.$segmented--control--blended--segment--bg--hover--dark};
+	--segmented-control-blended-segment-bg-checked: #{colors.$segmented--control--blended--segment--bg--checked--dark};
+	--segmented-control-blended-segment-text: #{colors.$segmented--control--blended--segment--text--dark};
+	--segmented-control-blended-segment-text-hover: #{colors.$segmented--control--blended--segment--text--hover--dark};
+	--segmented-control-blended-segment-text-checked: #{colors.$segmented--control--blended--segment--text--checked--dark};
+
+	// Variant 2: Background (dark bg with lighter segments)
+	--segmented-control-background-bg: #{colors.$segmented--control--background--bg--dark};
+	--segmented-control-background-segment-bg: #{colors.$segmented--control--background--segment--bg--dark};
+	--segmented-control-background-segment-bg-hover: #{colors.$segmented--control--background--segment--bg--hover--dark};
+	--segmented-control-background-segment-bg-checked: #{colors.$segmented--control--background--segment--bg--checked--dark};
+	--segmented-control-background-segment-text: #{colors.$segmented--control--background--segment--text--dark};
+	--segmented-control-background-segment-text-hover: #{colors.$segmented--control--background--segment--text--hover--dark};
+	--segmented-control-background-segment-text-checked: #{colors.$segmented--control--background--segment--text--checked--dark};
 
 	// Dark - Extra Weapons
 	--extra-purple-bg: #{colors.$extra--purple--bg--dark};
