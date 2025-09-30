@@ -20,5 +20,9 @@
 	"skill_selection_title": "Select Skill",
 	"skill_selection_search_placeholder": "Search skills...",
 
-	"extra_weapons": "Additional Weapons"
+	"extra_weapons": "Additional Weapons",
+
+	"context_view_details": "View Details",
+	"context_replace": "Replace",
+	"context_remove": "Remove"
 }

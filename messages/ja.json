@@ -20,5 +20,9 @@
 	"skill_selection_title": "スキル選択",
 	"skill_selection_search_placeholder": "スキルを検索...",
 
-	"extra_weapons": "追加武器"
+	"extra_weapons": "追加武器",
+
+	"context_view_details": "詳細を見る",
+	"context_replace": "交換",
+	"context_remove": "削除"
 }
