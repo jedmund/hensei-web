@@ -16,6 +16,10 @@
 	}
 }
 
+.growWrapper {
+	width: 100%;
+}
+
 .segmentedControl {
 	display: inline-flex;
 	position: relative;
@@ -30,17 +34,20 @@
 	}
 
 	&.blended {
-		background: var(--input-bound-bg);
+		background: var(--segmented-control-blended-bg);
 		border-radius: layout.$full-corner;
+		padding: spacing.$unit-half;
 	}
 
 	&.background {
-		background: var(--input-bg);
+		background: var(--segmented-control-background-bg);
 		border-radius: layout.$full-corner;
+		padding: spacing.$unit-half;
 	}
 
 	&.grow {
 		flex-grow: 1;
+		width: 100%;
 	}
 
 	&.gap {
@@ -51,7 +58,7 @@
 		width: 100%;
 	}
 
-	// Element colors
+	// Element colors (not used currently, but keeping for future)
 	&.fire {
 		[data-state='checked'] {
 			background: var(--fire-bg);

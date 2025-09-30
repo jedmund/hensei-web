@@ -1,19 +1,24 @@
 <!-- SegmentedControl Component -->
 <svelte:options runes={true} />
-<script lang="ts">
-	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui';
-	import styles from './segmented-control.module.scss';
-	import type { HTMLDivAttributes } from 'svelte/elements';
 
-	interface Props extends HTMLDivAttributes {
-		value?: string;
-		onValueChange?: (value: string) => void;
-		variant?: 'default' | 'blended' | 'background';
-		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | null;
-		grow?: boolean;
-		gap?: boolean;
-		class?: string;
-		wrapperClass?: string;
+<script lang="ts">
+	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui'
+	import { setContext } from 'svelte'
+	import styles from './segmented-control.module.scss'
+	import type { HTMLAttributes } from 'svelte/elements'
+
+	export type SegmentedControlVariant = 'default' | 'blended' | 'background'
+
+	interface Props extends HTMLAttributes<HTMLDivElement> {
+		value?: string
+		onValueChange?: (value: string) => void
+		variant?: SegmentedControlVariant
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | null
+		grow?: boolean
+		gap?: boolean
+		class?: string
+		wrapperClass?: string
+		children?: import('svelte').Snippet
 	}
 
 	let {
@@ -27,19 +32,22 @@
 		wrapperClass,
 		children,
 		...restProps
-	}: Props = $props();
+	}: Props = $props()
+
+	// Provide variant to child segments via context
+	setContext('segmented-control-variant', variant)
 
 	$effect(() => {
 		if (onValueChange && value !== undefined) {
-			onValueChange(value);
+			onValueChange(value)
 		}
-	});
+	})
 
 	const variantClasses = {
 		default: '',
 		blended: styles.blended,
 		background: styles.background
-	};
+	}
 
 	const elementClasses = {
 		wind: styles.wind,
@@ -48,15 +56,34 @@
 		earth: styles.earth,
 		dark: styles.dark,
 		light: styles.light
-	};
+	}
+
+	const classList = $derived(
+		[
+			styles.segmentedControl,
+			variantClasses[variant],
+			element ? elementClasses[element] : '',
+			grow ? styles.grow : '',
+			gap ? styles.gap : '',
+			className || ''
+		]
+			.filter(Boolean)
+			.join(' ')
+	)
+
+	const wrapperClassList = $derived(
+		[
+			styles.wrapper,
+			grow ? styles.growWrapper : '',
+			wrapperClass || ''
+		]
+			.filter(Boolean)
+			.join(' ')
+	)
 </script>
 
-<div class={`${styles.wrapper} ${wrapperClass || ''}`}>
-	<RadioGroupPrimitive.Root
-		bind:value
-		class={`${styles.segmentedControl} ${variantClasses[variant]} ${element ? elementClasses[element] : ''} ${grow ? styles.grow : ''} ${gap ? styles.gap : ''} ${className || ''}`}
-		{...restProps}
-	>
+<div class={wrapperClassList}>
+	<RadioGroupPrimitive.Root bind:value class={classList} {...restProps}>
 		{@render children?.()}
 	</RadioGroupPrimitive.Root>
 </div>

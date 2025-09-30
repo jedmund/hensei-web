@@ -5,61 +5,105 @@
 @use 'themes/mixins';
 
 .segment {
-  color: colors.$grey-55;
-  cursor: pointer;
-  flex-grow: 1;
-  font-size: typography.$font-regular;
-  font-weight: typography.$normal;
-  min-width: 100px;
-  position: relative;
-  background: transparent;
-  border: none;
-  padding: 0;
-  text-align: center;
-  outline: none;
+	color: var(--text-secondary);
+	cursor: pointer;
+	flex-grow: 1;
+	font-size: typography.$font-regular;
+	font-weight: typography.$normal;
+	min-width: 100px;
+	position: relative;
+	background: transparent;
+	border: none;
+	padding: 0;
+	text-align: center;
+	outline: none;
 
-  &:hover .label {
-    background: var(--page-hover);
-    color: var(--text-primary);
-  }
+	&:focus-visible .label {
+		outline: 2px solid colors.$blue;
+		outline-offset: 2px;
+	}
 
-  &[data-state='checked'] .label {
-    background: var(--background);
-    color: var(--text-primary);
-  }
-
-  &:focus-visible .label {
-    outline: 2px solid colors.$blue;
-    outline-offset: 2px;
-  }
-
-  @include mixins.breakpoint(phone) {
-    min-width: initial;
-    width: 100%;
-  }
+	@include mixins.breakpoint(phone) {
+		min-width: initial;
+		width: 100%;
+	}
 }
 
 .label {
-  border-radius: spacing.$unit * 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  box-sizing: border-box;
-  height: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  padding: 8px 12px;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
+	border: 0.5px solid transparent;
+	border-radius: layout.$full-corner;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	box-sizing: border-box;
+	font-weight: typography.$medium;
+	height: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	padding: calc(spacing.$unit * 1.5) spacing.$unit-2x;
+	text-overflow: ellipsis;
+	cursor: pointer;
+	transition: all 0.15s ease-in-out;
 }
 
 .indicator {
-  display: none;
+	display: none;
+}
+
+// Default variant styles
+.default {
+	.label {
+		background: transparent;
+		color: var(--text-secondary);
+	}
+
+	&:hover .label {
+		background: var(--page-hover);
+		color: var(--text-primary);
+	}
+
+	&[data-state='checked'] .label {
+		background: var(--background);
+		color: var(--text-primary);
+	}
 }
 
 // Blended variant styles
-:global(.blended) .segment[data-state='checked'] .label {
-  background: var(--card-bg);
+.blended {
+	.label {
+		background: var(--segmented-control-blended-segment-bg);
+		color: var(--segmented-control-blended-segment-text);
+	}
+
+	&:hover .label {
+		background: var(--segmented-control-blended-segment-bg-hover);
+		color: var(--segmented-control-blended-segment-text-hover);
+	}
+
+	&[data-state='checked'] .label {
+		background: var(--segmented-control-blended-segment-bg-checked);
+		color: var(--segmented-control-blended-segment-text-checked);
+		box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+	}
+}
+
+// Background variant styles
+.background {
+	.label {
+		background: var(--segmented-control-background-segment-bg);
+		color: var(--segmented-control-background-segment-text);
+	}
+
+	&:hover .label {
+		background: var(--segmented-control-background-segment-bg-hover);
+		color: var(--segmented-control-background-segment-text-hover);
+	}
+
+	&[data-state='checked'] .label {
+		background: var(--segmented-control-background-segment-bg-checked);
+		color: var(--segmented-control-background-segment-text-checked);
+		border: 0.5px solid rgba(0, 0, 0, 0.12);
+		box-shadow: 0 0 4px rgba(0, 0, 0, 0.08);
+	}
 }
