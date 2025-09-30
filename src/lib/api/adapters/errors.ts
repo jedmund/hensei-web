@@ -14,7 +14,7 @@ import type { AdapterError } from './types'
  * Extends the native Error class with additional properties
  */
 export class ApiError extends Error implements AdapterError {
-	name: 'AdapterError' = 'AdapterError'
+	name = 'AdapterError' as const
 	code: string
 	status: number
 	details?: any
@@ -173,11 +173,7 @@ export class RateLimitError extends ApiError {
  * @param details - Additional error details
  * @returns Appropriate error instance based on status code
  */
-export function createErrorFromStatus(
-	status: number,
-	message?: string,
-	details?: any
-): ApiError {
+export function createErrorFromStatus(status: number, message?: string, details?: any): ApiError {
 	switch (status) {
 		case 400:
 			return new ApiError('BAD_REQUEST', status, message || 'Bad request', details)
@@ -190,7 +186,9 @@ export function createErrorFromStatus(
 
 		case 404:
 			// Pass the message to NotFoundError if provided
-			return message ? new ApiError('NOT_FOUND', 404, message, details) : new NotFoundError(undefined, details)
+			return message
+				? new ApiError('NOT_FOUND', 404, message, details)
+				: new NotFoundError(undefined, details)
 
 		case 409:
 			return new ConflictError(message, details)
@@ -254,7 +252,11 @@ export function isRetryableError(error: any): boolean {
 
 	// Check by error code (handles both ApiError instances and plain objects)
 	// Note: NetworkError sets name to 'NetworkError' but still has AdapterError structure
-	if (error instanceof ApiError || error?.name === 'AdapterError' || error?.name === 'NetworkError') {
+	if (
+		error instanceof ApiError ||
+		error?.name === 'AdapterError' ||
+		error?.name === 'NetworkError'
+	) {
 		const retryableCodes = [
 			'NETWORK_ERROR',
 			'TIMEOUT',
@@ -321,11 +323,7 @@ export function normalizeError(error: any): AdapterError {
 
 	// Generic Error with status
 	if (error?.status) {
-		return createErrorFromStatus(
-			error.status,
-			error.message || error.statusText,
-			error
-		).toJSON()
+		return createErrorFromStatus(error.status, error.message || error.statusText, error).toJSON()
 	}
 
 	// Fallback to generic error
@@ -349,11 +347,12 @@ export function getErrorMessage(error: any): string {
 	}
 
 	// Try to get message from various error formats
-	const message = error.message ||
-					error.error ||
-					error.errors?.[0]?.message ||
-					error.statusText ||
-					'An unknown error occurred'
+	const message =
+		error.message ||
+		error.error ||
+		error.errors?.[0]?.message ||
+		error.statusText ||
+		'An unknown error occurred'
 
 	// Make network errors more user-friendly
 	if (message.includes('NetworkError') || message.includes('Failed to fetch')) {

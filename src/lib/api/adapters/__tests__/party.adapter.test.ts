@@ -7,7 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { PartyAdapter } from '../party.adapter'
-import type { Party } from '../party.adapter'
+import type { Party } from '$lib/types/api/party'
 
 describe('PartyAdapter', () => {
 	let adapter: PartyAdapter
@@ -25,26 +25,26 @@ describe('PartyAdapter', () => {
 		},
 		job: {
 			id: 'job-1',
-			name: { en: 'Warrior' },
+			name: { en: 'Warrior', ja: 'ウォリアー' },
 			skills: [
 				{
 					id: 'skill-1',
-					name: { en: 'Rage' },
+					name: { en: 'Rage', ja: 'レイジ' },
 					slot: 1
 				}
 			]
 		},
 		raid: {
 			id: 'raid-1',
-			name: { en: 'Proto Bahamut' },
+			name: { en: 'Proto Bahamut', ja: 'プロトバハムート' },
 			group: {
 				id: 'group-1',
-				name: { en: 'Tier 1' }
+				name: { en: 'Tier 1', ja: 'ティア1' }
 			}
 		},
-		gridWeapons: [],
-		gridSummons: [],
-		gridCharacters: [],
+		weapons: [],
+		summons: [],
+		characters: [],
 		createdAt: '2024-01-01T00:00:00Z',
 		updatedAt: '2024-01-01T00:00:00Z'
 	}

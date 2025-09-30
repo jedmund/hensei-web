@@ -321,11 +321,8 @@ const GridCharacterSchema = z.object({
   perpetuity: z.boolean().nullish().default(false),
   
   // Rings and earring
-  ring1: RingSchema,
-  ring2: RingSchema,
-  ring3: RingSchema,
-  ring4: RingSchema,
-  earring: RingSchema,
+  over_mastery: z.array(RingSchema).nullish(),
+  aetherial_mastery: RingSchema.nullish(),
   
   // Awakening
   awakening_id: z.string().nullish(),

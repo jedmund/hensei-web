@@ -39,7 +39,7 @@ interface SearchState {
  * @example
  * ```svelte
  * <script>
- * import { createSearchResource } from '$lib/api/adapters/resources'
+ * import { createSearchResource } from '$lib/api/adapters/resources/search.resource.svelte'
  *
  * const search = createSearchResource({
  *   debounceMs: 300,

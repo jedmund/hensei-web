@@ -8,7 +8,6 @@
  * @module adapters/base
  */
 
-import { snakeToCamel, camelToSnake } from '../schemas/transforms'
 import { transformResponse, transformRequest } from '../client'
 import type { AdapterOptions, RequestOptions, AdapterError } from './types'
 import {
@@ -90,10 +89,7 @@ export abstract class BaseAdapter {
 	 * })
 	 * ```
 	 */
-	protected async request<T>(
-		path: string,
-		options: RequestOptions = {}
-	): Promise<T> {
+	protected async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
 		// Build the full URL with query parameters (support both params and query)
 		const url = this.buildURL(path, options.query || options.params)
 
@@ -264,7 +260,7 @@ export abstract class BaseAdapter {
 	 */
 	cancelAll(): void {
 		// Abort all pending requests
-		this.abortControllers.forEach(controller => controller.abort())
+		this.abortControllers.forEach((controller) => controller.abort())
 		this.abortControllers.clear()
 	}
 
@@ -290,8 +286,9 @@ export abstract class BaseAdapter {
 			let response: Response
 			if (this.options.timeout > 0) {
 				const timeoutId = setTimeout(() => {
-					const controller = Array.from(this.abortControllers.values())
-						.find(c => c.signal === options.signal)
+					const controller = Array.from(this.abortControllers.values()).find(
+						(c) => c.signal === options.signal
+					)
 					controller?.abort()
 				}, this.options.timeout)
 
@@ -349,7 +346,6 @@ export abstract class BaseAdapter {
 		}
 	}
 
-
 	/**
 	 * Delays execution for a specified duration
 	 * Used for retry backoff
@@ -358,7 +354,7 @@ export abstract class BaseAdapter {
 	 * @returns Promise that resolves after the delay
 	 */
 	protected delay(ms: number): Promise<void> {
-		return new Promise(resolve => setTimeout(resolve, ms))
+		return new Promise((resolve) => setTimeout(resolve, ms))
 	}
 
 	/**
@@ -425,7 +421,7 @@ export abstract class BaseAdapter {
 
 			// Handle arrays by adding multiple params with the same key
 			if (Array.isArray(value)) {
-				value.forEach(item => {
+				value.forEach((item) => {
 					url.searchParams.append(key, String(item))
 				})
 			} else {
@@ -465,7 +461,7 @@ export abstract class BaseAdapter {
 		let hash = 0
 		for (let i = 0; i < str.length; i++) {
 			const char = str.charCodeAt(i)
-			hash = ((hash << 5) - hash) + char
+			hash = (hash << 5) - hash + char
 			hash = hash & hash // Convert to 32bit integer
 		}
 		return hash.toString(36)
@@ -487,10 +483,11 @@ export abstract class BaseAdapter {
 			const errorData = await response.json()
 
 			// Extract error message from various possible formats
-			message = errorData.message ||
-					 errorData.error ||
-					 errorData.errors?.[0]?.message ||
-					 response.statusText
+			message =
+				errorData.message ||
+				errorData.error ||
+				errorData.errors?.[0]?.message ||
+				response.statusText
 
 			details = errorData
 		} catch {

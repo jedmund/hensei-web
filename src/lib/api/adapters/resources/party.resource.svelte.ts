@@ -7,7 +7,8 @@
  * @module adapters/resources/party
  */
 
-import { PartyAdapter, partyAdapter, type Party, type CreatePartyParams, type UpdatePartyParams } from '../party.adapter'
+import { PartyAdapter, partyAdapter, type CreatePartyParams, type UpdatePartyParams } from '../party.adapter'
+import type { Party } from '$lib/types/api/party'
 import type { AdapterError } from '../types'
 
 /**
@@ -48,7 +49,7 @@ interface PartyListState {
  * @example
  * ```svelte
  * <script>
- * import { createPartyResource } from '$lib/api/adapters/resources'
+ * import { createPartyResource } from '$lib/api/adapters/resources/party.resource.svelte'
  *
  * const party = createPartyResource()
  *
@@ -299,7 +300,7 @@ export class PartyResource {
 	 * Updates the job for the current party
 	 */
 	async updateJob(
-		shortcode: string,
+		partyId: string,
 		jobId: string,
 		skills?: Array<{ id: string; slot: number }>,
 		accessoryId?: string
@@ -307,7 +308,16 @@ export class PartyResource {
 		this.current = { ...this.current, updating: true, error: undefined }
 
 		try {
-			const party = await this.adapter.updateJob(shortcode, jobId, skills, accessoryId)
+			// Update job first
+			let party = await this.adapter.updateJob(partyId, jobId)
+
+			// Update skills if provided
+			if (skills) {
+				party = await this.adapter.updateJobSkills(partyId, skills)
+			}
+
+			// TODO: Handle accessory update when API supports it
+
 			this.current = { data: party, loading: false, updating: false }
 			return party
 		} catch (error: any) {

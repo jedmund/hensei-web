@@ -9,61 +9,9 @@
  */
 
 import { BaseAdapter } from './base.adapter'
-import type { RequestOptions, AdapterOptions, PaginatedResponse } from './types'
+import type { AdapterOptions, PaginatedResponse } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
-
-/**
- * Party data structure
- */
-export interface Party {
-	id: string
-	shortcode: string
-	name?: string
-	description?: string
-	visibility: 'public' | 'private' | 'unlisted'
-	user: {
-		id: string
-		username: string
-	}
-	job?: {
-		id: string
-		name: Record<string, string>
-		skills: Array<{
-			id: string
-			name: Record<string, string>
-			slot: number
-		}>
-		accessory?: {
-			id: string
-			name: Record<string, string>
-		}
-	}
-	raid?: {
-		id: string
-		name: Record<string, string>
-		group?: {
-			id: string
-			name: Record<string, string>
-		}
-	}
-	weapons: GridWeapon[]
-	summons: GridSummon[]
-	characters: GridCharacter[]
-	guidebook?: {
-		id: string
-		title: string
-	}
-	extras?: Record<string, any>
-	createdAt: string
-	updatedAt: string
-}
-
-// GridWeapon type is imported from types/api/party
-
-// GridSummon type is imported from types/api/party
-
-// GridCharacter type is imported from types/api/party
 
 /**
  * Parameters for creating a new party
@@ -261,10 +209,7 @@ export class PartyAdapter extends BaseAdapter {
 	/**
 	 * Updates the job for a party
 	 */
-	async updateJob(
-		shortcode: string,
-		jobId: string
-	): Promise<Party> {
+	async updateJob(shortcode: string, jobId: string): Promise<Party> {
 		return this.request<Party>(`/parties/${shortcode}/jobs`, {
 			method: 'PUT',
 			body: {
@@ -277,25 +222,45 @@ export class PartyAdapter extends BaseAdapter {
 	 * Updates job skills for a party
 	 */
 	async updateJobSkills(
-		shortcode: string,
+		partyId: string,
 		skills: Array<{ id: string; slot: number }>
 	): Promise<Party> {
-		return this.request<Party>(`/parties/${shortcode}/job_skills`, {
+		console.log('[updateJobSkills] Input skills array:', skills)
+
+		// Convert skills array to Rails expected format
+		const party: Record<string, string | null> = {}
+
+		// Initialize all slots with null
+		for (let i = 1; i <= 4; i++) {
+			party[`skill${i}_id`] = null
+		}
+
+		// Set the provided skills
+		skills.forEach(skill => {
+			// Rails expects skill1_id, skill2_id, skill3_id, skill4_id
+			party[`skill${skill.slot + 1}_id`] = skill.id
+		})
+
+		const requestBody = {
+			party
+		}
+
+		console.log('[updateJobSkills] Sending to server:', {
+			url: `/parties/${partyId}/job_skills`,
+			body: requestBody
+		})
+
+		return this.request<Party>(`/parties/${partyId}/job_skills`, {
 			method: 'PUT',
-			body: {
-				skills
-			}
+			body: requestBody
 		})
 	}
 
 	/**
 	 * Removes a job skill from a party
 	 */
-	async removeJobSkill(
-		shortcode: string,
-		skillSlot: number
-	): Promise<Party> {
-		return this.request<Party>(`/parties/${shortcode}/job_skills`, {
+	async removeJobSkill(partyId: string, skillSlot: number): Promise<Party> {
+		return this.request<Party>(`/parties/${partyId}/job_skills`, {
 			method: 'DELETE',
 			body: {
 				slot: skillSlot
@@ -310,7 +275,7 @@ export class PartyAdapter extends BaseAdapter {
 		return this.request<Blob>(`/parties/${shortcode}/preview`, {
 			method: 'GET',
 			headers: {
-				'Accept': 'image/png'
+				Accept: 'image/png'
 			}
 		})
 	}

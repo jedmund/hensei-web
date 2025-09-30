@@ -42,8 +42,8 @@ export interface InfiniteScrollOptions<T> {
  * @example
  * ```svelte
  * <script>
- * import { createInfiniteScrollResource } from '$lib/api/adapters/resources'
- * import { partyAdapter } from '$lib/api/adapters'
+ * import { createInfiniteScrollResource } from '$lib/api/adapters/resources/infiniteScroll.resource.svelte'
+ * import { partyAdapter } from '$lib/api/adapters/party.adapter'
  *
  * const resource = createInfiniteScrollResource({
  *   fetcher: (page) => partyAdapter.list({ page }),
@@ -243,7 +243,7 @@ export class InfiniteScrollResource<T> {
 		} finally {
 			this.loadingMore = false
 			if (this.abortController) {
-				this.abortController = undefined
+				delete this.abortController
 			}
 		}
 	}
