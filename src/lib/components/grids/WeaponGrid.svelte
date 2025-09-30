@@ -23,6 +23,7 @@
 	}: Props = $props()
 
 	import WeaponUnit from '$lib/components/units/WeaponUnit.svelte'
+	import ExtraContainer from '$lib/components/extra/ExtraContainer.svelte'
 	import ExtraWeapons from '$lib/components/extra/ExtraWeaponsGrid.svelte'
 	import Guidebooks from '$lib/components/extra/GuidebooksGrid.svelte'
 
@@ -81,11 +82,15 @@
 			{/each}
 		</ul>
 	</div>
-	{#if raidExtra}
-		<ExtraWeapons {weapons} offset={9} />
-	{/if}
-	{#if showGuidebooks}
-		<Guidebooks {guidebooks} />
+	{#if raidExtra || showGuidebooks}
+		<ExtraContainer>
+			{#if raidExtra}
+				<ExtraWeapons {weapons} offset={9} />
+			{/if}
+			{#if showGuidebooks}
+				<Guidebooks {guidebooks} />
+			{/if}
+		</ExtraContainer>
 	{/if}
 </div>
 
