@@ -1,18 +1,26 @@
 <script lang="ts">
   import WeaponUnit from '$lib/components/units/WeaponUnit.svelte'
-  import type { GridWeaponItemView } from '$lib/api/schemas/party'
+  import ExtraContainerItem from './ExtraContainerItem.svelte'
+  import type { GridWeapon } from '$lib/types/api/party'
+  import * as m from '$lib/paraglide/messages'
 
-  export let weapons: GridWeaponItemView[] = []
-  export let offset = 9
+  interface Props {
+    weapons?: GridWeapon[]
+    offset?: number
+  }
+
+  let { weapons = [], offset = 9 }: Props = $props()
 </script>
 
-<ul class="grid">
-  {#each [0,1,2] as i}
-    <li class:empty={!weapons[offset + i]}>
-      <WeaponUnit item={weapons[offset + i]} position={offset + i} />
-    </li>
-  {/each}
-</ul>
+<ExtraContainerItem title={m.extra_weapons()}>
+  <ul class="grid">
+    {#each [0, 1, 2] as i}
+      <li class:empty={!weapons[offset + i]}>
+        <WeaponUnit item={weapons[offset + i]} position={offset + i} />
+      </li>
+    {/each}
+  </ul>
+</ExtraContainerItem>
 
 <style lang="scss">
   @use '$src/themes/spacing' as *;
