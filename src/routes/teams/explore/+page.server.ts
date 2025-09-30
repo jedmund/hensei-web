@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
-import { partyAdapter } from '$lib/api/adapters'
+import { partyAdapter } from '$lib/api/adapters/party.adapter'
 
 export const load: PageServerLoad = async ({ url, depends }) => {
   depends('app:parties:list')

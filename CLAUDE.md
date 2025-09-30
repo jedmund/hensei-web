@@ -197,6 +197,28 @@ src/
    - `$types` → `src/lib/types` (custom alias)
    - `$src` → `src/` (Vite alias)
 
+7. **Import Patterns**:
+   - **Prefer direct imports over re-exports** for better clarity and tree-shaking
+   - Import types directly from their source files (e.g., `import type { Party } from '$lib/types/api/party'`)
+   - Avoid creating barrel files (index.ts) that re-export from other modules
+   - Exception: Generated code (like Paraglide messages) may use re-exports
+   - This pattern improves TypeScript performance and makes dependencies explicit
+
+   **Correct Import Examples**:
+   ```typescript
+   // ✅ Good - Direct imports
+   import { partyAdapter } from '$lib/api/adapters/party.adapter'
+   import { userAdapter } from '$lib/api/adapters/user.adapter'
+   import { createSearchResource } from '$lib/api/adapters/resources/search.resource.svelte'
+   import type { Party } from '$lib/types/api/party'
+   import type { AdapterOptions } from '$lib/api/adapters/types'
+   import { ApiError } from '$lib/api/adapters/errors'
+
+   // ❌ Bad - Barrel file imports
+   import { partyAdapter, userAdapter } from '$lib/api/adapters'
+   import type { Party } from '$lib/api/adapters'
+   ```
+
 ### Component Patterns
 
 Components follow a consistent structure:

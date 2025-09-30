@@ -2,7 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit'
 import { json } from '@sveltejs/kit'
 import { z } from 'zod'
 import { passwordGrantLogin } from '$lib/auth/oauth'
-import { UserAdapter } from '$lib/api/adapters'
+import { UserAdapter } from '$lib/api/adapters/user.adapter'
 import { buildCookies } from '$lib/auth/map'
 import { setAccountCookie, setUserCookie, setRefreshCookie } from '$lib/auth/cookies'
 

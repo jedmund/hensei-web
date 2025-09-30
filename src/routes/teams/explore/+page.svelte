@@ -4,7 +4,7 @@
   import InfiniteScroll from '$lib/components/InfiniteScroll.svelte'
   import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
   import { createInfiniteScrollResource } from '$lib/api/adapters/resources/infiniteScroll.resource.svelte'
-  import { partyAdapter } from '$lib/api/adapters'
+  import { partyAdapter } from '$lib/api/adapters/party.adapter'
 
   const { data } = $props() as { data: PageData }
 

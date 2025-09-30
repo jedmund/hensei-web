@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
-import { userAdapter } from '$lib/api/adapters'
+import { userAdapter } from '$lib/api/adapters/user.adapter'
 import { parseParty } from '$lib/api/schemas/party'
 
 export const load: PageServerLoad = async ({ params, url, depends, locals }) => {
