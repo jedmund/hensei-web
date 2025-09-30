@@ -1,23 +1,30 @@
 <script lang="ts">
 	import type { Party, GridWeapon, GridCharacter } from '$lib/types/api/party'
+	import type { Job } from '$lib/types/api/entities'
 	import { getElementClass } from '$lib/types/enums'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
+	import { getJobPortraitUrl, Gender } from '$lib/utils/jobUtils'
 
 	interface Props {
 		party?: Party
 		characters?: GridCharacter[]
+		job?: Job
 		jobId?: string
 		element?: number
 		gender?: number
 	}
 
-	let { party, characters: directCharacters, jobId, element, gender }: Props = $props()
+	let { party, characters: directCharacters, job, jobId, element, gender }: Props = $props()
 
 	// Use direct characters if provided, otherwise get from party
 	const characters = $derived(directCharacters || party?.characters || [])
 	const grid = $derived(Array.from({ length: 3 }, (_, i) =>
 		characters.find((c: GridCharacter) => c?.position === i)
 	))
+
+	// Get job from party if not directly provided
+	const currentJob = $derived(job || party?.job)
+	const genderValue = $derived(gender !== undefined ? gender : 0) // Default to Gran if not specified
 
 	const protagonistClass = $derived(
 		// If element is directly provided, use it
@@ -30,6 +37,11 @@
 			const el = main?.element ?? main?.weapon?.element
 			return getElementClass(el) || ''
 		})() : ''
+	)
+
+	// Get job portrait URL if job is available
+	const jobPortraitUrl = $derived(
+		currentJob ? getJobPortraitUrl(currentJob, genderValue as Gender) : ''
 	)
 
 	function characterImageUrl(c?: GridCharacter): string {
@@ -58,7 +70,16 @@
 
 <div class="rep">
 	<ul class="characters">
-		<li class={`protagonist ${protagonistClass}`} class:empty={!protagonistClass}></li>
+		<li class={`protagonist ${protagonistClass}`} class:empty={!currentJob}>
+			{#if currentJob && jobPortraitUrl}
+				<img
+					alt="{currentJob.name.en} job"
+					src={jobPortraitUrl}
+					loading="lazy"
+					decoding="async"
+				/>
+			{/if}
+		</li>
 		{#each grid as c, i}
 			<li class="character" class:empty={!c}>
 				{#if c}<img
@@ -124,6 +145,7 @@
 				position: relative;
 				width: 100%;
 				height: 100%;
+				object-fit: cover;
 			}
 
 			&.wind {

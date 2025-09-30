@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { GridCharacter } from '$lib/types/api/party'
 	import type { Party } from '$lib/types/api/party'
+	import type { Job } from '$lib/types/api/entities'
 	import { getContext } from 'svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
@@ -8,6 +9,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
 	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+	import { getJobPortraitUrl, Gender } from '$lib/utils/jobUtils'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
 
@@ -16,9 +18,10 @@
 		position: number
 		mainWeaponElement?: number | null
 		partyElement?: number | null
+		job?: Job
 	}
 
-	let { item, position, mainWeaponElement, partyElement }: Props = $props()
+	let { item, position, mainWeaponElement, partyElement, job }: Props = $props()
 
 	type PartyCtx = {
 		getParty: () => Party
@@ -43,6 +46,11 @@
 	}
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
+		// For protagonist slot (position 0) with a job, show job portrait
+		if (position === 0 && job) {
+			return getJobPortraitUrl(job, Gender.Gran) // TODO: Get gender from user preferences
+		}
+
 		// If no item or no character with granblueId, return placeholder
 		if (!item || !item.character?.granblueId) {
 			return getCharacterImageWithPose(null, 'main', 0, 0)
@@ -57,6 +65,9 @@
 			partyElement
 		)
 	})
+
+	// Check if this is the protagonist slot
+	const isProtagonist = $derived(position === 0)
 
 	async function remove() {
 		if (!item?.id) return
@@ -162,8 +173,9 @@
 						{/if}
 						<img
 							class="image"
-							class:placeholder={!item?.character?.granblueId}
-							alt={displayName(item?.character)}
+							class:placeholder={!item?.character?.granblueId && !isProtagonist}
+							class:protagonist={isProtagonist}
+							alt={isProtagonist && job ? job.name.en : displayName(item?.character)}
 							src={imageUrl}
 						/>
 					</div>
@@ -189,16 +201,20 @@
 		{#key `empty-${position}`}
 			<div
 				class="frame character cell"
-				class:editable={ctx?.canEdit()}
+				class:editable={ctx?.canEdit() && !isProtagonist}
+				class:protagonist={isProtagonist}
 				onclick={() =>
+					!isProtagonist &&
 					ctx?.canEdit() &&
 					ctx?.openPicker &&
 					ctx.openPicker({ type: 'character', position, item })}
 			>
 				<img
-					class="image placeholder"
-					alt=""
-					src="/images/placeholders/placeholder-weapon-grid.png"
+					class="image"
+					class:placeholder={!isProtagonist || !job}
+					class:protagonist={isProtagonist}
+					alt={isProtagonist && job ? job.name.en : ""}
+					src={isProtagonist ? imageUrl : "/images/placeholders/placeholder-weapon-grid.png"}
 				/>
 				{#if ctx?.canEdit()}
 					<span class="icon">
@@ -315,6 +331,18 @@
 
 		&.placeholder {
 			opacity: 0;
+		}
+
+		&.protagonist {
+			object-fit: cover;
+			opacity: 1;
+		}
+	}
+
+	.frame.protagonist {
+		// Protagonist slot may have different aspect ratio for job portraits
+		.image {
+			object-fit: cover;
 		}
 	}
 

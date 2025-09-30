@@ -2,6 +2,7 @@
 
 <script lang="ts">
 	import type { GridCharacter } from '$lib/types/api/party'
+	import type { Job } from '$lib/types/api/entities'
 	import { getContext } from 'svelte'
 	import type { PartyContext } from '$lib/services/party.service'
 	import type { DragDropContext } from '$lib/composables/drag-drop.svelte'
@@ -12,6 +13,7 @@
 		characters?: GridCharacter[]
 		mainWeaponElement?: number | null | undefined
 		partyElement?: number | null | undefined
+		job?: Job
 		container?: string
 	}
 
@@ -19,6 +21,7 @@
 		characters = [],
 		mainWeaponElement = undefined,
 		partyElement = undefined,
+		job = undefined,
 		container = 'main-characters'
 	}: Props = $props()
 
@@ -65,11 +68,23 @@
 							type="character"
 							canDrag={!!character && (ctx?.canEdit() ?? false)}
 						>
-							<CharacterUnit item={character} position={i} {mainWeaponElement} {partyElement} />
+							<CharacterUnit
+								item={character}
+								position={i}
+								{mainWeaponElement}
+								{partyElement}
+								job={i === 0 ? job : undefined}
+							/>
 						</DraggableItem>
 					</DropZone>
 				{:else}
-					<CharacterUnit item={character} position={i} {mainWeaponElement} {partyElement} />
+					<CharacterUnit
+						item={character}
+						position={i}
+						{mainWeaponElement}
+						{partyElement}
+						job={i === 0 ? job : undefined}
+					/>
 				{/if}
 			</li>
 		{/each}

@@ -31,9 +31,15 @@
 		<div class="info">
 			<h2 class:empty={!party.name}>{party.name || '(untitled)'}</h2>
 			<div class="details">
-				<span class={`raid ${!party.raid ? 'empty' : ''}`}
-					>{party.raid ? displayName(party.raid) : 'No raid'}</span
-				>
+				<div class="details-text">
+					<span class={`raid ${!party.raid ? 'empty' : ''}`}
+						>{party.raid ? displayName(party.raid) : 'No raid'}</span
+					>
+					{#if party.job}
+						<span class="separator">•</span>
+						<span class="job">{displayName(party.job)}</span>
+					{/if}
+				</div>
 
 				<div class="pills">
 					{#if party.chargeAttack}
@@ -190,12 +196,32 @@
 			min-width: 0;
 		}
 
+		.details-text {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: $unit-half;
+			overflow: hidden;
+			flex: 0 1 auto;
+			min-width: 0;
+
+			.separator {
+				color: var(--text-tertiary);
+				flex-shrink: 0;
+			}
+
+			.job {
+				color: var(--text-secondary);
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
+
 		.raid {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			flex: 0 1 auto;
-			min-width: 0;
 
 			&.empty {
 				color: var(--text-tertiary);
