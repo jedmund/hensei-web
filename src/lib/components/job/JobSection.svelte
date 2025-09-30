@@ -86,23 +86,36 @@
 			<div class="job-header">
 				{#if canEdit}
 					<button class="job-name clickable" on:click={onSelectJob}>
-						<img src={jobIconUrl} alt="{job.name.en} icon" class="job-icon" />
-						<h3>{job.name.en}</h3>
+						<div class="job-name-row">
+							<img src={jobIconUrl} alt="{job.name.en} icon" class="job-icon" />
+							<h3>{job.name.en}</h3>
+						</div>
+						{#if job.masterLevel || job.ultimateMastery}
+							<div class="job-badges">
+								{#if job.masterLevel}
+									<span class="badge master">ML{job.masterLevel}</span>
+								{/if}
+								{#if job.ultimateMastery}
+									<span class="badge ultimate">UM</span>
+								{/if}
+							</div>
+						{/if}
 					</button>
 				{:else}
 					<div class="job-name">
-						<img src={jobIconUrl} alt="{job.name.en} icon" class="job-icon" />
-						<h3>{job.name.en}</h3>
-					</div>
-				{/if}
-
-				{#if job.masterLevel || job.ultimateMastery}
-					<div class="job-badges">
-						{#if job.masterLevel}
-							<span class="badge master">Master Lv.{job.masterLevel}</span>
-						{/if}
-						{#if job.ultimateMastery}
-							<span class="badge ultimate">Ultimate</span>
+						<div class="job-name-row">
+							<img src={jobIconUrl} alt="{job.name.en} icon" class="job-icon" />
+							<h3>{job.name.en}</h3>
+						</div>
+						{#if job.masterLevel || job.ultimateMastery}
+							<div class="job-badges">
+								{#if job.masterLevel}
+									<span class="badge master">ML{job.masterLevel}</span>
+								{/if}
+								{#if job.ultimateMastery}
+									<span class="badge ultimate">UM</span>
+								{/if}
+							</div>
 						{/if}
 					</div>
 				{/if}
@@ -297,6 +310,7 @@
 			.job-name {
 				display: flex;
 				align-items: center;
+				justify-content: space-between;
 				gap: spacing.$unit;
 				padding: spacing.$unit;
 				border-radius: layout.$card-corner;
@@ -314,6 +328,12 @@
 					&:hover {
 						background: var(--button-contained-bg-hover);
 					}
+				}
+
+				.job-name-row {
+					display: flex;
+					align-items: center;
+					gap: spacing.$unit-half;
 				}
 
 				.job-icon {

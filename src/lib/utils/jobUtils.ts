@@ -41,11 +41,9 @@ export function getJobFullImageUrl(job: Job | undefined, gender: Gender = Gender
 		return '/images/placeholders/placeholder-weapon-grid.png'
 	}
 
-	// Convert job name to slug format (lowercase, spaces to hyphens)
-	const slug = job.name.en.toLowerCase().replace(/\s+/g, '-')
 	const genderSuffix = gender === Gender.Djeeta ? 'b' : 'a'
 
-	return `/images/jobs/${slug}_${genderSuffix}.png`
+	return `/images/job-zoom/${job.granblueId}_${genderSuffix}.png`
 }
 
 /**
@@ -59,6 +57,19 @@ export function getJobIconUrl(granblueId: string | undefined): string {
 	}
 
 	return `/images/job-icons/${granblueId}.png`
+}
+
+/**
+ * Generate job wide banner image URL for JobItem component
+ * These are wider banner-style images stored in /static/images/job-wide/
+ */
+export function getJobWideImageUrl(job: Job | undefined, gender: Gender = Gender.Gran): string {
+	if (!job) {
+		return '/images/placeholders/placeholder-weapon-grid.png'
+	}
+
+	const genderSuffix = gender === Gender.Djeeta ? 'b' : 'a'
+	return `/images/job-wide/${job.granblueId}_${genderSuffix}.jpg`
 }
 
 /**

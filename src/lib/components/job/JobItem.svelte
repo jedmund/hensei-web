@@ -1,6 +1,11 @@
 <script lang="ts">
 	import type { Job } from '$lib/types/api/entities'
-	import { getJobIconUrl, formatJobProficiency } from '$lib/utils/jobUtils'
+	import {
+		getJobIconUrl,
+		getJobWideImageUrl,
+		formatJobProficiency,
+		Gender
+	} from '$lib/utils/jobUtils'
 	import ProficiencyLabel from '../labels/ProficiencyLabel.svelte'
 
 	interface Props {
@@ -21,26 +26,34 @@
 	aria-pressed={selected}
 	aria-label="{job.name.en} - {selected ? 'Currently selected' : 'Click to select'}"
 >
-	<img src={getJobIconUrl(job.granblueId)} alt={job.name.en} class="job-icon" loading="lazy" />
+	<div class="job-image-container">
+		<img
+			src={getJobWideImageUrl(job, Gender.Gran)}
+			alt={job.name.en}
+			class="job-wide"
+			loading="lazy"
+		/>
+	</div>
 
 	<div class="job-info">
 		<span class="job-name">{job.name.en}</span>
 
-		<div class="job-details">
-			{#if job.ultimateMastery}
-				<span class="badge ultimate">UM</span>
-			{/if}
+		{#if proficiencies.length > 0}
+			<div class="proficiencies">
+				{#each job.proficiency as prof}
+					{#if prof > 0}
+						<ProficiencyLabel proficiency={prof} size="small" />
+					{/if}
+				{/each}
+			</div>
+		{/if}
+	</div>
 
-			{#if proficiencies.length > 0}
-				<div class="proficiencies">
-					{#each job.proficiency as prof}
-						{#if prof > 0}
-							<ProficiencyLabel proficiency={prof} size="small" />
-						{/if}
-					{/each}
-				</div>
-			{/if}
-		</div>
+	<div class="job-right">
+		{#if job.ultimateMastery}
+			<span class="badge ultimate">UM</span>
+		{/if}
+		<img src={getJobIconUrl(job.granblueId)} alt="" class="job-icon" loading="lazy" />
 	</div>
 </button>
 
@@ -53,7 +66,7 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit;
-		padding: spacing.$unit-2x spacing.$unit;
+		padding: spacing.$unit;
 		background: var(--card-bg);
 		border-radius: layout.$card-corner;
 		border: none;
@@ -83,24 +96,26 @@
 
 		position: relative;
 
-		.job-icon {
-			// Display at native size (job icons are typically 48x48px)
-			width: auto;
-			height: 24px;
-			max-width: 48px;
-			max-height: 48px;
-			border-radius: 4px;
+		.job-image-container {
+			position: relative;
+			width: 120px;
+			border-radius: layout.$item-corner;
+			overflow: hidden;
 			flex-shrink: 0;
-			object-fit: contain;
+
+			.job-wide {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				display: block;
+			}
 		}
 
 		.job-info {
 			flex: 1;
 			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			align-items: center;
-			gap: 4px;
+			flex-direction: column;
+			gap: spacing.$unit-half;
 			min-width: 0;
 
 			.job-name {
@@ -112,38 +127,45 @@
 				white-space: nowrap;
 			}
 
-			.job-details {
+			.proficiencies {
 				display: flex;
-				align-items: center;
 				gap: spacing.$unit-half;
+				align-items: center;
+				overflow: hidden;
+			}
+		}
 
-				.badge {
-					display: inline-block;
-					padding: 2px 6px;
-					border-radius: 8px;
-					font-size: typography.$font-small;
-					font-weight: 600;
-					text-transform: uppercase;
-					letter-spacing: 0.5px;
-					flex-shrink: 0;
+		.job-right {
+			display: flex;
+			align-items: center;
+			gap: spacing.$unit;
+			flex-shrink: 0;
 
-					&.master {
-						background: var(--badge-master-bg, #ffd700);
-						color: var(--badge-master-text, #000);
-					}
+			.badge {
+				display: inline-block;
+				padding: 2px 6px;
+				border-radius: 8px;
+				font-size: typography.$font-small;
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
 
-					&.ultimate {
-						background: var(--badge-ultimate-bg, #9b59b6);
-						color: var(--badge-ultimate-text, #fff);
-					}
+				&.master {
+					background: var(--badge-master-bg, #ffd700);
+					color: var(--badge-master-text, #000);
 				}
 
-				.proficiencies {
-					display: flex;
-					gap: spacing.$unit-half;
-					align-items: center;
-					overflow: hidden;
+				&.ultimate {
+					background: var(--badge-ultimate-bg, #9b59b6);
+					color: var(--badge-ultimate-text, #fff);
 				}
+			}
+
+			.job-icon {
+				width: 28px;
+				height: 28px;
+				border-radius: layout.$item-corner;
+				object-fit: contain;
 			}
 		}
 	}
