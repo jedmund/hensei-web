@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ url, depends }) => {
       page,
       total: response.total,
       totalPages: response.totalPages,
-      perPage: response.per || 20
+      perPage: response.perPage || 20
     }
   } catch (e: any) {
     console.error('[explore/+page.server.ts] Failed to load teams:', {
