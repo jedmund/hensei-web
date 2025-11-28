@@ -333,8 +333,8 @@
 						<DetailItem label="Race 2" value={getRaceLabel(character.race?.[1])} />
 					{/if}
 					<DetailItem label="Gender" value={getGenderLabel(character.gender)} />
-					<DetailItem label="Proficiency 1" value={getProficiencyLabel(character.proficiency[0])} />
-					<DetailItem label="Proficiency 2" value={getProficiencyLabel(character.proficiency[1])} />
+						<DetailItem label="Proficiency 1" value={getProficiencyLabel(character.proficiency?.[0] ?? 0)} />
+						<DetailItem label="Proficiency 2" value={getProficiencyLabel(character.proficiency?.[1] ?? 0)} />
 				{/if}
 			</DetailsContainer>
 

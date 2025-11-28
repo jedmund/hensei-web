@@ -21,7 +21,7 @@
 		placeholder
 	}: {
 		label: string
-		value?: string | number | undefined
+		value?: string | number | boolean | null | undefined
 		children?: Snippet
 		editable?: boolean
 		type?: 'text' | 'number' | 'select' | 'checkbox'
