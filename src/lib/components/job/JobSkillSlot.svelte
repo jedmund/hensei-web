@@ -112,8 +112,10 @@
 
 {#snippet EmptyState({ slot })}
 	<div class="empty-content">
-		<Icon name="plus" size={20} />
-		<span>Slot {slot + 1}</span>
+		<div class="placeholder-icon">
+			<Icon name="plus" size={16} />
+		</div>
+		<span class="placeholder-text">Select a skill</span>
 	</div>
 {/snippet}
 
@@ -154,12 +156,19 @@
 		}
 
 		&.empty {
-			border-style: dashed;
-			background: var(--placeholder-bg);
+			background: transparent;
 
 			&.editable:hover {
-				background: var(--button-contained-bg-hover);
-				border-style: solid;
+				background: var(--button-bg-hover);
+
+				.placeholder-icon {
+					border-color: var(--border-medium);
+					box-shadow: var(--hover-shadow);
+				}
+
+				.placeholder-text {
+					color: var(--text-tertiary-hover);
+				}
 			}
 		}
 
@@ -222,16 +231,30 @@
 
 	.empty-content {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		align-items: center;
-		justify-content: center;
-		gap: 4px;
+		gap: $unit;
 		padding: $unit;
-		color: var(--text-tertiary);
-		height: 60px;
+		height: 100%;
 
-		span {
-			font-size: 12px;
+		.placeholder-icon {
+			width: 32px;
+			height: 32px;
+			background: var(--card-bg);
+			border: 1px solid transparent;
+			border-radius: $unit-half;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			color: var(--icon-secondary);
+			transition: all 0.15s ease;
+		}
+
+		.placeholder-text {
+			font-size: 14px;
+			color: var(--text-tertiary);
+			transition: color 0.15s ease;
 		}
 	}
 

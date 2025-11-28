@@ -93,7 +93,7 @@
 						{#if job.masterLevel || job.ultimateMastery}
 							<div class="job-badges">
 								{#if job.masterLevel}
-									<span class="badge master">ML{job.masterLevel}</span>
+									<span class="badge master">ML</span>
 								{/if}
 								{#if job.ultimateMastery}
 									<span class="badge ultimate">UM</span>
@@ -110,7 +110,7 @@
 						{#if job.masterLevel || job.ultimateMastery}
 							<div class="job-badges">
 								{#if job.masterLevel}
-									<span class="badge master">ML{job.masterLevel}</span>
+									<span class="badge master">ML</span>
 								{/if}
 								{#if job.ultimateMastery}
 									<span class="badge ultimate">UM</span>

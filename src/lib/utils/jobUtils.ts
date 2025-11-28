@@ -154,9 +154,8 @@ export function isSkillSlotLocked(
 export function getSkillCategoryName(skill: JobSkill): string {
 	if (skill.main) return 'Main'
 	if (skill.sub) return 'Subskill'
-	// Use category field for additional classification
-	if (skill.category === 2) return 'EMP'
-	if (skill.category === 1) return 'Base'
+	if (skill.emp) return 'EMP'
+	if (skill.base) return 'Base'
 	return 'Unknown'
 }
 
@@ -167,9 +166,8 @@ export function getSkillCategoryName(skill: JobSkill): string {
 export function getSkillCategoryColor(skill: JobSkill): string {
 	if (skill.main) return 'var(--skill-main)'
 	if (skill.sub) return 'var(--skill-sub)'
-	// Use category field for additional classification
-	if (skill.category === 2) return 'var(--skill-emp)'
-	if (skill.category === 1) return 'var(--skill-base)'
+	if (skill.emp) return 'var(--skill-emp)'
+	if (skill.base) return 'var(--skill-base)'
 	return 'var(--skill-default)'
 }
 
@@ -226,9 +224,8 @@ export function countSkillsByType(skills: JobSkillList): {
 		if (skill) {
 			if (skill.main) counts.main++
 			else if (skill.sub) counts.sub++
-			// Use category field for additional classification
-			else if (skill.category === 2) counts.emp++
-			else if (skill.category === 1) counts.base++
+			else if (skill.emp) counts.emp++
+			else if (skill.base) counts.base++
 		}
 	}
 

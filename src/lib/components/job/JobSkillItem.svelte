@@ -23,9 +23,8 @@
 	function getSkillColorClass(skill: JobSkill): string {
 		if (skill.main) return 'skill-main'
 		if (skill.sub) return 'skill-sub'
-		// Use category for additional classification
-		if (skill.category === 2) return 'skill-emp'
-		if (skill.category === 1) return 'skill-base'
+		if (skill.emp) return 'skill-emp'
+		if (skill.base) return 'skill-base'
 		return ''
 	}
 </script>

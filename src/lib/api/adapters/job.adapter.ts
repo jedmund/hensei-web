@@ -21,6 +21,8 @@ export interface SearchJobSkillsParams {
 	jobId: string  // Required for API
 	page?: number
 	per?: number
+	locale?: string
+	filters?: { group?: number }
 }
 
 /**
@@ -114,12 +116,13 @@ export class JobAdapter extends BaseAdapter {
 			body: {
 				search: {
 					query: params.query || '',
-					job: params.jobId
-				},
-				page: params.page || 1,
-				per: params.per || 50
-			},
-			cacheTTL: 60000 // Cache for 1 minute
+					job: params.jobId,
+					page: params.page || 1,
+					locale: params.locale || 'en',
+					filters: params.filters || {}
+				}
+			}
+			// Note: No caching - filters change frequently and cache key bug causes stale data
 		})
 
 		// Transform the response to match the expected format

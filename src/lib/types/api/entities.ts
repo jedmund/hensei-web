@@ -91,20 +91,24 @@ export interface Job {
   row: number
   order: number
   proficiency: [number, number]
-  masterLevel?: number
-  ultimateMastery?: number
+  masterLevel?: boolean    // Whether this job supports master level
+  ultimateMastery?: boolean // Whether this job supports ultimate mastery
   accessory?: boolean
   accessoryType?: number
 }
 
-// JobSkill entity
+// JobSkill entity from JobSkillBlueprint
 export interface JobSkill {
   id: string
   name: LocalizedName
   slug: string
-  category: number
-  main: boolean
-  sub: boolean
+  color: number       // Skill category (0-3 for colors, relates to skill type)
+  main: boolean       // Primary job skill
+  sub: boolean        // Sub-skill (transferable)
+  emp: boolean        // EMP skill
+  base: boolean       // Base skill (for advanced jobs)
+  order: number       // Display order
+  job: Job            // Associated job
 }
 
 // JobAccessory entity

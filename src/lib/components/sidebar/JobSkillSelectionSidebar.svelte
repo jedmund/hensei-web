@@ -8,6 +8,7 @@
 	import JobSkillItem from '../job/JobSkillItem.svelte'
 	import Button from '../ui/Button.svelte'
 	import Input from '../ui/Input.svelte'
+	import Select from '../ui/Select.svelte'
 	import Icon from '../Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -27,13 +28,28 @@
 		onRemoveSkill
 	}: Props = $props()
 
+	// Skill category filter options
+	// Values match Rails search_controller expectations:
+	// -1: All, 0-3: Color categories, 4: EMP, 5: Base
+	const skillCategoryOptions = [
+		{ value: -1, label: 'All Skills' },
+		{ value: 2, label: 'Damaging' },
+		{ value: 0, label: 'Buffing' },
+		{ value: 1, label: 'Debuffing' },
+		{ value: 3, label: 'Healing' },
+		{ value: 4, label: 'EMP' },
+		{ value: 5, label: 'Base' }
+	]
+
 	// State
 	let searchQuery = $state('')
+	let skillCategory = $state(-1) // -1 = All
 	let error = $state<string | undefined>()
 	let sentinelEl = $state<HTMLElement>()
 	let skillsResource = $state<ReturnType<typeof createInfiniteScrollResource<JobSkill>> | null>(null)
 	let lastSearchQuery = ''
 	let lastJobId: string | undefined
+	let lastCategory = -1
 
 	// Check if slot is locked
 	const slotLocked = $derived(targetSlot === 0)
@@ -44,9 +60,10 @@
 	// Manage resource creation and search updates
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined
 
-	function updateSearch() {
+	function updateSearch(forceRebuild = false) {
 		const jobId = job?.id
 		const locked = slotLocked
+		const category = skillCategory
 
 		// Clean up if no job or locked
 		if (!jobId || locked) {
@@ -56,21 +73,29 @@
 			}
 			lastJobId = undefined
 			lastSearchQuery = ''
+			lastCategory = -1
 			return
 		}
 
-		// Create new resource if job changed
-		if (jobId !== lastJobId) {
+		// Rebuild resource if job or category changed
+		const needsRebuild = forceRebuild || jobId !== lastJobId || category !== lastCategory
+
+		if (needsRebuild) {
 			if (skillsResource) {
 				skillsResource.destroy()
 			}
 
+			// Capture current values for the closure
+			const currentQuery = searchQuery
+			const currentCategory = category
+
 			const resource = createInfiniteScrollResource<JobSkill>({
 				fetcher: async (page) => {
 					const response = await jobAdapter.searchSkills({
-						query: lastSearchQuery,
+						query: currentQuery,
 						jobId,
-						page
+						page,
+						...(currentCategory >= 0 ? { filters: { group: currentCategory } } : {})
 					})
 					return response
 				},
@@ -81,19 +106,21 @@
 			skillsResource = resource
 			lastJobId = jobId
 			lastSearchQuery = searchQuery
+			lastCategory = category
 			resource.load()
 		}
-		// Reload if search query changed
+		// Reload if only search query changed
 		else if (searchQuery !== lastSearchQuery && skillsResource) {
 			lastSearchQuery = searchQuery
-			skillsResource.reset()
-			skillsResource.load()
+			// Need to rebuild to capture new query in closure
+			updateSearch(true)
 		}
 	}
 
-	// Watch for job changes
+	// Watch for job and category changes
 	$effect(() => {
 		job // Track job
+		skillCategory // Track category
 		updateSearch()
 	})
 
@@ -198,6 +225,16 @@
 			disabled={!canSearch}
 			fullWidth={true}
 		/>
+		<div class="filter-row">
+			<Select
+				options={skillCategoryOptions}
+				bind:value={skillCategory}
+				placeholder="Filter by category"
+				disabled={!canSearch}
+				size="small"
+				fullWidth={true}
+			/>
+		</div>
 	</div>
 
 	<div class="skills-container">
@@ -235,10 +272,19 @@
 					<div class="empty-state">
 						<Icon name="search-x" size={32} />
 						<p>No skills found</p>
-						{#if searchQuery}
-							<Button size="small" variant="ghost" on:click={() => searchQuery = ''}>
-								Clear search
-							</Button>
+						{#if searchQuery || skillCategory >= 0}
+							<div class="clear-filters">
+								{#if searchQuery}
+									<Button size="small" variant="ghost" on:click={() => searchQuery = ''}>
+										Clear search
+									</Button>
+								{/if}
+								{#if skillCategory >= 0}
+									<Button size="small" variant="ghost" on:click={() => skillCategory = -1}>
+										Clear filter
+									</Button>
+								{/if}
+							</div>
 						{/if}
 					</div>
 				{/if}
@@ -341,9 +387,17 @@
 	}
 
 	.search-section {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
 		padding: $unit-2x 0;
 		border-bottom: 1px solid var(--border-subtle);
 		flex-shrink: 0;
+	}
+
+	.filter-row {
+		display: flex;
+		gap: $unit;
 	}
 
 	.skills-container {
@@ -371,6 +425,12 @@
 		p {
 			margin: 0;
 			font-size: 14px;
+		}
+
+		.clear-filters {
+			display: flex;
+			gap: $unit;
+			margin-top: $unit;
 		}
 	}
 
