@@ -4,56 +4,79 @@
 Continue cleaning up type errors in the `svelte-main` branch of `jedmund/hensei-web`. The goal is to get the build green by fixing all remaining type errors.
 
 ## Context
-This is a Svelte 5 rewrite of a Granblue Fantasy team composition app. The previous session reduced type errors from ~412 to ~378. A detailed plan of completed and remaining work is in `CLEANUP_PLAN.md`.
+This is a Svelte 5 rewrite of a Granblue Fantasy team composition app. The previous sessions reduced type errors from ~412 to ~217. A detailed plan of completed and remaining work is in `CLEANUP_PLAN.md`.
 
 ## Starting Point
 1. Checkout the `svelte-main` branch in `/home/ubuntu/repos/hensei-web`
-2. Run `pnpm check 2>&1 | grep -c "Error:"` to see current error count (~378)
-3. Review `CLEANUP_PLAN.md` for detailed context on what's been fixed and what remains
+2. Merge or cherry-pick from `devin/1764361948-fix-type-errors` branch which has the latest fixes
+3. Run `pnpm check 2>&1 | grep -c "Error:"` to see current error count (~217)
+4. Review `CLEANUP_PLAN.md` for detailed context on what's been fixed and what remains
 
-## Remaining Type Errors to Fix (Priority Order)
+## Completed Fixes (This Session)
+- Fixed Button variant errors (outlined -> ghost, contained -> primary)
+- Fixed search.queries.ts import path and property names (snake_case -> camelCase)
+- Fixed PartyContext export from party.service.ts
+- Fixed User type missing avatar property
+- Fixed exactOptionalPropertyTypes violations in Unit components (SummonUnit, WeaponUnit, CharacterUnit)
+- Fixed MenuItems Props interface
+- Fixed RequestOptions, SearchParams, SearchFilters types in types.ts
+- Fixed UpdateUncapParams type in grid.adapter.ts
+- Fixed Select.ItemIndicator and maxLength errors
+- Fixed Summon/Weapon hp/atk properties in entity.adapter.ts
 
-### 1. 'firstItem' and 'item' Possibly Undefined (27 errors)
-- **File**: `src/routes/teams/new/+page.svelte`
-- **Fix**: Add null checks before accessing `items[0]` and in forEach loops
-- **Example**: Change `const firstItem = items[0]` to include a guard like `if (!items[0]) return`
+## Remaining Type Errors to Fix (~217 errors)
 
-### 2. PartyCtx Missing openPicker Property (8 errors)
-- **Fix**: Find the `PartyCtx` type definition and add `openPicker` method signature
-- **Search**: `grep -rn "PartyCtx" src/lib/types/`
+### High Priority - exactOptionalPropertyTypes Violations
+The project uses `exactOptionalPropertyTypes: true` which requires explicit `T | undefined` for optional properties.
 
-### 3. Missing Paraglide Translation Keys (18 errors)
-- **Keys needed**: `context_view_details`, `context_replace`, `context_remove`
-- **Files to update**: `project.inlang/messages/en.json` and `project.inlang/messages/ja.json`
-- **Then run**: `pnpm paraglide-js compile --project ./project.inlang`
+1. **SearchState error property** (3 errors)
+   - File: `src/lib/api/adapters/resources/search.resource.svelte.ts`
+   - Issue: `error: undefined` not assignable to `AdapterError`
+   - Fix: Update SearchState interface to allow `error?: AdapterError | undefined`
 
-### 4. Summon/Weapon Missing hp/atk Properties (18 errors)
-- **File**: `src/lib/api/adapters/entity.adapter.ts`
-- **Fix**: Update `Summon` interface to include nested `hp` and `atk` objects (similar to Character fix already done)
+2. **JobState error property** (2 errors)
+   - Similar fix needed for JobState interface
 
-### 5. exactOptionalPropertyTypes Violations (~15 errors)
-- **Issue**: Props with `undefined` values passed to components that don't accept undefined
-- **Fix**: Update component Props interfaces to accept `| undefined` for optional properties
+3. **Party type missing element property** (2 errors)
+   - Files: `src/lib/components/party/PartySegmentedControl.svelte`, `src/lib/components/party/Party.svelte`
+   - Fix: Add `element?: number` to Party interface in `src/lib/types/api/party.ts`
 
-### 6. Select.svelte ItemIndicator Errors (4 errors)
-- **File**: `src/lib/components/ui/Select.svelte`
-- **Issue**: `Select.ItemIndicator` doesn't exist in bits-ui v2.9.6
-- **Fix**: Check bits-ui docs for correct component or remove usage
+### Medium Priority - Type Mismatches
 
-### 7. DropdownItem.svelte asChild Issue (2 errors)
-- **File**: `src/lib/components/ui/dropdown/DropdownItem.svelte`
-- **Issue**: `asChild` prop doesn't exist in bits-ui
-- **Fix**: Use `child` snippet pattern instead
+4. **SearchResult async function type** (5 errors)
+   - Issue: `(items: SearchResult<any>[]) => Promise<void>` not assignable to `(items: SearchResult[]) => void`
+   - Fix: Update function signatures to be async-compatible
 
-### 8. Button.svelte Icon Type Issues (2 errors)
-- **File**: `src/lib/components/ui/Button.svelte`
-- **Fix**: Add conditional rendering `{#if icon}` before Icon component
+5. **number | undefined vs number** (6 errors)
+   - Various files need null guards or type assertions
 
-### 9. Button Variant "outlined" (3 errors)
-- **Fix**: Change "outlined" to valid variant (check Button component for valid options)
+6. **number | null vs number | undefined** (4 errors)
+   - Need to normalize null/undefined handling
 
-### 10. maxLength vs maxlength (4 errors)
-- **Fix**: Change `maxLength` to `maxlength` (lowercase) in input elements
+7. **boolean vs string | number | undefined** (4 errors)
+   - Type mismatch in component props
+
+8. **Expected 1 arguments, but got 2** (4 errors)
+   - Function call signature mismatches
+
+### Lower Priority - bits-ui Component Issues
+
+9. **Select.Item disabled prop** (2 errors)
+   - Issue: `disabled: boolean | undefined` not matching bits-ui types
+   - Fix: Use conditional spreading or type assertion
+
+10. **RadioGroup.Item type mismatch** (2 errors)
+    - Similar bits-ui type compatibility issue
+
+11. **Checkbox.Indicator doesn't exist** (2 errors)
+    - Check bits-ui v2.9.6 docs for correct API
+
+### Other Issues
+
+12. **Property 'normalizer' does not exist on DatabaseProvider** (2 errors)
+13. **Property 'granblue_id' should be 'granblueId'** (2 errors)
+14. **Expression produces union type too complex** (5 errors)
+15. **Object is possibly 'undefined'** (5 errors)
 
 ## Commands Reference
 ```bash
@@ -81,7 +104,7 @@ pnpm paraglide-js compile --project ./project.inlang
 - The codebase uses Svelte 5 runes (`$state`, `$derived`, `$effect`)
 - bits-ui v2.9.6 is used for UI components - check their docs for correct API
 - Focus on errors only, not warnings (per user instruction)
-- Push directly to `svelte-main` branch when done
+- The branch `devin/1764361948-fix-type-errors` contains the latest fixes - merge into svelte-main or continue from there
 
 ## Success Criteria
 - `pnpm check` returns 0 errors
