@@ -2,15 +2,15 @@
 <svelte:options runes={true} />
 <script lang="ts">
 	import { Checkbox as CheckboxPrimitive } from 'bits-ui';
-	import type { HTMLButtonAttributes } from 'svelte/elements';
 
-	interface Props extends Omit<HTMLButtonAttributes, 'value'> {
-		checked?: boolean | 'indeterminate';
+	interface Props {
+		checked?: boolean;
+		indeterminate?: boolean;
 		disabled?: boolean;
 		required?: boolean;
 		name?: string;
 		value?: string;
-		onCheckedChange?: (checked: boolean | 'indeterminate') => void;
+		onCheckedChange?: (checked: boolean) => void;
 		class?: string;
 		variant?: 'default' | 'bound';
 		size?: 'small' | 'medium' | 'large';
@@ -18,6 +18,7 @@
 
 	let {
 		checked = $bindable(false),
+		indeterminate = false,
 		disabled = false,
 		required = false,
 		name,
@@ -25,8 +26,7 @@
 		onCheckedChange,
 		class: className,
 		variant = 'default',
-		size = 'medium',
-		...restProps
+		size = 'medium'
 	}: Props = $props();
 
 	$effect(() => {
@@ -41,20 +41,22 @@
 
 <CheckboxPrimitive.Root
 	bind:checked
+	{indeterminate}
 	{disabled}
 	{required}
-	{name}
-	{value}
+	name={name ?? ''}
+	value={value ?? ''}
 	class="checkbox {sizeClass} {variantClass} {className || ''}"
-	{...restProps}
 >
-	<CheckboxPrimitive.Indicator class="indicator">
-		{#if checked === 'indeterminate'}
-			<span class="icon">−</span>
-		{:else if checked}
-			<span class="icon">✓</span>
-		{/if}
-	</CheckboxPrimitive.Indicator>
+	{#snippet children({ checked: isChecked, indeterminate: isIndeterminate })}
+		<span class="indicator">
+			{#if isIndeterminate}
+				<span class="icon">−</span>
+			{:else if isChecked}
+				<span class="icon">✓</span>
+			{/if}
+		</span>
+	{/snippet}
 </CheckboxPrimitive.Root>
 
 <style lang="scss">

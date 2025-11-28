@@ -2,9 +2,8 @@
 <svelte:options runes={true} />
 <script lang="ts">
 	import { Switch as SwitchPrimitive } from 'bits-ui';
-	import type { HTMLButtonAttributes } from 'svelte/elements';
 
-	interface Props extends Omit<HTMLButtonAttributes, 'value'> {
+	interface Props {
 		checked?: boolean;
 		disabled?: boolean;
 		required?: boolean;
@@ -23,8 +22,7 @@
 		value,
 		onCheckedChange,
 		class: className,
-		thumbClass,
-		...restProps
+		thumbClass
 	}: Props = $props();
 
 	$effect(() => {
@@ -41,7 +39,6 @@
 	{name}
 	{value}
 	class="switch {className || ''}"
-	{...restProps}
 >
 	<SwitchPrimitive.Thumb class="thumb {thumbClass || ''}" />
 </SwitchPrimitive.Root>

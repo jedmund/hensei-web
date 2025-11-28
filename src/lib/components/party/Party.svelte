@@ -16,7 +16,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
-	import { openDescriptionSidebar } from '$lib/features/description/openDescriptionSidebar.svelte.ts'
+	import { openDescriptionSidebar } from '$lib/features/description/openDescriptionSidebar.svelte'
 	import { DropdownMenu } from 'bits-ui'
 	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 	import JobSection from '$lib/components/job/JobSection.svelte'
@@ -57,7 +57,7 @@
 	// Services
 	const partyService = new PartyService()
 	const gridService = new GridService()
-	const conflictService = new ConflictService(fetch)
+	const conflictService = new ConflictService()
 
 	// Create drag-drop context
 	const dragContext = createDragDropContext({

@@ -8,7 +8,12 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter(),
-		alias: { $types: 'src/lib/types' }
+		alias: {
+			$types: 'src/lib/types',
+			'$lib/paraglide/messages': 'src/paraglide/messages.js',
+			'$lib/paraglide/runtime': 'src/paraglide/runtime.js',
+			'$lib/paraglide/server': 'src/paraglide/server.js'
+		}
 	}
 }
 

@@ -5,12 +5,12 @@ export const SIDEBAR_WIDTH = '420px'
 
 interface SidebarState {
 	open: boolean
-	title?: string
-	content?: Snippet
-	component?: Component
-	componentProps?: Record<string, any>
-	scrollable?: boolean
-	activeItemId?: string
+	title: string | undefined
+	content: Snippet | undefined
+	component: Component | undefined
+	componentProps: Record<string, any> | undefined
+	scrollable: boolean
+	activeItemId: string | undefined
 }
 
 class SidebarStore {
@@ -20,7 +20,8 @@ class SidebarStore {
 		content: undefined,
 		component: undefined,
 		componentProps: undefined,
-		scrollable: true
+		scrollable: true,
+		activeItemId: undefined
 	})
 
 	open(title?: string, content?: Snippet, scrollable = true) {

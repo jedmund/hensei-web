@@ -118,11 +118,11 @@
 		<span class="accessory">
 			{@render leftAccessory()}
 		</span>
-	{:else if hasLeftIcon && !iconOnly}
-		<span class="accessory">
-			<Icon name={icon} size={iconSizes[size]} />
-		</span>
-	{/if}
+	{:else if hasLeftIcon && !iconOnly && icon}
+			<span class="accessory">
+				<Icon name={icon} size={iconSizes[size]} />
+			</span>
+		{/if}
 
 	{#if children && !iconOnly}
 		<span class="text">
@@ -136,11 +136,11 @@
 		<span class="accessory">
 			{@render rightAccessory()}
 		</span>
-	{:else if hasRightIcon && !iconOnly}
-		<span class="accessory">
-			<Icon name={icon} size={iconSizes[size]} />
-		</span>
-	{/if}
+	{:else if hasRightIcon && !iconOnly && icon}
+			<span class="accessory">
+				<Icon name={icon} size={iconSizes[size]} />
+			</span>
+		{/if}
 </ButtonPrimitive.Root>
 
 <style lang="scss">

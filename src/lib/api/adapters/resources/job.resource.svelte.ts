@@ -25,10 +25,10 @@ export interface JobResourceOptions {
  * State for job data
  */
 interface JobState<T> {
-	data?: T
+	data: T | undefined
 	loading: boolean
-	error?: AdapterError
-	lastFetch?: number
+	error: AdapterError | undefined
+	lastFetch: number | undefined
 }
 
 /**
@@ -65,11 +65,11 @@ export class JobResource {
 	private cacheDuration: number
 
 	// Reactive state for job data
-	jobs = $state<JobState<Job[]>>({ loading: false })
-	currentJob = $state<JobState<Job>>({ loading: false })
-	jobSkills = $state<JobState<JobSkill[]>>({ loading: false })
-	jobAccessories = $state<JobState<JobAccessory[]>>({ loading: false })
-	allSkills = $state<JobState<JobSkill[]>>({ loading: false })
+	jobs = $state<JobState<Job[]>>({ loading: false, data: undefined, error: undefined, lastFetch: undefined })
+	currentJob = $state<JobState<Job>>({ loading: false, data: undefined, error: undefined, lastFetch: undefined })
+	jobSkills = $state<JobState<JobSkill[]>>({ loading: false, data: undefined, error: undefined, lastFetch: undefined })
+	jobAccessories = $state<JobState<JobAccessory[]>>({ loading: false, data: undefined, error: undefined, lastFetch: undefined })
+	allSkills = $state<JobState<JobSkill[]>>({ loading: false, data: undefined, error: undefined, lastFetch: undefined })
 
 	// Track active requests
 	private activeRequests = new Map<string, AbortController>()
@@ -108,7 +108,7 @@ export class JobResource {
 
 		try {
 			const data = await this.adapter.getAll()
-			this.jobs = { data, loading: false, lastFetch: Date.now() }
+			this.jobs = { data, loading: false, lastFetch: Date.now(), error: undefined }
 			return data
 		} catch (error: any) {
 			if (error.code !== 'CANCELLED') {
@@ -145,7 +145,7 @@ export class JobResource {
 
 		try {
 			const data = await this.adapter.getById(id)
-			this.currentJob = { data, loading: false, lastFetch: Date.now() }
+			this.currentJob = { data, loading: false, lastFetch: Date.now(), error: undefined }
 			return data
 		} catch (error: any) {
 			if (error.code !== 'CANCELLED') {
@@ -177,7 +177,7 @@ export class JobResource {
 
 		try {
 			const data = await this.adapter.getSkills(jobId)
-			this.jobSkills = { data, loading: false, lastFetch: Date.now() }
+			this.jobSkills = { data, loading: false, lastFetch: Date.now(), error: undefined }
 			return data
 		} catch (error: any) {
 			if (error.code !== 'CANCELLED') {
@@ -209,7 +209,7 @@ export class JobResource {
 
 		try {
 			const data = await this.adapter.getAccessories(jobId)
-			this.jobAccessories = { data, loading: false, lastFetch: Date.now() }
+			this.jobAccessories = { data, loading: false, lastFetch: Date.now(), error: undefined }
 			return data
 		} catch (error: any) {
 			if (error.code !== 'CANCELLED') {
@@ -246,7 +246,7 @@ export class JobResource {
 
 		try {
 			const data = await this.adapter.getAllSkills()
-			this.allSkills = { data, loading: false, lastFetch: Date.now() }
+			this.allSkills = { data, loading: false, lastFetch: Date.now(), error: undefined }
 			return data
 		} catch (error: any) {
 			if (error.code !== 'CANCELLED') {
@@ -309,11 +309,11 @@ export class JobResource {
 	 * Clear cached data
 	 */
 	clearCache() {
-		this.jobs = { loading: false }
-		this.currentJob = { loading: false }
-		this.jobSkills = { loading: false }
-		this.jobAccessories = { loading: false }
-		this.allSkills = { loading: false }
+		this.jobs = { loading: false, data: undefined, error: undefined, lastFetch: undefined }
+		this.currentJob = { loading: false, data: undefined, error: undefined, lastFetch: undefined }
+		this.jobSkills = { loading: false, data: undefined, error: undefined, lastFetch: undefined }
+		this.jobAccessories = { loading: false, data: undefined, error: undefined, lastFetch: undefined }
+		this.allSkills = { loading: false, data: undefined, error: undefined, lastFetch: undefined }
 	}
 }
 
@@ -340,14 +340,16 @@ export function groupJobsByTier(jobs: Job[]): Record<string, Job[]> {
 
 	for (const job of jobs) {
 		const tier = job.row.toString().toLowerCase()
-		if (tier in tiers) {
+		if (tier in tiers && tiers[tier]) {
 			tiers[tier].push(job)
 		}
 	}
 
 	// Sort jobs within each tier by order
 	for (const tier in tiers) {
-		tiers[tier].sort((a, b) => a.order - b.order)
+		if (tiers[tier]) {
+			tiers[tier].sort((a, b) => a.order - b.order)
+		}
 	}
 
 	return tiers
