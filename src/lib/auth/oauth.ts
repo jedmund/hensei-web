@@ -13,6 +13,20 @@ export interface OAuthLoginResponse {
 	}
 }
 
+// Response from user info endpoint used during auth flow
+export interface UserInfoResponse {
+	id: string
+	username: string
+	role: number
+	avatar: {
+		picture: string | null
+		element: string | null
+	}
+	language: string | null
+	gender: number | null
+	theme: string | null
+}
+
 export async function passwordGrantLogin(
 	fetchFn: typeof fetch,
 	body: { email: string; password: string; grant_type: 'password' }
