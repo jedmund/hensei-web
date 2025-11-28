@@ -281,7 +281,7 @@
               const emptySlots = Array.from({ length: 10 }, (_, i) => i - 1)
                 .filter(i => !weapons.find(w => w.position === i))
               if (emptySlots.length === 0) return // Grid full
-              position = emptySlots[0]
+              position = emptySlots[0]!
             }
 
             // Add weapon via API
@@ -313,7 +313,7 @@
               const emptySlots = [-1, 0, 1, 2, 3, 6] // main, 4 grid slots, friend
                 .filter(i => !summons.find(s => s.position === i))
               if (emptySlots.length === 0) return // Grid full
-              position = emptySlots[0]
+              position = emptySlots[0]!
             }
 
             // Add summon via API
@@ -347,7 +347,7 @@
               const emptySlots = Array.from({ length: 5 }, (_, i) => i)
                 .filter(i => !characters.find(c => c.position === i))
               if (emptySlots.length === 0) return // Grid full
-              position = emptySlots[0]
+              position = emptySlots[0]!
             }
 
             // Add character via API
@@ -394,7 +394,7 @@
           // Find next empty slot
           const availableSlots = emptySlots.filter(s => !weapons.find(w => w.position === s))
           if (availableSlots.length === 0) return
-          position = availableSlots[0]
+          position = availableSlots[0]!
         }
 
         const newWeapon = {
@@ -426,7 +426,7 @@
           // Find next empty slot
           const availableSlots = emptySlots.filter(s => !summons.find(sum => sum.position === s))
           if (availableSlots.length === 0) return
-          position = availableSlots[0]
+          position = availableSlots[0]!
         }
 
         summons = [...summons, {
@@ -456,7 +456,7 @@
           // Find next empty slot
           const availableSlots = emptySlots.filter(s => !characters.find(c => c.position === s))
           if (availableSlots.length === 0) return
-          position = availableSlots[0]
+          position = availableSlots[0]!
         }
 
         characters = [...characters, {
