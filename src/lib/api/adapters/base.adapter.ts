@@ -8,8 +8,7 @@
  * @module adapters/base
  */
 
-import { snakeToCamel, camelToSnake } from '../schemas/transforms'
-import { transformResponse, transformRequest } from '../client'
+import { snakeToCamel, camelToSnake, transformResponse, transformRequest } from '../schemas/transforms'
 import type { AdapterOptions, RequestOptions, AdapterError } from './types'
 import {
 	createErrorFromStatus,
