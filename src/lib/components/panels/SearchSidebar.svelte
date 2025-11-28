@@ -171,10 +171,10 @@
   }
 
   function getImageUrl(item: SearchResult): string {
-    if (!item.granblue_id) return '/images/placeholders/placeholder-' + type + '.png'
+    if (!item.granblueId) return '/images/placeholders/placeholder-' + type + '.png'
 
     const folder = type === 'weapon' ? 'weapon-grid' : type
-    return `/images/${folder}/${item.granblue_id}.jpg`
+    return `/images/${folder}/${item.granblueId}.jpg`
   }
 
   function getItemName(item: SearchResult): string {
