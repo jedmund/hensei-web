@@ -4,79 +4,83 @@
 Continue cleaning up type errors in the `svelte-main` branch of `jedmund/hensei-web`. The goal is to get the build green by fixing all remaining type errors.
 
 ## Context
-This is a Svelte 5 rewrite of a Granblue Fantasy team composition app. The previous sessions reduced type errors from ~412 to ~217. A detailed plan of completed and remaining work is in `CLEANUP_PLAN.md`.
+This is a Svelte 5 rewrite of a Granblue Fantasy team composition app. The previous sessions reduced type errors from ~412 to ~161. A detailed plan of completed and remaining work is in `CLEANUP_PLAN.md`.
 
 ## Starting Point
 1. Checkout the `svelte-main` branch in `/home/ubuntu/repos/hensei-web`
-2. Merge or cherry-pick from `devin/1764361948-fix-type-errors` branch which has the latest fixes
-3. Run `pnpm check 2>&1 | grep -c "Error:"` to see current error count (~217)
-4. Review `CLEANUP_PLAN.md` for detailed context on what's been fixed and what remains
+2. Run `pnpm check 2>&1 | grep -c "Error:"` to see current error count (~161)
+3. Review this file for detailed context on what's been fixed and what remains
 
-## Completed Fixes (This Session)
-- Fixed Button variant errors (outlined -> ghost, contained -> primary)
-- Fixed search.queries.ts import path and property names (snake_case -> camelCase)
-- Fixed PartyContext export from party.service.ts
-- Fixed User type missing avatar property
-- Fixed exactOptionalPropertyTypes violations in Unit components (SummonUnit, WeaponUnit, CharacterUnit)
-- Fixed MenuItems Props interface
-- Fixed RequestOptions, SearchParams, SearchFilters types in types.ts
-- Fixed UpdateUncapParams type in grid.adapter.ts
-- Fixed Select.ItemIndicator and maxLength errors
-- Fixed Summon/Weapon hp/atk properties in entity.adapter.ts
+## Completed Fixes (This Session - 219 -> 161 errors)
+- Fixed teams/new/+page.svelte position type assertions (non-null assertions for array access after length check)
+- Fixed Party.svelte editKey type (string | null -> string | undefined)
+- Fixed sidebar.svelte.ts Component type to accept any props (Component<any, any, any>)
+- Fixed database/characters/[id]/+page.svelte UncapData type (provide default values for flb/ulb)
+- Fixed DetailScaffold.svelte optional props (use nullish coalescing for optional callbacks)
+- Fixed SearchSidebar.svelte params construction (conditionally add properties instead of passing undefined)
+- Fixed SearchSidebar.svelte granblue_id -> granblueId property name
+- Fixed Party.svelte mainWeapon derived state (removed arrow function wrapper)
 
-## Remaining Type Errors to Fix (~217 errors)
+## Remaining Type Errors to Fix (~161 errors)
 
-### High Priority - exactOptionalPropertyTypes Violations
-The project uses `exactOptionalPropertyTypes: true` which requires explicit `T | undefined` for optional properties.
+### Files with Most Errors
+1. Party.svelte - 22 errors
+2. database/characters/[id]/+page.svelte - 19 errors
+3. Checkbox.svelte - 19 errors
+4. SearchSidebar.svelte - 12 errors
+5. teams/new/+page.svelte - 10 errors
+6. test/images/+page.svelte - 9 errors
+7. Switch.svelte - 9 errors
+8. StatsSection.svelte - 9 errors
+9. Button.svelte - 8 errors
+10. WeaponUnit.svelte - 7 errors
 
-1. **SearchState error property** (3 errors)
-   - File: `src/lib/api/adapters/resources/search.resource.svelte.ts`
-   - Issue: `error: undefined` not assignable to `AdapterError`
-   - Fix: Update SearchState interface to allow `error?: AdapterError | undefined`
+### High Priority Error Patterns
 
-2. **JobState error property** (2 errors)
-   - Similar fix needed for JobState interface
-
-3. **Party type missing element property** (2 errors)
-   - Files: `src/lib/components/party/PartySegmentedControl.svelte`, `src/lib/components/party/Party.svelte`
-   - Fix: Add `element?: number` to Party interface in `src/lib/types/api/party.ts`
-
-### Medium Priority - Type Mismatches
-
-4. **SearchResult async function type** (5 errors)
+1. **SearchResult type mismatch** (5 errors)
    - Issue: `(items: SearchResult<any>[]) => Promise<void>` not assignable to `(items: SearchResult[]) => void`
-   - Fix: Update function signatures to be async-compatible
+   - Files: Party.svelte, teams/new/+page.svelte, SearchSidebar.svelte
+   - Fix: Update function signatures or SearchResult type definition
 
-5. **number | undefined vs number** (6 errors)
-   - Various files need null guards or type assertions
+2. **Object is possibly 'undefined'** (5 errors)
+   - Various files need null guards or optional chaining
 
-6. **number | null vs number | undefined** (4 errors)
-   - Need to normalize null/undefined handling
+3. **number | null vs number | undefined** (4 errors)
+   - File: ItemHeader.svelte
+   - Fix: Normalize null/undefined handling (use ?? operator)
 
-7. **boolean vs string | number | undefined** (4 errors)
-   - Type mismatch in component props
-
-8. **Expected 1 arguments, but got 2** (4 errors)
+4. **Expected 1 arguments, but got 2** (4 errors)
    - Function call signature mismatches
 
-### Lower Priority - bits-ui Component Issues
+5. **Conversion of number to "0" | "1" | "2" | "3"** (3 errors)
+   - File: Party.svelte (job skill slot handling)
+   - Fix: Use `as unknown as "0" | "1" | "2" | "3"` or update type definitions
 
-9. **Select.Item disabled prop** (2 errors)
-   - Issue: `disabled: boolean | undefined` not matching bits-ui types
-   - Fix: Use conditional spreading or type assertion
+### Medium Priority Error Patterns
 
-10. **RadioGroup.Item type mismatch** (2 errors)
-    - Similar bits-ui type compatibility issue
+6. **exactOptionalPropertyTypes violations** (multiple errors)
+   - Issue: Passing `undefined` explicitly to optional props
+   - Fix: Use nullish coalescing or omit the property entirely
 
-11. **Checkbox.Indicator doesn't exist** (2 errors)
-    - Check bits-ui v2.9.6 docs for correct API
+7. **Select.Item disabled prop** (2 errors)
+   - bits-ui type compatibility issue
 
-### Other Issues
+8. **RadioGroup.Item type mismatch** (2 errors)
+   - bits-ui type compatibility issue
 
-12. **Property 'normalizer' does not exist on DatabaseProvider** (2 errors)
-13. **Property 'granblue_id' should be 'granblueId'** (2 errors)
-14. **Expression produces union type too complex** (5 errors)
-15. **Object is possibly 'undefined'** (5 errors)
+9. **Property 'normalizer' does not exist on DatabaseProvider** (2 errors)
+
+10. **Module has no exported member 'PartyView'** (2 errors)
+    - File: party schema
+    - Fix: Add or update the export
+
+### Lower Priority
+
+11. **Argument of type '"01"' not assignable to ImageVariant** (2 errors)
+12. **'uncapLevel' is possibly 'null'** (2 errors)
+13. **'to' is possibly 'null'** (2 errors)
+14. **Expression produces union type too complex** (3 errors)
+15. **Parameter implicitly has 'any' type** (6 errors)
 
 ## Commands Reference
 ```bash
