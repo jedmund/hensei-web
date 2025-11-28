@@ -1,0 +1,102 @@
+@use '$src/themes/spacing' as *;
+@use '$src/themes/layout' as *;
+@use '$src/themes/typography' as *;
+@use '$src/themes/effects' as *;
+
+// Shared menu container styles
+@mixin menu-container {
+	background: var(--menu-bg);
+	border: 1px solid var(--border-subtle);
+	border-radius: $card-corner;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	padding: $unit-half;
+	min-width: calc($unit * 22.5);
+	z-index: 200;
+	animation: slideIn $duration-quick ease-out;
+}
+
+// Shared menu item styles
+@mixin menu-item {
+	padding: $unit $unit-2x;
+	border-radius: $item-corner-small;
+	cursor: pointer;
+	font-size: $font-regular;
+	color: var(--menu-text);
+	display: flex;
+	align-items: center;
+	gap: $unit;
+	@include smooth-transition($duration-standard, background);
+
+	&:hover {
+		background: var(--menu-bg-item-hover);
+	}
+
+	&:first-child {
+		border-top-left-radius: $item-corner;
+		border-top-right-radius: $item-corner;
+	}
+
+	&:last-child {
+		border-bottom-left-radius: $item-corner;
+		border-bottom-right-radius: $item-corner;
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	&.danger {
+		color: var(--danger);
+
+		&:hover {
+			background: var(--danger-bg);
+		}
+	}
+}
+
+// Shared menu separator styles
+@mixin menu-separator {
+	border-radius: $full-corner;
+	height: 2px;
+	background: var(--menu-separator);
+	margin: $unit-half ($unit * 0.75);
+}
+
+// Slide in animation
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateY(-$unit-fourth);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// Global styles for context menu
+:global(.context-menu) {
+	@include menu-container;
+}
+
+:global(.context-menu-item) {
+	@include menu-item;
+}
+
+:global(.context-menu-separator) {
+	@include menu-separator;
+}
+
+// Global styles for dropdown menu
+:global(.dropdown-menu) {
+	@include menu-container;
+}
+
+:global(.dropdown-menu-item) {
+	@include menu-item;
+}
+
+:global(.dropdown-menu-separator) {
+	@include menu-separator;
+}
