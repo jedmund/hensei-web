@@ -7,7 +7,7 @@ interface SidebarState {
 	open: boolean
 	title: string | undefined
 	content: Snippet | undefined
-	component: Component | undefined
+	component: Component<any, any, any> | undefined
 	componentProps: Record<string, any> | undefined
 	scrollable: boolean
 	activeItemId: string | undefined
@@ -35,7 +35,7 @@ class SidebarStore {
 
 	openWithComponent(
 		title: string,
-		component: Component,
+		component: Component<any, any, any>,
 		props?: Record<string, any>,
 		scrollable = true
 	) {
