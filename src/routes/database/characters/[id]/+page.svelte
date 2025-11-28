@@ -192,14 +192,14 @@
 	const uncap = $derived(
 		editMode
 			? { flb: editData.flb, ulb: editData.ulb, transcendence: editData.transcendence }
-			: (character?.uncap ?? {})
+			: (character?.uncap ?? { flb: false, ulb: false, transcendence: false })
 	)
 	const flb = $derived(uncap.flb ?? false)
 	const ulb = $derived(uncap.ulb ?? false)
 	const transcendence = $derived(uncap.transcendence ?? false)
 	const special = $derived(editMode ? editData.special : (character?.special ?? false))
 
-	const uncapLevel = $derived(getCharacterMaxUncapLevel({ special, uncap }))
+	const uncapLevel = $derived(getCharacterMaxUncapLevel({ special, uncap: { flb, ulb, transcendence } }))
 	const transcendenceStage = $derived(transcendence ? 5 : 0)
 </script>
 
