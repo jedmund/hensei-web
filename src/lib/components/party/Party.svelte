@@ -209,7 +209,7 @@
 
 	// Client-side editability state
 	let localId = $state<string>('')
-	let editKey = $state<string | null>(null)
+	let editKey = $state<string | undefined>(undefined)
 
 	// Derived editability (combines server and client state)
 	let canEdit = $derived(() => {
