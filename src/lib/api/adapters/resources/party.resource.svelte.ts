@@ -7,7 +7,13 @@
  * @module adapters/resources/party
  */
 
-import { PartyAdapter, partyAdapter, type CreatePartyParams, type UpdatePartyParams } from '../party.adapter'
+import { SvelteDate, SvelteMap } from 'svelte/reactivity'
+import {
+	PartyAdapter,
+	partyAdapter,
+	type CreatePartyParams,
+	type UpdatePartyParams
+} from '../party.adapter'
 import type { Party } from '$lib/types/api/party'
 import type { AdapterError } from '../types'
 
@@ -86,7 +92,7 @@ export class PartyResource {
 	})
 
 	// Track active requests for cancellation
-	private activeRequests = new Map<string, AbortController>()
+	private activeRequests = new SvelteMap<string, AbortController>()
 
 	constructor(options: PartyResourceOptions = {}) {
 		this.adapter = options.adapter || partyAdapter
@@ -103,14 +109,16 @@ export class PartyResource {
 		const controller = new AbortController()
 		this.activeRequests.set('load', controller)
 
-		this.current = { ...this.current, loading: true, error: undefined }
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { error: _error, ...rest } = this.current
+		this.current = { ...rest, loading: true }
 
 		try {
 			const party = await this.adapter.getByShortcode(shortcode)
 			this.current = { data: party, loading: false }
 			return party
-		} catch (error: any) {
-			if (error.code !== 'CANCELLED') {
+		} catch (error: unknown) {
+			if (error && typeof error === 'object' && 'code' in error && error.code !== 'CANCELLED') {
 				this.current = {
 					...this.current,
 					loading: false,
@@ -126,7 +134,9 @@ export class PartyResource {
 	 * Creates a new party
 	 */
 	async create(params: CreatePartyParams): Promise<Party | undefined> {
-		this.current = { ...this.current, updating: true, error: undefined }
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { error: _error, ...rest } = this.current
+		this.current = { ...rest, updating: true }
 
 		try {
 			const party = await this.adapter.create(params)
@@ -141,7 +151,7 @@ export class PartyResource {
 			}
 
 			return party
-		} catch (error: any) {
+		} catch (error: unknown) {
 			this.current = {
 				...this.current,
 				updating: false,
@@ -159,7 +169,7 @@ export class PartyResource {
 			const optimisticData = {
 				...this.current.data,
 				...params,
-				updatedAt: new Date().toISOString()
+				updatedAt: new SvelteDate().toISOString()
 			}
 			this.current = {
 				...this.current,
@@ -175,15 +185,13 @@ export class PartyResource {
 			this.current = { data: party, loading: false, updating: false }
 
 			// Update in user parties list if present
-			const index = this.userParties.parties.findIndex(
-				p => p.shortcode === params.shortcode
-			)
+			const index = this.userParties.parties.findIndex((p) => p.shortcode === params.shortcode)
 			if (index !== -1) {
 				this.userParties.parties[index] = party
 			}
 
 			return party
-		} catch (error: any) {
+		} catch (error: unknown) {
 			// Revert optimistic update on error
 			if (this.optimistic) {
 				await this.load(params.shortcode)
@@ -200,7 +208,9 @@ export class PartyResource {
 	 * Deletes the current party
 	 */
 	async delete(shortcode: string): Promise<boolean> {
-		this.current = { ...this.current, updating: true, error: undefined }
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { error: _error, ...rest } = this.current
+		this.current = { ...rest, updating: true }
 
 		try {
 			await this.adapter.delete(shortcode)
@@ -209,15 +219,13 @@ export class PartyResource {
 			this.current = { loading: false, updating: false }
 
 			// Remove from user parties list
-			this.userParties.parties = this.userParties.parties.filter(
-				p => p.shortcode !== shortcode
-			)
+			this.userParties.parties = this.userParties.parties.filter((p) => p.shortcode !== shortcode)
 			if (this.userParties.total !== undefined && this.userParties.total > 0) {
 				this.userParties.total--
 			}
 
 			return true
-		} catch (error: any) {
+		} catch (error: unknown) {
 			this.current = {
 				...this.current,
 				updating: false,
@@ -231,7 +239,9 @@ export class PartyResource {
 	 * Creates a remix (copy) of a party
 	 */
 	async remix(shortcode: string): Promise<Party | undefined> {
-		this.current = { ...this.current, updating: true, error: undefined }
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { error: _error, ...rest } = this.current
+		this.current = { ...rest, updating: true }
 
 		try {
 			const party = await this.adapter.remix(shortcode)
@@ -246,7 +256,7 @@ export class PartyResource {
 			}
 
 			return party
-		} catch (error: any) {
+		} catch (error: unknown) {
 			this.current = {
 				...this.current,
 				updating: false,
@@ -268,7 +278,9 @@ export class PartyResource {
 		const controller = new AbortController()
 		this.activeRequests.set('userParties', controller)
 
-		this.userParties = { ...this.userParties, loading: true, error: undefined }
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { error: _error, ...rest } = this.userParties
+		this.userParties = { ...rest, loading: true }
 
 		try {
 			const response = await this.adapter.listUserParties({
@@ -283,8 +295,8 @@ export class PartyResource {
 				totalPages: response.totalPages,
 				loading: false
 			}
-		} catch (error: any) {
-			if (error.code !== 'CANCELLED') {
+		} catch (error: unknown) {
+			if (error && typeof error === 'object' && 'code' in error && error.code !== 'CANCELLED') {
 				this.userParties = {
 					...this.userParties,
 					loading: false,
@@ -305,7 +317,9 @@ export class PartyResource {
 		skills?: Array<{ id: string; slot: number }>,
 		accessoryId?: string
 	): Promise<Party | undefined> {
-		this.current = { ...this.current, updating: true, error: undefined }
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { error: _error, ...rest } = this.current
+		this.current = { ...rest, updating: true }
 
 		try {
 			// Update job first
@@ -317,10 +331,13 @@ export class PartyResource {
 			}
 
 			// TODO: Handle accessory update when API supports it
+			if (accessoryId) {
+				party = await this.adapter.updateAccessory(partyId, accessoryId)
+			}
 
 			this.current = { data: party, loading: false, updating: false }
 			return party
-		} catch (error: any) {
+		} catch (error: unknown) {
 			this.current = {
 				...this.current,
 				updating: false,
@@ -344,7 +361,7 @@ export class PartyResource {
 	 * Cancels all active requests
 	 */
 	cancelAll() {
-		this.activeRequests.forEach(controller => controller.abort())
+		this.activeRequests.forEach((controller) => controller.abort())
 		this.activeRequests.clear()
 	}
 

@@ -31,11 +31,9 @@
 		if (sentinel && resource) {
 			resource.bindSentinel(sentinel)
 		}
-
-		// Cleanup on unmount
-		return () => {
-			resource?.destroy()
-		}
+		// Note: We intentionally don't destroy the resource here.
+		// The parent component owns the resource lifecycle and calls destroy()
+		// when appropriate (e.g., when filters change and a new resource is created).
 	})
 
 	// Accessibility: Announce new content to screen readers

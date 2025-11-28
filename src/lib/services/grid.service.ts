@@ -1,7 +1,6 @@
 import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
 import { gridAdapter } from '$lib/api/adapters/grid.adapter'
 import { partyAdapter } from '$lib/api/adapters/party.adapter'
-import { getDefaultMaxUncapLevel } from '$lib/utils/uncap'
 
 export interface GridOperation {
   type: 'add' | 'replace' | 'remove' | 'move' | 'swap'
@@ -38,12 +37,12 @@ export class GridService {
     options?: { mainhand?: boolean; shortcode?: string }
   ): Promise<GridUpdateResult> {
     try {
+      // Note: The backend computes the correct uncap level based on the weapon's FLB/ULB/transcendence flags
       const gridWeapon = await gridAdapter.createWeapon({
         partyId,
         weaponId,
         position,
         mainhand: options?.mainhand,
-        uncapLevel: getDefaultMaxUncapLevel('weapon'),
         transcendenceStep: 0
       }, this.buildHeaders(editKey))
 
@@ -207,13 +206,13 @@ export class GridService {
     editKey?: string,
     options?: { main?: boolean; friend?: boolean; shortcode?: string }
   ): Promise<Party> {
+    // Note: The backend computes the correct uncap level based on the summon's FLB/ULB/transcendence flags
     const gridSummon = await gridAdapter.createSummon({
       partyId,
       summonId,
       position,
       main: options?.main,
       friend: options?.friend,
-      uncapLevel: getDefaultMaxUncapLevel('summon'),
       transcendenceStage: 0
     }, this.buildHeaders(editKey))
 
@@ -356,11 +355,11 @@ export class GridService {
     options?: { shortcode?: string }
   ): Promise<GridUpdateResult> {
     try {
+      // Note: The backend computes the correct uncap level based on the character's special/FLB/ULB flags
       const gridCharacter = await gridAdapter.createCharacter({
         partyId,
         characterId,
         position,
-        uncapLevel: getDefaultMaxUncapLevel('character'),
         transcendenceStep: 0
       }, this.buildHeaders(editKey))
 
