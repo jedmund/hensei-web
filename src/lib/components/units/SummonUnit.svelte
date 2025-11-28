@@ -3,11 +3,12 @@
   import type { Party } from '$lib/types/api/party'
   import { getContext } from 'svelte'
   import Icon from '$lib/components/Icon.svelte'
-  import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
-  import { ContextMenu as ContextMenuBase, DropdownMenu as DropdownMenuBase } from 'bits-ui'
+  import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
+  import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
   import { getSummonImage } from '$lib/features/database/detail/image'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+  import { sidebar } from '$lib/stores/sidebar.svelte'
   import * as m from '$lib/paraglide/messages'
 
   interface Props {
@@ -43,6 +44,24 @@
     return getSummonImage(item?.summon?.granblueId, variant)
   })
 
+  // Check if this item is currently active in the sidebar
+  let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
+
+  // Determine element class for focus ring
+  let elementClass = $derived.by(() => {
+    const element = item?.summon?.element
+
+    switch(element) {
+      case 1: return 'wind'
+      case 2: return 'fire'
+      case 3: return 'water'
+      case 4: return 'earth'
+      case 5: return 'dark'
+      case 6: return 'light'
+      default: return 'neutral'
+    }
+  })
+
   async function remove() {
     if (!item?.id) return
     try {
@@ -74,21 +93,22 @@
 
 </script>
 
-<div class="unit" class:empty={!item}>
+<div class="unit {elementClass}" class:empty={!item} class:is-active={isActive}>
   {#if item}
-    <ContextMenu showGearButton={true}>
-      {#snippet children()}
-        {#key item?.id ?? position}
-          <div
-            class="frame summon"
-            class:main={item?.main || position === -1}
-            class:friend={item?.friend || position === 6}
-            class:cell={!((item?.main || position === -1) || (item?.friend || position === 6))}
-            class:editable={ctx?.canEdit()}
-            onclick={() => viewDetails()}
-          >
+    <UnitMenuContainer showGearButton={true}>
+      {#snippet trigger()}
+        <div class="focus-ring-wrapper {elementClass}" class:is-active={isActive} class:editable={ctx?.canEdit()}>
+          {#key item?.id ?? position}
+            <div
+              class="frame summon {elementClass}"
+              class:main={item?.main || position === -1}
+              class:friend={item?.friend || position === 6}
+              class:cell={!((item?.main || position === -1) || (item?.friend || position === 6))}
+              class:editable={ctx?.canEdit()}
+              onclick={() => viewDetails()}
+            >
             <img
-              class="image"
+              class="image {elementClass}"
               class:placeholder={!item?.summon?.granblueId}
               alt={displayName(item?.summon)}
               src={imageUrl}
@@ -100,39 +120,36 @@
               <span class="badge" style="left:auto; right:6px">Friend</span>
             {/if}
           </div>
-        {/key}
+          {/key}
+        </div>
       {/snippet}
 
       {#snippet contextMenu()}
-        <ContextMenuBase.Item class="context-menu-item" onclick={viewDetails}>
-          {m.context_view_details()}
-        </ContextMenuBase.Item>
-        {#if ctx?.canEdit()}
-          <ContextMenuBase.Item class="context-menu-item" onclick={replace}>
-            {m.context_replace()}
-          </ContextMenuBase.Item>
-          <ContextMenuBase.Separator class="context-menu-separator" />
-          <ContextMenuBase.Item class="context-menu-item danger" onclick={remove}>
-            {m.context_remove()}
-          </ContextMenuBase.Item>
-        {/if}
+        <MenuItems
+          onViewDetails={viewDetails}
+          onReplace={ctx?.canEdit() ? replace : undefined}
+          onRemove={ctx?.canEdit() ? remove : undefined}
+          canEdit={ctx?.canEdit()}
+          variant="context"
+          viewDetailsLabel={m.context_view_details()}
+          replaceLabel={m.context_replace()}
+          removeLabel={m.context_remove()}
+        />
       {/snippet}
 
       {#snippet dropdownMenu()}
-        <DropdownMenuBase.Item class="dropdown-menu-item" onclick={viewDetails}>
-          {m.context_view_details()}
-        </DropdownMenuBase.Item>
-        {#if ctx?.canEdit()}
-          <DropdownMenuBase.Item class="dropdown-menu-item" onclick={replace}>
-            {m.context_replace()}
-          </DropdownMenuBase.Item>
-          <DropdownMenuBase.Separator class="dropdown-menu-separator" />
-          <DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={remove}>
-            {m.context_remove()}
-          </DropdownMenuBase.Item>
-        {/if}
+        <MenuItems
+          onViewDetails={viewDetails}
+          onReplace={ctx?.canEdit() ? replace : undefined}
+          onRemove={ctx?.canEdit() ? remove : undefined}
+          canEdit={ctx?.canEdit()}
+          variant="dropdown"
+          viewDetailsLabel={m.context_view_details()}
+          replaceLabel={m.context_replace()}
+          removeLabel={m.context_remove()}
+        />
       {/snippet}
-    </ContextMenu>
+    </UnitMenuContainer>
   {:else}
     {#key `empty-${position}`}
       <div
@@ -199,9 +216,9 @@
 </div>
 
 <style lang="scss">
-  @use '$src/themes/colors' as *;
-  @use '$src/themes/typography' as *;
-  @use '$src/themes/spacing' as *;
+  @use '$src/themes/colors' as colors;
+  @use '$src/themes/typography' as typography;
+  @use '$src/themes/spacing' as spacing;
   @use '$src/themes/rep' as rep;
 
   .unit {
@@ -210,10 +227,29 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: $unit;
+    gap: spacing.$unit;
 
     &.empty .name {
       display: none;
+    }
+  }
+
+  .focus-ring-wrapper {
+    position: relative;
+    display: block;
+    transition: transform 0.2s ease-in-out;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    &.editable:hover {
+      transform: scale(1.05);
     }
   }
 
@@ -223,14 +259,13 @@
     overflow: hidden;
     border-radius: 8px;
     background: var(--card-bg, #f5f5f5);
-    border: 1px solid transparent;
-    transition: all 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
 
-    &:hover {
+    &.editable:hover {
       opacity: 0.95;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
@@ -270,9 +305,9 @@
   }
 
   .name {
-    font-size: $font-small;
+    font-size: typography.$font-small;
     text-align: center;
-    color: $grey-50;
+    color: colors.$grey-50;
   }
 
   .badge {
@@ -285,5 +320,92 @@
     padding: 2px 6px;
     border-radius: 10px;
     z-index: 3;
+  }
+
+  // Pulsing focus ring animation
+  @keyframes pulse-focus-ring {
+    0%, 100% {
+      box-shadow: 0 0 4px 3px currentColor;
+    }
+    50% {
+      box-shadow: 0 0 4px 6px currentColor;
+    }
+  }
+
+  // Element-specific focus rings
+  .focus-ring-wrapper.is-active::before {
+    animation: pulse-focus-ring 2s ease-in-out infinite;
+  }
+
+  .focus-ring-wrapper.is-active {
+    &.fire::before {
+      @include colors.focus-ring-fire();
+      color: rgba(250, 109, 109, 0.2);
+    }
+
+    &.water::before {
+      @include colors.focus-ring-water();
+      color: rgba(108, 201, 255, 0.2);
+    }
+
+    &.earth::before {
+      @include colors.focus-ring-earth();
+      color: rgba(253, 159, 91, 0.2);
+    }
+
+    &.wind::before {
+      @include colors.focus-ring-wind();
+      color: rgba(62, 228, 137, 0.2);
+    }
+
+    &.light::before {
+      @include colors.focus-ring-light();
+      color: rgba(232, 214, 51, 0.2);
+    }
+
+    &.dark::before {
+      @include colors.focus-ring-dark();
+      color: rgba(222, 123, 255, 0.2);
+    }
+
+    &.neutral::before {
+      @include colors.focus-ring-neutral();
+      color: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Element-specific name colors when active
+  .unit.is-active {
+    .name {
+      font-weight: typography.$bold;
+    }
+
+    &.fire .name {
+      color: colors.$fire--text--light;
+    }
+
+    &.water .name {
+      color: colors.$water--text--light;
+    }
+
+    &.earth .name {
+      color: colors.$earth--text--light;
+    }
+
+    &.wind .name {
+      color: colors.$wind--text--light;
+    }
+
+    &.light .name {
+      color: colors.$light--text--light;
+    }
+
+    &.dark .name {
+      color: colors.$dark--text--light;
+    }
+
+    &.neutral .name {
+      color: colors.$grey-40;
+    }
   }
 </style>

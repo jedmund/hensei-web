@@ -10,6 +10,7 @@ interface SidebarState {
 	component?: Component
 	componentProps?: Record<string, any>
 	scrollable?: boolean
+	activeItemId?: string
 }
 
 class SidebarStore {
@@ -31,17 +32,27 @@ class SidebarStore {
 		this.state.scrollable = scrollable
 	}
 
-	openWithComponent(title: string, component: Component, props?: Record<string, any>, scrollable = true) {
+	openWithComponent(
+		title: string,
+		component: Component,
+		props?: Record<string, any>,
+		scrollable = true
+	) {
 		this.state.open = true
 		this.state.title = title
 		this.state.component = component
 		this.state.componentProps = props
 		this.state.content = undefined
 		this.state.scrollable = scrollable
+		// Extract and store the item ID if it's a details sidebar
+		if (props?.item?.id) {
+			this.state.activeItemId = String(props.item.id)
+		}
 	}
 
 	close() {
 		this.state.open = false
+		this.state.activeItemId = undefined
 		// Clear content after animation
 		setTimeout(() => {
 			this.state.title = undefined
@@ -81,6 +92,10 @@ class SidebarStore {
 
 	get scrollable() {
 		return this.state.scrollable ?? true
+	}
+
+	get activeItemId() {
+		return this.state.activeItemId
 	}
 }
 

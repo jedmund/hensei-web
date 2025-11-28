@@ -4,12 +4,13 @@
 	import type { Job } from '$lib/types/api/entities'
 	import { getContext } from 'svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
-	import { ContextMenu as ContextMenuBase, DropdownMenu as DropdownMenuBase } from 'bits-ui'
+	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
+	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
 	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { getJobPortraitUrl, Gender } from '$lib/utils/jobUtils'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
 	import * as m from '$lib/paraglide/messages'
@@ -69,6 +70,31 @@
 
 	// Check if this is the protagonist slot
 	const isProtagonist = $derived(position === 0)
+
+	// Check if this item is currently active in the sidebar
+	let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
+
+	// Determine element class for focus ring
+	let elementClass = $derived.by(() => {
+		const element = item?.character?.element || partyElement
+
+		switch (element) {
+			case 1:
+				return 'wind'
+			case 2:
+				return 'fire'
+			case 3:
+				return 'water'
+			case 4:
+				return 'earth'
+			case 5:
+				return 'dark'
+			case 6:
+				return 'light'
+			default:
+				return 'neutral'
+		}
+	})
 
 	async function remove() {
 		if (!item?.id) return
@@ -140,86 +166,88 @@
 	}
 </script>
 
-<div class="unit" class:empty={!item}>
+<div class="unit {elementClass}" class:empty={!item} class:is-active={isActive}>
 	{#if item}
-		<ContextMenu showGearButton={true}>
-			{#snippet children()}
-				{#key item?.id ?? position}
-					<div
-						class="frame character cell"
-						class:protagonist={position === 0}
-						class:editable={ctx?.canEdit()}
-						onclick={() => viewDetails()}
-					>
-						{#if position !== 0}
-							{#if ctx?.canEdit()}
-								<button
-									class="perpetuity"
-									class:active={item.perpetuity}
-									onclick={togglePerpetuity}
-									title={item.perpetuity ? 'Remove Perpetuity Ring' : 'Add Perpetuity Ring'}
-								>
+		<UnitMenuContainer showGearButton={true}>
+			{#snippet trigger()}
+				<div
+					class="focus-ring-wrapper {elementClass}"
+					class:is-active={isActive}
+					class:editable={ctx?.canEdit()}
+				>
+					{#key item?.id ?? position}
+						<div
+							class="frame character cell {elementClass}"
+							class:protagonist={position === 0}
+							class:editable={ctx?.canEdit()}
+							onclick={() => viewDetails()}
+						>
+							{#if position !== 0}
+								{#if ctx?.canEdit()}
+									<button
+										class="perpetuity"
+										class:active={item.perpetuity}
+										onclick={togglePerpetuity}
+										title={item.perpetuity ? 'Remove Perpetuity Ring' : 'Add Perpetuity Ring'}
+									>
+										<img
+											class="perpetuity-icon filled"
+											src={perpetuityFilled}
+											alt="Perpetuity Ring"
+										/>
+										<img
+											class="perpetuity-icon empty"
+											src={perpetuityEmpty}
+											alt="Add Perpetuity Ring"
+										/>
+									</button>
+								{:else if item.perpetuity}
 									<img
-										class="perpetuity-icon filled"
+										class="perpetuity static"
 										src={perpetuityFilled}
 										alt="Perpetuity Ring"
+										title="Perpetuity Ring"
 									/>
-									<img
-										class="perpetuity-icon empty"
-										src={perpetuityEmpty}
-										alt="Add Perpetuity Ring"
-									/>
-								</button>
-							{:else if item.perpetuity}
-								<img
-									class="perpetuity static"
-									src={perpetuityFilled}
-									alt="Perpetuity Ring"
-									title="Perpetuity Ring"
-								/>
+								{/if}
 							{/if}
-						{/if}
-						<img
-							class="image"
-							class:placeholder={!item?.character?.granblueId && !isProtagonist}
-							class:protagonist={isProtagonist}
-							alt={isProtagonist && job ? job.name.en : displayName(item?.character)}
-							src={imageUrl}
-						/>
-					</div>
-				{/key}
+							<img
+								class="image {elementClass}"
+								class:placeholder={!item?.character?.granblueId && !isProtagonist}
+								class:protagonist={isProtagonist}
+								alt={isProtagonist && job ? job.name.en : displayName(item?.character)}
+								src={imageUrl}
+							/>
+						</div>
+					{/key}
+				</div>
 			{/snippet}
 
 			{#snippet contextMenu()}
-				<ContextMenuBase.Item class="context-menu-item" onclick={viewDetails}>
-					{m.context_view_details()}
-				</ContextMenuBase.Item>
-				{#if ctx?.canEdit()}
-					<ContextMenuBase.Item class="context-menu-item" onclick={replace}>
-						{m.context_replace()}
-					</ContextMenuBase.Item>
-					<ContextMenuBase.Separator class="context-menu-separator" />
-					<ContextMenuBase.Item class="context-menu-item danger" onclick={remove}>
-						{m.context_remove()}
-					</ContextMenuBase.Item>
-				{/if}
+				<MenuItems
+					onViewDetails={viewDetails}
+					onReplace={ctx?.canEdit() ? replace : undefined}
+					onRemove={ctx?.canEdit() ? remove : undefined}
+					canEdit={ctx?.canEdit()}
+					variant="context"
+					viewDetailsLabel={m.context_view_details()}
+					replaceLabel={m.context_replace()}
+					removeLabel={m.context_remove()}
+				/>
 			{/snippet}
 
 			{#snippet dropdownMenu()}
-				<DropdownMenuBase.Item class="dropdown-menu-item" onclick={viewDetails}>
-					{m.context_view_details()}
-				</DropdownMenuBase.Item>
-				{#if ctx?.canEdit()}
-					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={replace}>
-						{m.context_replace()}
-					</DropdownMenuBase.Item>
-					<DropdownMenuBase.Separator class="dropdown-menu-separator" />
-					<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={remove}>
-						{m.context_remove()}
-					</DropdownMenuBase.Item>
-				{/if}
+				<MenuItems
+					onViewDetails={viewDetails}
+					onReplace={ctx?.canEdit() ? replace : undefined}
+					onRemove={ctx?.canEdit() ? remove : undefined}
+					canEdit={ctx?.canEdit()}
+					variant="dropdown"
+					viewDetailsLabel={m.context_view_details()}
+					replaceLabel={m.context_replace()}
+					removeLabel={m.context_remove()}
+				/>
 			{/snippet}
-		</ContextMenu>
+		</UnitMenuContainer>
 	{:else}
 		{#key `empty-${position}`}
 			<div
@@ -301,10 +329,9 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as *;
+	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as *;
-	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as typography;
 	@use '$src/themes/rep' as rep;
 
 	.unit {
@@ -313,27 +340,44 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: $unit;
+		gap: spacing.$unit;
 
 		&.empty .name {
 			display: none;
 		}
 	}
 
+	.focus-ring-wrapper {
+		position: relative;
+		display: block;
+		transition: transform 0.2s ease-in-out;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			border-radius: 8px;
+			pointer-events: none;
+			z-index: 10;
+		}
+
+		&.editable:hover {
+			transform: scale(1.05);
+		}
+	}
+
 	.frame {
 		position: relative;
 		width: 100%;
-		overflow: visible;
 		border-radius: 8px;
 		background: var(--card-bg, #f5f5f5);
-		border: 1px solid transparent;
-		transition: all 0.2s ease-in-out;
+		transition: opacity 0.2s ease-in-out;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
 
-		&:hover {
+		&.editable:hover {
 			opacity: 0.95;
 			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		}
@@ -388,14 +432,14 @@
 	}
 
 	.name {
-		font-size: $font-small;
+		font-size: typography.$font-small;
 		text-align: center;
-		color: $grey-50;
+		color: colors.$grey-50;
 	}
 
 	.perpetuity {
 		position: absolute;
-		z-index: 20;
+		z-index: 40;
 		top: calc(spacing.$unit * -1);
 		right: spacing.$unit-3x;
 		width: spacing.$unit-4x;
@@ -459,6 +503,94 @@
 
 		.perpetuity-icon.empty {
 			display: none;
+		}
+	}
+
+	// Pulsing focus ring animation
+	@keyframes pulse-focus-ring {
+		0%,
+		100% {
+			box-shadow: 0 0 4px 3px currentColor;
+		}
+		50% {
+			box-shadow: 0 0 4px 6px currentColor;
+		}
+	}
+
+	// Element-specific focus rings
+	.focus-ring-wrapper.is-active::before {
+		animation: pulse-focus-ring 2s ease-in-out infinite;
+	}
+
+	.focus-ring-wrapper.is-active {
+		&.fire::before {
+			@include colors.focus-ring-fire();
+			color: rgba(250, 109, 109, 0.2);
+		}
+
+		&.water::before {
+			@include colors.focus-ring-water();
+			color: rgba(108, 201, 255, 0.2);
+		}
+
+		&.earth::before {
+			@include colors.focus-ring-earth();
+			color: rgba(253, 159, 91, 0.2);
+		}
+
+		&.wind::before {
+			@include colors.focus-ring-wind();
+			color: rgba(62, 228, 137, 0.2);
+		}
+
+		&.light::before {
+			@include colors.focus-ring-light();
+			color: rgba(232, 214, 51, 0.2);
+		}
+
+		&.dark::before {
+			@include colors.focus-ring-dark();
+			color: rgba(222, 123, 255, 0.2);
+		}
+
+		&.neutral::before {
+			@include colors.focus-ring-neutral();
+			color: rgba(0, 0, 0, 0.1);
+		}
+	}
+
+	// Element-specific name colors when active
+	.unit.is-active {
+		.name {
+			font-weight: typography.$bold;
+		}
+
+		&.fire .name {
+			color: colors.$fire--text--light;
+		}
+
+		&.water .name {
+			color: colors.$water--text--light;
+		}
+
+		&.earth .name {
+			color: colors.$earth--text--light;
+		}
+
+		&.wind .name {
+			color: colors.$wind--text--light;
+		}
+
+		&.light .name {
+			color: colors.$light--text--light;
+		}
+
+		&.dark .name {
+			color: colors.$dark--text--light;
+		}
+
+		&.neutral .name {
+			color: colors.$grey-40;
 		}
 	}
 </style>

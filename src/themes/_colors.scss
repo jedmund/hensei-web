@@ -694,3 +694,46 @@ $light--shadow--dark--hover: color.adjust($light-text-00, $alpha: -0.3);
 	border: $width solid $color;
 	box-shadow: 0 0 0 2px rgba($color, 0.2);
 }
+
+// Element-specific focus ring mixins
+@mixin focus-ring-fire($width: 3px) {
+	outline: none;
+	border: $width solid var(--fire-accent);
+	box-shadow: 0 0 4px 6px rgba(250, 109, 109, 0.2);
+}
+
+@mixin focus-ring-water($width: 3px) {
+	outline: none;
+	border: $width solid var(--water-accent);
+	box-shadow: 0 0 4px 6px rgba(108, 201, 255, 0.2);
+}
+
+@mixin focus-ring-earth($width: 3px) {
+	outline: none;
+	border: $width solid var(--earth-accent);
+	box-shadow: 0 0 4px 6px rgba(253, 159, 91, 0.2);
+}
+
+@mixin focus-ring-wind($width: 3px) {
+	outline: none;
+	border: $width solid var(--wind-accent);
+	box-shadow: 0 0 4px 6px rgba(62, 228, 137, 0.2);
+}
+
+@mixin focus-ring-light($width: 3px) {
+	outline: none;
+	border: $width solid var(--light-accent);
+	box-shadow: 0 0 4px 6px rgba(232, 214, 51, 0.2);
+}
+
+@mixin focus-ring-dark($width: 3px) {
+	outline: none;
+	border: $width solid var(--dark-accent);
+	box-shadow: 0 0 4px 6px rgba(222, 123, 255, 0.2);
+}
+
+@mixin focus-ring-neutral($width: 3px) {
+	outline: none;
+	border: $width solid var(--null-accent);
+	box-shadow: 0 0 4px 6px rgba(0, 0, 0, 0.1);
+}

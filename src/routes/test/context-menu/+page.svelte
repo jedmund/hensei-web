@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
-	import { ContextMenu as ContextMenuBase, DropdownMenu as DropdownMenuBase } from 'bits-ui'
+	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
+	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 
 	let message = $state('No action yet')
 
@@ -31,8 +31,8 @@
 
 	<div class="test-container">
 		<div class="test-unit">
-			<ContextMenu showGearButton={true}>
-				{#snippet children()}
+			<UnitMenuContainer showGearButton={true}>
+				{#snippet trigger()}
 					<img
 						src="/images/placeholders/placeholder-weapon-grid.png"
 						alt="Test weapon"
@@ -40,34 +40,34 @@
 					/>
 				{/snippet}
 
-			{#snippet contextMenu()}
-				<ContextMenuBase.Item class="context-menu-item" onclick={handleViewDetails}>
-					View Details
-				</ContextMenuBase.Item>
-				<ContextMenuBase.Item class="context-menu-item" onclick={handleReplace}>
-					Replace
-				</ContextMenuBase.Item>
-				<ContextMenuBase.Separator class="context-menu-separator" />
-				<ContextMenuBase.Item class="context-menu-item danger" onclick={handleRemove}>
-					Remove
-				</ContextMenuBase.Item>
-			{/snippet}
+				{#snippet contextMenu()}
+					<MenuItems
+						onViewDetails={handleViewDetails}
+						onReplace={handleReplace}
+						onRemove={handleRemove}
+						canEdit={true}
+						variant="context"
+						viewDetailsLabel="View Details"
+						replaceLabel="Replace"
+						removeLabel="Remove"
+					/>
+				{/snippet}
 
-			{#snippet dropdownMenu()}
-				<DropdownMenuBase.Item class="dropdown-menu-item" onclick={handleViewDetails}>
-					View Details
-				</DropdownMenuBase.Item>
-				<DropdownMenuBase.Item class="dropdown-menu-item" onclick={handleReplace}>
-					Replace
-				</DropdownMenuBase.Item>
-				<DropdownMenuBase.Separator class="dropdown-menu-separator" />
-				<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={handleRemove}>
-					Remove
-				</DropdownMenuBase.Item>
-			{/snippet}
-		</ContextMenu>
-		<div class="test-label">Hover me or right-click</div>
-	</div>
+				{#snippet dropdownMenu()}
+					<MenuItems
+						onViewDetails={handleViewDetails}
+						onReplace={handleReplace}
+						onRemove={handleRemove}
+						canEdit={true}
+						variant="dropdown"
+						viewDetailsLabel="View Details"
+						replaceLabel="Replace"
+						removeLabel="Remove"
+					/>
+				{/snippet}
+			</UnitMenuContainer>
+			<div class="test-label">Hover me or right-click</div>
+		</div>
 	</div>
 
 	<div class="result">

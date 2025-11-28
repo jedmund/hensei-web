@@ -257,6 +257,7 @@
 	--null-text-hover: #{colors.$null--text--hover--light};
 	--null-shadow: #{colors.$null--shadow--light};
 	--null-shadow-hover: #{colors.$null--shadow--light--hover};
+	--null-accent: #{colors.$grey-70};
 
 	// Light - Element button colors
 	--null-button-bg: #{colors.$grey-55};
@@ -302,6 +303,7 @@
 	--wind-text-hover: #{colors.$wind--text--hover--light};
 	--wind-shadow: #{colors.$wind--shadow--light};
 	--wind-shadow-hover: #{colors.$wind--shadow--light--hover};
+	--wind-accent: #{colors.$wind--bg--light};
 
 	--fire-bg: #{colors.$fire--bg--light};
 	--fire-bg-hover: #{colors.$fire--bg--hover--light};
@@ -312,6 +314,7 @@
 	--fire-text-hover: #{colors.$fire--text--hover--light};
 	--fire-shadow: #{colors.$fire--shadow--light};
 	--fire-shadow-hover: #{colors.$fire--shadow--light--hover};
+	--fire-accent: #{colors.$fire--bg--light};
 
 	--water-bg: #{colors.$water--bg--light};
 	--water-bg-hover: #{colors.$water--bg--hover--light};
@@ -322,6 +325,7 @@
 	--water-text-hover: #{colors.$water--text--hover--light};
 	--water-shadow: #{colors.$water--shadow--light};
 	--water-shadow-hover: #{colors.$water--shadow--light--hover};
+	--water-accent: #{colors.$water--bg--light};
 
 	--earth-bg: #{colors.$earth--bg--light};
 	--earth-bg-hover: #{colors.$earth--bg--hover--light};
@@ -332,6 +336,7 @@
 	--earth-text-hover: #{colors.$earth--text--hover--light};
 	--earth-shadow: #{colors.$earth--shadow--light};
 	--earth-shadow-hover: #{colors.$earth--shadow--light--hover};
+	--earth-accent: #{colors.$earth--bg--light};
 
 	--dark-bg: #{colors.$dark--bg--light};
 	--dark-bg-hover: #{colors.$dark--bg--hover--light};
@@ -342,6 +347,7 @@
 	--dark-text-hover: #{colors.$dark--text--hover--light};
 	--dark-shadow: #{colors.$dark--shadow--light};
 	--dark-shadow-hover: #{colors.$dark--shadow--light--hover};
+	--dark-accent: #{colors.$dark--bg--light};
 
 	--light-bg: #{colors.$light--bg--light};
 	--light-bg-hover: #{colors.$light--bg--hover--light};
@@ -352,6 +358,7 @@
 	--light-text-hover: #{colors.$light--text--hover--light};
 	--light-shadow: #{colors.$light--shadow--light};
 	--light-shadow-hover: #{colors.$light--shadow--light--hover};
+	--light-accent: #{colors.$light--bg--light};
 
 	// Gradients
 	--hero-gradient: #{effects.$hero--gradient--light};
@@ -586,6 +593,7 @@
 	--null-text-hover: #{colors.$null--text--hover--dark};
 	--null-shadow: #{colors.$null--shadow--dark};
 	--null-shadow-hover: #{colors.$null--shadow--dark--hover};
+	--null-accent: #{colors.$grey-70};
 
 	// Dark - Element button colors (same as light theme)
 	--null-button-bg: #{colors.$grey-55};
@@ -632,6 +640,7 @@
 	--wind-text-hover: #{colors.$wind--text--hover--dark};
 	--wind-shadow: #{colors.$wind--shadow--dark};
 	--wind-shadow-hover: #{colors.$wind--shadow--dark--hover};
+	--wind-accent: #{colors.$wind--bg--dark};
 
 	--fire-bg: #{colors.$fire--bg--dark};
 	--fire-bg-hover: #{colors.$fire--bg--hover--dark};
@@ -642,6 +651,7 @@
 	--fire-text-hover: #{colors.$fire--text--hover--dark};
 	--fire-shadow: #{colors.$fire--shadow--dark};
 	--fire-shadow-hover: #{colors.$fire--shadow--dark--hover};
+	--fire-accent: #{colors.$fire--bg--dark};
 
 	--water-bg: #{colors.$water--bg--dark};
 	--water-bg-hover: #{colors.$water--bg--hover--dark};
@@ -652,6 +662,7 @@
 	--water-text-hover: #{colors.$water--text--hover--dark};
 	--water-shadow: #{colors.$water--shadow--dark};
 	--water-shadow-hover: #{colors.$water--shadow--dark--hover};
+	--water-accent: #{colors.$water--bg--dark};
 
 	--earth-bg: #{colors.$earth--bg--dark};
 	--earth-bg-hover: #{colors.$earth--bg--hover--dark};
@@ -662,6 +673,7 @@
 	--earth-text-hover: #{colors.$earth--text--hover--dark};
 	--earth-shadow: #{colors.$earth--shadow--dark};
 	--earth-shadow-hover: #{colors.$earth--shadow--dark--hover};
+	--earth-accent: #{colors.$earth--bg--dark};
 
 	--dark-bg: #{colors.$dark--bg--dark};
 	--dark-bg-hover: #{colors.$dark--bg--hover--dark};
@@ -672,6 +684,7 @@
 	--dark-text-hover: #{colors.$dark--text--hover--dark};
 	--dark-shadow: #{colors.$dark--shadow--dark};
 	--dark-shadow-hover: #{colors.$dark--shadow--dark--hover};
+	--dark-accent: #{colors.$dark--bg--dark};
 
 	--light-bg: #{colors.$light--bg--dark};
 	--light-bg-hover: #{colors.$light--bg--hover--dark};
@@ -682,6 +695,7 @@
 	--light-text-hover: #{colors.$light--text--hover--dark};
 	--light-shadow: #{colors.$light--shadow--dark};
 	--light-shadow-hover: #{colors.$light--shadow--dark--hover};
+	--light-accent: #{colors.$light--bg--dark};
 
 	// Gradients
 	--hero-gradient: #{effects.$hero--gradient--dark};

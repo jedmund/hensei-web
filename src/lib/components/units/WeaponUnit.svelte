@@ -1,390 +1,548 @@
 <script lang="ts">
-  import type { GridWeapon } from '$lib/types/api/party'
-  import type { Party } from '$lib/types/api/party'
-  import { getContext } from 'svelte'
-  import Icon from '$lib/components/Icon.svelte'
-  import ContextMenu from '$lib/components/ui/ContextMenu.svelte'
-  import { ContextMenu as ContextMenuBase, DropdownMenu as DropdownMenuBase } from 'bits-ui'
-  import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-  import { getWeaponImage } from '$lib/features/database/detail/image'
-  import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
-  import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages } from '$lib/utils/modifiers'
-  import * as m from '$lib/paraglide/messages'
+	import type { GridWeapon } from '$lib/types/api/party'
+	import type { Party } from '$lib/types/api/party'
+	import { getContext } from 'svelte'
+	import Icon from '$lib/components/Icon.svelte'
+	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
+	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
+	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import { getWeaponImage } from '$lib/features/database/detail/image'
+	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+	import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages } from '$lib/utils/modifiers'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import * as m from '$lib/paraglide/messages'
 
-  interface Props {
-    item?: GridWeapon
-    position: number
-  }
+	interface Props {
+		item?: GridWeapon
+		position: number
+	}
 
-  let { item, position }: Props = $props()
+	let { item, position }: Props = $props()
 
-  type PartyCtx = {
-    getParty: () => Party
-    updateParty: (p: Party) => void
-    canEdit: () => boolean
-    getEditKey: () => string | null
-    services: { gridService: any; partyService: any }
-  }
+	type PartyCtx = {
+		getParty: () => Party
+		updateParty: (p: Party) => void
+		canEdit: () => boolean
+		getEditKey: () => string | null
+		services: { gridService: any; partyService: any }
+	}
 
-  const ctx = getContext<PartyCtx>('party')
+	const ctx = getContext<PartyCtx>('party')
 
-  function displayName(input: any): string {
-    if (!input) return '—'
-    const maybe = input.name ?? input
-    if (typeof maybe === 'string') return maybe
-    if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-    return '—'
-  }
+	function displayName(input: any): string {
+		if (!input) return '—'
+		const maybe = input.name ?? input
+		if (typeof maybe === 'string') return maybe
+		if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
+		return '—'
+	}
 
-  // Use $derived to ensure consistent computation between server and client
-  let imageUrl = $derived.by(() => {
-    const isMain = position === -1 || item?.mainhand
-    const variant = isMain ? 'main' : 'grid'
+	// Use $derived to ensure consistent computation between server and client
+	let imageUrl = $derived.by(() => {
+		const isMain = position === -1 || item?.mainhand
+		const variant = isMain ? 'main' : 'grid'
 
-    // For weapons with null element that have an instance element, use it
-    const element = (item?.weapon?.element === 0 && item?.element) ? item.element : undefined
+		// For weapons with null element that have an instance element, use it
+		const element = item?.weapon?.element === 0 && item?.element ? item.element : undefined
 
-    return getWeaponImage(item?.weapon?.granblueId, variant, element)
-  })
+		return getWeaponImage(item?.weapon?.granblueId, variant, element)
+	})
 
-  // Get awakening image URL using utility
-  let awakeningImage = $derived(getAwakeningImage(item?.awakening))
+	// Get awakening image URL using utility
+	let awakeningImage = $derived(getAwakeningImage(item?.awakening))
 
-  // Get weapon key images using utility
-  let weaponKeyImages = $derived(
-    getWeaponKeyImages(
-      item?.weaponKeys,
-      item?.weapon?.element,
-      item?.weapon?.proficiency,
-      item?.weapon?.series,
-      item?.weapon?.name
-    )
-  )
+	// Get weapon key images using utility
+	let weaponKeyImages = $derived(
+		getWeaponKeyImages(
+			item?.weaponKeys,
+			item?.weapon?.element,
+			item?.weapon?.proficiency,
+			item?.weapon?.series,
+			item?.weapon?.name
+		)
+	)
 
-  // Get AX skill images using utility
-  let axSkillImages = $derived(getAxSkillImages(item?.ax))
+	// Get AX skill images using utility
+	let axSkillImages = $derived(getAxSkillImages(item?.ax))
 
-  async function remove() {
-    if (!item?.id) return
-    try {
-      const party = ctx.getParty()
-      const editKey = ctx.getEditKey()
-      const updated = await ctx.services.gridService.removeWeapon(party.id, item.id as any, editKey || undefined)
-      if (updated) {
-        ctx.updateParty(updated)
-      }
-    } catch (err) {
-      console.error('Error removing weapon:', err)
-    }
-  }
+	// Check if this item is currently active in the sidebar
+	let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
 
-  function viewDetails() {
-    if (!item) return
-    openDetailsSidebar({
-      type: 'weapon',
-      item
-    })
-  }
+	// Determine element class for focus ring
+	let elementClass = $derived.by(() => {
+		// For weapons with null element that have an instance element, use it
+		const element =
+			item?.weapon?.element === 0 && item?.element ? item.element : item?.weapon?.element
 
-  function replace() {
-    if (ctx?.openPicker) {
-      ctx.openPicker({ type: 'weapon', position, item })
-    }
-  }
+		switch (element) {
+			case 1:
+				return 'wind'
+			case 2:
+				return 'fire'
+			case 3:
+				return 'water'
+			case 4:
+				return 'earth'
+			case 5:
+				return 'dark'
+			case 6:
+				return 'light'
+			default:
+				return 'neutral'
+		}
+	})
 
+	async function remove() {
+		if (!item?.id) return
+		try {
+			const party = ctx.getParty()
+			const editKey = ctx.getEditKey()
+			const updated = await ctx.services.gridService.removeWeapon(
+				party.id,
+				item.id as any,
+				editKey || undefined
+			)
+			if (updated) {
+				ctx.updateParty(updated)
+			}
+		} catch (err) {
+			console.error('Error removing weapon:', err)
+		}
+	}
 
+	function viewDetails() {
+		if (!item) return
+		openDetailsSidebar({
+			type: 'weapon',
+			item
+		})
+	}
+
+	function replace() {
+		if (ctx?.openPicker) {
+			ctx.openPicker({ type: 'weapon', position, item })
+		}
+	}
 </script>
 
-<div class="unit" class:empty={!item} class:extra={position >= 9}>
-  {#if item}
-    <ContextMenu showGearButton={true}>
-      {#snippet children()}
-        {#key item?.id ?? position}
-          <div
-            class="frame weapon"
-            class:main={item?.mainhand || position === -1}
-            class:cell={!(item?.mainhand || position === -1)}
-            class:extra={position >= 9}
-            class:editable={ctx?.canEdit()}
-            onclick={() => viewDetails()}
-          >
-            <div class="modifiers">
-              {#if awakeningImage}
-                <img
-                  class="awakening"
-                  src={awakeningImage}
-                  alt={`${item?.awakening?.type?.name?.en || 'Awakening'} Lv${item?.awakening?.level || 0}`}
-                />
-              {/if}
-              <div class="skills">
-                {#each axSkillImages as skill}
-                  <img class="skill" src={skill.url} alt={skill.alt} />
-                {/each}
-                {#each weaponKeyImages as skill}
-                  <img class="skill" src={skill.url} alt={skill.alt} />
-                {/each}
-              </div>
-            </div>
-            <img
-              class="image"
-              class:placeholder={!item?.weapon?.granblueId}
-              alt={displayName(item?.weapon)}
-              src={imageUrl}
-            />
-          </div>
-        {/key}
-      {/snippet}
+<div
+	class="unit {elementClass}"
+	class:empty={!item}
+	class:extra={position >= 9}
+	class:is-active={isActive}
+>
+	{#if item}
+		<UnitMenuContainer showGearButton={true}>
+			{#snippet trigger()}
+				<div
+					class="focus-ring-wrapper {elementClass}"
+					class:is-active={isActive}
+					class:editable={ctx?.canEdit()}
+					class:main={item?.mainhand || position === -1}
+				>
+					{#key item?.id ?? position}
+						<div
+							class="frame weapon {elementClass}"
+							class:main={item?.mainhand || position === -1}
+							class:cell={!(item?.mainhand || position === -1)}
+							class:extra={position >= 9}
+							class:editable={ctx?.canEdit()}
+							onclick={() => viewDetails()}
+						>
+							<div class="modifiers">
+								{#if awakeningImage}
+									<img
+										class="awakening"
+										src={awakeningImage}
+										alt={`${item?.awakening?.type?.name?.en || 'Awakening'} Lv${item?.awakening?.level || 0}`}
+									/>
+								{/if}
+								<div class="skills">
+									{#each axSkillImages as skill}
+										<img class="skill" src={skill.url} alt={skill.alt} />
+									{/each}
+									{#each weaponKeyImages as skill}
+										<img class="skill" src={skill.url} alt={skill.alt} />
+									{/each}
+								</div>
+							</div>
+							<img
+								class="image {elementClass}"
+								class:placeholder={!item?.weapon?.granblueId}
+								alt={displayName(item?.weapon)}
+								src={imageUrl}
+							/>
+						</div>
+					{/key}
+				</div>
+			{/snippet}
 
-      {#snippet contextMenu()}
-        <ContextMenuBase.Item class="context-menu-item" onclick={viewDetails}>
-          {m.context_view_details()}
-        </ContextMenuBase.Item>
-        {#if ctx?.canEdit()}
-          <ContextMenuBase.Item class="context-menu-item" onclick={replace}>
-            {m.context_replace()}
-          </ContextMenuBase.Item>
-          <ContextMenuBase.Separator class="context-menu-separator" />
-          <ContextMenuBase.Item class="context-menu-item danger" onclick={remove}>
-            {m.context_remove()}
-          </ContextMenuBase.Item>
-        {/if}
-      {/snippet}
+			{#snippet contextMenu()}
+				<MenuItems
+					onViewDetails={viewDetails}
+					onReplace={ctx?.canEdit() ? replace : undefined}
+					onRemove={ctx?.canEdit() ? remove : undefined}
+					canEdit={ctx?.canEdit()}
+					variant="context"
+					viewDetailsLabel={m.context_view_details()}
+					replaceLabel={m.context_replace()}
+					removeLabel={m.context_remove()}
+				/>
+			{/snippet}
 
-      {#snippet dropdownMenu()}
-        <DropdownMenuBase.Item class="dropdown-menu-item" onclick={viewDetails}>
-          {m.context_view_details()}
-        </DropdownMenuBase.Item>
-        {#if ctx?.canEdit()}
-          <DropdownMenuBase.Item class="dropdown-menu-item" onclick={replace}>
-            {m.context_replace()}
-          </DropdownMenuBase.Item>
-          <DropdownMenuBase.Separator class="dropdown-menu-separator" />
-          <DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={remove}>
-            {m.context_remove()}
-          </DropdownMenuBase.Item>
-        {/if}
-      {/snippet}
-    </ContextMenu>
-  {:else}
-    {#key `empty-${position}`}
-      <div
-        class="frame weapon"
-        class:main={position === -1}
-        class:cell={position !== -1}
-        class:extra={position >= 9}
-        class:editable={ctx?.canEdit()}
-        onclick={() => ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'weapon', position, item })}
-      >
-        <img
-          class="image placeholder"
-          alt=""
-          src={position === -1 ? '/images/placeholders/placeholder-weapon-main.png' : '/images/placeholders/placeholder-weapon-grid.png'}
-        />
-        {#if ctx?.canEdit()}
-          <span class="icon">
-            <Icon name="plus" size={24} />
-          </span>
-        {/if}
-      </div>
-    {/key}
-  {/if}
-  {#if item}
-    <UncapIndicator
-      type="weapon"
-      uncapLevel={item.uncapLevel}
-      transcendenceStage={item.transcendenceStep}
-      flb={item.weapon?.uncap?.flb}
-      ulb={item.weapon?.uncap?.ulb}
-      transcendence={item.weapon?.uncap?.transcendence}
-      editable={ctx?.canEdit()}
-      updateUncap={async (level) => {
-        if (!item?.id || !ctx) return
-        try {
-          const editKey = ctx.getEditKey()
-          const updated = await ctx.services.gridService.updateWeaponUncap(item.id, level, undefined, editKey || undefined)
-          if (updated) {
-            ctx.updateParty(updated)
-          }
-        } catch (err) {
-          console.error('Failed to update weapon uncap:', err)
-          // TODO: Show user-friendly error notification
-        }
-      }}
-      updateTranscendence={async (stage) => {
-        if (!item?.id || !ctx) return
-        try {
-          const editKey = ctx.getEditKey()
-          // When setting transcendence > 0, also set uncap to max (6)
-          const maxUncap = stage > 0 ? 6 : undefined
-          const updated = await ctx.services.gridService.updateWeaponUncap(item.id, maxUncap, stage, editKey || undefined)
-          if (updated) {
-            ctx.updateParty(updated)
-          }
-        } catch (err) {
-          console.error('Failed to update weapon transcendence:', err)
-          // TODO: Show user-friendly error notification
-        }
-      }}
-    />
-  {/if}
-  <div class="name">{item ? displayName(item?.weapon) : ''}</div>
+			{#snippet dropdownMenu()}
+				<MenuItems
+					onViewDetails={viewDetails}
+					onReplace={ctx?.canEdit() ? replace : undefined}
+					onRemove={ctx?.canEdit() ? remove : undefined}
+					canEdit={ctx?.canEdit()}
+					variant="dropdown"
+					viewDetailsLabel={m.context_view_details()}
+					replaceLabel={m.context_replace()}
+					removeLabel={m.context_remove()}
+				/>
+			{/snippet}
+		</UnitMenuContainer>
+	{:else}
+		{#key `empty-${position}`}
+			<div
+				class="frame weapon"
+				class:main={position === -1}
+				class:cell={position !== -1}
+				class:extra={position >= 9}
+				class:editable={ctx?.canEdit()}
+				onclick={() =>
+					ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'weapon', position, item })}
+			>
+				<img
+					class="image placeholder"
+					alt=""
+					src={position === -1
+						? '/images/placeholders/placeholder-weapon-main.png'
+						: '/images/placeholders/placeholder-weapon-grid.png'}
+				/>
+				{#if ctx?.canEdit()}
+					<span class="icon">
+						<Icon name="plus" size={24} />
+					</span>
+				{/if}
+			</div>
+		{/key}
+	{/if}
+	{#if item}
+		<UncapIndicator
+			type="weapon"
+			uncapLevel={item.uncapLevel}
+			transcendenceStage={item.transcendenceStep}
+			flb={item.weapon?.uncap?.flb}
+			ulb={item.weapon?.uncap?.ulb}
+			transcendence={item.weapon?.uncap?.transcendence}
+			editable={ctx?.canEdit()}
+			updateUncap={async (level) => {
+				if (!item?.id || !ctx) return
+				try {
+					const editKey = ctx.getEditKey()
+					const updated = await ctx.services.gridService.updateWeaponUncap(
+						item.id,
+						level,
+						undefined,
+						editKey || undefined
+					)
+					if (updated) {
+						ctx.updateParty(updated)
+					}
+				} catch (err) {
+					console.error('Failed to update weapon uncap:', err)
+					// TODO: Show user-friendly error notification
+				}
+			}}
+			updateTranscendence={async (stage) => {
+				if (!item?.id || !ctx) return
+				try {
+					const editKey = ctx.getEditKey()
+					// When setting transcendence > 0, also set uncap to max (6)
+					const maxUncap = stage > 0 ? 6 : undefined
+					const updated = await ctx.services.gridService.updateWeaponUncap(
+						item.id,
+						maxUncap,
+						stage,
+						editKey || undefined
+					)
+					if (updated) {
+						ctx.updateParty(updated)
+					}
+				} catch (err) {
+					console.error('Failed to update weapon transcendence:', err)
+					// TODO: Show user-friendly error notification
+				}
+			}}
+		/>
+	{/if}
+	<div class="name">{item ? displayName(item?.weapon) : ''}</div>
 </div>
 
 <style lang="scss">
-  @use '$src/themes/colors' as *;
-  @use '$src/themes/typography' as *;
-  @use '$src/themes/spacing' as *;
-  @use '$src/themes/layout' as *;
-  @use '$src/themes/rep' as rep;
+	@use '$src/themes/colors' as colors;
+	@use '$src/themes/typography' as typography;
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/rep' as rep;
 
-  .unit {
-    position: relative;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $unit;
+	.unit {
+		position: relative;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: spacing.$unit;
 
-    &.empty .name {
-      display: none;
-    }
+		&.empty .name {
+			display: none;
+		}
 
-    &.extra {
-      .frame {
-        background: var(--extra-purple-card-bg);
-      }
+		&.extra {
+			.frame {
+				background: var(--extra-purple-card-bg);
+			}
 
-      .icon {
-        color: var(--extra-purple-secondary);
-      }
+			.icon {
+				color: var(--extra-purple-secondary);
+			}
 
-      &:hover .icon {
-        color: var(--extra-purple-primary);
-      }
+			&:hover .icon {
+				color: var(--extra-purple-primary);
+			}
 
-      .name {
-        font-weight: $medium;
-        color: var(--extra-purple-text);
-      }
-    }
-  }
+			.name {
+				font-weight: typography.$medium;
+				color: var(--extra-purple-text);
+			}
+		}
+	}
 
-  .frame {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    border-radius: 8px;
-    background: var(--card-bg, #f5f5f5);
-    border: 1px solid transparent;
-    transition: all 0.2s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+	.focus-ring-wrapper {
+		position: relative;
+		display: block;
+		transition: transform 0.2s ease-in-out;
 
-    &.editable:hover {
-      opacity: 0.95;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      transform: $scale-wide;
-    }
-  }
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			border-radius: 8px;
+			pointer-events: none;
+			z-index: 10;
+		}
 
-  .frame.weapon.main {
-    @include rep.aspect(rep.$weapon-main-w, rep.$weapon-main-h);
+		&.editable:hover {
+			transform: layout.$scale-wide;
+		}
 
-    &.editable:hover {
-      transform: $scale-tall;
-    }
-  }
+		&.editable.main:hover {
+			transform: layout.$scale-tall;
+		}
+	}
 
-  .frame.weapon.cell { @include rep.aspect(rep.$weapon-cell-w, rep.$weapon-cell-h); }
+	.frame {
+		position: relative;
+		width: 100%;
+		overflow: hidden;
+		border-radius: 8px;
+		background: var(--card-bg, #f5f5f5);
+		transition: opacity 0.2s ease-in-out;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
 
-  .image {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    z-index: 2;
+		&.editable:hover {
+			opacity: 0.95;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+	}
 
-    &.placeholder {
-      opacity: 0;
-    }
-  }
+	.frame.weapon.main {
+		@include rep.aspect(rep.$weapon-main-w, rep.$weapon-main-h);
+	}
 
-  .icon {
-    position: absolute;
-    z-index: 1;
-    color: var(--icon-secondary, #999);
-    transition: color 0.2s ease-in-out;
-  }
+	.frame.weapon.cell {
+		@include rep.aspect(rep.$weapon-cell-w, rep.$weapon-cell-h);
+	}
 
-  .frame.editable:hover .icon {
-    color: var(--icon-secondary-hover, #666);
-  }
+	.image {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+		z-index: 2;
 
-  .name {
-    font-size: $font-small;
-    text-align: center;
-    color: $grey-50;
-  }
+		&.placeholder {
+			opacity: 0;
+		}
+	}
 
-  .modifiers {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 3;
-    pointer-events: none;
+	.icon {
+		position: absolute;
+		z-index: 1;
+		color: var(--icon-secondary, #999);
+		transition: color 0.2s ease-in-out;
+	}
 
-    .awakening {
-      position: absolute;
-      width: 30%;
-      height: auto;
-    }
+	.frame.editable:hover .icon {
+		color: var(--icon-secondary-hover, #666);
+	}
 
-    .skills {
-      position: absolute;
-      display: flex;
-      gap: calc($unit / 4);
-      padding: calc($unit / 2);
+	.name {
+		font-size: typography.$font-small;
+		text-align: center;
+		color: colors.$grey-50;
+	}
 
-      .skill {
-        width: 20%;
-        height: auto;
-      }
-    }
-  }
+	.modifiers {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: 3;
+		pointer-events: none;
 
-  // Position modifiers for grid weapons
-  .frame.weapon.cell {
-    .awakening {
-      top: 14%;
-      left: -3.5%;
-    }
+		.awakening {
+			position: absolute;
+			width: 30%;
+			height: auto;
+		}
 
-    .skills {
-      bottom: 2%;
-      right: 2%;
-      justify-content: flex-end;
-    }
-  }
+		.skills {
+			position: absolute;
+			display: flex;
+			gap: calc(spacing.$unit / 4);
+			padding: calc(spacing.$unit / 2);
 
-  // Position modifiers for main weapons
-  .frame.weapon.main {
-    .awakening {
-      width: 40%;
-      top: 67%;
-      left: -3.5%;
-    }
+			.skill {
+				width: 20%;
+				height: auto;
+			}
+		}
+	}
 
-    .skills {
-      bottom: 12%;
-      right: -3.5%;
-      justify-content: flex-end;
+	// Position modifiers for grid weapons
+	.frame.weapon.cell {
+		.awakening {
+			top: 14%;
+			left: -3.5%;
+		}
 
-      .skill {
-        width: 25%;
-      }
-    }
-  }
+		.skills {
+			bottom: 2%;
+			right: 2%;
+			justify-content: flex-end;
+		}
+	}
+
+	// Position modifiers for main weapons
+	.frame.weapon.main {
+		.awakening {
+			width: 40%;
+			top: 67%;
+			left: -3.5%;
+		}
+
+		.skills {
+			bottom: 12%;
+			right: -3.5%;
+			justify-content: flex-end;
+
+			.skill {
+				width: 25%;
+			}
+		}
+	}
+
+	// Pulsing focus ring animation
+	@keyframes pulse-focus-ring {
+		0%,
+		100% {
+			box-shadow: 0 0 4px 3px currentColor;
+		}
+		50% {
+			box-shadow: 0 0 4px 6px currentColor;
+		}
+	}
+
+	// Element-specific focus rings
+	.focus-ring-wrapper.is-active::before {
+		animation: pulse-focus-ring 2s ease-in-out infinite;
+	}
+
+	.focus-ring-wrapper.is-active {
+		&.fire::before {
+			@include colors.focus-ring-fire();
+			color: rgba(250, 109, 109, 0.2);
+		}
+
+		&.water::before {
+			@include colors.focus-ring-water();
+			color: rgba(108, 201, 255, 0.2);
+		}
+
+		&.earth::before {
+			@include colors.focus-ring-earth();
+			color: rgba(253, 159, 91, 0.2);
+		}
+
+		&.wind::before {
+			@include colors.focus-ring-wind();
+			color: rgba(62, 228, 137, 0.2);
+		}
+
+		&.light::before {
+			@include colors.focus-ring-light();
+			color: rgba(232, 214, 51, 0.2);
+		}
+
+		&.dark::before {
+			@include colors.focus-ring-dark();
+			color: rgba(222, 123, 255, 0.2);
+		}
+
+		&.neutral::before {
+			@include colors.focus-ring-neutral();
+			color: rgba(0, 0, 0, 0.1);
+		}
+	}
+
+	// Element-specific name colors when active
+	.unit.is-active {
+		.name {
+			font-weight: typography.$bold;
+		}
+
+		&.fire .name {
+			color: colors.$fire--text--light;
+		}
+
+		&.water .name {
+			color: colors.$water--text--light;
+		}
+
+		&.earth .name {
+			color: colors.$earth--text--light;
+		}
+
+		&.wind .name {
+			color: colors.$wind--text--light;
+		}
+
+		&.light .name {
+			color: colors.$light--text--light;
+		}
+
+		&.dark .name {
+			color: colors.$dark--text--light;
+		}
+
+		&.neutral .name {
+			color: colors.$grey-40;
+		}
+	}
 </style>
