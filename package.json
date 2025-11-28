@@ -1,5 +1,6 @@
 {
   "name": "grid-web",
+  "hasInstallScript": true,
   "private": true,
   "cacheDirectories": [
     ".next/cache"
