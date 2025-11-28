@@ -1,5 +1,4 @@
-import type { OAuthLoginResponse } from './oauth'
-import type { UserInfoResponse } from '$lib/api/resources/users'
+import type { OAuthLoginResponse, UserInfoResponse } from './oauth'
 import type { AccountCookie } from '$lib/types/AccountCookie'
 import type { UserCookie } from '$lib/types/UserCookie'
 
