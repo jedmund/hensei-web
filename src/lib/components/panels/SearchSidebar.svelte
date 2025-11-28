@@ -100,14 +100,25 @@
     isLoading = true
 
     try {
-      const params = {
-        query: searchQuery || undefined, // Don't send empty string
+      const params: any = {
         page: currentPage,
-        filters: {
-          element: elementFilters.length > 0 ? elementFilters : undefined,
-          rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
-          proficiency1: type === 'weapon' && proficiencyFilters.length > 0 ? proficiencyFilters : undefined
-        }
+        filters: {}
+      }
+      
+      // Only add query if not empty
+      if (searchQuery) {
+        params.query = searchQuery
+      }
+      
+      // Only add filters if they have values
+      if (elementFilters.length > 0) {
+        params.filters.element = elementFilters
+      }
+      if (rarityFilters.length > 0) {
+        params.filters.rarity = rarityFilters
+      }
+      if (type === 'weapon' && proficiencyFilters.length > 0) {
+        params.filters.proficiency1 = proficiencyFilters
       }
 
       let response
