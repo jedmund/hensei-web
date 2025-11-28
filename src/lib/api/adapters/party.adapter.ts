@@ -213,7 +213,9 @@ export class PartyAdapter extends BaseAdapter {
 		return this.request<Party>(`/parties/${shortcode}/jobs`, {
 			method: 'PUT',
 			body: {
-				job_id: jobId
+				party: {
+					job_id: jobId
+				}
 			}
 		})
 	}
@@ -228,17 +230,17 @@ export class PartyAdapter extends BaseAdapter {
 		console.log('[updateJobSkills] Input skills array:', skills)
 
 		// Convert skills array to Rails expected format
-		const party: Record<string, string | null> = {}
+		// Rails has skill0_id (main, locked), skill1_id, skill2_id, skill3_id
+		// Only include skills that have actual IDs - don't send null values
+		// as Rails will try to validate them
+		const party: Record<string, string> = {}
 
-		// Initialize all slots with null
-		for (let i = 1; i <= 4; i++) {
-			party[`skill${i}_id`] = null
-		}
-
-		// Set the provided skills
-		skills.forEach(skill => {
-			// Rails expects skill1_id, skill2_id, skill3_id, skill4_id
-			party[`skill${skill.slot + 1}_id`] = skill.id
+		// Set the provided skills - slot number maps directly to skill{N}_id
+		skills.forEach((skill) => {
+			// Only set editable slots (1, 2, 3) and only if skill has an ID
+			if (skill.slot >= 1 && skill.slot <= 3 && skill.id) {
+				party[`skill${skill.slot}_id`] = skill.id
+			}
 		})
 
 		const requestBody = {
@@ -253,6 +255,16 @@ export class PartyAdapter extends BaseAdapter {
 		return this.request<Party>(`/parties/${partyId}/job_skills`, {
 			method: 'PUT',
 			body: requestBody
+		})
+	}
+
+	/**
+	 * Updates the accessory for a party
+	 */
+	async updateAccessory(partyId: string, accessoryId: string): Promise<Party> {
+		return this.request<Party>(`/parties/${partyId}/accessory`, {
+			method: 'PUT',
+			body: { accessory_id: accessoryId }
 		})
 	}
 

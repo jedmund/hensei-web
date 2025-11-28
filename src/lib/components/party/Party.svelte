@@ -369,8 +369,8 @@
 				error = null
 
 				try {
-					// Update job via API
-					const updated = await partyAdapter.updateJob(party.id, job.id)
+					// Update job via API (use shortcode for party identification)
+					const updated = await partyAdapter.updateJob(party.shortcode, job.id)
 					party = updated
 				} catch (e) {
 					error = e instanceof Error ? e.message : 'Failed to update job'
@@ -415,7 +415,7 @@
 					console.log('[Party] Skills array to send:', skillsArray)
 
 					const updated = await partyAdapter.updateJobSkills(
-						party.id,
+						party.shortcode,
 						skillsArray
 					)
 					party = updated
@@ -476,7 +476,7 @@
 					console.log('[Party] Skills array to send after removal:', skillsArray)
 
 					const updated = await partyAdapter.updateJobSkills(
-						party.id,
+						party.shortcode,
 						skillsArray
 					)
 					party = updated
@@ -537,7 +537,7 @@
 				}))
 
 			const updated = await partyAdapter.updateJobSkills(
-				party.id,
+				party.shortcode,
 				skillsArray
 			)
 			party = updated
