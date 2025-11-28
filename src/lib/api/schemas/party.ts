@@ -461,8 +461,8 @@ export type RaidGroup = CamelCasedKeysDeep<z.infer<typeof RaidGroupSchema>>
 export type User = CamelCasedKeysDeep<z.infer<typeof UserSchema>>
 export type Guidebook = CamelCasedKeysDeep<z.infer<typeof GuidebookSchema>>
 
-// Import transformation from client
-import { transformResponse } from '../client'
+// Import transformation from transforms
+import { transformResponse } from './transforms'
 import type { Party as CleanParty } from '$lib/types/api/party'
 
 // Helper: parse raw API party (snake_case) and convert to clean types

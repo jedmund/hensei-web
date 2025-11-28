@@ -8,7 +8,7 @@
  * @module adapters/base
  */
 
-import { transformResponse, transformRequest } from '../client'
+import { transformResponse, transformRequest } from '../schemas/transforms'
 import type { AdapterOptions, RequestOptions, AdapterError } from './types'
 import {
 	createErrorFromStatus,

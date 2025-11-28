@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
 	const authUserId = locals.session?.account?.userId
 
 	// Try to fetch party data on the server
-	const partyService = new PartyService(fetch)
+	const partyService = new PartyService()
 
 	let partyFound = false
 	let party = null
