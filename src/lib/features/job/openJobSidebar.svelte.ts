@@ -5,16 +5,16 @@ import type { Job, JobSkill } from '$lib/types/api/entities'
 import type { JobSkillList } from '$lib/types/api/party'
 
 interface JobSelectionOptions {
-	currentJobId?: string
-	onSelectJob?: (job: Job) => void
+	currentJobId?: string | undefined
+	onSelectJob?: ((job: Job) => void) | undefined
 }
 
 interface JobSkillSelectionOptions {
-	job?: Job
-	currentSkills?: JobSkillList
+	job?: Job | undefined
+	currentSkills?: JobSkillList | undefined
 	targetSlot: number
-	onSelectSkill?: (skill: JobSkill) => void
-	onRemoveSkill?: () => void
+	onSelectSkill?: ((skill: JobSkill) => void) | undefined
+	onRemoveSkill?: (() => void) | undefined
 }
 
 export function openJobSelectionSidebar(options: JobSelectionOptions) {

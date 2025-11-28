@@ -191,7 +191,7 @@
 
 					<DropdownMenu.Portal>
 						<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-							<DropdownItem asChild>
+							<DropdownItem>
 								<button onclick={() => (settingsModalOpen = true)}>
 									{m.nav_settings()}
 								</button>
@@ -201,7 +201,7 @@
 							{/if}
 							{#if isAuth}
 								<DropdownMenu.Separator class="dropdown-separator" />
-								<DropdownItem asChild>
+								<DropdownItem>
 									<button onclick={handleLogout}>{m.nav_logout()}</button>
 								</DropdownItem>
 							{/if}

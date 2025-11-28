@@ -10,11 +10,11 @@
 	import DropZone from '$lib/components/dnd/DropZone.svelte'
 
 	interface Props {
-		characters?: GridCharacter[]
+		characters?: GridCharacter[] | undefined
 		mainWeaponElement?: number | null | undefined
 		partyElement?: number | null | undefined
-		job?: Job
-		container?: string
+		job?: Job | undefined
+		container?: string | undefined
 	}
 
 	let {

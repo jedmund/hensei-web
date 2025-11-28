@@ -397,7 +397,7 @@
 				try {
 					// Update skills with the new skill in the slot
 					const updatedSkills = { ...party.jobSkills }
-					updatedSkills[slot as keyof typeof updatedSkills] = skill
+					updatedSkills[String(slot) as keyof typeof updatedSkills] = skill
 
 					console.log('[Party] Current jobSkills:', party.jobSkills)
 					console.log('[Party] Updated jobSkills object:', updatedSkills)
@@ -459,7 +459,7 @@
 				try {
 					// Remove skill from slot
 					const updatedSkills = { ...party.jobSkills }
-					delete updatedSkills[slot as keyof typeof updatedSkills]
+					delete updatedSkills[String(slot) as keyof typeof updatedSkills]
 
 					console.log('[Party] Removing skill from slot:', slot)
 					console.log('[Party] Current jobSkills:', party.jobSkills)
@@ -526,7 +526,7 @@
 		try {
 			// Remove skill from slot
 			const updatedSkills = { ...party.jobSkills }
-			delete updatedSkills[slot as keyof typeof updatedSkills]
+			delete updatedSkills[String(slot) as keyof typeof updatedSkills]
 
 			// Convert skills object to array format expected by API
 			const skillsArray = Object.entries(updatedSkills)
@@ -554,6 +554,7 @@
 		if (items.length === 0 || !canEdit()) return
 
 		const item = items[0]
+		if (!item) return
 		loading = true
 		error = null
 
@@ -649,7 +650,7 @@
 		localId = partyService.getLocalId()
 
 		// Get edit key for this party if it exists
-		editKey = partyService.getEditKey(party.shortcode)
+			editKey = partyService.getEditKey(party.shortcode) ?? undefined
 
 		// No longer need to verify party data integrity after hydration
 		// since $state.raw prevents the hydration mismatch
@@ -787,14 +788,20 @@
 							(c: any) => c.id === gridCharacterId
 						)
 						if (charIndex !== -1) {
-							// Preserve the character object reference but update uncap fields
-							updatedParty.characters[charIndex] = {
-								...updatedParty.characters[charIndex],
-								uncapLevel: updatedChar.uncapLevel ?? updatedChar.uncap_level,
-								transcendenceStep: updatedChar.transcendenceStep ?? updatedChar.transcendence_step
+								// Preserve the character object reference but update uncap fields
+								const existingChar = updatedParty.characters[charIndex]
+								if (existingChar) {
+									updatedParty.characters[charIndex] = {
+										...existingChar,
+										id: existingChar.id,
+										position: existingChar.position,
+										character: existingChar.character,
+										uncapLevel: updatedChar.uncapLevel ?? updatedChar.uncap_level,
+										transcendenceStep: updatedChar.transcendenceStep ?? updatedChar.transcendence_step
+									}
+								}
+								return updatedParty
 							}
-							return updatedParty
-						}
 					}
 				}
 				return party // Return unchanged party if update failed
@@ -825,15 +832,21 @@
 					if (updatedParty.weapons) {
 						const weaponIndex = updatedParty.weapons.findIndex((w: any) => w.id === gridWeaponId)
 						if (weaponIndex !== -1) {
-							// Preserve the weapon object reference but update uncap fields
-							updatedParty.weapons[weaponIndex] = {
-								...updatedParty.weapons[weaponIndex],
-								uncapLevel: updatedWeapon.uncapLevel ?? updatedWeapon.uncap_level,
-								transcendenceStep:
-									updatedWeapon.transcendenceStep ?? updatedWeapon.transcendence_step
+								// Preserve the weapon object reference but update uncap fields
+								const existingWeapon = updatedParty.weapons[weaponIndex]
+								if (existingWeapon) {
+									updatedParty.weapons[weaponIndex] = {
+										...existingWeapon,
+										id: existingWeapon.id,
+										position: existingWeapon.position,
+										weapon: existingWeapon.weapon,
+										uncapLevel: updatedWeapon.uncapLevel ?? updatedWeapon.uncap_level,
+										transcendenceStep:
+											updatedWeapon.transcendenceStep ?? updatedWeapon.transcendence_step
+									}
+								}
+								return updatedParty
 							}
-							return updatedParty
-						}
 					}
 				}
 				return party // Return unchanged party if update failed
@@ -864,15 +877,21 @@
 					if (updatedParty.summons) {
 						const summonIndex = updatedParty.summons.findIndex((s: any) => s.id === gridSummonId)
 						if (summonIndex !== -1) {
-							// Preserve the summon object reference but update uncap fields
-							updatedParty.summons[summonIndex] = {
-								...updatedParty.summons[summonIndex],
-								uncapLevel: updatedSummon.uncapLevel ?? updatedSummon.uncap_level,
-								transcendenceStep:
-									updatedSummon.transcendenceStep ?? updatedSummon.transcendence_step
+								// Preserve the summon object reference but update uncap fields
+								const existingSummon = updatedParty.summons[summonIndex]
+								if (existingSummon) {
+									updatedParty.summons[summonIndex] = {
+										...existingSummon,
+										id: existingSummon.id,
+										position: existingSummon.position,
+										summon: existingSummon.summon,
+										uncapLevel: updatedSummon.uncapLevel ?? updatedSummon.uncap_level,
+										transcendenceStep:
+											updatedSummon.transcendenceStep ?? updatedSummon.transcendence_step
+									}
+								}
+								return updatedParty
 							}
-							return updatedParty
-						}
 					}
 				}
 				return party // Return unchanged party if update failed
@@ -967,26 +986,26 @@
 						<DropdownMenu.Portal>
 							<DropdownMenu.Content class="dropdown-content" sideOffset={6} align="end">
 								{#if canEdit()}
-									<DropdownItem asChild>
+									<DropdownItem>
 										<button onclick={openEditDialog} disabled={loading}>Edit</button>
 									</DropdownItem>
 								{/if}
 
 								{#if authUserId}
-									<DropdownItem asChild>
+									<DropdownItem>
 										<button onclick={toggleFavorite} disabled={loading}>
 											{party.favorited ? 'Remove from favorites' : 'Add to favorites'}
 										</button>
 									</DropdownItem>
 								{/if}
 
-								<DropdownItem asChild>
+								<DropdownItem>
 									<button onclick={remixParty} disabled={loading}>Remix</button>
 								</DropdownItem>
 
 								{#if party.user?.id === authUserId}
 									<DropdownMenu.Separator class="dropdown-separator" />
-									<DropdownItem asChild>
+									<DropdownItem>
 										<button onclick={() => (deleteDialogOpen = true)} disabled={loading}>
 											Delete
 										</button>

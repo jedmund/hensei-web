@@ -54,6 +54,8 @@ export interface SearchResult {
 	series?: number
 	/** URL for entity image */
 	imageUrl?: string
+	/** Type of entity (lowercase for compatibility) */
+	type?: 'weapon' | 'character' | 'summon'
 	/** Type of entity */
 	searchableType: 'Weapon' | 'Character' | 'Summon'
 }

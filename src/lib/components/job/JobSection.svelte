@@ -13,16 +13,16 @@
 	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
-		job?: Job
-		jobSkills?: JobSkillList
-		accessory?: JobAccessory
-		canEdit?: boolean
-		gender?: Gender
-		element?: number
-		onSelectJob?: () => void
-		onSelectSkill?: (slot: number) => void
-		onRemoveSkill?: (slot: number) => void
-		onSelectAccessory?: () => void
+		job?: Job | undefined
+		jobSkills?: JobSkillList | undefined
+		accessory?: JobAccessory | undefined
+		canEdit?: boolean | undefined
+		gender?: Gender | undefined
+		element?: number | undefined
+		onSelectJob?: (() => void) | undefined
+		onSelectSkill?: ((slot: number) => void) | undefined
+		onRemoveSkill?: ((slot: number) => void) | undefined
+		onSelectAccessory?: (() => void) | undefined
 	}
 
 	let {

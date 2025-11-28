@@ -12,8 +12,8 @@
 		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
 		itemData: any
-		gridUncapLevel: number | null
-		gridTranscendence: number | null
+		gridUncapLevel: number | null | undefined
+		gridTranscendence: number | null | undefined
 	}
 
 	let { type, item, itemData, gridUncapLevel, gridTranscendence }: Props = $props()

@@ -7,21 +7,22 @@
 	type Props = {
 		children: Snippet
 		href?: string
-		asChild?: boolean
 		class?: string
 	}
 
-	const { children, href, asChild = false, class: className = '' }: Props = $props()
+	const { children, href, class: className = '' }: Props = $props()
 </script>
 
 {#if href}
-	<DropdownMenu.Item class="dropdown-item {className}" asChild>
-		<a {href}>
-			{@render children()}
-		</a>
+	<DropdownMenu.Item class="dropdown-item {className}">
+		{#snippet child({ props })}
+			<a {...props} {href}>
+				{@render children()}
+			</a>
+		{/snippet}
 	</DropdownMenu.Item>
 {:else}
-	<DropdownMenu.Item class="dropdown-item {className}" {asChild}>
+	<DropdownMenu.Item class="dropdown-item {className}">
 		{@render children()}
 	</DropdownMenu.Item>
 {/if}

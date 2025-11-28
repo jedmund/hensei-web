@@ -2,10 +2,10 @@ import { sidebar } from '$lib/stores/sidebar.svelte'
 import DescriptionSidebar from '$lib/components/sidebar/DescriptionSidebar.svelte'
 
 interface DescriptionSidebarOptions {
-	title?: string
-	description?: string
-	canEdit?: boolean
-	onEdit?: () => void
+	title?: string | undefined
+	description?: string | undefined
+	canEdit?: boolean | undefined
+	onEdit?: (() => void) | undefined
 }
 
 export function openDescriptionSidebar(options: DescriptionSidebarOptions) {

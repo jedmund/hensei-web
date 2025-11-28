@@ -6,17 +6,17 @@
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
-		rarity?: number
-		uncapLevel?: number
-		transcendenceStage?: number
-		flb?: boolean
-		ulb?: boolean
-		transcendence?: boolean
-		special?: boolean
-		className?: string
-		editable?: boolean
-		updateUncap?: (index: number) => void
-		updateTranscendence?: (index: number) => void
+		rarity?: number | undefined
+		uncapLevel?: number | null | undefined
+		transcendenceStage?: number | null | undefined
+		flb?: boolean | undefined
+		ulb?: boolean | undefined
+		transcendence?: boolean | undefined
+		special?: boolean | undefined
+		className?: string | undefined
+		editable?: boolean | undefined
+		updateUncap?: ((index: number) => void) | undefined
+		updateTranscendence?: ((index: number) => void) | undefined
 	}
 
 	interface StarRender {

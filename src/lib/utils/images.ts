@@ -51,8 +51,8 @@ export function getImageUrl(
 	id: string | number | null | undefined,
 	variant: ImageVariant,
 	options?: {
-		pose?: string // For character poses
-		element?: number // For element-specific weapon grids
+		pose?: string | undefined // For character poses
+		element?: number | undefined // For element-specific weapon grids
 	}
 ): string {
 	// Return placeholder if no ID

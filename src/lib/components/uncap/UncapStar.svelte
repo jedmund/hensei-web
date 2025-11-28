@@ -7,7 +7,7 @@
 		flb?: boolean
 		ulb?: boolean
 		index: number
-		tabIndex?: number
+		tabindex?: number
 		onStarClick: (index: number, empty: boolean) => void
 	}
 
@@ -17,7 +17,7 @@
 		flb = false,
 		ulb = false,
 		index,
-		tabIndex,
+		tabindex,
 		onStarClick
 	}: Props = $props()
 
@@ -33,7 +33,7 @@
 	class:mlb={!special}
 	class:flb
 	class:ulb
-	{tabIndex}
+	{tabindex}
 	onclick={handleClick}
 	role="button"
 	aria-label="Uncap star"

@@ -10,7 +10,7 @@
 		type?: 'character' | 'weapon' | 'summon'
 		editable?: boolean
 		interactive?: boolean
-		tabIndex?: number
+		tabindex?: number
 		onStarClick?: () => void
 		onFragmentClick?: (newStage: number) => void
 		onFragmentHover?: (newStage: number) => void
@@ -22,7 +22,7 @@
 		type = 'character',
 		editable = false,
 		interactive = false,
-		tabIndex,
+		tabindex,
 		onStarClick,
 		onFragmentClick,
 		onFragmentHover
@@ -168,7 +168,7 @@
 	onclick={handleClick}
 	onmouseleave={interactive ? handleMouseLeave : undefined}
 	bind:this={starElement}
-	{tabIndex}
+	{tabindex}
 	role={editable ? 'button' : undefined}
 	aria-label={editable ? 'Transcendence star' : undefined}
 >

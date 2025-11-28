@@ -1,13 +1,13 @@
 <script lang="ts">
   import { getContext } from 'svelte'
-  import type { PartyView } from '$lib/api/schemas/party'
+  import type { Party } from '$lib/types/api/party'
 
   export let item: any | undefined
   export let position: number // 1..3
 
   type PartyCtx = {
-    getParty: () => PartyView
-    updateParty: (p: PartyView) => void
+    getParty: () => Party
+    updateParty: (p: Party) => void
     canEdit: () => boolean
     services: { partyService: any }
   }
