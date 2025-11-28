@@ -34,28 +34,31 @@ export interface AdapterOptions {
  */
 export interface RequestOptions extends Omit<RequestInit, 'body' | 'cache'> {
 	/** Query parameters to append to the URL */
-	params?: Record<string, any>
+	params?: Record<string, any> | undefined
 
 	/** Alternative alias for query parameters */
-	query?: Record<string, any>
+	query?: Record<string, any> | undefined
 
 	/** Request timeout in milliseconds. Overrides the adapter's default timeout */
-	timeout?: number
+	timeout?: number | undefined
 
 	/** Number of retry attempts for this specific request */
-	retries?: number
+	retries?: number | undefined
 
 	/** Cache duration for this request in milliseconds */
-	cacheTime?: number
+	cacheTime?: number | undefined
 
 	/** Request cache mode */
-	cache?: RequestCache
+	cache?: RequestCache | undefined
 
 	/** Alternative alias for cache duration */
-	cacheTTL?: number
+	cacheTTL?: number | undefined
 
 	/** Request body. Can be any serializable value */
 	body?: any
+
+	/** HTTP headers for the request */
+	headers?: Record<string, string> | undefined
 }
 
 /**
@@ -153,28 +156,28 @@ export interface ApiResponse<T> {
  */
 export interface SearchFilters {
 	/** Filter by element IDs */
-	element?: number[]
+	element?: number[] | undefined
 
 	/** Filter by rarity levels */
-	rarity?: number[]
+	rarity?: number[] | undefined
 
 	/** Filter by primary proficiency (weapons and characters) */
-	proficiency1?: number[]
+	proficiency1?: number[] | undefined
 
 	/** Filter by secondary proficiency (characters only) */
-	proficiency2?: number[]
+	proficiency2?: number[] | undefined
 
 	/** Filter by series */
-	series?: number[]
+	series?: number[] | undefined
 
 	/** Include extra/seasonal variants */
-	extra?: boolean
+	extra?: boolean | undefined
 
 	/** Filter summons with sub-aura */
-	subaura?: boolean
+	subaura?: boolean | undefined
 
 	/** Filter special characters */
-	special?: boolean
+	special?: boolean | undefined
 
 	/** Custom filters for specific use cases */
 	[key: string]: any
@@ -188,25 +191,25 @@ export interface SearchParams {
 	type: 'weapon' | 'character' | 'summon'
 
 	/** Search query string */
-	query?: string
+	query?: string | undefined
 
 	/** Filters to apply to the search */
-	filters?: SearchFilters
+	filters?: SearchFilters | undefined
 
 	/** Page number for pagination (1-indexed) */
-	page?: number
+	page?: number | undefined
 
 	/** Number of items per page */
-	perPage?: number
+	perPage?: number | undefined
 
 	/** Locale for localized content */
-	locale?: 'en' | 'ja'
+	locale?: 'en' | 'ja' | undefined
 
 	/** Items to exclude from results (by ID) */
-	exclude?: string[]
+	exclude?: string[] | undefined
 
 	/** AbortSignal for request cancellation */
-	signal?: AbortSignal
+	signal?: AbortSignal | undefined
 }
 
 /**

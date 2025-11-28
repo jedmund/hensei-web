@@ -3,6 +3,18 @@ import { partyAdapter } from '$lib/api/adapters/party.adapter'
 import { authStore } from '$lib/stores/auth.store'
 import { browser } from '$app/environment'
 
+/**
+ * Context type for party-related operations in components
+ */
+export interface PartyContext {
+  getParty: () => Party
+  updateParty: (p: Party) => void
+  canEdit: () => boolean
+  getEditKey: () => string | null
+  services: { gridService: any; partyService: any }
+  openPicker?: (opts: { type: 'weapon' | 'summon' | 'character'; position: number; item?: any }) => void
+}
+
 export interface EditabilityResult {
   canEdit: boolean
   headers?: Record<string, string>

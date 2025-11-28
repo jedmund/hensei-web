@@ -98,6 +98,12 @@
     if (!partyId && !isCreatingParty && items.length > 0) {
       isCreatingParty = true
       const firstItem = items[0]
+      
+      // Guard against undefined firstItem (shouldn't happen given items.length > 0 check, but TypeScript needs this)
+      if (!firstItem) {
+        isCreatingParty = false
+        return
+      }
 
       try {
         // Step 1: Create the party (with local_id only for anonymous users)
@@ -262,6 +268,7 @@
       try {
         for (let i = 0; i < items.length; i++) {
           const item = items[i]
+          if (!item) continue // Skip undefined items
           let position = -1 // Default position
 
           if (activeTab === GridType.Weapon) {

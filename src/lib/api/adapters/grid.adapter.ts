@@ -49,11 +49,11 @@ export interface CreateGridSummonParams {
  * Parameters for updating uncap levels
  */
 export interface UpdateUncapParams {
-	id?: string
+	id?: string | undefined
 	partyId: string
-	position?: number
+	position?: number | undefined
 	uncapLevel: number
-	transcendenceStep?: number
+	transcendenceStep?: number | undefined
 }
 
 /**

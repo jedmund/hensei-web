@@ -9,11 +9,9 @@
 
 import { infiniteQueryOptions } from '@tanstack/svelte-query'
 import {
-	searchWeapons,
-	searchCharacters,
-	searchSummons,
+	searchAdapter,
 	type SearchParams
-} from '$lib/api/resources/search'
+} from '$lib/api/adapters/search.adapter'
 
 /**
  * Filter configuration for search queries
@@ -33,14 +31,14 @@ export interface SearchFilters {
 export interface SearchPageResult {
 	results: Array<{
 		id: string
-		granblue_id: string
+		granblueId: string
 		name: { en?: string; ja?: string }
 		element?: number
 		rarity?: number
 		proficiency?: number
 		series?: number
-		image_url?: string
-		searchable_type: 'Weapon' | 'Character' | 'Summon'
+		imageUrl?: string
+		searchableType: 'Weapon' | 'Character' | 'Summon'
 	}>
 	page: number
 	totalPages: number
@@ -131,12 +129,12 @@ export const searchQueries = {
 			queryKey: ['search', 'weapons', query, filters, locale] as const,
 			queryFn: async ({ pageParam }): Promise<SearchPageResult> => {
 				const params = buildSearchParams(query, filters, pageParam, locale)
-				const response = await searchWeapons(params)
+				const response = await searchAdapter.searchWeapons(params)
 
 				return {
 					results: response.results,
 					page: response.meta?.page ?? response.page ?? pageParam,
-					totalPages: response.meta?.total_pages ?? response.total_pages ?? 1
+					totalPages: response.meta?.totalPages ?? response.totalPages ?? 1
 				}
 			},
 			initialPageParam: 1,
@@ -163,12 +161,12 @@ export const searchQueries = {
 			queryKey: ['search', 'characters', query, filters, locale] as const,
 			queryFn: async ({ pageParam }): Promise<SearchPageResult> => {
 				const params = buildSearchParams(query, filters, pageParam, locale)
-				const response = await searchCharacters(params)
+				const response = await searchAdapter.searchCharacters(params)
 
 				return {
 					results: response.results,
 					page: response.meta?.page ?? response.page ?? pageParam,
-					totalPages: response.meta?.total_pages ?? response.total_pages ?? 1
+					totalPages: response.meta?.totalPages ?? response.totalPages ?? 1
 				}
 			},
 			initialPageParam: 1,
@@ -195,12 +193,12 @@ export const searchQueries = {
 			queryKey: ['search', 'summons', query, filters, locale] as const,
 			queryFn: async ({ pageParam }): Promise<SearchPageResult> => {
 				const params = buildSearchParams(query, filters, pageParam, locale)
-				const response = await searchSummons(params)
+				const response = await searchAdapter.searchSummons(params)
 
 				return {
 					results: response.results,
 					page: response.meta?.page ?? response.page ?? pageParam,
-					totalPages: response.meta?.total_pages ?? response.total_pages ?? 1
+					totalPages: response.meta?.totalPages ?? response.totalPages ?? 1
 				}
 			},
 			initialPageParam: 1,

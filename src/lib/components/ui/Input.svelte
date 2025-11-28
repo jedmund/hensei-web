@@ -94,7 +94,7 @@
 					{disabled}
 					{readonly}
 					{required}
-					{maxLength}
+					maxlength={maxLength}
 					{...restProps}
 				/>
 
@@ -112,16 +112,16 @@
 			</div>
 		{:else}
 			<input
-				bind:value
-				class={inputClasses}
-				{type}
-				{placeholder}
-				{disabled}
-				{readonly}
-				{required}
-				{maxLength}
-				{...restProps}
-			/>
+					bind:value
+					class={inputClasses}
+					{type}
+					{placeholder}
+					{disabled}
+					{readonly}
+					{required}
+					maxlength={maxLength}
+					{...restProps}
+				/>
 		{/if}
 
 		{#if error}
@@ -143,7 +143,7 @@
 			{disabled}
 			{readonly}
 			{required}
-			{maxLength}
+			maxlength={maxLength}
 			{...restProps}
 		/>
 
@@ -161,16 +161,16 @@
 	</div>
 {:else}
 	<input
-		bind:value
-		class={inputClasses}
-		{type}
-		{placeholder}
-		{disabled}
-		{readonly}
-		{required}
-		{maxLength}
-		{...restProps}
-	/>
+			bind:value
+			class={inputClasses}
+			{type}
+			{placeholder}
+			{disabled}
+			{readonly}
+			{required}
+			maxlength={maxLength}
+			{...restProps}
+		/>
 {/if}
 
 <style lang="scss">

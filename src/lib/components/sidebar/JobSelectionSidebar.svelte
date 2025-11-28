@@ -144,7 +144,7 @@
 			<div class="error-state">
 				<Icon name="alert-circle" size={32} />
 				<p>{error}</p>
-				<Button size="small" on:click={loadJobs}>Retry</Button>
+				<Button size="small" onclick={loadJobs}>Retry</Button>
 			</div>
 		{:else if Object.keys(filteredJobs).length === 0}
 			<div class="empty-state">
@@ -153,8 +153,8 @@
 				{#if searchQuery || selectedTiers.size > 0}
 					<Button
 						size="small"
-						variant="outlined"
-						on:click={() => {
+						variant="ghost"
+						onclick={() => {
 							searchQuery = ''
 							selectedTiers = new Set(['4', '5', 'ex2', 'o1'])
 						}}

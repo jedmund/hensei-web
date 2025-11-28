@@ -16,11 +16,11 @@
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
-		item?: GridCharacter
+		item?: GridCharacter | undefined
 		position: number
-		mainWeaponElement?: number | null
-		partyElement?: number | null
-		job?: Job
+		mainWeaponElement?: number | null | undefined
+		partyElement?: number | null | undefined
+		job?: Job | undefined
 	}
 
 	let { item, position, mainWeaponElement, partyElement, job }: Props = $props()

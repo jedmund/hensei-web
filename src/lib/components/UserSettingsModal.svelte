@@ -197,11 +197,11 @@
 			</div>
 
 			<div class="form-actions">
-				<Button variant="outlined" onclick={handleClose} disabled={saving}>Cancel</Button>
-				<Button type="submit" variant="contained" disabled={saving}>
-					{saving ? 'Saving...' : 'Save Changes'}
-				</Button>
-			</div>
+					<Button variant="ghost" onclick={handleClose} disabled={saving}>Cancel</Button>
+					<Button type="submit" variant="primary" disabled={saving}>
+						{saving ? 'Saving...' : 'Save Changes'}
+					</Button>
+				</div>
 		</form>
 	{/snippet}
 

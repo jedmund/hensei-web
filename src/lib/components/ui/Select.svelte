@@ -105,13 +105,17 @@
 				<SelectPrimitive.Viewport>
 					{#each options as option}
 						<SelectPrimitive.Item value={String(option.value)} disabled={option.disabled} class="item">
-							{#if option.image}
-								<img src={option.image} alt={option.label} class="image" />
-							{/if}
-							<span class="text">{option.label}</span>
-							<SelectPrimitive.ItemIndicator class="indicator">
-								<Icon name="check" size={14} />
-							</SelectPrimitive.ItemIndicator>
+							{#snippet children({ selected })}
+								{#if option.image}
+									<img src={option.image} alt={option.label} class="image" />
+								{/if}
+								<span class="text">{option.label}</span>
+								{#if selected}
+									<span class="indicator">
+										<Icon name="check" size={14} />
+									</span>
+								{/if}
+							{/snippet}
 						</SelectPrimitive.Item>
 					{/each}
 				</SelectPrimitive.Viewport>
@@ -135,14 +139,18 @@
 		<SelectPrimitive.Content class="content">
 			<SelectPrimitive.Viewport>
 				{#each options as option}
-					<SelectPrimitive.Item value={String(option.value)} disabled={option.disabled} class="item">
-						{#if option.image}
-							<img src={option.image} alt={option.label} class="image" />
-						{/if}
-						<span class="text">{option.label}</span>
-						<SelectPrimitive.ItemIndicator class="indicator">
-							<Icon name="check" size={14} />
-						</SelectPrimitive.ItemIndicator>
+				<SelectPrimitive.Item value={String(option.value)} disabled={option.disabled} class="item">
+						{#snippet children({ selected })}
+							{#if option.image}
+								<img src={option.image} alt={option.label} class="image" />
+							{/if}
+							<span class="text">{option.label}</span>
+							{#if selected}
+								<span class="indicator">
+									<Icon name="check" size={14} />
+								</span>
+							{/if}
+						{/snippet}
 					</SelectPrimitive.Item>
 				{/each}
 			</SelectPrimitive.Viewport>

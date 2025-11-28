@@ -37,6 +37,29 @@ export interface Weapon {
 	ulbAttack?: number
 	transcendenceHp?: number
 	transcendenceAttack?: number
+	hp?: {
+		minHp?: number
+		maxHp?: number
+		maxHpFlb?: number
+		maxHpUlb?: number
+	}
+	atk?: {
+		minAtk?: number
+		maxAtk?: number
+		maxAtkFlb?: number
+		maxAtkUlb?: number
+	}
+	uncap?: {
+		flb?: boolean
+		ulb?: boolean
+		transcendence?: boolean
+	}
+	maxLevel?: number
+	skillLevelCap?: number
+	weapon_skills?: Array<{
+		name?: string
+		description?: string
+	}>
 	awakenings?: Array<{
 		id: string
 		name: Record<string, string>
@@ -109,8 +132,33 @@ export interface Summon {
 	ulbAttack?: number
 	transcendenceHp?: number
 	transcendenceAttack?: number
+	hp?: {
+		minHp?: number
+		maxHp?: number
+		maxHpFlb?: number
+		maxHpUlb?: number
+		maxHpXlb?: number
+	}
+	atk?: {
+		minAtk?: number
+		maxAtk?: number
+		maxAtkFlb?: number
+		maxAtkUlb?: number
+		maxAtkXlb?: number
+	}
+	uncap?: {
+		flb?: boolean
+		ulb?: boolean
+		transcendence?: boolean
+	}
 	subaura?: boolean
 	cooldown?: number
+	callName?: string
+	callDescription?: string
+	auraName?: string
+	auraDescription?: string
+	subAuraName?: string
+	subAuraDescription?: string
 }
 
 /**

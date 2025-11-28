@@ -2,14 +2,14 @@
 	import { ContextMenu, DropdownMenu } from 'bits-ui'
 
 	interface MenuItemsProps {
-		onViewDetails?: () => void
-		onReplace?: () => void
-		onRemove?: () => void
-		canEdit?: boolean
+		onViewDetails?: (() => void) | undefined
+		onReplace?: (() => void) | undefined
+		onRemove?: (() => void | Promise<void>) | undefined
+		canEdit?: boolean | undefined
 		variant?: 'context' | 'dropdown'
-		viewDetailsLabel?: string
-		replaceLabel?: string
-		removeLabel?: string
+		viewDetailsLabel?: string | undefined
+		replaceLabel?: string | undefined
+		removeLabel?: string | undefined
 	}
 
 	let {

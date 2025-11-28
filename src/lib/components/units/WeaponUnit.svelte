@@ -13,7 +13,7 @@
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
-		item?: GridWeapon
+		item?: GridWeapon | undefined
 		position: number
 	}
 
@@ -25,6 +25,7 @@
 		canEdit: () => boolean
 		getEditKey: () => string | null
 		services: { gridService: any; partyService: any }
+		openPicker?: (opts: { type: 'weapon' | 'summon' | 'character'; position: number; item?: any }) => void
 	}
 
 	const ctx = getContext<PartyCtx>('party')

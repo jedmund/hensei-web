@@ -194,4 +194,8 @@ export interface User {
   role?: string
   createdAt?: string
   updatedAt?: string
+  avatar?: {
+    picture?: string
+    element?: string
+  }
 }
