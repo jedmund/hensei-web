@@ -11,6 +11,9 @@ importers:
       '@friendofsvelte/tipex':
         specifier: ^0.0.9
         version: 0.0.9(highlight.js@11.8.0)(svelte@5.38.7)
+      '@tanstack/svelte-query':
+        specifier: ^6.0.9
+        version: 6.0.9(svelte@5.38.7)
       '@tiptap/core':
         specifier: ^3.5.1
         version: 3.5.1(@tiptap/pm@3.5.1)
@@ -833,6 +836,14 @@ packages:
 
   '@swc/helpers@0.5.17':
     resolution: {integrity: sha512-5IKx/Y13RsYd+sauPb2x+U/xZikHjolzfuDgTAl/Tdf3Q8rslRvC19NKDLgAJQ6wsqADk10ntlv08nPFw/gO/A==}
+
+  '@tanstack/query-core@5.90.11':
+    resolution: {integrity: sha512-f9z/nXhCgWDF4lHqgIE30jxLe4sYv15QodfdPDKYAk7nAEjNcndy4dHz3ezhdUaR23BpWa4I2EH4/DZ0//Uf8A==}
+
+  '@tanstack/svelte-query@6.0.9':
+    resolution: {integrity: sha512-ezawzencc07h61M+p8R9Opp2CmpgGwrM05IsIGJiPkr1SrBPW8gDZ9sTdaQbEpzLNXMXaZUkq0MS+61Rw2EfSg==}
+    peerDependencies:
+      svelte: ^5.25.0
 
   '@testing-library/dom@10.4.1':
     resolution: {integrity: sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==}
@@ -2816,8 +2827,8 @@ snapshots:
   '@friendofsvelte/tipex@0.0.9(highlight.js@11.8.0)(svelte@5.38.7)':
     dependencies:
       '@tiptap/core': 2.26.2(@tiptap/pm@2.26.2)
-      '@tiptap/extension-code-block': 2.26.2(@tiptap/core@3.5.1(@tiptap/pm@3.5.1))(@tiptap/pm@3.5.1)
-      '@tiptap/extension-code-block-lowlight': 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))(@tiptap/extension-code-block@2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))(@tiptap/pm@2.26.2))(@tiptap/pm@2.26.2)(highlight.js@11.8.0)(lowlight@2.9.0)
+      '@tiptap/extension-code-block': 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))(@tiptap/pm@2.26.2)
+      '@tiptap/extension-code-block-lowlight': 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))(@tiptap/extension-code-block@2.26.2(@tiptap/core@3.5.1(@tiptap/pm@3.5.1))(@tiptap/pm@3.5.1))(@tiptap/pm@2.26.2)(highlight.js@11.8.0)(lowlight@2.9.0)
       '@tiptap/extension-floating-menu': 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))(@tiptap/pm@2.26.2)
       '@tiptap/extension-image': 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))
       '@tiptap/extension-link': 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))(@tiptap/pm@2.26.2)
@@ -3267,6 +3278,13 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@tanstack/query-core@5.90.11': {}
+
+  '@tanstack/svelte-query@6.0.9(svelte@5.38.7)':
+    dependencies:
+      '@tanstack/query-core': 5.90.11
+      svelte: 5.38.7
+
   '@testing-library/dom@10.4.1':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -3323,10 +3341,10 @@ snapshots:
     dependencies:
       '@tiptap/extension-list': 3.5.1(@tiptap/core@3.5.1(@tiptap/pm@3.5.1))(@tiptap/pm@3.5.1)
 
-  '@tiptap/extension-code-block-lowlight@2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))(@tiptap/extension-code-block@2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))(@tiptap/pm@2.26.2))(@tiptap/pm@2.26.2)(highlight.js@11.8.0)(lowlight@2.9.0)':
+  '@tiptap/extension-code-block-lowlight@2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))(@tiptap/extension-code-block@2.26.2(@tiptap/core@3.5.1(@tiptap/pm@3.5.1))(@tiptap/pm@3.5.1))(@tiptap/pm@2.26.2)(highlight.js@11.8.0)(lowlight@2.9.0)':
     dependencies:
       '@tiptap/core': 2.26.2(@tiptap/pm@2.26.2)
-      '@tiptap/extension-code-block': 2.26.2(@tiptap/core@3.5.1(@tiptap/pm@3.5.1))(@tiptap/pm@3.5.1)
+      '@tiptap/extension-code-block': 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.2))(@tiptap/pm@2.26.2)
       '@tiptap/pm': 2.26.2
       highlight.js: 11.8.0
       lowlight: 2.9.0
@@ -3335,11 +3353,6 @@ snapshots:
     dependencies:
       '@tiptap/core': 2.26.2(@tiptap/pm@2.26.2)
       '@tiptap/pm': 2.26.2
-
-  '@tiptap/extension-code-block@2.26.2(@tiptap/core@3.5.1(@tiptap/pm@3.5.1))(@tiptap/pm@3.5.1)':
-    dependencies:
-      '@tiptap/core': 3.5.1(@tiptap/pm@3.5.1)
-      '@tiptap/pm': 3.5.1
 
   '@tiptap/extension-code-block@3.5.1(@tiptap/core@3.5.1(@tiptap/pm@3.5.1))(@tiptap/pm@3.5.1)':
     dependencies:

@@ -10,6 +10,10 @@
 	import { beforeNavigate, afterNavigate } from '$app/navigation'
 	import { authStore } from '$lib/stores/auth.store'
 	import { browser } from '$app/environment'
+	import { QueryClientProvider } from '@tanstack/svelte-query'
+	import { createQueryClient } from '$lib/query/queryClient'
+
+	const queryClient = createQueryClient()
 
 	// Get `data` and `children` from the router via $props()
 	// Use a more flexible type that allows additional properties from child pages
@@ -105,36 +109,38 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<Tooltip.Provider>
-	<div class="app-container" class:sidebar-open={sidebar.isOpen}>
-		<div class="main-pane">
-			<div class="nav-blur-background"></div>
-			<div class="main-navigation">
-				<Navigation
-				isAuthenticated={data?.isAuthenticated}
-				account={data?.account}
-				currentUser={data?.currentUser}
-			/>
+<QueryClientProvider client={queryClient}>
+	<Tooltip.Provider>
+		<div class="app-container" class:sidebar-open={sidebar.isOpen}>
+			<div class="main-pane">
+				<div class="nav-blur-background"></div>
+				<div class="main-navigation">
+					<Navigation
+					isAuthenticated={data?.isAuthenticated}
+					account={data?.account}
+					currentUser={data?.currentUser}
+				/>
+				</div>
+				<main class="main-content" bind:this={mainContent}>
+					{@render children?.()}
+				</main>
 			</div>
-			<main class="main-content" bind:this={mainContent}>
-				{@render children?.()}
-			</main>
-		</div>
 
-		<Sidebar
-			open={sidebar.isOpen}
-			title={sidebar.title}
-			onclose={() => sidebar.close()}
-			scrollable={sidebar.scrollable}
-		>
-			{#if sidebar.component}
-				<svelte:component this={sidebar.component} {...sidebar.componentProps} />
-			{:else if sidebar.content}
-				{@render sidebar.content()}
-			{/if}
-		</Sidebar>
-	</div>
-</Tooltip.Provider>
+			<Sidebar
+				open={sidebar.isOpen}
+				title={sidebar.title}
+				onclose={() => sidebar.close()}
+				scrollable={sidebar.scrollable}
+			>
+				{#if sidebar.component}
+					<svelte:component this={sidebar.component} {...sidebar.componentProps} />
+				{:else if sidebar.content}
+					{@render sidebar.content()}
+				{/if}
+			</Sidebar>
+		</div>
+	</Tooltip.Provider>
+</QueryClientProvider>
 
 <style lang="scss">
 	@use '$src/themes/effects' as *;
