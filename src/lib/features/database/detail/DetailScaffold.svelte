@@ -41,9 +41,9 @@
     {image}
     {editMode}
     showEdit={showEdit}
-    onEdit={onEdit}
-    onSave={onSave}
-    onCancel={onCancel}
+    onEdit={onEdit ?? (() => {})}
+    onSave={onSave ?? (() => {})}
+    onCancel={onCancel ?? (() => {})}
     {isSaving}
   />
 
