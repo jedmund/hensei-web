@@ -221,11 +221,11 @@
 	})
 
 	// Derived elements for character image logic
-	const mainWeapon = $derived(() =>
+	const mainWeapon = $derived(
 		(party?.weapons ?? []).find((w) => w?.mainhand || w?.position === -1)
 	)
-	const mainWeaponElement = $derived(() => mainWeapon?.element ?? mainWeapon?.weapon?.element)
-	const partyElement = $derived(() => party?.element)
+	const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
+	const partyElement = $derived((party as any)?.element)
 
 	function handleTabChange(tab: GridType) {
 		activeTab = tab
