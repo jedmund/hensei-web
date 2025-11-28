@@ -32,7 +32,7 @@ export interface AdapterOptions {
  * Options for individual HTTP requests
  * Extends the standard RequestInit interface with additional features
  */
-export interface RequestOptions extends Omit<RequestInit, 'body'> {
+export interface RequestOptions extends Omit<RequestInit, 'body' | 'cache'> {
 	/** Query parameters to append to the URL */
 	params?: Record<string, any>
 

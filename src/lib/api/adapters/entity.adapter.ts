@@ -56,19 +56,27 @@ export interface Character {
 	}
 	rarity: number
 	element: number
+	gender?: number
+	proficiency?: number[]
 	proficiency1?: number
 	proficiency2?: number
 	series?: number
-	minHp?: number
-	maxHp?: number
-	minAttack?: number
-	maxAttack?: number
-	flbHp?: number
-	flbAttack?: number
-	ulbHp?: number
-	ulbAttack?: number
-	transcendenceHp?: number
-	transcendenceAttack?: number
+	race?: number[]
+	hp?: {
+		minHp?: number
+		maxHp?: number
+		maxHpFlb?: number
+	}
+	atk?: {
+		minAtk?: number
+		maxAtk?: number
+		maxAtkFlb?: number
+	}
+	uncap?: {
+		flb?: boolean
+		ulb?: boolean
+		transcendence?: boolean
+	}
 	special?: boolean
 	seasonalId?: string
 	awakenings?: Array<{

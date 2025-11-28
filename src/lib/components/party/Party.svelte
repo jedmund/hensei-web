@@ -10,7 +10,7 @@
 	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
 	import { openSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
-	import type { SearchResult } from '$lib/api/resources/search'
+	import type { SearchResult } from '$lib/api/adapters'
 	import { GridType } from '$lib/types/enums'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -562,8 +562,8 @@
 			let targetSlot = selectedSlot
 
 			// Call appropriate grid service method based on current tab
-			// Use granblue_id (snake_case) as that's what the search API returns
-			const itemId = item.granblue_id || item.granblueId
+			// Use granblueId (camelCase) as that's what the SearchResult type uses
+			const itemId = item.granblueId
 			if (activeTab === GridType.Weapon) {
 				await gridService.addWeapon(party.id, itemId, targetSlot, editKey || undefined, {
 					mainhand: targetSlot === -1,

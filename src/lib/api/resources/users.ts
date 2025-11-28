@@ -1,5 +1,4 @@
-import type { FetchLike } from '../core'
-import { put } from '../core'
+import { userAdapter } from '../adapters/user.adapter'
 
 export interface UserUpdateParams {
 	picture?: string
@@ -26,6 +25,16 @@ export const users = {
 	/**
 	 * Update user settings
 	 */
-	update: (fetch: FetchLike, userId: string, params: UserUpdateParams) =>
-		put<UserResponse>(fetch, `/users/${userId}`, { user: params })
+	update: async (userId: string, params: UserUpdateParams): Promise<UserResponse> => {
+		const result = await userAdapter.updateProfile(params)
+		return {
+			id: result.id,
+			username: result.username,
+			avatar: result.avatar,
+			gender: result.gender,
+			language: result.language,
+			theme: result.theme,
+			role: result.role
+		}
+	}
 }

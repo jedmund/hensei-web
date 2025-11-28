@@ -53,6 +53,22 @@ export interface Character {
   }
   special: boolean
   recruits: string | null
+  gender: number
+  race: {
+    race1: number
+    race2: number
+  }
+  proficiency: number[]
+  hp: {
+    minHp: number
+    maxHp: number
+    maxHpFlb: number
+  }
+  atk: {
+    minAtk: number
+    maxAtk: number
+    maxAtkFlb: number
+  }
 }
 
 // Summon entity from SummonBlueprint

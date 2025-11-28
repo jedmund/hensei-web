@@ -3,14 +3,13 @@
 <script lang="ts">
 	import Dialog from './ui/Dialog.svelte'
 	import Select from './ui/Select.svelte'
-	import Switch from './ui/switch/switch.svelte'
+	import Switch from './ui/switch/Switch.svelte'
 	import Button from './ui/Button.svelte'
 	import { pictureData, type Picture } from '$lib/utils/pictureData'
 	import { users } from '$lib/api/resources/users'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { setUserCookie } from '$lib/auth/cookies'
 	import { invalidateAll } from '$app/navigation'
-	import type { Snippet } from 'svelte'
 
 	interface Props {
 		open: boolean
@@ -83,7 +82,7 @@
 			}
 
 			// Call API to update user settings
-			const response = await users.update(fetch, userId, updateData)
+			const response = await users.update(userId, updateData)
 
 			// Update the user cookie
 			const updatedUser: UserCookie = {
@@ -130,10 +129,6 @@
 		onOpenChange?.(false)
 	}
 
-	// Footer snippet for the dialog
-	const footer: Snippet = {
-		render: () => ({})
-	}
 </script>
 
 <Dialog bind:open {onOpenChange} title="@{username}" description="Account Settings">

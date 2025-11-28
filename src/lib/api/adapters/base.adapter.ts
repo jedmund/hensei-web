@@ -96,8 +96,8 @@ export abstract class BaseAdapter {
 		// Generate a unique ID for this request (used for cancellation and caching)
 		const requestId = this.generateRequestId(path, options.method, options.body as string)
 
-		// Check cache first if caching is enabled (support both cache and cacheTTL)
-		const cacheTime = options.cacheTTL ?? options.cache ?? this.options.cacheTime
+		// Check cache first if caching is enabled (support both cacheTime and cacheTTL)
+		const cacheTime = options.cacheTTL ?? options.cacheTime ?? this.options.cacheTime
 		// Allow caching for any method if explicitly set (unless cache is disabled)
 		if (!this.disableCache && cacheTime > 0) {
 			const cached = this.getFromCache(requestId)
