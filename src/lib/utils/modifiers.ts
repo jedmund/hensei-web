@@ -3,7 +3,7 @@
  */
 
 import type { Awakening } from '$lib/types/Awakening'
-import type { WeaponKey } from '$lib/types/WeaponKey'
+import type { WeaponKey } from '$lib/types/api/entities'
 import type { SimpleAxSkill } from '$lib/types/SimpleAxSkill'
 
 /**
@@ -41,7 +41,7 @@ export function getWeaponKeyImage(
 
 	// Handle element-specific telumas (Draconic weapons)
 	const elementalTelumas = [15008, 16001, 16002]
-	const granblueId = parseInt(key.granblueId || '0')
+	const granblueId = parseInt(key.granblue_id || '0')
 
 	if (elementalTelumas.includes(granblueId) && weaponElement) {
 		filename += `-${weaponElement}`

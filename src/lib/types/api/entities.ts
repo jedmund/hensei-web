@@ -167,10 +167,13 @@ export interface Awakening {
 // WeaponKey entity
 export interface WeaponKey {
   id: string
+  granblue_id: string
   name: LocalizedName
   slug: string
-  keyType: string
+  series: number[]
   slot: number
+  group: number
+  order: number
 }
 
 // SimpleAxSkill for weapon AX skills
