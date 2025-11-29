@@ -574,7 +574,7 @@ export class GridService {
 
       case 'swap':
         const item1 = updated.find(i => i.id === operation.itemId)
-        const item2 = updated.find(i => i.id === operation.targetPosition)
+        const item2 = updated.find(i => i.position === operation.targetPosition)
         if (item1 && item2) {
           const tempPos = item1.position
           item1.position = item2.position

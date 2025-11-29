@@ -123,7 +123,7 @@ export function jobSupportsAccessories(job: Job | undefined): boolean {
  */
 export function getJobSkillSlotCount(job: Job | undefined): number {
 	if (!job) return 0
-	return job.row === 1 || job.row === '1' ? 3 : 4
+	return job.row === 1 ? 3 : 4
 }
 
 /**
@@ -253,7 +253,7 @@ export function validateSkillConfiguration(
 	}
 
 	// Check for Row 1 constraint
-	if ((job.row === 1 || job.row === '1') && skills[3]) {
+	if (job.row === 1 && skills[3]) {
 		errors.push('Row I jobs only support 3 skill slots')
 	}
 
