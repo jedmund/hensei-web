@@ -17,7 +17,7 @@ interface APIResponse {
 	}
 }
 
-export class DatabaseProvider extends RestDataProvider {
+export class DatabaseProvider extends RestDataProvider<any> {
 	private resource: 'weapons' | 'characters' | 'summons'
 	private pageSize: number
 	private currentPage: number = 1

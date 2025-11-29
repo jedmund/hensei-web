@@ -31,7 +31,7 @@ export const users = {
 			gender?: number | undefined
 			language?: string | undefined
 			theme?: string | undefined
-			avatar?: { picture?: string | undefined; element?: string | undefined } | undefined
+			avatar?: { picture: string; element: string } | undefined
 		} = {}
 
 		if (params.gender !== undefined) updates.gender = params.gender
@@ -39,10 +39,10 @@ export const users = {
 		if (params.theme !== undefined) updates.theme = params.theme
 
 		if (params.picture !== undefined || params.element !== undefined) {
-			const avatar: { picture?: string | undefined; element?: string | undefined } = {}
-			if (params.picture !== undefined) avatar.picture = params.picture
-			if (params.element !== undefined) avatar.element = params.element
-			updates.avatar = avatar
+			updates.avatar = {
+				picture: params.picture ?? '',
+				element: params.element ?? ''
+			}
 		}
 
 		const result = await userAdapter.updateProfile(updates)

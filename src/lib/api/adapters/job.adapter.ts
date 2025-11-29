@@ -131,7 +131,12 @@ export class JobAdapter extends BaseAdapter {
 			page: params.page || 1,
 			total: response.meta?.count || 0,
 			totalPages: response.meta?.total_pages || 1,
-			meta: response.meta
+			meta: response.meta ? {
+				count: response.meta.count ?? 0,
+				page: params.page || 1,
+				perPage: response.meta.per_page ?? 10,
+				totalPages: response.meta.total_pages ?? 1
+			} : undefined
 		}
 	}
 

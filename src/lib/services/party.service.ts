@@ -1,5 +1,5 @@
 import type { Party } from '$lib/types/api/party'
-import { partyAdapter } from '$lib/api/adapters/party.adapter'
+import { partyAdapter, type CreatePartyParams } from '$lib/api/adapters/party.adapter'
 import { authStore } from '$lib/stores/auth.store'
 import { browser } from '$app/environment'
 
@@ -279,13 +279,13 @@ export class PartyService {
     return headers
   }
   
-  private mapToApiPayload(payload: PartyUpdatePayload): Partial<Party> {
+  private mapToApiPayload(payload: PartyUpdatePayload): CreatePartyParams {
     const mapped: any = {}
 
     if (payload.name !== undefined) mapped.name = payload.name
     if (payload.description !== undefined) mapped.description = payload.description
     if (payload.element !== undefined) mapped.element = payload.element
-    if (payload.raidId !== undefined) mapped.raid = { id: payload.raidId }
+    if (payload.raidId !== undefined) mapped.raidId = payload.raidId
     if (payload.chargeAttack !== undefined) mapped.chargeAttack = payload.chargeAttack
     if (payload.fullAuto !== undefined) mapped.fullAuto = payload.fullAuto
     if (payload.autoGuard !== undefined) mapped.autoGuard = payload.autoGuard
@@ -294,8 +294,16 @@ export class PartyService {
     if (payload.buttonCount !== undefined) mapped.buttonCount = payload.buttonCount
     if (payload.chainCount !== undefined) mapped.chainCount = payload.chainCount
     if (payload.turnCount !== undefined) mapped.turnCount = payload.turnCount
-    if (payload.jobId !== undefined) mapped.job = { id: payload.jobId }
-    if (payload.visibility !== undefined) mapped.visibility = payload.visibility
+    if (payload.jobId !== undefined) mapped.jobId = payload.jobId
+    if (payload.visibility !== undefined) {
+      // Convert number visibility to string
+      const visibilityMap: Record<number, 'public' | 'private' | 'unlisted'> = {
+        0: 'public',
+        1: 'private',
+        2: 'unlisted'
+      }
+      mapped.visibility = visibilityMap[payload.visibility] || 'public'
+    }
     if (payload.localId !== undefined) mapped.localId = payload.localId
 
     return mapped
