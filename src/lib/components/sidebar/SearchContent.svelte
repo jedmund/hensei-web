@@ -112,8 +112,14 @@
 	})
 
 	// Flatten all pages into a single items array
-	const searchResults = $derived(
+	const rawResults = $derived(
 		searchQueryResult.data?.pages.flatMap((page) => page.results) ?? []
+	)
+
+	// Deduplicate by id - needed because the API may return the same item across pages
+	// (e.g., due to items being added/removed between page fetches)
+	const searchResults = $derived(
+		Array.from(new Map(rawResults.map((item) => [item.id, item])).values())
 	)
 
 	// Use runed's IsInViewport for viewport detection
