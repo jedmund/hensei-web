@@ -11,6 +11,7 @@
   import type { SearchResult } from '$lib/api/adapters'
   import { partyAdapter, gridAdapter } from '$lib/api/adapters'
   import { getLocalId } from '$lib/utils/localId'
+  import { storeEditKey } from '$lib/utils/editKeys'
 
   // TanStack Query mutations
   import { useCreateParty } from '$lib/api/mutations/party.mutations'
@@ -135,6 +136,14 @@
         // The adapter returns the party directly
         partyId = createdParty.id
         shortcode = createdParty.shortcode
+
+        // Store edit key for anonymous editing under BOTH identifiers
+        // - shortcode: for Party.svelte which uses shortcode as partyId
+        // - UUID: for /teams/new which uses UUID as partyId
+        if (createdParty.editKey) {
+          storeEditKey(createdParty.shortcode, createdParty.editKey)
+          storeEditKey(createdParty.id, createdParty.editKey)
+        }
 
         if (!partyId || !shortcode) {
           throw new Error('Party creation did not return ID or shortcode')
