@@ -161,7 +161,9 @@ export class RateLimitError extends ApiError {
 
 		super('RATE_LIMITED', 429, message, details)
 		this.name = 'RateLimitError' as any
-		this.retryAfter = retryAfter
+		if (retryAfter !== undefined) {
+			this.retryAfter = retryAfter
+		}
 	}
 }
 

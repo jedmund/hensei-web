@@ -53,14 +53,25 @@ export class UserAdapter extends BaseAdapter {
 
     const items = Array.isArray(response.profile?.parties) ? response.profile.parties : []
 
-    return {
+    const result: UserProfileResponse = {
       user: response.profile,
       items,
-      page,
-      total: response.meta?.count,
-      totalPages: response.meta?.total_pages || response.meta?.totalPages,
-      perPage: response.meta?.per_page || response.meta?.perPage
+      page
     }
+
+    if (response.meta?.count !== undefined) {
+      result.total = response.meta.count
+    }
+    const totalPages = response.meta?.total_pages ?? response.meta?.totalPages
+    if (totalPages !== undefined) {
+      result.totalPages = totalPages
+    }
+    const perPage = response.meta?.per_page ?? response.meta?.perPage
+    if (perPage !== undefined) {
+      result.perPage = perPage
+    }
+
+    return result
   }
 
   /**
