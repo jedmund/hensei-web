@@ -23,6 +23,9 @@
 	import { Gender } from '$lib/utils/jobUtils'
 	import { openJobSelectionSidebar, openJobSkillSelectionSidebar } from '$lib/features/job/openJobSidebar.svelte'
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
+	import { extractErrorMessage } from '$lib/utils/errors'
+	import { transformSkillsToArray } from '$lib/utils/jobSkills'
+	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 
 	interface Props {
 		party?: Party
@@ -405,12 +408,7 @@
 					console.log('[Party] New skill:', skill)
 
 					// Convert skills object to array format expected by API
-					const skillsArray = Object.entries(updatedSkills)
-						.filter(([_, skill]) => skill !== null && skill !== undefined)
-						.map(([slotKey, skill]) => ({
-							id: skill!.id,
-							slot: parseInt(slotKey)
-						}))
+					const skillsArray = transformSkillsToArray(updatedSkills)
 
 					console.log('[Party] Skills array to send:', skillsArray)
 
@@ -420,33 +418,7 @@
 					)
 					party = updated
 				} catch (e: any) {
-					// Extract detailed error message from nested structure
-					let errorDetails = e?.details
-
-					// Navigate through nested details structure
-					while (errorDetails?.details) {
-						errorDetails = errorDetails.details
-					}
-
-					if (errorDetails?.errors) {
-						if (errorDetails.errors.message) {
-							// Simple message format
-							error = errorDetails.errors.message
-						} else {
-							// Field-based errors
-							const errorMessages = Object.entries(errorDetails.errors)
-								.map(([field, messages]) => {
-									if (Array.isArray(messages)) {
-										return messages.join(', ')
-									}
-									return String(messages)
-								})
-								.join('; ')
-							error = errorMessages || e.message || 'Failed to update skill'
-						}
-					} else {
-						error = e?.message || 'Failed to update skill'
-					}
+					error = extractErrorMessage(e, 'Failed to update skill')
 					console.error('Failed to update skill:', e)
 				} finally {
 					loading = false
@@ -466,12 +438,7 @@
 					console.log('[Party] Updated jobSkills after removal:', updatedSkills)
 
 					// Convert skills object to array format expected by API
-					const skillsArray = Object.entries(updatedSkills)
-						.filter(([_, skill]) => skill !== null && skill !== undefined)
-						.map(([slotKey, skill]) => ({
-							id: skill!.id,
-							slot: parseInt(slotKey)
-						}))
+					const skillsArray = transformSkillsToArray(updatedSkills)
 
 					console.log('[Party] Skills array to send after removal:', skillsArray)
 
@@ -481,33 +448,7 @@
 					)
 					party = updated
 				} catch (e: any) {
-					// Extract detailed error message from nested structure
-					let errorDetails = e?.details
-
-					// Navigate through nested details structure
-					while (errorDetails?.details) {
-						errorDetails = errorDetails.details
-					}
-
-					if (errorDetails?.errors) {
-						if (errorDetails.errors.message) {
-							// Simple message format
-							error = errorDetails.errors.message
-						} else {
-							// Field-based errors
-							const errorMessages = Object.entries(errorDetails.errors)
-								.map(([field, messages]) => {
-									if (Array.isArray(messages)) {
-										return messages.join(', ')
-									}
-									return String(messages)
-								})
-								.join('; ')
-							error = errorMessages || e.message || 'Failed to remove skill'
-						}
-					} else {
-						error = e?.message || 'Failed to remove skill'
-					}
+					error = extractErrorMessage(e, 'Failed to remove skill')
 					console.error('Failed to remove skill:', e)
 				} finally {
 					loading = false
@@ -529,12 +470,7 @@
 			delete updatedSkills[String(slot) as keyof typeof updatedSkills]
 
 			// Convert skills object to array format expected by API
-			const skillsArray = Object.entries(updatedSkills)
-				.filter(([_, skill]) => skill !== null && skill !== undefined)
-				.map(([slotKey, skill]) => ({
-					id: skill!.id,
-					slot: parseInt(slotKey)
-				}))
+			const skillsArray = transformSkillsToArray(updatedSkills)
 
 			const updated = await partyAdapter.updateJobSkills(
 				party.shortcode,
@@ -590,50 +526,8 @@
 			party = updated
 
 			// Find next empty slot for continuous adding
-			let nextEmptySlot = -999 // sentinel value meaning no empty slot found
-
-			if (activeTab === GridType.Weapon) {
-				// Check mainhand first (position -1)
-				if (!party.weapons.find((w) => w.position === -1 || w.mainhand)) {
-					nextEmptySlot = -1
-				} else {
-					// Check grid slots 0-8
-					for (let i = 0; i < 9; i++) {
-						if (!party.weapons.find((w) => w.position === i)) {
-							nextEmptySlot = i
-							break
-						}
-					}
-				}
-			} else if (activeTab === GridType.Summon) {
-				// Check main summon first (position -1)
-				if (!party.summons.find((s) => s.position === -1 || s.main)) {
-					nextEmptySlot = -1
-				} else {
-					// Check grid slots 0-5
-					for (let i = 0; i < 6; i++) {
-						if (!party.summons.find((s) => s.position === i)) {
-							nextEmptySlot = i
-							break
-						}
-					}
-					// Check friend summon (position 6)
-					if (nextEmptySlot === -999 && !party.summons.find((s) => s.position === 6 || s.friend)) {
-						nextEmptySlot = 6
-					}
-				}
-			} else if (activeTab === GridType.Character) {
-				// Check character slots 0-4
-				for (let i = 0; i < 5; i++) {
-					if (!party.characters.find((c) => c.position === i)) {
-						nextEmptySlot = i
-						break
-					}
-				}
-			}
-
-			// If there's another empty slot, update selectedSlot to it
-			if (nextEmptySlot !== -999) {
+			const nextEmptySlot = findNextEmptySlot(party, activeTab)
+			if (nextEmptySlot !== SLOT_NOT_FOUND) {
 				selectedSlot = nextEmptySlot
 			}
 			// Note: Sidebar stays open for continuous adding
