@@ -1,35 +1,54 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import { browser } from '$app/environment'
-  import InfiniteScroll from '$lib/components/InfiniteScroll.svelte'
+  import { createInfiniteQuery } from '@tanstack/svelte-query'
   import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
-  import { createInfiniteScrollResource } from '$lib/api/adapters/resources/infiniteScroll.resource.svelte'
-  import { partyAdapter } from '$lib/api/adapters/party.adapter'
+  import { partyQueries } from '$lib/api/queries/party.queries'
+  import { IsInViewport } from 'runed'
+  import Icon from '$lib/components/Icon.svelte'
+  import Button from '$lib/components/ui/Button.svelte'
 
   const { data } = $props() as { data: PageData }
 
-  // Create infinite scroll resource
-  const exploreResource = createInfiniteScrollResource({
-    fetcher: (page) => partyAdapter.list({ page }),
-    initialData: data.items,
-    initialPage: data.page || 1,
-    initialTotalPages: data.totalPages,
-    initialTotal: data.total,
-    threshold: 300,
-    debounceMs: 200,
-    maxItems: 500, // Limit for performance
-    debug: false // Disable debug logging
+  const partiesQuery = createInfiniteQuery(() => ({
+    ...partyQueries.list(),
+    initialData: data.items
+      ? {
+          pages: [
+            {
+              results: data.items,
+              page: data.page || 1,
+              totalPages: data.totalPages,
+              total: data.total,
+              perPage: data.perPage || 20
+            }
+          ],
+          pageParams: [1]
+        }
+      : undefined,
+    initialDataUpdatedAt: 0
+  }))
+
+  const items = $derived(
+    partiesQuery.data?.pages.flatMap((page) => page.results) ?? data.items ?? []
+  )
+
+  const isEmpty = $derived(!partiesQuery.isLoading && items.length === 0)
+  const showSentinel = $derived(partiesQuery.hasNextPage && !partiesQuery.isFetchingNextPage)
+
+  let sentinelEl = $state<HTMLElement>()
+
+  const inViewport = new IsInViewport(() => sentinelEl, {
+    rootMargin: '300px'
   })
 
-  // Initialize with SSR data on client
   $effect(() => {
-    if (browser && data.items && !exploreResource.items.length) {
-      exploreResource.initFromSSR({
-        items: data.items,
-        page: data.page || 1,
-        totalPages: data.totalPages,
-        total: data.total
-      })
+    if (
+      inViewport.current &&
+      partiesQuery.hasNextPage &&
+      !partiesQuery.isFetchingNextPage &&
+      !partiesQuery.isLoading
+    ) {
+      partiesQuery.fetchNextPage()
     }
   })
 </script>
@@ -39,27 +58,43 @@
     <h1>Explore Teams</h1>
   </header>
 
-  <InfiniteScroll resource={exploreResource} class="explore-grid">
-    <ExploreGrid items={exploreResource.items} />
+  {#if partiesQuery.isLoading}
+    <div class="loading">
+      <Icon name="loader-2" size={32} />
+      <p>Loading teams...</p>
+    </div>
+  {:else if partiesQuery.isError}
+    <div class="error">
+      <Icon name="alert-circle" size={32} />
+      <p>Failed to load teams: {partiesQuery.error?.message || 'Unknown error'}</p>
+      <Button size="small" onclick={() => partiesQuery.refetch()}>Retry</Button>
+    </div>
+  {:else if isEmpty}
+    <div class="empty">
+      <p>No teams found</p>
+    </div>
+  {:else}
+    <div class="explore-grid">
+      <ExploreGrid items={items} />
 
-    {#snippet emptySnippet()}
-      <div class="empty">
-        <p>No teams found</p>
-      </div>
-    {/snippet}
+      {#if showSentinel}
+        <div class="load-more-sentinel" bind:this={sentinelEl}></div>
+      {/if}
 
-    {#snippet endSnippet()}
-      <div class="end">
-        <p>You've reached the end of all teams!</p>
-      </div>
-    {/snippet}
+      {#if partiesQuery.isFetchingNextPage}
+        <div class="loading-more">
+          <Icon name="loader-2" size={20} />
+          <span>Loading more...</span>
+        </div>
+      {/if}
 
-    {#snippet errorSnippet(error)}
-      <div class="error">
-        <p>Failed to load teams: {error.message || 'Unknown error'}</p>
-      </div>
-    {/snippet}
-  </InfiniteScroll>
+      {#if !partiesQuery.hasNextPage && items.length > 0}
+        <div class="end">
+          <p>You've reached the end of all teams!</p>
+        </div>
+      {/if}
+    </div>
+  {/if}
 </section>
 
 <style lang="scss">
@@ -88,5 +123,46 @@
 
   .error {
     color: var(--text-error, #dc2626);
+  }
+
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $unit;
+    padding: $unit-4x;
+    color: var(--text-secondary);
+
+    :global(svg) {
+      animation: spin 1s linear infinite;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .load-more-sentinel {
+    height: 1px;
+    margin-top: $unit;
+  }
+
+  .loading-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $unit;
+    padding: $unit-2x;
+    color: var(--text-secondary);
+
+    :global(svg) {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 </style>

@@ -1,9 +1,12 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { SearchAdapter } from '$lib/api/adapters/search.adapter'
+	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import type { SearchResult } from '$lib/api/adapters/search.adapter'
+	import { searchQueries, type SearchFilters } from '$lib/api/queries/search.queries'
 	import Button from '../ui/Button.svelte'
+	import Icon from '../Icon.svelte'
+	import { IsInViewport } from 'runed'
 	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/features/database/detail/image'
 
 	interface Props {
@@ -18,16 +21,10 @@
 		canAddMore = true
 	}: Props = $props()
 
-	// Search adapter
-	const searchAdapter = new SearchAdapter()
-
-	// Search state
+	// Search state (local UI state)
 	let searchQuery = $state('')
-	let searchResults = $state<SearchResult[]>([])
-	let isLoading = $state(false)
-	let currentPage = $state(1)
-	let totalPages = $state(1)
-	let hasInitialLoad = $state(false)
+	let debouncedSearchQuery = $state('')
+	let debounceTimer: ReturnType<typeof setTimeout> | undefined
 
 	// Filter state
 	let elementFilters = $state<number[]>([])
@@ -36,6 +33,7 @@
 
 	// Refs
 	let searchInput: HTMLInputElement
+	let sentinelEl = $state<HTMLElement>()
 
 	// Constants
 	const elements = [
@@ -67,63 +65,94 @@
 		{ value: 10, label: 'Katana' }
 	]
 
+	// Debounce search query changes
+	$effect(() => {
+		const query = searchQuery
+
+		if (debounceTimer) {
+			clearTimeout(debounceTimer)
+		}
+
+		debounceTimer = setTimeout(() => {
+			debouncedSearchQuery = query
+		}, 300)
+
+		return () => {
+			if (debounceTimer) {
+				clearTimeout(debounceTimer)
+			}
+		}
+	})
+
+	// Build filters object for query
+	const filters = $derived<SearchFilters>({
+		element: elementFilters.length > 0 ? elementFilters : undefined,
+		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
+		proficiency: type === 'weapon' && proficiencyFilters.length > 0 ? proficiencyFilters : undefined
+	})
+
+	// TanStack Query v6: Use createInfiniteQuery with thunk pattern for reactivity
+	// Query automatically updates when type, debouncedSearchQuery, or filters change
+	// Note: Type assertion needed because different search types have different query keys
+	// but share the same SearchPageResult structure
+	const searchQueryResult = createInfiniteQuery(() => {
+		const query = debouncedSearchQuery
+		const currentFilters = filters
+
+		// Select the appropriate query based on type
+		// All query types return the same SearchPageResult structure
+		switch (type) {
+			case 'weapon':
+				return searchQueries.weapons(query, currentFilters)
+			case 'character':
+				return searchQueries.characters(query, currentFilters) as unknown as ReturnType<typeof searchQueries.weapons>
+			case 'summon':
+				return searchQueries.summons(query, currentFilters) as unknown as ReturnType<typeof searchQueries.weapons>
+		}
+	})
+
+	// Flatten all pages into a single items array
+	const rawResults = $derived(
+		searchQueryResult.data?.pages.flatMap((page) => page.results) ?? []
+	)
+
+	// Deduplicate by id - needed because the API may return the same item across pages
+	// (e.g., due to items being added/removed between page fetches)
+	const searchResults = $derived(
+		Array.from(new Map(rawResults.map((item) => [item.id, item])).values())
+	)
+
+	// Use runed's IsInViewport for viewport detection
+	const inViewport = new IsInViewport(() => sentinelEl, {
+		rootMargin: '200px'
+	})
+
+	// Auto-fetch next page when sentinel is visible
+	$effect(() => {
+		if (
+			inViewport.current &&
+			searchQueryResult.hasNextPage &&
+			!searchQueryResult.isFetchingNextPage &&
+			!searchQueryResult.isLoading
+		) {
+			searchQueryResult.fetchNextPage()
+		}
+	})
+
+	// Computed states
+	const isEmpty = $derived(
+		searchResults.length === 0 && !searchQueryResult.isLoading && !searchQueryResult.isError
+	)
+	const showSentinel = $derived(
+		!searchQueryResult.isLoading && searchQueryResult.hasNextPage && searchResults.length > 0
+	)
+
 	// Focus search input on mount
 	$effect(() => {
 		if (searchInput) {
 			searchInput.focus()
 		}
-		// Load recent items on mount
-		if (!hasInitialLoad) {
-			hasInitialLoad = true
-			performSearch()
-		}
 	})
-
-	// Search when query or filters change (debounced by adapter)
-	$effect(() => {
-		if (hasInitialLoad) {
-			performSearch()
-		}
-	})
-
-	async function performSearch() {
-		isLoading = true
-
-		try {
-			const params = {
-				query: searchQuery || '',
-				page: currentPage,
-				filters: {
-					element: elementFilters.length > 0 ? elementFilters : undefined,
-					rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
-					proficiency1: type === 'weapon' && proficiencyFilters.length > 0 ? proficiencyFilters : undefined
-				}
-			}
-
-			let response
-			switch (type) {
-				case 'weapon':
-					response = await searchAdapter.searchWeapons(params)
-					break
-				case 'character':
-					response = await searchAdapter.searchCharacters(params)
-					break
-				case 'summon':
-					response = await searchAdapter.searchSummons(params)
-					break
-			}
-
-			if (response) {
-				searchResults = response.results || []
-				totalPages = response.totalPages || 1
-			}
-		} catch (error) {
-			console.error('Search failed:', error)
-			searchResults = []
-		} finally {
-			isLoading = false
-		}
-	}
 
 	function handleItemClick(item: SearchResult) {
 		if (canAddMore) {
@@ -248,8 +277,17 @@
 
 	<!-- Results -->
 	<div class="results-section">
-		{#if isLoading}
-			<div class="loading">Searching...</div>
+		{#if searchQueryResult.isLoading}
+			<div class="loading">
+				<Icon name="loader-2" size={24} />
+				<span>Searching...</span>
+			</div>
+		{:else if searchQueryResult.isError}
+			<div class="error-state">
+				<Icon name="alert-circle" size={24} />
+				<p>{searchQueryResult.error?.message || 'Search failed'}</p>
+				<Button size="small" onclick={() => searchQueryResult.refetch()}>Retry</Button>
+			</div>
 		{:else if searchResults.length > 0}
 			<ul class="results-list">
 				{#each searchResults as item (item.id)}
@@ -281,31 +319,24 @@
 				{/each}
 			</ul>
 
-			{#if totalPages > 1}
-				<div class="pagination">
-					<Button
-						variant="ghost"
-						size="small"
-						onclick={() => currentPage = Math.max(1, currentPage - 1)}
-						disabled={currentPage === 1}
-					>
-						Previous
-					</Button>
-					<span class="page-info">Page {currentPage} of {totalPages}</span>
-					<Button
-						variant="ghost"
-						size="small"
-						onclick={() => currentPage = Math.min(totalPages, currentPage + 1)}
-						disabled={currentPage === totalPages}
-					>
-						Next
-					</Button>
+			{#if showSentinel}
+				<div class="load-more-sentinel" bind:this={sentinelEl}></div>
+			{/if}
+
+			{#if searchQueryResult.isFetchingNextPage}
+				<div class="loading-more">
+					<Icon name="loader-2" size={20} />
+					<span>Loading more...</span>
 				</div>
 			{/if}
-		{:else if searchQuery.length > 0}
-			<div class="no-results">No results found</div>
-		{:else}
-			<div class="no-results">Start typing to search</div>
+		{:else if isEmpty}
+			<div class="no-results">
+				{#if searchQuery.length > 0}
+					No results found
+				{:else}
+					Start typing to search
+				{/if}
+			</div>
 		{/if}
 	</div>
 </div>
@@ -492,19 +523,58 @@
 			}
 		}
 
-		.pagination {
+		.loading {
 			display: flex;
-			justify-content: center;
+			flex-direction: column;
 			align-items: center;
-			gap: $unit-2x;
-			margin-top: $unit-2x;
-			padding-top: $unit-2x;
-			border-top: 1px solid var(--border-primary);
+			gap: $unit;
 
-			.page-info {
-				font-size: $font-small;
-				color: var(--text-secondary);
+			:global(svg) {
+				animation: spin 1s linear infinite;
 			}
 		}
+
+		.error-state {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: $unit;
+			padding: $unit-3x;
+			color: var(--text-secondary);
+
+			:global(svg) {
+				color: var(--text-tertiary);
+			}
+
+			p {
+				margin: 0;
+				font-size: $font-regular;
+			}
+		}
+
+		.load-more-sentinel {
+			height: 1px;
+			margin-top: $unit;
+		}
+
+		.loading-more {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: $unit;
+			padding: $unit-2x;
+			color: var(--text-secondary);
+			font-size: $font-regular;
+
+			:global(svg) {
+				animation: spin 1s linear infinite;
+			}
+		}
+	}
+
+	@keyframes spin {
+		from { transform: rotate(0deg); }
+		to { transform: rotate(360deg); }
 	}
 </style>
