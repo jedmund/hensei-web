@@ -8,9 +8,9 @@
 		container: string
 		position: number
 		type: GridItemType
-		item?: GridItem
-		canDrop?: boolean
-		onDrop?: (item: GridItem) => void
+		item?: GridItem | undefined
+		canDrop?: boolean | undefined
+		onDrop?: ((item: GridItem) => void) | undefined
 		children?: any
 	}
 

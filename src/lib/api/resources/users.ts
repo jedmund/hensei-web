@@ -1,4 +1,5 @@
 import { userAdapter } from '../adapters/user.adapter'
+import { optionalProps } from '$lib/utils/typeShims'
 
 export interface UserUpdateParams {
 	picture?: string | undefined
@@ -27,12 +28,12 @@ export const users = {
 	 */
 	update: async (userId: string, params: UserUpdateParams): Promise<UserResponse> => {
 		// Transform flat params to nested UserInfo structure
-		const updates: Partial<{
-			gender: number | undefined
-			language: string | undefined
-			theme: string | undefined
-			avatar: { picture?: string | undefined; element?: string | undefined }
-		}> = {}
+		const updates: {
+			gender?: number | undefined
+			language?: string | undefined
+			theme?: string | undefined
+			avatar?: { picture?: string | undefined; element?: string | undefined } | undefined
+		} = {}
 
 		if (params.gender !== undefined) updates.gender = params.gender
 		if (params.language !== undefined) updates.language = params.language

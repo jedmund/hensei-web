@@ -7,6 +7,7 @@
 	import type { Snippet } from 'svelte'
 	import styles from './segmented-control.module.scss'
 	import type { HTMLAttributes } from 'svelte/elements'
+	import { optionalProps } from '$lib/utils/typeShims'
 
 	export type SegmentedControlVariant = 'default' | 'blended' | 'background'
 
@@ -84,7 +85,7 @@
 </script>
 
 <div class={wrapperClassList}>
-	<RadioGroupPrimitive.Root bind:value class={classList} {...restProps}>
+	<RadioGroupPrimitive.Root bind:value class={classList} {...optionalProps(restProps)}>
 		{@render children?.()}
 	</RadioGroupPrimitive.Root>
 </div>
