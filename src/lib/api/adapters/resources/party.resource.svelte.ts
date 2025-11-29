@@ -4,6 +4,27 @@
  * Provides reactive state management for party operations with
  * automatic loading states, error handling, and optimistic updates.
  *
+ * @deprecated This resource class is deprecated in favor of TanStack Query.
+ * Use `partyQueries` from `$lib/api/queries/party.queries` and
+ * mutation hooks from `$lib/api/mutations/party.mutations` instead.
+ *
+ * Migration example:
+ * ```typescript
+ * // Before (PartyResource)
+ * const party = createPartyResource()
+ * party.load('ABC123')
+ * party.update({ shortcode: 'ABC123', name: 'New Name' })
+ *
+ * // After (TanStack Query)
+ * import { createQuery } from '@tanstack/svelte-query'
+ * import { partyQueries } from '$lib/api/queries/party.queries'
+ * import { useUpdateParty } from '$lib/api/mutations/party.mutations'
+ *
+ * const party = createQuery(() => partyQueries.byShortcode('ABC123'))
+ * const updateParty = useUpdateParty()
+ * updateParty.mutate({ shortcode: 'ABC123', name: 'New Name' })
+ * ```
+ *
  * @module adapters/resources/party
  */
 
