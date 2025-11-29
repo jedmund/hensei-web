@@ -3,7 +3,7 @@
 <script lang="ts">
 	import type { GridSummon } from '$lib/types/api/party'
 	import { getContext } from 'svelte'
-	import type { PartyContext } from '$lib/services/party.service'
+	import type { PartyContext } from '$lib/types/party-context'
 	import type { DragDropContext } from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
 	import DropZone from '$lib/components/dnd/DropZone.svelte'

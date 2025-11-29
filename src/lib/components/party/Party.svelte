@@ -2,8 +2,11 @@
 	import { onMount, getContext, setContext } from 'svelte'
 	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 
-	// TanStack Query mutations
+	// TanStack Query mutations - Grid
 	import {
+		useCreateGridWeapon,
+		useCreateGridCharacter,
+		useCreateGridSummon,
 		useDeleteGridWeapon,
 		useDeleteGridCharacter,
 		useDeleteGridSummon,
@@ -12,13 +15,24 @@
 		useUpdateGridSummon,
 		useUpdateWeaponUncap,
 		useUpdateCharacterUncap,
-		useUpdateSummonUncap
+		useUpdateSummonUncap,
+		useSwapWeapons,
+		useSwapCharacters,
+		useSwapSummons
 	} from '$lib/api/mutations/grid.mutations'
 
-	// Legacy services - kept only for swap/move operations and edit keys
-	// TODO: Remove once swap/move mutations are implemented
-	import { PartyService } from '$lib/services/party.service'
-	import { GridService } from '$lib/services/grid.service'
+	// TanStack Query mutations - Party
+	import {
+		useUpdateParty,
+		useDeleteParty,
+		useRemixParty,
+		useFavoriteParty,
+		useUnfavoriteParty
+	} from '$lib/api/mutations/party.mutations'
+
+	// Utilities
+	import { getLocalId } from '$lib/utils/localId'
+	import { getEditKey, storeEditKey, computeEditability } from '$lib/utils/editKeys'
 
 	import { createDragDropContext, type DragOperation } from '$lib/composables/drag-drop.svelte'
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
@@ -42,7 +56,6 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
-	import { executeGridOperation } from '$lib/utils/gridOperations'
 
 	interface Props {
 		party?: Party
@@ -74,11 +87,10 @@
 	let editDialogOpen = $state(false)
 	let editingTitle = $state('')
 
-	// Legacy services - only for swap/move and edit keys
-	const partyService = new PartyService()
-	const gridService = new GridService()
-
-	// TanStack Query mutations
+	// TanStack Query mutations - Grid
+	const createWeapon = useCreateGridWeapon()
+	const createCharacter = useCreateGridCharacter()
+	const createSummon = useCreateGridSummon()
 	const deleteWeapon = useDeleteGridWeapon()
 	const deleteCharacter = useDeleteGridCharacter()
 	const deleteSummon = useDeleteGridSummon()
@@ -88,6 +100,16 @@
 	const updateWeaponUncap = useUpdateWeaponUncap()
 	const updateCharacterUncap = useUpdateCharacterUncap()
 	const updateSummonUncap = useUpdateSummonUncap()
+	const swapWeapons = useSwapWeapons()
+	const swapCharacters = useSwapCharacters()
+	const swapSummons = useSwapSummons()
+
+	// TanStack Query mutations - Party
+	const updatePartyMutation = useUpdateParty()
+	const deletePartyMutation = useDeleteParty()
+	const remixPartyMutation = useRemixParty()
+	const favoritePartyMutation = useFavoriteParty()
+	const unfavoritePartyMutation = useUnfavoriteParty()
 
 	// Create drag-drop context
 	const dragContext = createDragDropContext({
@@ -152,14 +174,23 @@
 			throw new Error('Cannot swap items in unsaved party')
 		}
 
-		return executeGridOperation(
-			'swap',
-			source,
-			target,
-			{ partyId: party.id, shortcode: party.shortcode, editKey },
-			gridService,
-			partyService
-		)
+		// Use appropriate swap mutation based on item type
+		const swapParams = {
+			partyId: party.id,
+			partyShortcode: party.shortcode,
+			sourceId: source.itemId,
+			targetId: target.itemId
+		}
+
+		if (source.type === 'weapon') {
+			await swapWeapons.mutateAsync(swapParams)
+		} else if (source.type === 'character') {
+			await swapCharacters.mutateAsync(swapParams)
+		} else if (source.type === 'summon') {
+			await swapSummons.mutateAsync(swapParams)
+		}
+
+		return party
 	}
 
 	async function handleMove(source: any, target: any): Promise<Party> {
@@ -167,14 +198,22 @@
 			throw new Error('Cannot move items in unsaved party')
 		}
 
-		return executeGridOperation(
-			'move',
-			source,
-			target,
-			{ partyId: party.id, shortcode: party.shortcode, editKey },
-			gridService,
-			partyService
-		)
+		// Move is swap with empty target - use update mutation to change position
+		const updateParams = {
+			id: source.itemId,
+			partyShortcode: party.shortcode,
+			updates: { position: target.position }
+		}
+
+		if (source.type === 'weapon') {
+			await updateWeapon.mutateAsync(updateParams)
+		} else if (source.type === 'character') {
+			await updateCharacter.mutateAsync(updateParams)
+		} else if (source.type === 'summon') {
+			await updateSummon.mutateAsync(updateParams)
+		}
+
+		return party
 	}
 
 	// Localized name helper: accepts either an object with { name: { en, ja } }
@@ -198,7 +237,7 @@
 		if (canEditServer) return true
 
 		// Re-compute on client with localStorage values
-		const result = partyService.computeEditability(party, authUserId, localId, editKey)
+		const result = computeEditability(party, authUserId, localId, editKey)
 		return result.canEdit
 	})
 
@@ -248,10 +287,10 @@
 		error = null
 
 		try {
-			// Use partyService for client-side updates
-			const updated = await partyService.update(party.id, updates, editKey || undefined)
-			party = updated
-			return updated
+			// Use TanStack Query mutation to update party
+			await updatePartyMutation.mutateAsync({ shortcode: party.shortcode, updates })
+			// Party will be updated via cache invalidation
+			return party
 		} catch (err: any) {
 			error = err.message || 'Failed to update party'
 			return null
@@ -268,10 +307,10 @@
 
 		try {
 			if (party.favorited) {
-				await partyService.unfavorite(party.id)
+				await unfavoritePartyMutation.mutateAsync({ shortcode: party.shortcode })
 				party.favorited = false
 			} else {
-				await partyService.favorite(party.id)
+				await favoritePartyMutation.mutateAsync({ shortcode: party.shortcode })
 				party.favorited = true
 			}
 		} catch (err: any) {
@@ -286,10 +325,15 @@
 		error = null
 
 		try {
-			const result = await partyService.remix(party.shortcode, localId, editKey || undefined)
+			const result = await remixPartyMutation.mutateAsync({
+				shortcode: party.shortcode,
+				localId,
+				editKey: editKey || undefined
+			})
 
 			// Store new edit key if returned
 			if (result.editKey) {
+				storeEditKey(result.party.shortcode, result.editKey)
 				editKey = result.editKey
 			}
 
@@ -322,8 +366,8 @@
 			deleting = true
 			error = null
 
-			// Delete the party - API expects the ID, not shortcode
-			await partyService.delete(party.id, editKey || undefined)
+			// Delete the party using mutation
+			await deletePartyMutation.mutateAsync({ shortcode: party.shortcode })
 
 			// Navigate to user's own profile page after deletion
 			if (party.user?.username) {
@@ -477,33 +521,33 @@
 			// Determine which slot to use
 			let targetSlot = selectedSlot
 
-			// Call appropriate grid service method based on current tab
+			// Call appropriate create mutation based on current tab
 			// Use granblueId (camelCase) as that's what the SearchResult type uses
 			const itemId = item.granblueId
 			if (activeTab === GridType.Weapon) {
-				await gridService.addWeapon(party.id, itemId, targetSlot, editKey || undefined, {
-					mainhand: targetSlot === -1,
-					shortcode: party.shortcode
+				await createWeapon.mutateAsync({
+					partyId: party.id,
+					weaponId: itemId,
+					position: targetSlot,
+					mainhand: targetSlot === -1
 				})
 			} else if (activeTab === GridType.Summon) {
-				await gridService.addSummon(party.id, itemId, targetSlot, editKey || undefined, {
+				await createSummon.mutateAsync({
+					partyId: party.id,
+					summonId: itemId,
+					position: targetSlot,
 					main: targetSlot === -1,
-					friend: targetSlot === 6,
-					shortcode: party.shortcode
+					friend: targetSlot === 6
 				})
 			} else if (activeTab === GridType.Character) {
-				await gridService.addCharacter(party.id, itemId, targetSlot, editKey || undefined, {
-					shortcode: party.shortcode
+				await createCharacter.mutateAsync({
+					partyId: party.id,
+					characterId: itemId,
+					position: targetSlot
 				})
 			}
 
-			// Clear cache before refreshing to ensure fresh data
-			partyService.clearPartyCache(party.shortcode)
-
-			// Refresh party data
-			const updated = await partyService.getByShortcode(party.shortcode)
-			party = updated
-
+			// Party will be updated via cache invalidation from the mutation
 			// Find next empty slot for continuous adding
 			const nextEmptySlot = findNextEmptySlot(party, activeTab)
 			if (nextEmptySlot !== SLOT_NOT_FOUND) {
@@ -520,10 +564,10 @@
 	// Client-side initialization
 	onMount(() => {
 		// Get or create local ID
-		localId = partyService.getLocalId()
+		localId = getLocalId()
 
 		// Get edit key for this party if it exists
-			editKey = partyService.getEditKey(party.shortcode) ?? undefined
+		editKey = getEditKey(party.shortcode) ?? undefined
 
 		// No longer need to verify party data integrity after hydration
 		// since $state.raw prevents the hydration mismatch
@@ -681,7 +725,6 @@
 		canEdit: () => canEdit(),
 		getEditKey: () => editKey,
 		services: {
-			partyService,
 			gridService: clientGridService // Uses TanStack Query mutations
 		},
 		openPicker: (opts: {

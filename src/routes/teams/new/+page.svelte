@@ -10,13 +10,10 @@
   import { setContext } from 'svelte'
   import type { SearchResult } from '$lib/api/adapters'
   import { partyAdapter, gridAdapter } from '$lib/api/adapters'
-  import { PartyService } from '$lib/services/party.service'
+  import { getLocalId } from '$lib/utils/localId'
   import { Dialog } from 'bits-ui'
   import { replaceState } from '$app/navigation'
   import { page } from '$app/stores'
-
-  // Initialize party service for local ID management
-  const partyService = new PartyService()
 
   // Get authentication status from page store
   const isAuthenticated = $derived($page.data?.isAuthenticated ?? false)
@@ -115,8 +112,7 @@
 
         // Only include localId for anonymous users
         if (!isAuthenticated) {
-          const localId = partyService.getLocalId()
-          partyPayload.localId = localId
+          partyPayload.localId = getLocalId()
         }
 
         // Create party using the party adapter

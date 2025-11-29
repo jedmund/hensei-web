@@ -14,7 +14,8 @@ import {
 	type CreateGridCharacterParams,
 	type CreateGridSummonParams,
 	type UpdateUncapParams,
-	type ResolveConflictParams
+	type ResolveConflictParams,
+	type SwapPositionsParams
 } from '$lib/api/adapters/grid.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
@@ -214,6 +215,23 @@ export function useResolveWeaponConflict() {
 	}))
 }
 
+/**
+ * Swap weapon positions mutation
+ *
+ * Swaps the positions of two weapons in the grid.
+ */
+export function useSwapWeapons() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
+			gridAdapter.swapWeapons(params),
+		onSuccess: (_data, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}
+
 // ============================================================================
 // Character Mutations
 // ============================================================================
@@ -368,6 +386,23 @@ export function useResolveCharacterConflict() {
 	return createMutation(() => ({
 		mutationFn: (params: ResolveConflictParams & { partyShortcode: string }) =>
 			gridAdapter.resolveCharacterConflict(params),
+		onSuccess: (_data, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}
+
+/**
+ * Swap character positions mutation
+ *
+ * Swaps the positions of two characters in the grid.
+ */
+export function useSwapCharacters() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
+			gridAdapter.swapCharacters(params),
 		onSuccess: (_data, { partyShortcode }) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
 		}
@@ -562,6 +597,23 @@ export function useUpdateQuickSummon() {
 			}
 		},
 		onSettled: (_data, _err, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}
+
+/**
+ * Swap summon positions mutation
+ *
+ * Swaps the positions of two summons in the grid.
+ */
+export function useSwapSummons() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
+			gridAdapter.swapSummons(params),
+		onSuccess: (_data, { partyShortcode }) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
 		}
 	}))
