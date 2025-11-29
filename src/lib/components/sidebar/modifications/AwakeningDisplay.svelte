@@ -36,7 +36,7 @@
   }
 
   let awakeningData = $derived(getAwakeningData())
-  let imageUrl = $derived(getAwakeningImage(awakeningData))
+  let imageUrl = $derived(getAwakeningImage(awakeningData ?? undefined))
   let displayName = $derived(awakeningData?.type?.name?.en || awakeningData?.type?.name?.ja || 'Awakening')
 </script>
 

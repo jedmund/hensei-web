@@ -2,8 +2,7 @@
  * Utility functions for weapon and character modifiers (awakenings, weapon keys, AX skills)
  */
 
-import type { Awakening } from '$lib/types/Awakening'
-import type { WeaponKey } from '$lib/types/api/entities'
+import type { Awakening, WeaponKey } from '$lib/types/api/entities'
 import type { SimpleAxSkill } from '$lib/types/SimpleAxSkill'
 
 /**

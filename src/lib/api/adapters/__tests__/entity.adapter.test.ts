@@ -58,7 +58,6 @@ describe('EntityAdapter', () => {
 			ulb: true
 		},
 		special: false,
-		recruits: null,
 		gender: 0,
 		race: [1, 2],
 		proficiency: [1, 2],

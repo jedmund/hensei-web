@@ -30,8 +30,8 @@ export interface GridWeapon {
   weaponKeys?: WeaponKey[]
   ax?: SimpleAxSkill[]
   awakening?: {
-    type: Awakening
-    level: number
+    type?: Awakening
+    level?: number
   }
 }
 
@@ -44,8 +44,8 @@ export interface GridCharacter {
   transcendenceStep?: number
   character: Character  // Named properly, not "object"
   awakening?: {
-    type: Awakening
-    level: number
+    type?: Awakening
+    level?: number
   }
   aetherialMastery?: { modifier: number; strength: number }
   overMastery?: Array<{ modifier: number; strength: number }>
