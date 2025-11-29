@@ -22,6 +22,37 @@
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
 	import { openJobSelectionSidebar, openJobSkillSelectionSidebar } from '$lib/features/job/openJobSidebar.svelte'
+
+	// TanStack Query mutations
+	import {
+		useUpdateParty,
+		useDeleteParty,
+		useRemixParty,
+		useFavoriteParty,
+		useUnfavoriteParty
+	} from '$lib/api/mutations/party.mutations'
+	import {
+		useCreateGridWeapon,
+		useUpdateGridWeapon,
+		useDeleteGridWeapon,
+		useUpdateWeaponUncap,
+		useCreateGridCharacter,
+		useUpdateGridCharacter,
+		useDeleteGridCharacter,
+		useUpdateCharacterUncap,
+		useCreateGridSummon,
+		useUpdateGridSummon,
+		useDeleteGridSummon,
+		useUpdateSummonUncap,
+		useMoveWeapon,
+		useMoveCharacter,
+		useMoveSummon
+	} from '$lib/api/mutations/grid.mutations'
+	import {
+		useUpdatePartyJob,
+		useUpdatePartyJobSkills,
+		useRemovePartyJobSkill
+	} from '$lib/api/mutations/job.mutations'
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 
 	interface Props {
@@ -58,6 +89,39 @@
 	const partyService = new PartyService()
 	const gridService = new GridService()
 	const conflictService = new ConflictService()
+
+	// TanStack Query mutation hooks
+	const updatePartyMutation = useUpdateParty()
+	const deletePartyMutation = useDeleteParty()
+	const remixPartyMutation = useRemixParty()
+	const favoritePartyMutation = useFavoriteParty()
+	const unfavoritePartyMutation = useUnfavoriteParty()
+
+	// Grid mutations - weapons
+	const createWeaponMutation = useCreateGridWeapon()
+	const updateWeaponMutation = useUpdateGridWeapon()
+	const deleteWeaponMutation = useDeleteGridWeapon()
+	const updateWeaponUncapMutation = useUpdateWeaponUncap()
+	const moveWeaponMutation = useMoveWeapon()
+
+	// Grid mutations - characters
+	const createCharacterMutation = useCreateGridCharacter()
+	const updateCharacterMutation = useUpdateGridCharacter()
+	const deleteCharacterMutation = useDeleteGridCharacter()
+	const updateCharacterUncapMutation = useUpdateCharacterUncap()
+	const moveCharacterMutation = useMoveCharacter()
+
+	// Grid mutations - summons
+	const createSummonMutation = useCreateGridSummon()
+	const updateSummonMutation = useUpdateGridSummon()
+	const deleteSummonMutation = useDeleteGridSummon()
+	const updateSummonUncapMutation = useUpdateSummonUncap()
+	const moveSummonMutation = useMoveSummon()
+
+	// Job mutations
+	const updateJobMutation = useUpdatePartyJob()
+	const updateJobSkillsMutation = useUpdatePartyJobSkills()
+	const removeJobSkillMutation = useRemovePartyJobSkill()
 
 	// Create drag-drop context
 	const dragContext = createDragDropContext({
@@ -241,87 +305,75 @@
 	async function savePartyTitle() {
 		if (!canEdit()) return
 
-		try {
-			loading = true
-			error = null
-
-			// Update party title via API
-			const updated = await updatePartyDetails({ name: editingTitle })
-			if (updated) {
-				party = updated
-				editDialogOpen = false
-			}
-		} catch (err: any) {
-			error = err.message || 'Failed to update party title'
-		} finally {
-			loading = false
+		error = null
+		const updated = await updatePartyDetails({ name: editingTitle })
+		if (updated) {
+			editDialogOpen = false
 		}
 	}
 
 	// Party operations
-	async function updatePartyDetails(updates: Partial<Party>) {
+	async function updatePartyDetails(updates: Partial<Party>): Promise<Party | null> {
 		if (!canEdit()) return null
 
-		loading = true
-		error = null
-
-		try {
-			// Use partyService for client-side updates
-			const updated = await partyService.update(party.id, updates, editKey || undefined)
-			party = updated
-			return updated
-		} catch (err: any) {
-			error = err.message || 'Failed to update party'
-			return null
-		} finally {
-			loading = false
-		}
+		return new Promise((resolve) => {
+			updatePartyMutation.mutate(
+				{ shortcode: party.shortcode, ...updates },
+				{
+					onSuccess: (updated) => {
+						party = updated
+						resolve(updated)
+					},
+					onError: (err: any) => {
+						error = err.message || 'Failed to update party'
+						resolve(null)
+					}
+				}
+			)
+		})
 	}
 
-	async function toggleFavorite() {
+	function toggleFavorite() {
 		if (!authUserId) return // Must be logged in to favorite
 
-		loading = true
 		error = null
 
-		try {
-			if (party.favorited) {
-				await partyService.unfavorite(party.id)
-				party.favorited = false
-			} else {
-				await partyService.favorite(party.id)
-				party.favorited = true
-			}
-		} catch (err: any) {
-			error = err.message || 'Failed to update favorite status'
-		} finally {
-			loading = false
+		if (party.favorited) {
+			unfavoritePartyMutation.mutate(party.shortcode, {
+				onSuccess: () => {
+					party.favorited = false
+				},
+				onError: (err: any) => {
+					error = err.message || 'Failed to update favorite status'
+				}
+			})
+		} else {
+			favoritePartyMutation.mutate(party.shortcode, {
+				onSuccess: () => {
+					party.favorited = true
+				},
+				onError: (err: any) => {
+					error = err.message || 'Failed to update favorite status'
+				}
+			})
 		}
 	}
 
-	async function remixParty() {
-		loading = true
+	function remixParty() {
 		error = null
 
-		try {
-			const result = await partyService.remix(party.shortcode, localId, editKey || undefined)
-
-			// Store new edit key if returned
-			if (result.editKey) {
-				editKey = result.editKey
+		remixPartyMutation.mutate(party.shortcode, {
+			onSuccess: (newParty) => {
+				// Navigate to new party
+				window.location.href = `/teams/${newParty.shortcode}`
+			},
+			onError: (err: any) => {
+				error = err.message || 'Failed to remix party'
 			}
-
-			// Navigate to new party
-			window.location.href = `/teams/${result.party.shortcode}`
-		} catch (err: any) {
-			error = err.message || 'Failed to remix party'
-		} finally {
-			loading = false
-		}
+		})
 	}
 
 	let deleteDialogOpen = $state(false)
-	let deleting = $state(false)
 
 	function openDescriptionPanel() {
 		openDescriptionSidebar({
@@ -332,315 +384,268 @@
 		})
 	}
 
-	async function deleteParty() {
+	function deleteParty() {
 		// Only allow deletion if user owns the party
 		if (party.user?.id !== authUserId) return
 
-		try {
-			deleting = true
-			error = null
+		error = null
 
-			// Delete the party - API expects the ID, not shortcode
-			await partyService.delete(party.id, editKey || undefined)
-
-			// Navigate to user's own profile page after deletion
-			if (party.user?.username) {
-				window.location.href = `/${party.user.username}`
-			} else {
-				// Fallback to /me for logged-in users
-				window.location.href = '/me'
-			}
-		} catch (err: any) {
-			error = err.message || 'Failed to delete party'
-			deleteDialogOpen = false
-		} finally {
-			deleting = false
-		}
-	}
-
-	// Handle job selection
-	async function handleSelectJob() {
-		if (!canEdit()) return
-
-		openJobSelectionSidebar({
-			currentJobId: party.job?.id,
-			onSelectJob: async (job) => {
-				loading = true
-				error = null
-
-				try {
-					// Update job via API (use shortcode for party identification)
-					const updated = await partyAdapter.updateJob(party.shortcode, job.id)
-					party = updated
-				} catch (e) {
-					error = e instanceof Error ? e.message : 'Failed to update job'
-					console.error('Failed to update job:', e)
-				} finally {
-					loading = false
+		deletePartyMutation.mutate(party.shortcode, {
+			onSuccess: () => {
+				// Navigate to user's own profile page after deletion
+				if (party.user?.username) {
+					window.location.href = `/${party.user.username}`
+				} else {
+					// Fallback to /me for logged-in users
+					window.location.href = '/me'
 				}
+			},
+			onError: (err: any) => {
+				error = err.message || 'Failed to delete party'
+				deleteDialogOpen = false
 			}
 		})
 	}
 
+	// Handle job selection
+	function handleSelectJob() {
+		if (!canEdit()) return
+
+		openJobSelectionSidebar({
+			currentJobId: party.job?.id,
+			onSelectJob: (job) => {
+				error = null
+
+				updateJobMutation.mutate(
+					{ shortcode: party.shortcode, jobId: job.id },
+					{
+						onSuccess: (updated) => {
+							party = updated
+						},
+						onError: (e: any) => {
+							error = e?.message || 'Failed to update job'
+							console.error('Failed to update job:', e)
+						}
+					}
+				)
+			}
+		})
+	}
+
+	// Helper function to extract error message from nested error structure
+	function extractErrorMessage(e: any, defaultMessage: string): string {
+		let errorDetails = e?.details
+
+		// Navigate through nested details structure
+		while (errorDetails?.details) {
+			errorDetails = errorDetails.details
+		}
+
+		if (errorDetails?.errors) {
+			if (errorDetails.errors.message) {
+				return errorDetails.errors.message
+			} else {
+				const errorMessages = Object.entries(errorDetails.errors)
+					.map(([_, messages]) => {
+						if (Array.isArray(messages)) {
+							return messages.join(', ')
+						}
+						return String(messages)
+					})
+					.join('; ')
+				return errorMessages || e?.message || defaultMessage
+			}
+		}
+		return e?.message || defaultMessage
+	}
+
 	// Handle job skill selection
-	async function handleSelectJobSkill(slot: number) {
+	function handleSelectJobSkill(slot: number) {
 		if (!canEdit()) return
 
 		openJobSkillSelectionSidebar({
 			job: party.job,
 			currentSkills: party.jobSkills,
 			targetSlot: slot,
-			onSelectSkill: async (skill) => {
-				loading = true
+			onSelectSkill: (skill) => {
 				error = null
 
-				try {
-					// Update skills with the new skill in the slot
-					const updatedSkills = { ...party.jobSkills }
-					updatedSkills[String(slot) as keyof typeof updatedSkills] = skill
+				// Update skills with the new skill in the slot
+				const updatedSkills = { ...party.jobSkills }
+				updatedSkills[String(slot) as keyof typeof updatedSkills] = skill
 
-					console.log('[Party] Current jobSkills:', party.jobSkills)
-					console.log('[Party] Updated jobSkills object:', updatedSkills)
-					console.log('[Party] Slot being updated:', slot)
-					console.log('[Party] New skill:', skill)
+				// Convert skills object to array format expected by API
+				const skillsArray = Object.entries(updatedSkills)
+					.filter(([_, skill]) => skill !== null && skill !== undefined)
+					.map(([slotKey, skill]) => ({
+						id: skill!.id,
+						slot: parseInt(slotKey)
+					}))
 
-					// Convert skills object to array format expected by API
-					const skillsArray = Object.entries(updatedSkills)
-						.filter(([_, skill]) => skill !== null && skill !== undefined)
-						.map(([slotKey, skill]) => ({
-							id: skill!.id,
-							slot: parseInt(slotKey)
-						}))
-
-					console.log('[Party] Skills array to send:', skillsArray)
-
-					const updated = await partyAdapter.updateJobSkills(
-						party.shortcode,
-						skillsArray
-					)
-					party = updated
-				} catch (e: any) {
-					// Extract detailed error message from nested structure
-					let errorDetails = e?.details
-
-					// Navigate through nested details structure
-					while (errorDetails?.details) {
-						errorDetails = errorDetails.details
-					}
-
-					if (errorDetails?.errors) {
-						if (errorDetails.errors.message) {
-							// Simple message format
-							error = errorDetails.errors.message
-						} else {
-							// Field-based errors
-							const errorMessages = Object.entries(errorDetails.errors)
-								.map(([field, messages]) => {
-									if (Array.isArray(messages)) {
-										return messages.join(', ')
-									}
-									return String(messages)
-								})
-								.join('; ')
-							error = errorMessages || e.message || 'Failed to update skill'
+				updateJobSkillsMutation.mutate(
+					{ shortcode: party.shortcode, skills: skillsArray },
+					{
+						onSuccess: (updated) => {
+							party = updated
+						},
+						onError: (e: any) => {
+							error = extractErrorMessage(e, 'Failed to update skill')
+							console.error('Failed to update skill:', e)
 						}
-					} else {
-						error = e?.message || 'Failed to update skill'
 					}
-					console.error('Failed to update skill:', e)
-				} finally {
-					loading = false
-				}
+				)
 			},
-			onRemoveSkill: async () => {
-				loading = true
+			onRemoveSkill: () => {
 				error = null
 
-				try {
-					// Remove skill from slot
-					const updatedSkills = { ...party.jobSkills }
-					delete updatedSkills[String(slot) as keyof typeof updatedSkills]
-
-					console.log('[Party] Removing skill from slot:', slot)
-					console.log('[Party] Current jobSkills:', party.jobSkills)
-					console.log('[Party] Updated jobSkills after removal:', updatedSkills)
-
-					// Convert skills object to array format expected by API
-					const skillsArray = Object.entries(updatedSkills)
-						.filter(([_, skill]) => skill !== null && skill !== undefined)
-						.map(([slotKey, skill]) => ({
-							id: skill!.id,
-							slot: parseInt(slotKey)
-						}))
-
-					console.log('[Party] Skills array to send after removal:', skillsArray)
-
-					const updated = await partyAdapter.updateJobSkills(
-						party.shortcode,
-						skillsArray
-					)
-					party = updated
-				} catch (e: any) {
-					// Extract detailed error message from nested structure
-					let errorDetails = e?.details
-
-					// Navigate through nested details structure
-					while (errorDetails?.details) {
-						errorDetails = errorDetails.details
-					}
-
-					if (errorDetails?.errors) {
-						if (errorDetails.errors.message) {
-							// Simple message format
-							error = errorDetails.errors.message
-						} else {
-							// Field-based errors
-							const errorMessages = Object.entries(errorDetails.errors)
-								.map(([field, messages]) => {
-									if (Array.isArray(messages)) {
-										return messages.join(', ')
-									}
-									return String(messages)
-								})
-								.join('; ')
-							error = errorMessages || e.message || 'Failed to remove skill'
+				removeJobSkillMutation.mutate(
+					{ shortcode: party.shortcode, slot },
+					{
+						onSuccess: (updated) => {
+							party = updated
+						},
+						onError: (e: any) => {
+							error = extractErrorMessage(e, 'Failed to remove skill')
+							console.error('Failed to remove skill:', e)
 						}
-					} else {
-						error = e?.message || 'Failed to remove skill'
 					}
-					console.error('Failed to remove skill:', e)
-				} finally {
-					loading = false
-				}
+				)
 			}
 		})
 	}
 
 	// Handle removing a skill directly
-	async function handleRemoveJobSkill(slot: number) {
+	function handleRemoveJobSkill(slot: number) {
 		if (!canEdit()) return
 
-		loading = true
 		error = null
 
-		try {
-			// Remove skill from slot
-			const updatedSkills = { ...party.jobSkills }
-			delete updatedSkills[String(slot) as keyof typeof updatedSkills]
-
-			// Convert skills object to array format expected by API
-			const skillsArray = Object.entries(updatedSkills)
-				.filter(([_, skill]) => skill !== null && skill !== undefined)
-				.map(([slotKey, skill]) => ({
-					id: skill!.id,
-					slot: parseInt(slotKey)
-				}))
-
-			const updated = await partyAdapter.updateJobSkills(
-				party.shortcode,
-				skillsArray
-			)
-			party = updated
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Failed to remove skill'
-			console.error('Failed to remove skill:', e)
-		} finally {
-			loading = false
-		}
+		removeJobSkillMutation.mutate(
+			{ shortcode: party.shortcode, slot },
+			{
+				onSuccess: (updated) => {
+					party = updated
+				},
+				onError: (e: any) => {
+					error = extractErrorMessage(e, 'Failed to remove skill')
+					console.error('Failed to remove skill:', e)
+				}
+			}
+		)
 	}
 
-	// Handle adding items from the search sidebar
-	async function handleAddItems(items: SearchResult[]) {
-		if (items.length === 0 || !canEdit()) return
+	// Helper function to find next empty slot after adding an item
+	function findNextEmptySlot(updatedParty: Party): number {
+		let nextEmptySlot = -999 // sentinel value meaning no empty slot found
 
-		const item = items[0]
-		if (!item) return
-		loading = true
-		error = null
-
-		try {
-			// Determine which slot to use
-			let targetSlot = selectedSlot
-
-			// Call appropriate grid service method based on current tab
-			// Use granblueId (camelCase) as that's what the SearchResult type uses
-			const itemId = item.granblueId
-			if (activeTab === GridType.Weapon) {
-				await gridService.addWeapon(party.id, itemId, targetSlot, editKey || undefined, {
-					mainhand: targetSlot === -1,
-					shortcode: party.shortcode
-				})
-			} else if (activeTab === GridType.Summon) {
-				await gridService.addSummon(party.id, itemId, targetSlot, editKey || undefined, {
-					main: targetSlot === -1,
-					friend: targetSlot === 6,
-					shortcode: party.shortcode
-				})
-			} else if (activeTab === GridType.Character) {
-				await gridService.addCharacter(party.id, itemId, targetSlot, editKey || undefined, {
-					shortcode: party.shortcode
-				})
-			}
-
-			// Clear cache before refreshing to ensure fresh data
-			partyService.clearPartyCache(party.shortcode)
-
-			// Refresh party data
-			const updated = await partyService.getByShortcode(party.shortcode)
-			party = updated
-
-			// Find next empty slot for continuous adding
-			let nextEmptySlot = -999 // sentinel value meaning no empty slot found
-
-			if (activeTab === GridType.Weapon) {
-				// Check mainhand first (position -1)
-				if (!party.weapons.find((w) => w.position === -1 || w.mainhand)) {
-					nextEmptySlot = -1
-				} else {
-					// Check grid slots 0-8
-					for (let i = 0; i < 9; i++) {
-						if (!party.weapons.find((w) => w.position === i)) {
-							nextEmptySlot = i
-							break
-						}
-					}
-				}
-			} else if (activeTab === GridType.Summon) {
-				// Check main summon first (position -1)
-				if (!party.summons.find((s) => s.position === -1 || s.main)) {
-					nextEmptySlot = -1
-				} else {
-					// Check grid slots 0-5
-					for (let i = 0; i < 6; i++) {
-						if (!party.summons.find((s) => s.position === i)) {
-							nextEmptySlot = i
-							break
-						}
-					}
-					// Check friend summon (position 6)
-					if (nextEmptySlot === -999 && !party.summons.find((s) => s.position === 6 || s.friend)) {
-						nextEmptySlot = 6
-					}
-				}
-			} else if (activeTab === GridType.Character) {
-				// Check character slots 0-4
-				for (let i = 0; i < 5; i++) {
-					if (!party.characters.find((c) => c.position === i)) {
+		if (activeTab === GridType.Weapon) {
+			// Check mainhand first (position -1)
+			if (!updatedParty.weapons.find((w) => w.position === -1 || w.mainhand)) {
+				nextEmptySlot = -1
+			} else {
+				// Check grid slots 0-8
+				for (let i = 0; i < 9; i++) {
+					if (!updatedParty.weapons.find((w) => w.position === i)) {
 						nextEmptySlot = i
 						break
 					}
 				}
 			}
+		} else if (activeTab === GridType.Summon) {
+			// Check main summon first (position -1)
+			if (!updatedParty.summons.find((s) => s.position === -1 || s.main)) {
+				nextEmptySlot = -1
+			} else {
+				// Check grid slots 0-5
+				for (let i = 0; i < 6; i++) {
+					if (!updatedParty.summons.find((s) => s.position === i)) {
+						nextEmptySlot = i
+						break
+					}
+				}
+				// Check friend summon (position 6)
+				if (nextEmptySlot === -999 && !updatedParty.summons.find((s) => s.position === 6 || s.friend)) {
+					nextEmptySlot = 6
+				}
+			}
+		} else if (activeTab === GridType.Character) {
+			// Check character slots 0-4
+			for (let i = 0; i < 5; i++) {
+				if (!updatedParty.characters.find((c) => c.position === i)) {
+					nextEmptySlot = i
+					break
+				}
+			}
+		}
+
+		return nextEmptySlot
+	}
+
+	// Handle adding items from the search sidebar
+	function handleAddItems(items: SearchResult[]) {
+		if (items.length === 0 || !canEdit()) return
+
+		const item = items[0]
+		if (!item) return
+		error = null
+
+		// Determine which slot to use
+		const targetSlot = selectedSlot
+
+		// Use granblueId (camelCase) as that's what the SearchResult type uses
+		const itemId = item.granblueId
+
+		const handleSuccess = (updated: Party) => {
+			party = updated
+
+			// Find next empty slot for continuous adding
+			const nextEmptySlot = findNextEmptySlot(updated)
 
 			// If there's another empty slot, update selectedSlot to it
 			if (nextEmptySlot !== -999) {
 				selectedSlot = nextEmptySlot
 			}
 			// Note: Sidebar stays open for continuous adding
-		} catch (err: any) {
-			error = err.message || 'Failed to add item'
-		} finally {
-			loading = false
+		}
+
+		const handleError = (err: any) => {
+			error = err?.message || 'Failed to add item'
+		}
+
+		// Call appropriate mutation based on current tab
+		if (activeTab === GridType.Weapon) {
+			createWeaponMutation.mutate(
+				{
+					partyId: party.id,
+					weaponId: itemId,
+					position: targetSlot,
+					mainhand: targetSlot === -1,
+					partyShortcode: party.shortcode
+				},
+				{ onSuccess: handleSuccess, onError: handleError }
+			)
+		} else if (activeTab === GridType.Summon) {
+			createSummonMutation.mutate(
+				{
+					partyId: party.id,
+					summonId: itemId,
+					position: targetSlot,
+					main: targetSlot === -1,
+					friend: targetSlot === 6,
+					partyShortcode: party.shortcode
+				},
+				{ onSuccess: handleSuccess, onError: handleError }
+			)
+		} else if (activeTab === GridType.Character) {
+			createCharacterMutation.mutate(
+				{
+					partyId: party.id,
+					characterId: itemId,
+					position: targetSlot,
+					partyShortcode: party.shortcode
+				},
+				{ onSuccess: handleSuccess, onError: handleError }
+			)
 		}
 	}
 
@@ -656,249 +661,275 @@
 		// since $state.raw prevents the hydration mismatch
 	})
 
-	// Create client-side wrappers for grid operations using API client
+	// Create client-side wrappers for grid operations using mutations
+	// These return promises that resolve when the mutation completes
 	const clientGridService = {
-		async removeWeapon(partyId: string, gridWeaponId: string, _editKey?: string) {
-			try {
-				// Remove returns null, so we need to update local state
-				await gridService.removeWeapon(partyId, gridWeaponId, editKey || undefined, {
-					shortcode: party.shortcode
-				})
-
-				// Update local state by removing the weapon
-				const updatedParty = { ...party }
-				if (updatedParty.weapons) {
-					updatedParty.weapons = updatedParty.weapons.filter((w: any) => w.id !== gridWeaponId)
-				}
-				return updatedParty
-			} catch (err) {
-				console.error('Failed to remove weapon:', err)
-				throw err
-			}
-		},
-		async removeSummon(partyId: string, gridSummonId: string, _editKey?: string) {
-			try {
-				// Remove returns null, so we need to update local state
-				await gridService.removeSummon(partyId, gridSummonId, editKey || undefined, {
-					shortcode: party.shortcode
-				})
-
-				// Update local state by removing the summon
-				const updatedParty = { ...party }
-				if (updatedParty.summons) {
-					updatedParty.summons = updatedParty.summons.filter((s: any) => s.id !== gridSummonId)
-				}
-				return updatedParty
-			} catch (err) {
-				console.error('Failed to remove summon:', err)
-				throw err
-			}
-		},
-		async removeCharacter(partyId: string, gridCharacterId: string, _editKey?: string) {
-			try {
-				// Remove returns null, so we need to update local state
-				await gridService.removeCharacter(partyId, gridCharacterId, editKey || undefined, {
-					shortcode: party.shortcode
-				})
-
-				// Update local state by removing the character
-				const updatedParty = { ...party }
-				if (updatedParty.characters) {
-					updatedParty.characters = updatedParty.characters.filter(
-						(c: any) => c.id !== gridCharacterId
-					)
-				}
-				return updatedParty
-			} catch (err) {
-				console.error('Failed to remove character:', err)
-				throw err
-			}
-		},
-		async updateWeapon(partyId: string, gridWeaponId: string, updates: any, _editKey?: string) {
-			try {
-				// Use the grid service to update weapon
-				const updated = await gridService.updateWeapon(
-					partyId,
-					gridWeaponId,
-					updates,
-					editKey || undefined
+		removeWeapon(partyId: string, gridWeaponId: string, _editKey?: string): Promise<Party> {
+			return new Promise((resolve, reject) => {
+				deleteWeaponMutation.mutate(
+					{ id: gridWeaponId, partyId, partyShortcode: party.shortcode },
+					{
+						onSuccess: (updated) => {
+							party = updated
+							resolve(updated)
+						},
+						onError: (err) => {
+							console.error('Failed to remove weapon:', err)
+							reject(err)
+						}
+					}
 				)
-				return updated
-			} catch (err) {
-				console.error('Failed to update weapon:', err)
-				throw err
-			}
+			})
 		},
-		async updateSummon(partyId: string, gridSummonId: string, updates: any, _editKey?: string) {
-			try {
-				// Use the grid service to update summon
-				const updated = await gridService.updateSummon(
-					partyId,
-					gridSummonId,
-					updates,
-					editKey || undefined
+		removeSummon(partyId: string, gridSummonId: string, _editKey?: string): Promise<Party> {
+			return new Promise((resolve, reject) => {
+				deleteSummonMutation.mutate(
+					{ id: gridSummonId, partyId, partyShortcode: party.shortcode },
+					{
+						onSuccess: (updated) => {
+							party = updated
+							resolve(updated)
+						},
+						onError: (err) => {
+							console.error('Failed to remove summon:', err)
+							reject(err)
+						}
+					}
 				)
-				return updated
-			} catch (err) {
-				console.error('Failed to update summon:', err)
-				throw err
-			}
+			})
 		},
-		async updateCharacter(
+		removeCharacter(partyId: string, gridCharacterId: string, _editKey?: string): Promise<Party> {
+			return new Promise((resolve, reject) => {
+				deleteCharacterMutation.mutate(
+					{ id: gridCharacterId, partyId, partyShortcode: party.shortcode },
+					{
+						onSuccess: (updated) => {
+							party = updated
+							resolve(updated)
+						},
+						onError: (err) => {
+							console.error('Failed to remove character:', err)
+							reject(err)
+						}
+					}
+				)
+			})
+		},
+		updateWeapon(partyId: string, gridWeaponId: string, updates: any, _editKey?: string): Promise<Party> {
+			return new Promise((resolve, reject) => {
+				updateWeaponMutation.mutate(
+					{ id: gridWeaponId, partyShortcode: party.shortcode, updates },
+					{
+						onSuccess: (updated) => {
+							party = updated
+							resolve(updated)
+						},
+						onError: (err) => {
+							console.error('Failed to update weapon:', err)
+							reject(err)
+						}
+					}
+				)
+			})
+		},
+		updateSummon(partyId: string, gridSummonId: string, updates: any, _editKey?: string): Promise<Party> {
+			return new Promise((resolve, reject) => {
+				updateSummonMutation.mutate(
+					{ id: gridSummonId, partyShortcode: party.shortcode, updates },
+					{
+						onSuccess: (updated) => {
+							party = updated
+							resolve(updated)
+						},
+						onError: (err) => {
+							console.error('Failed to update summon:', err)
+							reject(err)
+						}
+					}
+				)
+			})
+		},
+		updateCharacter(
 			partyId: string,
 			gridCharacterId: string,
 			updates: any,
 			_editKey?: string
-		) {
-			try {
-				// Use the grid service to update character
-				const updated = await gridService.updateCharacter(
-					partyId,
-					gridCharacterId,
-					updates,
-					editKey || undefined
+		): Promise<Party> {
+			return new Promise((resolve, reject) => {
+				updateCharacterMutation.mutate(
+					{ id: gridCharacterId, partyShortcode: party.shortcode, updates },
+					{
+						onSuccess: (updated) => {
+							party = updated
+							resolve(updated)
+						},
+						onError: (err) => {
+							console.error('Failed to update character:', err)
+							reject(err)
+						}
+					}
 				)
-				return updated
-			} catch (err) {
-				console.error('Failed to update character:', err)
-				throw err
-			}
+			})
 		},
-		async updateCharacterUncap(
+		updateCharacterUncap(
 			gridCharacterId: string,
 			uncapLevel?: number,
 			transcendenceStep?: number,
 			_editKey?: string
-		) {
-			try {
-				const response = await gridService.updateCharacterUncap(
-					party.id,
-					gridCharacterId,
-					uncapLevel,
-					transcendenceStep,
-					editKey || undefined
-				)
-				// The API returns {gridCharacter: {...}} with the updated item only (transformed to camelCase)
-				// We need to update just that character in the current party state
-				if (response.gridCharacter || response.grid_character) {
-					const updatedChar = response.gridCharacter || response.grid_character
-					const updatedParty = { ...party }
-					if (updatedParty.characters) {
-						const charIndex = updatedParty.characters.findIndex(
-							(c: any) => c.id === gridCharacterId
-						)
-						if (charIndex !== -1) {
-								// Preserve the character object reference but update uncap fields
-								const existingChar = updatedParty.characters[charIndex]
-								if (existingChar) {
-									updatedParty.characters[charIndex] = {
-										...existingChar,
-										id: existingChar.id,
-										position: existingChar.position,
-										character: existingChar.character,
-										uncapLevel: updatedChar.uncapLevel ?? updatedChar.uncap_level,
-										transcendenceStep: updatedChar.transcendenceStep ?? updatedChar.transcendence_step
+		): Promise<Party> {
+			return new Promise((resolve, reject) => {
+				updateCharacterUncapMutation.mutate(
+					{
+						partyId: party.id,
+						id: gridCharacterId,
+						uncapLevel: uncapLevel ?? 0,
+						transcendenceStep,
+						partyShortcode: party.shortcode
+					},
+					{
+						onSuccess: (response) => {
+							// The API returns {gridCharacter: {...}} with the updated item only
+							// We need to update just that character in the current party state
+							if (response.gridCharacter || response.grid_character) {
+								const updatedChar = response.gridCharacter || response.grid_character
+								const updatedParty = { ...party }
+								if (updatedParty.characters) {
+									const charIndex = updatedParty.characters.findIndex(
+										(c: any) => c.id === gridCharacterId
+									)
+									if (charIndex !== -1) {
+										const existingChar = updatedParty.characters[charIndex]
+										if (existingChar) {
+											updatedParty.characters[charIndex] = {
+												...existingChar,
+												id: existingChar.id,
+												position: existingChar.position,
+												character: existingChar.character,
+												uncapLevel: updatedChar.uncapLevel ?? updatedChar.uncap_level,
+												transcendenceStep: updatedChar.transcendenceStep ?? updatedChar.transcendence_step
+											}
+										}
+										party = updatedParty
+										resolve(updatedParty)
+										return
 									}
 								}
-								return updatedParty
 							}
+							resolve(party)
+						},
+						onError: (err) => {
+							console.error('Failed to update character uncap:', err)
+							reject(err)
+						}
 					}
-				}
-				return party // Return unchanged party if update failed
-			} catch (err) {
-				console.error('Failed to update character uncap:', err)
-				throw err
-			}
+				)
+			})
 		},
-		async updateWeaponUncap(
+		updateWeaponUncap(
 			gridWeaponId: string,
 			uncapLevel?: number,
 			transcendenceStep?: number,
 			_editKey?: string
-		) {
-			try {
-				const response = await gridService.updateWeaponUncap(
-					party.id,
-					gridWeaponId,
-					uncapLevel,
-					transcendenceStep,
-					editKey || undefined
-				)
-				// The API returns {gridWeapon: {...}} with the updated item only (transformed to camelCase)
-				// We need to update just that weapon in the current party state
-				if (response.gridWeapon || response.grid_weapon) {
-					const updatedWeapon = response.gridWeapon || response.grid_weapon
-					const updatedParty = { ...party }
-					if (updatedParty.weapons) {
-						const weaponIndex = updatedParty.weapons.findIndex((w: any) => w.id === gridWeaponId)
-						if (weaponIndex !== -1) {
-								// Preserve the weapon object reference but update uncap fields
-								const existingWeapon = updatedParty.weapons[weaponIndex]
-								if (existingWeapon) {
-									updatedParty.weapons[weaponIndex] = {
-										...existingWeapon,
-										id: existingWeapon.id,
-										position: existingWeapon.position,
-										weapon: existingWeapon.weapon,
-										uncapLevel: updatedWeapon.uncapLevel ?? updatedWeapon.uncap_level,
-										transcendenceStep:
-											updatedWeapon.transcendenceStep ?? updatedWeapon.transcendence_step
+		): Promise<Party> {
+			return new Promise((resolve, reject) => {
+				updateWeaponUncapMutation.mutate(
+					{
+						partyId: party.id,
+						id: gridWeaponId,
+						uncapLevel: uncapLevel ?? 0,
+						transcendenceStep,
+						partyShortcode: party.shortcode
+					},
+					{
+						onSuccess: (response) => {
+							// The API returns {gridWeapon: {...}} with the updated item only
+							// We need to update just that weapon in the current party state
+							if (response.gridWeapon || response.grid_weapon) {
+								const updatedWeapon = response.gridWeapon || response.grid_weapon
+								const updatedParty = { ...party }
+								if (updatedParty.weapons) {
+									const weaponIndex = updatedParty.weapons.findIndex((w: any) => w.id === gridWeaponId)
+									if (weaponIndex !== -1) {
+										const existingWeapon = updatedParty.weapons[weaponIndex]
+										if (existingWeapon) {
+											updatedParty.weapons[weaponIndex] = {
+												...existingWeapon,
+												id: existingWeapon.id,
+												position: existingWeapon.position,
+												weapon: existingWeapon.weapon,
+												uncapLevel: updatedWeapon.uncapLevel ?? updatedWeapon.uncap_level,
+												transcendenceStep:
+													updatedWeapon.transcendenceStep ?? updatedWeapon.transcendence_step
+											}
+										}
+										party = updatedParty
+										resolve(updatedParty)
+										return
 									}
 								}
-								return updatedParty
 							}
+							resolve(party)
+						},
+						onError: (err) => {
+							console.error('Failed to update weapon uncap:', err)
+							reject(err)
+						}
 					}
-				}
-				return party // Return unchanged party if update failed
-			} catch (err) {
-				console.error('Failed to update weapon uncap:', err)
-				throw err
-			}
+				)
+			})
 		},
-		async updateSummonUncap(
+		updateSummonUncap(
 			gridSummonId: string,
 			uncapLevel?: number,
 			transcendenceStep?: number,
 			_editKey?: string
-		) {
-			try {
-				const response = await gridService.updateSummonUncap(
-					party.id,
-					gridSummonId,
-					uncapLevel,
-					transcendenceStep,
-					editKey || undefined
-				)
-				// The API returns {gridSummon: {...}} with the updated item only (transformed to camelCase)
-				// We need to update just that summon in the current party state
-				if (response.gridSummon || response.grid_summon) {
-					const updatedSummon = response.gridSummon || response.grid_summon
-					const updatedParty = { ...party }
-					if (updatedParty.summons) {
-						const summonIndex = updatedParty.summons.findIndex((s: any) => s.id === gridSummonId)
-						if (summonIndex !== -1) {
-								// Preserve the summon object reference but update uncap fields
-								const existingSummon = updatedParty.summons[summonIndex]
-								if (existingSummon) {
-									updatedParty.summons[summonIndex] = {
-										...existingSummon,
-										id: existingSummon.id,
-										position: existingSummon.position,
-										summon: existingSummon.summon,
-										uncapLevel: updatedSummon.uncapLevel ?? updatedSummon.uncap_level,
-										transcendenceStep:
-											updatedSummon.transcendenceStep ?? updatedSummon.transcendence_step
+		): Promise<Party> {
+			return new Promise((resolve, reject) => {
+				updateSummonUncapMutation.mutate(
+					{
+						partyId: party.id,
+						id: gridSummonId,
+						uncapLevel: uncapLevel ?? 0,
+						transcendenceStep,
+						partyShortcode: party.shortcode
+					},
+					{
+						onSuccess: (response) => {
+							// The API returns {gridSummon: {...}} with the updated item only
+							// We need to update just that summon in the current party state
+							if (response.gridSummon || response.grid_summon) {
+								const updatedSummon = response.gridSummon || response.grid_summon
+								const updatedParty = { ...party }
+								if (updatedParty.summons) {
+									const summonIndex = updatedParty.summons.findIndex((s: any) => s.id === gridSummonId)
+									if (summonIndex !== -1) {
+										const existingSummon = updatedParty.summons[summonIndex]
+										if (existingSummon) {
+											updatedParty.summons[summonIndex] = {
+												...existingSummon,
+												id: existingSummon.id,
+												position: existingSummon.position,
+												summon: existingSummon.summon,
+												uncapLevel: updatedSummon.uncapLevel ?? updatedSummon.uncap_level,
+												transcendenceStep:
+													updatedSummon.transcendenceStep ?? updatedSummon.transcendence_step
+											}
+										}
+										party = updatedParty
+										resolve(updatedParty)
+										return
 									}
 								}
-								return updatedParty
 							}
+							resolve(party)
+						},
+						onError: (err) => {
+							console.error('Failed to update summon uncap:', err)
+							reject(err)
+						}
 					}
-				}
-				return party // Return unchanged party if update failed
-			} catch (err) {
-				console.error('Failed to update summon uncap:', err)
-				throw err
-			}
+				)
+			})
 		}
 	}
 
