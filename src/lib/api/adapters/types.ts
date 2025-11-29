@@ -213,44 +213,6 @@ export interface SearchParams {
 }
 
 /**
- * Unified search result structure
- */
-export interface SearchResult<T = any> {
-	/** Unique identifier */
-	id: string
-
-	/** Granblue Fantasy game ID */
-	granblueId: string
-
-	/** Item name (localized or string) */
-	name: { en?: string; ja?: string } | string
-
-	/** Display name (computed from name) */
-	displayName?: string
-
-	/** Element ID (0-6) */
-	element?: number
-
-	/** Rarity level */
-	rarity?: number
-
-	/** Primary proficiency (weapons) */
-	proficiency?: number
-
-	/** Series ID */
-	series?: number
-
-	/** URL to the item's image */
-	imageUrl?: string
-
-	/** Type of the search result */
-	type: 'weapon' | 'character' | 'summon'
-
-	/** The full entity data */
-	data?: T
-}
-
-/**
  * Cache entry structure
  */
 export interface CacheEntry<T = any> {
