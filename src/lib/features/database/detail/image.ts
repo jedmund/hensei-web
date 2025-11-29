@@ -7,7 +7,9 @@ export {
   getImageUrl as getImageUrlBase
 } from '$lib/utils/images'
 
-export type { ResourceType as ResourceKind, ImageVariant } from '$lib/utils/images'
+// Import types for local use and re-export
+import type { ResourceType, ImageVariant } from '$lib/utils/images'
+export type { ResourceType as ResourceKind, ImageVariant }
 
 // Legacy compatibility wrapper
 interface ImageArgs {
