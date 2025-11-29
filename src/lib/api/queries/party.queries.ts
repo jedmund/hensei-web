@@ -21,8 +21,8 @@ export interface PartyPageResult {
 	results: Party[]
 	page: number
 	totalPages: number
-	total: number
-	perPage: number
+	total?: number
+	perPage?: number
 }
 
 /**

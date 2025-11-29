@@ -129,9 +129,11 @@ export function useRemovePartyJobSkill() {
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(shortcode))
 
 			// Optimistically remove the skill from the slot
+			// Convert slot number to string key to match jobSkills type (0-3)
 			if (previousParty?.jobSkills) {
 				const updatedSkills = { ...previousParty.jobSkills }
-				delete updatedSkills[slot]
+				const key = String(slot) as unknown as keyof typeof updatedSkills
+				delete updatedSkills[key]
 				queryClient.setQueryData(partyKeys.detail(shortcode), {
 					...previousParty,
 					jobSkills: updatedSkills

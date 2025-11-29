@@ -15,9 +15,10 @@ import type { QueryClient } from '@tanstack/svelte-query'
  */
 export interface InitialDataOptions<TData> {
 	/**
-	 * The data fetched on the server to use as initial data
+	 * The data fetched on the server to use as initial data.
+	 * TanStack Query accepts TData | undefined but NOT null.
 	 */
-	initialData: TData | undefined | null
+	initialData?: TData
 
 	/**
 	 * Optional timestamp when the data was fetched on the server.
@@ -32,6 +33,9 @@ export interface InitialDataOptions<TData> {
  *
  * Use this helper when you have data fetched in a +page.server.ts load function
  * and want to use it as initial data for a TanStack Query.
+ *
+ * Note: This helper strips `null` from the input since TanStack Query's
+ * initialData only accepts `TData | undefined`, not `null`.
  *
  * @example
  * ```svelte
@@ -51,16 +55,16 @@ export interface InitialDataOptions<TData> {
  * </script>
  * ```
  *
- * @param initialData - The data fetched on the server
+ * @param initialData - The data fetched on the server (null is converted to undefined)
  * @param updatedAt - Optional timestamp when data was fetched (defaults to 0)
  * @returns Query options object with initialData and initialDataUpdatedAt
  */
 export function withInitialData<TData>(
 	initialData: TData | undefined | null,
 	updatedAt?: number
-): InitialDataOptions<TData> {
+): InitialDataOptions<NonNullable<TData>> {
 	return {
-		initialData: initialData ?? undefined,
+		initialData: (initialData ?? undefined) as NonNullable<TData> | undefined,
 		initialDataUpdatedAt: updatedAt ?? 0
 	}
 }
