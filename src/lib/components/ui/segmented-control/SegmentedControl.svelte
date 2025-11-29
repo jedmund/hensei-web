@@ -7,7 +7,6 @@
 	import type { Snippet } from 'svelte'
 	import styles from './segmented-control.module.scss'
 	import type { HTMLAttributes } from 'svelte/elements'
-	import { optionalProps } from '$lib/utils/typeShims'
 
 	export type SegmentedControlVariant = 'default' | 'blended' | 'background'
 
@@ -32,8 +31,7 @@
 		gap = false,
 		class: className,
 		wrapperClass,
-		children,
-		...restProps
+		children
 	}: Props = $props()
 
 	// Provide variant to child segments via context
@@ -85,7 +83,7 @@
 </script>
 
 <div class={wrapperClassList}>
-	<RadioGroupPrimitive.Root bind:value class={classList} {...(optionalProps(restProps) as any)}>
+	<RadioGroupPrimitive.Root bind:value class={classList}>
 		{@render children?.()}
 	</RadioGroupPrimitive.Root>
 </div>

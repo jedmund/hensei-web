@@ -19,14 +19,33 @@
 		updateTranscendence?: ((index: number) => void) | undefined
 	}
 
-	interface StarRender {
-		type: 'uncap' | 'transcendence'
-		props: {
-			index?: number
-			onStarClick?: (index: number, empty: boolean) => void
-			[key: string]: any
-		}
+	// Props for UncapStar component
+	interface UncapStarProps {
+		empty?: boolean
+		special?: boolean
+		flb?: boolean
+		ulb?: boolean
+		index: number
+		tabindex?: number
+		onStarClick: (index: number, empty: boolean) => void
 	}
+
+	// Props for TranscendenceStar component
+	interface TranscendenceStarProps {
+		className?: string
+		stage?: number
+		type?: 'character' | 'weapon' | 'summon'
+		editable?: boolean
+		interactive?: boolean
+		tabindex?: number
+		onStarClick?: () => void
+		onFragmentClick?: (newStage: number) => void
+		onFragmentHover?: (newStage: number) => void
+	}
+
+	type StarRender =
+		| { type: 'uncap'; props: UncapStarProps }
+		| { type: 'transcendence'; props: TranscendenceStarProps }
 
 	let {
 		type,
@@ -77,19 +96,36 @@
 		}
 	}
 
+	// Options for creating uncap star props
+	interface UncapStarOptions {
+		index: number
+		flb?: boolean
+		ulb?: boolean
+		special?: boolean
+	}
+
 	// Helper function to create star props
-	const createStarProps = (starType: 'uncap' | 'transcendence', options: any = {}): StarRender => {
+	function createStarProps(starType: 'transcendence'): StarRender
+	function createStarProps(starType: 'uncap', options: UncapStarOptions): StarRender
+	function createStarProps(
+		starType: 'uncap' | 'transcendence',
+		options?: UncapStarOptions
+	): StarRender {
 		if (starType === 'transcendence') {
 			return {
 				type: 'transcendence',
 				props: {
-					stage: transcendenceStage,
+					stage: transcendenceStage ?? 0,
 					type,
 					editable,
 					interactive: editable,
 					onFragmentClick: editable ? handleTranscendenceUpdate : undefined
 				}
 			}
+		}
+
+		if (!options) {
+			throw new Error('Options required for uncap star')
 		}
 
 		return {
@@ -100,7 +136,7 @@
 				flb: options.flb,
 				ulb: options.ulb,
 				special: options.special,
-				tabIndex: editable ? 0 : undefined,
+				tabindex: editable ? 0 : undefined,
 				onStarClick: editable ? toggleStar : () => {}
 			}
 		}
@@ -164,9 +200,9 @@
 			{@const star = renderStar(i)}
 			{#if star}
 				{#if star.type === 'transcendence'}
-					<TranscendenceStar {...(star.props as any)} />
+					<TranscendenceStar {...star.props} />
 				{:else}
-					<UncapStar {...(star.props as any)} />
+					<UncapStar {...star.props} />
 				{/if}
 			{/if}
 		{/each}
