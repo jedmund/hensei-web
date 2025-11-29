@@ -123,6 +123,104 @@
 	const updateJobSkillsMutation = useUpdatePartyJobSkills()
 	const removeJobSkillMutation = useRemovePartyJobSkill()
 
+	// ============================================================================
+	// DRY Helper Functions
+	// ============================================================================
+
+	// Generic mutation wrapper that handles common patterns for mutations returning Party
+	type PartyMutation<TVars> = {
+		mutate: (
+			vars: TVars,
+			options: {
+				onSuccess: (updated: Party) => void
+				onError: (err: unknown) => void
+			}
+		) => void
+	}
+
+	function runPartyMutation<TVars>(
+		mutation: PartyMutation<TVars>,
+		vars: TVars,
+		actionLabel: string
+	): Promise<Party> {
+		return new Promise((resolve, reject) => {
+			mutation.mutate(vars, {
+				onSuccess: (updated) => {
+					party = updated
+					resolve(updated)
+				},
+				onError: (err) => {
+					console.error(`Failed to ${actionLabel}:`, err)
+					reject(err)
+				}
+			})
+		})
+	}
+
+	// Centralized error handling helper
+	function setErrorAndLog(e: any, defaultMessage: string) {
+		error = extractErrorMessage(e, defaultMessage)
+		console.error(defaultMessage, e)
+	}
+
+	// Type-indexed maps for grid operations
+	const deleteMutations = {
+		weapon: deleteWeaponMutation,
+		character: deleteCharacterMutation,
+		summon: deleteSummonMutation
+	} as const
+
+	const updateMutations = {
+		weapon: updateWeaponMutation,
+		character: updateCharacterMutation,
+		summon: updateSummonMutation
+	} as const
+
+	const moveMutations = {
+		weapon: moveWeaponMutation,
+		character: moveCharacterMutation,
+		summon: moveSummonMutation
+	} as const
+
+	// Generic helper to merge updated grid item into party state
+	type GridKind = 'weapons' | 'characters' | 'summons'
+
+	function mergeUpdatedGridItem(
+		kind: GridKind,
+		itemId: string,
+		response: any
+	): Party {
+		// Find the updated item in the response (handles both camelCase and snake_case)
+		const responseKeys = ['gridWeapon', 'grid_weapon', 'gridCharacter', 'grid_character', 'gridSummon', 'grid_summon']
+		const updatedKey = Object.keys(response).find((k) => responseKeys.includes(k))
+		const updatedItem = updatedKey ? response[updatedKey] : null
+
+		if (!updatedItem) return party
+
+		const updatedParty: Party = { ...party }
+		const list = updatedParty[kind] as any[] | undefined
+		if (!list) return party
+
+		const index = list.findIndex((x: any) => x.id === itemId)
+		if (index === -1) return party
+
+		const existing = list[index]
+		list[index] = {
+			...existing,
+			id: existing.id,
+			position: existing.position,
+			// Preserve the base object (weapon/character/summon)
+			...(kind === 'weapons' && { weapon: existing.weapon }),
+			...(kind === 'characters' && { character: existing.character }),
+			...(kind === 'summons' && { summon: existing.summon }),
+			// Update uncap fields from response (handles both camelCase and snake_case)
+			uncapLevel: updatedItem.uncapLevel ?? updatedItem.uncap_level,
+			transcendenceStep: updatedItem.transcendenceStep ?? updatedItem.transcendence_step
+		}
+
+		return updatedParty
+	}
+
 	// Create drag-drop context
 	const dragContext = createDragDropContext({
 		onLocalUpdate: async (operation) => {
@@ -191,35 +289,21 @@
 			throw new Error('Invalid swap operation - missing items')
 		}
 
-		// Call appropriate grid service method based on type
-		if (source.type === 'weapon') {
-			await gridService.moveWeapon(party.id, source.itemId, target.position, editKey || undefined, {
-				shortcode: party.shortcode
-			})
-		} else if (source.type === 'character') {
-			await gridService.moveCharacter(
-				party.id,
-				source.itemId,
-				target.position,
-				editKey || undefined,
-				{
-					shortcode: party.shortcode
-				}
-			)
-		} else if (source.type === 'summon') {
-			await gridService.moveSummon(party.id, source.itemId, target.position, editKey || undefined, {
-				shortcode: party.shortcode
-			})
-		} else {
-			throw new Error(`Unknown item type: ${source.type}`)
-		}
+		// Use type-indexed map to get the appropriate move function
+		const gridMoveFns = {
+			weapon: () => gridService.moveWeapon(party.id, source.itemId, target.position, editKey || undefined, { shortcode: party.shortcode }),
+			character: () => gridService.moveCharacter(party.id, source.itemId, target.position, editKey || undefined, { shortcode: party.shortcode }),
+			summon: () => gridService.moveSummon(party.id, source.itemId, target.position, editKey || undefined, { shortcode: party.shortcode })
+		} as const
+
+		const moveFn = gridMoveFns[source.type as keyof typeof gridMoveFns]
+		if (!moveFn) throw new Error(`Unknown item type: ${source.type}`)
+
+		await moveFn()
 
 		// Clear cache and refresh party data
 		partyService.clearPartyCache(party.shortcode)
-		const updated = await partyService.getByShortcode(party.shortcode)
-		return updated
-
-		throw new Error(`Unknown item type: ${source.type}`)
+		return await partyService.getByShortcode(party.shortcode)
 	}
 
 	async function handleMove(source: any, target: any): Promise<Party> {
@@ -232,31 +316,21 @@
 			throw new Error('Invalid move operation')
 		}
 
-		// Call appropriate grid service method based on type
-		if (source.type === 'character') {
-			await gridService.moveCharacter(
-				party.id,
-				source.itemId,
-				target.position,
-				editKey || undefined,
-				{ shortcode: party.shortcode }
-			)
-		} else if (source.type === 'weapon') {
-			await gridService.moveWeapon(party.id, source.itemId, target.position, editKey || undefined, {
-				shortcode: party.shortcode
-			})
-		} else if (source.type === 'summon') {
-			await gridService.moveSummon(party.id, source.itemId, target.position, editKey || undefined, {
-				shortcode: party.shortcode
-			})
-		} else {
-			throw new Error(`Unknown item type: ${source.type}`)
-		}
+		// Use type-indexed map to get the appropriate move function
+		const gridMoveFns = {
+			weapon: () => gridService.moveWeapon(party.id, source.itemId, target.position, editKey || undefined, { shortcode: party.shortcode }),
+			character: () => gridService.moveCharacter(party.id, source.itemId, target.position, editKey || undefined, { shortcode: party.shortcode }),
+			summon: () => gridService.moveSummon(party.id, source.itemId, target.position, editKey || undefined, { shortcode: party.shortcode })
+		} as const
+
+		const moveFn = gridMoveFns[source.type as keyof typeof gridMoveFns]
+		if (!moveFn) throw new Error(`Unknown item type: ${source.type}`)
+
+		await moveFn()
 
 		// Clear cache and refresh party data
 		partyService.clearPartyCache(party.shortcode)
-		const updated = await partyService.getByShortcode(party.shortcode)
-		return updated
+		return await partyService.getByShortcode(party.shortcode)
 	}
 
 	// Localized name helper: accepts either an object with { name: { en, ja } }
@@ -663,114 +737,51 @@
 
 	// Create client-side wrappers for grid operations using mutations
 	// These return promises that resolve when the mutation completes
+	// Uses runPartyMutation helper for DRY code
 	const clientGridService = {
 		removeWeapon(partyId: string, gridWeaponId: string, _editKey?: string): Promise<Party> {
-			return new Promise((resolve, reject) => {
-				deleteWeaponMutation.mutate(
-					{ id: gridWeaponId, partyId, partyShortcode: party.shortcode },
-					{
-						onSuccess: (updated) => {
-							party = updated
-							resolve(updated)
-						},
-						onError: (err) => {
-							console.error('Failed to remove weapon:', err)
-							reject(err)
-						}
-					}
-				)
-			})
+			return runPartyMutation(
+				deleteWeaponMutation,
+				{ id: gridWeaponId, partyId, partyShortcode: party.shortcode },
+				'remove weapon'
+			)
 		},
 		removeSummon(partyId: string, gridSummonId: string, _editKey?: string): Promise<Party> {
-			return new Promise((resolve, reject) => {
-				deleteSummonMutation.mutate(
-					{ id: gridSummonId, partyId, partyShortcode: party.shortcode },
-					{
-						onSuccess: (updated) => {
-							party = updated
-							resolve(updated)
-						},
-						onError: (err) => {
-							console.error('Failed to remove summon:', err)
-							reject(err)
-						}
-					}
-				)
-			})
+			return runPartyMutation(
+				deleteSummonMutation,
+				{ id: gridSummonId, partyId, partyShortcode: party.shortcode },
+				'remove summon'
+			)
 		},
 		removeCharacter(partyId: string, gridCharacterId: string, _editKey?: string): Promise<Party> {
-			return new Promise((resolve, reject) => {
-				deleteCharacterMutation.mutate(
-					{ id: gridCharacterId, partyId, partyShortcode: party.shortcode },
-					{
-						onSuccess: (updated) => {
-							party = updated
-							resolve(updated)
-						},
-						onError: (err) => {
-							console.error('Failed to remove character:', err)
-							reject(err)
-						}
-					}
-				)
-			})
+			return runPartyMutation(
+				deleteCharacterMutation,
+				{ id: gridCharacterId, partyId, partyShortcode: party.shortcode },
+				'remove character'
+			)
 		},
-		updateWeapon(partyId: string, gridWeaponId: string, updates: any, _editKey?: string): Promise<Party> {
-			return new Promise((resolve, reject) => {
-				updateWeaponMutation.mutate(
-					{ id: gridWeaponId, partyShortcode: party.shortcode, updates },
-					{
-						onSuccess: (updated) => {
-							party = updated
-							resolve(updated)
-						},
-						onError: (err) => {
-							console.error('Failed to update weapon:', err)
-							reject(err)
-						}
-					}
-				)
-			})
+		updateWeapon(_partyId: string, gridWeaponId: string, updates: any, _editKey?: string): Promise<Party> {
+			return runPartyMutation(
+				updateWeaponMutation,
+				{ id: gridWeaponId, partyShortcode: party.shortcode, updates },
+				'update weapon'
+			)
 		},
-		updateSummon(partyId: string, gridSummonId: string, updates: any, _editKey?: string): Promise<Party> {
-			return new Promise((resolve, reject) => {
-				updateSummonMutation.mutate(
-					{ id: gridSummonId, partyShortcode: party.shortcode, updates },
-					{
-						onSuccess: (updated) => {
-							party = updated
-							resolve(updated)
-						},
-						onError: (err) => {
-							console.error('Failed to update summon:', err)
-							reject(err)
-						}
-					}
-				)
-			})
+		updateSummon(_partyId: string, gridSummonId: string, updates: any, _editKey?: string): Promise<Party> {
+			return runPartyMutation(
+				updateSummonMutation,
+				{ id: gridSummonId, partyShortcode: party.shortcode, updates },
+				'update summon'
+			)
 		},
-		updateCharacter(
-			partyId: string,
-			gridCharacterId: string,
-			updates: any,
-			_editKey?: string
-		): Promise<Party> {
-			return new Promise((resolve, reject) => {
-				updateCharacterMutation.mutate(
-					{ id: gridCharacterId, partyShortcode: party.shortcode, updates },
-					{
-						onSuccess: (updated) => {
-							party = updated
-							resolve(updated)
-						},
-						onError: (err) => {
-							console.error('Failed to update character:', err)
-							reject(err)
-						}
-					}
-				)
-			})
+		updateCharacter(_partyId: string, gridCharacterId: string, updates: any, _editKey?: string): Promise<Party> {
+			return runPartyMutation(
+				updateCharacterMutation,
+				{ id: gridCharacterId, partyShortcode: party.shortcode, updates },
+				'update character'
+			)
 		},
+		// Uncap methods use mergeUpdatedGridItem helper for DRY state merging
 		updateCharacterUncap(
 			gridCharacterId: string,
 			uncapLevel?: number,
@@ -788,34 +799,9 @@
 					},
 					{
 						onSuccess: (response) => {
-							// The API returns {gridCharacter: {...}} with the updated item only
-							// We need to update just that character in the current party state
-							if (response.gridCharacter || response.grid_character) {
-								const updatedChar = response.gridCharacter || response.grid_character
-								const updatedParty = { ...party }
-								if (updatedParty.characters) {
-									const charIndex = updatedParty.characters.findIndex(
-										(c: any) => c.id === gridCharacterId
-									)
-									if (charIndex !== -1) {
-										const existingChar = updatedParty.characters[charIndex]
-										if (existingChar) {
-											updatedParty.characters[charIndex] = {
-												...existingChar,
-												id: existingChar.id,
-												position: existingChar.position,
-												character: existingChar.character,
-												uncapLevel: updatedChar.uncapLevel ?? updatedChar.uncap_level,
-												transcendenceStep: updatedChar.transcendenceStep ?? updatedChar.transcendence_step
-											}
-										}
-										party = updatedParty
-										resolve(updatedParty)
-										return
-									}
-								}
-							}
-							resolve(party)
+							const updatedParty = mergeUpdatedGridItem('characters', gridCharacterId, response)
+							party = updatedParty
+							resolve(updatedParty)
 						},
 						onError: (err) => {
 							console.error('Failed to update character uncap:', err)
@@ -842,33 +828,9 @@
 					},
 					{
 						onSuccess: (response) => {
-							// The API returns {gridWeapon: {...}} with the updated item only
-							// We need to update just that weapon in the current party state
-							if (response.gridWeapon || response.grid_weapon) {
-								const updatedWeapon = response.gridWeapon || response.grid_weapon
-								const updatedParty = { ...party }
-								if (updatedParty.weapons) {
-									const weaponIndex = updatedParty.weapons.findIndex((w: any) => w.id === gridWeaponId)
-									if (weaponIndex !== -1) {
-										const existingWeapon = updatedParty.weapons[weaponIndex]
-										if (existingWeapon) {
-											updatedParty.weapons[weaponIndex] = {
-												...existingWeapon,
-												id: existingWeapon.id,
-												position: existingWeapon.position,
-												weapon: existingWeapon.weapon,
-												uncapLevel: updatedWeapon.uncapLevel ?? updatedWeapon.uncap_level,
-												transcendenceStep:
-													updatedWeapon.transcendenceStep ?? updatedWeapon.transcendence_step
-											}
-										}
-										party = updatedParty
-										resolve(updatedParty)
-										return
-									}
-								}
-							}
-							resolve(party)
+							const updatedParty = mergeUpdatedGridItem('weapons', gridWeaponId, response)
+							party = updatedParty
+							resolve(updatedParty)
 						},
 						onError: (err) => {
 							console.error('Failed to update weapon uncap:', err)
@@ -895,33 +857,9 @@
 					},
 					{
 						onSuccess: (response) => {
-							// The API returns {gridSummon: {...}} with the updated item only
-							// We need to update just that summon in the current party state
-							if (response.gridSummon || response.grid_summon) {
-								const updatedSummon = response.gridSummon || response.grid_summon
-								const updatedParty = { ...party }
-								if (updatedParty.summons) {
-									const summonIndex = updatedParty.summons.findIndex((s: any) => s.id === gridSummonId)
-									if (summonIndex !== -1) {
-										const existingSummon = updatedParty.summons[summonIndex]
-										if (existingSummon) {
-											updatedParty.summons[summonIndex] = {
-												...existingSummon,
-												id: existingSummon.id,
-												position: existingSummon.position,
-												summon: existingSummon.summon,
-												uncapLevel: updatedSummon.uncapLevel ?? updatedSummon.uncap_level,
-												transcendenceStep:
-													updatedSummon.transcendenceStep ?? updatedSummon.transcendence_step
-											}
-										}
-										party = updatedParty
-										resolve(updatedParty)
-										return
-									}
-								}
-							}
-							resolve(party)
+							const updatedParty = mergeUpdatedGridItem('summons', gridSummonId, response)
+							party = updatedParty
+							resolve(updatedParty)
 						},
 						onError: (err) => {
 							console.error('Failed to update summon uncap:', err)
