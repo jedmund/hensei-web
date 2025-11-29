@@ -15,10 +15,10 @@
 		useUpdateSummonUncap
 	} from '$lib/api/mutations/grid.mutations'
 
-	// Services (to be removed in Phase 4)
+	// Legacy services - kept only for swap/move operations and edit keys
+	// TODO: Remove once swap/move mutations are implemented
 	import { PartyService } from '$lib/services/party.service'
 	import { GridService } from '$lib/services/grid.service'
-	import { ConflictService } from '$lib/services/conflict.service'
 
 	import { createDragDropContext, type DragOperation } from '$lib/composables/drag-drop.svelte'
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
@@ -74,10 +74,9 @@
 	let editDialogOpen = $state(false)
 	let editingTitle = $state('')
 
-	// Services (Phase 4: to be removed)
+	// Legacy services - only for swap/move and edit keys
 	const partyService = new PartyService()
 	const gridService = new GridService()
-	const conflictService = new ConflictService()
 
 	// TanStack Query mutations
 	const deleteWeapon = useDeleteGridWeapon()
@@ -683,8 +682,7 @@
 		getEditKey: () => editKey,
 		services: {
 			partyService,
-			gridService: clientGridService, // Use client-side wrapper
-			conflictService
+			gridService: clientGridService // Uses TanStack Query mutations
 		},
 		openPicker: (opts: {
 			type: 'weapon' | 'summon' | 'character'
