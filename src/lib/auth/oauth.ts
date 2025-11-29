@@ -1,4 +1,6 @@
-import { OAUTH_BASE } from '$lib/config'
+import { PUBLIC_SIERO_API_URL } from '$env/static/public'
+
+const OAUTH_BASE = `${PUBLIC_SIERO_API_URL}/oauth`
 
 export interface OAuthLoginResponse {
 	access_token: string

@@ -1,12 +1,14 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { json } from '@sveltejs/kit'
-import { OAUTH_BASE } from '$lib/config'
+import { PUBLIC_SIERO_API_URL } from '$env/static/public'
 import {
 	getRefreshFromCookies,
 	setAccountCookie,
 	setRefreshCookie,
 	clearAuthCookies
 } from '$lib/auth/cookies'
+
+const OAUTH_BASE = `${PUBLIC_SIERO_API_URL}/oauth`
 
 type OAuthRefreshResponse = {
 	access_token: string
