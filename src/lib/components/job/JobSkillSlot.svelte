@@ -82,7 +82,7 @@
 	</div>
 {/if}
 
-{#snippet SlotBody({ locked })}
+{#snippet SlotBody({ locked }: { locked: boolean })}
 	{#if isFilled}
 		{@render SkillContent({ skill: skill!, skillIconUrl, locked })}
 	{:else if !isUnavailable}
@@ -92,7 +92,7 @@
 	{/if}
 {/snippet}
 
-{#snippet SkillContent({ skill, skillIconUrl, locked })}
+{#snippet SkillContent({ skill, skillIconUrl, locked }: { skill: JobSkill; skillIconUrl: string; locked: boolean })}
 	<div class="skill-content">
 		{#if skillIconUrl}
 			<img src={skillIconUrl} alt={skill.name.en} class="skill-icon" loading="lazy" />
@@ -110,7 +110,7 @@
 	</div>
 {/snippet}
 
-{#snippet EmptyState({ slot })}
+{#snippet EmptyState({ slot }: { slot: number })}
 	<div class="empty-content">
 		<div class="placeholder-icon">
 			<Icon name="plus" size={16} />

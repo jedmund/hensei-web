@@ -30,7 +30,7 @@
 				<span class="label">Race</span>
 				<span class="value">
 					{itemData.race
-						.map((r) => getRaceLabel(r))
+						.map((r: any) => getRaceLabel(r))
 						.filter(Boolean)
 						.join(', ') || '—'}
 				</span>
@@ -45,7 +45,7 @@
 				<span class="label">Proficiencies</span>
 				<span class="value">
 					{itemData.proficiency
-						.map((p) => getProficiencyLabel(p))
+						.map((p: any) => getProficiencyLabel(p))
 						.filter(Boolean)
 						.join(', ') || '—'}
 				</span>

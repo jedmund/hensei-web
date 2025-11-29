@@ -23,7 +23,7 @@
 			header: 'Name',
 			flexgrow: 1,
 			sort: true,
-			template: (nameObj) => {
+			template: (nameObj: any) => {
 				// nameObj is the name property itself, not the full item
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
@@ -36,7 +36,7 @@
 			header: 'Rarity',
 			width: 80,
 			sort: true,
-			template: (rarity) => getRarityLabel(rarity)
+			template: (rarity: any) => getRarityLabel(rarity)
 		},
 		{
 			id: 'element',

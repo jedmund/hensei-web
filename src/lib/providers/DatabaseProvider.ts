@@ -27,7 +27,7 @@ export class DatabaseProvider extends RestDataProvider {
 
 	constructor(options: DatabaseProviderOptions) {
 		// Pass a dummy URL to parent since we'll override getData
-		super('dummy', (item) => {
+		super('dummy', (item: any) => {
 			// Normalize data if needed
 			if (item.name && typeof item.name === 'object') {
 				// Ensure name is accessible for display
