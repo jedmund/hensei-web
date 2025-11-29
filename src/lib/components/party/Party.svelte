@@ -1,9 +1,25 @@
 <script lang="ts">
 	import { onMount, getContext, setContext } from 'svelte'
 	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+
+	// TanStack Query mutations
+	import {
+		useDeleteGridWeapon,
+		useDeleteGridCharacter,
+		useDeleteGridSummon,
+		useUpdateGridWeapon,
+		useUpdateGridCharacter,
+		useUpdateGridSummon,
+		useUpdateWeaponUncap,
+		useUpdateCharacterUncap,
+		useUpdateSummonUncap
+	} from '$lib/api/mutations/grid.mutations'
+
+	// Services (to be removed in Phase 4)
 	import { PartyService } from '$lib/services/party.service'
 	import { GridService } from '$lib/services/grid.service'
 	import { ConflictService } from '$lib/services/conflict.service'
+
 	import { createDragDropContext, type DragOperation } from '$lib/composables/drag-drop.svelte'
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
 	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
@@ -26,8 +42,7 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
-	import { executeGridOperation, removeGridItem, updateGridItem } from '$lib/utils/gridOperations'
-	import { updateGridItemUncap } from '$lib/utils/gridStateUpdater'
+	import { executeGridOperation } from '$lib/utils/gridOperations'
 
 	interface Props {
 		party?: Party
@@ -59,10 +74,21 @@
 	let editDialogOpen = $state(false)
 	let editingTitle = $state('')
 
-	// Services
+	// Services (Phase 4: to be removed)
 	const partyService = new PartyService()
 	const gridService = new GridService()
 	const conflictService = new ConflictService()
+
+	// TanStack Query mutations
+	const deleteWeapon = useDeleteGridWeapon()
+	const deleteCharacter = useDeleteGridCharacter()
+	const deleteSummon = useDeleteGridSummon()
+	const updateWeapon = useUpdateGridWeapon()
+	const updateCharacter = useUpdateGridCharacter()
+	const updateSummon = useUpdateGridSummon()
+	const updateWeaponUncap = useUpdateWeaponUncap()
+	const updateCharacterUncap = useUpdateCharacterUncap()
+	const updateSummonUncap = useUpdateSummonUncap()
 
 	// Create drag-drop context
 	const dragContext = createDragDropContext({
@@ -504,19 +530,17 @@
 		// since $state.raw prevents the hydration mismatch
 	})
 
-	// Create client-side wrappers for grid operations using API client
+	// Grid service wrapper using TanStack Query mutations
 	const clientGridService = {
 		async removeWeapon(partyId: string, gridWeaponId: string, _editKey?: string) {
 			try {
-				return await removeGridItem(
-					'weapon',
+				await deleteWeapon.mutateAsync({
+					id: gridWeaponId,
 					partyId,
-					gridWeaponId,
-					party,
-					party.shortcode,
-					editKey,
-					gridService
-				)
+					partyShortcode: party.shortcode
+				})
+				// Return updated party from cache after mutation
+				return party
 			} catch (err) {
 				console.error('Failed to remove weapon:', err)
 				throw err
@@ -524,15 +548,12 @@
 		},
 		async removeSummon(partyId: string, gridSummonId: string, _editKey?: string) {
 			try {
-				return await removeGridItem(
-					'summon',
+				await deleteSummon.mutateAsync({
+					id: gridSummonId,
 					partyId,
-					gridSummonId,
-					party,
-					party.shortcode,
-					editKey,
-					gridService
-				)
+					partyShortcode: party.shortcode
+				})
+				return party
 			} catch (err) {
 				console.error('Failed to remove summon:', err)
 				throw err
@@ -540,15 +561,12 @@
 		},
 		async removeCharacter(partyId: string, gridCharacterId: string, _editKey?: string) {
 			try {
-				return await removeGridItem(
-					'character',
+				await deleteCharacter.mutateAsync({
+					id: gridCharacterId,
 					partyId,
-					gridCharacterId,
-					party,
-					party.shortcode,
-					editKey,
-					gridService
-				)
+					partyShortcode: party.shortcode
+				})
+				return party
 			} catch (err) {
 				console.error('Failed to remove character:', err)
 				throw err
@@ -556,7 +574,12 @@
 		},
 		async updateWeapon(partyId: string, gridWeaponId: string, updates: any, _editKey?: string) {
 			try {
-				return await updateGridItem('weapon', partyId, gridWeaponId, updates, editKey, gridService)
+				await updateWeapon.mutateAsync({
+					id: gridWeaponId,
+					partyShortcode: party.shortcode,
+					updates
+				})
+				return party
 			} catch (err) {
 				console.error('Failed to update weapon:', err)
 				throw err
@@ -564,7 +587,12 @@
 		},
 		async updateSummon(partyId: string, gridSummonId: string, updates: any, _editKey?: string) {
 			try {
-				return await updateGridItem('summon', partyId, gridSummonId, updates, editKey, gridService)
+				await updateSummon.mutateAsync({
+					id: gridSummonId,
+					partyShortcode: party.shortcode,
+					updates
+				})
+				return party
 			} catch (err) {
 				console.error('Failed to update summon:', err)
 				throw err
@@ -577,7 +605,12 @@
 			_editKey?: string
 		) {
 			try {
-				return await updateGridItem('character', partyId, gridCharacterId, updates, editKey, gridService)
+				await updateCharacter.mutateAsync({
+					id: gridCharacterId,
+					partyShortcode: party.shortcode,
+					updates
+				})
+				return party
 			} catch (err) {
 				console.error('Failed to update character:', err)
 				throw err
@@ -590,14 +623,13 @@
 			_editKey?: string
 		) {
 			try {
-				return await updateGridItemUncap(
-					'character',
-					{ gridItemId: gridCharacterId, uncapLevel, transcendenceStep },
-					party.id,
-					party,
-					editKey,
-					gridService
-				)
+				await updateCharacterUncap.mutateAsync({
+					id: gridCharacterId,
+					partyShortcode: party.shortcode,
+					uncapLevel,
+					transcendenceStep
+				})
+				return party
 			} catch (err) {
 				console.error('Failed to update character uncap:', err)
 				throw err
@@ -610,14 +642,13 @@
 			_editKey?: string
 		) {
 			try {
-				return await updateGridItemUncap(
-					'weapon',
-					{ gridItemId: gridWeaponId, uncapLevel, transcendenceStep },
-					party.id,
-					party,
-					editKey,
-					gridService
-				)
+				await updateWeaponUncap.mutateAsync({
+					id: gridWeaponId,
+					partyShortcode: party.shortcode,
+					uncapLevel,
+					transcendenceStep
+				})
+				return party
 			} catch (err) {
 				console.error('Failed to update weapon uncap:', err)
 				throw err
@@ -630,14 +661,13 @@
 			_editKey?: string
 		) {
 			try {
-				return await updateGridItemUncap(
-					'summon',
-					{ gridItemId: gridSummonId, uncapLevel, transcendenceStep },
-					party.id,
-					party,
-					editKey,
-					gridService
-				)
+				await updateSummonUncap.mutateAsync({
+					id: gridSummonId,
+					partyShortcode: party.shortcode,
+					uncapLevel,
+					transcendenceStep
+				})
+				return party
 			} catch (err) {
 				console.error('Failed to update summon uncap:', err)
 				throw err
