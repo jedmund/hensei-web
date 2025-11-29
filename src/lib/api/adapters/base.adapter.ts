@@ -68,7 +68,7 @@ export abstract class BaseAdapter {
 			timeout: options.timeout ?? 30000,
 			retries: options.retries ?? 3,
 			cacheTime: options.cacheTime ?? 0,
-			onError: options.onError
+			onError: options.onError ?? (() => {})
 		}
 	}
 

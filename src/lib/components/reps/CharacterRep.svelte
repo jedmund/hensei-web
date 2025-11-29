@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Party, GridWeapon, GridCharacter } from '$lib/types/api/party'
 	import type { Job } from '$lib/types/api/entities'
-	import { getElementClass } from '$lib/types/enums'
+	import { getElementClass } from '$lib/utils/element'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
 	import { getJobPortraitUrl, Gender } from '$lib/utils/jobUtils'
 

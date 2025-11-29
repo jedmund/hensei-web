@@ -92,7 +92,7 @@
           <span class="badge" class:active={(uncapLevel ?? 0) >= 5}>ULB</span>
         {/if}
         {#if transcendence}
-          <span class="badge" class:active={transcendenceStep > 0}>Trans</span>
+          <span class="badge" class:active={(transcendenceStep ?? 0) > 0}>Trans</span>
         {/if}
         {#if !flb && !ulb && !transcendence}
           <span class="badge standard">Standard</span>
