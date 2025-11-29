@@ -48,7 +48,11 @@
 
 		{#if modificationStatus.hasAwakening}
 			<ModificationSection title="Awakening" visible={true}>
-				<AwakeningDisplay awakening={char.awakening} size="medium" showLevel={true} />
+				<AwakeningDisplay
+					{...(char.awakening ? { awakening: char.awakening } : {})}
+					size="medium"
+					showLevel={true}
+				/>
 			</ModificationSection>
 		{/if}
 

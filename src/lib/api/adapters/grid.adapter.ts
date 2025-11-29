@@ -21,28 +21,28 @@ export interface CreateGridWeaponParams {
 	partyId: string
 	weaponId: string
 	position: number
-	mainhand?: boolean
-	uncapLevel?: number
-	transcendenceStep?: number
+	mainhand?: boolean | undefined
+	uncapLevel?: number | undefined
+	transcendenceStep?: number | undefined
 }
 
 export interface CreateGridCharacterParams {
 	partyId: string
 	characterId: string
 	position: number
-	uncapLevel?: number
-	transcendenceStep?: number
+	uncapLevel?: number | undefined
+	transcendenceStep?: number | undefined
 }
 
 export interface CreateGridSummonParams {
 	partyId: string
 	summonId: string
 	position: number
-	main?: boolean
-	friend?: boolean
-	quickSummon?: boolean
-	uncapLevel?: number
-	transcendenceStep?: number
+	main?: boolean | undefined
+	friend?: boolean | undefined
+	quickSummon?: boolean | undefined
+	uncapLevel?: number | undefined
+	transcendenceStep?: number | undefined
 }
 
 /**

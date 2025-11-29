@@ -67,7 +67,7 @@ export class PartyService {
     party: Party
     editKey?: string
   }> {
-    const apiPayload = optionalProps(this.mapToApiPayload(payload))
+    const apiPayload = this.mapToApiPayload(payload)
     const party = await partyAdapter.create(apiPayload)
 
     // Note: Edit key handling may need to be adjusted based on how the API returns it
@@ -78,7 +78,7 @@ export class PartyService {
    * Update party details
    */
   async update(id: string, payload: PartyUpdatePayload, editKey?: string): Promise<Party> {
-    const apiPayload = optionalProps(this.mapToApiPayload(payload))
+    const apiPayload = this.mapToApiPayload(payload)
     return partyAdapter.update({ shortcode: id, ...apiPayload })
   }
   

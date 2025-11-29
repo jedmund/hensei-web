@@ -17,13 +17,13 @@ import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/ap
  * Parameters for creating a new party
  */
 export interface CreatePartyParams {
-	name?: string
-	description?: string
-	visibility?: 'public' | 'private' | 'unlisted'
-	jobId?: string
-	raidId?: string
-	guidebookId?: string
-	extras?: Record<string, any>
+	name?: string | undefined
+	description?: string | undefined
+	visibility?: 'public' | 'private' | 'unlisted' | undefined
+	jobId?: string | undefined
+	raidId?: string | undefined
+	guidebookId?: string | undefined
+	extras?: Record<string, any> | undefined
 }
 
 /**

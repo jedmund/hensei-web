@@ -39,13 +39,13 @@ export class GridService {
   ): Promise<GridUpdateResult> {
     try {
       // Note: The backend computes the correct uncap level based on the weapon's FLB/ULB/transcendence flags
-      const gridWeapon = await gridAdapter.createWeapon(optionalProps({
+      const gridWeapon = await gridAdapter.createWeapon({
         partyId,
         weaponId,
         position,
         mainhand: options?.mainhand,
         transcendenceStep: 0
-      }), this.buildHeaders(editKey))
+      }, this.buildHeaders(editKey))
 
       console.log('[GridService] Created grid weapon:', gridWeapon)
 
@@ -208,14 +208,14 @@ export class GridService {
     options?: { main?: boolean; friend?: boolean; shortcode?: string }
   ): Promise<Party> {
     // Note: The backend computes the correct uncap level based on the summon's FLB/ULB/transcendence flags
-    const gridSummon = await gridAdapter.createSummon(optionalProps({
+    const gridSummon = await gridAdapter.createSummon({
       partyId,
       summonId,
       position,
       main: options?.main,
       friend: options?.friend,
       transcendenceStep: 0
-    }), this.buildHeaders(editKey))
+    }, this.buildHeaders(editKey))
 
     console.log('[GridService] Created grid summon:', gridSummon)
 
