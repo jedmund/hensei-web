@@ -18,28 +18,34 @@ describe('PartyAdapter', () => {
 		shortcode: 'ABC123',
 		name: 'Test Party',
 		description: 'Test description',
-		visibility: 'public',
+		visibility: 0,
 		user: {
 			id: 'user-1',
 			username: 'testuser'
 		},
 		job: {
 			id: 'job-1',
+			granblueId: 'job-1',
 			name: { en: 'Warrior', ja: 'ウォリアー' },
-			skills: [
-				{
-					id: 'skill-1',
-					name: { en: 'Rage', ja: 'レイジ' },
-					slot: 1
-				}
-			]
+			row: 1,
+			order: 1,
+			proficiency: [1, 2]
 		},
 		raid: {
 			id: 'raid-1',
+			slug: 'proto-bahamut',
 			name: { en: 'Proto Bahamut', ja: 'プロトバハムート' },
+			level: 50,
+			element: 0,
 			group: {
 				id: 'group-1',
-				name: { en: 'Tier 1', ja: 'ティア1' }
+				name: { en: 'Tier 1', ja: 'ティア1' },
+				section: 'omega',
+				order: 1,
+				difficulty: 1,
+				hl: false,
+				extra: false,
+				guidebooks: true
 			}
 		},
 		weapons: [],

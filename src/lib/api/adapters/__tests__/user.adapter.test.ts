@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { UserAdapter } from '../user.adapter'
 import type { UserInfo, UserProfile } from '../user.adapter'
 import type { Party } from '$lib/types/api/party'
+import type { User } from '$lib/types/api/entities'
 
 describe('UserAdapter', () => {
   let adapter: UserAdapter
@@ -21,6 +22,16 @@ describe('UserAdapter', () => {
     }
   }
 
+  const mockUser: User = {
+    id: 'user-1',
+    username: 'testuser',
+    role: 'user',
+    avatar: {
+      picture: 'avatar.jpg',
+      element: 'fire'
+    }
+  }
+
   const mockUserProfile: UserProfile = {
     ...mockUserInfo,
     parties: [
@@ -28,8 +39,11 @@ describe('UserAdapter', () => {
         id: 'party-1',
         shortcode: 'abc123',
         name: 'Test Party',
-        user: mockUserInfo
-      } as Party
+        user: mockUser,
+        weapons: [],
+        characters: [],
+        summons: []
+      }
     ]
   }
 
@@ -37,13 +51,13 @@ describe('UserAdapter', () => {
     id: 'party-1',
     shortcode: 'abc123',
     name: 'Fire Team',
-    user: mockUserInfo,
+    user: mockUser,
     visibility: 0,
     element: 1,
     characters: [],
     weapons: [],
     summons: []
-  } as Party
+  }
 
   beforeEach(() => {
     mockFetch = vi.fn()

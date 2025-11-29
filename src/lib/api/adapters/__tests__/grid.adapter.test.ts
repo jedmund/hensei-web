@@ -8,38 +8,80 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { GridAdapter } from '../grid.adapter'
 import type { GridWeapon, GridCharacter, GridSummon } from '../grid.adapter'
+import type { Weapon, Character, Summon } from '$lib/types/api/entities'
 
 describe('GridAdapter', () => {
 	let adapter: GridAdapter
 	let originalFetch: typeof global.fetch
 
+	const mockWeapon: Weapon = {
+		id: 'weapon-1',
+		granblueId: '1040001',
+		name: { en: 'Test Weapon', ja: 'テスト武器' },
+		rarity: 5,
+		element: 1,
+		maxLevel: 150,
+		series: 1,
+		proficiency: 1,
+		uncap: { flb: true, ulb: true, transcendence: false },
+		hp: { minHp: 100, maxHp: 500, maxHpFlb: 600 },
+		atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200 }
+	}
+
+	const mockCharacter: Character = {
+		id: 'char-1',
+		granblueId: '3040001',
+		name: { en: 'Test Character', ja: 'テストキャラ' },
+		rarity: 5,
+		element: 1,
+		maxLevel: 100,
+		uncap: { flb: true, ulb: true },
+		special: false,
+		recruits: null,
+		gender: 0,
+		race: { race1: 1, race2: 0 },
+		proficiency: [1],
+		hp: { minHp: 150, maxHp: 750, maxHpFlb: 900 },
+		atk: { minAtk: 250, maxAtk: 1250, maxAtkFlb: 1500 }
+	}
+
+	const mockSummon: Summon = {
+		id: 'summon-1',
+		granblueId: '2040001',
+		name: { en: 'Test Summon', ja: 'テスト召喚石' },
+		rarity: 5,
+		element: 1,
+		maxLevel: 150,
+		series: 1,
+		uncap: { flb: true, ulb: true, transcendence: false },
+		hp: { minHp: 100, maxHp: 500, maxHpFlb: 600 },
+		atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200 }
+	}
+
 	const mockGridWeapon: GridWeapon = {
 		id: 'gw-1',
-		partyId: 'party-1',
-		weaponId: 'weapon-1',
 		position: 1,
 		mainhand: true,
 		uncapLevel: 5,
-		transcendenceStage: 0
+		transcendenceStep: 0,
+		weapon: mockWeapon
 	}
 
 	const mockGridCharacter: GridCharacter = {
 		id: 'gc-1',
-		partyId: 'party-1',
-		characterId: 'char-1',
 		position: 1,
 		uncapLevel: 5,
-		transcendenceStage: 1
+		transcendenceStep: 1,
+		character: mockCharacter
 	}
 
 	const mockGridSummon: GridSummon = {
 		id: 'gs-1',
-		partyId: 'party-1',
-		summonId: 'summon-1',
 		position: 1,
 		quickSummon: true,
 		uncapLevel: 5,
-		transcendenceStage: 2
+		transcendenceStep: 2,
+		summon: mockSummon
 	}
 
 	beforeEach(() => {

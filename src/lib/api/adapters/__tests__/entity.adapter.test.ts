@@ -53,28 +53,29 @@ describe('EntityAdapter', () => {
 		},
 		rarity: 5,
 		element: 2,
-		proficiency1: 1,
-		proficiency2: 2,
-		series: 1,
-		minHp: 150,
-		maxHp: 750,
-		minAttack: 250,
-		maxAttack: 1250,
-		flbHp: 900,
-		flbAttack: 1500,
-		ulbHp: 1050,
-		ulbAttack: 1750,
-		transcendenceHp: 1200,
-		transcendenceAttack: 2000,
+		maxLevel: 100,
+		uncap: {
+			flb: true,
+			ulb: true
+		},
 		special: false,
-		seasonalId: 'summer-1',
-		awakenings: [
-			{
-				id: 'awk-2',
-				name: { en: 'HP Boost' },
-				level: 2
-			}
-		]
+		recruits: null,
+		gender: 0,
+		race: {
+			race1: 1,
+			race2: 2
+		},
+		proficiency: [1, 2],
+		hp: {
+			minHp: 150,
+			maxHp: 750,
+			maxHpFlb: 900
+		},
+		atk: {
+			minAtk: 250,
+			maxAtk: 1250,
+			maxAtkFlb: 1500
+		}
 	}
 
 	const mockSummon: Summon = {
