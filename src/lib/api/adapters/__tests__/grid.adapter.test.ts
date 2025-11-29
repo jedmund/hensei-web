@@ -21,8 +21,12 @@ describe('GridAdapter', () => {
 		rarity: 5,
 		element: 1,
 		maxLevel: 150,
+		maxSkillLevel: 15,
+		maxAwakeningLevel: 5,
 		series: 1,
 		proficiency: 1,
+		ax: true,
+		axType: 1,
 		uncap: { flb: true, ulb: true, transcendence: false },
 		hp: { minHp: 100, maxHp: 500, maxHpFlb: 600, maxHpUlb: 700 },
 		atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200, maxAtkUlb: 1400 }
@@ -52,7 +56,6 @@ describe('GridAdapter', () => {
 		rarity: 5,
 		element: 1,
 		maxLevel: 150,
-		series: 1,
 		uncap: { flb: true, ulb: true, transcendence: false },
 		hp: { minHp: 100, maxHp: 500, maxHpFlb: 600, maxHpUlb: 700 },
 		atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200, maxAtkUlb: 1400 }

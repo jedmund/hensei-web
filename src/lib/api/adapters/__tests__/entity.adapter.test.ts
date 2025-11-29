@@ -53,7 +53,6 @@ describe('EntityAdapter', () => {
 		},
 		rarity: 5,
 		element: 2,
-		maxLevel: 100,
 		uncap: {
 			flb: true,
 			ulb: true
