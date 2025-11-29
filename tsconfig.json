@@ -6,7 +6,6 @@
 		/* Strictness */
 		"strict": true,
 		"noUncheckedIndexedAccess": true,
-		"exactOptionalPropertyTypes": true,
 		"useUnknownInCatchVariables": true,
 		"forceConsistentCasingInFileNames": true,
 

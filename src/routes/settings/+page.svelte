@@ -4,7 +4,7 @@
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
 	import Select from '$lib/components/ui/Select.svelte'
-	import Switch from '$lib/components/ui/switch/switch.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { pictureData } from '$lib/utils/pictureData'
 	import { users } from '$lib/api/resources/users'
