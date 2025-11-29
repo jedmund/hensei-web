@@ -13,6 +13,8 @@ import type { GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 
 // GridWeapon, GridCharacter, and GridSummon types are imported from types/api/party
+// Re-export for test files and consumers
+export type { GridWeapon, GridCharacter, GridSummon }
 
 /**
  * Parameters for creating grid items

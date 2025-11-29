@@ -93,6 +93,7 @@ export interface Party {
   turnCount?: number
   chainCount?: number
   visibility?: number
+  element?: number
   favorited?: boolean
   extra?: boolean
   remix?: boolean

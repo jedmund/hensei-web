@@ -320,7 +320,7 @@ export interface ResourceOptions<T> {
 	onSuccess?: (data: T) => void
 
 	/** Callback when fetch fails */
-	onError?: (error: Error) => void
+	onError?: (error: AdapterError) => void
 
 	/** Dependencies that trigger refetch when changed */
 	dependencies?: any[]
