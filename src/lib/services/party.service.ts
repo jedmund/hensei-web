@@ -35,7 +35,7 @@ export interface PartyUpdatePayload {
   chainCount?: number | null
   turnCount?: number | null
   jobId?: string
-  visibility?: number
+  visibility?: import('$lib/types/visibility').PartyVisibility
   localId?: string
 }
 
@@ -295,15 +295,7 @@ export class PartyService {
     if (payload.chainCount !== undefined) mapped.chainCount = payload.chainCount
     if (payload.turnCount !== undefined) mapped.turnCount = payload.turnCount
     if (payload.jobId !== undefined) mapped.jobId = payload.jobId
-    if (payload.visibility !== undefined) {
-      // Convert number visibility to string
-      const visibilityMap: Record<number, 'public' | 'private' | 'unlisted'> = {
-        0: 'public',
-        1: 'private',
-        2: 'unlisted'
-      }
-      mapped.visibility = visibilityMap[payload.visibility] || 'public'
-    }
+    if (payload.visibility !== undefined) mapped.visibility = payload.visibility
     if (payload.localId !== undefined) mapped.localId = payload.localId
 
     return mapped

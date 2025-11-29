@@ -18,7 +18,7 @@ describe('PartyAdapter', () => {
 		shortcode: 'ABC123',
 		name: 'Test Party',
 		description: 'Test description',
-		visibility: 0,
+		visibility: 'public',
 		user: {
 			id: 'user-1',
 			username: 'testuser'

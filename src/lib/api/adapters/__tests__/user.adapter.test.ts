@@ -52,7 +52,7 @@ describe('UserAdapter', () => {
     shortcode: 'abc123',
     name: 'Fire Team',
     user: mockUser,
-    visibility: 0,
+    visibility: 'public',
     element: 1,
     characters: [],
     weapons: [],

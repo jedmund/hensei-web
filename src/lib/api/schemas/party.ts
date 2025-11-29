@@ -120,7 +120,7 @@ const MinimalScalarsSchema = z
     buttonCount: z.number().nullish().optional(),
     chainCount: z.number().nullish().optional(),
     turnCount: z.number().nullish().optional(),
-    visibility: z.number().nullish().optional()
+    visibility: z.enum(['public', 'private', 'unlisted']).nullish().optional()
   })
   .partial()
 
@@ -344,7 +344,7 @@ export const PartySchemaRaw = z.object({
   name: z.string().nullish(),
   description: z.string().nullish(),
   shortcode: z.string(),
-  visibility: z.number().nullish().default(1),
+  visibility: z.enum(['public', 'private', 'unlisted']).nullish().default('private'),
   element: z.number().nullish(),
   
   // Battle settings

@@ -92,7 +92,7 @@ export interface Party {
   buttonCount?: number
   turnCount?: number
   chainCount?: number
-  visibility?: number
+  visibility?: import('$lib/types/visibility').PartyVisibility
   element?: number
   favorited?: boolean
   extra?: boolean
@@ -125,7 +125,7 @@ export interface PartyPreview {
   shortcode: string
   name?: string
   favorited?: boolean
-  visibility?: number
+  visibility?: import('$lib/types/visibility').PartyVisibility
   raid?: {
     name: { en: string; ja: string }
     group?: {
