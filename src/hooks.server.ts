@@ -28,7 +28,7 @@ export const handleSession: Handle = async ({ event, resolve }) => {
 		? {
 				accessToken: account.token,
 				user: user,
-				expiresAt: account.expires_at
+				expiresAt: account.expires_at ?? ''
 		  }
 		: null
 

@@ -44,7 +44,7 @@
 	{#if editable}
 		<div class="edit-value">
 			{#if type === 'select' && options}
-				<Select bind:value {options} {placeholder} size="medium" contained />
+				<Select bind:value={value as string | number | undefined} {options} {placeholder} size="medium" contained />
 			{:else if type === 'checkbox'}
 				<label class="checkbox-wrapper">
 					<input type="checkbox" bind:checked={checkboxValue} class="checkbox" />

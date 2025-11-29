@@ -21,7 +21,11 @@
 
 	interface StarRender {
 		type: 'uncap' | 'transcendence'
-		props: Record<string, any>
+		props: {
+			index?: number
+			onStarClick?: (index: number, empty: boolean) => void
+			[key: string]: any
+		}
 	}
 
 	let {
@@ -97,7 +101,7 @@
 				ulb: options.ulb,
 				special: options.special,
 				tabIndex: editable ? 0 : undefined,
-				onStarClick: editable ? toggleStar : undefined
+				onStarClick: editable ? toggleStar : () => {}
 			}
 		}
 	}
@@ -160,9 +164,9 @@
 			{@const star = renderStar(i)}
 			{#if star}
 				{#if star.type === 'transcendence'}
-					<TranscendenceStar {...star.props} />
+					<TranscendenceStar {...(star.props as any)} />
 				{:else}
-					<UncapStar {...star.props} />
+					<UncapStar {...(star.props as any)} />
 				{/if}
 			{/if}
 		{/each}

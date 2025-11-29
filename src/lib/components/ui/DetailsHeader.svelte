@@ -40,7 +40,7 @@
 
 	// Get element name for button styling
 	const elementName = $derived((() => {
-		const elementMap: Record<number, string> = {
+		const elementMap: Record<number, string | undefined> = {
 			0: undefined, // Null element
 			1: 'wind',
 			2: 'fire',
@@ -109,7 +109,7 @@
 				<Button
 					variant="primary"
 					size="medium"
-					element={elementName}
+					element={elementName as "fire" | "water" | "earth" | "wind" | "light" | "dark" | undefined}
 					onclick={onSave}
 					disabled={isSaving}
 				>

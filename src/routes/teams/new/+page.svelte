@@ -550,16 +550,17 @@
       </header>
 
       <PartySegmentedControl
-        value={activeTab}
-        onValueChange={selectTab}
+        selectedTab={activeTab}
+        onTabChange={selectTab}
         party={{
+          id: '',
+          shortcode: '',
           element: 0,
           job: undefined,
           characters,
           weapons,
           summons
         }}
-        userGender={currentUser?.gender}
       />
 
       <div class="party-content">
