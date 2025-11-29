@@ -1,13 +1,13 @@
 // Re-export types and functions from the main image utility
 export {
-  type ResourceType as ResourceKind,
-  type ImageVariant,
   getPlaceholderImage as getPlaceholder,
   getCharacterImage,
   getWeaponImage,
   getSummonImage,
   getImageUrl as getImageUrlBase
 } from '$lib/utils/images'
+
+export type { ResourceType as ResourceKind, ImageVariant } from '$lib/utils/images'
 
 // Legacy compatibility wrapper
 interface ImageArgs {

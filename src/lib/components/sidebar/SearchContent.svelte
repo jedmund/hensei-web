@@ -161,7 +161,7 @@
 
 		switch (type) {
 			case 'character':
-				return getCharacterImage(id, '01', 'square')
+				return getCharacterImage(id, 'square', '01')
 			case 'weapon':
 				return getWeaponImage(id, 'square')
 			case 'summon':

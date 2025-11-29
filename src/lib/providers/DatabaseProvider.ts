@@ -80,11 +80,6 @@ export class DatabaseProvider extends RestDataProvider {
 				}
 			}
 
-			// Apply normalizer if defined
-			if (this.normalizer && result.results) {
-				return result.results.map(this.normalizer)
-			}
-
 			return result.results || []
 		} catch (error) {
 			console.error('Failed to fetch data:', error)
