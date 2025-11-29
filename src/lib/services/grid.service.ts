@@ -2,14 +2,16 @@ import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/ap
 import { gridAdapter } from '$lib/api/adapters/grid.adapter'
 import { partyAdapter } from '$lib/api/adapters/party.adapter'
 
+export type GridItemData = GridWeapon | GridSummon | GridCharacter
+
 export interface GridOperation {
   type: 'add' | 'replace' | 'remove' | 'move' | 'swap'
   itemId?: string
   position?: number
-  targetPosition?: number
+  targetPosition?: number | string  // Can be position number or gridId string for swaps
   uncapLevel?: number
   transcendenceLevel?: number
-  data?: any
+  data?: GridItemData
 }
 
 export interface GridUpdateResult {
@@ -518,9 +520,9 @@ export class GridService {
    */
   normalizeDragIntent(
     dragType: 'weapon' | 'summon' | 'character',
-    draggedItem: any,
+    draggedItem: { id: string; gridId?: string },
     targetPosition: number,
-    targetItem?: any
+    targetItem?: { id: string; gridId?: string }
   ): GridOperation {
     // If dropping on an empty slot
     if (!targetItem) {
@@ -567,7 +569,7 @@ export class GridService {
 
       case 'move':
         const item = updated.find(i => i.id === operation.itemId)
-        if (item && operation.targetPosition !== undefined) {
+        if (item && operation.targetPosition !== undefined && typeof operation.targetPosition === 'number') {
           item.position = operation.targetPosition
         }
         break
