@@ -61,10 +61,7 @@ describe('EntityAdapter', () => {
 		special: false,
 		recruits: null,
 		gender: 0,
-		race: {
-			race1: 1,
-			race2: 2
-		},
+		race: [1, 2],
 		proficiency: [1, 2],
 		hp: {
 			minHp: 150,

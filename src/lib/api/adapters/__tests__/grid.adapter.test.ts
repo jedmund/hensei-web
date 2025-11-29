@@ -24,8 +24,8 @@ describe('GridAdapter', () => {
 		series: 1,
 		proficiency: 1,
 		uncap: { flb: true, ulb: true, transcendence: false },
-		hp: { minHp: 100, maxHp: 500, maxHpFlb: 600 },
-		atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200 }
+		hp: { minHp: 100, maxHp: 500, maxHpFlb: 600, maxHpUlb: 700 },
+		atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200, maxAtkUlb: 1400 }
 	}
 
 	const mockCharacter: Character = {
@@ -54,8 +54,8 @@ describe('GridAdapter', () => {
 		maxLevel: 150,
 		series: 1,
 		uncap: { flb: true, ulb: true, transcendence: false },
-		hp: { minHp: 100, maxHp: 500, maxHpFlb: 600 },
-		atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200 }
+		hp: { minHp: 100, maxHp: 500, maxHpFlb: 600, maxHpUlb: 700 },
+		atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200, maxAtkUlb: 1400 }
 	}
 
 	const mockGridWeapon: GridWeapon = {

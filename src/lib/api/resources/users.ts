@@ -45,7 +45,7 @@ export const users = {
 			updates.avatar = avatar
 		}
 
-		const result = await userAdapter.updateProfile(optionalProps(updates))
+		const result = await userAdapter.updateProfile(updates)
 		return {
 			id: result.id,
 			username: result.username,
