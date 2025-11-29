@@ -84,7 +84,7 @@
 			}
 
 			// Call API to update user settings
-			const response = await users.update(fetch, account.userId, updateData)
+			const response = await users.update(account.userId, updateData)
 
 			// Update the user cookie
 			const updatedUser: UserCookie = {
