@@ -2,6 +2,7 @@ import type { Party } from '$lib/types/api/party'
 import { partyAdapter } from '$lib/api/adapters/party.adapter'
 import { authStore } from '$lib/stores/auth.store'
 import { browser } from '$app/environment'
+import { optionalProps } from '$lib/utils/typeShims'
 
 /**
  * Context type for party-related operations in components
@@ -66,18 +67,18 @@ export class PartyService {
     party: Party
     editKey?: string
   }> {
-    const apiPayload = this.mapToApiPayload(payload)
+    const apiPayload = optionalProps(this.mapToApiPayload(payload))
     const party = await partyAdapter.create(apiPayload)
 
     // Note: Edit key handling may need to be adjusted based on how the API returns it
-    return { party, editKey: undefined }
+    return { party }
   }
 
   /**
    * Update party details
    */
   async update(id: string, payload: PartyUpdatePayload, editKey?: string): Promise<Party> {
-    const apiPayload = this.mapToApiPayload(payload)
+    const apiPayload = optionalProps(this.mapToApiPayload(payload))
     return partyAdapter.update({ shortcode: id, ...apiPayload })
   }
   
@@ -110,7 +111,7 @@ export class PartyService {
     const party = await partyAdapter.remix(shortcode)
 
     // Note: Edit key handling may need to be adjusted
-    return { party, editKey: undefined }
+    return { party }
   }
   
   /**

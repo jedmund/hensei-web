@@ -1,6 +1,7 @@
 import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
 import { gridAdapter } from '$lib/api/adapters/grid.adapter'
 import { partyAdapter } from '$lib/api/adapters/party.adapter'
+import { optionalProps } from '$lib/utils/typeShims'
 
 export interface GridOperation {
   type: 'add' | 'replace' | 'remove' | 'move' | 'swap'
@@ -38,13 +39,13 @@ export class GridService {
   ): Promise<GridUpdateResult> {
     try {
       // Note: The backend computes the correct uncap level based on the weapon's FLB/ULB/transcendence flags
-      const gridWeapon = await gridAdapter.createWeapon({
+      const gridWeapon = await gridAdapter.createWeapon(optionalProps({
         partyId,
         weaponId,
         position,
         mainhand: options?.mainhand,
         transcendenceStep: 0
-      }, this.buildHeaders(editKey))
+      }), this.buildHeaders(editKey))
 
       console.log('[GridService] Created grid weapon:', gridWeapon)
 
@@ -122,12 +123,12 @@ export class GridService {
     editKey?: string,
     options?: { shortcode?: string }
   ): Promise<Party | null> {
-    await gridAdapter.updateWeapon(gridWeaponId, {
+    await gridAdapter.updateWeapon(gridWeaponId, optionalProps({
       position: updates.position,
       uncapLevel: updates.uncapLevel,
       transcendenceStep: updates.transcendenceStep,
       element: updates.element
-    }, this.buildHeaders(editKey))
+    }), this.buildHeaders(editKey))
 
     // Clear party cache if shortcode provided
     if (options?.shortcode) {
@@ -207,14 +208,14 @@ export class GridService {
     options?: { main?: boolean; friend?: boolean; shortcode?: string }
   ): Promise<Party> {
     // Note: The backend computes the correct uncap level based on the summon's FLB/ULB/transcendence flags
-    const gridSummon = await gridAdapter.createSummon({
+    const gridSummon = await gridAdapter.createSummon(optionalProps({
       partyId,
       summonId,
       position,
       main: options?.main,
       friend: options?.friend,
-      transcendenceStage: 0
-    }, this.buildHeaders(editKey))
+      transcendenceStep: 0
+    }), this.buildHeaders(editKey))
 
     console.log('[GridService] Created grid summon:', gridSummon)
 
@@ -270,12 +271,12 @@ export class GridService {
     editKey?: string,
     options?: { shortcode?: string }
   ): Promise<Party | null> {
-    await gridAdapter.updateSummon(gridSummonId, {
+    await gridAdapter.updateSummon(gridSummonId, optionalProps({
       position: updates.position,
       quickSummon: updates.quickSummon,
       uncapLevel: updates.uncapLevel,
-      transcendenceStage: updates.transcendenceStep
-    }, this.buildHeaders(editKey))
+      transcendenceStep: updates.transcendenceStep
+    }), this.buildHeaders(editKey))
 
     // Clear party cache if shortcode provided
     if (options?.shortcode) {
@@ -436,12 +437,12 @@ export class GridService {
     editKey?: string,
     options?: { shortcode?: string }
   ): Promise<GridCharacter | null> {
-    const updated = await gridAdapter.updateCharacter(gridCharacterId, {
+    const updated = await gridAdapter.updateCharacter(gridCharacterId, optionalProps({
       position: updates.position,
       uncapLevel: updates.uncapLevel,
       transcendenceStep: updates.transcendenceStep,
       perpetuity: updates.perpetuity
-    }, this.buildHeaders(editKey))
+    }), this.buildHeaders(editKey))
 
     // Clear party cache if shortcode provided
     if (options?.shortcode) {

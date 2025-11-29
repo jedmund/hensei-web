@@ -1,4 +1,5 @@
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+import { optionalProps } from '$lib/utils/typeShims'
 
 export type GridItemType = 'character' | 'weapon' | 'summon'
 export type GridItem = GridCharacter | GridWeapon | GridSummon
@@ -30,13 +31,13 @@ export interface DragOperation {
 		container: string
 		position: number
 		itemId: string
-		type?: GridItemType
+		type?: GridItemType | undefined
 	}
 	target: {
 		container: string
 		position: number
-		itemId?: string
-		type?: GridItemType
+		itemId?: string | undefined
+		type?: GridItemType | undefined
 	}
 	status: 'pending' | 'synced' | 'failed'
 	retryCount: number
@@ -224,12 +225,12 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 						itemId: state.draggedItem.data.id,
 						type: state.draggedItem.source.type
 					},
-					target: {
+					target: optionalProps({
 						container: state.hoveredOver.container,
 						position: state.hoveredOver.position,
-						itemId: targetItem?.id || undefined,
+						itemId: targetItem?.id,
 						type: state.hoveredOver.type
-					},
+					}),
 					status: 'pending',
 					retryCount: 0
 				}

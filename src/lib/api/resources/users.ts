@@ -1,11 +1,11 @@
 import { userAdapter } from '../adapters/user.adapter'
 
 export interface UserUpdateParams {
-	picture?: string
-	element?: string
-	gender?: number
-	language?: string
-	theme?: string
+	picture?: string | undefined
+	element?: string | undefined
+	gender?: number | undefined
+	language?: string | undefined
+	theme?: string | undefined
 }
 
 export interface UserResponse {

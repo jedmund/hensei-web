@@ -113,7 +113,7 @@ export class SearchResource {
 			this.activeRequests.set(type, controller)
 
 			// Update loading state
-			this[type] = { ...this[type], loading: true, error: undefined }
+			this[type] = { ...this[type], loading: true }
 
 			try {
 				// Merge base params with provided params

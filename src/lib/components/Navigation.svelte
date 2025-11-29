@@ -216,7 +216,7 @@
 		iconOnly
 		shape="circle"
 		variant="primary"
-		element={userElement}
+		{...(userElement ? { element: userElement } : {})}
 		elementStyle={Boolean(userElement)}
 		class="new-team-button"
 		aria-label="New team"
