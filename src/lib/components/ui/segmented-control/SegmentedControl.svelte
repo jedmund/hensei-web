@@ -85,7 +85,7 @@
 </script>
 
 <div class={wrapperClassList}>
-	<RadioGroupPrimitive.Root bind:value class={classList} {...optionalProps(restProps)}>
+	<RadioGroupPrimitive.Root bind:value class={classList} {...(optionalProps(restProps) as any)}>
 		{@render children?.()}
 	</RadioGroupPrimitive.Root>
 </div>

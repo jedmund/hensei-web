@@ -143,7 +143,6 @@
 		onValueChange={handleValueChange}
 		{disabled}
 		items={stringOptions}
-		class={className}
 	>
 		<SelectPrimitive.Trigger class={selectClasses} data-placeholder={!selected}>
 			{#if selected?.image}

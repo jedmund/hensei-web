@@ -1,11 +1,9 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import type { ComponentProps } from 'svelte'
-	import type { Cell } from 'wx-svelte-grid'
-
-	type Props = ComponentProps<Cell> & {
+	interface Props {
 		row: any
+		[key: string]: any  // Allow additional props from wx-svelte-grid
 	}
 
 	const { row }: Props = $props()
