@@ -86,10 +86,10 @@
       <span class="label">Available Upgrades</span>
       <div class="uncap-badges">
         {#if flb}
-          <span class="badge" class:active={uncapLevel >= 4}>FLB</span>
+          <span class="badge" class:active={(uncapLevel ?? 0) >= 4}>FLB</span>
         {/if}
         {#if ulb}
-          <span class="badge" class:active={uncapLevel >= 5}>ULB</span>
+          <span class="badge" class:active={(uncapLevel ?? 0) >= 5}>ULB</span>
         {/if}
         {#if transcendence}
           <span class="badge" class:active={transcendenceStep > 0}>Trans</span>

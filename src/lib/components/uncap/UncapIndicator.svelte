@@ -91,7 +91,7 @@
 		return {
 			type: 'uncap',
 			props: {
-				empty: options.index >= uncapLevel,
+				empty: options.index >= (uncapLevel ?? 0),
 				index: options.index,
 				flb: options.flb,
 				ulb: options.ulb,
