@@ -40,12 +40,13 @@ export const users = {
 		if (params.theme !== undefined) updates.theme = params.theme
 
 		if (params.picture !== undefined || params.element !== undefined) {
-			updates.avatar = {}
-			if (params.picture !== undefined) updates.avatar.picture = params.picture
-			if (params.element !== undefined) updates.avatar.element = params.element
+			const avatar: { picture?: string | undefined; element?: string | undefined } = {}
+			if (params.picture !== undefined) avatar.picture = params.picture
+			if (params.element !== undefined) avatar.element = params.element
+			updates.avatar = avatar
 		}
 
-		const result = await userAdapter.updateProfile(updates)
+		const result = await userAdapter.updateProfile(optionalProps(updates))
 		return {
 			id: result.id,
 			username: result.username,
