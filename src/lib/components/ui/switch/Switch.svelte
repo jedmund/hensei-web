@@ -36,8 +36,8 @@
 	bind:checked
 	{disabled}
 	{required}
-	{name}
-	{value}
+	{...(name !== undefined ? { name } : {})}
+	{...(value !== undefined ? { value } : {})}
 	class="switch {className || ''}"
 >
 	<SwitchPrimitive.Thumb class="thumb {thumbClass || ''}" />

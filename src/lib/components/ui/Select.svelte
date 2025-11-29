@@ -92,7 +92,13 @@
 			</Label.Root>
 		{/if}
 
-		<SelectPrimitive.Root type="single" value={value !== undefined && value !== null ? String(value) : undefined} onValueChange={handleValueChange} {disabled} items={stringOptions}>
+		<SelectPrimitive.Root
+			type="single"
+			{...(value !== undefined && value !== null ? { value: String(value) } : {})}
+			onValueChange={handleValueChange}
+			{disabled}
+			items={stringOptions}
+		>
 			<SelectPrimitive.Trigger class={selectClasses} data-placeholder={!selected}>
 				{#if selected?.image}
 					<img src={selected.image} alt={selected.label} class="image" />
@@ -104,7 +110,11 @@
 			<SelectPrimitive.Content class="content">
 				<SelectPrimitive.Viewport>
 					{#each options as option}
-						<SelectPrimitive.Item value={String(option.value)} disabled={option.disabled} class="item">
+						<SelectPrimitive.Item
+							value={String(option.value)}
+							{...(option.disabled !== undefined ? { disabled: option.disabled } : {})}
+							class="item"
+						>
 							{#snippet children({ selected })}
 								{#if option.image}
 									<img src={option.image} alt={option.label} class="image" />
@@ -127,7 +137,14 @@
 		{/if}
 	</fieldset>
 {:else}
-	<SelectPrimitive.Root type="single" value={value !== undefined && value !== null ? String(value) : undefined} onValueChange={handleValueChange} {disabled} items={stringOptions} class={className}>
+	<SelectPrimitive.Root
+		type="single"
+		{...(value !== undefined && value !== null ? { value: String(value) } : {})}
+		onValueChange={handleValueChange}
+		{disabled}
+		items={stringOptions}
+		class={className}
+	>
 		<SelectPrimitive.Trigger class={selectClasses} data-placeholder={!selected}>
 			{#if selected?.image}
 				<img src={selected.image} alt={selected.label} class="image" />
@@ -139,7 +156,11 @@
 		<SelectPrimitive.Content class="content">
 			<SelectPrimitive.Viewport>
 				{#each options as option}
-				<SelectPrimitive.Item value={String(option.value)} disabled={option.disabled} class="item">
+					<SelectPrimitive.Item
+						value={String(option.value)}
+						{...(option.disabled !== undefined ? { disabled: option.disabled } : {})}
+						class="item"
+					>
 						{#snippet children({ selected })}
 							{#if option.image}
 								<img src={option.image} alt={option.label} class="image" />

@@ -4,16 +4,18 @@
 <script lang="ts">
 	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui'
 	import { getContext } from 'svelte'
+	import type { Snippet } from 'svelte'
 	import styles from './segment.module.scss'
-	import type { HTMLButtonAttributes } from 'svelte/elements'
 	import type { SegmentedControlVariant } from './SegmentedControl.svelte'
 
-	interface Props extends Omit<HTMLButtonAttributes, 'value'> {
+	interface Props {
 		value: string
 		class?: string
+		disabled?: boolean
+		children?: Snippet
 	}
 
-	let { value, class: className, children: content, ...restProps }: Props = $props()
+	let { value, class: className, disabled, children: content }: Props = $props()
 
 	// Get variant from parent context
 	const variant = getContext<SegmentedControlVariant>('segmented-control-variant') || 'default'
@@ -36,7 +38,11 @@
 	)
 </script>
 
-<RadioGroupPrimitive.Item {value} class={segmentClass} {...restProps}>
+<RadioGroupPrimitive.Item
+	{value}
+	{...(disabled !== undefined ? { disabled } : {})}
+	class={segmentClass}
+>
 	{#snippet children({ checked })}
 		{#if checked}
 			<div class={styles.indicator}></div>

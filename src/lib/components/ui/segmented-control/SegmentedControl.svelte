@@ -4,6 +4,7 @@
 <script lang="ts">
 	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui'
 	import { setContext } from 'svelte'
+	import type { Snippet } from 'svelte'
 	import styles from './segmented-control.module.scss'
 	import type { HTMLAttributes } from 'svelte/elements'
 
@@ -18,7 +19,7 @@
 		gap?: boolean
 		class?: string
 		wrapperClass?: string
-		children?: import('svelte').Snippet
+		children?: Snippet
 	}
 
 	let {

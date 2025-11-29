@@ -3,14 +3,16 @@
 
 <script lang="ts">
 	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui'
+	import type { Snippet } from 'svelte'
 	import styles from './rep-segment.module.scss'
-	import type { HTMLButtonAttributes } from 'svelte/elements'
 
-	interface Props extends Omit<HTMLButtonAttributes, 'value'> {
+	interface Props {
 		value: string
 		label: string
 		class?: string
 		selected?: boolean
+		disabled?: boolean
+		children?: Snippet
 	}
 
 	let {
@@ -18,15 +20,15 @@
 		label,
 		class: className,
 		selected = false,
-		children: content,
-		...restProps
+		disabled,
+		children: content
 	}: Props = $props()
 </script>
 
 <RadioGroupPrimitive.Item
 	{value}
+	{...(disabled !== undefined ? { disabled } : {})}
 	class={`${styles.repSegment} ${selected ? styles.selected : ''} ${className || ''}`}
-	{...restProps}
 >
 	{#snippet children({ checked })}
 		{#if checked}
