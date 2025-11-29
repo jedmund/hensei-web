@@ -8,7 +8,9 @@ let HttpResponse: any = null
 async function ensureMSW() {
   if (mockServer) return
   try {
+    // @ts-expect-error - MSW is an optional dependency for testing
     const mswNode = await import('msw/node')
+    // @ts-expect-error - MSW is an optional dependency for testing
     const msw = await import('msw')
     mockServer = mswNode.setupServer()
     http = msw.http
