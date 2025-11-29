@@ -168,16 +168,7 @@
             itemAdded = true
 
             // Update local state with the added weapon
-            weapons = [...weapons, {
-              id: addResult.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: firstItem.granblueId,
-                name: firstItem.name,
-                element: firstItem.element
-              },
-              mainhand: position === -1
-            }]
+            weapons = [...weapons, addResult]
           } else if (activeTab === GridType.Summon) {
             // Use selectedSlot if available, otherwise default to main summon
             if (selectedSlot === null) position = -1
@@ -192,17 +183,7 @@
             itemAdded = true
 
             // Update local state with the added summon
-            summons = [...summons, {
-              id: addResult.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: firstItem.granblueId,
-                name: firstItem.name,
-                element: firstItem.element
-              },
-              main: position === -1,
-              friend: position === 6
-            }]
+            summons = [...summons, addResult]
           } else if (activeTab === GridType.Character) {
             // Use selectedSlot if available, otherwise default to first slot
             if (selectedSlot === null) position = 0
@@ -215,15 +196,7 @@
             itemAdded = true
 
             // Update local state with the added character
-            characters = [...characters, {
-              id: addResult.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: firstItem.granblueId,
-                name: firstItem.name,
-                element: firstItem.element
-              }
-            }]
+            characters = [...characters, addResult]
           }
           selectedSlot = null // Reset after using
 
@@ -311,16 +284,7 @@
             })
 
             // Add to local state
-            weapons = [...weapons, {
-              id: response.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: item.granblueId,
-                name: item.name,
-                element: item.element
-              },
-              mainhand: position === -1
-            }]
+            weapons = [...weapons, response]
           } else if (activeTab === GridType.Summon) {
             // Use selectedSlot for first item if available
             if (i === 0 && selectedSlot !== null && !summons.find(s => s.position === selectedSlot)) {
@@ -344,17 +308,7 @@
             })
 
             // Add to local state
-            summons = [...summons, {
-              id: response.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: item.granblueId,
-                name: item.name,
-                element: item.element
-              },
-              main: position === -1,
-              friend: position === 6
-            }]
+            summons = [...summons, response]
           } else if (activeTab === GridType.Character) {
             // Use selectedSlot for first item if available
             if (i === 0 && selectedSlot !== null && !characters.find(c => c.position === selectedSlot)) {
@@ -376,15 +330,7 @@
             })
 
             // Add to local state
-            characters = [...characters, {
-              id: response.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: item.granblueId,
-                name: item.name,
-                element: item.element
-              }
-            }]
+            characters = [...characters, response]
           }
         }
       } catch (error: any) {
