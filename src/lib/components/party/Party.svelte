@@ -26,6 +26,7 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
+	import { executeGridOperation, removeGridItem, updateGridItem } from '$lib/utils/gridOperations'
 
 	interface Props {
 		party?: Party
@@ -125,40 +126,14 @@
 			throw new Error('Cannot swap items in unsaved party')
 		}
 
-		// Both source and target should have items for swap
-		if (!source.itemId || !target.itemId) {
-			throw new Error('Invalid swap operation - missing items')
-		}
-
-		// Call appropriate grid service method based on type
-		if (source.type === 'weapon') {
-			await gridService.moveWeapon(party.id, source.itemId, target.position, editKey || undefined, {
-				shortcode: party.shortcode
-			})
-		} else if (source.type === 'character') {
-			await gridService.moveCharacter(
-				party.id,
-				source.itemId,
-				target.position,
-				editKey || undefined,
-				{
-					shortcode: party.shortcode
-				}
-			)
-		} else if (source.type === 'summon') {
-			await gridService.moveSummon(party.id, source.itemId, target.position, editKey || undefined, {
-				shortcode: party.shortcode
-			})
-		} else {
-			throw new Error(`Unknown item type: ${source.type}`)
-		}
-
-		// Clear cache and refresh party data
-		partyService.clearPartyCache(party.shortcode)
-		const updated = await partyService.getByShortcode(party.shortcode)
-		return updated
-
-		throw new Error(`Unknown item type: ${source.type}`)
+		return executeGridOperation(
+			'swap',
+			source,
+			target,
+			{ partyId: party.id, shortcode: party.shortcode, editKey },
+			gridService,
+			partyService
+		)
 	}
 
 	async function handleMove(source: any, target: any): Promise<Party> {
@@ -166,36 +141,14 @@
 			throw new Error('Cannot move items in unsaved party')
 		}
 
-		// Source should have an item, target should be empty
-		if (!source.itemId || target.itemId) {
-			throw new Error('Invalid move operation')
-		}
-
-		// Call appropriate grid service method based on type
-		if (source.type === 'character') {
-			await gridService.moveCharacter(
-				party.id,
-				source.itemId,
-				target.position,
-				editKey || undefined,
-				{ shortcode: party.shortcode }
-			)
-		} else if (source.type === 'weapon') {
-			await gridService.moveWeapon(party.id, source.itemId, target.position, editKey || undefined, {
-				shortcode: party.shortcode
-			})
-		} else if (source.type === 'summon') {
-			await gridService.moveSummon(party.id, source.itemId, target.position, editKey || undefined, {
-				shortcode: party.shortcode
-			})
-		} else {
-			throw new Error(`Unknown item type: ${source.type}`)
-		}
-
-		// Clear cache and refresh party data
-		partyService.clearPartyCache(party.shortcode)
-		const updated = await partyService.getByShortcode(party.shortcode)
-		return updated
+		return executeGridOperation(
+			'move',
+			source,
+			target,
+			{ partyId: party.id, shortcode: party.shortcode, editKey },
+			gridService,
+			partyService
+		)
 	}
 
 	// Localized name helper: accepts either an object with { name: { en, ja } }
@@ -554,17 +507,15 @@
 	const clientGridService = {
 		async removeWeapon(partyId: string, gridWeaponId: string, _editKey?: string) {
 			try {
-				// Remove returns null, so we need to update local state
-				await gridService.removeWeapon(partyId, gridWeaponId, editKey || undefined, {
-					shortcode: party.shortcode
-				})
-
-				// Update local state by removing the weapon
-				const updatedParty = { ...party }
-				if (updatedParty.weapons) {
-					updatedParty.weapons = updatedParty.weapons.filter((w: any) => w.id !== gridWeaponId)
-				}
-				return updatedParty
+				return await removeGridItem(
+					'weapon',
+					partyId,
+					gridWeaponId,
+					party,
+					party.shortcode,
+					editKey,
+					gridService
+				)
 			} catch (err) {
 				console.error('Failed to remove weapon:', err)
 				throw err
@@ -572,17 +523,15 @@
 		},
 		async removeSummon(partyId: string, gridSummonId: string, _editKey?: string) {
 			try {
-				// Remove returns null, so we need to update local state
-				await gridService.removeSummon(partyId, gridSummonId, editKey || undefined, {
-					shortcode: party.shortcode
-				})
-
-				// Update local state by removing the summon
-				const updatedParty = { ...party }
-				if (updatedParty.summons) {
-					updatedParty.summons = updatedParty.summons.filter((s: any) => s.id !== gridSummonId)
-				}
-				return updatedParty
+				return await removeGridItem(
+					'summon',
+					partyId,
+					gridSummonId,
+					party,
+					party.shortcode,
+					editKey,
+					gridService
+				)
 			} catch (err) {
 				console.error('Failed to remove summon:', err)
 				throw err
@@ -590,19 +539,15 @@
 		},
 		async removeCharacter(partyId: string, gridCharacterId: string, _editKey?: string) {
 			try {
-				// Remove returns null, so we need to update local state
-				await gridService.removeCharacter(partyId, gridCharacterId, editKey || undefined, {
-					shortcode: party.shortcode
-				})
-
-				// Update local state by removing the character
-				const updatedParty = { ...party }
-				if (updatedParty.characters) {
-					updatedParty.characters = updatedParty.characters.filter(
-						(c: any) => c.id !== gridCharacterId
-					)
-				}
-				return updatedParty
+				return await removeGridItem(
+					'character',
+					partyId,
+					gridCharacterId,
+					party,
+					party.shortcode,
+					editKey,
+					gridService
+				)
 			} catch (err) {
 				console.error('Failed to remove character:', err)
 				throw err
@@ -610,14 +555,7 @@
 		},
 		async updateWeapon(partyId: string, gridWeaponId: string, updates: any, _editKey?: string) {
 			try {
-				// Use the grid service to update weapon
-				const updated = await gridService.updateWeapon(
-					partyId,
-					gridWeaponId,
-					updates,
-					editKey || undefined
-				)
-				return updated
+				return await updateGridItem('weapon', partyId, gridWeaponId, updates, editKey, gridService)
 			} catch (err) {
 				console.error('Failed to update weapon:', err)
 				throw err
@@ -625,14 +563,7 @@
 		},
 		async updateSummon(partyId: string, gridSummonId: string, updates: any, _editKey?: string) {
 			try {
-				// Use the grid service to update summon
-				const updated = await gridService.updateSummon(
-					partyId,
-					gridSummonId,
-					updates,
-					editKey || undefined
-				)
-				return updated
+				return await updateGridItem('summon', partyId, gridSummonId, updates, editKey, gridService)
 			} catch (err) {
 				console.error('Failed to update summon:', err)
 				throw err
@@ -645,14 +576,7 @@
 			_editKey?: string
 		) {
 			try {
-				// Use the grid service to update character
-				const updated = await gridService.updateCharacter(
-					partyId,
-					gridCharacterId,
-					updates,
-					editKey || undefined
-				)
-				return updated
+				return await updateGridItem('character', partyId, gridCharacterId, updates, editKey, gridService)
 			} catch (err) {
 				console.error('Failed to update character:', err)
 				throw err
