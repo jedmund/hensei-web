@@ -66,21 +66,19 @@ export class PartyService {
     party: Party
     editKey?: string
   }> {
-    const headers = this.buildHeaders(editKey)
     const apiPayload = this.mapToApiPayload(payload)
-    const party = await partyAdapter.create(apiPayload, headers)
+    const party = await partyAdapter.create(apiPayload)
 
     // Note: Edit key handling may need to be adjusted based on how the API returns it
     return { party, editKey: undefined }
   }
-  
+
   /**
    * Update party details
    */
   async update(id: string, payload: PartyUpdatePayload, editKey?: string): Promise<Party> {
-    const headers = this.buildHeaders(editKey)
     const apiPayload = this.mapToApiPayload(payload)
-    return partyAdapter.update({ shortcode: id, ...apiPayload }, headers)
+    return partyAdapter.update({ shortcode: id, ...apiPayload })
   }
   
   /**
@@ -92,7 +90,6 @@ export class PartyService {
     guidebookId: string | null,
     editKey?: string
   ): Promise<Party> {
-    const headers = this.buildHeaders(editKey)
     const payload: any = {}
 
     // Map position to guidebook1_id, guidebook2_id, guidebook3_id
@@ -100,9 +97,9 @@ export class PartyService {
       payload[`guidebook${position + 1}Id`] = guidebookId
     }
 
-    return partyAdapter.update({ shortcode: id, ...payload }, headers)
+    return partyAdapter.update({ shortcode: id, ...payload })
   }
-  
+
   /**
    * Remix a party (create a copy)
    */
@@ -110,8 +107,7 @@ export class PartyService {
     party: Party
     editKey?: string
   }> {
-    const headers = this.buildHeaders(editKey)
-    const party = await partyAdapter.remix(shortcode, headers)
+    const party = await partyAdapter.remix(shortcode)
 
     // Note: Edit key handling may need to be adjusted
     return { party, editKey: undefined }

@@ -376,18 +376,18 @@ export const PartySchemaRaw = z.object({
   skill3_id: z.string().nullish(),
   job_skills: z.union([
     z.array(z.any()),
-    z.record(z.any())
+    z.record(z.string(), z.any())
   ]).nullish().default([]),
   accessory_id: z.string().nullish(),
   accessory: JobAccessorySchema.nullish(),
-  
+
   // Guidebooks
   guidebook1_id: z.string().nullish(),
   guidebook2_id: z.string().nullish(),
   guidebook3_id: z.string().nullish(),
   guidebooks: z.union([
     z.array(z.any()),
-    z.record(z.any())
+    z.record(z.string(), z.any())
   ]).nullish().default([]),
   
   // Grid arrays (may be empty or contain items with missing nested data)
