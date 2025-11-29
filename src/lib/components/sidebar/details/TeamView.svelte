@@ -88,7 +88,7 @@
 			<ModificationSection title="AX Skills" visible={true}>
 				{#each weapon.ax as axSkill}
 					<StatModifierItem
-						label={formatAxSkill(axSkill).split('+')[0].trim()}
+						label={formatAxSkill(axSkill).split('+')[0]?.trim() ?? ''}
 						value={`+${axSkill.strength}`}
 						suffix={axSkill.modifier <= 2 ? '' : '%'}
 						variant="enhanced"

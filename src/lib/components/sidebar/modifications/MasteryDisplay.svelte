@@ -46,7 +46,7 @@
 						{#if iconUrl}
 							<img
 								src={iconUrl}
-								alt={formatRingStat(ring.modifier, ring.strength, locale).split('+')[0].trim()}
+								alt={formatRingStat(ring.modifier, ring.strength, locale).split('+')[0]?.trim() ?? ''}
 								class="mastery-icon"
 							/>
 						{/if}
@@ -54,7 +54,7 @@
 					<span class="mastery-content">
 						{#if variant === 'detailed'}
 							<strong class="mastery-label">
-								{formatRingStat(ring.modifier, ring.strength, locale).split('+')[0].trim()}
+								{formatRingStat(ring.modifier, ring.strength, locale).split('+')[0]?.trim() ?? ''}
 							</strong>
 							<span class="mastery-value">
 								+{ring.strength}{getRingStat(ring.modifier)?.suffix || ''}
@@ -81,7 +81,7 @@
 					{#if iconUrl}
 						<img
 							src={iconUrl}
-							alt={formatEarringStat(earring.modifier, earring.strength, locale, characterElement).split('+')[0].trim()}
+							alt={formatEarringStat(earring.modifier, earring.strength, locale, characterElement).split('+')[0]?.trim() ?? ''}
 							class="mastery-icon"
 						/>
 					{/if}
@@ -89,7 +89,7 @@
 				<span class="mastery-content">
 					{#if variant === 'detailed'}
 						<strong class="mastery-label">
-							{formatEarringStat(earring.modifier, earring.strength, locale, characterElement).split('+')[0].trim()}
+							{formatEarringStat(earring.modifier, earring.strength, locale, characterElement).split('+')[0]?.trim() ?? ''}
 						</strong>
 						<span class="mastery-value enhanced">
 							+{earring.strength}{getElementalizedEarringStat(earring.modifier, characterElement, locale)?.suffix || ''}

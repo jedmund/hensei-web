@@ -58,10 +58,11 @@
 
 	// Handle scroll restoration or reset after navigation
 	afterNavigate(({ from, to, type }) => {
-		if (!mainContent) return;
+		if (!mainContent || !to) return;
 
 		// Use requestAnimationFrame to ensure DOM has updated
 		requestAnimationFrame(() => {
+			if (!mainContent) return;
 			const key = to.url.pathname + to.url.search;
 
 			// Only restore scroll for browser back/forward navigation
