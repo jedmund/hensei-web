@@ -9,8 +9,9 @@
 	import { Tooltip } from 'bits-ui'
 	import { beforeNavigate, afterNavigate } from '$app/navigation'
 	import { authStore } from '$lib/stores/auth.store'
-	import { browser } from '$app/environment'
+	import { browser, dev } from '$app/environment'
 	import { QueryClientProvider } from '@tanstack/svelte-query'
+	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 	import type { LayoutData } from './$types'
 
 	// Get `data` and `children` from the router via $props()
@@ -109,6 +110,9 @@
 </svelte:head>
 
 <QueryClientProvider client={data.queryClient}>
+	{#if dev}
+		<SvelteQueryDevtools />
+	{/if}
 	<Tooltip.Provider>
 		<div class="app-container" class:sidebar-open={sidebar.isOpen}>
 			<div class="main-pane">
