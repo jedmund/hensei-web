@@ -176,14 +176,12 @@ describe('SearchResource', () => {
 			// Set some mock data
 			resource.weapons = {
 				loading: false,
-				data: { results: [] },
-				error: undefined
+				data: { results: [] }
 			}
 
 			resource.characters = {
 				loading: false,
-				data: { results: [] },
-				error: undefined
+				data: { results: [] }
 			}
 
 			// Clear weapons only

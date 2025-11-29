@@ -190,11 +190,13 @@ export function formatJobProficiency(proficiency: [number, number]): string[] {
 	}
 
 	const result: string[] = []
-	if (proficiency[0] && weaponTypes[proficiency[0]]) {
-		result.push(weaponTypes[proficiency[0]])
+	const type1 = proficiency[0] ? weaponTypes[proficiency[0]] : undefined
+	if (type1) {
+		result.push(type1)
 	}
-	if (proficiency[1] && weaponTypes[proficiency[1]]) {
-		result.push(weaponTypes[proficiency[1]])
+	const type2 = proficiency[1] ? weaponTypes[proficiency[1]] : undefined
+	if (type2) {
+		result.push(type2)
 	}
 
 	return result
