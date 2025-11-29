@@ -1,20 +1,16 @@
 import type { PageServerLoad } from './$types'
-import { PartyService } from '$lib/services/party.service'
+import { partyAdapter } from '$lib/api/adapters/party.adapter'
 
-export const load: PageServerLoad = async ({ params, fetch, locals }) => {
-	// Get auth data directly from locals instead of parent()
+export const load: PageServerLoad = async ({ params, locals }) => {
 	const authUserId = locals.session?.account?.userId
-
-	// Try to fetch party data on the server
-	const partyService = new PartyService()
 
 	let partyFound = false
 	let party = null
 	let canEdit = false
 
 	try {
-		// Fetch the party
-		party = await partyService.getByShortcode(params.id)
+		// Fetch the party using adapter
+		party = await partyAdapter.getByShortcode(params.id)
 		partyFound = true
 
 		// Determine if user can edit
@@ -23,7 +19,6 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
 		// Error is expected for test/invalid IDs
 	}
 
-	// Return party data with explicit serialization
 	return {
 		party: party ? structuredClone(party) : null,
 		canEdit: Boolean(canEdit),
