@@ -2,7 +2,6 @@ import type { Party } from '$lib/types/api/party'
 import { partyAdapter } from '$lib/api/adapters/party.adapter'
 import { authStore } from '$lib/stores/auth.store'
 import { browser } from '$app/environment'
-import { optionalProps } from '$lib/utils/typeShims'
 
 /**
  * Context type for party-related operations in components

@@ -10,7 +10,6 @@
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { setUserCookie } from '$lib/auth/cookies'
 	import { invalidateAll } from '$app/navigation'
-	import { optionalProps } from '$lib/utils/typeShims'
 
 	interface Props {
 		open: boolean
@@ -73,14 +72,14 @@
 		saving = true
 
 		try {
-			// Prepare the update data (filter undefined to satisfy exactOptionalPropertyTypes)
-			const updateData = optionalProps({
+			// Prepare the update data
+			const updateData = {
 				picture,
 				element: currentPicture?.element,
 				gender,
 				language,
 				theme
-			})
+			}
 
 			// Call API to update user settings
 			const response = await users.update(userId, updateData)

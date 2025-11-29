@@ -19,7 +19,6 @@ import {
 } from './errors'
 import { authStore } from '$lib/stores/auth.store'
 import { browser } from '$app/environment'
-import { optionalProps } from '$lib/utils/typeShims'
 
 /**
  * Base adapter class that all resource-specific adapters extend from.
@@ -125,9 +124,9 @@ export abstract class BaseAdapter {
 			}
 		}
 
-		// Prepare request options (filter out undefined to satisfy exactOptionalPropertyTypes)
+		// Prepare request options
 		const fetchOptions: RequestInit = {
-			...optionalProps(options), // Allow overriding defaults, filter undefined
+			...options, // Allow overriding defaults
 			credentials: 'include', // Still include cookies for CORS and refresh token
 			signal: controller.signal,
 			headers: {

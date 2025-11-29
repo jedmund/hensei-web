@@ -1,5 +1,4 @@
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
-import { optionalProps } from '$lib/utils/typeShims'
 
 export type GridItemType = 'character' | 'weapon' | 'summon'
 export type GridItem = GridCharacter | GridWeapon | GridSummon
@@ -225,12 +224,12 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 						itemId: state.draggedItem.data.id,
 						type: state.draggedItem.source.type
 					},
-					target: optionalProps({
+					target: {
 						container: state.hoveredOver.container,
 						position: state.hoveredOver.position,
 						itemId: targetItem?.id,
 						type: state.hoveredOver.type
-					}),
+					},
 					status: 'pending',
 					retryCount: 0
 				}

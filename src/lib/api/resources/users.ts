@@ -1,5 +1,4 @@
 import { userAdapter } from '../adapters/user.adapter'
-import { optionalProps } from '$lib/utils/typeShims'
 
 export interface UserUpdateParams {
 	picture?: string | undefined

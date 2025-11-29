@@ -1,7 +1,6 @@
 import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
 import { gridAdapter } from '$lib/api/adapters/grid.adapter'
 import { partyAdapter } from '$lib/api/adapters/party.adapter'
-import { optionalProps } from '$lib/utils/typeShims'
 
 export interface GridOperation {
   type: 'add' | 'replace' | 'remove' | 'move' | 'swap'
@@ -123,12 +122,12 @@ export class GridService {
     editKey?: string,
     options?: { shortcode?: string }
   ): Promise<Party | null> {
-    await gridAdapter.updateWeapon(gridWeaponId, optionalProps({
+    await gridAdapter.updateWeapon(gridWeaponId, {
       position: updates.position,
       uncapLevel: updates.uncapLevel,
       transcendenceStep: updates.transcendenceStep,
       element: updates.element
-    }), this.buildHeaders(editKey))
+    }, this.buildHeaders(editKey))
 
     // Clear party cache if shortcode provided
     if (options?.shortcode) {
@@ -271,12 +270,12 @@ export class GridService {
     editKey?: string,
     options?: { shortcode?: string }
   ): Promise<Party | null> {
-    await gridAdapter.updateSummon(gridSummonId, optionalProps({
+    await gridAdapter.updateSummon(gridSummonId, {
       position: updates.position,
       quickSummon: updates.quickSummon,
       uncapLevel: updates.uncapLevel,
       transcendenceStep: updates.transcendenceStep
-    }), this.buildHeaders(editKey))
+    }, this.buildHeaders(editKey))
 
     // Clear party cache if shortcode provided
     if (options?.shortcode) {
@@ -437,12 +436,12 @@ export class GridService {
     editKey?: string,
     options?: { shortcode?: string }
   ): Promise<GridCharacter | null> {
-    const updated = await gridAdapter.updateCharacter(gridCharacterId, optionalProps({
+    const updated = await gridAdapter.updateCharacter(gridCharacterId, {
       position: updates.position,
       uncapLevel: updates.uncapLevel,
       transcendenceStep: updates.transcendenceStep,
       perpetuity: updates.perpetuity
-    }), this.buildHeaders(editKey))
+    }, this.buildHeaders(editKey))
 
     // Clear party cache if shortcode provided
     if (options?.shortcode) {
