@@ -11,6 +11,14 @@
   import type { SearchResult } from '$lib/api/adapters'
   import { partyAdapter, gridAdapter } from '$lib/api/adapters'
   import { getLocalId } from '$lib/utils/localId'
+
+  // TanStack Query mutations
+  import { useCreateParty } from '$lib/api/mutations/party.mutations'
+  import {
+    useCreateGridWeapon,
+    useCreateGridCharacter,
+    useCreateGridSummon
+  } from '$lib/api/mutations/grid.mutations'
   import { Dialog } from 'bits-ui'
   import { replaceState } from '$app/navigation'
   import { page } from '$app/stores'
@@ -75,6 +83,11 @@
   let errorMessage = $state('')
   let errorDetails = $state<string[]>([])
 
+  // TanStack Query mutations
+  const createPartyMutation = useCreateParty()
+  const createWeaponMutation = useCreateGridWeapon()
+  const createCharacterMutation = useCreateGridCharacter()
+  const createSummonMutation = useCreateGridSummon()
 
   // Calculate if grids are full
   let isWeaponGridFull = $derived(weapons.length >= 10) // 1 mainhand + 9 grid slots
@@ -115,8 +128,8 @@
           partyPayload.localId = getLocalId()
         }
 
-        // Create party using the party adapter
-        const createdParty = await partyAdapter.create(partyPayload)
+        // Create party using mutation
+        const createdParty = await createPartyMutation.mutateAsync(partyPayload)
         console.log('Party created:', createdParty)
 
         // The adapter returns the party directly
@@ -136,7 +149,7 @@
           if (activeTab === GridType.Weapon) {
             // Use selectedSlot if available, otherwise default to mainhand
             if (selectedSlot === null) position = -1
-            const addResult = await gridAdapter.createWeapon({
+            const addResult = await createWeaponMutation.mutateAsync({
               partyId,
               weaponId: firstItem.granblueId,
               position,
@@ -159,7 +172,7 @@
           } else if (activeTab === GridType.Summon) {
             // Use selectedSlot if available, otherwise default to main summon
             if (selectedSlot === null) position = -1
-            const addResult = await gridAdapter.createSummon({
+            const addResult = await createSummonMutation.mutateAsync({
               partyId,
               summonId: firstItem.granblueId,
               position,
@@ -184,7 +197,7 @@
           } else if (activeTab === GridType.Character) {
             // Use selectedSlot if available, otherwise default to first slot
             if (selectedSlot === null) position = 0
-            const addResult = await gridAdapter.createCharacter({
+            const addResult = await createCharacterMutation.mutateAsync({
               partyId,
               characterId: firstItem.granblueId,
               position
@@ -281,7 +294,7 @@
             }
 
             // Add weapon via API
-            const response = await gridAdapter.createWeapon({
+            const response = await createWeaponMutation.mutateAsync({
               partyId,
               weaponId: item.granblueId,
               position,
@@ -313,7 +326,7 @@
             }
 
             // Add summon via API
-            const response = await gridAdapter.createSummon({
+            const response = await createSummonMutation.mutateAsync({
               partyId,
               summonId: item.granblueId,
               position,
@@ -347,7 +360,7 @@
             }
 
             // Add character via API
-            const response = await gridAdapter.createCharacter({
+            const response = await createCharacterMutation.mutateAsync({
               partyId,
               characterId: item.granblueId,
               position
