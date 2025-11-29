@@ -1,12 +1,9 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	interface Props {
-		row: any
-		[key: string]: any  // Allow additional props from wx-svelte-grid
-	}
+	import type { Cell } from 'wx-svelte-grid'
 
-	const { row }: Props = $props()
+	const { row }: Cell = $props()
 
 	// Get the most recent date from various date fields
 	const getLastUpdated = (item: any): Date | null => {

@@ -1,14 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import type { IRow } from 'wx-svelte-grid'
+	import type { Cell } from 'wx-svelte-grid'
 	import { getCharacterImage } from '$lib/features/database/detail/image'
 
-	interface Props {
-		row: IRow
-	}
-
-	const { row }: Props = $props()
+	const { row }: Cell = $props()
 </script>
 
 <div class="image-cell">

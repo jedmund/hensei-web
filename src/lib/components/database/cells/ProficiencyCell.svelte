@@ -1,14 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import type { IRow } from 'wx-svelte-grid'
+	import type { Cell } from 'wx-svelte-grid'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 
-	interface Props {
-		row: IRow
-	}
-
-	const { row }: Props = $props()
+	const { row }: Cell = $props()
 
 	const proficiency = $derived(row.proficiency)
 </script>

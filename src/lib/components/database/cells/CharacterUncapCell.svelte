@@ -1,14 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import type { IRow } from 'wx-svelte-grid'
+	import type { Cell } from 'wx-svelte-grid'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
-	interface Props {
-		row: IRow
-	}
-
-	let { row }: Props = $props()
+	let { row }: Cell = $props()
 
 	// For database view, show maximum possible uncap level
 	// Not the user's current uncap level

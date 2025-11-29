@@ -32,11 +32,15 @@ declare module 'wx-svelte-grid' {
     [key: string]: any
   }
 
-  export interface ICellProps {
+  // Cell component props - used by custom cell components
+  export interface Cell {
     row: IRow
     col: IColumn
-    value: any
+    value?: any
   }
+
+  // Alias for backward compatibility
+  export interface ICellProps extends Cell {}
 
   export interface IDataConfig {
     data: IRow[]
