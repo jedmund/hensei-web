@@ -4,6 +4,23 @@
  * Provides reactive state management for search operations with
  * automatic loading states, error handling, and debouncing.
  *
+ * @deprecated This resource class is deprecated in favor of TanStack Query.
+ * Use `searchQueries` from `$lib/api/queries/search.queries` with `createInfiniteQuery` instead.
+ *
+ * Migration example:
+ * ```typescript
+ * // Before (SearchResource)
+ * const search = createSearchResource({ debounceMs: 300 })
+ * search.searchWeapons({ query })
+ *
+ * // After (TanStack Query)
+ * import { createInfiniteQuery } from '@tanstack/svelte-query'
+ * import { searchQueries } from '$lib/api/queries/search.queries'
+ *
+ * let debouncedQuery = $state('')
+ * const weapons = createInfiniteQuery(() => searchQueries.weapons(debouncedQuery))
+ * ```
+ *
  * @module adapters/resources/search
  */
 

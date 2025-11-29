@@ -11,14 +11,12 @@
 	import { authStore } from '$lib/stores/auth.store'
 	import { browser } from '$app/environment'
 	import { QueryClientProvider } from '@tanstack/svelte-query'
-	import { createQueryClient } from '$lib/query/queryClient'
-
-	const queryClient = createQueryClient()
+	import type { LayoutData } from './$types'
 
 	// Get `data` and `children` from the router via $props()
-	// Use a more flexible type that allows additional properties from child pages
+	// QueryClient is now created in +layout.ts for SSR support
 	const { data, children } = $props<{
-		data: any  // Allow any data to pass through from child pages
+		data: LayoutData & { [key: string]: any }  // Allow any data to pass through from child pages
 		children: () => any
 	}>()
 
@@ -110,7 +108,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<QueryClientProvider client={queryClient}>
+<QueryClientProvider client={data.queryClient}>
 	<Tooltip.Provider>
 		<div class="app-container" class:sidebar-open={sidebar.isOpen}>
 			<div class="main-pane">

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	import { createQuery } from '@tanstack/svelte-query'
 	import type { Job } from '$lib/types/api/entities'
-	import { createJobResource } from '$lib/api/adapters/resources/job.resource.svelte'
+	import { jobQueries } from '$lib/api/queries/job.queries'
 	import { getJobTierName, getJobTierOrder } from '$lib/utils/jobUtils'
 	import JobItem from '../job/JobItem.svelte'
 	import JobTierSelector from '../job/JobTierSelector.svelte'
@@ -17,14 +17,13 @@
 
 	let { currentJobId, onSelectJob }: Props = $props()
 
-	// Create job resource
-	const jobResource = createJobResource()
+	// TanStack Query v6: Use createQuery with thunk pattern for reactivity
+	// Jobs are cached for 30 minutes and shared across all components
+	const jobsQuery = createQuery(() => jobQueries.list())
 
-	// State
+	// State for filtering (local UI state, not server state)
 	let searchQuery = $state('')
 	let selectedTiers = $state<Set<string>>(new Set(['4', '5', 'ex2', 'o1'])) // Default to IV, V, EXII, OI
-	let loading = $state(false)
-	let error = $state<string | undefined>()
 
 	// Available tiers with short labels for display
 	const tiers = [
@@ -48,29 +47,11 @@
 		selectedTiers = newSet
 	}
 
-	// Fetch jobs on mount
-	onMount(() => {
-		loadJobs()
-	})
-
-	async function loadJobs() {
-		loading = true
-		error = undefined
-
-		try {
-			await jobResource.fetchJobs()
-		} catch (e: any) {
-			error = e.message || 'Failed to load jobs'
-			console.error('Error loading jobs:', e)
-		} finally {
-			loading = false
-		}
-	}
-
 	// Filter jobs based on search and filters
+	// TanStack Query handles loading/error states, we just filter the data
 	const filteredJobs = $derived(
 		(() => {
-			let jobs = jobResource.jobs.data || []
+			let jobs = jobsQuery.data || []
 
 			// Filter by search query
 			if (searchQuery) {
@@ -135,16 +116,16 @@
 	</div>
 
 	<div class="jobs-container">
-		{#if loading}
+		{#if jobsQuery.isLoading}
 			<div class="loading-state">
 				<Icon name="loader-2" size={32} />
 				<p>Loading jobs...</p>
 			</div>
-		{:else if error}
+		{:else if jobsQuery.isError}
 			<div class="error-state">
 				<Icon name="alert-circle" size={32} />
-				<p>{error}</p>
-				<Button size="small" onclick={loadJobs}>Retry</Button>
+				<p>{jobsQuery.error?.message || 'Failed to load jobs'}</p>
+				<Button size="small" onclick={() => jobsQuery.refetch()}>Retry</Button>
 			</div>
 		{:else if Object.keys(filteredJobs).length === 0}
 			<div class="empty-state">
