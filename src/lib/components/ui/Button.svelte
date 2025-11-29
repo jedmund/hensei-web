@@ -8,47 +8,47 @@
 
 	interface Props {
 		/** Button variant style */
-		variant?: 'primary' | 'secondary' | 'ghost' | 'text' | 'destructive' | 'notice' | 'subtle'
+		variant?: 'primary' | 'secondary' | 'ghost' | 'text' | 'destructive' | 'notice' | 'subtle' | undefined
 		/** Button size */
-		size?: 'small' | 'medium' | 'large' | 'icon'
+		size?: 'small' | 'medium' | 'large' | 'icon' | undefined
 		/** Whether button is contained */
-		contained?: boolean
+		contained?: boolean | undefined
 		/** Element color theme */
-		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 		/** Use element styling (overrides variant colors) */
-		elementStyle?: boolean
+		elementStyle?: boolean | undefined
 		/** Whether button is active */
-		active?: boolean
+		active?: boolean | undefined
 		/** Save button behavior */
-		save?: boolean
+		save?: boolean | undefined
 		/** Whether saved (for save buttons) */
-		saved?: boolean
+		saved?: boolean | undefined
 		/** Full width button */
-		fullWidth?: boolean
+		fullWidth?: boolean | undefined
 		/** Icon only mode */
-		iconOnly?: boolean
+		iconOnly?: boolean | undefined
 		/** Additional CSS classes */
-		class?: string
+		class?: string | undefined
 		/** Button content */
-		children?: Snippet
+		children?: Snippet | undefined
 		/** Left accessory content */
-		leftAccessory?: Snippet
+		leftAccessory?: Snippet | undefined
 		/** Right accessory content */
-		rightAccessory?: Snippet
+		rightAccessory?: Snippet | undefined
 		/** Icon name (legacy support) */
-		icon?: string
+		icon?: string | undefined
 		/** Icon position (legacy support) */
-		iconPosition?: 'left' | 'right'
+		iconPosition?: 'left' | 'right' | undefined
 		/** Whether button is disabled */
-		disabled?: boolean
+		disabled?: boolean | undefined
 		/** Optional href to render as anchor */
-		href?: string
+		href?: string | undefined
 		/** Click handler */
-		onclick?: () => void
+		onclick?: (() => void) | undefined
 		/** Shape of the button corners */
-		shape?: 'default' | 'circular' | 'circle' | 'pill'
+		shape?: 'default' | 'circular' | 'circle' | 'pill' | undefined
 		/** Element tag override (for slots/triggers) */
-		as?: 'button' | 'a' | 'span'
+		as?: 'button' | 'a' | 'span' | undefined
 		/** Any additional HTML attributes */
 		[key: string]: any
 	}
