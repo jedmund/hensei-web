@@ -4,6 +4,11 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	// TanStack Query
+	import { createQuery } from '@tanstack/svelte-query'
+	import { entityQueries } from '$lib/api/queries/entity.queries'
+	import { withInitialData } from '$lib/query/ssr'
+
 	// Utility functions
 	import { getRarityLabel, getRarityOptions } from '$lib/utils/rarity'
 	import { getElementLabel, getElementOptions } from '$lib/utils/element'
@@ -25,8 +30,14 @@
 
 	let { data }: { data: PageData } = $props()
 
-	// Get character from server data
-	const character = $derived(data.character)
+	// Use TanStack Query with SSR initial data
+	const characterQuery = createQuery(() => ({
+		...entityQueries.character(data.character?.id ?? ''),
+		...withInitialData(data.character)
+	}))
+
+	// Get character from query
+	const character = $derived(characterQuery.data)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
 
