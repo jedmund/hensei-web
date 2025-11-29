@@ -27,6 +27,7 @@
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import { executeGridOperation, removeGridItem, updateGridItem } from '$lib/utils/gridOperations'
+	import { updateGridItemUncap } from '$lib/utils/gridStateUpdater'
 
 	interface Props {
 		party?: Party
@@ -589,40 +590,14 @@
 			_editKey?: string
 		) {
 			try {
-				const response = await gridService.updateCharacterUncap(
+				return await updateGridItemUncap(
+					'character',
+					{ gridItemId: gridCharacterId, uncapLevel, transcendenceStep },
 					party.id,
-					gridCharacterId,
-					uncapLevel,
-					transcendenceStep,
-					editKey || undefined
+					party,
+					editKey,
+					gridService
 				)
-				// The API returns {gridCharacter: {...}} with the updated item only (transformed to camelCase)
-				// We need to update just that character in the current party state
-				if (response.gridCharacter || response.grid_character) {
-					const updatedChar = response.gridCharacter || response.grid_character
-					const updatedParty = { ...party }
-					if (updatedParty.characters) {
-						const charIndex = updatedParty.characters.findIndex(
-							(c: any) => c.id === gridCharacterId
-						)
-						if (charIndex !== -1) {
-								// Preserve the character object reference but update uncap fields
-								const existingChar = updatedParty.characters[charIndex]
-								if (existingChar) {
-									updatedParty.characters[charIndex] = {
-										...existingChar,
-										id: existingChar.id,
-										position: existingChar.position,
-										character: existingChar.character,
-										uncapLevel: updatedChar.uncapLevel ?? updatedChar.uncap_level,
-										transcendenceStep: updatedChar.transcendenceStep ?? updatedChar.transcendence_step
-									}
-								}
-								return updatedParty
-							}
-					}
-				}
-				return party // Return unchanged party if update failed
 			} catch (err) {
 				console.error('Failed to update character uncap:', err)
 				throw err
@@ -635,39 +610,14 @@
 			_editKey?: string
 		) {
 			try {
-				const response = await gridService.updateWeaponUncap(
+				return await updateGridItemUncap(
+					'weapon',
+					{ gridItemId: gridWeaponId, uncapLevel, transcendenceStep },
 					party.id,
-					gridWeaponId,
-					uncapLevel,
-					transcendenceStep,
-					editKey || undefined
+					party,
+					editKey,
+					gridService
 				)
-				// The API returns {gridWeapon: {...}} with the updated item only (transformed to camelCase)
-				// We need to update just that weapon in the current party state
-				if (response.gridWeapon || response.grid_weapon) {
-					const updatedWeapon = response.gridWeapon || response.grid_weapon
-					const updatedParty = { ...party }
-					if (updatedParty.weapons) {
-						const weaponIndex = updatedParty.weapons.findIndex((w: any) => w.id === gridWeaponId)
-						if (weaponIndex !== -1) {
-								// Preserve the weapon object reference but update uncap fields
-								const existingWeapon = updatedParty.weapons[weaponIndex]
-								if (existingWeapon) {
-									updatedParty.weapons[weaponIndex] = {
-										...existingWeapon,
-										id: existingWeapon.id,
-										position: existingWeapon.position,
-										weapon: existingWeapon.weapon,
-										uncapLevel: updatedWeapon.uncapLevel ?? updatedWeapon.uncap_level,
-										transcendenceStep:
-											updatedWeapon.transcendenceStep ?? updatedWeapon.transcendence_step
-									}
-								}
-								return updatedParty
-							}
-					}
-				}
-				return party // Return unchanged party if update failed
 			} catch (err) {
 				console.error('Failed to update weapon uncap:', err)
 				throw err
@@ -680,39 +630,14 @@
 			_editKey?: string
 		) {
 			try {
-				const response = await gridService.updateSummonUncap(
+				return await updateGridItemUncap(
+					'summon',
+					{ gridItemId: gridSummonId, uncapLevel, transcendenceStep },
 					party.id,
-					gridSummonId,
-					uncapLevel,
-					transcendenceStep,
-					editKey || undefined
+					party,
+					editKey,
+					gridService
 				)
-				// The API returns {gridSummon: {...}} with the updated item only (transformed to camelCase)
-				// We need to update just that summon in the current party state
-				if (response.gridSummon || response.grid_summon) {
-					const updatedSummon = response.gridSummon || response.grid_summon
-					const updatedParty = { ...party }
-					if (updatedParty.summons) {
-						const summonIndex = updatedParty.summons.findIndex((s: any) => s.id === gridSummonId)
-						if (summonIndex !== -1) {
-								// Preserve the summon object reference but update uncap fields
-								const existingSummon = updatedParty.summons[summonIndex]
-								if (existingSummon) {
-									updatedParty.summons[summonIndex] = {
-										...existingSummon,
-										id: existingSummon.id,
-										position: existingSummon.position,
-										summon: existingSummon.summon,
-										uncapLevel: updatedSummon.uncapLevel ?? updatedSummon.uncap_level,
-										transcendenceStep:
-											updatedSummon.transcendenceStep ?? updatedSummon.transcendence_step
-									}
-								}
-								return updatedParty
-							}
-					}
-				}
-				return party // Return unchanged party if update failed
 			} catch (err) {
 				console.error('Failed to update summon uncap:', err)
 				throw err
