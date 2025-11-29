@@ -1,15 +1,16 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import type { Job, JobSkill } from '$lib/types/api/entities'
 	import type { JobSkillList } from '$lib/types/api/party'
-	import { jobAdapter } from '$lib/api/adapters/job.adapter'
-	import { createInfiniteScrollResource } from '$lib/api/adapters/resources/infiniteScroll.resource.svelte'
+	import { jobQueries } from '$lib/api/queries/job.queries'
 	import JobSkillItem from '../job/JobSkillItem.svelte'
 	import Button from '../ui/Button.svelte'
 	import Input from '../ui/Input.svelte'
 	import Select from '../ui/Select.svelte'
 	import Icon from '../Icon.svelte'
+	import { IsInViewport } from 'runed'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -41,101 +42,25 @@
 		{ value: 5, label: 'Base' }
 	]
 
-	// State
+	// State for filtering (local UI state, not server state)
 	let searchQuery = $state('')
 	let skillCategory = $state(-1) // -1 = All
 	let error = $state<string | undefined>()
-	let sentinelEl = $state<HTMLElement>()
-	let skillsResource = $state<ReturnType<typeof createInfiniteScrollResource<JobSkill>> | null>(null)
-	let lastSearchQuery = ''
-	let lastJobId: string | undefined
-	let lastCategory = -1
 
-	// Check if slot is locked
-	const slotLocked = $derived(targetSlot === 0)
-	const currentSkill = $derived(currentSkills[targetSlot as keyof JobSkillList])
-
-	const canSearch = $derived(Boolean(job) && !slotLocked)
-
-	// Manage resource creation and search updates
+	// Debounced search value for query
+	let debouncedSearchQuery = $state('')
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined
 
-	function updateSearch(forceRebuild = false) {
-		const jobId = job?.id
-		const locked = slotLocked
-		const category = skillCategory
-
-		// Clean up if no job or locked
-		if (!jobId || locked) {
-			if (skillsResource) {
-				skillsResource.destroy()
-				skillsResource = null
-			}
-			lastJobId = undefined
-			lastSearchQuery = ''
-			lastCategory = -1
-			return
-		}
-
-		// Rebuild resource if job or category changed
-		const needsRebuild = forceRebuild || jobId !== lastJobId || category !== lastCategory
-
-		if (needsRebuild) {
-			if (skillsResource) {
-				skillsResource.destroy()
-			}
-
-			// Capture current values for the closure
-			const currentQuery = searchQuery
-			const currentCategory = category
-
-			const resource = createInfiniteScrollResource<JobSkill>({
-				fetcher: async (page) => {
-					const response = await jobAdapter.searchSkills({
-						query: currentQuery,
-						jobId,
-						page,
-						...(currentCategory >= 0 ? { filters: { group: currentCategory } } : {})
-					})
-					return response
-				},
-				threshold: 200,
-				debounceMs: 200
-			})
-
-			skillsResource = resource
-			lastJobId = jobId
-			lastSearchQuery = searchQuery
-			lastCategory = category
-			resource.load()
-		}
-		// Reload if only search query changed
-		else if (searchQuery !== lastSearchQuery && skillsResource) {
-			lastSearchQuery = searchQuery
-			// Need to rebuild to capture new query in closure
-			updateSearch(true)
-		}
-	}
-
-	// Watch for job and category changes
+	// Debounce search query changes
 	$effect(() => {
-		job // Track job
-		skillCategory // Track category
-		updateSearch()
-	})
-
-	// Watch for search query changes with debounce
-	$effect(() => {
-		const query = searchQuery // Track searchQuery
+		const query = searchQuery
 
 		if (debounceTimer) {
 			clearTimeout(debounceTimer)
 		}
 
 		debounceTimer = setTimeout(() => {
-			if (query !== lastSearchQuery) {
-				updateSearch()
-			}
+			debouncedSearchQuery = query
 		}, 300)
 
 		return () => {
@@ -145,15 +70,59 @@
 		}
 	})
 
-	// Bind sentinel when ready
-	$effect(() => {
-		const sentinel = sentinelEl
-		const resource = skillsResource
+	// Check if slot is locked
+	const slotLocked = $derived(targetSlot === 0)
+	const currentSkill = $derived(currentSkills[targetSlot as keyof JobSkillList])
+	const canSearch = $derived(Boolean(job) && !slotLocked)
 
-		if (sentinel && resource) {
-			resource.bindSentinel(sentinel)
+	// TanStack Query v6: Use createInfiniteQuery with thunk pattern for reactivity
+	// Query automatically updates when job, debouncedSearchQuery, or skillCategory changes
+	const skillsQuery = createInfiniteQuery(() => {
+		const jobId = job?.id
+		const query = debouncedSearchQuery
+		const category = skillCategory
+
+		// Build filter params
+		const filters = category >= 0 ? { group: category } : undefined
+
+		return {
+			...jobQueries.skills(jobId ?? '', {
+				query: query || undefined,
+				filters
+			}),
+			// Disable query when no job or slot is locked
+			enabled: !!jobId && !slotLocked
 		}
 	})
+
+	// Flatten all pages into a single items array
+	const skills = $derived(skillsQuery.data?.pages.flatMap((page) => page.results) ?? [])
+
+	// Sentinel element for intersection observation
+	let sentinelEl = $state<HTMLElement>()
+
+	// Use runed's IsInViewport for viewport detection
+	const inViewport = new IsInViewport(() => sentinelEl, {
+		rootMargin: '200px'
+	})
+
+	// Auto-fetch next page when sentinel is visible
+	$effect(() => {
+		if (
+			inViewport.current &&
+			skillsQuery.hasNextPage &&
+			!skillsQuery.isFetchingNextPage &&
+			!skillsQuery.isLoading
+		) {
+			skillsQuery.fetchNextPage()
+		}
+	})
+
+	// Computed states
+	const isEmpty = $derived(skills.length === 0 && !skillsQuery.isLoading && !skillsQuery.isError)
+	const showSentinel = $derived(
+		!skillsQuery.isLoading && skillsQuery.hasNextPage && skills.length > 0
+	)
 
 	function handleSelectSkill(skill: JobSkill) {
 		// Clear any previous errors
@@ -210,7 +179,7 @@
 		<div class="error-banner">
 			<Icon name="alert-circle" size={16} />
 			<p>{error}</p>
-			<button class="close-error" on:click={() => error = undefined}>
+			<button class="close-error" onclick={() => error = undefined}>
 				<Icon name="x" size={16} />
 			</button>
 		</div>
@@ -243,44 +212,44 @@
 				<Icon name="briefcase" size={32} />
 				<p>Select a job first</p>
 			</div>
-	{:else if slotLocked}
-		<div class="empty-state">
-			<Icon name="arrow-left" size={32} />
-			<p>This slot cannot be changed</p>
-		</div>
-	{:else if skillsResource?.loading}
+		{:else if slotLocked}
+			<div class="empty-state">
+				<Icon name="arrow-left" size={32} />
+				<p>This slot cannot be changed</p>
+			</div>
+		{:else if skillsQuery.isLoading}
 			<div class="loading-state">
 				<Icon name="loader-2" size={32} />
 				<p>Loading skills...</p>
 			</div>
-		{:else if skillsResource?.error}
+		{:else if skillsQuery.isError}
 			<div class="error-state">
 				<Icon name="alert-circle" size={32} />
-				<p>{skillsResource.error.message || 'Failed to load skills'}</p>
-				<Button size="small" on:click={() => skillsResource?.retry()}>Retry</Button>
+				<p>{skillsQuery.error?.message || 'Failed to load skills'}</p>
+				<Button size="small" onclick={() => skillsQuery.refetch()}>Retry</Button>
 			</div>
 		{:else}
 			<div class="skills-list">
-				{#each skillsResource?.items || [] as skill (skill.id)}
+				{#each skills as skill (skill.id)}
 					<JobSkillItem
 						{skill}
 						onClick={() => handleSelectSkill(skill)}
 					/>
 				{/each}
 
-				{#if skillsResource?.isEmpty}
+				{#if isEmpty}
 					<div class="empty-state">
 						<Icon name="search-x" size={32} />
 						<p>No skills found</p>
 						{#if searchQuery || skillCategory >= 0}
 							<div class="clear-filters">
 								{#if searchQuery}
-									<Button size="small" variant="ghost" on:click={() => searchQuery = ''}>
+									<Button size="small" variant="ghost" onclick={() => searchQuery = ''}>
 										Clear search
 									</Button>
 								{/if}
 								{#if skillCategory >= 0}
-									<Button size="small" variant="ghost" on:click={() => skillCategory = -1}>
+									<Button size="small" variant="ghost" onclick={() => skillCategory = -1}>
 										Clear filter
 									</Button>
 								{/if}
@@ -289,11 +258,11 @@
 					</div>
 				{/if}
 
-				{#if skillsResource?.hasMore && !skillsResource?.loadingMore}
+				{#if showSentinel}
 					<div class="load-more-sentinel" bind:this={sentinelEl}></div>
 				{/if}
 
-				{#if skillsResource?.loadingMore}
+				{#if skillsQuery.isFetchingNextPage}
 					<div class="loading-more">
 						<Icon name="loader-2" size={20} />
 						<span>Loading more skills...</span>
