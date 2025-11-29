@@ -42,13 +42,19 @@ export interface DragOperation {
 	retryCount: number
 }
 
+export interface PendingDragData {
+	item: GridItem
+	source: Position
+	type: GridItemType
+}
+
 export interface TouchState {
 	touchStartPos: { x: number; y: number } | null
 	touchStartTime: number
 	longPressTimer: number | null
 	touchThreshold: number
 	longPressDuration: number
-	currentTouch: Touch | null
+	currentTouch: PendingDragData | null
 }
 
 export interface DragDropState {
