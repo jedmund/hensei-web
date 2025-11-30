@@ -20,6 +20,7 @@ import {
 import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
 import { getEditKey } from '$lib/utils/editKeys'
+import { invalidateParty } from '$lib/query/cacheHelpers'
 
 // ============================================================================
 // Mutation Factory
@@ -85,7 +86,7 @@ export function useCreateGridWeapon() {
 		),
 		onSuccess: (_data, params) => {
 			// Invalidate the party to refetch with new weapon
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.partyId) })
+			invalidateParty(queryClient, params.partyId)
 		}
 	}))
 }
@@ -281,7 +282,7 @@ export function useCreateGridCharacter() {
 			gridAdapter.createCharacter(params, headers)
 		),
 		onSuccess: (_data, params) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.partyId) })
+			invalidateParty(queryClient, params.partyId)
 		}
 	}))
 }
@@ -460,7 +461,7 @@ export function useCreateGridSummon() {
 			gridAdapter.createSummon(params, headers)
 		),
 		onSuccess: (_data, params) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.partyId) })
+			invalidateParty(queryClient, params.partyId)
 		}
 	}))
 }

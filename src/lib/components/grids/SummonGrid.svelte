@@ -24,7 +24,7 @@
 	let friend = $derived(summons.find((s) => s.friend || s.position === 6))
 
 	// Create array for sub-summons (positions 0-3)
-	let subSummonSlots = $derived(() => {
+	let subSummonSlots = $derived.by(() => {
 		const slots: (GridSummon | undefined)[] = Array(4).fill(undefined)
 		summons.forEach(summon => {
 			if (summon.position >= 0 && summon.position < 4) {
@@ -45,7 +45,7 @@
 		<section>
 			<div class="label">Summons</div>
 			<ul class="summons">
-				{#each subSummonSlots() as summon, i}
+				{#each subSummonSlots as summon, i}
 					<li
 						aria-label={`Summon slot ${i}`}
 						class:Empty={!summon}

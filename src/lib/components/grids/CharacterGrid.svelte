@@ -31,7 +31,7 @@
 	const dragContext = getContext<DragDropContext | undefined>('drag-drop')
 
 	// Create array with proper empty slots
-	let characterSlots = $derived(() => {
+	let characterSlots = $derived.by(() => {
 		const slots: (GridCharacter | undefined)[] = Array(5).fill(undefined)
 		characters.forEach(char => {
 			if (char.position >= 0 && char.position < 5) {
@@ -47,7 +47,7 @@
 		class="characters"
 		aria-label="Character Grid"
 	>
-		{#each characterSlots() as character, i}
+		{#each characterSlots as character, i}
 			<li
 				aria-label={`Character slot ${i}`}
 				class:main-character={i === 0}

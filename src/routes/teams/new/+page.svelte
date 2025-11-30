@@ -1,6 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import type { PageData } from './$types'
   import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
   import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
   import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
@@ -22,11 +23,17 @@
   } from '$lib/api/mutations/grid.mutations'
   import { Dialog } from 'bits-ui'
   import { replaceState } from '$app/navigation'
-  import { page } from '$app/stores'
 
-  // Get authentication status from page store
-  const isAuthenticated = $derived($page.data?.isAuthenticated ?? false)
-  const currentUser = $derived($page.data?.currentUser)
+  // Props
+  interface Props {
+    data: PageData
+  }
+
+  let { data }: Props = $props()
+
+  // Get authentication status from data prop (no store subscription!)
+  let isAuthenticated = $derived(data.isAuthenticated)
+  let currentUser = $derived(data.currentUser)
 
   // Local, client-only state for tab selection (Svelte 5 runes)
   let activeTab = $state<GridType>(GridType.Weapon)
