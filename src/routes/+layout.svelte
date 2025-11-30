@@ -8,7 +8,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
 	import { beforeNavigate, afterNavigate } from '$app/navigation'
-	import { dev } from '$app/environment'
+	import { browser, dev } from '$app/environment'
 	import { QueryClientProvider } from '@tanstack/svelte-query'
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 	import type { LayoutData } from './$types'
