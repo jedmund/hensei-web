@@ -21,6 +21,15 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		})
 	}
 
+	// Debug logging for Navigation props
+	console.log('[+layout.server] Navigation props:', {
+		hasAccount: !!account,
+		account,
+		hasCurrentUser: !!currentUser,
+		currentUser,
+		isAuthenticated
+	})
+
 	return {
 		isAuthenticated,
 		account,
