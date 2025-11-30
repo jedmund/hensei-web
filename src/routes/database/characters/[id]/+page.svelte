@@ -212,6 +212,13 @@
 
 	const uncapLevel = $derived(getCharacterMaxUncapLevel({ special, uncap: { flb, ulb, transcendence } }))
 	const transcendenceStage = $derived(transcendence ? 5 : 0)
+
+	// Get element name for checkbox theming
+	const elementName = $derived.by(() => {
+		const el = editMode ? editData.element : character?.element
+		const label = getElementLabel(el)
+		return label !== '—' && label !== 'Null' ? label.toLowerCase() as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' : undefined
+	})
 </script>
 
 <div>
@@ -278,19 +285,21 @@
 				{/if}
 
 				{#if editMode}
-					<DetailItem label="FLB" bind:value={editData.flb} editable={true} type="checkbox" />
-					<DetailItem label="ULB" bind:value={editData.ulb} editable={true} type="checkbox" />
+					<DetailItem label="FLB" bind:value={editData.flb} editable={true} type="checkbox" element={elementName} />
+					<DetailItem label="ULB" bind:value={editData.ulb} editable={true} type="checkbox" element={elementName} />
 					<DetailItem
 						label="Transcendence"
 						bind:value={editData.transcendence}
 						editable={true}
 						type="checkbox"
+						element={elementName}
 					/>
 					<DetailItem
 						label="Special"
 						bind:value={editData.special}
 						editable={true}
 						type="checkbox"
+						element={elementName}
 					/>
 				{/if}
 

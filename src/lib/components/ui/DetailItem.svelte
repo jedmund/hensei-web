@@ -4,6 +4,7 @@
 	import type { Snippet } from 'svelte'
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
+	import Checkbox from './checkbox/Checkbox.svelte'
 
 	interface SelectOption {
 		value: string | number
@@ -18,7 +19,8 @@
 		editable = false,
 		type = 'text',
 		options,
-		placeholder
+		placeholder,
+		element
 	}: {
 		label: string
 		value?: string | number | boolean | null | undefined
@@ -27,6 +29,7 @@
 		type?: 'text' | 'number' | 'select' | 'checkbox'
 		options?: SelectOption[]
 		placeholder?: string
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	} = $props()
 
 	// For checkbox type, convert value to boolean
@@ -46,10 +49,7 @@
 			{#if type === 'select' && options}
 				<Select bind:value={value as string | number | undefined} {options} {placeholder} size="medium" contained />
 			{:else if type === 'checkbox'}
-				<label class="checkbox-wrapper">
-					<input type="checkbox" bind:checked={checkboxValue} class="checkbox" />
-					<span class="checkbox-label">{checkboxValue ? 'Yes' : 'No'}</span>
-				</label>
+				<Checkbox bind:checked={checkboxValue} contained {element} />
 			{:else if type === 'number'}
 				<Input
 					bind:value
@@ -131,22 +131,5 @@
 			}
 		}
 
-		.checkbox-wrapper {
-			display: flex;
-			align-items: center;
-			gap: spacing.$unit;
-			cursor: pointer;
-
-			.checkbox {
-				width: spacing.$unit-2x;
-				height: spacing.$unit-2x;
-				cursor: pointer;
-			}
-
-			.checkbox-label {
-				color: var(--text-primary);
-				user-select: none;
-			}
-		}
 	}
 </style>

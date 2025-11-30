@@ -164,6 +164,37 @@
 		--cb-checked-fg: white;
 	}
 
+	// Element colors when bound (higher specificity to override .checkbox.bound)
+	:global(.checkbox.bound.wind[data-state='checked']),
+	:global(.checkbox.bound.wind[data-state='indeterminate']),
+	:global(.checkbox.bound.fire[data-state='checked']),
+	:global(.checkbox.bound.fire[data-state='indeterminate']),
+	:global(.checkbox.bound.water[data-state='checked']),
+	:global(.checkbox.bound.water[data-state='indeterminate']),
+	:global(.checkbox.bound.earth[data-state='checked']),
+	:global(.checkbox.bound.earth[data-state='indeterminate']),
+	:global(.checkbox.bound.dark[data-state='checked']),
+	:global(.checkbox.bound.dark[data-state='indeterminate']),
+	:global(.checkbox.bound.light[data-state='checked']),
+	:global(.checkbox.bound.light[data-state='indeterminate']) {
+		background-color: var(--cb-checked-bg);
+	}
+
+	:global(.checkbox.bound.wind[data-state='checked']:hover:not(:disabled)),
+	:global(.checkbox.bound.wind[data-state='indeterminate']:hover:not(:disabled)),
+	:global(.checkbox.bound.fire[data-state='checked']:hover:not(:disabled)),
+	:global(.checkbox.bound.fire[data-state='indeterminate']:hover:not(:disabled)),
+	:global(.checkbox.bound.water[data-state='checked']:hover:not(:disabled)),
+	:global(.checkbox.bound.water[data-state='indeterminate']:hover:not(:disabled)),
+	:global(.checkbox.bound.earth[data-state='checked']:hover:not(:disabled)),
+	:global(.checkbox.bound.earth[data-state='indeterminate']:hover:not(:disabled)),
+	:global(.checkbox.bound.dark[data-state='checked']:hover:not(:disabled)),
+	:global(.checkbox.bound.dark[data-state='indeterminate']:hover:not(:disabled)),
+	:global(.checkbox.bound.light[data-state='checked']:hover:not(:disabled)),
+	:global(.checkbox.bound.light[data-state='indeterminate']:hover:not(:disabled)) {
+		background-color: var(--cb-checked-bg-hover);
+	}
+
 	// Size variations
 	:global(.checkbox.small) {
 		--cb-icon-size: #{calc($unit * 1.5)};
