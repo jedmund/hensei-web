@@ -128,12 +128,11 @@
 		open = false
 		onOpenChange?.(false)
 	}
-
 </script>
 
 <Dialog
 	bind:open
-	{...(onOpenChange ? { onOpenChange } : {})}
+	{...onOpenChange ? { onOpenChange } : {}}
 	title="@{username}"
 	description="Account Settings"
 >
@@ -160,6 +159,7 @@
 						label="Avatar"
 						placeholder="Select an avatar"
 						fullWidth
+						contained
 					/>
 				</div>
 
@@ -170,6 +170,7 @@
 					label="Gender"
 					placeholder="Select gender"
 					fullWidth
+					contained
 				/>
 
 				<!-- Language Selection -->
@@ -179,6 +180,7 @@
 					label="Language"
 					placeholder="Select language"
 					fullWidth
+					contained
 				/>
 
 				<!-- Theme Selection -->
@@ -188,6 +190,7 @@
 					label="Theme"
 					placeholder="Select theme"
 					fullWidth
+					contained
 				/>
 
 				<!-- Admin Mode (only for admins) -->
@@ -202,11 +205,11 @@
 			</div>
 
 			<div class="form-actions">
-					<Button variant="ghost" onclick={handleClose} disabled={saving}>Cancel</Button>
-					<Button type="submit" variant="primary" disabled={saving}>
-						{saving ? 'Saving...' : 'Save Changes'}
-					</Button>
-				</div>
+				<Button variant="ghost" onclick={handleClose} disabled={saving}>Cancel</Button>
+				<Button type="submit" variant="primary" disabled={saving}>
+					{saving ? 'Saving...' : 'Save Changes'}
+				</Button>
+			</div>
 		</form>
 	{/snippet}
 
@@ -304,5 +307,11 @@
 		justify-content: flex-end;
 		padding-top: spacing.$unit-2x;
 		border-top: 1px solid var(--border-color);
+	}
+
+	:global(fieldset) {
+		border: none;
+		padding: 0;
+		margin: 0;
 	}
 </style>
