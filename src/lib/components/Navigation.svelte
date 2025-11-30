@@ -12,6 +12,7 @@
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import UserSettingsModal from './UserSettingsModal.svelte'
+	import { authStore } from '$lib/stores/auth.store'
 
 	// Props from layout data
 	const {
@@ -29,7 +30,8 @@
 	}>()
 
 	const username = $derived(account?.username ?? '')
-	const isAuth = $derived(Boolean(isAuthProp))
+	// Use reactive authStore instead of static server prop for real-time auth state
+	const isAuth = $derived($authStore.isAuthenticated)
 	const role = $derived(account?.role ?? null)
 	// Element from UserCookie is already a string like "fire", "water", etc.
 	const userElement = $derived(
