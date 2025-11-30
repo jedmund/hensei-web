@@ -7,6 +7,7 @@
 	// TanStack Query
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
+	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Utility functions
@@ -43,6 +44,16 @@
 
 	// Edit mode state
 	let editMode = $state(false)
+
+	// Query for related characters (same character_id)
+	const relatedQuery = createQuery(() => ({
+		queryKey: ['characters', 'related', character?.id],
+		queryFn: async () => {
+			if (!character?.id) return []
+			return entityAdapter.getRelatedCharacters(character.id)
+		},
+		enabled: !!character?.characterId && !editMode
+	}))
 	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
 	let saveSuccess = $state(false)
@@ -51,6 +62,7 @@
 	let editData = $state({
 		name: character?.name || '',
 		granblueId: character?.granblueId || '',
+		characterId: character?.characterId ?? (null as number | null),
 		rarity: character?.rarity || 1,
 		element: character?.element || 0,
 		race1: character?.race?.[0] ?? null,
@@ -76,6 +88,7 @@
 			editData = {
 				name: character.name || '',
 				granblueId: character.granblueId || '',
+				characterId: character.characterId ?? null,
 				rarity: character.rarity || 1,
 				element: character.element || 0,
 				race1: character.race?.[0] ?? null,
@@ -114,6 +127,7 @@
 			editData = {
 				name: character.name || '',
 				granblueId: character.granblueId || '',
+				characterId: character.characterId ?? null,
 				rarity: character.rarity || 1,
 				element: character.element || 0,
 				race1: character.race?.[0] ?? null,
@@ -145,9 +159,10 @@
 			const payload = {
 				name: editData.name,
 				granblue_id: editData.granblueId,
+				character_id: editData.characterId,
 				rarity: editData.rarity,
 				element: editData.element,
-				race: [editData.race1, editData.race2].filter(r => r !== null && r !== undefined),
+				race: [editData.race1, editData.race2].filter((r) => r !== null && r !== undefined),
 				gender: editData.gender,
 				proficiency: [editData.proficiency1, editData.proficiency2],
 				hp: {
@@ -210,14 +225,18 @@
 	const transcendence = $derived(uncap.transcendence ?? false)
 	const special = $derived(editMode ? editData.special : (character?.special ?? false))
 
-	const uncapLevel = $derived(getCharacterMaxUncapLevel({ special, uncap: { flb, ulb, transcendence } }))
+	const uncapLevel = $derived(
+		getCharacterMaxUncapLevel({ special, uncap: { flb, ulb, transcendence } })
+	)
 	const transcendenceStage = $derived(transcendence ? 5 : 0)
 
 	// Get element name for checkbox theming
 	const elementName = $derived.by(() => {
 		const el = editMode ? editData.element : character?.element
 		const label = getElementLabel(el)
-		return label !== '—' && label !== 'Null' ? label.toLowerCase() as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' : undefined
+		return label !== '—' && label !== 'Null'
+			? (label.toLowerCase() as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light')
+			: undefined
 	})
 </script>
 
@@ -248,179 +267,223 @@
 				</div>
 			{/if}
 
-			<DetailsContainer title="Metadata">
-				{#if editMode}
-					<DetailItem
-						label="Rarity"
-						bind:value={editData.rarity}
-						editable={true}
-						type="select"
-						options={rarityOptions}
-					/>
-					<DetailItem
-						label="Granblue ID"
-						bind:value={editData.granblueId}
-						editable={true}
-						type="text"
-					/>
-				{:else}
-					<DetailItem label="Rarity" value={getRarityLabel(character.rarity)} />
-					<DetailItem label="Granblue ID" value={character.granblueId} />
-				{/if}
-			</DetailsContainer>
-			<DetailsContainer title="Details">
-				{#if character.uncap}
-					<DetailItem label="Uncap">
-						<UncapIndicator
-							type="character"
-							{uncapLevel}
-							{transcendenceStage}
-							{flb}
-							{ulb}
-							{transcendence}
-							{special}
-							editable={false}
+			<section class="details">
+				<DetailsContainer title="Metadata">
+					{#if editMode}
+						<DetailItem
+							label="Rarity"
+							bind:value={editData.rarity}
+							editable={true}
+							type="select"
+							options={rarityOptions}
 						/>
-					</DetailItem>
-				{/if}
-
-				{#if editMode}
-					<DetailItem label="FLB" bind:value={editData.flb} editable={true} type="checkbox" element={elementName} />
-					<DetailItem label="ULB" bind:value={editData.ulb} editable={true} type="checkbox" element={elementName} />
-					<DetailItem
-						label="Transcendence"
-						bind:value={editData.transcendence}
-						editable={true}
-						type="checkbox"
-						element={elementName}
-					/>
-					<DetailItem
-						label="Special"
-						bind:value={editData.special}
-						editable={true}
-						type="checkbox"
-						element={elementName}
-					/>
-				{/if}
-
-				{#if editMode}
-					<DetailItem
-						label="Element"
-						bind:value={editData.element}
-						editable={true}
-						type="select"
-						options={elementOptions}
-					/>
-					<DetailItem
-						label="Race 1"
-						bind:value={editData.race1}
-						editable={true}
-						type="select"
-						options={raceOptions}
-					/>
-					<DetailItem
-						label="Race 2"
-						bind:value={editData.race2}
-						editable={true}
-						type="select"
-						options={raceOptions}
-					/>
-					<DetailItem
-						label="Gender"
-						bind:value={editData.gender}
-						editable={true}
-						type="select"
-						options={genderOptions}
-					/>
-					<DetailItem
-						label="Proficiency 1"
-						bind:value={editData.proficiency1}
-						editable={true}
-						type="select"
-						options={proficiencyOptions}
-					/>
-					<DetailItem
-						label="Proficiency 2"
-						bind:value={editData.proficiency2}
-						editable={true}
-						type="select"
-						options={proficiencyOptions}
-					/>
-				{:else}
-					<DetailItem label="Element" value={getElementLabel(character.element)} />
-					<DetailItem label="Race 1" value={getRaceLabel(character.race?.[0])} />
-					{#if character.race?.[1]}
-						<DetailItem label="Race 2" value={getRaceLabel(character.race?.[1])} />
+						<DetailItem
+							label="Granblue ID"
+							bind:value={editData.granblueId}
+							editable={true}
+							type="text"
+						/>
+						<DetailItem
+							label="Character ID"
+							bind:value={editData.characterId}
+							editable={true}
+							type="number"
+						/>
+					{:else}
+						<DetailItem label="Rarity" value={getRarityLabel(character.rarity)} />
+						<DetailItem label="Granblue ID" value={character.granblueId} />
 					{/if}
-					<DetailItem label="Gender" value={getGenderLabel(character.gender)} />
-						<DetailItem label="Proficiency 1" value={getProficiencyLabel(character.proficiency?.[0] ?? 0)} />
-						<DetailItem label="Proficiency 2" value={getProficiencyLabel(character.proficiency?.[1] ?? 0)} />
-				{/if}
-			</DetailsContainer>
+				</DetailsContainer>
 
-			<DetailsContainer title="HP Stats">
-				{#if editMode}
-					<DetailItem
-						label="Base HP"
-						bind:value={editData.minHp}
-						editable={true}
-						type="number"
-						placeholder="0"
-					/>
-					<DetailItem
-						label="Max HP"
-						bind:value={editData.maxHp}
-						editable={true}
-						type="number"
-						placeholder="0"
-					/>
-					<DetailItem
-						label="Max HP (FLB)"
-						bind:value={editData.maxHpFlb}
-						editable={true}
-						type="number"
-						placeholder="0"
-					/>
-				{:else}
-					<DetailItem label="Base HP" value={character.hp?.minHp} />
-					<DetailItem label="Max HP" value={character.hp?.maxHp} />
-					{#if flb}
-						<DetailItem label="Max HP (FLB)" value={character.hp?.maxHpFlb} />
+				<DetailsContainer title="Details">
+					{#if character.uncap}
+						<DetailItem label="Uncap">
+							<UncapIndicator
+								type="character"
+								{uncapLevel}
+								{transcendenceStage}
+								{flb}
+								{ulb}
+								{transcendence}
+								{special}
+								editable={false}
+							/>
+						</DetailItem>
 					{/if}
-				{/if}
-			</DetailsContainer>
 
-			<DetailsContainer title="Attack Stats">
-				{#if editMode}
-					<DetailItem
-						label="Base Attack"
-						bind:value={editData.minAtk}
-						editable={true}
-						type="number"
-						placeholder="0"
-					/>
-					<DetailItem
-						label="Max Attack"
-						bind:value={editData.maxAtk}
-						editable={true}
-						type="number"
-						placeholder="0"
-					/>
-					<DetailItem
-						label="Max Attack (FLB)"
-						bind:value={editData.maxAtkFlb}
-						editable={true}
-						type="number"
-						placeholder="0"
-					/>
-				{:else}
-					<DetailItem label="Base Attack" value={character.atk?.minAtk} />
-					<DetailItem label="Max Attack" value={character.atk?.maxAtk} />
-					{#if flb}
-						<DetailItem label="Max Attack (FLB)" value={character.atk?.maxAtkFlb} />
+					{#if editMode}
+						<DetailItem
+							label="FLB"
+							bind:value={editData.flb}
+							editable={true}
+							type="checkbox"
+							element={elementName}
+						/>
+						<DetailItem
+							label="ULB"
+							bind:value={editData.ulb}
+							editable={true}
+							type="checkbox"
+							element={elementName}
+						/>
+						<DetailItem
+							label="Transcendence"
+							bind:value={editData.transcendence}
+							editable={true}
+							type="checkbox"
+							element={elementName}
+						/>
+						<DetailItem
+							label="Special"
+							bind:value={editData.special}
+							editable={true}
+							type="checkbox"
+							element={elementName}
+						/>
 					{/if}
+
+					{#if editMode}
+						<DetailItem
+							label="Element"
+							bind:value={editData.element}
+							editable={true}
+							type="select"
+							options={elementOptions}
+						/>
+						<DetailItem
+							label="Race 1"
+							bind:value={editData.race1}
+							editable={true}
+							type="select"
+							options={raceOptions}
+						/>
+						<DetailItem
+							label="Race 2"
+							bind:value={editData.race2}
+							editable={true}
+							type="select"
+							options={raceOptions}
+						/>
+						<DetailItem
+							label="Gender"
+							bind:value={editData.gender}
+							editable={true}
+							type="select"
+							options={genderOptions}
+						/>
+						<DetailItem
+							label="Proficiency 1"
+							bind:value={editData.proficiency1}
+							editable={true}
+							type="select"
+							options={proficiencyOptions}
+						/>
+						<DetailItem
+							label="Proficiency 2"
+							bind:value={editData.proficiency2}
+							editable={true}
+							type="select"
+							options={proficiencyOptions}
+						/>
+					{:else}
+						<DetailItem label="Element" value={getElementLabel(character.element)} />
+						<DetailItem label="Race 1" value={getRaceLabel(character.race?.[0])} />
+						{#if character.race?.[1]}
+							<DetailItem label="Race 2" value={getRaceLabel(character.race?.[1])} />
+						{/if}
+						<DetailItem label="Gender" value={getGenderLabel(character.gender)} />
+						<DetailItem
+							label="Proficiency 1"
+							value={getProficiencyLabel(character.proficiency?.[0] ?? 0)}
+						/>
+						<DetailItem
+							label="Proficiency 2"
+							value={getProficiencyLabel(character.proficiency?.[1] ?? 0)}
+						/>
+					{/if}
+				</DetailsContainer>
+
+				<DetailsContainer title="HP Stats">
+					{#if editMode}
+						<DetailItem
+							label="Base HP"
+							bind:value={editData.minHp}
+							editable={true}
+							type="number"
+							placeholder="0"
+						/>
+						<DetailItem
+							label="Max HP"
+							bind:value={editData.maxHp}
+							editable={true}
+							type="number"
+							placeholder="0"
+						/>
+						<DetailItem
+							label="Max HP (FLB)"
+							bind:value={editData.maxHpFlb}
+							editable={true}
+							type="number"
+							placeholder="0"
+						/>
+					{:else}
+						<DetailItem label="Base HP" value={character.hp?.minHp} />
+						<DetailItem label="Max HP" value={character.hp?.maxHp} />
+						{#if flb}
+							<DetailItem label="Max HP (FLB)" value={character.hp?.maxHpFlb} />
+						{/if}
+					{/if}
+				</DetailsContainer>
+
+				<DetailsContainer title="Attack Stats">
+					{#if editMode}
+						<DetailItem
+							label="Base Attack"
+							bind:value={editData.minAtk}
+							editable={true}
+							type="number"
+							placeholder="0"
+						/>
+						<DetailItem
+							label="Max Attack"
+							bind:value={editData.maxAtk}
+							editable={true}
+							type="number"
+							placeholder="0"
+						/>
+						<DetailItem
+							label="Max Attack (FLB)"
+							bind:value={editData.maxAtkFlb}
+							editable={true}
+							type="number"
+							placeholder="0"
+						/>
+					{:else}
+						<DetailItem label="Base Attack" value={character.atk?.minAtk} />
+						<DetailItem label="Max Attack" value={character.atk?.maxAtk} />
+						{#if flb}
+							<DetailItem label="Max Attack (FLB)" value={character.atk?.maxAtkFlb} />
+						{/if}
+					{/if}
+				</DetailsContainer>
+
+				{#if !editMode && relatedQuery.data?.length}
+					<DetailsContainer title="Related Units">
+						<div class="related-units">
+							{#each relatedQuery.data as related}
+								<a href="/database/characters/{related.id}" class="related-unit">
+									<img
+										src={getCharacterImage(related.granblueId, 'grid', '01')}
+										alt={related.name.en}
+										class="related-image"
+									/>
+									<span class="related-name">{related.name.en}</span>
+								</a>
+							{/each}
+						</div>
+					</DetailsContainer>
 				{/if}
-			</DetailsContainer>
+			</section>
 		</div>
 	{:else}
 		<div class="not-found">
@@ -461,9 +524,13 @@
 		background: white;
 		border-radius: layout.$card-corner;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-		overflow: visible; // Changed from hidden to allow sticky header
-		margin-top: spacing.$unit-2x;
+		overflow: visible;
 		position: relative;
+
+		.details {
+			display: flex;
+			flex-direction: column;
+		}
 	}
 
 	.edit-controls {
@@ -493,5 +560,37 @@
 		to {
 			opacity: 1;
 		}
+	}
+
+	.related-units {
+		display: flex;
+		flex-wrap: wrap;
+		gap: spacing.$unit-2x;
+		padding: spacing.$unit-2x;
+	}
+
+	.related-unit {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-decoration: none;
+		color: colors.$grey-30;
+
+		&:hover .related-image {
+			transform: scale(1.05);
+		}
+	}
+
+	.related-image {
+		width: 128px;
+		height: auto;
+		border-radius: layout.$item-corner;
+		transition: transform 0.2s ease;
+	}
+
+	.related-name {
+		margin-top: spacing.$unit;
+		font-size: typography.$font-small;
+		text-align: center;
 	}
 </style>

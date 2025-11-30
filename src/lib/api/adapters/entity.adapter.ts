@@ -73,6 +73,7 @@ export interface Weapon {
 export interface Character {
 	id: string
 	granblueId: string
+	characterId?: number
 	name: {
 		en?: string
 		ja?: string
@@ -181,6 +182,16 @@ export class EntityAdapter extends BaseAdapter {
 	 */
 	async getCharacter(id: string): Promise<Character> {
 		return this.request<Character>(`/characters/${id}`, {
+			method: 'GET',
+			cacheTTL: 600000 // Cache for 10 minutes
+		})
+	}
+
+	/**
+	 * Gets related characters (same character_id) for a given character
+	 */
+	async getRelatedCharacters(id: string): Promise<Character[]> {
+		return this.request<Character[]>(`/characters/${id}/related`, {
 			method: 'GET',
 			cacheTTL: 600000 // Cache for 10 minutes
 		})

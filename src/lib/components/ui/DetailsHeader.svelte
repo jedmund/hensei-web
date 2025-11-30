@@ -39,18 +39,20 @@
 	const granblueId = $derived(item?.granblue_id)
 
 	// Get element name for button styling
-	const elementName = $derived((() => {
-		const elementMap: Record<number, string | undefined> = {
-			0: undefined, // Null element
-			1: 'wind',
-			2: 'fire',
-			3: 'water',
-			4: 'earth',
-			5: 'dark',
-			6: 'light'
-		}
-		return elementMap[element] || undefined
-	})())
+	const elementName = $derived(
+		(() => {
+			const elementMap: Record<number, string | undefined> = {
+				0: undefined, // Null element
+				1: 'wind',
+				2: 'fire',
+				3: 'water',
+				4: 'earth',
+				5: 'dark',
+				6: 'light'
+			}
+			return elementMap[element] || undefined
+		})()
+	)
 
 	// Helper function to get display name
 	function getDisplayName(nameObj: string | { en?: string; ja?: string }): string {
@@ -60,7 +62,7 @@
 	}
 </script>
 
-<section class="container">
+<header class="container">
 	<div class="left">
 		<div class="image">
 			<img
@@ -109,7 +111,14 @@
 				<Button
 					variant="primary"
 					size="medium"
-					element={elementName as "fire" | "water" | "earth" | "wind" | "light" | "dark" | undefined}
+					element={elementName as
+						| 'fire'
+						| 'water'
+						| 'earth'
+						| 'wind'
+						| 'light'
+						| 'dark'
+						| undefined}
 					onclick={onSave}
 					disabled={isSaving}
 				>
@@ -120,7 +129,7 @@
 			{/if}
 		</div>
 	{/if}
-</section>
+</header>
 
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
@@ -135,9 +144,9 @@
 		gap: spacing.$unit * 2;
 		padding: spacing.$unit * 2;
 		border-bottom: 1px solid #e5e5e5;
-		position: sticky;
-		top: 0;
-		z-index: 10;
+		// position: sticky;
+		// top: 0;
+		// z-index: 10;
 		background: white;
 		border-top-left-radius: layout.$card-corner;
 		border-top-right-radius: layout.$card-corner;
