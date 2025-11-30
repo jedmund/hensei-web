@@ -80,6 +80,15 @@
 	let party = $state<Party>(
 		initial?.id && initial?.id !== 'new' && Array.isArray(initial?.weapons) ? initial : defaultParty
 	)
+
+	// Sync local party state with prop changes (for query refetches)
+	$effect(() => {
+		// Only update if we have valid party data from props
+		if (initial && initial.id && initial.id !== 'new' && Array.isArray(initial.weapons)) {
+			party = initial
+		}
+	})
+
 	let activeTab = $state<GridType>(GridType.Weapon)
 	let loading = $state(false)
 	let error = $state<string | null>(null)
