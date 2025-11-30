@@ -9,6 +9,7 @@
   import { getSummonImage } from '$lib/features/database/detail/image'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
   import { sidebar } from '$lib/stores/sidebar.svelte'
+  import { GridType } from '$lib/types/enums'
   import * as m from '$lib/paraglide/messages'
 
   interface Props {
@@ -23,6 +24,8 @@
     updateParty: (p: Party) => void
     canEdit: () => boolean
     getEditKey: () => string | null
+    getSelectedSlot?: () => number
+    getActiveTab?: () => GridType
     services: { gridService: any; partyService: any }
     openPicker?: (opts: { type: 'weapon' | 'summon' | 'character'; position: number; item?: any }) => void
   }
@@ -47,6 +50,13 @@
 
   // Check if this item is currently active in the sidebar
   let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
+
+  // Check if this empty slot is currently selected for adding an item
+  let isEmptySelected = $derived(
+    !item &&
+      ctx?.getSelectedSlot?.() === position &&
+      ctx?.getActiveTab?.() === GridType.Summon
+  )
 
   // Determine element class for focus ring
   let elementClass = $derived.by(() => {
@@ -106,6 +116,7 @@
               class:friend={item?.friend || position === 6}
               class:cell={!((item?.main || position === -1) || (item?.friend || position === 6))}
               class:editable={ctx?.canEdit()}
+              class:is-active={isActive}
               onclick={() => viewDetails()}
             >
             <img
@@ -159,6 +170,7 @@
         class:friend={position === 6}
         class:cell={!(position === -1 || position === 6)}
         class:editable={ctx?.canEdit()}
+        class:is-selected={isEmptySelected}
         onclick={() => ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'summon', position, item })}
       >
         <img
@@ -269,6 +281,21 @@
     &.editable:hover {
       opacity: 0.95;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    // Slot selection - subtle dark pulsing glow (works for both empty and filled)
+    &.is-selected,
+    &.is-active {
+      animation: pulse-slot-shadow 2s ease-in-out infinite;
+    }
+  }
+
+  @keyframes pulse-slot-shadow {
+    0%, 100% {
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12), 0 0 4px 2px rgba(0, 0, 0, 0.06);
+    }
+    50% {
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.24), 0 0 8px 4px rgba(0, 0, 0, 0.12);
     }
   }
 
