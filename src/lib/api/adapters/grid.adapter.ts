@@ -11,6 +11,7 @@ import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions } from './types'
 import type { GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
+import { validateGridWeapon, validateGridCharacter, validateGridSummon } from '$lib/utils/gridValidation'
 
 // GridWeapon, GridCharacter, and GridSummon types are imported from types/api/party
 // Re-export for test files and consumers
@@ -103,7 +104,14 @@ export class GridAdapter extends BaseAdapter {
             body: { weapon: params },
             headers
         })
-        return response.gridWeapon
+
+        // Validate and normalize response
+        const validated = validateGridWeapon(response.gridWeapon)
+        if (!validated) {
+            throw new Error('API returned incomplete GridWeapon data')
+        }
+
+        return validated
     }
 
 	/**
@@ -207,7 +215,14 @@ export class GridAdapter extends BaseAdapter {
             body: { character: params },
             headers
         })
-        return response.gridCharacter
+
+        // Validate and normalize response
+        const validated = validateGridCharacter(response.gridCharacter)
+        if (!validated) {
+            throw new Error('API returned incomplete GridCharacter data')
+        }
+
+        return validated
     }
 
 	/**
@@ -311,7 +326,14 @@ export class GridAdapter extends BaseAdapter {
             body: { summon: params },
             headers
         })
-        return response.gridSummon
+
+        // Validate and normalize response
+        const validated = validateGridSummon(response.gridSummon)
+        if (!validated) {
+            throw new Error('API returned incomplete GridSummon data')
+        }
+
+        return validated
     }
 
 	/**
