@@ -245,6 +245,16 @@ Key API patterns:
 - Base path: `/api/v1/`
 - Image assets served from AWS S3
 
+**📖 For detailed networking architecture, see [TanStack Query Architecture](./docs/TANSTACK_QUERY_ARCHITECTURE.md)**
+
+This document covers:
+- TanStack Query v6 integration patterns
+- Query and mutation hooks
+- Cache management strategies
+- SSR hydration with `withInitialData()`
+- Best practices and common patterns
+- Migration from Valtio to TanStack Query
+
 ### Domain Models (from hensei-api)
 
 Key models that the frontend interacts with:
