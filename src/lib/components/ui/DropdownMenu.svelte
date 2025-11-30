@@ -2,8 +2,12 @@
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import type { Snippet } from 'svelte'
 
+	interface TriggerProps {
+		props: Record<string, unknown>
+	}
+
 	interface DropdownMenuProps {
-		trigger: Snippet
+		trigger: Snippet<[TriggerProps]>
 		menu: Snippet
 		open?: boolean
 	}
@@ -13,7 +17,9 @@
 
 <DropdownMenuBase.Root bind:open>
 	<DropdownMenuBase.Trigger>
-		{@render trigger()}
+		{#snippet child({ props })}
+			{@render trigger({ props })}
+		{/snippet}
 	</DropdownMenuBase.Trigger>
 
 	<DropdownMenuBase.Portal>

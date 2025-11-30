@@ -10,7 +10,9 @@
 		open?: boolean
 		/** Title for the sidebar header */
 		title?: string
-		/** Callback when close is requested */
+		/** Callback when close is requested (camelCase preferred) */
+		onClose?: () => void
+		/** Callback when close is requested (lowercase, deprecated - use onClose) */
 		onclose?: () => void
 		/** Content to render in the sidebar */
 		children?: Snippet
@@ -20,12 +22,15 @@
 		scrollable?: boolean
 	}
 
-	const { open = false, title, onclose, children, headerActions, scrollable = true }: Props = $props()
+	const { open = false, title, onClose, onclose, children, headerActions, scrollable = true }: Props = $props()
+
+	// Support both onClose (camelCase) and onclose (lowercase) for backward compatibility
+	const handleClose = $derived(onClose ?? onclose)
 </script>
 
 <aside class="sidebar" class:open style:--sidebar-width={SIDEBAR_WIDTH}>
 	{#if title}
-		<SidebarHeader {title} {onclose} actions={headerActions} />
+		<SidebarHeader {title} onclose={handleClose} actions={headerActions} />
 	{/if}
 
 	<div class="sidebar-content" class:scrollable>
