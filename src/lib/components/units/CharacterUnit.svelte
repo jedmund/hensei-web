@@ -11,6 +11,7 @@
 	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { getJobPortraitUrl, Gender } from '$lib/utils/jobUtils'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { GridType } from '$lib/types/enums'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
 	import * as m from '$lib/paraglide/messages'
@@ -30,6 +31,8 @@
 		updateParty: (p: Party) => void
 		canEdit: () => boolean
 		getEditKey: () => string | null
+		getSelectedSlot?: () => number
+		getActiveTab?: () => GridType
 		services: { gridService: any; partyService: any }
 		openPicker?: (opts: {
 			type: 'character' | 'weapon' | 'summon'
@@ -53,6 +56,11 @@
 			return getJobPortraitUrl(job, Gender.Gran) // TODO: Get gender from user preferences
 		}
 
+		// For protagonist slot without a job, show nothing (relief.png background shows through)
+		if (position === 0 && !job) {
+			return ''
+		}
+
 		// If no item or no character with granblueId, return placeholder
 		if (!item || !item.character?.granblueId) {
 			return getCharacterImageWithPose(null, 'main', 0, 0)
@@ -73,6 +81,14 @@
 
 	// Check if this item is currently active in the sidebar
 	let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
+
+	// Check if this empty slot is currently selected for adding an item
+	let isEmptySelected = $derived(
+		!item &&
+			!isProtagonist &&
+			ctx?.getSelectedSlot?.() === position &&
+			ctx?.getActiveTab?.() === GridType.Character
+	)
 
 	// Determine element class for focus ring
 	let elementClass = $derived.by(() => {
@@ -180,6 +196,7 @@
 							class="frame character cell {elementClass}"
 							class:protagonist={position === 0}
 							class:editable={ctx?.canEdit()}
+							class:is-active={isActive}
 							onclick={() => viewDetails()}
 						>
 							{#if position !== 0}
@@ -210,6 +227,7 @@
 									/>
 								{/if}
 							{/if}
+							{#if imageUrl}
 							<img
 								class="image {elementClass}"
 								class:placeholder={!item?.character?.granblueId && !isProtagonist}
@@ -217,6 +235,7 @@
 								alt={isProtagonist && job ? job.name.en : displayName(item?.character)}
 								src={imageUrl}
 							/>
+						{/if}
 						</div>
 					{/key}
 				</div>
@@ -254,20 +273,28 @@
 				class="frame character cell"
 				class:editable={ctx?.canEdit() && !isProtagonist}
 				class:protagonist={isProtagonist}
+				class:empty-protagonist={isProtagonist && !job}
+				class:is-selected={isEmptySelected}
 				onclick={() =>
 					!isProtagonist &&
 					ctx?.canEdit() &&
 					ctx?.openPicker &&
 					ctx.openPicker({ type: 'character', position, item })}
 			>
-				<img
-					class="image"
-					class:placeholder={!isProtagonist || !job}
-					class:protagonist={isProtagonist}
-					alt={isProtagonist && job ? job.name.en : ''}
-					src={isProtagonist ? imageUrl : '/images/placeholders/placeholder-weapon-grid.png'}
-				/>
-				{#if ctx?.canEdit()}
+				{#if !isProtagonist}
+					<img
+						class="image placeholder"
+						alt=""
+						src="/images/placeholders/placeholder-weapon-grid.png"
+					/>
+				{:else if job && imageUrl}
+					<img
+						class="image protagonist"
+						alt={job.name.en}
+						src={imageUrl}
+					/>
+				{/if}
+				{#if ctx?.canEdit() && !isProtagonist}
 					<span class="icon">
 						<Icon name="plus" size={24} />
 					</span>
@@ -381,6 +408,22 @@
 			opacity: 0.95;
 			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		}
+
+		// Slot selection - subtle dark pulsing glow (works for both empty and filled)
+		&.is-selected,
+		&.is-active {
+			animation: pulse-slot-shadow 2s ease-in-out infinite;
+		}
+	}
+
+	@keyframes pulse-slot-shadow {
+		0%,
+		100% {
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12), 0 0 4px 2px rgba(0, 0, 0, 0.06);
+		}
+		50% {
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.24), 0 0 8px 4px rgba(0, 0, 0, 0.12);
+		}
 	}
 
 	.frame.character.cell {
@@ -391,6 +434,10 @@
 			background-size: cover;
 			background-position: center -20px;
 			background-repeat: no-repeat;
+
+			&.empty-protagonist {
+				background-position: center 0;
+			}
 		}
 	}
 
