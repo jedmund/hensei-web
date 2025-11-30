@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use 'colors';
 @use 'typography';
 @use 'spacing';
@@ -150,6 +151,12 @@
 	--input-bound-bg: #{colors.$input--bound--bg--light};
 	--input-bound-bg-hover: #{colors.$input--bound--bg--light--hover};
 
+	// Light - Checkboxes
+	--checkbox-bg: #{colors.$checkbox--bg--light};
+	--checkbox-bg-hover: #{colors.$checkbox--bg--light--hover};
+	--checkbox-text: #{colors.$checkbox--text--light};
+	--checkbox-text-hover: #{colors.$checkbox--text--light--hover};
+
 	// Light - Selects
 	--select-bg: #{colors.$select--trigger--bg--light};
 	--select-contained-bg: #{colors.$select--trigger--contained--bg--light};
@@ -267,6 +274,15 @@
 	--earth-button-bg: #{colors.$earth-text-20};
 	--light-button-bg: #{colors.$light-text-30};
 	--dark-button-bg: #{colors.$dark-text-30};
+
+	// Light - Element button hover colors (slightly lighter than button-bg)
+	--null-button-bg-hover: #{colors.$grey-60};
+	--wind-button-bg-hover: #{color.adjust(colors.$wind-text-30, $lightness: 8%)};
+	--fire-button-bg-hover: #{color.adjust(colors.$fire-text-30, $lightness: 8%)};
+	--water-button-bg-hover: #{color.adjust(colors.$water-text-30, $lightness: 8%)};
+	--earth-button-bg-hover: #{color.adjust(colors.$earth-text-20, $lightness: 8%)};
+	--light-button-bg-hover: #{color.adjust(colors.$light-text-30, $lightness: 8%)};
+	--dark-button-bg-hover: #{color.adjust(colors.$dark-text-30, $lightness: 8%)};
 
 	// Light - Element navigation selected background
 	--null-nav-selected-bg: #{colors.$grey-85};
@@ -486,6 +502,12 @@
 	--input-bound-bg: #{colors.$input--bound--bg--dark};
 	--input-bound-bg-hover: #{colors.$input--bound--bg--dark--hover};
 
+	// Dark - Checkboxes
+	--checkbox-bg: #{colors.$checkbox--bg--dark};
+	--checkbox-bg-hover: #{colors.$checkbox--bg--dark--hover};
+	--checkbox-text: #{colors.$checkbox--text--dark};
+	--checkbox-text-hover: #{colors.$checkbox--text--dark--hover};
+
 	// Dark - Selects
 	--select-bg: #{colors.$select--trigger--bg--dark};
 	--select-contained-bg: #{colors.$select--trigger--contained--bg--dark};
@@ -603,6 +625,15 @@
 	--earth-button-bg: #{colors.$earth-text-20};
 	--light-button-bg: #{colors.$light-text-30};
 	--dark-button-bg: #{colors.$dark-text-30};
+
+	// Dark - Element button hover colors (same as light theme)
+	--null-button-bg-hover: #{colors.$grey-60};
+	--wind-button-bg-hover: #{color.adjust(colors.$wind-text-30, $lightness: 8%)};
+	--fire-button-bg-hover: #{color.adjust(colors.$fire-text-30, $lightness: 8%)};
+	--water-button-bg-hover: #{color.adjust(colors.$water-text-30, $lightness: 8%)};
+	--earth-button-bg-hover: #{color.adjust(colors.$earth-text-20, $lightness: 8%)};
+	--light-button-bg-hover: #{color.adjust(colors.$light-text-30, $lightness: 8%)};
+	--dark-button-bg-hover: #{color.adjust(colors.$dark-text-30, $lightness: 8%)};
 
 	// Dark - Element navigation selected background (same as light theme)
 	--null-nav-selected-bg: #{colors.$grey-85};

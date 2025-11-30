@@ -1,19 +1,27 @@
 <!-- Checkbox Component -->
 <svelte:options runes={true} />
+
 <script lang="ts">
-	import { Checkbox as CheckboxPrimitive } from 'bits-ui';
+	import { Checkbox as CheckboxPrimitive } from 'bits-ui'
+	import CheckIcon from '$src/assets/icons/check.svg?raw'
 
 	interface Props {
-		checked?: boolean;
-		indeterminate?: boolean;
-		disabled?: boolean;
-		required?: boolean;
-		name?: string;
-		value?: string;
-		onCheckedChange?: (checked: boolean) => void;
-		class?: string;
-		variant?: 'default' | 'bound';
-		size?: 'small' | 'medium' | 'large';
+		checked?: boolean
+		indeterminate?: boolean
+		disabled?: boolean
+		required?: boolean
+		name?: string
+		value?: string
+		onCheckedChange?: (checked: boolean) => void
+		class?: string
+		variant?: 'default' | 'bound'
+		/** Contained background style (alias for variant='bound') */
+		contained?: boolean
+		size?: 'small' | 'medium' | 'large'
+		/** Full width checkbox container */
+		fullWidth?: boolean
+		/** Element color theme for checked state */
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	}
 
 	let {
@@ -26,17 +34,22 @@
 		onCheckedChange,
 		class: className,
 		variant = 'default',
-		size = 'medium'
-	}: Props = $props();
+		contained = false,
+		size = 'medium',
+		fullWidth = false,
+		element
+	}: Props = $props()
 
 	$effect(() => {
 		if (onCheckedChange && checked !== undefined) {
-			onCheckedChange(checked);
+			onCheckedChange(checked)
 		}
-	});
+	})
 
-	const sizeClass = $derived(size);
-	const variantClass = $derived(variant === 'bound' ? 'bound' : '');
+	const sizeClass = $derived(size)
+	// contained prop is an alias for variant='bound'
+	const variantClass = $derived(variant === 'bound' || contained ? 'bound' : '')
+	const fullWidthClass = $derived(fullWidth ? 'full' : '')
 </script>
 
 <CheckboxPrimitive.Root
@@ -46,14 +59,14 @@
 	{required}
 	name={name ?? ''}
 	value={value ?? ''}
-	class="checkbox {sizeClass} {variantClass} {className || ''}"
+	class="checkbox {sizeClass} {variantClass} {fullWidthClass} {element || ''} {className || ''}"
 >
 	{#snippet children({ checked: isChecked, indeterminate: isIndeterminate })}
 		<span class="indicator">
 			{#if isIndeterminate}
-				<span class="icon">−</span>
+				<span class="icon indeterminate"></span>
 			{:else if isChecked}
-				<span class="icon">✓</span>
+				<span class="icon">{@html CheckIcon}</span>
 			{/if}
 		</span>
 	{/snippet}
@@ -66,96 +79,140 @@
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/effects' as *;
 
-	.checkbox {
+	// Base checkbox styles
+	:global(.checkbox) {
+		// Default (no element) colors - light grey bg with dark grey check
+		--cb-checked-bg: var(--null-bg);
+		--cb-checked-bg-hover: var(--null-bg-hover);
+		--cb-checked-fg: #{$grey-45};
+
 		background-color: var(--input-bg);
-		border: 2px solid var(--separator-bg);
-		border-radius: $item-corner-small;
+		border: none;
 		cursor: pointer;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		@include smooth-transition($duration-zoom, all);
+	}
 
-		&:hover:not(:disabled) {
-			background-color: var(--input-bg-hover);
-			border-color: var(--separator-bg-hover);
-		}
+	:global(.checkbox:hover:not(:disabled)) {
+		background-color: var(--input-bg-hover);
+	}
 
-		&:focus,
-		&:focus-visible {
-			@include focus-ring($blue);
-		}
+	:global(.checkbox:focus),
+	:global(.checkbox:focus-visible) {
+		@include focus-ring($blue);
+	}
 
-		&[data-state='checked'],
-		&[data-state='indeterminate'] {
-			background-color: var(--accent-blue);
-			border-color: var(--accent-blue);
+	:global(.checkbox[data-state='checked']),
+	:global(.checkbox[data-state='indeterminate']) {
+		background-color: var(--cb-checked-bg);
+	}
 
-			&:hover:not(:disabled) {
-				background-color: var(--accent-blue-hover);
-				border-color: var(--accent-blue-hover);
-			}
-		}
+	:global(.checkbox[data-state='checked']:hover:not(:disabled)),
+	:global(.checkbox[data-state='indeterminate']:hover:not(:disabled)) {
+		background-color: var(--cb-checked-bg-hover);
+	}
 
-		&:disabled {
-			cursor: not-allowed;
-			opacity: 0.5;
-		}
+	:global(.checkbox:disabled) {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
 
-		&.bound {
-			background-color: var(--input-bound-bg);
+	:global(.checkbox.bound) {
+		background-color: var(--input-bound-bg);
+	}
 
-			&:hover:not(:disabled) {
-				background-color: var(--input-bound-bg-hover);
-			}
+	:global(.checkbox.bound:hover:not(:disabled)) {
+		background-color: var(--input-bound-bg-hover);
+	}
 
-			&[data-state='checked'],
-			&[data-state='indeterminate'] {
-				background-color: var(--accent-blue);
-				border-color: var(--accent-blue);
-			}
-		}
+	// Element-specific color overrides
+	:global(.checkbox.wind) {
+		--cb-checked-bg: var(--wind-button-bg);
+		--cb-checked-bg-hover: var(--wind-button-bg-hover);
+		--cb-checked-fg: white;
+	}
+
+	:global(.checkbox.fire) {
+		--cb-checked-bg: var(--fire-button-bg);
+		--cb-checked-bg-hover: var(--fire-button-bg-hover);
+		--cb-checked-fg: white;
+	}
+
+	:global(.checkbox.water) {
+		--cb-checked-bg: var(--water-button-bg);
+		--cb-checked-bg-hover: var(--water-button-bg-hover);
+		--cb-checked-fg: white;
+	}
+
+	:global(.checkbox.earth) {
+		--cb-checked-bg: var(--earth-button-bg);
+		--cb-checked-bg-hover: var(--earth-button-bg-hover);
+		--cb-checked-fg: white;
+	}
+
+	:global(.checkbox.dark) {
+		--cb-checked-bg: var(--dark-button-bg);
+		--cb-checked-bg-hover: var(--dark-button-bg-hover);
+		--cb-checked-fg: white;
+	}
+
+	:global(.checkbox.light) {
+		--cb-checked-bg: var(--light-button-bg);
+		--cb-checked-bg-hover: var(--light-button-bg-hover);
+		--cb-checked-fg: white;
 	}
 
 	// Size variations
-	.small {
-		width: $unit-2x;
-		height: $unit-2x;
-
-		.icon {
-			width: calc($unit * 1.5);
-			height: calc($unit * 1.5);
-		}
-	}
-
-	.medium {
-		width: calc($unit * 2.5);
-		height: calc($unit * 2.5);
-
-		.icon {
-			width: calc($unit * 1.75);
-			height: calc($unit * 1.75);
-		}
-	}
-
-	.large {
+	:global(.checkbox.small) {
+		--cb-icon-size: #{calc($unit * 1.5)};
+		--cb-dash-height: 3px;
+		border-radius: $item-corner;
 		width: $unit-3x;
 		height: $unit-3x;
-
-		.icon {
-			width: calc($unit * 2.25);
-			height: calc($unit * 2.25);
-		}
 	}
 
-	.indicator {
+	:global(.checkbox.medium) {
+		--cb-icon-size: #{$unit-2x};
+		--cb-dash-height: 4px;
+		border-radius: $card-corner;
+		width: $unit-4x;
+		height: $unit-4x;
+	}
+
+	:global(.checkbox.large) {
+		--cb-icon-size: #{calc($unit * 2.5)};
+		--cb-dash-height: 4px;
+		border-radius: $card-corner;
+		width: $unit-5x;
+		height: $unit-5x;
+	}
+
+	// Indicator and icon styles
+	:global(.checkbox .indicator) {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: white;
+		color: var(--cb-checked-fg);
 	}
 
-	.icon {
-		stroke-width: 3;
+	:global(.checkbox .icon) {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		:global(svg) {
+			width: var(--cb-icon-size);
+			height: var(--cb-icon-size);
+			fill: currentColor;
+		}
+
+		&.indeterminate {
+			width: var(--cb-icon-size);
+			height: var(--cb-dash-height);
+			background-color: var(--cb-checked-fg);
+			border-radius: $unit-fourth;
+		}
 	}
 </style>
