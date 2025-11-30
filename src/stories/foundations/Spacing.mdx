@@ -1,0 +1,143 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Spacing" />
+
+# Spacing
+
+Hensei uses an 8px base unit spacing system for consistent rhythm throughout the interface.
+
+## Base Unit
+
+```scss
+$unit: 8px;
+```
+
+All spacing values are multiples of this base unit, creating visual harmony and predictable layouts.
+
+## Spacing Scale
+
+<div style={{ display: 'grid', gap: '16px', marginTop: '24px' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div style={{ width: '120px', fontFamily: 'monospace', fontSize: '13px' }}>$unit-fourth</div>
+    <div style={{ width: '2px', height: '24px', background: '#275dc5' }}></div>
+    <span style={{ fontSize: '13px', color: '#666' }}>2px - Micro spacing</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div style={{ width: '120px', fontFamily: 'monospace', fontSize: '13px' }}>$unit-half</div>
+    <div style={{ width: '4px', height: '24px', background: '#275dc5' }}></div>
+    <span style={{ fontSize: '13px', color: '#666' }}>4px - Tight spacing</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div style={{ width: '120px', fontFamily: 'monospace', fontSize: '13px' }}>$unit</div>
+    <div style={{ width: '8px', height: '24px', background: '#275dc5' }}></div>
+    <span style={{ fontSize: '13px', color: '#666' }}>8px - Base unit</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div style={{ width: '120px', fontFamily: 'monospace', fontSize: '13px' }}>$unit-2x</div>
+    <div style={{ width: '16px', height: '24px', background: '#275dc5' }}></div>
+    <span style={{ fontSize: '13px', color: '#666' }}>16px - Default gap</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div style={{ width: '120px', fontFamily: 'monospace', fontSize: '13px' }}>$unit-3x</div>
+    <div style={{ width: '24px', height: '24px', background: '#275dc5' }}></div>
+    <span style={{ fontSize: '13px', color: '#666' }}>24px - Medium spacing</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div style={{ width: '120px', fontFamily: 'monospace', fontSize: '13px' }}>$unit-4x</div>
+    <div style={{ width: '32px', height: '24px', background: '#275dc5' }}></div>
+    <span style={{ fontSize: '13px', color: '#666' }}>32px - Section spacing</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div style={{ width: '120px', fontFamily: 'monospace', fontSize: '13px' }}>$unit-6x</div>
+    <div style={{ width: '48px', height: '24px', background: '#275dc5' }}></div>
+    <span style={{ fontSize: '13px', color: '#666' }}>48px - Large spacing</span>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div style={{ width: '120px', fontFamily: 'monospace', fontSize: '13px' }}>$unit-8x</div>
+    <div style={{ width: '64px', height: '24px', background: '#275dc5' }}></div>
+    <span style={{ fontSize: '13px', color: '#666' }}>64px - XL spacing</span>
+  </div>
+</div>
+
+## Full Scale Reference
+
+| Token | Value | Pixels | Usage |
+|-------|-------|--------|-------|
+| `$unit-fourth` | $unit / 4 | 2px | Borders, micro adjustments |
+| `$unit-half` | $unit / 2 | 4px | Tight gaps, small padding |
+| `$unit-three-quarter` | $unit * 0.75 | 6px | Small gaps |
+| `$unit` | 8px | 8px | Base unit |
+| `$unit-2x` | $unit * 2 | 16px | Standard gap/padding |
+| `$unit-3x` | $unit * 3 | 24px | Medium spacing |
+| `$unit-4x` | $unit * 4 | 32px | Section spacing |
+| `$unit-5x` | $unit * 5 | 40px | Large gaps |
+| `$unit-6x` | $unit * 6 | 48px | XL gaps |
+| `$unit-8x` | $unit * 8 | 64px | Page margins |
+| `$unit-10x` | $unit * 10 | 80px | Hero spacing |
+| `$unit-12x` | $unit * 12 | 96px | Section dividers |
+
+## CSS Custom Properties
+
+Semantic spacing aliases are available as CSS variables:
+
+```css
+:root {
+  --spacing-xs: 8px;    /* $unit */
+  --spacing-sm: 16px;   /* $unit-2x */
+  --spacing-md: 32px;   /* $unit-4x */
+  --spacing-lg: 64px;   /* $unit-8x */
+  --spacing-xl: 96px;   /* $unit-12x */
+}
+```
+
+## Breakpoints
+
+Responsive breakpoints for different device sizes:
+
+| Token | Value | Device |
+|-------|-------|--------|
+| `$phone` | 375px | Mobile phones |
+| `$tablet` | 768px | Tablets |
+| `$laptop` | 1280px | Laptops |
+| `$desktop` | 1920px | Desktop monitors |
+
+### Grid Width
+
+The standard grid/content width:
+
+```scss
+$grid-width: 780px;
+```
+
+## Component Heights
+
+Standard heights for grid representation components:
+
+| Token | Value | Component |
+|-------|-------|-----------|
+| `$character-rep-height` | 111px | Character unit/rep |
+| `$weapon-rep-height` | 109.75px | Weapon unit/rep |
+| `$summon-rep-height` | 117px | Summon unit/rep |
+
+## Usage in SCSS
+
+```scss
+@use 'themes/spacing' as spacing;
+
+.card {
+  padding: spacing.$unit-2x;
+  margin-bottom: spacing.$unit-3x;
+  gap: spacing.$unit;
+}
+
+.hero-section {
+  padding: spacing.$unit-8x 0;
+  margin-bottom: spacing.$unit-6x;
+}
+
+@media (max-width: spacing.$tablet) {
+  .card {
+    padding: spacing.$unit;
+  }
+}
+```

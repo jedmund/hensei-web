@@ -1,0 +1,119 @@
+import { Meta, Typeset } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+Hensei uses the **Goalking** variable font as its primary typeface, with system fonts as fallbacks.
+
+## Font Family
+
+```css
+--font-family: 'Goalking', system-ui, sans-serif;
+```
+
+The Goalking font is a variable font supporting weights from 100-900, loaded from `/fonts/gk-variable.woff2`.
+
+## Font Weights
+
+| Weight | Value | Usage |
+|--------|-------|-------|
+| Normal | 400 | Body text, descriptions |
+| Medium | 500 | Labels, emphasized text |
+| Bold | 600 | Headings, important text |
+
+## Font Sizes
+
+Our font sizes use `rem` units based on a 10px base (62.5% of 16px), making calculations simple: 1rem = 10px.
+
+<Typeset
+  fontSizes={[
+    '11px',
+    '13px',
+    '15px',
+    '16px',
+    '18px',
+    '21px',
+    '24px',
+    '28px',
+  ]}
+  fontWeight={400}
+  sampleText="The quick brown fox jumps over the lazy dog"
+  fontFamily="'Goalking', system-ui, sans-serif"
+/>
+
+### Size Scale
+
+| Token | Size | Pixels | Usage |
+|-------|------|--------|-------|
+| `$font-tiny` | 1.1rem | 11px | Badges, captions |
+| `$font-small` | 1.3rem | 13px | Secondary text, metadata |
+| `$font-button` | 1.5rem | 15px | Button text |
+| `$font-name` | 1.5rem | 15px | Character/item names |
+| `$font-regular` | 1.6rem | 16px | Body text |
+| `$font-medium` | 1.8rem | 18px | Subheadings |
+| `$font-large` | 2.1rem | 21px | Section headers |
+| `$font-xlarge` | 2.4rem | 24px | Page titles |
+| `$font-xxlarge` | 2.8rem | 28px | Hero text |
+
+## Font Weight Examples
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: '12px', margin: '24px 0' }}>
+  <div style={{ fontSize: '18px', fontWeight: 400 }}>Normal (400): The quick brown fox jumps over the lazy dog</div>
+  <div style={{ fontSize: '18px', fontWeight: 500 }}>Medium (500): The quick brown fox jumps over the lazy dog</div>
+  <div style={{ fontSize: '18px', fontWeight: 600 }}>Bold (600): The quick brown fox jumps over the lazy dog</div>
+</div>
+
+## Usage in SCSS
+
+Import the typography module to use font variables:
+
+```scss
+@use 'themes/typography' as typography;
+
+.heading {
+  font-size: typography.$font-large;
+  font-weight: typography.$bold;
+}
+
+.body-text {
+  font-size: typography.$font-regular;
+  font-weight: typography.$normal;
+}
+
+.caption {
+  font-size: typography.$font-small;
+  font-weight: typography.$medium;
+}
+```
+
+## Text Color Variables
+
+Text colors are available as CSS custom properties and automatically adapt to the current theme:
+
+| Variable | Description |
+|----------|-------------|
+| `--text-primary` | Main body text |
+| `--text-secondary` | Muted/secondary text |
+| `--text-tertiary` | Disabled/placeholder text |
+| `--link-text-hover` | Link hover state |
+
+```css
+.primary-text {
+  color: var(--text-primary);
+}
+
+.muted-text {
+  color: var(--text-secondary);
+}
+```
+
+## Font Smoothing
+
+For optimal rendering, we apply antialiasing to all text:
+
+```css
+body {
+  -webkit-font-smoothing: antialiased;
+}
+```

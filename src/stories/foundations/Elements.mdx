@@ -1,0 +1,232 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Elements" />
+
+# Elements
+
+Granblue Fantasy features six elemental types that form a core part of the game's mechanics. Each element has a distinct color palette used throughout Hensei for theming characters, weapons, summons, and UI components.
+
+## Element Wheel
+
+The six elements form a weakness/advantage cycle:
+
+<div style={{ display: 'flex', justifyContent: 'center', margin: '32px 0' }}>
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', maxWidth: '400px' }}>
+    <div style={{ padding: '16px', background: '#cdffed', borderRadius: '8px', textAlign: 'center' }}>
+      <div style={{ fontWeight: 600, color: '#006a45' }}>Wind</div>
+    </div>
+    <div style={{ padding: '16px', background: '#ffcdcd', borderRadius: '8px', textAlign: 'center' }}>
+      <div style={{ fontWeight: 600, color: '#6e0000' }}>Fire</div>
+    </div>
+    <div style={{ padding: '16px', background: '#cdedff', borderRadius: '8px', textAlign: 'center' }}>
+      <div style={{ fontWeight: 600, color: '#00639c' }}>Water</div>
+    </div>
+    <div style={{ padding: '16px', background: '#ffe2cd', borderRadius: '8px', textAlign: 'center' }}>
+      <div style={{ fontWeight: 600, color: '#8e3c0b' }}>Earth</div>
+    </div>
+    <div style={{ padding: '16px', background: '#fffacd', borderRadius: '8px', textAlign: 'center' }}>
+      <div style={{ fontWeight: 600, color: '#715100' }}>Light</div>
+    </div>
+    <div style={{ padding: '16px', background: '#f2cdff', borderRadius: '8px', textAlign: 'center' }}>
+      <div style={{ fontWeight: 600, color: '#560075' }}>Dark</div>
+    </div>
+  </div>
+</div>
+
+**Advantage cycle:**
+- Wind → Earth → Water → Fire → Wind
+- Light ↔ Dark (mutual advantage)
+
+## Element Color Palettes
+
+Each element has multiple color values for different contexts:
+
+### Wind (Green)
+
+<div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+  <div style={{ width: '80px', height: '60px', background: '#006a45', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'white', fontSize: '11px' }}>Text Light</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#1dc688', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Text Dark</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#3ee489', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Background</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#cdffed', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Portrait</span>
+  </div>
+</div>
+
+### Fire (Red)
+
+<div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+  <div style={{ width: '80px', height: '60px', background: '#6e0000', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'white', fontSize: '11px' }}>Text Light</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#ec5c5c', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Text Dark</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#fa6d6d', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Background</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#ffcdcd', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Portrait</span>
+  </div>
+</div>
+
+### Water (Blue)
+
+<div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+  <div style={{ width: '80px', height: '60px', background: '#00639c', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'white', fontSize: '11px' }}>Text Light</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#5cb7ec', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Text Dark</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#6cc9ff', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Background</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#cdedff', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Portrait</span>
+  </div>
+</div>
+
+### Earth (Orange)
+
+<div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+  <div style={{ width: '80px', height: '60px', background: '#8e3c0b', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'white', fontSize: '11px' }}>Text Light</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#ec985c', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Text Dark</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#fd9f5b', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Background</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#ffe2cd', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Portrait</span>
+  </div>
+</div>
+
+### Light (Yellow)
+
+<div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+  <div style={{ width: '80px', height: '60px', background: '#715100', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'white', fontSize: '11px' }}>Text Light</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#c59c0c', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Text Dark</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#e8d633', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Background</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#fffacd', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Portrait</span>
+  </div>
+</div>
+
+### Dark (Purple)
+
+<div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+  <div style={{ width: '80px', height: '60px', background: '#560075', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'white', fontSize: '11px' }}>Text Light</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#c65cec', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Text Dark</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#de7bff', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Background</span>
+  </div>
+  <div style={{ width: '80px', height: '60px', background: '#f2cdff', borderRadius: '4px', display: 'flex', alignItems: 'end', padding: '4px' }}>
+    <span style={{ color: 'black', fontSize: '11px' }}>Portrait</span>
+  </div>
+</div>
+
+## CSS Custom Properties
+
+Element colors are available as CSS variables that adapt to light/dark themes:
+
+```css
+/* Each element provides these variables */
+--{element}-bg           /* Main background color */
+--{element}-bg-hover     /* Hover state background */
+--{element}-text         /* Primary text color */
+--{element}-text-hover   /* Hover state text */
+--{element}-portrait-bg  /* Portrait/card background */
+--{element}-shadow       /* Box shadow color */
+--{element}-accent       /* Accent color */
+```
+
+### Example Usage
+
+```css
+.wind-card {
+  background: var(--wind-bg);
+  color: var(--wind-text);
+  box-shadow: 0 2px 8px var(--wind-shadow);
+}
+
+.wind-card:hover {
+  background: var(--wind-bg-hover);
+  color: var(--wind-text-hover);
+}
+```
+
+## Element Buttons
+
+Each element has a dedicated button color:
+
+<div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', margin: '16px 0' }}>
+  <button style={{ padding: '8px 16px', background: '#1dc688', border: 'none', borderRadius: '6px', color: 'white', fontWeight: 500 }}>Wind</button>
+  <button style={{ padding: '8px 16px', background: '#ec5c5c', border: 'none', borderRadius: '6px', color: 'white', fontWeight: 500 }}>Fire</button>
+  <button style={{ padding: '8px 16px', background: '#5cb7ec', border: 'none', borderRadius: '6px', color: 'white', fontWeight: 500 }}>Water</button>
+  <button style={{ padding: '8px 16px', background: '#8e3c0b', border: 'none', borderRadius: '6px', color: 'white', fontWeight: 500 }}>Earth</button>
+  <button style={{ padding: '8px 16px', background: '#c59c0c', border: 'none', borderRadius: '6px', color: 'white', fontWeight: 500 }}>Light</button>
+  <button style={{ padding: '8px 16px', background: '#c65cec', border: 'none', borderRadius: '6px', color: 'white', fontWeight: 500 }}>Dark</button>
+</div>
+
+## Navigation Selected States
+
+Elements have specific colors for selected navigation items:
+
+| Element | Background | Text |
+|---------|------------|------|
+| Wind | `#cdffed` | `#006a45` |
+| Fire | `#ffcdcd` | `#6e0000` |
+| Water | `#cdedff` | `#00639c` |
+| Earth | `#ffe2cd` | `#863504` |
+| Light | `#fffacd` | `#715100` |
+| Dark | `#f2cdff` | `#560075` |
+
+## Focus Ring Mixins
+
+SCSS mixins for element-specific focus rings:
+
+```scss
+@use 'themes/colors';
+
+.wind-input:focus {
+  @include colors.focus-ring-wind();
+}
+
+.fire-input:focus {
+  @include colors.focus-ring-fire();
+}
+```
+
+Each mixin applies:
+- Appropriate border color
+- Matching box shadow with transparency
+- Removes default outline
+
+## Components with Element Support
+
+The following components support element theming:
+
+- **Button** - `element` prop for colored buttons
+- **SegmentedControl** - `element` prop for colored segments
+- **ElementLabel** - Displays element icon with color
+- **CharacterUnit** - Border color based on character element
+- **WeaponUnit** - Border color based on weapon element
+- **SummonUnit** - Border color based on summon element
