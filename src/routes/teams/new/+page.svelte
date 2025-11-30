@@ -5,12 +5,17 @@
   import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
   import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
   import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
+  import JobSection from '$lib/components/job/JobSection.svelte'
   import { openSearchSidebar, closeSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
+  import { openJobSelectionSidebar, openJobSkillSelectionSidebar } from '$lib/features/job/openJobSidebar.svelte'
   import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
   import { GridType } from '$lib/types/enums'
+  import { Gender } from '$lib/utils/jobUtils'
+  import { partyAdapter } from '$lib/api/adapters/party.adapter'
+  import { transformSkillsToArray } from '$lib/utils/jobSkills'
   import { setContext } from 'svelte'
   import type { SearchResult } from '$lib/api/adapters'
-  import { partyAdapter, gridAdapter } from '$lib/api/adapters'
+  import { gridAdapter } from '$lib/api/adapters'
   import { getLocalId } from '$lib/utils/localId'
   import { storeEditKey } from '$lib/utils/editKeys'
   import type { Party } from '$lib/types/api/party'
@@ -52,6 +57,8 @@
   $effect(() => {
     if (!hasOpenedSidebar) {
       hasOpenedSidebar = true
+      // Set initial selected slot to mainhand weapon
+      selectedSlot = -1
       // Small delay to let the page render first
       setTimeout(() => {
         openSearchSidebar({
@@ -65,6 +72,26 @@
 
   function selectTab(gridType: GridType) {
     activeTab = gridType
+
+    // Set selectedSlot to first valid empty slot for this tab
+    if (gridType === GridType.Character) {
+      // Find first empty character slot (skip protagonist at position 0)
+      const emptySlot = [1, 2, 3, 4].find(i => !characters.find(c => c.position === i))
+      selectedSlot = emptySlot ?? 1
+    } else if (gridType === GridType.Weapon) {
+      // Find first empty weapon slot (mainhand first, then grid)
+      const emptySlot = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8].find(i =>
+        !weapons.find(w => w.position === i || (i === -1 && w.mainhand))
+      )
+      selectedSlot = emptySlot ?? -1
+    } else {
+      // Find first empty summon slot (main, grid, friend)
+      const emptySlot = [-1, 0, 1, 2, 3, 6].find(i =>
+        !summons.find(s => s.position === i || (i === -1 && s.main) || (i === 6 && s.friend))
+      )
+      selectedSlot = emptySlot ?? -1
+    }
+
     // Open sidebar when switching tabs
     openSearchSidebar({
       type: gridType === GridType.Weapon ? 'weapon' :
@@ -80,6 +107,89 @@
     if (gridType === GridType.Weapon) return weapons.length >= 10
     if (gridType === GridType.Summon) return summons.length >= 6
     return characters.length >= 5
+  }
+
+  // Job selection handlers
+  async function handleSelectJob() {
+    openJobSelectionSidebar({
+      currentJobId: party.job?.id,
+      onSelectJob: async (job) => {
+        // If party exists, update via API
+        if (partyId && shortcode) {
+          try {
+            await partyAdapter.updateJob(shortcode, job.id)
+            // Cache will be updated via invalidation
+          } catch (e) {
+            console.error('Failed to update job:', e)
+            errorMessage = e instanceof Error ? e.message : 'Failed to update job'
+            errorDialogOpen = true
+          }
+        } else {
+          // Update cache locally for new party
+          queryClient.setQueryData(partyKeys.detail('new'), (old: Party | undefined) => {
+            if (!old) return placeholderParty
+            return { ...old, job }
+          })
+        }
+      }
+    })
+  }
+
+  async function handleSelectJobSkill(slot: number) {
+    openJobSkillSelectionSidebar({
+      job: party.job,
+      currentSkills: party.jobSkills,
+      targetSlot: slot,
+      onSelectSkill: async (skill) => {
+        // If party exists, update via API
+        if (partyId && shortcode) {
+          try {
+            const updatedSkills = { ...party.jobSkills }
+            updatedSkills[String(slot) as keyof typeof updatedSkills] = skill
+            const skillsArray = transformSkillsToArray(updatedSkills)
+            await partyAdapter.updateJobSkills(shortcode, skillsArray)
+          } catch (e) {
+            console.error('Failed to update skill:', e)
+            errorMessage = e instanceof Error ? e.message : 'Failed to update skill'
+            errorDialogOpen = true
+          }
+        } else {
+          // Update cache locally for new party
+          queryClient.setQueryData(partyKeys.detail('new'), (old: Party | undefined) => {
+            if (!old) return placeholderParty
+            const updatedSkills = { ...old.jobSkills }
+            updatedSkills[String(slot) as keyof typeof updatedSkills] = skill
+            return { ...old, jobSkills: updatedSkills }
+          })
+        }
+      },
+      onRemoveSkill: async () => {
+        await handleRemoveJobSkill(slot)
+      }
+    })
+  }
+
+  async function handleRemoveJobSkill(slot: number) {
+    if (partyId && shortcode) {
+      try {
+        const updatedSkills = { ...party.jobSkills }
+        delete updatedSkills[String(slot) as keyof typeof updatedSkills]
+        const skillsArray = transformSkillsToArray(updatedSkills)
+        await partyAdapter.updateJobSkills(shortcode, skillsArray)
+      } catch (e) {
+        console.error('Failed to remove skill:', e)
+        errorMessage = e instanceof Error ? e.message : 'Failed to remove skill'
+        errorDialogOpen = true
+      }
+    } else {
+      // Update cache locally for new party
+      queryClient.setQueryData(partyKeys.detail('new'), (old: Party | undefined) => {
+        if (!old) return placeholderParty
+        const updatedSkills = { ...old.jobSkills }
+        delete updatedSkills[String(slot) as keyof typeof updatedSkills]
+        return { ...old, jobSkills: updatedSkills }
+      })
+    }
   }
 
   // Party state
@@ -98,7 +208,10 @@
     summons: [],
     characters: [],
     element: 0,
-    visibility: 1
+    visibility: 1,
+    job: undefined,
+    jobSkills: undefined,
+    accessory: undefined
   }
 
   // Create query with placeholder data
@@ -114,6 +227,11 @@
   const weapons = $derived(party.weapons ?? [])
   const summons = $derived(party.summons ?? [])
   const characters = $derived(party.characters ?? [])
+
+  // Derived values for job section
+  const mainWeapon = $derived(weapons.find((w) => w?.mainhand || w?.position === -1))
+  const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
+  const partyElement = $derived((party as any)?.element)
 
   let selectedSlot = $state<number | null>(null)
   let isFirstItemForSlot = false // Track if this is the first item after clicking empty cell
@@ -414,6 +532,8 @@
     },
     canEdit: () => true,
     getEditKey: () => editKey,
+    getSelectedSlot: () => selectedSlot,
+    getActiveTab: () => activeTab,
     services: {
       gridService: {
         removeWeapon: async (partyId: string, itemId: string) => {
@@ -499,7 +619,28 @@
         {:else if activeTab === GridType.Summon}
           <SummonGrid {summons} />
         {:else}
-          <CharacterGrid {characters} />
+          <div class="character-tab-content">
+            <JobSection
+              job={party.job}
+              jobSkills={party.jobSkills}
+              accessory={party.accessory}
+              canEdit={true}
+              gender={Gender.Gran}
+              element={mainWeaponElement}
+              onSelectJob={handleSelectJob}
+              onSelectSkill={handleSelectJobSkill}
+              onRemoveSkill={handleRemoveJobSkill}
+              onSelectAccessory={() => {
+                console.log('Open accessory selection sidebar')
+              }}
+            />
+            <CharacterGrid
+              {characters}
+              {mainWeaponElement}
+              {partyElement}
+              job={party.job}
+            />
+          </div>
         {/if}
       </div>
     </section>
@@ -588,6 +729,12 @@
 
   .party-content {
     min-height: 400px;
+  }
+
+  .character-tab-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
   /* Dialog styles */
