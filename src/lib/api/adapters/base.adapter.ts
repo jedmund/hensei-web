@@ -171,6 +171,11 @@ export abstract class BaseAdapter {
 			// Make the request with retry logic (errors handled inside fetchWithRetry)
 			const response = await this.fetchWithRetry(url, fetchOptions, options.retries)
 
+			// Handle 204 No Content responses (e.g., DELETE operations)
+			if (response.status === 204) {
+				return undefined as T
+			}
+
 			// Parse and transform the response
 			const data = await response.json()
 
