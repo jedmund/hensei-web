@@ -27,21 +27,18 @@
 	// Store scroll positions for each visited route
 	const scrollPositions = new Map<string, number>();
 
-    // Initialize auth store from server data immediately on load to ensure
-    // Authorization headers are available for client-side API calls
-    // Run immediately, not in effect to avoid timing issues
-    if (browser) {
-        if (data?.auth) {
+    // Initialize auth store from server data when data prop is populated
+    // Use $effect to ensure we react to when server data is available
+    $effect(() => {
+        if (browser && data?.auth) {
             console.log('[+layout] Initializing authStore with token:', data.auth.accessToken ? 'present' : 'missing')
             authStore.initFromServer(
                 data.auth.accessToken,
                 data.auth.user,
                 data.auth.expiresAt
             )
-        } else {
-            console.warn('[+layout] No auth data available to initialize authStore')
         }
-    }
+    })
 
 	// Save scroll position before navigating away and close sidebar
 	beforeNavigate(({ from }) => {
