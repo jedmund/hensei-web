@@ -10,9 +10,9 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			$types: 'src/lib/types',
-			'$lib/paraglide/messages': 'src/paraglide/messages.js',
-			'$lib/paraglide/runtime': 'src/paraglide/runtime.js',
-			'$lib/paraglide/server': 'src/paraglide/server.js'
+			'$lib/paraglide/messages': 'src/lib/paraglide/messages.js',
+			'$lib/paraglide/runtime': 'src/lib/paraglide/runtime.js',
+			'$lib/paraglide/server': 'src/lib/paraglide/server.js'
 		}
 	}
 }
