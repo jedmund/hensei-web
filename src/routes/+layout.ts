@@ -41,5 +41,9 @@ export const load: LayoutLoad = async ({ data }) => {
 		}
 	})
 
-	return { queryClient }
+	// Pass through server data (account, currentUser, etc.) along with queryClient
+	return {
+		...data,
+		queryClient
+	}
 }

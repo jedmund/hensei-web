@@ -12,24 +12,6 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	const currentUser = locals.session.user ?? null
 	const isAuthenticated = locals.session.isAuthenticated
 
-	// Debug logging for auth data
-	if (locals.auth) {
-		console.log('[+layout.server] Auth data being passed to client:', {
-			hasToken: !!locals.auth.accessToken,
-			hasUser: !!locals.auth.user,
-			hasExpiresAt: !!locals.auth.expiresAt
-		})
-	}
-
-	// Debug logging for Navigation props
-	console.log('[+layout.server] Navigation props:', {
-		hasAccount: !!account,
-		account,
-		hasCurrentUser: !!currentUser,
-		currentUser,
-		isAuthenticated
-	})
-
 	return {
 		isAuthenticated,
 		account,
