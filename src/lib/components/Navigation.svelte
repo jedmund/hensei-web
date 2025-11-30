@@ -199,7 +199,9 @@
 								</button>
 							</DropdownItem>
 							{#if role !== null && role >= 7}
-								<DropdownItem href={databaseHref}>Database</DropdownItem>
+								<DropdownItem>
+									<a href={databaseHref}>Database</a>
+								</DropdownItem>
 							{/if}
 							{#if isAuth}
 								<DropdownMenu.Separator class="dropdown-separator" />
