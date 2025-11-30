@@ -15,7 +15,10 @@
 	const grid = $derived(
 		Array.from({ length: 9 }, (_, i) => weapons.find((w: GridWeapon) => w?.position === i))
 	)
-
+	// Pre-compute rows as explicit derived to ensure reactivity propagates to template
+	const rows = $derived(
+		Array.from({ length: 3 }, (_, rowIndex) => grid.slice(rowIndex * 3, (rowIndex + 1) * 3))
+	)
 
 	function weaponImageUrl(w?: GridWeapon, isMain = false): string {
 		const variant = isMain ? 'main' : 'grid'
@@ -35,9 +38,9 @@
 			/>{/if}
 	</div>
 	<div class="weapons">
-		{#each Array.from( { length: 3 }, (_, rowIndex) => grid.slice(rowIndex * 3, (rowIndex + 1) * 3) ) as row, rowIndex}
+		{#each rows as row, rowIndex (rowIndex)}
 			<ul class="weapon-row">
-				{#each row as w, colIndex}
+				{#each row as w, colIndex (rowIndex * 3 + colIndex)}
 					<li class="weapon" class:empty={!w}>
 						{#if w}<img alt="Weapon" src={weaponImageUrl(w)} loading="lazy" decoding="async" />{/if}
 					</li>

@@ -85,7 +85,6 @@ export function useCreateGridWeapon() {
 			gridAdapter.createWeapon(params, headers)
 		),
 		onSuccess: (_data, params) => {
-			// Invalidate the party to refetch with new weapon
 			invalidateParty(queryClient, params.partyId)
 		}
 	}))

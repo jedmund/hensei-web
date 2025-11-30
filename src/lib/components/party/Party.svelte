@@ -76,18 +76,10 @@
 		characters: []
 	}
 
-	// Initialize party state with proper validation
-	let party = $state<Party>(
+	// Derive party directly from prop - single source of truth from TanStack Query cache
+	let party = $derived(
 		initial?.id && initial?.id !== 'new' && Array.isArray(initial?.weapons) ? initial : defaultParty
 	)
-
-	// Sync local party state with prop changes (for query refetches)
-	$effect(() => {
-		// Only update if we have valid party data from props
-		if (initial && initial.id && initial.id !== 'new' && Array.isArray(initial.weapons)) {
-			party = initial
-		}
-	})
 
 	let activeTab = $state<GridType>(GridType.Weapon)
 	let loading = $state(false)
@@ -155,20 +147,16 @@
 
 		try {
 			loading = true
-			let updated: Party | null = null
 
 			if (operation.type === 'swap') {
 				// Handle swapping items between positions
-				updated = await handleSwap(source, target)
+				await handleSwap(source, target)
 			} else if (operation.type === 'move') {
 				// Handle moving to empty position
-				updated = await handleMove(source, target)
+				await handleMove(source, target)
 			}
 
-			// Update party with returned data from API
-			if (updated) {
-				party = updated
-			}
+			// Party will be updated via cache invalidation from mutations
 		} catch (err: any) {
 			error = err.message || 'Failed to update party'
 			console.error('Drag operation failed:', err)
@@ -178,7 +166,7 @@
 		}
 	}
 
-	async function handleSwap(source: any, target: any): Promise<Party> {
+	async function handleSwap(source: any, target: any): Promise<void> {
 		if (!party.id || party.id === 'new') {
 			throw new Error('Cannot swap items in unsaved party')
 		}
@@ -198,11 +186,9 @@
 		} else if (source.type === 'summon') {
 			await swapSummons.mutateAsync(swapParams)
 		}
-
-		return party
 	}
 
-	async function handleMove(source: any, target: any): Promise<Party> {
+	async function handleMove(source: any, target: any): Promise<void> {
 		if (!party.id || party.id === 'new') {
 			throw new Error('Cannot move items in unsaved party')
 		}
@@ -221,8 +207,6 @@
 		} else if (source.type === 'summon') {
 			await updateSummon.mutateAsync(updateParams)
 		}
-
-		return party
 	}
 
 	// Localized name helper: accepts either an object with { name: { en, ja } }
@@ -276,11 +260,8 @@
 			error = null
 
 			// Update party title via API
-			const updated = await updatePartyDetails({ name: editingTitle })
-			if (updated) {
-				party = updated
-				editDialogOpen = false
-			}
+			await updatePartyDetails({ name: editingTitle })
+			editDialogOpen = false
 		} catch (err: any) {
 			error = err.message || 'Failed to update party title'
 		} finally {
@@ -290,7 +271,7 @@
 
 	// Party operations
 	async function updatePartyDetails(updates: Partial<Party>) {
-		if (!canEdit()) return null
+		if (!canEdit()) return
 
 		loading = true
 		error = null
@@ -299,10 +280,8 @@
 			// Use TanStack Query mutation to update party
 			await updatePartyMutation.mutateAsync({ shortcode: party.shortcode, updates })
 			// Party will be updated via cache invalidation
-			return party
 		} catch (err: any) {
 			error = err.message || 'Failed to update party'
-			return null
 		} finally {
 			loading = false
 		}
@@ -317,11 +296,10 @@
 		try {
 			if (party.favorited) {
 				await unfavoritePartyMutation.mutateAsync({ shortcode: party.shortcode })
-				party.favorited = false
 			} else {
 				await favoritePartyMutation.mutateAsync({ shortcode: party.shortcode })
-				party.favorited = true
 			}
+			// Party will be updated via cache invalidation
 		} catch (err: any) {
 			error = err.message || 'Failed to update favorite status'
 		} finally {
@@ -405,8 +383,8 @@
 
 				try {
 					// Update job via API (use shortcode for party identification)
-					const updated = await partyAdapter.updateJob(party.shortcode, job.id)
-					party = updated
+					await partyAdapter.updateJob(party.shortcode, job.id)
+					// Party will be updated via cache invalidation
 				} catch (e) {
 					error = e instanceof Error ? e.message : 'Failed to update job'
 					console.error('Failed to update job:', e)
@@ -444,11 +422,8 @@
 
 					console.log('[Party] Skills array to send:', skillsArray)
 
-					const updated = await partyAdapter.updateJobSkills(
-						party.shortcode,
-						skillsArray
-					)
-					party = updated
+					await partyAdapter.updateJobSkills(party.shortcode, skillsArray)
+					// Party will be updated via cache invalidation
 				} catch (e: any) {
 					error = extractErrorMessage(e, 'Failed to update skill')
 					console.error('Failed to update skill:', e)
@@ -474,11 +449,8 @@
 
 					console.log('[Party] Skills array to send after removal:', skillsArray)
 
-					const updated = await partyAdapter.updateJobSkills(
-						party.shortcode,
-						skillsArray
-					)
-					party = updated
+					await partyAdapter.updateJobSkills(party.shortcode, skillsArray)
+					// Party will be updated via cache invalidation
 				} catch (e: any) {
 					error = extractErrorMessage(e, 'Failed to remove skill')
 					console.error('Failed to remove skill:', e)
@@ -504,11 +476,8 @@
 			// Convert skills object to array format expected by API
 			const skillsArray = transformSkillsToArray(updatedSkills)
 
-			const updated = await partyAdapter.updateJobSkills(
-				party.shortcode,
-				skillsArray
-			)
-			party = updated
+			await partyAdapter.updateJobSkills(party.shortcode, skillsArray)
+			// Party will be updated via cache invalidation
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to remove skill'
 			console.error('Failed to remove skill:', e)
@@ -591,8 +560,7 @@
 					partyId,
 					partyShortcode: party.shortcode
 				})
-				// Return updated party from cache after mutation
-				return party
+				// Party will be updated via cache invalidation
 			} catch (err) {
 				console.error('Failed to remove weapon:', err)
 				throw err
@@ -605,7 +573,6 @@
 					partyId,
 					partyShortcode: party.shortcode
 				})
-				return party
 			} catch (err) {
 				console.error('Failed to remove summon:', err)
 				throw err
@@ -618,7 +585,6 @@
 					partyId,
 					partyShortcode: party.shortcode
 				})
-				return party
 			} catch (err) {
 				console.error('Failed to remove character:', err)
 				throw err
@@ -631,7 +597,6 @@
 					partyShortcode: party.shortcode,
 					updates
 				})
-				return party
 			} catch (err) {
 				console.error('Failed to update weapon:', err)
 				throw err
@@ -644,7 +609,6 @@
 					partyShortcode: party.shortcode,
 					updates
 				})
-				return party
 			} catch (err) {
 				console.error('Failed to update summon:', err)
 				throw err
@@ -662,7 +626,6 @@
 					partyShortcode: party.shortcode,
 					updates
 				})
-				return party
 			} catch (err) {
 				console.error('Failed to update character:', err)
 				throw err
@@ -681,7 +644,6 @@
 					uncapLevel,
 					transcendenceStep
 				})
-				return party
 			} catch (err) {
 				console.error('Failed to update character uncap:', err)
 				throw err
@@ -700,7 +662,6 @@
 					uncapLevel,
 					transcendenceStep
 				})
-				return party
 			} catch (err) {
 				console.error('Failed to update weapon uncap:', err)
 				throw err
@@ -719,7 +680,6 @@
 					uncapLevel,
 					transcendenceStep
 				})
-				return party
 			} catch (err) {
 				console.error('Failed to update summon uncap:', err)
 				throw err
@@ -730,7 +690,6 @@
 	// Provide services to child components via context
 	setContext('party', {
 		getParty: () => party,
-		updateParty: (p: Party) => (party = p),
 		canEdit: () => canEdit(),
 		getEditKey: () => editKey,
 		services: {

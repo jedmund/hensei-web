@@ -1,4 +1,6 @@
 <!-- PartySegmentedControl Component -->
+<svelte:options runes={true} />
+
 <script lang="ts">
 	import { getContext } from 'svelte'
 	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
@@ -18,6 +20,14 @@
 	}
 
 	let { selectedTab = GridType.Character, onTabChange, party, class: className }: Props = $props()
+
+	// Derived values to ensure reactivity propagates through snippet boundaries
+	// When party updates from TanStack Query cache, these will trigger re-renders
+	const weapons = $derived(party.weapons)
+	const summons = $derived(party.summons)
+	const characters = $derived(party.characters)
+	const job = $derived(party.job)
+	const element = $derived(party.element)
 
 	// Handle value changes
 	let value = $state(selectedTab)
@@ -45,10 +55,10 @@
 			selected={value === GridType.Character}
 		>
 			<CharacterRep
-				job={party.job}
-				element={party.element}
+				job={job}
+				element={element}
 				gender={userGender}
-				characters={party.characters}
+				characters={characters}
 			/>
 		</RepSegment>
 
@@ -57,7 +67,7 @@
 			label={m.party_segmented_control_weapons()}
 			selected={value === GridType.Weapon}
 		>
-			<WeaponRep weapons={party.weapons} />
+			<WeaponRep weapons={weapons} />
 		</RepSegment>
 
 		<RepSegment
@@ -65,7 +75,7 @@
 			label={m.party_segmented_control_summons()}
 			selected={value === GridType.Summon}
 		>
-			<SummonRep summons={party.summons} />
+			<SummonRep summons={summons} />
 		</RepSegment>
 	</SegmentedControl>
 </nav>
