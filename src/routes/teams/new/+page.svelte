@@ -1,6 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+  import type { PageData } from './$types'
   import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
   import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
   import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
@@ -10,17 +11,38 @@
   import { setContext } from 'svelte'
   import type { SearchResult } from '$lib/api/adapters'
   import { partyAdapter, gridAdapter } from '$lib/api/adapters'
-  import { PartyService } from '$lib/services/party.service'
+  import { getLocalId } from '$lib/utils/localId'
+  import { storeEditKey } from '$lib/utils/editKeys'
+  import type { Party } from '$lib/types/api/party'
+
+  // TanStack Query
+  import { createQuery, useQueryClient } from '@tanstack/svelte-query'
+  import { partyQueries } from '$lib/api/queries/party.queries'
+  import { partyKeys } from '$lib/api/queries/party.queries'
+
+  // TanStack Query mutations
+  import { useCreateParty } from '$lib/api/mutations/party.mutations'
+  import {
+    useCreateGridWeapon,
+    useCreateGridCharacter,
+    useCreateGridSummon,
+    useDeleteGridWeapon,
+    useDeleteGridCharacter,
+    useDeleteGridSummon
+  } from '$lib/api/mutations/grid.mutations'
   import { Dialog } from 'bits-ui'
   import { replaceState } from '$app/navigation'
-  import { page } from '$app/stores'
 
-  // Initialize party service for local ID management
-  const partyService = new PartyService()
+  // Props
+  interface Props {
+    data: PageData
+  }
 
-  // Get authentication status from page store
-  const isAuthenticated = $derived($page.data?.isAuthenticated ?? false)
-  const currentUser = $derived($page.data?.currentUser)
+  let { data }: Props = $props()
+
+  // Get authentication status from data prop (no store subscription!)
+  let isAuthenticated = $derived(data.isAuthenticated)
+  let currentUser = $derived(data.currentUser)
 
   // Local, client-only state for tab selection (Svelte 5 runes)
   let activeTab = $state<GridType>(GridType.Weapon)
@@ -60,24 +82,68 @@
     return characters.length >= 5
   }
 
-  // Grid state
-  let weapons = $state<any[]>([])
-  let summons = $state<any[]>([])
-  let characters = $state<any[]>([])
-  let selectedSlot = $state<number | null>(null)
-  let isFirstItemForSlot = false // Track if this is the first item after clicking empty cell
-
   // Party state
   let partyId = $state<string | null>(null)
   let shortcode = $state<string | null>(null)
   let editKey = $state<string | null>(null)
   let isCreatingParty = $state(false)
 
+  // Placeholder party for 'new' route
+  const placeholderParty: Party = {
+    id: 'new',
+    shortcode: 'new',
+    name: 'New Team',
+    description: '',
+    weapons: [],
+    summons: [],
+    characters: [],
+    element: 0,
+    visibility: 1
+  }
+
+  // Create query with placeholder data
+  const queryClient = useQueryClient()
+  const partyQuery = createQuery(() => ({
+    ...partyQueries.byShortcode(shortcode || 'new'),
+    initialData: placeholderParty,
+    enabled: false // Disable automatic fetching for 'new' party
+  }))
+
+  // Derive state from query
+  const party = $derived(partyQuery.data ?? placeholderParty)
+  const weapons = $derived(party.weapons ?? [])
+  const summons = $derived(party.summons ?? [])
+  const characters = $derived(party.characters ?? [])
+
+  let selectedSlot = $state<number | null>(null)
+  let isFirstItemForSlot = false // Track if this is the first item after clicking empty cell
+
   // Error dialog state
   let errorDialogOpen = $state(false)
   let errorMessage = $state('')
   let errorDetails = $state<string[]>([])
 
+  // TanStack Query mutations
+  const createPartyMutation = useCreateParty()
+  const createWeaponMutation = useCreateGridWeapon()
+  const createCharacterMutation = useCreateGridCharacter()
+  const createSummonMutation = useCreateGridSummon()
+  const deleteWeapon = useDeleteGridWeapon()
+  const deleteCharacter = useDeleteGridCharacter()
+  const deleteSummon = useDeleteGridSummon()
+
+  // Helper to add item to cache
+  function addItemToCache(itemType: 'weapons' | 'summons' | 'characters', item: any) {
+    const cacheKey = partyKeys.detail(shortcode || 'new')
+
+    queryClient.setQueryData(cacheKey, (old: Party | undefined) => {
+      if (!old) return placeholderParty
+      return {
+        ...old,
+        [itemType]: [...(old[itemType] ?? []), item]
+      }
+    })
+  }
 
   // Calculate if grids are full
   let isWeaponGridFull = $derived(weapons.length >= 10) // 1 mainhand + 9 grid slots
@@ -115,21 +181,34 @@
 
         // Only include localId for anonymous users
         if (!isAuthenticated) {
-          const localId = partyService.getLocalId()
-          partyPayload.localId = localId
+          partyPayload.localId = getLocalId()
         }
 
-        // Create party using the party adapter
-        const createdParty = await partyAdapter.create(partyPayload)
+        // Create party using mutation
+        const createdParty = await createPartyMutation.mutateAsync(partyPayload)
         console.log('Party created:', createdParty)
 
         // The adapter returns the party directly
         partyId = createdParty.id
         shortcode = createdParty.shortcode
 
+        // Store edit key for anonymous editing under BOTH identifiers
+        // - shortcode: for Party.svelte which uses shortcode as partyId
+        // - UUID: for /teams/new which uses UUID as partyId
+        if (createdParty.editKey) {
+          storeEditKey(createdParty.shortcode, createdParty.editKey)
+          storeEditKey(createdParty.id, createdParty.editKey)
+        }
+
         if (!partyId || !shortcode) {
           throw new Error('Party creation did not return ID or shortcode')
         }
+
+        // Update the query cache with the created party
+        queryClient.setQueryData(
+          partyKeys.detail(createdParty.shortcode),
+          createdParty
+        )
 
         // Step 2: Add the first item to the party
         let position = selectedSlot !== null ? selectedSlot : -1 // Use selectedSlot if available
@@ -140,7 +219,7 @@
           if (activeTab === GridType.Weapon) {
             // Use selectedSlot if available, otherwise default to mainhand
             if (selectedSlot === null) position = -1
-            const addResult = await gridAdapter.createWeapon({
+            const addResult = await createWeaponMutation.mutateAsync({
               partyId,
               weaponId: firstItem.granblueId,
               position,
@@ -149,21 +228,12 @@
             console.log('Weapon added:', addResult)
             itemAdded = true
 
-            // Update local state with the added weapon
-            weapons = [...weapons, {
-              id: addResult.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: firstItem.granblueId,
-                name: firstItem.name,
-                element: firstItem.element
-              },
-              mainhand: position === -1
-            }]
+            // Update cache with the added weapon
+            addItemToCache('weapons', addResult)
           } else if (activeTab === GridType.Summon) {
             // Use selectedSlot if available, otherwise default to main summon
             if (selectedSlot === null) position = -1
-            const addResult = await gridAdapter.createSummon({
+            const addResult = await createSummonMutation.mutateAsync({
               partyId,
               summonId: firstItem.granblueId,
               position,
@@ -173,22 +243,12 @@
             console.log('Summon added:', addResult)
             itemAdded = true
 
-            // Update local state with the added summon
-            summons = [...summons, {
-              id: addResult.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: firstItem.granblueId,
-                name: firstItem.name,
-                element: firstItem.element
-              },
-              main: position === -1,
-              friend: position === 6
-            }]
+            // Update cache with the added summon
+            addItemToCache('summons', addResult)
           } else if (activeTab === GridType.Character) {
             // Use selectedSlot if available, otherwise default to first slot
             if (selectedSlot === null) position = 0
-            const addResult = await gridAdapter.createCharacter({
+            const addResult = await createCharacterMutation.mutateAsync({
               partyId,
               characterId: firstItem.granblueId,
               position
@@ -196,16 +256,8 @@
             console.log('Character added:', addResult)
             itemAdded = true
 
-            // Update local state with the added character
-            characters = [...characters, {
-              id: addResult.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: firstItem.granblueId,
-                name: firstItem.name,
-                element: firstItem.element
-              }
-            }]
+            // Update cache with the added character
+            addItemToCache('characters', addResult)
           }
           selectedSlot = null // Reset after using
 
@@ -285,24 +337,15 @@
             }
 
             // Add weapon via API
-            const response = await gridAdapter.createWeapon({
+            const response = await createWeaponMutation.mutateAsync({
               partyId,
               weaponId: item.granblueId,
               position,
               mainhand: position === -1
             })
 
-            // Add to local state
-            weapons = [...weapons, {
-              id: response.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: item.granblueId,
-                name: item.name,
-                element: item.element
-              },
-              mainhand: position === -1
-            }]
+            // Add to cache
+            addItemToCache('weapons', response)
           } else if (activeTab === GridType.Summon) {
             // Use selectedSlot for first item if available
             if (i === 0 && selectedSlot !== null && !summons.find(s => s.position === selectedSlot)) {
@@ -317,7 +360,7 @@
             }
 
             // Add summon via API
-            const response = await gridAdapter.createSummon({
+            const response = await createSummonMutation.mutateAsync({
               partyId,
               summonId: item.granblueId,
               position,
@@ -325,18 +368,8 @@
               friend: position === 6
             })
 
-            // Add to local state
-            summons = [...summons, {
-              id: response.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: item.granblueId,
-                name: item.name,
-                element: item.element
-              },
-              main: position === -1,
-              friend: position === 6
-            }]
+            // Add to cache
+            addItemToCache('summons', response)
           } else if (activeTab === GridType.Character) {
             // Use selectedSlot for first item if available
             if (i === 0 && selectedSlot !== null && !characters.find(c => c.position === selectedSlot)) {
@@ -351,22 +384,14 @@
             }
 
             // Add character via API
-            const response = await gridAdapter.createCharacter({
+            const response = await createCharacterMutation.mutateAsync({
               partyId,
               characterId: item.granblueId,
               position
             })
 
-            // Add to local state
-            characters = [...characters, {
-              id: response.id || `temp-${Date.now()}`,
-              position,
-              object: {
-                granblueId: item.granblueId,
-                name: item.name,
-                element: item.element
-              }
-            }]
+            // Add to cache
+            addItemToCache('characters', response)
           }
         }
       } catch (error: any) {
@@ -377,143 +402,48 @@
       }
       return
     }
-
-    // Original local-only adding logic (before party creation)
-    if (activeTab === GridType.Weapon) {
-      // Add weapons to empty slots
-      const emptySlots = Array.from({ length: 10 }, (_, i) => i - 1) // -1 for mainhand, 0-8 for grid
-        .filter(i => !weapons.find(w => w.position === i))
-
-      items.forEach((item, index) => {
-        let position: number
-        // Use selectedSlot for first item if available
-        if (index === 0 && selectedSlot !== null && !weapons.find(w => w.position === selectedSlot)) {
-          position = selectedSlot
-          selectedSlot = null // Reset after using
-        } else {
-          // Find next empty slot
-          const availableSlots = emptySlots.filter(s => !weapons.find(w => w.position === s))
-          if (availableSlots.length === 0) return
-          position = availableSlots[0]!
-        }
-
-        const newWeapon = {
-          id: `temp-${Date.now()}-${index}`,
-          position,
-          object: {
-            granblueId: item.granblueId,
-            name: item.name,
-            element: item.element
-          },
-          mainhand: position === -1
-        }
-        console.log('Adding weapon:', newWeapon)
-        weapons = [...weapons, newWeapon]
-      })
-      console.log('Updated weapons array:', weapons)
-    } else if (activeTab === GridType.Summon) {
-      // Add summons to empty slots
-      const emptySlots = [-1, 0, 1, 2, 3, 6] // main, 4 grid slots, friend
-        .filter(i => !summons.find(s => s.position === i))
-
-      items.forEach((item, index) => {
-        let position: number
-        // Use selectedSlot for first item if available
-        if (index === 0 && selectedSlot !== null && !summons.find(s => s.position === selectedSlot)) {
-          position = selectedSlot
-          selectedSlot = null // Reset after using
-        } else {
-          // Find next empty slot
-          const availableSlots = emptySlots.filter(s => !summons.find(sum => sum.position === s))
-          if (availableSlots.length === 0) return
-          position = availableSlots[0]!
-        }
-
-        summons = [...summons, {
-          id: `temp-${Date.now()}-${index}`,
-          position,
-          object: {
-            granblueId: item.granblueId,
-            name: item.name,
-            element: item.element
-          },
-          main: position === -1,
-          friend: position === 6
-        }]
-      })
-    } else if (activeTab === GridType.Character) {
-      // Add characters to empty slots
-      const emptySlots = Array.from({ length: 5 }, (_, i) => i)
-        .filter(i => !characters.find(c => c.position === i))
-
-      items.forEach((item, index) => {
-        let position: number
-        // Use selectedSlot for first item if available
-        if (index === 0 && selectedSlot !== null && !characters.find(c => c.position === selectedSlot)) {
-          position = selectedSlot
-          selectedSlot = null // Reset after using
-        } else {
-          // Find next empty slot
-          const availableSlots = emptySlots.filter(s => !characters.find(c => c.position === s))
-          if (availableSlots.length === 0) return
-          position = availableSlots[0]!
-        }
-
-        characters = [...characters, {
-          id: `temp-${Date.now()}-${index}`,
-          position,
-          object: {
-            granblueId: item.granblueId,
-            name: item.name,
-            element: item.element
-          }
-        }]
-      })
-    }
   }
 
-  // Remove functions
-  function removeWeapon(itemId: string) {
-    console.log('Removing weapon:', itemId)
-    weapons = weapons.filter(w => w.id !== itemId)
-    return Promise.resolve({ id: 'new', shortcode: 'new', weapons, summons, characters })
-  }
 
-  function removeSummon(itemId: string) {
-    console.log('Removing summon:', itemId)
-    summons = summons.filter(s => s.id !== itemId)
-    return Promise.resolve({ id: 'new', shortcode: 'new', weapons, summons, characters })
-  }
-
-  function removeCharacter(itemId: string) {
-    console.log('Removing character:', itemId)
-    characters = characters.filter(c => c.id !== itemId)
-    return Promise.resolve({ id: 'new', shortcode: 'new', weapons, summons, characters })
-  }
-
-  // Provide a minimal party context so Unit components can render safely.
+  // Provide party context using query data
   setContext('party', {
-    getParty: () => ({ id: 'new', shortcode: 'new', weapons, summons, characters }),
-    updateParty: (updatedParty: any) => {
-      // Update the local state when party is updated
-      if (updatedParty.weapons) weapons = updatedParty.weapons
-      if (updatedParty.summons) summons = updatedParty.summons
-      if (updatedParty.characters) characters = updatedParty.characters
+    getParty: () => party,
+    updateParty: (p: Party) => {
+      // Update cache instead of local state
+      queryClient.setQueryData(partyKeys.detail(shortcode || 'new'), p)
     },
     canEdit: () => true,
+    getEditKey: () => editKey,
     services: {
       gridService: {
-        removeWeapon: (partyId: string, itemId: string) => removeWeapon(itemId),
-        removeSummon: (partyId: string, itemId: string) => removeSummon(itemId),
-        removeCharacter: (partyId: string, itemId: string) => removeCharacter(itemId),
-        addWeapon: () => Promise.resolve({ party: { id: 'new', shortcode: 'new', weapons, summons, characters } }),
-        addSummon: () => Promise.resolve({ party: { id: 'new', shortcode: 'new', weapons, summons, characters } }),
-        addCharacter: () => Promise.resolve({ party: { id: 'new', shortcode: 'new', weapons, summons, characters } }),
-        replaceWeapon: () => Promise.resolve({ party: { id: 'new', shortcode: 'new', weapons, summons, characters } }),
-        replaceSummon: () => Promise.resolve({ party: { id: 'new', shortcode: 'new', weapons, summons, characters } }),
-        replaceCharacter: () => Promise.resolve({ party: { id: 'new', shortcode: 'new', weapons, summons, characters } })
-      },
-      partyService: { getEditKey: () => null }
+        removeWeapon: async (partyId: string, itemId: string) => {
+          if (!partyId || partyId === 'new') return party
+          await deleteWeapon.mutateAsync({
+            id: itemId,
+            partyId,
+            partyShortcode: shortcode || 'new'
+          })
+          return party
+        },
+        removeSummon: async (partyId: string, itemId: string) => {
+          if (!partyId || partyId === 'new') return party
+          await deleteSummon.mutateAsync({
+            id: itemId,
+            partyId,
+            partyShortcode: shortcode || 'new'
+          })
+          return party
+        },
+        removeCharacter: async (partyId: string, itemId: string) => {
+          if (!partyId || partyId === 'new') return party
+          await deleteCharacter.mutateAsync({
+            id: itemId,
+            partyId,
+            partyShortcode: shortcode || 'new'
+          })
+          return party
+        }
+      }
     },
     openPicker: (opts: { type: 'weapon' | 'summon' | 'character'; position: number; item?: any }) => {
       selectedSlot = opts.position

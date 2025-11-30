@@ -4,7 +4,7 @@
 	import type { GridCharacter } from '$lib/types/api/party'
 	import type { Job } from '$lib/types/api/entities'
 	import { getContext } from 'svelte'
-	import type { PartyContext } from '$lib/services/party.service'
+	import type { PartyContext } from '$lib/types/party-context'
 	import type { DragDropContext } from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
 	import DropZone from '$lib/components/dnd/DropZone.svelte'
@@ -31,7 +31,7 @@
 	const dragContext = getContext<DragDropContext | undefined>('drag-drop')
 
 	// Create array with proper empty slots
-	let characterSlots = $derived(() => {
+	let characterSlots = $derived.by(() => {
 		const slots: (GridCharacter | undefined)[] = Array(5).fill(undefined)
 		characters.forEach(char => {
 			if (char.position >= 0 && char.position < 5) {
@@ -47,7 +47,7 @@
 		class="characters"
 		aria-label="Character Grid"
 	>
-		{#each characterSlots() as character, i}
+		{#each characterSlots as character, i}
 			<li
 				aria-label={`Character slot ${i}`}
 				class:main-character={i === 0}

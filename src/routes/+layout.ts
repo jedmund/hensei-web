@@ -11,8 +11,19 @@
 import type { LayoutLoad } from './$types'
 import { browser } from '$app/environment'
 import { QueryClient } from '@tanstack/svelte-query'
+import { authStore } from '$lib/stores/auth.store'
 
-export const load: LayoutLoad = async () => {
+export const load: LayoutLoad = async ({ data }) => {
+	// Initialize auth store from server data BEFORE creating QueryClient
+	// This ensures auth is ready when mutations initialize
+	if (browser && data.auth) {
+		authStore.initFromServer(
+			data.auth.accessToken,
+			data.auth.user,
+			data.auth.expiresAt
+		)
+	}
+
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: {
@@ -30,5 +41,9 @@ export const load: LayoutLoad = async () => {
 		}
 	})
 
-	return { queryClient }
+	// Pass through server data (account, currentUser, etc.) along with queryClient
+	return {
+		...data,
+		queryClient
+	}
 }

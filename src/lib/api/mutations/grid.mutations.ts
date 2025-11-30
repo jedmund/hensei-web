@@ -14,10 +14,42 @@ import {
 	type CreateGridCharacterParams,
 	type CreateGridSummonParams,
 	type UpdateUncapParams,
-	type ResolveConflictParams
+	type ResolveConflictParams,
+	type SwapPositionsParams
 } from '$lib/api/adapters/grid.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
+import { getEditKey } from '$lib/utils/editKeys'
+import { invalidateParty } from '$lib/query/cacheHelpers'
+
+// ============================================================================
+// Mutation Factory
+// ============================================================================
+
+/**
+ * Wraps a grid adapter method to automatically inject edit key headers for anonymous users.
+ * When a party has an edit key stored in localStorage, it's automatically sent in the X-Edit-Key header.
+ *
+ * For anonymous users:
+ * - Edit key is retrieved from localStorage using party shortcode
+ * - X-Edit-Key header is automatically injected
+ *
+ * For authenticated users:
+ * - No edit key in localStorage
+ * - Falls back to Bearer token (existing behavior)
+ *
+ * @param adapterMethod - The grid adapter method to wrap
+ * @returns Wrapped method that automatically handles edit key injection
+ */
+function createGridMutation<TParams extends { partyId: number | string }>(
+	adapterMethod: (params: TParams, headers?: Record<string, string>) => Promise<any>
+) {
+	return (params: TParams) => {
+		const editKey = typeof params.partyId === 'string' ? getEditKey(params.partyId) : null
+		const headers = editKey ? { 'X-Edit-Key': editKey } : undefined
+		return adapterMethod(params, headers)
+	}
+}
 
 // ============================================================================
 // Weapon Mutations
@@ -49,10 +81,12 @@ export function useCreateGridWeapon() {
 	const queryClient = useQueryClient()
 
 	return createMutation(() => ({
-		mutationFn: (params: CreateGridWeaponParams) => gridAdapter.createWeapon(params),
+		mutationFn: createGridMutation((params: CreateGridWeaponParams, headers?: Record<string, string>) =>
+			gridAdapter.createWeapon(params, headers)
+		),
 		onSuccess: (_data, params) => {
 			// Invalidate the party to refetch with new weapon
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.partyId) })
+			invalidateParty(queryClient, params.partyId)
 		}
 	}))
 }
@@ -214,6 +248,23 @@ export function useResolveWeaponConflict() {
 	}))
 }
 
+/**
+ * Swap weapon positions mutation
+ *
+ * Swaps the positions of two weapons in the grid.
+ */
+export function useSwapWeapons() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
+			gridAdapter.swapWeapons(params),
+		onSuccess: (_data, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}
+
 // ============================================================================
 // Character Mutations
 // ============================================================================
@@ -227,9 +278,11 @@ export function useCreateGridCharacter() {
 	const queryClient = useQueryClient()
 
 	return createMutation(() => ({
-		mutationFn: (params: CreateGridCharacterParams) => gridAdapter.createCharacter(params),
+		mutationFn: createGridMutation((params: CreateGridCharacterParams, headers?: Record<string, string>) =>
+			gridAdapter.createCharacter(params, headers)
+		),
 		onSuccess: (_data, params) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.partyId) })
+			invalidateParty(queryClient, params.partyId)
 		}
 	}))
 }
@@ -374,6 +427,23 @@ export function useResolveCharacterConflict() {
 	}))
 }
 
+/**
+ * Swap character positions mutation
+ *
+ * Swaps the positions of two characters in the grid.
+ */
+export function useSwapCharacters() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
+			gridAdapter.swapCharacters(params),
+		onSuccess: (_data, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}
+
 // ============================================================================
 // Summon Mutations
 // ============================================================================
@@ -387,9 +457,11 @@ export function useCreateGridSummon() {
 	const queryClient = useQueryClient()
 
 	return createMutation(() => ({
-		mutationFn: (params: CreateGridSummonParams) => gridAdapter.createSummon(params),
+		mutationFn: createGridMutation((params: CreateGridSummonParams, headers?: Record<string, string>) =>
+			gridAdapter.createSummon(params, headers)
+		),
 		onSuccess: (_data, params) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.partyId) })
+			invalidateParty(queryClient, params.partyId)
 		}
 	}))
 }
@@ -562,6 +634,23 @@ export function useUpdateQuickSummon() {
 			}
 		},
 		onSettled: (_data, _err, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}
+
+/**
+ * Swap summon positions mutation
+ *
+ * Swaps the positions of two summons in the grid.
+ */
+export function useSwapSummons() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
+			gridAdapter.swapSummons(params),
+		onSuccess: (_data, { partyShortcode }) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
 		}
 	}))

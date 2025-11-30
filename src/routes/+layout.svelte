@@ -8,7 +8,6 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
 	import { beforeNavigate, afterNavigate } from '$app/navigation'
-	import { authStore } from '$lib/stores/auth.store'
 	import { browser, dev } from '$app/environment'
 	import { QueryClientProvider } from '@tanstack/svelte-query'
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
@@ -26,22 +25,6 @@
 
 	// Store scroll positions for each visited route
 	const scrollPositions = new Map<string, number>();
-
-    // Initialize auth store from server data immediately on load to ensure
-    // Authorization headers are available for client-side API calls
-    // Run immediately, not in effect to avoid timing issues
-    if (browser) {
-        if (data?.auth) {
-            console.log('[+layout] Initializing authStore with token:', data.auth.accessToken ? 'present' : 'missing')
-            authStore.initFromServer(
-                data.auth.accessToken,
-                data.auth.user,
-                data.auth.expiresAt
-            )
-        } else {
-            console.warn('[+layout] No auth data available to initialize authStore')
-        }
-    }
 
 	// Save scroll position before navigating away and close sidebar
 	beforeNavigate(({ from }) => {

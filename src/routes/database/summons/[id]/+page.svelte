@@ -2,9 +2,18 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
+
+	// TanStack Query
+	import { createQuery } from '@tanstack/svelte-query'
+	import { entityQueries } from '$lib/api/queries/entity.queries'
+	import { withInitialData } from '$lib/query/ssr'
+
+	// Utilities
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getElementLabel, getElementIcon } from '$lib/utils/element'
 	import { getSummonImage } from '$lib/utils/images'
+
+	// Components
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -13,8 +22,14 @@
 
 	let { data }: { data: PageData } = $props()
 
-	// Get summon from server data
-	const summon = $derived(data.summon)
+	// Use TanStack Query with SSR initial data
+	const summonQuery = createQuery(() => ({
+		...entityQueries.summon(data.summon?.id ?? ''),
+		...withInitialData(data.summon)
+	}))
+
+	// Get summon from query
+	const summon = $derived(summonQuery.data)
 
 	// Helper function to get summon grid image
 	function getSummonGridImage(summon: any): string {

@@ -3,7 +3,7 @@
 <script lang="ts">
 	import type { GridWeapon } from '$lib/types/api/party'
 	import { getContext } from 'svelte'
-	import type { PartyContext } from '$lib/services/party.service'
+	import type { PartyContext } from '$lib/types/party-context'
 	import type { DragDropContext } from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
 	import DropZone from '$lib/components/dnd/DropZone.svelte'
@@ -33,7 +33,7 @@
 	let mainhand = $derived(weapons.find((w) => (w as any).mainhand || w.position === -1))
 
 	// Create array for sub-weapons (positions 0-8)
-	let subWeaponSlots = $derived(() => {
+	let subWeaponSlots = $derived.by(() => {
 		const slots: (GridWeapon | undefined)[] = Array(9).fill(undefined)
 		weapons.forEach(weapon => {
 			if (weapon.position >= 0 && weapon.position < 9) {
@@ -51,7 +51,7 @@
 		</div>
 
 		<ul class="weapons" aria-label="Weapon Grid">
-			{#each subWeaponSlots() as weapon, i}
+			{#each subWeaponSlots as weapon, i}
 				<li
 					aria-label={weapon ? `Weapon ${i}` : `Empty slot ${i}`}
 					data-index={i}
