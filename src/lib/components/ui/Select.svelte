@@ -58,13 +58,7 @@
 	)
 
 	const selectClasses = $derived(
-		[
-			'select',
-			size,
-			contained && 'contained',
-			fullWidth && 'full',
-			disabled && 'disabled'
-		]
+		['select', size, contained && 'contained', fullWidth && 'full', disabled && 'disabled']
 			.filter(Boolean)
 			.join(' ')
 	)
@@ -94,7 +88,7 @@
 
 		<SelectPrimitive.Root
 			type="single"
-			{...(value !== undefined && value !== null ? { value: String(value) } : {})}
+			{...value !== undefined && value !== null ? { value: String(value) } : {}}
 			onValueChange={handleValueChange}
 			{disabled}
 			items={stringOptions}
@@ -112,7 +106,7 @@
 					{#each options as option}
 						<SelectPrimitive.Item
 							value={String(option.value)}
-							{...(option.disabled !== undefined ? { disabled: option.disabled } : {})}
+							{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
 							class="item"
 						>
 							{#snippet children({ selected })}
@@ -139,7 +133,7 @@
 {:else}
 	<SelectPrimitive.Root
 		type="single"
-		{...(value !== undefined && value !== null ? { value: String(value) } : {})}
+		{...value !== undefined && value !== null ? { value: String(value) } : {}}
 		onValueChange={handleValueChange}
 		{disabled}
 		items={stringOptions}
@@ -157,7 +151,7 @@
 				{#each options as option}
 					<SelectPrimitive.Item
 						value={String(option.value)}
-						{...(option.disabled !== undefined ? { disabled: option.disabled } : {})}
+						{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
 						class="item"
 					>
 						{#snippet children({ selected })}
@@ -305,7 +299,7 @@
 
 		:global(.chevron) {
 			flex-shrink: 0;
-			color: var(--text-secondary);
+			color: var(--text-tertiary);
 			margin-left: auto;
 		}
 	}

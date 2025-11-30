@@ -48,11 +48,11 @@
 </script>
 
 {#if !loading && svgContent}
-  <span 
+  <span
     class="icon {className}"
-    style="width: {typeof size === 'number' ? `${size}px` : size}; 
+    style="width: {typeof size === 'number' ? `${size}px` : size};
            height: {typeof size === 'number' ? `${size}px` : size};
-           color: {color};
+           {color !== 'currentColor' ? `color: ${color};` : ''}
            display: inline-flex;
            align-items: center;
            justify-content: center;"
