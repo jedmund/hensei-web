@@ -10,8 +10,10 @@
 import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions } from './types'
 import type { GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
+import type { Character, Weapon } from '$lib/types/api/entities'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import { validateGridWeapon, validateGridCharacter, validateGridSummon } from '$lib/utils/gridValidation'
+import { isConflictResponse } from '$lib/types/api/conflict'
 
 // GridWeapon, GridCharacter, and GridSummon types are imported from types/api/party
 // Re-export for test files and consumers
@@ -89,6 +91,24 @@ export interface ResolveConflictParams {
 }
 
 /**
+ * Character conflict response from API
+ */
+export interface CharacterConflictResponse {
+	position: number
+	conflicts: GridCharacter[]
+	incoming: Character
+}
+
+/**
+ * Weapon conflict response from API
+ */
+export interface WeaponConflictResponse {
+	position: number
+	conflicts: GridWeapon[]
+	incoming: Weapon
+}
+
+/**
  * Grid adapter for managing user's grid item instances
  */
 export class GridAdapter extends BaseAdapter {
@@ -97,16 +117,23 @@ export class GridAdapter extends BaseAdapter {
 
 	/**
 	 * Creates a new grid weapon instance
+	 * Returns either a GridWeapon on success, or a WeaponConflictResponse if conflicts are detected
 	 */
-    async createWeapon(params: CreateGridWeaponParams, headers?: Record<string, string>): Promise<GridWeapon> {
-        const response = await this.request<{ gridWeapon: GridWeapon }>('/grid_weapons', {
+    async createWeapon(params: CreateGridWeaponParams, headers?: Record<string, string>): Promise<GridWeapon | WeaponConflictResponse> {
+        const response = await this.request<{ gridWeapon: GridWeapon } | WeaponConflictResponse>('/grid_weapons', {
             method: 'POST',
             body: { weapon: params },
             headers
         })
 
-        // Validate and normalize response
-        const validated = validateGridWeapon(response.gridWeapon)
+        // Check if this is a conflict response
+        if (isConflictResponse(response)) {
+            return response as WeaponConflictResponse
+        }
+
+        // Normal success response - validate and normalize
+        const gridWeaponResponse = response as { gridWeapon: GridWeapon }
+        const validated = validateGridWeapon(gridWeaponResponse.gridWeapon)
         if (!validated) {
             throw new Error('API returned incomplete GridWeapon data')
         }
@@ -208,16 +235,23 @@ export class GridAdapter extends BaseAdapter {
 
 	/**
 	 * Creates a new grid character instance
+	 * Returns either a GridCharacter on success, or a CharacterConflictResponse if conflicts are detected
 	 */
-    async createCharacter(params: CreateGridCharacterParams, headers?: Record<string, string>): Promise<GridCharacter> {
-        const response = await this.request<{ gridCharacter: GridCharacter }>('/grid_characters', {
+    async createCharacter(params: CreateGridCharacterParams, headers?: Record<string, string>): Promise<GridCharacter | CharacterConflictResponse> {
+        const response = await this.request<{ gridCharacter: GridCharacter } | CharacterConflictResponse>('/grid_characters', {
             method: 'POST',
             body: { character: params },
             headers
         })
 
-        // Validate and normalize response
-        const validated = validateGridCharacter(response.gridCharacter)
+        // Check if this is a conflict response
+        if (isConflictResponse(response)) {
+            return response as CharacterConflictResponse
+        }
+
+        // Normal success response - validate and normalize
+        const gridCharacterResponse = response as { gridCharacter: GridCharacter }
+        const validated = validateGridCharacter(gridCharacterResponse.gridCharacter)
         if (!validated) {
             throw new Error('API returned incomplete GridCharacter data')
         }
