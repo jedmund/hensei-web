@@ -133,9 +133,10 @@ export class PartyAdapter extends BaseAdapter {
 
 	/**
 	 * Deletes a party
+	 * @param id - The party's UUID (not shortcode - API requires UUID for delete)
 	 */
-	async delete(shortcode: string): Promise<void> {
-		return this.request<void>(`/parties/${shortcode}`, {
+	async delete(id: string): Promise<void> {
+		return this.request<void>(`/parties/${id}`, {
 			method: 'DELETE'
 		})
 	}

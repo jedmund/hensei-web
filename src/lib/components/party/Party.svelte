@@ -56,6 +56,9 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
+	import ConflictDialog from '$lib/components/dialogs/ConflictDialog.svelte'
+	import type { ConflictData } from '$lib/types/api/conflict'
+	import { isConflictResponse, createConflictData } from '$lib/types/api/conflict'
 
 	interface Props {
 		party?: Party
@@ -87,6 +90,8 @@
 	let selectedSlot = $state<number>(0)
 	let editDialogOpen = $state(false)
 	let editingTitle = $state('')
+	let conflictDialogOpen = $state(false)
+	let conflictData = $state<ConflictData | null>(null)
 
 	// TanStack Query mutations - Grid
 	const createWeapon = useCreateGridWeapon()
@@ -243,6 +248,16 @@
 
 	function handleTabChange(tab: GridType) {
 		activeTab = tab
+		// Update selectedSlot to the first valid empty slot for this tab
+		// Characters tab: position 0 is protagonist (not selectable), so start at 1
+		// Weapons/Summons: start at first empty slot
+		const nextEmpty = findNextEmptySlot(party, tab)
+		if (nextEmpty !== SLOT_NOT_FOUND) {
+			selectedSlot = nextEmpty
+		} else {
+			// Fallback: Characters start at 1 (skip protagonist), others at 0
+			selectedSlot = tab === GridType.Character ? 1 : 0
+		}
 	}
 
 	// Edit dialog functions
@@ -278,7 +293,7 @@
 
 		try {
 			// Use TanStack Query mutation to update party
-			await updatePartyMutation.mutateAsync({ shortcode: party.shortcode, updates })
+			await updatePartyMutation.mutateAsync({ shortcode: party.shortcode, ...updates })
 			// Party will be updated via cache invalidation
 		} catch (err: any) {
 			error = err.message || 'Failed to update party'
@@ -295,9 +310,9 @@
 
 		try {
 			if (party.favorited) {
-				await unfavoritePartyMutation.mutateAsync({ shortcode: party.shortcode })
+				await unfavoritePartyMutation.mutateAsync(party.shortcode)
 			} else {
-				await favoritePartyMutation.mutateAsync({ shortcode: party.shortcode })
+				await favoritePartyMutation.mutateAsync(party.shortcode)
 			}
 			// Party will be updated via cache invalidation
 		} catch (err: any) {
@@ -312,20 +327,10 @@
 		error = null
 
 		try {
-			const result = await remixPartyMutation.mutateAsync({
-				shortcode: party.shortcode,
-				localId,
-				editKey: editKey || undefined
-			})
-
-			// Store new edit key if returned
-			if (result.editKey) {
-				storeEditKey(result.party.shortcode, result.editKey)
-				editKey = result.editKey
-			}
+			const newParty = await remixPartyMutation.mutateAsync(party.shortcode)
 
 			// Navigate to new party
-			window.location.href = `/teams/${result.party.shortcode}`
+			window.location.href = `/teams/${newParty.shortcode}`
 		} catch (err: any) {
 			error = err.message || 'Failed to remix party'
 		} finally {
@@ -353,8 +358,8 @@
 			deleting = true
 			error = null
 
-			// Delete the party using mutation
-			await deletePartyMutation.mutateAsync({ shortcode: party.shortcode })
+			// Delete the party using mutation (API expects UUID, cache uses shortcode)
+			await deletePartyMutation.mutateAsync({ id: party.id, shortcode: party.shortcode })
 
 			// Navigate to user's own profile page after deletion
 			if (party.user?.username) {
@@ -502,13 +507,22 @@
 			// Call appropriate create mutation based on current tab
 			// Use granblueId (camelCase) as that's what the SearchResult type uses
 			const itemId = item.granblueId
+			let result: unknown
+
 			if (activeTab === GridType.Weapon) {
-				await createWeapon.mutateAsync({
+				result = await createWeapon.mutateAsync({
 					partyId: party.id,
 					weaponId: itemId,
 					position: targetSlot,
 					mainhand: targetSlot === -1
 				})
+
+				// Check if the result is a conflict response
+				if (isConflictResponse(result)) {
+					conflictData = createConflictData(result, 'weapon')
+					conflictDialogOpen = true
+					return
+				}
 			} else if (activeTab === GridType.Summon) {
 				await createSummon.mutateAsync({
 					partyId: party.id,
@@ -518,11 +532,18 @@
 					friend: targetSlot === 6
 				})
 			} else if (activeTab === GridType.Character) {
-				await createCharacter.mutateAsync({
+				result = await createCharacter.mutateAsync({
 					partyId: party.id,
 					characterId: itemId,
 					position: targetSlot
 				})
+
+				// Check if the result is a conflict response
+				if (isConflictResponse(result)) {
+					conflictData = createConflictData(result, 'character')
+					conflictDialogOpen = true
+					return
+				}
 			}
 
 			// Party will be updated via cache invalidation from the mutation
@@ -692,6 +713,8 @@
 		getParty: () => party,
 		canEdit: () => canEdit(),
 		getEditKey: () => editKey,
+		getSelectedSlot: () => selectedSlot,
+		getActiveTab: () => activeTab,
 		services: {
 			gridService: clientGridService // Uses TanStack Query mutations
 		},
@@ -932,6 +955,25 @@
 		</button>
 	{/snippet}
 </Dialog>
+
+<!-- Conflict Resolution Dialog -->
+<ConflictDialog
+	bind:open={conflictDialogOpen}
+	conflict={conflictData}
+	partyId={party.id}
+	partyShortcode={party.shortcode}
+	onResolve={() => {
+		conflictData = null
+		// Find next empty slot after conflict resolution
+		const nextEmptySlot = findNextEmptySlot(party, activeTab)
+		if (nextEmptySlot !== SLOT_NOT_FOUND) {
+			selectedSlot = nextEmptySlot
+		}
+	}}
+	onCancel={() => {
+		conflictData = null
+	}}
+/>
 
 <style lang="scss">
 	@use '$src/themes/typography' as *;

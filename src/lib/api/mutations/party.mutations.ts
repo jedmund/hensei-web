@@ -108,6 +108,7 @@ export function useUpdateParty() {
  * Delete party mutation
  *
  * Deletes a party and removes it from all caches.
+ * Note: The API expects the party UUID (id), not the shortcode.
  *
  * @example
  * ```svelte
@@ -116,8 +117,8 @@ export function useUpdateParty() {
  *
  *   const deleteParty = useDeleteParty()
  *
- *   function handleDelete(shortcode: string) {
- *     deleteParty.mutate(shortcode)
+ *   function handleDelete(id: string, shortcode: string) {
+ *     deleteParty.mutate({ id, shortcode })
  *   }
  * </script>
  * ```
@@ -126,10 +127,10 @@ export function useDeleteParty() {
 	const queryClient = useQueryClient()
 
 	return createMutation(() => ({
-		mutationFn: (shortcode: string) => partyAdapter.delete(shortcode),
-		onSuccess: (_data, shortcode) => {
-			// Remove the party from cache
-			queryClient.removeQueries({ queryKey: partyKeys.detail(shortcode) })
+		mutationFn: (params: { id: string; shortcode: string }) => partyAdapter.delete(params.id),
+		onSuccess: (_data, params) => {
+			// Remove the party from cache (keyed by shortcode)
+			queryClient.removeQueries({ queryKey: partyKeys.detail(params.shortcode) })
 			// Invalidate party lists
 			queryClient.invalidateQueries({ queryKey: partyKeys.lists() })
 			// Invalidate user's party lists
