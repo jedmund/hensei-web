@@ -26,7 +26,8 @@
 
 		// Avoid "paths" here—SvelteKit manages them via svelte.config.js -> kit.alias
 		// Adding "paths" would override $app/* & $lib/* from the generated config.
-	},
+	}
 
-	"include": ["src/**/*.svelte", "src/**/*.ts", "src/**/*.d.ts"]
+	// Note: Don't override "include" here - let .svelte-kit/tsconfig.json handle it
+	// so that ambient.d.ts (which contains $env types) is properly included
 }
