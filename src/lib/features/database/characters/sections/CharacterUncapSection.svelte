@@ -37,6 +37,42 @@
       ? (label.toLowerCase() as ElementName)
       : undefined
   })
+
+  // Auto-check/uncheck uncap levels in hierarchy: Transcendence > ULB > FLB
+  function handleFlbChange(checked: boolean) {
+    if (!checked) {
+      // Unchecking FLB should also uncheck ULB and Transcendence
+      editData.ulb = false
+      editData.transcendence = false
+    }
+  }
+
+  function handleUlbChange(checked: boolean) {
+    if (checked && !editData.flb) {
+      // Checking ULB should also check FLB
+      editData.flb = true
+    } else if (!checked) {
+      // Unchecking ULB should also uncheck Transcendence
+      editData.transcendence = false
+    }
+  }
+
+  function handleTranscendenceChange(checked: boolean) {
+    if (checked) {
+      // Checking Transcendence should also check ULB and FLB
+      if (!editData.ulb) editData.ulb = true
+      if (!editData.flb) editData.flb = true
+    }
+  }
+
+  function handleSpecialChange(checked: boolean) {
+    if (checked) {
+      // Special characters (Story SRs) don't have standard uncap levels
+      editData.flb = false
+      editData.ulb = false
+      editData.transcendence = false
+    }
+  }
 </script>
 
 <DetailsContainer title="Uncap">
@@ -56,10 +92,31 @@
   {/if}
 
   {#if editMode}
-    <DetailItem label="FLB" bind:value={editData.flb} editable={true} type="checkbox" element={elementName} />
-    <DetailItem label="ULB" bind:value={editData.ulb} editable={true} type="checkbox" element={elementName} />
-    <DetailItem label="Transcendence" bind:value={editData.transcendence} editable={true} type="checkbox" element={elementName} />
-    <DetailItem label="Special" bind:value={editData.special} editable={true} type="checkbox" element={elementName} />
+    <DetailItem label="FLB" bind:value={editData.flb} editable={true} type="checkbox" element={elementName} onchange={handleFlbChange} />
+    <DetailItem label="ULB" bind:value={editData.ulb} editable={true} type="checkbox" element={elementName} onchange={handleUlbChange} />
+    <DetailItem label="Transcendence" bind:value={editData.transcendence} editable={true} type="checkbox" element={elementName} onchange={handleTranscendenceChange} />
+    <div class="special-field">
+      <DetailItem label="Special" bind:value={editData.special} editable={true} type="checkbox" element={elementName} onchange={handleSpecialChange} />
+      <p class="special-note">This is for Story SRs. Don't check this unless something really weird happens.</p>
+    </div>
   {/if}
 </DetailsContainer>
+
+<style lang="scss">
+  @use '$src/themes/colors' as colors;
+  @use '$src/themes/spacing' as spacing;
+  @use '$src/themes/typography' as typography;
+
+  .special-field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .special-note {
+    font-size: typography.$font-small;
+    color: colors.$grey-50;
+    margin: 0;
+    padding: 0 spacing.$unit spacing.$unit;
+  }
+</style>
 
