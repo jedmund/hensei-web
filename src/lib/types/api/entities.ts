@@ -105,6 +105,13 @@ export interface Summon {
   }
 }
 
+// Raw data response from separate /raw endpoint
+export interface EntityRawData {
+  wikiRaw: string | null
+  gameRawEn: Record<string, unknown> | null
+  gameRawJp: Record<string, unknown> | null
+}
+
 // Job entity from JobBlueprint
 export interface Job {
   id: string

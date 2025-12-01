@@ -403,6 +403,15 @@ export interface WeaponDownloadStatus {
 }
 
 /**
+ * Raw data response from /raw endpoint
+ */
+export interface EntityRawData {
+	wikiRaw: string | null
+	gameRawEn: Record<string, unknown> | null
+	gameRawJp: Record<string, unknown> | null
+}
+
+/**
  * Entity adapter for accessing canonical game data
  */
 export class EntityAdapter extends BaseAdapter {
@@ -812,6 +821,52 @@ export class EntityAdapter extends BaseAdapter {
 			images: response.images,
 			updatedAt: response.updated_at
 		}
+	}
+
+	// ============================================
+	// Raw Data Methods (for database viewing)
+	// ============================================
+
+	/**
+	 * Gets raw wiki and game data for a character
+	 * This data is fetched separately to avoid bloating regular entity responses
+	 * Note: BaseAdapter.request() automatically transforms snake_case to camelCase
+	 */
+	async getCharacterRawData(id: string): Promise<EntityRawData> {
+		// Response keys are already camelCase after BaseAdapter.transformResponse()
+		const response = await this.request<EntityRawData>(`/characters/${id}/raw`, {
+			method: 'GET'
+		})
+
+		return response
+	}
+
+	/**
+	 * Gets raw wiki and game data for a weapon
+	 * This data is fetched separately to avoid bloating regular entity responses
+	 * Note: BaseAdapter.request() automatically transforms snake_case to camelCase
+	 */
+	async getWeaponRawData(id: string): Promise<EntityRawData> {
+		// Response keys are already camelCase after BaseAdapter.transformResponse()
+		const response = await this.request<EntityRawData>(`/weapons/${id}/raw`, {
+			method: 'GET'
+		})
+
+		return response
+	}
+
+	/**
+	 * Gets raw wiki and game data for a summon
+	 * This data is fetched separately to avoid bloating regular entity responses
+	 * Note: BaseAdapter.request() automatically transforms snake_case to camelCase
+	 */
+	async getSummonRawData(id: string): Promise<EntityRawData> {
+		// Response keys are already camelCase after BaseAdapter.transformResponse()
+		const response = await this.request<EntityRawData>(`/summons/${id}/raw`, {
+			method: 'GET'
+		})
+
+		return response
 	}
 }
 
