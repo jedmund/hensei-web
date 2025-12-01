@@ -8,9 +8,10 @@ import { PUBLIC_SIERO_API_URL } from '$env/static/public'
  * Always use direct API URL for both server and client
  */
 export function getApiBaseUrl(): string {
-	// Always use direct API URL
 	const base = PUBLIC_SIERO_API_URL || 'http://localhost:3000'
-	return `${base}/api/v1`
+	// Production API uses /v1, development uses /api/v1
+	const apiPath = import.meta.env.PROD ? '/v1' : '/api/v1'
+	return `${base}${apiPath}`
 }
 
 /**
