@@ -17,7 +17,7 @@
     <DetailItem label="Granblue ID" bind:value={editData.granblue_id} editable={true} type="text" />
   {:else}
     <DetailItem label="Rarity" value={getRarityLabel(summon.rarity)} />
-    <DetailItem label="Granblue ID" value={summon.granblue_id} />
+    <DetailItem label="Granblue ID" value={summon.granblueId} />
   {/if}
 </DetailsContainer>
 
