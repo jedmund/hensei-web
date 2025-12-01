@@ -340,6 +340,10 @@
 	// Shapes
 	:global([data-button-root].circular) {
 		border-radius: 999px;
+
+		&:active:not(:disabled) {
+			transform: none;
+		}
 	}
 
 	:global([data-button-root].pill) {
@@ -424,7 +428,7 @@
 		color: white;
 
 		&:hover:not(:disabled) {
-			background: var(--wind-bg-hover);
+			background: var(--wind-button-bg-hover);
 			color: white;
 		}
 	}
@@ -434,7 +438,7 @@
 		color: white;
 
 		&:hover:not(:disabled) {
-			background: var(--fire-bg-hover);
+			background: var(--fire-button-bg-hover);
 			color: white;
 		}
 	}
@@ -444,7 +448,7 @@
 		color: white;
 
 		&:hover:not(:disabled) {
-			background: var(--water-bg-hover);
+			background: var(--water-button-bg-hover);
 			color: white;
 		}
 	}
@@ -454,7 +458,7 @@
 		color: white;
 
 		&:hover:not(:disabled) {
-			background: var(--earth-bg-hover);
+			background: var(--earth-button-bg-hover);
 			color: white;
 		}
 	}
@@ -464,7 +468,7 @@
 		color: white;
 
 		&:hover:not(:disabled) {
-			background: var(--dark-bg-hover);
+			background: var(--dark-button-bg-hover);
 			color: white;
 		}
 	}
@@ -474,7 +478,7 @@
 		color: black;
 
 		&:hover:not(:disabled) {
-			background: var(--light-bg-hover);
+			background: var(--light-button-bg-hover);
 			color: white;
 		}
 	}
