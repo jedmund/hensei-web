@@ -16,7 +16,6 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		isAuthenticated,
 		account,
 		currentUser,
-		// Pass auth data for client-side store initialization
 		auth: locals.auth
 	}
 }
