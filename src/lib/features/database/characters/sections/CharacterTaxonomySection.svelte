@@ -8,11 +8,13 @@
   import { getGenderLabel, getGenderOptions } from '$lib/utils/gender'
   import { getProficiencyLabel, getProficiencyOptions } from '$lib/utils/proficiency'
 
-  let {
-    character,
-    editMode = false,
-    editData = $bindable<any>()
-  }: { character: any; editMode?: boolean; editData?: any } = $props()
+  interface Props {
+    character: any
+    editMode?: boolean
+    editData?: any
+  }
+
+  let { character, editMode = false, editData = $bindable() }: Props = $props()
 
   const elementOptions = getElementOptions()
   const raceOptions = getRaceOptions()
@@ -35,8 +37,8 @@
       <DetailItem label="Race 2" value={getRaceLabel(character.race?.[1])} />
     {/if}
     <DetailItem label="Gender" value={getGenderLabel(character.gender)} />
-    <DetailItem label="Proficiency 1" value={getProficiencyLabel(character.proficiency[0])} />
-    <DetailItem label="Proficiency 2" value={getProficiencyLabel(character.proficiency[1])} />
+    <DetailItem label="Proficiency 1" value={getProficiencyLabel(character.proficiency?.[0] ?? 0)} />
+    <DetailItem label="Proficiency 2" value={getProficiencyLabel(character.proficiency?.[1] ?? 0)} />
   {/if}
 </DetailsContainer>
 
