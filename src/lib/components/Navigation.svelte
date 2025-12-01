@@ -43,7 +43,7 @@
 	const guidesHref = $derived(localizeHref('/guides'))
 	const collectionHref = $derived(localizeHref('/collection'))
 	const meHref = $derived(localizeHref('/me'))
-	const loginHref = $derived(localizeHref('/login'))
+	const loginHref = $derived(localizeHref('/auth/login'))
 	const settingsHref = $derived(localizeHref('/settings'))
 	const databaseHref = $derived(localizeHref('/database'))
 	const newTeamHref = $derived(localizeHref('/teams/new'))
@@ -99,7 +99,7 @@
 
 			if (response.ok) {
 				// Navigate to login page after successful logout
-				await goto('/login')
+				await goto('/auth/login')
 			}
 		} catch (error) {
 			console.error('Logout failed:', error)
