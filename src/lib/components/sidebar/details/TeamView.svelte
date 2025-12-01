@@ -1,21 +1,13 @@
 <script lang="ts">
 	import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
-	import ModificationSection from '../modifications/ModificationSection.svelte'
-	import UncapStatusDisplay from '../modifications/UncapStatusDisplay.svelte'
+	import DetailsSection from './DetailsSection.svelte'
+	import DetailRow from './DetailRow.svelte'
 	import AwakeningDisplay from '../modifications/AwakeningDisplay.svelte'
 	import MasteryDisplay from '../modifications/MasteryDisplay.svelte'
-	import StatModifierItem from '../modifications/StatModifierItem.svelte'
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
-	import { getRarityLabel } from '$lib/utils/rarity'
-	import { getElementLabel } from '$lib/utils/element'
-	import { getRaceLabel } from '$lib/utils/race'
-	import { getGenderLabel } from '$lib/utils/gender'
-	import { getProficiencyLabel } from '$lib/utils/proficiency'
-	import {
-		formatAxSkill,
-		getWeaponKeyTitle,
-		getElementName
-	} from '$lib/utils/modificationFormatters'
+	import { formatAxSkill, getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
+	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -28,36 +20,54 @@
 
 	let { type, item, itemData, gridUncapLevel, gridTranscendence, modificationStatus }: Props =
 		$props()
+
+	// Get uncap capabilities from item data based on type
+	let uncapCaps = $derived.by(() => {
+		if (type === 'character') {
+			const char = item as GridCharacter
+			const uncap = char.character?.uncap
+			return { flb: uncap?.flb, ulb: uncap?.ulb, transcendence: false }
+		} else if (type === 'weapon') {
+			const weapon = item as GridWeapon
+			const uncap = weapon.weapon?.uncap
+			return { flb: uncap?.flb, ulb: uncap?.ulb, transcendence: uncap?.transcendence }
+		} else {
+			const summon = item as GridSummon
+			const uncap = summon.summon?.uncap
+			return { flb: uncap?.flb, ulb: uncap?.ulb, transcendence: uncap?.transcendence }
+		}
+	})
 </script>
 
 <div class="team-view">
-	<ModificationSection title="Uncap & Transcendence" visible={true}>
-		<UncapStatusDisplay
-			{type}
-			uncapLevel={gridUncapLevel}
-			transcendenceStep={gridTranscendence}
-			special={itemData?.special}
-			flb={itemData?.uncap?.flb}
-			ulb={itemData?.uncap?.ulb}
-			transcendence={itemData?.uncap?.transcendence}
-		/>
-	</ModificationSection>
+	<DetailsSection title="Uncap & Transcendence">
+		<DetailRow label="Uncap Level">
+			<UncapIndicator
+				{type}
+				uncapLevel={gridUncapLevel}
+				transcendenceStage={gridTranscendence}
+				flb={uncapCaps?.flb}
+				ulb={uncapCaps?.ulb}
+				transcendence={uncapCaps?.transcendence}
+			/>
+		</DetailRow>
+	</DetailsSection>
 
 	{#if type === 'character'}
 		{@const char = item as GridCharacter}
 
 		{#if modificationStatus.hasAwakening}
-			<ModificationSection title="Awakening" visible={true}>
+			<DetailsSection title="Awakening">
 				<AwakeningDisplay
 					{...(char.awakening ? { awakening: char.awakening } : {})}
 					size="medium"
 					showLevel={true}
 				/>
-			</ModificationSection>
+			</DetailsSection>
 		{/if}
 
 		{#if modificationStatus.hasRings || modificationStatus.hasEarring}
-			<ModificationSection title="Mastery" visible={true}>
+			<DetailsSection title="Mastery">
 				<MasteryDisplay
 					rings={char.overMastery}
 					earring={char.aetherialMastery}
@@ -65,95 +75,69 @@
 					variant="detailed"
 					showIcons={true}
 				/>
-			</ModificationSection>
+			</DetailsSection>
 		{/if}
 
 		{#if modificationStatus.hasPerpetuity}
-			<ModificationSection title="Status" visible={true}>
-				<StatModifierItem label="Perpetuity" value="Active" variant="max" />
-			</ModificationSection>
+			<DetailsSection title="Status">
+				<DetailRow label="Perpetuity Ring" value="Active" />
+			</DetailsSection>
 		{/if}
 	{:else if type === 'weapon'}
 		{@const weapon = item as GridWeapon}
 
 		{#if modificationStatus.hasAwakening && weapon.awakening}
-			<ModificationSection title="Awakening" visible={true}>
+			<DetailsSection title="Awakening">
 				<AwakeningDisplay awakening={weapon.awakening} size="medium" showLevel={true} />
-			</ModificationSection>
+			</DetailsSection>
 		{/if}
 
 		{#if modificationStatus.hasWeaponKeys}
-			<ModificationSection title={getWeaponKeyTitle(weapon.weapon?.series)} visible={true}>
+			<DetailsSection title={getWeaponKeyTitle(weapon.weapon?.series)}>
 				<WeaponKeysList weaponKeys={weapon.weaponKeys} weaponData={weapon.weapon} layout="list" />
-			</ModificationSection>
+			</DetailsSection>
 		{/if}
 
 		{#if modificationStatus.hasAxSkills && weapon.ax}
-			<ModificationSection title="AX Skills" visible={true}>
+			<DetailsSection title="AX Skills">
 				{#each weapon.ax as axSkill}
-					<StatModifierItem
+					<DetailRow
 						label={formatAxSkill(axSkill).split('+')[0]?.trim() ?? ''}
-						value={`+${axSkill.strength}`}
-						suffix={axSkill.modifier <= 2 ? '' : '%'}
-						variant="enhanced"
+						value={`+${axSkill.strength}${axSkill.modifier <= 2 ? '' : '%'}`}
 					/>
 				{/each}
-			</ModificationSection>
+			</DetailsSection>
 		{/if}
 
 		{#if modificationStatus.hasElement && weapon.element}
-			<ModificationSection title="Element Override" visible={true}>
-				<StatModifierItem label="Instance Element" value={getElementName(weapon.element)} />
-			</ModificationSection>
+			<DetailsSection title="Element Override">
+				<DetailRow label="Weapon Element">
+					<ElementLabel element={weapon.element} size="medium" />
+				</DetailRow>
+			</DetailsSection>
 		{/if}
 	{:else if type === 'summon'}
 		{@const summon = item as GridSummon}
 
 		{#if modificationStatus.hasQuickSummon || modificationStatus.hasFriendSummon}
-			<ModificationSection title="Summon Status" visible={true}>
+			<DetailsSection title="Summon Status">
 				{#if summon.quickSummon}
-					<StatModifierItem label="Quick Summon" value="Enabled" variant="enhanced" />
+					<DetailRow label="Quick Summon" value="Enabled" />
 				{/if}
 				{#if summon.friend}
-					<StatModifierItem label="Friend Summon" value="Yes" />
+					<DetailRow label="Friend Summon" value="Yes" />
 				{/if}
-			</ModificationSection>
+			</DetailsSection>
 		{/if}
 	{/if}
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 
 	.team-view {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-2x;
-	}
-
-	.detail-row {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: calc(spacing.$unit * 0.75) 0;
-		border-bottom: 1px solid rgba(colors.$grey-70, 0.5);
-
-		&:last-child {
-			border-bottom: none;
-		}
-
-		.label {
-			font-size: typography.$font-regular;
-			color: var(--text-secondary, colors.$grey-50);
-		}
-
-		.value {
-			font-size: typography.$font-regular;
-			color: var(--text-primary, colors.$grey-10);
-			font-weight: typography.$medium;
-			text-align: right;
-		}
+		gap: spacing.$unit-4x;
 	}
 </style>

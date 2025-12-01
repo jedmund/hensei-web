@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
-	import { detectModifications } from '$lib/utils/modificationDetector'
+	import { detectModifications, canWeaponBeModified } from '$lib/utils/modificationDetector'
+	import { partyStore } from '$lib/stores/partyStore.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import DetailsSidebarSegmentedControl from './modifications/DetailsSidebarSegmentedControl.svelte'
 	import ItemHeader from './details/ItemHeader.svelte'
 	import BasicInfoSection from './details/BasicInfoSection.svelte'
@@ -13,10 +15,41 @@
 		item: GridCharacter | GridWeapon | GridSummon
 	}
 
-	let { type, item }: Props = $props()
+	let { type, item: initialItem }: Props = $props()
 
-	let selectedView = $state<'canonical' | 'user'>('user')
+	// Derive item from partyStore for reactivity, fall back to prop if not in store
+	// This ensures the sidebar updates when party data changes (e.g., uncap level)
+	let item = $derived.by(() => {
+		const activeId = sidebar.activeItemId
+		if (activeId && partyStore.party) {
+			const storeItem = partyStore.getItem(type, activeId)
+			if (storeItem) return storeItem
+		}
+		return initialItem
+	})
+
 	let modificationStatus = $derived(detectModifications(type, item))
+
+	// For weapons, only show segmented control if the weapon can be modified
+	const showSegmentedControl = $derived(
+		type === 'weapon'
+			? canWeaponBeModified(item as GridWeapon)
+			: modificationStatus.hasModifications
+	)
+
+	// Track selected view - updated reactively based on modifiability
+	let selectedView = $state<'canonical' | 'user'>('user')
+
+	// Update view when switching to items with different modifiability
+	$effect(() => {
+		if (!showSegmentedControl) {
+			// Force canonical view for non-modifiable items
+			selectedView = 'canonical'
+		} else if (showSegmentedControl && selectedView === 'canonical') {
+			// Switch to user view when selecting a modifiable item
+			selectedView = 'user'
+		}
+	})
 
 	// Helper to get the actual item data
 	function getItemData() {
@@ -54,7 +87,7 @@
 	<ItemHeader {type} {item} {itemData} {gridUncapLevel} {gridTranscendence} />
 
 	<DetailsSidebarSegmentedControl
-		hasModifications={modificationStatus.hasModifications}
+		hasModifications={showSegmentedControl}
 		bind:selectedView
 	/>
 
@@ -87,6 +120,6 @@
 		display: flex;
 		position: relative;
 		flex-direction: column;
-		gap: spacing.$unit-2x;
+		gap: spacing.$unit-4x;
 	}
 </style>

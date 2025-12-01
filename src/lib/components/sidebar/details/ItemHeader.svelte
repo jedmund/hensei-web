@@ -62,6 +62,9 @@
 		}
 		return '—'
 	}
+
+	// Special characters have different star counts (SR characters, etc.)
+	const special = $derived(type === 'character' && (itemData?.rarity ?? 3) < 3)
 </script>
 
 <div class="item-header-container">
@@ -74,6 +77,7 @@
 				flb={itemData?.uncap?.flb}
 				ulb={itemData?.uncap?.ulb}
 				transcendence={itemData?.uncap?.transcendence}
+				{special}
 				editable={false}
 			/>
 		</div>
