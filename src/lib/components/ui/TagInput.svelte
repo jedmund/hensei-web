@@ -21,6 +21,8 @@
 		class?: string
 		/** Input id for label association */
 		id?: string
+		/** Whether to show contained style with background */
+		contained?: boolean
 	}
 
 	let {
@@ -31,7 +33,8 @@
 		error,
 		maxTags,
 		class: className = '',
-		id
+		id,
+		contained = false
 	}: Props = $props()
 
 	let inputValue = $state('')
@@ -83,6 +86,7 @@
 			class="tagInput"
 			class:disabled
 			class:hasError={!!error}
+			class:contained
 			onclick={focusInput}
 			onkeydown={(e) => e.key === 'Enter' && focusInput()}
 			role="button"
@@ -126,6 +130,7 @@
 	<div
 		class="tagInput {className}"
 		class:disabled
+		class:contained
 		onclick={focusInput}
 		onkeydown={(e) => e.key === 'Enter' && focusInput()}
 		role="button"
@@ -202,13 +207,14 @@
 		gap: $unit-half;
 		padding: $unit $unit-2x;
 		min-height: calc($unit * 5.5);
+		max-width: 480px;
 		background-color: var(--input-bg);
 		border-radius: $input-corner;
 		border: 2px solid transparent;
 		cursor: text;
 		@include smooth-transition($duration-quick, background-color, border-color);
 
-		&:hover:not(.disabled) {
+		&:hover:not(.disabled):not(.contained) {
 			background-color: var(--input-bg-hover);
 		}
 
@@ -223,6 +229,14 @@
 
 		&.hasError {
 			border-color: $error;
+		}
+
+		&.contained {
+			background-color: var(--input-bound-bg);
+
+			&:hover:not(.disabled) {
+				background-color: var(--input-bound-bg-hover);
+			}
 		}
 	}
 
