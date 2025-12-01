@@ -13,6 +13,7 @@
 	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import ValidatedInput from '$lib/components/ui/ValidatedInput.svelte'
+	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { getRarityOptions } from '$lib/utils/rarity'
 
@@ -93,7 +94,11 @@
 		wikiEn: '',
 		wikiJa: '',
 		gamewith: '',
-		kamigame: ''
+		kamigame: '',
+
+		// Nicknames
+		nicknamesEn: [] as string[],
+		nicknamesJp: [] as string[]
 	})
 
 	const rarityOptions = getRarityOptions()
@@ -201,7 +206,11 @@
 				wiki_en: editData.wikiEn,
 				wiki_ja: editData.wikiJa,
 				gamewith: editData.gamewith,
-				kamigame: editData.kamigame
+				kamigame: editData.kamigame,
+
+				// Nicknames
+				nicknames_en: editData.nicknamesEn,
+				nicknames_jp: editData.nicknamesJp
 			}
 
 			const newCharacter = await entityAdapter.createCharacter(payload)
@@ -286,6 +295,15 @@
 		<CharacterUncapSection character={emptyCharacter} {editMode} bind:editData />
 		<CharacterTaxonomySection character={emptyCharacter} {editMode} bind:editData />
 		<CharacterStatsSection character={emptyCharacter} {editMode} bind:editData />
+
+		<DetailsContainer title="Nicknames">
+			<DetailItem label="Nicknames (EN)">
+				<TagInput bind:value={editData.nicknamesEn} placeholder="Add nickname..." />
+			</DetailItem>
+			<DetailItem label="Nicknames (JP)">
+				<TagInput bind:value={editData.nicknamesJp} placeholder="ニックネーム..." />
+			</DetailItem>
+		</DetailsContainer>
 
 		<DetailsContainer title="Dates">
 			<DetailItem
