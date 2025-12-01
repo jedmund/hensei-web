@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount, getContext, setContext, onDestroy } from 'svelte'
-	import { goto } from '$app/navigation'
-	import { page } from '$app/state'
+	import { pushState } from '$app/navigation'
 	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 
@@ -105,17 +104,8 @@
 		characters: GridType.Character
 	}
 
-	// Derive activeTab from URL params (single source of truth)
-	// This ensures back/forward navigation works correctly
-	// Falls back to initialTab prop for SSR hydration
-	let activeTab = $derived.by(() => {
-		const urlTab = page.params.tab as string | undefined
-		if (urlTab) {
-			return tabMap[urlTab] ?? GridType.Weapon
-		}
-		// Use initialTab for SSR or when no tab in URL
-		return initialTab ?? GridType.Weapon
-	})
+	// Use $state for instant UI updates - initialized from server-provided initialTab
+	let activeTab = $state<GridType>(initialTab ?? GridType.Weapon)
 
 	let loading = $state(false)
 	let error = $state<string | null>(null)
@@ -279,12 +269,12 @@
 	const partyElement = $derived((party as any)?.element)
 
 	function handleTabChange(tab: GridType) {
-		// Update URL (adds to browser history)
-		// activeTab is derived from URL params, so it will update automatically
-		// Always use explicit tab path (e.g., /weapons not just /) to ensure navigation triggers
+		activeTab = tab // Instant UI update
+
+		// Update URL without navigation (no load function, instant)
 		const basePath = `/teams/${party.shortcode}`
 		const newPath = `${basePath}/${tab}s`
-		goto(newPath, { noScroll: true, keepFocus: true })
+		pushState(newPath, {})
 
 		// Update selectedSlot to the first valid empty slot for this tab
 		const nextEmpty = findNextEmptySlot(party, tab)
@@ -604,8 +594,19 @@
 		// Get edit key for this party if it exists
 		editKey = getEditKey(party.shortcode) ?? undefined
 
-		// No longer need to verify party data integrity after hydration
-		// since $state.raw prevents the hydration mismatch
+		// Handle browser back/forward navigation for tabs
+		const handlePopState = () => {
+			const path = window.location.pathname
+			const match = path.match(/\/teams\/[^/]+\/(\w+)$/)
+			const urlTabSlug = match?.[1]
+			const newTab = urlTabSlug ? (tabMap[urlTabSlug] ?? GridType.Weapon) : GridType.Weapon
+			if (activeTab !== newTab) {
+				activeTab = newTab
+			}
+		}
+
+		window.addEventListener('popstate', handlePopState)
+		return () => window.removeEventListener('popstate', handlePopState)
 	})
 
 	// Grid service wrapper using TanStack Query mutations
