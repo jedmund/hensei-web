@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { JobSkill } from '$lib/types/api/entities'
 	import { getSkillCategoryName } from '$lib/utils/jobUtils'
+	import { getJobSkillIcon } from '$lib/utils/images'
 
 	interface Props {
 		skill: JobSkill
@@ -13,11 +14,7 @@
 	let { skill, onClick, disabled = false, variant = 'default', onRemove }: Props = $props()
 
 	function getSkillIcon(skill: JobSkill): string {
-		if (skill.slug) {
-			return `/images/job-skills/${skill.slug}.png`
-		}
-		// Fallback if no slug
-		return '/images/job-skills/default.png'
+		return getJobSkillIcon(skill.slug)
 	}
 
 	function getSkillColorClass(skill: JobSkill): string {

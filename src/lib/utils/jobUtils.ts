@@ -7,6 +7,16 @@
 
 import type { Job, JobSkill } from '$lib/types/api/entities'
 import type { JobSkillList } from '$lib/types/api/party'
+import { getImageBaseUrl } from '$lib/api/adapters/config'
+
+/**
+ * Gets the base path for images
+ * Returns AWS S3/CDN URL if configured, otherwise local /images path
+ */
+function getBasePath(): string {
+	const remoteUrl = getImageBaseUrl()
+	return remoteUrl || '/images'
+}
 
 /**
  * Gender options for job portraits
@@ -29,7 +39,7 @@ export function getJobPortraitUrl(job: Job | undefined, gender: Gender = Gender.
 	const slug = job.name.en.toLowerCase().replace(/\s+/g, '-')
 	const genderSuffix = gender === Gender.Djeeta ? 'b' : 'a'
 
-	return `/images/job-portraits/${slug}_${genderSuffix}.png`
+	return `${getBasePath()}/job-portraits/${slug}_${genderSuffix}.png`
 }
 
 /**
@@ -43,20 +53,19 @@ export function getJobFullImageUrl(job: Job | undefined, gender: Gender = Gender
 
 	const genderSuffix = gender === Gender.Djeeta ? 'b' : 'a'
 
-	return `/images/job-zoom/${job.granblueId}_${genderSuffix}.png`
+	return `${getBasePath()}/job-zoom/${job.granblueId}_${genderSuffix}.png`
 }
 
 /**
  * Generate job icon URL
  * Job icons are small square icons representing the job
- * Images are stored locally in /static/images/job-icons/
  */
 export function getJobIconUrl(granblueId: string | undefined): string {
 	if (!granblueId) {
 		return '/images/placeholders/placeholder-weapon-grid.png'
 	}
 
-	return `/images/job-icons/${granblueId}.png`
+	return `${getBasePath()}/job-icons/${granblueId}.png`
 }
 
 /**
@@ -69,7 +78,7 @@ export function getJobWideImageUrl(job: Job | undefined, gender: Gender = Gender
 	}
 
 	const genderSuffix = gender === Gender.Djeeta ? 'b' : 'a'
-	return `/images/job-wide/${job.granblueId}_${genderSuffix}.jpg`
+	return `${getBasePath()}/job-wide/${job.granblueId}_${genderSuffix}.jpg`
 }
 
 /**

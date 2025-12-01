@@ -4,6 +4,7 @@
 
 import type { Awakening, WeaponKey } from '$lib/types/api/entities'
 import type { SimpleAxSkill } from '$lib/types/SimpleAxSkill'
+import { getBasePath } from '$lib/utils/images'
 
 /**
  * Get the image URL for an awakening type
@@ -20,7 +21,7 @@ export function getAwakeningImage(awakening?: { type?: Awakening; level?: number
 	const isCharacterAwakening = slug.startsWith('character-')
 	const extension = isCharacterAwakening ? 'jpg' : 'png'
 
-	return `/images/awakening/${slug}.${extension}`
+	return `${getBasePath()}/awakening/${slug}.${extension}`
 }
 
 /**
@@ -35,7 +36,7 @@ export function getWeaponKeyImage(
 ): string {
 	if (!key.slug) return ''
 
-	const baseUrl = '/images/weapon-keys/'
+	const baseUrl = `${getBasePath()}/weapon-keys/`
 	let filename = key.slug
 
 	// Handle element-specific telumas (Draconic weapons)
@@ -97,7 +98,7 @@ export function getWeaponKeyImages(
  */
 export function getAxSkillImage(axSkill?: { slug?: string }): string | null {
 	if (!axSkill?.slug) return null
-	return `/images/ax/${axSkill.slug}.png`
+	return `${getBasePath()}/ax/${axSkill.slug}.png`
 }
 
 /**

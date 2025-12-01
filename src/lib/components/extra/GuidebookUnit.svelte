@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte'
   import type { Party } from '$lib/types/api/party'
+  import { getGuidebookImage } from '$lib/utils/images'
 
   export let item: any | undefined
   export let position: number // 1..3
@@ -22,9 +23,7 @@
   }
 
   function guidebookImageUrl(g?: any): string {
-    const id = g?.granblueId
-    if (!id) return '/images/placeholders/placeholder-weapon-grid.png'
-    return `/images/guidebooks/book_${id}.png`
+    return getGuidebookImage(g?.granblueId)
   }
 
   async function remove() {

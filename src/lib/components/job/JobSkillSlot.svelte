@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { JobSkill } from '$lib/types/api/entities'
 	import { getSkillCategoryColor } from '$lib/utils/jobUtils'
+	import { getJobSkillIcon } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -26,7 +27,7 @@
 	}: Props = $props()
 
 	const categoryColor = $derived(skill ? getSkillCategoryColor(skill) : '')
-	const skillIconUrl = $derived(skill?.slug ? `/images/job-skills/${skill.slug}.png` : '')
+	const skillIconUrl = $derived(skill?.slug ? getJobSkillIcon(skill.slug) : '')
 
 	const isEditable = $derived(editable && !locked && available)
 	const isUnavailable = $derived(!available)

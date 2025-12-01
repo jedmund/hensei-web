@@ -10,6 +10,7 @@
 		isSkillSlotAvailable,
 		isSkillSlotLocked
 	} from '$lib/utils/jobUtils'
+	import { getAccessoryImage } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
@@ -155,7 +156,7 @@
 					>
 						{#if accessory}
 							<img
-								src="/images/accessory-square/{accessory.granblueId}.jpg"
+								src={getAccessoryImage(accessory.granblueId)}
 								alt={accessory.name.en}
 								class="accessory-icon"
 							/>

@@ -2,6 +2,7 @@
 	import type { GridCharacter } from '$lib/types/api/party'
 	import { formatRingStat, formatEarringStat } from '$lib/utils/modificationFormatters'
 	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
+	import { getMasteryImage } from '$lib/utils/images'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 
 	interface Props {
@@ -29,7 +30,7 @@
 
 		if (!stat || !stat.slug) return null
 
-		return `/images/mastery/${stat.slug}.png`
+		return getMasteryImage(stat.slug)
 	}
 </script>
 

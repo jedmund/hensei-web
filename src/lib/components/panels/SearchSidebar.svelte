@@ -3,6 +3,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { searchAdapter, type SearchResult } from '$lib/api/adapters'
+  import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholderImage } from '$lib/utils/images'
 
   interface Props {
     open?: boolean
@@ -182,10 +183,19 @@
   }
 
   function getImageUrl(item: SearchResult): string {
-    if (!item.granblueId) return '/images/placeholders/placeholder-' + type + '.png'
+    const id = item.granblueId
+    if (!id) return getPlaceholderImage(type, 'grid')
 
-    const folder = type === 'weapon' ? 'weapon-grid' : type
-    return `/images/${folder}/${item.granblueId}.jpg`
+    switch (type) {
+      case 'character':
+        return getCharacterImage(id, 'grid', '01')
+      case 'weapon':
+        return getWeaponImage(id, 'grid')
+      case 'summon':
+        return getSummonImage(id, 'grid')
+      default:
+        return getPlaceholderImage(type, 'grid')
+    }
   }
 
   function getItemName(item: SearchResult): string {

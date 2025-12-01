@@ -9,6 +9,7 @@
 	import AwakeningSelect from './edit/AwakeningSelect.svelte'
 	import AxSkillSelect from './edit/AxSkillSelect.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import { getElementIcon } from '$lib/utils/images'
 
 	interface Props {
 		weapon: GridWeapon
@@ -78,12 +79,12 @@
 
 	// Element options
 	const elementOptions = [
-		{ value: 1, label: 'Wind', image: '/images/elements/element-wind.png' },
-		{ value: 2, label: 'Fire', image: '/images/elements/element-fire.png' },
-		{ value: 3, label: 'Water', image: '/images/elements/element-water.png' },
-		{ value: 4, label: 'Earth', image: '/images/elements/element-earth.png' },
-		{ value: 5, label: 'Dark', image: '/images/elements/element-dark.png' },
-		{ value: 6, label: 'Light', image: '/images/elements/element-light.png' }
+		{ value: 1, label: 'Wind', image: getElementIcon(1) },
+		{ value: 2, label: 'Fire', image: getElementIcon(2) },
+		{ value: 3, label: 'Water', image: getElementIcon(3) },
+		{ value: 4, label: 'Earth', image: getElementIcon(4) },
+		{ value: 5, label: 'Dark', image: getElementIcon(5) },
+		{ value: 6, label: 'Light', image: getElementIcon(6) }
 	]
 
 	function displayName(input: any): string {
