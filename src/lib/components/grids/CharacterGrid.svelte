@@ -2,7 +2,6 @@
 
 <script lang="ts">
 	import type { GridCharacter } from '$lib/types/api/party'
-	import type { Job } from '$lib/types/api/entities'
 	import { getContext } from 'svelte'
 	import type { PartyContext } from '$lib/types/party-context'
 	import type { DragDropContext } from '$lib/composables/drag-drop.svelte'
@@ -13,7 +12,6 @@
 		characters?: GridCharacter[] | undefined
 		mainWeaponElement?: number | null | undefined
 		partyElement?: number | null | undefined
-		job?: Job | undefined
 		container?: string | undefined
 	}
 
@@ -21,7 +19,6 @@
 		characters = [],
 		mainWeaponElement = undefined,
 		partyElement = undefined,
-		job = undefined,
 		container = 'main-characters'
 	}: Props = $props()
 
@@ -50,7 +47,6 @@
 		{#each characterSlots as character, i}
 			<li
 				aria-label={`Character slot ${i}`}
-				class:main-character={i === 0}
 				class:Empty={!character}
 			>
 				{#if dragContext}
@@ -73,7 +69,6 @@
 								position={i}
 								{mainWeaponElement}
 								{partyElement}
-								job={i === 0 ? job : undefined}
 							/>
 						</DraggableItem>
 					</DropZone>
@@ -83,7 +78,6 @@
 						position={i}
 						{mainWeaponElement}
 						{partyElement}
-						job={i === 0 ? job : undefined}
 					/>
 				{/if}
 			</li>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { GridCharacter } from '$lib/types/api/party'
 	import type { Party } from '$lib/types/api/party'
-	import type { Job } from '$lib/types/api/entities'
 	import { getContext } from 'svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
@@ -9,7 +8,6 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
 	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
-	import { getJobPortraitUrl, Gender } from '$lib/utils/jobUtils'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
@@ -21,10 +19,9 @@
 		position: number
 		mainWeaponElement?: number | null | undefined
 		partyElement?: number | null | undefined
-		job?: Job | undefined
 	}
 
-	let { item, position, mainWeaponElement, partyElement, job }: Props = $props()
+	let { item, position, mainWeaponElement, partyElement }: Props = $props()
 
 	type PartyCtx = {
 		getParty: () => Party
@@ -51,16 +48,6 @@
 	}
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
-		// For protagonist slot (position 0) with a job, show job portrait
-		if (position === 0 && job) {
-			return getJobPortraitUrl(job, Gender.Gran) // TODO: Get gender from user preferences
-		}
-
-		// For protagonist slot without a job, show nothing (relief.png background shows through)
-		if (position === 0 && !job) {
-			return ''
-		}
-
 		// If no item or no character with granblueId, return placeholder
 		if (!item || !item.character?.granblueId) {
 			return getCharacterImageWithPose(null, 'main', 0, 0)
@@ -76,16 +63,12 @@
 		)
 	})
 
-	// Check if this is the protagonist slot
-	const isProtagonist = $derived(position === 0)
-
 	// Check if this item is currently active in the sidebar
 	let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
 
 	// Check if this empty slot is currently selected for adding an item
 	let isEmptySelected = $derived(
 		!item &&
-			!isProtagonist &&
 			ctx?.getSelectedSlot?.() === position &&
 			ctx?.getActiveTab?.() === GridType.Character
 	)
@@ -194,48 +177,44 @@
 					{#key item?.id ?? position}
 						<div
 							class="frame character cell {elementClass}"
-							class:protagonist={position === 0}
 							class:editable={ctx?.canEdit()}
 							class:is-active={isActive}
 							onclick={() => viewDetails()}
 						>
-							{#if position !== 0}
-								{#if ctx?.canEdit()}
-									<button
-										class="perpetuity"
-										class:active={item.perpetuity}
-										onclick={togglePerpetuity}
-										title={item.perpetuity ? 'Remove Perpetuity Ring' : 'Add Perpetuity Ring'}
-									>
-										<img
-											class="perpetuity-icon filled"
-											src={perpetuityFilled}
-											alt="Perpetuity Ring"
-										/>
-										<img
-											class="perpetuity-icon empty"
-											src={perpetuityEmpty}
-											alt="Add Perpetuity Ring"
-										/>
-									</button>
-								{:else if item.perpetuity}
+							{#if ctx?.canEdit()}
+								<button
+									class="perpetuity"
+									class:active={item.perpetuity}
+									onclick={togglePerpetuity}
+									title={item.perpetuity ? 'Remove Perpetuity Ring' : 'Add Perpetuity Ring'}
+								>
 									<img
-										class="perpetuity static"
+										class="perpetuity-icon filled"
 										src={perpetuityFilled}
 										alt="Perpetuity Ring"
-										title="Perpetuity Ring"
 									/>
-								{/if}
+									<img
+										class="perpetuity-icon empty"
+										src={perpetuityEmpty}
+										alt="Add Perpetuity Ring"
+									/>
+								</button>
+							{:else if item.perpetuity}
+								<img
+									class="perpetuity static"
+									src={perpetuityFilled}
+									alt="Perpetuity Ring"
+									title="Perpetuity Ring"
+								/>
 							{/if}
 							{#if imageUrl}
-							<img
-								class="image {elementClass}"
-								class:placeholder={!item?.character?.granblueId && !isProtagonist}
-								class:protagonist={isProtagonist}
-								alt={isProtagonist && job ? job.name.en : displayName(item?.character)}
-								src={imageUrl}
-							/>
-						{/if}
+								<img
+									class="image {elementClass}"
+									class:placeholder={!item?.character?.granblueId}
+									alt={displayName(item?.character)}
+									src={imageUrl}
+								/>
+							{/if}
 						</div>
 					{/key}
 				</div>
@@ -271,30 +250,19 @@
 		{#key `empty-${position}`}
 			<div
 				class="frame character cell"
-				class:editable={ctx?.canEdit() && !isProtagonist}
-				class:protagonist={isProtagonist}
-				class:empty-protagonist={isProtagonist && !job}
+				class:editable={ctx?.canEdit()}
 				class:is-selected={isEmptySelected}
 				onclick={() =>
-					!isProtagonist &&
 					ctx?.canEdit() &&
 					ctx?.openPicker &&
 					ctx.openPicker({ type: 'character', position, item })}
 			>
-				{#if !isProtagonist}
-					<img
-						class="image placeholder"
-						alt=""
-						src="/images/placeholders/placeholder-weapon-grid.png"
-					/>
-				{:else if job && imageUrl}
-					<img
-						class="image protagonist"
-						alt={job.name.en}
-						src={imageUrl}
-					/>
-				{/if}
-				{#if ctx?.canEdit() && !isProtagonist}
+				<img
+					class="image placeholder"
+					alt=""
+					src="/images/placeholders/placeholder-weapon-grid.png"
+				/>
+				{#if ctx?.canEdit()}
 					<span class="icon">
 						<Icon name="plus" size={24} />
 					</span>
@@ -428,17 +396,6 @@
 
 	.frame.character.cell {
 		@include rep.aspect(rep.$char-cell-w, rep.$char-cell-h);
-
-		&.protagonist {
-			background-image: url('/images/relief.png'), linear-gradient(to right, #000, #484440, #000);
-			background-size: cover;
-			background-position: center -20px;
-			background-repeat: no-repeat;
-
-			&.empty-protagonist {
-				background-position: center 0;
-			}
-		}
 	}
 
 	.image {
@@ -452,18 +409,6 @@
 
 		&.placeholder {
 			opacity: 0;
-		}
-
-		&.protagonist {
-			object-fit: cover;
-			opacity: 1;
-		}
-	}
-
-	.frame.protagonist {
-		// Protagonist slot may have different aspect ratio for job portraits
-		.image {
-			object-fit: cover;
 		}
 	}
 

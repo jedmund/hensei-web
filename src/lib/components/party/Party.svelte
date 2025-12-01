@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { onMount, getContext, setContext } from 'svelte'
+	import { onMount, getContext, setContext, onDestroy } from 'svelte'
 	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+	import { partyStore } from '$lib/stores/partyStore.svelte'
 
 	// TanStack Query mutations - Grid
 	import {
@@ -83,6 +84,16 @@
 	let party = $derived(
 		initial?.id && initial?.id !== 'new' && Array.isArray(initial?.weapons) ? initial : defaultParty
 	)
+
+	// Sync party to global store for components outside the party context (like DetailsSidebar)
+	$effect(() => {
+		partyStore.setParty(party)
+	})
+
+	// Clear store on unmount
+	onDestroy(() => {
+		partyStore.clear()
+	})
 
 	let activeTab = $state<GridType>(GridType.Weapon)
 	let loading = $state(false)
@@ -249,14 +260,12 @@
 	function handleTabChange(tab: GridType) {
 		activeTab = tab
 		// Update selectedSlot to the first valid empty slot for this tab
-		// Characters tab: position 0 is protagonist (not selectable), so start at 1
-		// Weapons/Summons: start at first empty slot
 		const nextEmpty = findNextEmptySlot(party, tab)
 		if (nextEmpty !== SLOT_NOT_FOUND) {
 			selectedSlot = nextEmpty
 		} else {
-			// Fallback: Characters start at 1 (skip protagonist), others at 0
-			selectedSlot = tab === GridType.Character ? 1 : 0
+			// Fallback: all grid types start at 0
+			selectedSlot = 0
 		}
 	}
 
@@ -902,7 +911,6 @@
 							characters={party.characters}
 							{mainWeaponElement}
 							{partyElement}
-							job={party.job}
 						/>
 					</div>
 				{/if}

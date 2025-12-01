@@ -2,7 +2,6 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { getContext } from 'svelte'
 	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 	import { GridType } from '$lib/types/enums'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
@@ -26,8 +25,6 @@
 	const weapons = $derived(party.weapons)
 	const summons = $derived(party.summons)
 	const characters = $derived(party.characters)
-	const job = $derived(party.job)
-	const element = $derived(party.element)
 
 	// Handle value changes
 	let value = $state(selectedTab)
@@ -41,10 +38,6 @@
 		onTabChange?.(newValue as GridType)
 	}
 
-	// Get user gender from context if available
-	// This would typically come from auth/account state
-	const accountContext = getContext<any>('account')
-	const userGender = $derived(accountContext?.user?.gender ?? 0)
 </script>
 
 <nav class={className}>
@@ -54,12 +47,7 @@
 			label={m.party_segmented_control_characters()}
 			selected={value === GridType.Character}
 		>
-			<CharacterRep
-				job={job}
-				element={element}
-				gender={userGender}
-				characters={characters}
-			/>
+			<CharacterRep characters={characters} />
 		</RepSegment>
 
 		<RepSegment
