@@ -104,7 +104,7 @@ function createAuthStore() {
 
           // Redirect to login on refresh failure
           if (browser) {
-            window.location.href = '/login'
+            window.location.href = '/auth/login'
           }
 
           return false
