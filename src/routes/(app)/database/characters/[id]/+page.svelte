@@ -5,7 +5,7 @@
 	import { goto } from '$app/navigation'
 
 	// TanStack Query
-	import { createQuery } from '@tanstack/svelte-query'
+	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { withInitialData } from '$lib/query/ssr'
@@ -24,6 +24,8 @@
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()
+
+	const queryClient = useQueryClient()
 
 	// Use TanStack Query with SSR initial data
 	const characterQuery = createQuery(() => ({
@@ -138,48 +140,40 @@
 	}
 
 	async function saveChanges() {
+		if (!character?.id) return
+
 		isSaving = true
 		saveError = null
 		saveSuccess = false
 
 		try {
-			// Prepare the data for API (convert to snake_case)
+			// Prepare the data for API (flat snake_case format)
 			const payload = {
-				name: editData.name,
+				name_en: editData.name,
 				granblue_id: editData.granblueId,
-				character_id: editData.characterId,
+				character_id: editData.characterId ? [editData.characterId] : [],
 				rarity: editData.rarity,
 				element: editData.element,
-				race: [editData.race1, editData.race2].filter((r) => r !== null && r !== undefined),
+				race1: editData.race1,
+				race2: editData.race2,
 				gender: editData.gender,
-				proficiency: [editData.proficiency1, editData.proficiency2],
-				hp: {
-					min_hp: editData.minHp,
-					max_hp: editData.maxHp,
-					max_hp_flb: editData.maxHpFlb
-				},
-				atk: {
-					min_atk: editData.minAtk,
-					max_atk: editData.maxAtk,
-					max_atk_flb: editData.maxAtkFlb
-				},
-				uncap: {
-					flb: editData.flb,
-					ulb: editData.ulb,
-					transcendence: editData.transcendence
-				},
+				proficiency1: editData.proficiency1,
+				proficiency2: editData.proficiency2,
+				min_hp: editData.minHp,
+				max_hp: editData.maxHp,
+				max_hp_flb: editData.maxHpFlb,
+				min_atk: editData.minAtk,
+				max_atk: editData.maxAtk,
+				max_atk_flb: editData.maxAtkFlb,
+				flb: editData.flb,
+				ulb: editData.ulb,
 				special: editData.special
 			}
 
-			// TODO: When backend endpoint is ready, make the API call here
-			// const response = await fetch(`/api/v1/characters/${character.id}`, {
-			//   method: 'PUT',
-			//   headers: { 'Content-Type': 'application/json' },
-			//   body: JSON.stringify(payload)
-			// })
+			await entityAdapter.updateCharacter(character.id, payload)
 
-			// For now, just simulate success
-			await new Promise((resolve) => setTimeout(resolve, 1000))
+			// Invalidate TanStack Query cache to refetch fresh data
+			await queryClient.invalidateQueries({ queryKey: ['character', character.id] })
 
 			saveSuccess = true
 			editMode = false
