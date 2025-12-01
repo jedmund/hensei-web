@@ -4,8 +4,19 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { partyQueries } from '$lib/api/queries/party.queries'
 	import { withInitialData } from '$lib/query/ssr'
+	import { GridType } from '$lib/types/enums'
 
 	let { data }: { data: PageData } = $props()
+
+	// Map URL segment to GridType
+	const tabMap: Record<string, GridType> = {
+		weapons: GridType.Weapon,
+		summons: GridType.Summon,
+		characters: GridType.Character
+	}
+
+	// Initialize from URL or default to Weapon
+	const initialTab = data.tab ? (tabMap[data.tab] ?? GridType.Weapon) : GridType.Weapon
 
 	/**
 	 * TanStack Query v6 SSR Integration Example
@@ -33,7 +44,7 @@
 </script>
 
 {#if party}
-	<Party party={party} canEdit={data.canEdit || false} authUserId={data.authUserId} />
+	<Party party={party} canEdit={data.canEdit || false} authUserId={data.authUserId} {initialTab} />
 {:else}
 	<div>
 		<h1>Party not found</h1>

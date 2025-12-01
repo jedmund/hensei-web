@@ -23,6 +23,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		party: party ? structuredClone(party) : null,
 		canEdit: Boolean(canEdit),
 		partyFound,
-		authUserId: authUserId || null
+		authUserId: authUserId || null,
+		tab: params.tab || null
 	}
 }

@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount, getContext, setContext, onDestroy } from 'svelte'
+	import { pushState } from '$app/navigation'
+	import { page } from '$app/state'
 	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 
@@ -65,9 +67,10 @@
 		party?: Party
 		canEdit?: boolean
 		authUserId?: string
+		initialTab?: GridType
 	}
 
-	let { party: initial, canEdit: canEditServer = false, authUserId }: Props = $props()
+	let { party: initial, canEdit: canEditServer = false, authUserId, initialTab }: Props = $props()
 
 	// Per-route local state using Svelte 5 runes
 	const defaultParty: Party = {
@@ -95,7 +98,24 @@
 		partyStore.clear()
 	})
 
-	let activeTab = $state<GridType>(GridType.Weapon)
+	let activeTab = $state<GridType>(initialTab ?? GridType.Weapon)
+
+	// Map URL segment to GridType for back/forward navigation
+	const tabMap: Record<string, GridType> = {
+		weapons: GridType.Weapon,
+		summons: GridType.Summon,
+		characters: GridType.Character
+	}
+
+	// Sync activeTab with URL when user navigates back/forward
+	$effect(() => {
+		const urlTab = page.params.tab as string | undefined
+		const expectedTab = urlTab ? (tabMap[urlTab] ?? GridType.Weapon) : GridType.Weapon
+		if (activeTab !== expectedTab) {
+			activeTab = expectedTab
+		}
+	})
+
 	let loading = $state(false)
 	let error = $state<string | null>(null)
 	let selectedSlot = $state<number>(0)
@@ -259,6 +279,12 @@
 
 	function handleTabChange(tab: GridType) {
 		activeTab = tab
+
+		// Update URL with push state (adds to browser history)
+		const basePath = `/teams/${party.shortcode}`
+		const newPath = tab === GridType.Weapon ? basePath : `${basePath}/${tab}s`
+		pushState(newPath, {})
+
 		// Update selectedSlot to the first valid empty slot for this tab
 		const nextEmpty = findNextEmptySlot(party, tab)
 		if (nextEmpty !== SLOT_NOT_FOUND) {
