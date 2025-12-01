@@ -1,0 +1,94 @@
+<script lang="ts">
+	import { enhance } from '$app/forms'
+	import AuthCard from '$lib/components/auth/AuthCard.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import * as m from '$lib/paraglide/messages'
+
+	interface Props {
+		form: { error?: string; email?: string } | null
+	}
+
+	let { form }: Props = $props()
+
+	let email = $state(form?.email ?? '')
+	let password = $state('')
+	let isSubmitting = $state(false)
+</script>
+
+<svelte:head>
+	<title>{m.auth_login_title()} | Granblue Party</title>
+</svelte:head>
+
+<AuthCard title={m.auth_login_title()}>
+	<form
+		method="post"
+		use:enhance={() => {
+			isSubmitting = true
+			return async ({ update }) => {
+				isSubmitting = false
+				await update()
+			}
+		}}
+	>
+		<Input
+			type="email"
+			name="email"
+			label={m.auth_login_email()}
+			bind:value={email}
+			autocomplete="email"
+			required
+			fullWidth
+			contained
+		/>
+
+		<Input
+			type="password"
+			name="password"
+			label={m.auth_login_password()}
+			bind:value={password}
+			autocomplete="current-password"
+			minlength={8}
+			required
+			fullWidth
+			contained
+		/>
+
+		{#if form?.error}
+			<p class="error">{form.error}</p>
+		{/if}
+
+		<Button type="submit" variant="primary" fullWidth disabled={isSubmitting}>
+			{isSubmitting ? m.auth_login_submitting() : m.auth_login_submit()}
+		</Button>
+	</form>
+
+	{#snippet footer()}
+		<p>
+			{m.auth_login_noAccount()}
+			<a href="/auth/register">{m.auth_login_register()}</a>
+		</p>
+	{/snippet}
+</AuthCard>
+
+<style lang="scss">
+	@use '$src/themes/spacing' as *;
+	@use '$src/themes/colors' as *;
+	@use '$src/themes/typography' as *;
+
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+	}
+
+	.error {
+		color: $error;
+		font-size: $font-small;
+		text-align: center;
+		margin: 0;
+		padding: $unit $unit-2x;
+		background: var(--danger-bg);
+		border-radius: $unit;
+	}
+</style>
