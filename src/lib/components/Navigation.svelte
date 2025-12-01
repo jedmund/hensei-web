@@ -44,6 +44,7 @@
 	const collectionHref = $derived(localizeHref('/collection'))
 	const meHref = $derived(localizeHref('/me'))
 	const loginHref = $derived(localizeHref('/auth/login'))
+	const registerHref = $derived(localizeHref('/auth/register'))
 	const settingsHref = $derived(localizeHref('/settings'))
 	const databaseHref = $derived(localizeHref('/database'))
 	const newTeamHref = $derived(localizeHref('/teams/new'))
@@ -151,15 +152,15 @@
 			<li>
 				<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
 			</li>
-			<li><a href={guidesHref} class:selected={isNavSelected(guidesHref)}>Guides</a></li>
-			<li>
-				<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
-					>{m.nav_collection()}</a
-				>
-			</li>
-
-			<li>
-				{#if isAuth}
+			{#if isAuth}
+				<!-- Authenticated: show Guides and Collection in nav -->
+				<li><a href={guidesHref} class:selected={isNavSelected(guidesHref)}>Guides</a></li>
+				<li>
+					<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
+						>{m.nav_collection()}</a
+					>
+				</li>
+				<li>
 					<a
 						href={meHref}
 						class:selected={isProfileSelected}
@@ -178,12 +179,18 @@
 						{/if}
 						<span>{username}</span>
 					</a>
-				{:else}
-					<a href={loginHref} class:selected={isNavSelected(loginHref)} aria-label="Login"
-						>{m.nav_login()}</a
+				</li>
+			{:else}
+				<!-- Not authenticated: show Register and Log in -->
+				<li>
+					<a href={registerHref} class:selected={isNavSelected(registerHref)}
+						>{m.nav_register()}</a
 					>
-				{/if}
-			</li>
+				</li>
+				<li>
+					<a href={loginHref} class:selected={isNavSelected(loginHref)}>{m.nav_login()}</a>
+				</li>
+			{/if}
 
 			<li>
 				<DropdownMenu.Root>
@@ -193,6 +200,16 @@
 
 					<DropdownMenu.Portal>
 						<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
+							{#if !isAuth}
+								<!-- Not authenticated: show Guides and Collection in dropdown -->
+								<DropdownItem>
+									<a href={guidesHref}>Guides</a>
+								</DropdownItem>
+								<DropdownItem>
+									<a href={collectionHref}>{m.nav_collection()}</a>
+								</DropdownItem>
+								<DropdownMenu.Separator class="dropdown-separator" />
+							{/if}
 							<DropdownItem>
 								<button onclick={() => (settingsModalOpen = true)}>
 									{m.nav_settings()}
