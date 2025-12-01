@@ -281,8 +281,9 @@
 	function handleTabChange(tab: GridType) {
 		// Update URL (adds to browser history)
 		// activeTab is derived from URL params, so it will update automatically
+		// Always use explicit tab path (e.g., /weapons not just /) to ensure navigation triggers
 		const basePath = `/teams/${party.shortcode}`
-		const newPath = tab === GridType.Weapon ? basePath : `${basePath}/${tab}s`
+		const newPath = `${basePath}/${tab}s`
 		goto(newPath, { noScroll: true, keepFocus: true })
 
 		// Update selectedSlot to the first valid empty slot for this tab
