@@ -1,27 +1,123 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-  import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
-  import DetailItem from '$lib/components/ui/DetailItem.svelte'
-  import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
+	import DetailItem from '$lib/components/ui/DetailItem.svelte'
+	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import { getSummonMaxUncapLevel } from '$lib/utils/uncap'
+	import { getElementLabel } from '$lib/utils/element'
 
-  let { summon, editMode = false, editData = $bindable<any>() }:
-    { summon: any; editMode?: boolean; editData?: any } = $props()
+	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
-  const flb = $derived(editMode ? Boolean(editData.flb) : Boolean(summon?.uncap?.flb))
-  const ulb = $derived(editMode ? Boolean(editData.ulb) : Boolean(summon?.uncap?.ulb))
-  const transcendence = $derived(editMode ? Boolean(editData.transcendence) : Boolean(summon?.uncap?.transcendence))
+	interface Props {
+		summon: any
+		editMode?: boolean
+		editData?: any
+	}
+
+	let { summon, editMode = false, editData = $bindable() }: Props = $props()
+
+	const uncap = $derived(
+		editMode
+			? { flb: editData.flb, ulb: editData.ulb, transcendence: editData.transcendence }
+			: (summon?.uncap ?? {})
+	)
+	const flb = $derived(uncap.flb ?? false)
+	const ulb = $derived(uncap.ulb ?? false)
+	const transcendence = $derived(uncap.transcendence ?? false)
+	const subaura = $derived(editMode ? editData.subaura : (summon?.subaura ?? false))
+	const uncapLevel = $derived(getSummonMaxUncapLevel({ uncap }))
+	const transcendenceStage = $derived(transcendence ? 5 : 0)
+
+	// Get element name for checkbox theming
+	const elementName = $derived.by((): ElementName | undefined => {
+		const el = editMode ? editData.element : summon?.element
+		const label = getElementLabel(el)
+		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
+	})
+
+	// Auto-check/uncheck uncap levels in hierarchy: Transcendence > ULB > FLB
+	function handleFlbChange(checked: boolean) {
+		if (!checked) {
+			// Unchecking FLB should also uncheck ULB and Transcendence
+			editData.ulb = false
+			editData.transcendence = false
+		}
+	}
+
+	function handleUlbChange(checked: boolean) {
+		if (checked && !editData.flb) {
+			// Checking ULB should also check FLB
+			editData.flb = true
+		} else if (!checked) {
+			// Unchecking ULB should also uncheck Transcendence
+			editData.transcendence = false
+		}
+	}
+
+	function handleTranscendenceChange(checked: boolean) {
+		if (checked) {
+			// Checking Transcendence should also check ULB and FLB
+			if (!editData.ulb) editData.ulb = true
+			if (!editData.flb) editData.flb = true
+		}
+	}
 </script>
 
 <DetailsContainer title="Uncap">
-  <DetailItem label="Uncap">
-    <UncapIndicator type="summon" {flb} {ulb} {transcendence} editable={false} />
-  </DetailItem>
+	{#if summon?.uncap || editMode}
+		<DetailItem label="Uncap">
+			<UncapIndicator
+				type="summon"
+				{uncapLevel}
+				{transcendenceStage}
+				{flb}
+				{ulb}
+				{transcendence}
+				{subaura}
+				editable={false}
+			/>
+		</DetailItem>
+	{/if}
 
-  {#if editMode}
-    <DetailItem label="FLB" bind:value={editData.flb} editable={true} type="checkbox" />
-    <DetailItem label="ULB" bind:value={editData.ulb} editable={true} type="checkbox" />
-    <DetailItem label="Transcendence" bind:value={editData.transcendence} editable={true} type="checkbox" />
-  {/if}
+	{#if editMode}
+		<DetailItem
+			label="FLB"
+			bind:value={editData.flb}
+			editable={true}
+			type="checkbox"
+			element={elementName}
+			onchange={handleFlbChange}
+		/>
+		<DetailItem
+			label="ULB"
+			bind:value={editData.ulb}
+			editable={true}
+			type="checkbox"
+			element={elementName}
+			onchange={handleUlbChange}
+		/>
+		<DetailItem
+			label="Transcendence"
+			bind:value={editData.transcendence}
+			editable={true}
+			type="checkbox"
+			element={elementName}
+			onchange={handleTranscendenceChange}
+		/>
+		<DetailItem
+			label="Subaura"
+			bind:value={editData.subaura}
+			editable={true}
+			type="checkbox"
+			element={elementName}
+		/>
+		<DetailItem
+			label="Limit"
+			bind:value={editData.limit}
+			editable={true}
+			type="checkbox"
+			element={elementName}
+		/>
+	{/if}
 </DetailsContainer>
-

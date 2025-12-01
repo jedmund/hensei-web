@@ -13,6 +13,10 @@ export interface CharacterUncapData {
 	uncap: UncapData
 }
 
+export interface SummonUncapData {
+	uncap: UncapData
+}
+
 /**
  * Calculate the maximum uncap level for a character based on their uncap data
  * @param special - Whether the character is special (limited/seasonal)
@@ -38,6 +42,19 @@ export function getMaxUncapLevel(special: boolean, flb: boolean, ulb: boolean): 
 export function getCharacterMaxUncapLevel(character: CharacterUncapData): number {
 	const { special, uncap } = character
 	return getMaxUncapLevel(special, uncap.flb, uncap.ulb)
+}
+
+/**
+ * Calculate the maximum uncap level from summon uncap data
+ * Summons: 3 base, +1 for FLB (4), +1 for ULB (5), transcendence stage tracked separately
+ * @param summon - Summon data with uncap information
+ * @returns The maximum uncap level
+ */
+export function getSummonMaxUncapLevel(summon: SummonUncapData): number {
+	const { uncap } = summon
+	if (uncap.ulb) return 5
+	if (uncap.flb) return 4
+	return 3
 }
 
 /**
