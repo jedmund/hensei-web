@@ -279,10 +279,10 @@
 
 		<DetailsContainer title="Nicknames">
 			<DetailItem label="Nicknames (EN)">
-				<TagInput bind:value={editData.nicknamesEn} placeholder="Add nickname..." />
+				<TagInput bind:value={editData.nicknamesEn} placeholder="Add nickname..." contained />
 			</DetailItem>
 			<DetailItem label="Nicknames (JP)">
-				<TagInput bind:value={editData.nicknamesJp} placeholder="ニックネーム..." />
+				<TagInput bind:value={editData.nicknamesJp} placeholder="ニックネームを入力" contained />
 			</DetailItem>
 		</DetailsContainer>
 
@@ -381,10 +381,6 @@
 	.details {
 		display: flex;
 		flex-direction: column;
-
-		:global(.container) {
-			border-bottom: none;
-		}
 	}
 
 	.error-banner {

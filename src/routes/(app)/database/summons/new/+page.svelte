@@ -254,7 +254,8 @@
 				bind:value={editData.nameJp}
 				editable={true}
 				type="text"
-				placeholder="ìšó"
+				placeholder="ï¿½ï¿½
+"
 			/>
 			<DetailItem
 				label="Rarity"
@@ -279,16 +280,10 @@
 
 		<DetailsContainer title="Nicknames">
 			<DetailItem label="Nicknames (EN)">
-				<TagInput
-					bind:value={editData.nicknamesEn}
-					placeholder="Add nickname..."
-				/>
+				<TagInput bind:value={editData.nicknamesEn} placeholder="Add nickname..." contained />
 			</DetailItem>
 			<DetailItem label="Nicknames (JP)">
-				<TagInput
-					bind:value={editData.nicknamesJp}
-					placeholder="ËÃ¯Íüà’ý ..."
-				/>
+				<TagInput bind:value={editData.nicknamesJp} placeholder="ãƒ‹ãƒƒã‚¯ãƒãƒ¼ãƒ ã‚’å…¥åŠ›" contained />
 			</DetailItem>
 		</DetailsContainer>
 
@@ -381,10 +376,6 @@
 	.details {
 		display: flex;
 		flex-direction: column;
-
-		:global(.container) {
-			border-bottom: none;
-		}
 	}
 
 	.error-banner {
