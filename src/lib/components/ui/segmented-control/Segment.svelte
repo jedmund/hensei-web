@@ -6,7 +6,7 @@
 	import { getContext } from 'svelte'
 	import type { Snippet } from 'svelte'
 	import styles from './segment.module.scss'
-	import type { SegmentedControlVariant } from './SegmentedControl.svelte'
+	import type { SegmentedControlVariant, SegmentedControlSize } from './SegmentedControl.svelte'
 
 	interface Props {
 		value: string
@@ -17,8 +17,9 @@
 
 	let { value, class: className, disabled, children: content }: Props = $props()
 
-	// Get variant from parent context
+	// Get variant and size from parent context
 	const variant = getContext<SegmentedControlVariant>('segmented-control-variant') || 'default'
+	const size = getContext<SegmentedControlSize>('segmented-control-size') || 'default'
 
 	// Apply variant-specific classes
 	const variantClasses = {
@@ -27,10 +28,17 @@
 		background: styles.background
 	}
 
+	// Apply size-specific classes
+	const sizeClasses = {
+		default: '',
+		small: styles.small
+	}
+
 	const segmentClass = $derived(
 		[
 			styles.segment,
 			variantClasses[variant],
+			sizeClasses[size],
 			className || ''
 		]
 			.filter(Boolean)

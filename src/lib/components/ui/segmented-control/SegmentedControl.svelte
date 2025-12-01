@@ -9,11 +9,13 @@
 	import type { HTMLAttributes } from 'svelte/elements'
 
 	export type SegmentedControlVariant = 'default' | 'blended' | 'background'
+	export type SegmentedControlSize = 'default' | 'small'
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		value?: string
 		onValueChange?: (value: string) => void
 		variant?: SegmentedControlVariant
+		size?: SegmentedControlSize
 		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | null
 		grow?: boolean
 		gap?: boolean
@@ -26,6 +28,7 @@
 		value = $bindable(),
 		onValueChange,
 		variant = 'default',
+		size = 'default',
 		element = null,
 		grow = false,
 		gap = false,
@@ -34,8 +37,9 @@
 		children
 	}: Props = $props()
 
-	// Provide variant to child segments via context
+	// Provide variant and size to child segments via context
 	setContext('segmented-control-variant', variant)
+	setContext('segmented-control-size', size)
 
 	// Track previous value to only fire callback on actual changes (not initialization)
 	let previousValue = $state<string | undefined>(undefined)

@@ -29,6 +29,16 @@
 	}
 }
 
+// Small size variant
+.small {
+	font-size: typography.$font-small;
+	min-width: 80px;
+
+	.label {
+		padding: spacing.$unit spacing.$unit-2x;
+	}
+}
+
 .label {
 	border: 0.5px solid transparent;
 	border-radius: layout.$full-corner;
