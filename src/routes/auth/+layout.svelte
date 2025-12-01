@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import { getBasePath } from '$lib/utils/images'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -8,9 +9,11 @@
 	}
 
 	let { children }: Props = $props()
+
+	const backgroundUrl = `${getBasePath()}/port-breeze.jpg`
 </script>
 
-<div class="authContainer">
+<div class="authContainer" style:--auth-bg-url="url('{backgroundUrl}')">
 	<div class="authBackground"></div>
 	<a href="/" class="backLink">
 		<Icon name="arrow-left" size={14} />
@@ -37,7 +40,7 @@
 	.authBackground {
 		position: absolute;
 		inset: 0;
-		background: #1a1a2e url('/images/port-breeze.jpg') center / cover no-repeat;
+		background: #1a1a2e var(--auth-bg-url) center / cover no-repeat;
 		z-index: 0;
 
 		// Overlay for readability
