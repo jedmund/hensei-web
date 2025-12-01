@@ -5,6 +5,7 @@
 	"nav_gallery": "Gallery",
 	"nav_collection": "Collection",
 	"nav_login": "Log in",
+	"nav_register": "Register",
 	"nav_settings": "Settings",
 	"nav_logout": "Log out",
 	"nav_account_aria": "Your account",
@@ -65,6 +66,8 @@
 	"series_world": "World",
 	"series_draconic_providence": "Draconic Providence",
 
+	"auth_backToHome": "Back to home",
+
 	"auth_login_title": "Sign in",
 	"auth_login_email": "Email address",
 	"auth_login_password": "Password",
@@ -75,6 +78,7 @@
 
 	"auth_register_title": "Create account",
 	"auth_register_username": "Username",
+	"auth_register_usernameNote": "You can change this later",
 	"auth_register_email": "Email address",
 	"auth_register_password": "Password",
 	"auth_register_confirmPassword": "Confirm password",

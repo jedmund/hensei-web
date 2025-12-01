@@ -5,6 +5,7 @@
 	"nav_gallery": "ギャラリー",
 	"nav_collection": "コレクション",
 	"nav_login": "ログイン",
+	"nav_register": "登録",
 	"nav_settings": "設定",
 	"nav_logout": "ログアウト",
 	"nav_account_aria": "アカウント",
@@ -65,6 +66,8 @@
 	"series_world": "ワールド",
 	"series_draconic_providence": "ドラコニック・プロヴィデンス",
 
+	"auth_backToHome": "ホームに戻る",
+
 	"auth_login_title": "ログイン",
 	"auth_login_email": "メールアドレス",
 	"auth_login_password": "パスワード",
@@ -75,6 +78,7 @@
 
 	"auth_register_title": "アカウント作成",
 	"auth_register_username": "ユーザー名",
+	"auth_register_usernameNote": "後から変更できます",
 	"auth_register_email": "メールアドレス",
 	"auth_register_password": "パスワード",
 	"auth_register_confirmPassword": "パスワード（確認）",
