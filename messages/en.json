@@ -63,5 +63,31 @@
 	"series_disaster": "Disaster",
 	"series_illustrious": "Illustrious",
 	"series_world": "World",
-	"series_draconic_providence": "Draconic Providence"
+	"series_draconic_providence": "Draconic Providence",
+
+	"auth_login_title": "Sign in",
+	"auth_login_email": "Email address",
+	"auth_login_password": "Password",
+	"auth_login_submit": "Sign in",
+	"auth_login_submitting": "Signing in...",
+	"auth_login_noAccount": "Don't have an account?",
+	"auth_login_register": "Create one",
+
+	"auth_register_title": "Create account",
+	"auth_register_username": "Username",
+	"auth_register_email": "Email address",
+	"auth_register_password": "Password",
+	"auth_register_confirmPassword": "Confirm password",
+	"auth_register_submit": "Create account",
+	"auth_register_submitting": "Creating account...",
+	"auth_register_hasAccount": "Already have an account?",
+	"auth_register_login": "Sign in",
+	"auth_register_errors_usernameMin": "Username must be at least 3 characters",
+	"auth_register_errors_usernameMax": "Username must be less than 20 characters",
+	"auth_register_errors_usernameFormat": "Username can only contain letters, numbers, underscores, and hyphens",
+	"auth_register_errors_usernameTaken": "Username is already taken",
+	"auth_register_errors_emailInvalid": "Please enter a valid email address",
+	"auth_register_errors_emailTaken": "Email is already registered",
+	"auth_register_errors_passwordMin": "Password must be at least 8 characters",
+	"auth_register_errors_passwordMismatch": "Passwords don't match"
 }

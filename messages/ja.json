@@ -63,5 +63,31 @@
 	"series_disaster": "ディザスター",
 	"series_illustrious": "イラストリアス",
 	"series_world": "ワールド",
-	"series_draconic_providence": "ドラコニック・プロヴィデンス"
+	"series_draconic_providence": "ドラコニック・プロヴィデンス",
+
+	"auth_login_title": "ログイン",
+	"auth_login_email": "メールアドレス",
+	"auth_login_password": "パスワード",
+	"auth_login_submit": "ログイン",
+	"auth_login_submitting": "ログイン中...",
+	"auth_login_noAccount": "アカウントをお持ちでない方は",
+	"auth_login_register": "新規登録",
+
+	"auth_register_title": "アカウント作成",
+	"auth_register_username": "ユーザー名",
+	"auth_register_email": "メールアドレス",
+	"auth_register_password": "パスワード",
+	"auth_register_confirmPassword": "パスワード（確認）",
+	"auth_register_submit": "アカウントを作成",
+	"auth_register_submitting": "作成中...",
+	"auth_register_hasAccount": "既にアカウントをお持ちの方は",
+	"auth_register_login": "ログイン",
+	"auth_register_errors_usernameMin": "ユーザー名は3文字以上で入力してください",
+	"auth_register_errors_usernameMax": "ユーザー名は20文字以下で入力してください",
+	"auth_register_errors_usernameFormat": "ユーザー名には英数字、アンダースコア、ハイフンのみ使用できます",
+	"auth_register_errors_usernameTaken": "このユーザー名は既に使用されています",
+	"auth_register_errors_emailInvalid": "有効なメールアドレスを入力してください",
+	"auth_register_errors_emailTaken": "このメールアドレスは既に登録されています",
+	"auth_register_errors_passwordMin": "パスワードは8文字以上で入力してください",
+	"auth_register_errors_passwordMismatch": "パスワードが一致しません"
 }
