@@ -3,7 +3,8 @@
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import { getElementLabel, getElementOptions } from '$lib/utils/element'
+	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import { getElementOptions } from '$lib/utils/element'
 
 	interface Props {
 		summon: any
@@ -33,9 +34,9 @@
 			placeholder="Series name"
 		/>
 	{:else}
-		<DetailItem label="Element" value={getElementLabel(summon.element)} />
-		{#if summon.series}
-			<DetailItem label="Series" value={summon.series} />
-		{/if}
+		<DetailItem label="Element">
+			<ElementLabel element={summon.element} size="medium" />
+		</DetailItem>
+		<DetailItem label="Series" value={summon.series || '—'} />
 	{/if}
 </DetailsContainer>

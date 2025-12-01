@@ -3,10 +3,12 @@
 <script lang="ts">
   import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
   import DetailItem from '$lib/components/ui/DetailItem.svelte'
-  import { getElementLabel, getElementOptions } from '$lib/utils/element'
+  import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+  import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
+  import { getElementOptions } from '$lib/utils/element'
   import { getRaceLabel, getRaceOptions } from '$lib/utils/race'
   import { getGenderLabel, getGenderOptions } from '$lib/utils/gender'
-  import { getProficiencyLabel, getProficiencyOptions } from '$lib/utils/proficiency'
+  import { getProficiencyOptions } from '$lib/utils/proficiency'
 
   interface Props {
     character: any
@@ -31,14 +33,18 @@
     <DetailItem label="Proficiency 1" bind:value={editData.proficiency1} editable={true} type="select" options={proficiencyOptions} />
     <DetailItem label="Proficiency 2" bind:value={editData.proficiency2} editable={true} type="select" options={proficiencyOptions} />
   {:else}
-    <DetailItem label="Element" value={getElementLabel(character.element)} />
+    <DetailItem label="Element">
+      <ElementLabel element={character.element} size="medium" />
+    </DetailItem>
     <DetailItem label="Race 1" value={getRaceLabel(character.race?.[0])} />
-    {#if character.race?.[1]}
-      <DetailItem label="Race 2" value={getRaceLabel(character.race?.[1])} />
-    {/if}
+    <DetailItem label="Race 2" value={getRaceLabel(character.race?.[1])} />
     <DetailItem label="Gender" value={getGenderLabel(character.gender)} />
-    <DetailItem label="Proficiency 1" value={getProficiencyLabel(character.proficiency?.[0] ?? 0)} />
-    <DetailItem label="Proficiency 2" value={getProficiencyLabel(character.proficiency?.[1] ?? 0)} />
+    <DetailItem label="Proficiency 1">
+      <ProficiencyLabel proficiency={character.proficiency?.[0] ?? 0} size="medium" />
+    </DetailItem>
+    <DetailItem label="Proficiency 2">
+      <ProficiencyLabel proficiency={character.proficiency?.[1] ?? 0} size="medium" />
+    </DetailItem>
   {/if}
 </DetailsContainer>
 
