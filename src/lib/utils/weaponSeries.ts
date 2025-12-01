@@ -74,3 +74,18 @@ export function getWeaponSeriesSlug(id: number): string | undefined {
 export function isOpusDraconicSeries(seriesId: number): boolean {
 	return OPUS_DRACONIC_SERIES.includes(seriesId)
 }
+
+/**
+ * Get all weapon series as options for a select/dropdown.
+ *
+ * @returns Array of { value, label } options
+ */
+export function getWeaponSeriesOptions() {
+	return weaponSeries.map((series) => ({
+		value: series.id,
+		label: series.slug
+			.split('_')
+			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(' ')
+	}))
+}

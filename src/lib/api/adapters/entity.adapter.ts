@@ -328,6 +328,79 @@ export interface SummonDownloadStatus {
 }
 
 /**
+ * Response from weapon granblue_id validation
+ */
+export interface WeaponValidationResult {
+	valid: boolean
+	granblueId: string
+	existsInDb: boolean
+	error?: string
+	imageUrls?: {
+		main?: string
+		grid?: string
+		square?: string
+	}
+}
+
+/**
+ * Payload for creating a new weapon
+ * Note: Frontend uses "transcendence" but API expects "xlb" for stats
+ */
+export interface CreateWeaponPayload {
+	granblue_id: string
+	name_en: string
+	name_jp?: string
+	rarity?: number
+	element?: number
+	proficiency?: number
+	series?: number
+	new_series?: number
+	min_hp?: number
+	max_hp?: number
+	max_hp_flb?: number
+	max_hp_ulb?: number
+	min_atk?: number
+	max_atk?: number
+	max_atk_flb?: number
+	max_atk_ulb?: number
+	max_level?: number
+	max_skill_level?: number
+	max_awakening_level?: number
+	flb?: boolean
+	ulb?: boolean
+	transcendence?: boolean
+	extra?: boolean
+	limit?: boolean
+	ax?: boolean
+	release_date?: string | null
+	flb_date?: string | null
+	ulb_date?: string | null
+	transcendence_date?: string | null
+	wiki_en?: string
+	wiki_ja?: string
+	gamewith?: string
+	kamigame?: string
+	recruits?: string | null  // Character ID reference
+	nicknames_en?: string[]
+	nicknames_jp?: string[]
+}
+
+/**
+ * Response from weapon image download status
+ */
+export interface WeaponDownloadStatus {
+	status: 'queued' | 'processing' | 'completed' | 'failed' | 'not_found'
+	progress?: number
+	imagesDownloaded?: number
+	imagesTotal?: number
+	error?: string
+	weaponId?: string
+	granblueId?: string
+	images?: Record<string, string[]>
+	updatedAt?: string
+}
+
+/**
  * Entity adapter for accessing canonical game data
  */
 export class EntityAdapter extends BaseAdapter {
@@ -602,6 +675,95 @@ export class EntityAdapter extends BaseAdapter {
 			imagesTotal: response.images_total,
 			error: response.error,
 			summonId: response.summon_id,
+			granblueId: response.granblue_id,
+			images: response.images,
+			updatedAt: response.updated_at
+		}
+	}
+
+	// ============================================
+	// Weapon Creation & Image Download Methods
+	// ============================================
+
+	/**
+	 * Validates a weapon granblue_id by checking if images exist on GBF servers
+	 * Requires editor role (>= 7)
+	 */
+	async validateWeaponGranblueId(granblueId: string): Promise<WeaponValidationResult> {
+		const response = await this.request<{
+			valid: boolean
+			granblue_id: string
+			exists_in_db: boolean
+			error?: string
+			image_urls?: {
+				main?: string
+				grid?: string
+				square?: string
+			}
+		}>(`/weapons/validate/${granblueId}`, {
+			method: 'GET'
+		})
+
+		return {
+			valid: response.valid,
+			granblueId: response.granblue_id,
+			existsInDb: response.exists_in_db,
+			error: response.error,
+			imageUrls: response.image_urls
+		}
+	}
+
+	/**
+	 * Creates a new weapon record
+	 * Requires editor role (>= 7)
+	 */
+	async createWeapon(payload: CreateWeaponPayload): Promise<Weapon> {
+		return this.request<Weapon>('/weapons', {
+			method: 'POST',
+			body: { weapon: payload }
+		})
+	}
+
+	/**
+	 * Triggers async image download for a weapon
+	 * Requires editor role (>= 7)
+	 */
+	async downloadWeaponImages(
+		weaponId: string,
+		options?: { force?: boolean; size?: 'all' | string }
+	): Promise<{ status: string; weaponId: string; message: string }> {
+		return this.request(`/weapons/${weaponId}/download_images`, {
+			method: 'POST',
+			body: { options }
+		})
+	}
+
+	/**
+	 * Gets the status of an ongoing weapon image download
+	 * Requires editor role (>= 7)
+	 */
+	async getWeaponDownloadStatus(weaponId: string): Promise<WeaponDownloadStatus> {
+		const response = await this.request<{
+			status: string
+			progress?: number
+			images_downloaded?: number
+			images_total?: number
+			error?: string
+			weapon_id?: string
+			granblue_id?: string
+			images?: Record<string, string[]>
+			updated_at?: string
+		}>(`/weapons/${weaponId}/download_status`, {
+			method: 'GET'
+		})
+
+		return {
+			status: response.status as WeaponDownloadStatus['status'],
+			progress: response.progress,
+			imagesDownloaded: response.images_downloaded,
+			imagesTotal: response.images_total,
+			error: response.error,
+			weaponId: response.weapon_id,
 			granblueId: response.granblue_id,
 			images: response.images,
 			updatedAt: response.updated_at
