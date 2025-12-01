@@ -11,6 +11,18 @@ interface SidebarState {
 	componentProps: Record<string, any> | undefined
 	scrollable: boolean
 	activeItemId: string | undefined
+	onsave: (() => void) | undefined
+	saveLabel: string | undefined
+	element: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
+	onback: (() => void) | undefined
+}
+
+interface OpenWithComponentOptions {
+	scrollable?: boolean
+	onsave?: () => void
+	saveLabel?: string
+	element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+	onback?: () => void
 }
 
 class SidebarStore {
@@ -21,7 +33,11 @@ class SidebarStore {
 		component: undefined,
 		componentProps: undefined,
 		scrollable: true,
-		activeItemId: undefined
+		activeItemId: undefined,
+		onsave: undefined,
+		saveLabel: undefined,
+		element: undefined,
+		onback: undefined
 	})
 
 	open(title?: string, content?: Snippet, scrollable = true) {
@@ -37,14 +53,22 @@ class SidebarStore {
 		title: string,
 		component: Component<any, any, any>,
 		props?: Record<string, any>,
-		scrollable = true
+		options?: OpenWithComponentOptions | boolean
 	) {
+		// Handle backward compatibility where 4th param was scrollable boolean
+		const opts: OpenWithComponentOptions =
+			typeof options === 'boolean' ? { scrollable: options } : options ?? {}
+
 		this.state.open = true
 		this.state.title = title
 		this.state.component = component
 		this.state.componentProps = props
 		this.state.content = undefined
-		this.state.scrollable = scrollable
+		this.state.scrollable = opts.scrollable ?? true
+		this.state.onsave = opts.onsave
+		this.state.saveLabel = opts.saveLabel
+		this.state.element = opts.element
+		this.state.onback = opts.onback
 		// Extract and store the item ID if it's a details sidebar
 		if (props?.item?.id) {
 			this.state.activeItemId = String(props.item.id)
@@ -60,6 +84,10 @@ class SidebarStore {
 			this.state.content = undefined
 			this.state.component = undefined
 			this.state.componentProps = undefined
+			this.state.onsave = undefined
+			this.state.saveLabel = undefined
+			this.state.element = undefined
+			this.state.onback = undefined
 		}, 300)
 	}
 
@@ -97,6 +125,22 @@ class SidebarStore {
 
 	get activeItemId() {
 		return this.state.activeItemId
+	}
+
+	get onsave() {
+		return this.state.onsave
+	}
+
+	get saveLabel() {
+		return this.state.saveLabel
+	}
+
+	get element() {
+		return this.state.element
+	}
+
+	get onback() {
+		return this.state.onback
 	}
 }
 
