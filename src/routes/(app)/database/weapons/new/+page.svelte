@@ -14,6 +14,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import ValidatedInput from '$lib/components/ui/ValidatedInput.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
+	import CharacterTypeahead from '$lib/components/ui/CharacterTypeahead.svelte'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { getRarityOptions } from '$lib/utils/rarity'
 
@@ -282,6 +283,12 @@
 			</DetailItem>
 			<DetailItem label="Nicknames (JP)">
 				<TagInput bind:value={editData.nicknamesJp} placeholder="ニックネーム..." />
+			</DetailItem>
+		</DetailsContainer>
+
+		<DetailsContainer title="Recruits">
+			<DetailItem label="Recruits Character" sublabel="Character recruited by this weapon">
+				<CharacterTypeahead bind:value={editData.recruits} placeholder="Search for character..." />
 			</DetailItem>
 		</DetailsContainer>
 
