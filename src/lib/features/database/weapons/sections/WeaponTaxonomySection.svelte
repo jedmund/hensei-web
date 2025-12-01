@@ -7,6 +7,8 @@
 	import { getProficiencyLabel, getProficiencyOptions } from '$lib/utils/proficiency'
 	import { getWeaponSeriesOptions, getWeaponSeriesSlug } from '$lib/utils/weaponSeries'
 
+	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+
 	interface Props {
 		weapon: any
 		editMode?: boolean
@@ -18,6 +20,13 @@
 	const elementOptions = getElementOptions()
 	const proficiencyOptions = getProficiencyOptions()
 	const seriesOptions = [{ value: 0, label: 'None' }, ...getWeaponSeriesOptions()]
+
+	// Get element name for checkbox theming
+	const elementName = $derived.by((): ElementName | undefined => {
+		const el = editMode ? editData.element : weapon?.element
+		const label = getElementLabel(el)
+		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
+	})
 </script>
 
 <DetailsContainer title="Details">
@@ -44,12 +53,28 @@
 			options={seriesOptions}
 		/>
 		<DetailItem
-			label="New Series"
-			sublabel="Secondary series classification"
-			bind:value={editData.newSeries}
+			label="Extra"
+			sublabel="Can be placed in Additional Weapons"
+			bind:value={editData.extra}
 			editable={true}
-			type="select"
-			options={seriesOptions}
+			type="checkbox"
+			element={elementName}
+		/>
+		<DetailItem
+			label="Limit"
+			sublabel="Only one copy can be placed in a team"
+			bind:value={editData.limit}
+			editable={true}
+			type="checkbox"
+			element={elementName}
+		/>
+		<DetailItem
+			label="AX Skills"
+			sublabel="Can have AX Skills"
+			bind:value={editData.ax}
+			editable={true}
+			type="checkbox"
+			element={elementName}
 		/>
 	{:else}
 		<DetailItem label="Element" value={getElementLabel(weapon.element)} />

@@ -4,7 +4,6 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-	import { getMaxUncapLevel } from '$lib/utils/uncap'
 	import { getElementLabel } from '$lib/utils/element'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -25,7 +24,8 @@
 	const flb = $derived(uncap.flb ?? false)
 	const ulb = $derived(uncap.ulb ?? false)
 	const transcendence = $derived(uncap.transcendence ?? false)
-	const uncapLevel = $derived(getMaxUncapLevel({ uncap }))
+	// Weapons: 3 base stars, +1 for FLB (4), +1 for ULB (5), +1 for transcendence (6)
+	const uncapLevel = $derived(transcendence ? 6 : ulb ? 5 : flb ? 4 : 3)
 	const transcendenceStage = $derived(transcendence ? 5 : 0)
 
 	// Get element name for checkbox theming
@@ -102,30 +102,6 @@
 			type="checkbox"
 			element={elementName}
 			onchange={handleTranscendenceChange}
-		/>
-		<DetailItem
-			label="Extra"
-			sublabel="Has additional slot (Opus, etc.)"
-			bind:value={editData.extra}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-		/>
-		<DetailItem
-			label="Limit"
-			sublabel="Limited availability"
-			bind:value={editData.limit}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-		/>
-		<DetailItem
-			label="AX Skills"
-			sublabel="Can have AX skill slots"
-			bind:value={editData.ax}
-			editable={true}
-			type="checkbox"
-			element={elementName}
 		/>
 	{/if}
 </DetailsContainer>
