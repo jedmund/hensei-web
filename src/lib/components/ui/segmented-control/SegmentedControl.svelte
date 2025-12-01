@@ -37,9 +37,16 @@
 	// Provide variant to child segments via context
 	setContext('segmented-control-variant', variant)
 
+	// Track previous value to only fire callback on actual changes (not initialization)
+	let previousValue = $state<string | undefined>(undefined)
+
 	$effect(() => {
 		if (onValueChange && value !== undefined) {
-			onValueChange(value)
+			// Only call onValueChange if value actually changed (not on initialization)
+			if (previousValue !== undefined && value !== previousValue) {
+				onValueChange(value)
+			}
+			previousValue = value
 		}
 	})
 
