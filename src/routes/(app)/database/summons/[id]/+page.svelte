@@ -233,7 +233,7 @@
 	}
 </script>
 
-<div>
+<div class="page">
 	{#if summon}
 		<DetailScaffold
 			type="summon"
@@ -257,10 +257,14 @@
 				{#if editMode}
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
-							<TagInput bind:value={editData.nicknamesEn} placeholder="Add nickname..." />
+							<TagInput bind:value={editData.nicknamesEn} placeholder="Add nickname..." contained />
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
-							<TagInput bind:value={editData.nicknamesJp} placeholder="ニックネーム..." />
+							<TagInput
+								bind:value={editData.nicknamesJp}
+								placeholder="ニックネームを入力"
+								contained
+							/>
 						</DetailItem>
 					</DetailsContainer>
 
@@ -396,6 +400,12 @@
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+
+	.page {
+		background: white;
+		border-radius: layout.$card-corner;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	}
 
 	.not-found {
 		text-align: center;

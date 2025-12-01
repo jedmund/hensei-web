@@ -54,7 +54,6 @@
 		element: weapon?.element || 0,
 		proficiency: weapon?.proficiency || 0,
 		series: weapon?.series || 0,
-		newSeries: 0,
 		minHp: weapon?.hp?.minHp || 0,
 		maxHp: weapon?.hp?.maxHp || 0,
 		maxHpFlb: weapon?.hp?.maxHpFlb || 0,
@@ -96,7 +95,6 @@
 				element: weapon.element || 0,
 				proficiency: weapon.proficiency || 0,
 				series: weapon.series || 0,
-				newSeries: 0,
 				minHp: weapon.hp?.minHp || 0,
 				maxHp: weapon.hp?.maxHp || 0,
 				maxHpFlb: weapon.hp?.maxHpFlb || 0,
@@ -144,7 +142,6 @@
 				element: weapon.element || 0,
 				proficiency: weapon.proficiency || 0,
 				series: weapon.series || 0,
-				newSeries: 0,
 				minHp: weapon.hp?.minHp || 0,
 				maxHp: weapon.hp?.maxHp || 0,
 				maxHpFlb: weapon.hp?.maxHpFlb || 0,
@@ -193,7 +190,6 @@
 				element: editData.element,
 				proficiency: editData.proficiency,
 				series: editData.series || undefined,
-				new_series: editData.newSeries || undefined,
 				min_hp: editData.minHp,
 				max_hp: editData.maxHp,
 				max_hp_flb: editData.maxHpFlb,
@@ -249,7 +245,7 @@
 	}
 </script>
 
-<div>
+<div class="page">
 	{#if weapon}
 		<DetailScaffold
 			type="weapon"
@@ -273,10 +269,14 @@
 				{#if editMode}
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
-							<TagInput bind:value={editData.nicknamesEn} placeholder="Add nickname..." />
+							<TagInput bind:value={editData.nicknamesEn} placeholder="Add nickname..." contained />
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
-							<TagInput bind:value={editData.nicknamesJp} placeholder="ニックネーム..." />
+							<TagInput
+								bind:value={editData.nicknamesJp}
+								placeholder="ニックネームを入力"
+								contained
+							/>
 						</DetailItem>
 					</DetailsContainer>
 
@@ -372,7 +372,9 @@
 								{#each weapon.weapon_skills as skill}
 									<div class="skill-item">
 										<h4 class="skill-name">{skill.name || 'Unknown Skill'}</h4>
-										<p class="skill-description">{skill.description || 'No description available'}</p>
+										<p class="skill-description">
+											{skill.description || 'No description available'}
+										</p>
 									</div>
 								{/each}
 							{:else}
@@ -397,6 +399,12 @@
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+
+	.page {
+		background: white;
+		border-radius: layout.$card-corner;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	}
 
 	.not-found {
 		text-align: center;

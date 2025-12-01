@@ -196,7 +196,7 @@
 	}
 </script>
 
-<div>
+<div class="page">
 	{#if character}
 		<DetailScaffold
 			type="character"
@@ -257,6 +257,12 @@
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+
+	.page {
+		background: white;
+		border-radius: layout.$card-corner;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	}
 
 	.not-found {
 		text-align: center;
