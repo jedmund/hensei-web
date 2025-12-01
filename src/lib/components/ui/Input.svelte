@@ -185,6 +185,9 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-half;
+		border: none;
+		padding: 0;
+		margin: 0;
 
 		&:last-child .error {
 			margin-bottom: 0;
