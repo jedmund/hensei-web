@@ -111,6 +111,32 @@ export interface Character {
 }
 
 /**
+ * Weapon key data for customizing weapons
+ */
+export interface WeaponKey {
+	id: string
+	granblue_id: number
+	name: {
+		en: string
+		ja: string
+	}
+	slug: string
+	series: number[]
+	slot: number
+	group: number
+	order: number
+}
+
+/**
+ * Query parameters for fetching weapon keys
+ */
+export interface WeaponKeyQueryParams {
+	series?: number
+	slot?: number
+	group?: number
+}
+
+/**
  * Canonical summon data from the game
  */
 export interface Summon {
@@ -233,9 +259,27 @@ export class EntityAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Gets weapon keys with optional filtering
+	 */
+	async getWeaponKeys(params?: WeaponKeyQueryParams): Promise<WeaponKey[]> {
+		const searchParams = new URLSearchParams()
+		if (params?.series !== undefined) searchParams.set('series', String(params.series))
+		if (params?.slot !== undefined) searchParams.set('slot', String(params.slot))
+		if (params?.group !== undefined) searchParams.set('group', String(params.group))
+
+		const queryString = searchParams.toString()
+		const url = queryString ? `/weapon_keys?${queryString}` : '/weapon_keys'
+
+		return this.request<WeaponKey[]>(url, {
+			method: 'GET',
+			cacheTTL: 3600000 // Cache for 1 hour - weapon keys rarely change
+		})
+	}
+
+	/**
 	 * Clears entity cache
 	 */
-	clearEntityCache(type?: 'weapons' | 'characters' | 'summons') {
+	clearEntityCache(type?: 'weapons' | 'characters' | 'summons' | 'weapon_keys') {
 		if (type) {
 			this.clearCache(`/${type}`)
 		} else {
@@ -243,6 +287,7 @@ export class EntityAdapter extends BaseAdapter {
 			this.clearCache('/weapons')
 			this.clearCache('/characters')
 			this.clearCache('/summons')
+			this.clearCache('/weapon_keys')
 		}
 	}
 }

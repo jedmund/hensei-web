@@ -8,7 +8,7 @@
  */
 
 import { queryOptions } from '@tanstack/svelte-query'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { entityAdapter, type WeaponKeyQueryParams } from '$lib/api/adapters/entity.adapter'
 
 /**
  * Entity query options factory
@@ -72,6 +72,20 @@ export const entityQueries = {
 			enabled: !!id,
 			staleTime: 1000 * 60 * 60, // 1 hour - canonical data rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * Weapon keys query options with optional filtering
+	 *
+	 * @param params - Optional filter parameters (series, slot, group)
+	 * @returns Query options for fetching weapon keys
+	 */
+	weaponKeys: (params?: WeaponKeyQueryParams) =>
+		queryOptions({
+			queryKey: ['weaponKeys', params?.series, params?.slot, params?.group] as const,
+			queryFn: () => entityAdapter.getWeaponKeys(params),
+			staleTime: 1000 * 60 * 60, // 1 hour - weapon keys rarely change
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		})
 }
 
@@ -98,5 +112,7 @@ export const entityKeys = {
 	characters: () => ['character'] as const,
 	character: (id: string) => [...entityKeys.characters(), id] as const,
 	summons: () => ['summon'] as const,
-	summon: (id: string) => [...entityKeys.summons(), id] as const
+	summon: (id: string) => [...entityKeys.summons(), id] as const,
+	weaponKeys: (params?: WeaponKeyQueryParams) =>
+		['weaponKeys', params?.series, params?.slot, params?.group] as const
 }
