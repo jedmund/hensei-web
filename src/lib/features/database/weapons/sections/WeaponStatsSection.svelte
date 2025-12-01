@@ -14,6 +14,29 @@
 
 	const flb = $derived(editMode ? Boolean(editData.flb) : Boolean(weapon?.uncap?.flb))
 	const ulb = $derived(editMode ? Boolean(editData.ulb) : Boolean(weapon?.uncap?.ulb))
+	const transcendence = $derived(
+		editMode ? Boolean(editData.transcendence) : Boolean(weapon?.uncap?.transcendence)
+	)
+
+	// Auto-update Max Level and Max Skill Level based on uncap status
+	// No FLB: 100 / 10, FLB: 150 / 15, ULB: 200 / 20, Transcendence: 250 / 25
+	$effect(() => {
+		if (editMode && editData) {
+			if (transcendence) {
+				editData.maxLevel = 250
+				editData.maxSkillLevel = 25
+			} else if (ulb) {
+				editData.maxLevel = 200
+				editData.maxSkillLevel = 20
+			} else if (flb) {
+				editData.maxLevel = 150
+				editData.maxSkillLevel = 15
+			} else {
+				editData.maxLevel = 100
+				editData.maxSkillLevel = 10
+			}
+		}
+	})
 </script>
 
 <DetailsContainer title="HP Stats">
