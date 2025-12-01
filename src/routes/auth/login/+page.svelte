@@ -14,6 +14,9 @@
 	let email = $state(form?.email ?? '')
 	let password = $state('')
 	let isSubmitting = $state(false)
+
+	const placeholders = ['gran@grancypher.com', 'djeeta@grancypher.com']
+	const randomPlaceholder = placeholders[Math.floor(Math.random() * placeholders.length)]
 </script>
 
 <svelte:head>
@@ -34,7 +37,7 @@
 		<Input
 			type="email"
 			name="email"
-			label={m.auth_login_email()}
+			placeholder={m.auth_login_email()}
 			bind:value={email}
 			autocomplete="email"
 			required
@@ -45,7 +48,7 @@
 		<Input
 			type="password"
 			name="password"
-			label={m.auth_login_password()}
+			placeholder={m.auth_login_password()}
 			bind:value={password}
 			autocomplete="current-password"
 			minlength={8}

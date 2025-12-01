@@ -206,11 +206,23 @@
 
 	// Derive validation icon states
 	const usernameIcon = $derived(
-		isCheckingUsername ? 'loader' : usernameAvailable === true ? 'check' : usernameAvailable === false ? 'x' : undefined
+		isCheckingUsername
+			? 'loader'
+			: usernameAvailable === true
+				? 'check'
+				: usernameAvailable === false
+					? 'x'
+					: undefined
 	)
 
 	const emailIcon = $derived(
-		isCheckingEmail ? 'loader' : emailAvailable === true ? 'check' : emailAvailable === false ? 'x' : undefined
+		isCheckingEmail
+			? 'loader'
+			: emailAvailable === true
+				? 'check'
+				: emailAvailable === false
+					? 'x'
+					: undefined
 	)
 </script>
 
@@ -229,62 +241,67 @@
 			}
 		}}
 	>
-		<Input
-			type="text"
-			name="username"
-			label={m.auth_register_username()}
-			value={username}
-			oninput={onUsernameInput}
-			autocomplete="username"
-			minlength={3}
-			maxLength={20}
-			required
-			fullWidth
-			contained
-			error={usernameError}
-			rightIcon={usernameIcon}
-		/>
+		<section class="input-group">
+			<Input
+				type="text"
+				name="username"
+				placeholder={m.auth_register_username()}
+				value={username}
+				oninput={onUsernameInput}
+				minlength={3}
+				maxLength={20}
+				required
+				fullWidth
+				contained
+				error={usernameError}
+				rightIcon={usernameIcon}
+				no1password
+			/>
+			<span class="note">{m.auth_register_usernameNote()}</span>
+		</section>
 
-		<Input
-			type="email"
-			name="email"
-			label={m.auth_register_email()}
-			value={email}
-			oninput={onEmailInput}
-			autocomplete="email"
-			required
-			fullWidth
-			contained
-			error={emailError}
-			rightIcon={emailIcon}
-		/>
+		<section class="input-group">
+			<Input
+				type="email"
+				name="email"
+				placeholder={m.auth_register_email()}
+				value={email}
+				oninput={onEmailInput}
+				autocomplete="email"
+				required
+				fullWidth
+				contained
+				error={emailError}
+				rightIcon={emailIcon}
+			/>
 
-		<Input
-			type="password"
-			name="password"
-			label={m.auth_register_password()}
-			value={password}
-			oninput={onPasswordInput}
-			autocomplete="new-password"
-			minlength={8}
-			required
-			fullWidth
-			contained
-			error={passwordError}
-		/>
+			<Input
+				type="password"
+				name="password"
+				placeholder={m.auth_register_password()}
+				value={password}
+				oninput={onPasswordInput}
+				autocomplete="new-password"
+				minlength={8}
+				required
+				fullWidth
+				contained
+				error={passwordError}
+			/>
 
-		<Input
-			type="password"
-			name="password_confirmation"
-			label={m.auth_register_confirmPassword()}
-			value={passwordConfirmation}
-			oninput={onPasswordConfirmationInput}
-			autocomplete="new-password"
-			required
-			fullWidth
-			contained
-			error={passwordConfirmationError}
-		/>
+			<Input
+				type="password"
+				name="password_confirmation"
+				placeholder={m.auth_register_confirmPassword()}
+				value={passwordConfirmation}
+				oninput={onPasswordConfirmationInput}
+				autocomplete="new-password"
+				required
+				fullWidth
+				contained
+				error={passwordConfirmationError}
+			/>
+		</section>
 
 		{#if form?.error}
 			<p class="error">{form.error}</p>
@@ -311,7 +328,20 @@
 	form {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-2x;
+		gap: $unit-4x;
+	}
+
+	.input-group {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+
+		.note {
+			color: var(--text-secondary);
+			font-size: $font-small;
+			text-align: center;
+			margin: 0;
+		}
 	}
 
 	.error {
