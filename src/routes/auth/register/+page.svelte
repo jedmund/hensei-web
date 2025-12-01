@@ -227,7 +227,7 @@
 </script>
 
 <svelte:head>
-	<title>{m.auth_register_title()} | Granblue Party</title>
+	<title>{m.auth_register_title()}</title>
 </svelte:head>
 
 <AuthCard title={m.auth_register_title()}>
