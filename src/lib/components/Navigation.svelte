@@ -64,6 +64,35 @@
 	// Database route detection
 	const isDatabaseRoute = $derived($page.url.pathname.startsWith(localizeHref('/database')))
 
+	// Detect current database entity type
+	const currentDatabaseEntity = $derived.by(() => {
+		const path = $page.url.pathname
+		if (path.startsWith(databaseCharactersHref)) return 'character'
+		if (path.startsWith(databaseWeaponsHref)) return 'weapon'
+		if (path.startsWith(databaseSummonsHref)) return 'summon'
+		return null
+	})
+
+	// Database "New" button config
+	const databaseNewButtonLabel = $derived(
+		currentDatabaseEntity === 'character'
+			? 'New character'
+			: currentDatabaseEntity === 'weapon'
+				? 'New weapon'
+				: currentDatabaseEntity === 'summon'
+					? 'New summon'
+					: 'New'
+	)
+	const databaseNewButtonHref = $derived(
+		currentDatabaseEntity === 'character'
+			? localizeHref('/database/characters/new')
+			: currentDatabaseEntity === 'weapon'
+				? localizeHref('/database/weapons/new')
+				: currentDatabaseEntity === 'summon'
+					? localizeHref('/database/summons/new')
+					: localizeHref('/database')
+	)
+
 	// Function to check if a nav item is selected
 	function isNavSelected(href: string): boolean {
 		const path = $page.url.pathname
@@ -232,17 +261,32 @@
 			</li>
 		</ul>
 	{/if}
-	<Button
-		icon="plus"
-		iconOnly
-		shape="circle"
-		variant="primary"
-		{...(userElement ? { element: userElement } : {})}
-		elementStyle={Boolean(userElement)}
-		class="new-team-button"
-		aria-label="New team"
-		href={newTeamHref}
-	/>
+	{#if isDatabaseRoute}
+		<Button
+			icon="plus"
+			shape="pill"
+			variant="primary"
+			size="small"
+			{...(userElement ? { element: userElement } : {})}
+			elementStyle={Boolean(userElement)}
+			class="new-item-button"
+			href={databaseNewButtonHref}
+		>
+			{databaseNewButtonLabel}
+		</Button>
+	{:else}
+		<Button
+			icon="plus"
+			iconOnly
+			shape="circle"
+			variant="primary"
+			{...(userElement ? { element: userElement } : {})}
+			elementStyle={Boolean(userElement)}
+			class="new-team-button"
+			aria-label="New team"
+			href={newTeamHref}
+		/>
+	{/if}
 </nav>
 
 <!-- Settings Modal -->
@@ -480,6 +524,12 @@
 	:global(.new-team-button) {
 		// Only add styles that are specific overrides, not duplicates
 		// The Button component already handles size, shape, colors, etc.
+	}
+
+	// Style the database "New item" button
+	:global(.new-item-button) {
+		padding-top: spacing.$unit-2x !important;
+		padding-bottom: spacing.$unit-2x !important;
 	}
 
 	// Element-specific SELECTED states for navigation links
