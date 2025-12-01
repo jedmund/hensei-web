@@ -258,6 +258,76 @@ export interface CharacterDownloadStatus {
 }
 
 /**
+ * Response from summon granblue_id validation
+ */
+export interface SummonValidationResult {
+	valid: boolean
+	granblueId: string
+	existsInDb: boolean
+	error?: string
+	imageUrls?: {
+		main?: string
+		grid?: string
+		square?: string
+	}
+}
+
+/**
+ * Payload for creating a new summon
+ * Note: Frontend uses "transcendence" but API expects "xlb" for stats
+ */
+export interface CreateSummonPayload {
+	granblue_id: string
+	name_en: string
+	name_jp?: string
+	summon_id?: string
+	rarity?: number
+	element?: number
+	series?: string
+	min_hp?: number
+	max_hp?: number
+	max_hp_flb?: number
+	max_hp_ulb?: number
+	max_hp_xlb?: number  // transcendence HP
+	min_atk?: number
+	max_atk?: number
+	max_atk_flb?: number
+	max_atk_ulb?: number
+	max_atk_xlb?: number  // transcendence ATK
+	max_level?: number
+	flb?: boolean
+	ulb?: boolean
+	transcendence?: boolean
+	subaura?: boolean
+	limit?: boolean
+	release_date?: string | null
+	flb_date?: string | null
+	ulb_date?: string | null
+	transcendence_date?: string | null
+	wiki_en?: string
+	wiki_ja?: string
+	gamewith?: string
+	kamigame?: string
+	nicknames_en?: string[]
+	nicknames_jp?: string[]
+}
+
+/**
+ * Response from summon image download status
+ */
+export interface SummonDownloadStatus {
+	status: 'queued' | 'processing' | 'completed' | 'failed' | 'not_found'
+	progress?: number
+	imagesDownloaded?: number
+	imagesTotal?: number
+	error?: string
+	summonId?: string
+	granblueId?: string
+	images?: Record<string, string[]>
+	updatedAt?: string
+}
+
+/**
  * Entity adapter for accessing canonical game data
  */
 export class EntityAdapter extends BaseAdapter {
@@ -443,6 +513,95 @@ export class EntityAdapter extends BaseAdapter {
 			imagesTotal: response.images_total,
 			error: response.error,
 			characterId: response.character_id,
+			granblueId: response.granblue_id,
+			images: response.images,
+			updatedAt: response.updated_at
+		}
+	}
+
+	// ============================================
+	// Summon Creation & Image Download Methods
+	// ============================================
+
+	/**
+	 * Validates a summon granblue_id by checking if images exist on GBF servers
+	 * Requires editor role (>= 7)
+	 */
+	async validateSummonGranblueId(granblueId: string): Promise<SummonValidationResult> {
+		const response = await this.request<{
+			valid: boolean
+			granblue_id: string
+			exists_in_db: boolean
+			error?: string
+			image_urls?: {
+				main?: string
+				grid?: string
+				square?: string
+			}
+		}>(`/summons/validate/${granblueId}`, {
+			method: 'GET'
+		})
+
+		return {
+			valid: response.valid,
+			granblueId: response.granblue_id,
+			existsInDb: response.exists_in_db,
+			error: response.error,
+			imageUrls: response.image_urls
+		}
+	}
+
+	/**
+	 * Creates a new summon record
+	 * Requires editor role (>= 7)
+	 */
+	async createSummon(payload: CreateSummonPayload): Promise<Summon> {
+		return this.request<Summon>('/summons', {
+			method: 'POST',
+			body: { summon: payload }
+		})
+	}
+
+	/**
+	 * Triggers async image download for a summon
+	 * Requires editor role (>= 7)
+	 */
+	async downloadSummonImages(
+		summonId: string,
+		options?: { force?: boolean; size?: 'all' | string }
+	): Promise<{ status: string; summonId: string; message: string }> {
+		return this.request(`/summons/${summonId}/download_images`, {
+			method: 'POST',
+			body: { options }
+		})
+	}
+
+	/**
+	 * Gets the status of an ongoing summon image download
+	 * Requires editor role (>= 7)
+	 */
+	async getSummonDownloadStatus(summonId: string): Promise<SummonDownloadStatus> {
+		const response = await this.request<{
+			status: string
+			progress?: number
+			images_downloaded?: number
+			images_total?: number
+			error?: string
+			summon_id?: string
+			granblue_id?: string
+			images?: Record<string, string[]>
+			updated_at?: string
+		}>(`/summons/${summonId}/download_status`, {
+			method: 'GET'
+		})
+
+		return {
+			status: response.status as SummonDownloadStatus['status'],
+			progress: response.progress,
+			imagesDownloaded: response.images_downloaded,
+			imagesTotal: response.images_total,
+			error: response.error,
+			summonId: response.summon_id,
 			granblueId: response.granblue_id,
 			images: response.images,
 			updatedAt: response.updated_at
