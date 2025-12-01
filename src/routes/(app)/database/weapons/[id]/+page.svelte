@@ -3,30 +3,42 @@
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
 
 	// TanStack Query
-	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
+	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
-	import DetailScaffold from '$lib/features/database/detail/DetailScaffold.svelte'
+	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
 	import WeaponMetadataSection from '$lib/features/database/weapons/sections/WeaponMetadataSection.svelte'
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
-	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
-	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import TagInput from '$lib/components/ui/TagInput.svelte'
-	import { getWeaponGridImage } from '$lib/utils/images'
+	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
+	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl } from '$lib/utils/images'
 
 	// Types
 	import type { PageData } from './$types'
+	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 
 	let { data }: { data: PageData } = $props()
 
-	const queryClient = useQueryClient()
+	// Tab state from URL
+	const currentTab = $derived(($page.url.searchParams.get('tab') as DetailTab) || 'info')
+
+	function handleTabChange(tab: DetailTab) {
+		const url = new URL($page.url)
+		if (tab === 'info') {
+			url.searchParams.delete('tab')
+		} else {
+			url.searchParams.set('tab', tab)
+		}
+		goto(url.toString(), { replaceState: true })
+	}
 
 	// Use TanStack Query with SSR initial data
 	const weaponQuery = createQuery(() => ({
@@ -39,210 +51,41 @@
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
 
-	// Edit mode state
-	let editMode = $state(false)
-	let isSaving = $state(false)
-	let saveError = $state<string | null>(null)
-	let saveSuccess = $state(false)
+	// Edit URL for navigation
+	const editUrl = $derived(weapon?.id ? `/database/weapons/${weapon.id}/edit` : undefined)
 
-	// Editable fields
-	let editData = $state({
-		name: weapon?.name?.en || '',
-		nameJp: weapon?.name?.ja || '',
-		granblue_id: weapon?.granblueId || '',
-		rarity: weapon?.rarity || 3,
-		element: weapon?.element || 0,
-		proficiency: weapon?.proficiency || 0,
-		series: weapon?.series || 0,
-		minHp: weapon?.hp?.minHp || 0,
-		maxHp: weapon?.hp?.maxHp || 0,
-		maxHpFlb: weapon?.hp?.maxHpFlb || 0,
-		maxHpUlb: weapon?.hp?.maxHpUlb || 0,
-		minAtk: weapon?.atk?.minAtk || 0,
-		maxAtk: weapon?.atk?.maxAtk || 0,
-		maxAtkFlb: weapon?.atk?.maxAtkFlb || 0,
-		maxAtkUlb: weapon?.atk?.maxAtkUlb || 0,
-		maxLevel: weapon?.maxLevel || 100,
-		maxSkillLevel: weapon?.maxSkillLevel || 10,
-		maxAwakeningLevel: weapon?.maxAwakeningLevel || 0,
-		flb: weapon?.uncap?.flb || false,
-		ulb: weapon?.uncap?.ulb || false,
-		transcendence: weapon?.uncap?.transcendence || false,
-		extra: false,
-		limit: false,
-		ax: weapon?.ax || false,
-		releaseDate: '',
-		flbDate: '',
-		ulbDate: '',
-		transcendenceDate: '',
-		wikiEn: '',
-		wikiJa: '',
-		gamewith: '',
-		kamigame: '',
-		nicknamesEn: [] as string[],
-		nicknamesJp: [] as string[],
-		recruits: ''
-	})
-
-	// Reset edit data when weapon changes
-	$effect(() => {
-		if (weapon) {
-			editData = {
-				name: weapon.name?.en || '',
-				nameJp: weapon.name?.ja || '',
-				granblue_id: weapon.granblueId || '',
-				rarity: weapon.rarity || 3,
-				element: weapon.element || 0,
-				proficiency: weapon.proficiency || 0,
-				series: weapon.series || 0,
-				minHp: weapon.hp?.minHp || 0,
-				maxHp: weapon.hp?.maxHp || 0,
-				maxHpFlb: weapon.hp?.maxHpFlb || 0,
-				maxHpUlb: weapon.hp?.maxHpUlb || 0,
-				minAtk: weapon.atk?.minAtk || 0,
-				maxAtk: weapon.atk?.maxAtk || 0,
-				maxAtkFlb: weapon.atk?.maxAtkFlb || 0,
-				maxAtkUlb: weapon.atk?.maxAtkUlb || 0,
-				maxLevel: weapon.maxLevel || 100,
-				maxSkillLevel: weapon.maxSkillLevel || 10,
-				maxAwakeningLevel: weapon.maxAwakeningLevel || 0,
-				flb: weapon.uncap?.flb || false,
-				ulb: weapon.uncap?.ulb || false,
-				transcendence: weapon.uncap?.transcendence || false,
-				extra: false,
-				limit: false,
-				ax: weapon.ax || false,
-				releaseDate: '',
-				flbDate: '',
-				ulbDate: '',
-				transcendenceDate: '',
-				wikiEn: '',
-				wikiJa: '',
-				gamewith: '',
-				kamigame: '',
-				nicknamesEn: [],
-				nicknamesJp: [],
-				recruits: ''
-			}
-		}
-	})
-
-	function toggleEditMode() {
-		editMode = !editMode
-		saveError = null
-		saveSuccess = false
-
-		// Reset data when canceling
-		if (!editMode && weapon) {
-			editData = {
-				name: weapon.name?.en || '',
-				nameJp: weapon.name?.ja || '',
-				granblue_id: weapon.granblueId || '',
-				rarity: weapon.rarity || 3,
-				element: weapon.element || 0,
-				proficiency: weapon.proficiency || 0,
-				series: weapon.series || 0,
-				minHp: weapon.hp?.minHp || 0,
-				maxHp: weapon.hp?.maxHp || 0,
-				maxHpFlb: weapon.hp?.maxHpFlb || 0,
-				maxHpUlb: weapon.hp?.maxHpUlb || 0,
-				minAtk: weapon.atk?.minAtk || 0,
-				maxAtk: weapon.atk?.maxAtk || 0,
-				maxAtkFlb: weapon.atk?.maxAtkFlb || 0,
-				maxAtkUlb: weapon.atk?.maxAtkUlb || 0,
-				maxLevel: weapon.maxLevel || 100,
-				maxSkillLevel: weapon.maxSkillLevel || 10,
-				maxAwakeningLevel: weapon.maxAwakeningLevel || 0,
-				flb: weapon.uncap?.flb || false,
-				ulb: weapon.uncap?.ulb || false,
-				transcendence: weapon.uncap?.transcendence || false,
-				extra: false,
-				limit: false,
-				ax: weapon.ax || false,
-				releaseDate: '',
-				flbDate: '',
-				ulbDate: '',
-				transcendenceDate: '',
-				wikiEn: '',
-				wikiJa: '',
-				gamewith: '',
-				kamigame: '',
-				nicknamesEn: [],
-				nicknamesJp: [],
-				recruits: ''
-			}
-		}
-	}
-
-	async function saveChanges() {
-		if (!weapon?.id) return
-
-		isSaving = true
-		saveError = null
-		saveSuccess = false
-
-		try {
-			const payload = {
-				name_en: editData.name,
-				name_jp: editData.nameJp || undefined,
-				granblue_id: editData.granblue_id,
-				rarity: editData.rarity,
-				element: editData.element,
-				proficiency: editData.proficiency,
-				series: editData.series || undefined,
-				min_hp: editData.minHp,
-				max_hp: editData.maxHp,
-				max_hp_flb: editData.maxHpFlb,
-				max_hp_ulb: editData.maxHpUlb,
-				min_atk: editData.minAtk,
-				max_atk: editData.maxAtk,
-				max_atk_flb: editData.maxAtkFlb,
-				max_atk_ulb: editData.maxAtkUlb,
-				max_level: editData.maxLevel,
-				max_skill_level: editData.maxSkillLevel,
-				max_awakening_level: editData.maxAwakeningLevel,
-				flb: editData.flb,
-				ulb: editData.ulb,
-				transcendence: editData.transcendence,
-				extra: editData.extra,
-				limit: editData.limit,
-				ax: editData.ax,
-				release_date: editData.releaseDate || null,
-				flb_date: editData.flbDate || null,
-				ulb_date: editData.ulbDate || null,
-				transcendence_date: editData.transcendenceDate || null,
-				wiki_en: editData.wikiEn,
-				wiki_ja: editData.wikiJa,
-				gamewith: editData.gamewith,
-				kamigame: editData.kamigame,
-				nicknames_en: editData.nicknamesEn,
-				nicknames_jp: editData.nicknamesJp,
-				recruits: editData.recruits || undefined
-			}
-
-			await entityAdapter.updateWeapon(weapon.id, payload)
-
-			// Invalidate TanStack Query cache to refetch fresh data
-			await queryClient.invalidateQueries({ queryKey: ['weapon', weapon.id] })
-
-			saveSuccess = true
-			editMode = false
-
-			setTimeout(() => {
-				saveSuccess = false
-			}, 3000)
-		} catch (error) {
-			saveError = 'Failed to save changes. Please try again.'
-			console.error('Save error:', error)
-		} finally {
-			isSaving = false
-		}
-	}
+	// Query for raw data (only when on raw tab)
+	const rawDataQuery = createQuery(() => ({
+		queryKey: ['weapons', 'raw', weapon?.id],
+		queryFn: async () => {
+			if (!weapon?.id) return null
+			return entityAdapter.getWeaponRawData(weapon.id)
+		},
+		enabled: currentTab === 'raw' && !!weapon?.id
+	}))
 
 	// Helper function for weapon grid image
 	function getWeaponImage(weapon: any): string {
 		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement)
 	}
+
+	// Generate image items for weapon (base, grid, main, square variants)
+	const weaponImages = $derived.by((): ImageItem[] => {
+		if (!weapon?.granblueId) return []
+
+		const variants = ['base', 'grid', 'main', 'square'] as const
+		const images: ImageItem[] = []
+
+		for (const variant of variants) {
+			images.push({
+				url: getWeaponImageUrl(weapon.granblueId, variant),
+				label: variant,
+				variant
+			})
+		}
+
+		return images
+	})
 </script>
 
 <div class="page">
@@ -252,119 +95,17 @@
 			item={weapon}
 			image={getWeaponImage(weapon)}
 			showEdit={canEdit}
-			{editMode}
-			{isSaving}
-			{saveSuccess}
-			{saveError}
-			onEdit={toggleEditMode}
-			onSave={saveChanges}
-			onCancel={toggleEditMode}
+			editUrl={canEdit ? editUrl : undefined}
+			{currentTab}
+			onTabChange={handleTabChange}
 		>
-			<section class="details">
-				<WeaponMetadataSection {weapon} {editMode} bind:editData />
-				<WeaponUncapSection {weapon} {editMode} bind:editData />
-				<WeaponTaxonomySection {weapon} {editMode} bind:editData />
-				<WeaponStatsSection {weapon} {editMode} bind:editData />
+			{#if currentTab === 'info'}
+				<section class="details">
+					<WeaponMetadataSection {weapon} />
+					<WeaponUncapSection {weapon} />
+					<WeaponTaxonomySection {weapon} />
+					<WeaponStatsSection {weapon} />
 
-				{#if editMode}
-					<DetailsContainer title="Nicknames">
-						<DetailItem label="Nicknames (EN)">
-							<TagInput bind:value={editData.nicknamesEn} placeholder="Add nickname..." contained />
-						</DetailItem>
-						<DetailItem label="Nicknames (JP)">
-							<TagInput
-								bind:value={editData.nicknamesJp}
-								placeholder="ニックネームを入力"
-								contained
-							/>
-						</DetailItem>
-					</DetailsContainer>
-
-					<DetailsContainer title="Dates">
-						<DetailItem
-							label="Release Date"
-							bind:value={editData.releaseDate}
-							editable={true}
-							type="text"
-							placeholder="YYYY-MM-DD"
-						/>
-						{#if editData.flb}
-							<DetailItem
-								label="FLB Date"
-								bind:value={editData.flbDate}
-								editable={true}
-								type="text"
-								placeholder="YYYY-MM-DD"
-							/>
-						{/if}
-						{#if editData.ulb}
-							<DetailItem
-								label="ULB Date"
-								bind:value={editData.ulbDate}
-								editable={true}
-								type="text"
-								placeholder="YYYY-MM-DD"
-							/>
-						{/if}
-						{#if editData.transcendence}
-							<DetailItem
-								label="Transcendence Date"
-								bind:value={editData.transcendenceDate}
-								editable={true}
-								type="text"
-								placeholder="YYYY-MM-DD"
-							/>
-						{/if}
-					</DetailsContainer>
-
-					<DetailsContainer title="Links">
-						<DetailItem
-							label="Wiki (EN)"
-							bind:value={editData.wikiEn}
-							editable={true}
-							type="text"
-							placeholder="https://gbf.wiki/..."
-							width="480px"
-						/>
-						<DetailItem
-							label="Wiki (JP)"
-							bind:value={editData.wikiJa}
-							editable={true}
-							type="text"
-							placeholder="https://gbf-wiki.com/..."
-							width="480px"
-						/>
-						<DetailItem
-							label="Gamewith"
-							bind:value={editData.gamewith}
-							editable={true}
-							type="text"
-							placeholder="https://xn--bck3aza1a2if6kra4ee0hf.gamewith.jp/..."
-							width="480px"
-						/>
-						<DetailItem
-							label="Kamigame"
-							bind:value={editData.kamigame}
-							editable={true}
-							type="text"
-							placeholder="https://kamigame.jp/..."
-							width="480px"
-						/>
-					</DetailsContainer>
-
-					<DetailsContainer title="Character">
-						<DetailItem
-							label="Recruits"
-							sublabel="Character ID this weapon recruits"
-							bind:value={editData.recruits}
-							editable={true}
-							type="text"
-							placeholder="Character ID..."
-						/>
-					</DetailsContainer>
-				{/if}
-
-				{#if !editMode}
 					<div class="weapon-skills">
 						<h3>Skills</h3>
 						<div class="skills-grid">
@@ -382,8 +123,17 @@
 							{/if}
 						</div>
 					</div>
-				{/if}
-			</section>
+				</section>
+			{:else if currentTab === 'images'}
+				<EntityImagesTab images={weaponImages} />
+			{:else if currentTab === 'raw'}
+				<EntityRawDataTab
+					wikiRaw={rawDataQuery.data?.wikiRaw}
+					gameRawEn={rawDataQuery.data?.gameRawEn}
+					gameRawJp={rawDataQuery.data?.gameRawJp}
+					isLoading={rawDataQuery.isLoading}
+				/>
+			{/if}
 		</DetailScaffold>
 	{:else}
 		<div class="not-found">

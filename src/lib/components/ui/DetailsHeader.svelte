@@ -11,7 +11,7 @@
 		type: 'character' | 'summon' | 'weapon'
 		item: any // The character/summon/weapon object
 		image: string
-		onEdit?: () => void // Optional edit handler
+		editUrl?: string // URL to navigate to for editing (view mode)
 		showEdit?: boolean // Whether to show the edit button
 		editMode?: boolean // Whether currently in edit mode
 		onSave?: () => void // Save handler
@@ -23,7 +23,7 @@
 		type,
 		item,
 		image,
-		onEdit,
+		editUrl,
 		showEdit = false,
 		editMode = false,
 		onSave,
@@ -124,8 +124,8 @@
 				>
 					{isSaving ? 'Saving...' : 'Save'}
 				</Button>
-			{:else}
-				<Button variant="secondary" size="medium" onclick={onEdit}>Edit</Button>
+			{:else if editUrl}
+				<Button variant="secondary" size="medium" href={editUrl}>Edit</Button>
 			{/if}
 		</div>
 	{/if}
