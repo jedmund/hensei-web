@@ -210,6 +210,7 @@ export interface CreateCharacterPayload {
 	granblue_id: string
 	name_en: string
 	name_jp?: string
+	character_id?: number[]  // Array for dual/trio units
 	rarity?: number
 	element?: number
 	race1?: number | null
@@ -220,12 +221,25 @@ export interface CreateCharacterPayload {
 	min_hp?: number
 	max_hp?: number
 	max_hp_flb?: number
+	max_hp_ulb?: number
 	min_atk?: number
 	max_atk?: number
 	max_atk_flb?: number
+	max_atk_ulb?: number
+	base_da?: number
+	base_ta?: number
+	ougi_ratio?: number
+	ougi_ratio_flb?: number
 	flb?: boolean
 	ulb?: boolean
 	special?: boolean
+	release_date?: string | null
+	flb_date?: string | null
+	ulb_date?: string | null
+	wiki_en?: string
+	wiki_ja?: string
+	gamewith?: string
+	kamigame?: string
 }
 
 /**
