@@ -17,6 +17,7 @@
 		fullHeight?: boolean
 		alignRight?: boolean
 		accessory?: boolean
+		no1password?: boolean
 	}
 
 	let {
@@ -40,6 +41,7 @@
 		readonly = false,
 		required = false,
 		class: className = '',
+		no1password = false,
 		...restProps
 	}: Props = $props()
 
@@ -95,6 +97,7 @@
 					{readonly}
 					{required}
 					maxlength={maxLength}
+					data-1p-ignore={no1password}
 					{...restProps}
 				/>
 
@@ -120,6 +123,7 @@
 				{readonly}
 				{required}
 				maxlength={maxLength}
+				data-1p-ignore={no1password}
 				{...restProps}
 			/>
 		{/if}
@@ -144,6 +148,7 @@
 			{readonly}
 			{required}
 			maxlength={maxLength}
+			data-1p-ignore={no1password}
 			{...restProps}
 		/>
 
@@ -169,6 +174,7 @@
 		{readonly}
 		{required}
 		maxlength={maxLength}
+		data-1p-ignore={no1password}
 		{...restProps}
 	/>
 {/if}
@@ -211,6 +217,7 @@
 		:global(.label .required) {
 			color: $error;
 			margin-left: $unit-fourth;
+			display: none;
 		}
 
 		.error {
@@ -258,8 +265,9 @@
 			.counter {
 				color: var(--text-tertiary);
 				display: block;
-				font-weight: $bold;
+				font-weight: $normal;
 				line-height: calc($unit * 6);
+				font-size: $font-small;
 				position: absolute;
 				right: $unit-2x;
 				top: 0;
