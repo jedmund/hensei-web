@@ -19,7 +19,7 @@ export interface SlotRange {
 const GRID_CONFIGS: Record<GridType, SlotRange> = {
 	[GridType.Weapon]: { start: 0, end: 8, specialSlots: [-1] }, // mainhand + 9 grid slots
 	[GridType.Summon]: { start: 0, end: 5, specialSlots: [-1, 6] }, // main + 6 grid + friend
-	[GridType.Character]: { start: 1, end: 4, specialSlots: [] } // 4 slots (1-4), position 0 is protagonist (not user-selectable)
+	[GridType.Character]: { start: 0, end: 4, specialSlots: [] } // 5 character slots (0-4)
 }
 
 /**

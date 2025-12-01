@@ -94,3 +94,55 @@ export function hasAnyModification(
 ): boolean {
 	return detectModifications(type, item).hasModifications
 }
+
+// Weapon series that support weapon keys
+// 2 = Dark Opus, 3 = Draconic, 17 = Ultima, 24 = Astral, 34 = Superlative
+const WEAPON_KEY_SERIES = [2, 3, 17, 24, 34]
+
+/**
+ * Check if a weapon CAN be modified (has modifiable properties)
+ * This is different from hasModifications which checks if it HAS been modified
+ */
+export function canWeaponBeModified(gridWeapon: GridWeapon | undefined): boolean {
+	if (!gridWeapon?.weapon) return false
+
+	const weapon = gridWeapon.weapon
+
+	// Element can be changed (element = 0 means "any element")
+	const canChangeElement = weapon.element === 0
+
+	// Weapon keys (series-specific)
+	const hasWeaponKeys = WEAPON_KEY_SERIES.includes(weapon.series)
+
+	// AX skills
+	const hasAxSkills = weapon.ax === true
+
+	// Awakening (maxAwakeningLevel > 0 means it can have awakening)
+	const hasAwakening = (weapon.maxAwakeningLevel ?? 0) > 0
+
+	return canChangeElement || hasWeaponKeys || hasAxSkills || hasAwakening
+}
+
+/**
+ * Check if a character CAN be modified (has modifiable properties)
+ * This is different from hasModifications which checks if it HAS been modified
+ */
+export function canCharacterBeModified(gridCharacter: GridCharacter | undefined): boolean {
+	if (!gridCharacter?.character) return false
+
+	const character = gridCharacter.character
+
+	// Awakening (maxAwakeningLevel > 0 means it can have awakening)
+	const hasAwakening = (character.maxAwakeningLevel ?? 0) > 0
+
+	// All characters can have rings (Over Mastery)
+	const canHaveRings = true
+
+	// All characters can have earrings (Aetherial Mastery)
+	const canHaveEarring = true
+
+	// Perpetuity is only for non-MC characters (position > 0)
+	const canHavePerpetuity = gridCharacter.position > 0
+
+	return hasAwakening || canHaveRings || canHaveEarring || canHavePerpetuity
+}
