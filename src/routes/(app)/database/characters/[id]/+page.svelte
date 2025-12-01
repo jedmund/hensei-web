@@ -16,6 +16,7 @@
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
+	import CharacterImagesSection from '$lib/features/database/characters/sections/CharacterImagesSection.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
 
@@ -221,6 +222,14 @@
 				<CharacterUncapSection {character} {editMode} bind:editData />
 				<CharacterTaxonomySection {character} {editMode} bind:editData />
 				<CharacterStatsSection {character} {editMode} bind:editData />
+
+				{#if character?.id && character?.granblueId}
+					<CharacterImagesSection
+						characterId={character.id}
+						granblueId={character.granblueId}
+						{canEdit}
+					/>
+				{/if}
 
 				{#if !editMode && relatedQuery.data?.length}
 					<DetailsContainer title="Related Units">
