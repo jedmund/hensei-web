@@ -189,6 +189,61 @@ export interface Summon {
 }
 
 /**
+ * Response from character granblue_id validation
+ */
+export interface CharacterValidationResult {
+	valid: boolean
+	granblueId: string
+	existsInDb: boolean
+	error?: string
+	imageUrls?: {
+		main?: string
+		grid?: string
+		square?: string
+	}
+}
+
+/**
+ * Payload for creating a new character
+ */
+export interface CreateCharacterPayload {
+	granblue_id: string
+	name_en: string
+	name_jp?: string
+	rarity?: number
+	element?: number
+	race1?: number | null
+	race2?: number | null
+	gender?: number
+	proficiency1?: number
+	proficiency2?: number
+	min_hp?: number
+	max_hp?: number
+	max_hp_flb?: number
+	min_atk?: number
+	max_atk?: number
+	max_atk_flb?: number
+	flb?: boolean
+	ulb?: boolean
+	special?: boolean
+}
+
+/**
+ * Response from character image download status
+ */
+export interface CharacterDownloadStatus {
+	status: 'queued' | 'processing' | 'completed' | 'failed' | 'not_found'
+	progress?: number
+	imagesDownloaded?: number
+	imagesTotal?: number
+	error?: string
+	characterId?: string
+	granblueId?: string
+	images?: Record<string, string[]>
+	updatedAt?: string
+}
+
+/**
  * Entity adapter for accessing canonical game data
  */
 export class EntityAdapter extends BaseAdapter {
@@ -288,6 +343,95 @@ export class EntityAdapter extends BaseAdapter {
 			this.clearCache('/characters')
 			this.clearCache('/summons')
 			this.clearCache('/weapon_keys')
+		}
+	}
+
+	// ============================================
+	// Character Creation & Image Download Methods
+	// ============================================
+
+	/**
+	 * Validates a character granblue_id by checking if images exist on GBF servers
+	 * Requires editor role (>= 7)
+	 */
+	async validateCharacterGranblueId(granblueId: string): Promise<CharacterValidationResult> {
+		const response = await this.request<{
+			valid: boolean
+			granblue_id: string
+			exists_in_db: boolean
+			error?: string
+			image_urls?: {
+				main?: string
+				grid?: string
+				square?: string
+			}
+		}>(`/characters/validate/${granblueId}`, {
+			method: 'GET'
+		})
+
+		return {
+			valid: response.valid,
+			granblueId: response.granblue_id,
+			existsInDb: response.exists_in_db,
+			error: response.error,
+			imageUrls: response.image_urls
+		}
+	}
+
+	/**
+	 * Creates a new character record
+	 * Requires editor role (>= 7)
+	 */
+	async createCharacter(payload: CreateCharacterPayload): Promise<Character> {
+		return this.request<Character>('/characters', {
+			method: 'POST',
+			body: { character: payload }
+		})
+	}
+
+	/**
+	 * Triggers async image download for a character
+	 * Requires editor role (>= 7)
+	 */
+	async downloadCharacterImages(
+		characterId: string,
+		options?: { force?: boolean; size?: 'all' | string }
+	): Promise<{ status: string; characterId: string; message: string }> {
+		return this.request(`/characters/${characterId}/download_images`, {
+			method: 'POST',
+			body: { options }
+		})
+	}
+
+	/**
+	 * Gets the status of an ongoing character image download
+	 * Requires editor role (>= 7)
+	 */
+	async getCharacterDownloadStatus(characterId: string): Promise<CharacterDownloadStatus> {
+		const response = await this.request<{
+			status: string
+			progress?: number
+			images_downloaded?: number
+			images_total?: number
+			error?: string
+			character_id?: string
+			granblue_id?: string
+			images?: Record<string, string[]>
+			updated_at?: string
+		}>(`/characters/${characterId}/download_status`, {
+			method: 'GET'
+		})
+
+		return {
+			status: response.status as CharacterDownloadStatus['status'],
+			progress: response.progress,
+			imagesDownloaded: response.images_downloaded,
+			imagesTotal: response.images_total,
+			error: response.error,
+			characterId: response.character_id,
+			granblueId: response.granblue_id,
+			images: response.images,
+			updatedAt: response.updated_at
 		}
 	}
 }
