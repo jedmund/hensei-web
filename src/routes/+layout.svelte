@@ -117,6 +117,10 @@
 				title={sidebar.title}
 				onclose={() => sidebar.close()}
 				scrollable={sidebar.scrollable}
+				onsave={sidebar.onsave}
+				saveLabel={sidebar.saveLabel}
+				element={sidebar.element}
+				onback={sidebar.onback}
 			>
 				{#if sidebar.component}
 					<svelte:component this={sidebar.component} {...sidebar.componentProps} />

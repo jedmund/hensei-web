@@ -75,9 +75,9 @@
 
     // Set selectedSlot to first valid empty slot for this tab
     if (gridType === GridType.Character) {
-      // Find first empty character slot (skip protagonist at position 0)
-      const emptySlot = [1, 2, 3, 4].find(i => !characters.find(c => c.position === i))
-      selectedSlot = emptySlot ?? 1
+      // Find first empty character slot
+      const emptySlot = [0, 1, 2, 3, 4].find(i => !characters.find(c => c.position === i))
+      selectedSlot = emptySlot ?? 0
     } else if (gridType === GridType.Weapon) {
       // Find first empty weapon slot (mainhand first, then grid)
       const emptySlot = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8].find(i =>
@@ -638,7 +638,6 @@
               {characters}
               {mainWeaponElement}
               {partyElement}
-              job={party.job}
             />
           </div>
         {/if}
