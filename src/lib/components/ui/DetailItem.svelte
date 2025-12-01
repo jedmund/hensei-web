@@ -14,15 +14,20 @@
 
 	let {
 		label,
+		sublabel,
 		value = $bindable(),
 		children,
 		editable = false,
 		type = 'text',
 		options,
 		placeholder,
-		element
+		element,
+		onchange,
+		width
 	}: {
 		label: string
+		/** Secondary label displayed below the main label */
+		sublabel?: string
 		value?: string | number | boolean | null | undefined
 		children?: Snippet
 		editable?: boolean
@@ -30,26 +35,47 @@
 		options?: SelectOption[]
 		placeholder?: string
 		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+		/** Callback for checkbox type when value changes */
+		onchange?: (checked: boolean) => void
+		/** Custom width for the input field (e.g., '320px') */
+		width?: string
 	} = $props()
 
-	// For checkbox type, convert value to boolean
-	let checkboxValue = $state(type === 'checkbox' ? Boolean(value) : false)
+	// For checkbox type, derive the checked state from value
+	// This ensures external changes to value are reflected in the checkbox
+	const checkboxValue = $derived(type === 'checkbox' ? Boolean(value) : false)
 
-	$effect(() => {
-		if (type === 'checkbox') {
-			value = checkboxValue as any
-		}
-	})
+	// Handle checkbox change and call onchange if provided
+	function handleCheckboxChange(checked: boolean) {
+		value = checked as any
+		onchange?.(checked)
+	}
 </script>
 
-<div class="detail-item" class:editable>
-	<span class="label">{label}</span>
+<div class="detail-item" class:editable class:hasChildren={!!children}>
+	<div class="label-container">
+		<span class="label">{label}</span>
+		{#if sublabel}
+			<span class="sublabel">{sublabel}</span>
+		{/if}
+	</div>
 	{#if editable}
-		<div class="edit-value">
+		<div class="edit-value" style:--custom-width={width}>
 			{#if type === 'select' && options}
-				<Select bind:value={value as string | number | undefined} {options} {placeholder} size="medium" contained />
+				<Select
+					bind:value={value as string | number | undefined}
+					{options}
+					{placeholder}
+					size="medium"
+					contained
+				/>
 			{:else if type === 'checkbox'}
-				<Checkbox bind:checked={checkboxValue} contained {element} />
+				<Checkbox
+					checked={checkboxValue}
+					onCheckedChange={handleCheckboxChange}
+					contained
+					{element}
+				/>
 			{:else if type === 'number'}
 				<Input
 					bind:value
@@ -60,11 +86,11 @@
 					alignRight={true}
 				/>
 			{:else}
-				<Input bind:value type="text" contained={true} {placeholder} alignRight={true} />
+				<Input bind:value type="text" contained={true} {placeholder} alignRight={false} />
 			{/if}
 		</div>
 	{:else if children}
-		<div class="value">
+		<div class="value" class:edit-value={editable}>
 			{@render children()}
 		</div>
 	{:else}
@@ -89,24 +115,37 @@
 		font-size: typography.$font-regular;
 		min-height: calc(spacing.$unit * 5);
 
-		&:hover:not(.editable) {
+		&:hover:not(.editable):not(.hasChildren) {
 			background: colors.$grey-80;
 		}
 
-		&.editable:hover,
-		&.editable:focus-within {
+		&.editable:focus-within,
+		&.hasChildren:focus-within {
 			background: var(--input-bg-hover);
 		}
 
-		&.editable {
+		&.editable,
+		&.hasChildren {
 			background: var(--input-bg);
+		}
+
+		.label-container {
+			display: flex;
+			flex-direction: column;
+			flex-shrink: 0;
+			margin-right: spacing.$unit-2x;
+			gap: spacing.$unit-fourth;
 		}
 
 		.label {
 			font-weight: typography.$medium;
 			color: colors.$grey-50;
-			flex-shrink: 0;
-			margin-right: spacing.$unit-2x;
+		}
+
+		.sublabel {
+			font-size: typography.$font-small;
+			color: colors.$grey-60;
+			font-weight: typography.$normal;
 		}
 
 		.value {
@@ -123,13 +162,12 @@
 
 			:global(.input),
 			:global(.select) {
-				min-width: 180px;
+				width: var(--custom-width, 240px);
 			}
 
 			:global(.input.number) {
-				min-width: 120px;
+				width: var(--custom-width, 120px);
 			}
 		}
-
 	}
 </style>

@@ -18,6 +18,10 @@
 		alignRight?: boolean
 		accessory?: boolean
 		no1password?: boolean
+		validationState?: 'idle' | 'validating' | 'valid' | 'invalid'
+		handleBlur?: () => void
+		handleFocus?: () => void
+		handleInput?: () => void
 	}
 
 	let {
@@ -34,7 +38,7 @@
 		fullHeight = false,
 		alignRight = false,
 		accessory = false,
-		value = $bindable(''),
+		value = $bindable(),
 		type = 'text',
 		placeholder,
 		disabled = false,
@@ -42,12 +46,27 @@
 		required = false,
 		class: className = '',
 		no1password = false,
+		validationState = 'idle',
+		handleBlur,
+		handleFocus,
+		handleInput,
 		...restProps
 	}: Props = $props()
 
+	// Determine the validation icon to show
+	const validationIcon = $derived(
+		validationState === 'validating'
+			? 'loader-2'
+			: validationState === 'valid'
+				? 'check'
+				: validationState === 'invalid'
+					? 'close'
+					: null
+	)
+
 	const showCounter = $derived(counter !== undefined || maxLength !== undefined)
-	const currentCount = $derived(String(value).length)
-	const hasWrapper = $derived(accessory || leftIcon || rightIcon || showCounter)
+	const currentCount = $derived(String(value ?? '').length)
+	const hasWrapper = $derived(accessory || leftIcon || rightIcon || showCounter || validationIcon)
 
 	const fieldsetClasses = $derived(
 		['fieldset', hidden && 'hidden', fullWidth && 'full', className].filter(Boolean).join(' ')
@@ -68,6 +87,12 @@
 			.filter(Boolean)
 			.join(' ')
 	)
+
+	// Debug: log what's in restProps
+	$effect(() => {
+		console.log('[Input] restProps keys:', Object.keys(restProps))
+		console.log('[Input] hasWrapper:', hasWrapper, 'validationIcon:', validationIcon)
+	})
 </script>
 
 {#if label || error}
@@ -98,12 +123,21 @@
 					{required}
 					maxlength={maxLength}
 					data-1p-ignore={no1password}
+					onblur={handleBlur}
+					onfocus={handleFocus}
+					oninput={handleInput}
 					{...restProps}
 				/>
 
 				{#if rightIcon}
 					<span class="iconRight">
 						<Icon name={rightIcon} size={16} />
+					</span>
+				{/if}
+
+				{#if validationIcon}
+					<span class="validationIcon {validationState}">
+						<Icon name={validationIcon} size={16} />
 					</span>
 				{/if}
 
@@ -124,6 +158,9 @@
 				{required}
 				maxlength={maxLength}
 				data-1p-ignore={no1password}
+				onblur={handleBlur}
+				onfocus={handleFocus}
+				oninput={handleInput}
 				{...restProps}
 			/>
 		{/if}
@@ -149,12 +186,21 @@
 			{required}
 			maxlength={maxLength}
 			data-1p-ignore={no1password}
+			onblur={handleBlur}
+			onfocus={handleFocus}
+			oninput={handleInput}
 			{...restProps}
 		/>
 
 		{#if rightIcon}
 			<span class="iconRight">
 				<Icon name={rightIcon} size={16} />
+			</span>
+		{/if}
+
+		{#if validationIcon}
+			<span class="validationIcon {validationState}">
+				<Icon name={validationIcon} size={16} />
 			</span>
 		{/if}
 
@@ -175,6 +221,9 @@
 		{required}
 		maxlength={maxLength}
 		data-1p-ignore={no1password}
+		onblur={handleBlur}
+		onfocus={handleFocus}
+		oninput={handleInput}
 		{...restProps}
 	/>
 {/if}
@@ -312,11 +361,43 @@
 				right: $unit-2x;
 			}
 
+			.validationIcon {
+				position: absolute;
+				right: $unit-2x;
+				display: flex;
+				align-items: center;
+				pointer-events: none;
+
+				:global(svg) {
+					fill: currentColor;
+				}
+
+				&.valid {
+					color: $wind-text-20;
+				}
+
+				&.invalid {
+					color: $error;
+				}
+
+				&.validating {
+					color: var(--text-tertiary);
+
+					:global(svg) {
+						animation: spin 1s linear infinite;
+					}
+				}
+			}
+
 			&:has(.iconLeft) input {
 				padding-left: $unit-5x;
 			}
 
 			&:has(.iconRight) input {
+				padding-right: $unit-5x;
+			}
+
+			&:has(.validationIcon) input {
 				padding-right: $unit-5x;
 			}
 
@@ -478,5 +559,14 @@
 	input.input::placeholder {
 		color: var(--text-tertiary);
 		opacity: 1;
+	}
+
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>

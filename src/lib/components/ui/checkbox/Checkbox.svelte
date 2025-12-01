@@ -40,12 +40,6 @@
 		element
 	}: Props = $props()
 
-	$effect(() => {
-		if (onCheckedChange && checked !== undefined) {
-			onCheckedChange(checked)
-		}
-	})
-
 	const sizeClass = $derived(size)
 	// contained prop is an alias for variant='bound'
 	const variantClass = $derived(variant === 'bound' || contained ? 'bound' : '')
@@ -57,6 +51,7 @@
 	{indeterminate}
 	{disabled}
 	{required}
+	{onCheckedChange}
 	name={name ?? ''}
 	value={value ?? ''}
 	class="checkbox {sizeClass} {variantClass} {fullWidthClass} {element || ''} {className || ''}"
