@@ -292,7 +292,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: spacing.$unit-2x;
-		padding: spacing.$unit-2x;
+		padding: spacing.$unit-2x 0;
 	}
 
 	.related-unit {

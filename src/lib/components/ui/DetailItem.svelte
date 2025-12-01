@@ -110,10 +110,28 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: spacing.$unit 0;
-		background: colors.$grey-90;
 		border-radius: layout.$item-corner;
 		font-size: typography.$font-regular;
 		min-height: calc(spacing.$unit * 5);
+
+		&:not(.editable) {
+			padding: spacing.$unit;
+			margin: 0 calc(spacing.$unit * -1);
+		}
+
+		&:hover:not(.editable):not(.hasChildren) {
+			background: colors.$grey-90;
+		}
+
+		&.editable:focus-within,
+		&.hasChildren:focus-within {
+			background: var(--input-bg-hover);
+		}
+
+		&.editable,
+		&.hasChildren {
+			background: var(--input-bg);
+		}
 
 		.label-container {
 			display: flex;

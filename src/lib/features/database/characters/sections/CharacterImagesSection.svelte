@@ -89,9 +89,7 @@
 {#if canEdit}
 	<DetailsContainer title="Image Management">
 		<div class="images-section">
-			<p class="description">
-				Download character images from the game server to your storage.
-			</p>
+			<p class="description">Download character images from the game server to your storage.</p>
 
 			<div class="actions">
 				<Button
@@ -119,13 +117,11 @@
 				<div class="status" class:success={isComplete} class:error={isFailed}>
 					{#if isInProgress}
 						<div class="progress-bar">
-							<div
-								class="progress-fill"
-								style="width: {downloadStatus.progress ?? 0}%"
-							></div>
+							<div class="progress-fill" style="width: {downloadStatus.progress ?? 0}%"></div>
 						</div>
 						<span class="progress-text">
-							{downloadStatus.progress ?? 0}% - {downloadStatus.imagesDownloaded ?? 0}/{downloadStatus.imagesTotal ?? '?'} images
+							{downloadStatus.progress ?? 0}% - {downloadStatus.imagesDownloaded ??
+								0}/{downloadStatus.imagesTotal ?? '?'} images
 						</span>
 					{:else if isComplete}
 						<span>Download complete - {downloadStatus.imagesDownloaded} images downloaded</span>
@@ -151,7 +147,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x;
-		padding: spacing.$unit-2x;
+		padding: spacing.$unit-2x 0;
 	}
 
 	.description {
