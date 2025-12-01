@@ -549,6 +549,20 @@ export class EntityAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Updates an existing character record
+	 * Requires editor role (>= 7)
+	 */
+	async updateCharacter(id: string, payload: Partial<CreateCharacterPayload>): Promise<Character> {
+		const result = await this.request<Character>(`/characters/${id}`, {
+			method: 'PATCH',
+			body: { character: payload }
+		})
+		// Invalidate cache for this character
+		this.clearCache(`/characters/${id}`)
+		return result
+	}
+
+	/**
 	 * Triggers async image download for a character
 	 * Requires editor role (>= 7)
 	 */
@@ -638,6 +652,20 @@ export class EntityAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Updates an existing summon record
+	 * Requires editor role (>= 7)
+	 */
+	async updateSummon(id: string, payload: Partial<CreateSummonPayload>): Promise<Summon> {
+		const result = await this.request<Summon>(`/summons/${id}`, {
+			method: 'PATCH',
+			body: { summon: payload }
+		})
+		// Invalidate cache for this summon
+		this.clearCache(`/summons/${id}`)
+		return result
+	}
+
+	/**
 	 * Triggers async image download for a summon
 	 * Requires editor role (>= 7)
 	 */
@@ -724,6 +752,20 @@ export class EntityAdapter extends BaseAdapter {
 			method: 'POST',
 			body: { weapon: payload }
 		})
+	}
+
+	/**
+	 * Updates an existing weapon record
+	 * Requires editor role (>= 7)
+	 */
+	async updateWeapon(id: string, payload: Partial<CreateWeaponPayload>): Promise<Weapon> {
+		const result = await this.request<Weapon>(`/weapons/${id}`, {
+			method: 'PATCH',
+			body: { weapon: payload }
+		})
+		// Invalidate cache for this weapon
+		this.clearCache(`/weapons/${id}`)
+		return result
 	}
 
 	/**
