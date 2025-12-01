@@ -588,15 +588,6 @@
           <h1>Create a new team</h1>
           <p class="description">Search and click items to add them to your grid</p>
         </div>
-        <button class="toggle-sidebar" on:click={() => openSearchSidebar({
-          type: activeTab === GridType.Weapon ? 'weapon' :
-                activeTab === GridType.Summon ? 'summon' :
-                'character',
-          onAddItems: handleAddItems,
-          canAddMore: !isGridFull(activeTab)
-        })}>
-          Open Search
-        </button>
       </header>
 
       <PartySegmentedControl
@@ -677,16 +668,16 @@
 </Dialog.Root>
 
 <style>
-  /* Override the main element's padding for this page */
-  :global(main) {
-    padding: 0 !important;
-  }
-
   .page-container {
     display: flex;
     gap: 0;
     width: 100%;
     min-height: 100vh;
+    /* Use negative margins to counteract main's padding without global CSS */
+    margin-top: -81px;
+    padding-top: 81px;
+    margin-bottom: -20vh;
+    padding-bottom: 20vh;
   }
 
   .party-content {
@@ -709,21 +700,6 @@
   .description {
     color: #666;
     margin: 0;
-  }
-
-  .toggle-sidebar {
-    padding: 0.5rem 1rem;
-    background: #3366ff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s;
-  }
-
-  .toggle-sidebar:hover {
-    background: #2857e0;
   }
 
   .party-content {
