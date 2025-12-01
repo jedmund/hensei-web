@@ -1,36 +1,32 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import Button from './Button.svelte'
-	import closeIcon from '$src/assets/icons/close.svg?raw'
 	import type { Snippet } from 'svelte'
 
 	interface Props {
 		/** Title for the sidebar header */
 		title: string
-		/** Callback when close is requested */
-		onclose?: () => void
-		/** Optional additional actions to render in the header */
-		actions?: Snippet
+		/** Left accessory content (e.g., close/back button) */
+		leftAccessory?: Snippet
+		/** Right accessory content (e.g., save/edit button) */
+		rightAccessory?: Snippet
 	}
 
-	const { title, onclose, actions }: Props = $props()
+	const { title, leftAccessory, rightAccessory }: Props = $props()
 </script>
 
 <div class="sidebar-header">
 	<div class="header-left">
-		{#if actions}
-			{@render actions()}
+		{#if leftAccessory}
+			{@render leftAccessory()}
 		{/if}
 	</div>
 
 	<h2 class="sidebar-title">{title}</h2>
 
 	<div class="header-right">
-		{#if onclose}
-			<button onclick={onclose} class="close-button" aria-label="Close sidebar">
-				{@html closeIcon}
-			</button>
+		{#if rightAccessory}
+			{@render rightAccessory()}
 		{/if}
 	</div>
 </div>
@@ -42,9 +38,9 @@
 	@use '$src/themes/layout' as *;
 
 	.sidebar-header {
-		display: flex;
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
 		align-items: center;
-		justify-content: space-between;
 		padding: $unit-2x;
 		border-bottom: 1px solid var(--border-primary);
 		flex-shrink: 0;
@@ -57,11 +53,8 @@
 
 		.header-left,
 		.header-right {
-			width: 32px; // Same width as close button for balance
-			flex-shrink: 0;
 			display: flex;
 			align-items: center;
-			justify-content: center;
 		}
 
 		.header-left {
@@ -78,39 +71,10 @@
 			font-weight: $medium;
 			color: var(--text-primary);
 			text-align: center;
-			flex: 1;
-		}
-
-		.close-button {
-			padding: $unit;
-			background: transparent;
-			border: none;
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border-radius: 4px;
-			color: var(--text-secondary);
-			transition:
-				background-color 0.2s,
-				color 0.2s;
-			width: 32px;
-			height: 32px;
-
-			:global(svg) {
-				width: 14px;
-				height: 14px;
-				fill: currentColor;
-			}
-
-			&:hover {
-				background-color: var(--button-bg);
-				color: var(--text-primary);
-			}
-
-			&:active {
-				transform: translateY(1px);
-			}
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			padding: 0 $unit;
 		}
 	}
 </style>

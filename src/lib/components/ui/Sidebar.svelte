@@ -2,6 +2,7 @@
 
 <script lang="ts">
 	import SidebarHeader from './SidebarHeader.svelte'
+	import Button from './Button.svelte'
 	import { SIDEBAR_WIDTH } from '$lib/stores/sidebar.svelte'
 	import type { Snippet } from 'svelte'
 
@@ -14,23 +15,59 @@
 		onClose?: () => void
 		/** Callback when close is requested (lowercase, deprecated - use onClose) */
 		onclose?: () => void
+		/** Callback when back is requested (shows arrow instead of X) */
+		onback?: () => void
+		/** Callback when save/done is requested */
+		onsave?: () => void
+		/** Label for the save button */
+		saveLabel?: string
+		/** Element for styling the save button */
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 		/** Content to render in the sidebar */
 		children?: Snippet
-		/** Optional header actions */
-		headerActions?: Snippet
 		/** Whether the sidebar content should scroll. Default true. */
 		scrollable?: boolean
 	}
 
-	const { open = false, title, onClose, onclose, children, headerActions, scrollable = true }: Props = $props()
+	const { open = false, title, onClose, onclose, onback, onsave, saveLabel = 'Done', element, children, scrollable = true }: Props = $props()
 
 	// Support both onClose (camelCase) and onclose (lowercase) for backward compatibility
 	const handleClose = $derived(onClose ?? onclose)
 </script>
 
+{#snippet leftAccessory()}
+	{#if onback}
+		<Button
+			variant="ghost"
+			size="small"
+			iconOnly
+			icon="arrow-left"
+			onclick={onback}
+			aria-label="Go back"
+		/>
+	{:else if handleClose}
+		<Button
+			variant="ghost"
+			size="small"
+			iconOnly
+			icon="close"
+			onclick={handleClose}
+			aria-label="Close sidebar"
+		/>
+	{/if}
+{/snippet}
+
+{#snippet rightAccessory()}
+	{#if onsave}
+		<Button variant="ghost" size="small" {element} elementStyle={!!element} onclick={onsave}>
+			{saveLabel}
+		</Button>
+	{/if}
+{/snippet}
+
 <aside class="sidebar" class:open style:--sidebar-width={SIDEBAR_WIDTH}>
 	{#if title}
-		<SidebarHeader {title} onclose={handleClose} actions={headerActions} />
+		<SidebarHeader {title} {leftAccessory} {rightAccessory} />
 	{/if}
 
 	<div class="sidebar-content" class:scrollable>

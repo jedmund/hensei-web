@@ -289,6 +289,7 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			font-weight: $normal;
 		}
 
 		.image {

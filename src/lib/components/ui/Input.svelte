@@ -112,16 +112,16 @@
 			</div>
 		{:else}
 			<input
-					bind:value
-					class={inputClasses}
-					{type}
-					{placeholder}
-					{disabled}
-					{readonly}
-					{required}
-					maxlength={maxLength}
-					{...restProps}
-				/>
+				bind:value
+				class={inputClasses}
+				{type}
+				{placeholder}
+				{disabled}
+				{readonly}
+				{required}
+				maxlength={maxLength}
+				{...restProps}
+			/>
 		{/if}
 
 		{#if error}
@@ -161,16 +161,16 @@
 	</div>
 {:else}
 	<input
-			bind:value
-			class={inputClasses}
-			{type}
-			{placeholder}
-			{disabled}
-			{readonly}
-			{required}
-			maxlength={maxLength}
-			{...restProps}
-		/>
+		bind:value
+		class={inputClasses}
+		{type}
+		{placeholder}
+		{disabled}
+		{readonly}
+		{required}
+		maxlength={maxLength}
+		{...restProps}
+	/>
 {/if}
 
 <style lang="scss">
@@ -235,7 +235,7 @@
 		@include smooth-transition($duration-quick, background-color);
 
 		&:not(.wrapper) {
-			padding: calc($unit * 1.5) $unit-2x;
+			padding: calc($unit * 1.25) $unit-2x;
 		}
 
 		&.fullHeight {

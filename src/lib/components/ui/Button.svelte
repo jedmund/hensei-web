@@ -8,7 +8,15 @@
 
 	interface Props {
 		/** Button variant style */
-		variant?: 'primary' | 'secondary' | 'ghost' | 'text' | 'destructive' | 'notice' | 'subtle' | undefined
+		variant?:
+			| 'primary'
+			| 'secondary'
+			| 'ghost'
+			| 'text'
+			| 'destructive'
+			| 'notice'
+			| 'subtle'
+			| undefined
 		/** Button size */
 		size?: 'small' | 'medium' | 'large' | 'icon' | undefined
 		/** Whether button is contained */
@@ -119,10 +127,10 @@
 			{@render leftAccessory()}
 		</span>
 	{:else if hasLeftIcon && !iconOnly && icon}
-			<span class="accessory">
-				<Icon name={icon} size={iconSizes[size]} />
-			</span>
-		{/if}
+		<span class="accessory">
+			<Icon name={icon} size={iconSizes[size]} />
+		</span>
+	{/if}
 
 	{#if children && !iconOnly}
 		<span class="text">
@@ -137,10 +145,10 @@
 			{@render rightAccessory()}
 		</span>
 	{:else if hasRightIcon && !iconOnly && icon}
-			<span class="accessory">
-				<Icon name={icon} size={iconSizes[size]} />
-			</span>
-		{/if}
+		<span class="accessory">
+			<Icon name={icon} size={iconSizes[size]} />
+		</span>
+	{/if}
 </ButtonPrimitive.Root>
 
 <style lang="scss">
@@ -305,7 +313,7 @@
 
 	// Sizes
 	:global([data-button-root].small) {
-		padding: $unit $unit-2x;
+		padding: $unit calc($unit * 1.5);
 		font-size: $font-small;
 		min-height: calc($unit * 3.5);
 	}
@@ -417,6 +425,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--wind-bg-hover);
+			color: white;
 		}
 	}
 
@@ -426,6 +435,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--fire-bg-hover);
+			color: white;
 		}
 	}
 
@@ -435,6 +445,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--water-bg-hover);
+			color: white;
 		}
 	}
 
@@ -444,6 +455,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--earth-bg-hover);
+			color: white;
 		}
 	}
 
@@ -453,6 +465,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--dark-bg-hover);
+			color: white;
 		}
 	}
 
@@ -462,6 +475,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--light-bg-hover);
+			color: white;
 		}
 	}
 
@@ -472,6 +486,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--wind-bg-hover);
+			color: var(--wind-text-contrast);
 		}
 	}
 
@@ -481,6 +496,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--fire-bg-hover);
+			color: var(--fire-text-contrast);
 		}
 	}
 
@@ -490,6 +506,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--water-bg-hover);
+			color: var(--water-text-contrast);
 		}
 	}
 
@@ -499,6 +516,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--earth-bg-hover);
+			color: var(--earth-text-contrast);
 		}
 	}
 
@@ -508,6 +526,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--dark-bg-hover);
+			color: var(--dark-text-contrast);
 		}
 	}
 
@@ -517,6 +536,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--light-bg-hover);
+			color: var(--light-text-contrast);
 		}
 	}
 </style>
