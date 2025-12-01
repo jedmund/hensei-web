@@ -37,6 +37,8 @@ export interface Weapon {
     ulb: boolean
     transcendence: boolean
   }
+  // Available awakenings for this weapon (from :full view)
+  awakenings?: Awakening[]
 }
 
 // Character entity from CharacterBlueprint
@@ -47,9 +49,11 @@ export interface Character {
   element: number
   rarity: number
   maxLevel: number
+  maxAwakeningLevel?: number
   uncap: {
     flb: boolean
     ulb: boolean
+    transcendence?: boolean
   }
   special: boolean
   recruits: string | null
@@ -69,6 +73,8 @@ export interface Character {
     maxAtk: number
     maxAtkFlb: number
   }
+  // Available awakenings for this character (from :full view)
+  awakenings?: Awakening[]
 }
 
 // Summon entity from SummonBlueprint
@@ -162,12 +168,21 @@ export interface Awakening {
   id: string
   name: LocalizedName
   slug: string
+  order?: number
+}
+
+// No awakening constant
+export const NO_AWAKENING: Awakening = {
+  id: '0',
+  name: { en: 'No awakening', ja: '覚醒なし' },
+  slug: 'no-awakening',
+  order: 0
 }
 
 // WeaponKey entity
 export interface WeaponKey {
   id: string
-  granblue_id: string
+  granblue_id: number
   name: LocalizedName
   slug: string
   series: number[]
