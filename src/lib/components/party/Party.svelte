@@ -106,6 +106,7 @@
 
 	// Use $state for instant UI updates - initialized from server-provided initialTab
 	let activeTab = $state<GridType>(initialTab ?? GridType.Weapon)
+	let routerReady = $state(false) // Guards pushState calls until router is initialized
 
 	let loading = $state(false)
 	let error = $state<string | null>(null)
@@ -272,9 +273,12 @@
 		activeTab = tab // Instant UI update
 
 		// Update URL without navigation (no load function, instant)
-		const basePath = `/teams/${party.shortcode}`
-		const newPath = `${basePath}/${tab}s`
-		pushState(newPath, {})
+		// Only call pushState after router is initialized to avoid errors during SSR/hydration
+		if (routerReady) {
+			const basePath = `/teams/${party.shortcode}`
+			const newPath = `${basePath}/${tab}s`
+			pushState(newPath, {})
+		}
 
 		// Update selectedSlot to the first valid empty slot for this tab
 		const nextEmpty = findNextEmptySlot(party, tab)
@@ -593,6 +597,9 @@
 
 		// Get edit key for this party if it exists
 		editKey = getEditKey(party.shortcode) ?? undefined
+
+		// Router is now ready - safe to call pushState
+		routerReady = true
 
 		// Handle browser back/forward navigation for tabs
 		const handlePopState = () => {
