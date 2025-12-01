@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, getContext, setContext, onDestroy } from 'svelte'
-	import { pushState } from '$app/navigation'
+	import { goto } from '$app/navigation'
 	import { page } from '$app/state'
 	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
@@ -98,22 +98,23 @@
 		partyStore.clear()
 	})
 
-	let activeTab = $state<GridType>(initialTab ?? GridType.Weapon)
-
-	// Map URL segment to GridType for back/forward navigation
+	// Map URL segment to GridType
 	const tabMap: Record<string, GridType> = {
 		weapons: GridType.Weapon,
 		summons: GridType.Summon,
 		characters: GridType.Character
 	}
 
-	// Sync activeTab with URL when user navigates back/forward
-	$effect(() => {
+	// Derive activeTab from URL params (single source of truth)
+	// This ensures back/forward navigation works correctly
+	// Falls back to initialTab prop for SSR hydration
+	let activeTab = $derived.by(() => {
 		const urlTab = page.params.tab as string | undefined
-		const expectedTab = urlTab ? (tabMap[urlTab] ?? GridType.Weapon) : GridType.Weapon
-		if (activeTab !== expectedTab) {
-			activeTab = expectedTab
+		if (urlTab) {
+			return tabMap[urlTab] ?? GridType.Weapon
 		}
+		// Use initialTab for SSR or when no tab in URL
+		return initialTab ?? GridType.Weapon
 	})
 
 	let loading = $state(false)
@@ -278,12 +279,11 @@
 	const partyElement = $derived((party as any)?.element)
 
 	function handleTabChange(tab: GridType) {
-		activeTab = tab
-
-		// Update URL with push state (adds to browser history)
+		// Update URL (adds to browser history)
+		// activeTab is derived from URL params, so it will update automatically
 		const basePath = `/teams/${party.shortcode}`
 		const newPath = tab === GridType.Weapon ? basePath : `${basePath}/${tab}s`
-		pushState(newPath, {})
+		goto(newPath, { noScroll: true, keepFocus: true })
 
 		// Update selectedSlot to the first valid empty slot for this tab
 		const nextEmpty = findNextEmptySlot(party, tab)
