@@ -2,6 +2,8 @@
  * Race mapping utilities for Granblue Fantasy
  */
 
+import { getBasePath } from '$lib/utils/images'
+
 export const RACE_LABELS: Record<number, string> = {
 	0: 'Unknown',
 	1: 'Human',
@@ -20,7 +22,7 @@ export function getRaceLabel(race?: number | null): string {
 export function getRaceIcon(race?: number | null): string {
 	const label = getRaceLabel(race)
 	if (label === '—' || label === 'Unknown') return ''
-	return `/images/labels/race/Label_Race_${label}.png`
+	return `${getBasePath()}/labels/race/Label_Race_${label}.png`
 }
 
 export function getRaceOptions() {

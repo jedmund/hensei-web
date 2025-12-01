@@ -1,3 +1,5 @@
+import { getBasePath } from '$lib/utils/images'
+
 export const PROFICIENCY_LABELS: Record<number, string> = {
 	0: 'None',
 	1: 'Sabre',
@@ -21,7 +23,7 @@ export function getProficiencyIcon(proficiency: number): string {
 	if (!label || label === 'None') return ''
 	// Capitalize first letter for filename
 	const capitalizedLabel = label.charAt(0).toUpperCase() + label.slice(1)
-	return `/images/labels/proficiency/Label_Weapon_${capitalizedLabel}.png`
+	return `${getBasePath()}/labels/proficiency/Label_Weapon_${capitalizedLabel}.png`
 }
 
 export function getProficiencyOptions() {

@@ -1,6 +1,11 @@
 /**
  * Centralized image utility system for all game assets
+ *
+ * Supports both local images (development) and remote AWS S3/CDN images (production)
+ * Configure via PUBLIC_SIERO_IMG_URL environment variable
  */
+
+import { getImageBaseUrl } from '$lib/api/adapters/config'
 
 export type ResourceType = 'character' | 'weapon' | 'summon'
 export type ImageVariant = 'main' | 'grid' | 'square' | 'detail' | 'base' | 'wide'
@@ -27,7 +32,17 @@ function getFileExtension(type: ResourceType, variant: ImageVariant): string {
 }
 
 /**
+ * Gets the base path for images
+ * Returns AWS S3/CDN URL if configured, otherwise local /images path
+ */
+export function getBasePath(): string {
+	const remoteUrl = getImageBaseUrl()
+	return remoteUrl || '/images'
+}
+
+/**
  * Gets the placeholder image for a given type and variant
+ * Placeholders are always served locally
  */
 export function getPlaceholderImage(type: ResourceType, variant: ImageVariant): string {
 	return `/images/placeholders/placeholder-${type}-${variant}.png`
@@ -62,7 +77,7 @@ export function getImageUrl(
 
 	const directory = getImageDirectory(type, variant)
 	const extension = getFileExtension(type, variant)
-	const basePath = `/images/${directory}`
+	const basePath = `${getBasePath()}/${directory}`
 
 	// Handle character-specific logic
 	if (type === 'character') {
@@ -191,4 +206,143 @@ export function getWeaponGridImage(
 		return getImageUrl('weapon', id, 'grid', { element: instanceElement })
 	}
 	return getImageUrl('weapon', id, 'grid')
+}
+
+// ===== Job-Related Images =====
+
+/**
+ * Get job skill icon URL
+ */
+export function getJobSkillIcon(slug: string | undefined): string {
+	if (!slug) return '/images/job-skills/default.png'
+	return `${getBasePath()}/job-skills/${slug}.png`
+}
+
+/**
+ * Get accessory square image URL
+ */
+export function getAccessoryImage(granblueId: string | undefined): string {
+	if (!granblueId) return '/images/placeholders/placeholder-weapon-grid.png'
+	return `${getBasePath()}/accessory-square/${granblueId}.jpg`
+}
+
+// ===== Modification Images =====
+
+/**
+ * Get awakening image URL
+ */
+export function getAwakeningImage(slug: string | undefined, extension: 'png' | 'jpg' = 'jpg'): string {
+	if (!slug) return ''
+	return `${getBasePath()}/awakening/${slug}.${extension}`
+}
+
+/**
+ * Get weapon key image URL
+ */
+export function getWeaponKeyImage(slug: string, element?: number): string {
+	const basePath = `${getBasePath()}/weapon-keys`
+
+	// Check if this key type needs element suffix
+	if (element && isElementalWeaponKey(slug)) {
+		return `${basePath}/${slug}-${element}.png`
+	}
+	return `${basePath}/${slug}.png`
+}
+
+/**
+ * Check if weapon key slug requires element suffix
+ */
+function isElementalWeaponKey(slug: string): boolean {
+	const elementalKeys = [
+		'elemental-teluma',
+		'pendulum',
+		'chain-of-causality',
+		'ultima'
+	]
+	return elementalKeys.some((key) => slug.includes(key))
+}
+
+/**
+ * Get AX skill image URL
+ */
+export function getAxSkillImage(slug: string | undefined): string {
+	if (!slug) return ''
+	return `${getBasePath()}/ax/${slug}.png`
+}
+
+/**
+ * Get mastery image URL
+ */
+export function getMasteryImage(slug: string | undefined): string {
+	if (!slug) return ''
+	return `${getBasePath()}/mastery/${slug}.png`
+}
+
+// ===== Label Images =====
+
+/**
+ * Get element label image URL
+ */
+export function getElementLabelImage(elementName: string): string {
+	const capitalizedLabel = elementName.charAt(0).toUpperCase() + elementName.slice(1).toLowerCase()
+	return `${getBasePath()}/labels/element/Label_Element_${capitalizedLabel}.png`
+}
+
+/**
+ * Get proficiency label image URL
+ */
+export function getProficiencyLabelImage(proficiencyName: string): string {
+	const capitalizedLabel =
+		proficiencyName.charAt(0).toUpperCase() + proficiencyName.slice(1).toLowerCase()
+	return `${getBasePath()}/labels/proficiency/Label_Weapon_${capitalizedLabel}.png`
+}
+
+/**
+ * Get race label image URL
+ */
+export function getRaceLabelImage(raceName: string): string {
+	return `${getBasePath()}/labels/race/Label_Race_${raceName}.png`
+}
+
+/**
+ * Get gender label image URL
+ */
+export function getGenderLabelImage(genderLabel: string): string {
+	return `${getBasePath()}/labels/gender/Label_Gender_${genderLabel.replace('/', '_')}.png`
+}
+
+// ===== Element Icons =====
+
+/**
+ * Get element icon image URL (for select dropdowns, etc.)
+ */
+export function getElementIcon(element: number): string {
+	const elementNames: Record<number, string> = {
+		1: 'wind',
+		2: 'fire',
+		3: 'water',
+		4: 'earth',
+		5: 'dark',
+		6: 'light'
+	}
+	const name = elementNames[element] || 'none'
+	return `${getBasePath()}/elements/element-${name}.png`
+}
+
+// ===== Other Game Images =====
+
+/**
+ * Get guidebook image URL
+ */
+export function getGuidebookImage(granblueId: string | number | undefined): string {
+	if (!granblueId) return '/images/placeholders/placeholder-weapon-grid.png'
+	return `${getBasePath()}/guidebooks/book_${granblueId}.png`
+}
+
+/**
+ * Get raid image URL
+ */
+export function getRaidImage(slug: string | undefined): string {
+	if (!slug) return '/images/placeholders/placeholder-weapon-grid.png'
+	return `${getBasePath()}/raids/${slug}.png`
 }

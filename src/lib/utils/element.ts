@@ -1,3 +1,5 @@
+import { getBasePath } from '$lib/utils/images'
+
 interface ElementData {
 	en: string
 	ja: string
@@ -41,7 +43,7 @@ export function getElementIcon(element?: number): string {
 	if (label === '—' || label === 'Null') return ''
 	// Capitalize first letter for filename
 	const capitalizedLabel = label.charAt(0).toUpperCase() + label.slice(1)
-	return `/images/labels/element/Label_Element_${capitalizedLabel}.png`
+	return `${getBasePath()}/labels/element/Label_Element_${capitalizedLabel}.png`
 }
 
 export function getElementOptions() {

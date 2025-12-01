@@ -2,6 +2,8 @@
  * Gender mapping utilities for Granblue Fantasy
  */
 
+import { getBasePath } from '$lib/utils/images'
+
 export const GENDER_LABELS: Record<number, string> = {
 	0: 'Unknown',
 	1: 'Male',
@@ -18,7 +20,7 @@ export function getGenderIcon(gender?: number | null): string {
 	const label = getGenderLabel(gender)
 	if (label === '—' || label === 'Unknown') return ''
 	// Gender icons may use different naming convention
-	return `/images/labels/gender/Label_Gender_${label.replace('/', '_')}.png`
+	return `${getBasePath()}/labels/gender/Label_Gender_${label.replace('/', '_')}.png`
 }
 
 export function getGenderOptions() {
