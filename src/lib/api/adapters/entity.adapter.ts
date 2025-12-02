@@ -27,6 +27,10 @@ export interface Weapon {
 	proficiency: number
 	series?: number
 	weaponType?: number
+	/** Gacha promotions (1=Premium, 2=Classic, 3=ClassicII, 4=Flash, 5=Legend, etc.) */
+	promotions?: number[]
+	/** Human-readable promotion names */
+	promotionNames?: string[]
 	minHp?: number
 	maxHp?: number
 	minAttack?: number
@@ -102,8 +106,17 @@ export interface Character {
 	proficiency?: number[]
 	proficiency1?: number
 	proficiency2?: number
-	series?: number
 	race?: number[]
+	/** Season integer (1=Standard, 2=Valentine, 3=Formal, 4=Summer, 5=Halloween, 6=Holiday) */
+	season?: number | null
+	/** Human-readable season name */
+	seasonName?: string | null
+	/** Series integer array (1=Standard, 2=Grand, 3=Zodiac, etc.) */
+	series?: number[]
+	/** Human-readable series names */
+	seriesNames?: string[]
+	/** Whether character can be pulled from gacha */
+	gachaAvailable?: boolean
 	hp?: {
 		minHp?: number
 		maxHp?: number
@@ -120,7 +133,6 @@ export interface Character {
 		transcendence?: boolean
 	}
 	special?: boolean
-	seasonalId?: string
 	awakenings?: Array<{
 		id: string
 		name: Record<string, string>
@@ -135,6 +147,17 @@ export interface Character {
 		wikiJa?: string
 		gamewith?: string
 		kamigame?: string
+	}
+	/** Weapon that recruits this character (reverse of Weapon.recruits) */
+	recruitedBy?: {
+		id: string
+		granblueId: string
+		name: {
+			en?: string
+			ja?: string
+		}
+		promotions: number[]
+		promotionNames: string[]
 	}
 }
 
@@ -177,6 +200,10 @@ export interface Summon {
 	rarity: number
 	element: number
 	series?: number
+	/** Gacha promotions (1=Premium, 2=Classic, 3=ClassicII, 4=Flash, 5=Legend, etc.) */
+	promotions?: number[]
+	/** Human-readable promotion names */
+	promotionNames?: string[]
 	minHp?: number
 	maxHp?: number
 	minAttack?: number

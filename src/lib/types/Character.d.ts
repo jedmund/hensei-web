@@ -8,6 +8,11 @@ interface Character {
   rarity: number
   gender: number
   max_level: number
+  season: number | null
+  season_name: string | null
+  series: number[]
+  series_names: string[]
+  gacha_available: boolean
   name: {
     [key: string]: string
     en: string

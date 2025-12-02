@@ -12,6 +12,8 @@ export interface Weapon {
 	ax: boolean
 	ax_type: number
 	awakenings: Awakening[]
+	promotions: number[]
+	promotion_names: string[]
 	name: {
 		[key: string]: string
 		en: string

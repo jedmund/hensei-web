@@ -5,6 +5,8 @@ export interface Summon {
 	granblue_id: number
 	element: number
 	max_level: number
+	promotions: number[]
+	promotion_names: string[]
 	name: {
 		[key: string]: string
 		en: string
