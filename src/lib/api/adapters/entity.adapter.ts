@@ -412,6 +412,108 @@ export interface EntityRawData {
 }
 
 /**
+ * Suggestions for character fields parsed from wiki data
+ */
+export interface CharacterSuggestions {
+	nameEn?: string
+	nameJp?: string
+	granblueId?: string
+	characterId?: number[]
+	rarity?: number
+	element?: number
+	gender?: number
+	proficiency1?: number
+	proficiency2?: number
+	race1?: number
+	race2?: number
+	minHp?: number
+	maxHp?: number
+	maxHpFlb?: number
+	minAtk?: number
+	maxAtk?: number
+	maxAtkFlb?: number
+	flb?: boolean
+	ulb?: boolean
+	releaseDate?: string
+	flbDate?: string
+	ulbDate?: string
+	gamewith?: string
+	kamigame?: string
+}
+
+/**
+ * Suggestions for weapon fields parsed from wiki data
+ */
+export interface WeaponSuggestions {
+	nameEn?: string
+	nameJp?: string
+	granblueId?: string
+	rarity?: number
+	element?: number
+	proficiency?: number
+	minHp?: number
+	maxHp?: number
+	maxHpFlb?: number
+	minAtk?: number
+	maxAtk?: number
+	maxAtkFlb?: number
+	flb?: boolean
+	ulb?: boolean
+	releaseDate?: string
+	flbDate?: string
+	ulbDate?: string
+	gamewith?: string
+	kamigame?: string
+	recruits?: string
+}
+
+/**
+ * Suggestions for summon fields parsed from wiki data
+ */
+export interface SummonSuggestions {
+	nameEn?: string
+	nameJp?: string
+	granblueId?: string
+	rarity?: number
+	element?: number
+	minHp?: number
+	maxHp?: number
+	maxHpFlb?: number
+	minAtk?: number
+	maxAtk?: number
+	maxAtkFlb?: number
+	flb?: boolean
+	ulb?: boolean
+	subaura?: boolean
+	releaseDate?: string
+	flbDate?: string
+	ulbDate?: string
+	gamewith?: string
+	kamigame?: string
+}
+
+/**
+ * Result from batch_preview for a single wiki page
+ */
+export interface BatchPreviewResult<T> {
+	wikiPage: string
+	status: 'success' | 'error'
+	granblueId?: string
+	wikiRaw?: string
+	suggestions?: T
+	imageStatus?: 'pending' | 'exists' | 'error' | 'no_id'
+	error?: string
+	redirectedFrom?: string
+}
+
+/**
+ * Response from batch_preview endpoint
+ */
+export interface BatchPreviewResponse<T> {
+	results: BatchPreviewResult<T>[]
+}
+
+/**
  * Entity adapter for accessing canonical game data
  */
 export class EntityAdapter extends BaseAdapter {
@@ -586,6 +688,26 @@ export class EntityAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Downloads a single image for a character (synchronous)
+	 * Requires editor role (>= 7)
+	 * @param characterId - Character database ID
+	 * @param size - Image size variant (main, grid, square, detail)
+	 * @param transformation - Pose variant (01=Base, 02=MLB, 03=FLB, 04=Transcendence)
+	 * @param force - Force re-download even if image exists
+	 */
+	async downloadCharacterImage(
+		characterId: string,
+		size: string,
+		transformation?: string,
+		force?: boolean
+	): Promise<{ success: boolean; error?: string }> {
+		return this.request(`/characters/${characterId}/download_image`, {
+			method: 'POST',
+			body: { size, transformation, force }
+		})
+	}
+
+	/**
 	 * Gets the status of an ongoing character image download
 	 * Requires editor role (>= 7)
 	 */
@@ -685,6 +807,26 @@ export class EntityAdapter extends BaseAdapter {
 		return this.request(`/summons/${summonId}/download_images`, {
 			method: 'POST',
 			body: { options }
+		})
+	}
+
+	/**
+	 * Downloads a single image for a summon (synchronous)
+	 * Requires editor role (>= 7)
+	 * @param summonId - Summon database ID
+	 * @param size - Image size variant (main, grid, wide, square, detail)
+	 * @param transformation - Pose variant (empty=Base, 02=ULB, 03=Trans1, 04=Trans5)
+	 * @param force - Force re-download even if image exists
+	 */
+	async downloadSummonImage(
+		summonId: string,
+		size: string,
+		transformation?: string,
+		force?: boolean
+	): Promise<{ success: boolean; error?: string }> {
+		return this.request(`/summons/${summonId}/download_image`, {
+			method: 'POST',
+			body: { size, transformation, force }
 		})
 	}
 
@@ -792,6 +934,26 @@ export class EntityAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Downloads a single image for a weapon (synchronous)
+	 * Requires editor role (>= 7)
+	 * @param weaponId - Weapon database ID
+	 * @param size - Image size variant (main, grid, square, base)
+	 * @param transformation - Pose variant (empty=Base, 02=Trans1, 03=Trans5)
+	 * @param force - Force re-download even if image exists
+	 */
+	async downloadWeaponImage(
+		weaponId: string,
+		size: string,
+		transformation?: string,
+		force?: boolean
+	): Promise<{ success: boolean; error?: string }> {
+		return this.request(`/weapons/${weaponId}/download_image`, {
+			method: 'POST',
+			body: { size, transformation, force }
+		})
+	}
+
+	/**
 	 * Gets the status of an ongoing weapon image download
 	 * Requires editor role (>= 7)
 	 */
@@ -867,6 +1029,86 @@ export class EntityAdapter extends BaseAdapter {
 		})
 
 		return response
+	}
+
+	// ============================================
+	// Wiki Fetch Methods (editor-only)
+	// ============================================
+
+	/**
+	 * Fetches and stores wiki data for a character
+	 * Requires editor role (>= 7)
+	 */
+	async fetchCharacterWiki(id: string): Promise<EntityRawData> {
+		return this.request<EntityRawData>(`/characters/${id}/fetch_wiki`, {
+			method: 'POST'
+		})
+	}
+
+	/**
+	 * Fetches and stores wiki data for a weapon
+	 * Requires editor role (>= 7)
+	 */
+	async fetchWeaponWiki(id: string): Promise<EntityRawData> {
+		return this.request<EntityRawData>(`/weapons/${id}/fetch_wiki`, {
+			method: 'POST'
+		})
+	}
+
+	/**
+	 * Fetches and stores wiki data for a summon
+	 * Requires editor role (>= 7)
+	 */
+	async fetchSummonWiki(id: string): Promise<EntityRawData> {
+		return this.request<EntityRawData>(`/summons/${id}/fetch_wiki`, {
+			method: 'POST'
+		})
+	}
+
+	// ============================================
+	// Batch Preview Methods (for batch import)
+	// ============================================
+
+	/**
+	 * Fetches wiki data and suggestions for multiple character wiki pages
+	 * Requires editor role (>= 7)
+	 * @param wikiPages - Array of wiki page names (max 10)
+	 */
+	async batchPreviewCharacters(
+		wikiPages: string[]
+	): Promise<BatchPreviewResponse<CharacterSuggestions>> {
+		return this.request<BatchPreviewResponse<CharacterSuggestions>>('/characters/batch_preview', {
+			method: 'POST',
+			body: { wiki_pages: wikiPages }
+		})
+	}
+
+	/**
+	 * Fetches wiki data and suggestions for multiple weapon wiki pages
+	 * Requires editor role (>= 7)
+	 * @param wikiPages - Array of wiki page names (max 10)
+	 */
+	async batchPreviewWeapons(
+		wikiPages: string[]
+	): Promise<BatchPreviewResponse<WeaponSuggestions>> {
+		return this.request<BatchPreviewResponse<WeaponSuggestions>>('/weapons/batch_preview', {
+			method: 'POST',
+			body: { wiki_pages: wikiPages }
+		})
+	}
+
+	/**
+	 * Fetches wiki data and suggestions for multiple summon wiki pages
+	 * Requires editor role (>= 7)
+	 * @param wikiPages - Array of wiki page names (max 10)
+	 */
+	async batchPreviewSummons(
+		wikiPages: string[]
+	): Promise<BatchPreviewResponse<SummonSuggestions>> {
+		return this.request<BatchPreviewResponse<SummonSuggestions>>('/summons/batch_preview', {
+			method: 'POST',
+			body: { wiki_pages: wikiPages }
+		})
 	}
 }
 
