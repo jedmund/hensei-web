@@ -229,12 +229,15 @@ export class SearchAdapter extends BaseAdapter {
 		})
 
 		// Search endpoints don't use credentials to avoid CORS
+		// Rails expects params nested under 'search' key
+		// Per-page is sent via X-Per-Page header
 		return this.request<SearchResponse>('/search/all', {
 			method: 'POST',
-			body: JSON.stringify(body),
+			body: { search: body },
 			credentials: 'omit',
 			// Cache search results for 5 minutes by default
-			cacheTTL: params.query ? 300000 : 0 // Don't cache empty searches
+			cacheTTL: params.query ? 300000 : 0, // Don't cache empty searches
+			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
 		})
 	}
 
@@ -254,11 +257,14 @@ export class SearchAdapter extends BaseAdapter {
 			extra: true
 		})
 
+		// Rails expects params nested under 'search' key
+		// Per-page is sent via X-Per-Page header
 		return this.request<SearchResponse>('/search/weapons', {
 			method: 'POST',
-			body: JSON.stringify(body),
+			body: { search: body },
 			credentials: 'omit',
-			cacheTTL: params.query ? 300000 : 0
+			cacheTTL: params.query ? 300000 : 0,
+			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
 		})
 	}
 
@@ -279,11 +285,14 @@ export class SearchAdapter extends BaseAdapter {
 			gachaAvailable: true
 		})
 
+		// Rails expects params nested under 'search' key
+		// Per-page is sent via X-Per-Page header
 		return this.request<SearchResponse>('/search/characters', {
 			method: 'POST',
-			body: JSON.stringify(body),
+			body: { search: body },
 			credentials: 'omit',
-			cacheTTL: params.query ? 300000 : 0
+			cacheTTL: params.query ? 300000 : 0,
+			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
 		})
 	}
 
@@ -301,11 +310,14 @@ export class SearchAdapter extends BaseAdapter {
 			subaura: true
 		})
 
+		// Rails expects params nested under 'search' key
+		// Per-page is sent via X-Per-Page header
 		return this.request<SearchResponse>('/search/summons', {
 			method: 'POST',
-			body: JSON.stringify(body),
+			body: { search: body },
 			credentials: 'omit',
-			cacheTTL: params.query ? 300000 : 0
+			cacheTTL: params.query ? 300000 : 0,
+			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
 		})
 	}
 

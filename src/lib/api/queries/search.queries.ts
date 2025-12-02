@@ -23,6 +23,10 @@ export interface SearchFilters {
 	proficiency2?: number[]
 	subaura?: boolean
 	extra?: boolean
+	// Character-specific filters
+	season?: number[]
+	characterSeries?: number[]
+	gachaAvailable?: boolean
 }
 
 /**
@@ -44,6 +48,9 @@ export interface SearchPageResult {
 	totalPages: number
 }
 
+/** Default number of results per page for search queries */
+const SEARCH_PER_PAGE = 50
+
 /**
  * Builds search parameters from query string and filters
  */
@@ -51,16 +58,23 @@ function buildSearchParams(
 	query: string,
 	filters: SearchFilters | undefined,
 	page: number,
-	locale: 'en' | 'ja' = 'en'
+	locale: 'en' | 'ja' = 'en',
+	exclude?: string[]
 ): SearchParams {
 	const params: SearchParams = {
 		page,
-		locale
+		locale,
+		per: SEARCH_PER_PAGE
 	}
 
 	// Only include query if not empty
 	if (query && query.trim().length > 0) {
 		params.query = query.trim()
+	}
+
+	// Only include exclude if provided
+	if (exclude && exclude.length > 0) {
+		params.exclude = exclude
 	}
 
 	// Build filters object with only defined values
@@ -84,6 +98,16 @@ function buildSearchParams(
 		}
 		if (filters.extra !== undefined) {
 			apiFilters.extra = filters.extra
+		}
+		// Character-specific filters
+		if (filters.season && filters.season.length > 0) {
+			apiFilters.season = filters.season
+		}
+		if (filters.characterSeries && filters.characterSeries.length > 0) {
+			apiFilters.characterSeries = filters.characterSeries
+		}
+		if (filters.gachaAvailable !== undefined) {
+			apiFilters.gachaAvailable = filters.gachaAvailable
 		}
 
 		// Only include filters if any were set
@@ -154,13 +178,21 @@ export const searchQueries = {
 	 * @param query - Search query string
 	 * @param filters - Optional filter configuration
 	 * @param locale - Locale for results (default: 'en')
+	 * @param exclude - Optional array of character IDs to exclude from results
+	 * @param enabled - Whether the query should be enabled (default: true)
 	 * @returns Infinite query options for character search
 	 */
-	characters: (query: string = '', filters?: SearchFilters, locale: 'en' | 'ja' = 'en') =>
+	characters: (
+		query: string = '',
+		filters?: SearchFilters,
+		locale: 'en' | 'ja' = 'en',
+		exclude?: string[],
+		enabled: boolean = true
+	) =>
 		infiniteQueryOptions({
-			queryKey: ['search', 'characters', query, filters, locale] as const,
+			queryKey: ['search', 'characters', query, filters, locale, exclude] as const,
 			queryFn: async ({ pageParam }): Promise<SearchPageResult> => {
-				const params = buildSearchParams(query, filters, pageParam, locale)
+				const params = buildSearchParams(query, filters, pageParam, locale, exclude)
 				const response = await searchAdapter.searchCharacters(params)
 
 				return {
@@ -178,6 +210,7 @@ export const searchQueries = {
 			},
 			staleTime: 1000 * 60 * 5, // 5 minutes
 			gcTime: 1000 * 60 * 30, // 30 minutes
+			enabled
 		}),
 
 	/**
