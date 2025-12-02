@@ -3,34 +3,73 @@
 <script lang="ts">
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import type { EntityRawData } from '$lib/api/adapters/entity.adapter'
 
 	interface Props {
 		wikiRaw?: string | null
 		gameRawEn?: Record<string, unknown> | null
 		gameRawJp?: Record<string, unknown> | null
 		isLoading?: boolean
+		canEdit?: boolean
+		onFetchWiki?: () => Promise<EntityRawData>
 	}
 
-	let { wikiRaw, gameRawEn, gameRawJp, isLoading = false }: Props = $props()
+	let { wikiRaw, gameRawEn, gameRawJp, isLoading = false, canEdit = false, onFetchWiki }: Props =
+		$props()
 
 	let selectedLang = $state('en')
+	let isFetching = $state(false)
+	let fetchError = $state<string | null>(null)
 
 	const currentGameRaw = $derived(selectedLang === 'en' ? gameRawEn : gameRawJp)
 	const formattedGameRaw = $derived(
 		currentGameRaw ? JSON.stringify(currentGameRaw, null, 2) : null
 	)
+
+	async function handleFetchWiki() {
+		if (!onFetchWiki) return
+
+		isFetching = true
+		fetchError = null
+
+		try {
+			await onFetchWiki()
+		} catch (err: unknown) {
+			fetchError = err instanceof Error ? err.message : 'Failed to fetch wiki data'
+		} finally {
+			isFetching = false
+		}
+	}
 </script>
 
 <div class="raw-data-tab">
 	{#if isLoading}
 		<p class="loading">Loading raw data...</p>
 	{:else}
-		{#if wikiRaw}
-			<section class="raw-section">
+		<section class="raw-section">
+			<div class="section-header">
 				<h3>Wiki Raw</h3>
+				{#if canEdit && onFetchWiki}
+					<Button
+						variant="secondary"
+						size="small"
+						onclick={handleFetchWiki}
+						disabled={isFetching}
+					>
+						{isFetching ? 'Fetching...' : 'Fetch Wiki'}
+					</Button>
+				{/if}
+			</div>
+			{#if fetchError}
+				<p class="error">{fetchError}</p>
+			{/if}
+			{#if wikiRaw}
 				<pre class="raw-content">{wikiRaw}</pre>
-			</section>
-		{/if}
+			{:else}
+				<p class="no-data">No wiki data available</p>
+			{/if}
+		</section>
 
 		{#if gameRawEn || gameRawJp}
 			<section class="raw-section">
@@ -47,10 +86,6 @@
 					<p class="no-data">No {selectedLang.toUpperCase()} data available</p>
 				{/if}
 			</section>
-		{/if}
-
-		{#if !wikiRaw && !gameRawEn && !gameRawJp}
-			<p class="no-data">No raw data available</p>
 		{/if}
 	{/if}
 </div>
@@ -109,5 +144,11 @@
 	.loading {
 		color: colors.$grey-50;
 		font-style: italic;
+	}
+
+	.error {
+		color: colors.$error;
+		font-size: typography.$font-small;
+		margin: 0 0 spacing.$unit 0;
 	}
 </style>
