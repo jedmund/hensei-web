@@ -144,17 +144,11 @@
       <DetailItem label="Ougi Ratio (FLB)" bind:value={editData.ougiRatioFlb} editable={true} type="number" placeholder="0" />
     {/if}
   {:else}
-    {#if character.baseDa}
-      <DetailItem label="Base DA" value={character.baseDa} />
-    {/if}
-    {#if character.baseTa}
-      <DetailItem label="Base TA" value={character.baseTa} />
-    {/if}
-    {#if character.ougiRatio}
-      <DetailItem label="Ougi Ratio" value={character.ougiRatio} />
-    {/if}
-    {#if character.ougiRatioFlb}
-      <DetailItem label="Ougi Ratio (FLB)" value={character.ougiRatioFlb} />
+    <DetailItem label="Base DA" value={character.baseDa} />
+    <DetailItem label="Base TA" value={character.baseTa} />
+    <DetailItem label="Ougi Ratio" value={character.ougiRatio?.ougiRatio} />
+    {#if flb}
+      <DetailItem label="Ougi Ratio (FLB)" value={character.ougiRatio?.ougiRatioFlb} />
     {/if}
   {/if}
 </DetailsContainer>
