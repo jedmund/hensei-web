@@ -41,7 +41,9 @@
 	// Localized links
 	const galleryHref = $derived(localizeHref('/teams/explore'))
 	const guidesHref = $derived(localizeHref('/guides'))
-	const collectionHref = $derived(localizeHref('/collection'))
+	const collectionHref = $derived(
+		username ? localizeHref(`/${username}/collection/characters`) : localizeHref('/collection')
+	)
 	const meHref = $derived(localizeHref('/me'))
 	const loginHref = $derived(localizeHref('/auth/login'))
 	const registerHref = $derived(localizeHref('/auth/register'))
@@ -99,6 +101,11 @@
 		// For gallery/teams, we need to check for /teams paths
 		if (href === galleryHref) {
 			return path === href
+		}
+
+		// For collection, check if we're on any collection page
+		if (href === collectionHref) {
+			return path.includes('/collection')
 		}
 
 		// Exact match or starts with href + /
