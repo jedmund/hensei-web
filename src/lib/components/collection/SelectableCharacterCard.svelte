@@ -57,7 +57,7 @@
 
 	.card {
 		position: relative;
-		width: 100%;
+		width: 70px;
 		@include rep.aspect(rep.$char-cell-w, rep.$char-cell-h);
 		padding: 0;
 		border: 2px solid transparent;
@@ -65,6 +65,7 @@
 		background: var(--card-bg, #f5f5f5);
 		cursor: pointer;
 		overflow: hidden;
+		flex-shrink: 0;
 		@include smooth-transition(0.15s, all);
 
 		&:hover {
