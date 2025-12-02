@@ -288,7 +288,6 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
-	@use '$src/themes/rep' as rep;
 
 	.collection-page {
 		display: flex;
@@ -309,8 +308,8 @@
 	}
 
 	.character-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+		display: flex;
+		flex-wrap: wrap;
 		gap: $unit;
 	}
 
@@ -338,8 +337,9 @@
 
 	.card-image {
 		position: relative;
-		width: 100%;
-		@include rep.aspect(rep.$char-cell-w, rep.$char-cell-h);
+		// Character grid images are 280x160 (7:4 ratio)
+		width: 100px;
+		aspect-ratio: 280 / 160;
 		border-radius: 8px;
 		overflow: hidden;
 		background: var(--card-bg, #f5f5f5);
