@@ -162,6 +162,30 @@
 			{#if currentTab === 'info'}
 				<section class="details">
 					<WeaponMetadataSection {weapon} />
+
+					{#if weapon.nicknames?.en?.length || weapon.nicknames?.ja?.length}
+						<DetailsContainer title="Nicknames">
+							{#if weapon.nicknames?.en?.length}
+								<DetailItem label="English">
+									<div class="nickname-tags">
+										{#each weapon.nicknames.en as nickname}
+											<span class="nickname-tag">{nickname}</span>
+										{/each}
+									</div>
+								</DetailItem>
+							{/if}
+							{#if weapon.nicknames?.ja?.length}
+								<DetailItem label="Japanese">
+									<div class="nickname-tags">
+										{#each weapon.nicknames.ja as nickname}
+											<span class="nickname-tag">{nickname}</span>
+										{/each}
+									</div>
+								</DetailItem>
+							{/if}
+						</DetailsContainer>
+					{/if}
+
 					<WeaponUncapSection {weapon} />
 					<WeaponTaxonomySection {weapon} />
 					<WeaponStatsSection {weapon} />
@@ -179,6 +203,39 @@
 							{/if}
 							{#if weapon.transcendenceDate}
 								<DetailItem label="Transcendence Date" value={weapon.transcendenceDate} />
+							{/if}
+						</DetailsContainer>
+					{/if}
+
+					{#if weapon.links?.wikiEn || weapon.links?.wikiJa || weapon.links?.gamewith || weapon.links?.kamigame}
+						<DetailsContainer title="Links">
+							{#if weapon.links?.wikiEn}
+								<DetailItem label="Wiki (EN)">
+									<a href={weapon.links.wikiEn} target="_blank" rel="noopener noreferrer" class="external-link">
+										{weapon.links.wikiEn}
+									</a>
+								</DetailItem>
+							{/if}
+							{#if weapon.links?.wikiJa}
+								<DetailItem label="Wiki (JP)">
+									<a href={weapon.links.wikiJa} target="_blank" rel="noopener noreferrer" class="external-link">
+										{weapon.links.wikiJa}
+									</a>
+								</DetailItem>
+							{/if}
+							{#if weapon.links?.gamewith}
+								<DetailItem label="Gamewith">
+									<a href={weapon.links.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
+										{weapon.links.gamewith}
+									</a>
+								</DetailItem>
+							{/if}
+							{#if weapon.links?.kamigame}
+								<DetailItem label="Kamigame">
+									<a href={weapon.links.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
+										{weapon.links.kamigame}
+									</a>
+								</DetailItem>
 							{/if}
 						</DetailsContainer>
 					{/if}
@@ -321,6 +378,29 @@
 	@media (max-width: 768px) {
 		.weapon-skills .skills-grid {
 			grid-template-columns: 1fr;
+		}
+	}
+
+	.nickname-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: spacing.$unit;
+	}
+
+	.nickname-tag {
+		background: colors.$grey-90;
+		padding: spacing.$unit-half spacing.$unit;
+		border-radius: layout.$item-corner-small;
+		font-size: typography.$font-small;
+	}
+
+	.external-link {
+		color: colors.$blue;
+		text-decoration: none;
+		word-break: break-all;
+
+		&:hover {
+			text-decoration: underline;
 		}
 	}
 </style>

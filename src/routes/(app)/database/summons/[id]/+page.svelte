@@ -169,6 +169,30 @@
 			{#if currentTab === 'info'}
 				<section class="details">
 					<SummonMetadataSection {summon} />
+
+					{#if summon.nicknames?.en?.length || summon.nicknames?.ja?.length}
+						<DetailsContainer title="Nicknames">
+							{#if summon.nicknames?.en?.length}
+								<DetailItem label="English">
+									<div class="nickname-tags">
+										{#each summon.nicknames.en as nickname}
+											<span class="nickname-tag">{nickname}</span>
+										{/each}
+									</div>
+								</DetailItem>
+							{/if}
+							{#if summon.nicknames?.ja?.length}
+								<DetailItem label="Japanese">
+									<div class="nickname-tags">
+										{#each summon.nicknames.ja as nickname}
+											<span class="nickname-tag">{nickname}</span>
+										{/each}
+									</div>
+								</DetailItem>
+							{/if}
+						</DetailsContainer>
+					{/if}
+
 					<SummonUncapSection {summon} />
 					<SummonTaxonomySection {summon} />
 					<SummonStatsSection {summon} />
@@ -186,6 +210,39 @@
 							{/if}
 							{#if summon.transcendenceDate}
 								<DetailItem label="Transcendence Date" value={summon.transcendenceDate} />
+							{/if}
+						</DetailsContainer>
+					{/if}
+
+					{#if summon.links?.wikiEn || summon.links?.wikiJa || summon.links?.gamewith || summon.links?.kamigame}
+						<DetailsContainer title="Links">
+							{#if summon.links?.wikiEn}
+								<DetailItem label="Wiki (EN)">
+									<a href={summon.links.wikiEn} target="_blank" rel="noopener noreferrer" class="external-link">
+										{summon.links.wikiEn}
+									</a>
+								</DetailItem>
+							{/if}
+							{#if summon.links?.wikiJa}
+								<DetailItem label="Wiki (JP)">
+									<a href={summon.links.wikiJa} target="_blank" rel="noopener noreferrer" class="external-link">
+										{summon.links.wikiJa}
+									</a>
+								</DetailItem>
+							{/if}
+							{#if summon.links?.gamewith}
+								<DetailItem label="Gamewith">
+									<a href={summon.links.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
+										{summon.links.gamewith}
+									</a>
+								</DetailItem>
+							{/if}
+							{#if summon.links?.kamigame}
+								<DetailItem label="Kamigame">
+									<a href={summon.links.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
+										{summon.links.kamigame}
+									</a>
+								</DetailItem>
 							{/if}
 						</DetailsContainer>
 					{/if}
@@ -348,6 +405,29 @@
 				font-style: italic;
 				padding: spacing.$unit;
 			}
+		}
+	}
+
+	.nickname-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: spacing.$unit;
+	}
+
+	.nickname-tag {
+		background: colors.$grey-90;
+		padding: spacing.$unit-half spacing.$unit;
+		border-radius: layout.$item-corner-small;
+		font-size: typography.$font-small;
+	}
+
+	.external-link {
+		color: colors.$blue;
+		text-decoration: none;
+		word-break: break-all;
+
+		&:hover {
+			text-decoration: underline;
 		}
 	}
 </style>

@@ -65,6 +65,24 @@ export interface Weapon {
 		name: Record<string, string>
 		level: number
 	}>
+	nicknames?: {
+		en?: string[]
+		ja?: string[]
+	}
+	links?: {
+		wikiEn?: string
+		wikiJa?: string
+		gamewith?: string
+		kamigame?: string
+	}
+	recruits?: {
+		id: string
+		granblueId: string
+		name: {
+			en?: string
+			ja?: string
+		}
+	}
 }
 
 /**
@@ -108,6 +126,16 @@ export interface Character {
 		name: Record<string, string>
 		level: number
 	}>
+	nicknames?: {
+		en?: string[]
+		ja?: string[]
+	}
+	links?: {
+		wikiEn?: string
+		wikiJa?: string
+		gamewith?: string
+		kamigame?: string
+	}
 }
 
 /**
@@ -186,6 +214,16 @@ export interface Summon {
 	auraDescription?: string
 	subAuraName?: string
 	subAuraDescription?: string
+	nicknames?: {
+		en?: string[]
+		ja?: string[]
+	}
+	links?: {
+		wikiEn?: string
+		wikiJa?: string
+		gamewith?: string
+		kamigame?: string
+	}
 }
 
 /**

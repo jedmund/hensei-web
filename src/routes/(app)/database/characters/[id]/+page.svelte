@@ -169,6 +169,30 @@
 			{#if currentTab === 'info'}
 				<section class="details">
 					<CharacterMetadataSection {character} />
+
+					{#if character.nicknames?.en?.length || character.nicknames?.ja?.length}
+						<DetailsContainer title="Nicknames">
+							{#if character.nicknames?.en?.length}
+								<DetailItem label="English">
+									<div class="nickname-tags">
+										{#each character.nicknames.en as nickname}
+											<span class="nickname-tag">{nickname}</span>
+										{/each}
+									</div>
+								</DetailItem>
+							{/if}
+							{#if character.nicknames?.ja?.length}
+								<DetailItem label="Japanese">
+									<div class="nickname-tags">
+										{#each character.nicknames.ja as nickname}
+											<span class="nickname-tag">{nickname}</span>
+										{/each}
+									</div>
+								</DetailItem>
+							{/if}
+						</DetailsContainer>
+					{/if}
+
 					<CharacterUncapSection {character} />
 					<CharacterTaxonomySection {character} />
 					<CharacterStatsSection {character} />
@@ -183,6 +207,39 @@
 							{/if}
 							{#if character.ulbDate}
 								<DetailItem label="ULB Date" value={character.ulbDate} />
+							{/if}
+						</DetailsContainer>
+					{/if}
+
+					{#if character.links?.wikiEn || character.links?.wikiJa || character.links?.gamewith || character.links?.kamigame}
+						<DetailsContainer title="Links">
+							{#if character.links?.wikiEn}
+								<DetailItem label="Wiki (EN)">
+									<a href={character.links.wikiEn} target="_blank" rel="noopener noreferrer" class="external-link">
+										{character.links.wikiEn}
+									</a>
+								</DetailItem>
+							{/if}
+							{#if character.links?.wikiJa}
+								<DetailItem label="Wiki (JP)">
+									<a href={character.links.wikiJa} target="_blank" rel="noopener noreferrer" class="external-link">
+										{character.links.wikiJa}
+									</a>
+								</DetailItem>
+							{/if}
+							{#if character.links?.gamewith}
+								<DetailItem label="Gamewith">
+									<a href={character.links.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
+										{character.links.gamewith}
+									</a>
+								</DetailItem>
+							{/if}
+							{#if character.links?.kamigame}
+								<DetailItem label="Kamigame">
+									<a href={character.links.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
+										{character.links.kamigame}
+									</a>
+								</DetailItem>
 							{/if}
 						</DetailsContainer>
 					{/if}
@@ -303,5 +360,28 @@
 		margin-top: spacing.$unit;
 		font-size: typography.$font-small;
 		text-align: center;
+	}
+
+	.nickname-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: spacing.$unit;
+	}
+
+	.nickname-tag {
+		background: colors.$grey-90;
+		padding: spacing.$unit-half spacing.$unit;
+		border-radius: layout.$item-corner-small;
+		font-size: typography.$font-small;
+	}
+
+	.external-link {
+		color: colors.$blue;
+		text-decoration: none;
+		word-break: break-all;
+
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 </style>
