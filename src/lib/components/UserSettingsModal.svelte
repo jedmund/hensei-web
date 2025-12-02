@@ -10,7 +10,7 @@
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { setUserCookie } from '$lib/auth/cookies'
 	import { invalidateAll } from '$app/navigation'
-
+	
 	interface Props {
 		open: boolean
 		onOpenChange?: (open: boolean) => void
@@ -24,6 +24,7 @@
 
 	// Form state
 	let picture = $state(user.picture)
+	let element = $state(user.element)
 	let gender = $state(user.gender)
 	let language = $state(user.language)
 	let theme = $state(user.theme)
@@ -62,6 +63,32 @@
 		{ value: 'dark', label: 'Dark' }
 	]
 
+	// Element colors for circle indicators
+	const elementColors: Record<string, string> = {
+		wind: '#3ee489',
+		fire: '#fa6d6d',
+		water: '#6cc9ff',
+		earth: '#fd9f5b',
+		dark: '#de7bff',
+		light: '#e8d633'
+	}
+
+	// Create SVG circle data URL for element color
+	function getElementCircle(element: string): string {
+		const color = elementColors[element] || '#888'
+		const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="${color}"/></svg>`
+		return `data:image/svg+xml,${encodeURIComponent(svg)}`
+	}
+
+	const elementOptions = [
+		{ value: 'wind', label: 'Wind', image: getElementCircle('wind') },
+		{ value: 'fire', label: 'Fire', image: getElementCircle('fire') },
+		{ value: 'water', label: 'Water', image: getElementCircle('water') },
+		{ value: 'earth', label: 'Earth', image: getElementCircle('earth') },
+		{ value: 'dark', label: 'Dark', image: getElementCircle('dark') },
+		{ value: 'light', label: 'Light', image: getElementCircle('light') }
+	]
+
 	// Get current picture data
 	const currentPicture = $derived(pictureData.find((p) => p.filename === picture))
 
@@ -75,7 +102,7 @@
 			// Prepare the update data
 			const updateData = {
 				picture,
-				element: currentPicture?.element,
+				element,
 				gender,
 				language,
 				theme
@@ -108,10 +135,13 @@
 				body: JSON.stringify(updatedUser)
 			})
 
-			// If language or theme changed, we need to reload
+			// If language or theme changed, we need a full page reload
 			if (user.language !== language || user.theme !== theme || user.bahamut !== bahamut) {
 				await invalidateAll()
 				window.location.reload()
+			} else {
+				// For other changes (element, picture, gender), invalidate to refresh layout data
+				await invalidateAll()
 			}
 
 			// Close the modal
@@ -150,7 +180,7 @@
 							src={`/profile/${picture}.png`}
 							srcset={`/profile/${picture}.png 1x, /profile/${picture}@2x.png 2x`}
 							alt={currentPicture?.name[locale] || ''}
-							class="avatar-preview element-{currentPicture?.element}"
+							class="avatar-preview element-{element}"
 						/>
 					</div>
 					<Select
@@ -162,6 +192,16 @@
 						contained
 					/>
 				</div>
+
+				<!-- Element Selection -->
+				<Select
+					bind:value={element}
+					options={elementOptions}
+					label="Element"
+					placeholder="Select an element"
+					fullWidth
+					contained
+				/>
 
 				<!-- Gender Selection -->
 				<Select
