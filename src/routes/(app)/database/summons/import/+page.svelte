@@ -7,7 +7,7 @@
 		type SummonSuggestions,
 		type BatchPreviewResult
 	} from '$lib/api/adapters/entity.adapter'
-	import { getSummonGridImageUrl } from '$lib/utils/images'
+	import { getSummonImage } from '$lib/utils/images'
 
 	// Components
 	import SummonUncapSection from '$lib/features/database/summons/sections/SummonUncapSection.svelte'
@@ -77,7 +77,7 @@
 			granblueId: entity.granblueId,
 			status: entity.status,
 			imageUrl: entity.granblueId
-				? getSummonGridImageUrl(entity.granblueId)
+				? getSummonImage(entity.granblueId)
 				: '/images/placeholders/placeholder-summon-sub.png',
 			error: entity.error,
 			saved: savedEntities.has(wikiPage)

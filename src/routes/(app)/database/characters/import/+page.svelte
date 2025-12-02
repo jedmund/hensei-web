@@ -2,12 +2,8 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import {
-		entityAdapter,
-		type CharacterSuggestions,
-		type BatchPreviewResult
-	} from '$lib/api/adapters/entity.adapter'
-	import { getCharacterGridImageUrl } from '$lib/utils/images'
+	import { entityAdapter, type CharacterSuggestions } from '$lib/api/adapters/entity.adapter'
+	import { getCharacterImage } from '$lib/utils/images'
 
 	// Components
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
@@ -26,6 +22,15 @@
 
 	import type { PageData } from './$types'
 
+	// Internal entity state including loading status
+	interface EntityState {
+		wikiPage: string
+		status: 'loading' | 'success' | 'error'
+		granblueId?: string
+		suggestions?: CharacterSuggestions
+		error?: string
+	}
+
 	let { data }: { data: PageData } = $props()
 
 	// Input phase
@@ -34,7 +39,7 @@
 	let fetchError = $state<string | null>(null)
 
 	// Fetched entities
-	let entities = $state<Map<string, BatchPreviewResult<CharacterSuggestions>>>(new Map())
+	let entities = $state<Map<string, EntityState>>(new Map())
 	let selectedWikiPage = $state<string | null>(null)
 
 	// Form data per entity (keyed by wikiPage)
@@ -66,8 +71,8 @@
 	// Get selected entity data
 	const selectedEntity = $derived(selectedWikiPage ? entities.get(selectedWikiPage) : null)
 	const selectedFormData = $derived(selectedWikiPage ? formDataMap.get(selectedWikiPage) : null)
-	const selectedDismissed = $derived(
-		selectedWikiPage ? dismissedSuggestionsMap.get(selectedWikiPage) ?? new Set() : new Set()
+	const selectedDismissed = $derived<Set<string>>(
+		selectedWikiPage ? dismissedSuggestionsMap.get(selectedWikiPage) ?? new Set<string>() : new Set<string>()
 	)
 
 	// Entity tabs for TabbedEntitySelector
@@ -77,7 +82,7 @@
 			granblueId: entity.granblueId,
 			status: entity.status,
 			imageUrl: entity.granblueId
-				? getCharacterGridImageUrl(entity.granblueId)
+				? getCharacterImage(entity.granblueId, 'grid')
 				: '/images/placeholders/placeholder-character-grid.png',
 			error: entity.error,
 			saved: savedEntities.has(wikiPage)
@@ -143,11 +148,11 @@
 		fetchError = null
 
 		// Initialize entities as loading
-		const newEntities = new Map<string, BatchPreviewResult<CharacterSuggestions>>()
+		const newEntities = new Map<string, EntityState>()
 		pages.forEach((page) => {
 			newEntities.set(page, {
 				wikiPage: page,
-				status: 'loading' as const
+				status: 'loading'
 			})
 		})
 		entities = newEntities
@@ -157,15 +162,21 @@
 			const response = await entityAdapter.batchPreviewCharacters(pages)
 
 			// Update entities with results
-			const updatedEntities = new Map<string, BatchPreviewResult<CharacterSuggestions>>()
+			const updatedEntities = new Map<string, EntityState>()
 			response.results.forEach((result) => {
-				updatedEntities.set(result.wikiPage, result)
+				updatedEntities.set(result.wikiPage, {
+					wikiPage: result.wikiPage,
+					status: result.status,
+					granblueId: result.granblueId,
+					suggestions: result.suggestions,
+					error: result.error
+				})
 
 				// Create form data for successful results
 				if (result.status === 'success') {
 					const formData = createEmptyFormData(result.wikiPage, result.suggestions)
 					formDataMap.set(result.wikiPage, formData)
-					dismissedSuggestionsMap.set(result.wikiPage, new Set())
+					dismissedSuggestionsMap.set(result.wikiPage, new Set<string>())
 				}
 			})
 			entities = updatedEntities
@@ -208,54 +219,56 @@
 
 	// Save current entity
 	async function saveCurrentEntity() {
-		if (!selectedWikiPage || !selectedFormData) return
+		if (!selectedWikiPage) return
+		const formData = formDataMap.get(selectedWikiPage)
+		if (!formData) return
 
 		isSaving = true
 		saveError = null
 
 		try {
 			const payload = {
-				granblue_id: selectedFormData.granblueId,
-				name_en: selectedFormData.name,
-				name_jp: selectedFormData.nameJp,
+				granblue_id: formData.granblueId,
+				name_en: formData.name,
+				name_jp: formData.nameJp,
 				character_id:
-					selectedFormData.characterId.trim() === ''
+					formData.characterId.trim() === ''
 						? []
-						: selectedFormData.characterId
+						: formData.characterId
 								.split(',')
 								.map((id: string) => Number(id.trim()))
 								.filter((id: number) => !isNaN(id)),
-				rarity: selectedFormData.rarity,
-				element: selectedFormData.element,
-				race1: selectedFormData.race1,
-				race2: selectedFormData.race2,
-				gender: selectedFormData.gender,
-				proficiency1: selectedFormData.proficiency1,
-				proficiency2: selectedFormData.proficiency2,
-				min_hp: selectedFormData.minHp,
-				max_hp: selectedFormData.maxHp,
-				max_hp_flb: selectedFormData.maxHpFlb,
-				max_hp_ulb: selectedFormData.maxHpUlb,
-				min_atk: selectedFormData.minAtk,
-				max_atk: selectedFormData.maxAtk,
-				max_atk_flb: selectedFormData.maxAtkFlb,
-				max_atk_ulb: selectedFormData.maxAtkUlb,
-				base_da: selectedFormData.baseDa,
-				base_ta: selectedFormData.baseTa,
-				ougi_ratio: selectedFormData.ougiRatio,
-				ougi_ratio_flb: selectedFormData.ougiRatioFlb,
-				flb: selectedFormData.flb,
-				ulb: selectedFormData.ulb,
-				special: selectedFormData.special,
-				release_date: selectedFormData.releaseDate || null,
-				flb_date: selectedFormData.flbDate || null,
-				ulb_date: selectedFormData.ulbDate || null,
-				wiki_en: selectedFormData.wikiEn,
-				wiki_ja: selectedFormData.wikiJa,
-				gamewith: selectedFormData.gamewith,
-				kamigame: selectedFormData.kamigame,
-				nicknames_en: selectedFormData.nicknamesEn,
-				nicknames_jp: selectedFormData.nicknamesJp
+				rarity: formData.rarity,
+				element: formData.element,
+				race1: formData.race1,
+				race2: formData.race2,
+				gender: formData.gender,
+				proficiency1: formData.proficiency1,
+				proficiency2: formData.proficiency2,
+				min_hp: formData.minHp,
+				max_hp: formData.maxHp,
+				max_hp_flb: formData.maxHpFlb,
+				max_hp_ulb: formData.maxHpUlb,
+				min_atk: formData.minAtk,
+				max_atk: formData.maxAtk,
+				max_atk_flb: formData.maxAtkFlb,
+				max_atk_ulb: formData.maxAtkUlb,
+				base_da: formData.baseDa,
+				base_ta: formData.baseTa,
+				ougi_ratio: formData.ougiRatio,
+				ougi_ratio_flb: formData.ougiRatioFlb,
+				flb: formData.flb,
+				ulb: formData.ulb,
+				special: formData.special,
+				release_date: formData.releaseDate || null,
+				flb_date: formData.flbDate || null,
+				ulb_date: formData.ulbDate || null,
+				wiki_en: formData.wikiEn,
+				wiki_ja: formData.wikiJa,
+				gamewith: formData.gamewith,
+				kamigame: formData.kamigame,
+				nicknames_en: formData.nicknamesEn,
+				nicknames_jp: formData.nicknamesJp
 			}
 
 			await entityAdapter.createCharacter(payload)
@@ -280,12 +293,16 @@
 	}
 
 	// Can save current entity
-	const canSave = $derived(
-		selectedFormData &&
-			selectedFormData.name.trim() !== '' &&
-			selectedFormData.granblueId.trim() !== '' &&
-			!savedEntities.has(selectedWikiPage ?? '')
-	)
+	const canSave = $derived.by(() => {
+		if (!selectedWikiPage) return false
+		const formData = formDataMap.get(selectedWikiPage)
+		if (!formData) return false
+		return (
+			formData.name.trim() !== '' &&
+			formData.granblueId.trim() !== '' &&
+			!savedEntities.has(selectedWikiPage)
+		)
+	})
 
 	// All entities saved
 	const allSaved = $derived(
@@ -363,14 +380,15 @@
 				<div class="entity-loading">
 					<p>Loading wiki data...</p>
 				</div>
-			{:else if selectedFormData}
+			{:else if selectedWikiPage && formDataMap.has(selectedWikiPage)}
+				{@const formData = formDataMap.get(selectedWikiPage)!}
 				{@const suggestions = selectedEntity.suggestions}
-				{@const dismissed = selectedDismissed}
+				{@const dismissed = dismissedSuggestionsMap.get(selectedWikiPage) ?? new Set<string>()}
 				<section class="details">
 					<DetailsContainer title="Basic Info">
 						<SuggestionDetailItem
 							label="Name (EN)"
-							bind:value={selectedFormData.name}
+							bind:value={formData.name}
 							editable={true}
 							type="text"
 							placeholder="Character name"
@@ -381,7 +399,7 @@
 						/>
 						<SuggestionDetailItem
 							label="Name (JP)"
-							bind:value={selectedFormData.nameJp}
+							bind:value={formData.nameJp}
 							editable={true}
 							type="text"
 							placeholder="キャラクター名"
@@ -393,7 +411,7 @@
 						<DetailItem
 							label="Character ID"
 							sublabel="Separate multiple IDs with commas"
-							bind:value={selectedFormData.characterId}
+							bind:value={formData.characterId}
 							editable={true}
 							type="text"
 							placeholder="Character IDs"
@@ -403,7 +421,7 @@
 					<CharacterMetadataSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={selectedFormData}
+						bind:editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -413,7 +431,7 @@
 					<CharacterUncapSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={selectedFormData}
+						bind:editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -423,7 +441,7 @@
 					<CharacterTaxonomySection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={selectedFormData}
+						bind:editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -433,7 +451,7 @@
 					<CharacterStatsSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={selectedFormData}
+						bind:editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -442,17 +460,17 @@
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
-							<TagInput bind:value={selectedFormData.nicknamesEn} placeholder="Add nickname..." contained />
+							<TagInput bind:value={formData.nicknamesEn} placeholder="Add nickname..." contained />
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
-							<TagInput bind:value={selectedFormData.nicknamesJp} placeholder="ニックネーム..." contained />
+							<TagInput bind:value={formData.nicknamesJp} placeholder="ニックネーム..." contained />
 						</DetailItem>
 					</DetailsContainer>
 
 					<DetailsContainer title="Dates">
 						<SuggestionDetailItem
 							label="Release Date"
-							bind:value={selectedFormData.releaseDate}
+							bind:value={formData.releaseDate}
 							editable={true}
 							type="text"
 							placeholder="YYYY-MM-DD"
@@ -461,10 +479,10 @@
 							onAcceptSuggestion={() => handleAcceptSuggestion('releaseDate', suggestions?.releaseDate)}
 							onDismissSuggestion={() => handleDismissSuggestion('releaseDate')}
 						/>
-						{#if selectedFormData.flb}
+						{#if formData.flb}
 							<SuggestionDetailItem
 								label="FLB Date"
-								bind:value={selectedFormData.flbDate}
+								bind:value={formData.flbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -474,10 +492,10 @@
 								onDismissSuggestion={() => handleDismissSuggestion('flbDate')}
 							/>
 						{/if}
-						{#if selectedFormData.ulb}
+						{#if formData.ulb}
 							<SuggestionDetailItem
 								label="ULB Date"
-								bind:value={selectedFormData.ulbDate}
+								bind:value={formData.ulbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -492,7 +510,7 @@
 					<DetailsContainer title="Links">
 						<DetailItem
 							label="Wiki (EN)"
-							bind:value={selectedFormData.wikiEn}
+							bind:value={formData.wikiEn}
 							editable={true}
 							type="text"
 							placeholder="https://gbf.wiki/..."
@@ -500,7 +518,7 @@
 						/>
 						<DetailItem
 							label="Wiki (JP)"
-							bind:value={selectedFormData.wikiJa}
+							bind:value={formData.wikiJa}
 							editable={true}
 							type="text"
 							placeholder="https://gbf-wiki.com/..."
@@ -508,7 +526,7 @@
 						/>
 						<SuggestionDetailItem
 							label="Gamewith"
-							bind:value={selectedFormData.gamewith}
+							bind:value={formData.gamewith}
 							editable={true}
 							type="text"
 							placeholder="https://..."
@@ -520,7 +538,7 @@
 						/>
 						<SuggestionDetailItem
 							label="Kamigame"
-							bind:value={selectedFormData.kamigame}
+							bind:value={formData.kamigame}
 							editable={true}
 							type="text"
 							placeholder="https://..."

@@ -2,12 +2,8 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import {
-		entityAdapter,
-		type WeaponSuggestions,
-		type BatchPreviewResult
-	} from '$lib/api/adapters/entity.adapter'
-	import { getWeaponGridImageUrl } from '$lib/utils/images'
+	import { entityAdapter, type WeaponSuggestions } from '$lib/api/adapters/entity.adapter'
+	import { getWeaponImage } from '$lib/utils/images'
 
 	// Components
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
@@ -27,6 +23,15 @@
 
 	import type { PageData } from './$types'
 
+	// Internal entity state including loading status
+	interface EntityState {
+		wikiPage: string
+		status: 'loading' | 'success' | 'error'
+		granblueId?: string
+		suggestions?: WeaponSuggestions
+		error?: string
+	}
+
 	let { data }: { data: PageData } = $props()
 
 	// Input phase
@@ -35,7 +40,7 @@
 	let fetchError = $state<string | null>(null)
 
 	// Fetched entities
-	let entities = $state<Map<string, BatchPreviewResult<WeaponSuggestions>>>(new Map())
+	let entities = $state<Map<string, EntityState>>(new Map())
 	let selectedWikiPage = $state<string | null>(null)
 
 	// Form data per entity (keyed by wikiPage)
@@ -76,7 +81,7 @@
 			granblueId: entity.granblueId,
 			status: entity.status,
 			imageUrl: entity.granblueId
-				? getWeaponGridImageUrl(entity.granblueId)
+				? getWeaponImage(entity.granblueId)
 				: '/images/placeholders/placeholder-weapon-grid.png',
 			error: entity.error,
 			saved: savedEntities.has(wikiPage)
