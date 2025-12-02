@@ -149,9 +149,10 @@ export class UserAdapter extends BaseAdapter {
    * Update user profile
    */
   async updateProfile(updates: Partial<UserInfo>): Promise<UserInfo> {
+    // Wrap updates in 'user' key as required by Rails backend
     const result = await this.request<UserInfo>('/users/me', {
       method: 'PUT',
-      body: JSON.stringify(updates)
+      body: JSON.stringify({ user: updates })
     })
 
     // Clear cache for current user after update

@@ -26,24 +26,20 @@ export const users = {
 	 * Update user settings
 	 */
 	update: async (userId: string, params: UserUpdateParams): Promise<UserResponse> => {
-		// Transform flat params to nested UserInfo structure
+		// Pass flat params directly - backend expects flat picture/element fields
 		const updates: {
+			picture?: string | undefined
+			element?: string | undefined
 			gender?: number | undefined
 			language?: string | undefined
 			theme?: string | undefined
-			avatar?: { picture: string; element: string } | undefined
 		} = {}
 
+		if (params.picture !== undefined) updates.picture = params.picture
+		if (params.element !== undefined) updates.element = params.element
 		if (params.gender !== undefined) updates.gender = params.gender
 		if (params.language !== undefined) updates.language = params.language
 		if (params.theme !== undefined) updates.theme = params.theme
-
-		if (params.picture !== undefined || params.element !== undefined) {
-			updates.avatar = {
-				picture: params.picture ?? '',
-				element: params.element ?? ''
-			}
-		}
 
 		const result = await userAdapter.updateProfile(updates)
 		return {
