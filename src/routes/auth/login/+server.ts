@@ -1,5 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { json } from '@sveltejs/kit'
+import { dev } from '$app/environment'
 import { z } from 'zod'
 import { passwordGrantLogin } from '$lib/auth/oauth'
 import { UserAdapter } from '$lib/api/adapters/user.adapter'
@@ -12,7 +13,7 @@ const LoginSchema = z.object({
 	grant_type: z.literal('password')
 })
 
-export const POST: RequestHandler = async ({ request, cookies, url, fetch }) => {
+export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 	const raw = await request.json().catch(() => ({}))
 	const parsed = LoginSchema.safeParse(raw)
 	if (!parsed.success) {
@@ -33,7 +34,8 @@ export const POST: RequestHandler = async ({ request, cookies, url, fetch }) => 
 
 		const { account, user, accessTokenExpiresAt, refresh } = buildCookies(oauth, info)
 
-		const secure = url.protocol === 'https:'
+		// Use secure cookies in production (dev flag handles this correctly behind proxies)
+		const secure = !dev
 		setAccountCookie(cookies, account, { secure, expires: accessTokenExpiresAt })
 		setUserCookie(cookies, user, { secure, expires: accessTokenExpiresAt })
 		setRefreshCookie(cookies, refresh, { secure, expires: accessTokenExpiresAt })

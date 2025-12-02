@@ -1,5 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { json } from '@sveltejs/kit'
+import { dev } from '$app/environment'
 import { PUBLIC_SIERO_API_URL } from '$env/static/public'
 import {
 	getRefreshFromCookies,
@@ -23,7 +24,7 @@ type OAuthRefreshResponse = {
 	}
 }
 
-export const POST: RequestHandler = async ({ cookies, fetch, url }) => {
+export const POST: RequestHandler = async ({ cookies, fetch }) => {
 	const refresh = getRefreshFromCookies(cookies)
 	if (!refresh) {
 		return json({ error: 'no_refresh_token' }, { status: 401 })
@@ -48,7 +49,8 @@ export const POST: RequestHandler = async ({ cookies, fetch, url }) => {
 	}
 
 	const data = (await res.json()) as OAuthRefreshResponse
-	const secure = url.protocol === 'https:'
+	// Use secure cookies in production (dev flag handles this correctly behind proxies)
+	const secure = !dev
 	const accessTokenExpiresAt = new Date((data.created_at + data.expires_in) * 1000)
 
 	setAccountCookie(
