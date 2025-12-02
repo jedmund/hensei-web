@@ -189,8 +189,8 @@
 
 <div class="filters" class:horizontal={layout === 'horizontal'} class:vertical={layout === 'vertical'}>
 	{#if showFilters.element}
-		<div class="filter-group">
-			<label class="filter-label">Element</label>
+		<div class="filter-group" role="group" aria-label="Element filters">
+			<span class="filter-label">Element</span>
 			<div class="filter-buttons">
 				{#each elements as element}
 					<button
@@ -209,8 +209,8 @@
 	{/if}
 
 	{#if showFilters.rarity}
-		<div class="filter-group">
-			<label class="filter-label">Rarity</label>
+		<div class="filter-group" role="group" aria-label="Rarity filters">
+			<span class="filter-label">Rarity</span>
 			<div class="filter-buttons">
 				{#each rarities as rarity}
 					<button
@@ -228,8 +228,8 @@
 	{/if}
 
 	{#if showFilters.season}
-		<div class="filter-group">
-			<label class="filter-label">Season</label>
+		<div class="filter-group" role="group" aria-label="Season filters">
+			<span class="filter-label">Season</span>
 			<div class="filter-buttons">
 				{#each seasons as season}
 					<button
@@ -247,8 +247,8 @@
 	{/if}
 
 	{#if showFilters.series}
-		<div class="filter-group">
-			<label class="filter-label">Series</label>
+		<div class="filter-group" role="group" aria-label="Series filters">
+			<span class="filter-label">Series</span>
 			<div class="filter-buttons wrap">
 				{#each series as s}
 					<button
@@ -266,8 +266,8 @@
 	{/if}
 
 	{#if showFilters.race}
-		<div class="filter-group">
-			<label class="filter-label">Race</label>
+		<div class="filter-group" role="group" aria-label="Race filters">
+			<span class="filter-label">Race</span>
 			<div class="filter-buttons">
 				{#each races as race}
 					<button
@@ -285,8 +285,8 @@
 	{/if}
 
 	{#if showFilters.proficiency}
-		<div class="filter-group">
-			<label class="filter-label">Proficiency</label>
+		<div class="filter-group" role="group" aria-label="Proficiency filters">
+			<span class="filter-label">Proficiency</span>
 			<div class="filter-buttons proficiency-grid">
 				{#each proficiencies as prof}
 					<button
@@ -304,8 +304,8 @@
 	{/if}
 
 	{#if showFilters.gender}
-		<div class="filter-group">
-			<label class="filter-label">Gender</label>
+		<div class="filter-group" role="group" aria-label="Gender filters">
+			<span class="filter-label">Gender</span>
 			<div class="filter-buttons">
 				{#each genders as gender}
 					<button
