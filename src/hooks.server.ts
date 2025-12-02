@@ -3,6 +3,7 @@ import { sequence } from '@sveltejs/kit/hooks'
 import { paraglideMiddleware } from '$lib/paraglide/server'
 import { getAccountFromCookies, getUserFromCookies } from '$lib/auth/cookies'
 import { PUBLIC_SIERO_API_URL } from '$env/static/public'
+import { generateFontFaceCSS, getFontPreloadLinks } from '$lib/utils/fonts'
 
 export const handleSession: Handle = async ({ event, resolve }) => {
 	const account = getAccountFromCookies(event.cookies)
@@ -41,12 +42,21 @@ export const handleSession: Handle = async ({ event, resolve }) => {
 	return resolve(event)
 }
 
+// Generate font CSS and preload links once at startup
+const fontCSS = generateFontFaceCSS()
+const fontPreloads = getFontPreloadLinks()
+
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
 		event.request = request
 
 		return resolve(event, {
-			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale)
+			transformPageChunk: ({ html }) => {
+				// Inject font preloads and @font-face CSS into the head
+				const fontStyle = `<style id="font-faces">${fontCSS}</style>`
+				html = html.replace('</head>', `${fontPreloads}\n${fontStyle}\n</head>`)
+				return html.replace('%paraglide.lang%', locale)
+			}
 		})
 	})
 

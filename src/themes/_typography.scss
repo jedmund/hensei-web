@@ -1,11 +1,7 @@
 // Fonts
-@font-face {
-	font-family: 'Goalking';
-	src: url('/fonts/gk-variable.woff2') format('woff2-variations');
-	font-weight: 100 900;
-	font-style: normal;
-	font-display: swap;
-}
+// Font files are loaded from static/fonts locally or AWS S3 in production
+// The @font-face declarations are in src/lib/styles/fonts.css which is
+// generated/loaded based on environment (see app.html and hooks)
 
 // Font-weight (AGrot: 400, 500, 700, 900)
 $normal: 400;
