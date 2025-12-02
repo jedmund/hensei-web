@@ -119,13 +119,33 @@ export function getCharacterDetailImage(
 
 /**
  * Get weapon image URL
+ * @param transformation - Optional transformation suffix ('02' for transcendence)
  */
 export function getWeaponImage(
 	id: string | number | null | undefined,
 	variant: ImageVariant = 'main',
-	element?: number
+	element?: number,
+	transformation?: string
 ): string {
-	return getImageUrl('weapon', id, variant, { element })
+	if (!id) {
+		return getPlaceholderImage('weapon', variant)
+	}
+
+	const directory = getImageDirectory('weapon', variant)
+	const extension = getFileExtension('weapon', variant)
+	const basePath = `${getBasePath()}/${directory}`
+
+	// Handle element-specific weapon grids
+	if (variant === 'grid' && element && element > 0) {
+		return `${basePath}/${id}_${element}${extension}`
+	}
+
+	// Handle transformation suffix (transcendence)
+	if (transformation) {
+		return `${basePath}/${id}_${transformation}${extension}`
+	}
+
+	return `${basePath}/${id}${extension}`
 }
 
 /**
@@ -139,12 +159,27 @@ export function getWeaponBaseImage(
 
 /**
  * Get summon image URL
+ * @param transformation - Optional transformation suffix ('02' for ULB, '03' for transcendence)
  */
 export function getSummonImage(
 	id: string | number | null | undefined,
-	variant: ImageVariant = 'main'
+	variant: ImageVariant = 'main',
+	transformation?: string
 ): string {
-	return getImageUrl('summon', id, variant)
+	if (!id) {
+		return getPlaceholderImage('summon', variant)
+	}
+
+	const directory = getImageDirectory('summon', variant)
+	const extension = getFileExtension('summon', variant)
+	const basePath = `${getBasePath()}/${directory}`
+
+	// Handle transformation suffix (ULB, transcendence)
+	if (transformation) {
+		return `${basePath}/${id}_${transformation}${extension}`
+	}
+
+	return `${basePath}/${id}${extension}`
 }
 
 /**
