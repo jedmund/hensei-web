@@ -82,10 +82,24 @@
 		enabled: open && !collectedIdsQuery.isLoading
 	}))
 
-	// Flatten results
-	const allResults = $derived(
-		searchResults.data?.pages.flatMap((page) => page.results) ?? []
-	)
+	// Flatten results and deduplicate by ID
+	// (API may return duplicates across pages)
+	const allResults = $derived.by(() => {
+		const pages = searchResults.data?.pages ?? []
+		const seen = new Set<string>()
+		const results: SearchResult[] = []
+
+		for (const page of pages) {
+			for (const result of page.results) {
+				if (!seen.has(result.id)) {
+					seen.add(result.id)
+					results.push(result)
+				}
+			}
+		}
+
+		return results
+	})
 
 	// Filter to show only selected if enabled
 	const displayedResults = $derived(

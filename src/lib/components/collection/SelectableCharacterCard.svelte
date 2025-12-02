@@ -53,11 +53,12 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/effects' as *;
+	@use '$src/themes/rep' as rep;
 
 	.card {
 		position: relative;
-		width: 80px;
-		height: 80px;
+		width: 100%;
+		@include rep.aspect(rep.$char-cell-w, rep.$char-cell-h);
 		padding: 0;
 		border: 2px solid transparent;
 		border-radius: 8px;
@@ -85,7 +86,7 @@
 	.image {
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
+		object-fit: contain;
 	}
 
 	.check-overlay {
