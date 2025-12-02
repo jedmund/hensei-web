@@ -10,6 +10,7 @@
 	import { getElementLabel, getElementOptions } from '$lib/utils/element'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
 	import { getWeaponSeriesOptions, getWeaponSeriesSlug } from '$lib/utils/weaponSeries'
+	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -38,6 +39,12 @@
 	const proficiencyOptions = getProficiencyOptions()
 	const seriesOptions = [{ value: 0, label: 'None' }, ...getWeaponSeriesOptions()]
 
+	// Promotion options for multiselect
+	const promotionOptions = Object.entries(PROMOTION_NAMES).map(([value, label]) => ({
+		value: Number(value),
+		label
+	}))
+
 	// Get element name for checkbox theming
 	const elementName = $derived.by((): ElementName | undefined => {
 		const el = editMode ? editData.element : weapon?.element
@@ -54,6 +61,12 @@
 			.split('_')
 			.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
 			.join(' ')
+	}
+
+	// Format promotions for display
+	function formatPromotionsDisplay(promotions: number[]): string {
+		if (!promotions || promotions.length === 0) return '—'
+		return getPromotionNames(promotions).join(', ')
 	}
 </script>
 
@@ -112,6 +125,15 @@
 			type="checkbox"
 			element={elementName}
 		/>
+		<DetailItem
+			label="Promotions"
+			sublabel="Gacha pools where this weapon appears"
+			bind:value={editData.promotions}
+			editable={true}
+			type="multiselect"
+			options={promotionOptions}
+			element={elementName}
+		/>
 	{:else}
 		<DetailItem label="Element">
 			<ElementLabel element={weapon.element} size="medium" />
@@ -126,5 +148,6 @@
 		<DetailItem label="Extra" sublabel="Can be placed in Additional Weapons" value={weapon.extra ? 'Yes' : 'No'} />
 		<DetailItem label="Limit" sublabel="Only one copy can be placed in a team" value={weapon.limit ? 'Yes' : 'No'} />
 		<DetailItem label="AX Skills" sublabel="Can have AX Skills" value={weapon.ax ? 'Yes' : 'No'} />
+		<DetailItem label="Promotions" sublabel="Gacha pools where this weapon appears" value={formatPromotionsDisplay(weapon.promotions)} />
 	{/if}
 </DetailsContainer>
