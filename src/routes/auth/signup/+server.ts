@@ -4,7 +4,7 @@ import { dev } from '$app/environment'
 import { z } from 'zod'
 import { PUBLIC_SIERO_API_URL } from '$env/static/public'
 import { passwordGrantLogin } from '$lib/auth/oauth'
-import { UserAdapter } from '$lib/api/adapters/user.adapter'
+import { userAdapter } from '$lib/api/adapters/user.adapter'
 import { buildCookies } from '$lib/auth/map'
 import { setAccountCookie, setUserCookie, setRefreshCookie } from '$lib/auth/cookies'
 
@@ -75,7 +75,6 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 		})
 
 		// 3. Get additional user info
-		const userAdapter = new UserAdapter()
 		const info = await userAdapter.getInfo(oauth.user.username, {
 			headers: {
 				Authorization: `Bearer ${oauth.access_token}`
