@@ -16,6 +16,16 @@
 	// Reference to the scrolling container
 	let mainContent: HTMLElement | undefined
 
+	// Track scroll state for gradient visibility
+	let isScrolled = $state(false)
+
+	// Handle scroll events to toggle gradient visibility
+	function handleScroll() {
+		if (mainContent) {
+			isScrolled = mainContent.scrollTop > 0
+		}
+	}
+
 	// Store scroll positions for each visited route
 	const scrollPositions = new Map<string, number>()
 
@@ -87,7 +97,7 @@
 <Tooltip.Provider>
 	<div class="app-container" class:sidebar-open={sidebar.isOpen}>
 		<div class="main-pane">
-			<div class="nav-blur-background"></div>
+			<div class="nav-blur-background" class:scrolled={isScrolled}></div>
 			<div class="main-navigation">
 				<Navigation
 					isAuthenticated={data?.isAuthenticated}
@@ -95,7 +105,7 @@
 					currentUser={data?.currentUser}
 				/>
 			</div>
-			<main class="main-content" bind:this={mainContent}>
+			<main class="main-content" bind:this={mainContent} onscroll={handleScroll}>
 				{@render children?.()}
 			</main>
 		</div>
@@ -153,7 +163,7 @@
 				left: 0;
 				right: 0;
 				height: 81px; // Matches $nav-height
-				z-index: 1; // Lower z-index so scrollbar appears above
+				z-index: 3; // Above content (2) for backdrop-filter to work, below nav (10)
 				pointer-events: none;
 				transition: right $duration-slide ease-in-out;
 
@@ -173,6 +183,23 @@
 				// Mask gradient to fade out the blur effect progressively
 				mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
 				-webkit-mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
+
+				// Scroll-triggered gradient overlay using pseudo-element
+				&::after {
+					content: '';
+					position: absolute;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					background: linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0) 100%);
+					opacity: 0;
+					transition: opacity 0.2s ease-in-out;
+				}
+
+				&.scrolled::after {
+					opacity: 1;
+				}
 			}
 
 			// Navigation wrapper - fixed but shifts with main-pane
