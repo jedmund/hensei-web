@@ -2,8 +2,8 @@
 	import type { PageData } from './$types'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
+	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import { userQueries } from '$lib/api/queries/user.queries'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { IsInViewport } from 'runed'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -11,10 +11,7 @@
 	const { data } = $props() as { data: PageData }
 	const tab = $derived(data.tab || 'teams')
 	const isOwner = $derived(data.isOwner || false)
-
-	const avatarFile = $derived(data.user?.avatar?.picture || '')
-	const avatarSrc = $derived(getAvatarSrc(avatarFile))
-	const avatarSrcSet = $derived(getAvatarSrcSet(avatarFile))
+	const activeTab = $derived<'teams' | 'favorites'>(tab === 'favorites' ? 'favorites' : 'teams')
 
 	// Note: Type assertion needed because favorites and parties queries have different
 	// result structures (items vs results) but we handle both in the items $derived
@@ -94,35 +91,12 @@
 </script>
 
 <section class="profile">
-	<header class="header">
-		{#if data.user?.avatar?.picture}
-			<img
-				class="avatar"
-				alt={`Avatar of ${data.user.username}`}
-				src={avatarSrc}
-				srcset={avatarSrcSet}
-				width="64"
-				height="64"
-			/>
-		{:else}
-			<div class="avatar" aria-hidden="true"></div>
-		{/if}
-		<div>
-			<h1>{data.user.username}</h1>
-			<nav class="tabs" aria-label="Profile sections">
-				<a class:active={tab === 'teams'} href="?tab=teams" data-sveltekit-preload-data="hover"
-					>Teams</a
-				>
-				{#if isOwner}
-					<a
-						class:active={tab === 'favorites'}
-						href="?tab=favorites"
-						data-sveltekit-preload-data="hover">Favorites</a
-					>
-				{/if}
-			</nav>
-		</div>
-	</header>
+	<ProfileHeader
+		username={data.user.username}
+		avatarPicture={data.user?.avatar?.picture}
+		{activeTab}
+		{isOwner}
+	/>
 
 	{#if partiesQuery.isLoading}
 		<div class="loading">
@@ -169,39 +143,6 @@
 
 	.profile {
 		padding: $unit-2x 0;
-	}
-	.header {
-		display: flex;
-		align-items: center;
-		gap: $unit-2x;
-		margin-bottom: $unit-2x;
-	}
-	.avatar {
-		width: 64px;
-		height: 64px;
-		border-radius: 50%;
-		background: $grey-80;
-		border: 1px solid $grey-75;
-		object-fit: cover;
-	}
-	.sub {
-		color: $grey-55;
-		margin: 0;
-	}
-	.tabs {
-		display: flex;
-		gap: $unit-2x;
-		margin-top: $unit-half;
-	}
-	.tabs a {
-		text-decoration: none;
-		color: inherit;
-		padding-bottom: 2px;
-		border-bottom: 2px solid transparent;
-	}
-	.tabs a.active {
-		border-color: #3366ff;
-		color: #3366ff;
 	}
 
 	.empty,
