@@ -94,7 +94,13 @@ export abstract class BaseAdapter {
 		const url = this.buildURL(path, options.query || options.params)
 
 		// Generate a unique ID for this request (used for cancellation and caching)
-		const requestId = this.generateRequestId(path, options.method, options.body as string)
+		// Stringify body if it's an object to ensure proper cache key generation
+		const bodyString = options.body
+			? typeof options.body === 'string'
+				? options.body
+				: JSON.stringify(options.body)
+			: undefined
+		const requestId = this.generateRequestId(path, options.method, bodyString)
 
 		// Check cache first if caching is enabled (support both cacheTime and cacheTTL)
 		const cacheTime = options.cacheTTL ?? options.cacheTime ?? this.options.cacheTime
