@@ -5,6 +5,7 @@
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import Checkbox from './checkbox/Checkbox.svelte'
+	import CheckboxGroup from './checkbox/CheckboxGroup.svelte'
 	import DatePicker from './DatePicker.svelte'
 
 	interface SelectOption {
@@ -29,10 +30,10 @@
 		label: string
 		/** Secondary label displayed below the main label */
 		sublabel?: string
-		value?: string | number | boolean | null | undefined
+		value?: string | number | boolean | number[] | null | undefined
 		children?: Snippet
 		editable?: boolean
-		type?: 'text' | 'number' | 'select' | 'checkbox' | 'date'
+		type?: 'text' | 'number' | 'select' | 'checkbox' | 'date' | 'multiselect'
 		options?: SelectOption[]
 		placeholder?: string
 		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -69,6 +70,12 @@
 					{placeholder}
 					size="medium"
 					contained
+				/>
+			{:else if type === 'multiselect' && options}
+				<CheckboxGroup
+					bind:value={value as number[]}
+					options={options as { value: number; label: string }[]}
+					{element}
 				/>
 			{:else if type === 'checkbox'}
 				<Checkbox
