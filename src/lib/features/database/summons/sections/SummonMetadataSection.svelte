@@ -47,7 +47,7 @@
     />
     <SuggestionDetailItem
       label="Granblue ID"
-      bind:value={editData.granblue_id}
+      bind:value={editData.granblueId}
       editable={true}
       type="text"
       suggestion={suggestions?.granblueId}
