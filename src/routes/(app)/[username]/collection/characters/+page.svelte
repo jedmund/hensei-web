@@ -31,81 +31,28 @@
 	// Sentinel for infinite scroll
 	let sentinelEl = $state<HTMLElement>()
 
-	// Build filters for query
+	// Build filters for query - all filters are now server-side for everyone
 	const queryFilters = $derived({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
-		rarity: rarityFilters.length > 0 ? rarityFilters : undefined
+		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
+		race: raceFilters.length > 0 ? raceFilters : undefined,
+		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
+		gender: genderFilters.length > 0 ? genderFilters : undefined
 	})
 
-	// For owner, use the authenticated collection query with infinite scroll
-	// For non-owner, use the server-loaded public data
-	const collectionQuery = createInfiniteQuery(() => ({
-		...collectionQueries.characters(queryFilters),
-		enabled: data.isOwner,
-		initialData: data.isOwner
-			? undefined
-			: {
-					pages: [
-						{
-							results: data.characters || [],
-							page: 1,
-							totalPages: 1,
-							total: data.characters?.length || 0,
-							perPage: data.characters?.length || 20
-						}
-					],
-					pageParams: [1]
-				}
-	}))
+	// Unified query for any user's collection (privacy enforced server-side)
+	const collectionQuery = createInfiniteQuery(() => {
+		const userId = data.user.id
+		const filters = queryFilters
+		return collectionQueries.characters(userId, filters)
+	})
 
 	// Flatten all characters from pages
 	const allCharacters = $derived.by((): CollectionCharacter[] => {
-		if (!data.isOwner) {
-			return data.characters || []
-		}
 		if (!collectionQuery.data?.pages) {
 			return []
 		}
 		return collectionQuery.data.pages.flatMap((page) => page.results ?? [])
-	})
-
-	// Client-side filtering for non-API-supported filters
-	const filteredCharacters = $derived.by((): CollectionCharacter[] => {
-		let result = allCharacters
-
-		// Apply element filter (client-side for non-owner)
-		if (elementFilters.length > 0) {
-			result = result.filter((c) => elementFilters.includes(c.character?.element ?? 0))
-		}
-
-		// Apply rarity filter (client-side for non-owner)
-		if (rarityFilters.length > 0) {
-			result = result.filter((c) => rarityFilters.includes(c.character?.rarity ?? 0))
-		}
-
-		// Apply race filter (client-side) - race is nested object
-		if (raceFilters.length > 0) {
-			result = result.filter((c) => {
-				const race1 = c.character?.race?.race1 ?? 0
-				const race2 = c.character?.race?.race2 ?? 0
-				return raceFilters.includes(race1) || (race2 && raceFilters.includes(race2))
-			})
-		}
-
-		// Apply proficiency filter (client-side) - proficiency is an array
-		if (proficiencyFilters.length > 0) {
-			result = result.filter((c) => {
-				const proficiencies = c.character?.proficiency ?? []
-				return proficiencies.some((p) => proficiencyFilters.includes(p))
-			})
-		}
-
-		// Apply gender filter (client-side)
-		if (genderFilters.length > 0) {
-			result = result.filter((c) => genderFilters.includes(c.character?.gender ?? 0))
-		}
-
-		return result
 	})
 
 	// Infinite scroll
@@ -115,7 +62,6 @@
 
 	$effect(() => {
 		if (
-			data.isOwner &&
 			inViewport.current &&
 			collectionQuery.hasNextPage &&
 			!collectionQuery.isFetchingNextPage &&
@@ -125,11 +71,9 @@
 		}
 	})
 
-	const isLoading = $derived(data.isOwner && collectionQuery.isLoading)
-	const isEmpty = $derived(!isLoading && filteredCharacters.length === 0)
-	const showSentinel = $derived(
-		data.isOwner && collectionQuery.hasNextPage && !collectionQuery.isFetchingNextPage
-	)
+	const isLoading = $derived(collectionQuery.isLoading)
+	const isEmpty = $derived(!isLoading && allCharacters.length === 0)
+	const showSentinel = $derived(collectionQuery.hasNextPage && !collectionQuery.isFetchingNextPage)
 
 	function handleFiltersChange(filters: CollectionFilterState) {
 		elementFilters = filters.element
@@ -223,7 +167,7 @@
 			</div>
 		{:else}
 			<div class="character-grid">
-				{#each filteredCharacters as character (character.id)}
+				{#each allCharacters as character (character.id)}
 					<button
 						type="button"
 						class="character-card"
@@ -270,9 +214,9 @@
 				</div>
 			{/if}
 
-			{#if data.isOwner && !collectionQuery.hasNextPage && filteredCharacters.length > 0}
+			{#if !collectionQuery.hasNextPage && allCharacters.length > 0}
 				<div class="end-message">
-					<p>{filteredCharacters.length} character{filteredCharacters.length === 1 ? '' : 's'} in your collection</p>
+					<p>{allCharacters.length} character{allCharacters.length === 1 ? '' : 's'} in {data.isOwner ? 'your' : 'this'} collection</p>
 				</div>
 			{/if}
 		{/if}
@@ -281,7 +225,7 @@
 
 <!-- Add to Collection Modal -->
 {#if data.isOwner}
-	<AddToCollectionModal bind:open={addModalOpen} />
+	<AddToCollectionModal userId={data.user.id} bind:open={addModalOpen} />
 {/if}
 
 <style lang="scss">

@@ -19,11 +19,12 @@
 	type SearchResultItem = SearchPageResult['results'][number]
 
 	interface Props {
+		userId: string
 		open?: boolean
 		onOpenChange?: (open: boolean) => void
 	}
 
-	let { open = $bindable(false), onOpenChange }: Props = $props()
+	let { userId, open = $bindable(false), onOpenChange }: Props = $props()
 
 	// Search state
 	let searchQuery = $state('')
@@ -45,7 +46,7 @@
 	let sentinelEl = $state<HTMLElement>()
 
 	// Get IDs of characters already in collection
-	const collectedIdsQuery = createQuery(() => collectionQueries.collectedCharacterIds())
+	const collectedIdsQuery = createQuery(() => collectionQueries.collectedCharacterIds(userId))
 
 	// Build filters for search (using SearchFilters type from search.queries)
 	const searchFilters = $derived<SearchFilters>({
