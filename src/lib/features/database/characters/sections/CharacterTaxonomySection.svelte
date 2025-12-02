@@ -7,10 +7,20 @@
   import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
   import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
   import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
-  import { getElementOptions } from '$lib/utils/element'
+  import { getElementLabel, getElementOptions } from '$lib/utils/element'
   import { getRaceLabel, getRaceOptions } from '$lib/utils/race'
   import { getGenderLabel, getGenderOptions } from '$lib/utils/gender'
   import { getProficiencyOptions } from '$lib/utils/proficiency'
+  import {
+    CharacterSeason,
+    CharacterSeries,
+    CHARACTER_SEASON_NAMES,
+    CHARACTER_SERIES_NAMES,
+    getSeasonName,
+    getSeriesNames
+  } from '$lib/types/enums'
+
+  type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
   interface Props {
     character: any
@@ -37,6 +47,34 @@
   const raceOptions = getRaceOptions()
   const genderOptions = getGenderOptions()
   const proficiencyOptions = getProficiencyOptions()
+
+  // Season options (nullable, so include a "None" option)
+  const seasonOptions = [
+    { value: 0, label: 'None' },
+    ...Object.entries(CHARACTER_SEASON_NAMES).map(([value, label]) => ({
+      value: Number(value),
+      label
+    }))
+  ]
+
+  // Series options for multiselect
+  const seriesOptions = Object.entries(CHARACTER_SERIES_NAMES).map(([value, label]) => ({
+    value: Number(value),
+    label
+  }))
+
+  // Get element name for checkbox theming
+  const elementName = $derived.by((): ElementName | undefined => {
+    const el = editMode ? editData?.element : character?.element
+    const label = getElementLabel(el)
+    return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
+  })
+
+  // Format series for display
+  function formatSeriesDisplay(series: number[]): string {
+    if (!series || series.length === 0) return '—'
+    return getSeriesNames(series).join(', ')
+  }
 </script>
 
 <DetailsContainer title="Details">
@@ -107,6 +145,29 @@
       onAcceptSuggestion={() => onAcceptSuggestion?.('proficiency2', suggestions?.proficiency2)}
       onDismissSuggestion={() => onDismissSuggestion?.('proficiency2')}
     />
+    <DetailItem
+      label="Season"
+      bind:value={editData.season}
+      editable={true}
+      type="select"
+      options={seasonOptions}
+    />
+    <DetailItem
+      label="Series"
+      bind:value={editData.series}
+      editable={true}
+      type="multiselect"
+      options={seriesOptions}
+      element={elementName}
+    />
+    <DetailItem
+      label="Gacha Available"
+      sublabel="Can be pulled from gacha"
+      bind:value={editData.gacha_available}
+      editable={true}
+      type="checkbox"
+      element={elementName}
+    />
   {:else}
     <DetailItem label="Element">
       <ElementLabel element={character.element} size="medium" />
@@ -120,6 +181,9 @@
     <DetailItem label="Proficiency 2">
       <ProficiencyLabel proficiency={character.proficiency?.[1] ?? 0} size="medium" />
     </DetailItem>
+    <DetailItem label="Season" value={getSeasonName(character.season) || '—'} />
+    <DetailItem label="Series" value={formatSeriesDisplay(character.series)} />
+    <DetailItem label="Gacha Available" value={character.gachaAvailable ? 'Yes' : 'No'} />
   {/if}
 </DetailsContainer>
 
