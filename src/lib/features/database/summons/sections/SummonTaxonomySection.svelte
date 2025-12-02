@@ -6,7 +6,10 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
-	import { getElementOptions } from '$lib/utils/element'
+	import { getElementLabel, getElementOptions } from '$lib/utils/element'
+	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
+
+	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
 		summon: any
@@ -30,6 +33,25 @@
 	}: Props = $props()
 
 	const elementOptions = getElementOptions()
+
+	// Promotion options for multiselect
+	const promotionOptions = Object.entries(PROMOTION_NAMES).map(([value, label]) => ({
+		value: Number(value),
+		label
+	}))
+
+	// Get element name for checkbox theming
+	const elementName = $derived.by((): ElementName | undefined => {
+		const el = editMode ? editData?.element : summon?.element
+		const label = getElementLabel(el)
+		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
+	})
+
+	// Format promotions for display
+	function formatPromotionsDisplay(promotions: number[]): string {
+		if (!promotions || promotions.length === 0) return '—'
+		return getPromotionNames(promotions).join(', ')
+	}
 </script>
 
 <DetailsContainer title="Details">
@@ -52,10 +74,20 @@
 			type="text"
 			placeholder="Series name"
 		/>
+		<DetailItem
+			label="Promotions"
+			sublabel="Gacha pools where this summon appears"
+			bind:value={editData.promotions}
+			editable={true}
+			type="multiselect"
+			options={promotionOptions}
+			element={elementName}
+		/>
 	{:else}
 		<DetailItem label="Element">
 			<ElementLabel element={summon.element} size="medium" />
 		</DetailItem>
 		<DetailItem label="Series" value={summon.series || '—'} />
+		<DetailItem label="Promotions" sublabel="Gacha pools where this summon appears" value={formatPromotionsDisplay(summon.promotions)} />
 	{/if}
 </DetailsContainer>

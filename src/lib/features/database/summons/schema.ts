@@ -5,6 +5,7 @@ export const SummonEditSchema = z.object({
   granblue_id: z.string().min(1),
   rarity: z.number().int().min(1),
   element: z.number().int().min(0),
+  promotions: z.array(z.number().int().min(1)),
   min_hp: z.number().int().min(0),
   max_hp: z.number().int().min(0),
   max_hp_flb: z.number().int().min(0),
@@ -21,15 +22,17 @@ export type SummonEdit = z.infer<typeof SummonEditSchema>
 export function toEditData(model: any): SummonEdit {
   return {
     name: model?.name ?? '',
-    granblue_id: model?.granblue_id ?? '',
+    granblue_id: model?.granblueId ?? model?.granblue_id ?? '',
     rarity: model?.rarity ?? 1,
     element: model?.element ?? 0,
-    min_hp: model?.hp?.min_hp ?? 0,
-    max_hp: model?.hp?.max_hp ?? 0,
-    max_hp_flb: model?.hp?.max_hp_flb ?? 0,
-    min_atk: model?.atk?.min_atk ?? 0,
-    max_atk: model?.atk?.max_atk ?? 0,
-    max_atk_flb: model?.atk?.max_atk_flb ?? 0,
+    promotions: model?.promotions ?? [],
+    // API returns camelCase after transformation
+    min_hp: model?.hp?.minHp ?? model?.hp?.min_hp ?? 0,
+    max_hp: model?.hp?.maxHp ?? model?.hp?.max_hp ?? 0,
+    max_hp_flb: model?.hp?.maxHpFlb ?? model?.hp?.max_hp_flb ?? 0,
+    min_atk: model?.atk?.minAtk ?? model?.atk?.min_atk ?? 0,
+    max_atk: model?.atk?.maxAtk ?? model?.atk?.max_atk ?? 0,
+    max_atk_flb: model?.atk?.maxAtkFlb ?? model?.atk?.max_atk_flb ?? 0,
     flb: model?.uncap?.flb ?? false,
     ulb: model?.uncap?.ulb ?? false,
     transcendence: model?.uncap?.transcendence ?? false
@@ -42,6 +45,7 @@ export function toPayload(edit: SummonEdit) {
     granblue_id: edit.granblue_id,
     rarity: edit.rarity,
     element: edit.element,
+    promotions: edit.promotions,
     hp: {
       min_hp: edit.min_hp,
       max_hp: edit.max_hp,
