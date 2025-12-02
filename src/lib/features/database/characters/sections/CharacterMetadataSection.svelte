@@ -55,7 +55,6 @@
       onAcceptSuggestion={() => onAcceptSuggestion?.('granblueId', suggestions?.granblueId)}
       onDismissSuggestion={() => onDismissSuggestion?.('granblueId')}
     />
-    <DetailItem label="Character ID" bind:value={editData.characterId} editable={true} type="number" />
   {:else}
     <DetailItem label="Rarity" value={getRarityLabel(character.rarity)} />
     <DetailItem label="Granblue ID">
