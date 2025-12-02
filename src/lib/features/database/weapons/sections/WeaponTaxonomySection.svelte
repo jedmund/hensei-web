@@ -1,8 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import type { WeaponSuggestions } from '$lib/api/adapters/entity.adapter'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
+	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import { getElementLabel, getElementOptions } from '$lib/utils/element'
@@ -15,9 +17,22 @@
 		weapon: any
 		editMode?: boolean
 		editData?: any
+		// Suggestion support for batch import
+		suggestions?: WeaponSuggestions
+		dismissedSuggestions?: Set<string>
+		onAcceptSuggestion?: (field: string, value: any) => void
+		onDismissSuggestion?: (field: string) => void
 	}
 
-	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
+	let {
+		weapon,
+		editMode = false,
+		editData = $bindable(),
+		suggestions,
+		dismissedSuggestions,
+		onAcceptSuggestion,
+		onDismissSuggestion
+	}: Props = $props()
 
 	const elementOptions = getElementOptions()
 	const proficiencyOptions = getProficiencyOptions()
@@ -44,19 +59,27 @@
 
 <DetailsContainer title="Details">
 	{#if editMode}
-		<DetailItem
+		<SuggestionDetailItem
 			label="Element"
 			bind:value={editData.element}
 			editable={true}
 			type="select"
 			options={elementOptions}
+			suggestion={suggestions?.element}
+			dismissedSuggestion={dismissedSuggestions?.has('element')}
+			onAcceptSuggestion={() => onAcceptSuggestion?.('element', suggestions?.element)}
+			onDismissSuggestion={() => onDismissSuggestion?.('element')}
 		/>
-		<DetailItem
+		<SuggestionDetailItem
 			label="Proficiency"
 			bind:value={editData.proficiency}
 			editable={true}
 			type="select"
 			options={proficiencyOptions}
+			suggestion={suggestions?.proficiency}
+			dismissedSuggestion={dismissedSuggestions?.has('proficiency')}
+			onAcceptSuggestion={() => onAcceptSuggestion?.('proficiency', suggestions?.proficiency)}
+			onDismissSuggestion={() => onDismissSuggestion?.('proficiency')}
 		/>
 		<DetailItem
 			label="Series"

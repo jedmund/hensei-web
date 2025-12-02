@@ -30,16 +30,18 @@
 </script>
 
 {#if suggestion !== undefined && suggestion !== null && !dismissed}
-	<TooltipBase.Root bind:open={isOpen} openDelay={0} closeDelay={100}>
-		<TooltipBase.Trigger asChild let:builder>
-			<button
-				{...builder}
-				type="button"
-				class="suggestion-badge"
-				aria-label="Wiki suggestion available"
-			>
-				<Icon name="sparkles" size={14} />
-			</button>
+	<TooltipBase.Root bind:open={isOpen} delayDuration={0}>
+		<TooltipBase.Trigger>
+			{#snippet child({ props })}
+				<button
+					{...props}
+					type="button"
+					class="suggestion-badge"
+					aria-label="Wiki suggestion available"
+				>
+					<Icon name="sparkles" size={14} />
+				</button>
+			{/snippet}
 		</TooltipBase.Trigger>
 		<TooltipBase.Content class="suggestion-tooltip" sideOffset={4}>
 			<div class="suggestion-content">

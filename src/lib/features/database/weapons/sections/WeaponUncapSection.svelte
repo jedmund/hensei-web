@@ -1,8 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import type { WeaponSuggestions } from '$lib/api/adapters/entity.adapter'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
+	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getElementLabel } from '$lib/utils/element'
 
@@ -12,9 +14,22 @@
 		weapon: any
 		editMode?: boolean
 		editData?: any
+		// Suggestion support for batch import
+		suggestions?: WeaponSuggestions
+		dismissedSuggestions?: Set<string>
+		onAcceptSuggestion?: (field: string, value: any) => void
+		onDismissSuggestion?: (field: string) => void
 	}
 
-	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
+	let {
+		weapon,
+		editMode = false,
+		editData = $bindable(),
+		suggestions,
+		dismissedSuggestions,
+		onAcceptSuggestion,
+		onDismissSuggestion
+	}: Props = $props()
 
 	const uncap = $derived(
 		editMode
@@ -79,21 +94,29 @@
 	{/if}
 
 	{#if editMode}
-		<DetailItem
+		<SuggestionDetailItem
 			label="FLB"
 			bind:value={editData.flb}
 			editable={true}
 			type="checkbox"
 			element={elementName}
 			onchange={handleFlbChange}
+			suggestion={suggestions?.flb}
+			dismissedSuggestion={dismissedSuggestions?.has('flb')}
+			onAcceptSuggestion={() => onAcceptSuggestion?.('flb', suggestions?.flb)}
+			onDismissSuggestion={() => onDismissSuggestion?.('flb')}
 		/>
-		<DetailItem
+		<SuggestionDetailItem
 			label="ULB"
 			bind:value={editData.ulb}
 			editable={true}
 			type="checkbox"
 			element={elementName}
 			onchange={handleUlbChange}
+			suggestion={suggestions?.ulb}
+			dismissedSuggestion={dismissedSuggestions?.has('ulb')}
+			onAcceptSuggestion={() => onAcceptSuggestion?.('ulb', suggestions?.ulb)}
+			onDismissSuggestion={() => onDismissSuggestion?.('ulb')}
 		/>
 		<DetailItem
 			label="Transcendence"
