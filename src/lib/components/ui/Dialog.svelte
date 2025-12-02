@@ -3,11 +3,14 @@
 	import type { Snippet } from 'svelte'
 	import Icon from '$lib/components/Icon.svelte'
 
+	type DialogSize = 'default' | 'large'
+
 	interface DialogProps {
 		open: boolean
 		onOpenChange?: (open: boolean) => void
 		title?: string
 		description?: string
+		size?: DialogSize
 		children: Snippet
 		footer?: Snippet
 	}
@@ -17,9 +20,12 @@
 		onOpenChange,
 		title,
 		description,
+		size = 'default',
 		children,
 		footer
 	}: DialogProps = $props()
+
+	const sizeClass = $derived(size === 'large' ? 'dialog-content-large' : '')
 
 	function handleOpenChange(newOpen: boolean) {
 		open = newOpen
@@ -30,7 +36,7 @@
 <DialogBase.Root bind:open onOpenChange={handleOpenChange}>
 	<DialogBase.Portal>
 		<DialogBase.Overlay class="dialog-overlay" />
-		<DialogBase.Content class="dialog-content">
+		<DialogBase.Content class="dialog-content {sizeClass}">
 			{#if title}
 				<DialogBase.Title class="dialog-title">{title}</DialogBase.Title>
 			{/if}
@@ -141,6 +147,24 @@
 		display: flex;
 		gap: $unit;
 		justify-content: flex-end;
+	}
+
+	// Large dialog variant for collection modals, etc.
+	:global(.dialog-content-large) {
+		width: 90vw;
+		max-width: 1400px;
+		height: 85vh;
+		max-height: 85vh;
+	}
+
+	:global(.dialog-content-large .dialog-body) {
+		padding: $unit-3x;
+	}
+
+	:global(.dialog-content-large .dialog-footer) {
+		padding: $unit-3x;
+		padding-top: $unit-2x;
+		border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
 	}
 
 	@keyframes fade-in {
