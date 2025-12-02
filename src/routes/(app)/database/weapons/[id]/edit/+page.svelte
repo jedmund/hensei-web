@@ -111,17 +111,17 @@
 				extra: false,
 				limit: false,
 				ax: weapon.ax || false,
-				releaseDate: '',
-				flbDate: '',
-				ulbDate: '',
-				transcendenceDate: '',
-				wikiEn: '',
-				wikiJa: '',
-				gamewith: '',
-				kamigame: '',
-				nicknamesEn: [],
-				nicknamesJp: [],
-				recruits: ''
+				releaseDate: weapon.releaseDate || '',
+				flbDate: weapon.flbDate || '',
+				ulbDate: weapon.ulbDate || '',
+				transcendenceDate: weapon.transcendenceDate || '',
+				wikiEn: weapon.wiki?.en || '',
+				wikiJa: weapon.wiki?.ja || '',
+				gamewith: weapon.gamewith || '',
+				kamigame: weapon.kamigame || '',
+				nicknamesEn: weapon.nicknames?.en || [],
+				nicknamesJp: weapon.nicknames?.ja || [],
+				recruits: weapon.recruits || ''
 			}
 		}
 	})
@@ -233,16 +233,14 @@
 						label="Release Date"
 						bind:value={editData.releaseDate}
 						editable={true}
-						type="text"
-						placeholder="YYYY-MM-DD"
+						type="date"
 					/>
 					{#if editData.flb}
 						<DetailItem
 							label="FLB Date"
 							bind:value={editData.flbDate}
 							editable={true}
-							type="text"
-							placeholder="YYYY-MM-DD"
+							type="date"
 						/>
 					{/if}
 					{#if editData.ulb}
@@ -250,8 +248,7 @@
 							label="ULB Date"
 							bind:value={editData.ulbDate}
 							editable={true}
-							type="text"
-							placeholder="YYYY-MM-DD"
+							type="date"
 						/>
 					{/if}
 					{#if editData.transcendence}
@@ -259,8 +256,7 @@
 							label="Transcendence Date"
 							bind:value={editData.transcendenceDate}
 							editable={true}
-							type="text"
-							placeholder="YYYY-MM-DD"
+							type="date"
 						/>
 					{/if}
 				</DetailsContainer>

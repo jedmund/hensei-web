@@ -106,16 +106,16 @@
 				transcendence: summon.uncap?.transcendence || false,
 				subaura: summon.subaura || false,
 				limit: false,
-				releaseDate: '',
-				flbDate: '',
-				ulbDate: '',
-				transcendenceDate: '',
-				wikiEn: '',
-				wikiJa: '',
-				gamewith: '',
-				kamigame: '',
-				nicknamesEn: [],
-				nicknamesJp: []
+				releaseDate: summon.releaseDate || '',
+				flbDate: summon.flbDate || '',
+				ulbDate: summon.ulbDate || '',
+				transcendenceDate: summon.transcendenceDate || '',
+				wikiEn: summon.wiki?.en || '',
+				wikiJa: summon.wiki?.ja || '',
+				gamewith: summon.gamewith || '',
+				kamigame: summon.kamigame || '',
+				nicknamesEn: summon.nicknames?.en || [],
+				nicknamesJp: summon.nicknames?.ja || []
 			}
 		}
 	})
@@ -224,16 +224,14 @@
 						label="Release Date"
 						bind:value={editData.releaseDate}
 						editable={true}
-						type="text"
-						placeholder="YYYY-MM-DD"
+						type="date"
 					/>
 					{#if editData.flb}
 						<DetailItem
 							label="FLB Date"
 							bind:value={editData.flbDate}
 							editable={true}
-							type="text"
-							placeholder="YYYY-MM-DD"
+							type="date"
 						/>
 					{/if}
 					{#if editData.ulb}
@@ -241,8 +239,7 @@
 							label="ULB Date"
 							bind:value={editData.ulbDate}
 							editable={true}
-							type="text"
-							placeholder="YYYY-MM-DD"
+							type="date"
 						/>
 					{/if}
 					{#if editData.transcendence}
@@ -250,8 +247,7 @@
 							label="Transcendence Date"
 							bind:value={editData.transcendenceDate}
 							editable={true}
-							type="text"
-							placeholder="YYYY-MM-DD"
+							type="date"
 						/>
 					{/if}
 				</DetailsContainer>

@@ -16,7 +16,8 @@
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
-	import CharacterImagesSection from '$lib/features/database/characters/sections/CharacterImagesSection.svelte'
+	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
+	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
 
 	// Types
@@ -63,7 +64,10 @@
 		flb: false,
 		ulb: false,
 		transcendence: false,
-		special: false
+		special: false,
+		releaseDate: '',
+		flbDate: '',
+		ulbDate: ''
 	})
 
 	// Populate edit data when character loads
@@ -89,7 +93,10 @@
 				flb: character.uncap?.flb || false,
 				ulb: character.uncap?.ulb || false,
 				transcendence: character.uncap?.transcendence || false,
-				special: character.special || false
+				special: character.special || false,
+				releaseDate: character.releaseDate || '',
+				flbDate: character.flbDate || '',
+				ulbDate: character.ulbDate || ''
 			}
 		}
 	})
@@ -121,7 +128,10 @@
 				max_atk_flb: editData.maxAtkFlb,
 				flb: editData.flb,
 				ulb: editData.ulb,
-				special: editData.special
+				special: editData.special,
+				release_date: editData.releaseDate || null,
+				flb_date: editData.flbDate || null,
+				ulb_date: editData.ulbDate || null
 			}
 
 			await entityAdapter.updateCharacter(character.id, payload)
@@ -168,13 +178,30 @@
 				<CharacterTaxonomySection {character} {editMode} bind:editData />
 				<CharacterStatsSection {character} {editMode} bind:editData />
 
-				{#if character?.id && character?.granblueId}
-					<CharacterImagesSection
-						characterId={character.id}
-						granblueId={character.granblueId}
-						canEdit={true}
+				<DetailsContainer title="Dates">
+					<DetailItem
+						label="Release Date"
+						bind:value={editData.releaseDate}
+						editable={true}
+						type="date"
 					/>
-				{/if}
+					{#if editData.flb}
+						<DetailItem
+							label="FLB Date"
+							bind:value={editData.flbDate}
+							editable={true}
+							type="date"
+						/>
+					{/if}
+					{#if editData.ulb}
+						<DetailItem
+							label="ULB Date"
+							bind:value={editData.ulbDate}
+							editable={true}
+							type="date"
+						/>
+					{/if}
+				</DetailsContainer>
 			</section>
 		</DetailScaffold>
 	{:else}
