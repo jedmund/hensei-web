@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { getCharacterImage } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
-	import type { SearchResult } from '$lib/api/adapters/search.adapter'
+	import type { SearchPageResult } from '$lib/api/queries/search.queries'
+
+	type SearchResultItem = SearchPageResult['results'][number]
 
 	interface Props {
-		character: SearchResult
+		character: SearchResultItem
 		selected?: boolean
-		onToggle?: (character: SearchResult) => void
+		onToggle?: (character: SearchResultItem) => void
 	}
 
 	let { character, selected = false, onToggle }: Props = $props()

@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { createQuery, createInfiniteQuery } from '@tanstack/svelte-query'
-	import { searchAdapter, type SearchResult } from '$lib/api/adapters/search.adapter'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
+	import {
+		searchQueries,
+		type SearchFilters,
+		type SearchPageResult
+	} from '$lib/api/queries/search.queries'
 	import { useAddCharactersToCollection } from '$lib/api/mutations/collection.mutations'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -12,6 +16,8 @@
 	import SelectableCharacterCard from './SelectableCharacterCard.svelte'
 	import { IsInViewport } from 'runed'
 
+	type SearchResultItem = SearchPageResult['results'][number]
+
 	interface Props {
 		open?: boolean
 		onOpenChange?: (open: boolean) => void
@@ -21,8 +27,6 @@
 
 	// Search state
 	let searchQuery = $state('')
-	let debouncedQuery = $state('')
-	let debounceTimer: ReturnType<typeof setTimeout>
 
 	// Filter state
 	let elementFilters = $state<number[]>([])
@@ -43,51 +47,34 @@
 	// Get IDs of characters already in collection
 	const collectedIdsQuery = createQuery(() => collectionQueries.collectedCharacterIds())
 
-	// Build filters for search
-	const searchFilters = $derived({
+	// Build filters for search (using SearchFilters type from search.queries)
+	const searchFilters = $derived<SearchFilters>({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
 		season: seasonFilters.length > 0 ? seasonFilters : undefined,
 		characterSeries: seriesFilters.length > 0 ? seriesFilters : undefined,
-		// Note: Race, proficiency, and gender filters would need API support
-		// For now we filter client-side or skip if API doesn't support
-		proficiency1: proficiencyFilters.length > 0 ? proficiencyFilters : undefined
+		// Note: Race and gender filters would need API support
+		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined
 	})
 
-	// Search query with infinite scroll
-	const searchResults = createInfiniteQuery(() => ({
-		queryKey: ['search', 'characters', 'collection', debouncedQuery, searchFilters] as const,
-		queryFn: async ({ pageParam }) => {
-			const response = await searchAdapter.searchCharacters({
-				query: debouncedQuery || undefined,
-				page: pageParam,
-				per: 60,
-				filters: searchFilters,
-				exclude: collectedIdsQuery.data ?? []
-			})
-			return {
-				results: response.results ?? [],
-				page: response.meta?.page ?? pageParam,
-				totalPages: response.meta?.totalPages ?? 1,
-				total: response.meta?.count ?? 0
-			}
-		},
-		initialPageParam: 1,
-		getNextPageParam: (lastPage) => {
-			if (lastPage.page < lastPage.totalPages) {
-				return lastPage.page + 1
-			}
-			return undefined
-		},
-		enabled: open && !collectedIdsQuery.isLoading
-	}))
+	// Search query with infinite scroll using the factory pattern
+	// No debouncing - TanStack Query's staleTime handles caching
+	const searchResults = createInfiniteQuery(() => {
+		// Capture current reactive values synchronously for dependency tracking
+		const query = searchQuery
+		const filters = searchFilters
+		const excludeIds = collectedIdsQuery.data ?? []
+		const isEnabled = open && !collectedIdsQuery.isLoading
+
+		return searchQueries.characters(query, filters, 'en', excludeIds, isEnabled)
+	})
 
 	// Flatten results and deduplicate by ID
 	// (API may return duplicates across pages)
 	const allResults = $derived.by(() => {
 		const pages = searchResults.data?.pages ?? []
 		const seen = new Set<string>()
-		const results: SearchResult[] = []
+		const results: typeof pages[number]['results'] = []
 
 		for (const page of pages) {
 			for (const result of page.results) {
@@ -110,16 +97,6 @@
 
 	// Add mutation
 	const addMutation = useAddCharactersToCollection()
-
-	// Debounce search input
-	$effect(() => {
-		clearTimeout(debounceTimer)
-		debounceTimer = setTimeout(() => {
-			debouncedQuery = searchQuery
-		}, 300)
-
-		return () => clearTimeout(debounceTimer)
-	})
 
 	// Infinite scroll
 	const inViewport = new IsInViewport(() => sentinelEl, {
@@ -144,7 +121,6 @@
 			selectedIds = new Set()
 			showOnlySelected = false
 			searchQuery = ''
-			debouncedQuery = ''
 			elementFilters = []
 			rarityFilters = []
 			seasonFilters = []
@@ -155,7 +131,7 @@
 		}
 	})
 
-	function toggleSelection(character: SearchResult) {
+	function toggleSelection(character: SearchResultItem) {
 		const newSet = new Set(selectedIds)
 		if (newSet.has(character.id)) {
 			newSet.delete(character.id)
