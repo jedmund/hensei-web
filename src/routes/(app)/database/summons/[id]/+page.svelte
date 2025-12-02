@@ -173,6 +173,23 @@
 					<SummonTaxonomySection {summon} />
 					<SummonStatsSection {summon} />
 
+					{#if summon.releaseDate || summon.flbDate || summon.ulbDate || summon.transcendenceDate}
+						<DetailsContainer title="Dates">
+							{#if summon.releaseDate}
+								<DetailItem label="Release Date" value={summon.releaseDate} />
+							{/if}
+							{#if summon.flbDate}
+								<DetailItem label="FLB Date" value={summon.flbDate} />
+							{/if}
+							{#if summon.ulbDate}
+								<DetailItem label="ULB Date" value={summon.ulbDate} />
+							{/if}
+							{#if summon.transcendenceDate}
+								<DetailItem label="Transcendence Date" value={summon.transcendenceDate} />
+							{/if}
+						</DetailsContainer>
+					{/if}
+
 					<div class="summon-abilities">
 						<h3>Call Effect</h3>
 						<div class="abilities-section">
@@ -214,23 +231,6 @@
 							</div>
 						{/if}
 					</div>
-
-					{#if summon.releaseDate || summon.flbDate || summon.ulbDate || summon.transcendenceDate}
-						<DetailsContainer title="Dates">
-							{#if summon.releaseDate}
-								<DetailItem label="Release Date" value={summon.releaseDate} />
-							{/if}
-							{#if summon.flbDate}
-								<DetailItem label="FLB Date" value={summon.flbDate} />
-							{/if}
-							{#if summon.ulbDate}
-								<DetailItem label="ULB Date" value={summon.ulbDate} />
-							{/if}
-							{#if summon.transcendenceDate}
-								<DetailItem label="Transcendence Date" value={summon.transcendenceDate} />
-							{/if}
-						</DetailsContainer>
-					{/if}
 				</section>
 			{:else if currentTab === 'images'}
 				<EntityImagesTab

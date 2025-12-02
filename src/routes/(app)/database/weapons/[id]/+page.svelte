@@ -166,6 +166,23 @@
 					<WeaponTaxonomySection {weapon} />
 					<WeaponStatsSection {weapon} />
 
+					{#if weapon.releaseDate || weapon.flbDate || weapon.ulbDate || weapon.transcendenceDate}
+						<DetailsContainer title="Dates">
+							{#if weapon.releaseDate}
+								<DetailItem label="Release Date" value={weapon.releaseDate} />
+							{/if}
+							{#if weapon.flbDate}
+								<DetailItem label="FLB Date" value={weapon.flbDate} />
+							{/if}
+							{#if weapon.ulbDate}
+								<DetailItem label="ULB Date" value={weapon.ulbDate} />
+							{/if}
+							{#if weapon.transcendenceDate}
+								<DetailItem label="Transcendence Date" value={weapon.transcendenceDate} />
+							{/if}
+						</DetailsContainer>
+					{/if}
+
 					<div class="weapon-skills">
 						<h3>Skills</h3>
 						<div class="skills-grid">
@@ -183,23 +200,6 @@
 							{/if}
 						</div>
 					</div>
-
-					{#if weapon.releaseDate || weapon.flbDate || weapon.ulbDate || weapon.transcendenceDate}
-						<DetailsContainer title="Dates">
-							{#if weapon.releaseDate}
-								<DetailItem label="Release Date" value={weapon.releaseDate} />
-							{/if}
-							{#if weapon.flbDate}
-								<DetailItem label="FLB Date" value={weapon.flbDate} />
-							{/if}
-							{#if weapon.ulbDate}
-								<DetailItem label="ULB Date" value={weapon.ulbDate} />
-							{/if}
-							{#if weapon.transcendenceDate}
-								<DetailItem label="Transcendence Date" value={weapon.transcendenceDate} />
-							{/if}
-						</DetailsContainer>
-					{/if}
 				</section>
 			{:else if currentTab === 'images'}
 				<EntityImagesTab
