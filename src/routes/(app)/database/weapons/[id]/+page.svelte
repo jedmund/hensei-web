@@ -19,6 +19,8 @@
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
+	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl } from '$lib/utils/images'
 
 	// Types
@@ -69,23 +71,78 @@
 		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement)
 	}
 
+	// Available image sizes for weapons
+	const weaponSizes = ['base', 'grid', 'main', 'square']
+
 	// Generate image items for weapon (base, grid, main, square variants)
+	// Weapons have transformations: Base (no suffix), Transcendence Stage 1 (_02), Transcendence Stage 5 (_03)
 	const weaponImages = $derived.by((): ImageItem[] => {
 		if (!weapon?.granblueId) return []
 
 		const variants = ['base', 'grid', 'main', 'square'] as const
 		const images: ImageItem[] = []
 
-		for (const variant of variants) {
-			images.push({
-				url: getWeaponImageUrl(weapon.granblueId, variant),
-				label: variant,
-				variant
-			})
+		// Only include transformations that are available
+		const transformations: { id: string; label: string; suffix?: string }[] = [
+			{ id: '01', label: 'Base', suffix: undefined }
+		]
+
+		if (weapon.uncap?.transcendence) {
+			transformations.push(
+				{ id: '02', label: 'Transcendence (1)', suffix: '02' },
+				{ id: '03', label: 'Transcendence (5)', suffix: '03' }
+			)
+		}
+
+		for (const transformation of transformations) {
+			for (const variant of variants) {
+				images.push({
+					url: getWeaponImageUrl(weapon.granblueId, variant, undefined, transformation.suffix),
+					label: `${variant} (${transformation.label})`,
+					variant,
+					pose: transformation.id,
+					poseLabel: transformation.label
+				})
+			}
 		}
 
 		return images
 	})
+
+	// Image download handlers
+	async function handleDownloadImage(size: string, transformation: string | undefined, force: boolean) {
+		if (!weapon?.id) return
+		// For weapons, '01' means base (no transformation suffix)
+		const trans = transformation === '01' ? undefined : transformation
+		await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+	}
+
+	async function handleDownloadAllPose(pose: string, force: boolean) {
+		if (!weapon?.id) return
+		const trans = pose === '01' ? undefined : pose
+		// Download all sizes for this pose
+		for (const size of weaponSizes) {
+			await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+		}
+	}
+
+	async function handleDownloadAllImages(force: boolean) {
+		if (!weapon?.id) return
+		await entityAdapter.downloadWeaponImages(weapon.id, { force })
+	}
+
+	async function handleDownloadSize(size: string) {
+		if (!weapon?.id) return
+		// Download this size for all available transformations
+		const transformations: (string | undefined)[] = [undefined]
+		if (weapon.uncap?.transcendence) {
+			transformations.push('02', '03')
+		}
+
+		for (const trans of transformations) {
+			await entityAdapter.downloadWeaponImage(weapon.id, size, trans, false)
+		}
+	}
 </script>
 
 <div class="page">
@@ -98,6 +155,9 @@
 			editUrl={canEdit ? editUrl : undefined}
 			{currentTab}
 			onTabChange={handleTabChange}
+			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
+			onDownloadSize={canEdit ? handleDownloadSize : undefined}
+			availableSizes={weaponSizes}
 		>
 			{#if currentTab === 'info'}
 				<section class="details">
@@ -123,15 +183,45 @@
 							{/if}
 						</div>
 					</div>
+
+					{#if weapon.releaseDate || weapon.flbDate || weapon.ulbDate || weapon.transcendenceDate}
+						<DetailsContainer title="Dates">
+							{#if weapon.releaseDate}
+								<DetailItem label="Release Date" value={weapon.releaseDate} />
+							{/if}
+							{#if weapon.flbDate}
+								<DetailItem label="FLB Date" value={weapon.flbDate} />
+							{/if}
+							{#if weapon.ulbDate}
+								<DetailItem label="ULB Date" value={weapon.ulbDate} />
+							{/if}
+							{#if weapon.transcendenceDate}
+								<DetailItem label="Transcendence Date" value={weapon.transcendenceDate} />
+							{/if}
+						</DetailsContainer>
+					{/if}
 				</section>
 			{:else if currentTab === 'images'}
-				<EntityImagesTab images={weaponImages} />
+				<EntityImagesTab
+					images={weaponImages}
+					{canEdit}
+					onDownloadImage={canEdit ? handleDownloadImage : undefined}
+					onDownloadAllPose={canEdit ? handleDownloadAllPose : undefined}
+				/>
 			{:else if currentTab === 'raw'}
 				<EntityRawDataTab
 					wikiRaw={rawDataQuery.data?.wikiRaw}
 					gameRawEn={rawDataQuery.data?.gameRawEn}
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
+					{canEdit}
+					onFetchWiki={canEdit && weapon?.id
+						? async () => {
+								const result = await entityAdapter.fetchWeaponWiki(weapon.id)
+								rawDataQuery.refetch()
+								return result
+							}
+						: undefined}
 				/>
 			{/if}
 		</DetailScaffold>

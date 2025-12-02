@@ -17,10 +17,10 @@
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
-	import CharacterImagesSection from '$lib/features/database/characters/sections/CharacterImagesSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
+	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
 
 	// Types
@@ -81,6 +81,9 @@
 		return getCharacterImage(character?.granblueId, 'grid', '01')
 	}
 
+	// Available image sizes for characters
+	const characterSizes = ['detail', 'grid', 'main', 'square']
+
 	// Generate image items for character (variants and poses based on uncap level)
 	const characterImages = $derived.by((): ImageItem[] => {
 		if (!character?.granblueId) return []
@@ -88,8 +91,7 @@
 		const variants = ['detail', 'grid', 'main', 'square'] as const
 		const images: ImageItem[] = []
 
-		// Determine available poses based on uncap level
-		// _01 = Base, _02 = MLB (3*), _03 = FLB (5*), _04 = Transcendence
+		// Only include poses that are available - _01 = Base, _02 = MLB (3*), _03 = FLB (5*), _04 = Transcendence
 		const poses: { id: string; label: string }[] = [
 			{ id: '01', label: 'Base' },
 			{ id: '02', label: 'MLB' }
@@ -103,19 +105,51 @@
 			poses.push({ id: '04', label: 'Transcendence' })
 		}
 
-		for (const variant of variants) {
-			for (const pose of poses) {
+		for (const pose of poses) {
+			for (const variant of variants) {
 				images.push({
 					url: getCharacterImage(character.granblueId, variant, pose.id),
 					label: `${variant} (${pose.label})`,
 					variant,
-					pose: pose.id
+					pose: pose.id,
+					poseLabel: pose.label
 				})
 			}
 		}
 
 		return images
 	})
+
+	// Image download handlers
+	async function handleDownloadImage(size: string, transformation: string | undefined, force: boolean) {
+		if (!character?.id) return
+		await entityAdapter.downloadCharacterImage(character.id, size, transformation, force)
+	}
+
+	async function handleDownloadAllPose(pose: string, force: boolean) {
+		if (!character?.id) return
+		// Download all sizes for this pose
+		for (const size of characterSizes) {
+			await entityAdapter.downloadCharacterImage(character.id, size, pose, force)
+		}
+	}
+
+	async function handleDownloadAllImages(force: boolean) {
+		if (!character?.id) return
+		await entityAdapter.downloadCharacterImages(character.id, { force })
+	}
+
+	async function handleDownloadSize(size: string) {
+		if (!character?.id) return
+		// Download this size for all available poses
+		const poses = ['01', '02']
+		if (character.uncap?.flb) poses.push('03')
+		if (character.uncap?.transcendence) poses.push('04')
+
+		for (const pose of poses) {
+			await entityAdapter.downloadCharacterImage(character.id, size, pose, false)
+		}
+	}
 </script>
 
 <div class="page">
@@ -128,6 +162,9 @@
 			editUrl={canEdit ? editUrl : undefined}
 			{currentTab}
 			onTabChange={handleTabChange}
+			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
+			onDownloadSize={canEdit ? handleDownloadSize : undefined}
+			availableSizes={characterSizes}
 		>
 			{#if currentTab === 'info'}
 				<section class="details">
@@ -136,12 +173,18 @@
 					<CharacterTaxonomySection {character} />
 					<CharacterStatsSection {character} />
 
-					{#if character?.id && character?.granblueId}
-						<CharacterImagesSection
-							characterId={character.id}
-							granblueId={character.granblueId}
-							{canEdit}
-						/>
+					{#if character.releaseDate || character.flbDate || character.ulbDate}
+						<DetailsContainer title="Dates">
+							{#if character.releaseDate}
+								<DetailItem label="Release Date" value={character.releaseDate} />
+							{/if}
+							{#if character.flbDate}
+								<DetailItem label="FLB Date" value={character.flbDate} />
+							{/if}
+							{#if character.ulbDate}
+								<DetailItem label="ULB Date" value={character.ulbDate} />
+							{/if}
+						</DetailsContainer>
 					{/if}
 
 					{#if relatedQuery.data?.length}
@@ -162,13 +205,26 @@
 					{/if}
 				</section>
 			{:else if currentTab === 'images'}
-				<EntityImagesTab images={characterImages} />
+				<EntityImagesTab
+					images={characterImages}
+					{canEdit}
+					onDownloadImage={canEdit ? handleDownloadImage : undefined}
+					onDownloadAllPose={canEdit ? handleDownloadAllPose : undefined}
+				/>
 			{:else if currentTab === 'raw'}
 				<EntityRawDataTab
 					wikiRaw={rawDataQuery.data?.wikiRaw}
 					gameRawEn={rawDataQuery.data?.gameRawEn}
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
+					{canEdit}
+					onFetchWiki={canEdit && character?.id
+						? async () => {
+								const result = await entityAdapter.fetchCharacterWiki(character.id)
+								rawDataQuery.refetch()
+								return result
+							}
+						: undefined}
 				/>
 			{/if}
 		</DetailScaffold>

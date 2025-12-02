@@ -19,6 +19,8 @@
 	import SummonStatsSection from '$lib/features/database/summons/sections/SummonStatsSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
+	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getSummonImage } from '$lib/utils/images'
 
 	// Types
@@ -69,23 +71,85 @@
 		return getSummonImage(summon?.granblueId, 'grid')
 	}
 
+	// Available image sizes for summons
+	const summonSizes = ['detail', 'grid', 'main', 'square', 'wide']
+
 	// Generate image items for summon (detail, grid, main, square, wide variants)
+	// Summons have transformations: Base (no suffix), ULB (_02), Transcendence Stage 1 (_03), Transcendence Stage 5 (_04)
 	const summonImages = $derived.by((): ImageItem[] => {
 		if (!summon?.granblueId) return []
 
 		const variants = ['detail', 'grid', 'main', 'square', 'wide'] as const
 		const images: ImageItem[] = []
 
-		for (const variant of variants) {
-			images.push({
-				url: getSummonImage(summon.granblueId, variant),
-				label: variant,
-				variant
-			})
+		// Only include transformations that are available
+		const transformations: { id: string; label: string; suffix?: string }[] = [
+			{ id: '01', label: 'Base', suffix: undefined }
+		]
+
+		if (summon.uncap?.ulb) {
+			transformations.push({ id: '02', label: 'ULB', suffix: '02' })
+		}
+
+		if (summon.uncap?.transcendence) {
+			transformations.push(
+				{ id: '03', label: 'Transcendence (1)', suffix: '03' },
+				{ id: '04', label: 'Transcendence (5)', suffix: '04' }
+			)
+		}
+
+		for (const transformation of transformations) {
+			for (const variant of variants) {
+				images.push({
+					url: getSummonImage(summon.granblueId, variant, transformation.suffix),
+					label: `${variant} (${transformation.label})`,
+					variant,
+					pose: transformation.id,
+					poseLabel: transformation.label
+				})
+			}
 		}
 
 		return images
 	})
+
+	// Image download handlers
+	async function handleDownloadImage(size: string, transformation: string | undefined, force: boolean) {
+		if (!summon?.id) return
+		// For summons, '01' means base (no transformation suffix)
+		const trans = transformation === '01' ? undefined : transformation
+		await entityAdapter.downloadSummonImage(summon.id, size, trans, force)
+	}
+
+	async function handleDownloadAllPose(pose: string, force: boolean) {
+		if (!summon?.id) return
+		const trans = pose === '01' ? undefined : pose
+		// Download all sizes for this pose
+		for (const size of summonSizes) {
+			await entityAdapter.downloadSummonImage(summon.id, size, trans, force)
+		}
+	}
+
+	async function handleDownloadAllImages(force: boolean) {
+		if (!summon?.id) return
+		await entityAdapter.downloadSummonImages(summon.id, { force })
+	}
+
+	async function handleDownloadSize(size: string) {
+		if (!summon?.id) return
+		// Download this size for all available transformations
+		const transformations: (string | undefined)[] = [undefined]
+		if (summon.uncap?.ulb) {
+			transformations.push('02')
+		}
+		if (summon.uncap?.transcendence) {
+			transformations.push('03', '04')
+		}
+
+		for (const trans of transformations) {
+			await entityAdapter.downloadSummonImage(summon.id, size, trans, false)
+		}
+	}
 </script>
 
 <div class="page">
@@ -98,6 +162,9 @@
 			editUrl={canEdit ? editUrl : undefined}
 			{currentTab}
 			onTabChange={handleTabChange}
+			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
+			onDownloadSize={canEdit ? handleDownloadSize : undefined}
+			availableSizes={summonSizes}
 		>
 			{#if currentTab === 'info'}
 				<section class="details">
@@ -147,15 +214,45 @@
 							</div>
 						{/if}
 					</div>
+
+					{#if summon.releaseDate || summon.flbDate || summon.ulbDate || summon.transcendenceDate}
+						<DetailsContainer title="Dates">
+							{#if summon.releaseDate}
+								<DetailItem label="Release Date" value={summon.releaseDate} />
+							{/if}
+							{#if summon.flbDate}
+								<DetailItem label="FLB Date" value={summon.flbDate} />
+							{/if}
+							{#if summon.ulbDate}
+								<DetailItem label="ULB Date" value={summon.ulbDate} />
+							{/if}
+							{#if summon.transcendenceDate}
+								<DetailItem label="Transcendence Date" value={summon.transcendenceDate} />
+							{/if}
+						</DetailsContainer>
+					{/if}
 				</section>
 			{:else if currentTab === 'images'}
-				<EntityImagesTab images={summonImages} />
+				<EntityImagesTab
+					images={summonImages}
+					{canEdit}
+					onDownloadImage={canEdit ? handleDownloadImage : undefined}
+					onDownloadAllPose={canEdit ? handleDownloadAllPose : undefined}
+				/>
 			{:else if currentTab === 'raw'}
 				<EntityRawDataTab
 					wikiRaw={rawDataQuery.data?.wikiRaw}
 					gameRawEn={rawDataQuery.data?.gameRawEn}
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
+					{canEdit}
+					onFetchWiki={canEdit && summon?.id
+						? async () => {
+								const result = await entityAdapter.fetchSummonWiki(summon.id)
+								rawDataQuery.refetch()
+								return result
+							}
+						: undefined}
 				/>
 			{/if}
 		</DetailScaffold>
