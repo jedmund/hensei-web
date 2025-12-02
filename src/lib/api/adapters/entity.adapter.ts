@@ -242,6 +242,7 @@ export interface CreateCharacterPayload {
 	kamigame?: string
 	nicknames_en?: string[]
 	nicknames_jp?: string[]
+	wiki_raw?: string | null
 }
 
 /**

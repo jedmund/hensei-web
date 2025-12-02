@@ -25,11 +25,11 @@
 	const placeholderImage = $derived(() => {
 		switch (entityType) {
 			case 'character':
-				return '/images/placeholders/placeholder-character-grid.png'
+				return '/images/placeholders/placeholder-character-square.png'
 			case 'weapon':
-				return '/images/placeholders/placeholder-weapon-grid.png'
+				return '/images/placeholders/placeholder-weapon-square.png'
 			case 'summon':
-				return '/images/placeholders/placeholder-summon-sub.png'
+				return '/images/placeholders/placeholder-summon-square.png'
 		}
 	})
 </script>

@@ -28,6 +28,7 @@
 		status: 'loading' | 'success' | 'error'
 		granblueId?: string
 		suggestions?: CharacterSuggestions
+		wikiRaw?: string
 		error?: string
 	}
 
@@ -82,8 +83,8 @@
 			granblueId: entity.granblueId,
 			status: entity.status,
 			imageUrl: entity.granblueId
-				? getCharacterImage(entity.granblueId, 'grid')
-				: '/images/placeholders/placeholder-character-grid.png',
+				? getCharacterImage(entity.granblueId, 'square')
+				: '/images/placeholders/placeholder-character-square.png',
 			error: entity.error,
 			saved: savedEntities.has(wikiPage)
 		}))
@@ -95,7 +96,7 @@
 			name: suggestions?.nameEn ?? '',
 			nameJp: suggestions?.nameJp ?? '',
 			granblueId: suggestions?.granblueId ?? '',
-			characterId: '',
+			characterId: suggestions?.characterId?.join(', ') ?? '',
 			rarity: suggestions?.rarity ?? 3,
 			element: suggestions?.element ?? 0,
 			race1: suggestions?.race1 ?? null,
@@ -169,6 +170,7 @@
 					status: result.status,
 					granblueId: result.granblueId,
 					suggestions: result.suggestions,
+					wikiRaw: result.wikiRaw,
 					error: result.error
 				})
 
@@ -222,6 +224,7 @@
 		if (!selectedWikiPage) return
 		const formData = formDataMap.get(selectedWikiPage)
 		if (!formData) return
+		const entity = entities.get(selectedWikiPage)
 
 		isSaving = true
 		saveError = null
@@ -268,7 +271,8 @@
 				gamewith: formData.gamewith,
 				kamigame: formData.kamigame,
 				nicknames_en: formData.nicknamesEn,
-				nicknames_jp: formData.nicknamesJp
+				nicknames_jp: formData.nicknamesJp,
+				wiki_raw: entity?.wikiRaw || null
 			}
 
 			await entityAdapter.createCharacter(payload)
@@ -421,7 +425,7 @@
 					<CharacterMetadataSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formData}
+						editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -431,7 +435,7 @@
 					<CharacterUncapSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formData}
+						editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -441,7 +445,7 @@
 					<CharacterTaxonomySection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formData}
+						editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -451,7 +455,7 @@
 					<CharacterStatsSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formData}
+						editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -549,6 +553,14 @@
 							onDismissSuggestion={() => handleDismissSuggestion('kamigame')}
 						/>
 					</DetailsContainer>
+
+					{#if selectedEntity?.wikiRaw}
+						<DetailsContainer title="Raw Wiki Data">
+							<div class="wiki-raw">
+								<pre>{selectedEntity.wikiRaw}</pre>
+							</div>
+						</DetailsContainer>
+					{/if}
 				</section>
 			{/if}
 		{/if}
@@ -625,6 +637,22 @@
 
 		p {
 			margin: 0;
+		}
+	}
+
+	.wiki-raw {
+		padding: spacing.$unit;
+
+		pre {
+			margin: 0;
+			padding: spacing.$unit;
+			background: colors.$grey-95;
+			border-radius: 4px;
+			font-size: typography.$font-small;
+			white-space: pre-wrap;
+			word-break: break-word;
+			max-height: 300px;
+			overflow-y: auto;
 		}
 	}
 </style>

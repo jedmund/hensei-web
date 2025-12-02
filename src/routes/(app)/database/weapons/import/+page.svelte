@@ -69,10 +69,6 @@
 
 	// Get selected entity data
 	const selectedEntity = $derived(selectedWikiPage ? entities.get(selectedWikiPage) : null)
-	const selectedFormData = $derived(selectedWikiPage ? formDataMap.get(selectedWikiPage) : null)
-	const selectedDismissed = $derived(
-		selectedWikiPage ? dismissedSuggestionsMap.get(selectedWikiPage) ?? new Set() : new Set()
-	)
 
 	// Entity tabs for TabbedEntitySelector
 	const entityTabs = $derived<EntityTab[]>(
@@ -81,8 +77,8 @@
 			granblueId: entity.granblueId,
 			status: entity.status,
 			imageUrl: entity.granblueId
-				? getWeaponImage(entity.granblueId)
-				: '/images/placeholders/placeholder-weapon-grid.png',
+				? getWeaponImage(entity.granblueId, 'square')
+				: '/images/placeholders/placeholder-weapon-square.png',
 			error: entity.error,
 			saved: savedEntities.has(wikiPage)
 		}))
@@ -147,11 +143,11 @@
 		fetchError = null
 
 		// Initialize entities as loading
-		const newEntities = new Map<string, BatchPreviewResult<WeaponSuggestions>>()
+		const newEntities = new Map<string, EntityState>()
 		pages.forEach((page) => {
 			newEntities.set(page, {
 				wikiPage: page,
-				status: 'loading' as const
+				status: 'loading'
 			})
 		})
 		entities = newEntities
@@ -161,15 +157,21 @@
 			const response = await entityAdapter.batchPreviewWeapons(pages)
 
 			// Update entities with results
-			const updatedEntities = new Map<string, BatchPreviewResult<WeaponSuggestions>>()
+			const updatedEntities = new Map<string, EntityState>()
 			response.results.forEach((result) => {
-				updatedEntities.set(result.wikiPage, result)
+				updatedEntities.set(result.wikiPage, {
+					wikiPage: result.wikiPage,
+					status: result.status,
+					granblueId: result.granblueId,
+					suggestions: result.suggestions,
+					error: result.error
+				})
 
 				// Create form data for successful results
 				if (result.status === 'success') {
 					const formData = createEmptyFormData(result.wikiPage, result.suggestions)
 					formDataMap.set(result.wikiPage, formData)
-					dismissedSuggestionsMap.set(result.wikiPage, new Set())
+					dismissedSuggestionsMap.set(result.wikiPage, new Set<string>())
 				}
 			})
 			entities = updatedEntities
@@ -192,7 +194,7 @@
 
 	// Accept a suggestion
 	function handleAcceptSuggestion(field: string, value: any) {
-		if (!selectedWikiPage || !selectedFormData) return
+		if (!selectedWikiPage) return
 
 		const formData = formDataMap.get(selectedWikiPage)
 		if (formData) {
@@ -212,49 +214,51 @@
 
 	// Save current entity
 	async function saveCurrentEntity() {
-		if (!selectedWikiPage || !selectedFormData) return
+		if (!selectedWikiPage) return
+		const formData = formDataMap.get(selectedWikiPage)
+		if (!formData) return
 
 		isSaving = true
 		saveError = null
 
 		try {
 			const payload = {
-				granblue_id: selectedFormData.granblue_id,
-				name_en: selectedFormData.name,
-				name_jp: selectedFormData.nameJp || undefined,
-				rarity: selectedFormData.rarity,
-				element: selectedFormData.element,
-				proficiency: selectedFormData.proficiency,
-				series: selectedFormData.series || undefined,
-				new_series: selectedFormData.newSeries || undefined,
-				min_hp: selectedFormData.minHp,
-				max_hp: selectedFormData.maxHp,
-				max_hp_flb: selectedFormData.maxHpFlb,
-				max_hp_ulb: selectedFormData.maxHpUlb,
-				min_atk: selectedFormData.minAtk,
-				max_atk: selectedFormData.maxAtk,
-				max_atk_flb: selectedFormData.maxAtkFlb,
-				max_atk_ulb: selectedFormData.maxAtkUlb,
-				max_level: selectedFormData.maxLevel,
-				max_skill_level: selectedFormData.maxSkillLevel,
-				max_awakening_level: selectedFormData.maxAwakeningLevel,
-				flb: selectedFormData.flb,
-				ulb: selectedFormData.ulb,
-				transcendence: selectedFormData.transcendence,
-				extra: selectedFormData.extra,
-				limit: selectedFormData.limit,
-				ax: selectedFormData.ax,
-				release_date: selectedFormData.releaseDate || null,
-				flb_date: selectedFormData.flbDate || null,
-				ulb_date: selectedFormData.ulbDate || null,
-				transcendence_date: selectedFormData.transcendenceDate || null,
-				wiki_en: selectedFormData.wikiEn,
-				wiki_ja: selectedFormData.wikiJa,
-				gamewith: selectedFormData.gamewith,
-				kamigame: selectedFormData.kamigame,
-				nicknames_en: selectedFormData.nicknamesEn,
-				nicknames_jp: selectedFormData.nicknamesJp,
-				recruits: selectedFormData.recruits
+				granblue_id: formData.granblue_id,
+				name_en: formData.name,
+				name_jp: formData.nameJp || undefined,
+				rarity: formData.rarity,
+				element: formData.element,
+				proficiency: formData.proficiency,
+				series: formData.series || undefined,
+				new_series: formData.newSeries || undefined,
+				min_hp: formData.minHp,
+				max_hp: formData.maxHp,
+				max_hp_flb: formData.maxHpFlb,
+				max_hp_ulb: formData.maxHpUlb,
+				min_atk: formData.minAtk,
+				max_atk: formData.maxAtk,
+				max_atk_flb: formData.maxAtkFlb,
+				max_atk_ulb: formData.maxAtkUlb,
+				max_level: formData.maxLevel,
+				max_skill_level: formData.maxSkillLevel,
+				max_awakening_level: formData.maxAwakeningLevel,
+				flb: formData.flb,
+				ulb: formData.ulb,
+				transcendence: formData.transcendence,
+				extra: formData.extra,
+				limit: formData.limit,
+				ax: formData.ax,
+				release_date: formData.releaseDate || null,
+				flb_date: formData.flbDate || null,
+				ulb_date: formData.ulbDate || null,
+				transcendence_date: formData.transcendenceDate || null,
+				wiki_en: formData.wikiEn,
+				wiki_ja: formData.wikiJa,
+				gamewith: formData.gamewith,
+				kamigame: formData.kamigame,
+				nicknames_en: formData.nicknamesEn,
+				nicknames_jp: formData.nicknamesJp,
+				recruits: formData.recruits
 			}
 
 			await entityAdapter.createWeapon(payload)
@@ -279,12 +283,16 @@
 	}
 
 	// Can save current entity
-	const canSave = $derived(
-		selectedFormData &&
-			selectedFormData.name.trim() !== '' &&
-			selectedFormData.granblue_id.trim() !== '' &&
-			!savedEntities.has(selectedWikiPage ?? '')
-	)
+	const canSave = $derived.by(() => {
+		if (!selectedWikiPage) return false
+		const formData = formDataMap.get(selectedWikiPage)
+		if (!formData) return false
+		return (
+			formData.name.trim() !== '' &&
+			formData.granblue_id.trim() !== '' &&
+			!savedEntities.has(selectedWikiPage)
+		)
+	})
 
 	// All entities saved
 	const allSaved = $derived(
@@ -362,14 +370,15 @@
 				<div class="entity-loading">
 					<p>Loading wiki data...</p>
 				</div>
-			{:else if selectedFormData}
+			{:else if selectedWikiPage && formDataMap.has(selectedWikiPage)}
+				{@const formData = formDataMap.get(selectedWikiPage)!}
 				{@const suggestions = selectedEntity.suggestions}
-				{@const dismissed = selectedDismissed}
+				{@const dismissed = dismissedSuggestionsMap.get(selectedWikiPage) ?? new Set<string>()}
 				<section class="details">
 					<DetailsContainer title="Basic Info">
 						<SuggestionDetailItem
 							label="Name (EN)"
-							bind:value={selectedFormData.name}
+							bind:value={formData.name}
 							editable={true}
 							type="text"
 							placeholder="Weapon name"
@@ -380,7 +389,7 @@
 						/>
 						<SuggestionDetailItem
 							label="Name (JP)"
-							bind:value={selectedFormData.nameJp}
+							bind:value={formData.nameJp}
 							editable={true}
 							type="text"
 							placeholder="武器名"
@@ -394,7 +403,7 @@
 					<WeaponMetadataSection
 						weapon={emptyWeapon}
 						editMode={true}
-						bind:editData={selectedFormData}
+						editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -404,7 +413,7 @@
 					<WeaponUncapSection
 						weapon={emptyWeapon}
 						editMode={true}
-						bind:editData={selectedFormData}
+						editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -414,7 +423,7 @@
 					<WeaponTaxonomySection
 						weapon={emptyWeapon}
 						editMode={true}
-						bind:editData={selectedFormData}
+						editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -424,7 +433,7 @@
 					<WeaponStatsSection
 						weapon={emptyWeapon}
 						editMode={true}
-						bind:editData={selectedFormData}
+						editData={formData}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -433,23 +442,23 @@
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
-							<TagInput bind:value={selectedFormData.nicknamesEn} placeholder="Add nickname..." contained />
+							<TagInput bind:value={formData.nicknamesEn} placeholder="Add nickname..." contained />
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
-							<TagInput bind:value={selectedFormData.nicknamesJp} placeholder="ニックネーム..." contained />
+							<TagInput bind:value={formData.nicknamesJp} placeholder="ニックネーム..." contained />
 						</DetailItem>
 					</DetailsContainer>
 
 					<DetailsContainer title="Recruits">
 						<DetailItem label="Recruits Character" sublabel="Character recruited by this weapon">
-							<CharacterTypeahead bind:value={selectedFormData.recruits} placeholder="Search for character..." />
+							<CharacterTypeahead bind:value={formData.recruits} placeholder="Search for character..." />
 						</DetailItem>
 					</DetailsContainer>
 
 					<DetailsContainer title="Dates">
 						<SuggestionDetailItem
 							label="Release Date"
-							bind:value={selectedFormData.releaseDate}
+							bind:value={formData.releaseDate}
 							editable={true}
 							type="text"
 							placeholder="YYYY-MM-DD"
@@ -458,10 +467,10 @@
 							onAcceptSuggestion={() => handleAcceptSuggestion('releaseDate', suggestions?.releaseDate)}
 							onDismissSuggestion={() => handleDismissSuggestion('releaseDate')}
 						/>
-						{#if selectedFormData.flb}
+						{#if formData.flb}
 							<SuggestionDetailItem
 								label="FLB Date"
-								bind:value={selectedFormData.flbDate}
+								bind:value={formData.flbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -471,10 +480,10 @@
 								onDismissSuggestion={() => handleDismissSuggestion('flbDate')}
 							/>
 						{/if}
-						{#if selectedFormData.ulb}
+						{#if formData.ulb}
 							<SuggestionDetailItem
 								label="ULB Date"
-								bind:value={selectedFormData.ulbDate}
+								bind:value={formData.ulbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -484,10 +493,10 @@
 								onDismissSuggestion={() => handleDismissSuggestion('ulbDate')}
 							/>
 						{/if}
-						{#if selectedFormData.transcendence}
+						{#if formData.transcendence}
 							<DetailItem
 								label="Transcendence Date"
-								bind:value={selectedFormData.transcendenceDate}
+								bind:value={formData.transcendenceDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -498,7 +507,7 @@
 					<DetailsContainer title="Links">
 						<DetailItem
 							label="Wiki (EN)"
-							bind:value={selectedFormData.wikiEn}
+							bind:value={formData.wikiEn}
 							editable={true}
 							type="text"
 							placeholder="https://gbf.wiki/..."
@@ -506,7 +515,7 @@
 						/>
 						<DetailItem
 							label="Wiki (JP)"
-							bind:value={selectedFormData.wikiJa}
+							bind:value={formData.wikiJa}
 							editable={true}
 							type="text"
 							placeholder="https://gbf-wiki.com/..."
@@ -514,7 +523,7 @@
 						/>
 						<SuggestionDetailItem
 							label="Gamewith"
-							bind:value={selectedFormData.gamewith}
+							bind:value={formData.gamewith}
 							editable={true}
 							type="text"
 							placeholder="https://..."
@@ -526,7 +535,7 @@
 						/>
 						<SuggestionDetailItem
 							label="Kamigame"
-							bind:value={selectedFormData.kamigame}
+							bind:value={formData.kamigame}
 							editable={true}
 							type="text"
 							placeholder="https://..."
