@@ -45,7 +45,6 @@
 	const meHref = $derived(localizeHref('/me'))
 	const loginHref = $derived(localizeHref('/auth/login'))
 	const registerHref = $derived(localizeHref('/auth/register'))
-	const settingsHref = $derived(localizeHref('/settings'))
 	const databaseHref = $derived(localizeHref('/database'))
 	const newTeamHref = $derived(localizeHref('/teams/new'))
 
