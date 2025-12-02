@@ -150,6 +150,9 @@ export interface CollectionJobAccessoryInput {
 export interface CollectionFilters {
 	element?: number[]
 	rarity?: number[]
+	race?: number[]
+	proficiency?: number[]
+	gender?: number[]
 	page?: number
 	limit?: number
 }
