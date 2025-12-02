@@ -53,12 +53,12 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/effects' as *;
-	@use '$src/themes/rep' as rep;
 
 	.card {
 		position: relative;
-		width: 70px;
-		@include rep.aspect(rep.$char-cell-w, rep.$char-cell-h);
+		width: 100px;
+		// Character grid images are 280x160 (7:4 ratio)
+		aspect-ratio: 280 / 160;
 		padding: 0;
 		border: 2px solid transparent;
 		border-radius: 8px;
