@@ -5,6 +5,7 @@
 
 	import { browser } from '$app/environment'
 	import { QueryClientProvider } from '@tanstack/svelte-query'
+	import { Toaster } from 'svelte-sonner'
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
@@ -18,5 +19,6 @@
 </svelte:head>
 
 <QueryClientProvider client={data.queryClient}>
+	<Toaster position="bottom-right" richColors toastOptions={{ duration: 4000 }} />
 	{@render children?.()}
 </QueryClientProvider>

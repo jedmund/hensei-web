@@ -376,6 +376,20 @@
 	--light-shadow-hover: #{colors.$light--shadow--light--hover};
 	--light-accent: #{colors.$light--bg--light};
 
+	// Toast notifications
+	--toast-bg: #{colors.$grey-100};
+	--toast-text: #{colors.$text--primary--color--light};
+	--toast-text-secondary: #{colors.$text--secondary--color--light};
+	--toast-border: #{colors.$border--subtle--light};
+	--toast-success-bg: #e8f5e9;
+	--toast-success-text: #2e7d32;
+	--toast-error-bg: #{colors.$error--bg--light};
+	--toast-error-text: #{colors.$error};
+	--toast-warning-bg: #{colors.$notice--bg--light};
+	--toast-warning-text: #{colors.$notice--text--light};
+	--toast-info-bg: #e3f2fd;
+	--toast-info-text: #1565c0;
+
 	// Gradients
 	--hero-gradient: #{effects.$hero--gradient--light};
 	--hero-gradient-overlay: #{effects.$hero--gradient--light--overlay};
@@ -727,6 +741,20 @@
 	--light-shadow: #{colors.$light--shadow--dark};
 	--light-shadow-hover: #{colors.$light--shadow--dark--hover};
 	--light-accent: #{colors.$light--bg--dark};
+
+	// Toast notifications
+	--toast-bg: #{colors.$grey-20};
+	--toast-text: #{colors.$text--primary--color--dark};
+	--toast-text-secondary: #{colors.$text--secondary--color--dark};
+	--toast-border: #{colors.$border--subtle--dark};
+	--toast-success-bg: #1b3d1f;
+	--toast-success-text: #66bb6a;
+	--toast-error-bg: #{colors.$error--bg--dark};
+	--toast-error-text: #{colors.$error};
+	--toast-warning-bg: #{colors.$notice--bg--dark};
+	--toast-warning-text: #{colors.$notice--text--dark};
+	--toast-info-bg: #0d2744;
+	--toast-info-text: #64b5f6;
 
 	// Gradients
 	--hero-gradient: #{effects.$hero--gradient--dark};
