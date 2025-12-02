@@ -28,6 +28,14 @@ export interface CollectionPageResult<T> {
 }
 
 /**
+ * Initial data structure for collection infinite queries
+ */
+export interface CollectionInitialData<T> {
+	pages: CollectionPageResult<T>[]
+	pageParams: number[]
+}
+
+/**
  * Collection query options factory
  *
  * @example
@@ -35,25 +43,33 @@ export interface CollectionPageResult<T> {
  * import { createQuery, createInfiniteQuery } from '@tanstack/svelte-query'
  * import { collectionQueries } from '$lib/api/queries/collection.queries'
  *
- * // Own collection characters
- * const characters = createInfiniteQuery(() => collectionQueries.characters())
- *
- * // Public collection
- * const publicChars = createQuery(() => collectionQueries.publicCharacters(userId))
+ * // Any user's collection characters (privacy enforced server-side)
+ * const characters = createInfiniteQuery(() => collectionQueries.characters(userId))
  *
  * // Collected character IDs (for filtering add modal)
- * const ownedIds = createQuery(() => collectionQueries.collectedCharacterIds())
+ * const ownedIds = createQuery(() => collectionQueries.collectedCharacterIds(userId))
  * ```
  */
 export const collectionQueries = {
 	/**
-	 * Current user's collection characters with infinite scroll
+	 * User's collection characters with infinite scroll
+	 * Works for any user - privacy is enforced server-side
+	 *
+	 * @param userId - The user whose collection to fetch
+	 * @param filters - Optional filters for element, rarity, etc.
+	 * @param enabled - Whether the query is enabled (default: true)
+	 * @param initialData - Optional initial data for SSR hydration
 	 */
-	characters: (filters?: CollectionFilters) =>
+	characters: (
+		userId: string,
+		filters?: CollectionFilters,
+		enabled: boolean = true,
+		initialData?: CollectionInitialData<CollectionCharacter>
+	) =>
 		infiniteQueryOptions({
-			queryKey: ['collection', 'characters', filters] as const,
+			queryKey: ['collection', 'characters', userId, filters] as const,
 			queryFn: async ({ pageParam }): Promise<CollectionPageResult<CollectionCharacter>> => {
-				const response = await collectionAdapter.listCharacters({
+				const response = await collectionAdapter.listCharacters(userId, {
 					...filters,
 					page: pageParam
 				})
@@ -73,17 +89,20 @@ export const collectionQueries = {
 				return undefined
 			},
 			staleTime: 1000 * 60 * 2, // 2 minutes
-			gcTime: 1000 * 60 * 15 // 15 minutes
+			gcTime: 1000 * 60 * 15, // 15 minutes
+			enabled,
+			initialData
 		}),
 
 	/**
-	 * Current user's collection weapons with infinite scroll
+	 * User's collection weapons with infinite scroll
+	 * Works for any user - privacy is enforced server-side
 	 */
-	weapons: (filters?: CollectionFilters) =>
+	weapons: (userId: string, filters?: CollectionFilters) =>
 		infiniteQueryOptions({
-			queryKey: ['collection', 'weapons', filters] as const,
+			queryKey: ['collection', 'weapons', userId, filters] as const,
 			queryFn: async ({ pageParam }): Promise<CollectionPageResult<CollectionWeapon>> => {
-				const response = await collectionAdapter.listWeapons({
+				const response = await collectionAdapter.listWeapons(userId, {
 					...filters,
 					page: pageParam
 				})
@@ -107,13 +126,14 @@ export const collectionQueries = {
 		}),
 
 	/**
-	 * Current user's collection summons with infinite scroll
+	 * User's collection summons with infinite scroll
+	 * Works for any user - privacy is enforced server-side
 	 */
-	summons: (filters?: CollectionFilters) =>
+	summons: (userId: string, filters?: CollectionFilters) =>
 		infiniteQueryOptions({
-			queryKey: ['collection', 'summons', filters] as const,
+			queryKey: ['collection', 'summons', userId, filters] as const,
 			queryFn: async ({ pageParam }): Promise<CollectionPageResult<CollectionSummon>> => {
-				const response = await collectionAdapter.listSummons({
+				const response = await collectionAdapter.listSummons(userId, {
 					...filters,
 					page: pageParam
 				})
@@ -137,13 +157,14 @@ export const collectionQueries = {
 		}),
 
 	/**
-	 * Get IDs of characters already in the user's collection
+	 * Get IDs of characters already in a user's collection
 	 * Used to filter out owned characters in the add modal
 	 */
-	collectedCharacterIds: () =>
+	collectedCharacterIds: (userId: string) =>
 		queryOptions({
-			queryKey: ['collection', 'characters', 'ids'] as const,
-			queryFn: () => collectionAdapter.getCollectedCharacterIds(),
+			queryKey: ['collection', 'characters', 'ids', userId] as const,
+			queryFn: () => collectionAdapter.getCollectedCharacterIds(userId),
+			enabled: !!userId,
 			staleTime: 1000 * 60 * 5, // 5 minutes
 			gcTime: 1000 * 60 * 30 // 30 minutes
 		}),
@@ -156,42 +177,6 @@ export const collectionQueries = {
 			queryKey: ['collection', 'character', id] as const,
 			queryFn: () => collectionAdapter.getCharacter(id),
 			enabled: !!id,
-			staleTime: 1000 * 60 * 5,
-			gcTime: 1000 * 60 * 30
-		}),
-
-	/**
-	 * Public collection for a user (respects privacy)
-	 */
-	publicCharacters: (userId: string) =>
-		queryOptions({
-			queryKey: ['collection', 'public', userId, 'characters'] as const,
-			queryFn: () => collectionAdapter.getPublicCharacters(userId),
-			enabled: !!userId,
-			staleTime: 1000 * 60 * 5,
-			gcTime: 1000 * 60 * 30
-		}),
-
-	/**
-	 * Public weapon collection for a user
-	 */
-	publicWeapons: (userId: string) =>
-		queryOptions({
-			queryKey: ['collection', 'public', userId, 'weapons'] as const,
-			queryFn: () => collectionAdapter.getPublicWeapons(userId),
-			enabled: !!userId,
-			staleTime: 1000 * 60 * 5,
-			gcTime: 1000 * 60 * 30
-		}),
-
-	/**
-	 * Public summon collection for a user
-	 */
-	publicSummons: (userId: string) =>
-		queryOptions({
-			queryKey: ['collection', 'public', userId, 'summons'] as const,
-			queryFn: () => collectionAdapter.getPublicSummons(userId),
-			enabled: !!userId,
 			staleTime: 1000 * 60 * 5,
 			gcTime: 1000 * 60 * 30
 		})
@@ -210,24 +195,33 @@ export const collectionQueries = {
  * // Invalidate all collection data
  * queryClient.invalidateQueries({ queryKey: collectionKeys.all })
  *
- * // Invalidate only characters
- * queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
+ * // Invalidate only characters for a user
+ * queryClient.invalidateQueries({ queryKey: collectionKeys.characters(userId) })
  * ```
  */
 export const collectionKeys = {
 	all: ['collection'] as const,
-	characters: () => [...collectionKeys.all, 'characters'] as const,
-	characterList: (filters?: CollectionFilters) =>
-		[...collectionKeys.characters(), filters] as const,
+	characters: (userId?: string) =>
+		userId
+			? ([...collectionKeys.all, 'characters', userId] as const)
+			: ([...collectionKeys.all, 'characters'] as const),
+	characterList: (userId: string, filters?: CollectionFilters) =>
+		[...collectionKeys.characters(userId), filters] as const,
 	character: (id: string) => [...collectionKeys.all, 'character', id] as const,
-	characterIds: () => [...collectionKeys.characters(), 'ids'] as const,
-	weapons: () => [...collectionKeys.all, 'weapons'] as const,
-	weaponList: (filters?: CollectionFilters) => [...collectionKeys.weapons(), filters] as const,
-	summons: () => [...collectionKeys.all, 'summons'] as const,
-	summonList: (filters?: CollectionFilters) => [...collectionKeys.summons(), filters] as const,
-	public: (userId: string) => [...collectionKeys.all, 'public', userId] as const,
-	publicCharacters: (userId: string) =>
-		[...collectionKeys.public(userId), 'characters'] as const,
-	publicWeapons: (userId: string) => [...collectionKeys.public(userId), 'weapons'] as const,
-	publicSummons: (userId: string) => [...collectionKeys.public(userId), 'summons'] as const
+	characterIds: (userId?: string) =>
+		userId
+			? ([...collectionKeys.all, 'characters', 'ids', userId] as const)
+			: ([...collectionKeys.all, 'characters', 'ids'] as const),
+	weapons: (userId?: string) =>
+		userId
+			? ([...collectionKeys.all, 'weapons', userId] as const)
+			: ([...collectionKeys.all, 'weapons'] as const),
+	weaponList: (userId: string, filters?: CollectionFilters) =>
+		[...collectionKeys.weapons(userId), filters] as const,
+	summons: (userId?: string) =>
+		userId
+			? ([...collectionKeys.all, 'summons', userId] as const)
+			: ([...collectionKeys.all, 'summons'] as const),
+	summonList: (userId: string, filters?: CollectionFilters) =>
+		[...collectionKeys.summons(userId), filters] as const
 }

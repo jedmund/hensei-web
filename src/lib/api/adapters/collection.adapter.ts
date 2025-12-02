@@ -19,8 +19,7 @@ import type {
 	CollectionWeaponInput,
 	CollectionSummonInput,
 	CollectionJobAccessoryInput,
-	CollectionFilters,
-	CollectionResponse
+	CollectionFilters
 } from '$lib/types/api/collection'
 
 /**
@@ -57,15 +56,20 @@ export class CollectionAdapter extends BaseAdapter {
 	// ============================================
 
 	/**
-	 * Lists the current user's collection characters with optional filters
+	 * Lists a user's collection characters with optional filters
+	 * Works for any user - privacy is enforced server-side
 	 */
 	async listCharacters(
+		userId: string,
 		params: CollectionListParams = {}
 	): Promise<PaginatedResponse<CollectionCharacter>> {
-		const response = await this.request<CollectionCharacterListResponse>('/collection/characters', {
-			method: 'GET',
-			query: params
-		})
+		const response = await this.request<CollectionCharacterListResponse>(
+			`/users/${userId}/collection/characters`,
+			{
+				method: 'GET',
+				query: params
+			}
+		)
 
 		return {
 			results: response.characters,
@@ -131,17 +135,17 @@ export class CollectionAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Gets the IDs of all characters in the current user's collection
+	 * Gets the IDs of all characters in a user's collection
 	 * Useful for filtering out already-owned characters in the add modal
 	 */
-	async getCollectedCharacterIds(): Promise<string[]> {
+	async getCollectedCharacterIds(userId: string): Promise<string[]> {
 		// Fetch all pages to get complete list
 		const allIds: string[] = []
 		let page = 1
 		let hasMore = true
 
 		while (hasMore) {
-			const response = await this.listCharacters({ page, limit: 100 })
+			const response = await this.listCharacters(userId, { page, limit: 100 })
 			allIds.push(...response.results.map((c) => c.character.id))
 			hasMore = page < response.totalPages
 			page++
@@ -155,13 +159,17 @@ export class CollectionAdapter extends BaseAdapter {
 	// ============================================
 
 	/**
-	 * Lists the current user's collection weapons with optional filters
+	 * Lists a user's collection weapons with optional filters
+	 * Works for any user - privacy is enforced server-side
 	 */
-	async listWeapons(params: CollectionListParams = {}): Promise<PaginatedResponse<CollectionWeapon>> {
+	async listWeapons(
+		userId: string,
+		params: CollectionListParams = {}
+	): Promise<PaginatedResponse<CollectionWeapon>> {
 		const response = await this.request<{
 			weapons: CollectionWeapon[]
 			meta: { count: number; totalPages: number; perPage: number; currentPage: number }
-		}>('/collection/weapons', {
+		}>(`/users/${userId}/collection/weapons`, {
 			method: 'GET',
 			query: params
 		})
@@ -213,13 +221,17 @@ export class CollectionAdapter extends BaseAdapter {
 	// ============================================
 
 	/**
-	 * Lists the current user's collection summons with optional filters
+	 * Lists a user's collection summons with optional filters
+	 * Works for any user - privacy is enforced server-side
 	 */
-	async listSummons(params: CollectionListParams = {}): Promise<PaginatedResponse<CollectionSummon>> {
+	async listSummons(
+		userId: string,
+		params: CollectionListParams = {}
+	): Promise<PaginatedResponse<CollectionSummon>> {
 		const response = await this.request<{
 			summons: CollectionSummon[]
 			meta: { count: number; totalPages: number; perPage: number; currentPage: number }
-		}>('/collection/summons', {
+		}>(`/users/${userId}/collection/summons`, {
 			method: 'GET',
 			query: params
 		})
@@ -302,49 +314,6 @@ export class CollectionAdapter extends BaseAdapter {
 		return this.request<void>(`/collection/job_accessories/${id}`, {
 			method: 'DELETE'
 		})
-	}
-
-	// ============================================
-	// Public Collection (viewing other users)
-	// ============================================
-
-	/**
-	 * Gets a user's public collection (respects privacy settings)
-	 * @param userId - The user's ID
-	 * @param type - Optional type filter: 'characters', 'weapons', 'summons', 'job_accessories'
-	 */
-	async getPublicCollection(
-		userId: string,
-		type?: 'characters' | 'weapons' | 'summons' | 'job_accessories'
-	): Promise<CollectionResponse> {
-		return this.request<CollectionResponse>(`/users/${userId}/collection`, {
-			method: 'GET',
-			query: type ? { type } : undefined
-		})
-	}
-
-	/**
-	 * Gets a user's public character collection
-	 */
-	async getPublicCharacters(userId: string): Promise<CollectionCharacter[]> {
-		const response = await this.getPublicCollection(userId, 'characters')
-		return response.characters || []
-	}
-
-	/**
-	 * Gets a user's public weapon collection
-	 */
-	async getPublicWeapons(userId: string): Promise<CollectionWeapon[]> {
-		const response = await this.getPublicCollection(userId, 'weapons')
-		return response.weapons || []
-	}
-
-	/**
-	 * Gets a user's public summon collection
-	 */
-	async getPublicSummons(userId: string): Promise<CollectionSummon[]> {
-		const response = await this.getPublicCollection(userId, 'summons')
-		return response.summons || []
 	}
 
 	// ============================================
