@@ -167,8 +167,20 @@ export interface SearchFilters {
 	/** Filter by secondary proficiency (characters only) */
 	proficiency2?: number[] | undefined
 
-	/** Filter by series */
+	/** Filter by weapon series */
 	series?: number[] | undefined
+
+	/** Filter by character season (1=Standard, 2=Valentine, etc.) */
+	season?: number[] | undefined
+
+	/** Filter by character series (1=Standard, 2=Grand, 3=Zodiac, etc.) */
+	characterSeries?: number[] | undefined
+
+	/** Filter characters available in gacha */
+	gachaAvailable?: boolean | undefined
+
+	/** Filter by gacha promotions (1=Premium, 2=Classic, 4=Flash, 5=Legend, etc.) */
+	promotions?: number[] | undefined
 
 	/** Include extra/seasonal variants */
 	extra?: boolean | undefined

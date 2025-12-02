@@ -133,6 +133,10 @@ export class SearchAdapter extends BaseAdapter {
 			proficiency1?: boolean
 			proficiency2?: boolean
 			series?: boolean
+			season?: boolean
+			characterSeries?: boolean
+			gachaAvailable?: boolean
+			promotions?: boolean
 			extra?: boolean
 			subaura?: boolean
 		} = {}
@@ -176,6 +180,18 @@ export class SearchAdapter extends BaseAdapter {
 			if (includeFilters.series && params.filters.series?.length) {
 				filters.series = params.filters.series
 			}
+			if (includeFilters.season && params.filters.season?.length) {
+				filters.season = params.filters.season
+			}
+			if (includeFilters.characterSeries && params.filters.characterSeries?.length) {
+				filters.characterSeries = params.filters.characterSeries
+			}
+			if (includeFilters.gachaAvailable && params.filters.gachaAvailable !== undefined) {
+				filters.gachaAvailable = params.filters.gachaAvailable
+			}
+			if (includeFilters.promotions && params.filters.promotions?.length) {
+				filters.promotions = params.filters.promotions
+			}
 			if (includeFilters.extra && params.filters.extra !== undefined) {
 				filters.extra = params.filters.extra
 			}
@@ -204,6 +220,10 @@ export class SearchAdapter extends BaseAdapter {
 			proficiency1: true,
 			proficiency2: true,
 			series: true,
+			season: true,
+			characterSeries: true,
+			gachaAvailable: true,
+			promotions: true,
 			extra: true,
 			subaura: true
 		})
@@ -229,6 +249,8 @@ export class SearchAdapter extends BaseAdapter {
 			element: true,
 			rarity: true,
 			proficiency1: true,
+			series: true,
+			promotions: true,
 			extra: true
 		})
 
@@ -251,7 +273,10 @@ export class SearchAdapter extends BaseAdapter {
 			element: true,
 			rarity: true,
 			proficiency1: true,
-			proficiency2: true
+			proficiency2: true,
+			season: true,
+			characterSeries: true,
+			gachaAvailable: true
 		})
 
 		return this.request<SearchResponse>('/search/characters', {
@@ -272,6 +297,7 @@ export class SearchAdapter extends BaseAdapter {
 		const body = this.buildSearchBody(params, {
 			element: true,
 			rarity: true,
+			promotions: true,
 			subaura: true
 		})
 
