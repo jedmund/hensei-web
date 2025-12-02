@@ -11,6 +11,9 @@ importers:
       '@friendofsvelte/tipex':
         specifier: ^0.0.9
         version: 0.0.9(highlight.js@11.8.0)(svelte@5.38.7)
+      '@internationalized/date':
+        specifier: ^3.10.0
+        version: 3.10.0
       '@tanstack/svelte-query':
         specifier: ^6.0.9
         version: 6.0.9(svelte@5.38.7)
@@ -31,7 +34,7 @@ importers:
         version: 3.5.1
       bits-ui:
         specifier: ^2.9.6
-        version: 2.9.6(@internationalized/date@3.9.0)(svelte@5.38.7)
+        version: 2.9.6(@internationalized/date@3.10.0)(svelte@5.38.7)
       fluid-dnd:
         specifier: ^2.6.2
         version: 2.6.2
@@ -430,8 +433,8 @@ packages:
     resolution: {integrity: sha512-cvz/C1rF5WBxzHbEoiBoI6Sz6q6M+TdxfWkEGBYTD77opY8i8WN01prUWXEM87GPF4SZcyIySez9U0Ccm12oFQ==}
     engines: {node: '>=18.0.0'}
 
-  '@internationalized/date@3.9.0':
-    resolution: {integrity: sha512-yaN3brAnHRD+4KyyOsJyk49XUvj2wtbNACSqg0bz3u8t2VuzhC8Q5dfRnrSxjnnbDb+ienBnkn1TzQfE154vyg==}
+  '@internationalized/date@3.10.0':
+    resolution: {integrity: sha512-oxDR/NTEJ1k+UFVQElaNIk65E/Z83HK1z1WI3lQyhTtnNg4R5oVXaPzK3jcpKG8UHKDVuDQHzn+wsxSz8RP3aw==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -3094,7 +3097,7 @@ snapshots:
     transitivePeerDependencies:
       - babel-plugin-macros
 
-  '@internationalized/date@3.9.0':
+  '@internationalized/date@3.10.0':
     dependencies:
       '@swc/helpers': 0.5.17
 
@@ -4145,11 +4148,11 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  bits-ui@2.9.6(@internationalized/date@3.9.0)(svelte@5.38.7):
+  bits-ui@2.9.6(@internationalized/date@3.10.0)(svelte@5.38.7):
     dependencies:
       '@floating-ui/core': 1.7.3
       '@floating-ui/dom': 1.7.4
-      '@internationalized/date': 3.9.0
+      '@internationalized/date': 3.10.0
       esm-env: 1.2.2
       runed: 0.29.2(svelte@5.38.7)
       svelte: 5.38.7

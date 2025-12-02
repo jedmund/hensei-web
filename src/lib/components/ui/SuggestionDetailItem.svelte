@@ -5,6 +5,7 @@
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import Checkbox from './checkbox/Checkbox.svelte'
+	import DatePicker from './DatePicker.svelte'
 	import SuggestionBadge from './SuggestionBadge.svelte'
 
 	interface SelectOption {
@@ -38,7 +39,7 @@
 		value?: string | number | boolean | null | undefined
 		children?: Snippet
 		editable?: boolean
-		type?: 'text' | 'number' | 'select' | 'checkbox'
+		type?: 'text' | 'number' | 'select' | 'checkbox' | 'date'
 		options?: SelectOption[]
 		placeholder?: string
 		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -133,6 +134,8 @@
 					{placeholder}
 					alignRight={true}
 				/>
+			{:else if type === 'date'}
+				<DatePicker bind:value={value as string | null} contained={true} {placeholder} />
 			{:else}
 				<Input bind:value type="text" contained={true} {placeholder} alignRight={false} />
 			{/if}
