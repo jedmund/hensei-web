@@ -7,9 +7,11 @@
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	// Utilities
 	import { getRarityLabel } from '$lib/utils/rarity'
+	import { goto } from '$app/navigation'
 
 	const columns = [
 		{
@@ -61,7 +63,13 @@
 </script>
 
 <div class="page">
-	<DatabaseGridWithProvider resource="characters" {columns} pageSize={20} />
+	<DatabaseGridWithProvider resource="characters" {columns} pageSize={20}>
+		{#snippet headerActions()}
+			<Button variant="secondary" size="small" onclick={() => goto('/database/characters/import')}>
+				Batch Import
+			</Button>
+		{/snippet}
+	</DatabaseGridWithProvider>
 </div>
 
 <style lang="scss">

@@ -7,7 +7,9 @@
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import SummonUncapCell from '$lib/components/database/cells/SummonUncapCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
+	import { goto } from '$app/navigation'
 
 	// Column configuration for summons
 	const columns: IColumn[] = [
@@ -61,7 +63,13 @@
 </script>
 
 <div class="database-page">
-	<DatabaseGridWithProvider resource="summons" {columns} pageSize={20} />
+	<DatabaseGridWithProvider resource="summons" {columns} pageSize={20}>
+		{#snippet headerActions()}
+			<Button variant="secondary" size="small" onclick={() => goto('/database/summons/import')}>
+				Batch Import
+			</Button>
+		{/snippet}
+	</DatabaseGridWithProvider>
 </div>
 
 <style lang="scss">

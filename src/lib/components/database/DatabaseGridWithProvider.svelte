@@ -11,13 +11,16 @@
 	import { onMount, onDestroy } from 'svelte'
 	import { goto } from '$app/navigation'
 
+	import type { Snippet } from 'svelte'
+
 	interface Props {
 		resource: 'weapons' | 'characters' | 'summons'
 		columns: IColumn[]
 		pageSize?: number
+		headerActions?: Snippet
 	}
 
-	const { resource, columns, pageSize: initialPageSize = 20 }: Props = $props()
+	const { resource, columns, pageSize: initialPageSize = 20, headerActions }: Props = $props()
 
 	// State
 	let data = $state<any[]>([])
@@ -159,14 +162,20 @@
 	<div class="controls">
 		<input type="text" placeholder="Search..." bind:value={searchTerm} />
 
-		<div class="page-size-selector">
-			<label for="page-size">Show:</label>
-			<select id="page-size" value={pageSize} onchange={handlePageSizeChange}>
-				<option value={10}>10</option>
-				<option value={20}>20</option>
-				<option value={50}>50</option>
-				<option value={100}>100</option>
-			</select>
+		<div class="controls-right">
+			{#if headerActions}
+				{@render headerActions()}
+			{/if}
+
+			<div class="page-size-selector">
+				<label for="page-size">Show:</label>
+				<select id="page-size" value={pageSize} onchange={handlePageSizeChange}>
+					<option value={10}>10</option>
+					<option value={20}>20</option>
+					<option value={50}>50</option>
+					<option value={100}>100</option>
+				</select>
+			</div>
 		</div>
 	</div>
 
@@ -247,6 +256,12 @@
 					outline: none;
 					border-color: #007bff;
 				}
+			}
+
+			.controls-right {
+				display: flex;
+				align-items: center;
+				gap: spacing.$unit;
 			}
 
 			.page-size-selector {
