@@ -15,6 +15,7 @@ import type {
   WeaponKey,
   SimpleAxSkill
 } from './entities'
+import type { GridArtifact, CollectionArtifact } from './artifact'
 
 // Grid item types - these are the junction tables between Party and entities
 
@@ -49,6 +50,8 @@ export interface GridCharacter {
   }
   aetherialMastery?: { modifier: number; strength: number }
   overMastery?: Array<{ modifier: number; strength: number }>
+  /** Equipped artifact (can be grid or collection artifact) */
+  artifact?: GridArtifact | CollectionArtifact
 }
 
 // GridSummon from GridSummonBlueprint
