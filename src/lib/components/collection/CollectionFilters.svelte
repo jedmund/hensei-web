@@ -2,6 +2,9 @@
 	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
 	import { RACE_LABELS } from '$lib/utils/race'
 	import { GENDER_LABELS } from '$lib/utils/gender'
+	import type { CollectionSortKey } from '$lib/types/api/collection'
+	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
 
 	interface Props {
 		elementFilters?: number[]
@@ -11,7 +14,9 @@
 		raceFilters?: number[]
 		proficiencyFilters?: number[]
 		genderFilters?: number[]
+		sortBy?: CollectionSortKey
 		onFiltersChange?: (filters: CollectionFilterState) => void
+		onSortChange?: (sort: CollectionSortKey) => void
 		/** Which filter groups to show */
 		showFilters?: {
 			element?: boolean
@@ -22,8 +27,8 @@
 			proficiency?: boolean
 			gender?: boolean
 		}
-		/** Layout mode */
-		layout?: 'horizontal' | 'vertical'
+		/** Whether to show the sort dropdown */
+		showSort?: boolean
 	}
 
 	export interface CollectionFilterState {
@@ -44,7 +49,9 @@
 		raceFilters = $bindable([]),
 		proficiencyFilters = $bindable([]),
 		genderFilters = $bindable([]),
+		sortBy = $bindable<CollectionSortKey>('name_asc'),
 		onFiltersChange,
+		onSortChange,
 		showFilters = {
 			element: true,
 			rarity: true,
@@ -54,8 +61,18 @@
 			proficiency: true,
 			gender: true
 		},
-		layout = 'horizontal'
+		showSort = true
 	}: Props = $props()
+
+	// Sort options
+	const sortOptions: { value: CollectionSortKey; label: string }[] = [
+		{ value: 'name_asc', label: 'Name A → Z' },
+		{ value: 'name_desc', label: 'Name Z → A' },
+		{ value: 'element_asc', label: 'Element ↑' },
+		{ value: 'element_desc', label: 'Element ↓' },
+		{ value: 'proficiency_asc', label: 'Proficiency ↑' },
+		{ value: 'proficiency_desc', label: 'Proficiency ↓' }
+	]
 
 	// Constants
 	const elements = [
@@ -77,13 +94,13 @@
 	const proficiencies = [
 		{ value: 1, label: 'Sabre' },
 		{ value: 2, label: 'Dagger' },
-		{ value: 3, label: 'Spear' },
-		{ value: 4, label: 'Axe' },
-		{ value: 5, label: 'Staff' },
-		{ value: 6, label: 'Gun' },
+		{ value: 3, label: 'Axe' },
+		{ value: 4, label: 'Spear' },
+		{ value: 5, label: 'Bow' },
+		{ value: 6, label: 'Staff' },
 		{ value: 7, label: 'Melee' },
-		{ value: 8, label: 'Bow' },
-		{ value: 9, label: 'Harp' },
+		{ value: 8, label: 'Harp' },
+		{ value: 9, label: 'Gun' },
 		{ value: 10, label: 'Katana' }
 	]
 
@@ -124,45 +141,46 @@
 		})
 	}
 
-	function toggleFilter(
-		current: number[],
-		value: number,
-		setter: (val: number[]) => void
-	) {
-		if (current.includes(value)) {
-			setter(current.filter((v) => v !== value))
-		} else {
-			setter([...current, value])
-		}
+	function handleElementChange(value: number[]) {
+		elementFilters = value
 		emitChange()
 	}
 
-	function toggleElement(value: number) {
-		toggleFilter(elementFilters, value, (v) => (elementFilters = v))
+	function handleRarityChange(value: number[]) {
+		rarityFilters = value
+		emitChange()
 	}
 
-	function toggleRarity(value: number) {
-		toggleFilter(rarityFilters, value, (v) => (rarityFilters = v))
+	function handleSeasonChange(value: number[]) {
+		seasonFilters = value
+		emitChange()
 	}
 
-	function toggleSeason(value: number) {
-		toggleFilter(seasonFilters, value, (v) => (seasonFilters = v))
+	function handleSeriesChange(value: number[]) {
+		seriesFilters = value
+		emitChange()
 	}
 
-	function toggleSeries(value: number) {
-		toggleFilter(seriesFilters, value, (v) => (seriesFilters = v))
+	function handleRaceChange(value: number[]) {
+		raceFilters = value
+		emitChange()
 	}
 
-	function toggleRace(value: number) {
-		toggleFilter(raceFilters, value, (v) => (raceFilters = v))
+	function handleProficiencyChange(value: number[]) {
+		proficiencyFilters = value
+		emitChange()
 	}
 
-	function toggleProficiency(value: number) {
-		toggleFilter(proficiencyFilters, value, (v) => (proficiencyFilters = v))
+	function handleGenderChange(value: number[]) {
+		genderFilters = value
+		emitChange()
 	}
 
-	function toggleGender(value: number) {
-		toggleFilter(genderFilters, value, (v) => (genderFilters = v))
+	function handleSortChange(value: CollectionSortKey | undefined) {
+		if (value) {
+			sortBy = value
+			onSortChange?.(value)
+		}
 	}
 
 	function clearAll() {
@@ -187,231 +205,123 @@
 	)
 </script>
 
-<div class="filters" class:horizontal={layout === 'horizontal'} class:vertical={layout === 'vertical'}>
-	{#if showFilters.element}
-		<div class="filter-group" role="group" aria-label="Element filters">
-			<span class="filter-label">Element</span>
-			<div class="filter-buttons">
-				{#each elements as element}
-					<button
-						type="button"
-						class="filter-btn element-btn"
-						class:active={elementFilters.includes(element.value)}
-						style="--element-color: {element.color}"
-						onclick={() => toggleElement(element.value)}
-						aria-pressed={elementFilters.includes(element.value)}
-					>
-						{element.label}
-					</button>
-				{/each}
-			</div>
-		</div>
-	{/if}
+<div class="filters-container">
+	<div class="filters">
+		{#if showFilters.element}
+			<MultiSelect
+				options={elements}
+				bind:value={elementFilters}
+				onValueChange={handleElementChange}
+				placeholder="Element"
+			/>
+		{/if}
 
-	{#if showFilters.rarity}
-		<div class="filter-group" role="group" aria-label="Rarity filters">
-			<span class="filter-label">Rarity</span>
-			<div class="filter-buttons">
-				{#each rarities as rarity}
-					<button
-						type="button"
-						class="filter-btn"
-						class:active={rarityFilters.includes(rarity.value)}
-						onclick={() => toggleRarity(rarity.value)}
-						aria-pressed={rarityFilters.includes(rarity.value)}
-					>
-						{rarity.label}
-					</button>
-				{/each}
-			</div>
-		</div>
-	{/if}
+		{#if showFilters.rarity}
+			<MultiSelect
+				options={rarities}
+				bind:value={rarityFilters}
+				onValueChange={handleRarityChange}
+				placeholder="Rarity"
+			/>
+		{/if}
 
-	{#if showFilters.season}
-		<div class="filter-group" role="group" aria-label="Season filters">
-			<span class="filter-label">Season</span>
-			<div class="filter-buttons">
-				{#each seasons as season}
-					<button
-						type="button"
-						class="filter-btn"
-						class:active={seasonFilters.includes(season.value)}
-						onclick={() => toggleSeason(season.value)}
-						aria-pressed={seasonFilters.includes(season.value)}
-					>
-						{season.label}
-					</button>
-				{/each}
-			</div>
-		</div>
-	{/if}
+		{#if showFilters.season}
+			<MultiSelect
+				options={seasons}
+				bind:value={seasonFilters}
+				onValueChange={handleSeasonChange}
+				placeholder="Season"
+			/>
+		{/if}
 
-	{#if showFilters.series}
-		<div class="filter-group" role="group" aria-label="Series filters">
-			<span class="filter-label">Series</span>
-			<div class="filter-buttons wrap">
-				{#each series as s}
-					<button
-						type="button"
-						class="filter-btn"
-						class:active={seriesFilters.includes(s.value)}
-						onclick={() => toggleSeries(s.value)}
-						aria-pressed={seriesFilters.includes(s.value)}
-					>
-						{s.label}
-					</button>
-				{/each}
-			</div>
-		</div>
-	{/if}
+		{#if showFilters.series}
+			<MultiSelect
+				options={series}
+				bind:value={seriesFilters}
+				onValueChange={handleSeriesChange}
+				placeholder="Series"
+			/>
+		{/if}
 
-	{#if showFilters.race}
-		<div class="filter-group" role="group" aria-label="Race filters">
-			<span class="filter-label">Race</span>
-			<div class="filter-buttons">
-				{#each races as race}
-					<button
-						type="button"
-						class="filter-btn"
-						class:active={raceFilters.includes(race.value)}
-						onclick={() => toggleRace(race.value)}
-						aria-pressed={raceFilters.includes(race.value)}
-					>
-						{race.label}
-					</button>
-				{/each}
-			</div>
-		</div>
-	{/if}
+		{#if showFilters.race}
+			<MultiSelect
+				options={races}
+				bind:value={raceFilters}
+				onValueChange={handleRaceChange}
+				placeholder="Race"
+			/>
+		{/if}
 
-	{#if showFilters.proficiency}
-		<div class="filter-group" role="group" aria-label="Proficiency filters">
-			<span class="filter-label">Proficiency</span>
-			<div class="filter-buttons proficiency-grid">
-				{#each proficiencies as prof}
-					<button
-						type="button"
-						class="filter-btn"
-						class:active={proficiencyFilters.includes(prof.value)}
-						onclick={() => toggleProficiency(prof.value)}
-						aria-pressed={proficiencyFilters.includes(prof.value)}
-					>
-						{prof.label}
-					</button>
-				{/each}
-			</div>
-		</div>
-	{/if}
+		{#if showFilters.proficiency}
+			<MultiSelect
+				options={proficiencies}
+				bind:value={proficiencyFilters}
+				onValueChange={handleProficiencyChange}
+				placeholder="Proficiency"
+			/>
+		{/if}
 
-	{#if showFilters.gender}
-		<div class="filter-group" role="group" aria-label="Gender filters">
-			<span class="filter-label">Gender</span>
-			<div class="filter-buttons">
-				{#each genders as gender}
-					<button
-						type="button"
-						class="filter-btn"
-						class:active={genderFilters.includes(gender.value)}
-						onclick={() => toggleGender(gender.value)}
-						aria-pressed={genderFilters.includes(gender.value)}
-					>
-						{gender.label}
-					</button>
-				{/each}
-			</div>
-		</div>
-	{/if}
+		{#if showFilters.gender}
+			<MultiSelect
+				options={genders}
+				bind:value={genderFilters}
+				onValueChange={handleGenderChange}
+				placeholder="Gender"
+			/>
+		{/if}
 
-	{#if hasActiveFilters}
-		<button type="button" class="clear-btn" onclick={clearAll}>
-			Clear filters
-		</button>
+		{#if hasActiveFilters}
+			<button type="button" class="clear-btn" onclick={clearAll}> Clear </button>
+		{/if}
+	</div>
+
+	{#if showSort}
+		<div class="sort">
+			<Select
+				options={sortOptions}
+				bind:value={sortBy}
+				onValueChange={handleSortChange}
+				size="small"
+			/>
+		</div>
 	{/if}
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 
-	.filters {
-		display: flex;
-		gap: $unit-2x;
-
-		&.horizontal {
-			flex-wrap: wrap;
-			align-items: flex-start;
-		}
-
-		&.vertical {
-			flex-direction: column;
-		}
-	}
-
-	.filter-group {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
-	}
-
-	.filter-label {
-		font-size: 11px;
-		font-weight: 600;
-		text-transform: uppercase;
-		color: var(--text-secondary, #666);
-		letter-spacing: 0.5px;
-	}
-
-	.filter-buttons {
+	.filters-container {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 4px;
-
-		&.wrap {
-			max-width: 400px;
-		}
-
-		&.proficiency-grid {
-			display: grid;
-			grid-template-columns: repeat(5, 1fr);
-			gap: 4px;
-		}
+		align-items: center;
+		justify-content: space-between;
+		gap: $unit;
+		width: 100%;
 	}
 
-	.filter-btn {
-		padding: 4px 8px;
-		border: 1px solid var(--border-color, #ddd);
-		background: var(--button-bg, white);
-		border-radius: 4px;
-		font-size: 12px;
-		cursor: pointer;
-		transition: all 0.15s ease;
-		color: var(--text-primary, #333);
-		white-space: nowrap;
+	.filters {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: $unit;
+	}
 
-		&:hover {
-			background: var(--button-bg-hover, #f5f5f5);
-		}
+	.sort {
+		flex-shrink: 0;
 
-		&.active {
-			background: var(--accent-color, #3366ff);
-			color: white;
-			border-color: var(--accent-color, #3366ff);
-		}
-
-		&.element-btn.active {
-			background: var(--element-color);
-			border-color: var(--element-color);
+		:global([data-select-trigger]) {
+			min-width: 128px;
 		}
 	}
 
 	.clear-btn {
-		padding: 4px 12px;
+		padding: $unit-half $unit;
 		border: 1px solid var(--border-color, #ddd);
 		background: transparent;
 		border-radius: 4px;
 		font-size: 12px;
 		cursor: pointer;
 		color: var(--text-secondary, #666);
-		align-self: flex-end;
 
 		&:hover {
 			background: var(--button-bg-hover, #f5f5f5);

@@ -145,6 +145,17 @@ export interface CollectionJobAccessoryInput {
 }
 
 /**
+ * Sort options for collection items
+ */
+export type CollectionSortKey =
+	| 'name_asc'
+	| 'name_desc'
+	| 'element_asc'
+	| 'element_desc'
+	| 'proficiency_asc'
+	| 'proficiency_desc'
+
+/**
  * Filters for listing collection items
  */
 export interface CollectionFilters {
@@ -153,6 +164,7 @@ export interface CollectionFilters {
 	race?: number[]
 	proficiency?: number[]
 	gender?: number[]
+	sort?: CollectionSortKey
 	page?: number
 	limit?: number
 }

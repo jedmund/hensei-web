@@ -5,8 +5,13 @@
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Icon from '$lib/components/Icon.svelte'
+	import AddToCollectionModal from '$lib/components/collection/AddToCollectionModal.svelte'
 
 	let { data, children }: { data: LayoutData; children: any } = $props()
+
+	let addModalOpen = $state(false)
 
 	// Determine active entity type from URL path
 	const activeEntityType = $derived.by(() => {
@@ -24,37 +29,52 @@
 </script>
 
 <svelte:head>
-	<title>{username}'s Collection</title>
+	<title>{username}</title>
 </svelte:head>
 
 <section class="collection">
 	<ProfileHeader
 		{username}
 		avatarPicture={data.user?.avatar?.picture}
-		title="{username}'s Collection"
+		title={username}
 		activeTab="collection"
 		isOwner={data.isOwner}
 	/>
 
 	<!-- Entity type segmented control -->
 	<nav class="entity-nav" aria-label="Collection type">
-		<SegmentedControl value={activeEntityType} onValueChange={handleTabChange} gap={true}>
-			<Segment value="characters">
-				Characters
-			</Segment>
-			<Segment value="weapons" disabled>
-				Weapons
-			</Segment>
-			<Segment value="summons" disabled>
-				Summons
-			</Segment>
+		<SegmentedControl
+			value={activeEntityType}
+			onValueChange={handleTabChange}
+			variant="blended"
+			size="small"
+		>
+			<Segment value="characters">Characters</Segment>
+			<Segment value="weapons" disabled>Weapons</Segment>
+			<Segment value="summons" disabled>Summons</Segment>
 		</SegmentedControl>
+
+		{#if data.isOwner}
+			<Button
+				variant="primary"
+				size="small"
+				onclick={() => (addModalOpen = true)}
+				icon="plus"
+				iconPosition="left"
+			>
+				Add characters
+			</Button>
+		{/if}
 	</nav>
 
 	<div class="content">
 		{@render children()}
 	</div>
 </section>
+
+{#if data.isOwner}
+	<AddToCollectionModal userId={data.user.id} bind:open={addModalOpen} />
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
@@ -64,8 +84,15 @@
 	}
 
 	.entity-nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: $unit-2x;
 		margin-bottom: $unit-2x;
-		max-width: 500px;
+
+		:global(.button) {
+			align-self: stretch;
+		}
 	}
 
 	.content {

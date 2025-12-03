@@ -1,14 +1,12 @@
 <script lang="ts">
 	import type { PageData } from './$types'
-	import type { CollectionCharacter } from '$lib/types/api/collection'
+	import type { CollectionCharacter, CollectionSortKey } from '$lib/types/api/collection'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
 		type CollectionFilterState
 	} from '$lib/components/collection/CollectionFilters.svelte'
-	import AddToCollectionModal from '$lib/components/collection/AddToCollectionModal.svelte'
 	import CollectionCharacterPane from '$lib/components/collection/CollectionCharacterPane.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { IsInViewport } from 'runed'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
@@ -25,8 +23,8 @@
 	let proficiencyFilters = $state<number[]>([])
 	let genderFilters = $state<number[]>([])
 
-	// Modal state
-	let addModalOpen = $state(false)
+	// Sort state
+	let sortBy = $state<CollectionSortKey>('name_asc')
 
 	// Sentinel for infinite scroll
 	let sentinelEl = $state<HTMLElement>()
@@ -37,7 +35,8 @@
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
 		race: raceFilters.length > 0 ? raceFilters : undefined,
 		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
-		gender: genderFilters.length > 0 ? genderFilters : undefined
+		gender: genderFilters.length > 0 ? genderFilters : undefined,
+		sort: sortBy
 	})
 
 	// Unified query for any user's collection (privacy enforced server-side)
@@ -122,6 +121,7 @@
 			bind:raceFilters
 			bind:proficiencyFilters
 			bind:genderFilters
+			bind:sortBy
 			onFiltersChange={handleFiltersChange}
 			showFilters={{
 				element: true,
@@ -132,15 +132,7 @@
 				proficiency: true,
 				gender: true
 			}}
-			layout="horizontal"
 		/>
-
-		{#if data.isOwner}
-			<Button variant="primary" onclick={() => (addModalOpen = true)}>
-				<Icon name="plus" size={16} />
-				Add to Collection
-			</Button>
-		{/if}
 	</div>
 
 	<!-- Collection grid -->
@@ -155,11 +147,7 @@
 				{#if data.isOwner}
 					<Icon name="users" size={48} />
 					<h3>Your collection is empty</h3>
-					<p>Add characters to start building your collection</p>
-					<Button variant="primary" onclick={() => (addModalOpen = true)}>
-						<Icon name="plus" size={16} />
-						Add Characters
-					</Button>
+					<p>Use the "Add to Collection" button above to get started</p>
 				{:else}
 					<Icon name="lock" size={48} />
 					<p>This collection is empty or private</p>
@@ -216,17 +204,16 @@
 
 			{#if !collectionQuery.hasNextPage && allCharacters.length > 0}
 				<div class="end-message">
-					<p>{allCharacters.length} character{allCharacters.length === 1 ? '' : 's'} in {data.isOwner ? 'your' : 'this'} collection</p>
+					<p>
+						{allCharacters.length} character{allCharacters.length === 1 ? '' : 's'} in {data.isOwner
+							? 'your'
+							: 'this'} collection
+					</p>
 				</div>
 			{/if}
 		{/if}
 	</div>
 </div>
-
-<!-- Add to Collection Modal -->
-{#if data.isOwner}
-	<AddToCollectionModal userId={data.user.id} bind:open={addModalOpen} />
-{/if}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
@@ -252,9 +239,10 @@
 	}
 
 	.character-grid {
-		display: flex;
-		flex-wrap: wrap;
-		gap: $unit;
+		display: grid;
+		grid-template-columns: repeat(5, 128px);
+		justify-content: space-between;
+		gap: $unit-4x;
 	}
 
 	.character-card {
@@ -282,7 +270,7 @@
 	.card-image {
 		position: relative;
 		// Character grid images are 280x160 (7:4 ratio)
-		width: 100px;
+		width: 100%;
 		aspect-ratio: 280 / 160;
 		border-radius: 8px;
 		overflow: hidden;
@@ -306,13 +294,7 @@
 	}
 
 	.character-name {
-		font-size: $font-small;
-		text-align: center;
-		color: $grey-50;
-		max-width: 100%;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		display: none;
 	}
 
 	.loading-state,
