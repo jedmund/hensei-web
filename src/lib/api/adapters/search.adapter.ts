@@ -50,8 +50,8 @@ export interface SearchResult {
 	rarity?: number
 	/** Weapon/Character proficiency */
 	proficiency?: number
-	/** Series ID for categorization */
-	series?: number
+	/** Series - object for weapons (WeaponSeriesRef), number array for characters */
+	series?: { id: string; slug: string; name: { en: string; ja: string } } | number[]
 	/** URL for entity image */
 	imageUrl?: string
 	/** Type of entity (lowercase for compatibility) */

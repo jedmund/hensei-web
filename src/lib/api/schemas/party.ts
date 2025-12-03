@@ -186,6 +186,21 @@ const JobAccessorySchema = z.object({
   slug: z.string()
 })
 
+// Weapon series reference schema (embedded in weapon)
+const WeaponSeriesRefSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  name: z.object({
+    en: z.string(),
+    ja: z.string()
+  }),
+  has_weapon_keys: z.boolean().optional(),
+  has_awakening: z.boolean().optional(),
+  has_ax_skills: z.boolean().optional(),
+  extra: z.boolean().optional(),
+  element_changeable: z.boolean().optional()
+})
+
 // Item schemas
 const WeaponSchema = z.object({
   id: z.string(),
@@ -199,7 +214,7 @@ const WeaponSchema = z.object({
   rarity: z.number().nullish(),
   max_level: z.number().nullish(),
   max_skill_level: z.number().nullish(),
-  series: z.number().nullish(),
+  series: WeaponSeriesRefSchema.nullish(),
   icon_url: z.string().nullish(),
   square_url: z.string().nullish()
 })

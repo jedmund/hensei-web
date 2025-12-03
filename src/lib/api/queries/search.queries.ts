@@ -40,7 +40,8 @@ export interface SearchPageResult {
 		element?: number
 		rarity?: number
 		proficiency?: number
-		series?: number
+		/** Series - object for weapons, number array for characters */
+		series?: { id: string; slug: string; name: { en: string; ja: string } } | number[]
 		imageUrl?: string
 		searchableType: 'Weapon' | 'Character' | 'Summon'
 	}>
