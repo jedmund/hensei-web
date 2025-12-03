@@ -61,6 +61,7 @@
 	const databaseCharactersHref = $derived(localizeHref('/database/characters'))
 	const databaseWeaponsHref = $derived(localizeHref('/database/weapons'))
 	const databaseSummonsHref = $derived(localizeHref('/database/summons'))
+	const databaseWeaponSeriesHref = $derived(localizeHref('/database/weapon-series'))
 
 	// Database route detection
 	const isDatabaseRoute = $derived($page.url.pathname.startsWith(localizeHref('/database')))
@@ -178,6 +179,21 @@
 					<a href={databaseSummonsHref} class:selected={isDatabaseNavSelected(databaseSummonsHref)}>
 						Summons
 					</a>
+				</li>
+				<li>
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger class="nav-more-trigger">
+							<Icon name="ellipsis" size={14} />
+						</DropdownMenu.Trigger>
+
+						<DropdownMenu.Portal>
+							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
+								<DropdownItem>
+									<a href={databaseWeaponSeriesHref}>Weapon Series</a>
+								</DropdownItem>
+							</DropdownMenu.Content>
+						</DropdownMenu.Portal>
+					</DropdownMenu.Root>
 				</li>
 			</ul>
 		</div>
