@@ -75,7 +75,7 @@ export const collectionQueries = {
 				})
 				return {
 					results: response.results,
-					page: response.page,
+					page: pageParam,
 					totalPages: response.totalPages,
 					total: response.total,
 					perPage: response.perPage ?? 50
@@ -108,7 +108,7 @@ export const collectionQueries = {
 				})
 				return {
 					results: response.results,
-					page: response.page,
+					page: pageParam,
 					totalPages: response.totalPages,
 					total: response.total,
 					perPage: response.perPage ?? 50
@@ -139,7 +139,7 @@ export const collectionQueries = {
 				})
 				return {
 					results: response.results,
-					page: response.page,
+					page: pageParam,
 					totalPages: response.totalPages,
 					total: response.total,
 					perPage: response.perPage ?? 50
