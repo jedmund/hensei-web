@@ -99,6 +99,24 @@ class SidebarStore {
 		}
 	}
 
+	/** Update the right accessory action button dynamically */
+	setAction(
+		onsave: (() => void) | undefined,
+		saveLabel?: string,
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+	) {
+		this.state.onsave = onsave
+		this.state.saveLabel = saveLabel
+		this.state.element = element
+	}
+
+	/** Clear the right accessory action button */
+	clearAction() {
+		this.state.onsave = undefined
+		this.state.saveLabel = undefined
+		this.state.element = undefined
+	}
+
 	get isOpen() {
 		return this.state.open
 	}
