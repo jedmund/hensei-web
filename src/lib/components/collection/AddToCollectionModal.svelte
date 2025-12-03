@@ -219,42 +219,55 @@
 	}
 
 	async function handleAdd() {
+		// Capture selected data before any state changes
+		const currentEntityType = entityType
+		const characterInputs =
+			currentEntityType === 'character'
+				? Array.from(selectedIds).map((characterId) => ({
+						characterId,
+						uncapLevel: 4,
+						transcendenceStep: 0
+					}))
+				: []
+		const weaponInputs =
+			currentEntityType === 'weapon'
+				? Array.from(selectedQuantities.entries()).map(([weaponId, quantity]) => ({
+						weaponId,
+						quantity,
+						uncapLevel: 3,
+						transcendenceStep: 0
+					}))
+				: []
+		const summonInputs =
+			currentEntityType === 'summon'
+				? Array.from(selectedQuantities.entries()).map(([summonId, quantity]) => ({
+						summonId,
+						quantity,
+						uncapLevel: 3,
+						transcendenceStep: 0
+					}))
+				: []
+
 		try {
-			if (entityType === 'character') {
-				if (selectedIds.size === 0) return
-
-				const inputs = Array.from(selectedIds).map((characterId) => ({
-					characterId,
-					uncapLevel: 4,
-					transcendenceStep: 0
-				}))
-				await addCharacterMutation.mutateAsync(inputs)
-			} else if (entityType === 'weapon') {
-				if (selectedQuantities.size === 0) return
-
-				const inputs = Array.from(selectedQuantities.entries()).map(([weaponId, quantity]) => ({
-					weaponId,
-					quantity,
-					uncapLevel: 3,
-					transcendenceStep: 0
-				}))
-				await addWeaponMutation.mutateAsync(inputs)
+			if (currentEntityType === 'character') {
+				if (characterInputs.length === 0) return
+				await addCharacterMutation.mutateAsync(characterInputs)
+			} else if (currentEntityType === 'weapon') {
+				if (weaponInputs.length === 0) return
+				await addWeaponMutation.mutateAsync(weaponInputs)
 			} else {
-				if (selectedQuantities.size === 0) return
-
-				const inputs = Array.from(selectedQuantities.entries()).map(([summonId, quantity]) => ({
-					summonId,
-					quantity,
-					uncapLevel: 3,
-					transcendenceStep: 0
-				}))
-				await addSummonMutation.mutateAsync(inputs)
+				if (summonInputs.length === 0) return
+				await addSummonMutation.mutateAsync(summonInputs)
 			}
 
+			// Close modal after successful mutation
 			open = false
 			onOpenChange?.(false)
 		} catch (error) {
-			console.error(`Failed to add ${entityNames[entityType].plural}:`, error)
+			// Only log non-cancellation errors
+			if (error && typeof error === 'object' && 'name' in error && error.name !== 'CancelledError') {
+				console.error(`Failed to add ${entityNames[currentEntityType].plural}:`, error)
+			}
 		}
 	}
 

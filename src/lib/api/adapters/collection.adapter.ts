@@ -203,13 +203,19 @@ export class CollectionAdapter extends BaseAdapter {
 		inputs: Array<CollectionWeaponInput & { quantity?: number }>
 	): Promise<CollectionWeapon[]> {
 		// Expand inputs based on quantity
+		// Note: We create individual objects to ensure unique request IDs for deduplication
 		const expanded = inputs.flatMap((input) => {
 			const count = input.quantity ?? 1
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { quantity, ...rest } = input
-			return Array(count).fill(rest) as CollectionWeaponInput[]
+			return Array.from({ length: count }, () => ({ ...rest })) as CollectionWeaponInput[]
 		})
-		return Promise.all(expanded.map((input) => this.addWeapon(input)))
+		// Execute sequentially to avoid request deduplication issues
+		const results: CollectionWeapon[] = []
+		for (const input of expanded) {
+			results.push(await this.addWeapon(input))
+		}
+		return results
 	}
 
 	/**
@@ -282,13 +288,19 @@ export class CollectionAdapter extends BaseAdapter {
 		inputs: Array<CollectionSummonInput & { quantity?: number }>
 	): Promise<CollectionSummon[]> {
 		// Expand inputs based on quantity
+		// Note: We create individual objects to ensure unique request IDs for deduplication
 		const expanded = inputs.flatMap((input) => {
 			const count = input.quantity ?? 1
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { quantity, ...rest } = input
-			return Array(count).fill(rest) as CollectionSummonInput[]
+			return Array.from({ length: count }, () => ({ ...rest })) as CollectionSummonInput[]
 		})
-		return Promise.all(expanded.map((input) => this.addSummon(input)))
+		// Execute sequentially to avoid request deduplication issues
+		const results: CollectionSummon[] = []
+		for (const input of expanded) {
+			results.push(await this.addSummon(input))
+		}
+		return results
 	}
 
 	/**
