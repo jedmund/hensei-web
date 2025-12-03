@@ -22,8 +22,11 @@
 	import EarringSelect from './edit/EarringSelect.svelte'
 	import PerpetuityToggle from './edit/PerpetuityToggle.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
 	export interface CharacterEditValues {
+		uncapLevel: number
+		transcendenceStep: number
 		awakening?: {
 			type?: Awakening
 			level: number
@@ -34,6 +37,8 @@
 	}
 
 	export interface CharacterEditUpdates {
+		uncapLevel?: number
+		transcendenceStep?: number
 		awakening?: {
 			id: string
 			level: number
@@ -68,6 +73,8 @@
 	}: Props = $props()
 
 	// Internal state - initialized from currentValues
+	let uncapLevel = $state(currentValues.uncapLevel)
+	let transcendenceStep = $state(currentValues.transcendenceStep)
 	let selectedAwakening = $state<Awakening | undefined>(currentValues.awakening?.type)
 	let awakeningLevel = $state(currentValues.awakening?.level ?? 1)
 	let rings = $state<ExtendedMastery[]>(
@@ -85,6 +92,8 @@
 
 	// Re-initialize when currentValues changes (e.g., switching between characters)
 	$effect(() => {
+		uncapLevel = currentValues.uncapLevel
+		transcendenceStep = currentValues.transcendenceStep
 		selectedAwakening = currentValues.awakening?.type
 		awakeningLevel = currentValues.awakening?.level ?? 1
 		rings =
@@ -125,8 +134,19 @@
 		'character-multi': 'e36b0573-79c3-4dd2-9524-c95def4bbb1a'
 	}
 
+	// Handlers for UncapIndicator
+	function handleUncapUpdate(newLevel: number) {
+		uncapLevel = newLevel
+	}
+
+	function handleTranscendenceUpdate(newStage: number) {
+		transcendenceStep = newStage
+	}
+
 	function handleSave() {
 		const updates: CharacterEditUpdates = {
+			uncapLevel,
+			transcendenceStep,
 			rings,
 			perpetuity: showPerpetuity ? perpetuity : undefined
 		}
@@ -156,6 +176,8 @@
 
 	function handleCancel() {
 		// Reset to original values
+		uncapLevel = currentValues.uncapLevel
+		transcendenceStep = currentValues.transcendenceStep
 		selectedAwakening = currentValues.awakening?.type
 		awakeningLevel = currentValues.awakening?.level ?? 1
 		rings =
@@ -175,6 +197,23 @@
 
 <div class="character-edit-pane">
 	<div class="edit-sections">
+		<DetailsSection title="Uncap Level">
+			<div class="section-content uncap-section">
+				<UncapIndicator
+					type="character"
+					{uncapLevel}
+					transcendenceStage={transcendenceStep}
+					special={characterData?.special}
+					flb={characterData?.uncap?.flb}
+					ulb={characterData?.uncap?.ulb}
+					transcendence={characterData?.uncap?.transcendence}
+					editable={true}
+					updateUncap={handleUncapUpdate}
+					updateTranscendence={handleTranscendenceUpdate}
+				/>
+			</div>
+		</DetailsSection>
+
 		{#if hasAwakening && availableAwakenings.length > 0}
 			<DetailsSection title="Awakening">
 				<div class="section-content">

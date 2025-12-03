@@ -28,6 +28,8 @@
 
 	// Convert GridCharacter data to CharacterEditPane format
 	const currentValues = $derived<CharacterEditValues>({
+		uncapLevel: character.uncapLevel ?? 0,
+		transcendenceStep: character.transcendenceStep ?? 0,
 		awakening: character.awakening
 			? {
 					type: character.awakening.type,
