@@ -159,12 +159,15 @@ export const collectionQueries = {
 	/**
 	 * Get IDs of characters already in a user's collection
 	 * Used to filter out owned characters in the add modal
+	 *
+	 * @param userId - The user whose collection to fetch
+	 * @param enabled - Whether the query is enabled (default: true)
 	 */
-	collectedCharacterIds: (userId: string) =>
+	collectedCharacterIds: (userId: string, enabled: boolean = true) =>
 		queryOptions({
 			queryKey: ['collection', 'characters', 'ids', userId] as const,
 			queryFn: () => collectionAdapter.getCollectedCharacterIds(userId),
-			enabled: !!userId,
+			enabled: !!userId && enabled,
 			staleTime: 1000 * 60 * 5, // 5 minutes
 			gcTime: 1000 * 60 * 30 // 30 minutes
 		}),

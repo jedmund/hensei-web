@@ -6,7 +6,11 @@
 		type SearchFilters,
 		type SearchPageResult
 	} from '$lib/api/queries/search.queries'
-	import { useAddCharactersToCollection } from '$lib/api/mutations/collection.mutations'
+	import {
+		useAddCharactersToCollection,
+		useAddWeaponsToCollection,
+		useAddSummonsToCollection
+	} from '$lib/api/mutations/collection.mutations'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -14,17 +18,25 @@
 		type CollectionFilterState
 	} from './CollectionFilters.svelte'
 	import SelectableCharacterCard from './SelectableCharacterCard.svelte'
+	import SelectableCharacterRow from './SelectableCharacterRow.svelte'
+	import SelectableWeaponCard from './SelectableWeaponCard.svelte'
+	import SelectableWeaponRow from './SelectableWeaponRow.svelte'
+	import SelectableSummonCard from './SelectableSummonCard.svelte'
+	import SelectableSummonRow from './SelectableSummonRow.svelte'
 	import { IsInViewport } from 'runed'
+	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 
 	type SearchResultItem = SearchPageResult['results'][number]
+	type EntityType = 'character' | 'weapon' | 'summon'
 
 	interface Props {
 		userId: string
+		entityType?: EntityType
 		open?: boolean
 		onOpenChange?: (open: boolean) => void
 	}
 
-	let { userId, open = $bindable(false), onOpenChange }: Props = $props()
+	let { userId, entityType = 'character', open = $bindable(false), onOpenChange }: Props = $props()
 
 	// Search state
 	let searchQuery = $state('')
@@ -38,15 +50,25 @@
 	let proficiencyFilters = $state<number[]>([])
 	let genderFilters = $state<number[]>([])
 
-	// Selection state
+	// Selection state - characters use Set<string>, weapons/summons use Map<string, number> for quantities
 	let selectedIds = $state<Set<string>>(new Set())
+	let selectedQuantities = $state<Map<string, number>>(new Map())
 	let showOnlySelected = $state(false)
 
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
 
-	// Get IDs of characters already in collection
-	const collectedIdsQuery = createQuery(() => collectionQueries.collectedCharacterIds(userId))
+	// Entity type display names
+	const entityNames: Record<EntityType, { singular: string; plural: string }> = {
+		character: { singular: 'character', plural: 'characters' },
+		weapon: { singular: 'weapon', plural: 'weapons' },
+		summon: { singular: 'summon', plural: 'summons' }
+	}
+
+	// Get IDs of characters already in collection (only used for characters)
+	const collectedIdsQuery = createQuery(() =>
+		collectionQueries.collectedCharacterIds(userId, entityType === 'character')
+	)
 
 	// Build filters for search (using SearchFilters type from search.queries)
 	const searchFilters = $derived<SearchFilters>({
@@ -54,24 +76,32 @@
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
 		season: seasonFilters.length > 0 ? seasonFilters : undefined,
 		characterSeries: seriesFilters.length > 0 ? seriesFilters : undefined,
-		// Note: Race and gender filters would need API support
 		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined
 	})
 
-	// Search query with infinite scroll using the factory pattern
-	// No debouncing - TanStack Query's staleTime handles caching
+	// Search query with infinite scroll - dynamic based on entity type
 	const searchResults = createInfiniteQuery(() => {
-		// Capture current reactive values synchronously for dependency tracking
 		const query = searchQuery
 		const filters = searchFilters
-		const excludeIds = collectedIdsQuery.data ?? []
-		const isEnabled = open && !collectedIdsQuery.isLoading
 
-		return searchQueries.characters(query, filters, 'en', excludeIds, isEnabled)
+		if (entityType === 'character') {
+			const excludeIds = collectedIdsQuery.data ?? []
+			const isEnabled = open && !collectedIdsQuery.isLoading
+			return searchQueries.characters(query, filters, 'en', excludeIds, isEnabled)
+		} else if (entityType === 'weapon') {
+			return {
+				...searchQueries.weapons(query, filters, 'en'),
+				enabled: open
+			}
+		} else {
+			return {
+				...searchQueries.summons(query, filters, 'en'),
+				enabled: open
+			}
+		}
 	})
 
 	// Flatten results and deduplicate by ID
-	// (API may return duplicates across pages)
 	const allResults = $derived.by(() => {
 		const pages = searchResults.data?.pages ?? []
 		const seen = new Set<string>()
@@ -90,14 +120,29 @@
 	})
 
 	// Filter to show only selected if enabled
-	const displayedResults = $derived(
-		showOnlySelected
-			? allResults.filter((r) => selectedIds.has(r.id))
-			: allResults
-	)
+	const displayedResults = $derived.by(() => {
+		if (!showOnlySelected) return allResults
 
-	// Add mutation
-	const addMutation = useAddCharactersToCollection()
+		if (entityType === 'character') {
+			return allResults.filter((r) => selectedIds.has(r.id))
+		} else {
+			return allResults.filter((r) => (selectedQuantities.get(r.id) ?? 0) > 0)
+		}
+	})
+
+	// Add mutations
+	const addCharacterMutation = useAddCharactersToCollection()
+	const addWeaponMutation = useAddWeaponsToCollection()
+	const addSummonMutation = useAddSummonsToCollection()
+
+	// Current mutation based on entity type
+	const currentMutation = $derived(
+		entityType === 'character'
+			? addCharacterMutation
+			: entityType === 'weapon'
+				? addWeaponMutation
+				: addSummonMutation
+	)
 
 	// Infinite scroll
 	const inViewport = new IsInViewport(() => sentinelEl, {
@@ -116,23 +161,29 @@
 		}
 	})
 
-	// Reset state when modal closes
+	// Reset state when modal closes or entity type changes
 	$effect(() => {
 		if (!open) {
-			selectedIds = new Set()
-			showOnlySelected = false
-			searchQuery = ''
-			elementFilters = []
-			rarityFilters = []
-			seasonFilters = []
-			seriesFilters = []
-			raceFilters = []
-			proficiencyFilters = []
-			genderFilters = []
+			resetState()
 		}
 	})
 
-	function toggleSelection(character: SearchResultItem) {
+	function resetState() {
+		selectedIds = new Set()
+		selectedQuantities = new Map()
+		showOnlySelected = false
+		searchQuery = ''
+		elementFilters = []
+		rarityFilters = []
+		seasonFilters = []
+		seriesFilters = []
+		raceFilters = []
+		proficiencyFilters = []
+		genderFilters = []
+	}
+
+	// Character toggle (binary selection)
+	function toggleCharacterSelection(character: SearchResultItem) {
 		const newSet = new Set(selectedIds)
 		if (newSet.has(character.id)) {
 			newSet.delete(character.id)
@@ -140,6 +191,17 @@
 			newSet.add(character.id)
 		}
 		selectedIds = newSet
+	}
+
+	// Weapon/Summon quantity change
+	function handleQuantityChange(item: SearchResultItem, quantity: number) {
+		const newMap = new Map(selectedQuantities)
+		if (quantity <= 0) {
+			newMap.delete(item.id)
+		} else {
+			newMap.set(item.id, quantity)
+		}
+		selectedQuantities = newMap
 	}
 
 	function handleFiltersChange(filters: CollectionFilterState) {
@@ -157,28 +219,89 @@
 	}
 
 	async function handleAdd() {
-		if (selectedIds.size === 0) return
-
-		const inputs = Array.from(selectedIds).map((characterId) => ({
-			characterId,
-			uncapLevel: 0,
-			transcendenceStep: 0
-		}))
-
 		try {
-			await addMutation.mutateAsync(inputs)
+			if (entityType === 'character') {
+				if (selectedIds.size === 0) return
+
+				const inputs = Array.from(selectedIds).map((characterId) => ({
+					characterId,
+					uncapLevel: 4,
+					transcendenceStep: 0
+				}))
+				await addCharacterMutation.mutateAsync(inputs)
+			} else if (entityType === 'weapon') {
+				if (selectedQuantities.size === 0) return
+
+				const inputs = Array.from(selectedQuantities.entries()).map(([weaponId, quantity]) => ({
+					weaponId,
+					quantity,
+					uncapLevel: 3,
+					transcendenceStep: 0
+				}))
+				await addWeaponMutation.mutateAsync(inputs)
+			} else {
+				if (selectedQuantities.size === 0) return
+
+				const inputs = Array.from(selectedQuantities.entries()).map(([summonId, quantity]) => ({
+					summonId,
+					quantity,
+					uncapLevel: 3,
+					transcendenceStep: 0
+				}))
+				await addSummonMutation.mutateAsync(inputs)
+			}
+
 			open = false
 			onOpenChange?.(false)
 		} catch (error) {
-			console.error('Failed to add characters:', error)
+			console.error(`Failed to add ${entityNames[entityType].plural}:`, error)
 		}
 	}
 
-	const selectedCount = $derived(selectedIds.size)
-	const isLoading = $derived(searchResults.isLoading || collectedIdsQuery.isLoading)
+	// Selected count
+	const selectedCount = $derived(
+		entityType === 'character'
+			? selectedIds.size
+			: Array.from(selectedQuantities.values()).reduce((sum, qty) => sum + qty, 0)
+	)
+
+	// Total items selected (for weapons/summons, this is unique items, not total quantity)
+	const selectedItemCount = $derived(
+		entityType === 'character' ? selectedIds.size : selectedQuantities.size
+	)
+
+	const isLoading = $derived(
+		searchResults.isLoading || (entityType === 'character' && collectedIdsQuery.isLoading)
+	)
+
+	// View mode from store
+	const currentViewMode = $derived(viewMode.modalView)
+
+	function handleViewModeChange(mode: ViewMode) {
+		viewMode.setModalView(mode)
+	}
+
+	// Dialog title based on entity type
+	const dialogTitle = $derived(`Add ${entityNames[entityType].plural.charAt(0).toUpperCase() + entityNames[entityType].plural.slice(1)} to Collection`)
+
+	// Placeholder text based on entity type
+	const searchPlaceholder = $derived(`Search ${entityNames[entityType].plural} by name...`)
+
+	// Footer text based on entity type
+	const selectedText = $derived.by(() => {
+		if (entityType === 'character') {
+			return `${selectedCount} ${selectedCount === 1 ? entityNames[entityType].singular : entityNames[entityType].plural} selected`
+		} else {
+			// For weapons/summons, show both item count and total quantity
+			if (selectedItemCount === 0) return ''
+			const itemText = `${selectedItemCount} ${selectedItemCount === 1 ? 'item' : 'items'}`
+			const qtyText = selectedCount > selectedItemCount ? ` (${selectedCount} total)` : ''
+			return `${itemText}${qtyText} selected`
+		}
+	})
 </script>
 
-<Dialog bind:open {onOpenChange} title="Add Characters to Collection" size="large">
+<Dialog bind:open {onOpenChange} title={dialogTitle} size="large">
 	{#snippet children()}
 		<div class="modal-content">
 			<!-- Search input -->
@@ -187,7 +310,7 @@
 				<input
 					type="text"
 					bind:value={searchQuery}
-					placeholder="Search characters by name..."
+					placeholder={searchPlaceholder}
 					class="search-input"
 				/>
 			</div>
@@ -195,6 +318,7 @@
 			<!-- Filters -->
 			<div class="filters-bar">
 				<CollectionFilters
+					{entityType}
 					bind:elementFilters
 					bind:rarityFilters
 					bind:seasonFilters
@@ -203,40 +327,92 @@
 					bind:proficiencyFilters
 					bind:genderFilters
 					onFiltersChange={handleFiltersChange}
+					showSort={false}
+					showViewToggle={true}
+					viewMode={currentViewMode}
+					onViewModeChange={handleViewModeChange}
 				/>
 			</div>
 
-			<!-- Results grid -->
+			<!-- Results -->
 			<div class="results-area">
 				{#if isLoading}
 					<div class="loading-state">
 						<Icon name="loader-2" size={32} />
-						<p>Loading characters...</p>
+						<p>Loading {entityNames[entityType].plural}...</p>
 					</div>
 				{:else if displayedResults.length === 0}
 					<div class="empty-state">
 						{#if showOnlySelected}
-							<p>No characters selected</p>
+							<p>No {entityNames[entityType].plural} selected</p>
 							<Button variant="ghost" size="small" onclick={toggleShowSelected}>
-								Show all characters
+								Show all {entityNames[entityType].plural}
 							</Button>
 						{:else if searchQuery || Object.values(searchFilters).some((v) => v)}
-							<p>No characters match your search</p>
+							<p>No {entityNames[entityType].plural} match your search</p>
 						{:else}
-							<p>Start searching to find characters</p>
+							<p>Start searching to find {entityNames[entityType].plural}</p>
+						{/if}
+					</div>
+				{:else if currentViewMode === 'grid'}
+					<div class="results-grid">
+						{#if entityType === 'character'}
+							{#each displayedResults as character (character.id)}
+								<SelectableCharacterCard
+									{character}
+									selected={selectedIds.has(character.id)}
+									onToggle={toggleCharacterSelection}
+								/>
+							{/each}
+						{:else if entityType === 'weapon'}
+							{#each displayedResults as weapon (weapon.id)}
+								<SelectableWeaponCard
+									{weapon}
+									quantity={selectedQuantities.get(weapon.id) ?? 0}
+									onQuantityChange={handleQuantityChange}
+								/>
+							{/each}
+						{:else}
+							{#each displayedResults as summon (summon.id)}
+								<SelectableSummonCard
+									{summon}
+									quantity={selectedQuantities.get(summon.id) ?? 0}
+									onQuantityChange={handleQuantityChange}
+								/>
+							{/each}
 						{/if}
 					</div>
 				{:else}
-					<div class="results-grid">
-						{#each displayedResults as character (character.id)}
-							<SelectableCharacterCard
-								{character}
-								selected={selectedIds.has(character.id)}
-								onToggle={toggleSelection}
-							/>
-						{/each}
+					<div class="results-list">
+						{#if entityType === 'character'}
+							{#each displayedResults as character (character.id)}
+								<SelectableCharacterRow
+									{character}
+									selected={selectedIds.has(character.id)}
+									onToggle={toggleCharacterSelection}
+								/>
+							{/each}
+						{:else if entityType === 'weapon'}
+							{#each displayedResults as weapon (weapon.id)}
+								<SelectableWeaponRow
+									{weapon}
+									quantity={selectedQuantities.get(weapon.id) ?? 0}
+									onQuantityChange={handleQuantityChange}
+								/>
+							{/each}
+						{:else}
+							{#each displayedResults as summon (summon.id)}
+								<SelectableSummonRow
+									{summon}
+									quantity={selectedQuantities.get(summon.id) ?? 0}
+									onQuantityChange={handleQuantityChange}
+								/>
+							{/each}
+						{/if}
 					</div>
+				{/if}
 
+				{#if displayedResults.length > 0}
 					{#if !showOnlySelected && searchResults.hasNextPage}
 						<div class="load-more-sentinel" bind:this={sentinelEl}></div>
 					{/if}
@@ -262,7 +438,7 @@
 						class:active={showOnlySelected}
 						onclick={toggleShowSelected}
 					>
-						{selectedCount} character{selectedCount === 1 ? '' : 's'} selected
+						{selectedText}
 					</button>
 				{/if}
 			</div>
@@ -272,10 +448,10 @@
 				</Button>
 				<Button
 					variant="primary"
-					disabled={selectedCount === 0 || addMutation.isPending}
+					disabled={selectedCount === 0 || currentMutation.isPending}
 					onclick={handleAdd}
 				>
-					{#if addMutation.isPending}
+					{#if currentMutation.isPending}
 						<Icon name="loader-2" size={16} />
 						Adding...
 					{:else}
@@ -345,6 +521,13 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: $unit;
+		padding: $unit 0;
+	}
+
+	.results-list {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
 		padding: $unit 0;
 	}
 

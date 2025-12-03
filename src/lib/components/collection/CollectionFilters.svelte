@@ -3,10 +3,16 @@
 	import { RACE_LABELS } from '$lib/utils/race'
 	import { GENDER_LABELS } from '$lib/utils/gender'
 	import type { CollectionSortKey } from '$lib/types/api/collection'
+	import type { ViewMode } from '$lib/stores/viewMode.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
+	import Icon from '$lib/components/Icon.svelte'
+
+	type EntityType = 'character' | 'weapon' | 'summon'
 
 	interface Props {
+		/** Entity type to determine which filters to show */
+		entityType?: EntityType
 		elementFilters?: number[]
 		rarityFilters?: number[]
 		seasonFilters?: number[]
@@ -17,7 +23,7 @@
 		sortBy?: CollectionSortKey
 		onFiltersChange?: (filters: CollectionFilterState) => void
 		onSortChange?: (sort: CollectionSortKey) => void
-		/** Which filter groups to show */
+		/** Which filter groups to show (overrides entityType defaults) */
 		showFilters?: {
 			element?: boolean
 			rarity?: boolean
@@ -29,6 +35,12 @@
 		}
 		/** Whether to show the sort dropdown */
 		showSort?: boolean
+		/** Current view mode */
+		viewMode?: ViewMode
+		/** Callback when view mode changes */
+		onViewModeChange?: (mode: ViewMode) => void
+		/** Whether to show the view toggle */
+		showViewToggle?: boolean
 	}
 
 	export interface CollectionFilterState {
@@ -41,7 +53,39 @@
 		gender: number[]
 	}
 
+	// Default filter visibility based on entity type
+	const defaultFiltersByEntity: Record<EntityType, Props['showFilters']> = {
+		character: {
+			element: true,
+			rarity: true,
+			season: true,
+			series: true,
+			race: true,
+			proficiency: true,
+			gender: true
+		},
+		weapon: {
+			element: true,
+			rarity: true,
+			season: false,
+			series: true, // Weapon series
+			race: false,
+			proficiency: true, // Weapon type
+			gender: false
+		},
+		summon: {
+			element: true,
+			rarity: true,
+			season: false,
+			series: false,
+			race: false,
+			proficiency: false,
+			gender: false
+		}
+	}
+
 	let {
+		entityType = 'character',
 		elementFilters = $bindable([]),
 		rarityFilters = $bindable([]),
 		seasonFilters = $bindable([]),
@@ -52,17 +96,18 @@
 		sortBy = $bindable<CollectionSortKey>('name_asc'),
 		onFiltersChange,
 		onSortChange,
-		showFilters = {
-			element: true,
-			rarity: true,
-			season: true,
-			series: true,
-			race: true,
-			proficiency: true,
-			gender: true
-		},
-		showSort = true
+		showFilters,
+		showSort = true,
+		viewMode = 'grid',
+		onViewModeChange,
+		showViewToggle = false
 	}: Props = $props()
+
+	// Compute effective filter visibility (explicit showFilters overrides entityType defaults)
+	const effectiveShowFilters = $derived({
+		...defaultFiltersByEntity[entityType],
+		...showFilters
+	})
 
 	// Sort options
 	const sortOptions: { value: CollectionSortKey; label: string }[] = [
@@ -207,7 +252,7 @@
 
 <div class="filters-container">
 	<div class="filters">
-		{#if showFilters.element}
+		{#if effectiveShowFilters.element}
 			<MultiSelect
 				options={elements}
 				bind:value={elementFilters}
@@ -216,7 +261,7 @@
 			/>
 		{/if}
 
-		{#if showFilters.rarity}
+		{#if effectiveShowFilters.rarity}
 			<MultiSelect
 				options={rarities}
 				bind:value={rarityFilters}
@@ -225,7 +270,7 @@
 			/>
 		{/if}
 
-		{#if showFilters.season}
+		{#if effectiveShowFilters.season}
 			<MultiSelect
 				options={seasons}
 				bind:value={seasonFilters}
@@ -234,16 +279,16 @@
 			/>
 		{/if}
 
-		{#if showFilters.series}
+		{#if effectiveShowFilters.series}
 			<MultiSelect
 				options={series}
 				bind:value={seriesFilters}
 				onValueChange={handleSeriesChange}
-				placeholder="Series"
+				placeholder={entityType === 'weapon' ? 'Weapon Series' : 'Series'}
 			/>
 		{/if}
 
-		{#if showFilters.race}
+		{#if effectiveShowFilters.race}
 			<MultiSelect
 				options={races}
 				bind:value={raceFilters}
@@ -252,16 +297,16 @@
 			/>
 		{/if}
 
-		{#if showFilters.proficiency}
+		{#if effectiveShowFilters.proficiency}
 			<MultiSelect
 				options={proficiencies}
 				bind:value={proficiencyFilters}
 				onValueChange={handleProficiencyChange}
-				placeholder="Proficiency"
+				placeholder={entityType === 'weapon' ? 'Weapon Type' : 'Proficiency'}
 			/>
 		{/if}
 
-		{#if showFilters.gender}
+		{#if effectiveShowFilters.gender}
 			<MultiSelect
 				options={genders}
 				bind:value={genderFilters}
@@ -275,16 +320,43 @@
 		{/if}
 	</div>
 
-	{#if showSort}
-		<div class="sort">
-			<Select
-				options={sortOptions}
-				bind:value={sortBy}
-				onValueChange={handleSortChange}
-				size="small"
-			/>
-		</div>
-	{/if}
+	<div class="right-controls">
+		{#if showViewToggle}
+			<div class="view-toggle">
+				<button
+					type="button"
+					class="view-btn"
+					class:active={viewMode === 'grid'}
+					onclick={() => onViewModeChange?.('grid')}
+					aria-label="Grid view"
+					aria-pressed={viewMode === 'grid'}
+				>
+					<Icon name="grid-2x2" size={18} />
+				</button>
+				<button
+					type="button"
+					class="view-btn"
+					class:active={viewMode === 'list'}
+					onclick={() => onViewModeChange?.('list')}
+					aria-label="List view"
+					aria-pressed={viewMode === 'list'}
+				>
+					<Icon name="list" size={18} />
+				</button>
+			</div>
+		{/if}
+
+		{#if showSort}
+			<div class="sort">
+				<Select
+					options={sortOptions}
+					bind:value={sortBy}
+					onValueChange={handleSortChange}
+					size="small"
+				/>
+			</div>
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">
@@ -304,6 +376,46 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: $unit;
+	}
+
+	.right-controls {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		flex-shrink: 0;
+	}
+
+	.view-toggle {
+		display: flex;
+		border: 1px solid var(--border-color, #ddd);
+		border-radius: 6px;
+		overflow: hidden;
+	}
+
+	.view-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: $unit-half;
+		border: none;
+		background: transparent;
+		color: var(--text-secondary, #666);
+		cursor: pointer;
+		transition: background 0.15s, color 0.15s;
+
+		&:hover {
+			background: var(--button-bg-hover, #f5f5f5);
+			color: var(--text-primary, #333);
+		}
+
+		&.active {
+			background: var(--accent-color, #3366ff);
+			color: white;
+		}
+
+		&:first-child {
+			border-right: 1px solid var(--border-color, #ddd);
+		}
 	}
 
 	.sort {
