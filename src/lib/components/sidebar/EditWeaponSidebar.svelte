@@ -10,6 +10,7 @@
 	import AxSkillSelect from './edit/AxSkillSelect.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { getElementIcon } from '$lib/utils/images'
+	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
 
 	interface Props {
 		weapon: GridWeapon
@@ -42,23 +43,24 @@
 	// Weapon data shortcuts
 	const weaponData = $derived(weapon.weapon)
 	const canChangeElement = $derived(weaponData?.element === 0)
-	const series = $derived(weaponData?.series ?? 0)
+	const series = $derived(weaponData?.series)
+	const seriesSlug = $derived(getSeriesSlug(series))
 	const transcendenceStep = $derived(weapon.transcendenceStep ?? 0)
 
-	// Weapon key config keyed by WEAPON series
-	// Maps weapon.series → { slots, keySeries } where keySeries is what weapon_keys API expects
-	const WEAPON_KEY_SERIES: Record<number, { name: string; slots: number; keySeries: number }> = {
-		2: { name: 'Dark Opus', slots: 2, keySeries: 3 }, // Pendulum (slot 0) + Chain/Pendulum (slot 1)
-		3: { name: 'Ultima', slots: 3, keySeries: 13 }, // Gauph Key (slot 0) + Ultima Key (slot 1) + Gate (slot 2)
-		17: { name: 'Draconic', slots: 2, keySeries: 27 }, // Teluma (slot 0) + Teluma (slot 1)
-		22: { name: 'Astral', slots: 1, keySeries: 19 }, // Emblem (slot 0)
-		34: { name: 'Superlative', slots: 2, keySeries: 40 } // Teluma (slot 0) + Teluma (slot 1)
+	// Weapon key slot configuration by series slug
+	// Maps series slug → number of weapon key slots
+	const WEAPON_KEY_SLOTS: Record<string, number> = {
+		'dark-opus': 2, // Pendulum (slot 0) + Chain/Pendulum (slot 1)
+		'ultima': 3, // Gauph Key (slot 0) + Ultima Key (slot 1) + Gate (slot 2)
+		'draconic': 2, // Teluma (slot 0) + Teluma (slot 1)
+		'draconic-providence': 2, // Same as Draconic
+		'superlative': 2, // Teluma (slot 0) + Teluma (slot 1)
+		// Add more as needed
 	}
 
-	const weaponKeyConfig = $derived(WEAPON_KEY_SERIES[series])
-	const hasWeaponKeys = $derived(!!weaponKeyConfig)
-	const keySlotCount = $derived(weaponKeyConfig?.slots ?? 0)
-	const keySeries = $derived(weaponKeyConfig?.keySeries ?? 0)
+	// Check if series has weapon keys using the utility (handles both formats)
+	const hasWeaponKeys = $derived(seriesHasWeaponKeys(series))
+	const keySlotCount = $derived(seriesSlug ? (WEAPON_KEY_SLOTS[seriesSlug] ?? 2) : 0)
 
 	const hasAxSkills = $derived(weaponData?.ax === true)
 	const axType = $derived(weaponData?.axType ?? 1)
@@ -95,16 +97,92 @@
 		return '—'
 	}
 
-	function handleSave() {
-		const updates: Partial<GridWeapon> = {}
+	// Build the update payload for the API
+	// Uses flat key IDs rather than nested arrays, as expected by the API
+	interface WeaponUpdatePayload {
+		element?: number
+		weaponKey1Id?: string | null
+		weaponKey2Id?: string | null
+		weaponKey3Id?: string | null
+		awakeningId?: string | null
+		awakeningLevel?: number
+		axModifier1?: number | null
+		axStrength1?: number | null
+		axModifier2?: number | null
+		axStrength2?: number | null
+	}
 
+	function handleSave() {
+		const updates: WeaponUpdatePayload = {}
+
+		// Element change (only for element-changeable weapons)
 		if (canChangeElement && element !== weapon.element) {
 			updates.element = element
 		}
 
-		// TODO: Add weapon keys, AX skills, awakening updates
+		// Weapon keys - send individual key IDs
+		if (hasWeaponKeys) {
+			const originalKey1 = weapon.weaponKeys?.[0]?.id
+			const originalKey2 = weapon.weaponKeys?.[1]?.id
+			const originalKey3 = weapon.weaponKeys?.[2]?.id
 
-		onSave?.(updates)
+			if (weaponKey1 !== originalKey1) {
+				updates.weaponKey1Id = weaponKey1 ?? null
+			}
+			if (weaponKey2 !== originalKey2) {
+				updates.weaponKey2Id = weaponKey2 ?? null
+			}
+			if (weaponKey3 !== originalKey3) {
+				updates.weaponKey3Id = weaponKey3 ?? null
+			}
+		}
+
+		// Awakening - send awakening ID and level
+		if (hasAwakening) {
+			const originalAwakeningId = weapon.awakening?.type?.id
+			const originalLevel = weapon.awakening?.level ?? 1
+
+			if (selectedAwakening?.id !== originalAwakeningId) {
+				updates.awakeningId = selectedAwakening?.id ?? null
+			}
+			if (awakeningLevel !== originalLevel) {
+				updates.awakeningLevel = awakeningLevel
+			}
+		}
+
+		// AX skills - send modifier/strength pairs
+		if (hasAxSkills) {
+			const originalAx = weapon.ax ?? [
+				{ modifier: -1, strength: 0 },
+				{ modifier: -1, strength: 0 }
+			]
+
+			const ax1 = axSkills[0]
+			const ax2 = axSkills[1]
+			const origAx1 = originalAx[0]
+			const origAx2 = originalAx[1]
+
+			if (ax1?.modifier !== origAx1?.modifier) {
+				updates.axModifier1 = ax1?.modifier ?? null
+			}
+			if (ax1?.strength !== origAx1?.strength) {
+				updates.axStrength1 = ax1?.strength ?? null
+			}
+			if (ax2?.modifier !== origAx2?.modifier) {
+				updates.axModifier2 = ax2?.modifier ?? null
+			}
+			if (ax2?.strength !== origAx2?.strength) {
+				updates.axStrength2 = ax2?.strength ?? null
+			}
+		}
+
+		// Only call onSave if there are actual updates
+		if (Object.keys(updates).length > 0) {
+			onSave?.(updates as Partial<GridWeapon>)
+		} else {
+			// No changes, just close the panel
+			onCancel?.()
+		}
 	}
 
 	function handleCancel() {
@@ -148,12 +226,12 @@
 			</DetailsSection>
 		{/if}
 
-		{#if hasWeaponKeys}
+		{#if hasWeaponKeys && seriesSlug}
 			<DetailsSection title="Weapon Keys">
 				<div class="key-selects">
 					{#if keySlotCount >= 1}
 						<WeaponKeySelect
-							series={keySeries}
+							{seriesSlug}
 							slot={0}
 							bind:value={weaponKey1}
 							{transcendenceStep}
@@ -161,7 +239,7 @@
 					{/if}
 					{#if keySlotCount >= 2}
 						<WeaponKeySelect
-							series={keySeries}
+							{seriesSlug}
 							slot={1}
 							bind:value={weaponKey2}
 							{transcendenceStep}
@@ -169,7 +247,7 @@
 					{/if}
 					{#if keySlotCount >= 3}
 						<WeaponKeySelect
-							series={keySeries}
+							{seriesSlug}
 							slot={2}
 							bind:value={weaponKey3}
 							{transcendenceStep}

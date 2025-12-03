@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query'
-	import { entityQueries } from '$lib/api/queries/entity.queries'
+	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import type { WeaponKey } from '$lib/api/adapters/entity.adapter'
 	import Select from '$lib/components/ui/Select.svelte'
+	import { queryOptions } from '@tanstack/svelte-query'
 
 	interface Props {
-		/** The weapon series (determines which keys are available) */
-		series: number
-		/** The slot number (1, 2, or 3) */
+		/** The weapon series slug (determines which keys are available) */
+		seriesSlug?: string
+		/** The slot number (0, 1, or 2) */
 		slot: number
 		/** Currently selected weapon key ID */
 		value?: string
@@ -17,42 +18,54 @@
 		transcendenceStep?: number
 	}
 
-	let { series, slot, value = $bindable(), onchange, transcendenceStep = 0 }: Props = $props()
+	let { seriesSlug, slot, value = $bindable(), onchange, transcendenceStep = 0 }: Props = $props()
 
-	// Key type names based on series and slot (0-based indexing)
-	const KEY_TYPE_NAMES: Record<number, Record<number, { en: string; ja: string }>> = {
-		// Dark Opus (series 3)
-		3: {
+	// Key type names based on series slug and slot (0-based indexing)
+	const KEY_TYPE_NAMES: Record<string, Record<number, { en: string; ja: string }>> = {
+		// Dark Opus
+		'dark-opus': {
 			0: { en: 'Pendulum', ja: 'ペンデュラム' },
 			1: { en: 'Pendulum/Chain', ja: 'ペンデュラム/チェイン' }
 		},
-		// Draconic (series 27)
-		27: {
+		// Draconic
+		'draconic': {
 			0: { en: 'Teluma', ja: 'テルマ' },
 			1: { en: 'Teluma', ja: 'テルマ' }
 		},
-		// Ultima (series 13)
-		13: {
+		// Draconic Providence
+		'draconic-providence': {
+			0: { en: 'Teluma', ja: 'テルマ' },
+			1: { en: 'Teluma', ja: 'テルマ' }
+		},
+		// Ultima
+		'ultima': {
 			0: { en: 'Gauph Key', ja: 'ガフスキー' },
 			1: { en: 'Ultima Key', ja: 'ガフスキーΩ' },
 			2: { en: 'Gate of Omnipotence', ja: 'ガフスキー' }
 		},
-		// Astral (series 19)
-		19: {
-			0: { en: 'Emblem', ja: 'エンブレム' }
-		},
-		// Superlative (series 40)
-		40: {
+		// Superlative
+		'superlative': {
 			0: { en: 'Teluma', ja: 'テルマ' },
 			1: { en: 'Teluma', ja: 'テルマ' }
 		}
 	}
 
-	// Fetch weapon keys for this series and slot
-	const weaponKeysQuery = createQuery(() => entityQueries.weaponKeys({ series, slot }))
+	// Fetch weapon keys for this series slug and slot
+	const weaponKeysQuery = createQuery(() =>
+		queryOptions({
+			queryKey: ['weaponKeys', 'slug', seriesSlug, slot] as const,
+			queryFn: async () => {
+				if (!seriesSlug) return []
+				return entityAdapter.getWeaponKeys({ seriesSlug, slot })
+			},
+			enabled: !!seriesSlug,
+			staleTime: 1000 * 60 * 60,
+			gcTime: 1000 * 60 * 60 * 24
+		})
+	)
 
 	// Get the key type name for this series/slot
-	const keyTypeName = $derived(KEY_TYPE_NAMES[series]?.[slot]?.en ?? 'Key')
+	const keyTypeName = $derived(seriesSlug ? (KEY_TYPE_NAMES[seriesSlug]?.[slot]?.en ?? 'Key') : 'Key')
 
 	// Group and sort weapon keys
 	const groupedOptions = $derived.by(() => {

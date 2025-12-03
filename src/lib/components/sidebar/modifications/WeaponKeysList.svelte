@@ -2,13 +2,14 @@
 	import { getWeaponKeyImages } from '$lib/utils/modifiers'
 	import type { WeaponKey } from '$lib/types/api/entities'
 	import type { LocalizedName } from '$lib/types/api/entities'
+	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 	interface Props {
 		weaponKeys?: WeaponKey[]
 		weaponData?: {
 			element?: number
 			proficiency?: number | number[]
-			series?: number
+			series?: WeaponSeriesRef | null
 			name?: LocalizedName
 		}
 		layout?: 'list' | 'grid'
@@ -32,7 +33,7 @@
 		return key.slug || 'Weapon Key'
 	}
 
-	function getSlotLabel(slot: number, series?: number): string {
+	function getSlotLabel(slot: number, series?: WeaponSeriesRef | null): string {
 		return `Skill ${slot + 1}`
 	}
 </script>
