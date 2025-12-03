@@ -1,0 +1,291 @@
+<svelte:options runes={true} />
+
+<script lang="ts" generics="T extends string | number">
+	import { Select as SelectPrimitive } from 'bits-ui'
+	import Icon from '../Icon.svelte'
+	import checkIcon from '$src/assets/icons/check.svg'
+
+	interface Option {
+		value: T
+		label: string
+		disabled?: boolean
+		color?: string
+	}
+
+	interface Props {
+		options: Option[]
+		value?: T[]
+		onValueChange?: (value: T[]) => void
+		placeholder?: string
+		disabled?: boolean
+		size?: 'small' | 'medium' | 'large'
+		contained?: boolean
+		class?: string
+	}
+
+	let {
+		options = [],
+		value = $bindable([]),
+		onValueChange,
+		placeholder = 'Select...',
+		disabled = false,
+		size = 'small',
+		contained = false,
+		class: className = ''
+	}: Props = $props()
+
+	// Convert options to string values for Bits UI
+	const stringOptions = $derived(
+		options.map((opt) => ({
+			...opt,
+			value: String(opt.value)
+		}))
+	)
+
+	// Convert value array to string array for Bits UI
+	const stringValue = $derived(value.map((v) => String(v)))
+
+	// Get selected labels for display
+	const selectedLabels = $derived(() => {
+		if (value.length === 0) return null
+		if (value.length === 1) {
+			return options.find((opt) => opt.value === value[0])?.label
+		}
+		return `${value.length} selected`
+	})
+
+	const selectClasses = $derived(
+		[
+			'multi-select',
+			size,
+			contained && 'contained',
+			disabled && 'disabled',
+			value.length > 0 && 'has-value',
+			className
+		]
+			.filter(Boolean)
+			.join(' ')
+	)
+
+	function handleValueChange(newValue: string[]) {
+		// Convert strings back to original type
+		const typedValue = newValue.map((v) =>
+			typeof options[0]?.value === 'number' ? Number(v) : v
+		) as T[]
+		value = typedValue
+		onValueChange?.(typedValue)
+	}
+</script>
+
+<SelectPrimitive.Root
+	type="multiple"
+	value={stringValue}
+	onValueChange={handleValueChange}
+	{disabled}
+	items={stringOptions}
+>
+	<SelectPrimitive.Trigger class={selectClasses} data-placeholder={value.length === 0}>
+		<span class="text">{selectedLabels() || placeholder}</span>
+		<Icon name="chevron-down-small" size={14} class="chevron" />
+	</SelectPrimitive.Trigger>
+
+	<SelectPrimitive.Content class="multi-content">
+		<SelectPrimitive.Viewport>
+			{#each options as option}
+				<SelectPrimitive.Item
+					value={String(option.value)}
+					disabled={option.disabled}
+					class="multi-item"
+					style={option.color ? `--option-color: ${option.color}` : ''}
+				>
+					{#snippet children({ selected })}
+						<span class="label" class:has-color={!!option.color} class:selected>{option.label}</span
+						>
+						<span class="check-icon" class:visible={selected}>
+							<img src={checkIcon} alt="" />
+						</span>
+					{/snippet}
+				</SelectPrimitive.Item>
+			{/each}
+		</SelectPrimitive.Viewport>
+	</SelectPrimitive.Content>
+</SelectPrimitive.Root>
+
+<style lang="scss">
+	@use '$src/themes/spacing' as *;
+	@use '$src/themes/colors' as *;
+	@use '$src/themes/typography' as *;
+	@use '$src/themes/layout' as *;
+	@use '$src/themes/mixins' as *;
+	@use '$src/themes/effects' as *;
+
+	// Trigger styling - base styles
+	:global([data-select-trigger].multi-select) {
+		all: unset;
+		box-sizing: border-box;
+		-webkit-font-smoothing: antialiased;
+		align-items: center;
+		background-color: var(--input-bg);
+		border-radius: $input-corner;
+		border: 1px solid var(--border-color, transparent);
+		color: var(--text-primary);
+		cursor: pointer;
+		display: inline-flex;
+		font-family: var(--font-family);
+		gap: $unit-half;
+		@include smooth-transition($duration-quick, background-color, border-color, box-shadow);
+
+		&:hover:not(.disabled) {
+			// background-color: var(--input-bg-hover);
+			box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+		}
+
+		&:focus-visible {
+			@include focus-ring($blue);
+		}
+
+		&.disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		&[data-placeholder='true'] .text {
+			color: var(--text-tertiary);
+		}
+
+		&.has-value {
+			border-color: var(--accent-color, $blue);
+			background-color: rgba($blue, 0.08);
+		}
+
+		.text {
+			flex: 1;
+			text-align: left;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			color: var(--text-tertiary);
+		}
+
+		:global(.chevron) {
+			flex-shrink: 0;
+			color: var(--text-tertiary);
+		}
+	}
+
+	// Size: small
+	:global([data-select-trigger].multi-select.small) {
+		padding: $unit-half $unit;
+		font-size: $font-small;
+		min-height: $unit-3x;
+	}
+
+	// Size: medium (default for standalone use)
+	:global([data-select-trigger].multi-select.medium) {
+		padding: $unit calc($unit * 1.5);
+		font-size: $font-regular;
+		min-height: $unit-4x;
+	}
+
+	// Variant: contained
+	:global([data-select-trigger].multi-select.contained) {
+		background-color: var(--select-contained-bg);
+
+		&:hover:not(.disabled) {
+			background-color: var(--select-contained-bg-hover);
+		}
+	}
+
+	// Dropdown content
+	:global([data-select-content].multi-content) {
+		background: var(--dialog-bg);
+		border-radius: $card-corner;
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+		padding: $unit-half;
+		min-width: var(--bits-select-anchor-width);
+		max-height: 280px;
+		overflow: auto;
+		z-index: 50;
+		animation: fadeIn $duration-opacity-fade ease-out;
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(-4px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+	}
+
+	// Dropdown items
+	:global([data-select-item].multi-item) {
+		align-items: center;
+		border-radius: $item-corner-small;
+		color: var(--text-primary);
+		cursor: pointer;
+		display: flex;
+		gap: $unit;
+		padding: $unit calc($unit * 1.5);
+		user-select: none;
+		font-size: $font-small;
+		font-weight: $normal;
+		@include smooth-transition($duration-quick, background-color);
+
+		&:hover {
+			background-color: var(--option-bg-hover);
+		}
+
+		&[data-disabled] {
+			color: var(--text-tertiary);
+			cursor: not-allowed;
+			opacity: 0.5;
+		}
+
+		&[data-highlighted] {
+			background-color: var(--option-bg-hover);
+		}
+
+		.label {
+			flex: 1;
+
+			&.selected {
+				font-weight: $medium;
+			}
+
+			&.has-color {
+				&::before {
+					content: '';
+					display: inline-block;
+					width: 8px;
+					height: 8px;
+					border-radius: 50%;
+					background: var(--option-color);
+					margin-right: $unit-half;
+				}
+			}
+		}
+
+		.check-icon {
+			width: 12px;
+			height: 12px;
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			img {
+				width: 12px;
+				height: 12px;
+				opacity: 0;
+			}
+
+			&.visible img {
+				opacity: 1;
+			}
+		}
+	}
+</style>

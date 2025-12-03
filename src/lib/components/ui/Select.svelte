@@ -209,87 +209,47 @@
 		}
 	}
 
-	// Select trigger styling (matching Input component)
-	:global([data-select-trigger]) {
+	// Select trigger styling - base styles
+	:global([data-select-trigger].select) {
 		all: unset;
 		box-sizing: border-box;
-		display: inline-flex;
-		cursor: pointer;
-	}
-
-	:global([data-select-trigger].select) {
 		-webkit-font-smoothing: antialiased;
 		align-items: center;
 		background-color: var(--input-bg);
 		border-radius: $input-corner;
-		border: 2px solid transparent;
+		border: 1px solid var(--border-color, transparent);
 		color: var(--text-primary);
-		display: flex;
+		cursor: pointer;
+		display: inline-flex;
 		font-family: var(--font-family);
-		gap: $unit;
-		width: 100%;
-		@include smooth-transition($duration-quick, background-color, border-color);
+		gap: $unit-half;
+		@include smooth-transition($duration-quick, background-color, border-color, box-shadow);
 
 		&:hover:not(.disabled) {
-			background-color: var(--input-bg-hover);
+			// background-color: var(--input-bg-hover);
+			box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 		}
 
 		&:focus-visible {
 			@include focus-ring($blue);
 		}
-	}
 
-	// Size modifiers (matching Button component)
-	:global([data-select-trigger].select.small) {
-		padding: $unit $unit-2x;
-		font-size: $font-small;
-		min-height: calc($unit * 3.5);
-	}
-
-	:global([data-select-trigger].select.medium) {
-		padding: $unit ($unit * 2.5);
-		font-size: $font-regular;
-		height: calc($unit * 5.5);
-	}
-
-	:global([data-select-trigger].select.large) {
-		padding: $unit-2x $unit-3x;
-		font-size: $font-large;
-		min-height: calc($unit * 6.5);
-	}
-
-	// Variant modifiers
-	:global([data-select-trigger].select.contained) {
-		background-color: var(--select-contained-bg);
-
-		&:hover:not(.disabled) {
-			background-color: var(--select-contained-bg-hover);
+		&.disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
 		}
-	}
 
-	// Other modifiers
-	:global([data-select-trigger].select.full) {
-		width: 100%;
-	}
+		&[data-placeholder='true'] .text {
+			color: var(--text-tertiary);
+		}
 
-	:global([data-select-trigger].select.disabled) {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	:global([data-select-trigger].select[data-placeholder='true']) .text {
-		color: var(--text-tertiary);
-	}
-
-	// Inner elements of select trigger
-	:global([data-select-trigger].select) {
 		.text {
 			flex: 1;
 			text-align: left;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			font-weight: $normal;
+			color: var(--text-tertiary);
 		}
 
 		.image {
@@ -301,8 +261,42 @@
 		:global(.chevron) {
 			flex-shrink: 0;
 			color: var(--text-tertiary);
-			margin-left: auto;
 		}
+	}
+
+	// Size: small
+	:global([data-select-trigger].select.small) {
+		padding: $unit-half $unit;
+		font-size: $font-small;
+		min-height: $unit-3x;
+	}
+
+	// Size: medium (default)
+	:global([data-select-trigger].select.medium) {
+		padding: $unit calc($unit * 1.5);
+		font-size: $font-regular;
+		min-height: $unit-4x;
+	}
+
+	// Size: large
+	:global([data-select-trigger].select.large) {
+		padding: $unit-2x $unit-3x;
+		font-size: $font-large;
+		min-height: calc($unit * 6);
+	}
+
+	// Variant: contained
+	:global([data-select-trigger].select.contained) {
+		background-color: var(--select-contained-bg);
+
+		&:hover:not(.disabled) {
+			background-color: var(--select-contained-bg-hover);
+		}
+	}
+
+	// Modifier: full width
+	:global([data-select-trigger].select.full) {
+		width: 100%;
 	}
 
 	// Dropdown content styling
