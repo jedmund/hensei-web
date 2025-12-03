@@ -54,7 +54,7 @@
 	aria-label="Select {name}, current quantity: {quantity}"
 >
 	<img src={imageUrl} alt={name} class="image" loading="lazy" />
-	<div class="counter-overlay" onclick|stopPropagation={() => {}}>
+	<div class="counter-overlay" onclick={(e) => e.stopPropagation()}>
 		<QuantityCounter value={quantity} onChange={handleQuantityChange} />
 	</div>
 </div>

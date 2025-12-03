@@ -56,7 +56,8 @@
 	onkeydown={handleKeyDown}
 	aria-label="Select {name}, current quantity: {quantity}"
 >
-	<div class="counter-cell" onclick|stopPropagation={() => {}}>
+	<!-- onclick stops propagation to prevent row click from firing -->
+	<div class="counter-cell" onclick={(e) => e.stopPropagation()}>
 		<QuantityCounter value={quantity} onChange={handleQuantityChange} />
 	</div>
 
