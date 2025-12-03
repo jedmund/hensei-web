@@ -25,19 +25,20 @@ export interface WeaponSeriesRef {
 
 /**
  * Full weapon series from /api/v1/weapon_series endpoint.
- * The list endpoint returns a minimal view, while the show endpoint returns the full view.
+ * Flags are included in both list and show endpoints.
+ * weaponCount is only included in the :full view (show endpoint).
  */
 export interface WeaponSeries {
 	id: string
 	name: { en: string; ja: string }
 	slug: string
 	order: number
+	extra: boolean
+	elementChangeable: boolean
+	hasWeaponKeys: boolean
+	hasAwakening: boolean
+	hasAxSkills: boolean
 	// Only included in :full view (show endpoint)
-	extra?: boolean
-	elementChangeable?: boolean
-	hasWeaponKeys?: boolean
-	hasAwakening?: boolean
-	hasAxSkills?: boolean
 	weaponCount?: number
 }
 
