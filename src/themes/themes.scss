@@ -38,6 +38,9 @@
 
 	--grid-rep-hover: #{colors.$grid--rep--hover--light};
 
+	--list-cell-bg: #{colors.$list--cell--bg--light};
+	--list-cell-bg-hover: #{colors.$list--cell--bg--light--hover};
+
 	--card-bg: #{colors.$grey-100};
 	--bar-bg: #{colors.$grey-100};
 
@@ -402,6 +405,9 @@
 	--page-bg: #{colors.$page--bg--dark};
 
 	--grid-rep-hover: #{colors.$grid--rep--hover--dark};
+
+	--list-cell-bg: #{colors.$list--cell--bg--dark};
+	--list-cell-bg-hover: #{colors.$list--cell--bg--dark--hover};
 
 	--card-bg: #{colors.$page--element--bg--dark};
 	--bar-bg: #{colors.$grey-20};
