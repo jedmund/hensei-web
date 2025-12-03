@@ -82,9 +82,38 @@ export const entityQueries = {
 	 */
 	weaponKeys: (params?: WeaponKeyQueryParams) =>
 		queryOptions({
-			queryKey: ['weaponKeys', params?.series, params?.slot, params?.group] as const,
+			queryKey: ['weaponKeys', params?.seriesSlug, params?.slot, params?.group] as const,
 			queryFn: () => entityAdapter.getWeaponKeys(params),
 			staleTime: 1000 * 60 * 60, // 1 hour - weapon keys rarely change
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * All weapon series query options
+	 * Returns list ordered by display order
+	 *
+	 * @returns Query options for fetching all weapon series
+	 */
+	weaponSeriesList: () =>
+		queryOptions({
+			queryKey: ['weaponSeries', 'list'] as const,
+			queryFn: () => entityAdapter.getWeaponSeriesList(),
+			staleTime: 1000 * 60 * 60, // 1 hour - rarely changes
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * Single weapon series query options
+	 *
+	 * @param idOrSlug - Weapon series UUID or slug (e.g., 'dark-opus')
+	 * @returns Query options for fetching a single weapon series with full details
+	 */
+	weaponSeries: (idOrSlug: string) =>
+		queryOptions({
+			queryKey: ['weaponSeries', idOrSlug] as const,
+			queryFn: () => entityAdapter.getWeaponSeries(idOrSlug),
+			enabled: !!idOrSlug,
+			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		})
 }
@@ -114,5 +143,8 @@ export const entityKeys = {
 	summons: () => ['summon'] as const,
 	summon: (id: string) => [...entityKeys.summons(), id] as const,
 	weaponKeys: (params?: WeaponKeyQueryParams) =>
-		['weaponKeys', params?.series, params?.slot, params?.group] as const
+		['weaponKeys', params?.seriesSlug, params?.slot, params?.group] as const,
+	weaponSeriesList: () => ['weaponSeries', 'list'] as const,
+	weaponSeries: (idOrSlug: string) => ['weaponSeries', idOrSlug] as const,
+	allWeaponSeries: () => ['weaponSeries'] as const
 }

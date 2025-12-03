@@ -11,6 +11,12 @@
 import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
+import type {
+	WeaponSeriesRef,
+	WeaponSeries,
+	CreateWeaponSeriesPayload,
+	UpdateWeaponSeriesPayload
+} from '$lib/types/api/weaponSeries'
 
 /**
  * Canonical weapon data from the game
@@ -25,7 +31,8 @@ export interface Weapon {
 	rarity: number
 	element: number
 	proficiency: number
-	series?: number
+	/** Weapon series - object with slug/name/flags */
+	series?: WeaponSeriesRef | null
 	weaponType?: number
 	/** Gacha promotions (1=Premium, 2=Classic, 3=ClassicII, 4=Flash, 5=Legend, etc.) */
 	promotions?: number[]
@@ -182,7 +189,8 @@ export interface WeaponKey {
  * Query parameters for fetching weapon keys
  */
 export interface WeaponKeyQueryParams {
-	series?: number
+	/** Filter by weapon series slug (e.g., 'dark-opus', 'ultima') */
+	seriesSlug?: string
 	slot?: number
 	group?: number
 }
@@ -421,8 +429,8 @@ export interface CreateWeaponPayload {
 	rarity?: number
 	element?: number
 	proficiency?: number
-	series?: number
-	new_series?: number
+	/** Weapon series ID (UUID) */
+	weapon_series_id?: string
 	min_hp?: number
 	max_hp?: number
 	max_hp_flb?: number
@@ -654,7 +662,9 @@ export class EntityAdapter extends BaseAdapter {
 	 */
 	async getWeaponKeys(params?: WeaponKeyQueryParams): Promise<WeaponKey[]> {
 		const searchParams = new URLSearchParams()
-		if (params?.series !== undefined) searchParams.set('series', String(params.series))
+		if (params?.seriesSlug) {
+			searchParams.set('series_slug', params.seriesSlug)
+		}
 		if (params?.slot !== undefined) searchParams.set('slot', String(params.slot))
 		if (params?.group !== undefined) searchParams.set('group', String(params.group))
 
@@ -670,7 +680,7 @@ export class EntityAdapter extends BaseAdapter {
 	/**
 	 * Clears entity cache
 	 */
-	clearEntityCache(type?: 'weapons' | 'characters' | 'summons' | 'weapon_keys') {
+	clearEntityCache(type?: 'weapons' | 'characters' | 'summons' | 'weapon_keys' | 'weapon_series') {
 		if (type) {
 			this.clearCache(`/${type}`)
 		} else {
@@ -679,6 +689,7 @@ export class EntityAdapter extends BaseAdapter {
 			this.clearCache('/characters')
 			this.clearCache('/summons')
 			this.clearCache('/weapon_keys')
+			this.clearCache('/weapon_series')
 		}
 	}
 
@@ -1175,6 +1186,87 @@ export class EntityAdapter extends BaseAdapter {
 			method: 'POST',
 			body: { wiki_pages: wikiPages }
 		})
+	}
+
+	// ============================================
+	// Weapon Series Methods
+	// ============================================
+
+	/**
+	 * Gets all weapon series ordered by display order
+	 * Returns minimal view (id, name, slug, order)
+	 */
+	async getWeaponSeriesList(): Promise<WeaponSeries[]> {
+		return this.request<WeaponSeries[]>('/weapon_series', {
+			method: 'GET',
+			cacheTTL: 3600000 // Cache for 1 hour - rarely changes
+		})
+	}
+
+	/**
+	 * Gets a single weapon series by ID or slug
+	 * Returns full view with boolean flags and weapon count
+	 *
+	 * @param idOrSlug - UUID or slug (e.g., 'dark-opus')
+	 */
+	async getWeaponSeries(idOrSlug: string): Promise<WeaponSeries> {
+		return this.request<WeaponSeries>(`/weapon_series/${idOrSlug}`, {
+			method: 'GET',
+			cacheTTL: 3600000 // Cache for 1 hour
+		})
+	}
+
+	/**
+	 * Creates a new weapon series
+	 * Requires editor role (>= 7)
+	 */
+	async createWeaponSeries(payload: CreateWeaponSeriesPayload): Promise<WeaponSeries> {
+		const result = await this.request<WeaponSeries>('/weapon_series', {
+			method: 'POST',
+			body: { weapon_series: payload }
+		})
+		// Clear weapon series cache
+		this.clearCache('/weapon_series')
+		return result
+	}
+
+	/**
+	 * Updates an existing weapon series
+	 * Requires editor role (>= 7)
+	 *
+	 * @param id - Weapon series UUID
+	 * @param payload - Fields to update
+	 */
+	async updateWeaponSeries(id: string, payload: UpdateWeaponSeriesPayload): Promise<WeaponSeries> {
+		const result = await this.request<WeaponSeries>(`/weapon_series/${id}`, {
+			method: 'PATCH',
+			body: { weapon_series: payload }
+		})
+		// Clear weapon series caches
+		this.clearCache('/weapon_series')
+		return result
+	}
+
+	/**
+	 * Deletes a weapon series
+	 * Requires editor role (>= 7)
+	 * Will fail if series has associated weapons
+	 *
+	 * @param id - Weapon series UUID
+	 */
+	async deleteWeaponSeries(id: string): Promise<void> {
+		await this.request<void>(`/weapon_series/${id}`, {
+			method: 'DELETE'
+		})
+		// Clear weapon series cache
+		this.clearCache('/weapon_series')
+	}
+
+	/**
+	 * Clears weapon series cache
+	 */
+	clearWeaponSeriesCache() {
+		this.clearCache('/weapon_series')
 	}
 }
 

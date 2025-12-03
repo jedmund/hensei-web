@@ -167,8 +167,8 @@ export interface SearchFilters {
 	/** Filter by secondary proficiency (characters only) */
 	proficiency2?: number[] | undefined
 
-	/** Filter by weapon series */
-	series?: number[] | undefined
+	/** Filter by weapon series (accepts series IDs or slugs) */
+	series?: string[] | undefined
 
 	/** Filter by character season (1=Standard, 2=Valentine, etc.) */
 	season?: number[] | undefined
