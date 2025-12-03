@@ -62,8 +62,12 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/colors' as *;
+	@use '$src/themes/layout' as *;
 
 	.header {
+		background: var(--card-bg);
+		border-radius: $card-corner;
+		padding: $unit-2x;
 		display: flex;
 		align-items: center;
 		gap: $unit-2x;

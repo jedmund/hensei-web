@@ -203,7 +203,6 @@
 					bind:proficiencyFilters
 					bind:genderFilters
 					onFiltersChange={handleFiltersChange}
-					layout="horizontal"
 				/>
 			</div>
 
