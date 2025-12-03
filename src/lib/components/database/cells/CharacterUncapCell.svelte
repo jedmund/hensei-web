@@ -30,13 +30,18 @@
 	// Only regular (non-special) characters have transcendence
 	const transcendenceStage = $derived(
 		// Special characters don't have transcendence
-		special ? 0 :
-		// First check if API provides direct transcendence_step field on the row
-		row.transcendence_step ? row.transcendence_step :
-		// Check if API provides specific max transcendence step in uncap object
-		uncap.max_transcendence_step ? uncap.max_transcendence_step :
-		// Otherwise, show maximum stage (5) when transcendence is available for regular characters
-		transcendence ? 5 : 0
+		special
+			? 0
+			: // First check if API provides direct transcendence_step field on the row
+				row.transcendence_step
+				? row.transcendence_step
+				: // Check if API provides specific max transcendence step in uncap object
+					uncap.max_transcendence_step
+					? uncap.max_transcendence_step
+					: // Otherwise, show maximum stage (5) when transcendence is available for regular characters
+						transcendence
+						? 5
+						: 0
 	)
 </script>
 
@@ -57,7 +62,7 @@
 	.uncap-cell {
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: flex-start;
 		height: 100%;
 		padding: 4px;
 	}

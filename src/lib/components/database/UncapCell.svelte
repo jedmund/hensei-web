@@ -53,7 +53,7 @@
 	.uncap-cell {
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: flex-start;
 		height: 100%;
 		padding: 4px;
 	}

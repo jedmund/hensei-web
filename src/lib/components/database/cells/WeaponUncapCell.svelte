@@ -22,11 +22,15 @@
 	// For database view, show maximum transcendence stage when available
 	const transcendenceStage = $derived(
 		// First check if API provides direct transcendence_step field on the row
-		row.transcendence_step ? row.transcendence_step :
-		// Check if API provides specific max transcendence step in uncap object
-		uncap.max_transcendence_step ? uncap.max_transcendence_step :
-		// Otherwise, show maximum stage (5) when transcendence is available
-		transcendence ? 5 : 0
+		row.transcendence_step
+			? row.transcendence_step
+			: // Check if API provides specific max transcendence step in uncap object
+				uncap.max_transcendence_step
+				? uncap.max_transcendence_step
+				: // Otherwise, show maximum stage (5) when transcendence is available
+					transcendence
+					? 5
+					: 0
 	)
 </script>
 
@@ -46,7 +50,7 @@
 	.uncap-cell {
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: flex-start;
 		height: 100%;
 		padding: 4px;
 	}
