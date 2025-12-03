@@ -7,12 +7,12 @@
 		type CollectionFilterState
 	} from '$lib/components/collection/CollectionFilters.svelte'
 	import CollectionCharacterPane from '$lib/components/collection/CollectionCharacterPane.svelte'
+	import CollectionCharacterCard from '$lib/components/collection/CollectionCharacterCard.svelte'
+	import CollectionCharacterRow from '$lib/components/collection/CollectionCharacterRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { IsInViewport } from 'runed'
-	import { getCharacterImageWithPose } from '$lib/utils/images'
-	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
+	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 
 	const { data }: { data: PageData } = $props()
 
@@ -74,6 +74,9 @@
 	const isEmpty = $derived(!isLoading && allCharacters.length === 0)
 	const showSentinel = $derived(collectionQuery.hasNextPage && !collectionQuery.isFetchingNextPage)
 
+	// Current view mode from store
+	const currentViewMode = $derived(viewMode.collectionView)
+
 	function handleFiltersChange(filters: CollectionFilterState) {
 		elementFilters = filters.element
 		rarityFilters = filters.rarity
@@ -82,20 +85,8 @@
 		genderFilters = filters.gender
 	}
 
-	function getImageUrl(character: CollectionCharacter): string {
-		return getCharacterImageWithPose(
-			character.character?.granblueId,
-			'grid',
-			character.uncapLevel,
-			character.transcendenceStep
-		)
-	}
-
-	function displayName(character: CollectionCharacter): string {
-		const name = character.character?.name
-		if (!name) return '—'
-		if (typeof name === 'string') return name
-		return name.en || name.ja || '—'
+	function handleViewModeChange(mode: ViewMode) {
+		viewMode.setCollectionView(mode)
 	}
 
 	function openCharacterDetails(character: CollectionCharacter) {
@@ -132,6 +123,9 @@
 				proficiency: true,
 				gender: true
 			}}
+			showViewToggle={true}
+			viewMode={currentViewMode}
+			onViewModeChange={handleViewModeChange}
 		/>
 	</div>
 
@@ -153,44 +147,27 @@
 					<p>This collection is empty or private</p>
 				{/if}
 			</div>
-		{:else}
+		{:else if currentViewMode === 'grid'}
 			<div class="character-grid">
 				{#each allCharacters as character (character.id)}
-					<button
-						type="button"
-						class="character-card"
-						onclick={() => openCharacterDetails(character)}
-					>
-						<div class="card-image">
-							{#if character.perpetuity}
-								<img
-									class="perpetuity-badge"
-									src={perpetuityFilled}
-									alt="Perpetuity Ring"
-									title="Perpetuity Ring"
-								/>
-							{/if}
-							<img
-								class="character-image"
-								src={getImageUrl(character)}
-								alt={displayName(character)}
-								loading="lazy"
-							/>
-						</div>
-						<UncapIndicator
-							type="character"
-							uncapLevel={character.uncapLevel}
-							transcendenceStage={character.transcendenceStep}
-							special={character.character?.special}
-							flb={character.character?.uncap?.flb}
-							ulb={character.character?.uncap?.ulb}
-							transcendence={!character.character?.special && character.character?.uncap?.ulb}
-						/>
-						<span class="character-name">{displayName(character)}</span>
-					</button>
+					<CollectionCharacterCard
+						{character}
+						onClick={() => openCharacterDetails(character)}
+					/>
 				{/each}
 			</div>
+		{:else}
+			<div class="character-list">
+				{#each allCharacters as character (character.id)}
+					<CollectionCharacterRow
+						{character}
+						onClick={() => openCharacterDetails(character)}
+					/>
+				{/each}
+			</div>
+		{/if}
 
+		{#if !isLoading && !isEmpty}
 			{#if showSentinel}
 				<div class="load-more-sentinel" bind:this={sentinelEl}></div>
 			{/if}
@@ -245,56 +222,10 @@
 		gap: $unit-4x;
 	}
 
-	.character-card {
+	.character-list {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		gap: $unit-half;
-		padding: 0;
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		transition: transform 0.2s ease;
-
-		&:hover {
-			transform: scale(1.05);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--accent-color, #3366ff);
-			outline-offset: 2px;
-			border-radius: 8px;
-		}
-	}
-
-	.card-image {
-		position: relative;
-		// Character grid images are 280x160 (7:4 ratio)
-		width: 100%;
-		aspect-ratio: 280 / 160;
-		border-radius: 8px;
-		overflow: hidden;
-		background: var(--card-bg, #f5f5f5);
-	}
-
-	.perpetuity-badge {
-		position: absolute;
-		top: -$unit-half;
-		right: $unit;
-		width: $unit-3x;
-		height: $unit-3x;
-		z-index: 10;
-	}
-
-	.character-image {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		border-radius: 8px;
-	}
-
-	.character-name {
-		display: none;
+		gap: $unit;
 	}
 
 	.loading-state,
