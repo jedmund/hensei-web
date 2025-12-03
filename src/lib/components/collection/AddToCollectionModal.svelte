@@ -264,8 +264,10 @@
 			open = false
 			onOpenChange?.(false)
 		} catch (error) {
-			// Only log non-cancellation errors
-			if (error && typeof error === 'object' && 'name' in error && error.name !== 'CancelledError') {
+			// Log all errors except cancellation
+			const isCancelledError =
+				error && typeof error === 'object' && 'name' in error && error.name === 'CancelledError'
+			if (!isCancelledError) {
 				console.error(`Failed to add ${entityNames[currentEntityType].plural}:`, error)
 			}
 		}
