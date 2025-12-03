@@ -148,6 +148,21 @@ export function useAddWeaponToCollection() {
 }
 
 /**
+ * Add multiple weapons to collection mutation with quantity support
+ */
+export function useAddWeaponsToCollection() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (inputs: Array<CollectionWeaponInput & { quantity?: number }>) =>
+			collectionAdapter.addWeapons(inputs),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
+		}
+	}))
+}
+
+/**
  * Update collection weapon mutation
  */
 export function useUpdateCollectionWeapon() {
@@ -188,6 +203,21 @@ export function useAddSummonToCollection() {
 
 	return createMutation(() => ({
 		mutationFn: (input: CollectionSummonInput) => collectionAdapter.addSummon(input),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
+		}
+	}))
+}
+
+/**
+ * Add multiple summons to collection mutation with quantity support
+ */
+export function useAddSummonsToCollection() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (inputs: Array<CollectionSummonInput & { quantity?: number }>) =>
+			collectionAdapter.addSummons(inputs),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
 		}

@@ -196,6 +196,23 @@ export class CollectionAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Adds multiple weapons to the collection with quantity support
+	 * Each quantity > 1 creates multiple collection entries
+	 */
+	async addWeapons(
+		inputs: Array<CollectionWeaponInput & { quantity?: number }>
+	): Promise<CollectionWeapon[]> {
+		// Expand inputs based on quantity
+		const expanded = inputs.flatMap((input) => {
+			const count = input.quantity ?? 1
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const { quantity, ...rest } = input
+			return Array(count).fill(rest) as CollectionWeaponInput[]
+		})
+		return Promise.all(expanded.map((input) => this.addWeapon(input)))
+	}
+
+	/**
 	 * Updates a collection weapon
 	 */
 	async updateWeapon(id: string, input: Partial<CollectionWeaponInput>): Promise<CollectionWeapon> {
@@ -255,6 +272,23 @@ export class CollectionAdapter extends BaseAdapter {
 				collectionSummon: input
 			}
 		})
+	}
+
+	/**
+	 * Adds multiple summons to the collection with quantity support
+	 * Each quantity > 1 creates multiple collection entries
+	 */
+	async addSummons(
+		inputs: Array<CollectionSummonInput & { quantity?: number }>
+	): Promise<CollectionSummon[]> {
+		// Expand inputs based on quantity
+		const expanded = inputs.flatMap((input) => {
+			const count = input.quantity ?? 1
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const { quantity, ...rest } = input
+			return Array(count).fill(rest) as CollectionSummonInput[]
+		})
+		return Promise.all(expanded.map((input) => this.addSummon(input)))
 	}
 
 	/**
