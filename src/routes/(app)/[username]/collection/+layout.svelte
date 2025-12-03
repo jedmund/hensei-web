@@ -21,6 +21,16 @@
 		return 'characters'
 	})
 
+	// Map entity type to singular form for modal
+	const modalEntityType = $derived.by(() => {
+		if (activeEntityType === 'weapons') return 'weapon'
+		if (activeEntityType === 'summons') return 'summon'
+		return 'character'
+	})
+
+	// Dynamic button text
+	const addButtonText = $derived(`Add ${activeEntityType}`)
+
 	const username = $derived(data.user?.username || $page.params.username)
 
 	function handleTabChange(value: string) {
@@ -50,8 +60,8 @@
 			size="small"
 		>
 			<Segment value="characters">Characters</Segment>
-			<Segment value="weapons" disabled>Weapons</Segment>
-			<Segment value="summons" disabled>Summons</Segment>
+			<Segment value="weapons">Weapons</Segment>
+			<Segment value="summons">Summons</Segment>
 		</SegmentedControl>
 
 		{#if data.isOwner}
@@ -62,7 +72,7 @@
 				icon="plus"
 				iconPosition="left"
 			>
-				Add characters
+				{addButtonText}
 			</Button>
 		{/if}
 	</nav>
@@ -73,7 +83,11 @@
 </section>
 
 {#if data.isOwner}
-	<AddToCollectionModal userId={data.user.id} bind:open={addModalOpen} />
+	<AddToCollectionModal
+		userId={data.user.id}
+		entityType={modalEntityType}
+		bind:open={addModalOpen}
+	/>
 {/if}
 
 <style lang="scss">
