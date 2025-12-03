@@ -102,12 +102,22 @@ export class CollectionAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Adds multiple characters to the collection
-	 * Makes parallel requests for each character
+	 * Adds multiple characters to the collection in a single batch request
 	 */
 	async addCharacters(inputs: CollectionCharacterInput[]): Promise<CollectionCharacter[]> {
-		const results = await Promise.all(inputs.map((input) => this.addCharacter(input)))
-		return results
+		if (inputs.length === 0) return []
+
+		const response = await this.request<{
+			characters: CollectionCharacter[]
+			meta: { created: number; skipped: number; errors: any[] }
+		}>('/collection/characters/batch', {
+			method: 'POST',
+			body: {
+				collectionCharacters: inputs
+			}
+		})
+
+		return response.characters
 	}
 
 	/**
@@ -167,15 +177,20 @@ export class CollectionAdapter extends BaseAdapter {
 		params: CollectionListParams = {}
 	): Promise<PaginatedResponse<CollectionWeapon>> {
 		const response = await this.request<{
-			weapons: CollectionWeapon[]
+			weapons?: CollectionWeapon[]
+			collectionWeapons?: CollectionWeapon[]
 			meta: { count: number; totalPages: number; perPage: number; currentPage: number }
 		}>(`/users/${userId}/collection/weapons`, {
 			method: 'GET',
 			query: params
 		})
 
+		// Handle both 'weapons' and 'collectionWeapons' response keys
+		// (backend currently returns 'collectionWeapons', should return 'weapons')
+		const weapons = response.weapons ?? response.collectionWeapons ?? []
+
 		return {
-			results: response.weapons,
+			results: weapons,
 			page: response.meta.currentPage,
 			total: response.meta.count,
 			totalPages: response.meta.totalPages,
@@ -196,26 +211,33 @@ export class CollectionAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Adds multiple weapons to the collection with quantity support
-	 * Each quantity > 1 creates multiple collection entries
+	 * Adds multiple weapons to the collection in a single batch request
+	 * Handles quantity expansion - each quantity > 1 creates multiple entries
 	 */
 	async addWeapons(
 		inputs: Array<CollectionWeaponInput & { quantity?: number }>
 	): Promise<CollectionWeapon[]> {
 		// Expand inputs based on quantity
-		// Note: We create individual objects to ensure unique request IDs for deduplication
 		const expanded = inputs.flatMap((input) => {
 			const count = input.quantity ?? 1
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { quantity, ...rest } = input
 			return Array.from({ length: count }, () => ({ ...rest })) as CollectionWeaponInput[]
 		})
-		// Execute sequentially to avoid request deduplication issues
-		const results: CollectionWeapon[] = []
-		for (const input of expanded) {
-			results.push(await this.addWeapon(input))
-		}
-		return results
+
+		if (expanded.length === 0) return []
+
+		const response = await this.request<{
+			weapons: CollectionWeapon[]
+			meta: { created: number; errors: any[] }
+		}>('/collection/weapons/batch', {
+			method: 'POST',
+			body: {
+				collectionWeapons: expanded
+			}
+		})
+
+		return response.weapons
 	}
 
 	/**
@@ -252,15 +274,20 @@ export class CollectionAdapter extends BaseAdapter {
 		params: CollectionListParams = {}
 	): Promise<PaginatedResponse<CollectionSummon>> {
 		const response = await this.request<{
-			summons: CollectionSummon[]
+			summons?: CollectionSummon[]
+			collectionSummons?: CollectionSummon[]
 			meta: { count: number; totalPages: number; perPage: number; currentPage: number }
 		}>(`/users/${userId}/collection/summons`, {
 			method: 'GET',
 			query: params
 		})
 
+		// Handle both 'summons' and 'collectionSummons' response keys
+		// (backend currently returns 'collectionSummons', should return 'summons')
+		const summons = response.summons ?? response.collectionSummons ?? []
+
 		return {
-			results: response.summons,
+			results: summons,
 			page: response.meta.currentPage,
 			total: response.meta.count,
 			totalPages: response.meta.totalPages,
@@ -281,26 +308,33 @@ export class CollectionAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Adds multiple summons to the collection with quantity support
-	 * Each quantity > 1 creates multiple collection entries
+	 * Adds multiple summons to the collection in a single batch request
+	 * Handles quantity expansion - each quantity > 1 creates multiple entries
 	 */
 	async addSummons(
 		inputs: Array<CollectionSummonInput & { quantity?: number }>
 	): Promise<CollectionSummon[]> {
 		// Expand inputs based on quantity
-		// Note: We create individual objects to ensure unique request IDs for deduplication
 		const expanded = inputs.flatMap((input) => {
 			const count = input.quantity ?? 1
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { quantity, ...rest } = input
 			return Array.from({ length: count }, () => ({ ...rest })) as CollectionSummonInput[]
 		})
-		// Execute sequentially to avoid request deduplication issues
-		const results: CollectionSummon[] = []
-		for (const input of expanded) {
-			results.push(await this.addSummon(input))
-		}
-		return results
+
+		if (expanded.length === 0) return []
+
+		const response = await this.request<{
+			summons: CollectionSummon[]
+			meta: { created: number; errors: any[] }
+		}>('/collection/summons/batch', {
+			method: 'POST',
+			body: {
+				collectionSummons: expanded
+			}
+		})
+
+		return response.summons
 	}
 
 	/**
