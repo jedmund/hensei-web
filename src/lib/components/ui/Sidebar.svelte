@@ -1,80 +1,33 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import SidebarHeader from './SidebarHeader.svelte'
-	import Button from './Button.svelte'
 	import { SIDEBAR_WIDTH } from '$lib/stores/sidebar.svelte'
+	import PaneStack from './PaneStack.svelte'
+	import type { PaneStackStore } from '$lib/stores/paneStack.svelte'
 	import type { Snippet } from 'svelte'
 
 	interface Props {
 		/** Whether the sidebar is open */
 		open?: boolean
-		/** Title for the sidebar header */
-		title?: string
-		/** Callback when close is requested (camelCase preferred) */
+		/** The pane stack to render */
+		stack?: PaneStackStore
+		/** Callback when close is requested */
 		onClose?: () => void
-		/** Callback when close is requested (lowercase, deprecated - use onClose) */
-		onclose?: () => void
-		/** Callback when back is requested (shows arrow instead of X) */
-		onback?: () => void
-		/** Callback when save/done is requested */
-		onsave?: () => void
-		/** Label for the save button */
-		saveLabel?: string
-		/** Element for styling the save button */
-		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-		/** Content to render in the sidebar */
+		/** Legacy: Content to render in the sidebar (when not using pane stack) */
 		children?: Snippet
-		/** Whether the sidebar content should scroll. Default true. */
-		scrollable?: boolean
 	}
 
-	const { open = false, title, onClose, onclose, onback, onsave, saveLabel = 'Done', element, children, scrollable = true }: Props = $props()
-
-	// Support both onClose (camelCase) and onclose (lowercase) for backward compatibility
-	const handleClose = $derived(onClose ?? onclose)
+	const { open = false, stack, onClose, children }: Props = $props()
 </script>
 
-{#snippet leftAccessory()}
-	{#if onback}
-		<Button
-			variant="ghost"
-			size="small"
-			iconOnly
-			icon="arrow-left"
-			onclick={onback}
-			aria-label="Go back"
-		/>
-	{:else if handleClose}
-		<Button
-			variant="ghost"
-			size="small"
-			iconOnly
-			icon="close"
-			onclick={handleClose}
-			aria-label="Close sidebar"
-		/>
-	{/if}
-{/snippet}
-
-{#snippet rightAccessory()}
-	{#if onsave}
-		<Button variant="ghost" size="small" {element} elementStyle={!!element} onclick={onsave}>
-			{saveLabel}
-		</Button>
-	{/if}
-{/snippet}
-
 <aside class="sidebar" class:open style:--sidebar-width={SIDEBAR_WIDTH}>
-	{#if title}
-		<SidebarHeader {title} {leftAccessory} {rightAccessory} />
-	{/if}
-
-	<div class="sidebar-content" class:scrollable>
-		{#if children}
+	{#if stack && !stack.isEmpty}
+		<PaneStack {stack} {onClose} />
+	{:else if children}
+		<div class="sidebar-content scrollable">
 			{@render children()}
-		{/if}
-	</div>
+		</div>
+	{/if}
 </aside>
 
 <style lang="scss">

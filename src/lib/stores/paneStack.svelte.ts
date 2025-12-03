@@ -1,4 +1,5 @@
 import type { Component } from 'svelte'
+import { getContext, setContext } from 'svelte'
 
 /**
  * Pane Stack Store
@@ -8,6 +9,9 @@ import type { Component } from 'svelte'
  */
 
 export type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+
+/** Context key for pane stack */
+const PANE_STACK_CONTEXT_KEY = Symbol('pane-stack')
 
 export interface PaneConfig {
 	/** Unique identifier for this pane */
@@ -39,7 +43,7 @@ interface PaneStackState {
 	animationDirection: 'push' | 'pop' | null
 }
 
-class PaneStackStore {
+export class PaneStackStore {
 	state = $state<PaneStackState>({
 		panes: [],
 		isAnimating: false,
@@ -195,3 +199,36 @@ export function createPaneStack() {
 
 // Default global pane stack for sidebar
 export const paneStack = new PaneStackStore()
+
+// ============================================
+// Context API for child components
+// ============================================
+
+/**
+ * Set the pane stack in context for child components
+ * Call this in the parent component that owns the pane stack
+ */
+export function setPaneStackContext(stack: PaneStackStore) {
+	setContext(PANE_STACK_CONTEXT_KEY, stack)
+}
+
+/**
+ * Get the pane stack from context
+ * Call this in child components that need to push/pop panes
+ * Returns undefined if no pane stack is in context
+ */
+export function getPaneStackContext(): PaneStackStore | undefined {
+	return getContext<PaneStackStore | undefined>(PANE_STACK_CONTEXT_KEY)
+}
+
+/**
+ * Get the pane stack from context, throwing if not found
+ * Use this when you know the pane stack should be available
+ */
+export function usePaneStack(): PaneStackStore {
+	const stack = getPaneStackContext()
+	if (!stack) {
+		throw new Error('usePaneStack must be used within a PaneStack context')
+	}
+	return stack
+}

@@ -1,30 +1,30 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import type { PaneConfig } from '$lib/stores/paneStack.svelte'
+	import {
+		type PaneConfig,
+		type PaneStackStore,
+		setPaneStackContext
+	} from '$lib/stores/paneStack.svelte'
 	import SidebarHeader from './SidebarHeader.svelte'
 	import Button from './Button.svelte'
 
 	interface Props {
-		/** Array of panes to render */
-		panes: PaneConfig[]
-		/** Whether an animation is in progress */
-		isAnimating?: boolean
-		/** Direction of animation */
-		animationDirection?: 'push' | 'pop' | null
-		/** Callback to pop the current pane */
-		onPop?: () => void
+		/** The pane stack store to use */
+		stack: PaneStackStore
 		/** Callback to close the entire sidebar (for root pane close button) */
 		onClose?: () => void
 	}
 
-	const {
-		panes,
-		isAnimating = false,
-		animationDirection = null,
-		onPop,
-		onClose
-	}: Props = $props()
+	const { stack, onClose }: Props = $props()
+
+	// Set context so child components can access the pane stack
+	setPaneStackContext(stack)
+
+	// Derive values from the stack
+	const panes = $derived(stack.panes)
+	const isAnimating = $derived(stack.isAnimating)
+	const animationDirection = $derived(stack.animationDirection)
 
 	function handleBack(pane: PaneConfig, index: number) {
 		if (index === 0 && pane.onback) {
@@ -33,9 +33,9 @@
 		} else if (index === 0 && onClose) {
 			// Root pane, close sidebar
 			onClose()
-		} else if (onPop) {
+		} else {
 			// Non-root pane, pop from stack
-			onPop()
+			stack.pop()
 		}
 	}
 
@@ -93,7 +93,8 @@
 			</SidebarHeader>
 
 			<div class="pane-content">
-				<svelte:component this={pane.component} {...pane.props ?? {}} />
+				{@const PaneComponent = pane.component}
+				<PaneComponent {...pane.props ?? {}} />
 			</div>
 		</div>
 	{/each}

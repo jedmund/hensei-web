@@ -112,20 +112,9 @@
 
 		<Sidebar
 			open={sidebar.isOpen}
-			title={sidebar.title}
-			onclose={() => sidebar.close()}
-			scrollable={sidebar.scrollable}
-			onsave={sidebar.onsave}
-			saveLabel={sidebar.saveLabel}
-			element={sidebar.element}
-			onback={sidebar.onback}
-		>
-			{#if sidebar.component}
-				<svelte:component this={sidebar.component} {...sidebar.componentProps} />
-			{:else if sidebar.content}
-				{@render sidebar.content()}
-			{/if}
-		</Sidebar>
+			stack={sidebar.paneStack}
+			onClose={() => sidebar.close()}
+		/>
 	</div>
 </Tooltip.Provider>
 
