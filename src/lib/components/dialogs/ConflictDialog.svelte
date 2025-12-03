@@ -24,7 +24,7 @@
 	import type { Character, Weapon } from '$lib/types/api/entities'
 	import { useResolveCharacterConflict, useResolveWeaponConflict } from '$lib/api/mutations/grid.mutations'
 	import { getCharacterImageWithPose, getWeaponImage } from '$lib/utils/images'
-	import { getWeaponSeriesSlug, isOpusDraconicSeries } from '$lib/utils/weaponSeries'
+	import { isOpusDraconicSeries, getSeriesDisplayName } from '$lib/utils/weaponSeries'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import * as m from '$lib/paraglide/messages'
 
@@ -78,11 +78,8 @@
 			return m.conflict_weapon_opus_draconic()
 		}
 
-		// Get series name for message
-		const seriesSlug = getWeaponSeriesSlug(weapon.series)
-
-		// Use the series slug directly for now - proper i18n can be added later
-		const seriesName = seriesSlug?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Unknown'
+		// Get series name for message - use localized name from series object
+		const seriesName = getSeriesDisplayName(weapon.series, locale)
 
 		return m.conflict_weapon_series({ series: seriesName })
 	})

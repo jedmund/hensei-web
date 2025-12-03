@@ -1,7 +1,9 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { createQuery } from '@tanstack/svelte-query'
 	import type { WeaponSuggestions } from '$lib/api/adapters/entity.adapter'
+	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
@@ -9,7 +11,8 @@
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import { getElementLabel, getElementOptions } from '$lib/utils/element'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
-	import { getWeaponSeriesOptions, getWeaponSeriesSlug } from '$lib/utils/weaponSeries'
+	import { getSeriesDisplayName } from '$lib/utils/weaponSeries'
+	import { isWeaponSeriesRef, type WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -35,9 +38,24 @@
 		onDismissSuggestion
 	}: Props = $props()
 
+	// Fetch weapon series list from API
+	const weaponSeriesQuery = createQuery(() => entityQueries.weaponSeriesList())
+
 	const elementOptions = getElementOptions()
 	const proficiencyOptions = getProficiencyOptions()
-	const seriesOptions = [{ value: 0, label: 'None' }, ...getWeaponSeriesOptions()]
+
+	// Build series options from fetched data
+	// In edit mode, we need IDs for the select value
+	const seriesOptions = $derived.by(() => {
+		const series = weaponSeriesQuery.data ?? []
+		return [
+			{ value: '', label: 'None' },
+			...series.map((s) => ({
+				value: s.id,
+				label: s.name.en
+			}))
+		]
+	})
 
 	// Promotion options for multiselect
 	const promotionOptions = Object.entries(PROMOTION_NAMES).map(([value, label]) => ({
@@ -52,15 +70,10 @@
 		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
 	})
 
-	// Format series label
-	function formatSeriesLabel(series: number | undefined): string {
+	// Format series label for display mode
+	function formatSeriesLabel(series: WeaponSeriesRef | null | undefined): string {
 		if (!series) return '—'
-		const seriesSlug = getWeaponSeriesSlug(series)
-		if (!seriesSlug) return String(series)
-		return seriesSlug
-			.split('_')
-			.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-			.join(' ')
+		return getSeriesDisplayName(series, 'en') || '—'
 	}
 
 	// Format promotions for display

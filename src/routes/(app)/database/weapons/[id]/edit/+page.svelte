@@ -93,7 +93,8 @@
 				rarity: weapon.rarity || 3,
 				element: weapon.element || 0,
 				proficiency: weapon.proficiency || 0,
-				series: weapon.series || 0,
+				// Extract series ID from object
+				series: weapon.series?.id || '',
 				minHp: weapon.hp?.minHp || 0,
 				maxHp: weapon.hp?.maxHp || 0,
 				maxHpFlb: weapon.hp?.maxHpFlb || 0,
