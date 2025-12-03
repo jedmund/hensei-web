@@ -1,5 +1,6 @@
 import type { SimpleAxSkill } from '$lib/types/api/entities'
 import { getRingStat, getEarringStat, getElementalizedEarringStat } from './masteryUtils'
+import { isWeaponSeriesRef, type WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 const AX_SKILL_NAMES: Record<number, string> = {
 	1: 'Attack',
@@ -51,16 +52,21 @@ export function formatAxSkill(ax: SimpleAxSkill): string {
 	return `${skillName} +${ax.strength}${suffix}`
 }
 
-export function getWeaponKeyTitle(series?: number): string {
-	switch (series) {
-		case 2:
+export function getWeaponKeyTitle(series?: WeaponSeriesRef | null): string {
+	if (!isWeaponSeriesRef(series)) {
+		return 'Weapon Keys'
+	}
+
+	switch (series.slug) {
+		case 'dark-opus':
 			return 'Pendulums & Chains'
-		case 3:
-		case 34:
+		case 'draconic':
+		case 'draconic-providence':
+		case 'superlative':
 			return 'Telumas'
-		case 17:
+		case 'ultima':
 			return 'Ultima Keys'
-		case 22:
+		case 'astral':
 			return 'Emblems'
 		default:
 			return 'Weapon Keys'

@@ -4,6 +4,7 @@
 
 import type { Awakening, WeaponKey } from '$lib/types/api/entities'
 import type { SimpleAxSkill } from '$lib/types/SimpleAxSkill'
+import { isWeaponSeriesRef, type WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 import { getBasePath } from '$lib/utils/images'
 
 /**
@@ -25,13 +26,23 @@ export function getAwakeningImage(awakening?: { type?: Awakening; level?: number
 }
 
 /**
+ * Helper to get series slug from WeaponSeriesRef
+ */
+function getSeriesSlug(series?: WeaponSeriesRef | null): string | undefined {
+	if (!isWeaponSeriesRef(series)) {
+		return undefined
+	}
+	return series.slug
+}
+
+/**
  * Get the image URL for a weapon key with proper element/proficiency/mod variants
  */
 export function getWeaponKeyImage(
 	key: WeaponKey,
 	weaponElement?: number,
 	weaponProficiency?: number,
-	weaponSeries?: number,
+	weaponSeries?: WeaponSeriesRef | null,
 	weaponName?: { en?: string }
 ): string {
 	if (!key.slug) return ''
@@ -39,21 +50,24 @@ export function getWeaponKeyImage(
 	const baseUrl = `${getBasePath()}/weapon-keys/`
 	let filename = key.slug
 
+	// Get series slug for comparison
+	const seriesSlug = getSeriesSlug(weaponSeries)
+
 	// Handle element-specific telumas (Draconic weapons)
 	const elementalTelumas = [15008, 16001, 16002]
-	const granblueId = parseInt(key.granblue_id || '0')
+	const granblueId = key.granblue_id ?? 0
 
 	if (elementalTelumas.includes(granblueId) && weaponElement) {
 		filename += `-${weaponElement}`
 	}
 
 	// Handle proficiency-specific ultima keys (slot 0)
-	if (key.slot === 0 && weaponSeries === 17 && weaponProficiency) {
+	if (key.slot === 0 && seriesSlug === 'ultima' && weaponProficiency) {
 		filename += `-${weaponProficiency}`
 	}
 
 	// Handle element-specific opus pendulums (slot 1)
-	if (weaponSeries === 2 && key.slot === 1 && weaponElement) {
+	if (seriesSlug === 'dark-opus' && key.slot === 1 && weaponElement) {
 		const mod = weaponName?.en?.includes('Repudiation') ? 'primal' : 'magna'
 		const suffixes = [
 			'pendulum-strength',
@@ -78,16 +92,19 @@ export function getWeaponKeyImage(
 export function getWeaponKeyImages(
 	keys?: WeaponKey[],
 	weaponElement?: number,
-	weaponProficiency?: number,
-	weaponSeries?: number,
+	weaponProficiency?: number | number[],
+	weaponSeries?: WeaponSeriesRef | null,
 	weaponName?: { en?: string }
 ): Array<{ url: string; alt: string }> {
 	if (!keys || keys.length === 0) return []
 
+	// Handle proficiency being an array (take first element)
+	const proficiency = Array.isArray(weaponProficiency) ? weaponProficiency[0] : weaponProficiency
+
 	return keys
 		.filter(key => key.slug)
 		.map(key => ({
-			url: getWeaponKeyImage(key, weaponElement, weaponProficiency, weaponSeries, weaponName),
+			url: getWeaponKeyImage(key, weaponElement, proficiency, weaponSeries, weaponName),
 			alt: key.name?.en || key.slug || 'Weapon Key'
 		}))
 }

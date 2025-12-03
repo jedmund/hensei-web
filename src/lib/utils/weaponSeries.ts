@@ -2,90 +2,114 @@
  * Weapon Series Utilities
  *
  * Provides helpers for weapon series identification and conflict messaging.
+ * Works with the API-driven WeaponSeriesRef type.
  *
  * @module utils/weaponSeries
  */
 
-export interface WeaponSeries {
-	id: number
-	slug: string
-}
+import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
+import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 /**
- * All weapon series with their IDs and slugs.
- * The slug is used for i18n message keys.
- */
-export const weaponSeries: WeaponSeries[] = [
-	{ id: 0, slug: 'seraphic' },
-	{ id: 1, slug: 'grand' },
-	{ id: 2, slug: 'opus' },
-	{ id: 3, slug: 'draconic' },
-	{ id: 4, slug: 'revenant' },
-	{ id: 6, slug: 'primal' },
-	{ id: 7, slug: 'beast' },
-	{ id: 8, slug: 'regalia' },
-	{ id: 9, slug: 'omega' },
-	{ id: 10, slug: 'olden_primal' },
-	{ id: 11, slug: 'militis' },
-	{ id: 12, slug: 'hollowsky' },
-	{ id: 13, slug: 'xeno' },
-	{ id: 14, slug: 'astral' },
-	{ id: 15, slug: 'rose' },
-	{ id: 16, slug: 'bahamut' },
-	{ id: 17, slug: 'ultima' },
-	{ id: 18, slug: 'epic' },
-	{ id: 19, slug: 'ennead' },
-	{ id: 20, slug: 'cosmic' },
-	{ id: 21, slug: 'ancestral' },
-	{ id: 22, slug: 'superlative' },
-	{ id: 23, slug: 'vintage' },
-	{ id: 24, slug: 'class_champion' },
-	{ id: 25, slug: 'proving' },
-	{ id: 28, slug: 'sephira' },
-	{ id: 29, slug: 'new_world' },
-	{ id: 30, slug: 'disaster' },
-	{ id: 31, slug: 'illustrious' },
-	{ id: 32, slug: 'world' },
-	{ id: 34, slug: 'draconic_providence' }
-]
-
-/**
- * Series IDs that share the Opus/Draconic conflict rule.
+ * Slugs for series that share the Opus/Draconic conflict rule.
  * Only one weapon from these series can be in a party at a time.
  */
-export const OPUS_DRACONIC_SERIES = [2, 3, 34]
+export const OPUS_DRACONIC_SLUGS = ['dark-opus', 'draconic', 'draconic-providence']
 
 /**
- * Get the slug for a weapon series by ID.
+ * Check if a series belongs to the Opus/Draconic conflict group.
  *
- * @param id - The series ID
- * @returns The series slug or undefined if not found
- */
-export function getWeaponSeriesSlug(id: number): string | undefined {
-	return weaponSeries.find((s) => s.id === id)?.slug
-}
-
-/**
- * Check if a series ID belongs to the Opus/Draconic conflict group.
- *
- * @param seriesId - The series ID to check
+ * @param series - The series to check (WeaponSeriesRef or null)
  * @returns True if the series is Opus, Draconic, or Draconic Providence
  */
-export function isOpusDraconicSeries(seriesId: number): boolean {
-	return OPUS_DRACONIC_SERIES.includes(seriesId)
+export function isOpusDraconicSeries(series: WeaponSeriesRef | null | undefined): boolean {
+	if (!isWeaponSeriesRef(series)) {
+		return false
+	}
+	return OPUS_DRACONIC_SLUGS.includes(series.slug)
 }
 
 /**
- * Get all weapon series as options for a select/dropdown.
+ * Get the display name for a weapon series.
  *
- * @returns Array of { value, label } options
+ * @param series - The weapon series reference
+ * @param locale - The locale to use ('en' or 'ja')
+ * @returns The localized series name, or 'Unknown' if not available
  */
-export function getWeaponSeriesOptions() {
-	return weaponSeries.map((series) => ({
-		value: series.id,
-		label: series.slug
-			.split('_')
-			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-			.join(' ')
-	}))
+export function getSeriesDisplayName(
+	series: WeaponSeriesRef | null | undefined,
+	locale: 'en' | 'ja' = 'en'
+): string {
+	if (!isWeaponSeriesRef(series)) {
+		return 'Unknown'
+	}
+	return series.name[locale] || series.name.en || 'Unknown'
 }
+
+/**
+ * Get the slug for a weapon series.
+ *
+ * @param series - The weapon series
+ * @returns The series slug or undefined
+ */
+export function getSeriesSlug(series: WeaponSeriesRef | null | undefined): string | undefined {
+	if (!isWeaponSeriesRef(series)) {
+		return undefined
+	}
+	return series.slug
+}
+
+/**
+ * Check if a weapon series supports weapon keys.
+ *
+ * @param series - The weapon series
+ * @returns True if the series supports weapon keys
+ */
+export function seriesHasWeaponKeys(series: WeaponSeriesRef | null | undefined): boolean {
+	if (!isWeaponSeriesRef(series)) {
+		return false
+	}
+	return series.hasWeaponKeys
+}
+
+/**
+ * Check if a weapon series supports awakening.
+ *
+ * @param series - The weapon series
+ * @returns True if the series supports awakening
+ */
+export function seriesHasAwakening(series: WeaponSeriesRef | null | undefined): boolean {
+	if (!isWeaponSeriesRef(series)) {
+		return false
+	}
+	return series.hasAwakening
+}
+
+/**
+ * Check if a weapon series allows element changes.
+ *
+ * @param series - The weapon series
+ * @returns True if weapons in this series can have their element changed
+ */
+export function seriesIsElementChangeable(series: WeaponSeriesRef | null | undefined): boolean {
+	if (!isWeaponSeriesRef(series)) {
+		return false
+	}
+	return series.elementChangeable
+}
+
+/**
+ * Check if a weapon series can be placed in extra grid slots.
+ *
+ * @param series - The weapon series
+ * @returns True if weapons in this series can be in extra slots
+ */
+export function seriesIsExtra(series: WeaponSeriesRef | null | undefined): boolean {
+	if (!isWeaponSeriesRef(series)) {
+		return false
+	}
+	return series.extra
+}
+
+// Re-export the type guard for convenience
+export { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'

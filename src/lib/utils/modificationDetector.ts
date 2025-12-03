@@ -1,4 +1,5 @@
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+import { seriesHasWeaponKeys } from '$lib/utils/weaponSeries'
 
 export interface ModificationStatus {
 	hasModifications: boolean
@@ -95,10 +96,6 @@ export function hasAnyModification(
 	return detectModifications(type, item).hasModifications
 }
 
-// Weapon series that support weapon keys
-// 2 = Dark Opus, 3 = Draconic, 17 = Ultima, 24 = Astral, 34 = Superlative
-const WEAPON_KEY_SERIES = [2, 3, 17, 24, 34]
-
 /**
  * Check if a weapon CAN be modified (has modifiable properties)
  * This is different from hasModifications which checks if it HAS been modified
@@ -111,8 +108,8 @@ export function canWeaponBeModified(gridWeapon: GridWeapon | undefined): boolean
 	// Element can be changed (element = 0 means "any element")
 	const canChangeElement = weapon.element === 0
 
-	// Weapon keys (series-specific)
-	const hasWeaponKeys = WEAPON_KEY_SERIES.includes(weapon.series)
+	// Weapon keys (series-specific) - use utility function that handles both formats
+	const hasWeaponKeys = seriesHasWeaponKeys(weapon.series)
 
 	// AX skills
 	const hasAxSkills = weapon.ax === true
