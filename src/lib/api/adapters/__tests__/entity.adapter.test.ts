@@ -23,7 +23,16 @@ describe('EntityAdapter', () => {
 		rarity: 4,
 		element: 1,
 		proficiency: 1,
-		series: 1,
+		series: {
+			id: 'series-1',
+			slug: 'dark-opus',
+			name: { en: 'Dark Opus', ja: 'ダークオーパス' },
+			hasWeaponKeys: true,
+			hasAwakening: true,
+			hasAxSkills: false,
+			extra: false,
+			elementChangeable: false
+		},
 		weaponType: 1,
 		minHp: 100,
 		maxHp: 500,

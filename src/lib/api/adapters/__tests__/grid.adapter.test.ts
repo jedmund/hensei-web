@@ -23,7 +23,16 @@ describe('GridAdapter', () => {
 		maxLevel: 150,
 		maxSkillLevel: 15,
 		maxAwakeningLevel: 5,
-		series: 1,
+		series: {
+			id: 'series-1',
+			slug: 'dark-opus',
+			name: { en: 'Dark Opus', ja: 'ダークオーパス' },
+			hasWeaponKeys: true,
+			hasAwakening: true,
+			hasAxSkills: false,
+			extra: false,
+			elementChangeable: false
+		},
 		proficiency: 1,
 		ax: true,
 		axType: 1,
