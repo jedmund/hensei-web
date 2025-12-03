@@ -1,6 +1,8 @@
 // Core entity types based on Rails blueprints
 // These are the base types for game objects
 
+import type { WeaponSeriesRef } from './weaponSeries'
+
 export interface LocalizedName {
   en: string
   ja: string
@@ -17,7 +19,8 @@ export interface Weapon {
   maxLevel: number
   maxSkillLevel: number
   maxAwakeningLevel: number
-  series: number
+  /** Weapon series - object with slug/name/flags */
+  series: WeaponSeriesRef | null
   ax: boolean
   axType: number
   hp: {
