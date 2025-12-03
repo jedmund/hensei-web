@@ -19,6 +19,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getElementIcon } from '$lib/utils/images'
+	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
 
 	export interface WeaponEditValues {
 		uncapLevel: number
@@ -106,21 +107,21 @@
 
 	// Derived conditions
 	const canChangeElement = $derived(weaponData?.element === 0)
-	const series = $derived(weaponData?.series ?? 0)
+	const series = $derived(weaponData?.series)
+	const seriesSlug = $derived(getSeriesSlug(series))
 
-	// Weapon key config keyed by WEAPON series
-	const WEAPON_KEY_SERIES: Record<number, { name: string; slots: number; keySeries: number }> = {
-		2: { name: 'Dark Opus', slots: 2, keySeries: 3 },
-		3: { name: 'Ultima', slots: 3, keySeries: 13 },
-		17: { name: 'Draconic', slots: 2, keySeries: 27 },
-		22: { name: 'Astral', slots: 1, keySeries: 19 },
-		34: { name: 'Superlative', slots: 2, keySeries: 40 }
+	// Weapon key slot configuration by series slug
+	const WEAPON_KEY_SLOTS: Record<string, number> = {
+		'dark-opus': 2,
+		'ultima': 3,
+		'draconic': 2,
+		'draconic-providence': 2,
+		'superlative': 2
 	}
 
-	const weaponKeyConfig = $derived(WEAPON_KEY_SERIES[series])
-	const hasWeaponKeys = $derived(!!weaponKeyConfig)
-	const keySlotCount = $derived(weaponKeyConfig?.slots ?? 0)
-	const keySeries = $derived(weaponKeyConfig?.keySeries ?? 0)
+	// Check if series has weapon keys using the utility (handles both formats)
+	const hasWeaponKeys = $derived(seriesHasWeaponKeys(series))
+	const keySlotCount = $derived(seriesSlug ? (WEAPON_KEY_SLOTS[seriesSlug] ?? 2) : 0)
 
 	const hasAxSkills = $derived(weaponData?.ax === true)
 	const axType = $derived(weaponData?.axType ?? 1)
@@ -272,7 +273,7 @@
 				<div class="section-content key-selects">
 					{#if keySlotCount >= 1}
 						<WeaponKeySelect
-							series={keySeries}
+							{seriesSlug}
 							slot={0}
 							bind:value={weaponKey1}
 							{transcendenceStep}
@@ -280,7 +281,7 @@
 					{/if}
 					{#if keySlotCount >= 2}
 						<WeaponKeySelect
-							series={keySeries}
+							{seriesSlug}
 							slot={1}
 							bind:value={weaponKey2}
 							{transcendenceStep}
@@ -288,7 +289,7 @@
 					{/if}
 					{#if keySlotCount >= 3}
 						<WeaponKeySelect
-							series={keySeries}
+							{seriesSlug}
 							slot={2}
 							bind:value={weaponKey3}
 							{transcendenceStep}

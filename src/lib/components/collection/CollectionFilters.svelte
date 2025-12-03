@@ -7,6 +7,8 @@
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import { createQuery, queryOptions } from '@tanstack/svelte-query'
+	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 
 	type EntityType = 'character' | 'weapon' | 'summon'
 
@@ -16,7 +18,8 @@
 		elementFilters?: number[]
 		rarityFilters?: number[]
 		seasonFilters?: number[]
-		seriesFilters?: number[]
+		/** Series filters - number[] for characters, string[] for weapons (UUIDs) */
+		seriesFilters?: (number | string)[]
 		raceFilters?: number[]
 		proficiencyFilters?: number[]
 		genderFilters?: number[]
@@ -47,7 +50,8 @@
 		element: number[]
 		rarity: number[]
 		season: number[]
-		series: number[]
+		/** Series filters - number[] for characters, string[] for weapons (UUIDs) */
+		series: (number | string)[]
 		race: number[]
 		proficiency: number[]
 		gender: number[]
@@ -149,16 +153,43 @@
 		{ value: 10, label: 'Katana' }
 	]
 
+	// Fetch weapon series from API (only when entityType is weapon)
+	const weaponSeriesQuery = createQuery(() =>
+		queryOptions({
+			queryKey: ['weaponSeries', 'list'] as const,
+			queryFn: () => entityAdapter.getWeaponSeriesList(),
+			enabled: entityType === 'weapon',
+			staleTime: 1000 * 60 * 60, // 1 hour
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		})
+	)
+
 	// Convert record maps to arrays for iteration
 	const seasons = Object.entries(CHARACTER_SEASON_NAMES).map(([value, label]) => ({
 		value: Number(value),
 		label
 	}))
 
-	const series = Object.entries(CHARACTER_SERIES_NAMES).map(([value, label]) => ({
+	// Character series (hardcoded enum)
+	const characterSeries = Object.entries(CHARACTER_SERIES_NAMES).map(([value, label]) => ({
 		value: Number(value),
 		label
 	}))
+
+	// Build series options based on entity type
+	// For weapons: use API-fetched series with string IDs
+	// For characters: use hardcoded enum with number values
+	const seriesOptions = $derived.by(() => {
+		if (entityType === 'weapon' && weaponSeriesQuery.data) {
+			return weaponSeriesQuery.data
+				.sort((a, b) => a.order - b.order)
+				.map((s) => ({
+					value: s.id,
+					label: s.name.en
+				}))
+		}
+		return characterSeries
+	})
 
 	const races = Object.entries(RACE_LABELS)
 		.filter(([value]) => Number(value) !== 0) // Exclude Unknown
@@ -201,7 +232,7 @@
 		emitChange()
 	}
 
-	function handleSeriesChange(value: number[]) {
+	function handleSeriesChange(value: (number | string)[]) {
 		seriesFilters = value
 		emitChange()
 	}
@@ -281,7 +312,7 @@
 
 		{#if effectiveShowFilters.series}
 			<MultiSelect
-				options={series}
+				options={seriesOptions}
 				bind:value={seriesFilters}
 				onValueChange={handleSeriesChange}
 				placeholder={entityType === 'weapon' ? 'Weapon Series' : 'Series'}

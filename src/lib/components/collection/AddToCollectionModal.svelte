@@ -45,7 +45,7 @@
 	let elementFilters = $state<number[]>([])
 	let rarityFilters = $state<number[]>([])
 	let seasonFilters = $state<number[]>([])
-	let seriesFilters = $state<number[]>([])
+	let seriesFilters = $state<(number | string)[]>([])
 	let raceFilters = $state<number[]>([])
 	let proficiencyFilters = $state<number[]>([])
 	let genderFilters = $state<number[]>([])

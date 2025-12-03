@@ -20,7 +20,7 @@
 	let elementFilters = $state<number[]>([])
 	let rarityFilters = $state<number[]>([])
 	let proficiencyFilters = $state<number[]>([])
-	let seriesFilters = $state<number[]>([])
+	let seriesFilters = $state<(number | string)[]>([])
 
 	// Sort state
 	let sortBy = $state<CollectionSortKey>('name_asc')
