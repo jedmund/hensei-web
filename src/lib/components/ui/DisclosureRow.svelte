@@ -1,7 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import Icon from './Icon.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
 		/** Primary label text */
