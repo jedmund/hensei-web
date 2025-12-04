@@ -89,17 +89,9 @@ export function openWeaponEditSidebar(weapon: GridWeapon) {
   const weaponName = getName(weapon.weapon)
   const title = weaponName !== 'Details' ? weaponName : 'Edit Weapon'
 
-  // Get element for styling
-  const element = getItemElement('weapon', weapon)
-
-  // Keep track of the current weapon state for going back to details
-  let currentWeapon = weapon
-
-  // Handler to go back to details view
+  // Handler to go back to details view - uses pop() to return to previous pane
   const goBackToDetails = () => {
-    // Get the updated weapon from the store if available
-    const updated = partyStore.getWeapon(weapon.id)
-    openDetailsSidebar({ type: 'weapon', item: updated ?? currentWeapon })
+    sidebar.pop()
   }
 
   // Handler for save button - saves updates via partyStore
@@ -111,22 +103,24 @@ export function openWeaponEditSidebar(weapon: GridWeapon) {
     }
 
     try {
-      const updated = await partyStore.updateWeapon(String(weapon.id), updates)
-      currentWeapon = updated
+      await partyStore.updateWeapon(String(weapon.id), updates)
       goBackToDetails()
     } catch (error) {
       console.error('Failed to save weapon:', error)
-      // Still go back on error - the optimistic update will be visible
       goBackToDetails()
     }
   }
 
-  sidebar.openWithComponent(title, EditWeaponSidebar, {
-    weapon,
-    onSave: handleSave,
-    onCancel: goBackToDetails
-  }, {
-    element,
+  // Push onto pane stack instead of replacing
+  sidebar.push({
+    id: `edit-weapon-${weapon.id}`,
+    title,
+    component: EditWeaponSidebar,
+    props: {
+      weapon,
+      onSave: handleSave,
+      onCancel: goBackToDetails
+    },
     onback: goBackToDetails
   })
 }
@@ -135,17 +129,9 @@ export function openCharacterEditSidebar(character: GridCharacter) {
   const characterName = getName(character.character)
   const title = characterName !== 'Details' ? characterName : 'Edit Character'
 
-  // Get element for styling
-  const element = getItemElement('character', character)
-
-  // Keep track of the current character state for going back to details
-  let currentCharacter = character
-
-  // Handler to go back to details view
+  // Handler to go back to details view - uses pop() to return to previous pane
   const goBackToDetails = () => {
-    // Get the updated character from the store if available
-    const updated = partyStore.getCharacter(character.id)
-    openDetailsSidebar({ type: 'character', item: updated ?? currentCharacter })
+    sidebar.pop()
   }
 
   // Handler for save button - saves updates via partyStore
@@ -157,22 +143,24 @@ export function openCharacterEditSidebar(character: GridCharacter) {
     }
 
     try {
-      const updated = await partyStore.updateCharacter(String(character.id), updates)
-      currentCharacter = updated
+      await partyStore.updateCharacter(String(character.id), updates)
       goBackToDetails()
     } catch (error) {
       console.error('Failed to save character:', error)
-      // Still go back on error - the optimistic update will be visible
       goBackToDetails()
     }
   }
 
-  sidebar.openWithComponent(title, EditCharacterSidebar, {
-    character,
-    onSave: handleSave,
-    onCancel: goBackToDetails
-  }, {
-    element,
+  // Push onto pane stack instead of replacing
+  sidebar.push({
+    id: `edit-character-${character.id}`,
+    title,
+    component: EditCharacterSidebar,
+    props: {
+      character,
+      onSave: handleSave,
+      onCancel: goBackToDetails
+    },
     onback: goBackToDetails
   })
 }
