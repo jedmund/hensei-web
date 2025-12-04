@@ -7,6 +7,7 @@
 	 * Shows artifact info in read-only mode. If user is owner,
 	 * provides Edit button in header to push edit pane onto stack.
 	 */
+	import { onMount } from 'svelte'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { isQuirkArtifact } from '$lib/types/api/artifact'
 	import { usePaneStack, type PaneConfig } from '$lib/stores/paneStack.svelte'
@@ -64,7 +65,7 @@
 	}
 
 	// Set up the Edit action button in the pane header for owners
-	$effect(() => {
+	onMount(() => {
 		if (isOwner) {
 			sidebar.setAction(handleEdit, 'Edit')
 		}
