@@ -3,7 +3,7 @@
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
-	import CollectionArtifactPane from '$lib/components/collection/CollectionArtifactPane.svelte'
+	import CollectionArtifactDetailPane from '$lib/components/collection/CollectionArtifactDetailPane.svelte'
 	import CollectionArtifactCard from '$lib/components/collection/CollectionArtifactCard.svelte'
 	import CollectionArtifactRow from '$lib/components/collection/CollectionArtifactRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -76,7 +76,7 @@
 				? artifact.artifact.name
 				: artifact.artifact?.name?.en || 'Artifact'
 
-		sidebar.openWithComponent(artifactName, CollectionArtifactPane, {
+		sidebar.openWithComponent(artifactName, CollectionArtifactDetailPane, {
 			artifact,
 			isOwner: data.isOwner,
 			onClose: () => sidebar.close()
