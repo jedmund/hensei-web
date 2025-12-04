@@ -6,13 +6,15 @@
 	interface Props {
 		/** Title for the sidebar header */
 		title: string
+		/** Optional image URL to display next to the title */
+		image?: string
 		/** Left accessory content (e.g., close/back button) */
 		leftAccessory?: Snippet
 		/** Right accessory content (e.g., save/edit button) */
 		rightAccessory?: Snippet
 	}
 
-	const { title, leftAccessory, rightAccessory }: Props = $props()
+	const { title, image, leftAccessory, rightAccessory }: Props = $props()
 </script>
 
 <div class="sidebar-header">
@@ -22,7 +24,12 @@
 		{/if}
 	</div>
 
-	<h2 class="sidebar-title">{title}</h2>
+	<div class="sidebar-title-container">
+		{#if image}
+			<img src={image} alt="" class="title-image" />
+		{/if}
+		<h2 class="sidebar-title">{title}</h2>
+	</div>
 
 	<div class="header-right">
 		{#if rightAccessory}
@@ -74,6 +81,21 @@
 		.header-right {
 			justify-content: flex-end;
 			gap: $unit-half;
+		}
+
+		.sidebar-title-container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: $unit-half;
+		}
+
+		.title-image {
+			width: calc($unit * 3);
+			height: calc($unit * 3);
+			object-fit: contain;
+			border-radius: $item-corner-small;
+			flex-shrink: 0;
 		}
 
 		.sidebar-title {

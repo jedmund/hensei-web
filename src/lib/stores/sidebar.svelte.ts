@@ -15,6 +15,7 @@ interface OpenWithComponentOptions {
 	saveLabel?: string
 	element?: ElementType
 	onback?: () => void
+	image?: string
 }
 
 interface SidebarState {
@@ -66,6 +67,7 @@ class SidebarStore {
 		const paneConfig: PaneConfig = {
 			id: crypto.randomUUID(),
 			title,
+			image: opts.image,
 			component,
 			props,
 			onback: opts.onback,

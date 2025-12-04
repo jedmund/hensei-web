@@ -84,7 +84,7 @@
 			class:scrollable={pane.scrollable !== false}
 			style:--pane-depth={depth}
 		>
-			<SidebarHeader title={pane.title}>
+			<SidebarHeader title={pane.title} image={pane.image}>
 				{#snippet leftAccessory()}
 					{#if showBackButton}
 						<Button

@@ -31,6 +31,8 @@ export interface PaneConfig {
 	id: string
 	/** Title displayed in the pane header */
 	title: string
+	/** Optional image URL to display next to the title */
+	image?: string
 	/** Component to render in the pane */
 	component: Component<any, any, any>
 	/** Props to pass to the component */
