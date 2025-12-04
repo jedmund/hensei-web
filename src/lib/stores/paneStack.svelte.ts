@@ -13,6 +13,19 @@ export type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 /** Context key for pane stack */
 const PANE_STACK_CONTEXT_KEY = Symbol('pane-stack')
 
+export interface PaneAction {
+	label: string
+	handler: () => void
+	element?: ElementType
+	disabled?: boolean
+}
+
+export interface OverflowMenuItem {
+	label: string
+	handler: () => void
+	variant?: 'default' | 'danger'
+}
+
 export interface PaneConfig {
 	/** Unique identifier for this pane */
 	id: string
@@ -25,11 +38,9 @@ export interface PaneConfig {
 	/** Optional callback when back is clicked (for root pane) */
 	onback?: () => void
 	/** Optional save/action button configuration */
-	action?: {
-		label: string
-		handler: () => void
-		element?: ElementType
-	}
+	action?: PaneAction
+	/** Optional overflow menu items */
+	overflowMenu?: OverflowMenuItem[]
 	/** Whether this pane's content should scroll */
 	scrollable?: boolean
 }

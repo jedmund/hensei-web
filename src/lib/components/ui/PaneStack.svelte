@@ -1,6 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { DropdownMenu } from 'bits-ui'
 	import {
 		type PaneConfig,
 		type PaneStackStore,
@@ -105,9 +106,38 @@
 							element={pane.action.element}
 							elementStyle={!!pane.action.element}
 							onclick={pane.action.handler}
+							disabled={pane.action.disabled}
 						>
 							{pane.action.label}
 						</Button>
+					{/if}
+					{#if pane.overflowMenu && pane.overflowMenu.length > 0}
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger>
+								{#snippet child({ props })}
+									<Button
+										{...props}
+										variant="ghost"
+										size="small"
+										iconOnly
+										icon="ellipsis"
+										aria-label="More options"
+									/>
+								{/snippet}
+							</DropdownMenu.Trigger>
+							<DropdownMenu.Portal>
+								<DropdownMenu.Content class="overflow-menu" side="bottom" align="end" sideOffset={4}>
+									{#each pane.overflowMenu as item}
+										<DropdownMenu.Item
+											class="overflow-menu-item {item.variant === 'danger' ? 'danger' : ''}"
+											onSelect={item.handler}
+										>
+											{item.label}
+										</DropdownMenu.Item>
+									{/each}
+								</DropdownMenu.Content>
+							</DropdownMenu.Portal>
+						</DropdownMenu.Root>
 					{/if}
 				{/snippet}
 			</SidebarHeader>
@@ -253,6 +283,40 @@
 			// Improve mobile scrolling performance
 			@media (max-width: 768px) {
 				-webkit-overflow-scrolling: touch;
+			}
+		}
+	}
+
+	// Overflow menu styles
+	:global(.overflow-menu) {
+		background: var(--menu-bg, white);
+		border: 1px solid var(--border-color, #ddd);
+		border-radius: $card-corner;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		padding: $unit-half;
+		min-width: calc($unit * 20);
+		z-index: 200;
+	}
+
+	:global(.overflow-menu-item) {
+		padding: $unit $unit-2x;
+		border-radius: $item-corner-small;
+		cursor: pointer;
+		font-size: 14px;
+		color: var(--text-primary);
+		outline: none;
+
+		&:hover,
+		&:focus {
+			background: var(--button-bg-hover, #f5f5f5);
+		}
+
+		&.danger {
+			color: var(--danger, #dc3545);
+
+			&:hover,
+			&:focus {
+				background: var(--danger-bg, #fff5f5);
 			}
 		}
 	}

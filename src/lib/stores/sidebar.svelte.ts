@@ -2,6 +2,7 @@ import type { Snippet, Component } from 'svelte'
 import {
 	PaneStackStore,
 	type PaneConfig,
+	type OverflowMenuItem,
 	type ElementType
 } from '$lib/stores/paneStack.svelte'
 
@@ -128,30 +129,28 @@ class SidebarStore {
 
 	/**
 	 * Update the action button for the current pane
+	 * @param handler - Click handler, or undefined to show disabled button
+	 * @param label - Button label (defaults to 'Done')
+	 * @param element - Element type for styling
+	 * @param show - Whether to show the button at all (defaults to true if label provided)
 	 */
 	setAction(
-		onsave: (() => void) | undefined,
-		saveLabel?: string,
-		element?: ElementType
+		handler: (() => void) | undefined,
+		label?: string,
+		element?: ElementType,
+		show: boolean = true
 	) {
-		const currentPane = this.paneStack.currentPane
-		if (currentPane) {
-			this.paneStack.updateCurrentProps({})
-			// Update action on current pane
-			const panes = this.paneStack.panes
-			const currentIndex = panes.length - 1
-			if (currentIndex >= 0 && panes[currentIndex]) {
-				panes[currentIndex] = {
-					...panes[currentIndex],
-					action:
-						onsave ?
-							{
-								label: saveLabel ?? 'Done',
-								handler: onsave,
-								element
-							}
-						:	undefined
-				}
+		const panes = this.paneStack.panes
+		const currentIndex = panes.length - 1
+		if (currentIndex >= 0 && panes[currentIndex]) {
+			panes[currentIndex] = {
+				...panes[currentIndex],
+				action: show && label ? {
+					label,
+					handler: handler ?? (() => {}),
+					element,
+					disabled: !handler
+				} : undefined
 			}
 		}
 	}
@@ -161,6 +160,27 @@ class SidebarStore {
 	 */
 	clearAction() {
 		this.setAction(undefined)
+	}
+
+	/**
+	 * Set the overflow menu items for the current pane
+	 */
+	setOverflowMenu(items: OverflowMenuItem[] | undefined) {
+		const panes = this.paneStack.panes
+		const currentIndex = panes.length - 1
+		if (currentIndex >= 0 && panes[currentIndex]) {
+			panes[currentIndex] = {
+				...panes[currentIndex],
+				overflowMenu: items
+			}
+		}
+	}
+
+	/**
+	 * Clear the overflow menu for the current pane
+	 */
+	clearOverflowMenu() {
+		this.setOverflowMenu(undefined)
 	}
 
 	// Getters for reactive access
