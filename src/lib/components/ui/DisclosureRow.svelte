@@ -59,9 +59,9 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		width: 100%;
-		padding: spacing.$unit spacing.$unit;
+		gap: spacing.$unit-2x;
 		margin: 0 calc(spacing.$unit * -1);
+		padding: spacing.$unit;
 		border-radius: layout.$item-corner;
 		font-size: typography.$font-regular;
 		min-height: calc(spacing.$unit * 5);
@@ -87,14 +87,16 @@
 		.label-container {
 			display: flex;
 			flex-direction: column;
-			flex-shrink: 0;
-			margin-right: spacing.$unit-2x;
+			flex: 1;
+			min-width: 0;
 			gap: spacing.$unit-fourth;
 		}
 
 		.label {
 			font-weight: typography.$medium;
 			color: colors.$grey-30;
+			word-wrap: break-word;
+			overflow-wrap: break-word;
 		}
 
 		.sublabel {

@@ -60,6 +60,7 @@
 			color: var(--text-primary, colors.$grey-10);
 			font-weight: typography.$medium;
 			text-align: right;
+			min-width: 180px;
 		}
 	}
 </style>
