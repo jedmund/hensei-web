@@ -1,24 +1,30 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { createInfiniteQuery } from '@tanstack/svelte-query'
+	import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
 	import type { SearchResult } from '$lib/api/adapters/search.adapter'
 	import { searchQueries, type SearchFilters } from '$lib/api/queries/search.queries'
+	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import Button from '../ui/Button.svelte'
 	import Icon from '../Icon.svelte'
 	import { IsInViewport } from 'runed'
 	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/features/database/detail/image'
+	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
+	import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from '$lib/types/api/collection'
 
 	interface Props {
 		type: 'weapon' | 'character' | 'summon'
-		onAddItems?: (items: SearchResult[]) => void
+		onAddItems?: (items: AddItemResult[]) => void
 		canAddMore?: boolean
+		/** User ID to enable collection search mode */
+		authUserId?: string
 	}
 
 	let {
 		type = 'weapon',
 		onAddItems = () => {},
-		canAddMore = true
+		canAddMore = true,
+		authUserId
 	}: Props = $props()
 
 	// Search state (local UI state)
@@ -30,6 +36,9 @@
 	let elementFilters = $state<number[]>([])
 	let rarityFilters = $state<number[]>([])
 	let proficiencyFilters = $state<number[]>([])
+
+	// Search mode state (only available when authUserId is provided)
+	let searchMode = $state<SearchMode>('all')
 
 	// Refs
 	let searchInput: HTMLInputElement
@@ -91,6 +100,37 @@
 		proficiency: type === 'weapon' && proficiencyFilters.length > 0 ? proficiencyFilters : undefined
 	})
 
+	// Helper to map collection items to search result format with collectionId
+	function mapCollectionToSearchResult(
+		item: CollectionCharacter | CollectionWeapon | CollectionSummon
+	): AddItemResult {
+		const entity = 'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
+		return {
+			id: entity.id,
+			granblueId: entity.granblueId,
+			name: entity.name,
+			element: entity.element,
+			rarity: entity.rarity,
+			collectionId: item.id
+		}
+	}
+
+	// Filter collection items by search query (client-side)
+	function filterCollectionByQuery<T extends CollectionCharacter | CollectionWeapon | CollectionSummon>(
+		items: T[],
+		query: string
+	): T[] {
+		if (!query.trim()) return items
+		const lowerQuery = query.toLowerCase()
+		return items.filter((item) => {
+			const entity = 'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
+			const name = entity.name
+			const nameEn = typeof name === 'string' ? name : name?.en || ''
+			const nameJa = typeof name === 'string' ? '' : name?.ja || ''
+			return nameEn.toLowerCase().includes(lowerQuery) || nameJa.toLowerCase().includes(lowerQuery)
+		})
+	}
+
 	// TanStack Query v6: Use createInfiniteQuery with thunk pattern for reactivity
 	// Query automatically updates when type, debouncedSearchQuery, or filters change
 	// Note: Type assertion needed because different search types have different query keys
@@ -111,40 +151,94 @@
 		}
 	})
 
+	// Collection query - only enabled when in collection mode and authUserId is provided
+	// Type assertion needed because different types have different query result types
+	// but they all share the same structure with different content types
+	const collectionQueryResult = createInfiniteQuery(() => {
+		if (!authUserId) {
+			// Return a disabled query config
+			return {
+				...collectionQueries.characters(authUserId ?? '', {}, false),
+				enabled: false
+			} as ReturnType<typeof collectionQueries.characters>
+		}
+
+		const currentFilters = {
+			element: elementFilters.length > 0 ? elementFilters : undefined,
+			rarity: rarityFilters.length > 0 ? rarityFilters : undefined
+		}
+
+		switch (type) {
+			case 'weapon':
+				return {
+					...collectionQueries.weapons(authUserId, currentFilters),
+					enabled: searchMode === 'collection'
+				} as unknown as ReturnType<typeof collectionQueries.characters>
+			case 'character':
+				return {
+					...collectionQueries.characters(authUserId, currentFilters),
+					enabled: searchMode === 'collection'
+				}
+			case 'summon':
+				return {
+					...collectionQueries.summons(authUserId, currentFilters),
+					enabled: searchMode === 'collection'
+				} as unknown as ReturnType<typeof collectionQueries.characters>
+		}
+	})
+
 	// Flatten all pages into a single items array
 	const rawResults = $derived(
 		searchQueryResult.data?.pages.flatMap((page) => page.results) ?? []
 	)
 
+	// Collection results (filtered client-side by search query)
+	const rawCollectionResults = $derived.by(() => {
+		const pages = collectionQueryResult.data?.pages ?? []
+		const allItems = pages.flatMap((page) => page.results)
+		return filterCollectionByQuery(allItems, debouncedSearchQuery)
+	})
+
 	// Deduplicate by id - needed because the API may return the same item across pages
 	// (e.g., due to items being added/removed between page fetches)
-	const searchResults = $derived(
-		Array.from(new Map(rawResults.map((item) => [item.id, item])).values())
-	)
+	const searchResults = $derived.by<AddItemResult[]>(() => {
+		if (searchMode === 'collection' && authUserId) {
+			// Map collection items to AddItemResult format
+			return rawCollectionResults.map(mapCollectionToSearchResult)
+		}
+		// Regular search results - cast to AddItemResult[] since they're compatible
+		const deduped = Array.from(new Map(rawResults.map((item) => [item.id, item])).values())
+		return deduped as AddItemResult[]
+	})
 
 	// Use runed's IsInViewport for viewport detection
 	const inViewport = new IsInViewport(() => sentinelEl, {
 		rootMargin: '200px'
 	})
 
+	// Get the active query based on search mode
+	const activeQuery = $derived(
+		searchMode === 'collection' && authUserId ? collectionQueryResult : searchQueryResult
+	)
+
 	// Auto-fetch next page when sentinel is visible
 	$effect(() => {
 		if (
 			inViewport.current &&
-			searchQueryResult.hasNextPage &&
-			!searchQueryResult.isFetchingNextPage &&
-			!searchQueryResult.isLoading
+			activeQuery.hasNextPage &&
+			!activeQuery.isFetchingNextPage &&
+			!activeQuery.isLoading
 		) {
-			searchQueryResult.fetchNextPage()
+			activeQuery.fetchNextPage()
 		}
 	})
 
 	// Computed states
 	const isEmpty = $derived(
-		searchResults.length === 0 && !searchQueryResult.isLoading && !searchQueryResult.isError
+		searchResults.length === 0 && !activeQuery.isLoading && !activeQuery.isError
 	)
 	const showSentinel = $derived(
-		!searchQueryResult.isLoading && searchQueryResult.hasNextPage && searchResults.length > 0
+		!activeQuery.isLoading && activeQuery.hasNextPage && searchResults.length > 0
 	)
 
 	// Focus search input on mount
@@ -154,7 +248,7 @@
 		}
 	})
 
-	function handleItemClick(item: SearchResult) {
+	function handleItemClick(item: AddItemResult) {
 		if (canAddMore) {
 			onAddItems([item])
 		}
@@ -184,7 +278,7 @@
 		}
 	}
 
-	function getImageUrl(item: SearchResult): string {
+	function getImageUrl(item: AddItemResult): string {
 		const id = item.granblueId
 		if (!id) return `/images/placeholders/placeholder-${type}-square.png`
 
@@ -200,7 +294,7 @@
 		}
 	}
 
-	function getItemName(item: SearchResult): string {
+	function getItemName(item: AddItemResult): string {
 		const name = item.name
 		if (typeof name === 'string') return name
 		return name?.en || name?.ja || 'Unknown'
@@ -218,6 +312,25 @@
 			class="search-input"
 		/>
 	</div>
+
+	{#if authUserId}
+		<div class="mode-toggle">
+			<button
+				class="mode-btn"
+				class:active={searchMode === 'all'}
+				onclick={() => searchMode = 'all'}
+			>
+				All Items
+			</button>
+			<button
+				class="mode-btn"
+				class:active={searchMode === 'collection'}
+				onclick={() => searchMode = 'collection'}
+			>
+				My Collection
+			</button>
+		</div>
+	{/if}
 
 	<div class="filters-section">
 		<!-- Element filters -->
@@ -277,16 +390,16 @@
 
 	<!-- Results -->
 	<div class="results-section">
-		{#if searchQueryResult.isLoading}
+		{#if activeQuery.isLoading}
 			<div class="loading">
 				<Icon name="loader-2" size={24} />
 				<span>Searching...</span>
 			</div>
-		{:else if searchQueryResult.isError}
+		{:else if activeQuery.isError}
 			<div class="error-state">
 				<Icon name="alert-circle" size={24} />
-				<p>{searchQueryResult.error?.message || 'Search failed'}</p>
-				<Button size="small" onclick={() => searchQueryResult.refetch()}>Retry</Button>
+				<p>{activeQuery.error?.message || 'Search failed'}</p>
+				<Button size="small" onclick={() => activeQuery.refetch()}>Retry</Button>
 			</div>
 		{:else if searchResults.length > 0}
 			<ul class="results-list">
@@ -295,6 +408,7 @@
 						<button
 							class="result-button"
 							class:disabled={!canAddMore}
+							class:from-collection={item.collectionId}
 							onclick={() => handleItemClick(item)}
 							aria-label="{canAddMore ? 'Add' : 'Grid full - cannot add'} {getItemName(item)}"
 							disabled={!canAddMore}
@@ -306,6 +420,9 @@
 								loading="lazy"
 							/>
 							<span class="result-name">{getItemName(item)}</span>
+							{#if item.collectionId}
+								<Icon name="bookmark" size={14} class="collection-indicator" />
+							{/if}
 							{#if item.element !== undefined}
 								<span
 									class="result-element"
@@ -323,7 +440,7 @@
 				<div class="load-more-sentinel" bind:this={sentinelEl}></div>
 			{/if}
 
-			{#if searchQueryResult.isFetchingNextPage}
+			{#if activeQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={20} />
 					<span>Loading more...</span>
@@ -331,7 +448,13 @@
 			{/if}
 		{:else if isEmpty}
 			<div class="no-results">
-				{#if searchQuery.length > 0}
+				{#if searchMode === 'collection'}
+					{#if searchQuery.length > 0}
+						No items match your search
+					{:else}
+						Your collection is empty
+					{/if}
+				{:else if searchQuery.length > 0}
 					No results found
 				{:else}
 					Start typing to search
@@ -375,6 +498,37 @@
 
 			&::placeholder {
 				color: var(--text-tertiary);
+			}
+		}
+	}
+
+	.mode-toggle {
+		display: flex;
+		gap: $unit-half;
+		padding-bottom: $unit-2x;
+		flex-shrink: 0;
+
+		.mode-btn {
+			flex: 1;
+			padding: $unit calc($unit * 1.5);
+			border: 1px solid var(--border-primary);
+			background: var(--bg-secondary);
+			border-radius: $input-corner;
+			font-size: $font-small;
+			font-weight: $medium;
+			cursor: pointer;
+			transition: all 0.2s;
+			color: var(--text-secondary);
+
+			&:hover {
+				background: var(--bg-tertiary);
+				border-color: var(--border-secondary);
+			}
+
+			&.active {
+				background: var(--accent-blue);
+				color: white;
+				border-color: var(--accent-blue);
 			}
 		}
 	}
@@ -519,6 +673,11 @@
 			.result-element {
 				font-size: $font-small;
 				font-weight: $bold;
+				flex-shrink: 0;
+			}
+
+			:global(.collection-indicator) {
+				color: var(--accent-blue);
 				flex-shrink: 0;
 			}
 		}
