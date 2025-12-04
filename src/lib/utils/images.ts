@@ -366,12 +366,19 @@ export function getElementIcon(element: number): string {
 
 // ===== Artifact Images =====
 
+export type ArtifactImageVariant = 'square' | 'wide'
+
 /**
  * Get artifact image URL
+ * @param variant - 'square' for thumbnails/icons, 'wide' for grid-sized display
  */
-export function getArtifactImage(granblueId: string | number | null | undefined): string {
+export function getArtifactImage(
+	granblueId: string | number | null | undefined,
+	variant: ArtifactImageVariant = 'square'
+): string {
 	if (!granblueId) return '/images/placeholders/placeholder-weapon-grid.png'
-	return `${getBasePath()}/artifacts/${granblueId}.png`
+	const directory = `artifact-${variant}`
+	return `${getBasePath()}/${directory}/${granblueId}.jpg`
 }
 
 // ===== Other Game Images =====
