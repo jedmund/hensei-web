@@ -32,17 +32,12 @@
 		element,
 		class: className = ''
 	}: Props = $props()
-
-	function handleValueChange(values: number[]) {
-		const newValue = values[0] ?? min
-		onValueChange?.(newValue)
-	}
 </script>
 
 <SliderPrimitive.Root
 	type="single"
-	value={[value]}
-	onValueChange={handleValueChange}
+	{value}
+	{onValueChange}
 	{min}
 	{max}
 	{step}
@@ -78,7 +73,7 @@
 
 	:global(.slider-track) {
 		position: relative;
-		width: 100%;
+		flex-grow: 1;
 		height: $unit-half;
 		background: var(--slider-track-bg, var(--button-bg));
 		border-radius: $full-corner;
