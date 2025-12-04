@@ -70,7 +70,7 @@
 			<div class="recommendation">
 				<span class="action-badge {action?.class ?? ''}">{action?.label ?? grade.recommendation.action}</span>
 				{#if grade.recommendation.reason}
-					<p class="reason">{grade.recommendation.reason}</p>
+					<span class="reason">{grade.recommendation.reason}</span>
 				{/if}
 			</div>
 		{/if}
@@ -170,17 +170,19 @@
 
 	.recommendation {
 		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
+		flex-direction: row;
+		align-items: center;
+		gap: spacing.$unit;
+		flex-wrap: wrap;
 	}
 
 	.action-badge {
 		display: inline-flex;
-		align-self: flex-start;
 		padding: spacing.$unit-fourth spacing.$unit-half;
 		border-radius: layout.$item-corner;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
+		flex-shrink: 0;
 
 		&.action-keep {
 			background: colors.$wind-bg-20;
@@ -199,7 +201,6 @@
 	.reason {
 		font-size: typography.$font-small;
 		color: colors.$grey-40;
-		margin: 0;
 	}
 
 	.no-grade {
