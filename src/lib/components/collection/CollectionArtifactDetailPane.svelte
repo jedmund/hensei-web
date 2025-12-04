@@ -10,7 +10,7 @@
 	import { onMount } from 'svelte'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { isQuirkArtifact } from '$lib/types/api/artifact'
-	import { usePaneStack, type PaneConfig } from '$lib/stores/paneStack.svelte'
+	import { usePaneStack, type PaneConfig, type ElementType } from '$lib/stores/paneStack.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { getArtifactImage } from '$lib/utils/images'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
@@ -50,6 +50,17 @@
 	const skills = $derived(artifact.skills ?? [])
 	const hasSkills = $derived(!isQuirk && skills.some((s) => s !== null))
 
+	// Convert numeric element to ElementType string
+	const elementNames: Record<number, ElementType> = {
+		1: 'wind',
+		2: 'fire',
+		3: 'water',
+		4: 'earth',
+		5: 'dark',
+		6: 'light'
+	}
+	const elementType = $derived(elementNames[artifact.element] ?? undefined)
+
 	// Push edit pane
 	function handleEdit() {
 		const config: PaneConfig = {
@@ -67,7 +78,7 @@
 	// Set up the Edit action button in the pane header for owners
 	onMount(() => {
 		if (isOwner) {
-			sidebar.setAction(handleEdit, 'Edit')
+			sidebar.setAction(handleEdit, 'Edit', elementType)
 		}
 
 		return () => {
