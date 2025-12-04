@@ -4,20 +4,19 @@
 	import type {
 		ArtifactInstance,
 		ArtifactSkillInstance,
-		ArtifactSkill,
-		ArtifactGrade
+		ArtifactSkill
 	} from '$lib/types/api/artifact'
 	import { isQuirkArtifact, getSkillGroupForSlot } from '$lib/types/api/artifact'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
-	import { usePaneStack, type PaneConfig, type ElementType } from '$lib/stores/paneStack.svelte'
+	import { usePaneStack, type PaneConfig } from '$lib/stores/paneStack.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
-	import Slider from '$lib/components/ui/Slider.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
 	import ArtifactSkillRow from './ArtifactSkillRow.svelte'
 	import ArtifactModifierList from './ArtifactModifierList.svelte'
-	import ArtifactGradeDisplay from './ArtifactGradeDisplay.svelte'
+	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 
 	interface Props {
 		/** The artifact instance being edited */
@@ -34,10 +33,63 @@
 	const paneStack = usePaneStack()
 
 	// Local state for edits
+	// Use type assertion since this pane is used with CollectionArtifact which has nickname
+	let nickname = $state((artifact as { nickname?: string }).nickname ?? '')
 	let element = $state(artifact.element)
 	let level = $state(artifact.level)
 	let proficiency = $state(artifact.proficiency)
-	let skills = $state<(ArtifactSkillInstance | null)[]>([...artifact.skills])
+	let skills = $state<(ArtifactSkillInstance | null)[]>(initializeSkillLevels([...artifact.skills]))
+
+	// Initialize skill levels to meet the constraint (artifact.level + 3)
+	// This handles cases where imported data has incorrect skill levels
+	function initializeSkillLevels(
+		inputSkills: (ArtifactSkillInstance | null)[]
+	): (ArtifactSkillInstance | null)[] {
+		// Skip for quirk artifacts
+		if (artifact.artifact?.rarity === 'quirk') return inputSkills
+
+		const targetSum = artifact.level + 3
+		const currentSum = inputSkills.reduce((sum, s) => sum + (s?.level ?? 0), 0)
+		const diff = targetSum - currentSum
+
+		if (diff === 0) return inputSkills
+
+		// Need to adjust skill levels
+		const adjusted = [...inputSkills]
+
+		if (diff > 0) {
+			// Need to add points
+			let remaining = diff
+			for (let i = 0; i < 4 && remaining > 0; i++) {
+				const skill = adjusted[i]
+				if (skill) {
+					const canAdd = Math.min(5 - skill.level, remaining)
+					if (canAdd > 0) {
+						adjusted[i] = { ...skill, level: skill.level + canAdd }
+						remaining -= canAdd
+					}
+				}
+			}
+		} else {
+			// Need to remove points
+			let remaining = Math.abs(diff)
+			const indices = [0, 1, 2, 3]
+				.filter((i) => adjusted[i] !== null)
+				.sort((a, b) => (adjusted[b]?.level ?? 0) - (adjusted[a]?.level ?? 0))
+
+			for (const i of indices) {
+				if (remaining <= 0) break
+				const skill = adjusted[i]
+				if (skill && skill.level > 1) {
+					const canRemove = Math.min(skill.level - 1, remaining)
+					adjusted[i] = { ...skill, level: skill.level - canRemove }
+					remaining -= canRemove
+				}
+			}
+		}
+
+		return adjusted
+	}
 
 	// Derived values
 	const artifactData = $derived(artifact.artifact)
@@ -66,6 +118,7 @@
 	]
 
 	// Convert numeric element to ElementType string
+	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	const elementTypeMap: Record<number, ElementType> = {
 		1: 'wind',
 		2: 'fire',
@@ -74,7 +127,7 @@
 		5: 'dark',
 		6: 'light'
 	}
-	const elementType = $derived(elementTypeMap[element] ?? undefined)
+	const elementType = $derived(elementTypeMap[element])
 
 	// Level options (1-5 for standard, fixed at 1 for quirk)
 	const levelOptions = $derived(
@@ -103,13 +156,6 @@
 		{ value: 10, label: 'Katana' }
 	]
 
-	// Get proficiency display name
-	function getProficiencyName(profValue: number | null | undefined): string {
-		if (!profValue) return '—'
-		const option = proficiencyOptions.find((o) => o.value === profValue)
-		return option?.label ?? '—'
-	}
-
 	// Push modifier selection pane for a specific slot
 	function handleSelectModifier(slot: number) {
 		const config: PaneConfig = {
@@ -119,6 +165,7 @@
 			props: {
 				slot,
 				selectedModifier: skills[slot - 1]?.modifier,
+				element: elementType,
 				onSelect: (skill: ArtifactSkill) => handleModifierSelected(slot, skill)
 			}
 		}
@@ -139,10 +186,10 @@
 		}
 
 		skills = newSkills
-		notifyUpdate()
 
-		// Pop back to the edit pane
+		// Pop back to the edit pane BEFORE notifying, so the header update targets the right pane
 		paneStack.pop()
+		notifyUpdate()
 	}
 
 	// Handle skill updates from skill row
@@ -164,11 +211,62 @@
 		notifyUpdate()
 	}
 
-	// Handle level change
+	// Handle level change - redistributes skill levels to maintain constraint
 	function handleLevelChange(newLevel: number | undefined) {
 		if (newLevel === undefined) return
+
+		const oldBudget = level + 3
+		const newBudget = newLevel + 3
+		const budgetDiff = newBudget - oldBudget
+
 		level = newLevel
+
+		// If budget increased, distribute extra points to skills
+		// If budget decreased, remove points from skills (starting from highest)
+		if (budgetDiff !== 0 && !isQuirk) {
+			redistributeSkillLevels(budgetDiff)
+		}
+
 		notifyUpdate()
+	}
+
+	// Redistribute skill levels when artifact level changes
+	function redistributeSkillLevels(budgetDiff: number) {
+		const newSkills = [...skills]
+		let remaining = budgetDiff
+
+		if (remaining > 0) {
+			// Add points: distribute to skills that can accept more (max 5)
+			for (let i = 0; i < 4 && remaining > 0; i++) {
+				const skill = newSkills[i]
+				if (skill) {
+					const canAdd = Math.min(5 - skill.level, remaining)
+					if (canAdd > 0) {
+						newSkills[i] = { ...skill, level: skill.level + canAdd }
+						remaining -= canAdd
+					}
+				}
+			}
+		} else {
+			// Remove points: take from skills with highest levels first
+			remaining = Math.abs(remaining)
+			// Sort indices by skill level descending
+			const indices = [0, 1, 2, 3]
+				.filter((i) => newSkills[i] !== null)
+				.sort((a, b) => (newSkills[b]?.level ?? 0) - (newSkills[a]?.level ?? 0))
+
+			for (const i of indices) {
+				if (remaining <= 0) break
+				const skill = newSkills[i]
+				if (skill && skill.level > 1) {
+					const canRemove = Math.min(skill.level - 1, remaining)
+					newSkills[i] = { ...skill, level: skill.level - canRemove }
+					remaining -= canRemove
+				}
+			}
+		}
+
+		skills = newSkills
 	}
 
 	// Handle proficiency change
@@ -178,11 +276,19 @@
 		notifyUpdate()
 	}
 
+	// Handle nickname change
+	function handleNicknameChange(event: Event) {
+		const target = event.target as HTMLInputElement
+		nickname = target.value
+		notifyUpdate()
+	}
+
 	// Notify parent of updates
 	function notifyUpdate() {
 		if (!onUpdate) return
 
 		const updates: Partial<ArtifactInstance> = {
+			nickname: nickname.trim() || undefined,
 			element,
 			level,
 			skills: [...skills]
@@ -194,17 +300,28 @@
 
 		onUpdate(updates)
 	}
-
-	// Current grade (from artifact or could be recalculated)
-	const currentGrade: ArtifactGrade = $derived(artifact.grade)
 </script>
 
 <div class="artifact-edit-pane">
-	<DetailsSection title="Base Properties">
+	<DetailsSection title="Basic Info">
+		<DetailRow label="Nickname" noHover>
+			{#if disabled}
+				<span>{nickname || '—'}</span>
+			{:else}
+				<Input
+					class="nickname-input"
+					value={nickname}
+					oninput={handleNicknameChange}
+					placeholder="Optional nickname"
+					maxLength={50}
+					contained
+				/>
+			{/if}
+		</DetailRow>
 		{#if canChangeProficiency}
 			<DetailRow label="Proficiency" noHover>
 				{#if disabled}
-					<span>{getProficiencyName(proficiency)}</span>
+					<ProficiencyLabel {proficiency} size="medium" />
 				{:else}
 					<Select
 						options={proficiencyOptions}
@@ -218,7 +335,9 @@
 				{/if}
 			</DetailRow>
 		{:else}
-			<DetailRow label="Proficiency" value={getProficiencyName(artifactData.proficiency)} />
+			<DetailRow label="Proficiency" noHover>
+				<ProficiencyLabel proficiency={artifactData.proficiency} size="medium" />
+			</DetailRow>
 		{/if}
 
 		<DetailRow label="Element" noHover>
@@ -244,18 +363,13 @@
 			{#if disabled || isQuirk}
 				<span>{level}</span>
 			{:else}
-				<div class="level-slider">
-					<Slider
-						value={level}
-						onValueChange={handleLevelChange}
-						min={1}
-						max={5}
-						step={1}
-						element={elementType}
-						{disabled}
-					/>
-					<span class="level-value">{level}</span>
-				</div>
+				<Select
+					options={levelOptions}
+					value={level}
+					onValueChange={handleLevelChange}
+					contained
+					{disabled}
+				/>
 			{/if}
 		</DetailRow>
 	</DetailsSection>
@@ -267,6 +381,8 @@
 					<ArtifactSkillRow
 						{slot}
 						skill={skills[slot - 1] ?? null}
+						allSkills={skills}
+						artifactLevel={level}
 						availableSkills={getSkillsForSlot(slot)}
 						onSelectModifier={() => handleSelectModifier(slot)}
 						onUpdateSkill={(update) => handleUpdateSkill(slot, update)}
@@ -276,12 +392,6 @@
 			</div>
 		</DetailsSection>
 	{/if}
-
-	<DetailsSection title="Grade">
-		<div class="grade-section">
-			<ArtifactGradeDisplay grade={currentGrade} />
-		</div>
-	</DetailsSection>
 </div>
 
 <style lang="scss">
@@ -298,7 +408,15 @@
 	}
 
 	:global(.artifact-edit-pane .select.medium) {
-		min-width: 120px;
+		min-width: 180px;
+	}
+
+	:global(.nickname-input) {
+		min-width: 180px;
+	}
+
+	:global(.nickname-input input) {
+		padding: spacing.$unit spacing.$unit-4x spacing.$unit calc(spacing.$unit * 1.5) !important;
 	}
 
 	.element-display {
@@ -314,28 +432,9 @@
 		flex-shrink: 0;
 	}
 
-	.level-slider {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit;
-		flex: 1;
-
-		.level-value {
-			font-size: typography.$font-regular;
-			font-weight: typography.$medium;
-			min-width: spacing.$unit-2x;
-			text-align: center;
-		}
-	}
-
 	.skills-list {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
-		padding: 0 spacing.$unit;
-	}
-
-	.grade-section {
-		padding: spacing.$unit;
 	}
 </style>

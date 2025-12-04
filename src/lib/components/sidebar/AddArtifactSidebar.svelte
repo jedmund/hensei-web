@@ -12,7 +12,12 @@
 	 * 5. Configure skills (for standard artifacts only, uses pane stack)
 	 */
 	import { onMount, untrack } from 'svelte'
-	import type { Artifact, ArtifactSkill, ArtifactSkillInstance, CollectionArtifactInput } from '$lib/types/api/artifact'
+	import type {
+		Artifact,
+		ArtifactSkill,
+		ArtifactSkillInstance,
+		CollectionArtifactInput
+	} from '$lib/types/api/artifact'
 	import { isQuirkArtifact, getSkillGroupForSlot } from '$lib/types/api/artifact'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
@@ -22,7 +27,6 @@
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
-	import Slider from '$lib/components/ui/Slider.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import ArtifactSkillRow from '$lib/components/artifact/ArtifactSkillRow.svelte'
 	import ArtifactModifierList from '$lib/components/artifact/ArtifactModifierList.svelte'
@@ -63,7 +67,7 @@
 		3: '#5cb7ec', // Water - blue
 		4: '#ec985c', // Earth - orange/brown
 		5: '#c65cec', // Dark - purple
-		6: '#c59c0c'  // Light - gold/yellow
+		6: '#c59c0c' // Light - gold/yellow
 	}
 
 	// Proficiency options - matches database enum values
@@ -94,7 +98,7 @@
 	// Standard artifacts have a fixed proficiency, quirk artifacts match any proficiency
 	const filteredArtifacts = $derived.by(() => {
 		if (!artifactsQuery.data || proficiency === undefined) return []
-		return artifactsQuery.data.filter(a => {
+		return artifactsQuery.data.filter((a) => {
 			// Quirk artifacts have null proficiency - they work with any proficiency
 			if (a.proficiency === null) return true
 			// Standard artifacts match their fixed proficiency
@@ -104,16 +108,14 @@
 
 	// Build artifact options for dropdown (filtered by proficiency)
 	const artifactOptions = $derived.by(() => {
-		return filteredArtifacts.map(a => ({
+		return filteredArtifacts.map((a) => ({
 			value: a.id,
-			label: typeof a.name === 'string' ? a.name : (a.name.en || a.name.ja || '—')
+			label: typeof a.name === 'string' ? a.name : a.name.en || a.name.ja || '—'
 		}))
 	})
 
 	// Selected artifact data
-	const selectedArtifact = $derived(
-		artifactsQuery.data?.find(a => a.id === selectedArtifactId)
-	)
+	const selectedArtifact = $derived(artifactsQuery.data?.find((a) => a.id === selectedArtifactId))
 	const isQuirk = $derived(selectedArtifact ? isQuirkArtifact(selectedArtifact) : false)
 
 	// Level options (1-5 for standard, fixed at 1 for quirk)
@@ -145,6 +147,7 @@
 			props: {
 				slot,
 				selectedModifier: skills[slot - 1]?.modifier,
+				element: elementType,
 				onSelect: (skill: ArtifactSkill) => handleModifierSelected(slot, skill)
 			}
 		}
@@ -195,17 +198,69 @@
 		// Reset skills when artifact changes
 		skills = [null, null, null, null]
 		// Reset level for quirk
-		const artifact = artifactsQuery.data?.find(a => a.id === newArtifactId)
+		const artifact = artifactsQuery.data?.find((a) => a.id === newArtifactId)
 		if (artifact && isQuirkArtifact(artifact)) {
 			level = 1
 		}
 	}
 
+	// Handle level change - redistributes skill levels to maintain constraint
+	function handleLevelChange(newLevel: number | undefined) {
+		if (newLevel === undefined) return
+
+		const oldBudget = level + 3
+		const newBudget = newLevel + 3
+		const budgetDiff = newBudget - oldBudget
+
+		level = newLevel
+
+		// If budget changed and we have skills, redistribute levels
+		if (budgetDiff !== 0 && !isQuirk) {
+			redistributeSkillLevels(budgetDiff)
+		}
+	}
+
+	// Redistribute skill levels when artifact level changes
+	function redistributeSkillLevels(budgetDiff: number) {
+		const newSkills = [...skills]
+		let remaining = budgetDiff
+
+		if (remaining > 0) {
+			// Add points: distribute to skills that can accept more (max 5)
+			for (let i = 0; i < 4 && remaining > 0; i++) {
+				const skill = newSkills[i]
+				if (skill) {
+					const canAdd = Math.min(5 - skill.level, remaining)
+					if (canAdd > 0) {
+						newSkills[i] = { ...skill, level: skill.level + canAdd }
+						remaining -= canAdd
+					}
+				}
+			}
+		} else {
+			// Remove points: take from skills with highest levels first
+			remaining = Math.abs(remaining)
+			const indices = [0, 1, 2, 3]
+				.filter((i) => newSkills[i] !== null)
+				.sort((a, b) => (newSkills[b]?.level ?? 0) - (newSkills[a]?.level ?? 0))
+
+			for (const i of indices) {
+				if (remaining <= 0) break
+				const skill = newSkills[i]
+				if (skill && skill.level > 1) {
+					const canRemove = Math.min(skill.level - 1, remaining)
+					newSkills[i] = { ...skill, level: skill.level - canRemove }
+					remaining -= canRemove
+				}
+			}
+		}
+
+		skills = newSkills
+	}
+
 	// Validate form
 	const isValid = $derived(
-		proficiency !== undefined &&
-		element !== undefined &&
-		selectedArtifactId !== undefined
+		proficiency !== undefined && element !== undefined && selectedArtifactId !== undefined
 	)
 
 	// Convert numeric element to ElementType string for button styling
@@ -324,26 +379,17 @@
 					{#if isQuirk}
 						<span>1</span>
 					{:else}
-						<div class="level-slider">
-							<Slider
-								value={level}
-								onValueChange={(v) => (level = v)}
-								min={1}
-								max={5}
-								step={1}
-								element={elementType}
-							/>
-							<span class="level-value">{level}</span>
-						</div>
+						<Select
+							options={levelOptions}
+							value={level}
+							onValueChange={handleLevelChange}
+							contained
+						/>
 					{/if}
 				</DetailRow>
 
 				<DetailRow label="Nickname" noHover>
-					<Input
-						bind:value={nickname}
-						placeholder="Optional nickname"
-						maxLength={50}
-					/>
+					<Input bind:value={nickname} placeholder="Optional nickname" maxLength={50} />
 				</DetailRow>
 			</DetailsSection>
 
@@ -354,6 +400,8 @@
 							<ArtifactSkillRow
 								{slot}
 								skill={skills[slot - 1] ?? null}
+								allSkills={skills}
+								artifactLevel={level}
 								availableSkills={getSkillsForSlot(slot)}
 								onSelectModifier={() => handleSelectModifier(slot)}
 								onUpdateSkill={(update) => handleUpdateSkill(slot, update)}
@@ -364,7 +412,6 @@
 			{/if}
 		{/if}
 	</div>
-
 </div>
 
 <style lang="scss">
@@ -404,24 +451,9 @@
 		color: colors.$error;
 	}
 
-	.level-slider {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit;
-		flex: 1;
-
-		.level-value {
-			font-size: typography.$font-regular;
-			font-weight: typography.$medium;
-			min-width: spacing.$unit-2x;
-			text-align: center;
-		}
-	}
-
 	.skills-list {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
-		padding: 0 spacing.$unit;
 	}
 </style>

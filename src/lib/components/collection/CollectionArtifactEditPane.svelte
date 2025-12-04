@@ -16,9 +16,11 @@
 
 	interface Props {
 		artifact: CollectionArtifact
+		/** Called when artifact is saved, with the updated artifact data */
+		onSaved?: (updatedArtifact: CollectionArtifact) => void
 	}
 
-	let { artifact }: Props = $props()
+	let { artifact, onSaved }: Props = $props()
 
 	const paneStack = usePaneStack()
 
@@ -49,20 +51,40 @@
 	function handleSave() {
 		if (!pendingUpdates) return
 
+		const input = {
+			nickname: pendingUpdates.nickname,
+			element: pendingUpdates.element,
+			level: pendingUpdates.level,
+			proficiency: pendingUpdates.proficiency,
+			skill1: pendingUpdates.skills?.[0] ?? undefined,
+			skill2: pendingUpdates.skills?.[1] ?? undefined,
+			skill3: pendingUpdates.skills?.[2] ?? undefined,
+			skill4: pendingUpdates.skills?.[3] ?? undefined
+		}
+
+		// Debug: Log what we're sending
+		const skillLevelSum = [input.skill1, input.skill2, input.skill3, input.skill4]
+			.filter(Boolean)
+			.reduce((sum, s) => sum + (s?.level ?? 0), 0)
+		const expectedSum = (input.level ?? artifact.level) + 3
+		console.log('[CollectionArtifactEditPane] Saving artifact:', {
+			id: artifact.id,
+			input,
+			skillLevelSum,
+			expectedSum,
+			constraintMet: skillLevelSum === expectedSum
+		})
+
 		updateMutation.mutate({
 			id: artifact.id,
-			input: {
-				element: pendingUpdates.element,
-				level: pendingUpdates.level,
-				proficiency: pendingUpdates.proficiency,
-				skill1: pendingUpdates.skills?.[0] ?? undefined,
-				skill2: pendingUpdates.skills?.[1] ?? undefined,
-				skill3: pendingUpdates.skills?.[2] ?? undefined,
-				skill4: pendingUpdates.skills?.[3] ?? undefined
-			}
+			input
 		}, {
-			onSuccess: () => {
+			onSuccess: (updatedArtifact) => {
+				onSaved?.(updatedArtifact)
 				paneStack.pop()
+			},
+			onError: (error) => {
+				console.error('[CollectionArtifactEditPane] Save failed:', error)
 			}
 		})
 	}
@@ -78,9 +100,9 @@
 		return () => sidebar.clearAction()
 	})
 
-	// Reactively update header when state changes
+	// Reactively update header when state changes or when returning from sub-pane
 	$effect(() => {
-		const _ = [hasChanges, updateMutation.isPending]
+		const _ = [hasChanges, updateMutation.isPending, paneStack.panes.length]
 		untrack(() => updateHeader())
 	})
 </script>
