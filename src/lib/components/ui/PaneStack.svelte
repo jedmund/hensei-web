@@ -55,6 +55,7 @@
 		{@const isActive = index === panes.length - 1}
 		{@const isBehind = index < panes.length - 1}
 		{@const showBackButton = index > 0 || pane.onback || onClose}
+		{@const PaneComponent = pane.component}
 
 		<div
 			class="pane"
@@ -93,7 +94,6 @@
 			</SidebarHeader>
 
 			<div class="pane-content">
-				{@const PaneComponent = pane.component}
 				<PaneComponent {...pane.props ?? {}} />
 			</div>
 		</div>
