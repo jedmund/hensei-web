@@ -41,7 +41,7 @@
 		display: grid;
 		grid-template-columns: 1fr auto 1fr;
 		align-items: center;
-		padding: $unit-2x;
+		padding: $unit;
 		border-bottom: 1px solid var(--border-primary);
 		flex-shrink: 0;
 		background: var(--bg-primary);
@@ -55,6 +55,16 @@
 		.header-right {
 			display: flex;
 			align-items: center;
+
+			// Ensure all buttons in header have consistent height
+			:global([data-button-root]) {
+				height: calc($unit * 4) !important;
+
+				// Icon-only buttons should be square
+				&.iconOnly {
+					width: calc($unit * 4) !important;
+				}
+			}
 		}
 
 		.header-left {
@@ -63,6 +73,7 @@
 
 		.header-right {
 			justify-content: flex-end;
+			gap: $unit-half;
 		}
 
 		.sidebar-title {

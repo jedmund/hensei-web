@@ -113,7 +113,7 @@
 					{/if}
 					{#if pane.overflowMenu && pane.overflowMenu.length > 0}
 						<DropdownMenu.Root>
-							<DropdownMenu.Trigger>
+							<DropdownMenu.Trigger class="overflow-trigger">
 								{#snippet child({ props })}
 									<Button
 										{...props}
@@ -285,6 +285,12 @@
 				-webkit-overflow-scrolling: touch;
 			}
 		}
+	}
+
+	// Overflow trigger - reset any default styles from bits-ui
+	:global(.overflow-trigger) {
+		all: unset;
+		display: flex;
 	}
 
 	// Overflow menu styles
