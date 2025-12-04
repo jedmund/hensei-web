@@ -286,3 +286,20 @@ export function getSkillGroupForSlot(slot: number): ArtifactSkillGroup {
 	if (slot === 3) return 'group_ii'
 	return 'group_iii'
 }
+
+/**
+ * Calculate the displayed skill value at a given level
+ * Formula: baseValue + (growth × (level - 1))
+ *
+ * @param baseValue - The base strength value (rolled when skill is obtained)
+ * @param growth - The per-level growth factor (default 0)
+ * @param level - The skill level (1-5)
+ * @returns The calculated display value that matches in-game display
+ */
+export function calculateSkillDisplayValue(
+	baseValue: number,
+	growth: number | undefined,
+	level: number
+): number {
+	return baseValue + (growth ?? 0) * (level - 1)
+}
