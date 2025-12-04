@@ -9,6 +9,7 @@
 	 */
 	import {
 		calculateSkillDisplayValue,
+		getSkillGroupForSlot,
 		type ArtifactSkillInstance
 	} from '$lib/types/api/artifact'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -18,19 +19,24 @@
 
 	interface Props {
 		skill: ArtifactSkillInstance
+		/** Skill slot number (1-4) for skill group lookup */
+		skillSlot: number
 		/** Element for max value highlighting */
 		element?: ElementType
 	}
 
-	const { skill, element }: Props = $props()
+	const { skill, skillSlot, element }: Props = $props()
 
 	// Query skills to get the full skill definition
 	const skillsQuery = createQuery(() => artifactQueries.skills())
 
-	// Find the skill definition
-	const skillDef = $derived(
-		skillsQuery.data?.find((s) => s.modifier === skill.modifier)
-	)
+	// Find the skill definition (must match both modifier and skill group)
+	const skillDef = $derived.by(() => {
+		const group = getSkillGroupForSlot(skillSlot)
+		return skillsQuery.data?.find(
+			(s) => s.modifier === skill.modifier && s.skillGroup === group
+		)
+	})
 
 	const suffix = $derived(skillDef?.suffix?.en ?? '')
 	const isNegative = $derived(skillDef?.polarity === 'negative')

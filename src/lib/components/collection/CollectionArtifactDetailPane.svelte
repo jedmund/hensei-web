@@ -9,7 +9,7 @@
 	 */
 	import { onMount } from 'svelte'
 	import type { CollectionArtifact, ArtifactSkillInstance } from '$lib/types/api/artifact'
-	import { isQuirkArtifact } from '$lib/types/api/artifact'
+	import { isQuirkArtifact, getSkillGroupForSlot } from '$lib/types/api/artifact'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
 	import { useDeleteCollectionArtifact } from '$lib/api/mutations/artifact.mutations'
@@ -59,9 +59,12 @@
 	// Query skill definitions to get names
 	const skillsQuery = createQuery(() => artifactQueries.skills())
 
-	// Get skill name by modifier
-	function getSkillName(skill: ArtifactSkillInstance): string {
-		const skillDef = skillsQuery.data?.find((s) => s.modifier === skill.modifier)
+	// Get skill name by modifier and slot (different slots use different skill groups)
+	function getSkillName(skill: ArtifactSkillInstance, slot: number): string {
+		const group = getSkillGroupForSlot(slot)
+		const skillDef = skillsQuery.data?.find(
+			(s) => s.modifier === skill.modifier && s.skillGroup === group
+		)
 		return skillDef?.name?.en ?? 'Unknown Skill'
 	}
 
@@ -149,10 +152,11 @@
 
 		{#if hasSkills}
 			<DetailsSection title="Skills">
-				{#each skills as skill}
+				{#each skills as skill, index}
+					{@const skillSlot = index + 1}
 					{#if skill}
-						<DetailRow label={getSkillName(skill)}>
-							<ArtifactSkillDisplay {skill} element={elementType} />
+						<DetailRow label={getSkillName(skill, skillSlot)}>
+							<ArtifactSkillDisplay {skill} {skillSlot} element={elementType} />
 						</DetailRow>
 					{/if}
 				{/each}
