@@ -11,19 +11,20 @@
 	 * 4. Configure level, nickname
 	 * 5. Configure skills (for standard artifacts only, uses pane stack)
 	 */
+	import { onMount, untrack } from 'svelte'
 	import type { Artifact, ArtifactSkill, ArtifactSkillInstance, CollectionArtifactInput } from '$lib/types/api/artifact'
 	import { isQuirkArtifact, getSkillGroupForSlot } from '$lib/types/api/artifact'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
 	import { useCreateCollectionArtifact } from '$lib/api/mutations/artifact.mutations'
-	import { usePaneStack, type PaneConfig } from '$lib/stores/paneStack.svelte'
+	import { usePaneStack, type PaneConfig, type ElementType } from '$lib/stores/paneStack.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import ArtifactSkillRow from '$lib/components/artifact/ArtifactSkillRow.svelte'
 	import ArtifactModifierList from '$lib/components/artifact/ArtifactModifierList.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 
 	interface Props {
 		/** Callback when artifact is created successfully */
@@ -206,6 +207,17 @@
 		selectedArtifactId !== undefined
 	)
 
+	// Convert numeric element to ElementType string for button styling
+	const elementTypeMap: Record<number, ElementType> = {
+		1: 'wind',
+		2: 'fire',
+		3: 'water',
+		4: 'earth',
+		5: 'dark',
+		6: 'light'
+	}
+	const elementType = $derived(element !== undefined ? elementTypeMap[element] : undefined)
+
 	// Handle save
 	async function handleSave() {
 		if (!selectedArtifactId || !isValid || element === undefined) return
@@ -230,6 +242,29 @@
 			}
 		})
 	}
+
+	// Update the header action button based on form validity and element
+	function updateHeaderAction() {
+		if (isValid && !createMutation.isPending) {
+			sidebar.setAction(handleSave, 'Add', elementType)
+		} else {
+			sidebar.clearAction()
+		}
+	}
+
+	// Set up header action on mount and when validity/element changes
+	onMount(() => {
+		updateHeaderAction()
+		return () => sidebar.clearAction()
+	})
+
+	// Reactively update action when form state changes
+	$effect(() => {
+		// Access reactive dependencies
+		const _ = [isValid, element, createMutation.isPending]
+		// Use untrack to avoid infinite loop when calling sidebar methods
+		untrack(() => updateHeaderAction())
+	})
 </script>
 
 <div class="add-artifact-sidebar">
@@ -321,16 +356,6 @@
 		{/if}
 	</div>
 
-	<div class="form-footer">
-		<Button variant="secondary" onclick={onClose}>Cancel</Button>
-		<Button
-			variant="primary"
-			onclick={handleSave}
-			disabled={!isValid || createMutation.isPending}
-		>
-			{createMutation.isPending ? 'Adding...' : 'Add to Collection'}
-		</Button>
-	</div>
 </div>
 
 <style lang="scss">
@@ -375,17 +400,5 @@
 		flex-direction: column;
 		gap: spacing.$unit;
 		padding: 0 spacing.$unit;
-	}
-
-	.form-footer {
-		display: flex;
-		gap: spacing.$unit-2x;
-		padding: spacing.$unit-2x;
-		border-top: 1px solid var(--border-secondary);
-		flex-shrink: 0;
-
-		:global(button) {
-			flex: 1;
-		}
 	}
 </style>
