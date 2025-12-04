@@ -8,6 +8,7 @@
 	 *
 	 * The "My Collection" tab includes an edit mode using WeaponEditPane.
 	 */
+	import { untrack } from 'svelte'
 	import type { CollectionWeapon } from '$lib/types/api/collection'
 	import type { SimpleAxSkill } from '$lib/types/api/entities'
 	import { useUpdateCollectionWeapon } from '$lib/api/mutations/collection.mutations'
@@ -193,11 +194,17 @@
 
 	// Update sidebar header action
 	$effect(() => {
-		if (isOwner && selectedTab === 'collection' && !isEditing) {
-			sidebar.setAction(() => (isEditing = true), 'Edit', elementName)
-		} else {
-			sidebar.clearAction()
-		}
+		// Capture reactive dependencies we want to track
+		const shouldShowEdit = isOwner && selectedTab === 'collection' && !isEditing
+		const element = elementName
+		// Use untrack to avoid infinite loop when sidebar.setAction mutates pane state
+		untrack(() => {
+			if (shouldShowEdit) {
+				sidebar.setAction(() => (isEditing = true), 'Edit', element)
+			} else {
+				sidebar.clearAction()
+			}
+		})
 	})
 
 	// Clean up sidebar action when component is destroyed
