@@ -48,6 +48,21 @@
 	function isPopping(index: number): boolean {
 		return isAnimating && animationDirection === 'pop' && index === panes.length - 1
 	}
+
+	// Determine if a pane is becoming active (the one behind a popping pane)
+	function isBecomingActive(index: number): boolean {
+		return isAnimating && animationDirection === 'pop' && index === panes.length - 2
+	}
+
+	// Determine the visual depth of a pane (0 = active, 1 = one behind, 2+ = hidden)
+	function getDepth(index: number): number {
+		return panes.length - 1 - index
+	}
+
+	// Panes more than 1 level deep should be hidden
+	function isHidden(index: number): boolean {
+		return getDepth(index) > 1
+	}
 </script>
 
 <div class="pane-stack">
@@ -56,13 +71,17 @@
 		{@const isBehind = index < panes.length - 1}
 		{@const showBackButton = index > 0 || pane.onback || onClose}
 		{@const PaneComponent = pane.component}
+		{@const depth = getDepth(index)}
 
 		<div
 			class="pane"
-			class:is-active={isActive && !isPopping(index)}
-			class:is-behind={isBehind || isPopping(index)}
+			class:is-active={(isActive && !isPopping(index)) || isBecomingActive(index)}
+			class:is-behind={isBehind && !isPopping(index) && !isBecomingActive(index)}
 			class:is-pushing={isPushing(index)}
+			class:is-popping={isPopping(index)}
+			class:is-hidden={isHidden(index)}
 			class:scrollable={pane.scrollable !== false}
+			style:--pane-depth={depth}
 		>
 			<SidebarHeader title={pane.title}>
 				{#snippet leftAccessory()}
@@ -103,12 +122,15 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/effects' as *;
+	@use '$src/themes/layout' as *;
+
+	// Stacking configuration
+	$pane-peek-offset: $unit-3x; // How much the behind pane peeks out to the left
 
 	.pane-stack {
 		position: relative;
 		width: 100%;
 		height: 100%;
-		overflow: hidden;
 	}
 
 	.pane {
@@ -116,7 +138,14 @@
 		inset: 0;
 		display: flex;
 		flex-direction: column;
+
+		// Each pane is its own card
 		background: var(--sidebar-bg);
+		border-radius: $page-corner;
+		box-shadow: $page-elevation;
+		border: 1px solid rgba(0, 0, 0, 0.14);
+		overflow: hidden;
+
 		transition:
 			transform $duration-slide ease-out,
 			opacity $duration-slide ease-out;
@@ -126,28 +155,41 @@
 		&.is-active {
 			transform: translateX(0) scale(1);
 			z-index: 10;
+			opacity: 1;
 
 			.pane-content {
 				opacity: 1;
-				transition: opacity $duration-slide ease-out;
 			}
 		}
 
-		// Behind pane (scaled down and shifted left)
+		// Behind pane (shifted left to peek out)
 		&.is-behind {
-			transform: translateX(-20px) scale(0.9);
-			z-index: 1;
+			transform: translateX(-$pane-peek-offset) scale(0.98);
+			z-index: 5;
+			opacity: 1;
 
 			.pane-content {
 				opacity: 0;
 				pointer-events: none;
-				transition: opacity $duration-slide ease-out;
 			}
+		}
+
+		// Hidden panes (2+ levels deep)
+		&.is-hidden {
+			opacity: 0;
+			pointer-events: none;
+			z-index: 0;
 		}
 
 		// Pushing animation (new pane entering from right)
 		&.is-pushing {
 			animation: pane-enter $duration-slide ease-out forwards;
+		}
+
+		// Popping animation (pane exiting to the right)
+		&.is-popping {
+			animation: pane-exit $duration-slide ease-out forwards;
+			z-index: 10; // Keep on top during exit
 		}
 	}
 
@@ -156,7 +198,16 @@
 			transform: translateX(100%);
 		}
 		to {
-			transform: translateX(0) scale(1);
+			transform: translateX(0);
+		}
+	}
+
+	@keyframes pane-exit {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(100%);
 		}
 	}
 
@@ -165,6 +216,7 @@
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
+		transition: opacity $duration-slide ease-out;
 
 		// Scrollable pane content
 		.pane.scrollable & {

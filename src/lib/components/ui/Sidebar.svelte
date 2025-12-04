@@ -43,21 +43,19 @@
 		right: $unit-2x;
 		height: calc(100vh - #{$unit-2x} - #{$unit-2x}); // 100vh minus top and bottom insets
 		box-sizing: border-box;
-		background: var(--sidebar-bg);
+		// No background - individual panes have their own card styling
 		display: flex;
 		flex-direction: column;
-		border-radius: $page-corner;
 		flex-shrink: 0;
 		width: var(--sidebar-width);
-		overflow: hidden;
-		transform: translateX(100%);
+		overflow: visible; // Allow panes to show stacking effect
+		transform: translateX(calc(100% + #{$unit-2x}));
 		opacity: 0;
 		transition:
 			transform $duration-slide ease-in-out,
 			opacity $duration-slide ease-in-out;
 		z-index: 50;
-		box-shadow: $page-elevation;
-		border: 1px solid rgba(0, 0, 0, 0.14);
+		// No shadow/border - individual panes have their own
 
 		&.open {
 			transform: translateX(0);
@@ -69,6 +67,12 @@
 			overflow: hidden;
 			display: flex;
 			flex-direction: column;
+
+			// Legacy content needs its own card styling
+			background: var(--sidebar-bg);
+			border-radius: $page-corner;
+			box-shadow: $page-elevation;
+			border: 1px solid rgba(0, 0, 0, 0.14);
 
 			// When scrollable, enable scrolling with nice scrollbars
 			&.scrollable {
