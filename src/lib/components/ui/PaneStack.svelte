@@ -101,10 +101,9 @@
 				{#snippet rightAccessory()}
 					{#if pane.action}
 						<Button
-							variant="ghost"
+							variant={pane.action.element ? 'element-ghost' : 'ghost'}
 							size="small"
 							element={pane.action.element}
-							elementStyle={!!pane.action.element}
 							onclick={pane.action.handler}
 							disabled={pane.action.disabled}
 						>
@@ -285,12 +284,6 @@
 				-webkit-overflow-scrolling: touch;
 			}
 		}
-	}
-
-	// Overflow trigger - reset any default styles from bits-ui
-	:global(.overflow-trigger) {
-		all: unset;
-		display: flex;
 	}
 
 	// Overflow menu styles

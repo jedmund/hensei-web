@@ -12,6 +12,7 @@
 			| 'primary'
 			| 'secondary'
 			| 'ghost'
+			| 'element-ghost'
 			| 'text'
 			| 'destructive'
 			| 'notice'
@@ -472,8 +473,55 @@
 		}
 	}
 
+	// Element ghost variant - transparent bg with element text color, light element bg on hover
+	:global([data-button-root].element-ghost) {
+		background-color: transparent;
+	}
+
+	:global([data-button-root].element-ghost.wind) {
+		color: var(--wind-button-bg);
+		&:hover:not(:disabled) {
+			background-color: var(--wind-nav-selected-bg);
+		}
+	}
+
+	:global([data-button-root].element-ghost.fire) {
+		color: var(--fire-button-bg);
+		&:hover:not(:disabled) {
+			background-color: var(--fire-nav-selected-bg);
+		}
+	}
+
+	:global([data-button-root].element-ghost.water) {
+		color: var(--water-button-bg);
+		&:hover:not(:disabled) {
+			background-color: var(--water-nav-selected-bg);
+		}
+	}
+
+	:global([data-button-root].element-ghost.earth) {
+		color: var(--earth-button-bg);
+		&:hover:not(:disabled) {
+			background-color: var(--earth-nav-selected-bg);
+		}
+	}
+
+	:global([data-button-root].element-ghost.dark) {
+		color: var(--dark-button-bg);
+		&:hover:not(:disabled) {
+			background-color: var(--dark-nav-selected-bg);
+		}
+	}
+
+	:global([data-button-root].element-ghost.light) {
+		color: var(--light-button-bg);
+		&:hover:not(:disabled) {
+			background-color: var(--light-nav-selected-bg);
+		}
+	}
+
 	// Keep non-styled element classes for backward compatibility
-	:global([data-button-root].wind:not(.element-styled)) {
+	:global([data-button-root].wind:not(.element-styled):not(.element-ghost)) {
 		background: var(--wind-bg);
 		color: var(--wind-text-contrast);
 
@@ -483,7 +531,7 @@
 		}
 	}
 
-	:global([data-button-root].fire:not(.element-styled)) {
+	:global([data-button-root].fire:not(.element-styled):not(.element-ghost)) {
 		background: var(--fire-bg);
 		color: var(--fire-text-contrast);
 
@@ -493,7 +541,7 @@
 		}
 	}
 
-	:global([data-button-root].water:not(.element-styled)) {
+	:global([data-button-root].water:not(.element-styled):not(.element-ghost)) {
 		background: var(--water-bg);
 		color: var(--water-text-contrast);
 
@@ -503,7 +551,7 @@
 		}
 	}
 
-	:global([data-button-root].earth:not(.element-styled)) {
+	:global([data-button-root].earth:not(.element-styled):not(.element-ghost)) {
 		background: var(--earth-bg);
 		color: var(--earth-text-contrast);
 
@@ -513,7 +561,7 @@
 		}
 	}
 
-	:global([data-button-root].dark:not(.element-styled)) {
+	:global([data-button-root].dark:not(.element-styled):not(.element-ghost)) {
 		background: var(--dark-bg);
 		color: var(--dark-text-contrast);
 
@@ -523,7 +571,7 @@
 		}
 	}
 
-	:global([data-button-root].light:not(.element-styled)) {
+	:global([data-button-root].light:not(.element-styled):not(.element-ghost)) {
 		background: var(--light-bg);
 		color: var(--light-text-contrast);
 
