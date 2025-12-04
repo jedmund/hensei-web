@@ -22,6 +22,7 @@
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
+	import Slider from '$lib/components/ui/Slider.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import ArtifactSkillRow from '$lib/components/artifact/ArtifactSkillRow.svelte'
 	import ArtifactModifierList from '$lib/components/artifact/ArtifactModifierList.svelte'
@@ -320,13 +321,21 @@
 		{#if selectedArtifact}
 			<DetailsSection title="Configuration">
 				<DetailRow label="Level" noHover>
-					<Select
-						options={levelOptions}
-						value={level}
-						onValueChange={(v) => v !== undefined && (level = v)}
-						size="small"
-						contained
-					/>
+					{#if isQuirk}
+						<span>1</span>
+					{:else}
+						<div class="level-slider">
+							<Slider
+								value={level}
+								onValueChange={(v) => (level = v)}
+								min={1}
+								max={5}
+								step={1}
+								element={elementType}
+							/>
+							<span class="level-value">{level}</span>
+						</div>
+					{/if}
 				</DetailRow>
 
 				<DetailRow label="Nickname" noHover>
@@ -393,6 +402,20 @@
 
 	.error {
 		color: colors.$error;
+	}
+
+	.level-slider {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+		flex: 1;
+
+		.level-value {
+			font-size: typography.$font-regular;
+			font-weight: typography.$medium;
+			min-width: spacing.$unit-2x;
+			text-align: center;
+		}
 	}
 
 	.skills-list {

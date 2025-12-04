@@ -10,10 +10,11 @@
 	import { isQuirkArtifact, getSkillGroupForSlot } from '$lib/types/api/artifact'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
-	import { usePaneStack, type PaneConfig } from '$lib/stores/paneStack.svelte'
+	import { usePaneStack, type PaneConfig, type ElementType } from '$lib/stores/paneStack.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
+	import Slider from '$lib/components/ui/Slider.svelte'
 	import ArtifactSkillRow from './ArtifactSkillRow.svelte'
 	import ArtifactModifierList from './ArtifactModifierList.svelte'
 	import ArtifactGradeDisplay from './ArtifactGradeDisplay.svelte'
@@ -63,6 +64,17 @@
 		{ value: 5, label: 'Dark', color: '#de7bff' },
 		{ value: 6, label: 'Light', color: '#e8d633' }
 	]
+
+	// Convert numeric element to ElementType string
+	const elementTypeMap: Record<number, ElementType> = {
+		1: 'wind',
+		2: 'fire',
+		3: 'water',
+		4: 'earth',
+		5: 'dark',
+		6: 'light'
+	}
+	const elementType = $derived(elementTypeMap[element] ?? undefined)
 
 	// Level options (1-5 for standard, fixed at 1 for quirk)
 	const levelOptions = $derived(
@@ -189,25 +201,6 @@
 
 <div class="artifact-edit-pane">
 	<DetailsSection title="Base Properties">
-		<DetailRow label="Element" noHover>
-			{#if disabled}
-				{@const elementOption = elementOptions.find((o) => o.value === element)}
-				<span class="element-display">
-					<span class="element-dot" style="background-color: {elementOption?.color}"></span>
-					{elementOption?.label ?? '—'}
-				</span>
-			{:else}
-				<Select
-					options={elementOptions}
-					value={element}
-					onValueChange={handleElementChange}
-					size="small"
-					contained
-					{disabled}
-				/>
-			{/if}
-		</DetailRow>
-
 		{#if canChangeProficiency}
 			<DetailRow label="Proficiency" noHover>
 				{#if disabled}
@@ -228,18 +221,41 @@
 			<DetailRow label="Proficiency" value={getProficiencyName(artifactData.proficiency)} />
 		{/if}
 
+		<DetailRow label="Element" noHover>
+			{#if disabled}
+				{@const elementOption = elementOptions.find((o) => o.value === element)}
+				<span class="element-display">
+					<span class="element-dot" style="background-color: {elementOption?.color}"></span>
+					{elementOption?.label ?? '—'}
+				</span>
+			{:else}
+				<Select
+					class="element-select"
+					options={elementOptions}
+					value={element}
+					onValueChange={handleElementChange}
+					contained
+					{disabled}
+				/>
+			{/if}
+		</DetailRow>
+
 		<DetailRow label="Level" noHover>
 			{#if disabled || isQuirk}
 				<span>{level}</span>
 			{:else}
-				<Select
-					options={levelOptions}
-					value={level}
-					onValueChange={handleLevelChange}
-					size="small"
-					contained
-					{disabled}
-				/>
+				<div class="level-slider">
+					<Slider
+						value={level}
+						onValueChange={handleLevelChange}
+						min={1}
+						max={5}
+						step={1}
+						element={elementType}
+						{disabled}
+					/>
+					<span class="level-value">{level}</span>
+				</div>
 			{/if}
 		</DetailRow>
 	</DetailsSection>
@@ -281,6 +297,10 @@
 		padding-bottom: spacing.$unit-4x;
 	}
 
+	:global(.artifact-edit-pane .select.medium) {
+		min-width: 120px;
+	}
+
 	.element-display {
 		display: flex;
 		align-items: center;
@@ -292,6 +312,20 @@
 		height: 12px;
 		border-radius: 50%;
 		flex-shrink: 0;
+	}
+
+	.level-slider {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+		flex: 1;
+
+		.level-value {
+			font-size: typography.$font-regular;
+			font-weight: typography.$medium;
+			min-width: spacing.$unit-2x;
+			text-align: center;
+		}
 	}
 
 	.skills-list {
