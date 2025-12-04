@@ -34,6 +34,10 @@ export interface GridWeapon {
     type?: Awakening
     level?: number
   }
+  /** Reference to the source collection weapon if linked */
+  collectionWeaponId?: string
+  /** Whether the grid item is out of sync with its collection source */
+  outOfSync?: boolean
 }
 
 // GridCharacter from GridCharacterBlueprint
@@ -52,6 +56,10 @@ export interface GridCharacter {
   overMastery?: Array<{ modifier: number; strength: number }>
   /** Equipped artifact (can be grid or collection artifact) */
   artifact?: GridArtifact | CollectionArtifact
+  /** Reference to the source collection character if linked */
+  collectionCharacterId?: string
+  /** Whether the grid item is out of sync with its collection source */
+  outOfSync?: boolean
 }
 
 // GridSummon from GridSummonBlueprint
@@ -64,6 +72,10 @@ export interface GridSummon {
   uncapLevel?: number
   transcendenceStep?: number
   summon: Summon  // Named properly, not "object"
+  /** Reference to the source collection summon if linked */
+  collectionSummonId?: string
+  /** Whether the grid item is out of sync with its collection source */
+  outOfSync?: boolean
 }
 
 // JobSkillList for party job skills

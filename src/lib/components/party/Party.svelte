@@ -42,7 +42,7 @@
 	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
 	import { openSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
-	import type { SearchResult } from '$lib/api/adapters'
+	import type { AddItemResult } from '$lib/types/api/search'
 	import { GridType } from '$lib/types/enums'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -522,7 +522,7 @@
 	}
 
 	// Handle adding items from the search sidebar
-	async function handleAddItems(items: SearchResult[]) {
+	async function handleAddItems(items: AddItemResult[]) {
 		if (items.length === 0 || !canEdit()) return
 
 		const item = items[0]
@@ -535,7 +535,7 @@
 			let targetSlot = selectedSlot
 
 			// Call appropriate create mutation based on current tab
-			// Use granblueId (camelCase) as that's what the SearchResult type uses
+			// Use granblueId (camelCase) as that's what the AddItemResult type uses
 			const itemId = item.granblueId
 			let result: unknown
 
@@ -544,7 +544,9 @@
 					partyId: party.id,
 					weaponId: itemId,
 					position: targetSlot,
-					mainhand: targetSlot === -1
+					mainhand: targetSlot === -1,
+					// Link to collection if item was selected from collection
+					collectionWeaponId: item.collectionId
 				})
 
 				// Check if the result is a conflict response
@@ -559,13 +561,17 @@
 					summonId: itemId,
 					position: targetSlot,
 					main: targetSlot === -1,
-					friend: targetSlot === 6
+					friend: targetSlot === 6,
+					// Link to collection if item was selected from collection
+					collectionSummonId: item.collectionId
 				})
 			} else if (activeTab === GridType.Character) {
 				result = await createCharacter.mutateAsync({
 					partyId: party.id,
 					characterId: itemId,
-					position: targetSlot
+					position: targetSlot,
+					// Link to collection if item was selected from collection
+					collectionCharacterId: item.collectionId
 				})
 
 				// Check if the result is a conflict response
@@ -777,10 +783,12 @@
 						: GridType.Character
 
 			// Open the search sidebar with the appropriate type
+			// Pass authUserId to enable collection mode toggle
 			openSearchSidebar({
 				type: opts.type,
 				onAddItems: handleAddItems,
-				canAddMore: true
+				canAddMore: true,
+				authUserId
 			})
 		}
 	})

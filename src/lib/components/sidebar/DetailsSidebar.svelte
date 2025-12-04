@@ -9,6 +9,12 @@
 	import StatsSection from './details/StatsSection.svelte'
 	import SkillsSection from './details/SkillsSection.svelte'
 	import TeamView from './details/TeamView.svelte'
+	import Icon from '$lib/components/Icon.svelte'
+	import {
+		useSyncGridCharacter,
+		useSyncGridWeapon,
+		useSyncGridSummon
+	} from '$lib/api/mutations/grid.mutations'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -16,6 +22,11 @@
 	}
 
 	let { type, item: initialItem }: Props = $props()
+
+	// Sync mutations
+	const syncCharacterMutation = useSyncGridCharacter()
+	const syncWeaponMutation = useSyncGridWeapon()
+	const syncSummonMutation = useSyncGridSummon()
 
 	// Derive item from partyStore for reactivity, fall back to prop if not in store
 	// This ensures the sidebar updates when party data changes (e.g., uncap level)
@@ -40,14 +51,21 @@
 	// Track selected view - updated reactively based on modifiability
 	let selectedView = $state<'canonical' | 'user'>('user')
 
-	// Update view when switching to items with different modifiability
+	// Track the item ID to detect when switching to a different item
+	let currentItemId = $state<string | undefined>(undefined)
+
+	// Update view when switching to a different item
 	$effect(() => {
-		if (!showSegmentedControl) {
-			// Force canonical view for non-modifiable items
-			selectedView = 'canonical'
-		} else if (showSegmentedControl && selectedView === 'canonical') {
-			// Switch to user view when selecting a modifiable item
-			selectedView = 'user'
+		const itemId = item && 'id' in item ? item.id : undefined
+		if (itemId !== currentItemId) {
+			currentItemId = itemId
+			if (!showSegmentedControl) {
+				// Force canonical view for non-modifiable items
+				selectedView = 'canonical'
+			} else {
+				// Default to user view for modifiable items
+				selectedView = 'user'
+			}
 		}
 	})
 
@@ -81,10 +99,57 @@
 				? ((item as GridWeapon).transcendenceStep ?? null)
 				: ((item as GridSummon).transcendenceStep ?? null)
 	)
+
+	// Sync status - check if linked to collection and out of sync
+	const isLinkedToCollection = $derived.by(() => {
+		if (type === 'character') return !!(item as GridCharacter).collectionCharacterId
+		if (type === 'weapon') return !!(item as GridWeapon).collectionWeaponId
+		if (type === 'summon') return !!(item as GridSummon).collectionSummonId
+		return false
+	})
+
+	const isOutOfSync = $derived.by(() => {
+		if (type === 'character') return (item as GridCharacter).outOfSync ?? false
+		if (type === 'weapon') return (item as GridWeapon).outOfSync ?? false
+		if (type === 'summon') return (item as GridSummon).outOfSync ?? false
+		return false
+	})
+
+	const isSyncing = $derived(
+		syncCharacterMutation.isPending ||
+			syncWeaponMutation.isPending ||
+			syncSummonMutation.isPending
+	)
+
+	// Handle sync from collection
+	async function handleSync() {
+		const itemId = item && 'id' in item ? item.id : undefined
+		if (!itemId || !isLinkedToCollection) return
+
+		if (type === 'character') {
+			await syncCharacterMutation.mutateAsync({ id: itemId, partyShortcode: '' })
+		} else if (type === 'weapon') {
+			await syncWeaponMutation.mutateAsync({ id: itemId, partyShortcode: '' })
+		} else if (type === 'summon') {
+			await syncSummonMutation.mutateAsync({ id: itemId, partyShortcode: '' })
+		}
+	}
 </script>
 
 <div class="details-sidebar">
 	<ItemHeader {type} {item} {itemData} {gridUncapLevel} {gridTranscendence} />
+
+	{#if isLinkedToCollection && isOutOfSync}
+		<div class="sync-banner">
+			<div class="sync-message">
+				<Icon name="refresh-cw" size={14} />
+				<span>Out of sync with collection</span>
+			</div>
+			<button class="sync-button" onclick={handleSync} disabled={isSyncing}>
+				{isSyncing ? 'Syncing...' : 'Sync'}
+			</button>
+		</div>
+	{/if}
 
 	<DetailsSidebarSegmentedControl
 		hasModifications={showSegmentedControl}
@@ -114,6 +179,50 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x;
+	}
+
+	.sync-banner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: spacing.$unit spacing.$unit-2x;
+		background: var(--warning-bg, rgba(255, 193, 7, 0.15));
+		border: 1px solid var(--warning-border, rgba(255, 193, 7, 0.3));
+		border-radius: spacing.$unit;
+		gap: spacing.$unit-2x;
+	}
+
+	.sync-message {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		font-size: typography.$font-small;
+		color: var(--warning-text, #b59100);
+
+		:global(svg) {
+			color: inherit;
+		}
+	}
+
+	.sync-button {
+		padding: spacing.$unit-half spacing.$unit;
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-primary);
+		background: var(--button-bg);
+		border: 1px solid var(--button-border);
+		border-radius: spacing.$unit-half;
+		cursor: pointer;
+		transition: background 0.15s ease;
+
+		&:hover:not(:disabled) {
+			background: var(--button-bg-hover);
+		}
+
+		&:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
 	}
 
 	.canonical-view {

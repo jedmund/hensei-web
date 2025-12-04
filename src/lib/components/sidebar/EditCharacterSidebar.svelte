@@ -11,6 +11,8 @@
 		type CharacterEditValues,
 		type CharacterEditUpdates
 	} from './CharacterEditPane.svelte'
+	import { useSyncGridCharacter } from '$lib/api/mutations/grid.mutations'
+	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
 		character: GridCharacter
@@ -20,11 +22,28 @@
 
 	let { character, onSave, onCancel }: Props = $props()
 
+	// Sync mutation
+	const syncMutation = useSyncGridCharacter()
+
 	// Character data shortcut
 	const characterData = $derived(character.character)
 
 	// Perpetuity is only available for non-MC characters (position > 0)
 	const canHavePerpetuity = $derived(character.position > 0)
+
+	// Sync status
+	const isLinkedToCollection = $derived(!!character.collectionCharacterId)
+	const isOutOfSync = $derived(character.outOfSync ?? false)
+	const isSyncing = $derived(syncMutation.isPending)
+
+	// Handle sync from collection
+	async function handleSync() {
+		if (!character.id || !isLinkedToCollection) return
+		await syncMutation.mutateAsync({
+			id: character.id,
+			partyShortcode: '' // Will be handled by cache invalidation
+		})
+	}
 
 	// Convert GridCharacter data to CharacterEditPane format
 	const currentValues = $derived<CharacterEditValues>({
@@ -66,22 +85,83 @@
 		gridTranscendence={character.transcendenceStep}
 	/>
 
+	{#if isLinkedToCollection && isOutOfSync}
+		<div class="sync-banner">
+			<div class="sync-message">
+				<Icon name="refresh-cw" size={14} />
+				<span>Out of sync with collection</span>
+			</div>
+			<button
+				class="sync-button"
+				onclick={handleSync}
+				disabled={isSyncing}
+			>
+				{isSyncing ? 'Syncing...' : 'Sync'}
+			</button>
+		</div>
+	{/if}
+
 	<CharacterEditPane
 		{characterData}
 		{currentValues}
 		showPerpetuity={canHavePerpetuity}
 		onSave={handleSave}
-		onCancel={handleCancel}
 	/>
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/colors' as colors;
+	@use '$src/themes/typography' as typography;
 
 	.character-edit-sidebar {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
 		gap: spacing.$unit-4x;
+	}
+
+	.sync-banner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: spacing.$unit spacing.$unit-2x;
+		background: var(--warning-bg, rgba(255, 193, 7, 0.15));
+		border: 1px solid var(--warning-border, rgba(255, 193, 7, 0.3));
+		border-radius: spacing.$unit;
+		gap: spacing.$unit-2x;
+	}
+
+	.sync-message {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		font-size: typography.$font-small;
+		color: var(--warning-text, #b59100);
+
+		:global(svg) {
+			color: inherit;
+		}
+	}
+
+	.sync-button {
+		padding: spacing.$unit-half spacing.$unit;
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-primary);
+		background: var(--button-bg);
+		border: 1px solid var(--button-border);
+		border-radius: spacing.$unit-half;
+		cursor: pointer;
+		transition: background 0.15s ease;
+
+		&:hover:not(:disabled) {
+			background: var(--button-bg-hover);
+		}
+
+		&:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
 	}
 </style>

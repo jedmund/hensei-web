@@ -9,8 +9,10 @@
 	import AwakeningSelect from './edit/AwakeningSelect.svelte'
 	import AxSkillSelect from './edit/AxSkillSelect.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import { getElementIcon } from '$lib/utils/images'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
+	import { useSyncGridWeapon } from '$lib/api/mutations/grid.mutations'
 
 	interface Props {
 		weapon: GridWeapon
@@ -19,6 +21,23 @@
 	}
 
 	let { weapon, onSave, onCancel }: Props = $props()
+
+	// Sync mutation
+	const syncMutation = useSyncGridWeapon()
+
+	// Sync status
+	const isLinkedToCollection = $derived(!!weapon.collectionWeaponId)
+	const isOutOfSync = $derived(weapon.outOfSync ?? false)
+	const isSyncing = $derived(syncMutation.isPending)
+
+	// Handle sync from collection
+	async function handleSync() {
+		if (!weapon.id || !isLinkedToCollection) return
+		await syncMutation.mutateAsync({
+			id: weapon.id,
+			partyShortcode: ''
+		})
+	}
 
 	// Local state for edits
 	let element = $state(weapon.element ?? weapon.weapon?.element ?? 0)
@@ -210,6 +229,22 @@
 		gridTranscendence={weapon.transcendenceStep}
 	/>
 
+	{#if isLinkedToCollection && isOutOfSync}
+		<div class="sync-banner">
+			<div class="sync-message">
+				<Icon name="refresh-cw" size={14} />
+				<span>Out of sync with collection</span>
+			</div>
+			<button
+				class="sync-button"
+				onclick={handleSync}
+				disabled={isSyncing}
+			>
+				{isSyncing ? 'Syncing...' : 'Sync'}
+			</button>
+		</div>
+	{/if}
+
 	<div class="edit-sections">
 		{#if canChangeElement}
 			<DetailsSection title="Element">
@@ -310,6 +345,50 @@
 		flex-direction: column;
 		height: 100%;
 		gap: spacing.$unit-4x;
+	}
+
+	.sync-banner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: spacing.$unit spacing.$unit-2x;
+		background: var(--warning-bg, rgba(255, 193, 7, 0.15));
+		border: 1px solid var(--warning-border, rgba(255, 193, 7, 0.3));
+		border-radius: spacing.$unit;
+		gap: spacing.$unit-2x;
+	}
+
+	.sync-message {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		font-size: typography.$font-small;
+		color: var(--warning-text, #b59100);
+
+		:global(svg) {
+			color: inherit;
+		}
+	}
+
+	.sync-button {
+		padding: spacing.$unit-half spacing.$unit;
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-primary);
+		background: var(--button-bg);
+		border: 1px solid var(--button-border);
+		border-radius: spacing.$unit-half;
+		cursor: pointer;
+		transition: background 0.15s ease;
+
+		&:hover:not(:disabled) {
+			background: var(--button-bg-hover);
+		}
+
+		&:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
 	}
 
 	.weapon-title {
