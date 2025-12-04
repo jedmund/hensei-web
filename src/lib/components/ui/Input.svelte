@@ -64,9 +64,12 @@
 					: null
 	)
 
-	const showCounter = $derived(counter !== undefined || maxLength !== undefined)
 	const currentCount = $derived(String(value ?? '').length)
-	const hasWrapper = $derived(accessory || leftIcon || rightIcon || showCounter || validationIcon)
+	const charsRemaining = $derived(maxLength !== undefined ? maxLength - currentCount : undefined)
+	const showCounter = $derived(
+		counter !== undefined || (charsRemaining !== undefined && charsRemaining <= 5)
+	)
+	const hasWrapper = $derived(accessory || leftIcon || rightIcon || maxLength !== undefined || validationIcon)
 
 	const fieldsetClasses = $derived(
 		['fieldset', hidden && 'hidden', fullWidth && 'full', className].filter(Boolean).join(' ')
@@ -82,7 +85,8 @@
 			alignRight && 'alignRight',
 			fullHeight && 'fullHeight',
 			accessory && 'accessory',
-			hasWrapper && 'wrapper'
+			hasWrapper && 'wrapper',
+			className
 		]
 			.filter(Boolean)
 			.join(' ')
@@ -142,8 +146,8 @@
 				{/if}
 
 				{#if showCounter}
-					<span class="counter">
-						{currentCount}{maxLength ? `/${maxLength}` : ''}
+					<span class="counter" class:warning={charsRemaining !== undefined && charsRemaining <= 5}>
+						{charsRemaining !== undefined ? charsRemaining : currentCount}
 					</span>
 				{/if}
 			</div>
@@ -205,8 +209,8 @@
 		{/if}
 
 		{#if showCounter}
-			<span class="counter">
-				{currentCount}{maxLength ? `/${maxLength}` : ''}
+			<span class="counter" class:warning={charsRemaining !== undefined && charsRemaining <= 5}>
+				{charsRemaining !== undefined ? charsRemaining : currentCount}
 			</span>
 		{/if}
 	</div>
@@ -313,14 +317,25 @@
 
 			.counter {
 				color: var(--text-tertiary);
-				display: block;
+				display: flex;
+				align-items: center;
 				font-weight: $normal;
-				line-height: calc($unit * 6);
 				font-size: $font-small;
 				position: absolute;
 				right: $unit-2x;
 				top: 0;
+				bottom: 0;
 				pointer-events: none;
+
+				&.warning {
+					background: $error;
+					color: white;
+					padding: 0 $unit-half;
+					border-radius: $unit-half;
+					top: 50%;
+					bottom: auto;
+					transform: translateY(-50%);
+				}
 			}
 
 			input {
