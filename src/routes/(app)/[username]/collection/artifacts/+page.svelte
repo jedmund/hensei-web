@@ -12,6 +12,7 @@
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import { getArtifactImage } from '$lib/utils/images'
 
 	const { data }: { data: PageData } = $props()
 
@@ -76,11 +77,18 @@
 				? artifact.artifact.name
 				: artifact.artifact?.name?.en || 'Artifact'
 
-		sidebar.openWithComponent(artifactName, CollectionArtifactDetailPane, {
-			artifact,
-			isOwner: data.isOwner,
-			onClose: () => sidebar.close()
-		})
+		sidebar.openWithComponent(
+			artifactName,
+			CollectionArtifactDetailPane,
+			{
+				artifact,
+				isOwner: data.isOwner,
+				onClose: () => sidebar.close()
+			},
+			{
+				image: getArtifactImage(artifact.artifact?.granblueId)
+			}
+		)
 	}
 </script>
 

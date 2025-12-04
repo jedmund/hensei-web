@@ -8,12 +8,13 @@
 	 * provides Edit button in header to push edit pane onto stack.
 	 */
 	import { onMount } from 'svelte'
-	import type { CollectionArtifact } from '$lib/types/api/artifact'
+	import type { CollectionArtifact, ArtifactSkillInstance } from '$lib/types/api/artifact'
 	import { isQuirkArtifact } from '$lib/types/api/artifact'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { artifactQueries } from '$lib/api/queries/artifact.queries'
 	import { useDeleteCollectionArtifact } from '$lib/api/mutations/artifact.mutations'
 	import { usePaneStack, type PaneConfig, type ElementType } from '$lib/stores/paneStack.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { getArtifactImage } from '$lib/utils/images'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
@@ -28,19 +29,19 @@
 		onClose?: () => void
 	}
 
-	let { artifact, isOwner = false, onClose }: Props = $props()
+	let { artifact: initialArtifact, isOwner = false, onClose }: Props = $props()
+
+	// Local state that can be updated when returning from edit pane
+	let artifact = $state(initialArtifact)
+
+	// Update artifact when edit pane returns with new data
+	function handleArtifactUpdated(updatedArtifact: CollectionArtifact) {
+		artifact = updatedArtifact
+	}
 
 	const paneStack = usePaneStack()
 	const deleteMutation = useDeleteCollectionArtifact()
 
-	// Image and name
-	const imageUrl = $derived(getArtifactImage(artifact.artifact?.granblueId))
-	const displayName = $derived.by(() => {
-		const name = artifact.artifact?.name
-		if (!name) return '—'
-		if (typeof name === 'string') return name
-		return name.en || name.ja || '—'
-	})
 
 	// Artifact properties
 	const isQuirk = $derived(isQuirkArtifact(artifact.artifact))
@@ -51,6 +52,15 @@
 	// Skills (only for standard artifacts)
 	const skills = $derived(artifact.skills ?? [])
 	const hasSkills = $derived(!isQuirk && skills.some((s) => s !== null))
+
+	// Query skill definitions to get names
+	const skillsQuery = createQuery(() => artifactQueries.skills())
+
+	// Get skill name by modifier
+	function getSkillName(skill: ArtifactSkillInstance): string {
+		const skillDef = skillsQuery.data?.find((s) => s.modifier === skill.modifier)
+		return skillDef?.name?.en ?? 'Unknown Skill'
+	}
 
 	// Convert numeric element to ElementType string
 	const elementNames: Record<number, ElementType> = {
@@ -70,7 +80,8 @@
 			title: 'Edit Artifact',
 			component: CollectionArtifactEditPane,
 			props: {
-				artifact
+				artifact,
+				onSaved: handleArtifactUpdated
 			}
 		}
 		paneStack.push(config)
@@ -108,20 +119,12 @@
 </script>
 
 <div class="artifact-detail-pane">
-	<!-- Header with image -->
-	<div class="pane-header">
-		<div class="artifact-image">
-			<img src={imageUrl} alt={displayName} />
-		</div>
-		<h2 class="artifact-name">{displayName}</h2>
-		{#if artifact.nickname}
-			<p class="artifact-nickname">"{artifact.nickname}"</p>
-		{/if}
-	</div>
-
-	<!-- Details content -->
 	<div class="pane-content">
 		<DetailsSection title="Properties">
+			{#if artifact.nickname}
+				<DetailRow label="Nickname" value={artifact.nickname} />
+			{/if}
+
 			<DetailRow label="Element">
 				<ElementLabel element={artifact.element} size="medium" />
 			</DetailRow>
@@ -139,13 +142,13 @@
 
 		{#if hasSkills}
 			<DetailsSection title="Skills">
-				<div class="skills-list">
-					{#each skills as skill, index}
-						{#if skill}
-							<ArtifactSkillDisplay slot={index + 1} {skill} />
-						{/if}
-					{/each}
-				</div>
+				{#each skills as skill}
+					{#if skill}
+						<DetailRow label={getSkillName(skill)}>
+							<ArtifactSkillDisplay {skill} element={elementType} />
+						</DetailRow>
+					{/if}
+				{/each}
 			</DetailsSection>
 		{/if}
 
@@ -155,57 +158,15 @@
 			</div>
 		</DetailsSection>
 	</div>
-
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/typography' as *;
-	@use '$src/themes/layout' as *;
 
 	.artifact-detail-pane {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-	}
-
-	.pane-header {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: $unit-2x;
-		border-bottom: 1px solid var(--border-secondary);
-	}
-
-	.artifact-image {
-		width: 80px;
-		height: 80px;
-		border-radius: $item-corner;
-		overflow: hidden;
-		background: var(--card-bg, #f5f5f5);
-		margin-bottom: $unit;
-
-		img {
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-		}
-	}
-
-	.artifact-name {
-		margin: 0;
-		font-size: $font-large;
-		font-weight: $bold;
-		color: var(--text-primary);
-		text-align: center;
-	}
-
-	.artifact-nickname {
-		margin: $unit-half 0 0;
-		font-size: $font-small;
-		color: var(--text-secondary);
-		font-style: italic;
-		text-align: center;
 	}
 
 	.pane-content {
@@ -215,13 +176,6 @@
 		flex-direction: column;
 		gap: $unit-2x;
 		padding-bottom: $unit-2x;
-	}
-
-	.skills-list {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
-		padding: 0 $unit;
 	}
 
 	.grade-section {
