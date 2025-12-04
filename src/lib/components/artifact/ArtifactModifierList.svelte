@@ -16,16 +16,11 @@
 
 	const { slot, selectedModifier, onSelect }: Props = $props()
 
-	// Query skills for this slot
+	// Query skills for this slot (filtered by group on the server)
 	const skillsQuery = createQuery(() => artifactQueries.skillsForSlot(slot))
 
-	// Separate positive and negative skills
-	const positiveSkills = $derived(
-		skillsQuery.data?.filter((s) => s.polarity === 'positive') ?? []
-	)
-	const negativeSkills = $derived(
-		skillsQuery.data?.filter((s) => s.polarity === 'negative') ?? []
-	)
+	// All skills for this slot
+	const skills = $derived(skillsQuery.data ?? [])
 </script>
 
 <div class="modifier-list">
@@ -33,44 +28,21 @@
 		<div class="loading-state">Loading skills...</div>
 	{:else if skillsQuery.isError}
 		<div class="error-state">Failed to load skills</div>
+	{:else if skills.length === 0}
+		<div class="empty-state">No skills available</div>
 	{:else}
-		{#if positiveSkills.length > 0}
-			<div class="skill-group">
-				<h4 class="group-header positive">Positive Effects</h4>
-				<div class="skill-options">
-					{#each positiveSkills as skill (skill.id)}
-						<button
-							type="button"
-							class="modifier-option"
-							class:selected={selectedModifier === skill.modifier}
-							onclick={() => onSelect(skill)}
-						>
-							<span class="name">{skill.name.en}</span>
-							<span class="polarity positive">+</span>
-						</button>
-					{/each}
-				</div>
-			</div>
-		{/if}
-
-		{#if negativeSkills.length > 0}
-			<div class="skill-group">
-				<h4 class="group-header negative">Negative Effects</h4>
-				<div class="skill-options">
-					{#each negativeSkills as skill (skill.id)}
-						<button
-							type="button"
-							class="modifier-option"
-							class:selected={selectedModifier === skill.modifier}
-							onclick={() => onSelect(skill)}
-						>
-							<span class="name">{skill.name.en}</span>
-							<span class="polarity negative">−</span>
-						</button>
-					{/each}
-				</div>
-			</div>
-		{/if}
+		<div class="skill-options">
+			{#each skills as skill (skill.id)}
+				<button
+					type="button"
+					class="modifier-option"
+					class:selected={selectedModifier === skill.modifier}
+					onclick={() => onSelect(skill)}
+				>
+					<span class="name">{skill.name.en}</span>
+				</button>
+			{/each}
+		</div>
 	{/if}
 </div>
 
@@ -89,33 +61,11 @@
 	}
 
 	.loading-state,
-	.error-state {
+	.error-state,
+	.empty-state {
 		padding: spacing.$unit-4x;
 		text-align: center;
 		color: colors.$grey-50;
-	}
-
-	.skill-group {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit;
-	}
-
-	.group-header {
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		margin: 0;
-		padding: 0 spacing.$unit-half;
-
-		&.positive {
-			color: colors.$wind-text-20;
-		}
-
-		&.negative {
-			color: colors.$error;
-		}
 	}
 
 	.skill-options {
@@ -156,23 +106,6 @@
 			font-size: typography.$font-regular;
 			font-weight: typography.$normal;
 			color: colors.$grey-20;
-		}
-
-		.polarity {
-			font-size: typography.$font-small;
-			font-weight: typography.$bold;
-			padding: 2px 6px;
-			border-radius: 4px;
-
-			&.positive {
-				background: colors.$wind-bg-20;
-				color: colors.$wind-text-20;
-			}
-
-			&.negative {
-				background: colors.$error--bg--light;
-				color: colors.$error;
-			}
 		}
 	}
 </style>
