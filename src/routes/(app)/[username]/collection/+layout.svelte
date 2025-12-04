@@ -8,6 +8,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import AddToCollectionModal from '$lib/components/collection/AddToCollectionModal.svelte'
+	import { openAddArtifactSidebar } from '$lib/features/collection/openAddArtifactSidebar'
 
 	let { data, children }: { data: LayoutData; children: any } = $props()
 
@@ -26,12 +27,15 @@
 	const modalEntityType = $derived.by((): 'character' | 'weapon' | 'summon' | undefined => {
 		if (activeEntityType === 'weapons') return 'weapon'
 		if (activeEntityType === 'summons') return 'summon'
-		if (activeEntityType === 'artifacts') return undefined // Artifacts use different flow
+		if (activeEntityType === 'artifacts') return undefined // Artifacts use sidebar instead
 		return 'character'
 	})
 
-	// Whether the current entity type supports the add modal
+	// Whether the current entity type supports the add modal (all except artifacts)
 	const supportsAddModal = $derived(activeEntityType !== 'artifacts')
+
+	// Whether to show the add button for artifacts (uses sidebar instead of modal)
+	const isArtifacts = $derived(activeEntityType === 'artifacts')
 
 	// Dynamic button text
 	const addButtonText = $derived(`Add ${activeEntityType}`)
@@ -40,6 +44,10 @@
 
 	function handleTabChange(value: string) {
 		goto(`/${username}/collection/${value}`)
+	}
+
+	function handleAddArtifact() {
+		openAddArtifactSidebar()
 	}
 </script>
 
@@ -79,6 +87,16 @@
 				iconPosition="left"
 			>
 				{addButtonText}
+			</Button>
+		{:else if data.isOwner && isArtifacts}
+			<Button
+				variant="primary"
+				size="small"
+				onclick={handleAddArtifact}
+				icon="plus"
+				iconPosition="left"
+			>
+				Add artifact
 			</Button>
 		{/if}
 	</nav>
