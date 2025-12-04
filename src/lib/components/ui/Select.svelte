@@ -10,6 +10,8 @@
 		label: string
 		disabled?: boolean
 		image?: string
+		/** CSS color for a colored dot indicator */
+		color?: string
 	}
 
 	interface Props {
@@ -94,7 +96,9 @@
 			items={stringOptions}
 		>
 			<SelectPrimitive.Trigger class={selectClasses} data-placeholder={!selected}>
-				{#if selected?.image}
+				{#if selected?.color}
+					<span class="color-dot" style="background-color: {selected.color}"></span>
+				{:else if selected?.image}
 					<img src={selected.image} alt={selected.label} class="image" />
 				{/if}
 				<span class="text">{selected?.label || placeholder}</span>
@@ -110,7 +114,9 @@
 							class="item"
 						>
 							{#snippet children({ selected })}
-								{#if option.image}
+								{#if option.color}
+									<span class="color-dot" style="background-color: {option.color}"></span>
+								{:else if option.image}
 									<img src={option.image} alt={option.label} class="image" />
 								{/if}
 								<span class="text">{option.label}</span>
@@ -139,7 +145,9 @@
 		items={stringOptions}
 	>
 		<SelectPrimitive.Trigger class={selectClasses} data-placeholder={!selected}>
-			{#if selected?.image}
+			{#if selected?.color}
+				<span class="color-dot" style="background-color: {selected.color}"></span>
+			{:else if selected?.image}
 				<img src={selected.image} alt={selected.label} class="image" />
 			{/if}
 			<span class="text">{selected?.label || placeholder}</span>
@@ -155,7 +163,9 @@
 						class="item"
 					>
 						{#snippet children({ selected })}
-							{#if option.image}
+							{#if option.color}
+								<span class="color-dot" style="background-color: {option.color}"></span>
+							{:else if option.image}
 								<img src={option.image} alt={option.label} class="image" />
 							{/if}
 							<span class="text">{option.label}</span>
@@ -255,6 +265,13 @@
 		.image {
 			width: $unit-3x;
 			height: auto;
+			flex-shrink: 0;
+		}
+
+		.color-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
 			flex-shrink: 0;
 		}
 
@@ -361,6 +378,13 @@
 		.image {
 			width: $unit-3x;
 			height: auto;
+			flex-shrink: 0;
+		}
+
+		.color-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
 			flex-shrink: 0;
 		}
 
