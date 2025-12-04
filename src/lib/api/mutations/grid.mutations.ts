@@ -654,3 +654,75 @@ export function useSwapSummons() {
 		}
 	}))
 }
+
+// ============================================================================
+// Sync Mutations (Collection -> Grid)
+// ============================================================================
+
+/**
+ * Sync grid character from collection mutation
+ *
+ * Syncs a grid character's customizations from its linked collection source.
+ */
+export function useSyncGridCharacter() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: { id: string; partyShortcode: string }) =>
+			gridAdapter.syncCharacter(params.id),
+		onSuccess: (_data, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}
+
+/**
+ * Sync grid weapon from collection mutation
+ *
+ * Syncs a grid weapon's customizations from its linked collection source.
+ */
+export function useSyncGridWeapon() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: { id: string; partyShortcode: string }) =>
+			gridAdapter.syncWeapon(params.id),
+		onSuccess: (_data, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}
+
+/**
+ * Sync grid summon from collection mutation
+ *
+ * Syncs a grid summon's customizations from its linked collection source.
+ */
+export function useSyncGridSummon() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: { id: string; partyShortcode: string }) =>
+			gridAdapter.syncSummon(params.id),
+		onSuccess: (_data, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}
+
+/**
+ * Sync all party items from collection mutation
+ *
+ * Syncs all linked grid items in a party from their collection sources.
+ */
+export function useSyncAllPartyItems() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: { partyId: string; partyShortcode: string }) =>
+			gridAdapter.syncAllPartyItems(params.partyId),
+		onSuccess: (_data, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}

@@ -199,3 +199,25 @@ export function useGradeArtifact() {
 		mutationFn: (input: ArtifactGradeInput) => artifactAdapter.gradeArtifact(input)
 	}))
 }
+
+// ============================================================================
+// Sync Mutations (Collection -> Grid)
+// ============================================================================
+
+/**
+ * Sync grid artifact from collection mutation
+ *
+ * Syncs a grid artifact's properties from its linked collection source.
+ */
+export function useSyncGridArtifact() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: { id: string; partyShortcode: string }) =>
+			artifactAdapter.syncGridArtifact(params.id),
+		onSuccess: (_data, { partyShortcode }) => {
+			// Invalidate party queries to reflect the synced artifact
+			queryClient.invalidateQueries({ queryKey: ['parties', 'detail', partyShortcode] })
+		}
+	}))
+}
