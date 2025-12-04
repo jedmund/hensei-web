@@ -10,8 +10,7 @@
 	import { IsInViewport } from 'runed'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
-	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
-	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
 	import { getArtifactImage } from '$lib/utils/images'
 
 	const { data }: { data: PageData } = $props()
@@ -95,16 +94,16 @@
 <div class="collection-page">
 	<!-- Filters bar -->
 	<div class="filters-bar">
-		<SegmentedControl
+		<Select
 			value={rarityFilter}
 			onValueChange={(v) => (rarityFilter = v as 'all' | 'standard' | 'quirk')}
-			variant="blended"
+			options={[
+				{ value: 'all', label: 'All' },
+				{ value: 'standard', label: 'Standard' },
+				{ value: 'quirk', label: 'Quirk' }
+			]}
 			size="small"
-		>
-			<Segment value="all">All</Segment>
-			<Segment value="standard">Standard</Segment>
-			<Segment value="quirk">Quirk</Segment>
-		</SegmentedControl>
+		/>
 
 		<div class="view-toggle">
 			<button
