@@ -82,34 +82,8 @@ export function useUpdateCollectionArtifact() {
 	return createMutation(() => ({
 		mutationFn: ({ id, input }: { id: string; input: Partial<CollectionArtifactInput> }) =>
 			artifactAdapter.updateCollectionArtifact(id, input),
-		onMutate: async ({ id, input }) => {
-			// Cancel any outgoing refetches
-			await queryClient.cancelQueries({ queryKey: artifactKeys.collectionArtifact(id) })
-
-			// Snapshot the previous value
-			const previousArtifact = queryClient.getQueryData<CollectionArtifact>(
-				artifactKeys.collectionArtifact(id)
-			)
-
-			// Optimistically update the cache
-			if (previousArtifact) {
-				queryClient.setQueryData(artifactKeys.collectionArtifact(id), {
-					...previousArtifact,
-					...input
-				})
-			}
-
-			return { previousArtifact }
-		},
-		onError: (_err, { id }, context) => {
-			// Rollback on error
-			if (context?.previousArtifact) {
-				queryClient.setQueryData(artifactKeys.collectionArtifact(id), context.previousArtifact)
-			}
-		},
-		onSettled: (_data, _err, { id }) => {
-			// Always refetch after mutation
-			queryClient.invalidateQueries({ queryKey: artifactKeys.collectionArtifact(id) })
+		onSettled: () => {
+			// Invalidate collection list to reflect changes
 			queryClient.invalidateQueries({ queryKey: artifactKeys.collectionBase })
 		}
 	}))
