@@ -320,7 +320,12 @@
 			}}
 		/>
 	{/if}
-	<div class="name">{item ? displayName(item?.character) : ''}</div>
+	<div class="name">
+		{item ? displayName(item?.character) : ''}
+		{#if item?.artifact}
+			<Icon name="gem" size={12} class="artifact-indicator" />
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">
@@ -427,6 +432,15 @@
 		font-size: typography.$font-small;
 		text-align: center;
 		color: colors.$grey-50;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: spacing.$unit-fourth;
+
+		:global(.artifact-indicator) {
+			color: colors.$purple-20;
+			flex-shrink: 0;
+		}
 	}
 
 	.perpetuity {
