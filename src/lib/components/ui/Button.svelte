@@ -188,9 +188,6 @@
 		font-family: inherit;
 		@include smooth-transition($duration-zoom, background-color, color, border-color);
 
-		&:active:not(:disabled) {
-			transform: translateY(1px);
-		}
 
 		&:disabled {
 			cursor: not-allowed;
@@ -287,10 +284,6 @@
 			color: var(--accent-blue-focus);
 			text-decoration: underline;
 		}
-
-		&:active:not(:disabled) {
-			transform: none;
-		}
 	}
 
 	:global([data-button-root].destructive) {
@@ -340,10 +333,6 @@
 	// Shapes
 	:global([data-button-root].circular) {
 		border-radius: 999px;
-
-		&:active:not(:disabled) {
-			transform: none;
-		}
 	}
 
 	:global([data-button-root].pill) {
