@@ -49,7 +49,9 @@
 	{disabled}
 	class="slider {element ?? ''} {className}"
 >
-	<SliderPrimitive.Range class="slider-range" />
+	<span class="slider-track">
+		<SliderPrimitive.Range class="slider-range" />
+	</span>
 	<SliderPrimitive.Thumb index={0} class="slider-thumb" />
 </SliderPrimitive.Root>
 
@@ -68,26 +70,24 @@
 		touch-action: none;
 		user-select: none;
 
-		// Track
-		&::before {
-			content: '';
-			position: absolute;
-			left: 0;
-			right: 0;
-			height: $unit-half;
-			background: var(--slider-track-bg, var(--button-bg));
-			border-radius: $full-corner;
-		}
-
 		&[data-disabled] {
 			opacity: 0.5;
 			cursor: not-allowed;
 		}
 	}
 
+	:global(.slider-track) {
+		position: relative;
+		width: 100%;
+		height: $unit-half;
+		background: var(--slider-track-bg, var(--button-bg));
+		border-radius: $full-corner;
+		overflow: hidden;
+	}
+
 	:global(.slider-range) {
 		position: absolute;
-		height: $unit-half;
+		height: 100%;
 		background: var(--slider-range-bg, var(--accent-blue));
 		border-radius: $full-corner;
 	}
