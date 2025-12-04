@@ -364,6 +364,16 @@ export function getElementIcon(element: number): string {
 	return `${getBasePath()}/elements/element-${name}.png`
 }
 
+// ===== Artifact Images =====
+
+/**
+ * Get artifact image URL
+ */
+export function getArtifactImage(granblueId: string | number | null | undefined): string {
+	if (!granblueId) return '/images/placeholders/placeholder-weapon-grid.png'
+	return `${getBasePath()}/artifacts/${granblueId}.png`
+}
+
 // ===== Other Game Images =====
 
 /**

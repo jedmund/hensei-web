@@ -18,15 +18,20 @@
 		const path = $page.url.pathname
 		if (path.includes('/weapons')) return 'weapons'
 		if (path.includes('/summons')) return 'summons'
+		if (path.includes('/artifacts')) return 'artifacts'
 		return 'characters'
 	})
 
-	// Map entity type to singular form for modal
-	const modalEntityType = $derived.by(() => {
+	// Map entity type to singular form for modal (only for supported types)
+	const modalEntityType = $derived.by((): 'character' | 'weapon' | 'summon' | undefined => {
 		if (activeEntityType === 'weapons') return 'weapon'
 		if (activeEntityType === 'summons') return 'summon'
+		if (activeEntityType === 'artifacts') return undefined // Artifacts use different flow
 		return 'character'
 	})
+
+	// Whether the current entity type supports the add modal
+	const supportsAddModal = $derived(activeEntityType !== 'artifacts')
 
 	// Dynamic button text
 	const addButtonText = $derived(`Add ${activeEntityType}`)
@@ -62,9 +67,10 @@
 			<Segment value="characters">Characters</Segment>
 			<Segment value="weapons">Weapons</Segment>
 			<Segment value="summons">Summons</Segment>
+			<Segment value="artifacts">Artifacts</Segment>
 		</SegmentedControl>
 
-		{#if data.isOwner}
+		{#if data.isOwner && supportsAddModal}
 			<Button
 				variant="primary"
 				size="small"
@@ -82,7 +88,7 @@
 	</div>
 </section>
 
-{#if data.isOwner}
+{#if data.isOwner && modalEntityType}
 	<AddToCollectionModal
 		userId={data.user.id}
 		entityType={modalEntityType}

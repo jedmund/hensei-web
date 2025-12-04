@@ -40,9 +40,10 @@ export interface ArtifactListParams {
 export interface CollectionArtifactListParams {
 	page?: number
 	limit?: number
-	element?: number
+	element?: number | number[]
 	artifactId?: string
 	proficiency?: number
+	rarity?: 'standard' | 'quirk'
 }
 
 /**
