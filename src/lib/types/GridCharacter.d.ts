@@ -11,4 +11,8 @@ export interface GridCharacter {
 		type: Awakening
 		level: number
 	}
+	/** Reference to the source collection character if linked */
+	collectionCharacterId?: string
+	/** Whether the grid item is out of sync with its collection source */
+	outOfSync?: boolean
 }

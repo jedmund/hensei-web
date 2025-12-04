@@ -244,7 +244,8 @@ export class ArtifactAdapter extends BaseAdapter {
 						skill1: input.skill1,
 						skill2: input.skill2,
 						skill3: input.skill3,
-						skill4: input.skill4
+						skill4: input.skill4,
+						collectionArtifactId: input.collectionArtifactId
 					}
 				}
 			}
@@ -270,6 +271,16 @@ export class ArtifactAdapter extends BaseAdapter {
 		return this.request<void>(`/grid_artifacts/${id}`, {
 			method: 'DELETE'
 		})
+	}
+
+	/**
+	 * Syncs a grid artifact from its linked collection source
+	 */
+	async syncGridArtifact(id: string): Promise<GridArtifact> {
+		const response = await this.request<{ gridArtifact: GridArtifact }>(`/grid_artifacts/${id}/sync`, {
+			method: 'POST'
+		})
+		return response.gridArtifact
 	}
 
 	/**

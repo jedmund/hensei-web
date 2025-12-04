@@ -29,6 +29,8 @@ export interface CreateGridWeaponParams {
 	mainhand?: boolean | undefined
 	uncapLevel?: number | undefined
 	transcendenceStep?: number | undefined
+	/** Optional reference to source collection weapon for syncing */
+	collectionWeaponId?: string | undefined
 }
 
 export interface CreateGridCharacterParams {
@@ -37,6 +39,8 @@ export interface CreateGridCharacterParams {
 	position: number
 	uncapLevel?: number | undefined
 	transcendenceStep?: number | undefined
+	/** Optional reference to source collection character for syncing */
+	collectionCharacterId?: string | undefined
 }
 
 export interface CreateGridSummonParams {
@@ -48,6 +52,8 @@ export interface CreateGridSummonParams {
 	quickSummon?: boolean | undefined
 	uncapLevel?: number | undefined
 	transcendenceStep?: number | undefined
+	/** Optional reference to source collection summon for syncing */
+	collectionSummonId?: string | undefined
 }
 
 /**
@@ -88,6 +94,19 @@ export interface ResolveConflictParams {
 	incomingId: string
 	position: number
 	conflictingIds: string[]
+}
+
+/**
+ * Response from syncing all party items
+ */
+export interface SyncAllPartyItemsResponse {
+	party: import('$lib/types/api/party').Party
+	synced: {
+		characters: number
+		weapons: number
+		summons: number
+		artifacts: number
+	}
 }
 
 /**
@@ -462,6 +481,51 @@ export class GridAdapter extends BaseAdapter {
             headers
         })
     }
+
+	// Sync operations
+
+	/**
+	 * Syncs a grid character from its linked collection source
+	 */
+	async syncCharacter(id: string, headers?: Record<string, string>): Promise<GridCharacter> {
+		const response = await this.request<{ gridCharacter: GridCharacter }>(`/grid_characters/${id}/sync`, {
+			method: 'POST',
+			headers
+		})
+		return response.gridCharacter
+	}
+
+	/**
+	 * Syncs a grid weapon from its linked collection source
+	 */
+	async syncWeapon(id: string, headers?: Record<string, string>): Promise<GridWeapon> {
+		const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${id}/sync`, {
+			method: 'POST',
+			headers
+		})
+		return response.gridWeapon
+	}
+
+	/**
+	 * Syncs a grid summon from its linked collection source
+	 */
+	async syncSummon(id: string, headers?: Record<string, string>): Promise<GridSummon> {
+		const response = await this.request<{ gridSummon: GridSummon }>(`/grid_summons/${id}/sync`, {
+			method: 'POST',
+			headers
+		})
+		return response.gridSummon
+	}
+
+	/**
+	 * Syncs all linked items in a party from their collection sources
+	 */
+	async syncAllPartyItems(partyId: string, headers?: Record<string, string>): Promise<SyncAllPartyItemsResponse> {
+		return this.request<SyncAllPartyItemsResponse>(`/parties/${partyId}/sync_all`, {
+			method: 'POST',
+			headers
+		})
+	}
 
 	/**
 	 * Clears grid-specific cache

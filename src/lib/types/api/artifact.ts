@@ -185,6 +185,10 @@ export interface GridArtifact {
 	grade: ArtifactGrade
 	/** Reference to the base artifact */
 	artifact: Artifact
+	/** Reference to the source collection artifact if linked */
+	collectionArtifactId?: string
+	/** Whether the grid item is out of sync with its collection source */
+	outOfSync?: boolean
 }
 
 // ============================================
@@ -224,6 +228,8 @@ export interface GridArtifactInput {
 	skill2?: ArtifactSkillInstance
 	skill3?: ArtifactSkillInstance
 	skill4?: ArtifactSkillInstance
+	/** Optional reference to source collection artifact for syncing */
+	collectionArtifactId?: string
 }
 
 /**

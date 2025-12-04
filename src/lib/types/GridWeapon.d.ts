@@ -12,4 +12,8 @@ export interface GridWeapon {
 		type: Awakening
 		level: number
 	}
+	/** Reference to the source collection weapon if linked */
+	collectionWeaponId?: string
+	/** Whether the grid item is out of sync with its collection source */
+	outOfSync?: boolean
 }
