@@ -5,6 +5,7 @@
 	import AwakeningDisplay from '../modifications/AwakeningDisplay.svelte'
 	import MasteryDisplay from '../modifications/MasteryDisplay.svelte'
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
+	import ArtifactSummary from '../modifications/ArtifactSummary.svelte'
 	import { formatAxSkill, getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
@@ -81,6 +82,12 @@
 		{#if modificationStatus.hasPerpetuity}
 			<DetailsSection title="Status">
 				<DetailRow label="Perpetuity Ring" value="Active" />
+			</DetailsSection>
+		{/if}
+
+		{#if char.artifact}
+			<DetailsSection title="Artifact">
+				<ArtifactSummary artifact={char.artifact} />
 			</DetailsSection>
 		{/if}
 	{:else if type === 'weapon'}
