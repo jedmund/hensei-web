@@ -20,7 +20,8 @@
 		useUpdateSummonUncap,
 		useSwapWeapons,
 		useSwapCharacters,
-		useSwapSummons
+		useSwapSummons,
+		useSyncAllPartyItems
 	} from '$lib/api/mutations/grid.mutations'
 
 	// TanStack Query mutations - Party
@@ -132,6 +133,7 @@
 	const swapWeapons = useSwapWeapons()
 	const swapCharacters = useSwapCharacters()
 	const swapSummons = useSwapSummons()
+	const syncAllItems = useSyncAllPartyItems()
 
 	// TanStack Query mutations - Party
 	const updatePartyMutation = useUpdateParty()
@@ -269,6 +271,17 @@
 	const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
 	const partyElement = $derived((party as any)?.element)
 
+	// Check if any items in the party are linked to collection (for sync menu option)
+	const hasCollectionLinks = $derived.by(() => {
+		const hasLinkedWeapons = (party?.weapons ?? []).some((w) => w?.collectionWeaponId)
+		const hasLinkedCharacters = (party?.characters ?? []).some((c) => c?.collectionCharacterId)
+		const hasLinkedSummons = (party?.summons ?? []).some((s) => s?.collectionSummonId)
+		return hasLinkedWeapons || hasLinkedCharacters || hasLinkedSummons
+	})
+
+	// Check if syncing is in progress
+	const isSyncingAll = $derived(syncAllItems.isPending)
+
 	function handleTabChange(tab: GridType) {
 		activeTab = tab // Instant UI update
 
@@ -363,6 +376,25 @@
 			window.location.href = `/teams/${newParty.shortcode}`
 		} catch (err: any) {
 			error = err.message || 'Failed to remix party'
+		} finally {
+			loading = false
+		}
+	}
+
+	async function syncFromCollection() {
+		if (!canEdit() || !hasCollectionLinks) return
+
+		loading = true
+		error = null
+
+		try {
+			await syncAllItems.mutateAsync({
+				partyId: party.id,
+				partyShortcode: party.shortcode
+			})
+			// Party will be updated via cache invalidation
+		} catch (err: any) {
+			error = err.message || 'Failed to sync from collection'
 		} finally {
 			loading = false
 		}
@@ -846,6 +878,14 @@
 									<DropdownItem>
 										<button onclick={openEditDialog} disabled={loading}>Edit</button>
 									</DropdownItem>
+									{#if hasCollectionLinks}
+										<DropdownItem>
+											<button onclick={syncFromCollection} disabled={loading || isSyncingAll}>
+												{isSyncingAll ? 'Syncing...' : 'Sync from collection'}
+											</button>
+										</DropdownItem>
+									{/if}
+									<DropdownMenu.Separator class="dropdown-separator" />
 								{/if}
 
 								{#if authUserId}

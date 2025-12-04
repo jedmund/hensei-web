@@ -151,7 +151,8 @@
 		}
 	})
 
-	// Collection query - only enabled when in collection mode and authUserId is provided
+	// Collection query - enabled when authUserId is provided
+	// Used both for collection mode AND for highlighting owned items in "all" mode
 	// Type assertion needed because different types have different query result types
 	// but they all share the same structure with different content types
 	const collectionQueryResult = createInfiniteQuery(() => {
@@ -163,26 +164,27 @@
 			} as ReturnType<typeof collectionQueries.characters>
 		}
 
-		const currentFilters = {
+		// For collection mode, apply filters; for "all" mode, fetch all to build owned set
+		const currentFilters = searchMode === 'collection' ? {
 			element: elementFilters.length > 0 ? elementFilters : undefined,
 			rarity: rarityFilters.length > 0 ? rarityFilters : undefined
-		}
+		} : {}
 
 		switch (type) {
 			case 'weapon':
 				return {
 					...collectionQueries.weapons(authUserId, currentFilters),
-					enabled: searchMode === 'collection'
+					enabled: true // Always enabled when authUserId exists
 				} as unknown as ReturnType<typeof collectionQueries.characters>
 			case 'character':
 				return {
 					...collectionQueries.characters(authUserId, currentFilters),
-					enabled: searchMode === 'collection'
+					enabled: true
 				}
 			case 'summon':
 				return {
 					...collectionQueries.summons(authUserId, currentFilters),
-					enabled: searchMode === 'collection'
+					enabled: true
 				} as unknown as ReturnType<typeof collectionQueries.characters>
 		}
 	})
@@ -198,6 +200,25 @@
 		const allItems = pages.flatMap((page) => page.results)
 		return filterCollectionByQuery(allItems, debouncedSearchQuery)
 	})
+
+	// Set of owned item granblue IDs for fast lookup (used in "all" mode to highlight owned items)
+	const ownedItemIds = $derived.by(() => {
+		const pages = collectionQueryResult.data?.pages ?? []
+		const allItems = pages.flatMap((page) => page.results)
+		const ids = new Set<string>()
+		for (const item of allItems) {
+			const entity = 'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
+			if (entity.granblueId) {
+				ids.add(String(entity.granblueId))
+			}
+		}
+		return ids
+	})
+
+	// Helper to check if an item is owned (in user's collection)
+	function isOwned(item: AddItemResult): boolean {
+		return ownedItemIds.has(String(item.granblueId))
+	}
 
 	// Deduplicate by id - needed because the API may return the same item across pages
 	// (e.g., due to items being added/removed between page fetches)
@@ -404,11 +425,13 @@
 		{:else if searchResults.length > 0}
 			<ul class="results-list">
 				{#each searchResults as item (item.id)}
+					{@const owned = searchMode === 'all' && authUserId && isOwned(item)}
 					<li class="result-item">
 						<button
 							class="result-button"
 							class:disabled={!canAddMore}
 							class:from-collection={item.collectionId}
+							class:owned={owned}
 							onclick={() => handleItemClick(item)}
 							aria-label="{canAddMore ? 'Add' : 'Grid full - cannot add'} {getItemName(item)}"
 							disabled={!canAddMore}
@@ -422,6 +445,8 @@
 							<span class="result-name">{getItemName(item)}</span>
 							{#if item.collectionId}
 								<Icon name="bookmark" size={14} class="collection-indicator" />
+							{:else if owned}
+								<Icon name="check" size={14} class="owned-indicator" />
 							{/if}
 							{#if item.element !== undefined}
 								<span
@@ -679,6 +704,21 @@
 			:global(.collection-indicator) {
 				color: var(--accent-blue);
 				flex-shrink: 0;
+			}
+
+			:global(.owned-indicator) {
+				color: var(--success, #4caf50);
+				flex-shrink: 0;
+				opacity: 0.7;
+			}
+
+			// Subtle highlight for owned items in "all" mode
+			.result-button.owned {
+				background: var(--owned-bg, rgba(76, 175, 80, 0.08));
+
+				&:hover {
+					background: var(--owned-bg-hover, rgba(76, 175, 80, 0.15));
+				}
 			}
 		}
 
