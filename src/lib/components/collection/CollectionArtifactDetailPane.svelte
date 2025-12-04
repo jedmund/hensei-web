@@ -15,6 +15,7 @@
 	import { useDeleteCollectionArtifact } from '$lib/api/mutations/artifact.mutations'
 	import { usePaneStack, type PaneConfig, type ElementType } from '$lib/stores/paneStack.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { getArtifactImage } from '$lib/utils/images'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
@@ -42,6 +43,8 @@
 	const paneStack = usePaneStack()
 	const deleteMutation = useDeleteCollectionArtifact()
 
+	// Wide image for header
+	const wideImageUrl = $derived(getArtifactImage(artifact.artifact?.granblueId, 'wide'))
 
 	// Artifact properties
 	const isQuirk = $derived(isQuirkArtifact(artifact.artifact))
@@ -119,8 +122,12 @@
 </script>
 
 <div class="artifact-detail-pane">
+	<div class="artifact-header">
+		<img src={wideImageUrl} alt="" class="artifact-image" />
+	</div>
+
 	<div class="pane-content">
-		<DetailsSection title="Properties">
+		<DetailsSection title="General">
 			{#if artifact.nickname}
 				<DetailRow label="Nickname" value={artifact.nickname} />
 			{/if}
@@ -162,11 +169,31 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as *;
 
 	.artifact-detail-pane {
 		display: flex;
 		flex-direction: column;
+		gap: $unit-2x;
 		height: 100%;
+	}
+
+	.artifact-header {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 120px;
+		margin: 0 $unit-2x;
+		border-radius: $card-corner;
+		background: url('/images/relief.png'), linear-gradient(to right, #000, #484440, #000);
+		background-size: 420px 731px;
+		background-position: -20px -20px;
+		overflow: hidden;
+
+		.artifact-image {
+			width: 100%;
+			max-width: 120px;
+		}
 	}
 
 	.pane-content {
@@ -174,7 +201,7 @@
 		overflow-y: auto;
 		display: flex;
 		flex-direction: column;
-		gap: $unit-2x;
+		gap: $unit-4x;
 		padding-bottom: $unit-2x;
 	}
 
