@@ -17,7 +17,6 @@
 	import ArtifactSkillRow from './ArtifactSkillRow.svelte'
 	import ArtifactModifierList from './ArtifactModifierList.svelte'
 	import ArtifactGradeDisplay from './ArtifactGradeDisplay.svelte'
-	import { getElementIcon } from '$lib/utils/images'
 
 	interface Props {
 		/** The artifact instance being edited */
@@ -55,14 +54,14 @@
 		return skillsQuery.data.filter((s) => s.skillGroup === group)
 	}
 
-	// Element options
+	// Element options with color dots
 	const elementOptions = [
-		{ value: 1, label: 'Wind', image: getElementIcon(1) },
-		{ value: 2, label: 'Fire', image: getElementIcon(2) },
-		{ value: 3, label: 'Water', image: getElementIcon(3) },
-		{ value: 4, label: 'Earth', image: getElementIcon(4) },
-		{ value: 5, label: 'Dark', image: getElementIcon(5) },
-		{ value: 6, label: 'Light', image: getElementIcon(6) }
+		{ value: 1, label: 'Wind', color: '#3ee489' },
+		{ value: 2, label: 'Fire', color: '#fa6d6d' },
+		{ value: 3, label: 'Water', color: '#6cc9ff' },
+		{ value: 4, label: 'Earth', color: '#fd9f5b' },
+		{ value: 5, label: 'Dark', color: '#de7bff' },
+		{ value: 6, label: 'Light', color: '#e8d633' }
 	]
 
 	// Level options (1-5 for standard, fixed at 1 for quirk)
@@ -192,9 +191,10 @@
 	<DetailsSection title="Base Properties">
 		<DetailRow label="Element" noHover>
 			{#if disabled}
+				{@const elementOption = elementOptions.find((o) => o.value === element)}
 				<span class="element-display">
-					<img src={getElementIcon(element)} alt="" class="element-icon" />
-					{elementOptions.find((o) => o.value === element)?.label ?? '—'}
+					<span class="element-dot" style="background-color: {elementOption?.color}"></span>
+					{elementOption?.label ?? '—'}
 				</span>
 			{:else}
 				<Select
@@ -287,9 +287,11 @@
 		gap: spacing.$unit-half;
 	}
 
-	.element-icon {
-		width: 20px;
-		height: 20px;
+	.element-dot {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		flex-shrink: 0;
 	}
 
 	.skills-list {
