@@ -7,96 +7,93 @@
 	 * Pushed onto pane stack from CollectionArtifactDetailPane.
 	 * Handles saving and deleting artifacts.
 	 */
+	import { onMount, untrack } from 'svelte'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
-	import { useUpdateCollectionArtifact, useDeleteCollectionArtifact } from '$lib/api/mutations/artifact.mutations'
-	import { usePaneStack } from '$lib/stores/paneStack.svelte'
+	import { useUpdateCollectionArtifact } from '$lib/api/mutations/artifact.mutations'
+	import { usePaneStack, type ElementType } from '$lib/stores/paneStack.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import ArtifactEditPane from '$lib/components/artifact/ArtifactEditPane.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 
 	interface Props {
 		artifact: CollectionArtifact
-		onClose?: () => void
 	}
 
-	let { artifact, onClose }: Props = $props()
+	let { artifact }: Props = $props()
 
 	const paneStack = usePaneStack()
 
 	// Mutations
 	const updateMutation = useUpdateCollectionArtifact()
-	const deleteMutation = useDeleteCollectionArtifact()
 
-	// Handle updates from ArtifactEditPane
+	// Track pending changes
+	let pendingUpdates = $state<Partial<CollectionArtifact> | null>(null)
+	let hasChanges = $derived(pendingUpdates !== null)
+
+	// Convert numeric element to ElementType string
+	const elementNames: Record<number, ElementType> = {
+		1: 'wind',
+		2: 'fire',
+		3: 'water',
+		4: 'earth',
+		5: 'dark',
+		6: 'light'
+	}
+	const elementType = $derived(elementNames[artifact.element] ?? undefined)
+
+	// Handle updates from ArtifactEditPane (store locally until save)
 	function handleUpdate(updates: Partial<CollectionArtifact>) {
+		pendingUpdates = { ...pendingUpdates, ...updates }
+	}
+
+	// Handle save
+	function handleSave() {
+		if (!pendingUpdates) return
+
 		updateMutation.mutate({
 			id: artifact.id,
 			input: {
-				element: updates.element,
-				level: updates.level,
-				proficiency: updates.proficiency,
-				skill1: updates.skills?.[0] ?? undefined,
-				skill2: updates.skills?.[1] ?? undefined,
-				skill3: updates.skills?.[2] ?? undefined,
-				skill4: updates.skills?.[3] ?? undefined
+				element: pendingUpdates.element,
+				level: pendingUpdates.level,
+				proficiency: pendingUpdates.proficiency,
+				skill1: pendingUpdates.skills?.[0] ?? undefined,
+				skill2: pendingUpdates.skills?.[1] ?? undefined,
+				skill3: pendingUpdates.skills?.[2] ?? undefined,
+				skill4: pendingUpdates.skills?.[3] ?? undefined
+			}
+		}, {
+			onSuccess: () => {
+				paneStack.pop()
 			}
 		})
 	}
 
-	// Handle delete
-	function handleDelete() {
-		if (confirm('Are you sure you want to delete this artifact from your collection?')) {
-			deleteMutation.mutate(artifact.id, {
-				onSuccess: () => {
-					onClose?.()
-				}
-			})
-		}
+	// Set up header action (Save button always visible, disabled when no changes)
+	function updateHeader() {
+		const canSave = hasChanges && !updateMutation.isPending
+		sidebar.setAction(canSave ? handleSave : undefined, 'Save', elementType)
 	}
+
+	onMount(() => {
+		updateHeader()
+		return () => sidebar.clearAction()
+	})
+
+	// Reactively update header when state changes
+	$effect(() => {
+		const _ = [hasChanges, updateMutation.isPending]
+		untrack(() => updateHeader())
+	})
 </script>
 
 <div class="artifact-edit-pane">
-	<!-- Edit pane content -->
-	<div class="pane-content">
-		<ArtifactEditPane
-			{artifact}
-			onUpdate={handleUpdate}
-		/>
-	</div>
-
-	<!-- Actions footer -->
-	<div class="pane-footer">
-		<Button
-			variant="destructive"
-			size="small"
-			onclick={handleDelete}
-			disabled={deleteMutation.isPending}
-		>
-			{deleteMutation.isPending ? 'Deleting...' : 'Delete'}
-		</Button>
-	</div>
+	<ArtifactEditPane
+		{artifact}
+		onUpdate={handleUpdate}
+	/>
 </div>
 
 <style lang="scss">
-	@use '$src/themes/spacing' as *;
-	@use '$src/themes/typography' as *;
-	@use '$src/themes/layout' as *;
-
 	.artifact-edit-pane {
-		display: flex;
-		flex-direction: column;
 		height: 100%;
-	}
-
-	.pane-content {
-		flex: 1;
-		overflow-y: auto;
-	}
-
-	.pane-footer {
-		display: flex;
-		justify-content: center;
-		padding: $unit-2x;
-		border-top: 1px solid var(--border-secondary);
-		flex-shrink: 0;
 	}
 </style>

@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { isQuirkArtifact } from '$lib/types/api/artifact'
+	import { useDeleteCollectionArtifact } from '$lib/api/mutations/artifact.mutations'
 	import { usePaneStack, type PaneConfig, type ElementType } from '$lib/stores/paneStack.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { getArtifactImage } from '$lib/utils/images'
@@ -30,6 +31,7 @@
 	let { artifact, isOwner = false, onClose }: Props = $props()
 
 	const paneStack = usePaneStack()
+	const deleteMutation = useDeleteCollectionArtifact()
 
 	// Image and name
 	const imageUrl = $derived(getArtifactImage(artifact.artifact?.granblueId))
@@ -68,22 +70,39 @@
 			title: 'Edit Artifact',
 			component: CollectionArtifactEditPane,
 			props: {
-				artifact,
-				onClose
+				artifact
 			}
 		}
 		paneStack.push(config)
 	}
 
-	// Set up the Edit action button in the pane header for owners
+	// Handle delete
+	function handleDelete() {
+		if (confirm('Are you sure you want to remove this artifact from your collection?')) {
+			deleteMutation.mutate(artifact.id, {
+				onSuccess: () => {
+					onClose?.()
+				}
+			})
+		}
+	}
+
+	// Set up the Edit action button and overflow menu for owners
 	onMount(() => {
 		if (isOwner) {
 			sidebar.setAction(handleEdit, 'Edit', elementType)
+			sidebar.setOverflowMenu([
+				{
+					label: 'Remove from collection',
+					handler: handleDelete,
+					variant: 'danger'
+				}
+			])
 		}
 
 		return () => {
-			// Clean up action when component unmounts
 			sidebar.clearAction()
+			sidebar.clearOverflowMenu()
 		}
 	})
 </script>
