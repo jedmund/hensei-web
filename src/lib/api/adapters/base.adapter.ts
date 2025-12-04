@@ -100,7 +100,8 @@ export abstract class BaseAdapter {
 				? options.body
 				: JSON.stringify(options.body)
 			: undefined
-		const requestId = this.generateRequestId(path, options.method, bodyString)
+		// Use full URL (including query params) for cache key to differentiate filtered requests
+		const requestId = this.generateRequestId(url, options.method, bodyString)
 
 		// Check cache first if caching is enabled (support both cacheTime and cacheTTL)
 		const cacheTime = options.cacheTTL ?? options.cacheTime ?? this.options.cacheTime
