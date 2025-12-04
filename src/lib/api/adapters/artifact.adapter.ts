@@ -108,6 +108,7 @@ export class ArtifactAdapter extends BaseAdapter {
 			4: 'group_iii'
 		}
 		const group = groupMap[slot]
+
 		if (!group) {
 			throw new Error(`Invalid slot number: ${slot}. Must be 1-4.`)
 		}
@@ -116,7 +117,7 @@ export class ArtifactAdapter extends BaseAdapter {
 			'/artifact_skills',
 			{
 				method: 'GET',
-				query: { skillGroup: group },
+				query: { group },
 				cacheTime: 60 * 60 * 1000 // 1 hour
 			}
 		)
