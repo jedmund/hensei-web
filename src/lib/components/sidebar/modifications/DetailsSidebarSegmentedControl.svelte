@@ -22,10 +22,11 @@
 			bind:value={selectedView}
 			onValueChange={handleViewChange}
 			variant="background"
+			size="small"
 			grow
 		>
 			<Segment value="user">This team</Segment>
-			<Segment value="canonical">Stats</Segment>
+			<Segment value="canonical">Info</Segment>
 		</SegmentedControl>
 	</div>
 {/if}

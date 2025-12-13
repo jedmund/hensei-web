@@ -57,9 +57,11 @@
 		<DetailRow label="Gender" value={getGenderLabel(itemData?.gender)} />
 		{#if itemData?.proficiency && itemData.proficiency.length > 0}
 			<DetailRow label="Proficiencies">
-				{#each itemData.proficiency as prof}
-					<ProficiencyLabel proficiency={prof} size="medium" />
-				{/each}
+				<span class="proficiency-list">
+					{#each itemData.proficiency as prof}
+						<ProficiencyLabel proficiency={prof} size="medium" />
+					{/each}
+				</span>
 			</DetailRow>
 		{/if}
 	{:else if type === 'weapon'}
@@ -80,3 +82,12 @@
 		/>
 	</DetailRow>
 </DetailsSection>
+
+<style lang="scss">
+	@use '$src/themes/spacing' as *;
+
+	.proficiency-list {
+		display: inline-flex;
+		gap: $unit-half;
+	}
+</style>
