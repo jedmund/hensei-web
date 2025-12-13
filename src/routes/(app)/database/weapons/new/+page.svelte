@@ -56,6 +56,7 @@
 		proficiency: 0,
 		series: 0,
 		newSeries: 0,
+		promotions: [] as number[],
 
 		// Stats
 		minHp: 0,

@@ -9,7 +9,7 @@ export const mockCharacter: Character = {
 	rarity: 3, // SSR
 	special: false,
 	uncap: { flb: true, ulb: true, transcendence: false },
-	proficiency: [1, 2] // Katana, Dagger
+	proficiency: [1, 2] // Sabre, Dagger
 };
 
 export const mockSpecialCharacter: Character = {

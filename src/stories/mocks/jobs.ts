@@ -14,7 +14,7 @@ export const mockJobNoUM: Job = {
 	id: 'job-2',
 	granblueId: '100001',
 	name: { en: 'Dark Fencer', ja: 'ダークフェンサー' },
-	proficiency: [1, 2], // Sword, Dagger
+	proficiency: [1, 2], // Sabre, Dagger
 	row: 3,
 	ultimateMastery: false
 };

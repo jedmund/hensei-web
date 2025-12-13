@@ -186,15 +186,15 @@ export function getSkillCategoryColor(skill: JobSkill): string {
  */
 export function formatJobProficiency(proficiency: [number, number]): string[] {
 	const weaponTypes: Record<number, string> = {
-		1: 'Sword',
+		1: 'Sabre',
 		2: 'Dagger',
-		3: 'Spear',
-		4: 'Axe',
-		5: 'Staff',
-		6: 'Gun',
+		3: 'Axe',
+		4: 'Spear',
+		5: 'Bow',
+		6: 'Staff',
 		7: 'Melee',
-		8: 'Bow',
-		9: 'Harp',
+		8: 'Harp',
+		9: 'Gun',
 		10: 'Katana'
 	}
 

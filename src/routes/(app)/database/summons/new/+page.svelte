@@ -56,6 +56,7 @@
 		// Taxonomy
 		element: 0,
 		series: '',
+		promotions: [] as number[],
 
 		// Stats
 		minHp: 0,

@@ -6,11 +6,11 @@ export const PROFICIENCY_LABELS: Record<number, string> = {
 	2: 'Dagger',
 	3: 'Axe',
 	4: 'Spear',
-	5: 'Staff',
-	6: 'Gun',
+	5: 'Bow',
+	6: 'Staff',
 	7: 'Melee',
-	8: 'Bow',
-	9: 'Harp',
+	8: 'Harp',
+	9: 'Gun',
 	10: 'Katana'
 }
 

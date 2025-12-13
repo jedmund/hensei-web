@@ -65,6 +65,9 @@
 		gender: 0,
 		proficiency1: 0,
 		proficiency2: 0,
+		season: 0,
+		series: [] as number[],
+		gacha_available: false,
 
 		// Stats
 		minHp: 0,
