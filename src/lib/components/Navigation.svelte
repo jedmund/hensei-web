@@ -49,6 +49,7 @@
 	const registerHref = $derived(localizeHref('/auth/register'))
 	const databaseHref = $derived(localizeHref('/database'))
 	const newTeamHref = $derived(localizeHref('/teams/new'))
+	const crewHref = $derived(localizeHref('/crew'))
 
 	// Get the element class for styling
 	const elementClass = $derived(userElement ? `element-${userElement}` : '')
@@ -62,6 +63,7 @@
 	const databaseWeaponsHref = $derived(localizeHref('/database/weapons'))
 	const databaseSummonsHref = $derived(localizeHref('/database/summons'))
 	const databaseWeaponSeriesHref = $derived(localizeHref('/database/weapon-series'))
+	const databaseGwEventsHref = $derived(localizeHref('/database/gw-events'))
 
 	// Database route detection
 	const isDatabaseRoute = $derived($page.url.pathname.startsWith(localizeHref('/database')))
@@ -191,6 +193,9 @@
 								<DropdownItem>
 									<a href={databaseWeaponSeriesHref}>Weapon Series</a>
 								</DropdownItem>
+								<DropdownItem>
+									<a href={databaseGwEventsHref}>Unite & Fight</a>
+								</DropdownItem>
 							</DropdownMenu.Content>
 						</DropdownMenu.Portal>
 					</DropdownMenu.Root>
@@ -260,6 +265,11 @@
 									<a href={collectionHref}>{m.nav_collection()}</a>
 								</DropdownItem>
 								<DropdownMenu.Separator class="dropdown-separator" />
+							{/if}
+							{#if isAuth}
+								<DropdownItem>
+									<a href={crewHref}>Crew</a>
+								</DropdownItem>
 							{/if}
 							<DropdownItem>
 								<button onclick={() => (settingsModalOpen = true)}>
