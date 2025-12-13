@@ -8,10 +8,13 @@
 	 *
 	 * The "My Collection" tab includes an edit mode using WeaponEditPane.
 	 */
-	import { untrack } from 'svelte'
+	import { onMount } from 'svelte'
 	import type { CollectionWeapon } from '$lib/types/api/collection'
 	import type { SimpleAxSkill } from '$lib/types/api/entities'
-	import { useUpdateCollectionWeapon } from '$lib/api/mutations/collection.mutations'
+	import {
+		useUpdateCollectionWeapon,
+		useRemoveWeaponFromCollection
+	} from '$lib/api/mutations/collection.mutations'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import ItemHeader from '$lib/components/sidebar/details/ItemHeader.svelte'
@@ -39,20 +42,30 @@
 	// Local state for the weapon - updated when mutation succeeds
 	let weapon = $state<CollectionWeapon>(initialWeapon)
 
+	// Track which weapon we're displaying to detect when a different one is selected
+	let currentWeaponId = $state(initialWeapon.id)
+
 	// Tab state
 	let selectedTab = $state<'info' | 'collection'>('collection')
 
 	// Edit mode state
 	let isEditing = $state(false)
 
-	// Sync local state when a different weapon is selected
+	// Reference to the edit pane component for calling save()
+	let editPaneRef: ReturnType<typeof WeaponEditPane> | undefined = $state()
+
+	// Sync local state only when a DIFFERENT weapon is selected (not on every re-render)
 	$effect(() => {
-		weapon = initialWeapon
-		isEditing = false
+		if (initialWeapon.id !== currentWeaponId) {
+			weapon = initialWeapon
+			currentWeaponId = initialWeapon.id
+			isEditing = false
+		}
 	})
 
-	// Update mutation
+	// Mutations
 	const updateMutation = useUpdateCollectionWeapon()
+	const deleteMutation = useRemoveWeaponFromCollection()
 
 	// Derived values
 	const weaponData = $derived(weapon.weapon)
@@ -148,13 +161,57 @@
 			weapon = updatedWeapon
 
 			isEditing = false
+			updateActionVisibility()
 		} catch (error) {
 			console.error('Failed to update collection weapon:', error)
 		}
 	}
 
+	// Enter edit mode and update header action
+	function enterEditMode() {
+		isEditing = true
+		// Update header to show Save button
+		sidebar.setAction(() => editPaneRef?.save(), 'Save', elementName)
+	}
+
+	// Handle delete from collection
+	function handleDelete() {
+		if (confirm('Are you sure you want to remove this weapon from your collection?')) {
+			deleteMutation.mutate(weapon.id, {
+				onSuccess: () => {
+					onClose?.()
+				}
+			})
+		}
+	}
+
+	// Update action visibility when tab or edit state changes
+	function updateActionVisibility() {
+		if (isOwner && selectedTab === 'collection') {
+			if (isEditing) {
+				// Show Save button when editing, hide overflow menu
+				sidebar.setAction(() => editPaneRef?.save(), 'Save', elementName)
+				sidebar.clearOverflowMenu()
+			} else {
+				// Show Edit button and overflow menu when viewing
+				sidebar.setAction(enterEditMode, 'Edit', elementName)
+				sidebar.setOverflowMenu([
+					{
+						label: 'Remove from collection',
+						handler: handleDelete,
+						variant: 'danger'
+					}
+				])
+			}
+		} else {
+			sidebar.clearAction()
+			sidebar.clearOverflowMenu()
+		}
+	}
+
 	function handleCancel() {
 		isEditing = false
+		updateActionVisibility()
 	}
 
 	function handleTabChange(value: string) {
@@ -162,6 +219,7 @@
 		if (isEditing) {
 			isEditing = false
 		}
+		updateActionVisibility()
 	}
 
 	function getAwakeningType(): string {
@@ -192,25 +250,13 @@
 	const hasAxSkills = $derived((weapon.ax?.length ?? 0) > 0 && weapon.ax?.some(ax => ax.modifier >= 0))
 	const canChangeElement = $derived(weaponData?.element === 0)
 
-	// Update sidebar header action
-	$effect(() => {
-		// Capture reactive dependencies we want to track
-		const shouldShowEdit = isOwner && selectedTab === 'collection' && !isEditing
-		const element = elementName
-		// Use untrack to avoid infinite loop when sidebar.setAction mutates pane state
-		untrack(() => {
-			if (shouldShowEdit) {
-				sidebar.setAction(() => (isEditing = true), 'Edit', element)
-			} else {
-				sidebar.clearAction()
-			}
-		})
-	})
+	// Set up sidebar action on mount and clean up on destroy
+	onMount(() => {
+		updateActionVisibility()
 
-	// Clean up sidebar action when component is destroyed
-	$effect(() => {
 		return () => {
 			sidebar.clearAction()
+			sidebar.clearOverflowMenu()
 		}
 	})
 </script>
@@ -250,11 +296,10 @@
 			</div>
 		{:else if isEditing}
 			<WeaponEditPane
+				bind:this={editPaneRef}
 				{weaponData}
 				{currentValues}
 				onSave={handleSave}
-				onCancel={handleCancel}
-				saving={updateMutation.isPending}
 			/>
 		{:else}
 			<div class="collection-view">
