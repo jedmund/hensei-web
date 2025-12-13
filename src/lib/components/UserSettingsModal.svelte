@@ -2,6 +2,9 @@
 
 <script lang="ts">
 	import Dialog from './ui/Dialog.svelte'
+	import ModalHeader from './ui/ModalHeader.svelte'
+	import ModalBody from './ui/ModalBody.svelte'
+	import ModalFooter from './ui/ModalFooter.svelte'
 	import Select from './ui/Select.svelte'
 	import Switch from './ui/switch/Switch.svelte'
 	import Button from './ui/Button.svelte'
@@ -10,7 +13,7 @@
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { setUserCookie } from '$lib/auth/cookies'
 	import { invalidateAll } from '$app/navigation'
-	
+
 	interface Props {
 		open: boolean
 		onOpenChange?: (open: boolean) => void
@@ -93,8 +96,7 @@
 	const currentPicture = $derived(pictureData.find((p) => p.filename === picture))
 
 	// Handle form submission
-	async function handleSave(e: Event) {
-		e.preventDefault()
+	async function handleSave() {
 		error = null
 		saving = true
 
@@ -160,101 +162,98 @@
 	}
 </script>
 
-<Dialog
-	bind:open
-	{...onOpenChange ? { onOpenChange } : {}}
-	title="@{username}"
-	description="Account Settings"
->
+<Dialog bind:open {...onOpenChange ? { onOpenChange } : {}}>
 	{#snippet children()}
-		<form onsubmit={handleSave} class="settings-form">
-			{#if error}
-				<div class="error-message">{error}</div>
-			{/if}
+		<ModalHeader title="Account settings" description="@{username}" />
 
-			<div class="form-fields">
-				<!-- Picture Selection with Preview -->
-				<div class="picture-section">
-					<div class="current-avatar">
-						<img
-							src={`/profile/${picture}.png`}
-							srcset={`/profile/${picture}.png 1x, /profile/${picture}@2x.png 2x`}
-							alt={currentPicture?.name[locale] || ''}
-							class="avatar-preview element-{element}"
+		<ModalBody>
+			<div class="settings-form">
+				{#if error}
+					<div class="error-message">{error}</div>
+				{/if}
+
+				<div class="form-fields">
+					<!-- Picture Selection with Preview -->
+					<div class="picture-section">
+						<div class="current-avatar">
+							<img
+								src={`/profile/${picture}.png`}
+								srcset={`/profile/${picture}.png 1x, /profile/${picture}@2x.png 2x`}
+								alt={currentPicture?.name[locale] || ''}
+								class="avatar-preview element-{element}"
+							/>
+						</div>
+						<Select
+							bind:value={picture}
+							options={pictureOptions}
+							label="Avatar"
+							placeholder="Select an avatar"
+							fullWidth
+							contained
 						/>
 					</div>
+
+					<!-- Element Selection -->
 					<Select
-						bind:value={picture}
-						options={pictureOptions}
-						label="Avatar"
-						placeholder="Select an avatar"
+						bind:value={element}
+						options={elementOptions}
+						label="Element"
+						placeholder="Select an element"
 						fullWidth
 						contained
 					/>
+
+					<!-- Gender Selection -->
+					<Select
+						bind:value={gender}
+						options={genderOptions}
+						label="Gender"
+						placeholder="Select gender"
+						fullWidth
+						contained
+					/>
+
+					<!-- Language Selection -->
+					<Select
+						bind:value={language}
+						options={languageOptions}
+						label="Language"
+						placeholder="Select language"
+						fullWidth
+						contained
+					/>
+
+					<!-- Theme Selection -->
+					<Select
+						bind:value={theme}
+						options={themeOptions}
+						label="Theme"
+						placeholder="Select theme"
+						fullWidth
+						contained
+					/>
+
+					<!-- Admin Mode (only for admins) -->
+					{#if role === 9}
+						<div class="switch-field">
+							<label for="bahamut-mode">
+								<span>Admin Mode</span>
+								<Switch bind:checked={bahamut} name="bahamut-mode" />
+							</label>
+						</div>
+					{/if}
 				</div>
-
-				<!-- Element Selection -->
-				<Select
-					bind:value={element}
-					options={elementOptions}
-					label="Element"
-					placeholder="Select an element"
-					fullWidth
-					contained
-				/>
-
-				<!-- Gender Selection -->
-				<Select
-					bind:value={gender}
-					options={genderOptions}
-					label="Gender"
-					placeholder="Select gender"
-					fullWidth
-					contained
-				/>
-
-				<!-- Language Selection -->
-				<Select
-					bind:value={language}
-					options={languageOptions}
-					label="Language"
-					placeholder="Select language"
-					fullWidth
-					contained
-				/>
-
-				<!-- Theme Selection -->
-				<Select
-					bind:value={theme}
-					options={themeOptions}
-					label="Theme"
-					placeholder="Select theme"
-					fullWidth
-					contained
-				/>
-
-				<!-- Admin Mode (only for admins) -->
-				{#if role === 9}
-					<div class="switch-field">
-						<label for="bahamut-mode">
-							<span>Admin Mode</span>
-							<Switch bind:checked={bahamut} name="bahamut-mode" />
-						</label>
-					</div>
-				{/if}
 			</div>
+		</ModalBody>
 
-			<div class="form-actions">
+		<ModalFooter>
+			{#snippet children()}
 				<Button variant="ghost" onclick={handleClose} disabled={saving}>Cancel</Button>
-				<Button type="submit" variant="primary" disabled={saving}>
+				<Button onclick={handleSave} variant="primary" disabled={saving}>
 					{saving ? 'Saving...' : 'Save Changes'}
 				</Button>
-			</div>
-		</form>
-	{/snippet}
-
-	{#snippet footer()}
-		<!-- Empty footer, actions are in the form -->
+			{/snippet}
+		</ModalFooter>
 	{/snippet}
 </Dialog>
 
@@ -263,7 +262,6 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/effects' as effects;
 
 	.settings-form {
 		display: flex;
@@ -331,7 +329,7 @@
 			align-items: center;
 			justify-content: space-between;
 			padding: spacing.$unit-2x;
-			background-color: var(--input-bg);
+			background-color: var(--input-bound-bg);
 			border-radius: layout.$card-corner;
 
 			span {
@@ -339,14 +337,6 @@
 				color: var(--text-primary);
 			}
 		}
-	}
-
-	.form-actions {
-		display: flex;
-		gap: spacing.$unit-2x;
-		justify-content: flex-end;
-		padding-top: spacing.$unit-2x;
-		border-top: 1px solid var(--border-color);
 	}
 
 	:global(fieldset) {

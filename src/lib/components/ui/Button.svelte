@@ -139,6 +139,8 @@
 		</span>
 	{:else if iconOnly && icon}
 		<Icon name={icon} size={iconSizes[size]} />
+	{:else if iconOnly && children}
+		{@render children()}
 	{/if}
 
 	{#if rightAccessory}
@@ -364,24 +366,24 @@
 		gap: 0;
 		aspect-ratio: 1;
 		padding: calc($unit * 1.5); // Default square padding
+	}
 
-		&.small {
-			padding: $unit !important; // Override size padding
-			width: calc($unit * 3.5);
-			height: calc($unit * 3.5);
-		}
+	:global([data-button-root].iconOnly.small) {
+		padding: $unit !important; // Override size padding
+		width: 30px;
+		height: 30px;
+	}
 
-		&.medium {
-			padding: calc($unit * 1.5) !important; // Override size padding
-			width: calc($unit * 5.5);
-			height: calc($unit * 5.5);
-		}
+	:global([data-button-root].iconOnly.medium) {
+		padding: calc($unit * 1.5) !important; // Override size padding
+		width: calc($unit * 5.5);
+		height: calc($unit * 5.5);
+	}
 
-		&.large {
-			padding: $unit-2x !important; // Override size padding
-			width: calc($unit * 6.5);
-			height: calc($unit * 6.5);
-		}
+	:global([data-button-root].iconOnly.large) {
+		padding: $unit-2x !important; // Override size padding
+		width: calc($unit * 6.5);
+		height: calc($unit * 6.5);
 	}
 
 	// Save button special states
