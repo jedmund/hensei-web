@@ -46,6 +46,9 @@
 	import type { AddItemResult } from '$lib/types/api/search'
 	import { GridType } from '$lib/types/enums'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
+	import ModalBody from '$lib/components/ui/ModalBody.svelte'
+	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
@@ -1003,47 +1006,55 @@
 </div>
 
 <!-- Edit Dialog -->
-<Dialog bind:open={editDialogOpen} title="Edit Party Details">
+<Dialog bind:open={editDialogOpen}>
 	{#snippet children()}
-		<div class="edit-form">
-			<label for="party-title">Party Title</label>
-			<input
-				id="party-title"
-				type="text"
-				bind:value={editingTitle}
-				placeholder="Enter party title..."
-				disabled={loading}
-			/>
-		</div>
-	{/snippet}
-
-	{#snippet footer()}
-		<button class="btn-secondary" onclick={() => (editDialogOpen = false)} disabled={loading}>
-			Cancel
-		</button>
-		<button class="btn-primary" onclick={savePartyTitle} disabled={loading || !editingTitle.trim()}>
-			{loading ? 'Saving...' : 'Save'}
-		</button>
+		<ModalHeader title="Edit Party Details" />
+		<ModalBody>
+			<div class="edit-form">
+				<label for="party-title">Party Title</label>
+				<input
+					id="party-title"
+					type="text"
+					bind:value={editingTitle}
+					placeholder="Enter party title..."
+					disabled={loading}
+				/>
+			</div>
+		</ModalBody>
+		<ModalFooter>
+			{#snippet children()}
+				<button class="btn-secondary" onclick={() => (editDialogOpen = false)} disabled={loading}>
+					Cancel
+				</button>
+				<button class="btn-primary" onclick={savePartyTitle} disabled={loading || !editingTitle.trim()}>
+					{loading ? 'Saving...' : 'Save'}
+				</button>
+			{/snippet}
+		</ModalFooter>
 	{/snippet}
 </Dialog>
 
 <!-- Delete Confirmation Dialog -->
-<Dialog bind:open={deleteDialogOpen} title="Delete Party">
+<Dialog bind:open={deleteDialogOpen}>
 	{#snippet children()}
-		<div class="delete-confirmation">
-			<p>Are you sure you want to delete this party?</p>
-			<p><strong>{party.name || 'Unnamed Party'}</strong></p>
-			<p class="warning">⚠️ This action cannot be undone.</p>
-		</div>
-	{/snippet}
-
-	{#snippet footer()}
-		<button class="btn-secondary" onclick={() => (deleteDialogOpen = false)} disabled={deleting}>
-			Cancel
-		</button>
-		<button class="btn-danger" onclick={deleteParty} disabled={deleting}>
-			{deleting ? 'Deleting...' : 'Delete Party'}
-		</button>
+		<ModalHeader title="Delete Party" />
+		<ModalBody>
+			<div class="delete-confirmation">
+				<p>Are you sure you want to delete this party?</p>
+				<p><strong>{party.name || 'Unnamed Party'}</strong></p>
+				<p class="warning">⚠️ This action cannot be undone.</p>
+			</div>
+		</ModalBody>
+		<ModalFooter>
+			{#snippet children()}
+				<button class="btn-secondary" onclick={() => (deleteDialogOpen = false)} disabled={deleting}>
+					Cancel
+				</button>
+				<button class="btn-danger" onclick={deleteParty} disabled={deleting}>
+					{deleting ? 'Deleting...' : 'Delete Party'}
+				</button>
+			{/snippet}
+		</ModalFooter>
 	{/snippet}
 </Dialog>
 

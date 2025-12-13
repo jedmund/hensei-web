@@ -18,6 +18,9 @@
 -->
 <script lang="ts">
 	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
+	import ModalBody from '$lib/components/ui/ModalBody.svelte'
+	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import type { ConflictData } from '$lib/types/api/conflict'
 	import type { GridCharacter, GridWeapon } from '$lib/types/api/party'
@@ -167,70 +170,78 @@
 	}
 </script>
 
-<Dialog bind:open onOpenChange={handleOpenChange} title={m.conflict_title()}>
-	{#if conflict}
-		<div class={styles.content}>
-			<p class={styles.message}>{conflictMessage}</p>
+<Dialog bind:open onOpenChange={handleOpenChange}>
+	{#snippet children()}
+		<ModalHeader title={m.conflict_title()} />
+		<ModalBody>
+			{#snippet children()}
+				{#if conflict}
+					<div class={styles.content}>
+						<p class={styles.message}>{conflictMessage}</p>
 
-			<div class={styles.diagram}>
-				<!-- Conflicting items (left side) -->
-				<ul class={styles.conflicts}>
-					{#if conflict.type === 'character'}
-						{#each conflict.conflicts as gridChar (gridChar.id)}
-							<li class={styles.item}>
-								<img
-									src={getCharacterUrl(gridChar)}
-									alt={gridChar.character.name[locale]}
-								/>
-								<span>{gridChar.character.name[locale]}</span>
-							</li>
-						{/each}
-					{:else}
-						{#each conflict.conflicts as gridWeapon (gridWeapon.id)}
-							<li class={styles.item}>
-								<img
-									src={getWeaponUrl(gridWeapon)}
-									alt={gridWeapon.weapon.name[locale]}
-								/>
-								<span>{gridWeapon.weapon.name[locale]}</span>
-							</li>
-						{/each}
-					{/if}
-				</ul>
+						<div class={styles.diagram}>
+							<!-- Conflicting items (left side) -->
+							<ul class={styles.conflicts}>
+								{#if conflict.type === 'character'}
+									{#each conflict.conflicts as gridChar (gridChar.id)}
+										<li class={styles.item}>
+											<img
+												src={getCharacterUrl(gridChar)}
+												alt={gridChar.character.name[locale]}
+											/>
+											<span>{gridChar.character.name[locale]}</span>
+										</li>
+									{/each}
+								{:else}
+									{#each conflict.conflicts as gridWeapon (gridWeapon.id)}
+										<li class={styles.item}>
+											<img
+												src={getWeaponUrl(gridWeapon)}
+												alt={gridWeapon.weapon.name[locale]}
+											/>
+											<span>{gridWeapon.weapon.name[locale]}</span>
+										</li>
+									{/each}
+								{/if}
+							</ul>
 
-				<!-- Arrow -->
-				<span class={styles.arrow}>&rarr;</span>
+							<!-- Arrow -->
+							<span class={styles.arrow}>&rarr;</span>
 
-				<!-- Incoming item (right side) -->
-				<div class={styles.incoming}>
-					{#if conflict.type === 'character'}
-						<div class={styles.item}>
-							<img
-								src={getIncomingCharacterUrl(conflict.incoming)}
-								alt={conflict.incoming.name[locale]}
-							/>
-							<span>{conflict.incoming.name[locale]}</span>
+							<!-- Incoming item (right side) -->
+							<div class={styles.incoming}>
+								{#if conflict.type === 'character'}
+									<div class={styles.item}>
+										<img
+											src={getIncomingCharacterUrl(conflict.incoming)}
+											alt={conflict.incoming.name[locale]}
+										/>
+										<span>{conflict.incoming.name[locale]}</span>
+									</div>
+								{:else}
+									<div class={styles.item}>
+										<img
+											src={getIncomingWeaponUrl(conflict.incoming)}
+											alt={conflict.incoming.name[locale]}
+										/>
+										<span>{conflict.incoming.name[locale]}</span>
+									</div>
+								{/if}
+							</div>
 						</div>
-					{:else}
-						<div class={styles.item}>
-							<img
-								src={getIncomingWeaponUrl(conflict.incoming)}
-								alt={conflict.incoming.name[locale]}
-							/>
-							<span>{conflict.incoming.name[locale]}</span>
-						</div>
-					{/if}
-				</div>
-			</div>
-		</div>
-	{/if}
-
-	{#snippet footer()}
-		<Button variant="ghost" onclick={handleCancel} disabled={isLoading}>
-			{m.conflict_cancel()}
-		</Button>
-		<Button variant="primary" onclick={handleResolve} disabled={isLoading}>
-			{m.conflict_confirm()}
-		</Button>
+					</div>
+				{/if}
+			{/snippet}
+		</ModalBody>
+		<ModalFooter>
+			{#snippet children()}
+				<Button variant="ghost" onclick={handleCancel} disabled={isLoading}>
+					{m.conflict_cancel()}
+				</Button>
+				<Button variant="primary" onclick={handleResolve} disabled={isLoading}>
+					{m.conflict_confirm()}
+				</Button>
+			{/snippet}
+		</ModalFooter>
 	{/snippet}
 </Dialog>

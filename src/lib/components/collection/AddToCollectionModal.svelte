@@ -12,6 +12,9 @@
 		useAddSummonsToCollection
 	} from '$lib/api/mutations/collection.mutations'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
+	import ModalBody from '$lib/components/ui/ModalBody.svelte'
+	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import CollectionFilters, {
@@ -316,8 +319,9 @@
 	})
 </script>
 
-<Dialog bind:open {onOpenChange} title={dialogTitle} size="large">
+<Dialog bind:open {onOpenChange} size="large">
 	{#snippet children()}
+		<ModalHeader title={dialogTitle} />
 		<div class="modal-content">
 			<!-- Search input -->
 			<div class="search-bar">
@@ -441,40 +445,41 @@
 				{/if}
 			</div>
 		</div>
-	{/snippet}
-
-	{#snippet footer()}
-		<div class="modal-footer">
-			<div class="footer-left">
-				{#if selectedCount > 0}
-					<button
-						type="button"
-						class="selected-link"
-						class:active={showOnlySelected}
-						onclick={toggleShowSelected}
-					>
-						{selectedText}
-					</button>
-				{/if}
-			</div>
-			<div class="footer-right">
-				<Button variant="ghost" onclick={() => (open = false)}>
-					Cancel
-				</Button>
-				<Button
-					variant="primary"
-					disabled={selectedCount === 0 || currentMutation.isPending}
-					onclick={handleAdd}
-				>
-					{#if currentMutation.isPending}
-						<Icon name="loader-2" size={16} />
-						Adding...
-					{:else}
-						Add to Collection
-					{/if}
-				</Button>
-			</div>
-		</div>
+		<ModalFooter>
+			{#snippet children()}
+				<div class="modal-footer">
+					<div class="footer-left">
+						{#if selectedCount > 0}
+							<button
+								type="button"
+								class="selected-link"
+								class:active={showOnlySelected}
+								onclick={toggleShowSelected}
+							>
+								{selectedText}
+							</button>
+						{/if}
+					</div>
+					<div class="footer-right">
+						<Button variant="ghost" onclick={() => (open = false)}>
+							Cancel
+						</Button>
+						<Button
+							variant="primary"
+							disabled={selectedCount === 0 || currentMutation.isPending}
+							onclick={handleAdd}
+						>
+							{#if currentMutation.isPending}
+								<Icon name="loader-2" size={16} />
+								Adding...
+							{:else}
+								Add to Collection
+							{/if}
+						</Button>
+					</div>
+				</div>
+			{/snippet}
+		</ModalFooter>
 	{/snippet}
 </Dialog>
 
