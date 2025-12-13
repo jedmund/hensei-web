@@ -112,6 +112,7 @@ export interface Party {
   favorited?: boolean
   extra?: boolean
   remix?: boolean
+  editKey?: string
 
   // Relationships
   weapons: GridWeapon[]

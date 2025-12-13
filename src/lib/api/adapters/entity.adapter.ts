@@ -66,6 +66,12 @@ export interface Weapon {
 		transcendence?: boolean
 	}
 	maxLevel?: number
+	maxSkillLevel?: number
+	maxAwakeningLevel?: number
+	limit?: number
+	extra?: boolean
+	ax?: boolean
+	axType?: number
 	skillLevelCap?: number
 	weapon_skills?: Array<{
 		name?: string
@@ -94,6 +100,14 @@ export interface Weapon {
 			ja?: string
 		}
 	}
+	// Date fields
+	releaseDate?: string
+	flbDate?: string
+	ulbDate?: string
+	transcendenceDate?: string
+	wiki?: { en?: string; ja?: string }
+	gamewith?: string
+	kamigame?: string
 }
 
 /**
@@ -166,6 +180,13 @@ export interface Character {
 		promotions: number[]
 		promotionNames: string[]
 	}
+	// Date fields
+	releaseDate?: string
+	flbDate?: string
+	ulbDate?: string
+	wiki?: { en?: string; ja?: string }
+	gamewith?: string
+	kamigame?: string
 }
 
 /**
@@ -259,6 +280,14 @@ export interface Summon {
 		gamewith?: string
 		kamigame?: string
 	}
+	// Date fields
+	releaseDate?: string
+	flbDate?: string
+	ulbDate?: string
+	transcendenceDate?: string
+	wiki?: { en?: string; ja?: string }
+	gamewith?: string
+	kamigame?: string
 }
 
 /**

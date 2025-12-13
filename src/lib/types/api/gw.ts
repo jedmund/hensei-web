@@ -19,6 +19,9 @@ export const GW_ROUND_LABELS: Record<GwRound, string> = {
   5: 'Finals Day 4'
 }
 
+// GwEvent status
+export type GwEventStatus = 'upcoming' | 'active' | 'completed'
+
 // GwEvent from GwEventBlueprint
 export interface GwEvent {
   id: string
@@ -26,6 +29,7 @@ export interface GwEvent {
   startDate: string
   endDate: string
   eventNumber: number // GW #XX
+  status?: GwEventStatus
   createdAt?: string
   updatedAt?: string
 }
@@ -35,6 +39,10 @@ export interface CrewGwParticipation {
   id: string
   preliminaryRanking: number | null
   finalRanking: number | null
+  // Aggregated stats
+  totalScore?: number
+  wins?: number
+  losses?: number
   createdAt?: string
   // From :with_event view
   gwEvent?: GwEvent

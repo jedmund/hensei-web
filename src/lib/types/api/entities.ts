@@ -23,6 +23,8 @@ export interface Weapon {
   series: WeaponSeriesRef | null
   ax: boolean
   axType: number
+  limit?: number
+  extra?: boolean
   hp: {
     minHp: number
     maxHp: number
@@ -40,8 +42,20 @@ export interface Weapon {
     ulb: boolean
     transcendence: boolean
   }
+  transcendenceHp?: number
+  transcendenceAtk?: number
   // Available awakenings for this weapon (from :full view)
   awakenings?: Awakening[]
+  // Database/admin fields
+  releaseDate?: string
+  flbDate?: string
+  ulbDate?: string
+  transcendenceDate?: string
+  wiki?: { en?: string; ja?: string }
+  gamewith?: string
+  kamigame?: string
+  nicknames?: { en?: string[]; ja?: string[] }
+  recruits?: string | { id: string; granblueId: string; name: LocalizedName }
 }
 
 // Character entity from CharacterBlueprint
@@ -78,6 +92,14 @@ export interface Character {
   }
   // Available awakenings for this character (from :full view)
   awakenings?: Awakening[]
+  // Database/admin fields
+  releaseDate?: string
+  flbDate?: string
+  ulbDate?: string
+  wiki?: { en?: string; ja?: string }
+  gamewith?: string
+  kamigame?: string
+  nicknames?: { en?: string[]; ja?: string[] }
 }
 
 // Summon entity from SummonBlueprint
@@ -106,6 +128,17 @@ export interface Summon {
     maxAtkFlb: number
     maxAtkUlb: number
   }
+  transcendenceHp?: number
+  transcendenceAtk?: number
+  // Database/admin fields
+  releaseDate?: string
+  flbDate?: string
+  ulbDate?: string
+  transcendenceDate?: string
+  wiki?: { en?: string; ja?: string }
+  gamewith?: string
+  kamigame?: string
+  nicknames?: { en?: string[]; ja?: string[] }
 }
 
 // Raw data response from separate /raw endpoint
