@@ -16,7 +16,6 @@
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
 	import AwakeningSelect from '$lib/components/sidebar/edit/AwakeningSelect.svelte'
 	import AxSkillSelect from '$lib/components/sidebar/edit/AxSkillSelect.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getElementIcon } from '$lib/utils/images'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
@@ -60,13 +59,9 @@
 		currentValues: WeaponEditValues
 		/** Callback when save is clicked */
 		onSave?: (updates: WeaponEditUpdates) => void
-		/** Callback when cancel is clicked */
-		onCancel?: () => void
-		/** Whether save is in progress */
-		saving?: boolean
 	}
 
-	let { weaponData, currentValues, onSave, onCancel, saving = false }: Props = $props()
+	let { weaponData, currentValues, onSave }: Props = $props()
 
 	// Internal state
 	let uncapLevel = $state(currentValues.uncapLevel)
@@ -166,7 +161,8 @@
 		transcendenceStep = newStage
 	}
 
-	function handleSave() {
+	// Export save function so parent can call it from header button
+	export function save() {
 		const updates: WeaponEditUpdates = {
 			uncapLevel,
 			transcendenceStep
@@ -212,26 +208,6 @@
 		}
 
 		onSave?.(updates)
-	}
-
-	function handleCancel() {
-		// Reset to original values
-		uncapLevel = currentValues.uncapLevel
-		transcendenceStep = currentValues.transcendenceStep
-		element = currentValues.element ?? weaponData?.element ?? 0
-		weaponKey1 = currentValues.weaponKey1Id
-		weaponKey2 = currentValues.weaponKey2Id
-		weaponKey3 = currentValues.weaponKey3Id
-		selectedAwakening = currentValues.awakening?.type
-		awakeningLevel = currentValues.awakening?.level ?? 1
-		axSkills =
-			currentValues.axSkills.length > 0
-				? currentValues.axSkills
-				: [
-						{ modifier: -1, strength: 0 },
-						{ modifier: -1, strength: 0 }
-					]
-		onCancel?.()
 	}
 </script>
 
@@ -332,19 +308,6 @@
 			</DetailsSection>
 		{/if}
 	</div>
-
-	<div class="edit-footer">
-		<Button variant="secondary" onclick={handleCancel} disabled={saving}>Cancel</Button>
-		<Button
-			variant="primary"
-			element={elementName}
-			elementStyle={!!elementName}
-			onclick={handleSave}
-			disabled={saving}
-		>
-			{saving ? 'Saving...' : 'Save'}
-		</Button>
-	</div>
 </div>
 
 <style lang="scss">
@@ -354,7 +317,6 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-		gap: spacing.$unit-2x;
 	}
 
 	.edit-sections {
@@ -373,17 +335,5 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x;
-	}
-
-	.edit-footer {
-		display: flex;
-		gap: spacing.$unit-2x;
-		padding: spacing.$unit-2x;
-		border-top: 1px solid var(--border-secondary);
-		flex-shrink: 0;
-
-		:global(button) {
-			flex: 1;
-		}
 	}
 </style>

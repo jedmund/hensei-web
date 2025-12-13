@@ -21,7 +21,6 @@
 	import RingsSelect from './edit/RingsSelect.svelte'
 	import EarringSelect from './edit/EarringSelect.svelte'
 	import PerpetuityToggle from './edit/PerpetuityToggle.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
 	export interface CharacterEditValues {
@@ -57,19 +56,13 @@
 		showPerpetuity?: boolean
 		/** Callback when save is clicked, receives API-formatted updates */
 		onSave?: (updates: CharacterEditUpdates) => void
-		/** Callback when cancel is clicked */
-		onCancel?: () => void
-		/** Whether save is in progress (disables buttons) */
-		saving?: boolean
 	}
 
 	let {
 		characterData,
 		currentValues,
 		showPerpetuity = true,
-		onSave,
-		onCancel,
-		saving = false
+		onSave
 	}: Props = $props()
 
 	// Internal state - initialized from currentValues
@@ -143,7 +136,8 @@
 		transcendenceStep = newStage
 	}
 
-	function handleSave() {
+	// Export save function so parent can call it from header button
+	export function save() {
 		const updates: CharacterEditUpdates = {
 			uncapLevel,
 			transcendenceStep,
@@ -172,26 +166,6 @@
 		}
 
 		onSave?.(updates)
-	}
-
-	function handleCancel() {
-		// Reset to original values
-		uncapLevel = currentValues.uncapLevel
-		transcendenceStep = currentValues.transcendenceStep
-		selectedAwakening = currentValues.awakening?.type
-		awakeningLevel = currentValues.awakening?.level ?? 1
-		rings =
-			currentValues.rings.length > 0
-				? currentValues.rings
-				: [
-						{ modifier: 1, strength: 0 },
-						{ modifier: 2, strength: 0 },
-						{ modifier: 0, strength: 0 },
-						{ modifier: 0, strength: 0 }
-					]
-		earring = currentValues.earring ?? undefined
-		perpetuity = currentValues.perpetuity
-		onCancel?.()
 	}
 </script>
 
@@ -270,19 +244,6 @@
 			</DetailsSection>
 		{/if}
 	</div>
-
-	<div class="edit-footer">
-		<Button variant="secondary" onclick={handleCancel} disabled={saving}>Cancel</Button>
-		<Button
-			variant="primary"
-			element={elementName}
-			elementStyle={!!elementName}
-			onclick={handleSave}
-			disabled={saving}
-		>
-			{saving ? 'Saving...' : 'Save'}
-		</Button>
-	</div>
 </div>
 
 <style lang="scss">
@@ -292,7 +253,6 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-		gap: spacing.$unit-2x;
 	}
 
 	.edit-sections {
@@ -305,17 +265,5 @@
 
 	.section-content {
 		padding: spacing.$unit;
-	}
-
-	.edit-footer {
-		display: flex;
-		gap: spacing.$unit-2x;
-		padding: spacing.$unit-2x;
-		border-top: 1px solid var(--border-secondary);
-		flex-shrink: 0;
-
-		:global(button) {
-			flex: 1;
-		}
 	}
 </style>

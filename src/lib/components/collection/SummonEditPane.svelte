@@ -10,7 +10,6 @@
 	 */
 	import type { Summon } from '$lib/types/api/entities'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
 	export interface SummonEditValues {
@@ -30,13 +29,9 @@
 		currentValues: SummonEditValues
 		/** Callback when save is clicked */
 		onSave?: (updates: SummonEditUpdates) => void
-		/** Callback when cancel is clicked */
-		onCancel?: () => void
-		/** Whether save is in progress */
-		saving?: boolean
 	}
 
-	let { summonData, currentValues, onSave, onCancel, saving = false }: Props = $props()
+	let { summonData, currentValues, onSave }: Props = $props()
 
 	// Internal state
 	let uncapLevel = $state(currentValues.uncapLevel)
@@ -67,19 +62,13 @@
 		transcendenceStep = newStage
 	}
 
-	function handleSave() {
+	// Export save function so parent can call it from header button
+	export function save() {
 		const updates: SummonEditUpdates = {
 			uncapLevel,
 			transcendenceStep
 		}
 		onSave?.(updates)
-	}
-
-	function handleCancel() {
-		// Reset to original values
-		uncapLevel = currentValues.uncapLevel
-		transcendenceStep = currentValues.transcendenceStep
-		onCancel?.()
 	}
 </script>
 
@@ -101,19 +90,6 @@
 			</div>
 		</DetailsSection>
 	</div>
-
-	<div class="edit-footer">
-		<Button variant="secondary" onclick={handleCancel} disabled={saving}>Cancel</Button>
-		<Button
-			variant="primary"
-			element={elementName}
-			elementStyle={!!elementName}
-			onclick={handleSave}
-			disabled={saving}
-		>
-			{saving ? 'Saving...' : 'Save'}
-		</Button>
-	</div>
 </div>
 
 <style lang="scss">
@@ -123,7 +99,6 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-		gap: spacing.$unit-2x;
 	}
 
 	.edit-sections {
@@ -136,17 +111,5 @@
 
 	.section-content {
 		padding: spacing.$unit;
-	}
-
-	.edit-footer {
-		display: flex;
-		gap: spacing.$unit-2x;
-		padding: spacing.$unit-2x;
-		border-top: 1px solid var(--border-secondary);
-		flex-shrink: 0;
-
-		:global(button) {
-			flex: 1;
-		}
 	}
 </style>
