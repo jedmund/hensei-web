@@ -25,6 +25,7 @@
 	import { getLocalId } from '$lib/utils/localId'
 	import { storeEditKey } from '$lib/utils/editKeys'
 	import type { Party } from '$lib/types/api/party'
+	import { PartyVisibility } from '$lib/types/visibility'
 
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -218,7 +219,7 @@
 		summons: [],
 		characters: [],
 		element: 0,
-		visibility: 1,
+		visibility: PartyVisibility.PRIVATE,
 		job: undefined,
 		jobSkills: undefined,
 		accessory: undefined

@@ -483,7 +483,7 @@
 			{#snippet children()}
 				<Button variant="ghost" onclick={() => (confirmDialogOpen = false)}>Cancel</Button>
 				<Button
-					variant={confirmAction === 'remove' ? 'danger' : 'primary'}
+					variant={confirmAction === 'remove' ? 'destructive' : 'primary'}
 					onclick={handleConfirmAction}
 				>
 					{#if confirmAction === 'remove'}
