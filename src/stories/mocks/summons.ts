@@ -1,4 +1,5 @@
-import type { Summon, GridSummon } from '$lib/types/api/summon';
+import type { Summon } from '$lib/types/api/entities';
+import type { GridSummon } from '$lib/types/api/party';
 
 /** Mock summon data for Storybook stories */
 export const mockSummon: Summon = {

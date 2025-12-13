@@ -1,4 +1,4 @@
-import type { Job } from '$lib/types/api/job';
+import type { Job } from '$lib/types/api/entities';
 
 /** Mock job data for Storybook stories */
 export const mockJob: Job = {

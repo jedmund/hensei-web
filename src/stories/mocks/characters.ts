@@ -1,4 +1,5 @@
-import type { Character, GridCharacter } from '$lib/types/api/character';
+import type { Character } from '$lib/types/api/entities';
+import type { GridCharacter } from '$lib/types/api/party';
 
 /** Mock character data for Storybook stories */
 export const mockCharacter: Character = {

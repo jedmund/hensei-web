@@ -1,4 +1,5 @@
-import type { Weapon, GridWeapon } from '$lib/types/api/weapon';
+import type { Weapon } from '$lib/types/api/entities';
+import type { GridWeapon } from '$lib/types/api/party';
 
 /** Mock weapon data for Storybook stories */
 export const mockWeapon: Weapon = {
