@@ -63,6 +63,12 @@
 	)
 
 	const selected = $derived(options.find((opt) => opt.value === value))
+
+	$effect(() => {
+		console.log('[Select] value:', value, typeof value)
+		console.log('[Select] options:', options.map(o => ({ value: o.value, type: typeof o.value })))
+		console.log('[Select] selected:', selected)
+	})
 	const hasWrapper = $derived(label || error)
 
 	const fieldsetClasses = $derived(
@@ -105,13 +111,13 @@
 			{disabled}
 			items={stringOptions}
 		>
-			<SelectPrimitive.Trigger class={selectClasses} data-placeholder={!selected}>
+			<SelectPrimitive.Trigger class={selectClasses} data-placeholder={selected === undefined}>
 				{#if selected?.color}
 					<span class="color-dot" style="background-color: {selected.color}"></span>
 				{:else if selected?.image}
 					<img src={selected.image} alt={selected.label} class="image" />
 				{/if}
-				<span class="text">{selected?.label || placeholder}</span>
+				<span class="text">{selected !== undefined ? selected.label : placeholder}</span>
 				<Icon name="chevron-down-small" size={14} class="chevron" />
 			</SelectPrimitive.Trigger>
 
@@ -190,13 +196,13 @@
 		{disabled}
 		items={stringOptions}
 	>
-		<SelectPrimitive.Trigger class={selectClasses} data-placeholder={!selected}>
+		<SelectPrimitive.Trigger class={selectClasses} data-placeholder={selected === undefined}>
 			{#if selected?.color}
 				<span class="color-dot" style="background-color: {selected.color}"></span>
 			{:else if selected?.image}
 				<img src={selected.image} alt={selected.label} class="image" />
 			{/if}
-			<span class="text">{selected?.label || placeholder}</span>
+			<span class="text">{selected !== undefined ? selected.label : placeholder}</span>
 			<Icon name="chevron-down-small" size={14} class="chevron" />
 		</SelectPrimitive.Trigger>
 
