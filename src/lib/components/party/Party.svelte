@@ -63,6 +63,7 @@
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import ConflictDialog from '$lib/components/dialogs/ConflictDialog.svelte'
+	import DeleteTeamDialog from '$lib/components/dialogs/DeleteTeamDialog.svelte'
 	import type { ConflictData } from '$lib/types/api/conflict'
 	import { isConflictResponse, createConflictData } from '$lib/types/api/conflict'
 
@@ -743,9 +744,11 @@
 			transcendenceStep?: number,
 			_editKey?: string
 		) {
+			if (uncapLevel === undefined) return
 			try {
 				await updateCharacterUncap.mutateAsync({
 					id: gridCharacterId,
+					partyId: party.id,
 					partyShortcode: party.shortcode,
 					uncapLevel,
 					transcendenceStep
@@ -761,9 +764,11 @@
 			transcendenceStep?: number,
 			_editKey?: string
 		) {
+			if (uncapLevel === undefined) return
 			try {
 				await updateWeaponUncap.mutateAsync({
 					id: gridWeaponId,
+					partyId: party.id,
 					partyShortcode: party.shortcode,
 					uncapLevel,
 					transcendenceStep
@@ -779,9 +784,11 @@
 			transcendenceStep?: number,
 			_editKey?: string
 		) {
+			if (uncapLevel === undefined) return
 			try {
 				await updateSummonUncap.mutateAsync({
 					id: gridSummonId,
+					partyId: party.id,
 					partyShortcode: party.shortcode,
 					uncapLevel,
 					transcendenceStep
@@ -1021,42 +1028,26 @@
 				/>
 			</div>
 		</ModalBody>
-		<ModalFooter>
-			{#snippet children()}
-				<button class="btn-secondary" onclick={() => (editDialogOpen = false)} disabled={loading}>
-					Cancel
-				</button>
-				<button class="btn-primary" onclick={savePartyTitle} disabled={loading || !editingTitle.trim()}>
-					{loading ? 'Saving...' : 'Save'}
-				</button>
-			{/snippet}
-		</ModalFooter>
+		<ModalFooter
+			onCancel={() => (editDialogOpen = false)}
+			cancelDisabled={loading}
+			primaryAction={{
+				label: loading ? 'Saving...' : 'Save',
+				onclick: savePartyTitle,
+				disabled: loading || !editingTitle.trim()
+			}}
+		/>
 	{/snippet}
 </Dialog>
 
 <!-- Delete Confirmation Dialog -->
-<Dialog bind:open={deleteDialogOpen}>
-	{#snippet children()}
-		<ModalHeader title="Delete Party" />
-		<ModalBody>
-			<div class="delete-confirmation">
-				<p>Are you sure you want to delete this party?</p>
-				<p><strong>{party.name || 'Unnamed Party'}</strong></p>
-				<p class="warning">⚠️ This action cannot be undone.</p>
-			</div>
-		</ModalBody>
-		<ModalFooter>
-			{#snippet children()}
-				<button class="btn-secondary" onclick={() => (deleteDialogOpen = false)} disabled={deleting}>
-					Cancel
-				</button>
-				<button class="btn-danger" onclick={deleteParty} disabled={deleting}>
-					{deleting ? 'Deleting...' : 'Delete Party'}
-				</button>
-			{/snippet}
-		</ModalFooter>
-	{/snippet}
-</Dialog>
+<DeleteTeamDialog
+	bind:open={deleteDialogOpen}
+	partyName={party.name || 'Untitled'}
+	{deleting}
+	onDelete={deleteParty}
+	onCancel={() => (deleteDialogOpen = false)}
+/>
 
 <!-- Conflict Resolution Dialog -->
 <ConflictDialog
@@ -1434,27 +1425,4 @@
 		}
 	}
 
-	// Delete confirmation styles
-	.delete-confirmation {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
-		text-align: center;
-		padding: $unit 0;
-
-		p {
-			margin: 0;
-		}
-
-		strong {
-			color: var(--text-primary);
-			font-size: $font-medium;
-		}
-
-		.warning {
-			color: $error;
-			font-size: $font-small;
-			margin-top: $unit-half;
-		}
-	}
 </style>
