@@ -18,7 +18,9 @@ export function buildCookies(oauth: OAuthLoginResponse, info: UserInfoResponse) 
 		element: info.avatar.element ?? '',
 		language: info.language ?? 'en',
 		gender: info.gender ?? 0,
-		theme: info.theme ?? 'system'
+		theme: info.theme ?? 'system',
+		granblueId: info.granblueId,
+		showCrewGamertag: info.showCrewGamertag
 	}
 
 	return { account, user, accessTokenExpiresAt, refresh: oauth.refresh_token }

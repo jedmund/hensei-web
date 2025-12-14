@@ -38,20 +38,19 @@
 	let theme = $state(user.theme)
 	let bahamut = $state(user.bahamut ?? false)
 
-	// Form state - fields from API (must wait for query to load)
-	// Initialize as empty - will be set by $effect when API data loads
-	let granblueId = $state('')
-	let showCrewGamertag = $state(false)
-	let apiDataLoaded = $state(false)
+	// Form state - fields that are also in cookie (use cookie as initial value)
+	let granblueId = $state(user.granblueId ?? '')
+	let showCrewGamertag = $state(user.showCrewGamertag ?? false)
 
 	let saving = $state(false)
 	let error = $state<string | null>(null)
 
-	// Fetch current user data from API (to get actual show_gamertag value from database)
+	// Fetch current user data from API (to sync with latest database values)
 	const currentUserQuery = createQuery(() => ({
 		queryKey: ['currentUser', 'settings'],
 		queryFn: () => userAdapter.getCurrentUser(),
-		enabled: open // Only fetch when modal is open
+		enabled: open, // Only fetch when modal is open
+		staleTime: 5 * 60 * 1000 // Cache for 5 minutes
 	}))
 
 	// Fetch current user's crew (for showing gamertag toggle)
@@ -62,21 +61,12 @@
 
 	const isInCrew = $derived(!!myCrewQuery.data)
 	const crewGamertag = $derived(myCrewQuery.data?.gamertag)
-	const isLoadingApiData = $derived(currentUserQuery.isLoading || currentUserQuery.isPending)
 
-	// Update form state when API data loads (to get actual values from database)
+	// Sync form state when API returns fresher data than cookie
 	$effect(() => {
 		if (currentUserQuery.data) {
 			granblueId = currentUserQuery.data.granblueId ?? ''
 			showCrewGamertag = currentUserQuery.data.showCrewGamertag ?? false
-			apiDataLoaded = true
-		}
-	})
-
-	// Reset apiDataLoaded when modal closes so fresh data is fetched next time
-	$effect(() => {
-		if (!open) {
-			apiDataLoaded = false
 		}
 	})
 
@@ -252,31 +242,20 @@
 					/>
 
 					<!-- Granblue ID -->
-					{#if isLoadingApiData}
-						<div class="loading-field">
-							<span class="loading-label">Granblue ID</span>
-							<span class="loading-text">Loading...</span>
-						</div>
-					{:else}
-						<Input
-							bind:value={granblueId}
-							label="Granblue ID"
-							placeholder="Enter your Granblue ID"
-							contained
-							fullWidth
-						/>
-					{/if}
+					<Input
+						bind:value={granblueId}
+						label="Granblue ID"
+						placeholder="Enter your Granblue ID"
+						contained
+						fullWidth
+					/>
 
 					<!-- Show Crew Gamertag (only if in a crew with a gamertag) -->
 					{#if isInCrew && crewGamertag}
 						<div class="inline-switch">
 							<label for="show-gamertag">
 								<span>Show crew tag on profile</span>
-								{#if isLoadingApiData}
-									<span class="loading-text">Loading...</span>
-								{:else}
-									<Switch bind:checked={showCrewGamertag} name="show-gamertag" element={element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined} />
-								{/if}
+								<Switch bind:checked={showCrewGamertag} name="show-gamertag" element={element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined} />
 							</label>
 							<p class="field-hint">Display "{crewGamertag}" next to your name</p>
 						</div>
@@ -389,28 +368,6 @@
 			font-size: typography.$font-small;
 			color: var(--text-secondary);
 		}
-	}
-
-	.loading-field {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
-
-		.loading-label {
-			font-size: typography.$font-small;
-			font-weight: typography.$medium;
-			color: var(--text-primary);
-		}
-
-		.loading-text {
-			font-size: typography.$font-regular;
-			color: var(--text-secondary);
-		}
-	}
-
-	.loading-text {
-		font-size: typography.$font-regular;
-		color: var(--text-secondary);
 	}
 
 	.picture-section {
