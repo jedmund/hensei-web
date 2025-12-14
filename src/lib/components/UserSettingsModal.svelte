@@ -10,6 +10,7 @@
 	import Button from './ui/Button.svelte'
 	import Input from './ui/Input.svelte'
 	import { pictureData, type Picture } from '$lib/utils/pictureData'
+	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { users } from '$lib/api/resources/users'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { setUserCookie } from '$lib/auth/cookies'
@@ -89,7 +90,7 @@
 			.map((p) => ({
 				value: p.filename,
 				label: p.name[locale] || p.name.en,
-				image: `/profile/${p.filename}.png`
+				image: getAvatarSrc(p.filename)
 			}))
 	)
 
@@ -224,8 +225,8 @@
 					<div class="picture-section">
 						<div class="current-avatar">
 							<img
-								src={`/profile/${picture}.png`}
-								srcset={`/profile/${picture}.png 1x, /profile/${picture}@2x.png 2x`}
+								src={getAvatarSrc(picture)}
+								srcset={getAvatarSrcSet(picture)}
 								alt={currentPicture?.name[locale] || ''}
 								class="avatar-preview element-{element}"
 							/>
