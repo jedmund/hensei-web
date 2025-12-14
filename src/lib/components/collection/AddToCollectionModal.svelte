@@ -481,8 +481,12 @@
 	.modal-content {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
+		flex: 1;
+		min-height: 0;
+		overflow: hidden;
 		gap: $unit-2x;
+		padding: $unit-2x;
+		padding-top: 0;
 	}
 
 	.search-bar {
