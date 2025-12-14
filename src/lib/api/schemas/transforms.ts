@@ -21,24 +21,37 @@ export function snakeToCamel<T>(obj: T): T {
 }
 
 /**
- * Transforms camelCase keys to snake_case
+ * Keys that contain data maps where the keys themselves are data values
+ * (like wiki page names), not property names that should be transformed
  */
-export function camelToSnake<T>(obj: T): T {
+const DATA_MAP_KEYS = new Set(['wiki_data', 'wikiData'])
+
+/**
+ * Transforms camelCase keys to snake_case
+ * @param obj - The object to transform
+ * @param skipValueTransform - If true, don't transform nested values (used for data maps)
+ */
+export function camelToSnake<T>(obj: T, skipValueTransform = false): T {
   if (obj === null || obj === undefined) return obj
-  
+
   if (Array.isArray(obj)) {
-    return obj.map(camelToSnake) as T
+    return obj.map(item => camelToSnake(item, skipValueTransform)) as T
   }
-  
+
   if (typeof obj === 'object') {
     const result: any = {}
     for (const [key, value] of Object.entries(obj)) {
-      const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)
-      result[snakeKey] = camelToSnake(value)
+      const snakeKey = skipValueTransform ? key : key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)
+      // If this key is a data map, don't transform its nested keys
+      if (DATA_MAP_KEYS.has(key) || DATA_MAP_KEYS.has(snakeKey)) {
+        result[snakeKey] = value // Keep value as-is
+      } else {
+        result[snakeKey] = camelToSnake(value, skipValueTransform)
+      }
     }
     return result
   }
-  
+
   return obj
 }
 
