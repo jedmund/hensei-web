@@ -21,8 +21,9 @@
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
+	import ScoutUserModal from '$lib/components/crew/ScoutUserModal.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
-	import type { MemberFilter, CrewMembership, PhantomPlayer } from '$lib/types/api/crew'
+	import type { MemberFilter, CrewMembership, PhantomPlayer, CrewInvitation } from '$lib/types/api/crew'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -45,6 +46,12 @@
 	const activeQuery = createQuery(() => ({
 		...crewQueries.members('active'),
 		enabled: filter !== 'active' // Only fetch separately if not already viewing active
+	}))
+
+	// Query for pending invitations (officers only)
+	const invitationsQuery = createQuery(() => ({
+		...crewQueries.crewInvitations(crewStore.crew?.id ?? ''),
+		enabled: crewStore.isOfficer && !!crewStore.crew?.id
 	}))
 
 	// Calculate total active roster size (members + phantoms)
@@ -101,6 +108,12 @@
 	let editingMember = $state<CrewMembership | null>(null)
 	let editingPhantom = $state<PhantomPlayer | null>(null)
 	let editJoinDate = $state('')
+
+	// Dialog state for scout modal
+	let scoutModalOpen = $state(false)
+
+	// Pending invitations section visibility
+	let invitationsSectionOpen = $state(true)
 
 	// Dialog state for phantom creation
 	let phantomDialogOpen = $state(false)
@@ -187,14 +200,14 @@
 		editingMember = member
 		editingPhantom = null
 		// Format date for input
-		editJoinDate = member.joinedAt ? member.joinedAt.split('T')[0] : ''
+		editJoinDate = member.joinedAt ? member.joinedAt.split('T')[0] ?? '' : ''
 		editJoinDateDialogOpen = true
 	}
 
 	function openEditPhantomJoinDateDialog(phantom: PhantomPlayer) {
 		editingPhantom = phantom
 		editingMember = null
-		editJoinDate = phantom.joinedAt ? phantom.joinedAt.split('T')[0] : ''
+		editJoinDate = phantom.joinedAt ? phantom.joinedAt.split('T')[0] ?? '' : ''
 		editJoinDateDialogOpen = true
 	}
 
@@ -277,6 +290,16 @@
 			day: 'numeric'
 		})
 	}
+
+	// Check if invitation is expired
+	function isInvitationExpired(expiresAt: string): boolean {
+		return new Date(expiresAt) < new Date()
+	}
+
+	// Get pending (non-expired) invitations count
+	const pendingInvitationsCount = $derived(
+		invitationsQuery.data?.filter((inv) => !isInvitationExpired(inv.expiresAt)).length ?? 0
+	)
 </script>
 
 <svelte:head>
@@ -301,7 +324,14 @@
 			{/snippet}
 			{#snippet actions()}
 				{#if crewStore.isOfficer}
-					<Button variant="secondary" size="small" disabled={isRosterFull}>Scout</Button>
+					<Button
+						variant="secondary"
+						size="small"
+						disabled={isRosterFull}
+						onclick={() => (scoutModalOpen = true)}
+					>
+						Scout
+					</Button>
 					<DropdownMenu>
 						{#snippet trigger({ props })}
 							<Button variant="secondary" size="small" iconOnly icon="ellipsis" {...props} />
@@ -315,6 +345,49 @@
 				{/if}
 			{/snippet}
 		</CrewHeader>
+
+		<!-- Pending Invitations Section (officers only) -->
+		{#if crewStore.isOfficer && invitationsQuery.data && invitationsQuery.data.length > 0}
+			<div class="invitations-section">
+				<button
+					class="invitations-header"
+					onclick={() => (invitationsSectionOpen = !invitationsSectionOpen)}
+				>
+					<span class="invitations-title">
+						Pending Invitations
+						{#if pendingInvitationsCount > 0}
+							<span class="invitations-count">{pendingInvitationsCount}</span>
+						{/if}
+					</span>
+					<span class="toggle-icon" class:open={invitationsSectionOpen}>▼</span>
+				</button>
+
+				{#if invitationsSectionOpen}
+					<ul class="invitations-list">
+						{#each invitationsQuery.data as invitation}
+							{@const expired = isInvitationExpired(invitation.expiresAt)}
+							<li class="invitation-item" class:expired>
+								<div class="invitation-info">
+									<span class="invited-user">{invitation.user?.username ?? 'Unknown'}</span>
+									{#if invitation.invitedBy}
+										<span class="invited-by">
+											Invited by {invitation.invitedBy.username}
+										</span>
+									{/if}
+								</div>
+								<div class="invitation-status">
+									{#if expired}
+										<span class="status-badge expired">Expired</span>
+									{:else}
+										<span class="expires-text">Expires {formatDate(invitation.expiresAt)}</span>
+									{/if}
+								</div>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+		{/if}
 
 		{#if membersQuery.isLoading}
 			<div class="loading-state">
@@ -601,6 +674,11 @@
 		</ModalFooter>
 	{/snippet}
 </Dialog>
+
+<!-- Scout User Modal -->
+{#if crewStore.crew?.id}
+	<ScoutUserModal bind:open={scoutModalOpen} crewId={crewStore.crew.id} />
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
@@ -899,5 +977,117 @@
 		color: var(--text-secondary);
 		margin: 0;
 		line-height: 1.4;
+	}
+
+	// Pending invitations section
+	.invitations-section {
+		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+	}
+
+	.invitations-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		padding: spacing.$unit-2x spacing.$unit-3x;
+		background: rgba(0, 0, 0, 0.02);
+		border: none;
+		cursor: pointer;
+		transition: background-color 0.15s;
+
+		&:hover {
+			background: rgba(0, 0, 0, 0.04);
+		}
+	}
+
+	.invitations-title {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-secondary);
+	}
+
+	.invitations-count {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 18px;
+		height: 18px;
+		padding: 0 6px;
+		background: colors.$error;
+		color: white;
+		border-radius: 9px;
+		font-size: 11px;
+		font-weight: typography.$medium;
+	}
+
+	.toggle-icon {
+		font-size: 10px;
+		color: var(--text-tertiary);
+		transition: transform 0.2s;
+
+		&.open {
+			transform: rotate(180deg);
+		}
+	}
+
+	.invitations-list {
+		list-style: none;
+		margin: 0;
+		padding: spacing.$unit;
+	}
+
+	.invitation-item {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: spacing.$unit spacing.$unit-2x;
+		border-radius: layout.$item-corner;
+
+		&:hover {
+			background: rgba(0, 0, 0, 0.02);
+		}
+
+		&.expired {
+			opacity: 0.5;
+		}
+	}
+
+	.invitation-info {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.invited-user {
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-primary);
+	}
+
+	.invited-by {
+		font-size: typography.$font-tiny;
+		color: var(--text-tertiary);
+	}
+
+	.invitation-status {
+		display: flex;
+		align-items: center;
+	}
+
+	.expires-text {
+		font-size: typography.$font-tiny;
+		color: var(--text-tertiary);
+	}
+
+	.status-badge.expired {
+		font-size: typography.$font-tiny;
+		color: colors.$error;
+		background: colors.$error--bg--light;
+		padding: 2px 8px;
+		border-radius: 4px;
+		font-weight: typography.$medium;
 	}
 </style>
