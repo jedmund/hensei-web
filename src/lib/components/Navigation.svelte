@@ -5,13 +5,17 @@
 	import { m } from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import Button from './ui/Button.svelte'
 	import Icon from './Icon.svelte'
 	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
+	import NotificationBadge from './ui/NotificationBadge.svelte'
 	import { DropdownMenu } from 'bits-ui'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import UserSettingsModal from './UserSettingsModal.svelte'
+	import InvitationsModal from './crew/InvitationsModal.svelte'
 	import { authStore } from '$lib/stores/auth.store'
 
 	// Props from layout data
@@ -128,6 +132,18 @@
 	// Settings modal state
 	let settingsModalOpen = $state(false)
 
+	// Invitations modal state
+	let invitationsModalOpen = $state(false)
+
+	// Query for pending invitations (only when authenticated)
+	const pendingInvitationsQuery = createQuery(() => ({
+		...crewQueries.pendingInvitations(),
+		enabled: isAuth
+	}))
+
+	// Derived count of pending invitations
+	const pendingInvitationCount = $derived(pendingInvitationsQuery.data?.length ?? 0)
+
 	// Handle logout
 	async function handleLogout() {
 		try {
@@ -223,16 +239,23 @@
 						aria-label="Your account"
 						class="profile-link"
 					>
-						{#if avatarSrc}
-							<img
-								src={avatarSrc}
-								srcset={avatarSrcSet}
-								alt={username}
-								class="user-avatar"
-								width="24"
-								height="24"
-							/>
-						{/if}
+						<span class="avatar-container">
+							{#if avatarSrc}
+								<img
+									src={avatarSrc}
+									srcset={avatarSrcSet}
+									alt={username}
+									class="user-avatar"
+									width="24"
+									height="24"
+								/>
+							{/if}
+							{#if pendingInvitationCount > 0}
+								<span class="avatar-badge">
+									<NotificationBadge count={pendingInvitationCount} />
+								</span>
+							{/if}
+						</span>
 						<span>{username}</span>
 					</a>
 				</li>
@@ -269,6 +292,14 @@
 							{#if isAuth}
 								<DropdownItem>
 									<a href={crewHref}>Crew</a>
+								</DropdownItem>
+								<DropdownItem>
+									<button class="dropdown-button-with-badge" onclick={() => (invitationsModalOpen = true)}>
+										<span>Invitations</span>
+										{#if pendingInvitationCount > 0}
+											<NotificationBadge count={pendingInvitationCount} showCount />
+										{/if}
+									</button>
 								</DropdownItem>
 							{/if}
 							<DropdownItem>
@@ -330,6 +361,15 @@
 		userId={account.userId}
 		user={currentUser}
 		role={role ?? 0}
+	/>
+{/if}
+
+<!-- Invitations Modal -->
+{#if isAuth}
+	<InvitationsModal
+		bind:open={invitationsModalOpen}
+		invitations={pendingInvitationsQuery.data ?? []}
+		isLoading={pendingInvitationsQuery.isLoading}
 	/>
 {/if}
 
@@ -499,12 +539,34 @@
 		align-items: center;
 		gap: spacing.$unit-half;
 
+		.avatar-container {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
 		.user-avatar {
 			width: 24px;
 			height: 24px;
 			border-radius: 50%;
 			object-fit: cover;
 		}
+
+		.avatar-badge {
+			position: absolute;
+			top: -2px;
+			right: -4px;
+		}
+	}
+
+	// Dropdown button with badge (for Invitations)
+	:global(.dropdown-button-with-badge) {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		gap: spacing.$unit;
 	}
 
 	// Style the nav buttons to match link dimensions
