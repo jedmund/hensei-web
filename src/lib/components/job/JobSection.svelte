@@ -10,7 +10,7 @@
 		isSkillSlotAvailable,
 		isSkillSlotLocked
 	} from '$lib/utils/jobUtils'
-	import { getAccessoryImage } from '$lib/utils/images'
+	import { getAccessoryImage, getBasePath } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
@@ -42,6 +42,7 @@
 	const slotCount = $derived(getJobSkillSlotCount(job))
 	const jobIconUrl = $derived(job ? getJobIconUrl(job.granblueId) : '')
 	const jobImageUrl = $derived(job ? getJobFullImageUrl(job, gender) : '')
+	const jobBackgroundUrl = `${getBasePath()}/background_a.jpg`
 
 	function handleSelectSkill(slot: number) {
 		if (onSelectSkill) {
@@ -57,7 +58,7 @@
 </script>
 
 <div class="job-section">
-	<div class="job-image-container">
+	<div class="job-image-container" style:background-image="url({jobBackgroundUrl})">
 		{#if job}
 			<img class="job-portrait" src={jobImageUrl} alt={job.name.en} />
 			<div class="overlay"></div>
@@ -205,7 +206,6 @@
 		max-width: 100%;
 		height: 252px;
 		aspect-ratio: 7/4;
-		background: url('/images/background_a.jpg');
 		background-size: 500px 281px;
 		background-position: center;
 		border-radius: layout.$item-corner;

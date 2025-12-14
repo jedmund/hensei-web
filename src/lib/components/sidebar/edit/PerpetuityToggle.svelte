@@ -2,6 +2,7 @@
 
 <script lang="ts">
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
+	import { getBasePath } from '$lib/utils/images'
 
 	interface Props {
 		/** Whether perpetuity is enabled */
@@ -15,6 +16,8 @@
 	let { value = false, onChange, element }: Props = $props()
 
 	let localValue = $state(value)
+
+	const perpetuityImageUrl = `${getBasePath()}/perpetuity.png`
 
 	function handleChange(checked: boolean) {
 		localValue = checked
@@ -32,7 +35,7 @@
 		/>
 		<div class="toggle-content">
 			<img
-				src="/images/perpetuity.png"
+				src={perpetuityImageUrl}
 				alt="Perpetuity Ring"
 				class="perpetuity-icon"
 			/>

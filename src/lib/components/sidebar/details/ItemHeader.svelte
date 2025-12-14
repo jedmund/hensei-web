@@ -4,7 +4,8 @@
 		getCharacterDetailImage,
 		getWeaponBaseImage,
 		getSummonDetailImage,
-		getCharacterPose
+		getCharacterPose,
+		getBasePath
 	} from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
@@ -65,10 +66,12 @@
 
 	// Special characters have different star counts (SR characters, etc.)
 	const special = $derived(type === 'character' && (itemData?.rarity ?? 3) < 3)
+
+	const reliefBackgroundUrl = `${getBasePath()}/relief.png`
 </script>
 
 <div class="item-header-container">
-	<div class="item-header">
+	<div class="item-header" style:background="url({reliefBackgroundUrl}), linear-gradient(to right, #000, #484440, #000)">
 		<div class="uncap-overlay">
 			<UncapIndicator
 				{type}
@@ -99,7 +102,6 @@
 			border-radius: layout.$card-corner;
 			align-items: center;
 			justify-content: center;
-			background: url('/images/relief.png'), linear-gradient(to right, #000, #484440, #000);
 			background-size: 420px 731px;
 			background-position: -20px -20px;
 			transition: background 0.3s ease;

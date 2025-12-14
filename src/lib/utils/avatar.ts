@@ -1,3 +1,5 @@
+import { getImageBaseUrl } from '$lib/api/adapters/config'
+
 /**
  * Ensures a filename has a .png extension
  */
@@ -13,10 +15,20 @@ export function to2x(name: string): string {
 }
 
 /**
+ * Gets the base path for profile images
+ * Uses AWS URL in production, local /profile path in development
+ */
+function getProfileBasePath(): string {
+	const remoteUrl = getImageBaseUrl()
+	return remoteUrl ? `${remoteUrl}/profile` : '/profile'
+}
+
+/**
  * Gets the avatar source path
  */
 export function getAvatarSrc(avatarFile: string | undefined | null): string {
-	return avatarFile ? `/profile/${ensurePng(avatarFile)}` : ''
+	if (!avatarFile) return ''
+	return `${getProfileBasePath()}/${ensurePng(avatarFile)}`
 }
 
 /**
@@ -24,6 +36,7 @@ export function getAvatarSrc(avatarFile: string | undefined | null): string {
  */
 export function getAvatarSrcSet(avatarFile: string | undefined | null): string {
 	if (!avatarFile) return ''
-	const src = `/profile/${ensurePng(avatarFile)}`
-	return `${src} 1x, /profile/${to2x(avatarFile)} 2x`
+	const basePath = getProfileBasePath()
+	const src = `${basePath}/${ensurePng(avatarFile)}`
+	return `${src} 1x, ${basePath}/${to2x(avatarFile)} 2x`
 }
