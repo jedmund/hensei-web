@@ -318,8 +318,7 @@
 		@include smooth-transition($duration-quick, background-color, border-color, box-shadow);
 
 		&:hover:not(.disabled) {
-			// background-color: var(--input-bg-hover);
-			box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+			background-color: var(--input-bg-hover);
 		}
 
 		&:focus-visible {
@@ -481,7 +480,7 @@
 
 		:global(.indicator) {
 			margin-left: auto;
-			color: var(--accent-blue);
+			color: var(--accent-color);
 		}
 	}
 </style>

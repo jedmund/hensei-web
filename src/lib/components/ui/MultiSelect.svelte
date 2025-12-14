@@ -3,7 +3,6 @@
 <script lang="ts" generics="T extends string | number">
 	import { Select as SelectPrimitive } from 'bits-ui'
 	import Icon from '../Icon.svelte'
-	import checkIcon from '$src/assets/icons/check.svg'
 
 	interface Option {
 		value: T
@@ -99,11 +98,12 @@
 					style={option.color ? `--option-color: ${option.color}` : ''}
 				>
 					{#snippet children({ selected })}
-						<span class="label" class:has-color={!!option.color} class:selected>{option.label}</span
-						>
-						<span class="check-icon" class:visible={selected}>
-							<img src={checkIcon} alt="" />
-						</span>
+						<span class="label" class:has-color={!!option.color} class:selected>{option.label}</span>
+						{#if selected}
+							<span class="indicator">
+								<Icon name="check" size={14} />
+							</span>
+						{/if}
 					{/snippet}
 				</SelectPrimitive.Item>
 			{/each}
@@ -136,8 +136,7 @@
 		@include smooth-transition($duration-quick, background-color, border-color, box-shadow);
 
 		&:hover:not(.disabled) {
-			// background-color: var(--input-bg-hover);
-			box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+			background-color: var(--input-bg-hover);
 		}
 
 		&:focus-visible {
@@ -269,23 +268,9 @@
 			}
 		}
 
-		.check-icon {
-			width: 12px;
-			height: 12px;
-			flex-shrink: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-
-			img {
-				width: 12px;
-				height: 12px;
-				opacity: 0;
-			}
-
-			&.visible img {
-				opacity: 1;
-			}
+		:global(.indicator) {
+			margin-left: auto;
+			color: var(--accent-color);
 		}
 	}
 </style>
