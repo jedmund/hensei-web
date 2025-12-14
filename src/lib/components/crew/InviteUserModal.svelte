@@ -1,0 +1,139 @@
+<svelte:options runes={true} />
+
+<script lang="ts">
+	import { useSendInvitation } from '$lib/api/mutations/crew.mutations'
+	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
+	import ModalBody from '$lib/components/ui/ModalBody.svelte'
+	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+
+	interface Props {
+		open: boolean
+		userId: string
+		username: string
+		crewId: string
+	}
+
+	let { open = $bindable(false), userId, username, crewId }: Props = $props()
+
+	const sendMutation = useSendInvitation()
+
+	// State
+	let error = $state<string | null>(null)
+	let success = $state(false)
+
+	async function handleSend() {
+		error = null
+		try {
+			await sendMutation.mutateAsync({ crewId, userId })
+			success = true
+			// Close after a brief delay to show success
+			setTimeout(() => {
+				open = false
+				success = false
+			}, 1500)
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Failed to send invitation'
+		}
+	}
+
+	function handleCancel() {
+		open = false
+		error = null
+		success = false
+	}
+
+	// Reset state when modal opens
+	$effect(() => {
+		if (open) {
+			error = null
+			success = false
+		}
+	})
+</script>
+
+<Dialog bind:open>
+	<ModalHeader
+		title="Invite to Crew"
+		description="Send a crew invitation to this user"
+	/>
+
+	<ModalBody>
+		{#if success}
+			<div class="success-message">
+				<p>Invitation sent to <strong>{username}</strong>!</p>
+			</div>
+		{:else}
+			<div class="confirmation">
+				<p>
+					Are you sure you want to invite <strong>{username}</strong> to join your crew?
+				</p>
+				<p class="note">
+					They will receive the invitation and can choose to accept or decline.
+				</p>
+			</div>
+
+			{#if error}
+				<div class="error-message">
+					<p>{error}</p>
+				</div>
+			{/if}
+		{/if}
+	</ModalBody>
+
+	{#if !success}
+		<ModalFooter>
+			<Button variant="secondary" onclick={handleCancel} disabled={sendMutation.isPending}>
+				Cancel
+			</Button>
+			<Button variant="primary" onclick={handleSend} disabled={sendMutation.isPending}>
+				{sendMutation.isPending ? 'Sending...' : 'Send Invitation'}
+			</Button>
+		</ModalFooter>
+	{/if}
+</Dialog>
+
+<style lang="scss">
+	@use '$src/themes/colors' as colors;
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
+
+	.confirmation {
+		p {
+			margin: 0 0 spacing.$unit;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		.note {
+			font-size: typography.$font-small;
+			color: var(--text-secondary);
+		}
+	}
+
+	.success-message {
+		text-align: center;
+		padding: spacing.$unit-2x;
+		color: colors.$wind-text-20;
+
+		p {
+			margin: 0;
+		}
+	}
+
+	.error-message {
+		margin-top: spacing.$unit;
+		padding: spacing.$unit;
+		background: colors.$error--bg--light;
+		border-radius: 4px;
+		color: colors.$error;
+
+		p {
+			margin: 0;
+			font-size: typography.$font-small;
+		}
+	}
+</style>
