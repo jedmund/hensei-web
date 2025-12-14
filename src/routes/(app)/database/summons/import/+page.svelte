@@ -18,6 +18,7 @@
 	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 
 	import type { PageData } from './$types'
@@ -34,7 +35,7 @@
 	let { data }: { data: PageData } = $props()
 
 	// Input phase
-	let wikiPagesInput = $state('')
+	let wikiPagesInputs = $state<string[]>(['', '', ''])
 	let isFetching = $state(false)
 	let fetchError = $state<string | null>(null)
 
@@ -125,10 +126,20 @@
 		}
 	}
 
+	// Add/remove input fields
+	function addInput() {
+		wikiPagesInputs = [...wikiPagesInputs, '']
+	}
+
+	function removeInput(index: number) {
+		if (wikiPagesInputs.length > 1) {
+			wikiPagesInputs = wikiPagesInputs.filter((_, i) => i !== index)
+		}
+	}
+
 	// Fetch wiki data for entered pages
 	async function fetchWikiData() {
-		const pages = wikiPagesInput
-			.split(',')
+		const pages = wikiPagesInputs
 			.map((p) => p.trim())
 			.filter((p) => p.length > 0)
 			.slice(0, 10)
@@ -326,24 +337,41 @@
 	<!-- Input phase -->
 	{#if entities.size === 0}
 		<div class="input-phase">
-			<DetailsContainer title="Enter Wiki Pages">
-				<div class="wiki-input">
-					<Input
-						bind:value={wikiPagesInput}
-						placeholder="Bahamut, Lucifer, Zeus"
-						contained
-					/>
-					<p class="hint">Enter wiki page names separated by commas (up to 10)</p>
-				</div>
-				{#if fetchError}
-					<p class="error">{fetchError}</p>
-				{/if}
-				<div class="fetch-button">
-					<Button variant="primary" onclick={fetchWikiData} disabled={isFetching}>
-						{isFetching ? 'Fetching...' : 'Fetch Wiki Data'}
-					</Button>
-				</div>
-			</DetailsContainer>
+			<p class="hint">Enter up to 10 wiki page names to import data</p>
+			<div class="wiki-inputs">
+				{#each wikiPagesInputs as _, index}
+					<div class="input-row">
+						<Input
+							bind:value={wikiPagesInputs[index]}
+							placeholder="Bahamut"
+							contained
+							fullWidth
+						/>
+						{#if wikiPagesInputs.length > 1}
+							<button
+								type="button"
+								class="remove-button"
+								onclick={() => removeInput(index)}
+								aria-label="Remove input"
+							>
+								<Icon name="close" size={16} />
+							</button>
+						{/if}
+					</div>
+				{/each}
+				<Button variant="ghost" onclick={addInput}>
+					<Icon name="plus" size={16} />
+					Add another
+				</Button>
+			</div>
+			{#if fetchError}
+				<p class="error">{fetchError}</p>
+			{/if}
+			<div class="fetch-button">
+				<Button variant="primary" onclick={fetchWikiData} disabled={isFetching}>
+					{isFetching ? 'Fetching...' : 'Fetch data'}
+				</Button>
+			</div>
 		</div>
 	{:else}
 		<!-- Entity selector -->
@@ -564,13 +592,46 @@
 	}
 
 	.input-phase {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-2x;
 		padding: spacing.$unit-2x;
 	}
 
-	.wiki-input {
+	.wiki-inputs {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
+	}
+
+	.input-row {
+		display: flex;
+		gap: spacing.$unit;
+		align-items: center;
+	}
+
+	.remove-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		padding: 0;
+		background: transparent;
+		border: none;
+		border-radius: layout.$input-corner;
+		color: colors.$grey-50;
+		cursor: pointer;
+		flex-shrink: 0;
+
+		&:hover {
+			background: colors.$grey-90;
+			color: colors.$grey-30;
+		}
+
+		:global(svg) {
+			fill: currentColor;
+		}
 	}
 
 	.hint {
