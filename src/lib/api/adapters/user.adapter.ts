@@ -3,6 +3,32 @@ import type { Party } from '$lib/types/api/party'
 import type { RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 
+/**
+ * API response for user data (already camelCased by BaseAdapter.transformResponse)
+ * Note: BaseAdapter automatically transforms snake_case to camelCase,
+ * so we receive granblueId, showGamertag, etc.
+ */
+interface ApiUserResponse {
+  id: string
+  username: string
+  language: string
+  private: boolean
+  gender: number
+  theme: string
+  role: number
+  granblueId?: number | string | null  // API returns number, transformed to camelCase
+  showGamertag?: boolean  // transformed from show_gamertag
+  gamertag?: string
+  avatar: {
+    picture: string
+    element: string
+  }
+}
+
+/**
+ * Transformed user info (camelCase for frontend)
+ * Uses our preferred naming convention (showCrewGamertag, crewGamertag)
+ */
 export interface UserInfo {
   id: string
   username: string
@@ -11,6 +37,9 @@ export interface UserInfo {
   gender: number
   theme: string
   role: number
+  granblueId?: string
+  showCrewGamertag?: boolean
+  crewGamertag?: string
   avatar: {
     picture: string
     element: string
@@ -31,6 +60,29 @@ export interface UserProfileResponse {
 }
 
 /**
+ * Transform API user response to frontend UserInfo format
+ * Renames API fields to our preferred naming convention
+ */
+function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
+  return {
+    id: apiUser.id,
+    username: apiUser.username,
+    language: apiUser.language,
+    private: apiUser.private,
+    gender: apiUser.gender,
+    theme: apiUser.theme,
+    role: apiUser.role,
+    // granblueId comes as number from API, convert to string
+    granblueId: apiUser.granblueId != null ? String(apiUser.granblueId) : undefined,
+    // Rename showGamertag to showCrewGamertag
+    showCrewGamertag: apiUser.showGamertag,
+    // Rename gamertag to crewGamertag
+    crewGamertag: apiUser.gamertag,
+    avatar: apiUser.avatar
+  }
+}
+
+/**
  * Adapter for user-related API operations
  */
 export class UserAdapter extends BaseAdapter {
@@ -38,7 +90,11 @@ export class UserAdapter extends BaseAdapter {
    * Get user information
    */
   async getInfo(username: string, options?: RequestOptions): Promise<UserInfo> {
-    return this.request<UserInfo>(`/users/info/${encodeURIComponent(username)}`, options)
+    const result = await this.request<ApiUserResponse>(
+      `/users/info/${encodeURIComponent(username)}`,
+      options
+    )
+    return transformUserResponse(result)
   }
 
   /**
@@ -47,14 +103,26 @@ export class UserAdapter extends BaseAdapter {
   async getProfile(username: string, page = 1): Promise<UserProfileResponse> {
     const params = page > 1 ? { page } : undefined
     const response = await this.request<{
-      profile: UserProfile
-      meta?: { count?: number; total_pages?: number; totalPages?: number; per_page?: number; perPage?: number }
+      profile: ApiUserResponse & { parties?: Party[] }
+      meta?: {
+        count?: number
+        total_pages?: number
+        totalPages?: number
+        per_page?: number
+        perPage?: number
+      }
     }>(`/users/${encodeURIComponent(username)}`, { params })
 
     const items = Array.isArray(response.profile?.parties) ? response.profile.parties : []
 
+    // Transform API response to frontend format
+    const user: UserProfile = {
+      ...transformUserResponse(response.profile),
+      parties: items
+    }
+
     const result: UserProfileResponse = {
-      user: response.profile,
+      user,
       items,
       page
     }
@@ -150,7 +218,7 @@ export class UserAdapter extends BaseAdapter {
    */
   async updateProfile(updates: Partial<UserInfo>): Promise<UserInfo> {
     // Wrap updates in 'user' key as required by Rails backend
-    const result = await this.request<UserInfo>('/users/me', {
+    const result = await this.request<ApiUserResponse>('/users/me', {
       method: 'PUT',
       body: JSON.stringify({ user: updates })
     })
@@ -158,14 +226,15 @@ export class UserAdapter extends BaseAdapter {
     // Clear cache for current user after update
     this.clearCache('/users/me')
 
-    return result
+    return transformUserResponse(result)
   }
 
   /**
    * Get current user
    */
   async getCurrentUser(): Promise<UserInfo> {
-    return this.request<UserInfo>('/users/me')
+    const result = await this.request<ApiUserResponse>('/users/me')
+    return transformUserResponse(result)
   }
 }
 

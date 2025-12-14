@@ -130,6 +130,7 @@ export interface Summon {
   }
   transcendenceHp?: number
   transcendenceAtk?: number
+  series?: number
   // Database/admin fields
   releaseDate?: string
   flbDate?: string

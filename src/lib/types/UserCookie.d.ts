@@ -5,4 +5,6 @@ export interface UserCookie {
 	gender: number
 	theme: string
 	bahamut?: boolean
+	granblueId?: string
+	showCrewGamertag?: boolean
 }

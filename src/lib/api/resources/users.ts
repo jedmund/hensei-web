@@ -6,6 +6,8 @@ export interface UserUpdateParams {
 	gender?: number | undefined
 	language?: string | undefined
 	theme?: string | undefined
+	granblueId?: string | undefined
+	showCrewGamertag?: boolean | undefined
 }
 
 export interface UserResponse {
@@ -19,6 +21,8 @@ export interface UserResponse {
 	language: string
 	theme: string
 	role: number
+	granblueId?: string
+	showCrewGamertag?: boolean
 }
 
 export const users = {
@@ -33,6 +37,8 @@ export const users = {
 			gender?: number | undefined
 			language?: string | undefined
 			theme?: string | undefined
+			granblue_id?: string | undefined
+			show_gamertag?: boolean | undefined
 		} = {}
 
 		if (params.picture !== undefined) updates.picture = params.picture
@@ -40,6 +46,8 @@ export const users = {
 		if (params.gender !== undefined) updates.gender = params.gender
 		if (params.language !== undefined) updates.language = params.language
 		if (params.theme !== undefined) updates.theme = params.theme
+		if (params.granblueId !== undefined) updates.granblue_id = params.granblueId
+		if (params.showCrewGamertag !== undefined) updates.show_gamertag = params.showCrewGamertag
 
 		const result = await userAdapter.updateProfile(updates)
 		return {
@@ -49,7 +57,9 @@ export const users = {
 			gender: result.gender,
 			language: result.language,
 			theme: result.theme,
-			role: result.role
+			role: result.role,
+			granblueId: result.granblueId,
+			showCrewGamertag: result.showCrewGamertag
 		}
 	}
 }
