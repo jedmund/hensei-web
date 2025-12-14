@@ -3,7 +3,8 @@
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
-	import { userQueries } from '$lib/api/queries/user.queries'
+	import { userQueries, type FavoritesPageResult } from '$lib/api/queries/user.queries'
+	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { IsInViewport } from 'runed'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -13,9 +14,13 @@
 	const isOwner = $derived(data.isOwner || false)
 	const activeTab = $derived<'teams' | 'favorites'>(tab === 'favorites' ? 'favorites' : 'teams')
 
+	// Crew info for invite functionality
+	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
+	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
+
 	// Note: Type assertion needed because favorites and parties queries have different
 	// result structures (items vs results) but we handle both in the items $derived
-	const partiesQuery = createInfiniteQuery(() => {
+	const getQueryOptions = () => {
 		const isFavorites = tab === 'favorites' && isOwner
 
 		if (isFavorites) {
@@ -57,8 +62,9 @@
 					}
 				: undefined,
 			initialDataUpdatedAt: 0
-		} as unknown as ReturnType<typeof userQueries.favorites>
-	})
+		}
+	}
+	const partiesQuery = createInfiniteQuery(getQueryOptions as () => ReturnType<typeof userQueries.favorites>)
 
 	const items = $derived(() => {
 		if (!partiesQuery.data?.pages) return data.items || []
@@ -93,9 +99,12 @@
 <section class="profile">
 	<ProfileHeader
 		username={data.user.username}
+		userId={data.user?.id}
 		avatarPicture={data.user?.avatar?.picture}
 		{activeTab}
 		{isOwner}
+		{viewerCrewRole}
+		{viewerCrewId}
 	/>
 
 	{#if partiesQuery.isLoading}
