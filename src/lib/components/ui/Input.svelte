@@ -99,62 +99,26 @@
 	})
 </script>
 
-{#if label || error}
-	<fieldset class={fieldsetClasses}>
-		{#if label}
-			<Label.Root class="label" for={restProps.id}>
-				{label}
-				{#if required}
-					<span class="required">*</span>
-				{/if}
-			</Label.Root>
-		{/if}
+<fieldset class={fieldsetClasses}>
+	{#if label}
+		<Label.Root class="label" for={restProps.id}>
+			{label}
+			{#if required}
+				<span class="required">*</span>
+			{/if}
+		</Label.Root>
+	{/if}
 
-		{#if hasWrapper}
-			<div class={inputClasses}>
-				{#if leftIcon}
-					<span class="iconLeft">
-						<Icon name={leftIcon} size={16} />
-					</span>
-				{/if}
+	{#if hasWrapper}
+		<div class={inputClasses}>
+			{#if leftIcon}
+				<span class="iconLeft">
+					<Icon name={leftIcon} size={16} />
+				</span>
+			{/if}
 
-				<input
-					bind:value
-					{type}
-					{placeholder}
-					{disabled}
-					{readonly}
-					{required}
-					maxlength={maxLength}
-					data-1p-ignore={no1password}
-					onblur={handleBlur}
-					onfocus={handleFocus}
-					oninput={handleInput}
-					{...restProps}
-				/>
-
-				{#if rightIcon}
-					<span class="iconRight">
-						<Icon name={rightIcon} size={16} />
-					</span>
-				{/if}
-
-				{#if validationIcon}
-					<span class="validationIcon {validationState}">
-						<Icon name={validationIcon} size={16} />
-					</span>
-				{/if}
-
-				{#if showCounter}
-					<span class="counter" class:warning={charsRemaining !== undefined && charsRemaining <= 5}>
-						{charsRemaining !== undefined ? charsRemaining : currentCount}
-					</span>
-				{/if}
-			</div>
-		{:else}
 			<input
 				bind:value
-				class={inputClasses}
 				{type}
 				{placeholder}
 				{disabled}
@@ -167,22 +131,29 @@
 				oninput={handleInput}
 				{...restProps}
 			/>
-		{/if}
 
-		{#if error}
-			<span class="error">{error}</span>
-		{/if}
-	</fieldset>
-{:else if hasWrapper}
-	<div class={inputClasses}>
-		{#if leftIcon}
-			<span class="iconLeft">
-				<Icon name={leftIcon} size={16} />
-			</span>
-		{/if}
+			{#if rightIcon}
+				<span class="iconRight">
+					<Icon name={rightIcon} size={16} />
+				</span>
+			{/if}
 
+			{#if validationIcon}
+				<span class="validationIcon {validationState}">
+					<Icon name={validationIcon} size={16} />
+				</span>
+			{/if}
+
+			{#if showCounter}
+				<span class="counter" class:warning={charsRemaining !== undefined && charsRemaining <= 5}>
+					{charsRemaining !== undefined ? charsRemaining : currentCount}
+				</span>
+			{/if}
+		</div>
+	{:else}
 		<input
 			bind:value
+			class={inputClasses}
 			{type}
 			{placeholder}
 			{disabled}
@@ -195,42 +166,12 @@
 			oninput={handleInput}
 			{...restProps}
 		/>
+	{/if}
 
-		{#if rightIcon}
-			<span class="iconRight">
-				<Icon name={rightIcon} size={16} />
-			</span>
-		{/if}
-
-		{#if validationIcon}
-			<span class="validationIcon {validationState}">
-				<Icon name={validationIcon} size={16} />
-			</span>
-		{/if}
-
-		{#if showCounter}
-			<span class="counter" class:warning={charsRemaining !== undefined && charsRemaining <= 5}>
-				{charsRemaining !== undefined ? charsRemaining : currentCount}
-			</span>
-		{/if}
-	</div>
-{:else}
-	<input
-		bind:value
-		class={inputClasses}
-		{type}
-		{placeholder}
-		{disabled}
-		{readonly}
-		{required}
-		maxlength={maxLength}
-		data-1p-ignore={no1password}
-		onblur={handleBlur}
-		onfocus={handleFocus}
-		oninput={handleInput}
-		{...restProps}
-	/>
-{/if}
+	{#if error}
+		<span class="error">{error}</span>
+	{/if}
+</fieldset>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
