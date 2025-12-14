@@ -289,6 +289,7 @@
 				bind:value={elementFilters}
 				onValueChange={handleElementChange}
 				placeholder="Element"
+				contained
 			/>
 		{/if}
 
@@ -298,6 +299,7 @@
 				bind:value={rarityFilters}
 				onValueChange={handleRarityChange}
 				placeholder="Rarity"
+				contained
 			/>
 		{/if}
 
@@ -307,6 +309,7 @@
 				bind:value={seasonFilters}
 				onValueChange={handleSeasonChange}
 				placeholder="Season"
+				contained
 			/>
 		{/if}
 
@@ -316,6 +319,7 @@
 				bind:value={seriesFilters}
 				onValueChange={handleSeriesChange}
 				placeholder={entityType === 'weapon' ? 'Weapon Series' : 'Series'}
+				contained
 			/>
 		{/if}
 
@@ -325,6 +329,7 @@
 				bind:value={raceFilters}
 				onValueChange={handleRaceChange}
 				placeholder="Race"
+				contained
 			/>
 		{/if}
 
@@ -334,6 +339,7 @@
 				bind:value={proficiencyFilters}
 				onValueChange={handleProficiencyChange}
 				placeholder={entityType === 'weapon' ? 'Weapon Type' : 'Proficiency'}
+				contained
 			/>
 		{/if}
 
@@ -343,6 +349,7 @@
 				bind:value={genderFilters}
 				onValueChange={handleGenderChange}
 				placeholder="Gender"
+				contained
 			/>
 		{/if}
 
@@ -384,6 +391,7 @@
 					bind:value={sortBy}
 					onValueChange={handleSortChange}
 					size="small"
+					contained
 				/>
 			</div>
 		{/if}

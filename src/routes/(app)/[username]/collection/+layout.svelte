@@ -57,52 +57,58 @@
 
 <section class="collection">
 	<ProfileHeader
-		{username}
+		username={username ?? ''}
 		avatarPicture={data.user?.avatar?.picture}
-		title={username}
+		element={data.user?.avatar?.element}
+		granblueId={data.user?.granblueId}
+		showCrewGamertag={data.user?.showCrewGamertag}
+		crewGamertag={data.user?.crewGamertag}
+		title={username ?? ''}
 		activeTab="collection"
 		isOwner={data.isOwner}
 	/>
 
-	<!-- Entity type segmented control -->
-	<nav class="entity-nav" aria-label="Collection type">
-		<SegmentedControl
-			value={activeEntityType}
-			onValueChange={handleTabChange}
-			variant="blended"
-			size="small"
-		>
-			<Segment value="characters">Characters</Segment>
-			<Segment value="weapons">Weapons</Segment>
-			<Segment value="summons">Summons</Segment>
-			<Segment value="artifacts">Artifacts</Segment>
-		</SegmentedControl>
-
-		{#if data.isOwner && supportsAddModal}
-			<Button
-				variant="primary"
+	<div class="card-container">
+		<!-- Entity type segmented control -->
+		<nav class="entity-nav" aria-label="Collection type">
+			<SegmentedControl
+				value={activeEntityType}
+				onValueChange={handleTabChange}
+				variant="blended"
 				size="small"
-				onclick={() => (addModalOpen = true)}
-				icon="plus"
-				iconPosition="left"
 			>
-				{addButtonText}
-			</Button>
-		{:else if data.isOwner && isArtifacts}
-			<Button
-				variant="primary"
-				size="small"
-				onclick={handleAddArtifact}
-				icon="plus"
-				iconPosition="left"
-			>
-				Add artifact
-			</Button>
-		{/if}
-	</nav>
+				<Segment value="characters">Characters</Segment>
+				<Segment value="weapons">Weapons</Segment>
+				<Segment value="summons">Summons</Segment>
+				<Segment value="artifacts">Artifacts</Segment>
+			</SegmentedControl>
 
-	<div class="content">
-		{@render children()}
+			{#if data.isOwner && supportsAddModal}
+				<Button
+					variant="primary"
+					size="small"
+					onclick={() => (addModalOpen = true)}
+					icon="plus"
+					iconPosition="left"
+				>
+					{addButtonText}
+				</Button>
+			{:else if data.isOwner && isArtifacts}
+				<Button
+					variant="primary"
+					size="small"
+					onclick={handleAddArtifact}
+					icon="plus"
+					iconPosition="left"
+				>
+					Add artifact
+				</Button>
+			{/if}
+		</nav>
+
+		<div class="content">
+			{@render children()}
+		</div>
 	</div>
 </section>
 
@@ -116,9 +122,15 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as *;
 
 	.collection {
 		padding: $unit-2x 0;
+	}
+
+	.card-container {
+		background: var(--card-bg);
+		border-radius: $card-corner;
 	}
 
 	.entity-nav {
@@ -126,14 +138,12 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: $unit-2x;
-		margin-bottom: $unit-2x;
-
-		:global(.button) {
-			align-self: stretch;
-		}
+		padding: $unit-2x;
+		border-bottom: 1px solid var(--border-subtle);
 	}
 
 	.content {
+		padding: $unit-2x;
 		min-height: 400px;
 	}
 </style>
