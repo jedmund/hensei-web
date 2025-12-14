@@ -18,6 +18,8 @@
 		element?: string
 		/** User's Granblue Fantasy ID for profile link */
 		granblueId?: string
+		/** Whether the user wants to show their Granblue ID on profile */
+		showGranblueId?: boolean
 		/** Whether to show crew gamertag */
 		showCrewGamertag?: boolean
 		/** The crew's gamertag to display */
@@ -39,6 +41,7 @@
 		isOwner = false,
 		element = 'null',
 		granblueId,
+		showGranblueId = false,
 		showCrewGamertag = false,
 		crewGamertag,
 		viewerCrewRole = null,
@@ -46,9 +49,11 @@
 		targetUserHasCrew = false
 	}: Props = $props()
 
-	// GBF profile URL
+	// GBF profile URL - only show if user has enabled the setting
 	const gbfProfileUrl = $derived(
-		granblueId ? `https://game.granbluefantasy.jp/#profile/${granblueId}` : null
+		granblueId && showGranblueId
+			? `https://game.granbluefantasy.jp/#profile/${granblueId}`
+			: null
 	)
 
 	const avatarSrc = $derived(getAvatarSrc(avatarPicture))
