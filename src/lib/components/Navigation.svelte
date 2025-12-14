@@ -64,7 +64,7 @@
 	const databaseCharactersHref = $derived(localizeHref('/database/characters'))
 	const databaseWeaponsHref = $derived(localizeHref('/database/weapons'))
 	const databaseSummonsHref = $derived(localizeHref('/database/summons'))
-	const databaseWeaponSeriesHref = $derived(localizeHref('/database/weapon-series'))
+	const databaseSeriesHref = $derived(localizeHref('/database/series'))
 	const databaseGwEventsHref = $derived(localizeHref('/database/gw-events'))
 
 	// Database route detection
@@ -204,7 +204,7 @@
 						<DropdownMenu.Portal>
 							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
 								<DropdownItem>
-									<a href={databaseWeaponSeriesHref}>Weapon Series</a>
+									<a href={databaseSeriesHref}>Series</a>
 								</DropdownItem>
 								<DropdownItem>
 									<a href={databaseGwEventsHref}>Unite & Fight</a>
