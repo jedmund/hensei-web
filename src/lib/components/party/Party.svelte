@@ -36,6 +36,7 @@
 	// Utilities
 	import { getLocalId } from '$lib/utils/localId'
 	import { getEditKey, storeEditKey, computeEditability } from '$lib/utils/editKeys'
+	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 
 	import { createDragDropContext, type DragOperation } from '$lib/composables/drag-drop.svelte'
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
@@ -846,14 +847,8 @@
 				<div class="party-info">
 					<h1>{party.name || '(untitled party)'}</h1>
 					{#if party.user}
-						{@const avatarFile = party.user.avatar?.picture || ''}
-						{@const ensurePng = (name: string) => (/\.png$/i.test(name) ? name : `${name}.png`)}
-						{@const to2x = (name: string) =>
-							/\.png$/i.test(name) ? name.replace(/\.png$/i, '@2x.png') : `${name}@2x.png`}
-						{@const avatarSrc = avatarFile ? `/profile/${ensurePng(avatarFile)}` : ''}
-						{@const avatarSrcSet = avatarFile
-							? `${avatarSrc} 1x, /profile/${to2x(avatarFile)} 2x`
-							: ''}
+						{@const avatarSrc = getAvatarSrc(party.user.avatar?.picture)}
+						{@const avatarSrcSet = getAvatarSrcSet(party.user.avatar?.picture)}
 						<div class="creator">
 							<a href="/{party.user.username}" class="creator-link">
 								<div class="avatar-wrapper {party.user.avatar?.element || ''}">
