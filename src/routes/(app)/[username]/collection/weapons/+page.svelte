@@ -113,6 +113,7 @@
 			showViewToggle={true}
 			viewMode={currentViewMode}
 			onViewModeChange={handleViewModeChange}
+			neutralViewToggle={true}
 		/>
 	</div>
 

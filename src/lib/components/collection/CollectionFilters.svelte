@@ -6,7 +6,7 @@
 	import type { ViewMode } from '$lib/stores/viewMode.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
-	import Icon from '$lib/components/Icon.svelte'
+	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 
@@ -44,6 +44,10 @@
 		onViewModeChange?: (mode: ViewMode) => void
 		/** Whether to show the view toggle */
 		showViewToggle?: boolean
+		/** Element color theme for active toggle state */
+		element?: string
+		/** Use neutral gray styling for view toggle */
+		neutralViewToggle?: boolean
 	}
 
 	export interface CollectionFilterState {
@@ -104,7 +108,9 @@
 		showSort = true,
 		viewMode = 'grid',
 		onViewModeChange,
-		showViewToggle = false
+		showViewToggle = false,
+		element,
+		neutralViewToggle = false
 	}: Props = $props()
 
 	// Compute effective filter visibility (explicit showFilters overrides entityType defaults)
@@ -360,28 +366,7 @@
 
 	<div class="right-controls">
 		{#if showViewToggle}
-			<div class="view-toggle">
-				<button
-					type="button"
-					class="view-btn"
-					class:active={viewMode === 'grid'}
-					onclick={() => onViewModeChange?.('grid')}
-					aria-label="Grid view"
-					aria-pressed={viewMode === 'grid'}
-				>
-					<Icon name="grid-2x2" size={18} />
-				</button>
-				<button
-					type="button"
-					class="view-btn"
-					class:active={viewMode === 'list'}
-					onclick={() => onViewModeChange?.('list')}
-					aria-label="List view"
-					aria-pressed={viewMode === 'list'}
-				>
-					<Icon name="list" size={18} />
-				</button>
-			</div>
+			<ViewModeToggle value={viewMode} onValueChange={onViewModeChange} {element} neutral={neutralViewToggle} />
 		{/if}
 
 		{#if showSort}
@@ -422,39 +407,6 @@
 		align-items: center;
 		gap: $unit;
 		flex-shrink: 0;
-	}
-
-	.view-toggle {
-		display: flex;
-		border: 1px solid var(--border-color, #ddd);
-		border-radius: 6px;
-		overflow: hidden;
-	}
-
-	.view-btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: $unit-half;
-		border: none;
-		background: transparent;
-		color: var(--text-secondary, #666);
-		cursor: pointer;
-		transition: background 0.15s, color 0.15s;
-
-		&:hover {
-			background: var(--button-bg-hover, #f5f5f5);
-			color: var(--text-primary, #333);
-		}
-
-		&.active {
-			background: var(--accent-color, #3366ff);
-			color: white;
-		}
-
-		&:first-child {
-			border-right: 1px solid var(--border-color, #ddd);
-		}
 	}
 
 	.sort {

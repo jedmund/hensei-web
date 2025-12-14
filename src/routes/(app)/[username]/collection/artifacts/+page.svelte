@@ -7,6 +7,7 @@
 	import CollectionArtifactCard from '$lib/components/collection/CollectionArtifactCard.svelte'
 	import CollectionArtifactRow from '$lib/components/collection/CollectionArtifactRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import { IsInViewport } from 'runed'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
@@ -105,26 +106,11 @@
 			size="small"
 		/>
 
-		<div class="view-toggle">
-			<button
-				type="button"
-				class="toggle-btn"
-				class:active={currentViewMode === 'grid'}
-				onclick={() => handleViewModeChange('grid')}
-				aria-label="Grid view"
-			>
-				<Icon name="grid-2x2" size={18} />
-			</button>
-			<button
-				type="button"
-				class="toggle-btn"
-				class:active={currentViewMode === 'list'}
-				onclick={() => handleViewModeChange('list')}
-				aria-label="List view"
-			>
-				<Icon name="list" size={18} />
-			</button>
-		</div>
+		<ViewModeToggle
+			value={currentViewMode}
+			onValueChange={handleViewModeChange}
+			neutral={true}
+		/>
 	</div>
 
 	<!-- Collection grid -->
@@ -207,37 +193,6 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: $unit-2x;
-	}
-
-	.view-toggle {
-		display: flex;
-		gap: $unit-fourth;
-		padding: $unit-fourth;
-		background: var(--segmented-control-bg, $grey-90);
-		border-radius: $item-corner;
-	}
-
-	.toggle-btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: $unit-half;
-		border: none;
-		background: transparent;
-		border-radius: $item-corner-small;
-		cursor: pointer;
-		color: var(--text-secondary);
-		transition: all 0.15s;
-
-		&:hover {
-			color: var(--text-primary);
-		}
-
-		&.active {
-			background: var(--unit-bg, white);
-			color: var(--text-primary);
-			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-		}
 	}
 
 	.grid-area {
