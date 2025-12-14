@@ -286,7 +286,7 @@
 								</DropdownItem>
 								<DropdownMenu.Separator class="dropdown-separator" />
 							{/if}
-							{#if isAuth}
+							{#if isAuth && !crewStore.isInCrew}
 								<DropdownItem>
 									<button class="dropdown-button-with-badge" onclick={() => (invitationsModalOpen = true)}>
 										<span>Invitations</span>
