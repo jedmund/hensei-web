@@ -46,15 +46,11 @@
       onAcceptSuggestion={() => onAcceptSuggestion?.('rarity', suggestions?.rarity)}
       onDismissSuggestion={() => onDismissSuggestion?.('rarity')}
     />
-    <SuggestionDetailItem
+    <DetailItem
       label="Granblue ID"
       bind:value={editData.granblue_id}
       editable={true}
       type="text"
-      suggestion={suggestions?.granblueId}
-      dismissedSuggestion={dismissedSuggestions?.has('granblueId')}
-      onAcceptSuggestion={() => onAcceptSuggestion?.('granblueId', suggestions?.granblueId)}
-      onDismissSuggestion={() => onDismissSuggestion?.('granblueId')}
     />
   {:else}
     <DetailItem label="Rarity" value={getRarityLabel(weapon.rarity)} />
