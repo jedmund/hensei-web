@@ -5,12 +5,13 @@
 
 	interface Props {
 		children: Snippet
+		noPadding?: boolean
 	}
 
-	let { children }: Props = $props()
+	let { children, noPadding = false }: Props = $props()
 </script>
 
-<div class="modal-body">
+<div class="modal-body" class:no-padding={noPadding}>
 	{@render children()}
 </div>
 
@@ -22,5 +23,9 @@
 		padding-bottom: spacing.$unit-3x;
 		overflow-y: auto;
 		flex: 1;
+
+		&.no-padding {
+			padding: 0;
+		}
 	}
 </style>

@@ -16,12 +16,14 @@
 		cancelDisabled?: boolean
 		primaryAction?: PrimaryAction
 		left?: Snippet
+		showShadow?: boolean
 	}
 
-	let { onCancel, cancelDisabled = false, primaryAction, left }: Props = $props()
+	let { onCancel, cancelDisabled = false, primaryAction, left, showShadow = false }: Props =
+		$props()
 </script>
 
-<div class="modal-footer">
+<div class="modal-footer" class:shadow={showShadow}>
 	{#if left}
 		<div class="left">
 			{@render left()}
@@ -43,13 +45,19 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/effects' as effects;
 
 	.modal-footer {
 		padding: spacing.$unit-2x;
-		padding-top: 0;
+		padding-top: spacing.$unit-2x;
 		display: flex;
 		gap: spacing.$unit-2x;
 		align-items: center;
+		@include effects.smooth-transition(effects.$duration-quick, box-shadow);
+
+		&.shadow {
+			box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+		}
 	}
 
 	.left {

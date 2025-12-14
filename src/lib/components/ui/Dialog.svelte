@@ -8,6 +8,7 @@
 		open: boolean
 		onOpenChange?: (open: boolean) => void
 		size?: DialogSize
+		hideClose?: boolean
 		children: Snippet
 	}
 
@@ -15,6 +16,7 @@
 		open = $bindable(false),
 		onOpenChange,
 		size = 'default',
+		hideClose = false,
 		children
 	}: DialogProps = $props()
 
@@ -36,9 +38,11 @@
 	<DialogBase.Portal>
 		<DialogBase.Overlay class="dialog-overlay" />
 		<DialogBase.Content class="dialog-content {sizeClass}">
-			<DialogBase.Close class="dialog-close">
-				<span aria-hidden="true">×</span>
-			</DialogBase.Close>
+			{#if !hideClose}
+				<DialogBase.Close class="dialog-close">
+					<span aria-hidden="true">×</span>
+				</DialogBase.Close>
+			{/if}
 
 			{@render children()}
 		</DialogBase.Content>

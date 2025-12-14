@@ -2,18 +2,14 @@
 
 <script lang="ts">
 	import Dialog from './ui/Dialog.svelte'
-	import ModalHeader from './ui/ModalHeader.svelte'
 	import ModalBody from './ui/ModalBody.svelte'
 	import ModalFooter from './ui/ModalFooter.svelte'
-	import Select from './ui/Select.svelte'
-	import Switch from './ui/switch/Switch.svelte'
-	import Button from './ui/Button.svelte'
-	import Input from './ui/Input.svelte'
-	import { pictureData, type Picture } from '$lib/utils/pictureData'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+	import SettingsNav, { type ElementType } from './ui/SettingsNav.svelte'
+	import AccountSettings from './settings/AccountSettings.svelte'
+	import ProfileSettings from './settings/ProfileSettings.svelte'
+	import PrivacySettings from './settings/PrivacySettings.svelte'
 	import { users } from '$lib/api/resources/users'
 	import type { UserCookie } from '$lib/types/UserCookie'
-	import { setUserCookie } from '$lib/auth/cookies'
 	import { invalidateAll } from '$app/navigation'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
@@ -30,27 +26,48 @@
 
 	let { open = $bindable(false), onOpenChange, username, userId, user, role }: Props = $props()
 
-	// Form state - fields from cookie (can use immediately)
-	let picture = $state(user.picture)
-	let element = $state(user.element)
-	let gender = $state(user.gender)
-	let language = $state(user.language)
-	let theme = $state(user.theme)
-	let bahamut = $state(user.bahamut ?? false)
+	// Active section for navigation
+	let activeSection = $state<string>('profile')
 
-	// Form state - fields that are also in cookie (use cookie as initial value)
-	let granblueId = $state(user.granblueId ?? '')
-	let showCrewGamertag = $state(user.showCrewGamertag ?? false)
+	// Form state - Account section (initialized empty, populated from API)
+	let formUsername = $state(username)
+	let formEmail = $state('')
+	let currentPassword = $state('')
+	let newPassword = $state('')
+	let confirmPassword = $state('')
+	let bahamut = $state(user.bahamut ?? false) // Client-side preference, kept in cookie
+
+	// Form state - Profile section (initialized with defaults, populated from API)
+	let picture = $state('')
+	let element = $state<ElementType>('wind')
+	let granblueId = $state('')
+	let gender = $state(0)
+	let language = $state('en')
+	let theme = $state('system')
+
+	// Form state - Privacy section (initialized with defaults, populated from API)
+	let showGranblueId = $state(false)
+	let collectionPrivacy = $state(1) // 1 = Everyone (1-based to avoid JS falsy 0)
+	let showCrewGamertag = $state(false)
+
+	// Track whether form has been initialized from API
+	let formInitialized = $state(false)
+
+	// Store original values from API for comparison on save
+	let originalLanguage = $state('')
+	let originalTheme = $state('')
 
 	let saving = $state(false)
 	let error = $state<string | null>(null)
+	let contentElement: HTMLElement | undefined = $state()
+	let isScrolledToBottom = $state(true)
 
-	// Fetch current user data from API (to sync with latest database values)
+	// Fetch current user data from API
 	const currentUserQuery = createQuery(() => ({
 		queryKey: ['currentUser', 'settings'],
 		queryFn: () => userAdapter.getCurrentUser(),
 		enabled: open, // Only fetch when modal is open
-		staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+		staleTime: 0 // Always refetch when modal opens to ensure fresh data
 	}))
 
 	// Fetch current user's crew (for showing gamertag toggle)
@@ -60,74 +77,73 @@
 	}))
 
 	const isInCrew = $derived(!!myCrewQuery.data)
-	const crewGamertag = $derived(myCrewQuery.data?.gamertag)
+	const crewGamertag = $derived(myCrewQuery.data?.gamertag ?? undefined)
+	const isLoading = $derived(currentUserQuery.isPending && !formInitialized)
 
-	// Sync form state when API returns fresher data than cookie
+	// Populate form state when API returns data
 	$effect(() => {
-		if (currentUserQuery.data) {
-			granblueId = currentUserQuery.data.granblueId ?? ''
-			showCrewGamertag = currentUserQuery.data.showCrewGamertag ?? false
+		if (currentUserQuery.data && !formInitialized) {
+			const data = currentUserQuery.data
+			console.log('[UserSettingsModal] API data received:', data)
+			console.log('[UserSettingsModal] data.collectionPrivacy:', data.collectionPrivacy, typeof data.collectionPrivacy)
+			// Account
+			formEmail = data.email ?? ''
+			// Profile
+			picture = data.avatar?.picture ?? ''
+			element = (data.avatar?.element as ElementType) ?? 'wind'
+			granblueId = data.granblueId ?? ''
+			gender = data.gender ?? 0
+			language = data.language ?? 'en'
+			theme = data.theme ?? 'system'
+			// Privacy
+			showGranblueId = data.showGranblueId ?? false
+			collectionPrivacy = data.collectionPrivacy ?? 1
+			console.log('[UserSettingsModal] collectionPrivacy set to:', collectionPrivacy, typeof collectionPrivacy)
+			showCrewGamertag = data.showCrewGamertag ?? false
+			// Store original values for comparison
+			originalLanguage = data.language ?? 'en'
+			originalTheme = data.theme ?? 'system'
+			formInitialized = true
 		}
 	})
 
-	// Get current locale from user settings
-	const locale = $derived(user.language as 'en' | 'ja')
+	// Reset form initialized state when modal closes
+	$effect(() => {
+		if (!open) {
+			formInitialized = false
+		}
+	})
 
-	// Prepare options for selects
-	const pictureOptions = $derived(
-		pictureData
-			.sort((a, b) => a.name.en.localeCompare(b.name.en))
-			.map((p) => ({
-				value: p.filename,
-				label: p.name[locale] || p.name.en,
-				image: getAvatarSrc(p.filename)
-			}))
-	)
-
-	const genderOptions = [
-		{ value: 0, label: 'Gran' },
-		{ value: 1, label: 'Djeeta' }
+	// Navigation items
+	const navItems = [
+		{ value: 'account', label: 'Account' },
+		{ value: 'profile', label: 'Profile' },
+		{ value: 'privacy', label: 'Privacy' }
 	]
 
-	const languageOptions = [
-		{ value: 'en', label: 'English' },
-		{ value: 'ja', label: '日本語' }
-	]
-
-	const themeOptions = [
-		{ value: 'system', label: 'System' },
-		{ value: 'light', label: 'Light' },
-		{ value: 'dark', label: 'Dark' }
-	]
-
-	// Element colors for circle indicators
-	const elementColors: Record<string, string> = {
-		wind: '#3ee489',
-		fire: '#fa6d6d',
-		water: '#6cc9ff',
-		earth: '#fd9f5b',
-		dark: '#de7bff',
-		light: '#e8d633'
+	// Check if scrolled to bottom
+	function checkScrollPosition() {
+		if (!contentElement) return
+		const { scrollTop, scrollHeight, clientHeight } = contentElement
+		// Consider "at bottom" if within 5px of the bottom
+		isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 5
 	}
 
-	// Create SVG circle data URL for element color
-	function getElementCircle(element: string): string {
-		const color = elementColors[element] || '#888'
-		const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="${color}"/></svg>`
-		return `data:image/svg+xml,${encodeURIComponent(svg)}`
-	}
+	// Check scroll position when content element is bound or section changes
+	$effect(() => {
+		if (contentElement) {
+			// Small delay to let content render
+			setTimeout(checkScrollPosition, 0)
+		}
+	})
 
-	const elementOptions = [
-		{ value: 'wind', label: 'Wind', image: getElementCircle('wind') },
-		{ value: 'fire', label: 'Fire', image: getElementCircle('fire') },
-		{ value: 'water', label: 'Water', image: getElementCircle('water') },
-		{ value: 'earth', label: 'Earth', image: getElementCircle('earth') },
-		{ value: 'dark', label: 'Dark', image: getElementCircle('dark') },
-		{ value: 'light', label: 'Light', image: getElementCircle('light') }
-	]
-
-	// Get current picture data
-	const currentPicture = $derived(pictureData.find((p) => p.filename === picture))
+	// Re-check when section changes
+	$effect(() => {
+		activeSection // Track this dependency
+		if (contentElement) {
+			setTimeout(checkScrollPosition, 0)
+		}
+	})
 
 	// Handle form submission
 	async function handleSave() {
@@ -136,14 +152,16 @@
 
 		try {
 			// Prepare the update data
-			const updateData = {
+			const updateData: Parameters<typeof users.update>[1] = {
 				picture,
 				element,
 				gender,
 				language,
 				theme,
 				granblueId: granblueId || undefined,
-				showCrewGamertag
+				showCrewGamertag,
+				showGranblueId,
+				collectionPrivacy
 			}
 
 			// Call API to update user settings
@@ -158,13 +176,10 @@
 				theme: response.theme,
 				bahamut,
 				granblueId: response.granblueId,
-				showCrewGamertag: response.showCrewGamertag
+				showCrewGamertag: response.showCrewGamertag,
+				showGranblueId: response.showGranblueId,
+				collectionPrivacy: response.collectionPrivacy
 			}
-
-			// Save to cookie (we'll need to handle this server-side)
-			// For now, we'll just update the local state
-			const expires = new Date()
-			expires.setDate(expires.getDate() + 60)
 
 			// Make a request to update the cookie server-side
 			await fetch('/api/settings', {
@@ -176,7 +191,7 @@
 			})
 
 			// If language, theme, or bahamut mode changed, we need a full page reload
-			if (user.language !== language || user.theme !== theme || user.bahamut !== bahamut) {
+			if (originalLanguage !== language || originalTheme !== theme || user.bahamut !== bahamut) {
 				await invalidateAll()
 				window.location.reload()
 			} else {
@@ -200,110 +215,78 @@
 	}
 </script>
 
-<Dialog bind:open {...onOpenChange ? { onOpenChange } : {}}>
+<Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="medium" hideClose>
 	{#snippet children()}
-		<ModalHeader title="Account settings" description="@{username}" />
-
-		<ModalBody>
-			<div class="settings-form">
+		<ModalBody noPadding>
+			<div class="settings-layout">
 				{#if error}
 					<div class="error-message">{error}</div>
 				{/if}
 
-				<div class="form-fields">
-					<!-- Picture Selection with Preview -->
-					<div class="picture-section">
-						<div class="current-avatar">
-							<img
-								src={getAvatarSrc(picture)}
-								srcset={getAvatarSrcSet(picture)}
-								alt={currentPicture?.name[locale] || ''}
-								class="avatar-preview element-{element}"
-							/>
-						</div>
-						<Select
-							bind:value={picture}
-							options={pictureOptions}
-							label="Avatar"
-							placeholder="Select an avatar"
-							fullWidth
-							contained
-						/>
+				<aside class="settings-sidebar">
+					<div class="sidebar-header">
+						<h2 class="title">Settings</h2>
+						<p class="username">@{username}</p>
 					</div>
-
-					<!-- Element Selection -->
-					<Select
-						bind:value={element}
-						options={elementOptions}
-						label="Element"
-						placeholder="Select an element"
-						fullWidth
-						contained
+					<SettingsNav
+						bind:value={activeSection}
+						{element}
+						items={navItems}
 					/>
+				</aside>
 
-					<!-- Granblue ID -->
-					<Input
-						bind:value={granblueId}
-						label="Granblue ID"
-						placeholder="Enter your Granblue ID"
-						contained
-						fullWidth
-					/>
-
-					<!-- Show Crew Gamertag (only if in a crew with a gamertag) -->
-					{#if isInCrew && crewGamertag}
-						<div class="inline-switch">
-							<label for="show-gamertag">
-								<span>Show crew tag on profile</span>
-								<Switch bind:checked={showCrewGamertag} name="show-gamertag" element={element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined} />
-							</label>
-							<p class="field-hint">Display "{crewGamertag}" next to your name</p>
+				<main class="settings-content" bind:this={contentElement} onscroll={checkScrollPosition}>
+					{#if isLoading}
+						<div class="loading-state">
+							<div class="spinner"></div>
+							<span>Loading settings...</span>
 						</div>
+					{:else if activeSection === 'account'}
+						<AccountSettings
+							username={formUsername}
+							email={formEmail}
+							{currentPassword}
+							{newPassword}
+							{confirmPassword}
+							{bahamut}
+							{role}
+							{element}
+							onUsernameChange={(v) => (formUsername = v)}
+							onEmailChange={(v) => (formEmail = v)}
+							onCurrentPasswordChange={(v) => (currentPassword = v)}
+							onNewPasswordChange={(v) => (newPassword = v)}
+							onConfirmPasswordChange={(v) => (confirmPassword = v)}
+							onBahamutChange={(v) => (bahamut = v)}
+						/>
+					{:else if activeSection === 'profile'}
+						<ProfileSettings
+							{picture}
+							{element}
+							{granblueId}
+							{gender}
+							{language}
+							{theme}
+							onPictureChange={(v) => (picture = v)}
+							onElementChange={(v) => (element = v as ElementType)}
+							onGranblueIdChange={(v) => (granblueId = v)}
+							onGenderChange={(v) => (gender = v)}
+							onLanguageChange={(v) => (language = v)}
+							onThemeChange={(v) => (theme = v)}
+						/>
+					{:else if activeSection === 'privacy'}
+						<PrivacySettings
+							{showGranblueId}
+							{collectionPrivacy}
+							{showCrewGamertag}
+							{isInCrew}
+							{crewGamertag}
+							{element}
+							onShowGranblueIdChange={(v) => (showGranblueId = v)}
+							onCollectionPrivacyChange={(v) => (collectionPrivacy = v)}
+							onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
+						/>
 					{/if}
-
-					<hr class="separator" />
-
-					<!-- Gender Selection -->
-					<Select
-						bind:value={gender}
-						options={genderOptions}
-						label="Gender"
-						placeholder="Select gender"
-						fullWidth
-						contained
-					/>
-
-					<!-- Language Selection -->
-					<Select
-						bind:value={language}
-						options={languageOptions}
-						label="Language"
-						placeholder="Select language"
-						fullWidth
-						contained
-					/>
-
-					<!-- Theme Selection -->
-					<Select
-						bind:value={theme}
-						options={themeOptions}
-						label="Theme"
-						placeholder="Select theme"
-						fullWidth
-						contained
-					/>
-
-					<!-- Bahamut Mode (only for admins) -->
-					{#if role === 9}
-						<hr class="separator" />
-						<div class="switch-field">
-							<label for="bahamut-mode">
-								<span>Bahamut Mode</span>
-								<Switch bind:checked={bahamut} name="bahamut-mode" element={element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined} />
-							</label>
-						</div>
-					{/if}
-				</div>
+				</main>
 			</div>
 		</ModalBody>
 
@@ -313,8 +296,9 @@
 			primaryAction={{
 				label: saving ? 'Saving...' : 'Save Changes',
 				onclick: handleSave,
-				disabled: saving
+				disabled: saving || isLoading
 			}}
+			showShadow={!isScrolledToBottom}
 		/>
 	{/snippet}
 </Dialog>
@@ -325,10 +309,9 @@
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 
-	.settings-form {
+	.settings-layout {
 		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-3x;
+		height: 480px;
 	}
 
 	.error-message {
@@ -337,92 +320,65 @@
 		border-radius: layout.$card-corner;
 		color: colors.$error;
 		padding: spacing.$unit-2x;
+		margin-bottom: spacing.$unit-2x;
+		width: 100%;
 	}
 
-	.form-fields {
+	.settings-sidebar {
+		flex-shrink: 0;
+		padding: spacing.$unit;
+		padding-right: 0;
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-3x;
+		gap: spacing.$unit-2x;
 	}
 
-	.separator {
-		border: none;
-		border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
-		margin: 0;
-	}
+	.sidebar-header {
+		padding: spacing.$unit spacing.$unit-2x;
 
-	.inline-switch {
-		label {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-
-			span {
-				font-size: typography.$font-regular;
-				color: var(--text-primary);
-			}
+		.title {
+			font-size: typography.$font-large;
+			font-weight: typography.$medium;
+			color: var(--text-primary);
+			margin: 0;
 		}
 
-		.field-hint {
-			margin: spacing.$unit-half 0 0;
+		.username {
 			font-size: typography.$font-small;
 			color: var(--text-secondary);
+			margin: 0;
+			margin-top: spacing.$unit-half;
 		}
 	}
 
-	.picture-section {
+	.settings-content {
+		flex: 1;
+		overflow-y: auto;
+		padding: spacing.$unit-3x;
+	}
+
+	.loading-state {
 		display: flex;
-		gap: spacing.$unit-3x;
+		flex-direction: column;
 		align-items: center;
-
-		.current-avatar {
-			flex-shrink: 0;
-			width: 80px;
-			height: 80px;
-
-			.avatar-preview {
-				width: 100%;
-				height: 100%;
-				object-fit: contain;
-				border-radius: layout.$full-corner;
-				padding: spacing.$unit;
-				background-color: var(--placeholder-bg);
-
-				&.element-fire {
-					background-color: colors.$fire-bg-20;
-				}
-				&.element-water {
-					background-color: colors.$water-bg-20;
-				}
-				&.element-earth {
-					background-color: colors.$earth-bg-20;
-				}
-				&.element-wind {
-					background-color: colors.$wind-bg-20;
-				}
-				&.element-light {
-					background-color: colors.$light-bg-20;
-				}
-				&.element-dark {
-					background-color: colors.$dark-bg-20;
-				}
-			}
-		}
+		justify-content: center;
+		height: 100%;
+		gap: spacing.$unit-2x;
+		color: var(--text-secondary);
 	}
 
-	.switch-field {
-		label {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: spacing.$unit-2x;
-			background-color: var(--input-bound-bg);
-			border-radius: layout.$card-corner;
+	.spinner {
+		width: 24px;
+		height: 24px;
+		border: 2px solid var(--border-color);
+		border-top-color: var(--text-secondary);
+		border-radius: 50%;
+		animation: spin 0.8s linear infinite;
+	}
 
-			span {
-				font-size: typography.$font-regular;
-				color: var(--text-primary);
-			}
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
 		}
 	}
 
