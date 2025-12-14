@@ -17,6 +17,7 @@
 	import UserSettingsModal from './UserSettingsModal.svelte'
 	import InvitationsModal from './crew/InvitationsModal.svelte'
 	import { authStore } from '$lib/stores/auth.store'
+	import { crewStore } from '$lib/stores/crew.store.svelte'
 
 	// Props from layout data
 	const {
