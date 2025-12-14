@@ -5,8 +5,9 @@ export const mockJob: Job = {
 	id: 'job-1',
 	granblueId: '180001',
 	name: { en: 'Lumberjack', ja: 'ランバージャック' },
-	proficiency: [3], // Axe
+	proficiency: [3, 0], // Axe
 	row: 5,
+	order: 1,
 	ultimateMastery: true
 };
 
@@ -16,6 +17,7 @@ export const mockJobNoUM: Job = {
 	name: { en: 'Dark Fencer', ja: 'ダークフェンサー' },
 	proficiency: [1, 2], // Sabre, Dagger
 	row: 3,
+	order: 1,
 	ultimateMastery: false
 };
 
@@ -25,11 +27,12 @@ export const mockJobMultiProf: Job = {
 	name: { en: 'Kengo', ja: 'ケンゴウ' },
 	proficiency: [1, 2], // Sword, Katana
 	row: 5,
+	order: 1,
 	ultimateMastery: true
 };
 
 /** Jobs organized by row/tier */
-export const mockJobsByRow = {
+export const mockJobsByRow: Record<string, Job> = {
 	row1: { ...mockJob, id: 'job-row1', granblueId: '100001', row: 1, ultimateMastery: false },
 	row2: { ...mockJob, id: 'job-row2', granblueId: '110001', row: 2, ultimateMastery: false },
 	row3: { ...mockJob, id: 'job-row3', granblueId: '120001', row: 3, ultimateMastery: false },

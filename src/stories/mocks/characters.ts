@@ -8,9 +8,15 @@ export const mockCharacter: Character = {
 	name: { en: 'Narmaya', ja: 'ナルメア' },
 	element: 5, // Dark
 	rarity: 3, // SSR
+	maxLevel: 100,
 	special: false,
+	recruits: null,
+	gender: 2, // Female
+	race: { race1: 1, race2: 0 }, // Human
 	uncap: { flb: true, ulb: true, transcendence: false },
-	proficiency: [1, 2] // Sabre, Dagger
+	proficiency: [1, 2], // Sabre, Dagger
+	hp: { minHp: 200, maxHp: 1200, maxHpFlb: 1500 },
+	atk: { minAtk: 6000, maxAtk: 8500, maxAtkFlb: 10000 }
 };
 
 export const mockSpecialCharacter: Character = {
@@ -19,9 +25,15 @@ export const mockSpecialCharacter: Character = {
 	name: { en: 'Cagliostro', ja: 'カリオストロ' },
 	element: 4, // Earth
 	rarity: 3, // SSR
+	maxLevel: 100,
 	special: true, // Limited
+	recruits: null,
+	gender: 2, // Female (canonical)
+	race: { race1: 1, race2: 0 }, // Human
 	uncap: { flb: true, ulb: true, transcendence: false },
-	proficiency: [6] // Staff
+	proficiency: [6, 0], // Staff
+	hp: { minHp: 180, maxHp: 1100, maxHpFlb: 1400 },
+	atk: { minAtk: 5500, maxAtk: 8000, maxAtkFlb: 9500 }
 };
 
 export const mockGridCharacter: GridCharacter = {
@@ -43,7 +55,7 @@ export const mockGridCharacterWithRing: GridCharacter = {
 };
 
 /** Characters organized by element for element-specific stories */
-export const mockCharactersByElement = {
+export const mockCharactersByElement: Record<string, Character> = {
 	wind: { ...mockCharacter, id: 'char-wind', element: 1, name: { en: 'Tiamat', ja: 'ティアマト' } },
 	fire: { ...mockCharacter, id: 'char-fire', element: 2, name: { en: 'Colossus', ja: 'コロッサス' } },
 	water: {

@@ -8,7 +8,11 @@ export const mockSummon: Summon = {
 	name: { en: 'Bahamut', ja: 'バハムート' },
 	element: 5, // Dark
 	rarity: 3, // SSR
-	uncap: { flb: true, ulb: true, transcendence: true }
+	maxLevel: 200,
+	subaura: true,
+	uncap: { flb: true, ulb: true, transcendence: true },
+	hp: { minHp: 1000, maxHp: 2000, maxHpFlb: 2500, maxHpUlb: 3000 },
+	atk: { minAtk: 3000, maxAtk: 4500, maxAtkFlb: 5500, maxAtkUlb: 6500 }
 };
 
 export const mockGridSummon: GridSummon = {
@@ -42,7 +46,7 @@ export const mockFriendSummon: GridSummon = {
 };
 
 /** Summons organized by element */
-export const mockSummonsByElement = {
+export const mockSummonsByElement: Record<string, Summon> = {
 	wind: { ...mockSummon, id: 'summon-wind', element: 1, name: { en: 'Tiamat', ja: 'ティアマト' } },
 	fire: { ...mockSummon, id: 'summon-fire', element: 2, name: { en: 'Colossus', ja: 'コロッサス' } },
 	water: { ...mockSummon, id: 'summon-water', element: 3, name: { en: 'Leviathan', ja: 'リヴァイアサン' } },
