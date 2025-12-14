@@ -4,6 +4,7 @@
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { getArtifactImage } from '$lib/utils/images'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 
 	interface Props {
 		artifact: CollectionArtifact
@@ -21,27 +22,29 @@
 		return name.en || name.ja || '—'
 	})
 
-	// Get grade letter for badge
-	const gradeLetter = $derived(artifact.grade?.letter)
-	const gradeClass = $derived(gradeLetter?.toLowerCase() ?? 'none')
-
 	// Is this a quirk artifact?
 	const isQuirk = $derived(artifact.artifact?.rarity === 'quirk')
+
+	// Proficiency: quirk artifacts use instance proficiency, standard use canonical
+	const proficiency = $derived(artifact.proficiency ?? artifact.artifact?.proficiency)
 </script>
 
 <button type="button" class="artifact-card" onclick={onClick}>
 	<div class="card-image">
 		<img class="artifact-image" src={imageUrl} alt={displayName} loading="lazy" />
-		{#if gradeLetter}
-			<span class="grade-badge grade-{gradeClass}">{gradeLetter}</span>
-		{/if}
+		<span class="level-badge">Lv.{artifact.level}</span>
 		{#if isQuirk}
 			<span class="quirk-badge">Q</span>
 		{/if}
 	</div>
+	{#if artifact.nickname}
+		<span class="artifact-name nickname">{artifact.nickname}</span>
+	{:else}
+		<span class="artifact-name">{displayName}</span>
+	{/if}
 	<div class="card-info">
 		<ElementLabel element={artifact.element} size="small" />
-		<span class="level">Lv.{artifact.level}</span>
+		<ProficiencyLabel {proficiency} size="small" />
 	</div>
 </button>
 
@@ -88,7 +91,7 @@
 		border-radius: $item-corner;
 	}
 
-	.grade-badge {
+	.level-badge {
 		position: absolute;
 		top: $unit-fourth;
 		right: $unit-fourth;
@@ -97,28 +100,8 @@
 		padding: 2px 6px;
 		border-radius: 4px;
 		line-height: 1;
-
-		&.grade-s {
-			background: linear-gradient(135deg, #ffd700, #ffb347);
-			color: #6b4c00;
-		}
-		&.grade-a {
-			background: linear-gradient(135deg, #4ade80, #22c55e);
-			color: #14532d;
-		}
-		&.grade-b {
-			background: linear-gradient(135deg, #60a5fa, #3b82f6);
-			color: #1e3a5f;
-		}
-		&.grade-c,
-		&.grade-d {
-			background: var(--grey-80, #e9e9e9);
-			color: var(--grey-40, #444);
-		}
-		&.grade-f {
-			background: linear-gradient(135deg, #f87171, #ef4444);
-			color: #7f1d1d;
-		}
+		background: var(--grey-80, #e9e9e9);
+		color: var(--grey-40, #444);
 	}
 
 	.quirk-badge {
@@ -140,8 +123,17 @@
 		gap: $unit-half;
 	}
 
-	.level {
+	.artifact-name {
 		font-size: $font-small;
-		color: var(--text-secondary);
+		color: var(--text-tertiary);
+		text-align: center;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 100%;
+
+		&.nickname {
+			font-weight: $bold;
+		}
 	}
 </style>
