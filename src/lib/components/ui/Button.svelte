@@ -44,6 +44,10 @@
 		leftAccessory?: Snippet | undefined
 		/** Right accessory content */
 		rightAccessory?: Snippet | undefined
+		/** Left icon name */
+		leftIcon?: string | undefined
+		/** Right icon name */
+		rightIcon?: string | undefined
 		/** Icon name (legacy support) */
 		icon?: string | undefined
 		/** Icon position (legacy support) */
@@ -77,6 +81,8 @@
 		children,
 		leftAccessory,
 		rightAccessory,
+		leftIcon,
+		rightIcon,
 		icon,
 		iconPosition = 'left',
 		disabled = false,
@@ -127,6 +133,10 @@
 		<span class="accessory">
 			{@render leftAccessory()}
 		</span>
+	{:else if leftIcon}
+		<span class="accessory">
+			<Icon name={leftIcon} size={iconSizes[size]} />
+		</span>
 	{:else if hasLeftIcon && !iconOnly && icon}
 		<span class="accessory">
 			<Icon name={icon} size={iconSizes[size]} />
@@ -146,6 +156,10 @@
 	{#if rightAccessory}
 		<span class="accessory">
 			{@render rightAccessory()}
+		</span>
+	{:else if rightIcon}
+		<span class="accessory">
+			<Icon name={rightIcon} size={iconSizes[size]} />
 		</span>
 	{:else if hasRightIcon && !iconOnly && icon}
 		<span class="accessory">

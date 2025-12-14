@@ -2,7 +2,7 @@
 	import { Dialog as DialogBase } from 'bits-ui'
 	import type { Snippet } from 'svelte'
 
-	type DialogSize = 'default' | 'large'
+	type DialogSize = 'default' | 'medium' | 'large'
 
 	interface DialogProps {
 		open: boolean
@@ -18,7 +18,13 @@
 		children
 	}: DialogProps = $props()
 
-	const sizeClass = $derived(size === 'large' ? 'dialog-content-large' : '')
+	const sizeClass = $derived(
+		size === 'large'
+			? 'dialog-content-large'
+			: size === 'medium'
+				? 'dialog-content-medium'
+				: ''
+	)
 
 	function handleOpenChange(newOpen: boolean) {
 		open = newOpen
@@ -98,6 +104,11 @@
 			outline: 2px solid var(--focus-ring);
 			outline-offset: 2px;
 		}
+	}
+
+	// Medium dialog variant - wider than default, grows with content
+	:global(.dialog-content-medium) {
+		width: 900px;
 	}
 
 	// Large dialog variant for collection modals, etc.
