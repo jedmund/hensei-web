@@ -89,7 +89,7 @@
 				granblueId: summon.granblueId || '',
 				rarity: summon.rarity || 3,
 				element: summon.element || 0,
-				series: summon.series || '',
+				series: summon.series?.toString() ?? '',
 				minHp: summon.hp?.minHp || 0,
 				maxHp: summon.hp?.maxHp || 0,
 				maxHpFlb: summon.hp?.maxHpFlb || 0,

@@ -25,7 +25,7 @@
 	// Query for event data
 	const eventQuery = createQuery(() => ({
 		queryKey: ['gw', 'events', eventId],
-		queryFn: () => gwAdapter.getEvent(eventId),
+		queryFn: () => gwAdapter.getEvent(eventId ?? ''),
 		enabled: !!eventId
 	}))
 

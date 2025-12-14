@@ -74,7 +74,7 @@
 	$effect(() => {
 		if (character) {
 			editData = {
-				name: character.name || '',
+				name: character.name?.en || '',
 				granblueId: character.granblueId || '',
 				characterId: character.characterId ?? null,
 				rarity: character.rarity || 1,

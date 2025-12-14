@@ -111,7 +111,7 @@
 				ulb: weapon.uncap?.ulb || false,
 				transcendence: weapon.uncap?.transcendence || false,
 				extra: weapon.extra || false,
-				limit: weapon.limit || false,
+				limit: Boolean(weapon.limit),
 				ax: weapon.ax || false,
 				promotions: weapon.promotions || [],
 				releaseDate: weapon.releaseDate || '',
@@ -124,7 +124,7 @@
 				kamigame: weapon.kamigame || '',
 				nicknamesEn: weapon.nicknames?.en || [],
 				nicknamesJp: weapon.nicknames?.ja || [],
-				recruits: weapon.recruits || ''
+				recruits: typeof weapon.recruits === 'string' ? weapon.recruits : (weapon.recruits?.granblueId ?? '')
 			}
 		}
 	})
