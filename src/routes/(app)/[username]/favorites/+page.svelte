@@ -1,48 +1,26 @@
+<svelte:options runes={true} />
+
 <script lang="ts">
 	import type { PageData } from './$types'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import { userQueries } from '$lib/api/queries/user.queries'
-	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { IsInViewport } from 'runed'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 
 	const { data }: { data: PageData } = $props()
-	const isOwner = $derived(data.isOwner || false)
 
-	// Crew info for invite functionality
-	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
-	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
-
-	const partiesQuery = createInfiniteQuery(() => ({
-		...userQueries.parties(data.user?.username ?? ''),
-		enabled: !!data.user?.username,
-		initialData: data.items
-			? {
-					pages: [
-						{
-							results: data.items,
-							page: data.page || 1,
-							totalPages: data.totalPages ?? 1,
-							total: data.total ?? data.items.length,
-							perPage: data.perPage || 20
-						}
-					],
-					pageParams: [1]
-				}
-			: undefined,
-		initialDataUpdatedAt: 0
-	}))
+	const favoritesQuery = createInfiniteQuery(() => userQueries.favorites())
 
 	const items = $derived(() => {
-		if (!partiesQuery.data?.pages) return data.items || []
-		return partiesQuery.data.pages.flatMap((page) => page.results ?? [])
+		if (!favoritesQuery.data?.pages) return []
+		return favoritesQuery.data.pages.flatMap((page) => page.items ?? [])
 	})
 
-	const isEmpty = $derived(!partiesQuery.isLoading && items().length === 0)
-	const showSentinel = $derived(partiesQuery.hasNextPage && !partiesQuery.isFetchingNextPage)
+	const isEmpty = $derived(!favoritesQuery.isLoading && items().length === 0)
+	const showSentinel = $derived(favoritesQuery.hasNextPage && !favoritesQuery.isFetchingNextPage)
 
 	let sentinelEl = $state<HTMLElement>()
 
@@ -53,17 +31,17 @@
 	$effect(() => {
 		if (
 			inViewport.current &&
-			partiesQuery.hasNextPage &&
-			!partiesQuery.isFetchingNextPage &&
-			!partiesQuery.isLoading
+			favoritesQuery.hasNextPage &&
+			!favoritesQuery.isFetchingNextPage &&
+			!favoritesQuery.isLoading
 		) {
-			partiesQuery.fetchNextPage()
+			favoritesQuery.fetchNextPage()
 		}
 	})
 </script>
 
 <svelte:head>
-	<title>{data.user.username}'s Teams | Hensei</title>
+	<title>{data.user.username}'s Favorites | Hensei</title>
 </svelte:head>
 
 <section class="profile">
@@ -75,26 +53,24 @@
 		granblueId={data.user?.granblueId}
 		showCrewGamertag={data.user?.showCrewGamertag}
 		crewGamertag={data.user?.crewGamertag}
-		activeTab="teams"
-		{isOwner}
-		{viewerCrewRole}
-		{viewerCrewId}
+		activeTab="favorites"
+		isOwner={true}
 	/>
 
-	{#if partiesQuery.isLoading}
+	{#if favoritesQuery.isLoading}
 		<div class="loading">
 			<Icon name="loader-2" size={32} />
-			<p>Loading teams...</p>
+			<p>Loading favorites...</p>
 		</div>
-	{:else if partiesQuery.isError}
+	{:else if favoritesQuery.isError}
 		<div class="error">
 			<Icon name="alert-circle" size={32} />
-			<p>Failed to load teams: {partiesQuery.error?.message || 'Unknown error'}</p>
-			<Button size="small" onclick={() => partiesQuery.refetch()}>Retry</Button>
+			<p>Failed to load favorites: {favoritesQuery.error?.message || 'Unknown error'}</p>
+			<Button size="small" onclick={() => favoritesQuery.refetch()}>Retry</Button>
 		</div>
 	{:else if isEmpty}
 		<div class="empty">
-			<p>No teams found</p>
+			<p>No favorite teams yet</p>
 		</div>
 	{:else}
 		<div class="profile-grid">
@@ -104,16 +80,16 @@
 				<div class="load-more-sentinel" bind:this={sentinelEl}></div>
 			{/if}
 
-			{#if partiesQuery.isFetchingNextPage}
+			{#if favoritesQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={20} />
 					<span>Loading more...</span>
 				</div>
 			{/if}
 
-			{#if !partiesQuery.hasNextPage && items().length > 0}
+			{#if !favoritesQuery.hasNextPage && items().length > 0}
 				<div class="end">
-					<p>You've seen all teams!</p>
+					<p>You've seen all favorites!</p>
 				</div>
 			{/if}
 		</div>
@@ -181,7 +157,11 @@
 	}
 
 	@keyframes spin {
-		from { transform: rotate(0deg); }
-		to { transform: rotate(360deg); }
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>
