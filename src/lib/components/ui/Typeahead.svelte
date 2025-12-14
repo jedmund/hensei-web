@@ -1,7 +1,7 @@
 <!-- Typeahead Component (Svelecte wrapper) -->
 <svelte:options runes={true} />
 
-<script lang="ts" generics="T">
+<script lang="ts" generics="T extends object">
 	import Svelecte from 'svelecte';
 	import { Label } from 'bits-ui';
 
@@ -83,8 +83,7 @@
 			.join(' ')
 	);
 
-	function handleChange(event: CustomEvent<{ detail: T | T[] | null }>) {
-		const newValue = event.detail;
+	function handleChange(newValue: T | T[] | null) {
 		value = newValue;
 		onValueChange?.(newValue);
 	}
@@ -114,7 +113,7 @@
 				{placeholder}
 				{disabled}
 				{clearable}
-				on:change={handleChange}
+				onChange={handleChange}
 			/>
 		</div>
 
@@ -136,7 +135,7 @@
 			{placeholder}
 			{disabled}
 			{clearable}
-			on:change={handleChange}
+			onChange={handleChange}
 		/>
 	</div>
 {/if}

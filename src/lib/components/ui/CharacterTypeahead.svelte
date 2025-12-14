@@ -75,8 +75,9 @@
 		}
 	}
 
-	function handleInput(event: CustomEvent) {
-		const query = (event.detail as { inputValue?: string })?.inputValue ?? ''
+	function handleInput(event: Event) {
+		const target = event.target as HTMLInputElement | null
+		const query = target?.value ?? ''
 
 		// Debounce the search
 		if (searchTimeout) {
@@ -88,9 +89,7 @@
 		}, 300)
 	}
 
-	function handleChange(event: CustomEvent) {
-		// Svelecte emits the selected option directly in event.detail
-		const selected = event.detail as CharacterOption | null
+	function handleChange(selected: CharacterOption | null) {
 		const newValue = selected?.id || null
 		value = newValue
 		onValueChange?.(newValue)
@@ -106,7 +105,8 @@
 	})
 </script>
 
-<div class={typeaheadClasses}>
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class={typeaheadClasses} oninput={handleInput}>
 	<Svelecte
 		{options}
 		value={displayValue}
@@ -116,8 +116,7 @@
 		{placeholder}
 		{disabled}
 		{clearable}
-		on:input={handleInput}
-		on:change={handleChange}
+		onChange={handleChange}
 		keepSelectionInList={false}
 	/>
 	{#if isLoading}
