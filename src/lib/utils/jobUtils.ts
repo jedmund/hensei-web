@@ -8,6 +8,7 @@
 import type { Job, JobSkill } from '$lib/types/api/entities'
 import type { JobSkillList } from '$lib/types/api/party'
 import { getImageBaseUrl } from '$lib/api/adapters/config'
+import { getGenericPlaceholder } from './images'
 
 /**
  * Gets the base path for images
@@ -32,7 +33,7 @@ export enum Gender {
  */
 export function getJobPortraitUrl(job: Job | undefined, gender: Gender = Gender.Gran): string {
 	if (!job) {
-		return '/images/placeholders/placeholder-weapon-grid.png'
+		return getGenericPlaceholder()
 	}
 
 	// Convert job name to slug format (lowercase, spaces to hyphens)
@@ -48,7 +49,7 @@ export function getJobPortraitUrl(job: Job | undefined, gender: Gender = Gender.
  */
 export function getJobFullImageUrl(job: Job | undefined, gender: Gender = Gender.Gran): string {
 	if (!job) {
-		return '/images/placeholders/placeholder-weapon-grid.png'
+		return getGenericPlaceholder()
 	}
 
 	const genderSuffix = gender === Gender.Djeeta ? 'b' : 'a'
@@ -62,7 +63,7 @@ export function getJobFullImageUrl(job: Job | undefined, gender: Gender = Gender
  */
 export function getJobIconUrl(granblueId: string | undefined): string {
 	if (!granblueId) {
-		return '/images/placeholders/placeholder-weapon-grid.png'
+		return getGenericPlaceholder()
 	}
 
 	return `${getBasePath()}/job-icons/${granblueId}.png`
@@ -74,7 +75,7 @@ export function getJobIconUrl(granblueId: string | undefined): string {
  */
 export function getJobWideImageUrl(job: Job | undefined, gender: Gender = Gender.Gran): string {
 	if (!job) {
-		return '/images/placeholders/placeholder-weapon-grid.png'
+		return getGenericPlaceholder()
 	}
 
 	const genderSuffix = gender === Gender.Djeeta ? 'b' : 'a'

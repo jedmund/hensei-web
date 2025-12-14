@@ -42,10 +42,18 @@ export function getBasePath(): string {
 
 /**
  * Gets the placeholder image for a given type and variant
- * Placeholders are always served locally
+ * Uses AWS S3/CDN in production, local path in development
  */
 export function getPlaceholderImage(type: ResourceType, variant: ImageVariant): string {
-	return `/images/placeholders/placeholder-${type}-${variant}.png`
+	return `${getBasePath()}/placeholders/placeholder-${type}-${variant}.png`
+}
+
+/**
+ * Gets a generic placeholder image (weapon-grid variant)
+ * Used as fallback for misc image types that don't have specific placeholders
+ */
+export function getGenericPlaceholder(): string {
+	return `${getBasePath()}/placeholders/placeholder-weapon-grid.png`
 }
 
 /**
@@ -257,7 +265,7 @@ export function getJobSkillIcon(slug: string | undefined): string {
  * Get accessory square image URL
  */
 export function getAccessoryImage(granblueId: string | undefined): string {
-	if (!granblueId) return '/images/placeholders/placeholder-weapon-grid.png'
+	if (!granblueId) return getGenericPlaceholder()
 	return `${getBasePath()}/accessory-square/${granblueId}.jpg`
 }
 
@@ -376,7 +384,7 @@ export function getArtifactImage(
 	granblueId: string | number | null | undefined,
 	variant: ArtifactImageVariant = 'square'
 ): string {
-	if (!granblueId) return '/images/placeholders/placeholder-weapon-grid.png'
+	if (!granblueId) return getGenericPlaceholder()
 	const directory = `artifact-${variant}`
 	return `${getBasePath()}/${directory}/${granblueId}.jpg`
 }
@@ -387,7 +395,7 @@ export function getArtifactImage(
  * Get guidebook image URL
  */
 export function getGuidebookImage(granblueId: string | number | undefined): string {
-	if (!granblueId) return '/images/placeholders/placeholder-weapon-grid.png'
+	if (!granblueId) return getGenericPlaceholder()
 	return `${getBasePath()}/guidebooks/book_${granblueId}.png`
 }
 
@@ -395,6 +403,6 @@ export function getGuidebookImage(granblueId: string | number | undefined): stri
  * Get raid image URL
  */
 export function getRaidImage(slug: string | undefined): string {
-	if (!slug) return '/images/placeholders/placeholder-weapon-grid.png'
+	if (!slug) return getGenericPlaceholder()
 	return `${getBasePath()}/raids/${slug}.png`
 }
