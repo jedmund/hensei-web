@@ -18,6 +18,8 @@
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
+	import SettingsRow from '$lib/components/ui/SettingsRow.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import ScoutUserModal from '$lib/components/crew/ScoutUserModal.svelte'
 	import BulkPhantomModal from '$lib/components/crew/BulkPhantomModal.svelte'
@@ -101,11 +103,12 @@
 	let confirmAction = $state<'remove' | 'promote' | 'demote' | null>(null)
 	let selectedMember = $state<CrewMembership | null>(null)
 
-	// Dialog state for editing join date
-	let editJoinDateDialogOpen = $state(false)
+	// Dialog state for editing member/phantom
+	let editDialogOpen = $state(false)
 	let editingMember = $state<CrewMembership | null>(null)
 	let editingPhantom = $state<PhantomPlayer | null>(null)
 	let editJoinDate = $state('')
+	let editRetired = $state(false)
 
 	// Dialog state for scout modal
 	let scoutModalOpen = $state(false)
@@ -193,23 +196,25 @@
 		confirmAction = null
 	}
 
-	// Join date editing
-	function openEditJoinDateDialog(member: CrewMembership) {
+	// Member/phantom editing
+	function openEditMemberDialog(member: CrewMembership) {
 		editingMember = member
 		editingPhantom = null
 		// Format date for input
 		editJoinDate = member.joinedAt ? member.joinedAt.split('T')[0] ?? '' : ''
-		editJoinDateDialogOpen = true
+		editRetired = member.retired
+		editDialogOpen = true
 	}
 
-	function openEditPhantomJoinDateDialog(phantom: PhantomPlayer) {
+	function openEditPhantomDialog(phantom: PhantomPlayer) {
 		editingPhantom = phantom
 		editingMember = null
 		editJoinDate = phantom.joinedAt ? phantom.joinedAt.split('T')[0] ?? '' : ''
-		editJoinDateDialogOpen = true
+		editRetired = phantom.retired
+		editDialogOpen = true
 	}
 
-	async function handleSaveJoinDate() {
+	async function handleSaveEdit() {
 		if (!crewStore.crew) return
 
 		try {
@@ -217,12 +222,13 @@
 				await updateMembershipMutation.mutateAsync({
 					crewId: crewStore.crew.id,
 					membershipId: editingMember.id,
-					input: { joinedAt: editJoinDate }
+					input: { joinedAt: editJoinDate, retired: editRetired }
 				})
 			} else if (editingPhantom) {
 				// Call the phantom update directly through the adapter
 				await crewAdapter.updatePhantom(crewStore.crew.id, editingPhantom.id, {
-					joinedAt: editJoinDate
+					joinedAt: editJoinDate,
+					retired: editRetired
 				})
 				// Invalidate members query
 				membersQuery.refetch()
@@ -230,13 +236,14 @@
 			// Invalidate GW event queries since membersDuringEvent depends on join dates
 			queryClient.invalidateQueries({ queryKey: ['crew', 'gw'] })
 		} catch (error) {
-			console.error('Failed to update join date:', error)
+			console.error('Failed to update:', error)
 		}
 
-		editJoinDateDialogOpen = false
+		editDialogOpen = false
 		editingMember = null
 		editingPhantom = null
 		editJoinDate = ''
+		editRetired = false
 	}
 
 	function openDeletePhantomDialog(phantom: PhantomPlayer) {
@@ -401,7 +408,7 @@
 									{#snippet menu()}
 										<DropdownMenuBase.Item
 											class="dropdown-menu-item"
-											onclick={() => openEditJoinDateDialog(member)}
+											onclick={() => openEditMemberDialog(member)}
 										>
 											Edit
 										</DropdownMenuBase.Item>
@@ -479,7 +486,7 @@
 									{#snippet menu()}
 										<DropdownMenuBase.Item
 											class="dropdown-menu-item"
-											onclick={() => openEditPhantomJoinDateDialog(phantom)}
+											onclick={() => openEditPhantomDialog(phantom)}
 										>
 											Edit
 										</DropdownMenuBase.Item>
@@ -544,8 +551,8 @@
 	{/snippet}
 </Dialog>
 
-<!-- Edit Join Date Dialog -->
-<Dialog bind:open={editJoinDateDialogOpen}>
+<!-- Edit Member/Phantom Dialog -->
+<Dialog bind:open={editDialogOpen}>
 	{#snippet children()}
 		<ModalHeader title="Edit player" />
 
@@ -560,15 +567,23 @@
 						This date is used to determine which events a member was active for when adding
 						historical GW scores.
 					</p>
+					<SettingsRow
+						title="Retired"
+						subtitle="This player is no longer a part of the crew"
+					>
+						{#snippet control()}
+							<Switch bind:checked={editRetired} name="retired" />
+						{/snippet}
+					</SettingsRow>
 				</div>
 			</div>
 		</ModalBody>
 
 		<ModalFooter
-			onCancel={() => (editJoinDateDialogOpen = false)}
+			onCancel={() => (editDialogOpen = false)}
 			primaryAction={{
 				label: 'Save',
-				onclick: handleSaveJoinDate,
+				onclick: handleSaveEdit,
 				disabled: !editJoinDate
 			}}
 		/>

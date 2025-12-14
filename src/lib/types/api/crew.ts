@@ -114,9 +114,11 @@ export interface UpdatePhantomPlayerInput {
   granblueId?: string
   notes?: string
   joinedAt?: string
+  retired?: boolean
 }
 
 export interface UpdateMembershipInput {
   role?: CrewRole
   joinedAt?: string
+  retired?: boolean
 }
