@@ -2,16 +2,43 @@
 
 <script lang="ts">
 	import type { Snippet } from 'svelte'
+	import Button from './Button.svelte'
 
-	interface Props {
-		children: Snippet
+	interface PrimaryAction {
+		label: string
+		onclick: () => void
+		destructive?: boolean
+		disabled?: boolean
 	}
 
-	let { children }: Props = $props()
+	interface Props {
+		onCancel: () => void
+		cancelDisabled?: boolean
+		primaryAction?: PrimaryAction
+		left?: Snippet
+	}
+
+	let { onCancel, cancelDisabled = false, primaryAction, left }: Props = $props()
 </script>
 
 <div class="modal-footer">
-	{@render children()}
+	{#if left}
+		<div class="left">
+			{@render left()}
+		</div>
+	{/if}
+	<div class="actions">
+		<Button variant="ghost" onclick={onCancel} disabled={cancelDisabled}>Nevermind</Button>
+		{#if primaryAction}
+			<Button
+				variant={primaryAction.destructive ? 'destructive' : 'primary'}
+				onclick={primaryAction.onclick}
+				disabled={primaryAction.disabled}
+			>
+				{primaryAction.label}
+			</Button>
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">
@@ -22,6 +49,16 @@
 		padding-top: 0;
 		display: flex;
 		gap: spacing.$unit-2x;
-		justify-content: flex-end;
+		align-items: center;
+	}
+
+	.left {
+		flex: 1;
+	}
+
+	.actions {
+		display: flex;
+		gap: spacing.$unit;
+		margin-left: auto;
 	}
 </style>

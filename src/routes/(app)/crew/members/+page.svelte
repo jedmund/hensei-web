@@ -552,23 +552,14 @@
 			</p>
 		</ModalBody>
 
-		<ModalFooter>
-			{#snippet children()}
-				<Button variant="ghost" onclick={() => (confirmDialogOpen = false)}>Cancel</Button>
-				<Button
-					variant={confirmAction === 'remove' ? 'destructive' : 'primary'}
-					onclick={handleConfirmAction}
-				>
-					{#if confirmAction === 'remove'}
-						Remove
-					{:else if confirmAction === 'promote'}
-						Promote
-					{:else}
-						Demote
-					{/if}
-				</Button>
-			{/snippet}
-		</ModalFooter>
+		<ModalFooter
+			onCancel={() => (confirmDialogOpen = false)}
+			primaryAction={{
+				label: confirmAction === 'remove' ? 'Remove' : confirmAction === 'promote' ? 'Promote' : 'Demote',
+				onclick: handleConfirmAction,
+				destructive: confirmAction === 'remove'
+			}}
+		/>
 	{/snippet}
 </Dialog>
 
@@ -623,24 +614,15 @@
 			</div>
 		</ModalBody>
 
-		<ModalFooter>
-			{#snippet children()}
-				<Button
-					variant="ghost"
-					onclick={() => (phantomDialogOpen = false)}
-					disabled={createPhantomMutation.isPending}
-				>
-					Cancel
-				</Button>
-				<Button
-					variant="primary"
-					onclick={handleCreatePhantom}
-					disabled={!phantomName.trim() || createPhantomMutation.isPending}
-				>
-					{createPhantomMutation.isPending ? 'Creating...' : 'Create'}
-				</Button>
-			{/snippet}
-		</ModalFooter>
+		<ModalFooter
+			onCancel={() => (phantomDialogOpen = false)}
+			cancelDisabled={createPhantomMutation.isPending}
+			primaryAction={{
+				label: createPhantomMutation.isPending ? 'Creating...' : 'Create',
+				onclick: handleCreatePhantom,
+				disabled: !phantomName.trim() || createPhantomMutation.isPending
+			}}
+		/>
 	{/snippet}
 </Dialog>
 
@@ -664,14 +646,14 @@
 			</div>
 		</ModalBody>
 
-		<ModalFooter>
-			{#snippet children()}
-				<Button variant="ghost" onclick={() => (editJoinDateDialogOpen = false)}>Cancel</Button>
-				<Button variant="primary" onclick={handleSaveJoinDate} disabled={!editJoinDate}>
-					Save
-				</Button>
-			{/snippet}
-		</ModalFooter>
+		<ModalFooter
+			onCancel={() => (editJoinDateDialogOpen = false)}
+			primaryAction={{
+				label: 'Save',
+				onclick: handleSaveJoinDate,
+				disabled: !editJoinDate
+			}}
+		/>
 	{/snippet}
 </Dialog>
 

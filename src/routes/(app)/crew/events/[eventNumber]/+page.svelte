@@ -32,7 +32,7 @@
 	// Query for event and participation data
 	const eventQuery = createQuery(() => ({
 		queryKey: ['crew', 'gw', 'event', eventNumber],
-		queryFn: () => gwAdapter.getEventWithParticipation(eventNumber),
+		queryFn: () => gwAdapter.getEventWithParticipation(eventNumber ?? ''),
 		enabled: !!eventNumber && crewStore.isInCrew
 	}))
 
@@ -404,7 +404,7 @@
 
 <!-- Add Score Modal -->
 <Dialog bind:open={showScoreModal} onOpenChange={(open) => !open && closeScoreModal()}>
-	<ModalHeader title="Add Score" onClose={closeScoreModal} />
+	<ModalHeader title="Add Score" />
 	<ModalBody>
 		<div class="score-form">
 			<Select
@@ -455,20 +455,17 @@
 			{/if}
 		</div>
 	</ModalBody>
-	<ModalFooter>
-		<Button variant="secondary" size="small" onclick={closeScoreModal}>Cancel</Button>
-		<Button
-			variant="primary"
-			size="small"
-			onclick={handleSubmitScore}
-			disabled={isSubmitting ||
+	<ModalFooter
+		onCancel={closeScoreModal}
+		primaryAction={{
+			label: isSubmitting ? 'Saving...' : 'Save',
+			onclick: handleSubmitScore,
+			disabled: isSubmitting ||
 				!selectedPlayerId ||
 				(!isCumulative && calculatedCumulativeScore === 0) ||
-				(isCumulative && !cumulativeScore)}
-		>
-			{isSubmitting ? 'Saving...' : 'Save'}
-		</Button>
-	</ModalFooter>
+				(isCumulative && !cumulativeScore)
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

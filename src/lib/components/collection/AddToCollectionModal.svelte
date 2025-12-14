@@ -74,16 +74,21 @@
 	)
 
 	// Build filters for search (using SearchFilters type from search.queries)
+	// Filter seriesFilters to only numbers for characterSeries (strings are weapon UUIDs)
+	const numericSeriesFilters = $derived(
+		seriesFilters.filter((s): s is number => typeof s === 'number')
+	)
 	const searchFilters = $derived<SearchFilters>({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
 		season: seasonFilters.length > 0 ? seasonFilters : undefined,
-		characterSeries: seriesFilters.length > 0 ? seriesFilters : undefined,
+		characterSeries: numericSeriesFilters.length > 0 ? numericSeriesFilters : undefined,
 		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined
 	})
 
 	// Search query with infinite scroll - dynamic based on entity type
-	const searchResults = createInfiniteQuery(() => {
+	// Type assertion needed because queryKeys differ but data shape is the same
+	const getSearchOptions = () => {
 		const query = searchQuery
 		const filters = searchFilters
 
@@ -102,7 +107,8 @@
 				enabled: open
 			}
 		}
-	})
+	}
+	const searchResults = createInfiniteQuery(getSearchOptions as () => ReturnType<typeof searchQueries.weapons>)
 
 	// Flatten results and deduplicate by ID
 	const allResults = $derived.by(() => {
@@ -445,39 +451,25 @@
 				{/if}
 			</div>
 		</div>
-		<ModalFooter>
-			{#snippet children()}
-				<div class="modal-footer">
-					<div class="footer-left">
-						{#if selectedCount > 0}
-							<button
-								type="button"
-								class="selected-link"
-								class:active={showOnlySelected}
-								onclick={toggleShowSelected}
-							>
-								{selectedText}
-							</button>
-						{/if}
-					</div>
-					<div class="footer-right">
-						<Button variant="ghost" onclick={() => (open = false)}>
-							Cancel
-						</Button>
-						<Button
-							variant="primary"
-							disabled={selectedCount === 0 || currentMutation.isPending}
-							onclick={handleAdd}
-						>
-							{#if currentMutation.isPending}
-								<Icon name="loader-2" size={16} />
-								Adding...
-							{:else}
-								Add to Collection
-							{/if}
-						</Button>
-					</div>
-				</div>
+		<ModalFooter
+			onCancel={() => (open = false)}
+			primaryAction={{
+				label: currentMutation.isPending ? 'Adding...' : 'Add to Collection',
+				onclick: handleAdd,
+				disabled: selectedCount === 0 || currentMutation.isPending
+			}}
+		>
+			{#snippet left()}
+				{#if selectedCount > 0}
+					<button
+						type="button"
+						class="selected-link"
+						class:active={showOnlySelected}
+						onclick={toggleShowSelected}
+					>
+						{selectedText}
+					</button>
+				{/if}
 			{/snippet}
 		</ModalFooter>
 	{/snippet}
@@ -586,22 +578,6 @@
 		:global(svg) {
 			animation: spin 1s linear infinite;
 		}
-	}
-
-	.modal-footer {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-	}
-
-	.footer-left {
-		flex: 1;
-	}
-
-	.footer-right {
-		display: flex;
-		gap: $unit;
 	}
 
 	.selected-link {

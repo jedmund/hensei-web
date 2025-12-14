@@ -10,6 +10,9 @@
 		title: 'Components/UI/Dialog',
 		tags: ['autodocs']
 	})
+
+	// Dummy handlers for storybook
+	const noop = () => {}
 </script>
 
 <script>
@@ -67,12 +70,13 @@
 						<p>Are you sure you want to proceed with this action?</p>
 					{/snippet}
 				</ModalBody>
-				<ModalFooter>
-					{#snippet children()}
-						<Button variant="secondary" onclick={() => (withFooterOpen = false)}>Cancel</Button>
-						<Button variant="primary" onclick={() => (withFooterOpen = false)}>Confirm</Button>
-					{/snippet}
-				</ModalFooter>
+				<ModalFooter
+					onCancel={() => (withFooterOpen = false)}
+					primaryAction={{
+						label: 'Confirm',
+						onclick: () => (withFooterOpen = false)
+					}}
+				/>
 			{/snippet}
 		</Dialog>
 	</div>
@@ -112,12 +116,13 @@
 						</div>
 					{/snippet}
 				</ModalBody>
-				<ModalFooter>
-					{#snippet children()}
-						<Button variant="secondary" onclick={() => (longContentOpen = false)}>Decline</Button>
-						<Button variant="primary" onclick={() => (longContentOpen = false)}>Accept</Button>
-					{/snippet}
-				</ModalFooter>
+				<ModalFooter
+					onCancel={() => (longContentOpen = false)}
+					primaryAction={{
+						label: 'Accept',
+						onclick: () => (longContentOpen = false)
+					}}
+				/>
 			{/snippet}
 		</Dialog>
 	</div>
@@ -160,12 +165,13 @@
 						</div>
 					{/snippet}
 				</ModalBody>
-				<ModalFooter>
-					{#snippet children()}
-						<Button variant="secondary" onclick={() => (formOpen = false)}>Cancel</Button>
-						<Button variant="primary" onclick={() => (formOpen = false)}>Save Changes</Button>
-					{/snippet}
-				</ModalFooter>
+				<ModalFooter
+					onCancel={() => (formOpen = false)}
+					primaryAction={{
+						label: 'Save Changes',
+						onclick: () => (formOpen = false)
+					}}
+				/>
 			{/snippet}
 		</Dialog>
 	</div>
@@ -186,12 +192,14 @@
 						</p>
 					{/snippet}
 				</ModalBody>
-				<ModalFooter>
-					{#snippet children()}
-						<Button variant="secondary" onclick={() => (confirmOpen = false)}>Cancel</Button>
-						<Button variant="destructive" onclick={() => (confirmOpen = false)}>Delete</Button>
-					{/snippet}
-				</ModalFooter>
+				<ModalFooter
+					onCancel={() => (confirmOpen = false)}
+					primaryAction={{
+						label: 'Delete',
+						onclick: () => (confirmOpen = false),
+						destructive: true
+					}}
+				/>
 			{/snippet}
 		</Dialog>
 	</div>

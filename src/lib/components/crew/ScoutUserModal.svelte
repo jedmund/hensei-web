@@ -165,20 +165,16 @@
 	</ModalBody>
 
 	{#if !inviteSuccess}
-		<ModalFooter>
-			<Button variant="secondary" onclick={handleCancel}>
-				Cancel
-			</Button>
-			{#if foundUser}
-				<Button
-					variant="primary"
-					onclick={handleInvite}
-					disabled={sendMutation.isPending}
-				>
-					{sendMutation.isPending ? 'Sending...' : 'Send Invitation'}
-				</Button>
-			{/if}
-		</ModalFooter>
+		<ModalFooter
+			onCancel={handleCancel}
+			primaryAction={foundUser
+				? {
+						label: sendMutation.isPending ? 'Sending...' : 'Send Invitation',
+						onclick: handleInvite,
+						disabled: sendMutation.isPending
+					}
+				: undefined}
+		/>
 	{/if}
 </Dialog>
 

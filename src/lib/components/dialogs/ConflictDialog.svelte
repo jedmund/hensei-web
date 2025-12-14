@@ -21,7 +21,6 @@
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import type { ConflictData } from '$lib/types/api/conflict'
 	import type { GridCharacter, GridWeapon } from '$lib/types/api/party'
 	import type { Character, Weapon } from '$lib/types/api/entities'
@@ -233,15 +232,14 @@
 				{/if}
 			{/snippet}
 		</ModalBody>
-		<ModalFooter>
-			{#snippet children()}
-				<Button variant="ghost" onclick={handleCancel} disabled={isLoading}>
-					{m.conflict_cancel()}
-				</Button>
-				<Button variant="primary" onclick={handleResolve} disabled={isLoading}>
-					{m.conflict_confirm()}
-				</Button>
-			{/snippet}
-		</ModalFooter>
+		<ModalFooter
+			onCancel={handleCancel}
+			cancelDisabled={isLoading}
+			primaryAction={{
+				label: m.conflict_confirm(),
+				onclick: handleResolve,
+				disabled: isLoading
+			}}
+		/>
 	{/snippet}
 </Dialog>

@@ -6,7 +6,6 @@
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 
 	interface Props {
 		open: boolean
@@ -83,14 +82,15 @@
 	</ModalBody>
 
 	{#if !success}
-		<ModalFooter>
-			<Button variant="secondary" onclick={handleCancel} disabled={sendMutation.isPending}>
-				Cancel
-			</Button>
-			<Button variant="primary" onclick={handleSend} disabled={sendMutation.isPending}>
-				{sendMutation.isPending ? 'Sending...' : 'Send Invitation'}
-			</Button>
-		</ModalFooter>
+		<ModalFooter
+			onCancel={handleCancel}
+			cancelDisabled={sendMutation.isPending}
+			primaryAction={{
+				label: sendMutation.isPending ? 'Sending...' : 'Send Invitation',
+				onclick: handleSend,
+				disabled: sendMutation.isPending
+			}}
+		/>
 	{/if}
 </Dialog>
 

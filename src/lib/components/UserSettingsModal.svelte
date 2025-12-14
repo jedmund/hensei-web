@@ -8,11 +8,15 @@
 	import Select from './ui/Select.svelte'
 	import Switch from './ui/switch/Switch.svelte'
 	import Button from './ui/Button.svelte'
+	import Input from './ui/Input.svelte'
 	import { pictureData, type Picture } from '$lib/utils/pictureData'
 	import { users } from '$lib/api/resources/users'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { setUserCookie } from '$lib/auth/cookies'
 	import { invalidateAll } from '$app/navigation'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { crewQueries } from '$lib/api/queries/crew.queries'
+	import { userAdapter } from '$lib/api/adapters/user.adapter'
 
 	interface Props {
 		open: boolean
@@ -25,7 +29,7 @@
 
 	let { open = $bindable(false), onOpenChange, username, userId, user, role }: Props = $props()
 
-	// Form state
+	// Form state - fields from cookie (can use immediately)
 	let picture = $state(user.picture)
 	let element = $state(user.element)
 	let gender = $state(user.gender)
@@ -33,8 +37,47 @@
 	let theme = $state(user.theme)
 	let bahamut = $state(user.bahamut ?? false)
 
+	// Form state - fields from API (must wait for query to load)
+	// Initialize as empty - will be set by $effect when API data loads
+	let granblueId = $state('')
+	let showCrewGamertag = $state(false)
+	let apiDataLoaded = $state(false)
+
 	let saving = $state(false)
 	let error = $state<string | null>(null)
+
+	// Fetch current user data from API (to get actual show_gamertag value from database)
+	const currentUserQuery = createQuery(() => ({
+		queryKey: ['currentUser', 'settings'],
+		queryFn: () => userAdapter.getCurrentUser(),
+		enabled: open // Only fetch when modal is open
+	}))
+
+	// Fetch current user's crew (for showing gamertag toggle)
+	const myCrewQuery = createQuery(() => ({
+		...crewQueries.myCrew(),
+		enabled: open // Only fetch when modal is open
+	}))
+
+	const isInCrew = $derived(!!myCrewQuery.data)
+	const crewGamertag = $derived(myCrewQuery.data?.gamertag)
+	const isLoadingApiData = $derived(currentUserQuery.isLoading || currentUserQuery.isPending)
+
+	// Update form state when API data loads (to get actual values from database)
+	$effect(() => {
+		if (currentUserQuery.data) {
+			granblueId = currentUserQuery.data.granblueId ?? ''
+			showCrewGamertag = currentUserQuery.data.showCrewGamertag ?? false
+			apiDataLoaded = true
+		}
+	})
+
+	// Reset apiDataLoaded when modal closes so fresh data is fetched next time
+	$effect(() => {
+		if (!open) {
+			apiDataLoaded = false
+		}
+	})
 
 	// Get current locale from user settings
 	const locale = $derived(user.language as 'en' | 'ja')
@@ -107,7 +150,9 @@
 				element,
 				gender,
 				language,
-				theme
+				theme,
+				granblueId: granblueId || undefined,
+				showCrewGamertag
 			}
 
 			// Call API to update user settings
@@ -120,7 +165,9 @@
 				language: response.language,
 				gender: response.gender,
 				theme: response.theme,
-				bahamut
+				bahamut,
+				granblueId: response.granblueId,
+				showCrewGamertag: response.showCrewGamertag
 			}
 
 			// Save to cookie (we'll need to handle this server-side)
@@ -137,7 +184,7 @@
 				body: JSON.stringify(updatedUser)
 			})
 
-			// If language or theme changed, we need a full page reload
+			// If language, theme, or bahamut mode changed, we need a full page reload
 			if (user.language !== language || user.theme !== theme || user.bahamut !== bahamut) {
 				await invalidateAll()
 				window.location.reload()
@@ -203,6 +250,39 @@
 						contained
 					/>
 
+					<!-- Granblue ID -->
+					{#if isLoadingApiData}
+						<div class="loading-field">
+							<span class="loading-label">Granblue ID</span>
+							<span class="loading-text">Loading...</span>
+						</div>
+					{:else}
+						<Input
+							bind:value={granblueId}
+							label="Granblue ID"
+							placeholder="Enter your Granblue ID"
+							contained
+							fullWidth
+						/>
+					{/if}
+
+					<!-- Show Crew Gamertag (only if in a crew with a gamertag) -->
+					{#if isInCrew && crewGamertag}
+						<div class="inline-switch">
+							<label for="show-gamertag">
+								<span>Show crew tag on profile</span>
+								{#if isLoadingApiData}
+									<span class="loading-text">Loading...</span>
+								{:else}
+									<Switch bind:checked={showCrewGamertag} name="show-gamertag" element={element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined} />
+								{/if}
+							</label>
+							<p class="field-hint">Display "{crewGamertag}" next to your name</p>
+						</div>
+					{/if}
+
+					<hr class="separator" />
+
 					<!-- Gender Selection -->
 					<Select
 						bind:value={gender}
@@ -233,12 +313,13 @@
 						contained
 					/>
 
-					<!-- Admin Mode (only for admins) -->
+					<!-- Bahamut Mode (only for admins) -->
 					{#if role === 9}
+						<hr class="separator" />
 						<div class="switch-field">
 							<label for="bahamut-mode">
-								<span>Admin Mode</span>
-								<Switch bind:checked={bahamut} name="bahamut-mode" />
+								<span>Bahamut Mode</span>
+								<Switch bind:checked={bahamut} name="bahamut-mode" element={element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined} />
 							</label>
 						</div>
 					{/if}
@@ -246,14 +327,15 @@
 			</div>
 		</ModalBody>
 
-		<ModalFooter>
-			{#snippet children()}
-				<Button variant="ghost" onclick={handleClose} disabled={saving}>Cancel</Button>
-				<Button onclick={handleSave} variant="primary" disabled={saving}>
-					{saving ? 'Saving...' : 'Save Changes'}
-				</Button>
-			{/snippet}
-		</ModalFooter>
+		<ModalFooter
+			onCancel={handleClose}
+			cancelDisabled={saving}
+			primaryAction={{
+				label: saving ? 'Saving...' : 'Save Changes',
+				onclick: handleSave,
+				disabled: saving
+			}}
+		/>
 	{/snippet}
 </Dialog>
 
@@ -281,6 +363,53 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-3x;
+	}
+
+	.separator {
+		border: none;
+		border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+		margin: 0;
+	}
+
+	.inline-switch {
+		label {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			span {
+				font-size: typography.$font-regular;
+				color: var(--text-primary);
+			}
+		}
+
+		.field-hint {
+			margin: spacing.$unit-half 0 0;
+			font-size: typography.$font-small;
+			color: var(--text-secondary);
+		}
+	}
+
+	.loading-field {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-half;
+
+		.loading-label {
+			font-size: typography.$font-small;
+			font-weight: typography.$medium;
+			color: var(--text-primary);
+		}
+
+		.loading-text {
+			font-size: typography.$font-regular;
+			color: var(--text-secondary);
+		}
+	}
+
+	.loading-text {
+		font-size: typography.$font-regular;
+		color: var(--text-secondary);
 	}
 
 	.picture-section {

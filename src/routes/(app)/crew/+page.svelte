@@ -112,6 +112,7 @@
 				role: 'captain',
 				retired: false,
 				retiredAt: null,
+				joinedAt: new Date().toISOString(),
 				createdAt: new Date().toISOString()
 			})
 
@@ -237,8 +238,8 @@
 			<div class="crew-dashboard">
 				<CrewHeader
 					title={crewStore.crew?.name ?? ''}
-					subtitle={crewStore.crew?.gamertag}
-					description={crewStore.crew?.description}
+					subtitle={crewStore.crew?.gamertag ?? undefined}
+					description={crewStore.crew?.description ?? undefined}
 				>
 					{#snippet actions()}
 						{#if crewStore.isOfficer}
@@ -292,8 +293,8 @@
 								<span class="event-dates">
 									{formatDate(event.startDate)} – {formatDate(event.endDate)}
 								</span>
-								<span class="event-status status-{event.status}"
-									>{formatEventStatus(event.status, event.startDate)}</span
+								<span class="event-status status-{event.status ?? 'unknown'}"
+									>{formatEventStatus(event.status ?? 'unknown', event.startDate)}</span
 								>
 							</li>
 						{/each}
@@ -354,20 +355,15 @@
 			{/snippet}
 		</ModalBody>
 
-		<ModalFooter>
-			{#snippet children()}
-				<Button variant="ghost" onclick={handleCloseModal} disabled={createCrewMutation.isPending}>
-					Cancel
-				</Button>
-				<Button
-					onclick={handleCreateCrew}
-					variant="primary"
-					disabled={!canCreate || createCrewMutation.isPending}
-				>
-					{createCrewMutation.isPending ? 'Creating...' : 'Create Crew'}
-				</Button>
-			{/snippet}
-		</ModalFooter>
+		<ModalFooter
+			onCancel={handleCloseModal}
+			cancelDisabled={createCrewMutation.isPending}
+			primaryAction={{
+				label: createCrewMutation.isPending ? 'Creating...' : 'Create Crew',
+				onclick: handleCreateCrew,
+				disabled: !canCreate || createCrewMutation.isPending
+			}}
+		/>
 	{/snippet}
 </Dialog>
 
@@ -419,24 +415,15 @@
 			{/snippet}
 		</ModalBody>
 
-		<ModalFooter>
-			{#snippet children()}
-				<Button
-					variant="ghost"
-					onclick={handleCloseSettingsModal}
-					disabled={updateCrewMutation.isPending}
-				>
-					Cancel
-				</Button>
-				<Button
-					onclick={handleUpdateSettings}
-					variant="primary"
-					disabled={!canSaveSettings || updateCrewMutation.isPending}
-				>
-					{updateCrewMutation.isPending ? 'Saving...' : 'Save'}
-				</Button>
-			{/snippet}
-		</ModalFooter>
+		<ModalFooter
+			onCancel={handleCloseSettingsModal}
+			cancelDisabled={updateCrewMutation.isPending}
+			primaryAction={{
+				label: updateCrewMutation.isPending ? 'Saving...' : 'Save',
+				onclick: handleUpdateSettings,
+				disabled: !canSaveSettings || updateCrewMutation.isPending
+			}}
+		/>
 	{/snippet}
 </Dialog>
 
