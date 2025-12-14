@@ -13,7 +13,8 @@ import { authStore } from '$lib/stores/auth.store'
 
 export const load: LayoutLoad = async ({ data }) => {
 	// Initialize auth store from server data BEFORE creating QueryClient
-	if (browser && data.auth) {
+	// Defensive check: data might be null/undefined during error scenarios
+	if (browser && data?.auth) {
 		authStore.initFromServer(
 			data.auth.accessToken,
 			data.auth.user,
