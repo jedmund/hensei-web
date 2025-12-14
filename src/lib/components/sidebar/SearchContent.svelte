@@ -207,8 +207,12 @@
 		const allItems = pages.flatMap((page) => page.results)
 		const ids = new Set<string>()
 		for (const item of allItems) {
-			const entity = 'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
-			if (entity.granblueId) {
+			// Type assertion needed because the query result type doesn't capture all variants
+			const anyItem = item as unknown as Record<string, unknown>
+			const entity = (anyItem.character ?? anyItem.weapon ?? anyItem.summon) as
+				| { granblueId?: string }
+				| undefined
+			if (entity?.granblueId) {
 				ids.add(String(entity.granblueId))
 			}
 		}

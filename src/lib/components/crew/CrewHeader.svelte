@@ -56,7 +56,7 @@
 	.header-info {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-half;
+		gap: spacing.$unit;
 	}
 
 	.title-row {

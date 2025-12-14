@@ -20,7 +20,7 @@
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
 	import { setContext } from 'svelte'
-	import type { SearchResult } from '$lib/api/adapters'
+	import type { AddItemResult } from '$lib/types/api/search'
 	import { gridAdapter } from '$lib/api/adapters'
 	import { getLocalId } from '$lib/utils/localId'
 	import { storeEditKey } from '$lib/utils/editKeys'
@@ -288,7 +288,7 @@
 	)
 
 	// Handle adding items from search
-	async function handleAddItems(items: SearchResult[]) {
+	async function handleAddItems(items: AddItemResult[]) {
 		console.log('Adding items:', items, 'to tab:', activeTab)
 
 		// Create party on first item if not already created

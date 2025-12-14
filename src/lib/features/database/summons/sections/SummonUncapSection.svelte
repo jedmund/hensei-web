@@ -89,7 +89,6 @@
 				{flb}
 				{ulb}
 				{transcendence}
-				{subaura}
 				editable={false}
 			/>
 		</DetailItem>

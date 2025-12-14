@@ -13,8 +13,9 @@ export default defineConfig({
 	css: {
 		preprocessorOptions: {
 			scss: {
-				api: 'modern-compiler',
-				loadPaths: [fileURLToPath(new URL('./src', import.meta.url))]
+				// Modern compiler API for better Sass compatibility
+				// Type assertion needed as Vite types haven't been updated yet
+				...(({ api: 'modern-compiler', loadPaths: [fileURLToPath(new URL('./src', import.meta.url))] }) as object)
 			}
 		}
 	},

@@ -336,7 +336,7 @@
 			</DetailRow>
 		{:else}
 			<DetailRow label="Proficiency" noHover>
-				<ProficiencyLabel proficiency={artifactData.proficiency} size="medium" />
+				<ProficiencyLabel proficiency={artifactData.proficiency ?? undefined} size="medium" />
 			</DetailRow>
 		{/if}
 

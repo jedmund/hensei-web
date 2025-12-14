@@ -88,7 +88,7 @@ export const CHARACTER_SERIES_NAMES: Record<number, string> = {
 }
 
 export function getSeriesNames(series: number[]): string[] {
-  return series.map(s => CHARACTER_SERIES_NAMES[s]).filter(Boolean)
+  return series.map(s => CHARACTER_SERIES_NAMES[s]).filter((name): name is string => Boolean(name))
 }
 
 // Weapon/Summon promotions (gacha pool membership)
@@ -121,5 +121,5 @@ export const PROMOTION_NAMES: Record<number, string> = {
 }
 
 export function getPromotionNames(promotions: number[]): string[] {
-  return promotions.map(p => PROMOTION_NAMES[p]).filter(Boolean)
+  return promotions.map(p => PROMOTION_NAMES[p]).filter((name): name is string => Boolean(name))
 }

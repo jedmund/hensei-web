@@ -19,6 +19,7 @@
 
 	.modal-body {
 		padding: spacing.$unit-2x;
+		padding-bottom: spacing.$unit-3x;
 		overflow-y: auto;
 		flex: 1;
 	}
