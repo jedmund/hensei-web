@@ -8,7 +8,6 @@
 	import {
 		useRemoveMember,
 		useUpdateMembership,
-		useCreatePhantom,
 		useDeletePhantom
 	} from '$lib/api/mutations/crew.mutations'
 	import { crewAdapter } from '$lib/api/adapters/crew.adapter'
@@ -19,9 +18,9 @@
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
-	import Input from '$lib/components/ui/Input.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import ScoutUserModal from '$lib/components/crew/ScoutUserModal.svelte'
+	import BulkPhantomModal from '$lib/components/crew/BulkPhantomModal.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import type { MemberFilter, CrewMembership, PhantomPlayer, CrewInvitation } from '$lib/types/api/crew'
 	import type { PageData } from './$types'
@@ -36,7 +35,7 @@
 
 	// Get filter from URL
 	const filter = $derived<MemberFilter>(
-		($page.url.searchParams.get('filter') as MemberFilter) || 'active'
+		($page.url.searchParams.get('filter') as MemberFilter) || 'all'
 	)
 
 	// Query for members based on filter
@@ -76,21 +75,20 @@
 	// Mutations
 	const removeMemberMutation = useRemoveMember()
 	const updateMembershipMutation = useUpdateMembership()
-	const createPhantomMutation = useCreatePhantom()
 	const deletePhantomMutation = useDeletePhantom()
 
 	// Filter options
 	const filterOptions: { value: MemberFilter; label: string }[] = [
+		{ value: 'all', label: 'All' },
 		{ value: 'active', label: 'Active' },
 		{ value: 'phantom', label: 'Phantoms' },
-		{ value: 'retired', label: 'Retired' },
-		{ value: 'all', label: 'All' }
+		{ value: 'retired', label: 'Retired' }
 	]
 
 	// Change filter
 	function handleFilterChange(newFilter: MemberFilter) {
 		const url = new URL($page.url)
-		if (newFilter === 'active') {
+		if (newFilter === 'all') {
 			url.searchParams.delete('filter')
 		} else {
 			url.searchParams.set('filter', newFilter)
@@ -116,11 +114,11 @@
 	let invitationsSectionOpen = $state(true)
 
 	// Dialog state for phantom creation
-	let phantomDialogOpen = $state(false)
-	let phantomName = $state('')
-	let phantomGranblueId = $state('')
-	let phantomNotes = $state('')
-	let phantomJoinedAt = $state('')
+	let bulkPhantomDialogOpen = $state(false)
+
+	// Dialog state for phantom deletion confirmation
+	let deletePhantomDialogOpen = $state(false)
+	let phantomToDelete = $state<PhantomPlayer | null>(null)
 
 	// Role display helpers
 	function getRoleLabel(role: string): string {
@@ -241,45 +239,25 @@
 		editJoinDate = ''
 	}
 
-	// Phantom actions
-	function openPhantomDialog() {
-		phantomName = ''
-		phantomGranblueId = ''
-		phantomNotes = ''
-		phantomJoinedAt = ''
-		phantomDialogOpen = true
+	function openDeletePhantomDialog(phantom: PhantomPlayer) {
+		phantomToDelete = phantom
+		deletePhantomDialogOpen = true
 	}
 
-	async function handleCreatePhantom() {
-		if (!phantomName.trim() || !crewStore.crew) return
-
-		try {
-			await createPhantomMutation.mutateAsync({
-				crewId: crewStore.crew.id,
-				input: {
-					name: phantomName.trim(),
-					granblueId: phantomGranblueId.trim() || undefined,
-					notes: phantomNotes.trim() || undefined,
-					joinedAt: phantomJoinedAt || undefined
-				}
-			})
-			phantomDialogOpen = false
-		} catch (error) {
-			console.error('Failed to create phantom:', error)
-		}
-	}
-
-	async function handleDeletePhantom(phantom: PhantomPlayer) {
-		if (!crewStore.crew) return
+	async function handleConfirmDeletePhantom() {
+		if (!crewStore.crew || !phantomToDelete) return
 
 		try {
 			await deletePhantomMutation.mutateAsync({
 				crewId: crewStore.crew.id,
-				phantomId: phantom.id
+				phantomId: phantomToDelete.id
 			})
 		} catch (error) {
 			console.error('Failed to delete phantom:', error)
 		}
+
+		deletePhantomDialogOpen = false
+		phantomToDelete = null
 	}
 
 	// Format date
@@ -337,8 +315,11 @@
 							<Button variant="secondary" size="small" iconOnly icon="ellipsis" {...props} />
 						{/snippet}
 						{#snippet menu()}
-							<DropdownMenuBase.Item class="dropdown-menu-item" onclick={openPhantomDialog}>
-								Add Phantom
+							<DropdownMenuBase.Item
+								class="dropdown-menu-item"
+								onclick={() => (bulkPhantomDialogOpen = true)}
+							>
+								Add phantoms...
 							</DropdownMenuBase.Item>
 						{/snippet}
 					</DropdownMenu>
@@ -504,7 +485,7 @@
 										</DropdownMenuBase.Item>
 										<DropdownMenuBase.Item
 											class="dropdown-menu-item danger"
-											onclick={() => handleDeletePhantom(phantom)}
+											onclick={() => openDeletePhantomDialog(phantom)}
 										>
 											Delete
 										</DropdownMenuBase.Item>
@@ -518,8 +499,8 @@
 				<div class="empty-state">
 					<p>No phantom players.</p>
 					{#if crewStore.isOfficer}
-						<Button variant="secondary" size="small" onclick={openPhantomDialog}>
-							Add Phantom
+						<Button variant="secondary" size="small" onclick={() => (bulkPhantomDialogOpen = true)}>
+							Add phantoms...
 						</Button>
 					{/if}
 				</div>
@@ -563,69 +544,6 @@
 	{/snippet}
 </Dialog>
 
-<!-- Create Phantom Dialog -->
-<Dialog bind:open={phantomDialogOpen}>
-	{#snippet children()}
-		<ModalHeader
-			title="Add Phantom Player"
-			description="Phantom players allow you to track the scores of members without accounts"
-		/>
-
-		<ModalBody>
-			<div class="modal-form">
-				<div class="form-fields">
-					<Input
-						label="Name"
-						bind:value={phantomName}
-						placeholder="Player's name or nickname"
-						fullWidth
-						contained
-						required
-					/>
-
-					<Input
-						label="Granblue ID"
-						bind:value={phantomGranblueId}
-						placeholder="In-game player ID (optional)"
-						fullWidth
-						contained
-					/>
-
-					<div class="form-field">
-						<label for="phantomJoinedAt">Join Date <span class="optional">(optional)</span></label>
-						<input
-							id="phantomJoinedAt"
-							type="date"
-							bind:value={phantomJoinedAt}
-							class="date-input"
-						/>
-					</div>
-
-					<div class="form-field">
-						<label for="phantomNotes">Notes <span class="optional">(optional)</span></label>
-						<textarea
-							id="phantomNotes"
-							bind:value={phantomNotes}
-							placeholder="Optional notes about this player"
-							rows="2"
-						></textarea>
-					</div>
-				</div>
-			</div>
-		</ModalBody>
-
-		<ModalFooter
-			onCancel={() => (phantomDialogOpen = false)}
-			cancelDisabled={createPhantomMutation.isPending}
-			primaryAction={{
-				label: createPhantomMutation.isPending ? 'Creating...' : 'Create',
-				onclick: handleCreatePhantom,
-				disabled: !phantomName.trim() || createPhantomMutation.isPending
-			}}
-		/>
-	{/snippet}
-</Dialog>
-
 <!-- Edit Join Date Dialog -->
 <Dialog bind:open={editJoinDateDialogOpen}>
 	{#snippet children()}
@@ -657,9 +575,33 @@
 	{/snippet}
 </Dialog>
 
+<!-- Delete Phantom Confirmation Dialog -->
+<Dialog bind:open={deletePhantomDialogOpen}>
+	{#snippet children()}
+		<ModalHeader title="Delete Phantom Player" />
+
+		<ModalBody>
+			<p class="confirm-message">
+				Are you sure you want to delete {phantomToDelete?.name ?? 'this phantom player'}? This
+				action cannot be undone.
+			</p>
+		</ModalBody>
+
+		<ModalFooter
+			onCancel={() => (deletePhantomDialogOpen = false)}
+			primaryAction={{
+				label: 'Delete',
+				onclick: handleConfirmDeletePhantom,
+				destructive: true
+			}}
+		/>
+	{/snippet}
+</Dialog>
+
 <!-- Scout User Modal -->
 {#if crewStore.crew?.id}
 	<ScoutUserModal bind:open={scoutModalOpen} crewId={crewStore.crew.id} />
+	<BulkPhantomModal bind:open={bulkPhantomDialogOpen} crewId={crewStore.crew.id} />
 {/if}
 
 <style lang="scss">
@@ -868,7 +810,7 @@
 
 	// Confirm dialog styles
 	.confirm-message {
-		color: var(--text-secondary);
+		color: var(--text-primary);
 		line-height: 1.5;
 		margin: 0;
 	}

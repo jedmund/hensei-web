@@ -184,6 +184,21 @@ export function useCreatePhantom() {
 }
 
 /**
+ * Bulk create phantom players mutation
+ */
+export function useBulkCreatePhantoms() {
+  const queryClient = useQueryClient()
+
+  return createMutation(() => ({
+    mutationFn: ({ crewId, phantoms }: { crewId: string; phantoms: CreatePhantomPlayerInput[] }) =>
+      crewAdapter.bulkCreatePhantoms(crewId, phantoms),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: crewKeys.membersAll() })
+    }
+  }))
+}
+
+/**
  * Update phantom player mutation
  */
 export function useUpdatePhantom() {

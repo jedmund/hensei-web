@@ -206,6 +206,26 @@ export class CrewAdapter extends BaseAdapter {
   }
 
   /**
+   * Create multiple phantom players at once (officers only)
+   */
+  async bulkCreatePhantoms(
+    crewId: string,
+    phantoms: CreatePhantomPlayerInput[],
+    options?: RequestOptions
+  ): Promise<PhantomPlayer[]> {
+    const response = await this.request<{ phantom_players: PhantomPlayer[] }>(
+      `/crews/${crewId}/phantom_players/bulk_create`,
+      {
+        ...options,
+        method: 'POST',
+        body: JSON.stringify({ phantom_players: phantoms })
+      }
+    )
+    this.clearCache('/crew/members')
+    return response.phantom_players
+  }
+
+  /**
    * Update a phantom player
    */
   async updatePhantom(
