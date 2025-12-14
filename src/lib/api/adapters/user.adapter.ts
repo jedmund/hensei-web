@@ -197,7 +197,7 @@ export class UserAdapter extends BaseAdapter {
    * Check username availability
    */
   async checkUsernameAvailability(username: string): Promise<{ available: boolean }> {
-    return this.request<{ available: boolean }>(`/users/check-username`, {
+    return this.request<{ available: boolean }>(`/check/username`, {
       method: 'POST',
       body: JSON.stringify({ username })
     })
@@ -207,7 +207,7 @@ export class UserAdapter extends BaseAdapter {
    * Check email availability
    */
   async checkEmailAvailability(email: string): Promise<{ available: boolean }> {
-    return this.request<{ available: boolean }>(`/users/check-email`, {
+    return this.request<{ available: boolean }>(`/check/email`, {
       method: 'POST',
       body: JSON.stringify({ email })
     })

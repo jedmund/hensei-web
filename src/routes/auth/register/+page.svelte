@@ -3,7 +3,7 @@
 	import AuthCard from '$lib/components/auth/AuthCard.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import { UserAdapter } from '$lib/api/adapters/user.adapter'
+	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -37,8 +37,6 @@
 	// Debounce timers
 	let usernameTimer: ReturnType<typeof setTimeout>
 	let emailTimer: ReturnType<typeof setTimeout>
-
-	const userAdapter = new UserAdapter()
 
 	// Username validation regex
 	const usernameRegex = /^[a-zA-Z0-9_-]+$/

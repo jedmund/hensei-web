@@ -2,7 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit'
 import { json } from '@sveltejs/kit'
 import { dev } from '$app/environment'
 import { z } from 'zod'
-import { PUBLIC_SIERO_API_URL } from '$env/static/public'
+import { getApiBaseUrl } from '$lib/api/adapters/config'
 import { passwordGrantLogin } from '$lib/auth/oauth'
 import { userAdapter } from '$lib/api/adapters/user.adapter'
 import { buildCookies } from '$lib/auth/map'
@@ -40,7 +40,7 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 
 	try {
 		// 1. Create user account via API
-		const signupRes = await fetch(`${PUBLIC_SIERO_API_URL}/users`, {
+		const signupRes = await fetch(`${getApiBaseUrl()}/users`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
