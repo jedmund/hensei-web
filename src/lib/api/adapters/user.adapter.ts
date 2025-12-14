@@ -18,7 +18,10 @@ interface ApiUserResponse {
   role: number
   granblueId?: number | string | null  // API returns number, transformed to camelCase
   showGamertag?: boolean  // transformed from show_gamertag
+  showGranblueId?: boolean  // transformed from show_granblue_id
+  collectionPrivacy?: number  // transformed from collection_privacy (0=everyone, 1=crew_only, 2=private)
   gamertag?: string
+  email?: string  // Only included in settings view
   avatar: {
     picture: string
     element: string
@@ -39,11 +42,20 @@ export interface UserInfo {
   role: number
   granblueId?: string
   showCrewGamertag?: boolean
+  showGranblueId?: boolean
+  collectionPrivacy?: number
   crewGamertag?: string
   avatar: {
     picture: string
     element: string
   }
+}
+
+/**
+ * User settings info - includes email (only returned by /users/me endpoint)
+ */
+export interface UserSettings extends UserInfo {
+  email: string
 }
 
 export interface UserProfile extends UserInfo {
@@ -76,9 +88,22 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
     granblueId: apiUser.granblueId != null ? String(apiUser.granblueId) : undefined,
     // Rename showGamertag to showCrewGamertag
     showCrewGamertag: apiUser.showGamertag,
+    // Privacy settings
+    showGranblueId: apiUser.showGranblueId,
+    collectionPrivacy: apiUser.collectionPrivacy,
     // Rename gamertag to crewGamertag
     crewGamertag: apiUser.gamertag,
     avatar: apiUser.avatar
+  }
+}
+
+/**
+ * Transform API user response to frontend UserSettings format (includes email)
+ */
+function transformSettingsResponse(apiUser: ApiUserResponse): UserSettings {
+  return {
+    ...transformUserResponse(apiUser),
+    email: apiUser.email ?? ''
   }
 }
 
@@ -230,11 +255,11 @@ export class UserAdapter extends BaseAdapter {
   }
 
   /**
-   * Get current user
+   * Get current user settings (includes email - only for settings modal)
    */
-  async getCurrentUser(): Promise<UserInfo> {
+  async getCurrentUser(): Promise<UserSettings> {
     const result = await this.request<ApiUserResponse>('/users/me')
-    return transformUserResponse(result)
+    return transformSettingsResponse(result)
   }
 }
 

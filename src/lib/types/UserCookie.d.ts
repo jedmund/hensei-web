@@ -7,4 +7,6 @@ export interface UserCookie {
 	bahamut?: boolean
 	granblueId?: string
 	showCrewGamertag?: boolean
+	showGranblueId?: boolean
+	collectionPrivacy?: number
 }

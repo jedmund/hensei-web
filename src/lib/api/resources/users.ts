@@ -8,6 +8,8 @@ export interface UserUpdateParams {
 	theme?: string | undefined
 	granblueId?: string | undefined
 	showCrewGamertag?: boolean | undefined
+	showGranblueId?: boolean | undefined
+	collectionPrivacy?: number | undefined
 }
 
 export interface UserResponse {
@@ -23,6 +25,8 @@ export interface UserResponse {
 	role: number
 	granblueId?: string
 	showCrewGamertag?: boolean
+	showGranblueId?: boolean
+	collectionPrivacy?: number
 }
 
 export const users = {
@@ -39,6 +43,8 @@ export const users = {
 			theme?: string | undefined
 			granblue_id?: string | undefined
 			show_gamertag?: boolean | undefined
+			show_granblue_id?: boolean | undefined
+			collection_privacy?: number | undefined
 		} = {}
 
 		if (params.picture !== undefined) updates.picture = params.picture
@@ -48,6 +54,8 @@ export const users = {
 		if (params.theme !== undefined) updates.theme = params.theme
 		if (params.granblueId !== undefined) updates.granblue_id = params.granblueId
 		if (params.showCrewGamertag !== undefined) updates.show_gamertag = params.showCrewGamertag
+		if (params.showGranblueId !== undefined) updates.show_granblue_id = params.showGranblueId
+		if (params.collectionPrivacy !== undefined) updates.collection_privacy = params.collectionPrivacy
 
 		const result = await userAdapter.updateProfile(updates)
 		return {
@@ -59,7 +67,9 @@ export const users = {
 			theme: result.theme,
 			role: result.role,
 			granblueId: result.granblueId,
-			showCrewGamertag: result.showCrewGamertag
+			showCrewGamertag: result.showCrewGamertag,
+			showGranblueId: result.showGranblueId,
+			collectionPrivacy: result.collectionPrivacy
 		}
 	}
 }
