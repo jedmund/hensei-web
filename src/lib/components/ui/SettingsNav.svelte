@@ -90,43 +90,43 @@
 	// Element-specific styles for checked state
 	.element-wind {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$wind-bg-10;
-			color: white;
+			background: colors.$wind-bg-20;
+			color: colors.$wind-text-10;
 		}
 	}
 
 	.element-fire {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$fire-bg-10;
-			color: white;
+			background: colors.$fire-bg-20;
+			color: colors.$fire-text-10;
 		}
 	}
 
 	.element-water {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$water-bg-10;
-			color: white;
+			background: colors.$water-bg-20;
+			color: colors.$water-text-10;
 		}
 	}
 
 	.element-earth {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$earth-bg-10;
-			color: white;
+			background: colors.$earth-bg-20;
+			color: colors.$earth-text-10;
 		}
 	}
 
 	.element-dark {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$dark-bg-10;
-			color: white;
+			background: colors.$dark-bg-20;
+			color: colors.$dark-text-10;
 		}
 	}
 
 	.element-light {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$light-bg-10;
-			color: white;
+			background: colors.$light-bg-20;
+			color: colors.$light-text-10;
 		}
 	}
 </style>
