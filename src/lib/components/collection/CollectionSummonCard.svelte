@@ -13,7 +13,7 @@
 	// Get transformation suffix for transcendence
 	const transformation = $derived(summon.transcendenceStep > 0 ? '02' : undefined)
 
-	const imageUrl = $derived(getSummonImage(summon.summon?.granblueId, 'grid', transformation))
+	const imageUrl = $derived(getSummonImage(summon.summon?.granblueId, 'wide', transformation))
 
 	const displayName = $derived.by(() => {
 		const name = summon.summon?.name
@@ -65,7 +65,6 @@
 	.card-image {
 		position: relative;
 		width: 100%;
-		aspect-ratio: 1 / 1;
 		border-radius: 8px;
 		overflow: hidden;
 		background: var(--card-bg, #f5f5f5);

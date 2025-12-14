@@ -70,7 +70,6 @@
 	.card-image {
 		position: relative;
 		width: 100%;
-		aspect-ratio: 1 / 1;
 		border-radius: 8px;
 		overflow: hidden;
 		background: var(--card-bg, #f5f5f5);
