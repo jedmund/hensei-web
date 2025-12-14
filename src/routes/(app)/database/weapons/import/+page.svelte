@@ -3,7 +3,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { entityAdapter, type WeaponSuggestions } from '$lib/api/adapters/entity.adapter'
-	import { getWeaponImage } from '$lib/utils/images'
+	import { getWeaponImage, getPlaceholderImage } from '$lib/utils/images'
 
 	// Components
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
@@ -79,7 +79,7 @@
 			status: entity.status,
 			imageUrl: entity.granblueId
 				? getWeaponImage(entity.granblueId, 'square')
-				: '/images/placeholders/placeholder-weapon-square.png',
+				: getPlaceholderImage('weapon', 'square'),
 			error: entity.error,
 			saved: savedEntities.has(wikiPage)
 		}))

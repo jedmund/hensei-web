@@ -3,7 +3,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { entityAdapter, type CharacterSuggestions } from '$lib/api/adapters/entity.adapter'
-	import { getCharacterImage } from '$lib/utils/images'
+	import { getCharacterImage, getPlaceholderImage } from '$lib/utils/images'
 
 	// Components
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
@@ -85,7 +85,7 @@
 			status: entity.status,
 			imageUrl: entity.granblueId
 				? getCharacterImage(entity.granblueId, 'square')
-				: '/images/placeholders/placeholder-character-square.png',
+				: getPlaceholderImage('character', 'square'),
 			error: entity.error,
 			saved: savedEntities.has(wikiPage)
 		}))

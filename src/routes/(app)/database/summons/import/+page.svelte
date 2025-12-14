@@ -3,7 +3,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { entityAdapter, type SummonSuggestions } from '$lib/api/adapters/entity.adapter'
-	import { getSummonImage } from '$lib/utils/images'
+	import { getSummonImage, getPlaceholderImage } from '$lib/utils/images'
 
 	// Components
 	import SummonUncapSection from '$lib/features/database/summons/sections/SummonUncapSection.svelte'
@@ -80,7 +80,7 @@
 			status: entity.status,
 			imageUrl: entity.granblueId
 				? getSummonImage(entity.granblueId, 'square')
-				: '/images/placeholders/placeholder-summon-square.png',
+				: getPlaceholderImage('summon', 'square'),
 			error: entity.error,
 			saved: savedEntities.has(wikiPage)
 		}))

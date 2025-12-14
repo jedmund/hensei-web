@@ -2,6 +2,7 @@
 
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte'
+	import { getPlaceholderImage } from '$lib/utils/images'
 
 	export interface EntityTab {
 		wikiPage: string
@@ -22,16 +23,7 @@
 	let { entities, selectedWikiPage, onSelect, entityType }: Props = $props()
 
 	// Get placeholder image based on entity type
-	const placeholderImage = $derived(() => {
-		switch (entityType) {
-			case 'character':
-				return '/images/placeholders/placeholder-character-square.png'
-			case 'weapon':
-				return '/images/placeholders/placeholder-weapon-square.png'
-			case 'summon':
-				return '/images/placeholders/placeholder-summon-square.png'
-		}
-	})
+	const placeholderImage = $derived(getPlaceholderImage(entityType, 'square'))
 </script>
 
 <div class="entity-selector">
@@ -48,7 +40,7 @@
 			disabled={entity.saved}
 		>
 			<img
-				src={entity.granblueId ? entity.imageUrl : placeholderImage()}
+				src={entity.granblueId ? entity.imageUrl : placeholderImage}
 				alt={entity.wikiPage}
 				class="entity-image"
 				class:placeholder={!entity.granblueId}
@@ -60,7 +52,7 @@
 				</span>
 			{:else if entity.status === 'error'}
 				<span class="status-overlay error">
-					<Icon name="alert-circle" size={20} />
+					<Icon name="close" size={20} />
 				</span>
 			{:else if entity.saved}
 				<span class="status-overlay saved">
