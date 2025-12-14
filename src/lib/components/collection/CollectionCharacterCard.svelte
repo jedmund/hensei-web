@@ -54,6 +54,7 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as typography;
 
 	.character-card {
 		display: flex;
@@ -103,6 +104,12 @@
 	}
 
 	.character-name {
-		display: none;
+		font-size: typography.$font-small;
+		color: var(--text-tertiary);
+		text-align: center;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 100%;
 	}
 </style>

@@ -40,10 +40,12 @@
 		ulb={weapon.weapon?.uncap?.ulb}
 		transcendence={weapon.weapon?.uncap?.transcendence}
 	/>
+	<span class="weapon-name">{displayName}</span>
 </button>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as typography;
 
 	.weapon-card {
 		display: flex;
@@ -80,5 +82,15 @@
 		height: 100%;
 		object-fit: contain;
 		border-radius: 8px;
+	}
+
+	.weapon-name {
+		font-size: typography.$font-small;
+		color: var(--text-tertiary);
+		text-align: center;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 100%;
 	}
 </style>

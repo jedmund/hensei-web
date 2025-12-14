@@ -35,10 +35,12 @@
 		ulb={summon.summon?.uncap?.ulb}
 		transcendence={summon.summon?.uncap?.transcendence}
 	/>
+	<span class="summon-name">{displayName}</span>
 </button>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as typography;
 
 	.summon-card {
 		display: flex;
@@ -75,5 +77,15 @@
 		height: 100%;
 		object-fit: contain;
 		border-radius: 8px;
+	}
+
+	.summon-name {
+		font-size: typography.$font-small;
+		color: var(--text-tertiary);
+		text-align: center;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 100%;
 	}
 </style>
