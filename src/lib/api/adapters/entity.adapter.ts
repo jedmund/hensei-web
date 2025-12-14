@@ -1192,13 +1192,21 @@ export class EntityAdapter extends BaseAdapter {
 	 * Fetches wiki data and suggestions for multiple character wiki pages
 	 * Requires editor role (>= 7)
 	 * @param wikiPages - Array of wiki page names (max 10)
+	 * @param wikiData - Optional pre-fetched wiki text keyed by page name
 	 */
 	async batchPreviewCharacters(
-		wikiPages: string[]
+		wikiPages: string[],
+		wikiData?: Record<string, string>
 	): Promise<BatchPreviewResponse<CharacterSuggestions>> {
+		const body: { wiki_pages: string[]; wiki_data?: Record<string, string> } = {
+			wiki_pages: wikiPages
+		}
+		if (wikiData) {
+			body.wiki_data = wikiData
+		}
 		return this.request<BatchPreviewResponse<CharacterSuggestions>>('/characters/batch_preview', {
 			method: 'POST',
-			body: { wiki_pages: wikiPages }
+			body
 		})
 	}
 
@@ -1206,13 +1214,21 @@ export class EntityAdapter extends BaseAdapter {
 	 * Fetches wiki data and suggestions for multiple weapon wiki pages
 	 * Requires editor role (>= 7)
 	 * @param wikiPages - Array of wiki page names (max 10)
+	 * @param wikiData - Optional pre-fetched wiki text keyed by page name
 	 */
 	async batchPreviewWeapons(
-		wikiPages: string[]
+		wikiPages: string[],
+		wikiData?: Record<string, string>
 	): Promise<BatchPreviewResponse<WeaponSuggestions>> {
+		const body: { wiki_pages: string[]; wiki_data?: Record<string, string> } = {
+			wiki_pages: wikiPages
+		}
+		if (wikiData) {
+			body.wiki_data = wikiData
+		}
 		return this.request<BatchPreviewResponse<WeaponSuggestions>>('/weapons/batch_preview', {
 			method: 'POST',
-			body: { wiki_pages: wikiPages }
+			body
 		})
 	}
 
@@ -1220,13 +1236,21 @@ export class EntityAdapter extends BaseAdapter {
 	 * Fetches wiki data and suggestions for multiple summon wiki pages
 	 * Requires editor role (>= 7)
 	 * @param wikiPages - Array of wiki page names (max 10)
+	 * @param wikiData - Optional pre-fetched wiki text keyed by page name
 	 */
 	async batchPreviewSummons(
-		wikiPages: string[]
+		wikiPages: string[],
+		wikiData?: Record<string, string>
 	): Promise<BatchPreviewResponse<SummonSuggestions>> {
+		const body: { wiki_pages: string[]; wiki_data?: Record<string, string> } = {
+			wiki_pages: wikiPages
+		}
+		if (wikiData) {
+			body.wiki_data = wikiData
+		}
 		return this.request<BatchPreviewResponse<SummonSuggestions>>('/summons/batch_preview', {
 			method: 'POST',
-			body: { wiki_pages: wikiPages }
+			body
 		})
 	}
 

@@ -3,6 +3,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { entityAdapter, type WeaponSuggestions } from '$lib/api/adapters/entity.adapter'
+	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
 	import { getWeaponImage, getPlaceholderImage } from '$lib/utils/images'
 
 	// Components
@@ -166,7 +167,15 @@
 		selectedWikiPage = pages[0] ?? null
 
 		try {
-			const response = await entityAdapter.batchPreviewWeapons(pages)
+			// Step 1: Fetch wiki data client-side (bypasses CloudFlare)
+			const wikiResults = await fetchWikiPages(pages)
+			const wikiData = buildWikiDataMap(wikiResults)
+
+			// Update pages array with any redirects
+			const finalPages = wikiResults.map((r) => r.wikiPage)
+
+			// Step 2: Send to API for parsing (with pre-fetched wiki data)
+			const response = await entityAdapter.batchPreviewWeapons(finalPages, wikiData)
 
 			// Update entities with results
 			const updatedEntities = new Map<string, EntityState>()
