@@ -28,9 +28,9 @@
       const iconModule = await import(`../../assets/icons/${name}.svg?raw`);
       let content = iconModule.default;
       
-      // Remove width and height attributes to make it responsive
-      content = content.replace(/width="[^"]*"/g, '');
-      content = content.replace(/height="[^"]*"/g, '');
+      // Remove width and height from root <svg> only (preserve inner element dimensions)
+      content = content.replace(/<svg([^>]*)width="[^"]*"/, '<svg$1');
+      content = content.replace(/<svg([^>]*)height="[^"]*"/, '<svg$1');
       
       // Add viewBox if not present (fallback to 0 0 24 24)
       if (!content.includes('viewBox')) {
