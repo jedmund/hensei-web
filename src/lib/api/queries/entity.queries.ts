@@ -115,6 +115,64 @@ export const entityQueries = {
 			enabled: !!idOrSlug,
 			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * All character series query options
+	 * Returns list ordered by display order
+	 *
+	 * @returns Query options for fetching all character series
+	 */
+	characterSeriesList: () =>
+		queryOptions({
+			queryKey: ['characterSeries', 'list'] as const,
+			queryFn: () => entityAdapter.getCharacterSeriesList(),
+			staleTime: 1000 * 60 * 60, // 1 hour - rarely changes
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * Single character series query options
+	 *
+	 * @param idOrSlug - Character series UUID or slug (e.g., 'grand')
+	 * @returns Query options for fetching a single character series with full details
+	 */
+	characterSeries: (idOrSlug: string) =>
+		queryOptions({
+			queryKey: ['characterSeries', idOrSlug] as const,
+			queryFn: () => entityAdapter.getCharacterSeries(idOrSlug),
+			enabled: !!idOrSlug,
+			staleTime: 1000 * 60 * 60, // 1 hour
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * All summon series query options
+	 * Returns list ordered by display order
+	 *
+	 * @returns Query options for fetching all summon series
+	 */
+	summonSeriesList: () =>
+		queryOptions({
+			queryKey: ['summonSeries', 'list'] as const,
+			queryFn: () => entityAdapter.getSummonSeriesList(),
+			staleTime: 1000 * 60 * 60, // 1 hour - rarely changes
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * Single summon series query options
+	 *
+	 * @param idOrSlug - Summon series UUID or slug (e.g., 'magna')
+	 * @returns Query options for fetching a single summon series with full details
+	 */
+	summonSeries: (idOrSlug: string) =>
+		queryOptions({
+			queryKey: ['summonSeries', idOrSlug] as const,
+			queryFn: () => entityAdapter.getSummonSeries(idOrSlug),
+			enabled: !!idOrSlug,
+			staleTime: 1000 * 60 * 60, // 1 hour
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		})
 }
 
@@ -146,5 +204,11 @@ export const entityKeys = {
 		['weaponKeys', params?.seriesSlug, params?.slot, params?.group] as const,
 	weaponSeriesList: () => ['weaponSeries', 'list'] as const,
 	weaponSeries: (idOrSlug: string) => ['weaponSeries', idOrSlug] as const,
-	allWeaponSeries: () => ['weaponSeries'] as const
+	allWeaponSeries: () => ['weaponSeries'] as const,
+	characterSeriesList: () => ['characterSeries', 'list'] as const,
+	characterSeries: (idOrSlug: string) => ['characterSeries', idOrSlug] as const,
+	allCharacterSeries: () => ['characterSeries'] as const,
+	summonSeriesList: () => ['summonSeries', 'list'] as const,
+	summonSeries: (idOrSlug: string) => ['summonSeries', idOrSlug] as const,
+	allSummonSeries: () => ['summonSeries'] as const
 }

@@ -17,6 +17,18 @@ import type {
 	CreateWeaponSeriesPayload,
 	UpdateWeaponSeriesPayload
 } from '$lib/types/api/weaponSeries'
+import type {
+	CharacterSeriesRef,
+	CharacterSeries,
+	CreateCharacterSeriesPayload,
+	UpdateCharacterSeriesPayload
+} from '$lib/types/api/characterSeries'
+import type {
+	SummonSeriesRef,
+	SummonSeries,
+	CreateSummonSeriesPayload,
+	UpdateSummonSeriesPayload
+} from '$lib/types/api/summonSeries'
 
 /**
  * Canonical weapon data from the game
@@ -132,8 +144,8 @@ export interface Character {
 	season?: number | null
 	/** Human-readable season name */
 	seasonName?: string | null
-	/** Series integer array (1=Standard, 2=Grand, 3=Zodiac, etc.) */
-	series?: number[]
+	/** Series - array of objects with slug/name or legacy integers */
+	series?: CharacterSeriesRef[] | number[]
 	/** Human-readable series names */
 	seriesNames?: string[]
 	/** Whether character can be pulled from gacha */
@@ -228,7 +240,8 @@ export interface Summon {
 	}
 	rarity: number
 	element: number
-	series?: number
+	/** Series - object with slug/name or null */
+	series?: SummonSeriesRef | null
 	/** Gacha promotions (1=Premium, 2=Classic, 3=ClassicII, 4=Flash, 5=Legend, etc.) */
 	promotions?: number[]
 	/** Human-readable promotion names */
@@ -1296,6 +1309,171 @@ export class EntityAdapter extends BaseAdapter {
 	 */
 	clearWeaponSeriesCache() {
 		this.clearCache('/weapon_series')
+	}
+
+	// ============================================================
+	// CHARACTER SERIES METHODS
+	// ============================================================
+
+	/**
+	 * Gets all character series, sorted by order
+	 * Returns list view with basic info (no character count)
+	 */
+	async getCharacterSeriesList(): Promise<CharacterSeries[]> {
+		return this.request<CharacterSeries[]>('/character_series', {
+			method: 'GET',
+			cacheTTL: 3600000 // Cache for 1 hour - rarely changes
+		})
+	}
+
+	/**
+	 * Gets a single character series by ID or slug
+	 * Returns full view with character count
+	 *
+	 * @param idOrSlug - UUID or slug (e.g., 'grand')
+	 */
+	async getCharacterSeries(idOrSlug: string): Promise<CharacterSeries> {
+		return this.request<CharacterSeries>(`/character_series/${idOrSlug}`, {
+			method: 'GET',
+			cacheTTL: 3600000 // Cache for 1 hour
+		})
+	}
+
+	/**
+	 * Creates a new character series
+	 * Requires editor role (>= 7)
+	 */
+	async createCharacterSeries(payload: CreateCharacterSeriesPayload): Promise<CharacterSeries> {
+		const result = await this.request<CharacterSeries>('/character_series', {
+			method: 'POST',
+			body: { character_series: payload }
+		})
+		// Clear character series cache
+		this.clearCache('/character_series')
+		return result
+	}
+
+	/**
+	 * Updates an existing character series
+	 * Requires editor role (>= 7)
+	 *
+	 * @param id - Character series UUID
+	 * @param payload - Fields to update
+	 */
+	async updateCharacterSeries(
+		id: string,
+		payload: UpdateCharacterSeriesPayload
+	): Promise<CharacterSeries> {
+		const result = await this.request<CharacterSeries>(`/character_series/${id}`, {
+			method: 'PATCH',
+			body: { character_series: payload }
+		})
+		// Clear character series cache
+		this.clearCache('/character_series')
+		return result
+	}
+
+	/**
+	 * Deletes a character series
+	 * Requires editor role (>= 7)
+	 * Will fail if series has associated characters
+	 *
+	 * @param id - Character series UUID
+	 */
+	async deleteCharacterSeries(id: string): Promise<void> {
+		await this.request<void>(`/character_series/${id}`, {
+			method: 'DELETE'
+		})
+		// Clear character series cache
+		this.clearCache('/character_series')
+	}
+
+	/**
+	 * Clears character series cache
+	 */
+	clearCharacterSeriesCache() {
+		this.clearCache('/character_series')
+	}
+
+	// ============================================================
+	// SUMMON SERIES METHODS
+	// ============================================================
+
+	/**
+	 * Gets all summon series, sorted by order
+	 * Returns list view with basic info (no summon count)
+	 */
+	async getSummonSeriesList(): Promise<SummonSeries[]> {
+		return this.request<SummonSeries[]>('/summon_series', {
+			method: 'GET',
+			cacheTTL: 3600000 // Cache for 1 hour - rarely changes
+		})
+	}
+
+	/**
+	 * Gets a single summon series by ID or slug
+	 * Returns full view with summon count
+	 *
+	 * @param idOrSlug - UUID or slug (e.g., 'magna')
+	 */
+	async getSummonSeries(idOrSlug: string): Promise<SummonSeries> {
+		return this.request<SummonSeries>(`/summon_series/${idOrSlug}`, {
+			method: 'GET',
+			cacheTTL: 3600000 // Cache for 1 hour
+		})
+	}
+
+	/**
+	 * Creates a new summon series
+	 * Requires editor role (>= 7)
+	 */
+	async createSummonSeries(payload: CreateSummonSeriesPayload): Promise<SummonSeries> {
+		const result = await this.request<SummonSeries>('/summon_series', {
+			method: 'POST',
+			body: { summon_series: payload }
+		})
+		// Clear summon series cache
+		this.clearCache('/summon_series')
+		return result
+	}
+
+	/**
+	 * Updates an existing summon series
+	 * Requires editor role (>= 7)
+	 *
+	 * @param id - Summon series UUID
+	 * @param payload - Fields to update
+	 */
+	async updateSummonSeries(id: string, payload: UpdateSummonSeriesPayload): Promise<SummonSeries> {
+		const result = await this.request<SummonSeries>(`/summon_series/${id}`, {
+			method: 'PATCH',
+			body: { summon_series: payload }
+		})
+		// Clear summon series cache
+		this.clearCache('/summon_series')
+		return result
+	}
+
+	/**
+	 * Deletes a summon series
+	 * Requires editor role (>= 7)
+	 * Will fail if series has associated summons
+	 *
+	 * @param id - Summon series UUID
+	 */
+	async deleteSummonSeries(id: string): Promise<void> {
+		await this.request<void>(`/summon_series/${id}`, {
+			method: 'DELETE'
+		})
+		// Clear summon series cache
+		this.clearCache('/summon_series')
+	}
+
+	/**
+	 * Clears summon series cache
+	 */
+	clearSummonSeriesCache() {
+		this.clearCache('/summon_series')
 	}
 }
 

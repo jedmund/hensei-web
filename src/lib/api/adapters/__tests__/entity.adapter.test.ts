@@ -91,7 +91,11 @@ describe('EntityAdapter', () => {
 		},
 		rarity: 5,
 		element: 0,
-		series: 2,
+		series: {
+			id: 'series-1',
+			slug: 'optimus',
+			name: { en: 'Optimus Series', ja: 'オプティマスシリーズ' }
+		},
 		minHp: 200,
 		maxHp: 1000,
 		minAttack: 300,
