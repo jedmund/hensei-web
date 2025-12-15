@@ -173,51 +173,42 @@
 			{#if currentTab === 'info'}
 				<section class="details">
 					<WeaponMetadataSection {weapon} />
-
-					{#if weapon.nicknames?.en?.length || weapon.nicknames?.ja?.length}
-						<DetailsContainer title="Nicknames">
-							{#if weapon.nicknames?.en?.length}
-								<DetailItem label="English">
-									<div class="nickname-tags">
-										{#each weapon.nicknames.en as nickname}
-											<span class="nickname-tag">{nickname}</span>
-										{/each}
-									</div>
-								</DetailItem>
-							{/if}
-							{#if weapon.nicknames?.ja?.length}
-								<DetailItem label="Japanese">
-									<div class="nickname-tags">
-										{#each weapon.nicknames.ja as nickname}
-											<span class="nickname-tag">{nickname}</span>
-										{/each}
-									</div>
-								</DetailItem>
-							{/if}
-						</DetailsContainer>
-					{/if}
-
+					<WeaponGachaSection {weapon} />
 					<WeaponUncapSection {weapon} />
 					<WeaponTaxonomySection {weapon} />
 					<WeaponStatsSection {weapon} />
-					<WeaponGachaSection {weapon} />
 
-					{#if weapon.releaseDate || weapon.flbDate || weapon.ulbDate || weapon.transcendenceDate}
-						<DetailsContainer title="Dates">
-							{#if weapon.releaseDate}
-								<DetailItem label="Release Date" value={weapon.releaseDate} />
+					<DetailsContainer title="Nicknames">
+						<DetailItem label="English">
+							{#if weapon.nicknames?.en?.length}
+								<div class="nickname-tags">
+									{#each weapon.nicknames.en as nickname}
+										<span class="nickname-tag">{nickname}</span>
+									{/each}
+								</div>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if weapon.flbDate}
-								<DetailItem label="FLB Date" value={weapon.flbDate} />
+						</DetailItem>
+						<DetailItem label="Japanese">
+							{#if weapon.nicknames?.ja?.length}
+								<div class="nickname-tags">
+									{#each weapon.nicknames.ja as nickname}
+										<span class="nickname-tag">{nickname}</span>
+									{/each}
+								</div>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if weapon.ulbDate}
-								<DetailItem label="ULB Date" value={weapon.ulbDate} />
-							{/if}
-							{#if weapon.transcendenceDate}
-								<DetailItem label="Transcendence Date" value={weapon.transcendenceDate} />
-							{/if}
-						</DetailsContainer>
-					{/if}
+						</DetailItem>
+					</DetailsContainer>
+
+					<DetailsContainer title="Dates">
+						<DetailItem label="Release Date" value={weapon.releaseDate || '—'} />
+						<DetailItem label="FLB Date" value={weapon.flbDate || '—'} />
+						<DetailItem label="ULB Date" value={weapon.ulbDate || '—'} />
+						<DetailItem label="Transcendence Date" value={weapon.transcendenceDate || '—'} />
+					</DetailsContainer>
 
 					<DetailsContainer title="Links">
 						<DetailItem label="Wiki (EN)">

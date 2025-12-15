@@ -216,10 +216,10 @@
 		>
 			<section class="details">
 				<WeaponMetadataSection {weapon} {editMode} bind:editData />
+				<WeaponGachaSection {weapon} {editMode} bind:editData />
 				<WeaponUncapSection {weapon} {editMode} bind:editData />
 				<WeaponTaxonomySection {weapon} {editMode} bind:editData />
 				<WeaponStatsSection {weapon} {editMode} bind:editData />
-				<WeaponGachaSection {weapon} {editMode} bind:editData />
 
 				<DetailsContainer title="Nicknames">
 					<DetailItem label="Nicknames (EN)">
