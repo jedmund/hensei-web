@@ -57,6 +57,7 @@
 	// Editable fields - initialized from character data
 	let editData = $state({
 		name: '',
+		nameJp: '',
 		granblueId: '',
 		characterId: '', // Comma-separated string for dual/trio units
 		rarity: 1,
@@ -126,6 +127,7 @@
 		if (character) {
 			editData = {
 				name: character.name?.en || '',
+				nameJp: character.name?.ja || '',
 				granblueId: character.granblueId || '',
 				characterId: character.characterId?.join(', ') || '',
 				rarity: character.rarity || 1,
@@ -183,6 +185,7 @@
 			// Prepare the data for API (flat snake_case format)
 			const payload = {
 				name_en: editData.name,
+				name_jp: editData.nameJp,
 				granblue_id: editData.granblueId,
 				character_id:
 					editData.characterId.trim() === ''

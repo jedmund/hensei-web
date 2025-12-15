@@ -78,6 +78,20 @@
 
 <DetailsContainer title="Metadata">
   {#if editMode}
+    <DetailItem
+      label="Name (EN)"
+      bind:value={editData.name}
+      editable={true}
+      type="text"
+      placeholder="English name"
+    />
+    <DetailItem
+      label="Name (JP)"
+      bind:value={editData.nameJp}
+      editable={true}
+      type="text"
+      placeholder="日本語名"
+    />
     <SuggestionDetailItem
       label="Rarity"
       bind:value={editData.rarity}
@@ -143,6 +157,8 @@
       />
     </DetailItem>
   {:else}
+    <DetailItem label="Name (EN)" value={character.name?.en || '—'} />
+    <DetailItem label="Name (JP)" value={character.name?.ja || '—'} />
     <DetailItem label="Rarity" value={getRarityLabel(character.rarity)} />
     <DetailItem label="Granblue ID">
       {#if character.granblueId}
