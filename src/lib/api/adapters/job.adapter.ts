@@ -26,6 +26,24 @@ export interface SearchJobSkillsParams {
 }
 
 /**
+ * Payload for updating a job entity
+ */
+export interface JobUpdatePayload {
+	name_en?: string
+	name_jp?: string
+	granblue_id?: string
+	proficiency1?: number
+	proficiency2?: number
+	row?: string
+	order?: number
+	master_level?: boolean
+	ultimate_mastery?: boolean
+	accessory?: boolean
+	accessory_type?: number
+	base_job_id?: string | null
+}
+
+/**
  * Job skill search response
  */
 export interface JobSkillSearchResponse {
@@ -65,11 +83,11 @@ export class JobAdapter extends BaseAdapter {
 	 * Gets a single job by ID
 	 */
 	async getById(id: string): Promise<Job> {
-		const response = await this.request<{ job: Job }>(`/jobs/${id}`, {
+		const response = await this.request<Job>(`/jobs/${id}`, {
 			method: 'GET',
 			cacheTTL: 300000 // Cache for 5 minutes
 		})
-		return response.job
+		return response
 	}
 
 	/**
@@ -97,6 +115,22 @@ export class JobAdapter extends BaseAdapter {
 			}
 		)
 		return response.accessories
+	}
+
+	/**
+	 * Updates a job entity (database admin function)
+	 * @param granblueId The job's granblue_id
+	 * @param data The fields to update
+	 */
+	async updateJob(granblueId: string, data: JobUpdatePayload): Promise<Job> {
+		const response = await this.request<Job>(`/jobs/${granblueId}`, {
+			method: 'PUT',
+			body: data
+		})
+		// Clear jobs cache to reflect the change
+		this.clearCache('/jobs')
+		this.clearCache(`/jobs/${granblueId}`)
+		return response
 	}
 
 	/**
