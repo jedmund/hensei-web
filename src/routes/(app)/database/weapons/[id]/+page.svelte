@@ -10,6 +10,7 @@
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { withInitialData } from '$lib/query/ssr'
+	import { fetchWikiPage } from '$lib/api/wiki'
 
 	// Components
 	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
@@ -17,6 +18,7 @@
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
+	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -189,6 +191,7 @@
 					<WeaponUncapSection {weapon} />
 					<WeaponTaxonomySection {weapon} />
 					<WeaponStatsSection {weapon} />
+					<WeaponGachaSection {weapon} />
 
 					{#if weapon.releaseDate || weapon.flbDate || weapon.ulbDate || weapon.transcendenceDate}
 						<DetailsContainer title="Dates">
@@ -272,11 +275,17 @@
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
 					{canEdit}
-					onFetchWiki={canEdit && weapon?.id
+					onFetchWiki={canEdit && weapon?.id && weapon?.wiki?.en
 						? async () => {
-								const result = await entityAdapter.fetchWeaponWiki(weapon.id)
+								// Fetch wiki data client-side (bypasses CloudFlare)
+								const wikiResult = await fetchWikiPage(weapon.wiki!.en!)
+								if (wikiResult.error) {
+									throw new Error(wikiResult.error)
+								}
+								// Update the weapon with the wiki_raw data
+								await entityAdapter.updateWeapon(weapon.id, { wiki_raw: wikiResult.wikiRaw })
 								rawDataQuery.refetch()
-								return result
+								return { wikiRaw: wikiResult.wikiRaw ?? null, gameRawEn: null, gameRawJp: null }
 							}
 						: undefined}
 				/>

@@ -10,6 +10,7 @@
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { withInitialData } from '$lib/query/ssr'
+	import { fetchWikiPage } from '$lib/api/wiki'
 
 	// Components
 	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
@@ -275,11 +276,17 @@
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
 					{canEdit}
-					onFetchWiki={canEdit && character?.id
+					onFetchWiki={canEdit && character?.id && character?.wiki?.en
 						? async () => {
-								const result = await entityAdapter.fetchCharacterWiki(character.id)
+								// Fetch wiki data client-side (bypasses CloudFlare)
+								const wikiResult = await fetchWikiPage(character.wiki!.en!)
+								if (wikiResult.error) {
+									throw new Error(wikiResult.error)
+								}
+								// Update the character with the wiki_raw data
+								await entityAdapter.updateCharacter(character.id, { wiki_raw: wikiResult.wikiRaw })
 								rawDataQuery.refetch()
-								return result
+								return { wikiRaw: wikiResult.wikiRaw ?? null, gameRawEn: null, gameRawJp: null }
 							}
 						: undefined}
 				/>
