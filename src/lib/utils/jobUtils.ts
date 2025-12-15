@@ -176,11 +176,11 @@ export function getSkillCategoryName(skill: JobSkill): string {
  * Returns CSS color variable name
  */
 export function getSkillCategoryColor(skill: JobSkill): string {
-	if (skill.main) return 'var(--skill-main)'
-	if (skill.sub) return 'var(--skill-sub)'
-	if (skill.emp) return 'var(--skill-emp)'
-	if (skill.base) return 'var(--skill-base)'
-	return 'var(--skill-default)'
+	if (skill.main) return 'var(--skill-main, #ff6b6b)'
+	if (skill.sub) return 'var(--skill-sub, #4ecdc4)'
+	if (skill.emp) return 'var(--skill-emp, #45b7d1)'
+	if (skill.base) return 'var(--skill-base, #96ceb4)'
+	return 'var(--skill-default, #888)'
 }
 
 /**
