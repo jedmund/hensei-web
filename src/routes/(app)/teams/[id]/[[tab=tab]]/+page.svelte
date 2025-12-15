@@ -5,8 +5,24 @@
 	import { partyQueries } from '$lib/api/queries/party.queries'
 	import { withInitialData } from '$lib/query/ssr'
 	import { GridType } from '$lib/types/enums'
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	let { data }: { data: PageData } = $props()
+
+	// Element emoji mapping for party titles
+	function getElementEmoji(element: number | undefined | null): string {
+		const emojis: Record<number, string> = {
+			0: '⚪', // null/unknown
+			1: '🔴', // fire
+			2: '🔵', // water
+			3: '🟤', // earth
+			4: '🟢', // wind
+			5: '🟡', // light
+			6: '🟣'  // dark
+		}
+		return emojis[element ?? 0] ?? '⚪'
+	}
 
 	// Map URL segment to GridType
 	const tabMap: Record<string, GridType> = {
@@ -41,7 +57,25 @@
 	// Use query data if available, fall back to server data
 	// This allows the query to refetch and update the UI automatically
 	const party = $derived(partyQuery.data ?? data.party)
+
+	// Generate dynamic page title
+	const pageTitle = $derived(() => {
+		if (!party) return 'Team / granblue.team'
+		const emoji = getElementEmoji(party.element)
+		const teamName = party.name || 'Unnamed Team'
+		const username = party.user?.username || 'Anonymous'
+		return m.page_title_party({ emoji, teamName, username })
+	})
+
+	const pageDescription = $derived(() => {
+		if (!party) return m.page_desc_home()
+		const raidName = party.raid?.name || 'Unknown Raid'
+		const username = party.user?.username || 'Anonymous'
+		return m.page_desc_party({ raidName, username })
+	})
 </script>
+
+<PageMeta title={pageTitle()} description={pageDescription()} />
 
 {#if party}
 	<Party party={party} canEdit={data.canEdit || false} authUserId={data.authUserId} {initialTab} />

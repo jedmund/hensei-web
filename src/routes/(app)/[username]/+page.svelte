@@ -8,6 +8,8 @@
 	import { IsInViewport } from 'runed'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	const { data }: { data: PageData } = $props()
 	const isOwner = $derived(data.isOwner || false)
@@ -62,9 +64,10 @@
 	})
 </script>
 
-<svelte:head>
-	<title>{data.user.username}'s Teams | Hensei</title>
-</svelte:head>
+<PageMeta
+	title={m.page_title_profile({ username: data.user?.username ?? '' })}
+	description={m.page_desc_profile({ username: data.user?.username ?? '' })}
+/>
 
 <section class="profile">
 	<ProfileHeader
