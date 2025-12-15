@@ -204,6 +204,8 @@
 			}
 
 			const newWeapon = await entityAdapter.createWeapon(payload)
+			// Trigger image download in background (don't await - it queues a job)
+			entityAdapter.downloadWeaponImages(newWeapon.id).catch(console.error)
 			await goto(`/database/weapons/${newWeapon.id}`)
 		} catch (error) {
 			saveError = 'Failed to create weapon. Please try again.'

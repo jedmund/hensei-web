@@ -197,6 +197,8 @@
 			}
 
 			const newSummon = await entityAdapter.createSummon(payload)
+			// Trigger image download in background (don't await - it queues a job)
+			entityAdapter.downloadSummonImages(newSummon.id).catch(console.error)
 			await goto(`/database/summons/${newSummon.id}`)
 		} catch (error) {
 			saveError = 'Failed to create summon. Please try again.'
