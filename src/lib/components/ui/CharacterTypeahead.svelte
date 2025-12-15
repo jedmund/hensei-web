@@ -5,6 +5,7 @@
 	import Svelecte from 'svelecte'
 	import Icon from '../Icon.svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters/search.adapter'
+	import { getCharacterImage } from '$lib/utils/images'
 
 	interface CharacterOption {
 		id: string
@@ -46,39 +47,42 @@
 		contained = false
 	}: Props = $props()
 
-	// Initialize selectedOption from initialCharacter if provided
-	function initializeFromCharacter() {
-		if (initialCharacter && value) {
-			return {
+	let searchResults = $state<CharacterOption[]>([])
+	// Only used when user selects something NEW (different from initialCharacter)
+	let userSelectedOption = $state<CharacterOption | null>(null)
+	let isLoading = $state(false)
+	let searchTimeout: ReturnType<typeof setTimeout> | null = null
+
+	// Clear userSelectedOption when value is cleared
+	$effect(() => {
+		if (!value) {
+			userSelectedOption = null
+		}
+	})
+
+	// Derive options: include initialCharacter or userSelectedOption so Svelecte can find the value
+	const options = $derived.by(() => {
+		const results = [...searchResults]
+
+		// If user selected something new, prioritize that
+		const userSelected = userSelectedOption
+		if (userSelected && !results.find((o) => o.granblueId === userSelected.granblueId)) {
+			return [userSelected, ...results]
+		}
+
+		// Otherwise, include initialCharacter if we have a value matching it
+		if (value && initialCharacter && initialCharacter.granblueId === value) {
+			const initOption: CharacterOption = {
 				id: initialCharacter.id,
 				label: initialCharacter.name,
 				granblueId: initialCharacter.granblueId
 			}
+			if (!results.find((o) => o.granblueId === initOption.granblueId)) {
+				return [initOption, ...results]
+			}
 		}
-		return null
-	}
 
-	let searchResults = $state<CharacterOption[]>([])
-	let selectedOption = $state<CharacterOption | null>(initializeFromCharacter())
-	let isLoading = $state(false)
-	let searchTimeout: ReturnType<typeof setTimeout> | null = null
-
-	// Update selectedOption when initialCharacter changes or value is cleared
-	$effect(() => {
-		if (!value) {
-			selectedOption = null
-		} else if (initialCharacter && !selectedOption) {
-			selectedOption = initializeFromCharacter()
-		}
-	})
-
-	// Combine search results with the selected option so Svelecte can always find it
-	const options = $derived.by(() => {
-		const selected = selectedOption
-		if (selected && !searchResults.find((o) => o.granblueId === selected.granblueId)) {
-			return [selected, ...searchResults]
-		}
-		return searchResults
+		return results
 	})
 
 	const typeaheadClasses = $derived(
@@ -132,7 +136,12 @@
 	function handleChange(selected: CharacterOption | null) {
 		const newValue = selected?.granblueId || null
 		value = newValue
-		selectedOption = selected
+		// Only track as userSelectedOption if it's different from initialCharacter
+		if (selected && initialCharacter && selected.granblueId === initialCharacter.granblueId) {
+			userSelectedOption = null // Use initialCharacter instead
+		} else {
+			userSelectedOption = selected
+		}
 		onValueChange?.(newValue)
 	}
 </script>
@@ -152,6 +161,30 @@
 	>
 		{#snippet toggleIcon(dropdownShow)}
 			<Icon name="chevron-down-small" size={14} class="chevron" />
+		{/snippet}
+		{#snippet option(opt)}
+			{@const char = opt as CharacterOption}
+			<div class="option-item">
+				<img
+					src={getCharacterImage(char.granblueId, 'square', '01')}
+					alt=""
+					class="option-image"
+				/>
+				<span class="option-label">{char.label}</span>
+			</div>
+		{/snippet}
+		{#snippet selection(sel)}
+			{@const char = (sel as CharacterOption[])[0]}
+			{#if char}
+				<div class="selection-item">
+					<img
+						src={getCharacterImage(char.granblueId, 'square', '01')}
+						alt=""
+						class="selection-image"
+					/>
+					<span class="selection-label">{char.label}</span>
+				</div>
+			{/if}
 		{/snippet}
 	</Svelecte>
 	{#if isLoading}
@@ -257,6 +290,47 @@
 		// Hide the separator bar between buttons
 		:global(.sv-btn-separator) {
 			display: none;
+		}
+
+		// Custom option item styling
+		.option-item {
+			display: flex;
+			align-items: center;
+			gap: $unit;
+		}
+
+		.option-image {
+			width: 24px;
+			height: 24px;
+			border-radius: $item-corner-small;
+			flex-shrink: 0;
+		}
+
+		.option-label {
+			flex: 1;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		// Custom selection item styling (shown in input when value selected)
+		.selection-item {
+			display: flex;
+			align-items: center;
+			gap: $unit-half;
+		}
+
+		.selection-image {
+			width: 20px;
+			height: 20px;
+			border-radius: $item-corner-small;
+			flex-shrink: 0;
+		}
+
+		.selection-label {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 	}
 
