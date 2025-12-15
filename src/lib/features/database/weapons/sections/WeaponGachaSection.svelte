@@ -69,10 +69,12 @@
 					contained
 				/>
 			</DetailItem>
-			<DetailItem label="Recruits" sublabel="Character recruited by this weapon">
+			<DetailItem label="Recruits" sublabel="Character recruited by this weapon" editable={true}>
 				<CharacterTypeahead
 					bind:value={editData.recruits}
+					initialCharacter={weapon.recruits ? { id: weapon.recruits.id, name: weapon.recruits.name?.en || weapon.recruits.granblueId, granblueId: weapon.recruits.granblueId } : null}
 					placeholder="Search for character..."
+					contained
 				/>
 			</DetailItem>
 		{:else}

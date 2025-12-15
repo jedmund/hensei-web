@@ -296,8 +296,8 @@
 		</DetailsContainer>
 
 		<DetailsContainer title="Recruits">
-			<DetailItem label="Recruits Character" sublabel="Character recruited by this weapon">
-				<CharacterTypeahead bind:value={editData.recruits} placeholder="Search for character..." />
+			<DetailItem label="Recruits Character" sublabel="Character recruited by this weapon" editable={true}>
+				<CharacterTypeahead bind:value={editData.recruits} placeholder="Search for character..." contained />
 			</DetailItem>
 		</DetailsContainer>
 
