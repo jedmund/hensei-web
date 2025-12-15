@@ -7,11 +7,9 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
-	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import { getElementLabel, getElementOptions } from '$lib/utils/element'
 	import type { SummonSeriesRef } from '$lib/types/api/summonSeries'
-	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -53,12 +51,6 @@
 		]
 	})
 
-	// Promotion options for multiselect
-	const promotionOptions = Object.entries(PROMOTION_NAMES).map(([value, label]) => ({
-		value: Number(value),
-		label
-	}))
-
 	// Get element name for checkbox theming
 	const elementName = $derived.by((): ElementName | undefined => {
 		const el = editMode ? editData?.element : summon?.element
@@ -70,12 +62,6 @@
 	function formatSeriesLabel(series: SummonSeriesRef | null | undefined): string {
 		if (!series) return '—'
 		return series.name?.en || '—'
-	}
-
-	// Format promotions for display
-	function formatPromotionsDisplay(promotions: number[]): string {
-		if (!promotions || promotions.length === 0) return '—'
-		return getPromotionNames(promotions).join(', ')
 	}
 </script>
 
@@ -99,24 +85,10 @@
 			type="select"
 			options={seriesOptions}
 		/>
-		<DetailItem label="Promotions" sublabel="Gacha pools where this summon appears" editable={true}>
-			<MultiSelect
-				size="medium"
-				options={promotionOptions}
-				bind:value={editData.promotions}
-				placeholder="Select promotions"
-				contained
-			/>
-		</DetailItem>
 	{:else}
 		<DetailItem label="Element">
 			<ElementLabel element={summon.element} size="medium" />
 		</DetailItem>
 		<DetailItem label="Series" value={formatSeriesLabel(summon.series)} />
-		<DetailItem
-			label="Promotions"
-			sublabel="Gacha pools where this summon appears"
-			value={formatPromotionsDisplay(summon.promotions)}
-		/>
 	{/if}
 </DetailsContainer>
