@@ -4,7 +4,13 @@
 	import { goto } from '$app/navigation'
 	import { entityAdapter, type WeaponSuggestions } from '$lib/api/adapters/entity.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
-	import { getWeaponImage, getPlaceholderImage } from '$lib/utils/images'
+	import { getGameCdnWeaponImage, getPlaceholderImage } from '$lib/utils/images'
+	import {
+		buildWikiEnUrl,
+		buildWikiJaUrl,
+		buildGamewithUrl,
+		buildKamigameUrl
+	} from '$lib/utils/external-links'
 
 	// Components
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
@@ -45,9 +51,9 @@
 	let entities = $state<Map<string, EntityState>>(new Map())
 	let selectedWikiPage = $state<string | null>(null)
 
-	// Form data per entity (keyed by wikiPage)
-	let formDataMap = $state<Map<string, any>>(new Map())
-	let dismissedSuggestionsMap = $state<Map<string, Set<string>>>(new Map())
+	// Form data per entity (keyed by wikiPage) - using Record for proper reactivity
+	let formDataByPage = $state<Record<string, any>>({})
+	let dismissedByPage = $state<Record<string, Set<string>>>({})
 	let savedEntities = $state<Set<string>>(new Set())
 
 	// Saving state
@@ -79,7 +85,7 @@
 			granblueId: entity.granblueId,
 			status: entity.status,
 			imageUrl: entity.granblueId
-				? getWeaponImage(entity.granblueId, 'square')
+				? getGameCdnWeaponImage(entity.granblueId)
 				: getPlaceholderImage('weapon', 'square'),
 			error: entity.error,
 			saved: savedEntities.has(wikiPage)
@@ -119,7 +125,7 @@
 			flbDate: suggestions?.flbDate ?? '',
 			ulbDate: suggestions?.ulbDate ?? '',
 			transcendenceDate: '',
-			wikiEn: wikiPage ? `https://gbf.wiki/${wikiPage.replace(/ /g, '_')}` : '',
+			wikiEn: wikiPage ? wikiPage.replace(/ /g, '_') : '',
 			wikiJa: '',
 			gamewith: suggestions?.gamewith ?? '',
 			kamigame: suggestions?.kamigame ?? '',
@@ -190,16 +196,15 @@
 
 				// Create form data for successful results
 				if (result.status === 'success') {
-					const formData = createEmptyFormData(result.wikiPage, result.suggestions)
-					formDataMap.set(result.wikiPage, formData)
-					dismissedSuggestionsMap.set(result.wikiPage, new Set<string>())
+					formDataByPage[result.wikiPage] = createEmptyFormData(result.wikiPage, result.suggestions)
+					dismissedByPage[result.wikiPage] = new Set<string>()
 				}
 			})
 			entities = updatedEntities
 
-			// Update formDataMap and dismissedSuggestionsMap to trigger reactivity
-			formDataMap = new Map(formDataMap)
-			dismissedSuggestionsMap = new Map(dismissedSuggestionsMap)
+			// Trigger reactivity by reassigning
+			formDataByPage = { ...formDataByPage }
+			dismissedByPage = { ...dismissedByPage }
 		} catch (error) {
 			console.error('Batch preview error:', error)
 			fetchError = 'Failed to fetch wiki data. Please try again.'
@@ -215,28 +220,26 @@
 
 	// Accept a suggestion
 	function handleAcceptSuggestion(field: string, value: any) {
-		if (!selectedWikiPage) return
+		if (!selectedWikiPage || !formDataByPage[selectedWikiPage]) return
 
-		const formData = formDataMap.get(selectedWikiPage)
-		if (formData) {
-			formData[field] = value
-			formDataMap = new Map(formDataMap)
-		}
+		formDataByPage[selectedWikiPage][field] = value
+		formDataByPage = { ...formDataByPage }
 	}
 
 	// Dismiss a suggestion
 	function handleDismissSuggestion(field: string) {
 		if (!selectedWikiPage) return
 
-		const dismissed = dismissedSuggestionsMap.get(selectedWikiPage) ?? new Set()
+		const dismissed = dismissedByPage[selectedWikiPage] ?? new Set<string>()
 		dismissed.add(field)
-		dismissedSuggestionsMap = new Map(dismissedSuggestionsMap)
+		dismissedByPage[selectedWikiPage] = dismissed
+		dismissedByPage = { ...dismissedByPage }
 	}
 
 	// Save current entity
 	async function saveCurrentEntity() {
 		if (!selectedWikiPage) return
-		const formData = formDataMap.get(selectedWikiPage)
+		const formData = formDataByPage[selectedWikiPage]
 		if (!formData) return
 
 		isSaving = true
@@ -288,7 +291,9 @@
 			savedEntities = new Set(savedEntities)
 
 			// Select next unsaved entity
-			const unsaved = entityTabs.find((e) => !savedEntities.has(e.wikiPage) && e.status === 'success')
+			const unsaved = entityTabs.find(
+				(e) => !savedEntities.has(e.wikiPage) && e.status === 'success'
+			)
 			if (unsaved) {
 				selectedWikiPage = unsaved.wikiPage
 			}
@@ -307,7 +312,7 @@
 	// Can save current entity
 	const canSave = $derived.by(() => {
 		if (!selectedWikiPage) return false
-		const formData = formDataMap.get(selectedWikiPage)
+		const formData = formDataByPage[selectedWikiPage]
 		if (!formData) return false
 		return (
 			formData.name.trim() !== '' &&
@@ -321,6 +326,7 @@
 		entityTabs.length > 0 &&
 			entityTabs.filter((e) => e.status === 'success').every((e) => savedEntities.has(e.wikiPage))
 	)
+
 </script>
 
 <div class="page">
@@ -350,17 +356,12 @@
 
 	<!-- Input phase -->
 	{#if entities.size === 0}
-		<div class="input-phase">
+		<form class="input-phase" onsubmit={(e) => { e.preventDefault(); fetchWikiData(); }}>
 			<p class="hint">Enter up to 10 wiki page names to import data</p>
 			<div class="wiki-inputs">
 				{#each wikiPagesInputs as _, index}
 					<div class="input-row">
-						<Input
-							bind:value={wikiPagesInputs[index]}
-							placeholder="Ixaba"
-							contained
-							fullWidth
-						/>
+						<Input bind:value={wikiPagesInputs[index]} placeholder="Ixaba" contained fullWidth />
 						{#if wikiPagesInputs.length > 1}
 							<button
 								type="button"
@@ -373,8 +374,14 @@
 						{/if}
 					</div>
 				{/each}
-				<Button variant="ghost" onclick={addInput}>
-					<Icon name="plus" size={16} />
+				<Button
+					variant="ghost"
+					class="add-input-button"
+					leftIcon="plus"
+					size="small"
+					type="button"
+					onclick={addInput}
+				>
 					Add another
 				</Button>
 			</div>
@@ -382,11 +389,11 @@
 				<p class="error">{fetchError}</p>
 			{/if}
 			<div class="fetch-button">
-				<Button variant="primary" onclick={fetchWikiData} disabled={isFetching}>
+				<Button variant="primary" type="submit" disabled={isFetching}>
 					{isFetching ? 'Fetching...' : 'Fetch data'}
 				</Button>
 			</div>
-		</div>
+		</form>
 	{:else}
 		<!-- Entity selector -->
 		<div class="entity-selector-container">
@@ -409,15 +416,14 @@
 				<div class="entity-loading">
 					<p>Loading wiki data...</p>
 				</div>
-			{:else if selectedWikiPage && formDataMap.has(selectedWikiPage)}
-				{@const formData = formDataMap.get(selectedWikiPage)!}
+			{:else if selectedWikiPage && formDataByPage[selectedWikiPage]}
 				{@const suggestions = selectedEntity.suggestions}
-				{@const dismissed = dismissedSuggestionsMap.get(selectedWikiPage) ?? new Set<string>()}
+				{@const dismissed = dismissedByPage[selectedWikiPage] ?? new Set<string>()}
 				<section class="details">
 					<DetailsContainer title="Basic Info">
 						<SuggestionDetailItem
 							label="Name (EN)"
-							bind:value={formData.name}
+							bind:value={formDataByPage[selectedWikiPage].name}
 							editable={true}
 							type="text"
 							placeholder="Weapon name"
@@ -428,7 +434,7 @@
 						/>
 						<SuggestionDetailItem
 							label="Name (JP)"
-							bind:value={formData.nameJp}
+							bind:value={formDataByPage[selectedWikiPage].nameJp}
 							editable={true}
 							type="text"
 							placeholder="武器名"
@@ -442,7 +448,7 @@
 					<WeaponMetadataSection
 						weapon={emptyWeapon}
 						editMode={true}
-						editData={formData}
+						bind:editData={formDataByPage[selectedWikiPage]}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -452,7 +458,7 @@
 					<WeaponUncapSection
 						weapon={emptyWeapon}
 						editMode={true}
-						editData={formData}
+						bind:editData={formDataByPage[selectedWikiPage]}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -462,7 +468,7 @@
 					<WeaponTaxonomySection
 						weapon={emptyWeapon}
 						editMode={true}
-						editData={formData}
+						bind:editData={formDataByPage[selectedWikiPage]}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -472,7 +478,7 @@
 					<WeaponStatsSection
 						weapon={emptyWeapon}
 						editMode={true}
-						editData={formData}
+						bind:editData={formDataByPage[selectedWikiPage]}
 						{suggestions}
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
@@ -481,35 +487,39 @@
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
-							<TagInput bind:value={formData.nicknamesEn} placeholder="Add nickname..." contained />
+							<TagInput bind:value={formDataByPage[selectedWikiPage].nicknamesEn} placeholder="Add nickname..." contained />
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
-							<TagInput bind:value={formData.nicknamesJp} placeholder="ニックネーム..." contained />
+							<TagInput bind:value={formDataByPage[selectedWikiPage].nicknamesJp} placeholder="ニックネーム..." contained />
 						</DetailItem>
 					</DetailsContainer>
 
 					<DetailsContainer title="Recruits">
 						<DetailItem label="Recruits Character" sublabel="Character recruited by this weapon">
-							<CharacterTypeahead bind:value={formData.recruits} placeholder="Search for character..." />
+							<CharacterTypeahead
+								bind:value={formDataByPage[selectedWikiPage].recruits}
+								placeholder="Search for character..."
+							/>
 						</DetailItem>
 					</DetailsContainer>
 
 					<DetailsContainer title="Dates">
 						<SuggestionDetailItem
 							label="Release Date"
-							bind:value={formData.releaseDate}
+							bind:value={formDataByPage[selectedWikiPage].releaseDate}
 							editable={true}
 							type="text"
 							placeholder="YYYY-MM-DD"
 							suggestion={suggestions?.releaseDate}
 							dismissedSuggestion={dismissed.has('releaseDate')}
-							onAcceptSuggestion={() => handleAcceptSuggestion('releaseDate', suggestions?.releaseDate)}
+							onAcceptSuggestion={() =>
+								handleAcceptSuggestion('releaseDate', suggestions?.releaseDate)}
 							onDismissSuggestion={() => handleDismissSuggestion('releaseDate')}
 						/>
-						{#if formData.flb}
+						{#if formDataByPage[selectedWikiPage].flb}
 							<SuggestionDetailItem
 								label="FLB Date"
-								bind:value={formData.flbDate}
+								bind:value={formDataByPage[selectedWikiPage].flbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -519,10 +529,10 @@
 								onDismissSuggestion={() => handleDismissSuggestion('flbDate')}
 							/>
 						{/if}
-						{#if formData.ulb}
+						{#if formDataByPage[selectedWikiPage].ulb}
 							<SuggestionDetailItem
 								label="ULB Date"
-								bind:value={formData.ulbDate}
+								bind:value={formDataByPage[selectedWikiPage].ulbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -532,10 +542,10 @@
 								onDismissSuggestion={() => handleDismissSuggestion('ulbDate')}
 							/>
 						{/if}
-						{#if formData.transcendence}
+						{#if formDataByPage[selectedWikiPage].transcendence}
 							<DetailItem
 								label="Transcendence Date"
-								bind:value={formData.transcendenceDate}
+								bind:value={formDataByPage[selectedWikiPage].transcendenceDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -546,27 +556,33 @@
 					<DetailsContainer title="Links">
 						<DetailItem
 							label="Wiki (EN)"
-							bind:value={formData.wikiEn}
+							bind:value={formDataByPage[selectedWikiPage].wikiEn}
 							editable={true}
 							type="text"
-							placeholder="https://gbf.wiki/..."
+							placeholder="Page name (e.g., Cosmic_Sword)"
 							width="480px"
+							hasLinkButton={true}
+							linkUrl={buildWikiEnUrl(formDataByPage[selectedWikiPage].wikiEn)}
 						/>
 						<DetailItem
 							label="Wiki (JP)"
-							bind:value={formData.wikiJa}
+							bind:value={formDataByPage[selectedWikiPage].wikiJa}
 							editable={true}
 							type="text"
-							placeholder="https://gbf-wiki.com/..."
+							placeholder="Japanese page name"
 							width="480px"
+							hasLinkButton={true}
+							linkUrl={buildWikiJaUrl(formDataByPage[selectedWikiPage].wikiJa)}
 						/>
 						<SuggestionDetailItem
 							label="Gamewith"
-							bind:value={formData.gamewith}
+							bind:value={formDataByPage[selectedWikiPage].gamewith}
 							editable={true}
 							type="text"
-							placeholder="https://..."
+							placeholder="Article ID (e.g., 519325)"
 							width="480px"
+							hasLinkButton={true}
+							linkUrl={buildGamewithUrl(formDataByPage[selectedWikiPage].gamewith)}
 							suggestion={suggestions?.gamewith}
 							dismissedSuggestion={dismissed.has('gamewith')}
 							onAcceptSuggestion={() => handleAcceptSuggestion('gamewith', suggestions?.gamewith)}
@@ -574,11 +590,13 @@
 						/>
 						<SuggestionDetailItem
 							label="Kamigame"
-							bind:value={formData.kamigame}
+							bind:value={formDataByPage[selectedWikiPage].kamigame}
 							editable={true}
 							type="text"
-							placeholder="https://..."
+							placeholder="Japanese name (e.g., 神刃エクス・アシャワン)"
 							width="480px"
+							hasLinkButton={true}
+							linkUrl={buildKamigameUrl(formDataByPage[selectedWikiPage].kamigame, 'weapon', formDataByPage[selectedWikiPage].rarity)}
 							suggestion={suggestions?.kamigame}
 							dismissedSuggestion={dismissed.has('kamigame')}
 							onAcceptSuggestion={() => handleAcceptSuggestion('kamigame', suggestions?.kamigame)}
@@ -620,6 +638,10 @@
 		display: flex;
 		gap: spacing.$unit;
 		align-items: center;
+	}
+
+	:global(.wiki-inputs .add-input-button) {
+		width: fit-content;
 	}
 
 	.remove-button {

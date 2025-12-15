@@ -7,6 +7,7 @@
 	import Checkbox from './checkbox/Checkbox.svelte'
 	import DatePicker from './DatePicker.svelte'
 	import SuggestionBadge from './SuggestionBadge.svelte'
+	import Icon from '../Icon.svelte'
 
 	interface SelectOption {
 		value: string | number
@@ -26,6 +27,8 @@
 		element,
 		onchange,
 		width,
+		linkUrl,
+		hasLinkButton = false,
 		// Suggestion props
 		suggestion,
 		suggestionLabel,
@@ -47,6 +50,10 @@
 		onchange?: (checked: boolean) => void
 		/** Custom width for the input field (e.g., '320px') */
 		width?: string
+		/** URL to open when link button is clicked */
+		linkUrl?: string | null
+		/** Whether to show the link button (disabled when linkUrl is empty) */
+		hasLinkButton?: boolean
 		// Suggestion props
 		/** The suggested value from wiki */
 		suggestion?: string | number | boolean | null | undefined
@@ -63,10 +70,21 @@
 	// For checkbox type, derive the checked state from value
 	const checkboxValue = $derived(type === 'checkbox' ? Boolean(value) : false)
 
+	// Show link button when hasLinkButton is true or linkUrl is provided
+	const showLinkButton = $derived(hasLinkButton || !!linkUrl)
+	const linkDisabled = $derived(!linkUrl)
+
 	// Handle checkbox change and call onchange if provided
 	function handleCheckboxChange(checked: boolean) {
 		value = checked as any
 		onchange?.(checked)
+	}
+
+	// Open URL in new tab
+	function openLink() {
+		if (linkUrl) {
+			window.open(linkUrl, '_blank', 'noopener,noreferrer')
+		}
 	}
 
 	// Show suggestion badge when:
@@ -138,6 +156,17 @@
 				<DatePicker bind:value={value as string | null} contained={true} {placeholder} />
 			{:else}
 				<Input bind:value type="text" contained={true} {placeholder} alignRight={false} />
+				{#if showLinkButton}
+					<button
+						type="button"
+						class="link-button"
+						onclick={openLink}
+						disabled={linkDisabled}
+						title={linkDisabled ? 'No link available' : 'Open link'}
+					>
+						<Icon name="link" size={16} />
+					</button>
+				{/if}
 			{/if}
 		</div>
 	{:else if children}
@@ -154,6 +183,7 @@
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/effects' as effects;
 
 	.detail-item {
 		display: flex;
@@ -218,6 +248,8 @@
 			display: flex;
 			flex-grow: 0;
 			justify-content: flex-end;
+			align-items: center;
+			gap: spacing.$unit-half;
 
 			:global(.input),
 			:global(.select) {
@@ -226,6 +258,36 @@
 
 			:global(.input.number) {
 				width: var(--custom-width, 120px);
+			}
+
+			.link-button {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 42px;
+				height: 42px;
+				padding: 0;
+				border: none;
+				border-radius: layout.$item-corner;
+				background: transparent;
+				color: colors.$grey-50;
+				cursor: pointer;
+				flex-shrink: 0;
+				@include effects.smooth-transition(effects.$duration-quick, background-color, color, opacity);
+
+				&:hover:not(:disabled) {
+					background: colors.$grey-90;
+					color: colors.$grey-30;
+				}
+
+				&:active:not(:disabled) {
+					background: colors.$grey-80;
+				}
+
+				&:disabled {
+					cursor: not-allowed;
+					opacity: 0.4;
+				}
 			}
 		}
 	}

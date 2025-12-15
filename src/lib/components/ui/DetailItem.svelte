@@ -7,6 +7,7 @@
 	import Checkbox from './checkbox/Checkbox.svelte'
 	import CheckboxGroup from './checkbox/CheckboxGroup.svelte'
 	import DatePicker from './DatePicker.svelte'
+	import Icon from '../Icon.svelte'
 
 	interface SelectOption {
 		value: string | number
@@ -25,7 +26,9 @@
 		placeholder,
 		element,
 		onchange,
-		width
+		width,
+		linkUrl,
+		hasLinkButton = false
 	}: {
 		label: string
 		/** Secondary label displayed below the main label */
@@ -41,16 +44,31 @@
 		onchange?: (checked: boolean) => void
 		/** Custom width for the input field (e.g., '320px') */
 		width?: string
+		/** URL to open when link button is clicked */
+		linkUrl?: string | null
+		/** Whether to show the link button (disabled when linkUrl is empty) */
+		hasLinkButton?: boolean
 	} = $props()
 
 	// For checkbox type, derive the checked state from value
 	// This ensures external changes to value are reflected in the checkbox
 	const checkboxValue = $derived(type === 'checkbox' ? Boolean(value) : false)
 
+	// Show link button when hasLinkButton is true or linkUrl is provided
+	const showLinkButton = $derived(hasLinkButton || !!linkUrl)
+	const linkDisabled = $derived(!linkUrl)
+
 	// Handle checkbox change and call onchange if provided
 	function handleCheckboxChange(checked: boolean) {
 		value = checked as any
 		onchange?.(checked)
+	}
+
+	// Open URL in new tab
+	function openLink() {
+		if (linkUrl) {
+			window.open(linkUrl, '_blank', 'noopener,noreferrer')
+		}
 	}
 </script>
 
@@ -95,8 +113,21 @@
 				/>
 			{:else if type === 'date'}
 				<DatePicker bind:value={value as string | null} contained={true} {placeholder} />
+			{:else if children}
+				{@render children()}
 			{:else}
 				<Input bind:value type="text" contained={true} {placeholder} alignRight={false} />
+				{#if showLinkButton}
+					<button
+						type="button"
+						class="link-button"
+						onclick={openLink}
+						disabled={linkDisabled}
+						title={linkDisabled ? 'No link available' : 'Open link'}
+					>
+						<Icon name="link" size={16} />
+					</button>
+				{/if}
 			{/if}
 		</div>
 	{:else if children}
@@ -131,11 +162,6 @@
 
 		&:hover:not(.editable):not(.hasChildren) {
 			background: colors.$grey-90;
-		}
-
-		&.editable:focus-within,
-		&.hasChildren:focus-within {
-			background: var(--input-bg-hover);
 		}
 
 		&.editable,
@@ -173,14 +199,47 @@
 			display: flex;
 			flex-grow: 0;
 			justify-content: flex-end;
+			align-items: center;
+			gap: spacing.$unit-half;
 
 			:global(.input),
-			:global(.select) {
+			:global(.select),
+			:global(.multi-select) {
 				width: var(--custom-width, 240px);
 			}
 
 			:global(.input.number) {
 				width: var(--custom-width, 120px);
+			}
+
+			.link-button {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 42px;
+				height: 42px;
+				padding: 0;
+				border: none;
+				border-radius: layout.$item-corner;
+				background: transparent;
+				color: colors.$grey-50;
+				cursor: pointer;
+				flex-shrink: 0;
+				@include effects.smooth-transition(effects.$duration-quick, background-color, color, opacity);
+
+				&:hover:not(:disabled) {
+					background: colors.$grey-90;
+					color: colors.$grey-30;
+				}
+
+				&:active:not(:disabled) {
+					background: colors.$grey-80;
+				}
+
+				&:disabled {
+					cursor: not-allowed;
+					opacity: 0.4;
+				}
 			}
 		}
 	}
