@@ -550,6 +550,8 @@ export interface CharacterSuggestions {
 	maxAtkFlb?: number
 	flb?: boolean
 	ulb?: boolean
+	/** Series array (e.g., [2] for Grand, [3] for Zodiac) */
+	series?: number[]
 	releaseDate?: string
 	flbDate?: string
 	ulbDate?: string
@@ -570,11 +572,15 @@ export interface WeaponSuggestions {
 	minHp?: number
 	maxHp?: number
 	maxHpFlb?: number
+	maxHpUlb?: number
 	minAtk?: number
 	maxAtk?: number
 	maxAtkFlb?: number
+	maxAtkUlb?: number
 	flb?: boolean
 	ulb?: boolean
+	/** Series name (e.g., "Revenant", "Optimus") */
+	series?: string
 	releaseDate?: string
 	flbDate?: string
 	ulbDate?: string
@@ -596,11 +602,16 @@ export interface SummonSuggestions {
 	minHp?: number
 	maxHp?: number
 	maxHpFlb?: number
+	maxHpUlb?: number
 	minAtk?: number
 	maxAtk?: number
 	maxAtkFlb?: number
+	maxAtkUlb?: number
 	flb?: boolean
 	ulb?: boolean
+	transcendence?: boolean
+	/** Series name (e.g., "Optimus", "Arcarum") */
+	series?: string
 	subaura?: boolean
 	releaseDate?: string
 	flbDate?: string

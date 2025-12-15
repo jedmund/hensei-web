@@ -20,6 +20,8 @@
 		dismissedSuggestions?: Set<string>
 		onAcceptSuggestion?: (field: string, value: any) => void
 		onDismissSuggestion?: (field: string) => void
+		// Callback when editData is modified (for triggering reactivity in parent)
+		onDataChange?: () => void
 	}
 
 	let {
@@ -29,7 +31,8 @@
 		suggestions,
 		dismissedSuggestions,
 		onAcceptSuggestion,
-		onDismissSuggestion
+		onDismissSuggestion,
+		onDataChange
 	}: Props = $props()
 
 	const uncap = $derived(
@@ -58,6 +61,7 @@
 			editData.ulb = false
 			editData.transcendence = false
 		}
+		onDataChange?.()
 	}
 
 	function handleUlbChange(checked: boolean) {
@@ -68,6 +72,7 @@
 			// Unchecking ULB should also uncheck Transcendence
 			editData.transcendence = false
 		}
+		onDataChange?.()
 	}
 
 	function handleTranscendenceChange(checked: boolean) {
@@ -76,6 +81,7 @@
 			if (!editData.ulb) editData.ulb = true
 			if (!editData.flb) editData.flb = true
 		}
+		onDataChange?.()
 	}
 </script>
 

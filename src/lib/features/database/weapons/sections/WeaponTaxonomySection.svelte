@@ -7,6 +7,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
+	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import { getElementLabel, getElementOptions } from '$lib/utils/element'
@@ -138,15 +139,15 @@
 			type="checkbox"
 			element={elementName}
 		/>
-		<DetailItem
-			label="Promotions"
-			sublabel="Gacha pools where this weapon appears"
-			bind:value={editData.promotions}
-			editable={true}
-			type="multiselect"
-			options={promotionOptions}
-			element={elementName}
-		/>
+		<DetailItem label="Promotions" sublabel="Gacha pools where this weapon appears" editable={true}>
+			<MultiSelect
+				size="medium"
+				options={promotionOptions}
+				bind:value={editData.promotions}
+				placeholder="Select promotions"
+				contained
+			/>
+		</DetailItem>
 	{:else}
 		<DetailItem label="Element">
 			<ElementLabel element={weapon.element} size="medium" />
@@ -158,9 +159,21 @@
 			/>
 		</DetailItem>
 		<DetailItem label="Series" value={formatSeriesLabel(weapon.series)} />
-		<DetailItem label="Extra" sublabel="Can be placed in Additional Weapons" value={weapon.extra ? 'Yes' : 'No'} />
-		<DetailItem label="Limit" sublabel="Only one copy can be placed in a team" value={weapon.limit ? 'Yes' : 'No'} />
+		<DetailItem
+			label="Extra"
+			sublabel="Can be placed in Additional Weapons"
+			value={weapon.extra ? 'Yes' : 'No'}
+		/>
+		<DetailItem
+			label="Limit"
+			sublabel="Only one copy can be placed in a team"
+			value={weapon.limit ? 'Yes' : 'No'}
+		/>
 		<DetailItem label="AX Skills" sublabel="Can have AX Skills" value={weapon.ax ? 'Yes' : 'No'} />
-		<DetailItem label="Promotions" sublabel="Gacha pools where this weapon appears" value={formatPromotionsDisplay(weapon.promotions)} />
+		<DetailItem
+			label="Promotions"
+			sublabel="Gacha pools where this weapon appears"
+			value={formatPromotionsDisplay(weapon.promotions)}
+		/>
 	{/if}
 </DetailsContainer>

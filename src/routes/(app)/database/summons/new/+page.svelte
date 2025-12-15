@@ -157,6 +157,7 @@
 				// Taxonomy
 				element: editData.element,
 				series: editData.series || undefined,
+				promotions: editData.promotions,
 
 				// Stats - note: transcendence maps to xlb
 				min_hp: editData.minHp,

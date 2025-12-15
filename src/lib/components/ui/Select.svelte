@@ -64,11 +64,16 @@
 
 	const selected = $derived(options.find((opt) => opt.value === value))
 
+	// Local string value for Bits UI (which manages its own internal state)
+	let internalValue = $state<string | undefined>(
+		value !== undefined && value !== null ? String(value) : undefined
+	)
+
+	// Sync external value changes to internal state
 	$effect(() => {
-		console.log('[Select] value:', value, typeof value)
-		console.log('[Select] options:', options.map(o => ({ value: o.value, type: typeof o.value })))
-		console.log('[Select] selected:', selected)
+		internalValue = value !== undefined && value !== null ? String(value) : undefined
 	})
+
 	const hasWrapper = $derived(label || error)
 
 	const fieldsetClasses = $derived(
@@ -106,7 +111,7 @@
 
 		<SelectPrimitive.Root
 			type="single"
-			{...value !== undefined && value !== null ? { value: String(value) } : {}}
+			bind:value={internalValue}
 			onValueChange={handleValueChange}
 			{disabled}
 			items={stringOptions}
@@ -191,7 +196,7 @@
 {:else}
 	<SelectPrimitive.Root
 		type="single"
-		{...value !== undefined && value !== null ? { value: String(value) } : {}}
+		bind:value={internalValue}
 		onValueChange={handleValueChange}
 		{disabled}
 		items={stringOptions}

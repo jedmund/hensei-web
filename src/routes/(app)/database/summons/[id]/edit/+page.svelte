@@ -77,7 +77,8 @@
 		gamewith: '',
 		kamigame: '',
 		nicknamesEn: [] as string[],
-		nicknamesJp: [] as string[]
+		nicknamesJp: [] as string[],
+		promotions: [] as number[]
 	})
 
 	// Populate edit data when summon loads
@@ -89,7 +90,7 @@
 				granblueId: summon.granblueId || '',
 				rarity: summon.rarity || 3,
 				element: summon.element || 0,
-				series: summon.series?.toString() ?? '',
+				series: summon.series?.id || '',
 				minHp: summon.hp?.minHp || 0,
 				maxHp: summon.hp?.maxHp || 0,
 				maxHpFlb: summon.hp?.maxHpFlb || 0,
@@ -115,7 +116,8 @@
 				gamewith: summon.gamewith || '',
 				kamigame: summon.kamigame || '',
 				nicknamesEn: summon.nicknames?.en || [],
-				nicknamesJp: summon.nicknames?.ja || []
+				nicknamesJp: summon.nicknames?.ja || [],
+				promotions: summon.promotions || []
 			}
 		}
 	})
@@ -159,7 +161,8 @@
 				gamewith: editData.gamewith,
 				kamigame: editData.kamigame,
 				nicknames_en: editData.nicknamesEn,
-				nicknames_jp: editData.nicknamesJp
+				nicknames_jp: editData.nicknamesJp,
+				promotions: editData.promotions
 			}
 
 			await entityAdapter.updateSummon(summon.id, payload)
