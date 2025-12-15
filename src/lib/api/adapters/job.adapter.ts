@@ -95,11 +95,10 @@ export class JobAdapter extends BaseAdapter {
 	 * Returns skills categorized by type (main, sub, emp, base)
 	 */
 	async getSkills(jobId: string): Promise<JobSkill[]> {
-		const response = await this.request<{ skills: JobSkill[] }>(`/jobs/${jobId}/skills`, {
+		return this.request<JobSkill[]>(`/jobs/${jobId}/skills`, {
 			method: 'GET',
 			cacheTTL: 300000 // Cache for 5 minutes
 		})
-		return response.skills
 	}
 
 	/**
@@ -179,11 +178,21 @@ export class JobAdapter extends BaseAdapter {
 	 * Useful for browsing all skills
 	 */
 	async getAllSkills(): Promise<JobSkill[]> {
-		const response = await this.request<{ skills: JobSkill[] }>('/jobs/skills', {
+		return this.request<JobSkill[]>('/jobs/skills', {
 			method: 'GET',
 			cacheTTL: 300000 // Cache for 5 minutes
 		})
-		return response.skills
+	}
+
+	/**
+	 * Gets EMP skills from other jobs (for party skill selection)
+	 * Returns skills that can be used with the specified job
+	 */
+	async getEmpSkills(jobId: string): Promise<JobSkill[]> {
+		return this.request<JobSkill[]>(`/jobs/${jobId}/emp_skills`, {
+			method: 'GET',
+			cacheTTL: 300000 // Cache for 5 minutes
+		})
 	}
 
 	/**

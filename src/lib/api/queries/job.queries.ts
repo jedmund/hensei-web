@@ -87,6 +87,21 @@ export const jobQueries = {
 		}),
 
 	/**
+	 * EMP skills from other jobs (for party skill selection)
+	 *
+	 * @param jobId - Current job ID to find compatible EMP skills for
+	 * @returns Query options for fetching EMP skills from other jobs
+	 */
+	empSkills: (jobId: string) =>
+		queryOptions({
+			queryKey: ['jobs', jobId, 'emp_skills'] as const,
+			queryFn: () => jobAdapter.getEmpSkills(jobId),
+			enabled: !!jobId,
+			staleTime: 1000 * 60 * 30, // 30 minutes
+			gcTime: 1000 * 60 * 60 // 1 hour
+		}),
+
+	/**
 	 * Job skills search infinite query options
 	 *
 	 * @param jobId - Job ID to search skills for
@@ -175,6 +190,7 @@ export const jobKeys = {
 	lists: () => [...jobKeys.all] as const,
 	detail: (id: string) => [...jobKeys.all, id] as const,
 	skills: (jobId: string) => [...jobKeys.all, jobId, 'skills'] as const,
+	empSkills: (jobId: string) => [...jobKeys.all, jobId, 'emp_skills'] as const,
 	skillsSearch: (jobId: string, params?: Omit<SearchJobSkillsParams, 'jobId' | 'page'>) =>
 		[...jobKeys.skills(jobId), 'search', params] as const,
 	accessories: (jobId: string) => [...jobKeys.all, jobId, 'accessories'] as const,
