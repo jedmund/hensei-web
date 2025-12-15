@@ -17,7 +17,6 @@
 	// Components
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
-	import CharacterGachaSection from '$lib/features/database/characters/sections/CharacterGachaSection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
 	import CharacterMetadataSection from '$lib/features/database/characters/sections/CharacterMetadataSection.svelte'
 	import TabbedEntitySelector from '$lib/features/database/import/TabbedEntitySelector.svelte'
@@ -116,8 +115,6 @@
 			proficiency2: suggestions?.proficiency2 ?? 0,
 			season: suggestions?.season ?? (null as number | null),
 			series: suggestions?.series ?? ([] as number[]),
-			promotions: suggestions?.promotions ?? ([] as number[]),
-			gacha_available: suggestions?.gachaAvailable ?? true,
 			minHp: suggestions?.minHp ?? 0,
 			maxHp: suggestions?.maxHp ?? 0,
 			maxHpFlb: suggestions?.maxHpFlb ?? 0,
@@ -283,8 +280,6 @@
 				proficiency2: formData.proficiency2,
 				season: formData.season === 0 ? null : formData.season,
 				series: formData.series,
-				promotions: formData.promotions,
-				gacha_available: formData.gacha_available,
 				min_hp: formData.minHp,
 				max_hp: formData.maxHp,
 				max_hp_flb: formData.maxHpFlb,
@@ -454,6 +449,7 @@
 				{@const suggestions = selectedEntity.suggestions}
 				{@const dismissed = dismissedByPage[selectedWikiPage] ?? new Set<string>()}
 				<section class="details">
+					<!-- Basic Info: Name fields needed for import (not in MetadataSection) -->
 					<DetailsContainer title="Basic Info">
 						<SuggestionDetailItem
 							label="Name (EN)"
@@ -518,12 +514,6 @@
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
 						onDismissSuggestion={handleDismissSuggestion}
-					/>
-
-					<CharacterGachaSection
-						character={emptyCharacter}
-						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
 					/>
 
 					<CharacterStatsSection
