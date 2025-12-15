@@ -5,11 +5,12 @@
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import Button from './Button.svelte'
+	import { getJobTierName } from '$lib/utils/jobUtils'
 
 	// Props
 	interface Props {
-		type: 'character' | 'summon' | 'weapon'
-		item: any // The character/summon/weapon object
+		type: 'character' | 'summon' | 'weapon' | 'job'
+		item: any // The character/summon/weapon/job object
 		image: string
 		editUrl?: string // URL to navigate to for editing (view mode)
 		showEdit?: boolean // Whether to show the edit button
@@ -64,18 +65,18 @@
 
 <header class="container">
 	<div class="left">
-		<div class="image">
+		<div class="image" class:job={type === 'job'}>
 			<img
 				src={image}
 				alt={getDisplayName(name)}
 				onerror={(e) => {
-					const placeholder =
-						type === 'character'
-							? '/images/placeholders/placeholder-character-main.png'
-							: type === 'summon'
-								? '/images/placeholders/placeholder-summon-main.png'
-								: '/images/placeholders/placeholder-weapon-main.png'
-					;(e.currentTarget as HTMLImageElement).src = placeholder
+					const placeholders = {
+						character: '/images/placeholders/placeholder-character-main.png',
+						summon: '/images/placeholders/placeholder-summon-main.png',
+						weapon: '/images/placeholders/placeholder-weapon-main.png',
+						job: '/images/placeholders/placeholder-job.png'
+					} as const
+					;(e.currentTarget as HTMLImageElement).src = placeholders[type]
 				}}
 			/>
 		</div>
@@ -83,19 +84,23 @@
 		<div class="info">
 			<h2>{getDisplayName(name)}</h2>
 			<div class="meta">
-				{#if element !== undefined}
-					<ElementLabel {element} size="medium" />
-				{/if}
-				{#if (type === 'character' || type === 'weapon') && proficiency}
-					{#if Array.isArray(proficiency)}
-						{#if proficiency[0] !== undefined}
-							<ProficiencyLabel proficiency={proficiency[0]} size="medium" />
+				{#if type === 'job'}
+					<span class="job-tier">{getJobTierName(item?.row)}</span>
+				{:else}
+					{#if element !== undefined}
+						<ElementLabel {element} size="medium" />
+					{/if}
+					{#if (type === 'character' || type === 'weapon') && proficiency}
+						{#if Array.isArray(proficiency)}
+							{#if proficiency[0] !== undefined}
+								<ProficiencyLabel proficiency={proficiency[0]} size="medium" />
+							{/if}
+							{#if proficiency[1] !== undefined}
+								<ProficiencyLabel proficiency={proficiency[1]} size="medium" />
+							{/if}
+						{:else if proficiency !== undefined}
+							<ProficiencyLabel {proficiency} size="medium" />
 						{/if}
-						{#if proficiency[1] !== undefined}
-							<ProficiencyLabel proficiency={proficiency[1]} size="medium" />
-						{/if}
-					{:else if proficiency !== undefined}
-						<ProficiencyLabel {proficiency} size="medium" />
 					{/if}
 				{/if}
 			</div>
@@ -170,6 +175,11 @@
 				height: auto;
 				border-radius: layout.$item-corner;
 			}
+
+			&.job img {
+				width: 32px;
+				height: auto;
+			}
 		}
 
 		.info {
@@ -186,6 +196,12 @@
 				display: flex;
 				flex-direction: row;
 				gap: spacing.$unit;
+				align-items: center;
+			}
+
+			.job-tier {
+				font-size: typography.$font-small;
+				color: colors.$grey-50;
 			}
 		}
 	}
