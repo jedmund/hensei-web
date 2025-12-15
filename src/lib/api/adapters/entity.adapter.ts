@@ -559,6 +559,12 @@ export interface CharacterSuggestions {
 	ulbDate?: string
 	gamewith?: string
 	kamigame?: string
+	/** Season enum value (1=Standard, 2=Valentine, etc.) */
+	season?: number
+	/** Whether character can be pulled from gacha */
+	gachaAvailable?: boolean
+	/** Promotion IDs where character appears */
+	promotions?: number[]
 }
 
 /**

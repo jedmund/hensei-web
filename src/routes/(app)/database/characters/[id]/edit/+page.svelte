@@ -19,6 +19,7 @@
 	import CharacterMetadataSection from '$lib/features/database/characters/sections/CharacterMetadataSection.svelte'
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
+	import CharacterGachaSection from '$lib/features/database/characters/sections/CharacterGachaSection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -185,6 +186,7 @@
 				<CharacterMetadataSection {character} {editMode} bind:editData />
 				<CharacterUncapSection {character} {editMode} bind:editData />
 				<CharacterTaxonomySection {character} {editMode} bind:editData />
+				<CharacterGachaSection {character} {editMode} bind:editData />
 				<CharacterStatsSection {character} {editMode} bind:editData />
 
 				<DetailsContainer title="Dates">

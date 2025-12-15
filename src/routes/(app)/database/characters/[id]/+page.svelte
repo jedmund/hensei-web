@@ -21,6 +21,7 @@
 	import CharacterMetadataSection from '$lib/features/database/characters/sections/CharacterMetadataSection.svelte'
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
+	import CharacterGachaSection from '$lib/features/database/characters/sections/CharacterGachaSection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
@@ -205,6 +206,7 @@
 
 					<CharacterUncapSection {character} />
 					<CharacterTaxonomySection {character} />
+					<CharacterGachaSection {character} />
 					<CharacterStatsSection {character} />
 
 					{#if character.releaseDate || character.flbDate || character.ulbDate}
