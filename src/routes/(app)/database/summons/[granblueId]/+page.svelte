@@ -19,6 +19,7 @@
 	// Components
 	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
 	import SummonMetadataSection from '$lib/features/database/summons/sections/SummonMetadataSection.svelte'
+	import SummonGachaSection from '$lib/features/database/summons/sections/SummonGachaSection.svelte'
 	import SummonUncapSection from '$lib/features/database/summons/sections/SummonUncapSection.svelte'
 	import SummonTaxonomySection from '$lib/features/database/summons/sections/SummonTaxonomySection.svelte'
 	import SummonStatsSection from '$lib/features/database/summons/sections/SummonStatsSection.svelte'
@@ -179,50 +180,42 @@
 			{#if currentTab === 'info'}
 				<section class="details">
 					<SummonMetadataSection {summon} />
-
-					{#if summon.nicknames?.en?.length || summon.nicknames?.ja?.length}
-						<DetailsContainer title="Nicknames">
-							{#if summon.nicknames?.en?.length}
-								<DetailItem label="English">
-									<div class="nickname-tags">
-										{#each summon.nicknames.en as nickname}
-											<span class="nickname-tag">{nickname}</span>
-										{/each}
-									</div>
-								</DetailItem>
-							{/if}
-							{#if summon.nicknames?.ja?.length}
-								<DetailItem label="Japanese">
-									<div class="nickname-tags">
-										{#each summon.nicknames.ja as nickname}
-											<span class="nickname-tag">{nickname}</span>
-										{/each}
-									</div>
-								</DetailItem>
-							{/if}
-						</DetailsContainer>
-					{/if}
-
+					<SummonGachaSection {summon} />
 					<SummonUncapSection {summon} />
 					<SummonTaxonomySection {summon} />
 					<SummonStatsSection {summon} />
 
-					{#if summon.releaseDate || summon.flbDate || summon.ulbDate || summon.transcendenceDate}
-						<DetailsContainer title="Dates">
-							{#if summon.releaseDate}
-								<DetailItem label="Release Date" value={summon.releaseDate} />
+					<DetailsContainer title="Nicknames">
+						<DetailItem label="English">
+							{#if summon.nicknames?.en?.length}
+								<div class="nickname-tags">
+									{#each summon.nicknames.en as nickname}
+										<span class="nickname-tag">{nickname}</span>
+									{/each}
+								</div>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if summon.flbDate}
-								<DetailItem label="FLB Date" value={summon.flbDate} />
+						</DetailItem>
+						<DetailItem label="Japanese">
+							{#if summon.nicknames?.ja?.length}
+								<div class="nickname-tags">
+									{#each summon.nicknames.ja as nickname}
+										<span class="nickname-tag">{nickname}</span>
+									{/each}
+								</div>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if summon.ulbDate}
-								<DetailItem label="ULB Date" value={summon.ulbDate} />
-							{/if}
-							{#if summon.transcendenceDate}
-								<DetailItem label="Transcendence Date" value={summon.transcendenceDate} />
-							{/if}
-						</DetailsContainer>
-					{/if}
+						</DetailItem>
+					</DetailsContainer>
+
+					<DetailsContainer title="Dates">
+						<DetailItem label="Release Date" value={summon.releaseDate || '—'} />
+						<DetailItem label="FLB Date" value={summon.flbDate || '—'} />
+						<DetailItem label="ULB Date" value={summon.ulbDate || '—'} />
+						<DetailItem label="Transcendence Date" value={summon.transcendenceDate || '—'} />
+					</DetailsContainer>
 
 					<DetailsContainer title="Links">
 						<DetailItem label="Wiki (EN)">

@@ -13,6 +13,7 @@
 	// Components
 	import DetailScaffold from '$lib/features/database/detail/DetailScaffold.svelte'
 	import SummonMetadataSection from '$lib/features/database/summons/sections/SummonMetadataSection.svelte'
+	import SummonGachaSection from '$lib/features/database/summons/sections/SummonGachaSection.svelte'
 	import SummonUncapSection from '$lib/features/database/summons/sections/SummonUncapSection.svelte'
 	import SummonTaxonomySection from '$lib/features/database/summons/sections/SummonTaxonomySection.svelte'
 	import SummonStatsSection from '$lib/features/database/summons/sections/SummonStatsSection.svelte'
@@ -205,6 +206,7 @@
 		>
 			<section class="details">
 				<SummonMetadataSection {summon} {editMode} bind:editData />
+				<SummonGachaSection {summon} {editMode} bind:editData />
 				<SummonUncapSection {summon} {editMode} bind:editData />
 				<SummonTaxonomySection {summon} {editMode} bind:editData />
 				<SummonStatsSection {summon} {editMode} bind:editData />
