@@ -32,6 +32,22 @@
 	const transcendence = $derived(
 		editMode ? Boolean(editData.transcendence) : Boolean(summon?.uncap?.transcendence)
 	)
+
+	// Auto-update Max Level based on uncap status
+	// No FLB: 100, FLB: 150, ULB: 200, Transcendence: 250
+	$effect(() => {
+		if (editMode && editData) {
+			if (transcendence) {
+				editData.maxLevel = 250
+			} else if (ulb) {
+				editData.maxLevel = 200
+			} else if (flb) {
+				editData.maxLevel = 150
+			} else {
+				editData.maxLevel = 100
+			}
+		}
+	})
 </script>
 
 <DetailsContainer title="HP Stats">
