@@ -48,7 +48,7 @@
 	let editData = $state({
 		name: '',
 		nameJp: '',
-		granblueId: '',
+		granblue_id: '',
 		rarity: 3,
 		element: 0,
 		series: '',
@@ -87,7 +87,7 @@
 			editData = {
 				name: summon.name?.en || '',
 				nameJp: summon.name?.ja || '',
-				granblueId: summon.granblueId || '',
+				granblue_id: summon.granblueId || '',
 				rarity: summon.rarity || 3,
 				element: summon.element || 0,
 				series: summon.series?.id || '',
@@ -132,7 +132,7 @@
 			const payload = {
 				name_en: editData.name,
 				name_jp: editData.nameJp || undefined,
-				granblue_id: editData.granblueId,
+				granblue_id: editData.granblue_id,
 				rarity: editData.rarity,
 				element: editData.element,
 				series: editData.series || undefined,

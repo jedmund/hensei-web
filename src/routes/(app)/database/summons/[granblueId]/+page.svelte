@@ -224,38 +224,44 @@
 						</DetailsContainer>
 					{/if}
 
-					{#if summon.links?.wikiEn || summon.links?.wikiJa || summon.links?.gamewith || summon.links?.kamigame}
-						<DetailsContainer title="Links">
-							{#if summon.links?.wikiEn}
-								<DetailItem label="Wiki (EN)">
-									<a href={summon.links.wikiEn} target="_blank" rel="noopener noreferrer" class="external-link">
-										{summon.links.wikiEn}
-									</a>
-								</DetailItem>
+					<DetailsContainer title="Links">
+						<DetailItem label="Wiki (EN)">
+							{#if summon.wiki?.en}
+								<a href={summon.wiki.en} target="_blank" rel="noopener noreferrer" class="external-link">
+									{summon.wiki.en}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if summon.links?.wikiJa}
-								<DetailItem label="Wiki (JP)">
-									<a href={summon.links.wikiJa} target="_blank" rel="noopener noreferrer" class="external-link">
-										{summon.links.wikiJa}
-									</a>
-								</DetailItem>
+						</DetailItem>
+						<DetailItem label="Wiki (JP)">
+							{#if summon.wiki?.ja}
+								<a href={summon.wiki.ja} target="_blank" rel="noopener noreferrer" class="external-link">
+									{summon.wiki.ja}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if summon.links?.gamewith}
-								<DetailItem label="Gamewith">
-									<a href={summon.links.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
-										{summon.links.gamewith}
-									</a>
-								</DetailItem>
+						</DetailItem>
+						<DetailItem label="Gamewith">
+							{#if summon.gamewith}
+								<a href={summon.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
+									{summon.gamewith}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if summon.links?.kamigame}
-								<DetailItem label="Kamigame">
-									<a href={summon.links.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
-										{summon.links.kamigame}
-									</a>
-								</DetailItem>
+						</DetailItem>
+						<DetailItem label="Kamigame">
+							{#if summon.kamigame}
+								<a href={summon.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
+									{summon.kamigame}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-						</DetailsContainer>
-					{/if}
+						</DetailItem>
+					</DetailsContainer>
 
 					<div class="summon-abilities">
 						<h3>Call Effect</h3>

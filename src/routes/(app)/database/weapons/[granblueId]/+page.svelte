@@ -219,38 +219,44 @@
 						</DetailsContainer>
 					{/if}
 
-					{#if weapon.links?.wikiEn || weapon.links?.wikiJa || weapon.links?.gamewith || weapon.links?.kamigame}
-						<DetailsContainer title="Links">
-							{#if weapon.links?.wikiEn}
-								<DetailItem label="Wiki (EN)">
-									<a href={weapon.links.wikiEn} target="_blank" rel="noopener noreferrer" class="external-link">
-										{weapon.links.wikiEn}
-									</a>
-								</DetailItem>
+					<DetailsContainer title="Links">
+						<DetailItem label="Wiki (EN)">
+							{#if weapon.wiki?.en}
+								<a href={weapon.wiki.en} target="_blank" rel="noopener noreferrer" class="external-link">
+									{weapon.wiki.en}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if weapon.links?.wikiJa}
-								<DetailItem label="Wiki (JP)">
-									<a href={weapon.links.wikiJa} target="_blank" rel="noopener noreferrer" class="external-link">
-										{weapon.links.wikiJa}
-									</a>
-								</DetailItem>
+						</DetailItem>
+						<DetailItem label="Wiki (JP)">
+							{#if weapon.wiki?.ja}
+								<a href={weapon.wiki.ja} target="_blank" rel="noopener noreferrer" class="external-link">
+									{weapon.wiki.ja}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if weapon.links?.gamewith}
-								<DetailItem label="Gamewith">
-									<a href={weapon.links.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
-										{weapon.links.gamewith}
-									</a>
-								</DetailItem>
+						</DetailItem>
+						<DetailItem label="Gamewith">
+							{#if weapon.gamewith}
+								<a href={weapon.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
+									{weapon.gamewith}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if weapon.links?.kamigame}
-								<DetailItem label="Kamigame">
-									<a href={weapon.links.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
-										{weapon.links.kamigame}
-									</a>
-								</DetailItem>
+						</DetailItem>
+						<DetailItem label="Kamigame">
+							{#if weapon.kamigame}
+								<a href={weapon.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
+									{weapon.kamigame}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-						</DetailsContainer>
-					{/if}
+						</DetailItem>
+					</DetailsContainer>
 
 					<div class="weapon-skills">
 						<h3>Skills</h3>
