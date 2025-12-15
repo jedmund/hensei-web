@@ -30,7 +30,7 @@
 
 	// Use TanStack Query with SSR initial data
 	const summonQuery = createQuery(() => ({
-		...entityQueries.summon(data.summon?.id ?? ''),
+		...entityQueries.summon(data.summon?.granblueId ?? ''),
 		...withInitialData(data.summon)
 	}))
 
@@ -168,10 +168,10 @@
 			await entityAdapter.updateSummon(summon.id, payload)
 
 			// Invalidate TanStack Query cache to refetch fresh data
-			await queryClient.invalidateQueries({ queryKey: ['summon', summon.id] })
+			await queryClient.invalidateQueries({ queryKey: ['summon', summon.granblueId] })
 
 			// Navigate back to detail page
-			goto(`/database/summons/${summon.id}`)
+			goto(`/database/summons/${summon.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
 			console.error('Save error:', error)
@@ -181,7 +181,7 @@
 	}
 
 	function handleCancel() {
-		goto(`/database/summons/${summon?.id}`)
+		goto(`/database/summons/${summon?.granblueId}`)
 	}
 
 	// Helper function for summon grid image

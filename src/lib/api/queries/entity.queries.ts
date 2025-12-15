@@ -21,25 +21,25 @@ import { entityAdapter, type WeaponKeyQueryParams } from '$lib/api/adapters/enti
  * import { createQuery } from '@tanstack/svelte-query'
  * import { entityQueries } from '$lib/api/queries/entity.queries'
  *
- * // Single weapon by ID
- * const weapon = createQuery(() => entityQueries.weapon(id))
+ * // Single weapon by granblueId
+ * const weapon = createQuery(() => entityQueries.weapon(granblueId))
  *
- * // Single character by ID
- * const character = createQuery(() => entityQueries.character(id))
+ * // Single character by granblueId
+ * const character = createQuery(() => entityQueries.character(granblueId))
  * ```
  */
 export const entityQueries = {
 	/**
 	 * Single weapon query options
 	 *
-	 * @param id - Weapon ID
+	 * @param granblueId - Weapon granblueId (e.g., "1040001000")
 	 * @returns Query options for fetching a single weapon
 	 */
-	weapon: (id: string) =>
+	weapon: (granblueId: string) =>
 		queryOptions({
-			queryKey: ['weapon', id] as const,
-			queryFn: () => entityAdapter.getWeapon(id),
-			enabled: !!id,
+			queryKey: ['weapon', granblueId] as const,
+			queryFn: () => entityAdapter.getWeapon(granblueId),
+			enabled: !!granblueId,
 			staleTime: 1000 * 60 * 60, // 1 hour - canonical data rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		}),
@@ -47,14 +47,14 @@ export const entityQueries = {
 	/**
 	 * Single character query options
 	 *
-	 * @param id - Character ID
+	 * @param granblueId - Character granblueId (e.g., "3040001000")
 	 * @returns Query options for fetching a single character
 	 */
-	character: (id: string) =>
+	character: (granblueId: string) =>
 		queryOptions({
-			queryKey: ['character', id] as const,
-			queryFn: () => entityAdapter.getCharacter(id),
-			enabled: !!id,
+			queryKey: ['character', granblueId] as const,
+			queryFn: () => entityAdapter.getCharacter(granblueId),
+			enabled: !!granblueId,
 			staleTime: 1000 * 60 * 60, // 1 hour - canonical data rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		}),
@@ -62,14 +62,14 @@ export const entityQueries = {
 	/**
 	 * Single summon query options
 	 *
-	 * @param id - Summon ID
+	 * @param granblueId - Summon granblueId (e.g., "2040001000")
 	 * @returns Query options for fetching a single summon
 	 */
-	summon: (id: string) =>
+	summon: (granblueId: string) =>
 		queryOptions({
-			queryKey: ['summon', id] as const,
-			queryFn: () => entityAdapter.getSummon(id),
-			enabled: !!id,
+			queryKey: ['summon', granblueId] as const,
+			queryFn: () => entityAdapter.getSummon(granblueId),
+			enabled: !!granblueId,
 			staleTime: 1000 * 60 * 60, // 1 hour - canonical data rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		}),
@@ -186,8 +186,8 @@ export const entityQueries = {
  *
  * const queryClient = useQueryClient()
  *
- * // Invalidate a specific weapon
- * queryClient.invalidateQueries({ queryKey: entityKeys.weapon('abc123') })
+ * // Invalidate a specific weapon by granblueId
+ * queryClient.invalidateQueries({ queryKey: entityKeys.weapon('1040001000') })
  *
  * // Invalidate all weapons
  * queryClient.invalidateQueries({ queryKey: entityKeys.weapons() })
@@ -195,11 +195,11 @@ export const entityQueries = {
  */
 export const entityKeys = {
 	weapons: () => ['weapon'] as const,
-	weapon: (id: string) => [...entityKeys.weapons(), id] as const,
+	weapon: (granblueId: string) => [...entityKeys.weapons(), granblueId] as const,
 	characters: () => ['character'] as const,
-	character: (id: string) => [...entityKeys.characters(), id] as const,
+	character: (granblueId: string) => [...entityKeys.characters(), granblueId] as const,
 	summons: () => ['summon'] as const,
-	summon: (id: string) => [...entityKeys.summons(), id] as const,
+	summon: (granblueId: string) => [...entityKeys.summons(), granblueId] as const,
 	weaponKeys: (params?: WeaponKeyQueryParams) =>
 		['weaponKeys', params?.seriesSlug, params?.slot, params?.group] as const,
 	weaponSeriesList: () => ['weaponSeries', 'list'] as const,

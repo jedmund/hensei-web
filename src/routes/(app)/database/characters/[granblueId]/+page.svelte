@@ -50,7 +50,7 @@
 
 	// Use TanStack Query with SSR initial data
 	const characterQuery = createQuery(() => ({
-		...entityQueries.character(data.character?.id ?? ''),
+		...entityQueries.character(data.character?.granblueId ?? ''),
 		...withInitialData(data.character)
 	}))
 
@@ -60,7 +60,7 @@
 	const canEdit = $derived(userRole >= 7)
 
 	// Edit URL for navigation
-	const editUrl = $derived(character?.id ? `/database/characters/${character.id}/edit` : undefined)
+	const editUrl = $derived(character?.granblueId ? `/database/characters/${character.granblueId}/edit` : undefined)
 
 	// Query for related characters (same character_id)
 	const relatedQuery = createQuery(() => ({
@@ -260,7 +260,7 @@
 						<DetailsContainer title="Related Units">
 							<div class="related-units">
 								{#each relatedQuery.data as related}
-									<a href="/database/characters/{related.id}" class="related-unit">
+									<a href="/database/characters/{related.granblueId}" class="related-unit">
 										<img
 											src={getCharacterImage(related.granblueId, 'grid', '01')}
 											alt={related.name.en}

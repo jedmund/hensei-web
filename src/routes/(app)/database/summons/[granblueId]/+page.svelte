@@ -18,16 +18,15 @@
 
 	// Components
 	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
-	import WeaponMetadataSection from '$lib/features/database/weapons/sections/WeaponMetadataSection.svelte'
-	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
-	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
-	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
-	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
+	import SummonMetadataSection from '$lib/features/database/summons/sections/SummonMetadataSection.svelte'
+	import SummonUncapSection from '$lib/features/database/summons/sections/SummonUncapSection.svelte'
+	import SummonTaxonomySection from '$lib/features/database/summons/sections/SummonTaxonomySection.svelte'
+	import SummonStatsSection from '$lib/features/database/summons/sections/SummonStatsSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl } from '$lib/utils/images'
+	import { getSummonImage } from '$lib/utils/images'
 
 	// Types
 	import type { PageData } from './$types'
@@ -49,43 +48,43 @@
 	}
 
 	// Use TanStack Query with SSR initial data
-	const weaponQuery = createQuery(() => ({
-		...entityQueries.weapon(data.weapon?.id ?? ''),
-		...withInitialData(data.weapon)
+	const summonQuery = createQuery(() => ({
+		...entityQueries.summon(data.summon?.granblueId ?? ''),
+		...withInitialData(data.summon)
 	}))
 
-	// Get weapon from query
-	const weapon = $derived(weaponQuery.data)
+	// Get summon from query
+	const summon = $derived(summonQuery.data)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
 
 	// Edit URL for navigation
-	const editUrl = $derived(weapon?.id ? `/database/weapons/${weapon.id}/edit` : undefined)
+	const editUrl = $derived(summon?.granblueId ? `/database/summons/${summon.granblueId}/edit` : undefined)
 
 	// Query for raw data (only when on raw tab)
 	const rawDataQuery = createQuery(() => ({
-		queryKey: ['weapons', 'raw', weapon?.id],
+		queryKey: ['summons', 'raw', summon?.id],
 		queryFn: async () => {
-			if (!weapon?.id) return null
-			return entityAdapter.getWeaponRawData(weapon.id)
+			if (!summon?.id) return null
+			return entityAdapter.getSummonRawData(summon.id)
 		},
-		enabled: currentTab === 'raw' && !!weapon?.id
+		enabled: currentTab === 'raw' && !!summon?.id
 	}))
 
-	// Helper function for weapon grid image
-	function getWeaponImage(weapon: any): string {
-		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement)
+	// Helper function for summon grid image
+	function getSummonGridImage(summon: any): string {
+		return getSummonImage(summon?.granblueId, 'grid')
 	}
 
-	// Available image sizes for weapons
-	const weaponSizes = ['base', 'grid', 'main', 'square']
+	// Available image sizes for summons
+	const summonSizes = ['detail', 'grid', 'main', 'square', 'wide']
 
-	// Generate image items for weapon (base, grid, main, square variants)
-	// Weapons have transformations: Base (no suffix), Transcendence Stage 1 (_02), Transcendence Stage 5 (_03)
-	const weaponImages = $derived.by((): ImageItem[] => {
-		if (!weapon?.granblueId) return []
+	// Generate image items for summon (detail, grid, main, square, wide variants)
+	// Summons have transformations: Base (no suffix), ULB (_02), Transcendence Stage 1 (_03), Transcendence Stage 5 (_04)
+	const summonImages = $derived.by((): ImageItem[] => {
+		if (!summon?.granblueId) return []
 
-		const variants = ['base', 'grid', 'main', 'square'] as const
+		const variants = ['detail', 'grid', 'main', 'square', 'wide'] as const
 		const images: ImageItem[] = []
 
 		// Only include transformations that are available
@@ -93,17 +92,21 @@
 			{ id: '01', label: 'Base', suffix: undefined }
 		]
 
-		if (weapon.uncap?.transcendence) {
+		if (summon.uncap?.ulb) {
+			transformations.push({ id: '02', label: 'ULB', suffix: '02' })
+		}
+
+		if (summon.uncap?.transcendence) {
 			transformations.push(
-				{ id: '02', label: 'Transcendence (1)', suffix: '02' },
-				{ id: '03', label: 'Transcendence (5)', suffix: '03' }
+				{ id: '03', label: 'Transcendence (1)', suffix: '03' },
+				{ id: '04', label: 'Transcendence (5)', suffix: '04' }
 			)
 		}
 
 		for (const transformation of transformations) {
 			for (const variant of variants) {
 				images.push({
-					url: getWeaponImageUrl(weapon.granblueId, variant, undefined, transformation.suffix),
+					url: getSummonImage(summon.granblueId, variant, transformation.suffix),
 					label: `${variant} (${transformation.label})`,
 					variant,
 					pose: transformation.id,
@@ -117,78 +120,81 @@
 
 	// Image download handlers
 	async function handleDownloadImage(size: string, transformation: string | undefined, force: boolean) {
-		if (!weapon?.id) return
-		// For weapons, '01' means base (no transformation suffix)
+		if (!summon?.id) return
+		// For summons, '01' means base (no transformation suffix)
 		const trans = transformation === '01' ? undefined : transformation
-		await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+		await entityAdapter.downloadSummonImage(summon.id, size, trans, force)
 	}
 
 	async function handleDownloadAllPose(pose: string, force: boolean) {
-		if (!weapon?.id) return
+		if (!summon?.id) return
 		const trans = pose === '01' ? undefined : pose
 		// Download all sizes for this pose
-		for (const size of weaponSizes) {
-			await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+		for (const size of summonSizes) {
+			await entityAdapter.downloadSummonImage(summon.id, size, trans, force)
 		}
 	}
 
 	async function handleDownloadAllImages(force: boolean) {
-		if (!weapon?.id) return
-		await entityAdapter.downloadWeaponImages(weapon.id, { force })
+		if (!summon?.id) return
+		await entityAdapter.downloadSummonImages(summon.id, { force })
 	}
 
 	async function handleDownloadSize(size: string) {
-		if (!weapon?.id) return
+		if (!summon?.id) return
 		// Download this size for all available transformations
 		const transformations: (string | undefined)[] = [undefined]
-		if (weapon.uncap?.transcendence) {
-			transformations.push('02', '03')
+		if (summon.uncap?.ulb) {
+			transformations.push('02')
+		}
+		if (summon.uncap?.transcendence) {
+			transformations.push('03', '04')
 		}
 
 		for (const trans of transformations) {
-			await entityAdapter.downloadWeaponImage(weapon.id, size, trans, false)
+			await entityAdapter.downloadSummonImage(summon.id, size, trans, false)
 		}
 	}
 
 	// Page title
-	const pageTitle = $derived(m.page_title_db_entity({ name: weapon?.name?.en ?? 'Weapon' }))
+	const pageTitle = $derived(m.page_title_db_entity({ name: summon?.name?.en ?? 'Summon' }))
 </script>
 
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	{#if weapon}
+	{#if summon}
 		<DetailScaffold
-			type="weapon"
-			item={weapon}
-			image={getWeaponImage(weapon)}
+			type="summon"
+			item={summon}
+			image={getSummonGridImage(summon)}
 			showEdit={canEdit}
 			editUrl={canEdit ? editUrl : undefined}
 			{currentTab}
 			onTabChange={handleTabChange}
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
 			onDownloadSize={canEdit ? handleDownloadSize : undefined}
-			availableSizes={weaponSizes}
+			availableSizes={summonSizes}
 		>
 			{#if currentTab === 'info'}
 				<section class="details">
-					<WeaponMetadataSection {weapon} />
+					<SummonMetadataSection {summon} />
 
-					{#if weapon.nicknames?.en?.length || weapon.nicknames?.ja?.length}
+					{#if summon.nicknames?.en?.length || summon.nicknames?.ja?.length}
 						<DetailsContainer title="Nicknames">
-							{#if weapon.nicknames?.en?.length}
+							{#if summon.nicknames?.en?.length}
 								<DetailItem label="English">
 									<div class="nickname-tags">
-										{#each weapon.nicknames.en as nickname}
+										{#each summon.nicknames.en as nickname}
 											<span class="nickname-tag">{nickname}</span>
 										{/each}
 									</div>
 								</DetailItem>
 							{/if}
-							{#if weapon.nicknames?.ja?.length}
+							{#if summon.nicknames?.ja?.length}
 								<DetailItem label="Japanese">
 									<div class="nickname-tags">
-										{#each weapon.nicknames.ja as nickname}
+										{#each summon.nicknames.ja as nickname}
 											<span class="nickname-tag">{nickname}</span>
 										{/each}
 									</div>
@@ -197,82 +203,105 @@
 						</DetailsContainer>
 					{/if}
 
-					<WeaponUncapSection {weapon} />
-					<WeaponTaxonomySection {weapon} />
-					<WeaponStatsSection {weapon} />
-					<WeaponGachaSection {weapon} />
+					<SummonUncapSection {summon} />
+					<SummonTaxonomySection {summon} />
+					<SummonStatsSection {summon} />
 
-					{#if weapon.releaseDate || weapon.flbDate || weapon.ulbDate || weapon.transcendenceDate}
+					{#if summon.releaseDate || summon.flbDate || summon.ulbDate || summon.transcendenceDate}
 						<DetailsContainer title="Dates">
-							{#if weapon.releaseDate}
-								<DetailItem label="Release Date" value={weapon.releaseDate} />
+							{#if summon.releaseDate}
+								<DetailItem label="Release Date" value={summon.releaseDate} />
 							{/if}
-							{#if weapon.flbDate}
-								<DetailItem label="FLB Date" value={weapon.flbDate} />
+							{#if summon.flbDate}
+								<DetailItem label="FLB Date" value={summon.flbDate} />
 							{/if}
-							{#if weapon.ulbDate}
-								<DetailItem label="ULB Date" value={weapon.ulbDate} />
+							{#if summon.ulbDate}
+								<DetailItem label="ULB Date" value={summon.ulbDate} />
 							{/if}
-							{#if weapon.transcendenceDate}
-								<DetailItem label="Transcendence Date" value={weapon.transcendenceDate} />
+							{#if summon.transcendenceDate}
+								<DetailItem label="Transcendence Date" value={summon.transcendenceDate} />
 							{/if}
 						</DetailsContainer>
 					{/if}
 
-					{#if weapon.links?.wikiEn || weapon.links?.wikiJa || weapon.links?.gamewith || weapon.links?.kamigame}
+					{#if summon.links?.wikiEn || summon.links?.wikiJa || summon.links?.gamewith || summon.links?.kamigame}
 						<DetailsContainer title="Links">
-							{#if weapon.links?.wikiEn}
+							{#if summon.links?.wikiEn}
 								<DetailItem label="Wiki (EN)">
-									<a href={weapon.links.wikiEn} target="_blank" rel="noopener noreferrer" class="external-link">
-										{weapon.links.wikiEn}
+									<a href={summon.links.wikiEn} target="_blank" rel="noopener noreferrer" class="external-link">
+										{summon.links.wikiEn}
 									</a>
 								</DetailItem>
 							{/if}
-							{#if weapon.links?.wikiJa}
+							{#if summon.links?.wikiJa}
 								<DetailItem label="Wiki (JP)">
-									<a href={weapon.links.wikiJa} target="_blank" rel="noopener noreferrer" class="external-link">
-										{weapon.links.wikiJa}
+									<a href={summon.links.wikiJa} target="_blank" rel="noopener noreferrer" class="external-link">
+										{summon.links.wikiJa}
 									</a>
 								</DetailItem>
 							{/if}
-							{#if weapon.links?.gamewith}
+							{#if summon.links?.gamewith}
 								<DetailItem label="Gamewith">
-									<a href={weapon.links.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
-										{weapon.links.gamewith}
+									<a href={summon.links.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
+										{summon.links.gamewith}
 									</a>
 								</DetailItem>
 							{/if}
-							{#if weapon.links?.kamigame}
+							{#if summon.links?.kamigame}
 								<DetailItem label="Kamigame">
-									<a href={weapon.links.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
-										{weapon.links.kamigame}
+									<a href={summon.links.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
+										{summon.links.kamigame}
 									</a>
 								</DetailItem>
 							{/if}
 						</DetailsContainer>
 					{/if}
 
-					<div class="weapon-skills">
-						<h3>Skills</h3>
-						<div class="skills-grid">
-							{#if weapon.weapon_skills && weapon.weapon_skills.length > 0}
-								{#each weapon.weapon_skills as skill}
-									<div class="skill-item">
-										<h4 class="skill-name">{skill.name || 'Unknown Skill'}</h4>
-										<p class="skill-description">
-											{skill.description || 'No description available'}
-										</p>
-									</div>
-								{/each}
+					<div class="summon-abilities">
+						<h3>Call Effect</h3>
+						<div class="abilities-section">
+							{#if summon.callName || summon.callDescription}
+								<div class="ability-item">
+									<h4 class="ability-name">{summon.callName || 'Call Effect'}</h4>
+									<p class="ability-description">
+										{summon.callDescription || 'No description available'}
+									</p>
+								</div>
 							{:else}
-								<p class="no-skills">No skills available</p>
+								<p class="no-abilities">No call effect information available</p>
 							{/if}
 						</div>
+
+						<h3>Aura Effect</h3>
+						<div class="abilities-section">
+							{#if summon.auraName || summon.auraDescription}
+								<div class="ability-item">
+									<h4 class="ability-name">{summon.auraName || 'Aura Effect'}</h4>
+									<p class="ability-description">
+										{summon.auraDescription || 'No description available'}
+									</p>
+								</div>
+							{:else}
+								<p class="no-abilities">No aura effect information available</p>
+							{/if}
+						</div>
+
+						{#if summon.subAuraName || summon.subAuraDescription}
+							<h3>Sub Aura Effect</h3>
+							<div class="abilities-section">
+								<div class="ability-item">
+									<h4 class="ability-name">{summon.subAuraName || 'Sub Aura Effect'}</h4>
+									<p class="ability-description">
+										{summon.subAuraDescription || 'No description available'}
+									</p>
+								</div>
+							</div>
+						{/if}
 					</div>
 				</section>
 			{:else if currentTab === 'images'}
 				<EntityImagesTab
-					images={weaponImages}
+					images={summonImages}
 					{canEdit}
 					onDownloadImage={canEdit ? handleDownloadImage : undefined}
 					onDownloadAllPose={canEdit ? handleDownloadAllPose : undefined}
@@ -284,15 +313,15 @@
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
 					{canEdit}
-					onFetchWiki={canEdit && weapon?.id && weapon?.wiki?.en
+					onFetchWiki={canEdit && summon?.id && summon?.wiki?.en
 						? async () => {
 								// Fetch wiki data client-side (bypasses CloudFlare)
-								const wikiResult = await fetchWikiPage(weapon.wiki!.en!)
+								const wikiResult = await fetchWikiPage(summon.wiki!.en!)
 								if (wikiResult.error) {
 									throw new Error(wikiResult.error)
 								}
-								// Update the weapon with the wiki_raw data
-								await entityAdapter.updateWeapon(weapon.id, { wiki_raw: wikiResult.wikiRaw })
+								// Update the summon with the wiki_raw data
+								await entityAdapter.updateSummon(summon.id, { wiki_raw: wikiResult.wikiRaw })
 								rawDataQuery.refetch()
 								return { wikiRaw: wikiResult.wikiRaw ?? null, gameRawEn: null, gameRawJp: null }
 							}
@@ -302,9 +331,9 @@
 		</DetailScaffold>
 	{:else}
 		<div class="not-found">
-			<h2>Weapon Not Found</h2>
-			<p>The weapon you're looking for could not be found.</p>
-			<button onclick={() => goto('/database/weapons')}>Back to Weapons</button>
+			<h2>Summon Not Found</h2>
+			<p>The summon you're looking for could not be found.</p>
+			<button onclick={() => goto('/database/summons')}>Back to Summons</button>
 		</div>
 	{/if}
 </div>
@@ -345,7 +374,7 @@
 		flex-direction: column;
 	}
 
-	.weapon-skills {
+	.summon-abilities {
 		padding: spacing.$unit-2x;
 		border-bottom: 1px solid #e5e5e5;
 
@@ -359,24 +388,26 @@
 			margin: 0 0 spacing.$unit 0;
 		}
 
-		.skills-grid {
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-			gap: spacing.$unit;
+		.abilities-section {
+			margin-bottom: spacing.$unit * 2;
 
-			.skill-item {
+			&:last-child {
+				margin-bottom: 0;
+			}
+
+			.ability-item {
 				padding: spacing.$unit;
 				background: #f8f9fa;
 				border-radius: 4px;
 
-				.skill-name {
+				.ability-name {
 					font-size: typography.$font-medium;
 					font-weight: typography.$medium;
 					margin: 0 0 spacing.$unit * 0.5 0;
 					color: #333;
 				}
 
-				.skill-description {
+				.ability-description {
 					font-size: typography.$font-small;
 					color: #666;
 					margin: 0;
@@ -384,18 +415,12 @@
 				}
 			}
 
-			.no-skills {
-				grid-column: 1 / -1;
+			.no-abilities {
 				text-align: center;
 				color: #666;
 				font-style: italic;
+				padding: spacing.$unit;
 			}
-		}
-	}
-
-	@media (max-width: 768px) {
-		.weapon-skills .skills-grid {
-			grid-template-columns: 1fr;
 		}
 	}
 

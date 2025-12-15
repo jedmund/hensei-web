@@ -34,7 +34,7 @@
 
 	// Use TanStack Query with SSR initial data
 	const characterQuery = createQuery(() => ({
-		...entityQueries.character(data.character?.id ?? ''),
+		...entityQueries.character(data.character?.granblueId ?? ''),
 		...withInitialData(data.character)
 	}))
 
@@ -142,10 +142,10 @@
 			await entityAdapter.updateCharacter(character.id, payload)
 
 			// Invalidate TanStack Query cache to refetch fresh data
-			await queryClient.invalidateQueries({ queryKey: ['character', character.id] })
+			await queryClient.invalidateQueries({ queryKey: ['character', character.granblueId] })
 
 			// Navigate back to detail page
-			goto(`/database/characters/${character.id}`)
+			goto(`/database/characters/${character.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
 			console.error('Save error:', error)
@@ -155,7 +155,7 @@
 	}
 
 	function handleCancel() {
-		goto(`/database/characters/${character?.id}`)
+		goto(`/database/characters/${character?.granblueId}`)
 	}
 
 	// Helper function for character grid image

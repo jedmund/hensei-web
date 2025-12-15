@@ -63,7 +63,7 @@
     </DetailItem>
     {#if weapon.recruits}
       <DetailItem label="Recruits">
-        <a href="/database/characters/{weapon.recruits.id}" class="recruits-link">
+        <a href="/database/characters/{weapon.recruits.granblueId}" class="recruits-link">
           <img
             src={getCharacterImage(weapon.recruits.granblueId, 'square', '01')}
             alt={weapon.recruits.name.en || 'Recruited character'}

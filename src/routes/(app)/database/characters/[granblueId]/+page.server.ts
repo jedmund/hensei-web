@@ -7,23 +7,23 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 		// Get parent data to access role
 		const parentData = await parent()
 
-		const summon = await entityAdapter.getSummon(params.id)
+		const character = await entityAdapter.getCharacter(params.granblueId)
 
-		if (!summon) {
-			throw error(404, 'Summon not found')
+		if (!character) {
+			throw error(404, 'Character not found')
 		}
 
 		return {
-			summon,
+			character,
 			role: parentData.role
 		}
 	} catch (err) {
-		console.error('Failed to load summon:', err)
+		console.error('Failed to load character:', err)
 
 		if (err instanceof Error && 'status' in err && err.status === 404) {
-			throw error(404, 'Summon not found')
+			throw error(404, 'Character not found')
 		}
 
-		throw error(500, 'Failed to load summon')
+		throw error(500, 'Failed to load character')
 	}
 }

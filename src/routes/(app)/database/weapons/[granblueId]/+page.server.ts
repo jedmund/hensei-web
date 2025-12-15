@@ -7,23 +7,23 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 		// Get parent data to access role
 		const parentData = await parent()
 
-		const character = await entityAdapter.getCharacter(params.id)
+		const weapon = await entityAdapter.getWeapon(params.granblueId)
 
-		if (!character) {
-			throw error(404, 'Character not found')
+		if (!weapon) {
+			throw error(404, 'Weapon not found')
 		}
 
 		return {
-			character,
+			weapon,
 			role: parentData.role
 		}
 	} catch (err) {
-		console.error('Failed to load character:', err)
+		console.error('Failed to load weapon:', err)
 
 		if (err instanceof Error && 'status' in err && err.status === 404) {
-			throw error(404, 'Character not found')
+			throw error(404, 'Weapon not found')
 		}
 
-		throw error(500, 'Failed to load character')
+		throw error(500, 'Failed to load weapon')
 	}
 }

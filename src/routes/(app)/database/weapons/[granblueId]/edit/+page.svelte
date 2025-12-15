@@ -31,7 +31,7 @@
 
 	// Use TanStack Query with SSR initial data
 	const weaponQuery = createQuery(() => ({
-		...entityQueries.weapon(data.weapon?.id ?? ''),
+		...entityQueries.weapon(data.weapon?.granblueId ?? ''),
 		...withInitialData(data.weapon)
 	}))
 
@@ -179,10 +179,10 @@
 			await entityAdapter.updateWeapon(weapon.id, payload)
 
 			// Invalidate TanStack Query cache to refetch fresh data
-			await queryClient.invalidateQueries({ queryKey: ['weapon', weapon.id] })
+			await queryClient.invalidateQueries({ queryKey: ['weapon', weapon.granblueId] })
 
 			// Navigate back to detail page
-			goto(`/database/weapons/${weapon.id}`)
+			goto(`/database/weapons/${weapon.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
 			console.error('Save error:', error)
@@ -192,7 +192,7 @@
 	}
 
 	function handleCancel() {
-		goto(`/database/weapons/${weapon?.id}`)
+		goto(`/database/weapons/${weapon?.granblueId}`)
 	}
 
 	// Helper function for weapon grid image

@@ -223,7 +223,7 @@
 			const newCharacter = await entityAdapter.createCharacter(payload)
 			// Trigger image download in background (don't await - it queues a job)
 			entityAdapter.downloadCharacterImages(newCharacter.id).catch(console.error)
-			await goto(`/database/characters/${newCharacter.id}`)
+			await goto(`/database/characters/${newCharacter.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to create character. Please try again.'
 			console.error('Create error:', error)
