@@ -55,6 +55,9 @@
 	let dismissedByPage = $state<Record<string, Set<string>>>({})
 	let savedEntities = $state<Set<string>>(new Set())
 
+	// Store wiki raw data per entity for sending with create request
+	let wikiRawByPage = $state<Record<string, string>>({})
+
 	// Saving state
 	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
@@ -175,6 +178,9 @@
 			const wikiResults = await fetchWikiPages(pages)
 			const wikiData = buildWikiDataMap(wikiResults)
 
+			// Store wiki raw data for sending with create request
+			wikiRawByPage = { ...wikiData }
+
 			// Update pages array with any redirects
 			const finalPages = wikiResults.map((r) => r.wikiPage)
 
@@ -278,7 +284,8 @@
 				gamewith: formData.gamewith,
 				kamigame: formData.kamigame,
 				nicknames_en: formData.nicknamesEn,
-				nicknames_jp: formData.nicknamesJp
+				nicknames_jp: formData.nicknamesJp,
+				wiki_raw: wikiRawByPage[selectedWikiPage] || undefined
 			}
 
 			const newSummon = await entityAdapter.createSummon(payload)

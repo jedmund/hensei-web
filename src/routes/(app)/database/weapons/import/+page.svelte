@@ -17,6 +17,7 @@
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
 	import WeaponMetadataSection from '$lib/features/database/weapons/sections/WeaponMetadataSection.svelte'
+	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
 	import TabbedEntitySelector from '$lib/features/database/import/TabbedEntitySelector.svelte'
 	import type { EntityTab } from '$lib/features/database/import/TabbedEntitySelector.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -27,7 +28,6 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
-	import CharacterTypeahead from '$lib/components/ui/CharacterTypeahead.svelte'
 
 	import type { PageData } from './$types'
 
@@ -55,6 +55,9 @@
 	let formDataByPage = $state<Record<string, any>>({})
 	let dismissedByPage = $state<Record<string, Set<string>>>({})
 	let savedEntities = $state<Set<string>>(new Set())
+
+	// Store wiki raw data per entity for sending with create request
+	let wikiRawByPage = $state<Record<string, string>>({})
 
 	// Saving state
 	let isSaving = $state(false)
@@ -177,6 +180,9 @@
 			const wikiResults = await fetchWikiPages(pages)
 			const wikiData = buildWikiDataMap(wikiResults)
 
+			// Store wiki raw data for sending with create request
+			wikiRawByPage = { ...wikiData }
+
 			// Update pages array with any redirects
 			const finalPages = wikiResults.map((r) => r.wikiPage)
 
@@ -283,7 +289,8 @@
 				kamigame: formData.kamigame,
 				nicknames_en: formData.nicknamesEn,
 				nicknames_jp: formData.nicknamesJp,
-				recruits: formData.recruits
+				recruits: formData.recruits,
+				wiki_raw: wikiRawByPage[selectedWikiPage] || undefined
 			}
 
 			const newWeapon = await entityAdapter.createWeapon(payload)
@@ -487,21 +494,22 @@
 						onDismissSuggestion={handleDismissSuggestion}
 					/>
 
+					<WeaponGachaSection
+						weapon={emptyWeapon}
+						editMode={true}
+						bind:editData={formDataByPage[selectedWikiPage]}
+						{suggestions}
+						dismissedSuggestions={dismissed}
+						onAcceptSuggestion={handleAcceptSuggestion}
+						onDismissSuggestion={handleDismissSuggestion}
+					/>
+
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
 							<TagInput bind:value={formDataByPage[selectedWikiPage].nicknamesEn} placeholder="Add nickname..." contained />
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
 							<TagInput bind:value={formDataByPage[selectedWikiPage].nicknamesJp} placeholder="ニックネーム..." contained />
-						</DetailItem>
-					</DetailsContainer>
-
-					<DetailsContainer title="Recruits">
-						<DetailItem label="Recruits Character" sublabel="Character recruited by this weapon">
-							<CharacterTypeahead
-								bind:value={formDataByPage[selectedWikiPage].recruits}
-								placeholder="Search for character..."
-							/>
 						</DetailItem>
 					</DetailsContainer>
 

@@ -424,6 +424,7 @@ export interface CreateSummonPayload {
 	transcendence_date?: string | null
 	wiki_en?: string
 	wiki_ja?: string
+	wiki_raw?: string
 	gamewith?: string
 	kamigame?: string
 	nicknames_en?: string[]
@@ -496,6 +497,7 @@ export interface CreateWeaponPayload {
 	transcendence_date?: string | null
 	wiki_en?: string
 	wiki_ja?: string
+	wiki_raw?: string
 	gamewith?: string
 	kamigame?: string
 	recruits?: string | null  // Character ID reference
