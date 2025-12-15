@@ -204,7 +204,8 @@
 
 			:global(.input),
 			:global(.select),
-			:global(.multi-select) {
+			:global(.multi-select),
+			:global(.character-typeahead) {
 				width: var(--custom-width, 240px);
 			}
 
