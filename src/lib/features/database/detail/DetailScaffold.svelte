@@ -184,7 +184,6 @@
 		border-radius: layout.$card-corner;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 		overflow: visible;
-		margin-top: spacing.$unit-2x;
 		position: relative;
 	}
 

@@ -143,7 +143,6 @@
 		justify-content: space-between;
 		gap: spacing.$unit * 2;
 		padding: spacing.$unit * 2;
-		border-bottom: 1px solid #e5e5e5;
 		// position: sticky;
 		// top: 0;
 		// z-index: 10;

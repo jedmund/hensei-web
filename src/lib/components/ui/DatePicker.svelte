@@ -104,7 +104,7 @@
 				</BitsDatePicker.Trigger>
 			</div>
 
-			<BitsDatePicker.Content class="content" sideOffset={8}>
+			<BitsDatePicker.Content class="date-picker-content" sideOffset={8}>
 				<BitsDatePicker.Calendar class="calendar">
 					{#snippet children({ months, weekdays })}
 						<BitsDatePicker.Header class="calendar-header">
@@ -175,7 +175,7 @@
 			</BitsDatePicker.Trigger>
 		</div>
 
-		<BitsDatePicker.Content class="content" sideOffset={8}>
+		<BitsDatePicker.Content class="date-picker-content" sideOffset={8}>
 			<BitsDatePicker.Calendar class="calendar">
 				{#snippet children({ months, weekdays })}
 					<BitsDatePicker.Header class="calendar-header">
@@ -313,7 +313,8 @@
 		}
 	}
 
-	:global(.content) {
+	// Portalled content - use specific class name to avoid conflicts
+	:global(.date-picker-content) {
 		z-index: 50;
 		background-color: $grey-85;
 		border-radius: $card-corner;
@@ -322,26 +323,26 @@
 		border: 1px solid $grey-80;
 	}
 
-	:global(.calendar) {
+	:global(.date-picker-content .calendar) {
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
 	}
 
-	:global(.calendar-header) {
+	:global(.date-picker-content .calendar-header) {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		padding-bottom: $unit;
 	}
 
-	:global(.heading) {
+	:global(.date-picker-content .heading) {
 		font-size: $font-regular;
 		font-weight: $medium;
 		color: var(--text-primary);
 	}
 
-	:global(.nav-button) {
+	:global(.date-picker-content .nav-button) {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -365,16 +366,16 @@
 		}
 	}
 
-	:global(.grid) {
+	:global(.date-picker-content .grid) {
 		border-collapse: collapse;
 	}
 
-	:global(.grid-row) {
+	:global(.date-picker-content .grid-row) {
 		display: flex;
 		gap: $unit-fourth;
 	}
 
-	:global(.head-cell) {
+	:global(.date-picker-content .head-cell) {
 		width: 32px;
 		height: 32px;
 		display: flex;
@@ -385,13 +386,13 @@
 		color: var(--text-tertiary);
 	}
 
-	:global(.cell) {
+	:global(.date-picker-content .cell) {
 		width: 32px;
 		height: 32px;
 		padding: 0;
 	}
 
-	:global(.day) {
+	:global(.date-picker-content .day) {
 		width: 100%;
 		height: 100%;
 		display: flex;
