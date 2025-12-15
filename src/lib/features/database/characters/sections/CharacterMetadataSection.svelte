@@ -7,9 +7,10 @@
   import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
   import CopyableText from '$lib/components/ui/CopyableText.svelte'
   import Select from '$lib/components/ui/Select.svelte'
+  import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
   import { getRarityLabel, getRarityOptions } from '$lib/utils/rarity'
   import { getWeaponImage } from '$lib/utils/images'
-  import { CHARACTER_SEASON_NAMES, getSeasonName } from '$lib/types/enums'
+  import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES, getSeasonName, getSeriesNames } from '$lib/types/enums'
 
   interface Props {
     character: any
@@ -43,9 +44,35 @@
     }))
   ]
 
+  // Series options for multiselect
+  const seriesOptions = Object.entries(CHARACTER_SERIES_NAMES).map(([value, label]) => ({
+    value: Number(value),
+    label
+  }))
+
   function formatPromotions(promotionNames: string[] | undefined): string {
     if (!promotionNames || promotionNames.length === 0) return '—'
     return promotionNames.join(', ')
+  }
+
+  // Format series for display - use API-provided seriesNames if available
+  function formatSeriesDisplay(): string {
+    // Use pre-computed seriesNames from API if available
+    if (character.seriesNames && character.seriesNames.length > 0) {
+      return character.seriesNames.join(', ')
+    }
+    // Fallback for legacy integer array
+    if (Array.isArray(character.series) && character.series.length > 0) {
+      const first = character.series[0]
+      if (typeof first === 'number') {
+        return getSeriesNames(character.series as number[]).join(', ')
+      }
+      // CharacterSeriesRef[] - extract names
+      return (character.series as Array<{ name: { en?: string } }>)
+        .map((s) => s.name?.en || 'Unknown')
+        .join(', ')
+    }
+    return '—'
   }
 </script>
 
@@ -63,6 +90,47 @@
       onDismissSuggestion={() => onDismissSuggestion?.('rarity')}
     />
     <DetailItem
+      label="Granblue ID"
+      bind:value={editData.granblueId}
+      editable={true}
+      type="text"
+      placeholder="Granblue ID"
+    />
+    <DetailItem
+      label="Character ID"
+      sublabel="Separate multiple IDs with commas"
+      bind:value={editData.characterId}
+      editable={true}
+      type="text"
+      placeholder="Character IDs"
+    />
+    {#if character.recruitedBy}
+      <DetailItem label="Recruited By">
+        <a href="/database/weapons/{character.recruitedBy.granblueId}" class="recruited-by-link">
+          <img
+            src={getWeaponImage(character.recruitedBy.granblueId, 'square')}
+            alt={character.recruitedBy.name.en || 'Recruiting weapon'}
+            class="recruited-by-image"
+          />
+          <span class="recruited-by-name">{character.recruitedBy.name.en}</span>
+        </a>
+      </DetailItem>
+      <DetailItem
+        label="Promotions"
+        sublabel="Gacha pools from recruiting weapon"
+        value={formatPromotions(character.recruitedBy.promotionNames)}
+      />
+    {/if}
+    <DetailItem label="Series" editable={true}>
+      <MultiSelect
+        size="medium"
+        options={seriesOptions}
+        bind:value={editData.series}
+        placeholder="Select series"
+        contained
+      />
+    </DetailItem>
+    <DetailItem
       label="Season"
       sublabel="Used to disambiguate characters with the same name"
       editable={true}
@@ -74,19 +142,8 @@
         contained
       />
     </DetailItem>
-    <DetailItem
-      label="Character ID"
-      sublabel="Separate multiple IDs with commas"
-      bind:value={editData.characterId}
-      editable={true}
-      type="text"
-      placeholder="Character IDs"
-    />
   {:else}
     <DetailItem label="Rarity" value={getRarityLabel(character.rarity)} />
-    {#if character.season}
-      <DetailItem label="Season" value={getSeasonName(character.season) || '—'} />
-    {/if}
     <DetailItem label="Granblue ID">
       {#if character.granblueId}
         <CopyableText value={character.granblueId} />
@@ -116,6 +173,8 @@
         value={formatPromotions(character.recruitedBy.promotionNames)}
       />
     {/if}
+    <DetailItem label="Series" value={formatSeriesDisplay()} />
+    <DetailItem label="Season" value={getSeasonName(character.season) || '—'} />
   {/if}
 </DetailsContainer>
 

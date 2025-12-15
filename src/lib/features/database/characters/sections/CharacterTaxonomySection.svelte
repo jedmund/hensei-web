@@ -5,14 +5,12 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
-	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import { getElementOptions } from '$lib/utils/element'
 	import { getRaceLabel, getRaceOptions } from '$lib/utils/race'
 	import { getGenderLabel, getGenderOptions } from '$lib/utils/gender'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
-	import { CHARACTER_SERIES_NAMES, getSeriesNames } from '$lib/types/enums'
 
 	interface Props {
 		character: any
@@ -39,18 +37,6 @@
 	const raceOptions = getRaceOptions()
 	const genderOptions = getGenderOptions()
 	const proficiencyOptions = getProficiencyOptions()
-
-	// Series options for multiselect
-	const seriesOptions = Object.entries(CHARACTER_SERIES_NAMES).map(([value, label]) => ({
-		value: Number(value),
-		label
-	}))
-
-	// Format series for display
-	function formatSeriesDisplay(series: number[]): string {
-		if (!series || series.length === 0) return '—'
-		return getSeriesNames(series).join(', ')
-	}
 </script>
 
 <DetailsContainer title="Details">
@@ -121,18 +107,6 @@
 			onAcceptSuggestion={() => onAcceptSuggestion?.('proficiency2', suggestions?.proficiency2)}
 			onDismissSuggestion={() => onDismissSuggestion?.('proficiency2')}
 		/>
-		<DetailItem
-			label="Series"
-			editable={true}
-		>
-			<MultiSelect
-				size="medium"
-				options={seriesOptions}
-				bind:value={editData.series}
-				placeholder="Select series"
-				contained
-			/>
-		</DetailItem>
 	{:else}
 		<DetailItem label="Element">
 			<ElementLabel element={character.element} size="medium" />
@@ -146,6 +120,5 @@
 		<DetailItem label="Proficiency 2">
 			<ProficiencyLabel proficiency={character.proficiency?.[1] ?? 0} size="medium" />
 		</DetailItem>
-		<DetailItem label="Series" value={formatSeriesDisplay(character.series)} />
 	{/if}
 </DetailsContainer>
