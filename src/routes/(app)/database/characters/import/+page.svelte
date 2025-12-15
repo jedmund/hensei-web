@@ -17,6 +17,7 @@
 	// Components
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
+	import CharacterGachaSection from '$lib/features/database/characters/sections/CharacterGachaSection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
 	import CharacterMetadataSection from '$lib/features/database/characters/sections/CharacterMetadataSection.svelte'
 	import TabbedEntitySelector from '$lib/features/database/import/TabbedEntitySelector.svelte'
@@ -113,10 +114,10 @@
 			gender: suggestions?.gender ?? 0,
 			proficiency1: suggestions?.proficiency1 ?? 0,
 			proficiency2: suggestions?.proficiency2 ?? 0,
-			season: null as number | null,
+			season: suggestions?.season ?? (null as number | null),
 			series: suggestions?.series ?? ([] as number[]),
-			promotions: [] as number[],
-			gacha_available: true,
+			promotions: suggestions?.promotions ?? ([] as number[]),
+			gacha_available: suggestions?.gachaAvailable ?? true,
 			minHp: suggestions?.minHp ?? 0,
 			maxHp: suggestions?.maxHp ?? 0,
 			maxHpFlb: suggestions?.maxHpFlb ?? 0,
@@ -147,6 +148,7 @@
 
 	// Add/remove input fields
 	function addInput() {
+		if (wikiPagesInputs.length >= 10) return
 		wikiPagesInputs = [...wikiPagesInputs, '']
 	}
 
@@ -475,13 +477,16 @@
 							onAcceptSuggestion={() => handleAcceptSuggestion('nameJp', suggestions?.nameJp)}
 							onDismissSuggestion={() => handleDismissSuggestion('nameJp')}
 						/>
-						<DetailItem
-							label="Character ID"
-							sublabel="Separate multiple IDs with commas"
-							bind:value={formDataByPage[selectedWikiPage].characterId}
+						<SuggestionDetailItem
+							label="Granblue ID"
+							bind:value={formDataByPage[selectedWikiPage].granblueId}
 							editable={true}
 							type="text"
-							placeholder="Character IDs"
+							placeholder="3040001000"
+							suggestion={suggestions?.granblueId}
+							dismissedSuggestion={dismissed.has('granblueId')}
+							onAcceptSuggestion={() => handleAcceptSuggestion('granblueId', suggestions?.granblueId)}
+							onDismissSuggestion={() => handleDismissSuggestion('granblueId')}
 						/>
 					</DetailsContainer>
 
@@ -513,6 +518,12 @@
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
 						onDismissSuggestion={handleDismissSuggestion}
+					/>
+
+					<CharacterGachaSection
+						character={emptyCharacter}
+						editMode={true}
+						bind:editData={formDataByPage[selectedWikiPage]}
 					/>
 
 					<CharacterStatsSection

@@ -140,6 +140,7 @@
 
 	// Add/remove input fields
 	function addInput() {
+		if (wikiPagesInputs.length >= 10) return
 		wikiPagesInputs = [...wikiPagesInputs, '']
 	}
 
