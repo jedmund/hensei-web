@@ -590,6 +590,7 @@ export interface SummonSuggestions {
 	nameEn?: string
 	nameJp?: string
 	granblueId?: string
+	summonId?: string
 	rarity?: number
 	element?: number
 	minHp?: number

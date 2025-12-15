@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation'
 	import { entityAdapter, type SummonSuggestions } from '$lib/api/adapters/entity.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
-	import { getSummonImage, getPlaceholderImage } from '$lib/utils/images'
+	import { getGameCdnSummonImage, getPlaceholderImage } from '$lib/utils/images'
 
 	// Components
 	import SummonUncapSection from '$lib/features/database/summons/sections/SummonUncapSection.svelte'
@@ -80,7 +80,7 @@
 			granblueId: entity.granblueId,
 			status: entity.status,
 			imageUrl: entity.granblueId
-				? getSummonImage(entity.granblueId, 'square')
+				? getGameCdnSummonImage(entity.granblueId)
 				: getPlaceholderImage('summon', 'square'),
 			error: entity.error,
 			saved: savedEntities.has(wikiPage)
@@ -93,7 +93,7 @@
 			name: suggestions?.nameEn ?? '',
 			nameJp: suggestions?.nameJp ?? '',
 			granblue_id: suggestions?.granblueId ?? '',
-			summonId: '',
+			summonId: suggestions?.summonId ?? '',
 			rarity: suggestions?.rarity ?? 3,
 			element: suggestions?.element ?? 0,
 			series: '',
@@ -283,7 +283,9 @@
 			savedEntities = new Set(savedEntities)
 
 			// Select next unsaved entity
-			const unsaved = entityTabs.find((e) => !savedEntities.has(e.wikiPage) && e.status === 'success')
+			const unsaved = entityTabs.find(
+				(e) => !savedEntities.has(e.wikiPage) && e.status === 'success'
+			)
 			if (unsaved) {
 				selectedWikiPage = unsaved.wikiPage
 			}
@@ -345,17 +347,12 @@
 
 	<!-- Input phase -->
 	{#if entities.size === 0}
-		<div class="input-phase">
+		<form class="input-phase" onsubmit={(e) => { e.preventDefault(); fetchWikiData(); }}>
 			<p class="hint">Enter up to 10 wiki page names to import data</p>
 			<div class="wiki-inputs">
 				{#each wikiPagesInputs as _, index}
 					<div class="input-row">
-						<Input
-							bind:value={wikiPagesInputs[index]}
-							placeholder="Bahamut"
-							contained
-							fullWidth
-						/>
+						<Input bind:value={wikiPagesInputs[index]} placeholder="Bahamut" contained fullWidth />
 						{#if wikiPagesInputs.length > 1}
 							<button
 								type="button"
@@ -368,20 +365,24 @@
 						{/if}
 					</div>
 				{/each}
-				<Button variant="ghost" onclick={addInput}>
-					<Icon name="plus" size={16} />
-					Add another
-				</Button>
+				<Button
+					variant="ghost"
+					type="button"
+					onclick={addInput}
+					class="add-input-button"
+					leftIcon="plus"
+					size="small">Add another</Button
+				>
 			</div>
 			{#if fetchError}
 				<p class="error">{fetchError}</p>
 			{/if}
 			<div class="fetch-button">
-				<Button variant="primary" onclick={fetchWikiData} disabled={isFetching}>
+				<Button variant="primary" type="submit" disabled={isFetching}>
 					{isFetching ? 'Fetching...' : 'Fetch data'}
 				</Button>
 			</div>
-		</div>
+		</form>
 	{:else}
 		<!-- Entity selector -->
 		<div class="entity-selector-container">
@@ -500,7 +501,8 @@
 							placeholder="YYYY-MM-DD"
 							suggestion={suggestions?.releaseDate}
 							dismissedSuggestion={dismissed.has('releaseDate')}
-							onAcceptSuggestion={() => handleAcceptSuggestion('releaseDate', suggestions?.releaseDate)}
+							onAcceptSuggestion={() =>
+								handleAcceptSuggestion('releaseDate', suggestions?.releaseDate)}
 							onDismissSuggestion={() => handleDismissSuggestion('releaseDate')}
 						/>
 						{#if formData.flb}
@@ -617,6 +619,10 @@
 		display: flex;
 		gap: spacing.$unit;
 		align-items: center;
+	}
+
+	:global(.wiki-inputs .add-input-button) {
+		width: fit-content;
 	}
 
 	.remove-button {
