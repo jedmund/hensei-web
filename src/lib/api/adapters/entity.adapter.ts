@@ -98,12 +98,6 @@ export interface Weapon {
 		en?: string[]
 		ja?: string[]
 	}
-	links?: {
-		wikiEn?: string
-		wikiJa?: string
-		gamewith?: string
-		kamigame?: string
-	}
 	recruits?: {
 		id: string
 		granblueId: string
@@ -128,7 +122,7 @@ export interface Weapon {
 export interface Character {
 	id: string
 	granblueId: string
-	characterId?: number
+	characterId?: number[]
 	name: {
 		en?: string
 		ja?: string
@@ -148,17 +142,24 @@ export interface Character {
 	series?: CharacterSeriesRef[] | number[]
 	/** Human-readable series names */
 	seriesNames?: string[]
-	/** Whether character can be pulled from gacha */
-	gachaAvailable?: boolean
 	hp?: {
 		minHp?: number
 		maxHp?: number
 		maxHpFlb?: number
+		maxHpUlb?: number
 	}
 	atk?: {
 		minAtk?: number
 		maxAtk?: number
 		maxAtkFlb?: number
+		maxAtkUlb?: number
+	}
+	// Other stats
+	baseDa?: number
+	baseTa?: number
+	ougiRatio?: {
+		ougiRatio?: number
+		ougiRatioFlb?: number
 	}
 	uncap?: {
 		flb?: boolean
@@ -174,12 +175,6 @@ export interface Character {
 	nicknames?: {
 		en?: string[]
 		ja?: string[]
-	}
-	links?: {
-		wikiEn?: string
-		wikiJa?: string
-		gamewith?: string
-		kamigame?: string
 	}
 	/** Weapon that recruits this character (reverse of Weapon.recruits) */
 	recruitedBy?: {
@@ -286,12 +281,6 @@ export interface Summon {
 	nicknames?: {
 		en?: string[]
 		ja?: string[]
-	}
-	links?: {
-		wikiEn?: string
-		wikiJa?: string
-		gamewith?: string
-		kamigame?: string
 	}
 	// Date fields
 	releaseDate?: string

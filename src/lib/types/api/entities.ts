@@ -2,6 +2,7 @@
 // These are the base types for game objects
 
 import type { WeaponSeriesRef } from './weaponSeries'
+import type { CharacterSeriesRef } from './characterSeries'
 
 export interface LocalizedName {
   en: string
@@ -80,19 +81,33 @@ export interface Character {
     race2: number
   }
   proficiency: number[]
-  hp: {
-    minHp: number
-    maxHp: number
-    maxHpFlb: number
+  hp?: {
+    minHp?: number
+    maxHp?: number
+    maxHpFlb?: number
+    maxHpUlb?: number
   }
-  atk: {
-    minAtk: number
-    maxAtk: number
-    maxAtkFlb: number
+  atk?: {
+    minAtk?: number
+    maxAtk?: number
+    maxAtkFlb?: number
+    maxAtkUlb?: number
+  }
+  // Other stats
+  baseDa?: number
+  baseTa?: number
+  ougiRatio?: {
+    ougiRatio?: number
+    ougiRatioFlb?: number
   }
   // Available awakenings for this character (from :full view)
   awakenings?: Awakening[]
   // Database/admin fields
+  characterId?: number[]
+  season?: number
+  series?: number[] | CharacterSeriesRef[]
+  /** Human-readable series names (computed by API) */
+  seriesNames?: string[]
   releaseDate?: string
   flbDate?: string
   ulbDate?: string
@@ -100,6 +115,7 @@ export interface Character {
   gamewith?: string
   kamigame?: string
   nicknames?: { en?: string[]; ja?: string[] }
+  recruitedBy?: { id: string; granblueId: string; name: LocalizedName; promotionNames?: string[] }
 }
 
 // Summon entity from SummonBlueprint
