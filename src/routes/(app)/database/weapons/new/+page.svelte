@@ -4,6 +4,10 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	// Page metadata
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
+
 	// Components
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
@@ -219,6 +223,8 @@
 		goto('/database/weapons')
 	}
 </script>
+
+<PageMeta title={m.page_title_db_new({ type: 'Weapon' })} description={m.page_desc_home()} />
 
 <div class="page">
 	<SidebarHeader title="New Weapon">

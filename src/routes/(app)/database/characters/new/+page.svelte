@@ -4,6 +4,10 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	// Page metadata
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
+
 	// Components
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
@@ -232,6 +236,8 @@
 		goto('/database/characters')
 	}
 </script>
+
+<PageMeta title={m.page_title_db_new({ type: 'Character' })} description={m.page_desc_home()} />
 
 <div class="page">
 	<SidebarHeader title="New Character">

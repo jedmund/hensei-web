@@ -1,6 +1,9 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
+
 	// Svelte components
 	import CharacterImageCell from '$lib/components/database/cells/CharacterImageCell.svelte'
 	import CharacterUncapCell from '$lib/components/database/cells/CharacterUncapCell.svelte'
@@ -61,6 +64,8 @@
 		}
 	]
 </script>
+
+<PageMeta title={m.page_title_db_characters()} description={m.page_desc_home()} />
 
 <div class="page">
 	<DatabaseGridWithProvider resource="characters" {columns} pageSize={20}>

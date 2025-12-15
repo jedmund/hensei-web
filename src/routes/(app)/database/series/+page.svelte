@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
@@ -36,6 +38,8 @@
 	// Check if the current type has flags (only weapons)
 	const hasFlags = $derived(activeType === 'weapons')
 </script>
+
+<PageMeta title={m.page_title_db_series()} description={m.page_desc_home()} />
 
 <div class="database-page">
 	<div class="grid-container">

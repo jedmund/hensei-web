@@ -5,6 +5,10 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 
+	// Page metadata
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
+
 	// TanStack Query
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -151,7 +155,12 @@
 			await entityAdapter.downloadSummonImage(summon.id, size, trans, false)
 		}
 	}
+
+	// Page title
+	const pageTitle = $derived(m.page_title_db_entity({ name: summon?.name?.en ?? 'Summon' }))
 </script>
+
+<PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
 	{#if summon}

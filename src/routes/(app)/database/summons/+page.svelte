@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import type { IColumn } from 'wx-svelte-grid'
 	import SummonImageCell from '$lib/components/database/cells/SummonImageCell.svelte'
@@ -61,6 +63,8 @@
 		}
 	]
 </script>
+
+<PageMeta title={m.page_title_db_summons()} description={m.page_desc_home()} />
 
 <div class="database-page">
 	<DatabaseGridWithProvider resource="summons" {columns} pageSize={20}>

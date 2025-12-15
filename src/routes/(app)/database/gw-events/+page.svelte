@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
@@ -73,6 +75,8 @@
 		goto(`/database/gw-events/${event.id}`)
 	}
 </script>
+
+<PageMeta title={m.page_title_db_gw()} description={m.page_desc_home()} />
 
 <div class="page">
 	<div class="grid">

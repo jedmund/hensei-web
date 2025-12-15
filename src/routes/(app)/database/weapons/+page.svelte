@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import type { IColumn } from 'wx-svelte-grid'
 	import WeaponImageCell from '$lib/components/database/cells/WeaponImageCell.svelte'
@@ -69,6 +71,8 @@
 		}
 	]
 </script>
+
+<PageMeta title={m.page_title_db_weapons()} description={m.page_desc_home()} />
 
 <div class="database-page">
 	<DatabaseGridWithProvider resource="weapons" {columns} pageSize={20}>

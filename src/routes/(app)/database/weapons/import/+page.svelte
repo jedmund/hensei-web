@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { entityAdapter, type WeaponSuggestions } from '$lib/api/adapters/entity.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
@@ -335,8 +337,9 @@
 		entityTabs.length > 0 &&
 			entityTabs.filter((e) => e.status === 'success').every((e) => savedEntities.has(e.wikiPage))
 	)
-
 </script>
+
+<PageMeta title={m.page_title_db_import({ type: 'Weapons' })} description={m.page_desc_home()} />
 
 <div class="page">
 	<SidebarHeader title="Batch Import Weapons">

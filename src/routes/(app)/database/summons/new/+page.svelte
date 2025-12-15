@@ -4,6 +4,10 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	// Page metadata
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
+
 	// Components
 	import SummonUncapSection from '$lib/features/database/summons/sections/SummonUncapSection.svelte'
 	import SummonTaxonomySection from '$lib/features/database/summons/sections/SummonTaxonomySection.svelte'
@@ -212,6 +216,8 @@
 		goto('/database/summons')
 	}
 </script>
+
+<PageMeta title={m.page_title_db_new({ type: 'Summon' })} description={m.page_desc_home()} />
 
 <div class="page">
 	<SidebarHeader title="New Summon">

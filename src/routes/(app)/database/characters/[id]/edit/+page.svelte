@@ -4,6 +4,10 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	// Page metadata
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
+
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -157,7 +161,12 @@
 	function getCharacterGridImage(character: any): string {
 		return getCharacterImage(character?.granblueId, 'grid', '01')
 	}
+
+	// Page title
+	const pageTitle = $derived(m.page_title_db_edit({ name: character?.name?.en ?? 'Character' }))
 </script>
+
+<PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
 	{#if character}
