@@ -178,11 +178,10 @@
 	}
 
 	.group-title {
-		font-size: typography.$font-large;
-		font-weight: typography.$bold;
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: colors.$grey-50;
 		margin: 0 0 spacing.$unit 0;
-		padding-bottom: spacing.$unit;
-		border-bottom: 1px solid colors.$grey-90;
 	}
 
 	.skill-list {
@@ -215,6 +214,7 @@
 	.skill-info {
 		display: flex;
 		flex-direction: column;
+		gap: spacing.$unit-half;
 		flex: 1;
 		min-width: 0;
 	}
