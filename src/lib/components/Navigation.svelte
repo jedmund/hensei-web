@@ -64,6 +64,7 @@
 	const databaseCharactersHref = $derived(localizeHref('/database/characters'))
 	const databaseWeaponsHref = $derived(localizeHref('/database/weapons'))
 	const databaseSummonsHref = $derived(localizeHref('/database/summons'))
+	const databaseJobsHref = $derived(localizeHref('/database/jobs'))
 	const databaseSeriesHref = $derived(localizeHref('/database/series'))
 	const databaseGwEventsHref = $derived(localizeHref('/database/gw-events'))
 
@@ -79,24 +80,33 @@
 		return null
 	})
 
-	// Database "New" button config
-	const databaseNewButtonLabel = $derived(
+	// Database "New" dropdown config
+	const databaseEntityLabel = $derived(
 		currentDatabaseEntity === 'character'
-			? 'New character'
+			? 'character'
 			: currentDatabaseEntity === 'weapon'
-				? 'New weapon'
+				? 'weapon'
 				: currentDatabaseEntity === 'summon'
-					? 'New summon'
-					: 'New'
+					? 'summon'
+					: null
 	)
-	const databaseNewButtonHref = $derived(
+	const databaseNewHref = $derived(
 		currentDatabaseEntity === 'character'
 			? localizeHref('/database/characters/new')
 			: currentDatabaseEntity === 'weapon'
 				? localizeHref('/database/weapons/new')
 				: currentDatabaseEntity === 'summon'
 					? localizeHref('/database/summons/new')
-					: localizeHref('/database')
+					: null
+	)
+	const databaseImportHref = $derived(
+		currentDatabaseEntity === 'character'
+			? localizeHref('/database/characters/import')
+			: currentDatabaseEntity === 'weapon'
+				? localizeHref('/database/weapons/import')
+				: currentDatabaseEntity === 'summon'
+					? localizeHref('/database/summons/import')
+					: null
 	)
 
 	// Function to check if a nav item is selected
@@ -132,6 +142,9 @@
 	// Invitations modal state
 	let invitationsModalOpen = $state(false)
 
+	// Database back button hover state
+	let databaseBackHovered = $state(false)
+
 	// Query for pending invitations (only when authenticated)
 	const pendingInvitationsQuery = createQuery(() => ({
 		...crewQueries.pendingInvitations(),
@@ -163,15 +176,21 @@
 	{#if isDatabaseRoute}
 		<!-- Database navigation mode -->
 		<div class="database-nav">
-			<!-- Back button and Database label -->
+			<!-- Back button -->
 			<ul role="list" class="database-back-section">
 				<li>
-					<a href={galleryHref} class="database-back-button" aria-label="Back to gallery">
+					<a
+						href={galleryHref}
+						class="database-back-button"
+						aria-label="Back to gallery"
+						onmouseenter={() => (databaseBackHovered = true)}
+						onmouseleave={() => (databaseBackHovered = false)}
+					>
 						<Icon name="arrow-left" size={14} />
+						{#if databaseBackHovered}
+							<span class="database-back-label">Back to site</span>
+						{/if}
 					</a>
-				</li>
-				<li>
-					<span class="database-label">Database</span>
 				</li>
 			</ul>
 
@@ -203,6 +222,9 @@
 
 						<DropdownMenu.Portal>
 							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
+								<DropdownItem>
+									<a href={databaseJobsHref}>Jobs</a>
+								</DropdownItem>
 								<DropdownItem>
 									<a href={databaseSeriesHref}>Series</a>
 								</DropdownItem>
@@ -314,19 +336,28 @@
 			</li>
 		</ul>
 	{/if}
-	{#if isDatabaseRoute}
-		<Button
-			icon="plus"
-			shape="pill"
-			variant="primary"
-			size="small"
-			{...(userElement ? { element: userElement } : {})}
-			elementStyle={Boolean(userElement)}
-			class="new-item-button"
-			href={databaseNewButtonHref}
-		>
-			{databaseNewButtonLabel}
-		</Button>
+	{#if isDatabaseRoute && databaseEntityLabel}
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger class="new-item-trigger {userElement ?? ''}">
+				<span>New {databaseEntityLabel}</span>
+				<Icon name="chevron-down" size={12} />
+			</DropdownMenu.Trigger>
+
+			<DropdownMenu.Portal>
+				<DropdownMenu.Content class="dropdown-content" sideOffset={5} align="end">
+					{#if databaseNewHref}
+						<DropdownItem>
+							<a href={databaseNewHref}>Single {databaseEntityLabel}</a>
+						</DropdownItem>
+					{/if}
+					{#if databaseImportHref}
+						<DropdownItem>
+							<a href={databaseImportHref}>Multiple {databaseEntityLabel}s</a>
+						</DropdownItem>
+					{/if}
+				</DropdownMenu.Content>
+			</DropdownMenu.Portal>
+		</DropdownMenu.Root>
 	{:else}
 		<Button
 			icon="plus"
@@ -442,6 +473,7 @@
 
 			.database-back-section {
 				min-height: 49px;
+				min-width: 49px;
 
 				ul {
 					background-color: var(--menu-bg);
@@ -468,20 +500,8 @@
 					}
 				}
 
-				.database-label {
-					border-radius: layout.$full-corner;
-					color: var(--menu-text);
-					font-size: typography.$font-small;
-					font-weight: typography.$medium;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					padding: spacing.$unit calc(spacing.$unit * 1.5) spacing.$unit spacing.$unit;
-
-					&.selected {
-						background-color: var(--menu-bg-item-selected, var(--menu-bg-item-hover));
-						font-weight: typography.$bold;
-					}
+				.database-back-label {
+					margin-left: spacing.$unit-half;
 				}
 			}
 
@@ -610,10 +630,68 @@
 		// The Button component already handles size, shape, colors, etc.
 	}
 
-	// Style the database "New item" button
-	:global(.new-item-button) {
-		padding-top: spacing.$unit-2x !important;
-		padding-bottom: spacing.$unit-2x !important;
+	// Style the database "New item" dropdown trigger
+	:global(.new-item-trigger) {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		padding: calc(spacing.$unit * 1.5) spacing.$unit-2x;
+		border-radius: layout.$full-corner;
+		background-color: var(--button-primary-bg);
+		color: var(--button-primary-text);
+		border: none;
+		cursor: pointer;
+		font-family: var(--font-family);
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		transition: background-color 0.2s ease;
+	}
+	:global(.new-item-trigger:hover) {
+		background-color: var(--button-primary-bg-hover);
+	}
+
+	// Element-specific colors for new item trigger
+	:global(.new-item-trigger.wind) {
+		background-color: var(--wind-button-bg);
+		color: white;
+	}
+	:global(.new-item-trigger.wind:hover) {
+		background-color: var(--wind-button-bg-hover);
+	}
+	:global(.new-item-trigger.fire) {
+		background-color: var(--fire-button-bg);
+		color: white;
+	}
+	:global(.new-item-trigger.fire:hover) {
+		background-color: var(--fire-button-bg-hover);
+	}
+	:global(.new-item-trigger.water) {
+		background-color: var(--water-button-bg);
+		color: white;
+	}
+	:global(.new-item-trigger.water:hover) {
+		background-color: var(--water-button-bg-hover);
+	}
+	:global(.new-item-trigger.earth) {
+		background-color: var(--earth-button-bg);
+		color: white;
+	}
+	:global(.new-item-trigger.earth:hover) {
+		background-color: var(--earth-button-bg-hover);
+	}
+	:global(.new-item-trigger.light) {
+		background-color: var(--light-button-bg);
+		color: black;
+	}
+	:global(.new-item-trigger.light:hover) {
+		background-color: var(--light-button-bg-hover);
+	}
+	:global(.new-item-trigger.dark) {
+		background-color: var(--dark-button-bg);
+		color: white;
+	}
+	:global(.new-item-trigger.dark:hover) {
+		background-color: var(--dark-button-bg-hover);
 	}
 
 	// Element-specific SELECTED states for navigation links
