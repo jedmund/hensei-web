@@ -6,8 +6,10 @@
   import DetailItem from '$lib/components/ui/DetailItem.svelte'
   import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
   import CopyableText from '$lib/components/ui/CopyableText.svelte'
+  import Select from '$lib/components/ui/Select.svelte'
   import { getRarityLabel, getRarityOptions } from '$lib/utils/rarity'
   import { getWeaponImage } from '$lib/utils/images'
+  import { CHARACTER_SEASON_NAMES, getSeasonName } from '$lib/types/enums'
 
   interface Props {
     character: any
@@ -32,6 +34,15 @@
 
   const rarityOptions = getRarityOptions()
 
+  // Season options (nullable, so include a "None" option)
+  const seasonOptions = [
+    { value: 0, label: 'None' },
+    ...Object.entries(CHARACTER_SEASON_NAMES).map(([value, label]) => ({
+      value: Number(value),
+      label
+    }))
+  ]
+
   function formatPromotions(promotionNames: string[] | undefined): string {
     if (!promotionNames || promotionNames.length === 0) return '—'
     return promotionNames.join(', ')
@@ -52,13 +63,30 @@
       onDismissSuggestion={() => onDismissSuggestion?.('rarity')}
     />
     <DetailItem
-      label="Granblue ID"
-      bind:value={editData.granblueId}
+      label="Season"
+      sublabel="Used to disambiguate characters with the same name"
+      editable={true}
+    >
+      <Select
+        size="medium"
+        options={seasonOptions}
+        bind:value={editData.season}
+        contained
+      />
+    </DetailItem>
+    <DetailItem
+      label="Character ID"
+      sublabel="Separate multiple IDs with commas"
+      bind:value={editData.characterId}
       editable={true}
       type="text"
+      placeholder="Character IDs"
     />
   {:else}
     <DetailItem label="Rarity" value={getRarityLabel(character.rarity)} />
+    {#if character.season}
+      <DetailItem label="Season" value={getSeasonName(character.season) || '—'} />
+    {/if}
     <DetailItem label="Granblue ID">
       {#if character.granblueId}
         <CopyableText value={character.granblueId} />
@@ -66,6 +94,11 @@
         —
       {/if}
     </DetailItem>
+    {#if character.characterId?.length}
+      <DetailItem label="Character ID">
+        <CopyableText value={character.characterId.join(', ')} />
+      </DetailItem>
+    {/if}
     {#if character.recruitedBy}
       <DetailItem label="Recruited By">
         <a href="/database/weapons/{character.recruitedBy.id}" class="recruited-by-link">
