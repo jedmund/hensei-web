@@ -7,14 +7,12 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
-	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import { getElementLabel, getElementOptions } from '$lib/utils/element'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
 	import { getSeriesDisplayName } from '$lib/utils/weaponSeries'
-	import { isWeaponSeriesRef, type WeaponSeriesRef } from '$lib/types/api/weaponSeries'
-	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
+	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -58,12 +56,6 @@
 		]
 	})
 
-	// Promotion options for multiselect
-	const promotionOptions = Object.entries(PROMOTION_NAMES).map(([value, label]) => ({
-		value: Number(value),
-		label
-	}))
-
 	// Get element name for checkbox theming
 	const elementName = $derived.by((): ElementName | undefined => {
 		const el = editMode ? editData.element : weapon?.element
@@ -75,12 +67,6 @@
 	function formatSeriesLabel(series: WeaponSeriesRef | null | undefined): string {
 		if (!series) return '—'
 		return getSeriesDisplayName(series, 'en') || '—'
-	}
-
-	// Format promotions for display
-	function formatPromotionsDisplay(promotions: number[]): string {
-		if (!promotions || promotions.length === 0) return '—'
-		return getPromotionNames(promotions).join(', ')
 	}
 </script>
 
@@ -139,15 +125,6 @@
 			type="checkbox"
 			element={elementName}
 		/>
-		<DetailItem label="Promotions" sublabel="Gacha pools where this weapon appears" editable={true}>
-			<MultiSelect
-				size="medium"
-				options={promotionOptions}
-				bind:value={editData.promotions}
-				placeholder="Select promotions"
-				contained
-			/>
-		</DetailItem>
 	{:else}
 		<DetailItem label="Element">
 			<ElementLabel element={weapon.element} size="medium" />
@@ -170,10 +147,5 @@
 			value={weapon.limit ? 'Yes' : 'No'}
 		/>
 		<DetailItem label="AX Skills" sublabel="Can have AX Skills" value={weapon.ax ? 'Yes' : 'No'} />
-		<DetailItem
-			label="Promotions"
-			sublabel="Gacha pools where this weapon appears"
-			value={formatPromotionsDisplay(weapon.promotions)}
-		/>
 	{/if}
 </DetailsContainer>

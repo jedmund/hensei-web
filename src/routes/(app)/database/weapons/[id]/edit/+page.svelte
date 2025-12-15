@@ -16,6 +16,7 @@
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
+	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
@@ -218,6 +219,7 @@
 				<WeaponUncapSection {weapon} {editMode} bind:editData />
 				<WeaponTaxonomySection {weapon} {editMode} bind:editData />
 				<WeaponStatsSection {weapon} {editMode} bind:editData />
+				<WeaponGachaSection {weapon} {editMode} bind:editData />
 
 				<DetailsContainer title="Nicknames">
 					<DetailItem label="Nicknames (EN)">
@@ -297,17 +299,6 @@
 						type="text"
 						placeholder="https://kamigame.jp/..."
 						width="480px"
-					/>
-				</DetailsContainer>
-
-				<DetailsContainer title="Character">
-					<DetailItem
-						label="Recruits"
-						sublabel="Character ID this weapon recruits"
-						bind:value={editData.recruits}
-						editable={true}
-						type="text"
-						placeholder="Character ID..."
 					/>
 				</DetailsContainer>
 			</section>
