@@ -19,14 +19,20 @@
 	import CharacterMetadataSection from '$lib/features/database/characters/sections/CharacterMetadataSection.svelte'
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
-	import CharacterGachaSection from '$lib/features/database/characters/sections/CharacterGachaSection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
+	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
+	import { CHARACTER_SERIES_NAMES } from '$lib/types/enums'
 
 	// Types
 	import type { PageData } from './$types'
+
+	// Create reverse mapping from series name to integer
+	const SERIES_NAME_TO_INT: Record<string, number> = Object.fromEntries(
+		Object.entries(CHARACTER_SERIES_NAMES).map(([key, name]) => [name, Number(key)])
+	)
 
 	let { data }: { data: PageData } = $props()
 
@@ -52,7 +58,7 @@
 	let editData = $state({
 		name: '',
 		granblueId: '',
-		characterId: null as number | null,
+		characterId: '', // Comma-separated string for dual/trio units
 		rarity: 1,
 		element: 0,
 		race1: null as number | null,
@@ -60,20 +66,60 @@
 		gender: 0,
 		proficiency1: 0,
 		proficiency2: 0,
+		season: 0,
+		series: [] as number[],
+		// HP stats
 		minHp: 0,
 		maxHp: 0,
 		maxHpFlb: 0,
+		maxHpUlb: 0,
+		// Attack stats
 		minAtk: 0,
 		maxAtk: 0,
 		maxAtkFlb: 0,
+		maxAtkUlb: 0,
+		// Other stats
+		baseDa: 0,
+		baseTa: 0,
+		ougiRatio: 0,
+		ougiRatioFlb: 0,
+		// Uncap flags
 		flb: false,
 		ulb: false,
 		transcendence: false,
 		special: false,
+		// Dates
 		releaseDate: '',
 		flbDate: '',
-		ulbDate: ''
+		ulbDate: '',
+		// Nicknames
+		nicknamesEn: [] as string[],
+		nicknamesJp: [] as string[],
+		// Links
+		wikiEn: '',
+		wikiJa: '',
+		gamewith: '',
+		kamigame: ''
 	})
+
+	// Helper to convert series to number array (handles both legacy integer and object formats)
+	function seriesAsNumbers(
+		series: number[] | Array<{ id: string; name?: { en?: string } }> | undefined
+	): number[] {
+		if (!series || series.length === 0) return []
+		// Check if first element is an object (CharacterSeriesRef) or number
+		const first = series[0]
+		if (typeof first === 'object' && first !== null && 'id' in first) {
+			// It's CharacterSeriesRef[] - convert using name.en to look up enum value
+			return (series as Array<{ id: string; name?: { en?: string } }>)
+				.map((s) => {
+					const name = s.name?.en
+					return name ? SERIES_NAME_TO_INT[name] : undefined
+				})
+				.filter((n): n is number => n !== undefined)
+		}
+		return series as number[]
+	}
 
 	// Populate edit data when character loads
 	$effect(() => {
@@ -81,7 +127,7 @@
 			editData = {
 				name: character.name?.en || '',
 				granblueId: character.granblueId || '',
-				characterId: character.characterId ?? null,
+				characterId: character.characterId?.join(', ') || '',
 				rarity: character.rarity || 1,
 				element: character.element || 0,
 				race1: character.race?.[0] ?? null,
@@ -89,19 +135,40 @@
 				gender: character.gender || 0,
 				proficiency1: character.proficiency?.[0] || 0,
 				proficiency2: character.proficiency?.[1] || 0,
+				season: character.season || 0,
+				series: seriesAsNumbers(character.series),
+				// HP stats
 				minHp: character.hp?.minHp || 0,
 				maxHp: character.hp?.maxHp || 0,
 				maxHpFlb: character.hp?.maxHpFlb || 0,
+				maxHpUlb: character.hp?.maxHpUlb || 0,
+				// Attack stats
 				minAtk: character.atk?.minAtk || 0,
 				maxAtk: character.atk?.maxAtk || 0,
 				maxAtkFlb: character.atk?.maxAtkFlb || 0,
+				maxAtkUlb: character.atk?.maxAtkUlb || 0,
+				// Other stats
+				baseDa: character.baseDa || 0,
+				baseTa: character.baseTa || 0,
+				ougiRatio: character.ougiRatio?.ougiRatio || 0,
+				ougiRatioFlb: character.ougiRatio?.ougiRatioFlb || 0,
+				// Uncap flags
 				flb: character.uncap?.flb || false,
 				ulb: character.uncap?.ulb || false,
 				transcendence: character.uncap?.transcendence || false,
 				special: character.special || false,
+				// Dates
 				releaseDate: character.releaseDate || '',
 				flbDate: character.flbDate || '',
-				ulbDate: character.ulbDate || ''
+				ulbDate: character.ulbDate || '',
+				// Nicknames
+				nicknamesEn: character.nicknames?.en || [],
+				nicknamesJp: character.nicknames?.ja || [],
+				// Links
+				wikiEn: character.wiki?.en || '',
+				wikiJa: character.wiki?.ja || '',
+				gamewith: character.gamewith || '',
+				kamigame: character.kamigame || ''
 			}
 		}
 	})
@@ -117,7 +184,13 @@
 			const payload = {
 				name_en: editData.name,
 				granblue_id: editData.granblueId,
-				character_id: editData.characterId ? [editData.characterId] : [],
+				character_id:
+					editData.characterId.trim() === ''
+						? []
+						: editData.characterId
+								.split(',')
+								.map((id) => Number(id.trim()))
+								.filter((id) => !isNaN(id)),
 				rarity: editData.rarity,
 				element: editData.element,
 				race1: editData.race1,
@@ -125,18 +198,40 @@
 				gender: editData.gender,
 				proficiency1: editData.proficiency1,
 				proficiency2: editData.proficiency2,
+				season: editData.season || undefined,
+				series: editData.series,
+				// HP stats
 				min_hp: editData.minHp,
 				max_hp: editData.maxHp,
 				max_hp_flb: editData.maxHpFlb,
+				max_hp_ulb: editData.maxHpUlb,
+				// Attack stats
 				min_atk: editData.minAtk,
 				max_atk: editData.maxAtk,
 				max_atk_flb: editData.maxAtkFlb,
+				max_atk_ulb: editData.maxAtkUlb,
+				// Other stats
+				base_da: editData.baseDa,
+				base_ta: editData.baseTa,
+				ougi_ratio: editData.ougiRatio,
+				ougi_ratio_flb: editData.ougiRatioFlb,
+				// Uncap flags
 				flb: editData.flb,
 				ulb: editData.ulb,
+				transcendence: editData.transcendence,
 				special: editData.special,
-				release_date: editData.releaseDate || null,
-				flb_date: editData.flbDate || null,
-				ulb_date: editData.ulbDate || null
+				// Dates
+				release_date: editData.releaseDate || undefined,
+				flb_date: editData.flbDate || undefined,
+				ulb_date: editData.ulbDate || undefined,
+				// Nicknames
+				nicknames_en: editData.nicknamesEn,
+				nicknames_jp: editData.nicknamesJp,
+				// Links
+				wiki_en: editData.wikiEn || undefined,
+				wiki_ja: editData.wikiJa || undefined,
+				gamewith: editData.gamewith || undefined,
+				kamigame: editData.kamigame || undefined
 			}
 
 			await entityAdapter.updateCharacter(character.id, payload)
@@ -186,8 +281,20 @@
 				<CharacterMetadataSection {character} {editMode} bind:editData />
 				<CharacterUncapSection {character} {editMode} bind:editData />
 				<CharacterTaxonomySection {character} {editMode} bind:editData />
-				<CharacterGachaSection {character} {editMode} bind:editData />
 				<CharacterStatsSection {character} {editMode} bind:editData />
+
+				<DetailsContainer title="Nicknames">
+					<DetailItem label="Nicknames (EN)">
+						<TagInput bind:value={editData.nicknamesEn} placeholder="Add nickname..." contained />
+					</DetailItem>
+					<DetailItem label="Nicknames (JP)">
+						<TagInput
+							bind:value={editData.nicknamesJp}
+							placeholder="ニックネームを入力"
+							contained
+						/>
+					</DetailItem>
+				</DetailsContainer>
 
 				<DetailsContainer title="Dates">
 					<DetailItem
@@ -212,6 +319,41 @@
 							type="date"
 						/>
 					{/if}
+				</DetailsContainer>
+
+				<DetailsContainer title="Links">
+					<DetailItem
+						label="Wiki (EN)"
+						bind:value={editData.wikiEn}
+						editable={true}
+						type="text"
+						placeholder="https://gbf.wiki/..."
+						width="480px"
+					/>
+					<DetailItem
+						label="Wiki (JP)"
+						bind:value={editData.wikiJa}
+						editable={true}
+						type="text"
+						placeholder="https://gbf-wiki.com/..."
+						width="480px"
+					/>
+					<DetailItem
+						label="Gamewith"
+						bind:value={editData.gamewith}
+						editable={true}
+						type="text"
+						placeholder="https://xn--bck3aza1a2if6kra4ee0hf.gamewith.jp/..."
+						width="480px"
+					/>
+					<DetailItem
+						label="Kamigame"
+						bind:value={editData.kamigame}
+						editable={true}
+						type="text"
+						placeholder="https://kamigame.jp/..."
+						width="480px"
+					/>
 				</DetailsContainer>
 			</section>
 		</DetailScaffold>

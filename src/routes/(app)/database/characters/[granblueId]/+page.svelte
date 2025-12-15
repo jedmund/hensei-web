@@ -21,7 +21,6 @@
 	import CharacterMetadataSection from '$lib/features/database/characters/sections/CharacterMetadataSection.svelte'
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
-	import CharacterGachaSection from '$lib/features/database/characters/sections/CharacterGachaSection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
@@ -180,81 +179,83 @@
 			{#if currentTab === 'info'}
 				<section class="details">
 					<CharacterMetadataSection {character} />
-
-					{#if character.nicknames?.en?.length || character.nicknames?.ja?.length}
-						<DetailsContainer title="Nicknames">
-							{#if character.nicknames?.en?.length}
-								<DetailItem label="English">
-									<div class="nickname-tags">
-										{#each character.nicknames.en as nickname}
-											<span class="nickname-tag">{nickname}</span>
-										{/each}
-									</div>
-								</DetailItem>
-							{/if}
-							{#if character.nicknames?.ja?.length}
-								<DetailItem label="Japanese">
-									<div class="nickname-tags">
-										{#each character.nicknames.ja as nickname}
-											<span class="nickname-tag">{nickname}</span>
-										{/each}
-									</div>
-								</DetailItem>
-							{/if}
-						</DetailsContainer>
-					{/if}
-
 					<CharacterUncapSection {character} />
 					<CharacterTaxonomySection {character} />
-					<CharacterGachaSection {character} />
 					<CharacterStatsSection {character} />
 
-					{#if character.releaseDate || character.flbDate || character.ulbDate}
-						<DetailsContainer title="Dates">
-							{#if character.releaseDate}
-								<DetailItem label="Release Date" value={character.releaseDate} />
+					<DetailsContainer title="Nicknames">
+						<DetailItem label="Nicknames (EN)">
+							{#if character.nicknames?.en?.length}
+								<div class="nickname-tags">
+									{#each character.nicknames.en as nickname}
+										<span class="nickname-tag">{nickname}</span>
+									{/each}
+								</div>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if character.flbDate}
-								<DetailItem label="FLB Date" value={character.flbDate} />
+						</DetailItem>
+						<DetailItem label="Nicknames (JP)">
+							{#if character.nicknames?.ja?.length}
+								<div class="nickname-tags">
+									{#each character.nicknames.ja as nickname}
+										<span class="nickname-tag">{nickname}</span>
+									{/each}
+								</div>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if character.ulbDate}
-								<DetailItem label="ULB Date" value={character.ulbDate} />
-							{/if}
-						</DetailsContainer>
-					{/if}
+						</DetailItem>
+					</DetailsContainer>
 
-					{#if character.links?.wikiEn || character.links?.wikiJa || character.links?.gamewith || character.links?.kamigame}
-						<DetailsContainer title="Links">
-							{#if character.links?.wikiEn}
-								<DetailItem label="Wiki (EN)">
-									<a href={character.links.wikiEn} target="_blank" rel="noopener noreferrer" class="external-link">
-										{character.links.wikiEn}
-									</a>
-								</DetailItem>
+					<DetailsContainer title="Dates">
+						<DetailItem label="Release Date" value={character.releaseDate || '—'} />
+						{#if character.uncap?.flb}
+							<DetailItem label="FLB Date" value={character.flbDate || '—'} />
+						{/if}
+						{#if character.uncap?.ulb}
+							<DetailItem label="ULB Date" value={character.ulbDate || '—'} />
+						{/if}
+					</DetailsContainer>
+
+					<DetailsContainer title="Links">
+						<DetailItem label="Wiki (EN)">
+							{#if character.wiki?.en}
+								<a href={character.wiki.en} target="_blank" rel="noopener noreferrer" class="external-link">
+									{character.wiki.en}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if character.links?.wikiJa}
-								<DetailItem label="Wiki (JP)">
-									<a href={character.links.wikiJa} target="_blank" rel="noopener noreferrer" class="external-link">
-										{character.links.wikiJa}
-									</a>
-								</DetailItem>
+						</DetailItem>
+						<DetailItem label="Wiki (JP)">
+							{#if character.wiki?.ja}
+								<a href={character.wiki.ja} target="_blank" rel="noopener noreferrer" class="external-link">
+									{character.wiki.ja}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if character.links?.gamewith}
-								<DetailItem label="Gamewith">
-									<a href={character.links.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
-										{character.links.gamewith}
-									</a>
-								</DetailItem>
+						</DetailItem>
+						<DetailItem label="Gamewith">
+							{#if character.gamewith}
+								<a href={character.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
+									{character.gamewith}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-							{#if character.links?.kamigame}
-								<DetailItem label="Kamigame">
-									<a href={character.links.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
-										{character.links.kamigame}
-									</a>
-								</DetailItem>
+						</DetailItem>
+						<DetailItem label="Kamigame">
+							{#if character.kamigame}
+								<a href={character.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
+									{character.kamigame}
+								</a>
+							{:else}
+								<span class="empty-value">—</span>
 							{/if}
-						</DetailsContainer>
-					{/if}
+						</DetailItem>
+					</DetailsContainer>
 
 					{#if relatedQuery.data?.length}
 						<DetailsContainer title="Related Units">
@@ -401,5 +402,9 @@
 		&:hover {
 			text-decoration: underline;
 		}
+	}
+
+	.empty-value {
+		color: colors.$grey-50;
 	}
 </style>
