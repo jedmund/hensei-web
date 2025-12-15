@@ -6,6 +6,8 @@
   import { IsInViewport } from 'runed'
   import Icon from '$lib/components/Icon.svelte'
   import Button from '$lib/components/ui/Button.svelte'
+  import PageMeta from '$lib/components/PageMeta.svelte'
+  import * as m from '$lib/paraglide/messages'
 
   const { data } = $props() as { data: PageData }
 
@@ -52,6 +54,8 @@
     }
   })
 </script>
+
+<PageMeta title={m.page_title_teams()} description={m.page_desc_teams()} />
 
 <section class="explore">
   <header>

@@ -2,6 +2,8 @@
 
 <script lang="ts">
 	import type { PageData } from './$types'
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
 	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
 	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
@@ -614,6 +616,8 @@
 		}
 	})
 </script>
+
+<PageMeta title={m.page_title_new()} description={m.page_desc_home()} />
 
 <main>
 	<div class="page-container">

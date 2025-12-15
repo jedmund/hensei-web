@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { m } from '$lib/paraglide/messages'
-	export let data: { status: unknown; seo: string }
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 </script>
 
-<svelte:head>{@html data.seo}</svelte:head>
+<PageMeta title={m.page_title_about()} description={m.page_desc_about()} />
 
-<h1>{m.hello_world({ name: 'World' })}</h1>
-<pre>{JSON.stringify(data, null, 2)}</pre>
+<h1>About</h1>
+<p>About granblue.team</p>

@@ -1,9 +1,13 @@
 <script lang="ts">
 	import type { AccountCookie } from '$lib/types/AccountCookie'
 	import type { UserCookie } from '$lib/types/UserCookie'
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	export let data: { account: AccountCookie; user: UserCookie }
 </script>
+
+<PageMeta title={m.page_title_settings()} description={m.page_desc_home()} />
 
 <h1>Welcome, {data.account.username}!</h1>
 

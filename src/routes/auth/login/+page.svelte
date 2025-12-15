@@ -3,6 +3,7 @@
 	import AuthCard from '$lib/components/auth/AuthCard.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -19,9 +20,7 @@
 	const randomPlaceholder = placeholders[Math.floor(Math.random() * placeholders.length)]
 </script>
 
-<svelte:head>
-	<title>{m.auth_login_title()}</title>
-</svelte:head>
+<PageMeta title={m.page_title_login()} description={m.page_desc_home()} />
 
 <AuthCard title={m.auth_login_title()}>
 	<form

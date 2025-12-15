@@ -2,11 +2,11 @@
 
 <script lang="ts">
 	import { page } from '$app/stores'
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
 </script>
 
-<svelte:head>
-	<title>Collection</title>
-</svelte:head>
+<PageMeta title={m.page_title_collection()} description={m.page_desc_collection()} />
 
 <div class="container">
 	<h1>Collection</h1>
