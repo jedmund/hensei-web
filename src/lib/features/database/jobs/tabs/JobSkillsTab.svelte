@@ -150,12 +150,10 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/effects' as effects;
 
 	.skills-tab {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-2x;
 	}
 
 	.loading,
@@ -171,9 +169,6 @@
 	}
 
 	.skill-group {
-		background: white;
-		border-radius: layout.$card-corner;
-		box-shadow: effects.$page-elevation;
 		padding: spacing.$unit-2x;
 	}
 
