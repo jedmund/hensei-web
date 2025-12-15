@@ -302,7 +302,9 @@
 				wiki_raw: entity?.wikiRaw || null
 			}
 
-			await entityAdapter.createCharacter(payload)
+			const newCharacter = await entityAdapter.createCharacter(payload)
+			// Trigger image download in background (don't await - it queues a job)
+			entityAdapter.downloadCharacterImages(newCharacter.id).catch(console.error)
 			savedEntities.add(selectedWikiPage)
 			savedEntities = new Set(savedEntities)
 

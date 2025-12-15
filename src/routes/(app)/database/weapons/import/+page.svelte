@@ -286,7 +286,9 @@
 				recruits: formData.recruits
 			}
 
-			await entityAdapter.createWeapon(payload)
+			const newWeapon = await entityAdapter.createWeapon(payload)
+			// Trigger image download in background (don't await - it queues a job)
+			entityAdapter.downloadWeaponImages(newWeapon.id).catch(console.error)
 			savedEntities.add(selectedWikiPage)
 			savedEntities = new Set(savedEntities)
 
