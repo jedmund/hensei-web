@@ -445,6 +445,10 @@
 		border-radius: layout.$page-corner;
 		box-shadow: effects.$page-elevation;
 		overflow: hidden;
+
+		:global(.header-info) {
+			gap: 0;
+		}
 	}
 
 	.loading-state {

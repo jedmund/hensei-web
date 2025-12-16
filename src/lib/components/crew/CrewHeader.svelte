@@ -69,6 +69,7 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit;
+		min-height: 30px;
 	}
 
 	.header-title {
