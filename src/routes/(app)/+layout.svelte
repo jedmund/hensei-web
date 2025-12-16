@@ -110,11 +110,7 @@
 			</main>
 		</div>
 
-		<Sidebar
-			open={sidebar.isOpen}
-			stack={sidebar.paneStack}
-			onClose={() => sidebar.close()}
-		/>
+		<Sidebar open={sidebar.isOpen} stack={sidebar.paneStack} onClose={() => sidebar.close()} />
 	</div>
 </Tooltip.Provider>
 
@@ -248,7 +244,6 @@
 				margin-right: var(--sidebar-width, 420px);
 
 				// Blur background and navigation shift with the main pane
-				.nav-blur-background,
 				.main-navigation {
 					right: var(--sidebar-width, 420px);
 				}
