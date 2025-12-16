@@ -191,6 +191,8 @@ export interface JobSkill {
   base: boolean       // Base skill (for advanced jobs)
   order: number       // Display order
   job: Job            // Associated job
+  imageId?: string    // Image filename (e.g., "2710_3")
+  actionId?: number   // Unique game ID
 }
 
 // JobAccessory entity

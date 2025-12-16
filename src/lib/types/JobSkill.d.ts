@@ -13,4 +13,6 @@ export interface JobSkill {
 	sub: boolean
 	emp: boolean
 	order: number
+	imageId?: string
+	actionId?: number
 }
