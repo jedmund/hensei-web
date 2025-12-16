@@ -25,6 +25,12 @@
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
 	import { CHARACTER_SERIES_NAMES } from '$lib/types/enums'
+	import {
+		buildWikiEnUrl,
+		buildWikiJaUrl,
+		buildGamewithUrl,
+		buildKamigameUrl
+	} from '$lib/utils/external-links'
 
 	// Types
 	import type { PageData } from './$types'
@@ -330,32 +336,40 @@
 						bind:value={editData.wikiEn}
 						editable={true}
 						type="text"
-						placeholder="https://gbf.wiki/..."
+						placeholder="Page name (e.g., Narmaya)"
 						width="480px"
+						hasLinkButton={true}
+						linkUrl={buildWikiEnUrl(editData.wikiEn)}
 					/>
 					<DetailItem
 						label="Wiki (JP)"
 						bind:value={editData.wikiJa}
 						editable={true}
 						type="text"
-						placeholder="https://gbf-wiki.com/..."
+						placeholder="Japanese page name"
 						width="480px"
+						hasLinkButton={true}
+						linkUrl={buildWikiJaUrl(editData.wikiJa)}
 					/>
 					<DetailItem
 						label="Gamewith"
 						bind:value={editData.gamewith}
 						editable={true}
 						type="text"
-						placeholder="https://xn--bck3aza1a2if6kra4ee0hf.gamewith.jp/..."
+						placeholder="Article ID (e.g., 519325)"
 						width="480px"
+						hasLinkButton={true}
+						linkUrl={buildGamewithUrl(editData.gamewith)}
 					/>
 					<DetailItem
 						label="Kamigame"
 						bind:value={editData.kamigame}
 						editable={true}
 						type="text"
-						placeholder="https://kamigame.jp/..."
+						placeholder="Slug (e.g., SSR闇フロレンス)"
 						width="480px"
+						hasLinkButton={true}
+						linkUrl={buildKamigameUrl(editData.kamigame, 'character')}
 					/>
 				</DetailsContainer>
 			</section>
