@@ -37,9 +37,6 @@
 			{#if hasSeason}
 				<CharacterTag {character} type="season" />
 			{/if}
-			{#if hasSeries}
-				<CharacterTag {character} type="series" />
-			{/if}
 		</div>
 	{/if}
 </div>
