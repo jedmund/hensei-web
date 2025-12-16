@@ -37,6 +37,7 @@
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
 	import Button from '$lib/components/ui/Button.svelte'
+	import CharacterTag from '$lib/components/tags/CharacterTag.svelte'
 
 	// Types
 	import type { PageData } from './$types'
@@ -324,6 +325,7 @@
 											class="related-image"
 										/>
 										<span class="related-name">{related.name.en}</span>
+										<CharacterTag character={related} type="element" />
 									</a>
 								{/each}
 							</div>

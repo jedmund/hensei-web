@@ -1,16 +1,23 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import type { Character } from '$lib/types/api/entities'
 	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 	import { getElementLabel } from '$lib/utils/element'
 	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
 
 	type TagType = 'element' | 'season' | 'series'
 
+	/** Minimal character data needed for tag display */
+	interface CharacterForTag {
+		element?: number | null
+		season?: number | null
+		series?: (number | CharacterSeriesRef)[] | null
+		seriesNames?: string[] | null
+	}
+
 	interface Props {
 		/** The character to display the tag for */
-		character: Character
+		character: CharacterForTag
 		/** Which characteristic to display */
 		type: TagType
 		/** Optional specific series index to display (for multi-series characters) */
@@ -44,7 +51,7 @@
 	const displayText = $derived.by(() => {
 		switch (type) {
 			case 'element':
-				return getElementLabel(character.element)
+				return getElementLabel(character.element ?? undefined)
 
 			case 'season':
 				if (character.season === undefined || character.season === null) return null
