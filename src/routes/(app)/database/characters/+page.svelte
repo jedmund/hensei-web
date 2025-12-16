@@ -6,6 +6,7 @@
 
 	// Svelte components
 	import CharacterImageCell from '$lib/components/database/cells/CharacterImageCell.svelte'
+	import CharacterNameCell from '$lib/components/database/cells/CharacterNameCell.svelte'
 	import CharacterUncapCell from '$lib/components/database/cells/CharacterUncapCell.svelte'
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
@@ -28,12 +29,7 @@
 			header: 'Name',
 			flexgrow: 1,
 			sort: true,
-			template: (nameObj: { en: any; ja: any }) => {
-				if (!nameObj) return '—'
-				if (typeof nameObj === 'string') return nameObj
-				// Handle {en: "...", ja: "..."} structure
-				return nameObj.en || nameObj.ja || '—'
-			}
+			cell: CharacterNameCell
 		},
 		{
 			id: 'rarity',
