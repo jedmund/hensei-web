@@ -28,6 +28,12 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl } from '$lib/utils/images'
+	import {
+		buildWikiEnUrl,
+		buildWikiJaUrl,
+		buildGamewithUrl,
+		buildKamigameUrl
+	} from '$lib/utils/external-links'
 
 	// Types
 	import type { PageData } from './$types'
@@ -212,36 +218,40 @@
 
 					<DetailsContainer title="Links">
 						<DetailItem label="Wiki (EN)">
-							{#if weapon.wiki?.en}
-								<a href={weapon.wiki.en} target="_blank" rel="noopener noreferrer" class="external-link">
-									{weapon.wiki.en}
+							{@const url = buildWikiEnUrl(weapon.wiki?.en)}
+							{#if url}
+								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
+									{url}
 								</a>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Wiki (JP)">
-							{#if weapon.wiki?.ja}
-								<a href={weapon.wiki.ja} target="_blank" rel="noopener noreferrer" class="external-link">
-									{weapon.wiki.ja}
+							{@const url = buildWikiJaUrl(weapon.wiki?.ja)}
+							{#if url}
+								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
+									{url}
 								</a>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Gamewith">
-							{#if weapon.gamewith}
-								<a href={weapon.gamewith} target="_blank" rel="noopener noreferrer" class="external-link">
-									{weapon.gamewith}
+							{@const url = buildGamewithUrl(weapon.gamewith)}
+							{#if url}
+								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
+									{url}
 								</a>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Kamigame">
-							{#if weapon.kamigame}
-								<a href={weapon.kamigame} target="_blank" rel="noopener noreferrer" class="external-link">
-									{weapon.kamigame}
+							{@const url = buildKamigameUrl(weapon.kamigame, 'weapon', weapon.rarity)}
+							{#if url}
+								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
+									{url}
 								</a>
 							{:else}
 								<span class="empty-value">—</span>
