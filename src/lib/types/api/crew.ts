@@ -10,7 +10,7 @@ export type CrewRole = 'member' | 'vice_captain' | 'captain'
 export type InvitationStatus = 'pending' | 'accepted' | 'rejected' | 'expired'
 
 // Member filter options for GET /crew/members
-export type MemberFilter = 'active' | 'retired' | 'phantom' | 'all'
+export type MemberFilter = 'active' | 'retired' | 'phantom' | 'pending' | 'all'
 
 // Crew from CrewBlueprint
 export interface Crew {
