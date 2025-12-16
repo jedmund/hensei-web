@@ -58,26 +58,24 @@ export function getSeasonName(season: number | null): string | null {
 
 // Character series (identity/pool membership)
 export enum CharacterSeries {
-	Standard = 1,
-	Grand = 2,
-	Zodiac = 3,
-	Promo = 4,
-	Collab = 5,
-	Eternal = 6,
-	Evoker = 7,
-	Saint = 8,
-	Fantasy = 9,
-	Summer = 10,
-	Yukata = 11,
-	Valentine = 12,
-	Halloween = 13,
-	Formal = 14,
-	Holiday = 15,
-	Event = 16
+	Grand = 1,
+	Zodiac = 2,
+	Promo = 3,
+	Collab = 4,
+	Eternal = 5,
+	Evoker = 6,
+	Saint = 7,
+	Fantasy = 8,
+	Summer = 9,
+	Yukata = 10,
+	Valentine = 11,
+	Halloween = 12,
+	Formal = 13,
+	Holiday = 14,
+	Event = 15
 }
 
 export const CHARACTER_SERIES_NAMES: Record<number, string> = {
-	[CharacterSeries.Standard]: 'Standard',
 	[CharacterSeries.Grand]: 'Grand',
 	[CharacterSeries.Zodiac]: 'Zodiac',
 	[CharacterSeries.Promo]: 'Promo',
