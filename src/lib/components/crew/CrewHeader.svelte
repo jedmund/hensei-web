@@ -2,6 +2,7 @@
 
 <script lang="ts">
 	import type { Snippet } from 'svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	interface Props {
 		/** Main title text */
@@ -10,18 +11,23 @@
 		subtitle?: string | undefined
 		/** Optional description text */
 		description?: string | undefined
+		/** Optional back navigation URL */
+		backHref?: string | undefined
 		/** Content rendered below title (e.g., filter tabs) */
 		belowTitle?: Snippet | undefined
 		/** Action buttons on the right */
 		actions?: Snippet | undefined
 	}
 
-	const { title, subtitle, description, belowTitle, actions }: Props = $props()
+	const { title, subtitle, description, backHref, belowTitle, actions }: Props = $props()
 </script>
 
 <div class="section-header">
 	<div class="header-info">
 		<div class="title-row">
+			{#if backHref}
+				<Button variant="ghost" size="small" iconOnly icon="arrow-left" href={backHref} />
+			{/if}
 			<span class="header-title">{title}</span>
 			{#if subtitle}
 				<span class="header-subtitle">[{subtitle}]</span>
@@ -61,7 +67,7 @@
 
 	.title-row {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		gap: spacing.$unit;
 	}
 
