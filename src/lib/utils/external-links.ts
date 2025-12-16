@@ -30,15 +30,29 @@ export function buildWikiEnUrl(pageName: string | undefined | null): string | nu
 	return `${WIKI_EN_BASE}/${encoded}`
 }
 
+// Japanese wiki paths by entity type
+const WIKI_JA_PATHS = {
+	character: '', // no prefix
+	weapon: '武器/',
+	summon: '召喚石/'
+} as const
+
 /**
  * Build Japanese wiki URL from page name
- * Input: "フロレンス (SSR)闇属性バージョン"
+ * Input: "フロレンス (SSR)闇属性バージョン", entityType: "character"
  * Output: "https://gbf-wiki.com/?フロレンス+(SSR)闇属性バージョン"
+ *
+ * Input: "新神気鋭・猫之印 (SSR)", entityType: "weapon"
+ * Output: "https://gbf-wiki.com/?武器/新神気鋭・猫之印+(SSR)"
  */
-export function buildWikiJaUrl(pageName: string | undefined | null): string | null {
+export function buildWikiJaUrl(
+	pageName: string | undefined | null,
+	entityType?: EntityType
+): string | null {
 	if (!pageName?.trim()) return null
+	const prefix = entityType ? WIKI_JA_PATHS[entityType] : ''
 	// Japanese wiki uses query string with + for spaces
-	const encoded = encodeURIComponent(pageName.trim()).replace(/%20/g, '+')
+	const encoded = encodeURIComponent(prefix + pageName.trim()).replace(/%20/g, '+')
 	return `${WIKI_JA_BASE}/?${encoded}`
 }
 
