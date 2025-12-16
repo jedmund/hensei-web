@@ -267,7 +267,7 @@
 						<DetailItem label="Wiki (JP)">
 							{#if character.wiki?.ja}
 								<Button
-									href={buildWikiJaUrl(character.wiki.ja) ?? undefined}
+									href={buildWikiJaUrl(character.wiki.ja, 'character') ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}

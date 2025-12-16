@@ -250,7 +250,7 @@
 						</DetailItem>
 						<DetailItem label="Wiki (JP)">
 							{#if summon.wiki?.ja}
-								<Button href={buildWikiJaUrl(summon.wiki.ja) ?? undefined} target="_blank" variant="element-ghost"
+								<Button href={buildWikiJaUrl(summon.wiki.ja, 'summon') ?? undefined} target="_blank" variant="element-ghost"
 									element={elementName} size="small" rightIcon="link">
 									Open
 								</Button>

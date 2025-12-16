@@ -586,7 +586,7 @@
 							placeholder="Japanese page name"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildWikiJaUrl(formDataByPage[selectedWikiPage].wikiJa)}
+							linkUrl={buildWikiJaUrl(formDataByPage[selectedWikiPage].wikiJa, 'weapon')}
 						/>
 						<SuggestionDetailItem
 							label="Gamewith"

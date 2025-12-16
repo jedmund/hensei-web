@@ -349,7 +349,7 @@
 						placeholder="Japanese page name"
 						width="480px"
 						hasLinkButton={true}
-						linkUrl={buildWikiJaUrl(editData.wikiJa)}
+						linkUrl={buildWikiJaUrl(editData.wikiJa, 'character')}
 					/>
 					<DetailItem
 						label="Gamewith"
