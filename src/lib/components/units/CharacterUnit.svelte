@@ -6,6 +6,7 @@
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
 	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
@@ -326,6 +327,9 @@
 			<Icon name="gem" size={12} class="artifact-indicator" />
 		{/if}
 	</div>
+	{#if item?.character}
+		<CharacterTags character={item.character} />
+	{/if}
 </div>
 
 <style lang="scss">

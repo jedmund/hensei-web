@@ -7,6 +7,7 @@
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import Button from '../ui/Button.svelte'
 	import Icon from '../Icon.svelte'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import { IsInViewport } from 'runed'
 	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/features/database/detail/image'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
@@ -447,6 +448,9 @@
 								loading="lazy"
 							/>
 							<span class="result-name">{getItemName(item)}</span>
+							{#if type === 'character'}
+								<CharacterTags character={item} />
+							{/if}
 							{#if item.collectionId}
 								<Icon name="bookmark" size={14} class="collection-indicator" />
 							{:else if owned}
