@@ -27,7 +27,7 @@
 	}: Props = $props()
 
 	const categoryColor = $derived(skill ? getSkillCategoryColor(skill) : '')
-	const skillIconUrl = $derived(skill?.slug ? getJobSkillIcon(skill.slug) : '')
+	const skillIconUrl = $derived(skill ? getJobSkillIcon(skill) : '')
 
 	const isEditable = $derived(editable && !locked && available)
 	const isUnavailable = $derived(!available)

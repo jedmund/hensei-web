@@ -255,10 +255,21 @@ export function getWeaponGridImage(
 
 /**
  * Get job skill icon URL
+ * Uses slug for the image path
  */
-export function getJobSkillIcon(slug: string | undefined): string {
-	if (!slug) return '/images/job-skills/default.png'
-	return `${getBasePath()}/job-skills/${slug}.png`
+export function getJobSkillIcon(skill: { imageId?: string; slug?: string } | string | undefined): string {
+	if (!skill) return '/images/job-skills/default.png'
+
+	// Handle string input (backward compatibility)
+	if (typeof skill === 'string') {
+		return `${getBasePath()}/job-skills/${skill}.png`
+	}
+
+	// Use slug for the image path
+	if (skill.slug) {
+		return `${getBasePath()}/job-skills/${skill.slug}.png`
+	}
+	return '/images/job-skills/default.png'
 }
 
 /**

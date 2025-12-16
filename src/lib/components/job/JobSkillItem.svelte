@@ -14,7 +14,7 @@
 	let { skill, onClick, disabled = false, variant = 'default', onRemove }: Props = $props()
 
 	function getSkillIcon(skill: JobSkill): string {
-		return getJobSkillIcon(skill.slug)
+		return getJobSkillIcon(skill)
 	}
 
 	function getSkillColorClass(skill: JobSkill): string {
