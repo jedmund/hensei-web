@@ -435,7 +435,6 @@
 	@use '$src/themes/colors' as colors;
 
 	.page {
-		padding: spacing.$unit-2x 0;
 		margin: 0 auto;
 		max-width: var(--main-max-width);
 	}
