@@ -28,12 +28,14 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getSummonImage } from '$lib/utils/images'
+	import { getElementLabel } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
 		buildGamewithUrl,
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	// Types
 	import type { PageData } from './$types'
@@ -64,6 +66,18 @@
 	const summon = $derived(summonQuery.data)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
+
+	// Element for button styling
+	const elementName = $derived(
+		getElementLabel(summon?.element)?.toLowerCase() as
+			| 'wind'
+			| 'fire'
+			| 'water'
+			| 'earth'
+			| 'dark'
+			| 'light'
+			| undefined
+	)
 
 	// Edit URL for navigation
 	const editUrl = $derived(summon?.granblueId ? `/database/summons/${summon.granblueId}/edit` : undefined)
@@ -225,41 +239,41 @@
 
 					<DetailsContainer title="Links">
 						<DetailItem label="Wiki (EN)">
-							{@const url = buildWikiEnUrl(summon.wiki?.en)}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if summon.wiki?.en}
+								<Button href={buildWikiEnUrl(summon.wiki.en) ?? undefined} target="_blank" variant="element-ghost"
+									element={elementName} size="small" rightIcon="link">
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Wiki (JP)">
-							{@const url = buildWikiJaUrl(summon.wiki?.ja)}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if summon.wiki?.ja}
+								<Button href={buildWikiJaUrl(summon.wiki.ja) ?? undefined} target="_blank" variant="element-ghost"
+									element={elementName} size="small" rightIcon="link">
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Gamewith">
-							{@const url = buildGamewithUrl(summon.gamewith)}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if summon.gamewith}
+								<Button href={buildGamewithUrl(summon.gamewith) ?? undefined} target="_blank" variant="element-ghost"
+									element={elementName} size="small" rightIcon="link">
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Kamigame">
-							{@const url = buildKamigameUrl(summon.kamigame, 'summon')}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if summon.kamigame}
+								<Button href={buildKamigameUrl(summon.kamigame, 'summon') ?? undefined} target="_blank" variant="element-ghost"
+									element={elementName} size="small" rightIcon="link">
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
@@ -446,13 +460,7 @@
 		font-size: typography.$font-small;
 	}
 
-	.external-link {
-		color: colors.$blue;
-		text-decoration: none;
-		word-break: break-all;
-
-		&:hover {
-			text-decoration: underline;
-		}
+	.empty-value {
+		color: colors.$grey-50;
 	}
 </style>

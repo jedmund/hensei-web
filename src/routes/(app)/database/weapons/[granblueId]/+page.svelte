@@ -17,7 +17,9 @@
 	import { fetchWikiPage } from '$lib/api/wiki'
 
 	// Components
-	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
+	import DetailScaffold, {
+		type DetailTab
+	} from '$lib/features/database/detail/DetailScaffold.svelte'
 	import WeaponMetadataSection from '$lib/features/database/weapons/sections/WeaponMetadataSection.svelte'
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
@@ -28,12 +30,14 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl } from '$lib/utils/images'
+	import { getElementLabel } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
 		buildGamewithUrl,
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	// Types
 	import type { PageData } from './$types'
@@ -65,8 +69,22 @@
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
 
+	// Element for button styling
+	const elementName = $derived(
+		getElementLabel(weapon?.element)?.toLowerCase() as
+			| 'wind'
+			| 'fire'
+			| 'water'
+			| 'earth'
+			| 'dark'
+			| 'light'
+			| undefined
+	)
+
 	// Edit URL for navigation
-	const editUrl = $derived(weapon?.granblueId ? `/database/weapons/${weapon.granblueId}/edit` : undefined)
+	const editUrl = $derived(
+		weapon?.granblueId ? `/database/weapons/${weapon.granblueId}/edit` : undefined
+	)
 
 	// Query for raw data (only when on raw tab)
 	const rawDataQuery = createQuery(() => ({
@@ -122,7 +140,11 @@
 	})
 
 	// Image download handlers
-	async function handleDownloadImage(size: string, transformation: string | undefined, force: boolean) {
+	async function handleDownloadImage(
+		size: string,
+		transformation: string | undefined,
+		force: boolean
+	) {
 		if (!weapon?.id) return
 		// For weapons, '01' means base (no transformation suffix)
 		const trans = transformation === '01' ? undefined : transformation
@@ -218,41 +240,65 @@
 
 					<DetailsContainer title="Links">
 						<DetailItem label="Wiki (EN)">
-							{@const url = buildWikiEnUrl(weapon.wiki?.en)}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if weapon.wiki?.en}
+								<Button
+									href={buildWikiEnUrl(weapon.wiki.en) ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Wiki (JP)">
-							{@const url = buildWikiJaUrl(weapon.wiki?.ja)}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if weapon.wiki?.ja}
+								<Button
+									href={buildWikiJaUrl(weapon.wiki.ja) ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Gamewith">
-							{@const url = buildGamewithUrl(weapon.gamewith)}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if weapon.gamewith}
+								<Button
+									href={buildGamewithUrl(weapon.gamewith) ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Kamigame">
-							{@const url = buildKamigameUrl(weapon.kamigame, 'weapon', weapon.rarity)}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if weapon.kamigame}
+								<Button
+									href={buildKamigameUrl(weapon.kamigame, 'weapon', weapon.rarity) ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
@@ -419,13 +465,7 @@
 		font-size: typography.$font-small;
 	}
 
-	.external-link {
-		color: colors.$blue;
-		text-decoration: none;
-		word-break: break-all;
-
-		&:hover {
-			text-decoration: underline;
-		}
+	.empty-value {
+		color: colors.$grey-50;
 	}
 </style>

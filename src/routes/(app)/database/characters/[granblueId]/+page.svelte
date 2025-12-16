@@ -17,7 +17,9 @@
 	import { fetchWikiPage } from '$lib/api/wiki'
 
 	// Components
-	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
+	import DetailScaffold, {
+		type DetailTab
+	} from '$lib/features/database/detail/DetailScaffold.svelte'
 	import CharacterMetadataSection from '$lib/features/database/characters/sections/CharacterMetadataSection.svelte'
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
@@ -27,12 +29,14 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
+	import { getElementLabel } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
 		buildGamewithUrl,
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	// Types
 	import type { PageData } from './$types'
@@ -64,8 +68,22 @@
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
 
+	// Element for button styling
+	const elementName = $derived(
+		getElementLabel(character?.element)?.toLowerCase() as
+			| 'wind'
+			| 'fire'
+			| 'water'
+			| 'earth'
+			| 'dark'
+			| 'light'
+			| undefined
+	)
+
 	// Edit URL for navigation
-	const editUrl = $derived(character?.granblueId ? `/database/characters/${character.granblueId}/edit` : undefined)
+	const editUrl = $derived(
+		character?.granblueId ? `/database/characters/${character.granblueId}/edit` : undefined
+	)
 
 	// Query for related characters (same character_id)
 	const relatedQuery = createQuery(() => ({
@@ -132,7 +150,11 @@
 	})
 
 	// Image download handlers
-	async function handleDownloadImage(size: string, transformation: string | undefined, force: boolean) {
+	async function handleDownloadImage(
+		size: string,
+		transformation: string | undefined,
+		force: boolean
+	) {
 		if (!character?.id) return
 		await entityAdapter.downloadCharacterImage(character.id, size, transformation, force)
 	}
@@ -226,41 +248,65 @@
 
 					<DetailsContainer title="Links">
 						<DetailItem label="Wiki (EN)">
-							{@const url = buildWikiEnUrl(character.wiki?.en)}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if character.wiki?.en}
+								<Button
+									href={buildWikiEnUrl(character.wiki.en) ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Wiki (JP)">
-							{@const url = buildWikiJaUrl(character.wiki?.ja)}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if character.wiki?.ja}
+								<Button
+									href={buildWikiJaUrl(character.wiki.ja) ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Gamewith">
-							{@const url = buildGamewithUrl(character.gamewith)}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if character.gamewith}
+								<Button
+									href={buildGamewithUrl(character.gamewith) ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
 						</DetailItem>
 						<DetailItem label="Kamigame">
-							{@const url = buildKamigameUrl(character.kamigame, 'character')}
-							{#if url}
-								<a href={url} target="_blank" rel="noopener noreferrer" class="external-link">
-									{url}
-								</a>
+							{#if character.kamigame}
+								<Button
+									href={buildKamigameUrl(character.kamigame, 'character') ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
+									Open
+								</Button>
 							{:else}
 								<span class="empty-value">—</span>
 							{/if}
@@ -402,16 +448,6 @@
 		padding: spacing.$unit-half spacing.$unit;
 		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
-	}
-
-	.external-link {
-		color: colors.$blue;
-		text-decoration: none;
-		word-break: break-all;
-
-		&:hover {
-			text-decoration: underline;
-		}
 	}
 
 	.empty-value {
