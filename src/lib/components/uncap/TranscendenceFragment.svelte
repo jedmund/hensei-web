@@ -55,7 +55,7 @@
 		--scaled-height: calc((var(--scaled-width) / var(--orig-width)) * var(--orig-height));
 		--scale: 1.2;
 
-		background-image: url('/icons/transcendence/interactive/interactive-piece.png');
+		background-image: url('$src/assets/icons/transcendence/interactive/interactive-piece.png');
 		background-size: var(--scaled-width) var(--scaled-height);
 		background-repeat: no-repeat;
 
@@ -106,11 +106,11 @@
 
 		/* High DPI support */
 		@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-			background-image: url('/icons/transcendence/interactive/interactive-piece@2x.png');
+			background-image: url('$src/assets/icons/transcendence/interactive/interactive-piece@2x.png');
 		}
 
 		@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 288dpi) {
-			background-image: url('/icons/transcendence/interactive/interactive-piece@3x.png');
+			background-image: url('$src/assets/icons/transcendence/interactive/interactive-piece@3x.png');
 		}
 	}
 </style>

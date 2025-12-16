@@ -58,42 +58,42 @@
 		&.empty.flb,
 		&.empty.ulb,
 		&.empty.special {
-			background-image: url('/icons/uncap/empty@3x.png');
+			background-image: url('$src/assets/icons/uncap/empty@3x.png');
 
 			&:hover {
-				background-image: url('/icons/uncap/empty-hover@3x.png');
+				background-image: url('$src/assets/icons/uncap/empty-hover@3x.png');
 			}
 		}
 
 		&.mlb {
-			background-image: url('/icons/uncap/yellow@3x.png');
+			background-image: url('$src/assets/icons/uncap/yellow@3x.png');
 
 			&:hover {
-				background-image: url('/icons/uncap/yellow-hover@3x.png');
+				background-image: url('$src/assets/icons/uncap/yellow-hover@3x.png');
 			}
 		}
 
 		&.special {
-			background-image: url('/icons/uncap/red@3x.png');
+			background-image: url('$src/assets/icons/uncap/red@3x.png');
 
 			&:hover {
-				background-image: url('/icons/uncap/red-hover@3x.png');
+				background-image: url('$src/assets/icons/uncap/red-hover@3x.png');
 			}
 		}
 
 		&.flb {
-			background-image: url('/icons/uncap/blue@3x.png');
+			background-image: url('$src/assets/icons/uncap/blue@3x.png');
 
 			&:hover {
-				background-image: url('/icons/uncap/blue-hover@3x.png');
+				background-image: url('$src/assets/icons/uncap/blue-hover@3x.png');
 			}
 		}
 
 		&.ulb {
-			background-image: url('/icons/uncap/purple@3x.png');
+			background-image: url('$src/assets/icons/uncap/purple@3x.png');
 
 			&:hover {
-				background-image: url('/icons/uncap/purple-hover@3x.png');
+				background-image: url('$src/assets/icons/uncap/purple-hover@3x.png');
 			}
 		}
 

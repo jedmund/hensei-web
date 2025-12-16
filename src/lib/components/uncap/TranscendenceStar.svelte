@@ -220,37 +220,37 @@
 		}
 
 		&.empty {
-			background-image: url('/icons/transcendence/0/stage-0.png');
+			background-image: url('$src/assets/icons/transcendence/0/stage-0.png');
 			background-size: var(--size) var(--size);
 			background-repeat: no-repeat;
 		}
 
 		&.stage1 {
-			background-image: url('/icons/transcendence/1/stage-1.png');
+			background-image: url('$src/assets/icons/transcendence/1/stage-1.png');
 			background-size: var(--size) var(--size);
 			background-repeat: no-repeat;
 		}
 
 		&.stage2 {
-			background-image: url('/icons/transcendence/2/stage-2.png');
+			background-image: url('$src/assets/icons/transcendence/2/stage-2.png');
 			background-size: var(--size) var(--size);
 			background-repeat: no-repeat;
 		}
 
 		&.stage3 {
-			background-image: url('/icons/transcendence/3/stage-3.png');
+			background-image: url('$src/assets/icons/transcendence/3/stage-3.png');
 			background-size: var(--size) var(--size);
 			background-repeat: no-repeat;
 		}
 
 		&.stage4 {
-			background-image: url('/icons/transcendence/4/stage-4.png');
+			background-image: url('$src/assets/icons/transcendence/4/stage-4.png');
 			background-size: var(--size) var(--size);
 			background-repeat: no-repeat;
 		}
 
 		&.stage5 {
-			background-image: url('/icons/transcendence/5/stage-5.png');
+			background-image: url('$src/assets/icons/transcendence/5/stage-5.png');
 			background-size: var(--size) var(--size);
 			background-repeat: no-repeat;
 		}
@@ -258,43 +258,43 @@
 		/* High DPI support */
 		@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
 			&.empty {
-				background-image: url('/icons/transcendence/0/stage-0@2x.png');
+				background-image: url('$src/assets/icons/transcendence/0/stage-0@2x.png');
 			}
 			&.stage1 {
-				background-image: url('/icons/transcendence/1/stage-1@2x.png');
+				background-image: url('$src/assets/icons/transcendence/1/stage-1@2x.png');
 			}
 			&.stage2 {
-				background-image: url('/icons/transcendence/2/stage-2@2x.png');
+				background-image: url('$src/assets/icons/transcendence/2/stage-2@2x.png');
 			}
 			&.stage3 {
-				background-image: url('/icons/transcendence/3/stage-3@2x.png');
+				background-image: url('$src/assets/icons/transcendence/3/stage-3@2x.png');
 			}
 			&.stage4 {
-				background-image: url('/icons/transcendence/4/stage-4@2x.png');
+				background-image: url('$src/assets/icons/transcendence/4/stage-4@2x.png');
 			}
 			&.stage5 {
-				background-image: url('/icons/transcendence/5/stage-5@2x.png');
+				background-image: url('$src/assets/icons/transcendence/5/stage-5@2x.png');
 			}
 		}
 
 		@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 288dpi) {
 			&.empty {
-				background-image: url('/icons/transcendence/0/stage-0@3x.png');
+				background-image: url('$src/assets/icons/transcendence/0/stage-0@3x.png');
 			}
 			&.stage1 {
-				background-image: url('/icons/transcendence/1/stage-1@3x.png');
+				background-image: url('$src/assets/icons/transcendence/1/stage-1@3x.png');
 			}
 			&.stage2 {
-				background-image: url('/icons/transcendence/2/stage-2@3x.png');
+				background-image: url('$src/assets/icons/transcendence/2/stage-2@3x.png');
 			}
 			&.stage3 {
-				background-image: url('/icons/transcendence/3/stage-3@3x.png');
+				background-image: url('$src/assets/icons/transcendence/3/stage-3@3x.png');
 			}
 			&.stage4 {
-				background-image: url('/icons/transcendence/4/stage-4@3x.png');
+				background-image: url('$src/assets/icons/transcendence/4/stage-4@3x.png');
 			}
 			&.stage5 {
-				background-image: url('/icons/transcendence/5/stage-5@3x.png');
+				background-image: url('$src/assets/icons/transcendence/5/stage-5@3x.png');
 			}
 		}
 
@@ -308,7 +308,7 @@
 
 			&.interactive.base {
 				--size: calc(spacing.$unit * 6);
-				background-image: url('/icons/transcendence/interactive/interactive-base.png');
+				background-image: url('$src/assets/icons/transcendence/interactive/interactive-base.png');
 				background-size: var(--size) var(--size);
 				height: var(--size);
 				width: var(--size);
@@ -320,11 +320,11 @@
 
 				/* High DPI support */
 				@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-					background-image: url('/icons/transcendence/interactive/interactive-base@2x.png');
+					background-image: url('$src/assets/icons/transcendence/interactive/interactive-base@2x.png');
 				}
 
 				@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 288dpi) {
-					background-image: url('/icons/transcendence/interactive/interactive-base@3x.png');
+					background-image: url('$src/assets/icons/transcendence/interactive/interactive-base@3x.png');
 				}
 			}
 
