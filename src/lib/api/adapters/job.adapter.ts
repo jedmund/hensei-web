@@ -26,6 +26,23 @@ export interface SearchJobSkillsParams {
 }
 
 /**
+ * Payload for creating/updating a job skill
+ */
+export interface JobSkillPayload {
+	name_en: string
+	name_jp?: string
+	slug: string
+	color?: number
+	main?: boolean
+	base?: boolean
+	sub?: boolean
+	emp?: boolean
+	order?: number
+	image_id?: string
+	action_id?: number
+}
+
+/**
  * Payload for updating a job entity
  */
 export interface JobUpdatePayload {
@@ -192,6 +209,59 @@ export class JobAdapter extends BaseAdapter {
 		return this.request<JobSkill[]>(`/jobs/${jobId}/emp_skills`, {
 			method: 'GET',
 			cacheTTL: 300000 // Cache for 5 minutes
+		})
+	}
+
+	/**
+	 * Creates a new skill for a job
+	 * @param jobId The job's granblue_id
+	 * @param data The skill data
+	 */
+	async createSkill(jobId: string, data: JobSkillPayload): Promise<JobSkill> {
+		const response = await this.request<JobSkill>(`/jobs/${jobId}/skills`, {
+			method: 'POST',
+			body: data
+		})
+		this.clearCache(`/jobs/${jobId}/skills`)
+		return response
+	}
+
+	/**
+	 * Updates an existing job skill
+	 * @param jobId The job's granblue_id
+	 * @param skillId The skill's ID
+	 * @param data The updated skill data
+	 */
+	async updateSkill(jobId: string, skillId: string, data: JobSkillPayload): Promise<JobSkill> {
+		const response = await this.request<JobSkill>(`/jobs/${jobId}/skills/${skillId}`, {
+			method: 'PUT',
+			body: data
+		})
+		this.clearCache(`/jobs/${jobId}/skills`)
+		return response
+	}
+
+	/**
+	 * Deletes a job skill
+	 * @param jobId The job's granblue_id
+	 * @param skillId The skill's ID
+	 */
+	async deleteSkill(jobId: string, skillId: string): Promise<void> {
+		await this.request(`/jobs/${jobId}/skills/${skillId}`, {
+			method: 'DELETE'
+		})
+		this.clearCache(`/jobs/${jobId}/skills`)
+	}
+
+	/**
+	 * Downloads the image for a job skill
+	 * @param jobId The job's granblue_id
+	 * @param skillId The skill's ID
+	 * @returns Object with success status and filename
+	 */
+	async downloadSkillImage(jobId: string, skillId: string): Promise<{ success: boolean; filename: string }> {
+		return this.request<{ success: boolean; filename: string }>(`/jobs/${jobId}/skills/${skillId}/download_image`, {
+			method: 'POST'
 		})
 	}
 
