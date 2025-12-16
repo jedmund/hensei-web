@@ -43,8 +43,11 @@
 		return null
 	})
 
-	// Check if character has season (seasonal variant)
-	const hasSeason = $derived(seasonText !== null)
+	// Special case: Yukata is more specific than Summer, so hide Summer if Yukata is present
+	const isYukataWithSummer = $derived(seriesText === 'Yukata' && seasonText === 'Summer')
+
+	// Check if character has season (seasonal variant), but hide if Yukata+Summer
+	const hasSeason = $derived(seasonText !== null && !isYukataWithSummer)
 
 	// Check if character has series with different text than season
 	const hasDistinctSeries = $derived(seriesText !== null && seriesText !== seasonText)
