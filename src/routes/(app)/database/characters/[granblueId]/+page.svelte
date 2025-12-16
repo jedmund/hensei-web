@@ -418,6 +418,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		gap: spacing.$unit-half;
 		text-decoration: none;
 		color: colors.$grey-30;
 
