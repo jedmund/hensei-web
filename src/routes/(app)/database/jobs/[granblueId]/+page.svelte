@@ -98,7 +98,7 @@
 					<JobFeaturesSection {job} />
 				</section>
 			{:else if currentTab === 'skills'}
-				<JobSkillsTab {job} />
+				<JobSkillsTab {job} {canEdit} />
 			{:else if currentTab === 'images'}
 				<JobImagesTab {job} />
 			{/if}
