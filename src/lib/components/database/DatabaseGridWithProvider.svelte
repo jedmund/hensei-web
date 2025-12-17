@@ -8,6 +8,8 @@
 	import { Grid } from 'wx-svelte-grid'
 	import type { IColumn, IRow } from 'wx-svelte-grid'
 	import { DatabaseProvider } from '$lib/providers/DatabaseProvider'
+	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
+	import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
 	import { onMount, onDestroy } from 'svelte'
 	import { goto } from '$app/navigation'
 
@@ -32,6 +34,37 @@
 	let lastSearchTerm = $state('')
 	let pageSize = $state(initialPageSize)
 	let searchTimeout: ReturnType<typeof setTimeout> | undefined
+
+	// Sort state - tracks which column is sorted and in which direction
+	let sortMarks = $state<Record<string, { order: 'asc' | 'desc' }>>({})
+
+	// Filter state
+	let elementFilters = $state<number[]>([])
+	let rarityFilters = $state<number[]>([])
+	let seriesFilters = $state<(number | string)[]>([])
+	let proficiencyFilters = $state<number[]>([])
+	let seasonFilters = $state<number[]>([])
+
+	// Handle filter changes from CollectionFilters component
+	function handleFiltersChange(filters: CollectionFilterState) {
+		// Convert series to string[] (weapon series are UUIDs, character series are numbers that need conversion)
+		const seriesAsStrings =
+			filters.series.length > 0 ? filters.series.map((s) => String(s)) : undefined
+
+		provider.setFilters({
+			element: filters.element.length > 0 ? filters.element : undefined,
+			rarity: filters.rarity.length > 0 ? filters.rarity : undefined,
+			series: seriesAsStrings,
+			proficiency1: filters.proficiency.length > 0 ? filters.proficiency : undefined,
+			season: filters.season.length > 0 ? filters.season : undefined,
+			// For characters, also pass series as characterSeries (they use number enum values)
+			characterSeries:
+				resource === 'characters' && filters.series.length > 0
+					? filters.series.filter((s): s is number => typeof s === 'number')
+					: undefined
+		})
+		loadData(1) // Reset to first page when filters change
+	}
 
 	// Create provider
 	const provider = new DatabaseProvider({ resource, pageSize: initialPageSize })
@@ -70,15 +103,42 @@
 		// Connect provider to grid
 		api.setNext(provider)
 
+		// Intercept sort-rows to prevent client-side sorting and do server-side instead
+		api.intercept('sort-rows', (ev: { key: string; add: boolean }) => {
+			const { key } = ev
+			const currentOrder = sortMarks[key]?.order
+
+			// Toggle: asc -> desc -> clear
+			let newSortKey: string | null = null
+			let newSortOrder: 'asc' | 'desc' = 'asc'
+
+			if (currentOrder === 'asc') {
+				sortMarks = { [key]: { order: 'desc' } }
+				newSortKey = key
+				newSortOrder = 'desc'
+			} else if (currentOrder === 'desc') {
+				sortMarks = {} // Clear sort
+				newSortKey = null
+			} else {
+				sortMarks = { [key]: { order: 'asc' } }
+				newSortKey = key
+				newSortOrder = 'asc'
+			}
+
+			// Update provider and reload from server
+			provider.setSort(newSortKey, newSortOrder)
+			loadData(1) // Reset to first page when sorting
+
+			return false // Prevent default client-side sorting
+		})
+
 		// Add row click handler
 		api.on('select-row', (ev: any) => {
-			console.log('Row selected:', ev)
 			const rowId = ev.id
 			if (rowId) {
 				// Find the row data to get the granblueId
 				const rowData = data.find((item: any) => item.id === rowId)
 				if (rowData && rowData.granblueId) {
-					console.log(`Navigating to: /database/${resource}/${rowData.granblueId}`)
 					goto(`/database/${resource}/${rowData.granblueId}`)
 				}
 			}
@@ -158,62 +218,67 @@
 	})
 </script>
 
+<svelte:head>
+	<link rel="stylesheet" href="https://cdn.svar.dev/fonts/wxi/wx-icons.css" />
+</svelte:head>
+
 <div class="grid">
 	<div class="controls">
-		<input type="text" placeholder="Search..." bind:value={searchTerm} />
+		<CollectionFilters
+			entityType={resource === 'characters' ? 'character' : resource === 'summons' ? 'summon' : 'weapon'}
+			bind:elementFilters
+			bind:rarityFilters
+			bind:seriesFilters
+			bind:proficiencyFilters
+			bind:seasonFilters
+			onFiltersChange={handleFiltersChange}
+			showSort={false}
+		/>
 
 		<div class="controls-right">
 			{#if headerActions}
 				{@render headerActions()}
 			{/if}
 
-			<div class="page-size-selector">
-				<label for="page-size">Show:</label>
-				<select id="page-size" value={pageSize} onchange={handlePageSizeChange}>
-					<option value={10}>10</option>
-					<option value={20}>20</option>
-					<option value={50}>50</option>
-					<option value={100}>100</option>
-				</select>
-			</div>
+			<input type="text" placeholder="Search..." bind:value={searchTerm} />
 		</div>
 	</div>
 
-	<div class="grid-wrapper" class:loading>
-		{#if loading}
-			<div class="loading-overlay">
-				<div class="loading-spinner">Loading...</div>
-			</div>
-		{/if}
-
-		<Grid {data} {columns} {init} sizes={{ rowHeight: 80 }} />
-	</div>
-
-	<div class="grid-footer">
-		<div class="pagination-info">
-			{#if total > 0}
-				Showing {startItem} to {endItem} of {total} entries
-			{:else}
-				No entries found
+		<div class="grid-wrapper" class:loading>
+			{#if loading}
+				<div class="loading-overlay">
+					<div class="loading-spinner">Loading...</div>
+				</div>
 			{/if}
+
+			<Grid {data} {columns} {init} {sortMarks} sizes={{ rowHeight: 80 }} class="database-grid-theme" />
 		</div>
 
-		<div class="pagination-controls">
-			<button class="pagination-button" onclick={handlePrevPage} disabled={currentPage <= 1}>
-				Previous
-			</button>
+		<div class="grid-footer">
+			<div class="pagination-info">
+				{#if total > 0}
+					Showing {startItem} to {endItem} of {total} entries
+				{:else}
+					No entries found
+				{/if}
+			</div>
 
-			<span class="page-display">
-				Page {currentPage} of {totalPages}
-			</span>
+			<div class="pagination-controls">
+				<button class="pagination-button" onclick={handlePrevPage} disabled={currentPage <= 1}>
+					Previous
+				</button>
 
-			<button
-				class="pagination-button"
-				onclick={handleNextPage}
-				disabled={currentPage >= totalPages}
-			>
-				Next
-			</button>
+				<span class="page-display">
+					Page {currentPage} of {totalPages}
+				</span>
+
+				<button
+					class="pagination-button"
+					onclick={handleNextPage}
+					disabled={currentPage >= totalPages}
+				>
+					Next
+				</button>
 		</div>
 	</div>
 </div>
@@ -234,27 +299,22 @@
 
 		.controls {
 			display: flex;
-			justify-content: space-between;
+			flex-wrap: wrap;
 			align-items: center;
+			justify-content: space-between;
 			padding: spacing.$unit;
 			border-bottom: 1px solid #e5e5e5;
 			gap: spacing.$unit;
 
-			input {
-				padding: spacing.$unit spacing.$unit-2x;
-				background: var(--input-bound-bg);
-				border: none;
-				border-radius: layout.$item-corner;
-				font-size: typography.$font-medium;
-				width: 100%;
+			// CollectionFilters on the left
+			:global(.filters-container) {
+				flex: 1;
+				min-width: 0;
 
-				&:hover {
-					background: var(--input-bound-bg-hover);
-				}
-
-				&:focus {
-					outline: none;
-					border-color: #007bff;
+				// Override filter trigger padding
+				:global([data-select-trigger]) {
+					padding-top: 7px;
+					padding-bottom: 7px;
 				}
 			}
 
@@ -262,24 +322,25 @@
 				display: flex;
 				align-items: center;
 				gap: spacing.$unit;
-			}
+				flex-shrink: 0;
 
-			.page-size-selector {
-				display: flex;
-				align-items: center;
-				gap: spacing.$unit * 0.5;
-
-				label {
+				input {
+					padding: spacing.$unit spacing.$unit-2x;
+					background: var(--input-bound-bg);
+					border: none;
+					border-radius: layout.$item-corner;
+					font-family: 'AGrot', system-ui, sans-serif;
 					font-size: typography.$font-small;
-				}
+					width: 200px;
 
-				select {
-					padding: spacing.$unit * 0.25 spacing.$unit * 0.5;
-					border: 1px solid #ddd;
-					border-radius: 4px;
-					font-size: typography.$font-small;
-					background: white;
-					cursor: pointer;
+					&:hover {
+						background: var(--input-bound-bg-hover);
+					}
+
+					&:focus {
+						outline: none;
+						border-color: #007bff;
+					}
 				}
 			}
 		}
@@ -361,8 +422,7 @@
 	}
 
 	// Global styles for SVAR Grid elements
-	:global(.database-grid .wx-grid) {
-		font-family: inherit;
+	:global(.database-grid-theme) {
 		font-size: typography.$font-small;
 		width: 100%;
 	}
@@ -372,19 +432,36 @@
 		max-width: 100%;
 	}
 
+	:global(.wx-grid .wx-header) {
+		background: transparent;
+	}
+
 	:global(.wx-grid .wx-header-cell) {
-		background: #f8f9fa;
+		background: transparent;
 		font-weight: typography.$bold;
 		color: #495057;
 		border-bottom: 2px solid #dee2e6;
+		border-radius: layout.$item-corner;
+		transition: background-color 0.15s ease;
+		cursor: pointer;
+
+		&:hover {
+			background: #e9ecef;
+		}
 	}
+
 
 	:global(.wx-grid .wx-cell) {
 		padding: spacing.$unit * 0.5;
-		border-bottom: 1px solid #dee2e6;
 		vertical-align: middle;
 		display: flex;
 		align-items: center;
+		border: none;
+		--wx-table-cell-border: none;
+	}
+
+	:global(.wx-grid .wx-cell:not(:last-child)) {
+		border-right: none;
 	}
 
 	:global(.wx-grid .wx-row:hover) {
