@@ -104,7 +104,6 @@
 	@use '$src/themes/typography' as typography;
 
 	.database-page {
-		padding: spacing.$unit-2x 0;
 		margin: 0 auto;
 	}
 
