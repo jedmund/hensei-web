@@ -164,6 +164,7 @@ export interface CollectionFilters {
 	race?: number[]
 	proficiency?: number[]
 	gender?: number[]
+	series?: (string | number)[]
 	sort?: CollectionSortKey
 	page?: number
 	limit?: number
