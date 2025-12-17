@@ -93,8 +93,8 @@ export function getImageUrl(
 		return `${basePath}/${id}_${pose}${extension}`
 	}
 
-	// Handle weapon grid element variants
-	if (type === 'weapon' && variant === 'grid' && options?.element && options.element > 0) {
+	// Handle weapon grid element variants (including element 0 for null-element weapons)
+	if (type === 'weapon' && variant === 'grid' && options?.element !== undefined && options.element >= 0) {
 		return `${basePath}/${id}_${options.element}${extension}`
 	}
 
@@ -143,8 +143,8 @@ export function getWeaponImage(
 	const extension = getFileExtension('weapon', variant)
 	const basePath = `${getBasePath()}/${directory}`
 
-	// Handle element-specific weapon grids
-	if (variant === 'grid' && element && element > 0) {
+	// Handle element-specific weapon grids (including element 0 for null-element weapons)
+	if (variant === 'grid' && element !== undefined && element >= 0) {
 		return `${basePath}/${id}_${element}${extension}`
 	}
 
@@ -238,15 +238,17 @@ export function getCharacterImageWithPose(
 
 /**
  * Get weapon grid image with element support
+ * For element-changeable weapons (element === 0), uses instanceElement or defaults to 0 (no element image)
  */
 export function getWeaponGridImage(
 	id: string | number | null | undefined,
 	element?: number,
 	instanceElement?: number
 ): string {
-	// Handle element-specific weapons (primal weapons)
-	if (id && element === 0 && instanceElement) {
-		return getImageUrl('weapon', id, 'grid', { element: instanceElement })
+	// Handle element-changeable weapons (element 0 means null/changeable)
+	// Use instance element if set, otherwise default to 0 (no element selected image)
+	if (id && element === 0) {
+		return getImageUrl('weapon', id, 'grid', { element: instanceElement ?? 0 })
 	}
 	return getImageUrl('weapon', id, 'grid')
 }

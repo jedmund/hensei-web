@@ -15,8 +15,8 @@
 	// Get transformation suffix for transcendence
 	const transformation = $derived(weapon.transcendenceStep > 0 ? '02' : undefined)
 
-	// Use instance element for element-changeable weapons
-	const displayElement = $derived(weapon.weapon?.element === 0 ? weapon.element : undefined)
+	// Use instance element for element-changeable weapons, default to 0 (no element image) if not set
+	const displayElement = $derived(weapon.weapon?.element === 0 ? (weapon.element ?? 0) : undefined)
 
 	const imageUrl = $derived(
 		getWeaponImage(weapon.weapon?.granblueId, 'grid', displayElement, transformation)

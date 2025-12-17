@@ -46,8 +46,8 @@
 		const isMain = position === -1 || item?.mainhand
 		const variant = isMain ? 'main' : 'grid'
 
-		// For weapons with null element that have an instance element, use it
-		const element = item?.weapon?.element === 0 && item?.element ? item.element : undefined
+		// For element-changeable weapons (element === 0), use instance element or default to 0 (no element image)
+		const element = item?.weapon?.element === 0 ? (item?.element ?? 0) : undefined
 
 		return getWeaponImage(item?.weapon?.granblueId, variant, element)
 	})
