@@ -33,6 +33,7 @@
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
 		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
+		series: seriesFilters.length > 0 ? seriesFilters : undefined,
 		sort: sortBy
 	})
 
