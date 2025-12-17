@@ -381,7 +381,19 @@
 	<!-- Input phase -->
 	{#if entities.size === 0}
 		<form class="input-phase" onsubmit={(e) => { e.preventDefault(); fetchWikiData(); }}>
-			<p class="hint">Enter up to 10 wiki page names to import data</p>
+			<div class="input-header">
+				<p class="hint">Enter up to 10 wiki page names to import data</p>
+				<Button
+					variant="ghost"
+					class="add-input-button"
+					leftIcon="plus"
+					size="small"
+					type="button"
+					onclick={addInput}
+				>
+					Add another
+				</Button>
+			</div>
 			<div class="wiki-inputs">
 				{#each wikiPagesInputs as _, index}
 					<div class="input-row">
@@ -403,16 +415,6 @@
 						{/if}
 					</div>
 				{/each}
-				<Button
-					variant="ghost"
-					class="add-input-button"
-					leftIcon="plus"
-					size="small"
-					type="button"
-					onclick={addInput}
-				>
-					Add another
-				</Button>
 			</div>
 			{#if fetchError}
 				<p class="error">{fetchError}</p>
@@ -659,6 +661,13 @@
 		padding: spacing.$unit-2x;
 	}
 
+	.input-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: spacing.$unit-2x;
+	}
+
 	.wiki-inputs {
 		display: flex;
 		flex-direction: column;
@@ -669,10 +678,6 @@
 		display: flex;
 		gap: spacing.$unit;
 		align-items: center;
-	}
-
-	:global(.wiki-inputs .add-input-button) {
-		width: fit-content;
 	}
 
 	.remove-button {
