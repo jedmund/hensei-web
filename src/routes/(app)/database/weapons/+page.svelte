@@ -10,15 +10,13 @@
 	import ProficiencyCell from '$lib/components/database/cells/ProficiencyCell.svelte'
 	import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
-	import { goto } from '$app/navigation'
 
 	// Column configuration for weapons
 	const columns: IColumn[] = [
 		{
 			id: 'granblueId',
-			header: 'Image',
+			header: '',
 			width: 80,
 			cell: WeaponImageCell
 		},
@@ -75,13 +73,7 @@
 <PageMeta title={m.page_title_db_weapons()} description={m.page_desc_home()} />
 
 <div class="database-page">
-	<DatabaseGridWithProvider resource="weapons" {columns} pageSize={20}>
-		{#snippet headerActions()}
-			<Button variant="secondary" size="small" onclick={() => goto('/database/weapons/import')}>
-				Batch Import
-			</Button>
-		{/snippet}
-	</DatabaseGridWithProvider>
+	<DatabaseGridWithProvider resource="weapons" {columns} pageSize={20} />
 </div>
 
 <style lang="scss">

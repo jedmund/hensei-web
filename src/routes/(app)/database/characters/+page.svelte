@@ -11,16 +11,14 @@
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 
 	// Utilities
 	import { getRarityLabel } from '$lib/utils/rarity'
-	import { goto } from '$app/navigation'
 
 	const columns = [
 		{
 			id: 'granblueId',
-			header: 'Image',
+			header: '',
 			width: 80,
 			cell: CharacterImageCell
 		},
@@ -64,13 +62,7 @@
 <PageMeta title={m.page_title_db_characters()} description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabaseGridWithProvider resource="characters" {columns} pageSize={20}>
-		{#snippet headerActions()}
-			<Button variant="secondary" size="small" onclick={() => goto('/database/characters/import')}>
-				Batch Import
-			</Button>
-		{/snippet}
-	</DatabaseGridWithProvider>
+	<DatabaseGridWithProvider resource="characters" {columns} pageSize={20} />
 </div>
 
 <style lang="scss">

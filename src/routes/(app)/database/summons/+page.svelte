@@ -9,15 +9,13 @@
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import SummonUncapCell from '$lib/components/database/cells/SummonUncapCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
-	import { goto } from '$app/navigation'
 
 	// Column configuration for summons
 	const columns: IColumn[] = [
 		{
 			id: 'granblueId',
-			header: 'Image',
+			header: '',
 			width: 80,
 			cell: SummonImageCell
 		},
@@ -67,13 +65,7 @@
 <PageMeta title={m.page_title_db_summons()} description={m.page_desc_home()} />
 
 <div class="database-page">
-	<DatabaseGridWithProvider resource="summons" {columns} pageSize={20}>
-		{#snippet headerActions()}
-			<Button variant="secondary" size="small" onclick={() => goto('/database/summons/import')}>
-				Batch Import
-			</Button>
-		{/snippet}
-	</DatabaseGridWithProvider>
+	<DatabaseGridWithProvider resource="summons" {columns} pageSize={20} />
 </div>
 
 <style lang="scss">
