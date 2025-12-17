@@ -106,7 +106,7 @@
 			rarity: suggestions?.rarity ?? 3,
 			element: suggestions?.element ?? 0,
 			proficiency: suggestions?.proficiency ?? 0,
-			series: 0,
+			series: suggestions?.series ?? '',
 			newSeries: 0,
 			promotions: [] as number[],
 			minHp: suggestions?.minHp ?? 0,

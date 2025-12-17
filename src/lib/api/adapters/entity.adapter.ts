@@ -578,7 +578,7 @@ export interface WeaponSuggestions {
 	flb?: boolean
 	ulb?: boolean
 	transcendence?: boolean
-	/** Series name (e.g., "Revenant", "Optimus") */
+	/** Series ID (UUID) - looked up from wiki series name */
 	series?: string
 	releaseDate?: string
 	flbDate?: string
