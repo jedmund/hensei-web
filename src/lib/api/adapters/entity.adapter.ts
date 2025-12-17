@@ -574,8 +574,10 @@ export interface WeaponSuggestions {
 	maxAtk?: number
 	maxAtkFlb?: number
 	maxAtkUlb?: number
+	maxLevel?: number
 	flb?: boolean
 	ulb?: boolean
+	transcendence?: boolean
 	/** Series name (e.g., "Revenant", "Optimus") */
 	series?: string
 	releaseDate?: string
@@ -604,6 +606,7 @@ export interface SummonSuggestions {
 	maxAtk?: number
 	maxAtkFlb?: number
 	maxAtkUlb?: number
+	maxLevel?: number
 	flb?: boolean
 	ulb?: boolean
 	transcendence?: boolean
