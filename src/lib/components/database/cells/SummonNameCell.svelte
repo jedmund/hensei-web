@@ -2,17 +2,16 @@
 
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
-	import type { Character } from '$lib/types/api/entities'
-	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import type { Summon } from '$lib/types/api/entities'
 
 	const { row }: Cell = $props()
 
-	// Cast row to Character type for type safety
-	const character = row as Character
+	// Cast row to Summon type for type safety
+	const summon = row as Summon
 
 	// Get display name
 	const displayName = $derived.by(() => {
-		const nameObj = character.name
+		const nameObj = summon.name
 		if (!nameObj) return '—'
 		if (typeof nameObj === 'string') return nameObj
 		return nameObj.en || nameObj.ja || '—'
@@ -21,7 +20,6 @@
 
 <div class="name-cell">
 	<span class="name" title={displayName}>{displayName}</span>
-	<CharacterTags {character} />
 </div>
 
 <style lang="scss">
