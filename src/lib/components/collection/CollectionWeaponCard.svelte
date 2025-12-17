@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { CollectionWeapon } from '$lib/types/api/collection'
 	import { getWeaponImage } from '$lib/utils/images'
+	import { getAwakeningImage } from '$lib/utils/modifiers'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
 	interface Props {
@@ -33,6 +34,13 @@
 
 <button type="button" class="weapon-card" onclick={onClick}>
 	<div class="card-image">
+		{#if awakeningImage}
+			<img
+				class="awakening"
+				src={awakeningImage}
+				alt={`${weapon.awakening?.type?.name?.en || 'Awakening'} Lv${weapon.awakening?.level || 0}`}
+			/>
+		{/if}
 		<img class="weapon-image" src={imageUrl} alt={displayName} loading="lazy" />
 	</div>
 	<UncapIndicator
@@ -78,6 +86,16 @@
 		border-radius: 8px;
 		overflow: hidden;
 		background: var(--card-bg, #f5f5f5);
+
+		.awakening {
+			position: absolute;
+			top: 10%;
+			left: -3%;
+			width: 30%;
+			height: auto;
+			z-index: 2;
+			pointer-events: none;
+		}
 	}
 
 	.weapon-image {
