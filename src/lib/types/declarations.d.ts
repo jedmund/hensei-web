@@ -50,7 +50,23 @@ declare module 'wx-svelte-grid' {
   export class Grid extends SvelteComponent<{
     data?: IRow[]
     columns?: IColumn[]
+    sortMarks?: Record<string, { order: 'asc' | 'desc'; index?: number }>
     [key: string]: any
+  }> {}
+
+  export class Willow extends SvelteComponent<{
+    fonts?: boolean
+    children?: any
+  }> {}
+
+  export class WillowDark extends SvelteComponent<{
+    fonts?: boolean
+    children?: any
+  }> {}
+
+  export class Material extends SvelteComponent<{
+    fonts?: boolean
+    children?: any
   }> {}
 
   export class RestDataProvider<T = any> {

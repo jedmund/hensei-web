@@ -1,6 +1,7 @@
 import { RestDataProvider } from 'wx-grid-data-provider'
 import { searchAdapter } from '$lib/api/adapters/search.adapter'
 import type { SearchParams } from '$lib/api/adapters/search.adapter'
+import type { SearchFilters } from '$lib/api/adapters/types'
 
 interface DatabaseProviderOptions {
 	resource: 'weapons' | 'characters' | 'summons'
@@ -24,6 +25,9 @@ export class DatabaseProvider extends RestDataProvider<any> {
 	private totalCount: number = 0
 	private totalPages: number = 1
 	private searchQuery: string = ''
+	private sortColumn: string | null = null
+	private sortOrder: 'asc' | 'desc' = 'asc'
+	private filters: SearchFilters = {}
 
 	constructor(options: DatabaseProviderOptions) {
 		// Pass a dummy URL to parent since we'll override getData
@@ -50,7 +54,10 @@ export class DatabaseProvider extends RestDataProvider<any> {
 			const searchParams: SearchParams = {
 				page: page,
 				per: perPage,
-				...(this.searchQuery && this.searchQuery.length >= 2 && { query: this.searchQuery })
+				...(this.searchQuery && this.searchQuery.length >= 2 && { query: this.searchQuery }),
+				...(this.sortColumn && { sortBy: this.sortColumn }),
+				...(this.sortColumn && { sortOrder: this.sortOrder }),
+				...(Object.keys(this.filters).length > 0 && { filters: this.filters })
 			}
 
 			// Use the appropriate search method based on resource type
@@ -118,6 +125,25 @@ export class DatabaseProvider extends RestDataProvider<any> {
 	// Clear search
 	clearSearch() {
 		this.searchQuery = ''
+		this.currentPage = 1
+	}
+
+	// Set sort column and order
+	setSort(column: string | null, order: 'asc' | 'desc') {
+		this.sortColumn = column
+		this.sortOrder = order
+	}
+
+	// Set filters
+	setFilters(filters: SearchFilters) {
+		this.filters = filters
+		// Reset to first page when filters change
+		this.currentPage = 1
+	}
+
+	// Clear filters
+	clearFilters() {
+		this.filters = {}
 		this.currentPage = 1
 	}
 }
