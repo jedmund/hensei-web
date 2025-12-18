@@ -37,9 +37,10 @@
 		children
 	}: Props = $props()
 
-	// Provide variant and size to child segments via context
+	// Provide variant, size, and grow to child segments via context
 	setContext('segmented-control-variant', variant)
 	setContext('segmented-control-size', size)
+	setContext('segmented-control-grow', grow)
 
 	// Track previous value to only fire callback on actual changes (not initialization)
 	let previousValue = $state<string | undefined>(undefined)
