@@ -67,9 +67,7 @@
 
 	// Validation
 	const canSave = $derived(
-		editData.eventNumber > 0 &&
-		editData.startDate !== '' &&
-		editData.endDate !== ''
+		editData.eventNumber > 0 && editData.startDate !== '' && editData.endDate !== ''
 	)
 
 	// Save changes
@@ -116,12 +114,7 @@
 				<Button variant="secondary" size="small" onclick={handleCancel}>Cancel</Button>
 			{/snippet}
 			{#snippet rightAccessory()}
-				<Button
-					variant="primary"
-					size="small"
-					onclick={handleSave}
-					disabled={!canSave || isSaving}
-				>
+				<Button variant="primary" size="small" onclick={handleSave} disabled={!canSave || isSaving}>
 					{isSaving ? 'Saving...' : 'Save'}
 				</Button>
 			{/snippet}
@@ -175,14 +168,16 @@
 
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
+	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
 	.page {
 		background: white;
-		border-radius: layout.$card-corner;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		border: 0.5px solid rgba(0, 0, 0, 0.18);
+		border-radius: layout.$page-corner;
+		box-shadow: effects.$page-elevation;
 	}
 
 	.loading-state {
