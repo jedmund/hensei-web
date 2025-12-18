@@ -410,7 +410,7 @@
 				{/if}
 
 				{#if pendingClaimPhantoms.length > 0}
-					<div class="section-divider pending-claims">
+					<div class="section-divider">
 						<span>Pending Claims ({pendingClaimPhantoms.length})</span>
 					</div>
 					<ul class="member-list">
