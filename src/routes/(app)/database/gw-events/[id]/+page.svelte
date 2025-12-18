@@ -10,6 +10,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
 	import { formatDateJST, formatDateLongJST } from '$lib/utils/date'
+	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -31,27 +32,6 @@
 	const event = $derived(eventQuery.data)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
-
-	// Element labels and colors (matches GranblueEnums::ELEMENTS)
-	const elementLabels: Record<number, string> = {
-		0: 'Null',
-		1: 'Wind',
-		2: 'Fire',
-		3: 'Water',
-		4: 'Earth',
-		5: 'Dark',
-		6: 'Light'
-	}
-
-	const elementColors: Record<number, string> = {
-		0: 'null',
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
 
 	// Navigate to edit
 	function handleEdit() {
@@ -90,9 +70,7 @@
 			<DetailsContainer title="Event Details">
 				<DetailItem label="Event Number" value={`#${event.eventNumber}`} />
 				<DetailItem label="Element">
-					<span class="element-badge element-{elementColors[event.element]}">
-						{elementLabels[event.element] ?? 'Unknown'}
-					</span>
+					<ElementBadge element={event.element} />
 				</DetailItem>
 				<DetailItem label="Start Date" value={formatDateLongJST(event.startDate)} />
 				<DetailItem label="End Date" value={formatDateLongJST(event.endDate)} />
@@ -158,43 +136,5 @@
 	.details {
 		display: flex;
 		flex-direction: column;
-	}
-
-	.element-badge {
-		display: inline-block;
-		padding: 2px 8px;
-		border-radius: 4px;
-		font-size: typography.$font-small;
-		font-weight: 500;
-
-		&.element-fire {
-			background: #fee2e2;
-			color: #dc2626;
-		}
-
-		&.element-water {
-			background: #dbeafe;
-			color: #2563eb;
-		}
-
-		&.element-earth {
-			background: #fef3c7;
-			color: #d97706;
-		}
-
-		&.element-wind {
-			background: #d1fae5;
-			color: #059669;
-		}
-
-		&.element-light {
-			background: #fef9c3;
-			color: #ca8a04;
-		}
-
-		&.element-dark {
-			background: #ede9fe;
-			color: #7c3aed;
-		}
 	}
 </style>

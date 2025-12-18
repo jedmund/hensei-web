@@ -8,6 +8,8 @@
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { formatDateJST } from '$lib/utils/date'
+	import { ELEMENT_LABELS } from '$lib/utils/gw'
+	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import type { GwEvent } from '$lib/types/api/gw'
 	import type { PageData } from './$types'
 
@@ -27,28 +29,6 @@
 		staleTime: 1000 * 60 * 5
 	}))
 
-	// Element labels (matches GranblueEnums::ELEMENTS)
-	const elementLabels: Record<number, string> = {
-		0: 'Null',
-		1: 'Wind',
-		2: 'Fire',
-		3: 'Water',
-		4: 'Earth',
-		5: 'Dark',
-		6: 'Light'
-	}
-
-	// Element colors for badges
-	const elementColors: Record<number, string> = {
-		0: 'null',
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-
 	// Filter events by search
 	const filteredEvents = $derived.by(() => {
 		const events = eventsQuery.data ?? []
@@ -58,7 +38,7 @@
 		return events.filter(
 			(e) =>
 				String(e.eventNumber).includes(term) ||
-				elementLabels[e.element]?.toLowerCase().includes(term)
+				ELEMENT_LABELS[e.element]?.toLowerCase().includes(term)
 		)
 	})
 
@@ -110,9 +90,7 @@
 									<span class="event-number">{event.eventNumber}</span>
 								</td>
 								<td class="col-element">
-									<span class="element-badge element-{elementColors[event.element]}">
-										{elementLabels[event.element] ?? 'Unknown'}
-									</span>
+									<ElementBadge element={event.element} />
 								</td>
 								<td class="col-dates">
 									<span class="dates">
@@ -258,44 +236,6 @@
 	.event-number {
 		font-weight: typography.$bold;
 		color: #666;
-	}
-
-	.element-badge {
-		display: inline-block;
-		padding: 2px 8px;
-		border-radius: 4px;
-		font-size: typography.$font-small;
-		font-weight: 500;
-
-		&.element-fire {
-			background: #fee2e2;
-			color: #dc2626;
-		}
-
-		&.element-water {
-			background: #dbeafe;
-			color: #2563eb;
-		}
-
-		&.element-earth {
-			background: #fef3c7;
-			color: #d97706;
-		}
-
-		&.element-wind {
-			background: #d1fae5;
-			color: #059669;
-		}
-
-		&.element-light {
-			background: #fef9c3;
-			color: #ca8a04;
-		}
-
-		&.element-dark {
-			background: #ede9fe;
-			color: #7c3aed;
-		}
 	}
 
 	.dates {

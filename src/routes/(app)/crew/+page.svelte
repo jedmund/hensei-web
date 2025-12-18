@@ -15,6 +15,8 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import { formatDateJST } from '$lib/utils/date'
+	import { formatScore } from '$lib/utils/gw'
+	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -38,28 +40,6 @@
 		enabled: crewStore.isInCrew,
 		staleTime: 1000 * 60 * 5
 	}))
-
-	// Element labels (matches GranblueEnums::ELEMENTS)
-	const elementLabels: Record<number, string> = {
-		0: 'Null',
-		1: 'Wind',
-		2: 'Fire',
-		3: 'Water',
-		4: 'Earth',
-		5: 'Dark',
-		6: 'Light'
-	}
-
-	// Element colors for badges
-	const elementColors: Record<number, string> = {
-		0: 'null',
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
 
 	// Mutations
 	const createCrewMutation = useCreateCrew()
@@ -158,11 +138,6 @@
 	function handleCloseSettingsModal() {
 		settingsModalOpen = false
 		settingsError = null
-	}
-
-	// Helper for formatting scores with commas
-	function formatScore(score: number): string {
-		return score.toLocaleString()
 	}
 
 	function formatEventStatus(status: string, startDate: string): string {
@@ -283,9 +258,7 @@
 							<li class="event-item" onclick={() => goto(`/crew/events/${event.eventNumber}`)}>
 								<div class="event-info">
 									<span class="event-number">{event.eventNumber}</span>
-									<span class="element-badge element-{elementColors[event.element]}">
-										{elementLabels[event.element] ?? 'Unknown'}
-									</span>
+									<ElementBadge element={event.element} />
 								</div>
 								<span class="event-dates">
 									{formatDateJST(event.startDate)} – {formatDateJST(event.endDate)}
@@ -657,49 +630,6 @@
 		&.status-finished {
 			background: rgba(0, 0, 0, 0.04);
 			color: var(--text-secondary);
-		}
-	}
-
-	.element-badge {
-		display: inline-block;
-		padding: 2px 8px;
-		border-radius: layout.$item-corner-small;
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-
-		&.element-null {
-			background: rgba(0, 0, 0, 0.04);
-			color: var(--text-secondary);
-		}
-
-		&.element-fire {
-			background: #fee2e2;
-			color: #dc2626;
-		}
-
-		&.element-water {
-			background: #dbeafe;
-			color: #2563eb;
-		}
-
-		&.element-earth {
-			background: #fef3c7;
-			color: #d97706;
-		}
-
-		&.element-wind {
-			background: #d1fae5;
-			color: #059669;
-		}
-
-		&.element-light {
-			background: #fef9c3;
-			color: #ca8a04;
-		}
-
-		&.element-dark {
-			background: #ede9fe;
-			color: #7c3aed;
 		}
 	}
 
