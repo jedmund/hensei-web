@@ -219,29 +219,30 @@
 	})
 
 	// Player options for dropdown - members first, then phantoms
+	// Excludes players who already have scores for this event
 	const playerOptions = $derived.by(() => {
-		const options: Array<{ value: string; label: string; suffix?: string; muted?: boolean }> = []
+		const options: Array<{ value: string; label: string; suffix?: string }> = []
 
-		// Add members
+		// Add members (skip those with scores)
 		for (const m of membersDuringEvent) {
 			if (m.user) {
 				const hasScore = playersWithScores.has(`member:${m.id}`)
+				if (hasScore) continue
 				options.push({
 					value: `member:${m.id}`,
-					label: m.user.username + (m.retired ? ' (Retired)' : ''),
-					muted: hasScore
+					label: m.user.username + (m.retired ? ' (Retired)' : '')
 				})
 			}
 		}
 
-		// Add phantoms
+		// Add phantoms (skip those with scores)
 		for (const p of phantomPlayers) {
 			const hasScore = playersWithScores.has(`phantom:${p.id}`)
+			if (hasScore) continue
 			options.push({
 				value: `phantom:${p.id}`,
 				label: p.name + (p.retired ? ' (Retired)' : ''),
-				suffix: 'Phantom',
-				muted: hasScore
+				suffix: 'Phantom'
 			})
 		}
 
