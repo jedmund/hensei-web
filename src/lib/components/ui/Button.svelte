@@ -15,6 +15,7 @@
 			| 'element-ghost'
 			| 'text'
 			| 'destructive'
+			| 'destructive-ghost'
 			| 'notice'
 			| 'subtle'
 			| undefined
@@ -309,6 +310,15 @@
 
 		&:hover:not(:disabled) {
 			background: color.adjust($error, $lightness: -15%);
+		}
+	}
+
+	:global([data-button-root].destructive-ghost) {
+		background: transparent;
+		color: $error;
+
+		&:hover:not(:disabled) {
+			background: $error--bg--light;
 		}
 	}
 
