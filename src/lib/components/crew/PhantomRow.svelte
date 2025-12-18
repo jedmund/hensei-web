@@ -13,10 +13,12 @@
 		onEdit?: () => void
 		onDelete?: () => void
 		onAssign?: () => void
-		onConfirmClaim?: () => void
+		onAccept?: () => void
+		onDecline?: () => void
 	}
 
-	const { phantom, currentUserId, onEdit, onDelete, onAssign, onConfirmClaim }: Props = $props()
+	const { phantom, currentUserId, onEdit, onDelete, onAssign, onAccept, onDecline }: Props =
+		$props()
 
 	function formatDate(dateString: string): string {
 		return new Date(dateString).toLocaleDateString(undefined, {
@@ -35,9 +37,12 @@
 		return 'unclaimed'
 	})
 
-	// Check if current user is the one assigned to this phantom (can claim)
+	// Check if current user is the one assigned to this phantom (can accept/decline)
 	const canClaim = $derived(
-		phantom.claimedBy?.id === currentUserId && !phantom.claimConfirmed
+		!!phantom.claimedBy &&
+			!!currentUserId &&
+			phantom.claimedBy.id === currentUserId &&
+			!phantom.claimConfirmed
 	)
 </script>
 
@@ -88,11 +93,20 @@
 					{/if}
 				{/snippet}
 			</DropdownMenu>
-		{:else if canClaim && onConfirmClaim}
-			<!-- Non-officers who can claim get a simple button -->
-			<Button variant="secondary" size="small" onclick={onConfirmClaim}>
-				Claim
-			</Button>
+		{:else if canClaim}
+			<!-- Non-officers who can accept/decline get two buttons -->
+			<div class="claim-buttons">
+				{#if onDecline}
+					<Button variant="secondary" size="small" onclick={onDecline}>
+						Decline
+					</Button>
+				{/if}
+				{#if onAccept}
+					<Button variant="primary" size="small" onclick={onAccept}>
+						Accept
+					</Button>
+				{/if}
+			</div>
 		{/if}
 	</div>
 </li>
@@ -151,6 +165,11 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit;
+	}
+
+	.claim-buttons {
+		display: flex;
+		gap: spacing.$unit-half;
 	}
 
 	.status-badge {
