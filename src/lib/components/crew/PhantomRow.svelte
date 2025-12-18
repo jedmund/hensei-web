@@ -72,7 +72,7 @@
 			<!-- Officers get dropdown menu -->
 			<DropdownMenu>
 				{#snippet trigger({ props })}
-					<Button variant="secondary" size="small" iconOnly icon="ellipsis" {...props} />
+					<Button variant="ghost" size="small" iconOnly icon="ellipsis" {...props} />
 				{/snippet}
 				{#snippet menu()}
 					{#if onEdit}

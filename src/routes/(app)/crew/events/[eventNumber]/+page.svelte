@@ -477,7 +477,7 @@
 											<DropdownMenu>
 												{#snippet trigger({ props })}
 													<Button
-														variant="secondary"
+														variant="ghost"
 														size="small"
 														iconOnly
 														icon="ellipsis"
@@ -556,7 +556,7 @@
 											<DropdownMenu>
 												{#snippet trigger({ props })}
 													<Button
-														variant="secondary"
+														variant="ghost"
 														size="small"
 														iconOnly
 														icon="ellipsis"
