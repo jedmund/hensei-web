@@ -23,26 +23,30 @@
 </script>
 
 <div class="section-header">
-	<div class="header-info">
-		<div class="title-row">
-			{#if backHref}
-				<Button variant="ghost" size="small" iconOnly icon="arrow-left" href={backHref} />
-			{/if}
-			<span class="header-title">{title}</span>
-			{#if subtitle}
-				<span class="header-subtitle">[{subtitle}]</span>
+	<div class="header-top-row">
+		<div class="header-info">
+			<div class="title-row">
+				{#if backHref}
+					<Button variant="ghost" size="small" iconOnly icon="arrow-left" href={backHref} />
+				{/if}
+				<span class="header-title">{title}</span>
+				{#if subtitle}
+					<span class="header-subtitle">[{subtitle}]</span>
+				{/if}
+			</div>
+			{#if description}
+				<p class="header-description">{description}</p>
 			{/if}
 		</div>
-		{#if description}
-			<p class="header-description">{description}</p>
-		{/if}
-		{#if belowTitle}
-			{@render belowTitle()}
+		{#if actions}
+			<div class="header-actions">
+				{@render actions()}
+			</div>
 		{/if}
 	</div>
-	{#if actions}
-		<div class="header-actions">
-			{@render actions()}
+	{#if belowTitle}
+		<div class="header-below">
+			{@render belowTitle()}
 		</div>
 	{/if}
 </div>
@@ -53,16 +57,27 @@
 
 	.section-header {
 		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
+		flex-direction: column;
+		gap: spacing.$unit;
 		padding: spacing.$unit-2x;
 		border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+	}
+
+	.header-top-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		width: 100%;
 	}
 
 	.header-info {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
+	}
+
+	.header-below {
+		width: 100%;
 	}
 
 	.title-row {
