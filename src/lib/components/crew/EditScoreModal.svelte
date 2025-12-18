@@ -11,6 +11,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import { GW_ROUND_LABELS, type GwIndividualScore, type GwRound } from '$lib/types/api/gw'
+	import { formatScore, parseScore } from '$lib/utils/gw'
 
 	interface Props {
 		open: boolean
@@ -59,16 +60,6 @@
 			return gwAdapter.deleteIndividualScore(participationId, scoreId)
 		}
 	}))
-
-	// Format number with commas
-	function formatScore(score: number): string {
-		return score.toLocaleString()
-	}
-
-	// Parse score string, removing commas
-	function parseScore(value: string): number {
-		return parseInt(value.replace(/,/g, ''), 10)
-	}
 
 	// Get label for a score
 	function getScoreLabel(score: GwIndividualScore): string {

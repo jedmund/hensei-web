@@ -10,6 +10,7 @@
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import { GW_ROUND_LABELS, type GwCrewScore, type GwRound } from '$lib/types/api/gw'
+	import { formatScore, parseScore } from '$lib/utils/gw'
 
 	interface Props {
 		open: boolean
@@ -79,16 +80,6 @@
 			return gwAdapter.deleteCrewScore(participationId, existingScore.id)
 		}
 	}))
-
-	// Format number with commas
-	function formatScore(score: number): string {
-		return score.toLocaleString()
-	}
-
-	// Parse score string, removing commas
-	function parseScore(value: string): number {
-		return parseInt(value.replace(/,/g, ''), 10)
-	}
 
 	// Initialize form values
 	function initializeForm() {

@@ -6,6 +6,7 @@
 	import SettingsRow from '../ui/SettingsRow.svelte'
 	import { pictureData } from '$lib/utils/pictureData'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+	import { ELEMENT_HEX_COLORS } from '$lib/utils/gw'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
 
 	interface Props {
@@ -52,19 +53,9 @@
 			}))
 	)
 
-	// Element colors for circle indicators
-	const elementColors: Record<string, string> = {
-		wind: '#3ee489',
-		fire: '#fa6d6d',
-		water: '#6cc9ff',
-		earth: '#fd9f5b',
-		dark: '#de7bff',
-		light: '#e8d633'
-	}
-
 	// Create SVG circle data URL for element color
 	function getElementCircle(el: string): string {
-		const color = elementColors[el] || '#888'
+		const color = ELEMENT_HEX_COLORS[el] || '#888'
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="${color}"/></svg>`
 		return `data:image/svg+xml,${encodeURIComponent(svg)}`
 	}
