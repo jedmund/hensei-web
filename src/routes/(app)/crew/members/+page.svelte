@@ -8,7 +8,8 @@
 	import {
 		useRemoveMember,
 		useUpdateMembership,
-		useDeletePhantom
+		useDeletePhantom,
+		useDeclinePhantomClaim
 	} from '$lib/api/mutations/crew.mutations'
 	import { crewAdapter } from '$lib/api/adapters/crew.adapter'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
@@ -83,6 +84,7 @@
 	const removeMemberMutation = useRemoveMember()
 	const updateMembershipMutation = useUpdateMembership()
 	const deletePhantomMutation = useDeletePhantom()
+	const declinePhantomClaimMutation = useDeclinePhantomClaim()
 
 	// Filter options - Pending only shown to officers
 	const filterOptions = $derived.by(() => {
@@ -266,10 +268,24 @@
 		assignPhantomDialogOpen = true
 	}
 
-	// Confirm claim
+	// Confirm claim (opens modal)
 	function openConfirmClaimDialog(phantom: PhantomPlayer) {
 		phantomToClaim = phantom
 		confirmClaimDialogOpen = true
+	}
+
+	// Decline claim (direct action, no confirmation needed)
+	async function handleDeclineClaim(phantom: PhantomPlayer) {
+		if (!crewStore.crew) return
+
+		try {
+			await declinePhantomClaimMutation.mutateAsync({
+				crewId: crewStore.crew.id,
+				phantomId: phantom.id
+			})
+		} catch (error) {
+			console.error('Failed to decline phantom claim:', error)
+		}
 	}
 
 	// Format date
@@ -417,7 +433,8 @@
 							onEdit={() => openEditPhantomDialog(phantom)}
 							onDelete={() => openDeletePhantomDialog(phantom)}
 							onAssign={() => openAssignPhantomDialog(phantom)}
-							onConfirmClaim={() => openConfirmClaimDialog(phantom)}
+							onAccept={() => openConfirmClaimDialog(phantom)}
+							onDecline={() => handleDeclineClaim(phantom)}
 						/>
 					{/each}
 				</ul>
@@ -438,7 +455,8 @@
 							onEdit={() => openEditPhantomDialog(phantom)}
 							onDelete={() => openDeletePhantomDialog(phantom)}
 							onAssign={() => openAssignPhantomDialog(phantom)}
-							onConfirmClaim={() => openConfirmClaimDialog(phantom)}
+							onAccept={() => openConfirmClaimDialog(phantom)}
+							onDecline={() => handleDeclineClaim(phantom)}
 						/>
 					{/each}
 				</ul>

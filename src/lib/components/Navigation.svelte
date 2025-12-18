@@ -151,8 +151,16 @@
 		enabled: isAuth
 	}))
 
-	// Derived count of pending invitations
+	// Query for pending phantom claims (only when authenticated and in a crew)
+	const pendingPhantomClaimsQuery = createQuery(() => ({
+		...crewQueries.pendingPhantomClaims(),
+		enabled: isAuth && crewStore.isInCrew
+	}))
+
+	// Derived counts
 	const pendingInvitationCount = $derived(pendingInvitationsQuery.data?.length ?? 0)
+	const pendingPhantomClaimCount = $derived(pendingPhantomClaimsQuery.data?.length ?? 0)
+	const totalNotificationCount = $derived(pendingInvitationCount + pendingPhantomClaimCount)
 
 	// Handle logout
 	async function handleLogout() {
@@ -267,9 +275,9 @@
 									height="24"
 								/>
 							{/if}
-							{#if pendingInvitationCount > 0}
+							{#if totalNotificationCount > 0}
 								<span class="avatar-badge">
-									<NotificationBadge count={pendingInvitationCount} />
+									<NotificationBadge count={totalNotificationCount} />
 								</span>
 							{/if}
 						</span>
@@ -309,13 +317,11 @@
 								</DropdownItem>
 								<DropdownMenu.Separator class="dropdown-separator" />
 							{/if}
-							{#if isAuth && !crewStore.isInCrew}
+							{#if isAuth && totalNotificationCount > 0}
 								<DropdownItem>
 									<button class="dropdown-button-with-badge" onclick={() => (invitationsModalOpen = true)}>
-										<span>Invitations</span>
-										{#if pendingInvitationCount > 0}
-											<NotificationBadge count={pendingInvitationCount} showCount />
-										{/if}
+										<span>Notifications</span>
+										<NotificationBadge count={totalNotificationCount} showCount />
 									</button>
 								</DropdownItem>
 							{/if}
@@ -385,12 +391,13 @@
 	/>
 {/if}
 
-<!-- Invitations Modal -->
+<!-- Notifications Modal (invitations + phantom claims) -->
 {#if isAuth}
 	<InvitationsModal
 		bind:open={invitationsModalOpen}
 		invitations={pendingInvitationsQuery.data ?? []}
-		isLoading={pendingInvitationsQuery.isLoading}
+		phantomClaims={pendingPhantomClaimsQuery.data ?? []}
+		isLoading={pendingInvitationsQuery.isLoading || pendingPhantomClaimsQuery.isLoading}
 	/>
 {/if}
 
