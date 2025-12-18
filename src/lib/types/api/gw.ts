@@ -72,6 +72,8 @@ export interface GwIndividualScore {
   round: GwRound
   score: number
   isCumulative: boolean
+  excused: boolean
+  excuseReason?: string // Only returned to crew officers
   playerName: string
   playerType: PlayerType
   createdAt?: string
@@ -125,6 +127,8 @@ export interface CreateIndividualScoreInput {
   round: GwRound
   score: number
   isCumulative?: boolean
+  excused?: boolean
+  excuseReason?: string
 }
 
 // Batch score entry
@@ -135,6 +139,8 @@ export interface BatchScoreEntry {
   round: GwRound
   score: number
   isCumulative?: boolean
+  excused?: boolean
+  excuseReason?: string
 }
 
 export interface BatchIndividualScoresInput {

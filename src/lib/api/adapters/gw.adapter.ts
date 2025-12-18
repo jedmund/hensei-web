@@ -194,6 +194,24 @@ export class GwAdapter extends BaseAdapter {
     return response.crewScore
   }
 
+  /**
+   * Delete a crew score
+   */
+  async deleteCrewScore(
+    participationId: string,
+    scoreId: string,
+    options?: RequestOptions
+  ): Promise<void> {
+    await this.request<void>(
+      `/crew/gw_participations/${participationId}/crew_scores/${scoreId}`,
+      {
+        ...options,
+        method: 'DELETE'
+      }
+    )
+    this.clearCache(`/crew/gw_participations/${participationId}`)
+  }
+
   // ==================== Individual Score Operations ====================
 
   /**

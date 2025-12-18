@@ -1,7 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { goto } from '$app/navigation'
+	import { goto, replaceState } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery, createMutation, useQueryClient } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
@@ -18,7 +18,17 @@
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import EditScoreModal from '$lib/components/crew/EditScoreModal.svelte'
-	import { GW_ROUND_LABELS, type GwRound, type GwIndividualScore } from '$lib/types/api/gw'
+	import EditCrewScoreModal from '$lib/components/crew/EditCrewScoreModal.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import {
+		GW_ROUND_LABELS,
+		type GwRound,
+		type GwIndividualScore,
+		type GwCrewScore,
+		type CreateCrewScoreInput,
+		type UpdateCrewScoreInput
+	} from '$lib/types/api/gw'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -43,6 +53,26 @@
 	const participation = $derived(eventQuery.data?.participation)
 	const membersDuringEvent = $derived(eventQuery.data?.membersDuringEvent ?? [])
 	const phantomPlayers = $derived(eventQuery.data?.phantomPlayers ?? [])
+
+	// Tab state for switching between Individual and Crew honors
+	// Initialize from URL query param
+	const urlHasCrew = $page.url.searchParams.has('crew')
+	let activeTab = $state<'individual' | 'crew'>(urlHasCrew ? 'crew' : 'individual')
+
+	// Update URL when tab changes
+	function handleTabChange(newTab: 'individual' | 'crew') {
+		activeTab = newTab
+		const url = new URL($page.url)
+		if (newTab === 'crew') {
+			url.searchParams.set('crew', '')
+		} else {
+			url.searchParams.delete('crew')
+		}
+		replaceState(url, {})
+	}
+
+	// Crew scores from participation (Finals Day 1-4 only: rounds 2-5)
+	const crewScores = $derived(participation?.crewScores ?? [])
 
 	// Element labels (matches GranblueEnums::ELEMENTS)
 	const elementLabels: Record<number, string> = {
@@ -156,6 +186,8 @@
 		4: '',
 		5: ''
 	})
+	let isExcused = $state(false)
+	let excuseReason = $state('')
 	let isSubmitting = $state(false)
 
 	// Player type tracking - value format is "member:id" or "phantom:id"
@@ -255,7 +287,9 @@
 					...input,
 					round: 0, // Cumulative scores go to preliminaries
 					score,
-					isCumulative: true
+					isCumulative: true,
+					excused: isExcused,
+					excuseReason: isExcused ? excuseReason : undefined
 				})
 			} else {
 				// Batch add per-round scores
@@ -272,7 +306,9 @@
 							...entry,
 							round,
 							score: value,
-							isCumulative: false
+							isCumulative: false,
+							excused: isExcused,
+							excuseReason: isExcused ? excuseReason : undefined
 						})
 					}
 				}
@@ -305,6 +341,8 @@
 		isCumulative = true
 		cumulativeScore = ''
 		roundScores = { 0: '', 1: '', 2: '', 3: '', 4: '', 5: '' }
+		isExcused = false
+		excuseReason = ''
 		isSubmitting = false
 	}
 
@@ -325,6 +363,23 @@
 		editingPlayer = player
 		showEditScoreModal = true
 	}
+
+	// ==================== Crew Score Modal ====================
+	let showCrewScoreModal = $state(false)
+	let editingCrewScoreRound = $state<GwRound | null>(null)
+	let editingCrewScore = $state<GwCrewScore | null>(null)
+
+	function openCrewScoreModal(round: GwRound, existingScore?: GwCrewScore) {
+		editingCrewScoreRound = round
+		editingCrewScore = existingScore ?? null
+		showCrewScoreModal = true
+	}
+
+	function closeCrewScoreModal() {
+		showCrewScoreModal = false
+		editingCrewScoreRound = null
+		editingCrewScore = null
+	}
 </script>
 
 <svelte:head>
@@ -343,7 +398,7 @@
 				<Button variant="secondary" size="small" onclick={handleBack}>Back to Crew</Button>
 			</div>
 		{:else}
-			<CrewHeader title="GW #{gwEvent.eventNumber}">
+			<CrewHeader title="GW #{gwEvent.eventNumber}" backHref="/crew">
 				{#snippet belowTitle()}
 					<div class="event-meta">
 						<span class="element-badge element-{elementColors[gwEvent.element]}">
@@ -353,9 +408,15 @@
 							{formatDate(gwEvent.startDate)} – {formatDate(gwEvent.endDate)}
 						</span>
 					</div>
+					<div class="tab-control">
+						<SegmentedControl value={activeTab} onValueChange={(v) => handleTabChange(v as 'individual' | 'crew')} size="small" variant="background" grow>
+							<Segment value="individual">Individual</Segment>
+							<Segment value="crew">Crew</Segment>
+						</SegmentedControl>
+					</div>
 				{/snippet}
 				{#snippet actions()}
-					{#if crewStore.isOfficer && gwEvent.status !== 'upcoming'}
+					{#if crewStore.isOfficer && gwEvent.status !== 'upcoming' && activeTab === 'individual'}
 						<Button variant="primary" size="small" onclick={openScoreModal}>Add Score</Button>
 					{/if}
 				{/snippet}
@@ -369,8 +430,8 @@
 					{/if}
 				</div>
 			{:else}
-				<!-- Score summary -->
-				{#if participation.totalScore !== undefined}
+				<!-- Score summary (crew tab only) -->
+				{#if activeTab === 'crew' && participation.totalScore !== undefined}
 					<div class="stats-row">
 						<div class="stat">
 							<span class="stat-value">{formatScore(participation.totalScore)}</span>
@@ -387,52 +448,142 @@
 					</div>
 				{/if}
 
-				<!-- Player scores -->
-				<div class="section-header">
-					<span class="section-title">Individual Scores</span>
-				</div>
+				<!-- Individual Honors Tab -->
+				{#if activeTab === 'individual'}
+					<div class="section-header">
+						<span class="section-title">Individual Scores</span>
+					</div>
 
-				{#if playerScores.length > 0}
-					<ul class="player-list">
-						{#each playerScores as player, index}
-							<li class="player-item" class:retired={player.isRetired}>
-								<div class="player-info">
-									<span class="player-rank">{index + 1}</span>
-									<span class="player-name">{player.name}</span>
-									{#if player.isRetired}
-										<span class="player-badge retired">Retired</span>
+					{#if playerScores.length > 0}
+						<ul class="player-list">
+							{#each playerScores as player, index}
+								<li class="player-item" class:retired={player.isRetired}>
+									<div class="player-info">
+										<span class="player-rank">{index + 1}</span>
+										<span class="player-name">{player.name}</span>
+										{#if player.isRetired}
+											<span class="player-badge retired">Retired</span>
+										{/if}
+										{#if player.scores.some((s) => s.excused)}
+											<span class="player-badge excused">Excused</span>
+										{/if}
+									</div>
+									{#if player.type === 'phantom'}
+										<span class="player-type">Phantom</span>
+									{/if}
+									<div class="player-actions">
+										<span class="player-score">{formatScore(player.totalScore)}</span>
+										{#if crewStore.isOfficer && player.scores.length > 0}
+											<DropdownMenu>
+												{#snippet trigger({ props })}
+													<Button
+														variant="secondary"
+														size="small"
+														iconOnly
+														icon="ellipsis"
+														{...props}
+													/>
+												{/snippet}
+												{#snippet menu()}
+													{#if player.type === 'member'}
+														<DropdownMenuBase.Item
+															class="dropdown-menu-item"
+															onclick={() => goto(`/${player.name}`)}
+														>
+															View profile
+														</DropdownMenuBase.Item>
+													{/if}
+													<DropdownMenuBase.Item
+														class="dropdown-menu-item"
+														onclick={() => openEditScoreModal(player)}
+													>
+														Edit score...
+													</DropdownMenuBase.Item>
+												{/snippet}
+											</DropdownMenu>
+										{/if}
+									</div>
+								</li>
+							{/each}
+						</ul>
+					{:else}
+						<p class="empty-state">No scores recorded yet</p>
+					{/if}
+				{/if}
+
+				<!-- Crew Honors Tab -->
+				{#if activeTab === 'crew'}
+					<div class="crew-score-table">
+						<div class="crew-score-header">
+							<span class="col-round">Round</span>
+							<span class="col-our-score">Our Score</span>
+							<span class="col-their-score">Their Score</span>
+							<span class="col-actions"></span>
+						</div>
+						{#each [2, 3, 4, 5] as round (round)}
+							{@const score = crewScores.find((s) => s.round === round)}
+							<div class="crew-score-row">
+								<div class="col-round">
+									<span class="round-label">{GW_ROUND_LABELS[round as GwRound]}</span>
+									{#if score?.victory !== undefined && score.victory !== null}
+										<span class="result-badge" class:win={score.victory} class:loss={!score.victory}>
+											{score.victory ? 'Win' : 'Loss'}
+										</span>
 									{/if}
 								</div>
-								{#if player.type === 'phantom'}
-									<span class="player-type">Phantom</span>
-								{/if}
-								<span class="player-score">{formatScore(player.totalScore)}</span>
-								{#if crewStore.isOfficer && player.scores.length > 0}
-									<DropdownMenu>
-										{#snippet trigger({ props })}
-											<Button
-												variant="secondary"
-												size="small"
-												iconOnly
-												icon="ellipsis"
-												{...props}
-											/>
-										{/snippet}
-										{#snippet menu()}
-											<DropdownMenuBase.Item
-												class="dropdown-menu-item"
-												onclick={() => openEditScoreModal(player)}
-											>
-												Edit score...
-											</DropdownMenuBase.Item>
-										{/snippet}
-									</DropdownMenu>
-								{/if}
-							</li>
+								<div class="col-our-score">
+									{#if score}
+										<span class="score-value" class:winner={score.victory === true}>{formatScore(score.crewScore)}</span>
+									{:else}
+										<span class="score-empty">—</span>
+									{/if}
+								</div>
+								<div class="col-their-score">
+									{#if score}
+										{#if score.opponentScore !== null}
+											<span class="score-value" class:winner={score.victory === false}>{formatScore(score.opponentScore)}</span>
+										{/if}
+										{#if score.opponentName}
+											<span class="opponent-name">({score.opponentName})</span>
+										{/if}
+									{:else}
+										<span class="score-empty">—</span>
+									{/if}
+								</div>
+								<div class="col-actions">
+									{#if score}
+										{#if crewStore.isOfficer}
+											<DropdownMenu>
+												{#snippet trigger({ props })}
+													<Button
+														variant="secondary"
+														size="small"
+														iconOnly
+														icon="ellipsis"
+														{...props}
+													/>
+												{/snippet}
+												{#snippet menu()}
+													<DropdownMenuBase.Item
+														class="dropdown-menu-item"
+														onclick={() => openCrewScoreModal(round as GwRound, score)}
+													>
+														Edit score...
+													</DropdownMenuBase.Item>
+												{/snippet}
+											</DropdownMenu>
+										{/if}
+									{:else}
+										{#if crewStore.isOfficer}
+											<Button size="small" onclick={() => openCrewScoreModal(round as GwRound)}>
+												Record
+											</Button>
+										{/if}
+									{/if}
+								</div>
+							</div>
 						{/each}
-					</ul>
-				{:else}
-					<p class="empty-state">No scores recorded yet</p>
+					</div>
 				{/if}
 			{/if}
 		{/if}
@@ -485,6 +636,21 @@
 				</div>
 			{/if}
 
+			<div class="excused-section">
+				<label class="checkbox-row">
+					<Checkbox bind:checked={isExcused} size="small" contained />
+					<span>Excused?</span>
+				</label>
+				{#if isExcused}
+					<textarea
+						class="excuse-textarea"
+						bind:value={excuseReason}
+						placeholder="Excusal reason (optional)"
+						rows="2"
+					></textarea>
+				{/if}
+			</div>
+
 			{#if addScoreMutation.isError}
 				<p class="error-message">
 					{addScoreMutation.error?.message ?? 'Failed to add score'}
@@ -504,6 +670,28 @@
 		}}
 	/>
 </Dialog>
+
+<!-- Edit Score Modal -->
+{#if participation?.id && editingPlayer}
+	<EditScoreModal
+		bind:open={showEditScoreModal}
+		participationId={participation.id}
+		eventNumber={eventNumber ?? ''}
+		playerName={editingPlayer.name}
+		scores={editingPlayer.scores}
+	/>
+{/if}
+
+<!-- Edit Crew Score Modal -->
+{#if participation?.id && editingCrewScoreRound !== null}
+	<EditCrewScoreModal
+		bind:open={showCrewScoreModal}
+		participationId={participation.id}
+		eventNumber={eventNumber ?? ''}
+		round={editingCrewScoreRound}
+		existingScore={editingCrewScore}
+	/>
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
@@ -710,6 +898,11 @@
 			background: rgba(0, 0, 0, 0.04);
 			color: var(--text-secondary);
 		}
+
+		&.excused {
+			background: var(--color-yellow-light, #fef9c3);
+			color: var(--color-yellow-dark, #854d0e);
+		}
 	}
 
 	.player-type {
@@ -717,6 +910,12 @@
 		color: var(--text-tertiary);
 		margin-left: auto;
 		margin-right: spacing.$unit;
+	}
+
+	.player-actions {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
 	}
 
 	.player-score {
@@ -758,9 +957,153 @@
 		border-radius: layout.$card-corner;
 	}
 
+	.excused-section {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+	}
+
+	.excuse-textarea {
+		width: 100%;
+		padding: spacing.$unit;
+		border: none;
+		border-radius: layout.$input-corner;
+		font-size: typography.$font-small;
+		font-family: inherit;
+		background: var(--input-bound-bg);
+		color: var(--text-primary);
+		resize: vertical;
+		min-height: 60px;
+
+		&::placeholder {
+			color: var(--text-tertiary);
+		}
+
+		&:hover {
+			background: var(--input-bound-bg-hover);
+		}
+
+		&:focus {
+			outline: none;
+			background: var(--input-bound-bg-hover);
+		}
+	}
+
 	.error-message {
 		color: colors.$error;
 		font-size: typography.$font-small;
 		margin: 0;
 	}
+
+	// Tab control
+	.tab-control {
+		margin-top: spacing.$unit;
+	}
+
+	// Crew scores table
+	.crew-score-table {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.crew-score-header {
+		display: flex;
+		align-items: center;
+		padding: spacing.$unit spacing.$unit-2x;
+		background: rgba(0, 0, 0, 0.02);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-secondary);
+	}
+
+	.crew-score-row {
+		display: flex;
+		align-items: center;
+		padding: spacing.$unit spacing.$unit-2x;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+		transition: background-color 0.15s;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&:hover {
+			background: rgba(0, 0, 0, 0.02);
+		}
+	}
+
+	.col-round {
+		flex: 2;
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+	}
+
+	.col-our-score {
+		width: 120px;
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+	}
+
+	.col-their-score {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+	}
+
+	.col-actions {
+		width: 80px;
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.round-label {
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+	}
+
+	.score-value {
+		font-size: typography.$font-small;
+		font-variant-numeric: tabular-nums;
+
+		&.winner {
+			font-weight: typography.$medium;
+		}
+	}
+
+	.score-empty {
+		font-size: typography.$font-small;
+		color: var(--text-tertiary);
+	}
+
+	.opponent-name {
+		font-size: typography.$font-small;
+		color: var(--text-tertiary);
+	}
+
+	.result-badge {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 24px;
+		height: 24px;
+		padding: 0 spacing.$unit-half;
+		border-radius: layout.$item-corner-small;
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+
+		&.win {
+			background: var(--color-green-light, #dcfce7);
+			color: var(--color-green-dark, #166534);
+		}
+
+		&.loss {
+			background: colors.$error--bg--light;
+			color: colors.$error;
+		}
+	}
+
 </style>
