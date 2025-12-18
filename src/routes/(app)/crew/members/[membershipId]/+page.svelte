@@ -2,13 +2,13 @@
 
 <script lang="ts">
 	import { page } from '$app/stores'
-	import { goto } from '$app/navigation'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { gwQueries } from '$lib/api/queries/gw.queries'
-	import { crewStore } from '$lib/stores/crew.store.svelte'
-	import { formatScore } from '$lib/utils/gw'
-	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
+	import { formatScore, toPlayerHistoryChartData } from '$lib/utils/gw'
+	import { formatDateJST } from '$lib/utils/date'
+	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
+	import GwEventScoreRow from '$lib/components/crew/GwEventScoreRow.svelte'
+	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
 
 	const membershipId = $derived($page.params.membershipId ?? '')
 
@@ -16,104 +16,122 @@
 	const scoresQuery = createQuery(() => gwQueries.memberGwScores(membershipId))
 
 	const memberName = $derived(scoresQuery.data?.member?.user?.username ?? 'Member')
+
+	// Transform data for chart
+	const historyChartData = $derived(
+		scoresQuery.data?.eventScores
+			? toPlayerHistoryChartData(scoresQuery.data.eventScores, formatDateJST)
+			: []
+	)
 </script>
 
-<div class="scores-page">
-	<header class="page-header">
-		<Button variant="ghost" size="small" icon="arrow-left" onclick={() => history.back()}>
-			Back
-		</Button>
-		<h1>{memberName}</h1>
-	</header>
+<svelte:head>
+	<title>{memberName} / granblue.team</title>
+</svelte:head>
 
-	{#if scoresQuery.isLoading}
-		<div class="loading">Loading scores...</div>
-	{:else if scoresQuery.isError}
-		<div class="error">Failed to load scores</div>
-	{:else if scoresQuery.data}
-		{@const data = scoresQuery.data}
-
-		<div class="summary">
-			<div class="stat">
-				<span class="stat-label">Total Honors</span>
-				<span class="stat-value">{formatScore(data.grandTotal)}</span>
+<div class="page">
+	<div class="card">
+		{#if scoresQuery.isLoading}
+			<div class="loading-state">
+				<p>Loading...</p>
 			</div>
-			<div class="stat">
-				<span class="stat-label">Events</span>
-				<span class="stat-value">{data.eventScores.length}</span>
+		{:else if scoresQuery.isError}
+			<div class="error-state">
+				<p>Failed to load scores</p>
 			</div>
-		</div>
+		{:else if scoresQuery.data}
+			{@const data = scoresQuery.data}
 
-		{#if data.eventScores.length === 0}
-			<div class="empty">No GW scores recorded yet.</div>
-		{:else}
-			<ul class="events-list">
-				{#each data.eventScores as eventScore (eventScore.gwEvent.id)}
-					<li class="event-item">
-						<button
-							class="event-button"
-							onclick={() => goto(`/crew/events/${eventScore.gwEvent.eventNumber}`)}
-						>
-							<div class="event-info">
-								<span class="event-number">GW #{eventScore.gwEvent.eventNumber}</span>
-								<ElementBadge element={eventScore.gwEvent.element} />
-							</div>
-							<span class="event-score">{formatScore(eventScore.totalScore)}</span>
-						</button>
-					</li>
-				{/each}
-			</ul>
+			<CrewHeader title={memberName} backHref="/crew/members" />
+
+			<div class="stats-row">
+				<div class="stat">
+					<span class="stat-value">{formatScore(data.grandTotal)}</span>
+					<span class="stat-label">Total Honors</span>
+				</div>
+				<div class="stat">
+					<span class="stat-value">{data.eventScores.length}</span>
+					<span class="stat-label">Events</span>
+				</div>
+			</div>
+
+			{#if historyChartData.length > 0}
+				<div class="chart-section">
+					<GwCrewHistoryChart data={historyChartData} height={300} />
+				</div>
+			{/if}
+
+			{#if data.eventScores.length === 0}
+				<div class="empty-state">No GW scores recorded yet.</div>
+			{:else}
+				<div class="section-header">
+					<span class="section-title">Event History</span>
+				</div>
+
+				<ul class="event-list">
+					{#each data.eventScores as eventScore (eventScore.gwEvent.id)}
+						<GwEventScoreRow {eventScore} />
+					{/each}
+				</ul>
+			{/if}
 		{/if}
-	{/if}
+	</div>
 </div>
 
 <style lang="scss">
+	@use '$src/themes/colors' as colors;
+	@use '$src/themes/effects' as effects;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 
-	.scores-page {
-		padding: spacing.$unit-2x;
+	.page {
+		margin: 0 auto;
+		max-width: var(--main-max-width);
 	}
 
-	.page-header {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit-2x;
-		margin-bottom: spacing.$unit-3x;
-
-		h1 {
-			font-size: typography.$font-large;
-			font-weight: typography.$bold;
-			margin: 0;
-		}
-	}
-
-	.loading,
-	.error,
-	.empty {
-		text-align: center;
-		padding: spacing.$unit-4x;
-		color: var(--text-secondary);
-	}
-
-	.error {
-		color: var(--color-error);
-	}
-
-	.summary {
-		display: flex;
-		gap: spacing.$unit-4x;
-		margin-bottom: spacing.$unit-3x;
-		padding: spacing.$unit-2x;
+	.card {
 		background: var(--card-bg);
-		border-radius: layout.$card-corner;
+		border: 0.5px solid rgba(0, 0, 0, 0.18);
+		border-radius: layout.$page-corner;
+		box-shadow: effects.$page-elevation;
+		overflow: hidden;
+	}
+
+	.loading-state,
+	.error-state {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: spacing.$unit-4x;
+		gap: spacing.$unit-2x;
+		color: var(--text-secondary);
+		font-size: typography.$font-small;
+	}
+
+	.stats-row {
+		display: flex;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 	}
 
 	.stat {
+		flex: 1;
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-half;
+		align-items: center;
+		padding: spacing.$unit-2x;
+		border-right: 1px solid rgba(0, 0, 0, 0.08);
+
+		&:last-child {
+			border-right: none;
+		}
+	}
+
+	.stat-value {
+		font-size: typography.$font-medium;
+		font-weight: typography.$medium;
+		margin-bottom: 2px;
 	}
 
 	.stat-label {
@@ -121,59 +139,35 @@
 		color: var(--text-secondary);
 	}
 
-	.stat-value {
-		font-size: typography.$font-large;
-		font-weight: typography.$bold;
-		font-variant-numeric: tabular-nums;
-	}
-
-	.events-list {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit;
-	}
-
-	.event-item {
-		border-radius: layout.$item-corner;
-		overflow: hidden;
-	}
-
-	.event-button {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		width: 100%;
+	.chart-section {
 		padding: spacing.$unit-2x;
-		background: var(--card-bg);
-		border: none;
-		border-radius: layout.$item-corner;
-		cursor: pointer;
-		transition: background-color 0.15s;
-		text-align: left;
-
-		&:hover {
-			background: var(--card-bg-hover);
-		}
+		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 	}
 
-	.event-info {
+	.section-header {
 		display: flex;
 		align-items: center;
-		gap: spacing.$unit-2x;
+		padding: spacing.$unit spacing.$unit-2x;
+		background: rgba(0, 0, 0, 0.02);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 	}
 
-	.event-number {
-		font-size: typography.$font-regular;
+	.section-title {
+		font-size: typography.$font-small;
 		font-weight: typography.$medium;
-	}
-
-	.event-score {
-		font-size: typography.$font-regular;
-		font-weight: typography.$medium;
-		font-variant-numeric: tabular-nums;
 		color: var(--text-secondary);
+	}
+
+	.empty-state {
+		text-align: center;
+		color: var(--text-secondary);
+		padding: spacing.$unit-3x;
+		font-size: typography.$font-small;
+	}
+
+	.event-list {
+		list-style: none;
+		margin: 0;
+		padding: spacing.$unit;
 	}
 </style>
