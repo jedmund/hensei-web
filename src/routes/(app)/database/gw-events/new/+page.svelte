@@ -113,15 +113,13 @@
 				label="Start date"
 				bind:value={editData.startDate}
 				editable={true}
-				type="text"
-				placeholder="YYYY-MM-DD"
+				type="date"
 			/>
 			<DetailItem
 				label="End date"
 				bind:value={editData.endDate}
 				editable={true}
-				type="text"
-				placeholder="YYYY-MM-DD"
+				type="date"
 			/>
 		</DetailsContainer>
 	</section>
