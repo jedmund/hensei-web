@@ -65,6 +65,12 @@
 		enabled: crewStore.isOfficer && !!crewStore.crew?.id
 	}))
 
+	// Query for phantoms (needed for pending claims badge when not viewing phantom/all filter)
+	const phantomsQuery = createQuery(() => ({
+		...crewQueries.members('phantom'),
+		enabled: filter !== 'phantom' && filter !== 'all' && crewStore.isOfficer
+	}))
+
 	// Calculate total active roster size (members + phantoms)
 	const activeRosterSize = $derived.by(() => {
 		// Use active filter data if viewing active, otherwise use dedicated query
@@ -308,9 +314,14 @@
 	)
 
 	// Get phantoms with pending claims (assigned but not confirmed)
-	const pendingClaimPhantoms = $derived(
-		membersQuery.data?.phantoms?.filter((p) => p.claimedBy && !p.claimConfirmed) ?? []
-	)
+	// Use phantom query when not viewing phantom/all filter to ensure badge always has data
+	const pendingClaimPhantoms = $derived.by(() => {
+		let phantoms = membersQuery.data?.phantoms
+		if (filter !== 'phantom' && filter !== 'all') {
+			phantoms = phantomsQuery.data?.phantoms
+		}
+		return phantoms?.filter((p) => p.claimedBy && !p.claimConfirmed) ?? []
+	})
 </script>
 
 <svelte:head>
@@ -329,6 +340,9 @@
 							onclick={() => handleFilterChange(option.value)}
 						>
 							{option.label}
+							{#if option.value === 'pending' && (pendingInvitationsCount > 0 || pendingClaimPhantoms.length > 0)}
+								<span class="tab-badge">{pendingInvitationsCount + pendingClaimPhantoms.length}</span>
+							{/if}
 						</button>
 					{/each}
 				</div>
@@ -345,7 +359,7 @@
 					</Button>
 					<DropdownMenu>
 						{#snippet trigger({ props })}
-							<Button variant="secondary" size="small" iconOnly icon="ellipsis" {...props} />
+							<Button variant="ghost" size="small" iconOnly icon="ellipsis" {...props} />
 						{/snippet}
 						{#snippet menu()}
 							<DropdownMenuBase.Item
@@ -360,39 +374,65 @@
 			{/snippet}
 		</CrewHeader>
 
-		<!-- Pending Invitations (shown when filter is 'pending') -->
+		<!-- Pending tab (invitations and claims) -->
 		{#if filter === 'pending'}
-			{#if invitationsQuery.isLoading}
+			{#if invitationsQuery.isLoading || phantomsQuery.isLoading}
 				<div class="loading-state">
 					<p>Loading...</p>
 				</div>
-			{:else if invitationsQuery.data && invitationsQuery.data.length > 0}
-				<ul class="member-list">
-					{#each invitationsQuery.data as invitation}
-						{@const expired = isInvitationExpired(invitation.expiresAt)}
-						<li class="invitation-row" class:expired>
-							<div class="invitation-info">
-								<span class="invited-user">{invitation.user?.username ?? 'Unknown'}</span>
-								{#if invitation.invitedBy}
-									<span class="invited-by">
-										Invited by {invitation.invitedBy.username}
-									</span>
-								{/if}
-							</div>
-							<div class="invitation-status">
-								{#if expired}
-									<span class="status-badge expired">Expired</span>
-								{:else}
-									<span class="expires-text">Expires {formatDate(invitation.expiresAt)}</span>
-								{/if}
-							</div>
-						</li>
-					{/each}
-				</ul>
 			{:else}
-				<div class="empty-state">
-					<p>No pending invitations.</p>
-				</div>
+				{#if invitationsQuery.data && invitationsQuery.data.length > 0}
+					<div class="section-divider">
+						<span>Pending Invitations ({invitationsQuery.data.length})</span>
+					</div>
+					<ul class="member-list">
+						{#each invitationsQuery.data as invitation}
+							{@const expired = isInvitationExpired(invitation.expiresAt)}
+							<li class="invitation-row" class:expired>
+								<div class="invitation-info">
+									<span class="invited-user">{invitation.user?.username ?? 'Unknown'}</span>
+									{#if invitation.invitedBy}
+										<span class="invited-by">
+											Invited by {invitation.invitedBy.username}
+										</span>
+									{/if}
+								</div>
+								<div class="invitation-status">
+									{#if expired}
+										<span class="status-badge expired">Expired</span>
+									{:else}
+										<span class="expires-text">Expires {formatDate(invitation.expiresAt)}</span>
+									{/if}
+								</div>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+
+				{#if pendingClaimPhantoms.length > 0}
+					<div class="section-divider pending-claims">
+						<span>Pending Claims ({pendingClaimPhantoms.length})</span>
+					</div>
+					<ul class="member-list">
+						{#each pendingClaimPhantoms as phantom}
+							<PhantomRow
+								{phantom}
+								currentUserId={crewStore.membership?.user?.id}
+								onEdit={() => openEditPhantomDialog(phantom)}
+								onDelete={() => openDeletePhantomDialog(phantom)}
+								onAssign={() => openAssignPhantomDialog(phantom)}
+								onAccept={() => openConfirmClaimDialog(phantom)}
+								onDecline={() => handleDeclineClaim(phantom)}
+							/>
+						{/each}
+					</ul>
+				{/if}
+
+				{#if (!invitationsQuery.data || invitationsQuery.data.length === 0) && pendingClaimPhantoms.length === 0}
+					<div class="empty-state">
+						<p>No pending items.</p>
+					</div>
+				{/if}
 			{/if}
 		{:else if membersQuery.isLoading}
 			<div class="loading-state">
@@ -418,26 +458,6 @@
 				</ul>
 			{:else if filter !== 'phantom'}
 				<p class="empty-state">No members found</p>
-			{/if}
-
-			<!-- Pending Claims Section (officers only) -->
-			{#if crewStore.isOfficer && pendingClaimPhantoms.length > 0 && (filter === 'all' || filter === 'phantom')}
-				<div class="section-divider pending-claims">
-					<span>Pending Claims ({pendingClaimPhantoms.length})</span>
-				</div>
-				<ul class="member-list">
-					{#each pendingClaimPhantoms as phantom}
-						<PhantomRow
-							{phantom}
-							currentUserId={crewStore.membership?.user?.id}
-							onEdit={() => openEditPhantomDialog(phantom)}
-							onDelete={() => openDeletePhantomDialog(phantom)}
-							onAssign={() => openAssignPhantomDialog(phantom)}
-							onAccept={() => openConfirmClaimDialog(phantom)}
-							onDecline={() => handleDeclineClaim(phantom)}
-						/>
-					{/each}
-				</ul>
 			{/if}
 
 			<!-- Phantom players -->
@@ -619,6 +639,9 @@
 	}
 
 	.filter-tab {
+		display: flex;
+		align-items: center;
+		gap: 4px;
 		padding: 4px spacing.$unit;
 		background: none;
 		border: none;
@@ -640,6 +663,15 @@
 			background: rgba(0, 0, 0, 0.06);
 			font-weight: typography.$medium;
 		}
+	}
+
+	.tab-badge {
+		background: var(--color-orange, #f97316);
+		color: white;
+		font-size: 11px;
+		font-weight: typography.$medium;
+		padding: 1px 6px;
+		border-radius: 10px;
 	}
 
 	.loading-state,
