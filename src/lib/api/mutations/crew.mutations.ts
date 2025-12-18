@@ -268,6 +268,23 @@ export function useConfirmPhantomClaim() {
       crewAdapter.confirmPhantomClaim(crewId, phantomId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: crewKeys.membersAll() })
+      queryClient.invalidateQueries({ queryKey: crewKeys.phantomClaims.pending() })
+    }
+  }))
+}
+
+/**
+ * Decline phantom claim mutation
+ */
+export function useDeclinePhantomClaim() {
+  const queryClient = useQueryClient()
+
+  return createMutation(() => ({
+    mutationFn: ({ crewId, phantomId }: { crewId: string; phantomId: string }) =>
+      crewAdapter.declinePhantomClaim(crewId, phantomId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: crewKeys.membersAll() })
+      queryClient.invalidateQueries({ queryKey: crewKeys.phantomClaims.pending() })
     }
   }))
 }

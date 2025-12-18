@@ -84,6 +84,18 @@ export const crewQueries = {
       queryFn: () => crewAdapter.getPendingInvitations(),
       staleTime: 1000 * 60 * 2, // 2 minutes
       gcTime: 1000 * 60 * 15 // 15 minutes
+    }),
+
+  /**
+   * Current user's pending phantom claims query options
+   * Returns phantoms assigned to the user that need to be accepted or declined
+   */
+  pendingPhantomClaims: () =>
+    queryOptions({
+      queryKey: ['phantom_claims', 'pending'] as const,
+      queryFn: () => crewAdapter.getPendingPhantomClaims(),
+      staleTime: 1000 * 60 * 2, // 2 minutes
+      gcTime: 1000 * 60 * 15 // 15 minutes
     })
 }
 
@@ -113,5 +125,9 @@ export const crewKeys = {
   invitations: {
     all: ['invitations'] as const,
     pending: () => ['invitations', 'pending'] as const
+  },
+  phantomClaims: {
+    all: ['phantom_claims'] as const,
+    pending: () => ['phantom_claims', 'pending'] as const
   }
 }

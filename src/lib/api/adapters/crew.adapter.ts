@@ -292,6 +292,33 @@ export class CrewAdapter extends BaseAdapter {
     this.clearCache('/crew/members')
     return response.phantom_player
   }
+
+  /**
+   * Decline claim of a phantom player (by the assigned user)
+   */
+  async declinePhantomClaim(crewId: string, phantomId: string, options?: RequestOptions): Promise<PhantomPlayer> {
+    const response = await this.request<{ phantom_player: PhantomPlayer }>(
+      `/crews/${crewId}/phantom_players/${phantomId}/decline_claim`,
+      {
+        ...options,
+        method: 'POST'
+      }
+    )
+    this.clearCache('/crew/members')
+    this.clearCache('/pending_phantom_claims')
+    return response.phantom_player
+  }
+
+  /**
+   * Get pending phantom claims for current user (phantoms assigned but not yet confirmed)
+   */
+  async getPendingPhantomClaims(options?: RequestOptions): Promise<PhantomPlayer[]> {
+    const response = await this.request<{ phantom_claims: PhantomPlayer[] }>(
+      '/pending_phantom_claims',
+      options
+    )
+    return response.phantom_claims
+  }
 }
 
 export const crewAdapter = new CrewAdapter(DEFAULT_ADAPTER_CONFIG)

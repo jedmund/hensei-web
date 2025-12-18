@@ -65,6 +65,8 @@ export interface PhantomPlayer {
   // From :with_scores view
   totalScore?: number
   scoreCount?: number
+  // From :with_crew view
+  crew?: CrewMinimal
 }
 
 // CrewInvitation from CrewInvitationBlueprint
