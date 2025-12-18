@@ -31,9 +31,11 @@
 	const isTopFive = $derived(rank <= 5)
 
 	function handleRowClick() {
+		// For members, use username (stored in name) for cleaner URLs
+		// For phantoms, use phantom ID since they don't have usernames
 		const path =
 			player.type === 'member'
-				? `/crew/members/${player.id}`
+				? `/crew/members/${player.name}`
 				: `/crew/phantoms/${player.id}`
 		goto(path)
 	}

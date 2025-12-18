@@ -10,10 +10,10 @@
 	import GwEventScoreRow from '$lib/components/crew/GwEventScoreRow.svelte'
 	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
 
-	const membershipId = $derived($page.params.membershipId ?? '')
+	const username = $derived($page.params.username ?? '')
 
 	// Query for member's GW scores
-	const scoresQuery = createQuery(() => gwQueries.memberGwScores(membershipId))
+	const scoresQuery = createQuery(() => gwQueries.memberGwScoresByUsername(username))
 
 	const memberName = $derived(scoresQuery.data?.member?.user?.username ?? 'Member')
 

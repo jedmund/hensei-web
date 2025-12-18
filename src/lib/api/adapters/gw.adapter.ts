@@ -341,11 +341,22 @@ export class GwAdapter extends BaseAdapter {
   // ==================== Member/Phantom Score History ====================
 
   /**
-   * Get all GW scores for a specific crew member
+   * Get all GW scores for a specific crew member by membership ID
    */
   async getMemberGwScores(membershipId: string, options?: RequestOptions): Promise<MemberGwScores> {
     const response = await this.request<MemberGwScores>(
       `/crew/memberships/${membershipId}/gw_scores`,
+      options
+    )
+    return response
+  }
+
+  /**
+   * Get all GW scores for a crew member by username
+   */
+  async getMemberGwScoresByUsername(username: string, options?: RequestOptions): Promise<MemberGwScores> {
+    const response = await this.request<MemberGwScores>(
+      `/crew/memberships/${username}/gw_scores`,
       options
     )
     return response
