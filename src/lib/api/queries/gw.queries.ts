@@ -80,6 +80,34 @@ export const gwQueries = {
       enabled: !!participationId,
       staleTime: 1000 * 60 * 2, // 2 minutes - scores change during event
       gcTime: 1000 * 60 * 15 // 15 minutes
+    }),
+
+  /**
+   * Member's GW scores history query options
+   *
+   * @param membershipId - Crew membership ID
+   */
+  memberGwScores: (membershipId: string) =>
+    queryOptions({
+      queryKey: ['crew', 'member', membershipId, 'gw_scores'] as const,
+      queryFn: () => gwAdapter.getMemberGwScores(membershipId),
+      enabled: !!membershipId,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 30 // 30 minutes
+    }),
+
+  /**
+   * Phantom's GW scores history query options
+   *
+   * @param phantomId - Phantom player ID
+   */
+  phantomGwScores: (phantomId: string) =>
+    queryOptions({
+      queryKey: ['crew', 'phantom', phantomId, 'gw_scores'] as const,
+      queryFn: () => gwAdapter.getPhantomGwScores(phantomId),
+      enabled: !!phantomId,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 30 // 30 minutes
     })
 }
 
@@ -105,5 +133,7 @@ export const gwKeys = {
   events: () => [...gwKeys.all, 'events'] as const,
   event: (eventId: string) => [...gwKeys.all, 'events', eventId] as const,
   participationsAll: () => [...gwKeys.all, 'participations'] as const,
-  participation: (participationId: string) => [...gwKeys.all, 'participations', participationId] as const
+  participation: (participationId: string) => [...gwKeys.all, 'participations', participationId] as const,
+  memberGwScores: (membershipId: string) => ['crew', 'member', membershipId, 'gw_scores'] as const,
+  phantomGwScores: (phantomId: string) => ['crew', 'phantom', phantomId, 'gw_scores'] as const
 }

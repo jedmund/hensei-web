@@ -148,6 +148,33 @@ export interface BatchIndividualScoresInput {
   scores: BatchScoreEntry[]
 }
 
+// Member/Phantom GW score history
+
+export interface GwEventMinimal {
+  id: string
+  element: number
+  eventNumber: number
+  startDate: string
+  endDate: string
+}
+
+export interface EventScoreSummary {
+  gwEvent: GwEventMinimal
+  totalScore: number
+}
+
+export interface MemberGwScores {
+  member: CrewMembership
+  eventScores: EventScoreSummary[]
+  grandTotal: number
+}
+
+export interface PhantomGwScores {
+  phantom: PhantomPlayer
+  eventScores: EventScoreSummary[]
+  grandTotal: number
+}
+
 // Aggregated data for visualization
 
 export interface GwLeaderboardEntry {

@@ -12,7 +12,9 @@ import type {
   CreateCrewScoreInput,
   UpdateCrewScoreInput,
   CreateIndividualScoreInput,
-  BatchIndividualScoresInput
+  BatchIndividualScoresInput,
+  MemberGwScores,
+  PhantomGwScores
 } from '$lib/types/api/gw'
 
 /**
@@ -334,6 +336,30 @@ export class GwAdapter extends BaseAdapter {
     )
     this.clearCache('/crew/gw_participations')
     return response.individualScores
+  }
+
+  // ==================== Member/Phantom Score History ====================
+
+  /**
+   * Get all GW scores for a specific crew member
+   */
+  async getMemberGwScores(membershipId: string, options?: RequestOptions): Promise<MemberGwScores> {
+    const response = await this.request<MemberGwScores>(
+      `/crew/memberships/${membershipId}/gw_scores`,
+      options
+    )
+    return response
+  }
+
+  /**
+   * Get all GW scores for a specific phantom player
+   */
+  async getPhantomGwScores(phantomId: string, options?: RequestOptions): Promise<PhantomGwScores> {
+    const response = await this.request<PhantomGwScores>(
+      `/crew/phantom_players/${phantomId}/gw_scores`,
+      options
+    )
+    return response
   }
 }
 
