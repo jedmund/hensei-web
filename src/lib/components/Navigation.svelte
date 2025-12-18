@@ -17,7 +17,6 @@
 	import UserSettingsModal from './UserSettingsModal.svelte'
 	import InvitationsModal from './crew/InvitationsModal.svelte'
 	import { authStore } from '$lib/stores/auth.store'
-	import { crewStore } from '$lib/stores/crew.store.svelte'
 
 	// Props from layout data
 	const {
@@ -145,6 +144,15 @@
 	// Database back button hover state
 	let databaseBackHovered = $state(false)
 
+	// Query for the user's crew (to determine if phantom claims should be fetched)
+	const myCrewQuery = createQuery(() => ({
+		...crewQueries.myCrew(),
+		enabled: isAuth
+	}))
+
+	// Derived: whether the user is in a crew (from query, not store)
+	const isInCrew = $derived(myCrewQuery.data != null)
+
 	// Query for pending invitations (only when authenticated)
 	const pendingInvitationsQuery = createQuery(() => ({
 		...crewQueries.pendingInvitations(),
@@ -154,7 +162,7 @@
 	// Query for pending phantom claims (only when authenticated and in a crew)
 	const pendingPhantomClaimsQuery = createQuery(() => ({
 		...crewQueries.pendingPhantomClaims(),
-		enabled: isAuth && crewStore.isInCrew
+		enabled: isAuth && isInCrew
 	}))
 
 	// Derived counts
@@ -264,23 +272,16 @@
 						aria-label="Your account"
 						class="profile-link"
 					>
-						<span class="avatar-container">
-							{#if avatarSrc}
-								<img
-									src={avatarSrc}
-									srcset={avatarSrcSet}
-									alt={username}
-									class="user-avatar"
-									width="24"
-									height="24"
-								/>
-							{/if}
-							{#if totalNotificationCount > 0}
-								<span class="avatar-badge">
-									<NotificationBadge count={totalNotificationCount} />
-								</span>
-							{/if}
-						</span>
+						{#if avatarSrc}
+							<img
+								src={avatarSrc}
+								srcset={avatarSrcSet}
+								alt={username}
+								class="user-avatar"
+								width="24"
+								height="24"
+							/>
+						{/if}
 						<span>{username}</span>
 					</a>
 				</li>
@@ -298,8 +299,14 @@
 
 			<li>
 				<DropdownMenu.Root>
-					<DropdownMenu.Trigger class="nav-more-trigger">
-						<Icon name="ellipsis" size={14} />
+					<DropdownMenu.Trigger
+						class="nav-more-trigger {totalNotificationCount > 0 ? `has-notification ${userElement ?? ''}` : ''}"
+					>
+						{#if totalNotificationCount > 0}
+							<Icon name="mail" size={18} />
+						{:else}
+							<Icon name="ellipsis" size={14} />
+						{/if}
 					</DropdownMenu.Trigger>
 
 					<DropdownMenu.Portal>
@@ -317,11 +324,13 @@
 								</DropdownItem>
 								<DropdownMenu.Separator class="dropdown-separator" />
 							{/if}
-							{#if isAuth && totalNotificationCount > 0}
+							{#if isAuth}
 								<DropdownItem>
 									<button class="dropdown-button-with-badge" onclick={() => (invitationsModalOpen = true)}>
 										<span>Notifications</span>
-										<NotificationBadge count={totalNotificationCount} showCount />
+										{#if totalNotificationCount > 0}
+											<NotificationBadge count={totalNotificationCount} showCount element={userElement} />
+										{/if}
 									</button>
 								</DropdownItem>
 							{/if}
@@ -556,24 +565,11 @@
 		align-items: center;
 		gap: spacing.$unit-half;
 
-		.avatar-container {
-			position: relative;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
 		.user-avatar {
 			width: 24px;
 			height: 24px;
 			border-radius: 50%;
 			object-fit: cover;
-		}
-
-		.avatar-badge {
-			position: absolute;
-			top: -2px;
-			right: -4px;
 		}
 	}
 
@@ -627,6 +623,70 @@
 
 		&:focus-visible {
 			box-shadow: 0 0 0 2px var(--accent-blue-focus);
+		}
+	}
+
+	// Notification pulse animation for the more trigger
+	@keyframes notification-pulse {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.6;
+		}
+	}
+
+	:global(.nav-more-trigger.has-notification) {
+		animation: notification-pulse 2s ease-in-out infinite;
+		// Default pulse color (no element selected)
+		background-color: var(--button-primary-bg);
+		color: white;
+		// Compensate for larger mail icon (18px vs 14px ellipsis)
+		padding: spacing.$unit calc(spacing.$unit + 3px);
+
+		&:hover {
+			animation: none;
+			background-color: var(--button-primary-bg-hover);
+		}
+	}
+
+	// Element-specific notification colors
+	:global(.nav-more-trigger.has-notification.wind) {
+		background-color: var(--wind-button-bg);
+		&:hover {
+			background-color: var(--wind-button-bg-hover);
+		}
+	}
+	:global(.nav-more-trigger.has-notification.fire) {
+		background-color: var(--fire-button-bg);
+		&:hover {
+			background-color: var(--fire-button-bg-hover);
+		}
+	}
+	:global(.nav-more-trigger.has-notification.water) {
+		background-color: var(--water-button-bg);
+		&:hover {
+			background-color: var(--water-button-bg-hover);
+		}
+	}
+	:global(.nav-more-trigger.has-notification.earth) {
+		background-color: var(--earth-button-bg);
+		&:hover {
+			background-color: var(--earth-button-bg-hover);
+		}
+	}
+	:global(.nav-more-trigger.has-notification.light) {
+		background-color: var(--light-button-bg);
+		color: black;
+		&:hover {
+			background-color: var(--light-button-bg-hover);
+		}
+	}
+	:global(.nav-more-trigger.has-notification.dark) {
+		background-color: var(--dark-button-bg);
+		&:hover {
+			background-color: var(--dark-button-bg-hover);
 		}
 	}
 
