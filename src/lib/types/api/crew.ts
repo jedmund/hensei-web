@@ -117,10 +117,12 @@ export interface UpdatePhantomPlayerInput {
   notes?: string
   joinedAt?: string
   retired?: boolean
+  retiredAt?: string
 }
 
 export interface UpdateMembershipInput {
   role?: CrewRole
   joinedAt?: string
   retired?: boolean
+  retiredAt?: string
 }

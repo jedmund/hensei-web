@@ -128,6 +128,7 @@
 	let editingPhantom = $state<PhantomPlayer | null>(null)
 	let editJoinDate = $state('')
 	let editRetired = $state(false)
+	let editRetiredAt = $state('')
 
 	// Dialog state for scout modal
 	let scoutModalOpen = $state(false)
@@ -204,6 +205,7 @@
 		// Format date for input
 		editJoinDate = member.joinedAt ? (member.joinedAt.split('T')[0] ?? '') : ''
 		editRetired = member.retired
+		editRetiredAt = member.retiredAt ? (member.retiredAt.split('T')[0] ?? '') : ''
 		editDialogOpen = true
 	}
 
@@ -212,6 +214,7 @@
 		editingMember = null
 		editJoinDate = phantom.joinedAt ? (phantom.joinedAt.split('T')[0] ?? '') : ''
 		editRetired = phantom.retired
+		editRetiredAt = phantom.retiredAt ? (phantom.retiredAt.split('T')[0] ?? '') : ''
 		editDialogOpen = true
 	}
 
@@ -223,13 +226,18 @@
 				await updateMembershipMutation.mutateAsync({
 					crewId: crewStore.crew.id,
 					membershipId: editingMember.id,
-					input: { joinedAt: editJoinDate, retired: editRetired }
+					input: {
+						joinedAt: editJoinDate,
+						retired: editRetired,
+						retiredAt: editRetired ? editRetiredAt || undefined : undefined
+					}
 				})
 			} else if (editingPhantom) {
 				// Call the phantom update directly through the adapter
 				await crewAdapter.updatePhantom(crewStore.crew.id, editingPhantom.id, {
 					joinedAt: editJoinDate,
-					retired: editRetired
+					retired: editRetired,
+					retiredAt: editRetired ? editRetiredAt || undefined : undefined
 				})
 				// Invalidate members query
 				membersQuery.refetch()
@@ -245,6 +253,7 @@
 		editingPhantom = null
 		editJoinDate = ''
 		editRetired = false
+		editRetiredAt = ''
 	}
 
 	function openDeletePhantomDialog(phantom: PhantomPlayer) {
@@ -555,6 +564,15 @@
 							<Switch bind:checked={editRetired} name="retired" />
 						{/snippet}
 					</SettingsRow>
+					{#if editRetired}
+						<div class="form-field">
+							<label for="retiredAt">Retired date</label>
+							<input id="retiredAt" type="date" bind:value={editRetiredAt} class="date-input" />
+						</div>
+						<p class="help-text">
+							This date is used to determine which events a retired player was active for.
+						</p>
+					{/if}
 				</div>
 			</div>
 		</ModalBody>
