@@ -30,6 +30,7 @@ export interface GwEvent {
   endDate: string
   eventNumber: number // GW #XX
   status?: GwEventStatus
+  crewTotalScore?: number // Included when user has a crew with participation
   createdAt?: string
   updatedAt?: string
 }

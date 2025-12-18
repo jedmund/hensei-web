@@ -168,6 +168,11 @@
 		})
 	}
 
+	// Helper for formatting scores with commas
+	function formatScore(score: number): string {
+		return score.toLocaleString()
+	}
+
 	function formatEventStatus(status: string, startDate: string): string {
 		if (status === 'upcoming') {
 			const now = new Date()
@@ -292,6 +297,11 @@
 								</div>
 								<span class="event-dates">
 									{formatDate(event.startDate)} – {formatDate(event.endDate)}
+								</span>
+								<span class="event-score">
+									{#if event.crewTotalScore !== undefined}
+										{formatScore(event.crewTotalScore)}
+									{/if}
 								</span>
 								<span class="event-status status-{event.status ?? 'unknown'}"
 									>{formatEventStatus(event.status ?? 'unknown', event.startDate)}</span
@@ -593,8 +603,8 @@
 
 	.event-item {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
+		gap: spacing.$unit-2x;
 		padding: spacing.$unit spacing.$unit-2x;
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s;
@@ -609,6 +619,7 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit;
+		width: 140px;
 	}
 
 	.event-number {
@@ -618,15 +629,28 @@
 	}
 
 	.event-dates {
+		flex: 1;
 		font-size: typography.$font-small;
 		color: var(--text-secondary);
 	}
 
+	.event-score {
+		width: 140px;
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+		color: var(--text-primary);
+	}
+
 	.event-status {
+		width: 80px;
 		font-size: typography.$font-small;
 		padding: 2px 6px;
 		border-radius: layout.$item-corner-small;
+		text-align: center;
 		text-transform: capitalize;
+		white-space: nowrap;
 
 		&.status-active {
 			background: var(--color-green-light, #dcfce7);
