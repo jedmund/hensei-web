@@ -114,7 +114,7 @@
 </script>
 
 <Dialog bind:open>
-	<ModalHeader title="Notifications" description="Pending actions for your account" />
+	<ModalHeader title="Notifications" />
 
 	<ModalBody>
 		{#if isLoading}
@@ -133,9 +133,7 @@
 			{#if hasPhantomClaims}
 				<div class="section">
 					<h3 class="section-title">Phantom Assignments</h3>
-					<p class="section-description">
-						Accept to inherit the phantom's GW scores and join date
-					</p>
+					<p class="section-description">Accept to inherit the phantom's GW scores and join date</p>
 					<div class="notifications-list">
 						{#each phantomClaims as phantom}
 							{@const crew = phantom.crew}
@@ -187,7 +185,7 @@
 			<!-- Crew Invitations Section -->
 			{#if hasInvitations}
 				<div class="section">
-					<h3 class="section-title">Crew Invitations</h3>
+					<h3 class="section-title">Crew invites</h3>
 					<div class="notifications-list">
 						{#each invitations as invitation}
 							{@const expired = isExpired(invitation.expiresAt)}
@@ -299,6 +297,10 @@
 	}
 
 	.section {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-2x;
+
 		&:not(:first-child) {
 			margin-top: spacing.$unit-3x;
 			padding-top: spacing.$unit-3x;
@@ -307,10 +309,10 @@
 	}
 
 	.section-title {
-		margin: 0 0 spacing.$unit-half 0;
 		font-size: typography.$font-regular;
 		font-weight: typography.$medium;
 		color: var(--text-primary);
+		margin: 0;
 	}
 
 	.section-description {

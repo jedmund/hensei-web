@@ -313,11 +313,11 @@ export class CrewAdapter extends BaseAdapter {
    * Get pending phantom claims for current user (phantoms assigned but not yet confirmed)
    */
   async getPendingPhantomClaims(options?: RequestOptions): Promise<PhantomPlayer[]> {
-    const response = await this.request<{ phantom_claims: PhantomPlayer[] }>(
+    const response = await this.request<{ phantomClaims: PhantomPlayer[] }>(
       '/pending_phantom_claims',
       options
     )
-    return response.phantom_claims
+    return response.phantomClaims
   }
 }
 

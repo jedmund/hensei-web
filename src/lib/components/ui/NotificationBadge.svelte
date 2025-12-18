@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import type { Element } from '$lib/types/api/shared'
+
 	interface Props {
 		/** Number of notifications */
 		count?: number
@@ -8,13 +10,19 @@
 		showCount?: boolean
 		/** Size variant */
 		size?: 'small' | 'medium'
+		/** Element for color styling */
+		element?: Element
 	}
 
-	let { count = 0, showCount = false, size = 'small' }: Props = $props()
+	let { count = 0, showCount = false, size = 'small', element }: Props = $props()
 </script>
 
 {#if count > 0}
-	<span class="notification-badge" class:medium={size === 'medium'} class:has-count={showCount}>
+	<span
+		class="notification-badge {element ?? ''}"
+		class:medium={size === 'medium'}
+		class:has-count={showCount}
+	>
 		{#if showCount}
 			{count > 99 ? '99+' : count}
 		{/if}
@@ -33,7 +41,7 @@
 		min-width: 8px;
 		height: 8px;
 		border-radius: 50%;
-		background: colors.$fire-text-20;
+		background: var(--button-primary-bg);
 		flex-shrink: 0;
 
 		&.medium {
@@ -55,6 +63,27 @@
 				height: 18px;
 				font-size: 11px;
 			}
+		}
+
+		// Element-specific colors
+		&.wind {
+			background: var(--wind-button-bg);
+		}
+		&.fire {
+			background: var(--fire-button-bg);
+		}
+		&.water {
+			background: var(--water-button-bg);
+		}
+		&.earth {
+			background: var(--earth-button-bg);
+		}
+		&.light {
+			background: var(--light-button-bg);
+			color: black;
+		}
+		&.dark {
+			background: var(--dark-button-bg);
 		}
 	}
 </style>
