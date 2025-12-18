@@ -77,7 +77,7 @@
 </script>
 
 <svelte:head>
-	<title>Join Crew | Hensei</title>
+	<title>Join Crew / granblue.team</title>
 </svelte:head>
 
 <div class="join-page">

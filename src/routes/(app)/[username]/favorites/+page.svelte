@@ -41,7 +41,7 @@
 </script>
 
 <svelte:head>
-	<title>{data.user.username}'s Favorites | Hensei</title>
+	<title>{data.user.username}'s Favorites / granblue.team</title>
 </svelte:head>
 
 <section class="profile">

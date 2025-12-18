@@ -8,6 +8,8 @@
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
+	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
@@ -15,7 +17,8 @@
 	import Select from '$lib/components/ui/Select.svelte'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
-	import { GW_ROUND_LABELS, type GwRound } from '$lib/types/api/gw'
+	import EditScoreModal from '$lib/components/crew/EditScoreModal.svelte'
+	import { GW_ROUND_LABELS, type GwRound, type GwIndividualScore } from '$lib/types/api/gw'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -69,6 +72,7 @@
 		type: 'member' | 'phantom'
 		totalScore: number
 		isRetired?: boolean
+		scores: GwIndividualScore[] // Individual score records for this player
 	}
 
 	const playerScores = $derived.by(() => {
@@ -82,7 +86,8 @@
 					name: member.user.username,
 					type: 'member',
 					totalScore: 0,
-					isRetired: member.retired
+					isRetired: member.retired,
+					scores: []
 				})
 			}
 		}
@@ -95,6 +100,7 @@
 
 				if (existing) {
 					existing.totalScore += score.score
+					existing.scores.push(score)
 				} else {
 					// Phantom player or member not in membersDuringEvent
 					scoreMap.set(playerId, {
@@ -102,7 +108,8 @@
 						name: score.playerName,
 						type: score.playerType,
 						totalScore: score.score,
-						isRetired: score.member?.retired
+						isRetired: score.member?.retired,
+						scores: [score]
 					})
 				}
 			}
@@ -309,10 +316,19 @@
 			isSubmitting = false
 		}
 	}
+
+	// ==================== Edit Score Modal ====================
+	let showEditScoreModal = $state(false)
+	let editingPlayer = $state<PlayerScore | null>(null)
+
+	function openEditScoreModal(player: PlayerScore) {
+		editingPlayer = player
+		showEditScoreModal = true
+	}
 </script>
 
 <svelte:head>
-	<title>GW #{eventNumber} | Crew | Hensei</title>
+	<title>GW #{eventNumber} / granblue.team</title>
 </svelte:head>
 
 <div class="page">
@@ -391,6 +407,27 @@
 									<span class="player-type">Phantom</span>
 								{/if}
 								<span class="player-score">{formatScore(player.totalScore)}</span>
+								{#if crewStore.isOfficer && player.scores.length > 0}
+									<DropdownMenu>
+										{#snippet trigger({ props })}
+											<Button
+												variant="secondary"
+												size="small"
+												iconOnly
+												icon="ellipsis"
+												{...props}
+											/>
+										{/snippet}
+										{#snippet menu()}
+											<DropdownMenuBase.Item
+												class="dropdown-menu-item"
+												onclick={() => openEditScoreModal(player)}
+											>
+												Edit score...
+											</DropdownMenuBase.Item>
+										{/snippet}
+									</DropdownMenu>
+								{/if}
 							</li>
 						{/each}
 					</ul>

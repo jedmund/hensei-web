@@ -90,7 +90,7 @@
 </script>
 
 <svelte:head>
-	<title>Create Crew | Hensei</title>
+	<title>Create Crew / granblue.team</title>
 </svelte:head>
 
 <div class="create-crew-page">

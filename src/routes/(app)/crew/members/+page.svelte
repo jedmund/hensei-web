@@ -314,7 +314,7 @@
 </script>
 
 <svelte:head>
-	<title>Crew Members | Hensei</title>
+	<title>Crew Members / granblue.team</title>
 </svelte:head>
 
 <div class="page">

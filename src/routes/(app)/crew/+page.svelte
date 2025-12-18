@@ -183,7 +183,7 @@
 </script>
 
 <svelte:head>
-	<title>Crew | Hensei</title>
+	<title>Crew / granblue.team</title>
 </svelte:head>
 
 <div class="page">

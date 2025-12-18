@@ -142,7 +142,7 @@
 </script>
 
 <svelte:head>
-	<title>Crew Settings | Hensei</title>
+	<title>Crew Settings / granblue.team</title>
 </svelte:head>
 
 <div class="settings-page">
