@@ -5,6 +5,7 @@
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import { formatDate } from '$lib/utils/date'
 	import type { PhantomPlayer } from '$lib/types/api/crew'
 
 	interface Props {
@@ -19,14 +20,6 @@
 
 	const { phantom, currentUserId, onEdit, onDelete, onAssign, onAccept, onDecline }: Props =
 		$props()
-
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleDateString(undefined, {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		})
-	}
 
 	// Status badge type
 	type ClaimStatus = 'unclaimed' | 'pending' | 'claimed'

@@ -8,6 +8,7 @@
 	import { useAcceptInvitation, useRejectInvitation } from '$lib/api/mutations/crew.mutations'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import { formatDate } from '$lib/utils/date'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -59,15 +60,6 @@
 			console.error('Failed to reject invitation:', error)
 			processingId = null
 		}
-	}
-
-	// Format date
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleDateString(undefined, {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		})
 	}
 
 	// Check if invitation is expired

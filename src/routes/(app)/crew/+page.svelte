@@ -14,6 +14,7 @@
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
+	import { formatDateJST } from '$lib/utils/date'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -159,15 +160,6 @@
 		settingsError = null
 	}
 
-	// Helper for formatting dates
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleDateString(undefined, {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		})
-	}
-
 	// Helper for formatting scores with commas
 	function formatScore(score: number): string {
 		return score.toLocaleString()
@@ -296,7 +288,7 @@
 									</span>
 								</div>
 								<span class="event-dates">
-									{formatDate(event.startDate)} – {formatDate(event.endDate)}
+									{formatDateJST(event.startDate)} – {formatDateJST(event.endDate)}
 								</span>
 								<span class="event-score">
 									{#if event.crewTotalScore !== undefined}

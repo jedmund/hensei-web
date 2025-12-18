@@ -29,6 +29,7 @@
 	import AssignPhantomModal from '$lib/components/crew/AssignPhantomModal.svelte'
 	import ConfirmClaimModal from '$lib/components/crew/ConfirmClaimModal.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
+	import { formatDate } from '$lib/utils/date'
 	import type {
 		MemberFilter,
 		CrewMembership,
@@ -301,15 +302,6 @@
 		} catch (error) {
 			console.error('Failed to decline phantom claim:', error)
 		}
-	}
-
-	// Format date
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleDateString(undefined, {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		})
 	}
 
 	// Check if invitation is expired

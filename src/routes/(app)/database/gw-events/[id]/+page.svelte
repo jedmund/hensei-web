@@ -9,6 +9,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
+	import { formatDateJST, formatDateLongJST } from '$lib/utils/date'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -52,15 +53,6 @@
 		6: 'light'
 	}
 
-	// Format date for display
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleDateString(undefined, {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		})
-	}
-
 	// Navigate to edit
 	function handleEdit() {
 		goto(`/database/gw-events/${eventId}/edit`)
@@ -102,15 +94,15 @@
 						{elementLabels[event.element] ?? 'Unknown'}
 					</span>
 				</DetailItem>
-				<DetailItem label="Start Date" value={formatDate(event.startDate)} />
-				<DetailItem label="End Date" value={formatDate(event.endDate)} />
+				<DetailItem label="Start Date" value={formatDateLongJST(event.startDate)} />
+				<DetailItem label="End Date" value={formatDateLongJST(event.endDate)} />
 			</DetailsContainer>
 
 			{#if event.createdAt}
 				<DetailsContainer title="Metadata">
-					<DetailItem label="Created" value={formatDate(event.createdAt)} />
+					<DetailItem label="Created" value={formatDateJST(event.createdAt)} />
 					{#if event.updatedAt}
-						<DetailItem label="Updated" value={formatDate(event.updatedAt)} />
+						<DetailItem label="Updated" value={formatDateJST(event.updatedAt)} />
 					{/if}
 				</DetailsContainer>
 			{/if}

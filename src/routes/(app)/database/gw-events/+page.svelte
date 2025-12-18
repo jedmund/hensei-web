@@ -7,6 +7,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
+	import { formatDateJST } from '$lib/utils/date'
 	import type { GwEvent } from '$lib/types/api/gw'
 	import type { PageData } from './$types'
 
@@ -60,15 +61,6 @@
 				elementLabels[e.element]?.toLowerCase().includes(term)
 		)
 	})
-
-	// Format date for display
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleDateString(undefined, {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		})
-	}
 
 	// Navigate to event detail/edit
 	function handleRowClick(event: GwEvent) {
@@ -124,7 +116,7 @@
 								</td>
 								<td class="col-dates">
 									<span class="dates">
-										{formatDate(event.startDate)} - {formatDate(event.endDate)}
+										{formatDateJST(event.startDate)} - {formatDateJST(event.endDate)}
 									</span>
 								</td>
 							</tr>

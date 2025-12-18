@@ -13,6 +13,7 @@
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import { formatDate } from '$lib/utils/date'
 	import type { CrewInvitation, PhantomPlayer } from '$lib/types/api/crew'
 
 	interface Props {
@@ -96,15 +97,6 @@
 			console.error('Failed to decline phantom claim:', error)
 			processingId = null
 		}
-	}
-
-	// Format date
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleDateString(undefined, {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		})
 	}
 
 	// Check if invitation is expired

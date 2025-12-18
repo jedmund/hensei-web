@@ -21,6 +21,7 @@
 	import EditCrewScoreModal from '$lib/components/crew/EditCrewScoreModal.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import { formatDateJST } from '$lib/utils/date'
 	import {
 		GW_ROUND_LABELS,
 		type GwRound,
@@ -157,15 +158,6 @@
 	// Parse score string, removing commas
 	function parseScore(value: string): number {
 		return parseInt(value.replace(/,/g, ''), 10)
-	}
-
-	// Format date
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleDateString(undefined, {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		})
 	}
 
 	// Navigate back
@@ -406,7 +398,7 @@
 							{elementLabels[gwEvent.element] ?? 'Unknown'}
 						</span>
 						<span class="event-dates">
-							{formatDate(gwEvent.startDate)} – {formatDate(gwEvent.endDate)}
+							{formatDateJST(gwEvent.startDate)} – {formatDateJST(gwEvent.endDate)}
 						</span>
 					</div>
 					<div class="tab-control">

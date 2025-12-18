@@ -6,6 +6,7 @@
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import { formatDate } from '$lib/utils/date'
 	import type { CrewMembership } from '$lib/types/api/crew'
 
 	interface Props {
@@ -38,14 +39,6 @@
 			default:
 				return ''
 		}
-	}
-
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleDateString(undefined, {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		})
 	}
 
 	const canShowOfficerActions = $derived(
