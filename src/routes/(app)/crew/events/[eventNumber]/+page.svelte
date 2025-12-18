@@ -18,8 +18,10 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import { formatDateJST } from '$lib/utils/date'
-	import { formatScore } from '$lib/utils/gw'
+	import { formatScore, toMultiPlayerChartData, toCrewBattleChartData } from '$lib/utils/gw'
 	import { GW_ROUND_LABELS, type GwRound, type GwCrewScore } from '$lib/types/api/gw'
+	import GwMultiPlayerChart from '$lib/components/charts/GwMultiPlayerChart.svelte'
+	import GwCrewBattleChart from '$lib/components/charts/GwCrewBattleChart.svelte'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -62,6 +64,14 @@
 
 	// Crew scores from participation (Finals Day 1-4 only: rounds 2-5)
 	const crewScores = $derived(participation?.crewScores ?? [])
+
+	// Chart data transformations
+	const multiPlayerChartData = $derived(
+		participation?.individualScores
+			? toMultiPlayerChartData(participation.individualScores)
+			: new Map()
+	)
+	const crewBattleChartData = $derived(toCrewBattleChartData(crewScores))
 
 	const playerScores = $derived.by(() => {
 		const scoreMap = new Map<string, PlayerScore>()
@@ -208,6 +218,12 @@
 
 				<!-- Individual Honors Tab -->
 				{#if activeTab === 'individual'}
+					{#if multiPlayerChartData.size > 0}
+						<div class="chart-section">
+							<GwMultiPlayerChart playerScores={multiPlayerChartData} />
+						</div>
+					{/if}
+
 					<div class="section-header">
 						<span class="section-title">Individual Scores</span>
 					</div>
@@ -230,6 +246,12 @@
 
 				<!-- Crew Honors Tab -->
 				{#if activeTab === 'crew'}
+					{#if crewBattleChartData.length > 0}
+						<div class="chart-section">
+							<GwCrewBattleChart data={crewBattleChartData} />
+						</div>
+					{/if}
+
 					<div class="crew-score-table">
 						<div class="crew-score-header">
 							<span class="col-round">Round</span>
@@ -438,6 +460,11 @@
 		align-items: center;
 		padding: spacing.$unit spacing.$unit-2x;
 		background: rgba(0, 0, 0, 0.02);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+	}
+
+	.chart-section {
+		padding: spacing.$unit-2x;
 		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 	}
 

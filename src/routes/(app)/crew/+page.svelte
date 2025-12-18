@@ -15,8 +15,9 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import { formatDateJST } from '$lib/utils/date'
-	import { formatScore } from '$lib/utils/gw'
+	import { formatScore, toCrewHistoryChartData } from '$lib/utils/gw'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
+	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -152,6 +153,11 @@
 		}
 		return status
 	}
+
+	// Transform events data for history chart
+	const historyChartData = $derived(
+		eventsQuery.data ? toCrewHistoryChartData(eventsQuery.data, formatDateJST) : []
+	)
 </script>
 
 <svelte:head>
@@ -247,6 +253,12 @@
 				<div class="section-header">
 					<span class="section-title">Unite and Fight</span>
 				</div>
+
+				{#if historyChartData.length > 0}
+					<div class="chart-section">
+						<GwCrewHistoryChart data={historyChartData} />
+					</div>
+				{/if}
 
 				{#if eventsQuery.isLoading}
 					<div class="loading-state">
@@ -557,6 +569,12 @@
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		color: var(--text-secondary);
+	}
+
+	// Chart section
+	.chart-section {
+		padding: spacing.$unit-2x;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 	}
 
 	// Event list (similar to member list)
