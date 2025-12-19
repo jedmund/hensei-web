@@ -44,6 +44,11 @@ export interface CollectionArtifactListParams {
 	artifactId?: string
 	proficiency?: number
 	rarity?: 'standard' | 'quirk'
+	// Skill filters - each slot accepts array of modifier IDs (OR logic within slot, AND across slots)
+	skill1?: number[]
+	skill2?: number[]
+	skill3?: number[]
+	skill4?: number[]
 }
 
 /**
@@ -258,6 +263,22 @@ export class ArtifactAdapter extends BaseAdapter {
 		return this.request<void>(`/collection/artifacts/${id}`, {
 			method: 'DELETE'
 		})
+	}
+
+	/**
+	 * Deletes multiple collection artifacts in a single batch request
+	 */
+	async deleteCollectionArtifactsBatch(ids: string[]): Promise<{ deleted: number }> {
+		if (ids.length === 0) return { deleted: 0 }
+
+		const response = await this.request<{
+			meta: { deleted: number }
+		}>('/collection/artifacts/batch_destroy', {
+			method: 'DELETE',
+			body: { ids }
+		})
+
+		return response.meta
 	}
 
 	// ============================================
