@@ -66,6 +66,7 @@
 	const databaseJobsHref = $derived(localizeHref('/database/jobs'))
 	const databaseSeriesHref = $derived(localizeHref('/database/series'))
 	const databaseGwEventsHref = $derived(localizeHref('/database/gw-events'))
+	const databaseArtifactSkillsHref = $derived(localizeHref('/database/artifact-skills'))
 
 	// Database route detection
 	const isDatabaseRoute = $derived($page.url.pathname.startsWith(localizeHref('/database')))
@@ -246,6 +247,9 @@
 								</DropdownItem>
 								<DropdownItem>
 									<a href={databaseGwEventsHref}>Unite & Fight</a>
+								</DropdownItem>
+								<DropdownItem>
+									<a href={databaseArtifactSkillsHref}>Artifact Skills</a>
 								</DropdownItem>
 							</DropdownMenu.Content>
 						</DropdownMenu.Portal>
