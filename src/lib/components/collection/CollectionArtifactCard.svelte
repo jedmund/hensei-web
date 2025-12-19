@@ -80,7 +80,6 @@
 		justify-content: center;
 		position: relative;
 		width: 100%;
-		aspect-ratio: 1 / 1;
 		border-radius: $item-corner;
 		overflow: hidden;
 		background: var(--card-bg, #f5f5f5);
@@ -132,7 +131,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		max-width: 100%;
+		max-width: 139px;
 
 		&.nickname {
 			font-weight: $bold;
