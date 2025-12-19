@@ -125,13 +125,19 @@
 	}
 
 	.artifact-name {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
 		font-size: $font-small;
+		line-height: 1.4;
 		color: var(--text-tertiary);
 		text-align: center;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
+		white-space: normal;
+		word-break: break-word;
 		max-width: 139px;
+		min-height: calc($font-small * 1.4 * 2);
 
 		&.nickname {
 			font-weight: $bold;

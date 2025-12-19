@@ -106,12 +106,18 @@
 	}
 
 	.weapon-name {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
 		font-size: typography.$font-small;
+		line-height: 1.4;
 		color: var(--text-tertiary);
 		text-align: center;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
+		white-space: normal;
+		word-break: break-word;
 		max-width: 100%;
+		min-height: calc(typography.$font-small * 1.4 * 2);
 	}
 </style>

@@ -2,6 +2,7 @@
 	import type { CollectionCharacter } from '$lib/types/api/collection'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 
 	interface Props {
@@ -50,6 +51,9 @@
 		transcendence={!character.character?.special && character.character?.uncap?.ulb}
 	/>
 	<span class="character-name">{displayName}</span>
+	{#if character.character}
+		<CharacterTags character={character.character} />
+	{/if}
 </button>
 
 <style lang="scss">
@@ -61,6 +65,7 @@
 		flex-direction: column;
 		align-items: center;
 		gap: $unit-half;
+		width: 100%;
 		padding: 0;
 		border: none;
 		background: transparent;
@@ -104,12 +109,18 @@
 	}
 
 	.character-name {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
 		font-size: typography.$font-small;
+		line-height: 1.4;
 		color: var(--text-tertiary);
 		text-align: center;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
+		white-space: normal;
+		word-break: break-word;
 		max-width: 100%;
+		max-height: calc(typography.$font-small * 1.4 * 2);
 	}
 </style>
