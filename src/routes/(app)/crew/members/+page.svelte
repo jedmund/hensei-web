@@ -16,6 +16,8 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+	import DatePicker from '$lib/components/ui/DatePicker.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
@@ -66,10 +68,10 @@
 		enabled: crewStore.isOfficer && !!crewStore.crew?.id
 	}))
 
-	// Query for phantoms (needed for pending claims badge when not viewing phantom/all filter)
+	// Query for phantoms (needed for pending claims badge when viewing pending filter)
 	const phantomsQuery = createQuery(() => ({
 		...crewQueries.members('phantom'),
-		enabled: filter !== 'phantom' && filter !== 'all' && crewStore.isOfficer
+		enabled: filter === 'pending' && crewStore.isOfficer
 	}))
 
 	// Calculate total active roster size (members + phantoms)
@@ -97,8 +99,7 @@
 	const filterOptions = $derived.by(() => {
 		const options: { value: MemberFilter; label: string }[] = [
 			{ value: 'all', label: 'All' },
-			{ value: 'active', label: 'Active' },
-			{ value: 'phantom', label: 'Phantoms' }
+			{ value: 'active', label: 'Active' }
 		]
 		if (crewStore.isOfficer) {
 			options.push({ value: 'pending', label: 'Pending' })
@@ -130,6 +131,7 @@
 	let editJoinDate = $state('')
 	let editRetired = $state(false)
 	let editRetiredAt = $state('')
+	let editGranblueId = $state('')
 
 	// Dialog state for scout modal
 	let scoutModalOpen = $state(false)
@@ -216,6 +218,7 @@
 		editJoinDate = phantom.joinedAt ? (phantom.joinedAt.split('T')[0] ?? '') : ''
 		editRetired = phantom.retired
 		editRetiredAt = phantom.retiredAt ? (phantom.retiredAt.split('T')[0] ?? '') : ''
+		editGranblueId = phantom.granblueId ?? ''
 		editDialogOpen = true
 	}
 
@@ -238,7 +241,8 @@
 				await crewAdapter.updatePhantom(crewStore.crew.id, editingPhantom.id, {
 					joinedAt: editJoinDate,
 					retired: editRetired,
-					retiredAt: editRetired ? editRetiredAt || undefined : undefined
+					retiredAt: editRetired ? editRetiredAt || undefined : undefined,
+					granblueId: editGranblueId || undefined
 				})
 				// Invalidate members query
 				membersQuery.refetch()
@@ -255,6 +259,7 @@
 		editJoinDate = ''
 		editRetired = false
 		editRetiredAt = ''
+		editGranblueId = ''
 	}
 
 	function openDeletePhantomDialog(phantom: PhantomPlayer) {
@@ -315,12 +320,11 @@
 	)
 
 	// Get phantoms with pending claims (assigned but not confirmed)
-	// Use phantom query when not viewing phantom/all filter to ensure badge always has data
+	// Use phantom query when viewing pending filter since it doesn't include phantoms
 	const pendingClaimPhantoms = $derived.by(() => {
-		let phantoms = membersQuery.data?.phantoms
-		if (filter !== 'phantom' && filter !== 'all') {
-			phantoms = phantomsQuery.data?.phantoms
-		}
+		const phantoms = filter === 'pending'
+			? phantomsQuery.data?.phantoms
+			: membersQuery.data?.phantoms
 		return phantoms?.filter((p) => p.claimedBy && !p.claimConfirmed) ?? []
 	})
 </script>
@@ -444,52 +448,56 @@
 				<p>Failed to load members</p>
 			</div>
 		{:else}
-			<!-- Regular members -->
-			{#if membersQuery.data?.members && membersQuery.data.members.length > 0}
-				<ul class="member-list">
-					{#each membersQuery.data.members as member}
-						<MemberRow
-							{member}
-							onEdit={() => openEditMemberDialog(member)}
-							onPromote={() => openPromoteDialog(member)}
-							onDemote={() => openDemoteDialog(member)}
-							onRemove={() => openRemoveDialog(member)}
-						/>
-					{/each}
-				</ul>
-			{:else if filter !== 'phantom'}
-				<p class="empty-state">No members found</p>
-			{/if}
+			{@const hasMembers = membersQuery.data?.members && membersQuery.data.members.length > 0}
+			{@const hasPhantoms = membersQuery.data?.phantoms && membersQuery.data.phantoms.length > 0}
 
-			<!-- Phantom players -->
-			{#if membersQuery.data?.phantoms && membersQuery.data.phantoms.length > 0}
-				{#if filter === 'all' && membersQuery.data.members.length > 0}
-					<div class="section-divider">
-						<span>Phantom Players</span>
-					</div>
-				{/if}
-				<ul class="member-list">
-					{#each membersQuery.data.phantoms as phantom}
-						<PhantomRow
-							{phantom}
-							currentUserId={crewStore.membership?.user?.id}
-							onEdit={() => openEditPhantomDialog(phantom)}
-							onDelete={() => openDeletePhantomDialog(phantom)}
-							onAssign={() => openAssignPhantomDialog(phantom)}
-							onAccept={() => openConfirmClaimDialog(phantom)}
-							onDecline={() => handleDeclineClaim(phantom)}
-						/>
-					{/each}
-				</ul>
-			{:else if filter === 'phantom'}
+			<!-- Empty state for active/retired when no members or phantoms -->
+			{#if (filter === 'active' || filter === 'retired') && !hasMembers && !hasPhantoms}
 				<div class="empty-state">
-					<p>No phantom players.</p>
-					{#if crewStore.isOfficer}
-						<Button variant="secondary" size="small" onclick={() => (bulkPhantomDialogOpen = true)}>
-							Add phantoms...
-						</Button>
-					{/if}
+					<p>No {filter} players found.</p>
 				</div>
+			{:else}
+				<!-- Regular members -->
+				{#if hasMembers}
+					{#if (filter === 'active' || filter === 'retired') && hasPhantoms}
+						<div class="section-divider">
+							<span>Members ({membersQuery.data?.members.length})</span>
+						</div>
+					{/if}
+					<ul class="member-list">
+						{#each membersQuery.data?.members ?? [] as member}
+							<MemberRow
+								{member}
+								onEdit={() => openEditMemberDialog(member)}
+								onPromote={() => openPromoteDialog(member)}
+								onDemote={() => openDemoteDialog(member)}
+								onRemove={() => openRemoveDialog(member)}
+							/>
+						{/each}
+					</ul>
+				{/if}
+
+				<!-- Phantom players -->
+				{#if hasPhantoms}
+					{#if filter === 'all' || filter === 'active' || filter === 'retired'}
+						<div class="section-divider">
+							<span>Phantom Players ({membersQuery.data?.phantoms.length})</span>
+						</div>
+					{/if}
+					<ul class="member-list">
+						{#each membersQuery.data?.phantoms ?? [] as phantom}
+							<PhantomRow
+								{phantom}
+								currentUserId={crewStore.membership?.user?.id}
+								onEdit={() => openEditPhantomDialog(phantom)}
+								onDelete={() => openDeletePhantomDialog(phantom)}
+								onAssign={() => openAssignPhantomDialog(phantom)}
+								onAccept={() => openConfirmClaimDialog(phantom)}
+								onDecline={() => handleDeclineClaim(phantom)}
+							/>
+						{/each}
+					</ul>
+				{/if}
 			{/if}
 		{/if}
 	</div>
@@ -543,10 +551,15 @@
 		<ModalBody>
 			<div class="modal-form">
 				<div class="form-fields">
-					<div class="form-field">
-						<label for="joinDate">Join date</label>
-						<input id="joinDate" type="date" bind:value={editJoinDate} class="date-input" />
-					</div>
+					{#if editingPhantom}
+						<Input
+							label="Granblue ID"
+							bind:value={editGranblueId}
+							maxLength={20}
+							variant="contained"
+						/>
+					{/if}
+					<DatePicker label="Join date" bind:value={editJoinDate} contained />
 					<p class="help-text">
 						This date is used to determine which events a member was active for when adding
 						historical GW scores.
@@ -557,10 +570,7 @@
 						{/snippet}
 					</SettingsRow>
 					{#if editRetired}
-						<div class="form-field">
-							<label for="retiredAt">Retired date</label>
-							<input id="retiredAt" type="date" bind:value={editRetiredAt} class="date-input" />
-						</div>
+						<DatePicker label="Retired date" bind:value={editRetiredAt} contained />
 						<p class="help-text">
 							This date is used to determine which events a retired player was active for.
 						</p>
@@ -758,42 +768,10 @@
 		gap: spacing.$unit-3x;
 	}
 
-	.form-field {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
-
-		label {
-			font-size: typography.$font-small;
-			font-weight: typography.$medium;
-			color: var(--text-primary);
-		}
-	}
-
 	:global(fieldset) {
 		border: none;
 		padding: 0;
 		margin: 0;
-	}
-
-	.date-input {
-		padding: spacing.$unit spacing.$unit-2x;
-		border: none;
-		border-radius: layout.$input-corner;
-		font-size: typography.$font-regular;
-		font-family: inherit;
-		background: var(--input-bound-bg);
-		color: var(--text-primary);
-		width: 100%;
-
-		&:hover {
-			background: var(--input-bound-bg-hover);
-		}
-
-		&:focus {
-			outline: none;
-			background: var(--input-bound-bg-hover);
-		}
 	}
 
 	.help-text {

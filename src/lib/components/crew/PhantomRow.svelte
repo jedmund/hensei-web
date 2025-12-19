@@ -43,9 +43,6 @@
 	<div class="phantom-info">
 		<div class="phantom-details">
 			<span class="name">{phantom.name}</span>
-			{#if phantom.granblueId}
-				<span class="granblue-id">ID: {phantom.granblueId}</span>
-			{/if}
 			{#if phantom.joinedAt}
 				<span class="joined-date">Joined {formatDate(phantom.joinedAt)}</span>
 			{/if}
@@ -142,11 +139,6 @@
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		color: var(--text-primary);
-	}
-
-	.granblue-id {
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
 	}
 
 	.joined-date {
