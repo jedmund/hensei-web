@@ -23,6 +23,11 @@
 	// Get loaded IDs context from layout
 	const loadedIdsContext = getContext<LoadedIdsContext | undefined>(LOADED_IDS_KEY)
 
+	// User's element for elemental styling
+	const userElement = $derived(
+		data.user?.avatar?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
+	)
+
 	// Filter state
 	let elementFilters = $state<number[]>([])
 	let rarityFilters = $state<number[]>([])
@@ -119,7 +124,7 @@
 			showViewToggle={true}
 			viewMode={currentViewMode}
 			onViewModeChange={handleViewModeChange}
-			neutralViewToggle={true}
+			element={userElement}
 		/>
 	</div>
 
@@ -171,15 +176,6 @@
 				</div>
 			{/if}
 
-			{#if !collectionQuery.hasNextPage && allSummons.length > 0}
-				<div class="end-message">
-					<p>
-						{allSummons.length} summon{allSummons.length === 1 ? '' : 's'} in {data.isOwner
-							? 'your'
-							: 'this'} collection
-					</p>
-				</div>
-			{/if}
 		{/if}
 	</div>
 </div>
@@ -209,9 +205,9 @@
 
 	.summon-grid {
 		display: grid;
-		grid-template-columns: repeat(5, 128px);
+		grid-template-columns: repeat(5, 144px);
 		justify-content: space-between;
-		gap: $unit-4x;
+		gap: $unit-4x $unit-2x;
 	}
 
 	.summon-list {
@@ -263,16 +259,6 @@
 
 		:global(svg) {
 			animation: spin 1s linear infinite;
-		}
-	}
-
-	.end-message {
-		text-align: center;
-		padding: $unit-2x;
-		color: var(--text-secondary, #666);
-
-		p {
-			margin: 0;
 		}
 	}
 
