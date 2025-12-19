@@ -3,6 +3,8 @@
 	import { getCharacterImageWithPose } from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 
 	interface Props {
@@ -29,24 +31,7 @@
 	})
 
 	const element = $derived(character.character?.element)
-
-	const awakeningDisplay = $derived.by(() => {
-		if (!character.awakening) return null
-		const type = character.awakening.type?.name?.en || 'Balanced'
-		const level = character.awakening.level || 1
-		// Abbreviate type names
-		const abbrev =
-			type === 'Balanced'
-				? 'BAL'
-				: type === 'Attack'
-					? 'ATK'
-					: type === 'Defense'
-						? 'DEF'
-						: type === 'Multiattack'
-							? 'DA/TA'
-							: type.slice(0, 3).toUpperCase()
-		return `${abbrev} ${level}`
-	})
+	const proficiencies = $derived(character.character?.proficiency ?? [])
 </script>
 
 <button type="button" class="character-row" onclick={onClick}>
@@ -55,14 +40,19 @@
 			<img src={imageUrl} alt={displayName} loading="lazy" />
 		</div>
 		<div class="name-cell">
-			<span class="name">{displayName}</span>
-			{#if character.perpetuity}
-				<img
-					class="perpetuity-badge"
-					src={perpetuityFilled}
-					alt="Perpetuity Ring"
-					title="Perpetuity Ring"
-				/>
+			<div class="name-row">
+				<span class="name">{displayName}</span>
+				{#if character.perpetuity}
+					<img
+						class="perpetuity-badge"
+						src={perpetuityFilled}
+						alt="Perpetuity Ring"
+						title="Perpetuity Ring"
+					/>
+				{/if}
+			</div>
+			{#if character.character}
+				<CharacterTags character={character.character} />
 			{/if}
 		</div>
 	</div>
@@ -83,12 +73,10 @@
 		/>
 	</div>
 
-	<div class="awakening-cell">
-		{#if awakeningDisplay}
-			<span class="awakening">{awakeningDisplay}</span>
-		{:else}
-			<span class="awakening-placeholder">—</span>
-		{/if}
+	<div class="proficiency-cell">
+		{#each proficiencies as proficiency}
+			<ProficiencyLabel {proficiency} size="small" />
+		{/each}
 	</div>
 </button>
 
@@ -148,6 +136,12 @@
 			flex: 1;
 			min-width: 0;
 			display: flex;
+			flex-direction: column;
+			gap: $unit-half;
+		}
+
+		.name-row {
+			display: flex;
 			align-items: center;
 			gap: $unit;
 
@@ -159,13 +153,13 @@
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
-		}
-	}
 
-	.perpetuity-badge {
-		width: 16px;
-		height: 16px;
-		flex-shrink: 0;
+			.perpetuity-badge {
+				width: 16px;
+				height: 16px;
+				flex-shrink: 0;
+			}
+		}
 	}
 
 	.uncap-cell {
@@ -175,20 +169,9 @@
 		flex-shrink: 0;
 	}
 
-	.awakening-cell {
-		width: 64px;
+	.proficiency-cell {
 		display: flex;
-		justify-content: flex-end;
+		gap: $unit-half;
 		flex-shrink: 0;
-	}
-
-	.awakening {
-		font-size: $font-small;
-		color: var(--text-secondary);
-		font-weight: $medium;
-	}
-
-	.awakening-placeholder {
-		color: var(--text-secondary);
 	}
 </style>
