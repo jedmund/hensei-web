@@ -24,6 +24,11 @@
 	// Get loaded IDs context from layout
 	const loadedIdsContext = getContext<LoadedIdsContext | undefined>(LOADED_IDS_KEY)
 
+	// User's element for elemental styling
+	const userElement = $derived(
+		data.user?.avatar?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
+	)
+
 	// Filter state
 	let elementFilters = $state<number[]>([])
 	let proficiencyFilters = $state<number[]>([])
@@ -246,7 +251,7 @@
 			{/if}
 		</div>
 
-		<ViewModeToggle value={currentViewMode} onValueChange={handleViewModeChange} neutral={true} />
+		<ViewModeToggle value={currentViewMode} onValueChange={handleViewModeChange} element={userElement} />
 	</div>
 
 	<!-- Collection grid -->
@@ -297,15 +302,6 @@
 				</div>
 			{/if}
 
-			{#if !collectionQuery.hasNextPage && allArtifacts.length > 0}
-				<div class="end-message">
-					<p>
-						{allArtifacts.length} artifact{allArtifacts.length === 1 ? '' : 's'} in {data.isOwner
-							? 'your'
-							: 'this'} collection
-					</p>
-				</div>
-			{/if}
 		{/if}
 	</div>
 </div>
@@ -413,16 +409,6 @@
 
 		:global(svg) {
 			animation: spin 1s linear infinite;
-		}
-	}
-
-	.end-message {
-		text-align: center;
-		padding: $unit-2x;
-		color: var(--text-secondary, #666);
-
-		p {
-			margin: 0;
 		}
 	}
 
