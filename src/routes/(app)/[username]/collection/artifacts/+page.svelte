@@ -326,6 +326,9 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: $unit-2x;
+		padding: $unit;
+		background: var(--placeholder-bg);
+		border-radius: $item-corner;
 	}
 
 	.filter-group {

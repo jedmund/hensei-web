@@ -58,7 +58,6 @@
 		flex-direction: column;
 		align-items: center;
 		gap: $unit-half;
-		width: 139px;
 		padding: 0;
 		border: none;
 		background: transparent;
@@ -77,6 +76,8 @@
 	}
 
 	.card-image {
+		display: flex;
+		justify-content: center;
 		position: relative;
 		width: 100%;
 		aspect-ratio: 1 / 1;
