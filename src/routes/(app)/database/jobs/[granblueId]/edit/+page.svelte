@@ -60,6 +60,7 @@
 		proficiency2: 0,
 		masterLevel: false,
 		ultimateMastery: false,
+		auxWeapon: false,
 		accessory: false,
 		accessoryType: 0
 	})
@@ -77,6 +78,7 @@
 				proficiency2: job.proficiency?.[1] || 0,
 				masterLevel: job.masterLevel || false,
 				ultimateMastery: job.ultimateMastery || false,
+				auxWeapon: job.auxWeapon || false,
 				accessory: job.accessory || false,
 				accessoryType: job.accessoryType || 0
 			}
@@ -102,6 +104,7 @@
 				proficiency2: editData.proficiency2,
 				master_level: editData.masterLevel,
 				ultimate_mastery: editData.ultimateMastery,
+				aux_weapon: editData.auxWeapon,
 				accessory: editData.accessory,
 				accessory_type: editData.accessoryType
 			}

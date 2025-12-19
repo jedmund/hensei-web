@@ -57,6 +57,7 @@ export interface JobUpdatePayload {
 	ultimate_mastery?: boolean
 	accessory?: boolean
 	accessory_type?: number
+	aux_weapon?: boolean
 	base_job_id?: string | null
 }
 

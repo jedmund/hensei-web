@@ -40,6 +40,9 @@
 		<DetailItem label="Ultimate Mastery" editable={true}>
 			<Checkbox bind:checked={editData.ultimateMastery} contained />
 		</DetailItem>
+		<DetailItem label="Aux Weapon" editable={true}>
+			<Checkbox bind:checked={editData.auxWeapon} contained />
+		</DetailItem>
 		<DetailItem label="Has Accessory" editable={true}>
 			<Checkbox bind:checked={editData.accessory} contained />
 		</DetailItem>
@@ -62,6 +65,11 @@
 		<DetailItem label="Ultimate Mastery">
 			<span class="boolean-indicator" class:yes={job.ultimateMastery}>
 				{formatBoolean(job.ultimateMastery)}
+			</span>
+		</DetailItem>
+		<DetailItem label="Aux Weapon">
+			<span class="boolean-indicator" class:yes={job.auxWeapon}>
+				{formatBoolean(job.auxWeapon)}
 			</span>
 		</DetailItem>
 		<DetailItem label="Has Accessory">

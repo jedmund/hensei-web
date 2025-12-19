@@ -177,6 +177,7 @@ export interface Job {
   ultimateMastery?: boolean // Whether this job supports ultimate mastery
   accessory?: boolean
   accessoryType?: number
+  auxWeapon?: boolean      // Whether this job requires an aux weapon in the first non-mainhand slot
 }
 
 // JobSkill entity from JobSkillBlueprint
