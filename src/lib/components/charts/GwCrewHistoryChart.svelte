@@ -20,16 +20,46 @@
 			: 0
 	)
 
+	// Check if data has any gaps
+	const hasGaps = $derived(data.some((d) => d.isGap))
+
+	// Build gap connection data: only show values at gap boundaries for dashed line
+	// This creates a dashed line connecting across gaps
+	const gapConnectionData = $derived.by(() => {
+		if (!hasGaps) return []
+
+		const result: (number | null)[] = []
+		for (let i = 0; i < data.length; i++) {
+			const current = data[i]
+			const prev = data[i - 1]
+			const next = data[i + 1]
+
+			// Include this point if it's adjacent to a gap
+			const isBeforeGap = !current?.isGap && next?.isGap
+			const isAfterGap = !current?.isGap && prev?.isGap
+
+			if (isBeforeGap || isAfterGap) {
+				result.push(current?.totalScore ?? null)
+			} else {
+				result.push(null)
+			}
+		}
+		return result
+	})
+
 	const options = $derived({
 		textStyle: { fontFamily: CHART_FONT_FAMILY },
 		tooltip: {
 			trigger: 'axis' as const,
 			formatter: (params: unknown) => {
-				const p = params as Array<{ name: string; value: number; dataIndex: number }>
+				const p = params as Array<{ name: string; value: number | null; dataIndex: number }>
 				const point = p[0]
 				if (!point) return ''
 				const dataPoint = data[point.dataIndex]
-				return `${point.name}<br/>Score: ${formatScore(point.value)}<br/>${dataPoint?.date ?? ''}`
+				if (dataPoint?.isGap) {
+					return `${point.name}<br/><span style="color: #999">Not in crew</span><br/>${dataPoint?.date ?? ''}`
+				}
+				return `${point.name}<br/>Score: ${formatScore(point.value ?? 0)}<br/>${dataPoint?.date ?? ''}`
 			}
 		},
 		toolbox: {
@@ -88,16 +118,32 @@
 			}
 		},
 		series: [
+			// Main series: solid line, breaks at gaps (null values)
 			{
 				type: 'line' as const,
 				data: data.map((d) => d.totalScore),
 				smooth: true,
 				symbol: 'circle',
 				symbolSize: 8,
+				connectNulls: false,
 				lineStyle: { width: 2, color: '#2563eb' },
 				itemStyle: { color: '#2563eb' },
 				areaStyle: { opacity: 0.1, color: '#2563eb' }
-			}
+			},
+			// Gap connection series: dashed line connecting across gaps
+			...(hasGaps
+				? [
+						{
+							type: 'line' as const,
+							data: gapConnectionData,
+							smooth: true,
+							symbol: 'none',
+							connectNulls: true,
+							lineStyle: { width: 1.5, color: '#94a3b8', type: 'dashed' as const },
+							z: 0 // Behind the main series
+						}
+					]
+				: [])
 		]
 	})
 </script>
