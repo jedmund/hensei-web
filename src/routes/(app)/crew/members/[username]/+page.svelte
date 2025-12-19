@@ -1,6 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { gwQueries } from '$lib/api/queries/gw.queries'
@@ -9,6 +10,7 @@
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import GwEventScoreRow from '$lib/components/crew/GwEventScoreRow.svelte'
 	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
+	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 
 	const username = $derived($page.params.username ?? '')
 
@@ -16,6 +18,11 @@
 	const scoresQuery = createQuery(() => gwQueries.memberGwScoresByUsername(username))
 
 	const memberName = $derived(scoresQuery.data?.member?.user?.username ?? 'Member')
+
+	// Count only events where player was in crew
+	const eventsInCrew = $derived(
+		scoresQuery.data?.eventScores.filter((e) => e.inCrew).length ?? 0
+	)
 
 	// Transform data for chart
 	const historyChartData = $derived(
@@ -50,7 +57,7 @@
 					<span class="stat-label">Total Honors</span>
 				</div>
 				<div class="stat">
-					<span class="stat-value">{data.eventScores.length}</span>
+					<span class="stat-value">{eventsInCrew}</span>
 					<span class="stat-label">Events</span>
 				</div>
 			</div>
@@ -70,7 +77,22 @@
 
 				<ul class="event-list">
 					{#each data.eventScores as eventScore (eventScore.gwEvent.id)}
-						<GwEventScoreRow {eventScore} />
+						{#if eventScore.inCrew}
+							<GwEventScoreRow {eventScore} />
+						{:else}
+							<li class="gap-row">
+								<button
+									class="gap-button"
+									onclick={() => goto(`/crew/events/${eventScore.gwEvent.eventNumber}`)}
+								>
+									<div class="gap-info">
+										<span class="event-number">GW #{eventScore.gwEvent.eventNumber}</span>
+										<ElementBadge element={eventScore.gwEvent.element} />
+									</div>
+									<span class="gap-indicator">Not in crew</span>
+								</button>
+							</li>
+						{/if}
 					{/each}
 				</ul>
 			{/if}
@@ -169,5 +191,46 @@
 		list-style: none;
 		margin: 0;
 		padding: spacing.$unit;
+	}
+
+	.gap-row {
+		border-radius: layout.$item-corner;
+		overflow: hidden;
+	}
+
+	.gap-button {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: spacing.$unit spacing.$unit-2x;
+		background: rgba(0, 0, 0, 0.02);
+		border: none;
+		border-radius: layout.$item-corner;
+		cursor: pointer;
+		transition: background-color 0.15s;
+		text-align: left;
+
+		&:hover {
+			background: rgba(0, 0, 0, 0.04);
+		}
+	}
+
+	.gap-info {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+	}
+
+	.gap-info .event-number {
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-tertiary);
+	}
+
+	.gap-indicator {
+		font-size: typography.$font-small;
+		font-style: italic;
+		color: var(--text-tertiary);
 	}
 </style>
