@@ -32,8 +32,9 @@ export interface PlayerRoundScore {
 export interface HistoryDataPoint {
 	eventNumber: number
 	eventLabel: string // "GW #72"
-	totalScore: number
+	totalScore: number | null // null = gap (player wasn't in crew)
 	date: string // For tooltip
+	isGap: boolean // true if player wasn't in crew during this event
 }
 
 // ============================================================================
@@ -216,24 +217,26 @@ export function toCrewHistoryChartData(
 			eventNumber: e.eventNumber,
 			eventLabel: `GW #${e.eventNumber}`,
 			totalScore: e.crewTotalScore ?? 0,
-			date: formatDate(e.startDate)
+			date: formatDate(e.startDate),
+			isGap: false
 		}))
 }
 
 /**
  * Transform player event scores into history chart data
+ * Includes gap events (when player wasn't in crew) with null scores
  */
 export function toPlayerHistoryChartData(
 	eventScores: EventScoreSummary[],
 	formatDate: (date: string) => string
 ): HistoryDataPoint[] {
 	return eventScores
-		.filter((e) => e.totalScore > 0)
 		.sort((a, b) => a.gwEvent.eventNumber - b.gwEvent.eventNumber)
 		.map((e) => ({
 			eventNumber: e.gwEvent.eventNumber,
 			eventLabel: `GW #${e.gwEvent.eventNumber}`,
-			totalScore: e.totalScore,
-			date: formatDate(e.gwEvent.startDate)
+			totalScore: e.inCrew ? e.totalScore : null,
+			date: formatDate(e.gwEvent.startDate),
+			isGap: !e.inCrew
 		}))
 }

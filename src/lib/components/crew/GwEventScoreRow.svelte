@@ -22,7 +22,7 @@
 			<span class="event-number">GW #{eventScore.gwEvent.eventNumber}</span>
 			<ElementBadge element={eventScore.gwEvent.element} />
 		</div>
-		<span class="event-score">{formatScore(eventScore.totalScore)}</span>
+		<span class="event-score">{formatScore(eventScore.totalScore ?? 0)}</span>
 	</button>
 </li>
 

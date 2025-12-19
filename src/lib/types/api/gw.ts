@@ -160,13 +160,22 @@ export interface GwEventMinimal {
 
 export interface EventScoreSummary {
   gwEvent: GwEventMinimal
-  totalScore: number
+  totalScore: number | null // null = gap (player wasn't in crew during this event)
+  inCrew: boolean // false = gap event, true = player was in crew
+}
+
+export interface MembershipPeriod {
+  id: string
+  joinedAt: string | null
+  retiredAt: string | null
+  retired: boolean
 }
 
 export interface MemberGwScores {
   member: CrewMembership
   eventScores: EventScoreSummary[]
   grandTotal: number
+  membershipPeriods: MembershipPeriod[] // All membership periods for boomerang players
 }
 
 export interface PhantomGwScores {
