@@ -133,6 +133,16 @@
 	let editRetiredAt = $state('')
 	let editGranblueId = $state('')
 
+	// Membership history for boomerang players
+	interface EditableMembershipPeriod {
+		id: string
+		joinedAt: string
+		retiredAt: string
+		retired: boolean
+	}
+	let membershipHistory = $state<EditableMembershipPeriod[]>([])
+	let loadingHistory = $state(false)
+
 	// Dialog state for scout modal
 	let scoutModalOpen = $state(false)
 
@@ -202,14 +212,35 @@
 	}
 
 	// Member/phantom editing
-	function openEditMemberDialog(member: CrewMembership) {
+	async function openEditMemberDialog(member: CrewMembership) {
 		editingMember = member
 		editingPhantom = null
 		// Format date for input
 		editJoinDate = member.joinedAt ? (member.joinedAt.split('T')[0] ?? '') : ''
 		editRetired = member.retired
 		editRetiredAt = member.retiredAt ? (member.retiredAt.split('T')[0] ?? '') : ''
+		membershipHistory = []
 		editDialogOpen = true
+
+		// Fetch membership history for boomerang players
+		if (crewStore.crew && member.user?.id) {
+			loadingHistory = true
+			try {
+				const history = await crewAdapter.getMembershipHistory(crewStore.crew.id, member.user.id)
+				// Only show multi-period UI if there are multiple memberships
+				if (history.length > 1) {
+					membershipHistory = history.map((m) => ({
+						id: m.id,
+						joinedAt: m.joinedAt ? (m.joinedAt.split('T')[0] ?? '') : '',
+						retiredAt: m.retiredAt ? (m.retiredAt.split('T')[0] ?? '') : '',
+						retired: m.retired
+					}))
+				}
+			} catch (error) {
+				console.error('Failed to fetch membership history:', error)
+			}
+			loadingHistory = false
+		}
 	}
 
 	function openEditPhantomDialog(phantom: PhantomPlayer) {
@@ -227,15 +258,32 @@
 
 		try {
 			if (editingMember) {
-				await updateMembershipMutation.mutateAsync({
-					crewId: crewStore.crew.id,
-					membershipId: editingMember.id,
-					input: {
-						joinedAt: editJoinDate,
-						retired: editRetired,
-						retiredAt: editRetired ? editRetiredAt || undefined : undefined
+				// Check if we have multiple membership periods (boomerang player)
+				if (membershipHistory.length > 1) {
+					// Update each membership period
+					for (const period of membershipHistory) {
+						await updateMembershipMutation.mutateAsync({
+							crewId: crewStore.crew.id,
+							membershipId: period.id,
+							input: {
+								joinedAt: period.joinedAt,
+								retired: period.retired,
+								retiredAt: period.retired ? period.retiredAt || undefined : undefined
+							}
+						})
 					}
-				})
+				} else {
+					// Single membership period (normal case)
+					await updateMembershipMutation.mutateAsync({
+						crewId: crewStore.crew.id,
+						membershipId: editingMember.id,
+						input: {
+							joinedAt: editJoinDate,
+							retired: editRetired,
+							retiredAt: editRetired ? editRetiredAt || undefined : undefined
+						}
+					})
+				}
 			} else if (editingPhantom) {
 				// Call the phantom update directly through the adapter
 				await crewAdapter.updatePhantom(crewStore.crew.id, editingPhantom.id, {
@@ -260,6 +308,7 @@
 		editRetired = false
 		editRetiredAt = ''
 		editGranblueId = ''
+		membershipHistory = []
 	}
 
 	function openDeletePhantomDialog(phantom: PhantomPlayer) {
@@ -559,21 +608,81 @@
 							variant="contained"
 						/>
 					{/if}
-					<DatePicker label="Join date" bind:value={editJoinDate} contained />
-					<p class="help-text">
-						This date is used to determine which events a member was active for when adding
-						historical GW scores.
-					</p>
-					<SettingsRow title="Retired" subtitle="This player is no longer a part of the crew">
-						{#snippet control()}
-							<Switch bind:checked={editRetired} name="retired" />
-						{/snippet}
-					</SettingsRow>
-					{#if editRetired}
-						<DatePicker label="Retired date" bind:value={editRetiredAt} contained />
+
+					{#if loadingHistory}
+						<p class="loading-text">Loading membership history...</p>
+					{:else if membershipHistory.length > 1}
+						<!-- Multiple membership periods (boomerang player) -->
+						<div class="membership-periods">
+							<h4 class="periods-title">Membership Periods</h4>
+							<p class="help-text">
+								This player has joined and left the crew multiple times. Edit each period below.
+							</p>
+							{#each membershipHistory as period, i}
+								<div class="period-row">
+									<span class="period-label">
+										{#if i === 0}
+											Current
+										{:else}
+											Period {membershipHistory.length - i}
+										{/if}
+									</span>
+									<div class="period-fields">
+										<DatePicker
+											label="Joined"
+											bind:value={period.joinedAt}
+											contained
+										/>
+										{#if period.retired || i > 0}
+											<DatePicker
+												label="Left"
+												bind:value={period.retiredAt}
+												contained
+											/>
+										{/if}
+									</div>
+								</div>
+							{/each}
+						</div>
+
+						<!-- Retired toggle only affects current membership -->
+						{#if !membershipHistory[0]?.retired}
+							<SettingsRow title="Retired" subtitle="Mark current membership as ended">
+								{#snippet control()}
+									<Switch
+										checked={editRetired}
+										name="retired"
+										onCheckedChange={(checked) => {
+											editRetired = checked
+											if (membershipHistory[0]) {
+												membershipHistory[0].retired = checked
+											}
+										}}
+									/>
+								{/snippet}
+							</SettingsRow>
+							{#if editRetired && membershipHistory[0]}
+								<DatePicker label="Retired date" bind:value={membershipHistory[0].retiredAt} contained />
+							{/if}
+						{/if}
+					{:else}
+						<!-- Single membership period (normal case) -->
+						<DatePicker label="Join date" bind:value={editJoinDate} contained />
 						<p class="help-text">
-							This date is used to determine which events a retired player was active for.
+							This date is used to determine which events a member was active for when adding
+							historical GW scores.
 						</p>
+						<SettingsRow title="Retired" subtitle="This player is no longer a part of the crew">
+							{#snippet control()}
+								<Switch bind:checked={editRetired} name="retired" />
+							{/snippet}
+						</SettingsRow>
+						{#if editRetired}
+							<DatePicker label="Retired date" bind:value={editRetiredAt} contained />
+							<p class="help-text">
+								This date is used to determine which events a retired player was active for.
+							</p>
+						{/if}
 					{/if}
 				</div>
 			</div>
@@ -584,7 +693,7 @@
 			primaryAction={{
 				label: 'Save',
 				onclick: handleSaveEdit,
-				disabled: !editJoinDate
+				disabled: membershipHistory.length > 1 ? !membershipHistory[0]?.joinedAt : !editJoinDate
 			}}
 		/>
 	{/snippet}
@@ -779,6 +888,51 @@
 		color: var(--text-secondary);
 		margin: 0;
 		line-height: 1.4;
+	}
+
+	.loading-text {
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
+		margin: 0;
+		font-style: italic;
+	}
+
+	.membership-periods {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-2x;
+	}
+
+	.periods-title {
+		font-size: typography.$font-regular;
+		font-weight: typography.$medium;
+		margin: 0;
+		color: var(--text-primary);
+	}
+
+	.period-row {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+		padding: spacing.$unit-2x;
+		background: rgba(0, 0, 0, 0.02);
+		border-radius: layout.$item-corner;
+		border: 1px solid rgba(0, 0, 0, 0.06);
+	}
+
+	.period-label {
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-secondary);
+	}
+
+	.period-fields {
+		display: flex;
+		gap: spacing.$unit-2x;
+
+		:global(.date-picker) {
+			flex: 1;
+		}
 	}
 
 	// Invitation row styles

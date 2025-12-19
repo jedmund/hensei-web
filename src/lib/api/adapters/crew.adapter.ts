@@ -123,6 +123,17 @@ export class CrewAdapter extends BaseAdapter {
     this.clearCache('/crew/members')
   }
 
+  /**
+   * Get all membership periods for a user in a crew (for boomerang players)
+   */
+  async getMembershipHistory(crewId: string, userId: string, options?: RequestOptions): Promise<CrewMembership[]> {
+    const response = await this.request<{ memberships: CrewMembership[] }>(
+      `/crews/${crewId}/memberships/by_user/${userId}`,
+      options
+    )
+    return response.memberships
+  }
+
   // ==================== Invitation Operations ====================
 
   /**
