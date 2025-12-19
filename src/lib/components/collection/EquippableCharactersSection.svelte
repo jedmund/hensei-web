@@ -87,7 +87,7 @@
 	.loading-state {
 		display: flex;
 		justify-content: center;
-		padding: $unit;
+		padding: $unit $unit-2x;
 
 		:global(svg) {
 			animation: spin 1s linear infinite;
@@ -96,7 +96,7 @@
 	}
 
 	.empty-state {
-		padding: $unit;
+		padding: 0 $unit;
 	}
 
 	.empty-text {
@@ -105,14 +105,14 @@
 	}
 
 	.character-grid {
-		display: flex;
-		flex-wrap: wrap;
-		gap: $unit-half;
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: $unit;
+		padding: 0 $unit;
 	}
 
 	.character-portrait {
-		width: 40px;
-		height: 40px;
+		aspect-ratio: 1 / 1;
 		border-radius: $item-corner-small;
 		overflow: hidden;
 		cursor: pointer;
