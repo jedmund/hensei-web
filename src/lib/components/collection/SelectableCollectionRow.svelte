@@ -37,7 +37,7 @@
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="checkbox-cell" onclick={handleCheckboxClick}>
-			<Checkbox checked={isSelected} onCheckedChange={handleCheckboxChange} size="small" />
+			<Checkbox checked={isSelected} onCheckedChange={handleCheckboxChange} size="small" contained />
 		</div>
 	{/if}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
