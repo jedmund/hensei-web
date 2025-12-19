@@ -288,11 +288,10 @@
 		justify-content: space-between;
 		gap: $unit-2x;
 		padding: $unit-2x;
-		border-bottom: 1px solid var(--border-subtle);
 	}
 
 	.content {
-		padding: $unit-2x;
+		padding: 0 $unit-2x $unit-2x;
 		min-height: 400px;
 	}
 

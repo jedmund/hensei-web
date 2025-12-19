@@ -327,8 +327,8 @@
 		align-items: center;
 		gap: $unit-2x;
 		padding: $unit;
-		background: var(--placeholder-bg);
-		border-radius: $item-corner;
+		background: var(--button-contained-bg);
+		border-radius: $card-corner;
 	}
 
 	.filter-group {
