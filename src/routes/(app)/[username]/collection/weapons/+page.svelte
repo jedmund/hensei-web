@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types'
 	import type { CollectionWeapon, CollectionSortKey } from '$lib/types/api/collection'
+	import { getContext } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
@@ -9,12 +10,18 @@
 	import CollectionWeaponPane from '$lib/components/collection/CollectionWeaponPane.svelte'
 	import CollectionWeaponCard from '$lib/components/collection/CollectionWeaponCard.svelte'
 	import CollectionWeaponRow from '$lib/components/collection/CollectionWeaponRow.svelte'
+	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
+	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { IsInViewport } from 'runed'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
+	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 
 	const { data }: { data: PageData } = $props()
+
+	// Get loaded IDs context from layout
+	const loadedIdsContext = getContext<LoadedIdsContext | undefined>(LOADED_IDS_KEY)
 
 	// Filter state
 	let elementFilters = $state<number[]>([])
@@ -50,6 +57,12 @@
 			return []
 		}
 		return collectionQuery.data.pages.flatMap((page) => page.results ?? [])
+	})
+
+	// Provide loaded IDs to layout for "Select all"
+	$effect(() => {
+		const ids = allWeapons.map((w) => w.id)
+		loadedIdsContext?.setIds(ids)
 	})
 
 	// Infinite scroll
@@ -139,19 +152,17 @@
 		{:else if currentViewMode === 'grid'}
 			<div class="weapon-grid">
 				{#each allWeapons as weapon (weapon.id)}
-					<CollectionWeaponCard
-						{weapon}
-						onClick={() => openWeaponDetails(weapon)}
-					/>
+					<SelectableCollectionCard id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
+						<CollectionWeaponCard {weapon} />
+					</SelectableCollectionCard>
 				{/each}
 			</div>
 		{:else}
 			<div class="weapon-list">
 				{#each allWeapons as weapon (weapon.id)}
-					<CollectionWeaponRow
-						{weapon}
-						onClick={() => openWeaponDetails(weapon)}
-					/>
+					<SelectableCollectionRow id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
+						<CollectionWeaponRow {weapon} />
+					</SelectableCollectionRow>
 				{/each}
 			</div>
 		{/if}

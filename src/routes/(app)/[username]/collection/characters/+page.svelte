@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types'
 	import type { CollectionCharacter, CollectionSortKey } from '$lib/types/api/collection'
+	import { getContext } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
@@ -9,12 +10,18 @@
 	import CollectionCharacterPane from '$lib/components/collection/CollectionCharacterPane.svelte'
 	import CollectionCharacterCard from '$lib/components/collection/CollectionCharacterCard.svelte'
 	import CollectionCharacterRow from '$lib/components/collection/CollectionCharacterRow.svelte'
+	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
+	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { IsInViewport } from 'runed'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
+	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 
 	const { data }: { data: PageData } = $props()
+
+	// Get loaded IDs context from layout
+	const loadedIdsContext = getContext<LoadedIdsContext | undefined>(LOADED_IDS_KEY)
 
 	// Filter state
 	let elementFilters = $state<number[]>([])
@@ -52,6 +59,12 @@
 			return []
 		}
 		return collectionQuery.data.pages.flatMap((page) => page.results ?? [])
+	})
+
+	// Provide loaded IDs to layout for "Select all"
+	$effect(() => {
+		const ids = allCharacters.map((c) => c.id)
+		loadedIdsContext?.setIds(ids)
 	})
 
 	// Infinite scroll
@@ -151,19 +164,17 @@
 		{:else if currentViewMode === 'grid'}
 			<div class="character-grid">
 				{#each allCharacters as character (character.id)}
-					<CollectionCharacterCard
-						{character}
-						onClick={() => openCharacterDetails(character)}
-					/>
+					<SelectableCollectionCard id={character.id} onClick={() => openCharacterDetails(character)}>
+						<CollectionCharacterCard {character} />
+					</SelectableCollectionCard>
 				{/each}
 			</div>
 		{:else}
 			<div class="character-list">
 				{#each allCharacters as character (character.id)}
-					<CollectionCharacterRow
-						{character}
-						onClick={() => openCharacterDetails(character)}
-					/>
+					<SelectableCollectionRow id={character.id} onClick={() => openCharacterDetails(character)}>
+						<CollectionCharacterRow {character} />
+					</SelectableCollectionRow>
 				{/each}
 			</div>
 		{/if}

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types'
 	import type { CollectionSummon, CollectionSortKey } from '$lib/types/api/collection'
+	import { getContext } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
@@ -9,12 +10,18 @@
 	import CollectionSummonPane from '$lib/components/collection/CollectionSummonPane.svelte'
 	import CollectionSummonCard from '$lib/components/collection/CollectionSummonCard.svelte'
 	import CollectionSummonRow from '$lib/components/collection/CollectionSummonRow.svelte'
+	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
+	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { IsInViewport } from 'runed'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
+	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 
 	const { data }: { data: PageData } = $props()
+
+	// Get loaded IDs context from layout
+	const loadedIdsContext = getContext<LoadedIdsContext | undefined>(LOADED_IDS_KEY)
 
 	// Filter state
 	let elementFilters = $state<number[]>([])
@@ -46,6 +53,12 @@
 			return []
 		}
 		return collectionQuery.data.pages.flatMap((page) => page.results ?? [])
+	})
+
+	// Provide loaded IDs to layout for "Select all"
+	$effect(() => {
+		const ids = allSummons.map((s) => s.id)
+		loadedIdsContext?.setIds(ids)
 	})
 
 	// Infinite scroll
@@ -131,19 +144,17 @@
 		{:else if currentViewMode === 'grid'}
 			<div class="summon-grid">
 				{#each allSummons as summon (summon.id)}
-					<CollectionSummonCard
-						{summon}
-						onClick={() => openSummonDetails(summon)}
-					/>
+					<SelectableCollectionCard id={summon.id} onClick={() => openSummonDetails(summon)}>
+						<CollectionSummonCard {summon} />
+					</SelectableCollectionCard>
 				{/each}
 			</div>
 		{:else}
 			<div class="summon-list">
 				{#each allSummons as summon (summon.id)}
-					<CollectionSummonRow
-						{summon}
-						onClick={() => openSummonDetails(summon)}
-					/>
+					<SelectableCollectionRow id={summon.id} onClick={() => openSummonDetails(summon)}>
+						<CollectionSummonRow {summon} />
+					</SelectableCollectionRow>
 				{/each}
 			</div>
 		{/if}

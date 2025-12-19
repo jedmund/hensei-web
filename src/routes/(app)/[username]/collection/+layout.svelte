@@ -2,17 +2,53 @@
 	import type { LayoutData } from './$types'
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
+	import { setContext } from 'svelte'
+	import { DropdownMenu } from 'bits-ui'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 	import AddToCollectionModal from '$lib/components/collection/AddToCollectionModal.svelte'
+	import BulkDeleteConfirmModal from '$lib/components/collection/BulkDeleteConfirmModal.svelte'
 	import { openAddArtifactSidebar } from '$lib/features/collection/openAddArtifactSidebar'
+	import {
+		createSelectionModeContext,
+		SELECTION_MODE_KEY,
+		LOADED_IDS_KEY,
+		type EntityType
+	} from '$lib/stores/selectionMode.svelte'
+	import {
+		useBulkRemoveCharactersFromCollection,
+		useBulkRemoveWeaponsFromCollection,
+		useBulkRemoveSummonsFromCollection
+	} from '$lib/api/mutations/collection.mutations'
+	import { useBulkDeleteCollectionArtifacts } from '$lib/api/mutations/artifact.mutations'
 
 	let { data, children }: { data: LayoutData; children: any } = $props()
 
+	// Bulk delete mutations
+	const bulkDeleteCharacters = useBulkRemoveCharactersFromCollection()
+	const bulkDeleteWeapons = useBulkRemoveWeaponsFromCollection()
+	const bulkDeleteSummons = useBulkRemoveSummonsFromCollection()
+	const bulkDeleteArtifacts = useBulkDeleteCollectionArtifacts()
+
 	let addModalOpen = $state(false)
+	let confirmDeleteOpen = $state(false)
+	let isDeleting = $state(false)
+
+	// Selection mode context
+	const selectionMode = createSelectionModeContext()
+	setContext(SELECTION_MODE_KEY, selectionMode)
+
+	// Context for child pages to provide their loaded IDs
+	let loadedIds = $state<string[]>([])
+	setContext(LOADED_IDS_KEY, {
+		setIds: (ids: string[]) => {
+			loadedIds = ids
+		}
+	})
 
 	// Determine active entity type from URL path
 	const activeEntityType = $derived.by(() => {
@@ -43,11 +79,68 @@
 	const username = $derived(data.user?.username || $page.params.username)
 
 	function handleTabChange(value: string) {
+		// Exit selection mode when switching entity types
+		if (selectionMode.isActive) {
+			selectionMode.exit()
+		}
 		goto(`/${username}/collection/${value}`)
 	}
 
 	function handleAddArtifact() {
 		openAddArtifactSidebar()
+	}
+
+	function handleEnterSelectionMode() {
+		selectionMode.enter(activeEntityType as EntityType)
+	}
+
+	function handleCancelSelection() {
+		selectionMode.exit()
+	}
+
+	function handleSelectAll() {
+		selectionMode.selectAll(loadedIds)
+	}
+
+	function handleDeleteClick() {
+		if (selectionMode.selectedCount > 0) {
+			confirmDeleteOpen = true
+		}
+	}
+
+	async function handleConfirmDelete() {
+		isDeleting = true
+		const ids = Array.from(selectionMode.selectedIds)
+
+		try {
+			// Call the appropriate bulk delete mutation based on entity type
+			switch (activeEntityType) {
+				case 'characters':
+					await bulkDeleteCharacters.mutateAsync(ids)
+					break
+				case 'weapons':
+					await bulkDeleteWeapons.mutateAsync(ids)
+					break
+				case 'summons':
+					await bulkDeleteSummons.mutateAsync(ids)
+					break
+				case 'artifacts':
+					await bulkDeleteArtifacts.mutateAsync(ids)
+					break
+			}
+
+			selectionMode.exit()
+			confirmDeleteOpen = false
+		} catch (error) {
+			console.error('Failed to delete items:', error)
+			// Keep modal open on error so user can retry
+		} finally {
+			isDeleting = false
+		}
+	}
+
+	function handleCancelDelete() {
+		confirmDeleteOpen = false
 	}
 </script>
 
@@ -72,38 +165,81 @@
 	<div class="card-container">
 		<!-- Entity type segmented control -->
 		<nav class="entity-nav" aria-label="Collection type">
-			<SegmentedControl
-				value={activeEntityType}
-				onValueChange={handleTabChange}
-				variant="blended"
-				size="small"
-			>
-				<Segment value="characters">Characters</Segment>
-				<Segment value="weapons">Weapons</Segment>
-				<Segment value="summons">Summons</Segment>
-				<Segment value="artifacts">Artifacts</Segment>
-			</SegmentedControl>
+			{#if selectionMode.isActive}
+				<!-- Selection mode UI -->
+				<div class="selection-controls-left">
+					<span class="selection-count">{selectionMode.selectedCount} selected</span>
+					<button class="select-all-link" onclick={handleSelectAll}>Select all</button>
+				</div>
+				<div class="selection-controls-right">
+					<Button
+						variant="destructive"
+						size="small"
+						onclick={handleDeleteClick}
+						disabled={selectionMode.selectedCount === 0}
+					>
+						Delete
+					</Button>
+					<Button variant="ghost" size="small" onclick={handleCancelSelection}>
+						Cancel
+					</Button>
+				</div>
+			{:else}
+				<!-- Normal UI -->
+				<SegmentedControl
+					value={activeEntityType}
+					onValueChange={handleTabChange}
+					variant="blended"
+					size="small"
+				>
+					<Segment value="characters">Characters</Segment>
+					<Segment value="weapons">Weapons</Segment>
+					<Segment value="summons">Summons</Segment>
+					<Segment value="artifacts">Artifacts</Segment>
+				</SegmentedControl>
 
-			{#if data.isOwner && supportsAddModal}
-				<Button
-					variant="primary"
-					size="small"
-					onclick={() => (addModalOpen = true)}
-					icon="plus"
-					iconPosition="left"
-				>
-					{addButtonText}
-				</Button>
-			{:else if data.isOwner && isArtifacts}
-				<Button
-					variant="primary"
-					size="small"
-					onclick={handleAddArtifact}
-					icon="plus"
-					iconPosition="left"
-				>
-					Add artifact
-				</Button>
+				{#if data.isOwner}
+					<div class="action-buttons">
+						{#if supportsAddModal}
+							<Button
+								variant="primary"
+								size="small"
+								onclick={() => (addModalOpen = true)}
+								icon="plus"
+								iconPosition="left"
+							>
+								{addButtonText}
+							</Button>
+						{:else if isArtifacts}
+							<Button
+								variant="primary"
+								size="small"
+								onclick={handleAddArtifact}
+								icon="plus"
+								iconPosition="left"
+							>
+								Add artifact
+							</Button>
+						{/if}
+
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger class="more-menu-trigger">
+								<Icon name="ellipsis" size={16} />
+							</DropdownMenu.Trigger>
+
+							<DropdownMenu.Portal>
+								<DropdownMenu.Content class="dropdown-menu" sideOffset={5} align="end">
+									<DropdownItem>
+										<button onclick={handleEnterSelectionMode}>
+											<Icon name="check" size={14} />
+											<span>Select...</span>
+										</button>
+									</DropdownItem>
+								</DropdownMenu.Content>
+							</DropdownMenu.Portal>
+						</DropdownMenu.Root>
+					</div>
+				{/if}
 			{/if}
 		</nav>
 
@@ -121,9 +257,19 @@
 	/>
 {/if}
 
+<BulkDeleteConfirmModal
+	bind:open={confirmDeleteOpen}
+	count={selectionMode.selectedCount}
+	entityType={activeEntityType}
+	deleting={isDeleting}
+	onConfirm={handleConfirmDelete}
+	onCancel={handleCancelDelete}
+/>
+
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/typography' as *;
 
 	.collection {
 		padding: $unit-2x 0;
@@ -146,5 +292,70 @@
 	.content {
 		padding: $unit-2x;
 		min-height: 400px;
+	}
+
+	// Action buttons container
+	.action-buttons {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+	}
+
+	// More menu trigger button
+	:global(.more-menu-trigger) {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: $unit-4x;
+		height: $unit-4x;
+		border-radius: $item-corner;
+		border: none;
+		background: var(--button-contained-bg);
+		color: var(--text-secondary);
+		cursor: pointer;
+		transition: background 0.15s ease;
+
+		&:hover {
+			background: var(--button-contained-bg-hover);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--accent-color);
+			outline-offset: 2px;
+		}
+	}
+
+	// Selection mode controls
+	.selection-controls-left {
+		display: flex;
+		align-items: center;
+		gap: $unit-2x;
+	}
+
+	.selection-count {
+		font-size: $font-regular;
+		font-weight: $medium;
+		color: var(--text-primary);
+	}
+
+	.select-all-link {
+		background: none;
+		border: none;
+		padding: 0;
+		font-size: $font-small;
+		font-weight: $medium;
+		color: var(--accent-color);
+		cursor: pointer;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	.selection-controls-right {
+		display: flex;
+		align-items: center;
+		gap: $unit;
 	}
 </style>
