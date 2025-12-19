@@ -1,6 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { goto } from '$app/navigation'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
@@ -40,14 +41,16 @@
 </script>
 
 <li class="phantom-row" class:retired={phantom.retired}>
-	<div class="phantom-info">
-		<div class="phantom-details">
-			<span class="name">{phantom.name}</span>
-			{#if phantom.joinedAt}
-				<span class="joined-date">Joined {formatDate(phantom.joinedAt)}</span>
-			{/if}
+	<a href="/crew/phantoms/{phantom.id}" class="phantom-link">
+		<div class="phantom-info">
+			<div class="phantom-details">
+				<span class="name">{phantom.name}</span>
+				{#if phantom.joinedAt}
+					<span class="joined-date">Joined {formatDate(phantom.joinedAt)}</span>
+				{/if}
+			</div>
 		</div>
-	</div>
+	</a>
 
 	<div class="phantom-actions">
 		{#if claimStatus === 'unclaimed'}
@@ -65,6 +68,12 @@
 					<Button variant="ghost" size="small" iconOnly icon="ellipsis" {...props} />
 				{/snippet}
 				{#snippet menu()}
+					<DropdownMenuBase.Item
+						class="dropdown-menu-item"
+						onclick={() => goto(`/crew/phantoms/${phantom.id}`)}
+					>
+						View crew profile
+					</DropdownMenuBase.Item>
 					{#if onEdit}
 						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEdit}>
 							Edit
@@ -110,7 +119,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: spacing.$unit spacing.$unit spacing.$unit spacing.$unit-2x;
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s;
 
@@ -121,6 +129,15 @@
 		&.retired {
 			opacity: 0.6;
 		}
+	}
+
+	.phantom-link {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		padding: spacing.$unit spacing.$unit spacing.$unit spacing.$unit-2x;
+		text-decoration: none;
+		color: inherit;
 	}
 
 	.phantom-info {
@@ -150,6 +167,7 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit;
+		padding-right: spacing.$unit;
 	}
 
 	.claim-buttons {
