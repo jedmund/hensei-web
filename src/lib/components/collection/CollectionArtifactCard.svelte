@@ -85,8 +85,8 @@
 	}
 
 	.artifact-image {
-		width: 100%;
-		height: 100%;
+		width: 104px;
+		height: 104px;
 		object-fit: contain;
 		border-radius: $item-corner;
 	}
