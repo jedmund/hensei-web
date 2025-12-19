@@ -295,7 +295,7 @@
 				bind:value={elementFilters}
 				onValueChange={handleElementChange}
 				placeholder="Element"
-				contained
+				size="small"
 			/>
 		{/if}
 
@@ -305,7 +305,7 @@
 				bind:value={rarityFilters}
 				onValueChange={handleRarityChange}
 				placeholder="Rarity"
-				contained
+				size="small"
 			/>
 		{/if}
 
@@ -315,7 +315,7 @@
 				bind:value={seasonFilters}
 				onValueChange={handleSeasonChange}
 				placeholder="Season"
-				contained
+				size="small"
 			/>
 		{/if}
 
@@ -325,7 +325,7 @@
 				bind:value={seriesFilters}
 				onValueChange={handleSeriesChange}
 				placeholder={entityType === 'weapon' ? 'Weapon Series' : 'Series'}
-				contained
+				size="small"
 			/>
 		{/if}
 
@@ -335,7 +335,7 @@
 				bind:value={raceFilters}
 				onValueChange={handleRaceChange}
 				placeholder="Race"
-				contained
+				size="small"
 			/>
 		{/if}
 
@@ -345,7 +345,7 @@
 				bind:value={proficiencyFilters}
 				onValueChange={handleProficiencyChange}
 				placeholder={entityType === 'weapon' ? 'Weapon Type' : 'Proficiency'}
-				contained
+				size="small"
 			/>
 		{/if}
 
@@ -355,20 +355,16 @@
 				bind:value={genderFilters}
 				onValueChange={handleGenderChange}
 				placeholder="Gender"
-				contained
+				size="small"
 			/>
 		{/if}
 
 		{#if hasActiveFilters}
-			<button type="button" class="clear-btn" onclick={clearAll}> Clear </button>
+			<button type="button" class="clear-btn" onclick={clearAll}>Clear</button>
 		{/if}
 	</div>
 
 	<div class="right-controls">
-		{#if showViewToggle}
-			<ViewModeToggle value={viewMode} onValueChange={onViewModeChange} {element} neutral={neutralViewToggle} />
-		{/if}
-
 		{#if showSort}
 			<div class="sort">
 				<Select
@@ -376,22 +372,30 @@
 					bind:value={sortBy}
 					onValueChange={handleSortChange}
 					size="small"
-					contained
 				/>
 			</div>
+		{/if}
+
+		{#if showViewToggle}
+			<ViewModeToggle value={viewMode} onValueChange={onViewModeChange} {element} neutral={neutralViewToggle} />
 		{/if}
 	</div>
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as *;
+	@use '$src/themes/typography' as *;
 
 	.filters-container {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: $unit;
+		gap: $unit-2x;
+		padding: $unit;
+		background: var(--button-contained-bg);
+		border-radius: $card-corner;
 		width: 100%;
 	}
 
@@ -418,17 +422,16 @@
 	}
 
 	.clear-btn {
+		background: none;
+		border: none;
 		padding: $unit-half $unit;
-		border: 1px solid var(--border-color, #ddd);
-		background: transparent;
-		border-radius: 4px;
-		font-size: 12px;
+		font-size: $font-small;
+		font-weight: $medium;
+		color: var(--accent-color);
 		cursor: pointer;
-		color: var(--text-secondary, #666);
 
 		&:hover {
-			background: var(--button-bg-hover, #f5f5f5);
-			color: var(--text-primary, #333);
+			text-decoration: underline;
 		}
 	}
 </style>
