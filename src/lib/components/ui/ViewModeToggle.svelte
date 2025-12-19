@@ -66,56 +66,48 @@
 		display: flex;
 		gap: $unit-fourth;
 		padding: $unit-fourth;
-		background: var(--segmented-control-bg);
+		background: var(--segmented-control-blended-bg);
 		border-radius: $item-corner;
 
-		// Default colors (null element)
-		--toggle-active-bg: var(--null-button-bg);
-		--toggle-active-bg-hover: var(--null-button-bg-hover);
-		--toggle-active-icon: white;
+		// Default colors (no element)
+		--toggle-active-bg: var(--segmented-control-blended-segment-bg-checked);
+		--toggle-active-icon: var(--segmented-control-blended-segment-text-checked);
 
-		// Element-specific colors
+		// Element-specific colors (match SegmentedControl)
 		&.wind {
-			--toggle-active-bg: var(--wind-button-bg);
-			--toggle-active-bg-hover: var(--wind-button-bg-hover);
-			--toggle-active-icon: var(--wind-text-contrast);
+			--toggle-active-bg: var(--wind-nav-selected-bg);
+			--toggle-active-icon: var(--wind-nav-selected-text);
 		}
 
 		&.fire {
-			--toggle-active-bg: var(--fire-button-bg);
-			--toggle-active-bg-hover: var(--fire-button-bg-hover);
-			--toggle-active-icon: var(--fire-text-contrast);
+			--toggle-active-bg: var(--fire-nav-selected-bg);
+			--toggle-active-icon: var(--fire-nav-selected-text);
 		}
 
 		&.water {
-			--toggle-active-bg: var(--water-button-bg);
-			--toggle-active-bg-hover: var(--water-button-bg-hover);
-			--toggle-active-icon: var(--water-text-contrast);
+			--toggle-active-bg: var(--water-nav-selected-bg);
+			--toggle-active-icon: var(--water-nav-selected-text);
 		}
 
 		&.earth {
-			--toggle-active-bg: var(--earth-button-bg);
-			--toggle-active-bg-hover: var(--earth-button-bg-hover);
-			--toggle-active-icon: var(--earth-text-contrast);
+			--toggle-active-bg: var(--earth-nav-selected-bg);
+			--toggle-active-icon: var(--earth-nav-selected-text);
 		}
 
 		&.dark {
-			--toggle-active-bg: var(--dark-button-bg);
-			--toggle-active-bg-hover: var(--dark-button-bg-hover);
-			--toggle-active-icon: var(--dark-text-contrast);
+			--toggle-active-bg: var(--dark-nav-selected-bg);
+			--toggle-active-icon: var(--dark-nav-selected-text);
 		}
 
 		&.light {
-			--toggle-active-bg: var(--light-button-bg);
-			--toggle-active-bg-hover: var(--light-button-bg-hover);
-			--toggle-active-icon: var(--light-text-contrast);
+			--toggle-active-bg: var(--light-nav-selected-bg);
+			--toggle-active-icon: var(--light-nav-selected-text);
 		}
 
 		// Neutral gray styling (no element colors)
 		&.neutral {
-			--toggle-active-bg: var(--button-bg);
-			--toggle-active-bg-hover: var(--button-bg-hover);
-			--toggle-active-icon: var(--text-primary);
+			--toggle-active-bg: var(--segmented-control-blended-segment-bg-checked);
+			--toggle-active-icon: var(--segmented-control-blended-segment-text-checked);
 		}
 	}
 
@@ -143,10 +135,6 @@
 		&.active {
 			background: var(--toggle-active-bg);
 			color: var(--toggle-active-icon);
-
-			&:hover {
-				background: var(--toggle-active-bg-hover);
-			}
 		}
 	}
 </style>

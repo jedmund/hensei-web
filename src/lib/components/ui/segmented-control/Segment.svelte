@@ -17,10 +17,13 @@
 
 	let { value, class: className, disabled, children: content }: Props = $props()
 
-	// Get variant, size, and grow from parent context
+	// Get variant, size, grow, and element from parent context
 	const variant = getContext<SegmentedControlVariant>('segmented-control-variant') || 'default'
 	const size = getContext<SegmentedControlSize>('segmented-control-size') || 'default'
 	const grow = getContext<boolean>('segmented-control-grow') || false
+	const element = getContext<'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | null>(
+		'segmented-control-element'
+	)
 
 	// Apply variant-specific classes
 	const variantClasses = {
@@ -35,11 +38,22 @@
 		small: styles.small
 	}
 
+	// Apply element-specific classes
+	const elementClasses: Record<string, string | undefined> = {
+		wind: styles.wind,
+		fire: styles.fire,
+		water: styles.water,
+		earth: styles.earth,
+		dark: styles.dark,
+		light: styles.light
+	}
+
 	const segmentClass = $derived(
 		[
 			styles.segment,
 			variantClasses[variant],
 			sizeClasses[size],
+			element ? elementClasses[element] : '',
 			grow ? styles.grow : '',
 			className || ''
 		]

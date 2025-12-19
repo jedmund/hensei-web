@@ -37,10 +37,11 @@
 		children
 	}: Props = $props()
 
-	// Provide variant, size, and grow to child segments via context
+	// Provide variant, size, grow, and element to child segments via context
 	setContext('segmented-control-variant', variant)
 	setContext('segmented-control-size', size)
 	setContext('segmented-control-grow', grow)
+	setContext('segmented-control-element', element)
 
 	// Track previous value to only fire callback on actual changes (not initialization)
 	let previousValue = $state<string | undefined>(undefined)
@@ -61,20 +62,10 @@
 		background: styles.background
 	}
 
-	const elementClasses = {
-		wind: styles.wind,
-		fire: styles.fire,
-		water: styles.water,
-		earth: styles.earth,
-		dark: styles.dark,
-		light: styles.light
-	}
-
 	const classList = $derived(
 		[
 			styles.segmentedControl,
 			variantClasses[variant],
-			element ? elementClasses[element] : '',
 			grow ? styles.grow : '',
 			gap ? styles.gap : '',
 			className || ''
