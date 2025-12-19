@@ -34,9 +34,11 @@
 			</span>
 		{/snippet}
 	</TooltipBase.Trigger>
-	<TooltipBase.Content class="rich-tooltip-content" sideOffset={8}>
-		{@render content()}
-	</TooltipBase.Content>
+	<TooltipBase.Portal>
+		<TooltipBase.Content class="rich-tooltip-content" sideOffset={8}>
+			{@render content()}
+		</TooltipBase.Content>
+	</TooltipBase.Portal>
 </TooltipBase.Root>
 
 <style lang="scss">
