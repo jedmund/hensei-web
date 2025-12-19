@@ -45,6 +45,8 @@ export interface Artifact {
 export interface ArtifactSkill {
 	id: string
 	name: LocalizedName
+	/** Game name used for import matching (may differ from display name) */
+	gameName?: LocalizedName
 	/** Which skill group this belongs to (determines valid slots) */
 	skillGroup: ArtifactSkillGroup
 	/** Numeric modifier identifier */

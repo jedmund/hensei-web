@@ -105,6 +105,18 @@ export const artifactQueries = {
 		}),
 
 	/**
+	 * Single artifact skill by ID
+	 */
+	skillById: (id: string) =>
+		queryOptions({
+			queryKey: ['artifacts', 'skills', 'detail', id] as const,
+			queryFn: () => artifactAdapter.getSkill(id),
+			enabled: !!id,
+			staleTime: 1000 * 60 * 60, // 1 hour
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
 	 * User's collection artifacts with infinite scroll
 	 *
 	 * @param userId - The user whose collection to fetch
@@ -198,6 +210,9 @@ export const artifactKeys = {
 
 	/** Skills for a specific slot */
 	skillsForSlot: (slot: number) => ['artifacts', 'skills', 'slot', slot] as const,
+
+	/** Single skill by ID */
+	skillDetail: (id: string) => ['artifacts', 'skills', 'detail', id] as const,
 
 	/** Collection artifacts base key */
 	collectionBase: ['collection', 'artifacts'] as const,

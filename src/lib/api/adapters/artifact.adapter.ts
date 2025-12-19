@@ -124,6 +124,44 @@ export class ArtifactAdapter extends BaseAdapter {
 		return response.artifactSkills
 	}
 
+	/**
+	 * Gets a single artifact skill by ID
+	 */
+	async getSkill(id: string): Promise<ArtifactSkill> {
+		return this.request<ArtifactSkill>(`/artifact_skills/${id}`, {
+			method: 'GET',
+			cacheTime: 60 * 60 * 1000 // 1 hour
+		})
+	}
+
+	/**
+	 * Updates an artifact skill
+	 */
+	async updateSkill(
+		id: string,
+		data: Partial<{
+			name_en: string
+			name_jp: string
+			game_name_en: string
+			game_name_jp: string
+			skill_group: number
+			modifier: number
+			polarity: string
+			base_values: (number | null)[]
+			growth: number
+			suffix_en: string
+			suffix_jp: string
+		}>
+	): Promise<ArtifactSkill> {
+		const response = await this.request<ArtifactSkill>(`/artifact_skills/${id}`, {
+			method: 'PATCH',
+			body: data
+		})
+		this.clearCache('/artifact_skills')
+		this.clearCache(`/artifact_skills/${id}`)
+		return response
+	}
+
 	// ============================================
 	// Collection Artifacts
 	// ============================================
