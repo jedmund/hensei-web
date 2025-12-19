@@ -223,12 +223,14 @@
 						{/if}
 
 						<DropdownMenu.Root>
-							<DropdownMenu.Trigger class="more-menu-trigger">
-								<Icon name="ellipsis" size={16} />
+							<DropdownMenu.Trigger>
+								{#snippet child({ props })}
+									<Button {...props} variant="ghost" size="icon" icon="ellipsis" />
+								{/snippet}
 							</DropdownMenu.Trigger>
 
 							<DropdownMenu.Portal>
-								<DropdownMenu.Content class="dropdown-menu" sideOffset={5} align="end">
+								<DropdownMenu.Content class="collection-dropdown-menu" sideOffset={5} align="end">
 									<DropdownItem>
 										<button onclick={handleEnterSelectionMode}>
 											<Icon name="check" size={14} />
@@ -301,28 +303,9 @@
 		gap: $unit;
 	}
 
-	// More menu trigger button
-	:global(.more-menu-trigger) {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: $unit-4x;
-		height: $unit-4x;
-		border-radius: $item-corner;
-		border: none;
-		background: var(--button-contained-bg);
-		color: var(--text-secondary);
-		cursor: pointer;
-		transition: background 0.15s ease;
-
-		&:hover {
-			background: var(--button-contained-bg-hover);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--accent-color);
-			outline-offset: 2px;
-		}
+	// Dropdown menu z-index fix
+	:global(.collection-dropdown-menu) {
+		z-index: 200;
 	}
 
 	// Selection mode controls
