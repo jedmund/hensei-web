@@ -3,13 +3,12 @@
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
 	import { setContext } from 'svelte'
-	import { DropdownMenu } from 'bits-ui'
+	import { createQuery } from '@tanstack/svelte-query'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import Icon from '$lib/components/Icon.svelte'
-	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
+	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import AddToCollectionModal from '$lib/components/collection/AddToCollectionModal.svelte'
 	import BulkDeleteConfirmModal from '$lib/components/collection/BulkDeleteConfirmModal.svelte'
 	import { openAddArtifactSidebar } from '$lib/features/collection/openAddArtifactSidebar'
@@ -25,8 +24,17 @@
 		useBulkRemoveSummonsFromCollection
 	} from '$lib/api/mutations/collection.mutations'
 	import { useBulkDeleteCollectionArtifacts } from '$lib/api/mutations/artifact.mutations'
+	import { collectionQueries } from '$lib/api/queries/collection.queries'
 
 	let { data, children }: { data: LayoutData; children: any } = $props()
+
+	// Query for collection counts
+	const countsQuery = createQuery(() => collectionQueries.counts(data.user?.id ?? ''))
+
+	// User's element for elemental styling
+	const userElement = $derived(
+		data.user?.avatar?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
+	)
 
 	// Bulk delete mutations
 	const bulkDeleteCharacters = useBulkRemoveCharactersFromCollection()
@@ -102,6 +110,10 @@
 		selectionMode.selectAll(loadedIds)
 	}
 
+	function handleClearSelection() {
+		selectionMode.clearSelection()
+	}
+
 	function handleDeleteClick() {
 		if (selectionMode.selectedCount > 0) {
 			confirmDeleteOpen = true
@@ -169,7 +181,16 @@
 				<!-- Selection mode UI -->
 				<div class="selection-controls-left">
 					<span class="selection-count">{selectionMode.selectedCount} selected</span>
-					<button class="select-all-link" onclick={handleSelectAll}>Select all</button>
+					<div class="selection-buttons">
+						<Button variant="element-ghost" size="small" element={userElement} onclick={handleSelectAll}>
+							Select all
+						</Button>
+						{#if selectionMode.selectedCount > 0}
+							<Button variant="element-ghost" size="small" element={userElement} onclick={handleClearSelection}>
+								Clear
+							</Button>
+						{/if}
+					</div>
 				</div>
 				<div class="selection-controls-right">
 					<Button
@@ -191,11 +212,32 @@
 					onValueChange={handleTabChange}
 					variant="blended"
 					size="small"
+					element={userElement}
 				>
-					<Segment value="characters">Characters</Segment>
-					<Segment value="weapons">Weapons</Segment>
-					<Segment value="summons">Summons</Segment>
-					<Segment value="artifacts">Artifacts</Segment>
+					<Segment value="characters">
+						Characters
+						{#if countsQuery.data?.characters != null}
+							<span class="count">{countsQuery.data.characters}</span>
+						{/if}
+					</Segment>
+					<Segment value="weapons">
+						Weapons
+						{#if countsQuery.data?.weapons != null}
+							<span class="count">{countsQuery.data.weapons}</span>
+						{/if}
+					</Segment>
+					<Segment value="summons">
+						Summons
+						{#if countsQuery.data?.summons != null}
+							<span class="count">{countsQuery.data.summons}</span>
+						{/if}
+					</Segment>
+					<Segment value="artifacts">
+						Artifacts
+						{#if countsQuery.data?.artifacts != null}
+							<span class="count">{countsQuery.data.artifacts}</span>
+						{/if}
+					</Segment>
 				</SegmentedControl>
 
 				{#if data.isOwner}
@@ -222,24 +264,16 @@
 							</Button>
 						{/if}
 
-						<DropdownMenu.Root>
-							<DropdownMenu.Trigger>
-								{#snippet child({ props })}
-									<Button {...props} variant="ghost" size="icon" icon="ellipsis" />
-								{/snippet}
-							</DropdownMenu.Trigger>
-
-							<DropdownMenu.Portal>
-								<DropdownMenu.Content class="collection-dropdown-menu" sideOffset={5} align="end">
-									<DropdownItem>
-										<button onclick={handleEnterSelectionMode}>
-											<Icon name="check" size={14} />
-											<span>Select...</span>
-										</button>
-									</DropdownItem>
-								</DropdownMenu.Content>
-							</DropdownMenu.Portal>
-						</DropdownMenu.Root>
+						<DropdownMenu>
+							{#snippet trigger({ props })}
+								<Button {...props} variant="ghost" size="small" iconOnly icon="ellipsis" />
+							{/snippet}
+							{#snippet menu()}
+								<button type="button" class="dropdown-menu-item" onclick={handleEnterSelectionMode}>
+									Select {activeEntityType}...
+								</button>
+							{/snippet}
+						</DropdownMenu>
 					</div>
 				{/if}
 			{/if}
@@ -288,6 +322,7 @@
 		justify-content: space-between;
 		gap: $unit-2x;
 		padding: $unit-2x;
+		min-height: 74px;
 	}
 
 	.content {
@@ -302,11 +337,6 @@
 		gap: $unit;
 	}
 
-	// Dropdown menu z-index fix
-	:global(.collection-dropdown-menu) {
-		z-index: 200;
-	}
-
 	// Selection mode controls
 	.selection-controls-left {
 		display: flex;
@@ -315,29 +345,26 @@
 	}
 
 	.selection-count {
-		font-size: $font-regular;
+		font-size: $font-small;
 		font-weight: $medium;
 		color: var(--text-primary);
 	}
 
-	.select-all-link {
-		background: none;
-		border: none;
-		padding: 0;
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--accent-color);
-		cursor: pointer;
-		text-decoration: none;
-
-		&:hover {
-			text-decoration: underline;
-		}
+	.selection-buttons {
+		display: flex;
+		gap: $unit;
 	}
 
 	.selection-controls-right {
 		display: flex;
 		align-items: center;
 		gap: $unit;
+	}
+
+	// Count badge in segment tabs
+	.count {
+		margin-left: $unit-half;
+		color: inherit;
+		opacity: 0.7;
 	}
 </style>

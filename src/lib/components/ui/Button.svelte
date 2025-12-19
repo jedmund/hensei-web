@@ -508,6 +508,7 @@
 		color: var(--wind-button-bg);
 		&:hover:not(:disabled) {
 			background-color: var(--wind-nav-selected-bg);
+			color: var(--wind-nav-selected-text);
 		}
 	}
 
@@ -515,6 +516,7 @@
 		color: var(--fire-button-bg);
 		&:hover:not(:disabled) {
 			background-color: var(--fire-nav-selected-bg);
+			color: var(--fire-nav-selected-text);
 		}
 	}
 
@@ -522,6 +524,7 @@
 		color: var(--water-button-bg);
 		&:hover:not(:disabled) {
 			background-color: var(--water-nav-selected-bg);
+			color: var(--water-nav-selected-text);
 		}
 	}
 
@@ -529,6 +532,7 @@
 		color: var(--earth-button-bg);
 		&:hover:not(:disabled) {
 			background-color: var(--earth-nav-selected-bg);
+			color: var(--earth-nav-selected-text);
 		}
 	}
 
@@ -536,6 +540,7 @@
 		color: var(--dark-button-bg);
 		&:hover:not(:disabled) {
 			background-color: var(--dark-nav-selected-bg);
+			color: var(--dark-nav-selected-text);
 		}
 	}
 
@@ -543,6 +548,7 @@
 		color: var(--light-button-bg);
 		&:hover:not(:disabled) {
 			background-color: var(--light-nav-selected-bg);
+			color: var(--light-nav-selected-text);
 		}
 	}
 
