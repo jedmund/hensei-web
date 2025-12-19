@@ -100,7 +100,6 @@
 	&[data-state='checked'] .label {
 		background: var(--segmented-control-blended-segment-bg-checked);
 		color: var(--segmented-control-blended-segment-text-checked);
-		box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
 	}
 }
 
@@ -121,5 +120,84 @@
 		color: var(--segmented-control-background-segment-text-checked);
 		border: 0.5px solid rgba(0, 0, 0, 0.12);
 		box-shadow: 0 0 4px rgba(0, 0, 0, 0.08);
+	}
+}
+
+// Element-specific styles (override checked state)
+.fire {
+	&[data-state='checked'] .label {
+		background: var(--fire-nav-selected-bg);
+		color: var(--fire-nav-selected-text);
+	}
+
+	&:hover:not([data-state='checked']) .label {
+		background: var(--fire-nav-selected-bg);
+		color: var(--fire-nav-selected-text);
+		opacity: 0.7;
+	}
+}
+
+.water {
+	&[data-state='checked'] .label {
+		background: var(--water-nav-selected-bg);
+		color: var(--water-nav-selected-text);
+	}
+
+	&:hover:not([data-state='checked']) .label {
+		background: var(--water-nav-selected-bg);
+		color: var(--water-nav-selected-text);
+		opacity: 0.7;
+	}
+}
+
+.earth {
+	&[data-state='checked'] .label {
+		background: var(--earth-nav-selected-bg);
+		color: var(--earth-nav-selected-text);
+	}
+
+	&:hover:not([data-state='checked']) .label {
+		background: var(--earth-nav-selected-bg);
+		color: var(--earth-nav-selected-text);
+		opacity: 0.7;
+	}
+}
+
+.wind {
+	&[data-state='checked'] .label {
+		background: var(--wind-nav-selected-bg);
+		color: var(--wind-nav-selected-text);
+	}
+
+	&:hover:not([data-state='checked']) .label {
+		background: var(--wind-nav-selected-bg);
+		color: var(--wind-nav-selected-text);
+		opacity: 0.7;
+	}
+}
+
+.light {
+	&[data-state='checked'] .label {
+		background: var(--light-nav-selected-bg);
+		color: var(--light-nav-selected-text);
+	}
+
+	&:hover:not([data-state='checked']) .label {
+		background: var(--light-nav-selected-bg);
+		color: var(--light-nav-selected-text);
+		opacity: 0.7;
+	}
+}
+
+.dark {
+	&[data-state='checked'] .label {
+		background: var(--dark-nav-selected-bg);
+		color: var(--dark-nav-selected-text);
+	}
+
+	&:hover:not([data-state='checked']) .label {
+		background: var(--dark-nav-selected-bg);
+		color: var(--dark-nav-selected-text);
+		opacity: 0.7;
 	}
 }
