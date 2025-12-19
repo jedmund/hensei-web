@@ -55,18 +55,20 @@
 </script>
 
 <li class="member-row" class:retired={member.retired}>
-	<div class="member-info">
-		<div class="member-details">
-			{#if member.user?.username}
-				<a href="/{member.user.username}" class="username">{member.user.username}</a>
-			{:else}
-				<span class="username">Unknown</span>
-			{/if}
-			{#if member.joinedAt}
-				<span class="joined-date">Joined {formatDate(member.joinedAt)}</span>
-			{/if}
+	<a href="/crew/members/{member.user?.username}" class="member-link">
+		<div class="member-info">
+			<div class="member-details">
+				{#if member.user?.username}
+					<span class="username">{member.user.username}</span>
+				{:else}
+					<span class="username">Unknown</span>
+				{/if}
+				{#if member.joinedAt}
+					<span class="joined-date">Joined {formatDate(member.joinedAt)}</span>
+				{/if}
+			</div>
 		</div>
-	</div>
+	</a>
 
 	<div class="member-actions">
 		<span class="role-badge {getRoleClass(member.role)}">
@@ -79,6 +81,12 @@
 		{/snippet}
 		{#snippet menu()}
 			{#if member.user?.username}
+				<DropdownMenuBase.Item
+					class="dropdown-menu-item"
+					onclick={() => goto(`/crew/members/${member.user?.username}`)}
+				>
+					View crew profile
+				</DropdownMenuBase.Item>
 				<DropdownMenuBase.Item
 					class="dropdown-menu-item"
 					onclick={() => goto(`/${member.user?.username}`)}
@@ -122,7 +130,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: spacing.$unit spacing.$unit spacing.$unit spacing.$unit-2x;
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s;
 
@@ -133,6 +140,15 @@
 		&.retired {
 			opacity: 0.6;
 		}
+	}
+
+	.member-link {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		padding: spacing.$unit spacing.$unit spacing.$unit spacing.$unit-2x;
+		text-decoration: none;
+		color: inherit;
 	}
 
 	.member-info {
@@ -151,17 +167,13 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit;
+		padding-right: spacing.$unit;
 	}
 
 	.username {
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		color: var(--text-primary);
-		text-decoration: none;
-	}
-
-	a.username:hover {
-		text-decoration: underline;
 	}
 
 	.role-badge {
