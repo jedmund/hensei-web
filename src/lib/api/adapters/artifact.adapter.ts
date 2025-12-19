@@ -42,7 +42,7 @@ export interface CollectionArtifactListParams {
 	limit?: number
 	element?: number | number[]
 	artifactId?: string
-	proficiency?: number
+	proficiency?: number | number[]
 	rarity?: 'standard' | 'quirk'
 	// Skill filters - each slot accepts array of modifier IDs (OR logic within slot, AND across slots)
 	skill1?: number[]

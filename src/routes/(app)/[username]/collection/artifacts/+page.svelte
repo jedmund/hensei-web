@@ -110,7 +110,7 @@
 	// Build filters for query
 	const queryFilters = $derived({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
-		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters[0] : undefined,
+		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
 		rarity: rarityFilter !== 'all' ? rarityFilter : undefined,
 		skill1: slot1Filters.length > 0 ? slot1Filters : undefined,
 		skill2: slot2Filters.length > 0 ? slot2Filters : undefined,
@@ -355,9 +355,9 @@
 
 	.artifact-grid {
 		display: grid;
-		grid-template-columns: repeat(5, 100px);
+		grid-template-columns: repeat(5, 139px);
 		justify-content: space-between;
-		gap: $unit-4x;
+		gap: $unit-4x $unit-2x;
 	}
 
 	.artifact-list {
