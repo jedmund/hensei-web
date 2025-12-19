@@ -13,7 +13,8 @@ import type {
 	CollectionCharacter,
 	CollectionWeapon,
 	CollectionSummon,
-	CollectionFilters
+	CollectionFilters,
+	CollectionCounts
 } from '$lib/types/api/collection'
 
 /**
@@ -51,6 +52,22 @@ export interface CollectionInitialData<T> {
  * ```
  */
 export const collectionQueries = {
+	/**
+	 * Get counts for all collection entity types
+	 * Used to display totals in the navigation tabs
+	 *
+	 * @param userId - The user whose collection to fetch counts for
+	 * @param enabled - Whether the query is enabled (default: true)
+	 */
+	counts: (userId: string, enabled: boolean = true) =>
+		queryOptions<CollectionCounts>({
+			queryKey: ['collection', 'counts', userId] as const,
+			queryFn: () => collectionAdapter.getCounts(userId),
+			enabled: !!userId && enabled,
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			gcTime: 1000 * 60 * 30 // 30 minutes
+		}),
+
 	/**
 	 * User's collection characters with infinite scroll
 	 * Works for any user - privacy is enforced server-side
@@ -227,6 +244,7 @@ export const collectionQueries = {
  */
 export const collectionKeys = {
 	all: ['collection'] as const,
+	counts: (userId: string) => [...collectionKeys.all, 'counts', userId] as const,
 	characters: (userId?: string) =>
 		userId
 			? ([...collectionKeys.all, 'characters', userId] as const)

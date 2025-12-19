@@ -178,3 +178,13 @@ export enum CollectionPrivacy {
 	CrewOnly = 1,
 	Private = 2
 }
+
+/**
+ * Collection counts response
+ */
+export interface CollectionCounts {
+	characters: number
+	weapons: number
+	summons: number
+	artifacts: number
+}

@@ -19,7 +19,8 @@ import type {
 	CollectionWeaponInput,
 	CollectionSummonInput,
 	CollectionJobAccessoryInput,
-	CollectionFilters
+	CollectionFilters,
+	CollectionCounts
 } from '$lib/types/api/collection'
 
 /**
@@ -49,6 +50,19 @@ export interface CollectionCharacterListResponse {
 export class CollectionAdapter extends BaseAdapter {
 	constructor(options?: AdapterOptions) {
 		super(options)
+	}
+
+	// ============================================
+	// Collection Counts
+	// ============================================
+
+	/**
+	 * Gets the total counts for all collection entity types
+	 */
+	async getCounts(userId: string): Promise<CollectionCounts> {
+		return this.request<CollectionCounts>(`/users/${userId}/collection/counts`, {
+			method: 'GET'
+		})
 	}
 
 	// ============================================
