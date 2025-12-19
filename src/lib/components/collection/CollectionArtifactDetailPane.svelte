@@ -23,14 +23,16 @@
 	import ArtifactGradeDisplay from '$lib/components/artifact/ArtifactGradeDisplay.svelte'
 	import ArtifactSkillDisplay from '$lib/components/artifact/ArtifactSkillDisplay.svelte'
 	import CollectionArtifactEditPane from './CollectionArtifactEditPane.svelte'
+	import EquippableCharactersSection from './EquippableCharactersSection.svelte'
 
 	interface Props {
 		artifact: CollectionArtifact
+		userId: string
 		isOwner?: boolean
 		onClose?: () => void
 	}
 
-	let { artifact: initialArtifact, isOwner = false, onClose }: Props = $props()
+	let { artifact: initialArtifact, userId, isOwner = false, onClose }: Props = $props()
 
 	// Local state that can be updated when returning from edit pane
 	let artifact = $state(initialArtifact)
@@ -162,6 +164,14 @@
 					{/if}
 				{/each}
 			</DetailsSection>
+		{/if}
+
+		{#if proficiency}
+			<EquippableCharactersSection
+				{userId}
+				element={artifact.element}
+				{proficiency}
+			/>
 		{/if}
 
 		<DetailsSection title="Grade">

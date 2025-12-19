@@ -177,6 +177,7 @@
 			CollectionArtifactDetailPane,
 			{
 				artifact,
+				userId: data.user.id,
 				isOwner: data.isOwner,
 				onClose: () => sidebar.close()
 			},

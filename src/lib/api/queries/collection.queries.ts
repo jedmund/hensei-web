@@ -182,6 +182,29 @@ export const collectionQueries = {
 			enabled: !!id,
 			staleTime: 1000 * 60 * 5,
 			gcTime: 1000 * 60 * 30
+		}),
+
+	/**
+	 * User's collection characters as a simple list (non-paginated)
+	 * Useful for smaller filtered queries where infinite scroll is overkill
+	 *
+	 * @param userId - The user whose collection to fetch
+	 * @param filters - Optional filters for element, proficiency, etc.
+	 * @param enabled - Whether the query is enabled (default: true)
+	 */
+	charactersList: (userId: string, filters?: CollectionFilters, enabled: boolean = true) =>
+		queryOptions({
+			queryKey: ['collection', 'characters', 'list', userId, filters] as const,
+			queryFn: async () => {
+				const response = await collectionAdapter.listCharacters(userId, {
+					...filters,
+					limit: 100
+				})
+				return response.results
+			},
+			enabled: !!userId && enabled,
+			staleTime: 1000 * 60 * 2,
+			gcTime: 1000 * 60 * 15
 		})
 }
 
