@@ -48,8 +48,10 @@
 	// Check if character has season (seasonal variant), but hide if Yukata+Summer
 	const hasSeason = $derived(seasonText !== null && !isYukataWithSummer)
 
-	// Check if character has series with different text than season
-	const hasDistinctSeries = $derived(seriesText !== null && seriesText !== seasonText)
+	// Check if character has series with different text than season (exclude "Standard")
+	const hasDistinctSeries = $derived(
+		seriesText !== null && seriesText !== seasonText && seriesText !== 'Standard'
+	)
 
 	// Whether any tags should be shown
 	const hasTags = $derived(hasSeason || hasDistinctSeries)
