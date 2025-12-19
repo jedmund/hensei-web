@@ -49,12 +49,16 @@
 	:global(.dropdown-menu-item) {
 		padding: $unit $unit-2x;
 		border-radius: $item-corner-small;
+		border: none;
+		background: transparent;
 		cursor: pointer;
 		font-size: $font-regular;
 		color: var(--text-primary);
 		display: flex;
 		align-items: center;
 		gap: $unit;
+		width: 100%;
+		text-align: left;
 		@include smooth-transition($duration-standard, background);
 
 		&:hover {
