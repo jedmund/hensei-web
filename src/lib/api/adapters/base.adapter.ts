@@ -431,11 +431,9 @@ export abstract class BaseAdapter {
 			// Skip undefined and null values
 			if (value === undefined || value === null) return
 
-			// Handle arrays by adding multiple params with the same key
+			// Handle arrays by joining values with commas (Rails-friendly format)
 			if (Array.isArray(value)) {
-				value.forEach((item) => {
-					url.searchParams.append(key, String(item))
-				})
+				url.searchParams.set(key, value.join(','))
 			} else {
 				url.searchParams.set(key, String(value))
 			}
