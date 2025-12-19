@@ -145,6 +145,22 @@ export class CollectionAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Removes multiple characters from the collection in a single batch request
+	 */
+	async removeCharactersBatch(ids: string[]): Promise<{ deleted: number }> {
+		if (ids.length === 0) return { deleted: 0 }
+
+		const response = await this.request<{
+			meta: { deleted: number }
+		}>('/collection/characters/batch_destroy', {
+			method: 'DELETE',
+			body: { ids }
+		})
+
+		return response.meta
+	}
+
+	/**
 	 * Gets the IDs of all characters in a user's collection
 	 * Useful for filtering out already-owned characters in the add modal
 	 */
@@ -261,6 +277,22 @@ export class CollectionAdapter extends BaseAdapter {
 		})
 	}
 
+	/**
+	 * Removes multiple weapons from the collection in a single batch request
+	 */
+	async removeWeaponsBatch(ids: string[]): Promise<{ deleted: number }> {
+		if (ids.length === 0) return { deleted: 0 }
+
+		const response = await this.request<{
+			meta: { deleted: number }
+		}>('/collection/weapons/batch_destroy', {
+			method: 'DELETE',
+			body: { ids }
+		})
+
+		return response.meta
+	}
+
 	// ============================================
 	// Collection Summons
 	// ============================================
@@ -356,6 +388,22 @@ export class CollectionAdapter extends BaseAdapter {
 		return this.request<void>(`/collection/summons/${id}`, {
 			method: 'DELETE'
 		})
+	}
+
+	/**
+	 * Removes multiple summons from the collection in a single batch request
+	 */
+	async removeSummonsBatch(ids: string[]): Promise<{ deleted: number }> {
+		if (ids.length === 0) return { deleted: 0 }
+
+		const response = await this.request<{
+			meta: { deleted: number }
+		}>('/collection/summons/batch_destroy', {
+			method: 'DELETE',
+			body: { ids }
+		})
+
+		return response.meta
 	}
 
 	// ============================================

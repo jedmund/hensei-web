@@ -103,6 +103,20 @@ export function useDeleteCollectionArtifact() {
 	}))
 }
 
+/**
+ * Delete multiple collection artifacts in a single batch
+ */
+export function useBulkDeleteCollectionArtifacts() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (ids: string[]) => artifactAdapter.deleteCollectionArtifactsBatch(ids),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: artifactKeys.collectionBase })
+		}
+	}))
+}
+
 // ============================================================================
 // Grid Artifact Mutations (Equipped on Characters)
 // ============================================================================

@@ -129,6 +129,21 @@ export function useRemoveCharacterFromCollection() {
 	}))
 }
 
+/**
+ * Remove multiple characters from collection in a single batch
+ */
+export function useBulkRemoveCharactersFromCollection() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (ids: string[]) => collectionAdapter.removeCharactersBatch(ids),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.characterIds() })
+		}
+	}))
+}
+
 // ============================================================================
 // Weapon Mutations
 // ============================================================================
@@ -191,6 +206,20 @@ export function useRemoveWeaponFromCollection() {
 	}))
 }
 
+/**
+ * Remove multiple weapons from collection in a single batch
+ */
+export function useBulkRemoveWeaponsFromCollection() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (ids: string[]) => collectionAdapter.removeWeaponsBatch(ids),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
+		}
+	}))
+}
+
 // ============================================================================
 // Summon Mutations
 // ============================================================================
@@ -247,6 +276,20 @@ export function useRemoveSummonFromCollection() {
 
 	return createMutation(() => ({
 		mutationFn: (id: string) => collectionAdapter.removeSummon(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
+		}
+	}))
+}
+
+/**
+ * Remove multiple summons from collection in a single batch
+ */
+export function useBulkRemoveSummonsFromCollection() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (ids: string[]) => collectionAdapter.removeSummonsBatch(ids),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
 		}
