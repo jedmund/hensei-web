@@ -95,7 +95,8 @@ export function getJobTierName(row: string | number): string {
 		'5': 'Class V',
 		ex: 'EX',
 		ex1: 'EX',
-		ex2: 'EXII'
+		ex2: 'EXII',
+		o1: 'Origin I'
 	}
 
 	const rowStr = row.toString().toLowerCase()
@@ -115,7 +116,8 @@ export function getJobTierOrder(row: string | number): number {
 		'5': 5,
 		ex: 6,
 		ex1: 6,
-		ex2: 7
+		ex2: 7,
+		o1: 8
 	}
 
 	const rowStr = row.toString().toLowerCase()

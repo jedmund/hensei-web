@@ -24,7 +24,8 @@
 		{ value: '4', label: 'Class IV' },
 		{ value: '5', label: 'Class V' },
 		{ value: 'ex', label: 'Extra' },
-		{ value: 'ex2', label: 'Extra II' }
+		{ value: 'ex2', label: 'Extra II' },
+		{ value: 'o1', label: 'Origin I' }
 	]
 </script>
 
