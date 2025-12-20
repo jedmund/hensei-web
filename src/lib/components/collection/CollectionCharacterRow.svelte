@@ -75,7 +75,7 @@
 
 	<div class="proficiency-cell">
 		{#each proficiencies as proficiency}
-			<ProficiencyLabel {proficiency} size="small" />
+			<ProficiencyLabel {proficiency} size="medium" />
 		{/each}
 	</div>
 </button>
@@ -173,5 +173,7 @@
 		display: flex;
 		gap: $unit-half;
 		flex-shrink: 0;
+		min-width: 130px;
+		justify-content: flex-end;
 	}
 </style>
