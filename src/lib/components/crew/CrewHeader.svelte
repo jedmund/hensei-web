@@ -60,7 +60,6 @@
 		flex-direction: column;
 		gap: spacing.$unit;
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 	}
 
 	.header-top-row {
@@ -73,7 +72,7 @@
 	.header-info {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit;
+		gap: 0;
 	}
 
 	.header-below {

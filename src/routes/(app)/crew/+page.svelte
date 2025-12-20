@@ -14,6 +14,7 @@
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
+	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
 	import { formatDateJST } from '$lib/utils/date'
 	import { formatScore, toCrewHistoryChartData } from '$lib/utils/gw'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
@@ -226,28 +227,7 @@
 					{/snippet}
 				</CrewHeader>
 
-				<div class="stats-row">
-					<a href="/crew/members" class="stat stat-link">
-						<span class="stat-value">{crewStore.crew?.memberCount ?? 0}</span>
-						<span class="stat-label">Members</span>
-					</a>
-					<div class="stat">
-						<span
-							class="stat-value role"
-							class:captain={crewStore.isCaptain}
-							class:officer={crewStore.isViceCaptain}
-						>
-							{#if crewStore.isCaptain}
-								Captain
-							{:else if crewStore.isViceCaptain}
-								Vice Captain
-							{:else}
-								Member
-							{/if}
-						</span>
-						<span class="stat-label">Your Role</span>
-					</div>
-				</div>
+				<CrewTabs userElement={data.currentUser?.element} />
 
 				<!-- GW Events Section -->
 				<div class="section-header">
@@ -432,10 +412,6 @@
 		border-radius: layout.$page-corner;
 		box-shadow: effects.$page-elevation;
 		overflow: hidden;
-
-		:global(.header-info) {
-			gap: 0;
-		}
 	}
 
 	.loading-state {
@@ -504,56 +480,6 @@
 			font-size: typography.$font-small;
 			color: var(--text-secondary);
 		}
-	}
-
-	.stats-row {
-		display: flex;
-	}
-
-	.stat {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: spacing.$unit-2x;
-		border-right: 1px solid rgba(0, 0, 0, 0.08);
-
-		&:last-child {
-			border-right: none;
-		}
-
-		&.stat-link {
-			text-decoration: none;
-			color: inherit;
-			transition: background-color 0.15s;
-
-			&:hover {
-				background: rgba(0, 0, 0, 0.02);
-			}
-		}
-	}
-
-	.stat-value {
-		font-size: typography.$font-medium;
-		font-weight: typography.$medium;
-		margin-bottom: 2px;
-
-		&.role {
-			font-size: typography.$font-small;
-
-			&.captain {
-				color: var(--color-gold, #b8860b);
-			}
-
-			&.officer {
-				color: var(--color-blue, #3b82f6);
-			}
-		}
-	}
-
-	.stat-label {
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
 	}
 
 	// Section header

@@ -24,6 +24,7 @@
 	import SettingsRow from '$lib/components/ui/SettingsRow.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
+	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
 	import MemberRow from '$lib/components/crew/MemberRow.svelte'
 	import PhantomRow from '$lib/components/crew/PhantomRow.svelte'
 	import ScoutUserModal from '$lib/components/crew/ScoutUserModal.svelte'
@@ -384,23 +385,11 @@
 
 <div class="page">
 	<div class="card">
-		<CrewHeader title="Members" backHref="/crew">
-			{#snippet belowTitle()}
-				<div class="filter-tabs">
-					{#each filterOptions as option}
-						<button
-							class="filter-tab"
-							class:active={filter === option.value}
-							onclick={() => handleFilterChange(option.value)}
-						>
-							{option.label}
-							{#if option.value === 'pending' && (pendingInvitationsCount > 0 || pendingClaimPhantoms.length > 0)}
-								<span class="tab-badge">{pendingInvitationsCount + pendingClaimPhantoms.length}</span>
-							{/if}
-						</button>
-					{/each}
-				</div>
-			{/snippet}
+		<CrewHeader
+			title={crewStore.crew?.name ?? ''}
+			subtitle={crewStore.crew?.gamertag ?? undefined}
+			description={crewStore.crew?.description ?? undefined}
+		>
 			{#snippet actions()}
 				{#if crewStore.isOfficer}
 					<Button
@@ -427,6 +416,23 @@
 				{/if}
 			{/snippet}
 		</CrewHeader>
+
+		<CrewTabs userElement={data.currentUser?.element} />
+
+		<div class="filter-tabs">
+			{#each filterOptions as option}
+				<button
+					class="filter-tab"
+					class:active={filter === option.value}
+					onclick={() => handleFilterChange(option.value)}
+				>
+					{option.label}
+					{#if option.value === 'pending' && (pendingInvitationsCount > 0 || pendingClaimPhantoms.length > 0)}
+						<span class="tab-badge">{pendingInvitationsCount + pendingClaimPhantoms.length}</span>
+					{/if}
+				</button>
+			{/each}
+		</div>
 
 		<!-- Pending tab (invitations and claims) -->
 		{#if filter === 'pending'}
@@ -756,15 +762,12 @@
 		border-radius: layout.$page-corner;
 		box-shadow: effects.$page-elevation;
 		overflow: hidden;
-
-		:global(.header-info) {
-			gap: spacing.$unit-2x;
-		}
 	}
 
 	.filter-tabs {
 		display: flex;
 		gap: spacing.$unit-half;
+		padding: spacing.$unit-2x spacing.$unit-2x spacing.$unit;
 	}
 
 	.filter-tab {
