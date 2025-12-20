@@ -88,7 +88,6 @@
 
 	const isLoading = $derived(collectionQuery.isLoading)
 	const isEmpty = $derived(!isLoading && allWeapons.length === 0)
-	const showSentinel = $derived(collectionQuery.hasNextPage && !collectionQuery.isFetchingNextPage)
 
 	// Current view mode from store
 	const currentViewMode = $derived(viewMode.collectionView)
@@ -173,9 +172,12 @@
 		{/if}
 
 		{#if !isLoading && !isEmpty}
-			{#if showSentinel}
-				<div class="load-more-sentinel" bind:this={sentinelEl}></div>
-			{/if}
+			<!-- Sentinel always in DOM to avoid Svelte block tracking issues during rapid updates -->
+			<div
+				class="load-more-sentinel"
+				bind:this={sentinelEl}
+				class:hidden={!collectionQuery.hasNextPage}
+			></div>
 
 			{#if collectionQuery.isFetchingNextPage}
 				<div class="loading-more">
@@ -183,7 +185,6 @@
 					<span>Loading more...</span>
 				</div>
 			{/if}
-
 		{/if}
 	</div>
 </div>
@@ -255,6 +256,10 @@
 	.load-more-sentinel {
 		height: 1px;
 		margin-top: $unit;
+
+		&.hidden {
+			display: none;
+		}
 	}
 
 	.loading-more {
