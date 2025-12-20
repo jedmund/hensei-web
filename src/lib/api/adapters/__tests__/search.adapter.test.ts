@@ -390,15 +390,7 @@ describe('SearchAdapter', () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
 				json: async () => ({
-					results: [],
-					page: 2,
-					total_pages: 5,
-					meta: {
-						count: 0,
-						page: 2,
-						per_page: 20,
-						total_pages: 5
-					}
+					results: []
 				})
 			})
 
@@ -420,8 +412,8 @@ describe('SearchAdapter', () => {
 				})
 			)
 
-			expect(result.page).toBe(2)
-			expect(result.totalPages).toBe(5)
+			// Unified search only returns results, no pagination metadata
+			expect(result.results).toEqual([])
 		})
 	})
 })

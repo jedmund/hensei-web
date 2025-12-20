@@ -35,8 +35,9 @@ export interface SearchParams {
 }
 
 /**
- * Individual search result item
- * Represents a weapon, character, or summon
+ * Individual search result item from type-specific search endpoints
+ * (searchWeapons, searchCharacters, searchSummons)
+ * These return full entity data with camelCase field names (transformed by BaseAdapter)
  */
 export interface SearchResult {
 	/** Unique entity ID */
@@ -65,7 +66,40 @@ export interface SearchResult {
 }
 
 /**
- * Search API response structure
+ * Character series reference for unified search
+ */
+export interface UnifiedSearchSeriesRef {
+	id: string
+	slug: string
+	name: { en: string; ja: string }
+}
+
+/**
+ * Individual search result item from unified search endpoint (searchAll)
+ * Uses PgSearch.multisearch which returns different field structure
+ * Field names are camelCase after BaseAdapter transformation
+ */
+export interface UnifiedSearchResult {
+	/** Unique entity ID (from searchable_id) */
+	searchableId: string
+	/** Type of entity */
+	searchableType: 'Weapon' | 'Character' | 'Summon'
+	/** Granblue game ID */
+	granblueId: string
+	/** English name */
+	nameEn?: string
+	/** Japanese name */
+	nameJp?: string
+	/** Element type (1-6 for different elements) */
+	element?: number
+	/** Season (characters only) */
+	season?: number | null
+	/** Series (characters only) */
+	series?: UnifiedSearchSeriesRef[] | null
+}
+
+/**
+ * Search API response structure for type-specific endpoints
  * Contains results and pagination metadata
  */
 export interface SearchResponse {
@@ -84,6 +118,14 @@ export interface SearchResponse {
 		perPage: number
 		totalPages: number
 	}
+}
+
+/**
+ * Search API response structure for unified search endpoint
+ */
+export interface UnifiedSearchResponse {
+	/** Array of search results */
+	results: UnifiedSearchResult[]
 }
 
 /**
@@ -221,11 +263,12 @@ export class SearchAdapter extends BaseAdapter {
 
 	/**
 	 * Searches across all entity types (weapons, characters, summons)
+	 * Uses PgSearch.multisearch which returns a different response structure
 	 *
 	 * @param params - Search parameters
-	 * @returns Promise resolving to search results
+	 * @returns Promise resolving to unified search results
 	 */
-	async searchAll(params: SearchParams = {}): Promise<SearchResponse> {
+	async searchAll(params: SearchParams = {}): Promise<UnifiedSearchResponse> {
 		const body = this.buildSearchBody(params, {
 			element: true,
 			rarity: true,
@@ -243,7 +286,7 @@ export class SearchAdapter extends BaseAdapter {
 		// Search endpoints don't use credentials to avoid CORS
 		// Rails expects params nested under 'search' key
 		// Per-page is sent via X-Per-Page header
-		return this.request<SearchResponse>('/search/all', {
+		return this.request<UnifiedSearchResponse>('/search', {
 			method: 'POST',
 			body: { search: body },
 			credentials: 'omit',
