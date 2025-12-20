@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
-	import { getContext } from 'svelte'
+	import { getContext, onDestroy } from 'svelte'
 	import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
 	import CollectionArtifactDetailPane from '$lib/components/collection/CollectionArtifactDetailPane.svelte'
@@ -12,12 +12,12 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
-	import { IsInViewport } from 'runed'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { getArtifactImage } from '$lib/utils/images'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
+	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 
 	const { data }: { data: PageData } = $props()
 
@@ -130,6 +130,10 @@
 		return artifactQueries.collection(userId, filters)
 	})
 
+	// State-gated infinite scroll (inspired by svelte-infinite)
+	// Encapsulates intersection observer, state machine, and all reactive effects
+	const loader = useInfiniteLoader(() => collectionQuery, () => sentinelEl)
+
 	// Flatten all artifacts from pages
 	const allArtifacts = $derived.by((): CollectionArtifact[] => {
 		if (!collectionQuery.data?.pages) {
@@ -144,25 +148,17 @@
 		loadedIdsContext?.setIds(ids)
 	})
 
-	// Infinite scroll
-	const inViewport = new IsInViewport(() => sentinelEl, {
-		rootMargin: '200px'
+	// Reset loader state when filters change
+	$effect(() => {
+		void queryFilters
+		loader.reset()
 	})
 
-	$effect(() => {
-		if (
-			inViewport.current &&
-			collectionQuery.hasNextPage &&
-			!collectionQuery.isFetchingNextPage &&
-			!collectionQuery.isLoading
-		) {
-			collectionQuery.fetchNextPage()
-		}
-	})
+	// Cleanup on destroy
+	onDestroy(() => loader.destroy())
 
 	const isLoading = $derived(collectionQuery.isLoading)
 	const isEmpty = $derived(!isLoading && allArtifacts.length === 0)
-	const showSentinel = $derived(collectionQuery.hasNextPage && !collectionQuery.isFetchingNextPage)
 
 	// Current view mode from store
 	const currentViewMode = $derived(viewMode.collectionView)
@@ -291,9 +287,12 @@
 		{/if}
 
 		{#if !isLoading && !isEmpty}
-			{#if showSentinel}
-				<div class="load-more-sentinel" bind:this={sentinelEl}></div>
-			{/if}
+			<!-- Sentinel always in DOM to avoid Svelte block tracking issues during rapid updates -->
+			<div
+				class="load-more-sentinel"
+				bind:this={sentinelEl}
+				class:hidden={!collectionQuery.hasNextPage}
+			></div>
 
 			{#if collectionQuery.isFetchingNextPage}
 				<div class="loading-more">
@@ -301,7 +300,6 @@
 					<span>Loading more...</span>
 				</div>
 			{/if}
-
 		{/if}
 	</div>
 </div>
@@ -397,6 +395,10 @@
 	.load-more-sentinel {
 		height: 1px;
 		margin-top: $unit;
+
+		&.hidden {
+			display: none;
+		}
 	}
 
 	.loading-more {

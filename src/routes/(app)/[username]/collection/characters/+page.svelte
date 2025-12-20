@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types'
 	import type { CollectionCharacter, CollectionSortKey } from '$lib/types/api/collection'
-	import { getContext } from 'svelte'
+	import { getContext, onDestroy } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
@@ -13,10 +13,10 @@
 	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import { IsInViewport } from 'runed'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
+	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 
 	const { data }: { data: PageData } = $props()
 
@@ -58,6 +58,10 @@
 		return collectionQueries.characters(userId, filters)
 	})
 
+	// State-gated infinite scroll (inspired by svelte-infinite)
+	// Encapsulates intersection observer, state machine, and all reactive effects
+	const loader = useInfiniteLoader(() => collectionQuery, () => sentinelEl)
+
 	// Flatten all characters from pages
 	const allCharacters = $derived.by((): CollectionCharacter[] => {
 		if (!collectionQuery.data?.pages) {
@@ -72,21 +76,14 @@
 		loadedIdsContext?.setIds(ids)
 	})
 
-	// Infinite scroll
-	const inViewport = new IsInViewport(() => sentinelEl, {
-		rootMargin: '200px'
+	// Reset loader state when filters change
+	$effect(() => {
+		void queryFilters
+		loader.reset()
 	})
 
-	$effect(() => {
-		if (
-			inViewport.current &&
-			collectionQuery.hasNextPage &&
-			!collectionQuery.isFetchingNextPage &&
-			!collectionQuery.isLoading
-		) {
-			collectionQuery.fetchNextPage()
-		}
-	})
+	// Cleanup on destroy
+	onDestroy(() => loader.destroy())
 
 	const isLoading = $derived(collectionQuery.isLoading)
 	const isEmpty = $derived(!isLoading && allCharacters.length === 0)
