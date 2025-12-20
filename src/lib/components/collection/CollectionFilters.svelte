@@ -48,6 +48,8 @@
 		element?: string
 		/** Use neutral gray styling for view toggle */
 		neutralViewToggle?: boolean
+		/** Whether to show contained background styling (default: true) */
+		contained?: boolean
 	}
 
 	export interface CollectionFilterState {
@@ -110,7 +112,8 @@
 		onViewModeChange,
 		showViewToggle = false,
 		element,
-		neutralViewToggle = false
+		neutralViewToggle = false,
+		contained = true
 	}: Props = $props()
 
 	// Compute effective filter visibility (explicit showFilters overrides entityType defaults)
@@ -287,7 +290,7 @@
 	)
 </script>
 
-<div class="filters-container">
+<div class="filters-container" class:contained>
 	<div class="filters">
 		{#if effectiveShowFilters.element}
 			<MultiSelect
@@ -393,10 +396,13 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: $unit-2x;
-		padding: $unit;
-		background: var(--button-contained-bg);
-		border-radius: $card-corner;
 		width: 100%;
+
+		&.contained {
+			padding: $unit;
+			background: var(--button-contained-bg);
+			border-radius: $card-corner;
+		}
 	}
 
 	.filters {

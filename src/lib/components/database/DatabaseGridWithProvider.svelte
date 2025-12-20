@@ -233,6 +233,7 @@
 			bind:seasonFilters
 			onFiltersChange={handleFiltersChange}
 			showSort={false}
+			contained={false}
 		/>
 
 		<div class="controls-right">
