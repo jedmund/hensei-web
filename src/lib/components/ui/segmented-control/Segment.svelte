@@ -35,7 +35,8 @@
 	// Apply size-specific classes
 	const sizeClasses = {
 		default: '',
-		small: styles.small
+		small: styles.small,
+		xsmall: styles.xsmall
 	}
 
 	// Apply element-specific classes

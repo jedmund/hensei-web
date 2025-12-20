@@ -39,6 +39,16 @@
 	}
 }
 
+// Extra small size variant
+.xsmall {
+	font-size: typography.$font-small;
+	min-width: 60px;
+
+	.label {
+		padding: spacing.$unit-half spacing.$unit;
+	}
+}
+
 // Grow variant - fill available space equally
 .grow {
 	flex: 1;

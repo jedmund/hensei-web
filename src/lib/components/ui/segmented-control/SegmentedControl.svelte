@@ -9,7 +9,7 @@
 	import type { HTMLAttributes } from 'svelte/elements'
 
 	export type SegmentedControlVariant = 'default' | 'blended' | 'background'
-	export type SegmentedControlSize = 'default' | 'small'
+	export type SegmentedControlSize = 'default' | 'small' | 'xsmall'
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		value?: string
