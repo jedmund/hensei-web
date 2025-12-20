@@ -333,7 +333,7 @@
 			options: seriesOptions,
 			value: seriesFilters,
 			onChange: (v) => handleSeriesChange(v),
-			placeholder: entityType === 'weapon' ? 'Weapon Series' : 'Series'
+			placeholder: 'Series'
 		},
 		{
 			key: 'race',
@@ -347,7 +347,7 @@
 			options: proficiencies,
 			value: proficiencyFilters,
 			onChange: (v) => handleProficiencyChange(v as number[]),
-			placeholder: entityType === 'weapon' ? 'Weapon Type' : 'Proficiency'
+			placeholder: 'Proficiency'
 		},
 		{
 			key: 'gender',
