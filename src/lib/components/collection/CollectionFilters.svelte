@@ -9,6 +9,8 @@
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { DropdownMenu } from 'bits-ui'
+	import Icon from '$lib/components/Icon.svelte'
 
 	type EntityType = 'character' | 'weapon' | 'summon'
 
@@ -288,78 +290,158 @@
 			proficiencyFilters.length > 0 ||
 			genderFilters.length > 0
 	)
+
+	// Overflow detection state
+	type FilterKey = 'element' | 'rarity' | 'season' | 'series' | 'race' | 'proficiency' | 'gender'
+
+	interface FilterConfig {
+		key: FilterKey
+		options: { value: number | string; label: string; color?: string }[]
+		value: (number | string)[]
+		onChange: (value: (number | string)[]) => void
+		placeholder: string
+	}
+
+	// Filters that always go in the "More" dropdown
+	const moreFilterKeys: FilterKey[] = ['race', 'gender']
+
+	// Unified filter configuration
+	const filterConfigs = $derived<FilterConfig[]>([
+		{
+			key: 'element',
+			options: elements,
+			value: elementFilters,
+			onChange: (v) => handleElementChange(v as number[]),
+			placeholder: 'Element'
+		},
+		{
+			key: 'rarity',
+			options: rarities,
+			value: rarityFilters,
+			onChange: (v) => handleRarityChange(v as number[]),
+			placeholder: 'Rarity'
+		},
+		{
+			key: 'season',
+			options: seasons,
+			value: seasonFilters,
+			onChange: (v) => handleSeasonChange(v as number[]),
+			placeholder: 'Season'
+		},
+		{
+			key: 'series',
+			options: seriesOptions,
+			value: seriesFilters,
+			onChange: (v) => handleSeriesChange(v),
+			placeholder: entityType === 'weapon' ? 'Weapon Series' : 'Series'
+		},
+		{
+			key: 'race',
+			options: races,
+			value: raceFilters,
+			onChange: (v) => handleRaceChange(v as number[]),
+			placeholder: 'Race'
+		},
+		{
+			key: 'proficiency',
+			options: proficiencies,
+			value: proficiencyFilters,
+			onChange: (v) => handleProficiencyChange(v as number[]),
+			placeholder: entityType === 'weapon' ? 'Weapon Type' : 'Proficiency'
+		},
+		{
+			key: 'gender',
+			options: genders,
+			value: genderFilters,
+			onChange: (v) => handleGenderChange(v as number[]),
+			placeholder: 'Gender'
+		}
+	])
+
+	// Active filters based on visibility settings
+	const activeFilters = $derived(
+		filterConfigs.filter((f) => effectiveShowFilters[f.key])
+	)
+
+	// Filters visible in the main row (not in moreFilterKeys)
+	const visibleFilters = $derived(
+		activeFilters.filter((f) => !moreFilterKeys.includes(f.key))
+	)
+
+	// Filters in the "More" dropdown
+	const moreFilters = $derived(
+		activeFilters.filter((f) => moreFilterKeys.includes(f.key))
+	)
+
+	const showMoreButton = $derived(moreFilters.length > 0)
+
+	// Toggle function for submenu multi-select behavior
+	function toggleFilterValue(filter: FilterConfig, value: number | string) {
+		const currentValues = filter.value
+		const newValues = currentValues.includes(value)
+			? currentValues.filter((v) => v !== value)
+			: [...currentValues, value]
+
+		filter.onChange(newValues)
+	}
 </script>
 
 <div class="filters-container" class:contained>
 	<div class="filters">
-		{#if effectiveShowFilters.element}
+		{#each visibleFilters as filter (filter.key)}
 			<MultiSelect
-				options={elements}
-				bind:value={elementFilters}
-				onValueChange={handleElementChange}
-				placeholder="Element"
+				options={filter.options}
+				value={filter.value}
+				onValueChange={filter.onChange}
+				placeholder={filter.placeholder}
 				size="small"
 			/>
-		{/if}
+		{/each}
 
-		{#if effectiveShowFilters.rarity}
-			<MultiSelect
-				options={rarities}
-				bind:value={rarityFilters}
-				onValueChange={handleRarityChange}
-				placeholder="Rarity"
-				size="small"
-			/>
-		{/if}
+		{#if showMoreButton}
+			<DropdownMenu.Root>
+				<DropdownMenu.Trigger class="more-trigger">
+					<span>More</span>
+					<Icon name="chevron-down-small" size={14} />
+				</DropdownMenu.Trigger>
 
-		{#if effectiveShowFilters.season}
-			<MultiSelect
-				options={seasons}
-				bind:value={seasonFilters}
-				onValueChange={handleSeasonChange}
-				placeholder="Season"
-				size="small"
-			/>
-		{/if}
+				<DropdownMenu.Portal>
+					<DropdownMenu.Content class="more-menu-content" side="bottom" align="start" sideOffset={4}>
+						{#each moreFilters as filter (filter.key)}
+							<DropdownMenu.Sub>
+								<DropdownMenu.SubTrigger class="more-menu-subtrigger">
+									<span class="submenu-label">{filter.placeholder}</span>
+									{#if filter.value.length > 0}
+										<span class="selection-badge">{filter.value.length}</span>
+									{/if}
+									<Icon name="chevron-right-small" size={14} class="submenu-chevron" />
+								</DropdownMenu.SubTrigger>
 
-		{#if effectiveShowFilters.series}
-			<MultiSelect
-				options={seriesOptions}
-				bind:value={seriesFilters}
-				onValueChange={handleSeriesChange}
-				placeholder={entityType === 'weapon' ? 'Weapon Series' : 'Series'}
-				size="small"
-			/>
-		{/if}
-
-		{#if effectiveShowFilters.race}
-			<MultiSelect
-				options={races}
-				bind:value={raceFilters}
-				onValueChange={handleRaceChange}
-				placeholder="Race"
-				size="small"
-			/>
-		{/if}
-
-		{#if effectiveShowFilters.proficiency}
-			<MultiSelect
-				options={proficiencies}
-				bind:value={proficiencyFilters}
-				onValueChange={handleProficiencyChange}
-				placeholder={entityType === 'weapon' ? 'Weapon Type' : 'Proficiency'}
-				size="small"
-			/>
-		{/if}
-
-		{#if effectiveShowFilters.gender}
-			<MultiSelect
-				options={genders}
-				bind:value={genderFilters}
-				onValueChange={handleGenderChange}
-				placeholder="Gender"
-				size="small"
-			/>
+								<DropdownMenu.SubContent class="submenu-content">
+									{#each filter.options as option (option.value)}
+										{@const isSelected = filter.value.includes(option.value)}
+										<DropdownMenu.Item
+											class="submenu-item {isSelected ? 'selected' : ''}"
+											onSelect={(e) => {
+												e.preventDefault()
+												toggleFilterValue(filter, option.value)
+											}}
+										>
+											{#if option.color}
+												<span class="color-dot" style="background: {option.color}"></span>
+											{/if}
+											<span class="item-label" class:selected={isSelected}>{option.label}</span>
+											{#if isSelected}
+												<Icon name="check" size={14} class="check-icon" />
+											{/if}
+										</DropdownMenu.Item>
+									{/each}
+								</DropdownMenu.SubContent>
+							</DropdownMenu.Sub>
+						{/each}
+					</DropdownMenu.Content>
+				</DropdownMenu.Portal>
+			</DropdownMenu.Root>
 		{/if}
 
 		{#if hasActiveFilters}
@@ -389,6 +471,8 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/colors' as *;
+	@use '$src/themes/effects' as *;
 
 	.filters-container {
 		display: flex;
@@ -438,6 +522,154 @@
 
 		&:hover {
 			text-decoration: underline;
+		}
+	}
+
+	// More button trigger - matches MultiSelect trigger styling
+	:global(.more-trigger) {
+		all: unset;
+		box-sizing: border-box;
+		-webkit-font-smoothing: antialiased;
+		display: inline-flex;
+		align-items: center;
+		gap: $unit-half;
+		padding: $unit-half $unit;
+		font-size: $font-small;
+		font-family: var(--font-family);
+		min-height: $unit-3x;
+		color: var(--text-tertiary);
+		background-color: var(--input-bg);
+		border-radius: $input-corner;
+		border: 1px solid var(--border-color, transparent);
+		cursor: pointer;
+		transition: background-color 0.15s ease, border-color 0.15s ease;
+
+		&:hover {
+			background-color: var(--input-bg-hover);
+		}
+
+		&:focus-visible {
+			outline: 2px solid $blue;
+			outline-offset: 2px;
+		}
+
+		:global(svg) {
+			flex-shrink: 0;
+			color: var(--text-tertiary);
+		}
+	}
+
+	// More dropdown content
+	:global(.more-menu-content) {
+		background: var(--dialog-bg);
+		border-radius: $card-corner;
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+		padding: $unit-half;
+		min-width: calc($unit * 18);
+		z-index: 50;
+		animation: fadeIn 0.15s ease-out;
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(-4px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+	}
+
+	// Submenu trigger
+	:global(.more-menu-subtrigger) {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		padding: $unit calc($unit * 1.5);
+		border-radius: $item-corner-small;
+		cursor: pointer;
+		font-size: $font-small;
+		color: var(--text-primary);
+		transition: background-color 0.1s ease;
+
+		&:hover,
+		&[data-highlighted] {
+			background: var(--option-bg-hover);
+		}
+
+		.submenu-label {
+			flex: 1;
+		}
+
+		.selection-badge {
+			background: var(--accent-color, #{$blue});
+			color: white;
+			font-size: 11px;
+			font-weight: $medium;
+			padding: 2px 6px;
+			border-radius: $full-corner;
+			min-width: 18px;
+			text-align: center;
+		}
+
+		:global(.submenu-chevron) {
+			color: var(--text-tertiary);
+			margin-left: auto;
+		}
+	}
+
+	// Submenu content
+	:global(.submenu-content) {
+		background: var(--dialog-bg);
+		border-radius: $card-corner;
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+		padding: $unit-half;
+		min-width: calc($unit * 16);
+		max-height: 280px;
+		overflow: auto;
+		z-index: 51;
+	}
+
+	// Submenu items
+	:global(.submenu-item) {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		padding: $unit calc($unit * 1.5);
+		border-radius: $item-corner-small;
+		cursor: pointer;
+		font-size: $font-small;
+		color: var(--text-primary);
+		transition: background-color 0.1s ease;
+
+		&:hover,
+		&[data-highlighted] {
+			background: var(--option-bg-hover);
+		}
+
+		&.selected {
+			.item-label {
+				font-weight: $medium;
+			}
+		}
+
+		.color-dot {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			flex-shrink: 0;
+		}
+
+		.item-label {
+			flex: 1;
+		}
+
+		:global(.check-icon) {
+			color: var(--accent-color);
+			margin-left: auto;
 		}
 	}
 </style>
