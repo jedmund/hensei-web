@@ -179,6 +179,8 @@ export function useAddWeaponsToCollection() {
 
 /**
  * Update collection weapon mutation
+ * Uses resetQueries to clear cache and start fresh, avoiding issues where
+ * items shift between pages after sort-affecting updates (like element changes)
  */
 export function useUpdateCollectionWeapon() {
 	const queryClient = useQueryClient()
@@ -187,7 +189,7 @@ export function useUpdateCollectionWeapon() {
 		mutationFn: ({ id, input }: { id: string; input: Partial<CollectionWeaponInput> }) =>
 			collectionAdapter.updateWeapon(id, input),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
+			queryClient.resetQueries({ queryKey: collectionKeys.weapons() })
 		}
 	}))
 }
@@ -201,7 +203,7 @@ export function useRemoveWeaponFromCollection() {
 	return createMutation(() => ({
 		mutationFn: (id: string) => collectionAdapter.removeWeapon(id),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
+			queryClient.resetQueries({ queryKey: collectionKeys.weapons() })
 		}
 	}))
 }
@@ -215,7 +217,7 @@ export function useBulkRemoveWeaponsFromCollection() {
 	return createMutation(() => ({
 		mutationFn: (ids: string[]) => collectionAdapter.removeWeaponsBatch(ids),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
+			queryClient.resetQueries({ queryKey: collectionKeys.weapons() })
 		}
 	}))
 }
