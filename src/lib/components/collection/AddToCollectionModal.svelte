@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createQuery, createInfiniteQuery } from '@tanstack/svelte-query'
+	import { onDestroy } from 'svelte'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import {
 		searchQueries,
@@ -26,7 +27,7 @@
 	import SelectableWeaponRow from './SelectableWeaponRow.svelte'
 	import SelectableSummonCard from './SelectableSummonCard.svelte'
 	import SelectableSummonRow from './SelectableSummonRow.svelte'
-	import { IsInViewport } from 'runed'
+	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 
 	type SearchResultItem = SearchPageResult['results'][number]
@@ -153,22 +154,18 @@
 				: addSummonMutation
 	)
 
-	// Infinite scroll
-	const inViewport = new IsInViewport(() => sentinelEl, {
-		rootMargin: '200px'
+	// State-gated infinite scroll
+	const loader = useInfiniteLoader(() => searchResults, () => sentinelEl, { rootMargin: '200px' })
+
+	// Reset loader when filters or showOnlySelected changes
+	$effect(() => {
+		void searchFilters
+		void showOnlySelected
+		loader.reset()
 	})
 
-	$effect(() => {
-		if (
-			inViewport.current &&
-			searchResults.hasNextPage &&
-			!searchResults.isFetchingNextPage &&
-			!searchResults.isLoading &&
-			!showOnlySelected
-		) {
-			searchResults.fetchNextPage()
-		}
-	})
+	// Cleanup on destroy
+	onDestroy(() => loader.destroy())
 
 	// Reset state when modal closes or entity type changes
 	$effect(() => {
@@ -438,9 +435,11 @@
 				{/if}
 
 				{#if displayedResults.length > 0}
-					{#if !showOnlySelected && searchResults.hasNextPage}
-						<div class="load-more-sentinel" bind:this={sentinelEl}></div>
-					{/if}
+					<div
+						class="load-more-sentinel"
+						bind:this={sentinelEl}
+						class:hidden={showOnlySelected || !searchResults.hasNextPage}
+					></div>
 
 					{#if searchResults.isFetchingNextPage}
 						<div class="loading-more">
@@ -569,6 +568,10 @@
 	.load-more-sentinel {
 		height: 1px;
 		margin-top: $unit;
+
+		&.hidden {
+			display: none;
+		}
 	}
 
 	.loading-more {

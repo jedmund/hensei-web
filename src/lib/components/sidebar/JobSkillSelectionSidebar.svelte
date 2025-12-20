@@ -2,6 +2,7 @@
 
 <script lang="ts">
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
+	import { onDestroy } from 'svelte'
 	import type { Job, JobSkill } from '$lib/types/api/entities'
 	import type { JobSkillList } from '$lib/types/api/party'
 	import { jobQueries } from '$lib/api/queries/job.queries'
@@ -10,7 +11,7 @@
 	import Input from '../ui/Input.svelte'
 	import Select from '../ui/Select.svelte'
 	import Icon from '../Icon.svelte'
-	import { IsInViewport } from 'runed'
+	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -101,28 +102,21 @@
 	// Sentinel element for intersection observation
 	let sentinelEl = $state<HTMLElement>()
 
-	// Use runed's IsInViewport for viewport detection
-	const inViewport = new IsInViewport(() => sentinelEl, {
-		rootMargin: '200px'
+	// State-gated infinite scroll
+	const loader = useInfiniteLoader(() => skillsQuery, () => sentinelEl, { rootMargin: '200px' })
+
+	// Reset loader when filters change
+	$effect(() => {
+		void debouncedSearchQuery
+		void skillCategory
+		loader.reset()
 	})
 
-	// Auto-fetch next page when sentinel is visible
-	$effect(() => {
-		if (
-			inViewport.current &&
-			skillsQuery.hasNextPage &&
-			!skillsQuery.isFetchingNextPage &&
-			!skillsQuery.isLoading
-		) {
-			skillsQuery.fetchNextPage()
-		}
-	})
+	// Cleanup on destroy
+	onDestroy(() => loader.destroy())
 
 	// Computed states
 	const isEmpty = $derived(skills.length === 0 && !skillsQuery.isLoading && !skillsQuery.isError)
-	const showSentinel = $derived(
-		!skillsQuery.isLoading && skillsQuery.hasNextPage && skills.length > 0
-	)
 
 	function handleSelectSkill(skill: JobSkill) {
 		// Clear any previous errors
@@ -258,9 +252,11 @@
 					</div>
 				{/if}
 
-				{#if showSentinel}
-					<div class="load-more-sentinel" bind:this={sentinelEl}></div>
-				{/if}
+				<div
+					class="load-more-sentinel"
+					bind:this={sentinelEl}
+					class:hidden={!skillsQuery.hasNextPage}
+				></div>
 
 				{#if skillsQuery.isFetchingNextPage}
 					<div class="loading-more">
@@ -421,6 +417,10 @@
 	.load-more-sentinel {
 		height: 1px;
 		margin-top: $unit;
+
+		&.hidden {
+			display: none;
+		}
 	}
 
 	.loading-more {

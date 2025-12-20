@@ -11,8 +11,9 @@
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import type { Character } from '$lib/types/api/entities'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
+	import { onDestroy } from 'svelte'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
-	import { IsInViewport } from 'runed'
+	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { getArtifactImage } from '$lib/utils/images'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
@@ -56,25 +57,20 @@
 		return collectionQuery.data.pages.flatMap((page) => page.results ?? [])
 	})
 
-	// Infinite scroll
-	const inViewport = new IsInViewport(() => sentinelEl, {
-		rootMargin: '200px'
+	// State-gated infinite scroll
+	const loader = useInfiniteLoader(() => collectionQuery, () => sentinelEl, { rootMargin: '200px' })
+
+	// Reset loader when filters change
+	$effect(() => {
+		void queryFilters
+		loader.reset()
 	})
 
-	$effect(() => {
-		if (
-			inViewport.current &&
-			collectionQuery.hasNextPage &&
-			!collectionQuery.isFetchingNextPage &&
-			!collectionQuery.isLoading
-		) {
-			collectionQuery.fetchNextPage()
-		}
-	})
+	// Cleanup on destroy
+	onDestroy(() => loader.destroy())
 
 	const isLoading = $derived(collectionQuery.isLoading)
 	const isEmpty = $derived(!isLoading && allArtifacts.length === 0)
-	const showSentinel = $derived(collectionQuery.hasNextPage && !collectionQuery.isFetchingNextPage)
 
 	// Get display name for artifact
 	function getDisplayName(artifact: CollectionArtifact): string {
@@ -168,9 +164,11 @@
 				</button>
 			{/each}
 
-			{#if showSentinel}
-				<div class="load-more-sentinel" bind:this={sentinelEl}></div>
-			{/if}
+			<div
+				class="load-more-sentinel"
+				bind:this={sentinelEl}
+				class:hidden={!collectionQuery.hasNextPage}
+			></div>
 
 			{#if collectionQuery.isFetchingNextPage}
 				<div class="loading-more">
@@ -347,6 +345,10 @@
 
 	.load-more-sentinel {
 		height: 1px;
+
+		&.hidden {
+			display: none;
+		}
 	}
 
 	.loading-more {

@@ -2,13 +2,14 @@
 
 <script lang="ts">
 	import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
+	import { onDestroy } from 'svelte'
 	import type { SearchResult } from '$lib/api/adapters/search.adapter'
 	import { searchQueries, type SearchFilters } from '$lib/api/queries/search.queries'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import Button from '../ui/Button.svelte'
 	import Icon from '../Icon.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
-	import { IsInViewport } from 'runed'
+	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/features/database/detail/image'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
 	import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from '$lib/types/api/collection'
@@ -245,34 +246,29 @@
 		return deduped as AddItemResult[]
 	})
 
-	// Use runed's IsInViewport for viewport detection
-	const inViewport = new IsInViewport(() => sentinelEl, {
-		rootMargin: '200px'
-	})
-
 	// Get the active query based on search mode
 	const activeQuery = $derived(
 		searchMode === 'collection' && authUserId ? collectionQueryResult : searchQueryResult
 	)
 
-	// Auto-fetch next page when sentinel is visible
+	// State-gated infinite scroll
+	// Type assertion needed because activeQuery is a union of different query types
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const loader = useInfiniteLoader(() => activeQuery as any, () => sentinelEl, { rootMargin: '200px' })
+
+	// Reset loader when search mode or filters change
 	$effect(() => {
-		if (
-			inViewport.current &&
-			activeQuery.hasNextPage &&
-			!activeQuery.isFetchingNextPage &&
-			!activeQuery.isLoading
-		) {
-			activeQuery.fetchNextPage()
-		}
+		void searchMode
+		void filters
+		loader.reset()
 	})
+
+	// Cleanup on destroy
+	onDestroy(() => loader.destroy())
 
 	// Computed states
 	const isEmpty = $derived(
 		searchResults.length === 0 && !activeQuery.isLoading && !activeQuery.isError
-	)
-	const showSentinel = $derived(
-		!activeQuery.isLoading && activeQuery.hasNextPage && searchResults.length > 0
 	)
 
 	// Focus search input on mount
@@ -477,9 +473,11 @@
 				{/each}
 			</ul>
 
-			{#if showSentinel}
-				<div class="load-more-sentinel" bind:this={sentinelEl}></div>
-			{/if}
+			<div
+				class="load-more-sentinel"
+				bind:this={sentinelEl}
+				class:hidden={!activeQuery.hasNextPage}
+			></div>
 
 			{#if activeQuery.isFetchingNextPage}
 				<div class="loading-more">
@@ -771,6 +769,10 @@
 		.load-more-sentinel {
 			height: 1px;
 			margin-top: $unit;
+
+			&.hidden {
+				display: none;
+			}
 		}
 
 		.loading-more {
