@@ -98,9 +98,9 @@
 			<DetailsContainer title="Classification">
 				<DetailItem label="Group">
 					{#if raid.group}
-						<button class="group-link" onclick={handleGroupClick}>
+						<Button variant="ghost" size="small" rightIcon="chevron-right-small" onclick={handleGroupClick}>
 							{displayName(raid.group)}
-						</button>
+						</Button>
 					{:else}
 						<span class="no-value">-</span>
 					{/if}
@@ -175,20 +175,6 @@
 
 	.no-value {
 		color: var(--text-tertiary);
-	}
-
-	.group-link {
-		background: none;
-		border: none;
-		color: var(--link-color, #007bff);
-		cursor: pointer;
-		font-size: inherit;
-		padding: 0;
-		text-decoration: underline;
-
-		&:hover {
-			color: var(--link-hover-color, #0056b3);
-		}
 	}
 
 	.badge {

@@ -196,7 +196,7 @@
 		<div class="not-found">
 			<h2>Raid Group Not Found</h2>
 			<p>The raid group you're looking for could not be found.</p>
-			<Button variant="secondary" onclick={() => goto('/database/raid-groups')}>
+			<Button variant="secondary" onclick={() => goto('/database/raids?view=groups')}>
 				Back to Groups
 			</Button>
 		</div>

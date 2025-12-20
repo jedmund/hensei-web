@@ -46,7 +46,7 @@
 
 	// Navigate back
 	function handleBack() {
-		goto('/database/raid-groups')
+		goto('/database/raids?view=groups')
 	}
 
 	// Navigate to raid detail
