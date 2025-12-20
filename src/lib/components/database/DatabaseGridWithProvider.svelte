@@ -12,6 +12,7 @@
 	import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
 	import { onMount, onDestroy } from 'svelte'
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
 
 	import type { Snippet } from 'svelte'
 
@@ -19,10 +20,11 @@
 		resource: 'weapons' | 'characters' | 'summons'
 		columns: IColumn[]
 		pageSize?: number
+		leftActions?: Snippet
 		headerActions?: Snippet
 	}
 
-	const { resource, columns, pageSize: initialPageSize = 20, headerActions }: Props = $props()
+	const { resource, columns, pageSize: initialPageSize = 20, leftActions, headerActions }: Props = $props()
 
 	// State
 	let data = $state<any[]>([])
@@ -72,13 +74,25 @@
 	// Grid API reference
 	let api: any
 
+	// Update URL with current page (without triggering navigation)
+	function updateUrl(pageNum: number) {
+		const url = new URL($page.url)
+		if (pageNum === 1) {
+			url.searchParams.delete('page')
+		} else {
+			url.searchParams.set('page', String(pageNum))
+		}
+		// Use replaceState to update URL without adding history entry
+		goto(url.pathname + url.search, { replaceState: true, noScroll: true, keepFocus: true })
+	}
+
 	// Load data
-	async function loadData(page: number = 1) {
+	async function loadData(pageNum: number = 1, updateUrlParam: boolean = true) {
 		loading = true
 		try {
-			const result = await provider.loadPage(page)
+			const result = await provider.loadPage(pageNum)
 			data = result
-			currentPage = page
+			currentPage = pageNum
 
 			// Get pagination metadata from provider
 			const meta = provider.getPaginationMeta()
@@ -89,6 +103,11 @@
 				if (meta.pageSize && meta.pageSize !== pageSize) {
 					pageSize = meta.pageSize
 				}
+			}
+
+			// Update URL to reflect current page
+			if (updateUrlParam) {
+				updateUrl(pageNum)
 			}
 		} catch (error) {
 			console.error('Failed to load data:', error)
@@ -205,9 +224,11 @@
 	const startItem = $derived((currentPage - 1) * pageSize + 1)
 	const endItem = $derived(Math.min(currentPage * pageSize, total))
 
-	// Load initial data
+	// Load initial data from URL page param
 	onMount(() => {
-		loadData()
+		const pageParam = $page.url.searchParams.get('page')
+		const initialPage = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1
+		loadData(initialPage, false) // Don't update URL on initial load
 	})
 
 	// Clean up timeout on destroy
@@ -224,6 +245,10 @@
 
 <div class="grid">
 	<div class="controls">
+		{#if leftActions}
+			{@render leftActions()}
+		{/if}
+
 		<CollectionFilters
 			entityType={resource === 'characters' ? 'character' : resource === 'summons' ? 'summon' : 'weapon'}
 			bind:elementFilters
