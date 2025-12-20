@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { PageData } from './$types'
+	import { onDestroy } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import { userQueries } from '$lib/api/queries/user.queries'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
-	import { IsInViewport } from 'runed'
+	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -17,6 +18,8 @@
 	// Crew info for invite functionality
 	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
 	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
+
+	let sentinelEl = $state<HTMLElement>()
 
 	const partiesQuery = createInfiniteQuery(() => ({
 		...userQueries.parties(data.user?.username ?? ''),
@@ -38,30 +41,18 @@
 		initialDataUpdatedAt: 0
 	}))
 
+	// State-gated infinite scroll
+	const loader = useInfiniteLoader(() => partiesQuery, () => sentinelEl, { rootMargin: '300px' })
+
+	// Cleanup on destroy
+	onDestroy(() => loader.destroy())
+
 	const items = $derived(() => {
 		if (!partiesQuery.data?.pages) return data.items || []
 		return partiesQuery.data.pages.flatMap((page) => page.results ?? [])
 	})
 
 	const isEmpty = $derived(!partiesQuery.isLoading && items().length === 0)
-	const showSentinel = $derived(partiesQuery.hasNextPage && !partiesQuery.isFetchingNextPage)
-
-	let sentinelEl = $state<HTMLElement>()
-
-	const inViewport = new IsInViewport(() => sentinelEl, {
-		rootMargin: '300px'
-	})
-
-	$effect(() => {
-		if (
-			inViewport.current &&
-			partiesQuery.hasNextPage &&
-			!partiesQuery.isFetchingNextPage &&
-			!partiesQuery.isLoading
-		) {
-			partiesQuery.fetchNextPage()
-		}
-	})
 </script>
 
 <PageMeta
@@ -104,9 +95,11 @@
 		<div class="profile-grid">
 			<ExploreGrid items={items()} />
 
-			{#if showSentinel}
-				<div class="load-more-sentinel" bind:this={sentinelEl}></div>
-			{/if}
+			<div
+				class="load-more-sentinel"
+				bind:this={sentinelEl}
+				class:hidden={!partiesQuery.hasNextPage}
+			></div>
 
 			{#if partiesQuery.isFetchingNextPage}
 				<div class="loading-more">
@@ -169,6 +162,10 @@
 	.load-more-sentinel {
 		height: 1px;
 		margin-top: $unit;
+
+		&.hidden {
+			display: none;
+		}
 	}
 
 	.loading-more {

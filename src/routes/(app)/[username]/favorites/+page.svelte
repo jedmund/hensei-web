@@ -2,17 +2,26 @@
 
 <script lang="ts">
 	import type { PageData } from './$types'
+	import { onDestroy } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import { userQueries } from '$lib/api/queries/user.queries'
-	import { IsInViewport } from 'runed'
+	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 
 	const { data }: { data: PageData } = $props()
 
+	let sentinelEl = $state<HTMLElement>()
+
 	const favoritesQuery = createInfiniteQuery(() => userQueries.favorites())
+
+	// State-gated infinite scroll
+	const loader = useInfiniteLoader(() => favoritesQuery, () => sentinelEl, { rootMargin: '300px' })
+
+	// Cleanup on destroy
+	onDestroy(() => loader.destroy())
 
 	const items = $derived(() => {
 		if (!favoritesQuery.data?.pages) return []
@@ -20,24 +29,6 @@
 	})
 
 	const isEmpty = $derived(!favoritesQuery.isLoading && items().length === 0)
-	const showSentinel = $derived(favoritesQuery.hasNextPage && !favoritesQuery.isFetchingNextPage)
-
-	let sentinelEl = $state<HTMLElement>()
-
-	const inViewport = new IsInViewport(() => sentinelEl, {
-		rootMargin: '300px'
-	})
-
-	$effect(() => {
-		if (
-			inViewport.current &&
-			favoritesQuery.hasNextPage &&
-			!favoritesQuery.isFetchingNextPage &&
-			!favoritesQuery.isLoading
-		) {
-			favoritesQuery.fetchNextPage()
-		}
-	})
 </script>
 
 <svelte:head>
@@ -77,9 +68,11 @@
 		<div class="profile-grid">
 			<ExploreGrid items={items()} />
 
-			{#if showSentinel}
-				<div class="load-more-sentinel" bind:this={sentinelEl}></div>
-			{/if}
+			<div
+				class="load-more-sentinel"
+				bind:this={sentinelEl}
+				class:hidden={!favoritesQuery.hasNextPage}
+			></div>
 
 			{#if favoritesQuery.isFetchingNextPage}
 				<div class="loading-more">
@@ -142,6 +135,10 @@
 	.load-more-sentinel {
 		height: 1px;
 		margin-top: $unit;
+
+		&.hidden {
+			display: none;
+		}
 	}
 
 	.loading-more {

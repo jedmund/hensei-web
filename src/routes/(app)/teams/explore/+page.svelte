@@ -1,15 +1,18 @@
 <script lang="ts">
   import type { PageData } from './$types'
+  import { onDestroy } from 'svelte'
   import { createInfiniteQuery } from '@tanstack/svelte-query'
   import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
   import { partyQueries } from '$lib/api/queries/party.queries'
-  import { IsInViewport } from 'runed'
+  import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
   import Icon from '$lib/components/Icon.svelte'
   import Button from '$lib/components/ui/Button.svelte'
   import PageMeta from '$lib/components/PageMeta.svelte'
   import * as m from '$lib/paraglide/messages'
 
   const { data } = $props() as { data: PageData }
+
+  let sentinelEl = $state<HTMLElement>()
 
   const partiesQuery = createInfiniteQuery(() => ({
     ...partyQueries.list(),
@@ -30,29 +33,17 @@
     initialDataUpdatedAt: 0
   }))
 
+  // State-gated infinite scroll
+  const loader = useInfiniteLoader(() => partiesQuery, () => sentinelEl, { rootMargin: '300px' })
+
+  // Cleanup on destroy
+  onDestroy(() => loader.destroy())
+
   const items = $derived(
     partiesQuery.data?.pages.flatMap((page) => page.results) ?? data.items ?? []
   )
 
   const isEmpty = $derived(!partiesQuery.isLoading && items.length === 0)
-  const showSentinel = $derived(partiesQuery.hasNextPage && !partiesQuery.isFetchingNextPage)
-
-  let sentinelEl = $state<HTMLElement>()
-
-  const inViewport = new IsInViewport(() => sentinelEl, {
-    rootMargin: '300px'
-  })
-
-  $effect(() => {
-    if (
-      inViewport.current &&
-      partiesQuery.hasNextPage &&
-      !partiesQuery.isFetchingNextPage &&
-      !partiesQuery.isLoading
-    ) {
-      partiesQuery.fetchNextPage()
-    }
-  })
 </script>
 
 <PageMeta title={m.page_title_teams()} description={m.page_desc_teams()} />
@@ -81,9 +72,11 @@
     <div class="explore-grid">
       <ExploreGrid items={items} />
 
-      {#if showSentinel}
-        <div class="load-more-sentinel" bind:this={sentinelEl}></div>
-      {/if}
+      <div
+        class="load-more-sentinel"
+        bind:this={sentinelEl}
+        class:hidden={!partiesQuery.hasNextPage}
+      ></div>
 
       {#if partiesQuery.isFetchingNextPage}
         <div class="loading-more">
@@ -150,6 +143,10 @@
   .load-more-sentinel {
     height: 1px;
     margin-top: $unit;
+
+    &.hidden {
+      display: none;
+    }
   }
 
   .loading-more {
