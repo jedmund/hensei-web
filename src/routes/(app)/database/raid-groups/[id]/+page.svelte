@@ -96,6 +96,9 @@
 				<DetailItem label="Guidebooks">
 					<span class="badge" class:active={group.guidebooks}>{group.guidebooks ? 'Yes' : 'No'}</span>
 				</DetailItem>
+				<DetailItem label="Unlimited">
+					<span class="badge" class:active={group.unlimited}>{group.unlimited ? 'Yes' : 'No'}</span>
+				</DetailItem>
 			</DetailsContainer>
 
 			{#if group.raids && group.raids.length > 0}

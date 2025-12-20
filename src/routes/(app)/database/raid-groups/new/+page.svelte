@@ -31,7 +31,8 @@
 		difficulty: 1,
 		hl: false,
 		extra: false,
-		guidebooks: false
+		guidebooks: false,
+		unlimited: false
 	})
 
 	// Validation
@@ -55,7 +56,8 @@
 				difficulty: editData.difficulty,
 				hl: editData.hl,
 				extra: editData.extra,
-				guidebooks: editData.guidebooks
+				guidebooks: editData.guidebooks,
+				unlimited: editData.unlimited
 			})
 
 			// Invalidate queries
@@ -144,6 +146,12 @@
 			<DetailItem
 				label="Guidebooks"
 				bind:value={editData.guidebooks}
+				editable={true}
+				type="checkbox"
+			/>
+			<DetailItem
+				label="Unlimited"
+				bind:value={editData.unlimited}
 				editable={true}
 				type="checkbox"
 			/>

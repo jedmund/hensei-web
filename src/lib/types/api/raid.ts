@@ -29,6 +29,7 @@ export interface RaidGroupFlat {
   hl: boolean
   extra: boolean
   guidebooks: boolean
+  unlimited: boolean
 }
 
 // Full RaidGroup (from :full view, includes raids)
@@ -65,6 +66,7 @@ export interface CreateRaidGroupInput {
   hl: boolean
   extra: boolean
   guidebooks: boolean
+  unlimited: boolean
 }
 
 export interface UpdateRaidGroupInput {
@@ -76,6 +78,7 @@ export interface UpdateRaidGroupInput {
   hl?: boolean
   extra?: boolean
   guidebooks?: boolean
+  unlimited?: boolean
 }
 
 // Filter types for raid queries
@@ -86,4 +89,5 @@ export interface RaidFilters {
   hl?: boolean
   extra?: boolean
   guidebooks?: boolean
+  unlimited?: boolean
 }

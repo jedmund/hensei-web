@@ -12,4 +12,5 @@ export interface RaidGroup {
 	extra: boolean
 	guidebooks: boolean
 	hl: boolean
+	unlimited: boolean
 }

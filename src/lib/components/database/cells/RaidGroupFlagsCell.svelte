@@ -12,7 +12,8 @@
 	{#if row.hl}<span class="flag hl">HL</span>{/if}
 	{#if row.extra}<span class="flag extra">Extra</span>{/if}
 	{#if row.guidebooks}<span class="flag guidebooks">Guidebooks</span>{/if}
-	{#if !row.hl && !row.extra && !row.guidebooks}
+	{#if row.unlimited}<span class="flag unlimited">Unlimited</span>{/if}
+	{#if !row.hl && !row.extra && !row.guidebooks && !row.unlimited}
 		<span class="no-flags">—</span>
 	{/if}
 </div>
@@ -45,6 +46,11 @@
 
 		&.guidebooks {
 			background: #28a745;
+			color: white;
+		}
+
+		&.unlimited {
+			background: #fd7e14;
 			color: white;
 		}
 	}

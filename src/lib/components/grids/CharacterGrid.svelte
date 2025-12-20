@@ -13,14 +13,19 @@
 		mainWeaponElement?: number | null | undefined
 		partyElement?: number | null | undefined
 		container?: string | undefined
+		unlimited?: boolean
 	}
 
 	let {
 		characters = [],
 		mainWeaponElement = undefined,
 		partyElement = undefined,
-		container = 'main-characters'
+		container = 'main-characters',
+		unlimited = false
 	}: Props = $props()
+
+	// Dynamic slot count based on unlimited flag
+	const slotCount = $derived(unlimited ? 7 : 5)
 
 	import CharacterUnit from '$lib/components/units/CharacterUnit.svelte'
 
@@ -29,9 +34,9 @@
 
 	// Create array with proper empty slots
 	let characterSlots = $derived.by(() => {
-		const slots: (GridCharacter | undefined)[] = Array(5).fill(undefined)
+		const slots: (GridCharacter | undefined)[] = Array(slotCount).fill(undefined)
 		characters.forEach(char => {
-			if (char.position >= 0 && char.position < 5) {
+			if (char.position >= 0 && char.position < slotCount) {
 				slots[char.position] = char
 			}
 		})
@@ -42,6 +47,7 @@
 <div class="wrapper">
 	<ul
 		class="characters"
+		class:unlimited
 		aria-label="Character Grid"
 	>
 		{#each characterSlots as character, i}
@@ -94,6 +100,10 @@
 		display: grid;
 		grid-template-columns: repeat(5, minmax(0, 1fr));
 		gap: $unit-3x;
+
+		&.unlimited {
+			grid-template-columns: repeat(7, minmax(0, 1fr));
+		}
 
 		& > li {
 			list-style: none;

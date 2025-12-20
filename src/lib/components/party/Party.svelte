@@ -999,6 +999,7 @@
 							characters={party.characters}
 							{mainWeaponElement}
 							{partyElement}
+							unlimited={(party as any)?.raid?.group?.unlimited}
 						/>
 					</div>
 				{/if}
