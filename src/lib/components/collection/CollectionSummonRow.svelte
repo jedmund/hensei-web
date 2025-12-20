@@ -52,10 +52,6 @@
 			transcendence={summon.summon?.uncap?.transcendence}
 		/>
 	</div>
-
-	<div class="extra-cell">
-		<span class="placeholder">—</span>
-	</div>
 </button>
 
 <style lang="scss">

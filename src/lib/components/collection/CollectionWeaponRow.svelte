@@ -70,10 +70,6 @@
 		<ElementLabel {element} size="medium" />
 	</div>
 
-	<div class="proficiency-cell">
-		<ProficiencyLabel {proficiency} size="medium" />
-	</div>
-
 	<div class="uncap-cell">
 		<UncapIndicator
 			type="weapon"
@@ -85,7 +81,11 @@
 		/>
 	</div>
 
-	<div class="extra-cell">
+	<div class="proficiency-cell">
+		<ProficiencyLabel {proficiency} size="medium" />
+	</div>
+
+	<!-- <div class="extra-cell">
 		{#if awakeningDisplay}
 			<span class="awakening">{awakeningDisplay}</span>
 		{:else if keyCount > 0}
@@ -93,7 +93,7 @@
 		{:else}
 			<span class="placeholder">—</span>
 		{/if}
-	</div>
+	</div> -->
 </button>
 
 <style lang="scss">
