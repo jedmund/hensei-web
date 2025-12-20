@@ -146,5 +146,10 @@
 	"page_desc_teams": "Save and discover teams to use in Granblue Fantasy",
 	"page_desc_collection": "Manage your character, weapon, and summon collection",
 	"page_desc_profile": "Browse {username}'s teams on granblue.team",
-	"page_desc_party": "Browse this team for {raidName} by {username} on granblue.team"
+	"page_desc_party": "Browse this team for {raidName} by {username} on granblue.team",
+
+	"raid_section_farming": "Farming",
+	"raid_section_raid": "Raid",
+	"raid_section_event": "Event",
+	"raid_section_solo": "Solo"
 }

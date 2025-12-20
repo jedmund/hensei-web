@@ -146,5 +146,10 @@
 	"page_desc_teams": "グラブルで使えるチームを見つけて保存しましょう",
 	"page_desc_collection": "キャラ、武器、召喚石のコレクションを管理",
 	"page_desc_profile": "{username}のチームをgranblue.teamで見る",
-	"page_desc_party": "{raidName}の{username}のチームをgranblue.teamで見る"
+	"page_desc_party": "{raidName}の{username}のチームをgranblue.teamで見る",
+
+	"raid_section_farming": "周回",
+	"raid_section_raid": "マルチ",
+	"raid_section_event": "イベント",
+	"raid_section_solo": "ソロ"
 }
