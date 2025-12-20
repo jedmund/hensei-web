@@ -120,14 +120,7 @@ function createAuthStore() {
     async checkAndRefresh(): Promise<string | null> {
       const state = get(authStore)
 
-      console.log('[AuthStore] checkAndRefresh - current state:', {
-        hasToken: !!state.accessToken,
-        isAuthenticated: state.isAuthenticated,
-        expiresAt: state.expiresAt?.toISOString()
-      })
-
       if (!state.accessToken) {
-        console.warn('[AuthStore] checkAndRefresh - no access token')
         return null
       }
 
@@ -147,11 +140,6 @@ function createAuthStore() {
     },
 
     initFromServer: (accessToken: string | null, user: UserInfo | null, expiresAt: string | null) => {
-      console.log('[AuthStore] initFromServer called with:', {
-        hasToken: !!accessToken,
-        hasUser: !!user,
-        expiresAt
-      })
       if (accessToken && user && expiresAt) {
         set({
           accessToken,
