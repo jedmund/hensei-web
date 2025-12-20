@@ -67,6 +67,8 @@
 	const databaseSeriesHref = $derived(localizeHref('/database/series'))
 	const databaseGwEventsHref = $derived(localizeHref('/database/gw-events'))
 	const databaseArtifactSkillsHref = $derived(localizeHref('/database/artifact-skills'))
+	const databaseRaidsHref = $derived(localizeHref('/database/raids'))
+	const databaseRaidGroupsHref = $derived(localizeHref('/database/raid-groups'))
 
 	// Database route detection
 	const isDatabaseRoute = $derived($page.url.pathname.startsWith(localizeHref('/database')))
@@ -77,6 +79,7 @@
 		if (path.startsWith(databaseCharactersHref)) return 'character'
 		if (path.startsWith(databaseWeaponsHref)) return 'weapon'
 		if (path.startsWith(databaseSummonsHref)) return 'summon'
+		if (path.startsWith(databaseRaidsHref) || path.startsWith(databaseRaidGroupsHref)) return 'raid'
 		return null
 	})
 
@@ -88,7 +91,9 @@
 				? 'weapon'
 				: currentDatabaseEntity === 'summon'
 					? 'summon'
-					: null
+					: currentDatabaseEntity === 'raid'
+						? 'raid'
+						: null
 	)
 	const databaseNewHref = $derived(
 		currentDatabaseEntity === 'character'
@@ -243,13 +248,15 @@
 									<a href={databaseJobsHref}>Jobs</a>
 								</DropdownItem>
 								<DropdownItem>
-									<a href={databaseSeriesHref}>Series</a>
+									<a href={databaseRaidsHref}>Raids</a>
 								</DropdownItem>
-								<DropdownItem>
-									<a href={databaseGwEventsHref}>Unite & Fight</a>
-								</DropdownItem>
+								<DropdownMenu.Separator class="dropdown-separator" />
 								<DropdownItem>
 									<a href={databaseArtifactSkillsHref}>Artifact Skills</a>
+								</DropdownItem>
+								<DropdownMenu.Separator class="dropdown-separator" />
+								<DropdownItem>
+									<a href={databaseGwEventsHref}>Unite & Fight</a>
 								</DropdownItem>
 							</DropdownMenu.Content>
 						</DropdownMenu.Portal>
@@ -364,15 +371,24 @@
 
 			<DropdownMenu.Portal>
 				<DropdownMenu.Content class="dropdown-content" sideOffset={5} align="end">
-					{#if databaseNewHref}
+					{#if currentDatabaseEntity === 'raid'}
 						<DropdownItem>
-							<a href={databaseNewHref}>Single {databaseEntityLabel}</a>
+							<a href={localizeHref('/database/raids/new')}>New raid</a>
 						</DropdownItem>
-					{/if}
-					{#if databaseImportHref}
 						<DropdownItem>
-							<a href={databaseImportHref}>Multiple {databaseEntityLabel}s</a>
+							<a href={localizeHref('/database/raid-groups/new')}>New raid group</a>
 						</DropdownItem>
+					{:else}
+						{#if databaseNewHref}
+							<DropdownItem>
+								<a href={databaseNewHref}>Single {databaseEntityLabel}</a>
+							</DropdownItem>
+						{/if}
+						{#if databaseImportHref}
+							<DropdownItem>
+								<a href={databaseImportHref}>Multiple {databaseEntityLabel}s</a>
+							</DropdownItem>
+						{/if}
 					{/if}
 				</DropdownMenu.Content>
 			</DropdownMenu.Portal>
