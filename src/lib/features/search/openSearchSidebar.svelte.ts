@@ -8,10 +8,12 @@ interface SearchSidebarOptions {
 	canAddMore?: boolean
 	/** User ID to enable collection search mode. If not provided, only "All Items" mode is available. */
 	authUserId?: string
+	/** Required proficiencies for mainhand weapon selection */
+	requiredProficiencies?: number[]
 }
 
 export function openSearchSidebar(options: SearchSidebarOptions) {
-	const { type, onAddItems, canAddMore = true, authUserId } = options
+	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies } = options
 
 	// Open the sidebar with the search component
 	const title = `Search ${type.charAt(0).toUpperCase() + type.slice(1)}s`
@@ -19,7 +21,8 @@ export function openSearchSidebar(options: SearchSidebarOptions) {
 		type,
 		onAddItems,
 		canAddMore,
-		authUserId
+		authUserId,
+		requiredProficiencies
 	})
 }
 

@@ -11,6 +11,7 @@
     onClose?: () => void
     onAddItems?: (items: SearchResult[]) => void
     canAddMore?: boolean
+    requiredProficiencies?: number[]  // For mainhand: restricts to job's proficiencies
   }
 
   let {
@@ -18,7 +19,8 @@
     type = 'weapon',
     onClose = () => {},
     onAddItems = () => {},
-    canAddMore = true
+    canAddMore = true,
+    requiredProficiencies
   }: Props = $props()
 
   // Search state
@@ -118,8 +120,12 @@
       if (rarityFilters.length > 0) {
         params.filters.rarity = rarityFilters
       }
-      if (type === 'weapon' && proficiencyFilters.length > 0) {
-        params.filters.proficiency1 = proficiencyFilters
+      if (type === 'weapon') {
+        // Use required proficiencies (for mainhand) if set, otherwise use user-selected filters
+        const profs = requiredProficiencies ?? (proficiencyFilters.length > 0 ? proficiencyFilters : undefined)
+        if (profs && profs.length > 0) {
+          params.filters.proficiency1 = profs
+        }
       }
 
       let response
@@ -264,8 +270,8 @@
       </div>
     </div>
 
-    <!-- Proficiency filters (weapons only) -->
-    {#if type === 'weapon'}
+    <!-- Proficiency filters (weapons only, hidden when required proficiencies set) -->
+    {#if type === 'weapon' && !requiredProficiencies}
       <div class="filter-group">
         <label class="filter-label">Proficiency</label>
         <div class="filter-buttons proficiency-grid">

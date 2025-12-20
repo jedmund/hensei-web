@@ -825,13 +825,20 @@
 						? GridType.Summon
 						: GridType.Character
 
+			// For mainhand weapons (position -1), restrict to job's proficiencies
+			const requiredProficiencies =
+				opts.type === 'weapon' && opts.position === -1 && party.job?.proficiency
+					? party.job.proficiency.filter((p): p is number => p !== null && p !== undefined && p !== 0)
+					: undefined
+
 			// Open the search sidebar with the appropriate type
 			// Pass authUserId to enable collection mode toggle
 			openSearchSidebar({
 				type: opts.type,
 				onAddItems: handleAddItems,
 				canAddMore: true,
-				authUserId
+				authUserId,
+				requiredProficiencies
 			})
 		}
 	})

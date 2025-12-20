@@ -19,13 +19,16 @@
 		canAddMore?: boolean
 		/** User ID to enable collection search mode */
 		authUserId?: string
+		/** Required proficiencies for mainhand weapon selection */
+		requiredProficiencies?: number[]
 	}
 
 	let {
 		type = 'weapon',
 		onAddItems = () => {},
 		canAddMore = true,
-		authUserId
+		authUserId,
+		requiredProficiencies
 	}: Props = $props()
 
 	// Search state (local UI state)
@@ -95,10 +98,15 @@
 	})
 
 	// Build filters object for query
+	// Use requiredProficiencies for mainhand selection if set, otherwise use user-selected filters
+	const effectiveProficiencies = $derived(
+		requiredProficiencies ?? (proficiencyFilters.length > 0 ? proficiencyFilters : undefined)
+	)
+
 	const filters = $derived<SearchFilters>({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
-		proficiency: type === 'weapon' && proficiencyFilters.length > 0 ? proficiencyFilters : undefined
+		proficiency: type === 'weapon' && effectiveProficiencies ? effectiveProficiencies : undefined
 	})
 
 	// Helper to map collection items to search result format with collectionId
@@ -394,8 +402,8 @@
 			</div>
 		</div>
 
-		<!-- Proficiency filters (weapons only) -->
-		{#if type === 'weapon'}
+		<!-- Proficiency filters (weapons only, hidden when required proficiencies set for mainhand) -->
+		{#if type === 'weapon' && !requiredProficiencies}
 			<div class="filter-group">
 				<label class="filter-label">Proficiency</label>
 				<div class="filter-buttons proficiency-grid">
