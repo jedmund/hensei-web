@@ -126,3 +126,29 @@ export interface UpdateMembershipInput {
   retired?: boolean
   retiredAt?: string
 }
+
+// Roster feature types
+
+export interface RosterItem {
+  id: string
+  uncapLevel: number
+}
+
+export interface RosterMember {
+  userId: string
+  username: string
+  role: CrewRole
+  characters: RosterItem[]
+  weapons: RosterItem[]
+  summons: RosterItem[]
+}
+
+export interface RosterResponse {
+  members: RosterMember[]
+}
+
+export interface RosterQuery {
+  characterIds?: string[]
+  weaponIds?: string[]
+  summonIds?: string[]
+}

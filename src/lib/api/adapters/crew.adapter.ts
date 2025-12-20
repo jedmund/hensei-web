@@ -12,7 +12,9 @@ import type {
   CreatePhantomPlayerInput,
   UpdatePhantomPlayerInput,
   UpdateMembershipInput,
-  MemberFilter
+  MemberFilter,
+  RosterResponse,
+  RosterQuery
 } from '$lib/types/api/crew'
 
 /**
@@ -61,6 +63,23 @@ export class CrewAdapter extends BaseAdapter {
   async getMembers(filter: MemberFilter = 'active', options?: RequestOptions): Promise<CrewMembersResponse> {
     const params = filter !== 'active' ? { filter } : undefined
     return this.request<CrewMembersResponse>('/crew/members', { ...options, params })
+  }
+
+  /**
+   * Get collection roster for crew members (officers only)
+   * Returns ownership info for specified items across all active crew members
+   */
+  async getRoster(query: RosterQuery, options?: RequestOptions): Promise<RosterResponse> {
+    const searchParams = new URLSearchParams()
+
+    query.characterIds?.forEach((id) => searchParams.append('character_ids[]', id))
+    query.weaponIds?.forEach((id) => searchParams.append('weapon_ids[]', id))
+    query.summonIds?.forEach((id) => searchParams.append('summon_ids[]', id))
+
+    const queryString = searchParams.toString()
+    const url = queryString ? `/crew/roster?${queryString}` : '/crew/roster'
+
+    return this.request<RosterResponse>(url, options)
   }
 
   /**
