@@ -1,0 +1,529 @@
+<svelte:options runes={true} />
+
+<script lang="ts">
+	import PageMeta from '$lib/components/PageMeta.svelte'
+	import * as m from '$lib/paraglide/messages'
+	import { goto } from '$app/navigation'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
+	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
+	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import type { Raid, RaidGroup } from '$lib/types/api/entities'
+	import type { RaidGroupFull } from '$lib/types/api/raid'
+
+	function displayName(input: any): string {
+		if (!input) return '—'
+		const maybe = input.name ?? input
+		if (typeof maybe === 'string') return maybe
+		if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
+		return '—'
+	}
+
+	// State
+	let viewMode = $state<'raids' | 'groups'>('raids')
+	let searchTerm = $state('')
+	let elementFilters = $state<number[]>([])
+	let groupFilter = $state<string | undefined>(undefined)
+	let hlFilter = $state<number | undefined>(undefined)
+	let extraFilter = $state<number | undefined>(undefined)
+
+	// Query for raids
+	const raidsQuery = createQuery(() => ({
+		queryKey: ['raids', 'list'],
+		queryFn: () => raidAdapter.getAll(),
+		staleTime: 1000 * 60 * 5
+	}))
+
+	// Query for raid groups (for filter dropdown)
+	const groupsQuery = createQuery(() => ({
+		queryKey: ['raid-groups', 'list'],
+		queryFn: () => raidAdapter.getGroups(),
+		staleTime: 1000 * 60 * 10
+	}))
+
+	// Build group options for Select
+	const groupOptions = $derived(
+		(groupsQuery.data ?? []).map((g) => ({
+			value: g.id,
+			label: displayName(g)
+		}))
+	)
+
+	// Filter raids
+	const filteredRaids = $derived.by(() => {
+		let raids = raidsQuery.data ?? []
+
+		// Apply text search
+		if (searchTerm.trim()) {
+			const term = searchTerm.toLowerCase()
+			raids = raids.filter(
+				(r) =>
+					r.name.en?.toLowerCase().includes(term) ||
+					r.name.ja?.toLowerCase().includes(term) ||
+					r.slug?.toLowerCase().includes(term)
+			)
+		}
+
+		// Apply element filter (multi-select)
+		if (elementFilters.length > 0) {
+			raids = raids.filter((r) => r.element !== undefined && elementFilters.includes(r.element))
+		}
+
+		// Apply group filter
+		if (groupFilter) {
+			raids = raids.filter((r) => r.group?.id === groupFilter)
+		}
+
+		// Apply HL filter (1 = yes, 0 = no)
+		if (hlFilter !== undefined) {
+			const hlBool = hlFilter === 1
+			raids = raids.filter((r) => r.group?.hl === hlBool)
+		}
+
+		// Apply Extra filter (1 = yes, 0 = no)
+		if (extraFilter !== undefined) {
+			const extraBool = extraFilter === 1
+			raids = raids.filter((r) => r.group?.extra === extraBool)
+		}
+
+		return raids
+	})
+
+	// Navigate to raid detail
+	function handleRaidClick(raid: Raid) {
+		goto(`/database/raids/${raid.slug}`)
+	}
+
+	// Navigate to raid group detail
+	function handleGroupClick(group: RaidGroupFull) {
+		goto(`/database/raid-groups/${group.id}`)
+	}
+
+	// Check if any filters are active
+	const hasActiveFilters = $derived(
+		elementFilters.length > 0 ||
+		groupFilter !== undefined ||
+		hlFilter !== undefined ||
+		extraFilter !== undefined
+	)
+
+	// Clear all filters
+	function clearFilters() {
+		elementFilters = []
+		groupFilter = undefined
+		hlFilter = undefined
+		extraFilter = undefined
+	}
+
+	// Element options (matching CollectionFilters)
+	const elements = [
+		{ value: 0, label: 'Null', color: '#888' },
+		{ value: 1, label: 'Wind', color: '#4A9B3F' },
+		{ value: 2, label: 'Fire', color: '#D94444' },
+		{ value: 3, label: 'Water', color: '#4A7FB8' },
+		{ value: 4, label: 'Earth', color: '#9B6E3F' },
+		{ value: 5, label: 'Dark', color: '#6B3E9B' },
+		{ value: 6, label: 'Light', color: '#F4B643' }
+	]
+
+	// Boolean filter options
+	const booleanOptions = [
+		{ value: 1, label: 'Yes' },
+		{ value: 0, label: 'No' }
+	]
+</script>
+
+<PageMeta title="Database - Raids" description="Manage raids in the database" />
+
+<div class="page">
+	<div class="grid">
+		<div class="controls">
+			<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
+				<Segment value="raids">Raids</Segment>
+				<Segment value="groups">Groups</Segment>
+			</SegmentedControl>
+
+			{#if viewMode === 'raids'}
+				<div class="filters">
+					<MultiSelect
+						options={elements}
+						bind:value={elementFilters}
+						placeholder="Element"
+						size="small"
+					/>
+
+					<Select
+						options={groupOptions}
+						bind:value={groupFilter}
+						placeholder="Raid Group"
+						size="small"
+					/>
+
+					<Select
+						options={booleanOptions}
+						bind:value={hlFilter}
+						placeholder="HL"
+						size="small"
+					/>
+
+					<Select
+						options={booleanOptions}
+						bind:value={extraFilter}
+						placeholder="Extra"
+						size="small"
+					/>
+
+					{#if hasActiveFilters}
+						<button type="button" class="clear-btn" onclick={clearFilters}>Clear</button>
+					{/if}
+				</div>
+
+				<div class="controls-right">
+					<input type="text" placeholder="Search..." bind:value={searchTerm} />
+				</div>
+			{/if}
+		</div>
+
+		{#if viewMode === 'raids'}
+			<div class="grid-wrapper" class:loading={raidsQuery.isLoading}>
+				{#if raidsQuery.isLoading}
+					<div class="loading-overlay">
+						<div class="loading-spinner">Loading...</div>
+					</div>
+				{/if}
+
+				<table class="raids-table">
+					<thead>
+						<tr>
+							<th class="col-name">Name</th>
+							<th class="col-level">Level</th>
+							<th class="col-element">Element</th>
+							<th class="col-group">Group</th>
+							<th class="col-slug">Slug</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#if filteredRaids.length === 0 && !raidsQuery.isLoading}
+							<tr>
+								<td colspan="5" class="empty-state">
+									{searchTerm || hasActiveFilters
+										? 'No raids match your filters'
+										: 'No raids yet'}
+								</td>
+							</tr>
+						{:else}
+							{#each filteredRaids as raid}
+								<tr onclick={() => handleRaidClick(raid)} class="clickable">
+									<td class="col-name">
+										<span class="raid-name">{displayName(raid)}</span>
+									</td>
+									<td class="col-level">
+										{raid.level ?? '-'}
+									</td>
+									<td class="col-element">
+										{#if raid.element !== undefined && raid.element !== null}
+											<ElementBadge element={raid.element} />
+										{:else}
+											<span class="no-element">-</span>
+										{/if}
+									</td>
+									<td class="col-group">
+										{raid.group ? displayName(raid.group) : '-'}
+									</td>
+									<td class="col-slug">
+										<code>{raid.slug}</code>
+									</td>
+								</tr>
+							{/each}
+						{/if}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="grid-footer">
+				<div class="pagination-info">
+					{filteredRaids.length} raid{filteredRaids.length === 1 ? '' : 's'}
+				</div>
+			</div>
+		{:else}
+			<div class="grid-wrapper" class:loading={groupsQuery.isLoading}>
+				{#if groupsQuery.isLoading}
+					<div class="loading-overlay">
+						<div class="loading-spinner">Loading...</div>
+					</div>
+				{/if}
+
+				<table class="raids-table">
+					<thead>
+						<tr>
+							<th class="col-name">Name</th>
+							<th class="col-section">Section</th>
+							<th class="col-difficulty">Difficulty</th>
+							<th class="col-flags">Flags</th>
+							<th class="col-raids">Raids</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#if (groupsQuery.data ?? []).length === 0 && !groupsQuery.isLoading}
+							<tr>
+								<td colspan="5" class="empty-state">No raid groups yet</td>
+							</tr>
+						{:else}
+							{#each (groupsQuery.data ?? []) as group}
+								<tr onclick={() => handleGroupClick(group)} class="clickable">
+									<td class="col-name">
+										<span class="raid-name">{displayName(group)}</span>
+									</td>
+									<td class="col-section">
+										{group.section ?? '-'}
+									</td>
+									<td class="col-difficulty">
+										{group.difficulty ?? '-'}
+									</td>
+									<td class="col-flags">
+										<div class="flags">
+											{#if group.hl}<span class="flag">HL</span>{/if}
+											{#if group.extra}<span class="flag">Extra</span>{/if}
+											{#if group.guidebooks}<span class="flag">Guidebooks</span>{/if}
+											{#if !group.hl && !group.extra && !group.guidebooks}
+												<span class="no-flags">-</span>
+											{/if}
+										</div>
+									</td>
+									<td class="col-raids">
+										{group.raids?.length ?? 0}
+									</td>
+								</tr>
+							{/each}
+						{/if}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="grid-footer">
+				<div class="pagination-info">
+					{(groupsQuery.data ?? []).length} group{(groupsQuery.data ?? []).length === 1 ? '' : 's'}
+				</div>
+			</div>
+		{/if}
+	</div>
+</div>
+
+<style lang="scss">
+	@use '$src/themes/effects' as effects;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
+
+	.page {
+		padding: 0;
+		margin: 0 auto;
+	}
+
+	.grid {
+		width: 100%;
+		background: var(--card-bg);
+		border: 0.5px solid rgba(0, 0, 0, 0.18);
+		border-radius: layout.$page-corner;
+		box-shadow: effects.$page-elevation;
+		overflow: hidden;
+	}
+
+	.controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		padding: spacing.$unit;
+		border-bottom: 1px solid #e5e5e5;
+		gap: spacing.$unit;
+
+		.filters {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: spacing.$unit;
+			flex: 1;
+			min-width: 0;
+		}
+
+		.controls-right {
+			display: flex;
+			align-items: center;
+			gap: spacing.$unit;
+			flex-shrink: 0;
+
+			input {
+				padding: spacing.$unit spacing.$unit-2x;
+				background: var(--input-bound-bg);
+				border: none;
+				border-radius: layout.$item-corner;
+				font-family: 'AGrot', system-ui, sans-serif;
+				font-size: typography.$font-small;
+				width: 200px;
+
+				&:hover {
+					background: var(--input-bound-bg-hover);
+				}
+
+				&:focus {
+					outline: none;
+					border-color: #007bff;
+				}
+			}
+		}
+	}
+
+	.clear-btn {
+		background: none;
+		border: none;
+		padding: spacing.$unit-half spacing.$unit;
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--accent-color);
+		cursor: pointer;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	.grid-wrapper {
+		position: relative;
+		overflow-x: auto;
+		min-height: 200px;
+
+		&.loading {
+			opacity: 0.6;
+		}
+	}
+
+	.loading-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(255, 255, 255, 0.9);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 10;
+
+		.loading-spinner {
+			font-size: typography.$font-medium;
+			color: #666;
+		}
+	}
+
+	.raids-table {
+		width: 100%;
+		border-collapse: collapse;
+
+		th,
+		td {
+			padding: spacing.$unit spacing.$unit-2x;
+			text-align: left;
+			border-bottom: 1px solid #e5e5e5;
+		}
+
+		th {
+			background: #f8f9fa;
+			font-weight: typography.$bold;
+			color: #495057;
+			font-size: typography.$font-small;
+		}
+
+		tr.clickable {
+			cursor: pointer;
+
+			&:hover {
+				background: #f8f9fa;
+			}
+		}
+
+		.col-name {
+			min-width: 200px;
+		}
+
+		.col-level {
+			width: 80px;
+		}
+
+		.col-element {
+			width: 100px;
+		}
+
+		.col-group {
+			min-width: 150px;
+		}
+
+		.col-slug {
+			min-width: 150px;
+
+			code {
+				font-size: typography.$font-small;
+				background: #f0f0f0;
+				padding: 2px 6px;
+				border-radius: 3px;
+			}
+		}
+
+		.col-section,
+		.col-difficulty,
+		.col-raids {
+			width: 100px;
+		}
+
+		.col-flags {
+			min-width: 150px;
+		}
+	}
+
+	.raid-name {
+		font-weight: typography.$bold;
+	}
+
+	.no-element,
+	.no-flags {
+		color: #999;
+	}
+
+	.flags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: spacing.$unit-half;
+	}
+
+	.flag {
+		display: inline-block;
+		padding: 2px 8px;
+		border-radius: 4px;
+		font-size: typography.$font-tiny;
+		background: #e9ecef;
+		color: #495057;
+	}
+
+	.empty-state {
+		text-align: center;
+		color: #666;
+		padding: spacing.$unit-4x !important;
+	}
+
+	.grid-footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: spacing.$unit;
+		border-top: 1px solid #e5e5e5;
+		background: #f8f9fa;
+
+		.pagination-info {
+			font-size: typography.$font-small;
+			color: #6c757d;
+		}
+	}
+</style>
