@@ -4,15 +4,22 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
+	import { onMount } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
+	import { Grid } from 'wx-svelte-grid'
+	import type { IColumn } from 'wx-svelte-grid'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import RaidGroupNameCell from '$lib/components/database/cells/RaidGroupNameCell.svelte'
+	import RaidGroupFlagsCell from '$lib/components/database/cells/RaidGroupFlagsCell.svelte'
 	import type { Raid, RaidGroup } from '$lib/types/api/entities'
 	import type { RaidGroupFull } from '$lib/types/api/raid'
+	import { getRaidSectionLabel } from '$lib/utils/raidSection'
 
 	function displayName(input: any): string {
 		if (!input) return '—'
@@ -29,6 +36,31 @@
 	let groupFilter = $state<string | undefined>(undefined)
 	let hlFilter = $state<number | undefined>(undefined)
 	let extraFilter = $state<number | undefined>(undefined)
+
+	// Read initial view mode from URL
+	onMount(() => {
+		const viewParam = $page.url.searchParams.get('view')
+		if (viewParam === 'groups') {
+			viewMode = 'groups'
+		}
+	})
+
+	// Update URL when view mode changes
+	function updateViewUrl(mode: 'raids' | 'groups') {
+		const url = new URL($page.url)
+		if (mode === 'groups') {
+			url.searchParams.set('view', 'groups')
+		} else {
+			url.searchParams.delete('view')
+		}
+		goto(url.pathname + url.search, { replaceState: true, noScroll: true, keepFocus: true })
+	}
+
+	// Handle view mode change from segmented control
+	function handleViewModeChange(newMode: string) {
+		viewMode = newMode as 'raids' | 'groups'
+		updateViewUrl(viewMode)
+	}
 
 	// Query for raids
 	const raidsQuery = createQuery(() => ({
@@ -52,7 +84,7 @@
 		}))
 	)
 
-	// Filter raids
+	// Filter and sort raids
 	const filteredRaids = $derived.by(() => {
 		let raids = raidsQuery.data ?? []
 
@@ -89,7 +121,23 @@
 			raids = raids.filter((r) => r.group?.extra === extraBool)
 		}
 
-		return raids
+		// Sort by group section, then group order, then element
+		return [...raids].sort((a, b) => {
+			// Section first (may be string or number)
+			const sectionA = Number(a.group?.section) || 999
+			const sectionB = Number(b.group?.section) || 999
+			if (sectionA !== sectionB) {
+				return sectionA - sectionB
+			}
+			// Then group order
+			const groupOrderA = a.group?.order ?? 999
+			const groupOrderB = b.group?.order ?? 999
+			if (groupOrderA !== groupOrderB) {
+				return groupOrderA - groupOrderB
+			}
+			// Then element
+			return (a.element ?? 999) - (b.element ?? 999)
+		})
 	})
 
 	// Navigate to raid detail
@@ -134,14 +182,132 @@
 		{ value: 1, label: 'Yes' },
 		{ value: 0, label: 'No' }
 	]
+
+	// ==================== Groups Grid Configuration ====================
+
+	// Sort state for groups grid
+	let groupsSortMarks = $state<Record<string, { order: 'asc' | 'desc' }>>({})
+
+	// Groups grid columns
+	const groupsColumns: IColumn[] = [
+		{
+			id: 'name',
+			header: 'Name',
+			flexgrow: 1,
+			sort: true,
+			cell: RaidGroupNameCell
+		},
+		{
+			id: 'section',
+			header: 'Section',
+			width: 100,
+			sort: true,
+			template: (val: any) => getRaidSectionLabel(val)
+		},
+		{
+			id: 'order',
+			header: 'Order',
+			width: 80,
+			sort: true,
+			template: (val: any) => val?.toString() ?? '-'
+		},
+		{
+			id: 'difficulty',
+			header: 'Difficulty',
+			width: 100,
+			sort: true,
+			template: (val: any) => val?.toString() ?? '-'
+		},
+		{
+			id: 'flags',
+			header: 'Flags',
+			width: 180,
+			cell: RaidGroupFlagsCell
+		},
+		{
+			id: 'raids',
+			header: 'Raids',
+			width: 80,
+			template: (_val: any, row: any) => row.raids?.length?.toString() ?? '0'
+		}
+	]
+
+	// Sorted groups data
+	const sortedGroupsData = $derived.by(() => {
+		const groups = groupsQuery.data ?? []
+		const sortKey = Object.keys(groupsSortMarks)[0]
+		if (!sortKey) return groups
+
+		const order = groupsSortMarks[sortKey]?.order
+		return [...groups].sort((a: any, b: any) => {
+			let valA = a[sortKey]
+			let valB = b[sortKey]
+
+			// Handle name sorting (use English name)
+			if (sortKey === 'name') {
+				valA = a.name?.en ?? ''
+				valB = b.name?.en ?? ''
+			}
+
+			// Handle numeric values
+			if (typeof valA === 'number' && typeof valB === 'number') {
+				return order === 'asc' ? valA - valB : valB - valA
+			}
+
+			// Handle string values
+			const strA = String(valA ?? '')
+			const strB = String(valB ?? '')
+			return order === 'asc' ? strA.localeCompare(strB) : strB.localeCompare(strA)
+		})
+	})
+
+	// Groups grid API reference
+	let groupsGridApi: any
+
+	// Initialize groups grid
+	const initGroupsGrid = (apiRef: any) => {
+		groupsGridApi = apiRef
+
+		// Intercept sort-rows for client-side sorting
+		groupsGridApi.intercept('sort-rows', (ev: { key: string; add: boolean }) => {
+			const { key } = ev
+			const currentOrder = groupsSortMarks[key]?.order
+
+			// Toggle: asc -> desc -> clear
+			if (currentOrder === 'asc') {
+				groupsSortMarks = { [key]: { order: 'desc' } }
+			} else if (currentOrder === 'desc') {
+				groupsSortMarks = {}
+			} else {
+				groupsSortMarks = { [key]: { order: 'asc' } }
+			}
+
+			return false // Prevent default sorting
+		})
+
+		// Row click handler
+		groupsGridApi.on('select-row', (ev: any) => {
+			const rowId = ev.id
+			if (rowId) {
+				const group = (groupsQuery.data ?? []).find((g: any) => g.id === rowId)
+				if (group) {
+					handleGroupClick(group)
+				}
+			}
+		})
+	}
 </script>
+
+<svelte:head>
+	<link rel="stylesheet" href="https://cdn.svar.dev/fonts/wxi/wx-icons.css" />
+</svelte:head>
 
 <PageMeta title="Database - Raids" description="Manage raids in the database" />
 
 <div class="page">
 	<div class="grid">
 		<div class="controls">
-			<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
+			<SegmentedControl bind:value={viewMode} onValueChange={handleViewModeChange} size="xsmall" variant="background">
 				<Segment value="raids">Raids</Segment>
 				<Segment value="groups">Groups</Segment>
 			</SegmentedControl>
@@ -256,56 +422,19 @@
 					</div>
 				{/if}
 
-				<table class="raids-table">
-					<thead>
-						<tr>
-							<th class="col-name">Name</th>
-							<th class="col-section">Section</th>
-							<th class="col-difficulty">Difficulty</th>
-							<th class="col-flags">Flags</th>
-							<th class="col-raids">Raids</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#if (groupsQuery.data ?? []).length === 0 && !groupsQuery.isLoading}
-							<tr>
-								<td colspan="5" class="empty-state">No raid groups yet</td>
-							</tr>
-						{:else}
-							{#each (groupsQuery.data ?? []) as group}
-								<tr onclick={() => handleGroupClick(group)} class="clickable">
-									<td class="col-name">
-										<span class="raid-name">{displayName(group)}</span>
-									</td>
-									<td class="col-section">
-										{group.section ?? '-'}
-									</td>
-									<td class="col-difficulty">
-										{group.difficulty ?? '-'}
-									</td>
-									<td class="col-flags">
-										<div class="flags">
-											{#if group.hl}<span class="flag">HL</span>{/if}
-											{#if group.extra}<span class="flag">Extra</span>{/if}
-											{#if group.guidebooks}<span class="flag">Guidebooks</span>{/if}
-											{#if !group.hl && !group.extra && !group.guidebooks}
-												<span class="no-flags">-</span>
-											{/if}
-										</div>
-									</td>
-									<td class="col-raids">
-										{group.raids?.length ?? 0}
-									</td>
-								</tr>
-							{/each}
-						{/if}
-					</tbody>
-				</table>
+				<Grid
+					data={sortedGroupsData}
+					columns={groupsColumns}
+					init={initGroupsGrid}
+					sortMarks={groupsSortMarks}
+					sizes={{ rowHeight: 48 }}
+					class="database-grid-theme"
+				/>
 			</div>
 
 			<div class="grid-footer">
 				<div class="pagination-info">
-					{(groupsQuery.data ?? []).length} group{(groupsQuery.data ?? []).length === 1 ? '' : 's'}
+					{sortedGroupsData.length} group{sortedGroupsData.length === 1 ? '' : 's'}
 				</div>
 			</div>
 		{/if}
@@ -472,39 +601,14 @@
 			}
 		}
 
-		.col-section,
-		.col-difficulty,
-		.col-raids {
-			width: 100px;
-		}
-
-		.col-flags {
-			min-width: 150px;
-		}
 	}
 
 	.raid-name {
 		font-weight: typography.$bold;
 	}
 
-	.no-element,
-	.no-flags {
+	.no-element {
 		color: #999;
-	}
-
-	.flags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: spacing.$unit-half;
-	}
-
-	.flag {
-		display: inline-block;
-		padding: 2px 8px;
-		border-radius: 4px;
-		font-size: typography.$font-tiny;
-		background: #e9ecef;
-		color: #495057;
 	}
 
 	.empty-state {
@@ -525,5 +629,52 @@
 			font-size: typography.$font-small;
 			color: #6c757d;
 		}
+	}
+
+	// SVAR Grid styles
+	:global(.database-grid-theme) {
+		font-size: typography.$font-small;
+		width: 100%;
+	}
+
+	:global(.wx-grid .wx-header) {
+		background: #f8f9fa;
+	}
+
+	:global(.wx-grid .wx-h-row) {
+		background: #f8f9fa;
+		border-bottom: 1px solid #e5e5e5;
+	}
+
+	:global(.wx-grid .wx-header-cell) {
+		background: #f8f9fa;
+		font-weight: typography.$bold;
+		color: #495057;
+		border-bottom: 2px solid #dee2e6;
+		border-radius: layout.$item-corner;
+		transition: background-color 0.15s ease;
+		cursor: pointer;
+
+		&:hover {
+			background: #e9ecef;
+		}
+	}
+
+	:global(.wx-grid .wx-cell) {
+		padding: spacing.$unit * 0.5;
+		vertical-align: middle;
+		display: flex;
+		align-items: center;
+		border: none;
+		--wx-table-cell-border: none;
+	}
+
+	:global(.wx-grid .wx-cell:first-child) {
+		padding-left: spacing.$unit-2x;
+	}
+
+	:global(.wx-grid .wx-row:hover) {
+		background: #f8f9fa;
+		cursor: pointer;
 	}
 </style>

@@ -459,11 +459,16 @@
 	}
 
 	:global(.wx-grid .wx-header) {
-		background: transparent;
+		background: #f8f9fa;
+	}
+
+	:global(.wx-grid .wx-h-row) {
+		background: #f8f9fa;
+		border-bottom: 1px solid #e5e5e5;
 	}
 
 	:global(.wx-grid .wx-header-cell) {
-		background: transparent;
+		background: #f8f9fa;
 		font-weight: typography.$bold;
 		color: #495057;
 		border-bottom: 2px solid #dee2e6;
@@ -484,6 +489,10 @@
 		align-items: center;
 		border: none;
 		--wx-table-cell-border: none;
+	}
+
+	:global(.wx-grid .wx-cell:first-child) {
+		padding-left: spacing.$unit-2x;
 	}
 
 	:global(.wx-grid .wx-cell:not(:last-child)) {
