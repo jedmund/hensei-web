@@ -35,7 +35,7 @@
 	}
 
 	.name {
-		font-weight: $medium;
+		font-weight: $bold;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
