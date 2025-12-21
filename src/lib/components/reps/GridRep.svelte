@@ -102,8 +102,9 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/spacing' as *;
-	@use '$src/themes/layout' as *;
+	@use '$src/themes/effects' as effects;
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/layout' as layout;
 	@use '$src/themes/rep' as rep;
 
 	.gridRep {
@@ -126,21 +127,23 @@
 		a {
 			display: grid;
 			grid-template-rows: auto 1fr;
-			gap: $unit;
-			padding: $unit;
+			gap: spacing.$unit;
+			padding: spacing.$unit;
 			text-decoration: none;
 			color: inherit;
 			width: 100%;
 			height: 100%;
 			border: 1px solid transparent;
-			border-radius: $card-corner;
+			border-radius: layout.$card-corner;
 			box-sizing: border-box;
 			background: var(--card-bg);
 			overflow: hidden;
 
 			&:hover {
 				background: var(--grid-rep-hover);
-				box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+				box-shadow:
+					0 0 0 1px rgba(0, 0, 0, 0.1),
+					effects.$card-elevation;
 			}
 
 			&:hover .indicators {
@@ -168,8 +171,8 @@
 	.info {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-fourth;
-		padding: $unit-half 0;
+		gap: spacing.$unit-fourth;
+		padding: spacing.$unit-half 0;
 		min-width: 0; /* Critical: allows flex child to shrink below content size */
 
 		h2 {
@@ -191,7 +194,7 @@
 		.details {
 			display: flex;
 			flex-direction: row;
-			gap: $unit;
+			gap: spacing.$unit;
 			justify-content: space-between;
 			min-width: 0;
 		}
@@ -200,7 +203,7 @@
 			display: flex;
 			flex-direction: row;
 			align-items: center;
-			gap: $unit-half;
+			gap: spacing.$unit-half;
 			overflow: hidden;
 			flex: 0 1 auto;
 			min-width: 0;
@@ -235,8 +238,8 @@
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
-				padding: 0 $unit-half;
-				border-radius: $full-corner;
+				padding: 0 spacing.$unit-half;
+				border-radius: layout.$full-corner;
 				flex-shrink: 0;
 
 				&.chargeAttack {
@@ -260,7 +263,7 @@
 	.indicators {
 		display: flex;
 		flex-direction: row;
-		gap: $unit;
+		gap: spacing.$unit;
 		justify-content: center;
 		opacity: 0;
 		list-style: none;
@@ -278,8 +281,8 @@
 
 		.indicator {
 			transition: background-color 0.12s ease-in-out;
-			height: $unit;
-			border-radius: $unit-half;
+			height: spacing.$unit;
+			border-radius: spacing.$unit-half;
 			background-color: var(--button-contained-bg-hover);
 		}
 	}
