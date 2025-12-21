@@ -9,7 +9,7 @@
   <p class="empty">No teams found.</p>
 {:else}
   <ul class="grid" role="list">
-    {#each items as p}
+    {#each items as p, i (i)}
       <li><GridRep party={p} /></li>
     {/each}
   </ul>
