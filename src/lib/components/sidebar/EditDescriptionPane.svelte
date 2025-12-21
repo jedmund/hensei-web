@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import type { Editor, Content } from '@tiptap/core'
+	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
+	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import EdraEditor from '$lib/components/edra/headless/editor.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 
@@ -29,9 +31,6 @@
 	let editor = $state<Editor>()
 	let initialContent = $state<Content | undefined>()
 
-	// Style dropdown state
-	let styleDropdownOpen = $state(false)
-
 	// Parse description JSON on mount
 	onMount(() => {
 		if (description) {
@@ -57,20 +56,18 @@
 	}
 
 	function getStyleLabel(): string {
-		if (editor?.isActive('heading', { level: 1 })) return 'H1'
-		if (editor?.isActive('heading', { level: 2 })) return 'H2'
-		if (editor?.isActive('heading', { level: 3 })) return 'H3'
-		return 'P'
+		if (editor?.isActive('heading', { level: 1 })) return 'Heading 1'
+		if (editor?.isActive('heading', { level: 2 })) return 'Heading 2'
+		if (editor?.isActive('heading', { level: 3 })) return 'Heading 3'
+		return 'Paragraph'
 	}
 
 	function setHeading(level: 1 | 2 | 3) {
 		editor?.chain().focus().toggleHeading({ level }).run()
-		styleDropdownOpen = false
 	}
 
 	function setParagraph() {
 		editor?.chain().focus().setParagraph().run()
-		styleDropdownOpen = false
 	}
 
 	function toggleLink() {
@@ -90,64 +87,53 @@
 	<div class="toolbar-container">
 		<div class="description-toolbar">
 			<!-- Text Style Dropdown -->
-			<div class="style-dropdown-wrapper">
-				<button
-					class="toolbar-button style-trigger"
-					onclick={() => (styleDropdownOpen = !styleDropdownOpen)}
-					disabled={!editor}
-				>
-					{#if editor?.isActive('heading', { level: 1 })}
-						<Heading1 size={16} />
-					{:else if editor?.isActive('heading', { level: 2 })}
-						<Heading2 size={16} />
-					{:else if editor?.isActive('heading', { level: 3 })}
-						<Heading3 size={16} />
-					{:else}
-						<Pilcrow size={16} />
-					{/if}
-					<span>{getStyleLabel()}</span>
-					<ChevronDown size={12} />
-				</button>
-
-				{#if styleDropdownOpen}
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<div class="style-dropdown" onclick={(e) => e.stopPropagation()}>
-						<button
-							class="style-item"
-							class:active={editor?.isActive('heading', { level: 1 })}
-							onclick={() => setHeading(1)}
-						>
+			<DropdownMenu>
+				{#snippet trigger({ props })}
+					<button class="toolbar-button style-trigger" disabled={!editor} {...props}>
+						{#if editor?.isActive('heading', { level: 1 })}
 							<Heading1 size={16} />
-							<span>Heading 1</span>
-						</button>
-						<button
-							class="style-item"
-							class:active={editor?.isActive('heading', { level: 2 })}
-							onclick={() => setHeading(2)}
-						>
+						{:else if editor?.isActive('heading', { level: 2 })}
 							<Heading2 size={16} />
-							<span>Heading 2</span>
-						</button>
-						<button
-							class="style-item"
-							class:active={editor?.isActive('heading', { level: 3 })}
-							onclick={() => setHeading(3)}
-						>
+						{:else if editor?.isActive('heading', { level: 3 })}
 							<Heading3 size={16} />
-							<span>Heading 3</span>
-						</button>
-						<button
-							class="style-item"
-							class:active={editor?.isActive('paragraph')}
-							onclick={setParagraph}
-						>
+						{:else}
 							<Pilcrow size={16} />
-							<span>Paragraph</span>
-						</button>
-					</div>
-				{/if}
-			</div>
+						{/if}
+						<span>{getStyleLabel()}</span>
+						<ChevronDown size={12} />
+					</button>
+				{/snippet}
+				{#snippet menu()}
+					<DropdownMenuBase.Item
+						class="dropdown-menu-item {editor?.isActive('heading', { level: 1 }) ? 'active' : ''}"
+						onSelect={() => setHeading(1)}
+					>
+						<Heading1 size={16} />
+						<span>Heading 1</span>
+					</DropdownMenuBase.Item>
+					<DropdownMenuBase.Item
+						class="dropdown-menu-item {editor?.isActive('heading', { level: 2 }) ? 'active' : ''}"
+						onSelect={() => setHeading(2)}
+					>
+						<Heading2 size={16} />
+						<span>Heading 2</span>
+					</DropdownMenuBase.Item>
+					<DropdownMenuBase.Item
+						class="dropdown-menu-item {editor?.isActive('heading', { level: 3 }) ? 'active' : ''}"
+						onSelect={() => setHeading(3)}
+					>
+						<Heading3 size={16} />
+						<span>Heading 3</span>
+					</DropdownMenuBase.Item>
+					<DropdownMenuBase.Item
+						class="dropdown-menu-item {editor?.isActive('paragraph') ? 'active' : ''}"
+						onSelect={setParagraph}
+					>
+						<Pilcrow size={16} />
+						<span>Paragraph</span>
+					</DropdownMenuBase.Item>
+				{/snippet}
+			</DropdownMenu>
 
 			<div class="separator"></div>
 
@@ -240,9 +226,6 @@
 	</div>
 </div>
 
-<!-- Close dropdown when clicking outside -->
-<svelte:window onclick={() => (styleDropdownOpen = false)} />
-
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
@@ -308,57 +291,19 @@
 		}
 	}
 
-	.style-dropdown-wrapper {
-		position: relative;
-	}
-
 	.style-trigger {
 		display: flex;
 		align-items: center;
 		gap: $unit-half;
 		width: auto;
-		min-width: 56px;
+		min-width: 100px;
 		padding: 0 $unit;
 		font-size: $font-small;
 		font-weight: $medium;
 	}
 
-	.style-dropdown {
-		position: absolute;
-		top: 100%;
-		left: 0;
-		margin-top: 4px;
-		background: var(--menu-bg);
-		border: 1px solid var(--menu-border);
-		border-radius: $card-corner;
-		padding: $unit-half;
-		min-width: 140px;
-		box-shadow: var(--shadow-floating);
-		z-index: 100;
-	}
-
-	.style-item {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		width: 100%;
-		padding: $unit ($unit * 1.5);
-		border: none;
-		background: transparent;
-		border-radius: 6px;
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--text-primary);
-		cursor: pointer;
-		text-align: left;
-
-		&:hover {
-			background: var(--menu-bg-item-hover);
-		}
-
-		&.active {
-			background: var(--menu-bg-item-active);
-		}
+	:global(.dropdown-menu-item.active) {
+		background: var(--button-bg-active);
 	}
 
 	.editor-container {
