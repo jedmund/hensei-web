@@ -7,6 +7,7 @@
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
+	import { getPlaceholderImage } from '$lib/utils/images'
 	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages } from '$lib/utils/modifiers'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
@@ -230,9 +231,7 @@
 				<img
 					class="image placeholder"
 					alt=""
-					src={position === -1
-						? '/images/placeholders/placeholder-weapon-main.png'
-						: '/images/placeholders/placeholder-weapon-grid.png'}
+					src={getPlaceholderImage('weapon', position === -1 ? 'main' : 'grid')}
 				/>
 				{#if ctx?.canEdit()}
 					<span class="icon">

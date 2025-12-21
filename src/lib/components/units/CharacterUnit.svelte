@@ -7,7 +7,7 @@
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
-	import { getCharacterImageWithPose } from '$lib/utils/images'
+	import { getCharacterImageWithPose, getPlaceholderImage } from '$lib/utils/images'
 	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
@@ -261,7 +261,7 @@
 				<img
 					class="image placeholder"
 					alt=""
-					src="/images/placeholders/placeholder-weapon-grid.png"
+					src={getPlaceholderImage('character', 'grid')}
 				/>
 				{#if ctx?.canEdit()}
 					<span class="icon">

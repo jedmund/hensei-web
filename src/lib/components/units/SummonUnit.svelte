@@ -7,6 +7,7 @@
   import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
   import { getSummonImage } from '$lib/features/database/detail/image'
+  import { getPlaceholderImage } from '$lib/utils/images'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
   import { sidebar } from '$lib/stores/sidebar.svelte'
   import { GridType } from '$lib/types/enums'
@@ -176,7 +177,7 @@
         <img
           class="image placeholder"
           alt=""
-          src={position === -1 || position === 6 ? '/images/placeholders/placeholder-summon-main.png' : '/images/placeholders/placeholder-summon-sub.png'}
+          src={getPlaceholderImage('summon', position === -1 || position === 6 ? 'main' : 'grid')}
         />
         {#if ctx?.canEdit()}
           <span class="icon">
