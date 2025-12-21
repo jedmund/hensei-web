@@ -89,7 +89,7 @@
 
 	.option-label {
 		font-size: $font-small;
-		color: $grey-50;
+		color: var(--text-secondary);
 		user-select: none;
 		transition: color 0.15s ease;
 	}

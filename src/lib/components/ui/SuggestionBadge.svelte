@@ -135,7 +135,7 @@
 
 	.suggestion-label {
 		font-size: calc($font-small * 0.9);
-		color: $grey-50;
+		color: var(--text-secondary);
 		font-weight: $normal;
 	}
 

@@ -228,12 +228,12 @@
 
 		.label {
 			font-weight: typography.$medium;
-			color: colors.$grey-50;
+			color: var(--text-secondary);
 		}
 
 		.sublabel {
 			font-size: typography.$font-small;
-			color: colors.$grey-60;
+			color: var(--text-tertiary);
 			font-weight: typography.$normal;
 		}
 
@@ -270,7 +270,7 @@
 				border: none;
 				border-radius: layout.$item-corner;
 				background: transparent;
-				color: colors.$grey-50;
+				color: var(--text-secondary);
 				cursor: pointer;
 				flex-shrink: 0;
 				@include effects.smooth-transition(effects.$duration-quick, background-color, color, opacity);

@@ -101,7 +101,7 @@
 
 		.sublabel {
 			font-size: typography.$font-small;
-			color: colors.$grey-60;
+			color: var(--text-tertiary);
 			font-weight: typography.$normal;
 		}
 
@@ -109,13 +109,13 @@
 			display: flex;
 			align-items: center;
 			gap: spacing.$unit-half;
-			color: colors.$grey-50;
+			color: var(--text-secondary);
 			flex-shrink: 0;
 		}
 
 		.value {
 			font-size: typography.$font-regular;
-			color: colors.$grey-50;
+			color: var(--text-secondary);
 		}
 
 		// Element-colored value
