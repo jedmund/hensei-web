@@ -10,6 +10,8 @@
 		label?: string
 		leftIcon?: string
 		rightIcon?: string
+		clearable?: boolean
+		onClear?: () => void
 		counter?: number
 		maxLength?: number
 		hidden?: boolean
@@ -31,6 +33,8 @@
 		label,
 		leftIcon,
 		rightIcon,
+		clearable = false,
+		onClear,
 		counter,
 		maxLength,
 		hidden = false,
@@ -69,7 +73,12 @@
 	const showCounter = $derived(
 		counter !== undefined || (charsRemaining !== undefined && charsRemaining <= 5)
 	)
-	const hasWrapper = $derived(accessory || leftIcon || rightIcon || maxLength !== undefined || validationIcon)
+	const hasWrapper = $derived(accessory || leftIcon || rightIcon || clearable || maxLength !== undefined || validationIcon)
+
+	function handleClear() {
+		value = ''
+		onClear?.()
+	}
 
 	const fieldsetClasses = $derived(
 		['fieldset', hidden && 'hidden', fullWidth && 'full', className].filter(Boolean).join(' ')
@@ -92,11 +101,6 @@
 			.join(' ')
 	)
 
-	// Debug: log what's in restProps
-	$effect(() => {
-		console.log('[Input] restProps keys:', Object.keys(restProps))
-		console.log('[Input] hasWrapper:', hasWrapper, 'validationIcon:', validationIcon)
-	})
 </script>
 
 <fieldset class={fieldsetClasses}>
@@ -142,6 +146,12 @@
 				<span class="validationIcon {validationState}">
 					<Icon name={validationIcon} size={16} />
 				</span>
+			{/if}
+
+			{#if clearable && value}
+				<button type="button" class="clearButton" onclick={handleClear}>
+					<Icon name="close" size={14} />
+				</button>
 			{/if}
 
 			{#if showCounter}
@@ -345,6 +355,32 @@
 				}
 			}
 
+			.clearButton {
+				position: absolute;
+				right: $unit-2x;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 20px;
+				height: 20px;
+				padding: 0;
+				border: none;
+				background: transparent;
+				color: var(--text-secondary);
+				cursor: pointer;
+				border-radius: $unit-half;
+				@include smooth-transition($duration-quick, background-color, color);
+
+				&:hover {
+					background: var(--surface-tertiary);
+					color: var(--text-primary);
+				}
+
+				:global(svg) {
+					fill: currentColor;
+				}
+			}
+
 			&:has(.iconLeft) input {
 				padding-left: $unit-5x;
 			}
@@ -354,6 +390,10 @@
 			}
 
 			&:has(.validationIcon) input {
+				padding-right: $unit-5x;
+			}
+
+			&:has(.clearButton) input {
 				padding-right: $unit-5x;
 			}
 

@@ -21,7 +21,7 @@ export interface CreatePartyParams {
 	description?: string | undefined
 	visibility?: 'public' | 'private' | 'unlisted' | undefined
 	jobId?: string | undefined
-	raidId?: string | undefined
+	raidId?: string | null | undefined
 	guidebookId?: string | undefined
 	extras?: Record<string, any> | undefined
 }
@@ -30,7 +30,24 @@ export interface CreatePartyParams {
  * Parameters for updating a party
  */
 export interface UpdatePartyParams extends CreatePartyParams {
+	/** Party UUID (required for API update) */
+	id: string
+	/** Party shortcode (for cache invalidation) */
 	shortcode: string
+	// Battle settings
+	fullAuto?: boolean
+	autoGuard?: boolean
+	autoSummon?: boolean
+	chargeAttack?: boolean
+	// Performance metrics (null to clear)
+	clearTime?: number | null
+	buttonCount?: number | null
+	chainCount?: number | null
+	summonCount?: number | null
+	// Video (null to clear)
+	videoUrl?: string | null
+	// Raid (null to clear)
+	raidId?: string | null
 }
 
 /**
@@ -119,10 +136,11 @@ export class PartyAdapter extends BaseAdapter {
 
 	/**
 	 * Updates a party
+	 * Note: API expects UUID for update, not shortcode
 	 */
 	async update(params: UpdatePartyParams): Promise<Party> {
-		const { shortcode, ...updateParams } = params
-		const response = await this.request<{ party: Party }>(`/parties/${shortcode}`, {
+		const { id, shortcode, ...updateParams } = params
+		const response = await this.request<{ party: Party }>(`/parties/${id}`, {
 			method: 'PATCH',
 			body: {
 				party: updateParams
