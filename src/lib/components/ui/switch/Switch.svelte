@@ -69,16 +69,18 @@
 		--sw-checked-bg-hover: var(--null-button-bg-hover);
 
 		background: $grey-70;
-		border: 2px solid transparent;
+		border: none;
 		box-sizing: border-box;
 		position: relative;
 		cursor: pointer;
+		display: flex;
+		align-items: center;
 		@include smooth-transition($duration-instant, background-color);
 	}
 
 	:global([data-switch-root].switch:focus),
 	:global([data-switch-root].switch:focus-visible) {
-		@include focus-ring($blue);
+		outline: none;
 	}
 
 	:global([data-switch-root].switch:hover:not(:disabled)) {
@@ -139,76 +141,93 @@
 		cursor: not-allowed;
 	}
 
-	// Size: Small
+	// Size: Small (22px track height, 16px thumb)
 	:global([data-switch-root].switch.small) {
-		$height: $unit-3x; // 24px
-		border-radius: calc($height / 2);
-		padding-left: $unit-fourth;
-		padding-right: $unit-fourth;
-		width: calc($unit-5x + $unit-half); // 44px
-		height: $height;
+		$track-height: 22px;
+		$thumb-size: 16px;
+		$track-padding: 3px;
+		$track-width: 40px;
+
+		border-radius: calc($track-height / 2);
+		padding: 0 $track-padding;
+		width: $track-width;
+		height: $track-height;
 	}
 
 	:global([data-switch-root].switch.small .thumb) {
-		height: calc($unit-2x + $unit-half); // 20px
-		width: calc($unit-2x + $unit-half); // 20px
-		border-radius: calc(($unit-2x + $unit-half) / 2);
+		$thumb-size: 16px;
+		height: $thumb-size;
+		width: $thumb-size;
+		border-radius: 50%;
 	}
 
 	:global([data-switch-root].switch.small .thumb[data-state='checked']) {
-		transform: translateX(calc($unit-2x + $unit-half)); // 20px
+		// Move distance: track-width - thumb-size - (2 * padding)
+		transform: translateX(18px);
 	}
 
-	// Size: Medium (default)
+	// Size: Medium (default) (26px track height, 20px thumb)
 	:global([data-switch-root].switch.medium) {
-		$height: calc($unit-4x + $unit-fourth); // 34px
-		border-radius: calc($height / 2);
-		padding-left: $unit-half;
-		padding-right: $unit-half;
-		width: $unit-7x + $unit-fourth; // 58px
-		height: $height;
+		$track-height: 26px;
+		$thumb-size: 20px;
+		$track-padding: 3px;
+		$track-width: 48px;
+
+		border-radius: calc($track-height / 2);
+		padding: 0 $track-padding;
+		width: $track-width;
+		height: $track-height;
 	}
 
 	:global([data-switch-root].switch.medium .thumb) {
-		height: $unit-3x + $unit-fourth; // 26px
-		width: $unit-3x + $unit-fourth; // 26px
-		border-radius: calc(($unit-3x + $unit-fourth) / 2);
+		$thumb-size: 20px;
+		height: $thumb-size;
+		width: $thumb-size;
+		border-radius: 50%;
 	}
 
 	:global([data-switch-root].switch.medium .thumb[data-state='checked']) {
-		transform: translateX(21px);
+		// Move distance: track-width - thumb-size - (2 * padding)
+		transform: translateX(22px);
 	}
 
-	// Size: Large
+	// Size: Large (30px track height, 24px thumb)
 	:global([data-switch-root].switch.large) {
-		$height: $unit-5x; // 40px
-		border-radius: calc($height / 2);
-		padding-left: $unit-half;
-		padding-right: $unit-half;
-		width: calc($unit-8x + $unit); // 72px
-		height: $height;
+		$track-height: 30px;
+		$thumb-size: 24px;
+		$track-padding: 3px;
+		$track-width: 56px;
+
+		border-radius: calc($track-height / 2);
+		padding: 0 $track-padding;
+		width: $track-width;
+		height: $track-height;
 	}
 
 	:global([data-switch-root].switch.large .thumb) {
-		height: calc($unit-4x); // 32px
-		width: calc($unit-4x); // 32px
-		border-radius: $unit-2x;
+		$thumb-size: 24px;
+		height: $thumb-size;
+		width: $thumb-size;
+		border-radius: 50%;
 	}
 
 	:global([data-switch-root].switch.large .thumb[data-state='checked']) {
-		transform: translateX(calc($unit-4x)); // 32px
+		// Move distance: track-width - thumb-size - (2 * padding)
+		transform: translateX(26px);
 	}
 
 	// Thumb base styles
 	:global([data-switch-root] .thumb) {
-		background: $grey-100;
+		background: white;
 		display: block;
+		flex-shrink: 0;
 		@include smooth-transition($duration-instant, transform);
-		transform: translateX(-1px);
+		transform: translateX(0);
 		cursor: pointer;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 	}
 
 	:global([data-switch-root] .thumb[data-state='checked']) {
-		background: $grey-100;
+		background: white;
 	}
 </style>
