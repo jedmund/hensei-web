@@ -65,6 +65,19 @@ export interface ListUserPartiesParams {
 }
 
 /**
+ * Parameters for listing parties by raid
+ */
+export interface ListRaidPartiesParams {
+	raidId: string
+	page?: number
+	per?: number
+	element?: number
+	fullAuto?: boolean
+	autoGuard?: boolean
+	chargeAttack?: boolean
+}
+
+/**
  * Grid operation for batch updates
  */
 export interface GridOperation {
@@ -205,6 +218,45 @@ export class PartyAdapter extends BaseAdapter {
 			query: queryParams,
 			cacheTTL: 30000 // Cache for 30 seconds
 		})
+	}
+
+	/**
+	 * Lists public parties for a specific raid
+	 */
+	async listRaidParties(params: ListRaidPartiesParams): Promise<PaginatedResponse<Party>> {
+		const { raidId, element, fullAuto, autoGuard, chargeAttack, ...rest } = params
+
+		// Build query with raid filter and convert booleans to API format
+		const query: Record<string, unknown> = {
+			...rest,
+			raid: raidId
+		}
+
+		if (element !== undefined && element >= 0) query.element = element
+		if (fullAuto !== undefined) query.full_auto = fullAuto ? 1 : 0
+		if (autoGuard !== undefined) query.auto_guard = autoGuard ? 1 : 0
+		if (chargeAttack !== undefined) query.charge_attack = chargeAttack ? 1 : 0
+
+		const response = await this.request<{
+			results: Party[]
+			meta?: {
+				count?: number
+				totalPages?: number
+				perPage?: number
+			}
+		}>('/parties', {
+			method: 'GET',
+			query,
+			cacheTTL: 30000
+		})
+
+		return {
+			results: response.results,
+			page: params.page || 1,
+			total: response.meta?.count || 0,
+			totalPages: response.meta?.totalPages || 1,
+			perPage: response.meta?.perPage || 20
+		}
 	}
 
 	/**

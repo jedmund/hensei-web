@@ -6,9 +6,13 @@
 
 	interface Props {
 		raid?: Raid
+		onclick?: () => void
 	}
 
-	let { raid }: Props = $props()
+	let { raid, onclick }: Props = $props()
+
+	// Only clickable if raid exists and onclick is provided
+	const clickable = $derived(!!raid && !!onclick)
 
 	const raidName = $derived(() => {
 		if (!raid) return null
@@ -19,7 +23,7 @@
 	const elementLabel = $derived(raid ? getElementLabel(raid.element) : null)
 </script>
 
-<InfoTile label="Raid" class="raid-tile">
+<InfoTile label="Raid" class="raid-tile" {clickable} {onclick}>
 	{#if raid}
 		<div class="raid-info">
 			<img src={getRaidImage(raid.slug)} alt="" class="raid-image" />

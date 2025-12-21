@@ -10,7 +10,8 @@
 import { queryOptions, infiniteQueryOptions } from '@tanstack/svelte-query'
 import {
 	partyAdapter,
-	type ListUserPartiesParams
+	type ListUserPartiesParams,
+	type ListRaidPartiesParams
 } from '$lib/api/adapters/party.adapter'
 import type { Party } from '$lib/types/api/party'
 
@@ -31,6 +32,16 @@ export interface PartyPageResult {
 export interface ListPartiesParams {
 	page?: number
 	per?: number
+}
+
+/**
+ * Filter options for raid parties query
+ */
+export interface RaidPartiesFilters {
+	element?: number
+	fullAuto?: boolean
+	autoGuard?: boolean
+	chargeAttack?: boolean
 }
 
 /**
@@ -140,6 +151,42 @@ export const partyQueries = {
 		}),
 
 	/**
+	 * Parties by raid infinite query options
+	 *
+	 * @param raidId - Raid ID to filter parties by
+	 * @param filters - Optional filter parameters (element, battle settings)
+	 * @returns Infinite query options for listing parties by raid
+	 */
+	raidParties: (raidId: string, filters?: RaidPartiesFilters) =>
+		infiniteQueryOptions({
+			queryKey: ['parties', 'raid', raidId, filters] as const,
+			queryFn: async ({ pageParam }): Promise<PartyPageResult> => {
+				const response = await partyAdapter.listRaidParties({
+					raidId,
+					...filters,
+					page: pageParam
+				})
+				return {
+					results: response.results,
+					page: response.page,
+					totalPages: response.totalPages,
+					total: response.total,
+					perPage: response.perPage
+				}
+			},
+			initialPageParam: 1,
+			getNextPageParam: (lastPage) => {
+				if (lastPage.page < lastPage.totalPages) {
+					return lastPage.page + 1
+				}
+				return undefined
+			},
+			enabled: !!raidId,
+			staleTime: 1000 * 60 * 2, // 2 minutes
+			gcTime: 1000 * 60 * 15 // 15 minutes
+		}),
+
+	/**
 	 * Party preview status query options
 	 *
 	 * @param shortcode - Party shortcode identifier
@@ -179,6 +226,9 @@ export const partyKeys = {
 	userLists: () => [...partyKeys.all, 'user'] as const,
 	userList: (username: string, params?: Omit<ListUserPartiesParams, 'username'>) =>
 		[...partyKeys.userLists(), username, params] as const,
+	raidLists: () => [...partyKeys.all, 'raid'] as const,
+	raidList: (raidId: string, filters?: RaidPartiesFilters) =>
+		[...partyKeys.raidLists(), raidId, filters] as const,
 	details: () => ['party'] as const,
 	detail: (shortcode: string) => [...partyKeys.details(), shortcode] as const,
 	preview: (shortcode: string) => [...partyKeys.detail(shortcode), 'preview'] as const

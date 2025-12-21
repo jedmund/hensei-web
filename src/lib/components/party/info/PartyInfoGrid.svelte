@@ -4,6 +4,9 @@
 	import RaidTile from './RaidTile.svelte'
 	import BattleTile from './BattleTile.svelte'
 	import VideoTile from './VideoTile.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import RaidPartiesPane from '$lib/components/sidebar/RaidPartiesPane.svelte'
+	import { getRaidImage } from '$lib/utils/images'
 
 	interface Props {
 		party: Party
@@ -25,11 +28,25 @@
 	// Video tile only shown when there's a video (no empty placeholder)
 	const showVideo = $derived(hasVideo)
 	// Battle tile always shown - settings have default values
+
+	function handleRaidClick() {
+		if (!party.raid) return
+
+		const raidName =
+			typeof party.raid.name === 'string'
+				? party.raid.name
+				: party.raid.name?.en || 'Raid Parties'
+
+		sidebar.openWithComponent(raidName, RaidPartiesPane, { raid: party.raid }, {
+			scrollable: true,
+			image: getRaidImage(party.raid.slug)
+		})
+	}
 </script>
 
 <div class="party-info-grid">
 	<!-- Row 1: Description + Video -->
-	<div class="row row-1">
+	<div class="row row-1" class:single={!showVideo}>
 		{#if showDescription}
 			<DescriptionTile description={party.description} onOpen={onOpenDescription} />
 		{/if}
@@ -40,7 +57,7 @@
 	</div>
 
 	<!-- Row 2: Battle + Raid -->
-	<div class="row row-2">
+	<div class="row row-2" class:single={!showRaid}>
 		<BattleTile
 			fullAuto={party.fullAuto}
 			autoGuard={party.autoGuard}
@@ -55,7 +72,7 @@
 		/>
 
 		{#if showRaid}
-			<RaidTile raid={party.raid} />
+			<RaidTile raid={party.raid} onclick={handleRaidClick} />
 		{/if}
 	</div>
 </div>
@@ -77,8 +94,7 @@
 	.row-1 {
 		grid-template-columns: 2fr 1fr;
 
-		// If only one item, let it take full width
-		&:has(> :only-child) {
+		&.single {
 			grid-template-columns: 1fr;
 		}
 	}
@@ -86,7 +102,7 @@
 	.row-2 {
 		grid-template-columns: repeat(2, 1fr);
 
-		&:has(> :only-child) {
+		&.single {
 			grid-template-columns: 1fr;
 		}
 	}
