@@ -399,7 +399,7 @@
 	--hero-gradient-overlay: #{effects.$hero--gradient--light--overlay};
 }
 
-[data-theme='dark'] {
+html[data-theme='dark'] {
 	--background: #{colors.$page--bg--dark};
 	--background-rgb: 25, 25, 25; // RGB values for grey-15
 	--page-hover: #{colors.$page--hover--dark};
