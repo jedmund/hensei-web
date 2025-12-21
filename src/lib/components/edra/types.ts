@@ -9,6 +9,7 @@ export interface EdraEditorProps {
 	editor?: Editor;
 	autofocus?: boolean;
 	onUpdate?: () => void;
+	onSelectionUpdate?: () => void;
 	class?: string;
 }
 

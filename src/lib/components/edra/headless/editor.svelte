@@ -43,6 +43,7 @@
 		editable = true,
 		content,
 		onUpdate,
+		onSelectionUpdate,
 		autofocus = false,
 		class: className
 	}: EdraEditorProps = $props();
@@ -70,7 +71,8 @@
 				slashcommand(SlashCommandList)
 			],
 			{
-				onUpdate,
+				...(onUpdate && { onUpdate }),
+				...(onSelectionUpdate && { onSelectionUpdate }),
 				onTransaction(props) {
 					// Only update if editor instance actually changed
 					// The old pattern (editor = undefined; editor = props.editor) was a Svelte 4
