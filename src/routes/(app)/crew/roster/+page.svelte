@@ -356,11 +356,13 @@
 
 	.roster-content {
 		padding: spacing.$unit-2x;
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-2x;
 	}
 
 	.search-section {
 		position: relative;
-		margin-bottom: spacing.$unit-2x;
 
 		// Svelecte CSS variable overrides
 		--sv-bg: var(--select-contained-bg);
@@ -462,11 +464,11 @@
 	}
 
 	.roster-header {
-		padding: spacing.$unit spacing.$unit-2x;
+		padding: spacing.$unit spacing.$unit-2x spacing.$unit 0;
 	}
 
 	.roster-row {
-		padding: spacing.$unit spacing.$unit-2x;
+		padding: spacing.$unit spacing.$unit-2x spacing.$unit 0;
 		border-radius: layout.$card-corner;
 		transition: background-color 0.1s;
 
@@ -481,6 +483,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
+		position: sticky;
+		left: 0;
+		padding-left: spacing.$unit-2x;
+		background: var(--card-bg);
+		z-index: 1;
 
 		.member-name {
 			font-weight: typography.$medium;
@@ -490,6 +497,10 @@
 			font-size: typography.$font-small;
 			color: var(--text-secondary);
 		}
+	}
+
+	.roster-row:hover .member-col {
+		background: var(--list-cell-bg-hover);
 	}
 
 	.item-col {
