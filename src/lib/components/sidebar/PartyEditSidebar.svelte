@@ -13,6 +13,7 @@
 	import YouTubeUrlInput from '$lib/components/party/edit/YouTubeUrlInput.svelte'
 	import MetricField from '$lib/components/party/edit/MetricField.svelte'
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
+	import EditDescriptionPane from '$lib/components/sidebar/EditDescriptionPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { usePaneStack } from '$lib/stores/paneStack.svelte'
 		import { untrack } from 'svelte'
@@ -22,6 +23,7 @@
 
 	export interface PartyEditValues {
 		name: string
+		description: string | null
 		fullAuto: boolean
 		autoGuard: boolean
 		autoSummon: boolean
@@ -64,6 +66,7 @@
 	let videoUrl = $state(initialValues.videoUrl)
 	let raid = $state<Raid | null>(initialValues.raid)
 	let raidId = $state<string | null>(initialValues.raidId)
+	let description = $state(initialValues.description)
 
 	// Check if any values have changed
 	const hasChanges = $derived(
@@ -77,13 +80,15 @@
 			chainCount !== initialValues.chainCount ||
 			summonCount !== initialValues.summonCount ||
 			videoUrl !== initialValues.videoUrl ||
-			raidId !== initialValues.raidId
+			raidId !== initialValues.raidId ||
+			description !== initialValues.description
 	)
 
 	// Expose save function for sidebar action button
 	export function save() {
 		const values: PartyEditValues = {
 			name,
+			description,
 			fullAuto,
 			autoGuard,
 			autoSummon,
@@ -185,6 +190,39 @@
 		}
 		paneStack.pop()
 	}
+
+	function getDescriptionPreview(desc: string | null): string {
+		if (!desc) return ''
+		try {
+			const parsed = JSON.parse(desc)
+			// Extract plain text from TipTap JSON
+			const extractText = (node: { type?: string; text?: string; content?: unknown[] }): string => {
+				if (node.text) return node.text
+				if (node.content) return node.content.map(extractText).join('')
+				return ''
+			}
+			return extractText(parsed).slice(0, 50) || ''
+		} catch {
+			// Legacy plain text
+			return desc.slice(0, 50)
+		}
+	}
+
+	function openDescriptionPane() {
+		paneStack.push({
+			id: 'edit-description',
+			title: 'Edit Description',
+			component: EditDescriptionPane,
+			props: {
+				description,
+				onSave: (content: string) => {
+					description = content
+					paneStack.pop()
+				}
+			},
+			scrollable: false
+		})
+	}
 </script>
 
 <div class="party-edit-sidebar">
@@ -198,6 +236,21 @@
 		/>
 		<YouTubeUrlInput label="Video" bind:value={videoUrl} contained />
 	</div>
+
+	<DetailsSection title="Content">
+		<DetailRow label="Description" noHover compact>
+			{#snippet children()}
+				<button type="button" class="description-select-button" onclick={openDescriptionPane}>
+					{#if description}
+						<span class="description-preview">{getDescriptionPreview(description)}...</span>
+					{:else}
+						<span class="placeholder">Add description...</span>
+					{/if}
+					<Icon name="chevron-right" size={16} class="chevron-icon" />
+				</button>
+			{/snippet}
+		</DetailRow>
+	</DetailsSection>
 
 	<DetailsSection title="Battle">
 		<DetailRow label="Raid" noHover compact>
@@ -272,7 +325,8 @@
 		padding: 0 $unit-2x;
 	}
 
-	.raid-select-button {
+	.raid-select-button,
+	.description-select-button {
 		display: flex;
 		align-items: center;
 		gap: $unit;
@@ -283,7 +337,8 @@
 		text-align: left;
 	}
 
-	.raid-name {
+	.raid-name,
+	.description-preview {
 		font-size: $font-regular;
 		font-weight: $medium;
 		color: var(--text-secondary);

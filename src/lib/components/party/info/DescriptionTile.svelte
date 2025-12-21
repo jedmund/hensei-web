@@ -21,8 +21,15 @@
 		menu?: Snippet
 	}
 
-	let { name, description, user, canEdit = false, onOpenDescription, onOpenEdit, menu }: Props =
-		$props()
+	let {
+		name,
+		description,
+		user,
+		canEdit = false,
+		onOpenDescription,
+		onOpenEdit,
+		menu
+	}: Props = $props()
 
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
@@ -30,40 +37,40 @@
 
 <div class="description-tile">
 	<!-- Header: Title + Actions -->
-	<div class="tile-header">
-		<h1 class="party-name">{name || '(untitled party)'}</h1>
-		<div class="actions">
-			{#if canEdit}
-				<Button variant="secondary" size="small" onclick={onOpenEdit}>
-					Edit
-				</Button>
-			{/if}
-			{#if menu}
-				{@render menu()}
-			{/if}
-		</div>
-	</div>
-
-	<!-- Creator info -->
-	{#if user}
-		<a href="/{user.username}" class="creator-link">
-			<div class="avatar-wrapper {user.avatar?.element || ''}">
-				{#if user.avatar?.picture}
-					<img
-						class="avatar"
-						alt={`Avatar of ${user.username}`}
-						src={avatarSrc}
-						srcset={avatarSrcSet}
-						width="24"
-						height="24"
-					/>
-				{:else}
-					<div class="avatar-placeholder" aria-hidden="true"></div>
+	<div class="tile-header-container">
+		<div class="tile-header">
+			<h1 class="party-name">{name || '(untitled party)'}</h1>
+			<div class="actions">
+				{#if canEdit}
+					<Button variant="secondary" size="small" onclick={onOpenEdit}>Edit</Button>
+				{/if}
+				{#if menu}
+					{@render menu()}
 				{/if}
 			</div>
-			<span class="username">{user.username}</span>
-		</a>
-	{/if}
+		</div>
+
+		<!-- Creator info -->
+		{#if user}
+			<a href="/{user.username}" class="creator-link">
+				<div class="avatar-wrapper {user.avatar?.element || ''}">
+					{#if user.avatar?.picture}
+						<img
+							class="avatar"
+							alt={`Avatar of ${user.username}`}
+							src={avatarSrc}
+							srcset={avatarSrcSet}
+							width="24"
+							height="24"
+						/>
+					{:else}
+						<div class="avatar-placeholder" aria-hidden="true"></div>
+					{/if}
+				</div>
+				<span class="username">{user.username}</span>
+			</a>
+		{/if}
+	</div>
 
 	<!-- Description content (clickable) -->
 	<button type="button" class="description-content" onclick={onOpenDescription}>
@@ -85,10 +92,16 @@
 		background: var(--card-bg);
 		border: 0.5px solid var(--button-bg);
 		border-radius: $card-corner;
-		padding: $unit-2x;
+		padding: $unit-2x $unit-2x $unit $unit-2x;
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
+	}
+
+	.tile-header-container {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
 	}
 
 	.tile-header {

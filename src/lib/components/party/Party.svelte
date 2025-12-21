@@ -409,7 +409,13 @@
 	function openDescriptionPanel() {
 		openDescriptionSidebar({
 			title: party.name || '(untitled party)',
-			description: party.description
+			description: party.description,
+			canEdit: canEdit(),
+			partyId: party.id,
+			partyShortcode: party.shortcode,
+			onSave: async (description) => {
+				await updatePartyDetails({ description })
+			}
 		})
 	}
 
@@ -418,6 +424,7 @@
 
 		const initialValues: PartyEditValues = {
 			name: party.name ?? '',
+			description: party.description ?? null,
 			fullAuto: party.fullAuto ?? false,
 			autoGuard: party.autoGuard ?? false,
 			autoSummon: party.autoSummon ?? false,
@@ -437,6 +444,7 @@
 			onSave: async (values) => {
 				await updatePartyDetails({
 					name: values.name,
+					description: values.description,
 					fullAuto: values.fullAuto,
 					autoGuard: values.autoGuard,
 					autoSummon: values.autoSummon,

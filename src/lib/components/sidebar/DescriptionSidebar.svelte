@@ -1,11 +1,46 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
+	import EditDescriptionPane from './EditDescriptionPane.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { usePaneStack } from '$lib/stores/paneStack.svelte'
 
 	interface Props {
 		description?: string
+		canEdit?: boolean
+		partyId?: string
+		partyShortcode?: string
+		onSave?: (description: string) => Promise<void>
 	}
 
-	let { description }: Props = $props()
+	let { description, canEdit = false, partyId, partyShortcode, onSave }: Props = $props()
+
+	const paneStack = usePaneStack()
+
+	function openEditPane() {
+		paneStack.push({
+			id: 'edit-description',
+			title: 'Edit Description',
+			component: EditDescriptionPane,
+			props: {
+				description,
+				onSave: async (content: string) => {
+					if (onSave) {
+						await onSave(content)
+					}
+					paneStack.pop()
+				}
+			},
+			scrollable: false
+		})
+	}
+
+	// Set up Edit button in sidebar header when canEdit is true
+	onMount(() => {
+		if (canEdit) {
+			sidebar.setAction(openEditPane, 'Edit')
+		}
+	})
 </script>
 
 <div class="description-sidebar">

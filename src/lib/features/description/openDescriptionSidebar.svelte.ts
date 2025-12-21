@@ -4,13 +4,21 @@ import DescriptionSidebar from '$lib/components/sidebar/DescriptionSidebar.svelt
 interface DescriptionSidebarOptions {
 	title?: string | undefined
 	description?: string | undefined
+	canEdit?: boolean | undefined
+	partyId?: string | undefined
+	partyShortcode?: string | undefined
+	onSave?: ((description: string) => Promise<void>) | undefined
 }
 
 export function openDescriptionSidebar(options: DescriptionSidebarOptions) {
-	const { title, description } = options
+	const { title, description, canEdit, partyId, partyShortcode, onSave } = options
 
 	sidebar.openWithComponent(title ?? '', DescriptionSidebar, {
-		description
+		description,
+		canEdit,
+		partyId,
+		partyShortcode,
+		onSave
 	})
 }
 
