@@ -15,6 +15,8 @@
 		special?: boolean | undefined
 		className?: string | undefined
 		editable?: boolean | undefined
+		contained?: boolean | undefined
+		size?: 'regular' | 'small' | undefined
 		updateUncap?: ((index: number) => void) | undefined
 		updateTranscendence?: ((index: number) => void) | undefined
 	}
@@ -27,6 +29,7 @@
 		ulb?: boolean
 		index: number
 		tabindex?: number
+		size?: 'regular' | 'small'
 		onStarClick: (index: number, empty: boolean) => void
 	}
 
@@ -38,6 +41,7 @@
 		editable?: boolean
 		interactive?: boolean
 		tabindex?: number
+		size?: 'regular' | 'small'
 		onStarClick?: () => void
 		onFragmentClick?: (newStage: number) => void
 		onFragmentHover?: (newStage: number) => void
@@ -58,6 +62,8 @@
 		special = false,
 		className,
 		editable = false,
+		contained = false,
+		size = 'regular',
 		updateUncap,
 		updateTranscendence
 	}: Props = $props()
@@ -119,6 +125,7 @@
 					type,
 					editable,
 					interactive: editable,
+					size,
 					onFragmentClick: editable ? handleTranscendenceUpdate : undefined
 				}
 			}
@@ -137,6 +144,7 @@
 				ulb: options.ulb,
 				special: options.special,
 				tabindex: editable ? 0 : undefined,
+				size,
 				onStarClick: editable ? toggleStar : () => {}
 			}
 		}
@@ -194,7 +202,7 @@
 	}
 </script>
 
-<div class="uncap-indicator {className || ''}">
+<div class="uncap-indicator {className || ''}" class:contained class:small={size === 'small'}>
 	<ul class="stars">
 		{#each Array(numStars) as _, i}
 			{@const star = renderStar(i)}
@@ -210,8 +218,20 @@
 </div>
 
 <style lang="scss">
+	@use '$src/themes/spacing' as spacing;
+
 	.uncap-indicator {
 		display: inline-block;
+
+		&.contained {
+			background: rgba(0, 0, 0, 0.5);
+			border-radius: 999px;
+			padding: spacing.$unit;
+
+			&.small {
+				padding: spacing.$unit-half;
+			}
+		}
 	}
 
 	.stars {

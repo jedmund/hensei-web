@@ -8,6 +8,7 @@
 		ulb?: boolean
 		index: number
 		tabindex?: number
+		size?: 'regular' | 'small'
 		onStarClick: (index: number, empty: boolean) => void
 	}
 
@@ -18,6 +19,7 @@
 		ulb = false,
 		index,
 		tabindex,
+		size = 'regular',
 		onStarClick
 	}: Props = $props()
 
@@ -33,6 +35,7 @@
 	class:mlb={!special}
 	class:flb
 	class:ulb
+	class:small={size === 'small'}
 	{tabindex}
 	onclick={handleClick}
 	role="button"
@@ -48,6 +51,10 @@
 		height: var(--size);
 		width: var(--size);
 		cursor: pointer;
+
+		&.small {
+			--size: 12px;
+		}
 
 		&:hover {
 			transform: scale(1.2);
@@ -100,6 +107,10 @@
 		@media (max-width: 768px) {
 			--size: 14px;
 			background-size: cover;
+
+			&.small {
+				--size: 12px;
+			}
 
 			&:hover {
 				transform: scale(1);

@@ -11,6 +11,7 @@
 		editable?: boolean
 		interactive?: boolean
 		tabindex?: number
+		size?: 'regular' | 'small'
 		onStarClick?: () => void
 		onFragmentClick?: (newStage: number) => void
 		onFragmentHover?: (newStage: number) => void
@@ -23,6 +24,7 @@
 		editable = false,
 		interactive = false,
 		tabindex,
+		size = 'regular',
 		onStarClick,
 		onFragmentClick,
 		onFragmentHover
@@ -165,6 +167,7 @@
 	class:stage3={stage === 3}
 	class:stage4={stage === 4}
 	class:stage5={stage === 5}
+	class:small={size === 'small'}
 	onclick={handleClick}
 	onmouseleave={interactive ? handleMouseLeave : undefined}
 	bind:this={starElement}
@@ -210,6 +213,10 @@
 		--size: 18px;
 		position: relative;
 		cursor: pointer;
+
+		&.small {
+			--size: 12px;
+		}
 
 		&:hover {
 			transform: scale(1.2);
@@ -331,6 +338,10 @@
 			&:hover {
 				transform: scale(1.2);
 			}
+		}
+
+		&.small .figure {
+			--size: 12px;
 		}
 	}
 
