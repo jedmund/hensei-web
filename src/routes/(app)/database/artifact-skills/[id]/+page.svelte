@@ -287,7 +287,7 @@
 	.error {
 		text-align: center;
 		padding: spacing.$unit * 4;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 	}
 
 	.error {
@@ -356,7 +356,7 @@
 
 			.skill-group {
 				font-size: typography.$font-small;
-				color: colors.$grey-50;
+				color: var(--text-secondary);
 			}
 		}
 	}

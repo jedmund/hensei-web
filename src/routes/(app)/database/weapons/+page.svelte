@@ -198,7 +198,7 @@
 	.empty-state {
 		padding: spacing.$unit-4x;
 		text-align: center;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 	}
 
 	.error-state {

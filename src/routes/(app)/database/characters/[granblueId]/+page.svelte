@@ -454,6 +454,6 @@
 	}
 
 	.empty-value {
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 	}
 </style>

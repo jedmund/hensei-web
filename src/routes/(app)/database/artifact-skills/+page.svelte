@@ -188,7 +188,7 @@
 	.error {
 		text-align: center;
 		padding: spacing.$unit * 4;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 	}
 
 	.error {
@@ -243,7 +243,7 @@
 		border-bottom: 1px solid #dee2e6;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 	}
 
 	.col-modifier {
@@ -292,11 +292,11 @@
 
 		.name-jp {
 			font-size: typography.$font-small;
-			color: colors.$grey-50;
+			color: var(--text-secondary);
 		}
 
 		.not-set {
-			color: colors.$grey-60;
+			color: var(--text-tertiary);
 			font-style: italic;
 		}
 	}
@@ -337,7 +337,7 @@
 	.footer {
 		padding: spacing.$unit;
 		text-align: center;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 		font-size: typography.$font-small;
 		background: #f8f9fa;
 		border-top: 1px solid #e5e5e5;

@@ -666,7 +666,7 @@
 		background: transparent;
 		border: none;
 		border-radius: layout.$input-corner;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 		cursor: pointer;
 		flex-shrink: 0;
 
@@ -682,7 +682,7 @@
 
 	.hint {
 		font-size: typography.$font-small;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 		margin: 0;
 	}
 
@@ -719,7 +719,7 @@
 	.entity-loading {
 		padding: spacing.$unit-4x;
 		text-align: center;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 
 		h3 {
 			margin: 0 0 spacing.$unit 0;
