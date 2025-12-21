@@ -132,7 +132,7 @@
 		}
 		&.grade-none {
 			background: colors.$grey-85;
-			color: colors.$grey-50;
+			color: var(--text-secondary);
 		}
 	}
 
@@ -159,7 +159,7 @@
 
 	.breakdown-label {
 		font-size: typography.$font-small;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 	}
 
 	.breakdown-value {
@@ -211,7 +211,7 @@
 
 	.no-grade-text {
 		font-size: typography.$font-small;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 		font-style: italic;
 	}
 

@@ -137,12 +137,12 @@
 	}
 
 	.no-data {
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 		font-style: italic;
 	}
 
 	.loading {
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 		font-style: italic;
 	}
 

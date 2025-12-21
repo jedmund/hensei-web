@@ -62,16 +62,12 @@
 		{#if job}
 			<img class="job-portrait" src={jobImageUrl} alt={job.name.en} />
 			<div class="overlay"></div>
-		{:else}
+		{:else if canEdit}
 			<div class="empty-portrait">
-				{#if canEdit}
-					<button class="select-job-button" on:click={onSelectJob}>
-						<Icon name="plus" size={24} />
-						<span>Select Job</span>
-					</button>
-				{:else}
-					<span>No Job Selected</span>
-				{/if}
+				<button class="select-job-button" on:click={onSelectJob}>
+					<Icon name="plus" size={24} />
+					<span>Select Job</span>
+				</button>
 			</div>
 		{/if}
 
@@ -170,8 +166,8 @@
 				</div>
 			{/if}
 		{:else}
-			<div class="no-job-message">
-				<p>Select a job to view skills and details</p>
+			<div class="no-job-message" class:readonly={!canEdit}>
+				<p>{canEdit ? 'Select a job to view skills and details' : 'No job selected'}</p>
 			</div>
 		{/if}
 	</div>
@@ -434,6 +430,10 @@
 			height: 100%;
 			color: var(--text-tertiary);
 			font-size: typography.$font-regular;
+
+			&.readonly {
+				color: var(--text-secondary);
+			}
 		}
 	}
 </style>

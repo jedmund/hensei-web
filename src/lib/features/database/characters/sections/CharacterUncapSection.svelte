@@ -175,7 +175,7 @@
 
 	.special-note {
 		font-size: typography.$font-small;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 		margin: 0;
 		padding-bottom: spacing.$unit;
 	}

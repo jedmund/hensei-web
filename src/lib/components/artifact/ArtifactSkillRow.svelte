@@ -191,6 +191,6 @@
 
 	.control-label {
 		font-size: typography.$font-small;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 	}
 </style>

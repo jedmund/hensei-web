@@ -356,7 +356,7 @@
 	.empty {
 		text-align: center;
 		padding: spacing.$unit * 4;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 
 		p {
 			margin: 0 0 spacing.$unit-2x 0;
@@ -374,7 +374,7 @@
 	.group-title {
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 		margin: 0 0 spacing.$unit 0;
 	}
 
@@ -420,7 +420,7 @@
 
 	.skill-name-jp {
 		font-size: typography.$font-small;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 	}
 
 	.skill-category {

@@ -157,7 +157,7 @@
 
 	.image-sublabel {
 		font-size: typography.$font-tiny;
-		color: colors.$grey-60;
+		color: var(--text-tertiary);
 		text-align: center;
 	}
 </style>

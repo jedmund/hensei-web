@@ -522,7 +522,7 @@
 
 				.database-back-button {
 					border-radius: layout.$full-corner;
-					color: colors.$grey-50;
+					color: var(--text-secondary);
 					font-size: typography.$font-small;
 					font-weight: typography.$medium;
 					text-decoration: none;

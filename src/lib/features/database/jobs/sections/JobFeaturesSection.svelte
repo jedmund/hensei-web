@@ -89,7 +89,7 @@
 
 	.boolean-indicator {
 		font-size: typography.$font-regular;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 
 		&.yes {
 			color: colors.$wind-bg-00;
