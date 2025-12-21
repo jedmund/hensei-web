@@ -25,7 +25,7 @@
 	}: Props = $props()
 
 	// Dynamic slot count based on unlimited flag
-	const slotCount = $derived(unlimited ? 7 : 5)
+	const slotCount = $derived(unlimited ? 8 : 5)
 
 	import CharacterUnit from '$lib/components/units/CharacterUnit.svelte'
 
@@ -102,7 +102,7 @@
 		gap: $unit-3x;
 
 		&.unlimited {
-			grid-template-columns: repeat(7, minmax(0, 1fr));
+			grid-template-columns: repeat(8, minmax(0, 1fr));
 		}
 
 		& > li {
