@@ -54,12 +54,17 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
 	import { openDescriptionSidebar } from '$lib/features/description/openDescriptionSidebar.svelte'
+	import {
+		openPartyEditSidebar,
+		type PartyEditValues
+	} from '$lib/features/party/openPartyEditSidebar.svelte'
+	import PartyInfoGrid from '$lib/components/party/info/PartyInfoGrid.svelte'
 	import { DropdownMenu } from 'bits-ui'
 	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
 	import { openJobSelectionSidebar, openJobSkillSelectionSidebar } from '$lib/features/job/openJobSidebar.svelte'
-	import { partyAdapter } from '$lib/api/adapters/party.adapter'
+	import { partyAdapter, type UpdatePartyParams } from '$lib/api/adapters/party.adapter'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
@@ -269,12 +274,26 @@
 		return result.canEdit
 	})
 
+	// Element mapping for theming (used for party element which is numeric)
+	const ELEMENT_MAP: Record<number, 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'> = {
+		1: 'wind',
+		2: 'fire',
+		3: 'water',
+		4: 'earth',
+		5: 'dark',
+		6: 'light'
+	}
+
 	// Derived elements for character image logic
 	const mainWeapon = $derived(
 		(party?.weapons ?? []).find((w) => w?.mainhand || w?.position === -1)
 	)
 	const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
 	const partyElement = $derived((party as any)?.element)
+
+	// User's element preference (string) - used for UI theming
+	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+	const userElement = $derived(party.user?.avatar?.element as ElementType | undefined)
 
 	// Check if any items in the party are linked to collection (for sync menu option)
 	const hasCollectionLinks = $derived.by(() => {
@@ -333,7 +352,7 @@
 	}
 
 	// Party operations
-	async function updatePartyDetails(updates: Partial<Party>) {
+	async function updatePartyDetails(updates: Omit<UpdatePartyParams, 'id' | 'shortcode'>) {
 		if (!canEdit()) return
 
 		loading = true
@@ -341,7 +360,8 @@
 
 		try {
 			// Use TanStack Query mutation to update party
-			await updatePartyMutation.mutateAsync({ shortcode: party.shortcode, ...updates })
+			// Note: API expects UUID (id), shortcode is for cache invalidation
+			await updatePartyMutation.mutateAsync({ id: party.id, shortcode: party.shortcode, ...updates })
 			// Party will be updated via cache invalidation
 		} catch (err: any) {
 			error = err.message || 'Failed to update party'
@@ -414,6 +434,45 @@
 			description: party.description,
 			canEdit: canEdit(),
 			onEdit: openEditDialog
+		})
+	}
+
+	function openSettingsPanel() {
+		if (!canEdit()) return
+
+		const initialValues: PartyEditValues = {
+			name: party.name ?? '',
+			fullAuto: party.fullAuto ?? false,
+			autoGuard: party.autoGuard ?? false,
+			autoSummon: party.autoSummon ?? false,
+			chargeAttack: party.chargeAttack ?? true,
+			clearTime: party.clearTime ?? null,
+			buttonCount: party.buttonCount ?? null,
+			chainCount: party.chainCount ?? null,
+			summonCount: party.summonCount ?? null,
+			videoUrl: party.videoUrl ?? null,
+			raid: party.raid ?? null,
+			raidId: party.raid?.id ?? null
+		}
+
+		openPartyEditSidebar({
+			initialValues,
+			element: userElement,
+			onSave: async (values) => {
+				await updatePartyDetails({
+					name: values.name,
+					fullAuto: values.fullAuto,
+					autoGuard: values.autoGuard,
+					autoSummon: values.autoSummon,
+					chargeAttack: values.chargeAttack,
+					clearTime: values.clearTime,
+					buttonCount: values.buttonCount,
+					chainCount: values.chainCount,
+					summonCount: values.summonCount,
+					videoUrl: values.videoUrl,
+					raidId: values.raidId
+				})
+			}
 		})
 	}
 
@@ -888,7 +947,7 @@
 							<DropdownMenu.Content class="dropdown-content" sideOffset={6} align="end">
 								{#if canEdit()}
 									<DropdownItem>
-										<button onclick={openEditDialog} disabled={loading}>Edit</button>
+										<button onclick={openSettingsPanel} disabled={loading}>Edit</button>
 									</DropdownItem>
 									{#if hasCollectionLinks}
 										<DropdownItem>
@@ -926,41 +985,12 @@
 				</div>
 			</header>
 
-			{#if party.description || party.raid}
-				<div class="cards">
-					{#if party.description}
-						<div
-							class="description-card clickable"
-							onclick={openDescriptionPanel}
-							role="button"
-							tabindex="0"
-							onkeydown={(e) => e.key === 'Enter' && openDescriptionPanel()}
-							aria-label="View full description"
-						>
-							<h2 class="card-label">Description</h2>
-							<div class="card-content">
-								<DescriptionRenderer content={party.description} truncate={true} maxLines={4} />
-							</div>
-						</div>
-					{/if}
-
-					{#if party.raid}
-						<div class="raid-card">
-							<h2 class="card-label">Raid</h2>
-							<div class="raid-content">
-								<span class="raid-name">
-									{typeof party.raid.name === 'string'
-										? party.raid.name
-										: party.raid.name?.en || party.raid.name?.ja || 'Unknown Raid'}
-								</span>
-								{#if party.raid.group}
-									<span class="raid-difficulty">Difficulty: {party.raid.group.difficulty}</span>
-								{/if}
-							</div>
-						</div>
-					{/if}
-				</div>
-			{/if}
+			<PartyInfoGrid
+				{party}
+				canEdit={canEdit()}
+				onOpenDescription={openDescriptionPanel}
+				onOpenEdit={openSettingsPanel}
+			/>
 
 			<PartySegmentedControl
 				selectedTab={activeTab}
@@ -1227,99 +1257,6 @@
 
 		&:active {
 			background-color: var(--button-subtle-bg-active);
-		}
-	}
-
-	// Cards container
-	.cards {
-		display: flex;
-		gap: $unit-2x;
-
-		// Individual card styles
-		.description-card,
-		.raid-card {
-			flex: 1;
-			min-width: 0; // Allow flexbox to shrink items
-			background: var(--card-bg);
-			border: 0.5px solid var(--button-bg);
-			border-radius: $card-corner;
-			padding: $unit-2x;
-			// box-shadow: $card-elevation;
-			text-align: left;
-
-			.card-label {
-				margin: 0 0 $unit 0;
-				font-size: $font-small;
-				font-weight: $bold;
-				text-transform: uppercase;
-				letter-spacing: 0.5px;
-				color: var(--text-secondary);
-			}
-
-			.card-text {
-				margin: 0;
-				color: var(--text-primary);
-				font-size: $font-regular;
-				line-height: 1.5;
-
-				// Text truncation after 3 lines
-				display: -webkit-box;
-				-webkit-line-clamp: 3;
-				-webkit-box-orient: vertical;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-
-			.card-content {
-				margin: 0;
-				color: var(--text-primary);
-			}
-
-			.card-hint {
-				display: none;
-				margin-top: $unit;
-				font-size: $font-small;
-				color: var(--accent-blue);
-				font-weight: $medium;
-			}
-
-			&.clickable {
-				cursor: pointer;
-				@include smooth-transition($duration-quick, box-shadow);
-
-				&:hover {
-					box-shadow: $card-elevation-hover;
-				}
-			}
-		}
-
-		// Specific styling for raid card
-		.raid-card {
-			flex: 0 0 auto;
-			min-width: 250px;
-
-			.raid-content {
-				display: flex;
-				flex-direction: column;
-				gap: $unit-half;
-			}
-
-			.raid-name {
-				font-weight: $bold;
-				color: var(--text-primary);
-				font-size: $font-regular;
-			}
-
-			.raid-difficulty {
-				color: var(--text-secondary);
-				font-size: $font-small;
-			}
-		}
-
-		// Description card takes up more space
-		.description-card {
-			flex: 2;
-			max-width: 600px;
 		}
 	}
 
