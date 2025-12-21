@@ -48,7 +48,9 @@
 			@include smooth-transition($duration-quick, box-shadow, transform);
 
 			&:hover {
-				box-shadow: $card-elevation-hover;
+				box-shadow:
+					0 0 0 1px rgba(0, 0, 0, 0.01),
+					$card-elevation-hover;
 			}
 
 			&:active {

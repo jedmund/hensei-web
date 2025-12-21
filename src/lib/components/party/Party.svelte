@@ -63,7 +63,10 @@
 	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
-	import { openJobSelectionSidebar, openJobSkillSelectionSidebar } from '$lib/features/job/openJobSidebar.svelte'
+	import {
+		openJobSelectionSidebar,
+		openJobSkillSelectionSidebar
+	} from '$lib/features/job/openJobSidebar.svelte'
 	import { partyAdapter, type UpdatePartyParams } from '$lib/api/adapters/party.adapter'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
@@ -283,9 +286,7 @@
 	}
 
 	// Derived elements for character image logic
-	const mainWeapon = $derived(
-		(party?.weapons ?? []).find((w) => w?.mainhand || w?.position === -1)
-	)
+	const mainWeapon = $derived((party?.weapons ?? []).find((w) => w?.mainhand || w?.position === -1))
 	const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
 	const partyElement = $derived((party as any)?.element)
 
@@ -335,7 +336,11 @@
 		try {
 			// Use TanStack Query mutation to update party
 			// Note: API expects UUID (id), shortcode is for cache invalidation
-			await updatePartyMutation.mutateAsync({ id: party.id, shortcode: party.shortcode, ...updates })
+			await updatePartyMutation.mutateAsync({
+				id: party.id,
+				shortcode: party.shortcode,
+				...updates
+			})
 			// Party will be updated via cache invalidation
 		} catch (err: any) {
 			error = err.message || 'Failed to update party'
@@ -859,7 +864,9 @@
 			// For mainhand weapons (position -1), restrict to job's proficiencies
 			const requiredProficiencies =
 				opts.type === 'weapon' && opts.position === -1 && party.job?.proficiency
-					? party.job.proficiency.filter((p): p is number => p !== null && p !== undefined && p !== 0)
+					? party.job.proficiency.filter(
+							(p): p is number => p !== null && p !== undefined && p !== 0
+						)
 					: undefined
 
 			// Open the search sidebar with the appropriate type
@@ -1056,7 +1063,8 @@
 	.page-wrap {
 		position: relative;
 		--panel-w: 380px;
-		overflow-x: auto;
+		// overflow-x: auto; // Disabling thing for overflow
+		overflow: visible;
 	}
 
 	.track {
@@ -1068,7 +1076,6 @@
 	.party-container {
 		width: 1200px;
 		margin: 0 auto;
-		padding: $unit-half;
 		gap: $unit-2x;
 		display: flex;
 		flex-direction: column;
@@ -1188,7 +1195,9 @@
 		color: var(--text-secondary);
 		border: none;
 		cursor: pointer;
-		transition: background-color 0.2s ease, color 0.2s ease;
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease;
 		outline: none;
 
 		&:hover {
@@ -1271,5 +1280,4 @@
 			background: darken($error, 10%);
 		}
 	}
-
 </style>
