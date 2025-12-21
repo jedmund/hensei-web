@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import type { Party } from '$lib/types/api/party'
 	import DescriptionTile from './DescriptionTile.svelte'
 	import RaidTile from './RaidTile.svelte'
@@ -13,9 +14,10 @@
 		canEdit: boolean
 		onOpenDescription: () => void
 		onOpenEdit?: () => void
+		menu?: Snippet
 	}
 
-	let { party, canEdit, onOpenDescription, onOpenEdit }: Props = $props()
+	let { party, canEdit, onOpenDescription, onOpenEdit, menu }: Props = $props()
 
 	// Check if data exists for each tile
 	const hasDescription = $derived(!!party.description)
@@ -48,7 +50,15 @@
 	<!-- Row 1: Description + Video -->
 	<div class="row row-1" class:single={!showVideo}>
 		{#if showDescription}
-			<DescriptionTile description={party.description} onOpen={onOpenDescription} />
+			<DescriptionTile
+				name={party.name}
+				description={party.description}
+				user={party.user}
+				{canEdit}
+				{onOpenDescription}
+				{onOpenEdit}
+				{menu}
+			/>
 		{/if}
 
 		{#if showVideo}

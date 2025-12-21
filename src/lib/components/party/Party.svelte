@@ -36,7 +36,6 @@
 	// Utilities
 	import { getLocalId } from '$lib/utils/localId'
 	import { getEditKey, storeEditKey, computeEditability } from '$lib/utils/editKeys'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 
 	import { createDragDropContext, type DragOperation } from '$lib/composables/drag-drop.svelte'
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
@@ -888,41 +887,13 @@
 <div class="page-wrap">
 	<div class="track">
 		<section class="party-container">
-			<header class="party-header">
-				<div class="party-info">
-					<h1>{party.name || '(untitled party)'}</h1>
-					{#if party.user}
-						{@const avatarSrc = getAvatarSrc(party.user.avatar?.picture)}
-						{@const avatarSrcSet = getAvatarSrcSet(party.user.avatar?.picture)}
-						<div class="creator">
-							<a href="/{party.user.username}" class="creator-link">
-								<div class="avatar-wrapper {party.user.avatar?.element || ''}">
-									{#if party.user.avatar?.picture}
-										<img
-											class="avatar"
-											alt={`Avatar of ${party.user.username}`}
-											src={avatarSrc}
-											srcset={avatarSrcSet}
-											width="32"
-											height="32"
-										/>
-									{:else}
-										<div class="avatar-placeholder" aria-hidden="true"></div>
-									{/if}
-								</div>
-								<span class="username">{party.user.username}</span>
-							</a>
-						</div>
-					{/if}
-				</div>
-
-				<div class="party-actions">
-					{#if canEdit()}
-						<Button variant="secondary" size="small" onclick={openSettingsPanel} disabled={loading}>
-							Edit
-						</Button>
-					{/if}
-
+			<PartyInfoGrid
+				{party}
+				canEdit={canEdit()}
+				onOpenDescription={openDescriptionPanel}
+				onOpenEdit={openSettingsPanel}
+			>
+				{#snippet menu()}
 					<DropdownMenu.Root>
 						<DropdownMenu.Trigger class="party-actions-trigger" aria-label="Open actions menu">
 							<Icon name="ellipsis" size={14} />
@@ -962,15 +933,8 @@
 							</DropdownMenu.Content>
 						</DropdownMenu.Portal>
 					</DropdownMenu.Root>
-				</div>
-			</header>
-
-			<PartyInfoGrid
-				{party}
-				canEdit={canEdit()}
-				onOpenDescription={openDescriptionPanel}
-				onOpenEdit={openSettingsPanel}
-			/>
+				{/snippet}
+			</PartyInfoGrid>
 
 			<PartySegmentedControl
 				selectedTab={activeTab}
@@ -1079,107 +1043,6 @@
 		gap: $unit-2x;
 		display: flex;
 		flex-direction: column;
-	}
-
-	.party-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-		vertical-align: middle;
-		align-items: center;
-		padding: $unit-2x 0;
-	}
-
-	.party-info {
-		flex-grow: 1;
-
-		h1 {
-			margin: 0 0 $unit-fourth 0;
-			font-size: $font-xlarge;
-			font-weight: $bold;
-			line-height: 1.2;
-		}
-	}
-
-	.creator {
-		margin-top: $unit-half;
-
-		&-link {
-			display: inline-flex;
-			align-items: center;
-			gap: $unit-three-quarter;
-			text-decoration: none;
-			color: var(--text-tertiary);
-			@include smooth-transition($duration-standard, color);
-
-			&:hover {
-				color: var(--text-tertiary-hover);
-
-				.avatar-wrapper {
-					transform: scale(1.05);
-				}
-			}
-		}
-	}
-
-	.avatar-wrapper {
-		width: $unit-4x;
-		height: $unit-4x;
-		border-radius: 50%;
-		overflow: hidden;
-		background: var(--card-bg);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		@include smooth-transition($duration-zoom, transform);
-
-		&.wind {
-			background: var(--wind-bg);
-		}
-
-		&.fire {
-			background: var(--fire-bg);
-		}
-
-		&.water {
-			background: var(--water-bg);
-		}
-
-		&.earth {
-			background: var(--earth-bg);
-		}
-
-		&.light {
-			background: var(--light-bg);
-		}
-
-		&.dark {
-			background: var(--dark-bg);
-		}
-
-		.avatar {
-			width: $unit-4x + $unit-half;
-			height: $unit-4x + $unit-half;
-			border-radius: 50%;
-			object-fit: cover;
-		}
-
-		.avatar-placeholder {
-			width: $unit-4x + $unit-half;
-			height: $unit-4x + $unit-half;
-			border-radius: 50%;
-			background: var(--placeholder-bg);
-		}
-	}
-
-	.username {
-		font-size: $font-regular;
-		font-weight: $medium;
-	}
-
-	.party-actions {
-		display: flex;
-		gap: $unit-half;
 	}
 
 	// Style the dropdown trigger button to match Button ghost small
