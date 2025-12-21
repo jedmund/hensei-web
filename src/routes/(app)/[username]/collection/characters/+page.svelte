@@ -164,7 +164,7 @@
 			</div>
 		{:else if currentViewMode === 'grid'}
 			<div class="character-grid">
-				{#each allCharacters as character (character.id)}
+				{#each allCharacters as character, i (i)}
 					<SelectableCollectionCard id={character.id} onClick={() => openCharacterDetails(character)}>
 						<CollectionCharacterCard {character} />
 					</SelectableCollectionCard>
@@ -172,7 +172,7 @@
 			</div>
 		{:else}
 			<div class="character-list">
-				{#each allCharacters as character (character.id)}
+				{#each allCharacters as character, i (i)}
 					<SelectableCollectionRow id={character.id} onClick={() => openCharacterDetails(character)}>
 						<CollectionCharacterRow {character} />
 					</SelectableCollectionRow>

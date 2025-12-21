@@ -144,7 +144,7 @@
 			</div>
 		{:else if currentViewMode === 'grid'}
 			<div class="summon-grid">
-				{#each allSummons as summon (summon.id)}
+				{#each allSummons as summon, i (i)}
 					<SelectableCollectionCard id={summon.id} onClick={() => openSummonDetails(summon)}>
 						<CollectionSummonCard {summon} />
 					</SelectableCollectionCard>
@@ -152,7 +152,7 @@
 			</div>
 		{:else}
 			<div class="summon-list">
-				{#each allSummons as summon (summon.id)}
+				{#each allSummons as summon, i (i)}
 					<SelectableCollectionRow id={summon.id} onClick={() => openSummonDetails(summon)}>
 						<CollectionSummonRow {summon} />
 					</SelectableCollectionRow>

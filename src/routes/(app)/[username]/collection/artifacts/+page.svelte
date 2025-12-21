@@ -270,7 +270,7 @@
 			</div>
 		{:else if currentViewMode === 'grid'}
 			<div class="artifact-grid">
-				{#each allArtifacts as artifact (artifact.id)}
+				{#each allArtifacts as artifact, i (i)}
 					<SelectableCollectionCard id={artifact.id} onClick={() => openArtifactDetails(artifact)}>
 						<CollectionArtifactCard {artifact} />
 					</SelectableCollectionCard>
@@ -278,7 +278,7 @@
 			</div>
 		{:else}
 			<div class="artifact-list">
-				{#each allArtifacts as artifact (artifact.id)}
+				{#each allArtifacts as artifact, i (i)}
 					<SelectableCollectionRow id={artifact.id} onClick={() => openArtifactDetails(artifact)}>
 						<CollectionArtifactRow {artifact} />
 					</SelectableCollectionRow>
