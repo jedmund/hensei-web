@@ -122,8 +122,6 @@
 	let loading = $state(false)
 	let error = $state<string | null>(null)
 	let selectedSlot = $state<number>(0)
-	let editDialogOpen = $state(false)
-	let editingTitle = $state('')
 	let conflictDialogOpen = $state(false)
 	let conflictData = $state<ConflictData | null>(null)
 
@@ -327,30 +325,6 @@
 		}
 	}
 
-	// Edit dialog functions
-	function openEditDialog() {
-		if (!canEdit()) return
-		editingTitle = party.name || ''
-		editDialogOpen = true
-	}
-
-	async function savePartyTitle() {
-		if (!canEdit()) return
-
-		try {
-			loading = true
-			error = null
-
-			// Update party title via API
-			await updatePartyDetails({ name: editingTitle })
-			editDialogOpen = false
-		} catch (err: any) {
-			error = err.message || 'Failed to update party title'
-		} finally {
-			loading = false
-		}
-	}
-
 	// Party operations
 	async function updatePartyDetails(updates: Omit<UpdatePartyParams, 'id' | 'shortcode'>) {
 		if (!canEdit()) return
@@ -431,9 +405,7 @@
 	function openDescriptionPanel() {
 		openDescriptionSidebar({
 			title: party.name || '(untitled party)',
-			description: party.description,
-			canEdit: canEdit(),
-			onEdit: openEditDialog
+			description: party.description
 		})
 	}
 
@@ -1046,34 +1018,6 @@
 	</div>
 </div>
 
-<!-- Edit Dialog -->
-<Dialog bind:open={editDialogOpen}>
-	{#snippet children()}
-		<ModalHeader title="Edit Party Details" />
-		<ModalBody>
-			<div class="edit-form">
-				<label for="party-title">Party Title</label>
-				<input
-					id="party-title"
-					type="text"
-					bind:value={editingTitle}
-					placeholder="Enter party title..."
-					disabled={loading}
-				/>
-			</div>
-		</ModalBody>
-		<ModalFooter
-			onCancel={() => (editDialogOpen = false)}
-			cancelDisabled={loading}
-			primaryAction={{
-				label: loading ? 'Saving...' : 'Save',
-				onclick: savePartyTitle,
-				disabled: loading || !editingTitle.trim()
-			}}
-		/>
-	{/snippet}
-</Dialog>
-
 <!-- Delete Confirmation Dialog -->
 <DeleteTeamDialog
 	bind:open={deleteDialogOpen}
@@ -1279,44 +1223,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
-	}
-
-	// Edit form styles
-	.edit-form {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
-
-		label {
-			font-weight: $medium;
-			font-size: $font-small;
-			color: var(--text-secondary);
-		}
-
-		input {
-			padding: $unit-three-quarter;
-			border: 1px solid var(--button-bg);
-			border-radius: $unit-three-quarter;
-			font-size: $font-regular;
-			background: var(--input-bg);
-			@include smooth-transition($duration-quick, border-color, background);
-
-			&:hover {
-				background: var(--input-bg-hover);
-			}
-
-			&:focus {
-				outline: none;
-				border-color: var(--accent-blue);
-				box-shadow: 0 0 0 2px rgba(39, 93, 197, 0.1); // Using raw value since CSS variables don't work in rgba()
-			}
-
-			&:disabled {
-				background: var(--button-bg);
-				opacity: 0.7;
-				cursor: not-allowed;
-			}
-		}
 	}
 
 	// Dialog buttons (shared styles)

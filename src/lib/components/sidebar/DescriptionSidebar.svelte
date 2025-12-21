@@ -1,15 +1,11 @@
 <script lang="ts">
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 
 	interface Props {
-		title?: string
 		description?: string
-		canEdit?: boolean
-		onEdit?: () => void
 	}
 
-	let { title, description, canEdit = false, onEdit }: Props = $props()
+	let { description }: Props = $props()
 </script>
 
 <div class="description-sidebar">
@@ -22,19 +18,10 @@
 			{:else}
 				<div class="empty-state">
 					<p>No description available for this party.</p>
-					{#if canEdit}
-						<Button variant="primary" onclick={onEdit}>Add Description</Button>
-					{/if}
 				</div>
 			{/if}
 		</div>
 	</div>
-
-	{#if canEdit && description}
-		<div class="actions-section">
-			<Button variant="secondary" onclick={onEdit} class="edit-button">Edit Description</Button>
-		</div>
-	{/if}
 </div>
 
 <style lang="scss">
@@ -88,19 +75,9 @@
 		min-height: 200px;
 
 		p {
-			margin: 0 0 $unit-2x 0;
+			margin: 0;
 			color: var(--text-secondary);
 			font-size: $font-regular;
-		}
-	}
-
-	.actions-section {
-		padding: $unit-2x;
-		padding-bottom: $unit-2x;
-		border-top: 1px solid var(--button-bg);
-
-		:global(.edit-button) {
-			width: 100%;
 		}
 	}
 </style>
