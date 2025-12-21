@@ -117,13 +117,14 @@ describe('PartyAdapter', () => {
 			})
 
 			const result = await adapter.update({
+				id: 'uuid-123',
 				shortcode: 'ABC123',
 				name: 'Updated Party'
 			})
 
 			expect(result).toEqual(updatedParty)
 			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/parties/ABC123',
+				'https://api.example.com/parties/uuid-123',
 				expect.objectContaining({
 					method: 'PATCH',
 					body: JSON.stringify({

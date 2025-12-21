@@ -120,6 +120,8 @@ const MinimalScalarsSchema = z
     buttonCount: z.number().nullish().optional(),
     chainCount: z.number().nullish().optional(),
     turnCount: z.number().nullish().optional(),
+    summonCount: z.number().nullish().optional(),
+    videoUrl: z.string().nullish().optional(),
     visibility: z.enum(['public', 'private', 'unlisted']).nullish().optional()
   })
   .partial()
@@ -373,6 +375,10 @@ export const PartySchemaRaw = z.object({
   button_count: z.number().nullish(),
   turn_count: z.number().nullish(),
   chain_count: z.number().nullish(),
+  summon_count: z.number().nullish(),
+
+  // Video URL
+  video_url: z.string().nullish(),
   
   // Relations
   raid_id: z.string().nullish(),

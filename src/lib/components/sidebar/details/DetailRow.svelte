@@ -9,12 +9,14 @@
 		noHover?: boolean
 		/** Remove padding for inline edit contexts */
 		noPadding?: boolean
+		/** Remove min-width from value (for compact controls like switches) */
+		compact?: boolean
 	}
 
-	let { label, value, children, noHover = false, noPadding = false }: Props = $props()
+	let { label, value, children, noHover = false, noPadding = false, compact = false }: Props = $props()
 </script>
 
-<div class="detail-row" class:no-hover={noHover} class:no-padding={noPadding}>
+<div class="detail-row" class:no-hover={noHover} class:no-padding={noPadding} class:compact>
 	<span class="label">{label}</span>
 	<span class="value">
 		{#if children}
@@ -61,6 +63,10 @@
 			font-weight: typography.$medium;
 			text-align: right;
 			min-width: 180px;
+		}
+
+		&.compact .value {
+			min-width: unset;
 		}
 	}
 </style>

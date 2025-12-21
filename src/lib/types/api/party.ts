@@ -107,6 +107,8 @@ export interface Party {
   buttonCount?: number
   turnCount?: number
   chainCount?: number
+  summonCount?: number
+  videoUrl?: string
   visibility?: import('$lib/types/visibility').PartyVisibility
   element?: number
   favorited?: boolean
