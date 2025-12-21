@@ -152,7 +152,7 @@
 			</div>
 		{:else if currentViewMode === 'grid'}
 			<div class="weapon-grid">
-				{#each allWeapons as weapon (weapon.id)}
+				{#each allWeapons as weapon, i (i)}
 					<SelectableCollectionCard id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
 						<CollectionWeaponCard {weapon} />
 					</SelectableCollectionCard>
@@ -160,7 +160,7 @@
 			</div>
 		{:else}
 			<div class="weapon-list">
-				{#each allWeapons as weapon (weapon.id)}
+				{#each allWeapons as weapon, i (i)}
 					<SelectableCollectionRow id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
 						<CollectionWeaponRow {weapon} />
 					</SelectableCollectionRow>
