@@ -938,24 +938,25 @@
 				</div>
 
 				<div class="party-actions">
+					{#if canEdit()}
+						<Button variant="secondary" size="small" onclick={openSettingsPanel} disabled={loading}>
+							Edit
+						</Button>
+					{/if}
+
 					<DropdownMenu.Root>
 						<DropdownMenu.Trigger class="party-actions-trigger" aria-label="Open actions menu">
-							<Icon name="ellipsis" size={16} />
+							<Icon name="ellipsis" size={14} />
 						</DropdownMenu.Trigger>
 
 						<DropdownMenu.Portal>
 							<DropdownMenu.Content class="dropdown-content" sideOffset={6} align="end">
-								{#if canEdit()}
+								{#if canEdit() && hasCollectionLinks}
 									<DropdownItem>
-										<button onclick={openSettingsPanel} disabled={loading}>Edit</button>
+										<button onclick={syncFromCollection} disabled={loading || isSyncingAll}>
+											{isSyncingAll ? 'Syncing...' : 'Sync from collection'}
+										</button>
 									</DropdownItem>
-									{#if hasCollectionLinks}
-										<DropdownItem>
-											<button onclick={syncFromCollection} disabled={loading || isSyncingAll}>
-												{isSyncingAll ? 'Syncing...' : 'Sync from collection'}
-											</button>
-										</DropdownItem>
-									{/if}
 									<DropdownMenu.Separator class="dropdown-separator" />
 								{/if}
 
@@ -1230,15 +1231,15 @@
 		gap: $unit-half;
 	}
 
-	// Style the dropdown trigger button
+	// Style the dropdown trigger button to match Button ghost small
 	:global(.party-actions-trigger) {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 32px;
-		height: 32px;
-		padding: 0;
-		border-radius: 50%;
+		width: 30px;
+		height: 30px;
+		padding: $unit;
+		border-radius: $input-corner;
 		background-color: transparent;
 		color: var(--text-secondary);
 		border: none;
@@ -1247,7 +1248,7 @@
 		outline: none;
 
 		&:hover {
-			background-color: var(--button-subtle-bg-hover);
+			background-color: var(--button-bg);
 			color: var(--text-primary);
 		}
 
