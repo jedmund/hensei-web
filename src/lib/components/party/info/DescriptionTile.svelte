@@ -2,7 +2,6 @@
 	import type { Snippet } from 'svelte'
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import Icon from '$lib/components/Icon.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 
 	interface Props {
@@ -73,7 +72,6 @@
 		{:else}
 			<span class="empty-state">No description</span>
 		{/if}
-		<Icon name="chevron-right" size={16} class="chevron" />
 	</button>
 </div>
 
@@ -163,9 +161,6 @@
 	}
 
 	.description-content {
-		display: flex;
-		align-items: flex-start;
-		gap: $unit;
 		padding: $unit;
 		margin: 0 (-$unit);
 		background: transparent;
@@ -179,12 +174,6 @@
 
 		&:hover {
 			background: var(--button-bg);
-		}
-
-		:global(.chevron) {
-			flex-shrink: 0;
-			color: var(--text-tertiary);
-			margin-top: 2px;
 		}
 	}
 
