@@ -6,12 +6,21 @@
 	import { browser } from '$app/environment'
 	import { QueryClientProvider } from '@tanstack/svelte-query'
 	import { Toaster } from 'svelte-sonner'
+	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
 		data: LayoutData & { [key: string]: any }
 		children: () => any
 	}>()
+
+	// Initialize theme from user cookie preference
+	$effect(() => {
+		if (browser) {
+			const userTheme = (data.currentUser?.theme as ThemePreference) ?? 'system'
+			themeStore.init(userTheme)
+		}
+	})
 </script>
 
 <svelte:head>

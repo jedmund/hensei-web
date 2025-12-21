@@ -3,6 +3,17 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script>
+			(function () {
+				try {
+					var c = document.cookie.split('; ').find(function (c) { return c.startsWith('user=') })
+					var u = c ? JSON.parse(decodeURIComponent(c.split('=')[1])) : null
+					var p = (u && u.theme) || 'system'
+					var d = p === 'dark' || (p === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+					document.documentElement.setAttribute('data-theme', d ? 'dark' : 'light')
+				} catch (e) {}
+			})()
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

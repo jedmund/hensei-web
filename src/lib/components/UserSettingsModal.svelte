@@ -14,6 +14,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
+	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
 
 	interface Props {
 		open: boolean
@@ -190,12 +191,17 @@
 				body: JSON.stringify(updatedUser)
 			})
 
-			// If language, theme, or bahamut mode changed, we need a full page reload
-			if (originalLanguage !== language || originalTheme !== theme || user.bahamut !== bahamut) {
+			// Apply theme change immediately without reload
+			if (originalTheme !== theme) {
+				themeStore.setTheme(theme as ThemePreference)
+			}
+
+			// If language or bahamut mode changed, we need a full page reload
+			if (originalLanguage !== language || user.bahamut !== bahamut) {
 				await invalidateAll()
 				window.location.reload()
 			} else {
-				// For other changes (element, picture, gender), invalidate to refresh layout data
+				// For other changes (element, picture, gender, theme), invalidate to refresh layout data
 				await invalidateAll()
 			}
 
