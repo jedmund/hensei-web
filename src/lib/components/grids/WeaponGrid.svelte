@@ -169,6 +169,6 @@
 	.name {
 		font-size: $font-small;
 		text-align: center;
-		color: $grey-50;
+		color: var(--text-secondary);
 	}
 </style>

@@ -435,7 +435,7 @@
 	.name {
 		font-size: typography.$font-small;
 		text-align: center;
-		color: colors.$grey-50;
+		color: var(--text-secondary);
 		display: flex;
 		align-items: center;
 		justify-content: center;
