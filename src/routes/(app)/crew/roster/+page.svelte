@@ -306,6 +306,13 @@
 												<UncapIndicator
 													type={getItemTypeForUncap(item.type)}
 													uncapLevel={ownership.uncapLevel}
+													transcendenceStage={ownership.transcendenceStep}
+													flb={ownership.flb}
+													ulb={ownership.ulb}
+													transcendence={ownership.transcendence}
+													special={item.type === 'Character' ? ownership.special : undefined}
+													size="small"
+													contained
 												/>
 											{:else}
 												<span class="not-owned">—</span>

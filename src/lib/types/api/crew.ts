@@ -132,6 +132,11 @@ export interface UpdateMembershipInput {
 export interface RosterItem {
   id: string
   uncapLevel: number
+  transcendenceStep?: number
+  flb?: boolean
+  ulb?: boolean
+  transcendence?: boolean
+  special?: boolean // characters only
 }
 
 export interface RosterMember {
