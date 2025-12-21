@@ -31,6 +31,22 @@
 	let editor = $state<Editor>()
 	let initialContent = $state<Content | undefined>()
 
+	// Version counter to trigger reactivity when editor state changes
+	let editorVersion = $state(0)
+	function onEditorUpdate() {
+		editorVersion++
+	}
+
+	// Derived label - must use $derived.by() for reactivity in Svelte 5
+	// Function calls in templates don't create reactive tracking
+	const styleLabel = $derived.by(() => {
+		void editorVersion // Force re-evaluation when version changes
+		if (editor?.isActive('heading', { level: 1 })) return 'Heading 1'
+		if (editor?.isActive('heading', { level: 2 })) return 'Heading 2'
+		if (editor?.isActive('heading', { level: 3 })) return 'Heading 3'
+		return 'Paragraph'
+	})
+
 	// Parse description JSON on mount
 	onMount(() => {
 		if (description) {
@@ -55,19 +71,19 @@
 		onSave(content)
 	}
 
-	function getStyleLabel(): string {
-		if (editor?.isActive('heading', { level: 1 })) return 'Heading 1'
-		if (editor?.isActive('heading', { level: 2 })) return 'Heading 2'
-		if (editor?.isActive('heading', { level: 3 })) return 'Heading 3'
-		return 'Paragraph'
-	}
-
 	function setHeading(level: 1 | 2 | 3) {
-		editor?.chain().focus().toggleHeading({ level }).run()
+		// Defer to let dropdown close and focus settle
+		requestAnimationFrame(() => {
+			editor?.chain().focus().toggleHeading({ level }).run()
+			editorVersion++
+		})
 	}
 
 	function setParagraph() {
-		editor?.chain().focus().setParagraph().run()
+		requestAnimationFrame(() => {
+			editor?.chain().focus().setParagraph().run()
+			editorVersion++
+		})
 	}
 
 	function toggleLink() {
@@ -90,16 +106,7 @@
 			<DropdownMenu>
 				{#snippet trigger({ props })}
 					<button class="toolbar-button style-trigger" disabled={!editor} {...props}>
-						{#if editor?.isActive('heading', { level: 1 })}
-							<Heading1 size={16} />
-						{:else if editor?.isActive('heading', { level: 2 })}
-							<Heading2 size={16} />
-						{:else if editor?.isActive('heading', { level: 3 })}
-							<Heading3 size={16} />
-						{:else}
-							<Pilcrow size={16} />
-						{/if}
-						<span>{getStyleLabel()}</span>
+						<span>{styleLabel}</span>
 						<ChevronDown size={12} />
 					</button>
 				{/snippet}
@@ -221,6 +228,8 @@
 			bind:editor
 			content={initialContent}
 			editable={true}
+			onUpdate={onEditorUpdate}
+			onSelectionUpdate={onEditorUpdate}
 			class="description-editor"
 		/>
 	</div>
