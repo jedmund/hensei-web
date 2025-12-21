@@ -62,6 +62,7 @@
 	let rosterData = $state<RosterMember[]>([])
 	let isLoadingRoster = $state(false)
 	let searchTimeout: ReturnType<typeof setTimeout> | null = null
+	let svelecteValue: SearchOption | null = $state(null)
 
 	// Check if user is an officer
 	$effect(() => {
@@ -133,8 +134,9 @@
 			}
 		]
 
-		// Clear selection after adding
+		// Clear selection and input after adding
 		searchOptions = []
+		svelecteValue = null
 	}
 
 	function removeItem(id: string, type: ItemType) {
@@ -218,7 +220,7 @@
 			<div class="search-section" oninput={handleInput}>
 				<Svelecte
 					options={searchOptions}
-					value={null}
+					bind:value={svelecteValue}
 					labelField="label"
 					valueField="value"
 					searchable={true}
@@ -456,6 +458,7 @@
 	.roster-row {
 		display: flex;
 		align-items: center;
+		gap: spacing.$unit;
 	}
 
 	.roster-header {
@@ -532,7 +535,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		opacity: 0;
 		transition:
+			opacity 0.15s,
 			background-color 0.15s,
 			color 0.15s;
 
@@ -540,6 +545,10 @@
 			background: var(--color-red, #dc2626);
 			color: white;
 		}
+	}
+
+	.item-col:hover .remove-item-btn {
+		opacity: 1;
 	}
 
 	.ownership-cell {
