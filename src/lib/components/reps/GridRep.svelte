@@ -74,7 +74,7 @@
 		</div>
 		<div class="gridContainer">
 			{#if currentView === 'characters'}
-				<div class="characterGrid"><CharacterRep {party} /></div>
+				<div class="characterGrid"><CharacterRep {party} unlimited={party.raid?.group?.unlimited} /></div>
 			{:else if currentView === 'summons'}
 				<div class="summonGrid"><SummonRep {party} extendedView={true} /></div>
 			{:else}

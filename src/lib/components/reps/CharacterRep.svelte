@@ -5,16 +5,20 @@
 	interface Props {
 		party?: Party
 		characters?: GridCharacter[]
+		unlimited?: boolean
 	}
 
-	let { party, characters: directCharacters }: Props = $props()
+	let { party, characters: directCharacters, unlimited = false }: Props = $props()
 
 	// Use direct characters if provided, otherwise get from party
 	const characters = $derived(directCharacters || party?.characters || [])
-	// Show 5 characters at positions 0-4
-	const grid = $derived(Array.from({ length: 5 }, (_, i) =>
-		characters.find((c: GridCharacter) => c?.position === i)
-	))
+	// Show 5 characters (or 8 for unlimited) at positions 0-4 (or 0-7)
+	const slotCount = $derived(unlimited ? 8 : 5)
+	const grid = $derived(
+		Array.from({ length: slotCount }, (_, i) =>
+			characters.find((c: GridCharacter) => c?.position === i)
+		)
+	)
 
 	function characterImageUrl(c?: GridCharacter): string {
 		const id = c?.character?.granblueId
@@ -31,7 +35,7 @@
 
 		return getCharacterImageWithPose(
 			id,
-			'main',
+			unlimited ? 'square' : 'main',
 			c?.uncapLevel ?? 0,
 			c?.transcendenceStep ?? 0,
 			mainWeaponElement,
@@ -41,7 +45,7 @@
 </script>
 
 <div class="rep">
-	<ul class="characters">
+	<ul class="characters" class:unlimited>
 		{#each grid as c, i}
 			<li class="character" class:empty={!c}>
 				{#if c}<img
@@ -72,6 +76,14 @@
 			margin: 0;
 			padding: 0;
 			list-style: none;
+
+			&.unlimited {
+				grid-template-columns: repeat(4, 1fr);
+
+				.character {
+					aspect-ratio: 1/1;
+				}
+			}
 
 			.character {
 				aspect-ratio: 16/33;

@@ -25,6 +25,7 @@
 	const weapons = $derived(party.weapons)
 	const summons = $derived(party.summons)
 	const characters = $derived(party.characters)
+	const unlimited = $derived(party.raid?.group?.unlimited ?? false)
 
 	// Handle value changes
 	let value = $state(selectedTab)
@@ -47,7 +48,7 @@
 			label={m.party_segmented_control_characters()}
 			selected={value === GridType.Character}
 		>
-			<CharacterRep characters={characters} />
+			<CharacterRep characters={characters} {unlimited} />
 		</RepSegment>
 
 		<RepSegment

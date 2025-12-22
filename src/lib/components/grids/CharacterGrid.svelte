@@ -102,7 +102,15 @@
 		gap: $unit-3x;
 
 		&.unlimited {
-			grid-template-columns: repeat(8, minmax(0, 1fr));
+			// Use flexbox to center the partial second row
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+
+			// 6 units must fit in space of 5
+			& > li {
+				width: 116px;
+			}
 		}
 
 		& > li {
