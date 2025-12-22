@@ -1,20 +1,22 @@
 import { sidebar } from '$lib/stores/sidebar.svelte'
-import DescriptionSidebar from '$lib/components/sidebar/DescriptionSidebar.svelte'
+import DescriptionPane from '$lib/components/sidebar/DescriptionPane.svelte'
 
-interface DescriptionSidebarOptions {
+interface DescriptionPaneOptions {
 	title?: string | undefined
 	description?: string | undefined
+	videoUrl?: string | undefined
 	canEdit?: boolean | undefined
 	partyId?: string | undefined
 	partyShortcode?: string | undefined
 	onSave?: ((description: string) => Promise<void>) | undefined
 }
 
-export function openDescriptionSidebar(options: DescriptionSidebarOptions) {
-	const { title, description, canEdit, partyId, partyShortcode, onSave } = options
+export function openDescriptionPane(options: DescriptionPaneOptions) {
+	const { title, description, videoUrl, canEdit, partyId, partyShortcode, onSave } = options
 
-	sidebar.openWithComponent(title ?? '', DescriptionSidebar, {
+	sidebar.openWithComponent(title ?? '', DescriptionPane, {
 		description,
+		videoUrl,
 		canEdit,
 		partyId,
 		partyShortcode,
@@ -22,6 +24,6 @@ export function openDescriptionSidebar(options: DescriptionSidebarOptions) {
 	})
 }
 
-export function closeDescriptionSidebar() {
+export function closeDescriptionPane() {
 	sidebar.close()
 }

@@ -7,13 +7,24 @@
 
 	interface Props {
 		description?: string
+		videoUrl?: string
 		canEdit?: boolean
 		partyId?: string
 		partyShortcode?: string
 		onSave?: (description: string) => Promise<void>
 	}
 
-	let { description, canEdit = false, partyId, partyShortcode, onSave }: Props = $props()
+	let { description, videoUrl, canEdit = false, partyId, partyShortcode, onSave }: Props = $props()
+
+	/** Extract YouTube video ID from various URL formats */
+	function extractVideoId(url?: string): string | null {
+		if (!url) return null
+		// Match youtube.com/watch?v=ID, youtu.be/ID, youtube.com/embed/ID
+		const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+		return match?.[1] ?? null
+	}
+
+	const videoId = $derived(extractVideoId(videoUrl))
 
 	const paneStack = usePaneStack()
 
@@ -43,9 +54,20 @@
 	})
 </script>
 
-<div class="description-sidebar">
+<div class="description-pane">
 	<div class="content-section">
 		<div class="content-inner">
+			{#if videoId}
+				<div class="video-embed">
+					<iframe
+						src="https://www.youtube.com/embed/{videoId}"
+						title="YouTube video"
+						frameborder="0"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+						allowfullscreen
+					></iframe>
+				</div>
+			{/if}
 			{#if description}
 				<div class="description-content">
 					<DescriptionRenderer content={description} truncate={false} />
@@ -65,11 +87,23 @@
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/effects' as *;
 
-	.description-sidebar {
+	.description-pane {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
 		color: var(--text-primary);
+	}
+
+	.video-embed {
+		margin-bottom: $unit-2x;
+		border-radius: $unit;
+		overflow: hidden;
+
+		iframe {
+			width: 100%;
+			aspect-ratio: 16 / 9;
+			display: block;
+		}
 	}
 
 	.content-section {

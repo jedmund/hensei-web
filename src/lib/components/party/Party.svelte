@@ -52,7 +52,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
-	import { openDescriptionSidebar } from '$lib/features/description/openDescriptionSidebar.svelte'
+	import { openDescriptionPane } from '$lib/features/description/openDescriptionPane.svelte'
 	import {
 		openPartyEditSidebar,
 		type PartyEditValues
@@ -407,9 +407,10 @@
 	let deleting = $state(false)
 
 	function openDescriptionPanel() {
-		openDescriptionSidebar({
+		openDescriptionPane({
 			title: party.name || '(untitled party)',
 			description: party.description,
+			videoUrl: party.videoUrl,
 			canEdit: canEdit(),
 			partyId: party.id,
 			partyShortcode: party.shortcode,
