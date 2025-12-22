@@ -1023,6 +1023,7 @@
 />
 
 <style lang="scss">
+	@use 'sass:color';
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/spacing' as *;
@@ -1145,7 +1146,7 @@
 		border: none;
 
 		&:hover:not(:disabled) {
-			background: darken($error, 10%);
+			background: color.adjust($error, $lightness: -10%);
 		}
 	}
 </style>
