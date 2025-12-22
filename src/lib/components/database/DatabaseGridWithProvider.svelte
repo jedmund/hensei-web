@@ -20,6 +20,8 @@
 		buildUrlFromFilters,
 		type ParsedFilters
 	} from '$lib/utils/filterParams'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 
 	import type { Snippet } from 'svelte'
 
@@ -31,7 +33,13 @@
 		headerActions?: Snippet
 	}
 
-	const { resource, columns, pageSize: initialPageSize = 20, leftActions, headerActions }: Props = $props()
+	const {
+		resource,
+		columns,
+		pageSize: initialPageSize = 20,
+		leftActions,
+		headerActions
+	}: Props = $props()
 
 	// Derive entity type from resource
 	const entityType = $derived(
@@ -69,6 +77,18 @@
 	let seriesFilters = $state<(number | string)[]>([])
 	let proficiencyFilters = $state<number[]>([])
 	let seasonFilters = $state<number[]>([])
+
+	// Filter visibility state
+	let showFilters = $state(false)
+
+	// Check if any filters are active (for button indicator)
+	const hasActiveFilters = $derived(
+		elementFilters.length > 0 ||
+			rarityFilters.length > 0 ||
+			seriesFilters.length > 0 ||
+			proficiencyFilters.length > 0 ||
+			seasonFilters.length > 0
+	)
 
 	// Handle filter changes from CollectionFilters component
 	function handleFiltersChange(filters: CollectionFilterState) {
@@ -271,11 +291,7 @@
 		if (urlInitialized) return
 		if (resource === 'weapons' && !weaponSeriesQuery.data) return // Wait for weapon series
 
-		const parsed = parseFiltersFromUrl(
-			$page.url.searchParams,
-			entityType,
-			weaponSeriesQuery.data
-		)
+		const parsed = parseFiltersFromUrl($page.url.searchParams, entityType, weaponSeriesQuery.data)
 
 		// Set filter state
 		elementFilters = parsed.element
@@ -313,6 +329,17 @@
 		if (parsed.searchQuery.length >= 2) {
 			provider.setSearchQuery(parsed.searchQuery)
 			lastSearchTerm = parsed.searchQuery
+		}
+
+		// Show filters panel if any filters are active from URL
+		if (
+			parsed.element.length > 0 ||
+			parsed.rarity.length > 0 ||
+			parsed.proficiency.length > 0 ||
+			parsed.season.length > 0 ||
+			parsed.series.length > 0
+		) {
+			showFilters = true
 		}
 
 		urlInitialized = true
@@ -353,62 +380,96 @@
 			{@render leftActions()}
 		{/if}
 
-		<CollectionFilters
-			entityType={resource === 'characters' ? 'character' : resource === 'summons' ? 'summon' : 'weapon'}
-			bind:elementFilters
-			bind:rarityFilters
-			bind:seriesFilters
-			bind:proficiencyFilters
-			bind:seasonFilters
-			onFiltersChange={handleFiltersChange}
-			showSort={false}
-			contained={false}
-		/>
-
 		<div class="controls-right">
 			{#if headerActions}
 				{@render headerActions()}
 			{/if}
 
+			<Button
+				variant="ghost"
+				size="small"
+				onclick={() => (showFilters = !showFilters)}
+				class="filter-toggle {hasActiveFilters ? 'has-active' : ''}"
+			>
+				<Icon name="chevron-down-small" size={14} />
+				Filters
+				{#if hasActiveFilters}
+					<span class="filter-count">
+						{elementFilters.length +
+							rarityFilters.length +
+							seriesFilters.length +
+							proficiencyFilters.length +
+							seasonFilters.length}
+					</span>
+				{/if}
+			</Button>
+
 			<input type="text" placeholder="Search..." bind:value={searchTerm} />
 		</div>
 	</div>
 
-		<div class="grid-wrapper" class:loading>
-			{#if loading}
-				<div class="loading-overlay">
-					<div class="loading-spinner">Loading...</div>
-				</div>
-			{/if}
+	{#if showFilters}
+		<div class="filters-row">
+			<CollectionFilters
+				entityType={resource === 'characters'
+					? 'character'
+					: resource === 'summons'
+						? 'summon'
+						: 'weapon'}
+				bind:elementFilters
+				bind:rarityFilters
+				bind:seriesFilters
+				bind:proficiencyFilters
+				bind:seasonFilters
+				onFiltersChange={handleFiltersChange}
+				showSort={false}
+				contained={false}
+			/>
+		</div>
+	{/if}
 
-			<Grid {data} {columns} {init} {sortMarks} sizes={{ rowHeight: 80 }} class="database-grid-theme" />
+	<div class="grid-wrapper" class:loading>
+		{#if loading}
+			<div class="loading-overlay">
+				<div class="loading-spinner">Loading...</div>
+			</div>
+		{/if}
+
+		<Grid
+			{data}
+			{columns}
+			{init}
+			{sortMarks}
+			sizes={{ rowHeight: 80 }}
+			class="database-grid-theme"
+		/>
+	</div>
+
+	<div class="grid-footer">
+		<div class="pagination-info">
+			{#if total > 0}
+				Showing {startItem} to {endItem} of {total} entries
+			{:else}
+				No entries found
+			{/if}
 		</div>
 
-		<div class="grid-footer">
-			<div class="pagination-info">
-				{#if total > 0}
-					Showing {startItem} to {endItem} of {total} entries
-				{:else}
-					No entries found
-				{/if}
-			</div>
+		<div class="pagination-controls">
+			<button class="pagination-button" onclick={handlePrevPage} disabled={currentPage <= 1}>
+				Previous
+			</button>
 
-			<div class="pagination-controls">
-				<button class="pagination-button" onclick={handlePrevPage} disabled={currentPage <= 1}>
-					Previous
-				</button>
+			<span class="page-display">
+				Page {currentPage} of {totalPages}
+			</span>
 
-				<span class="page-display">
-					Page {currentPage} of {totalPages}
-				</span>
-
-				<button
-					class="pagination-button"
-					onclick={handleNextPage}
-					disabled={currentPage >= totalPages}
-				>
-					Next
-				</button>
+			<button
+				class="pagination-button"
+				onclick={handleNextPage}
+				disabled={currentPage >= totalPages}
+			>
+				Next
+			</button>
 		</div>
 	</div>
 </div>
@@ -433,26 +494,39 @@
 			align-items: center;
 			justify-content: space-between;
 			padding: spacing.$unit;
-			border-bottom: 1px solid #e5e5e5;
 			gap: spacing.$unit;
-
-			// CollectionFilters on the left
-			:global(.filters-container) {
-				flex: 1;
-				min-width: 0;
-
-				// Override filter trigger padding
-				:global([data-select-trigger]) {
-					padding-top: 7px;
-					padding-bottom: 7px;
-				}
-			}
 
 			.controls-right {
 				display: flex;
 				align-items: center;
 				gap: spacing.$unit;
-				flex-shrink: 0;
+				margin-left: auto;
+
+				:global(.filter-toggle) {
+					gap: spacing.$unit-half;
+
+					:global(svg) {
+						transition: transform 0.15s ease;
+					}
+
+					&:global(.has-active) {
+						color: var(--accent-color);
+					}
+				}
+
+				.filter-count {
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					min-width: 18px;
+					height: 18px;
+					padding: 0 spacing.$unit-half;
+					background: var(--accent-color);
+					color: white;
+					font-size: 11px;
+					font-weight: typography.$medium;
+					border-radius: 9px;
+				}
 
 				input {
 					padding: spacing.$unit spacing.$unit-2x;
@@ -471,6 +545,25 @@
 						outline: none;
 						border-color: #007bff;
 					}
+				}
+			}
+		}
+
+		.filters-row {
+			display: flex;
+			align-items: center;
+			padding: spacing.$unit;
+			border-bottom: 1px solid #e5e5e5;
+			background: rgba(0, 0, 0, 0.02);
+
+			:global(.filters-container) {
+				flex: 1;
+				min-width: 0;
+
+				// Override filter trigger padding
+				:global([data-select-trigger]) {
+					padding-top: 7px;
+					padding-bottom: 7px;
 				}
 			}
 		}
@@ -584,7 +677,6 @@
 			background: #e9ecef;
 		}
 	}
-
 
 	:global(.wx-grid .wx-cell) {
 		padding: spacing.$unit * 0.5;
