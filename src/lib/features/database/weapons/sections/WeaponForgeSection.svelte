@@ -123,7 +123,7 @@
 		}
 
 		&.current {
-			background: colors.$blue--bg--light;
+			background: rgba(colors.$blue, 0.1);
 			outline: 1px solid colors.$blue;
 		}
 	}
@@ -139,13 +139,12 @@
 	}
 
 	.chain-order {
-		font-size: typography.$font-xs;
+		font-size: typography.$font-small;
 		color: var(--text-tertiary);
 	}
 
 	.chain-arrow {
 		color: var(--text-tertiary);
-		font-size: typography.$font-small;
 	}
 
 	.forged-from-link {
