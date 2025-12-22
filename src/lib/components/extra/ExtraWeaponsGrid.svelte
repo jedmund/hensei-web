@@ -10,13 +10,18 @@
   }
 
   let { weapons = [], offset = 9 }: Props = $props()
+
+  // Create array for extra weapon slots by finding weapons at positions offset+0, offset+1, offset+2
+  let extraWeaponSlots = $derived.by(() => {
+    return [0, 1, 2].map(i => weapons.find(w => w.position === offset + i))
+  })
 </script>
 
 <ExtraContainerItem title={m.extra_weapons()}>
   <ul class="grid">
-    {#each [0, 1, 2] as i}
-      <li class:empty={!weapons[offset + i]}>
-        <WeaponUnit item={weapons[offset + i]} position={offset + i} />
+    {#each extraWeaponSlots as weapon, i}
+      <li class:empty={!weapon}>
+        <WeaponUnit item={weapon} position={offset + i} />
       </li>
     {/each}
   </ul>
