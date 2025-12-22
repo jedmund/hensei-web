@@ -14,6 +14,8 @@ import { Table, TableCell, TableRow, TableHeader } from './extensions/table/inde
 import { Placeholder } from '@tiptap/extensions';
 import { Markdown } from '@tiptap/markdown';
 import MathMatics from '@tiptap/extension-mathematics';
+import Youtube from '@tiptap/extension-youtube';
+import { EntityMention, createEntityMentionSuggestion } from './extensions/entity-mention/index.js';
 
 import AutoJoiner from 'tiptap-extension-auto-joiner';
 import 'katex/dist/katex.min.css';
@@ -116,6 +118,16 @@ export default (
 			TableRow,
 			TableCell,
 			Markdown,
+			Youtube.configure({
+				inline: false,
+				modestBranding: true
+			}),
+			EntityMention.configure({
+				HTMLAttributes: {
+					class: 'entity-mention'
+				},
+				suggestion: createEntityMentionSuggestion()
+			}),
 			...(extensions ?? [])
 		],
 		...options
