@@ -29,7 +29,22 @@
 
 	// Bind editor instance (same pattern as superhuman)
 	let editor = $state<Editor>()
-	let initialContent = $state<Content | undefined>()
+
+	// Parse description immediately (not in onMount) so it's available when EdraEditor mounts
+	function parseDescription(desc?: string): Content | undefined {
+		if (!desc) return undefined
+		try {
+			return JSON.parse(desc)
+		} catch {
+			// Legacy plain text - wrap in paragraph
+			return {
+				type: 'doc',
+				content: [{ type: 'paragraph', content: [{ type: 'text', text: desc }] }]
+			}
+		}
+	}
+
+	const initialContent = parseDescription(description)
 
 	// Version counter to trigger reactivity when editor state changes
 	let editorVersion = $state(0)
@@ -47,20 +62,7 @@
 		return 'Paragraph'
 	})
 
-	// Parse description JSON on mount
 	onMount(() => {
-		if (description) {
-			try {
-				initialContent = JSON.parse(description)
-			} catch {
-				// Legacy plain text - wrap in paragraph
-				initialContent = {
-					type: 'doc',
-					content: [{ type: 'paragraph', content: [{ type: 'text', text: description }] }]
-				}
-			}
-		}
-
 		sidebar.setAction(save, 'Save')
 	})
 
