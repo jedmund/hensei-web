@@ -210,7 +210,7 @@ export function toCrewHistoryChartData(
 	events: GwEvent[],
 	formatDate: (date: string) => string
 ): HistoryDataPoint[] {
-	return events
+	return [...events]
 		.filter((e) => e.crewTotalScore !== undefined && e.crewTotalScore > 0)
 		.sort((a, b) => a.eventNumber - b.eventNumber)
 		.map((e) => ({
@@ -230,7 +230,7 @@ export function toPlayerHistoryChartData(
 	eventScores: EventScoreSummary[],
 	formatDate: (date: string) => string
 ): HistoryDataPoint[] {
-	return eventScores
+	return [...eventScores]
 		.sort((a, b) => a.gwEvent.eventNumber - b.gwEvent.eventNumber)
 		.map((e) => ({
 			eventNumber: e.gwEvent.eventNumber,
