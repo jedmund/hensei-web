@@ -443,13 +443,12 @@
 				</DropdownMenu.Portal>
 			</DropdownMenu.Root>
 		{/if}
-
-		{#if hasActiveFilters}
-			<button type="button" class="clear-btn" onclick={clearAll}>Clear</button>
-		{/if}
 	</div>
 
 	<div class="right-controls">
+		{#if hasActiveFilters}
+			<button type="button" class="clear-btn" onclick={clearAll}>Clear</button>
+		{/if}
 		{#if showSort}
 			<div class="sort">
 				<Select
