@@ -29,7 +29,7 @@
 <button
 	class="skill-item {getSkillColorClass(skill)}"
 	class:current={variant === 'current'}
-	on:click={onClick}
+	onclick={onClick}
 	{disabled}
 	aria-label="{skill.name.en} - {getSkillCategoryName(skill)} skill"
 >
@@ -43,7 +43,7 @@
 	</div>
 
 	{#if variant === 'current' && onRemove}
-		<button class="remove-button" on:click|stopPropagation={onRemove} aria-label="Remove skill">
+		<button class="remove-button" onclick={(e) => { e.stopPropagation(); onRemove?.(); }} aria-label="Remove skill">
 			Remove
 		</button>
 	{/if}

@@ -69,7 +69,7 @@
 		{/if}
 
 		{#if canEdit && job}
-			<button class="change-job-button" on:click={onSelectJob} aria-label="Change job">
+			<button class="change-job-button" onclick={onSelectJob} aria-label="Change job">
 				<Icon name="arrow-left" size={16} />
 			</button>
 		{/if}
@@ -80,7 +80,7 @@
 		{#if job}
 			<div class="job-header">
 				{#if canEdit}
-					<button class="job-name clickable" on:click={onSelectJob}>
+					<button class="job-name clickable" onclick={onSelectJob}>
 						<div class="job-name-row">
 							<img src={jobIconUrl} alt="{job.name.en} icon" class="job-icon" />
 							<h3>{job.name.en}</h3>
@@ -140,8 +140,8 @@
 						class:editable={canEdit}
 						role={canEdit ? 'button' : undefined}
 						tabindex={canEdit ? 0 : undefined}
-						on:click={() => canEdit && onSelectAccessory?.()}
-						on:keydown={(e) => {
+						onclick={() => canEdit && onSelectAccessory?.()}
+						onkeydown={(e) => {
 							if (canEdit && onSelectAccessory && (e.key === 'Enter' || e.key === ' ')) {
 								e.preventDefault()
 								onSelectAccessory()

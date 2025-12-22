@@ -224,10 +224,10 @@
 				<img
 					src={imageUrl}
 					alt="Test image"
-					on:error={(e) => {
+					onerror={(e) => {
 						e.currentTarget.classList.add('error')
 					}}
-					on:load={(e) => {
+					onload={(e) => {
 						e.currentTarget.classList.remove('error')
 					}}
 				/>

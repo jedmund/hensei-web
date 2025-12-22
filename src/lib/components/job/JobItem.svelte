@@ -22,7 +22,7 @@
 <button
 	class="job-item"
 	class:selected
-	on:click={onClick}
+	onclick={onClick}
 	aria-pressed={selected}
 	aria-label="{job.name.en} - {selected ? 'Currently selected' : 'Click to select'}"
 >

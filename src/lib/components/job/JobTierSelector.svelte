@@ -30,7 +30,7 @@
 			<button
 				class="tier-button"
 				class:selected={selectedTiers.has(tier.value)}
-				on:click={() => handleTierClick(tier.value)}
+				onclick={() => handleTierClick(tier.value)}
 				type="button"
 			>
 				{tier.shortLabel}
@@ -42,7 +42,7 @@
 			<button
 				class="tier-button"
 				class:selected={selectedTiers.has(tier.value)}
-				on:click={() => handleTierClick(tier.value)}
+				onclick={() => handleTierClick(tier.value)}
 				type="button"
 			>
 				{tier.shortLabel}

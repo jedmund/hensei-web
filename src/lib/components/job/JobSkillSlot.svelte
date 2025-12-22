@@ -54,7 +54,7 @@
 			class="skill-slot editable"
 			class:empty={!isFilled}
 			style:--category-color={categoryColor}
-			on:click={handleClick}
+			onclick={handleClick}
 			type="button"
 		>
 			{@render SlotBody({ locked: false })}
