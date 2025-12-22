@@ -63,12 +63,12 @@
 			<Button
 				variant="ghost"
 				icon="close"
-				on:click={handleRemove}
+				onclick={handleRemove}
 				aria-label="Remove skill"
 				type="button"
 				class="remove-button"
 				iconOnly
-			></Button>
+			/>
 		{/if}
 	</div>
 {:else}

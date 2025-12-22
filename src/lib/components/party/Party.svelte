@@ -33,6 +33,13 @@
 		useUnfavoriteParty
 	} from '$lib/api/mutations/party.mutations'
 
+	// TanStack Query mutations - Job
+	import {
+		useUpdatePartyJob,
+		useUpdatePartyJobSkills,
+		useRemovePartyJobSkill
+	} from '$lib/api/mutations/job.mutations'
+
 	// Utilities
 	import { getLocalId } from '$lib/utils/localId'
 	import { getEditKey, storeEditKey, computeEditability } from '$lib/utils/editKeys'
@@ -151,6 +158,11 @@
 	const remixPartyMutation = useRemixParty()
 	const favoritePartyMutation = useFavoriteParty()
 	const unfavoritePartyMutation = useUnfavoriteParty()
+
+	// TanStack Query mutations - Job
+	const updateJobMutation = useUpdatePartyJob()
+	const updateJobSkillsMutation = useUpdatePartyJobSkills()
+	const removeJobSkillMutation = useRemovePartyJobSkill()
 
 	// Create drag-drop context
 	const dragContext = createDragDropContext({
@@ -498,9 +510,11 @@
 				error = null
 
 				try {
-					// Update job via API (use shortcode for party identification)
-					await partyAdapter.updateJob(party.shortcode, job.id)
-					// Party will be updated via cache invalidation
+					// Use mutation for proper cache invalidation
+					await updateJobMutation.mutateAsync({
+						shortcode: party.shortcode,
+						jobId: job.id
+					})
 				} catch (e) {
 					error = e instanceof Error ? e.message : 'Failed to update job'
 					console.error('Failed to update job:', e)
@@ -528,18 +542,14 @@
 					const updatedSkills = { ...party.jobSkills }
 					updatedSkills[String(slot) as keyof typeof updatedSkills] = skill
 
-					console.log('[Party] Current jobSkills:', party.jobSkills)
-					console.log('[Party] Updated jobSkills object:', updatedSkills)
-					console.log('[Party] Slot being updated:', slot)
-					console.log('[Party] New skill:', skill)
-
 					// Convert skills object to array format expected by API
 					const skillsArray = transformSkillsToArray(updatedSkills)
 
-					console.log('[Party] Skills array to send:', skillsArray)
-
-					await partyAdapter.updateJobSkills(party.shortcode, skillsArray)
-					// Party will be updated via cache invalidation
+					// Use mutation for proper cache invalidation
+					await updateJobSkillsMutation.mutateAsync({
+						shortcode: party.shortcode,
+						skills: skillsArray
+					})
 				} catch (e: any) {
 					error = extractErrorMessage(e, 'Failed to update skill')
 					console.error('Failed to update skill:', e)
@@ -552,21 +562,11 @@
 				error = null
 
 				try {
-					// Remove skill from slot
-					const updatedSkills = { ...party.jobSkills }
-					delete updatedSkills[String(slot) as keyof typeof updatedSkills]
-
-					console.log('[Party] Removing skill from slot:', slot)
-					console.log('[Party] Current jobSkills:', party.jobSkills)
-					console.log('[Party] Updated jobSkills after removal:', updatedSkills)
-
-					// Convert skills object to array format expected by API
-					const skillsArray = transformSkillsToArray(updatedSkills)
-
-					console.log('[Party] Skills array to send after removal:', skillsArray)
-
-					await partyAdapter.updateJobSkills(party.shortcode, skillsArray)
-					// Party will be updated via cache invalidation
+					// Use remove mutation for proper cache invalidation
+					await removeJobSkillMutation.mutateAsync({
+						shortcode: party.shortcode,
+						slot
+					})
 				} catch (e: any) {
 					error = extractErrorMessage(e, 'Failed to remove skill')
 					console.error('Failed to remove skill:', e)
@@ -585,15 +585,11 @@
 		error = null
 
 		try {
-			// Remove skill from slot
-			const updatedSkills = { ...party.jobSkills }
-			delete updatedSkills[String(slot) as keyof typeof updatedSkills]
-
-			// Convert skills object to array format expected by API
-			const skillsArray = transformSkillsToArray(updatedSkills)
-
-			await partyAdapter.updateJobSkills(party.shortcode, skillsArray)
-			// Party will be updated via cache invalidation
+			// Use remove mutation for proper cache invalidation
+			await removeJobSkillMutation.mutateAsync({
+				shortcode: party.shortcode,
+				slot
+			})
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to remove skill'
 			console.error('Failed to remove skill:', e)

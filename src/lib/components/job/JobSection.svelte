@@ -12,6 +12,8 @@
 	} from '$lib/utils/jobUtils'
 	import { getAccessoryImage, getBasePath } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		job?: Job | undefined
@@ -62,13 +64,8 @@
 		{#if job}
 			<img class="job-portrait" src={jobImageUrl} alt={job.name.en} />
 			<div class="overlay"></div>
-		{:else if canEdit}
-			<div class="empty-portrait">
-				<button class="select-job-button" on:click={onSelectJob}>
-					<Icon name="plus" size={24} />
-					<span>Select Job</span>
-				</button>
-			</div>
+		{:else}
+			<div class="empty-portrait"></div>
 		{/if}
 
 		{#if canEdit && job}
@@ -167,7 +164,11 @@
 			{/if}
 		{:else}
 			<div class="no-job-message" class:readonly={!canEdit}>
-				<p>{canEdit ? 'Select a job to view skills and details' : 'No job selected'}</p>
+				{#if canEdit}
+					<Button onclick={onSelectJob} small>{m.job_choose()}</Button>
+				{:else}
+					<p>No job selected</p>
+				{/if}
 			</div>
 		{/if}
 	</div>
@@ -240,32 +241,7 @@
 		}
 
 		.empty-portrait {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			color: var(--text-secondary);
-			font-size: typography.$font-regular;
 			z-index: 2;
-		}
-
-		.select-job-button {
-			display: flex;
-			align-items: center;
-			gap: spacing.$unit-half;
-			padding: spacing.$unit spacing.$unit-2x;
-			background: var(--button-primary-bg);
-			color: var(--button-primary-text);
-			border: none;
-			border-radius: layout.$card-corner;
-			font-size: typography.$font-regular;
-			font-weight: 500;
-			cursor: pointer;
-			transition: background 0.2s ease;
-
-			&:hover {
-				background: var(--button-primary-bg-hover);
-			}
 		}
 
 		.change-job-button {

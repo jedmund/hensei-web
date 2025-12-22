@@ -346,7 +346,9 @@ export class PartyAdapter extends BaseAdapter {
 		return this.request<Party>(`/parties/${partyId}/job_skills`, {
 			method: 'DELETE',
 			body: {
-				slot: skillSlot
+				party: {
+					skill_position: skillSlot
+				}
 			}
 		})
 	}
