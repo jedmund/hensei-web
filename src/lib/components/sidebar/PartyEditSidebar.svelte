@@ -191,22 +191,49 @@
 		paneStack.pop()
 	}
 
-	function getDescriptionPreview(desc: string | null): string {
-		if (!desc) return ''
+	interface JSONContent {
+		type?: string
+		text?: string
+		content?: JSONContent[]
+		attrs?: Record<string, unknown>
+	}
+
+	/** Extract first non-empty paragraph from TipTap JSON content */
+	function getDescriptionPreview(desc: string | null): string | null {
+		if (!desc) return null
 		try {
-			const parsed = JSON.parse(desc)
-			// Extract plain text from TipTap JSON
-			const extractText = (node: { type?: string; text?: string; content?: unknown[] }): string => {
-				if (node.text) return node.text
-				if (node.content) return node.content.map(extractText).join('')
+			const parsed = JSON.parse(desc) as JSONContent
+			if (parsed.type !== 'doc' || !parsed.content?.length) return null
+
+			// Extract text from an inline node (text or mention)
+			const getNodeText = (node: JSONContent): string => {
+				if (node.type === 'text') return node.text ?? ''
+				if (node.type === 'mention') {
+					const id = node.attrs?.id as { name?: { en?: string }; granblue_en?: string } | undefined
+					return id?.name?.en ?? id?.granblue_en ?? ''
+				}
 				return ''
 			}
-			return extractText(parsed).slice(0, 50) || ''
+
+			// Extract text from a block
+			const getBlockText = (block: JSONContent): string =>
+				block.content?.map(getNodeText).join('') ?? ''
+
+			// Find first non-empty paragraph or heading
+			for (const node of parsed.content) {
+				if (node.type !== 'paragraph' && node.type !== 'heading') continue
+				const text = getBlockText(node).trim()
+				if (text) return text
+			}
+
+			return null
 		} catch {
-			// Legacy plain text
-			return desc.slice(0, 50)
+			// Legacy plain text - return first non-empty line
+			return desc.split('\n').map((l) => l.trim()).find(Boolean) ?? null
 		}
 	}
+
+	const descriptionPreview = $derived(getDescriptionPreview(description))
 
 	function openDescriptionPane() {
 		paneStack.push({
@@ -237,20 +264,17 @@
 		<YouTubeUrlInput label="Video" bind:value={videoUrl} contained />
 	</div>
 
-	<DetailsSection title="Content">
-		<DetailRow label="Description" noHover compact>
-			{#snippet children()}
-				<button type="button" class="description-select-button" onclick={openDescriptionPane}>
-					{#if description}
-						<span class="description-preview">{getDescriptionPreview(description)}...</span>
-					{:else}
-						<span class="placeholder">Add description...</span>
-					{/if}
-					<Icon name="chevron-right" size={16} class="chevron-icon" />
-				</button>
-			{/snippet}
-		</DetailRow>
-	</DetailsSection>
+	<button type="button" class="description-button" onclick={openDescriptionPane}>
+		<div class="description-header">
+			<span class="description-label">Description</span>
+			<Icon name="chevron-right" size={16} class="description-chevron" />
+		</div>
+		{#if descriptionPreview}
+			<p class="description-preview">{descriptionPreview}</p>
+		{:else}
+			<span class="description-placeholder">Add description...</span>
+		{/if}
+	</button>
 
 	<DetailsSection title="Battle">
 		<DetailRow label="Raid" noHover compact>
@@ -325,8 +349,7 @@
 		padding: 0 $unit-2x;
 	}
 
-	.raid-select-button,
-	.description-select-button {
+	.raid-select-button {
 		display: flex;
 		align-items: center;
 		gap: $unit;
@@ -337,8 +360,7 @@
 		text-align: left;
 	}
 
-	.raid-name,
-	.description-preview {
+	.raid-name {
 		font-size: $font-regular;
 		font-weight: $medium;
 		color: var(--text-secondary);
@@ -351,6 +373,53 @@
 	}
 
 	.chevron-icon {
+		color: var(--text-secondary);
+		flex-shrink: 0;
+	}
+
+	.description-button {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
+		margin: 0 $unit-2x;
+		padding: 0;
+		background: none;
+		border: none;
+		cursor: pointer;
+		text-align: left;
+	}
+
+	.description-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	.description-label {
+		font-size: $font-name;
+		font-weight: $medium;
+		color: var(--text-primary);
+	}
+
+	.description-preview {
+		margin: 0;
+		overflow: hidden;
+		font-size: $font-regular;
+		color: var(--text-secondary);
+		line-height: 1.5;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+	}
+
+	.description-placeholder {
+		font-size: $font-regular;
+		color: var(--text-tertiary);
+		font-style: italic;
+	}
+
+	.description-chevron {
 		color: var(--text-secondary);
 		flex-shrink: 0;
 	}
