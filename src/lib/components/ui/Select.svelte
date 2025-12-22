@@ -88,8 +88,9 @@
 
 	function handleValueChange(newValue: string | undefined) {
 		if (newValue !== undefined) {
-			// Convert string back to original type
-			const typedValue = (typeof options[0]?.value === 'number' ? Number(newValue) : newValue) as T
+			// Find the option by its stringified value to get the original type
+			const matchingOption = options.find((opt) => String(opt.value) === newValue)
+			const typedValue = (matchingOption !== undefined ? matchingOption.value : newValue) as T
 			value = typedValue
 			if (onValueChange) {
 				onValueChange(typedValue)
@@ -351,7 +352,7 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			color: var(--text-tertiary);
+			color: var(--text-secondary);
 		}
 
 		.image {
