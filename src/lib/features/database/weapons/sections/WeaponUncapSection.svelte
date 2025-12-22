@@ -46,6 +46,22 @@
 	const uncapLevel = $derived(transcendence ? 6 : ulb ? 5 : flb ? 4 : 3)
 	const transcendenceStage = $derived(transcendence ? 5 : 0)
 
+	// Extra prerequisite options for dropdown
+	const extraPrerequisiteOptions = [
+		{ value: '', label: 'None' },
+		{ value: 3, label: 'MLB' },
+		{ value: 4, label: 'FLB' },
+		{ value: 5, label: 'ULB' },
+		{ value: 6, label: 'Transcendence' }
+	]
+
+	// Get label for extra prerequisite value
+	function getExtraPrerequisiteLabel(value: number | null | undefined): string {
+		if (value == null) return '—'
+		const option = extraPrerequisiteOptions.find((o) => o.value === value)
+		return option?.label ?? '—'
+	}
+
 	// Get element name for checkbox theming
 	const elementName = $derived.by((): ElementName | undefined => {
 		const el = editMode ? editData.element : weapon?.element
@@ -132,5 +148,15 @@
 			element={elementName}
 			onchange={handleTranscendenceChange}
 		/>
+		<DetailItem
+			label="Extra Prerequisite"
+			sublabel="Min uncap for Additional Weapons"
+			bind:value={editData.extraPrerequisite}
+			editable={true}
+			type="select"
+			options={extraPrerequisiteOptions}
+		/>
+	{:else if weapon?.uncap?.extraPrerequisite != null}
+		<DetailItem label="Extra Prerequisite" value={getExtraPrerequisiteLabel(weapon.uncap.extraPrerequisite)} />
 	{/if}
 </DetailsContainer>

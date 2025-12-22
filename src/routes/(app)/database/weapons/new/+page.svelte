@@ -12,6 +12,7 @@
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
+	import WeaponForgeSection from '$lib/features/database/weapons/sections/WeaponForgeSection.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
@@ -79,6 +80,7 @@
 		flb: false,
 		ulb: false,
 		transcendence: false,
+		extraPrerequisite: '' as number | '',
 		extra: false,
 		limit: false,
 		ax: false,
@@ -100,7 +102,11 @@
 		nicknamesJp: [] as string[],
 
 		// Recruits (Character ID)
-		recruits: null as string | null
+		recruits: null as string | null,
+
+		// Forge chain
+		forgedFrom: null as string | null,
+		forgeOrder: null as number | null
 	})
 
 	const rarityOptions = getRarityOptions()
@@ -183,6 +189,7 @@
 				flb: editData.flb,
 				ulb: editData.ulb,
 				transcendence: editData.transcendence,
+				extra_prerequisite: editData.extraPrerequisite === '' ? null : editData.extraPrerequisite,
 				extra: editData.extra,
 				limit: editData.limit,
 				ax: editData.ax,
@@ -204,7 +211,11 @@
 				nicknames_jp: editData.nicknamesJp,
 
 				// Recruits
-				recruits: editData.recruits
+				recruits: editData.recruits,
+
+				// Forge chain
+				forged_from: editData.forgedFrom || null,
+				forge_order: editData.forgeOrder
 			}
 
 			const newWeapon = await entityAdapter.createWeapon(payload)
@@ -285,6 +296,7 @@
 		<WeaponUncapSection weapon={emptyWeapon} {editMode} bind:editData />
 		<WeaponTaxonomySection weapon={emptyWeapon} {editMode} bind:editData />
 		<WeaponStatsSection weapon={emptyWeapon} {editMode} bind:editData />
+		<WeaponForgeSection weapon={emptyWeapon} {editMode} bind:editData />
 
 		<DetailsContainer title="Nicknames">
 			<DetailItem label="Nicknames (EN)">

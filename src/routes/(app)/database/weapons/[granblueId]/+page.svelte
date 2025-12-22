@@ -25,6 +25,7 @@
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
 	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
+	import WeaponForgeSection from '$lib/features/database/weapons/sections/WeaponForgeSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -205,6 +206,7 @@
 					<WeaponUncapSection {weapon} />
 					<WeaponTaxonomySection {weapon} />
 					<WeaponStatsSection {weapon} />
+					<WeaponForgeSection {weapon} />
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="English">

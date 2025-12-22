@@ -42,6 +42,7 @@ export interface Weapon {
     flb: boolean
     ulb: boolean
     transcendence: boolean
+    extraPrerequisite?: number | null
   }
   transcendenceHp?: number
   transcendenceAtk?: number
@@ -57,6 +58,10 @@ export interface Weapon {
   kamigame?: string
   nicknames?: { en?: string[]; ja?: string[] }
   recruits?: string | { id: string; granblueId: string; name: LocalizedName }
+  // Forge chain fields
+  forgeOrder?: number | null
+  forgedFrom?: { id: string; granblueId: string; name: LocalizedName } | null
+  forgeChain?: Array<{ id: string; granblueId: string; name: LocalizedName; forgeOrder: number }> | null
 }
 
 // Character entity from CharacterBlueprint

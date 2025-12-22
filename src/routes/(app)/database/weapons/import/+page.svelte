@@ -20,6 +20,7 @@
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
 	import WeaponMetadataSection from '$lib/features/database/weapons/sections/WeaponMetadataSection.svelte'
 	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
+	import WeaponForgeSection from '$lib/features/database/weapons/sections/WeaponForgeSection.svelte'
 	import TabbedEntitySelector from '$lib/features/database/import/TabbedEntitySelector.svelte'
 	import type { EntityTab } from '$lib/features/database/import/TabbedEntitySelector.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -123,6 +124,7 @@
 			flb: suggestions?.flb ?? false,
 			ulb: suggestions?.ulb ?? false,
 			transcendence: suggestions?.transcendence ?? false,
+			extraPrerequisite: '' as number | '',
 			extra: false,
 			limit: false,
 			ax: false,
@@ -136,7 +138,10 @@
 			kamigame: suggestions?.kamigame ?? '',
 			nicknamesEn: [] as string[],
 			nicknamesJp: [] as string[],
-			recruits: suggestions?.recruits ?? null
+			recruits: suggestions?.recruits ?? null,
+			// Forge chain
+			forgedFrom: null as string | null,
+			forgeOrder: null as number | null
 		}
 	}
 
@@ -279,6 +284,7 @@
 				flb: formData.flb,
 				ulb: formData.ulb,
 				transcendence: formData.transcendence,
+				extra_prerequisite: formData.extraPrerequisite === '' ? null : formData.extraPrerequisite,
 				extra: formData.extra,
 				limit: formData.limit,
 				ax: formData.ax,
@@ -293,7 +299,10 @@
 				nicknames_en: formData.nicknamesEn,
 				nicknames_jp: formData.nicknamesJp,
 				recruits: formData.recruits,
-				wiki_raw: wikiRawByPage[selectedWikiPage] || undefined
+				wiki_raw: wikiRawByPage[selectedWikiPage] || undefined,
+				// Forge chain
+				forged_from: formData.forgedFrom || null,
+				forge_order: formData.forgeOrder
 			}
 
 			const newWeapon = await entityAdapter.createWeapon(payload)
@@ -508,6 +517,12 @@
 						dismissedSuggestions={dismissed}
 						onAcceptSuggestion={handleAcceptSuggestion}
 						onDismissSuggestion={handleDismissSuggestion}
+					/>
+
+					<WeaponForgeSection
+						weapon={emptyWeapon}
+						editMode={true}
+						bind:editData={formDataByPage[selectedWikiPage]}
 					/>
 
 					<DetailsContainer title="Nicknames">

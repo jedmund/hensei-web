@@ -17,6 +17,7 @@
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
 	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
+	import WeaponForgeSection from '$lib/features/database/weapons/sections/WeaponForgeSection.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
@@ -74,6 +75,7 @@
 		flb: false,
 		ulb: false,
 		transcendence: false,
+		extraPrerequisite: '' as number | '',
 		extra: false,
 		limit: false,
 		ax: false,
@@ -88,7 +90,10 @@
 		kamigame: '',
 		nicknamesEn: [] as string[],
 		nicknamesJp: [] as string[],
-		recruits: ''
+		recruits: '',
+		// Forge chain fields
+		forgedFrom: '' as string | null,
+		forgeOrder: null as number | null
 	})
 
 	// Populate edit data when weapon loads
@@ -117,6 +122,7 @@
 				flb: weapon.uncap?.flb || false,
 				ulb: weapon.uncap?.ulb || false,
 				transcendence: weapon.uncap?.transcendence || false,
+				extraPrerequisite: weapon.uncap?.extraPrerequisite ?? '',
 				extra: weapon.extra || false,
 				limit: Boolean(weapon.limit),
 				ax: weapon.ax || false,
@@ -131,7 +137,10 @@
 				kamigame: weapon.kamigame || '',
 				nicknamesEn: weapon.nicknames?.en || [],
 				nicknamesJp: weapon.nicknames?.ja || [],
-				recruits: typeof weapon.recruits === 'string' ? weapon.recruits : (weapon.recruits?.granblueId ?? '')
+				recruits: typeof weapon.recruits === 'string' ? weapon.recruits : (weapon.recruits?.granblueId ?? ''),
+				// Forge chain fields
+				forgedFrom: weapon.forgedFrom?.granblueId || null,
+				forgeOrder: weapon.forgeOrder ?? null
 			}
 		}
 	})
@@ -165,6 +174,7 @@
 				flb: editData.flb,
 				ulb: editData.ulb,
 				transcendence: editData.transcendence,
+				extra_prerequisite: editData.extraPrerequisite === '' ? null : editData.extraPrerequisite,
 				extra: editData.extra,
 				limit: editData.limit,
 				ax: editData.ax,
@@ -179,7 +189,10 @@
 				kamigame: editData.kamigame,
 				nicknames_en: editData.nicknamesEn,
 				nicknames_jp: editData.nicknamesJp,
-				recruits: editData.recruits || undefined
+				recruits: editData.recruits || undefined,
+				// Forge chain fields
+				forged_from: editData.forgedFrom || null,
+				forge_order: editData.forgeOrder
 			}
 
 			await entityAdapter.updateWeapon(weapon.id, payload)
@@ -226,6 +239,7 @@
 				<WeaponUncapSection {weapon} {editMode} bind:editData />
 				<WeaponTaxonomySection {weapon} {editMode} bind:editData />
 				<WeaponStatsSection {weapon} {editMode} bind:editData />
+				<WeaponForgeSection {weapon} {editMode} bind:editData />
 
 				<DetailsContainer title="Nicknames">
 					<DetailItem label="Nicknames (EN)">
