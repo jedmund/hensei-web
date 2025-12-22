@@ -13,6 +13,13 @@
 	import { onMount, onDestroy } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
+	import { createQuery, queryOptions } from '@tanstack/svelte-query'
+	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import {
+		parseFiltersFromUrl,
+		buildUrlFromFilters,
+		type ParsedFilters
+	} from '$lib/utils/filterParams'
 
 	import type { Snippet } from 'svelte'
 
@@ -25,6 +32,22 @@
 	}
 
 	const { resource, columns, pageSize: initialPageSize = 20, leftActions, headerActions }: Props = $props()
+
+	// Derive entity type from resource
+	const entityType = $derived(
+		resource === 'characters' ? 'character' : resource === 'summons' ? 'summon' : 'weapon'
+	)
+
+	// Fetch weapon series list for URL slug mapping (only for weapons)
+	const weaponSeriesQuery = createQuery(() =>
+		queryOptions({
+			queryKey: ['weaponSeries', 'list'] as const,
+			queryFn: () => entityAdapter.getWeaponSeriesList(),
+			enabled: resource === 'weapons',
+			staleTime: 1000 * 60 * 60, // 1 hour
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		})
+	)
 
 	// State
 	let data = $state<any[]>([])
@@ -65,7 +88,7 @@
 					? filters.series.filter((s): s is number => typeof s === 'number')
 					: undefined
 		})
-		loadData(1) // Reset to first page when filters change
+		loadData(1) // Reset to first page when filters change (this will update URL)
 	}
 
 	// Create provider
@@ -74,16 +97,32 @@
 	// Grid API reference
 	let api: any
 
-	// Update URL with current page (without triggering navigation)
-	function updateUrl(pageNum: number) {
-		const url = new URL($page.url)
-		if (pageNum === 1) {
-			url.searchParams.delete('page')
-		} else {
-			url.searchParams.set('page', String(pageNum))
+	// Build current filter state for URL building
+	function getCurrentFilterState(): CollectionFilterState {
+		return {
+			element: elementFilters,
+			rarity: rarityFilters,
+			proficiency: proficiencyFilters,
+			season: seasonFilters,
+			series: seriesFilters,
+			race: [],
+			gender: []
 		}
+	}
+
+	// Update URL with current filters, search, and page (without triggering navigation)
+	function updateUrl(pageNum: number) {
+		const params = buildUrlFromFilters(
+			getCurrentFilterState(),
+			searchTerm,
+			pageNum,
+			entityType,
+			weaponSeriesQuery.data
+		)
+		const search = params.toString()
+		const url = search ? `${$page.url.pathname}?${search}` : $page.url.pathname
 		// Use replaceState to update URL without adding history entry
-		goto(url.pathname + url.search, { replaceState: true, noScroll: true, keepFocus: true })
+		goto(url, { replaceState: true, noScroll: true, keepFocus: true })
 	}
 
 	// Load data
@@ -224,11 +263,76 @@
 	const startItem = $derived((currentPage - 1) * pageSize + 1)
 	const endItem = $derived(Math.min(currentPage * pageSize, total))
 
-	// Load initial data from URL page param
+	// Track if we've initialized from URL
+	let urlInitialized = $state(false)
+
+	// Initialize filters from URL (for weapons, wait for series list)
+	function initializeFromUrl() {
+		if (urlInitialized) return
+		if (resource === 'weapons' && !weaponSeriesQuery.data) return // Wait for weapon series
+
+		const parsed = parseFiltersFromUrl(
+			$page.url.searchParams,
+			entityType,
+			weaponSeriesQuery.data
+		)
+
+		// Set filter state
+		elementFilters = parsed.element
+		rarityFilters = parsed.rarity
+		proficiencyFilters = parsed.proficiency
+		seasonFilters = parsed.season
+		seriesFilters = parsed.series
+		searchTerm = parsed.searchQuery
+
+		// Apply filters to provider
+		if (
+			parsed.element.length > 0 ||
+			parsed.rarity.length > 0 ||
+			parsed.proficiency.length > 0 ||
+			parsed.season.length > 0 ||
+			parsed.series.length > 0
+		) {
+			const seriesAsStrings =
+				parsed.series.length > 0 ? parsed.series.map((s) => String(s)) : undefined
+
+			provider.setFilters({
+				element: parsed.element.length > 0 ? parsed.element : undefined,
+				rarity: parsed.rarity.length > 0 ? parsed.rarity : undefined,
+				series: seriesAsStrings,
+				proficiency1: parsed.proficiency.length > 0 ? parsed.proficiency : undefined,
+				season: parsed.season.length > 0 ? parsed.season : undefined,
+				characterSeries:
+					resource === 'characters' && parsed.series.length > 0
+						? parsed.series.filter((s): s is number => typeof s === 'number')
+						: undefined
+			})
+		}
+
+		// Apply search query to provider
+		if (parsed.searchQuery.length >= 2) {
+			provider.setSearchQuery(parsed.searchQuery)
+			lastSearchTerm = parsed.searchQuery
+		}
+
+		urlInitialized = true
+		loadData(parsed.page, false) // Don't update URL on initial load
+	}
+
+	// Load initial data from URL params
 	onMount(() => {
-		const pageParam = $page.url.searchParams.get('page')
-		const initialPage = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1
-		loadData(initialPage, false) // Don't update URL on initial load
+		// For non-weapon resources, initialize immediately
+		// For weapons, wait for series query to complete
+		if (resource !== 'weapons') {
+			initializeFromUrl()
+		}
+	})
+
+	// For weapons, initialize once series list is loaded
+	$effect(() => {
+		if (resource === 'weapons' && weaponSeriesQuery.data && !urlInitialized) {
+			initializeFromUrl()
+		}
 	})
 
 	// Clean up timeout on destroy
