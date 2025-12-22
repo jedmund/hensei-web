@@ -86,6 +86,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/effects' as *;
+	@use '$src/themes/layout' as *;
 
 	.description-pane {
 		display: flex;
@@ -96,7 +97,7 @@
 
 	.video-embed {
 		margin-bottom: $unit-2x;
-		border-radius: $unit;
+		border-radius: $card-corner;
 		overflow: hidden;
 
 		iframe {

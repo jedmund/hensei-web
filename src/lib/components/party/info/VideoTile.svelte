@@ -20,9 +20,7 @@
 	const thumbnailUrl = $derived(
 		videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null
 	)
-	const embedUrl = $derived(
-		videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null
-	)
+	const embedUrl = $derived(videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null)
 
 	// Fetch video title when videoId changes
 	$effect(() => {
@@ -34,10 +32,9 @@
 
 		const controller = new AbortController()
 
-		fetch(
-			`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`,
-			{ signal: controller.signal }
-		)
+		fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`, {
+			signal: controller.signal
+		})
 			.then((res) => (res.ok ? res.json() : null))
 			.then((data) => {
 				if (data?.title) {
@@ -125,7 +122,7 @@
 		position: relative;
 		width: 100%;
 		aspect-ratio: 16 / 9;
-		border-radius: $card-corner;
+		border-radius: $item-corner;
 		overflow: hidden;
 	}
 

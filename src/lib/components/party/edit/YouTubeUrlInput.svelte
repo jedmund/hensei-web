@@ -19,7 +19,13 @@
 		label?: string
 	}
 
-	let { value = $bindable(), onchange, disabled = false, contained = false, label }: Props = $props()
+	let {
+		value = $bindable(),
+		onchange,
+		disabled = false,
+		contained = false,
+		label
+	}: Props = $props()
 
 	// YouTube URL regex - matches youtube.com/watch?v= and youtu.be/ formats
 	const YOUTUBE_REGEX = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/
@@ -46,7 +52,9 @@
 	const isValid = $derived(isValidYouTubeUrl(inputValue))
 	const showError = $derived(touched && !isValid)
 	const showPreview = $derived(videoId != null && isValid)
-	const thumbnailUrl = $derived(videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null)
+	const thumbnailUrl = $derived(
+		videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null
+	)
 
 	// Fetch video metadata when videoId changes
 	$effect(() => {
@@ -59,10 +67,9 @@
 		isLoadingMetadata = true
 		const controller = new AbortController()
 
-		fetch(
-			`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`,
-			{ signal: controller.signal }
-		)
+		fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`, {
+			signal: controller.signal
+		})
 			.then((res) => (res.ok ? res.json() : null))
 			.then((data) => {
 				if (data?.title) {
@@ -282,7 +289,7 @@
 
 	.preview-card {
 		background-color: var(--input-bound-bg);
-		border-radius: $input-corner;
+		border-radius: $page-corner;
 		padding: $unit;
 	}
 
