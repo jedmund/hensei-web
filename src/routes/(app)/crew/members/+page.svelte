@@ -75,20 +75,16 @@
 		enabled: filter === 'pending' && crewStore.isOfficer
 	}))
 
-	// Calculate total active roster size (members + phantoms)
-	const activeRosterSize = $derived.by(() => {
+	// Calculate active member count (real members only, not phantoms)
+	// Used to determine if scouting is disabled - phantoms can be replaced by real members
+	const activeMemberCount = $derived.by(() => {
 		// Use active filter data if viewing active, otherwise use dedicated query
 		const activeMembers =
 			filter === 'active' ? (membersQuery.data?.members ?? []) : (activeQuery.data?.members ?? [])
-		const activePhantoms =
-			filter === 'active' ? (membersQuery.data?.phantoms ?? []) : (activeQuery.data?.phantoms ?? [])
-
-		const activeMemberCount = activeMembers.filter((m) => !m.retired).length
-		const activePhantomCount = activePhantoms.filter((p) => !p.retired).length
-		return activeMemberCount + activePhantomCount
+		return activeMembers.filter((m) => !m.retired).length
 	})
 
-	const isRosterFull = $derived(activeRosterSize >= 30)
+	const isRosterFull = $derived(activeMemberCount >= 30)
 
 	// Mutations
 	const removeMemberMutation = useRemoveMember()
