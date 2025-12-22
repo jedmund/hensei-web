@@ -46,6 +46,12 @@
 	} from '$lib/api/mutations/grid.mutations'
 	import { Dialog } from 'bits-ui'
 	import { replaceState } from '$app/navigation'
+	import DescriptionTile from '$lib/components/party/info/DescriptionTile.svelte'
+	import { openDescriptionPane } from '$lib/features/description/openDescriptionPane.svelte'
+	import {
+		openPartyEditSidebar,
+		type PartyEditValues
+	} from '$lib/features/party/openPartyEditSidebar.svelte'
 
 	// Props
 	interface Props {
@@ -127,22 +133,25 @@
 		openJobSelectionSidebar({
 			currentJobId: party.job?.id,
 			onSelectJob: async (job) => {
-				// If party exists, update via API
+				// Get the cache key being used by the query
+				const cacheKey = shortcode || 'new'
+
+				// Optimistically update cache first for immediate UI response
+				queryClient.setQueryData(partyKeys.detail(cacheKey), (old: Party | undefined) => {
+					if (!old) return { ...placeholderParty, job }
+					return { ...old, job }
+				})
+
+				// If party exists, persist to API
 				if (partyId && shortcode) {
 					try {
 						await partyAdapter.updateJob(shortcode, job.id)
-						// Cache will be updated via invalidation
 					} catch (e) {
 						console.error('Failed to update job:', e)
 						errorMessage = e instanceof Error ? e.message : 'Failed to update job'
 						errorDialogOpen = true
+						// Revert on error would go here if needed
 					}
-				} else {
-					// Update cache locally for new party
-					queryClient.setQueryData(partyKeys.detail('new'), (old: Party | undefined) => {
-						if (!old) return placeholderParty
-						return { ...old, job }
-					})
 				}
 			}
 		})
@@ -154,11 +163,20 @@
 			currentSkills: party.jobSkills,
 			targetSlot: slot,
 			onSelectSkill: async (skill) => {
-				// If party exists, update via API
+				// Get the cache key being used by the query
+				const cacheKey = shortcode || 'new'
+				const updatedSkills = { ...party.jobSkills }
+				updatedSkills[String(slot) as keyof typeof updatedSkills] = skill
+
+				// Optimistically update cache first for immediate UI response
+				queryClient.setQueryData(partyKeys.detail(cacheKey), (old: Party | undefined) => {
+					if (!old) return { ...placeholderParty, jobSkills: updatedSkills }
+					return { ...old, jobSkills: updatedSkills }
+				})
+
+				// If party exists, persist to API
 				if (partyId && shortcode) {
 					try {
-						const updatedSkills = { ...party.jobSkills }
-						updatedSkills[String(slot) as keyof typeof updatedSkills] = skill
 						const skillsArray = transformSkillsToArray(updatedSkills)
 						await partyAdapter.updateJobSkills(shortcode, skillsArray)
 					} catch (e) {
@@ -166,14 +184,6 @@
 						errorMessage = e instanceof Error ? e.message : 'Failed to update skill'
 						errorDialogOpen = true
 					}
-				} else {
-					// Update cache locally for new party
-					queryClient.setQueryData(partyKeys.detail('new'), (old: Party | undefined) => {
-						if (!old) return placeholderParty
-						const updatedSkills = { ...old.jobSkills }
-						updatedSkills[String(slot) as keyof typeof updatedSkills] = skill
-						return { ...old, jobSkills: updatedSkills }
-					})
 				}
 			},
 			onRemoveSkill: async () => {
@@ -183,10 +193,20 @@
 	}
 
 	async function handleRemoveJobSkill(slot: number) {
+		// Get the cache key being used by the query
+		const cacheKey = shortcode || 'new'
+		const updatedSkills = { ...party.jobSkills }
+		delete updatedSkills[String(slot) as keyof typeof updatedSkills]
+
+		// Optimistically update cache first for immediate UI response
+		queryClient.setQueryData(partyKeys.detail(cacheKey), (old: Party | undefined) => {
+			if (!old) return { ...placeholderParty, jobSkills: updatedSkills }
+			return { ...old, jobSkills: updatedSkills }
+		})
+
+		// If party exists, persist to API
 		if (partyId && shortcode) {
 			try {
-				const updatedSkills = { ...party.jobSkills }
-				delete updatedSkills[String(slot) as keyof typeof updatedSkills]
 				const skillsArray = transformSkillsToArray(updatedSkills)
 				await partyAdapter.updateJobSkills(shortcode, skillsArray)
 			} catch (e) {
@@ -194,15 +214,130 @@
 				errorMessage = e instanceof Error ? e.message : 'Failed to remove skill'
 				errorDialogOpen = true
 			}
-		} else {
-			// Update cache locally for new party
-			queryClient.setQueryData(partyKeys.detail('new'), (old: Party | undefined) => {
-				if (!old) return placeholderParty
-				const updatedSkills = { ...old.jobSkills }
-				delete updatedSkills[String(slot) as keyof typeof updatedSkills]
-				return { ...old, jobSkills: updatedSkills }
-			})
 		}
+	}
+
+	// Helper to ensure party exists before saving metadata
+	async function ensurePartyExists(): Promise<{ id: string; shortcode: string }> {
+		if (partyId && shortcode) {
+			return { id: partyId, shortcode }
+		}
+
+		// Create party with current metadata from cache
+		const partyPayload: any = {
+			name: party.name || 'New Team',
+			visibility: 1,
+			element: party.element || 0
+		}
+
+		if (!isAuthenticated) {
+			partyPayload.localId = getLocalId()
+		}
+
+		isCreatingParty = true
+		try {
+			const createdParty = await createPartyMutation.mutateAsync(partyPayload)
+
+			partyId = createdParty.id
+			shortcode = createdParty.shortcode
+
+			if (createdParty.editKey) {
+				storeEditKey(createdParty.shortcode, createdParty.editKey)
+				storeEditKey(createdParty.id, createdParty.editKey)
+			}
+
+			// Update URL
+			replaceState(`/teams/${createdParty.shortcode}`, {})
+
+			// Update cache
+			queryClient.setQueryData(partyKeys.detail(createdParty.shortcode), createdParty)
+
+			return { id: createdParty.id, shortcode: createdParty.shortcode }
+		} finally {
+			isCreatingParty = false
+		}
+	}
+
+	// Description/Edit handlers
+	function handleOpenDescription() {
+		openDescriptionPane({
+			title: party.name || 'New Team',
+			description: party.description,
+			videoUrl: party.videoUrl,
+			canEdit: true,
+			partyId: partyId ?? undefined,
+			partyShortcode: shortcode ?? undefined,
+			onSave: async (description) => {
+				const { id, shortcode: sc } = await ensurePartyExists()
+				await partyAdapter.update({ id, shortcode: sc, description })
+				// Update cache
+				queryClient.setQueryData(partyKeys.detail(sc), (old: Party | undefined) => {
+					if (!old) return placeholderParty
+					return { ...old, description }
+				})
+			}
+		})
+	}
+
+	function handleOpenEdit() {
+		const initialValues: PartyEditValues = {
+			name: party.name ?? 'New Team',
+			description: party.description ?? null,
+			fullAuto: party.fullAuto ?? false,
+			autoGuard: party.autoGuard ?? false,
+			autoSummon: party.autoSummon ?? false,
+			chargeAttack: party.chargeAttack ?? true,
+			clearTime: party.clearTime ?? null,
+			buttonCount: party.buttonCount ?? null,
+			chainCount: party.chainCount ?? null,
+			summonCount: party.summonCount ?? null,
+			videoUrl: party.videoUrl ?? null,
+			raid: party.raid ?? null,
+			raidId: party.raid?.id ?? null
+		}
+
+		openPartyEditSidebar({
+			initialValues,
+			onSave: async (values) => {
+				const { id, shortcode: sc } = await ensurePartyExists()
+				await partyAdapter.update({
+					id,
+					shortcode: sc,
+					name: values.name,
+					description: values.description ?? undefined,
+					fullAuto: values.fullAuto,
+					autoGuard: values.autoGuard,
+					autoSummon: values.autoSummon,
+					chargeAttack: values.chargeAttack,
+					clearTime: values.clearTime ?? undefined,
+					buttonCount: values.buttonCount ?? undefined,
+					chainCount: values.chainCount ?? undefined,
+					summonCount: values.summonCount ?? undefined,
+					videoUrl: values.videoUrl ?? undefined,
+					raidId: values.raidId ?? undefined
+				})
+				// Update cache
+				queryClient.setQueryData(partyKeys.detail(sc), (old: Party | undefined) => {
+					if (!old) return placeholderParty
+					return {
+						...old,
+						name: values.name,
+						description: values.description,
+						fullAuto: values.fullAuto,
+						autoGuard: values.autoGuard,
+						autoSummon: values.autoSummon,
+						chargeAttack: values.chargeAttack,
+						clearTime: values.clearTime,
+						buttonCount: values.buttonCount,
+						chainCount: values.chainCount,
+						summonCount: values.summonCount,
+						videoUrl: values.videoUrl,
+						raid: values.raid,
+						raidId: values.raidId
+					}
+				})
+			}
+		})
 	}
 
 	// Party state
@@ -622,12 +757,15 @@
 <main>
 	<div class="page-container">
 		<section class="party-content">
-			<header class="party-header">
-				<div class="party-info">
-					<h1>Create a new team</h1>
-					<p class="description">Search and click items to add them to your grid</p>
-				</div>
-			</header>
+			<div class="description-tile-wrapper">
+				<DescriptionTile
+					name={party.name}
+					description={party.description}
+					canEdit={true}
+					onOpenDescription={handleOpenDescription}
+					onOpenEdit={handleOpenEdit}
+				/>
+			</div>
 
 			<PartySegmentedControl
 				selectedTab={activeTab}
@@ -718,21 +856,8 @@
 		padding: 1rem 2rem;
 	}
 
-	.party-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
+	.description-tile-wrapper {
 		margin-bottom: 1rem;
-	}
-
-	.party-info h1 {
-		margin: 0 0 0.5rem 0;
-		font-size: 1.5rem;
-	}
-
-	.description {
-		color: #666;
-		margin: 0;
 	}
 
 	.party-content {
