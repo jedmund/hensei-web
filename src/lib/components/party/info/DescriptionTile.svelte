@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
+	import type { JSONContent } from '@tiptap/core'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 
@@ -33,6 +33,49 @@
 
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
+
+	/** Extract plain text from first two non-empty paragraphs of TipTap JSON content */
+	function getPreviewParagraphs(content?: string): string[] {
+		if (!content) return []
+
+		try {
+			const json = JSON.parse(content) as JSONContent
+			if (json.type !== 'doc' || !json.content?.length) return []
+
+			// Extract text from an inline node (text or mention)
+			const getNodeText = (node: JSONContent): string => {
+				if (node.type === 'text') return node.text ?? ''
+				if (node.type === 'mention') {
+					// EntityMention stores name in attrs.id
+					const id = node.attrs?.id as { name?: { en?: string }; granblue_en?: string } | undefined
+					return id?.name?.en ?? id?.granblue_en ?? ''
+				}
+				return ''
+			}
+
+			// Extract text from a block
+			const getBlockText = (block: JSONContent): string =>
+				block.content?.map(getNodeText).join('') ?? ''
+
+			// Find first two non-empty paragraphs or headings
+			const paragraphs: string[] = []
+			for (const node of json.content) {
+				if (node.type !== 'paragraph' && node.type !== 'heading') continue
+				const text = getBlockText(node).trim()
+				if (text) {
+					paragraphs.push(text)
+					if (paragraphs.length >= 2) break
+				}
+			}
+
+			return paragraphs
+		} catch {
+			// Plain text fallback - return first two non-empty lines
+			return content.split('\n').map((l) => l.trim()).filter(Boolean).slice(0, 2)
+		}
+	}
+
+	const previewParagraphs = $derived(getPreviewParagraphs(description))
 </script>
 
 <div class="description-tile">
@@ -74,8 +117,12 @@
 
 	<!-- Description content (clickable) -->
 	<button type="button" class="description-content" onclick={onOpenDescription}>
-		{#if description}
-			<DescriptionRenderer content={description} truncate={true} maxLines={3} />
+		{#if previewParagraphs.length}
+			<div class="preview-text">
+				{#each previewParagraphs as paragraph}
+					<p>{paragraph}</p>
+				{/each}
+			</div>
 		{:else}
 			<span class="empty-state">No description</span>
 		{/if}
@@ -96,6 +143,20 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
+		overflow: hidden;
+		position: relative;
+
+		&::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 96px;
+			background: linear-gradient(to bottom, transparent, var(--card-bg));
+			pointer-events: none;
+			border-radius: 0 0 $card-corner $card-corner;
+		}
 	}
 
 	.tile-header-container {
@@ -179,14 +240,36 @@
 		background: transparent;
 		border: none;
 		border-radius: $item-corner;
+		justify-content: flex-start;
+		align-items: flex-start;
+		display: flex;
 		cursor: pointer;
 		text-align: left;
 		color: inherit;
 		font: inherit;
+		min-width: 0;
+		width: calc(100% + #{$unit * 2});
+		flex: 1;
+		overflow: hidden;
 		@include smooth-transition($duration-quick, background-color);
 
 		&:hover {
 			background: var(--button-bg);
+		}
+	}
+
+	.preview-text {
+		font-size: $font-regular;
+		color: var(--text-secondary);
+		overflow: hidden;
+		line-height: 1.5;
+
+		p {
+			margin: 0 0 $unit-half 0;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 	}
 
