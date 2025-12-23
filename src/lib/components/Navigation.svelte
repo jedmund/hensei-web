@@ -208,7 +208,7 @@
 						onmouseenter={() => (databaseBackHovered = true)}
 						onmouseleave={() => (databaseBackHovered = false)}
 					>
-						<Icon name="home" size={14} />
+						<Icon name="home" size={21} />
 						{#if databaseBackHovered}
 							<span class="database-back-label">Back to site</span>
 						{/if}
@@ -529,9 +529,11 @@
 					display: flex;
 					align-items: center;
 					justify-content: center;
-					padding: spacing.$unit (spacing.$unit * 1.5);
+					padding: calc(spacing.$unit * 1.25);
+					aspect-ratio: 1;
 
 					&:hover {
+						aspect-ratio: auto;
 						color: colors.$grey-30;
 					}
 				}
