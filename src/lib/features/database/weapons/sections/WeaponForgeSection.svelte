@@ -17,7 +17,7 @@
 	// Get forge chain for display (only in view mode)
 	const forgeChain = $derived(weapon?.forgeChain ?? [])
 	const forgedFrom = $derived(weapon?.forgedFrom ?? null)
-	const forgeOrder = $derived(editMode ? editData?.forgeOrder : weapon?.forgeOrder)
+	const forgeOrder = $derived(weapon?.forgeOrder)
 
 	// Check if weapon has any forge data
 	const hasForgeData = $derived(
@@ -38,7 +38,7 @@
 {#if hasForgeData}
 	<DetailsContainer title="Forge Chain">
 		{#if editMode}
-			<DetailItem label="Forged From" sublabel="The weapon this was forged from">
+			<DetailItem label="Forged From" sublabel="The weapon this was forged from" editable={true}>
 				<WeaponTypeahead
 					bind:value={editData.forgedFrom}
 					initialWeapon={initialForgedFrom}
@@ -46,13 +46,6 @@
 					contained
 				/>
 			</DetailItem>
-			<DetailItem
-				label="Forge Order"
-				sublabel="Position in chain (0=base, 1=first forge, etc.)"
-				bind:value={editData.forgeOrder}
-				editable={true}
-				type="number"
-			/>
 		{:else}
 			{#if forgeChain.length > 0}
 				<DetailItem label="Forge Chain">
