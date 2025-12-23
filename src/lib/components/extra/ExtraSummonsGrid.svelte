@@ -19,7 +19,7 @@
 </script>
 
 <div class="container">
-  <h3>Subaura</h3>
+  <h3>Subaura Summons</h3>
   <ul class="grid" id="ExtraSummons">
     {#each subauraSlots() as summon, i}
       <li>

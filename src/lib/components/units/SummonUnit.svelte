@@ -126,12 +126,6 @@
               alt={displayName(item?.summon)}
               src={imageUrl}
             />
-            {#if item?.main || position === -1}
-              <span class="badge">Main</span>
-            {/if}
-            {#if item?.friend || position === 6}
-              <span class="badge" style="left:auto; right:6px">Friend</span>
-            {/if}
           </div>
           {/key}
         </div>
@@ -337,18 +331,6 @@
     font-size: typography.$font-small;
     text-align: center;
     color: var(--text-secondary);
-  }
-
-  .badge {
-    position: absolute;
-    left: 6px;
-    top: 6px;
-    background: #333;
-    color: #fff;
-    font-size: 11px;
-    padding: 2px 6px;
-    border-radius: 10px;
-    z-index: 3;
   }
 
   // Pulsing focus ring animation
