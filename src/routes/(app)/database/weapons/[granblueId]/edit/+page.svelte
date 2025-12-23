@@ -228,10 +228,6 @@
 		}
 	}
 
-	function handleCancel() {
-		goto(`/database/weapons/${weapon?.granblueId}`)
-	}
-
 	// Helper function for weapon grid image
 	function getWeaponImage(weapon: any): string {
 		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement)
@@ -239,7 +235,7 @@
 </script>
 
 <div class="page">
-	<DatabasePageHeader title="Edit Weapon" onBack={handleCancel}>
+	<DatabasePageHeader title="Edit Weapon" backHref={`/database/weapons/${weapon?.granblueId}`}>
 		{#snippet rightAction()}
 			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
 				{isSaving ? 'Saving...' : 'Save'}

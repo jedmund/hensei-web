@@ -276,10 +276,6 @@
 		}
 	}
 
-	function handleCancel() {
-		goto(`/database/characters/${character?.granblueId}`)
-	}
-
 	// Helper function for character grid image
 	function getCharacterGridImage(character: any): string {
 		return getCharacterImage(character?.granblueId, 'grid', '01')
@@ -292,7 +288,7 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabasePageHeader title="Edit Character" onBack={handleCancel}>
+	<DatabasePageHeader title="Edit Character" backHref={`/database/characters/${character?.granblueId}`}>
 		{#snippet rightAction()}
 			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
 				{isSaving ? 'Saving...' : 'Save'}

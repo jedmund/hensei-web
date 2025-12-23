@@ -205,10 +205,6 @@
 		}
 	}
 
-	function handleCancel() {
-		goto(`/database/summons/${summon?.granblueId}`)
-	}
-
 	// Helper function for summon grid image
 	function getSummonGridImage(summon: any): string {
 		return getSummonImage(summon?.granblueId, 'grid')
@@ -216,7 +212,7 @@
 </script>
 
 <div class="page">
-	<DatabasePageHeader title="Edit Summon" onBack={handleCancel}>
+	<DatabasePageHeader title="Edit Summon" backHref={`/database/summons/${summon?.granblueId}`}>
 		{#snippet rightAction()}
 			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
 				{isSaving ? 'Saving...' : 'Save'}

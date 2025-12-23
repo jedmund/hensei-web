@@ -39,6 +39,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
+	import { getListUrl } from '$lib/utils/listNavigation'
 
 	// Types
 	import type { PageData } from './$types'
@@ -193,7 +194,7 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabasePageHeader title="Character">
+	<DatabasePageHeader title="Character" backHref={getListUrl('characters')}>
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
 				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}>Edit</Button>

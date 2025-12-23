@@ -23,6 +23,7 @@
 	} from '$lib/utils/filterParams'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import { storeListUrl } from '$lib/utils/listNavigation'
 
 	import type { Snippet } from 'svelte'
 
@@ -232,6 +233,8 @@
 				// Find the row data to get the granblueId
 				const rowData = data.find((item: any) => item.id === rowId)
 				if (rowData && rowData.granblueId) {
+					// Store current list URL before navigating so Back button can return here
+					storeListUrl($page.url.href, resource)
 					goto(`/database/${resource}/${rowData.granblueId}`)
 				}
 			}

@@ -9,24 +9,16 @@
 		title: string
 		/** Custom right action content */
 		rightAction?: Snippet | undefined
-		/** Click handler for back button - defaults to history.back() */
-		onBack?: (() => void) | undefined
+		/** URL to navigate to when back is clicked */
+		backHref: string
 	}
 
-	let { title, rightAction, onBack }: Props = $props()
-
-	function handleBack() {
-		if (onBack) {
-			onBack()
-		} else {
-			history.back()
-		}
-	}
+	let { title, rightAction, backHref }: Props = $props()
 </script>
 
 <header class="header">
 	<div class="left">
-		<Button variant="ghost" size="small" leftIcon="chevron-left" onclick={handleBack}>
+		<Button variant="ghost" size="small" leftIcon="chevron-left" href={backHref}>
 			Back
 		</Button>
 	</div>
