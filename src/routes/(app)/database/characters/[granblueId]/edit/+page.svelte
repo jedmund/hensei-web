@@ -245,8 +245,11 @@
 
 			await entityAdapter.updateCharacter(character.id, payload)
 
-			// Invalidate TanStack Query cache to refetch fresh data
-			await queryClient.invalidateQueries({ queryKey: ['character', character.granblueId] })
+			// Invalidate TanStack Query cache and force immediate refetch
+			await queryClient.invalidateQueries({
+				queryKey: ['character', character.granblueId],
+				refetchType: 'all'
+			})
 
 			// Navigate back to detail page
 			goto(`/database/characters/${character.granblueId}`)

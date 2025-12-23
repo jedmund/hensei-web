@@ -174,8 +174,11 @@
 
 			await entityAdapter.updateSummon(summon.id, payload)
 
-			// Invalidate TanStack Query cache to refetch fresh data
-			await queryClient.invalidateQueries({ queryKey: ['summon', summon.granblueId] })
+			// Invalidate TanStack Query cache and force immediate refetch
+			await queryClient.invalidateQueries({
+				queryKey: ['summon', summon.granblueId],
+				refetchType: 'all'
+			})
 
 			// Navigate back to detail page
 			goto(`/database/summons/${summon.granblueId}`)

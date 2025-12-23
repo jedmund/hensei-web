@@ -197,8 +197,11 @@
 
 			await entityAdapter.updateWeapon(weapon.id, payload)
 
-			// Invalidate TanStack Query cache to refetch fresh data
-			await queryClient.invalidateQueries({ queryKey: ['weapon', weapon.granblueId] })
+			// Invalidate TanStack Query cache and force immediate refetch
+			await queryClient.invalidateQueries({
+				queryKey: ['weapon', weapon.granblueId],
+				refetchType: 'all'
+			})
 
 			// Navigate back to detail page
 			goto(`/database/weapons/${weapon.granblueId}`)
