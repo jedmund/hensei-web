@@ -8,6 +8,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import Button from './ui/Button.svelte'
+	import Tooltip from './ui/Tooltip.svelte'
 	import Icon from './Icon.svelte'
 	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
 	import NotificationBadge from './ui/NotificationBadge.svelte'
@@ -147,9 +148,6 @@
 	// Invitations modal state
 	let invitationsModalOpen = $state(false)
 
-	// Database back button hover state
-	let databaseBackHovered = $state(false)
-
 	// Query for the user's crew (to determine if phantom claims should be fetched)
 	const myCrewQuery = createQuery(() => ({
 		...crewQueries.myCrew(),
@@ -201,18 +199,15 @@
 			<!-- Back button -->
 			<ul role="list" class="database-back-section">
 				<li>
-					<a
-						href={galleryHref}
-						class="database-back-button"
-						aria-label="Back to gallery"
-						onmouseenter={() => (databaseBackHovered = true)}
-						onmouseleave={() => (databaseBackHovered = false)}
-					>
-						<Icon name="home" size={21} />
-						{#if databaseBackHovered}
-							<span class="database-back-label">Back to site</span>
-						{/if}
-					</a>
+					<Tooltip content="Back to site">
+						<a
+							href={galleryHref}
+							class="database-back-button"
+							aria-label="Back to site"
+						>
+							<Icon name="home" size={21} />
+						</a>
+					</Tooltip>
 				</li>
 			</ul>
 
@@ -533,13 +528,8 @@
 					aspect-ratio: 1;
 
 					&:hover {
-						aspect-ratio: auto;
 						color: colors.$grey-30;
 					}
-				}
-
-				.database-back-label {
-					margin-left: spacing.$unit-half;
 				}
 			}
 
