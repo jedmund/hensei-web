@@ -238,7 +238,8 @@ export class SearchAdapter extends BaseAdapter {
 				filters.season = params.filters.season
 			}
 			if (includeFilters.characterSeries && params.filters.characterSeries?.length) {
-				filters.characterSeries = params.filters.characterSeries
+				// API expects 'series' field for character series filter
+				filters.series = params.filters.characterSeries
 			}
 			if (includeFilters.gachaAvailable && params.filters.gachaAvailable !== undefined) {
 				filters.gachaAvailable = params.filters.gachaAvailable
