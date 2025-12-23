@@ -472,21 +472,17 @@
 		</div>
 
 		<div class="pagination-controls">
-			<button class="pagination-button" onclick={handlePrevPage} disabled={currentPage <= 1}>
+			<Button variant="ghost" size="small" onclick={handlePrevPage} disabled={currentPage <= 1}>
 				Previous
-			</button>
+			</Button>
 
 			<span class="page-display">
 				Page {currentPage} of {totalPages}
 			</span>
 
-			<button
-				class="pagination-button"
-				onclick={handleNextPage}
-				disabled={currentPage >= totalPages}
-			>
+			<Button variant="ghost" size="small" onclick={handleNextPage} disabled={currentPage >= totalPages}>
 				Next
-			</button>
+			</Button>
 		</div>
 	</div>
 </div>
@@ -510,7 +506,7 @@
 			flex-wrap: wrap;
 			align-items: center;
 			justify-content: space-between;
-			padding: spacing.$unit;
+			padding: spacing.$unit-2x;
 			gap: spacing.$unit;
 
 			.controls-right {
@@ -638,7 +634,7 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			padding: spacing.$unit;
+			padding: spacing.$unit-2x;
 			border-top: 1px solid #e5e5e5;
 			background: #f8f9fa;
 
@@ -651,26 +647,6 @@
 				display: flex;
 				align-items: center;
 				gap: spacing.$unit;
-
-				.pagination-button {
-					padding: spacing.$unit * 0.5 spacing.$unit;
-					background: white;
-					border: 1px solid #ddd;
-					border-radius: 4px;
-					font-size: typography.$font-small;
-					cursor: pointer;
-					transition: all 0.2s;
-
-					&:hover:not(:disabled) {
-						background: #e9ecef;
-						border-color: #adb5bd;
-					}
-
-					&:disabled {
-						opacity: 0.5;
-						cursor: not-allowed;
-					}
-				}
 
 				.page-display {
 					font-size: typography.$font-small;
