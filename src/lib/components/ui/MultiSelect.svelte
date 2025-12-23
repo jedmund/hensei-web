@@ -127,7 +127,7 @@
 		align-items: center;
 		background-color: var(--input-bg);
 		border-radius: $input-corner;
-		border: 1px solid var(--border-color, transparent);
+		border: 1px solid transparent;
 		color: var(--text-primary);
 		cursor: pointer;
 		display: inline-flex;

@@ -359,19 +359,13 @@
 	])
 
 	// Active filters based on visibility settings
-	const activeFilters = $derived(
-		filterConfigs.filter((f) => effectiveShowFilters[f.key])
-	)
+	const activeFilters = $derived(filterConfigs.filter((f) => effectiveShowFilters[f.key]))
 
 	// Filters visible in the main row (not in moreFilterKeys)
-	const visibleFilters = $derived(
-		activeFilters.filter((f) => !moreFilterKeys.includes(f.key))
-	)
+	const visibleFilters = $derived(activeFilters.filter((f) => !moreFilterKeys.includes(f.key)))
 
 	// Filters in the "More" dropdown
-	const moreFilters = $derived(
-		activeFilters.filter((f) => moreFilterKeys.includes(f.key))
-	)
+	const moreFilters = $derived(activeFilters.filter((f) => moreFilterKeys.includes(f.key)))
 
 	const showMoreButton = $derived(moreFilters.length > 0)
 
@@ -406,7 +400,12 @@
 				</DropdownMenu.Trigger>
 
 				<DropdownMenu.Portal>
-					<DropdownMenu.Content class="more-menu-content" side="bottom" align="start" sideOffset={4}>
+					<DropdownMenu.Content
+						class="more-menu-content"
+						side="bottom"
+						align="start"
+						sideOffset={4}
+					>
 						{#each moreFilters as filter (filter.key)}
 							<DropdownMenu.Sub>
 								<DropdownMenu.SubTrigger class="more-menu-subtrigger">
@@ -461,7 +460,12 @@
 		{/if}
 
 		{#if showViewToggle}
-			<ViewModeToggle value={viewMode} onValueChange={onViewModeChange} {element} neutral={neutralViewToggle} />
+			<ViewModeToggle
+				value={viewMode}
+				onValueChange={onViewModeChange}
+				{element}
+				neutral={neutralViewToggle}
+			/>
 		{/if}
 	</div>
 </div>
@@ -539,9 +543,11 @@
 		color: var(--text-tertiary);
 		background-color: var(--input-bg);
 		border-radius: $input-corner;
-		border: 1px solid var(--border-color, transparent);
+		border: 1px solid transparent;
 		cursor: pointer;
-		transition: background-color 0.15s ease, border-color 0.15s ease;
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease;
 
 		&:hover {
 			background-color: var(--input-bg-hover);
