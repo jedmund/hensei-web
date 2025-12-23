@@ -208,7 +208,7 @@
 						onmouseenter={() => (databaseBackHovered = true)}
 						onmouseleave={() => (databaseBackHovered = false)}
 					>
-						<Icon name="arrow-left" size={14} />
+						<Icon name="home" size={14} />
 						{#if databaseBackHovered}
 							<span class="database-back-label">Back to site</span>
 						{/if}
