@@ -3,22 +3,26 @@
 
 	interface MenuItemsProps {
 		onViewDetails?: (() => void) | undefined
+		onViewInDatabase?: (() => void) | undefined
 		onReplace?: (() => void) | undefined
 		onRemove?: (() => void | Promise<void>) | undefined
 		canEdit?: boolean | undefined
 		variant?: 'context' | 'dropdown'
 		viewDetailsLabel?: string | undefined
+		viewInDatabaseLabel?: string | undefined
 		replaceLabel?: string | undefined
 		removeLabel?: string | undefined
 	}
 
 	let {
 		onViewDetails,
+		onViewInDatabase,
 		onReplace,
 		onRemove,
 		canEdit = false,
 		variant = 'context',
 		viewDetailsLabel = 'View Details',
+		viewInDatabaseLabel = 'View in Database',
 		replaceLabel = 'Replace',
 		removeLabel = 'Remove'
 	}: MenuItemsProps = $props()
@@ -33,6 +37,12 @@
 {#if onViewDetails}
 	<Item class={itemClass} onclick={onViewDetails}>
 		{viewDetailsLabel}
+	</Item>
+{/if}
+
+{#if onViewInDatabase}
+	<Item class={itemClass} onclick={onViewInDatabase}>
+		{viewInDatabaseLabel}
 	</Item>
 {/if}
 

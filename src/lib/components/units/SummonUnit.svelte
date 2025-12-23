@@ -2,6 +2,8 @@
   import type { GridSummon } from '$lib/types/api/party'
   import type { Party } from '$lib/types/api/party'
   import { getContext } from 'svelte'
+  import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
   import Icon from '$lib/components/Icon.svelte'
   import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
   import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
@@ -102,6 +104,13 @@
     }
   }
 
+  function viewInDatabase() {
+    if (!item?.summon?.granblueId) return
+    goto(`/database/summons/${item.summon.granblueId}`)
+  }
+
+  // Check if user can view database (role >= 7)
+  let canViewDatabase = $derived(($page.data.account?.role ?? 0) >= 7)
 
 </script>
 
@@ -134,11 +143,13 @@
       {#snippet contextMenu()}
         <MenuItems
           onViewDetails={viewDetails}
+          onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
           onReplace={ctx?.canEdit() ? replace : undefined}
           onRemove={ctx?.canEdit() ? remove : undefined}
           canEdit={ctx?.canEdit()}
           variant="context"
           viewDetailsLabel={m.context_view_details()}
+          viewInDatabaseLabel={m.context_view_in_database()}
           replaceLabel={m.context_replace()}
           removeLabel={m.context_remove()}
         />
@@ -147,11 +158,13 @@
       {#snippet dropdownMenu()}
         <MenuItems
           onViewDetails={viewDetails}
+          onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
           onReplace={ctx?.canEdit() ? replace : undefined}
           onRemove={ctx?.canEdit() ? remove : undefined}
           canEdit={ctx?.canEdit()}
           variant="dropdown"
           viewDetailsLabel={m.context_view_details()}
+          viewInDatabaseLabel={m.context_view_in_database()}
           replaceLabel={m.context_replace()}
           removeLabel={m.context_remove()}
         />
