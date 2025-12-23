@@ -38,12 +38,10 @@
 <div class="wrapper">
 	<div class="grid">
 		<div class="LabeledUnit">
-			<div class="label">Main</div>
 			<SummonUnit item={main} position={-1} />
 		</div>
 
 		<section>
-			<div class="label">Summons</div>
 			<ul class="summons">
 				{#each subSummonSlots as summon, i}
 					<li
@@ -77,7 +75,6 @@
 		</section>
 
 		<div class="LabeledUnit">
-			<div class="label friend">Friend</div>
 			<SummonUnit item={friend} position={6} />
 		</div>
 	</div>
@@ -95,6 +92,7 @@
 		grid-template-columns: 1.17fr 2fr 1.17fr;
 		gap: $unit-3x;
 		justify-content: center;
+		align-items: stretch;
 		margin: 0 auto;
 		max-width: $grid-width;
 
@@ -106,35 +104,20 @@
 			gap: $unit;
 		}
 
-		& .label {
-			color: $grey-55;
-			font-size: $font-tiny;
-			font-weight: $medium;
-			margin-bottom: $unit;
-			text-align: center;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			overflow: hidden;
-
-			@include breakpoint(phone) {
-				&.friend {
-					max-width: 78px;
-				}
-			}
-		}
-
 		.summons {
 			display: grid;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
-			grid-template-rows: repeat(2, minmax(0, 1fr));
-			gap: $unit-3x;
+			grid-template-rows: repeat(2, auto);
+			align-content: space-between;
+			column-gap: $unit-3x;
+			height: 100%;
 
 			@include breakpoint(tablet) {
-				gap: $unit-2x;
+				column-gap: $unit-2x;
 			}
 
 			@include breakpoint(phone) {
-				gap: $unit;
+				column-gap: $unit;
 			}
 
 			& > li {
