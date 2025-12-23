@@ -13,15 +13,11 @@
 	// Use direct summons if provided, otherwise get from party
 	const summons = $derived(directSummons || party?.summons || [])
 	const main = $derived(summons.find((s: GridSummon) => s?.main || s?.position === -1))
-	const friend = $derived(
-		extendedView ? summons.find((s: GridSummon) => s?.friend || s?.position === -2) : undefined
-	)
+	const friend = $derived(summons.find((s: GridSummon) => s?.friend || s?.position === -2))
 
-	// In standard view: show positions 0-3 (4 summons)
-	// In extended view: show positions 0-5 (6 summons including subauras)
-	const gridLength = $derived(extendedView ? 6 : 4)
+	// Always show positions 0-5 (6 summons including subauras)
 	const grid = $derived(
-		Array.from({ length: gridLength }, (_, i) => summons.find((s: GridSummon) => s?.position === i))
+		Array.from({ length: 6 }, (_, i) => summons.find((s: GridSummon) => s?.position === i))
 	)
 
 	function summonImageUrl(s?: GridSummon, isMain = false): string {
@@ -48,16 +44,14 @@
 			</li>
 		{/each}
 	</ul>
-	{#if extendedView}
-		<div class="friendSummon" class:empty={!friend}>
-			{#if friend}<img
-					alt="Friend Summon"
-					src={summonImageUrl(friend, true)}
-					loading="lazy"
-					decoding="async"
-				/>{/if}
-		</div>
-	{/if}
+	<div class="friendSummon" class:empty={!friend}>
+		{#if friend}<img
+				alt="Friend Summon"
+				src={summonImageUrl(friend, true)}
+				loading="lazy"
+				decoding="async"
+			/>{/if}
+	</div>
 </div>
 
 <style lang="scss">
@@ -71,37 +65,8 @@
 		display: grid;
 		gap: $unit-half;
 
-		// Standard view layout: main summon | 4 grid summons
-		grid-template-columns: 0.96fr 2.2fr;
-		grid-template-rows: 1fr;
-
-		// Extended view layout: main summon | 6 grid summons | friend summon
-		&.extended {
-			gap: calc($unit-half + 1px);
-			grid-template-columns: auto 1fr auto;
-
-			.mainSummon {
-				min-width: 69px;
-			}
-
-			.mainSummon,
-			.friendSummon {
-				@include rep.aspect(56, 97);
-				display: grid;
-				flex: 0 0 auto;
-				min-width: 70px;
-				height: 100%;
-			}
-
-			.summons {
-				display: grid;
-				grid-template-rows: repeat(3, 1fr);
-				grid-template-columns: repeat(2, 1fr);
-				column-gap: calc($unit-half + 1px);
-				row-gap: calc($unit * 1.5 - 2px);
-				min-width: 0; /* allow grid to shrink without overflowing */
-			}
-		}
+		// Layout: main summon | 6 grid summons (3x2) | friend summon
+		grid-template-columns: auto 1fr auto;
 
 		.summon,
 		.mainSummon,
@@ -122,19 +87,25 @@
 			}
 		}
 
-		.mainSummon {
-			@include rep.aspect(56, 97);
+		.mainSummon,
+		.friendSummon {
+			@include rep.aspect(rep.$summon-main-w, rep.$summon-main-h);
 			display: grid;
-			max-width: 70px;
-			height: auto;
+			height: calc(100% - 6px);
+			align-self: center;
 		}
 
 		.summons {
-			@include rep.grid(2, 2, $unit-half);
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-template-rows: repeat(3, auto);
+			align-content: space-between;
+			column-gap: $unit-half;
 			margin: 0;
 			padding: 0;
 			list-style: none;
-			align-content: center; // Center the grid vertically
+			height: calc(100% - 6px);
+			align-self: center;
 		}
 
 		.summon {
@@ -143,7 +114,7 @@
 			overflow: hidden;
 			min-width: 43px;
 			display: grid;
-			@include rep.aspect(184, 138);
+			@include rep.aspect(rep.$summon-cell-w, rep.$summon-cell-h);
 		}
 	}
 </style>
