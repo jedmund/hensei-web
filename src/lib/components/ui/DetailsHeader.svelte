@@ -148,12 +148,6 @@
 		justify-content: space-between;
 		gap: spacing.$unit * 2;
 		padding: spacing.$unit * 2;
-		// position: sticky;
-		// top: 0;
-		// z-index: 10;
-		background: white;
-		border-top-left-radius: layout.$card-corner;
-		border-top-right-radius: layout.$card-corner;
 
 		.left {
 			display: flex;
