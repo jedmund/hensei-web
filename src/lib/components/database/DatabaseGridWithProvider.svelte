@@ -18,7 +18,8 @@
 	import {
 		parseFiltersFromUrl,
 		buildUrlFromFilters,
-		type ParsedFilters
+		type ParsedFilters,
+		ELEMENT_TO_PARAM
 	} from '$lib/utils/filterParams'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -89,6 +90,20 @@
 			proficiencyFilters.length > 0 ||
 			seasonFilters.length > 0
 	)
+
+	// Get selected element name for button styling (only when exactly one element is selected)
+	const selectedElement = $derived.by(() => {
+		if (elementFilters.length === 1) {
+			const elemId = elementFilters[0]
+			if (elemId !== undefined) {
+				const elemName = ELEMENT_TO_PARAM[elemId]
+				if (elemName && elemName !== 'null') {
+					return elemName as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+				}
+			}
+		}
+		return undefined
+	})
 
 	// Handle filter changes from CollectionFilters component
 	function handleFiltersChange(filters: CollectionFilterState) {
@@ -391,10 +406,9 @@
 				onclick={() => (showFilters = !showFilters)}
 				class="filter-toggle {hasActiveFilters ? 'has-active' : ''}"
 			>
-				<Icon name="chevron-down-small" size={14} />
 				Filters
 				{#if hasActiveFilters}
-					<span class="filter-count">
+					<span class="filter-count {selectedElement ?? ''}">
 						{elementFilters.length +
 							rarityFilters.length +
 							seriesFilters.length +
@@ -520,12 +534,33 @@
 					justify-content: center;
 					min-width: 18px;
 					height: 18px;
+					margin-left: spacing.$unit;
 					padding: 0 spacing.$unit-half;
 					background: var(--accent-color);
 					color: white;
 					font-size: 11px;
 					font-weight: typography.$medium;
 					border-radius: 9px;
+
+					// Element-colored badges
+					&:global(.wind) {
+						background: var(--wind-button-bg);
+					}
+					&:global(.fire) {
+						background: var(--fire-button-bg);
+					}
+					&:global(.water) {
+						background: var(--water-button-bg);
+					}
+					&:global(.earth) {
+						background: var(--earth-button-bg);
+					}
+					&:global(.dark) {
+						background: var(--dark-button-bg);
+					}
+					&:global(.light) {
+						background: var(--light-button-bg);
+					}
 				}
 
 				input {
@@ -552,9 +587,9 @@
 		.filters-row {
 			display: flex;
 			align-items: center;
-			padding: spacing.$unit;
+			padding: 0 spacing.$unit spacing.$unit spacing.$unit;
 			border-bottom: 1px solid #e5e5e5;
-			background: rgba(0, 0, 0, 0.02);
+			background: white;
 
 			:global(.filters-container) {
 				flex: 1;
@@ -567,79 +602,79 @@
 				}
 			}
 		}
-	}
 
-	.grid-wrapper {
-		position: relative;
-		overflow-x: auto;
-		min-height: 400px;
+		.grid-wrapper {
+			position: relative;
+			overflow-x: auto;
+			min-height: 400px;
 
-		&.loading {
-			opacity: 0.6;
-		}
-
-		.loading-overlay {
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background: rgba(255, 255, 255, 0.9);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			z-index: 10;
-
-			.loading-spinner {
-				font-size: typography.$font-medium;
-				color: #666;
-			}
-		}
-	}
-
-	.grid-footer {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: spacing.$unit;
-		border-top: 1px solid #e5e5e5;
-		background: #f8f9fa;
-
-		.pagination-info {
-			font-size: typography.$font-small;
-			color: #6c757d;
-		}
-
-		.pagination-controls {
-			display: flex;
-			align-items: center;
-			gap: spacing.$unit;
-
-			.pagination-button {
-				padding: spacing.$unit * 0.5 spacing.$unit;
-				background: white;
-				border: 1px solid #ddd;
-				border-radius: 4px;
-				font-size: typography.$font-small;
-				cursor: pointer;
-				transition: all 0.2s;
-
-				&:hover:not(:disabled) {
-					background: #e9ecef;
-					border-color: #adb5bd;
-				}
-
-				&:disabled {
-					opacity: 0.5;
-					cursor: not-allowed;
-				}
+			&.loading {
+				opacity: 0.6;
 			}
 
-			.page-display {
+			.loading-overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(255, 255, 255, 0.9);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 10;
+
+				.loading-spinner {
+					font-size: typography.$font-medium;
+					color: #666;
+				}
+			}
+		}
+
+		.grid-footer {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: spacing.$unit;
+			border-top: 1px solid #e5e5e5;
+			background: #f8f9fa;
+
+			.pagination-info {
 				font-size: typography.$font-small;
-				color: #495057;
-				min-width: 100px;
-				text-align: center;
+				color: #6c757d;
+			}
+
+			.pagination-controls {
+				display: flex;
+				align-items: center;
+				gap: spacing.$unit;
+
+				.pagination-button {
+					padding: spacing.$unit * 0.5 spacing.$unit;
+					background: white;
+					border: 1px solid #ddd;
+					border-radius: 4px;
+					font-size: typography.$font-small;
+					cursor: pointer;
+					transition: all 0.2s;
+
+					&:hover:not(:disabled) {
+						background: #e9ecef;
+						border-color: #adb5bd;
+					}
+
+					&:disabled {
+						opacity: 0.5;
+						cursor: not-allowed;
+					}
+				}
+
+				.page-display {
+					font-size: typography.$font-small;
+					color: #495057;
+					min-width: 100px;
+					text-align: center;
+				}
 			}
 		}
 	}
