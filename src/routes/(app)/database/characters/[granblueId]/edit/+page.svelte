@@ -25,12 +25,15 @@
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
 	import { CHARACTER_SERIES_NAMES } from '$lib/types/enums'
+	import { getElementLabel } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
 		buildGamewithUrl,
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
+	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	// Types
 	import type { PageData } from './$types'
@@ -55,6 +58,18 @@
 
 	// Always in edit mode
 	const editMode = true
+
+	// Element for button styling
+	const elementName = $derived(
+		getElementLabel(character?.element)?.toLowerCase() as
+			| 'wind'
+			| 'fire'
+			| 'water'
+			| 'earth'
+			| 'dark'
+			| 'light'
+			| undefined
+	)
 
 	// Save state
 	let isSaving = $state(false)
@@ -277,17 +292,20 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
+	<DatabasePageHeader title="Edit Character" onBack={handleCancel}>
+		{#snippet rightAction()}
+			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
+				{isSaving ? 'Saving...' : 'Save'}
+			</Button>
+		{/snippet}
+	</DatabasePageHeader>
+
 	{#if character}
 		<DetailScaffold
 			type="character"
 			item={character}
 			image={getCharacterGridImage(character)}
-			showEdit={true}
 			{editMode}
-			{isSaving}
-			{saveError}
-			onSave={saveChanges}
-			onCancel={handleCancel}
 		>
 			<section class="details">
 				<CharacterMetadataSection {character} {editMode} bind:editData />
@@ -394,7 +412,7 @@
 
 	.page {
 		background: white;
-		border-radius: layout.$card-corner;
+		border-radius: layout.$page-corner;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	}
 

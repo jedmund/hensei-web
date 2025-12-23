@@ -28,6 +28,9 @@
 		buildGamewithUrl,
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
+	import { getElementLabel } from '$lib/utils/element'
+	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	// Types
 	import type { PageData } from './$types'
@@ -47,6 +50,18 @@
 
 	// Always in edit mode
 	const editMode = true
+
+	// Element for button styling
+	const elementName = $derived(
+		getElementLabel(weapon?.element)?.toLowerCase() as
+			| 'wind'
+			| 'fire'
+			| 'water'
+			| 'earth'
+			| 'dark'
+			| 'light'
+			| undefined
+	)
 
 	// Save state
 	let isSaving = $state(false)
@@ -224,17 +239,20 @@
 </script>
 
 <div class="page">
+	<DatabasePageHeader title="Edit Weapon" onBack={handleCancel}>
+		{#snippet rightAction()}
+			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
+				{isSaving ? 'Saving...' : 'Save'}
+			</Button>
+		{/snippet}
+	</DatabasePageHeader>
+
 	{#if weapon}
 		<DetailScaffold
 			type="weapon"
 			item={weapon}
 			image={getWeaponImage(weapon)}
-			showEdit={true}
 			{editMode}
-			{isSaving}
-			{saveError}
-			onSave={saveChanges}
-			onCancel={handleCancel}
 		>
 			<section class="details">
 				<WeaponMetadataSection {weapon} {editMode} bind:editData />
@@ -351,7 +369,7 @@
 
 	.page {
 		background: white;
-		border-radius: layout.$card-corner;
+		border-radius: layout.$page-corner;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	}
 

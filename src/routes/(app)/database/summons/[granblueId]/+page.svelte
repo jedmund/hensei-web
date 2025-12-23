@@ -36,6 +36,7 @@
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
 	import Button from '$lib/components/ui/Button.svelte'
+	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 
 	// Types
 	import type { PageData } from './$types'
@@ -184,13 +185,19 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
+	<DatabasePageHeader title="Summon">
+		{#snippet rightAction()}
+			{#if canEdit && editUrl}
+				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}>Edit</Button>
+			{/if}
+		{/snippet}
+	</DatabasePageHeader>
+
 	{#if summon}
 		<DetailScaffold
 			type="summon"
 			item={summon}
 			image={getSummonGridImage(summon)}
-			showEdit={canEdit}
-			editUrl={canEdit ? editUrl : undefined}
 			{currentTab}
 			onTabChange={handleTabChange}
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
@@ -369,7 +376,7 @@
 
 	.page {
 		background: white;
-		border-radius: layout.$card-corner;
+		border-radius: layout.$page-corner;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	}
 
