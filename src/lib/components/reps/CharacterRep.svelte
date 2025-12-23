@@ -20,7 +20,11 @@
 		)
 	)
 
-	function characterImageUrl(c?: GridCharacter): string {
+	// For standard mode: first 3 are portraits, last 2 are squares
+	const portraits = $derived(unlimited ? [] : grid.slice(0, 3))
+	const squares = $derived(unlimited ? [] : grid.slice(3, 5))
+
+	function characterImageUrl(c: GridCharacter | undefined, position: number): string {
 		const id = c?.character?.granblueId
 		if (!id) return ''
 
@@ -33,9 +37,12 @@
 			mainWeaponElement = main?.element ?? main?.weapon?.element
 		}
 
+		// Use 'square' variant for unlimited mode or positions 3-4 in standard mode
+		const variant = unlimited || position >= 3 ? 'square' : 'main'
+
 		return getCharacterImageWithPose(
 			id,
-			unlimited ? 'square' : 'main',
+			variant,
 			c?.uncapLevel ?? 0,
 			c?.transcendenceStep ?? 0,
 			mainWeaponElement,
@@ -45,18 +52,47 @@
 </script>
 
 <div class="rep">
-	<ul class="characters" class:unlimited>
-		{#each grid as c, i}
-			<li class="character" class:empty={!c}>
-				{#if c}<img
-						alt="Character"
-						src={characterImageUrl(c)}
-						loading="lazy"
-						decoding="async"
-					/>{/if}
-			</li>
-		{/each}
-	</ul>
+	{#if unlimited}
+		<!-- Unlimited mode: 8 square slots in 4x2 grid -->
+		<ul class="characters unlimited">
+			{#each grid as c, i}
+				<li class="character" class:empty={!c}>
+					{#if c}<img
+							alt="Character"
+							src={characterImageUrl(c, i)}
+							loading="lazy"
+							decoding="async"
+						/>{/if}
+				</li>
+			{/each}
+		</ul>
+	{:else}
+		<!-- Standard mode: 3 portraits + 2 stacked squares -->
+		<div class="portraits">
+			{#each portraits as c, i}
+				<div class="character portrait" class:empty={!c}>
+					{#if c}<img
+							alt="Character"
+							src={characterImageUrl(c, i)}
+							loading="lazy"
+							decoding="async"
+						/>{/if}
+				</div>
+			{/each}
+		</div>
+		<div class="squares">
+			{#each squares as c, i}
+				<div class="character square" class:empty={!c}>
+					{#if c}<img
+							alt="Character"
+							src={characterImageUrl(c, i + 3)}
+							loading="lazy"
+							decoding="async"
+						/>{/if}
+				</div>
+			{/each}
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -66,45 +102,65 @@
 	.rep {
 		width: 100%;
 		height: 100%;
-		border-radius: $item-corner-small;
-		grid-gap: $unit-half;
+		display: flex;
+		gap: $unit-half;
+	}
 
-		.characters {
-			display: grid;
-			grid-template-columns: repeat(5, 1fr);
-			gap: $unit-half;
-			margin: 0;
-			padding: 0;
-			list-style: none;
+	// Standard mode: 3 portraits taking full height
+	.portraits {
+		display: flex;
+		gap: $unit-half;
+		height: 100%;
 
-			&.unlimited {
-				grid-template-columns: repeat(4, 1fr);
+		.character {
+			height: 100%;
+			aspect-ratio: 16/33;
+		}
+	}
 
-				.character {
-					aspect-ratio: 1/1;
-				}
-			}
+	// Standard mode: 2 stacked squares with gap filling remaining height
+	.squares {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100%;
 
-			.character {
-				aspect-ratio: 16/33;
-				background: var(--placeholder-bg);
-				border-radius: 4px;
-				box-sizing: border-box;
-				display: grid;
-				overflow: hidden;
+		.character {
+			aspect-ratio: 1/1;
+		}
+	}
 
-				&.empty {
-					background: var(--placeholder-bg);
-					box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
-				}
+	// Unlimited mode: 8 square slots in 4x2 grid
+	.characters.unlimited {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: $unit-half;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		width: 100%;
 
-				img {
-					display: block;
-					width: 100%;
-					height: 100%;
-					object-fit: cover;
-				}
-			}
+		.character {
+			aspect-ratio: 1/1;
+		}
+	}
+
+	// Shared character slot styles
+	.character {
+		background: var(--placeholder-bg);
+		border-radius: 4px;
+		box-sizing: border-box;
+		overflow: hidden;
+
+		&.empty {
+			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+		}
+
+		img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
 		}
 	}
 </style>
