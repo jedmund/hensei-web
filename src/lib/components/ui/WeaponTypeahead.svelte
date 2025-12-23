@@ -300,11 +300,10 @@
 		}
 
 		.option-image {
-			width: 32px;
-			height: 32px;
+			width: 24px;
+			height: 24px;
 			border-radius: $item-corner-small;
 			flex-shrink: 0;
-			object-fit: contain;
 		}
 
 		.option-label {
@@ -322,11 +321,10 @@
 		}
 
 		.selection-image {
-			width: 24px;
-			height: 24px;
+			width: 20px;
+			height: 20px;
 			border-radius: $item-corner-small;
 			flex-shrink: 0;
-			object-fit: contain;
 		}
 
 		.selection-label {

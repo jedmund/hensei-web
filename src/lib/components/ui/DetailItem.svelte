@@ -205,7 +205,8 @@
 			:global(.input),
 			:global(.select),
 			:global(.multi-select),
-			:global(.character-typeahead) {
+			:global(.character-typeahead),
+			:global(.weapon-typeahead) {
 				width: var(--custom-width, 240px);
 			}
 
