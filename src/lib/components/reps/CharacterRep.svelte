@@ -104,29 +104,32 @@
 		height: 100%;
 		display: flex;
 		gap: $unit-half;
+		align-items: stretch; // Squares section stretches to match portraits height
 	}
 
-	// Standard mode: 3 portraits taking full height
+	// Standard mode: 3 portraits - each gets flex: 1 to share width equally
 	.portraits {
 		display: flex;
 		gap: $unit-half;
-		height: 100%;
+		flex: 3; // Portraits section takes 3 parts
 
 		.character {
-			height: 100%;
+			flex: 1;
 			aspect-ratio: 16/33;
 		}
 	}
 
-	// Standard mode: 2 stacked squares with gap filling remaining height
+	// Standard mode: 2 stacked squares with forced gap
 	.squares {
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
-		height: 100%;
+		gap: $unit-half; // Forced minimum gap
+		flex: 1; // Squares section takes 1 part
 
 		.character {
+			flex: 1; // Each takes half remaining height after gap
 			aspect-ratio: 1/1;
+			min-height: 0; // Allow shrinking to fit
 		}
 	}
 
