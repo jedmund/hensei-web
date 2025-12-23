@@ -164,7 +164,8 @@
 						{#each options as option}
 							<SelectPrimitive.Item
 								value={String(option.value)}
-								{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
+								label={option.label}
+								disabled={option.disabled}
 								class="item"
 							>
 								{#snippet children({ selected })}
@@ -219,7 +220,8 @@
 						{#each options as option}
 							<SelectPrimitive.Item
 								value={String(option.value)}
-								{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
+								label={option.label}
+								disabled={option.disabled}
 								class="item"
 							>
 								{#snippet children({ selected })}
@@ -456,10 +458,6 @@
 			opacity: 0.5;
 		}
 
-		&[data-highlighted] {
-			background-color: var(--option-bg-hover);
-		}
-
 		&[data-selected] {
 			font-weight: $medium;
 		}
@@ -494,5 +492,10 @@
 			margin-left: auto;
 			color: var(--accent-color);
 		}
+	}
+
+	// Highlighted state (separate global selector for typeahead)
+	:global([data-select-item].item[data-highlighted]) {
+		background-color: var(--option-bg-hover);
 	}
 </style>

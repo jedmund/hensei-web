@@ -93,17 +93,17 @@
 			{#each options as option}
 				<SelectPrimitive.Item
 					value={String(option.value)}
+					label={option.label}
 					disabled={option.disabled}
 					class="multi-item"
 					style={option.color ? `--option-color: ${option.color}` : ''}
 				>
 					{#snippet children({ selected })}
-						<span class="label" class:has-color={!!option.color} class:selected>{option.label}</span>
-						{#if selected}
-							<span class="indicator">
-								<Icon name="check" size={14} />
-							</span>
-						{/if}
+						<span class="label" class:has-color={!!option.color} class:selected>{option.label}</span
+						>
+						<span class="indicator">
+							<Icon name="check" size={12} class="check-icon {selected ? 'visible' : ''}" />
+						</span>
 					{/snippet}
 				</SelectPrimitive.Item>
 			{/each}
@@ -149,7 +149,7 @@
 		}
 
 		&[data-placeholder='true'] .text {
-			color: var(--text-tertiary);
+			color: var(--text-secondary);
 		}
 
 		&.has-value {
@@ -163,7 +163,7 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			color: var(--text-tertiary);
+			color: var(--text-secondary);
 		}
 
 		:global(.chevron) {
@@ -235,7 +235,7 @@
 		@include smooth-transition($duration-quick, background-color);
 
 		&:hover {
-			background-color: var(--option-bg-hover);
+			background-color: var(--select-contained-bg-hover);
 		}
 
 		&[data-disabled] {
@@ -244,12 +244,29 @@
 			opacity: 0.5;
 		}
 
-		&[data-highlighted] {
-			background-color: var(--option-bg-hover);
+		&:first-child {
+			border-top-left-radius: $item-corner;
+			border-top-right-radius: $item-corner;
+		}
+
+		&:last-child {
+			border-bottom-left-radius: $item-corner;
+			border-bottom-right-radius: $item-corner;
+		}
+
+		:global(.check-icon) {
+			opacity: 0;
+			transition: opacity $duration-quick ease;
+			color: var(--text-tertiary);
+		}
+
+		:global(.check-icon.visible) {
+			opacity: 1;
 		}
 
 		.label {
 			flex: 1;
+			min-width: $unit-8x;
 
 			&.selected {
 				font-weight: $medium;
@@ -259,11 +276,11 @@
 				&::before {
 					content: '';
 					display: inline-block;
-					width: 8px;
-					height: 8px;
+					width: 10px;
+					height: 10px;
 					border-radius: 50%;
 					background: var(--option-color);
-					margin-right: $unit-half;
+					margin-right: $unit;
 				}
 			}
 		}
@@ -272,5 +289,10 @@
 			margin-left: auto;
 			color: var(--accent-color);
 		}
+	}
+
+	// Highlighted state (separate global selector for typeahead)
+	:global([data-select-item].multi-item[data-highlighted]) {
+		background-color: var(--option-bg-hover);
 	}
 </style>
