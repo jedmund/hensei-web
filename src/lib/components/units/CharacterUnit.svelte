@@ -176,7 +176,7 @@
 	}
 </script>
 
-<div class="unit {elementClass}" class:empty={!item} class:is-active={isActive}>
+<div class="unit {elementClass}" class:empty={!item} class:is-active={isActive} class:orphaned={item?.orphaned}>
 	{#if item}
 		<UnitMenuContainer showGearButton={true}>
 			{#snippet trigger()}
@@ -217,6 +217,11 @@
 									alt="Perpetuity Ring"
 									title="Perpetuity Ring"
 								/>
+							{/if}
+							{#if item?.orphaned}
+								<div class="orphaned-badge" title="This item is no longer in your collection">
+									<Icon name="alertTriangle" size={16} />
+								</div>
 							{/if}
 							{#if imageUrl}
 								<img
@@ -615,6 +620,36 @@
 
 		&.neutral .name {
 			color: colors.$grey-40;
+		}
+	}
+
+	.orphaned-badge {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		width: 24px;
+		height: 24px;
+		background: #d13a3a;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		z-index: 10;
+		pointer-events: auto;
+		cursor: help;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	}
+
+	// Orphaned state
+	.unit.orphaned {
+		.frame {
+			opacity: 0.7;
+			border: 2px solid #d13a3a;
+		}
+
+		.name {
+			color: #d13a3a;
 		}
 	}
 </style>
