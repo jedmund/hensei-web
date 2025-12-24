@@ -316,6 +316,14 @@
 	// Check if syncing is in progress
 	const isSyncingAll = $derived(syncAllItems.isPending)
 
+	// Check if any items in the party are orphaned (linked collection item was deleted)
+	const hasOrphanedItems = $derived.by(() => {
+		const hasOrphanedWeapons = (party?.weapons ?? []).some((w) => w?.orphaned)
+		const hasOrphanedCharacters = (party?.characters ?? []).some((c) => c?.orphaned)
+		const hasOrphanedSummons = (party?.summons ?? []).some((s) => s?.orphaned)
+		return hasOrphanedWeapons || hasOrphanedCharacters || hasOrphanedSummons
+	})
+
 	function handleTabChange(tab: GridType) {
 		activeTab = tab // Instant UI update
 
@@ -941,6 +949,13 @@
 				{/snippet}
 			</PartyInfoGrid>
 
+			{#if hasOrphanedItems}
+				<div class="orphan-warning" role="alert">
+					<Icon name="alertTriangle" size={16} />
+					<span>Some items in this party are no longer in your collection and may have outdated data.</span>
+				</div>
+			{/if}
+
 			<PartySegmentedControl
 				selectedTab={activeTab}
 				onTabChange={handleTabChange}
@@ -1147,6 +1162,23 @@
 
 		&:hover:not(:disabled) {
 			background: color.adjust($error, $lightness: -10%);
+		}
+	}
+
+	.orphan-warning {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		padding: $unit $unit-2x;
+		background: rgba(209, 137, 58, 0.15);
+		border: 1px solid rgba(209, 137, 58, 0.4);
+		border-radius: $unit-half;
+		color: #c47a1a;
+		font-size: $font-small;
+
+		:global(svg) {
+			flex-shrink: 0;
+			color: #c47a1a;
 		}
 	}
 </style>

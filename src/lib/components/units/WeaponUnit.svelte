@@ -152,6 +152,7 @@
 	class:empty={!item}
 	class:extra={position >= 9}
 	class:is-active={isActive}
+	class:orphaned={item?.orphaned}
 >
 	{#if item}
 		<UnitMenuContainer showGearButton={true}>
@@ -173,6 +174,11 @@
 							onclick={() => viewDetails()}
 						>
 							<div class="modifiers">
+								{#if item?.orphaned}
+									<div class="orphaned-badge" title="This item is no longer in your collection">
+										<Icon name="alertTriangle" size={16} />
+									</div>
+								{/if}
 								{#if awakeningImage}
 									<img
 										class="awakening"
@@ -448,6 +454,24 @@
 		z-index: 3;
 		pointer-events: none;
 
+		.orphaned-badge {
+			position: absolute;
+			top: 4px;
+			right: 4px;
+			width: 24px;
+			height: 24px;
+			background: #d13a3a;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: white;
+			z-index: 10;
+			pointer-events: auto;
+			cursor: help;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		}
+
 		.awakening {
 			position: absolute;
 			width: 30%;
@@ -464,6 +488,18 @@
 				width: 20%;
 				height: auto;
 			}
+		}
+	}
+
+	// Orphaned state
+	.unit.orphaned {
+		.frame {
+			opacity: 0.7;
+			border: 2px solid #d13a3a;
+		}
+
+		.name {
+			color: #d13a3a;
 		}
 	}
 

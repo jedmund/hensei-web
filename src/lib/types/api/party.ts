@@ -38,6 +38,8 @@ export interface GridWeapon {
   collectionWeaponId?: string
   /** Whether the grid item is out of sync with its collection source */
   outOfSync?: boolean
+  /** Whether the linked collection item has been deleted (item is orphaned) */
+  orphaned?: boolean
 }
 
 // GridCharacter from GridCharacterBlueprint
@@ -60,6 +62,8 @@ export interface GridCharacter {
   collectionCharacterId?: string
   /** Whether the grid item is out of sync with its collection source */
   outOfSync?: boolean
+  /** Whether the linked collection item has been deleted (item is orphaned) */
+  orphaned?: boolean
 }
 
 // GridSummon from GridSummonBlueprint
@@ -76,6 +80,8 @@ export interface GridSummon {
   collectionSummonId?: string
   /** Whether the grid item is out of sync with its collection source */
   outOfSync?: boolean
+  /** Whether the linked collection item has been deleted (item is orphaned) */
+  orphaned?: boolean
 }
 
 // JobSkillList for party job skills
@@ -115,6 +121,8 @@ export interface Party {
   extra?: boolean
   remix?: boolean
   editKey?: string
+  /** Whether the party contains any orphaned grid items */
+  hasOrphanedItems?: boolean
 
   // Relationships
   weapons: GridWeapon[]
