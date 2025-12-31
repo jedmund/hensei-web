@@ -17,6 +17,7 @@ import type {
 	CreateWeaponSeriesPayload,
 	UpdateWeaponSeriesPayload
 } from '$lib/types/api/weaponSeries'
+import type { WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
 import type {
 	CharacterSeriesRef,
 	CharacterSeries,
@@ -731,10 +732,47 @@ export class EntityAdapter extends BaseAdapter {
 		})
 	}
 
+	// ============================================
+	// Weapon Stat Modifier Methods (AX Skills & Befoulments)
+	// ============================================
+
+	/**
+	 * Gets all weapon stat modifiers (AX skills and befoulments)
+	 * @param category - Optional filter: 'ax' or 'befoulment'
+	 */
+	async getWeaponStatModifiers(category?: 'ax' | 'befoulment'): Promise<WeaponStatModifier[]> {
+		const searchParams = new URLSearchParams()
+		if (category) {
+			searchParams.set('category', category)
+		}
+
+		const queryString = searchParams.toString()
+		const url = queryString ? `/weapon_stat_modifiers?${queryString}` : '/weapon_stat_modifiers'
+
+		return this.request<WeaponStatModifier[]>(url, {
+			method: 'GET',
+			cacheTTL: 3600000 // Cache for 1 hour - reference data rarely changes
+		})
+	}
+
+	/**
+	 * Gets AX skills only
+	 */
+	async getAxSkills(): Promise<WeaponStatModifier[]> {
+		return this.getWeaponStatModifiers('ax')
+	}
+
+	/**
+	 * Gets befoulments only
+	 */
+	async getBefoulments(): Promise<WeaponStatModifier[]> {
+		return this.getWeaponStatModifiers('befoulment')
+	}
+
 	/**
 	 * Clears entity cache
 	 */
-	clearEntityCache(type?: 'weapons' | 'characters' | 'summons' | 'weapon_keys' | 'weapon_series') {
+	clearEntityCache(type?: 'weapons' | 'characters' | 'summons' | 'weapon_keys' | 'weapon_series' | 'weapon_stat_modifiers') {
 		if (type) {
 			this.clearCache(`/${type}`)
 		} else {
@@ -744,6 +782,7 @@ export class EntityAdapter extends BaseAdapter {
 			this.clearCache('/summons')
 			this.clearCache('/weapon_keys')
 			this.clearCache('/weapon_series')
+			this.clearCache('/weapon_stat_modifiers')
 		}
 	}
 

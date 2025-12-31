@@ -259,12 +259,6 @@ export interface WeaponKey {
   order: number
 }
 
-// SimpleAxSkill for weapon AX skills
-export interface SimpleAxSkill {
-  modifier: number
-  strength: number
-}
-
 // Guidebook entity
 export interface Guidebook {
   id: string
