@@ -8,7 +8,7 @@ const mockOmegaSeries = {
 	name: { en: 'Omega', ja: 'マグナ' },
 	hasWeaponKeys: false,
 	hasAwakening: true,
-	hasAxSkills: true,
+	augmentType: 'ax' as const,
 	extra: false,
 	elementChangeable: false
 };
@@ -19,7 +19,7 @@ const mockOpusSeries = {
 	name: { en: 'Opus', ja: 'オプス' },
 	hasWeaponKeys: true,
 	hasAwakening: true,
-	hasAxSkills: false,
+	augmentType: 'none' as const,
 	extra: false,
 	elementChangeable: false
 };
@@ -30,7 +30,7 @@ const mockDraconicSeries = {
 	name: { en: 'Draconic', ja: 'ドラゴニック' },
 	hasWeaponKeys: true,
 	hasAwakening: false,
-	hasAxSkills: false,
+	augmentType: 'none' as const,
 	extra: false,
 	elementChangeable: false
 };

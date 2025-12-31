@@ -6,6 +6,7 @@ export interface ModificationStatus {
 	hasAwakening: boolean
 	hasWeaponKeys: boolean
 	hasAxSkills: boolean
+	hasBefoulment: boolean
 	hasRings: boolean
 	hasEarring: boolean
 	hasPerpetuity: boolean
@@ -25,6 +26,7 @@ export function detectModifications(
 		hasAwakening: false,
 		hasWeaponKeys: false,
 		hasAxSkills: false,
+		hasBefoulment: false,
 		hasRings: false,
 		hasEarring: false,
 		hasPerpetuity: false,
@@ -60,6 +62,7 @@ export function detectModifications(
 		status.hasAwakening = !!weapon.awakening
 		status.hasWeaponKeys = !!(weapon.weaponKeys && weapon.weaponKeys.length > 0)
 		status.hasAxSkills = !!(weapon.ax && weapon.ax.length > 0)
+		status.hasBefoulment = !!weapon.befoulment?.modifier
 		status.hasTranscendence = !!(weapon.transcendenceStep && weapon.transcendenceStep > 0)
 		status.hasUncapLevel = weapon.uncapLevel !== undefined && weapon.uncapLevel !== null
 		status.hasElement = !!(weapon.element && weapon.weapon?.element === 0)
@@ -68,6 +71,7 @@ export function detectModifications(
 			status.hasAwakening ||
 			status.hasWeaponKeys ||
 			status.hasAxSkills ||
+			status.hasBefoulment ||
 			status.hasTranscendence ||
 			status.hasUncapLevel ||
 			status.hasElement
@@ -111,13 +115,14 @@ export function canWeaponBeModified(gridWeapon: GridWeapon | undefined): boolean
 	// Weapon keys (series-specific) - use utility function that handles both formats
 	const hasWeaponKeys = seriesHasWeaponKeys(weapon.series)
 
-	// AX skills
-	const hasAxSkills = weapon.ax === true
+	// AX skills or Befoulment - check augmentType from series
+	const augmentType = weapon.series?.augmentType ?? 'none'
+	const hasAugments = augmentType !== 'none'
 
 	// Awakening (maxAwakeningLevel > 0 means it can have awakening)
 	const hasAwakening = (weapon.maxAwakeningLevel ?? 0) > 0
 
-	return canChangeElement || hasWeaponKeys || hasAxSkills || hasAwakening
+	return canChangeElement || hasWeaponKeys || hasAugments || hasAwakening
 }
 
 /**
