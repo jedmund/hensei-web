@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { GridWeapon } from '$lib/types/api/party'
 	import type { WeaponKey } from '$lib/api/adapters/entity.adapter'
-	import type { Awakening, SimpleAxSkill } from '$lib/types/api/entities'
+	import type { Awakening } from '$lib/types/api/entities'
+	import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 	import DetailsSection from './details/DetailsSection.svelte'
 	import ItemHeader from './details/ItemHeader.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
@@ -52,12 +53,7 @@
 	let awakeningLevel = $state(weapon.awakening?.level ?? 1)
 
 	// AX skill state - initialize from existing AX skills
-	let axSkills = $state<SimpleAxSkill[]>(
-		weapon.ax ?? [
-			{ modifier: -1, strength: 0 },
-			{ modifier: -1, strength: 0 }
-		]
-	)
+	let axSkills = $state<AugmentSkill[]>(weapon.ax ?? [])
 
 	// Weapon data shortcuts
 	const weaponData = $derived(weapon.weapon)
@@ -125,9 +121,9 @@
 		weaponKey3Id?: string | null
 		awakeningId?: string | null
 		awakeningLevel?: number
-		axModifier1?: number | null
+		axModifier1Id?: string | null
 		axStrength1?: number | null
-		axModifier2?: number | null
+		axModifier2Id?: string | null
 		axStrength2?: number | null
 	}
 
@@ -169,26 +165,23 @@
 			}
 		}
 
-		// AX skills - send modifier/strength pairs
+		// AX skills - send modifier IDs and strength values
 		if (hasAxSkills) {
-			const originalAx = weapon.ax ?? [
-				{ modifier: -1, strength: 0 },
-				{ modifier: -1, strength: 0 }
-			]
+			const originalAx = weapon.ax ?? []
 
 			const ax1 = axSkills[0]
 			const ax2 = axSkills[1]
 			const origAx1 = originalAx[0]
 			const origAx2 = originalAx[1]
 
-			if (ax1?.modifier !== origAx1?.modifier) {
-				updates.axModifier1 = ax1?.modifier ?? null
+			if (ax1?.modifier?.id !== origAx1?.modifier?.id) {
+				updates.axModifier1Id = ax1?.modifier?.id ?? null
 			}
 			if (ax1?.strength !== origAx1?.strength) {
 				updates.axStrength1 = ax1?.strength ?? null
 			}
-			if (ax2?.modifier !== origAx2?.modifier) {
-				updates.axModifier2 = ax2?.modifier ?? null
+			if (ax2?.modifier?.id !== origAx2?.modifier?.id) {
+				updates.axModifier2Id = ax2?.modifier?.id ?? null
 			}
 			if (ax2?.strength !== origAx2?.strength) {
 				updates.axStrength2 = ax2?.strength ?? null
@@ -212,10 +205,7 @@
 		weaponKey3 = weapon.weaponKeys?.[2]?.id
 		selectedAwakening = weapon.awakening?.type
 		awakeningLevel = weapon.awakening?.level ?? 1
-		axSkills = weapon.ax ?? [
-			{ modifier: -1, strength: 0 },
-			{ modifier: -1, strength: 0 }
-		]
+		axSkills = weapon.ax ?? []
 		onCancel?.()
 	}
 </script>

@@ -10,7 +10,8 @@
 	 * - AX skills (for weapons with AX support)
 	 * - Awakening (for weapons with awakening support)
 	 */
-	import type { Weapon, Awakening, SimpleAxSkill } from '$lib/types/api/entities'
+	import type { Weapon, Awakening } from '$lib/types/api/entities'
+	import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
@@ -31,7 +32,7 @@
 			type?: Awakening
 			level: number
 		} | null
-		axSkills: SimpleAxSkill[]
+		axSkills: AugmentSkill[]
 	}
 
 	export interface WeaponEditUpdates {
@@ -46,9 +47,9 @@
 			id: string
 			level: number
 		} | null
-		axModifier1?: number
+		axModifier1Id?: string
 		axStrength1?: number
-		axModifier2?: number
+		axModifier2Id?: string
 		axStrength2?: number
 	}
 
@@ -72,14 +73,7 @@
 	let weaponKey3 = $state<string | undefined>(currentValues.weaponKey3Id)
 	let selectedAwakening = $state<Awakening | undefined>(currentValues.awakening?.type)
 	let awakeningLevel = $state(currentValues.awakening?.level ?? 1)
-	let axSkills = $state<SimpleAxSkill[]>(
-		currentValues.axSkills.length > 0
-			? currentValues.axSkills
-			: [
-					{ modifier: -1, strength: 0 },
-					{ modifier: -1, strength: 0 }
-				]
-	)
+	let axSkills = $state<AugmentSkill[]>(currentValues.axSkills ?? [])
 
 	// Re-initialize when currentValues changes
 	$effect(() => {
@@ -91,13 +85,7 @@
 		weaponKey3 = currentValues.weaponKey3Id
 		selectedAwakening = currentValues.awakening?.type
 		awakeningLevel = currentValues.awakening?.level ?? 1
-		axSkills =
-			currentValues.axSkills.length > 0
-				? currentValues.axSkills
-				: [
-						{ modifier: -1, strength: 0 },
-						{ modifier: -1, strength: 0 }
-					]
+		axSkills = currentValues.axSkills ?? []
 	})
 
 	// Derived conditions
@@ -196,13 +184,13 @@
 		}
 
 		// AX Skills
-		if (hasAxSkills && axSkills.length >= 2) {
-			if (axSkills[0] && axSkills[0].modifier >= 0) {
-				updates.axModifier1 = axSkills[0].modifier
+		if (hasAxSkills) {
+			if (axSkills[0]?.modifier?.id) {
+				updates.axModifier1Id = axSkills[0].modifier.id
 				updates.axStrength1 = axSkills[0].strength
 			}
-			if (axSkills[1] && axSkills[1].modifier >= 0) {
-				updates.axModifier2 = axSkills[1].modifier
+			if (axSkills[1]?.modifier?.id) {
+				updates.axModifier2Id = axSkills[1].modifier.id
 				updates.axStrength2 = axSkills[1].strength
 			}
 		}

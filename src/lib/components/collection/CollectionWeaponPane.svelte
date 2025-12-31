@@ -10,7 +10,7 @@
 	 */
 	import { onMount } from 'svelte'
 	import type { CollectionWeapon } from '$lib/types/api/collection'
-	import type { SimpleAxSkill } from '$lib/types/api/entities'
+	import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 	import {
 		useUpdateCollectionWeapon,
 		useRemoveWeaponFromCollection
@@ -89,7 +89,7 @@
 					level: weapon.awakening.level
 				}
 			: null,
-		axSkills: (weapon.ax as SimpleAxSkill[]) ?? []
+		axSkills: (weapon.ax as AugmentSkill[]) ?? []
 	})
 
 	// Element name for theming
@@ -247,7 +247,7 @@
 	// Check conditions
 	const hasAwakening = $derived(weapon.awakening !== null)
 	const hasWeaponKeys = $derived((weapon.weaponKeys?.length ?? 0) > 0)
-	const hasAxSkills = $derived((weapon.ax?.length ?? 0) > 0 && weapon.ax?.some(ax => ax.modifier >= 0))
+	const hasAxSkills = $derived((weapon.ax?.length ?? 0) > 0 && weapon.ax?.some(ax => ax.modifier?.id))
 	const canChangeElement = $derived(weaponData?.element === 0)
 
 	// Set up sidebar action on mount and clean up on destroy
@@ -334,8 +334,8 @@
 
 				<DetailsSection title="AX Skills" empty={!hasAxSkills} emptyMessage="Not set">
 					{#each weapon.ax ?? [] as ax, i}
-						{#if ax.modifier >= 0}
-							<DetailRow label="Skill {i + 1}" value={`${ax.modifier}: ${ax.strength}`} />
+						{#if ax.modifier?.id}
+							<DetailRow label="Skill {i + 1}" value={`${ax.modifier.nameEn} +${ax.strength}${ax.modifier.suffix ?? ''}`} />
 						{/if}
 					{/each}
 				</DetailsSection>

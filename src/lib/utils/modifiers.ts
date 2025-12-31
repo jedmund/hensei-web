@@ -3,7 +3,7 @@
  */
 
 import type { Awakening, WeaponKey } from '$lib/types/api/entities'
-import type { SimpleAxSkill } from '$lib/types/SimpleAxSkill'
+import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 import { isWeaponSeriesRef, type WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 import { getBasePath } from '$lib/utils/images'
 
@@ -120,10 +120,14 @@ export function getAxSkillImage(axSkill?: { slug?: string }): string | null {
 
 /**
  * Get all AX skill images for a weapon
- * Note: This is a placeholder until ax data structure is fully implemented
  */
-export function getAxSkillImages(ax?: SimpleAxSkill[]): Array<{ url: string; alt: string }> {
-	// TODO: Implement when ax data reference is available
-	// This would need to map ax modifiers to actual ax skill data
-	return []
+export function getAxSkillImages(ax?: AugmentSkill[]): Array<{ url: string; alt: string }> {
+	if (!ax || ax.length === 0) return []
+
+	return ax
+		.filter((skill) => skill.modifier?.slug)
+		.map((skill) => ({
+			url: `${getBasePath()}/ax/${skill.modifier.slug}.png`,
+			alt: skill.modifier.nameEn || skill.modifier.slug || 'AX Skill'
+		}))
 }
