@@ -29,7 +29,7 @@ describe('GridAdapter', () => {
 			name: { en: 'Dark Opus', ja: 'ダークオーパス' },
 			hasWeaponKeys: true,
 			hasAwakening: true,
-			hasAxSkills: false,
+			augmentType: 'none',
 			extra: false,
 			elementChangeable: false
 		},
