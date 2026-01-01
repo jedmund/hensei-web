@@ -4,6 +4,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
@@ -17,8 +18,19 @@
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
 
-	// View mode state
-	let viewMode = $state<'weapons' | 'series'>('weapons')
+	// View mode state - read initial value from URL
+	const initialView = $page.url.searchParams.get('view')
+	let viewMode = $state<'weapons' | 'series'>(initialView === 'series' ? 'series' : 'weapons')
+
+	// Sync viewMode changes to URL
+	$effect(() => {
+		const currentView = $page.url.searchParams.get('view')
+		if (viewMode === 'series' && currentView !== 'series') {
+			goto('?view=series', { replaceState: true, noScroll: true })
+		} else if (viewMode === 'weapons' && currentView === 'series') {
+			goto('/database/weapons', { replaceState: true, noScroll: true })
+		}
+	})
 
 	// Query for weapon series
 	const weaponSeriesQuery = createQuery(() => entityQueries.weaponSeriesList())
@@ -30,8 +42,8 @@
 	})
 
 	// Navigate to series detail
-	function handleSeriesClick(seriesId: string) {
-		goto(`/database/series/${seriesId}`)
+	function handleSeriesClick(slug: string) {
+		goto(`/database/series/weapons/${slug}`)
 	}
 
 	// Column configuration for weapons
@@ -130,7 +142,7 @@
 						</thead>
 						<tbody>
 							{#each sortedSeries as series (series.id)}
-								<tr onclick={() => handleSeriesClick(series.id)} class="clickable">
+								<tr onclick={() => handleSeriesClick(series.slug)} class="clickable">
 									<td class="col-order">{series.order}</td>
 									<td class="col-name">
 										<span class="series-name">{series.name.en}</span>
@@ -188,8 +200,7 @@
 	.controls {
 		display: flex;
 		align-items: center;
-		padding: spacing.$unit;
-		border-bottom: 1px solid #e5e5e5;
+		padding: spacing.$unit-2x;
 		gap: spacing.$unit;
 	}
 
@@ -216,7 +227,7 @@
 
 		th,
 		td {
-			padding: spacing.$unit spacing.$unit-2x;
+			padding: spacing.$unit-2x spacing.$unit-2x;
 			text-align: left;
 			border-bottom: 1px solid #e5e5e5;
 		}
@@ -262,7 +273,7 @@
 	}
 
 	.series-name {
-		font-weight: typography.$bold;
+		font-weight: typography.$normal;
 	}
 
 	.no-flags {
