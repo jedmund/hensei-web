@@ -20,7 +20,7 @@ export interface WeaponSeriesRef {
 	name: { en: string; ja: string }
 	hasWeaponKeys: boolean
 	hasAwakening: boolean
-	/** Type of augment this series supports: "ax", "befoulment", or "none" */
+	/** Type of augment this series supports: "ax", "befoulment", or "no_augment" */
 	augmentType: AugmentType
 	extra: boolean
 	elementChangeable: boolean
@@ -40,7 +40,7 @@ export interface WeaponSeries {
 	elementChangeable: boolean
 	hasWeaponKeys: boolean
 	hasAwakening: boolean
-	/** Type of augment this series supports: "ax", "befoulment", or "none" */
+	/** Type of augment this series supports: "ax", "befoulment", or "no_augment" */
 	augmentType: AugmentType
 	// Only included in :full view (show endpoint)
 	weaponCount?: number
