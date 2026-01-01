@@ -114,7 +114,7 @@
 	const keySlotCount = $derived(seriesSlug ? (WEAPON_KEY_SLOTS[seriesSlug] ?? 2) : 0)
 
 	// Augment type from series determines AX skills vs befoulment
-	const augmentType = $derived(series?.augmentType ?? 'none')
+	const augmentType = $derived(series?.augmentType ?? 'no_augment')
 	const hasAxSkills = $derived(augmentType === 'ax')
 	const hasBefoulment = $derived(augmentType === 'befoulment')
 	const hasAwakening = $derived((weaponData?.maxAwakeningLevel ?? 0) > 0)

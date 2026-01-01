@@ -116,8 +116,8 @@ export function canWeaponBeModified(gridWeapon: GridWeapon | undefined): boolean
 	const hasWeaponKeys = seriesHasWeaponKeys(weapon.series)
 
 	// AX skills or Befoulment - check augmentType from series
-	const augmentType = weapon.series?.augmentType ?? 'none'
-	const hasAugments = augmentType !== 'none'
+	const augmentType = weapon.series?.augmentType ?? 'no_augment'
+	const hasAugments = augmentType !== 'no_augment'
 
 	// Awakening (maxAwakeningLevel > 0 means it can have awakening)
 	const hasAwakening = (weapon.maxAwakeningLevel ?? 0) > 0

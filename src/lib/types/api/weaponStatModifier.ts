@@ -11,7 +11,7 @@
  * Augment type enum for weapon series.
  * Determines whether a weapon series supports AX skills, befoulments, or neither.
  */
-export type AugmentType = 'none' | 'ax' | 'befoulment'
+export type AugmentType = 'no_augment' | 'ax' | 'befoulment'
 
 /**
  * WeaponStatModifier from the API.
