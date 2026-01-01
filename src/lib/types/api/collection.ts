@@ -2,6 +2,7 @@
 // These define user-owned items with customizations
 
 import type { Character, Weapon, Summon, JobAccessory, Awakening } from './entities'
+import type { AugmentSkill, Befoulment } from './weaponStatModifier'
 
 /**
  * Extended mastery modifier (used for rings and earrings)
@@ -43,7 +44,10 @@ export interface CollectionWeapon {
 	uncapLevel: number
 	transcendenceStep: number
 	element?: number // For element-changeable weapons
-	ax?: Array<{ modifier: number; strength: number }>
+	/** AX skills with full modifier objects */
+	ax?: AugmentSkill[]
+	/** Befoulment for Odiant weapons */
+	befoulment?: Befoulment
 	awakening: {
 		type: Awakening
 		level: number
@@ -122,10 +126,15 @@ export interface CollectionWeaponInput {
 	weaponKey4Id?: string
 	awakeningId?: string
 	awakeningLevel?: number
-	axModifier1?: number
+	// AX skills (uses FK IDs for API payload)
+	axModifier1Id?: string
 	axStrength1?: number
-	axModifier2?: number
+	axModifier2Id?: string
 	axStrength2?: number
+	// Befoulment (for Odiant weapons)
+	befoulmentModifierId?: string
+	befoulmentStrength?: number
+	exorcismLevel?: number
 }
 
 /**

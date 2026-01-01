@@ -1,20 +1,6 @@
-import type { SimpleAxSkill } from '$lib/types/api/entities'
+import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 import { getRingStat, getEarringStat, getElementalizedEarringStat } from './masteryUtils'
 import { isWeaponSeriesRef, type WeaponSeriesRef } from '$lib/types/api/weaponSeries'
-
-const AX_SKILL_NAMES: Record<number, string> = {
-	1: 'Attack',
-	2: 'HP',
-	3: 'Double Attack',
-	4: 'Triple Attack',
-	5: 'C.A. DMG',
-	6: 'C.A. DMG Cap',
-	7: 'Skill DMG',
-	8: 'Skill DMG Cap',
-	9: 'Stamina',
-	10: 'Enmity',
-	11: 'Critical Hit'
-}
 
 export function formatRingStat(
 	modifier: number,
@@ -46,9 +32,9 @@ export function formatEarringStat(
 	return `${statName} +${strength}${stat.suffix}`
 }
 
-export function formatAxSkill(ax: SimpleAxSkill): string {
-	const skillName = AX_SKILL_NAMES[ax.modifier] || `Unknown (${ax.modifier})`
-	const suffix = ax.modifier <= 2 ? '' : '%'
+export function formatAxSkill(ax: AugmentSkill, locale: 'en' | 'ja' = 'en'): string {
+	const skillName = locale === 'ja' ? ax.modifier.nameJp : ax.modifier.nameEn
+	const suffix = ax.modifier.suffix ?? ''
 	return `${skillName} +${ax.strength}${suffix}`
 }
 

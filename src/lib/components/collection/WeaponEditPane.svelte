@@ -10,12 +10,14 @@
 	 * - AX skills (for weapons with AX support)
 	 * - Awakening (for weapons with awakening support)
 	 */
-	import type { Weapon, Awakening, SimpleAxSkill } from '$lib/types/api/entities'
+	import type { Weapon, Awakening } from '$lib/types/api/entities'
+	import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
 	import AwakeningSelect from '$lib/components/sidebar/edit/AwakeningSelect.svelte'
 	import AxSkillSelect from '$lib/components/sidebar/edit/AxSkillSelect.svelte'
+	import BefoulmentSelect from '$lib/components/sidebar/edit/BefoulmentSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getElementIcon } from '$lib/utils/images'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
@@ -31,7 +33,8 @@
 			type?: Awakening
 			level: number
 		} | null
-		axSkills: SimpleAxSkill[]
+		axSkills: AugmentSkill[]
+		befoulment?: Befoulment | null
 	}
 
 	export interface WeaponEditUpdates {
@@ -46,10 +49,13 @@
 			id: string
 			level: number
 		} | null
-		axModifier1?: number
+		axModifier1Id?: string
 		axStrength1?: number
-		axModifier2?: number
+		axModifier2Id?: string
 		axStrength2?: number
+		befoulmentModifierId?: string
+		befoulmentStrength?: number
+		exorcismLevel?: number
 	}
 
 	interface Props {
@@ -72,14 +78,8 @@
 	let weaponKey3 = $state<string | undefined>(currentValues.weaponKey3Id)
 	let selectedAwakening = $state<Awakening | undefined>(currentValues.awakening?.type)
 	let awakeningLevel = $state(currentValues.awakening?.level ?? 1)
-	let axSkills = $state<SimpleAxSkill[]>(
-		currentValues.axSkills.length > 0
-			? currentValues.axSkills
-			: [
-					{ modifier: -1, strength: 0 },
-					{ modifier: -1, strength: 0 }
-				]
-	)
+	let axSkills = $state<AugmentSkill[]>(currentValues.axSkills ?? [])
+	let befoulment = $state<Befoulment | null>(currentValues.befoulment ?? null)
 
 	// Re-initialize when currentValues changes
 	$effect(() => {
@@ -91,13 +91,8 @@
 		weaponKey3 = currentValues.weaponKey3Id
 		selectedAwakening = currentValues.awakening?.type
 		awakeningLevel = currentValues.awakening?.level ?? 1
-		axSkills =
-			currentValues.axSkills.length > 0
-				? currentValues.axSkills
-				: [
-						{ modifier: -1, strength: 0 },
-						{ modifier: -1, strength: 0 }
-					]
+		axSkills = currentValues.axSkills ?? []
+		befoulment = currentValues.befoulment ?? null
 	})
 
 	// Derived conditions
@@ -118,8 +113,10 @@
 	const hasWeaponKeys = $derived(seriesHasWeaponKeys(series))
 	const keySlotCount = $derived(seriesSlug ? (WEAPON_KEY_SLOTS[seriesSlug] ?? 2) : 0)
 
-	const hasAxSkills = $derived(weaponData?.ax === true)
-	const axType = $derived(weaponData?.axType ?? 1)
+	// Augment type from series determines AX skills vs befoulment
+	const augmentType = $derived(series?.augmentType ?? 'none')
+	const hasAxSkills = $derived(augmentType === 'ax')
+	const hasBefoulment = $derived(augmentType === 'befoulment')
 	const hasAwakening = $derived((weaponData?.maxAwakeningLevel ?? 0) > 0)
 	const availableAwakenings = $derived(weaponData?.awakenings ?? [])
 
@@ -196,14 +193,23 @@
 		}
 
 		// AX Skills
-		if (hasAxSkills && axSkills.length >= 2) {
-			if (axSkills[0] && axSkills[0].modifier >= 0) {
-				updates.axModifier1 = axSkills[0].modifier
+		if (hasAxSkills) {
+			if (axSkills[0]?.modifier?.id) {
+				updates.axModifier1Id = axSkills[0].modifier.id
 				updates.axStrength1 = axSkills[0].strength
 			}
-			if (axSkills[1] && axSkills[1].modifier >= 0) {
-				updates.axModifier2 = axSkills[1].modifier
+			if (axSkills[1]?.modifier?.id) {
+				updates.axModifier2Id = axSkills[1].modifier.id
 				updates.axStrength2 = axSkills[1].strength
+			}
+		}
+
+		// Befoulment
+		if (hasBefoulment) {
+			if (befoulment?.modifier?.id) {
+				updates.befoulmentModifierId = befoulment.modifier.id
+				updates.befoulmentStrength = befoulment.strength
+				updates.exorcismLevel = befoulment.exorcismLevel
 			}
 		}
 
@@ -279,10 +285,22 @@
 			<DetailsSection title="AX Skills">
 				<div class="section-content">
 					<AxSkillSelect
-						{axType}
 						currentSkills={axSkills}
 						onChange={(skills) => {
 							axSkills = skills
+						}}
+					/>
+				</div>
+			</DetailsSection>
+		{/if}
+
+		{#if hasBefoulment}
+			<DetailsSection title="Befoulment">
+				<div class="section-content">
+					<BefoulmentSelect
+						currentBefoulment={befoulment}
+						onChange={(bef) => {
+							befoulment = bef
 						}}
 					/>
 				</div>

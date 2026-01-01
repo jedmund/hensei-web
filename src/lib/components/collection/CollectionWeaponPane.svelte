@@ -10,7 +10,7 @@
 	 */
 	import { onMount } from 'svelte'
 	import type { CollectionWeapon } from '$lib/types/api/collection'
-	import type { SimpleAxSkill } from '$lib/types/api/entities'
+	import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 	import {
 		useUpdateCollectionWeapon,
 		useRemoveWeaponFromCollection
@@ -89,7 +89,8 @@
 					level: weapon.awakening.level
 				}
 			: null,
-		axSkills: (weapon.ax as SimpleAxSkill[]) ?? []
+		axSkills: (weapon.ax as AugmentSkill[]) ?? [],
+		befoulment: (weapon.befoulment as Befoulment) ?? null
 	})
 
 	// Element name for theming
@@ -143,13 +144,20 @@
 			}
 
 			// AX skills
-			if (updates.axModifier1 !== undefined) {
-				input.axModifier1 = updates.axModifier1
+			if (updates.axModifier1Id !== undefined) {
+				input.axModifier1Id = updates.axModifier1Id
 				input.axStrength1 = updates.axStrength1
 			}
-			if (updates.axModifier2 !== undefined) {
-				input.axModifier2 = updates.axModifier2
+			if (updates.axModifier2Id !== undefined) {
+				input.axModifier2Id = updates.axModifier2Id
 				input.axStrength2 = updates.axStrength2
+			}
+
+			// Befoulment
+			if (updates.befoulmentModifierId !== undefined) {
+				input.befoulmentModifierId = updates.befoulmentModifierId
+				input.befoulmentStrength = updates.befoulmentStrength
+				input.exorcismLevel = updates.exorcismLevel
 			}
 
 			const updatedWeapon = await updateMutation.mutateAsync({
@@ -247,7 +255,7 @@
 	// Check conditions
 	const hasAwakening = $derived(weapon.awakening !== null)
 	const hasWeaponKeys = $derived((weapon.weaponKeys?.length ?? 0) > 0)
-	const hasAxSkills = $derived((weapon.ax?.length ?? 0) > 0 && weapon.ax?.some(ax => ax.modifier >= 0))
+	const hasAxSkills = $derived((weapon.ax?.length ?? 0) > 0 && weapon.ax?.some(ax => ax.modifier?.id))
 	const canChangeElement = $derived(weaponData?.element === 0)
 
 	// Set up sidebar action on mount and clean up on destroy
@@ -334,8 +342,8 @@
 
 				<DetailsSection title="AX Skills" empty={!hasAxSkills} emptyMessage="Not set">
 					{#each weapon.ax ?? [] as ax, i}
-						{#if ax.modifier >= 0}
-							<DetailRow label="Skill {i + 1}" value={`${ax.modifier}: ${ax.strength}`} />
+						{#if ax.modifier?.id}
+							<DetailRow label="Skill {i + 1}" value={`${ax.modifier.nameEn} +${ax.strength}${ax.modifier.suffix ?? ''}`} />
 						{/if}
 					{/each}
 				</DetailsSection>

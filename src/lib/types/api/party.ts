@@ -12,10 +12,10 @@ import type {
   Guidebook,
   User,
   Awakening,
-  WeaponKey,
-  SimpleAxSkill
+  WeaponKey
 } from './entities'
 import type { GridArtifact, CollectionArtifact } from './artifact'
+import type { AugmentSkill, Befoulment } from './weaponStatModifier'
 
 // Grid item types - these are the junction tables between Party and entities
 
@@ -29,7 +29,10 @@ export interface GridWeapon {
   element?: number
   weapon: Weapon  // Named properly, not "object"
   weaponKeys?: WeaponKey[]
-  ax?: SimpleAxSkill[]
+  /** AX skills with full modifier objects */
+  ax?: AugmentSkill[]
+  /** Befoulment for Odiant weapons */
+  befoulment?: Befoulment
   awakening?: {
     type?: Awakening
     level?: number

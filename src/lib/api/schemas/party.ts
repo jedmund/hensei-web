@@ -198,9 +198,34 @@ const WeaponSeriesRefSchema = z.object({
   }),
   has_weapon_keys: z.boolean().optional(),
   has_awakening: z.boolean().optional(),
-  has_ax_skills: z.boolean().optional(),
+  augment_type: z.enum(['none', 'ax', 'befoulment']).optional(),
   extra: z.boolean().optional(),
   element_changeable: z.boolean().optional()
+})
+
+// Weapon stat modifier schema (for AX skills and befoulments)
+const WeaponStatModifierSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  name_en: z.string(),
+  name_jp: z.string(),
+  category: z.enum(['ax', 'befoulment']),
+  stat: z.string(),
+  polarity: z.number(),
+  suffix: z.string().nullable()
+})
+
+// AX skill with modifier object and strength
+const AugmentSkillSchema = z.object({
+  modifier: WeaponStatModifierSchema,
+  strength: z.number()
+})
+
+// Befoulment with modifier, strength, and exorcism level
+const BefoulmentSchema = z.object({
+  modifier: WeaponStatModifierSchema,
+  strength: z.number(),
+  exorcism_level: z.number()
 })
 
 // Item schemas
@@ -282,28 +307,33 @@ const GridWeaponSchema = z.object({
   transcendence_step: z.number().nullish().default(0),
   transcendence_level: z.number().nullish().default(0), // Alias for compatibility
   element: z.number().nullish(),
-  
+
   // Weapon keys
   weapon_key1_id: z.string().nullish(),
   weapon_key2_id: z.string().nullish(),
   weapon_key3_id: z.string().nullish(),
   weapon_key4_id: z.string().nullish(),
   weapon_keys: z.array(z.any()).nullish(), // Populated by API with key details
-  
+
   // Awakening
   awakening_id: z.string().nullish(),
   awakening_level: z.number().nullish().default(1),
   awakening: z.any().nullish(), // Populated by API with awakening details
-  
-  // AX modifiers
-  ax_modifier1: z.number().nullish(),
-  ax_strength1: z.number().nullish(),
-  ax_modifier2: z.number().nullish(),
-  ax_strength2: z.number().nullish(),
-  
+
+  // AX skills (new format with full modifier objects)
+  ax: z.array(AugmentSkillSchema).nullish(),
+
+  // Befoulment (for Odiant weapons)
+  befoulment: BefoulmentSchema.nullish(),
+
   // Nested weapon data (populated by API)
   weapon: WeaponSchema.nullish(),
-  
+
+  // Collection link fields
+  collection_weapon_id: z.string().nullish(),
+  out_of_sync: z.boolean().nullish(),
+  orphaned: z.boolean().nullish(),
+
   created_at: z.string().nullish(),
   updated_at: z.string().nullish()
 })

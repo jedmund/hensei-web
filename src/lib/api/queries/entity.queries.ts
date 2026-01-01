@@ -173,6 +173,46 @@ export const entityQueries = {
 			enabled: !!idOrSlug,
 			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * Weapon stat modifiers query options (AX skills and befoulments)
+	 *
+	 * @param category - Optional filter: 'ax' or 'befoulment'
+	 * @returns Query options for fetching weapon stat modifiers
+	 */
+	weaponStatModifiers: (category?: 'ax' | 'befoulment') =>
+		queryOptions({
+			queryKey: ['weaponStatModifiers', category ?? 'all'] as const,
+			queryFn: () => entityAdapter.getWeaponStatModifiers(category),
+			staleTime: 1000 * 60 * 60, // 1 hour - reference data
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * AX skills only query options
+	 *
+	 * @returns Query options for fetching AX skills
+	 */
+	axSkills: () =>
+		queryOptions({
+			queryKey: ['weaponStatModifiers', 'ax'] as const,
+			queryFn: () => entityAdapter.getAxSkills(),
+			staleTime: 1000 * 60 * 60, // 1 hour
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * Befoulments only query options
+	 *
+	 * @returns Query options for fetching befoulments
+	 */
+	befoulments: () =>
+		queryOptions({
+			queryKey: ['weaponStatModifiers', 'befoulment'] as const,
+			queryFn: () => entityAdapter.getBefoulments(),
+			staleTime: 1000 * 60 * 60, // 1 hour
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		})
 }
 
@@ -210,5 +250,10 @@ export const entityKeys = {
 	allCharacterSeries: () => ['characterSeries'] as const,
 	summonSeriesList: () => ['summonSeries', 'list'] as const,
 	summonSeries: (idOrSlug: string) => ['summonSeries', idOrSlug] as const,
-	allSummonSeries: () => ['summonSeries'] as const
+	allSummonSeries: () => ['summonSeries'] as const,
+	weaponStatModifiers: (category?: 'ax' | 'befoulment') =>
+		['weaponStatModifiers', category ?? 'all'] as const,
+	allWeaponStatModifiers: () => ['weaponStatModifiers'] as const,
+	axSkills: () => ['weaponStatModifiers', 'ax'] as const,
+	befoulments: () => ['weaponStatModifiers', 'befoulment'] as const
 }

@@ -7,6 +7,8 @@
  * @module types/api/weaponSeries
  */
 
+import type { AugmentType } from './weaponStatModifier'
+
 /**
  * Embedded series reference on weapons.
  * This is the structure returned in weapon.series field.
@@ -18,7 +20,8 @@ export interface WeaponSeriesRef {
 	name: { en: string; ja: string }
 	hasWeaponKeys: boolean
 	hasAwakening: boolean
-	hasAxSkills: boolean
+	/** Type of augment this series supports: "ax", "befoulment", or "none" */
+	augmentType: AugmentType
 	extra: boolean
 	elementChangeable: boolean
 }
@@ -37,7 +40,8 @@ export interface WeaponSeries {
 	elementChangeable: boolean
 	hasWeaponKeys: boolean
 	hasAwakening: boolean
-	hasAxSkills: boolean
+	/** Type of augment this series supports: "ax", "befoulment", or "none" */
+	augmentType: AugmentType
 	// Only included in :full view (show endpoint)
 	weaponCount?: number
 }
@@ -54,7 +58,7 @@ export interface WeaponSeriesInput {
 	element_changeable: boolean
 	has_weapon_keys: boolean
 	has_awakening: boolean
-	has_ax_skills: boolean
+	augment_type: AugmentType
 }
 
 /**
@@ -69,7 +73,7 @@ export interface CreateWeaponSeriesPayload {
 	element_changeable?: boolean
 	has_weapon_keys?: boolean
 	has_awakening?: boolean
-	has_ax_skills?: boolean
+	augment_type?: AugmentType
 }
 
 /**
@@ -84,7 +88,7 @@ export interface UpdateWeaponSeriesPayload {
 	element_changeable?: boolean
 	has_weapon_keys?: boolean
 	has_awakening?: boolean
-	has_ax_skills?: boolean
+	augment_type?: AugmentType
 }
 
 /**

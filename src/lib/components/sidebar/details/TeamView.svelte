@@ -105,14 +105,29 @@
 			</DetailsSection>
 		{/if}
 
-		{#if modificationStatus.hasAxSkills && weapon.ax}
+		{#if modificationStatus.hasAxSkills && weapon.ax?.length}
 			<DetailsSection title="AX Skills">
 				{#each weapon.ax as axSkill}
-					<DetailRow
-						label={formatAxSkill(axSkill).split('+')[0]?.trim() ?? ''}
-						value={`+${axSkill.strength}${axSkill.modifier <= 2 ? '' : '%'}`}
-					/>
+					{#if axSkill.modifier?.id}
+						<DetailRow
+							label={axSkill.modifier.nameEn}
+							value={`+${axSkill.strength}${axSkill.modifier.suffix ?? ''}`}
+						/>
+					{/if}
 				{/each}
+			</DetailsSection>
+		{/if}
+
+		{#if modificationStatus.hasBefoulment && weapon.befoulment?.modifier}
+			<DetailsSection title="Befoulment">
+				<DetailRow
+					label={weapon.befoulment.modifier.nameEn}
+					value={`${weapon.befoulment.strength}${weapon.befoulment.modifier.suffix ?? ''}`}
+				/>
+				<DetailRow
+					label="Exorcism Level"
+					value={`${weapon.befoulment.exorcismLevel ?? 0}`}
+				/>
 			</DetailsSection>
 		{/if}
 
