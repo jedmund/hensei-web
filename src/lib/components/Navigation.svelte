@@ -384,6 +384,12 @@
 								<a href={databaseImportHref}>Multiple {databaseEntityLabel}s</a>
 							</DropdownItem>
 						{/if}
+						{#if currentDatabaseEntity === 'weapon'}
+							<DropdownMenu.Separator class="dropdown-separator" />
+							<DropdownItem>
+								<a href={localizeHref('/database/series/weapons/new')}>Weapon series</a>
+							</DropdownItem>
+						{/if}
 					{/if}
 				</DropdownMenu.Content>
 			</DropdownMenu.Portal>
