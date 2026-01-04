@@ -1,11 +1,2 @@
-export interface JobAccessory {
-	id: string
-	granblue_id: string
-	job: Job
-	name: {
-		[key: string]: string
-		en: string
-		ja: string
-	}
-	rarity: number
-}
+// Re-export from entities for backwards compatibility
+export type { JobAccessory } from './api/entities'

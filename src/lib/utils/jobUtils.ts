@@ -290,3 +290,34 @@ export function validateSkillConfiguration(
 		errors
 	}
 }
+
+/**
+ * Proficiency options for job forms
+ */
+export const PROFICIENCIES = [
+	{ value: 0, label: 'None' },
+	{ value: 1, label: 'Sabre' },
+	{ value: 2, label: 'Dagger' },
+	{ value: 3, label: 'Axe' },
+	{ value: 4, label: 'Spear' },
+	{ value: 5, label: 'Bow' },
+	{ value: 6, label: 'Staff' },
+	{ value: 7, label: 'Melee' },
+	{ value: 8, label: 'Harp' },
+	{ value: 9, label: 'Gun' },
+	{ value: 10, label: 'Katana' }
+] as const
+
+/**
+ * Row options for job forms
+ */
+export const ROWS = [
+	{ value: '1', label: 'Class I' },
+	{ value: '2', label: 'Class II' },
+	{ value: '3', label: 'Class III' },
+	{ value: '4', label: 'Class IV' },
+	{ value: '5', label: 'Class V' },
+	{ value: 'ex', label: 'EX' },
+	{ value: 'ex2', label: 'EX II' },
+	{ value: 'o1', label: 'Origin I' }
+] as const
