@@ -9,6 +9,7 @@
 		label: string
 		disabled?: boolean
 		color?: string
+		image?: string
 	}
 
 	interface Props {
@@ -43,6 +44,11 @@
 
 	// Convert value array to string array for Bits UI
 	const stringValue = $derived(value.map((v) => String(v)))
+
+	// Get first selected option for display (image/color)
+	const firstSelectedOption = $derived(
+		value.length > 0 ? options.find((opt) => opt.value === value[0]) : undefined
+	)
 
 	// Get selected labels for display
 	const selectedLabels = $derived(() => {
@@ -84,6 +90,11 @@
 	items={stringOptions}
 >
 	<SelectPrimitive.Trigger class={selectClasses} data-placeholder={value.length === 0}>
+		{#if firstSelectedOption?.image}
+			<img src={firstSelectedOption.image} alt="" class="trigger-image" />
+		{:else if firstSelectedOption?.color}
+			<span class="trigger-color-dot" style="background-color: {firstSelectedOption.color}"></span>
+		{/if}
 		<span class="text">{selectedLabels() || placeholder}</span>
 		<Icon name="chevron-down-small" size={14} class="chevron" />
 	</SelectPrimitive.Trigger>
@@ -99,7 +110,11 @@
 					style={option.color ? `--option-color: ${option.color}` : ''}
 				>
 					{#snippet children({ selected })}
-						<span class="label" class:has-color={!!option.color} class:selected>{option.label}</span
+						{#if option.image}
+							<img src={option.image} alt="" class="item-image" />
+						{/if}
+						<span class="label" class:has-color={!!option.color && !option.image} class:selected
+							>{option.label}</span
 						>
 						<span class="indicator">
 							<Icon name="check" size={12} class="check-icon {selected ? 'visible' : ''}" />
@@ -164,6 +179,20 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			color: var(--text-secondary);
+		}
+
+		.trigger-image {
+			width: $unit-3x;
+			height: $unit-3x;
+			flex-shrink: 0;
+			object-fit: contain;
+		}
+
+		.trigger-color-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			flex-shrink: 0;
 		}
 
 		:global(.chevron) {
@@ -252,6 +281,13 @@
 		&:last-child {
 			border-bottom-left-radius: $item-corner;
 			border-bottom-right-radius: $item-corner;
+		}
+
+		.item-image {
+			width: $unit-3x;
+			height: $unit-3x;
+			flex-shrink: 0;
+			object-fit: contain;
 		}
 
 		:global(.check-icon) {
