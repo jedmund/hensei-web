@@ -8,6 +8,7 @@
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import Button from '../ui/Button.svelte'
 	import Icon from '../Icon.svelte'
+	import Input from '../ui/Input.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
@@ -47,7 +48,6 @@
 	let searchMode = $state<SearchMode>('all')
 
 	// Refs
-	let searchInput: HTMLInputElement
 	let sentinelEl = $state<HTMLElement>()
 
 	// Constants
@@ -272,13 +272,6 @@
 		searchResults.length === 0 && !activeQuery.isLoading && !activeQuery.isError
 	)
 
-	// Focus search input on mount
-	$effect(() => {
-		if (searchInput) {
-			searchInput.focus()
-		}
-	})
-
 	function handleItemClick(item: AddItemResult) {
 		if (canAddMore) {
 			onAddItems([item])
@@ -330,12 +323,13 @@
 
 <div class="search-content">
 	<div class="search-section">
-		<input
-			bind:this={searchInput}
+		<Input
 			bind:value={searchQuery}
 			type="text"
 			placeholder="Search by name..."
-			aria-label="Search"
+			leftIcon="search"
+			contained
+			fullWidth
 			class="search-input"
 		/>
 	</div>
@@ -511,24 +505,8 @@
 		padding: 0 0 $unit-2x 0;
 		flex-shrink: 0;
 
-		.search-input {
-			width: 100%;
-			padding: $unit calc($unit * 1.5);
-			border: 1px solid var(--border-primary);
-			border-radius: $input-corner;
-			font-size: $font-regular;
-			background: var(--bg-secondary);
-			color: var(--text-primary);
-
-			&:focus {
-				outline: none;
-				border-color: var(--accent-blue);
-				box-shadow: 0 0 0 2px var(--accent-blue-alpha);
-			}
-
-			&::placeholder {
-				color: var(--text-tertiary);
-			}
+		:global(.search-input) {
+			border-radius: $card-corner;
 		}
 	}
 
