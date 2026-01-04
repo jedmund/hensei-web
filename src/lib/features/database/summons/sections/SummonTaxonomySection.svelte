@@ -2,11 +2,9 @@
 
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query'
-	import type { SummonSuggestions } from '$lib/api/adapters/entity.adapter'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import { getElementLabel, getElementOptions } from '$lib/utils/element'
 	import type { SummonSeriesRef } from '$lib/types/api/summonSeries'
@@ -17,21 +15,12 @@
 		summon: any
 		editMode?: boolean
 		editData?: any
-		// Suggestion support for batch import
-		suggestions?: SummonSuggestions
-		dismissedSuggestions?: Set<string>
-		onAcceptSuggestion?: (field: string, value: any) => void
-		onDismissSuggestion?: (field: string) => void
 	}
 
 	let {
 		summon,
 		editMode = false,
-		editData = $bindable(),
-		suggestions,
-		dismissedSuggestions,
-		onAcceptSuggestion,
-		onDismissSuggestion
+		editData = $bindable()
 	}: Props = $props()
 
 	// Fetch summon series list from API
@@ -67,16 +56,12 @@
 
 <DetailsContainer title="Details">
 	{#if editMode}
-		<SuggestionDetailItem
+		<DetailItem
 			label="Element"
 			bind:value={editData.element}
 			editable={true}
 			type="select"
 			options={elementOptions}
-			suggestion={suggestions?.element}
-			dismissedSuggestion={dismissedSuggestions?.has('element')}
-			onAcceptSuggestion={() => onAcceptSuggestion?.('element', suggestions?.element)}
-			onDismissSuggestion={() => onDismissSuggestion?.('element')}
 		/>
 		<DetailItem
 			label="Series"

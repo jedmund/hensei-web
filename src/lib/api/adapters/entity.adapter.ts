@@ -520,9 +520,9 @@ export interface EntityRawData {
 }
 
 /**
- * Suggestions for character fields parsed from wiki data
+ * Parsed character data from wiki text
  */
-export interface CharacterSuggestions {
+export interface ParsedCharacterData {
 	nameEn?: string
 	nameJp?: string
 	granblueId?: string
@@ -558,9 +558,9 @@ export interface CharacterSuggestions {
 }
 
 /**
- * Suggestions for weapon fields parsed from wiki data
+ * Parsed weapon data from wiki text
  */
-export interface WeaponSuggestions {
+export interface ParsedWeaponData {
 	nameEn?: string
 	nameJp?: string
 	granblueId?: string
@@ -590,9 +590,9 @@ export interface WeaponSuggestions {
 }
 
 /**
- * Suggestions for summon fields parsed from wiki data
+ * Parsed summon data from wiki text
  */
-export interface SummonSuggestions {
+export interface ParsedSummonData {
 	nameEn?: string
 	nameJp?: string
 	granblueId?: string
@@ -629,7 +629,7 @@ export interface BatchPreviewResult<T> {
 	status: 'success' | 'error'
 	granblueId?: string
 	wikiRaw?: string
-	suggestions?: T
+	parsedData?: T
 	imageStatus?: 'pending' | 'exists' | 'error' | 'no_id'
 	error?: string
 	redirectedFrom?: string
@@ -1240,7 +1240,7 @@ export class EntityAdapter extends BaseAdapter {
 	// ============================================
 
 	/**
-	 * Fetches wiki data and suggestions for multiple character wiki pages
+	 * Fetches wiki data and parses it for multiple character wiki pages
 	 * Requires editor role (>= 7)
 	 * @param wikiPages - Array of wiki page names (max 10)
 	 * @param wikiData - Optional pre-fetched wiki text keyed by page name
@@ -1248,21 +1248,21 @@ export class EntityAdapter extends BaseAdapter {
 	async batchPreviewCharacters(
 		wikiPages: string[],
 		wikiData?: Record<string, string>
-	): Promise<BatchPreviewResponse<CharacterSuggestions>> {
+	): Promise<BatchPreviewResponse<ParsedCharacterData>> {
 		const body: { wiki_pages: string[]; wiki_data?: Record<string, string> } = {
 			wiki_pages: wikiPages
 		}
 		if (wikiData) {
 			body.wiki_data = wikiData
 		}
-		return this.request<BatchPreviewResponse<CharacterSuggestions>>('/characters/batch_preview', {
+		return this.request<BatchPreviewResponse<ParsedCharacterData>>('/characters/batch_preview', {
 			method: 'POST',
 			body
 		})
 	}
 
 	/**
-	 * Fetches wiki data and suggestions for multiple weapon wiki pages
+	 * Fetches wiki data and parses it for multiple weapon wiki pages
 	 * Requires editor role (>= 7)
 	 * @param wikiPages - Array of wiki page names (max 10)
 	 * @param wikiData - Optional pre-fetched wiki text keyed by page name
@@ -1270,21 +1270,21 @@ export class EntityAdapter extends BaseAdapter {
 	async batchPreviewWeapons(
 		wikiPages: string[],
 		wikiData?: Record<string, string>
-	): Promise<BatchPreviewResponse<WeaponSuggestions>> {
+	): Promise<BatchPreviewResponse<ParsedWeaponData>> {
 		const body: { wiki_pages: string[]; wiki_data?: Record<string, string> } = {
 			wiki_pages: wikiPages
 		}
 		if (wikiData) {
 			body.wiki_data = wikiData
 		}
-		return this.request<BatchPreviewResponse<WeaponSuggestions>>('/weapons/batch_preview', {
+		return this.request<BatchPreviewResponse<ParsedWeaponData>>('/weapons/batch_preview', {
 			method: 'POST',
 			body
 		})
 	}
 
 	/**
-	 * Fetches wiki data and suggestions for multiple summon wiki pages
+	 * Fetches wiki data and parses it for multiple summon wiki pages
 	 * Requires editor role (>= 7)
 	 * @param wikiPages - Array of wiki page names (max 10)
 	 * @param wikiData - Optional pre-fetched wiki text keyed by page name
@@ -1292,14 +1292,14 @@ export class EntityAdapter extends BaseAdapter {
 	async batchPreviewSummons(
 		wikiPages: string[],
 		wikiData?: Record<string, string>
-	): Promise<BatchPreviewResponse<SummonSuggestions>> {
+	): Promise<BatchPreviewResponse<ParsedSummonData>> {
 		const body: { wiki_pages: string[]; wiki_data?: Record<string, string> } = {
 			wiki_pages: wikiPages
 		}
 		if (wikiData) {
 			body.wiki_data = wikiData
 		}
-		return this.request<BatchPreviewResponse<SummonSuggestions>>('/summons/batch_preview', {
+		return this.request<BatchPreviewResponse<ParsedSummonData>>('/summons/batch_preview', {
 			method: 'POST',
 			body
 		})
