@@ -12,9 +12,11 @@
 		onChange?: (befoulment: Befoulment | null) => void
 		/** Language for display */
 		locale?: 'en' | 'ja'
+		/** Maximum exorcism level for this weapon (from weapon's maxExorcismLevel) */
+		maxExorcismLevel?: number | null
 	}
 
-	let { currentBefoulment = null, onChange, locale = 'en' }: Props = $props()
+	let { currentBefoulment = null, onChange, locale = 'en', maxExorcismLevel = null }: Props = $props()
 
 	const { befoulments, findBefoulment, isLoading } = useWeaponStatModifiers()
 
@@ -44,15 +46,14 @@
 		return items
 	})
 
-	// Exorcism level options (0-5)
-	const exorcismOptions: Array<{ value: number; label: string }> = [
-		{ value: 0, label: 'Level 0 (Full Effect)' },
-		{ value: 1, label: 'Level 1' },
-		{ value: 2, label: 'Level 2' },
-		{ value: 3, label: 'Level 3' },
-		{ value: 4, label: 'Level 4' },
-		{ value: 5, label: 'Level 5 (Fully Exorcised)' }
-	]
+	// Exorcism level options (0 to maxExorcismLevel, fallback to 5)
+	const exorcismOptions = $derived.by(() => {
+		const max = maxExorcismLevel ?? 5
+		return Array.from({ length: max + 1 }, (_, i) => ({
+			value: i,
+			label: `Level ${i}`
+		}))
+	})
 
 	// Get suffix for display
 	function getSuffix(modifier: WeaponStatModifier | undefined): string {

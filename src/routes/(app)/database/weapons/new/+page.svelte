@@ -75,6 +75,7 @@
 		maxLevel: 100,
 		maxSkillLevel: 10,
 		maxAwakeningLevel: 0,
+		maxExorcismLevel: null as number | null,
 
 		// Uncap
 		flb: false,
@@ -184,6 +185,7 @@
 				max_level: editData.maxLevel,
 				max_skill_level: editData.maxSkillLevel,
 				max_awakening_level: editData.maxAwakeningLevel,
+				max_exorcism_level: editData.maxExorcismLevel,
 
 				// Uncap
 				flb: editData.flb,

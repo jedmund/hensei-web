@@ -328,6 +328,7 @@
 						onChange={(bef) => {
 							befoulment = bef
 						}}
+						maxExorcismLevel={weaponData?.maxExorcismLevel}
 					/>
 				</div>
 			</DetailsSection>
