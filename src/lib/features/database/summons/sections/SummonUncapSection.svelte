@@ -1,10 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import type { SummonSuggestions } from '$lib/api/adapters/entity.adapter'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getSummonMaxUncapLevel } from '$lib/utils/uncap'
 	import { getElementLabel } from '$lib/utils/element'
@@ -15,11 +13,6 @@
 		summon: any
 		editMode?: boolean
 		editData?: any
-		// Suggestion support for batch import
-		suggestions?: SummonSuggestions
-		dismissedSuggestions?: Set<string>
-		onAcceptSuggestion?: (field: string, value: any) => void
-		onDismissSuggestion?: (field: string) => void
 		// Callback when editData is modified (for triggering reactivity in parent)
 		onDataChange?: () => void
 	}
@@ -28,10 +21,6 @@
 		summon,
 		editMode = false,
 		editData = $bindable(),
-		suggestions,
-		dismissedSuggestions,
-		onAcceptSuggestion,
-		onDismissSuggestion,
 		onDataChange
 	}: Props = $props()
 
@@ -101,29 +90,21 @@
 	{/if}
 
 	{#if editMode}
-		<SuggestionDetailItem
+		<DetailItem
 			label="FLB"
 			bind:value={editData.flb}
 			editable={true}
 			type="checkbox"
 			element={elementName}
 			onchange={handleFlbChange}
-			suggestion={suggestions?.flb}
-			dismissedSuggestion={dismissedSuggestions?.has('flb')}
-			onAcceptSuggestion={() => onAcceptSuggestion?.('flb', suggestions?.flb)}
-			onDismissSuggestion={() => onDismissSuggestion?.('flb')}
 		/>
-		<SuggestionDetailItem
+		<DetailItem
 			label="ULB"
 			bind:value={editData.ulb}
 			editable={true}
 			type="checkbox"
 			element={elementName}
 			onchange={handleUlbChange}
-			suggestion={suggestions?.ulb}
-			dismissedSuggestion={dismissedSuggestions?.has('ulb')}
-			onAcceptSuggestion={() => onAcceptSuggestion?.('ulb', suggestions?.ulb)}
-			onDismissSuggestion={() => onDismissSuggestion?.('ulb')}
 		/>
 		<DetailItem
 			label="Transcendence"
@@ -133,16 +114,12 @@
 			element={elementName}
 			onchange={handleTranscendenceChange}
 		/>
-		<SuggestionDetailItem
+		<DetailItem
 			label="Subaura"
 			bind:value={editData.subaura}
 			editable={true}
 			type="checkbox"
 			element={elementName}
-			suggestion={suggestions?.subaura}
-			dismissedSuggestion={dismissedSuggestions?.has('subaura')}
-			onAcceptSuggestion={() => onAcceptSuggestion?.('subaura', suggestions?.subaura)}
-			onDismissSuggestion={() => onDismissSuggestion?.('subaura')}
 		/>
 		<DetailItem
 			label="Limit"

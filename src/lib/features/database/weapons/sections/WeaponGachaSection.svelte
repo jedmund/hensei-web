@@ -1,7 +1,6 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import type { WeaponSuggestions } from '$lib/api/adapters/entity.adapter'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
@@ -13,21 +12,12 @@
 		weapon: any
 		editMode?: boolean
 		editData?: any
-		// Suggestion support for batch import
-		suggestions?: WeaponSuggestions
-		dismissedSuggestions?: Set<string>
-		onAcceptSuggestion?: (field: string, value: any) => void
-		onDismissSuggestion?: (field: string) => void
 	}
 
 	let {
 		weapon,
 		editMode = false,
-		editData = $bindable(),
-		suggestions,
-		dismissedSuggestions,
-		onAcceptSuggestion,
-		onDismissSuggestion
+		editData = $bindable()
 	}: Props = $props()
 
 	// Promotion options for multiselect
