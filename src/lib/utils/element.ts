@@ -65,3 +65,13 @@ export function getOppositeElement(element?: number): number | undefined {
 	const elementData = ELEMENTS[element]
 	return elementData?.opposite_id
 }
+
+/**
+ * Get the path to the element image from /images/elements/
+ * Used by ElementPicker component
+ */
+export function getElementImage(element?: number): string {
+	if (element === undefined || element === null) return ''
+	const label = ELEMENT_LABELS[element]?.toLowerCase() ?? 'null'
+	return `/images/elements/${label}.png`
+}
