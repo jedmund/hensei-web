@@ -73,7 +73,9 @@
 	const showCounter = $derived(
 		counter !== undefined || (charsRemaining !== undefined && charsRemaining <= 5)
 	)
-	const hasWrapper = $derived(accessory || leftIcon || rightIcon || clearable || maxLength !== undefined || validationIcon)
+	const hasWrapper = $derived(
+		accessory || leftIcon || rightIcon || clearable || maxLength !== undefined || validationIcon
+	)
 
 	function handleClear() {
 		value = ''
@@ -100,7 +102,6 @@
 			.filter(Boolean)
 			.join(' ')
 	)
-
 </script>
 
 <fieldset class={fieldsetClasses}>
@@ -295,7 +296,7 @@
 				// border: 2px solid transparent;
 				box-sizing: border-box;
 				color: var(--text-primary);
-				padding: calc($unit * 1.75) $unit-2x;
+				padding: calc($unit * 1.5) $unit-2x;
 				width: 100%;
 				font-size: $font-regular;
 				font-family: inherit;
