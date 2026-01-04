@@ -158,6 +158,15 @@
 			type="number"
 			placeholder="0"
 		/>
+		<DetailItem
+			label="Max Exorcism Level"
+			sublabel="For befoulment weapons only"
+			bind:value={editData.maxExorcismLevel}
+			editable={true}
+			type="number"
+			placeholder="—"
+			min={1}
+		/>
 	{:else}
 		<DetailItem label="Max Level" value={weapon.maxLevel} />
 		{#if weapon.maxSkillLevel}
@@ -165,6 +174,9 @@
 		{/if}
 		{#if weapon.maxAwakeningLevel}
 			<DetailItem label="Max Awakening Level" value={weapon.maxAwakeningLevel} />
+		{/if}
+		{#if weapon.maxExorcismLevel != null}
+			<DetailItem label="Max Exorcism Level" value={weapon.maxExorcismLevel} />
 		{/if}
 	{/if}
 </DetailsContainer>

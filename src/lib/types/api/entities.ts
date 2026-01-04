@@ -20,6 +20,7 @@ export interface Weapon {
   maxLevel: number
   maxSkillLevel: number
   maxAwakeningLevel: number
+  maxExorcismLevel?: number | null
   /** Weapon series - object with slug/name/flags */
   series: WeaponSeriesRef | null
   ax: boolean

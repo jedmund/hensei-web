@@ -28,7 +28,9 @@
 		onchange,
 		width,
 		linkUrl,
-		hasLinkButton = false
+		hasLinkButton = false,
+		min,
+		max
 	}: {
 		label: string
 		/** Secondary label displayed below the main label */
@@ -48,6 +50,10 @@
 		linkUrl?: string | null
 		/** Whether to show the link button (disabled when linkUrl is empty) */
 		hasLinkButton?: boolean
+		/** Minimum value for number inputs */
+		min?: number
+		/** Maximum value for number inputs */
+		max?: number
 	} = $props()
 
 	// For checkbox type, derive the checked state from value
@@ -110,6 +116,8 @@
 					contained={true}
 					{placeholder}
 					alignRight={true}
+					{min}
+					{max}
 				/>
 			{:else if type === 'date'}
 				<DatePicker bind:value={value as string | null} contained={true} {placeholder} />
