@@ -4,7 +4,7 @@ import type { SearchParams } from '$lib/api/adapters/search.adapter'
 import type { SearchFilters } from '$lib/api/adapters/types'
 
 interface DatabaseProviderOptions {
-	resource: 'weapons' | 'characters' | 'summons'
+	resource: 'weapons' | 'characters' | 'summons' | 'jobs'
 	pageSize?: number
 }
 
@@ -19,7 +19,7 @@ interface APIResponse {
 }
 
 export class DatabaseProvider extends RestDataProvider<any> {
-	private resource: 'weapons' | 'characters' | 'summons'
+	private resource: 'weapons' | 'characters' | 'summons' | 'jobs'
 	private pageSize: number
 	private currentPage: number = 1
 	private totalCount: number = 0
@@ -71,6 +71,9 @@ export class DatabaseProvider extends RestDataProvider<any> {
 					break
 				case 'summons':
 					result = await searchAdapter.searchSummons(searchParams)
+					break
+				case 'jobs':
+					result = await searchAdapter.searchJobs(searchParams)
 					break
 				default:
 					throw new Error(`Unknown resource type: ${this.resource}`)

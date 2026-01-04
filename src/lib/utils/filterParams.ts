@@ -181,7 +181,7 @@ function parseParamArray<T>(
  */
 export function parseFiltersFromUrl(
 	searchParams: URLSearchParams,
-	entityType: 'character' | 'weapon' | 'summon',
+	entityType: 'character' | 'weapon' | 'summon' | 'job',
 	weaponSeriesList?: WeaponSeries[]
 ): ParsedFilters {
 	const element = parseParamArray(searchParams, 'element', PARAM_TO_ELEMENT)
@@ -252,7 +252,7 @@ export function buildUrlFromFilters(
 	filters: CollectionFilterState,
 	searchQuery: string,
 	page: number,
-	entityType: 'character' | 'weapon' | 'summon',
+	entityType: 'character' | 'weapon' | 'summon' | 'job',
 	weaponSeriesList?: WeaponSeries[]
 ): URLSearchParams {
 	const params = new URLSearchParams()

@@ -28,7 +28,7 @@
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		resource: 'weapons' | 'characters' | 'summons'
+		resource: 'weapons' | 'characters' | 'summons' | 'jobs'
 		columns: IColumn[]
 		pageSize?: number
 		leftActions?: Snippet
@@ -45,8 +45,13 @@
 
 	// Derive entity type from resource
 	const entityType = $derived(
-		resource === 'characters' ? 'character' : resource === 'summons' ? 'summon' : 'weapon'
+		resource === 'characters' ? 'character' :
+		resource === 'summons' ? 'summon' :
+		resource === 'jobs' ? 'job' : 'weapon'
 	)
+
+	// Jobs don't use the standard CollectionFilters component
+	const supportsCollectionFilters = $derived(resource !== 'jobs')
 
 	// Fetch weapon series list for URL slug mapping (only for weapons)
 	const weaponSeriesQuery = createQuery(() =>
@@ -403,29 +408,31 @@
 				{@render headerActions()}
 			{/if}
 
-			<Button
-				variant="ghost"
-				size="small"
-				onclick={() => (showFilters = !showFilters)}
-				class="filter-toggle {hasActiveFilters ? 'has-active' : ''}"
-			>
-				Filters
-				{#if hasActiveFilters}
-					<span class="filter-count {selectedElement ?? ''}">
-						{elementFilters.length +
-							rarityFilters.length +
-							seriesFilters.length +
-							proficiencyFilters.length +
-							seasonFilters.length}
-					</span>
-				{/if}
-			</Button>
+			{#if supportsCollectionFilters}
+				<Button
+					variant="ghost"
+					size="small"
+					onclick={() => (showFilters = !showFilters)}
+					class="filter-toggle {hasActiveFilters ? 'has-active' : ''}"
+				>
+					Filters
+					{#if hasActiveFilters}
+						<span class="filter-count {selectedElement ?? ''}">
+							{elementFilters.length +
+								rarityFilters.length +
+								seriesFilters.length +
+								proficiencyFilters.length +
+								seasonFilters.length}
+						</span>
+					{/if}
+				</Button>
+			{/if}
 
 			<input type="text" placeholder="Search..." bind:value={searchTerm} />
 		</div>
 	</div>
 
-	{#if showFilters}
+	{#if showFilters && supportsCollectionFilters}
 		<div class="filters-row">
 			<CollectionFilters
 				entityType={resource === 'characters'
