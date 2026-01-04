@@ -502,7 +502,7 @@
 	}
 
 	.search-section {
-		padding: 0 0 $unit-2x 0;
+		padding: 0 $unit-2x $unit-2x $unit-2x;
 		flex-shrink: 0;
 
 		:global(.search-input) {
@@ -513,7 +513,7 @@
 	.mode-toggle {
 		display: flex;
 		gap: $unit-half;
-		padding-bottom: $unit-2x;
+		padding: 0 $unit-2x $unit-2x $unit-2x;
 		flex-shrink: 0;
 
 		.mode-btn {
@@ -542,7 +542,7 @@
 	}
 
 	.filters-section {
-		padding-bottom: $unit-2x;
+		padding: 0 $unit-2x $unit-2x $unit-2x;
 		border-bottom: 1px solid var(--border-primary);
 		flex-shrink: 0;
 
@@ -602,7 +602,7 @@
 	.results-section {
 		flex: 1;
 		overflow-y: auto;
-		padding: $unit-2x 0;
+		padding: $unit-2x;
 		min-height: 0;
 
 		.loading,
