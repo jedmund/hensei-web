@@ -80,6 +80,7 @@
 		if (path.startsWith(databaseCharactersHref)) return 'character'
 		if (path.startsWith(databaseWeaponsHref)) return 'weapon'
 		if (path.startsWith(databaseSummonsHref)) return 'summon'
+		if (path.startsWith(databaseJobsHref)) return 'job'
 		if (path.startsWith(databaseRaidsHref) || path.startsWith(databaseRaidGroupsHref)) return 'raid'
 		return null
 	})
@@ -92,9 +93,11 @@
 				? 'weapon'
 				: currentDatabaseEntity === 'summon'
 					? 'summon'
-					: currentDatabaseEntity === 'raid'
-						? 'raid'
-						: null
+					: currentDatabaseEntity === 'job'
+						? 'job'
+						: currentDatabaseEntity === 'raid'
+							? 'raid'
+							: null
 	)
 	const databaseNewHref = $derived(
 		currentDatabaseEntity === 'character'
@@ -372,6 +375,13 @@
 						</DropdownItem>
 						<DropdownItem>
 							<a href={localizeHref('/database/raid-groups/new')}>New raid group</a>
+						</DropdownItem>
+					{:else if currentDatabaseEntity === 'job'}
+						<DropdownItem>
+							<a href={localizeHref('/database/jobs/new')}>New job</a>
+						</DropdownItem>
+						<DropdownItem>
+							<a href={localizeHref('/database/job-accessories/new')}>New job accessory</a>
 						</DropdownItem>
 					{:else}
 						{#if databaseNewHref}

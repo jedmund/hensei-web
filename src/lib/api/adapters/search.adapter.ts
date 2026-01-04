@@ -378,6 +378,67 @@ export class SearchAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Searches for jobs with specific filters
+	 *
+	 * @param params - Search parameters with job-specific filters
+	 * @returns Promise resolving to job search results
+	 */
+	async searchJobs(params: SearchParams = {}): Promise<SearchResponse> {
+		const body: any = {
+			locale: params.locale || 'en',
+			page: params.page || 1
+		}
+
+		if (params.per) {
+			body.per = params.per
+		}
+
+		if (params.query) {
+			body.query = params.query
+		}
+
+		if (params.sortBy) {
+			body.sort = params.sortBy
+		}
+		if (params.sortOrder) {
+			body.order = params.sortOrder
+		}
+
+		// Build job-specific filters
+		if (params.filters) {
+			const filters: any = {}
+
+			if (params.filters.row?.length) {
+				filters.row = params.filters.row
+			}
+			if (params.filters.proficiency?.length) {
+				filters.proficiency = params.filters.proficiency
+			}
+			if (params.filters.masterLevel !== undefined) {
+				filters.masterLevel = params.filters.masterLevel
+			}
+			if (params.filters.ultimateMastery !== undefined) {
+				filters.ultimateMastery = params.filters.ultimateMastery
+			}
+			if (params.filters.accessory !== undefined) {
+				filters.accessory = params.filters.accessory
+			}
+
+			if (Object.keys(filters).length > 0) {
+				body.filters = filters
+			}
+		}
+
+		return this.request<SearchResponse>('/search/jobs', {
+			method: 'POST',
+			body: { search: body },
+			credentials: 'omit',
+			cacheTTL: params.query ? 300000 : 0,
+			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
+		})
+	}
+
+	/**
 	 * Clears all cached search results
 	 * Useful when entity data has been updated
 	 */

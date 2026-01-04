@@ -140,15 +140,15 @@ export const jobQueries = {
 		}),
 
 	/**
-	 * Job accessories query options
+	 * Job accessories query options (for a specific job)
 	 *
 	 * @param jobId - Job ID to fetch accessories for
 	 * @returns Query options for fetching job accessories
 	 */
-	accessories: (jobId: string) =>
+	accessoriesForJob: (jobId: string) =>
 		queryOptions({
 			queryKey: ['jobs', jobId, 'accessories'] as const,
-			queryFn: () => jobAdapter.getAccessories(jobId),
+			queryFn: () => jobAdapter.getAccessoriesForJob(jobId),
 			enabled: !!jobId,
 			staleTime: 1000 * 60 * 30, // 30 minutes
 			gcTime: 1000 * 60 * 60 // 1 hour
@@ -163,6 +163,39 @@ export const jobQueries = {
 		queryOptions({
 			queryKey: ['jobs', 'skills', 'all'] as const,
 			queryFn: () => jobAdapter.getAllSkills(),
+			staleTime: 1000 * 60 * 30, // 30 minutes
+			gcTime: 1000 * 60 * 60 // 1 hour
+		}),
+
+	// ============================================
+	// Job Accessory Database Queries
+	// ============================================
+
+	/**
+	 * All job accessories list query options
+	 *
+	 * @param accessoryType - Optional filter by type (1=Shield, 2=Manatura)
+	 * @returns Query options for fetching all job accessories
+	 */
+	accessoriesList: (accessoryType?: number) =>
+		queryOptions({
+			queryKey: ['jobAccessories', { accessoryType }] as const,
+			queryFn: () => jobAdapter.getAllAccessories(accessoryType),
+			staleTime: 1000 * 60 * 30, // 30 minutes
+			gcTime: 1000 * 60 * 60 // 1 hour
+		}),
+
+	/**
+	 * Single job accessory query options
+	 *
+	 * @param id - Accessory ID or granblue_id
+	 * @returns Query options for fetching a single accessory
+	 */
+	accessoryById: (id: string) =>
+		queryOptions({
+			queryKey: ['jobAccessories', id] as const,
+			queryFn: () => jobAdapter.getAccessoryById(id),
+			enabled: !!id,
 			staleTime: 1000 * 60 * 30, // 30 minutes
 			gcTime: 1000 * 60 * 60 // 1 hour
 		})
@@ -193,6 +226,15 @@ export const jobKeys = {
 	empSkills: (jobId: string) => [...jobKeys.all, jobId, 'emp_skills'] as const,
 	skillsSearch: (jobId: string, params?: Omit<SearchJobSkillsParams, 'jobId' | 'page'>) =>
 		[...jobKeys.skills(jobId), 'search', params] as const,
-	accessories: (jobId: string) => [...jobKeys.all, jobId, 'accessories'] as const,
+	accessoriesForJob: (jobId: string) => [...jobKeys.all, jobId, 'accessories'] as const,
 	allSkills: () => [...jobKeys.all, 'skills', 'all'] as const
+}
+
+/**
+ * Job accessory query key helpers for cache invalidation
+ */
+export const jobAccessoryKeys = {
+	all: ['jobAccessories'] as const,
+	lists: (accessoryType?: number) => [...jobAccessoryKeys.all, { accessoryType }] as const,
+	detail: (id: string) => [...jobAccessoryKeys.all, id] as const
 }

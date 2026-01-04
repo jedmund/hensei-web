@@ -2,143 +2,218 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { jobQueries } from '$lib/api/queries/job.queries'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { getJobIconUrl, getJobTierName } from '$lib/utils/jobUtils'
-	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
-	import type { Job } from '$lib/types/api/entities'
+	import { getAccessoryTypeName, ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
+	import type { IColumn } from 'wx-svelte-grid'
+	import type { JobAccessory } from '$lib/types/api/entities'
 
-	// Fetch all jobs
-	const jobsQuery = createQuery(() => jobQueries.list())
+	// Job cell components
+	import JobIconCell from '$lib/components/database/cells/JobIconCell.svelte'
+	import JobTierCell from '$lib/components/database/cells/JobTierCell.svelte'
+	import JobProficienciesCell from '$lib/components/database/cells/JobProficienciesCell.svelte'
+	import JobFeaturesCell from '$lib/components/database/cells/JobFeaturesCell.svelte'
 
-	// Search state
-	let searchTerm = $state('')
+	// View mode state - read initial value from URL
+	const initialView = $page.url.searchParams.get('view')
+	let viewMode = $state<'jobs' | 'accessories'>(initialView === 'accessories' ? 'accessories' : 'jobs')
 
-	// Filter jobs based on search
-	const filteredJobs = $derived.by(() => {
-		const jobs = jobsQuery.data ?? []
-		if (!searchTerm.trim()) return jobs
+	// Accessory type filter (for accessories view)
+	let accessoryTypeFilter = $state<number | undefined>(undefined)
 
-		const term = searchTerm.toLowerCase()
-		return jobs.filter(
-			(job) =>
-				job.name.en.toLowerCase().includes(term) ||
-				job.name.ja?.toLowerCase().includes(term) ||
-				job.granblueId.includes(term) ||
-				getJobTierName(job.row).toLowerCase().includes(term)
+	// Sync viewMode changes to URL
+	$effect(() => {
+		const currentView = $page.url.searchParams.get('view')
+		if (viewMode === 'accessories' && currentView !== 'accessories') {
+			goto('?view=accessories', { replaceState: true, noScroll: true })
+		} else if (viewMode === 'jobs' && currentView === 'accessories') {
+			goto('/database/jobs', { replaceState: true, noScroll: true })
+		}
+	})
+
+	// Define columns for jobs grid
+	const jobColumns: IColumn[] = [
+		{
+			id: 'granblueId',
+			header: '',
+			width: 60,
+			cell: JobIconCell
+		},
+		{
+			id: 'name',
+			header: 'Name',
+			flexgrow: 1,
+			sort: true,
+			template: (nameObj: any) => {
+				if (!nameObj) return '—'
+				if (typeof nameObj === 'string') return nameObj
+				return nameObj.en || nameObj.ja || '—'
+			}
+		},
+		{
+			id: 'row',
+			header: 'Row',
+			width: 100,
+			sort: true,
+			cell: JobTierCell
+		},
+		{
+			id: 'proficiency',
+			header: 'Proficiencies',
+			width: 120,
+			cell: JobProficienciesCell
+		},
+		{
+			id: 'features',
+			header: 'Features',
+			width: 200,
+			cell: JobFeaturesCell
+		}
+	]
+
+	// Fetch all accessories (for accessories view)
+	const accessoriesQuery = createQuery(() => ({
+		...jobQueries.accessoriesList(accessoryTypeFilter),
+		enabled: viewMode === 'accessories'
+	}))
+
+	// Search state for accessories
+	let accessorySearchTerm = $state('')
+
+	// Filter accessories based on search
+	const filteredAccessories = $derived.by(() => {
+		const accessories = accessoriesQuery.data ?? []
+		if (!accessorySearchTerm.trim()) return accessories
+
+		const term = accessorySearchTerm.toLowerCase()
+		return accessories.filter(
+			(acc) =>
+				acc.name.en.toLowerCase().includes(term) ||
+				acc.name.ja?.toLowerCase().includes(term) ||
+				acc.granblueId.includes(term)
 		)
 	})
 
-	// Row order mapping for sorting
-	const rowOrder: Record<string, number> = {
-		'1': 1,
-		'2': 2,
-		'3': 3,
-		'4': 4,
-		'5': 5,
-		ex: 6,
-		ex1: 6,
-		ex2: 7
-	}
-
-	// Sort jobs - always by row first, then by order within each row
-	const sortedJobs = $derived.by(() => {
-		const jobs = [...filteredJobs]
-
-		jobs.sort((a, b) => {
-			// Primary sort: by row
-			const rowA = rowOrder[a.row?.toString() || ''] || 99
-			const rowB = rowOrder[b.row?.toString() || ''] || 99
-			if (rowA !== rowB) {
-				return rowA - rowB
+	// Sort accessories by type then granblue_id
+	const sortedAccessories = $derived.by(() => {
+		const accessories = [...filteredAccessories]
+		accessories.sort((a, b) => {
+			if (a.accessoryType !== b.accessoryType) {
+				return a.accessoryType - b.accessoryType
 			}
-
-			// Secondary sort: by order within the same row
-			return (a.order || 0) - (b.order || 0)
+			return a.granblueId.localeCompare(b.granblueId)
 		})
-
-		return jobs
+		return accessories
 	})
 
-	function handleRowClick(job: Job) {
-		goto(`/database/jobs/${job.granblueId}`)
+	function handleAccessoryRowClick(accessory: JobAccessory) {
+		goto(`/database/job-accessories/${accessory.granblueId}`)
+	}
+
+	function handleAccessoryTypeChange(event: Event) {
+		const select = event.target as HTMLSelectElement
+		accessoryTypeFilter = select.value ? Number(select.value) : undefined
 	}
 </script>
 
 <PageMeta title={m.page_title_db_jobs()} description={m.page_desc_home()} />
 
 <div class="page">
-	<div class="grid-container">
-		<div class="controls">
-			<input type="text" placeholder="Search jobs..." bind:value={searchTerm} class="search" />
-		</div>
+	{#if viewMode === 'jobs'}
+		<!-- Jobs View - Using DatabaseGridWithProvider -->
+		<DatabaseGridWithProvider resource="jobs" columns={jobColumns} pageSize={20}>
+			{#snippet leftActions()}
+				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
+					<Segment value="jobs">Jobs</Segment>
+					<Segment value="accessories">Accessories</Segment>
+				</SegmentedControl>
+			{/snippet}
+		</DatabaseGridWithProvider>
+	{:else}
+		<!-- Accessories View - Custom table -->
+		<div class="grid-container">
+			<div class="controls">
+				<div class="controls-left">
+					<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
+						<Segment value="jobs">Jobs</Segment>
+						<Segment value="accessories">Accessories</Segment>
+					</SegmentedControl>
 
-		{#if jobsQuery.isLoading}
-			<div class="loading">Loading jobs...</div>
-		{:else if jobsQuery.isError}
-			<div class="error">Failed to load jobs</div>
-		{:else}
-			<div class="table-wrapper">
-				<table class="data-table">
-					<thead>
-						<tr>
-							<th class="col-image">Image</th>
-							<th class="col-name">Name</th>
-							<th class="col-row">Row</th>
-							<th class="col-proficiency">Proficiencies</th>
-							<th class="col-features">Features</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each sortedJobs as job (job.id)}
-							<tr onclick={() => handleRowClick(job)} class="clickable">
-								<td class="col-image">
-									<img src={getJobIconUrl(job.granblueId)} alt={job.name.en} class="job-icon" />
-								</td>
-								<td class="col-name">
-									<div class="name-cell">
-										<span class="name-en">{job.name.en}</span>
-									</div>
-								</td>
-								<td class="col-row">
-									<span class="tier-badge">{getJobTierName(job.row)}</span>
-								</td>
-								<td class="col-proficiency">
-									<div class="proficiency-icons">
-										{#if job.proficiency?.[0]}
-											<ProficiencyLabel proficiency={job.proficiency[0]} size="small" />
-										{/if}
-										{#if job.proficiency?.[1]}
-											<ProficiencyLabel proficiency={job.proficiency[1]} size="small" />
-										{/if}
-									</div>
-								</td>
-								<td class="col-features">
-									<div class="features">
-										{#if job.masterLevel}
-											<span class="badge master">Master</span>
-										{/if}
-										{#if job.ultimateMastery}
-											<span class="badge ultimate">Ultimate</span>
-										{/if}
-										{#if job.accessory}
-											<span class="badge accessory">Accessory</span>
-										{/if}
-									</div>
-								</td>
+					<select class="filter-select" onchange={handleAccessoryTypeChange}>
+						<option value="">All types</option>
+						<option value={ACCESSORY_TYPES.SHIELD}>Shield</option>
+						<option value={ACCESSORY_TYPES.MANATURA}>Manatura</option>
+					</select>
+				</div>
+
+				<input type="text" placeholder="Search accessories..." bind:value={accessorySearchTerm} class="search" />
+			</div>
+
+			{#if accessoriesQuery.isLoading}
+				<div class="loading">Loading accessories...</div>
+			{:else if accessoriesQuery.isError}
+				<div class="error">Failed to load accessories</div>
+			{:else if sortedAccessories.length === 0}
+				<div class="empty">No accessories found</div>
+			{:else}
+				<div class="table-wrapper">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th class="col-name">Name</th>
+								<th class="col-type">Type</th>
+								<th class="col-job">Job</th>
+								<th class="col-rarity">Rarity</th>
+								<th class="col-id">Granblue ID</th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+						</thead>
+						<tbody>
+							{#each sortedAccessories as accessory (accessory.id)}
+								<tr onclick={() => handleAccessoryRowClick(accessory)} class="clickable">
+									<td class="col-name">
+										<div class="name-cell">
+											<span class="name-en">{accessory.name.en}</span>
+											{#if accessory.name.ja}
+												<span class="name-ja">{accessory.name.ja}</span>
+											{/if}
+										</div>
+									</td>
+									<td class="col-type">
+										<span class="type-badge {accessory.accessoryType === ACCESSORY_TYPES.SHIELD ? 'shield' : 'manatura'}">
+											{getAccessoryTypeName(accessory.accessoryType)}
+										</span>
+									</td>
+									<td class="col-job">
+										{#if accessory.job}
+											{accessory.job.name.en}
+										{:else}
+											—
+										{/if}
+									</td>
+									<td class="col-rarity">
+										{accessory.rarity ?? '—'}
+									</td>
+									<td class="col-id">
+										<code>{accessory.granblueId}</code>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
 
-			<div class="footer">
-				Showing {sortedJobs.length} of {jobsQuery.data?.length ?? 0} jobs
-			</div>
-		{/if}
-	</div>
+				<div class="footer">
+					Showing {sortedAccessories.length} of {accessoriesQuery.data?.length ?? 0} accessories
+				</div>
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -165,17 +240,41 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: spacing.$unit;
-		border-bottom: 1px solid #e5e5e5;
+		padding: spacing.$unit-2x;
 		gap: spacing.$unit;
+		flex-wrap: wrap;
+
+		.controls-left {
+			display: flex;
+			align-items: center;
+			gap: spacing.$unit;
+		}
+
+		.filter-select {
+			padding: spacing.$unit spacing.$unit-2x;
+			background: var(--input-bound-bg);
+			border: none;
+			border-radius: layout.$item-corner;
+			font-size: typography.$font-small;
+			cursor: pointer;
+
+			&:hover {
+				background: var(--input-bound-bg-hover);
+			}
+
+			&:focus {
+				outline: none;
+				box-shadow: 0 0 0 2px colors.$blue;
+			}
+		}
 
 		.search {
 			padding: spacing.$unit spacing.$unit-2x;
 			background: var(--input-bound-bg);
 			border: none;
 			border-radius: layout.$item-corner;
-			font-size: typography.$font-medium;
-			width: 100%;
+			font-size: typography.$font-small;
+			width: 200px;
 
 			&:hover {
 				background: var(--input-bound-bg-hover);
@@ -189,7 +288,8 @@
 	}
 
 	.loading,
-	.error {
+	.error,
+	.empty {
 		text-align: center;
 		padding: spacing.$unit * 4;
 		color: var(--text-secondary);
@@ -232,80 +332,59 @@
 		}
 	}
 
-	.col-image {
-		width: 60px;
-		padding-left: spacing.$unit-2x !important;
-	}
-
 	.col-name {
 		min-width: 180px;
 	}
 
-	.col-row {
+	.col-type {
 		width: 100px;
 	}
 
-	.col-proficiency {
-		width: 100px;
+	.col-job {
+		min-width: 150px;
 	}
 
-	.col-features {
-		width: 200px;
+	.col-rarity {
+		width: 80px;
 	}
 
-	.job-icon {
-		width: auto;
-		height: 28px;
-		border-radius: 4px;
+	.col-id {
+		width: 120px;
+
+		code {
+			font-size: typography.$font-small;
+			background: #f0f0f0;
+			padding: 2px 6px;
+			border-radius: 3px;
+		}
 	}
 
 	.name-cell {
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
+
+		.name-ja {
+			font-size: typography.$font-small;
+			color: var(--text-secondary);
+		}
 	}
 
-	.tier-badge {
+	.type-badge {
 		display: inline-block;
 		padding: 2px 8px;
-		background: colors.$grey-90;
 		border-radius: 4px;
 		font-size: typography.$font-small;
-		color: colors.$grey-30;
-	}
-
-	.proficiency-icons {
-		display: flex;
-		gap: 4px;
-		align-items: center;
-	}
-
-	.features {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 4px;
-	}
-
-	.badge {
-		display: inline-block;
-		padding: 2px 6px;
-		border-radius: 4px;
-		font-size: typography.$font-tiny;
 		font-weight: typography.$medium;
 
-		&.master {
-			background: colors.$yellow;
-			color: white;
+		&.shield {
+			background: #e0f2fe;
+			color: #0369a1;
 		}
 
-		&.ultimate {
-			background: colors.$dark-bg-00;
-			color: white;
-		}
-
-		&.accessory {
-			background: colors.$blue;
-			color: white;
+		&.manatura {
+			background: #fce7f3;
+			color: #be185d;
 		}
 	}
 

@@ -202,12 +202,15 @@ export interface JobSkill {
   actionId?: number   // Unique game ID
 }
 
-// JobAccessory entity
+// JobAccessory entity from JobAccessoryBlueprint
 export interface JobAccessory {
   id: string
   name: LocalizedName
-  slug: string
   granblueId: string
+  rarity: number
+  releaseDate?: string
+  accessoryType: number  // 1 = Shield, 2 = Manatura
+  job?: Job              // Associated job (optional, included when available)
 }
 
 // Raid entity from RaidBlueprint

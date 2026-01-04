@@ -43,6 +43,19 @@ export interface JobSkillPayload {
 }
 
 /**
+ * Payload for creating/updating a job accessory
+ */
+export interface JobAccessoryPayload {
+	name_en: string
+	name_jp?: string
+	granblue_id: string
+	rarity?: number
+	release_date?: string
+	accessory_type: number  // 1 = Shield, 2 = Manatura
+	job_id?: string
+}
+
+/**
  * Payload for updating a job entity
  */
 export interface JobUpdatePayload {
@@ -123,15 +136,25 @@ export class JobAdapter extends BaseAdapter {
 	 * Gets all accessories available for a specific job
 	 * Only returns data if the job supports accessories
 	 */
-	async getAccessories(jobId: string): Promise<JobAccessory[]> {
-		const response = await this.request<{ accessories: JobAccessory[] }>(
-			`/jobs/${jobId}/accessories`,
-			{
-				method: 'GET',
-				cacheTTL: 300000 // Cache for 5 minutes
-			}
-		)
-		return response.accessories
+	async getAccessoriesForJob(jobId: string): Promise<JobAccessory[]> {
+		return this.request<JobAccessory[]>(`/jobs/${jobId}/accessories`, {
+			method: 'GET',
+			cacheTTL: 300000 // Cache for 5 minutes
+		})
+	}
+
+	/**
+	 * Creates a new job entity (database admin function)
+	 * @param data The job data
+	 */
+	async createJob(data: JobUpdatePayload): Promise<Job> {
+		const response = await this.request<Job>('/jobs', {
+			method: 'POST',
+			body: data
+		})
+		// Clear jobs cache to reflect the new job
+		this.clearCache('/jobs')
+		return response
 	}
 
 	/**
@@ -327,12 +350,78 @@ export class JobAdapter extends BaseAdapter {
 		this.clearCache(`/parties/${partyId}`)
 	}
 
+	// ============================================
+	// Job Accessory Methods (Database Management)
+	// ============================================
+
+	/**
+	 * Gets all job accessories
+	 * @param accessoryType Optional filter by type (1=Shield, 2=Manatura)
+	 */
+	async getAllAccessories(accessoryType?: number): Promise<JobAccessory[]> {
+		const params = accessoryType ? `?accessory_type=${accessoryType}` : ''
+		return this.request<JobAccessory[]>(`/job_accessories${params}`, {
+			method: 'GET',
+			cacheTTL: 300000 // Cache for 5 minutes
+		})
+	}
+
+	/**
+	 * Gets a single job accessory by ID or granblue_id
+	 */
+	async getAccessoryById(id: string): Promise<JobAccessory> {
+		return this.request<JobAccessory>(`/job_accessories/${id}`, {
+			method: 'GET',
+			cacheTTL: 300000 // Cache for 5 minutes
+		})
+	}
+
+	/**
+	 * Creates a new job accessory
+	 * @param data The accessory data
+	 */
+	async createAccessory(data: JobAccessoryPayload): Promise<JobAccessory> {
+		const response = await this.request<JobAccessory>('/job_accessories', {
+			method: 'POST',
+			body: data
+		})
+		this.clearCache('/job_accessories')
+		return response
+	}
+
+	/**
+	 * Updates an existing job accessory
+	 * @param id The accessory's ID or granblue_id
+	 * @param data The updated accessory data
+	 */
+	async updateAccessory(id: string, data: Partial<JobAccessoryPayload>): Promise<JobAccessory> {
+		const response = await this.request<JobAccessory>(`/job_accessories/${id}`, {
+			method: 'PUT',
+			body: data
+		})
+		this.clearCache('/job_accessories')
+		this.clearCache(`/job_accessories/${id}`)
+		return response
+	}
+
+	/**
+	 * Deletes a job accessory
+	 * @param id The accessory's ID or granblue_id
+	 */
+	async deleteAccessory(id: string): Promise<void> {
+		await this.request(`/job_accessories/${id}`, {
+			method: 'DELETE'
+		})
+		this.clearCache('/job_accessories')
+	}
+
 	/**
 	 * Clears the cache for job-related data
 	 */
 	clearJobCache() {
 		this.clearCache('/jobs')
 		this.clearCache('/search/job_skills')
+		this.clearCache('/job_accessories')
 	}
 }
 
