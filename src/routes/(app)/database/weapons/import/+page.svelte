@@ -4,7 +4,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
-	import { entityAdapter, type WeaponSuggestions } from '$lib/api/adapters/entity.adapter'
+	import { entityAdapter, type ParsedWeaponData } from '$lib/api/adapters/entity.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
 	import { getGameCdnWeaponImage, getPlaceholderImage } from '$lib/utils/images'
 	import {
@@ -25,7 +25,6 @@
 	import type { EntityTab } from '$lib/features/database/import/TabbedEntitySelector.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import SuggestionDetailItem from '$lib/components/ui/SuggestionDetailItem.svelte'
 	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
@@ -39,7 +38,7 @@
 		wikiPage: string
 		status: 'loading' | 'success' | 'error'
 		granblueId?: string
-		suggestions?: WeaponSuggestions
+		parsedData?: ParsedWeaponData
 		error?: string
 	}
 
@@ -56,7 +55,6 @@
 
 	// Form data per entity (keyed by wikiPage) - using Record for proper reactivity
 	let formDataByPage = $state<Record<string, any>>({})
-	let dismissedByPage = $state<Record<string, Set<string>>>({})
 	let savedEntities = $state<Set<string>>(new Set())
 
 	// Store wiki raw data per entity for sending with create request
@@ -99,46 +97,46 @@
 	)
 
 	// Initialize empty form data for an entity
-	function createEmptyFormData(wikiPage: string, suggestions?: WeaponSuggestions) {
+	function createEmptyFormData(wikiPage: string, parsedData?: ParsedWeaponData) {
 		return {
-			name: suggestions?.nameEn ?? '',
-			nameJp: suggestions?.nameJp ?? '',
-			granblue_id: suggestions?.granblueId ?? '',
-			rarity: suggestions?.rarity ?? 3,
-			element: suggestions?.element ?? 0,
-			proficiency: suggestions?.proficiency ?? 0,
-			series: suggestions?.series ?? '',
+			name: parsedData?.nameEn ?? '',
+			nameJp: parsedData?.nameJp ?? '',
+			granblue_id: parsedData?.granblueId ?? '',
+			rarity: parsedData?.rarity ?? 3,
+			element: parsedData?.element ?? 0,
+			proficiency: parsedData?.proficiency ?? 0,
+			series: parsedData?.series ?? '',
 			newSeries: 0,
 			promotions: [] as number[],
-			minHp: suggestions?.minHp ?? 0,
-			maxHp: suggestions?.maxHp ?? 0,
-			maxHpFlb: suggestions?.maxHpFlb ?? 0,
-			maxHpUlb: suggestions?.maxHpUlb ?? 0,
-			minAtk: suggestions?.minAtk ?? 0,
-			maxAtk: suggestions?.maxAtk ?? 0,
-			maxAtkFlb: suggestions?.maxAtkFlb ?? 0,
-			maxAtkUlb: suggestions?.maxAtkUlb ?? 0,
-			maxLevel: suggestions?.maxLevel ?? 100,
+			minHp: parsedData?.minHp ?? 0,
+			maxHp: parsedData?.maxHp ?? 0,
+			maxHpFlb: parsedData?.maxHpFlb ?? 0,
+			maxHpUlb: parsedData?.maxHpUlb ?? 0,
+			minAtk: parsedData?.minAtk ?? 0,
+			maxAtk: parsedData?.maxAtk ?? 0,
+			maxAtkFlb: parsedData?.maxAtkFlb ?? 0,
+			maxAtkUlb: parsedData?.maxAtkUlb ?? 0,
+			maxLevel: parsedData?.maxLevel ?? 100,
 			maxSkillLevel: 10,
 			maxAwakeningLevel: 0,
-			flb: suggestions?.flb ?? false,
-			ulb: suggestions?.ulb ?? false,
-			transcendence: suggestions?.transcendence ?? false,
+			flb: parsedData?.flb ?? false,
+			ulb: parsedData?.ulb ?? false,
+			transcendence: parsedData?.transcendence ?? false,
 			extraPrerequisite: '' as number | '',
 			extra: false,
 			limit: false,
 			ax: false,
-			releaseDate: suggestions?.releaseDate ?? '',
-			flbDate: suggestions?.flbDate ?? '',
-			ulbDate: suggestions?.ulbDate ?? '',
+			releaseDate: parsedData?.releaseDate ?? '',
+			flbDate: parsedData?.flbDate ?? '',
+			ulbDate: parsedData?.ulbDate ?? '',
 			transcendenceDate: '',
 			wikiEn: wikiPage ? wikiPage.replace(/ /g, '_') : '',
 			wikiJa: '',
-			gamewith: suggestions?.gamewith ?? '',
-			kamigame: suggestions?.kamigame ?? '',
+			gamewith: parsedData?.gamewith ?? '',
+			kamigame: parsedData?.kamigame ?? '',
 			nicknamesEn: [] as string[],
 			nicknamesJp: [] as string[],
-			recruits: suggestions?.recruits ?? null,
+			recruits: parsedData?.recruits ?? null,
 			// Forge chain
 			forgedFrom: null as string | null,
 			forgeOrder: null as number | null
@@ -204,21 +202,19 @@
 					wikiPage: result.wikiPage,
 					status: result.status,
 					granblueId: result.granblueId,
-					suggestions: result.suggestions,
+					parsedData: result.parsedData,
 					error: result.error
 				})
 
 				// Create form data for successful results
 				if (result.status === 'success') {
-					formDataByPage[result.wikiPage] = createEmptyFormData(result.wikiPage, result.suggestions)
-					dismissedByPage[result.wikiPage] = new Set<string>()
+					formDataByPage[result.wikiPage] = createEmptyFormData(result.wikiPage, result.parsedData)
 				}
 			})
 			entities = updatedEntities
 
 			// Trigger reactivity by reassigning
 			formDataByPage = { ...formDataByPage }
-			dismissedByPage = { ...dismissedByPage }
 		} catch (error) {
 			console.error('Batch preview error:', error)
 			fetchError = 'Failed to fetch wiki data. Please try again.'
@@ -230,24 +226,6 @@
 	// Handle entity selection
 	function handleSelectEntity(wikiPage: string) {
 		selectedWikiPage = wikiPage
-	}
-
-	// Accept a suggestion
-	function handleAcceptSuggestion(field: string, value: any) {
-		if (!selectedWikiPage || !formDataByPage[selectedWikiPage]) return
-
-		formDataByPage[selectedWikiPage][field] = value
-		formDataByPage = { ...formDataByPage }
-	}
-
-	// Dismiss a suggestion
-	function handleDismissSuggestion(field: string) {
-		if (!selectedWikiPage) return
-
-		const dismissed = dismissedByPage[selectedWikiPage] ?? new Set<string>()
-		dismissed.add(field)
-		dismissedByPage[selectedWikiPage] = dismissed
-		dismissedByPage = { ...dismissedByPage }
 	}
 
 	// Save current entity
@@ -441,31 +419,21 @@
 					<p>Loading wiki data...</p>
 				</div>
 			{:else if selectedWikiPage && formDataByPage[selectedWikiPage]}
-				{@const suggestions = selectedEntity.suggestions}
-				{@const dismissed = dismissedByPage[selectedWikiPage] ?? new Set<string>()}
 				<section class="details">
 					<DetailsContainer title="Basic Info">
-						<SuggestionDetailItem
+						<DetailItem
 							label="Name (EN)"
 							bind:value={formDataByPage[selectedWikiPage].name}
 							editable={true}
 							type="text"
 							placeholder="Weapon name"
-							suggestion={suggestions?.nameEn}
-							dismissedSuggestion={dismissed.has('name')}
-							onAcceptSuggestion={() => handleAcceptSuggestion('name', suggestions?.nameEn)}
-							onDismissSuggestion={() => handleDismissSuggestion('name')}
 						/>
-						<SuggestionDetailItem
+						<DetailItem
 							label="Name (JP)"
 							bind:value={formDataByPage[selectedWikiPage].nameJp}
 							editable={true}
 							type="text"
 							placeholder="武器名"
-							suggestion={suggestions?.nameJp}
-							dismissedSuggestion={dismissed.has('nameJp')}
-							onAcceptSuggestion={() => handleAcceptSuggestion('nameJp', suggestions?.nameJp)}
-							onDismissSuggestion={() => handleDismissSuggestion('nameJp')}
 						/>
 					</DetailsContainer>
 
@@ -473,50 +441,30 @@
 						weapon={emptyWeapon}
 						editMode={true}
 						bind:editData={formDataByPage[selectedWikiPage]}
-						{suggestions}
-						dismissedSuggestions={dismissed}
-						onAcceptSuggestion={handleAcceptSuggestion}
-						onDismissSuggestion={handleDismissSuggestion}
 					/>
 
 					<WeaponUncapSection
 						weapon={emptyWeapon}
 						editMode={true}
 						bind:editData={formDataByPage[selectedWikiPage]}
-						{suggestions}
-						dismissedSuggestions={dismissed}
-						onAcceptSuggestion={handleAcceptSuggestion}
-						onDismissSuggestion={handleDismissSuggestion}
 					/>
 
 					<WeaponTaxonomySection
 						weapon={emptyWeapon}
 						editMode={true}
 						bind:editData={formDataByPage[selectedWikiPage]}
-						{suggestions}
-						dismissedSuggestions={dismissed}
-						onAcceptSuggestion={handleAcceptSuggestion}
-						onDismissSuggestion={handleDismissSuggestion}
 					/>
 
 					<WeaponStatsSection
 						weapon={emptyWeapon}
 						editMode={true}
 						bind:editData={formDataByPage[selectedWikiPage]}
-						{suggestions}
-						dismissedSuggestions={dismissed}
-						onAcceptSuggestion={handleAcceptSuggestion}
-						onDismissSuggestion={handleDismissSuggestion}
 					/>
 
 					<WeaponGachaSection
 						weapon={emptyWeapon}
 						editMode={true}
 						bind:editData={formDataByPage[selectedWikiPage]}
-						{suggestions}
-						dismissedSuggestions={dismissed}
-						onAcceptSuggestion={handleAcceptSuggestion}
-						onDismissSuggestion={handleDismissSuggestion}
 					/>
 
 					<WeaponForgeSection
@@ -535,42 +483,29 @@
 					</DetailsContainer>
 
 					<DetailsContainer title="Dates">
-						<SuggestionDetailItem
+						<DetailItem
 							label="Release Date"
 							bind:value={formDataByPage[selectedWikiPage].releaseDate}
 							editable={true}
 							type="text"
 							placeholder="YYYY-MM-DD"
-							suggestion={suggestions?.releaseDate}
-							dismissedSuggestion={dismissed.has('releaseDate')}
-							onAcceptSuggestion={() =>
-								handleAcceptSuggestion('releaseDate', suggestions?.releaseDate)}
-							onDismissSuggestion={() => handleDismissSuggestion('releaseDate')}
 						/>
 						{#if formDataByPage[selectedWikiPage].flb}
-							<SuggestionDetailItem
+							<DetailItem
 								label="FLB Date"
 								bind:value={formDataByPage[selectedWikiPage].flbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
-								suggestion={suggestions?.flbDate}
-								dismissedSuggestion={dismissed.has('flbDate')}
-								onAcceptSuggestion={() => handleAcceptSuggestion('flbDate', suggestions?.flbDate)}
-								onDismissSuggestion={() => handleDismissSuggestion('flbDate')}
 							/>
 						{/if}
 						{#if formDataByPage[selectedWikiPage].ulb}
-							<SuggestionDetailItem
+							<DetailItem
 								label="ULB Date"
 								bind:value={formDataByPage[selectedWikiPage].ulbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
-								suggestion={suggestions?.ulbDate}
-								dismissedSuggestion={dismissed.has('ulbDate')}
-								onAcceptSuggestion={() => handleAcceptSuggestion('ulbDate', suggestions?.ulbDate)}
-								onDismissSuggestion={() => handleDismissSuggestion('ulbDate')}
 							/>
 						{/if}
 						{#if formDataByPage[selectedWikiPage].transcendence}
@@ -605,7 +540,7 @@
 							hasLinkButton={true}
 							linkUrl={buildWikiJaUrl(formDataByPage[selectedWikiPage].wikiJa, 'weapon')}
 						/>
-						<SuggestionDetailItem
+						<DetailItem
 							label="Gamewith"
 							bind:value={formDataByPage[selectedWikiPage].gamewith}
 							editable={true}
@@ -614,12 +549,8 @@
 							width="480px"
 							hasLinkButton={true}
 							linkUrl={buildGamewithUrl(formDataByPage[selectedWikiPage].gamewith)}
-							suggestion={suggestions?.gamewith}
-							dismissedSuggestion={dismissed.has('gamewith')}
-							onAcceptSuggestion={() => handleAcceptSuggestion('gamewith', suggestions?.gamewith)}
-							onDismissSuggestion={() => handleDismissSuggestion('gamewith')}
 						/>
-						<SuggestionDetailItem
+						<DetailItem
 							label="Kamigame"
 							bind:value={formDataByPage[selectedWikiPage].kamigame}
 							editable={true}
@@ -628,10 +559,6 @@
 							width="480px"
 							hasLinkButton={true}
 							linkUrl={buildKamigameUrl(formDataByPage[selectedWikiPage].kamigame, 'weapon', formDataByPage[selectedWikiPage].rarity)}
-							suggestion={suggestions?.kamigame}
-							dismissedSuggestion={dismissed.has('kamigame')}
-							onAcceptSuggestion={() => handleAcceptSuggestion('kamigame', suggestions?.kamigame)}
-							onDismissSuggestion={() => handleDismissSuggestion('kamigame')}
 						/>
 					</DetailsContainer>
 				</section>
