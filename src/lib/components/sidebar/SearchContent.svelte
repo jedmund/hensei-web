@@ -9,6 +9,7 @@
 	import Button from '../ui/Button.svelte'
 	import Icon from '../Icon.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/features/database/detail/image'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
@@ -284,12 +285,8 @@
 		}
 	}
 
-	function toggleElementFilter(element: number) {
-		if (elementFilters.includes(element)) {
-			elementFilters = elementFilters.filter(e => e !== element)
-		} else {
-			elementFilters = [...elementFilters, element]
-		}
+	function handleElementChange(value: number | number[]) {
+		elementFilters = Array.isArray(value) ? value : value !== undefined ? [value] : []
 	}
 
 	function toggleRarityFilter(rarity: number) {
@@ -366,19 +363,13 @@
 		<!-- Element filters -->
 		<div class="filter-group">
 			<label class="filter-label">Element</label>
-			<div class="filter-buttons">
-				{#each elements as element}
-					<button
-						class="filter-btn element-btn"
-						class:active={elementFilters.includes(element.value)}
-						style:--element-color={element.color}
-						onclick={() => toggleElementFilter(element.value)}
-						aria-pressed={elementFilters.includes(element.value)}
-					>
-						{element.label}
-					</button>
-				{/each}
-			</div>
+			<ElementPicker
+				value={elementFilters}
+				onValueChange={handleElementChange}
+				multiple={true}
+				includeAny={true}
+				contained={true}
+			/>
 		</div>
 
 		<!-- Rarity filters -->
@@ -626,12 +617,6 @@
 				background: var(--accent-blue);
 				color: white;
 				border-color: var(--accent-blue);
-			}
-
-			&.element-btn.active {
-				background: var(--element-color);
-				border-color: var(--element-color);
-				color: white;
 			}
 		}
 	}
