@@ -8,6 +8,14 @@ export function getRarityLabel(rarity: number): string {
 	return RARITY_LABELS[rarity] || '—'
 }
 
+/**
+ * Get rarity prefix for URL generation (e.g., "SSR", "SR", "R")
+ * Returns empty string for unknown rarity values
+ */
+export function getRarityPrefix(rarity: number): string {
+	return RARITY_LABELS[rarity] || ''
+}
+
 export function getRarityOptions() {
 	return Object.entries(RARITY_LABELS).map(([value, label]) => ({
 		value: Number(value),

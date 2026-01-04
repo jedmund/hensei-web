@@ -13,6 +13,7 @@
 		buildGamewithUrl,
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
+	import { getRarityPrefix } from '$lib/utils/rarity'
 
 	// Components
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
@@ -84,6 +85,23 @@
 
 	// Get selected entity data
 	const selectedEntity = $derived(selectedWikiPage ? entities.get(selectedWikiPage) : null)
+
+	// Auto-generate wiki URLs when Name (JP) or Rarity changes
+	$effect(() => {
+		if (!selectedWikiPage) return
+		const formData = formDataByPage[selectedWikiPage]
+		if (!formData) return
+
+		const nameJp = formData.nameJp
+		const rarity = formData.rarity
+
+		if (nameJp) {
+			// Auto-generate wikiJa: "Name (JP) (SSR)"
+			formData.wikiJa = `${nameJp} (${getRarityPrefix(rarity)})`
+			// Auto-generate kamigame: "Name (JP)" for characters (no rarity prefix)
+			formData.kamigame = nameJp
+		}
+	})
 
 	// Entity tabs for TabbedEntitySelector
 	const entityTabs = $derived<EntityTab[]>(
@@ -451,43 +469,6 @@
 				{@const suggestions = selectedEntity.suggestions}
 				{@const dismissed = dismissedByPage[selectedWikiPage] ?? new Set<string>()}
 				<section class="details">
-					<!-- Basic Info: Name fields needed for import (not in MetadataSection) -->
-					<DetailsContainer title="Basic Info">
-						<SuggestionDetailItem
-							label="Name (EN)"
-							bind:value={formDataByPage[selectedWikiPage].name}
-							editable={true}
-							type="text"
-							placeholder="Character name"
-							suggestion={suggestions?.nameEn}
-							dismissedSuggestion={dismissed.has('name')}
-							onAcceptSuggestion={() => handleAcceptSuggestion('name', suggestions?.nameEn)}
-							onDismissSuggestion={() => handleDismissSuggestion('name')}
-						/>
-						<SuggestionDetailItem
-							label="Name (JP)"
-							bind:value={formDataByPage[selectedWikiPage].nameJp}
-							editable={true}
-							type="text"
-							placeholder="キャラクター名"
-							suggestion={suggestions?.nameJp}
-							dismissedSuggestion={dismissed.has('nameJp')}
-							onAcceptSuggestion={() => handleAcceptSuggestion('nameJp', suggestions?.nameJp)}
-							onDismissSuggestion={() => handleDismissSuggestion('nameJp')}
-						/>
-						<SuggestionDetailItem
-							label="Granblue ID"
-							bind:value={formDataByPage[selectedWikiPage].granblueId}
-							editable={true}
-							type="text"
-							placeholder="3040001000"
-							suggestion={suggestions?.granblueId}
-							dismissedSuggestion={dismissed.has('granblueId')}
-							onAcceptSuggestion={() => handleAcceptSuggestion('granblueId', suggestions?.granblueId)}
-							onDismissSuggestion={() => handleDismissSuggestion('granblueId')}
-						/>
-					</DetailsContainer>
-
 					<CharacterMetadataSection
 						character={emptyCharacter}
 						editMode={true}

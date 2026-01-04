@@ -34,19 +34,27 @@
 
 <DetailsContainer title="Metadata">
   {#if editMode}
-    <DetailItem
+    <SuggestionDetailItem
       label="Name (EN)"
       bind:value={editData.name}
       editable={true}
       type="text"
       placeholder="English name"
+      suggestion={suggestions?.nameEn}
+      dismissedSuggestion={dismissedSuggestions?.has('name')}
+      onAcceptSuggestion={() => onAcceptSuggestion?.('name', suggestions?.nameEn)}
+      onDismissSuggestion={() => onDismissSuggestion?.('name')}
     />
-    <DetailItem
+    <SuggestionDetailItem
       label="Name (JP)"
       bind:value={editData.nameJp}
       editable={true}
       type="text"
       placeholder="日本語名"
+      suggestion={suggestions?.nameJp}
+      dismissedSuggestion={dismissedSuggestions?.has('nameJp')}
+      onAcceptSuggestion={() => onAcceptSuggestion?.('nameJp', suggestions?.nameJp)}
+      onDismissSuggestion={() => onDismissSuggestion?.('nameJp')}
     />
     <SuggestionDetailItem
       label="Rarity"
