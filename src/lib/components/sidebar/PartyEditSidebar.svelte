@@ -18,7 +18,8 @@
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { usePaneStack } from '$lib/stores/paneStack.svelte'
-	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { untrack } from 'svelte'
 	import type { Raid } from '$lib/types/api/entities'
 	import type { RaidFull } from '$lib/types/api/raid'
@@ -59,6 +60,13 @@
 	// Get the pane stack for pushing EditRaidPane
 	const paneStack = usePaneStack()
 
+	// Query user's crew membership to show/hide share toggle
+	const myCrewQuery = createQuery(() => ({
+		...crewQueries.myCrew(),
+		staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+	}))
+	const isInCrew = $derived(myCrewQuery.data != null)
+
 	// Local state - initialized from initialValues
 	let name = $state(initialValues.name)
 	let visibility = $state<PartyVisibility>(initialValues.visibility)
@@ -76,11 +84,11 @@
 	let raidId = $state<string | null>(initialValues.raidId)
 	let description = $state(initialValues.description)
 
-	// Visibility options for select
+	// Visibility options for select (1=Public, 2=Unlisted, 3=Private per Rails API)
 	const visibilityOptions: Array<{ value: PartyVisibility; label: string }> = [
-		{ value: 'public', label: 'Public' },
-		{ value: 'private', label: 'Private' },
-		{ value: 'unlisted', label: 'Unlisted' }
+		{ value: 1, label: 'Public' },
+		{ value: 2, label: 'Unlisted' },
+		{ value: 3, label: 'Private' }
 	]
 
 	// Check if any values have changed
@@ -289,12 +297,11 @@
 				<Select
 					options={visibilityOptions}
 					bind:value={visibility}
-					size="small"
 					contained
 				/>
 			{/snippet}
 		</DetailRow>
-		{#if crewStore.isInCrew}
+		{#if isInCrew}
 			<DetailRow label="Share with Crew" noHover compact>
 				{#snippet children()}
 					<Switch
