@@ -53,8 +53,8 @@ export interface SearchResult {
 	element?: number
 	/** Rarity level */
 	rarity?: number
-	/** Weapon/Character proficiency */
-	proficiency?: number
+	/** Proficiency - number for weapons, array for characters */
+	proficiency?: number | number[]
 	/** Series - object for weapons (WeaponSeriesRef), number array for characters */
 	series?: { id: string; slug: string; name: { en: string; ja: string } } | number[]
 	/** URL for entity image */

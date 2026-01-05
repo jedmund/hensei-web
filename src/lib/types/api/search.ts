@@ -28,6 +28,8 @@ export interface AddItemResult {
 	element?: number
 	/** Rarity level */
 	rarity?: number
+	/** Proficiency - number for weapons, array for characters */
+	proficiency?: number | number[]
 	/** Collection ID if the item was selected from user's collection */
 	collectionId?: string
 	/** Type of entity */
