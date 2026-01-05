@@ -229,6 +229,10 @@
 	--segmented-control-background-segment-text-hover: #{colors.$segmented--control--background--segment--text--hover--light};
 	--segmented-control-background-segment-text-checked: #{colors.$segmented--control--background--segment--text--checked--light};
 
+	// Light - Picker (icon-based pickers)
+	--picker-item-bg-hover: #{colors.$picker--item--bg--hover--light};
+	--picker-item-bg-selected: #{colors.$picker--item--bg--selected--light};
+
 	// Light - Extra Weapons
 	--extra-purple-bg: #{colors.$extra--purple--bg--light};
 	--extra-purple-card-bg: #{colors.$extra--purple--card--bg--light};
@@ -606,6 +610,10 @@ html[data-theme='dark'] {
 	--segmented-control-background-segment-text: #{colors.$segmented--control--background--segment--text--dark};
 	--segmented-control-background-segment-text-hover: #{colors.$segmented--control--background--segment--text--hover--dark};
 	--segmented-control-background-segment-text-checked: #{colors.$segmented--control--background--segment--text--checked--dark};
+
+	// Dark - Picker (icon-based pickers)
+	--picker-item-bg-hover: #{colors.$picker--item--bg--hover--dark};
+	--picker-item-bg-selected: #{colors.$picker--item--bg--selected--dark};
 
 	// Dark - Extra Weapons
 	--extra-purple-bg: #{colors.$extra--purple--bg--dark};

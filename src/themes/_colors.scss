@@ -534,6 +534,13 @@ $segmented--control--background--segment--text--dark: $grey-60;
 $segmented--control--background--segment--text--hover--dark: $grey-70;
 $segmented--control--background--segment--text--checked--dark: $grey-90;
 
+// Color Definitions: Picker (icon-based pickers like Element, Rarity, Proficiency)
+// Uses darker backgrounds than segmented controls for better visibility
+$picker--item--bg--hover--light: $grey-70;
+$picker--item--bg--hover--dark: $grey-40;
+$picker--item--bg--selected--light: $grey-75;
+$picker--item--bg--selected--dark: $grey-45;
+
 // Color Definitions: Element / Wind
 $wind--bg--light: $wind-bg-10;
 $wind--bg--dark: $wind-bg-10;
