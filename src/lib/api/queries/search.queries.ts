@@ -23,6 +23,8 @@ export interface SearchFilters {
 	proficiency2?: number[]
 	subaura?: boolean
 	extra?: boolean
+	// Series filter (by slug) - works for weapons, summons, and characters
+	series?: string[]
 	// Character-specific filters
 	season?: number[]
 	characterSeries?: number[]
@@ -99,6 +101,9 @@ function buildSearchParams(
 		}
 		if (filters.extra !== undefined) {
 			apiFilters.extra = filters.extra
+		}
+		if (filters.series && filters.series.length > 0) {
+			apiFilters.series = filters.series
 		}
 		// Character-specific filters
 		if (filters.season && filters.season.length > 0) {
