@@ -7,7 +7,7 @@
  * @module api/queries/crew
  */
 
-import { queryOptions } from '@tanstack/svelte-query'
+import { queryOptions, infiniteQueryOptions } from '@tanstack/svelte-query'
 import { crewAdapter } from '$lib/api/adapters/crew.adapter'
 import type { MemberFilter } from '$lib/types/api/crew'
 
@@ -96,6 +96,30 @@ export const crewQueries = {
       queryFn: () => crewAdapter.getPendingPhantomClaims(),
       staleTime: 1000 * 60 * 2, // 2 minutes
       gcTime: 1000 * 60 * 15 // 15 minutes
+    }),
+
+  /**
+   * Parties shared with the crew query options
+   * Uses infinite query for pagination
+   */
+  sharedParties: () =>
+    infiniteQueryOptions({
+      queryKey: ['crew', 'shared_parties'] as const,
+      queryFn: async ({ pageParam }) => {
+        const response = await crewAdapter.getSharedParties(pageParam)
+        return {
+          parties: response.parties,
+          page: response.meta.page,
+          totalPages: response.meta.totalPages,
+          total: response.meta.count,
+          perPage: response.meta.perPage
+        }
+      },
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) =>
+        lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+      staleTime: 1000 * 60 * 2, // 2 minutes
+      gcTime: 1000 * 60 * 15 // 15 minutes
     })
 }
 
@@ -122,6 +146,7 @@ export const crewKeys = {
   membersAll: () => [...crewKeys.all, 'members'] as const,
   members: (filter: MemberFilter) => [...crewKeys.all, 'members', filter] as const,
   crewInvitations: (crewId: string) => [...crewKeys.all, crewId, 'invitations'] as const,
+  sharedParties: () => [...crewKeys.all, 'shared_parties'] as const,
   invitations: {
     all: ['invitations'] as const,
     pending: () => ['invitations', 'pending'] as const

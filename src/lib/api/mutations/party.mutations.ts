@@ -15,6 +15,7 @@ import {
 } from '$lib/api/adapters/party.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import { userKeys } from '$lib/api/queries/user.queries'
+import { crewKeys } from '$lib/api/queries/crew.queries'
 import type { Party } from '$lib/types/api/party'
 
 /**
@@ -309,6 +310,72 @@ export function useRegeneratePreview() {
 		onSuccess: (_data, shortcode) => {
 			// Invalidate preview status to trigger refetch
 			queryClient.invalidateQueries({ queryKey: partyKeys.preview(shortcode) })
+		}
+	}))
+}
+
+/**
+ * Share party with crew mutation
+ *
+ * Shares a party with the current user's crew.
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   import { useSharePartyWithCrew } from '$lib/api/mutations/party.mutations'
+ *
+ *   const shareParty = useSharePartyWithCrew()
+ *
+ *   function handleShare(partyId: string, shortcode: string) {
+ *     shareParty.mutate({ partyId, shortcode })
+ *   }
+ * </script>
+ * ```
+ */
+export function useSharePartyWithCrew() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: ({ partyId }: { partyId: string; shortcode: string }) =>
+			partyAdapter.shareWithCrew(partyId),
+		onSuccess: (_share, { shortcode }) => {
+			// Invalidate the party to refresh its shares
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(shortcode) })
+			// Invalidate crew's shared parties list
+			queryClient.invalidateQueries({ queryKey: crewKeys.sharedParties() })
+		}
+	}))
+}
+
+/**
+ * Remove party share mutation
+ *
+ * Removes a share from a party.
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   import { useRemovePartyShare } from '$lib/api/mutations/party.mutations'
+ *
+ *   const removeShare = useRemovePartyShare()
+ *
+ *   function handleRemoveShare(partyId: string, shareId: string, shortcode: string) {
+ *     removeShare.mutate({ partyId, shareId, shortcode })
+ *   }
+ * </script>
+ * ```
+ */
+export function useRemovePartyShare() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: ({ partyId, shareId }: { partyId: string; shareId: string; shortcode: string }) =>
+			partyAdapter.removeShare(partyId, shareId),
+		onSuccess: (_data, { shortcode }) => {
+			// Invalidate the party to refresh its shares
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(shortcode) })
+			// Invalidate crew's shared parties list
+			queryClient.invalidateQueries({ queryKey: crewKeys.sharedParties() })
 		}
 	}))
 }
