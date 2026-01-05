@@ -20,6 +20,7 @@
 		disabled?: boolean
 		size?: 'small' | 'medium' | 'large'
 		contained?: boolean
+		fullWidth?: boolean
 		class?: string
 	}
 
@@ -31,6 +32,7 @@
 		disabled = false,
 		size = 'small',
 		contained = false,
+		fullWidth = false,
 		class: className = ''
 	}: Props = $props()
 
@@ -64,6 +66,7 @@
 			'multi-select',
 			size,
 			contained && 'contained',
+			fullWidth && 'full',
 			disabled && 'disabled',
 			value.length > 0 && 'has-value',
 			className
@@ -222,6 +225,11 @@
 		&:hover:not(.disabled) {
 			background-color: var(--select-contained-bg-hover);
 		}
+	}
+
+	// Variant: full width
+	:global([data-select-trigger].multi-select.full) {
+		width: 100%;
 	}
 
 	// Dropdown content
