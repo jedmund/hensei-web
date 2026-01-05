@@ -224,7 +224,7 @@
 	@use '$src/themes/typography' as typography;
 
 	.page {
-		padding: spacing.$unit-2x 0;
+		padding: 0;
 		margin: 0 auto;
 	}
 
