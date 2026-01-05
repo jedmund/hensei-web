@@ -17,6 +17,7 @@
 		mode?: 'auto' | 'segmented' | 'dropdown'
 		contained?: boolean
 		size?: 'small' | 'medium' | 'large'
+		showClear?: boolean
 		disabled?: boolean
 		class?: string
 	}
@@ -29,9 +30,13 @@
 		mode = 'auto',
 		contained = false,
 		size = 'medium',
+		showClear = false,
 		disabled = false,
 		class: className = ''
 	}: Props = $props()
+
+	// Map size to segmented control size (small stays small, medium/large become regular)
+	const segmentedSize = $derived(size === 'small' ? 'small' : 'regular')
 
 	// Responsive detection for auto mode
 	let isMobile = $state(false)
@@ -115,6 +120,8 @@
 		{multiple}
 		{includeAny}
 		{contained}
+		{showClear}
+		size={segmentedSize}
 		disabled={disabled}
 		class={className}
 	/>

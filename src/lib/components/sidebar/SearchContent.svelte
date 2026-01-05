@@ -363,6 +363,7 @@
 				multiple={true}
 				includeAny={true}
 				contained={true}
+				showClear={true}
 			/>
 		</div>
 
