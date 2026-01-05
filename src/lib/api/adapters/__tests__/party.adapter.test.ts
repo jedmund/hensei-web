@@ -18,7 +18,7 @@ describe('PartyAdapter', () => {
 		shortcode: 'ABC123',
 		name: 'Test Party',
 		description: 'Test description',
-		visibility: 'public',
+		visibility: 1,
 		user: {
 			id: 'user-1',
 			username: 'testuser'
@@ -75,7 +75,7 @@ describe('PartyAdapter', () => {
 			const result = await adapter.create({
 				name: 'Test Party',
 				description: 'Test description',
-				visibility: 'public'
+				visibility: 1
 			})
 
 			expect(result).toEqual(mockParty)
@@ -87,7 +87,7 @@ describe('PartyAdapter', () => {
 						party: {
 							name: 'Test Party',
 							description: 'Test description',
-							visibility: 'public'
+							visibility: 1
 						}
 					})
 				})
@@ -187,7 +187,7 @@ describe('PartyAdapter', () => {
 				username: 'testuser',
 				page: 1,
 				per: 20,
-				visibility: 'public',
+				visibility: 1,
 				raidId: 'raid-1'
 			})
 
@@ -203,7 +203,7 @@ describe('PartyAdapter', () => {
 			const callUrl = (global.fetch as any).mock.calls[0][0]
 			expect(callUrl).toContain('page=1')
 			expect(callUrl).toContain('per=20')
-			expect(callUrl).toContain('visibility=public')
+			expect(callUrl).toContain('visibility=1')
 			expect(callUrl).toContain('raid_id=raid-1')
 		})
 	})

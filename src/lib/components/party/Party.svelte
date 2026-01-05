@@ -453,7 +453,7 @@
 		const initialValues: PartyEditValues = {
 			name: party.name ?? '',
 			description: party.description ?? null,
-			visibility: party.visibility ?? 'public',
+			visibility: party.visibility ?? 1,
 			sharedWithCrew: isSharedWithCrew,
 			fullAuto: party.fullAuto ?? false,
 			autoGuard: party.autoGuard ?? false,

@@ -13,6 +13,7 @@ import type { AdapterOptions, PaginatedResponse } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
 import type { PartyShare } from '$lib/types/api/partyShare'
+import type { PartyVisibility } from '$lib/types/visibility'
 
 /**
  * Parameters for creating a new party
@@ -20,7 +21,7 @@ import type { PartyShare } from '$lib/types/api/partyShare'
 export interface CreatePartyParams {
 	name?: string | undefined
 	description?: string | undefined
-	visibility?: 'public' | 'private' | 'unlisted' | undefined
+	visibility?: PartyVisibility | undefined
 	jobId?: string | undefined
 	raidId?: string | null | undefined
 	guidebookId?: string | undefined
@@ -58,7 +59,7 @@ export interface ListUserPartiesParams {
 	username: string
 	page?: number
 	per?: number
-	visibility?: 'public' | 'private' | 'unlisted' | 'all'
+	visibility?: PartyVisibility | 'all'
 	raidId?: string
 	characterId?: string
 	weaponId?: string
