@@ -16,6 +16,7 @@ import type {
 } from './entities'
 import type { GridArtifact, CollectionArtifact } from './artifact'
 import type { AugmentSkill, Befoulment } from './weaponStatModifier'
+import type { PartyShare } from './partyShare'
 
 // Grid item types - these are the junction tables between Party and entities
 
@@ -139,6 +140,8 @@ export interface Party {
   user?: User
   sourceParty?: Party
   remixes?: Party[]
+  /** Shares for this party (only present for owner) */
+  shares?: PartyShare[]
 
   // Local client state
   localId?: string
