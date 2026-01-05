@@ -16,7 +16,7 @@
 	let { label, value, children, noHover = false, noPadding = false, compact = false }: Props = $props()
 </script>
 
-<div class="detail-row" class:no-hover={noHover} class:no-padding={noPadding} class:compact>
+<div class="detail-row" class:no-hover={noHover} class:no-padding={noPadding} class:compact class:has-control={children}>
 	<span class="label">{label}</span>
 	<span class="value">
 		{#if children}
@@ -60,13 +60,22 @@
 		.value {
 			font-size: typography.$font-regular;
 			color: var(--text-primary, colors.$grey-10);
+			min-width: 180px;
+		}
+
+		// Static value display (no children snippet)
+		&:not(.has-control) .value {
 			font-weight: typography.$medium;
 			text-align: right;
-			min-width: 180px;
 		}
 
 		&.compact .value {
 			min-width: unset;
+		}
+
+		// Select controls inside DetailRow should have consistent width
+		.value :global([data-select-trigger]) {
+			min-width: 192px;
 		}
 	}
 </style>
