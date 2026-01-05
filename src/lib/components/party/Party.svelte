@@ -30,7 +30,9 @@
 		useDeleteParty,
 		useRemixParty,
 		useFavoriteParty,
-		useUnfavoriteParty
+		useUnfavoriteParty,
+		useSharePartyWithCrew,
+		useRemovePartyShare
 	} from '$lib/api/mutations/party.mutations'
 
 	// TanStack Query mutations - Job
@@ -158,6 +160,8 @@
 	const remixPartyMutation = useRemixParty()
 	const favoritePartyMutation = useFavoriteParty()
 	const unfavoritePartyMutation = useUnfavoriteParty()
+	const sharePartyWithCrewMutation = useSharePartyWithCrew()
+	const removePartyShareMutation = useRemovePartyShare()
 
 	// TanStack Query mutations - Job
 	const updateJobMutation = useUpdatePartyJob()
@@ -443,9 +447,14 @@
 	function openSettingsPanel() {
 		if (!canEdit()) return
 
+		// Check if party is currently shared with a crew
+		const isSharedWithCrew = party.shares?.some((s) => s.shareableType === 'crew') ?? false
+
 		const initialValues: PartyEditValues = {
 			name: party.name ?? '',
 			description: party.description ?? null,
+			visibility: party.visibility ?? 'public',
+			sharedWithCrew: isSharedWithCrew,
 			fullAuto: party.fullAuto ?? false,
 			autoGuard: party.autoGuard ?? false,
 			autoSummon: party.autoSummon ?? false,
@@ -463,9 +472,11 @@
 			initialValues,
 			element: userElement,
 			onSave: async (values) => {
+				// Update party details including visibility
 				await updatePartyDetails({
 					name: values.name,
 					description: values.description,
+					visibility: values.visibility,
 					fullAuto: values.fullAuto,
 					autoGuard: values.autoGuard,
 					autoSummon: values.autoSummon,
@@ -477,6 +488,34 @@
 					videoUrl: values.videoUrl,
 					raidId: values.raidId
 				})
+
+				// Handle crew share toggle
+				const wasShared = party.shares?.some((s) => s.shareableType === 'crew') ?? false
+				if (values.sharedWithCrew && !wasShared) {
+					// Share with crew
+					try {
+						await sharePartyWithCrewMutation.mutateAsync({
+							partyId: party.id,
+							shortcode: party.shortcode
+						})
+					} catch (err: any) {
+						console.error('Failed to share with crew:', err)
+					}
+				} else if (!values.sharedWithCrew && wasShared) {
+					// Remove crew share
+					const share = party.shares?.find((s) => s.shareableType === 'crew')
+					if (share) {
+						try {
+							await removePartyShareMutation.mutateAsync({
+								partyId: party.id,
+								shareId: share.id,
+								shortcode: party.shortcode
+							})
+						} catch (err: any) {
+							console.error('Failed to remove share:', err)
+						}
+					}
+				}
 			}
 		})
 	}
