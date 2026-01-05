@@ -35,3 +35,9 @@ export function getRarityClass(rarity: number): string {
 			return ''
 	}
 }
+
+export function getRarityImage(rarity: number): string {
+	const label = RARITY_LABELS[rarity]
+	if (!label) return ''
+	return `/images/rarity/${label.toLowerCase()}.png`
+}

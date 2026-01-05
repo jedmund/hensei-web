@@ -6,9 +6,15 @@
 	import type { SearchResult } from '$lib/api/adapters/search.adapter'
 	import { searchQueries, type SearchFilters } from '$lib/api/queries/search.queries'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
+	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import Button from '../ui/Button.svelte'
+	import Select from '../ui/Select.svelte'
 	import Icon from '../Icon.svelte'
+	import Input from '../ui/Input.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
+	import RarityPicker from '../ui/rarity-picker/RarityPicker.svelte'
+	import ProficiencyPicker from '../ui/proficiency-picker/ProficiencyPicker.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/features/database/detail/image'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
@@ -41,12 +47,12 @@
 	let elementFilters = $state<number[]>([])
 	let rarityFilters = $state<number[]>([])
 	let proficiencyFilters = $state<number[]>([])
+	let seriesFilter = $state<string | undefined>(undefined)
 
 	// Search mode state (only available when authUserId is provided)
 	let searchMode = $state<SearchMode>('all')
 
 	// Refs
-	let searchInput: HTMLInputElement
 	let sentinelEl = $state<HTMLElement>()
 
 	// Constants
@@ -60,25 +66,7 @@
 		{ value: 6, label: 'Light', color: 'var(--light-bg)' }
 	]
 
-	const rarities = [
-		{ value: 1, label: 'R' },
-		{ value: 2, label: 'SR' },
-		{ value: 3, label: 'SSR' }
-	]
-
-	const proficiencies = [
-		{ value: 1, label: 'Sabre' },
-		{ value: 2, label: 'Dagger' },
-		{ value: 3, label: 'Spear' },
-		{ value: 4, label: 'Axe' },
-		{ value: 5, label: 'Staff' },
-		{ value: 6, label: 'Gun' },
-		{ value: 7, label: 'Melee' },
-		{ value: 8, label: 'Bow' },
-		{ value: 9, label: 'Harp' },
-		{ value: 10, label: 'Katana' }
-	]
-
+	
 	// Debounce search query changes
 	$effect(() => {
 		const query = searchQuery
@@ -98,6 +86,28 @@
 		}
 	})
 
+	// Series query - fetch list based on current type
+	const seriesQuery = createQuery(() => {
+		switch (type) {
+			case 'weapon':
+				return entityQueries.weaponSeriesList()
+			case 'character':
+				return entityQueries.characterSeriesList()
+			case 'summon':
+				return entityQueries.summonSeriesList()
+		}
+	})
+
+	// Build series options for dropdown (use ID for API filtering)
+	const seriesOptions = $derived.by(() => {
+		const data = seriesQuery.data
+		if (!data) return []
+		return data.map((s) => ({
+			value: s.id,
+			label: s.name.en
+		}))
+	})
+
 	// Build filters object for query
 	// Use requiredProficiencies for mainhand selection if set, otherwise use user-selected filters
 	const effectiveProficiencies = $derived(
@@ -107,7 +117,8 @@
 	const filters = $derived<SearchFilters>({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
-		proficiency: type === 'weapon' && effectiveProficiencies ? effectiveProficiencies : undefined
+		proficiency: type === 'weapon' && effectiveProficiencies ? effectiveProficiencies : undefined,
+		series: seriesFilter ? [seriesFilter] : undefined
 	})
 
 	// Helper to map collection items to search result format with collectionId
@@ -271,41 +282,26 @@
 		searchResults.length === 0 && !activeQuery.isLoading && !activeQuery.isError
 	)
 
-	// Focus search input on mount
-	$effect(() => {
-		if (searchInput) {
-			searchInput.focus()
-		}
-	})
-
 	function handleItemClick(item: AddItemResult) {
 		if (canAddMore) {
 			onAddItems([item])
 		}
 	}
 
-	function toggleElementFilter(element: number) {
-		if (elementFilters.includes(element)) {
-			elementFilters = elementFilters.filter(e => e !== element)
-		} else {
-			elementFilters = [...elementFilters, element]
-		}
+	function handleElementChange(value: number | number[]) {
+		elementFilters = Array.isArray(value) ? value : value !== undefined ? [value] : []
 	}
 
-	function toggleRarityFilter(rarity: number) {
-		if (rarityFilters.includes(rarity)) {
-			rarityFilters = rarityFilters.filter(r => r !== rarity)
-		} else {
-			rarityFilters = [...rarityFilters, rarity]
-		}
+	function handleRarityChange(value: number | number[]) {
+		rarityFilters = Array.isArray(value) ? value : value !== undefined ? [value] : []
 	}
 
-	function toggleProficiencyFilter(prof: number) {
-		if (proficiencyFilters.includes(prof)) {
-			proficiencyFilters = proficiencyFilters.filter(p => p !== prof)
-		} else {
-			proficiencyFilters = [...proficiencyFilters, prof]
-		}
+	function handleSeriesChange(value: string | undefined) {
+		seriesFilter = value
+	}
+
+	function handleProficiencyChange(value: number | number[]) {
+		proficiencyFilters = Array.isArray(value) ? value : value !== undefined ? [value] : []
 	}
 
 	function getImageUrl(item: AddItemResult): string {
@@ -333,12 +329,13 @@
 
 <div class="search-content">
 	<div class="search-section">
-		<input
-			bind:this={searchInput}
+		<Input
 			bind:value={searchQuery}
 			type="text"
 			placeholder="Search by name..."
-			aria-label="Search"
+			leftIcon="search"
+			contained
+			fullWidth
 			class="search-input"
 		/>
 	</div>
@@ -363,59 +360,78 @@
 	{/if}
 
 	<div class="filters-section">
-		<!-- Element filters -->
-		<div class="filter-group">
-			<label class="filter-label">Element</label>
-			<div class="filter-buttons">
-				{#each elements as element}
-					<button
-						class="filter-btn element-btn"
-						class:active={elementFilters.includes(element.value)}
-						style:--element-color={element.color}
-						onclick={() => toggleElementFilter(element.value)}
-						aria-pressed={elementFilters.includes(element.value)}
-					>
-						{element.label}
-					</button>
-				{/each}
-			</div>
-		</div>
-
-		<!-- Rarity filters -->
-		<div class="filter-group">
-			<label class="filter-label">Rarity</label>
-			<div class="filter-buttons">
-				{#each rarities as rarity}
-					<button
-						class="filter-btn rarity-btn"
-						class:active={rarityFilters.includes(rarity.value)}
-						onclick={() => toggleRarityFilter(rarity.value)}
-						aria-pressed={rarityFilters.includes(rarity.value)}
-					>
-						{rarity.label}
-					</button>
-				{/each}
-			</div>
-		</div>
-
-		<!-- Proficiency filters (weapons only, hidden when required proficiencies set for mainhand) -->
-		{#if type === 'weapon' && !requiredProficiencies}
+		<!-- Rarity and Element filters (side by side) -->
+		<div class="filter-row">
 			<div class="filter-group">
-				<label class="filter-label">Proficiency</label>
-				<div class="filter-buttons proficiency-grid">
-					{#each proficiencies as prof}
-						<button
-							class="filter-btn prof-btn"
-							class:active={proficiencyFilters.includes(prof.value)}
-							onclick={() => toggleProficiencyFilter(prof.value)}
-							aria-pressed={proficiencyFilters.includes(prof.value)}
-						>
-							{prof.label}
-						</button>
-					{/each}
+				<div class="filter-header">
+					<label class="filter-label">Rarity</label>
+					{#if rarityFilters.length > 0}
+						<a href="#" class="clear-link" onclick={(e) => { e.preventDefault(); rarityFilters = [] }}>Clear</a>
+					{/if}
 				</div>
+				<RarityPicker
+					value={rarityFilters}
+					onValueChange={handleRarityChange}
+					multiple={true}
+					contained={true}
+					size="small"
+				/>
+			</div>
+
+			<div class="filter-group">
+				<div class="filter-header">
+					<label class="filter-label">Element</label>
+					{#if elementFilters.length > 0}
+						<a href="#" class="clear-link" onclick={(e) => { e.preventDefault(); elementFilters = [] }}>Clear</a>
+					{/if}
+				</div>
+				<ElementPicker
+					value={elementFilters}
+					onValueChange={handleElementChange}
+					multiple={true}
+					includeAny={true}
+					contained={true}
+					size="small"
+				/>
+			</div>
+		</div>
+
+		<!-- Proficiency filters (weapons and characters, hidden when required proficiencies set for mainhand) -->
+		{#if (type === 'weapon' || type === 'character') && !requiredProficiencies}
+			<div class="filter-group">
+				<div class="filter-header">
+					<label class="filter-label">Proficiency</label>
+					{#if proficiencyFilters.length > 0}
+						<a href="#" class="clear-link" onclick={(e) => { e.preventDefault(); proficiencyFilters = [] }}>Clear</a>
+					{/if}
+				</div>
+				<ProficiencyPicker
+					value={proficiencyFilters}
+					onValueChange={handleProficiencyChange}
+					multiple={true}
+					contained={true}
+					size="small"
+				/>
 			</div>
 		{/if}
+
+		<!-- Series filter -->
+		<div class="filter-group">
+			<div class="filter-header">
+				<label class="filter-label">Series</label>
+				{#if seriesFilter}
+					<a href="#" class="clear-link" onclick={(e) => { e.preventDefault(); seriesFilter = undefined }}>Clear</a>
+				{/if}
+			</div>
+			<Select
+				options={seriesOptions}
+				value={seriesFilter}
+				onValueChange={handleSeriesChange}
+				placeholder="All series"
+				contained={true}
+				fullWidth={true}
+			/>
+		</div>
 	</div>
 
 	<!-- Results -->
@@ -517,34 +533,18 @@
 	}
 
 	.search-section {
-		padding: 0 0 $unit-2x 0;
+		padding: 0 $unit-2x $unit-2x $unit-2x;
 		flex-shrink: 0;
 
-		.search-input {
-			width: 100%;
-			padding: $unit calc($unit * 1.5);
-			border: 1px solid var(--border-primary);
-			border-radius: $input-corner;
-			font-size: $font-regular;
-			background: var(--bg-secondary);
-			color: var(--text-primary);
-
-			&:focus {
-				outline: none;
-				border-color: var(--accent-blue);
-				box-shadow: 0 0 0 2px var(--accent-blue-alpha);
-			}
-
-			&::placeholder {
-				color: var(--text-tertiary);
-			}
+		:global(.search-input) {
+			border-radius: $card-corner;
 		}
 	}
 
 	.mode-toggle {
 		display: flex;
 		gap: $unit-half;
-		padding-bottom: $unit-2x;
+		padding: 0 $unit-2x $unit-2x $unit-2x;
 		flex-shrink: 0;
 
 		.mode-btn {
@@ -573,26 +573,49 @@
 	}
 
 	.filters-section {
-		padding-bottom: $unit-2x;
+		display: flex;
+		flex-direction: column;
+		gap: calc($unit * 1.5);
+		padding: 0 $unit-2x $unit-2x $unit-2x;
 		border-bottom: 1px solid var(--border-primary);
 		flex-shrink: 0;
 
-		.filter-group {
-			margin-bottom: calc($unit * 1.5);
+		.filter-row {
+			display: flex;
+			justify-content: space-between;
+			gap: $unit;
+		}
 
-			&:last-child {
-				margin-bottom: 0;
-			}
+		.filter-group {
+			display: flex;
+			flex-direction: column;
+			gap: $unit;
+		}
+
+		.filter-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0 $unit-half;
 		}
 
 		.filter-label {
 			display: block;
-			font-size: $font-tiny;
+			font-size: $font-small;
 			font-weight: $bold;
-			text-transform: uppercase;
 			color: var(--text-secondary);
-			margin-bottom: $unit;
-			letter-spacing: 0.5px;
+		}
+
+		.clear-link {
+			font-size: $font-small;
+			color: var(--text-secondary);
+			text-decoration: none;
+			cursor: pointer;
+			transition: 0.15s color ease-out;
+
+			&:hover {
+				color: var(--text-primary);
+			}
 		}
 
 		.filter-buttons {
@@ -627,19 +650,13 @@
 				color: white;
 				border-color: var(--accent-blue);
 			}
-
-			&.element-btn.active {
-				background: var(--element-color);
-				border-color: var(--element-color);
-				color: white;
-			}
 		}
 	}
 
 	.results-section {
 		flex: 1;
 		overflow-y: auto;
-		padding: $unit-2x 0;
+		padding: $unit-2x;
 		min-height: 0;
 
 		.loading,

@@ -32,3 +32,9 @@ export function getProficiencyOptions() {
 		label
 	}))
 }
+
+export function getProficiencyImage(proficiency: number): string {
+	const label = PROFICIENCY_LABELS[proficiency]
+	if (!label || label === 'None') return ''
+	return `/images/proficiencies/${label.toLowerCase()}.png`
+}

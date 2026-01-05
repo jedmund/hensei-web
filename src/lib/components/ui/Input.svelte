@@ -6,6 +6,7 @@
 	interface Props extends HTMLInputAttributes {
 		variant?: 'default' | 'contained' | 'duration' | 'number' | 'range'
 		contained?: boolean
+		size?: 'small' | 'medium' | 'large'
 		error?: string
 		label?: string
 		leftIcon?: string
@@ -29,6 +30,7 @@
 	let {
 		variant = 'default',
 		contained = false,
+		size = 'medium',
 		error,
 		label,
 		leftIcon,
@@ -73,7 +75,9 @@
 	const showCounter = $derived(
 		counter !== undefined || (charsRemaining !== undefined && charsRemaining <= 5)
 	)
-	const hasWrapper = $derived(accessory || leftIcon || rightIcon || clearable || maxLength !== undefined || validationIcon)
+	const hasWrapper = $derived(
+		accessory || leftIcon || rightIcon || clearable || maxLength !== undefined || validationIcon
+	)
 
 	function handleClear() {
 		value = ''
@@ -87,6 +91,7 @@
 	const inputClasses = $derived(
 		[
 			'input',
+			size,
 			(variant === 'contained' || contained) && 'contained',
 			variant === 'duration' && 'duration',
 			variant === 'number' && 'number',
@@ -100,7 +105,6 @@
 			.filter(Boolean)
 			.join(' ')
 	)
-
 </script>
 
 <fieldset class={fieldsetClasses}>
@@ -244,13 +248,8 @@
 		color: var(--text-primary);
 		display: block;
 		font-family: var(--font-family);
-		font-size: $font-regular;
 		width: 100%;
 		@include smooth-transition($duration-quick, background-color);
-
-		&:not(.wrapper) {
-			padding: calc($unit * 1.25) $unit-2x;
-		}
 
 		&.fullHeight {
 			height: 100%;
@@ -292,12 +291,9 @@
 			input {
 				background: transparent;
 				border-radius: $input-corner;
-				// border: 2px solid transparent;
 				box-sizing: border-box;
 				color: var(--text-primary);
-				padding: calc($unit * 1.75) $unit-2x;
 				width: 100%;
-				font-size: $font-regular;
 				font-family: inherit;
 				@include smooth-transition($duration-quick, border-color);
 
@@ -381,26 +377,6 @@
 				}
 			}
 
-			&:has(.iconLeft) input {
-				padding-left: $unit-5x;
-			}
-
-			&:has(.iconRight) input {
-				padding-right: $unit-5x;
-			}
-
-			&:has(.validationIcon) input {
-				padding-right: $unit-5x;
-			}
-
-			&:has(.clearButton) input {
-				padding-right: $unit-5x;
-			}
-
-			&:has(.counter) input {
-				padding-right: $unit-8x;
-			}
-
 			input {
 				border: 2px solid transparent;
 			}
@@ -471,6 +447,94 @@
 			opacity: 0.5;
 			cursor: not-allowed;
 		}
+
+		// Size variants
+		&.small {
+			font-size: $font-small;
+			min-height: $unit-3x;
+
+			&:not(.wrapper) {
+				padding: $unit-half $unit;
+			}
+
+			&.wrapper input,
+			&.accessory input {
+				padding: $unit-half $unit;
+				font-size: $font-small;
+			}
+
+			&:has(.iconLeft) input {
+				padding-left: $unit-4x;
+			}
+
+			&:has(.iconRight) input,
+			&:has(.validationIcon) input,
+			&:has(.clearButton) input {
+				padding-right: $unit-4x;
+			}
+
+			&:has(.counter) input {
+				padding-right: $unit-6x;
+			}
+		}
+
+		&.medium {
+			font-size: $font-regular;
+			min-height: $unit-4x;
+
+			&:not(.wrapper) {
+				padding: $unit calc($unit * 1.5);
+			}
+
+			&.wrapper input,
+			&.accessory input {
+				padding: $unit calc($unit * 1.5);
+				font-size: $font-regular;
+			}
+
+			&:has(.iconLeft) input {
+				padding-left: $unit-5x;
+			}
+
+			&:has(.iconRight) input,
+			&:has(.validationIcon) input,
+			&:has(.clearButton) input {
+				padding-right: $unit-5x;
+			}
+
+			&:has(.counter) input {
+				padding-right: $unit-8x;
+			}
+		}
+
+		&.large {
+			font-size: $font-large;
+			min-height: calc($unit * 6);
+
+			&:not(.wrapper) {
+				padding: $unit-2x $unit-3x;
+			}
+
+			&.wrapper input,
+			&.accessory input {
+				padding: $unit-2x $unit-3x;
+				font-size: $font-large;
+			}
+
+			&:has(.iconLeft) input {
+				padding-left: $unit-6x;
+			}
+
+			&:has(.iconRight) input,
+			&:has(.validationIcon) input,
+			&:has(.clearButton) input {
+				padding-right: $unit-6x;
+			}
+
+			&:has(.counter) input {
+				padding-right: $unit-10x;
+			}
+		}
 	}
 
 	// Direct input element styles
@@ -483,9 +547,7 @@
 		color: var(--text-primary);
 		display: block;
 		font-family: var(--font-family);
-		font-size: $font-regular;
 		width: 100%;
-		padding: calc($unit * 1.5) $unit-2x;
 		@include smooth-transition($duration-quick, background-color);
 
 		&[type='number']::-webkit-inner-spin-button {
@@ -546,6 +608,25 @@
 		&:disabled {
 			opacity: 0.5;
 			cursor: not-allowed;
+		}
+
+		// Size variants
+		&.small {
+			padding: $unit-half $unit;
+			font-size: $font-small;
+			min-height: $unit-3x;
+		}
+
+		&.medium {
+			padding: $unit calc($unit * 1.5);
+			font-size: $font-regular;
+			min-height: $unit-4x;
+		}
+
+		&.large {
+			padding: $unit-2x $unit-3x;
+			font-size: $font-large;
+			min-height: calc($unit * 6);
 		}
 	}
 

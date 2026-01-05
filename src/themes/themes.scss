@@ -229,6 +229,10 @@
 	--segmented-control-background-segment-text-hover: #{colors.$segmented--control--background--segment--text--hover--light};
 	--segmented-control-background-segment-text-checked: #{colors.$segmented--control--background--segment--text--checked--light};
 
+	// Light - Picker (icon-based pickers)
+	--picker-item-bg-hover: #{colors.$picker--item--bg--hover--light};
+	--picker-item-bg-selected: #{colors.$picker--item--bg--selected--light};
+
 	// Light - Extra Weapons
 	--extra-purple-bg: #{colors.$extra--purple--bg--light};
 	--extra-purple-card-bg: #{colors.$extra--purple--card--bg--light};
@@ -296,6 +300,15 @@
 	--earth-nav-selected-bg: #{colors.$earth-bg-20};
 	--light-nav-selected-bg: #{colors.$light-bg-20};
 	--dark-nav-selected-bg: #{colors.$dark-bg-20};
+
+	// Light - Element navigation hover background (between bg and nav-selected)
+	--null-nav-hover-bg: #{colors.$grey-80};
+	--wind-nav-hover-bg: #{colors.$wind-bg-15};
+	--fire-nav-hover-bg: #{colors.$fire-bg-15};
+	--water-nav-hover-bg: #{colors.$water-bg-15};
+	--earth-nav-hover-bg: #{colors.$earth-bg-15};
+	--light-nav-hover-bg: #{colors.$light-bg-15};
+	--dark-nav-hover-bg: #{colors.$dark-bg-15};
 
 	// Item detail backgrounds (same colors as nav selected)
 	--null-item-detail-bg: #{colors.$grey-85};
@@ -598,6 +611,10 @@ html[data-theme='dark'] {
 	--segmented-control-background-segment-text-hover: #{colors.$segmented--control--background--segment--text--hover--dark};
 	--segmented-control-background-segment-text-checked: #{colors.$segmented--control--background--segment--text--checked--dark};
 
+	// Dark - Picker (icon-based pickers)
+	--picker-item-bg-hover: #{colors.$picker--item--bg--hover--dark};
+	--picker-item-bg-selected: #{colors.$picker--item--bg--selected--dark};
+
 	// Dark - Extra Weapons
 	--extra-purple-bg: #{colors.$extra--purple--bg--dark};
 	--extra-purple-card-bg: #{colors.$extra--purple--card--bg--dark};
@@ -665,6 +682,15 @@ html[data-theme='dark'] {
 	--earth-nav-selected-bg: #{colors.$earth-bg-20};
 	--light-nav-selected-bg: #{colors.$light-bg-20};
 	--dark-nav-selected-bg: #{colors.$dark-bg-20};
+
+	// Dark - Element navigation hover background (same as light theme)
+	--null-nav-hover-bg: #{colors.$grey-80};
+	--wind-nav-hover-bg: #{colors.$wind-bg-15};
+	--fire-nav-hover-bg: #{colors.$fire-bg-15};
+	--water-nav-hover-bg: #{colors.$water-bg-15};
+	--earth-nav-hover-bg: #{colors.$earth-bg-15};
+	--light-nav-hover-bg: #{colors.$light-bg-15};
+	--dark-nav-hover-bg: #{colors.$dark-bg-15};
 
 	// Item detail backgrounds (same colors as nav selected)
 	--null-item-detail-bg: #{colors.$grey-85};
