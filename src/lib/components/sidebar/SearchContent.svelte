@@ -12,6 +12,8 @@
 	import Icon from '../Icon.svelte'
 	import Input from '../ui/Input.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import RarityPicker from '../ui/rarity-picker/RarityPicker.svelte'
 	import ProficiencyPicker from '../ui/proficiency-picker/ProficiencyPicker.svelte'
@@ -55,18 +57,6 @@
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
 
-	// Constants
-	const elements = [
-		{ value: 0, label: 'Null', color: 'var(--grey-50)' },
-		{ value: 1, label: 'Wind', color: 'var(--wind-bg)' },
-		{ value: 2, label: 'Fire', color: 'var(--fire-bg)' },
-		{ value: 3, label: 'Water', color: 'var(--water-bg)' },
-		{ value: 4, label: 'Earth', color: 'var(--earth-bg)' },
-		{ value: 5, label: 'Dark', color: 'var(--dark-bg)' },
-		{ value: 6, label: 'Light', color: 'var(--light-bg)' }
-	]
-
-	
 	// Debounce search query changes
 	$effect(() => {
 		const query = searchQuery
@@ -467,7 +457,21 @@
 								class="result-image"
 								loading="lazy"
 							/>
-							<span class="result-name">{getItemName(item)}</span>
+							<div class="result-info">
+								<span class="result-name">{getItemName(item)}</span>
+								<div class="result-labels">
+									{#if item.element !== undefined}
+										<ElementLabel element={item.element} size="small" />
+									{/if}
+									{#if Array.isArray(item.proficiency)}
+										{#each item.proficiency as prof}
+											<ProficiencyLabel proficiency={prof} size="small" />
+										{/each}
+									{:else if item.proficiency !== undefined}
+										<ProficiencyLabel proficiency={item.proficiency} size="small" />
+									{/if}
+								</div>
+							</div>
 							{#if type === 'character'}
 								<CharacterTags character={item} />
 							{/if}
@@ -475,14 +479,6 @@
 								<Icon name="bookmark" size={14} class="collection-indicator" />
 							{:else if owned}
 								<Icon name="check" size={14} class="owned-indicator" />
-							{/if}
-							{#if item.element !== undefined}
-								<span
-									class="result-element"
-									style:color={elements.find(e => e.value === item.element)?.color}
-								>
-									{elements.find(e => e.value === item.element)?.label}
-								</span>
 							{/if}
 						</button>
 					</li>
@@ -617,40 +613,6 @@
 				color: var(--text-primary);
 			}
 		}
-
-		.filter-buttons {
-			display: flex;
-			flex-wrap: wrap;
-			gap: $unit-half;
-		}
-
-		.proficiency-grid {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			gap: $unit-half;
-		}
-
-		.filter-btn {
-			padding: $unit-half $unit;
-			border: 1px solid var(--border-primary);
-			background: var(--bg-secondary);
-			border-radius: $input-corner;
-			font-size: $font-small;
-			cursor: pointer;
-			transition: all 0.2s;
-			color: var(--text-primary);
-
-			&:hover {
-				background: var(--bg-tertiary);
-				border-color: var(--border-secondary);
-			}
-
-			&.active {
-				background: var(--accent-blue);
-				color: white;
-				border-color: var(--accent-blue);
-			}
-		}
 	}
 
 	.results-section {
@@ -682,16 +644,15 @@
 				align-items: center;
 				gap: $unit;
 				padding: $unit;
-				border: 1px solid transparent;
+				border: none;
 				border-radius: $input-corner;
-				background: var(--bg-secondary);
+				background: transparent;
 				cursor: pointer;
-				transition: all 0.2s;
+				transition: background-color 0.15s ease-out;
 				text-align: left;
 
 				&:hover {
 					background: var(--bg-tertiary);
-					border-color: var(--accent-blue);
 				}
 
 				&:active:not(:disabled) {
@@ -702,11 +663,9 @@
 				&:disabled {
 					opacity: 0.5;
 					cursor: not-allowed;
-					background: var(--bg-disabled);
 
 					&:hover {
-						background: var(--bg-disabled);
-						border-color: transparent;
+						background: transparent;
 					}
 				}
 			}
@@ -720,16 +679,23 @@
 				flex-shrink: 0;
 			}
 
-			.result-name {
+			.result-info {
 				flex: 1;
+				display: flex;
+				flex-direction: column;
+				gap: $unit-half;
+				min-width: 0;
+			}
+
+			.result-name {
 				font-size: $font-regular;
 				color: var(--text-primary);
 			}
 
-			.result-element {
-				font-size: $font-small;
-				font-weight: $bold;
-				flex-shrink: 0;
+			.result-labels {
+				display: flex;
+				align-items: center;
+				gap: $unit-half;
 			}
 
 			:global(.collection-indicator) {
