@@ -41,7 +41,8 @@ export interface SearchPageResult {
 		name: { en?: string; ja?: string }
 		element?: number
 		rarity?: number
-		proficiency?: number
+		/** Proficiency - number for weapons, array for characters */
+		proficiency?: number | number[]
 		/** Series - object for weapons, number array for characters */
 		series?: { id: string; slug: string; name: { en: string; ja: string } } | number[]
 		imageUrl?: string
