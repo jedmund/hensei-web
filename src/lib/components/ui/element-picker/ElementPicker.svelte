@@ -95,10 +95,11 @@
 			{options}
 			value={Array.isArray(value) ? value : value !== undefined ? [value] : []}
 			onValueChange={handleMultipleChange}
-			{size}
+			size="medium"
 			{contained}
 			disabled={disabled}
 			placeholder="Select elements..."
+			fullWidth={true}
 			class={className}
 		/>
 	{:else}
@@ -106,10 +107,11 @@
 			{options}
 			value={typeof value === 'number' ? value : undefined}
 			onValueChange={handleSingleChange}
-			{size}
+			size="medium"
 			{contained}
 			disabled={disabled}
 			placeholder="Select element"
+			fullWidth={true}
 			class={className}
 		/>
 	{/if}

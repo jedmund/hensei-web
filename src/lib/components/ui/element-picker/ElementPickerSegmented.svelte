@@ -101,7 +101,7 @@
 					type="multiple"
 					value={stringValue as string[]}
 					onValueChange={handleMultipleChange}
-					class="group"
+					class="element-group"
 					{disabled}
 				>
 					{#each elements as element}
@@ -109,13 +109,13 @@
 							{#snippet children()}
 								<ToggleGroup.Item
 									value={String(element)}
-									class="item"
+									class="element-item"
 									{disabled}
 								>
 									<img
 										src={getElementImage(element)}
 										alt={getLabel(element)}
-										class="image"
+										class="element-image"
 									/>
 								</ToggleGroup.Item>
 							{/snippet}
@@ -127,7 +127,7 @@
 					type="single"
 					value={stringValue as string | undefined}
 					onValueChange={handleSingleChange}
-					class="group"
+					class="element-group"
 					{disabled}
 				>
 					{#each elements as element}
@@ -135,13 +135,13 @@
 							{#snippet children()}
 								<ToggleGroup.Item
 									value={String(element)}
-									class="item"
+									class="element-item"
 									{disabled}
 								>
 									<img
 										src={getElementImage(element)}
 										alt={getLabel(element)}
-										class="image"
+										class="element-image"
 									/>
 								</ToggleGroup.Item>
 							{/snippet}
@@ -161,7 +161,7 @@
 				type="multiple"
 				value={stringValue as string[]}
 				onValueChange={handleMultipleChange}
-				class="group"
+				class="element-group"
 				{disabled}
 			>
 				{#each elements as element}
@@ -169,10 +169,10 @@
 						{#snippet children()}
 							<ToggleGroup.Item
 								value={String(element)}
-								class="item"
+								class="element-item"
 								{disabled}
 							>
-								<img src={getElementImage(element)} alt={getLabel(element)} class="image" />
+								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
 							</ToggleGroup.Item>
 						{/snippet}
 					</Tooltip>
@@ -183,7 +183,7 @@
 				type="single"
 				value={stringValue as string | undefined}
 				onValueChange={handleSingleChange}
-				class="group"
+				class="element-group"
 				{disabled}
 			>
 				{#each elements as element}
@@ -191,10 +191,10 @@
 						{#snippet children()}
 							<ToggleGroup.Item
 								value={String(element)}
-								class="item"
+								class="element-item"
 								{disabled}
 							>
-								<img src={getElementImage(element)} alt={getLabel(element)} class="image" />
+								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
 							</ToggleGroup.Item>
 						{/snippet}
 					</Tooltip>
@@ -229,13 +229,13 @@
 		}
 	}
 
-	:global(.group) {
+	:global(.element-group) {
 		display: flex;
-		gap: $unit-half;
+		gap: $unit-quarter;
 		align-items: center;
 	}
 
-	:global(.item) {
+	:global(.element-item) {
 		all: unset;
 		cursor: pointer;
 		border-radius: $full-corner;
@@ -243,87 +243,87 @@
 		@include smooth-transition($duration-quick, background-color, opacity);
 	}
 
-	:global(.item:focus-visible) {
+	:global(.element-item:focus-visible) {
 		@include focus-ring($blue);
 	}
 
-	:global(.item:disabled) {
+	:global(.element-item:disabled) {
 		opacity: 0.5;
 		cursor: not-allowed;
 	}
 
 	// Element-specific hover and selected states
-	:global(.item[data-value='0']:hover:not(:disabled)) {
+	:global(.element-item[data-value='0']:hover:not(:disabled)) {
 		background-color: var(--null-nav-hover-bg);
 	}
-	:global(.item[data-value='0'][data-state='on']:not(:hover)) {
+	:global(.element-item[data-value='0'][data-state='on']) {
 		background-color: var(--null-nav-selected-bg);
 	}
 
-	:global(.item[data-value='1']:hover:not(:disabled)) {
+	:global(.element-item[data-value='1']:hover:not(:disabled)) {
 		background-color: var(--wind-nav-hover-bg);
 	}
-	:global(.item[data-value='1'][data-state='on']:not(:hover)) {
+	:global(.element-item[data-value='1'][data-state='on']) {
 		background-color: var(--wind-nav-selected-bg);
 	}
 
-	:global(.item[data-value='2']:hover:not(:disabled)) {
+	:global(.element-item[data-value='2']:hover:not(:disabled)) {
 		background-color: var(--fire-nav-hover-bg);
 	}
-	:global(.item[data-value='2'][data-state='on']:not(:hover)) {
+	:global(.element-item[data-value='2'][data-state='on']) {
 		background-color: var(--fire-nav-selected-bg);
 	}
 
-	:global(.item[data-value='3']:hover:not(:disabled)) {
+	:global(.element-item[data-value='3']:hover:not(:disabled)) {
 		background-color: var(--water-nav-hover-bg);
 	}
-	:global(.item[data-value='3'][data-state='on']:not(:hover)) {
+	:global(.element-item[data-value='3'][data-state='on']) {
 		background-color: var(--water-nav-selected-bg);
 	}
 
-	:global(.item[data-value='4']:hover:not(:disabled)) {
+	:global(.element-item[data-value='4']:hover:not(:disabled)) {
 		background-color: var(--earth-nav-hover-bg);
 	}
-	:global(.item[data-value='4'][data-state='on']:not(:hover)) {
+	:global(.element-item[data-value='4'][data-state='on']) {
 		background-color: var(--earth-nav-selected-bg);
 	}
 
-	:global(.item[data-value='5']:hover:not(:disabled)) {
+	:global(.element-item[data-value='5']:hover:not(:disabled)) {
 		background-color: var(--dark-nav-hover-bg);
 	}
-	:global(.item[data-value='5'][data-state='on']:not(:hover)) {
+	:global(.element-item[data-value='5'][data-state='on']) {
 		background-color: var(--dark-nav-selected-bg);
 	}
 
-	:global(.item[data-value='6']:hover:not(:disabled)) {
+	:global(.element-item[data-value='6']:hover:not(:disabled)) {
 		background-color: var(--light-nav-hover-bg);
 	}
-	:global(.item[data-value='6'][data-state='on']:not(:hover)) {
+	:global(.element-item[data-value='6'][data-state='on']) {
 		background-color: var(--light-nav-selected-bg);
 	}
 
-	:global(.image) {
+	:global(.element-image) {
 		display: block;
 	}
 
 	// Size variants
 	.small {
-		:global(.item) {
+		:global(.element-item) {
 			padding: $unit-half;
 		}
 
-		:global(.image) {
-			width: $unit-3x;
-			height: $unit-3x;
+		:global(.element-image) {
+			width: calc($unit * 3.25);
+			height: calc($unit * 3.25);
 		}
 	}
 
 	.regular {
-		:global(.item) {
+		:global(.element-item) {
 			padding: $unit-half;
 		}
 
-		:global(.image) {
+		:global(.element-image) {
 			width: $unit-4x;
 			height: $unit-4x;
 		}
