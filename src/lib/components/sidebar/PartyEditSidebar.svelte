@@ -14,16 +14,22 @@
 	import MetricField from '$lib/components/party/edit/MetricField.svelte'
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import EditDescriptionPane from '$lib/components/sidebar/EditDescriptionPane.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { usePaneStack } from '$lib/stores/paneStack.svelte'
-		import { untrack } from 'svelte'
+	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import { untrack } from 'svelte'
 	import type { Raid } from '$lib/types/api/entities'
 	import type { RaidFull } from '$lib/types/api/raid'
+	import type { PartyVisibility } from '$lib/types/visibility'
 	import Icon from '$lib/components/Icon.svelte'
 
 	export interface PartyEditValues {
 		name: string
 		description: string | null
+		visibility: PartyVisibility
+		sharedWithCrew: boolean
 		fullAuto: boolean
 		autoGuard: boolean
 		autoSummon: boolean
@@ -55,6 +61,8 @@
 
 	// Local state - initialized from initialValues
 	let name = $state(initialValues.name)
+	let visibility = $state<PartyVisibility>(initialValues.visibility)
+	let sharedWithCrew = $state(initialValues.sharedWithCrew)
 	let fullAuto = $state(initialValues.fullAuto)
 	let autoGuard = $state(initialValues.autoGuard)
 	let autoSummon = $state(initialValues.autoSummon)
@@ -68,9 +76,18 @@
 	let raidId = $state<string | null>(initialValues.raidId)
 	let description = $state(initialValues.description)
 
+	// Visibility options for select
+	const visibilityOptions: Array<{ value: PartyVisibility; label: string }> = [
+		{ value: 'public', label: 'Public' },
+		{ value: 'private', label: 'Private' },
+		{ value: 'unlisted', label: 'Unlisted' }
+	]
+
 	// Check if any values have changed
 	const hasChanges = $derived(
 		name !== initialValues.name ||
+			visibility !== initialValues.visibility ||
+			sharedWithCrew !== initialValues.sharedWithCrew ||
 			fullAuto !== initialValues.fullAuto ||
 			autoGuard !== initialValues.autoGuard ||
 			autoSummon !== initialValues.autoSummon ||
@@ -89,6 +106,8 @@
 		const values: PartyEditValues = {
 			name,
 			description,
+			visibility,
+			sharedWithCrew,
 			fullAuto,
 			autoGuard,
 			autoSummon,
@@ -263,6 +282,30 @@
 		/>
 		<YouTubeUrlInput label="Video" bind:value={videoUrl} contained />
 	</div>
+
+	<DetailsSection title="Sharing">
+		<DetailRow label="Visibility" noHover compact>
+			{#snippet children()}
+				<Select
+					options={visibilityOptions}
+					bind:value={visibility}
+					size="small"
+					contained
+				/>
+			{/snippet}
+		</DetailRow>
+		{#if crewStore.isInCrew}
+			<DetailRow label="Share with Crew" noHover compact>
+				{#snippet children()}
+					<Switch
+						bind:checked={sharedWithCrew}
+						size="small"
+						{element}
+					/>
+				{/snippet}
+			</DetailRow>
+		{/if}
+	</DetailsSection>
 
 	<button type="button" class="description-button" onclick={openDescriptionPane}>
 		<div class="description-header">

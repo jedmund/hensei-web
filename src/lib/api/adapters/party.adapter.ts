@@ -12,6 +12,7 @@ import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions, PaginatedResponse } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
+import type { PartyShare } from '$lib/types/api/partyShare'
 
 /**
  * Parameters for creating a new party
@@ -407,6 +408,28 @@ export class PartyAdapter extends BaseAdapter {
 		})
 		// Clear cache for the party to reflect updated state
 		this.clearCache(`/parties/${shortcode}`)
+	}
+
+	/**
+	 * Share a party with the current user's crew
+	 * @param partyId - The party's UUID
+	 */
+	async shareWithCrew(partyId: string): Promise<PartyShare> {
+		const response = await this.request<{ share: PartyShare }>(`/parties/${partyId}/shares`, {
+			method: 'POST'
+		})
+		return response.share
+	}
+
+	/**
+	 * Remove a party share
+	 * @param partyId - The party's UUID
+	 * @param shareId - The share's UUID to remove
+	 */
+	async removeShare(partyId: string, shareId: string): Promise<void> {
+		await this.request(`/parties/${partyId}/shares/${shareId}`, {
+			method: 'DELETE'
+		})
 	}
 
 	/**

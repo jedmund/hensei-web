@@ -1,6 +1,7 @@
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
-import type { RequestOptions } from './types'
+import type { RequestOptions, PaginatedResponse } from './types'
+import type { Party } from '$lib/types/api/party'
 import type {
   Crew,
   CrewMembership,
@@ -29,6 +30,23 @@ export class CrewAdapter extends BaseAdapter {
   async getMyCrew(options?: RequestOptions): Promise<Crew> {
     const response = await this.request<{ crew: Crew }>('/crew', options)
     return response.crew
+  }
+
+  /**
+   * Get parties shared with the user's crew
+   */
+  async getSharedParties(
+    page = 1,
+    perPage = 20,
+    options?: RequestOptions
+  ): Promise<{ parties: Party[]; meta: { page: number; totalPages: number; count: number; perPage: number } }> {
+    return this.request<{ parties: Party[]; meta: { page: number; totalPages: number; count: number; perPage: number } }>(
+      '/crew/shared_parties',
+      {
+        ...options,
+        params: { page, per_page: perPage }
+      }
+    )
   }
 
   /**
