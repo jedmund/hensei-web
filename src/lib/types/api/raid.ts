@@ -16,7 +16,8 @@ export interface RaidFull {
   name: LocalizedName
   level: number
   element: number
-  game_id?: number
+  enemy_id?: number
+  summon_id?: number
   group?: RaidGroupFlat
 }
 
@@ -46,7 +47,8 @@ export interface CreateRaidInput {
   level: number
   element: number
   group_id: string
-  game_id?: number
+  enemy_id?: number
+  summon_id?: number
 }
 
 export interface UpdateRaidInput {
@@ -56,7 +58,8 @@ export interface UpdateRaidInput {
   level?: number
   element?: number
   group_id?: string
-  game_id?: number
+  enemy_id?: number
+  summon_id?: number
 }
 
 // Input types for creating/updating raid groups

@@ -220,7 +220,8 @@ export interface Raid {
   name: LocalizedName
   level: number
   element: number
-  game_id?: number
+  enemy_id?: number
+  summon_id?: number
   group?: RaidGroup
 }
 

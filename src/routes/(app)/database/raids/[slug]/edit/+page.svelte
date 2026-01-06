@@ -58,7 +58,8 @@
 		level: 0,
 		element: 0,
 		group_id: '',
-		game_id: undefined as number | undefined
+		enemy_id: undefined as number | undefined,
+		summon_id: undefined as number | undefined
 	})
 
 	// Sync edit data when raid changes
@@ -71,7 +72,8 @@
 				level: raid.level ?? 0,
 				element: raid.element ?? 0,
 				group_id: raid.group?.id || '',
-				game_id: raid.game_id
+				enemy_id: raid.enemy_id,
+				summon_id: raid.summon_id
 			}
 		}
 	})
@@ -115,7 +117,8 @@
 				level: editData.level,
 				element: editData.element,
 				group_id: editData.group_id,
-				game_id: editData.game_id
+				enemy_id: editData.enemy_id,
+				summon_id: editData.summon_id
 			})
 
 			// Invalidate queries
@@ -187,8 +190,14 @@
 					type="number"
 				/>
 				<DetailItem
-					label="Game ID"
-					bind:value={editData.game_id}
+					label="Enemy ID"
+					bind:value={editData.enemy_id}
+					editable={true}
+					type="number"
+				/>
+				<DetailItem
+					label="Summon ID"
+					bind:value={editData.summon_id}
 					editable={true}
 					type="number"
 				/>

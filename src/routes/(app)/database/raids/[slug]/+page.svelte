@@ -86,7 +86,8 @@
 				<DetailItem label="Name (JA)" value={raid.name.ja || '-'} />
 				<DetailItem label="Slug" value={raid.slug || '-'} />
 				<DetailItem label="Level" value={raid.level?.toString() ?? '-'} />
-				<DetailItem label="Game ID" value={raid.game_id?.toString() ?? '-'} />
+				<DetailItem label="Enemy ID" value={raid.enemy_id?.toString() ?? '-'} />
+				<DetailItem label="Summon ID" value={raid.summon_id?.toString() ?? '-'} />
 				<DetailItem label="Element">
 					{#if raid.element !== undefined && raid.element !== null}
 						<ElementBadge element={raid.element} />
