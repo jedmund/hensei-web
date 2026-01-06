@@ -57,7 +57,8 @@
 		slug: '',
 		level: 0,
 		element: 0,
-		group_id: ''
+		group_id: '',
+		game_id: undefined as number | undefined
 	})
 
 	// Sync edit data when raid changes
@@ -69,7 +70,8 @@
 				slug: raid.slug || '',
 				level: raid.level ?? 0,
 				element: raid.element ?? 0,
-				group_id: raid.group?.id || ''
+				group_id: raid.group?.id || '',
+				game_id: raid.game_id
 			}
 		}
 	})
@@ -112,7 +114,8 @@
 				slug: editData.slug,
 				level: editData.level,
 				element: editData.element,
-				group_id: editData.group_id
+				group_id: editData.group_id,
+				game_id: editData.game_id
 			})
 
 			// Invalidate queries
@@ -180,6 +183,12 @@
 				<DetailItem
 					label="Level"
 					bind:value={editData.level}
+					editable={true}
+					type="number"
+				/>
+				<DetailItem
+					label="Game ID"
+					bind:value={editData.game_id}
 					editable={true}
 					type="number"
 				/>
