@@ -20,9 +20,14 @@
 		Array.from({ length: 6 }, (_, i) => summons.find((s: GridSummon) => s?.position === i))
 	)
 
+	// Transparent SVG placeholders with correct aspect ratios for grid sizing
+	// Main/friend: 56x97, Grid: 184x138
+	const mainPlaceholder = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 97'%3E%3C/svg%3E`
+	const gridPlaceholder = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 184 138'%3E%3C/svg%3E`
+
 	function summonImageUrl(s?: GridSummon, isMain = false): string {
 		const id = s?.summon?.granblueId
-		if (!id) return ''
+		if (!id) return isMain ? mainPlaceholder : gridPlaceholder
 		const size = isMain ? 'main' : 'grid'
 		return getSummonImage(id, size)
 	}
@@ -30,27 +35,27 @@
 
 <div class="rep" class:extended={extendedView}>
 	<div class="mainSummon" class:empty={!main}>
-		{#if main}<img
-				alt="Main Summon"
-				src={summonImageUrl(main, true)}
-				loading="lazy"
-				decoding="async"
-			/>{/if}
+		<img
+			alt={main ? 'Main Summon' : ''}
+			src={summonImageUrl(main, true)}
+			loading="lazy"
+			decoding="async"
+		/>
 	</div>
 	<ul class="summons">
 		{#each grid as s, i}
 			<li class="summon" class:empty={!s}>
-				{#if s}<img alt="Summon" src={summonImageUrl(s)} loading="lazy" decoding="async" />{/if}
+				<img alt={s ? 'Summon' : ''} src={summonImageUrl(s)} loading="lazy" decoding="async" />
 			</li>
 		{/each}
 	</ul>
 	<div class="friendSummon" class:empty={!friend}>
-		{#if friend}<img
-				alt="Friend Summon"
-				src={summonImageUrl(friend, true)}
-				loading="lazy"
-				decoding="async"
-			/>{/if}
+		<img
+			alt={friend ? 'Friend Summon' : ''}
+			src={summonImageUrl(friend, true)}
+			loading="lazy"
+			decoding="async"
+		/>
 	</div>
 </div>
 
@@ -67,6 +72,7 @@
 
 		// Layout: main summon | 6 grid summons (3x2) | friend summon
 		grid-template-columns: auto 1fr auto;
+		grid-template-rows: 1fr;
 
 		.summon,
 		.mainSummon,
@@ -90,7 +96,6 @@
 		.mainSummon,
 		.friendSummon {
 			@include rep.aspect(rep.$summon-main-w, rep.$summon-main-h);
-			display: grid;
 			height: calc(100% - 6px);
 			align-self: center;
 		}
