@@ -17,6 +17,7 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import RaidGroupNameCell from '$lib/components/database/cells/RaidGroupNameCell.svelte'
 	import RaidGroupFlagsCell from '$lib/components/database/cells/RaidGroupFlagsCell.svelte'
+	import RaidImageCell from '$lib/components/database/cells/RaidImageCell.svelte'
 	import type { Raid, RaidGroup } from '$lib/types/api/entities'
 	import type { RaidGroupFull } from '$lib/types/api/raid'
 	import { getRaidSectionLabel } from '$lib/utils/raidSection'
@@ -364,6 +365,7 @@
 				<table class="raids-table">
 					<thead>
 						<tr>
+							<th class="col-image"></th>
 							<th class="col-name">Name</th>
 							<th class="col-level">Level</th>
 							<th class="col-element">Element</th>
@@ -374,7 +376,7 @@
 					<tbody>
 						{#if filteredRaids.length === 0 && !raidsQuery.isLoading}
 							<tr>
-								<td colspan="5" class="empty-state">
+								<td colspan="6" class="empty-state">
 									{searchTerm || hasActiveFilters
 										? 'No raids match your filters'
 										: 'No raids yet'}
@@ -383,6 +385,9 @@
 						{:else}
 							{#each filteredRaids as raid}
 								<tr onclick={() => handleRaidClick(raid)} class="clickable">
+									<td class="col-image">
+										<RaidImageCell {raid} />
+									</td>
 									<td class="col-name">
 										<span class="raid-name">{displayName(raid)}</span>
 									</td>
@@ -572,6 +577,11 @@
 			&:hover {
 				background: #f8f9fa;
 			}
+		}
+
+		.col-image {
+			width: 64px;
+			padding: 4px !important;
 		}
 
 		.col-name {
