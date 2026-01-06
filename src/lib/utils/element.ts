@@ -73,5 +73,5 @@ export function getOppositeElement(element?: number): number | undefined {
 export function getElementImage(element?: number): string {
 	if (element === undefined || element === null) return ''
 	const label = ELEMENT_LABELS[element]?.toLowerCase() ?? 'null'
-	return `/images/elements/${label}.png`
+	return `${getBasePath()}/elements/${label}.png`
 }

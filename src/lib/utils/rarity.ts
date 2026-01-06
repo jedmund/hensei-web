@@ -1,3 +1,5 @@
+import { getBasePath } from '$lib/utils/images'
+
 export const RARITY_LABELS: Record<number, string> = {
 	1: 'R',
 	2: 'SR',
@@ -39,5 +41,5 @@ export function getRarityClass(rarity: number): string {
 export function getRarityImage(rarity: number): string {
 	const label = RARITY_LABELS[rarity]
 	if (!label) return ''
-	return `/images/rarity/${label.toLowerCase()}.png`
+	return `${getBasePath()}/rarity/${label.toLowerCase()}.png`
 }
