@@ -5,6 +5,7 @@
 	 * Validates YouTube URLs and shows a thumbnail preview when valid.
 	 */
 	import { untrack } from 'svelte'
+	import Input from '$lib/components/ui/Input.svelte'
 
 	interface Props {
 		/** YouTube URL value */
@@ -96,9 +97,8 @@
 		})
 	})
 
-	function handleInput(e: Event) {
-		const target = e.target as HTMLInputElement
-		inputValue = target.value
+	function handleInput() {
+		// inputValue is already updated via bind:value
 		// Update bound value immediately if valid (so Save captures it)
 		if (isValidYouTubeUrl(inputValue)) {
 			const newValue = inputValue.trim() || null
@@ -132,33 +132,20 @@
 </script>
 
 <div class="youtube-input-wrapper">
-	{#if label}
-		<label class="input-label">{label}</label>
-	{/if}
-	<div class="input-container" class:disabled class:error={showError} class:contained>
-		<input
-			type="url"
-			placeholder="https://youtube.com/watch?v=..."
-			value={inputValue}
-			oninput={handleInput}
-			onblur={handleBlur}
-			onkeydown={handleKeydown}
-			{disabled}
-			class="url-input"
-		/>
-		{#if inputValue && !disabled}
-			<button type="button" class="clear-button" onclick={clearInput} aria-label="Clear URL">
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<line x1="18" y1="6" x2="6" y2="18" />
-					<line x1="6" y1="6" x2="18" y2="18" />
-				</svg>
-			</button>
-		{/if}
-	</div>
-
-	{#if showError}
-		<p class="error-message">Please enter a valid YouTube URL</p>
-	{/if}
+	<Input
+		{label}
+		type="url"
+		placeholder="https://youtube.com/watch?v=..."
+		bind:value={inputValue}
+		handleInput={handleInput}
+		handleBlur={handleBlur}
+		{disabled}
+		{contained}
+		clearable
+		onClear={clearInput}
+		error={showError ? 'Please enter a valid YouTube URL' : undefined}
+		fullWidth
+	/>
 
 	{#if showPreview && thumbnailUrl}
 		<div class="preview-card">
@@ -192,99 +179,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
-	}
-
-	.input-label {
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--text-secondary);
-	}
-
-	.input-container {
-		display: flex;
-		align-items: center;
-		background-color: var(--input-bg);
-		border-radius: $input-corner;
-		padding: 0;
-		@include smooth-transition($duration-quick, background-color, outline);
-
-		&:hover:not(.disabled) {
-			background-color: var(--input-bg-hover);
-		}
-
-		&:focus-within:not(.disabled) {
-			outline: 2px solid $water-text-20;
-			outline-offset: -2px;
-		}
-
-		&.error {
-			outline: 2px solid $fire-text-20;
-			outline-offset: -2px;
-		}
-
-		&.disabled {
-			opacity: 0.5;
-			cursor: not-allowed;
-		}
-
-		&.contained {
-			background-color: var(--input-bound-bg);
-
-			&:hover:not(.disabled) {
-				background-color: var(--input-bound-bg-hover);
-			}
-		}
-	}
-
-	.url-input {
-		flex: 1;
-		background: transparent;
-		border: none;
-		color: var(--text-primary);
-		font-size: $font-regular;
-		font-family: inherit;
-		padding: calc($unit * 1.75) $unit-2x;
-		outline: none;
-
-		&::placeholder {
-			color: var(--text-tertiary);
-		}
-
-		&:disabled {
-			cursor: not-allowed;
-		}
-	}
-
-	.clear-button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 24px;
-		height: 24px;
-		margin-right: $unit;
-		padding: 0;
-		border: none;
-		background: transparent;
-		color: var(--text-secondary);
-		cursor: pointer;
-		border-radius: $unit-half;
-		@include smooth-transition($duration-quick, background-color, color);
-
-		&:hover {
-			background-color: $grey-80;
-			color: var(--text-primary);
-		}
-
-		svg {
-			width: 14px;
-			height: 14px;
-		}
-	}
-
-	.error-message {
-		margin: 0;
-		font-size: $font-small;
-		color: $fire-text-20;
 	}
 
 	.preview-card {
