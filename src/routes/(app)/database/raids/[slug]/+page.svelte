@@ -18,6 +18,8 @@
 	// CDN base URLs for raid images
 	const ICON_BASE_URL = 'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/assets/enemy/m'
 	const THUMBNAIL_BASE_URL = 'https://prd-game-a1-granbluefantasy.akamaized.net/assets_en/img/sp/assets/summon/qm'
+	const LOBBY_BASE_URL = 'https://prd-game-a1-granbluefantasy.akamaized.net/assets_en/img/sp/quest/assets/lobby'
+	const BACKGROUND_BASE_URL = 'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/quest/assets/treasureraid'
 
 	function displayName(input: any): string {
 		if (!input) return '—'
@@ -85,6 +87,16 @@
 		return `${THUMBNAIL_BASE_URL}/${summonId}_high.png`
 	}
 
+	// Get lobby image URL (quest_id with "1" appended)
+	function getLobbyUrl(questId: number): string {
+		return `${LOBBY_BASE_URL}/${questId}1.png`
+	}
+
+	// Get background image URL
+	function getBackgroundUrl(questId: number): string {
+		return `${BACKGROUND_BASE_URL}/${questId}/raid_image_new.png`
+	}
+
 	// Get header image - prefer thumbnail, fallback to icon
 	const headerImage = $derived.by(() => {
 		if (raid?.summon_id) return getThumbnailUrl(raid.summon_id)
@@ -97,6 +109,10 @@
 		const sizes: string[] = []
 		if (raid?.enemy_id) sizes.push('icon')
 		if (raid?.summon_id) sizes.push('thumbnail')
+		if (raid?.quest_id) {
+			sizes.push('lobby')
+			sizes.push('background')
+		}
 		return sizes
 	})
 
@@ -124,17 +140,33 @@
 			})
 		}
 
+		// Lobby and background images from quest
+		if (raid.quest_id) {
+			images.push({
+				url: getLobbyUrl(raid.quest_id),
+				label: 'Lobby',
+				variant: 'lobby'
+			})
+			images.push({
+				url: getBackgroundUrl(raid.quest_id),
+				label: 'Background',
+				variant: 'background'
+			})
+		}
+
 		return images
 	})
 
 	// Image download handlers
+	type RaidImageSize = 'icon' | 'thumbnail' | 'lobby' | 'background'
+
 	async function handleDownloadImage(
 		size: string,
 		_transformation: string | undefined,
 		force: boolean
 	) {
 		if (!raidSlug) return
-		await raidAdapter.downloadRaidImage(raidSlug, size as 'icon' | 'thumbnail', force)
+		await raidAdapter.downloadRaidImage(raidSlug, size as RaidImageSize, force)
 	}
 
 	async function handleDownloadAllImages(force: boolean) {
@@ -144,7 +176,7 @@
 
 	async function handleDownloadSize(size: string) {
 		if (!raidSlug) return
-		await raidAdapter.downloadRaidImage(raidSlug, size as 'icon' | 'thumbnail', false)
+		await raidAdapter.downloadRaidImage(raidSlug, size as RaidImageSize, false)
 	}
 </script>
 
@@ -188,6 +220,7 @@
 						<DetailItem label="Level" value={raid.level?.toString() ?? '-'} />
 						<DetailItem label="Enemy ID" value={raid.enemy_id?.toString() ?? '-'} />
 						<DetailItem label="Summon ID" value={raid.summon_id?.toString() ?? '-'} />
+						<DetailItem label="Quest ID" value={raid.quest_id?.toString() ?? '-'} />
 						<DetailItem label="Element">
 							{#if raid.element !== undefined && raid.element !== null}
 								<ElementBadge element={raid.element} />

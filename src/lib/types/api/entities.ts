@@ -222,6 +222,7 @@ export interface Raid {
   element: number
   enemy_id?: number
   summon_id?: number
+  quest_id?: number
   group?: RaidGroup
 }
 

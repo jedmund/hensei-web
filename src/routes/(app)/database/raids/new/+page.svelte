@@ -46,7 +46,8 @@
 		element: 0,
 		group_id: '',
 		enemy_id: undefined as number | undefined,
-		summon_id: undefined as number | undefined
+		summon_id: undefined as number | undefined,
+		quest_id: undefined as number | undefined
 	})
 
 	// Element options
@@ -89,7 +90,8 @@
 				element: editData.element,
 				group_id: editData.group_id,
 				enemy_id: editData.enemy_id,
-				summon_id: editData.summon_id
+				summon_id: editData.summon_id,
+				quest_id: editData.quest_id
 			})
 
 			// Invalidate queries
@@ -164,6 +166,12 @@
 			<DetailItem
 				label="Summon ID"
 				bind:value={editData.summon_id}
+				editable={true}
+				type="number"
+			/>
+			<DetailItem
+				label="Quest ID"
+				bind:value={editData.quest_id}
 				editable={true}
 				type="number"
 			/>

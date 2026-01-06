@@ -109,12 +109,12 @@ export class RaidAdapter extends BaseAdapter {
    * Downloads a single image for a raid (synchronous)
    * Requires editor role (>= 7)
    * @param slug - Raid slug
-   * @param size - Image size variant ('icon' or 'thumbnail')
+   * @param size - Image size variant ('icon', 'thumbnail', 'lobby', or 'background')
    * @param force - Force re-download even if image exists
    */
   async downloadRaidImage(
     slug: string,
-    size: 'icon' | 'thumbnail',
+    size: 'icon' | 'thumbnail' | 'lobby' | 'background',
     force?: boolean,
     options?: RequestOptions
   ): Promise<{ success: boolean; error?: string }> {
@@ -131,7 +131,7 @@ export class RaidAdapter extends BaseAdapter {
    */
   async downloadRaidImages(
     slug: string,
-    downloadOptions?: { force?: boolean; size?: 'all' | 'icon' | 'thumbnail' },
+    downloadOptions?: { force?: boolean; size?: 'all' | 'icon' | 'thumbnail' | 'lobby' | 'background' },
     requestOptions?: RequestOptions
   ): Promise<{ status: string; raidId: string; message: string }> {
     return this.request(`/raids/${slug}/download_images`, {

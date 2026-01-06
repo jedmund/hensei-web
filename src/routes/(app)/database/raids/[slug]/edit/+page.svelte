@@ -59,7 +59,8 @@
 		element: 0,
 		group_id: '',
 		enemy_id: undefined as number | undefined,
-		summon_id: undefined as number | undefined
+		summon_id: undefined as number | undefined,
+		quest_id: undefined as number | undefined
 	})
 
 	// Sync edit data when raid changes
@@ -73,7 +74,8 @@
 				element: raid.element ?? 0,
 				group_id: raid.group?.id || '',
 				enemy_id: raid.enemy_id,
-				summon_id: raid.summon_id
+				summon_id: raid.summon_id,
+				quest_id: raid.quest_id
 			}
 		}
 	})
@@ -118,7 +120,8 @@
 				element: editData.element,
 				group_id: editData.group_id,
 				enemy_id: editData.enemy_id,
-				summon_id: editData.summon_id
+				summon_id: editData.summon_id,
+				quest_id: editData.quest_id
 			})
 
 			// Invalidate queries
@@ -198,6 +201,12 @@
 				<DetailItem
 					label="Summon ID"
 					bind:value={editData.summon_id}
+					editable={true}
+					type="number"
+				/>
+				<DetailItem
+					label="Quest ID"
+					bind:value={editData.quest_id}
 					editable={true}
 					type="number"
 				/>
