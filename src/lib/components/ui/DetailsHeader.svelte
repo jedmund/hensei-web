@@ -9,7 +9,7 @@
 
 	// Props
 	interface Props {
-		type: 'character' | 'summon' | 'weapon' | 'job'
+		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid'
 		item: any // The character/summon/weapon/job object
 		image: string
 		editUrl?: string // URL to navigate to for editing (view mode)
@@ -74,7 +74,8 @@
 						character: '/images/placeholders/placeholder-character-main.png',
 						summon: '/images/placeholders/placeholder-summon-main.png',
 						weapon: '/images/placeholders/placeholder-weapon-main.png',
-						job: '/images/placeholders/placeholder-job.png'
+						job: '/images/placeholders/placeholder-job.png',
+						raid: '/images/placeholders/placeholder-summon-main.png' // Fallback to summon placeholder
 					} as const
 					;(e.currentTarget as HTMLImageElement).src = placeholders[type]
 				}}
