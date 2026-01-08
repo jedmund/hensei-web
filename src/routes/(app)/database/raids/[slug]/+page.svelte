@@ -79,57 +79,36 @@
 		return ''
 	})
 
-	// Available image sizes for raids
-	const raidSizes = $derived.by(() => {
-		const sizes: string[] = []
-		if (raid?.enemy_id) sizes.push('icon')
-		if (raid?.summon_id) sizes.push('thumbnail')
-		if (raid?.quest_id) {
-			sizes.push('lobby')
-			sizes.push('background')
-		}
-		return sizes
-	})
+	// Available image sizes for raids (always show all types)
+	const raidSizes = ['icon', 'thumbnail', 'lobby', 'background']
 
 	// Generate image items for raid (using CDN URLs for the images tab)
+	// Always show all image types so user can right-click to download
 	const raidImages = $derived.by((): ImageItem[] => {
 		if (!raid) return []
 
-		const images: ImageItem[] = []
-
-		// Icon image from enemy
-		if (raid.enemy_id) {
-			images.push({
+		return [
+			{
 				url: getRaidCdnImage('icon', raid.enemy_id),
 				label: 'Icon',
 				variant: 'icon'
-			})
-		}
-
-		// Thumbnail image from summon
-		if (raid.summon_id) {
-			images.push({
+			},
+			{
 				url: getRaidCdnImage('thumbnail', raid.summon_id),
 				label: 'Thumbnail',
 				variant: 'thumbnail'
-			})
-		}
-
-		// Lobby and background images from quest
-		if (raid.quest_id) {
-			images.push({
+			},
+			{
 				url: getRaidCdnImage('lobby', raid.quest_id),
 				label: 'Lobby',
 				variant: 'lobby'
-			})
-			images.push({
+			},
+			{
 				url: getRaidCdnImage('background', raid.quest_id),
 				label: 'Background',
 				variant: 'background'
-			})
-		}
-
-		return images
+			}
+		]
 	})
 
 	// Image download handlers
