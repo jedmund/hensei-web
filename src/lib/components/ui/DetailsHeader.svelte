@@ -75,7 +75,7 @@
 						type === 'job'
 							? `${getBasePath()}/placeholders/placeholder-job.png`
 							: type === 'raid'
-								? getPlaceholderImage('summon', 'main')
+								? `${getBasePath()}/placeholders/placeholder-raid-thumbnail.png`
 								: getPlaceholderImage(type, 'main')
 					;(e.currentTarget as HTMLImageElement).src = placeholder
 				}}
