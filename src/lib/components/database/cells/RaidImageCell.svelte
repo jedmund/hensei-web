@@ -2,8 +2,7 @@
 
 <script lang="ts">
 	import type { Raid } from '$lib/types/api/entities'
-
-	const ICON_BASE_URL = 'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/assets/enemy/m'
+	import { getRaidImage, getRaidCdnImage } from '$lib/utils/images'
 
 	interface Props {
 		raid: Raid
@@ -11,14 +10,17 @@
 
 	const { raid }: Props = $props()
 
-	function getIconUrl(enemyId: number): string {
-		return `${ICON_BASE_URL}/${enemyId}.png`
-	}
+	// Prefer local icon image, fallback to CDN
+	const iconUrl = $derived.by(() => {
+		if (raid.slug) return getRaidImage(raid.slug, 'icon')
+		if (raid.enemy_id) return getRaidCdnImage('icon', raid.enemy_id)
+		return ''
+	})
 </script>
 
 <div class="image-cell">
-	{#if raid.enemy_id}
-		<img src={getIconUrl(raid.enemy_id)} alt="" class="database-image" />
+	{#if iconUrl}
+		<img src={iconUrl} alt="" class="database-image" />
 	{:else}
 		<div class="no-image"></div>
 	{/if}
