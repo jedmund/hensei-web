@@ -8,9 +8,18 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
+	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
+	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
+	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import type { PageData } from './$types'
+	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
+
+	// CDN base URLs for raid images
+	const ICON_BASE_URL = 'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/assets/enemy/m'
+	const THUMBNAIL_BASE_URL = 'https://prd-game-a1-granbluefantasy.akamaized.net/assets_en/img/sp/assets/summon/qm'
+	const LOBBY_BASE_URL = 'https://prd-game-a1-granbluefantasy.akamaized.net/assets_en/img/sp/quest/assets/lobby'
+	const BACKGROUND_BASE_URL = 'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/quest/assets/treasureraid'
 
 	function displayName(input: any): string {
 		if (!input) return '—'
@@ -26,6 +35,19 @@
 
 	let { data }: Props = $props()
 
+	// Tab state from URL
+	const currentTab = $derived(($page.url.searchParams.get('tab') as DetailTab) || 'info')
+
+	function handleTabChange(tab: DetailTab) {
+		const url = new URL($page.url)
+		if (tab === 'info') {
+			url.searchParams.delete('tab')
+		} else {
+			url.searchParams.set('tab', tab)
+		}
+		goto(url.toString(), { replaceState: true })
+	}
+
 	// Get raid slug from URL
 	const raidSlug = $derived($page.params.slug)
 
@@ -40,10 +62,8 @@
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
 
-	// Navigate to edit
-	function handleEdit() {
-		goto(`/database/raids/${raidSlug}/edit`)
-	}
+	// Edit URL for navigation
+	const editUrl = $derived(raidSlug ? `/database/raids/${raidSlug}/edit` : undefined)
 
 	// Navigate back
 	function handleBack() {
@@ -56,9 +76,119 @@
 			goto(`/database/raid-groups/${raid.group.id}`)
 		}
 	}
+
+	// Get icon image URL
+	function getIconUrl(enemyId: number): string {
+		return `${ICON_BASE_URL}/${enemyId}.png`
+	}
+
+	// Get thumbnail image URL
+	function getThumbnailUrl(summonId: number): string {
+		return `${THUMBNAIL_BASE_URL}/${summonId}_high.png`
+	}
+
+	// Get lobby image URL (quest_id with "1" appended)
+	function getLobbyUrl(questId: number): string {
+		return `${LOBBY_BASE_URL}/${questId}1.png`
+	}
+
+	// Get background image URL
+	function getBackgroundUrl(questId: number): string {
+		return `${BACKGROUND_BASE_URL}/${questId}/raid_image_new.png`
+	}
+
+	// Get header image - prefer thumbnail, fallback to icon
+	const headerImage = $derived.by(() => {
+		if (raid?.summon_id) return getThumbnailUrl(raid.summon_id)
+		if (raid?.enemy_id) return getIconUrl(raid.enemy_id)
+		return ''
+	})
+
+	// Available image sizes for raids
+	const raidSizes = $derived.by(() => {
+		const sizes: string[] = []
+		if (raid?.enemy_id) sizes.push('icon')
+		if (raid?.summon_id) sizes.push('thumbnail')
+		if (raid?.quest_id) {
+			sizes.push('lobby')
+			sizes.push('background')
+		}
+		return sizes
+	})
+
+	// Generate image items for raid
+	const raidImages = $derived.by((): ImageItem[] => {
+		if (!raid) return []
+
+		const images: ImageItem[] = []
+
+		// Icon image from enemy
+		if (raid.enemy_id) {
+			images.push({
+				url: getIconUrl(raid.enemy_id),
+				label: 'Icon',
+				variant: 'icon'
+			})
+		}
+
+		// Thumbnail image from summon
+		if (raid.summon_id) {
+			images.push({
+				url: getThumbnailUrl(raid.summon_id),
+				label: 'Thumbnail',
+				variant: 'thumbnail'
+			})
+		}
+
+		// Lobby and background images from quest
+		if (raid.quest_id) {
+			images.push({
+				url: getLobbyUrl(raid.quest_id),
+				label: 'Lobby',
+				variant: 'lobby'
+			})
+			images.push({
+				url: getBackgroundUrl(raid.quest_id),
+				label: 'Background',
+				variant: 'background'
+			})
+		}
+
+		return images
+	})
+
+	// Image download handlers
+	type RaidImageSize = 'icon' | 'thumbnail' | 'lobby' | 'background'
+
+	async function handleDownloadImage(
+		size: string,
+		_transformation: string | undefined,
+		force: boolean
+	) {
+		if (!raidSlug) return
+		await raidAdapter.downloadRaidImage(raidSlug, size as RaidImageSize, force)
+	}
+
+	async function handleDownloadAllImages(force: boolean) {
+		if (!raidSlug) return
+		await raidAdapter.downloadRaidImages(raidSlug, { force })
+	}
+
+	async function handleDownloadSize(size: string) {
+		if (!raidSlug) return
+		await raidAdapter.downloadRaidImage(raidSlug, size as RaidImageSize, false)
+	}
 </script>
 
 <div class="page">
+	<DatabasePageHeader title="Raid" backHref="/database/raids">
+		{#snippet rightAction()}
+			{#if canEdit && editUrl}
+				<Button variant="secondary" size="small" href={editUrl}>Edit</Button>
+			{/if}
+		{/snippet}
+	</DatabasePageHeader>
+
 	{#if raidQuery.isLoading}
 		<div class="loading-state">
 			<p>Loading raid...</p>
@@ -69,57 +199,73 @@
 			<Button variant="secondary" onclick={handleBack}>Back to Raids</Button>
 		</div>
 	{:else if raid}
-		<SidebarHeader title={displayName(raid)}>
-			{#snippet leftAccessory()}
-				<Button variant="secondary" size="small" onclick={handleBack}>Back</Button>
-			{/snippet}
-			{#snippet rightAccessory()}
-				{#if canEdit}
-					<Button variant="primary" size="small" onclick={handleEdit}>Edit</Button>
-				{/if}
-			{/snippet}
-		</SidebarHeader>
+		<DetailScaffold
+			type="raid"
+			item={raid}
+			image={headerImage}
+			showEdit={canEdit}
+			{editUrl}
+			{currentTab}
+			onTabChange={handleTabChange}
+			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
+			onDownloadSize={canEdit ? handleDownloadSize : undefined}
+			availableSizes={raidSizes}
+		>
+			{#if currentTab === 'info'}
+				<section class="details">
+					<DetailsContainer title="Raid Details">
+						<DetailItem label="Name (EN)" value={raid.name.en || '-'} />
+						<DetailItem label="Name (JA)" value={raid.name.ja || '-'} />
+						<DetailItem label="Slug" value={raid.slug || '-'} />
+						<DetailItem label="Level" value={raid.level?.toString() ?? '-'} />
+						<DetailItem label="Enemy ID" value={raid.enemy_id?.toString() ?? '-'} />
+						<DetailItem label="Summon ID" value={raid.summon_id?.toString() ?? '-'} />
+						<DetailItem label="Quest ID" value={raid.quest_id?.toString() ?? '-'} />
+						<DetailItem label="Element">
+							{#if raid.element !== undefined && raid.element !== null}
+								<ElementBadge element={raid.element} />
+							{:else}
+								<span class="no-value">-</span>
+							{/if}
+						</DetailItem>
+					</DetailsContainer>
 
-		<section class="details">
-			<DetailsContainer title="Raid Details">
-				<DetailItem label="Name (EN)" value={raid.name.en || '-'} />
-				<DetailItem label="Name (JA)" value={raid.name.ja || '-'} />
-				<DetailItem label="Slug" value={raid.slug || '-'} />
-				<DetailItem label="Level" value={raid.level?.toString() ?? '-'} />
-				<DetailItem label="Element">
-					{#if raid.element !== undefined && raid.element !== null}
-						<ElementBadge element={raid.element} />
-					{:else}
-						<span class="no-value">-</span>
-					{/if}
-				</DetailItem>
-			</DetailsContainer>
-
-			<DetailsContainer title="Classification">
-				<DetailItem label="Group">
-					{#if raid.group}
-						<Button variant="ghost" size="small" rightIcon="chevron-right-small" onclick={handleGroupClick}>
-							{displayName(raid.group)}
-						</Button>
-					{:else}
-						<span class="no-value">-</span>
-					{/if}
-				</DetailItem>
-				{#if raid.group}
-					<DetailItem label="Difficulty" value={raid.group.difficulty?.toString() ?? '-'} />
-					<DetailItem label="HL">
-						<span class="badge" class:active={raid.group.hl}>{raid.group.hl ? 'Yes' : 'No'}</span>
-					</DetailItem>
-					<DetailItem label="Extra">
-						<span class="badge" class:active={raid.group.extra}>{raid.group.extra ? 'Yes' : 'No'}</span>
-					</DetailItem>
-					<DetailItem label="Guidebooks">
-						<span class="badge" class:active={raid.group.guidebooks}>{raid.group.guidebooks ? 'Yes' : 'No'}</span>
-					</DetailItem>
-				{/if}
-			</DetailsContainer>
-
-		</section>
+					<DetailsContainer title="Classification">
+						<DetailItem label="Group">
+							{#if raid.group}
+								<Button variant="ghost" size="small" rightIcon="chevron-right-small" onclick={handleGroupClick}>
+									{displayName(raid.group)}
+								</Button>
+							{:else}
+								<span class="no-value">-</span>
+							{/if}
+						</DetailItem>
+						{#if raid.group}
+							<DetailItem label="Difficulty" value={raid.group.difficulty?.toString() ?? '-'} />
+							<DetailItem label="HL">
+								<span class="badge" class:active={raid.group.hl}>{raid.group.hl ? 'Yes' : 'No'}</span>
+							</DetailItem>
+							<DetailItem label="Extra">
+								<span class="badge" class:active={raid.group.extra}>{raid.group.extra ? 'Yes' : 'No'}</span>
+							</DetailItem>
+							<DetailItem label="Guidebooks">
+								<span class="badge" class:active={raid.group.guidebooks}>{raid.group.guidebooks ? 'Yes' : 'No'}</span>
+							</DetailItem>
+						{/if}
+					</DetailsContainer>
+				</section>
+			{:else if currentTab === 'images'}
+				<EntityImagesTab
+					images={raidImages}
+					{canEdit}
+					onDownloadImage={canEdit ? handleDownloadImage : undefined}
+				/>
+			{:else if currentTab === 'raw'}
+				<div class="raw-placeholder">
+					<p>Raw data not available for raids.</p>
+				</div>
+			{/if}
+		</DetailScaffold>
 	{:else}
 		<div class="not-found">
 			<h2>Raid Not Found</h2>
@@ -189,5 +335,11 @@
 			background: #28a745;
 			color: white;
 		}
+	}
+
+	.raw-placeholder {
+		padding: spacing.$unit-4x;
+		text-align: center;
+		color: var(--text-secondary);
 	}
 </style>
