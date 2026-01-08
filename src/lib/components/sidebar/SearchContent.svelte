@@ -18,7 +18,7 @@
 	import RarityPicker from '../ui/rarity-picker/RarityPicker.svelte'
 	import ProficiencyPicker from '../ui/proficiency-picker/ProficiencyPicker.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
-	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/features/database/detail/image'
+	import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholder } from '$lib/features/database/detail/image'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
 	import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from '$lib/types/api/collection'
 
@@ -296,7 +296,7 @@
 
 	function getImageUrl(item: AddItemResult): string {
 		const id = item.granblueId
-		if (!id) return `/images/placeholders/placeholder-${type}-square.png`
+		if (!id) return getPlaceholder(type, 'square')
 
 		switch (type) {
 			case 'character':

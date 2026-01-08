@@ -6,6 +6,7 @@
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import Button from './Button.svelte'
 	import { getJobTierName } from '$lib/utils/jobUtils'
+	import { getPlaceholderImage, getBasePath } from '$lib/utils/images'
 
 	// Props
 	interface Props {
@@ -70,14 +71,13 @@
 				src={image}
 				alt={getDisplayName(name)}
 				onerror={(e) => {
-					const placeholders = {
-						character: '/images/placeholders/placeholder-character-main.png',
-						summon: '/images/placeholders/placeholder-summon-main.png',
-						weapon: '/images/placeholders/placeholder-weapon-main.png',
-						job: '/images/placeholders/placeholder-job.png',
-						raid: '/images/placeholders/placeholder-summon-main.png' // Fallback to summon placeholder
-					} as const
-					;(e.currentTarget as HTMLImageElement).src = placeholders[type]
+					const placeholder =
+						type === 'job'
+							? `${getBasePath()}/placeholders/placeholder-job.png`
+							: type === 'raid'
+								? getPlaceholderImage('summon', 'main')
+								: getPlaceholderImage(type, 'main')
+					;(e.currentTarget as HTMLImageElement).src = placeholder
 				}}
 			/>
 		</div>
