@@ -14,12 +14,7 @@
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import type { PageData } from './$types'
 	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
-
-	// CDN base URLs for raid images
-	const ICON_BASE_URL = 'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/assets/enemy/m'
-	const THUMBNAIL_BASE_URL = 'https://prd-game-a1-granbluefantasy.akamaized.net/assets_en/img/sp/assets/summon/qm'
-	const LOBBY_BASE_URL = 'https://prd-game-a1-granbluefantasy.akamaized.net/assets_en/img/sp/quest/assets/lobby'
-	const BACKGROUND_BASE_URL = 'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/quest/assets/treasureraid'
+	import { getRaidImage, getRaidCdnImage, type RaidImageVariant } from '$lib/utils/images'
 
 	function displayName(input: any): string {
 		if (!input) return '—'
@@ -77,30 +72,10 @@
 		}
 	}
 
-	// Get icon image URL
-	function getIconUrl(enemyId: number): string {
-		return `${ICON_BASE_URL}/${enemyId}.png`
-	}
-
-	// Get thumbnail image URL
-	function getThumbnailUrl(summonId: number): string {
-		return `${THUMBNAIL_BASE_URL}/${summonId}_high.png`
-	}
-
-	// Get lobby image URL (quest_id with "1" appended)
-	function getLobbyUrl(questId: number): string {
-		return `${LOBBY_BASE_URL}/${questId}1.png`
-	}
-
-	// Get background image URL
-	function getBackgroundUrl(questId: number): string {
-		return `${BACKGROUND_BASE_URL}/${questId}/raid_image_new.png`
-	}
-
-	// Get header image - prefer thumbnail, fallback to icon
+	// Get header image - use local raid-thumbnail, fallback to icon from CDN
 	const headerImage = $derived.by(() => {
-		if (raid?.summon_id) return getThumbnailUrl(raid.summon_id)
-		if (raid?.enemy_id) return getIconUrl(raid.enemy_id)
+		if (raid?.slug) return getRaidImage(raid.slug, 'thumbnail')
+		if (raid?.enemy_id) return getRaidCdnImage('icon', raid.enemy_id)
 		return ''
 	})
 
@@ -116,7 +91,7 @@
 		return sizes
 	})
 
-	// Generate image items for raid
+	// Generate image items for raid (using CDN URLs for the images tab)
 	const raidImages = $derived.by((): ImageItem[] => {
 		if (!raid) return []
 
@@ -125,7 +100,7 @@
 		// Icon image from enemy
 		if (raid.enemy_id) {
 			images.push({
-				url: getIconUrl(raid.enemy_id),
+				url: getRaidCdnImage('icon', raid.enemy_id),
 				label: 'Icon',
 				variant: 'icon'
 			})
@@ -134,7 +109,7 @@
 		// Thumbnail image from summon
 		if (raid.summon_id) {
 			images.push({
-				url: getThumbnailUrl(raid.summon_id),
+				url: getRaidCdnImage('thumbnail', raid.summon_id),
 				label: 'Thumbnail',
 				variant: 'thumbnail'
 			})
@@ -143,12 +118,12 @@
 		// Lobby and background images from quest
 		if (raid.quest_id) {
 			images.push({
-				url: getLobbyUrl(raid.quest_id),
+				url: getRaidCdnImage('lobby', raid.quest_id),
 				label: 'Lobby',
 				variant: 'lobby'
 			})
 			images.push({
-				url: getBackgroundUrl(raid.quest_id),
+				url: getRaidCdnImage('background', raid.quest_id),
 				label: 'Background',
 				variant: 'background'
 			})
@@ -203,8 +178,6 @@
 			type="raid"
 			item={raid}
 			image={headerImage}
-			showEdit={canEdit}
-			{editUrl}
 			{currentTab}
 			onTabChange={handleTabChange}
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
@@ -218,9 +191,6 @@
 						<DetailItem label="Name (JA)" value={raid.name.ja || '-'} />
 						<DetailItem label="Slug" value={raid.slug || '-'} />
 						<DetailItem label="Level" value={raid.level?.toString() ?? '-'} />
-						<DetailItem label="Enemy ID" value={raid.enemy_id?.toString() ?? '-'} />
-						<DetailItem label="Summon ID" value={raid.summon_id?.toString() ?? '-'} />
-						<DetailItem label="Quest ID" value={raid.quest_id?.toString() ?? '-'} />
 						<DetailItem label="Element">
 							{#if raid.element !== undefined && raid.element !== null}
 								<ElementBadge element={raid.element} />
@@ -228,6 +198,12 @@
 								<span class="no-value">-</span>
 							{/if}
 						</DetailItem>
+					</DetailsContainer>
+
+					<DetailsContainer title="IDs">
+						<DetailItem label="Enemy ID" value={raid.enemy_id?.toString() ?? '-'} />
+						<DetailItem label="Summon ID" value={raid.summon_id?.toString() ?? '-'} />
+						<DetailItem label="Quest ID" value={raid.quest_id?.toString() ?? '-'} />
 					</DetailsContainer>
 
 					<DetailsContainer title="Classification">
