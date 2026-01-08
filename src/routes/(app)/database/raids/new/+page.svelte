@@ -44,7 +44,10 @@
 		slug: '',
 		level: 0,
 		element: 0,
-		group_id: ''
+		group_id: '',
+		enemy_id: undefined as number | undefined,
+		summon_id: undefined as number | undefined,
+		quest_id: undefined as number | undefined
 	})
 
 	// Element options
@@ -85,7 +88,10 @@
 				slug: editData.slug,
 				level: editData.level,
 				element: editData.element,
-				group_id: editData.group_id
+				group_id: editData.group_id,
+				enemy_id: editData.enemy_id,
+				summon_id: editData.summon_id,
+				quest_id: editData.quest_id
 			})
 
 			// Invalidate queries
@@ -148,6 +154,24 @@
 			<DetailItem
 				label="Level"
 				bind:value={editData.level}
+				editable={true}
+				type="number"
+			/>
+			<DetailItem
+				label="Enemy ID"
+				bind:value={editData.enemy_id}
+				editable={true}
+				type="number"
+			/>
+			<DetailItem
+				label="Summon ID"
+				bind:value={editData.summon_id}
+				editable={true}
+				type="number"
+			/>
+			<DetailItem
+				label="Quest ID"
+				bind:value={editData.quest_id}
 				editable={true}
 				type="number"
 			/>

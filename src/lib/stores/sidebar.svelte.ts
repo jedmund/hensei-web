@@ -39,10 +39,16 @@ class SidebarStore {
 	/** The pane stack for sidebar navigation */
 	paneStack = new PaneStackStore()
 
+	/** Timeout ID for delayed pane stack clear after close animation */
+	private clearTimeoutId: ReturnType<typeof setTimeout> | null = null
+
 	/**
 	 * Open the sidebar with a snippet content (legacy API)
 	 */
 	open(title?: string, content?: Snippet, scrollable = true) {
+		// Cancel any pending clear from a previous close()
+		this.cancelPendingClear()
+
 		// For snippet content, we don't use the pane stack
 		// This is for backwards compatibility
 		this.state.open = true
@@ -59,6 +65,9 @@ class SidebarStore {
 		props?: Record<string, any>,
 		options?: OpenWithComponentOptions | boolean
 	) {
+		// Cancel any pending clear from a previous close()
+		this.cancelPendingClear()
+
 		// Handle backward compatibility where 4th param was scrollable boolean
 		const opts: OpenWithComponentOptions =
 			typeof options === 'boolean' ? { scrollable: options } : options ?? {}
@@ -112,10 +121,21 @@ class SidebarStore {
 	close() {
 		this.state.open = false
 		this.state.activeItemId = undefined
-		// Clear pane stack after animation
-		setTimeout(() => {
+		// Clear pane stack after animation completes
+		this.clearTimeoutId = setTimeout(() => {
 			this.paneStack.clear()
+			this.clearTimeoutId = null
 		}, 300)
+	}
+
+	/**
+	 * Cancel any pending pane stack clear from a previous close()
+	 */
+	private cancelPendingClear() {
+		if (this.clearTimeoutId) {
+			clearTimeout(this.clearTimeoutId)
+			this.clearTimeoutId = null
+		}
 	}
 
 	/**

@@ -14,6 +14,21 @@ import type {
 import type { Raid, RaidGroup } from '$lib/types/api/entities'
 
 /**
+ * Response from raid image download status
+ */
+export interface RaidDownloadStatus {
+  status: 'queued' | 'processing' | 'completed' | 'failed' | 'not_found'
+  progress?: number
+  imagesDownloaded?: number
+  imagesTotal?: number
+  error?: string
+  raidId?: string
+  slug?: string
+  images?: Record<string, string[]>
+  updatedAt?: string
+}
+
+/**
  * Adapter for Raid and RaidGroup API operations
  */
 export class RaidAdapter extends BaseAdapter {
@@ -86,6 +101,77 @@ export class RaidAdapter extends BaseAdapter {
     })
     this.clearCache('/raids')
     this.clearCache(`/raids/${slug}`)
+  }
+
+  // ==================== Image Download Operations ====================
+
+  /**
+   * Downloads a single image for a raid (synchronous)
+   * Requires editor role (>= 7)
+   * @param slug - Raid slug
+   * @param size - Image size variant ('icon', 'thumbnail', 'lobby', or 'background')
+   * @param force - Force re-download even if image exists
+   */
+  async downloadRaidImage(
+    slug: string,
+    size: 'icon' | 'thumbnail' | 'lobby' | 'background',
+    force?: boolean,
+    options?: RequestOptions
+  ): Promise<{ success: boolean; error?: string }> {
+    return this.request(`/raids/${slug}/download_image`, {
+      ...options,
+      method: 'POST',
+      body: JSON.stringify({ size, force })
+    })
+  }
+
+  /**
+   * Triggers async image download for a raid
+   * Requires editor role (>= 7)
+   */
+  async downloadRaidImages(
+    slug: string,
+    downloadOptions?: { force?: boolean; size?: 'all' | 'icon' | 'thumbnail' | 'lobby' | 'background' },
+    requestOptions?: RequestOptions
+  ): Promise<{ status: string; raidId: string; message: string }> {
+    return this.request(`/raids/${slug}/download_images`, {
+      ...requestOptions,
+      method: 'POST',
+      body: JSON.stringify({ options: downloadOptions })
+    })
+  }
+
+  /**
+   * Gets the status of an ongoing raid image download
+   * Requires editor role (>= 7)
+   */
+  async getRaidDownloadStatus(slug: string, options?: RequestOptions): Promise<RaidDownloadStatus> {
+    const response = await this.request<{
+      status: string
+      progress?: number
+      images_downloaded?: number
+      images_total?: number
+      error?: string
+      raid_id?: string
+      slug?: string
+      images?: Record<string, string[]>
+      updated_at?: string
+    }>(`/raids/${slug}/download_status`, {
+      ...options,
+      method: 'GET'
+    })
+
+    return {
+      status: response.status as RaidDownloadStatus['status'],
+      progress: response.progress,
+      imagesDownloaded: response.images_downloaded,
+      imagesTotal: response.images_total,
+      error: response.error,
+      raidId: response.raid_id,
+      slug: response.slug,
+      images: response.images,
+      updatedAt: response.updated_at
+    }
   }
 
   // ==================== RaidGroup Operations ====================

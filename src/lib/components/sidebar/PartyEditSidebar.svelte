@@ -280,16 +280,50 @@
 </script>
 
 <div class="party-edit-sidebar">
-	<div class="top-fields">
-		<Input
-			label="Title"
-			bind:value={name}
-			placeholder="Enter party title..."
-			contained
-			fullWidth
-		/>
-		<YouTubeUrlInput label="Video" bind:value={videoUrl} contained />
+	<div class="top-section">
+		<h3>Details</h3>
+		<div class="top-fields">
+			<Input
+				label="Title"
+				bind:value={name}
+				placeholder="Enter party title..."
+				contained
+				fullWidth
+			/>
+			<YouTubeUrlInput label="Video" bind:value={videoUrl} contained />
+			<div class="raid-field">
+				<span class="raid-label">Raid</span>
+				<button
+					type="button"
+					class="raid-select-button {getRaidElementClass(raid)}"
+					onclick={openRaidPane}
+				>
+					{#if raid}
+						<span class="raid-name">{getRaidName(raid)}</span>
+					{:else}
+						<span class="placeholder">Select raid...</span>
+					{/if}
+					<Icon name="chevron-right" size={16} class="chevron-icon" />
+				</button>
+			</div>
+		</div>
 	</div>
+
+	<hr class="divider" />
+
+	<button type="button" class="description-button" onclick={openDescriptionPane}>
+		<div class="description-header">
+			<span class="description-label">Description</span>
+			<Icon name="chevron-right" size={16} class="description-chevron" />
+		</div>
+		{#if descriptionPreview}
+			<p class="description-preview">{descriptionPreview}</p>
+		{:else}
+			<span class="description-placeholder">Add description...</span>
+		{/if}
+	</button>
+
+	<hr class="divider" />
 
 	<DetailsSection title="Sharing">
 		<DetailRow label="Visibility" noHover compact>
@@ -314,36 +348,7 @@
 		{/if}
 	</DetailsSection>
 
-	<button type="button" class="description-button" onclick={openDescriptionPane}>
-		<div class="description-header">
-			<span class="description-label">Description</span>
-			<Icon name="chevron-right" size={16} class="description-chevron" />
-		</div>
-		{#if descriptionPreview}
-			<p class="description-preview">{descriptionPreview}</p>
-		{:else}
-			<span class="description-placeholder">Add description...</span>
-		{/if}
-	</button>
-
-	<DetailsSection title="Battle">
-		<DetailRow label="Raid" noHover compact>
-			{#snippet children()}
-				<button
-					type="button"
-					class="raid-select-button {getRaidElementClass(raid)}"
-					onclick={openRaidPane}
-				>
-					{#if raid}
-						<span class="raid-name">{getRaidName(raid)}</span>
-					{:else}
-						<span class="placeholder">Select raid...</span>
-					{/if}
-					<Icon name="chevron-right" size={16} class="chevron-icon" />
-				</button>
-			{/snippet}
-		</DetailRow>
-	</DetailsSection>
+	<hr class="divider" />
 
 	<BattleSettingsSection
 		bind:fullAuto
@@ -353,6 +358,8 @@
 		{element}
 		onchange={handleSettingsChange}
 	/>
+
+	<hr class="divider" />
 
 	<DetailsSection title="Performance">
 		<DetailRow label="Clear Time" noHover compact>
@@ -392,11 +399,50 @@
 		padding-bottom: $unit-2x;
 	}
 
+	.top-section {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+		padding: 0 $unit;
+
+		h3 {
+			margin: 0;
+			font-size: $font-name;
+			font-weight: $medium;
+			color: var(--text-primary);
+			padding: 0 $unit;
+		}
+	}
+
 	.top-fields {
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
-		padding: 0 $unit-2x;
+		padding: 0 $unit;
+
+		// Override Input label styling to match DetailRow
+		:global(.label) {
+			color: var(--text-secondary) !important;
+			font-size: $font-regular !important;
+			font-weight: normal !important;
+		}
+	}
+
+	.divider {
+		border: none;
+		border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.04));
+		margin: 0;
+	}
+
+	.raid-field {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
+	}
+
+	.raid-label {
+		font-size: $font-regular;
+		color: var(--text-secondary);
 	}
 
 	.raid-select-button {

@@ -34,6 +34,18 @@
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
 
+	// Measure content height to determine if fade gradient is needed
+	let contentEl = $state<HTMLDivElement | undefined>(undefined)
+	let needsFade = $state(false)
+
+	$effect(() => {
+		if (contentEl) {
+			// Show fade if content is taller than ~2 lines
+			// Based on line-height 1.5 × font-size ~16px × 2 lines ≈ 48px
+			needsFade = contentEl.scrollHeight > 48
+		}
+	})
+
 	/** Extract plain text from first two non-empty paragraphs of TipTap JSON content */
 	function getPreviewParagraphs(content?: string): string[] {
 		if (!content) return []
@@ -78,7 +90,7 @@
 	const previewParagraphs = $derived(getPreviewParagraphs(description))
 </script>
 
-<div class="description-tile">
+<div class="description-tile" class:has-fade={needsFade}>
 	<!-- Header: Title + Actions -->
 	<div class="tile-header-container">
 		<div class="tile-header">
@@ -118,7 +130,7 @@
 	<!-- Description content (clickable) -->
 	<button type="button" class="description-content" onclick={onOpenDescription}>
 		{#if previewParagraphs.length}
-			<div class="preview-text">
+			<div class="preview-text" bind:this={contentEl}>
 				{#each previewParagraphs as paragraph}
 					<p>{paragraph}</p>
 				{/each}
@@ -146,7 +158,7 @@
 		overflow: hidden;
 		position: relative;
 
-		&::after {
+		&.has-fade::after {
 			content: '';
 			position: absolute;
 			bottom: 0;

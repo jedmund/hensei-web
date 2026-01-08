@@ -756,7 +756,7 @@
 
 <main>
 	<div class="page-container">
-		<section class="party-content">
+		<section class="party-section">
 			<div class="description-tile-wrapper">
 				<DescriptionTile
 					name={party.name}
@@ -838,7 +838,9 @@
 	</Dialog.Portal>
 </Dialog.Root>
 
-<style>
+<style lang="scss">
+	@use '$src/themes/spacing' as *;
+
 	.page-container {
 		display: flex;
 		gap: 0;
@@ -851,13 +853,11 @@
 		padding-bottom: 20vh;
 	}
 
-	.party-content {
+	.party-section {
 		flex: 1;
-		padding: 1rem 2rem;
-	}
-
-	.description-tile-wrapper {
-		margin-bottom: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
 	}
 
 	.party-content {
@@ -867,7 +867,7 @@
 	.character-tab-content {
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		gap: $unit-2x;
 	}
 
 	/* Dialog styles */

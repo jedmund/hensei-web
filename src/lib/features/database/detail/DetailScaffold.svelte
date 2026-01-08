@@ -11,7 +11,7 @@
 	export type DetailTab = 'info' | 'images' | 'raw'
 
 	interface Props {
-		type: 'character' | 'summon' | 'weapon' | 'job'
+		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid'
 		item: any
 		image: string
 		showEdit?: boolean
