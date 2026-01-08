@@ -45,7 +45,7 @@ export interface CreateRaidInput {
   name_en: string
   name_jp: string
   slug: string
-  level: number
+  level?: number
   element: number
   group_id: string
   enemy_id?: number

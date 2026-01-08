@@ -37,12 +37,12 @@
 	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
 
-	// Edit data state
+	// Edit data state - use undefined for nullable number fields to avoid validation issues
 	let editData = $state({
 		name_en: '',
 		name_jp: '',
 		slug: '',
-		level: 0,
+		level: undefined as number | undefined,
 		element: 0,
 		group_id: '',
 		enemy_id: undefined as number | undefined,
@@ -74,6 +74,13 @@
 		editData.name_en.trim() !== '' && editData.slug.trim() !== '' && editData.group_id !== ''
 	)
 
+	// Helper to convert empty strings to undefined for number fields
+	function toNumberOrUndefined(value: number | string | undefined): number | undefined {
+		if (value === '' || value === undefined || value === null) return undefined
+		const num = typeof value === 'string' ? parseInt(value, 10) : value
+		return isNaN(num) ? undefined : num
+	}
+
 	// Create raid
 	async function handleSave() {
 		if (!canSave) return
@@ -86,12 +93,12 @@
 				name_en: editData.name_en,
 				name_jp: editData.name_jp,
 				slug: editData.slug,
-				level: editData.level,
+				level: toNumberOrUndefined(editData.level),
 				element: editData.element,
 				group_id: editData.group_id,
-				enemy_id: editData.enemy_id,
-				summon_id: editData.summon_id,
-				quest_id: editData.quest_id
+				enemy_id: toNumberOrUndefined(editData.enemy_id),
+				summon_id: toNumberOrUndefined(editData.summon_id),
+				quest_id: toNumberOrUndefined(editData.quest_id)
 			})
 
 			// Invalidate queries
@@ -158,6 +165,16 @@
 				type="number"
 			/>
 			<DetailItem
+				label="Element"
+				bind:value={editData.element}
+				editable={true}
+				type="select"
+				options={elementOptions}
+			/>
+		</DetailsContainer>
+
+		<DetailsContainer title="IDs">
+			<DetailItem
 				label="Enemy ID"
 				bind:value={editData.enemy_id}
 				editable={true}
@@ -174,13 +191,6 @@
 				bind:value={editData.quest_id}
 				editable={true}
 				type="number"
-			/>
-			<DetailItem
-				label="Element"
-				bind:value={editData.element}
-				editable={true}
-				type="select"
-				options={elementOptions}
 			/>
 		</DetailsContainer>
 
