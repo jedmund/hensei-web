@@ -127,6 +127,8 @@ export interface Party {
   editKey?: string
   /** Whether the party contains any orphaned grid items */
   hasOrphanedItems?: boolean
+  /** The user whose collection is linked to this party (null if no collection items) */
+  collectionSourceUserId?: string
 
   // Relationships
   weapons: GridWeapon[]

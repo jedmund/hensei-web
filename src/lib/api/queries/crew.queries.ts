@@ -9,7 +9,19 @@
 
 import { queryOptions, infiniteQueryOptions } from '@tanstack/svelte-query'
 import { crewAdapter } from '$lib/api/adapters/crew.adapter'
+import { userAdapter } from '$lib/api/adapters/user.adapter'
 import type { MemberFilter } from '$lib/types/api/crew'
+// Collection privacy values from the API (1-based, matching Rails enum)
+const COLLECTION_PRIVACY_PRIVATE = 3
+
+/**
+ * A crew member whose collection is accessible to the current user
+ */
+export interface AccessibleCollectionMember {
+  userId: string
+  username: string
+  avatarPicture?: string
+}
 
 /**
  * Crew query options factory
@@ -120,6 +132,44 @@ export const crewQueries = {
         lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
       staleTime: 1000 * 60 * 2, // 2 minutes
       gcTime: 1000 * 60 * 15 // 15 minutes
+    }),
+
+  /**
+   * Crew members with accessible collections (Everyone or CrewOnly privacy).
+   * Fetches active members, checks each member's collection privacy in parallel,
+   * and returns only those whose collections are viewable.
+   */
+  accessibleCollectionMembers: () =>
+    queryOptions<AccessibleCollectionMember[]>({
+      queryKey: ['crew', 'members', 'accessible-collections'] as const,
+      queryFn: async () => {
+        const { members } = await crewAdapter.getMembers('active')
+
+        const memberInfos = await Promise.all(
+          members
+            .filter((m) => m.user)
+            .map(async (m) => {
+              try {
+                const info = await userAdapter.getInfo(m.user!.username)
+                return {
+                  userId: m.user!.id,
+                  username: m.user!.username,
+                  avatarPicture: m.user!.avatar?.picture,
+                  collectionPrivacy: info.collectionPrivacy ?? COLLECTION_PRIVACY_PRIVATE
+                }
+              } catch {
+                return null
+              }
+            })
+        )
+
+        return memberInfos.filter(
+          (m): m is NonNullable<typeof m> =>
+            m !== null && m.collectionPrivacy !== COLLECTION_PRIVACY_PRIVATE
+        )
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 30 // 30 minutes
     })
 }
 
@@ -147,6 +197,7 @@ export const crewKeys = {
   members: (filter: MemberFilter) => [...crewKeys.all, 'members', filter] as const,
   crewInvitations: (crewId: string) => [...crewKeys.all, crewId, 'invitations'] as const,
   sharedParties: () => [...crewKeys.all, 'shared_parties'] as const,
+  accessibleCollectionMembers: () => [...crewKeys.all, 'members', 'accessible-collections'] as const,
   invitations: {
     all: ['invitations'] as const,
     pending: () => ['invitations', 'pending'] as const
