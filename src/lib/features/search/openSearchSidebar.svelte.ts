@@ -10,10 +10,12 @@ interface SearchSidebarOptions {
 	authUserId?: string
 	/** Required proficiencies for mainhand weapon selection */
 	requiredProficiencies?: number[]
+	/** User's element for styling the collection toggle */
+	userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 }
 
 export function openSearchSidebar(options: SearchSidebarOptions) {
-	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies } = options
+	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies, userElement } = options
 
 	// Open the sidebar with the search component
 	const title = `Search ${type.charAt(0).toUpperCase() + type.slice(1)}s`
@@ -22,7 +24,8 @@ export function openSearchSidebar(options: SearchSidebarOptions) {
 		onAddItems,
 		canAddMore,
 		authUserId,
-		requiredProficiencies
+		requiredProficiencies,
+		userElement
 	})
 }
 

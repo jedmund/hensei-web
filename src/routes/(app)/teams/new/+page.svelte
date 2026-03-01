@@ -80,7 +80,8 @@
 					type: 'weapon',
 					onAddItems: handleAddItems,
 					canAddMore: true,
-					authUserId: currentUser?.id
+					authUserId: data.account?.userId,
+					userElement: currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 				})
 			}, 100)
 		}
@@ -119,7 +120,8 @@
 						: 'character',
 			onAddItems: handleAddItems,
 			canAddMore: !isGridFull(gridType),
-			authUserId: currentUser?.id
+			authUserId: data.account?.userId,
+			userElement: currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 		})
 	}
 
@@ -749,7 +751,8 @@
 							? GridType.Summon
 							: GridType.Character
 				),
-				authUserId: currentUser?.id
+				authUserId: data.account?.userId,
+				userElement: currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 			})
 		}
 	})

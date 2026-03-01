@@ -927,7 +927,8 @@
 				onAddItems: handleAddItems,
 				canAddMore: true,
 				authUserId,
-				requiredProficiencies
+				requiredProficiencies,
+				userElement
 			})
 		}
 	})
