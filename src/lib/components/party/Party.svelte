@@ -21,7 +21,8 @@
 		useSwapWeapons,
 		useSwapCharacters,
 		useSwapSummons,
-		useSyncAllPartyItems
+		useSyncAllPartyItems,
+		useUnlinkCollectionSource
 	} from '$lib/api/mutations/grid.mutations'
 
 	// TanStack Query mutations - Party
@@ -153,6 +154,7 @@
 	const swapCharacters = useSwapCharacters()
 	const swapSummons = useSwapSummons()
 	const syncAllItems = useSyncAllPartyItems()
+	const unlinkCollectionSource = useUnlinkCollectionSource()
 
 	// TanStack Query mutations - Party
 	const updatePartyMutation = useUpdateParty()
@@ -424,6 +426,19 @@
 			error = err.message || 'Failed to sync from collection'
 		} finally {
 			loading = false
+		}
+	}
+
+	async function handleUnlinkCollection() {
+		if (!canEdit()) return
+
+		try {
+			await unlinkCollectionSource.mutateAsync({
+				partyId: party.id,
+				partyShortcode: party.shortcode
+			})
+		} catch (err: any) {
+			error = err.message || 'Failed to unlink collection'
 		}
 	}
 
@@ -928,7 +943,9 @@
 				canAddMore: true,
 				authUserId,
 				requiredProficiencies,
-				userElement
+				userElement,
+				collectionSourceUserId: party.collectionSourceUserId,
+				onUnlinkCollection: handleUnlinkCollection
 			})
 		}
 	})

@@ -23,6 +23,9 @@
 	import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholder } from '$lib/features/database/detail/image'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
 	import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from '$lib/types/api/collection'
+	import { crewQueries } from '$lib/api/queries/crew.queries'
+	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import { getAvatarSrc } from '$lib/utils/avatar'
 
 	interface Props {
 		type: 'weapon' | 'character' | 'summon'
@@ -34,6 +37,10 @@
 		requiredProficiencies?: number[]
 		/** User's element for styling the collection toggle */
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+		/** If set, collection mode is locked to this user's collection */
+		collectionSourceUserId?: string
+		/** Callback to unlink all collection items from the party */
+		onUnlinkCollection?: () => Promise<void>
 	}
 
 	let {
@@ -42,7 +49,9 @@
 		canAddMore = true,
 		authUserId,
 		requiredProficiencies,
-		userElement
+		userElement,
+		collectionSourceUserId,
+		onUnlinkCollection
 	}: Props = $props()
 
 	// Search state (local UI state)
@@ -58,6 +67,9 @@
 
 	// Search mode state (only available when authUserId is provided)
 	let searchMode = $state<SearchMode>('all')
+
+	// Crew member selection state
+	let selectedMemberId = $state<string | undefined>(collectionSourceUserId ?? authUserId)
 
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
@@ -101,6 +113,59 @@
 			value: s.id,
 			label: s.name.en
 		}))
+	})
+
+	// Crew members with accessible collections (for collection mode dropdown)
+	const crewMembersQuery = createQuery(() => ({
+		...crewQueries.accessibleCollectionMembers(),
+		enabled: crewStore.isInCrew
+	}))
+
+	const memberOptions = $derived.by(() => {
+		const members = crewMembersQuery.data ?? []
+		const options: { value: string; label: string; image?: string; suffix?: string }[] = []
+
+		if (authUserId) {
+			const selfMember = members.find((m) => m.userId === authUserId)
+			options.push({
+				value: authUserId,
+				label: selfMember?.username ?? 'You',
+				image: selfMember ? getAvatarSrc(selfMember.avatarPicture) : undefined,
+				suffix: 'You'
+			})
+		}
+
+		for (const m of members) {
+			if (m.userId !== authUserId) {
+				options.push({
+					value: m.userId,
+					label: m.username,
+					image: getAvatarSrc(m.avatarPicture)
+				})
+			}
+		}
+
+		return options
+	})
+
+	// The userId whose collection we're currently browsing
+	const collectionUserId = $derived.by(() => {
+		if (searchMode !== 'collection') return authUserId
+		if (collectionSourceUserId) return collectionSourceUserId
+		return selectedMemberId
+	})
+
+	const isCollectionLocked = $derived(!!collectionSourceUserId)
+
+	const showMemberDropdown = $derived(
+		searchMode === 'collection' && crewStore.isInCrew && memberOptions.length > 1
+	)
+
+	// Get selected member's username for empty state messaging
+	const selectedMemberName = $derived.by(() => {
+		if (!selectedMemberId || selectedMemberId === authUserId) return undefined
+		const members = crewMembersQuery.data ?? []
+		return members.find((m) => m.userId === selectedMemberId)?.username
 	})
 
 	// Build filters object for query
@@ -172,10 +237,11 @@
 	// Type assertion needed because different types have different query result types
 	// but they all share the same structure with different content types
 	const collectionQueryResult = createInfiniteQuery(() => {
-		if (!authUserId) {
+		const userId = collectionUserId
+		if (!userId) {
 			// Return a disabled query config
 			return {
-				...collectionQueries.characters(authUserId ?? '', {}, false),
+				...collectionQueries.characters(userId ?? '', {}, false),
 				enabled: false
 			} as ReturnType<typeof collectionQueries.characters>
 		}
@@ -189,17 +255,17 @@
 		switch (type) {
 			case 'weapon':
 				return {
-					...collectionQueries.weapons(authUserId, currentFilters),
-					enabled: true // Always enabled when authUserId exists
+					...collectionQueries.weapons(userId, currentFilters),
+					enabled: true
 				} as unknown as ReturnType<typeof collectionQueries.characters>
 			case 'character':
 				return {
-					...collectionQueries.characters(authUserId, currentFilters),
+					...collectionQueries.characters(userId, currentFilters),
 					enabled: true
 				}
 			case 'summon':
 				return {
-					...collectionQueries.summons(authUserId, currentFilters),
+					...collectionQueries.summons(userId, currentFilters),
 					enabled: true
 				} as unknown as ReturnType<typeof collectionQueries.characters>
 		}
@@ -346,8 +412,30 @@
 				grow
 			>
 				<Segment value="all">All Items</Segment>
-				<Segment value="collection">My Collection</Segment>
+				<Segment value="collection">Collection</Segment>
 			</SegmentedControl>
+		</div>
+	{/if}
+
+	{#if showMemberDropdown}
+		<div class="member-select">
+			<Select
+				options={memberOptions}
+				value={isCollectionLocked ? collectionSourceUserId : selectedMemberId}
+				onValueChange={(v) => { selectedMemberId = v }}
+				placeholder="Select member"
+				disabled={isCollectionLocked}
+				contained
+				fullWidth
+			/>
+			{#if isCollectionLocked}
+				<button
+					class="unlink-button"
+					onclick={async () => { if (onUnlinkCollection) await onUnlinkCollection() }}
+				>
+					Clear collection source
+				</button>
+			{/if}
 		</div>
 	{/if}
 
@@ -504,6 +592,8 @@
 				{#if searchMode === 'collection'}
 					{#if searchQuery.length > 0}
 						No items match your search
+					{:else if selectedMemberName}
+						{selectedMemberName}'s collection is empty
 					{:else}
 						Your collection is empty
 					{/if}
@@ -542,6 +632,29 @@
 	.mode-toggle {
 		padding: 0 $unit-2x $unit-2x $unit-2x;
 		flex-shrink: 0;
+	}
+
+	.member-select {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
+		padding: 0 $unit-2x $unit-2x $unit-2x;
+		flex-shrink: 0;
+
+		.unlink-button {
+			background: none;
+			border: none;
+			padding: 0 $unit-half;
+			font-size: $font-small;
+			color: var(--text-secondary);
+			cursor: pointer;
+			text-align: left;
+			transition: 0.15s color ease-out;
+
+			&:hover {
+				color: var(--text-primary);
+			}
+		}
 	}
 
 	.filters-section {
