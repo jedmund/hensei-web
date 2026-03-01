@@ -67,6 +67,28 @@ export interface ListUserPartiesParams {
 }
 
 /**
+ * Filter parameters for the explore parties list
+ */
+export interface ExploreFilterParams {
+	element?: number[]
+	raid?: string
+	recency?: number
+	job?: string
+	fullAuto?: number
+	autoGuard?: number
+	chargeAttack?: number
+	hasVideo?: boolean
+	charactersCount?: number
+	weaponsCount?: number
+	summonsCount?: number
+	nameQuality?: boolean
+	userQuality?: boolean
+	original?: boolean
+	includes?: string
+	excludes?: string
+}
+
+/**
  * Parameters for listing parties by raid
  */
 export interface ListRaidPartiesParams {
@@ -187,7 +209,16 @@ export class PartyAdapter extends BaseAdapter {
 	/**
 	 * Lists all public parties (explore page)
 	 */
-	async list(params: { page?: number; per?: number } = {}): Promise<PaginatedResponse<Party>> {
+	async list(
+		params: { page?: number; per?: number } & Partial<ExploreFilterParams> = {}
+	): Promise<PaginatedResponse<Party>> {
+		const query: Record<string, unknown> = {}
+		for (const [key, value] of Object.entries(params)) {
+			if (value !== undefined && value !== null) {
+				query[key] = value
+			}
+		}
+
 		const response = await this.request<{
 			results: Party[]
 			meta?: {
@@ -197,8 +228,8 @@ export class PartyAdapter extends BaseAdapter {
 			}
 		}>('/parties', {
 			method: 'GET',
-			query: params,
-			cacheTTL: 30000 // Cache for 30 seconds
+			query,
+			cacheTTL: 30000
 		})
 
 		return {

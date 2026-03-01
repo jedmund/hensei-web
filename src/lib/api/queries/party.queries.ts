@@ -11,7 +11,8 @@ import { queryOptions, infiniteQueryOptions } from '@tanstack/svelte-query'
 import {
 	partyAdapter,
 	type ListUserPartiesParams,
-	type ListRaidPartiesParams
+	type ListRaidPartiesParams,
+	type ExploreFilterParams
 } from '$lib/api/adapters/party.adapter'
 import type { Party } from '$lib/types/api/party'
 
@@ -30,8 +31,8 @@ export interface PartyPageResult {
  * Parameters for listing parties
  */
 export interface ListPartiesParams {
-	page?: number
 	per?: number
+	filters?: ExploreFilterParams
 }
 
 /**
@@ -62,6 +63,41 @@ export interface RaidPartiesFilters {
  * const parties = createInfiniteQuery(() => partyQueries.list())
  * ```
  */
+/**
+ * Strips default/inactive filter values so the API only gets meaningful filters
+ */
+function buildFilterQuery(filters: ExploreFilterParams): Partial<ExploreFilterParams> {
+	const query: Record<string, unknown> = {}
+
+	if (filters.element && filters.element.length > 0) query.element = filters.element
+	if (filters.raid) query.raid = filters.raid
+	if (filters.recency !== undefined && filters.recency > 0) query.recency = filters.recency
+	if (filters.job) query.job = filters.job
+
+	if (filters.fullAuto !== undefined && filters.fullAuto !== -1) query.fullAuto = filters.fullAuto
+	if (filters.autoGuard !== undefined && filters.autoGuard !== -1)
+		query.autoGuard = filters.autoGuard
+	if (filters.chargeAttack !== undefined && filters.chargeAttack !== -1)
+		query.chargeAttack = filters.chargeAttack
+	if (filters.hasVideo) query.hasVideo = filters.hasVideo
+
+	if (filters.charactersCount !== undefined && filters.charactersCount > 0)
+		query.charactersCount = filters.charactersCount
+	if (filters.weaponsCount !== undefined && filters.weaponsCount > 0)
+		query.weaponsCount = filters.weaponsCount
+	if (filters.summonsCount !== undefined && filters.summonsCount > 0)
+		query.summonsCount = filters.summonsCount
+
+	if (filters.nameQuality) query.nameQuality = filters.nameQuality
+	if (filters.userQuality) query.userQuality = filters.userQuality
+	if (filters.original) query.original = filters.original
+
+	if (filters.includes) query.includes = filters.includes
+	if (filters.excludes) query.excludes = filters.excludes
+
+	return query as Partial<ExploreFilterParams>
+}
+
 export const partyQueries = {
 	/**
 	 * Single party query options
@@ -84,13 +120,15 @@ export const partyQueries = {
 	 * @param params - Optional pagination parameters
 	 * @returns Infinite query options for listing public parties
 	 */
-	list: (params?: Omit<ListPartiesParams, 'page'>) =>
+	list: (params?: ListPartiesParams) =>
 		infiniteQueryOptions({
-			queryKey: ['parties', 'list', params] as const,
+			queryKey: ['parties', 'list', params?.filters] as const,
 			queryFn: async ({ pageParam }): Promise<PartyPageResult> => {
+				const filterQuery = params?.filters ? buildFilterQuery(params.filters) : {}
 				const response = await partyAdapter.list({
-					...params,
-					page: pageParam
+					per: params?.per,
+					page: pageParam,
+					...filterQuery
 				})
 				return {
 					results: response.results,
@@ -222,7 +260,7 @@ export const partyQueries = {
 export const partyKeys = {
 	all: ['parties'] as const,
 	lists: () => [...partyKeys.all, 'list'] as const,
-	list: (params?: ListPartiesParams) => [...partyKeys.lists(), params] as const,
+	list: (filters?: ExploreFilterParams) => [...partyKeys.lists(), filters] as const,
 	userLists: () => [...partyKeys.all, 'user'] as const,
 	userList: (username: string, params?: Omit<ListUserPartiesParams, 'username'>) =>
 		[...partyKeys.userLists(), username, params] as const,
