@@ -439,7 +439,7 @@
 			</div>
 		{:else if searchResults.length > 0}
 			<ul class="results-list">
-				{#each searchResults as item (item.id)}
+				{#each searchResults as item (item.collectionId || item.id)}
 					{@const owned = searchMode === 'all' && authUserId && isOwned(item)}
 					<li class="result-item">
 						<button

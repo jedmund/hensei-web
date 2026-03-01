@@ -79,7 +79,8 @@
 				openSearchSidebar({
 					type: 'weapon',
 					onAddItems: handleAddItems,
-					canAddMore: true
+					canAddMore: true,
+					authUserId: currentUser?.id
 				})
 			}, 100)
 		}
@@ -117,7 +118,8 @@
 						? 'summon'
 						: 'character',
 			onAddItems: handleAddItems,
-			canAddMore: !isGridFull(gridType)
+			canAddMore: !isGridFull(gridType),
+			authUserId: currentUser?.id
 		})
 	}
 
@@ -746,7 +748,8 @@
 						: opts.type === 'summon'
 							? GridType.Summon
 							: GridType.Character
-				)
+				),
+				authUserId: currentUser?.id
 			})
 		}
 	})
