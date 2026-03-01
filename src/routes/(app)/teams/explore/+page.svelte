@@ -32,8 +32,8 @@
 
   // Collection counts query — only fetches when authenticated
   const collectionCountsQuery = createQuery(() => ({
-    ...collectionQueries.counts(currentUser?.id ?? ''),
-    enabled: !!currentUser?.id
+    ...collectionQueries.counts(data.account?.userId ?? ''),
+    enabled: !!data.account?.userId
   }))
 
   const hasCollection = $derived.by(() => {
@@ -183,26 +183,28 @@
 <section class="explore">
   <div class="filters-row">
     <ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} />
-    {#if isAuthenticated}
+    <div class="filters-actions">
+      {#if isAuthenticated}
+        <button
+          type="button"
+          class="collection-toggle"
+          class:active={collectionFilterActive}
+          onclick={() => (collectionFilterActive = !collectionFilterActive)}
+          aria-label="Filter by my collection"
+          aria-pressed={collectionFilterActive}
+        >
+          Collection only
+        </button>
+      {/if}
       <button
         type="button"
-        class="collection-toggle"
-        class:active={collectionFilterActive}
-        onclick={() => (collectionFilterActive = !collectionFilterActive)}
-        aria-label="Filter by my collection"
-        aria-pressed={collectionFilterActive}
+        class="settings-btn"
+        onclick={() => (settingsOpen = true)}
+        aria-label="Filter settings"
       >
-        Collection only
+        Settings
       </button>
-    {/if}
-    <button
-      type="button"
-      class="settings-btn"
-      onclick={() => (settingsOpen = true)}
-      aria-label="Filter settings"
-    >
-      Settings
-    </button>
+    </div>
   </div>
 
   <ExploreSettingsModal
@@ -275,8 +277,16 @@
   .filters-row {
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
     gap: $unit;
     margin-bottom: $unit-2x;
+  }
+
+  .filters-actions {
+    display: flex;
+    align-items: center;
+    gap: $unit;
+    flex-shrink: 0;
   }
 
   .collection-toggle {
@@ -287,12 +297,14 @@
     padding: calc($unit-half + 1px) $unit;
     border-radius: $full-corner;
     font-size: $font-small;
+    font-weight: $medium;
     color: var(--text-secondary);
     white-space: nowrap;
     @include smooth-transition($duration-quick, color, background-color);
 
     &:hover {
       color: var(--text-primary);
+      background-color: var(--bg-tertiary);
     }
 
     &.active {
@@ -319,12 +331,16 @@
   }
 
   .empty-collection {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $unit;
     padding: $unit-4x;
     color: var(--text-secondary);
 
     p {
-      margin: 0 0 $unit;
+      margin: 0;
     }
   }
 
