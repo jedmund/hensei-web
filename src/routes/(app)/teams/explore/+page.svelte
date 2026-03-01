@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
-  import { createInfiniteQuery } from '@tanstack/svelte-query'
+  import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
   import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
   import ExploreFilters, { type FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
   import ExploreSettingsModal from '$lib/components/explore/ExploreSettingsModal.svelte'
   import { partyQueries } from '$lib/api/queries/party.queries'
+  import { collectionQueries } from '$lib/api/queries/collection.queries'
   import type { ExploreFilterParams } from '$lib/api/adapters/party.adapter'
   import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
   import { defaultFilterSet } from '$lib/utils/defaultFilters'
@@ -19,10 +20,27 @@
 
   let sentinelEl = $state<HTMLElement>()
 
+  // Auth state from root layout
+  const isAuthenticated = $derived(data.isAuthenticated)
+  const currentUser = $derived(data.currentUser)
+
   // Filter state
   let filterItems = $state<FilterItem[]>([])
   let advancedFilters = $state<FilterSet>({ ...defaultFilterSet })
   let settingsOpen = $state(false)
+  let collectionFilterActive = $state(false)
+
+  // Collection counts query — only fetches when authenticated
+  const collectionCountsQuery = createQuery(() => ({
+    ...collectionQueries.counts(data.account?.userId ?? ''),
+    enabled: !!data.account?.userId
+  }))
+
+  const hasCollection = $derived.by(() => {
+    const counts = collectionCountsQuery.data
+    if (!counts) return false
+    return counts.characters + counts.weapons + counts.summons > 0
+  })
 
   // Read advanced filters from cookie on mount
   onMount(() => {
@@ -95,6 +113,9 @@
     if (advancedFilters.user_quality) params.userQuality = true
     if (advancedFilters.original) params.original = true
 
+    // Collection filter
+    if (collectionFilterActive) params.collectionFilter = true
+
     return params
   })
 
@@ -104,7 +125,7 @@
   const partiesQuery = createInfiniteQuery(() => ({
     ...partyQueries.list({ filters: filterParams }),
     initialData:
-      !hasActiveFilters && data.items
+      !hasActiveFilters && !collectionFilterActive && data.items
         ? {
             pages: [
               {
@@ -142,6 +163,11 @@
 
   const isEmpty = $derived(!partiesQuery.isLoading && items.length === 0)
 
+  // Show empty collection prompt instead of normal empty state
+  const showCollectionPrompt = $derived(
+    collectionFilterActive && isAuthenticated && !hasCollection
+  )
+
   function handleFiltersChange(newFilters: FilterItem[]) {
     filterItems = newFilters
   }
@@ -157,14 +183,28 @@
 <section class="explore">
   <div class="filters-row">
     <ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} />
-    <button
-      type="button"
-      class="settings-btn"
-      onclick={() => (settingsOpen = true)}
-      aria-label="Filter settings"
-    >
-      <Icon name="settings" size={16} />
-    </button>
+    <div class="filters-actions">
+      {#if isAuthenticated}
+        <button
+          type="button"
+          class="collection-toggle"
+          class:active={collectionFilterActive}
+          onclick={() => (collectionFilterActive = !collectionFilterActive)}
+          aria-label="Filter by my collection"
+          aria-pressed={collectionFilterActive}
+        >
+          Collection only
+        </button>
+      {/if}
+      <button
+        type="button"
+        class="settings-btn"
+        onclick={() => (settingsOpen = true)}
+        aria-label="Filter settings"
+      >
+        Settings
+      </button>
+    </div>
   </div>
 
   <ExploreSettingsModal
@@ -173,7 +213,12 @@
     onSave={handleSettingsSave}
   />
 
-  {#if partiesQuery.isLoading}
+  {#if showCollectionPrompt}
+    <div class="empty-collection">
+      <p>Set up your collection to filter by items you own</p>
+      <Button href="/{data.account?.username}/collection" size="small">Go to Collection</Button>
+    </div>
+  {:else if partiesQuery.isLoading}
     <div class="loading">
       <Icon name="loader-2" size={32} />
       <p>Loading teams...</p>
@@ -186,7 +231,11 @@
     </div>
   {:else if isEmpty}
     <div class="empty">
-      <p>No teams found</p>
+      {#if collectionFilterActive}
+        <p>No teams match your collection</p>
+      {:else}
+        <p>No teams found</p>
+      {/if}
     </div>
   {:else}
     <div class="explore-grid">
@@ -218,6 +267,8 @@
   @use '$src/themes/spacing' as *;
   @use '$src/themes/colors' as *;
   @use '$src/themes/effects' as *;
+  @use '$src/themes/layout' as *;
+  @use '$src/themes/typography' as *;
 
   .explore {
     padding: $unit-2x 0;
@@ -226,22 +277,70 @@
   .filters-row {
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
     gap: $unit;
     margin-bottom: $unit-2x;
+  }
+
+  .filters-actions {
+    display: flex;
+    align-items: center;
+    gap: $unit;
+    flex-shrink: 0;
+  }
+
+  .collection-toggle {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    padding: calc($unit-half + 1px) $unit;
+    border-radius: $full-corner;
+    font-size: $font-small;
+    font-weight: $medium;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    @include smooth-transition($duration-quick, color, background-color);
+
+    &:hover {
+      color: var(--text-primary);
+      background-color: var(--bg-tertiary);
+    }
+
+    &.active {
+      color: var(--text-primary);
+      background-color: var(--null-bg);
+    }
   }
 
   .settings-btn {
     all: unset;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    padding: $unit-half;
-    color: var(--text-tertiary);
-    border-radius: $unit-half;
+    padding: calc($unit-half + 1px) $unit;
+    border-radius: $full-corner;
+    font-size: $font-small;
+    color: var(--text-secondary);
+    white-space: nowrap;
     @include smooth-transition($duration-quick, color);
 
     &:hover {
       color: var(--text-primary);
+    }
+  }
+
+  .empty-collection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $unit;
+    padding: $unit-4x;
+    color: var(--text-secondary);
+
+    p {
+      margin: 0;
     }
   }
 

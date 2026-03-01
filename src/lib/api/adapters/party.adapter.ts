@@ -86,6 +86,7 @@ export interface ExploreFilterParams {
 	original?: boolean
 	includes?: string
 	excludes?: string
+	collectionFilter?: boolean
 }
 
 /**

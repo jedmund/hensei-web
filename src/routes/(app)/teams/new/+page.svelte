@@ -79,7 +79,9 @@
 				openSearchSidebar({
 					type: 'weapon',
 					onAddItems: handleAddItems,
-					canAddMore: true
+					canAddMore: true,
+					authUserId: data.account?.userId,
+					userElement: currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 				})
 			}, 100)
 		}
@@ -117,7 +119,9 @@
 						? 'summon'
 						: 'character',
 			onAddItems: handleAddItems,
-			canAddMore: !isGridFull(gridType)
+			canAddMore: !isGridFull(gridType),
+			authUserId: data.account?.userId,
+			userElement: currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 		})
 	}
 
@@ -746,7 +750,9 @@
 						: opts.type === 'summon'
 							? GridType.Summon
 							: GridType.Character
-				)
+				),
+				authUserId: data.account?.userId,
+				userElement: currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 			})
 		}
 	})

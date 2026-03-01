@@ -17,6 +17,8 @@
 	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import RarityPicker from '../ui/rarity-picker/RarityPicker.svelte'
 	import ProficiencyPicker from '../ui/proficiency-picker/ProficiencyPicker.svelte'
+	import SegmentedControl from '../ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '../ui/segmented-control/Segment.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholder } from '$lib/features/database/detail/image'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
@@ -30,6 +32,8 @@
 		authUserId?: string
 		/** Required proficiencies for mainhand weapon selection */
 		requiredProficiencies?: number[]
+		/** User's element for styling the collection toggle */
+		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
 	let {
@@ -37,7 +41,8 @@
 		onAddItems = () => {},
 		canAddMore = true,
 		authUserId,
-		requiredProficiencies
+		requiredProficiencies,
+		userElement
 	}: Props = $props()
 
 	// Search state (local UI state)
@@ -332,20 +337,17 @@
 
 	{#if authUserId}
 		<div class="mode-toggle">
-			<button
-				class="mode-btn"
-				class:active={searchMode === 'all'}
-				onclick={() => searchMode = 'all'}
+			<SegmentedControl
+				value={searchMode}
+				onValueChange={(v) => searchMode = v as SearchMode}
+				variant="background"
+				size="small"
+				element={userElement}
+				grow
 			>
-				All Items
-			</button>
-			<button
-				class="mode-btn"
-				class:active={searchMode === 'collection'}
-				onclick={() => searchMode = 'collection'}
-			>
-				My Collection
-			</button>
+				<Segment value="all">All Items</Segment>
+				<Segment value="collection">My Collection</Segment>
+			</SegmentedControl>
 		</div>
 	{/if}
 
@@ -439,7 +441,7 @@
 			</div>
 		{:else if searchResults.length > 0}
 			<ul class="results-list">
-				{#each searchResults as item (item.id)}
+				{#each searchResults as item (item.collectionId || item.id)}
 					{@const owned = searchMode === 'all' && authUserId && isOwned(item)}
 					<li class="result-item">
 						<button
@@ -538,34 +540,8 @@
 	}
 
 	.mode-toggle {
-		display: flex;
-		gap: $unit-half;
 		padding: 0 $unit-2x $unit-2x $unit-2x;
 		flex-shrink: 0;
-
-		.mode-btn {
-			flex: 1;
-			padding: $unit calc($unit * 1.5);
-			border: 1px solid var(--border-primary);
-			background: var(--bg-secondary);
-			border-radius: $input-corner;
-			font-size: $font-small;
-			font-weight: $medium;
-			cursor: pointer;
-			transition: all 0.2s;
-			color: var(--text-secondary);
-
-			&:hover {
-				background: var(--bg-tertiary);
-				border-color: var(--border-secondary);
-			}
-
-			&.active {
-				background: var(--accent-blue);
-				color: white;
-				border-color: var(--accent-blue);
-			}
-		}
 	}
 
 	.filters-section {

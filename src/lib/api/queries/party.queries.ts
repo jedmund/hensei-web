@@ -94,6 +94,7 @@ function buildFilterQuery(filters: ExploreFilterParams): Partial<ExploreFilterPa
 
 	if (filters.includes) query.includes = filters.includes
 	if (filters.excludes) query.excludes = filters.excludes
+	if (filters.collectionFilter) query.collectionFilter = filters.collectionFilter
 
 	return query as Partial<ExploreFilterParams>
 }
