@@ -129,6 +129,24 @@ export interface UnifiedSearchResponse {
 }
 
 /**
+ * Random entity suggestion returned by the suggestions endpoint
+ */
+export interface EntitySuggestion {
+	id: string
+	granblueId: string
+	name: { en?: string; ja?: string }
+	element?: number
+	type: 'character' | 'weapon' | 'summon'
+}
+
+/**
+ * Response from the suggestions endpoint
+ */
+export interface SuggestionsResponse {
+	suggestions: EntitySuggestion[]
+}
+
+/**
  * Adapter for search-related API operations
  * Handles entity search with filtering, pagination, and caching
  *
@@ -435,6 +453,20 @@ export class SearchAdapter extends BaseAdapter {
 			credentials: 'omit',
 			cacheTTL: params.query ? 300000 : 0,
 			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
+		})
+	}
+
+	/**
+	 * Fetches random entity suggestions (mix of characters, weapons, summons)
+	 * Used for placeholder suggestions in the explore filter dropdown
+	 *
+	 * @param count - Number of random entities to return (default 12, max 30)
+	 */
+	async getRandomSuggestions(count: number = 12): Promise<SuggestionsResponse> {
+		return this.request<SuggestionsResponse>(`/search/suggestions?count=${count}`, {
+			method: 'GET',
+			credentials: 'omit',
+			cacheTTL: 60000
 		})
 	}
 
