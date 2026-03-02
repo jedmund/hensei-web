@@ -403,14 +403,19 @@
 	const deleteSummon = useDeleteGridSummon()
 
 	// Helper to add item to cache
-	function addItemToCache(itemType: 'weapons' | 'summons' | 'characters', item: any) {
+	function addItemToCache(
+		itemType: 'weapons' | 'summons' | 'characters',
+		item: any,
+		collectionSourceUserId?: string
+	) {
 		const cacheKey = partyKeys.detail(shortcode || 'new')
 
 		queryClient.setQueryData(cacheKey, (old: Party | undefined) => {
 			if (!old) return placeholderParty
 			return {
 				...old,
-				[itemType]: [...(old[itemType] ?? []), item]
+				[itemType]: [...(old[itemType] ?? []), item],
+				...(collectionSourceUserId ? { collectionSourceUserId } : {})
 			}
 		})
 	}
@@ -504,7 +509,7 @@
 						itemAdded = true
 
 						// Update cache with the added weapon
-						addItemToCache('weapons', addResult)
+						addItemToCache('weapons', addResult, firstItem.collectionSourceUserId)
 					} else if (activeTab === GridType.Summon) {
 						// Use selectedSlot if available, otherwise default to main summon
 						if (selectedSlot === null) position = -1
@@ -520,7 +525,7 @@
 						itemAdded = true
 
 						// Update cache with the added summon
-						addItemToCache('summons', addResult)
+						addItemToCache('summons', addResult, firstItem.collectionSourceUserId)
 					} else if (activeTab === GridType.Character) {
 						// Use selectedSlot if available, otherwise default to first slot
 						if (selectedSlot === null) position = 0
@@ -534,7 +539,7 @@
 						itemAdded = true
 
 						// Update cache with the added character
-						addItemToCache('characters', addResult)
+						addItemToCache('characters', addResult, firstItem.collectionSourceUserId)
 					}
 					selectedSlot = null // Reset after using
 
@@ -629,7 +634,7 @@
 						})
 
 						// Add to cache
-						addItemToCache('weapons', response)
+						addItemToCache('weapons', response, item.collectionSourceUserId)
 					} else if (activeTab === GridType.Summon) {
 						// Use selectedSlot for first item if available
 						if (
@@ -658,7 +663,7 @@
 						})
 
 						// Add to cache
-						addItemToCache('summons', response)
+						addItemToCache('summons', response, item.collectionSourceUserId)
 					} else if (activeTab === GridType.Character) {
 						// Use selectedSlot for first item if available
 						if (
@@ -686,7 +691,7 @@
 						})
 
 						// Add to cache
-						addItemToCache('characters', response)
+						addItemToCache('characters', response, item.collectionSourceUserId)
 					}
 				}
 			} catch (error: any) {

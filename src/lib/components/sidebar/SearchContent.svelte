@@ -196,7 +196,8 @@
 			name: entity.name,
 			element: entity.element,
 			rarity: entity.rarity,
-			collectionId: item.id
+			collectionId: item.id,
+			collectionSourceUserId: collectionUserId
 		}
 	}
 
