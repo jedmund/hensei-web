@@ -726,3 +726,20 @@ export function useSyncAllPartyItems() {
 		}
 	}))
 }
+
+/**
+ * Unlink all collection sources from a party's grid items.
+ *
+ * Keeps the grid items but removes their collection references and clears the collection source user.
+ */
+export function useUnlinkCollectionSource() {
+	const queryClient = useQueryClient()
+
+	return createMutation(() => ({
+		mutationFn: (params: { partyId: string; partyShortcode: string }) =>
+			gridAdapter.unlinkCollectionSource(params.partyId),
+		onSuccess: (_data, { partyShortcode }) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		}
+	}))
+}

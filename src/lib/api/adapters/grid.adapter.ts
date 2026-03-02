@@ -9,7 +9,7 @@
 
 import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions } from './types'
-import type { GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
+import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
 import type { Character, Weapon } from '$lib/types/api/entities'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import { validateGridWeapon, validateGridCharacter, validateGridSummon } from '$lib/utils/gridValidation'
@@ -522,6 +522,17 @@ export class GridAdapter extends BaseAdapter {
 	 */
 	async syncAllPartyItems(partyId: string, headers?: Record<string, string>): Promise<SyncAllPartyItemsResponse> {
 		return this.request<SyncAllPartyItemsResponse>(`/parties/${partyId}/sync_all`, {
+			method: 'POST',
+			headers
+		})
+	}
+
+	/**
+	 * Unlinks all collection items from a party's grid items.
+	 * Keeps the grid items but removes their collection references and clears the collection source.
+	 */
+	async unlinkCollectionSource(partyId: string, headers?: Record<string, string>): Promise<{ party: Party }> {
+		return this.request<{ party: Party }>(`/parties/${partyId}/unlink_collection`, {
 			method: 'POST',
 			headers
 		})
