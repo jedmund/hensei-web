@@ -24,9 +24,12 @@
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
 	import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from '$lib/types/api/collection'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
-	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { getAvatarSrc } from '$lib/utils/avatar'
+	import Dialog from '../ui/Dialog.svelte'
+	import ModalHeader from '../ui/ModalHeader.svelte'
+	import ModalBody from '../ui/ModalBody.svelte'
+	import ModalFooter from '../ui/ModalFooter.svelte'
 
 	interface Props {
 		type: 'weapon' | 'character' | 'summon'
@@ -38,8 +41,6 @@
 		requiredProficiencies?: number[]
 		/** User's element for styling the collection toggle */
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-		/** If set, collection mode is locked to this user's collection */
-		collectionSourceUserId?: string
 		/** Callback to unlink all collection items from the party */
 		onUnlinkCollection?: () => Promise<void>
 	}
@@ -51,9 +52,11 @@
 		authUserId,
 		requiredProficiencies,
 		userElement,
-		collectionSourceUserId,
 		onUnlinkCollection
 	}: Props = $props()
+
+	// Reactively derive collection source from party store (stays in sync after mutations)
+	const collectionSourceUserId = $derived(partyStore.party?.collectionSourceUserId)
 
 	// Search state (local UI state)
 	let searchQuery = $state('')
@@ -71,8 +74,9 @@
 	const initialSourceUserId = partyStore.party?.collectionSourceUserId
 	let searchMode = $state<SearchMode>(initialSourceUserId ? 'collection' : 'all')
 
-	// Crew member selection state
-	let selectedMemberId = $state<string | undefined>(collectionSourceUserId ?? authUserId)
+	// Crew member selection state (defaults to self; collectionSourceUserId is reactive via partyStore)
+	let selectedMemberId = $state<string | undefined>(authUserId)
+	let unlinkDialogOpen = $state(false)
 
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
@@ -118,10 +122,17 @@
 		}))
 	})
 
+	// Check if user is in a crew (crewStore is only populated on /crew routes, so query directly)
+	const myCrewQuery = createQuery(() => ({
+		...crewQueries.myCrew(),
+		enabled: !!authUserId
+	}))
+	const isInCrew = $derived(!!myCrewQuery.data)
+
 	// Crew members with accessible collections (for collection mode dropdown)
 	const crewMembersQuery = createQuery(() => ({
 		...crewQueries.accessibleCollectionMembers(),
-		enabled: crewStore.isInCrew
+		enabled: isInCrew
 	}))
 
 	const memberOptions = $derived.by(() => {
@@ -151,21 +162,39 @@
 		return options
 	})
 
-	// Reactive collection source from partyStore (updates when party data refreshes after mutations)
-	const reactiveSourceUserId = $derived(partyStore.party?.collectionSourceUserId)
-
 	// The userId whose collection we're currently browsing
 	const collectionUserId = $derived.by(() => {
-		if (reactiveSourceUserId) return reactiveSourceUserId
+		if (collectionSourceUserId) return collectionSourceUserId
 		if (searchMode !== 'collection') return authUserId
 		return selectedMemberId
 	})
 
-	const isCollectionLocked = $derived(!!reactiveSourceUserId)
+	const isCollectionLocked = $derived(!!collectionSourceUserId)
 
-	const showMemberDropdown = $derived(
-		searchMode === 'collection' && (crewStore.isInCrew && memberOptions.length > 1 || isCollectionLocked)
+	const showMemberSection = $derived(
+		searchMode === 'collection' && (
+			isCollectionLocked ||
+			(isInCrew && memberOptions.length > 1)
+		)
 	)
+
+	// Info about the locked member (for the locked indicator display)
+	const lockedMember = $derived.by(() => {
+		const lockedId = collectionSourceUserId
+		if (!lockedId) return undefined
+		const members = crewMembersQuery.data ?? []
+		if (lockedId === authUserId) {
+			const self = members.find((m) => m.userId === authUserId)
+			return {
+				label: self?.username ?? 'You',
+				image: self ? getAvatarSrc(self.avatarPicture) : undefined
+			}
+		}
+		const member = members.find((m) => m.userId === lockedId)
+		return member
+			? { label: member.username, image: getAvatarSrc(member.avatarPicture) }
+			: { label: 'Linked user', image: undefined }
+	})
 
 	// Get selected member's username for empty state messaging
 	const selectedMemberName = $derived.by(() => {
@@ -423,27 +452,27 @@
 		</div>
 	{/if}
 
-	{#if showMemberDropdown}
+	{#if showMemberSection}
 		<div class="member-select">
-			<Select
-				options={memberOptions}
-				value={isCollectionLocked ? reactiveSourceUserId : selectedMemberId}
-				onValueChange={(v) => { selectedMemberId = v }}
-				placeholder="Select member"
-				disabled={isCollectionLocked}
-				contained
-				fullWidth
-			/>
-			{#if isCollectionLocked}
-				<button
-					class="unlink-button"
-					onclick={async () => {
-					if (onUnlinkCollection) await onUnlinkCollection()
-					selectedMemberId = authUserId
-				}}
-				>
-					Clear collection source
-				</button>
+			{#if isCollectionLocked && lockedMember}
+				<div class="member-locked">
+					{#if lockedMember.image}
+						<img src={lockedMember.image} alt="" class="member-avatar" />
+					{/if}
+					<span class="member-name">{lockedMember.label}</span>
+					<button class="member-unlock" onclick={() => { unlinkDialogOpen = true }}>
+						<Icon name="close" size={14} />
+					</button>
+				</div>
+			{:else}
+				<Select
+					options={memberOptions}
+					value={selectedMemberId}
+					onValueChange={(v) => { selectedMemberId = v }}
+					placeholder="Select member"
+					contained
+					fullWidth
+				/>
 			{/if}
 		</div>
 	{/if}
@@ -616,6 +645,26 @@
 	</div>
 </div>
 
+<Dialog bind:open={unlinkDialogOpen}>
+	{#snippet children()}
+		<ModalHeader title="Clear collection source?" />
+		<ModalBody>
+			<p class="unlink-message">All collection links will be removed from items in this party. The items themselves will remain.</p>
+		</ModalBody>
+		<ModalFooter
+			onCancel={() => { unlinkDialogOpen = false }}
+			primaryAction={{
+				label: 'Clear',
+				onclick: async () => {
+					if (onUnlinkCollection) await onUnlinkCollection()
+					unlinkDialogOpen = false
+				},
+				destructive: true
+			}}
+		/>
+	{/snippet}
+</Dialog>
+
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/colors' as *;
@@ -644,26 +693,60 @@
 	}
 
 	.member-select {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
 		padding: 0 $unit-2x $unit-2x $unit-2x;
 		flex-shrink: 0;
 
-		.unlink-button {
-			background: none;
-			border: none;
-			padding: 0 $unit-half;
-			font-size: $font-small;
-			color: var(--text-secondary);
-			cursor: pointer;
-			text-align: left;
-			transition: 0.15s color ease-out;
+		.member-locked {
+			display: flex;
+			align-items: center;
+			gap: $unit-half;
+			width: 100%;
+			box-sizing: border-box;
+			padding: $unit calc($unit * 1.5);
+			background-color: var(--select-contained-bg);
+			border-radius: $input-corner;
+			border: 1px solid transparent;
+			min-height: $unit-4x;
+			font-size: $font-regular;
+			font-family: var(--font-family);
 
-			&:hover {
-				color: var(--text-primary);
+			.member-avatar {
+				width: $unit-3x;
+				height: auto;
+				flex-shrink: 0;
+			}
+
+			.member-name {
+				flex: 1;
+				text-align: left;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				color: var(--text-secondary);
+			}
+
+			.member-unlock {
+				all: unset;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-shrink: 0;
+				cursor: pointer;
+				color: var(--text-tertiary);
+				transition: 0.15s color ease-out;
+
+				&:hover {
+					color: var(--text-primary);
+				}
 			}
 		}
+	}
+
+	.unlink-message {
+		margin: 0;
+		font-size: $font-regular;
+		line-height: 1.4;
+		color: var(--text-primary);
 	}
 
 	.filters-section {
