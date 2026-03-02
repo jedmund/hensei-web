@@ -21,13 +21,14 @@
 	import { Gender } from '$lib/utils/jobUtils'
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
-	import { setContext } from 'svelte'
+	import { setContext, onDestroy } from 'svelte'
 	import type { AddItemResult } from '$lib/types/api/search'
 	import { gridAdapter } from '$lib/api/adapters'
 	import { getLocalId } from '$lib/utils/localId'
 	import { storeEditKey } from '$lib/utils/editKeys'
 	import type { Party } from '$lib/types/api/party'
 	import { PartyVisibility } from '$lib/types/visibility'
+	import { partyStore } from '$lib/stores/partyStore.svelte'
 
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -379,6 +380,14 @@
 	const weapons = $derived(party.weapons ?? [])
 	const summons = $derived(party.summons ?? [])
 	const characters = $derived(party.characters ?? [])
+
+	// Sync party to global store for components outside the party context (like SearchContent sidebar)
+	$effect(() => {
+		partyStore.setParty(party)
+	})
+	onDestroy(() => {
+		partyStore.clear()
+	})
 
 	// Derived values for job section
 	const mainWeapon = $derived(weapons.find((w) => w?.mainhand || w?.position === -1))
