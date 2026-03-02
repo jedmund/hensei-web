@@ -14,6 +14,7 @@
 		partyElement?: number | null | undefined
 		container?: string | undefined
 		unlimited?: boolean
+		collectionCharacterIds?: Set<string>
 	}
 
 	let {
@@ -21,7 +22,8 @@
 		mainWeaponElement = undefined,
 		partyElement = undefined,
 		container = 'main-characters',
-		unlimited = false
+		unlimited = false,
+		collectionCharacterIds = undefined
 	}: Props = $props()
 
 	// Dynamic slot count based on unlimited flag
@@ -75,6 +77,7 @@
 								position={i}
 								{mainWeaponElement}
 								{partyElement}
+								notInCollection={collectionCharacterIds != null && !!character?.character?.granblueId && !collectionCharacterIds.has(String(character.character.granblueId))}
 							/>
 						</DraggableItem>
 					</DropZone>
@@ -84,6 +87,7 @@
 						position={i}
 						{mainWeaponElement}
 						{partyElement}
+						notInCollection={collectionCharacterIds != null && !!character?.character?.granblueId && !collectionCharacterIds.has(String(character.character.granblueId))}
 					/>
 				{/if}
 			</li>

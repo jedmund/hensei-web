@@ -78,6 +78,8 @@
 	} from '$lib/features/job/openJobSidebar.svelte'
 	import { partyAdapter, type UpdatePartyParams } from '$lib/api/adapters/party.adapter'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import ConflictDialog from '$lib/components/dialogs/ConflictDialog.svelte'
@@ -196,6 +198,28 @@
 			return true
 		}
 	})
+
+	// Collection ownership check - fetch granblue IDs for the collection source user
+	const collectionGranblueIdsQuery = createQuery(() => ({
+		...collectionQueries.granblueIds(party.collectionSourceUserId ?? ''),
+		enabled: !!party.collectionSourceUserId
+	}))
+
+	const collectionWeaponIds = $derived(
+		collectionGranblueIdsQuery.data
+			? new Set(collectionGranblueIdsQuery.data.weapons.map(String))
+			: undefined
+	)
+	const collectionCharacterIds = $derived(
+		collectionGranblueIdsQuery.data
+			? new Set(collectionGranblueIdsQuery.data.characters.map(String))
+			: undefined
+	)
+	const collectionSummonIds = $derived(
+		collectionGranblueIdsQuery.data
+			? new Set(collectionGranblueIdsQuery.data.summons.map(String))
+			: undefined
+	)
 
 	// Handle drag operations
 	async function handleDragOperation(operation: DragOperation) {
@@ -1033,9 +1057,10 @@
 						raidExtra={(party as any)?.raid?.group?.extra}
 						showGuidebooks={(party as any)?.raid?.group?.guidebooks}
 						guidebooks={(party as any)?.guidebooks}
+						{collectionWeaponIds}
 					/>
 				{:else if activeTab === GridType.Summon}
-					<SummonGrid summons={party.summons} />
+					<SummonGrid summons={party.summons} {collectionSummonIds} />
 				{:else}
 					<div class="character-tab-content">
 						<JobSection
@@ -1058,6 +1083,7 @@
 							{mainWeaponElement}
 							{partyElement}
 							unlimited={(party as any)?.raid?.group?.unlimited}
+							{collectionCharacterIds}
 						/>
 					</div>
 				{/if}

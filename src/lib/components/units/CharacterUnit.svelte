@@ -22,9 +22,10 @@
 		position: number
 		mainWeaponElement?: number | null | undefined
 		partyElement?: number | null | undefined
+		notInCollection?: boolean
 	}
 
-	let { item, position, mainWeaponElement, partyElement }: Props = $props()
+	let { item, position, mainWeaponElement, partyElement, notInCollection = false }: Props = $props()
 
 	type PartyCtx = {
 		getParty: () => Party
@@ -227,6 +228,7 @@
 								<img
 									class="image {elementClass}"
 									class:placeholder={!item?.character?.granblueId}
+									class:not-in-collection={notInCollection}
 									alt={displayName(item?.character)}
 									src={imageUrl}
 								/>
@@ -437,6 +439,10 @@
 
 		&.placeholder {
 			opacity: 0;
+		}
+
+		&.not-in-collection {
+			opacity: 0.75;
 		}
 	}
 
