@@ -6,12 +6,33 @@
 	import { beforeNavigate, afterNavigate } from '$app/navigation'
 	import { browser, dev } from '$app/environment'
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { crewQueries } from '$lib/api/queries/crew.queries'
+	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
 		data: LayoutData & { [key: string]: any }
 		children: () => any
 	}>()
+
+	// Populate crew store for authenticated users (needed globally for collection features)
+	const crewQuery = createQuery(() => ({
+		...crewQueries.myCrew(),
+		enabled: !!data?.isAuthenticated && browser
+	}))
+
+	$effect(() => {
+		if (crewQuery.data) {
+			crewStore.setCrew(crewQuery.data, crewQuery.data.currentMembership ?? null)
+		} else if (crewQuery.isError) {
+			crewStore.clear()
+		}
+	})
+
+	$effect(() => {
+		crewStore.setLoading(crewQuery.isLoading)
+	})
 
 	// Reference to the scrolling container
 	let mainContent: HTMLElement | undefined

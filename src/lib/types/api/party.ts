@@ -129,6 +129,8 @@ export interface Party {
   hasOrphanedItems?: boolean
   /** The user whose collection is linked to this party (null if no collection items) */
   collectionSourceUserId?: string
+  /** The user object for collectionSourceUserId (resolved by API when present) */
+  collectionSourceUser?: User
 
   // Relationships
   weapons: GridWeapon[]

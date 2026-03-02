@@ -54,6 +54,7 @@
 				name={party.name}
 				description={party.description}
 				user={party.user}
+				collectionSourceUser={party.collectionSourceUser}
 				{canEdit}
 				{onOpenDescription}
 				{onOpenEdit}

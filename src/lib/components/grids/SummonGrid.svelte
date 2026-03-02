@@ -10,9 +10,10 @@
 
 	interface Props {
 		summons?: GridSummon[]
+		collectionSummonIds?: Set<string>
 	}
 
-	let { summons = [] }: Props = $props()
+	let { summons = [], collectionSummonIds = undefined }: Props = $props()
 
 	import SummonUnit from '$lib/components/units/SummonUnit.svelte'
 	import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
@@ -38,7 +39,7 @@
 <div class="wrapper">
 	<div class="grid">
 		<div class="LabeledUnit">
-			<SummonUnit item={main} position={-1} />
+			<SummonUnit item={main} position={-1} notInCollection={collectionSummonIds != null && !!main?.summon?.granblueId && !collectionSummonIds.has(String(main.summon.granblueId))} />
 		</div>
 
 		<section>
@@ -63,11 +64,11 @@
 									type="summon"
 									canDrag={!!summon && (ctx?.canEdit() ?? false)}
 								>
-									<SummonUnit item={summon} position={i} />
+									<SummonUnit item={summon} position={i} notInCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && !collectionSummonIds.has(String(summon.summon.granblueId))} />
 								</DraggableItem>
 							</DropZone>
 						{:else}
-							<SummonUnit item={summon} position={i} />
+							<SummonUnit item={summon} position={i} notInCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && !collectionSummonIds.has(String(summon.summon.granblueId))} />
 						{/if}
 					</li>
 				{/each}
@@ -75,7 +76,7 @@
 		</section>
 
 		<div class="LabeledUnit">
-			<SummonUnit item={friend} position={6} />
+			<SummonUnit item={friend} position={6} notInCollection={collectionSummonIds != null && !!friend?.summon?.granblueId && !collectionSummonIds.has(String(friend.summon.granblueId))} />
 		</div>
 	</div>
 	<ExtraSummons {summons} offset={4} />

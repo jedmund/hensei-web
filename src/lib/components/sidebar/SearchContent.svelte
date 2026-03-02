@@ -25,6 +25,7 @@
 	import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from '$lib/types/api/collection'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { getAvatarSrc } from '$lib/utils/avatar'
 
 	interface Props {
@@ -148,17 +149,20 @@
 		return options
 	})
 
+	// Reactive collection source from partyStore (updates when party data refreshes after mutations)
+	const reactiveSourceUserId = $derived(partyStore.party?.collectionSourceUserId)
+
 	// The userId whose collection we're currently browsing
 	const collectionUserId = $derived.by(() => {
+		if (reactiveSourceUserId) return reactiveSourceUserId
 		if (searchMode !== 'collection') return authUserId
-		if (collectionSourceUserId) return collectionSourceUserId
 		return selectedMemberId
 	})
 
-	const isCollectionLocked = $derived(!!collectionSourceUserId)
+	const isCollectionLocked = $derived(!!reactiveSourceUserId)
 
 	const showMemberDropdown = $derived(
-		searchMode === 'collection' && crewStore.isInCrew && memberOptions.length > 1
+		(searchMode === 'collection' && crewStore.isInCrew && memberOptions.length > 1) || isCollectionLocked
 	)
 
 	// Get selected member's username for empty state messaging
@@ -421,7 +425,7 @@
 		<div class="member-select">
 			<Select
 				options={memberOptions}
-				value={isCollectionLocked ? collectionSourceUserId : selectedMemberId}
+				value={isCollectionLocked ? reactiveSourceUserId : selectedMemberId}
 				onValueChange={(v) => { selectedMemberId = v }}
 				placeholder="Select member"
 				disabled={isCollectionLocked}
@@ -431,7 +435,10 @@
 			{#if isCollectionLocked}
 				<button
 					class="unlink-button"
-					onclick={async () => { if (onUnlinkCollection) await onUnlinkCollection() }}
+					onclick={async () => {
+					if (onUnlinkCollection) await onUnlinkCollection()
+					selectedMemberId = authUserId
+				}}
 				>
 					Clear collection source
 				</button>

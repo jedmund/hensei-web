@@ -14,6 +14,14 @@
 				element?: string | null
 			} | null
 		} | null
+		/** Collection source user info (when party uses another user's collection) */
+		collectionSourceUser?: {
+			username?: string
+			avatar?: {
+				picture?: string | null
+				element?: string | null
+			} | null
+		} | null
 		canEdit?: boolean
 		onOpenDescription: () => void
 		onOpenEdit?: () => void
@@ -25,6 +33,7 @@
 		name,
 		description,
 		user,
+		collectionSourceUser,
 		canEdit = false,
 		onOpenDescription,
 		onOpenEdit,
@@ -33,6 +42,7 @@
 
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
+	const collectionAvatarSrc = $derived(getAvatarSrc(collectionSourceUser?.avatar?.picture))
 
 	// Measure content height to determine if fade gradient is needed
 	let contentEl = $state<HTMLDivElement | undefined>(undefined)
@@ -123,6 +133,26 @@
 					{/if}
 				</div>
 				<span class="username">{user.username}</span>
+			</a>
+		{/if}
+
+		<!-- Collection source info -->
+		{#if collectionSourceUser?.username}
+			<a href="/{collectionSourceUser.username}" class="collection-source-link">
+				<div class="collection-avatar-wrapper {collectionSourceUser.avatar?.element || ''}">
+					{#if collectionSourceUser.avatar?.picture}
+						<img
+							class="avatar"
+							alt={`Avatar of ${collectionSourceUser.username}`}
+							src={collectionAvatarSrc}
+							width="18"
+							height="18"
+						/>
+					{:else}
+						<div class="avatar-placeholder" aria-hidden="true"></div>
+					{/if}
+				</div>
+				<span class="collection-source-text">Using {collectionSourceUser.username}'s collection</span>
 			</a>
 		{/if}
 	</div>
@@ -243,6 +273,37 @@
 
 	.username {
 		font-size: $font-small;
+		font-weight: $medium;
+	}
+
+	.collection-source-link {
+		display: inline-flex;
+		align-items: center;
+		gap: $unit-half;
+		text-decoration: none;
+		color: var(--text-tertiary);
+		width: fit-content;
+
+		&:hover {
+			color: var(--text-secondary);
+
+			.collection-source-text {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.collection-avatar-wrapper {
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		overflow: hidden;
+		background: var(--button-bg);
+		flex-shrink: 0;
+	}
+
+	.collection-source-text {
+		font-size: calc($font-small - 1px);
 		font-weight: $medium;
 	}
 

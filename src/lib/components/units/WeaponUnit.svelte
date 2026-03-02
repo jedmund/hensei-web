@@ -19,9 +19,10 @@
 	interface Props {
 		item?: GridWeapon | undefined
 		position: number
+		notInCollection?: boolean
 	}
 
-	let { item, position }: Props = $props()
+	let { item, position, notInCollection = false }: Props = $props()
 
 	type PartyCtx = {
 		getParty: () => Party
@@ -198,6 +199,7 @@
 							<img
 								class="image {elementClass}"
 								class:placeholder={!item?.weapon?.granblueId}
+								class:not-in-collection={notInCollection}
 								alt={displayName(item?.weapon)}
 								src={imageUrl}
 							/>
@@ -427,6 +429,10 @@
 
 		&.placeholder {
 			opacity: 0;
+		}
+
+		&.not-in-collection {
+			opacity: 0.75;
 		}
 	}
 
