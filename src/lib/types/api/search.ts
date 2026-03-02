@@ -32,8 +32,6 @@ export interface AddItemResult {
 	proficiency?: number | number[]
 	/** Collection ID if the item was selected from user's collection */
 	collectionId?: string
-	/** User ID of the collection owner (set when item is from another user's collection) */
-	collectionSourceUserId?: string
 	/** Type of entity */
 	searchableType?: 'Weapon' | 'Character' | 'Summon'
 }

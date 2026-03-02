@@ -18,6 +18,12 @@ import type { GridArtifact, CollectionArtifact } from './artifact'
 import type { AugmentSkill, Befoulment } from './weaponStatModifier'
 import type { PartyShare } from './partyShare'
 
+// Minimal party stub embedded in grid item responses (from :collection_source view)
+export interface PartyCollectionSource {
+	collectionSourceUserId?: string
+	collectionSourceUser?: User
+}
+
 // Grid item types - these are the junction tables between Party and entities
 
 // GridWeapon from GridWeaponBlueprint
@@ -44,6 +50,8 @@ export interface GridWeapon {
   outOfSync?: boolean
   /** Whether the linked collection item has been deleted (item is orphaned) */
   orphaned?: boolean
+  /** Embedded party stub from :full view (collection source fields only) */
+  party?: PartyCollectionSource
 }
 
 // GridCharacter from GridCharacterBlueprint
@@ -68,6 +76,8 @@ export interface GridCharacter {
   outOfSync?: boolean
   /** Whether the linked collection item has been deleted (item is orphaned) */
   orphaned?: boolean
+  /** Embedded party stub from :full view (collection source fields only) */
+  party?: PartyCollectionSource
 }
 
 // GridSummon from GridSummonBlueprint
@@ -86,6 +96,8 @@ export interface GridSummon {
   outOfSync?: boolean
   /** Whether the linked collection item has been deleted (item is orphaned) */
   orphaned?: boolean
+  /** Embedded party stub from :full view (collection source fields only) */
+  party?: PartyCollectionSource
 }
 
 // JobSkillList for party job skills
