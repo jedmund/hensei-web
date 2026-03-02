@@ -67,7 +67,9 @@
 	let seriesFilter = $state<string | undefined>(undefined)
 
 	// Search mode state (only available when authUserId is provided)
-	let searchMode = $state<SearchMode>('all')
+	// Default to 'collection' when a collection source is already set on the party
+	const initialSourceUserId = partyStore.party?.collectionSourceUserId
+	let searchMode = $state<SearchMode>(initialSourceUserId ? 'collection' : 'all')
 
 	// Crew member selection state
 	let selectedMemberId = $state<string | undefined>(collectionSourceUserId ?? authUserId)
@@ -162,7 +164,7 @@
 	const isCollectionLocked = $derived(!!reactiveSourceUserId)
 
 	const showMemberDropdown = $derived(
-		(searchMode === 'collection' && crewStore.isInCrew && memberOptions.length > 1) || isCollectionLocked
+		searchMode === 'collection' && (crewStore.isInCrew && memberOptions.length > 1 || isCollectionLocked)
 	)
 
 	// Get selected member's username for empty state messaging
