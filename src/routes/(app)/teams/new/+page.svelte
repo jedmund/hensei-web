@@ -497,7 +497,8 @@
 							partyId,
 							weaponId: firstItem.granblueId,
 							position,
-							mainhand: position === -1
+							mainhand: position === -1,
+							collectionWeaponId: firstItem.collectionId
 						})
 						console.log('Weapon added:', addResult)
 						itemAdded = true
@@ -512,7 +513,8 @@
 							summonId: firstItem.granblueId,
 							position,
 							main: position === -1,
-							friend: position === 6
+							friend: position === 6,
+							collectionSummonId: firstItem.collectionId
 						})
 						console.log('Summon added:', addResult)
 						itemAdded = true
@@ -525,7 +527,8 @@
 						const addResult = await createCharacterMutation.mutateAsync({
 							partyId,
 							characterId: firstItem.granblueId,
-							position
+							position,
+							collectionCharacterId: firstItem.collectionId
 						})
 						console.log('Character added:', addResult)
 						itemAdded = true
@@ -621,7 +624,8 @@
 							partyId,
 							weaponId: item.granblueId,
 							position,
-							mainhand: position === -1
+							mainhand: position === -1,
+							collectionWeaponId: item.collectionId
 						})
 
 						// Add to cache
@@ -649,7 +653,8 @@
 							summonId: item.granblueId,
 							position,
 							main: position === -1,
-							friend: position === 6
+							friend: position === 6,
+							collectionSummonId: item.collectionId
 						})
 
 						// Add to cache
@@ -676,7 +681,8 @@
 						const response = await createCharacterMutation.mutateAsync({
 							partyId,
 							characterId: item.granblueId,
-							position
+							position,
+							collectionCharacterId: item.collectionId
 						})
 
 						// Add to cache
