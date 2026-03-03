@@ -66,7 +66,7 @@ export interface RaidPartiesFilters {
 /**
  * Strips default/inactive filter values so the API only gets meaningful filters
  */
-function buildFilterQuery(filters: ExploreFilterParams): Partial<ExploreFilterParams> {
+export function buildFilterQuery(filters: ExploreFilterParams): Partial<ExploreFilterParams> {
 	const query: Record<string, unknown> = {}
 
 	if (filters.element && filters.element.length > 0) query.element = filters.element

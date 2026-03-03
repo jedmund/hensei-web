@@ -58,7 +58,7 @@ const SEARCH_PER_PAGE = 50
 /**
  * Builds search parameters from query string and filters
  */
-function buildSearchParams(
+export function buildSearchParams(
 	query: string,
 	filters: SearchFilters | undefined,
 	page: number,
