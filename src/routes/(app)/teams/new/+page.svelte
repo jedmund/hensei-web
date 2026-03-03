@@ -420,11 +420,18 @@
 			const partyUpdates = item.party?.collectionSourceUserId
 				? { collectionSourceUserId: item.party.collectionSourceUserId }
 				: {}
-			return {
+			const updatedParty = {
 				...old,
 				...partyUpdates,
 				[itemType]: [...(old[itemType] ?? []), item]
 			}
+
+			// Direct sync for immediate reactivity in sidebar components.
+			// The $effect chain may not fire synchronously when the query key
+			// shifts during async party creation.
+			partyStore.setParty(updatedParty)
+
+			return updatedParty
 		})
 	}
 
