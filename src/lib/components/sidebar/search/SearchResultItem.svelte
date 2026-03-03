@@ -130,8 +130,8 @@
 				transform: scale(0.99);
 			}
 
-			&.disabled,
-			&:disabled {
+			&.disabled:not(.in-team),
+			&:disabled:not(.in-team) {
 				opacity: 0.5;
 				cursor: not-allowed;
 
@@ -141,8 +141,15 @@
 			}
 
 			&.in-team {
-				opacity: 0.45;
 				cursor: not-allowed;
+
+				.result-image,
+				.result-name,
+				:global(.element-label),
+				:global(.proficiency-label),
+				:global(.character-tags) {
+					opacity: 0.45;
+				}
 
 				&:hover {
 					background: transparent;
