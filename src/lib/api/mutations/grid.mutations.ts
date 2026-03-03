@@ -4,10 +4,12 @@
  * Provides mutation configurations for grid item operations (weapons, characters, summons)
  * with cache invalidation and optimistic updates using TanStack Query v6.
  *
+ * Each mutation exports both an options factory (for testing) and a hook (for components).
+ *
  * @module api/mutations/grid
  */
 
-import { useQueryClient, createMutation } from '@tanstack/svelte-query'
+import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
 import {
 	gridAdapter,
 	type CreateGridWeaponParams,
@@ -41,7 +43,7 @@ import { invalidateParty } from '$lib/query/cacheHelpers'
  * @param adapterMethod - The grid adapter method to wrap
  * @returns Wrapped method that automatically handles edit key injection
  */
-function createGridMutation<TParams extends { partyId: number | string }>(
+export function createGridMutation<TParams extends { partyId: number | string }>(
 	adapterMethod: (params: TParams, headers?: Record<string, string>) => Promise<any>
 ) {
 	return (params: TParams) => {
@@ -52,73 +54,43 @@ function createGridMutation<TParams extends { partyId: number | string }>(
 }
 
 // ============================================================================
-// Weapon Mutations
+// Shared optimistic update helpers
 // ============================================================================
 
-/**
- * Create grid weapon mutation
- *
- * Adds a weapon to a party's grid.
- *
- * @example
- * ```svelte
- * <script lang="ts">
- *   import { useCreateGridWeapon } from '$lib/api/mutations/grid.mutations'
- *
- *   const createWeapon = useCreateGridWeapon()
- *
- *   function handleAddWeapon() {
- *     createWeapon.mutate({
- *       partyId: 'party-uuid',
- *       weaponId: 'weapon-id',
- *       position: 1
- *     })
- *   }
- * </script>
- * ```
- */
-export function useCreateGridWeapon() {
-	const queryClient = useQueryClient()
+function optimisticRollback(
+	queryClient: QueryClient,
+	partyShortcode: string,
+	context: { previousParty?: Party } | undefined
+) {
+	if (context?.previousParty) {
+		queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
+	}
+}
 
-	return createMutation(() => ({
+function invalidateOnSettled(queryClient: QueryClient, partyShortcode: string) {
+	queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+}
+
+// ============================================================================
+// Weapon Mutation Options
+// ============================================================================
+
+export function createGridWeaponOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: createGridMutation((params: CreateGridWeaponParams, headers?: Record<string, string>) =>
 			gridAdapter.createWeapon(params, headers)
 		),
-		onSuccess: (_data, params) => {
+		onSuccess: (_data: any, params: CreateGridWeaponParams) => {
 			invalidateParty(queryClient, params.partyId)
 		}
-	}))
+	}
 }
 
-/**
- * Update grid weapon mutation
- *
- * Updates a weapon in a party's grid with optimistic updates.
- *
- * @example
- * ```svelte
- * <script lang="ts">
- *   import { useUpdateGridWeapon } from '$lib/api/mutations/grid.mutations'
- *
- *   const updateWeapon = useUpdateGridWeapon()
- *
- *   function handleUpdateWeapon(id: string, partyShortcode: string) {
- *     updateWeapon.mutate({
- *       id,
- *       partyShortcode,
- *       updates: { element: 2 }
- *     })
- *   }
- * </script>
- * ```
- */
-export function useUpdateGridWeapon() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function updateGridWeaponOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: ({ id, updates }: { id: string; partyShortcode: string; updates: Partial<GridWeapon> }) =>
 			gridAdapter.updateWeapon(id, updates),
-		onMutate: async ({ id, partyShortcode, updates }) => {
+		onMutate: async ({ id, partyShortcode, updates }: { id: string; partyShortcode: string; updates: Partial<GridWeapon> }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
@@ -135,29 +107,20 @@ export function useUpdateGridWeapon() {
 
 			return { previousParty }
 		},
-		onError: (_err, { partyShortcode }, context) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
-			}
+		onError: (_err: any, { partyShortcode }: { partyShortcode: string }, context: { previousParty?: Party } | undefined) => {
+			optimisticRollback(queryClient, partyShortcode, context)
 		},
-		onSettled: (_data, _err, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSettled: (_data: any, _err: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Delete grid weapon mutation
- *
- * Removes a weapon from a party's grid.
- */
-export function useDeleteGridWeapon() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function deleteGridWeaponOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: { id?: string; partyId: string; partyShortcode: string; position?: number }) =>
 			gridAdapter.deleteWeapon({ id: params.id, partyId: params.partyId, position: params.position }),
-		onMutate: async ({ partyShortcode, id, position }) => {
+		onMutate: async ({ partyShortcode, id, position }: { partyShortcode: string; id?: string; position?: number }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
@@ -174,29 +137,20 @@ export function useDeleteGridWeapon() {
 
 			return { previousParty }
 		},
-		onError: (_err, { partyShortcode }, context) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
-			}
+		onError: (_err: any, { partyShortcode }: { partyShortcode: string }, context: { previousParty?: Party } | undefined) => {
+			optimisticRollback(queryClient, partyShortcode, context)
 		},
-		onSettled: (_data, _err, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSettled: (_data: any, _err: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Update weapon uncap mutation
- *
- * Updates a weapon's uncap level with optimistic updates.
- */
-export function useUpdateWeaponUncap() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function updateWeaponUncapOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: UpdateUncapParams & { partyShortcode: string }) =>
 			gridAdapter.updateWeaponUncap(params),
-		onMutate: async ({ partyShortcode, id, uncapLevel, transcendenceStep }) => {
+		onMutate: async ({ partyShortcode, id, uncapLevel, transcendenceStep }: UpdateUncapParams & { partyShortcode: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
@@ -219,85 +173,55 @@ export function useUpdateWeaponUncap() {
 
 			return { previousParty }
 		},
-		onError: (_err, { partyShortcode }, context) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
-			}
+		onError: (_err: any, { partyShortcode }: { partyShortcode: string }, context: { previousParty?: Party } | undefined) => {
+			optimisticRollback(queryClient, partyShortcode, context)
 		},
-		onSettled: (_data, _err, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSettled: (_data: any, _err: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Resolve weapon conflict mutation
- *
- * Resolves conflicts when adding a weapon that conflicts with existing weapons.
- */
-export function useResolveWeaponConflict() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function resolveWeaponConflictOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: ResolveConflictParams & { partyShortcode: string }) =>
 			gridAdapter.resolveWeaponConflict(params),
-		onSuccess: (_data, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Swap weapon positions mutation
- *
- * Swaps the positions of two weapons in the grid.
- */
-export function useSwapWeapons() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function swapWeaponsOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
 			gridAdapter.swapWeapons(params),
-		onSuccess: (_data, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
 // ============================================================================
-// Character Mutations
+// Character Mutation Options
 // ============================================================================
 
-/**
- * Create grid character mutation
- *
- * Adds a character to a party's grid.
- */
-export function useCreateGridCharacter() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function createGridCharacterOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: createGridMutation((params: CreateGridCharacterParams, headers?: Record<string, string>) =>
 			gridAdapter.createCharacter(params, headers)
 		),
-		onSuccess: (_data, params) => {
+		onSuccess: (_data: any, params: CreateGridCharacterParams) => {
 			invalidateParty(queryClient, params.partyId)
 		}
-	}))
+	}
 }
 
-/**
- * Update grid character mutation
- *
- * Updates a character in a party's grid with optimistic updates.
- */
-export function useUpdateGridCharacter() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function updateGridCharacterOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: ({ id, updates }: { id: string; partyShortcode: string; updates: Partial<GridCharacter> }) =>
 			gridAdapter.updateCharacter(id, updates),
-		onMutate: async ({ id, partyShortcode, updates }) => {
+		onMutate: async ({ id, partyShortcode, updates }: { id: string; partyShortcode: string; updates: Partial<GridCharacter> }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
@@ -314,29 +238,20 @@ export function useUpdateGridCharacter() {
 
 			return { previousParty }
 		},
-		onError: (_err, { partyShortcode }, context) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
-			}
+		onError: (_err: any, { partyShortcode }: { partyShortcode: string }, context: { previousParty?: Party } | undefined) => {
+			optimisticRollback(queryClient, partyShortcode, context)
 		},
-		onSettled: (_data, _err, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSettled: (_data: any, _err: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Delete grid character mutation
- *
- * Removes a character from a party's grid.
- */
-export function useDeleteGridCharacter() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function deleteGridCharacterOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: { id?: string; partyId: string; partyShortcode: string; position?: number }) =>
 			gridAdapter.deleteCharacter({ id: params.id, partyId: params.partyId, position: params.position }),
-		onMutate: async ({ partyShortcode, id, position }) => {
+		onMutate: async ({ partyShortcode, id, position }: { partyShortcode: string; id?: string; position?: number }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
@@ -353,29 +268,20 @@ export function useDeleteGridCharacter() {
 
 			return { previousParty }
 		},
-		onError: (_err, { partyShortcode }, context) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
-			}
+		onError: (_err: any, { partyShortcode }: { partyShortcode: string }, context: { previousParty?: Party } | undefined) => {
+			optimisticRollback(queryClient, partyShortcode, context)
 		},
-		onSettled: (_data, _err, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSettled: (_data: any, _err: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Update character uncap mutation
- *
- * Updates a character's uncap level with optimistic updates.
- */
-export function useUpdateCharacterUncap() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function updateCharacterUncapOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: UpdateUncapParams & { partyShortcode: string }) =>
 			gridAdapter.updateCharacterUncap(params),
-		onMutate: async ({ partyShortcode, id, uncapLevel, transcendenceStep }) => {
+		onMutate: async ({ partyShortcode, id, uncapLevel, transcendenceStep }: UpdateUncapParams & { partyShortcode: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
@@ -398,85 +304,55 @@ export function useUpdateCharacterUncap() {
 
 			return { previousParty }
 		},
-		onError: (_err, { partyShortcode }, context) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
-			}
+		onError: (_err: any, { partyShortcode }: { partyShortcode: string }, context: { previousParty?: Party } | undefined) => {
+			optimisticRollback(queryClient, partyShortcode, context)
 		},
-		onSettled: (_data, _err, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSettled: (_data: any, _err: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Resolve character conflict mutation
- *
- * Resolves conflicts when adding a character that conflicts with existing characters.
- */
-export function useResolveCharacterConflict() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function resolveCharacterConflictOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: ResolveConflictParams & { partyShortcode: string }) =>
 			gridAdapter.resolveCharacterConflict(params),
-		onSuccess: (_data, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Swap character positions mutation
- *
- * Swaps the positions of two characters in the grid.
- */
-export function useSwapCharacters() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function swapCharactersOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
 			gridAdapter.swapCharacters(params),
-		onSuccess: (_data, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
 // ============================================================================
-// Summon Mutations
+// Summon Mutation Options
 // ============================================================================
 
-/**
- * Create grid summon mutation
- *
- * Adds a summon to a party's grid.
- */
-export function useCreateGridSummon() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function createGridSummonOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: createGridMutation((params: CreateGridSummonParams, headers?: Record<string, string>) =>
 			gridAdapter.createSummon(params, headers)
 		),
-		onSuccess: (_data, params) => {
+		onSuccess: (_data: any, params: CreateGridSummonParams) => {
 			invalidateParty(queryClient, params.partyId)
 		}
-	}))
+	}
 }
 
-/**
- * Update grid summon mutation
- *
- * Updates a summon in a party's grid with optimistic updates.
- */
-export function useUpdateGridSummon() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function updateGridSummonOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: ({ id, updates }: { id: string; partyShortcode: string; updates: Partial<GridSummon> }) =>
 			gridAdapter.updateSummon(id, updates),
-		onMutate: async ({ id, partyShortcode, updates }) => {
+		onMutate: async ({ id, partyShortcode, updates }: { id: string; partyShortcode: string; updates: Partial<GridSummon> }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
@@ -493,29 +369,20 @@ export function useUpdateGridSummon() {
 
 			return { previousParty }
 		},
-		onError: (_err, { partyShortcode }, context) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
-			}
+		onError: (_err: any, { partyShortcode }: { partyShortcode: string }, context: { previousParty?: Party } | undefined) => {
+			optimisticRollback(queryClient, partyShortcode, context)
 		},
-		onSettled: (_data, _err, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSettled: (_data: any, _err: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Delete grid summon mutation
- *
- * Removes a summon from a party's grid.
- */
-export function useDeleteGridSummon() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function deleteGridSummonOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: { id?: string; partyId: string; partyShortcode: string; position?: number }) =>
 			gridAdapter.deleteSummon({ id: params.id, partyId: params.partyId, position: params.position }),
-		onMutate: async ({ partyShortcode, id, position }) => {
+		onMutate: async ({ partyShortcode, id, position }: { partyShortcode: string; id?: string; position?: number }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
@@ -532,29 +399,20 @@ export function useDeleteGridSummon() {
 
 			return { previousParty }
 		},
-		onError: (_err, { partyShortcode }, context) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
-			}
+		onError: (_err: any, { partyShortcode }: { partyShortcode: string }, context: { previousParty?: Party } | undefined) => {
+			optimisticRollback(queryClient, partyShortcode, context)
 		},
-		onSettled: (_data, _err, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSettled: (_data: any, _err: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Update summon uncap mutation
- *
- * Updates a summon's uncap level with optimistic updates.
- */
-export function useUpdateSummonUncap() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function updateSummonUncapOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: UpdateUncapParams & { partyShortcode: string }) =>
 			gridAdapter.updateSummonUncap(params),
-		onMutate: async ({ partyShortcode, id, uncapLevel, transcendenceStep }) => {
+		onMutate: async ({ partyShortcode, id, uncapLevel, transcendenceStep }: UpdateUncapParams & { partyShortcode: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
@@ -577,26 +435,17 @@ export function useUpdateSummonUncap() {
 
 			return { previousParty }
 		},
-		onError: (_err, { partyShortcode }, context) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
-			}
+		onError: (_err: any, { partyShortcode }: { partyShortcode: string }, context: { previousParty?: Party } | undefined) => {
+			optimisticRollback(queryClient, partyShortcode, context)
 		},
-		onSettled: (_data, _err, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSettled: (_data: any, _err: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Update quick summon mutation
- *
- * Updates a summon's quick summon setting with optimistic updates.
- */
-export function useUpdateQuickSummon() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function updateQuickSummonOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: {
 			id?: string
 			partyId: string
@@ -610,7 +459,7 @@ export function useUpdateQuickSummon() {
 				position: params.position,
 				quickSummon: params.quickSummon
 			}),
-		onMutate: async ({ partyShortcode, id, quickSummon }) => {
+		onMutate: async ({ partyShortcode, id, quickSummon }: { partyShortcode: string; id?: string; quickSummon: boolean }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
@@ -627,119 +476,194 @@ export function useUpdateQuickSummon() {
 
 			return { previousParty }
 		},
-		onError: (_err, { partyShortcode }, context) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), context.previousParty)
-			}
+		onError: (_err: any, { partyShortcode }: { partyShortcode: string }, context: { previousParty?: Party } | undefined) => {
+			optimisticRollback(queryClient, partyShortcode, context)
 		},
-		onSettled: (_data, _err, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSettled: (_data: any, _err: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Swap summon positions mutation
- *
- * Swaps the positions of two summons in the grid.
- */
-export function useSwapSummons() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function swapSummonsOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
 			gridAdapter.swapSummons(params),
-		onSuccess: (_data, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
 // ============================================================================
-// Sync Mutations (Collection -> Grid)
+// Sync Mutation Options
 // ============================================================================
 
-/**
- * Sync grid character from collection mutation
- *
- * Syncs a grid character's customizations from its linked collection source.
- */
-export function useSyncGridCharacter() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function syncGridCharacterOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: { id: string; partyShortcode: string }) =>
 			gridAdapter.syncCharacter(params.id),
-		onSuccess: (_data, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Sync grid weapon from collection mutation
- *
- * Syncs a grid weapon's customizations from its linked collection source.
- */
-export function useSyncGridWeapon() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function syncGridWeaponOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: { id: string; partyShortcode: string }) =>
 			gridAdapter.syncWeapon(params.id),
-		onSuccess: (_data, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Sync grid summon from collection mutation
- *
- * Syncs a grid summon's customizations from its linked collection source.
- */
-export function useSyncGridSummon() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function syncGridSummonOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: { id: string; partyShortcode: string }) =>
 			gridAdapter.syncSummon(params.id),
-		onSuccess: (_data, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Sync all party items from collection mutation
- *
- * Syncs all linked grid items in a party from their collection sources.
- */
-export function useSyncAllPartyItems() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function syncAllPartyItemsOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: { partyId: string; partyShortcode: string }) =>
 			gridAdapter.syncAllPartyItems(params.partyId),
-		onSuccess: (_data, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
 }
 
-/**
- * Unlink all collection sources from a party's grid items.
- *
- * Keeps the grid items but removes their collection references and clears the collection source user.
- */
-export function useUnlinkCollectionSource() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function unlinkCollectionSourceOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (params: { partyId: string; partyShortcode: string }) =>
 			gridAdapter.unlinkCollectionSource(params.partyId),
-		onSuccess: (_data, { partyShortcode }) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.detail(partyShortcode) })
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
-	}))
+	}
+}
+
+// ============================================================================
+// Svelte Hooks (thin wrappers for component use)
+// ============================================================================
+
+export function useCreateGridWeapon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => createGridWeaponOptions(queryClient))
+}
+
+export function useUpdateGridWeapon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => updateGridWeaponOptions(queryClient))
+}
+
+export function useDeleteGridWeapon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => deleteGridWeaponOptions(queryClient))
+}
+
+export function useUpdateWeaponUncap() {
+	const queryClient = useQueryClient()
+	return createMutation(() => updateWeaponUncapOptions(queryClient))
+}
+
+export function useResolveWeaponConflict() {
+	const queryClient = useQueryClient()
+	return createMutation(() => resolveWeaponConflictOptions(queryClient))
+}
+
+export function useSwapWeapons() {
+	const queryClient = useQueryClient()
+	return createMutation(() => swapWeaponsOptions(queryClient))
+}
+
+export function useCreateGridCharacter() {
+	const queryClient = useQueryClient()
+	return createMutation(() => createGridCharacterOptions(queryClient))
+}
+
+export function useUpdateGridCharacter() {
+	const queryClient = useQueryClient()
+	return createMutation(() => updateGridCharacterOptions(queryClient))
+}
+
+export function useDeleteGridCharacter() {
+	const queryClient = useQueryClient()
+	return createMutation(() => deleteGridCharacterOptions(queryClient))
+}
+
+export function useUpdateCharacterUncap() {
+	const queryClient = useQueryClient()
+	return createMutation(() => updateCharacterUncapOptions(queryClient))
+}
+
+export function useResolveCharacterConflict() {
+	const queryClient = useQueryClient()
+	return createMutation(() => resolveCharacterConflictOptions(queryClient))
+}
+
+export function useSwapCharacters() {
+	const queryClient = useQueryClient()
+	return createMutation(() => swapCharactersOptions(queryClient))
+}
+
+export function useCreateGridSummon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => createGridSummonOptions(queryClient))
+}
+
+export function useUpdateGridSummon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => updateGridSummonOptions(queryClient))
+}
+
+export function useDeleteGridSummon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => deleteGridSummonOptions(queryClient))
+}
+
+export function useUpdateSummonUncap() {
+	const queryClient = useQueryClient()
+	return createMutation(() => updateSummonUncapOptions(queryClient))
+}
+
+export function useUpdateQuickSummon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => updateQuickSummonOptions(queryClient))
+}
+
+export function useSwapSummons() {
+	const queryClient = useQueryClient()
+	return createMutation(() => swapSummonsOptions(queryClient))
+}
+
+export function useSyncGridCharacter() {
+	const queryClient = useQueryClient()
+	return createMutation(() => syncGridCharacterOptions(queryClient))
+}
+
+export function useSyncGridWeapon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => syncGridWeaponOptions(queryClient))
+}
+
+export function useSyncGridSummon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => syncGridSummonOptions(queryClient))
+}
+
+export function useSyncAllPartyItems() {
+	const queryClient = useQueryClient()
+	return createMutation(() => syncAllPartyItemsOptions(queryClient))
+}
+
+export function useUnlinkCollectionSource() {
+	const queryClient = useQueryClient()
+	return createMutation(() => unlinkCollectionSourceOptions(queryClient))
 }
