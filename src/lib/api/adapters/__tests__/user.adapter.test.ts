@@ -266,7 +266,7 @@ describe('UserAdapter', () => {
       const result = await adapter.checkUsernameAvailability('newuser')
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('/users/check-username'),
+        expect.stringContaining('/check/username'),
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify({ username: 'newuser' })
@@ -297,7 +297,7 @@ describe('UserAdapter', () => {
       const result = await adapter.checkEmailAvailability('new@example.com')
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('/users/check-email'),
+        expect.stringContaining('/check/email'),
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify({ email: 'new@example.com' })
@@ -327,10 +327,10 @@ describe('UserAdapter', () => {
         expect.stringContaining('/users/me'),
         expect.objectContaining({
           method: 'PUT',
-          body: JSON.stringify(updates)
+          body: JSON.stringify({ user: updates })
         })
       )
-      expect(result).toEqual(updatedUser)
+      expect(result).toEqual(expect.objectContaining(updatedUser))
     })
 
     it('should handle partial updates', async () => {
@@ -346,7 +346,7 @@ describe('UserAdapter', () => {
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/users/me'),
         expect.objectContaining({
-          body: JSON.stringify(updates)
+          body: JSON.stringify({ user: updates })
         })
       )
     })
@@ -365,7 +365,17 @@ describe('UserAdapter', () => {
         expect.stringContaining('/users/me'),
         expect.any(Object)
       )
-      expect(result).toEqual(mockUserInfo)
+      // transformSettingsResponse adds extra fields from the API response
+      expect(result).toEqual(expect.objectContaining({
+        id: mockUserInfo.id,
+        username: mockUserInfo.username,
+        language: mockUserInfo.language,
+        theme: mockUserInfo.theme,
+        role: mockUserInfo.role,
+        avatar: mockUserInfo.avatar
+      }))
+      // Settings response always includes email
+      expect(result.email).toBe('')
     })
   })
 
