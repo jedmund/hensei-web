@@ -968,7 +968,6 @@
 				authUserId,
 				requiredProficiencies,
 				userElement,
-				collectionSourceUserId: party.collectionSourceUserId,
 				onUnlinkCollection: handleUnlinkCollection
 			})
 		}

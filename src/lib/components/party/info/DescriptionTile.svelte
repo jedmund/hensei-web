@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte'
 	import type { JSONContent } from '@tiptap/core'
 	import Button from '$lib/components/ui/Button.svelte'
+	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 
 	interface Props {
@@ -22,6 +23,18 @@
 				element?: string | null
 			} | null
 		} | null
+		/** Source party (when this party is a remix) */
+		sourceParty?: {
+			shortcode?: string
+			name?: string
+			user?: {
+				username?: string
+				avatar?: {
+					picture?: string | null
+					element?: string | null
+				} | null
+			} | null
+		} | null
 		canEdit?: boolean
 		onOpenDescription: () => void
 		onOpenEdit?: () => void
@@ -34,6 +47,7 @@
 		description,
 		user,
 		collectionSourceUser,
+		sourceParty,
 		canEdit = false,
 		onOpenDescription,
 		onOpenEdit,
@@ -42,7 +56,6 @@
 
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
-	const collectionAvatarSrc = $derived(getAvatarSrc(collectionSourceUser?.avatar?.picture))
 
 	// Measure content height to determine if fade gradient is needed
 	let contentEl = $state<HTMLDivElement | undefined>(undefined)
@@ -116,7 +129,21 @@
 		</div>
 
 		<!-- Creator info -->
-		{#if user}
+		{#if user && collectionSourceUser?.username}
+			<div class="creator-pair-line">
+				<AvatarPair back={user} front={collectionSourceUser} size={24} />
+				<span class="creator-pair-text">
+					<a href="/{user.username}">{user.username}</a> using <a href="/{collectionSourceUser.username}">{collectionSourceUser.username}</a>'s collection
+				</span>
+			</div>
+		{:else if user && sourceParty?.user?.username}
+			<div class="creator-pair-line">
+				<AvatarPair back={sourceParty.user} front={user} size={24} />
+				<span class="creator-pair-text">
+					<a href="/{user.username}">{user.username}</a> remixed <a href="/{sourceParty.user.username}">{sourceParty.user.username}</a>'s team
+				</span>
+			</div>
+		{:else if user}
 			<a href="/{user.username}" class="creator-link">
 				<div class="avatar-wrapper {user.avatar?.element || ''}">
 					{#if user.avatar?.picture}
@@ -133,26 +160,6 @@
 					{/if}
 				</div>
 				<span class="username">{user.username}</span>
-			</a>
-		{/if}
-
-		<!-- Collection source info -->
-		{#if collectionSourceUser?.username}
-			<a href="/{collectionSourceUser.username}" class="collection-source-link">
-				<div class="collection-avatar-wrapper {collectionSourceUser.avatar?.element || ''}">
-					{#if collectionSourceUser.avatar?.picture}
-						<img
-							class="avatar"
-							alt={`Avatar of ${collectionSourceUser.username}`}
-							src={collectionAvatarSrc}
-							width="18"
-							height="18"
-						/>
-					{:else}
-						<div class="avatar-placeholder" aria-hidden="true"></div>
-					{/if}
-				</div>
-				<span class="collection-source-text">Using {collectionSourceUser.username}'s collection</span>
 			</a>
 		{/if}
 	</div>
@@ -276,35 +283,26 @@
 		font-weight: $medium;
 	}
 
-	.collection-source-link {
+	.creator-pair-line {
 		display: inline-flex;
 		align-items: center;
 		gap: $unit-half;
-		text-decoration: none;
-		color: var(--text-tertiary);
-		width: fit-content;
+	}
 
-		&:hover {
-			color: var(--text-secondary);
+	.creator-pair-text {
+		font-size: $font-small;
+		font-weight: $medium;
+		color: var(--text-secondary);
 
-			.collection-source-text {
+		a {
+			color: inherit;
+			text-decoration: none;
+
+			&:hover {
 				text-decoration: underline;
+				color: var(--text-primary);
 			}
 		}
-	}
-
-	.collection-avatar-wrapper {
-		width: 18px;
-		height: 18px;
-		border-radius: 50%;
-		overflow: hidden;
-		background: var(--button-bg);
-		flex-shrink: 0;
-	}
-
-	.collection-source-text {
-		font-size: calc($font-small - 1px);
-		font-weight: $medium;
 	}
 
 	.description-content {

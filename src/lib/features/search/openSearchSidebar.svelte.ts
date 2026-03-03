@@ -12,14 +12,12 @@ interface SearchSidebarOptions {
 	requiredProficiencies?: number[]
 	/** User's element for styling the collection toggle */
 	userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-	/** If set, collection mode is locked to this user's collection */
-	collectionSourceUserId?: string
 	/** Callback to unlink all collection items from the party */
 	onUnlinkCollection?: () => Promise<void>
 }
 
 export function openSearchSidebar(options: SearchSidebarOptions) {
-	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies, userElement, collectionSourceUserId, onUnlinkCollection } = options
+	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies, userElement, onUnlinkCollection } = options
 
 	// Open the sidebar with the search component
 	const title = `Search ${type.charAt(0).toUpperCase() + type.slice(1)}s`
@@ -30,7 +28,6 @@ export function openSearchSidebar(options: SearchSidebarOptions) {
 		authUserId,
 		requiredProficiencies,
 		userElement,
-		collectionSourceUserId,
 		onUnlinkCollection
 	})
 }

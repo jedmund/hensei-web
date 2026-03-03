@@ -55,6 +55,7 @@
 				description={party.description}
 				user={party.user}
 				collectionSourceUser={party.collectionSourceUser}
+				sourceParty={party.sourceParty}
 				{canEdit}
 				{onOpenDescription}
 				{onOpenEdit}

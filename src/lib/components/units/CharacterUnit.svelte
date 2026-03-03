@@ -191,6 +191,7 @@
 							class="frame character cell {elementClass}"
 							class:editable={ctx?.canEdit()}
 							class:is-active={isActive}
+							class:not-in-collection={notInCollection}
 							onclick={() => viewDetails()}
 						>
 							{#if ctx?.canEdit()}
@@ -342,7 +343,7 @@
 			}}
 		/>
 	{/if}
-	<div class="name">
+	<div class="name" class:not-in-collection={notInCollection}>
 		{item ? displayName(item?.character) : ''}
 		{#if item?.artifact}
 			<Icon name="gem" size={12} class="artifact-indicator" />
@@ -442,8 +443,18 @@
 		}
 
 		&.not-in-collection {
-			opacity: 0.75;
+			opacity: 0.6;
 		}
+	}
+
+	.frame.not-in-collection::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border: 2px solid colors.$error;
+		border-radius: inherit;
+		z-index: 2;
+		pointer-events: none;
 	}
 
 	.icon {
@@ -462,6 +473,10 @@
 		text-align: center;
 		color: var(--text-secondary);
 		display: flex;
+
+		&.not-in-collection {
+			color: colors.$error;
+		}
 		align-items: center;
 		justify-content: center;
 		gap: spacing.$unit-fourth;
