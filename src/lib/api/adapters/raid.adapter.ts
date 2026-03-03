@@ -146,32 +146,12 @@ export class RaidAdapter extends BaseAdapter {
    * Requires editor role (>= 7)
    */
   async getRaidDownloadStatus(slug: string, options?: RequestOptions): Promise<RaidDownloadStatus> {
-    const response = await this.request<{
-      status: string
-      progress?: number
-      images_downloaded?: number
-      images_total?: number
-      error?: string
-      raid_id?: string
-      slug?: string
-      images?: Record<string, string[]>
-      updated_at?: string
-    }>(`/raids/${slug}/download_status`, {
+    // BaseAdapter already transforms snake_case → camelCase,
+    // so we can return the response directly
+    return this.request<RaidDownloadStatus>(`/raids/${slug}/download_status`, {
       ...options,
       method: 'GET'
     })
-
-    return {
-      status: response.status as RaidDownloadStatus['status'],
-      progress: response.progress,
-      imagesDownloaded: response.images_downloaded,
-      imagesTotal: response.images_total,
-      error: response.error,
-      raidId: response.raid_id,
-      slug: response.slug,
-      images: response.images,
-      updatedAt: response.updated_at
-    }
   }
 
   // ==================== RaidGroup Operations ====================

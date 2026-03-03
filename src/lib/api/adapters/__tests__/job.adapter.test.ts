@@ -74,10 +74,7 @@ describe('JobAdapter', () => {
 			)
 		})
 
-		it('should transform meta response fields (BUG: reads snake_case from camelCase response)', async () => {
-			// BaseAdapter transforms meta.total_pages → meta.totalPages and
-			// meta.per_page → meta.perPage before searchSkills reads them.
-			// The adapter reads response.meta.total_pages (undefined) and falls back.
+		it('should transform meta response fields correctly', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
 				json: async () => ({
@@ -88,18 +85,14 @@ describe('JobAdapter', () => {
 
 			const result = await adapter.searchSkills({ jobId: 'job-1' })
 
-			// count survives (no underscore)
 			expect(result.total).toBe(42)
 			expect(result.page).toBe(1)
-
-			// BUG: total_pages/per_page already transformed to totalPages/perPage
-			// by BaseAdapter, so adapter reads undefined and falls back to defaults
-			expect(result.totalPages).toBe(1) // fallback, not 5
+			expect(result.totalPages).toBe(5)
 			expect(result.meta).toEqual({
 				count: 42,
 				page: 1,
-				perPage: 10, // fallback, happens to match
-				totalPages: 1 // fallback, not 5
+				perPage: 10,
+				totalPages: 5
 			})
 		})
 

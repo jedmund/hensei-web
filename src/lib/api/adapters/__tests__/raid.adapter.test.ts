@@ -71,10 +71,7 @@ describe('RaidAdapter', () => {
 	})
 
 	describe('download status', () => {
-		it('should map response fields (BUG: reads already-transformed keys as undefined)', async () => {
-			// BaseAdapter transforms snake_case → camelCase before the adapter
-			// method runs its manual mapping. So multi-word snake_case keys like
-			// images_downloaded are already imagesDownloaded when accessed.
+		it('should map all response fields correctly', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
 				json: async () => ({
@@ -90,17 +87,13 @@ describe('RaidAdapter', () => {
 
 			const result = await adapter.getRaidDownloadStatus('proto-bahamut')
 
-			// Single-word fields work
 			expect(result.status).toBe('completed')
 			expect(result.progress).toBe(100)
 			expect(result.slug).toBe('proto-bahamut')
-
-			// BUG: Multi-word fields are undefined — adapter reads snake_case
-			// keys from an already-camelCase-transformed response
-			expect(result.imagesDownloaded).toBeUndefined()
-			expect(result.imagesTotal).toBeUndefined()
-			expect(result.raidId).toBeUndefined()
-			expect(result.updatedAt).toBeUndefined()
+			expect(result.imagesDownloaded).toBe(4)
+			expect(result.imagesTotal).toBe(4)
+			expect(result.raidId).toBe('raid-1')
+			expect(result.updatedAt).toBe('2024-01-01T00:00:00Z')
 		})
 	})
 

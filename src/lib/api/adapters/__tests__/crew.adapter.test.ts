@@ -159,9 +159,7 @@ describe('CrewAdapter', () => {
 	})
 
 	describe('phantom players', () => {
-		it('should return undefined from createPhantom (BUG: reads snake_case from camelCase response)', async () => {
-			// BaseAdapter transforms phantom_player → phantomPlayer
-			// but adapter accesses response.phantom_player which is undefined
+		it('should unwrap phantomPlayer from createPhantom response', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
 				json: async () => ({ phantom_player: { id: 'p1', name: 'Ghost' } })
@@ -169,13 +167,10 @@ describe('CrewAdapter', () => {
 
 			const result = await adapter.createPhantom('crew-1', { name: 'Ghost' } as any)
 
-			// BUG: Same double-transform issue as raid.getRaidDownloadStatus
-			// Adapter reads response.phantom_player but transform already renamed to phantomPlayer
-			expect(result).toBeUndefined()
+			expect(result).toEqual({ id: 'p1', name: 'Ghost' })
 		})
 
-		it('should return undefined from bulkCreatePhantoms (BUG: reads snake_case from camelCase response)', async () => {
-			// Same bug: phantom_players → phantomPlayers after transform
+		it('should unwrap phantomPlayers from bulkCreatePhantoms response', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
 				json: async () => ({ phantom_players: [{ id: 'p1' }, { id: 'p2' }] })
@@ -183,9 +178,7 @@ describe('CrewAdapter', () => {
 
 			const result = await adapter.bulkCreatePhantoms('crew-1', [{ name: 'Ghost1' }, { name: 'Ghost2' }] as any)
 
-			// BUG: response.phantom_players is undefined after transform
-			// Same bug affects updatePhantom, assignPhantom, confirmPhantomClaim, declinePhantomClaim
-			expect(result).toBeUndefined()
+			expect(result).toEqual([{ id: 'p1' }, { id: 'p2' }])
 		})
 
 		it('should clear dual cache on declinePhantomClaim', async () => {

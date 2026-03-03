@@ -281,7 +281,7 @@ describe('checkAndRefresh', () => {
 		expect(get(authStore).accessToken).toBe('renewed-tok')
 	})
 
-	it('returns stale token when refresh fails (known bug: state snapshot is stale)', async () => {
+	it('returns null when refresh fails', async () => {
 		// Token expiring in 1 minute (within the 5-minute refresh window)
 		authStore.setAuth('dying-tok', { id: 'u1', username: 'grug' }, 60)
 
@@ -294,10 +294,7 @@ describe('checkAndRefresh', () => {
 
 		const result = await authStore.checkAndRefresh()
 
-		// BUG: checkAndRefresh captures `state` before refresh(), so when
-		// refresh fails and clears auth, it still returns the stale token.
-		// Should return null after failed refresh.
-		expect(result).toBe('dying-tok')
+		expect(result).toBeNull()
 		expect(get(authStore).isAuthenticated).toBe(false)
 
 		delete (globalThis as any).window
