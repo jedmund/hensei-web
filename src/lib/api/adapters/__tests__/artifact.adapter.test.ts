@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { ArtifactAdapter } from '../artifact.adapter'
+import { API, EXPECTED } from './fixtures/artifact.fixtures'
+import { mockApiResponse } from './fixtures/helpers'
 
 describe('ArtifactAdapter', () => {
 	let adapter: ArtifactAdapter
@@ -17,36 +19,25 @@ describe('ArtifactAdapter', () => {
 
 	describe('reference data', () => {
 		it('should unwrap artifacts from response', async () => {
-			const mockArtifacts = [{ id: 'a1', name: 'Sword' }]
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ artifacts: mockArtifacts })
-			})
+			global.fetch = mockApiResponse(API.listArtifacts)
 
 			const result = await adapter.listArtifacts()
 
-			expect(result).toEqual(mockArtifacts)
+			expect(result).toEqual(EXPECTED.listArtifacts)
 		})
 
 		it('should unwrap artifactSkills from response', async () => {
-			const mockSkills = [{ id: 's1', name: 'ATK Up' }]
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ artifact_skills: mockSkills })
-			})
+			global.fetch = mockApiResponse(API.listSkills)
 
 			const result = await adapter.listSkills()
 
-			expect(result).toEqual(mockSkills)
+			expect(result).toEqual(EXPECTED.listSkills)
 		})
 	})
 
 	describe('slot mapping', () => {
 		beforeEach(() => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ artifact_skills: [] })
-			})
+			global.fetch = mockApiResponse(API.listSkills)
 		})
 
 		it('should map slot 1 to group_i', async () => {
@@ -88,40 +79,25 @@ describe('ArtifactAdapter', () => {
 
 	describe('collection artifacts', () => {
 		it('should handle artifacts response key', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					artifacts: [{ id: 'ca-1' }],
-					meta: { count: 1, total_pages: 1, per_page: 20, current_page: 1 }
-				})
-			})
+			global.fetch = mockApiResponse(API.listCollectionArtifacts)
 
 			const result = await adapter.listCollectionArtifacts('user-1')
 
-			expect(result.results).toEqual([{ id: 'ca-1' }])
+			expect(result).toEqual(EXPECTED.listCollectionArtifacts)
 		})
 
 		it('should handle collectionArtifacts response key', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					collection_artifacts: [{ id: 'ca-2' }],
-					meta: { count: 1, total_pages: 1, per_page: 20, current_page: 1 }
-				})
-			})
+			global.fetch = mockApiResponse(API.listCollectionArtifactsAlt)
 
 			const result = await adapter.listCollectionArtifacts('user-1')
 
-			expect(result.results).toEqual([{ id: 'ca-2' }])
+			expect(result).toEqual(EXPECTED.listCollectionArtifactsAlt)
 		})
 	})
 
 	describe('grid artifacts', () => {
 		it('should build correct URL and body for createGridArtifact', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ id: 'ga-1' })
-			})
+			global.fetch = mockApiResponse({ id: 'ga-1' })
 
 			await adapter.createGridArtifact({
 				partyId: 'party-1',
@@ -159,15 +135,11 @@ describe('ArtifactAdapter', () => {
 		})
 
 		it('should unwrap gridArtifact from sync response', async () => {
-			const mockGridArtifact = { id: 'ga-1', artifactId: 'art-1' }
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ grid_artifact: mockGridArtifact })
-			})
+			global.fetch = mockApiResponse(API.syncGridArtifact)
 
 			const result = await adapter.syncGridArtifact('ga-1')
 
-			expect(result).toEqual(mockGridArtifact)
+			expect(result).toEqual(EXPECTED.syncGridArtifact)
 			expect(global.fetch).toHaveBeenCalledWith(
 				'https://api.example.com/grid_artifacts/ga-1/sync',
 				expect.objectContaining({ method: 'POST' })

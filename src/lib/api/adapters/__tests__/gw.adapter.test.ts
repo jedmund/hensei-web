@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { GwAdapter } from '../gw.adapter'
+import { API, EXPECTED } from './fixtures/gw.fixtures'
+import { mockApiResponse } from './fixtures/helpers'
 
 describe('GwAdapter', () => {
 	let adapter: GwAdapter
@@ -17,34 +19,23 @@ describe('GwAdapter', () => {
 
 	describe('events', () => {
 		it('should unwrap gwEvents from getEvents response', async () => {
-			const mockEvents = [{ id: 'gw-1', eventNumber: 78 }]
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ gw_events: mockEvents })
-			})
+			global.fetch = mockApiResponse(API.getEvents)
 
 			const result = await adapter.getEvents()
 
-			expect(result).toEqual(mockEvents)
+			expect(result).toEqual(EXPECTED.getEvents)
 		})
 
 		it('should unwrap gwEvent from getEvent response', async () => {
-			const mockEvent = { id: 'gw-1', eventNumber: 78 }
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ gw_event: mockEvent })
-			})
+			global.fetch = mockApiResponse(API.getEvent)
 
 			const result = await adapter.getEvent('gw-1')
 
-			expect(result).toEqual(mockEvent)
+			expect(result).toEqual(EXPECTED.getEvent)
 		})
 
 		it('should wrap body in gw_event for createEvent', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ gw_event: { id: 'gw-new' } })
-			})
+			global.fetch = mockApiResponse(API.createEvent)
 			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.createEvent({ event_number: 79 } as any)
@@ -57,50 +48,23 @@ describe('GwAdapter', () => {
 
 	describe('participation', () => {
 		it('should map getEventWithParticipation response', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					gw_event: { id: 'gw-1' },
-					crew_gw_participation: { id: 'part-1' },
-					members_during_event: [{ id: 'm1', retired: false }],
-					phantom_players: [{ id: 'p1', name: 'Ghost', retired: true }]
-				})
-			})
+			global.fetch = mockApiResponse(API.getEventWithParticipation)
 
 			const result = await adapter.getEventWithParticipation('gw-1')
 
-			expect(result.gwEvent).toEqual({ id: 'gw-1' })
-			expect(result.participation).toEqual({ id: 'part-1' })
-			expect(result.membersDuringEvent).toEqual([{ id: 'm1', retired: false }])
-			expect(result.phantomPlayers).toEqual([{ id: 'p1', name: 'Ghost', retired: true }])
+			expect(result).toEqual(EXPECTED.getEventWithParticipation)
 		})
 
 		it('should default missing arrays to empty in getEventWithParticipation', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					gw_event: null,
-					crew_gw_participation: null
-					// membersDuringEvent and phantomPlayers missing
-				})
-			})
+			global.fetch = mockApiResponse(API.getEventWithParticipationEmpty)
 
 			const result = await adapter.getEventWithParticipation('gw-99')
 
-			expect(result.gwEvent).toBeNull()
-			expect(result.participation).toBeNull()
-			expect(result.membersDuringEvent).toEqual([])
-			expect(result.phantomPlayers).toEqual([])
+			expect(result).toEqual(EXPECTED.getEventWithParticipationEmpty)
 		})
 
 		it('should use number param in getEventWithParticipation URL', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					gw_event: null,
-					crew_gw_participation: null
-				})
-			})
+			global.fetch = mockApiResponse(API.getEventWithParticipationEmpty)
 
 			await adapter.getEventWithParticipation(78)
 
@@ -109,36 +73,27 @@ describe('GwAdapter', () => {
 		})
 
 		it('should unwrap participation from joinEvent and clear cache', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ participation: { id: 'part-1' } })
-			})
+			global.fetch = mockApiResponse(API.joinEvent)
 			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
 
 			const result = await adapter.joinEvent('gw-1')
 
-			expect(result).toEqual({ id: 'part-1' })
+			expect(result).toEqual(EXPECTED.joinEvent)
 			expect(clearSpy).toHaveBeenCalledWith('/crew/gw_participations')
 		})
 
 		it('should unwrap crewGwParticipation from getParticipation', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ crew_gw_participation: { id: 'part-1', crewScores: [] } })
-			})
+			global.fetch = mockApiResponse(API.getParticipation)
 
 			const result = await adapter.getParticipation('part-1')
 
-			expect(result).toEqual({ id: 'part-1', crewScores: [] })
+			expect(result).toEqual(EXPECTED.getParticipation)
 		})
 	})
 
 	describe('scores', () => {
 		it('should POST addIndividualScoreByEvent to correct URL', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ individual_score: { id: 'is-1' } })
-			})
+			global.fetch = mockApiResponse(API.addIndividualScore)
 
 			await adapter.addIndividualScoreByEvent('gw-1', { round: 1, score: 100000 } as any)
 
@@ -148,10 +103,7 @@ describe('GwAdapter', () => {
 		})
 
 		it('should POST batchAddIndividualScoresByEvent to correct URL', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ individual_scores: [{ id: 'is-1' }] })
-			})
+			global.fetch = mockApiResponse(API.batchAddIndividualScores)
 
 			await adapter.batchAddIndividualScoresByEvent('gw-1', { scores: [] } as any)
 
@@ -161,10 +113,7 @@ describe('GwAdapter', () => {
 		})
 
 		it('should wrap body in crew_score for addCrewScore and clear participation cache', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ crew_score: { id: 'cs-1' } })
-			})
+			global.fetch = mockApiResponse(API.addCrewScore)
 			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.addCrewScore('part-1', { round: 1, score: 500000 } as any)

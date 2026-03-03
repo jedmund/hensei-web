@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { JobAdapter } from '../job.adapter'
+import { API, EXPECTED } from './fixtures/job.fixtures'
+import { mockApiResponse } from './fixtures/helpers'
 
 describe('JobAdapter', () => {
 	let adapter: JobAdapter
@@ -17,13 +19,7 @@ describe('JobAdapter', () => {
 
 	describe('searchSkills', () => {
 		it('should send full search params with jobId mapped to job', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					results: [],
-					meta: { count: 0, total_pages: 1, per_page: 10 }
-				})
-			})
+			global.fetch = mockApiResponse(API.searchSkillsEmpty)
 
 			await adapter.searchSkills({
 				query: 'rage',
@@ -51,10 +47,7 @@ describe('JobAdapter', () => {
 		})
 
 		it('should use defaults for optional params', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ results: [], meta: {} })
-			})
+			global.fetch = mockApiResponse({ results: [], meta: {} })
 
 			await adapter.searchSkills({ jobId: 'job-1' })
 
@@ -75,47 +68,41 @@ describe('JobAdapter', () => {
 		})
 
 		it('should transform meta response fields correctly', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					results: [{ id: 'skill-1', name: { en: 'Rage' } }],
-					meta: { count: 42, total_pages: 5, per_page: 10 }
-				})
-			})
+			global.fetch = mockApiResponse(API.searchSkills)
 
 			const result = await adapter.searchSkills({ jobId: 'job-1' })
 
-			expect(result.total).toBe(42)
-			expect(result.page).toBe(1)
-			expect(result.totalPages).toBe(5)
-			expect(result.meta).toEqual({
-				count: 42,
-				page: 1,
-				perPage: 10,
-				totalPages: 5
-			})
+			expect(result.total).toBe(EXPECTED.searchSkills.total)
+			expect(result.page).toBe(EXPECTED.searchSkills.page)
+			expect(result.totalPages).toBe(EXPECTED.searchSkills.totalPages)
+			expect(result.meta).toEqual(EXPECTED.searchSkills.meta)
+		})
+
+		it('should transform empty results with meta correctly', async () => {
+			global.fetch = mockApiResponse(API.searchSkillsEmpty)
+
+			const result = await adapter.searchSkills({ jobId: 'job-1' })
+
+			expect(result.results).toEqual(EXPECTED.searchSkillsEmpty.results)
+			expect(result.total).toBe(EXPECTED.searchSkillsEmpty.total)
+			expect(result.totalPages).toBe(EXPECTED.searchSkillsEmpty.totalPages)
+			expect(result.meta).toEqual(EXPECTED.searchSkillsEmpty.meta)
 		})
 
 		it('should fall back when meta is missing', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ results: [] })
-			})
+			global.fetch = mockApiResponse(API.searchSkillsNoMeta)
 
 			const result = await adapter.searchSkills({ jobId: 'job-1' })
 
-			expect(result.total).toBe(0)
-			expect(result.totalPages).toBe(1)
-			expect(result.meta).toBeUndefined()
+			expect(result.total).toBe(EXPECTED.searchSkillsNoMeta.total)
+			expect(result.totalPages).toBe(EXPECTED.searchSkillsNoMeta.totalPages)
+			expect(result.meta).toBe(EXPECTED.searchSkillsNoMeta.meta)
 		})
 	})
 
 	describe('updatePartyJobSkills', () => {
 		it('should map slots 0 and 2 to skill1_id and skill3_id', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({})
-			})
+			global.fetch = mockApiResponse({})
 
 			await adapter.updatePartyJobSkills('party-1', [
 				{ id: 'skill-a', slot: 0 },
@@ -139,10 +126,7 @@ describe('JobAdapter', () => {
 		})
 
 		it('should populate all 4 slots', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({})
-			})
+			global.fetch = mockApiResponse({})
 
 			await adapter.updatePartyJobSkills('party-1', [
 				{ id: 's1', slot: 0 },
@@ -167,10 +151,7 @@ describe('JobAdapter', () => {
 		})
 
 		it('should set all slots to null when empty', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({})
-			})
+			global.fetch = mockApiResponse({})
 
 			await adapter.updatePartyJobSkills('party-1', [])
 
@@ -192,10 +173,7 @@ describe('JobAdapter', () => {
 
 	describe('removePartyJobSkill', () => {
 		it('should DELETE with slot in body', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({})
-			})
+			global.fetch = mockApiResponse({})
 
 			await adapter.removePartyJobSkill('party-1', 2)
 
@@ -211,10 +189,7 @@ describe('JobAdapter', () => {
 
 	describe('getAllAccessories', () => {
 		it('should include accessory_type query param when provided', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ([])
-			})
+			global.fetch = mockApiResponse([])
 
 			await adapter.getAllAccessories(1)
 
@@ -223,10 +198,7 @@ describe('JobAdapter', () => {
 		})
 
 		it('should not include query param when type is omitted', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ([])
-			})
+			global.fetch = mockApiResponse([])
 
 			await adapter.getAllAccessories()
 
@@ -237,10 +209,7 @@ describe('JobAdapter', () => {
 
 	describe('cache clearing', () => {
 		it('should clear both job list and detail cache on updateJob', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ id: 'job-1' })
-			})
+			global.fetch = mockApiResponse({ id: 'job-1' })
 			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.updateJob('gbf-100', { name_en: 'Updated' })

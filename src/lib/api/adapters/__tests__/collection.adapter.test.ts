@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { CollectionAdapter } from '../collection.adapter'
+import { API, EXPECTED } from './fixtures/collection.fixtures'
+import { mockApiResponse } from './fixtures/helpers'
 
 describe('CollectionAdapter', () => {
 	let adapter: CollectionAdapter
@@ -17,21 +19,11 @@ describe('CollectionAdapter', () => {
 
 	describe('characters', () => {
 		it('should transform listCharacters response', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					characters: [{ id: 'cc-1', character: { id: 'c1' } }],
-					meta: { count: 1, total_pages: 1, per_page: 20, current_page: 1 }
-				})
-			})
+			global.fetch = mockApiResponse(API.listCharacters)
 
 			const result = await adapter.listCharacters('user-1')
 
-			expect(result.results).toEqual([{ id: 'cc-1', character: { id: 'c1' } }])
-			expect(result.page).toBe(1)
-			expect(result.total).toBe(1)
-			expect(result.totalPages).toBe(1)
-			expect(result.perPage).toBe(20)
+			expect(result).toEqual(EXPECTED.listCharacters)
 		})
 
 		it('should return empty without fetching for addCharacters with empty input', async () => {
@@ -53,20 +45,11 @@ describe('CollectionAdapter', () => {
 		})
 
 		it('should fetch single page for getCollectedCharacterIds', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					characters: [
-						{ character: { id: 'c1' } },
-						{ character: { id: 'c2' } }
-					],
-					meta: { count: 2, total_pages: 1, per_page: 100, current_page: 1 }
-				})
-			})
+			global.fetch = mockApiResponse(API.collectedCharactersSinglePage)
 
 			const result = await adapter.getCollectedCharacterIds('user-1')
 
-			expect(result).toEqual(['c1', 'c2'])
+			expect(result).toEqual(EXPECTED.collectedCharacterIdsSinglePage)
 			expect(global.fetch).toHaveBeenCalledTimes(1)
 		})
 
@@ -77,69 +60,46 @@ describe('CollectionAdapter', () => {
 				if (callCount === 1) {
 					return {
 						ok: true,
-						json: async () => ({
-							characters: [{ character: { id: 'c1' } }, { character: { id: 'c2' } }],
-							meta: { count: 4, total_pages: 2, per_page: 2, current_page: 1 }
-						})
+						json: async () => API.collectedCharactersPage1
 					}
 				}
 				return {
 					ok: true,
-					json: async () => ({
-						characters: [{ character: { id: 'c3' } }, { character: { id: 'c4' } }],
-						meta: { count: 4, total_pages: 2, per_page: 2, current_page: 2 }
-					})
+					json: async () => API.collectedCharactersPage2
 				}
 			})
 
 			const result = await adapter.getCollectedCharacterIds('user-1')
 
-			expect(result).toEqual(['c1', 'c2', 'c3', 'c4'])
+			expect(result).toEqual(EXPECTED.collectedCharacterIdsMultiPage)
 			expect(global.fetch).toHaveBeenCalledTimes(2)
 		})
 	})
 
 	describe('weapons', () => {
 		it('should handle weapons response key in listWeapons', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					weapons: [{ id: 'cw-1' }],
-					meta: { count: 1, total_pages: 1, per_page: 20, current_page: 1 }
-				})
-			})
+			global.fetch = mockApiResponse(API.listWeapons)
 
 			const result = await adapter.listWeapons('user-1')
 
-			expect(result.results).toEqual([{ id: 'cw-1' }])
+			expect(result.results).toEqual(EXPECTED.listWeapons.results)
 		})
 
 		it('should handle collectionWeapons response key in listWeapons', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					collection_weapons: [{ id: 'cw-2' }],
-					meta: { count: 1, total_pages: 1, per_page: 20, current_page: 1 }
-				})
-			})
+			global.fetch = mockApiResponse(API.listWeaponsAlt)
 
 			const result = await adapter.listWeapons('user-1')
 
-			expect(result.results).toEqual([{ id: 'cw-2' }])
+			expect(result.results).toEqual(EXPECTED.listWeaponsAlt.results)
 		})
 
 		it('should expand quantity in addWeapons', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					weapons: [{ id: 'cw-1' }, { id: 'cw-2' }, { id: 'cw-3' }],
-					meta: { created: 3, errors: [] }
-				})
+			global.fetch = mockApiResponse({
+				weapons: [{ id: 'cw-1' }, { id: 'cw-2' }, { id: 'cw-3' }],
+				meta: { created: 3, errors: [] }
 			})
 
-			await adapter.addWeapons([
-				{ weaponId: 'w1', quantity: 3 } as any
-			])
+			await adapter.addWeapons([{ weaponId: 'w1', quantity: 3 } as any])
 
 			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
 			// BaseAdapter transforms collectionWeapons → collection_weapons
@@ -152,12 +112,9 @@ describe('CollectionAdapter', () => {
 		})
 
 		it('should handle mixed quantities in addWeapons', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					weapons: [{ id: 'cw-1' }, { id: 'cw-2' }, { id: 'cw-3' }, { id: 'cw-4' }],
-					meta: { created: 4, errors: [] }
-				})
+			global.fetch = mockApiResponse({
+				weapons: [{ id: 'cw-1' }, { id: 'cw-2' }, { id: 'cw-3' }, { id: 'cw-4' }],
+				meta: { created: 4, errors: [] }
 			})
 
 			await adapter.addWeapons([
@@ -191,45 +148,28 @@ describe('CollectionAdapter', () => {
 
 	describe('summons', () => {
 		it('should handle summons response key in listSummons', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					summons: [{ id: 'cs-1' }],
-					meta: { count: 1, total_pages: 1, per_page: 20, current_page: 1 }
-				})
-			})
+			global.fetch = mockApiResponse(API.listSummons)
 
 			const result = await adapter.listSummons('user-1')
 
-			expect(result.results).toEqual([{ id: 'cs-1' }])
+			expect(result.results).toEqual(EXPECTED.listSummons.results)
 		})
 
 		it('should handle collectionSummons response key in listSummons', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					collection_summons: [{ id: 'cs-2' }],
-					meta: { count: 1, total_pages: 1, per_page: 20, current_page: 1 }
-				})
-			})
+			global.fetch = mockApiResponse(API.listSummonsAlt)
 
 			const result = await adapter.listSummons('user-1')
 
-			expect(result.results).toEqual([{ id: 'cs-2' }])
+			expect(result.results).toEqual(EXPECTED.listSummonsAlt.results)
 		})
 
 		it('should expand quantity in addSummons', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					summons: [{ id: 'cs-1' }, { id: 'cs-2' }],
-					meta: { created: 2, errors: [] }
-				})
+			global.fetch = mockApiResponse({
+				summons: [{ id: 'cs-1' }, { id: 'cs-2' }],
+				meta: { created: 2, errors: [] }
 			})
 
-			await adapter.addSummons([
-				{ summonId: 's1', quantity: 2 } as any
-			])
+			await adapter.addSummons([{ summonId: 's1', quantity: 2 } as any])
 
 			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
 			const items = body.collection_summons
@@ -251,15 +191,11 @@ describe('CollectionAdapter', () => {
 
 	describe('job accessories', () => {
 		it('should unwrap jobAccessories from listJobAccessories response', async () => {
-			const mockAccessories = [{ id: 'ja-1', name: 'Shield' }]
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ job_accessories: mockAccessories })
-			})
+			global.fetch = mockApiResponse(API.listJobAccessories)
 
 			const result = await adapter.listJobAccessories()
 
-			expect(result).toEqual(mockAccessories)
+			expect(result).toEqual(EXPECTED.listJobAccessories)
 		})
 	})
 })

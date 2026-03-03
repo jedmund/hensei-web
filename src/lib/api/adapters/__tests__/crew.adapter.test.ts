@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { CrewAdapter } from '../crew.adapter'
+import { API, EXPECTED } from './fixtures/crew.fixtures'
+import { mockApiResponse } from './fixtures/helpers'
 
 describe('CrewAdapter', () => {
 	let adapter: CrewAdapter
@@ -17,24 +19,15 @@ describe('CrewAdapter', () => {
 
 	describe('crew operations', () => {
 		it('should unwrap crew from getMyCrew response', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ crew: { id: 'crew-1', name: 'Test Crew' } })
-			})
+			global.fetch = mockApiResponse(API.getMyCrew)
 
 			const result = await adapter.getMyCrew()
 
-			expect(result).toEqual({ id: 'crew-1', name: 'Test Crew' })
+			expect(result).toEqual(EXPECTED.getMyCrew)
 		})
 
 		it('should send page and per_page params in getSharedParties', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					parties: [{ id: 'p1' }],
-					meta: { page: 2, total_pages: 3, count: 50, per_page: 20 }
-				})
-			})
+			global.fetch = mockApiResponse(API.getSharedParties)
 
 			await adapter.getSharedParties(2, 20)
 
@@ -44,10 +37,7 @@ describe('CrewAdapter', () => {
 		})
 
 		it('should clear dual cache on leave', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({})
-			})
+			global.fetch = mockApiResponse({})
 			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.leave()
@@ -57,10 +47,7 @@ describe('CrewAdapter', () => {
 		})
 
 		it('should send user_id in transferCaptain body', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ crew: { id: 'crew-1' } })
-			})
+			global.fetch = mockApiResponse(API.transferCaptain)
 
 			await adapter.transferCaptain('crew-1', 'user-2')
 
@@ -71,10 +58,7 @@ describe('CrewAdapter', () => {
 
 	describe('members', () => {
 		it('should not send filter param for default active members', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ members: [], phantom_players: [] })
-			})
+			global.fetch = mockApiResponse(API.getMembers)
 
 			await adapter.getMembers()
 
@@ -83,10 +67,7 @@ describe('CrewAdapter', () => {
 		})
 
 		it('should send filter param for retired members', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ members: [], phantom_players: [] })
-			})
+			global.fetch = mockApiResponse(API.getMembers)
 
 			await adapter.getMembers('retired')
 
@@ -95,10 +76,7 @@ describe('CrewAdapter', () => {
 		})
 
 		it('should build full query string for getRoster', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ members: [] })
-			})
+			global.fetch = mockApiResponse(API.getRoster)
 
 			await adapter.getRoster({
 				characterIds: ['c1', 'c2'],
@@ -117,10 +95,7 @@ describe('CrewAdapter', () => {
 		})
 
 		it('should send no query string for empty getRoster', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ members: [] })
-			})
+			global.fetch = mockApiResponse(API.getRoster)
 
 			await adapter.getRoster({})
 
@@ -132,23 +107,17 @@ describe('CrewAdapter', () => {
 
 	describe('invitations', () => {
 		it('should send user_id and unwrap invitation from sendInvitation', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ invitation: { id: 'inv-1', status: 'pending' } })
-			})
+			global.fetch = mockApiResponse(API.sendInvitation)
 
 			const result = await adapter.sendInvitation('crew-1', 'user-2')
 
 			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
 			expect(body.user_id).toBe('user-2')
-			expect(result).toEqual({ id: 'inv-1', status: 'pending' })
+			expect(result).toEqual(EXPECTED.sendInvitation)
 		})
 
 		it('should clear dual cache on acceptInvitation', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ membership: { id: 'mem-1' } })
-			})
+			global.fetch = mockApiResponse(API.acceptInvitation)
 			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.acceptInvitation('inv-1')
@@ -160,32 +129,23 @@ describe('CrewAdapter', () => {
 
 	describe('phantom players', () => {
 		it('should unwrap phantomPlayer from createPhantom response', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ phantom_player: { id: 'p1', name: 'Ghost' } })
-			})
+			global.fetch = mockApiResponse(API.createPhantom)
 
 			const result = await adapter.createPhantom('crew-1', { name: 'Ghost' } as any)
 
-			expect(result).toEqual({ id: 'p1', name: 'Ghost' })
+			expect(result).toEqual(EXPECTED.createPhantom)
 		})
 
 		it('should unwrap phantomPlayers from bulkCreatePhantoms response', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ phantom_players: [{ id: 'p1' }, { id: 'p2' }] })
-			})
+			global.fetch = mockApiResponse(API.bulkCreatePhantoms)
 
 			const result = await adapter.bulkCreatePhantoms('crew-1', [{ name: 'Ghost1' }, { name: 'Ghost2' }] as any)
 
-			expect(result).toEqual([{ id: 'p1' }, { id: 'p2' }])
+			expect(result).toEqual(EXPECTED.bulkCreatePhantoms)
 		})
 
 		it('should clear dual cache on declinePhantomClaim', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ phantom_player: { id: 'p1' } })
-			})
+			global.fetch = mockApiResponse(API.declinePhantomClaim)
 			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.declinePhantomClaim('crew-1', 'p1')
@@ -195,15 +155,11 @@ describe('CrewAdapter', () => {
 		})
 
 		it('should unwrap phantomClaims from getPendingPhantomClaims', async () => {
-			const mockClaims = [{ id: 'p1', name: 'Ghost' }]
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ phantom_claims: mockClaims })
-			})
+			global.fetch = mockApiResponse(API.getPendingPhantomClaims)
 
 			const result = await adapter.getPendingPhantomClaims()
 
-			expect(result).toEqual(mockClaims)
+			expect(result).toEqual(EXPECTED.getPendingPhantomClaims)
 		})
 	})
 })

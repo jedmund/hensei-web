@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { RaidAdapter } from '../raid.adapter'
+import { API, EXPECTED } from './fixtures/raid.fixtures'
+import { mockApiResponse } from './fixtures/helpers'
 
 describe('RaidAdapter', () => {
 	let adapter: RaidAdapter
@@ -17,10 +19,7 @@ describe('RaidAdapter', () => {
 
 	describe('filter mapping', () => {
 		it('should map all filters to query params', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ([])
-			})
+			global.fetch = mockApiResponse([])
 
 			await adapter.getAll({
 				element: 1,
@@ -41,10 +40,7 @@ describe('RaidAdapter', () => {
 		})
 
 		it('should not attach query params when no filters', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ([])
-			})
+			global.fetch = mockApiResponse([])
 
 			await adapter.getAll()
 
@@ -53,10 +49,7 @@ describe('RaidAdapter', () => {
 		})
 
 		it('should only send specified filters', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ([])
-			})
+			global.fetch = mockApiResponse([])
 
 			await adapter.getAll({ element: 3, hl: true })
 
@@ -72,37 +65,17 @@ describe('RaidAdapter', () => {
 
 	describe('download status', () => {
 		it('should map all response fields correctly', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({
-					status: 'completed',
-					progress: 100,
-					images_downloaded: 4,
-					images_total: 4,
-					raid_id: 'raid-1',
-					slug: 'proto-bahamut',
-					updated_at: '2024-01-01T00:00:00Z'
-				})
-			})
+			global.fetch = mockApiResponse(API.downloadStatus)
 
 			const result = await adapter.getRaidDownloadStatus('proto-bahamut')
 
-			expect(result.status).toBe('completed')
-			expect(result.progress).toBe(100)
-			expect(result.slug).toBe('proto-bahamut')
-			expect(result.imagesDownloaded).toBe(4)
-			expect(result.imagesTotal).toBe(4)
-			expect(result.raidId).toBe('raid-1')
-			expect(result.updatedAt).toBe('2024-01-01T00:00:00Z')
+			expect(result).toEqual(EXPECTED.downloadStatus)
 		})
 	})
 
 	describe('image downloads', () => {
 		it('should POST downloadRaidImage with size and force', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ success: true })
-			})
+			global.fetch = mockApiResponse({ success: true })
 
 			await adapter.downloadRaidImage('proto-bahamut', 'thumbnail', true)
 
@@ -116,10 +89,7 @@ describe('RaidAdapter', () => {
 		})
 
 		it('should POST downloadRaidImages with options wrapper', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ status: 'queued', raidId: 'raid-1', message: 'started' })
-			})
+			global.fetch = mockApiResponse({ status: 'queued', raidId: 'raid-1', message: 'started' })
 
 			await adapter.downloadRaidImages('proto-bahamut', { force: true, size: 'all' })
 
@@ -135,10 +105,7 @@ describe('RaidAdapter', () => {
 
 	describe('cache clearing', () => {
 		it('should clear both raid list and detail cache on update', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ id: 'raid-1', slug: 'proto-bahamut' })
-			})
+			global.fetch = mockApiResponse({ id: 'raid-1', slug: 'proto-bahamut' })
 			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.update('proto-bahamut', { name: { en: 'Updated' } } as any)
@@ -148,10 +115,7 @@ describe('RaidAdapter', () => {
 		})
 
 		it('should clear both raid list and detail cache on delete', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({})
-			})
+			global.fetch = mockApiResponse({})
 			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.delete('proto-bahamut')
