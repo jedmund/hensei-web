@@ -6,8 +6,8 @@
  * that mutations actually read or transform.
  */
 
-import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
-import type { Weapon, Character, Summon } from '$lib/types/api/entities'
+import type { Party, GridWeapon, GridCharacter, GridSummon, JobSkillList } from '$lib/types/api/party'
+import type { Weapon, Character, Summon, Job, JobSkill } from '$lib/types/api/entities'
 
 // ============================================================================
 // Base Entities
@@ -127,6 +127,54 @@ export const MOCK_GRID_SUMMON_2: GridSummon = {
 }
 
 // ============================================================================
+// Job & Skills
+// ============================================================================
+
+export const MOCK_JOB: Job = {
+	id: 'job-1',
+	granblueId: '100001',
+	name: { en: 'Dark Fencer', ja: 'ダークフェンサー' },
+	row: 4,
+	order: 1,
+	proficiency: [1, 0],
+	masterLevel: true,
+	ultimateMastery: false,
+	accessory: false,
+	auxWeapon: false
+}
+
+export const MOCK_JOB_SKILL_1: JobSkill = {
+	id: 'skill-1',
+	name: { en: 'Gravity', ja: 'グラビティ' },
+	slug: 'gravity',
+	color: 0,
+	main: true,
+	sub: false,
+	emp: false,
+	base: false,
+	order: 1,
+	job: MOCK_JOB
+}
+
+export const MOCK_JOB_SKILL_2: JobSkill = {
+	id: 'skill-2',
+	name: { en: 'Delay', ja: 'ディレイ' },
+	slug: 'delay',
+	color: 1,
+	main: false,
+	sub: true,
+	emp: false,
+	base: false,
+	order: 2,
+	job: MOCK_JOB
+}
+
+export const MOCK_JOB_SKILLS: JobSkillList = {
+	0: MOCK_JOB_SKILL_1,
+	1: MOCK_JOB_SKILL_2
+}
+
+// ============================================================================
 // Party
 // ============================================================================
 
@@ -139,6 +187,8 @@ export const MOCK_PARTY: Party = {
 	weapons: [MOCK_GRID_WEAPON, MOCK_GRID_WEAPON_2],
 	characters: [MOCK_GRID_CHARACTER, MOCK_GRID_CHARACTER_2],
 	summons: [MOCK_GRID_SUMMON, MOCK_GRID_SUMMON_2],
+	job: MOCK_JOB,
+	jobSkills: MOCK_JOB_SKILLS,
 	favorited: false,
 	user: { id: 'user-1', username: 'testuser' },
 	createdAt: '2024-01-01T00:00:00Z',

@@ -4,10 +4,12 @@
  * Provides mutation configurations for collection operations
  * with cache invalidation using TanStack Query v6.
  *
+ * Each mutation exports both an options factory (for testing) and a hook (for components).
+ *
  * @module api/mutations/collection
  */
 
-import { useQueryClient, createMutation } from '@tanstack/svelte-query'
+import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
 import { collectionAdapter } from '$lib/api/adapters/collection.adapter'
 import { collectionKeys } from '$lib/api/queries/collection.queries'
 import type {
@@ -19,78 +21,40 @@ import type {
 } from '$lib/types/api/collection'
 
 // ============================================================================
-// Character Mutations
+// Options Factories — Characters
 // ============================================================================
 
-/**
- * Add characters to collection mutation
- *
- * Adds one or more characters to the user's collection.
- *
- * @example
- * ```svelte
- * <script lang="ts">
- *   import { useAddToCollection } from '$lib/api/mutations/collection.mutations'
- *
- *   const addToCollection = useAddToCollection()
- *
- *   function handleAdd(characterIds: string[]) {
- *     addToCollection.mutate(
- *       characterIds.map(id => ({ characterId: id }))
- *     )
- *   }
- * </script>
- * ```
- */
-export function useAddCharactersToCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function addCharactersToCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (inputs: CollectionCharacterInput[]) => collectionAdapter.addCharacters(inputs),
 		onSuccess: () => {
-			// Invalidate all character-related collection queries
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characterIds() })
 		}
-	}))
+	}
 }
 
-/**
- * Add single character to collection mutation
- */
-export function useAddCharacterToCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function addCharacterToCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (input: CollectionCharacterInput) => collectionAdapter.addCharacter(input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characterIds() })
 		}
-	}))
+	}
 }
 
-/**
- * Update collection character mutation
- *
- * Updates a character's customizations (uncap, rings, etc.) in the collection.
- */
-export function useUpdateCollectionCharacter() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function updateCollectionCharacterOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: ({ id, input }: { id: string; input: Partial<CollectionCharacterInput> }) =>
 			collectionAdapter.updateCharacter(id, input),
-		onMutate: async ({ id, input }) => {
-			// Cancel any outgoing refetches
+		onMutate: async ({ id, input }: { id: string; input: Partial<CollectionCharacterInput> }) => {
 			await queryClient.cancelQueries({ queryKey: collectionKeys.character(id) })
 
-			// Snapshot the previous value
 			const previousCharacter = queryClient.getQueryData<CollectionCharacter>(
 				collectionKeys.character(id)
 			)
 
-			// Optimistically update the cache
 			if (previousCharacter) {
 				queryClient.setQueryData(collectionKeys.character(id), {
 					...previousCharacter,
@@ -100,232 +64,255 @@ export function useUpdateCollectionCharacter() {
 
 			return { previousCharacter }
 		},
-		onError: (_err, { id }, context) => {
-			// Rollback on error
+		onError: (
+			_err: unknown,
+			{ id }: { id: string; input: Partial<CollectionCharacterInput> },
+			context: { previousCharacter?: CollectionCharacter } | undefined
+		) => {
 			if (context?.previousCharacter) {
 				queryClient.setQueryData(collectionKeys.character(id), context.previousCharacter)
 			}
 		},
-		onSettled: (_data, _err, { id }) => {
-			// Always refetch after mutation
+		onSettled: (
+			_data: unknown,
+			_err: unknown,
+			{ id }: { id: string; input: Partial<CollectionCharacterInput> }
+		) => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.character(id) })
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 		}
-	}))
+	}
 }
 
-/**
- * Remove character from collection mutation
- */
-export function useRemoveCharacterFromCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function removeCharacterFromCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (id: string) => collectionAdapter.removeCharacter(id),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characterIds() })
 		}
-	}))
+	}
 }
 
-/**
- * Remove multiple characters from collection in a single batch
- */
-export function useBulkRemoveCharactersFromCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function bulkRemoveCharactersFromCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (ids: string[]) => collectionAdapter.removeCharactersBatch(ids),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characterIds() })
 		}
-	}))
+	}
 }
 
 // ============================================================================
-// Weapon Mutations
+// Options Factories — Weapons
 // ============================================================================
 
-/**
- * Add weapon to collection mutation
- */
-export function useAddWeaponToCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function addWeaponToCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (input: CollectionWeaponInput) => collectionAdapter.addWeapon(input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
 		}
-	}))
+	}
 }
 
-/**
- * Add multiple weapons to collection mutation with quantity support
- */
-export function useAddWeaponsToCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function addWeaponsToCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (inputs: Array<CollectionWeaponInput & { quantity?: number }>) =>
 			collectionAdapter.addWeapons(inputs),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
 		}
-	}))
+	}
 }
 
-/**
- * Update collection weapon mutation
- * Uses resetQueries to clear cache and start fresh, avoiding issues where
- * items shift between pages after sort-affecting updates (like element changes)
- */
-export function useUpdateCollectionWeapon() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function updateCollectionWeaponOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: ({ id, input }: { id: string; input: Partial<CollectionWeaponInput> }) =>
 			collectionAdapter.updateWeapon(id, input),
 		onSuccess: () => {
 			queryClient.resetQueries({ queryKey: collectionKeys.weapons() })
 		}
-	}))
+	}
 }
 
-/**
- * Remove weapon from collection mutation
- */
-export function useRemoveWeaponFromCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function removeWeaponFromCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (id: string) => collectionAdapter.removeWeapon(id),
 		onSuccess: () => {
 			queryClient.resetQueries({ queryKey: collectionKeys.weapons() })
 		}
-	}))
+	}
 }
 
-/**
- * Remove multiple weapons from collection in a single batch
- */
-export function useBulkRemoveWeaponsFromCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function bulkRemoveWeaponsFromCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (ids: string[]) => collectionAdapter.removeWeaponsBatch(ids),
 		onSuccess: () => {
 			queryClient.resetQueries({ queryKey: collectionKeys.weapons() })
 		}
-	}))
+	}
 }
 
 // ============================================================================
-// Summon Mutations
+// Options Factories — Summons
 // ============================================================================
 
-/**
- * Add summon to collection mutation
- */
-export function useAddSummonToCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function addSummonToCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (input: CollectionSummonInput) => collectionAdapter.addSummon(input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
 		}
-	}))
+	}
 }
 
-/**
- * Add multiple summons to collection mutation with quantity support
- */
-export function useAddSummonsToCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function addSummonsToCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (inputs: Array<CollectionSummonInput & { quantity?: number }>) =>
 			collectionAdapter.addSummons(inputs),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
 		}
-	}))
+	}
 }
 
-/**
- * Update collection summon mutation
- */
-export function useUpdateCollectionSummon() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function updateCollectionSummonOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: ({ id, input }: { id: string; input: Partial<CollectionSummonInput> }) =>
 			collectionAdapter.updateSummon(id, input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
 		}
-	}))
+	}
 }
 
-/**
- * Remove summon from collection mutation
- */
-export function useRemoveSummonFromCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function removeSummonFromCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (id: string) => collectionAdapter.removeSummon(id),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
 		}
-	}))
+	}
 }
 
-/**
- * Remove multiple summons from collection in a single batch
- */
-export function useBulkRemoveSummonsFromCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function bulkRemoveSummonsFromCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (ids: string[]) => collectionAdapter.removeSummonsBatch(ids),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
 		}
-	}))
+	}
 }
 
 // ============================================================================
-// Job Accessory Mutations
+// Options Factories — Job Accessories
 // ============================================================================
 
-/**
- * Add job accessory to collection mutation
- */
-export function useAddJobAccessoryToCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function addJobAccessoryToCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (input: CollectionJobAccessoryInput) => collectionAdapter.addJobAccessory(input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.all })
 		}
-	}))
+	}
 }
 
-/**
- * Remove job accessory from collection mutation
- */
-export function useRemoveJobAccessoryFromCollection() {
-	const queryClient = useQueryClient()
-
-	return createMutation(() => ({
+export function removeJobAccessoryFromCollectionOptions(queryClient: QueryClient) {
+	return {
 		mutationFn: (id: string) => collectionAdapter.removeJobAccessory(id),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.all })
 		}
-	}))
+	}
+}
+
+// ============================================================================
+// Hooks (thin wrappers for component use)
+// ============================================================================
+
+export function useAddCharactersToCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => addCharactersToCollectionOptions(queryClient))
+}
+
+export function useAddCharacterToCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => addCharacterToCollectionOptions(queryClient))
+}
+
+export function useUpdateCollectionCharacter() {
+	const queryClient = useQueryClient()
+	return createMutation(() => updateCollectionCharacterOptions(queryClient))
+}
+
+export function useRemoveCharacterFromCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => removeCharacterFromCollectionOptions(queryClient))
+}
+
+export function useBulkRemoveCharactersFromCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => bulkRemoveCharactersFromCollectionOptions(queryClient))
+}
+
+export function useAddWeaponToCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => addWeaponToCollectionOptions(queryClient))
+}
+
+export function useAddWeaponsToCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => addWeaponsToCollectionOptions(queryClient))
+}
+
+export function useUpdateCollectionWeapon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => updateCollectionWeaponOptions(queryClient))
+}
+
+export function useRemoveWeaponFromCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => removeWeaponFromCollectionOptions(queryClient))
+}
+
+export function useBulkRemoveWeaponsFromCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => bulkRemoveWeaponsFromCollectionOptions(queryClient))
+}
+
+export function useAddSummonToCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => addSummonToCollectionOptions(queryClient))
+}
+
+export function useAddSummonsToCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => addSummonsToCollectionOptions(queryClient))
+}
+
+export function useUpdateCollectionSummon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => updateCollectionSummonOptions(queryClient))
+}
+
+export function useRemoveSummonFromCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => removeSummonFromCollectionOptions(queryClient))
+}
+
+export function useBulkRemoveSummonsFromCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => bulkRemoveSummonsFromCollectionOptions(queryClient))
+}
+
+export function useAddJobAccessoryToCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => addJobAccessoryToCollectionOptions(queryClient))
+}
+
+export function useRemoveJobAccessoryFromCollection() {
+	const queryClient = useQueryClient()
+	return createMutation(() => removeJobAccessoryFromCollectionOptions(queryClient))
 }
