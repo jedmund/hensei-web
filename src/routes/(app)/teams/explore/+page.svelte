@@ -139,7 +139,7 @@
             pageParams: [1]
           }
         : undefined,
-    initialDataUpdatedAt: 0
+    initialDataUpdatedAt: Date.now()
   }))
 
   // Infinite scroll
