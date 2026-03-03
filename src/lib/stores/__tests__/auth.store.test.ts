@@ -209,4 +209,131 @@ describe('refresh', () => {
 
 		delete (globalThis as any).window
 	})
+
+	it('deduplicates concurrent refresh calls', async () => {
+		let fetchCount = 0
+		vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+			fetchCount++
+			// Small delay to simulate network
+			await new Promise(r => setTimeout(r, 10))
+			return new Response(
+				JSON.stringify({
+					access_token: 'deduped-tok',
+					user: { id: 'u1', username: 'grug' },
+					expires_in: 3600
+				}),
+				{ status: 200 }
+			)
+		})
+
+		// Fire three concurrent refreshes
+		const [r1, r2, r3] = await Promise.all([
+			authStore.refresh(),
+			authStore.refresh(),
+			authStore.refresh()
+		])
+
+		// All should succeed
+		expect(r1).toBe(true)
+		expect(r2).toBe(true)
+		expect(r3).toBe(true)
+
+		// But only one fetch call should have been made
+		expect(fetchCount).toBe(1)
+	})
+})
+
+// ============================================================================
+// checkAndRefresh
+// ============================================================================
+
+describe('checkAndRefresh', () => {
+	it('returns null when no token is set', async () => {
+		const result = await authStore.checkAndRefresh()
+		expect(result).toBeNull()
+	})
+
+	it('returns token when not near expiry', async () => {
+		authStore.setAuth('fresh-tok', { id: 'u1', username: 'grug' }, 3600)
+
+		const result = await authStore.checkAndRefresh()
+		expect(result).toBe('fresh-tok')
+	})
+
+	it('triggers refresh when within 5 minutes of expiry', async () => {
+		// Set token that expires in 2 minutes (within the 5-minute window)
+		authStore.setAuth('expiring-tok', { id: 'u1', username: 'grug' }, 120)
+
+		vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					access_token: 'renewed-tok',
+					user: { id: 'u1', username: 'grug' },
+					expires_in: 3600
+				}),
+				{ status: 200 }
+			)
+		)
+
+		const result = await authStore.checkAndRefresh()
+
+		expect(result).toBe('renewed-tok')
+		expect(get(authStore).accessToken).toBe('renewed-tok')
+	})
+
+	it('returns stale token when refresh fails (known bug: state snapshot is stale)', async () => {
+		// Token expiring in 1 minute (within the 5-minute refresh window)
+		authStore.setAuth('dying-tok', { id: 'u1', username: 'grug' }, 60)
+
+		vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response('', { status: 401 })
+		)
+
+		const fakeLocation = { href: '' }
+		;(globalThis as any).window = { location: fakeLocation }
+
+		const result = await authStore.checkAndRefresh()
+
+		// BUG: checkAndRefresh captures `state` before refresh(), so when
+		// refresh fails and clears auth, it still returns the stale token.
+		// Should return null after failed refresh.
+		expect(result).toBe('dying-tok')
+		expect(get(authStore).isAuthenticated).toBe(false)
+
+		delete (globalThis as any).window
+	})
+})
+
+// ============================================================================
+// getToken recovery
+// ============================================================================
+
+describe('getToken recovery', () => {
+	it('returns new token after refresh triggered by expired getToken', async () => {
+		// Set an expired token
+		authStore.setAuth('expired-tok', { id: 'u1', username: 'grug' }, -1)
+
+		;(globalThis as any).window = { location: { href: '' } }
+		vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					access_token: 'recovered-tok',
+					user: { id: 'u1', username: 'grug' },
+					expires_in: 3600
+				}),
+				{ status: 200 }
+			)
+		)
+
+		// First call returns null (expired)
+		expect(authStore.getToken()).toBeNull()
+
+		// Wait for the fire-and-forget refresh to complete
+		await vi.waitFor(() => expect(get(authStore).isRefreshing).toBe(false))
+
+		// Now getToken should return the refreshed token
+		expect(authStore.getToken()).toBe('recovered-tok')
+
+		delete (globalThis as any).window
+	})
 })
