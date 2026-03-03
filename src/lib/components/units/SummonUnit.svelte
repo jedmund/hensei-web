@@ -128,6 +128,7 @@
               class:cell={!((item?.main || position === -1) || (item?.friend || position === 6))}
               class:editable={ctx?.canEdit()}
               class:is-active={isActive}
+              class:not-in-collection={notInCollection}
               onclick={() => viewDetails()}
             >
             {#if item?.orphaned}
@@ -240,7 +241,7 @@
       }}
     />
   {/if}
-  <div class="name">{item ? displayName(item?.summon) : ''}</div>
+  <div class="name" class:not-in-collection={notInCollection}>{item ? displayName(item?.summon) : ''}</div>
 </div>
 
 <style lang="scss">
@@ -336,8 +337,18 @@
     }
 
     &.not-in-collection {
-      opacity: 0.75;
+      opacity: 0.6;
     }
+  }
+
+  .frame.not-in-collection::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid colors.$error;
+    border-radius: inherit;
+    z-index: 2;
+    pointer-events: none;
   }
 
   .icon {
@@ -355,6 +366,10 @@
     font-size: typography.$font-small;
     text-align: center;
     color: var(--text-secondary);
+
+    &.not-in-collection {
+      color: colors.$error;
+    }
   }
 
   .orphaned-badge {

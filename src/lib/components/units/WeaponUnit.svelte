@@ -172,6 +172,7 @@
 							class:extra={position >= 9}
 							class:editable={ctx?.canEdit()}
 							class:is-active={isActive}
+							class:not-in-collection={notInCollection}
 							onclick={() => viewDetails()}
 						>
 							<div class="modifiers">
@@ -312,7 +313,7 @@
 			}}
 		/>
 	{/if}
-	<div class="name">{item ? displayName(item?.weapon) : ''}</div>
+	<div class="name" class:not-in-collection={notInCollection}>{item ? displayName(item?.weapon) : ''}</div>
 </div>
 
 <style lang="scss">
@@ -432,8 +433,18 @@
 		}
 
 		&.not-in-collection {
-			opacity: 0.75;
+			opacity: 0.6;
 		}
+	}
+
+	.frame.not-in-collection::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border: 2px solid colors.$error;
+		border-radius: inherit;
+		z-index: 2;
+		pointer-events: none;
 	}
 
 	.icon {
@@ -451,6 +462,10 @@
 		font-size: typography.$font-small;
 		text-align: center;
 		color: var(--text-secondary);
+
+		&.not-in-collection {
+			color: colors.$error;
+		}
 	}
 
 	.modifiers {
