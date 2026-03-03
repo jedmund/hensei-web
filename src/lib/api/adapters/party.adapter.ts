@@ -145,8 +145,6 @@ export interface GridUpdateResponse {
 export class PartyAdapter extends BaseAdapter {
 	constructor(options?: AdapterOptions) {
 		super(options)
-		// Temporarily disable cache until cache invalidation is fixed
-		this.disableCache = true
 	}
 
 	/**
