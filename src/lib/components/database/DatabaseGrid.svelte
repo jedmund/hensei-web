@@ -150,6 +150,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.database-grid {
 		width: 100%;
@@ -224,7 +225,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			z-index: 10;
+			z-index: effects.$z-sticky;
 
 			.loading-spinner {
 				font-size: typography.$font-medium;

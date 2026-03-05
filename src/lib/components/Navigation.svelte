@@ -855,7 +855,7 @@
 			0 10px 38px -10px rgba(22, 23, 24, 0.35),
 			0 10px 20px -15px rgba(22, 23, 24, 0.2);
 		animation: dropdownSlideIn 0.2s ease;
-		z-index: 50;
+		z-index: effects.$z-popover;
 
 		@keyframes dropdownSlideIn {
 			from {

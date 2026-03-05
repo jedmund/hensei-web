@@ -169,7 +169,7 @@
 				left: 0;
 				right: 0;
 				height: 81px; // Matches $nav-height
-				z-index: 3; // Above content (2) for backdrop-filter to work, below nav (10)
+				z-index: $z-badge; // Above content (2) for backdrop-filter to work, below nav (10)
 				pointer-events: none;
 				transition: right $duration-slide ease-in-out;
 
@@ -214,7 +214,7 @@
 				top: 0;
 				left: 0;
 				right: 0;
-				z-index: 10; // Above blur but below scrollbar
+				z-index: $z-sticky; // Above blur but below scrollbar
 				transition: right $duration-slide ease-in-out;
 				pointer-events: auto;
 			}
@@ -227,7 +227,7 @@
 				position: relative;
 				padding-top: 81px; // Space for fixed navigation (matches $nav-height)
 				padding-bottom: 20vh; // Extra space at bottom for comfortable scrolling
-				z-index: 2; // Ensure scrollbar is above blur background
+				z-index: $z-badge; // Ensure scrollbar is above blur background
 
 				// Use overlay scrollbars that auto-hide on macOS
 				overflow-y: overlay;
@@ -301,7 +301,7 @@
 				right: 0;
 				bottom: 0;
 				background: rgba(0, 0, 0, 0.5);
-				z-index: 99;
+				z-index: $z-modal;
 				animation: fadeIn $duration-quick ease-out;
 			}
 		}

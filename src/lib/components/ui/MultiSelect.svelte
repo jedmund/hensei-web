@@ -242,7 +242,7 @@
 		min-width: var(--bits-select-anchor-width);
 		max-height: 280px;
 		overflow: auto;
-		z-index: 50;
+		z-index: $z-popover;
 		animation: fadeIn $duration-opacity-fade ease-out;
 
 		@keyframes fadeIn {

@@ -318,6 +318,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.settings-page {
 		max-width: 500px;
@@ -449,7 +450,7 @@
 		position: fixed;
 		inset: 0;
 		background: rgba(0, 0, 0, 0.5);
-		z-index: 50;
+		z-index: effects.$z-popover;
 	}
 
 	.dialog-title {

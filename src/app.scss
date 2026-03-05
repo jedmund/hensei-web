@@ -3,6 +3,7 @@
 @use 'themes/spacing';
 @use 'themes/tooltip';
 @use 'themes/layout' as layout;
+@use 'themes/effects' as effects;
 
 :root {
 	--main-max-width: 820px; // Default max-width for main content
@@ -103,7 +104,7 @@ $font-size-base: 16px;
 	--info-border: var(--toast-info-text);
 
 	font-family: var(--font-family);
-	z-index: 102; // Above dialogs (101)
+	z-index: effects.$z-modal + 2; // Above dialogs (101)
 }
 
 [data-sonner-toast] {

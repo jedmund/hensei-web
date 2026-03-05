@@ -421,7 +421,7 @@
 		min-width: var(--bits-select-anchor-width);
 		max-height: 40vh;
 		overflow: auto;
-		z-index: 102;
+		z-index: $z-modal + 2;
 		animation: fadeIn $duration-opacity-fade ease-out;
 
 		@keyframes fadeIn {

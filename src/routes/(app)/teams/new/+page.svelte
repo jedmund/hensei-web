@@ -873,6 +873,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.page-container {
 		display: flex;
@@ -908,7 +909,7 @@
 		position: fixed;
 		inset: 0;
 		background: rgba(0, 0, 0, 0.5);
-		z-index: 50;
+		z-index: effects.$z-popover;
 	}
 	/* 
   :global(.dialog-content) {
@@ -923,7 +924,7 @@
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
-    z-index: 51;
+    z-index: effects.$z-popover + 1;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   } */
 

@@ -58,6 +58,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.weapon-card {
 		display: flex;
@@ -94,7 +95,7 @@
 			left: -3%;
 			width: 30%;
 			height: auto;
-			z-index: 2;
+			z-index: effects.$z-badge;
 			pointer-events: none;
 		}
 	}

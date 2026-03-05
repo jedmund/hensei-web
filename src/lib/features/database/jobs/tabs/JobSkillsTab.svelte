@@ -345,6 +345,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.skills-tab {
 		display: flex;
@@ -453,7 +454,7 @@
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 		padding: spacing.$unit-half;
 		min-width: calc(spacing.$unit * 16);
-		z-index: 200;
+		z-index: effects.$z-modal;
 	}
 
 	:global(.skill-menu-item) {

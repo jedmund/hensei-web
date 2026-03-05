@@ -60,6 +60,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.character-card {
 		display: flex;
@@ -99,7 +100,7 @@
 		right: $unit;
 		width: $unit-3x;
 		height: $unit-3x;
-		z-index: 10;
+		z-index: effects.$z-sticky;
 	}
 
 	.character-image {

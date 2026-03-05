@@ -209,6 +209,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography';
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.star {
 		--size: 18px;
@@ -348,7 +349,7 @@
 
 	.popover {
 		position: fixed;
-		z-index: 1001;
+		z-index: effects.$z-notification + 1;
 		background: white;
 		border-radius: layout.$input-corner;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

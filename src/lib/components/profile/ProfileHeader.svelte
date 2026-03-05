@@ -170,6 +170,7 @@
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/effects' as effects;
 
 	.header {
 		background: var(--card-bg);
@@ -391,7 +392,7 @@
 		box-shadow:
 			0 10px 38px -10px rgba(22, 23, 24, 0.35),
 			0 10px 20px -15px rgba(22, 23, 24, 0.2);
-		z-index: 50;
+		z-index: effects.$z-popover;
 
 		button {
 			display: flex;

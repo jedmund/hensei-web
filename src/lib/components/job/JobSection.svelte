@@ -178,6 +178,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.job-section {
 		display: flex;
@@ -224,7 +225,7 @@
 			width: 100%;
 			height: auto;
 			object-fit: contain;
-			z-index: 2;
+			z-index: effects.$z-badge;
 			filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.48));
 			transform: translateY(74px);
 		}
@@ -236,19 +237,19 @@
 			bottom: 0;
 			left: 0;
 			backdrop-filter: blur(5px) saturate(100%) brightness(80%);
-			z-index: 1;
+			z-index: effects.$z-raised;
 			pointer-events: none;
 		}
 
 		.empty-portrait {
-			z-index: 2;
+			z-index: effects.$z-badge;
 		}
 
 		.change-job-button {
 			position: absolute;
 			top: spacing.$unit;
 			right: spacing.$unit;
-			z-index: 3;
+			z-index: effects.$z-badge;
 			display: flex;
 			align-items: center;
 			justify-content: center;

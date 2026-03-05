@@ -183,7 +183,7 @@
 		// Active pane (top of stack, fully visible)
 		&.is-active {
 			transform: translateX(0) scale(1);
-			z-index: 10;
+			z-index: $z-sticky;
 			opacity: 1;
 
 			.pane-content {
@@ -194,7 +194,7 @@
 		// Behind pane (shifted left to peek out)
 		&.is-behind {
 			transform: translateX(-$pane-peek-offset) scale(0.98);
-			z-index: 5;
+			z-index: $z-sticky;
 			opacity: 1;
 
 			.pane-content {
@@ -207,7 +207,7 @@
 		&.is-hidden {
 			opacity: 0;
 			pointer-events: none;
-			z-index: 0;
+			z-index: $z-base;
 		}
 
 		// Pushing animation (new pane entering from right)
@@ -218,7 +218,7 @@
 		// Popping animation (pane exiting to the right)
 		&.is-popping {
 			animation: pane-exit $duration-slide ease-out forwards;
-			z-index: 10; // Keep on top during exit
+			z-index: $z-sticky; // Keep on top during exit
 		}
 	}
 
@@ -294,7 +294,7 @@
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 		padding: $unit-half;
 		min-width: calc($unit * 20);
-		z-index: 200;
+		z-index: $z-modal;
 	}
 
 	:global(.overflow-menu-item) {

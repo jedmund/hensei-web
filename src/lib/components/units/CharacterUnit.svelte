@@ -360,6 +360,7 @@
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/rep' as rep;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.unit {
 		position: relative;
@@ -385,7 +386,7 @@
 			inset: 0;
 			border-radius: layout.$input-corner;
 			pointer-events: none;
-			z-index: 10;
+			z-index: effects.$z-sticky;
 		}
 
 		&.editable:hover {
@@ -436,7 +437,7 @@
 		height: 100%;
 		object-fit: cover;
 		display: block;
-		z-index: 2;
+		z-index: effects.$z-badge;
 		border-radius: layout.$input-corner;
 
 		&.placeholder {
@@ -454,13 +455,13 @@
 		inset: 0;
 		border: 2px solid colors.$error;
 		border-radius: inherit;
-		z-index: 2;
+		z-index: effects.$z-badge;
 		pointer-events: none;
 	}
 
 	.icon {
 		position: absolute;
-		z-index: 1;
+		z-index: effects.$z-raised;
 		color: var(--icon-secondary, #999);
 		transition: color 0.2s ease-in-out;
 	}
@@ -490,7 +491,7 @@
 
 	.perpetuity {
 		position: absolute;
-		z-index: 40;
+		z-index: effects.$z-tooltip;
 		top: calc(spacing.$unit * -1);
 		right: spacing.$unit-3x;
 		width: spacing.$unit-4x;
@@ -657,7 +658,7 @@
 		align-items: center;
 		justify-content: center;
 		color: white;
-		z-index: 10;
+		z-index: effects.$z-sticky;
 		pointer-events: auto;
 		cursor: help;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);

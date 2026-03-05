@@ -46,6 +46,7 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/effects' as effects;
 
 	.fragment {
 		--degrees: 72deg;
@@ -60,7 +61,7 @@
 		background-repeat: no-repeat;
 
 		position: absolute;
-		z-index: 32;
+		z-index: effects.$z-dropdown;
 
 		aspect-ratio: 29 / 54;
 		height: var(--scaled-height);

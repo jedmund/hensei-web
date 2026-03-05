@@ -401,7 +401,7 @@
 			border: 1px solid rgba(0, 0, 0, 0.1);
 			border-radius: layout.$card-corner !important;
 			max-height: 40vh;
-			z-index: 102;
+			z-index: effects.$z-modal + 2;
 		}
 
 		// Style dropdown item wrappers
@@ -487,7 +487,7 @@
 		left: 0;
 		padding-left: spacing.$unit-2x;
 		background: var(--card-bg);
-		z-index: 1;
+		z-index: effects.$z-raised;
 
 		.member-name {
 			font-weight: typography.$medium;
