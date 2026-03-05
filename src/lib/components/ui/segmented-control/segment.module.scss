@@ -129,7 +129,7 @@
 		background: var(--segmented-control-background-segment-bg-checked);
 		color: var(--segmented-control-background-segment-text-checked);
 		border: 0.5px solid rgba(0, 0, 0, 0.12);
-		box-shadow: 0 0 4px rgba(0, 0, 0, 0.08);
+		box-shadow: var(--shadow-xs);
 	}
 }
 

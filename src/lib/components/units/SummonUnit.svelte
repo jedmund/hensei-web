@@ -296,7 +296,7 @@
 
     &.editable:hover {
       opacity: 0.95;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow-sm);
     }
 
     // Slot selection - subtle dark pulsing glow (works for both empty and filled)
@@ -387,7 +387,7 @@
     z-index: 10;
     pointer-events: auto;
     cursor: help;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-sm);
   }
 
   // Orphaned state
