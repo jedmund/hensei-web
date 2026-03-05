@@ -448,7 +448,7 @@
 	}
 
 	.error {
-		color: colors.$error;
+		color: var(--danger);
 	}
 
 	.skills-list {

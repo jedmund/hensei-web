@@ -981,8 +981,8 @@
 
 	.status-badge.expired {
 		font-size: typography.$font-tiny;
-		color: colors.$error;
-		background: colors.$error--bg--light;
+		color: var(--danger);
+		background: var(--danger-bg);
 		padding: 2px 8px;
 		border-radius: 4px;
 		font-weight: typography.$medium;

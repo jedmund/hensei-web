@@ -592,10 +592,10 @@
 	}
 
 	.error-message {
-		background-color: rgba(colors.$error, 0.1);
-		border: 1px solid colors.$error;
+		background-color: var(--danger-bg-subtle);
+		border: 1px solid var(--danger);
 		border-radius: layout.$card-corner;
-		color: colors.$error;
+		color: var(--danger);
 		padding: spacing.$unit-2x;
 	}
 

@@ -127,9 +127,9 @@
 	.error-message {
 		margin-top: spacing.$unit;
 		padding: spacing.$unit;
-		background: colors.$error--bg--light;
+		background: var(--danger-bg);
 		border-radius: 4px;
-		color: colors.$error;
+		color: var(--danger);
 
 		p {
 			margin: 0;

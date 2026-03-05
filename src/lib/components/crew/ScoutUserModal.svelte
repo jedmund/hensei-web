@@ -220,7 +220,7 @@
 	.error-text {
 		margin: spacing.$unit 0 0;
 		font-size: typography.$font-small;
-		color: colors.$error;
+		color: var(--danger);
 	}
 
 	.user-result {
@@ -264,13 +264,13 @@
 	.invite-error {
 		margin-top: spacing.$unit;
 		padding: spacing.$unit;
-		background: colors.$error--bg--light;
+		background: var(--danger-bg);
 		border-radius: 4px;
 
 		p {
 			margin: 0;
 			font-size: typography.$font-small;
-			color: colors.$error;
+			color: var(--danger);
 		}
 	}
 

@@ -211,7 +211,7 @@
 		}
 
 		.error-message {
-			color: colors.$error;
+			color: var(--danger);
 			font-size: typography.$font-small;
 			animation: fadeIn effects.$duration-opacity-fade ease-in;
 		}

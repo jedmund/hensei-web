@@ -174,6 +174,6 @@
 	.level-error {
 		margin: 0;
 		font-size: typography.$font-small;
-		color: colors.$error;
+		color: var(--danger);
 	}
 </style>

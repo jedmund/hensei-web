@@ -147,7 +147,7 @@
 	}
 
 	.error {
-		color: colors.$error;
+		color: var(--danger);
 		font-size: typography.$font-small;
 		margin: 0 0 spacing.$unit 0;
 	}

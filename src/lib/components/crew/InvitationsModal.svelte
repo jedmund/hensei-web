@@ -378,8 +378,8 @@
 
 	.expired-badge {
 		font-size: typography.$font-tiny;
-		color: colors.$error;
-		background: colors.$error--bg--light;
+		color: var(--danger);
+		background: var(--danger-bg);
 		padding: spacing.$unit-quarter spacing.$unit-half;
 		border-radius: 4px;
 		font-weight: typography.$medium;
