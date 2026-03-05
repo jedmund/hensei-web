@@ -99,6 +99,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/colors' as colors;
 
 	.artifact-summary {
 		display: flex;
@@ -214,7 +215,7 @@
 		line-height: 1;
 
 		&.grade-s {
-			background: linear-gradient(135deg, #ffd700, #ffb347);
+			background: linear-gradient(135deg, colors.$gold, colors.$gold-light);
 			color: #6b4c00;
 		}
 		&.grade-a {

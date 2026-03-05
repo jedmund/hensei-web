@@ -105,6 +105,7 @@
 {/if}
 
 <style lang="scss">
+	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -146,8 +147,8 @@
 		border-radius: layout.$item-corner-small;
 
 		&.enhanced {
-			background: linear-gradient(135deg, var(--unit-bg), rgba(#d4af37, 0.1));
-			border: 1px solid rgba(#d4af37, 0.2);
+			background: linear-gradient(135deg, var(--unit-bg), rgba(colors.$gold-mastery, 0.1));
+			border: 1px solid rgba(colors.$gold-mastery, 0.2);
 		}
 	}
 
@@ -181,7 +182,7 @@
 		color: var(--text-secondary);
 
 		&.enhanced {
-			color: #d4af37;
+			color: colors.$gold-mastery;
 			font-weight: typography.$medium;
 		}
 	}

@@ -107,7 +107,7 @@
 		border-radius: layout.$item-corner;
 
 		&.grade-s {
-			background: linear-gradient(135deg, #ffd700, #ffb347);
+			background: linear-gradient(135deg, colors.$gold, colors.$gold-light);
 			color: #6b4c00;
 		}
 		&.grade-a {
