@@ -231,7 +231,7 @@
 		background: var(--app-bg, white);
 		border: 1px solid var(--border-color, #ddd);
 		border-radius: layout.$card-corner;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-md);
 		padding: spacing.$unit-half;
 		min-width: calc(spacing.$unit * 22.5);
 		z-index: 200;

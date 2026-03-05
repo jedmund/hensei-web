@@ -358,7 +358,7 @@
     background: var(--app-bg, #fff);
     display: none;
     flex-direction: column;
-    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-md);
     border-left: 1px solid #e0e0e0;
     position: sticky;
     top: 0;
@@ -519,7 +519,7 @@
         &:hover {
           background: #f5f5f5;
           border-color: #3366ff;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          box-shadow: var(--shadow-xs);
         }
 
         &:active:not(:disabled) {

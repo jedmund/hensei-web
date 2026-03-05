@@ -31,7 +31,7 @@
   .panel:not(.inline) {
     position: fixed;
     top: 0; right: 0; bottom: 0;
-    box-shadow: -2px 0 18px rgba(0,0,0,0.25);
+    box-shadow: var(--shadow-xl);
     transform: translateX(100%);
     transition: transform 200ms ease;
     z-index: 50;
@@ -43,7 +43,7 @@
     position: sticky;
     top: 0;
     height: 100dvh;
-    box-shadow: -2px 0 18px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-lg);
   }
   .panel.inline:not(.open) { display: none; }
   .panel-header {
