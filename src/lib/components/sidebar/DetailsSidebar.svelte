@@ -168,14 +168,13 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 
 	.details-sidebar {
 		padding: 0 0 spacing.$unit-2x;
-		color: var(--text-primary, colors.$grey-10);
+		color: var(--text-primary);
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x;

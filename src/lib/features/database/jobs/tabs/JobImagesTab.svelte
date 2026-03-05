@@ -78,7 +78,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -116,7 +115,7 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-		background: colors.$grey-90;
+		background: var(--background);
 		border-radius: layout.$item-corner;
 		overflow: hidden;
 		transition: transform 0.2s ease;
@@ -151,7 +150,7 @@
 
 	.image-label {
 		font-size: typography.$font-small;
-		color: colors.$grey-40;
+		color: var(--text-secondary);
 		text-align: center;
 	}
 

@@ -148,7 +148,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
@@ -169,7 +168,7 @@
 		}
 
 		&:hover:not(.editable):not(.hasChildren) {
-			background: colors.$grey-90;
+			background: var(--background);
 		}
 
 		&.editable,
@@ -197,7 +196,7 @@
 		}
 
 		.value {
-			color: colors.$grey-30;
+			color: var(--text-primary);
 			display: flex;
 			align-items: center;
 		}
@@ -238,12 +237,12 @@
 				@include effects.smooth-transition(effects.$duration-quick, background-color, color, opacity);
 
 				&:hover:not(:disabled) {
-					background: colors.$grey-90;
-					color: colors.$grey-30;
+					background: var(--background);
+					color: var(--text-primary);
 				}
 
 				&:active:not(:disabled) {
-					background: colors.$grey-80;
+					background: var(--placeholder-bg);
 				}
 
 				&:disabled {

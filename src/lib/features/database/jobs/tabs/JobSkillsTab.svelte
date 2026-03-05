@@ -341,7 +341,6 @@
 </Dialog>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -389,12 +388,12 @@
 		align-items: center;
 		gap: spacing.$unit;
 		padding: spacing.$unit;
-		background: colors.$grey-95;
+		background: var(--card-bg);
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s ease;
 
 		&:hover {
-			background: colors.$grey-90;
+			background: var(--background);
 		}
 	}
 

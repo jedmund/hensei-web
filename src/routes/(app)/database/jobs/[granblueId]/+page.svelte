@@ -113,7 +113,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 
@@ -125,7 +124,7 @@
 
 	.tabs-bar {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid colors.$grey-90;
+		border-bottom: 1px solid var(--separator-bg);
 	}
 
 	.details {

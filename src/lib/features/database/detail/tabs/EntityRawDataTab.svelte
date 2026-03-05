@@ -91,7 +91,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -107,7 +106,7 @@
 		h3 {
 			font-size: typography.$font-regular;
 			font-weight: 600;
-			color: colors.$grey-20;
+			color: var(--text-primary);
 			margin: 0 0 spacing.$unit 0;
 		}
 	}
@@ -121,8 +120,8 @@
 	}
 
 	.raw-content {
-		background: colors.$grey-95;
-		border: 1px solid colors.$grey-80;
+		background: var(--card-bg);
+		border: 1px solid var(--border-medium);
 		border-radius: layout.$item-corner;
 		padding: spacing.$unit-2x;
 		font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', monospace;

@@ -442,7 +442,6 @@
 {/if}
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/themes' as themes;
 	@use '$src/themes/layout' as layout;
@@ -544,7 +543,7 @@
 					aspect-ratio: 1;
 
 					&:hover {
-						color: colors.$grey-30;
+						color: var(--text-primary);
 					}
 				}
 			}

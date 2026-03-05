@@ -180,7 +180,6 @@
 </DetailsContainer>
 
 <style lang="scss">
-  @use '$src/themes/colors' as colors;
   @use '$src/themes/spacing' as spacing;
   @use '$src/themes/typography' as typography;
   @use '$src/themes/layout' as layout;
@@ -190,7 +189,7 @@
     align-items: center;
     gap: spacing.$unit;
     text-decoration: none;
-    color: colors.$grey-30;
+    color: var(--text-primary);
 
     &:hover .recruited-by-image {
       transform: scale(1.05);

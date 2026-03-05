@@ -60,7 +60,6 @@
 {/if}
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -83,12 +82,12 @@
 			gap: spacing.$unit-2x;
 			align-items: center;
 			padding: spacing.$unit;
-			background: colors.$grey-85;
+			background: var(--unit-bg);
 			border-radius: layout.$item-corner-small;
 			transition: background 0.2s ease;
 
 			&:hover {
-				background: colors.$grey-80;
+				background: var(--placeholder-bg);
 			}
 
 			.weapon-key-icon {
@@ -105,14 +104,14 @@
 
 				.slot-label {
 					font-size: typography.$font-tiny;
-					color: var(--text-tertiary, colors.$grey-60);
+					color: var(--text-tertiary);
 					text-transform: uppercase;
 					letter-spacing: 0.3px;
 				}
 
 				.key-name {
 					font-size: typography.$font-small;
-					color: var(--text-primary, colors.$grey-10);
+					color: var(--text-primary);
 					font-weight: typography.$medium;
 				}
 			}

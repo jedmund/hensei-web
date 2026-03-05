@@ -203,7 +203,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -215,7 +214,7 @@
 	.pose-header {
 		font-size: typography.$font-regular;
 		font-weight: 600;
-		color: colors.$grey-30;
+		color: var(--text-primary);
 		margin: 0 0 spacing.$unit 0;
 		padding-top: spacing.$unit-2x;
 
@@ -249,7 +248,7 @@
 		justify-content: center;
 		width: 100%;
 		aspect-ratio: 1;
-		background: colors.$grey-90;
+		background: var(--background);
 		border-radius: layout.$item-corner;
 		overflow: hidden;
 		transition: transform 0.2s ease;
@@ -294,7 +293,7 @@
 
 	.image-label {
 		font-size: typography.$font-small;
-		color: colors.$grey-40;
+		color: var(--text-secondary);
 		text-align: center;
 		text-transform: capitalize;
 	}
