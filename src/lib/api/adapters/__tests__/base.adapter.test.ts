@@ -227,9 +227,9 @@ describe('BaseAdapter', () => {
 			const calledUrl = (global.fetch as any).mock.calls[0][0]
 			expect(calledUrl).toContain('query=test')
 			expect(calledUrl).toContain('page=2')
-			expect(calledUrl).toContain('filters=1')
-			expect(calledUrl).toContain('filters=2')
-			expect(calledUrl).toContain('filters=3')
+			// Arrays are serialized as comma-separated values
+			const parsedUrl = new URL(calledUrl)
+			expect(parsedUrl.searchParams.get('filters')).toBe('1,2,3')
 		})
 
 		it('should handle error responses', async () => {
@@ -445,12 +445,12 @@ describe('BaseAdapter', () => {
 
 			// Make first request with caching
 			const result1 = await adapter.testRequest('/cached', {
-				cache: 60000 // 1 minute
+				cacheTime: 60000 // 1 minute
 			})
 
 			// Make second request (should use cache)
 			const result2 = await adapter.testRequest('/cached', {
-				cache: 60000
+				cacheTime: 60000
 			})
 
 			// Only one fetch should have been made
@@ -472,14 +472,14 @@ describe('BaseAdapter', () => {
 			// Make first POST request with cache
 			const result1 = await adapter.testRequest('/data', {
 				method: 'POST',
-				cache: 60000,
+				cacheTime: 60000,
 				body: JSON.stringify({ test: true })
 			})
 
 			// Make second POST request with same body (should use cache)
 			const result2 = await adapter.testRequest('/data', {
 				method: 'POST',
-				cache: 60000,
+				cacheTime: 60000,
 				body: JSON.stringify({ test: true })
 			})
 
@@ -490,7 +490,7 @@ describe('BaseAdapter', () => {
 			// Make POST request with different body (should not use cache)
 			await adapter.testRequest('/data', {
 				method: 'POST',
-				cache: 60000,
+				cacheTime: 60000,
 				body: JSON.stringify({ test: false })
 			})
 
@@ -510,13 +510,13 @@ describe('BaseAdapter', () => {
 			})
 
 			// Make cached request
-			await adapter.testRequest('/cached', { cache: 60000 })
+			await adapter.testRequest('/cached', { cacheTime: 60000 })
 
 			// Clear cache
 			adapter.testClearCache()
 
 			// Make request again (should fetch again)
-			await adapter.testRequest('/cached', { cache: 60000 })
+			await adapter.testRequest('/cached', { cacheTime: 60000 })
 
 			expect(fetchCount).toBe(2)
 		})
@@ -533,15 +533,15 @@ describe('BaseAdapter', () => {
 			})
 
 			// Cache multiple endpoints
-			await adapter.testRequest('/users/1', { cache: 60000 })
-			await adapter.testRequest('/posts/1', { cache: 60000 })
+			await adapter.testRequest('/users/1', { cacheTime: 60000 })
+			await adapter.testRequest('/posts/1', { cacheTime: 60000 })
 
 			// Clear only user cache
 			adapter.testClearCache('users')
 
 			// Users should refetch, posts should use cache
-			await adapter.testRequest('/users/1', { cache: 60000 })
-			await adapter.testRequest('/posts/1', { cache: 60000 })
+			await adapter.testRequest('/users/1', { cacheTime: 60000 })
+			await adapter.testRequest('/posts/1', { cacheTime: 60000 })
 
 			// 3 total fetches: initial 2 + 1 refetch for users
 			expect(fetchCount).toBe(3)

@@ -111,7 +111,7 @@ describe('GridAdapter', () => {
 		it('should create a grid weapon', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => mockGridWeapon
+				json: async () => ({ gridWeapon: mockGridWeapon })
 			})
 
 			const result = await adapter.createWeapon({
@@ -127,10 +127,12 @@ describe('GridAdapter', () => {
 				expect.objectContaining({
 					method: 'POST',
 					body: JSON.stringify({
-						party_id: 'party-1',
-						weapon_id: 'weapon-1',
-						position: 1,
-						mainhand: true
+						weapon: {
+							party_id: 'party-1',
+							weapon_id: 'weapon-1',
+							position: 1,
+							mainhand: true
+						}
 					})
 				})
 			)
@@ -139,7 +141,7 @@ describe('GridAdapter', () => {
 		it('should update a grid weapon', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => ({ ...mockGridWeapon, uncapLevel: 6 })
+				json: async () => ({ gridWeapon: { ...mockGridWeapon, uncapLevel: 6 } })
 			})
 
 			const result = await adapter.updateWeapon('gw-1', {
@@ -151,7 +153,7 @@ describe('GridAdapter', () => {
 				'https://api.example.com/grid_weapons/gw-1',
 				expect.objectContaining({
 					method: 'PUT',
-					body: JSON.stringify({ uncap_level: 6 })
+					body: JSON.stringify({ weapon: { uncap_level: 6 } })
 				})
 			)
 		})
@@ -167,14 +169,11 @@ describe('GridAdapter', () => {
 				partyId: 'party-1'
 			})
 
+			// ID-based delete uses REST-style URL with no body
 			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/grid_weapons',
+				'https://api.example.com/grid_weapons/gw-1',
 				expect.objectContaining({
-					method: 'DELETE',
-					body: JSON.stringify({
-						id: 'gw-1',
-						party_id: 'party-1'
-					})
+					method: 'DELETE'
 				})
 			)
 		})
@@ -182,7 +181,7 @@ describe('GridAdapter', () => {
 		it('should update weapon uncap level', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => ({ ...mockGridWeapon, uncapLevel: 6 })
+				json: async () => ({ gridWeapon: { ...mockGridWeapon, uncapLevel: 6 } })
 			})
 
 			const result = await adapter.updateWeaponUncap({
@@ -198,10 +197,12 @@ describe('GridAdapter', () => {
 				expect.objectContaining({
 					method: 'POST',
 					body: JSON.stringify({
-						id: 'gw-1',
-						party_id: 'party-1',
-						uncap_level: 6,
-						transcendence_step: 1
+						weapon: {
+							id: 'gw-1',
+							party_id: 'party-1',
+							uncap_level: 6,
+							transcendence_step: 1
+						}
 					})
 				})
 			)
@@ -210,7 +211,7 @@ describe('GridAdapter', () => {
 		it('should resolve weapon conflicts', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => mockGridWeapon
+				json: async () => ({ gridWeapon: mockGridWeapon })
 			})
 
 			const result = await adapter.resolveWeaponConflict({
@@ -226,10 +227,12 @@ describe('GridAdapter', () => {
 				expect.objectContaining({
 					method: 'POST',
 					body: JSON.stringify({
-						party_id: 'party-1',
-						incoming_id: 'weapon-2',
-						position: 1,
-						conflicting_ids: ['gw-1']
+						resolve: {
+							party_id: 'party-1',
+							incoming_id: 'weapon-2',
+							position: 1,
+							conflicting_ids: ['gw-1']
+						}
 					})
 				})
 			)
@@ -238,7 +241,7 @@ describe('GridAdapter', () => {
 		it('should update weapon position', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => ({ ...mockGridWeapon, position: 2 })
+				json: async () => ({ gridWeapon: { ...mockGridWeapon, position: 2 } })
 			})
 
 			const result = await adapter.updateWeaponPosition({
@@ -292,7 +295,7 @@ describe('GridAdapter', () => {
 		it('should create a grid character', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => mockGridCharacter
+				json: async () => ({ gridCharacter: mockGridCharacter })
 			})
 
 			const result = await adapter.createCharacter({
@@ -307,9 +310,11 @@ describe('GridAdapter', () => {
 				expect.objectContaining({
 					method: 'POST',
 					body: JSON.stringify({
-						party_id: 'party-1',
-						character_id: 'char-1',
-						position: 1
+						character: {
+							party_id: 'party-1',
+							character_id: 'char-1',
+							position: 1
+						}
 					})
 				})
 			)
@@ -318,7 +323,7 @@ describe('GridAdapter', () => {
 		it('should update character position', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => ({ ...mockGridCharacter, position: 2 })
+				json: async () => ({ gridCharacter: { ...mockGridCharacter, position: 2 } })
 			})
 
 			const result = await adapter.updateCharacterPosition({
@@ -372,7 +377,7 @@ describe('GridAdapter', () => {
 		it('should create a grid summon', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => mockGridSummon
+				json: async () => ({ gridSummon: mockGridSummon })
 			})
 
 			const result = await adapter.createSummon({
@@ -388,10 +393,12 @@ describe('GridAdapter', () => {
 				expect.objectContaining({
 					method: 'POST',
 					body: JSON.stringify({
-						party_id: 'party-1',
-						summon_id: 'summon-1',
-						position: 1,
-						quick_summon: true
+						summon: {
+							party_id: 'party-1',
+							summon_id: 'summon-1',
+							position: 1,
+							quick_summon: true
+						}
 					})
 				})
 			)
@@ -426,7 +433,7 @@ describe('GridAdapter', () => {
 		it('should update summon position', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => ({ ...mockGridSummon, position: 2 })
+				json: async () => ({ gridSummon: { ...mockGridSummon, position: 2 } })
 			})
 
 			const result = await adapter.updateSummonPosition({

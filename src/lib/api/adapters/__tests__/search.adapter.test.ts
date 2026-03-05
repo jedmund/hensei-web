@@ -103,14 +103,15 @@ describe('SearchAdapter', () => {
 			const result = await adapter.searchAll(params)
 
 			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/search/all',
+				'https://api.example.com/search',
 				expect.objectContaining({
 					method: 'POST',
-					credentials: 'omit',
 					body: JSON.stringify({
-						locale: 'en',
-						page: 1,
-						query: 'bahamut'
+						search: {
+							locale: 'en',
+							page: 1,
+							query: 'bahamut'
+						}
 					})
 				})
 			)
@@ -139,13 +140,15 @@ describe('SearchAdapter', () => {
 				expect.any(String),
 				expect.objectContaining({
 					body: JSON.stringify({
-						locale: 'en',
-						page: 1,
-						query: 'sword',
-						filters: {
-							element: [1, 2],
-							rarity: [5],
-							extra: true
+						search: {
+							locale: 'en',
+							page: 1,
+							query: 'sword',
+							filters: {
+								element: [1, 2],
+								rarity: [5],
+								extra: true
+							}
 						}
 					})
 				})
@@ -169,10 +172,12 @@ describe('SearchAdapter', () => {
 				expect.any(String),
 				expect.objectContaining({
 					body: JSON.stringify({
-						locale: 'en',
-						page: 1,
-						query: 'test',
-						exclude: ['1', '2', '3']
+						search: {
+							locale: 'en',
+							page: 1,
+							query: 'test',
+							exclude: ['1', '2', '3']
+						}
 					})
 				})
 			)
@@ -232,16 +237,17 @@ describe('SearchAdapter', () => {
 				'https://api.example.com/search/weapons',
 				expect.objectContaining({
 					method: 'POST',
-					credentials: 'omit',
 					body: JSON.stringify({
-						locale: 'en',
-						page: 1,
-						per: 50,
-						query: 'sword',
-						filters: {
-							element: [1],
-							proficiency1: [2],
-							extra: false
+						search: {
+							locale: 'en',
+							page: 1,
+							per: 50,
+							query: 'sword',
+							filters: {
+								element: [1],
+								proficiency1: [2],
+								extra: false
+							}
 						}
 					})
 				})
@@ -291,13 +297,15 @@ describe('SearchAdapter', () => {
 				'https://api.example.com/search/characters',
 				expect.objectContaining({
 					body: JSON.stringify({
-						locale: 'en',
-						page: 1,
-						query: 'katalina',
-						filters: {
-							element: [2],
-							proficiency1: [1],
-							proficiency2: [3]
+						search: {
+							locale: 'en',
+							page: 1,
+							query: 'katalina',
+							filters: {
+								element: [2],
+								proficiency1: [1],
+								proficiency2: [3]
+							}
 						}
 					})
 				})
@@ -327,13 +335,15 @@ describe('SearchAdapter', () => {
 				'https://api.example.com/search/summons',
 				expect.objectContaining({
 					body: JSON.stringify({
-						locale: 'en',
-						page: 1,
-						query: 'bahamut',
-						filters: {
-							element: [6],
-							rarity: [5],
-							subaura: true
+						search: {
+							locale: 'en',
+							page: 1,
+							query: 'bahamut',
+							filters: {
+								element: [6],
+								rarity: [5],
+								subaura: true
+							}
 						}
 					})
 				})
@@ -404,10 +414,12 @@ describe('SearchAdapter', () => {
 				expect.any(String),
 				expect.objectContaining({
 					body: JSON.stringify({
-						locale: 'en',
-						page: 2,
-						per: 20,
-						query: 'test'
+						search: {
+							locale: 'en',
+							page: 2,
+							per: 20,
+							query: 'test'
+						}
 					})
 				})
 			)

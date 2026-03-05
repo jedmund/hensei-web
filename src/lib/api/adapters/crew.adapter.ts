@@ -241,7 +241,7 @@ export class CrewAdapter extends BaseAdapter {
     input: CreatePhantomPlayerInput,
     options?: RequestOptions
   ): Promise<PhantomPlayer> {
-    const response = await this.request<{ phantom_player: PhantomPlayer }>(
+    const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
       `/crews/${crewId}/phantom_players`,
       {
         ...options,
@@ -250,7 +250,7 @@ export class CrewAdapter extends BaseAdapter {
       }
     )
     this.clearCache('/crew/members')
-    return response.phantom_player
+    return response.phantomPlayer
   }
 
   /**
@@ -261,7 +261,7 @@ export class CrewAdapter extends BaseAdapter {
     phantoms: CreatePhantomPlayerInput[],
     options?: RequestOptions
   ): Promise<PhantomPlayer[]> {
-    const response = await this.request<{ phantom_players: PhantomPlayer[] }>(
+    const response = await this.request<{ phantomPlayers: PhantomPlayer[] }>(
       `/crews/${crewId}/phantom_players/bulk_create`,
       {
         ...options,
@@ -270,7 +270,7 @@ export class CrewAdapter extends BaseAdapter {
       }
     )
     this.clearCache('/crew/members')
-    return response.phantom_players
+    return response.phantomPlayers
   }
 
   /**
@@ -282,7 +282,7 @@ export class CrewAdapter extends BaseAdapter {
     input: UpdatePhantomPlayerInput,
     options?: RequestOptions
   ): Promise<PhantomPlayer> {
-    const response = await this.request<{ phantom_player: PhantomPlayer }>(
+    const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
       `/crews/${crewId}/phantom_players/${phantomId}`,
       {
         ...options,
@@ -291,7 +291,7 @@ export class CrewAdapter extends BaseAdapter {
       }
     )
     this.clearCache('/crew/members')
-    return response.phantom_player
+    return response.phantomPlayer
   }
 
   /**
@@ -314,7 +314,7 @@ export class CrewAdapter extends BaseAdapter {
     userId: string,
     options?: RequestOptions
   ): Promise<PhantomPlayer> {
-    const response = await this.request<{ phantom_player: PhantomPlayer }>(
+    const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
       `/crews/${crewId}/phantom_players/${phantomId}/assign`,
       {
         ...options,
@@ -323,14 +323,14 @@ export class CrewAdapter extends BaseAdapter {
       }
     )
     this.clearCache('/crew/members')
-    return response.phantom_player
+    return response.phantomPlayer
   }
 
   /**
    * Confirm claim of a phantom player (by the assigned user)
    */
   async confirmPhantomClaim(crewId: string, phantomId: string, options?: RequestOptions): Promise<PhantomPlayer> {
-    const response = await this.request<{ phantom_player: PhantomPlayer }>(
+    const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
       `/crews/${crewId}/phantom_players/${phantomId}/confirm_claim`,
       {
         ...options,
@@ -338,14 +338,14 @@ export class CrewAdapter extends BaseAdapter {
       }
     )
     this.clearCache('/crew/members')
-    return response.phantom_player
+    return response.phantomPlayer
   }
 
   /**
    * Decline claim of a phantom player (by the assigned user)
    */
   async declinePhantomClaim(crewId: string, phantomId: string, options?: RequestOptions): Promise<PhantomPlayer> {
-    const response = await this.request<{ phantom_player: PhantomPlayer }>(
+    const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
       `/crews/${crewId}/phantom_players/${phantomId}/decline_claim`,
       {
         ...options,
@@ -354,7 +354,7 @@ export class CrewAdapter extends BaseAdapter {
     )
     this.clearCache('/crew/members')
     this.clearCache('/pending_phantom_claims')
-    return response.phantom_player
+    return response.phantomPlayer
   }
 
   /**
