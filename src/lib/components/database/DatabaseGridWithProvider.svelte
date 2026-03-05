@@ -595,7 +595,7 @@
 			align-items: center;
 			padding: 0 spacing.$unit spacing.$unit spacing.$unit;
 			border-bottom: 1px solid #e5e5e5;
-			background: white;
+			background: var(--card-bg);
 
 			:global(.filters-container) {
 				flex: 1;

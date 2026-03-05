@@ -218,7 +218,7 @@
 
 	// Thumb base styles
 	:global([data-switch-root] .thumb) {
-		background: white;
+		background: var(--switch-nub);
 		display: block;
 		flex-shrink: 0;
 		@include smooth-transition($duration-instant, transform);
@@ -228,6 +228,6 @@
 	}
 
 	:global([data-switch-root] .thumb[data-state='checked']) {
-		background: white;
+		background: var(--switch-nub);
 	}
 </style>

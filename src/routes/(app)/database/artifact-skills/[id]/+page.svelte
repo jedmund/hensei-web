@@ -278,7 +278,7 @@
 	@use '$src/themes/effects' as effects;
 
 	.page {
-		background: white;
+		background: var(--card-bg);
 		border-radius: layout.$card-corner;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	}
@@ -295,7 +295,7 @@
 	}
 
 	.content {
-		background: white;
+		background: var(--card-bg);
 		border-radius: layout.$card-corner;
 		overflow: visible;
 		position: relative;
@@ -307,7 +307,7 @@
 		justify-content: space-between;
 		gap: spacing.$unit * 2;
 		padding: spacing.$unit * 2;
-		background: white;
+		background: var(--card-bg);
 		border-top-left-radius: layout.$card-corner;
 		border-top-right-radius: layout.$card-corner;
 
