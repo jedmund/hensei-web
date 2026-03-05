@@ -370,7 +370,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
@@ -462,7 +461,7 @@
 	}
 
 	.nickname-tag {
-		background: colors.$grey-90;
+		background: var(--background);
 		padding: spacing.$unit-half spacing.$unit;
 		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;

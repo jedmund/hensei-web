@@ -25,7 +25,6 @@
 </button>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 
 	.copyable-text {
 		display: inline-flex;
@@ -35,13 +34,13 @@
 		padding: 0;
 		margin: 0;
 		font: inherit;
-		color: colors.$grey-30;
+		color: var(--text-primary);
 		cursor: pointer;
 		border-radius: 4px;
 		transition: color 0.15s ease;
 
 		&:hover {
-			color: colors.$grey-10;
+			color: var(--text-primary);
 		}
 	}
 

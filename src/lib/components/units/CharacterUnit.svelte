@@ -625,7 +625,7 @@
 		}
 
 		&.neutral .name {
-			color: colors.$grey-40;
+			color: var(--text-secondary);
 		}
 	}
 

@@ -192,7 +192,6 @@
 {/if}
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -209,7 +208,7 @@
 
 	.skeleton {
 		height: 40px;
-		background: var(--skeleton-bg, colors.$grey-80);
+		background: var(--skeleton-bg);
 		border-radius: layout.$item-corner-small;
 		animation: pulse 1.5s ease-in-out infinite;
 	}
@@ -245,7 +244,7 @@
 		width: 80px;
 		flex-shrink: 0;
 		padding: spacing.$unit spacing.$unit-2x;
-		background: var(--input-bg, colors.$grey-85);
+		background: var(--input-bg);
 		border: 1px solid var(--border-secondary);
 		border-radius: layout.$item-corner-small;
 		color: var(--text-primary);

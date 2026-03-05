@@ -105,7 +105,6 @@
 {/if}
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -124,7 +123,7 @@
 		margin: 0 0 spacing.$unit 0;
 		font-size: typography.$font-regular;
 		font-weight: typography.$medium;
-		color: var(--text-secondary, colors.$grey-40);
+		color: var(--text-secondary);
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
 	}
@@ -143,11 +142,11 @@
 		align-items: center;
 		gap: spacing.$unit;
 		padding: calc(spacing.$unit * 0.75);
-		background: colors.$grey-85;
+		background: var(--unit-bg);
 		border-radius: layout.$item-corner-small;
 
 		&.enhanced {
-			background: linear-gradient(135deg, colors.$grey-85, rgba(#d4af37, 0.1));
+			background: linear-gradient(135deg, var(--unit-bg), rgba(#d4af37, 0.1));
 			border: 1px solid rgba(#d4af37, 0.2);
 		}
 	}

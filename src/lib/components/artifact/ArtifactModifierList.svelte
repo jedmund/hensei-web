@@ -98,18 +98,18 @@
 		transition: background-color effects.$duration-quick ease;
 
 		&:hover {
-			background: colors.$grey-90;
+			background: var(--background);
 		}
 
 		&:active {
-			background: colors.$grey-85;
+			background: var(--unit-bg);
 		}
 
 		&.selected {
-			background: colors.$grey-85;
+			background: var(--unit-bg);
 
 			.name {
-				color: colors.$grey-20;
+				color: var(--text-primary);
 			}
 
 			&.element-wind {
@@ -141,7 +141,7 @@
 		.name {
 			font-size: typography.$font-regular;
 			font-weight: typography.$normal;
-			color: colors.$grey-20;
+			color: var(--text-primary);
 		}
 	}
 </style>

@@ -389,12 +389,12 @@
 		align-items: center;
 		gap: spacing.$unit;
 		padding: spacing.$unit;
-		background: colors.$grey-95;
+		background: var(--background);
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s ease;
 
 		&:hover {
-			background: colors.$grey-90;
+			background: var(--background);
 		}
 	}
 

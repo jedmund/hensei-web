@@ -595,8 +595,8 @@
 		flex-shrink: 0;
 
 		&:hover {
-			background: colors.$grey-90;
-			color: colors.$grey-30;
+			background: var(--background);
+			color: var(--text-primary);
 		}
 
 		:global(svg) {
@@ -624,7 +624,7 @@
 
 	.entity-selector-container {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid colors.$grey-90;
+		border-bottom: 1px solid var(--separator-bg);
 	}
 
 	.details {

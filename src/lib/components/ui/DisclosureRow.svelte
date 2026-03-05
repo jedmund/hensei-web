@@ -72,11 +72,11 @@
 		transition: background-color effects.$duration-quick ease;
 
 		&:hover:not(.disabled) {
-			background: colors.$grey-90;
+			background: var(--background);
 		}
 
 		&:active:not(.disabled) {
-			background: colors.$grey-85;
+			background: var(--unit-bg);
 		}
 
 		&.disabled {
@@ -94,7 +94,7 @@
 
 		.label {
 			font-weight: typography.$medium;
-			color: colors.$grey-30;
+			color: var(--text-primary);
 			word-wrap: break-word;
 			overflow-wrap: break-word;
 		}
