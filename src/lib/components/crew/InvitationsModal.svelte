@@ -245,6 +245,7 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.loading-state {
 		display: flex;
@@ -322,7 +323,7 @@
 	.notification-card {
 		background: var(--surface-secondary, #f9fafb);
 		border: 1px solid var(--border-color);
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		padding: spacing.$unit-2x;
 
 		&.expired {
@@ -381,7 +382,7 @@
 		color: colors.$error;
 		background: colors.$error--bg--light;
 		padding: spacing.$unit-quarter spacing.$unit-half;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-weight: typography.$medium;
 	}
 

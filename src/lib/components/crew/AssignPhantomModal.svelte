@@ -194,7 +194,7 @@
 		margin-top: spacing.$unit-2x;
 		padding: spacing.$unit;
 		background: colors.$error--bg--light;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 
 		p {
 			margin: 0;

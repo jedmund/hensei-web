@@ -317,6 +317,7 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.settings-page {
 		max-width: 500px;
@@ -342,7 +343,7 @@
 		border: 1px solid var(--error-border, #fecaca);
 		color: var(--error-text, #dc2626);
 		padding: spacing.$unit spacing.$unit-2x;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: 0.875rem;
 	}
 
@@ -364,7 +365,7 @@
 	.form-input {
 		padding: spacing.$unit spacing.$unit-half;
 		border: 1px solid var(--border-color);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		background: var(--input-background, var(--background));
 		color: var(--text-primary);
 		font-size: 1rem;
@@ -420,7 +421,7 @@
 		padding: spacing.$unit-2x;
 		background: var(--surface);
 		border: 1px solid var(--border-color);
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		margin-bottom: spacing.$unit;
 	}
 
@@ -473,7 +474,7 @@
 	.dialog-button {
 		padding: spacing.$unit spacing.$unit-2x;
 		border: none;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		cursor: pointer;
 		font-size: 0.875rem;
 		transition: background 0.2s;
@@ -531,7 +532,7 @@
 		gap: spacing.$unit;
 		padding: spacing.$unit;
 		border: 1px solid var(--border-color);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		cursor: pointer;
 
 		&:hover {

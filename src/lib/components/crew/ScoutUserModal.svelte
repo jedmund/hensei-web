@@ -182,6 +182,7 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.search-section {
 		margin-bottom: spacing.$unit-2x;
@@ -196,7 +197,7 @@
 		flex: 1;
 		padding: spacing.$unit spacing.$unit-2x;
 		border: 1px solid var(--border-color);
-		border-radius: 6px;
+		border-radius: layout.$bubble-menu-item-corner;
 		font-size: typography.$font-regular;
 		background: var(--input-bg, white);
 		color: var(--text-primary);
@@ -226,7 +227,7 @@
 	.user-result {
 		background: var(--surface-secondary, #f9fafb);
 		border: 1px solid var(--border-color);
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		padding: spacing.$unit-2x;
 	}
 
@@ -265,7 +266,7 @@
 		margin-top: spacing.$unit;
 		padding: spacing.$unit;
 		background: colors.$error--bg--light;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 
 		p {
 			margin: 0;

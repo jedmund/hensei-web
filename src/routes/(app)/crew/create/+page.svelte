@@ -216,6 +216,7 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.create-crew-page {
 		min-height: 400px;
@@ -257,7 +258,7 @@
 		border: 1px solid var(--error-border, #fecaca);
 		color: var(--error-text, #dc2626);
 		padding: spacing.$unit spacing.$unit-2x;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: 0.875rem;
 	}
 
@@ -279,7 +280,7 @@
 	.form-input {
 		padding: spacing.$unit spacing.$unit-half;
 		border: 1px solid var(--border-color);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		background: var(--input-background, var(--background));
 		color: var(--text-primary);
 		font-size: 1rem;

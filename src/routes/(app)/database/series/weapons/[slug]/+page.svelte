@@ -98,7 +98,7 @@
 			color: white;
 			border: none;
 			padding: spacing.$unit-half spacing.$unit;
-			border-radius: 4px;
+			border-radius: layout.$item-corner-small;
 			cursor: pointer;
 			margin-top: spacing.$unit;
 

@@ -848,7 +848,7 @@
 	// Dropdown menu styles
 	:global(.dropdown-content) {
 		background-color: var(--menu-bg);
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		padding: spacing.$unit-half;
 		min-width: 160px;
 		box-shadow:

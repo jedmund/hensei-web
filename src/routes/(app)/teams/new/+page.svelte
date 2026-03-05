@@ -872,6 +872,7 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as layout;
 
 	.page-container {
 		display: flex;
@@ -916,7 +917,7 @@
     top: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    border-radius: 8px;
+    border-radius: layout.$input-corner;
     padding: 24px;
     max-width: 500px;
     width: 90%;
@@ -942,7 +943,7 @@
 	.error-details {
 		background: #f5f5f5;
 		border: 1px solid #e0e0e0;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		padding: 12px;
 		margin-bottom: 20px;
 	}
@@ -974,7 +975,7 @@
 		background: #3366ff;
 		color: white;
 		border: none;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		cursor: pointer;
 		font-size: 14px;
 		transition: background 0.2s;

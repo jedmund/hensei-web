@@ -123,7 +123,7 @@
 				width: 24px;
 				height: 24px;
 				background: rgba(0, 0, 0, 0.5);
-				border-radius: 4px;
+				border-radius: $item-corner-small;
 				padding: 2px;
 			}
 		}
@@ -145,7 +145,7 @@
 				width: 32px;
 				height: 32px;
 				background: rgba(0, 0, 0, 0.5);
-				border-radius: 4px;
+				border-radius: $item-corner-small;
 				padding: 4px;
 			}
 		}

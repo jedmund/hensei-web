@@ -385,7 +385,7 @@
 
 	:global(.dropdown-content) {
 		background-color: var(--menu-bg);
-		border-radius: 8px;
+		border-radius: $input-corner;
 		padding: $unit-half;
 		min-width: 160px;
 		box-shadow:

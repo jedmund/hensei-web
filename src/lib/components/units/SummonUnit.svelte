@@ -249,6 +249,7 @@
   @use '$src/themes/typography' as typography;
   @use '$src/themes/spacing' as spacing;
   @use '$src/themes/rep' as rep;
+  @use '$src/themes/layout' as layout;
 
   .unit {
     position: relative;
@@ -272,7 +273,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      border-radius: 8px;
+      border-radius: layout.$input-corner;
       pointer-events: none;
       z-index: 10;
     }
@@ -286,7 +287,7 @@
     position: relative;
     width: 100%;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: layout.$input-corner;
     background: var(--card-bg, #f5f5f5);
     transition: opacity 0.2s ease-in-out;
     display: flex;

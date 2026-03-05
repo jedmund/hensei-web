@@ -984,7 +984,7 @@
 		color: colors.$error;
 		background: colors.$error--bg--light;
 		padding: 2px 8px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-weight: typography.$medium;
 	}
 </style>

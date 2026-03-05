@@ -98,6 +98,7 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.confirmation {
 		p {
@@ -128,7 +129,7 @@
 		margin-top: spacing.$unit;
 		padding: spacing.$unit;
 		background: colors.$error--bg--light;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		color: colors.$error;
 
 		p {

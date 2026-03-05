@@ -30,13 +30,14 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	// Define the dropdown item styles as a mixin for reusability
 	@mixin dropdown-item-base {
 		display: flex;
 		align-items: center;
 		padding: spacing.$unit (spacing.$unit * 1.5);
-		border-radius: 6px;
+		border-radius: layout.$bubble-menu-item-corner;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		color: var(--menu-text);

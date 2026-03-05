@@ -2,6 +2,7 @@
 @use 'themes/themes';
 @use 'themes/spacing';
 @use 'themes/tooltip';
+@use 'themes/layout' as layout;
 
 :root {
 	--main-max-width: 820px; // Default max-width for main content
@@ -106,7 +107,7 @@ $font-size-base: 16px;
 }
 
 [data-sonner-toast] {
-	border-radius: 8px;
+	border-radius: layout.$input-corner;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 	font-size: 1.4rem;
 }

@@ -176,7 +176,7 @@
 	.item-image {
 		width: 32px;
 		height: 32px;
-		border-radius: 4px;
+		border-radius: $item-corner-small;
 		overflow: hidden;
 		flex-shrink: 0;
 

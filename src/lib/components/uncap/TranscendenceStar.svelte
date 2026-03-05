@@ -208,6 +208,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography';
+	@use '$src/themes/layout' as layout;
 
 	.star {
 		--size: 18px;
@@ -349,7 +350,7 @@
 		position: fixed;
 		z-index: 1001;
 		background: white;
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 		padding: 12px;
 		width: auto;

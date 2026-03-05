@@ -66,13 +66,14 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/effects' as *;
+	@use '$src/themes/layout' as layout;
 
 	.quantity-counter {
 		display: inline-flex;
 		align-items: center;
 		gap: 2px;
 		background: var(--surface-overlay, rgba(0, 0, 0, 0.4));
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		padding: 2px;
 		@include smooth-transition(0.15s, all);
 

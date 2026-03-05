@@ -401,7 +401,7 @@
 	.skill-icon {
 		width: 40px;
 		height: 40px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		object-fit: cover;
 	}
 
@@ -427,7 +427,7 @@
 		font-size: typography.$font-tiny;
 		font-weight: typography.$medium;
 		padding: 2px 8px;
-		border-radius: 12px;
+		border-radius: layout.$card-corner;
 		color: white;
 		white-space: nowrap;
 	}

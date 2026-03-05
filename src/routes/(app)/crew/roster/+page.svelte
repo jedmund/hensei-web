@@ -529,7 +529,7 @@
 		width: 60px;
 		height: 60px;
 		object-fit: cover;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 	}
 
 	.remove-item-btn {

@@ -101,6 +101,7 @@
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/mixins' as *;
+	@use '$src/themes/layout' as layout;
 
 	.wrapper {
 		align-items: center;
@@ -164,7 +165,7 @@
 		width: 100%;
 		height: auto;
 		border: 1px solid $grey-75;
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		display: block;
 	}
 

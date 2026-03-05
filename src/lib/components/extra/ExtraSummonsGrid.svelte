@@ -34,10 +34,11 @@
   @use '$src/themes/colors' as *;
   @use '$src/themes/spacing' as *;
   @use '$src/themes/mixins' as *;
+  @use '$src/themes/layout' as layout;
 
   .container {
     background: var(--subaura-orange-bg);
-    border-radius: 8px;
+    border-radius: layout.$input-corner;
     box-sizing: border-box;
     display: grid;
     grid-template-columns: 2.32fr 2fr;

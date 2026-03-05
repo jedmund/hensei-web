@@ -27,6 +27,8 @@
 </div>
 
 <style lang="scss">
+	@use '$src/themes/layout' as layout;
+
 	.image-cell {
 		display: flex;
 		align-items: center;
@@ -41,13 +43,13 @@
 		width: auto;
 		height: auto;
 		object-fit: contain;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 	}
 
 	.no-image {
 		width: 48px;
 		height: 48px;
 		background: #f0f0f0;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 	}
 </style>

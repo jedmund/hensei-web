@@ -21,6 +21,7 @@
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.features-cell {
 		display: flex;
@@ -33,7 +34,7 @@
 	.badge {
 		display: inline-block;
 		padding: 2px 6px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-tiny;
 		font-weight: typography.$medium;
 

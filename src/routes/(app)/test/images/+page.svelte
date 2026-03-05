@@ -313,7 +313,7 @@
 				padding: 2px 6px;
 				background: rgba(59, 130, 246, 0.2);
 				color: rgb(59, 130, 246);
-				border-radius: 4px;
+				border-radius: $item-corner-small;
 				margin-left: auto;
 			}
 		}

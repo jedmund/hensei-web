@@ -122,7 +122,7 @@
 		.skill-icon {
 			width: 40px;
 			height: 40px;
-			border-radius: 4px;
+			border-radius: $item-corner-small;
 			flex-shrink: 0;
 			object-fit: cover;
 		}

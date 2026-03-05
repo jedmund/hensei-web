@@ -19,7 +19,8 @@
   </div>
 </aside>
 
-<style>
+<style lang="scss">
+	@use '$src/themes/layout' as layout;
   .panel {
     width: var(--panel-w, 380px);
     max-width: 92vw;
@@ -59,7 +60,7 @@
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: layout.$input-corner;
     font-size: 14px;
   }
 </style>
