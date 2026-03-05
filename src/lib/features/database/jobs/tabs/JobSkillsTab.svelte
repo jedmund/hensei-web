@@ -364,7 +364,7 @@
 	}
 
 	.error {
-		color: colors.$red;
+		color: var(--red);
 	}
 
 	.skill-group {

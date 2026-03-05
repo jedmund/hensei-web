@@ -291,7 +291,7 @@
 	}
 
 	.error {
-		color: colors.$red;
+		color: var(--red);
 	}
 
 	.content {
@@ -330,7 +330,7 @@
 			min-width: 48px;
 			height: 48px;
 			padding: 0 spacing.$unit;
-			background: colors.$blue;
+			background: var(--blue);
 			color: white;
 			border-radius: layout.$item-corner;
 			font-size: typography.$font-xlarge;
@@ -400,7 +400,7 @@
 		padding: spacing.$unit * 4;
 
 		button {
-			background: colors.$blue;
+			background: var(--blue);
 			color: white;
 			border: none;
 			padding: spacing.$unit spacing.$unit-2x;

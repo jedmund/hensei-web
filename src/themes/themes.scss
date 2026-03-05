@@ -211,6 +211,7 @@
 	--blue: #{colors.$blue};
 	--red: #{colors.$red};
 	--blue-subtle: #{rgba(colors.$blue, 0.1)};
+	--blue-focus-ring: #{rgba(colors.$blue, 0.2)};
 
 	// Light - Tags
 	--tag-bg: #{colors.$tag--bg--light};
@@ -599,6 +600,7 @@ html[data-theme='dark'] {
 	--blue: #{colors.$blue};
 	--red: #{colors.$red};
 	--blue-subtle: #{rgba(colors.$blue, 0.15)};
+	--blue-focus-ring: #{rgba(colors.$blue, 0.2)};
 
 	// Dark - Tags
 	--tag-bg: #{colors.$tag--bg--dark};

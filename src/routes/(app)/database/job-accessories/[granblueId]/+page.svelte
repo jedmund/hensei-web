@@ -194,7 +194,7 @@
 	}
 
 	.job-link {
-		color: colors.$blue;
+		color: var(--blue);
 		text-decoration: none;
 
 		&:hover {
@@ -217,6 +217,6 @@
 	}
 
 	.error {
-		color: colors.$red;
+		color: var(--red);
 	}
 </style>

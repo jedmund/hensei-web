@@ -116,8 +116,8 @@
 		}
 
 		&.current {
-			background: rgba(colors.$blue, 0.1);
-			outline: 1px solid colors.$blue;
+			background: var(--blue-subtle);
+			outline: 1px solid var(--blue);
 		}
 	}
 
@@ -141,7 +141,7 @@
 	}
 
 	.forged-from-link {
-		color: colors.$blue;
+		color: var(--blue);
 		text-decoration: none;
 
 		&:hover {

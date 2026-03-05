@@ -197,7 +197,7 @@
     }
 
     &:hover .recruited-by-name {
-      color: colors.$blue;
+      color: var(--blue);
     }
   }
 

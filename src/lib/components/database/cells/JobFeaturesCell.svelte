@@ -48,7 +48,7 @@
 		}
 
 		&.accessory {
-			background: colors.$blue;
+			background: var(--blue);
 			color: white;
 		}
 	}

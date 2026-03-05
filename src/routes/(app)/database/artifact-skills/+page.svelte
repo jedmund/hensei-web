@@ -179,7 +179,7 @@
 
 			&:focus {
 				outline: none;
-				box-shadow: 0 0 0 2px colors.$blue;
+				box-shadow: 0 0 0 2px var(--blue);
 			}
 		}
 	}
@@ -192,7 +192,7 @@
 	}
 
 	.error {
-		color: colors.$red;
+		color: var(--red);
 	}
 
 	.table-wrapper {
@@ -304,7 +304,7 @@
 	.group-badge {
 		display: inline-block;
 		padding: 2px 8px;
-		background: colors.$blue;
+		background: var(--blue);
 		color: white;
 		border-radius: 4px;
 		font-size: typography.$font-small;
@@ -323,7 +323,7 @@
 		}
 
 		&.negative {
-			background: colors.$red;
+			background: var(--red);
 			color: white;
 		}
 	}

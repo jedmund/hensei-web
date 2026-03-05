@@ -368,7 +368,7 @@
 		--sv-bg: var(--select-contained-bg);
 		--sv-border-color: transparent;
 		--sv-border: 1px solid var(--sv-border-color);
-		--sv-active-border: 1px solid colors.$blue;
+		--sv-active-border: 1px solid var(--blue);
 		--sv-active-outline: none;
 		--sv-border-radius: #{layout.$input-corner};
 		--sv-min-height: #{spacing.$unit-4x};
