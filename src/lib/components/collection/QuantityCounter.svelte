@@ -67,6 +67,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/effects' as *;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/typography' as typography;
 
 	.quantity-counter {
 		display: inline-flex;
@@ -92,8 +93,8 @@
 		border: none;
 		background: transparent;
 		color: white;
-		font-size: 14px;
-		font-weight: 600;
+		font-size: typography.$font-body;
+		font-weight: typography.$bold;
 		cursor: pointer;
 		border-radius: 2px;
 		@include smooth-transition(0.1s, all);
@@ -117,7 +118,7 @@
 		min-width: 20px;
 		text-align: center;
 		font-size: 12px;
-		font-weight: 600;
+		font-weight: typography.$bold;
 		color: white;
 	}
 </style>

@@ -52,6 +52,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/typography' as typography;
 
 	.skill-item {
 		display: flex;
@@ -135,8 +136,8 @@
 			min-width: 0;
 
 			.skill-name {
-				font-size: 14px;
-				font-weight: 500;
+				font-size: typography.$font-body;
+				font-weight: typography.$medium;
 				color: var(--text-primary);
 				overflow: hidden;
 				text-overflow: ellipsis;
@@ -145,7 +146,7 @@
 
 			.skill-category {
 				font-size: 11px;
-				font-weight: 600;
+				font-weight: typography.$bold;
 				color: var(--text-secondary);
 				text-transform: uppercase;
 				letter-spacing: 0.5px;

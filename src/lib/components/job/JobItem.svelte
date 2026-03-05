@@ -146,7 +146,7 @@
 				padding: 2px 6px;
 				border-radius: layout.$input-corner;
 				font-size: typography.$font-small;
-				font-weight: 600;
+				font-weight: typography.$bold;
 				text-transform: uppercase;
 				letter-spacing: 0.5px;
 

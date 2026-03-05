@@ -353,6 +353,7 @@
 
 <style lang="scss">
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/typography' as typography;
 
   .sidebar {
     width: 320px;
@@ -382,7 +383,7 @@
     h2 {
       margin: 0;
       font-size: 18px;
-      font-weight: 600;
+      font-weight: typography.$bold;
     }
 
     .close-btn {
@@ -413,7 +414,7 @@
       padding: 8px 12px;
       border: 1px solid #ddd;
       border-radius: layout.$bubble-menu-item-corner;
-      font-size: 14px;
+      font-size: typography.$font-body;
 
       &:focus {
         outline: none;
@@ -440,7 +441,7 @@
     .filter-label {
       display: block;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: typography.$bold;
       text-transform: uppercase;
       color: #666;
       margin-bottom: 6px;
@@ -494,7 +495,7 @@
       text-align: center;
       padding: 24px;
       color: #666;
-      font-size: 14px;
+      font-size: typography.$font-body;
     }
 
     .results-list {
@@ -554,13 +555,13 @@
 
       .result-name {
         flex: 1;
-        font-size: 14px;
+        font-size: typography.$font-body;
         color: #333;
       }
 
       .result-element {
         font-size: 12px;
-        font-weight: 600;
+        font-weight: typography.$bold;
         margin-left: 8px;
       }
     }

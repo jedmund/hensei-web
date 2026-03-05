@@ -22,6 +22,7 @@
 <style lang="scss">
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
+	@use '$src/themes/typography' as typography;
   .panel {
     width: var(--panel-w, 380px);
     max-width: 92vw;
@@ -62,6 +63,6 @@
     padding: 10px 12px;
     border: 1px solid #ddd;
     border-radius: layout.$input-corner;
-    font-size: 14px;
+    font-size: typography.$font-body;
   }
 </style>

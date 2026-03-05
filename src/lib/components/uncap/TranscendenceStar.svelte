@@ -210,6 +210,7 @@
 	@use '$src/themes/typography';
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
+	@use '$src/themes/typography' as typography;
 
 	.star {
 		--size: 18px;
@@ -382,7 +383,7 @@
 			color: #333;
 
 			.level-value {
-				font-weight: 500;
+				font-weight: typography.$medium;
 
 				&.pending {
 					color: #999;

@@ -269,7 +269,7 @@
 	}
 
 	.form-label {
-		font-weight: 500;
+		font-weight: typography.$medium;
 		font-size: 0.875rem;
 
 		.required {

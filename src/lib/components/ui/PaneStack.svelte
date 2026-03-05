@@ -152,6 +152,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/effects' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/typography' as typography;
 
 	// Stacking configuration
 	$pane-peek-offset: $unit-3x; // How much the behind pane peeks out to the left
@@ -301,7 +302,7 @@
 		padding: $unit $unit-2x;
 		border-radius: $item-corner-small;
 		cursor: pointer;
-		font-size: 14px;
+		font-size: typography.$font-body;
 		color: var(--text-primary);
 		outline: none;
 

@@ -355,7 +355,7 @@
 	}
 
 	.form-label {
-		font-weight: 500;
+		font-weight: typography.$medium;
 		font-size: 0.875rem;
 
 		.required {
@@ -455,7 +455,7 @@
 
 	.dialog-title {
 		font-size: 1.125rem;
-		font-weight: 600;
+		font-weight: typography.$bold;
 		margin-bottom: spacing.$unit;
 	}
 
@@ -546,7 +546,7 @@
 
 		.member-name {
 			flex: 1;
-			font-weight: 500;
+			font-weight: typography.$medium;
 		}
 
 		.member-role {

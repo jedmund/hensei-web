@@ -319,7 +319,7 @@
 				h3 {
 					margin: 0;
 					font-size: typography.$font-regular;
-					font-weight: 600;
+					font-weight: typography.$bold;
 					color: var(--text-primary);
 				}
 			}
@@ -332,7 +332,7 @@
 					padding: 2px 8px;
 					border-radius: layout.$item-corner;
 					font-size: typography.$font-small;
-					font-weight: 600;
+					font-weight: typography.$bold;
 					text-transform: uppercase;
 					letter-spacing: 0.5px;
 

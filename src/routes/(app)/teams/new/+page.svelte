@@ -874,6 +874,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
+	@use '$src/themes/typography' as typography;
 
 	.page-container {
 		display: flex;
@@ -930,7 +931,7 @@
 
 	.dialog-title {
 		font-size: 18px;
-		font-weight: 600;
+		font-weight: typography.$bold;
 		margin-bottom: 8px;
 		color: #d32f2f;
 	}
@@ -950,7 +951,7 @@
 	}
 
 	.error-details-title {
-		font-weight: 600;
+		font-weight: typography.$bold;
 		margin-bottom: 8px;
 		color: #333;
 	}
@@ -978,7 +979,7 @@
 		border: none;
 		border-radius: layout.$item-corner-small;
 		cursor: pointer;
-		font-size: 14px;
+		font-size: typography.$font-body;
 		transition: background 0.2s;
 	}
 
