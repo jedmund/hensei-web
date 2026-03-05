@@ -138,7 +138,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
@@ -318,7 +317,7 @@
 		font-weight: typography.$medium;
 
 		&.positive {
-			background: colors.$wind-bg-00;
+			background: var(--wind-bg);
 			color: white;
 		}
 

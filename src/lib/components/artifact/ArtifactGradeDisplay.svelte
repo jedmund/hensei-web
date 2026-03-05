@@ -82,7 +82,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -185,12 +184,12 @@
 		flex-shrink: 0;
 
 		&.action-keep {
-			background: colors.$wind-bg-20;
-			color: colors.$wind-text-20;
+			background: var(--wind-nav-selected-bg);
+			color: var(--wind-nav-selected-text);
 		}
 		&.action-reroll {
-			background: colors.$accent--yellow--100;
-			color: colors.$accent--yellow--10;
+			background: var(--notice-bg);
+			color: var(--notice-text);
 		}
 		&.action-scrap {
 			background: var(--danger-bg);

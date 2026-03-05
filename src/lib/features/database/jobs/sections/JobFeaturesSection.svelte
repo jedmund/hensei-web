@@ -84,7 +84,6 @@
 </DetailsContainer>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 
 	.boolean-indicator {
@@ -92,7 +91,7 @@
 		color: var(--text-secondary);
 
 		&.yes {
-			color: colors.$wind-bg-00;
+			color: var(--wind-bg);
 		}
 	}
 </style>

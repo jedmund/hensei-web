@@ -354,7 +354,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/rep' as rep;
@@ -467,7 +466,7 @@
 		gap: spacing.$unit-fourth;
 
 		:global(.artifact-indicator) {
-			color: colors.$purple-20;
+			color: var(--extra-purple-text);
 			flex-shrink: 0;
 		}
 	}
@@ -601,27 +600,27 @@
 		}
 
 		&.fire .name {
-			color: colors.$fire--text--light;
+			color: var(--fire-text);
 		}
 
 		&.water .name {
-			color: colors.$water--text--light;
+			color: var(--water-text);
 		}
 
 		&.earth .name {
-			color: colors.$earth--text--light;
+			color: var(--earth-text);
 		}
 
 		&.wind .name {
-			color: colors.$wind--text--light;
+			color: var(--wind-text);
 		}
 
 		&.light .name {
-			color: colors.$light--text--light;
+			color: var(--light-text);
 		}
 
 		&.dark .name {
-			color: colors.$dark--text--light;
+			color: var(--dark-text);
 		}
 
 		&.neutral .name {

@@ -140,7 +140,6 @@
 </Dialog>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -210,7 +209,7 @@
 		gap: spacing.$unit;
 		padding: spacing.$unit-4x;
 		text-align: center;
-		color: colors.$wind-text-20;
+		color: var(--wind-nav-selected-text);
 
 		p {
 			margin: 0;
