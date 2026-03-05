@@ -244,6 +244,7 @@
 </div>
 
 <style lang="scss">
+  @use '$src/themes/colors' as colors;
   @use '$src/themes/typography' as typography;
   @use '$src/themes/spacing' as spacing;
   @use '$src/themes/rep' as rep;
