@@ -124,7 +124,7 @@
 				height: 24px;
 				background: rgba(0, 0, 0, 0.5);
 				border-radius: $item-corner-small;
-				padding: 2px;
+				padding: $unit-fourth;
 			}
 		}
 
@@ -146,7 +146,7 @@
 				height: 32px;
 				background: rgba(0, 0, 0, 0.5);
 				border-radius: $item-corner-small;
-				padding: 4px;
+				padding: $unit-half;
 			}
 		}
 

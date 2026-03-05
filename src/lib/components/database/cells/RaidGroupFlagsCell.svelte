@@ -20,10 +20,11 @@
 
 <style lang="scss">
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/spacing' as spacing;
 
 	.flags {
 		display: flex;
-		gap: 4px;
+		gap: spacing.$unit-half;
 		flex-wrap: wrap;
 	}
 

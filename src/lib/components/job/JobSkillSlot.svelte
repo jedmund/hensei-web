@@ -211,7 +211,7 @@
 			min-width: 0;
 			display: flex;
 			flex-direction: column;
-			gap: 2px;
+			gap: $unit-fourth;
 
 			.skill-name {
 				font-size: typography.$font-body;

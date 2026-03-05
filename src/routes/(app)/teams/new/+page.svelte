@@ -920,7 +920,7 @@
     transform: translate(-50%, -50%);
     background: white;
     border-radius: layout.$input-corner;
-    padding: 24px;
+    padding: $unit-3x;
     max-width: 500px;
     width: 90%;
     max-height: 80vh;

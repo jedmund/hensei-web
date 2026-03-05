@@ -72,10 +72,10 @@
 	.quantity-counter {
 		display: inline-flex;
 		align-items: center;
-		gap: 2px;
+		gap: $unit-fourth;
 		background: var(--surface-overlay, rgba(0, 0, 0, 0.4));
 		border-radius: layout.$item-corner-small;
-		padding: 2px;
+		padding: $unit-fourth;
 		@include smooth-transition(0.15s, all);
 
 		&.active {

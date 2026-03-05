@@ -135,7 +135,7 @@
 	.raid-info {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: $unit-fourth;
 		flex: 1;
 		min-width: 0;
 	}

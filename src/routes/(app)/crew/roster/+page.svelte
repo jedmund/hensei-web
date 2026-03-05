@@ -482,7 +482,7 @@
 		min-width: 150px;
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: spacing.$unit-fourth;
 		position: sticky;
 		left: 0;
 		padding-left: spacing.$unit-2x;

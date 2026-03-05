@@ -132,7 +132,7 @@
 			flex: 1;
 			display: flex;
 			flex-direction: column;
-			gap: 2px;
+			gap: $unit-fourth;
 			min-width: 0;
 
 			.skill-name {

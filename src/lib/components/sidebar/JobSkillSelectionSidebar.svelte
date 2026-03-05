@@ -338,7 +338,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			padding: 4px;
+			padding: $unit-half;
 			background: transparent;
 			border: none;
 			cursor: pointer;

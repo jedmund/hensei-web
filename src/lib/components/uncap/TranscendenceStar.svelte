@@ -361,7 +361,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 8px;
+		gap: spacing.$unit;
 		animation: popover-appear 0.2s ease-out;
 
 		&.above {
@@ -379,7 +379,7 @@
 			text-align: center;
 			white-space: nowrap;
 			display: flex;
-			gap: 4px;
+			gap: spacing.$unit-half;
 			color: #333;
 
 			.level-value {

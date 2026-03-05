@@ -22,12 +22,13 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/spacing' as spacing;
 
 	.features-cell {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 4px;
+		gap: spacing.$unit-half;
 		height: 100%;
 	}
 

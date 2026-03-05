@@ -237,7 +237,7 @@
 
 	.stars {
 		display: flex;
-		gap: 2px;
+		gap: spacing.$unit-fourth;
 		list-style: none;
 		margin: 0;
 		padding: 0;

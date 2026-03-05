@@ -17,10 +17,12 @@
 </div>
 
 <style lang="scss">
+	@use '$src/themes/spacing' as spacing;
+
 	.proficiencies-cell {
 		display: flex;
 		align-items: center;
-		gap: 4px;
+		gap: spacing.$unit-half;
 		height: 100%;
 	}
 </style>
