@@ -207,10 +207,9 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography';
+	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
-	@use '$src/themes/typography' as typography;
 
 	.star {
 		--size: 18px;
