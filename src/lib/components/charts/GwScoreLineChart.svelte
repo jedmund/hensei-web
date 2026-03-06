@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import { Chart } from 'svelte-echarts'
-	import { init, CHART_FONT_FAMILY } from './echarts-setup'
+	import { init, CHART_FONT_FAMILY, CHART_SPLIT_LINE, CHART_AXIS_LINE, CHART_LABEL_COLOR } from './echarts-setup'
 	import { formatScore, formatScoreCompact, type PlayerRoundScore } from '$lib/utils/gw'
 
 	interface Props {
@@ -14,9 +14,9 @@
 	let { data, title, height = 300 }: Props = $props()
 
 	const options = $derived({
-		textStyle: { fontFamily: CHART_FONT_FAMILY },
+		textStyle: { fontFamily: CHART_FONT_FAMILY, color: CHART_LABEL_COLOR },
 		title: title
-			? { text: title, left: 'center', textStyle: { fontSize: 14, fontFamily: CHART_FONT_FAMILY } }
+			? { text: title, left: 'center', textStyle: { fontSize: 14, fontFamily: CHART_FONT_FAMILY, color: CHART_LABEL_COLOR } }
 			: undefined,
 		tooltip: {
 			trigger: 'axis' as const,
@@ -36,14 +36,17 @@
 		xAxis: {
 			type: 'category' as const,
 			data: data.map((d) => d.roundLabel),
-			axisLabel: { rotate: 45, fontSize: 11 }
+			axisLabel: { rotate: 45, fontSize: 11, color: CHART_LABEL_COLOR },
+			axisLine: CHART_AXIS_LINE
 		},
 		yAxis: {
 			type: 'value' as const,
 			axisLabel: {
 				formatter: (v: number) => formatScoreCompact(v),
-				fontSize: 11
-			}
+				fontSize: 11,
+				color: CHART_LABEL_COLOR
+			},
+			splitLine: CHART_SPLIT_LINE
 		},
 		series: [
 			{

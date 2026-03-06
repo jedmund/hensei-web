@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import { Chart } from 'svelte-echarts'
-	import { init, CHART_FONT_FAMILY } from './echarts-setup'
+	import { init, CHART_FONT_FAMILY, CHART_SPLIT_LINE, CHART_AXIS_LINE, CHART_LABEL_COLOR } from './echarts-setup'
 	import { formatScore, formatScoreCompact } from '$lib/utils/gw'
 	import type { GwChartDataPoint } from '$lib/types/api/gw'
 
@@ -14,7 +14,7 @@
 	let { data, height = 300 }: Props = $props()
 
 	const options = $derived({
-		textStyle: { fontFamily: CHART_FONT_FAMILY },
+		textStyle: { fontFamily: CHART_FONT_FAMILY, color: CHART_LABEL_COLOR },
 		tooltip: {
 			trigger: 'axis' as const,
 			formatter: (params: unknown) => {
@@ -27,7 +27,8 @@
 		},
 		legend: {
 			data: ['Our Crew', 'Opponent'],
-			bottom: 0
+			bottom: 0,
+			textStyle: { color: CHART_LABEL_COLOR }
 		},
 		grid: {
 			left: 48,
@@ -38,14 +39,17 @@
 		xAxis: {
 			type: 'category' as const,
 			data: data.map((d) => d.roundLabel),
-			axisLabel: { fontSize: 11 }
+			axisLabel: { fontSize: 11, color: CHART_LABEL_COLOR },
+			axisLine: CHART_AXIS_LINE
 		},
 		yAxis: {
 			type: 'value' as const,
 			axisLabel: {
 				formatter: (v: number) => formatScoreCompact(v),
-				fontSize: 11
-			}
+				fontSize: 11,
+				color: CHART_LABEL_COLOR
+			},
+			splitLine: CHART_SPLIT_LINE
 		},
 		series: [
 			{
