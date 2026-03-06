@@ -154,10 +154,10 @@
 
 	.database-grid {
 		width: 100%;
-		background: white;
+		background: var(--card-bg);
 		border-radius: layout.$input-corner;
 		overflow: hidden;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.grid-controls {
@@ -200,7 +200,7 @@
 				border: 1px solid #ddd;
 				border-radius: layout.$item-corner-small;
 				font-size: typography.$font-small;
-				background: white;
+				background: var(--card-bg);
 				cursor: pointer;
 			}
 		}
@@ -254,7 +254,7 @@
 
 			.pagination-button {
 				padding: spacing.$unit * 0.5 spacing.$unit;
-				background: white;
+				background: var(--card-bg);
 				border: 1px solid #ddd;
 				border-radius: layout.$item-corner-small;
 				font-size: typography.$font-small;

@@ -28,7 +28,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
@@ -54,12 +53,12 @@
 
 		.label {
 			font-size: typography.$font-regular;
-			color: var(--text-secondary, colors.$grey-50);
+			color: var(--text-secondary);
 		}
 
 		.value {
 			font-size: typography.$font-regular;
-			color: var(--text-primary, colors.$grey-10);
+			color: var(--text-primary);
 			min-width: 180px;
 		}
 

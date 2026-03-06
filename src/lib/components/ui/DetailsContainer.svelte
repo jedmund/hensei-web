@@ -14,7 +14,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
@@ -31,7 +30,7 @@
 		}
 
 		h4 {
-			color: colors.$grey-30;
+			color: var(--text-primary);
 			font-size: typography.$font-medium;
 			font-weight: typography.$bold;
 			margin: 0 0 spacing.$unit 0;

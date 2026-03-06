@@ -407,7 +407,7 @@
 
 		&.editable:hover {
 			opacity: 0.95;
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			box-shadow: var(--shadow-sm);
 		}
 
 		// Slot selection - subtle dark pulsing glow (works for both empty and filled)
@@ -642,7 +642,7 @@
 		}
 
 		&.neutral .name {
-			color: colors.$grey-40;
+			color: var(--text-secondary);
 		}
 	}
 
@@ -652,7 +652,7 @@
 		right: 4px;
 		width: 24px;
 		height: 24px;
-		background: #d13a3a;
+		background: colors.$error;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
@@ -661,18 +661,18 @@
 		z-index: effects.$z-sticky;
 		pointer-events: auto;
 		cursor: help;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		box-shadow: var(--shadow-sm);
 	}
 
 	// Orphaned state
 	.unit.orphaned {
 		.frame {
 			opacity: 0.7;
-			border: 2px solid #d13a3a;
+			border: 2px solid colors.$error;
 		}
 
 		.name {
-			color: #d13a3a;
+			color: colors.$error;
 		}
 	}
 </style>

@@ -389,9 +389,7 @@
 		border-radius: $input-corner;
 		padding: $unit-half;
 		min-width: 160px;
-		box-shadow:
-			0 10px 38px -10px rgba(22, 23, 24, 0.35),
-			0 10px 20px -15px rgba(22, 23, 24, 0.2);
+		box-shadow: var(--shadow-xl);
 		z-index: effects.$z-popover;
 
 		button {

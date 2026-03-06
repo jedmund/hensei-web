@@ -179,6 +179,7 @@
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
+	@use '$src/themes/colors' as colors;
 
 	.job-section {
 		display: flex;
@@ -337,7 +338,7 @@
 					letter-spacing: 0.5px;
 
 					&.master {
-						background: var(--badge-master-bg, #ffd700);
+						background: var(--badge-master-bg, colors.$gold);
 						color: var(--badge-master-text, #000);
 					}
 

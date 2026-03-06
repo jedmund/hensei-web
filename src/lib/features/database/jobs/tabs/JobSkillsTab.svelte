@@ -390,12 +390,12 @@
 		align-items: center;
 		gap: spacing.$unit;
 		padding: spacing.$unit;
-		background: colors.$grey-95;
+		background: var(--background);
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s ease;
 
 		&:hover {
-			background: colors.$grey-90;
+			background: var(--background);
 		}
 	}
 
@@ -451,7 +451,7 @@
 		background: var(--menu-bg, white);
 		border: 1px solid var(--border-color, #ddd);
 		border-radius: layout.$card-corner;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-md);
 		padding: spacing.$unit-half;
 		min-width: calc(spacing.$unit * 16);
 		z-index: effects.$z-modal;

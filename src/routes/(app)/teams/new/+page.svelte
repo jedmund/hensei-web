@@ -918,7 +918,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background: white;
+    background: var(--card-bg);
     border-radius: layout.$input-corner;
     padding: $unit-3x;
     max-width: 500px;

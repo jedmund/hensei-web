@@ -442,7 +442,6 @@
 {/if}
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/themes' as themes;
 	@use '$src/themes/layout' as layout;
@@ -544,7 +543,7 @@
 					aspect-ratio: 1;
 
 					&:hover {
-						color: colors.$grey-30;
+						color: var(--text-primary);
 					}
 				}
 			}
@@ -851,9 +850,7 @@
 		border-radius: layout.$input-corner;
 		padding: spacing.$unit-half;
 		min-width: 160px;
-		box-shadow:
-			0 10px 38px -10px rgba(22, 23, 24, 0.35),
-			0 10px 20px -15px rgba(22, 23, 24, 0.2);
+		box-shadow: var(--shadow-xl);
 		animation: dropdownSlideIn 0.2s ease;
 		z-index: effects.$z-popover;
 

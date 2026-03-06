@@ -55,7 +55,7 @@
 		font-size: $font-small;
 		font-weight: $medium;
 		z-index: effects.$z-notification;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		box-shadow: var(--shadow-md);
 		max-width: calc($unit * 31.25);
 		line-height: 1.4;
 	}

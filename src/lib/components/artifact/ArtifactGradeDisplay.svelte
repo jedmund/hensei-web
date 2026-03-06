@@ -107,7 +107,7 @@
 		border-radius: layout.$item-corner;
 
 		&.grade-s {
-			background: linear-gradient(135deg, #ffd700, #ffb347);
+			background: linear-gradient(135deg, colors.$gold, colors.$gold-light);
 			color: #6b4c00;
 		}
 		&.grade-a {
@@ -119,19 +119,19 @@
 			color: #1e3a5f;
 		}
 		&.grade-c {
-			background: colors.$grey-80;
-			color: colors.$grey-30;
+			background: var(--placeholder-bg);
+			color: var(--text-primary);
 		}
 		&.grade-d {
-			background: colors.$grey-70;
-			color: colors.$grey-40;
+			background: var(--placeholder-bg-accent);
+			color: var(--text-secondary);
 		}
 		&.grade-f {
 			background: linear-gradient(135deg, #f87171, #ef4444);
 			color: #7f1d1d;
 		}
 		&.grade-none {
-			background: colors.$grey-85;
+			background: var(--unit-bg);
 			color: var(--text-secondary);
 		}
 	}
@@ -139,14 +139,14 @@
 	.grade-score {
 		font-size: typography.$font-large;
 		font-weight: typography.$medium;
-		color: colors.$grey-40;
+		color: var(--text-secondary);
 	}
 
 	.breakdown {
 		display: flex;
 		gap: spacing.$unit-2x;
 		padding: spacing.$unit;
-		background: colors.$grey-95;
+		background: var(--background);
 		border-radius: layout.$item-corner;
 	}
 
@@ -165,7 +165,7 @@
 	.breakdown-value {
 		font-size: typography.$font-regular;
 		font-weight: typography.$medium;
-		color: colors.$grey-30;
+		color: var(--text-primary);
 	}
 
 	.recommendation {
@@ -200,12 +200,12 @@
 
 	.reason {
 		font-size: typography.$font-small;
-		color: colors.$grey-40;
+		color: var(--text-secondary);
 	}
 
 	.no-grade {
 		padding: spacing.$unit;
-		background: colors.$grey-95;
+		background: var(--background);
 		border-radius: layout.$item-corner;
 	}
 

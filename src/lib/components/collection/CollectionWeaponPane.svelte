@@ -354,14 +354,13 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 
 	.collection-weapon-pane {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-		color: var(--text-primary, colors.$grey-10);
+		color: var(--text-primary);
 	}
 
 	.tab-nav {

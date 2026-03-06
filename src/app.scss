@@ -110,6 +110,6 @@ $font-size-base: 16px;
 
 [data-sonner-toast] {
 	border-radius: layout.$input-corner;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	box-shadow: var(--shadow-lg);
 	font-size: typography.$font-body;
 }

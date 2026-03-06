@@ -13,7 +13,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 
@@ -26,9 +25,9 @@
 	.tier-badge {
 		display: inline-block;
 		padding: 2px 8px;
-		background: colors.$grey-90;
+		background: var(--background);
 		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
-		color: colors.$grey-30;
+		color: var(--text-primary);
 	}
 </style>

@@ -118,7 +118,7 @@
 
 		&:hover {
 			background: var(--list-cell-bg-hover);
-			box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+			box-shadow: var(--shadow-md);
 		}
 
 		&:focus-visible {

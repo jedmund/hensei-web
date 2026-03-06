@@ -362,7 +362,7 @@
     background: var(--app-bg, #fff);
     display: none;
     flex-direction: column;
-    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-md);
     border-left: 1px solid #e0e0e0;
     position: sticky;
     top: 0;
@@ -463,7 +463,7 @@
     .filter-btn {
       padding: 4px 8px;
       border: 1px solid #ddd;
-      background: white;
+      background: var(--card-bg);
       border-radius: layout.$item-corner-small;
       font-size: 12px;
       cursor: pointer;
@@ -515,7 +515,7 @@
         padding: spacing.$unit;
         border: 1px solid transparent;
         border-radius: layout.$bubble-menu-item-corner;
-        background: white;
+        background: var(--card-bg);
         cursor: pointer;
         transition: all 0.2s;
         text-align: left;
@@ -523,7 +523,7 @@
         &:hover {
           background: #f5f5f5;
           border-color: #3366ff;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          box-shadow: var(--shadow-xs);
         }
 
         &:active:not(:disabled) {
@@ -579,7 +579,7 @@
       button {
         padding: 4px 12px;
         border: 1px solid #ddd;
-        background: white;
+        background: var(--card-bg);
         border-radius: layout.$item-corner-small;
         font-size: 13px;
         cursor: pointer;
