@@ -122,7 +122,7 @@
 			z-index: 100;
 			width: 90vw !important;
 			max-width: 400px;
-			box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+			box-shadow: var(--shadow-md);
 			// Mobile already uses transform, no additional changes needed
 		}
 	}

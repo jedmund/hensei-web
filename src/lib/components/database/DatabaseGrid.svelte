@@ -155,7 +155,7 @@
 		background: var(--card-bg);
 		border-radius: 8px;
 		overflow: hidden;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.grid-controls {

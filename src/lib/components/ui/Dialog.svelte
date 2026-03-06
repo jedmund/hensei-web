@@ -70,7 +70,7 @@
 		transform: translate(-50%, -50%);
 		background: var(--dialog-bg);
 		border-radius: $card-corner;
-		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+		box-shadow: var(--shadow-xl);
 		max-width: 90vw;
 		max-height: 90vh;
 		width: 540px;

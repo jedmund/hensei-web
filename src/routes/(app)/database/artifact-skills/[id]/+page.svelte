@@ -280,7 +280,7 @@
 	.page {
 		background: var(--card-bg);
 		border-radius: layout.$card-corner;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.loading,

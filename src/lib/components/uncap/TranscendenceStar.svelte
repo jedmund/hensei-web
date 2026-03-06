@@ -350,7 +350,7 @@
 		z-index: 1001;
 		background: var(--card-bg);
 		border-radius: 8px;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		box-shadow: var(--shadow-lg);
 		padding: 12px;
 		width: auto;
 		min-width: 80px;

@@ -224,7 +224,7 @@
 		@include smooth-transition($duration-instant, transform);
 		transform: translateX(0);
 		cursor: pointer;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+		box-shadow: var(--shadow-sm);
 	}
 
 	:global([data-switch-root] .thumb[data-state='checked']) {
