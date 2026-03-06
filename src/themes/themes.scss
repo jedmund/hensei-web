@@ -238,9 +238,9 @@
 	--extra-purple-card-bg: #{colors.$extra--purple--card--bg--light};
 	--extra-purple-primary: #{colors.$extra--purple--primary--light};
 	--extra-purple-secondary: #{colors.$extra--purple--secondary--light};
-	--extra-purple-light-text: #{colors.$extra--purple--light--text--light};
+	--extra-purple-text-light: #{colors.$extra--purple--light--text--light};
 	--extra-purple-text: #{colors.$extra--purple--text--light};
-	--extra-purple-dark-text: #{colors.$extra--purple--dark--text--dark};
+	--extra-purple-text-dark: #{colors.$extra--purple--dark--text--dark};
 
 	--switch-nub: #{colors.$switch--nub--bg--light};
 
@@ -332,6 +332,7 @@
 	--wind-bg-hover: #{colors.$wind--bg--hover--light};
 	--wind-portrait-bg: #{colors.$wind--portrait--bg--light};
 	--wind-text: #{colors.$wind--text--light};
+	--wind-text-contrast: #{colors.$wind--text--contrast};
 	--wind-raid-text: #{colors.$wind--text--raid--light};
 	--wind-text-hover: #{colors.$wind--text--hover--light};
 	--wind-shadow: #{colors.$wind--shadow--light};
@@ -433,6 +434,8 @@ html[data-theme='dark'] {
 
 	--full-auto-bg: #{colors.$full--auto--bg};
 	--full-auto-text: #{colors.$charge--attack--text};
+	--auto-guard-bg: #{colors.$auto--guard--bg};
+	--auto-guard-text: #{colors.$auto--guard--text};
 
 	--full-auto-label-text: #{colors.$text--full--auto--dark};
 
@@ -649,7 +652,7 @@ html[data-theme='dark'] {
 	--null-bg: #{colors.$null--bg--dark};
 	--null-bg-hover: #{colors.$null--bg--hover--dark};
 	--null-text: #{colors.$null--text--dark};
-	--null-contrast-text: #{colors.$null--text--contrast};
+	--null-text-contrast: #{colors.$null--text--contrast};
 	--null-raid-text: #{colors.$null--text--raid--dark};
 	--null-text-hover: #{colors.$null--text--hover--dark};
 	--null-shadow: #{colors.$null--shadow--dark};
