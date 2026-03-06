@@ -243,7 +243,7 @@
 	}
 
 	.error-message {
-		color: colors.$error;
+		color: var(--danger);
 		font-size: typography.$font-small;
 		margin: spacing.$unit 0 0;
 	}

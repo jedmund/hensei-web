@@ -138,7 +138,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
@@ -179,7 +178,7 @@
 
 			&:focus {
 				outline: none;
-				box-shadow: 0 0 0 2px colors.$blue;
+				box-shadow: 0 0 0 2px var(--blue);
 			}
 		}
 	}
@@ -192,7 +191,7 @@
 	}
 
 	.error {
-		color: colors.$red;
+		color: var(--red);
 	}
 
 	.table-wrapper {
@@ -304,7 +303,7 @@
 	.group-badge {
 		display: inline-block;
 		padding: 2px 8px;
-		background: colors.$blue;
+		background: var(--blue);
 		color: white;
 		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
@@ -318,12 +317,12 @@
 		font-weight: typography.$medium;
 
 		&.positive {
-			background: colors.$wind-bg-00;
+			background: var(--wind-bg);
 			color: white;
 		}
 
 		&.negative {
-			background: colors.$red;
+			background: var(--red);
 			color: white;
 		}
 	}

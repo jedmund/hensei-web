@@ -205,6 +205,13 @@
 	// Light - Danger/Error
 	--danger: #{colors.$error};
 	--danger-bg: #{colors.$error--bg--light};
+	--danger-bg-subtle: #{rgba(colors.$error--bg--light, 0.1)};
+
+	// Light - Interface colors
+	--blue: #{colors.$blue};
+	--red: #{colors.$red};
+	--blue-subtle: #{rgba(colors.$blue, 0.1)};
+	--blue-focus-ring: #{rgba(colors.$blue, 0.2)};
 
 	// Light - Tags
 	--tag-bg: #{colors.$tag--bg--light};
@@ -598,6 +605,13 @@ html[data-theme='dark'] {
 	// Dark - Danger/Error
 	--danger: #{colors.$error};
 	--danger-bg: #{colors.$error--bg--dark};
+	--danger-bg-subtle: #{rgba(colors.$error--bg--dark, 0.15)};
+
+	// Dark - Interface colors
+	--blue: #{colors.$blue};
+	--red: #{colors.$red};
+	--blue-subtle: #{rgba(colors.$blue, 0.15)};
+	--blue-focus-ring: #{rgba(colors.$blue, 0.2)};
 
 	// Dark - Tags
 	--tag-bg: #{colors.$tag--bg--dark};

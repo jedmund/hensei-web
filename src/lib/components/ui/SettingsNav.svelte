@@ -44,7 +44,6 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
@@ -90,43 +89,43 @@
 	// Element-specific styles for checked state
 	.element-wind {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$wind-bg-20;
-			color: colors.$wind-text-10;
+			background: var(--wind-nav-selected-bg);
+			color: var(--wind-nav-selected-text);
 		}
 	}
 
 	.element-fire {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$fire-bg-20;
-			color: colors.$fire-text-10;
+			background: var(--fire-nav-selected-bg);
+			color: var(--fire-nav-selected-text);
 		}
 	}
 
 	.element-water {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$water-bg-20;
-			color: colors.$water-text-10;
+			background: var(--water-nav-selected-bg);
+			color: var(--water-nav-selected-text);
 		}
 	}
 
 	.element-earth {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$earth-bg-20;
-			color: colors.$earth-text-10;
+			background: var(--earth-nav-selected-bg);
+			color: var(--earth-nav-selected-text);
 		}
 	}
 
 	.element-dark {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$dark-bg-20;
-			color: colors.$dark-text-10;
+			background: var(--dark-nav-selected-bg);
+			color: var(--dark-nav-selected-text);
 		}
 	}
 
 	.element-light {
 		:global(.nav-item[data-state='checked']) {
-			background: colors.$light-bg-20;
-			color: colors.$light-text-10;
+			background: var(--light-nav-selected-bg);
+			color: var(--light-nav-selected-text);
 		}
 	}
 </style>

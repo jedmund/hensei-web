@@ -264,7 +264,7 @@
 
 			&:focus {
 				outline: none;
-				box-shadow: 0 0 0 2px colors.$blue;
+				box-shadow: 0 0 0 2px var(--blue);
 			}
 		}
 
@@ -282,7 +282,7 @@
 
 			&:focus {
 				outline: none;
-				box-shadow: 0 0 0 2px colors.$blue;
+				box-shadow: 0 0 0 2px var(--blue);
 			}
 		}
 	}
@@ -296,7 +296,7 @@
 	}
 
 	.error {
-		color: colors.$red;
+		color: var(--red);
 	}
 
 	.table-wrapper {

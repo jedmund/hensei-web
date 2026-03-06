@@ -223,7 +223,6 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as layout;
 
 	.section {
@@ -262,22 +261,22 @@
 				background-color: var(--placeholder-bg);
 
 				&.element-fire {
-					background-color: colors.$fire-bg-20;
+					background-color: var(--fire-nav-selected-bg);
 				}
 				&.element-water {
-					background-color: colors.$water-bg-20;
+					background-color: var(--water-nav-selected-bg);
 				}
 				&.element-earth {
-					background-color: colors.$earth-bg-20;
+					background-color: var(--earth-nav-selected-bg);
 				}
 				&.element-wind {
-					background-color: colors.$wind-bg-20;
+					background-color: var(--wind-nav-selected-bg);
 				}
 				&.element-light {
-					background-color: colors.$light-bg-20;
+					background-color: var(--light-nav-selected-bg);
 				}
 				&.element-dark {
-					background-color: colors.$dark-bg-20;
+					background-color: var(--dark-nav-selected-bg);
 				}
 			}
 		}

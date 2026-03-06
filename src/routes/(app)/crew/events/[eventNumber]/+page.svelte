@@ -593,8 +593,8 @@
 		}
 
 		&.loss {
-			background: colors.$error--bg--light;
-			color: colors.$error;
+			background: var(--danger-bg);
+			color: var(--danger);
 		}
 	}
 

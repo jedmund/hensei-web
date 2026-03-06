@@ -82,7 +82,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -123,7 +122,7 @@
 			color: var(--text-primary);
 		}
 		&.grade-d {
-			background: var(--placeholder-bg-accent);
+			background: var(--separator-bg);
 			color: var(--text-secondary);
 		}
 		&.grade-f {
@@ -146,7 +145,7 @@
 		display: flex;
 		gap: spacing.$unit-2x;
 		padding: spacing.$unit;
-		background: var(--background);
+		background: var(--card-bg);
 		border-radius: layout.$item-corner;
 	}
 
@@ -185,16 +184,16 @@
 		flex-shrink: 0;
 
 		&.action-keep {
-			background: colors.$wind-bg-20;
-			color: colors.$wind-text-20;
+			background: var(--wind-nav-selected-bg);
+			color: var(--wind-nav-selected-text);
 		}
 		&.action-reroll {
-			background: colors.$accent--yellow--100;
-			color: colors.$accent--yellow--10;
+			background: var(--notice-bg);
+			color: var(--notice-text);
 		}
 		&.action-scrap {
-			background: colors.$error--bg--light;
-			color: colors.$error;
+			background: var(--danger-bg);
+			color: var(--danger);
 		}
 	}
 
@@ -205,7 +204,7 @@
 
 	.no-grade {
 		padding: spacing.$unit;
-		background: var(--background);
+		background: var(--card-bg);
 		border-radius: layout.$item-corner;
 	}
 

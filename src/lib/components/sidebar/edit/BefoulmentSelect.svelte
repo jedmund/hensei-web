@@ -171,7 +171,7 @@
 
 	.skeleton {
 		height: 40px;
-		background: var(--skeleton-bg);
+		background: var(--placeholder-bg);
 		border-radius: layout.$item-corner-small;
 		animation: pulse 1.5s ease-in-out infinite;
 	}

@@ -49,7 +49,6 @@
 </button>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
@@ -120,22 +119,22 @@
 
 		// Element-colored value
 		&.element-wind .value {
-			color: colors.$wind-text-20;
+			color: var(--wind-nav-selected-text);
 		}
 		&.element-fire .value {
-			color: colors.$fire-text-20;
+			color: var(--fire-nav-selected-text);
 		}
 		&.element-water .value {
-			color: colors.$water-text-20;
+			color: var(--water-nav-selected-text);
 		}
 		&.element-earth .value {
-			color: colors.$earth-text-20;
+			color: var(--earth-nav-selected-text);
 		}
 		&.element-dark .value {
-			color: colors.$dark-text-20;
+			color: var(--dark-nav-selected-text);
 		}
 		&.element-light .value {
-			color: colors.$light-text-20;
+			color: var(--light-nav-selected-text);
 		}
 	}
 </style>

@@ -113,7 +113,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 
@@ -138,7 +137,7 @@
 		padding: spacing.$unit * 4;
 
 		button {
-			background: colors.$blue;
+			background: var(--blue);
 			color: white;
 			border: none;
 			padding: spacing.$unit spacing.$unit-2x;

@@ -188,7 +188,7 @@
 		padding: spacing.$unit * 4;
 
 		button {
-			background: colors.$blue;
+			background: var(--blue);
 			color: white;
 			border: none;
 			padding: spacing.$unit spacing.$unit-2x;

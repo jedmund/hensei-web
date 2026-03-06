@@ -19,7 +19,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
@@ -40,17 +39,17 @@
 		font-weight: typography.$medium;
 
 		&.master {
-			background: colors.$yellow;
+			background: var(--accent-yellow);
 			color: white;
 		}
 
 		&.ultimate {
-			background: colors.$dark-bg-00;
+			background: var(--dark-bg);
 			color: white;
 		}
 
 		&.accessory {
-			background: colors.$blue;
+			background: var(--blue);
 			color: white;
 		}
 	}

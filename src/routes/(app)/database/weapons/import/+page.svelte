@@ -571,7 +571,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -639,7 +638,7 @@
 	}
 
 	.error {
-		color: colors.$error;
+		color: var(--danger);
 		font-size: typography.$font-small;
 		margin: spacing.$unit 0;
 	}
@@ -661,10 +660,10 @@
 	}
 
 	.error-banner {
-		color: colors.$error;
+		color: var(--danger);
 		font-size: typography.$font-small;
 		padding: spacing.$unit-2x;
-		background: colors.$error--bg--light;
+		background: var(--danger-bg);
 	}
 
 	.entity-error,
@@ -675,7 +674,7 @@
 
 		h3 {
 			margin: 0 0 spacing.$unit 0;
-			color: colors.$error;
+			color: var(--danger);
 		}
 
 		p {

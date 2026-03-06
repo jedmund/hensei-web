@@ -244,8 +244,8 @@
 
 			&:focus {
 				outline: none;
-				border-color: colors.$blue;
-				box-shadow: 0 0 0 2px rgba(colors.$blue, 0.2);
+				border-color: var(--blue);
+				box-shadow: 0 0 0 2px var(--blue-focus-ring);
 			}
 		}
 
@@ -278,6 +278,6 @@
 	}
 
 	.error {
-		color: colors.$red;
+		color: var(--red);
 	}
 </style>

@@ -95,7 +95,6 @@
 </Dialog>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -118,7 +117,7 @@
 	.success-message {
 		text-align: center;
 		padding: spacing.$unit-2x;
-		color: colors.$wind-text-20;
+		color: var(--wind-nav-selected-text);
 
 		p {
 			margin: 0;
@@ -128,9 +127,9 @@
 	.error-message {
 		margin-top: spacing.$unit;
 		padding: spacing.$unit;
-		background: colors.$error--bg--light;
+		background: var(--danger-bg);
 		border-radius: layout.$item-corner-small;
-		color: colors.$error;
+		color: var(--danger);
 
 		p {
 			margin: 0;

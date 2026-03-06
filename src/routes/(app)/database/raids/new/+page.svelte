@@ -221,10 +221,10 @@
 	}
 
 	.error-banner {
-		color: colors.$error;
+		color: var(--danger);
 		font-size: typography.$font-small;
 		padding: spacing.$unit-2x;
-		background: colors.$error--bg--light;
+		background: var(--danger-bg);
 	}
 
 	.details {

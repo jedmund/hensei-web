@@ -93,7 +93,7 @@
       flex-shrink: 0;
 
       &.placeholder {
-        background: var(--placeholder-bg-accent);
+        background: var(--separator-bg);
         display: flex;
         align-items: center;
         justify-content: center;

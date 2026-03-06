@@ -57,7 +57,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -113,28 +112,28 @@
 			}
 
 			&.element-wind {
-				background: colors.$wind-bg-20;
-				.name { color: colors.$wind-text-20; }
+				background: var(--wind-nav-selected-bg);
+				.name { color: var(--wind-nav-selected-text); }
 			}
 			&.element-fire {
-				background: colors.$fire-bg-20;
-				.name { color: colors.$fire-text-20; }
+				background: var(--fire-nav-selected-bg);
+				.name { color: var(--fire-nav-selected-text); }
 			}
 			&.element-water {
-				background: colors.$water-bg-20;
-				.name { color: colors.$water-text-20; }
+				background: var(--water-nav-selected-bg);
+				.name { color: var(--water-nav-selected-text); }
 			}
 			&.element-earth {
-				background: colors.$earth-bg-20;
-				.name { color: colors.$earth-text-20; }
+				background: var(--earth-nav-selected-bg);
+				.name { color: var(--earth-nav-selected-text); }
 			}
 			&.element-dark {
-				background: colors.$dark-bg-20;
-				.name { color: colors.$dark-text-20; }
+				background: var(--dark-nav-selected-bg);
+				.name { color: var(--dark-nav-selected-text); }
 			}
 			&.element-light {
-				background: colors.$light-bg-20;
-				.name { color: colors.$light-text-20; }
+				background: var(--light-nav-selected-bg);
+				.name { color: var(--light-nav-selected-text); }
 			}
 		}
 

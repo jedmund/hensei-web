@@ -76,7 +76,6 @@
 </DetailsContainer>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -93,7 +92,7 @@
 		}
 
 		&:hover .recruits-name {
-			color: colors.$blue;
+			color: var(--blue);
 		}
 	}
 
