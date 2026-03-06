@@ -569,10 +569,10 @@
 		background: var(--dialog-bg);
 		border-radius: $card-corner;
 		border: 1px solid rgba(0, 0, 0, 0.1);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+		box-shadow: var(--shadow-lg);
 		padding: $unit-half;
 		min-width: calc($unit * 18);
-		z-index: 50;
+		z-index: $z-popover;
 		animation: fadeIn 0.15s ease-out;
 
 		@keyframes fadeIn {
@@ -630,12 +630,12 @@
 		background: var(--dialog-bg);
 		border-radius: $card-corner;
 		border: 1px solid rgba(0, 0, 0, 0.1);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+		box-shadow: var(--shadow-lg);
 		padding: $unit-half;
 		min-width: calc($unit * 16);
 		max-height: 280px;
 		overflow: auto;
-		z-index: 51;
+		z-index: $z-popover + 1;
 	}
 
 	// Submenu items

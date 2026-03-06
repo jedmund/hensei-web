@@ -315,7 +315,7 @@
 
 	// Portalled content - use specific class name to avoid conflicts
 	:global(.date-picker-content) {
-		z-index: 50;
+		z-index: $z-popover;
 		background-color: $grey-85;
 		border-radius: $card-corner;
 		padding: $unit-2x;

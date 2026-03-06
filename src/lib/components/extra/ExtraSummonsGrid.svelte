@@ -34,10 +34,12 @@
   @use '$src/themes/colors' as *;
   @use '$src/themes/spacing' as *;
   @use '$src/themes/mixins' as *;
+  @use '$src/themes/layout' as layout;
+  @use '$src/themes/typography' as typography;
 
   .container {
     background: var(--subaura-orange-bg);
-    border-radius: 8px;
+    border-radius: layout.$input-corner;
     box-sizing: border-box;
     display: grid;
     grid-template-columns: 2.32fr 2fr;
@@ -73,7 +75,7 @@
       align-items: center;
       justify-content: center;
       line-height: 1.2;
-      font-weight: 500;
+      font-weight: typography.$medium;
       text-align: center;
     }
 

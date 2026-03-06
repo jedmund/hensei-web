@@ -133,6 +133,8 @@ function createAuthStore() {
           if (refreshed) {
             return get(authStore).accessToken
           }
+          // Refresh failed — auth was cleared, return null
+          return null
         }
       }
 

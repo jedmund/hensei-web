@@ -99,6 +99,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/colors' as colors;
 
 	.artifact-summary {
 		display: flex;
@@ -210,11 +211,11 @@
 		font-size: $font-tiny;
 		font-weight: $bold;
 		padding: 2px 6px;
-		border-radius: 4px;
+		border-radius: $item-corner-small;
 		line-height: 1;
 
 		&.grade-s {
-			background: linear-gradient(135deg, #ffd700, #ffb347);
+			background: linear-gradient(135deg, colors.$gold, colors.$gold-light);
 			color: #6b4c00;
 		}
 		&.grade-a {
@@ -241,7 +242,7 @@
 		font-size: $font-tiny;
 		font-weight: $medium;
 		padding: 2px 6px;
-		border-radius: 4px;
+		border-radius: $item-corner-small;
 		background: var(--purple-50, #b6b2fc);
 		color: var(--purple-10, #4f3c79);
 	}

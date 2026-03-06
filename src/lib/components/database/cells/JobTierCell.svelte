@@ -14,6 +14,7 @@
 
 <style lang="scss">
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.tier-cell {
 		display: flex;
@@ -25,7 +26,7 @@
 		display: inline-block;
 		padding: 2px 8px;
 		background: var(--background);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
 		color: var(--text-primary);
 	}

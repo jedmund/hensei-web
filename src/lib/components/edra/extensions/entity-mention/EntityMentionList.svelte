@@ -147,7 +147,7 @@
 		background: var(--dialog-bg);
 		border: 1px solid var(--border-color);
 		border-radius: $card-corner;
-		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+		box-shadow: var(--shadow-lg);
 		overflow: hidden;
 		min-width: 200px;
 		max-width: 300px;
@@ -176,7 +176,7 @@
 	.item-image {
 		width: 32px;
 		height: 32px;
-		border-radius: 4px;
+		border-radius: $item-corner-small;
 		overflow: hidden;
 		flex-shrink: 0;
 

@@ -21,13 +21,14 @@
 	import { Gender } from '$lib/utils/jobUtils'
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
-	import { setContext } from 'svelte'
+	import { setContext, onDestroy } from 'svelte'
 	import type { AddItemResult } from '$lib/types/api/search'
 	import { gridAdapter } from '$lib/api/adapters'
 	import { getLocalId } from '$lib/utils/localId'
 	import { storeEditKey } from '$lib/utils/editKeys'
 	import type { Party } from '$lib/types/api/party'
 	import { PartyVisibility } from '$lib/types/visibility'
+	import { partyStore } from '$lib/stores/partyStore.svelte'
 
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -380,6 +381,14 @@
 	const summons = $derived(party.summons ?? [])
 	const characters = $derived(party.characters ?? [])
 
+	// Sync party to global store for components outside the party context (like SearchContent sidebar)
+	$effect(() => {
+		partyStore.setParty(party)
+	})
+	onDestroy(() => {
+		partyStore.clear()
+	})
+
 	// Derived values for job section
 	const mainWeapon = $derived(weapons.find((w) => w?.mainhand || w?.position === -1))
 	const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
@@ -411,11 +420,18 @@
 			const partyUpdates = item.party?.collectionSourceUserId
 				? { collectionSourceUserId: item.party.collectionSourceUserId }
 				: {}
-			return {
+			const updatedParty = {
 				...old,
 				...partyUpdates,
 				[itemType]: [...(old[itemType] ?? []), item]
 			}
+
+			// Direct sync for immediate reactivity in sidebar components.
+			// The $effect chain may not fire synchronously when the query key
+			// shifts during async party creation.
+			partyStore.setParty(updatedParty)
+
+			return updatedParty
 		})
 	}
 
@@ -856,6 +872,9 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
+	@use '$src/themes/typography' as typography;
 
 	.page-container {
 		display: flex;
@@ -891,7 +910,7 @@
 		position: fixed;
 		inset: 0;
 		background: rgba(0, 0, 0, 0.5);
-		z-index: 50;
+		z-index: effects.$z-popover;
 	}
 	/* 
   :global(.dialog-content) {
@@ -899,20 +918,20 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background: white;
-    border-radius: 8px;
-    padding: 24px;
+    background: var(--card-bg);
+    border-radius: layout.$input-corner;
+    padding: $unit-3x;
     max-width: 500px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
-    z-index: 51;
+    z-index: effects.$z-popover + 1;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   } */
 
 	.dialog-title {
 		font-size: 18px;
-		font-weight: 600;
+		font-weight: typography.$bold;
 		margin-bottom: 8px;
 		color: #d32f2f;
 	}
@@ -926,13 +945,13 @@
 	.error-details {
 		background: #f5f5f5;
 		border: 1px solid #e0e0e0;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		padding: 12px;
 		margin-bottom: 20px;
 	}
 
 	.error-details-title {
-		font-weight: 600;
+		font-weight: typography.$bold;
 		margin-bottom: 8px;
 		color: #333;
 	}
@@ -958,9 +977,9 @@
 		background: #3366ff;
 		color: white;
 		border: none;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		cursor: pointer;
-		font-size: 14px;
+		font-size: typography.$font-body;
 		transition: background 0.2s;
 	}
 

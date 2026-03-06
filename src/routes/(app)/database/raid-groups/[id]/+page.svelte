@@ -132,7 +132,7 @@
 	@use '$src/themes/typography' as typography;
 
 	.page {
-		background: white;
+		background: var(--card-bg);
 		border: 0.5px solid rgba(0, 0, 0, 0.18);
 		border-radius: layout.$page-corner;
 		box-shadow: effects.$page-elevation;
@@ -171,7 +171,7 @@
 	.badge {
 		display: inline-block;
 		padding: 2px 8px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
 		background: #f0f0f0;
 		color: #666;

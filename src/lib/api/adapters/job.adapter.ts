@@ -182,8 +182,8 @@ export class JobAdapter extends BaseAdapter {
 			results: JobSkill[]
 			meta?: {
 				count?: number
-				total_pages?: number
-				per_page?: number
+				totalPages?: number
+				perPage?: number
 			}
 		}>('/search/job_skills', {
 			method: 'POST',
@@ -199,17 +199,18 @@ export class JobAdapter extends BaseAdapter {
 			// Note: No caching - filters change frequently and cache key bug causes stale data
 		})
 
-		// Transform the response to match the expected format
+		// BaseAdapter already transforms snake_case → camelCase,
+		// so meta keys are already totalPages, perPage, etc.
 		return {
 			results: response.results,
 			page: params.page || 1,
 			total: response.meta?.count || 0,
-			totalPages: response.meta?.total_pages || 1,
+			totalPages: response.meta?.totalPages || 1,
 			meta: response.meta ? {
 				count: response.meta.count ?? 0,
 				page: params.page || 1,
-				perPage: response.meta.per_page ?? 10,
-				totalPages: response.meta.total_pages ?? 1
+				perPage: response.meta.perPage ?? 10,
+				totalPages: response.meta.totalPages ?? 1
 			} : undefined
 		}
 	}

@@ -69,7 +69,7 @@ describe('PartyAdapter', () => {
 		it('should create a new party', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => mockParty
+				json: async () => ({ party: mockParty })
 			})
 
 			const result = await adapter.create({
@@ -97,7 +97,7 @@ describe('PartyAdapter', () => {
 		it('should get a party by shortcode', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => mockParty
+				json: async () => ({ party: mockParty })
 			})
 
 			const result = await adapter.getByShortcode('ABC123')
@@ -113,7 +113,7 @@ describe('PartyAdapter', () => {
 			const updatedParty = { ...mockParty, name: 'Updated Party' }
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => updatedParty
+				json: async () => ({ party: updatedParty })
 			})
 
 			const result = await adapter.update({
@@ -154,7 +154,7 @@ describe('PartyAdapter', () => {
 			const remixedParty = { ...mockParty, id: '456', shortcode: 'DEF456' }
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => remixedParty
+				json: async () => ({ party: remixedParty })
 			})
 
 			const result = await adapter.remix('ABC123')
@@ -308,7 +308,9 @@ describe('PartyAdapter', () => {
 				expect.objectContaining({
 					method: 'PUT',
 					body: JSON.stringify({
-						job_id: 'job-2'
+						party: {
+							job_id: 'job-2'
+						}
 					})
 				})
 			)
@@ -345,10 +347,10 @@ describe('PartyAdapter', () => {
 				expect.objectContaining({
 					method: 'PUT',
 					body: JSON.stringify({
-						skills: [
-							{ id: 'skill-1', slot: 1 },
-							{ id: 'skill-2', slot: 2 }
-						]
+						party: {
+							skill1_id: 'skill-1',
+							skill2_id: 'skill-2'
+						}
 					})
 				})
 			)
@@ -356,26 +358,23 @@ describe('PartyAdapter', () => {
 	})
 
 	describe('cache management', () => {
-		it('should cache party retrieval', async () => {
+		it('should not cache when disableCache is true', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => mockParty
+				json: async () => ({ party: mockParty })
 			})
 
-			// First call
+			// PartyAdapter has disableCache = true, so both calls hit the network
+			await adapter.getByShortcode('ABC123')
 			await adapter.getByShortcode('ABC123')
 
-			// Second call (should use cache)
-			await adapter.getByShortcode('ABC123')
-
-			// Should only call fetch once due to caching
-			expect(global.fetch).toHaveBeenCalledTimes(1)
+			expect(global.fetch).toHaveBeenCalledTimes(2)
 		})
 
 		it('should clear party cache', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => mockParty
+				json: async () => ({ party: mockParty })
 			})
 
 			// First call

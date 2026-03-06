@@ -568,9 +568,9 @@
 	@use '$src/themes/layout' as layout;
 
 	.page {
-		background: white;
+		background: var(--card-bg);
 		border-radius: layout.$card-corner;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.input-phase {
@@ -681,7 +681,7 @@
 			margin: 0;
 			padding: spacing.$unit;
 			background: var(--card-bg);
-			border-radius: 4px;
+			border-radius: layout.$item-corner-small;
 			font-size: typography.$font-small;
 			white-space: pre-wrap;
 			word-break: break-word;

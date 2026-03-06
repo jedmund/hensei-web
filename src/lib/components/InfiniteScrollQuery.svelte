@@ -253,7 +253,7 @@
 		background: var(--button-bg, #3366ff);
 		color: var(--button-text, white);
 		border: none;
-		border-radius: 4px;
+		border-radius: $item-corner-small;
 		cursor: pointer;
 		font-size: inherit;
 		font-family: inherit;
@@ -275,7 +275,7 @@
 		background: var(--button-bg, #f3f4f6);
 		color: var(--button-text, #1f2937);
 		border: 1px solid var(--button-border, #e5e7eb);
-		border-radius: 4px;
+		border-radius: $item-corner-small;
 		cursor: pointer;
 		font-size: inherit;
 		font-family: inherit;

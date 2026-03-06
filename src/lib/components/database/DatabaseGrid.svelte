@@ -149,13 +149,15 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.database-grid {
 		width: 100%;
-		background: white;
-		border-radius: 8px;
+		background: var(--card-bg);
+		border-radius: layout.$input-corner;
 		overflow: hidden;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.grid-controls {
@@ -175,7 +177,7 @@
 			width: 100%;
 			padding: spacing.$unit * 0.5 spacing.$unit;
 			border: 1px solid #ddd;
-			border-radius: 4px;
+			border-radius: layout.$item-corner-small;
 			font-size: typography.$font-small;
 
 			&:focus {
@@ -196,9 +198,9 @@
 			select {
 				padding: spacing.$unit * 0.25 spacing.$unit * 0.5;
 				border: 1px solid #ddd;
-				border-radius: 4px;
+				border-radius: layout.$item-corner-small;
 				font-size: typography.$font-small;
-				background: white;
+				background: var(--card-bg);
 				cursor: pointer;
 			}
 		}
@@ -223,7 +225,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			z-index: 10;
+			z-index: effects.$z-sticky;
 
 			.loading-spinner {
 				font-size: typography.$font-medium;
@@ -252,9 +254,9 @@
 
 			.pagination-button {
 				padding: spacing.$unit * 0.5 spacing.$unit;
-				background: white;
+				background: var(--card-bg);
 				border: 1px solid #ddd;
-				border-radius: 4px;
+				border-radius: layout.$item-corner-small;
 				font-size: typography.$font-small;
 				cursor: pointer;
 				transition: all 0.2s;
@@ -320,6 +322,6 @@
 		width: 40px;
 		height: 40px;
 		object-fit: cover;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 	}
 </style>

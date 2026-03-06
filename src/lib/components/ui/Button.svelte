@@ -359,11 +359,11 @@
 
 	// Shapes
 	:global([data-button-root].circular) {
-		border-radius: 999px;
+		border-radius: $full-corner;
 	}
 
 	:global([data-button-root].pill) {
-		border-radius: 999px;
+		border-radius: $full-corner;
 	}
 
 	// Modifiers

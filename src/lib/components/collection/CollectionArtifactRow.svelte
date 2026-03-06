@@ -89,6 +89,7 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/colors' as colors;
 
 	.artifact-row {
 		display: flex;
@@ -107,7 +108,7 @@
 
 		&:hover {
 			background: var(--list-cell-bg-hover);
-			box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+			box-shadow: var(--shadow-md);
 		}
 
 		&:focus-visible {
@@ -195,7 +196,7 @@
 			font-size: $font-small;
 			font-weight: $medium;
 			padding: 2px 6px;
-			border-radius: 4px;
+			border-radius: $item-corner-small;
 			background: var(--purple-50, #b6b2fc);
 			color: var(--purple-10, #4f3c79);
 		}
@@ -212,11 +213,11 @@
 		font-size: $font-small;
 		font-weight: $bold;
 		padding: 2px 8px;
-		border-radius: 4px;
+		border-radius: $item-corner-small;
 		line-height: 1;
 
 		&.grade-s {
-			background: linear-gradient(135deg, #ffd700, #ffb347);
+			background: linear-gradient(135deg, colors.$gold, colors.$gold-light);
 			color: #6b4c00;
 		}
 		&.grade-a {

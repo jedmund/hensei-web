@@ -60,7 +60,7 @@
 		position: absolute;
 		top: $unit-half;
 		left: $unit-half;
-		z-index: 10;
+		z-index: $z-sticky;
 		background: rgba(0, 0, 0, 0.5);
 		border-radius: $item-corner;
 		padding: $unit-fourth;

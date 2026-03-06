@@ -45,6 +45,7 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/effects' as effects;
 
 	:global(.tooltip-content) {
 		background: var(--tooltip-bg, #2a2a2a);
@@ -53,8 +54,8 @@
 		border-radius: $item-corner-small;
 		font-size: $font-small;
 		font-weight: $medium;
-		z-index: 1000;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		z-index: effects.$z-notification;
+		box-shadow: var(--shadow-md);
 		max-width: calc($unit * 31.25);
 		line-height: 1.4;
 	}

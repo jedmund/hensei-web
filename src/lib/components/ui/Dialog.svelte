@@ -59,7 +59,7 @@
 		position: fixed;
 		inset: 0;
 		background: rgba(0, 0, 0, 0.5);
-		z-index: 100;
+		z-index: $z-modal;
 		animation: fade-in $duration-quick ease-out;
 	}
 
@@ -68,13 +68,13 @@
 		left: 50%;
 		top: 50%;
 		transform: translate(-50%, -50%);
-		background: white;
+		background: var(--dialog-bg);
 		border-radius: $card-corner;
-		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+		box-shadow: var(--shadow-xl);
 		max-width: 90vw;
 		max-height: 90vh;
 		width: 540px;
-		z-index: 101;
+		z-index: $z-modal + 1;
 		animation: slide-up $duration-standard ease-out;
 		display: flex;
 		flex-direction: column;
@@ -97,7 +97,7 @@
 		color: var(--text-secondary);
 		cursor: pointer;
 		border-radius: $item-corner-small;
-		z-index: 1;
+		z-index: $z-raised;
 		@include smooth-transition($duration-standard, all);
 
 		&:hover {

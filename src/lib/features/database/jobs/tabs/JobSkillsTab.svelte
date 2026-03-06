@@ -344,6 +344,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.skills-tab {
 		display: flex;
@@ -400,7 +401,7 @@
 	.skill-icon {
 		width: 40px;
 		height: 40px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		object-fit: cover;
 	}
 
@@ -426,7 +427,7 @@
 		font-size: typography.$font-tiny;
 		font-weight: typography.$medium;
 		padding: 2px 8px;
-		border-radius: 12px;
+		border-radius: layout.$card-corner;
 		color: white;
 		white-space: nowrap;
 	}
@@ -449,10 +450,10 @@
 		background: var(--menu-bg, white);
 		border: 1px solid var(--border-color, #ddd);
 		border-radius: layout.$card-corner;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-md);
 		padding: spacing.$unit-half;
 		min-width: calc(spacing.$unit * 16);
-		z-index: 200;
+		z-index: effects.$z-modal;
 	}
 
 	:global(.skill-menu-item) {

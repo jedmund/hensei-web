@@ -191,6 +191,7 @@
 							class="frame character cell {elementClass}"
 							class:editable={ctx?.canEdit()}
 							class:is-active={isActive}
+							class:not-in-collection={notInCollection}
 							onclick={() => viewDetails()}
 						>
 							{#if ctx?.canEdit()}
@@ -342,7 +343,7 @@
 			}}
 		/>
 	{/if}
-	<div class="name">
+	<div class="name" class:not-in-collection={notInCollection}>
 		{item ? displayName(item?.character) : ''}
 		{#if item?.artifact}
 			<Icon name="gem" size={12} class="artifact-indicator" />
@@ -358,6 +359,8 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/rep' as rep;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.unit {
 		position: relative;
@@ -381,9 +384,9 @@
 			content: '';
 			position: absolute;
 			inset: 0;
-			border-radius: 8px;
+			border-radius: layout.$input-corner;
 			pointer-events: none;
-			z-index: 10;
+			z-index: effects.$z-sticky;
 		}
 
 		&.editable:hover {
@@ -394,7 +397,7 @@
 	.frame {
 		position: relative;
 		width: 100%;
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		background: var(--card-bg, #f5f5f5);
 		transition: opacity 0.2s ease-in-out;
 		display: flex;
@@ -404,7 +407,7 @@
 
 		&.editable:hover {
 			opacity: 0.95;
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			box-shadow: var(--shadow-sm);
 		}
 
 		// Slot selection - subtle dark pulsing glow (works for both empty and filled)
@@ -434,21 +437,31 @@
 		height: 100%;
 		object-fit: cover;
 		display: block;
-		z-index: 2;
-		border-radius: 8px;
+		z-index: effects.$z-badge;
+		border-radius: layout.$input-corner;
 
 		&.placeholder {
 			opacity: 0;
 		}
 
 		&.not-in-collection {
-			opacity: 0.75;
+			opacity: 0.6;
 		}
+	}
+
+	.frame.not-in-collection::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border: 2px solid colors.$error;
+		border-radius: inherit;
+		z-index: effects.$z-badge;
+		pointer-events: none;
 	}
 
 	.icon {
 		position: absolute;
-		z-index: 1;
+		z-index: effects.$z-raised;
 		color: var(--icon-secondary, #999);
 		transition: color 0.2s ease-in-out;
 	}
@@ -462,6 +475,10 @@
 		text-align: center;
 		color: var(--text-secondary);
 		display: flex;
+
+		&.not-in-collection {
+			color: colors.$error;
+		}
 		align-items: center;
 		justify-content: center;
 		gap: spacing.$unit-fourth;
@@ -474,7 +491,7 @@
 
 	.perpetuity {
 		position: absolute;
-		z-index: 40;
+		z-index: effects.$z-tooltip;
 		top: calc(spacing.$unit * -1);
 		right: spacing.$unit-3x;
 		width: spacing.$unit-4x;
@@ -635,27 +652,27 @@
 		right: 4px;
 		width: 24px;
 		height: 24px;
-		background: #d13a3a;
+		background: colors.$error;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		color: white;
-		z-index: 10;
+		z-index: effects.$z-sticky;
 		pointer-events: auto;
 		cursor: help;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		box-shadow: var(--shadow-sm);
 	}
 
 	// Orphaned state
 	.unit.orphaned {
 		.frame {
 			opacity: 0.7;
-			border: 2px solid #d13a3a;
+			border: 2px solid colors.$error;
 		}
 
 		.name {
-			color: #d13a3a;
+			color: colors.$error;
 		}
 	}
 </style>

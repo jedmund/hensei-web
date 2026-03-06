@@ -272,6 +272,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/typography' as typography;
 
 	.skill-selection-content {
 		display: flex;
@@ -294,7 +295,7 @@
 
 		p {
 			margin: 0;
-			font-size: 14px;
+			font-size: typography.$font-body;
 			color: var(--warning-text);
 		}
 	}
@@ -306,7 +307,7 @@
 		h4 {
 			margin: 0 0 $unit 0;
 			font-size: 12px;
-			font-weight: 600;
+			font-weight: typography.$bold;
 			text-transform: uppercase;
 			letter-spacing: 0.5px;
 			color: var(--text-secondary);
@@ -337,7 +338,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			padding: 4px;
+			padding: $unit-half;
 			background: transparent;
 			border: none;
 			cursor: pointer;
@@ -389,7 +390,7 @@
 
 		p {
 			margin: 0;
-			font-size: 14px;
+			font-size: typography.$font-body;
 		}
 
 		.clear-filters {
@@ -430,7 +431,7 @@
 		gap: $unit;
 		padding: $unit-2x;
 		color: var(--text-secondary);
-		font-size: 14px;
+		font-size: typography.$font-body;
 
 		:global(svg) {
 			animation: spin 1s linear infinite;

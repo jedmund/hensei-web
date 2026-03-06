@@ -59,6 +59,8 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.character-card {
 		display: flex;
@@ -79,7 +81,7 @@
 		&:focus-visible {
 			outline: 2px solid var(--accent-color, #3366ff);
 			outline-offset: 2px;
-			border-radius: 8px;
+			border-radius: layout.$input-corner;
 		}
 	}
 
@@ -87,7 +89,7 @@
 		position: relative;
 		width: 100%;
 		aspect-ratio: 280 / 160;
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		overflow: hidden;
 		background: var(--card-bg, #f5f5f5);
 	}
@@ -98,14 +100,14 @@
 		right: $unit;
 		width: $unit-3x;
 		height: $unit-3x;
-		z-index: 10;
+		z-index: effects.$z-sticky;
 	}
 
 	.character-image {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 	}
 
 	.character-name {

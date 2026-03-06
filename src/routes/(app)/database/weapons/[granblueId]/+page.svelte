@@ -378,9 +378,9 @@
 	@use '$src/themes/typography' as typography;
 
 	.page {
-		background: white;
+		background: var(--card-bg);
 		border-radius: layout.$page-corner;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.not-found {
@@ -392,7 +392,7 @@
 			color: white;
 			border: none;
 			padding: spacing.$unit-half spacing.$unit;
-			border-radius: 4px;
+			border-radius: layout.$item-corner-small;
 			cursor: pointer;
 			margin-top: spacing.$unit;
 
@@ -429,7 +429,7 @@
 			.skill-item {
 				padding: spacing.$unit;
 				background: #f8f9fa;
-				border-radius: 4px;
+				border-radius: layout.$item-corner-small;
 
 				.skill-name {
 					font-size: typography.$font-medium;

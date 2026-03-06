@@ -87,7 +87,7 @@
 
 			&:hover {
 				transform: translateY(-2px);
-				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+				box-shadow: var(--shadow-lg);
 			}
 
 			&:active {
@@ -123,8 +123,8 @@
 				width: 24px;
 				height: 24px;
 				background: rgba(0, 0, 0, 0.5);
-				border-radius: 4px;
-				padding: 2px;
+				border-radius: $item-corner-small;
+				padding: $unit-fourth;
 			}
 		}
 
@@ -145,8 +145,8 @@
 				width: 32px;
 				height: 32px;
 				background: rgba(0, 0, 0, 0.5);
-				border-radius: 4px;
-				padding: 4px;
+				border-radius: $item-corner-small;
+				padding: $unit-half;
 			}
 		}
 

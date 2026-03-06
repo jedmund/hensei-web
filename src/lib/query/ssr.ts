@@ -22,8 +22,8 @@ export interface InitialDataOptions<TData> {
 
 	/**
 	 * Optional timestamp when the data was fetched on the server.
-	 * If not provided, defaults to 0 (will be considered stale immediately).
-	 * Use Date.now() on the server to get accurate timestamps.
+	 * Defaults to Date.now(), which tells TanStack Query the data is fresh
+	 * and prevents an immediate background refetch.
 	 */
 	initialDataUpdatedAt?: number
 }
@@ -56,7 +56,7 @@ export interface InitialDataOptions<TData> {
  * ```
  *
  * @param initialData - The data fetched on the server (null is converted to undefined)
- * @param updatedAt - Optional timestamp when data was fetched (defaults to 0)
+ * @param updatedAt - Optional timestamp when data was fetched (defaults to Date.now())
  * @returns Query options object with initialData and initialDataUpdatedAt
  */
 export function withInitialData<TData>(
@@ -65,7 +65,7 @@ export function withInitialData<TData>(
 ): InitialDataOptions<NonNullable<TData>> {
 	return {
 		initialData: (initialData ?? undefined) as NonNullable<TData> | undefined,
-		initialDataUpdatedAt: updatedAt ?? 0
+		initialDataUpdatedAt: updatedAt ?? Date.now()
 	}
 }
 

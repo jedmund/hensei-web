@@ -128,6 +128,7 @@
               class:cell={!((item?.main || position === -1) || (item?.friend || position === 6))}
               class:editable={ctx?.canEdit()}
               class:is-active={isActive}
+              class:not-in-collection={notInCollection}
               onclick={() => viewDetails()}
             >
             {#if item?.orphaned}
@@ -240,7 +241,7 @@
       }}
     />
   {/if}
-  <div class="name">{item ? displayName(item?.summon) : ''}</div>
+  <div class="name" class:not-in-collection={notInCollection}>{item ? displayName(item?.summon) : ''}</div>
 </div>
 
 <style lang="scss">
@@ -248,6 +249,8 @@
   @use '$src/themes/typography' as typography;
   @use '$src/themes/spacing' as spacing;
   @use '$src/themes/rep' as rep;
+  @use '$src/themes/layout' as layout;
+  @use '$src/themes/effects' as effects;
 
   .unit {
     position: relative;
@@ -271,9 +274,9 @@
       content: '';
       position: absolute;
       inset: 0;
-      border-radius: 8px;
+      border-radius: layout.$input-corner;
       pointer-events: none;
-      z-index: 10;
+      z-index: effects.$z-sticky;
     }
 
     &.editable:hover {
@@ -285,7 +288,7 @@
     position: relative;
     width: 100%;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: layout.$input-corner;
     background: var(--card-bg, #f5f5f5);
     transition: opacity 0.2s ease-in-out;
     display: flex;
@@ -295,7 +298,7 @@
 
     &.editable:hover {
       opacity: 0.95;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow-sm);
     }
 
     // Slot selection - subtle dark pulsing glow (works for both empty and filled)
@@ -329,20 +332,30 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    z-index: 2;
+    z-index: effects.$z-badge;
 
     &.placeholder {
       opacity: 0;
     }
 
     &.not-in-collection {
-      opacity: 0.75;
+      opacity: 0.6;
     }
+  }
+
+  .frame.not-in-collection::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid colors.$error;
+    border-radius: inherit;
+    z-index: effects.$z-badge;
+    pointer-events: none;
   }
 
   .icon {
     position: absolute;
-    z-index: 1;
+    z-index: effects.$z-raised;
     color: var(--icon-secondary, #999);
     transition: color 0.2s ease-in-out;
   }
@@ -355,6 +368,10 @@
     font-size: typography.$font-small;
     text-align: center;
     color: var(--text-secondary);
+
+    &.not-in-collection {
+      color: colors.$error;
+    }
   }
 
   .orphaned-badge {
@@ -363,27 +380,27 @@
     right: 4px;
     width: 24px;
     height: 24px;
-    background: #d13a3a;
+    background: colors.$error;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    z-index: 10;
+    z-index: effects.$z-sticky;
     pointer-events: auto;
     cursor: help;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-sm);
   }
 
   // Orphaned state
   .unit.orphaned {
     .frame {
       opacity: 0.7;
-      border: 2px solid #d13a3a;
+      border: 2px solid colors.$error;
     }
 
     .name {
-      color: #d13a3a;
+      color: colors.$error;
     }
   }
 

@@ -1,6 +1,6 @@
 @use 'themes/spacing';
 @use 'themes/colors';
-@use 'themes/layout';
+@use 'themes/layout' as layout;
 @use 'themes/mixins';
 
 .wrapper {
@@ -30,7 +30,7 @@
 
 	@include mixins.breakpoint(small-tablet) {
 		background: var(--card-bg);
-		border-radius: 100px;
+		border-radius: layout.$full-corner;
 	}
 
 	&.blended {

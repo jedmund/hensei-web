@@ -50,11 +50,13 @@
 </div>
 
 <style lang="scss">
+	@use '$src/themes/spacing' as spacing;
+
 	.uncap-cell {
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
 		height: 100%;
-		padding: 4px;
+		padding: spacing.$unit-half;
 	}
 </style>

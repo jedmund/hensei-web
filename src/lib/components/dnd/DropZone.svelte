@@ -118,6 +118,8 @@
 </div>
 
 <style lang="scss">
+	@use '$src/themes/layout' as layout;
+
 	.drop-zone {
 		position: relative;
 		transition: all 0.2s ease-out;
@@ -129,7 +131,7 @@
 		&.valid-drop {
 			border: 2px dashed #4CAF50;
 			background: rgba(76, 175, 80, 0.1);
-			border-radius: 8px;
+			border-radius: layout.$input-corner;
 
 			&::before {
 				content: '';
@@ -146,7 +148,7 @@
 		&.invalid-drop {
 			border: 2px dashed #F44336;
 			background: rgba(244, 67, 54, 0.1);
-			border-radius: 8px;
+			border-radius: layout.$input-corner;
 			opacity: 0.7;
 
 			&::after {

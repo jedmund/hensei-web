@@ -255,7 +255,7 @@
 		:global(.sv_dropdown) {
 			border: 1px solid rgba(0, 0, 0, 0.1);
 			max-height: 40vh;
-			z-index: 102;
+			z-index: $z-modal + 2;
 		}
 
 		// Style dropdown items

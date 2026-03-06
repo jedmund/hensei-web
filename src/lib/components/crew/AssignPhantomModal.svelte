@@ -193,7 +193,7 @@
 		margin-top: spacing.$unit-2x;
 		padding: spacing.$unit;
 		background: var(--danger-bg);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 
 		p {
 			margin: 0;

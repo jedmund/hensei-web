@@ -317,6 +317,8 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.settings-page {
 		max-width: 500px;
@@ -342,7 +344,7 @@
 		border: 1px solid var(--error-border, #fecaca);
 		color: var(--error-text, #dc2626);
 		padding: spacing.$unit spacing.$unit-2x;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: 0.875rem;
 	}
 
@@ -353,7 +355,7 @@
 	}
 
 	.form-label {
-		font-weight: 500;
+		font-weight: typography.$medium;
 		font-size: 0.875rem;
 
 		.required {
@@ -364,7 +366,7 @@
 	.form-input {
 		padding: spacing.$unit spacing.$unit-half;
 		border: 1px solid var(--border-color);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		background: var(--input-background, var(--background));
 		color: var(--text-primary);
 		font-size: 1rem;
@@ -420,7 +422,7 @@
 		padding: spacing.$unit-2x;
 		background: var(--surface);
 		border: 1px solid var(--border-color);
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		margin-bottom: spacing.$unit;
 	}
 
@@ -448,12 +450,12 @@
 		position: fixed;
 		inset: 0;
 		background: rgba(0, 0, 0, 0.5);
-		z-index: 50;
+		z-index: effects.$z-popover;
 	}
 
 	.dialog-title {
 		font-size: 1.125rem;
-		font-weight: 600;
+		font-weight: typography.$bold;
 		margin-bottom: spacing.$unit;
 	}
 
@@ -473,7 +475,7 @@
 	.dialog-button {
 		padding: spacing.$unit spacing.$unit-2x;
 		border: none;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		cursor: pointer;
 		font-size: 0.875rem;
 		transition: background 0.2s;
@@ -531,7 +533,7 @@
 		gap: spacing.$unit;
 		padding: spacing.$unit;
 		border: 1px solid var(--border-color);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		cursor: pointer;
 
 		&:hover {
@@ -544,7 +546,7 @@
 
 		.member-name {
 			flex: 1;
-			font-weight: 500;
+			font-weight: typography.$medium;
 		}
 
 		.member-role {

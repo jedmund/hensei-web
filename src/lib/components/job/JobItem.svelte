@@ -61,6 +61,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/colors' as colors;
 
 	.job-item {
 		display: flex;
@@ -144,14 +145,14 @@
 			.badge {
 				display: inline-block;
 				padding: 2px 6px;
-				border-radius: 8px;
+				border-radius: layout.$input-corner;
 				font-size: typography.$font-small;
-				font-weight: 600;
+				font-weight: typography.$bold;
 				text-transform: uppercase;
 				letter-spacing: 0.5px;
 
 				&.master {
-					background: var(--badge-master-bg, #ffd700);
+					background: var(--badge-master-bg, colors.$gold);
 					color: var(--badge-master-text, #000);
 				}
 

@@ -273,7 +273,7 @@
 		align-items: center;
 		gap: $unit;
 		padding: $unit ($unit * 1.5);
-		border-radius: 6px;
+		border-radius: $bubble-menu-item-corner;
 		font-size: $font-small;
 		font-weight: $medium;
 		color: var(--text-primary);

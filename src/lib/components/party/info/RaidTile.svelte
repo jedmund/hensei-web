@@ -57,7 +57,7 @@
 	.raid-details {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: $unit-fourth;
 	}
 
 	.raid-name {

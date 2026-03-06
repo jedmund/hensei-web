@@ -38,7 +38,7 @@
 					pageParams: [1]
 				}
 			: undefined,
-		initialDataUpdatedAt: 0
+		initialDataUpdatedAt: Date.now()
 	}))
 
 	// State-gated infinite scroll

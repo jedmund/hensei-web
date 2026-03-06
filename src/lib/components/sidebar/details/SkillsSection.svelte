@@ -75,6 +75,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.details-section {
 		margin-bottom: spacing.$unit-3x;
@@ -114,7 +115,7 @@
 	.aura-item {
 		padding: spacing.$unit;
 		background: var(--page-hover);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 	}
 
 	.keys-list {
@@ -129,7 +130,7 @@
 		align-items: center;
 		padding: calc(spacing.$unit * 0.75) spacing.$unit;
 		background: var(--page-hover);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 
 		.key-slot {
 			font-size: typography.$font-small;

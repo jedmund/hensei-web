@@ -3,30 +3,31 @@
 <script lang="ts">
 	import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
 	import { onDestroy } from 'svelte'
-	import type { SearchResult } from '$lib/api/adapters/search.adapter'
 	import { searchQueries, type SearchFilters } from '$lib/api/queries/search.queries'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import Button from '../ui/Button.svelte'
-	import Select from '../ui/Select.svelte'
-	import Icon from '../Icon.svelte'
-	import Input from '../ui/Input.svelte'
-	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
-	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
-	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
-	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
-	import RarityPicker from '../ui/rarity-picker/RarityPicker.svelte'
-	import ProficiencyPicker from '../ui/proficiency-picker/ProficiencyPicker.svelte'
-	import SegmentedControl from '../ui/segmented-control/SegmentedControl.svelte'
-	import Segment from '../ui/segmented-control/Segment.svelte'
-	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
-	import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholder } from '$lib/features/database/detail/image'
-	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
-	import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from '$lib/types/api/collection'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
-	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { getAvatarSrc } from '$lib/utils/avatar'
+	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
+	import type {
+		CollectionCharacter,
+		CollectionWeapon,
+		CollectionSummon
+	} from '$lib/types/api/collection'
+
+	import Button from '../ui/Button.svelte'
+	import Icon from '../Icon.svelte'
+	import Input from '../ui/Input.svelte'
+	import SegmentedControl from '../ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '../ui/segmented-control/Segment.svelte'
+
+	import Tooltip from '../ui/Tooltip.svelte'
+	import SearchResultItem from './search/SearchResultItem.svelte'
+	import SearchFiltersPanel from './search/SearchFiltersPanel.svelte'
+	import CollectionMemberSelector from './search/CollectionMemberSelector.svelte'
+	import UnlinkCollectionDialog from './search/UnlinkCollectionDialog.svelte'
 
 	interface Props {
 		type: 'weapon' | 'character' | 'summon'
@@ -38,8 +39,6 @@
 		requiredProficiencies?: number[]
 		/** User's element for styling the collection toggle */
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-		/** If set, collection mode is locked to this user's collection */
-		collectionSourceUserId?: string
 		/** Callback to unlink all collection items from the party */
 		onUnlinkCollection?: () => Promise<void>
 	}
@@ -51,9 +50,11 @@
 		authUserId,
 		requiredProficiencies,
 		userElement,
-		collectionSourceUserId,
 		onUnlinkCollection
 	}: Props = $props()
+
+	// Reactively derive collection source from party store (stays in sync after mutations)
+	const collectionSourceUserId = $derived(partyStore.party?.collectionSourceUserId)
 
 	// Search state (local UI state)
 	let searchQuery = $state('')
@@ -67,10 +68,16 @@
 	let seriesFilter = $state<string | undefined>(undefined)
 
 	// Search mode state (only available when authUserId is provided)
-	let searchMode = $state<SearchMode>('all')
+	// Default to 'collection' when a collection source is already set on the party
+	const initialSourceUserId = partyStore.party?.collectionSourceUserId
+	let searchMode = $state<SearchMode>(initialSourceUserId ? 'collection' : 'all')
 
-	// Crew member selection state
-	let selectedMemberId = $state<string | undefined>(collectionSourceUserId ?? authUserId)
+	// Crew member selection state (defaults to self; collectionSourceUserId is reactive via partyStore)
+	let selectedMemberId = $state<string | undefined>(authUserId)
+	let unlinkDialogOpen = $state(false)
+
+	// Filter visibility (collapsed by default)
+	let filtersOpen = $state(false)
 
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
@@ -94,6 +101,8 @@
 		}
 	})
 
+	// --- Queries ---
+
 	// Series query - fetch list based on current type
 	const seriesQuery = createQuery(() => {
 		switch (type) {
@@ -106,7 +115,6 @@
 		}
 	})
 
-	// Build series options for dropdown (use ID for API filtering)
 	const seriesOptions = $derived.by(() => {
 		const data = seriesQuery.data
 		if (!data) return []
@@ -116,10 +124,17 @@
 		}))
 	})
 
+	// Check if user is in a crew (crewStore is only populated on /crew routes, so query directly)
+	const myCrewQuery = createQuery(() => ({
+		...crewQueries.myCrew(),
+		enabled: !!authUserId
+	}))
+	const isInCrew = $derived(!!myCrewQuery.data)
+
 	// Crew members with accessible collections (for collection mode dropdown)
 	const crewMembersQuery = createQuery(() => ({
 		...crewQueries.accessibleCollectionMembers(),
-		enabled: crewStore.isInCrew
+		enabled: isInCrew
 	}))
 
 	const memberOptions = $derived.by(() => {
@@ -149,31 +164,46 @@
 		return options
 	})
 
-	// Reactive collection source from partyStore (updates when party data refreshes after mutations)
-	const reactiveSourceUserId = $derived(partyStore.party?.collectionSourceUserId)
+	// --- Derived collection state ---
 
-	// The userId whose collection we're currently browsing
 	const collectionUserId = $derived.by(() => {
-		if (reactiveSourceUserId) return reactiveSourceUserId
+		if (collectionSourceUserId) return collectionSourceUserId
 		if (searchMode !== 'collection') return authUserId
 		return selectedMemberId
 	})
 
-	const isCollectionLocked = $derived(!!reactiveSourceUserId)
+	const isCollectionLocked = $derived(!!collectionSourceUserId)
 
-	const showMemberDropdown = $derived(
-		(searchMode === 'collection' && crewStore.isInCrew && memberOptions.length > 1) || isCollectionLocked
+	const showMemberSection = $derived(
+		searchMode === 'collection' &&
+			(isCollectionLocked || (isInCrew && memberOptions.length > 1))
 	)
 
-	// Get selected member's username for empty state messaging
+	const lockedMember = $derived.by(() => {
+		const lockedId = collectionSourceUserId
+		if (!lockedId) return undefined
+		const members = crewMembersQuery.data ?? []
+		if (lockedId === authUserId) {
+			const self = members.find((m) => m.userId === authUserId)
+			return {
+				label: self?.username ?? 'You',
+				image: self ? getAvatarSrc(self.avatarPicture) : undefined
+			}
+		}
+		const member = members.find((m) => m.userId === lockedId)
+		return member
+			? { label: member.username, image: getAvatarSrc(member.avatarPicture) }
+			: { label: 'Linked user', image: undefined }
+	})
+
 	const selectedMemberName = $derived.by(() => {
 		if (!selectedMemberId || selectedMemberId === authUserId) return undefined
 		const members = crewMembersQuery.data ?? []
 		return members.find((m) => m.userId === selectedMemberId)?.username
 	})
 
-	// Build filters object for query
-	// Use requiredProficiencies for mainhand selection if set, otherwise use user-selected filters
+	// --- Filters ---
+
 	const effectiveProficiencies = $derived(
 		requiredProficiencies ?? (proficiencyFilters.length > 0 ? proficiencyFilters : undefined)
 	)
@@ -185,11 +215,13 @@
 		series: seriesFilter ? [seriesFilter] : undefined
 	})
 
-	// Helper to map collection items to search result format with collectionId
+	// --- Collection helpers ---
+
 	function mapCollectionToSearchResult(
 		item: CollectionCharacter | CollectionWeapon | CollectionSummon
 	): AddItemResult {
-		const entity = 'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
+		const entity =
+			'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
 		return {
 			id: entity.id,
 			granblueId: entity.granblueId,
@@ -200,61 +232,59 @@
 		}
 	}
 
-	// Filter collection items by search query (client-side)
-	function filterCollectionByQuery<T extends CollectionCharacter | CollectionWeapon | CollectionSummon>(
-		items: T[],
-		query: string
-	): T[] {
+	function filterCollectionByQuery<
+		T extends CollectionCharacter | CollectionWeapon | CollectionSummon
+	>(items: T[], query: string): T[] {
 		if (!query.trim()) return items
 		const lowerQuery = query.toLowerCase()
 		return items.filter((item) => {
-			const entity = 'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
+			const entity =
+				'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
 			const name = entity.name
 			const nameEn = typeof name === 'string' ? name : name?.en || ''
 			const nameJa = typeof name === 'string' ? '' : name?.ja || ''
-			return nameEn.toLowerCase().includes(lowerQuery) || nameJa.toLowerCase().includes(lowerQuery)
+			return (
+				nameEn.toLowerCase().includes(lowerQuery) || nameJa.toLowerCase().includes(lowerQuery)
+			)
 		})
 	}
 
-	// TanStack Query v6: Use createInfiniteQuery with thunk pattern for reactivity
-	// Query automatically updates when type, debouncedSearchQuery, or filters change
-	// Note: Type assertion needed because different search types have different query keys
-	// but share the same SearchPageResult structure
+	// --- Search queries ---
+
 	const searchQueryResult = createInfiniteQuery(() => {
 		const query = debouncedSearchQuery
 		const currentFilters = filters
 
-		// Select the appropriate query based on type
-		// All query types return the same SearchPageResult structure
 		switch (type) {
 			case 'weapon':
 				return searchQueries.weapons(query, currentFilters)
 			case 'character':
-				return searchQueries.characters(query, currentFilters) as unknown as ReturnType<typeof searchQueries.weapons>
+				return searchQueries.characters(query, currentFilters) as unknown as ReturnType<
+					typeof searchQueries.weapons
+				>
 			case 'summon':
-				return searchQueries.summons(query, currentFilters) as unknown as ReturnType<typeof searchQueries.weapons>
+				return searchQueries.summons(query, currentFilters) as unknown as ReturnType<
+					typeof searchQueries.weapons
+				>
 		}
 	})
 
-	// Collection query - enabled when authUserId is provided
-	// Used both for collection mode AND for highlighting owned items in "all" mode
-	// Type assertion needed because different types have different query result types
-	// but they all share the same structure with different content types
 	const collectionQueryResult = createInfiniteQuery(() => {
 		const userId = collectionUserId
 		if (!userId) {
-			// Return a disabled query config
 			return {
 				...collectionQueries.characters(userId ?? '', {}, false),
 				enabled: false
 			} as ReturnType<typeof collectionQueries.characters>
 		}
 
-		// For collection mode, apply filters; for "all" mode, fetch all to build owned set
-		const currentFilters = searchMode === 'collection' ? {
-			element: elementFilters.length > 0 ? elementFilters : undefined,
-			rarity: rarityFilters.length > 0 ? rarityFilters : undefined
-		} : {}
+		const currentFilters =
+			searchMode === 'collection'
+				? {
+						element: elementFilters.length > 0 ? elementFilters : undefined,
+						rarity: rarityFilters.length > 0 ? rarityFilters : undefined
+					}
+				: {}
 
 		switch (type) {
 			case 'weapon':
@@ -275,25 +305,23 @@
 		}
 	})
 
-	// Flatten all pages into a single items array
+	// --- Results processing ---
+
 	const rawResults = $derived(
 		searchQueryResult.data?.pages.flatMap((page) => page.results) ?? []
 	)
 
-	// Collection results (filtered client-side by search query)
 	const rawCollectionResults = $derived.by(() => {
 		const pages = collectionQueryResult.data?.pages ?? []
 		const allItems = pages.flatMap((page) => page.results)
 		return filterCollectionByQuery(allItems, debouncedSearchQuery)
 	})
 
-	// Set of owned item granblue IDs for fast lookup (used in "all" mode to highlight owned items)
 	const ownedItemIds = $derived.by(() => {
 		const pages = collectionQueryResult.data?.pages ?? []
 		const allItems = pages.flatMap((page) => page.results)
 		const ids = new Set<string>()
 		for (const item of allItems) {
-			// Type assertion needed because the query result type doesn't capture all variants
 			const anyItem = item as unknown as Record<string, unknown>
 			const entity = (anyItem.character ?? anyItem.weapon ?? anyItem.summon) as
 				| { granblueId?: string }
@@ -305,223 +333,160 @@
 		return ids
 	})
 
-	// Helper to check if an item is owned (in user's collection)
 	function isOwned(item: AddItemResult): boolean {
 		return ownedItemIds.has(String(item.granblueId))
 	}
 
-	// Deduplicate by id - needed because the API may return the same item across pages
-	// (e.g., due to items being added/removed between page fetches)
 	const searchResults = $derived.by<AddItemResult[]>(() => {
 		if (searchMode === 'collection' && authUserId) {
-			// Map collection items to AddItemResult format
 			return rawCollectionResults.map(mapCollectionToSearchResult)
 		}
-		// Regular search results - cast to AddItemResult[] since they're compatible
 		const deduped = Array.from(new Map(rawResults.map((item) => [item.id, item])).values())
 		return deduped as AddItemResult[]
 	})
 
-	// Get the active query based on search mode
 	const activeQuery = $derived(
 		searchMode === 'collection' && authUserId ? collectionQueryResult : searchQueryResult
 	)
 
-	// State-gated infinite scroll
-	// Type assertion needed because activeQuery is a union of different query types
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const loader = useInfiniteLoader(() => activeQuery as any, () => sentinelEl, { rootMargin: '200px' })
+	// --- "In team" tracking ---
 
-	// Reset loader when search mode or filters change
+	const inTeamCollectionIds = $derived.by(() => {
+		const party = partyStore.party
+		if (!party) return new Set<string>()
+		const ids = new Set<string>()
+		for (const w of party.weapons ?? []) {
+			if (w.collectionWeaponId) ids.add(w.collectionWeaponId)
+		}
+		for (const c of party.characters ?? []) {
+			if (c.collectionCharacterId) ids.add(c.collectionCharacterId)
+		}
+		for (const s of party.summons ?? []) {
+			if (s.collectionSummonId) ids.add(s.collectionSummonId)
+		}
+		return ids
+	})
+
+	function isInTeam(item: AddItemResult): boolean {
+		if (!item.collectionId) return false
+		return inTeamCollectionIds.has(item.collectionId)
+	}
+
+	// --- Infinite scroll ---
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const loader = useInfiniteLoader(
+		() => activeQuery as any,
+		() => sentinelEl,
+		{ rootMargin: '200px' }
+	)
+
 	$effect(() => {
 		void searchMode
 		void filters
 		loader.reset()
 	})
 
-	// Cleanup on destroy
 	onDestroy(() => loader.destroy())
 
-	// Computed states
+	// --- Computed states ---
+
 	const isEmpty = $derived(
 		searchResults.length === 0 && !activeQuery.isLoading && !activeQuery.isError
 	)
 
 	function handleItemClick(item: AddItemResult) {
-		if (canAddMore) {
+		if (canAddMore && !isInTeam(item)) {
 			onAddItems([item])
 		}
-	}
-
-	function handleElementChange(value: number | number[]) {
-		elementFilters = Array.isArray(value) ? value : value !== undefined ? [value] : []
-	}
-
-	function handleRarityChange(value: number | number[]) {
-		rarityFilters = Array.isArray(value) ? value : value !== undefined ? [value] : []
-	}
-
-	function handleSeriesChange(value: string | undefined) {
-		seriesFilter = value
-	}
-
-	function handleProficiencyChange(value: number | number[]) {
-		proficiencyFilters = Array.isArray(value) ? value : value !== undefined ? [value] : []
-	}
-
-	function getImageUrl(item: AddItemResult): string {
-		const id = item.granblueId
-		if (!id) return getPlaceholder(type, 'square')
-
-		switch (type) {
-			case 'character':
-				return getCharacterImage(id, 'square', '01')
-			case 'weapon':
-				return getWeaponImage(id, 'square')
-			case 'summon':
-				return getSummonImage(id, 'square')
-			default:
-				return ''
-		}
-	}
-
-	function getItemName(item: AddItemResult): string {
-		const name = item.name
-		if (typeof name === 'string') return name
-		return name?.en || name?.ja || 'Unknown'
 	}
 </script>
 
 <div class="search-content">
-	<div class="search-section">
-		<Input
-			bind:value={searchQuery}
-			type="text"
-			placeholder="Search by name..."
-			leftIcon="search"
-			contained
-			fullWidth
-			class="search-input"
-		/>
-	</div>
-
-	{#if authUserId}
-		<div class="mode-toggle">
-			<SegmentedControl
-				value={searchMode}
-				onValueChange={(v) => searchMode = v as SearchMode}
-				variant="background"
-				size="small"
-				element={userElement}
-				grow
-			>
-				<Segment value="all">All Items</Segment>
-				<Segment value="collection">Collection</Segment>
-			</SegmentedControl>
-		</div>
-	{/if}
-
-	{#if showMemberDropdown}
-		<div class="member-select">
-			<Select
-				options={memberOptions}
-				value={isCollectionLocked ? reactiveSourceUserId : selectedMemberId}
-				onValueChange={(v) => { selectedMemberId = v }}
-				placeholder="Select member"
-				disabled={isCollectionLocked}
-				contained
-				fullWidth
-			/>
-			{#if isCollectionLocked}
-				<button
-					class="unlink-button"
-					onclick={async () => {
-					if (onUnlinkCollection) await onUnlinkCollection()
-					selectedMemberId = authUserId
-				}}
+	<div class="controls">
+		{#if authUserId}
+			<div class="mode-toggle">
+				<SegmentedControl
+					value={searchMode}
+					onValueChange={(v) => (searchMode = v as SearchMode)}
+					variant="background"
+					size="small"
+					element={userElement}
+					grow
 				>
-					Clear collection source
-				</button>
-			{/if}
-		</div>
-	{/if}
-
-	<div class="filters-section">
-		<!-- Rarity and Element filters (side by side) -->
-		<div class="filter-row">
-			<div class="filter-group">
-				<div class="filter-header">
-					<label class="filter-label">Rarity</label>
-					{#if rarityFilters.length > 0}
-						<a href="#" class="clear-link" onclick={(e) => { e.preventDefault(); rarityFilters = [] }}>Clear</a>
-					{/if}
-				</div>
-				<RarityPicker
-					value={rarityFilters}
-					onValueChange={handleRarityChange}
-					multiple={true}
-					contained={true}
-					size="small"
-				/>
-			</div>
-
-			<div class="filter-group">
-				<div class="filter-header">
-					<label class="filter-label">Element</label>
-					{#if elementFilters.length > 0}
-						<a href="#" class="clear-link" onclick={(e) => { e.preventDefault(); elementFilters = [] }}>Clear</a>
-					{/if}
-				</div>
-				<ElementPicker
-					value={elementFilters}
-					onValueChange={handleElementChange}
-					multiple={true}
-					includeAny={true}
-					contained={true}
-					size="small"
-				/>
-			</div>
-		</div>
-
-		<!-- Proficiency filters (weapons and characters, hidden when required proficiencies set for mainhand) -->
-		{#if (type === 'weapon' || type === 'character') && !requiredProficiencies}
-			<div class="filter-group">
-				<div class="filter-header">
-					<label class="filter-label">Proficiency</label>
-					{#if proficiencyFilters.length > 0}
-						<a href="#" class="clear-link" onclick={(e) => { e.preventDefault(); proficiencyFilters = [] }}>Clear</a>
-					{/if}
-				</div>
-				<ProficiencyPicker
-					value={proficiencyFilters}
-					onValueChange={handleProficiencyChange}
-					multiple={true}
-					contained={true}
-					size="small"
-				/>
+					<Segment value="all">All Items</Segment>
+					<Segment value="collection">Collection</Segment>
+				</SegmentedControl>
 			</div>
 		{/if}
 
-		<!-- Series filter -->
-		<div class="filter-group">
-			<div class="filter-header">
-				<label class="filter-label">Series</label>
-				{#if seriesFilter}
-					<a href="#" class="clear-link" onclick={(e) => { e.preventDefault(); seriesFilter = undefined }}>Clear</a>
-				{/if}
-			</div>
-			<Select
-				options={seriesOptions}
-				value={seriesFilter}
-				onValueChange={handleSeriesChange}
-				placeholder="All series"
-				contained={true}
-				fullWidth={true}
+		{#if showMemberSection}
+			<CollectionMemberSelector
+				isLocked={isCollectionLocked}
+				{lockedMember}
+				{memberOptions}
+				{selectedMemberId}
+				onMemberChange={(id) => {
+					selectedMemberId = id
+				}}
+				onUnlinkRequest={() => {
+					unlinkDialogOpen = true
+				}}
 			/>
+		{/if}
+
+		<div class="search-section" class:filters-open={filtersOpen}>
+			<Input
+				bind:value={searchQuery}
+				type="text"
+				placeholder="Search by name..."
+				leftIcon="search"
+				contained
+				fullWidth
+				class="search-input"
+			/>
+		</div>
+
+		{#if filtersOpen}
+			<SearchFiltersPanel
+				{type}
+				{elementFilters}
+				{rarityFilters}
+				{proficiencyFilters}
+				{seriesFilter}
+				{seriesOptions}
+				{requiredProficiencies}
+				onElementChange={(v) => {
+					elementFilters = v
+				}}
+				onRarityChange={(v) => {
+					rarityFilters = v
+				}}
+				onProficiencyChange={(v) => {
+					proficiencyFilters = v
+				}}
+				onSeriesChange={(v) => {
+					seriesFilter = v
+				}}
+			/>
+		{/if}
+
+		<div class="filters-toggle">
+			<Tooltip content={filtersOpen ? 'Hide filters' : 'Show filters'}>
+				<Button
+					variant="ghost"
+					size="small"
+					fullWidth
+					onclick={() => {
+						filtersOpen = !filtersOpen
+					}}
+				>
+					<Icon name={filtersOpen ? 'chevron-up' : 'chevron-down'} size={14} />
+				</Button>
+			</Tooltip>
 		</div>
 	</div>
 
-	<!-- Results -->
 	<div class="results-section">
 		{#if activeQuery.isLoading}
 			<div class="loading">
@@ -537,48 +502,16 @@
 		{:else if searchResults.length > 0}
 			<ul class="results-list">
 				{#each searchResults as item (item.collectionId || item.id)}
-					{@const owned = searchMode === 'all' && authUserId && isOwned(item)}
-					<li class="result-item">
-						<button
-							class="result-button"
-							class:disabled={!canAddMore}
-							class:from-collection={item.collectionId}
-							class:owned={owned}
-							onclick={() => handleItemClick(item)}
-							aria-label="{canAddMore ? 'Add' : 'Grid full - cannot add'} {getItemName(item)}"
-							disabled={!canAddMore}
-						>
-							<img
-								src={getImageUrl(item)}
-								alt={getItemName(item)}
-								class="result-image"
-								loading="lazy"
-							/>
-							<div class="result-info">
-								<span class="result-name">{getItemName(item)}</span>
-								<div class="result-labels">
-									{#if item.element !== undefined}
-										<ElementLabel element={item.element} size="small" />
-									{/if}
-									{#if Array.isArray(item.proficiency)}
-										{#each item.proficiency as prof}
-											<ProficiencyLabel proficiency={prof} size="small" />
-										{/each}
-									{:else if item.proficiency !== undefined}
-										<ProficiencyLabel proficiency={item.proficiency} size="small" />
-									{/if}
-								</div>
-							</div>
-							{#if type === 'character'}
-								<CharacterTags character={item} />
-							{/if}
-							{#if item.collectionId}
-								<Icon name="bookmark" size={14} class="collection-indicator" />
-							{:else if owned}
-								<Icon name="check" size={14} class="owned-indicator" />
-							{/if}
-						</button>
-					</li>
+					{@const inTeam = searchMode === 'collection' && isInTeam(item)}
+					<SearchResultItem
+						{item}
+						{type}
+						disabled={!canAddMore}
+						fromCollection={!!item.collectionId}
+						owned={searchMode === 'all' && !!authUserId && isOwned(item)}
+						{inTeam}
+						onclick={handleItemClick}
+					/>
 				{/each}
 			</ul>
 
@@ -614,107 +547,64 @@
 	</div>
 </div>
 
+<UnlinkCollectionDialog
+	bind:open={unlinkDialogOpen}
+	onConfirm={async () => {
+		if (onUnlinkCollection) await onUnlinkCollection()
+	}}
+/>
+
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
 
 	.search-content {
 		display: flex;
 		flex-direction: column;
-		height: calc(100vh - 60px); // Account for sidebar header
+		height: calc(100vh - 60px);
 		overflow: hidden;
 	}
 
-	.search-section {
-		padding: 0 $unit-2x $unit-2x $unit-2x;
+	.controls {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+		padding: 0 $unit-2x;
 		flex-shrink: 0;
+
+		.search-section {
+			&.filters-open {
+				margin-bottom: $unit;
+			}
+		}
 
 		:global(.search-input) {
 			border-radius: $card-corner;
 		}
 	}
 
-	.mode-toggle {
-		padding: 0 $unit-2x $unit-2x $unit-2x;
+	.filters-toggle {
 		flex-shrink: 0;
-	}
-
-	.member-select {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
-		padding: 0 $unit-2x $unit-2x $unit-2x;
-		flex-shrink: 0;
-
-		.unlink-button {
-			background: none;
-			border: none;
-			padding: 0 $unit-half;
-			font-size: $font-small;
-			color: var(--text-secondary);
-			cursor: pointer;
-			text-align: left;
-			transition: 0.15s color ease-out;
-
-			&:hover {
-				color: var(--text-primary);
-			}
-		}
-	}
-
-	.filters-section {
-		display: flex;
-		flex-direction: column;
-		gap: calc($unit * 1.5);
-		padding: 0 $unit-2x $unit-2x $unit-2x;
+		padding-bottom: $unit-half;
 		border-bottom: 1px solid var(--border-primary);
-		flex-shrink: 0;
 
-		.filter-row {
-			display: flex;
-			justify-content: space-between;
-			gap: $unit;
-		}
-
-		.filter-group {
-			display: flex;
-			flex-direction: column;
-			gap: $unit;
-		}
-
-		.filter-header {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			padding: 0 $unit-half;
-		}
-
-		.filter-label {
+		> :global(span) {
 			display: block;
-			font-size: $font-small;
-			font-weight: $bold;
-			color: var(--text-secondary);
+			width: 100%;
 		}
 
-		.clear-link {
-			font-size: $font-small;
-			color: var(--text-secondary);
-			text-decoration: none;
-			cursor: pointer;
-			transition: 0.15s color ease-out;
-
-			&:hover {
-				color: var(--text-primary);
-			}
+		:global(button) {
+			justify-content: center;
+			color: var(--text-tertiary);
+			padding: $unit-half 0;
 		}
 	}
 
 	.results-section {
 		flex: 1;
 		overflow-y: auto;
-		padding: $unit-2x;
+		padding: 0 $unit-2x;
 		min-height: 0;
 
 		.loading,
@@ -729,90 +619,6 @@
 			list-style: none;
 			padding: 0;
 			margin: 0;
-		}
-
-		.result-item {
-			margin-bottom: $unit-half;
-
-			.result-button {
-				width: 100%;
-				display: flex;
-				align-items: center;
-				gap: $unit;
-				padding: $unit;
-				border: none;
-				border-radius: $input-corner;
-				background: transparent;
-				cursor: pointer;
-				transition: background-color 0.15s ease-out;
-				text-align: left;
-
-				&:hover {
-					background: var(--bg-tertiary);
-				}
-
-				&:active:not(:disabled) {
-					transform: scale(0.99);
-				}
-
-				&.disabled,
-				&:disabled {
-					opacity: 0.5;
-					cursor: not-allowed;
-
-					&:hover {
-						background: transparent;
-					}
-				}
-			}
-
-			.result-image {
-				width: 48px;
-				height: 48px;
-				object-fit: cover;
-				border-radius: 4px;
-				border: 1px solid var(--border-primary);
-				flex-shrink: 0;
-			}
-
-			.result-info {
-				flex: 1;
-				display: flex;
-				flex-direction: column;
-				gap: $unit-half;
-				min-width: 0;
-			}
-
-			.result-name {
-				font-size: $font-regular;
-				color: var(--text-primary);
-			}
-
-			.result-labels {
-				display: flex;
-				align-items: center;
-				gap: $unit-half;
-			}
-
-			:global(.collection-indicator) {
-				color: var(--accent-blue);
-				flex-shrink: 0;
-			}
-
-			:global(.owned-indicator) {
-				color: var(--success, #4caf50);
-				flex-shrink: 0;
-				opacity: 0.7;
-			}
-
-			// Subtle highlight for owned items in "all" mode
-			.result-button.owned {
-				background: var(--owned-bg, rgba(76, 175, 80, 0.08));
-
-				&:hover {
-					background: var(--owned-bg-hover, rgba(76, 175, 80, 0.15));
-				}
-			}
 		}
 
 		.loading {
@@ -870,7 +676,11 @@
 	}
 
 	@keyframes spin {
-		from { transform: rotate(0deg); }
-		to { transform: rotate(360deg); }
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>

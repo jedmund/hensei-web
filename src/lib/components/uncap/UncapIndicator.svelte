@@ -219,13 +219,14 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/layout' as layout;
 
 	.uncap-indicator {
 		display: inline-block;
 
 		&.contained {
 			background: rgba(0, 0, 0, 0.5);
-			border-radius: 999px;
+			border-radius: layout.$full-corner;
 			padding: spacing.$unit;
 
 			&.small {
@@ -236,7 +237,7 @@
 
 	.stars {
 		display: flex;
-		gap: 2px;
+		gap: spacing.$unit-fourth;
 		list-style: none;
 		margin: 0;
 		padding: 0;

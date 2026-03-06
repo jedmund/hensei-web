@@ -281,7 +281,7 @@
 		padding: 0;
 		border: none;
 		background: transparent;
-		border-radius: 6px;
+		border-radius: $bubble-menu-item-corner;
 		cursor: pointer;
 		color: var(--text-secondary);
 		transition: all 0.15s;
