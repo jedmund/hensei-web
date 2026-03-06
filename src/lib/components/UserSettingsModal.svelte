@@ -11,7 +11,7 @@
 	import { users } from '$lib/api/resources/users'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { invalidateAll } from '$app/navigation'
-	import { createQuery } from '@tanstack/svelte-query'
+	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
@@ -26,6 +26,8 @@
 	}
 
 	let { open = $bindable(false), onOpenChange, username, userId, user, role }: Props = $props()
+
+	const queryClient = useQueryClient()
 
 	// Active section for navigation
 	let activeSection = $state<string>('profile')
@@ -190,6 +192,23 @@
 				},
 				body: JSON.stringify(updatedUser)
 			})
+
+			// Update the TanStack Query cache so reopening the modal shows the saved values
+			queryClient.setQueryData(['currentUser', 'settings'], (oldData: Record<string, unknown> | undefined) =>
+				oldData
+					? {
+							...oldData,
+							avatar: { ...(oldData.avatar as Record<string, unknown>), picture, element },
+							granblueId,
+							gender,
+							language,
+							theme,
+							showGranblueId,
+							collectionPrivacy,
+							showCrewGamertag
+						}
+					: oldData
+			)
 
 			// Apply theme change immediately without reload
 			if (originalTheme !== theme) {

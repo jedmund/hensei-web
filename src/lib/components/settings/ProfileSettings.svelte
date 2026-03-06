@@ -156,6 +156,7 @@
 				placeholder="Select an avatar"
 				fullWidth
 				contained
+				portal
 			/>
 		</div>
 
@@ -167,6 +168,7 @@
 					options={elementOptions}
 					placeholder="Select an element"
 					contained
+					portal
 				/>
 			{/snippet}
 		</SettingsRow>
@@ -190,6 +192,7 @@
 					options={genderOptions}
 					placeholder="Select gender"
 					contained
+					portal
 				/>
 			{/snippet}
 		</SettingsRow>
@@ -202,6 +205,7 @@
 					options={languageOptions}
 					placeholder="Select language"
 					contained
+					portal
 				/>
 			{/snippet}
 		</SettingsRow>
@@ -214,6 +218,7 @@
 					options={themeOptions}
 					placeholder="Select theme"
 					contained
+					portal
 				/>
 			{/snippet}
 		</SettingsRow>

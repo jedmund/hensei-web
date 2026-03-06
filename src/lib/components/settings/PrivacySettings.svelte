@@ -90,6 +90,7 @@
 					options={collectionPrivacyOptions}
 					placeholder="Who can see your collection"
 					contained
+					portal
 				/>
 			{/snippet}
 		</SettingsRow>
