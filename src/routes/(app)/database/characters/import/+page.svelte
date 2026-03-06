@@ -569,7 +569,7 @@
 	@use '$src/themes/layout' as layout;
 
 	.page {
-		background: white;
+		background: var(--card-bg);
 		border-radius: layout.$card-corner;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	}
@@ -615,8 +615,8 @@
 		flex-shrink: 0;
 
 		&:hover {
-			background: colors.$grey-90;
-			color: colors.$grey-30;
+			background: var(--background);
+			color: var(--text-primary);
 		}
 
 		:global(svg) {
@@ -644,7 +644,7 @@
 
 	.entity-selector-container {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid colors.$grey-90;
+		border-bottom: 1px solid var(--separator-bg);
 	}
 
 	.details {
@@ -681,7 +681,7 @@
 		pre {
 			margin: 0;
 			padding: spacing.$unit;
-			background: colors.$grey-95;
+			background: var(--background);
 			border-radius: 4px;
 			font-size: typography.$font-small;
 			white-space: pre-wrap;

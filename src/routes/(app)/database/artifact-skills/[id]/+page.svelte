@@ -278,7 +278,7 @@
 	@use '$src/themes/effects' as effects;
 
 	.page {
-		background: white;
+		background: var(--card-bg);
 		border-radius: layout.$card-corner;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	}
@@ -295,7 +295,7 @@
 	}
 
 	.content {
-		background: white;
+		background: var(--card-bg);
 		border-radius: layout.$card-corner;
 		overflow: visible;
 		position: relative;
@@ -307,7 +307,7 @@
 		justify-content: space-between;
 		gap: spacing.$unit * 2;
 		padding: spacing.$unit * 2;
-		background: white;
+		background: var(--card-bg);
 		border-top-left-radius: layout.$card-corner;
 		border-top-right-radius: layout.$card-corner;
 
@@ -344,7 +344,7 @@
 				font-size: typography.$font-xlarge;
 				font-weight: typography.$bold;
 				margin: 0 0 spacing.$unit-half 0;
-				color: colors.$grey-30;
+				color: var(--text-primary);
 			}
 
 			.meta {
@@ -363,13 +363,13 @@
 
 	.edit-controls {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid colors.$grey-80;
+		border-bottom: 1px solid var(--border-subtle);
 		display: flex;
 		gap: spacing.$unit;
 		align-items: center;
 
 		.success-message {
-			color: colors.$grey-30;
+			color: var(--text-primary);
 			font-size: typography.$font-small;
 			animation: fadeIn effects.$duration-opacity-fade ease-in;
 		}

@@ -459,7 +459,7 @@
     .filter-btn {
       padding: 4px 8px;
       border: 1px solid #ddd;
-      background: white;
+      background: var(--card-bg);
       border-radius: 4px;
       font-size: 12px;
       cursor: pointer;
@@ -511,7 +511,7 @@
         padding: 8px;
         border: 1px solid transparent;
         border-radius: 6px;
-        background: white;
+        background: var(--card-bg);
         cursor: pointer;
         transition: all 0.2s;
         text-align: left;
@@ -575,7 +575,7 @@
       button {
         padding: 4px 12px;
         border: 1px solid #ddd;
-        background: white;
+        background: var(--card-bg);
         border-radius: 4px;
         font-size: 13px;
         cursor: pointer;

@@ -107,7 +107,7 @@
 		h3 {
 			font-size: typography.$font-regular;
 			font-weight: 600;
-			color: colors.$grey-20;
+			color: var(--text-primary);
 			margin: 0 0 spacing.$unit 0;
 		}
 	}
@@ -121,8 +121,8 @@
 	}
 
 	.raw-content {
-		background: colors.$grey-95;
-		border: 1px solid colors.$grey-80;
+		background: var(--background);
+		border: 1px solid var(--border-subtle);
 		border-radius: layout.$item-corner;
 		padding: spacing.$unit-2x;
 		font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', monospace;

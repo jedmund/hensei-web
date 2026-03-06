@@ -274,11 +274,11 @@
 	.modifier-badge {
 		display: inline-block;
 		padding: 2px 8px;
-		background: colors.$grey-90;
+		background: var(--background);
 		border-radius: 4px;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
-		color: colors.$grey-30;
+		color: var(--text-primary);
 	}
 
 	.name-cell {
@@ -330,7 +330,7 @@
 
 	.values {
 		font-size: typography.$font-small;
-		color: colors.$grey-40;
+		color: var(--text-secondary);
 		font-family: monospace;
 	}
 

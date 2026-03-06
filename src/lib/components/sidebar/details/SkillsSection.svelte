@@ -73,7 +73,6 @@
 {/if}
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
@@ -84,7 +83,7 @@
 			margin: 0 0 calc(spacing.$unit * 1.5) 0;
 			font-size: typography.$font-regular;
 			font-weight: typography.$medium;
-			color: var(--text-secondary, colors.$grey-40);
+			color: var(--text-secondary);
 			text-transform: uppercase;
 			letter-spacing: 0.5px;
 		}
@@ -92,13 +91,13 @@
 		h4 {
 			font-size: typography.$font-regular;
 			font-weight: typography.$medium;
-			color: var(--text-primary, colors.$grey-10);
+			color: var(--text-primary);
 			margin: 0 0 calc(spacing.$unit * 0.5) 0;
 		}
 
 		p {
 			font-size: typography.$font-small;
-			color: var(--text-secondary, colors.$grey-50);
+			color: var(--text-secondary);
 			line-height: 1.5;
 			margin: 0;
 		}
@@ -114,7 +113,7 @@
 	.skill-item,
 	.aura-item {
 		padding: spacing.$unit;
-		background: var(--page-hover, colors.$grey-80);
+		background: var(--page-hover);
 		border-radius: 4px;
 	}
 
@@ -129,18 +128,18 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: calc(spacing.$unit * 0.75) spacing.$unit;
-		background: var(--page-hover, colors.$grey-80);
+		background: var(--page-hover);
 		border-radius: 4px;
 
 		.key-slot {
 			font-size: typography.$font-small;
-			color: var(--text-secondary, colors.$grey-50);
+			color: var(--text-secondary);
 			font-weight: typography.$medium;
 		}
 
 		.key-name {
 			font-size: typography.$font-small;
-			color: var(--text-primary, colors.$grey-10);
+			color: var(--text-primary);
 		}
 	}
 
@@ -151,18 +150,18 @@
 		padding: calc(spacing.$unit * 0.75) 0;
 
 		&.special-indicator {
-			border-top: 1px solid rgba(colors.$grey-70, 0.5);
+			border-top: 1px solid var(--separator-bg);
 			padding-top: spacing.$unit;
 		}
 
 		.label {
 			font-size: typography.$font-regular;
-			color: var(--text-secondary, colors.$grey-50);
+			color: var(--text-secondary);
 		}
 
 		.value {
 			font-size: typography.$font-regular;
-			color: var(--text-primary, colors.$grey-10);
+			color: var(--text-primary);
 			font-weight: typography.$medium;
 		}
 	}

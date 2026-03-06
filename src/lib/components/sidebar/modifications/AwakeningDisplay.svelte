@@ -61,7 +61,6 @@
 {/if}
 
 <style lang="scss">
-  @use '$src/themes/colors' as colors;
   @use '$src/themes/spacing' as spacing;
   @use '$src/themes/typography' as typography;
   @use '$src/themes/layout' as layout;
@@ -71,7 +70,7 @@
     gap: spacing.$unit-2x;
     align-items: center;
     padding: spacing.$unit;
-    background: colors.$grey-85;
+    background: var(--unit-bg);
     border-radius: layout.$item-corner-small;
 
     &.small .awakening-icon {
@@ -94,7 +93,7 @@
       flex-shrink: 0;
 
       &.placeholder {
-        background: colors.$grey-70;
+        background: var(--placeholder-bg-accent);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -108,13 +107,13 @@
 
       .awakening-name {
         font-size: typography.$font-regular;
-        color: var(--text-primary, colors.$grey-10);
+        color: var(--text-primary);
         font-weight: typography.$medium;
       }
 
       .awakening-level {
         font-size: typography.$font-small;
-        color: var(--text-secondary, colors.$grey-50);
+        color: var(--text-secondary);
       }
     }
   }

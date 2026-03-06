@@ -124,7 +124,7 @@
 		margin: 0 0 spacing.$unit 0;
 		font-size: typography.$font-regular;
 		font-weight: typography.$medium;
-		color: var(--text-secondary, colors.$grey-40);
+		color: var(--text-secondary);
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
 	}
@@ -143,12 +143,12 @@
 		align-items: center;
 		gap: spacing.$unit;
 		padding: calc(spacing.$unit * 0.75);
-		background: colors.$grey-85;
+		background: var(--unit-bg);
 		border-radius: layout.$item-corner-small;
 
 		&.enhanced {
-			background: linear-gradient(135deg, colors.$grey-85, rgba(#d4af37, 0.1));
-			border: 1px solid rgba(#d4af37, 0.2);
+			background: linear-gradient(135deg, var(--unit-bg), rgba(colors.$gold-mastery, 0.1));
+			border: 1px solid rgba(colors.$gold-mastery, 0.2);
 		}
 	}
 
@@ -182,7 +182,7 @@
 		color: var(--text-secondary);
 
 		&.enhanced {
-			color: #d4af37;
+			color: colors.$gold-mastery;
 			font-weight: typography.$medium;
 		}
 	}

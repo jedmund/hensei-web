@@ -378,7 +378,7 @@
     right: 4px;
     width: 24px;
     height: 24px;
-    background: #d13a3a;
+    background: colors.$error;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -394,11 +394,11 @@
   .unit.orphaned {
     .frame {
       opacity: 0.7;
-      border: 2px solid #d13a3a;
+      border: 2px solid colors.$error;
     }
 
     .name {
-      color: #d13a3a;
+      color: colors.$error;
     }
   }
 
@@ -485,7 +485,7 @@
     }
 
     &.neutral .name {
-      color: colors.$grey-40;
+      color: var(--text-secondary);
     }
   }
 </style>

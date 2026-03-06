@@ -152,7 +152,7 @@
 
 	.database-grid {
 		width: 100%;
-		background: white;
+		background: var(--card-bg);
 		border-radius: 8px;
 		overflow: hidden;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -198,7 +198,7 @@
 				border: 1px solid #ddd;
 				border-radius: 4px;
 				font-size: typography.$font-small;
-				background: white;
+				background: var(--card-bg);
 				cursor: pointer;
 			}
 		}
@@ -252,7 +252,7 @@
 
 			.pagination-button {
 				padding: spacing.$unit * 0.5 spacing.$unit;
-				background: white;
+				background: var(--card-bg);
 				border: 1px solid #ddd;
 				border-radius: 4px;
 				font-size: typography.$font-small;

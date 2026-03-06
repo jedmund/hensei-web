@@ -199,13 +199,13 @@
 
 	.edit-controls {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid colors.$grey-80;
+		border-bottom: 1px solid var(--border-subtle);
 		display: flex;
 		gap: spacing.$unit;
 		align-items: center;
 
 		.success-message {
-			color: colors.$grey-30;
+			color: var(--text-primary);
 			font-size: typography.$font-small;
 			animation: fadeIn effects.$duration-opacity-fade ease-in;
 		}

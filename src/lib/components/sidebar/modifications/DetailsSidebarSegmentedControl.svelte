@@ -32,7 +32,6 @@
 {/if}
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
@@ -46,7 +45,7 @@
 		font-weight: typography.$medium;
 
 		&.disabled {
-			color: var(--text-tertiary, colors.$grey-60);
+			color: var(--text-tertiary);
 			opacity: 0.5;
 		}
 	}
@@ -57,7 +56,7 @@
 		align-items: center;
 		justify-content: center;
 		padding: spacing.$unit;
-		background: colors.$grey-90;
+		background: var(--background);
 		border-radius: spacing.$unit-half;
 		cursor: not-allowed;
 		user-select: none;

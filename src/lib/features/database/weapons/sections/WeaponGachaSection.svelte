@@ -86,7 +86,7 @@
 		align-items: center;
 		gap: spacing.$unit;
 		text-decoration: none;
-		color: colors.$grey-30;
+		color: var(--text-primary);
 
 		&:hover .recruits-image {
 			transform: scale(1.05);
