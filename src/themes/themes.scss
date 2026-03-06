@@ -408,6 +408,14 @@
 	--toast-info-bg: #e3f2fd;
 	--toast-info-text: #1565c0;
 
+	// Elevation shadows
+	--shadow-xs: #{effects.$shadow-xs-light};
+	--shadow-sm: #{effects.$shadow-sm-light};
+	--shadow-md: #{effects.$shadow-md-light};
+	--shadow-lg: #{effects.$shadow-lg-light};
+	--shadow-xl: #{effects.$shadow-xl-light};
+	--shadow-inset: #{effects.$shadow-inset-light};
+
 	// Gradients
 	--hero-gradient: #{effects.$hero--gradient--light};
 	--hero-gradient-overlay: #{effects.$hero--gradient--light--overlay};
@@ -792,6 +800,14 @@ html[data-theme='dark'] {
 	--toast-warning-text: #{colors.$notice--text--dark};
 	--toast-info-bg: #0d2744;
 	--toast-info-text: #64b5f6;
+
+	// Elevation shadows
+	--shadow-xs: #{effects.$shadow-xs-dark};
+	--shadow-sm: #{effects.$shadow-sm-dark};
+	--shadow-md: #{effects.$shadow-md-dark};
+	--shadow-lg: #{effects.$shadow-lg-dark};
+	--shadow-xl: #{effects.$shadow-xl-dark};
+	--shadow-inset: #{effects.$shadow-inset-dark};
 
 	// Gradients
 	--hero-gradient: #{effects.$hero--gradient--dark};
