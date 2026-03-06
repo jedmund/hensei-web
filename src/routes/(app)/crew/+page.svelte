@@ -500,7 +500,7 @@
 	// Chart section
 	.chart-section {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+		border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
 	}
 
 	// Event list (similar to member list)
@@ -520,7 +520,7 @@
 		cursor: pointer;
 
 		&:hover {
-			background: rgba(0, 0, 0, 0.03);
+			background: var(--list-cell-bg-hover, rgba(0, 0, 0, 0.03));
 		}
 	}
 
@@ -535,6 +535,7 @@
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		min-width: 24px;
+		color: var(--text-primary);
 	}
 
 	.event-dates {

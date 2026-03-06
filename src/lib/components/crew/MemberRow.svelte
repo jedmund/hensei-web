@@ -134,7 +134,7 @@
 		transition: background-color 0.15s;
 
 		&:hover {
-			background: rgba(0, 0, 0, 0.03);
+			background: var(--list-cell-bg-hover, rgba(0, 0, 0, 0.03));
 		}
 
 		&.retired {
@@ -182,7 +182,8 @@
 		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
-		background: rgba(0, 0, 0, 0.04);
+		background: var(--button-contained-bg-hover, rgba(0, 0, 0, 0.04));
+		color: var(--text-secondary);
 
 		&.captain {
 			background: var(--color-gold-light, #fef3c7);

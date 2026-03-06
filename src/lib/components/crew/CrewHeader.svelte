@@ -89,6 +89,7 @@
 	.header-title {
 		font-size: typography.$font-regular;
 		font-weight: typography.$medium;
+		color: var(--text-primary);
 	}
 
 	.header-subtitle {

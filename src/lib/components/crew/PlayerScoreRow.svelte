@@ -102,7 +102,7 @@
 		cursor: pointer;
 
 		&:hover {
-			background: rgba(0, 0, 0, 0.03);
+			background: var(--list-cell-bg-hover, rgba(0, 0, 0, 0.03));
 		}
 
 		&:focus-visible {
@@ -131,6 +131,7 @@
 	.player-name {
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
+		color: var(--text-primary);
 
 		.star {
 			color: #f5a623;
@@ -150,7 +151,7 @@
 		}
 
 		&.retired {
-			background: rgba(0, 0, 0, 0.04);
+			background: var(--button-contained-bg-hover, rgba(0, 0, 0, 0.04));
 			color: var(--text-secondary);
 		}
 
@@ -179,5 +180,6 @@
 		font-variant-numeric: tabular-nums;
 		min-width: 108px;
 		text-align: right;
+		color: var(--text-secondary);
 	}
 </style>

@@ -62,7 +62,7 @@
 		gap: spacing.$unit-quarter;
 		padding: 0 spacing.$unit-2x spacing.$unit;
 		background: var(--menu-bg);
-		border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+		border-bottom: 1px solid var(--border-subtle);
 	}
 
 	.tab {
