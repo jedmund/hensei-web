@@ -41,7 +41,7 @@
 		position: absolute;
 		inset: 0;
 		background: #1a1a2e var(--auth-bg-url) center / cover no-repeat;
-		z-index: 0;
+		z-index: $z-base;
 
 		// Overlay for readability
 		&::after {
@@ -56,7 +56,7 @@
 		position: absolute;
 		top: $unit-3x;
 		left: $unit-3x;
-		z-index: 2;
+		z-index: $z-badge;
 		display: flex;
 		align-items: center;
 		gap: $unit;
@@ -76,7 +76,7 @@
 
 	.authContent {
 		position: relative;
-		z-index: 1;
+		z-index: $z-raised;
 		width: 100%;
 		max-width: 420px;
 		margin: $unit-2x;

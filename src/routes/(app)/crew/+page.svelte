@@ -469,7 +469,7 @@
 	.invitation-info {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: spacing.$unit-fourth;
 
 		.crew-name {
 			font-size: typography.$font-regular;

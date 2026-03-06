@@ -160,7 +160,7 @@
 	.member-details {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: spacing.$unit-fourth;
 	}
 
 	.member-actions {

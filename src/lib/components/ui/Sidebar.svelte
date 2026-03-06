@@ -54,7 +54,7 @@
 		transition:
 			transform $duration-slide ease-in-out,
 			opacity $duration-slide ease-in-out;
-		z-index: 50;
+		z-index: $z-popover;
 		// No shadow/border - individual panes have their own
 
 		&.open {
@@ -119,7 +119,7 @@
 
 		// Mobile styles - overlay approach
 		@media (max-width: 768px) {
-			z-index: 100;
+			z-index: $z-modal;
 			width: 90vw !important;
 			max-width: 400px;
 			box-shadow: var(--shadow-md);

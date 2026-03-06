@@ -129,6 +129,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/typography' as typography;
 
 	.slot-row {
 		display: flex;
@@ -210,11 +211,11 @@
 			min-width: 0;
 			display: flex;
 			flex-direction: column;
-			gap: 2px;
+			gap: $unit-fourth;
 
 			.skill-name {
-				font-size: 14px;
-				font-weight: 500;
+				font-size: typography.$font-body;
+				font-weight: typography.$medium;
 				color: var(--text-primary);
 				white-space: nowrap;
 				overflow: hidden;
@@ -253,7 +254,7 @@
 		}
 
 		.placeholder-text {
-			font-size: 14px;
+			font-size: typography.$font-body;
 			color: var(--text-tertiary);
 			transition: color 0.15s ease;
 		}

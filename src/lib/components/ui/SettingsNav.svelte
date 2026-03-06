@@ -71,7 +71,7 @@
 		background: transparent;
 		color: var(--text-secondary);
 		font-size: typography.$font-regular;
-		font-weight: 500;
+		font-weight: typography.$medium;
 		cursor: pointer;
 		text-align: left;
 		@include effects.smooth-transition(effects.$duration-quick, background-color, color);

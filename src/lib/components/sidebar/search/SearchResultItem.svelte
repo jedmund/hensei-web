@@ -169,7 +169,7 @@
 			width: 48px;
 			height: 48px;
 			object-fit: cover;
-			border-radius: 4px;
+			border-radius: $item-corner-small;
 			border: 1px solid var(--border-primary);
 			flex-shrink: 0;
 		}

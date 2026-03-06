@@ -19,7 +19,10 @@
   </div>
 </aside>
 
-<style>
+<style lang="scss">
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
+	@use '$src/themes/typography' as typography;
   .panel {
     width: var(--panel-w, 380px);
     max-width: 92vw;
@@ -34,7 +37,7 @@
     box-shadow: var(--shadow-xl);
     transform: translateX(100%);
     transition: transform 200ms ease;
-    z-index: 50;
+    z-index: effects.$z-popover;
   }
   .panel:not(.inline).open { transform: translateX(0); }
   /* Inline mode (used in grid pages so content doesn't shrink) */
@@ -59,7 +62,7 @@
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
+    border-radius: layout.$input-corner;
+    font-size: typography.$font-body;
   }
 </style>

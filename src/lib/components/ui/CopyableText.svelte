@@ -25,6 +25,7 @@
 </button>
 
 <style lang="scss">
+	@use '$src/themes/layout' as layout;
 
 	.copyable-text {
 		display: inline-flex;
@@ -36,7 +37,7 @@
 		font: inherit;
 		color: var(--text-primary);
 		cursor: pointer;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		transition: color 0.15s ease;
 
 		&:hover {

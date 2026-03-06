@@ -106,7 +106,7 @@
 	.raw-section {
 		h3 {
 			font-size: typography.$font-regular;
-			font-weight: 600;
+			font-weight: typography.$bold;
 			color: var(--text-primary);
 			margin: 0 0 spacing.$unit 0;
 		}

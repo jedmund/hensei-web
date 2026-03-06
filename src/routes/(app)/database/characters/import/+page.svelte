@@ -682,7 +682,7 @@
 			margin: 0;
 			padding: spacing.$unit;
 			background: var(--background);
-			border-radius: 4px;
+			border-radius: layout.$item-corner-small;
 			font-size: typography.$font-small;
 			white-space: pre-wrap;
 			word-break: break-word;

@@ -476,6 +476,8 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/typography' as typography;
 
 	.modal-content {
 		display: flex;
@@ -494,7 +496,7 @@
 		gap: $unit;
 		padding: $unit-half $unit;
 		background: var(--input-bg, #f5f5f5);
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		border: 1px solid var(--border-color, #ddd);
 
 		:global(svg) {
@@ -507,7 +509,7 @@
 		flex: 1;
 		border: none;
 		background: transparent;
-		font-size: 14px;
+		font-size: typography.$font-body;
 		padding: $unit-half 0;
 		color: var(--text-primary, #333);
 
@@ -591,10 +593,10 @@
 		background: none;
 		border: none;
 		color: var(--accent-color, #3366ff);
-		font-size: 14px;
+		font-size: typography.$font-body;
 		cursor: pointer;
 		padding: $unit-half $unit;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 
 		&:hover {
 			background: var(--button-bg-hover, #f0f0f0);

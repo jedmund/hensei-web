@@ -248,7 +248,7 @@
 			.job-count {
 				padding: spacing.$unit-half spacing.$unit-2x;
 				background: var(--badge-bg);
-				border-radius: 12px;
+				border-radius: layout.$card-corner;
 				font-size: typography.$font-small;
 				color: var(--text-secondary);
 			}

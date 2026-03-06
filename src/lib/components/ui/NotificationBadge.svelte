@@ -33,6 +33,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/colors' as colors;
+	@use '$src/themes/layout' as layout;
 
 	.notification-badge {
 		display: inline-flex;
@@ -53,7 +54,7 @@
 			min-width: 16px;
 			height: 16px;
 			padding: 0 4px;
-			border-radius: 8px;
+			border-radius: layout.$input-corner;
 			font-size: 10px;
 			font-weight: typography.$medium;
 			color: white;

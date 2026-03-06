@@ -99,7 +99,7 @@
 		font-size: $font-small;
 		font-weight: $bold;
 		padding: 2px 6px;
-		border-radius: 4px;
+		border-radius: $item-corner-small;
 		line-height: 1;
 		background: var(--grey-80, #e9e9e9);
 		color: var(--grey-40, #444);
@@ -112,7 +112,7 @@
 		font-size: $font-small;
 		font-weight: $bold;
 		padding: 2px 6px;
-		border-radius: 4px;
+		border-radius: $item-corner-small;
 		line-height: 1;
 		background: var(--purple-50, #b6b2fc);
 		color: var(--purple-10, #4f3c79);

@@ -872,6 +872,9 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
+	@use '$src/themes/typography' as typography;
 
 	.page-container {
 		display: flex;
@@ -907,7 +910,7 @@
 		position: fixed;
 		inset: 0;
 		background: rgba(0, 0, 0, 0.5);
-		z-index: 50;
+		z-index: effects.$z-popover;
 	}
 	/* 
   :global(.dialog-content) {
@@ -916,19 +919,19 @@
     top: 50%;
     transform: translate(-50%, -50%);
     background: var(--card-bg);
-    border-radius: 8px;
-    padding: 24px;
+    border-radius: layout.$input-corner;
+    padding: $unit-3x;
     max-width: 500px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
-    z-index: 51;
+    z-index: effects.$z-popover + 1;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   } */
 
 	.dialog-title {
 		font-size: 18px;
-		font-weight: 600;
+		font-weight: typography.$bold;
 		margin-bottom: 8px;
 		color: #d32f2f;
 	}
@@ -942,13 +945,13 @@
 	.error-details {
 		background: #f5f5f5;
 		border: 1px solid #e0e0e0;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		padding: 12px;
 		margin-bottom: 20px;
 	}
 
 	.error-details-title {
-		font-weight: 600;
+		font-weight: typography.$bold;
 		margin-bottom: 8px;
 		color: #333;
 	}
@@ -974,9 +977,9 @@
 		background: #3366ff;
 		color: white;
 		border: none;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		cursor: pointer;
-		font-size: 14px;
+		font-size: typography.$font-body;
 		transition: background 0.2s;
 	}
 

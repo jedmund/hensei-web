@@ -207,7 +207,9 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography';
+	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.star {
 		--size: 18px;
@@ -347,9 +349,9 @@
 
 	.popover {
 		position: fixed;
-		z-index: 1001;
+		z-index: effects.$z-notification + 1;
 		background: var(--card-bg);
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		box-shadow: var(--shadow-lg);
 		padding: 12px;
 		width: auto;
@@ -358,7 +360,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 8px;
+		gap: spacing.$unit;
 		animation: popover-appear 0.2s ease-out;
 
 		&.above {
@@ -376,11 +378,11 @@
 			text-align: center;
 			white-space: nowrap;
 			display: flex;
-			gap: 4px;
+			gap: spacing.$unit-half;
 			color: #333;
 
 			.level-value {
-				font-weight: 500;
+				font-weight: typography.$medium;
 
 				&.pending {
 					color: #999;

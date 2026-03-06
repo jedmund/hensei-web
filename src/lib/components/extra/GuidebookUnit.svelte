@@ -58,11 +58,12 @@
   @use '$src/themes/colors' as *;
   @use '$src/themes/typography' as *;
   @use '$src/themes/spacing' as *;
+  @use '$src/themes/layout' as layout;
 
   .unit { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; gap: $unit; }
-  .image { width: 100%; height: auto; border: 1px solid $grey-75; border-radius: 8px; display: block; background: var(--extra-purple-card-bg); }
+  .image { width: 100%; height: auto; border: 1px solid $grey-75; border-radius: layout.$input-corner; display: block; background: var(--extra-purple-card-bg); }
   .name { font-size: $font-small; text-align: center; color: var(--text-secondary); }
-  .remove, .add { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.6); color: white; border: none; border-radius: 12px; width: 24px; height: 24px; line-height: 24px; cursor: pointer; }
+  .remove, .add { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.6); color: white; border: none; border-radius: layout.$card-corner; width: 24px; height: 24px; line-height: 24px; cursor: pointer; }
   .add { right: 6px; }
 </style>
 

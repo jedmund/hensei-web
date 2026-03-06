@@ -769,7 +769,7 @@
 	.filter-tab {
 		display: flex;
 		align-items: center;
-		gap: 4px;
+		gap: spacing.$unit-half;
 		padding: 4px spacing.$unit;
 		background: none;
 		border: none;
@@ -955,7 +955,7 @@
 	.invitation-info {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: spacing.$unit-fourth;
 	}
 
 	.invited-user {
@@ -984,7 +984,7 @@
 		color: colors.$error;
 		background: colors.$error--bg--light;
 		padding: 2px 8px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-weight: typography.$medium;
 	}
 </style>

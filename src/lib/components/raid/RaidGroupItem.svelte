@@ -80,7 +80,7 @@
 		background: $grey-90;
 		position: sticky;
 		top: 0;
-		z-index: 1;
+		z-index: $z-raised;
 	}
 
 	.group-name {
@@ -135,7 +135,7 @@
 	.raid-info {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: $unit-fourth;
 		flex: 1;
 		min-width: 0;
 	}

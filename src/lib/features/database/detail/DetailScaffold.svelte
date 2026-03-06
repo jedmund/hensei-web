@@ -234,7 +234,7 @@
 		box-shadow: var(--shadow-md);
 		padding: spacing.$unit-half;
 		min-width: calc(spacing.$unit * 22.5);
-		z-index: 200;
+		z-index: effects.$z-modal;
 	}
 
 	:global(.dropdown-menu-item) {

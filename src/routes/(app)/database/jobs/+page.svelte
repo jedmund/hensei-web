@@ -362,7 +362,7 @@
 	.name-cell {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: spacing.$unit-fourth;
 
 		.name-ja {
 			font-size: typography.$font-small;
@@ -373,7 +373,7 @@
 	.type-badge {
 		display: inline-block;
 		padding: 2px 8px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 

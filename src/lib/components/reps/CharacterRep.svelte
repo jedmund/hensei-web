@@ -151,7 +151,7 @@
 	// Shared character slot styles
 	.character {
 		background: var(--placeholder-bg);
-		border-radius: 4px;
+		border-radius: $item-corner-small;
 		box-sizing: border-box;
 		overflow: hidden;
 

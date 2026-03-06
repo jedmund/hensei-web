@@ -65,6 +65,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/layout' as layout;
 
 	.row {
 		display: flex;
@@ -76,7 +77,7 @@
 		cursor: pointer;
 		width: 100%;
 		text-align: left;
-		border-radius: 12px;
+		border-radius: layout.$card-corner;
 		transition:
 			background 0.15s,
 			box-shadow 0.15s;
@@ -104,7 +105,7 @@
 		width: 18px;
 		height: 18px;
 		border: 2px solid var(--border-color, #ccc);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -123,7 +124,7 @@
 	.thumbnail {
 		width: 100px;
 		aspect-ratio: 280 / 160;
-		border-radius: 6px;
+		border-radius: layout.$bubble-menu-item-corner;
 		overflow: hidden;
 		background: var(--card-bg, #f5f5f5);
 		flex-shrink: 0;

@@ -847,12 +847,12 @@
 	// Dropdown menu styles
 	:global(.dropdown-content) {
 		background-color: var(--menu-bg);
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		padding: spacing.$unit-half;
 		min-width: 160px;
 		box-shadow: var(--shadow-xl);
 		animation: dropdownSlideIn 0.2s ease;
-		z-index: 50;
+		z-index: effects.$z-popover;
 
 		@keyframes dropdownSlideIn {
 			from {

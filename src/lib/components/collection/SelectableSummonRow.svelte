@@ -75,6 +75,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/layout' as layout;
 
 	.row {
 		display: flex;
@@ -86,7 +87,7 @@
 		cursor: pointer;
 		width: 100%;
 		text-align: left;
-		border-radius: 12px;
+		border-radius: layout.$card-corner;
 		transition:
 			background 0.15s,
 			box-shadow 0.15s;
@@ -117,7 +118,7 @@
 	.thumbnail {
 		width: 80px;
 		aspect-ratio: 1 / 1;
-		border-radius: 6px;
+		border-radius: layout.$bubble-menu-item-corner;
 		overflow: hidden;
 		background: var(--card-bg, #f5f5f5);
 		flex-shrink: 0;

@@ -171,7 +171,7 @@
 	.badge {
 		display: inline-block;
 		padding: 2px 8px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
 		background: #f0f0f0;
 		color: #666;

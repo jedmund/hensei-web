@@ -352,6 +352,10 @@
 </aside>
 
 <style lang="scss">
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/typography' as typography;
+	@use '$src/themes/spacing' as spacing;
+
   .sidebar {
     width: 320px;
     height: 100vh;
@@ -380,7 +384,7 @@
     h2 {
       margin: 0;
       font-size: 18px;
-      font-weight: 600;
+      font-weight: typography.$bold;
     }
 
     .close-btn {
@@ -394,7 +398,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 4px;
+      border-radius: layout.$item-corner-small;
 
       &:hover {
         background: rgba(0,0,0,0.05);
@@ -410,8 +414,8 @@
       width: 100%;
       padding: 8px 12px;
       border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
+      border-radius: layout.$bubble-menu-item-corner;
+      font-size: typography.$font-body;
 
       &:focus {
         outline: none;
@@ -438,7 +442,7 @@
     .filter-label {
       display: block;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: typography.$bold;
       text-transform: uppercase;
       color: #666;
       margin-bottom: 6px;
@@ -447,20 +451,20 @@
     .filter-buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
+      gap: spacing.$unit-half;
     }
 
     .proficiency-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
+      gap: spacing.$unit-half;
     }
 
     .filter-btn {
       padding: 4px 8px;
       border: 1px solid #ddd;
       background: var(--card-bg);
-      border-radius: 4px;
+      border-radius: layout.$item-corner-small;
       font-size: 12px;
       cursor: pointer;
       transition: all 0.2s;
@@ -490,9 +494,9 @@
 
     .loading, .no-results, .empty-state {
       text-align: center;
-      padding: 24px;
+      padding: spacing.$unit-3x;
       color: #666;
-      font-size: 14px;
+      font-size: typography.$font-body;
     }
 
     .results-list {
@@ -508,9 +512,9 @@
         width: 100%;
         display: flex;
         align-items: center;
-        padding: 8px;
+        padding: spacing.$unit;
         border: 1px solid transparent;
-        border-radius: 6px;
+        border-radius: layout.$bubble-menu-item-corner;
         background: var(--card-bg);
         cursor: pointer;
         transition: all 0.2s;
@@ -545,20 +549,20 @@
         width: 48px;
         height: 48px;
         object-fit: cover;
-        border-radius: 4px;
+        border-radius: layout.$item-corner-small;
         margin-right: 12px;
         border: 1px solid #e0e0e0;
       }
 
       .result-name {
         flex: 1;
-        font-size: 14px;
+        font-size: typography.$font-body;
         color: #333;
       }
 
       .result-element {
         font-size: 12px;
-        font-weight: 600;
+        font-weight: typography.$bold;
         margin-left: 8px;
       }
     }
@@ -576,7 +580,7 @@
         padding: 4px 12px;
         border: 1px solid #ddd;
         background: var(--card-bg);
-        border-radius: 4px;
+        border-radius: layout.$item-corner-small;
         font-size: 13px;
         cursor: pointer;
 

@@ -55,6 +55,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/effects' as *;
+	@use '$src/themes/layout' as layout;
 
 	.card {
 		position: relative;
@@ -63,7 +64,7 @@
 		aspect-ratio: 280 / 160;
 		padding: 0;
 		border: 2px solid transparent;
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		background: var(--card-bg, #f5f5f5);
 		cursor: pointer;
 		overflow: hidden;

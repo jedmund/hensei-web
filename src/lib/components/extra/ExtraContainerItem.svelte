@@ -40,7 +40,7 @@
         font-size: $font-small;
         font-weight: $medium;
         line-height: 1.2;
-        font-weight: 500;
+        font-weight: $medium;
         text-align: center;
       }
     }

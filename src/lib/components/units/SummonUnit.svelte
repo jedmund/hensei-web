@@ -249,6 +249,8 @@
   @use '$src/themes/typography' as typography;
   @use '$src/themes/spacing' as spacing;
   @use '$src/themes/rep' as rep;
+  @use '$src/themes/layout' as layout;
+  @use '$src/themes/effects' as effects;
 
   .unit {
     position: relative;
@@ -272,9 +274,9 @@
       content: '';
       position: absolute;
       inset: 0;
-      border-radius: 8px;
+      border-radius: layout.$input-corner;
       pointer-events: none;
-      z-index: 10;
+      z-index: effects.$z-sticky;
     }
 
     &.editable:hover {
@@ -286,7 +288,7 @@
     position: relative;
     width: 100%;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: layout.$input-corner;
     background: var(--card-bg, #f5f5f5);
     transition: opacity 0.2s ease-in-out;
     display: flex;
@@ -330,7 +332,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    z-index: 2;
+    z-index: effects.$z-badge;
 
     &.placeholder {
       opacity: 0;
@@ -347,13 +349,13 @@
     inset: 0;
     border: 2px solid colors.$error;
     border-radius: inherit;
-    z-index: 2;
+    z-index: effects.$z-badge;
     pointer-events: none;
   }
 
   .icon {
     position: absolute;
-    z-index: 1;
+    z-index: effects.$z-raised;
     color: var(--icon-secondary, #999);
     transition: color 0.2s ease-in-out;
   }
@@ -384,7 +386,7 @@
     align-items: center;
     justify-content: center;
     color: white;
-    z-index: 10;
+    z-index: effects.$z-sticky;
     pointer-events: auto;
     cursor: help;
     box-shadow: var(--shadow-sm);

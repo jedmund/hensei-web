@@ -42,7 +42,7 @@
 		box-shadow: var(--shadow-md);
 		padding: $unit-half;
 		min-width: calc($unit * 22.5);
-		z-index: 200;
+		z-index: $z-modal;
 		animation: slideIn $duration-quick ease-out;
 	}
 

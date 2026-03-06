@@ -173,6 +173,7 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.join-page {
 		max-width: 600px;
@@ -205,7 +206,7 @@
 		padding: spacing.$unit-4x spacing.$unit-2x;
 		background: var(--surface);
 		border: 1px solid var(--border-color);
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 
 		p {
 			margin-bottom: spacing.$unit;
@@ -227,7 +228,7 @@
 	.invitation-card {
 		background: var(--surface);
 		border: 1px solid var(--border-color);
-		border-radius: 8px;
+		border-radius: layout.$input-corner;
 		padding: spacing.$unit-2x;
 		transition: border-color 0.2s;
 
@@ -283,7 +284,7 @@
 		font-size: 0.875rem;
 		padding: spacing.$unit;
 		background: var(--color-red-light, #fef2f2);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 	}
 
 	.expires-notice {

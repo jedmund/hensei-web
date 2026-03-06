@@ -103,6 +103,7 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.confirm-content {
 		display: flex;
@@ -127,7 +128,7 @@
 	.confirm-error {
 		padding: spacing.$unit;
 		background: colors.$error--bg--light;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 
 		p {
 			margin: 0;

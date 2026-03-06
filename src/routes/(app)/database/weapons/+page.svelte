@@ -290,7 +290,7 @@
 		display: inline-block;
 		font-size: typography.$font-tiny;
 		padding: 2px 6px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-weight: typography.$medium;
 
 		&.extra {

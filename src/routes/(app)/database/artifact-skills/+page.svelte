@@ -275,7 +275,7 @@
 		display: inline-block;
 		padding: 2px 8px;
 		background: var(--background);
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		color: var(--text-primary);
@@ -284,7 +284,7 @@
 	.name-cell {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: spacing.$unit-fourth;
 
 		.name-en {
 			font-weight: typography.$medium;
@@ -306,14 +306,14 @@
 		padding: 2px 8px;
 		background: colors.$blue;
 		color: white;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
 	}
 
 	.polarity-badge {
 		display: inline-block;
 		padding: 2px 8px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 

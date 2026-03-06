@@ -21,19 +21,21 @@
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/spacing' as spacing;
 
 	.features-cell {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 4px;
+		gap: spacing.$unit-half;
 		height: 100%;
 	}
 
 	.badge {
 		display: inline-block;
 		padding: 2px 6px;
-		border-radius: 4px;
+		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-tiny;
 		font-weight: typography.$medium;
 

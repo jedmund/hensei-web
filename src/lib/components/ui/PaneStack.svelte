@@ -152,6 +152,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/effects' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/typography' as typography;
 
 	// Stacking configuration
 	$pane-peek-offset: $unit-3x; // How much the behind pane peeks out to the left
@@ -183,7 +184,7 @@
 		// Active pane (top of stack, fully visible)
 		&.is-active {
 			transform: translateX(0) scale(1);
-			z-index: 10;
+			z-index: $z-sticky;
 			opacity: 1;
 
 			.pane-content {
@@ -194,7 +195,7 @@
 		// Behind pane (shifted left to peek out)
 		&.is-behind {
 			transform: translateX(-$pane-peek-offset) scale(0.98);
-			z-index: 5;
+			z-index: $z-sticky;
 			opacity: 1;
 
 			.pane-content {
@@ -207,7 +208,7 @@
 		&.is-hidden {
 			opacity: 0;
 			pointer-events: none;
-			z-index: 0;
+			z-index: $z-base;
 		}
 
 		// Pushing animation (new pane entering from right)
@@ -218,7 +219,7 @@
 		// Popping animation (pane exiting to the right)
 		&.is-popping {
 			animation: pane-exit $duration-slide ease-out forwards;
-			z-index: 10; // Keep on top during exit
+			z-index: $z-sticky; // Keep on top during exit
 		}
 	}
 
@@ -294,14 +295,14 @@
 		box-shadow: var(--shadow-md);
 		padding: $unit-half;
 		min-width: calc($unit * 20);
-		z-index: 200;
+		z-index: $z-modal;
 	}
 
 	:global(.overflow-menu-item) {
 		padding: $unit $unit-2x;
 		border-radius: $item-corner-small;
 		cursor: pointer;
-		font-size: 14px;
+		font-size: typography.$font-body;
 		color: var(--text-primary);
 		outline: none;
 

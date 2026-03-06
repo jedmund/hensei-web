@@ -194,7 +194,7 @@
 
 	.field-label {
 		font-size: typography.$font-small;
-		font-weight: 500;
+		font-weight: typography.$medium;
 		color: var(--text-primary);
 
 		.suffix {

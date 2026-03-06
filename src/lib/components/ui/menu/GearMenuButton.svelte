@@ -50,7 +50,7 @@
 	:global(.gear-button-trigger) {
 		width: 32px;
 		height: 32px;
-		z-index: 10;
+		z-index: $z-sticky;
 		opacity: 0;
 		pointer-events: none;
 		@include smooth-transition($duration-standard, opacity);
@@ -63,7 +63,7 @@
 
 	.gear-button {
 		position: absolute;
-		z-index: 99;
+		z-index: $z-modal;
 		width: 32px;
 		height: 32px;
 		padding: 0;

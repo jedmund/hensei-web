@@ -106,6 +106,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/rep' as rep;
+	@use '$src/themes/typography' as typography;
 
 	.gridRep {
 		box-sizing: border-box;
@@ -178,7 +179,7 @@
 		h2 {
 			color: var(--text-primary);
 			font-size: 1.6rem;
-			font-weight: 600;
+			font-weight: typography.$bold;
 			overflow: hidden;
 			padding-bottom: 1px;
 			text-overflow: ellipsis;

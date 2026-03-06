@@ -80,7 +80,7 @@
 	:global(.gear-button-trigger) {
 		width: 32px;
 		height: 32px;
-		z-index: 10;
+		z-index: $z-sticky;
 		opacity: 0;
 		pointer-events: none;
 		transition: opacity 0.2s ease;
@@ -95,7 +95,7 @@
 		position: absolute;
 		top: $unit;
 		left: $unit;
-		z-index: 99;
+		z-index: $z-modal;
 		width: 32px;
 		height: 32px;
 		padding: 0;
@@ -141,7 +141,7 @@
 		box-shadow: var(--shadow-md);
 		padding: $unit-half;
 		min-width: calc($unit * 22.5);
-		z-index: 200;
+		z-index: $z-modal;
 		animation: slideIn $duration-quick ease-out;
 	}
 
@@ -199,7 +199,7 @@
 		box-shadow: var(--shadow-md);
 		padding: $unit-half;
 		min-width: calc($unit * 22.5);
-		z-index: 200;
+		z-index: $z-modal;
 		animation: slideIn $duration-quick ease-out;
 	}
 

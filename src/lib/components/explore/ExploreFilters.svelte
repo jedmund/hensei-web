@@ -563,7 +563,7 @@
         #f7d6b3, #f9c4d2
       );
       opacity: 0;
-      z-index: 0;
+      z-index: $z-base;
       filter: blur(12px);
       @include smooth-transition($duration-quick, opacity);
     }
@@ -575,7 +575,7 @@
       inset: 0;
       border-radius: inherit;
       background: var(--card-bg);
-      z-index: 1;
+      z-index: $z-raised;
     }
 
     &:hover::before {
@@ -586,7 +586,7 @@
     // Ensure text and icon sit above the ::after background
     :global(> *) {
       position: relative;
-      z-index: 2;
+      z-index: $z-badge;
     }
 
     :global(.icon) {
@@ -628,7 +628,7 @@
         #f7d6b3, #f9c4d2
       );
       opacity: 0.8;
-      z-index: 0;
+      z-index: $z-base;
       filter: blur(12px);
       animation: spin-aura 8s linear infinite, breathe-aura 6s ease-in-out infinite;
     }
@@ -641,7 +641,7 @@
       border-radius: inherit;
       background: var(--card-bg);
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01);
-      z-index: 1;
+      z-index: $z-raised;
     }
   }
 
@@ -654,7 +654,7 @@
     min-width: 120px;
     box-sizing: border-box;
     position: relative;
-    z-index: 2;
+    z-index: $z-badge;
 
     &::placeholder {
       color: var(--text-tertiary);
@@ -670,7 +670,7 @@
     border: $card-border;
     border-radius: $card-corner;
     box-shadow: $dialog-elevation;
-    z-index: 50;
+    z-index: $z-popover;
     overflow: hidden;
   }
 

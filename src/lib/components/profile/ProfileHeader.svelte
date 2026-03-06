@@ -170,6 +170,7 @@
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/effects' as effects;
 
 	.header {
 		background: var(--card-bg);
@@ -385,11 +386,11 @@
 
 	:global(.dropdown-content) {
 		background-color: var(--menu-bg);
-		border-radius: 8px;
+		border-radius: $input-corner;
 		padding: $unit-half;
 		min-width: 160px;
 		box-shadow: var(--shadow-xl);
-		z-index: 50;
+		z-index: effects.$z-popover;
 
 		button {
 			display: flex;
