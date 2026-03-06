@@ -147,7 +147,7 @@
 
 	.stats-row {
 		display: flex;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+		border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
 	}
 
 	.stat {
@@ -156,7 +156,7 @@
 		flex-direction: column;
 		align-items: center;
 		padding: spacing.$unit-2x;
-		border-right: 1px solid rgba(0, 0, 0, 0.08);
+		border-right: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
 
 		&:last-child {
 			border-right: none;
@@ -167,6 +167,7 @@
 		font-size: typography.$font-medium;
 		font-weight: typography.$medium;
 		margin-bottom: 2px;
+		color: var(--text-primary);
 	}
 
 	.stat-label {
@@ -176,7 +177,7 @@
 
 	.chart-section {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+		border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
 	}
 
 	.section-header {

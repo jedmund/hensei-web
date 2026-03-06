@@ -50,7 +50,7 @@
 		text-align: left;
 
 		&:hover {
-			background: rgba(0, 0, 0, 0.03);
+			background: var(--list-cell-bg-hover, rgba(0, 0, 0, 0.03));
 		}
 	}
 
@@ -63,6 +63,7 @@
 	.event-number {
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
+		color: var(--text-primary);
 	}
 
 	.event-score {

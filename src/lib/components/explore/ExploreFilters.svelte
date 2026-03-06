@@ -523,8 +523,29 @@
   @use '$src/themes/layout' as *;
   @use '$src/themes/effects' as *;
 
+  @property --aura-angle {
+    syntax: '<angle>';
+    initial-value: 180deg;
+    inherits: false;
+  }
+
   .explore-filters {
     position: relative;
+
+    // Aura gradient colors — bright pastels for light, muted for dark
+    --aura-1: #f9c4d2;
+    --aura-2: #b8e6d0;
+    --aura-3: #b3d4f7;
+    --aura-4: #e0b3f7;
+    --aura-5: #f7d6b3;
+
+    :global(html[data-theme='dark']) & {
+      --aura-1: #7a3a4a;
+      --aura-2: #2a5a3f;
+      --aura-3: #2a4a6a;
+      --aura-4: #5a2a6a;
+      --aura-5: #6a4a2a;
+    }
   }
 
   .filter-row {
@@ -558,9 +579,9 @@
       inset: -6px;
       border-radius: $full-corner;
       background: conic-gradient(
-        from 180deg,
-        #f9c4d2, #b8e6d0, #b3d4f7, #e0b3f7,
-        #f7d6b3, #f9c4d2
+        from var(--aura-angle, 180deg),
+        var(--aura-1), var(--aura-2), var(--aura-3), var(--aura-4),
+        var(--aura-5), var(--aura-1)
       );
       opacity: 0;
       z-index: $z-base;
@@ -596,7 +617,7 @@
 
   @keyframes spin-aura {
     to {
-      transform: rotate(360deg);
+      --aura-angle: 540deg;
     }
   }
 
@@ -623,9 +644,9 @@
       inset: -6px;
       border-radius: $full-corner;
       background: conic-gradient(
-        from 180deg,
-        #f9c4d2, #b8e6d0, #b3d4f7, #e0b3f7,
-        #f7d6b3, #f9c4d2
+        from var(--aura-angle, 180deg),
+        var(--aura-1), var(--aura-2), var(--aura-3), var(--aura-4),
+        var(--aura-5), var(--aura-1)
       );
       opacity: 0.8;
       z-index: $z-base;

@@ -428,7 +428,7 @@
 
 	.stats-row {
 		display: flex;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+		border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
 	}
 
 	.stat {
@@ -437,7 +437,7 @@
 		flex-direction: column;
 		align-items: center;
 		padding: spacing.$unit-2x;
-		border-right: 1px solid rgba(0, 0, 0, 0.08);
+		border-right: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
 
 		&:last-child {
 			border-right: none;
@@ -448,6 +448,7 @@
 		font-size: typography.$font-medium;
 		font-weight: typography.$medium;
 		margin-bottom: 2px;
+		color: var(--text-primary);
 	}
 
 	.stat-label {
@@ -465,7 +466,7 @@
 
 	.chart-section {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+		border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
 	}
 
 	.section-title {
@@ -502,8 +503,8 @@
 		display: flex;
 		align-items: center;
 		padding: spacing.$unit spacing.$unit-2x;
-		background: rgba(0, 0, 0, 0.02);
-		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+		background: transparent;
+		border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		color: var(--text-secondary);
@@ -513,7 +514,7 @@
 		display: flex;
 		align-items: center;
 		padding: spacing.$unit spacing.$unit-2x;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+		border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.04));
 		transition: background-color 0.15s;
 
 		&:last-child {
@@ -521,7 +522,7 @@
 		}
 
 		&:hover {
-			background: rgba(0, 0, 0, 0.02);
+			background: var(--list-cell-bg-hover, rgba(0, 0, 0, 0.02));
 		}
 	}
 
@@ -540,10 +541,10 @@
 	}
 
 	.col-their-score {
-		flex: 1;
+		flex: 1.4;
 		display: flex;
 		align-items: center;
-		gap: spacing.$unit-half;
+		gap: spacing.$unit;
 	}
 
 	.col-actions {
@@ -555,14 +556,17 @@
 	.round-label {
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
+		color: var(--text-primary);
 	}
 
 	.score-value {
 		font-size: typography.$font-small;
 		font-variant-numeric: tabular-nums;
+		color: var(--text-secondary);
 
 		&.winner {
 			font-weight: typography.$medium;
+			color: var(--text-primary);
 		}
 	}
 

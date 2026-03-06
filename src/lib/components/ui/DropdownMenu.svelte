@@ -36,8 +36,8 @@
 	@use '$src/themes/effects' as *;
 
 	:global(.dropdown-menu) {
-		background: var(--app-bg, white);
-		border: 1px solid var(--border-color, #ddd);
+		background: var(--menu-bg, white);
+		border: 1px solid var(--border-subtle);
 		border-radius: $card-corner;
 		box-shadow: var(--shadow-md);
 		padding: $unit-half;
@@ -92,7 +92,7 @@
 	:global(.dropdown-menu-separator) {
 		border-radius: $full-corner;
 		height: 2px;
-		background: var(--menu-separator);
+		background: var(--border-subtle);
 		margin: $unit-half ($unit * 0.75);
 	}
 

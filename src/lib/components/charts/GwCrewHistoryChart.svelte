@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import { Chart } from 'svelte-echarts'
-	import { init, CHART_FONT_FAMILY } from './echarts-setup'
+	import { init, CHART_FONT_FAMILY, CHART_SPLIT_LINE, CHART_AXIS_LINE, CHART_LABEL_COLOR } from './echarts-setup'
 	import { formatScore, formatScoreCompact, type HistoryDataPoint } from '$lib/utils/gw'
 
 	interface Props {
@@ -48,7 +48,7 @@
 	})
 
 	const options = $derived({
-		textStyle: { fontFamily: CHART_FONT_FAMILY },
+		textStyle: { fontFamily: CHART_FONT_FAMILY, color: CHART_LABEL_COLOR },
 		tooltip: {
 			trigger: 'axis' as const,
 			formatter: (params: unknown) => {
@@ -107,15 +107,19 @@
 			axisLabel: {
 				rotate: 45,
 				interval: 'auto' as const,
-				fontSize: 11
-			}
+				fontSize: 11,
+				color: CHART_LABEL_COLOR
+			},
+			axisLine: CHART_AXIS_LINE
 		},
 		yAxis: {
 			type: 'value' as const,
 			axisLabel: {
 				formatter: (v: number) => formatScoreCompact(v),
-				fontSize: 11
-			}
+				fontSize: 11,
+				color: CHART_LABEL_COLOR
+			},
+			splitLine: CHART_SPLIT_LINE
 		},
 		series: [
 			// Main series: solid line, breaks at gaps (null values)

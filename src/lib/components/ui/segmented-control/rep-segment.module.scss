@@ -15,7 +15,7 @@
 	transition: all 0.2s ease;
 
 	&:hover {
-		background: $grey-100;
+		background: var(--card-bg);
 	}
 
 	&:focus-visible {
@@ -36,7 +36,7 @@
 .indicator {
 	position: absolute;
 	inset: 0;
-	background: $grey-100;
+	background: var(--card-bg);
 	border-radius: $card-corner;
 	opacity: 0;
 	transition: opacity 0.2s ease;

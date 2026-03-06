@@ -196,8 +196,8 @@
 		width: 56px;
 		height: 56px;
 		border-radius: 50%;
-		background: $grey-80;
-		border: 1px solid $grey-75;
+		background: var(--button-contained-bg-hover, $grey-80);
+		border: 1px solid var(--border-subtle);
 		object-fit: cover;
 		flex-shrink: 0;
 	}
@@ -218,6 +218,7 @@
 		margin: 0;
 		font-size: 20px;
 		font-weight: $medium;
+		color: var(--text-primary);
 	}
 
 	.gamertag-pill {
@@ -230,33 +231,33 @@
 
 		// Element-based pill colors
 		&[data-element='wind'] {
-			background: $wind-bg-20;
-			color: $wind-text-20;
+			background: var(--wind-bg);
+			color: var(--wind-text);
 		}
 		&[data-element='fire'] {
-			background: $fire-bg-20;
-			color: $fire-text-20;
+			background: var(--fire-bg);
+			color: var(--fire-text);
 		}
 		&[data-element='water'] {
-			background: $water-bg-20;
-			color: $water-text-20;
+			background: var(--water-bg);
+			color: var(--water-text);
 		}
 		&[data-element='earth'] {
-			background: $earth-bg-20;
-			color: $earth-text-20;
+			background: var(--earth-bg);
+			color: var(--earth-text);
 		}
 		&[data-element='light'] {
-			background: $light-bg-20;
-			color: $light-text-20;
+			background: var(--light-bg);
+			color: var(--light-text);
 		}
 		&[data-element='dark'] {
-			background: $dark-bg-20;
-			color: $dark-text-20;
+			background: var(--dark-bg);
+			color: var(--dark-text);
 		}
 		&[data-element='null'],
 		&:not([data-element]) {
-			background: $grey-90;
-			color: $grey-30;
+			background: var(--null-bg);
+			color: var(--null-text);
 		}
 	}
 
@@ -299,7 +300,7 @@
 		align-items: center;
 		justify-content: center;
 		padding: $unit-2x $unit;
-		border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+		border-top: 1px solid var(--border-subtle);
 		text-decoration: none;
 		color: var(--text-secondary);
 		font-size: $font-small;
@@ -310,7 +311,7 @@
 
 		&:hover {
 			color: var(--text-primary);
-			background: rgba(0, 0, 0, 0.02);
+			background: var(--list-cell-bg-hover, rgba(0, 0, 0, 0.02));
 		}
 	}
 
