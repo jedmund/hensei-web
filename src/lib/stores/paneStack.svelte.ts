@@ -179,17 +179,10 @@ export class PaneStackStore {
 	 */
 	updatePaneAt(index: number, updates: Partial<PaneConfig>) {
 		const pane = this.state.panes[index]
-		if (!pane) {
-			console.log('[PaneStack.updatePaneAt] no pane at index', index)
-			return
-		}
-		const oldAction = pane.action
-		const newAction = updates.action
-		console.log('[PaneStack.updatePaneAt] index:', index, 'old action:', oldAction ? { label: oldAction.label, disabled: oldAction.disabled } : undefined, '→ new action:', newAction ? { label: newAction.label, disabled: newAction.disabled } : undefined)
+		if (!pane) return
 		this.state.panes = this.state.panes.map((p, i) =>
 			i === index ? { ...p, ...updates } : p
 		)
-		console.log('[PaneStack.updatePaneAt] panes array replaced, new length:', this.state.panes.length)
 	}
 
 	/**

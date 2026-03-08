@@ -164,18 +164,15 @@ class SidebarStore {
 	) {
 		const panes = this.paneStack.panes
 		const currentIndex = panes.length - 1
-		console.log('[Sidebar.setAction] panes.length:', panes.length, 'currentIndex:', currentIndex, 'label:', label, 'disabled:', !handler, 'show:', show)
 		if (currentIndex >= 0 && panes[currentIndex]) {
-			const action = show && label ? {
-				label,
-				handler: handler ?? (() => {}),
-				element,
-				disabled: !handler
-			} : undefined
-			console.log('[Sidebar.setAction] calling updatePaneAt with action:', action ? { label: action.label, disabled: action.disabled } : undefined)
-			this.paneStack.updatePaneAt(currentIndex, { action })
-		} else {
-			console.log('[Sidebar.setAction] skipped — no pane at index', currentIndex)
+			this.paneStack.updatePaneAt(currentIndex, {
+				action: show && label ? {
+					label,
+					handler: handler ?? (() => {}),
+					element,
+					disabled: !handler
+				} : undefined
+			})
 		}
 	}
 
