@@ -1,6 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { MediaQuery } from 'svelte/reactivity'
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'
 	import ProficiencyPickerSegmented from './ProficiencyPickerSegmented.svelte'
@@ -37,24 +38,10 @@
 	const segmentedSize = $derived(size === 'small' ? 'small' : 'regular')
 
 	// Responsive detection for auto mode
-	let isMobile = $state(false)
-
-	$effect(() => {
-		if (typeof window === 'undefined') return
-
-		const mq = window.matchMedia('(max-width: 640px)')
-		isMobile = mq.matches
-
-		const handler = (e: MediaQueryListEvent) => {
-			isMobile = e.matches
-		}
-
-		mq.addEventListener('change', handler)
-		return () => mq.removeEventListener('change', handler)
-	})
+	const isMobile = new MediaQuery('(max-width: 640px)')
 
 	// Determine if we should use dropdown mode
-	const shouldUseDropdown = $derived(mode === 'dropdown' || (mode === 'auto' && isMobile))
+	const shouldUseDropdown = $derived(mode === 'dropdown' || (mode === 'auto' && isMobile.current))
 
 	// Build proficiency options for Select/MultiSelect
 	const options = $derived.by(() => {
