@@ -67,22 +67,45 @@
 	}))
 	const isInCrew = $derived(myCrewQuery.data != null)
 
-	// Local state - initialized from initialValues
-	let name = $state(initialValues.name)
-	let visibility = $state<PartyVisibility>(initialValues.visibility)
-	let sharedWithCrew = $state(initialValues.sharedWithCrew)
-	let fullAuto = $state(initialValues.fullAuto)
-	let autoGuard = $state(initialValues.autoGuard)
-	let autoSummon = $state(initialValues.autoSummon)
-	let chargeAttack = $state(initialValues.chargeAttack)
-	let clearTime = $state(initialValues.clearTime)
-	let buttonCount = $state(initialValues.buttonCount)
-	let chainCount = $state(initialValues.chainCount)
-	let summonCount = $state(initialValues.summonCount)
-	let videoUrl = $state(initialValues.videoUrl)
-	let raid = $state<Raid | null>(initialValues.raid)
-	let raidId = $state<string | null>(initialValues.raidId)
-	let description = $state(initialValues.description)
+	// Snapshot initial values at mount time to avoid proxy/reactivity issues.
+	// Props passed through PaneStack's $state are wrapped in deep reactive proxies.
+	// Reading initialValues.xxx in $derived creates tracking dependencies on the proxy,
+	// which can be invalidated when setAction mutates the pane object.
+	// Snapshotting into a plain const breaks that reactive chain.
+	const initial = {
+		name: initialValues.name,
+		description: initialValues.description,
+		visibility: initialValues.visibility,
+		sharedWithCrew: initialValues.sharedWithCrew,
+		fullAuto: initialValues.fullAuto,
+		autoGuard: initialValues.autoGuard,
+		autoSummon: initialValues.autoSummon,
+		chargeAttack: initialValues.chargeAttack,
+		clearTime: initialValues.clearTime,
+		buttonCount: initialValues.buttonCount,
+		chainCount: initialValues.chainCount,
+		summonCount: initialValues.summonCount,
+		videoUrl: initialValues.videoUrl,
+		raid: initialValues.raid,
+		raidId: initialValues.raidId
+	}
+
+	// Local state - initialized from snapshot
+	let name = $state(initial.name)
+	let visibility = $state<PartyVisibility>(initial.visibility)
+	let sharedWithCrew = $state(initial.sharedWithCrew)
+	let fullAuto = $state(initial.fullAuto)
+	let autoGuard = $state(initial.autoGuard)
+	let autoSummon = $state(initial.autoSummon)
+	let chargeAttack = $state(initial.chargeAttack)
+	let clearTime = $state(initial.clearTime)
+	let buttonCount = $state(initial.buttonCount)
+	let chainCount = $state(initial.chainCount)
+	let summonCount = $state(initial.summonCount)
+	let videoUrl = $state(initial.videoUrl)
+	let raid = $state<Raid | null>(initial.raid)
+	let raidId = $state<string | null>(initial.raidId)
+	let description = $state(initial.description)
 
 	// Visibility options for select (1=Public, 2=Unlisted, 3=Private per Rails API)
 	const visibilityOptions: Array<{ value: PartyVisibility; label: string }> = [
@@ -91,22 +114,22 @@
 		{ value: 3, label: 'Private' }
 	]
 
-	// Check if any values have changed
+	// Check if any values have changed (compared against snapshot, not proxy)
 	const hasChanges = $derived(
-		name !== initialValues.name ||
-			visibility !== initialValues.visibility ||
-			sharedWithCrew !== initialValues.sharedWithCrew ||
-			fullAuto !== initialValues.fullAuto ||
-			autoGuard !== initialValues.autoGuard ||
-			autoSummon !== initialValues.autoSummon ||
-			chargeAttack !== initialValues.chargeAttack ||
-			clearTime !== initialValues.clearTime ||
-			buttonCount !== initialValues.buttonCount ||
-			chainCount !== initialValues.chainCount ||
-			summonCount !== initialValues.summonCount ||
-			videoUrl !== initialValues.videoUrl ||
-			raidId !== initialValues.raidId ||
-			description !== initialValues.description
+		name !== initial.name ||
+			visibility !== initial.visibility ||
+			sharedWithCrew !== initial.sharedWithCrew ||
+			fullAuto !== initial.fullAuto ||
+			autoGuard !== initial.autoGuard ||
+			autoSummon !== initial.autoSummon ||
+			chargeAttack !== initial.chargeAttack ||
+			clearTime !== initial.clearTime ||
+			buttonCount !== initial.buttonCount ||
+			chainCount !== initial.chainCount ||
+			summonCount !== initial.summonCount ||
+			videoUrl !== initial.videoUrl ||
+			raidId !== initial.raidId ||
+			description !== initial.description
 	)
 
 	// Expose save function for sidebar action button
