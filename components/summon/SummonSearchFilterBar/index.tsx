@@ -17,8 +17,21 @@ interface Props {
 }
 
 // Module-level cache so filter selections persist across grid slot changes
+// localStorage backs the cache so filters survive page reloads
+const STORAGE_KEY = 'searchFilters_summons'
 let cachedRarityState: RarityState = emptyRarityState
 let cachedElementState: ElementState = emptyElementState
+
+if (typeof window !== 'undefined') {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      const data = JSON.parse(stored)
+      cachedRarityState = data.rarity ?? emptyRarityState
+      cachedElementState = data.element ?? emptyElementState
+    }
+  } catch {}
+}
 
 const SummonSearchFilterBar = (props: Props) => {
   const t = useTranslations('common')
@@ -76,6 +89,12 @@ const SummonSearchFilterBar = (props: Props) => {
   useEffect(() => {
     cachedRarityState = rarityState
     cachedElementState = elementState
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        rarity: rarityState,
+        element: elementState,
+      }))
+    } catch {}
     sendFilters()
   }, [rarityState, elementState])
 

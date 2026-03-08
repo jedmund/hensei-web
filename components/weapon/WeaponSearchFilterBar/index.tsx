@@ -21,10 +21,25 @@ interface Props {
 }
 
 // Module-level cache so filter selections persist across grid slot changes
+// localStorage backs the cache so filters survive page reloads
+const STORAGE_KEY = 'searchFilters_weapons'
 let cachedRarityState: RarityState = emptyRarityState
 let cachedElementState: ElementState = emptyElementState
 let cachedProficiencyState: ProficiencyState = emptyProficiencyState
 let cachedSeriesState: WeaponSeriesState = emptyWeaponSeriesState
+
+if (typeof window !== 'undefined') {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      const data = JSON.parse(stored)
+      cachedRarityState = data.rarity ?? emptyRarityState
+      cachedElementState = data.element ?? emptyElementState
+      cachedProficiencyState = data.proficiency ?? emptyProficiencyState
+      cachedSeriesState = data.series ?? emptyWeaponSeriesState
+    }
+  } catch {}
+}
 
 const WeaponSearchFilterBar = (props: Props) => {
   const t = useTranslations('common')
@@ -49,6 +64,14 @@ const WeaponSearchFilterBar = (props: Props) => {
     cachedElementState = elementState
     cachedProficiencyState = proficiencyState
     cachedSeriesState = seriesState
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        rarity: rarityState,
+        element: elementState,
+        proficiency: proficiencyState,
+        series: seriesState,
+      }))
+    } catch {}
     sendFilters()
   }, [rarityState, elementState, proficiencyState, seriesState])
 

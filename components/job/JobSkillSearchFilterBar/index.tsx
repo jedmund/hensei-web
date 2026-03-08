@@ -11,7 +11,16 @@ interface Props {
 }
 
 // Module-level cache so filter selections persist across grid slot changes
+// localStorage backs the cache so filters survive page reloads
+const STORAGE_KEY = 'searchFilters_jobSkills'
 let cachedGroup = -1
+
+if (typeof window !== 'undefined') {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) cachedGroup = JSON.parse(stored)
+  } catch {}
+}
 
 const JobSkillSearchFilterBar = (props: Props) => {
   // Set up translation
@@ -39,6 +48,9 @@ const JobSkillSearchFilterBar = (props: Props) => {
 
   useEffect(() => {
     cachedGroup = currentGroup
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(currentGroup))
+    } catch {}
     sendFilters()
   }, [currentGroup])
 

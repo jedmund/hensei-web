@@ -19,10 +19,25 @@ interface Props {
 }
 
 // Module-level cache so filter selections persist across grid slot changes
+// localStorage backs the cache so filters survive page reloads
+const STORAGE_KEY = 'searchFilters_characters'
 let cachedRarityState: RarityState = emptyRarityState
 let cachedElementState: ElementState = emptyElementState
 let cachedProficiency1State: ProficiencyState = emptyProficiencyState
 let cachedProficiency2State: ProficiencyState = emptyProficiencyState
+
+if (typeof window !== 'undefined') {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      const data = JSON.parse(stored)
+      cachedRarityState = data.rarity ?? emptyRarityState
+      cachedElementState = data.element ?? emptyElementState
+      cachedProficiency1State = data.proficiency1 ?? emptyProficiencyState
+      cachedProficiency2State = data.proficiency2 ?? emptyProficiencyState
+    }
+  } catch {}
+}
 
 const CharacterSearchFilterBar = (props: Props) => {
   const t = useTranslations('common')
@@ -132,6 +147,14 @@ const CharacterSearchFilterBar = (props: Props) => {
     cachedElementState = elementState
     cachedProficiency1State = proficiency1State
     cachedProficiency2State = proficiency2State
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        rarity: rarityState,
+        element: elementState,
+        proficiency1: proficiency1State,
+        proficiency2: proficiency2State,
+      }))
+    } catch {}
     sendFilters()
   }, [rarityState, elementState, proficiency1State, proficiency2State])
 
