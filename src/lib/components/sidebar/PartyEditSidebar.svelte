@@ -227,7 +227,8 @@
 							difficulty: selectedRaid.group.difficulty,
 							hl: selectedRaid.group.hl,
 							extra: selectedRaid.group.extra,
-							guidebooks: selectedRaid.group.guidebooks
+							guidebooks: selectedRaid.group.guidebooks,
+							unlimited: selectedRaid.group.unlimited
 						}
 					: undefined
 			}
