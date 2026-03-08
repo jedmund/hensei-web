@@ -14,6 +14,7 @@
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { collectionFilters } from '$lib/stores/collectionFilters.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
@@ -28,12 +29,12 @@
 		data.user?.avatar?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	)
 
-	// Filter state
-	let elementFilters = $state<number[]>([])
-	let rarityFilters = $state<number[]>([])
+	// Filter state (initialized from localStorage)
+	let elementFilters = $state<number[]>(collectionFilters.summons.element)
+	let rarityFilters = $state<number[]>(collectionFilters.summons.rarity)
 
-	// Sort state
-	let sortBy = $state<CollectionSortKey>('name_asc')
+	// Sort state (initialized from localStorage)
+	let sortBy = $state<CollectionSortKey>(collectionFilters.summons.sort)
 
 	// Sentinel for infinite scroll
 	let sentinelEl = $state<HTMLElement>()
@@ -89,6 +90,15 @@
 		elementFilters = filters.element
 		rarityFilters = filters.rarity
 	}
+
+	// Persist all filter and sort state to localStorage
+	$effect(() => {
+		collectionFilters.setSummons({
+			element: elementFilters,
+			rarity: rarityFilters,
+			sort: sortBy
+		})
+	})
 
 	function handleViewModeChange(mode: ViewMode) {
 		viewMode.setCollectionView(mode)

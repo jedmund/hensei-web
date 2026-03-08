@@ -13,6 +13,7 @@
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { collectionFilters } from '$lib/stores/collectionFilters.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { getArtifactImage } from '$lib/utils/images'
@@ -29,16 +30,16 @@
 		data.user?.avatar?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	)
 
-	// Filter state
-	let elementFilters = $state<number[]>([])
-	let proficiencyFilters = $state<number[]>([])
-	let rarityFilter = $state<'all' | 'standard' | 'quirk'>('all')
+	// Filter state (initialized from localStorage)
+	let elementFilters = $state<number[]>(collectionFilters.artifacts.element)
+	let proficiencyFilters = $state<number[]>(collectionFilters.artifacts.proficiency)
+	let rarityFilter = $state<'all' | 'standard' | 'quirk'>(collectionFilters.artifacts.rarity)
 
-	// Skill filter state - array of modifier IDs per slot
-	let slot1Filters = $state<number[]>([])
-	let slot2Filters = $state<number[]>([])
-	let slot3Filters = $state<number[]>([])
-	let slot4Filters = $state<number[]>([])
+	// Skill filter state - array of modifier IDs per slot (initialized from localStorage)
+	let slot1Filters = $state<number[]>(collectionFilters.artifacts.slot1)
+	let slot2Filters = $state<number[]>(collectionFilters.artifacts.slot2)
+	let slot3Filters = $state<number[]>(collectionFilters.artifacts.slot3)
+	let slot4Filters = $state<number[]>(collectionFilters.artifacts.slot4)
 
 	// Element options for MultiSelect
 	const elementOptions = [
@@ -108,6 +109,19 @@
 		slot3Filters = []
 		slot4Filters = []
 	}
+
+	// Persist all filter state to localStorage
+	$effect(() => {
+		collectionFilters.setArtifacts({
+			element: elementFilters,
+			proficiency: proficiencyFilters,
+			rarity: rarityFilter,
+			slot1: slot1Filters,
+			slot2: slot2Filters,
+			slot3: slot3Filters,
+			slot4: slot4Filters
+		})
+	})
 
 	// Sentinel for infinite scroll
 	let sentinelEl = $state<HTMLElement>()
