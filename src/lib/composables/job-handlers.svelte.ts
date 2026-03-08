@@ -1,0 +1,129 @@
+import type { PartyMutations } from './party-mutations.svelte'
+import type { Party } from '$lib/types/api/party'
+import {
+	openJobSelectionSidebar,
+	openJobSkillSelectionSidebar
+} from '$lib/features/job/openJobSidebar.svelte'
+import { transformSkillsToArray } from '$lib/utils/jobSkills'
+import { toast } from 'svelte-sonner'
+import { extractErrorMessage } from '$lib/utils/errors'
+
+interface JobHandlerOptions {
+	mutations: PartyMutations
+	getParty: () => Party
+	canEdit: () => boolean
+	ensurePartyExists?: () => Promise<{ id: string; shortcode: string }>
+}
+
+export function useJobHandlers(opts: JobHandlerOptions) {
+	let loading = $state(false)
+	let error = $state<string | null>(null)
+
+	async function getShortcode(): Promise<string | undefined> {
+		const party = opts.getParty()
+		if (party.shortcode && party.shortcode !== 'new') return party.shortcode
+		if (opts.ensurePartyExists) {
+			const result = await opts.ensurePartyExists()
+			return result.shortcode
+		}
+		return undefined
+	}
+
+	async function handleSelectJob() {
+		if (!opts.canEdit()) return
+
+		openJobSelectionSidebar({
+			currentJobId: opts.getParty().job?.id,
+			onSelectJob: async (job) => {
+				loading = true
+				error = null
+
+				try {
+					const shortcode = await getShortcode()
+					if (!shortcode) return
+
+					await opts.mutations.job.updateJob.mutateAsync({
+						shortcode,
+						jobId: job.id
+					})
+				} catch (e) {
+					error = e instanceof Error ? e.message : 'Failed to update job'
+					console.error('Failed to update job:', e)
+					toast.error(extractErrorMessage(e, 'Failed to update job'))
+				} finally {
+					loading = false
+				}
+			}
+		})
+	}
+
+	async function handleSelectJobSkill(slot: number) {
+		if (!opts.canEdit()) return
+
+		openJobSkillSelectionSidebar({
+			job: opts.getParty().job,
+			currentSkills: opts.getParty().jobSkills,
+			targetSlot: slot,
+			onSelectSkill: async (skill) => {
+				loading = true
+				error = null
+
+				try {
+					const shortcode = await getShortcode()
+					if (!shortcode) return
+
+					const updatedSkills = { ...opts.getParty().jobSkills }
+					updatedSkills[String(slot) as keyof typeof updatedSkills] = skill
+
+					const skillsArray = transformSkillsToArray(updatedSkills)
+
+					await opts.mutations.job.updateJobSkills.mutateAsync({
+						shortcode,
+						skills: skillsArray
+					})
+				} catch (e: any) {
+					error = extractErrorMessage(e, 'Failed to update skill')
+					console.error('Failed to update skill:', e)
+					toast.error(extractErrorMessage(e, 'Failed to update skill'))
+				} finally {
+					loading = false
+				}
+			},
+			onRemoveSkill: async () => {
+				await handleRemoveJobSkill(slot)
+			}
+		})
+	}
+
+	async function handleRemoveJobSkill(slot: number) {
+		if (!opts.canEdit()) return
+
+		loading = true
+		error = null
+
+		try {
+			const shortcode = await getShortcode()
+			if (!shortcode) return
+
+			await opts.mutations.job.removeJobSkill.mutateAsync({
+				shortcode,
+				slot
+			})
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Failed to remove skill'
+			console.error('Failed to remove skill:', e)
+			toast.error(extractErrorMessage(e, 'Failed to remove skill'))
+		} finally {
+			loading = false
+		}
+	}
+
+	return {
+		handleSelectJob,
+		handleSelectJobSkill,
+		handleRemoveJobSkill,
+		get loading() {
+			return loading
+		}
+	}
+}
