@@ -20,7 +20,7 @@
 
 	let partyId = $state<string | null>(null)
 	let shortcode = $state<string | null>(null)
-	let isCreatingParty = $state(false)
+	let creationPromise: Promise<{ id: string; shortcode: string }> | null = null
 
 	const queryClient = useQueryClient()
 	const createPartyMutation = useCreateParty()
@@ -51,45 +51,41 @@
 	async function ensurePartyExists(): Promise<{ id: string; shortcode: string }> {
 		if (partyId && shortcode) return { id: partyId, shortcode }
 
-		if (isCreatingParty) {
-			// Wait for in-progress creation (shouldn't happen but guard against race)
-			return new Promise((resolve) => {
-				const check = () => {
-					if (partyId && shortcode) resolve({ id: partyId, shortcode })
-					else setTimeout(check, 50)
+		// If creation is already in flight, share the same promise
+		if (creationPromise) return creationPromise
+
+		creationPromise = (async () => {
+			try {
+				const payload: any = {
+					name: 'New Team',
+					visibility: 1,
+					element: party.element || 0
 				}
-				check()
-			})
-		}
 
-		isCreatingParty = true
-		try {
-			const payload: any = {
-				name: 'New Team',
-				visibility: 1,
-				element: party.element || 0
+				if (!data.isAuthenticated) {
+					payload.localId = getLocalId()
+				}
+
+				const created = await createPartyMutation.mutateAsync(payload)
+				partyId = created.id
+				shortcode = created.shortcode
+
+				if (created.editKey) {
+					storeEditKey(created.shortcode, created.editKey)
+					storeEditKey(created.id, created.editKey)
+				}
+
+				queryClient.setQueryData(partyKeys.detail(created.shortcode), created)
+				replaceState(`/teams/${created.shortcode}`, {})
+
+				return { id: created.id, shortcode: created.shortcode }
+			} catch (err) {
+				creationPromise = null
+				throw err
 			}
+		})()
 
-			if (!data.isAuthenticated) {
-				payload.localId = getLocalId()
-			}
-
-			const created = await createPartyMutation.mutateAsync(payload)
-			partyId = created.id
-			shortcode = created.shortcode
-
-			if (created.editKey) {
-				storeEditKey(created.shortcode, created.editKey)
-				storeEditKey(created.id, created.editKey)
-			}
-
-			queryClient.setQueryData(partyKeys.detail(created.shortcode), created)
-			replaceState(`/teams/${created.shortcode}`, {})
-
-			return { id: created.id, shortcode: created.shortcode }
-		} finally {
-			isCreatingParty = false
-		}
+		return creationPromise
 	}
 </script>
 
