@@ -78,8 +78,7 @@
 	} from '$lib/features/job/openJobSidebar.svelte'
 	import { partyAdapter, type UpdatePartyParams } from '$lib/api/adapters/party.adapter'
 	import { extractErrorMessage } from '$lib/utils/errors'
-	import { partyKeys } from '$lib/api/queries/party.queries'
-	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
+	import { createQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
@@ -158,9 +157,6 @@
 	const swapSummons = useSwapSummons()
 	const syncAllItems = useSyncAllPartyItems()
 	const unlinkCollectionSource = useUnlinkCollectionSource()
-
-	// TanStack Query
-	const queryClient = useQueryClient()
 
 	// TanStack Query mutations - Party
 	const updatePartyMutation = useUpdateParty()
@@ -531,16 +527,6 @@
 					videoUrl: values.videoUrl,
 					raidId: values.raidId
 				})
-
-				// Update cache with full raid object for immediate layout reactivity.
-				// The mutation's optimistic update only sets raidId (a string), but grid
-				// components need raid.group.extra/unlimited for layout changes.
-				if (values.raid !== undefined) {
-					queryClient.setQueryData(
-						partyKeys.detail(party.shortcode),
-						(old: Party | undefined) => old ? { ...old, raid: values.raid } : old
-					)
-				}
 
 				// Handle crew share toggle
 				const wasShared = party.shares?.some((s) => s.shareableType === 'crew') ?? false
