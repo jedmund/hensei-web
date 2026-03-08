@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
-	import { getContext, onDestroy } from 'svelte'
+	import { getContext, onDestroy, untrack } from 'svelte'
 	import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
 	import CollectionArtifactDetailPane from '$lib/components/collection/CollectionArtifactDetailPane.svelte'
@@ -112,7 +112,7 @@
 
 	// Persist all filter state to localStorage
 	$effect(() => {
-		collectionFilters.setArtifacts({
+		const filters = {
 			element: elementFilters,
 			proficiency: proficiencyFilters,
 			rarity: rarityFilter,
@@ -120,7 +120,8 @@
 			slot2: slot2Filters,
 			slot3: slot3Filters,
 			slot4: slot4Filters
-		})
+		}
+		untrack(() => collectionFilters.setArtifacts(filters))
 	})
 
 	// Sentinel for infinite scroll
