@@ -18,6 +18,12 @@ interface Props {
   sendFilters: (filters: { [key: string]: number[] }) => void
 }
 
+// Module-level cache so filter selections persist across grid slot changes
+let cachedRarityState: RarityState = emptyRarityState
+let cachedElementState: ElementState = emptyElementState
+let cachedProficiency1State: ProficiencyState = emptyProficiencyState
+let cachedProficiency2State: ProficiencyState = emptyProficiencyState
+
 const CharacterSearchFilterBar = (props: Props) => {
   const t = useTranslations('common')
 
@@ -26,14 +32,15 @@ const CharacterSearchFilterBar = (props: Props) => {
   const [proficiency1Menu, setProficiency1Menu] = useState(false)
   const [proficiency2Menu, setProficiency2Menu] = useState(false)
 
-  const [rarityState, setRarityState] = useState<RarityState>(emptyRarityState)
+  const [rarityState, setRarityState] =
+    useState<RarityState>(cachedRarityState)
   const [elementState, setElementState] =
-    useState<ElementState>(emptyElementState)
+    useState<ElementState>(cachedElementState)
   const [proficiency1State, setProficiency1State] = useState<ProficiencyState>(
-    emptyProficiencyState
+    cachedProficiency1State
   )
   const [proficiency2State, setProficiency2State] = useState<ProficiencyState>(
-    emptyProficiencyState
+    cachedProficiency2State
   )
 
   function rarityMenuOpened(open: boolean) {
@@ -121,6 +128,10 @@ const CharacterSearchFilterBar = (props: Props) => {
   }
 
   useEffect(() => {
+    cachedRarityState = rarityState
+    cachedElementState = elementState
+    cachedProficiency1State = proficiency1State
+    cachedProficiency2State = proficiency2State
     sendFilters()
   }, [rarityState, elementState, proficiency1State, proficiency2State])
 

@@ -20,6 +20,12 @@ interface Props {
   sendFilters: (filters: { [key: string]: number[] }) => void
 }
 
+// Module-level cache so filter selections persist across grid slot changes
+let cachedRarityState: RarityState = emptyRarityState
+let cachedElementState: ElementState = emptyElementState
+let cachedProficiencyState: ProficiencyState = emptyProficiencyState
+let cachedSeriesState: WeaponSeriesState = emptyWeaponSeriesState
+
 const WeaponSearchFilterBar = (props: Props) => {
   const t = useTranslations('common')
 
@@ -28,17 +34,21 @@ const WeaponSearchFilterBar = (props: Props) => {
   const [proficiencyMenu, setProficiencyMenu] = useState(false)
   const [seriesMenu, setSeriesMenu] = useState(false)
 
-  const [rarityState, setRarityState] = useState<RarityState>(emptyRarityState)
+  const [rarityState, setRarityState] = useState<RarityState>(cachedRarityState)
   const [elementState, setElementState] =
-    useState<ElementState>(emptyElementState)
+    useState<ElementState>(cachedElementState)
   const [proficiencyState, setProficiencyState] = useState<ProficiencyState>(
-    emptyProficiencyState
+    cachedProficiencyState
   )
   const [seriesState, setSeriesState] = useState<WeaponSeriesState>(
-    emptyWeaponSeriesState
+    cachedSeriesState
   )
 
   useEffect(() => {
+    cachedRarityState = rarityState
+    cachedElementState = elementState
+    cachedProficiencyState = proficiencyState
+    cachedSeriesState = seriesState
     sendFilters()
   }, [rarityState, elementState, proficiencyState, seriesState])
 

@@ -16,15 +16,20 @@ interface Props {
   sendFilters: (filters: { [key: string]: number[] }) => void
 }
 
+// Module-level cache so filter selections persist across grid slot changes
+let cachedRarityState: RarityState = emptyRarityState
+let cachedElementState: ElementState = emptyElementState
+
 const SummonSearchFilterBar = (props: Props) => {
   const t = useTranslations('common')
 
   const [rarityMenu, setRarityMenu] = useState(false)
   const [elementMenu, setElementMenu] = useState(false)
 
-  const [rarityState, setRarityState] = useState<RarityState>(emptyRarityState)
+  const [rarityState, setRarityState] =
+    useState<RarityState>(cachedRarityState)
   const [elementState, setElementState] =
-    useState<ElementState>(emptyElementState)
+    useState<ElementState>(cachedElementState)
 
   function rarityMenuOpened(open: boolean) {
     if (open) {
@@ -69,6 +74,8 @@ const SummonSearchFilterBar = (props: Props) => {
   }
 
   useEffect(() => {
+    cachedRarityState = rarityState
+    cachedElementState = elementState
     sendFilters()
   }, [rarityState, elementState])
 

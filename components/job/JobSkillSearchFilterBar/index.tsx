@@ -10,12 +10,15 @@ interface Props {
   sendFilters: (filters: { [key: string]: number }) => void
 }
 
+// Module-level cache so filter selections persist across grid slot changes
+let cachedGroup = -1
+
 const JobSkillSearchFilterBar = (props: Props) => {
   // Set up translation
   const t = useTranslations('common')
 
   const [open, setOpen] = useState(false)
-  const [currentGroup, setCurrentGroup] = useState(-1)
+  const [currentGroup, setCurrentGroup] = useState(cachedGroup)
 
   function openSelect() {
     // debugger
@@ -35,6 +38,7 @@ const JobSkillSearchFilterBar = (props: Props) => {
   }
 
   useEffect(() => {
+    cachedGroup = currentGroup
     sendFilters()
   }, [currentGroup])
 
