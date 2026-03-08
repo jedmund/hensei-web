@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types'
 	import type { CollectionWeapon, CollectionSortKey } from '$lib/types/api/collection'
-	import { getContext, onDestroy } from 'svelte'
+	import { getContext, onDestroy, untrack } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
@@ -99,13 +99,14 @@
 
 	// Persist all filter and sort state to localStorage
 	$effect(() => {
-		collectionFilters.setWeapons({
+		const filters = {
 			element: elementFilters,
 			rarity: rarityFilters,
 			proficiency: proficiencyFilters,
 			series: seriesFilters,
 			sort: sortBy
-		})
+		}
+		untrack(() => collectionFilters.setWeapons(filters))
 	})
 
 	function handleViewModeChange(mode: ViewMode) {
