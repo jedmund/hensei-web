@@ -15,6 +15,8 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import { formatDate } from '$lib/utils/date'
 	import type { CrewInvitation, PhantomPlayer } from '$lib/types/api/crew'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		open: boolean
@@ -51,6 +53,7 @@
 			goto('/crew')
 		} catch (error) {
 			console.error('Failed to accept invitation:', error)
+			toast.error(extractErrorMessage(error, 'Failed to accept invitation'))
 			processingId = null
 		}
 	}
@@ -63,6 +66,7 @@
 			processingId = null
 		} catch (error) {
 			console.error('Failed to reject invitation:', error)
+			toast.error(extractErrorMessage(error, 'Failed to reject invitation'))
 			processingId = null
 		}
 	}
@@ -79,6 +83,7 @@
 			processingId = null
 		} catch (error) {
 			console.error('Failed to accept phantom claim:', error)
+			toast.error(extractErrorMessage(error, 'Failed to accept claim'))
 			processingId = null
 		}
 	}
@@ -95,6 +100,7 @@
 			processingId = null
 		} catch (error) {
 			console.error('Failed to decline phantom claim:', error)
+			toast.error(extractErrorMessage(error, 'Failed to decline claim'))
 			processingId = null
 		}
 	}

@@ -40,6 +40,8 @@
 		CrewInvitation
 	} from '$lib/types/api/crew'
 	import type { PageData } from './$types'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		data: PageData
@@ -201,6 +203,7 @@
 			}
 		} catch (error) {
 			console.error('Action failed:', error)
+			toast.error(extractErrorMessage(error, 'Action failed'))
 		}
 
 		confirmDialogOpen = false
@@ -235,6 +238,7 @@
 				}
 			} catch (error) {
 				console.error('Failed to fetch membership history:', error)
+				toast.error(extractErrorMessage(error, 'Failed to load history'))
 			}
 			loadingHistory = false
 		}
@@ -296,6 +300,7 @@
 			queryClient.invalidateQueries({ queryKey: ['crew', 'gw'] })
 		} catch (error) {
 			console.error('Failed to update:', error)
+			toast.error(extractErrorMessage(error, 'Failed to update member'))
 		}
 
 		editDialogOpen = false
@@ -323,6 +328,7 @@
 			})
 		} catch (error) {
 			console.error('Failed to delete phantom:', error)
+			toast.error(extractErrorMessage(error, 'Failed to delete phantom'))
 		}
 
 		deletePhantomDialogOpen = false
@@ -352,6 +358,7 @@
 			})
 		} catch (error) {
 			console.error('Failed to decline phantom claim:', error)
+			toast.error(extractErrorMessage(error, 'Failed to decline claim'))
 		}
 	}
 

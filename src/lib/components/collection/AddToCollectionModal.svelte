@@ -29,6 +29,8 @@
 	import SelectableSummonRow from './SelectableSummonRow.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	type SearchResultItem = SearchPageResult['results'][number]
 	type EntityType = 'character' | 'weapon' | 'summon'
@@ -275,6 +277,7 @@
 				error && typeof error === 'object' && 'name' in error && error.name === 'CancelledError'
 			if (!isCancelledError) {
 				console.error(`Failed to add ${entityNames[currentEntityType].plural}:`, error)
+				toast.error(extractErrorMessage(error, 'Failed to add to collection'))
 			}
 		}
 	}

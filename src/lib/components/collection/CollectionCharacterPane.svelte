@@ -29,6 +29,8 @@
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		character: CollectionCharacter
@@ -158,6 +160,7 @@
 			updateActionVisibility()
 		} catch (error) {
 			console.error('Failed to update collection character:', error)
+			toast.error(extractErrorMessage(error, 'Failed to update character'))
 		}
 	}
 

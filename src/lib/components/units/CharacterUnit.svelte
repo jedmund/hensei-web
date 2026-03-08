@@ -16,6 +16,8 @@
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
 	import * as m from '$lib/paraglide/messages'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		item?: GridCharacter | undefined
@@ -114,6 +116,7 @@
 			}
 		} catch (err) {
 			console.error('Error removing character:', err)
+			toast.error(extractErrorMessage(err, 'Failed to remove character'))
 		}
 	}
 
@@ -173,6 +176,7 @@
 			}
 		} catch (err) {
 			console.error('Error toggling perpetuity:', err)
+			toast.error(extractErrorMessage(err, 'Failed to toggle perpetuity'))
 		}
 	}
 </script>
@@ -318,7 +322,7 @@
 					}
 				} catch (err) {
 					console.error('Failed to update character uncap:', err)
-					// TODO: Show user-friendly error notification
+					toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
 				}
 			}}
 			updateTranscendence={async (stage) => {
@@ -338,7 +342,7 @@
 					}
 				} catch (err) {
 					console.error('Failed to update character transcendence:', err)
-					// TODO: Show user-friendly error notification
+					toast.error(extractErrorMessage(err, 'Failed to update transcendence'))
 				}
 			}}
 		/>

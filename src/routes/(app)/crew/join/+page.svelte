@@ -10,6 +10,8 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import { formatDate } from '$lib/utils/date'
 	import type { PageData } from './$types'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		data: PageData
@@ -46,6 +48,7 @@
 			goto('/crew')
 		} catch (error) {
 			console.error('Failed to accept invitation:', error)
+			toast.error(extractErrorMessage(error, 'Failed to accept invitation'))
 			processingId = null
 		}
 	}
@@ -58,6 +61,7 @@
 			processingId = null
 		} catch (error) {
 			console.error('Failed to reject invitation:', error)
+			toast.error(extractErrorMessage(error, 'Failed to reject invitation'))
 			processingId = null
 		}
 	}

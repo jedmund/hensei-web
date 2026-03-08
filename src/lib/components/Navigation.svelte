@@ -18,6 +18,8 @@
 	import UserSettingsModal from './UserSettingsModal.svelte'
 	import InvitationsModal from './crew/InvitationsModal.svelte'
 	import { authStore } from '$lib/stores/auth.store'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	// Props from layout data
 	const {
@@ -191,6 +193,7 @@
 			}
 		} catch (error) {
 			console.error('Logout failed:', error)
+			toast.error(extractErrorMessage(error, 'Failed to log out'))
 		}
 	}
 </script>

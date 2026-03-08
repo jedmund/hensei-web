@@ -14,6 +14,8 @@
   import { sidebar } from '$lib/stores/sidebar.svelte'
   import { GridType } from '$lib/types/enums'
   import * as m from '$lib/paraglide/messages'
+  import { toast } from 'svelte-sonner'
+  import { extractErrorMessage } from '$lib/utils/errors'
 
   interface Props {
     item?: GridSummon | undefined
@@ -88,6 +90,7 @@
       }
     } catch (err) {
       console.error('Error removing summon:', err)
+      toast.error(extractErrorMessage(err, 'Failed to remove summon'))
     }
   }
 
@@ -221,7 +224,7 @@
           }
         } catch (err) {
           console.error('Failed to update summon uncap:', err)
-          // TODO: Show user-friendly error notification
+          toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
         }
       }}
       updateTranscendence={async (stage) => {
@@ -236,7 +239,7 @@
           }
         } catch (err) {
           console.error('Failed to update summon transcendence:', err)
-          // TODO: Show user-friendly error notification
+          toast.error(extractErrorMessage(err, 'Failed to update transcendence'))
         }
       }}
     />

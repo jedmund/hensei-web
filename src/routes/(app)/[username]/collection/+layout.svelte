@@ -25,6 +25,8 @@
 	} from '$lib/api/mutations/collection.mutations'
 	import { useBulkDeleteCollectionArtifacts } from '$lib/api/mutations/artifact.mutations'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	let { data, children }: { data: LayoutData; children: any } = $props()
 
@@ -145,6 +147,7 @@
 			confirmDeleteOpen = false
 		} catch (error) {
 			console.error('Failed to delete items:', error)
+			toast.error(extractErrorMessage(error, 'Failed to delete items'))
 			// Keep modal open on error so user can retry
 		} finally {
 			isDeleting = false

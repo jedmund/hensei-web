@@ -27,6 +27,8 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		summon: CollectionSummon
@@ -108,6 +110,7 @@
 			updateActionVisibility()
 		} catch (error) {
 			console.error('Failed to update collection summon:', error)
+			toast.error(extractErrorMessage(error, 'Failed to update summon'))
 		}
 	}
 

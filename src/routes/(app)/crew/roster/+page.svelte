@@ -20,6 +20,8 @@
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
 	import type { RosterMember, RosterItem } from '$lib/types/api/crew'
 	import type { PageData } from './$types'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		data: PageData
@@ -99,6 +101,7 @@
 			}))
 		} catch (error) {
 			console.error('Search failed:', error)
+			toast.error(extractErrorMessage(error, 'Search failed'))
 			searchOptions = []
 		} finally {
 			isSearching = false
@@ -156,6 +159,7 @@
 			rosterData = response.members
 		} catch (error) {
 			console.error('Failed to fetch roster:', error)
+			toast.error(extractErrorMessage(error, 'Failed to load roster'))
 			rosterData = []
 		} finally {
 			isLoadingRoster = false

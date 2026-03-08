@@ -4,6 +4,8 @@
   import { onMount } from 'svelte'
   import { searchAdapter, type SearchResult } from '$lib/api/adapters'
   import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholderImage } from '$lib/utils/images'
+  import { toast } from 'svelte-sonner'
+  import { extractErrorMessage } from '$lib/utils/errors'
 
   interface Props {
     open?: boolean
@@ -145,6 +147,7 @@
       totalPages = response?.totalPages ?? 1
     } catch (error) {
       console.error('Search failed:', error)
+      toast.error(extractErrorMessage(error, 'Search failed'))
       searchResults = []
     } finally {
       isLoading = false
