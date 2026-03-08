@@ -1,20 +1,17 @@
 /**
  * Auth store tests
  *
- * Tests the Svelte writable-based auth store.
- * Mocks $app/environment (browser flag), $env/static/public,
- * and global fetch for refresh flow testing.
+ * Tests the Svelte 5 $state-based auth store.
+ * Mocks $app/environment (browser flag) and global fetch for refresh flow testing.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { get } from 'svelte/store'
 
 // Mock SvelteKit modules before importing the store
 vi.mock('$app/environment', () => ({ browser: true }))
-vi.mock('$env/static/public', () => ({ PUBLIC_SIERO_API_URL: 'http://localhost:3000' }))
 
 // Dynamic import so mocks are in place first
-const { authStore } = await import('../auth.store')
+const { authStore } = await import('../auth.store.svelte')
 
 // ============================================================================
 // Setup
@@ -40,14 +37,13 @@ describe('setAuth', () => {
 
 		authStore.setAuth('tok-123', user, 3600)
 
-		const state = get(authStore)
-		expect(state.accessToken).toBe('tok-123')
-		expect(state.user).toEqual(user)
-		expect(state.isAuthenticated).toBe(true)
-		expect(state.isRefreshing).toBe(false)
+		expect(authStore.accessToken).toBe('tok-123')
+		expect(authStore.user).toEqual(user)
+		expect(authStore.isAuthenticated).toBe(true)
+		expect(authStore.isRefreshing).toBe(false)
 
 		// expiresAt should be ~1 hour from now
-		const expiresMs = state.expiresAt!.getTime()
+		const expiresMs = authStore.expiresAt!.getTime()
 		expect(expiresMs).toBeGreaterThanOrEqual(before + 3600 * 1000 - 100)
 		expect(expiresMs).toBeLessThanOrEqual(Date.now() + 3600 * 1000 + 100)
 	})
@@ -55,7 +51,7 @@ describe('setAuth', () => {
 	it('sets refreshToken to null (managed via httpOnly cookie)', () => {
 		authStore.setAuth('tok', { id: 'u1', username: 'grug' }, 60)
 
-		expect(get(authStore).refreshToken).toBeNull()
+		expect(authStore.refreshToken).toBeNull()
 	})
 })
 
@@ -68,12 +64,11 @@ describe('clearAuth', () => {
 		authStore.setAuth('tok', { id: 'u1', username: 'grug' }, 3600)
 		authStore.clearAuth()
 
-		const state = get(authStore)
-		expect(state.accessToken).toBeNull()
-		expect(state.user).toBeNull()
-		expect(state.expiresAt).toBeNull()
-		expect(state.isAuthenticated).toBe(false)
-		expect(state.isRefreshing).toBe(false)
+		expect(authStore.accessToken).toBeNull()
+		expect(authStore.user).toBeNull()
+		expect(authStore.expiresAt).toBeNull()
+		expect(authStore.isAuthenticated).toBe(false)
+		expect(authStore.isRefreshing).toBe(false)
 	})
 })
 
@@ -107,7 +102,7 @@ describe('getToken', () => {
 		expect(authStore.getToken()).toBeNull()
 
 		// Let the fire-and-forget refresh() settle
-		await vi.waitFor(() => expect(get(authStore).isRefreshing).toBe(false))
+		await vi.waitFor(() => expect(authStore.isRefreshing).toBe(false))
 
 		delete (globalThis as any).window
 	})
@@ -124,26 +119,24 @@ describe('initFromServer', () => {
 
 		authStore.initFromServer('ssr-tok', user, expiresAt)
 
-		const state = get(authStore)
-		expect(state.accessToken).toBe('ssr-tok')
-		expect(state.user).toEqual(user)
-		expect(state.isAuthenticated).toBe(true)
-		expect(state.expiresAt).toBeInstanceOf(Date)
+		expect(authStore.accessToken).toBe('ssr-tok')
+		expect(authStore.user).toEqual(user)
+		expect(authStore.isAuthenticated).toBe(true)
+		expect(authStore.expiresAt).toBeInstanceOf(Date)
 	})
 
 	it('resets when params are null', () => {
 		authStore.setAuth('tok', { id: 'u1', username: 'grug' }, 3600)
 		authStore.initFromServer(null, null, null)
 
-		const state = get(authStore)
-		expect(state.accessToken).toBeNull()
-		expect(state.isAuthenticated).toBe(false)
+		expect(authStore.accessToken).toBeNull()
+		expect(authStore.isAuthenticated).toBe(false)
 	})
 
 	it('resets when only some params are null', () => {
 		authStore.initFromServer('tok', null, null)
 
-		expect(get(authStore).isAuthenticated).toBe(false)
+		expect(authStore.isAuthenticated).toBe(false)
 	})
 })
 
@@ -189,7 +182,7 @@ describe('refresh', () => {
 		const result = await authStore.refresh()
 
 		expect(result).toBe(true)
-		expect(get(authStore).accessToken).toBe('refreshed-tok')
+		expect(authStore.accessToken).toBe('refreshed-tok')
 	})
 
 	it('clears auth and redirects on failure', async () => {
@@ -204,7 +197,7 @@ describe('refresh', () => {
 		const result = await authStore.refresh()
 
 		expect(result).toBe(false)
-		expect(get(authStore).isAuthenticated).toBe(false)
+		expect(authStore.isAuthenticated).toBe(false)
 		expect(fakeLocation.href).toBe('/auth/login')
 
 		delete (globalThis as any).window
@@ -215,7 +208,7 @@ describe('refresh', () => {
 		vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
 			fetchCount++
 			// Small delay to simulate network
-			await new Promise(r => setTimeout(r, 10))
+			await new Promise((r) => setTimeout(r, 10))
 			return new Response(
 				JSON.stringify({
 					access_token: 'deduped-tok',
@@ -278,16 +271,14 @@ describe('checkAndRefresh', () => {
 		const result = await authStore.checkAndRefresh()
 
 		expect(result).toBe('renewed-tok')
-		expect(get(authStore).accessToken).toBe('renewed-tok')
+		expect(authStore.accessToken).toBe('renewed-tok')
 	})
 
 	it('returns null when refresh fails', async () => {
 		// Token expiring in 1 minute (within the 5-minute refresh window)
 		authStore.setAuth('dying-tok', { id: 'u1', username: 'grug' }, 60)
 
-		vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-			new Response('', { status: 401 })
-		)
+		vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('', { status: 401 }))
 
 		const fakeLocation = { href: '' }
 		;(globalThis as any).window = { location: fakeLocation }
@@ -295,7 +286,7 @@ describe('checkAndRefresh', () => {
 		const result = await authStore.checkAndRefresh()
 
 		expect(result).toBeNull()
-		expect(get(authStore).isAuthenticated).toBe(false)
+		expect(authStore.isAuthenticated).toBe(false)
 
 		delete (globalThis as any).window
 	})
@@ -326,7 +317,7 @@ describe('getToken recovery', () => {
 		expect(authStore.getToken()).toBeNull()
 
 		// Wait for the fire-and-forget refresh to complete
-		await vi.waitFor(() => expect(get(authStore).isRefreshing).toBe(false))
+		await vi.waitFor(() => expect(authStore.isRefreshing).toBe(false))
 
 		// Now getToken should return the refreshed token
 		expect(authStore.getToken()).toBe('recovered-tok')

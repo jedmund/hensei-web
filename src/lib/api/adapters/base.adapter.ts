@@ -17,7 +17,7 @@ import {
 	calculateRetryDelay,
 	CancelledError
 } from './errors'
-import { authStore } from '$lib/stores/auth.store'
+import { authStore } from '$lib/stores/auth.store.svelte'
 import { browser } from '$app/environment'
 
 /**
