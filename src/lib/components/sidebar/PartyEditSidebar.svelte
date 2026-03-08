@@ -71,24 +71,8 @@
 	// Props passed through PaneStack's $state are wrapped in deep reactive proxies.
 	// Reading initialValues.xxx in $derived creates tracking dependencies on the proxy,
 	// which can be invalidated when setAction mutates the pane object.
-	// Snapshotting into a plain const breaks that reactive chain.
-	const initial = {
-		name: initialValues.name,
-		description: initialValues.description,
-		visibility: initialValues.visibility,
-		sharedWithCrew: initialValues.sharedWithCrew,
-		fullAuto: initialValues.fullAuto,
-		autoGuard: initialValues.autoGuard,
-		autoSummon: initialValues.autoSummon,
-		chargeAttack: initialValues.chargeAttack,
-		clearTime: initialValues.clearTime,
-		buttonCount: initialValues.buttonCount,
-		chainCount: initialValues.chainCount,
-		summonCount: initialValues.summonCount,
-		videoUrl: initialValues.videoUrl,
-		raid: initialValues.raid,
-		raidId: initialValues.raidId
-	}
+	// $state.snapshot() produces a plain non-reactive copy, breaking that chain.
+	const initial = $state.snapshot(initialValues) as PartyEditValues
 
 	// Local state - initialized from snapshot
 	let name = $state(initial.name)

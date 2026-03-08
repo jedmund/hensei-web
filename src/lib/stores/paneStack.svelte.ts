@@ -66,6 +66,9 @@ export class PaneStackStore {
 	/** Animation duration in ms - should match CSS */
 	private readonly ANIMATION_DURATION = 300
 
+	/** Pending animation timeout ID for cleanup */
+	private animationTimeoutId: ReturnType<typeof setTimeout> | null = null
+
 	/**
 	 * Push a new pane onto the stack
 	 */
@@ -77,9 +80,10 @@ export class PaneStackStore {
 		this.state.panes = [...this.state.panes, config]
 
 		// Clear animation state after transition completes
-		setTimeout(() => {
+		this.animationTimeoutId = setTimeout(() => {
 			this.state.isAnimating = false
 			this.state.animationDirection = null
+			this.animationTimeoutId = null
 		}, this.ANIMATION_DURATION)
 	}
 
@@ -102,10 +106,11 @@ export class PaneStackStore {
 		this.state.animationDirection = 'pop'
 
 		// Remove the top pane after animation starts
-		setTimeout(() => {
+		this.animationTimeoutId = setTimeout(() => {
 			this.state.panes = this.state.panes.slice(0, -1)
 			this.state.isAnimating = false
 			this.state.animationDirection = null
+			this.animationTimeoutId = null
 		}, this.ANIMATION_DURATION)
 
 		return true
@@ -123,10 +128,11 @@ export class PaneStackStore {
 		this.state.isAnimating = true
 		this.state.animationDirection = 'pop'
 
-		setTimeout(() => {
+		this.animationTimeoutId = setTimeout(() => {
 			this.state.panes = this.state.panes.slice(0, index + 1)
 			this.state.isAnimating = false
 			this.state.animationDirection = null
+			this.animationTimeoutId = null
 		}, this.ANIMATION_DURATION)
 	}
 
@@ -142,6 +148,10 @@ export class PaneStackStore {
 	 * Clear the entire stack
 	 */
 	clear() {
+		if (this.animationTimeoutId) {
+			clearTimeout(this.animationTimeoutId)
+			this.animationTimeoutId = null
+		}
 		this.state.panes = []
 		this.state.isAnimating = false
 		this.state.animationDirection = null
@@ -151,6 +161,10 @@ export class PaneStackStore {
 	 * Replace the entire stack with a new root pane
 	 */
 	reset(config: PaneConfig) {
+		if (this.animationTimeoutId) {
+			clearTimeout(this.animationTimeoutId)
+			this.animationTimeoutId = null
+		}
 		this.state.panes = [config]
 		this.state.isAnimating = false
 		this.state.animationDirection = null
@@ -159,8 +173,9 @@ export class PaneStackStore {
 	/**
 	 * Replace a pane at a specific index, creating a new array so
 	 * $derived(stack.panes) sees a changed reference and propagates.
-	 * In-place mutations (array[i] = ...) keep the same array reference,
-	 * which $derived considers unchanged via Object.is.
+	 * The panes getter always returns the same proxy object, so
+	 * in-place mutations (array[i] = ...) don't change the getter's
+	 * return value and $derived short-circuits.
 	 */
 	updatePaneAt(index: number, updates: Partial<PaneConfig>) {
 		const pane = this.state.panes[index]
