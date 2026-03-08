@@ -144,30 +144,17 @@ export abstract class BaseAdapter {
 			}
 		}
 
-		// Debug logging for auth issues
-		if (import.meta.env.DEV && browser && path.includes('grid_')) {
-			console.log('[BaseAdapter] Request to:', path, 'Headers:', fetchOptions.headers)
-		}
-
 		// Transform request body from camelCase to snake_case if present
 		if (options.body) {
 			if (typeof options.body === 'object') {
 				// Body is an object, transform and stringify
 				const transformed = this.transformRequest(options.body)
 				fetchOptions.body = JSON.stringify(transformed)
-				// Debug logging for 422 errors
-				if (import.meta.env.DEV && browser && path.includes('grid_')) {
-					console.log('[BaseAdapter] Request body:', transformed)
-				}
 			} else if (typeof options.body === 'string') {
 				try {
 					const bodyData = JSON.parse(options.body)
 					const transformed = this.transformRequest(bodyData)
 					fetchOptions.body = JSON.stringify(transformed)
-					// Debug logging for 422 errors
-					if (import.meta.env.DEV && browser && path.includes('grid_')) {
-						console.log('[BaseAdapter] Request body:', transformed)
-					}
 				} catch {
 					// If body is not valid JSON, use as-is
 					fetchOptions.body = options.body
@@ -186,12 +173,6 @@ export abstract class BaseAdapter {
 
 			// Parse and transform the response
 			const data = await response.json()
-
-			// Debug logging for grid operations
-			if (import.meta.env.DEV && browser && path.includes('grid_')) {
-				console.log('[BaseAdapter] Response status:', response.status)
-				console.log('[BaseAdapter] Response data:', data)
-			}
 
 			const transformed = this.transformResponse<T>(data)
 
