@@ -83,7 +83,10 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 			}
 
 			// Find next empty slot for continuous adding
-			const nextEmptySlot = findNextEmptySlot(party, activeTab)
+			// Re-read party to get post-mutation state; fall back to marking
+			// the just-filled slot as occupied on the pre-mutation snapshot
+			const currentParty = opts.getParty()
+			const nextEmptySlot = findNextEmptySlot(currentParty, activeTab, targetSlot)
 			if (nextEmptySlot !== SLOT_NOT_FOUND) {
 				opts.setSelectedSlot(nextEmptySlot)
 			}
