@@ -29,6 +29,7 @@
 	import type { Party } from '$lib/types/api/party'
 	import { PartyVisibility } from '$lib/types/visibility'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
+	import { afterNavigate } from '$app/navigation'
 
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -85,6 +86,33 @@
 					userElement: currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 				})
 			}, 100)
+		}
+	})
+
+	// Reset state when re-navigating to /teams/new after a party was created.
+	// replaceState changes the URL to /teams/shortcode without SvelteKit navigation,
+	// so coming back to /teams/new reuses this component with stale state.
+	afterNavigate((nav) => {
+		if (nav.from && (partyId || shortcode)) {
+			// Clear old query cache
+			if (shortcode) {
+				queryClient.removeQueries({ queryKey: partyKeys.detail(shortcode) })
+			}
+
+			// Reset party state
+			partyId = null
+			shortcode = null
+			editKey = null
+			isCreatingParty = false
+
+			// Reset UI state — setting hasOpenedSidebar = false
+			// triggers the $effect above to reopen the search sidebar
+			hasOpenedSidebar = false
+			activeTab = GridType.Weapon
+			selectedSlot = null
+
+			// Reset query to placeholder
+			queryClient.setQueryData(partyKeys.detail('new'), placeholderParty)
 		}
 	})
 
@@ -442,7 +470,7 @@
 	// Calculate if grids are full
 	let isWeaponGridFull = $derived(weapons.length >= 10) // 1 mainhand + 9 grid slots
 	let isSummonGridFull = $derived(summons.length >= 6) // 6 summon slots (main + 4 grid + friend)
-	let isCharacterGridFull = $derived(characters.length >= 5) // 5 character slots
+	let isCharacterGridFull = $derived(characters.length >= (party.raid?.group?.unlimited ? 8 : 5))
 
 	let canAddMore = $derived(
 		activeTab === GridType.Weapon
@@ -813,13 +841,14 @@
 					job: undefined,
 					characters,
 					weapons,
-					summons
+					summons,
+					raid: party.raid
 				}}
 			/>
 
 			<div class="party-content">
 				{#if activeTab === GridType.Weapon}
-					<WeaponGrid {weapons} />
+					<WeaponGrid {weapons} raidExtra={party.raid?.group?.extra} />
 				{:else if activeTab === GridType.Summon}
 					<SummonGrid {summons} />
 				{:else}
@@ -838,7 +867,7 @@
 								console.log('Open accessory selection sidebar')
 							}}
 						/>
-						<CharacterGrid {characters} {mainWeaponElement} {partyElement} />
+						<CharacterGrid {characters} {mainWeaponElement} {partyElement} unlimited={party.raid?.group?.unlimited} />
 					</div>
 				{/if}
 			</div>

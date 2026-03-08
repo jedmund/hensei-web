@@ -165,16 +165,38 @@ class SidebarStore {
 		const panes = this.paneStack.panes
 		const currentIndex = panes.length - 1
 		if (currentIndex >= 0 && panes[currentIndex]) {
-			panes[currentIndex] = {
-				...panes[currentIndex],
+			this.paneStack.updatePaneAt(currentIndex, {
 				action: show && label ? {
 					label,
 					handler: handler ?? (() => {}),
 					element,
 					disabled: !handler
 				} : undefined
-			}
+			})
 		}
+	}
+
+	/**
+	 * Set the action button for a specific pane by ID.
+	 * Use this when the pane may not be on top of the stack.
+	 */
+	setActionForPane(
+		paneId: string,
+		handler: (() => void) | undefined,
+		label?: string,
+		element?: ElementType,
+		show: boolean = true
+	) {
+		const action =
+			show && label
+				? {
+						label,
+						handler: handler ?? (() => {}),
+						element,
+						disabled: !handler
+					}
+				: undefined
+		this.paneStack.updatePaneById(paneId, { action })
 	}
 
 	/**
@@ -191,10 +213,7 @@ class SidebarStore {
 		const panes = this.paneStack.panes
 		const currentIndex = panes.length - 1
 		if (currentIndex >= 0 && panes[currentIndex]) {
-			panes[currentIndex] = {
-				...panes[currentIndex],
-				overflowMenu: items
-			}
+			this.paneStack.updatePaneAt(currentIndex, { overflowMenu: items })
 		}
 	}
 

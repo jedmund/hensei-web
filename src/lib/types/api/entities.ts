@@ -236,6 +236,7 @@ export interface RaidGroup {
   hl: boolean
   extra: boolean
   guidebooks: boolean
+  unlimited: boolean
 }
 
 // Awakening entity
