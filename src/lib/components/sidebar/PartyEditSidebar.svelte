@@ -47,6 +47,8 @@
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
+		/** Pane ID injected by PaneStack for targeted action updates */
+		paneId?: string
 		/** Current party values */
 		initialValues: PartyEditValues
 		/** Party element for switch theming */
@@ -55,7 +57,7 @@
 		onSave?: (values: PartyEditValues) => void
 	}
 
-	let { initialValues, element, onSave }: Props = $props()
+	let { paneId, initialValues, element, onSave }: Props = $props()
 
 	// Get the pane stack for pushing EditRaidPane
 	const paneStack = usePaneStack()
@@ -73,6 +75,7 @@
 	// which can be invalidated when setAction mutates the pane object.
 	// $state.snapshot() produces a plain non-reactive copy, breaking that chain.
 	const initial = $state.snapshot(initialValues) as PartyEditValues
+	console.log('[PartyEdit] initial snapshot:', { name: initial.name, visibility: initial.visibility, raidId: initial.raidId, raid: initial.raid?.name })
 
 	// Local state - initialized from snapshot
 	let name = $state(initial.name)
@@ -99,22 +102,26 @@
 	]
 
 	// Check if any values have changed (compared against snapshot, not proxy)
-	const hasChanges = $derived(
-		name !== initial.name ||
-			visibility !== initial.visibility ||
-			sharedWithCrew !== initial.sharedWithCrew ||
-			fullAuto !== initial.fullAuto ||
-			autoGuard !== initial.autoGuard ||
-			autoSummon !== initial.autoSummon ||
-			chargeAttack !== initial.chargeAttack ||
-			clearTime !== initial.clearTime ||
-			buttonCount !== initial.buttonCount ||
-			chainCount !== initial.chainCount ||
-			summonCount !== initial.summonCount ||
-			videoUrl !== initial.videoUrl ||
-			raidId !== initial.raidId ||
-			description !== initial.description
-	)
+	const hasChanges = $derived.by(() => {
+		const diffs: string[] = []
+		if (name !== initial.name) diffs.push(`name: "${initial.name}" → "${name}"`)
+		if (visibility !== initial.visibility) diffs.push(`visibility: ${initial.visibility} → ${visibility}`)
+		if (sharedWithCrew !== initial.sharedWithCrew) diffs.push(`sharedWithCrew: ${initial.sharedWithCrew} → ${sharedWithCrew}`)
+		if (fullAuto !== initial.fullAuto) diffs.push(`fullAuto: ${initial.fullAuto} → ${fullAuto}`)
+		if (autoGuard !== initial.autoGuard) diffs.push(`autoGuard: ${initial.autoGuard} → ${autoGuard}`)
+		if (autoSummon !== initial.autoSummon) diffs.push(`autoSummon: ${initial.autoSummon} → ${autoSummon}`)
+		if (chargeAttack !== initial.chargeAttack) diffs.push(`chargeAttack: ${initial.chargeAttack} → ${chargeAttack}`)
+		if (clearTime !== initial.clearTime) diffs.push(`clearTime: ${initial.clearTime} → ${clearTime}`)
+		if (buttonCount !== initial.buttonCount) diffs.push(`buttonCount: ${initial.buttonCount} → ${buttonCount}`)
+		if (chainCount !== initial.chainCount) diffs.push(`chainCount: ${initial.chainCount} → ${chainCount}`)
+		if (summonCount !== initial.summonCount) diffs.push(`summonCount: ${initial.summonCount} → ${summonCount}`)
+		if (videoUrl !== initial.videoUrl) diffs.push(`videoUrl: "${initial.videoUrl}" → "${videoUrl}"`)
+		if (raidId !== initial.raidId) diffs.push(`raidId: ${initial.raidId} → ${raidId}`)
+		if (description !== initial.description) diffs.push(`description changed`)
+		const changed = diffs.length > 0
+		console.log('[PartyEdit] hasChanges:', changed, changed ? diffs : '(no diffs)')
+		return changed
+	})
 
 	// Expose save function for sidebar action button
 	export function save() {
@@ -139,16 +146,27 @@
 		sidebar.close()
 	}
 
-	// Update sidebar action button state based on changes
+	// Update sidebar action button state based on changes.
+	// Uses setActionForPane to target this pane by ID, so the action is set
+	// correctly even when another pane (e.g. EditRaidPane) is on top.
 	$effect(() => {
-		// Read hasChanges to track it
 		const changed = hasChanges
-		// Use untrack to prevent tracking sidebar mutations
+		console.log('[PartyEdit] $effect fired, hasChanges =', changed, 'paneId =', paneId)
 		untrack(() => {
-			if (changed) {
-				sidebar.setAction(save, 'Save', element)
+			if (paneId) {
+				sidebar.setActionForPane(
+					paneId,
+					changed ? save : undefined,
+					'Save',
+					element
+				)
 			} else {
-				sidebar.setAction(undefined, 'Save', element)
+				// Fallback for legacy callers without paneId
+				if (changed) {
+					sidebar.setAction(save, 'Save', element)
+				} else {
+					sidebar.setAction(undefined, 'Save', element)
+				}
 			}
 		})
 	})

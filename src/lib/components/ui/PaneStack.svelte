@@ -27,6 +27,10 @@
 	const isAnimating = $derived(stack.isAnimating)
 	const animationDirection = $derived(stack.animationDirection)
 
+	$effect(() => {
+		console.log('[PaneStack] $derived(stack.panes) updated, count:', panes.length, 'actions:', panes.map((p, i) => ({ i, action: p.action ? { label: p.action.label, disabled: p.action.disabled } : null })))
+	})
+
 	function handleBack(pane: PaneConfig, index: number) {
 		if (index === 0 && pane.onback) {
 			// Root pane with custom back handler
@@ -142,7 +146,7 @@
 			</SidebarHeader>
 
 			<div class="pane-content">
-				<PaneComponent {...pane.props ?? {}} />
+				<PaneComponent {...pane.props ?? {}} paneId={pane.id} />
 			</div>
 		</div>
 	{/each}
