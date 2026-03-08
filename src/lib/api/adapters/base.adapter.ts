@@ -105,8 +105,9 @@ export abstract class BaseAdapter {
 
 		// Check cache first if caching is enabled (support both cacheTime and cacheTTL)
 		const cacheTime = options.cacheTTL ?? options.cacheTime ?? this.options.cacheTime
-		// Allow caching for any method if explicitly set (unless cache is disabled)
-		if (!this.disableCache && cacheTime > 0) {
+		// Skip adapter-level cache in the browser — TanStack Query manages client-side caching.
+		// Keep it on the server for SSR deduplication of reference data across requests.
+		if (!this.disableCache && !browser && cacheTime > 0) {
 			const cached = this.getFromCache(requestId)
 			if (cached !== null) {
 				return cached as T
@@ -195,7 +196,7 @@ export abstract class BaseAdapter {
 			const transformed = this.transformResponse<T>(data)
 
 			// Cache the successful response if caching is enabled (use cacheTTL or cache)
-			if (!this.disableCache && cacheTime > 0) {
+			if (!this.disableCache && !browser && cacheTime > 0) {
 				this.setCache(requestId, transformed, cacheTime)
 			}
 
