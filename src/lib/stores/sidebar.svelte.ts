@@ -165,15 +165,14 @@ class SidebarStore {
 		const panes = this.paneStack.panes
 		const currentIndex = panes.length - 1
 		if (currentIndex >= 0 && panes[currentIndex]) {
-			panes[currentIndex] = {
-				...panes[currentIndex],
+			this.paneStack.updatePaneAt(currentIndex, {
 				action: show && label ? {
 					label,
 					handler: handler ?? (() => {}),
 					element,
 					disabled: !handler
 				} : undefined
-			}
+			})
 		}
 	}
 
@@ -191,10 +190,7 @@ class SidebarStore {
 		const panes = this.paneStack.panes
 		const currentIndex = panes.length - 1
 		if (currentIndex >= 0 && panes[currentIndex]) {
-			panes[currentIndex] = {
-				...panes[currentIndex],
-				overflowMenu: items
-			}
+			this.paneStack.updatePaneAt(currentIndex, { overflowMenu: items })
 		}
 	}
 

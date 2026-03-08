@@ -157,6 +157,20 @@ export class PaneStackStore {
 	}
 
 	/**
+	 * Replace a pane at a specific index, creating a new array so
+	 * $derived(stack.panes) sees a changed reference and propagates.
+	 * In-place mutations (array[i] = ...) keep the same array reference,
+	 * which $derived considers unchanged via Object.is.
+	 */
+	updatePaneAt(index: number, updates: Partial<PaneConfig>) {
+		const pane = this.state.panes[index]
+		if (!pane) return
+		this.state.panes = this.state.panes.map((p, i) =>
+			i === index ? { ...p, ...updates } : p
+		)
+	}
+
+	/**
 	 * Update props for the current (top) pane
 	 */
 	updateCurrentProps(props: Record<string, any>) {
@@ -165,10 +179,9 @@ export class PaneStackStore {
 		const currentIndex = this.state.panes.length - 1
 		const currentPane = this.state.panes[currentIndex]
 		if (currentPane) {
-			this.state.panes[currentIndex] = {
-				...currentPane,
+			this.updatePaneAt(currentIndex, {
 				props: { ...currentPane.props, ...props }
-			}
+			})
 		}
 	}
 
