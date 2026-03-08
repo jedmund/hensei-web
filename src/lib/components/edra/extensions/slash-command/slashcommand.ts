@@ -73,7 +73,9 @@ export default (menuList: Component<any, any, ''>): Extension =>
 							const tr = state.tr.deleteRange(from, end);
 							view.dispatch(tr);
 						} catch (error) {
-							console.error(error);
+							if (import.meta.env.DEV) {
+								console.error(error);
+							}
 						}
 
 						props.onClick(editor);

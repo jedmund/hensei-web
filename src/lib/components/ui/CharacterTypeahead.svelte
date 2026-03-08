@@ -112,7 +112,9 @@
 				element: result.element
 			}))
 		} catch (error) {
-			console.error('Character search error:', error)
+			if (import.meta.env.DEV) {
+				console.error('Character search error:', error)
+			}
 			searchResults = []
 		} finally {
 			isLoading = false

@@ -99,7 +99,7 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 			expires_at: accessTokenExpiresAt.toISOString()
 		})
 	} catch (e: unknown) {
-		console.error('Signup error:', e)
+		if (dev) console.error('Signup error:', e)
 
 		if (e instanceof Error && e.message === 'unauthorized') {
 			// This shouldn't happen during signup, but handle it

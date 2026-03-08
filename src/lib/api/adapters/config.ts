@@ -12,7 +12,7 @@ export function getApiBaseUrl(): string {
 	// Production API uses /v1, development uses /api/v1
 	const apiPath = import.meta.env.PROD ? '/v1' : '/api/v1'
 	const url = `${base}${apiPath}`
-	console.log('[API Config]', { base, apiPath, url, isProd: import.meta.env.PROD })
+	if (import.meta.env.DEV) console.log('[API Config]', { base, apiPath, url, isProd: import.meta.env.PROD })
 	return url
 }
 

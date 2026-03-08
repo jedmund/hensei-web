@@ -6,7 +6,9 @@ function getPmView() {
 	try {
 		return pmView;
 	} catch (error) {
-		console.error(error);
+		if (import.meta.env.DEV) {
+			console.error(error);
+		}
 		return null;
 	}
 }

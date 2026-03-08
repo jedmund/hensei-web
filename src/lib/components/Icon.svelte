@@ -39,7 +39,7 @@
       
       svgContent = content;
     } catch (error) {
-      console.error(`Failed to load icon: ${name}`, error);
+      if (import.meta.env.DEV) console.error(`Failed to load icon: ${name}`, error);
       svgContent = '';
     } finally {
       loading = false;

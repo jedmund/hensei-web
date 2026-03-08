@@ -87,8 +87,6 @@
 	$effect(() => {
 		if (currentUserQuery.data && !formInitialized) {
 			const data = currentUserQuery.data
-			console.log('[UserSettingsModal] API data received:', data)
-			console.log('[UserSettingsModal] data.collectionPrivacy:', data.collectionPrivacy, typeof data.collectionPrivacy)
 			// Account
 			formEmail = data.email ?? ''
 			// Profile
@@ -101,7 +99,6 @@
 			// Privacy
 			showGranblueId = data.showGranblueId ?? false
 			collectionPrivacy = data.collectionPrivacy ?? 1
-			console.log('[UserSettingsModal] collectionPrivacy set to:', collectionPrivacy, typeof collectionPrivacy)
 			showCrewGamertag = data.showCrewGamertag ?? false
 			// Store original values for comparison
 			originalLanguage = data.language ?? 'en'

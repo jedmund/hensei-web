@@ -40,7 +40,7 @@ export function validateGridWeapon(raw: any): GridWeapon | null {
 	const weapon = raw.weapon || raw.object
 
 	if (!weapon || !weapon.granblueId) {
-		console.warn('GridWeapon missing nested weapon data:', raw)
+		if (import.meta.env.DEV) console.warn('GridWeapon missing nested weapon data:', raw)
 		return null
 	}
 
@@ -64,7 +64,7 @@ export function validateGridCharacter(raw: any): GridCharacter | null {
 	const character = raw.character || raw.object
 
 	if (!character || !character.granblueId) {
-		console.warn('GridCharacter missing nested character data:', raw)
+		if (import.meta.env.DEV) console.warn('GridCharacter missing nested character data:', raw)
 		return null
 	}
 
@@ -88,7 +88,7 @@ export function validateGridSummon(raw: any): GridSummon | null {
 	const summon = raw.summon || raw.object
 
 	if (!summon || !summon.granblueId) {
-		console.warn('GridSummon missing nested summon data:', raw)
+		if (import.meta.env.DEV) console.warn('GridSummon missing nested summon data:', raw)
 		return null
 	}
 

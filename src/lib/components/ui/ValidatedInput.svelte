@@ -28,27 +28,20 @@
 	let tooltipTimeout: ReturnType<typeof setTimeout> | null = null
 
 	async function handleBlur() {
-		console.log('[ValidatedInput] handleBlur called, value:', value, 'minLength:', minLength)
-
 		// Only validate if value meets minimum length
 		if (value.length < minLength) {
-			console.log('[ValidatedInput] Value too short, skipping validation')
 			validationState = 'idle'
 			validationMessage = ''
 			return
 		}
 
-		console.log('[ValidatedInput] Starting validation...')
 		validationState = 'validating'
 		hideTooltip()
 
 		try {
-			console.log('[ValidatedInput] Calling onValidate...')
 			const result = await onValidate(value)
-			console.log('[ValidatedInput] Validation result:', result)
 			validationState = result.valid ? 'valid' : 'invalid'
 			validationMessage = result.message
-			console.log('[ValidatedInput] State updated:', { validationState, validationMessage })
 			showTooltip()
 		} catch (error) {
 			console.error('[ValidatedInput] Validation error:', error)

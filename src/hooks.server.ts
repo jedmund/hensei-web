@@ -9,21 +9,6 @@ export const handleSession: Handle = async ({ event, resolve }) => {
 	const account = getAccountFromCookies(event.cookies)
 	const user = getUserFromCookies(event.cookies)
 
-	// Debug logging for auth issues
-	const allCookies = event.cookies.getAll()
-	console.log('[hooks.server] Request to:', event.url.pathname)
-	console.log('[hooks.server] All cookies:', allCookies.map(c => c.name))
-
-	if (account) {
-		console.log('[hooks.server] Account cookie found:', {
-			hasToken: !!account.token,
-			hasExpiresAt: !!account.expires_at,
-			username: account.username
-		})
-	} else {
-		console.log('[hooks.server] No account cookie found')
-	}
-
 	event.locals.session = {
 		account,
 		user,

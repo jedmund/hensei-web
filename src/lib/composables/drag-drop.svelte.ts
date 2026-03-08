@@ -159,10 +159,10 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 
 	function startDrag(item: GridItem, source: DragSource) {
 		try {
-			console.group('🚀 Drag Start')
-			console.log('Item:', item)
-			console.log('Source:', source)
-			console.groupEnd()
+			if (import.meta.env.DEV) console.group('🚀 Drag Start')
+			if (import.meta.env.DEV) console.log('Item:', item)
+			if (import.meta.env.DEV) console.log('Source:', source)
+			if (import.meta.env.DEV) console.groupEnd()
 
 			state.isDragging = true
 			state.draggedItem = {
@@ -216,8 +216,8 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 
 	function endDrag(targetItem?: GridItem) {
 		try {
-			console.group('🏁 Drag End')
-			console.log('Final state:', { ...state })
+			if (import.meta.env.DEV) console.group('🏁 Drag End')
+			if (import.meta.env.DEV) console.log('Final state:', { ...state })
 
 			if (state.validDrop && state.draggedItem && state.hoveredOver) {
 				const operation: DragOperation = {
@@ -241,12 +241,12 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 				}
 
 				state.operationQueue.push(operation)
-				console.log('📝 Operation queued:', operation)
+				if (import.meta.env.DEV) console.log('📝 Operation queued:', operation)
 
 				handlers.onLocalUpdate?.(operation)
 			}
 
-			console.groupEnd()
+			if (import.meta.env.DEV) console.groupEnd()
 		} catch (error) {
 			handleDragError(error as Error)
 		} finally {
@@ -255,7 +255,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 	}
 
 	function handleDragError(error: Error) {
-		console.error('🔥 Drag operation failed:', error)
+		if (import.meta.env.DEV) console.error('🔥 Drag operation failed:', error)
 		state.lastError = error
 		cleanupDragState()
 	}
@@ -283,63 +283,63 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 	}
 
 	function validateDrop(source: DragSource, target: DropTarget): boolean {
-		console.group('🎯 Drop Validation')
-		console.log('Source:', source)
-		console.log('Target:', target)
+		if (import.meta.env.DEV) console.group('🎯 Drop Validation')
+		if (import.meta.env.DEV) console.log('Source:', source)
+		if (import.meta.env.DEV) console.log('Target:', target)
 
 		// Can't drop on self
 		if (source.container === target.container && source.position === target.position) {
-			console.log('❌ Cannot drop on self')
-			console.groupEnd()
+			if (import.meta.env.DEV) console.log('❌ Cannot drop on self')
+			if (import.meta.env.DEV) console.groupEnd()
 			return false
 		}
 
 		// Type mismatch check
 		if (source.type !== target.type) {
-			console.log('❌ Type mismatch:', source.type, 'vs', target.type)
-			console.groupEnd()
+			if (import.meta.env.DEV) console.log('❌ Type mismatch:', source.type, 'vs', target.type)
+			if (import.meta.env.DEV) console.groupEnd()
 			return false
 		}
 
 		// Custom validation
 		if (handlers.onValidate) {
 			const customValid = handlers.onValidate(source, target)
-			console.log(customValid ? '✅ Custom validation passed' : '❌ Custom validation failed')
-			console.groupEnd()
+			if (import.meta.env.DEV) console.log(customValid ? '✅ Custom validation passed' : '❌ Custom validation failed')
+			if (import.meta.env.DEV) console.groupEnd()
 			return customValid
 		}
 
-		console.log('✅ Drop allowed')
-		console.groupEnd()
+		if (import.meta.env.DEV) console.log('✅ Drop allowed')
+		if (import.meta.env.DEV) console.groupEnd()
 		return true
 	}
 
 	function handleDrop(target: DropTarget, targetItem?: GridItem) {
 		if (!state.draggedItem || !state.validDrop) {
-			console.log('❌ Invalid drop attempt')
+			if (import.meta.env.DEV) console.log('❌ Invalid drop attempt')
 			return false
 		}
 
 		const source = state.draggedItem.source
 		const item = state.draggedItem.data
 
-		console.group('💧 Handle Drop')
-		console.log('From:', source)
-		console.log('To:', target)
-		console.log('Item:', item)
-		console.log('Target Item:', targetItem)
+		if (import.meta.env.DEV) console.group('💧 Handle Drop')
+		if (import.meta.env.DEV) console.log('From:', source)
+		if (import.meta.env.DEV) console.log('To:', target)
+		if (import.meta.env.DEV) console.log('Item:', item)
+		if (import.meta.env.DEV) console.log('Target Item:', targetItem)
 
 		if (targetItem) {
 			// Swap items
-			console.log('🔄 Swapping items')
+			if (import.meta.env.DEV) console.log('🔄 Swapping items')
 			handlers.onSwap?.(source, target, item, targetItem)
 		} else {
 			// Move to empty slot
-			console.log('📦 Moving to empty slot')
+			if (import.meta.env.DEV) console.log('📦 Moving to empty slot')
 			handlers.onDrop?.(source, target, item)
 		}
 
-		console.groupEnd()
+		if (import.meta.env.DEV) console.groupEnd()
 		endDrag(targetItem)
 		return true
 	}
