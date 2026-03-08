@@ -771,6 +771,17 @@
 		}
 	}
 
+	// Handle browser back/forward navigation for tabs
+	function handlePopState() {
+		const path = window.location.pathname
+		const match = path.match(/\/teams\/[^/]+\/(\w+)$/)
+		const urlTabSlug = match?.[1]
+		const newTab = urlTabSlug ? (tabMap[urlTabSlug] ?? GridType.Weapon) : GridType.Weapon
+		if (activeTab !== newTab) {
+			activeTab = newTab
+		}
+	}
+
 	// Client-side initialization
 	onMount(() => {
 		// Get or create local ID
@@ -781,20 +792,6 @@
 
 		// Router is now ready - safe to call pushState
 		routerReady = true
-
-		// Handle browser back/forward navigation for tabs
-		const handlePopState = () => {
-			const path = window.location.pathname
-			const match = path.match(/\/teams\/[^/]+\/(\w+)$/)
-			const urlTabSlug = match?.[1]
-			const newTab = urlTabSlug ? (tabMap[urlTabSlug] ?? GridType.Weapon) : GridType.Weapon
-			if (activeTab !== newTab) {
-				activeTab = newTab
-			}
-		}
-
-		window.addEventListener('popstate', handlePopState)
-		return () => window.removeEventListener('popstate', handlePopState)
 	})
 
 	// Grid service wrapper using TanStack Query mutations
@@ -997,6 +994,8 @@
 	// Provide drag-drop context to child components
 	setDragDropContext(dragContext)
 </script>
+
+<svelte:window onpopstate={handlePopState} />
 
 <div class="page-wrap">
 	<div class="track">
