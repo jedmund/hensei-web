@@ -266,6 +266,8 @@ export const collectionQueries = {
  */
 export const collectionKeys = {
 	all: ['collection'] as const,
+	countsPrefix: ['collection', 'counts'] as const,
+	granblueIdsPrefix: ['collection', 'granblue_ids'] as const,
 	counts: (userId: string) => [...collectionKeys.all, 'counts', userId] as const,
 	granblueIds: (userId: string) => [...collectionKeys.all, 'granblue_ids', userId] as const,
 	characters: (userId?: string) =>
