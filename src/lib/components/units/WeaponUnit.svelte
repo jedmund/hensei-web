@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { GridWeapon } from '$lib/types/api/party'
-	import type { Party } from '$lib/types/api/party'
-	import { getContext } from 'svelte'
+	import { usePartyContext } from '$lib/types/party-context'
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
 	import Icon from '$lib/components/Icon.svelte'
@@ -26,18 +25,7 @@
 
 	let { item, position, notInCollection = false }: Props = $props()
 
-	type PartyCtx = {
-		getParty: () => Party
-		updateParty: (p: Party) => void
-		canEdit: () => boolean
-		getEditKey: () => string | null
-		getSelectedSlot?: () => number
-		getActiveTab?: () => GridType
-		services: { gridService: any; partyService: any }
-		openPicker?: (opts: { type: 'weapon' | 'summon' | 'character'; position: number; item?: any }) => void
-	}
-
-	const ctx = getContext<PartyCtx>('party')
+	const ctx = usePartyContext()
 
 	function displayName(input: any): string {
 		if (!input) return '—'

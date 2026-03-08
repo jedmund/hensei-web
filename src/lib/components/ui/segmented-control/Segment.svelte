@@ -3,10 +3,9 @@
 
 <script lang="ts">
 	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui'
-	import { getContext } from 'svelte'
 	import type { Snippet } from 'svelte'
 	import styles from './segment.module.scss'
-	import type { SegmentedControlVariant, SegmentedControlSize } from './SegmentedControl.svelte'
+	import { getSegmentedControlContext } from './context'
 
 	interface Props {
 		value: string
@@ -18,12 +17,7 @@
 	let { value, class: className, disabled, children: content }: Props = $props()
 
 	// Get variant, size, grow, and element from parent context
-	const variant = getContext<SegmentedControlVariant>('segmented-control-variant') || 'default'
-	const size = getContext<SegmentedControlSize>('segmented-control-size') || 'default'
-	const grow = getContext<boolean>('segmented-control-grow') || false
-	const element = getContext<'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | null>(
-		'segmented-control-element'
-	)
+	const { variant, size, grow, element } = getSegmentedControlContext()
 
 	// Apply variant-specific classes
 	const variantClasses = {

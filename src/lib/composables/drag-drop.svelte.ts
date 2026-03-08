@@ -378,3 +378,19 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 }
 
 export type DragDropContext = ReturnType<typeof createDragDropContext>
+
+// ============================================================================
+// Context API for child components
+// ============================================================================
+
+import { getContext, setContext } from 'svelte'
+
+const DRAG_DROP_KEY = Symbol('drag-drop')
+
+export function setDragDropContext(value: DragDropContext) {
+	setContext(DRAG_DROP_KEY, value)
+}
+
+export function getDragDropContext(): DragDropContext | undefined {
+	return getContext<DragDropContext | undefined>(DRAG_DROP_KEY)
+}

@@ -1,18 +1,11 @@
 <script lang="ts">
-  import { getContext } from 'svelte'
-  import type { Party } from '$lib/types/api/party'
+  import { usePartyContext } from '$lib/types/party-context'
   import { getGuidebookImage } from '$lib/utils/images'
 
   export let item: any | undefined
   export let position: number // 1..3
 
-  type PartyCtx = {
-    getParty: () => Party
-    updateParty: (p: Party) => void
-    canEdit: () => boolean
-    services: { partyService: any }
-  }
-  const ctx = getContext<PartyCtx>('party')
+  const ctx = usePartyContext()
 
   function displayName(input: any): string {
     if (!input) return '—'
