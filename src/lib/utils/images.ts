@@ -57,10 +57,33 @@ export function getGenericPlaceholder(): string {
 }
 
 /**
+ * Summon IDs that have alternate art at different uncap levels.
+ * Only these summons change their image based on uncap/transcendence.
+ */
+const SUMMONS_WITH_ALT_ART = new Set([
+	'2040094000',
+	'2040100000',
+	'2040080000',
+	'2040098000',
+	'2040090000',
+	'2040084000',
+	'2040003000',
+	'2040056000',
+	'2040020000',
+	'2040034000',
+	'2040028000',
+	'2040027000',
+	'2040046000',
+	'2040047000',
+])
+
+/**
  * Calculates the summon transformation suffix based on uncap level and transcendence
  * Returns undefined for base art, '02' for ULB, '03' for transcendence 1-4, '04' for transcendence 5+
+ * Only applies to summons in the SUMMONS_WITH_ALT_ART set.
  */
-export function getSummonTransformation(uncapLevel?: number, transcendenceStep?: number): string | undefined {
+export function getSummonTransformation(granblueId?: string | number | null, uncapLevel?: number, transcendenceStep?: number): string | undefined {
+	if (!granblueId || !SUMMONS_WITH_ALT_ART.has(String(granblueId))) return undefined
 	if (transcendenceStep && transcendenceStep >= 5) return '04'
 	if (transcendenceStep && transcendenceStep > 0) return '03'
 	if (uncapLevel && uncapLevel >= 5) return '02'
