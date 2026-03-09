@@ -1,4 +1,5 @@
 import type { PartyMutations } from './party-mutations.svelte'
+import type { GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
 import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
 
@@ -47,7 +48,7 @@ export function useGridService(
 				throw err
 			}
 		},
-		async updateWeapon(partyId: string, gridWeaponId: string, updates: any, _editKey?: string) {
+		async updateWeapon(partyId: string, gridWeaponId: string, updates: Partial<GridWeapon>, _editKey?: string) {
 			try {
 				await mutations.grid.updateWeapon.mutateAsync({
 					id: gridWeaponId,
@@ -60,7 +61,7 @@ export function useGridService(
 				throw err
 			}
 		},
-		async updateSummon(partyId: string, gridSummonId: string, updates: any, _editKey?: string) {
+		async updateSummon(partyId: string, gridSummonId: string, updates: Partial<GridSummon>, _editKey?: string) {
 			try {
 				await mutations.grid.updateSummon.mutateAsync({
 					id: gridSummonId,
@@ -76,7 +77,7 @@ export function useGridService(
 		async updateCharacter(
 			partyId: string,
 			gridCharacterId: string,
-			updates: any,
+			updates: Partial<GridCharacter>,
 			_editKey?: string
 		) {
 			try {

@@ -17,7 +17,7 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 	let loading = $state(false)
 	let error = $state<string | null>(null)
 
-	async function handleSwap(source: any, target: any): Promise<void> {
+	async function handleSwap(source: DragOperation['source'], target: DragOperation['target']): Promise<void> {
 		const party = opts.getParty()
 		if (!party.id || party.id === 'new') {
 			throw new Error('Cannot swap items in unsaved party')
@@ -39,7 +39,7 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 		}
 	}
 
-	async function handleMove(source: any, target: any): Promise<void> {
+	async function handleMove(source: DragOperation['source'], target: DragOperation['target']): Promise<void> {
 		const party = opts.getParty()
 		if (!party.id || party.id === 'new') {
 			throw new Error('Cannot move items in unsaved party')
