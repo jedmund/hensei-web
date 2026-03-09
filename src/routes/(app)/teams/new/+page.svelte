@@ -42,8 +42,8 @@
 
 	const partyQuery = createQuery(() => ({
 		...partyQueries.byShortcode(shortcode || 'new'),
-		initialData: placeholderParty,
-		enabled: false
+		initialData: shortcode ? undefined : placeholderParty,
+		enabled: !!shortcode
 	}))
 
 	const party = $derived(partyQuery.data ?? placeholderParty)
