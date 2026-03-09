@@ -3,14 +3,18 @@ import { partyAdapter } from '$lib/api/adapters/party.adapter'
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const authUserId = locals.session?.account?.userId
+	const authToken = locals.session?.account?.token
 
 	let partyFound = false
 	let party = null
 	let canEdit = false
 
 	try {
-		// Fetch the party using adapter
-		party = await partyAdapter.getByShortcode(params.id)
+		// Fetch the party using adapter (pass auth token for collection data)
+		party = await partyAdapter.getByShortcode(params.id, authToken
+			? { headers: { Authorization: `Bearer ${authToken}` } }
+			: undefined
+		)
 		partyFound = true
 
 		// Determine if user can edit
