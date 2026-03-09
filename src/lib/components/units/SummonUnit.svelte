@@ -8,7 +8,7 @@
   import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
   import { getSummonImage } from '$lib/features/database/detail/image'
-  import { getPlaceholderImage } from '$lib/utils/images'
+  import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
   import { sidebar } from '$lib/stores/sidebar.svelte'
   import { GridType } from '$lib/types/enums'
@@ -38,7 +38,8 @@
 
   let imageUrl = $derived.by(() => {
     const variant = isMainSized ? 'main' : 'grid'
-    return getSummonImage(item?.summon?.granblueId, variant)
+    const transformation = getSummonTransformation(item?.uncapLevel, item?.transcendenceStep)
+    return getSummonImage(item?.summon?.granblueId, variant, transformation)
   })
 
   // Check if this item is currently active in the sidebar
