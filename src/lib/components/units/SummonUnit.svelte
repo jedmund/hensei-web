@@ -38,7 +38,7 @@
 
   let imageUrl = $derived.by(() => {
     const variant = isMainSized ? 'main' : 'grid'
-    const transformation = getSummonTransformation(item?.uncapLevel, item?.transcendenceStep)
+    const transformation = getSummonTransformation(item?.summon?.granblueId, item?.uncapLevel, item?.transcendenceStep)
     return getSummonImage(item?.summon?.granblueId, variant, transformation)
   })
 
