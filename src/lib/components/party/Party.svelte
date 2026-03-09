@@ -514,12 +514,12 @@
 		background: rgba(209, 137, 58, 0.15);
 		border: 1px solid rgba(209, 137, 58, 0.4);
 		border-radius: $unit-half;
-		color: #c47a1a;
+		color: var(--accent-yellow);
 		font-size: $font-small;
 
 		:global(svg) {
 			flex-shrink: 0;
-			color: #c47a1a;
+			color: var(--accent-yellow);
 		}
 	}
 </style>

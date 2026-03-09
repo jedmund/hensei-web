@@ -1,4 +1,9 @@
-<svelte:options runes={true} />
+<!--
+  DORMANT COMPONENT — Currently unused.
+  Origin: Was used by the character detail/edit pages to show gacha availability and promotion info.
+  Removed from active use during a later refactor of the character detail page.
+  May be useful if gacha info editing is re-added to character detail pages.
+-->
 
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'

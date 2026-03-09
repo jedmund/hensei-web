@@ -109,6 +109,8 @@
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 
+	$mastery-gold: #d4af37;
+
 	.mastery-display {
 		&.detailed {
 			margin-bottom: spacing.$unit-2x;
@@ -146,8 +148,8 @@
 		border-radius: layout.$item-corner-small;
 
 		&.enhanced {
-			background: linear-gradient(135deg, var(--unit-bg), rgba(#d4af37, 0.1));
-			border: 1px solid rgba(#d4af37, 0.2);
+			background: linear-gradient(135deg, var(--unit-bg), rgba($mastery-gold, 0.1));
+			border: 1px solid rgba($mastery-gold, 0.2);
 		}
 	}
 
@@ -181,7 +183,7 @@
 		color: var(--text-secondary);
 
 		&.enhanced {
-			color: #d4af37;
+			color: $mastery-gold;
 			font-weight: typography.$medium;
 		}
 	}

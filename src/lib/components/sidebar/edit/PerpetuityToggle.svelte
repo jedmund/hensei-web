@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'

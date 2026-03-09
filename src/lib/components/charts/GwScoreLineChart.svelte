@@ -1,4 +1,9 @@
-<svelte:options runes={true} />
+<!--
+  DORMANT COMPONENT — Currently unused.
+  Origin: Scaffolded for GW (Guild War) individual player score charts.
+  Intended feature: Display per-round cumulative score line charts on crew/player GW pages.
+  Never wired up to any route or parent component.
+-->
 
 <script lang="ts">
 	import { Chart } from 'svelte-echarts'

@@ -1,4 +1,9 @@
-<svelte:options runes={true} />
+<!--
+  DORMANT COMPONENT — Currently unused.
+  Origin: Scaffolded for the database weapon grid to show truncated name cells.
+  Intended feature: Weapon name column with text-overflow ellipsis in the SVAR DataGrid.
+  Never wired up — the grid currently uses inline name rendering.
+-->
 
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'

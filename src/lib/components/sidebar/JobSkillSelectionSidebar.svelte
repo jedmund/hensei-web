@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { createInfiniteQuery } from '@tanstack/svelte-query'

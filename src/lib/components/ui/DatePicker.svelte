@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { DatePicker as BitsDatePicker, Label } from 'bits-ui'

@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
   import Dialog from '$lib/components/ui/Dialog.svelte'

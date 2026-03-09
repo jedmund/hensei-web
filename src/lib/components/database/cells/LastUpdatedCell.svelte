@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
@@ -120,19 +119,19 @@
 			letter-spacing: 0.5px;
 
 			&[data-type='transcendence'] {
-				color: #9b59b6;
+				color: var(--update-transcendence);
 			}
 
 			&[data-type='ulb'] {
-				color: #3498db;
+				color: var(--update-ulb);
 			}
 
 			&[data-type='flb'] {
-				color: #f39c12;
+				color: var(--update-flb);
 			}
 
 			&[data-type='release'] {
-				color: #95a5a6;
+				color: var(--update-release);
 			}
 		}
 	}

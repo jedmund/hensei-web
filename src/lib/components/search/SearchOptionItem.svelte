@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/utils/images'

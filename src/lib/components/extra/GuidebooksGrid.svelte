@@ -1,8 +1,11 @@
 <script lang="ts">
   import GuidebookUnit from '$lib/components/extra/GuidebookUnit.svelte'
 
-  // In API, guidebooks comes as a record with keys '1','2','3'
-  export let guidebooks: Record<string, any> | undefined
+  interface Props {
+    guidebooks?: Record<string, any>
+  }
+
+  let { guidebooks }: Props = $props()
 </script>
 
 <div class="guidebooks">
@@ -32,4 +35,3 @@
     }
   }
 </style>
-

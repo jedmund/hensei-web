@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import type { Job, JobSkill } from '$lib/types/api/entities'

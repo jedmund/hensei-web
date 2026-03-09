@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import type { Raid } from '$lib/types/api/entities'
@@ -50,7 +49,7 @@
 	.no-image {
 		width: 48px;
 		height: 48px;
-		background: #f0f0f0;
+		background: var(--placeholder-bg);
 		border-radius: layout.$item-corner-small;
 	}
 </style>

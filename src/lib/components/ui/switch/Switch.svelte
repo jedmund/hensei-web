@@ -1,5 +1,4 @@
 <!-- Switch Component -->
-<svelte:options runes={true} />
 <script lang="ts">
 	import { Switch as SwitchPrimitive } from 'bits-ui';
 

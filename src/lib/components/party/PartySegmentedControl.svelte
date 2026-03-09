@@ -1,5 +1,4 @@
 <!-- PartySegmentedControl Component -->
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'

@@ -2,7 +2,6 @@
   DatabaseGridWithProvider component using SVAR DataGrid with RestDataProvider
   Provides client-side pagination and data management with REST API integration
 -->
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { Grid } from 'wx-svelte-grid'
@@ -587,7 +586,7 @@
 
 					&:focus {
 						outline: none;
-						border-color: #007bff;
+						border-color: var(--accent-blue);
 					}
 				}
 			}
@@ -597,7 +596,7 @@
 			display: flex;
 			align-items: center;
 			padding: 0 spacing.$unit spacing.$unit spacing.$unit;
-			border-bottom: 1px solid #e5e5e5;
+			border-bottom: 1px solid var(--border-subtle);
 			background: var(--card-bg);
 
 			:global(.filters-container) {
@@ -627,7 +626,7 @@
 				left: 0;
 				right: 0;
 				bottom: 0;
-				background: rgba(255, 255, 255, 0.9);
+				background: color-mix(in srgb, var(--card-bg) 90%, transparent);
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -635,7 +634,7 @@
 
 				.loading-spinner {
 					font-size: typography.$font-medium;
-					color: #666;
+					color: var(--text-tertiary);
 				}
 			}
 		}
@@ -645,12 +644,12 @@
 			justify-content: space-between;
 			align-items: center;
 			padding: spacing.$unit-2x;
-			border-top: 1px solid #e5e5e5;
-			background: #f8f9fa;
+			border-top: 1px solid var(--border-subtle);
+			background: var(--bar-bg);
 
 			.pagination-info {
 				font-size: typography.$font-small;
-				color: #6c757d;
+				color: var(--text-secondary);
 			}
 
 			.pagination-controls {
@@ -660,7 +659,7 @@
 
 				.page-display {
 					font-size: typography.$font-small;
-					color: #495057;
+					color: var(--text-primary);
 					min-width: 100px;
 					text-align: center;
 				}
@@ -680,25 +679,25 @@
 	}
 
 	:global(.wx-grid .wx-header) {
-		background: #f8f9fa;
+		background: var(--bar-bg);
 	}
 
 	:global(.wx-grid .wx-h-row) {
-		background: #f8f9fa;
-		border-bottom: 1px solid #e5e5e5;
+		background: var(--bar-bg);
+		border-bottom: 1px solid var(--border-subtle);
 	}
 
 	:global(.wx-grid .wx-header-cell) {
-		background: #f8f9fa;
+		background: var(--bar-bg);
 		font-weight: typography.$bold;
-		color: #495057;
-		border-bottom: 2px solid #dee2e6;
+		color: var(--text-secondary);
+		border-bottom: 2px solid var(--border-medium);
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s ease;
 		cursor: pointer;
 
 		&:hover {
-			background: #e9ecef;
+			background: var(--button-bg-hover);
 		}
 	}
 
@@ -720,28 +719,28 @@
 	}
 
 	:global(.wx-grid .wx-row:hover) {
-		background: #f8f9fa;
+		background: var(--bar-bg);
 		cursor: pointer;
 	}
 
 	// Element color classes
 	:global(.element-fire) {
-		color: #ff6b6b;
+		color: var(--fire-text);
 	}
 	:global(.element-water) {
-		color: #4dabf7;
+		color: var(--water-text);
 	}
 	:global(.element-earth) {
-		color: #51cf66;
+		color: var(--earth-text);
 	}
 	:global(.element-wind) {
-		color: #69db7c;
+		color: var(--wind-text);
 	}
 	:global(.element-light) {
-		color: #ffd43b;
+		color: var(--light-text);
 	}
 	:global(.element-dark) {
-		color: #845ef7;
+		color: var(--dark-text);
 	}
 
 	// Database image styling - removed to allow cells to control sizing

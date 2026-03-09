@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
@@ -89,7 +88,7 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
-	@use '$src/themes/colors' as colors;
+	@use '$src/themes/grades' as grades;
 
 	.artifact-row {
 		display: flex;
@@ -216,27 +215,7 @@
 		border-radius: $item-corner-small;
 		line-height: 1;
 
-		&.grade-s {
-			background: linear-gradient(135deg, colors.$gold, colors.$gold-light);
-			color: #6b4c00;
-		}
-		&.grade-a {
-			background: linear-gradient(135deg, #4ade80, #22c55e);
-			color: #14532d;
-		}
-		&.grade-b {
-			background: linear-gradient(135deg, #60a5fa, #3b82f6);
-			color: #1e3a5f;
-		}
-		&.grade-c,
-		&.grade-d {
-			background: var(--grey-80, #e9e9e9);
-			color: var(--grey-40, #444);
-		}
-		&.grade-f {
-			background: linear-gradient(135deg, #f87171, #ef4444);
-			color: #7f1d1d;
-		}
+		@include grades.badge-colors;
 	}
 
 	.placeholder {

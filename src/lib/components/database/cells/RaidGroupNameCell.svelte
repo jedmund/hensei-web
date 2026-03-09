@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import typography from '$src/themes/_typography.scss?inline'

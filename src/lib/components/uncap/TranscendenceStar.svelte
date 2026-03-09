@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import TranscendenceFragment from './TranscendenceFragment.svelte'
@@ -379,13 +378,13 @@
 			white-space: nowrap;
 			display: flex;
 			gap: spacing.$unit-half;
-			color: #333;
+			color: var(--text-primary);
 
 			.level-value {
 				font-weight: typography.$medium;
 
 				&.pending {
-					color: #999;
+					color: var(--text-tertiary);
 				}
 			}
 		}

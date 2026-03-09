@@ -1,5 +1,4 @@
 <!-- Button Component -->
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { Button as ButtonPrimitive } from 'bits-ui'

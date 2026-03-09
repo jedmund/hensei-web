@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import type { GridItem, GridItemType } from '$lib/composables/drag-drop.svelte'
@@ -129,15 +128,15 @@
 		}
 
 		&.valid-drop {
-			border: 2px dashed #4CAF50;
-			background: rgba(76, 175, 80, 0.1);
+			border: 2px dashed var(--dnd-valid);
+			background: color-mix(in srgb, var(--dnd-valid) 10%, transparent);
 			border-radius: layout.$input-corner;
 
 			&::before {
 				content: '';
 				position: absolute;
 				inset: -4px;
-				border: 2px solid #4CAF50;
+				border: 2px solid var(--dnd-valid);
 				border-radius: 10px;
 				opacity: 0.3;
 				pointer-events: none;
@@ -146,8 +145,8 @@
 		}
 
 		&.invalid-drop {
-			border: 2px dashed #F44336;
-			background: rgba(244, 67, 54, 0.1);
+			border: 2px dashed var(--dnd-invalid);
+			background: color-mix(in srgb, var(--dnd-invalid) 10%, transparent);
 			border-radius: layout.$input-corner;
 			opacity: 0.7;
 
@@ -158,7 +157,7 @@
 				left: 50%;
 				transform: translate(-50%, -50%);
 				font-size: 24px;
-				color: #F44336;
+				color: var(--dnd-invalid);
 				pointer-events: none;
 			}
 		}

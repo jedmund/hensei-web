@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { ELEMENT_LABELS, ELEMENT_CSS_CLASSES } from '$lib/utils/gw'
@@ -40,33 +39,33 @@
 		}
 
 		&.element-fire {
-			background: #fee2e2;
-			color: #dc2626;
+			background: var(--fire-bg);
+			color: var(--fire-text);
 		}
 
 		&.element-water {
-			background: #dbeafe;
-			color: #2563eb;
+			background: var(--water-bg);
+			color: var(--water-text);
 		}
 
 		&.element-earth {
-			background: #fef3c7;
-			color: #d97706;
+			background: var(--earth-bg);
+			color: var(--earth-text);
 		}
 
 		&.element-wind {
-			background: #d1fae5;
-			color: #059669;
+			background: var(--wind-bg);
+			color: var(--wind-text);
 		}
 
 		&.element-light {
-			background: #fef9c3;
-			color: #ca8a04;
+			background: var(--light-bg);
+			color: var(--light-text);
 		}
 
 		&.element-dark {
-			background: #ede9fe;
-			color: #7c3aed;
+			background: var(--dark-bg);
+			color: var(--dark-text);
 		}
 	}
 </style>

@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
   import { onMount } from 'svelte'
@@ -6,6 +5,7 @@
   import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholderImage } from '$lib/utils/images'
   import { toast } from 'svelte-sonner'
   import { extractErrorMessage } from '$lib/utils/errors'
+  import { getElementColor } from '$lib/utils/gw'
 
   interface Props {
     open?: boolean
@@ -44,13 +44,13 @@
 
   // Constants
   const elements = [
-    { value: 0, label: 'Null', color: '#888' },
-    { value: 1, label: 'Wind', color: '#4A9B3F' },
-    { value: 2, label: 'Fire', color: '#D94444' },
-    { value: 3, label: 'Water', color: '#4A7FB8' },
-    { value: 4, label: 'Earth', color: '#9B6E3F' },
-    { value: 5, label: 'Dark', color: '#6B3E9B' },
-    { value: 6, label: 'Light', color: '#F4B643' }
+    { value: 0, label: 'Null', color: getElementColor(0) },
+    { value: 1, label: 'Wind', color: getElementColor(1) },
+    { value: 2, label: 'Fire', color: getElementColor(2) },
+    { value: 3, label: 'Water', color: getElementColor(3) },
+    { value: 4, label: 'Earth', color: getElementColor(4) },
+    { value: 5, label: 'Dark', color: getElementColor(5) },
+    { value: 6, label: 'Light', color: getElementColor(6) }
   ]
 
   const rarities = [
@@ -219,11 +219,11 @@
   class:open={open}
   aria-hidden={!open}
   aria-label="Search {type}s"
-  on:keydown={handleKeyDown}
+  onkeydown={handleKeyDown}
 >
   <header class="sidebar-header">
     <h2>Search {type}s</h2>
-    <button class="close-btn" on:click={onClose} aria-label="Close">×</button>
+    <button class="close-btn" onclick={onClose} aria-label="Close">×</button>
   </header>
 
   <div class="search-section">
@@ -247,7 +247,7 @@
             class="filter-btn element-btn"
             class:active={elementFilters.includes(element.value)}
             style="--element-color: {element.color}"
-            on:click={() => toggleElementFilter(element.value)}
+            onclick={() => toggleElementFilter(element.value)}
             aria-pressed={elementFilters.includes(element.value)}
           >
             {element.label}
@@ -264,7 +264,7 @@
           <button
             class="filter-btn rarity-btn"
             class:active={rarityFilters.includes(rarity.value)}
-            on:click={() => toggleRarityFilter(rarity.value)}
+            onclick={() => toggleRarityFilter(rarity.value)}
             aria-pressed={rarityFilters.includes(rarity.value)}
           >
             {rarity.label}
@@ -282,7 +282,7 @@
             <button
               class="filter-btn prof-btn"
               class:active={proficiencyFilters.includes(prof.value)}
-              on:click={() => toggleProficiencyFilter(prof.value)}
+              onclick={() => toggleProficiencyFilter(prof.value)}
               aria-pressed={proficiencyFilters.includes(prof.value)}
             >
               {prof.label}
@@ -304,7 +304,7 @@
             <button
               class="result-button"
               class:disabled={!canAddMore}
-              on:click={() => handleItemClick(item)}
+              onclick={() => handleItemClick(item)}
               aria-label="{canAddMore ? 'Add' : 'Grid full - cannot add'} {getItemName(item)}"
               disabled={!canAddMore}
             >
@@ -330,14 +330,14 @@
       {#if totalPages > 1}
         <div class="pagination">
           <button
-            on:click={() => currentPage = Math.max(1, currentPage - 1)}
+            onclick={() => currentPage = Math.max(1, currentPage - 1)}
             disabled={currentPage === 1}
           >
             Previous
           </button>
           <span>Page {currentPage} of {totalPages}</span>
           <button
-            on:click={() => currentPage = Math.min(totalPages, currentPage + 1)}
+            onclick={() => currentPage = Math.min(totalPages, currentPage + 1)}
             disabled={currentPage === totalPages}
           >
             Next
@@ -362,11 +362,11 @@
   .sidebar {
     width: 320px;
     height: 100vh;
-    background: var(--app-bg, #fff);
+    background: var(--card-bg);
     display: none;
     flex-direction: column;
     box-shadow: var(--shadow-md);
-    border-left: 1px solid #e0e0e0;
+    border-left: 1px solid var(--border-subtle);
     position: sticky;
     top: 0;
     flex-shrink: 0;
@@ -381,8 +381,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    border-bottom: 1px solid #e0e0e0;
-    background: #fafafa;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bar-bg);
 
     h2 {
       margin: 0;
@@ -402,35 +402,38 @@
       align-items: center;
       justify-content: center;
       border-radius: layout.$item-corner-small;
+      color: var(--text-primary);
 
       &:hover {
-        background: rgba(0,0,0,0.05);
+        background: var(--button-bg-hover);
       }
     }
   }
 
   .search-section {
     padding: 12px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-subtle);
 
     .search-input {
       width: 100%;
       padding: 8px 12px;
-      border: 1px solid #ddd;
+      border: 1px solid var(--border-subtle);
       border-radius: layout.$bubble-menu-item-corner;
       font-size: typography.$font-body;
+      background: var(--input-bg);
+      color: var(--text-primary);
 
       &:focus {
         outline: none;
-        border-color: #3366ff;
-        box-shadow: 0 0 0 2px rgba(51, 102, 255, 0.1);
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 2px var(--accent-blue-focus);
       }
     }
   }
 
   .filters-section {
     padding: 12px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-subtle);
     max-height: 280px;
     overflow-y: auto;
 
@@ -447,7 +450,7 @@
       font-size: 12px;
       font-weight: typography.$bold;
       text-transform: uppercase;
-      color: #666;
+      color: var(--text-tertiary);
       margin-bottom: 6px;
     }
 
@@ -465,21 +468,22 @@
 
     .filter-btn {
       padding: 4px 8px;
-      border: 1px solid #ddd;
+      border: 1px solid var(--border-subtle);
       background: var(--card-bg);
       border-radius: layout.$item-corner-small;
       font-size: 12px;
       cursor: pointer;
       transition: all 0.2s;
+      color: var(--text-primary);
 
       &:hover {
-        background: #f5f5f5;
+        background: var(--button-bg-hover);
       }
 
       &.active {
-        background: #3366ff;
+        background: var(--accent-blue);
         color: white;
-        border-color: #3366ff;
+        border-color: var(--accent-blue);
       }
 
       &.element-btn.active {
@@ -498,7 +502,7 @@
     .loading, .no-results, .empty-state {
       text-align: center;
       padding: spacing.$unit-3x;
-      color: #666;
+      color: var(--text-tertiary);
       font-size: typography.$font-body;
     }
 
@@ -524,8 +528,8 @@
         text-align: left;
 
         &:hover {
-          background: #f5f5f5;
-          border-color: #3366ff;
+          background: var(--button-bg-hover);
+          border-color: var(--accent-blue);
           box-shadow: var(--shadow-xs);
         }
 
@@ -537,12 +541,12 @@
         &:disabled {
           opacity: 0.5;
           cursor: not-allowed;
-          background: #f9f9f9;
-          border-color: #ddd;
+          background: var(--button-bg-disabled);
+          border-color: var(--border-subtle);
 
           &:hover {
-            background: #f9f9f9;
-            border-color: #ddd;
+            background: var(--button-bg-disabled);
+            border-color: var(--border-subtle);
             box-shadow: none;
           }
         }
@@ -554,13 +558,13 @@
         object-fit: cover;
         border-radius: layout.$item-corner-small;
         margin-right: 12px;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--border-subtle);
       }
 
       .result-name {
         flex: 1;
         font-size: typography.$font-body;
-        color: #333;
+        color: var(--text-primary);
       }
 
       .result-element {
@@ -577,18 +581,19 @@
       gap: 12px;
       margin-top: 16px;
       padding-top: 12px;
-      border-top: 1px solid #e0e0e0;
+      border-top: 1px solid var(--border-subtle);
 
       button {
         padding: 4px 12px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-subtle);
         background: var(--card-bg);
         border-radius: layout.$item-corner-small;
         font-size: 13px;
         cursor: pointer;
+        color: var(--text-primary);
 
         &:hover:not(:disabled) {
-          background: #f0f0f0;
+          background: var(--button-bg-hover);
         }
 
         &:disabled {
@@ -599,7 +604,7 @@
 
       span {
         font-size: 13px;
-        color: #666;
+        color: var(--text-tertiary);
       }
     }
   }

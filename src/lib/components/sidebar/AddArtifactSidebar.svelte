@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	/**
@@ -30,6 +29,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import ArtifactSkillRow from '$lib/components/artifact/ArtifactSkillRow.svelte'
 	import ArtifactModifierList from '$lib/components/artifact/ArtifactModifierList.svelte'
+	import { getElementColor } from '$lib/utils/gw'
 
 	interface Props {
 		/** Callback when artifact is created successfully */
@@ -60,16 +60,6 @@
 	let nickname = $state<string>('')
 	let skills = $state<(ArtifactSkillInstance | null)[]>([null, null, null, null])
 
-	// Element colors for dots (CSS colors that work in both light/dark themes)
-	const ELEMENT_COLORS: Record<number, string> = {
-		1: '#1dc688', // Wind - green
-		2: '#ec5c5c', // Fire - red
-		3: '#5cb7ec', // Water - blue
-		4: '#ec985c', // Earth - orange/brown
-		5: '#c65cec', // Dark - purple
-		6: '#c59c0c' // Light - gold/yellow
-	}
-
 	// Proficiency options - matches database enum values
 	const proficiencyOptions = [
 		{ value: 1, label: 'Sabre' },
@@ -86,12 +76,12 @@
 
 	// Element options with colored dots
 	const elementOptions = [
-		{ value: 1, label: 'Wind', color: ELEMENT_COLORS[1] },
-		{ value: 2, label: 'Fire', color: ELEMENT_COLORS[2] },
-		{ value: 3, label: 'Water', color: ELEMENT_COLORS[3] },
-		{ value: 4, label: 'Earth', color: ELEMENT_COLORS[4] },
-		{ value: 5, label: 'Dark', color: ELEMENT_COLORS[5] },
-		{ value: 6, label: 'Light', color: ELEMENT_COLORS[6] }
+		{ value: 1, label: 'Wind', color: getElementColor(1) },
+		{ value: 2, label: 'Fire', color: getElementColor(2) },
+		{ value: 3, label: 'Water', color: getElementColor(3) },
+		{ value: 4, label: 'Earth', color: getElementColor(4) },
+		{ value: 5, label: 'Dark', color: getElementColor(5) },
+		{ value: 6, label: 'Light', color: getElementColor(6) }
 	]
 
 	// Filter artifacts by selected proficiency

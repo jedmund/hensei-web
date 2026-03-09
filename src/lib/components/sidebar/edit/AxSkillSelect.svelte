@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import type { AugmentSkill, WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
