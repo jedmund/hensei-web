@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import Select from '$lib/components/ui/Select.svelte'

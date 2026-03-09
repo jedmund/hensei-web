@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'

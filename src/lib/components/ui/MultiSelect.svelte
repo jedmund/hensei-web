@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts" generics="T extends string | number">
 	import { Select as SelectPrimitive } from 'bits-ui'

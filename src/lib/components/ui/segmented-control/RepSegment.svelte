@@ -1,5 +1,4 @@
 <!-- RepSegment Component - A segment with visual content and label -->
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui'

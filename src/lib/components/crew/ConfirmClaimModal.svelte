@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { useConfirmPhantomClaim } from '$lib/api/mutations/crew.mutations'

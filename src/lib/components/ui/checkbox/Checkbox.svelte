@@ -1,5 +1,4 @@
 <!-- Checkbox Component -->
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { Checkbox as CheckboxPrimitive } from 'bits-ui'

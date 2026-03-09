@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { SIDEBAR_WIDTH } from '$lib/stores/sidebar.svelte'

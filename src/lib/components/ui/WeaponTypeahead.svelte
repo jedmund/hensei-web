@@ -1,5 +1,4 @@
 <!-- WeaponTypeahead Component - Async weapon search with Svelecte -->
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import Svelecte from 'svelecte'

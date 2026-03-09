@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'

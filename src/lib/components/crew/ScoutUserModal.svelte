@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { userAdapter, type UserInfo } from '$lib/api/adapters/user.adapter'

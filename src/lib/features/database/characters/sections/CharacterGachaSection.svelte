@@ -4,7 +4,6 @@
   Removed from active use during a later refactor of the character detail page.
   May be useful if gacha info editing is re-added to character detail pages.
 -->
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'

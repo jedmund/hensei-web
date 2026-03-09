@@ -1,5 +1,4 @@
 <!-- Typeahead Component (Svelecte wrapper) -->
-<svelte:options runes={true} />
 
 <script lang="ts" generics="T extends object">
 	import Svelecte from 'svelecte';

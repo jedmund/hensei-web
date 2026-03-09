@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { useSendInvitation } from '$lib/api/mutations/crew.mutations'

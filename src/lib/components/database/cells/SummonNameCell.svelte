@@ -4,7 +4,6 @@
   Intended feature: Summon name column with text-overflow ellipsis in the SVAR DataGrid.
   Never wired up — the grid currently uses inline name rendering.
 -->
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'

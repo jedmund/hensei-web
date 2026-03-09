@@ -4,7 +4,6 @@
   Intended feature: Display per-round cumulative score line charts on crew/player GW pages.
   Never wired up to any route or parent component.
 -->
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { Chart } from 'svelte-echarts'

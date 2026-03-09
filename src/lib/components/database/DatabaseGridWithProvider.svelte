@@ -2,7 +2,6 @@
   DatabaseGridWithProvider component using SVAR DataGrid with RestDataProvider
   Provides client-side pagination and data management with REST API integration
 -->
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { Grid } from 'wx-svelte-grid'

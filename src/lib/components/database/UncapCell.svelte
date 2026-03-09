@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'

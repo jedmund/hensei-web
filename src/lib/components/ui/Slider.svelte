@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { Slider as SliderPrimitive } from 'bits-ui'
