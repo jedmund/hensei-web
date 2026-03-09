@@ -47,6 +47,8 @@
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
+		/** Pane ID injected by PaneStack for targeted action updates */
+		paneId?: string
 		/** Current party values */
 		initialValues: PartyEditValues
 		/** Party element for switch theming */
@@ -55,7 +57,7 @@
 		onSave?: (values: PartyEditValues) => void
 	}
 
-	let { initialValues, element, onSave }: Props = $props()
+	let { paneId, initialValues, element, onSave }: Props = $props()
 
 	// Get the pane stack for pushing EditRaidPane
 	const paneStack = usePaneStack()
@@ -71,24 +73,8 @@
 	// Props passed through PaneStack's $state are wrapped in deep reactive proxies.
 	// Reading initialValues.xxx in $derived creates tracking dependencies on the proxy,
 	// which can be invalidated when setAction mutates the pane object.
-	// Snapshotting into a plain const breaks that reactive chain.
-	const initial = {
-		name: initialValues.name,
-		description: initialValues.description,
-		visibility: initialValues.visibility,
-		sharedWithCrew: initialValues.sharedWithCrew,
-		fullAuto: initialValues.fullAuto,
-		autoGuard: initialValues.autoGuard,
-		autoSummon: initialValues.autoSummon,
-		chargeAttack: initialValues.chargeAttack,
-		clearTime: initialValues.clearTime,
-		buttonCount: initialValues.buttonCount,
-		chainCount: initialValues.chainCount,
-		summonCount: initialValues.summonCount,
-		videoUrl: initialValues.videoUrl,
-		raid: initialValues.raid,
-		raidId: initialValues.raidId
-	}
+	// $state.snapshot() produces a plain non-reactive copy, breaking that chain.
+	const initial = $state.snapshot(initialValues) as PartyEditValues
 
 	// Local state - initialized from snapshot
 	let name = $state(initial.name)
@@ -155,16 +141,28 @@
 		sidebar.close()
 	}
 
-	// Update sidebar action button state based on changes
+	// Update sidebar action button state based on changes.
+	// Uses setActionForPane to target this pane by ID, so the action is set
+	// correctly even when another pane (e.g. EditRaidPane) is on top.
+	// IMPORTANT: paneId must be read inside untrack() to avoid an infinite loop —
+	// updatePaneAt creates a new panes array, which re-spreads component props,
+	// which would re-trigger this effect if paneId were tracked.
 	$effect(() => {
-		// Read hasChanges to track it
 		const changed = hasChanges
-		// Use untrack to prevent tracking sidebar mutations
 		untrack(() => {
-			if (changed) {
-				sidebar.setAction(save, 'Save', element)
+			if (paneId) {
+				sidebar.setActionForPane(
+					paneId,
+					changed ? save : undefined,
+					'Save',
+					element
+				)
 			} else {
-				sidebar.setAction(undefined, 'Save', element)
+				if (changed) {
+					sidebar.setAction(save, 'Save', element)
+				} else {
+					sidebar.setAction(undefined, 'Save', element)
+				}
 			}
 		})
 	})
@@ -229,7 +227,8 @@
 							difficulty: selectedRaid.group.difficulty,
 							hl: selectedRaid.group.hl,
 							extra: selectedRaid.group.extra,
-							guidebooks: selectedRaid.group.guidebooks
+							guidebooks: selectedRaid.group.guidebooks,
+							unlimited: selectedRaid.group.unlimited
 						}
 					: undefined
 			}
