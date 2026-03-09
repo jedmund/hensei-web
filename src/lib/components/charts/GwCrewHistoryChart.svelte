@@ -57,7 +57,7 @@
 				if (!point) return ''
 				const dataPoint = data[point.dataIndex]
 				if (dataPoint?.isGap) {
-					return `${point.name}<br/><span style="color: #999">Not in crew</span><br/>${dataPoint?.date ?? ''}`
+					return `${point.name}<br/><span style="color: var(--text-tertiary)">Not in crew</span><br/>${dataPoint?.date ?? ''}`
 				}
 				return `${point.name}<br/>Score: ${formatScore(point.value ?? 0)}<br/>${dataPoint?.date ?? ''}`
 			}
