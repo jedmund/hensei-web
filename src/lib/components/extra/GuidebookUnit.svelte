@@ -1,13 +1,14 @@
 <script lang="ts">
-  import { usePartyContext } from '$lib/types/party-context'
   import { getGuidebookImage } from '$lib/utils/images'
 
-  export let item: any | undefined
-  export let position: number // 1..3
+  interface Props {
+    item: Record<string, any> | undefined
+    position: number // 1..3
+  }
 
-  const ctx = usePartyContext()
+  let { item, position }: Props = $props()
 
-  function displayName(input: any): string {
+  function displayName(input: Record<string, any> | undefined): string {
     if (!input) return '—'
     const maybe = input.name ?? input
     if (typeof maybe === 'string') return maybe
@@ -15,36 +16,14 @@
     return '—'
   }
 
-  function guidebookImageUrl(g?: any): string {
+  function guidebookImageUrl(g?: Record<string, any>): string {
     return getGuidebookImage(g?.granblueId)
-  }
-
-  async function remove() {
-    const party = ctx.getParty()
-    const editKey = ctx.services.partyService.getEditKey(party.shortcode)
-    const updated = await ctx.services.partyService.updateGuidebooks(party.id, position - 1, null, editKey || undefined)
-    ctx.updateParty(updated)
-  }
-
-  async function add() {
-    const party = ctx.getParty()
-    const editKey = ctx.services.partyService.getEditKey(party.shortcode)
-    const id = window.prompt('Enter guidebook ID to add')
-    if (!id) return
-    const updated = await ctx.services.partyService.updateGuidebooks(party.id, position - 1, id, editKey || undefined)
-    ctx.updateParty(updated)
   }
 </script>
 
 <div class="unit">
   <img class="image" alt={item ? displayName(item) : ''} src={guidebookImageUrl(item)} />
   <div class="name">{item ? displayName(item) : '—'}</div>
-  {#if ctx.canEdit() && !item}
-    <button class="add" title="Add" on:click={add}>＋</button>
-  {/if}
-  {#if ctx.canEdit() && item}
-    <button class="remove" title="Remove" on:click={remove}>×</button>
-  {/if}
 </div>
 
 <style lang="scss">
@@ -56,7 +35,4 @@
   .unit { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; gap: $unit; }
   .image { width: 100%; height: auto; border: 1px solid $grey-75; border-radius: layout.$input-corner; display: block; background: var(--extra-purple-card-bg); }
   .name { font-size: $font-small; text-align: center; color: var(--text-secondary); }
-  .remove, .add { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.6); color: white; border: none; border-radius: layout.$card-corner; width: 24px; height: 24px; line-height: 24px; cursor: pointer; }
-  .add { right: 6px; }
 </style>
-

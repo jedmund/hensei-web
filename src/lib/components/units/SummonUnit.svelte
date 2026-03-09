@@ -73,10 +73,7 @@
     try {
       const party = ctx.getParty()
       const editKey = ctx.getEditKey()
-      const updated = await ctx.services.gridService.removeSummon(party.id, item.id as any, editKey || undefined)
-      if (updated) {
-        ctx.updateParty(updated)
-      }
+      await ctx.services.gridService.removeSummon(party.id, item.id as any, editKey || undefined)
     } catch (err) {
       console.error('Error removing summon:', err)
       toast.error(extractErrorMessage(err, 'Failed to remove summon'))
@@ -207,10 +204,7 @@
         if (!item?.id || !ctx) return
         try {
           const editKey = ctx.getEditKey()
-          const updated = await ctx.services.gridService.updateSummonUncap(item.id, level, undefined, editKey || undefined)
-          if (updated) {
-            ctx.updateParty(updated)
-          }
+          await ctx.services.gridService.updateSummonUncap(item.id, level, undefined, editKey || undefined)
         } catch (err) {
           console.error('Failed to update summon uncap:', err)
           toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
@@ -222,10 +216,7 @@
           const editKey = ctx.getEditKey()
           // When setting transcendence > 0, also set uncap to max (6)
           const maxUncap = stage > 0 ? 6 : undefined
-          const updated = await ctx.services.gridService.updateSummonUncap(item.id, maxUncap, stage, editKey || undefined)
-          if (updated) {
-            ctx.updateParty(updated)
-          }
+          await ctx.services.gridService.updateSummonUncap(item.id, maxUncap, stage, editKey || undefined)
         } catch (err) {
           console.error('Failed to update summon transcendence:', err)
           toast.error(extractErrorMessage(err, 'Failed to update transcendence'))
