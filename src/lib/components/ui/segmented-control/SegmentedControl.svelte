@@ -3,10 +3,10 @@
 
 <script lang="ts">
 	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui'
-	import { setContext } from 'svelte'
 	import type { Snippet } from 'svelte'
 	import styles from './segmented-control.module.scss'
 	import type { HTMLAttributes } from 'svelte/elements'
+	import { setSegmentedControlContext } from './context'
 
 	export type SegmentedControlVariant = 'default' | 'blended' | 'background'
 	export type SegmentedControlSize = 'default' | 'small' | 'xsmall'
@@ -38,10 +38,7 @@
 	}: Props = $props()
 
 	// Provide variant, size, grow, and element to child segments via context
-	setContext('segmented-control-variant', variant)
-	setContext('segmented-control-size', size)
-	setContext('segmented-control-grow', grow)
-	setContext('segmented-control-element', element)
+	setSegmentedControlContext({ variant, size, grow, element })
 
 	// Track previous value to only fire callback on actual changes (not initialization)
 	let previousValue = $state<string | undefined>(undefined)

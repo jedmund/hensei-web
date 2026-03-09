@@ -283,7 +283,15 @@
 		</nav>
 
 		<div class="content">
-			{@render children()}
+			<svelte:boundary onerror={(e) => { if (import.meta.env.DEV) console.error('Collection render error:', e) }}>
+				{@render children()}
+				{#snippet failed(error, reset)}
+					<div class="collection-error" role="alert">
+						<p>Failed to load collection</p>
+						<button onclick={reset}>Retry</button>
+					</div>
+				{/snippet}
+			</svelte:boundary>
 		</div>
 	</div>
 </section>

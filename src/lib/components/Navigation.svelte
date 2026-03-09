@@ -17,7 +17,7 @@
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import UserSettingsModal from './UserSettingsModal.svelte'
 	import InvitationsModal from './crew/InvitationsModal.svelte'
-	import { authStore } from '$lib/stores/auth.store'
+	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
@@ -38,7 +38,7 @@
 
 	const username = $derived(account?.username ?? '')
 	// Use reactive authStore instead of static server prop for real-time auth state
-	const isAuth = $derived($authStore.isAuthenticated)
+	const isAuth = $derived(authStore.isAuthenticated)
 	const role = $derived(account?.role ?? null)
 	// Element from UserCookie is already a string like "fire", "water", etc.
 	const userElement = $derived(

@@ -1,8 +1,9 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { getContext, onMount } from 'svelte'
-	import type { GridItem, GridItemType, DragDropContext } from '$lib/composables/drag-drop.svelte'
+	import { onMount } from 'svelte'
+	import type { GridItem, GridItemType } from '$lib/composables/drag-drop.svelte'
+	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 
 	interface Props {
 		item: GridItem | undefined
@@ -24,7 +25,7 @@
 		children
 	}: Props = $props()
 
-	const dragContext = getContext<DragDropContext>('drag-drop')
+	const dragContext = getDragDropContext()
 	let elementRef: HTMLElement | undefined = $state()
 	let isDragging = $derived(
 		dragContext?.state.isDragging &&

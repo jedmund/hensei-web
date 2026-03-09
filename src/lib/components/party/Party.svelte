@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { onMount, getContext, setContext, onDestroy } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
+	import { setPartyContext } from '$lib/types/party-context'
 	import { pushState } from '$app/navigation'
 	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
@@ -47,7 +48,11 @@
 	import { getLocalId } from '$lib/utils/localId'
 	import { getEditKey, storeEditKey, computeEditability } from '$lib/utils/editKeys'
 
-	import { createDragDropContext, type DragOperation } from '$lib/composables/drag-drop.svelte'
+	import {
+		createDragDropContext,
+		setDragDropContext,
+		type DragOperation
+	} from '$lib/composables/drag-drop.svelte'
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
 	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
 	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
@@ -944,7 +949,7 @@
 	}
 
 	// Provide services to child components via context
-	setContext('party', {
+	setPartyContext({
 		getParty: () => party,
 		canEdit: () => canEdit(),
 		getEditKey: () => editKey,
@@ -990,7 +995,7 @@
 	})
 
 	// Provide drag-drop context to child components
-	setContext('drag-drop', dragContext)
+	setDragDropContext(dragContext)
 </script>
 
 <div class="page-wrap">
@@ -1066,6 +1071,7 @@
 			{/if}
 
 			<div class="party-content">
+				<svelte:boundary onerror={(e) => { if (import.meta.env.DEV) console.error('Grid render error:', e) }}>
 				{#if activeTab === GridType.Weapon}
 					<WeaponGrid
 						weapons={party.weapons}
@@ -1101,6 +1107,13 @@
 						/>
 					</div>
 				{/if}
+				{#snippet failed(error, reset)}
+					<div class="grid-error" role="alert">
+						<p>Failed to render grid</p>
+						<button onclick={reset}>Retry</button>
+					</div>
+				{/snippet}
+				</svelte:boundary>
 			</div>
 		</section>
 	</div>

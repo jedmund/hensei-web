@@ -2,9 +2,8 @@
 
 <script lang="ts">
 	import type { GridSummon } from '$lib/types/api/party'
-	import { getContext } from 'svelte'
-	import type { PartyContext } from '$lib/types/party-context'
-	import type { DragDropContext } from '$lib/composables/drag-drop.svelte'
+	import { usePartyContext } from '$lib/types/party-context'
+	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
 	import DropZone from '$lib/components/dnd/DropZone.svelte'
 
@@ -18,8 +17,8 @@
 	import SummonUnit from '$lib/components/units/SummonUnit.svelte'
 	import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
 
-	const ctx = getContext<PartyContext>('party')
-	const dragContext = getContext<DragDropContext | undefined>('drag-drop')
+	const ctx = usePartyContext()
+	const dragContext = getDragDropContext()
 
 	let main = $derived(summons.find((s) => s.main || s.position === -1))
 	let friend = $derived(summons.find((s) => s.friend || s.position === 6))

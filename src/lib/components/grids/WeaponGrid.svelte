@@ -2,9 +2,8 @@
 
 <script lang="ts">
 	import type { GridWeapon } from '$lib/types/api/party'
-	import { getContext } from 'svelte'
-	import type { PartyContext } from '$lib/types/party-context'
-	import type { DragDropContext } from '$lib/composables/drag-drop.svelte'
+	import { usePartyContext } from '$lib/types/party-context'
+	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
 	import DropZone from '$lib/components/dnd/DropZone.svelte'
 
@@ -29,8 +28,8 @@
 	import ExtraWeapons from '$lib/components/extra/ExtraWeaponsGrid.svelte'
 	import Guidebooks from '$lib/components/extra/GuidebooksGrid.svelte'
 
-	const ctx = getContext<PartyContext>('party')
-	const dragContext = getContext<DragDropContext | undefined>('drag-drop')
+	const ctx = usePartyContext()
+	const dragContext = getDragDropContext()
 
 	let mainhand = $derived(weapons.find((w) => (w as any).mainhand || w.position === -1))
 

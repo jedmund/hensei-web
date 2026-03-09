@@ -9,7 +9,7 @@
 import type { LayoutLoad } from './$types'
 import { browser } from '$app/environment'
 import { QueryClient } from '@tanstack/svelte-query'
-import { authStore } from '$lib/stores/auth.store'
+import { authStore } from '$lib/stores/auth.store.svelte'
 
 export const load: LayoutLoad = async ({ data }) => {
 	// Initialize auth store from server data BEFORE creating QueryClient

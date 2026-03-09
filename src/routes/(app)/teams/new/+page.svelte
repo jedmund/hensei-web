@@ -21,7 +21,8 @@
 	import { Gender } from '$lib/utils/jobUtils'
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
-	import { setContext, onDestroy } from 'svelte'
+	import { onDestroy } from 'svelte'
+	import { setPartyContext } from '$lib/types/party-context'
 	import type { AddItemResult } from '$lib/types/api/search'
 	import { gridAdapter } from '$lib/api/adapters'
 	import { getLocalId } from '$lib/utils/localId'
@@ -745,7 +746,7 @@
 	}
 
 	// Provide party context using query data
-	setContext('party', {
+	setPartyContext({
 		getParty: () => party,
 		updateParty: (p: Party) => {
 			// Update cache instead of local state

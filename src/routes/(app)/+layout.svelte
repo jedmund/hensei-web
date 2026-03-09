@@ -127,7 +127,16 @@
 				/>
 			</div>
 			<main class="main-content" bind:this={mainContent} onscroll={handleScroll}>
-				{@render children?.()}
+				<svelte:boundary onerror={(e) => { if (import.meta.env.DEV) console.error('Page render error:', e) }}>
+					{@render children?.()}
+					{#snippet failed(error, reset)}
+						<div class="page-error" role="alert">
+							<h2>Something went wrong</h2>
+							<p>An error occurred while rendering this page.</p>
+							<button onclick={reset}>Try again</button>
+						</div>
+					{/snippet}
+				</svelte:boundary>
 			</main>
 		</div>
 
