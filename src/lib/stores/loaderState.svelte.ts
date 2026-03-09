@@ -124,7 +124,7 @@ export class LoopTracker {
 
 		// If too many calls, start cooldown
 		if (this.#count >= this.loopMaxCalls) {
-			console.warn(`[LoopTracker] Too many load attempts (${this.#count}), cooling off...`)
+			if (import.meta.env.DEV) console.warn(`[LoopTracker] Too many load attempts (${this.#count}), cooling off...`)
 			this.coolingOff = true
 			this.#coolingOffTimer = setTimeout(() => {
 				this.coolingOff = false
@@ -201,7 +201,7 @@ export function useInfiniteLoader<TData, TError>(
 	// Clear the waiting flag when sentinel leaves viewport
 	$effect(() => {
 		if (!inViewport.current && waitingForSentinelExit) {
-			console.log(`[InfiniteLoader] ${new Date().toISOString()} Sentinel exited viewport, ready for next trigger`)
+			if (import.meta.env.DEV) console.log(`[InfiniteLoader] ${new Date().toISOString()} Sentinel exited viewport, ready for next trigger`)
 			waitingForSentinelExit = false
 		}
 	})
@@ -213,38 +213,38 @@ export function useInfiniteLoader<TData, TError>(
 	async function loadMore() {
 		const query = queryFn()
 
-		console.log(`[InfiniteLoader] ${new Date().toISOString()} loadMore called, status=${state.status}, waitingForExit=${waitingForSentinelExit}`)
+		if (import.meta.env.DEV) console.log(`[InfiniteLoader] ${new Date().toISOString()} loadMore called, status=${state.status}, waitingForExit=${waitingForSentinelExit}`)
 
 		// Guard: Only proceed if READY or ERROR (for retry)
 		if (
 			state.status === STATUS.COMPLETE ||
 			(state.status !== STATUS.READY && state.status !== STATUS.ERROR)
 		) {
-			console.log(`[InfiniteLoader] ${new Date().toISOString()} Skipped - status is ${state.status}`)
+			if (import.meta.env.DEV) console.log(`[InfiniteLoader] ${new Date().toISOString()} Skipped - status is ${state.status}`)
 			return
 		}
 
 		// Guard: Wait for sentinel to leave viewport after a load before allowing next
 		if (waitingForSentinelExit) {
-			console.log(`[InfiniteLoader] ${new Date().toISOString()} Skipped - waiting for sentinel to leave viewport`)
+			if (import.meta.env.DEV) console.log(`[InfiniteLoader] ${new Date().toISOString()} Skipped - waiting for sentinel to leave viewport`)
 			return
 		}
 
 		// Skip if cooling off from loop detection
 		if (loopTracker.coolingOff) {
-			console.log(`[InfiniteLoader] ${new Date().toISOString()} Skipped - cooling off`)
+			if (import.meta.env.DEV) console.log(`[InfiniteLoader] ${new Date().toISOString()} Skipped - cooling off`)
 			return
 		}
 
 		// Check if there's more data to load
 		if (!query.hasNextPage) {
-			console.log(`[InfiniteLoader] ${new Date().toISOString()} No more pages available`)
+			if (import.meta.env.DEV) console.log(`[InfiniteLoader] ${new Date().toISOString()} No more pages available`)
 			state.complete()
 			return
 		}
 
 		state.status = STATUS.LOADING
-		console.log(`[InfiniteLoader] ${new Date().toISOString()} Status set to LOADING, starting fetch...`)
+		if (import.meta.env.DEV) console.log(`[InfiniteLoader] ${new Date().toISOString()} Status set to LOADING, starting fetch...`)
 
 		const startTime = performance.now()
 
@@ -256,7 +256,7 @@ export function useInfiniteLoader<TData, TError>(
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const pageCount = ((query.data as any)?.pages?.length ?? 0)
 			const elapsed = (performance.now() - startTime).toFixed(0)
-			console.log(`[InfiniteLoader] ${new Date().toISOString()} Loaded page ${pageCount} (${elapsed}ms)`)
+			if (import.meta.env.DEV) console.log(`[InfiniteLoader] ${new Date().toISOString()} Loaded page ${pageCount} (${elapsed}ms)`)
 
 			// Track AFTER successful load (svelte-infinite pattern)
 			loopTracker.track()
@@ -264,18 +264,18 @@ export function useInfiniteLoader<TData, TError>(
 			// Auto-transition to READY or COMPLETE
 			if (state.status === STATUS.LOADING) {
 				if (!query.hasNextPage) {
-					console.log(`[InfiniteLoader] ${new Date().toISOString()} Complete - no more pages`)
+					if (import.meta.env.DEV) console.log(`[InfiniteLoader] ${new Date().toISOString()} Complete - no more pages`)
 					state.complete()
 				} else {
 					// Set flag to wait for sentinel to leave viewport before next load
 					// This prevents immediate re-triggering when sentinel is still visible
 					waitingForSentinelExit = true
-					console.log(`[InfiniteLoader] ${new Date().toISOString()} Ready for next page (waiting for sentinel exit)`)
+					if (import.meta.env.DEV) console.log(`[InfiniteLoader] ${new Date().toISOString()} Ready for next page (waiting for sentinel exit)`)
 					state.loaded()
 				}
 			}
 		} catch (error) {
-			console.error(`[InfiniteLoader] ${new Date().toISOString()} Failed to load next page:`, error)
+			if (import.meta.env.DEV) console.error(`[InfiniteLoader] ${new Date().toISOString()} Failed to load next page:`, error)
 			state.error()
 		}
 	}

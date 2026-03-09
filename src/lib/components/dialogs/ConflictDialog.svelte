@@ -29,6 +29,8 @@
 	import { isOpusDraconicSeries, getSeriesDisplayName } from '$lib/utils/weaponSeries'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import * as m from '$lib/paraglide/messages'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	import styles from './ConflictDialog.module.scss'
 
@@ -112,6 +114,7 @@
 			onResolve?.()
 		} catch (error) {
 			console.error('[ConflictDialog] Failed to resolve conflict:', error)
+			toast.error(extractErrorMessage(error, 'Failed to resolve conflict'))
 			// Error will be handled by mutation's error state
 		} finally {
 			isLoading = false

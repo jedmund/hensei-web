@@ -482,7 +482,7 @@
 
 	// Handle adding items from search
 	async function handleAddItems(items: AddItemResult[]) {
-		console.log('Adding items:', items, 'to tab:', activeTab)
+		if (import.meta.env.DEV) console.log('Adding items:', items, 'to tab:', activeTab)
 
 		// Create party on first item if not already created
 		if (!partyId && !isCreatingParty && items.length > 0) {
@@ -510,7 +510,7 @@
 
 				// Create party using mutation
 				const createdParty = await createPartyMutation.mutateAsync(partyPayload)
-				console.log('Party created:', createdParty)
+				if (import.meta.env.DEV) console.log('Party created:', createdParty)
 
 				// The adapter returns the party directly
 				partyId = createdParty.id
@@ -535,13 +535,6 @@
 				let position = selectedSlot !== null ? selectedSlot : -1 // Use selectedSlot if available
 				let itemAdded = false
 				try {
-					console.log('Adding item to party:', {
-						partyId,
-						itemId: firstItem.id,
-						type: activeTab,
-						position
-					})
-
 					if (activeTab === GridType.Weapon) {
 						// Use selectedSlot if available, otherwise default to mainhand
 						if (selectedSlot === null) position = -1
@@ -552,7 +545,7 @@
 							mainhand: position === -1,
 							collectionWeaponId: firstItem.collectionId
 						})
-						console.log('Weapon added:', addResult)
+						if (import.meta.env.DEV) console.log('Weapon added:', addResult)
 						itemAdded = true
 
 						// Update cache with the added weapon
@@ -568,7 +561,7 @@
 							friend: position === 6,
 							collectionSummonId: firstItem.collectionId
 						})
-						console.log('Summon added:', addResult)
+						if (import.meta.env.DEV) console.log('Summon added:', addResult)
 						itemAdded = true
 
 						// Update cache with the added summon
@@ -582,7 +575,7 @@
 							position,
 							collectionCharacterId: firstItem.collectionId
 						})
-						console.log('Character added:', addResult)
+						if (import.meta.env.DEV) console.log('Character added:', addResult)
 						itemAdded = true
 
 						// Update cache with the added character
@@ -864,7 +857,7 @@
 							onSelectSkill={handleSelectJobSkill}
 							onRemoveSkill={handleRemoveJobSkill}
 							onSelectAccessory={() => {
-								console.log('Open accessory selection sidebar')
+								if (import.meta.env.DEV) console.log('Open accessory selection sidebar')
 							}}
 						/>
 						<CharacterGrid {characters} {mainWeaponElement} {partyElement} unlimited={party.raid?.group?.unlimited} />

@@ -38,7 +38,9 @@
 		element.style.visibility = 'hidden';
 
 		if (!editor || editor.isDestroyed) {
-			console.warn('BubbleMenu component does not have editor prop or editor is destroyed.');
+			if (import.meta.env.DEV) {
+				console.warn('BubbleMenu component does not have editor prop or editor is destroyed.');
+			}
 			return;
 		}
 

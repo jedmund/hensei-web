@@ -99,7 +99,7 @@ function createAuthStore() {
           return true
         })
         .catch(error => {
-          console.error('Token refresh failed:', error)
+          if (import.meta.env.DEV) console.error('Token refresh failed:', error)
           this.clearAuth()
 
           // Redirect to login on refresh failure

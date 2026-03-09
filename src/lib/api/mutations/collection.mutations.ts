@@ -30,6 +30,8 @@ export function addCharactersToCollectionOptions(queryClient: QueryClient) {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characterIds() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -40,6 +42,8 @@ export function addCharacterToCollectionOptions(queryClient: QueryClient) {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characterIds() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -90,6 +94,8 @@ export function removeCharacterFromCollectionOptions(queryClient: QueryClient) {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characterIds() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -100,6 +106,8 @@ export function bulkRemoveCharactersFromCollectionOptions(queryClient: QueryClie
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characterIds() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -113,6 +121,8 @@ export function addWeaponToCollectionOptions(queryClient: QueryClient) {
 		mutationFn: (input: CollectionWeaponInput) => collectionAdapter.addWeapon(input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -123,6 +133,8 @@ export function addWeaponsToCollectionOptions(queryClient: QueryClient) {
 			collectionAdapter.addWeapons(inputs),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -132,7 +144,7 @@ export function updateCollectionWeaponOptions(queryClient: QueryClient) {
 		mutationFn: ({ id, input }: { id: string; input: Partial<CollectionWeaponInput> }) =>
 			collectionAdapter.updateWeapon(id, input),
 		onSuccess: () => {
-			queryClient.resetQueries({ queryKey: collectionKeys.weapons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
 		}
 	}
 }
@@ -141,7 +153,9 @@ export function removeWeaponFromCollectionOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (id: string) => collectionAdapter.removeWeapon(id),
 		onSuccess: () => {
-			queryClient.resetQueries({ queryKey: collectionKeys.weapons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -150,7 +164,9 @@ export function bulkRemoveWeaponsFromCollectionOptions(queryClient: QueryClient)
 	return {
 		mutationFn: (ids: string[]) => collectionAdapter.removeWeaponsBatch(ids),
 		onSuccess: () => {
-			queryClient.resetQueries({ queryKey: collectionKeys.weapons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -164,6 +180,8 @@ export function addSummonToCollectionOptions(queryClient: QueryClient) {
 		mutationFn: (input: CollectionSummonInput) => collectionAdapter.addSummon(input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -174,6 +192,8 @@ export function addSummonsToCollectionOptions(queryClient: QueryClient) {
 			collectionAdapter.addSummons(inputs),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -193,6 +213,8 @@ export function removeSummonFromCollectionOptions(queryClient: QueryClient) {
 		mutationFn: (id: string) => collectionAdapter.removeSummon(id),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }
@@ -202,6 +224,8 @@ export function bulkRemoveSummonsFromCollectionOptions(queryClient: QueryClient)
 		mutationFn: (ids: string[]) => collectionAdapter.removeSummonsBatch(ids),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.countsPrefix })
+			queryClient.invalidateQueries({ queryKey: collectionKeys.granblueIdsPrefix })
 		}
 	}
 }

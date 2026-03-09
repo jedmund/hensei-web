@@ -37,9 +37,6 @@
 		{ value: 3, label: 'Private', description: 'Only you can view your collection' }
 	]
 
-	$effect(() => {
-		console.log('[PrivacySettings] collectionPrivacy prop:', collectionPrivacy, typeof collectionPrivacy)
-	})
 </script>
 
 <div class="section">

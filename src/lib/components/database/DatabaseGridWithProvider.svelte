@@ -24,6 +24,8 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { storeListUrl } from '$lib/utils/listNavigation'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	import type { Snippet } from 'svelte'
 
@@ -191,6 +193,7 @@
 			}
 		} catch (error) {
 			console.error('Failed to load data:', error)
+			toast.error(extractErrorMessage(error, 'Failed to load data'))
 		} finally {
 			loading = false
 		}

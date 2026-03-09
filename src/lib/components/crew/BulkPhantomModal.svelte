@@ -10,6 +10,8 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import type { CreatePhantomPlayerInput } from '$lib/types/api/crew'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		open: boolean
@@ -74,6 +76,7 @@
 			open = false
 		} catch (error) {
 			console.error('Failed to create phantoms:', error)
+			toast.error(extractErrorMessage(error, 'Failed to create phantoms'))
 		}
 	}
 

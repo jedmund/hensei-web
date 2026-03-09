@@ -75,9 +75,6 @@
 
 	const init = (apiRef: any) => {
 		api = apiRef
-		console.log('[DatabaseGrid] Grid API initialized:', api)
-		console.log('[DatabaseGrid] Data passed to grid:', data)
-		console.log('[DatabaseGrid] Columns passed to grid:', columns)
 	}
 </script>
 

@@ -32,7 +32,9 @@ export function createEntityMentionSuggestion(): Omit<SuggestionOptions<MentionI
 				})
 				return response.results
 			} catch (error) {
-				console.error('Entity mention search failed:', error)
+				if (import.meta.env.DEV) {
+					console.error('Entity mention search failed:', error)
+				}
 				return []
 			}
 		},

@@ -109,7 +109,6 @@
 		try {
 			const result = await jobAdapter.downloadSkillImage(jobId, skill.id)
 			if (result.success) {
-				console.log('Image downloaded:', result.filename)
 				// TODO: Show success toast
 			} else {
 				console.error('Failed to download image')

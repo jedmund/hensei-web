@@ -22,9 +22,7 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 	}
 
 	try {
-		console.log('[Login] Starting login for:', parsed.data.email)
 		const oauth = await passwordGrantLogin(fetch, parsed.data)
-		console.log('[Login] OAuth successful, got token for user:', oauth.user.username)
 
 		// Get user info using the pre-configured adapter
 		const info = await userAdapter.getInfo(oauth.user.username, {
@@ -32,19 +30,14 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 				Authorization: `Bearer ${oauth.access_token}`
 			}
 		})
-		console.log('[Login] Got user info:', info.username)
-
 		const { account, user, accessTokenExpiresAt, refresh } = buildCookies(oauth, info)
 
 		// Use secure cookies in production (dev flag handles this correctly behind proxies)
 		const secure = !dev
-		console.log('[Login] Setting cookies - secure:', secure, 'dev:', dev)
-		console.log('[Login] Account cookie data:', { userId: account.userId, username: account.username, hasToken: !!account.token })
 
 		setAccountCookie(cookies, account, { secure, expires: accessTokenExpiresAt })
 		setUserCookie(cookies, user, { secure, expires: accessTokenExpiresAt })
 		setRefreshCookie(cookies, refresh, { secure, expires: accessTokenExpiresAt })
-		console.log('[Login] Cookies set, returning response')
 
 		// Return access token for client-side storage
 		return json({
@@ -55,9 +48,9 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 			expires_at: accessTokenExpiresAt.toISOString()
 		})
 	} catch (e: any) {
-		console.error('[Login] Error:', e)
-		console.error('[Login] Error message:', e?.message)
-		console.error('[Login] Error stack:', e?.stack)
+		if (dev) console.error('[Login] Error:', e)
+		if (dev) console.error('[Login] Error message:', e?.message)
+		if (dev) console.error('[Login] Error stack:', e?.stack)
 
 		if (String(e?.message) === 'unauthorized') {
 			return json({ error: 'Invalid email or password' }, { status: 401 })

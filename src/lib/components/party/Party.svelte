@@ -77,6 +77,7 @@
 		openJobSkillSelectionSidebar
 	} from '$lib/features/job/openJobSidebar.svelte'
 	import { partyAdapter, type UpdatePartyParams } from '$lib/api/adapters/party.adapter'
+	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
@@ -175,7 +176,6 @@
 	// Create drag-drop context
 	const dragContext = createDragDropContext({
 		onLocalUpdate: async (operation) => {
-			console.log('📝 Drag operation:', operation)
 			await handleDragOperation(operation)
 		},
 		onValidate: (source, target) => {
@@ -242,6 +242,7 @@
 		} catch (err: any) {
 			error = err.message || 'Failed to update party'
 			console.error('Drag operation failed:', err)
+			toast.error(extractErrorMessage(err, 'Drag operation failed'))
 		} finally {
 			loading = false
 			dragContext.clearQueue()
@@ -539,6 +540,7 @@
 						})
 					} catch (err: any) {
 						console.error('Failed to share with crew:', err)
+						toast.error(extractErrorMessage(err, 'Failed to share with crew'))
 					}
 				} else if (!values.sharedWithCrew && wasShared) {
 					// Remove crew share
@@ -552,6 +554,7 @@
 							})
 						} catch (err: any) {
 							console.error('Failed to remove share:', err)
+							toast.error(extractErrorMessage(err, 'Failed to remove crew share'))
 						}
 					}
 				}
@@ -604,6 +607,7 @@
 				} catch (e) {
 					error = e instanceof Error ? e.message : 'Failed to update job'
 					console.error('Failed to update job:', e)
+					toast.error(extractErrorMessage(e, 'Failed to update job'))
 				} finally {
 					loading = false
 				}
@@ -639,6 +643,7 @@
 				} catch (e: any) {
 					error = extractErrorMessage(e, 'Failed to update skill')
 					console.error('Failed to update skill:', e)
+					toast.error(extractErrorMessage(e, 'Failed to update skill'))
 				} finally {
 					loading = false
 				}
@@ -656,6 +661,7 @@
 				} catch (e: any) {
 					error = extractErrorMessage(e, 'Failed to remove skill')
 					console.error('Failed to remove skill:', e)
+					toast.error(extractErrorMessage(e, 'Failed to remove skill'))
 				} finally {
 					loading = false
 				}
@@ -679,6 +685,7 @@
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to remove skill'
 			console.error('Failed to remove skill:', e)
+			toast.error(extractErrorMessage(e, 'Failed to remove skill'))
 		} finally {
 			loading = false
 		}
@@ -797,6 +804,7 @@
 				// Party will be updated via cache invalidation
 			} catch (err) {
 				console.error('Failed to remove weapon:', err)
+				toast.error(extractErrorMessage(err, 'Failed to remove weapon'))
 				throw err
 			}
 		},
@@ -809,6 +817,7 @@
 				})
 			} catch (err) {
 				console.error('Failed to remove summon:', err)
+				toast.error(extractErrorMessage(err, 'Failed to remove summon'))
 				throw err
 			}
 		},
@@ -821,6 +830,7 @@
 				})
 			} catch (err) {
 				console.error('Failed to remove character:', err)
+				toast.error(extractErrorMessage(err, 'Failed to remove character'))
 				throw err
 			}
 		},
@@ -833,6 +843,7 @@
 				})
 			} catch (err) {
 				console.error('Failed to update weapon:', err)
+				toast.error(extractErrorMessage(err, 'Failed to update weapon'))
 				throw err
 			}
 		},
@@ -845,6 +856,7 @@
 				})
 			} catch (err) {
 				console.error('Failed to update summon:', err)
+				toast.error(extractErrorMessage(err, 'Failed to update summon'))
 				throw err
 			}
 		},
@@ -862,6 +874,7 @@
 				})
 			} catch (err) {
 				console.error('Failed to update character:', err)
+				toast.error(extractErrorMessage(err, 'Failed to update character'))
 				throw err
 			}
 		},
@@ -882,6 +895,7 @@
 				})
 			} catch (err) {
 				console.error('Failed to update character uncap:', err)
+				toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
 				throw err
 			}
 		},
@@ -902,6 +916,7 @@
 				})
 			} catch (err) {
 				console.error('Failed to update weapon uncap:', err)
+				toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
 				throw err
 			}
 		},
@@ -922,6 +937,7 @@
 				})
 			} catch (err) {
 				console.error('Failed to update summon uncap:', err)
+				toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
 				throw err
 			}
 		}
@@ -1074,7 +1090,6 @@
 							onRemoveSkill={handleRemoveJobSkill}
 							onSelectAccessory={() => {
 								// TODO: Open accessory selection sidebar
-								console.log('Open accessory selection sidebar')
 							}}
 						/>
 						<CharacterGrid

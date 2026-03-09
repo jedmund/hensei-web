@@ -328,7 +328,7 @@ export class PartyAdapter extends BaseAdapter {
 		partyId: string,
 		skills: Array<{ id: string; slot: number }>
 	): Promise<Party> {
-		console.log('[updateJobSkills] Input skills array:', skills)
+		if (import.meta.env.DEV) console.log('[updateJobSkills] Input skills array:', skills)
 
 		// Convert skills array to Rails expected format
 		// Rails has skill0_id (main, locked), skill1_id, skill2_id, skill3_id
@@ -348,7 +348,7 @@ export class PartyAdapter extends BaseAdapter {
 			party
 		}
 
-		console.log('[updateJobSkills] Sending to server:', {
+		if (import.meta.env.DEV) console.log('[updateJobSkills] Sending to server:', {
 			url: `/parties/${partyId}/job_skills`,
 			body: requestBody
 		})

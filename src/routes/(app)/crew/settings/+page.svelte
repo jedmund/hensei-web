@@ -13,6 +13,8 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import { Dialog } from 'bits-ui'
 	import type { PageData } from './$types'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		data: PageData
@@ -114,6 +116,7 @@
 			goto('/crew')
 		} catch (error) {
 			console.error('Failed to leave crew:', error)
+			toast.error(extractErrorMessage(error, 'Failed to leave crew'))
 		}
 		leaveDialogOpen = false
 	}
@@ -131,6 +134,7 @@
 			goto('/crew')
 		} catch (error) {
 			console.error('Failed to transfer captain:', error)
+			toast.error(extractErrorMessage(error, 'Failed to transfer captain role'))
 		}
 		transferDialogOpen = false
 	}

@@ -30,6 +30,8 @@
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		weapon: CollectionWeapon
@@ -172,6 +174,7 @@
 			updateActionVisibility()
 		} catch (error) {
 			console.error('Failed to update collection weapon:', error)
+			toast.error(extractErrorMessage(error, 'Failed to update weapon'))
 		}
 	}
 

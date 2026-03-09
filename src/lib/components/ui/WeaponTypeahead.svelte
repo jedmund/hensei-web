@@ -112,7 +112,9 @@
 				element: result.element
 			}))
 		} catch (error) {
-			console.error('Weapon search error:', error)
+			if (import.meta.env.DEV) {
+				console.error('Weapon search error:', error)
+			}
 			searchResults = []
 		} finally {
 			isLoading = false

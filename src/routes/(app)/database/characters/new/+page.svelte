@@ -119,19 +119,14 @@
 	)
 
 	async function validateGranblueId(value: string): Promise<{ valid: boolean; message: string }> {
-		console.log('[+page] validateGranblueId called with:', value)
-
 		if (!value || value.length !== 10) {
-			console.log('[+page] Invalid length, returning early')
 			granblueIdValid = false
 			granblueIdExistsInDb = false
 			return { valid: false, message: 'Granblue ID must be exactly 10 digits' }
 		}
 
 		try {
-			console.log('[+page] Calling entityAdapter.validateCharacterGranblueId...')
 			const result = await entityAdapter.validateCharacterGranblueId(value)
-			console.log('[+page] API result:', result)
 
 			if (!result.valid) {
 				granblueIdValid = false

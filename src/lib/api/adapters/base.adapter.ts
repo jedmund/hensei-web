@@ -127,7 +127,7 @@ export abstract class BaseAdapter {
 			if (token) {
 				authHeaders['Authorization'] = `Bearer ${token}`
 			} else {
-				console.warn('[BaseAdapter] No auth token available in authStore for request:', path)
+				if (import.meta.env.DEV) console.warn('[BaseAdapter] No auth token available in authStore for request:', path)
 			}
 		}
 
@@ -144,7 +144,7 @@ export abstract class BaseAdapter {
 		}
 
 		// Debug logging for auth issues
-		if (browser && path.includes('grid_')) {
+		if (import.meta.env.DEV && browser && path.includes('grid_')) {
 			console.log('[BaseAdapter] Request to:', path, 'Headers:', fetchOptions.headers)
 		}
 
@@ -155,7 +155,7 @@ export abstract class BaseAdapter {
 				const transformed = this.transformRequest(options.body)
 				fetchOptions.body = JSON.stringify(transformed)
 				// Debug logging for 422 errors
-				if (browser && path.includes('grid_')) {
+				if (import.meta.env.DEV && browser && path.includes('grid_')) {
 					console.log('[BaseAdapter] Request body:', transformed)
 				}
 			} else if (typeof options.body === 'string') {
@@ -164,7 +164,7 @@ export abstract class BaseAdapter {
 					const transformed = this.transformRequest(bodyData)
 					fetchOptions.body = JSON.stringify(transformed)
 					// Debug logging for 422 errors
-					if (browser && path.includes('grid_')) {
+					if (import.meta.env.DEV && browser && path.includes('grid_')) {
 						console.log('[BaseAdapter] Request body:', transformed)
 					}
 				} catch {
@@ -187,7 +187,7 @@ export abstract class BaseAdapter {
 			const data = await response.json()
 
 			// Debug logging for grid operations
-			if (browser && path.includes('grid_')) {
+			if (import.meta.env.DEV && browser && path.includes('grid_')) {
 				console.log('[BaseAdapter] Response status:', response.status)
 				console.log('[BaseAdapter] Response data:', data)
 			}

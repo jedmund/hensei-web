@@ -1,3 +1,4 @@
+import { dev } from '$app/environment'
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { setUserCookie } from '$lib/auth/cookies'
@@ -19,7 +20,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 
 		return json({ success: true })
 	} catch (error) {
-		console.error('Failed to update settings cookie:', error)
+		if (dev) console.error('Failed to update settings cookie:', error)
 		return json({ error: 'Failed to update settings' }, { status: 500 })
 	}
 }

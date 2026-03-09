@@ -13,6 +13,8 @@
 	import { usePaneStack, type ElementType } from '$lib/stores/paneStack.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import ArtifactEditPane from '$lib/components/artifact/ArtifactEditPane.svelte'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		artifact: CollectionArtifact
@@ -62,19 +64,6 @@
 			skill4: pendingUpdates.skills?.[3] ?? undefined
 		}
 
-		// Debug: Log what we're sending
-		const skillLevelSum = [input.skill1, input.skill2, input.skill3, input.skill4]
-			.filter(Boolean)
-			.reduce((sum, s) => sum + (s?.level ?? 0), 0)
-		const expectedSum = (input.level ?? artifact.level) + 3
-		console.log('[CollectionArtifactEditPane] Saving artifact:', {
-			id: artifact.id,
-			input,
-			skillLevelSum,
-			expectedSum,
-			constraintMet: skillLevelSum === expectedSum
-		})
-
 		updateMutation.mutate({
 			id: artifact.id,
 			input
@@ -85,6 +74,7 @@
 			},
 			onError: (error) => {
 				console.error('[CollectionArtifactEditPane] Save failed:', error)
+				toast.error(extractErrorMessage(error, 'Failed to save artifact'))
 			}
 		})
 	}
