@@ -3,16 +3,23 @@
   interface Props {
     name: string;
     size?: number | string;
+    width?: number | string;
+    height?: number | string;
     color?: string;
     class?: string;
   }
 
-  const { 
-    name, 
-    size = 24, 
+  const {
+    name,
+    size = 24,
+    width: explicitWidth,
+    height: explicitHeight,
     color = 'currentColor',
     class: className = ''
   }: Props = $props();
+
+  const resolvedWidth = $derived(explicitWidth ?? size);
+  const resolvedHeight = $derived(explicitHeight ?? size);
 
   let svgContent = $state<string>('');
   let loading = $state(true);
@@ -49,8 +56,8 @@
 {#if !loading && svgContent}
   <span
     class="icon {className}"
-    style="width: {typeof size === 'number' ? `${size}px` : size};
-           height: {typeof size === 'number' ? `${size}px` : size};
+    style="width: {typeof resolvedWidth === 'number' ? `${resolvedWidth}px` : resolvedWidth};
+           height: {typeof resolvedHeight === 'number' ? `${resolvedHeight}px` : resolvedHeight};
            {color !== 'currentColor' ? `color: ${color};` : ''}
            display: inline-flex;
            align-items: center;
