@@ -19,8 +19,8 @@
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
 
-	let main = $derived(summons.find((s) => s.main || s.position === -1))
-	let friend = $derived(summons.find((s) => s.friend || s.position === 6))
+	let main = $derived(summons.find((s) => s.position === -1) ?? summons.find((s) => s.main))
+	let friend = $derived(summons.find((s) => s.position === 6) ?? summons.find((s) => s.friend))
 
 	// Create array for sub-summons (positions 0-3)
 	let subSummonSlots = $derived.by(() => {
