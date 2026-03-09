@@ -415,6 +415,10 @@
 	--toast-info-bg: #e3f2fd;
 	--toast-info-text: #1565c0;
 
+	// Drag and drop
+	--dnd-valid: #4caf50;
+	--dnd-invalid: #f44336;
+
 	// Elevation shadows
 	--shadow-xs: #{effects.$shadow-xs-light};
 	--shadow-sm: #{effects.$shadow-sm-light};
@@ -814,6 +818,10 @@ html[data-theme='dark'] {
 	--toast-warning-text: #{colors.$notice--text--dark};
 	--toast-info-bg: #0d2744;
 	--toast-info-text: #64b5f6;
+
+	// Drag and drop
+	--dnd-valid: #66bb6a;
+	--dnd-invalid: #ef5350;
 
 	// Elevation shadows
 	--shadow-xs: #{effects.$shadow-xs-dark};

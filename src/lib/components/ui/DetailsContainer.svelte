@@ -23,7 +23,7 @@
 		flex-direction: column;
 		gap: spacing.$unit;
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid #e5e5e5;
+		border-bottom: 1px solid var(--border-subtle);
 
 		&:last-child {
 			border-bottom: none;
