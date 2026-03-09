@@ -105,8 +105,9 @@ export abstract class BaseAdapter {
 
 		// Check cache first if caching is enabled (support both cacheTime and cacheTTL)
 		const cacheTime = options.cacheTTL ?? options.cacheTime ?? this.options.cacheTime
-		// Allow caching for any method if explicitly set (unless cache is disabled)
-		if (!this.disableCache && cacheTime > 0) {
+		// Skip adapter-level cache in the browser — TanStack Query manages client-side caching.
+		// Keep it on the server for SSR deduplication of reference data across requests.
+		if (!this.disableCache && !browser && cacheTime > 0) {
 			const cached = this.getFromCache(requestId)
 			if (cached !== null) {
 				return cached as T
@@ -143,30 +144,17 @@ export abstract class BaseAdapter {
 			}
 		}
 
-		// Debug logging for auth issues
-		if (import.meta.env.DEV && browser && path.includes('grid_')) {
-			console.log('[BaseAdapter] Request to:', path, 'Headers:', fetchOptions.headers)
-		}
-
 		// Transform request body from camelCase to snake_case if present
 		if (options.body) {
 			if (typeof options.body === 'object') {
 				// Body is an object, transform and stringify
 				const transformed = this.transformRequest(options.body)
 				fetchOptions.body = JSON.stringify(transformed)
-				// Debug logging for 422 errors
-				if (import.meta.env.DEV && browser && path.includes('grid_')) {
-					console.log('[BaseAdapter] Request body:', transformed)
-				}
 			} else if (typeof options.body === 'string') {
 				try {
 					const bodyData = JSON.parse(options.body)
 					const transformed = this.transformRequest(bodyData)
 					fetchOptions.body = JSON.stringify(transformed)
-					// Debug logging for 422 errors
-					if (import.meta.env.DEV && browser && path.includes('grid_')) {
-						console.log('[BaseAdapter] Request body:', transformed)
-					}
 				} catch {
 					// If body is not valid JSON, use as-is
 					fetchOptions.body = options.body
@@ -186,16 +174,10 @@ export abstract class BaseAdapter {
 			// Parse and transform the response
 			const data = await response.json()
 
-			// Debug logging for grid operations
-			if (import.meta.env.DEV && browser && path.includes('grid_')) {
-				console.log('[BaseAdapter] Response status:', response.status)
-				console.log('[BaseAdapter] Response data:', data)
-			}
-
 			const transformed = this.transformResponse<T>(data)
 
 			// Cache the successful response if caching is enabled (use cacheTTL or cache)
-			if (!this.disableCache && cacheTime > 0) {
+			if (!this.disableCache && !browser && cacheTime > 0) {
 				this.setCache(requestId, transformed, cacheTime)
 			}
 
