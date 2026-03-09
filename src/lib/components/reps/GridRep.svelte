@@ -6,11 +6,15 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 
-	export let party: Party
-	export let href: string = `/teams/${party.shortcode}`
-	export let loading = false
+	interface Props {
+		party: Party
+		href?: string
+		loading?: boolean
+	}
 
-	let currentView: 'weapons' | 'summons' | 'characters' = 'weapons'
+	let { party, href = `/teams/${party.shortcode}`, loading = false }: Props = $props()
+
+	let currentView: 'weapons' | 'summons' | 'characters' = $state('weapons')
 
 	function displayName(input: any): string {
 		if (!input) return '—'
@@ -25,7 +29,7 @@
 	class={`gridRep ${loading ? 'hidden' : 'visible'}`}
 	role="link"
 	tabindex="0"
-	on:mouseleave={() => (currentView = 'weapons')}
+	onmouseleave={() => (currentView = 'weapons')}
 >
 	<a {href} data-sveltekit-preload-data="hover">
 		<div class="info">
@@ -84,16 +88,16 @@
 		<ul class="indicators">
 			<li
 				class:active={currentView === 'characters'}
-				on:mouseenter={() => (currentView = 'characters')}
+				onmouseenter={() => (currentView = 'characters')}
 			>
 				<div class="indicator"></div>
 				<span class="sr-only">Characters</span>
 			</li>
-			<li class:active={currentView === 'weapons'} on:mouseenter={() => (currentView = 'weapons')}>
+			<li class:active={currentView === 'weapons'} onmouseenter={() => (currentView = 'weapons')}>
 				<div class="indicator"></div>
 				<span class="sr-only">Weapons</span>
 			</li>
-			<li class:active={currentView === 'summons'} on:mouseenter={() => (currentView = 'summons')}>
+			<li class:active={currentView === 'summons'} onmouseenter={() => (currentView = 'summons')}>
 				<div class="indicator"></div>
 				<span class="sr-only">Summons</span>
 			</li>

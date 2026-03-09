@@ -2,7 +2,11 @@
   import type { Party } from '$lib/types/api/party'
   import GridRep from '$lib/components/reps/GridRep.svelte'
 
-  export let items: Party[] = []
+  interface Props {
+    items?: Party[]
+  }
+
+  let { items = [] }: Props = $props()
 </script>
 
 {#if items.length === 0}
