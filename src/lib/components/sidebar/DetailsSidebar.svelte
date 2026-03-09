@@ -9,6 +9,7 @@
 	import StatsSection from './details/StatsSection.svelte'
 	import SkillsSection from './details/SkillsSection.svelte'
 	import TeamView from './details/TeamView.svelte'
+	import CollectionSection from './details/CollectionSection.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import {
 		useSyncGridCharacter,
@@ -138,6 +139,7 @@
 
 <div class="details-sidebar">
 	<ItemHeader {type} {item} {itemData} {gridUncapLevel} {gridTranscendence} />
+	<CollectionSection {type} granblueId={itemData?.granblueId} />
 
 	{#if isLinkedToCollection && isOutOfSync}
 		<div class="sync-banner">
