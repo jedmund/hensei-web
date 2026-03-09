@@ -102,14 +102,11 @@
 		try {
 			const party = ctx.getParty()
 			const editKey = ctx.getEditKey()
-			const updated = await ctx.services.gridService.removeWeapon(
+			await ctx.services.gridService.removeWeapon(
 				party.id,
 				item.id as any,
 				editKey || undefined
 			)
-			if (updated) {
-				ctx.updateParty(updated)
-			}
 		} catch (err) {
 			console.error('Error removing weapon:', err)
 			toast.error(extractErrorMessage(err, 'Failed to remove weapon'))
@@ -268,15 +265,12 @@
 				if (!item?.id || !ctx) return
 				try {
 					const editKey = ctx.getEditKey()
-					const updated = await ctx.services.gridService.updateWeaponUncap(
+					await ctx.services.gridService.updateWeaponUncap(
 						item.id,
 						level,
 						undefined,
 						editKey || undefined
 					)
-					if (updated) {
-						ctx.updateParty(updated)
-					}
 				} catch (err) {
 					console.error('Failed to update weapon uncap:', err)
 					toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
@@ -288,15 +282,12 @@
 					const editKey = ctx.getEditKey()
 					// When setting transcendence > 0, also set uncap to max (6)
 					const maxUncap = stage > 0 ? 6 : undefined
-					const updated = await ctx.services.gridService.updateWeaponUncap(
+					await ctx.services.gridService.updateWeaponUncap(
 						item.id,
 						maxUncap,
 						stage,
 						editKey || undefined
 					)
-					if (updated) {
-						ctx.updateParty(updated)
-					}
 				} catch (err) {
 					console.error('Failed to update weapon transcendence:', err)
 					toast.error(extractErrorMessage(err, 'Failed to update transcendence'))

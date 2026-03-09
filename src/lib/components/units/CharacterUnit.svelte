@@ -91,14 +91,11 @@
 		try {
 			const party = ctx.getParty()
 			const editKey = ctx.getEditKey()
-			const updated = await ctx.services.gridService.removeCharacter(
+			await ctx.services.gridService.removeCharacter(
 				party.id,
 				item.id as any,
 				editKey || undefined
 			)
-			if (updated) {
-				ctx.updateParty(updated)
-			}
 		} catch (err) {
 			console.error('Error removing character:', err)
 			toast.error(extractErrorMessage(err, 'Failed to remove character'))
@@ -134,31 +131,12 @@
 		try {
 			const party = ctx.getParty()
 			const editKey = ctx.getEditKey()
-			// Update the character on the server
-			const updatedCharacter = await ctx.services.gridService.updateCharacter(
+			await ctx.services.gridService.updateCharacter(
 				party.id,
 				item.id,
 				{ perpetuity: !item.perpetuity },
 				editKey || undefined
 			)
-
-			if (updatedCharacter) {
-				// The API returns 'object' but we need 'character'
-				const fixedCharacter = {
-					...updatedCharacter,
-					character: updatedCharacter.object,
-					object: undefined
-				}
-
-				// Update the party locally with the new character data
-				const updatedParty = {
-					...party,
-					characters: party.characters.map((char) =>
-						char.id === fixedCharacter.id ? fixedCharacter : char
-					)
-				}
-				ctx.updateParty(updatedParty)
-			}
 		} catch (err) {
 			console.error('Error toggling perpetuity:', err)
 			toast.error(extractErrorMessage(err, 'Failed to toggle perpetuity'))
@@ -296,15 +274,12 @@
 				if (!item?.id || !ctx) return
 				try {
 					const editKey = ctx.getEditKey()
-					const updated = await ctx.services.gridService.updateCharacterUncap(
+					await ctx.services.gridService.updateCharacterUncap(
 						item.id,
 						level,
 						undefined,
 						editKey || undefined
 					)
-					if (updated) {
-						ctx.updateParty(updated)
-					}
 				} catch (err) {
 					console.error('Failed to update character uncap:', err)
 					toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
@@ -316,15 +291,12 @@
 					const editKey = ctx.getEditKey()
 					// When setting transcendence > 0, also set uncap to max (6)
 					const maxUncap = stage > 0 ? 6 : undefined
-					const updated = await ctx.services.gridService.updateCharacterUncap(
+					await ctx.services.gridService.updateCharacterUncap(
 						item.id,
 						maxUncap,
 						stage,
 						editKey || undefined
 					)
-					if (updated) {
-						ctx.updateParty(updated)
-					}
 				} catch (err) {
 					console.error('Failed to update character transcendence:', err)
 					toast.error(extractErrorMessage(err, 'Failed to update transcendence'))

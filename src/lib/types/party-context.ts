@@ -3,22 +3,22 @@
  * Used for providing party data and operations to child components
  */
 
-import type { Party } from '$lib/types/api/party'
+import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 import type { GridType } from '$lib/types/enums'
+import type { GridService } from '$lib/composables/grid-service.svelte'
 import { getContext, setContext } from 'svelte'
 
 export interface PartyContext {
 	getParty: () => Party
-	updateParty: (p: Party) => void
 	canEdit: () => boolean
 	getEditKey: () => string | null | undefined
 	getSelectedSlot?: () => number | null
 	getActiveTab?: () => GridType
-	services: { gridService: any; partyService?: any }
+	services: { gridService: GridService }
 	openPicker?: (opts: {
 		type: 'weapon' | 'summon' | 'character'
 		position: number
-		item?: any
+		item?: GridCharacter | GridWeapon | GridSummon
 	}) => void
 }
 
