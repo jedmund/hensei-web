@@ -2,12 +2,14 @@
 	import { ContextMenu, DropdownMenu } from 'bits-ui'
 
 	interface MenuItemsProps {
+		onEdit?: (() => void) | undefined
 		onViewDetails?: (() => void) | undefined
 		onViewInDatabase?: (() => void) | undefined
 		onReplace?: (() => void) | undefined
 		onRemove?: (() => void | Promise<void>) | undefined
 		canEdit?: boolean | undefined
 		variant?: 'context' | 'dropdown'
+		editLabel?: string | undefined
 		viewDetailsLabel?: string | undefined
 		viewInDatabaseLabel?: string | undefined
 		replaceLabel?: string | undefined
@@ -15,16 +17,18 @@
 	}
 
 	let {
+		onEdit,
 		onViewDetails,
 		onViewInDatabase,
 		onReplace,
 		onRemove,
 		canEdit = false,
 		variant = 'context',
-		viewDetailsLabel = 'View Details',
+		editLabel = 'Edit',
+		viewDetailsLabel = 'View details',
 		viewInDatabaseLabel = 'View in Database',
 		replaceLabel = 'Replace',
-		removeLabel = 'Remove'
+		removeLabel = 'Remove from team'
 	}: MenuItemsProps = $props()
 
 	// Select the appropriate component based on variant
@@ -32,7 +36,26 @@
 	const Separator = variant === 'context' ? ContextMenu.Separator : DropdownMenu.Separator
 	const itemClass = variant === 'context' ? 'context-menu-item' : 'dropdown-menu-item'
 	const separatorClass = variant === 'context' ? 'context-menu-separator' : 'dropdown-menu-separator'
+
+	// Track whether we've rendered any items above the details/database section (for separator logic)
+	const hasEditSection = canEdit && (onEdit || onReplace)
 </script>
+
+{#if canEdit && onEdit}
+	<Item class={itemClass} onclick={onEdit}>
+		{editLabel}
+	</Item>
+{/if}
+
+{#if canEdit && onReplace}
+	<Item class={itemClass} onclick={onReplace}>
+		{replaceLabel}
+	</Item>
+{/if}
+
+{#if hasEditSection && (onViewDetails || onViewInDatabase)}
+	<Separator class={separatorClass} />
+{/if}
 
 {#if onViewDetails}
 	<Item class={itemClass} onclick={onViewDetails}>
@@ -46,17 +69,9 @@
 	</Item>
 {/if}
 
-{#if canEdit}
-	{#if onReplace}
-		<Item class={itemClass} onclick={onReplace}>
-			{replaceLabel}
-		</Item>
-	{/if}
-
-	{#if onRemove}
-		<Separator class={separatorClass} />
-		<Item class="{itemClass} danger" onclick={onRemove}>
-			{removeLabel}
-		</Item>
-	{/if}
+{#if canEdit && onRemove}
+	<Separator class={separatorClass} />
+	<Item class="{itemClass} danger" onclick={onRemove}>
+		{removeLabel}
+	</Item>
 {/if}

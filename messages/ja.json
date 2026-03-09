@@ -24,10 +24,11 @@
 
 	"extra_weapons": "追加武器",
 
+	"context_edit": "{type}を編集",
 	"context_view_details": "詳細を見る",
 	"context_view_in_database": "データベースで見る",
-	"context_replace": "交換",
-	"context_remove": "削除",
+	"context_replace": "{type}を交換",
+	"context_remove": "チームから外す",
 
 	"conflict_title": "コンフリクト検出",
 	"conflict_character_message": "同じ名前のキャラクターがパーティに編成されています。以下のキャラクターを入れ替えますか？",

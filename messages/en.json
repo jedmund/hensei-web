@@ -24,10 +24,11 @@
 
 	"extra_weapons": "Additional Weapons",
 
-	"context_view_details": "View Details",
+	"context_edit": "Edit {type}",
+	"context_view_details": "View details",
 	"context_view_in_database": "View in Database",
-	"context_replace": "Replace",
-	"context_remove": "Remove",
+	"context_replace": "Replace {type}",
+	"context_remove": "Remove from team",
 
 	"conflict_title": "Conflict Detected",
 	"conflict_character_message": "Only one version of a character can be included in each party. Do you want to replace them?",
