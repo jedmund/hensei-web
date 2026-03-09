@@ -3,8 +3,7 @@
 	import type { JSONContent } from '@tiptap/core'
 	import Button from '$lib/components/ui/Button.svelte'
 	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
-	import Icon from '$lib/components/Icon.svelte'
-	import { DropdownMenu } from 'bits-ui'
+	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 
 	type AvatarUser = {
@@ -56,12 +55,6 @@
 		!!authUser?.username && !!collectionSourceUser?.username &&
 		authUser.username !== collectionSourceUser.username
 	)
-
-	const activeUser = $derived(
-		activeCollectionUser === 'source' ? collectionSourceUser : authUser
-	)
-	const activeAvatarSrc = $derived(getAvatarSrc(activeUser?.avatar?.picture))
-	const activeAvatarSrcSet = $derived(getAvatarSrcSet(activeUser?.avatar?.picture))
 
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
@@ -128,72 +121,16 @@
 		<div class="tile-header">
 			<h1 class="party-name" class:empty={!name}>{name || 'Untitled team'}</h1>
 			<div class="actions">
+				{#if showCollectionSwitcher && authUser && collectionSourceUser}
+					<CollectionViewerSwitcher
+						{authUser}
+						{collectionSourceUser}
+						{activeCollectionUser}
+						onSwitchCollectionUser={(v) => onSwitchCollectionUser?.(v)}
+					/>
+				{/if}
 				{#if canEdit}
 					<Button variant="secondary" size="small" onclick={onOpenEdit}>Edit</Button>
-				{/if}
-				{#if showCollectionSwitcher}
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger class="collection-switcher-trigger" aria-label="Switch collection view">
-							<div class="switcher-avatar {activeUser?.avatar?.element || ''}">
-								{#if activeUser?.avatar?.picture}
-									<img
-										class="avatar"
-										alt={`Avatar of ${activeUser?.username}`}
-										src={activeAvatarSrc}
-										srcset={activeAvatarSrcSet}
-										width="20"
-										height="20"
-									/>
-								{:else}
-									<div class="avatar-placeholder" aria-hidden="true"></div>
-								{/if}
-							</div>
-							<span class="switcher-name">{activeCollectionUser === 'viewer' ? 'You' : activeUser?.username}</span>
-							<Icon name="chevron-down" size={10} />
-						</DropdownMenu.Trigger>
-
-						<DropdownMenu.Portal>
-							<DropdownMenu.Content class="dropdown-content" sideOffset={6} align="end">
-								<div class="dropdown-label">Viewing as</div>
-								<DropdownMenu.RadioGroup value={activeCollectionUser} onValueChange={(v) => onSwitchCollectionUser?.(v as 'viewer' | 'source')}>
-									<DropdownMenu.RadioItem value="viewer" class="dropdown-radio-item">
-										<div class="switcher-avatar {authUser?.avatar?.element || ''}">
-											{#if authUser?.avatar?.picture}
-												<img
-													class="avatar"
-													alt={`Avatar of ${authUser?.username}`}
-													src={getAvatarSrc(authUser?.avatar?.picture)}
-													srcset={getAvatarSrcSet(authUser?.avatar?.picture)}
-													width="20"
-													height="20"
-												/>
-											{:else}
-												<div class="avatar-placeholder" aria-hidden="true"></div>
-											{/if}
-										</div>
-										<span>You</span>
-									</DropdownMenu.RadioItem>
-									<DropdownMenu.RadioItem value="source" class="dropdown-radio-item">
-										<div class="switcher-avatar {collectionSourceUser?.avatar?.element || ''}">
-											{#if collectionSourceUser?.avatar?.picture}
-												<img
-													class="avatar"
-													alt={`Avatar of ${collectionSourceUser?.username}`}
-													src={getAvatarSrc(collectionSourceUser?.avatar?.picture)}
-													srcset={getAvatarSrcSet(collectionSourceUser?.avatar?.picture)}
-													width="20"
-													height="20"
-												/>
-											{:else}
-												<div class="avatar-placeholder" aria-hidden="true"></div>
-											{/if}
-										</div>
-										<span>{collectionSourceUser?.username}</span>
-									</DropdownMenu.RadioItem>
-								</DropdownMenu.RadioGroup>
-							</DropdownMenu.Content>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Root>
 				{/if}
 				{#if menu}
 					{@render menu()}
@@ -428,73 +365,4 @@
 		font-style: italic;
 	}
 
-	:global(.collection-switcher-trigger) {
-		display: inline-flex;
-		align-items: center;
-		gap: $unit-fourth;
-		padding: $unit-fourth $unit-half;
-		border-radius: $input-corner;
-		background: transparent;
-		color: var(--text-secondary);
-		border: none;
-		cursor: pointer;
-		font-size: $font-small;
-		font-weight: $medium;
-		@include smooth-transition($duration-quick, background-color, color);
-
-		&:hover {
-			background: var(--button-bg);
-			color: var(--text-primary);
-		}
-
-		&:focus-visible {
-			box-shadow: 0 0 0 2px var(--accent-blue-focus);
-		}
-	}
-
-	.switcher-avatar {
-		width: 20px;
-		height: 20px;
-		border-radius: 50%;
-		overflow: hidden;
-		background: var(--button-bg);
-		flex-shrink: 0;
-	}
-
-	.switcher-name {
-		max-width: 80px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	:global(.dropdown-label) {
-		padding: $unit-half $unit;
-		font-size: $font-small;
-		font-weight: $bold;
-		color: var(--text-tertiary);
-		user-select: none;
-	}
-
-	:global(.dropdown-radio-item) {
-		display: flex;
-		align-items: center;
-		gap: $unit-half;
-		padding: $unit-half $unit;
-		border-radius: $item-corner;
-		cursor: pointer;
-		font-size: $font-small;
-		color: var(--text-primary);
-		outline: none;
-		@include smooth-transition($duration-quick, background-color);
-
-		&:hover,
-		&[data-highlighted] {
-			background: var(--button-bg);
-		}
-
-		&[data-state='checked'] {
-			font-weight: $bold;
-		}
-	}
 </style>
