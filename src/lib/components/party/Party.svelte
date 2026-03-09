@@ -412,7 +412,7 @@
 <!-- Delete Confirmation Dialog -->
 <DeleteTeamDialog
 	bind:open={actions.deleteDialogOpen}
-	partyName={party.name || 'Untitled'}
+	partyName={party.name || 'Untitled team'}
 	deleting={actions.deleting}
 	onDelete={actions.deleteParty}
 	onCancel={() => (actions.deleteDialogOpen = false)}

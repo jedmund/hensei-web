@@ -35,33 +35,34 @@
 		if (!party.raid) return
 
 		const raidName =
-			typeof party.raid.name === 'string'
-				? party.raid.name
-				: party.raid.name?.en || 'Raid Parties'
+			typeof party.raid.name === 'string' ? party.raid.name : party.raid.name?.en || 'Raid Parties'
 
-		sidebar.openWithComponent(raidName, RaidPartiesPane, { raid: party.raid }, {
-			scrollable: true,
-			image: getRaidImage(party.raid.slug)
-		})
+		sidebar.openWithComponent(
+			raidName,
+			RaidPartiesPane,
+			{ raid: party.raid },
+			{
+				scrollable: true,
+				image: getRaidImage(party.raid.slug)
+			}
+		)
 	}
 </script>
 
 <div class="party-info-grid">
 	<!-- Row 1: Description + Video -->
 	<div class="row row-1" class:single={!showVideo}>
-		{#if showDescription}
-			<DescriptionTile
-				name={party.name}
-				description={party.description}
-				user={party.user}
-				collectionSourceUser={party.collectionSourceUser}
-				sourceParty={party.sourceParty}
-				{canEdit}
-				{onOpenDescription}
-				{onOpenEdit}
-				{menu}
-			/>
-		{/if}
+		<DescriptionTile
+			name={party.name}
+			description={party.description}
+			user={party.user}
+			collectionSourceUser={party.collectionSourceUser}
+			sourceParty={party.sourceParty}
+			{canEdit}
+			{onOpenDescription}
+			{onOpenEdit}
+			{menu}
+		/>
 
 		{#if showVideo}
 			<VideoTile videoUrl={party.videoUrl} />
