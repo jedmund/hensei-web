@@ -14,8 +14,7 @@ import type {
 	CollectionWeapon,
 	CollectionSummon,
 	CollectionFilters,
-	CollectionCounts,
-	CollectionItemCount
+	CollectionCounts
 } from '$lib/types/api/collection'
 
 /**
@@ -175,45 +174,6 @@ export const collectionQueries = {
 		}),
 
 	/**
-	 * Get count and items for a specific granblue_id in a user's collection
-	 */
-	itemCount: (
-		userId: string,
-		type: 'character' | 'weapon' | 'summon',
-		granblueId: string,
-		enabled: boolean = true
-	) =>
-		queryOptions<CollectionItemCount>({
-			queryKey: ['collection', 'item_count', userId, type, granblueId] as const,
-			queryFn: () => collectionAdapter.getItemCount(userId, type, granblueId),
-			enabled: !!userId && !!granblueId && enabled,
-			staleTime: 1000 * 60 * 5,
-			gcTime: 1000 * 60 * 30
-		}),
-
-	/**
-	 * Get all granblue IDs in a user's collection (lightweight, for ownership checks)
-	 * Returns { weapons: string[], characters: string[], summons: string[] }
-	 *
-	 * @param userId - The user whose collection to check
-	 * @param enabled - Whether the query is enabled (default: true)
-	 */
-	granblueIds: (userId: string, enabled: boolean = true) =>
-		queryOptions({
-			queryKey: ['collection', 'granblue_ids', userId] as const,
-			queryFn: () => collectionAdapter.getCollectionGranblueIds(userId),
-			enabled: !!userId && enabled,
-			staleTime: 1000 * 60 * 5, // 5 minutes
-			gcTime: 1000 * 60 * 30, // 30 minutes
-			retry: (failureCount, error) => {
-				// Don't retry on 403 (no access) or 404 (user not found)
-				if (error && 'status' in error && (error.status === 403 || error.status === 404))
-					return false
-				return failureCount < 3
-			}
-		}),
-
-	/**
 	 * Get IDs of characters already in a user's collection
 	 * Used to filter out owned characters in the add modal
 	 *
@@ -285,9 +245,7 @@ export const collectionQueries = {
 export const collectionKeys = {
 	all: ['collection'] as const,
 	countsPrefix: ['collection', 'counts'] as const,
-	granblueIdsPrefix: ['collection', 'granblue_ids'] as const,
 	counts: (userId: string) => [...collectionKeys.all, 'counts', userId] as const,
-	granblueIds: (userId: string) => [...collectionKeys.all, 'granblue_ids', userId] as const,
 	characters: (userId?: string) =>
 		userId
 			? ([...collectionKeys.all, 'characters', userId] as const)

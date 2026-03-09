@@ -114,7 +114,6 @@ describe('collectionKeys', () => {
 	it('produces correct key arrays', () => {
 		expect(collectionKeys.all).toEqual(['collection'])
 		expect(collectionKeys.counts('u-1')).toEqual(['collection', 'counts', 'u-1'])
-		expect(collectionKeys.granblueIds('u-1')).toEqual(['collection', 'granblue_ids', 'u-1'])
 		expect(collectionKeys.character('c-1')).toEqual(['collection', 'character', 'c-1'])
 	})
 
@@ -140,12 +139,6 @@ describe('collectionKeys', () => {
 
 	it('counts key matches query queryKey', () => {
 		expect(collectionKeys.counts('u-1')).toEqual(collectionQueries.counts('u-1').queryKey)
-	})
-
-	it('granblueIds key matches query queryKey', () => {
-		expect(collectionKeys.granblueIds('u-1')).toEqual(
-			collectionQueries.granblueIds('u-1').queryKey
-		)
 	})
 
 	it('character key matches query queryKey', () => {

@@ -20,8 +20,7 @@ import type {
 	CollectionSummonInput,
 	CollectionJobAccessoryInput,
 	CollectionFilters,
-	CollectionCounts,
-	CollectionItemCount
+	CollectionCounts
 } from '$lib/types/api/collection'
 
 /**
@@ -64,35 +63,6 @@ export class CollectionAdapter extends BaseAdapter {
 		return this.request<CollectionCounts>(`/users/${userId}/collection/counts`, {
 			method: 'GET'
 		})
-	}
-
-	/**
-	 * Gets all granblue IDs in a user's collection (lightweight, for ownership checks)
-	 */
-	async getCollectionGranblueIds(
-		userId: string
-	): Promise<{ weapons: string[]; characters: string[]; summons: string[] }> {
-		return this.request<{ weapons: string[]; characters: string[]; summons: string[] }>(
-			`/users/${userId}/collection/granblue_ids`,
-			{ method: 'GET' }
-		)
-	}
-
-	/**
-	 * Gets the count and items for a specific granblue_id in a user's collection
-	 */
-	async getItemCount(
-		userId: string,
-		type: 'character' | 'weapon' | 'summon',
-		granblueId: string
-	): Promise<CollectionItemCount> {
-		return this.request<CollectionItemCount>(
-			`/users/${userId}/collection/item_count`,
-			{
-				method: 'POST',
-				body: { type, granblue_id: granblueId }
-			}
-		)
 	}
 
 	// ============================================
