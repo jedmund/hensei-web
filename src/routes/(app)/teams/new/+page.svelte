@@ -30,6 +30,7 @@
 	import type { Party } from '$lib/types/api/party'
 	import { PartyVisibility } from '$lib/types/visibility'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
+	import { afterNavigate } from '$app/navigation'
 
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -437,7 +438,7 @@
 	// Calculate if grids are full
 	let isWeaponGridFull = $derived(weapons.length >= 10) // 1 mainhand + 9 grid slots
 	let isSummonGridFull = $derived(summons.length >= 6) // 6 summon slots (main + 4 grid + friend)
-	let isCharacterGridFull = $derived(characters.length >= 5) // 5 character slots
+	let isCharacterGridFull = $derived(characters.length >= (party.raid?.group?.unlimited ? 8 : 5))
 
 	let canAddMore = $derived(
 		activeTab === GridType.Weapon
@@ -801,13 +802,14 @@
 					job: undefined,
 					characters,
 					weapons,
-					summons
+					summons,
+					raid: party.raid
 				}}
 			/>
 
 			<div class="party-content">
 				{#if activeTab === GridType.Weapon}
-					<WeaponGrid {weapons} />
+					<WeaponGrid {weapons} raidExtra={party.raid?.group?.extra} />
 				{:else if activeTab === GridType.Summon}
 					<SummonGrid {summons} />
 				{:else}
@@ -826,7 +828,7 @@
 								if (import.meta.env.DEV) console.log('Open accessory selection sidebar')
 							}}
 						/>
-						<CharacterGrid {characters} {mainWeaponElement} {partyElement} />
+						<CharacterGrid {characters} {mainWeaponElement} {partyElement} unlimited={party.raid?.group?.unlimited} />
 					</div>
 				{/if}
 			</div>
