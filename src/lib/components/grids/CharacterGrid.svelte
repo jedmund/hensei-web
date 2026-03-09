@@ -12,7 +12,7 @@
 		partyElement?: number | null | undefined
 		container?: string | undefined
 		unlimited?: boolean
-		collectionCharacterIds?: Set<string>
+		collectionCharacterCounts?: Map<string, number>
 	}
 
 	let {
@@ -21,7 +21,7 @@
 		partyElement = undefined,
 		container = 'main-characters',
 		unlimited = false,
-		collectionCharacterIds = undefined
+		collectionCharacterCounts = undefined
 	}: Props = $props()
 
 	// Dynamic slot count based on unlimited flag
@@ -41,6 +41,27 @@
 			}
 		})
 		return slots
+	})
+
+	// Compute per-position collection status by consuming counts in render order
+	const collectionStatus = $derived.by(() => {
+		if (!collectionCharacterCounts) return null
+		const remaining = new Map(collectionCharacterCounts)
+		const status = new Map<number, boolean>()
+
+		characterSlots.forEach((char, i) => {
+			const gid = char?.character?.granblueId
+			if (!gid) { status.set(i, false); return }
+			const key = String(gid)
+			const count = remaining.get(key) ?? 0
+			if (count > 0) {
+				remaining.set(key, count - 1)
+				status.set(i, true)
+			} else {
+				status.set(i, false)
+			}
+		})
+		return status
 	})
 </script>
 
@@ -75,8 +96,8 @@
 								position={i}
 								{mainWeaponElement}
 								{partyElement}
-								notInCollection={collectionCharacterIds != null && !!character?.character?.granblueId && !collectionCharacterIds.has(String(character.character.granblueId))}
-								inCollection={collectionCharacterIds != null && !!character?.character?.granblueId && collectionCharacterIds.has(String(character.character.granblueId))}
+								notInCollection={collectionStatus != null && !!character?.character?.granblueId && !collectionStatus.get(i)}
+								inCollection={collectionStatus != null && !!character?.character?.granblueId && !!collectionStatus.get(i)}
 							/>
 						</DraggableItem>
 					</DropZone>
@@ -86,8 +107,8 @@
 						position={i}
 						{mainWeaponElement}
 						{partyElement}
-						notInCollection={collectionCharacterIds != null && !!character?.character?.granblueId && !collectionCharacterIds.has(String(character.character.granblueId))}
-						inCollection={collectionCharacterIds != null && !!character?.character?.granblueId && collectionCharacterIds.has(String(character.character.granblueId))}
+						notInCollection={collectionStatus != null && !!character?.character?.granblueId && !collectionStatus.get(i)}
+						inCollection={collectionStatus != null && !!character?.character?.granblueId && !!collectionStatus.get(i)}
 					/>
 				{/if}
 			</li>

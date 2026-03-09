@@ -189,22 +189,35 @@
 
 	function handleSwitchCollectionUser(target: 'viewer' | 'source') {
 		activeCollectionUser = target
+		partyStore.setActiveCollectionUser(target)
 	}
 
-	// Derive collection ID sets from embedded data
-	const collectionWeaponIds = $derived(
+	// Derive collection count maps from embedded data (granblueId → owned count)
+	const collectionWeaponCounts = $derived(
 		activeCollection
-			? new Set(activeCollection.weapons.map((w) => String(w.weapon.granblueId)))
+			? activeCollection.weapons.reduce((map, w) => {
+					const gid = String(w.weapon.granblueId)
+					map.set(gid, (map.get(gid) ?? 0) + 1)
+					return map
+				}, new Map<string, number>())
 			: undefined
 	)
-	const collectionCharacterIds = $derived(
+	const collectionCharacterCounts = $derived(
 		activeCollection
-			? new Set(activeCollection.characters.map((c) => String(c.character.granblueId)))
+			? activeCollection.characters.reduce((map, c) => {
+					const gid = String(c.character.granblueId)
+					map.set(gid, (map.get(gid) ?? 0) + 1)
+					return map
+				}, new Map<string, number>())
 			: undefined
 	)
-	const collectionSummonIds = $derived(
+	const collectionSummonCounts = $derived(
 		activeCollection
-			? new Set(activeCollection.summons.map((s) => String(s.summon.granblueId)))
+			? activeCollection.summons.reduce((map, s) => {
+					const gid = String(s.summon.granblueId)
+					map.set(gid, (map.get(gid) ?? 0) + 1)
+					return map
+				}, new Map<string, number>())
 			: undefined
 	)
 
@@ -392,10 +405,10 @@
 						raidExtra={(party as any)?.raid?.group?.extra}
 						showGuidebooks={(party as any)?.raid?.group?.guidebooks}
 						guidebooks={(party as any)?.guidebooks}
-						{collectionWeaponIds}
+						{collectionWeaponCounts}
 					/>
 				{:else if activeTab === GridType.Summon}
-					<SummonGrid summons={party.summons} {collectionSummonIds} />
+					<SummonGrid summons={party.summons} {collectionSummonCounts} />
 				{:else}
 					<div class="character-tab-content">
 						<JobSection
@@ -417,7 +430,7 @@
 							{mainWeaponElement}
 							{partyElement}
 							unlimited={(party as any)?.raid?.group?.unlimited}
-							{collectionCharacterIds}
+							{collectionCharacterCounts}
 						/>
 					</div>
 				{/if}

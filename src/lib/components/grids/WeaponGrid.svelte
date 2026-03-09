@@ -11,7 +11,7 @@
 		raidExtra?: boolean
 		showGuidebooks?: boolean
 		guidebooks?: Record<string, any>
-		collectionWeaponIds?: Set<string>
+		collectionWeaponCounts?: Map<string, number>
 	}
 
 	let {
@@ -19,7 +19,7 @@
 		raidExtra = undefined,
 		showGuidebooks = undefined,
 		guidebooks = undefined,
-		collectionWeaponIds = undefined
+		collectionWeaponCounts = undefined
 	}: Props = $props()
 
 	import WeaponUnit from '$lib/components/units/WeaponUnit.svelte'
@@ -42,12 +42,36 @@
 		})
 		return slots
 	})
+
+	// Compute per-position collection status by consuming counts in render order
+	const collectionStatus = $derived.by(() => {
+		if (!collectionWeaponCounts) return null
+		const remaining = new Map(collectionWeaponCounts)
+		const status = new Map<number, boolean>()
+
+		const check = (weapon: GridWeapon | undefined, position: number) => {
+			const gid = weapon?.weapon?.granblueId
+			if (!gid) { status.set(position, false); return }
+			const key = String(gid)
+			const count = remaining.get(key) ?? 0
+			if (count > 0) {
+				remaining.set(key, count - 1)
+				status.set(position, true)
+			} else {
+				status.set(position, false)
+			}
+		}
+
+		check(mainhand, -1)
+		subWeaponSlots.forEach((w, i) => check(w, i))
+		return status
+	})
 </script>
 
 <div class="wrapper">
 	<div class="grid">
 		<div aria-label="Mainhand Weapon">
-			<WeaponUnit item={mainhand} position={-1} notInCollection={collectionWeaponIds != null && !!mainhand?.weapon?.granblueId && !collectionWeaponIds.has(String(mainhand.weapon.granblueId))} inCollection={collectionWeaponIds != null && !!mainhand?.weapon?.granblueId && collectionWeaponIds.has(String(mainhand.weapon.granblueId))} />
+			<WeaponUnit item={mainhand} position={-1} notInCollection={collectionStatus != null && !!mainhand?.weapon?.granblueId && !collectionStatus.get(-1)} inCollection={collectionStatus != null && !!mainhand?.weapon?.granblueId && !!collectionStatus.get(-1)} />
 		</div>
 
 		<ul class="weapons" aria-label="Weapon Grid">
@@ -72,11 +96,11 @@
 								type="weapon"
 								canDrag={!!weapon && (ctx?.canEdit() ?? false)}
 							>
-								<WeaponUnit item={weapon} position={i} notInCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && !collectionWeaponIds.has(String(weapon.weapon.granblueId))} inCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && collectionWeaponIds.has(String(weapon.weapon.granblueId))} />
+								<WeaponUnit item={weapon} position={i} notInCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !collectionStatus.get(i)} inCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !!collectionStatus.get(i)} />
 							</DraggableItem>
 						</DropZone>
 					{:else}
-						<WeaponUnit item={weapon} position={i} notInCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && !collectionWeaponIds.has(String(weapon.weapon.granblueId))} inCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && collectionWeaponIds.has(String(weapon.weapon.granblueId))} />
+						<WeaponUnit item={weapon} position={i} notInCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !collectionStatus.get(i)} inCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !!collectionStatus.get(i)} />
 					{/if}
 				</li>
 			{/each}

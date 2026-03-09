@@ -8,10 +8,10 @@
 
 	interface Props {
 		summons?: GridSummon[]
-		collectionSummonIds?: Set<string>
+		collectionSummonCounts?: Map<string, number>
 	}
 
-	let { summons = [], collectionSummonIds = undefined }: Props = $props()
+	let { summons = [], collectionSummonCounts = undefined }: Props = $props()
 
 	import SummonUnit from '$lib/components/units/SummonUnit.svelte'
 	import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
@@ -32,12 +32,37 @@
 		})
 		return slots
 	})
+
+	// Compute per-position collection status by consuming counts in render order
+	const collectionStatus = $derived.by(() => {
+		if (!collectionSummonCounts) return null
+		const remaining = new Map(collectionSummonCounts)
+		const status = new Map<number, boolean>()
+
+		const check = (summon: GridSummon | undefined, position: number) => {
+			const gid = summon?.summon?.granblueId
+			if (!gid) { status.set(position, false); return }
+			const key = String(gid)
+			const count = remaining.get(key) ?? 0
+			if (count > 0) {
+				remaining.set(key, count - 1)
+				status.set(position, true)
+			} else {
+				status.set(position, false)
+			}
+		}
+
+		check(main, -1)
+		subSummonSlots.forEach((s, i) => check(s, i))
+		check(friend, 6)
+		return status
+	})
 </script>
 
 <div class="wrapper">
 	<div class="grid">
 		<div class="LabeledUnit">
-			<SummonUnit item={main} position={-1} notInCollection={collectionSummonIds != null && !!main?.summon?.granblueId && !collectionSummonIds.has(String(main.summon.granblueId))} inCollection={collectionSummonIds != null && !!main?.summon?.granblueId && collectionSummonIds.has(String(main.summon.granblueId))} />
+			<SummonUnit item={main} position={-1} notInCollection={collectionStatus != null && !!main?.summon?.granblueId && !collectionStatus.get(-1)} inCollection={collectionStatus != null && !!main?.summon?.granblueId && !!collectionStatus.get(-1)} />
 		</div>
 
 		<section>
@@ -62,11 +87,11 @@
 									type="summon"
 									canDrag={!!summon && (ctx?.canEdit() ?? false)}
 								>
-									<SummonUnit item={summon} position={i} notInCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && !collectionSummonIds.has(String(summon.summon.granblueId))} inCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && collectionSummonIds.has(String(summon.summon.granblueId))} />
+									<SummonUnit item={summon} position={i} notInCollection={collectionStatus != null && !!summon?.summon?.granblueId && !collectionStatus.get(i)} inCollection={collectionStatus != null && !!summon?.summon?.granblueId && !!collectionStatus.get(i)} />
 								</DraggableItem>
 							</DropZone>
 						{:else}
-							<SummonUnit item={summon} position={i} notInCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && !collectionSummonIds.has(String(summon.summon.granblueId))} inCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && collectionSummonIds.has(String(summon.summon.granblueId))} />
+							<SummonUnit item={summon} position={i} notInCollection={collectionStatus != null && !!summon?.summon?.granblueId && !collectionStatus.get(i)} inCollection={collectionStatus != null && !!summon?.summon?.granblueId && !!collectionStatus.get(i)} />
 						{/if}
 					</li>
 				{/each}
@@ -74,7 +99,7 @@
 		</section>
 
 		<div class="LabeledUnit">
-			<SummonUnit item={friend} position={6} notInCollection={collectionSummonIds != null && !!friend?.summon?.granblueId && !collectionSummonIds.has(String(friend.summon.granblueId))} inCollection={collectionSummonIds != null && !!friend?.summon?.granblueId && collectionSummonIds.has(String(friend.summon.granblueId))} />
+			<SummonUnit item={friend} position={6} notInCollection={collectionStatus != null && !!friend?.summon?.granblueId && !collectionStatus.get(6)} inCollection={collectionStatus != null && !!friend?.summon?.granblueId && !!collectionStatus.get(6)} />
 		</div>
 	</div>
 	<ExtraSummons {summons} offset={4} />
