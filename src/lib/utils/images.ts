@@ -8,7 +8,7 @@
 import { getImageBaseUrl } from '$lib/api/adapters/config'
 
 export type ResourceType = 'character' | 'weapon' | 'summon'
-export type ImageVariant = 'main' | 'grid' | 'square' | 'detail' | 'base' | 'wide'
+export type ImageVariant = 'main' | 'tall' | 'grid' | 'square' | 'detail' | 'base' | 'wide'
 
 /**
  * Maps resource type and variant to the correct directory name
