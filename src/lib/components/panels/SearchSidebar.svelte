@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
   import { onMount } from 'svelte'
@@ -6,6 +5,7 @@
   import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholderImage } from '$lib/utils/images'
   import { toast } from 'svelte-sonner'
   import { extractErrorMessage } from '$lib/utils/errors'
+  import { getElementColor } from '$lib/utils/gw'
 
   interface Props {
     open?: boolean
@@ -44,13 +44,13 @@
 
   // Constants
   const elements = [
-    { value: 0, label: 'Null', color: '#888' },
-    { value: 1, label: 'Wind', color: '#4A9B3F' },
-    { value: 2, label: 'Fire', color: '#D94444' },
-    { value: 3, label: 'Water', color: '#4A7FB8' },
-    { value: 4, label: 'Earth', color: '#9B6E3F' },
-    { value: 5, label: 'Dark', color: '#6B3E9B' },
-    { value: 6, label: 'Light', color: '#F4B643' }
+    { value: 0, label: 'Null', color: getElementColor(0) },
+    { value: 1, label: 'Wind', color: getElementColor(1) },
+    { value: 2, label: 'Fire', color: getElementColor(2) },
+    { value: 3, label: 'Water', color: getElementColor(3) },
+    { value: 4, label: 'Earth', color: getElementColor(4) },
+    { value: 5, label: 'Dark', color: getElementColor(5) },
+    { value: 6, label: 'Light', color: getElementColor(6) }
   ]
 
   const rarities = [

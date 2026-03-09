@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import type {
@@ -17,6 +16,7 @@
 	import ArtifactSkillRow from './ArtifactSkillRow.svelte'
 	import ArtifactModifierList from './ArtifactModifierList.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
+	import { getElementColor } from '$lib/utils/gw'
 
 	interface Props {
 		/** The artifact instance being edited */
@@ -109,12 +109,12 @@
 
 	// Element options with color dots
 	const elementOptions = [
-		{ value: 1, label: 'Wind', color: '#3ee489' },
-		{ value: 2, label: 'Fire', color: '#fa6d6d' },
-		{ value: 3, label: 'Water', color: '#6cc9ff' },
-		{ value: 4, label: 'Earth', color: '#fd9f5b' },
-		{ value: 5, label: 'Dark', color: '#de7bff' },
-		{ value: 6, label: 'Light', color: '#e8d633' }
+		{ value: 1, label: 'Wind', color: getElementColor(1) },
+		{ value: 2, label: 'Fire', color: getElementColor(2) },
+		{ value: 3, label: 'Water', color: getElementColor(3) },
+		{ value: 4, label: 'Earth', color: getElementColor(4) },
+		{ value: 5, label: 'Dark', color: getElementColor(5) },
+		{ value: 6, label: 'Light', color: getElementColor(6) }
 	]
 
 	// Convert numeric element to ElementType string

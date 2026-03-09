@@ -53,8 +53,8 @@
 	class:clickable
 	role={clickable ? 'button' : undefined}
 	tabindex={clickable ? 0 : undefined}
-	on:click={handleClick}
-	on:keydown={handleKeydown}
+	onclick={handleClick}
+	onkeydown={handleKeydown}
 >
 	{#if job}
 		<img src={portraitUrl} alt={job.name.en} class="portrait" loading="lazy" decoding="async" />
