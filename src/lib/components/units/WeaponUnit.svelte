@@ -317,7 +317,7 @@
 		/>
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
-		{#if item && inCollection}<Icon name="bookmark" size={10} />{/if}
+		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
 		{item ? displayName(item?.weapon) : ''}
 	</div>
 </div>
@@ -440,7 +440,7 @@
 		}
 
 		&.not-in-collection {
-			opacity: 0.6;
+			opacity: 0.7;
 		}
 	}
 
@@ -449,6 +449,7 @@
 		position: absolute;
 		inset: 0;
 		border: 2px solid colors.$error;
+		box-shadow: inset 0px 0px 4px colors.$error;
 		border-radius: inherit;
 		z-index: effects.$z-badge;
 		pointer-events: none;
@@ -469,14 +470,12 @@
 		font-size: typography.$font-small;
 		text-align: center;
 		color: var(--text-secondary);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 2px;
 
-		&.not-in-collection {
-			color: colors.$error;
+		:global(span) {
+			display: inline;
+			vertical-align: -4px;
 		}
+
 	}
 
 	.modifiers {
