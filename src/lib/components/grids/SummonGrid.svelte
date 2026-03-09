@@ -37,7 +37,7 @@
 <div class="wrapper">
 	<div class="grid">
 		<div class="LabeledUnit">
-			<SummonUnit item={main} position={-1} notInCollection={collectionSummonIds != null && !!main?.summon?.granblueId && !collectionSummonIds.has(String(main.summon.granblueId))} />
+			<SummonUnit item={main} position={-1} notInCollection={collectionSummonIds != null && !!main?.summon?.granblueId && !collectionSummonIds.has(String(main.summon.granblueId))} inCollection={collectionSummonIds != null && !!main?.summon?.granblueId && collectionSummonIds.has(String(main.summon.granblueId))} />
 		</div>
 
 		<section>
@@ -62,11 +62,11 @@
 									type="summon"
 									canDrag={!!summon && (ctx?.canEdit() ?? false)}
 								>
-									<SummonUnit item={summon} position={i} notInCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && !collectionSummonIds.has(String(summon.summon.granblueId))} />
+									<SummonUnit item={summon} position={i} notInCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && !collectionSummonIds.has(String(summon.summon.granblueId))} inCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && collectionSummonIds.has(String(summon.summon.granblueId))} />
 								</DraggableItem>
 							</DropZone>
 						{:else}
-							<SummonUnit item={summon} position={i} notInCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && !collectionSummonIds.has(String(summon.summon.granblueId))} />
+							<SummonUnit item={summon} position={i} notInCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && !collectionSummonIds.has(String(summon.summon.granblueId))} inCollection={collectionSummonIds != null && !!summon?.summon?.granblueId && collectionSummonIds.has(String(summon.summon.granblueId))} />
 						{/if}
 					</li>
 				{/each}
@@ -74,7 +74,7 @@
 		</section>
 
 		<div class="LabeledUnit">
-			<SummonUnit item={friend} position={6} notInCollection={collectionSummonIds != null && !!friend?.summon?.granblueId && !collectionSummonIds.has(String(friend.summon.granblueId))} />
+			<SummonUnit item={friend} position={6} notInCollection={collectionSummonIds != null && !!friend?.summon?.granblueId && !collectionSummonIds.has(String(friend.summon.granblueId))} inCollection={collectionSummonIds != null && !!friend?.summon?.granblueId && collectionSummonIds.has(String(friend.summon.granblueId))} />
 		</div>
 	</div>
 	<ExtraSummons {summons} offset={4} />

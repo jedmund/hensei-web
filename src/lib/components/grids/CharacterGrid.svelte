@@ -76,6 +76,7 @@
 								{mainWeaponElement}
 								{partyElement}
 								notInCollection={collectionCharacterIds != null && !!character?.character?.granblueId && !collectionCharacterIds.has(String(character.character.granblueId))}
+								inCollection={collectionCharacterIds != null && !!character?.character?.granblueId && collectionCharacterIds.has(String(character.character.granblueId))}
 							/>
 						</DraggableItem>
 					</DropZone>
@@ -86,6 +87,7 @@
 						{mainWeaponElement}
 						{partyElement}
 						notInCollection={collectionCharacterIds != null && !!character?.character?.granblueId && !collectionCharacterIds.has(String(character.character.granblueId))}
+						inCollection={collectionCharacterIds != null && !!character?.character?.granblueId && collectionCharacterIds.has(String(character.character.granblueId))}
 					/>
 				{/if}
 			</li>

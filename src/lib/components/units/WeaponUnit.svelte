@@ -22,9 +22,10 @@
 		item?: GridWeapon | undefined
 		position: number
 		notInCollection?: boolean
+		inCollection?: boolean
 	}
 
-	let { item, position, notInCollection = false }: Props = $props()
+	let { item, position, notInCollection = false, inCollection = false }: Props = $props()
 
 	const ctx = usePartyContext()
 
@@ -315,7 +316,10 @@
 			}}
 		/>
 	{/if}
-	<div class="name" class:not-in-collection={notInCollection}>{item ? displayName(item?.weapon) : ''}</div>
+	<div class="name" class:not-in-collection={notInCollection}>
+		{#if item && inCollection}<Icon name="bookmark" size={10} />{/if}
+		{item ? displayName(item?.weapon) : ''}
+	</div>
 </div>
 
 <style lang="scss">
@@ -465,6 +469,10 @@
 		font-size: typography.$font-small;
 		text-align: center;
 		color: var(--text-secondary);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 2px;
 
 		&.not-in-collection {
 			color: colors.$error;

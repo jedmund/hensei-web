@@ -25,9 +25,10 @@
 		mainWeaponElement?: number | null | undefined
 		partyElement?: number | null | undefined
 		notInCollection?: boolean
+		inCollection?: boolean
 	}
 
-	let { item, position, mainWeaponElement, partyElement, notInCollection = false }: Props = $props()
+	let { item, position, mainWeaponElement, partyElement, notInCollection = false, inCollection = false }: Props = $props()
 
 	const ctx = usePartyContext()
 
@@ -325,6 +326,7 @@
 		/>
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
+		{#if item && inCollection}<Icon name="bookmark" size={10} />{/if}
 		{item ? displayName(item?.character) : ''}
 		{#if item?.artifact}
 			<Icon name="gem" size={12} class="artifact-indicator" />

@@ -47,7 +47,7 @@
 <div class="wrapper">
 	<div class="grid">
 		<div aria-label="Mainhand Weapon">
-			<WeaponUnit item={mainhand} position={-1} notInCollection={collectionWeaponIds != null && !!mainhand?.weapon?.granblueId && !collectionWeaponIds.has(String(mainhand.weapon.granblueId))} />
+			<WeaponUnit item={mainhand} position={-1} notInCollection={collectionWeaponIds != null && !!mainhand?.weapon?.granblueId && !collectionWeaponIds.has(String(mainhand.weapon.granblueId))} inCollection={collectionWeaponIds != null && !!mainhand?.weapon?.granblueId && collectionWeaponIds.has(String(mainhand.weapon.granblueId))} />
 		</div>
 
 		<ul class="weapons" aria-label="Weapon Grid">
@@ -72,11 +72,11 @@
 								type="weapon"
 								canDrag={!!weapon && (ctx?.canEdit() ?? false)}
 							>
-								<WeaponUnit item={weapon} position={i} notInCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && !collectionWeaponIds.has(String(weapon.weapon.granblueId))} />
+								<WeaponUnit item={weapon} position={i} notInCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && !collectionWeaponIds.has(String(weapon.weapon.granblueId))} inCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && collectionWeaponIds.has(String(weapon.weapon.granblueId))} />
 							</DraggableItem>
 						</DropZone>
 					{:else}
-						<WeaponUnit item={weapon} position={i} notInCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && !collectionWeaponIds.has(String(weapon.weapon.granblueId))} />
+						<WeaponUnit item={weapon} position={i} notInCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && !collectionWeaponIds.has(String(weapon.weapon.granblueId))} inCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && collectionWeaponIds.has(String(weapon.weapon.granblueId))} />
 					{/if}
 				</li>
 			{/each}
