@@ -52,6 +52,17 @@ export function updatePartyOptions(queryClient: QueryClient) {
 
 			return { previousParty }
 		},
+		onSuccess: (data: Party, params: UpdatePartyParams) => {
+			// Use the full server response to update cache. This ensures nested
+			// objects like raid.group are present, which the optimistic update
+			// (onMutate) can't provide since it only has flat params.
+			queryClient.setQueryData(partyKeys.detail(params.shortcode), (old: Party | undefined) => {
+				if (!old) return data
+				// Merge server response with existing data to preserve fields
+				// the update endpoint might not return (e.g., favorited)
+				return { ...old, ...data }
+			})
+		},
 		onError: (_err: unknown, params: UpdatePartyParams, context: { previousParty?: Party } | undefined) => {
 			if (context?.previousParty) {
 				queryClient.setQueryData(partyKeys.detail(params.shortcode), context.previousParty)

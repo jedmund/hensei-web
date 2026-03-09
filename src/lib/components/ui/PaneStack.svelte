@@ -142,7 +142,7 @@
 			</SidebarHeader>
 
 			<div class="pane-content">
-				<PaneComponent {...pane.props ?? {}} />
+				<PaneComponent {...pane.props ?? {}} paneId={pane.id} />
 			</div>
 		</div>
 	{/each}
