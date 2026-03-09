@@ -14,7 +14,8 @@ import type {
 	CollectionWeapon,
 	CollectionSummon,
 	CollectionFilters,
-	CollectionCounts
+	CollectionCounts,
+	CollectionItemCount
 } from '$lib/types/api/collection'
 
 /**
@@ -171,6 +172,23 @@ export const collectionQueries = {
 			},
 			staleTime: 1000 * 60 * 2,
 			gcTime: 1000 * 60 * 15
+		}),
+
+	/**
+	 * Get count and items for a specific granblue_id in a user's collection
+	 */
+	itemCount: (
+		userId: string,
+		type: 'character' | 'weapon' | 'summon',
+		granblueId: string,
+		enabled: boolean = true
+	) =>
+		queryOptions<CollectionItemCount>({
+			queryKey: ['collection', 'item_count', userId, type, granblueId] as const,
+			queryFn: () => collectionAdapter.getItemCount(userId, type, granblueId),
+			enabled: !!userId && !!granblueId && enabled,
+			staleTime: 1000 * 60 * 5,
+			gcTime: 1000 * 60 * 30
 		}),
 
 	/**

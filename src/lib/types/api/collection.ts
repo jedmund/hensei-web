@@ -197,3 +197,11 @@ export interface CollectionCounts {
 	summons: number
 	artifacts: number
 }
+
+/**
+ * Response from the item_count endpoint
+ */
+export interface CollectionItemCount {
+	count: number
+	items: CollectionCharacter[] | CollectionWeapon[] | CollectionSummon[]
+}
