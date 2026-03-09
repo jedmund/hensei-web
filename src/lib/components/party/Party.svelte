@@ -240,6 +240,7 @@
 	// --- Context setup ---
 	setPartyContext({
 		getParty: () => party,
+		updateParty: () => {},
 		canEdit: () => canEdit(),
 		getEditKey: () => editKey,
 		getSelectedSlot: () => selectedSlot,
