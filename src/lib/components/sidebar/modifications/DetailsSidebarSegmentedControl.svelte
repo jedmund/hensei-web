@@ -36,7 +36,6 @@
 	@use '$src/themes/typography' as typography;
 
 	.details-sidebar-segmented-control {
-		margin-bottom: spacing.$unit-2x;
 		padding: 0 spacing.$unit-2x;
 	}
 
