@@ -18,7 +18,6 @@
 		type: 'weapon' | 'character' | 'summon'
 		disabled?: boolean
 		fromCollection?: boolean
-		owned?: boolean
 		inTeam?: boolean
 		onclick?: (item: AddItemResult) => void
 	}
@@ -28,7 +27,6 @@
 		type,
 		disabled = false,
 		fromCollection = false,
-		owned = false,
 		inTeam = false,
 		onclick
 	}: Props = $props()
@@ -65,7 +63,6 @@
 		class="result-button"
 		class:disabled={isDisabled}
 		class:from-collection={fromCollection}
-		class:owned
 		class:in-team={inTeam}
 		onclick={() => onclick?.(item)}
 		aria-label="{inTeam ? 'Already in team' : isDisabled ? 'Grid full - cannot add' : 'Add'} {itemName}"
@@ -95,8 +92,6 @@
 		{/if}
 		{#if fromCollection && !inTeam}
 			<Icon name="bookmark" size={14} class="collection-indicator" />
-		{:else if owned}
-			<Icon name="check" size={14} class="owned-indicator" />
 		{/if}
 	</button>
 </li>
@@ -156,13 +151,6 @@
 				}
 			}
 
-			&.owned {
-				background: var(--owned-bg, rgba(76, 175, 80, 0.08));
-
-				&:hover {
-					background: var(--owned-bg-hover, rgba(76, 175, 80, 0.15));
-				}
-			}
 		}
 
 		.result-image {
@@ -210,10 +198,5 @@
 			flex-shrink: 0;
 		}
 
-		:global(.owned-indicator) {
-			color: var(--success, #4caf50);
-			flex-shrink: 0;
-			opacity: 0.7;
-		}
 	}
 </style>
