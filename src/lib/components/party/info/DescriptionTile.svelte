@@ -117,7 +117,7 @@
 	<!-- Header: Title + Actions -->
 	<div class="tile-header-container">
 		<div class="tile-header">
-			<h1 class="party-name">{name || '(untitled party)'}</h1>
+			<h1 class="party-name" class:empty={!name}>{name || 'Untitled team'}</h1>
 			<div class="actions">
 				{#if canEdit}
 					<Button variant="secondary" size="small" onclick={onOpenEdit}>Edit</Button>
@@ -231,6 +231,10 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+
+		&.empty {
+			color: var(--text-tertiary);
+		}
 	}
 
 	.actions {

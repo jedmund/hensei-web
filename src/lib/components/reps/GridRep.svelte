@@ -33,7 +33,7 @@
 >
 	<a {href} data-sveltekit-preload-data="hover">
 		<div class="info">
-			<h2 class:empty={!party.name}>{party.name || '(untitled)'}</h2>
+			<h2 class:empty={!party.name}>{party.name || 'Untitled team'}</h2>
 			<div class="details">
 				<div class="details-text">
 					<span class={`raid ${!party.raid ? 'empty' : ''}`}
