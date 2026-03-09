@@ -38,7 +38,7 @@
 			case 'character':
 				return getCharacterImage(id, 'square', '01')
 			case 'weapon':
-				return getWeaponImage(id, 'square')
+				return getWeaponImage(id, 'square', result.element === 0 ? 0 : undefined)
 			case 'summon':
 				return getSummonImage(id, 'square')
 			default:

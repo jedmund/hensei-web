@@ -199,7 +199,7 @@
       case 'character':
         return getCharacterImage(id, 'grid', '01')
       case 'weapon':
-        return getWeaponImage(id, 'grid')
+        return getWeaponImage(id, 'grid', item.element === 0 ? 0 : undefined)
       case 'summon':
         return getSummonImage(id, 'grid')
       default:
