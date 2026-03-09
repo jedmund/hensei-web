@@ -8,7 +8,7 @@
   import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
   import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
   import { getSummonImage } from '$lib/features/database/detail/image'
-  import { getPlaceholderImage } from '$lib/utils/images'
+  import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
   import { sidebar } from '$lib/stores/sidebar.svelte'
   import { GridType } from '$lib/types/enums'
@@ -33,14 +33,13 @@
     if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
     return '—'
   }
-  // Use $derived to ensure consistent computation between server and client
-  let imageUrl = $derived.by(() => {
-    // Only position -1 (main) and position 6 (friend) use main-sized images
-    // All other positions (0-5) including subaura (4-5) use grid-sized images
-    const isMainSized = position === -1 || position === 6 || item?.main || item?.friend
-    const variant = isMainSized ? 'main' : 'grid'
+  // Use position (not data flags) to determine sizing — position is authoritative
+  let isMainSized = $derived(position === -1 || position === 6)
 
-    return getSummonImage(item?.summon?.granblueId, variant)
+  let imageUrl = $derived.by(() => {
+    const variant = isMainSized ? 'main' : 'grid'
+    const transformation = getSummonTransformation(item?.uncapLevel, item?.transcendenceStep)
+    return getSummonImage(item?.summon?.granblueId, variant, transformation)
   })
 
   // Check if this item is currently active in the sidebar
@@ -112,9 +111,9 @@
           {#key item?.id ?? position}
             <div
               class="frame summon {elementClass}"
-              class:main={item?.main || position === -1}
-              class:friend={item?.friend || position === 6}
-              class:cell={!((item?.main || position === -1) || (item?.friend || position === 6))}
+              class:main={position === -1}
+              class:friend={position === 6}
+              class:cell={!isMainSized}
               class:editable={ctx?.canEdit()}
               class:is-active={isActive}
               class:not-in-collection={notInCollection}

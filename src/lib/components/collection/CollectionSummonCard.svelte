@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CollectionSummon } from '$lib/types/api/collection'
-	import { getSummonImage } from '$lib/utils/images'
+	import { getSummonImage, getSummonTransformation } from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
 	interface Props {
@@ -10,8 +10,7 @@
 
 	let { summon, onClick }: Props = $props()
 
-	// Get transformation suffix for transcendence
-	const transformation = $derived(summon.transcendenceStep > 0 ? '02' : undefined)
+	const transformation = $derived(getSummonTransformation(summon.uncapLevel, summon.transcendenceStep))
 
 	const imageUrl = $derived(getSummonImage(summon.summon?.granblueId, 'wide', transformation))
 

@@ -57,6 +57,17 @@ export function getGenericPlaceholder(): string {
 }
 
 /**
+ * Calculates the summon transformation suffix based on uncap level and transcendence
+ * Returns undefined for base art, '02' for ULB, '03' for transcendence 1-4, '04' for transcendence 5+
+ */
+export function getSummonTransformation(uncapLevel?: number, transcendenceStep?: number): string | undefined {
+	if (transcendenceStep && transcendenceStep >= 5) return '04'
+	if (transcendenceStep && transcendenceStep > 0) return '03'
+	if (uncapLevel && uncapLevel >= 5) return '02'
+	return undefined
+}
+
+/**
  * Calculates the character pose based on uncap level and transcendence
  */
 export function getCharacterPose(uncapLevel?: number, transcendenceStep?: number): string {
