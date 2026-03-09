@@ -385,6 +385,7 @@ export function getGenderLabelImage(genderLabel: string): string {
  */
 export function getElementIcon(element: number): string {
 	const elementNames: Record<number, string> = {
+		0: 'null',
 		1: 'wind',
 		2: 'fire',
 		3: 'water',
