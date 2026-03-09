@@ -21,7 +21,7 @@
 	import { Gender } from '$lib/utils/jobUtils'
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 	import { transformSkillsToArray } from '$lib/utils/jobSkills'
-	import { onDestroy } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	import { setPartyContext } from '$lib/types/party-context'
 	import type { AddItemResult } from '$lib/types/api/search'
 	import { gridAdapter } from '$lib/api/adapters'
@@ -71,23 +71,17 @@
 	let activeTab = $state<GridType>(GridType.Weapon)
 
 	// Open search sidebar on mount
-	let hasOpenedSidebar = $state(false)
-	$effect(() => {
-		if (!hasOpenedSidebar) {
-			hasOpenedSidebar = true
-			// Set initial selected slot to mainhand weapon
-			selectedSlot = -1
-			// Small delay to let the page render first
-			setTimeout(() => {
-				openSearchSidebar({
-					type: 'weapon',
-					onAddItems: handleAddItems,
-					canAddMore: true,
-					authUserId: data.account?.userId,
-					userElement: currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
-				})
-			}, 100)
-		}
+	onMount(() => {
+		selectedSlot = -1
+		setTimeout(() => {
+			openSearchSidebar({
+				type: 'weapon',
+				onAddItems: handleAddItems,
+				canAddMore: true,
+				authUserId: data.account?.userId,
+				userElement: currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
+			})
+		}, 100)
 	})
 
 	// Reset state when re-navigating to /teams/new after a party was created.

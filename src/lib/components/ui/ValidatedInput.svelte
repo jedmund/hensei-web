@@ -1,6 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { onDestroy } from 'svelte'
 	import { Tooltip } from 'bits-ui'
 	import Input from './Input.svelte'
 
@@ -83,10 +84,8 @@
 	}
 
 	// Cleanup on unmount
-	$effect(() => {
-		return () => {
-			if (tooltipTimeout) clearTimeout(tooltipTimeout)
-		}
+	onDestroy(() => {
+		if (tooltipTimeout) clearTimeout(tooltipTimeout)
 	})
 </script>
 
