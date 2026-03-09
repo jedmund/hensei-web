@@ -102,6 +102,7 @@
 
 	// Element options
 	const elementOptions = [
+		{ value: 0, label: 'No element' },
 		{ value: 1, label: 'Wind', image: getElementIcon(1) },
 		{ value: 2, label: 'Fire', image: getElementIcon(2) },
 		{ value: 3, label: 'Water', image: getElementIcon(3) },
