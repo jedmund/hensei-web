@@ -139,7 +139,25 @@
 		</div>
 
 		<!-- Creator info -->
-		{#if user && collectionSourceUser?.username}
+		{#if user && collectionSourceUser?.username && user.username === collectionSourceUser.username}
+			<a href="/{user.username}" class="creator-link">
+				<div class="avatar-wrapper {user.avatar?.element || ''}">
+					{#if user.avatar?.picture}
+						<img
+							class="avatar"
+							alt={`Avatar of ${user.username}`}
+							src={getAvatarSrc(user.avatar.picture)}
+							srcset={getAvatarSrcSet(user.avatar.picture)}
+							width="24"
+							height="24"
+						/>
+					{:else}
+						<div class="avatar-placeholder" aria-hidden="true"></div>
+					{/if}
+				</div>
+				<span class="username">{user.username} using their collection</span>
+			</a>
+		{:else if user && collectionSourceUser?.username}
 			<div class="creator-pair-line">
 				<AvatarPair back={user} front={collectionSourceUser} size={24} />
 				<span class="creator-pair-text">
