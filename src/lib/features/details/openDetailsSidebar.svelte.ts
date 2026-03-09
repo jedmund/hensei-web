@@ -90,10 +90,21 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 export function openWeaponEditSidebar(weapon: GridWeapon, onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>) {
   const weaponName = getName(weapon.weapon)
   const title = weaponName !== 'Details' ? weaponName : 'Edit Weapon'
+  const editPaneId = `edit-weapon-${weapon.id}`
 
-  // Handler to go back to details view - uses pop() to return to previous pane
-  const goBackToDetails = () => {
-    sidebar.pop()
+  // If this edit pane is already in the stack, don't push a duplicate
+  if (sidebar.paneStack.panes.some((p) => p.id === editPaneId)) return
+
+  // Determine whether we're pushing onto an existing details view or opening fresh
+  const hasDetailsRoot = sidebar.isOpen && sidebar.paneStack.depth > 0
+
+  // Handler to go back - pops if pushed on stack, closes if opened as root
+  const goBack = () => {
+    if (hasDetailsRoot) {
+      sidebar.pop()
+    } else {
+      sidebar.close()
+    }
   }
 
   // Handler for save button - uses gridService callback if available (updates TanStack cache),
@@ -101,7 +112,7 @@ export function openWeaponEditSidebar(weapon: GridWeapon, onSaveWeapon?: (id: st
   const handleSave = async (updates: Partial<GridWeapon>) => {
     if (!weapon.id) {
       console.error('Cannot save weapon without ID')
-      goBackToDetails()
+      goBack()
       return
     }
 
@@ -111,34 +122,51 @@ export function openWeaponEditSidebar(weapon: GridWeapon, onSaveWeapon?: (id: st
       } else {
         await partyStore.updateWeapon(String(weapon.id), updates)
       }
-      goBackToDetails()
+      goBack()
     } catch (error) {
       console.error('Failed to save weapon:', error)
-      goBackToDetails()
+      goBack()
     }
   }
 
-  // Push onto pane stack instead of replacing
-  sidebar.push({
-    id: `edit-weapon-${weapon.id}`,
+  const paneConfig = {
+    id: editPaneId,
     title,
     component: EditWeaponSidebar,
     props: {
       weapon,
       onSave: handleSave,
-      onCancel: goBackToDetails
+      onCancel: goBack
     },
-    onback: goBackToDetails
-  })
+    onback: goBack
+  }
+
+  if (hasDetailsRoot) {
+    sidebar.push(paneConfig)
+  } else {
+    sidebar.paneStack.reset(paneConfig)
+    sidebar.state.open = true
+  }
 }
 
 export function openCharacterEditSidebar(character: GridCharacter, onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>) {
   const characterName = getName(character.character)
   const title = characterName !== 'Details' ? characterName : 'Edit Character'
+  const editPaneId = `edit-character-${character.id}`
 
-  // Handler to go back to details view - uses pop() to return to previous pane
-  const goBackToDetails = () => {
-    sidebar.pop()
+  // If this edit pane is already in the stack, don't push a duplicate
+  if (sidebar.paneStack.panes.some((p) => p.id === editPaneId)) return
+
+  // Determine whether we're pushing onto an existing details view or opening fresh
+  const hasDetailsRoot = sidebar.isOpen && sidebar.paneStack.depth > 0
+
+  // Handler to go back - pops if pushed on stack, closes if opened as root
+  const goBack = () => {
+    if (hasDetailsRoot) {
+      sidebar.pop()
+    } else {
+      sidebar.close()
+    }
   }
 
   // Handler for save button - uses gridService callback if available (updates TanStack cache),
@@ -146,7 +174,7 @@ export function openCharacterEditSidebar(character: GridCharacter, onSaveCharact
   const handleSave = async (updates: Partial<GridCharacter>) => {
     if (!character.id) {
       console.error('Cannot save character without ID')
-      goBackToDetails()
+      goBack()
       return
     }
 
@@ -156,25 +184,31 @@ export function openCharacterEditSidebar(character: GridCharacter, onSaveCharact
       } else {
         await partyStore.updateCharacter(String(character.id), updates)
       }
-      goBackToDetails()
+      goBack()
     } catch (error) {
       console.error('Failed to save character:', error)
-      goBackToDetails()
+      goBack()
     }
   }
 
-  // Push onto pane stack instead of replacing
-  sidebar.push({
-    id: `edit-character-${character.id}`,
+  const paneConfig = {
+    id: editPaneId,
     title,
     component: EditCharacterSidebar,
     props: {
       character,
       onSave: handleSave,
-      onCancel: goBackToDetails
+      onCancel: goBack
     },
-    onback: goBackToDetails
-  })
+    onback: goBack
+  }
+
+  if (hasDetailsRoot) {
+    sidebar.push(paneConfig)
+  } else {
+    sidebar.paneStack.reset(paneConfig)
+    sidebar.state.open = true
+  }
 }
 
 function getName(obj: any): string {
