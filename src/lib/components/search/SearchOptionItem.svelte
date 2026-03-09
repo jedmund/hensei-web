@@ -38,7 +38,7 @@
 			case 'Character':
 				return getCharacterImage(granblueId, 'square', '01')
 			case 'Weapon':
-				return getWeaponImage(granblueId, 'square')
+				return getWeaponImage(granblueId, 'square', element === 0 ? 0 : undefined)
 			case 'Summon':
 				return getSummonImage(granblueId, 'square')
 		}

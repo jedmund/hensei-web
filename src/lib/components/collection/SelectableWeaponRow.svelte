@@ -20,7 +20,7 @@
 
 	let { weapon, quantity = 0, onQuantityChange }: Props = $props()
 
-	const imageUrl = $derived(getWeaponImage(weapon.granblueId, 'grid'))
+	const imageUrl = $derived(getWeaponImage(weapon.granblueId, 'grid', weapon.element === 0 ? 0 : undefined))
 
 	const name = $derived(
 		typeof weapon.name === 'string'
