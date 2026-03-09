@@ -84,6 +84,21 @@
 	// Get the item's actual data
 	const itemData = $derived(getItemData())
 
+	// Compute collection count from embedded party data
+	const collectionCount = $derived.by(() => {
+		const gid = itemData?.granblueId
+		if (!gid) return 0
+
+		// Use viewerCollection from the party store (embedded in party response)
+		const vc = partyStore.party?.viewerCollection
+		if (!vc) return 0
+
+		if (type === 'character') return vc.characters.filter((c) => String(c.character.granblueId) === String(gid)).length
+		if (type === 'weapon') return vc.weapons.filter((w) => String(w.weapon.granblueId) === String(gid)).length
+		if (type === 'summon') return vc.summons.filter((s) => String(s.summon.granblueId) === String(gid)).length
+		return 0
+	})
+
 	// Grid item info (uncap levels from the grid item itself) - convert undefined to null
 	const gridUncapLevel = $derived(
 		type === 'character'
@@ -139,7 +154,7 @@
 
 <div class="details-sidebar">
 	<ItemHeader {type} {item} {itemData} {gridUncapLevel} {gridTranscendence} />
-	<CollectionSection {type} granblueId={itemData?.granblueId} />
+	<CollectionSection {type} count={collectionCount} element={itemData?.element} />
 
 	{#if isLinkedToCollection && isOutOfSync}
 		<div class="sync-banner">

@@ -30,8 +30,6 @@
 	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
-	import { createQuery } from '@tanstack/svelte-query'
-	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import ConflictDialog from '$lib/components/dialogs/ConflictDialog.svelte'
 	import DeleteTeamDialog from '$lib/components/dialogs/DeleteTeamDialog.svelte'
@@ -40,6 +38,8 @@
 		party?: Party
 		canEdit?: boolean
 		authUserId?: string
+		authUsername?: string
+		authUserAvatar?: { picture?: string; element?: string }
 		initialTab?: GridType
 		isNew?: boolean
 		ensurePartyExists?: () => Promise<{ id: string; shortcode: string }>
@@ -49,6 +49,8 @@
 		party: initial,
 		canEdit: canEditServer = false,
 		authUserId,
+		authUsername,
+		authUserAvatar,
 		initialTab,
 		isNew = false,
 		ensurePartyExists
@@ -165,25 +167,44 @@
 		return hasOrphanedWeapons || hasOrphanedCharacters || hasOrphanedSummons
 	})
 
-	// Collection ownership check
-	const collectionGranblueIdsQuery = createQuery(() => ({
-		...collectionQueries.granblueIds(party.collectionSourceUserId ?? ''),
-		enabled: !!party.collectionSourceUserId
-	}))
+	// --- Collection viewer switcher ---
+	let activeCollectionUser = $state<'viewer' | 'source'>('viewer')
 
+	const authUser = $derived(
+		authUserId
+			? {
+					username: authUsername,
+					avatar: authUserAvatar
+						? { picture: authUserAvatar.picture ?? null, element: authUserAvatar.element ?? null }
+						: null
+				}
+			: null
+	)
+
+	const activeCollection = $derived(
+		activeCollectionUser === 'source' && party.sourceCollection
+			? party.sourceCollection
+			: party.viewerCollection
+	)
+
+	function handleSwitchCollectionUser(target: 'viewer' | 'source') {
+		activeCollectionUser = target
+	}
+
+	// Derive collection ID sets from embedded data
 	const collectionWeaponIds = $derived(
-		collectionGranblueIdsQuery.data
-			? new Set(collectionGranblueIdsQuery.data.weapons.map(String))
+		activeCollection
+			? new Set(activeCollection.weapons.map((w) => String(w.weapon.granblueId)))
 			: undefined
 	)
 	const collectionCharacterIds = $derived(
-		collectionGranblueIdsQuery.data
-			? new Set(collectionGranblueIdsQuery.data.characters.map(String))
+		activeCollection
+			? new Set(activeCollection.characters.map((c) => String(c.character.granblueId)))
 			: undefined
 	)
 	const collectionSummonIds = $derived(
-		collectionGranblueIdsQuery.data
-			? new Set(collectionGranblueIdsQuery.data.summons.map(String))
+		activeCollection
+			? new Set(activeCollection.summons.map((s) => String(s.summon.granblueId)))
 			: undefined
 	)
 
@@ -294,6 +315,9 @@
 				canEdit={canEdit()}
 				onOpenDescription={actions.openDescriptionPanel}
 				onOpenEdit={actions.openSettingsPanel}
+				{authUser}
+				{activeCollectionUser}
+				onSwitchCollectionUser={handleSwitchCollectionUser}
 			>
 				{#snippet menu()}
 					{#if !isNew}
