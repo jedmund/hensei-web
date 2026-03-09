@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	interface Props {
@@ -36,27 +35,27 @@
 		font-weight: typography.$bold;
 
 		&.hl {
-			background: #dc3545;
+			background: var(--flag-hl);
 			color: white;
 		}
 
 		&.extra {
-			background: #6f42c1;
+			background: var(--flag-extra);
 			color: white;
 		}
 
 		&.guidebooks {
-			background: #28a745;
+			background: var(--flag-guidebooks);
 			color: white;
 		}
 
 		&.unlimited {
-			background: #fd7e14;
+			background: var(--flag-unlimited);
 			color: white;
 		}
 	}
 
 	.no-flags {
-		color: #999;
+		color: var(--text-tertiary);
 	}
 </style>

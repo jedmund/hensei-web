@@ -419,6 +419,18 @@
 	--dnd-valid: #4caf50;
 	--dnd-invalid: #f44336;
 
+	// Update type labels
+	--update-transcendence: #9b59b6;
+	--update-ulb: #3498db;
+	--update-flb: #f39c12;
+	--update-release: #95a5a6;
+
+	// Raid flags
+	--flag-hl: #dc3545;
+	--flag-extra: #6f42c1;
+	--flag-guidebooks: #28a745;
+	--flag-unlimited: #fd7e14;
+
 	// Elevation shadows
 	--shadow-xs: #{effects.$shadow-xs-light};
 	--shadow-sm: #{effects.$shadow-sm-light};
@@ -822,6 +834,18 @@ html[data-theme='dark'] {
 	// Drag and drop
 	--dnd-valid: #66bb6a;
 	--dnd-invalid: #ef5350;
+
+	// Update type labels
+	--update-transcendence: #b07cd8;
+	--update-ulb: #5dade2;
+	--update-flb: #f5b041;
+	--update-release: #aab7b8;
+
+	// Raid flags
+	--flag-hl: #e74c3c;
+	--flag-extra: #8e6cc8;
+	--flag-guidebooks: #2ecc71;
+	--flag-unlimited: #ff9f43;
 
 	// Elevation shadows
 	--shadow-xs: #{effects.$shadow-xs-dark};

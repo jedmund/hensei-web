@@ -1,4 +1,3 @@
-<svelte:options runes={true} />
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
@@ -134,7 +133,7 @@
 		color: var(--text-primary);
 
 		.star {
-			color: #f5a623;
+			color: var(--accent-yellow);
 			margin-left: 4px;
 		}
 	}
