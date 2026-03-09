@@ -317,26 +317,6 @@
 		return filterCollectionByQuery(allItems, debouncedSearchQuery)
 	})
 
-	const ownedItemIds = $derived.by(() => {
-		const pages = collectionQueryResult.data?.pages ?? []
-		const allItems = pages.flatMap((page) => page.results)
-		const ids = new Set<string>()
-		for (const item of allItems) {
-			const anyItem = item as unknown as Record<string, unknown>
-			const entity = (anyItem.character ?? anyItem.weapon ?? anyItem.summon) as
-				| { granblueId?: string }
-				| undefined
-			if (entity?.granblueId) {
-				ids.add(String(entity.granblueId))
-			}
-		}
-		return ids
-	})
-
-	function isOwned(item: AddItemResult): boolean {
-		return ownedItemIds.has(String(item.granblueId))
-	}
-
 	const searchResults = $derived.by<AddItemResult[]>(() => {
 		if (searchMode === 'collection' && authUserId) {
 			return rawCollectionResults.map(mapCollectionToSearchResult)
@@ -508,7 +488,6 @@
 						{type}
 						disabled={!canAddMore}
 						fromCollection={!!item.collectionId}
-						owned={searchMode === 'all' && !!authUserId && isOwned(item)}
 						{inTeam}
 						onclick={handleItemClick}
 					/>
