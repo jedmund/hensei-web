@@ -84,33 +84,6 @@
 		}, 100)
 	})
 
-	// Reset state when re-navigating to /teams/new after a party was created.
-	// replaceState changes the URL to /teams/shortcode without SvelteKit navigation,
-	// so coming back to /teams/new reuses this component with stale state.
-	afterNavigate((nav) => {
-		if (nav.from && (partyId || shortcode)) {
-			// Clear old query cache
-			if (shortcode) {
-				queryClient.removeQueries({ queryKey: partyKeys.detail(shortcode) })
-			}
-
-			// Reset party state
-			partyId = null
-			shortcode = null
-			editKey = null
-			isCreatingParty = false
-
-			// Reset UI state — setting hasOpenedSidebar = false
-			// triggers the $effect above to reopen the search sidebar
-			hasOpenedSidebar = false
-			activeTab = GridType.Weapon
-			selectedSlot = null
-
-			// Reset query to placeholder
-			queryClient.setQueryData(partyKeys.detail('new'), placeholderParty)
-		}
-	})
-
 	function selectTab(gridType: GridType) {
 		activeTab = gridType
 
