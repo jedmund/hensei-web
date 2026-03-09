@@ -1,3 +1,9 @@
+<!--
+  DORMANT COMPONENT — Currently unused.
+  Origin: Scaffolded for the database weapon grid to show truncated name cells.
+  Intended feature: Weapon name column with text-overflow ellipsis in the SVAR DataGrid.
+  Never wired up — the grid currently uses inline name rendering.
+-->
 <svelte:options runes={true} />
 
 <script lang="ts">

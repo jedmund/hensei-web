@@ -1,3 +1,9 @@
+<!--
+  DORMANT COMPONENT — Currently unused.
+  Origin: Scaffolded for the party description rich text editor toolbar (TipTap integration).
+  Intended feature: Formatting toolbar (headings, bold/italic/underline, links, lists) for party descriptions.
+  Never wired up — the description editor feature is not yet migrated from Next.js.
+-->
 <script lang="ts">
 	import type { Editor } from '@tiptap/core'
 	import Button from '$lib/components/ui/Button.svelte'
