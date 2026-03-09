@@ -104,8 +104,8 @@ export function getImageUrl(
 		return `${basePath}/${id}_${pose}${extension}`
 	}
 
-	// Handle weapon grid element variants (including element 0 for null-element weapons)
-	if (type === 'weapon' && variant === 'grid' && options?.element !== undefined && options.element >= 0) {
+	// Handle weapon element variants (including element 0 for null-element weapons)
+	if (type === 'weapon' && (variant === 'grid' || variant === 'main' || variant === 'square') && options?.element !== undefined && options.element >= 0) {
 		return `${basePath}/${id}_${options.element}${extension}`
 	}
 
@@ -154,8 +154,8 @@ export function getWeaponImage(
 	const extension = getFileExtension('weapon', variant)
 	const basePath = `${getBasePath()}/${directory}`
 
-	// Handle element-specific weapon grids (including element 0 for null-element weapons)
-	if (variant === 'grid' && element !== undefined && element >= 0) {
+	// Handle element-specific weapons (including element 0 for null-element weapons)
+	if ((variant === 'grid' || variant === 'main' || variant === 'square') && element !== undefined && element >= 0) {
 		return `${basePath}/${id}_${element}${extension}`
 	}
 

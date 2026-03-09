@@ -9,7 +9,8 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
 	import { getPlaceholderImage } from '$lib/utils/images'
-	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+	import { openDetailsSidebar, openWeaponEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages } from '$lib/utils/modifiers'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
@@ -113,12 +114,27 @@
 		}
 	}
 
+	let canEditItem = $derived(canWeaponBeModified(item))
+
+	function getSaveCallback() {
+		return async (id: string, updates: Partial<GridWeapon>) => {
+			const party = ctx.getParty()
+			await ctx.services.gridService.updateWeapon(party.id, id, updates)
+		}
+	}
+
 	function viewDetails() {
 		if (!item) return
 		openDetailsSidebar({
 			type: 'weapon',
-			item
+			item,
+			onSaveWeapon: getSaveCallback()
 		})
+	}
+
+	function editItem() {
+		if (!item) return
+		openWeaponEditSidebar(item, getSaveCallback())
 	}
 
 	function replace() {
@@ -199,30 +215,34 @@
 
 			{#snippet contextMenu()}
 				<MenuItems
+					onEdit={canEditItem ? editItem : undefined}
 					onViewDetails={viewDetails}
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="context"
+					editLabel={m.context_edit({ type: 'weapon' })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace()}
+					replaceLabel={m.context_replace({ type: 'weapon' })}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}
 
 			{#snippet dropdownMenu()}
 				<MenuItems
+					onEdit={canEditItem ? editItem : undefined}
 					onViewDetails={viewDetails}
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="dropdown"
+					editLabel={m.context_edit({ type: 'weapon' })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace()}
+					replaceLabel={m.context_replace({ type: 'weapon' })}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}

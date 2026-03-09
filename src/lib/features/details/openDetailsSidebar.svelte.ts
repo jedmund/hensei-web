@@ -9,6 +9,8 @@ import { canWeaponBeModified, canCharacterBeModified } from '$lib/utils/modifica
 interface DetailsSidebarOptions {
   type: 'weapon' | 'character' | 'summon'
   item: GridCharacter | GridWeapon | GridSummon
+  onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>
+  onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>
 }
 
 type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -63,9 +65,9 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
   const onsave = canEdit
     ? () => {
         if (canEditWeapon) {
-          openWeaponEditSidebar(item as GridWeapon)
+          openWeaponEditSidebar(item as GridWeapon, options.onSaveWeapon)
         } else if (canEditCharacter) {
-          openCharacterEditSidebar(item as GridCharacter)
+          openCharacterEditSidebar(item as GridCharacter, options.onSaveCharacter)
         }
       }
     : undefined
@@ -85,7 +87,7 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
   })
 }
 
-export function openWeaponEditSidebar(weapon: GridWeapon) {
+export function openWeaponEditSidebar(weapon: GridWeapon, onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>) {
   const weaponName = getName(weapon.weapon)
   const title = weaponName !== 'Details' ? weaponName : 'Edit Weapon'
 
@@ -94,7 +96,8 @@ export function openWeaponEditSidebar(weapon: GridWeapon) {
     sidebar.pop()
   }
 
-  // Handler for save button - saves updates via partyStore
+  // Handler for save button - uses gridService callback if available (updates TanStack cache),
+  // otherwise falls back to partyStore (which bypasses cache)
   const handleSave = async (updates: Partial<GridWeapon>) => {
     if (!weapon.id) {
       console.error('Cannot save weapon without ID')
@@ -103,7 +106,11 @@ export function openWeaponEditSidebar(weapon: GridWeapon) {
     }
 
     try {
-      await partyStore.updateWeapon(String(weapon.id), updates)
+      if (onSaveWeapon) {
+        await onSaveWeapon(String(weapon.id), updates)
+      } else {
+        await partyStore.updateWeapon(String(weapon.id), updates)
+      }
       goBackToDetails()
     } catch (error) {
       console.error('Failed to save weapon:', error)
@@ -125,7 +132,7 @@ export function openWeaponEditSidebar(weapon: GridWeapon) {
   })
 }
 
-export function openCharacterEditSidebar(character: GridCharacter) {
+export function openCharacterEditSidebar(character: GridCharacter, onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>) {
   const characterName = getName(character.character)
   const title = characterName !== 'Details' ? characterName : 'Edit Character'
 
@@ -134,7 +141,8 @@ export function openCharacterEditSidebar(character: GridCharacter) {
     sidebar.pop()
   }
 
-  // Handler for save button - saves updates via partyStore
+  // Handler for save button - uses gridService callback if available (updates TanStack cache),
+  // otherwise falls back to partyStore (which bypasses cache)
   const handleSave = async (updates: Partial<GridCharacter>) => {
     if (!character.id) {
       console.error('Cannot save character without ID')
@@ -143,7 +151,11 @@ export function openCharacterEditSidebar(character: GridCharacter) {
     }
 
     try {
-      await partyStore.updateCharacter(String(character.id), updates)
+      if (onSaveCharacter) {
+        await onSaveCharacter(String(character.id), updates)
+      } else {
+        await partyStore.updateCharacter(String(character.id), updates)
+      }
       goBackToDetails()
     } catch (error) {
       console.error('Failed to save character:', error)
