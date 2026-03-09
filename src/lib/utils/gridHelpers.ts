@@ -37,12 +37,17 @@ const GRID_CONFIGS: Record<GridType, SlotRange> = {
  * }
  * ```
  */
-export function findNextEmptySlot(party: Party, gridType: GridType): number {
+export function findNextEmptySlot(
+	party: Party,
+	gridType: GridType,
+	skipSlot?: number
+): number {
 	const config = GRID_CONFIGS[gridType]
 	const collection = getCollectionForType(party, gridType)
 
 	// Check special slots first (e.g., mainhand, main summon)
 	for (const specialSlot of config.specialSlots || []) {
+		if (specialSlot === skipSlot) continue
 		if (!isSlotOccupied(collection, specialSlot, gridType)) {
 			return specialSlot
 		}
@@ -50,6 +55,7 @@ export function findNextEmptySlot(party: Party, gridType: GridType): number {
 
 	// Check regular grid slots
 	for (let i = config.start; i <= config.end; i++) {
+		if (i === skipSlot) continue
 		if (!isSlotOccupied(collection, i, gridType)) {
 			return i
 		}
