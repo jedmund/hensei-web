@@ -7,16 +7,20 @@
 		count: number
 		gridCount?: number
 		element: number | undefined
+		hasCollection?: boolean
 		sourceUsername?: string
 		isOutOfSync?: boolean
 		isSyncing?: boolean
 		onSync?: () => void
 	}
 
-	let { type, count, element, gridCount, sourceUsername, isOutOfSync = false, isSyncing = false, onSync }: Props = $props()
+	let { type, count, element, gridCount, hasCollection = false, sourceUsername, isOutOfSync = false, isSyncing = false, onSync }: Props = $props()
 
 	const ownerLabel = $derived(sourceUsername ? `${sourceUsername}'s` : 'your')
-	const isInsufficient = $derived(type === 'weapon' && gridCount != null && count < gridCount)
+	const isInsufficient = $derived(
+		(type === 'weapon' && gridCount != null && count < gridCount) ||
+		(type !== 'weapon' && count === 0)
+	)
 
 	const ELEMENT_NAMES: Record<number, string> = {
 		1: 'wind',
@@ -30,24 +34,24 @@
 	const elementName = $derived(element ? ELEMENT_NAMES[element] ?? 'null' : 'null')
 </script>
 
-{#if count > 0 || isOutOfSync}
+{#if hasCollection || isOutOfSync}
 	<div class="collection-section-wrapper">
-		{#if count > 0}
-			<div
-				class="collection-section"
-				class:insufficient={isInsufficient}
-				style:background={isInsufficient ? 'var(--button-bg)' : `var(--${elementName}-nav-selected-bg)`}
-				style:color={isInsufficient ? 'var(--danger)' : `var(--${elementName}-nav-selected-text)`}
-			>
-				{#if type === 'character'}
-					<span>In {ownerLabel} Collection</span>
-				{:else if type === 'weapon' && gridCount != null}
-					<span>{count}/{gridCount} in {ownerLabel} Collection</span>
-				{:else}
-					<span>{count} in {ownerLabel} Collection</span>
-				{/if}
-			</div>
-		{/if}
+		<div
+			class="collection-section"
+			class:insufficient={isInsufficient}
+			style:background={isInsufficient ? 'var(--button-bg)' : `var(--${elementName}-nav-selected-bg)`}
+			style:color={isInsufficient ? 'var(--danger)' : `var(--${elementName}-nav-selected-text)`}
+		>
+			{#if type === 'character' && count > 0}
+				<span>In {ownerLabel} Collection</span>
+			{:else if type === 'character'}
+				<span>Not in {ownerLabel} Collection</span>
+			{:else if type === 'weapon' && gridCount != null}
+				<span>{count}/{gridCount} in {ownerLabel} Collection</span>
+			{:else}
+				<span>{count} in {ownerLabel} Collection</span>
+			{/if}
+		</div>
 
 		{#if isOutOfSync}
 			<div class="sync-banner">

@@ -178,6 +178,7 @@
 		count={collectionCount}
 		{gridCount}
 		element={itemData?.element}
+		hasCollection={!!partyStore.activeCollection}
 		sourceUsername={partyStore.activeCollectionUser === 'source' ? partyStore.party?.collectionSourceUser?.username : undefined}
 		isOutOfSync={isLinkedToCollection && isOutOfSync}
 		{isSyncing}
