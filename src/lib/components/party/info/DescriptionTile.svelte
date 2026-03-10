@@ -3,42 +3,36 @@
 	import type { JSONContent } from '@tiptap/core'
 	import Button from '$lib/components/ui/Button.svelte'
 	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
+	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+
+	type AvatarUser = {
+		username?: string
+		avatar?: {
+			picture?: string | null
+			element?: string | null
+		} | null
+	}
 
 	interface Props {
 		name?: string
 		description?: string
-		user?: {
-			username?: string
-			avatar?: {
-				picture?: string | null
-				element?: string | null
-			} | null
-		} | null
-		/** Collection source user info (when party uses another user's collection) */
-		collectionSourceUser?: {
-			username?: string
-			avatar?: {
-				picture?: string | null
-				element?: string | null
-			} | null
-		} | null
-		/** Source party (when this party is a remix) */
+		user?: AvatarUser | null
+		collectionSourceUser?: AvatarUser | null
 		sourceParty?: {
 			shortcode?: string
 			name?: string
-			user?: {
-				username?: string
-				avatar?: {
-					picture?: string | null
-					element?: string | null
-				} | null
-			} | null
+			user?: AvatarUser | null
 		} | null
+		/** The currently authenticated user (for collection viewer switcher) */
+		authUser?: AvatarUser | null
+		/** Which collection is currently being viewed */
+		activeCollectionUser?: 'viewer' | 'source'
+		/** Callback when collection viewer is switched */
+		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
 		canEdit?: boolean
 		onOpenDescription: () => void
 		onOpenEdit?: () => void
-		/** Slot for the dropdown menu */
 		menu?: Snippet
 	}
 
@@ -48,11 +42,19 @@
 		user,
 		collectionSourceUser,
 		sourceParty,
+		authUser,
+		activeCollectionUser = 'viewer',
+		onSwitchCollectionUser,
 		canEdit = false,
 		onOpenDescription,
 		onOpenEdit,
 		menu
 	}: Props = $props()
+
+	const showCollectionSwitcher = $derived(
+		!!authUser?.username && !!collectionSourceUser?.username &&
+		authUser.username !== collectionSourceUser.username
+	)
 
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
@@ -119,6 +121,14 @@
 		<div class="tile-header">
 			<h1 class="party-name" class:empty={!name}>{name || 'Untitled team'}</h1>
 			<div class="actions">
+				{#if showCollectionSwitcher && authUser && collectionSourceUser}
+					<CollectionViewerSwitcher
+						{authUser}
+						{collectionSourceUser}
+						{activeCollectionUser}
+						onSwitchCollectionUser={(v) => onSwitchCollectionUser?.(v)}
+					/>
+				{/if}
 				{#if canEdit}
 					<Button variant="secondary" size="small" onclick={onOpenEdit}>Edit</Button>
 				{/if}
@@ -129,7 +139,25 @@
 		</div>
 
 		<!-- Creator info -->
-		{#if user && collectionSourceUser?.username}
+		{#if user && collectionSourceUser?.username && user.username === collectionSourceUser.username}
+			<a href="/{user.username}" class="creator-link">
+				<div class="avatar-wrapper {user.avatar?.element || ''}">
+					{#if user.avatar?.picture}
+						<img
+							class="avatar"
+							alt={`Avatar of ${user.username}`}
+							src={getAvatarSrc(user.avatar.picture)}
+							srcset={getAvatarSrcSet(user.avatar.picture)}
+							width="24"
+							height="24"
+						/>
+					{:else}
+						<div class="avatar-placeholder" aria-hidden="true"></div>
+					{/if}
+				</div>
+				<span class="username">{user.username} using their collection</span>
+			</a>
+		{:else if user && collectionSourceUser?.username}
 			<div class="creator-pair-line">
 				<AvatarPair back={user} front={collectionSourceUser} size={24} />
 				<span class="creator-pair-text">
@@ -354,4 +382,5 @@
 		color: var(--text-tertiary);
 		font-style: italic;
 	}
+
 </style>

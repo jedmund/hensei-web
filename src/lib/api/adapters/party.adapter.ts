@@ -163,8 +163,8 @@ export class PartyAdapter extends BaseAdapter {
 	/**
 	 * Gets a party by shortcode
 	 */
-	async getByShortcode(shortcode: string): Promise<Party> {
-		const response = await this.request<{ party: Party }>(`/parties/${shortcode}`)
+	async getByShortcode(shortcode: string, options?: { headers?: Record<string, string> }): Promise<Party> {
+		const response = await this.request<{ party: Party }>(`/parties/${shortcode}`, options)
 		return response.party
 	}
 

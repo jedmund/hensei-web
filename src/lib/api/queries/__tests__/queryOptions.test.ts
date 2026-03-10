@@ -124,27 +124,6 @@ describe('retry logic', () => {
 		})
 	})
 
-	describe('collectionQueries.granblueIds', () => {
-		const opts = collectionQueries.granblueIds('u-1')
-		const retry = opts.retry as (failureCount: number, error: unknown) => boolean
-
-		it('does not retry on 403', () => {
-			expect(retry(0, { status: 403 })).toBe(false)
-		})
-
-		it('does not retry on 404', () => {
-			expect(retry(0, { status: 404 })).toBe(false)
-		})
-
-		it('retries on 500 when failureCount < 3', () => {
-			expect(retry(0, { status: 500 })).toBe(true)
-			expect(retry(2, { status: 500 })).toBe(true)
-		})
-
-		it('stops retrying after 3 failures', () => {
-			expect(retry(3, { status: 500 })).toBe(false)
-		})
-	})
 })
 
 // ============================================================================

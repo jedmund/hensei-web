@@ -67,11 +67,27 @@
 	// Special characters have different star counts (SR characters, etc.)
 	const special = $derived(type === 'character' && (itemData?.rarity ?? 3) < 3)
 
+	const ELEMENT_NAMES: Record<number, string> = {
+		1: 'wind',
+		2: 'fire',
+		3: 'water',
+		4: 'earth',
+		5: 'dark',
+		6: 'light'
+	}
+
+	const elementName = $derived(ELEMENT_NAMES[itemData?.element] ?? 'null')
+
 	const reliefBackgroundUrl = `${getBasePath()}/relief.png`
 </script>
 
 <div class="item-header-container">
-	<div class="item-header" style:background="url({reliefBackgroundUrl}), linear-gradient(to right, #000, #484440, #000)">
+	<div
+		class="item-header"
+		data-type={type}
+		style:background-image="url({reliefBackgroundUrl}), linear-gradient(to right, #000, #484440, #000)"
+		style:--element-color="var(--{elementName}-bg)"
+	>
 		<div class="uncap-overlay">
 			<UncapIndicator
 				{type}
@@ -111,6 +127,76 @@
 			.item-image.weapon {
 				width: 80%;
 				transform: rotate(-15deg);
+				transition: transform 0.3s ease;
+			}
+
+			&:hover .item-image.weapon {
+				animation: weapon-float 5s ease-in-out infinite;
+			}
+
+			@keyframes weapon-float {
+				0%,
+				100% {
+					transform: rotate(-15deg) translateY(0);
+				}
+				50% {
+					transform: rotate(-15deg) translateY(-6px);
+				}
+			}
+
+			&:hover .item-image.character,
+			&:hover .item-image.summon {
+				animation: character-float 5s ease-in-out infinite;
+			}
+
+			@keyframes character-float {
+				0%,
+				100% {
+					transform: translateY(0);
+				}
+				50% {
+					transform: translateY(-3px);
+				}
+			}
+
+			&[data-type='character'],
+			&[data-type='summon'] {
+				&::after {
+					content: '';
+					position: absolute;
+					inset: 0;
+					opacity: 0;
+					transition: opacity 0.4s ease;
+					pointer-events: none;
+					box-shadow:
+						inset 0 0 12px 4px rgba(0, 0, 0, 0.4),
+						inset 0 0 20px 7px color-mix(in srgb, var(--element-color) 70%, transparent);
+					z-index: 1;
+				}
+
+				&:hover::after {
+					opacity: 0.6;
+					animation: element-glow 3s ease-in-out 0.4s infinite;
+				}
+			}
+
+			@keyframes element-glow-in {
+				from {
+					opacity: 0;
+				}
+				to {
+					opacity: 0.6;
+				}
+			}
+
+			@keyframes element-glow {
+				0%,
+				100% {
+					opacity: 0.6;
+				}
+				50% {
+					opacity: 1;
+				}
 			}
 
 			.item-image.summon,
@@ -128,6 +214,7 @@
 				bottom: spacing.$unit;
 				right: spacing.$unit;
 				background: rgba(0, 0, 0, 0.24);
+				z-index: 2;
 			}
 		}
 	}

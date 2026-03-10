@@ -42,7 +42,7 @@
 
 <div class="team-view">
 	<DetailsSection title="Uncap & Transcendence">
-		<DetailRow label="Uncap Level">
+		<DetailRow label="Max Uncap Level">
 			<UncapIndicator
 				{type}
 				uncapLevel={gridUncapLevel}
@@ -160,6 +160,6 @@
 	.team-view {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-4x;
+		gap: spacing.$unit-3x;
 	}
 </style>

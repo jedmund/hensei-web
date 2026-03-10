@@ -16,7 +16,15 @@ import type {
 } from './entities'
 import type { GridArtifact, CollectionArtifact } from './artifact'
 import type { AugmentSkill, Befoulment } from './weaponStatModifier'
+import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from './collection'
 import type { PartyShare } from './partyShare'
+
+/** Embedded collection data for a single user, scoped to the party's items */
+export interface PartyCollection {
+  characters: CollectionCharacter[]
+  weapons: CollectionWeapon[]
+  summons: CollectionSummon[]
+}
 
 // Minimal party stub embedded in grid item responses (from :collection_source view)
 export interface PartyCollectionSource {
@@ -158,6 +166,10 @@ export interface Party {
   remixes?: Party[]
   /** Shares for this party (only present for owner) */
   shares?: PartyShare[]
+  /** Collection items for the viewing user, scoped to this party's items */
+  viewerCollection?: PartyCollection
+  /** Collection items for the collection source user, scoped to this party's items */
+  sourceCollection?: PartyCollection
 
   // Local client state
   localId?: string

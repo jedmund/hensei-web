@@ -11,7 +11,7 @@
 		raidExtra?: boolean
 		showGuidebooks?: boolean
 		guidebooks?: Record<string, any>
-		collectionWeaponIds?: Set<string>
+		collectionWeaponItems?: Map<string, { uncapLevel: number; transcendenceStep: number }[]>
 	}
 
 	let {
@@ -19,7 +19,7 @@
 		raidExtra = undefined,
 		showGuidebooks = undefined,
 		guidebooks = undefined,
-		collectionWeaponIds = undefined
+		collectionWeaponItems = undefined
 	}: Props = $props()
 
 	import WeaponUnit from '$lib/components/units/WeaponUnit.svelte'
@@ -42,12 +42,40 @@
 		})
 		return slots
 	})
+
+	// Compute per-position collection status by consuming items in render order.
+	// A collection item matches if its uncap/transcendence meets or exceeds the grid item's.
+	const collectionStatus = $derived.by(() => {
+		if (!collectionWeaponItems) return null
+		const remaining = new Map(Array.from(collectionWeaponItems, ([k, v]) => [k, [...v]]))
+		const status = new Map<number, boolean>()
+
+		const check = (weapon: GridWeapon | undefined, position: number) => {
+			const gid = weapon?.weapon?.granblueId
+			if (!gid) { status.set(position, false); return }
+			const key = String(gid)
+			const items = remaining.get(key)
+			if (!items) { status.set(position, false); return }
+			const needed = { uncap: weapon.uncapLevel ?? 0, trans: weapon.transcendenceStep ?? 0 }
+			const idx = items.findIndex(c => c.uncapLevel >= needed.uncap && c.transcendenceStep >= needed.trans)
+			if (idx >= 0) {
+				items.splice(idx, 1)
+				status.set(position, true)
+			} else {
+				status.set(position, false)
+			}
+		}
+
+		check(mainhand, -1)
+		subWeaponSlots.forEach((w, i) => check(w, i))
+		return status
+	})
 </script>
 
 <div class="wrapper">
 	<div class="grid">
 		<div aria-label="Mainhand Weapon">
-			<WeaponUnit item={mainhand} position={-1} notInCollection={collectionWeaponIds != null && !!mainhand?.weapon?.granblueId && !collectionWeaponIds.has(String(mainhand.weapon.granblueId))} />
+			<WeaponUnit item={mainhand} position={-1} notInCollection={collectionStatus != null && !!mainhand?.weapon?.granblueId && !collectionStatus.get(-1)} inCollection={collectionStatus != null && !!mainhand?.weapon?.granblueId && !!collectionStatus.get(-1)} />
 		</div>
 
 		<ul class="weapons" aria-label="Weapon Grid">
@@ -72,11 +100,11 @@
 								type="weapon"
 								canDrag={!!weapon && (ctx?.canEdit() ?? false)}
 							>
-								<WeaponUnit item={weapon} position={i} notInCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && !collectionWeaponIds.has(String(weapon.weapon.granblueId))} />
+								<WeaponUnit item={weapon} position={i} notInCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !collectionStatus.get(i)} inCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !!collectionStatus.get(i)} />
 							</DraggableItem>
 						</DropZone>
 					{:else}
-						<WeaponUnit item={weapon} position={i} notInCollection={collectionWeaponIds != null && !!weapon?.weapon?.granblueId && !collectionWeaponIds.has(String(weapon.weapon.granblueId))} />
+						<WeaponUnit item={weapon} position={i} notInCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !collectionStatus.get(i)} inCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !!collectionStatus.get(i)} />
 					{/if}
 				</li>
 			{/each}

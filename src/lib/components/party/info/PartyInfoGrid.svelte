@@ -9,15 +9,26 @@
 	import RaidPartiesPane from '$lib/components/sidebar/RaidPartiesPane.svelte'
 	import { getRaidImage } from '$lib/utils/images'
 
+	type AvatarUser = {
+		username?: string
+		avatar?: {
+			picture?: string | null
+			element?: string | null
+		} | null
+	}
+
 	interface Props {
 		party: Party
 		canEdit: boolean
 		onOpenDescription: () => void
 		onOpenEdit?: () => void
 		menu?: Snippet
+		authUser?: AvatarUser | null
+		activeCollectionUser?: 'viewer' | 'source'
+		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
 	}
 
-	let { party, canEdit, onOpenDescription, onOpenEdit, menu }: Props = $props()
+	let { party, canEdit, onOpenDescription, onOpenEdit, menu, authUser, activeCollectionUser, onSwitchCollectionUser }: Props = $props()
 
 	// Check if data exists for each tile
 	const hasDescription = $derived(!!party.description)
@@ -58,6 +69,9 @@
 			user={party.user}
 			collectionSourceUser={party.collectionSourceUser}
 			sourceParty={party.sourceParty}
+			{authUser}
+			{activeCollectionUser}
+			{onSwitchCollectionUser}
 			{canEdit}
 			{onOpenDescription}
 			{onOpenEdit}

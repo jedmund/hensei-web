@@ -111,7 +111,7 @@ export const partyQueries = {
 			queryKey: ['party', shortcode] as const,
 			queryFn: () => partyAdapter.getByShortcode(shortcode),
 			enabled: !!shortcode,
-			staleTime: 1000 * 60 * 5, // 5 minutes
+			staleTime: 1000 * 60 * 1, // 1 minute
 			gcTime: 1000 * 60 * 30 // 30 minutes
 		}),
 
@@ -146,7 +146,7 @@ export const partyQueries = {
 				}
 				return undefined
 			},
-			staleTime: 1000 * 60 * 2, // 2 minutes - parties change more frequently
+			staleTime: 1000 * 60 * 3, // 3 minutes - parties change more frequently
 			gcTime: 1000 * 60 * 15 // 15 minutes
 		}),
 
@@ -185,7 +185,7 @@ export const partyQueries = {
 				return undefined
 			},
 			enabled: !!username,
-			staleTime: 1000 * 60 * 2, // 2 minutes
+			staleTime: 1000 * 60 * 3, // 3 minutes
 			gcTime: 1000 * 60 * 15 // 15 minutes
 		}),
 
@@ -221,7 +221,7 @@ export const partyQueries = {
 				return undefined
 			},
 			enabled: !!raidId,
-			staleTime: 1000 * 60 * 2, // 2 minutes
+			staleTime: 1000 * 60 * 3, // 3 minutes
 			gcTime: 1000 * 60 * 15 // 15 minutes
 		}),
 

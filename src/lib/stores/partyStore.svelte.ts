@@ -7,9 +7,21 @@ import { gridAdapter } from '$lib/api/adapters/grid.adapter'
  */
 class PartyStore {
 	party = $state<Party | null>(null)
+	activeCollectionUser = $state<'viewer' | 'source'>('viewer')
 
 	setParty(party: Party | null) {
 		this.party = party
+	}
+
+	setActiveCollectionUser(user: 'viewer' | 'source') {
+		this.activeCollectionUser = user
+	}
+
+	get activeCollection() {
+		if (this.activeCollectionUser === 'source' && this.party?.sourceCollection) {
+			return this.party.sourceCollection
+		}
+		return this.party?.viewerCollection
 	}
 
 	get shortcode(): string | undefined {
@@ -104,6 +116,7 @@ class PartyStore {
 
 	clear() {
 		this.party = null
+		this.activeCollectionUser = 'viewer'
 	}
 }
 

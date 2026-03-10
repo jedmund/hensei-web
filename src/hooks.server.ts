@@ -19,7 +19,10 @@ export const handleSession: Handle = async ({ event, resolve }) => {
 	event.locals.auth = account?.token
 		? {
 				accessToken: account.token,
-				user: user,
+				user: {
+					id: account.userId,
+					username: account.username
+				},
 				expiresAt: account.expires_at ?? ''
 		  }
 		: null

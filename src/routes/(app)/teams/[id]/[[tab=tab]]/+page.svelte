@@ -78,7 +78,14 @@
 <PageMeta title={pageTitle()} description={pageDescription()} />
 
 {#if party}
-	<Party party={party} canEdit={data.canEdit || false} authUserId={data.authUserId} {initialTab} />
+	<Party
+		party={party}
+		canEdit={data.canEdit || false}
+		authUserId={data.authUserId}
+		authUsername={data.account?.username}
+		authUserAvatar={data.currentUser ? { picture: data.currentUser.picture, element: data.currentUser.element } : undefined}
+		{initialTab}
+	/>
 {:else}
 	<div>
 		<h1>Party not found</h1>

@@ -65,18 +65,6 @@ export class CollectionAdapter extends BaseAdapter {
 		})
 	}
 
-	/**
-	 * Gets all granblue IDs in a user's collection (lightweight, for ownership checks)
-	 */
-	async getCollectionGranblueIds(
-		userId: string
-	): Promise<{ weapons: string[]; characters: string[]; summons: string[] }> {
-		return this.request<{ weapons: string[]; characters: string[]; summons: string[] }>(
-			`/users/${userId}/collection/granblue_ids`,
-			{ method: 'GET' }
-		)
-	}
-
 	// ============================================
 	// Collection Characters
 	// ============================================
