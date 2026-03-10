@@ -60,6 +60,9 @@
 			font-size: typography.$font-regular;
 			color: var(--text-primary);
 			min-width: 180px;
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
 		}
 
 		// Static value display (no children snippet)
