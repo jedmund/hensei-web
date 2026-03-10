@@ -12,7 +12,7 @@
 		partyElement?: number | null | undefined
 		container?: string | undefined
 		unlimited?: boolean
-		collectionCharacterCounts?: Map<string, number>
+		collectionCharacterItems?: Map<string, { uncapLevel: number; transcendenceStep: number }[]>
 	}
 
 	let {
@@ -21,7 +21,7 @@
 		partyElement = undefined,
 		container = 'main-characters',
 		unlimited = false,
-		collectionCharacterCounts = undefined
+		collectionCharacterItems = undefined
 	}: Props = $props()
 
 	// Dynamic slot count based on unlimited flag
@@ -43,19 +43,23 @@
 		return slots
 	})
 
-	// Compute per-position collection status by consuming counts in render order
+	// Compute per-position collection status by consuming items in render order.
+	// A collection item matches if its uncap/transcendence meets or exceeds the grid item's.
 	const collectionStatus = $derived.by(() => {
-		if (!collectionCharacterCounts) return null
-		const remaining = new Map(collectionCharacterCounts)
+		if (!collectionCharacterItems) return null
+		const remaining = new Map(Array.from(collectionCharacterItems, ([k, v]) => [k, [...v]]))
 		const status = new Map<number, boolean>()
 
 		characterSlots.forEach((char, i) => {
 			const gid = char?.character?.granblueId
 			if (!gid) { status.set(i, false); return }
 			const key = String(gid)
-			const count = remaining.get(key) ?? 0
-			if (count > 0) {
-				remaining.set(key, count - 1)
+			const items = remaining.get(key)
+			if (!items) { status.set(i, false); return }
+			const needed = { uncap: char.uncapLevel ?? 0, trans: char.transcendenceStep ?? 0 }
+			const idx = items.findIndex(c => c.uncapLevel >= needed.uncap && c.transcendenceStep >= needed.trans)
+			if (idx >= 0) {
+				items.splice(idx, 1)
 				status.set(i, true)
 			} else {
 				status.set(i, false)

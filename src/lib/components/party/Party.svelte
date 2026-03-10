@@ -192,32 +192,39 @@
 		partyStore.setActiveCollectionUser(target)
 	}
 
-	// Derive collection count maps from embedded data (granblueId → owned count)
-	const collectionWeaponCounts = $derived(
+	// Derive collection item maps from embedded data (granblueId → items with levels)
+	type CollectionEntry = { uncapLevel: number; transcendenceStep: number }
+	const collectionWeaponItems = $derived(
 		activeCollection
 			? activeCollection.weapons.reduce((map, w) => {
 					const gid = String(w.weapon.granblueId)
-					map.set(gid, (map.get(gid) ?? 0) + 1)
+					const arr = map.get(gid) ?? []
+					arr.push({ uncapLevel: w.uncapLevel ?? 0, transcendenceStep: w.transcendenceStep ?? 0 })
+					map.set(gid, arr)
 					return map
-				}, new Map<string, number>())
+				}, new Map<string, CollectionEntry[]>())
 			: undefined
 	)
-	const collectionCharacterCounts = $derived(
+	const collectionCharacterItems = $derived(
 		activeCollection
 			? activeCollection.characters.reduce((map, c) => {
 					const gid = String(c.character.granblueId)
-					map.set(gid, (map.get(gid) ?? 0) + 1)
+					const arr = map.get(gid) ?? []
+					arr.push({ uncapLevel: c.uncapLevel ?? 0, transcendenceStep: c.transcendenceStep ?? 0 })
+					map.set(gid, arr)
 					return map
-				}, new Map<string, number>())
+				}, new Map<string, CollectionEntry[]>())
 			: undefined
 	)
-	const collectionSummonCounts = $derived(
+	const collectionSummonItems = $derived(
 		activeCollection
 			? activeCollection.summons.reduce((map, s) => {
 					const gid = String(s.summon.granblueId)
-					map.set(gid, (map.get(gid) ?? 0) + 1)
+					const arr = map.get(gid) ?? []
+					arr.push({ uncapLevel: s.uncapLevel ?? 0, transcendenceStep: s.transcendenceStep ?? 0 })
+					map.set(gid, arr)
 					return map
-				}, new Map<string, number>())
+				}, new Map<string, CollectionEntry[]>())
 			: undefined
 	)
 
@@ -405,10 +412,10 @@
 						raidExtra={(party as any)?.raid?.group?.extra}
 						showGuidebooks={(party as any)?.raid?.group?.guidebooks}
 						guidebooks={(party as any)?.guidebooks}
-						{collectionWeaponCounts}
+						{collectionWeaponItems}
 					/>
 				{:else if activeTab === GridType.Summon}
-					<SummonGrid summons={party.summons} {collectionSummonCounts} />
+					<SummonGrid summons={party.summons} {collectionSummonItems} />
 				{:else}
 					<div class="character-tab-content">
 						<JobSection
@@ -430,7 +437,7 @@
 							{mainWeaponElement}
 							{partyElement}
 							unlimited={(party as any)?.raid?.group?.unlimited}
-							{collectionCharacterCounts}
+							{collectionCharacterItems}
 						/>
 					</div>
 				{/if}

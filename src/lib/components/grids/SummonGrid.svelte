@@ -8,10 +8,10 @@
 
 	interface Props {
 		summons?: GridSummon[]
-		collectionSummonCounts?: Map<string, number>
+		collectionSummonItems?: Map<string, { uncapLevel: number; transcendenceStep: number }[]>
 	}
 
-	let { summons = [], collectionSummonCounts = undefined }: Props = $props()
+	let { summons = [], collectionSummonItems = undefined }: Props = $props()
 
 	import SummonUnit from '$lib/components/units/SummonUnit.svelte'
 	import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
@@ -33,19 +33,23 @@
 		return slots
 	})
 
-	// Compute per-position collection status by consuming counts in render order
+	// Compute per-position collection status by consuming items in render order.
+	// A collection item matches if its uncap/transcendence meets or exceeds the grid item's.
 	const collectionStatus = $derived.by(() => {
-		if (!collectionSummonCounts) return null
-		const remaining = new Map(collectionSummonCounts)
+		if (!collectionSummonItems) return null
+		const remaining = new Map(Array.from(collectionSummonItems, ([k, v]) => [k, [...v]]))
 		const status = new Map<number, boolean>()
 
 		const check = (summon: GridSummon | undefined, position: number) => {
 			const gid = summon?.summon?.granblueId
 			if (!gid) { status.set(position, false); return }
 			const key = String(gid)
-			const count = remaining.get(key) ?? 0
-			if (count > 0) {
-				remaining.set(key, count - 1)
+			const items = remaining.get(key)
+			if (!items) { status.set(position, false); return }
+			const needed = { uncap: summon.uncapLevel ?? 0, trans: summon.transcendenceStep ?? 0 }
+			const idx = items.findIndex(c => c.uncapLevel >= needed.uncap && c.transcendenceStep >= needed.trans)
+			if (idx >= 0) {
+				items.splice(idx, 1)
 				status.set(position, true)
 			} else {
 				status.set(position, false)
