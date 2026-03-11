@@ -222,7 +222,7 @@
 			{#snippet left()}
 				{#if isEditing}
 					<Button
-						variant="destructive"
+						variant="destructive-ghost"
 						onclick={handleDelete}
 						disabled={isDeleting || isSaving}
 					>
