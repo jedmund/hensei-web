@@ -244,7 +244,9 @@
 
 <Dialog bind:open={confirmDeleteOpen}>
 	{#snippet children()}
-		<ModalHeader title="Delete Awakening" description="Are you sure you want to delete this awakening? This action cannot be undone." />
+		<div class="confirm-body">
+			<p>Are you sure you want to delete this awakening? This action cannot be undone.</p>
+		</div>
 		<ModalFooter
 			onCancel={() => (confirmDeleteOpen = false)}
 			primaryAction={{
@@ -265,6 +267,16 @@
 	.modal-body {
 		padding: spacing.$unit-2x;
 		padding-top: 0;
+	}
+
+	.confirm-body {
+		padding: spacing.$unit-2x;
+
+		p {
+			margin: 0;
+			font-size: typography.$font-body;
+			color: var(--text-primary);
+		}
 	}
 
 	.form-grid {
