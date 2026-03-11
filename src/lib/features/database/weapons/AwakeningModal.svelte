@@ -139,11 +139,19 @@
 		}
 	}
 
-	async function handleDelete() {
+	// Delete confirmation
+	let confirmDeleteOpen = $state(false)
+
+	function handleDeleteClick() {
+		confirmDeleteOpen = true
+	}
+
+	async function handleConfirmDelete() {
 		if (!awakening) return
 		try {
 			await deleteMut.mutateAsync(awakening.id)
 			toast.success('Awakening deleted')
+			confirmDeleteOpen = false
 			open = false
 			onOpenChange?.(false)
 		} catch (error) {
@@ -223,7 +231,7 @@
 				{#if isEditing}
 					<Button
 						variant="destructive-ghost"
-						onclick={handleDelete}
+						onclick={handleDeleteClick}
 						disabled={isDeleting || isSaving}
 					>
 						{isDeleting ? 'Deleting...' : 'Delete'}
@@ -231,6 +239,21 @@
 				{/if}
 			{/snippet}
 		</ModalFooter>
+	{/snippet}
+</Dialog>
+
+<Dialog bind:open={confirmDeleteOpen}>
+	{#snippet children()}
+		<ModalHeader title="Delete Awakening" description="Are you sure you want to delete this awakening? This action cannot be undone." />
+		<ModalFooter
+			onCancel={() => (confirmDeleteOpen = false)}
+			primaryAction={{
+				label: isDeleting ? 'Deleting...' : 'Delete',
+				onclick: handleConfirmDelete,
+				destructive: true,
+				disabled: isDeleting
+			}}
+		/>
 	{/snippet}
 </Dialog>
 
