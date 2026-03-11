@@ -2,6 +2,8 @@
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import type { Awakening } from '$lib/types/api/entities'
 	import {
@@ -29,8 +31,14 @@
 	let nameEn = $state('')
 	let nameJp = $state('')
 	let slug = $state('')
-	let objectType = $state('Weapon')
-	let order = $state(0)
+	let objectType = $state<string>('Weapon')
+	let order = $state<number>(0)
+
+	// Select options
+	const typeOptions = [
+		{ value: 'Weapon', label: 'Weapon' },
+		{ value: 'Character', label: 'Character' }
+	]
 
 	// Image upload state
 	let imageFile = $state<File | null>(null)
@@ -158,34 +166,46 @@
 		<ModalHeader {title} />
 		<div class="modal-body">
 			<div class="form-grid">
-				<label class="field">
-					<span class="label">Name (EN)</span>
-					<input type="text" bind:value={nameEn} placeholder="e.g. Attack" />
-				</label>
+				<Input
+					label="Name (EN)"
+					bind:value={nameEn}
+					placeholder="e.g. Attack"
+					fullWidth
+					contained
+				/>
 
-				<label class="field">
-					<span class="label">Name (JP)</span>
-					<input type="text" bind:value={nameJp} placeholder="e.g. 攻撃" />
-				</label>
+				<Input
+					label="Name (JP)"
+					bind:value={nameJp}
+					placeholder="e.g. 攻撃"
+					fullWidth
+					contained
+				/>
 
-				<label class="field">
-					<span class="label">Slug</span>
-					<input type="text" bind:value={slug} placeholder="e.g. weapon-attack" />
-				</label>
+				<Input
+					label="Slug"
+					bind:value={slug}
+					placeholder="e.g. weapon-attack"
+					fullWidth
+					contained
+				/>
 
 				<div class="field-row">
-					<label class="field">
-						<span class="label">Type</span>
-						<select bind:value={objectType}>
-							<option value="Weapon">Weapon</option>
-							<option value="Character">Character</option>
-						</select>
-					</label>
+					<Select
+						label="Type"
+						options={typeOptions}
+						bind:value={objectType}
+						contained
+						fullWidth
+					/>
 
-					<label class="field">
-						<span class="label">Order</span>
-						<input type="number" bind:value={order} min="0" />
-					</label>
+					<Input
+						label="Order"
+						type="number"
+						bind:value={order}
+						contained
+						fullWidth
+					/>
 				</div>
 
 				<div class="field">
@@ -260,7 +280,7 @@
 		display: flex;
 		gap: spacing.$unit-2x;
 
-		.field {
+		:global(.fieldset) {
 			flex: 1;
 		}
 	}
@@ -269,22 +289,6 @@
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		color: var(--text-secondary);
-	}
-
-	input[type='text'],
-	input[type='number'],
-	select {
-		padding: spacing.$unit spacing.$unit-half;
-		border: 1px solid var(--border-color, #ddd);
-		border-radius: layout.$input-corner;
-		font-size: typography.$font-body;
-		background: var(--input-bg, #fff);
-		color: var(--text-primary);
-
-		&:focus {
-			outline: 2px solid var(--focus-ring);
-			outline-offset: -1px;
-		}
 	}
 
 	.image-upload {
