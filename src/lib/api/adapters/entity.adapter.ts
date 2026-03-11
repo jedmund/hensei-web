@@ -493,6 +493,7 @@ export interface CreateWeaponPayload {
 	recruits?: string | null  // Character ID reference
 	nicknames_en?: string[]
 	nicknames_jp?: string[]
+	awakening_ids?: string[]
 }
 
 /**
@@ -1084,8 +1085,10 @@ export class EntityAdapter extends BaseAdapter {
 			method: 'PATCH',
 			body: { weapon: payload }
 		})
-		// Invalidate cache for this weapon
 		this.clearCache(`/weapons/${id}`)
+		if (result.granblueId) {
+			this.clearCache(`/weapons/${result.granblueId}`)
+		}
 		return result
 	}
 
