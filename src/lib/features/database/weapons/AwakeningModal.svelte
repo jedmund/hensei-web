@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Dialog as DialogPrimitive } from 'bits-ui'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
@@ -239,23 +240,27 @@
 				{/if}
 			{/snippet}
 		</ModalFooter>
-	{/snippet}
-</Dialog>
 
-<Dialog bind:open={confirmDeleteOpen}>
-	{#snippet children()}
-		<div class="confirm-body">
-			<p>Are you sure you want to delete this awakening? This action cannot be undone.</p>
-		</div>
-		<ModalFooter
-			onCancel={() => (confirmDeleteOpen = false)}
-			primaryAction={{
-				label: isDeleting ? 'Deleting...' : 'Delete',
-				onclick: handleConfirmDelete,
-				destructive: true,
-				disabled: isDeleting
-			}}
-		/>
+		<!-- Nested delete confirmation dialog -->
+		<DialogPrimitive.Root bind:open={confirmDeleteOpen}>
+			<DialogPrimitive.Portal>
+				<DialogPrimitive.Overlay class="dialog-overlay" />
+				<DialogPrimitive.Content class="dialog-content">
+					<div class="confirm-body">
+						<p>Are you sure you want to delete this awakening? This action cannot be undone.</p>
+					</div>
+					<ModalFooter
+						onCancel={() => (confirmDeleteOpen = false)}
+						primaryAction={{
+							label: isDeleting ? 'Deleting...' : 'Delete',
+							onclick: handleConfirmDelete,
+							destructive: true,
+							disabled: isDeleting
+						}}
+					/>
+				</DialogPrimitive.Content>
+			</DialogPrimitive.Portal>
+		</DialogPrimitive.Root>
 	{/snippet}
 </Dialog>
 
