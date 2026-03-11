@@ -242,7 +242,6 @@
 				{#if isEditing}
 					<Button
 						variant="destructive"
-						size="small"
 						onclick={handleDelete}
 						disabled={isDeleting || isSaving}
 					>
