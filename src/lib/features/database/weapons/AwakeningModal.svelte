@@ -245,7 +245,7 @@
 		<DialogPrimitive.Root bind:open={confirmDeleteOpen}>
 			<DialogPrimitive.Portal>
 				<DialogPrimitive.Overlay class="dialog-overlay" />
-				<DialogPrimitive.Content class="dialog-content">
+				<DialogPrimitive.Content class="dialog-content confirm-dialog">
 					<div class="confirm-body">
 						<p>Are you sure you want to delete this awakening? This action cannot be undone.</p>
 					</div>
@@ -272,6 +272,17 @@
 	.modal-body {
 		padding: spacing.$unit-2x;
 		padding-top: 0;
+	}
+
+	// Scale down the parent dialog when nested confirmation is open
+	:global(.dialog-content[data-nested]) {
+		transform: translate(-50%, -50%) scale(calc(1 - var(--bits-dialog-nested-count) * 0.05));
+		filter: blur(calc(var(--bits-dialog-nested-count) * 2px));
+		transition: transform 0.2s ease, filter 0.2s ease;
+	}
+
+	:global(.confirm-dialog) {
+		width: 380px;
 	}
 
 	.confirm-body {
