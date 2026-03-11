@@ -2,7 +2,7 @@
  * Tests for the BaseAdapter class
  *
  * These tests verify the core functionality of the adapter system,
- * including request/response transformation, error handling, and caching.
+ * including request/response transformation and error handling.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
@@ -88,8 +88,7 @@ describe('BaseAdapter', () => {
 			const customAdapter = new TestAdapter({
 				baseURL: 'https://custom.api.com',
 				timeout: 10000,
-				retries: 5,
-				cacheTime: 60000
+				retries: 5
 			})
 			expect(customAdapter).toBeDefined()
 		})
@@ -431,122 +430,6 @@ describe('BaseAdapter', () => {
 		})
 	})
 
-	describe('caching', () => {
-		it('should cache GET requests when cacheTime is set', async () => {
-			let fetchCount = 0
-
-			global.fetch = vi.fn().mockImplementation(() => {
-				fetchCount++
-				return Promise.resolve({
-					ok: true,
-					json: async () => ({ data: 'cached', count: fetchCount })
-				})
-			})
-
-			// Make first request with caching
-			const result1 = await adapter.testRequest('/cached', {
-				cacheTime: 60000 // 1 minute
-			})
-
-			// Make second request (should use cache)
-			const result2 = await adapter.testRequest('/cached', {
-				cacheTime: 60000
-			})
-
-			// Only one fetch should have been made
-			expect(fetchCount).toBe(1)
-			expect(result1).toEqual(result2)
-		})
-
-		it('should cache POST requests with same body when cache is enabled', async () => {
-			let fetchCount = 0
-
-			global.fetch = vi.fn().mockImplementation(() => {
-				fetchCount++
-				return Promise.resolve({
-					ok: true,
-					json: async () => ({ count: fetchCount })
-				})
-			})
-
-			// Make first POST request with cache
-			const result1 = await adapter.testRequest('/data', {
-				method: 'POST',
-				cacheTime: 60000,
-				body: JSON.stringify({ test: true })
-			})
-
-			// Make second POST request with same body (should use cache)
-			const result2 = await adapter.testRequest('/data', {
-				method: 'POST',
-				cacheTime: 60000,
-				body: JSON.stringify({ test: true })
-			})
-
-			// Only one request should have been made
-			expect(fetchCount).toBe(1)
-			expect(result1).toEqual(result2)
-
-			// Make POST request with different body (should not use cache)
-			await adapter.testRequest('/data', {
-				method: 'POST',
-				cacheTime: 60000,
-				body: JSON.stringify({ test: false })
-			})
-
-			// Now two requests should have been made
-			expect(fetchCount).toBe(2)
-		})
-
-		it('should clear cache', async () => {
-			let fetchCount = 0
-
-			global.fetch = vi.fn().mockImplementation(() => {
-				fetchCount++
-				return Promise.resolve({
-					ok: true,
-					json: async () => ({ count: fetchCount })
-				})
-			})
-
-			// Make cached request
-			await adapter.testRequest('/cached', { cacheTime: 60000 })
-
-			// Clear cache
-			adapter.testClearCache()
-
-			// Make request again (should fetch again)
-			await adapter.testRequest('/cached', { cacheTime: 60000 })
-
-			expect(fetchCount).toBe(2)
-		})
-
-		it('should clear cache by pattern', async () => {
-			let fetchCount = 0
-
-			global.fetch = vi.fn().mockImplementation(() => {
-				fetchCount++
-				return Promise.resolve({
-					ok: true,
-					json: async () => ({ data: 'test' })
-				})
-			})
-
-			// Cache multiple endpoints
-			await adapter.testRequest('/users/1', { cacheTime: 60000 })
-			await adapter.testRequest('/posts/1', { cacheTime: 60000 })
-
-			// Clear only user cache
-			adapter.testClearCache('users')
-
-			// Users should refetch, posts should use cache
-			await adapter.testRequest('/users/1', { cacheTime: 60000 })
-			await adapter.testRequest('/posts/1', { cacheTime: 60000 })
-
-			// 3 total fetches: initial 2 + 1 refetch for users
-			expect(fetchCount).toBe(3)
-		})
-	})
 
 	describe('error handling', () => {
 		it('should call global error handler', async () => {
