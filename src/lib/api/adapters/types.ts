@@ -21,9 +21,6 @@ export interface AdapterOptions {
 	/** Number of retry attempts for failed requests. Defaults to 3 */
 	retries?: number
 
-	/** Default cache duration in milliseconds. Set to 0 to disable caching */
-	cacheTime?: number
-
 	/** Global error handler callback. Called when any request fails */
 	onError?: (error: AdapterError) => void
 }
@@ -45,14 +42,8 @@ export interface RequestOptions extends Omit<RequestInit, 'body' | 'cache'> {
 	/** Number of retry attempts for this specific request */
 	retries?: number | undefined
 
-	/** Cache duration for this request in milliseconds */
-	cacheTime?: number | undefined
-
 	/** Request cache mode */
 	cache?: RequestCache | undefined
-
-	/** Alternative alias for cache duration */
-	cacheTTL?: number | undefined
 
 	/** Request body. Can be any serializable value */
 	body?: any

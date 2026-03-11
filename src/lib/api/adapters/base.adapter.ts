@@ -20,6 +20,11 @@ import {
 import { authStore } from '$lib/stores/auth.store.svelte'
 import { browser } from '$app/environment'
 
+// NOTE: Adapter-level caching has been removed entirely.
+// TanStack Query is the single source of truth for client-side caching,
+// and server-side adapter caching caused stale data after edits
+// (the server process cache can't be invalidated from the browser).
+
 /**
  * Base adapter class that all resource-specific adapters extend from.
  * Provides core functionality for API communication with built-in features:
@@ -41,14 +46,8 @@ export abstract class BaseAdapter {
 	/** Map of request IDs to their abort controllers for cancellation */
 	protected abortControllers = new Map<string, AbortController>()
 
-	/** Cache for storing request responses */
-	protected cache = new Map<string, { data: any; expires: number }>()
-
 	/** Configuration options for the adapter */
 	protected options: Required<AdapterOptions>
-
-	/** Flag to disable caching entirely */
-	protected disableCache: boolean = false
 
 	/**
 	 * Creates a new adapter instance
@@ -57,7 +56,6 @@ export abstract class BaseAdapter {
 	 * @param options.baseURL - Base URL for API requests (defaults to API_BASE)
 	 * @param options.timeout - Default timeout for requests in milliseconds
 	 * @param options.retries - Number of retry attempts for failed requests
-	 * @param options.cacheTime - Default cache duration in milliseconds
 	 * @param options.onError - Global error handler callback
 	 */
 	constructor(options: AdapterOptions = {}) {
@@ -67,7 +65,6 @@ export abstract class BaseAdapter {
 			baseURL,
 			timeout: options.timeout ?? 30000,
 			retries: options.retries ?? 3,
-			cacheTime: options.cacheTime ?? 0,
 			onError: options.onError ?? (() => {})
 		}
 	}
@@ -102,17 +99,6 @@ export abstract class BaseAdapter {
 			: undefined
 		// Use full URL (including query params) for cache key to differentiate filtered requests
 		const requestId = this.generateRequestId(url, options.method, bodyString)
-
-		// Check cache first if caching is enabled (support both cacheTime and cacheTTL)
-		const cacheTime = options.cacheTTL ?? options.cacheTime ?? this.options.cacheTime
-		// Skip adapter-level cache in the browser — TanStack Query manages client-side caching.
-		// Keep it on the server for SSR deduplication of reference data across requests.
-		if (!this.disableCache && !browser && cacheTime > 0) {
-			const cached = this.getFromCache(requestId)
-			if (cached !== null) {
-				return cached as T
-			}
-		}
 
 		// Cancel any existing request to the same endpoint
 		this.cancelRequest(requestId)
@@ -175,11 +161,6 @@ export abstract class BaseAdapter {
 			const data = await response.json()
 
 			const transformed = this.transformResponse<T>(data)
-
-			// Cache the successful response if caching is enabled (use cacheTTL or cache)
-			if (!this.disableCache && !browser && cacheTime > 0) {
-				this.setCache(requestId, transformed, cacheTime)
-			}
 
 			return transformed
 		} catch (error: any) {
@@ -491,54 +472,10 @@ export abstract class BaseAdapter {
 	}
 
 	/**
-	 * Gets data from cache if it exists and hasn't expired
-	 *
-	 * @param key - The cache key
-	 * @returns The cached data or null if not found/expired
+	 * No-op kept for backwards compatibility.
+	 * Adapter-level caching has been removed; TanStack Query handles all caching.
 	 */
-	private getFromCache(key: string): any | null {
-		const entry = this.cache.get(key)
-		if (!entry) return null
-
-		// Check if cache has expired
-		if (Date.now() > entry.expires) {
-			this.cache.delete(key)
-			return null
-		}
-
-		return entry.data
-	}
-
-	/**
-	 * Stores data in cache with expiration time
-	 *
-	 * @param key - The cache key
-	 * @param data - The data to cache
-	 * @param ttl - Time to live in milliseconds
-	 */
-	private setCache(key: string, data: any, ttl: number): void {
-		this.cache.set(key, {
-			data,
-			expires: Date.now() + ttl
-		})
-	}
-
-	/**
-	 * Clears the cache
-	 *
-	 * @param pattern - Optional pattern to match keys for selective clearing
-	 */
-	clearCache(pattern?: string): void {
-		if (pattern) {
-			// Clear only matching keys
-			for (const key of this.cache.keys()) {
-				if (key.includes(pattern)) {
-					this.cache.delete(key)
-				}
-			}
-		} else {
-			// Clear all cache
-			this.cache.clear()
-		}
+	clearCache(_pattern?: string): void {
+		// No-op: adapter-level cache removed
 	}
 }
