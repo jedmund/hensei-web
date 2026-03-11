@@ -16,6 +16,7 @@
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
 	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
+	import WeaponAwakeningSection from '$lib/features/database/weapons/sections/WeaponAwakeningSection.svelte'
 	import WeaponForgeSection from '$lib/features/database/weapons/sections/WeaponForgeSection.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -108,7 +109,9 @@
 		recruits: '',
 		// Forge chain fields
 		forgedFrom: '' as string | null,
-		forgeOrder: null as number | null
+		forgeOrder: null as number | null,
+		// Awakenings
+		awakeningIds: [] as string[]
 	})
 
 	// Populate edit data when weapon loads
@@ -156,7 +159,9 @@
 				recruits: typeof weapon.recruits === 'string' ? weapon.recruits : (weapon.recruits?.granblueId ?? ''),
 				// Forge chain fields
 				forgedFrom: weapon.forgedFrom?.granblueId || null,
-				forgeOrder: weapon.forgeOrder ?? null
+				forgeOrder: weapon.forgeOrder ?? null,
+				// Awakenings
+				awakeningIds: (weapon.awakenings ?? []).map((a: any) => a.id)
 			}
 		}
 	})
@@ -209,7 +214,9 @@
 				recruits: editData.recruits || undefined,
 				// Forge chain fields
 				forged_from: editData.forgedFrom || null,
-				forge_order: editData.forgeOrder
+				forge_order: editData.forgeOrder,
+				// Awakenings
+				awakening_ids: editData.awakeningIds
 			}
 
 			await entityAdapter.updateWeapon(weapon.id, payload)
@@ -258,6 +265,7 @@
 				<WeaponUncapSection {weapon} {editMode} bind:editData />
 				<WeaponTaxonomySection {weapon} {editMode} bind:editData />
 				<WeaponStatsSection {weapon} {editMode} bind:editData />
+				<WeaponAwakeningSection {weapon} {editMode} bind:editData />
 				<WeaponForgeSection {weapon} {editMode} bind:editData />
 
 				<DetailsContainer title="Nicknames">
