@@ -1,0 +1,303 @@
+<script lang="ts">
+	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
+	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import type { Awakening } from '$lib/types/api/entities'
+	import {
+		useCreateAwakening,
+		useUpdateAwakening,
+		useDeleteAwakening,
+		useUploadAwakeningImage
+	} from '$lib/api/mutations/awakening.mutations'
+	import { getBasePath } from '$lib/utils/images'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
+
+	interface Props {
+		open?: boolean
+		awakening?: Awakening | null
+		onOpenChange?: (open: boolean) => void
+	}
+
+	let { open = $bindable(false), awakening = null, onOpenChange }: Props = $props()
+
+	const isEditing = $derived(!!awakening)
+	const title = $derived(isEditing ? 'Edit Awakening' : 'Add Awakening')
+
+	// Form state
+	let nameEn = $state('')
+	let nameJp = $state('')
+	let slug = $state('')
+	let objectType = $state('Weapon')
+	let order = $state(0)
+
+	// Image upload state
+	let imageFile = $state<File | null>(null)
+	let imagePreview = $state<string | null>(null)
+	let fileInputEl = $state<HTMLInputElement>()
+
+	// Mutations
+	const createMut = useCreateAwakening()
+	const updateMut = useUpdateAwakening()
+	const deleteMut = useDeleteAwakening()
+	const uploadImageMut = useUploadAwakeningImage()
+
+	const isSaving = $derived(createMut.isPending || updateMut.isPending)
+	const isDeleting = $derived(deleteMut.isPending)
+
+	// Reset form when awakening changes or modal opens
+	$effect(() => {
+		if (open) {
+			if (awakening) {
+				nameEn = awakening.name.en || ''
+				nameJp = awakening.name.ja || ''
+				slug = awakening.slug || ''
+				objectType = awakening.objectType || 'Weapon'
+				order = awakening.order ?? 0
+			} else {
+				nameEn = ''
+				nameJp = ''
+				slug = ''
+				objectType = 'Weapon'
+				order = 0
+			}
+			imageFile = null
+			imagePreview = null
+		}
+	})
+
+	// Existing image URL
+	const existingImageUrl = $derived.by(() => {
+		if (!awakening?.slug) return null
+		const ext = awakening.slug.startsWith('character-') ? 'jpg' : 'png'
+		return `${getBasePath()}/awakening/${awakening.slug}.${ext}`
+	})
+
+	function handleImageSelect(e: Event) {
+		const input = e.target as HTMLInputElement
+		const file = input.files?.[0]
+		if (!file) return
+		imageFile = file
+		const reader = new FileReader()
+		reader.onload = () => {
+			imagePreview = reader.result as string
+		}
+		reader.readAsDataURL(file)
+	}
+
+	async function handleSave() {
+		if (!nameEn || !slug) {
+			toast.error('Name and slug are required')
+			return
+		}
+
+		try {
+			let savedAwakening: Awakening
+
+			if (isEditing && awakening) {
+				savedAwakening = await updateMut.mutateAsync({
+					id: awakening.id,
+					payload: {
+						name_en: nameEn,
+						name_jp: nameJp || undefined,
+						slug,
+						object_type: objectType,
+						order
+					}
+				})
+			} else {
+				savedAwakening = await createMut.mutateAsync({
+					name_en: nameEn,
+					name_jp: nameJp || undefined,
+					slug,
+					object_type: objectType,
+					order
+				})
+			}
+
+			// Upload image if one was selected
+			if (imageFile && savedAwakening) {
+				const reader = new FileReader()
+				const dataUrl = await new Promise<string>((resolve) => {
+					reader.onload = () => resolve(reader.result as string)
+					reader.readAsDataURL(imageFile!)
+				})
+				// Strip data URL prefix, send only base64 payload
+				const base64 = dataUrl.replace(/^data:[^;]+;base64,/, '')
+				await uploadImageMut.mutateAsync({
+					id: savedAwakening.id,
+					imageData: base64,
+					filename: imageFile.name
+				})
+			}
+
+			toast.success(isEditing ? 'Awakening updated' : 'Awakening created')
+			open = false
+			onOpenChange?.(false)
+		} catch (error) {
+			toast.error(extractErrorMessage(error, 'Failed to save awakening'))
+		}
+	}
+
+	async function handleDelete() {
+		if (!awakening) return
+		try {
+			await deleteMut.mutateAsync(awakening.id)
+			toast.success('Awakening deleted')
+			open = false
+			onOpenChange?.(false)
+		} catch (error) {
+			toast.error(extractErrorMessage(error, 'Failed to delete awakening'))
+		}
+	}
+</script>
+
+<Dialog bind:open {onOpenChange}>
+	{#snippet children()}
+		<ModalHeader {title} />
+		<div class="modal-body">
+			<div class="form-grid">
+				<label class="field">
+					<span class="label">Name (EN)</span>
+					<input type="text" bind:value={nameEn} placeholder="e.g. Attack" />
+				</label>
+
+				<label class="field">
+					<span class="label">Name (JP)</span>
+					<input type="text" bind:value={nameJp} placeholder="e.g. 攻撃" />
+				</label>
+
+				<label class="field">
+					<span class="label">Slug</span>
+					<input type="text" bind:value={slug} placeholder="e.g. weapon-attack" />
+				</label>
+
+				<div class="field-row">
+					<label class="field">
+						<span class="label">Type</span>
+						<select bind:value={objectType}>
+							<option value="Weapon">Weapon</option>
+							<option value="Character">Character</option>
+						</select>
+					</label>
+
+					<label class="field">
+						<span class="label">Order</span>
+						<input type="number" bind:value={order} min="0" />
+					</label>
+				</div>
+
+				<div class="field">
+					<span class="label">Image</span>
+					<div class="image-upload">
+						{#if imagePreview}
+							<img src={imagePreview} alt="Preview" class="image-preview" />
+						{:else if existingImageUrl}
+							<img src={existingImageUrl} alt={nameEn} class="image-preview" />
+						{/if}
+						<Button variant="ghost" size="small" onclick={() => fileInputEl?.click()}>
+							{existingImageUrl || imagePreview ? 'Change Image' : 'Upload Image'}
+						</Button>
+						<input
+							bind:this={fileInputEl}
+							type="file"
+							accept="image/png,image/jpeg"
+							onchange={handleImageSelect}
+							hidden
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<ModalFooter
+			onCancel={() => (open = false)}
+			primaryAction={{
+				label: isSaving ? 'Saving...' : isEditing ? 'Save' : 'Create',
+				onclick: handleSave,
+				disabled: isSaving || isDeleting || !nameEn || !slug
+			}}
+		>
+			{#snippet left()}
+				{#if isEditing}
+					<Button
+						variant="destructive"
+						size="small"
+						onclick={handleDelete}
+						disabled={isDeleting || isSaving}
+					>
+						{isDeleting ? 'Deleting...' : 'Delete'}
+					</Button>
+				{/if}
+			{/snippet}
+		</ModalFooter>
+	{/snippet}
+</Dialog>
+
+<style lang="scss">
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
+
+	.modal-body {
+		padding: spacing.$unit-2x;
+		padding-top: 0;
+	}
+
+	.form-grid {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-2x;
+	}
+
+	.field {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-half;
+	}
+
+	.field-row {
+		display: flex;
+		gap: spacing.$unit-2x;
+
+		.field {
+			flex: 1;
+		}
+	}
+
+	.label {
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-secondary);
+	}
+
+	input[type='text'],
+	input[type='number'],
+	select {
+		padding: spacing.$unit spacing.$unit-half;
+		border: 1px solid var(--border-color, #ddd);
+		border-radius: layout.$input-corner;
+		font-size: typography.$font-body;
+		background: var(--input-bg, #fff);
+		color: var(--text-primary);
+
+		&:focus {
+			outline: 2px solid var(--focus-ring);
+			outline-offset: -1px;
+		}
+	}
+
+	.image-upload {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+	}
+
+	.image-preview {
+		width: 40px;
+		height: 40px;
+		object-fit: contain;
+		border-radius: layout.$item-corner-small;
+		border: 1px solid var(--border-color, #eee);
+	}
+</style>
