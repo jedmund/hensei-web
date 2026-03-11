@@ -3,7 +3,6 @@
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
-	import Select from '$lib/components/ui/Select.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import type { Awakening } from '$lib/types/api/entities'
 	import {
@@ -19,10 +18,11 @@
 	interface Props {
 		open?: boolean
 		awakening?: Awakening | null
+		objectType?: string
 		onOpenChange?: (open: boolean) => void
 	}
 
-	let { open = $bindable(false), awakening = null, onOpenChange }: Props = $props()
+	let { open = $bindable(false), awakening = null, objectType = 'Weapon', onOpenChange }: Props = $props()
 
 	const isEditing = $derived(!!awakening)
 	const title = $derived(isEditing ? 'Edit Awakening' : 'Add Awakening')
@@ -31,14 +31,7 @@
 	let nameEn = $state('')
 	let nameJp = $state('')
 	let slug = $state('')
-	let objectType = $state<string>('Weapon')
 	let order = $state<number>(0)
-
-	// Select options
-	const typeOptions = [
-		{ value: 'Weapon', label: 'Weapon' },
-		{ value: 'Character', label: 'Character' }
-	]
 
 	// Image upload state
 	let imageFile = $state<File | null>(null)
@@ -61,13 +54,11 @@
 				nameEn = awakening.name.en || ''
 				nameJp = awakening.name.ja || ''
 				slug = awakening.slug || ''
-				objectType = awakening.objectType || 'Weapon'
 				order = awakening.order ?? 0
 			} else {
 				nameEn = ''
 				nameJp = ''
 				slug = ''
-				objectType = 'Weapon'
 				order = 0
 			}
 			imageFile = null
@@ -190,23 +181,13 @@
 					contained
 				/>
 
-				<div class="field-row">
-					<Select
-						label="Type"
-						options={typeOptions}
-						bind:value={objectType}
-						contained
-						fullWidth
-					/>
-
-					<Input
-						label="Order"
-						type="number"
-						bind:value={order}
-						contained
-						fullWidth
-					/>
-				</div>
+				<Input
+					label="Order"
+					type="number"
+					bind:value={order}
+					contained
+					fullWidth
+				/>
 
 				<div class="field">
 					<span class="label">Image</span>
@@ -273,15 +254,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-half;
-	}
-
-	.field-row {
-		display: flex;
-		gap: spacing.$unit-2x;
-
-		:global(.fieldset) {
-			flex: 1;
-		}
 	}
 
 	.label {
