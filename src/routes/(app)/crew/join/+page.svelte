@@ -129,6 +129,15 @@
 							</span>
 						</div>
 
+						{#if invitation.phantomPlayer}
+							<div class="phantom-assignment">
+								Phantom assigned: <strong>{invitation.phantomPlayer.name}</strong>
+								{#if invitation.phantomPlayer.granblueId}
+									<span class="granblue-id">({invitation.phantomPlayer.granblueId})</span>
+								{/if}
+							</div>
+						{/if}
+
 						{#if 'memberCount' in crew && crew.memberCount !== undefined}
 							<div class="crew-stats">
 								<span class="stat">
@@ -288,6 +297,16 @@
 		padding: spacing.$unit;
 		background: var(--color-red-light, #fef2f2);
 		border-radius: layout.$item-corner-small;
+	}
+
+	.phantom-assignment {
+		font-size: 0.875rem;
+		color: var(--text-secondary);
+		margin-bottom: spacing.$unit;
+
+		.granblue-id {
+			color: var(--text-tertiary);
+		}
 	}
 
 	.expires-notice {

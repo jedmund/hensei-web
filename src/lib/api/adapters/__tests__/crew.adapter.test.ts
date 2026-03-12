@@ -116,6 +116,26 @@ describe('CrewAdapter', () => {
 			expect(result).toEqual(EXPECTED.sendInvitation)
 		})
 
+		it('should include phantom_player_id when provided', async () => {
+			global.fetch = mockApiResponse(API.sendInvitation)
+
+			await adapter.sendInvitation('crew-1', 'user-2', 'phantom-1')
+
+			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			expect(body.user_id).toBe('user-2')
+			expect(body.phantom_player_id).toBe('phantom-1')
+		})
+
+		it('should not include phantom_player_id when not provided', async () => {
+			global.fetch = mockApiResponse(API.sendInvitation)
+
+			await adapter.sendInvitation('crew-1', 'user-2')
+
+			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			expect(body.user_id).toBe('user-2')
+			expect(body.phantom_player_id).toBeUndefined()
+		})
+
 		it('should clear dual cache on acceptInvitation', async () => {
 			global.fetch = mockApiResponse(API.acceptInvitation)
 			const clearSpy = vi.spyOn(adapter as any, 'clearCache')

@@ -112,6 +112,17 @@ function transformSettingsResponse(apiUser: ApiUserResponse): UserSettings {
  */
 export class UserAdapter extends BaseAdapter {
   /**
+   * Search users by username prefix
+   */
+  async searchUsers(query: string, options?: RequestOptions): Promise<UserInfo[]> {
+    const response = await this.request<{ users: ApiUserResponse[] }>(
+      '/users/search',
+      { ...options, params: { query } }
+    )
+    return response.users.map(transformUserResponse)
+  }
+
+  /**
    * Get user information
    */
   async getInfo(username: string, options?: RequestOptions): Promise<UserInfo> {
