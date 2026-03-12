@@ -249,6 +249,7 @@ export interface Awakening {
   id: string
   name: LocalizedName
   slug: string
+  objectType?: string
   order?: number
 }
 

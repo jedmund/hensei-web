@@ -1,0 +1,701 @@
+[
+	{
+		"year": 2024,
+		"entries": [
+			{
+				"version": "2024-05U1",
+				"date": "2024/05/02",
+				"event": "content",
+				"new": {
+					"weapons": ["1040026100", "1040317400", "1040423100", "1040119500", "1040618800", "1040916300"]
+				},
+				"transcended": {
+					"summons": ["2040034000", "2040046000"]
+				},
+				"notes": [
+					"Added new raids: Colossus Ira Omega (Impossible) and Celeste Ater Omega (Impossible)",
+					"Pendulum of Extremity, Pendulum of Sagacity, and Pendulum of Supremacy added (I kept forgetting about these)",
+					"Only Dark Opus Weapons at Transcendence Lv3 or higher can equip the new Pendulums",
+					"Fixed a bug where users could not set the awakening level on some Grand weapons"
+				]
+			},
+			{
+				"version": "2024-04L",
+				"date": "2024/04/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040529000", "3040530000"],
+					"weapons": ["1040219200", "1040119400", "1040618700", "1030109000"]
+				}
+			},
+			{
+				"version": "2024-04U2",
+				"date": "2024/04/21",
+				"event": "content",
+				"new": {
+					"characters": ["3040525000"]
+				},
+				"uncapped": {
+					"weapons": ["1040313200"]
+				}
+			},
+			{
+				"version": "2024-04F",
+				"date": "2024/04/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040523000", "3040524000"],
+					"weapons": ["1040119300", "1040423000"]
+				}
+			},
+			{
+				"version": "2024-04U1",
+				"date": "2024/04/07",
+				"event": "content",
+				"new": {
+					"characters": ["3040522000"],
+					"weapons": ["1040618600"]
+				}
+			},
+			{
+				"version": "2024-03L",
+				"date": "2024/03/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040520000", "3040521000"],
+					"weapons": ["1040026000", "1040422900", "1040422800", "1030704700"]
+				}
+			},
+			{
+				"version": "2024-03U3",
+				"date": "2024/03/25",
+				"event": "content",
+				"new": {
+					"weapons": ["1040119200", "1040516800", "1040713400", "1040219100", "1040516900", "1040916200"]
+				},
+				"transcended": {
+					"summons": ["2040020000", "2040047000"]
+				},
+				"notes": [
+					"Added new raids: Tiamat Aura Omega (Impossible) and Luminiera Credo Omega (Impossible)",
+					"When searching for characters, weapons, and summons, results will now show the item can be transcended",
+					"When searching for summons, results will now show whether the summon has a subaura"
+				]
+			},
+			{
+				"version": "2024-03F",
+				"date": "2024/03/19",
+				"event": "flash",
+				"new": {
+					"characters": ["3040517000", "3040518000", "3040519000"],
+					"weapons": ["1040317200", "1040422600", "1040422700"]
+				}
+			},
+			{
+				"version": "2024-03U2",
+				"date": "2024/03/15",
+				"event": "content",
+				"new": {
+					"characters": ["3040516000"],
+					"weapons": ["1040713300"]
+				},
+				"uncapped": {
+					"weapons": ["1040614500"]
+				}
+			},
+			{
+				"version": "2024-03U",
+				"date": "2024/03/10",
+				"event": "content",
+				"transcended": {
+					"summons": ["2040094000", "2040100000", "2040098000", "2040084000", "2040090000", "2040080000"]
+				},
+				"uncapped": {
+					"weapons": ["1040516200", "1040915300", "1040116500", "1040815800", "1040710900", "1040024700", "1040712600", "1040116100", "1040712300", "1040806000", "1040515900", "1040616800"]
+				},
+				"awakened": ["1040906400", "1040708700", "1040212700", "1040910000", "1040014300", "1040207000"]
+			},
+			{
+				"version": "2024-02L",
+				"date": "2024/02/29",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040515000", "3040513000", "3040514000"],
+					"weapons": ["1040025900", "1040618500", "1040119100", "1040025800", "1030010200"]
+				}
+			},
+			{
+				"version": "2024-02U",
+				"date": "2024/02/20",
+				"event": "content",
+				"new": {
+					"weapons": ["1040618400"]
+				},
+				"raids": ["dark-rapture-zero"],
+				"notes": [
+					"Added new class: Onmyoji",
+					"Fixed a bug that prevented filtering job skills by category",
+					"Fixed a bug that prevented infinite scrolling in search results"
+				]
+			},
+			{
+				"version": "2024-02F",
+				"date": "2024/02/14",
+				"event": "flash",
+				"new": {
+					"characters": ["3040512000", "3040511000"],
+					"weapons": ["1040713200", "1040816400"]
+				}
+			},
+			{
+				"version": "2024-01U",
+				"date": "2024/02/06",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040190000"]
+				}
+			},
+			{
+				"version": "2024-01L",
+				"date": "2024/01/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040509000", "3040510000"],
+					"weapons": ["1040025700", "1040422500", "1040317100", "1030406600"]
+				},
+				"notes": [
+					"Added Ultimate Mastery skills for classes: Cavalier, Relic Buster, Yamato, and Masquerade",
+					"Fixed a bug where Telumas could be set on the third slot of Draconic Providence weapons"
+				]
+			},
+			{
+				"version": "2024-01U3",
+				"date": "2024/01/18",
+				"event": "content",
+				"new": {
+					"characters": ["3040506000"]
+				},
+				"uncapped": {
+					"characters": ["3040313000"]
+				}
+			},
+			{
+				"version": "2024-01F",
+				"date": "2024/01/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040508000", "3040507000"],
+					"weapons": ["1040422400", "1040219000"]
+				},
+				"transcended": {
+					"weapons": ["1040212600", "1040212500", "1040310700", "1040310600", "1040415100", "1040415000", "1040809500", "1040809400", "1040911100", "1040911000", "1040017100", "1040017000"]
+				}
+			},
+			{
+				"version": "2024-01U2",
+				"date": "2024/01/12",
+				"event": "content",
+				"new": {
+					"characters": ["3040504000", "3040505000"],
+					"weapons": ["1040618300"],
+					"summons": ["2040426000"]
+				}
+			},
+			{
+				"version": "2024-01U1",
+				"date": "2024/01/05",
+				"event": "content",
+				"new": {
+					"weapons": ["1040025400", "1040816300"]
+				},
+				"uncapped": {
+					"characters": ["3040167000", "3040166000"]
+				},
+				"notes": [
+					"Fixed a bug that prevented logged out users from creating teams if they started from the Character or Summon tabs",
+					"Fixed a bug that prevented filtering the Teams, Saved, and Profile pages without selecting a filter twice"
+				]
+			}
+		]
+	},
+	{
+		"year": 2023,
+		"entries": [
+			{
+				"version": "2023-12L",
+				"date": "2023/12/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040502000", "3040501000", "3040503000"],
+					"weapons": ["1040119000", "1040618200", "1040317000"],
+					"summons": ["2040425000"]
+				}
+			},
+			{
+				"version": "2023-12F2",
+				"date": "2023/12/28",
+				"event": "flash",
+				"new": {
+					"characters": ["3040499000", "3040500000"],
+					"weapons": ["1040218900", "1040618100", "1040025500", "1030305900"],
+					"summons": ["2040427000"]
+				}
+			},
+			{
+				"version": "2023-12U2",
+				"date": "2023/12/19",
+				"event": "content",
+				"uncapped": {
+					"weapons": ["1040815100", "1040815200", "1040815300", "1040815400", "1040815000"]
+				},
+				"notes": [
+					"Sorry for the longer spaces between updates—life has been a bit busy. Work has gotten a lot busier, I have more social obligations, and am working on another app. I haven't abandoned granblue.team though. Thanks for your patience!",
+					"Finally fixed the logic that determines when a conflict occurs between Dark Opus Weapons, Draconic Weapons and Draconic Providence Weapons"
+				]
+			},
+			{
+				"version": "2023-12F",
+				"date": "2023/12/17",
+				"event": "flash",
+				"new": {
+					"characters": ["3040498000", "3040497000"],
+					"weapons": ["1040218800", "1040816200"]
+				},
+				"uncapped": {
+					"weapons": ["1040416500", "1040215000"]
+				}
+			},
+			{
+				"version": "2023-12U",
+				"date": "2023/12/07",
+				"event": "content",
+				"new": {
+					"weapons": ["1040118000"]
+				}
+			},
+			{
+				"version": "2023-11L",
+				"date": "2023/11/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040496000", "3040495000"],
+					"weapons": ["1040516700", "1040713100", "1040117900", "1030609500"]
+				}
+			},
+			{
+				"version": "2023-11F",
+				"date": "2023/11/17",
+				"event": "flash",
+				"new": {
+					"characters": ["3040492000", "3040493000", "3040494000"],
+					"weapons": ["1040117800", "1040516600", "1040025300"]
+				}
+			},
+			{
+				"version": "2023-11U2",
+				"date": "2023/11/14",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040212000"]
+				}
+			},
+			{
+				"version": "2023-11U",
+				"date": "2023/11/09",
+				"event": "content",
+				"new": {
+					"weapons": ["1040025200", "1040316800", "1040316900", "1040025100", "1040712900", "1040713000", "1040915900", "1040617900", "1040618000", "1040117700", "1040316600", "1040316700", "1040422300", "1040816000", "1040816100", "1040916000", "1040117500", "1040117600"]
+				},
+				"notes": [
+					"Added Ultimate Mastery skills for classes: Bandit Tycoon, Nighthound, Monk, and Rising Force"
+				]
+			},
+			{
+				"version": "2023-10L",
+				"date": "2023/10/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040490000", "3040491000"],
+					"weapons": ["1040915800", "1040117400", "1040915700", "1030804500"],
+					"summons": ["2040424000"]
+				}
+			},
+			{
+				"version": "2023-10U",
+				"date": "2023/10/23",
+				"event": "content",
+				"new": {
+					"weapons": ["1040422200", "1040815900", "1040316500", "1040712800", "1040516500", "1040915600"]
+				},
+				"notes": [
+					"Draconic Weapons Providence are not properly implemented yet and cannot be placed into teams with Dark Opus Weapons"
+				]
+			},
+			{
+				"version": "2023-10F",
+				"date": "2023/10/18",
+				"event": "flash",
+				"new": {
+					"characters": ["3040487000", "3040488000", "3040489000"],
+					"weapons": ["1040516400", "1040422100", "1040316400"]
+				}
+			},
+			{
+				"version": "2023-10U2",
+				"date": "2023/10/16",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040109000", "3040168000", "3040162000"]
+				}
+			},
+			{
+				"version": "2023-09L",
+				"date": "2023/09/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040485000", "3040484000"],
+					"weapons": ["1040915500", "1040617800", "1040117300", "1030406500"]
+				}
+			},
+			{
+				"version": "2023-09F",
+				"date": "2023/09/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040486000", "3040483000"],
+					"weapons": ["1040117200", "1040024900"]
+				},
+				"uncapped": {
+					"characters": ["3040064000"]
+				},
+				"notes": [
+					"Added Ultimate Mastery skills for classes: Warlock, Chrysaor, Lumberjack, Robin Hood, and Doctor"
+				]
+			},
+			{
+				"version": "2023-09U",
+				"date": "2023/09/07",
+				"event": "content",
+				"new": {
+					"weapons": ["1040117000", "1040516300"]
+				},
+				"notes": [
+					"Added new Manatura \"Ouroboros Mino\""
+				]
+			},
+			{
+				"version": "2023-08L",
+				"date": "2023/08/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040481000", "3040482000"],
+					"weapons": ["1040218700", "1040617700", "1040712700", "1030406400"]
+				}
+			},
+			{
+				"version": "2023-08U",
+				"date": "2023/08/22",
+				"event": "uncap",
+				"uncapped": {
+					"summons": ["2040185000", "2040225000", "2040205000", "2040261000"]
+				}
+			},
+			{
+				"version": "2023-08F",
+				"date": "2023/08/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040478000", "3040479000", "3040480000"],
+					"weapons": ["1040915400", "1040024800", "1040422000"],
+					"summons": ["2040423000"]
+				},
+				"uncapped": {
+					"characters": ["3040161000", "3040165000"]
+				},
+				"notes": [
+					"Added new class \"Street King\""
+				]
+			},
+			{
+				"version": "2023-08U2",
+				"date": "2023/08/11",
+				"event": "content",
+				"new": {
+					"characters": ["3040476000", "3040477000"],
+					"weapons": ["1040117100"],
+					"summons": ["2040422000", "2040421000"]
+				}
+			},
+			{
+				"version": "2023-07L",
+				"date": "2023/07/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040472000", "3040474000", "3040475000", "3040473000"],
+					"weapons": ["1040815800", "1040024700", "1040516200", "1040218600", "1040617600", "1030305800"],
+					"summons": ["2040420000"]
+				}
+			},
+			{
+				"version": "2023-07F",
+				"date": "2023/07/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040470000", "3040471000"],
+					"weapons": ["1040316300", "1040516100"]
+				}
+			},
+			{
+				"version": "2023-07U",
+				"date": "2023/07/08",
+				"event": "uncap",
+				"new": {
+					"weapons": ["1040218500"]
+				},
+				"uncapped": {
+					"characters": ["3040102000"]
+				}
+			},
+			{
+				"version": "2023-06L",
+				"date": "2023/06/29",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040468000", "3040469000"],
+					"weapons": ["1040421900", "1040712600", "1040516000", "1030305700"]
+				}
+			},
+			{
+				"version": "2023-06F",
+				"date": "2023/06/19",
+				"event": "flash",
+				"new": {
+					"characters": ["3040466000", "3040467000"],
+					"weapons": ["1040915300", "1040815700"]
+				}
+			},
+			{
+				"version": "2023-06U1",
+				"date": "2023/06/07",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040169000", "3040163000"]
+				}
+			},
+			{
+				"version": "2023-05L",
+				"date": "2023/05/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040464000", "3040465000"],
+					"weapons": ["1040116900", "1040218400", "1040712500", "1030804400"]
+				},
+				"notes": [
+					"A large update is in the works. Stay tuned!"
+				]
+			},
+			{
+				"version": "2023-05F",
+				"date": "2023/05/20",
+				"event": "flash",
+				"new": {
+					"characters": ["3040463000", "3040462000"],
+					"weapons": ["1040421800", "1040024600"]
+				}
+			},
+			{
+				"version": "2023-05U",
+				"date": "2023/05/18",
+				"event": "content",
+				"new": {
+					"weapons": ["1040712400"]
+				},
+				"uncapped": {
+					"characters": ["3040073000"]
+				},
+				"notes": [
+					"Added Ultimate Mastery skills for classes: Sage, Chaos Ruler, Elysian, Glorybringer, Runeslayer"
+				]
+			},
+			{
+				"version": "2023-04L",
+				"date": "2023/04/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040460000", "3040461000"],
+					"weapons": ["1040815500", "1040815600", "1040421700", "1030208100"]
+				}
+			},
+			{
+				"version": "2023-04U",
+				"date": "2023/04/01",
+				"event": "content",
+				"new": {
+					"characters": ["3040457000"],
+					"summons": ["2040419000"]
+				}
+			},
+			{
+				"version": "2023-03L",
+				"date": "2023/03/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040456000", "3040455000"],
+					"weapons": ["1040316100", "1040617500"]
+				}
+			},
+			{
+				"version": "2023-03U2",
+				"date": "2023/03/30",
+				"event": "content",
+				"new": {
+					"weapons": ["1040815100", "1040815200", "1040815300", "1040815400", "1040815000", "1040024400", "1030609400"]
+				},
+				"uncapped": {
+					"characters": ["3040164000", "3040160000"]
+				},
+				"notes": [
+					"Added new weapon series, World Series"
+				]
+			},
+			{
+				"version": "2023-03U",
+				"date": "2023/03/22",
+				"event": "content",
+				"new": {
+					"weapons": ["1040024300"]
+				},
+				"uncapped": {
+					"weapons": ["1040217600", "1040312800", "1040023200", "1040217800", "1040420800", "1040213900", "1040116200", "1040216500", "1040616700", "1040420700", "1040913000", "1040419000"],
+					"summons": ["2040398000", "2040413000", "2040401000", "2040406000", "2040418000", "2040409000", "2040056000"]
+				},
+				"notes": [
+					"Added Siete HL (raid)",
+					"Chaser name corrected (was 'Chase')"
+				]
+			},
+			{
+				"version": "2023-03F",
+				"date": "2023/03/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040451000", "3040452000", "3040453000", "3040454000"],
+					"weapons": ["1040914600", "1040116800", "1040515900", "1040712300"]
+				},
+				"notes": [
+					"Added new class \"Yamato\"",
+					"Added Ultimate Mastery skills for classes: Berserker, Apsaras, Nekomancer, Kengo",
+					"Added raids for Dread Barrage",
+					"Renamed \"Guild Wars\" in raid list to \"Unite and Fight\"",
+					"Fixed sorting of raids for Dread Barrage and Unite and Fight",
+					"Fixed character hovercard showing up behind class image",
+					"Fixed an issue where users couldn't edit remixed teams"
+				]
+			},
+			{
+				"version": "2023-02L",
+				"date": "2023/02/27",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040450000", "3040449000"],
+					"weapons": ["1040421600", "1040617300", "1040712200"],
+					"summons": ["2040418000"]
+				}
+			},
+			{
+				"version": "2023-02F",
+				"date": "2023/02/14",
+				"event": "flash",
+				"new": {
+					"characters": ["3040447000", "3040448000"],
+					"weapons": ["1040617200", "1040421500"]
+				}
+			},
+			{
+				"version": "2023-02-U3",
+				"date": "2023/02/12",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040173000"],
+					"weapons": ["1040606800", "1040606900", "1040607000", "1040509500"],
+					"summons": ["2040288000"]
+				}
+			},
+			{
+				"version": "2023-02-U2",
+				"date": "2023/02/06",
+				"event": "uncap",
+				"new": {
+					"weapons": ["1040016100"]
+				},
+				"uncapped": {
+					"characters": ["3040252000"],
+					"weapons": ["1040617100", "1040016100"]
+				},
+				"notes": [
+					"Added official names for Proven Weapons and Revans Weapons"
+				]
+			},
+			{
+				"version": "2023-02-U1",
+				"date": "2023/02/01",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040136000", "3040219000"],
+					"weapons": ["1040412800", "1040511300"],
+					"summons": ["2040234000", "2040331000"]
+				}
+			},
+			{
+				"version": "2023-01L",
+				"date": "2023/01/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040445000", "3040446000"],
+					"weapons": ["1040116700", "1040421400", "1040316000", "1030208000"]
+				}
+			},
+			{
+				"version": "2023-01F",
+				"date": "2023/01/19",
+				"event": "flash",
+				"new": {
+					"characters": ["3040444000", "3040443000"],
+					"weapons": ["1040218300", "1040116600"]
+				}
+			},
+			{
+				"version": "2023-01U",
+				"date": "2023/01/06",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040196000"]
+				}
+			}
+		]
+	},
+	{
+		"year": 2022,
+		"entries": [
+			{
+				"version": "2022-12L",
+				"date": "2022/12/26",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040440000", "3040441000", "3040442000"],
+					"weapons": ["1040315900", "1040914500", "1040218200"],
+					"summons": ["2040417000"]
+				}
+			},
+			{
+				"version": "2022-12F2",
+				"date": "2022/12/26",
+				"event": "flash",
+				"new": {
+					"characters": ["3040438000", "3040439000"],
+					"weapons": ["1040024200", "1040116500"]
+				}
+			}
+		]
+	}
+]

@@ -184,6 +184,7 @@
 
 	// Light - About
 	--link-item-bg: #{colors.$link--item--bg--light};
+	--link-item-hover-bg: #{colors.$link--item--bg--light--hover};
 	--link-item-image-color: #{colors.$link--item--bg--image--light};
 	--link-item-image-color-hover: #{colors.$link--item--bg--image--light--hover};
 
@@ -600,6 +601,7 @@ html[data-theme='dark'] {
 
 	// Dark - About
 	--link-item-bg: #{colors.$link--item--bg--dark};
+	--link-item-hover-bg: #{colors.$link--item--bg--dark--hover};
 	--link-item-image-color: #{colors.$link--item--bg--image--dark};
 	--link-item-image-color-hover: #{colors.$link--item--bg--image--dark--hover};
 

@@ -30,6 +30,7 @@ import type {
 	CreateSummonSeriesPayload,
 	UpdateSummonSeriesPayload
 } from '$lib/types/api/summonSeries'
+import type { Awakening } from '$lib/types/api/entities'
 
 /**
  * Canonical weapon data from the game
@@ -493,6 +494,7 @@ export interface CreateWeaponPayload {
 	recruits?: string | null  // Character ID reference
 	nicknames_en?: string[]
 	nicknames_jp?: string[]
+	awakening_ids?: string[]
 }
 
 /**
@@ -508,6 +510,28 @@ export interface WeaponDownloadStatus {
 	granblueId?: string
 	images?: Record<string, string[]>
 	updatedAt?: string
+}
+
+/**
+ * Payload for creating a new awakening
+ */
+export interface CreateAwakeningPayload {
+	name_en: string
+	name_jp?: string
+	slug: string
+	object_type: string
+	order?: number
+}
+
+/**
+ * Payload for updating an awakening
+ */
+export interface UpdateAwakeningPayload {
+	name_en?: string
+	name_jp?: string
+	slug?: string
+	object_type?: string
+	order?: number
 }
 
 /**
@@ -651,10 +675,7 @@ export class EntityAdapter extends BaseAdapter {
 	 * Gets canonical weapon data by ID
 	 */
 	async getWeapon(id: string): Promise<Weapon> {
-		return this.request<Weapon>(`/weapons/${id}`, {
-			method: 'GET',
-			cacheTTL: 600000 // Cache for 10 minutes
-		})
+		return this.request<Weapon>(`/weapons/${id}`)
 	}
 
 	/**
@@ -662,30 +683,21 @@ export class EntityAdapter extends BaseAdapter {
 	 */
 	async getCharacter(id: string, options?: { styleSwap?: boolean }): Promise<Character> {
 		const params = options?.styleSwap ? '?style_swap=true' : ''
-		return this.request<Character>(`/characters/${id}${params}`, {
-			method: 'GET',
-			cacheTTL: 600000
-		})
+		return this.request<Character>(`/characters/${id}${params}`)
 	}
 
 	/**
 	 * Gets related characters (same character_id) for a given character
 	 */
 	async getRelatedCharacters(id: string): Promise<Character[]> {
-		return this.request<Character[]>(`/characters/${id}/related`, {
-			method: 'GET',
-			cacheTTL: 600000 // Cache for 10 minutes
-		})
+		return this.request<Character[]>(`/characters/${id}/related`)
 	}
 
 	/**
 	 * Gets canonical summon data by ID
 	 */
 	async getSummon(id: string): Promise<Summon> {
-		return this.request<Summon>(`/summons/${id}`, {
-			method: 'GET',
-			cacheTTL: 600000 // Cache for 10 minutes
-		})
+		return this.request<Summon>(`/summons/${id}`)
 	}
 
 	/**
@@ -727,10 +739,7 @@ export class EntityAdapter extends BaseAdapter {
 		const queryString = searchParams.toString()
 		const url = queryString ? `/weapon_keys?${queryString}` : '/weapon_keys'
 
-		return this.request<WeaponKey[]>(url, {
-			method: 'GET',
-			cacheTTL: 3600000 // Cache for 1 hour - weapon keys rarely change
-		})
+		return this.request<WeaponKey[]>(url)
 	}
 
 	// ============================================
@@ -750,10 +759,7 @@ export class EntityAdapter extends BaseAdapter {
 		const queryString = searchParams.toString()
 		const url = queryString ? `/weapon_stat_modifiers?${queryString}` : '/weapon_stat_modifiers'
 
-		return this.request<WeaponStatModifier[]>(url, {
-			method: 'GET',
-			cacheTTL: 3600000 // Cache for 1 hour - reference data rarely changes
-		})
+		return this.request<WeaponStatModifier[]>(url)
 	}
 
 	/**
@@ -1088,8 +1094,10 @@ export class EntityAdapter extends BaseAdapter {
 			method: 'PATCH',
 			body: { weapon: payload }
 		})
-		// Invalidate cache for this weapon
 		this.clearCache(`/weapons/${id}`)
+		if (result.granblueId) {
+			this.clearCache(`/weapons/${result.granblueId}`)
+		}
 		return result
 	}
 
@@ -1318,10 +1326,7 @@ export class EntityAdapter extends BaseAdapter {
 	 * Returns minimal view (id, name, slug, order)
 	 */
 	async getWeaponSeriesList(): Promise<WeaponSeries[]> {
-		return this.request<WeaponSeries[]>('/weapon_series', {
-			method: 'GET',
-			cacheTTL: 3600000 // Cache for 1 hour - rarely changes
-		})
+		return this.request<WeaponSeries[]>('/weapon_series')
 	}
 
 	/**
@@ -1331,10 +1336,7 @@ export class EntityAdapter extends BaseAdapter {
 	 * @param idOrSlug - UUID or slug (e.g., 'dark-opus')
 	 */
 	async getWeaponSeries(idOrSlug: string): Promise<WeaponSeries> {
-		return this.request<WeaponSeries>(`/weapon_series/${idOrSlug}`, {
-			method: 'GET',
-			cacheTTL: 3600000 // Cache for 1 hour
-		})
+		return this.request<WeaponSeries>(`/weapon_series/${idOrSlug}`)
 	}
 
 	/**
@@ -1399,10 +1401,7 @@ export class EntityAdapter extends BaseAdapter {
 	 * Returns list view with basic info (no character count)
 	 */
 	async getCharacterSeriesList(): Promise<CharacterSeries[]> {
-		return this.request<CharacterSeries[]>('/character_series', {
-			method: 'GET',
-			cacheTTL: 3600000 // Cache for 1 hour - rarely changes
-		})
+		return this.request<CharacterSeries[]>('/character_series')
 	}
 
 	/**
@@ -1412,10 +1411,7 @@ export class EntityAdapter extends BaseAdapter {
 	 * @param idOrSlug - UUID or slug (e.g., 'grand')
 	 */
 	async getCharacterSeries(idOrSlug: string): Promise<CharacterSeries> {
-		return this.request<CharacterSeries>(`/character_series/${idOrSlug}`, {
-			method: 'GET',
-			cacheTTL: 3600000 // Cache for 1 hour
-		})
+		return this.request<CharacterSeries>(`/character_series/${idOrSlug}`)
 	}
 
 	/**
@@ -1483,10 +1479,7 @@ export class EntityAdapter extends BaseAdapter {
 	 * Returns list view with basic info (no summon count)
 	 */
 	async getSummonSeriesList(): Promise<SummonSeries[]> {
-		return this.request<SummonSeries[]>('/summon_series', {
-			method: 'GET',
-			cacheTTL: 3600000 // Cache for 1 hour - rarely changes
-		})
+		return this.request<SummonSeries[]>('/summon_series')
 	}
 
 	/**
@@ -1496,10 +1489,7 @@ export class EntityAdapter extends BaseAdapter {
 	 * @param idOrSlug - UUID or slug (e.g., 'magna')
 	 */
 	async getSummonSeries(idOrSlug: string): Promise<SummonSeries> {
-		return this.request<SummonSeries>(`/summon_series/${idOrSlug}`, {
-			method: 'GET',
-			cacheTTL: 3600000 // Cache for 1 hour
-		})
+		return this.request<SummonSeries>(`/summon_series/${idOrSlug}`)
 	}
 
 	/**
@@ -1553,6 +1543,72 @@ export class EntityAdapter extends BaseAdapter {
 	 */
 	clearSummonSeriesCache() {
 		this.clearCache('/summon_series')
+	}
+
+	// ============================================================
+	// AWAKENING METHODS
+	// ============================================================
+
+	/**
+	 * Gets all awakenings, optionally filtered by object_type
+	 */
+	async getAwakenings(objectType?: string): Promise<Awakening[]> {
+		const params = objectType ? `?object_type=${objectType}` : ''
+		return this.request<Awakening[]>(`/awakenings${params}`, {
+			method: 'GET'
+		})
+	}
+
+	/**
+	 * Gets a single awakening by ID
+	 */
+	async getAwakening(id: string): Promise<Awakening> {
+		return this.request<Awakening>(`/awakenings/${id}`, {
+			method: 'GET'
+		})
+	}
+
+	/**
+	 * Creates a new awakening
+	 * Requires editor role (>= 7)
+	 */
+	async createAwakening(payload: CreateAwakeningPayload): Promise<Awakening> {
+		return this.request<Awakening>('/awakenings', {
+			method: 'POST',
+			body: { awakening: payload }
+		})
+	}
+
+	/**
+	 * Updates an existing awakening
+	 * Requires editor role (>= 7)
+	 */
+	async updateAwakening(id: string, payload: UpdateAwakeningPayload): Promise<Awakening> {
+		return this.request<Awakening>(`/awakenings/${id}`, {
+			method: 'PATCH',
+			body: { awakening: payload }
+		})
+	}
+
+	/**
+	 * Deletes an awakening
+	 * Requires editor role (>= 7)
+	 */
+	async deleteAwakening(id: string): Promise<void> {
+		await this.request<void>(`/awakenings/${id}`, {
+			method: 'DELETE'
+		})
+	}
+
+	/**
+	 * Uploads an image for an awakening
+	 * Requires editor role (>= 7)
+	 */
+	async uploadAwakeningImage(id: string, imageData: string, filename: string): Promise<Awakening> {
+		return this.request<Awakening>(`/awakenings/${id}/upload_image`, {
+			method: 'POST',
+			body: { image: imageData, filename }
+		})
 	}
 }
 

@@ -213,6 +213,14 @@ export const entityQueries = {
 			queryFn: () => entityAdapter.getBefoulments(),
 			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	awakenings: (objectType?: string) =>
+		queryOptions({
+			queryKey: ['awakenings', objectType ?? 'all'] as const,
+			queryFn: () => entityAdapter.getAwakenings(objectType),
+			staleTime: 1000 * 60 * 60,
+			gcTime: 1000 * 60 * 60 * 24
 		})
 }
 
@@ -255,5 +263,7 @@ export const entityKeys = {
 		['weaponStatModifiers', category ?? 'all'] as const,
 	allWeaponStatModifiers: () => ['weaponStatModifiers'] as const,
 	axSkills: () => ['weaponStatModifiers', 'ax'] as const,
-	befoulments: () => ['weaponStatModifiers', 'befoulment'] as const
+	befoulments: () => ['weaponStatModifiers', 'befoulment'] as const,
+	awakenings: (objectType?: string) => ['awakenings', objectType ?? 'all'] as const,
+	allAwakenings: () => ['awakenings'] as const
 }

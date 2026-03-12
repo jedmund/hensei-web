@@ -40,6 +40,5 @@ export function isUsingRemoteImages(): boolean {
 export const DEFAULT_ADAPTER_CONFIG = {
 	baseURL: getApiBaseUrl(),
 	timeout: 30000,
-	retries: 3,
-	cacheTime: 0
+	retries: 3
 }

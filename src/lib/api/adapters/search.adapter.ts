@@ -309,8 +309,6 @@ export class SearchAdapter extends BaseAdapter {
 			method: 'POST',
 			body: { search: body },
 			credentials: 'omit',
-			// Cache search results for 5 minutes by default
-			cacheTTL: params.query ? 300000 : 0, // Don't cache empty searches
 			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
 		})
 	}
@@ -337,7 +335,6 @@ export class SearchAdapter extends BaseAdapter {
 			method: 'POST',
 			body: { search: body },
 			credentials: 'omit',
-			cacheTTL: params.query ? 300000 : 0,
 			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
 		})
 	}
@@ -365,7 +362,6 @@ export class SearchAdapter extends BaseAdapter {
 			method: 'POST',
 			body: { search: body },
 			credentials: 'omit',
-			cacheTTL: params.query ? 300000 : 0,
 			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
 		})
 	}
@@ -390,7 +386,6 @@ export class SearchAdapter extends BaseAdapter {
 			method: 'POST',
 			body: { search: body },
 			credentials: 'omit',
-			cacheTTL: params.query ? 300000 : 0,
 			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
 		})
 	}
@@ -451,7 +446,6 @@ export class SearchAdapter extends BaseAdapter {
 			method: 'POST',
 			body: { search: body },
 			credentials: 'omit',
-			cacheTTL: params.query ? 300000 : 0,
 			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
 		})
 	}
@@ -464,9 +458,7 @@ export class SearchAdapter extends BaseAdapter {
 	 */
 	async getRandomSuggestions(count: number = 12): Promise<SuggestionsResponse> {
 		return this.request<SuggestionsResponse>(`/search/suggestions?count=${count}`, {
-			method: 'GET',
-			credentials: 'omit',
-			cacheTTL: 60000
+			credentials: 'omit'
 		})
 	}
 

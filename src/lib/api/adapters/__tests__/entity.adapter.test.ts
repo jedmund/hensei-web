@@ -383,23 +383,6 @@ describe('EntityAdapter', () => {
 	})
 
 	describe('configuration', () => {
-		it('should use custom cache time', async () => {
-			const customAdapter = new EntityAdapter({
-				baseURL: 'https://api.example.com',
-				cacheTime: 60000 // 1 minute
-			})
-
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => mockWeapon
-			})
-
-			await customAdapter.getWeapon('weapon-1')
-
-			// The cache time is set internally, but we can verify it's configured
-			expect(customAdapter).toBeDefined()
-		})
-
 		it('should use default baseURL if not provided', () => {
 			const defaultAdapter = new EntityAdapter()
 			expect(defaultAdapter).toBeDefined()
