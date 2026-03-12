@@ -94,7 +94,6 @@
 		// Style swap
 		styleSwap: false,
 		styleName: '' as string,
-		baseCharacterId: '' as string,
 
 		// Dates
 		releaseDate: '',
@@ -206,7 +205,6 @@
 				// Style swap
 				style_swap: editData.styleSwap,
 				style_name: editData.styleName || undefined,
-				base_character_id: editData.baseCharacterId || undefined,
 
 				// Dates
 				release_date: editData.releaseDate || null,

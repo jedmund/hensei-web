@@ -112,7 +112,6 @@
 		// Style swap
 		styleSwap: false,
 		styleName: '' as string,
-		baseCharacterId: '' as string,
 		// Dates
 		releaseDate: '',
 		flbDate: '',
@@ -186,7 +185,6 @@
 			// Style swap
 			styleSwap: character.styleSwap || false,
 			styleName: character.styleName || '',
-			baseCharacterId: character.baseCharacter?.id || '',
 				// Dates
 				releaseDate: character.releaseDate || '',
 				flbDate: character.flbDate || '',
@@ -254,7 +252,6 @@
 				// Style swap
 				style_swap: editData.styleSwap,
 				style_name: editData.styleName || undefined,
-				base_character_id: editData.baseCharacterId || undefined,
 				// Dates
 				release_date: editData.releaseDate || undefined,
 				flb_date: editData.flbDate || undefined,

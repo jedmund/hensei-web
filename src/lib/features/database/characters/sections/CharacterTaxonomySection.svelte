@@ -96,14 +96,6 @@
 				placeholder="e.g. Legend of Bravado and Revelry"
 				width="480px"
 			/>
-			<DetailItem
-				label="Base Character ID"
-				bind:value={editData.baseCharacterId}
-				editable={true}
-				type="text"
-				placeholder="UUID of the base character"
-				width="480px"
-			/>
 		{/if}
 	{:else}
 		<DetailItem label="Element">
