@@ -91,6 +91,11 @@
 		ulb: false,
 		special: false,
 
+		// Style swap
+		styleSwap: false,
+		styleNameEn: '' as string,
+		styleNameJp: '' as string,
+
 		// Dates
 		releaseDate: '',
 		flbDate: '',
@@ -198,6 +203,11 @@
 				ulb: editData.ulb,
 				special: editData.special,
 
+				// Style swap
+				style_swap: editData.styleSwap,
+				style_name_en: editData.styleNameEn || undefined,
+				style_name_jp: editData.styleNameJp || undefined,
+
 				// Dates
 				release_date: editData.releaseDate || null,
 				flb_date: editData.flbDate || null,
@@ -217,7 +227,8 @@
 			const newCharacter = await entityAdapter.createCharacter(payload)
 			// Trigger image download in background (don't await - it queues a job)
 			entityAdapter.downloadCharacterImages(newCharacter.id).catch(console.error)
-			await goto(`/database/characters/${newCharacter.granblueId}`)
+			const styleSuffix = newCharacter.styleSwap ? '/style' : ''
+		await goto(`/database/characters/${newCharacter.granblueId}${styleSuffix}`)
 		} catch (error) {
 			saveError = 'Failed to create character. Please try again.'
 			console.error('Create error:', error)

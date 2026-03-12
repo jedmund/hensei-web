@@ -59,9 +59,9 @@
 		goto(url.toString(), { replaceState: true })
 	}
 
-	// Use TanStack Query with SSR initial data
+	// Use TanStack Query with SSR initial data — style swap variant
 	const characterQuery = createQuery(() => ({
-		...entityQueries.character(data.character?.granblueId ?? ''),
+		...entityQueries.character(data.character?.granblueId ?? '', { styleSwap: true }),
 		...withInitialData(data.character)
 	}))
 
@@ -82,9 +82,9 @@
 			| undefined
 	)
 
-	// Edit URL for navigation
+	// Edit URL — style swap characters use the style edit page
 	const editUrl = $derived(
-		character?.granblueId ? `/database/characters/${character.granblueId}/edit` : undefined
+		character?.granblueId ? `/database/characters/${character.granblueId}/style/edit` : undefined
 	)
 
 	// Query for related characters (same character_id)
@@ -109,60 +109,28 @@
 
 	// Helper function for character grid image
 	function getCharacterGridImage(character: any): string {
-		const pose = character?.styleSwap ? '01_style' : '01'
-		return getCharacterImage(character?.granblueId, 'grid', pose)
+		return getCharacterImage(character?.granblueId, 'grid', '01_style')
 	}
 
 	// Available image sizes for characters
 	const characterSizes = ['detail', 'grid', 'main', 'square']
 
-	// Generate image items for character (variants and poses based on uncap level)
+	// Generate image items — style swap characters only have _01_style pose
 	const characterImages = $derived.by((): ImageItem[] => {
 		if (!character?.granblueId) return []
 
 		const variants = ['detail', 'grid', 'main', 'square'] as const
 		const images: ImageItem[] = []
 
-		// Style swap characters only have a single _01_style pose
-		if (character.styleSwap) {
-			for (const variant of variants) {
-				images.push({
-					url: getCharacterImage(character.granblueId, variant, '01_style'),
-					label: `${variant} (Style)`,
-					variant,
-					pose: '01_style',
-					poseLabel: 'Style'
-				})
-			}
-			return images
+		for (const variant of variants) {
+			images.push({
+				url: getCharacterImage(character.granblueId, variant, '01_style'),
+				label: `${variant} (Style)`,
+				variant,
+				pose: '01_style',
+				poseLabel: 'Style'
+			})
 		}
-
-		// Only include poses that are available - _01 = Base, _02 = MLB (3*), _03 = FLB (5*), _04 = Transcendence
-		const poses: { id: string; label: string }[] = [
-			{ id: '01', label: 'Base' },
-			{ id: '02', label: 'MLB' }
-		]
-
-		if (character.uncap?.flb) {
-			poses.push({ id: '03', label: 'FLB' })
-		}
-
-		if (character.uncap?.transcendence) {
-			poses.push({ id: '04', label: 'Transcendence' })
-		}
-
-		for (const pose of poses) {
-			for (const variant of variants) {
-				images.push({
-					url: getCharacterImage(character.granblueId, variant, pose.id),
-					label: `${variant} (${pose.label})`,
-					variant,
-					pose: pose.id,
-					poseLabel: pose.label
-				})
-			}
-		}
-
 		return images
 	})
 
@@ -178,7 +146,6 @@
 
 	async function handleDownloadAllPose(pose: string, force: boolean) {
 		if (!character?.id) return
-		// Download all sizes for this pose
 		for (const size of characterSizes) {
 			await entityAdapter.downloadCharacterImage(character.id, size, pose, force)
 		}
@@ -191,12 +158,7 @@
 
 	async function handleDownloadSize(size: string) {
 		if (!character?.id) return
-		// Download this size for all available poses
-		const poses = ['01', '02']
-		if (character.uncap?.flb) poses.push('03')
-		if (character.uncap?.transcendence) poses.push('04')
-		if (character.styleSwap) poses.push('style')
-
+		const poses = ['style']
 		for (const pose of poses) {
 			await entityAdapter.downloadCharacterImage(character.id, size, pose, false)
 		}
@@ -371,12 +333,10 @@
 					{canEdit}
 					onFetchWiki={canEdit && character?.id && character?.wiki?.en
 						? async () => {
-								// Fetch wiki data client-side (bypasses CloudFlare)
 								const wikiResult = await fetchWikiPage(character.wiki!.en!)
 								if (wikiResult.error) {
 									throw new Error(wikiResult.error)
 								}
-								// Update the character with the wiki_raw data
 								await entityAdapter.updateCharacter(character.id, { wiki_raw: wikiResult.wikiRaw })
 								rawDataQuery.refetch()
 								return { wikiRaw: wikiResult.wikiRaw ?? null, gameRawEn: null, gameRawJp: null }

@@ -122,6 +122,11 @@ export interface Character {
   kamigame?: string
   nicknames?: { en?: string[]; ja?: string[] }
   recruitedBy?: { id: string; granblueId: string; name: LocalizedName; promotionNames?: string[] }
+  // Style swap fields
+  styleSwap: boolean
+  styleName?: LocalizedName | null
+  baseCharacter?: { id: string; granblueId: string; name: LocalizedName } | null
+  styleSwaps?: Array<{ id: string; granblueId: string; name: LocalizedName; styleName: LocalizedName | null }>
 }
 
 // Summon entity from SummonBlueprint

@@ -8,6 +8,7 @@
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { getCharacterImageWithPose, getPlaceholderImage } from '$lib/utils/images'
 	import { openDetailsSidebar, openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
@@ -52,7 +53,8 @@
 			item?.uncapLevel ?? 0,
 			item?.transcendenceStep ?? 0,
 			mainWeaponElement,
-			partyElement
+			partyElement,
+			item.character.styleSwap
 		)
 	})
 
@@ -135,11 +137,36 @@
 
 	function viewInDatabase() {
 		if (!item?.character?.granblueId) return
-		goto(`/database/characters/${item.character.granblueId}`)
+		const styleSuffix = item.character.styleSwap ? '/style' : ''
+		goto(`/database/characters/${item.character.granblueId}${styleSuffix}`)
 	}
 
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(($page.data.account?.role ?? 0) >= 7)
+
+	// Check if character has a style swap variant available
+	let hasStyleVariant = $derived.by(() => {
+		if (!item?.character) return false
+		const c = item.character
+		// Base character with style swaps, or style swap character with a base
+		return (c.styleSwaps && c.styleSwaps.length > 0) || (c.styleSwap && c.baseCharacter != null)
+	})
+
+	async function switchStyle(e: Event) {
+		e.stopPropagation()
+		if (!item?.id || !ctx?.canEdit()) return
+
+		try {
+			const editKey = ctx.getEditKey()
+			await ctx.services.gridService.switchCharacterStyle(
+				item.id,
+				editKey || undefined
+			)
+		} catch (err) {
+			console.error('Error switching style:', err)
+			toast.error(extractErrorMessage(err, 'Failed to switch style'))
+		}
+	}
 
 	async function togglePerpetuity(e: Event) {
 		e.stopPropagation()
@@ -208,6 +235,18 @@
 								<div class="orphaned-badge" title="This item is no longer in your collection">
 									<Icon name="alertTriangle" size={16} />
 								</div>
+							{/if}
+							{#if hasStyleVariant && ctx?.canEdit()}
+								<span class="style-switch-wrapper">
+									<Tooltip content="Swap styles">
+										<button
+											class="style-switch"
+											onclick={switchStyle}
+										>
+											<Icon name="swap" size={14} />
+										</button>
+									</Tooltip>
+								</span>
 							{/if}
 							{#if imageUrl}
 								<img
@@ -540,6 +579,34 @@
 
 		.perpetuity-icon.empty {
 			display: none;
+		}
+	}
+
+	.style-switch-wrapper {
+		position: absolute;
+		z-index: effects.$z-tooltip;
+		bottom: spacing.$unit;
+		right: spacing.$unit;
+	}
+
+	.style-switch {
+		width: spacing.$unit-4x;
+		height: spacing.$unit-4x;
+		padding: 0;
+		border: none;
+		border-radius: 50%;
+		background: white;
+		color: var(--text-secondary);
+		box-shadow: var(--shadow-sm);
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+		&:hover {
+			transform: scale(1.15);
+			box-shadow: var(--shadow-md);
 		}
 	}
 

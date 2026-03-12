@@ -681,8 +681,9 @@ export class EntityAdapter extends BaseAdapter {
 	/**
 	 * Gets canonical character data by ID
 	 */
-	async getCharacter(id: string): Promise<Character> {
-		return this.request<Character>(`/characters/${id}`)
+	async getCharacter(id: string, options?: { styleSwap?: boolean }): Promise<Character> {
+		const params = options?.styleSwap ? '?style_swap=true' : ''
+		return this.request<Character>(`/characters/${id}${params}`)
 	}
 
 	/**
@@ -844,8 +845,11 @@ export class EntityAdapter extends BaseAdapter {
 			method: 'PATCH',
 			body: { character: payload }
 		})
-		// Invalidate cache for this character
+		// Invalidate cache for this character (by UUID and granblueId)
 		this.clearCache(`/characters/${id}`)
+		if (result.granblueId) {
+			this.clearCache(`/characters/${result.granblueId}`)
+		}
 		return result
 	}
 

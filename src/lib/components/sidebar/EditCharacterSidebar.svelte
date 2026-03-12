@@ -11,7 +11,7 @@
 		type CharacterEditValues,
 		type CharacterEditUpdates
 	} from './CharacterEditPane.svelte'
-	import { useSyncGridCharacter } from '$lib/api/mutations/grid.mutations'
+	import { useSyncGridCharacter, useSwitchCharacterStyle } from '$lib/api/mutations/grid.mutations'
 	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
@@ -25,6 +25,9 @@
 	// Sync mutation
 	const syncMutation = useSyncGridCharacter()
 
+	// Style switch mutation
+	const styleMutation = useSwitchCharacterStyle()
+
 	// Character data shortcut
 	const characterData = $derived(character.character)
 
@@ -35,6 +38,23 @@
 	const isLinkedToCollection = $derived(!!character.collectionCharacterId)
 	const isOutOfSync = $derived(character.outOfSync ?? false)
 	const isSyncing = $derived(syncMutation.isPending)
+
+	// Style swap
+	const hasStyleVariant = $derived.by(() => {
+		if (!characterData) return false
+		return (characterData.styleSwaps && characterData.styleSwaps.length > 0) ||
+			(characterData.styleSwap && characterData.baseCharacter != null)
+	})
+
+	const styleSwitching = $derived(styleMutation.isPending)
+
+	async function handleSwitchStyle() {
+		if (!character.id) return
+		await styleMutation.mutateAsync({
+			id: character.id,
+			partyShortcode: ''
+		})
+	}
 
 	// Handle sync from collection
 	async function handleSync() {
@@ -85,6 +105,17 @@
 		gridTranscendence={character.transcendenceStep}
 	/>
 
+	{#if hasStyleVariant}
+		<button
+			class="style-switch-banner"
+			onclick={handleSwitchStyle}
+			disabled={styleSwitching}
+		>
+			<Icon name="swap" size={16} />
+			<span>{styleSwitching ? 'Switching...' : 'Switch Style'}</span>
+		</button>
+	{/if}
+
 	{#if isLinkedToCollection && isOutOfSync}
 		<div class="sync-banner">
 			<div class="sync-message">
@@ -119,6 +150,35 @@
 		flex-direction: column;
 		height: 100%;
 		gap: spacing.$unit-4x;
+	}
+
+	.style-switch-banner {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: spacing.$unit;
+		padding: spacing.$unit spacing.$unit-2x;
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-primary);
+		background: var(--button-bg);
+		border: 1px solid var(--button-border);
+		border-radius: spacing.$unit;
+		cursor: pointer;
+		transition: background 0.15s ease;
+
+		&:hover:not(:disabled) {
+			background: var(--button-bg-hover);
+		}
+
+		&:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
+
+		:global(svg) {
+			color: var(--text-secondary);
+		}
 	}
 
 	.sync-banner {

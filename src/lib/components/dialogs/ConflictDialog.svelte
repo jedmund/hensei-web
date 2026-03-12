@@ -146,7 +146,10 @@
 			gridChar.character.granblueId,
 			'square',
 			gridChar.uncapLevel,
-			gridChar.transcendenceStep
+			gridChar.transcendenceStep,
+			null,
+			null,
+			gridChar.character.styleSwap
 		)
 	}
 
@@ -154,7 +157,7 @@
 	 * Get incoming character image URL (default pose)
 	 */
 	function getIncomingCharacterUrl(character: Character): string {
-		return getCharacterImageWithPose(character.granblueId, 'square', 0, 0)
+		return getCharacterImageWithPose(character.granblueId, 'square', 0, 0, null, null, character.styleSwap)
 	}
 
 	/**

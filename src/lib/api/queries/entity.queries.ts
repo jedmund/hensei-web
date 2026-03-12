@@ -50,10 +50,10 @@ export const entityQueries = {
 	 * @param granblueId - Character granblueId (e.g., "3040001000")
 	 * @returns Query options for fetching a single character
 	 */
-	character: (granblueId: string) =>
+	character: (granblueId: string, options?: { styleSwap?: boolean }) =>
 		queryOptions({
-			queryKey: ['character', granblueId] as const,
-			queryFn: () => entityAdapter.getCharacter(granblueId),
+			queryKey: ['character', granblueId, options?.styleSwap ? 'style' : 'base'] as const,
+			queryFn: () => entityAdapter.getCharacter(granblueId, options),
 			enabled: !!granblueId,
 			staleTime: 1000 * 60 * 60, // 1 hour - canonical data rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours

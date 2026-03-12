@@ -4,7 +4,7 @@
 	import { getElementLabel } from '$lib/utils/element'
 	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
 
-	type TagType = 'element' | 'season' | 'series'
+	type TagType = 'element' | 'season' | 'series' | 'style'
 
 	/** Minimal character data needed for tag display */
 	interface CharacterForTag {
@@ -55,6 +55,9 @@
 			case 'season':
 				if (character.season === undefined || character.season === null) return null
 				return CHARACTER_SEASON_NAMES[character.season] ?? null
+
+			case 'style':
+				return 'Style'
 
 			case 'series':
 				// Handle array of CharacterSeriesRef objects

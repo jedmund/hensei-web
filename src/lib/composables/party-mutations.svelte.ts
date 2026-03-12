@@ -14,6 +14,7 @@ import {
 	useSwapWeapons,
 	useSwapCharacters,
 	useSwapSummons,
+	useSwitchCharacterStyle,
 	useSyncAllPartyItems,
 	useUnlinkCollectionSource
 } from '$lib/api/mutations/grid.mutations'
@@ -52,6 +53,7 @@ export function usePartyMutations() {
 	const swapWeapons = useSwapWeapons()
 	const swapCharacters = useSwapCharacters()
 	const swapSummons = useSwapSummons()
+	const switchCharacterStyle = useSwitchCharacterStyle()
 	const syncAllItems = useSyncAllPartyItems()
 	const unlinkCollectionSource = useUnlinkCollectionSource()
 
@@ -87,6 +89,7 @@ export function usePartyMutations() {
 			swapWeapons,
 			swapCharacters,
 			swapSummons,
+			switchCharacterStyle,
 			syncAllItems,
 			unlinkCollectionSource
 		},

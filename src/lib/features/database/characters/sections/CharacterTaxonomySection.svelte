@@ -8,6 +8,10 @@
 	import { getRaceLabel, getRaceOptions } from '$lib/utils/race'
 	import { getGenderLabel, getGenderOptions } from '$lib/utils/gender'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
+	import { getElementLabel } from '$lib/utils/element'
+	import { getCharacterImage } from '$lib/utils/images'
+
+	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
 		character: any
@@ -25,6 +29,12 @@
 	const raceOptions = getRaceOptions()
 	const genderOptions = getGenderOptions()
 	const proficiencyOptions = getProficiencyOptions()
+
+	const elementName = $derived.by((): ElementName | undefined => {
+		const el = editMode ? editData.element : character?.element
+		const label = getElementLabel(el)
+		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
+	})
 </script>
 
 <DetailsContainer title="Details">
@@ -71,6 +81,31 @@
 			type="select"
 			options={proficiencyOptions}
 		/>
+		<DetailItem
+			label="Style Swap"
+			bind:value={editData.styleSwap}
+			editable={true}
+			type="checkbox"
+			element={elementName}
+		/>
+		{#if editData.styleSwap}
+			<DetailItem
+				label="Style Name (EN)"
+				bind:value={editData.styleNameEn}
+				editable={true}
+				type="text"
+				placeholder="e.g. Legend of Bravado and Revelry"
+				width="480px"
+			/>
+			<DetailItem
+				label="Style Name (JP)"
+				bind:value={editData.styleNameJp}
+				editable={true}
+				type="text"
+				placeholder="例：武勇と歓喜の伝説"
+				width="480px"
+			/>
+		{/if}
 	{:else}
 		<DetailItem label="Element">
 			<ElementLabel element={character.element} size="medium" />
@@ -84,5 +119,60 @@
 		<DetailItem label="Proficiency 2">
 			<ProficiencyLabel proficiency={character.proficiency?.[1] ?? 0} size="medium" />
 		</DetailItem>
+		{#if character.styleSwap}
+			<DetailItem label="Style Swap" value="Yes" />
+			{#if character.styleName?.en}
+				<DetailItem label="Style Name (EN)" value={character.styleName.en} />
+			{/if}
+			{#if character.styleName?.ja}
+				<DetailItem label="Style Name (JP)" value={character.styleName.ja} />
+			{/if}
+			{#if character.baseCharacter}
+				<DetailItem label="Base Character">
+					<a href="/database/characters/{character.baseCharacter.granblueId}" class="base-character-link">
+						<img
+							src={getCharacterImage(character.baseCharacter.granblueId, 'square', '01')}
+							alt={character.baseCharacter.name?.en || 'Base character'}
+							class="base-character-image"
+						/>
+						<span class="base-character-name">{character.baseCharacter.name?.en}</span>
+					</a>
+				</DetailItem>
+			{/if}
+		{/if}
 	{/if}
 </DetailsContainer>
+
+<style lang="scss">
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
+
+	.base-character-link {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+		text-decoration: none;
+		color: var(--text-primary);
+
+		&:hover .base-character-image {
+			transform: scale(1.05);
+		}
+
+		&:hover .base-character-name {
+			color: var(--blue);
+		}
+	}
+
+	.base-character-image {
+		width: 32px;
+		height: 32px;
+		border-radius: layout.$item-corner-small;
+		transition: transform 0.2s ease;
+	}
+
+	.base-character-name {
+		font-size: typography.$font-regular;
+		transition: color 0.2s ease;
+	}
+</style>
