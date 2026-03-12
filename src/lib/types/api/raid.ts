@@ -10,16 +10,18 @@ import type { LocalizedName } from './entities'
 export type { Raid, RaidGroup } from './entities'
 
 // Extended Raid type (from :full view)
+// Properties are camelCase because BaseAdapter transforms snake_case responses
 export interface RaidFull {
   id: string
   slug: string
   name: LocalizedName
   level: number
   element: number
+  playerCount: number
   extra: boolean
-  enemy_id?: number
-  summon_id?: number
-  quest_id?: number
+  enemyId?: number
+  summonId?: number
+  questId?: number
   group?: RaidGroupFlat
 }
 
@@ -48,6 +50,7 @@ export interface CreateRaidInput {
   slug: string
   level?: number
   element: number
+  player_count: number
   group_id: string
   enemy_id?: number
   summon_id?: number
@@ -60,6 +63,7 @@ export interface UpdateRaidInput {
   slug?: string
   level?: number
   element?: number
+  player_count?: number
   group_id?: string
   enemy_id?: number
   summon_id?: number

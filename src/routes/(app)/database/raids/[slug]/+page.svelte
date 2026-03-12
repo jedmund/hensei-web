@@ -74,7 +74,7 @@
 	// Get header image - use local raid-thumbnail, fallback to icon from CDN
 	const headerImage = $derived.by(() => {
 		if (raid?.slug) return getRaidImage(raid.slug, 'thumbnail')
-		if (raid?.enemy_id) return getRaidCdnImage('icon', raid.enemy_id)
+		if (raid?.enemyId) return getRaidCdnImage('icon', raid.enemyId)
 		return ''
 	})
 
@@ -88,22 +88,22 @@
 
 		return [
 			{
-				url: getRaidCdnImage('icon', raid.enemy_id),
+				url: getRaidCdnImage('icon', raid.enemyId),
 				label: 'Icon',
 				variant: 'icon'
 			},
 			{
-				url: getRaidCdnImage('thumbnail', raid.summon_id),
+				url: getRaidCdnImage('thumbnail', raid.summonId),
 				label: 'Thumbnail',
 				variant: 'thumbnail'
 			},
 			{
-				url: getRaidCdnImage('lobby', raid.quest_id),
+				url: getRaidCdnImage('lobby', raid.questId),
 				label: 'Lobby',
 				variant: 'lobby'
 			},
 			{
-				url: getRaidCdnImage('background', raid.quest_id),
+				url: getRaidCdnImage('background', raid.questId),
 				label: 'Background',
 				variant: 'background'
 			}
@@ -165,23 +165,24 @@
 			{#if currentTab === 'info'}
 				<section class="details">
 					<DetailsContainer title="Raid Details">
-						<DetailItem label="Name (EN)" value={raid.name.en || '-'} />
-						<DetailItem label="Name (JA)" value={raid.name.ja || '-'} />
-						<DetailItem label="Slug" value={raid.slug || '-'} />
-						<DetailItem label="Level" value={raid.level?.toString() ?? '-'} />
+						<DetailItem label="Name (EN)" value={raid.name.en || '—'} />
+						<DetailItem label="Name (JA)" value={raid.name.ja || '—'} />
+						<DetailItem label="Slug" value={raid.slug || '—'} />
+						<DetailItem label="Level" value={raid.level?.toString() ?? '—'} />
+						<DetailItem label="Players" value={raid.playerCount === 1 ? 'Solo' : raid.playerCount?.toString() ?? '—'} />
 						<DetailItem label="Element">
 							{#if raid.element !== undefined && raid.element !== null}
 								<ElementBadge element={raid.element} />
 							{:else}
-								<span class="no-value">-</span>
+								<span class="no-value">—</span>
 							{/if}
 						</DetailItem>
 					</DetailsContainer>
 
 					<DetailsContainer title="IDs">
-						<DetailItem label="Enemy ID" value={raid.enemy_id?.toString() ?? '-'} />
-						<DetailItem label="Summon ID" value={raid.summon_id?.toString() ?? '-'} />
-						<DetailItem label="Quest ID" value={raid.quest_id?.toString() ?? '-'} />
+						<DetailItem label="Enemy ID" value={raid.enemyId?.toString() ?? '—'} />
+						<DetailItem label="Summon ID" value={raid.summonId?.toString() ?? '—'} />
+						<DetailItem label="Quest ID" value={raid.questId?.toString() ?? '—'} />
 					</DetailsContainer>
 
 					<DetailsContainer title="Classification">
@@ -191,11 +192,11 @@
 									{displayName(raid.group)}
 								</Button>
 							{:else}
-								<span class="no-value">-</span>
+								<span class="no-value">—</span>
 							{/if}
 						</DetailItem>
 						{#if raid.group}
-							<DetailItem label="Difficulty" value={raid.group.difficulty?.toString() ?? '-'} />
+							<DetailItem label="Difficulty" value={raid.group.difficulty?.toString() ?? '—'} />
 							<DetailItem label="HL">
 								<span class="badge" class:active={raid.group.hl}>{raid.group.hl ? 'Yes' : 'No'}</span>
 							</DetailItem>

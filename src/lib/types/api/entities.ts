@@ -219,6 +219,7 @@ export interface JobAccessory {
 }
 
 // Raid entity from RaidBlueprint
+// Properties are camelCase because BaseAdapter transforms snake_case responses
 export interface Raid {
   id: string
   slug: string
@@ -226,9 +227,10 @@ export interface Raid {
   level: number
   element: number
   extra: boolean
-  enemy_id?: number
-  summon_id?: number
-  quest_id?: number
+  playerCount?: number
+  enemyId?: number
+  summonId?: number
+  questId?: number
   group?: RaidGroup
 }
 
