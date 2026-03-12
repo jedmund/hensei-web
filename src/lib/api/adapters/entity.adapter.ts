@@ -660,8 +660,9 @@ export class EntityAdapter extends BaseAdapter {
 	/**
 	 * Gets canonical character data by ID
 	 */
-	async getCharacter(id: string): Promise<Character> {
-		return this.request<Character>(`/characters/${id}`, {
+	async getCharacter(id: string, options?: { styleSwap?: boolean }): Promise<Character> {
+		const params = options?.styleSwap ? '?style_swap=true' : ''
+		return this.request<Character>(`/characters/${id}${params}`, {
 			method: 'GET',
 			cacheTTL: 600000 // Cache for 10 minutes
 		})
