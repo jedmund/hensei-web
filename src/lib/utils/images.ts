@@ -101,6 +101,12 @@ export function getCharacterPose(uncapLevel?: number, transcendenceStep?: number
 }
 
 /**
+ * Pose suffix for style swap character images.
+ * Style swap images are stored as {id}_01_style.{ext}
+ */
+export const STYLE_SWAP_POSE = '01_style'
+
+/**
  * Main function to get image URL for any resource
  */
 export function getImageUrl(
@@ -253,10 +259,16 @@ export function getCharacterImageWithPose(
 	uncapLevel?: number,
 	transcendenceStep?: number,
 	mainWeaponElement?: number | null,
-	partyElement?: number | null
+	partyElement?: number | null,
+	styleSwap?: boolean
 ): string {
 	if (!id) {
 		return getPlaceholderImage('character', variant)
+	}
+
+	// Style swap characters always use the _01_style pose
+	if (styleSwap) {
+		return getImageUrl('character', id, variant, { pose: STYLE_SWAP_POSE })
 	}
 
 	let pose = getCharacterPose(uncapLevel, transcendenceStep)
