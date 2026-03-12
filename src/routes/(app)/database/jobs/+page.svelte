@@ -3,14 +3,17 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
+	import { Grid } from 'wx-svelte-grid'
+	import type { IColumn } from 'wx-svelte-grid'
 	import { jobQueries } from '$lib/api/queries/job.queries'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getAccessoryTypeName, ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
+	import { getRarityLabel } from '$lib/utils/rarity'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
-	import type { IColumn } from 'wx-svelte-grid'
 	import type { JobAccessory } from '$lib/types/api/entities'
 
 	// Job cell components
@@ -19,11 +22,17 @@
 	import JobProficienciesCell from '$lib/components/database/cells/JobProficienciesCell.svelte'
 	import JobFeaturesCell from '$lib/components/database/cells/JobFeaturesCell.svelte'
 
+	// Accessory cell components
+	import AccessoryImageCell from '$lib/components/database/cells/AccessoryImageCell.svelte'
+	import AccessoryJobCell from '$lib/components/database/cells/AccessoryJobCell.svelte'
+	import AccessoryNameCell from '$lib/components/database/cells/AccessoryNameCell.svelte'
+	import AccessoryTypeCell from '$lib/components/database/cells/AccessoryTypeCell.svelte'
+
 	// View mode state - read initial value from URL
 	const initialView = $page.url.searchParams.get('view')
 	let viewMode = $state<'jobs' | 'accessories'>(initialView === 'accessories' ? 'accessories' : 'jobs')
 
-	// Accessory type filter (for accessories view)
+	// Accessory type filter
 	let accessoryTypeFilter = $state<number | undefined>(undefined)
 
 	// Sync viewMode changes to URL
@@ -76,56 +85,116 @@
 		}
 	]
 
-	// Fetch all accessories (for accessories view)
+	// Define columns for accessories grid
+	const accessoryColumns: IColumn[] = [
+		{
+			id: 'granblueId',
+			header: '',
+			width: 80,
+			cell: AccessoryImageCell
+		},
+		{
+			id: 'name',
+			header: 'Name',
+			flexgrow: 1,
+			sort: true,
+			cell: AccessoryNameCell
+		},
+		{
+			id: 'accessoryType',
+			header: 'Type',
+			width: 120,
+			sort: true,
+			cell: AccessoryTypeCell
+		},
+		{
+			id: 'job',
+			header: 'Job',
+			width: 180,
+			sort: true,
+			cell: AccessoryJobCell
+		},
+		{
+			id: 'rarity',
+			header: 'Rarity',
+			width: 80,
+			sort: true,
+			template: (rarity: any) => getRarityLabel(rarity)
+		}
+	]
+
+	// Accessory type select options
+	const typeOptions = [
+		{ value: 0, label: 'All types' },
+		{ value: ACCESSORY_TYPES.SHIELD, label: 'Shield' },
+		{ value: ACCESSORY_TYPES.MANATURA, label: 'Manatura' }
+	]
+
+	let selectedType = $state<number>(0)
+
+	// Sync selectedType to accessoryTypeFilter
+	$effect(() => {
+		accessoryTypeFilter = selectedType === 0 ? undefined : selectedType
+	})
+
+	// Fetch all accessories
 	const accessoriesQuery = createQuery(() => ({
 		...jobQueries.accessoriesList(accessoryTypeFilter),
 		enabled: viewMode === 'accessories'
 	}))
 
-	// Search state for accessories
+	// Search state
 	let accessorySearchTerm = $state('')
 
-	// Filter accessories based on search
-	const filteredAccessories = $derived.by(() => {
+	// Filter and sort accessories
+	const accessoryData = $derived.by(() => {
 		const accessories = accessoriesQuery.data ?? []
-		if (!accessorySearchTerm.trim()) return accessories
+		let filtered = accessories
 
-		const term = accessorySearchTerm.toLowerCase()
-		return accessories.filter(
-			(acc) =>
-				acc.name.en.toLowerCase().includes(term) ||
-				acc.name.ja?.toLowerCase().includes(term) ||
-				acc.granblueId.includes(term)
-		)
-	})
+		if (accessorySearchTerm.trim()) {
+			const term = accessorySearchTerm.toLowerCase()
+			filtered = accessories.filter(
+				(acc) =>
+					acc.name.en.toLowerCase().includes(term) ||
+					acc.name.ja?.toLowerCase().includes(term) ||
+					acc.granblueId.includes(term)
+			)
+		}
 
-	// Sort accessories by type then granblue_id
-	const sortedAccessories = $derived.by(() => {
-		const accessories = [...filteredAccessories]
-		accessories.sort((a, b) => {
+		return [...filtered].sort((a, b) => {
 			if (a.accessoryType !== b.accessoryType) {
 				return a.accessoryType - b.accessoryType
 			}
 			return a.granblueId.localeCompare(b.granblueId)
 		})
-		return accessories
 	})
 
-	function handleAccessoryRowClick(accessory: JobAccessory) {
-		goto(`/database/job-accessories/${accessory.granblueId}`)
-	}
+	// Grid API reference for accessories
+	let accessoryApi: any
 
-	function handleAccessoryTypeChange(event: Event) {
-		const select = event.target as HTMLSelectElement
-		accessoryTypeFilter = select.value ? Number(select.value) : undefined
+	const initAccessoryGrid = (apiRef: any) => {
+		accessoryApi = apiRef
+
+		apiRef.on('select-row', (ev: any) => {
+			const rowId = ev.id
+			if (rowId) {
+				const rowData = accessoryData.find((item) => item.id === rowId)
+				if (rowData) {
+					goto(`/database/job-accessories/${rowData.granblueId}`)
+				}
+			}
+		})
 	}
 </script>
 
 <PageMeta title={m.page_title_db_jobs()} description={m.page_desc_home()} />
 
+<svelte:head>
+	<link rel="stylesheet" href="https://cdn.svar.dev/fonts/wxi/wx-icons.css" />
+</svelte:head>
+
 <div class="page">
 	{#if viewMode === 'jobs'}
-		<!-- Jobs View - Using DatabaseGridWithProvider -->
 		<DatabaseGridWithProvider resource="jobs" columns={jobColumns} pageSize={20}>
 			{#snippet leftActions()}
 				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
@@ -135,8 +204,7 @@
 			{/snippet}
 		</DatabaseGridWithProvider>
 	{:else}
-		<!-- Accessories View - Custom table -->
-		<div class="grid-container">
+		<div class="grid">
 			<div class="controls">
 				<div class="controls-left">
 					<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
@@ -144,79 +212,49 @@
 						<Segment value="accessories">Accessories</Segment>
 					</SegmentedControl>
 
-					<select class="filter-select" onchange={handleAccessoryTypeChange}>
-						<option value="">All types</option>
-						<option value={ACCESSORY_TYPES.SHIELD}>Shield</option>
-						<option value={ACCESSORY_TYPES.MANATURA}>Manatura</option>
-					</select>
+					<Select
+						options={typeOptions}
+						bind:value={selectedType}
+						placeholder="All types"
+						size="small"
+					/>
 				</div>
 
-				<input type="text" placeholder="Search accessories..." bind:value={accessorySearchTerm} class="search" />
+				<div class="controls-right">
+					<input type="text" placeholder="Search..." bind:value={accessorySearchTerm} />
+				</div>
 			</div>
 
-			{#if accessoriesQuery.isLoading}
-				<div class="loading">Loading accessories...</div>
-			{:else if accessoriesQuery.isError}
-				<div class="error">Failed to load accessories</div>
-			{:else if sortedAccessories.length === 0}
-				<div class="empty">No accessories found</div>
-			{:else}
-				<div class="table-wrapper">
-					<table class="data-table">
-						<thead>
-							<tr>
-								<th class="col-name">Name</th>
-								<th class="col-type">Type</th>
-								<th class="col-job">Job</th>
-								<th class="col-rarity">Rarity</th>
-								<th class="col-id">Granblue ID</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each sortedAccessories as accessory (accessory.id)}
-								<tr onclick={() => handleAccessoryRowClick(accessory)} class="clickable">
-									<td class="col-name">
-										<div class="name-cell">
-											<span class="name-en">{accessory.name.en}</span>
-											{#if accessory.name.ja}
-												<span class="name-ja">{accessory.name.ja}</span>
-											{/if}
-										</div>
-									</td>
-									<td class="col-type">
-										<span class="type-badge {accessory.accessoryType === ACCESSORY_TYPES.SHIELD ? 'shield' : 'manatura'}">
-											{getAccessoryTypeName(accessory.accessoryType)}
-										</span>
-									</td>
-									<td class="col-job">
-										{#if accessory.job}
-											{accessory.job.name.en}
-										{:else}
-											—
-										{/if}
-									</td>
-									<td class="col-rarity">
-										{accessory.rarity ?? '—'}
-									</td>
-									<td class="col-id">
-										<code>{accessory.granblueId}</code>
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
+			<div class="grid-wrapper" class:loading={accessoriesQuery.isLoading}>
+				{#if accessoriesQuery.isLoading}
+					<div class="loading-overlay">
+						<div class="loading-spinner">Loading...</div>
+					</div>
+				{/if}
 
-				<div class="footer">
-					Showing {sortedAccessories.length} of {accessoriesQuery.data?.length ?? 0} accessories
+				<Grid
+					data={accessoryData}
+					columns={accessoryColumns}
+					init={initAccessoryGrid}
+					sizes={{ rowHeight: 60 }}
+					class="database-grid-theme"
+				/>
+			</div>
+
+			<div class="grid-footer">
+				<div class="pagination-info">
+					{#if accessoryData.length > 0}
+						Showing {accessoryData.length} of {accessoriesQuery.data?.length ?? 0} accessories
+					{:else}
+						No accessories found
+					{/if}
 				</div>
-			{/if}
+			</div>
 		</div>
 	{/if}
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
@@ -227,172 +265,155 @@
 		margin: 0 auto;
 	}
 
-	.grid-container {
+	.grid {
+		width: 100%;
 		background: var(--card-bg);
 		border: 0.5px solid rgba(0, 0, 0, 0.18);
 		border-radius: layout.$page-corner;
 		box-shadow: effects.$page-elevation;
 		overflow: hidden;
-	}
 
-	.controls {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: spacing.$unit-2x;
-		gap: spacing.$unit;
-		flex-wrap: wrap;
-
-		.controls-left {
+		.controls {
 			display: flex;
+			flex-wrap: wrap;
 			align-items: center;
+			justify-content: space-between;
+			padding: spacing.$unit-2x;
 			gap: spacing.$unit;
-		}
 
-		.filter-select {
-			padding: spacing.$unit spacing.$unit-2x;
-			background: var(--input-bound-bg);
-			border: none;
-			border-radius: layout.$item-corner;
-			font-size: typography.$font-small;
-			cursor: pointer;
-
-			&:hover {
-				background: var(--input-bound-bg-hover);
+			.controls-left {
+				display: flex;
+				align-items: center;
+				gap: spacing.$unit;
 			}
 
-			&:focus {
-				outline: none;
-				box-shadow: 0 0 0 2px var(--blue);
-			}
-		}
+			.controls-right {
+				display: flex;
+				align-items: center;
+				gap: spacing.$unit;
+				margin-left: auto;
 
-		.search {
-			padding: spacing.$unit spacing.$unit-2x;
-			background: var(--input-bound-bg);
-			border: none;
-			border-radius: layout.$item-corner;
-			font-size: typography.$font-small;
-			width: 200px;
+				input {
+					padding: spacing.$unit spacing.$unit-2x;
+					background: var(--input-bound-bg);
+					border: none;
+					border-radius: layout.$item-corner;
+					font-family: 'AGrot', system-ui, sans-serif;
+					font-size: typography.$font-small;
+					width: 200px;
 
-			&:hover {
-				background: var(--input-bound-bg-hover);
-			}
+					&:hover {
+						background: var(--input-bound-bg-hover);
+					}
 
-			&:focus {
-				outline: none;
-				box-shadow: 0 0 0 2px var(--blue);
-			}
-		}
-	}
-
-	.loading,
-	.error,
-	.empty {
-		text-align: center;
-		padding: spacing.$unit * 4;
-		color: var(--text-secondary);
-	}
-
-	.error {
-		color: var(--red);
-	}
-
-	.table-wrapper {
-		overflow-x: auto;
-	}
-
-	.data-table {
-		width: 100%;
-		border-collapse: collapse;
-
-		th,
-		td {
-			padding: spacing.$unit-2x spacing.$unit;
-			text-align: left;
-			border-bottom: 1px solid #dee2e6;
-		}
-
-		th {
-			background: #f8f9fa;
-			font-weight: typography.$bold;
-			color: #495057;
-			white-space: nowrap;
-		}
-
-		tbody tr {
-			&.clickable {
-				cursor: pointer;
-
-				&:hover {
-					background: #f8f9fa;
+					&:focus {
+						outline: none;
+						border-color: var(--accent-blue);
+					}
 				}
 			}
 		}
-	}
 
-	.col-name {
-		min-width: 180px;
-	}
+		.grid-wrapper {
+			position: relative;
+			overflow-x: auto;
+			min-height: 200px;
 
-	.col-type {
-		width: 100px;
-	}
+			&.loading {
+				opacity: 0.6;
+			}
 
-	.col-job {
-		min-width: 150px;
-	}
+			.loading-overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: color-mix(in srgb, var(--card-bg) 90%, transparent);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: effects.$z-sticky;
 
-	.col-rarity {
-		width: 80px;
-	}
+				.loading-spinner {
+					font-size: typography.$font-medium;
+					color: var(--text-tertiary);
+				}
+			}
+		}
 
-	.col-id {
-		width: 120px;
+		.grid-footer {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: spacing.$unit-2x;
+			border-top: 1px solid var(--border-subtle);
+			background: var(--bar-bg);
 
-		code {
-			font-size: typography.$font-small;
-			background: #f0f0f0;
-			padding: 2px 6px;
-			border-radius: 3px;
+			.pagination-info {
+				font-size: typography.$font-small;
+				color: var(--text-secondary);
+			}
 		}
 	}
 
-	.name-cell {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-fourth;
-
-		.name-ja {
-			font-size: typography.$font-small;
-			color: var(--text-secondary);
-		}
-	}
-
-	.type-badge {
-		display: inline-block;
-		padding: 2px 8px;
-		border-radius: layout.$item-corner-small;
+	// Grid theme styles (matching DatabaseGridWithProvider)
+	:global(.database-grid-theme) {
 		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-
-		&.shield {
-			background: #e0f2fe;
-			color: #0369a1;
-		}
-
-		&.manatura {
-			background: #fce7f3;
-			color: #be185d;
-		}
+		width: 100%;
 	}
 
-	.footer {
-		padding: spacing.$unit;
-		text-align: center;
+	:global(.wx-grid .wx-header) {
+		background: var(--bar-bg);
+	}
+
+	:global(.wx-grid .wx-h-row) {
+		height: auto !important;
+		background: var(--bar-bg);
+		padding-bottom: spacing.$unit-half;
+		border-bottom: 1px solid var(--border-medium);
+	}
+
+	:global(.wx-grid .wx-h-row .wx-cell) {
+		box-sizing: border-box;
+		background: var(--bar-bg);
+		font-weight: typography.$bold;
 		color: var(--text-secondary);
-		font-size: typography.$font-small;
-		background: #f8f9fa;
-		border-top: 1px solid #e5e5e5;
+		border-radius: layout.$item-corner;
+		transition: background-color 0.15s ease;
+		cursor: pointer;
+
+		&:hover {
+			background: var(--table-header-hover);
+		}
+	}
+
+	:global(.wx-grid .wx-h-row .wx-sort) {
+		height: auto;
+		margin-left: spacing.$unit-half;
+		flex-shrink: 0;
+		align-self: center;
+	}
+
+	:global(.wx-grid .wx-cell) {
+		padding: spacing.$unit * 0.5;
+		vertical-align: middle;
+		display: flex;
+		align-items: center;
+		border: none;
+		--wx-table-cell-border: none;
+	}
+
+	:global(.wx-grid .wx-cell:first-child) {
+		padding-left: spacing.$unit-2x;
+	}
+
+	:global(.wx-grid .wx-cell:not(:last-child)) {
+		border-right: none;
+	}
+
+	:global(.wx-grid .wx-row:hover) {
+		background: var(--table-row-hover);
+		cursor: pointer;
 	}
 </style>

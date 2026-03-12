@@ -16,9 +16,13 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
+	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 
 	// Utils
 	import { getAccessoryTypeName } from '$lib/utils/jobAccessoryUtils'
+	import { getJobAccessoryImageUrl } from '$lib/utils/jobAccessoryUtils'
+	import { getJobIconUrl } from '$lib/utils/jobUtils'
+	import { getRarityLabel } from '$lib/utils/rarity'
 
 	// Types
 	import type { PageData } from './$types'
@@ -37,141 +41,175 @@
 	const canEdit = $derived(userRole >= 7)
 
 	// Edit URL for navigation
-	const editUrl = $derived(accessory?.granblueId ? `/database/job-accessories/${accessory.granblueId}/edit` : undefined)
+	const editUrl = $derived(
+		accessory?.granblueId
+			? `/database/job-accessories/${accessory.granblueId}/edit`
+			: undefined
+	)
 
 	// Page title
-	const pageTitle = $derived(m.page_title_db_entity({ name: accessory?.name?.en ?? 'Job Accessory' }))
+	const pageTitle = $derived(
+		m.page_title_db_entity({ name: accessory?.name?.en ?? 'Job Accessory' })
+	)
 
-	function handleBack() {
-		goto('/database/jobs?view=accessories')
-	}
+	// Display name
+	const displayName = $derived.by(() => {
+		const nameObj = accessory?.name
+		if (!nameObj) return 'Unknown'
+		if (typeof nameObj === 'string') return nameObj
+		return nameObj.en || nameObj.ja || 'Unknown'
+	})
 </script>
 
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	{#if accessory}
-		<div class="header">
-			<div class="header-content">
-				<button class="back-button" onclick={handleBack}>
-					← Back to Accessories
-				</button>
-				<h1 class="title">{accessory.name.en}</h1>
-				{#if accessory.name.ja}
-					<p class="subtitle">{accessory.name.ja}</p>
-				{/if}
-			</div>
+	<DatabasePageHeader title="Job Accessory" backHref="/database/jobs?view=accessories">
+		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button href={editUrl} variant="secondary" size="small">Edit</Button>
+				<Button variant="secondary" size="small" href={editUrl}>Edit</Button>
 			{/if}
+		{/snippet}
+	</DatabasePageHeader>
+
+	{#if accessory}
+		<div class="content">
+			<header class="detail-header">
+				<div class="detail-header-left">
+					<div class="accessory-image">
+						<img
+							src={getJobAccessoryImageUrl(accessory.granblueId)}
+							alt={displayName}
+						/>
+					</div>
+					<div class="detail-header-info">
+						<h2>{displayName}</h2>
+						<div class="meta">
+							<span
+								class="type-badge"
+								class:shield={accessory.accessoryType === 1}
+								class:manatura={accessory.accessoryType === 2}
+							>
+								{getAccessoryTypeName(accessory.accessoryType)}
+							</span>
+						</div>
+					</div>
+				</div>
+			</header>
+
+			<section class="details">
+				<DetailsContainer title="Metadata">
+					<DetailItem label="Name (EN)" value={accessory.name.en} />
+					<DetailItem label="Name (JP)" value={accessory.name.ja ?? '—'} />
+					<DetailItem label="Rarity" value={getRarityLabel(accessory.rarity)} />
+					<DetailItem label="Granblue ID" value={accessory.granblueId} />
+				</DetailsContainer>
+
+				<DetailsContainer title="Classification">
+					<DetailItem label="Accessory Type">
+						<span
+							class="type-badge"
+							class:shield={accessory.accessoryType === 1}
+							class:manatura={accessory.accessoryType === 2}
+						>
+							{getAccessoryTypeName(accessory.accessoryType)}
+						</span>
+					</DetailItem>
+					<DetailItem label="Release Date" value={accessory.releaseDate ?? '—'} />
+				</DetailsContainer>
+
+				<DetailsContainer title="Associated Job">
+					<DetailItem label="Job">
+						{#if accessory.job}
+							<a href="/database/jobs/{accessory.job.granblueId}" class="job-link">
+								<img
+									src={getJobIconUrl(accessory.job.granblueId)}
+									alt=""
+									class="job-link-icon"
+								/>
+								{accessory.job.name.en}
+							</a>
+						{:else}
+							<span class="empty-value">—</span>
+						{/if}
+					</DetailItem>
+				</DetailsContainer>
+			</section>
 		</div>
-
-		<section class="details">
-			<DetailsContainer title="Metadata">
-				<DetailItem label="English Name">
-					{accessory.name.en}
-				</DetailItem>
-				<DetailItem label="Japanese Name">
-					{accessory.name.ja ?? '—'}
-				</DetailItem>
-				<DetailItem label="Granblue ID">
-					<code>{accessory.granblueId}</code>
-				</DetailItem>
-			</DetailsContainer>
-
-			<DetailsContainer title="Classification">
-				<DetailItem label="Accessory Type">
-					<span class="type-badge {accessory.accessoryType === 1 ? 'shield' : 'manatura'}">
-						{getAccessoryTypeName(accessory.accessoryType)}
-					</span>
-				</DetailItem>
-				<DetailItem label="Rarity">
-					{accessory.rarity ?? '—'}
-				</DetailItem>
-				<DetailItem label="Release Date">
-					{accessory.releaseDate ?? '—'}
-				</DetailItem>
-			</DetailsContainer>
-
-			<DetailsContainer title="Associated Job">
-				<DetailItem label="Job">
-					{#if accessory.job}
-						<a href="/database/jobs/{accessory.job.granblueId}" class="job-link">
-							{accessory.job.name.en}
-						</a>
-					{:else}
-						—
-					{/if}
-				</DetailItem>
-			</DetailsContainer>
-		</section>
 	{:else if accessoryQuery.isLoading}
 		<div class="loading">Loading accessory...</div>
 	{:else}
-		<div class="error">Failed to load accessory</div>
+		<div class="not-found">
+			<h2>Accessory Not Found</h2>
+			<p>The accessory you're looking for could not be found.</p>
+			<Button variant="secondary" size="small" href="/database/jobs?view=accessories">
+				Back to Accessories
+			</Button>
+		</div>
 	{/if}
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
-	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
 	.page {
-		padding: spacing.$unit-2x 0;
-		margin: 0 auto;
-	}
-
-	.header {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-		margin-bottom: spacing.$unit-2x;
-		padding: spacing.$unit-2x;
 		background: var(--card-bg);
-		border: 0.5px solid rgba(0, 0, 0, 0.18);
 		border-radius: layout.$page-corner;
-		box-shadow: effects.$page-elevation;
+		box-shadow: var(--shadow-sm);
 	}
 
-	.header-content {
+	.content {
+		overflow: visible;
+		position: relative;
+	}
+
+	.detail-header {
 		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
+		align-items: center;
+		justify-content: space-between;
+		gap: spacing.$unit-2x;
+		padding: 0 spacing.$unit-2x spacing.$unit-2x;
 	}
 
-	.back-button {
-		background: none;
-		border: none;
-		color: var(--text-secondary);
-		font-size: typography.$font-small;
-		cursor: pointer;
-		padding: 0;
-		margin-bottom: spacing.$unit-half;
+	.detail-header-left {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-2x;
+	}
 
-		&:hover {
-			color: var(--text-primary);
+	.accessory-image {
+		flex-shrink: 0;
+
+		img {
+			width: 96px;
+			height: auto;
+			border-radius: layout.$item-corner;
 		}
 	}
 
-	.title {
-		font-size: typography.$font-xlarge;
-		font-weight: typography.$bold;
-		margin: 0;
-	}
+	.detail-header-info {
+		flex: 1;
 
-	.subtitle {
-		font-size: typography.$font-medium;
-		color: var(--text-secondary);
-		margin: 0;
+		h2 {
+			font-size: typography.$font-xlarge;
+			font-weight: typography.$bold;
+			margin: 0 0 spacing.$unit 0;
+			color: var(--text-primary);
+		}
+
+		.meta {
+			display: flex;
+			flex-direction: row;
+			gap: spacing.$unit;
+			align-items: center;
+		}
 	}
 
 	.details {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-2x;
 	}
 
 	.type-badge {
@@ -182,40 +220,56 @@
 		font-weight: typography.$medium;
 
 		&.shield {
-			background: #e0f2fe;
-			color: #0369a1;
+			background: color-mix(in srgb, var(--water-button-bg) 20%, transparent);
+			color: var(--water-text);
 		}
 
 		&.manatura {
-			background: #fce7f3;
-			color: #be185d;
+			background: color-mix(in srgb, var(--fire-button-bg) 20%, transparent);
+			color: var(--fire-text);
 		}
 	}
 
 	.job-link {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		padding: spacing.$unit-half;
+		border-radius: layout.$item-corner;
 		color: var(--blue);
 		text-decoration: none;
+		transition: background-color 0.15s ease;
 
 		&:hover {
-			text-decoration: underline;
+			background: var(--button-contained-bg-hover);
 		}
 	}
 
-	code {
-		font-size: typography.$font-small;
-		background: #f0f0f0;
-		padding: 2px 6px;
-		border-radius: 3px;
+	.job-link-icon {
+		width: auto;
+		height: 24px;
+		object-fit: contain;
+		border-radius: layout.$item-corner-small;
+	}
+
+	.empty-value {
+		color: var(--text-secondary);
 	}
 
 	.loading,
-	.error {
+	.not-found {
 		text-align: center;
 		padding: spacing.$unit * 4;
 		color: var(--text-secondary);
 	}
 
-	.error {
-		color: var(--red);
+	@media (max-width: 768px) {
+		.detail-header {
+			flex-direction: column;
+		}
+
+		.accessory-image img {
+			width: 64px;
+		}
 	}
 </style>

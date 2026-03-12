@@ -140,11 +140,16 @@
 	}
 
 	.forged-from-link {
+		display: inline-flex;
+		align-items: center;
+		padding: spacing.$unit-half;
+		border-radius: layout.$item-corner;
 		color: var(--blue);
 		text-decoration: none;
+		transition: background-color 0.15s ease;
 
 		&:hover {
-			text-decoration: underline;
+			background: var(--button-contained-bg-hover);
 		}
 	}
 </style>

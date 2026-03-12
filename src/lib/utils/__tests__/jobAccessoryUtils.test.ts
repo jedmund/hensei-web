@@ -38,13 +38,13 @@ describe('getAccessoryTypeOptions', () => {
 })
 
 describe('getJobAccessoryImageUrl', () => {
-	it('returns shield path for type 1', () => {
-		expect(getJobAccessoryImageUrl('399001', 1)).toBe('/images/job-accessories/shield/399001.png')
+	it('returns square path by default', () => {
+		expect(getJobAccessoryImageUrl('399001')).toBe('/images/accessory-square/399001.jpg')
 	})
 
-	it('returns manatura path for type 2', () => {
-		expect(getJobAccessoryImageUrl('399002', 2)).toBe(
-			'/images/job-accessories/manatura/399002.png'
+	it('returns grid path when specified', () => {
+		expect(getJobAccessoryImageUrl('399002', 'grid')).toBe(
+			'/images/accessory-grid/399002.jpg'
 		)
 	})
 })

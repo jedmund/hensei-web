@@ -82,16 +82,15 @@
 	.recruits-link {
 		display: flex;
 		align-items: center;
-		gap: spacing.$unit;
+		gap: spacing.$unit-half;
+		padding: spacing.$unit-half;
+		border-radius: layout.$item-corner;
 		text-decoration: none;
 		color: var(--text-primary);
+		transition: background-color 0.15s ease;
 
-		&:hover .recruits-image {
-			transform: scale(1.05);
-		}
-
-		&:hover .recruits-name {
-			color: var(--blue);
+		&:hover {
+			background: var(--button-contained-bg-hover);
 		}
 	}
 
@@ -99,11 +98,9 @@
 		width: 32px;
 		height: 32px;
 		border-radius: layout.$item-corner-small;
-		transition: transform 0.2s ease;
 	}
 
 	.recruits-name {
 		font-size: typography.$font-regular;
-		transition: color 0.2s ease;
 	}
 </style>
