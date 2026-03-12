@@ -178,9 +178,10 @@
 				left: 0;
 				right: 0;
 				height: 81px; // Matches $nav-height
-				z-index: $z-badge; // Above content (2) for backdrop-filter to work, below nav (10)
+				z-index: $z-sticky - 1; // Above content, below nav
 				pointer-events: none;
-				transition: right $duration-slide ease-in-out;
+				transition: right $duration-slide ease-in-out, opacity 0.2s ease-in-out;
+				opacity: 0;
 
 				// Color gradient for the background
 				background: linear-gradient(
@@ -199,20 +200,7 @@
 				mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
 				-webkit-mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
 
-				// Scroll-triggered gradient overlay using pseudo-element
-				&::after {
-					content: '';
-					position: absolute;
-					top: 0;
-					left: 0;
-					right: 0;
-					bottom: 0;
-					background: linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0) 100%);
-					opacity: 0;
-					transition: opacity 0.2s ease-in-out;
-				}
-
-				&.scrolled::after {
+				&.scrolled {
 					opacity: 1;
 				}
 			}
