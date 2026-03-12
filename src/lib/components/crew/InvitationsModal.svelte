@@ -205,6 +205,11 @@
 													Invited by {invitedBy.username}
 												</span>
 											{/if}
+											{#if invitation.phantomPlayer}
+												<span class="notification-meta">
+													Phantom assigned: {invitation.phantomPlayer.name}
+												</span>
+											{/if}
 										</div>
 
 										{#if expired}
