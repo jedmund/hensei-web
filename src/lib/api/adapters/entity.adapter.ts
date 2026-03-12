@@ -839,8 +839,11 @@ export class EntityAdapter extends BaseAdapter {
 			method: 'PATCH',
 			body: { character: payload }
 		})
-		// Invalidate cache for this character
+		// Invalidate cache for this character (by UUID and granblueId)
 		this.clearCache(`/characters/${id}`)
+		if (result.granblueId) {
+			this.clearCache(`/characters/${result.granblueId}`)
+		}
 		return result
 	}
 
