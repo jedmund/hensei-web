@@ -409,7 +409,7 @@
 				{#if activeTab === GridType.Weapon}
 					<WeaponGrid
 						weapons={party.weapons}
-						raidExtra={(party as any)?.raid?.group?.extra}
+						raidExtra={(party as any)?.raid?.extra}
 						showGuidebooks={(party as any)?.raid?.group?.guidebooks}
 						guidebooks={(party as any)?.guidebooks}
 						{collectionWeaponItems}
