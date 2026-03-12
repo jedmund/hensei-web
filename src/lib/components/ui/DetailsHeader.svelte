@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// Components
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
@@ -145,8 +144,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: spacing.$unit * 2;
-		padding: spacing.$unit * 2;
+		gap: spacing.$unit-2x;
+		padding: 0 spacing.$unit-2x spacing.$unit-2x;
 
 		.left {
 			display: flex;

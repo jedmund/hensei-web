@@ -78,11 +78,11 @@
 
 		<section class="details">
 			<DetailsContainer title="Group Details">
-				<DetailItem label="Name (EN)" value={group.name.en || '-'} />
-				<DetailItem label="Name (JA)" value={group.name.ja || '-'} />
-				<DetailItem label="Section" value={group.section?.toString() ?? '-'} />
-				<DetailItem label="Order" value={group.order?.toString() ?? '-'} />
-				<DetailItem label="Difficulty" value={group.difficulty?.toString() ?? '-'} />
+				<DetailItem label="Name (EN)" value={group.name.en || '—'} />
+				<DetailItem label="Name (JA)" value={group.name.ja || '—'} />
+				<DetailItem label="Section" value={group.section?.toString() ?? '—'} />
+				<DetailItem label="Order" value={group.order?.toString() ?? '—'} />
+				<DetailItem label="Difficulty" value={group.difficulty?.toString() ?? '—'} />
 			</DetailsContainer>
 
 			<DetailsContainer title="Flags">
@@ -106,7 +106,7 @@
 						{#each group.raids as raid}
 							<button class="raid-item" onclick={() => handleRaidClick(raid.slug)}>
 								<span class="raid-name">{displayName(raid)}</span>
-								<span class="raid-level">Lv. {raid.level ?? '-'}</span>
+								<span class="raid-level">Lv. {raid.level ?? '—'}</span>
 							</button>
 						{/each}
 					</div>
