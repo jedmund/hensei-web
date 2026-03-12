@@ -2,43 +2,57 @@
 	import { page } from '$app/stores'
 </script>
 
-<div class="error-page">
-	<h1>{$page.status}</h1>
-	<p>{$page.error?.message ?? 'Something went wrong'}</p>
-	<a href="/teams/explore">Back to teams</a>
+<div class="error-container">
+	<div class="error-message">
+		<span class="status-code">{$page.status}</span>
+		<h1>Something went wrong</h1>
+	</div>
+
+	<a class="browse-link" href="/teams/explore">Browse teams</a>
 </div>
 
 <style lang="scss">
-	.error-page {
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
+
+	.error-container {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		min-height: 100vh;
+		padding: spacing.$unit-4x;
+		color: var(--text-primary);
+	}
+
+	.error-message {
 		text-align: center;
-		padding: 2rem;
-		color: var(--text-primary, #111);
+
+		.status-code {
+			display: block;
+			font-size: 4.8rem;
+			font-weight: typography.$medium;
+			color: var(--text-tertiary);
+			line-height: 1;
+			margin: 0 0 spacing.$unit;
+		}
 
 		h1 {
-			font-size: 4rem;
-			font-weight: 700;
-			margin: 0 0 0.5rem;
+			font-size: typography.$font-xlarge;
+			font-weight: typography.$bold;
+			margin: 0;
 		}
+	}
 
-		p {
-			font-size: 1.125rem;
-			color: var(--text-secondary, #666);
-			margin: 0 0 2rem;
-		}
+	.browse-link {
+		color: var(--link);
+		text-decoration: none;
+		font-weight: typography.$medium;
+		font-size: typography.$font-body;
+		margin-top: spacing.$unit-3x;
 
-		a {
-			color: var(--link, #0066cc);
-			text-decoration: none;
-			font-weight: 500;
-
-			&:hover {
-				text-decoration: underline;
-			}
+		&:hover {
+			text-decoration: underline;
 		}
 	}
 </style>
