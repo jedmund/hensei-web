@@ -102,10 +102,21 @@ export function removeMemberOptions(queryClient: QueryClient) {
 
 export function sendInvitationOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({ crewId, userId }: { crewId: string; userId: string }) =>
-			crewAdapter.sendInvitation(crewId, userId),
-		onSuccess: (_invitation: unknown, { crewId }: { crewId: string; userId: string }) => {
+		mutationFn: ({
+			crewId,
+			userId,
+			phantomPlayerId
+		}: {
+			crewId: string
+			userId: string
+			phantomPlayerId?: string
+		}) => crewAdapter.sendInvitation(crewId, userId, phantomPlayerId),
+		onSuccess: (
+			_invitation: unknown,
+			{ crewId }: { crewId: string; userId: string; phantomPlayerId?: string }
+		) => {
 			queryClient.invalidateQueries({ queryKey: crewKeys.crewInvitations(crewId) })
+			queryClient.invalidateQueries({ queryKey: crewKeys.membersAll() })
 		}
 	}
 }

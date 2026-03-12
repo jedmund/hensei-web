@@ -1,12 +1,15 @@
 
 <script lang="ts">
+	import { createQuery } from '@tanstack/svelte-query'
 	import { userAdapter, type UserInfo } from '$lib/api/adapters/user.adapter'
 	import { useSendInvitation } from '$lib/api/mutations/crew.mutations'
+	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 
@@ -19,13 +22,36 @@
 
 	const sendMutation = useSendInvitation()
 
+	// Query unclaimed phantoms
+	const phantomsQuery = createQuery(() => ({
+		...crewQueries.members('phantom'),
+		enabled: open
+	}))
+
+	const unclaimedPhantoms = $derived(
+		phantomsQuery.data?.phantoms?.filter((p) => !p.claimed) ?? []
+	)
+
+	const phantomOptions = $derived(
+		unclaimedPhantoms.map((p) => ({
+			value: p.id,
+			label: p.name,
+			suffix: p.granblueId ?? undefined
+		}))
+	)
+
 	// State
 	let usernameInput = $state('')
 	let isSearching = $state(false)
 	let searchError = $state<string | null>(null)
 	let foundUser = $state<UserInfo | null>(null)
+	let selectedPhantomId = $state<string | undefined>(undefined)
 	let inviteSuccess = $state(false)
 	let inviteError = $state<string | null>(null)
+
+	const selectedPhantomName = $derived(
+		unclaimedPhantoms.find((p) => p.id === selectedPhantomId)?.name
+	)
 
 	// Search for user by username
 	async function handleSearch() {
@@ -53,7 +79,11 @@
 
 		inviteError = null
 		try {
-			await sendMutation.mutateAsync({ crewId, userId: foundUser.id })
+			await sendMutation.mutateAsync({
+				crewId,
+				userId: foundUser.id,
+				phantomPlayerId: selectedPhantomId
+			})
 			inviteSuccess = true
 			// Reset after success
 			setTimeout(() => {
@@ -68,6 +98,7 @@
 	function resetState() {
 		usernameInput = ''
 		foundUser = null
+		selectedPhantomId = undefined
 		searchError = null
 		inviteSuccess = false
 		inviteError = null
@@ -104,6 +135,9 @@
 			<div class="success-message">
 				<Icon name="check-circle" size={32} />
 				<p>Invitation sent to <strong>{foundUser?.username}</strong>!</p>
+				{#if selectedPhantomName}
+					<p class="success-detail">"{selectedPhantomName}" will be assigned when they accept.</p>
+				{/if}
 			</div>
 		{:else}
 			<!-- Search input -->
@@ -159,6 +193,19 @@
 						</div>
 					{/if}
 				</div>
+
+				{#if unclaimedPhantoms.length > 0}
+					<div class="phantom-section">
+						<Select
+							label="Assign to phantom"
+							options={phantomOptions}
+							bind:value={selectedPhantomId}
+							placeholder="None (assign later)"
+							size="small"
+							fullWidth
+						/>
+					</div>
+				{/if}
 			{/if}
 		{/if}
 	</ModalBody>
@@ -273,6 +320,10 @@
 		}
 	}
 
+	.phantom-section {
+		margin-top: spacing.$unit-2x;
+	}
+
 	.success-message {
 		display: flex;
 		flex-direction: column;
@@ -284,6 +335,11 @@
 
 		p {
 			margin: 0;
+		}
+
+		.success-detail {
+			font-size: typography.$font-small;
+			color: var(--text-secondary);
 		}
 	}
 </style>
