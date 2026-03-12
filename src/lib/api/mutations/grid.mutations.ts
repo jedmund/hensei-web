@@ -496,6 +496,20 @@ export function swapSummonsOptions(queryClient: QueryClient) {
 }
 
 // ============================================================================
+// Style Swap Mutation Options
+// ============================================================================
+
+export function switchCharacterStyleOptions(queryClient: QueryClient) {
+	return {
+		mutationFn: (params: { id: string; partyShortcode: string }) =>
+			gridAdapter.switchCharacterStyle(params.id),
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
+		}
+	}
+}
+
+// ============================================================================
 // Sync Mutation Options
 // ============================================================================
 
@@ -641,6 +655,11 @@ export function useUpdateQuickSummon() {
 export function useSwapSummons() {
 	const queryClient = useQueryClient()
 	return createMutation(() => swapSummonsOptions(queryClient))
+}
+
+export function useSwitchCharacterStyle() {
+	const queryClient = useQueryClient()
+	return createMutation(() => switchCharacterStyleOptions(queryClient))
 }
 
 export function useSyncGridCharacter() {

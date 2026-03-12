@@ -92,6 +92,21 @@ export function useGridService(
 				throw err
 			}
 		},
+		async switchCharacterStyle(
+			gridCharacterId: string,
+			_editKey?: string
+		) {
+			try {
+				await mutations.grid.switchCharacterStyle.mutateAsync({
+					id: gridCharacterId,
+					partyShortcode: getPartyShortcode()
+				})
+			} catch (err) {
+				console.error('Failed to switch character style:', err)
+				toast.error(extractErrorMessage(err, 'Failed to switch style'))
+				throw err
+			}
+		},
 		async updateCharacterUncap(
 			gridCharacterId: string,
 			uncapLevel?: number,

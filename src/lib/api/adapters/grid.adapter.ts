@@ -482,6 +482,19 @@ export class GridAdapter extends BaseAdapter {
         })
     }
 
+	// Style swap operations
+
+	/**
+	 * Switches a grid character between its base and style swap variant
+	 */
+	async switchCharacterStyle(id: string, headers?: Record<string, string>): Promise<GridCharacter> {
+		const response = await this.request<{ gridCharacter: GridCharacter }>(`/grid_characters/${id}/switch_style`, {
+			method: 'POST',
+			headers
+		})
+		return response.gridCharacter
+	}
+
 	// Sync operations
 
 	/**
