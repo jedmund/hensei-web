@@ -168,8 +168,8 @@
 	}
 
 	// Load data
-	async function loadData(pageNum: number = 1, updateUrlParam: boolean = true) {
-		loading = true
+	async function loadData(pageNum: number = 1, updateUrlParam: boolean = true, showLoading: boolean = true) {
+		if (showLoading) loading = true
 		try {
 			const result = await provider.loadPage(pageNum)
 			data = result
@@ -228,7 +228,7 @@
 
 			// Update provider and reload from server
 			provider.setSort(newSortKey, newSortOrder)
-			loadData(1) // Reset to first page when sorting
+			loadData(1, true, false) // Reset to first page, no loading overlay
 
 			return false // Prevent default client-side sorting
 		})
@@ -684,22 +684,31 @@
 	}
 
 	:global(.wx-grid .wx-h-row) {
+		height: auto !important;
 		background: var(--bar-bg);
-		border-bottom: 1px solid var(--border-subtle);
+		padding-bottom: spacing.$unit-half;
+		border-bottom: 1px solid var(--border-medium);
 	}
 
-	:global(.wx-grid .wx-header-cell) {
+	:global(.wx-grid .wx-h-row .wx-cell) {
+		box-sizing: border-box;
 		background: var(--bar-bg);
 		font-weight: typography.$bold;
 		color: var(--text-secondary);
-		border-bottom: 2px solid var(--border-medium);
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s ease;
 		cursor: pointer;
 
 		&:hover {
-			background: var(--button-bg-hover);
+			background: var(--table-header-hover);
 		}
+	}
+
+	:global(.wx-grid .wx-h-row .wx-sort) {
+		height: auto;
+		margin-left: spacing.$unit-half;
+		flex-shrink: 0;
+		align-self: center;
 	}
 
 	:global(.wx-grid .wx-cell) {
