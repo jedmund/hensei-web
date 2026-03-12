@@ -109,6 +109,10 @@
 		ulb: false,
 		transcendence: false,
 		special: false,
+		// Style swap
+		styleSwap: false,
+		styleName: '' as string,
+		baseCharacterId: '' as string,
 		// Dates
 		releaseDate: '',
 		flbDate: '',
@@ -179,6 +183,10 @@
 				ulb: character.uncap?.ulb || false,
 				transcendence: character.uncap?.transcendence || false,
 				special: character.special || false,
+			// Style swap
+			styleSwap: character.styleSwap || false,
+			styleName: character.styleName || '',
+			baseCharacterId: character.baseCharacter?.id || '',
 				// Dates
 				releaseDate: character.releaseDate || '',
 				flbDate: character.flbDate || '',
@@ -243,6 +251,10 @@
 				ulb: editData.ulb,
 				transcendence: editData.transcendence,
 				special: editData.special,
+				// Style swap
+				style_swap: editData.styleSwap,
+				style_name: editData.styleName || undefined,
+				base_character_id: editData.baseCharacterId || undefined,
 				// Dates
 				release_date: editData.releaseDate || undefined,
 				flb_date: editData.flbDate || undefined,

@@ -8,6 +8,9 @@
 	import { getRaceLabel, getRaceOptions } from '$lib/utils/race'
 	import { getGenderLabel, getGenderOptions } from '$lib/utils/gender'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
+	import { getElementLabel } from '$lib/utils/element'
+
+	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
 		character: any
@@ -25,6 +28,12 @@
 	const raceOptions = getRaceOptions()
 	const genderOptions = getGenderOptions()
 	const proficiencyOptions = getProficiencyOptions()
+
+	const elementName = $derived.by((): ElementName | undefined => {
+		const el = editMode ? editData.element : character?.element
+		const label = getElementLabel(el)
+		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
+	})
 </script>
 
 <DetailsContainer title="Details">
@@ -71,6 +80,31 @@
 			type="select"
 			options={proficiencyOptions}
 		/>
+		<DetailItem
+			label="Style Swap"
+			bind:value={editData.styleSwap}
+			editable={true}
+			type="checkbox"
+			element={elementName}
+		/>
+		{#if editData.styleSwap}
+			<DetailItem
+				label="Style Name"
+				bind:value={editData.styleName}
+				editable={true}
+				type="text"
+				placeholder="e.g. Legend of Bravado and Revelry"
+				width="480px"
+			/>
+			<DetailItem
+				label="Base Character ID"
+				bind:value={editData.baseCharacterId}
+				editable={true}
+				type="text"
+				placeholder="UUID of the base character"
+				width="480px"
+			/>
+		{/if}
 	{:else}
 		<DetailItem label="Element">
 			<ElementLabel element={character.element} size="medium" />
@@ -84,5 +118,14 @@
 		<DetailItem label="Proficiency 2">
 			<ProficiencyLabel proficiency={character.proficiency?.[1] ?? 0} size="medium" />
 		</DetailItem>
+		{#if character.styleSwap}
+			<DetailItem label="Style Swap" value="Yes" />
+			{#if character.styleName}
+				<DetailItem label="Style Name" value={character.styleName} />
+			{/if}
+			{#if character.baseCharacter}
+				<DetailItem label="Base Character" value={character.baseCharacter.name?.en ?? '—'} />
+			{/if}
+		{/if}
 	{/if}
 </DetailsContainer>
