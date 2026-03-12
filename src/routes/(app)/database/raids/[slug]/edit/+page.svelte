@@ -8,6 +8,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
+	import { getElementOptions } from '$lib/utils/element'
 	import type { PageData } from './$types'
 
 	function displayName(input: any): string {
@@ -56,6 +57,7 @@
 		slug: '',
 		level: undefined as number | undefined,
 		element: 0,
+		player_count: 18,
 		group_id: '',
 		enemy_id: undefined as number | undefined,
 		summon_id: undefined as number | undefined,
@@ -71,23 +73,24 @@
 				slug: raid.slug || '',
 				level: raid.level,
 				element: raid.element ?? 0,
+				player_count: raid.playerCount ?? 18,
 				group_id: raid.group?.id || '',
-				enemy_id: raid.enemy_id,
-				summon_id: raid.summon_id,
-				quest_id: raid.quest_id
+				enemy_id: raid.enemyId,
+				summon_id: raid.summonId,
+				quest_id: raid.questId
 			}
 		}
 	})
 
-	// Element options
-	const elementOptions = [
-		{ value: 0, label: 'None' },
-		{ value: 1, label: 'Fire' },
-		{ value: 2, label: 'Water' },
-		{ value: 3, label: 'Earth' },
-		{ value: 4, label: 'Wind' },
-		{ value: 5, label: 'Light' },
-		{ value: 6, label: 'Dark' }
+	// Element options from canonical mapping (Wind=1, Fire=2, Water=3, Earth=4, Dark=5, Light=6)
+	const elementOptions = getElementOptions()
+
+	// Player count options
+	const playerCountOptions = [
+		{ value: 1, label: 'Solo' },
+		{ value: 6, label: '6' },
+		{ value: 18, label: '18' },
+		{ value: 30, label: '30' }
 	]
 
 	// Group options derived from query
@@ -124,6 +127,7 @@
 				slug: editData.slug,
 				level: toNumberOrUndefined(editData.level),
 				element: editData.element,
+				player_count: editData.player_count,
 				group_id: editData.group_id,
 				enemy_id: toNumberOrUndefined(editData.enemy_id),
 				summon_id: toNumberOrUndefined(editData.summon_id),
@@ -204,6 +208,13 @@
 					editable={true}
 					type="select"
 					options={elementOptions}
+				/>
+				<DetailItem
+					label="Players"
+					bind:value={editData.player_count}
+					editable={true}
+					type="select"
+					options={playerCountOptions}
 				/>
 			</DetailsContainer>
 
