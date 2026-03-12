@@ -316,7 +316,7 @@
 		border-radius: $input-corner;
 		border: 2px solid transparent;
 		min-height: $unit-4x;
-		padding: $unit calc($unit * 1.5);
+		padding: $unit;
 		@include smooth-transition($duration-quick, background-color);
 
 		&:hover {
