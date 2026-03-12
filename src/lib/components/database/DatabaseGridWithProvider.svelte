@@ -242,7 +242,8 @@
 				if (rowData && rowData.granblueId) {
 					// Store current list URL before navigating so Back button can return here
 					storeListUrl($page.url.href, resource)
-					goto(`/database/${resource}/${rowData.granblueId}`)
+					const styleSuffix = resource === 'characters' && rowData.styleSwap ? '/style' : ''
+					goto(`/database/${resource}/${rowData.granblueId}${styleSuffix}`)
 				}
 			}
 		})

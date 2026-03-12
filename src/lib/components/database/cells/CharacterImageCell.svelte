@@ -7,7 +7,7 @@
 </script>
 
 <div class="image-cell">
-	<img src={getCharacterImage(row.granblueId, 'square', '01')} alt="" class="database-image" />
+	<img src={getCharacterImage(row.granblueId, 'square', row.styleSwap ? '01_style' : '01')} alt="" class="database-image" />
 </div>
 
 <style lang="scss">
