@@ -89,11 +89,19 @@
 		/>
 		{#if editData.styleSwap}
 			<DetailItem
-				label="Style Name"
-				bind:value={editData.styleName}
+				label="Style Name (EN)"
+				bind:value={editData.styleNameEn}
 				editable={true}
 				type="text"
 				placeholder="e.g. Legend of Bravado and Revelry"
+				width="480px"
+			/>
+			<DetailItem
+				label="Style Name (JP)"
+				bind:value={editData.styleNameJp}
+				editable={true}
+				type="text"
+				placeholder="例：武勇と歓喜の伝説"
 				width="480px"
 			/>
 		{/if}
@@ -112,8 +120,11 @@
 		</DetailItem>
 		{#if character.styleSwap}
 			<DetailItem label="Style Swap" value="Yes" />
-			{#if character.styleName}
-				<DetailItem label="Style Name" value={character.styleName} />
+			{#if character.styleName?.en}
+				<DetailItem label="Style Name (EN)" value={character.styleName.en} />
+			{/if}
+			{#if character.styleName?.ja}
+				<DetailItem label="Style Name (JP)" value={character.styleName.ja} />
 			{/if}
 			{#if character.baseCharacter}
 				<DetailItem label="Base Character" value={character.baseCharacter.name?.en ?? '—'} />

@@ -93,7 +93,8 @@
 
 		// Style swap
 		styleSwap: false,
-		styleName: '' as string,
+		styleNameEn: '' as string,
+		styleNameJp: '' as string,
 
 		// Dates
 		releaseDate: '',
@@ -204,7 +205,8 @@
 
 				// Style swap
 				style_swap: editData.styleSwap,
-				style_name: editData.styleName || undefined,
+				style_name_en: editData.styleNameEn || undefined,
+				style_name_jp: editData.styleNameJp || undefined,
 
 				// Dates
 				release_date: editData.releaseDate || null,

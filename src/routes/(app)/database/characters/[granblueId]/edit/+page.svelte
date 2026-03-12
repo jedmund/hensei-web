@@ -111,7 +111,8 @@
 		special: false,
 		// Style swap
 		styleSwap: false,
-		styleName: '' as string,
+		styleNameEn: '' as string,
+		styleNameJp: '' as string,
 		// Dates
 		releaseDate: '',
 		flbDate: '',
@@ -184,7 +185,8 @@
 				special: character.special || false,
 			// Style swap
 			styleSwap: character.styleSwap || false,
-			styleName: character.styleName || '',
+			styleNameEn: character.styleName?.en || '',
+		styleNameJp: character.styleName?.ja || '',
 				// Dates
 				releaseDate: character.releaseDate || '',
 				flbDate: character.flbDate || '',
@@ -251,7 +253,8 @@
 				special: editData.special,
 				// Style swap
 				style_swap: editData.styleSwap,
-				style_name: editData.styleName || undefined,
+				style_name_en: editData.styleNameEn || undefined,
+				style_name_jp: editData.styleNameJp || undefined,
 				// Dates
 				release_date: editData.releaseDate || undefined,
 				flb_date: editData.flbDate || undefined,
