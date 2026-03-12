@@ -18,8 +18,7 @@
 	@use '$src/themes/spacing' as spacing;
 
 	.modal-body {
-		padding: spacing.$unit-2x;
-		padding-bottom: spacing.$unit-3x;
+		padding: spacing.$unit spacing.$unit-2x;
 		overflow-y: auto;
 		flex: 1;
 

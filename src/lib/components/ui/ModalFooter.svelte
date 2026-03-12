@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 	import Button from './Button.svelte'
@@ -18,8 +17,13 @@
 		showShadow?: boolean
 	}
 
-	let { onCancel, cancelDisabled = false, primaryAction, left, showShadow = false }: Props =
-		$props()
+	let {
+		onCancel,
+		cancelDisabled = false,
+		primaryAction,
+		left,
+		showShadow = false
+	}: Props = $props()
 </script>
 
 <div class="modal-footer" class:shadow={showShadow}>
@@ -29,12 +33,15 @@
 		</div>
 	{/if}
 	<div class="actions">
-		<Button variant="ghost" onclick={onCancel} disabled={cancelDisabled}>Nevermind</Button>
+		<Button variant="ghost" onclick={onCancel} disabled={cancelDisabled} size="small"
+			>Nevermind</Button
+		>
 		{#if primaryAction}
 			<Button
 				variant={primaryAction.destructive ? 'destructive' : 'primary'}
 				onclick={primaryAction.onclick}
 				disabled={primaryAction.disabled}
+				size="small"
 			>
 				{primaryAction.label}
 			</Button>
