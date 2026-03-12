@@ -303,9 +303,9 @@
 						<DetailsContainer title="Related Units">
 							<div class="related-units">
 								{#each relatedQuery.data as related}
-									<a href="/database/characters/{related.granblueId}" class="related-unit">
+									<a href="/database/characters/{related.granblueId}{related.styleSwap ? '/style' : ''}" class="related-unit">
 										<img
-											src={getCharacterImage(related.granblueId, 'grid', '01')}
+											src={getCharacterImage(related.granblueId, 'grid', related.styleSwap ? '01_style' : '01')}
 											alt={related.name.en}
 											class="related-image"
 										/>
