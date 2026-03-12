@@ -9,15 +9,16 @@
 	import { Grid } from 'wx-svelte-grid'
 	import type { IColumn } from 'wx-svelte-grid'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
-	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import RaidGridImageCell from '$lib/components/database/cells/RaidGridImageCell.svelte'
+	import RaidNameCell from '$lib/components/database/cells/RaidNameCell.svelte'
 	import RaidGroupNameCell from '$lib/components/database/cells/RaidGroupNameCell.svelte'
 	import RaidGroupFlagsCell from '$lib/components/database/cells/RaidGroupFlagsCell.svelte'
-	import RaidImageCell from '$lib/components/database/cells/RaidImageCell.svelte'
-	import type { Raid, RaidGroup } from '$lib/types/api/entities'
+	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
+	import type { Raid } from '$lib/types/api/entities'
 	import type { RaidGroupFull } from '$lib/types/api/raid'
 	import { getRaidSectionLabel } from '$lib/utils/raidSection'
 
@@ -166,7 +167,7 @@
 		extraFilter = undefined
 	}
 
-	// Element options (matching CollectionFilters)
+	// Element options (matching internal mapping)
 	const elements = [
 		{ value: 0, label: 'Null', color: '#888' },
 		{ value: 1, label: 'Wind', color: '#4A9B3F' },
@@ -182,6 +183,111 @@
 		{ value: 1, label: 'Yes' },
 		{ value: 0, label: 'No' }
 	]
+
+	// ==================== Raids Grid Configuration ====================
+
+	// Sort state for raids grid
+	let raidsSortMarks = $state<Record<string, { order: 'asc' | 'desc' }>>({})
+
+	// Raids grid columns
+	const raidsColumns: IColumn[] = [
+		{
+			id: 'image',
+			header: '',
+			width: 80,
+			cell: RaidGridImageCell
+		},
+		{
+			id: 'name',
+			header: 'Name',
+			flexgrow: 1,
+			sort: true,
+			cell: RaidNameCell
+		},
+		{
+			id: 'level',
+			header: 'Level',
+			width: 80,
+			sort: true,
+			template: (val: any) => val?.toString() ?? '-'
+		},
+		{
+			id: 'element',
+			header: 'Element',
+			width: 100,
+			sort: true,
+			cell: ElementCell
+		},
+		{
+			id: 'group',
+			header: 'Group',
+			width: 180,
+			template: (_val: any, row: any) => row.group ? displayName(row.group) : '-'
+		}
+	]
+
+	// Raids grid API reference
+	let raidsGridApi: any
+
+	// Initialize raids grid
+	const initRaidsGrid = (apiRef: any) => {
+		raidsGridApi = apiRef
+
+		// Intercept sort-rows for client-side sorting
+		raidsGridApi.intercept('sort-rows', (ev: { key: string; add: boolean }) => {
+			const { key } = ev
+			const currentOrder = raidsSortMarks[key]?.order
+
+			if (currentOrder === 'asc') {
+				raidsSortMarks = { [key]: { order: 'desc' } }
+			} else if (currentOrder === 'desc') {
+				raidsSortMarks = {}
+			} else {
+				raidsSortMarks = { [key]: { order: 'asc' } }
+			}
+
+			return false
+		})
+
+		// Row click handler
+		raidsGridApi.on('select-row', (ev: any) => {
+			const rowId = ev.id
+			if (rowId) {
+				const raid = filteredRaids.find((r: any) => r.id === rowId)
+				if (raid) {
+					handleRaidClick(raid)
+				}
+			}
+		})
+	}
+
+	// Sort filtered raids based on sort marks (or use default sort)
+	const sortedRaidsData = $derived.by(() => {
+		const sortKey = Object.keys(raidsSortMarks)[0]
+		if (!sortKey) return filteredRaids
+
+		const order = raidsSortMarks[sortKey]?.order
+		return [...filteredRaids].sort((a: any, b: any) => {
+			let valA = a[sortKey]
+			let valB = b[sortKey]
+
+			// Handle name sorting (use English name)
+			if (sortKey === 'name') {
+				valA = a.name?.en ?? ''
+				valB = b.name?.en ?? ''
+			}
+
+			// Handle numeric values
+			if (typeof valA === 'number' && typeof valB === 'number') {
+				return order === 'asc' ? valA - valB : valB - valA
+			}
+
+			// Handle string values
+			const strA = String(valA ?? '')
+			const strB = String(valB ?? '')
+			return order === 'asc' ? strA.localeCompare(strB) : strB.localeCompare(strA)
+		})
+	})
 
 	// ==================== Groups Grid Configuration ====================
 
@@ -205,11 +311,15 @@
 			template: (val: any) => getRaidSectionLabel(val)
 		},
 		{
-			id: 'order',
-			header: 'Order',
-			width: 80,
-			sort: true,
-			template: (val: any) => val?.toString() ?? '-'
+			id: 'player_count',
+			header: 'Players',
+			width: 100,
+			template: (_val: any, row: any) => {
+				const raids = row.raids ?? []
+				const counts: number[] = [...new Set<number>(raids.map((r: any) => r.playerCount).filter(Boolean))]
+				counts.sort((a, b) => a - b)
+				return counts.length > 0 ? counts.join(', ') : '-'
+			}
 		},
 		{
 			id: 'difficulty',
@@ -361,56 +471,14 @@
 					</div>
 				{/if}
 
-				<table class="raids-table">
-					<thead>
-						<tr>
-							<th class="col-image"></th>
-							<th class="col-name">Name</th>
-							<th class="col-level">Level</th>
-							<th class="col-element">Element</th>
-							<th class="col-group">Group</th>
-							<th class="col-slug">Slug</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#if filteredRaids.length === 0 && !raidsQuery.isLoading}
-							<tr>
-								<td colspan="6" class="empty-state">
-									{searchTerm || hasActiveFilters
-										? 'No raids match your filters'
-										: 'No raids yet'}
-								</td>
-							</tr>
-						{:else}
-							{#each filteredRaids as raid}
-								<tr onclick={() => handleRaidClick(raid)} class="clickable">
-									<td class="col-image">
-										<RaidImageCell {raid} />
-									</td>
-									<td class="col-name">
-										<span class="raid-name">{displayName(raid)}</span>
-									</td>
-									<td class="col-level">
-										{raid.level ?? '-'}
-									</td>
-									<td class="col-element">
-										{#if raid.element !== undefined && raid.element !== null}
-											<ElementBadge element={raid.element} />
-										{:else}
-											<span class="no-element">-</span>
-										{/if}
-									</td>
-									<td class="col-group">
-										{raid.group ? displayName(raid.group) : '-'}
-									</td>
-									<td class="col-slug">
-										<code>{raid.slug}</code>
-									</td>
-								</tr>
-							{/each}
-						{/if}
-					</tbody>
-				</table>
+				<Grid
+					data={sortedRaidsData}
+					columns={raidsColumns}
+					init={initRaidsGrid}
+					sortMarks={raidsSortMarks}
+					sizes={{ rowHeight: 64 }}
+					class="database-grid-theme"
+				/>
 			</div>
 
 			<div class="grid-footer">
@@ -471,7 +539,7 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: spacing.$unit;
-		border-bottom: 1px solid #e5e5e5;
+		border-bottom: 1px solid var(--border-subtle);
 		gap: spacing.$unit;
 
 		.filters {
@@ -504,7 +572,7 @@
 
 				&:focus {
 					outline: none;
-					border-color: #007bff;
+					border-color: var(--accent-blue);
 				}
 			}
 		}
@@ -516,7 +584,7 @@
 		padding: spacing.$unit-half spacing.$unit;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
-		color: var(--accent-color);
+		color: var(--accent-blue);
 		cursor: pointer;
 
 		&:hover {
@@ -540,7 +608,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: rgba(255, 255, 255, 0.9);
+		background: color-mix(in srgb, var(--card-bg) 90%, transparent);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -548,82 +616,8 @@
 
 		.loading-spinner {
 			font-size: typography.$font-medium;
-			color: #666;
+			color: var(--text-tertiary);
 		}
-	}
-
-	.raids-table {
-		width: 100%;
-		border-collapse: collapse;
-
-		th,
-		td {
-			padding: spacing.$unit spacing.$unit-2x;
-			text-align: left;
-			border-bottom: 1px solid #e5e5e5;
-		}
-
-		th {
-			background: #f8f9fa;
-			font-weight: typography.$bold;
-			color: #495057;
-			font-size: typography.$font-small;
-		}
-
-		tr.clickable {
-			cursor: pointer;
-
-			&:hover {
-				background: #f8f9fa;
-			}
-		}
-
-		.col-image {
-			width: 64px;
-			padding: 4px !important;
-		}
-
-		.col-name {
-			min-width: 200px;
-		}
-
-		.col-level {
-			width: 80px;
-		}
-
-		.col-element {
-			width: 100px;
-		}
-
-		.col-group {
-			min-width: 150px;
-		}
-
-		.col-slug {
-			min-width: 150px;
-
-			code {
-				font-size: typography.$font-small;
-				background: #f0f0f0;
-				padding: 2px 6px;
-				border-radius: 3px;
-			}
-		}
-
-	}
-
-	.raid-name {
-		font-weight: typography.$bold;
-	}
-
-	.no-element {
-		color: #999;
-	}
-
-	.empty-state {
-		text-align: center;
-		color: #666;
-		padding: spacing.$unit-4x !important;
 	}
 
 	.grid-footer {
@@ -631,41 +625,41 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: spacing.$unit;
-		border-top: 1px solid #e5e5e5;
-		background: #f8f9fa;
+		border-top: 1px solid var(--border-subtle);
+		background: var(--bar-bg);
 
 		.pagination-info {
 			font-size: typography.$font-small;
-			color: #6c757d;
+			color: var(--text-secondary);
 		}
 	}
 
-	// SVAR Grid styles
+	// SVAR Grid styles (using design system variables)
 	:global(.database-grid-theme) {
 		font-size: typography.$font-small;
 		width: 100%;
 	}
 
 	:global(.wx-grid .wx-header) {
-		background: #f8f9fa;
+		background: var(--bar-bg);
 	}
 
 	:global(.wx-grid .wx-h-row) {
-		background: #f8f9fa;
-		border-bottom: 1px solid #e5e5e5;
+		background: var(--bar-bg);
+		border-bottom: 1px solid var(--border-subtle);
 	}
 
 	:global(.wx-grid .wx-header-cell) {
-		background: #f8f9fa;
+		background: var(--bar-bg);
 		font-weight: typography.$bold;
-		color: #495057;
-		border-bottom: 2px solid #dee2e6;
+		color: var(--text-secondary);
+		border-bottom: 2px solid var(--border-medium);
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s ease;
 		cursor: pointer;
 
 		&:hover {
-			background: #e9ecef;
+			background: var(--button-bg-hover);
 		}
 	}
 
@@ -682,8 +676,12 @@
 		padding-left: spacing.$unit-2x;
 	}
 
+	:global(.wx-grid .wx-cell:not(:last-child)) {
+		border-right: none;
+	}
+
 	:global(.wx-grid .wx-row:hover) {
-		background: #f8f9fa;
+		background: var(--table-row-hover);
 		cursor: pointer;
 	}
 </style>

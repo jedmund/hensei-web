@@ -720,7 +720,7 @@
 	}
 
 	:global(.wx-grid .wx-row:hover) {
-		background: var(--bar-bg);
+		background: var(--table-row-hover);
 		cursor: pointer;
 	}
 

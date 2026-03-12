@@ -40,7 +40,8 @@ export function getElementClass(element?: number): string {
 
 export function getElementIcon(element?: number): string {
 	const label = getElementLabel(element)
-	if (label === '—' || label === 'Null') return ''
+	if (label === '—') return ''
+	if (label === 'Null') return `${getBasePath()}/labels/element/Label_Element_Any.png`
 	// Capitalize first letter for filename
 	const capitalizedLabel = label.charAt(0).toUpperCase() + label.slice(1)
 	return `${getBasePath()}/labels/element/Label_Element_${capitalizedLabel}.png`

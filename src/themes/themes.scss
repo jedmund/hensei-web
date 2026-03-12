@@ -271,6 +271,9 @@
 
 	--grid-border-color: #{colors.$grid--border--color--light};
 
+	// Light - Database
+	--table-row-hover: #{colors.$grey-95};
+
 	// Light - Element theming
 	--null-bg: #{colors.$null--bg--light};
 	--null-bg-hover: #{colors.$null--bg--hover--light};
@@ -687,6 +690,9 @@ html[data-theme='dark'] {
 	--toggle-stroke: #{colors.$toggle--stroke--dark};
 
 	--grid-border-color: #{colors.$grid--border--color--dark};
+
+	// Dark - Database
+	--table-row-hover: #{colors.$grey-25};
 
 	// Dark - Element theming
 	--null-bg: #{colors.$null--bg--dark};
