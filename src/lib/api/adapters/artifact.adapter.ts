@@ -65,13 +65,10 @@ export class ArtifactAdapter extends BaseAdapter {
 
 	/**
 	 * Lists all artifact reference data
-	 * Results are cached for 1 hour
 	 */
 	async listArtifacts(params?: ArtifactListParams): Promise<Artifact[]> {
 		const response = await this.request<{ artifacts: Artifact[] }>('/artifacts', {
-			method: 'GET',
-			query: params,
-			cacheTime: 60 * 60 * 1000 // 1 hour
+			query: params
 		})
 		return response.artifacts
 	}
@@ -80,21 +77,14 @@ export class ArtifactAdapter extends BaseAdapter {
 	 * Gets a single artifact by ID
 	 */
 	async getArtifact(id: string): Promise<Artifact> {
-		return this.request<Artifact>(`/artifacts/${id}`, {
-			method: 'GET',
-			cacheTime: 60 * 60 * 1000 // 1 hour
-		})
+		return this.request<Artifact>(`/artifacts/${id}`)
 	}
 
 	/**
 	 * Lists all artifact skills
-	 * Results are cached for 1 hour
 	 */
 	async listSkills(): Promise<ArtifactSkill[]> {
-		const response = await this.request<{ artifactSkills: ArtifactSkill[] }>('/artifact_skills', {
-			method: 'GET',
-			cacheTime: 60 * 60 * 1000 // 1 hour
-		})
+		const response = await this.request<{ artifactSkills: ArtifactSkill[] }>('/artifact_skills')
 		return response.artifactSkills
 	}
 
@@ -121,9 +111,7 @@ export class ArtifactAdapter extends BaseAdapter {
 		const response = await this.request<{ artifactSkills: ArtifactSkill[] }>(
 			'/artifact_skills',
 			{
-				method: 'GET',
-				query: { group },
-				cacheTime: 60 * 60 * 1000 // 1 hour
+				query: { group }
 			}
 		)
 		return response.artifactSkills
@@ -133,10 +121,7 @@ export class ArtifactAdapter extends BaseAdapter {
 	 * Gets a single artifact skill by ID
 	 */
 	async getSkill(id: string): Promise<ArtifactSkill> {
-		return this.request<ArtifactSkill>(`/artifact_skills/${id}`, {
-			method: 'GET',
-			cacheTime: 60 * 60 * 1000 // 1 hour
-		})
+		return this.request<ArtifactSkill>(`/artifact_skills/${id}`)
 	}
 
 	/**

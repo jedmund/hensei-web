@@ -224,9 +224,7 @@ export class PartyAdapter extends BaseAdapter {
 				perPage?: number
 			}
 		}>('/parties', {
-			method: 'GET',
-			query,
-			cacheTTL: 30000
+			query
 		})
 
 		return {
@@ -244,9 +242,7 @@ export class PartyAdapter extends BaseAdapter {
 	async listUserParties(params: ListUserPartiesParams): Promise<PaginatedResponse<Party>> {
 		const { username, ...queryParams } = params
 		return this.request<PaginatedResponse<Party>>(`/users/${username}/parties`, {
-			method: 'GET',
-			query: queryParams,
-			cacheTTL: 30000 // Cache for 30 seconds
+			query: queryParams
 		})
 	}
 
@@ -275,9 +271,7 @@ export class PartyAdapter extends BaseAdapter {
 				perPage?: number
 			}
 		}>('/parties', {
-			method: 'GET',
-			query,
-			cacheTTL: 30000
+			query
 		})
 
 		return {

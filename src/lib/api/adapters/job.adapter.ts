@@ -103,10 +103,7 @@ export class JobAdapter extends BaseAdapter {
 	 * Jobs are returned as a flat array from the API
 	 */
 	async getAll(): Promise<Job[]> {
-		const response = await this.request<Job[]>('/jobs', {
-			method: 'GET',
-			cacheTTL: 300000 // Cache for 5 minutes - jobs don't change often
-		})
+		const response = await this.request<Job[]>('/jobs')
 		return response
 	}
 
@@ -114,10 +111,7 @@ export class JobAdapter extends BaseAdapter {
 	 * Gets a single job by ID
 	 */
 	async getById(id: string): Promise<Job> {
-		const response = await this.request<Job>(`/jobs/${id}`, {
-			method: 'GET',
-			cacheTTL: 300000 // Cache for 5 minutes
-		})
+		const response = await this.request<Job>(`/jobs/${id}`)
 		return response
 	}
 
@@ -126,10 +120,7 @@ export class JobAdapter extends BaseAdapter {
 	 * Returns skills categorized by type (main, sub, emp, base)
 	 */
 	async getSkills(jobId: string): Promise<JobSkill[]> {
-		return this.request<JobSkill[]>(`/jobs/${jobId}/skills`, {
-			method: 'GET',
-			cacheTTL: 300000 // Cache for 5 minutes
-		})
+		return this.request<JobSkill[]>(`/jobs/${jobId}/skills`)
 	}
 
 	/**
@@ -137,10 +128,7 @@ export class JobAdapter extends BaseAdapter {
 	 * Only returns data if the job supports accessories
 	 */
 	async getAccessoriesForJob(jobId: string): Promise<JobAccessory[]> {
-		return this.request<JobAccessory[]>(`/jobs/${jobId}/accessories`, {
-			method: 'GET',
-			cacheTTL: 300000 // Cache for 5 minutes
-		})
+		return this.request<JobAccessory[]>(`/jobs/${jobId}/accessories`)
 	}
 
 	/**
@@ -220,10 +208,7 @@ export class JobAdapter extends BaseAdapter {
 	 * Useful for browsing all skills
 	 */
 	async getAllSkills(): Promise<JobSkill[]> {
-		return this.request<JobSkill[]>('/jobs/skills', {
-			method: 'GET',
-			cacheTTL: 300000 // Cache for 5 minutes
-		})
+		return this.request<JobSkill[]>('/jobs/skills')
 	}
 
 	/**
@@ -231,10 +216,7 @@ export class JobAdapter extends BaseAdapter {
 	 * Returns skills that can be used with the specified job
 	 */
 	async getEmpSkills(jobId: string): Promise<JobSkill[]> {
-		return this.request<JobSkill[]>(`/jobs/${jobId}/emp_skills`, {
-			method: 'GET',
-			cacheTTL: 300000 // Cache for 5 minutes
-		})
+		return this.request<JobSkill[]>(`/jobs/${jobId}/emp_skills`)
 	}
 
 	/**
@@ -361,20 +343,14 @@ export class JobAdapter extends BaseAdapter {
 	 */
 	async getAllAccessories(accessoryType?: number): Promise<JobAccessory[]> {
 		const params = accessoryType ? `?accessory_type=${accessoryType}` : ''
-		return this.request<JobAccessory[]>(`/job_accessories${params}`, {
-			method: 'GET',
-			cacheTTL: 300000 // Cache for 5 minutes
-		})
+		return this.request<JobAccessory[]>(`/job_accessories${params}`)
 	}
 
 	/**
 	 * Gets a single job accessory by ID or granblue_id
 	 */
 	async getAccessoryById(id: string): Promise<JobAccessory> {
-		return this.request<JobAccessory>(`/job_accessories/${id}`, {
-			method: 'GET',
-			cacheTTL: 300000 // Cache for 5 minutes
-		})
+		return this.request<JobAccessory>(`/job_accessories/${id}`)
 	}
 
 	/**
