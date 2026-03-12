@@ -39,6 +39,9 @@
 </script>
 
 <DetailsSection title="Basic Information">
+	{#if type === 'character' && itemData?.styleName?.en}
+		<DetailRow label="Style" value={itemData.styleName.en} />
+	{/if}
 	<DetailRow label="Rarity" value={getRarityLabel(itemData?.rarity)} />
 	<DetailRow label="Element">
 		<ElementLabel element={itemData?.element} size="medium" />

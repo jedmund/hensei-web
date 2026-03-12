@@ -24,7 +24,8 @@
 		const id = itemData?.granblueId
 
 		if (type === 'character') {
-			const pose = getCharacterPose(gridUncapLevel ?? undefined, gridTranscendence ?? undefined)
+			const isStyle = (item as GridCharacter).character?.styleSwap
+			const pose = isStyle ? '01_style' : getCharacterPose(gridUncapLevel ?? undefined, gridTranscendence ?? undefined)
 			return getCharacterDetailImage(id, pose)
 		} else if (type === 'weapon') {
 			return getWeaponBaseImage(id)
