@@ -9,7 +9,7 @@
 	import { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
 	import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
-	import { onMount, onDestroy } from 'svelte'
+	import { onMount, onDestroy, tick } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
@@ -138,6 +138,7 @@
 
 	// Grid API reference
 	let api: any
+	let gridDataStore: any
 
 	// Build current filter state for URL building
 	function getCurrentFilterState(): CollectionFilterState {
@@ -195,6 +196,14 @@
 			toast.error(extractErrorMessage(error, 'Failed to load data'))
 		} finally {
 			loading = false
+
+			// Re-apply sort marks after data load. We must wait for tick() because
+			// the data change triggers Grid's reinitStore effect which resets sortMarks.
+			// tick() ensures that effect has flushed before we re-apply.
+			if (gridDataStore && Object.keys(sortMarks).length > 0) {
+				await tick()
+				gridDataStore.setState({ sortMarks })
+			}
 		}
 	}
 
@@ -203,6 +212,10 @@
 		api = apiRef
 		// Connect provider to grid
 		api.setNext(provider)
+
+		// Get direct access to the data store for surgical state updates
+		const { data: dataStore } = api.getStores()
+		gridDataStore = dataStore
 
 		// Intercept sort-rows to prevent client-side sorting and do server-side instead
 		api.intercept('sort-rows', (ev: { key: string; add: boolean }) => {
@@ -225,6 +238,9 @@
 				newSortKey = key
 				newSortOrder = 'asc'
 			}
+
+			// Update sort marks directly in the store (bypasses reinitStore cycle)
+			dataStore.setState({ sortMarks })
 
 			// Update provider and reload from server
 			provider.setSort(newSortKey, newSortOrder)
@@ -466,7 +482,6 @@
 			{data}
 			{columns}
 			{init}
-			{sortMarks}
 			sizes={{ rowHeight: 80 }}
 			class="database-grid-theme"
 		/>
