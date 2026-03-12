@@ -64,7 +64,7 @@
 							{/snippet}
 						</Tooltip>
 					{/if}
-					{#if party.raid?.group?.extra}
+					{#if party.raid?.extra}
 						<Tooltip content="Extra">
 							{#snippet children()}
 								<span class="pill extra">
