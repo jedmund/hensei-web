@@ -226,7 +226,6 @@
 				ougi_ratio_flb: editData.ougiRatioFlb,
 				flb: editData.flb,
 				ulb: editData.ulb,
-				transcendence: editData.transcendence,
 				special: editData.special,
 				style_swap: editData.styleSwap,
 				style_name_en: editData.styleNameEn || undefined,

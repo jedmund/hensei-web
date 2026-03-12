@@ -249,7 +249,6 @@
 				// Uncap flags
 				flb: editData.flb,
 				ulb: editData.ulb,
-				transcendence: editData.transcendence,
 				special: editData.special,
 				// Style swap
 				style_swap: editData.styleSwap,

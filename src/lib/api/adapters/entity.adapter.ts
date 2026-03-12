@@ -664,7 +664,7 @@ export class EntityAdapter extends BaseAdapter {
 		const params = options?.styleSwap ? '?style_swap=true' : ''
 		return this.request<Character>(`/characters/${id}${params}`, {
 			method: 'GET',
-			cacheTTL: 600000 // Cache for 10 minutes
+			cacheTTL: 600000
 		})
 	}
 
