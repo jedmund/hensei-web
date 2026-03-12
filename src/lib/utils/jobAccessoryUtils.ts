@@ -41,10 +41,11 @@ export function getAccessoryTypeOptions(): Array<{ value: number; label: string 
 /**
  * Gets the image URL for a job accessory
  * @param granblueId The accessory's granblue_id
- * @param accessoryType The type of accessory (1=Shield, 2=Manatura)
+ * @param size The image size variant ('square' or 'grid')
  */
-export function getJobAccessoryImageUrl(granblueId: string, accessoryType: number): string {
-	// Different asset paths based on accessory type
-	const folder = accessoryType === ACCESSORY_TYPES.SHIELD ? 'shield' : 'manatura'
-	return `/images/job-accessories/${folder}/${granblueId}.png`
+export function getJobAccessoryImageUrl(
+	granblueId: string,
+	size: 'square' | 'grid' = 'square'
+): string {
+	return `/images/accessory-${size}/${granblueId}.jpg`
 }
