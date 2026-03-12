@@ -9,24 +9,32 @@
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import type { IColumn } from 'wx-svelte-grid'
 	import WeaponImageCell from '$lib/components/database/cells/WeaponImageCell.svelte'
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import ProficiencyCell from '$lib/components/database/cells/ProficiencyCell.svelte'
 	import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
+	import AwakeningModal from '$lib/features/database/weapons/AwakeningModal.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
+	import { getBasePath } from '$lib/utils/images'
+	import type { Awakening } from '$lib/types/api/entities'
+
+	type ViewMode = 'weapons' | 'series' | 'awakenings'
 
 	// View mode state - read initial value from URL
-	const initialView = $page.url.searchParams.get('view')
-	let viewMode = $state<'weapons' | 'series'>(initialView === 'series' ? 'series' : 'weapons')
+	const initialView = $page.url.searchParams.get('view') as ViewMode | null
+	let viewMode = $state<ViewMode>(
+		initialView === 'series' ? 'series' : initialView === 'awakenings' ? 'awakenings' : 'weapons'
+	)
 
 	// Sync viewMode changes to URL
 	$effect(() => {
 		const currentView = $page.url.searchParams.get('view')
-		if (viewMode === 'series' && currentView !== 'series') {
-			goto('?view=series', { replaceState: true, noScroll: true })
-		} else if (viewMode === 'weapons' && currentView === 'series') {
+		if (viewMode !== 'weapons' && currentView !== viewMode) {
+			goto(`?view=${viewMode}`, { replaceState: true, noScroll: true })
+		} else if (viewMode === 'weapons' && currentView) {
 			goto('/database/weapons', { replaceState: true, noScroll: true })
 		}
 	})
@@ -34,15 +42,43 @@
 	// Query for weapon series
 	const weaponSeriesQuery = createQuery(() => entityQueries.weaponSeriesList())
 
+	// Query for awakenings (weapon type)
+	const awakeningsQuery = createQuery(() => entityQueries.awakenings('Weapon'))
+
 	// Sorted series data
 	const sortedSeries = $derived.by(() => {
 		if (!weaponSeriesQuery.data) return []
 		return [...weaponSeriesQuery.data].sort((a, b) => a.order - b.order)
 	})
 
+	// Sorted awakenings
+	const sortedAwakenings = $derived.by(() => {
+		if (!awakeningsQuery.data) return []
+		return [...awakeningsQuery.data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+	})
+
 	// Navigate to series detail
 	function handleSeriesClick(slug: string) {
 		goto(`/database/series/weapons/${slug}`)
+	}
+
+	// Awakening modal state
+	let awakeningModalOpen = $state(false)
+	let editingAwakening = $state<Awakening | null>(null)
+
+	function handleAddAwakening() {
+		editingAwakening = null
+		awakeningModalOpen = true
+	}
+
+	function handleEditAwakening(awakening: Awakening) {
+		editingAwakening = awakening
+		awakeningModalOpen = true
+	}
+
+	function getAwakeningImageUrl(slug: string): string {
+		const ext = slug.startsWith('character-') ? 'jpg' : 'png'
+		return `${getBasePath()}/awakening/${slug}.${ext}`
 	}
 
 	// Column configuration for weapons
@@ -112,15 +148,17 @@
 				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
 					<Segment value="weapons">Weapons</Segment>
 					<Segment value="series">Series</Segment>
+					<Segment value="awakenings">Awakenings</Segment>
 				</SegmentedControl>
 			{/snippet}
 		</DatabaseGridWithProvider>
-	{:else}
+	{:else if viewMode === 'series'}
 		<div class="grid-container">
 			<div class="controls">
 				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
 					<Segment value="weapons">Weapons</Segment>
 					<Segment value="series">Series</Segment>
+					<Segment value="awakenings">Awakenings</Segment>
 				</SegmentedControl>
 			</div>
 
@@ -174,6 +212,71 @@
 				<div class="empty-state">No weapon series found</div>
 			{/if}
 		</div>
+	{:else}
+		<!-- Awakenings view -->
+		<div class="grid-container">
+			<div class="controls">
+				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
+					<Segment value="weapons">Weapons</Segment>
+					<Segment value="series">Series</Segment>
+					<Segment value="awakenings">Awakenings</Segment>
+				</SegmentedControl>
+				<div class="controls-right">
+					<Button variant="primary" size="small" onclick={handleAddAwakening}>Add</Button>
+				</div>
+			</div>
+
+			{#if awakeningsQuery.isPending}
+				<div class="loading-state">Loading awakenings...</div>
+			{:else if awakeningsQuery.error}
+				<div class="error-state">Failed to load awakenings</div>
+			{:else if sortedAwakenings.length > 0}
+				<div class="grid-wrapper">
+					<table class="series-table">
+						<thead>
+							<tr>
+								<th class="col-image">Image</th>
+								<th class="col-order">Order</th>
+								<th class="col-name">Name</th>
+								<th class="col-slug">Slug</th>
+								<th class="col-type">Type</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each sortedAwakenings as awakening (awakening.id)}
+								<tr onclick={() => handleEditAwakening(awakening)} class="clickable">
+									<td class="col-image">
+										{#if awakening.slug}
+											<img
+												src={getAwakeningImageUrl(awakening.slug)}
+												alt={awakening.name.en}
+												class="awakening-icon"
+											/>
+										{:else}
+											<span class="no-image">—</span>
+										{/if}
+									</td>
+									<td class="col-order">{awakening.order ?? '—'}</td>
+									<td class="col-name">{awakening.name.en}</td>
+									<td class="col-slug"><code>{awakening.slug}</code></td>
+									<td class="col-type">{awakening.objectType ?? '—'}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+
+				<div class="grid-footer">
+					<div class="pagination-info">
+						{sortedAwakenings.length} awakenings
+					</div>
+				</div>
+			{:else}
+				<div class="empty-state">No awakenings found</div>
+			{/if}
+		</div>
+
+		<AwakeningModal bind:open={awakeningModalOpen} awakening={editingAwakening} />
 	{/if}
 </div>
 
@@ -201,6 +304,10 @@
 		align-items: center;
 		padding: spacing.$unit-2x;
 		gap: spacing.$unit;
+	}
+
+	.controls-right {
+		margin-left: auto;
 	}
 
 	.loading-state,
@@ -269,6 +376,25 @@
 		.col-flags {
 			min-width: 200px;
 		}
+
+		.col-image {
+			width: 60px;
+			text-align: center;
+		}
+
+		.col-type {
+			width: 100px;
+		}
+	}
+
+	.awakening-icon {
+		width: 28px;
+		height: 28px;
+		object-fit: contain;
+	}
+
+	.no-image {
+		color: #999;
 	}
 
 	.series-name {

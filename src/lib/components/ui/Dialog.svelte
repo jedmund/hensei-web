@@ -80,6 +80,15 @@
 		flex-direction: column;
 		overflow: hidden;
 		padding: 0;
+		transition:
+			transform $duration-standard ease,
+			filter $duration-standard ease;
+	}
+
+	:global(.dialog-content[data-nested-open]) {
+		transform: translate(-50%, -50%)
+			scale(calc(1 - var(--bits-dialog-nested-count) * 0.05));
+		filter: blur(calc(var(--bits-dialog-nested-count) * 2px));
 	}
 
 	:global(.dialog-close) {
