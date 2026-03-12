@@ -23,7 +23,10 @@ export const CharacterEditSchema = z.object({
   flb: z.boolean(),
   ulb: z.boolean(),
   transcendence: z.boolean(),
-  special: z.boolean()
+  special: z.boolean(),
+  style_swap: z.boolean(),
+  style_name: z.string().nullable(),
+  base_character_id: z.string().nullable()
 })
 
 export type CharacterEdit = z.infer<typeof CharacterEditSchema>
@@ -52,7 +55,10 @@ export function toEditData(model: any): CharacterEdit {
     flb: model?.uncap?.flb ?? false,
     ulb: model?.uncap?.ulb ?? false,
     transcendence: model?.uncap?.transcendence ?? false,
-    special: model?.special ?? false
+    special: model?.special ?? false,
+    style_swap: model?.styleSwap ?? model?.style_swap ?? false,
+    style_name: model?.styleName ?? model?.style_name ?? null,
+    base_character_id: model?.baseCharacter?.id ?? model?.base_character_id ?? null
   }
 }
 
@@ -84,7 +90,10 @@ export function toPayload(edit: CharacterEdit) {
       ulb: edit.ulb,
       transcendence: edit.transcendence
     },
-    special: edit.special
+    special: edit.special,
+    style_swap: edit.style_swap,
+    style_name: edit.style_name,
+    base_character_id: edit.base_character_id
   }
 }
 
