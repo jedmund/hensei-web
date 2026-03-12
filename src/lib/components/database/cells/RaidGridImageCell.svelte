@@ -1,18 +1,13 @@
 
 <script lang="ts">
-	import type { Raid } from '$lib/types/api/entities'
+	import type { Cell } from 'wx-svelte-grid'
 	import { getRaidImage, getRaidCdnImage } from '$lib/utils/images'
 
-	interface Props {
-		raid: Raid
-	}
+	const { row }: Cell = $props()
 
-	const { raid }: Props = $props()
-
-	// Prefer local icon image, fallback to CDN
 	const iconUrl = $derived.by(() => {
-		if (raid.slug) return getRaidImage(raid.slug, 'icon')
-		if (raid.enemyId) return getRaidCdnImage('icon', raid.enemyId)
+		if (row.slug) return getRaidImage(row.slug, 'thumbnail')
+		if (row.summonId) return getRaidCdnImage('thumbnail', row.summonId)
 		return ''
 	})
 </script>
