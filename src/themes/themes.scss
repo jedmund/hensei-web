@@ -273,6 +273,7 @@
 
 	// Light - Database
 	--table-row-hover: #{colors.$grey-95};
+	--table-header-hover: #{colors.$grey-90};
 
 	// Light - Element theming
 	--null-bg: #{colors.$null--bg--light};
@@ -693,6 +694,7 @@ html[data-theme='dark'] {
 
 	// Dark - Database
 	--table-row-hover: #{colors.$grey-25};
+	--table-header-hover: #{colors.$grey-30};
 
 	// Dark - Element theming
 	--null-bg: #{colors.$null--bg--dark};

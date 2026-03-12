@@ -9,7 +9,7 @@
 	import { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
 	import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
-	import { onMount, onDestroy } from 'svelte'
+	import { onMount, onDestroy, tick } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
@@ -138,6 +138,7 @@
 
 	// Grid API reference
 	let api: any
+	let gridDataStore: any
 
 	// Build current filter state for URL building
 	function getCurrentFilterState(): CollectionFilterState {
@@ -168,8 +169,8 @@
 	}
 
 	// Load data
-	async function loadData(pageNum: number = 1, updateUrlParam: boolean = true) {
-		loading = true
+	async function loadData(pageNum: number = 1, updateUrlParam: boolean = true, showLoading: boolean = true) {
+		if (showLoading) loading = true
 		try {
 			const result = await provider.loadPage(pageNum)
 			data = result
@@ -195,6 +196,14 @@
 			toast.error(extractErrorMessage(error, 'Failed to load data'))
 		} finally {
 			loading = false
+
+			// Re-apply sort marks after data load. We must wait for tick() because
+			// the data change triggers Grid's reinitStore effect which resets sortMarks.
+			// tick() ensures that effect has flushed before we re-apply.
+			if (gridDataStore && Object.keys(sortMarks).length > 0) {
+				await tick()
+				gridDataStore.setState({ sortMarks })
+			}
 		}
 	}
 
@@ -203,6 +212,10 @@
 		api = apiRef
 		// Connect provider to grid
 		api.setNext(provider)
+
+		// Get direct access to the data store for surgical state updates
+		const { data: dataStore } = api.getStores()
+		gridDataStore = dataStore
 
 		// Intercept sort-rows to prevent client-side sorting and do server-side instead
 		api.intercept('sort-rows', (ev: { key: string; add: boolean }) => {
@@ -226,9 +239,12 @@
 				newSortOrder = 'asc'
 			}
 
+			// Update sort marks directly in the store (bypasses reinitStore cycle)
+			dataStore.setState({ sortMarks })
+
 			// Update provider and reload from server
 			provider.setSort(newSortKey, newSortOrder)
-			loadData(1) // Reset to first page when sorting
+			loadData(1, true, false) // Reset to first page, no loading overlay
 
 			return false // Prevent default client-side sorting
 		})
@@ -466,7 +482,6 @@
 			{data}
 			{columns}
 			{init}
-			{sortMarks}
 			sizes={{ rowHeight: 80 }}
 			class="database-grid-theme"
 		/>
@@ -684,22 +699,31 @@
 	}
 
 	:global(.wx-grid .wx-h-row) {
+		height: auto !important;
 		background: var(--bar-bg);
-		border-bottom: 1px solid var(--border-subtle);
+		padding-bottom: spacing.$unit-half;
+		border-bottom: 1px solid var(--border-medium);
 	}
 
-	:global(.wx-grid .wx-header-cell) {
+	:global(.wx-grid .wx-h-row .wx-cell) {
+		box-sizing: border-box;
 		background: var(--bar-bg);
 		font-weight: typography.$bold;
 		color: var(--text-secondary);
-		border-bottom: 2px solid var(--border-medium);
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s ease;
 		cursor: pointer;
 
 		&:hover {
-			background: var(--button-bg-hover);
+			background: var(--table-header-hover);
 		}
+	}
+
+	:global(.wx-grid .wx-h-row .wx-sort) {
+		height: auto;
+		margin-left: spacing.$unit-half;
+		flex-shrink: 0;
+		align-self: center;
 	}
 
 	:global(.wx-grid .wx-cell) {
