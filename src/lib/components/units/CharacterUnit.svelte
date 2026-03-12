@@ -142,6 +142,30 @@
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(($page.data.account?.role ?? 0) >= 7)
 
+	// Check if character has a style swap variant available
+	let hasStyleVariant = $derived.by(() => {
+		if (!item?.character) return false
+		const c = item.character
+		// Base character with style swaps, or style swap character with a base
+		return (c.styleSwaps && c.styleSwaps.length > 0) || (c.styleSwap && c.baseCharacter != null)
+	})
+
+	async function switchStyle(e: Event) {
+		e.stopPropagation()
+		if (!item?.id || !ctx?.canEdit()) return
+
+		try {
+			const editKey = ctx.getEditKey()
+			await ctx.services.gridService.switchCharacterStyle(
+				item.id,
+				editKey || undefined
+			)
+		} catch (err) {
+			console.error('Error switching style:', err)
+			toast.error(extractErrorMessage(err, 'Failed to switch style'))
+		}
+	}
+
 	async function togglePerpetuity(e: Event) {
 		e.stopPropagation()
 		if (!item?.id || !ctx?.canEdit()) return
@@ -209,6 +233,15 @@
 								<div class="orphaned-badge" title="This item is no longer in your collection">
 									<Icon name="alertTriangle" size={16} />
 								</div>
+							{/if}
+							{#if hasStyleVariant && ctx?.canEdit()}
+								<button
+									class="style-switch"
+									onclick={switchStyle}
+									title="Switch Style"
+								>
+									<Icon name="switch-style" size={14} />
+								</button>
 							{/if}
 							{#if imageUrl}
 								<img
@@ -542,6 +575,35 @@
 		.perpetuity-icon.empty {
 			display: none;
 		}
+	}
+
+	.style-switch {
+		position: absolute;
+		z-index: effects.$z-tooltip;
+		bottom: spacing.$unit;
+		right: spacing.$unit;
+		width: spacing.$unit-4x;
+		height: spacing.$unit-4x;
+		padding: 0;
+		border: none;
+		border-radius: 50%;
+		background: rgba(0, 0, 0, 0.55);
+		color: white;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: transform 0.2s ease, background 0.2s ease;
+		opacity: 0;
+
+		&:hover {
+			transform: scale(1.15);
+			background: rgba(0, 0, 0, 0.75);
+		}
+	}
+
+	.frame:hover .style-switch {
+		opacity: 1;
 	}
 
 	// Pulsing focus ring animation
