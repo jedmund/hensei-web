@@ -200,7 +200,7 @@
 								<span class="badge" class:active={raid.group.hl}>{raid.group.hl ? 'Yes' : 'No'}</span>
 							</DetailItem>
 							<DetailItem label="Extra">
-								<span class="badge" class:active={raid.group.extra}>{raid.group.extra ? 'Yes' : 'No'}</span>
+								<span class="badge" class:active={raid.extra}>{raid.extra ? 'Yes' : 'No'}</span>
 							</DetailItem>
 							<DetailItem label="Guidebooks">
 								<span class="badge" class:active={raid.group.guidebooks}>{raid.group.guidebooks ? 'Yes' : 'No'}</span>
