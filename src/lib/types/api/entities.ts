@@ -225,6 +225,7 @@ export interface Raid {
   name: LocalizedName
   level: number
   element: number
+  extra: boolean
   enemy_id?: number
   summon_id?: number
   quest_id?: number

@@ -118,7 +118,7 @@
 		// Apply Extra filter (1 = yes, 0 = no)
 		if (extraFilter !== undefined) {
 			const extraBool = extraFilter === 1
-			raids = raids.filter((r) => r.group?.extra === extraBool)
+			raids = raids.filter((r) => r.extra === extraBool)
 		}
 
 		// Sort by group section, then group order, then element
