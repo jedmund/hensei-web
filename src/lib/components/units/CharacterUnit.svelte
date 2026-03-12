@@ -8,6 +8,7 @@
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { getCharacterImageWithPose, getPlaceholderImage } from '$lib/utils/images'
 	import { openDetailsSidebar, openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
@@ -235,13 +236,16 @@
 								</div>
 							{/if}
 							{#if hasStyleVariant && ctx?.canEdit()}
-								<button
-									class="style-switch"
-									onclick={switchStyle}
-									title="Switch Style"
-								>
-									<Icon name="switch-style" size={14} />
-								</button>
+								<span class="style-switch-wrapper">
+									<Tooltip content="Swap styles">
+										<button
+											class="style-switch"
+											onclick={switchStyle}
+										>
+											<Icon name="swap" size={14} />
+										</button>
+									</Tooltip>
+								</span>
 							{/if}
 							{#if imageUrl}
 								<img
@@ -577,33 +581,32 @@
 		}
 	}
 
-	.style-switch {
+	.style-switch-wrapper {
 		position: absolute;
 		z-index: effects.$z-tooltip;
 		bottom: spacing.$unit;
 		right: spacing.$unit;
+	}
+
+	.style-switch {
 		width: spacing.$unit-4x;
 		height: spacing.$unit-4x;
 		padding: 0;
 		border: none;
 		border-radius: 50%;
-		background: rgba(0, 0, 0, 0.55);
-		color: white;
+		background: white;
+		color: var(--text-secondary);
+		box-shadow: var(--shadow-sm);
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		transition: transform 0.2s ease, background 0.2s ease;
-		opacity: 0;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
 
 		&:hover {
 			transform: scale(1.15);
-			background: rgba(0, 0, 0, 0.75);
+			box-shadow: var(--shadow-md);
 		}
-	}
-
-	.frame:hover .style-switch {
-		opacity: 1;
 	}
 
 	// Pulsing focus ring animation

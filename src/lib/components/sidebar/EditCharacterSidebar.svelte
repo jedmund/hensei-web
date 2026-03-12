@@ -111,7 +111,7 @@
 			onclick={handleSwitchStyle}
 			disabled={styleSwitching}
 		>
-			<Icon name="switch-style" size={16} />
+			<Icon name="swap" size={16} />
 			<span>{styleSwitching ? 'Switching...' : 'Switch Style'}</span>
 		</button>
 	{/if}
