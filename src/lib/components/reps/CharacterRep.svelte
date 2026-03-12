@@ -46,7 +46,8 @@
 			c?.uncapLevel ?? 0,
 			c?.transcendenceStep ?? 0,
 			mainWeaponElement,
-			undefined // partyElement not used here
+			undefined, // partyElement not used here
+			c?.character?.styleSwap
 		)
 	}
 </script>

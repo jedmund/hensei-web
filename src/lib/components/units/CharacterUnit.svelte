@@ -52,7 +52,8 @@
 			item?.uncapLevel ?? 0,
 			item?.transcendenceStep ?? 0,
 			mainWeaponElement,
-			partyElement
+			partyElement,
+			item.character.styleSwap
 		)
 	})
 

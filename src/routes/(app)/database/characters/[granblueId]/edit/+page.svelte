@@ -286,7 +286,8 @@
 
 	// Helper function for character grid image
 	function getCharacterGridImage(character: any): string {
-		return getCharacterImage(character?.granblueId, 'grid', '01')
+		const pose = character?.styleSwap ? '01_style' : '01'
+		return getCharacterImage(character?.granblueId, 'grid', pose)
 	}
 
 	// Page title

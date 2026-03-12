@@ -17,7 +17,10 @@
 			character.character?.granblueId,
 			'grid',
 			character.uncapLevel,
-			character.transcendenceStep
+			character.transcendenceStep,
+			null,
+			null,
+			character.character?.styleSwap
 		)
 	)
 

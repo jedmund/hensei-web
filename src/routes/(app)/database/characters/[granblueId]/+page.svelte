@@ -109,7 +109,8 @@
 
 	// Helper function for character grid image
 	function getCharacterGridImage(character: any): string {
-		return getCharacterImage(character?.granblueId, 'grid', '01')
+		const pose = character?.styleSwap ? '01_style' : '01'
+		return getCharacterImage(character?.granblueId, 'grid', pose)
 	}
 
 	// Available image sizes for characters
@@ -121,6 +122,20 @@
 
 		const variants = ['detail', 'grid', 'main', 'square'] as const
 		const images: ImageItem[] = []
+
+		// Style swap characters only have a single _01_style pose
+		if (character.styleSwap) {
+			for (const variant of variants) {
+				images.push({
+					url: getCharacterImage(character.granblueId, variant, '01_style'),
+					label: `${variant} (Style)`,
+					variant,
+					pose: '01_style',
+					poseLabel: 'Style'
+				})
+			}
+			return images
+		}
 
 		// Only include poses that are available - _01 = Base, _02 = MLB (3*), _03 = FLB (5*), _04 = Transcendence
 		const poses: { id: string; label: string }[] = [
