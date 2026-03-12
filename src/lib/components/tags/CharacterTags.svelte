@@ -10,6 +10,7 @@
 		season?: number | null
 		series?: (number | CharacterSeriesRef)[] | null
 		seriesNames?: string[] | null
+		styleSwap?: boolean
 	}
 
 	interface Props {
@@ -52,12 +53,18 @@
 		seriesText !== null && seriesText !== seasonText && seriesText !== 'Standard'
 	)
 
+	// Check if character is a style swap
+	const isStyleSwap = $derived(character.styleSwap === true)
+
 	// Whether any tags should be shown
-	const hasTags = $derived(hasSeason || hasDistinctSeries)
+	const hasTags = $derived(hasSeason || hasDistinctSeries || isStyleSwap)
 </script>
 
 {#if hasTags}
 	<div class="tags">
+		{#if isStyleSwap}
+			<CharacterTag {character} type="style" />
+		{/if}
 		{#if hasSeason}
 			<CharacterTag {character} type="season" />
 		{/if}
