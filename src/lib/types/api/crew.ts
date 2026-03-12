@@ -80,6 +80,8 @@ export interface CrewInvitation {
   // From :with_user view
   user?: User
   invitedBy?: User
+  // From :with_phantom view — pre-assigned phantom for the invited user
+  phantomPlayer?: PhantomPlayer
 }
 
 // Response type for GET /crew/members

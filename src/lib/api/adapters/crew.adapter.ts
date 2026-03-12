@@ -176,11 +176,20 @@ export class CrewAdapter extends BaseAdapter {
   /**
    * Send invitation to a user (officers only)
    */
-  async sendInvitation(crewId: string, userId: string, options?: RequestOptions): Promise<CrewInvitation> {
+  async sendInvitation(
+    crewId: string,
+    userId: string,
+    phantomPlayerId?: string,
+    options?: RequestOptions
+  ): Promise<CrewInvitation> {
+    const body: Record<string, string> = { user_id: userId }
+    if (phantomPlayerId) {
+      body.phantom_player_id = phantomPlayerId
+    }
     const response = await this.request<{ invitation: CrewInvitation }>(`/crews/${crewId}/invitations`, {
       ...options,
       method: 'POST',
-      body: JSON.stringify({ user_id: userId })
+      body: JSON.stringify(body)
     })
     return response.invitation
   }
