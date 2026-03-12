@@ -137,7 +137,8 @@
 
 	function viewInDatabase() {
 		if (!item?.character?.granblueId) return
-		goto(`/database/characters/${item.character.granblueId}`)
+		const styleSuffix = item.character.styleSwap ? '/style' : ''
+		goto(`/database/characters/${item.character.granblueId}${styleSuffix}`)
 	}
 
 	// Check if user can view database (role >= 7)
