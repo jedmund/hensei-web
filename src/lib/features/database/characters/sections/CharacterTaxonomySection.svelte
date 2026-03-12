@@ -9,6 +9,7 @@
 	import { getGenderLabel, getGenderOptions } from '$lib/utils/gender'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
 	import { getElementLabel } from '$lib/utils/element'
+	import { getCharacterImage } from '$lib/utils/images'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -127,8 +128,51 @@
 				<DetailItem label="Style Name (JP)" value={character.styleName.ja} />
 			{/if}
 			{#if character.baseCharacter}
-				<DetailItem label="Base Character" value={character.baseCharacter.name?.en ?? '—'} />
+				<DetailItem label="Base Character">
+					<a href="/database/characters/{character.baseCharacter.granblueId}" class="base-character-link">
+						<img
+							src={getCharacterImage(character.baseCharacter.granblueId, 'square', '01')}
+							alt={character.baseCharacter.name?.en || 'Base character'}
+							class="base-character-image"
+						/>
+						<span class="base-character-name">{character.baseCharacter.name?.en}</span>
+					</a>
+				</DetailItem>
 			{/if}
 		{/if}
 	{/if}
 </DetailsContainer>
+
+<style lang="scss">
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
+
+	.base-character-link {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+		text-decoration: none;
+		color: var(--text-primary);
+
+		&:hover .base-character-image {
+			transform: scale(1.05);
+		}
+
+		&:hover .base-character-name {
+			color: var(--blue);
+		}
+	}
+
+	.base-character-image {
+		width: 32px;
+		height: 32px;
+		border-radius: layout.$item-corner-small;
+		transition: transform 0.2s ease;
+	}
+
+	.base-character-name {
+		font-size: typography.$font-regular;
+		transition: color 0.2s ease;
+	}
+</style>
