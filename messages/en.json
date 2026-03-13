@@ -372,5 +372,17 @@
 	"unlink_collection_body": "All collection links will be removed from items in this party. The items themselves will remain.",
 	"unlink_collection_confirm": "Clear",
 
-	"search_select_member": "Select member"
+	"search_select_member": "Select member",
+
+	"proficiency_none": "None",
+	"proficiency_sabre": "Sabre",
+	"proficiency_dagger": "Dagger",
+	"proficiency_axe": "Axe",
+	"proficiency_spear": "Spear",
+	"proficiency_bow": "Bow",
+	"proficiency_staff": "Staff",
+	"proficiency_melee": "Melee",
+	"proficiency_harp": "Harp",
+	"proficiency_gun": "Gun",
+	"proficiency_katana": "Katana"
 }

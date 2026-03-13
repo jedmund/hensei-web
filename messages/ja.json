@@ -372,5 +372,17 @@
 	"unlink_collection_body": "この編成のすべてのコレクションリンクが解除されます。アイテム自体は残ります。",
 	"unlink_collection_confirm": "解除する",
 
-	"search_select_member": "メンバーを選択"
+	"search_select_member": "メンバーを選択",
+
+	"proficiency_none": "なし",
+	"proficiency_sabre": "剣",
+	"proficiency_dagger": "短剣",
+	"proficiency_axe": "斧",
+	"proficiency_spear": "槍",
+	"proficiency_bow": "弓",
+	"proficiency_staff": "杖",
+	"proficiency_melee": "格闘",
+	"proficiency_harp": "楽器",
+	"proficiency_gun": "銃",
+	"proficiency_katana": "刀"
 }
