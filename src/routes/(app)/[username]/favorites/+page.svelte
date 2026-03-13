@@ -9,6 +9,7 @@
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	const { data }: { data: PageData } = $props()
 
@@ -57,7 +58,7 @@
 		<div class="error">
 			<Icon name="alert-circle" size={32} />
 			<p>Failed to load favorites: {favoritesQuery.error?.message || 'Unknown error'}</p>
-			<Button size="small" onclick={() => favoritesQuery.refetch()}>Retry</Button>
+			<Button size="small" onclick={() => favoritesQuery.refetch()}>{m.retry()}</Button>
 		</div>
 	{:else if isEmpty}
 		<div class="empty">

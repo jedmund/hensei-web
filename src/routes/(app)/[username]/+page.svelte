@@ -85,7 +85,7 @@
 		<div class="error">
 			<Icon name="alert-circle" size={32} />
 			<p>{m.profile_load_error({ error: partiesQuery.error?.message || '' })}</p>
-			<Button size="small" onclick={() => partiesQuery.refetch()}>Retry</Button>
+			<Button size="small" onclick={() => partiesQuery.refetch()}>{m.retry()}</Button>
 		</div>
 	{:else if isEmpty}
 		<div class="empty">

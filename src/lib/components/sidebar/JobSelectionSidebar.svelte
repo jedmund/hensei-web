@@ -125,7 +125,7 @@
 			<div class="error-state">
 				<Icon name="alert-circle" size={32} />
 				<p>{jobsQuery.error?.message || 'Failed to load jobs'}</p>
-				<Button size="small" onclick={() => jobsQuery.refetch()}>Retry</Button>
+				<Button size="small" onclick={() => jobsQuery.refetch()}>{m.retry()}</Button>
 			</div>
 		{:else if Object.keys(filteredJobs).length === 0}
 			<div class="empty-state">

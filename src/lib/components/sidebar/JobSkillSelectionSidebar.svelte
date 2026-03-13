@@ -219,7 +219,7 @@
 			<div class="error-state">
 				<Icon name="alert-circle" size={32} />
 				<p>{skillsQuery.error?.message || 'Failed to load skills'}</p>
-				<Button size="small" onclick={() => skillsQuery.refetch()}>Retry</Button>
+				<Button size="small" onclick={() => skillsQuery.refetch()}>{m.retry()}</Button>
 			</div>
 		{:else}
 			<div class="skills-list">
