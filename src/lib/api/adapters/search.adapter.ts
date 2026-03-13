@@ -453,6 +453,27 @@ export class SearchAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Searches for guidebooks
+	 * Simple search with no filters — just query and pagination
+	 */
+	async searchGuidebooks(params: SearchParams = {}): Promise<SearchResponse> {
+		const body: any = {
+			locale: params.locale || 'en',
+			page: params.page || 1
+		}
+
+		if (params.per) body.per = params.per
+		if (params.query) body.query = params.query
+
+		return this.request<SearchResponse>('/search/guidebooks', {
+			method: 'POST',
+			body: { search: body },
+			credentials: 'omit',
+			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
+		})
+	}
+
+	/**
 	 * Fetches random entity suggestions (mix of characters, weapons, summons)
 	 * Used for placeholder suggestions in the explore filter dropdown
 	 *
