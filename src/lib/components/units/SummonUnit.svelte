@@ -187,7 +187,7 @@
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
           replaceLabel={m.context_replace({ type: m.type_summon() })}
-          duplicateLabel={m.context_duplicate()}
+          duplicateLabel={m.context_duplicate({ type: m.type_summon() })}
           removeLabel={m.context_remove()}
         />
       {/snippet}
@@ -205,7 +205,7 @@
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
           replaceLabel={m.context_replace({ type: m.type_summon() })}
-          duplicateLabel={m.context_duplicate()}
+          duplicateLabel={m.context_duplicate({ type: m.type_summon() })}
           removeLabel={m.context_remove()}
         />
       {/snippet}
