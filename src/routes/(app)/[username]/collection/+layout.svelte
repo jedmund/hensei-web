@@ -85,8 +85,15 @@
 	// Whether to show the add button for artifacts (uses sidebar instead of modal)
 	const isArtifacts = $derived(activeEntityType === 'artifacts')
 
-	// Dynamic button text
-	const addButtonText = $derived(`Add ${activeEntityType}`)
+	// Localized entity names for parameterized messages
+	const entityNameMap = {
+		characters: m.collection_entity_characters(),
+		weapons: m.collection_entity_weapons(),
+		summons: m.collection_entity_summons(),
+		artifacts: m.collection_entity_artifacts()
+	} as Record<string, string>
+
+	const addButtonText = $derived(m.collection_add_type({ type: entityNameMap[activeEntityType] ?? activeEntityType }))
 
 	const username = $derived(data.user?.username || $page.params.username)
 
@@ -149,7 +156,7 @@
 			confirmDeleteOpen = false
 		} catch (error) {
 			console.error('Failed to delete items:', error)
-			toast.error(extractErrorMessage(error, 'Failed to delete items'))
+			toast.error(extractErrorMessage(error, m.collection_delete_error()))
 			// Keep modal open on error so user can retry
 		} finally {
 			isDeleting = false
@@ -185,14 +192,14 @@
 			{#if selectionMode.isActive}
 				<!-- Selection mode UI -->
 				<div class="selection-controls-left">
-					<span class="selection-count">{selectionMode.selectedCount} selected</span>
+					<span class="selection-count">{m.collection_selected_count({ count: selectionMode.selectedCount })}</span>
 					<div class="selection-buttons">
 						<Button variant="element-ghost" size="small" element={userElement} onclick={handleSelectAll}>
-							Select all
+							{m.collection_select_all()}
 						</Button>
 						{#if selectionMode.selectedCount > 0}
 							<Button variant="element-ghost" size="small" element={userElement} onclick={handleClearSelection}>
-								Clear
+								{m.collection_clear_selection()}
 							</Button>
 						{/if}
 					</div>
@@ -204,10 +211,10 @@
 						onclick={handleDeleteClick}
 						disabled={selectionMode.selectedCount === 0}
 					>
-						Delete
+						{m.collection_delete()}
 					</Button>
 					<Button variant="ghost" size="small" onclick={handleCancelSelection}>
-						Cancel
+						{m.collection_cancel()}
 					</Button>
 				</div>
 			{:else}
@@ -220,25 +227,25 @@
 					element={userElement}
 				>
 					<Segment value="characters">
-						Characters
+						{m.collection_tab_characters()}
 						{#if countsQuery.data?.characters != null}
 							<span class="count">{countsQuery.data.characters}</span>
 						{/if}
 					</Segment>
 					<Segment value="weapons">
-						Weapons
+						{m.collection_tab_weapons()}
 						{#if countsQuery.data?.weapons != null}
 							<span class="count">{countsQuery.data.weapons}</span>
 						{/if}
 					</Segment>
 					<Segment value="summons">
-						Summons
+						{m.collection_tab_summons()}
 						{#if countsQuery.data?.summons != null}
 							<span class="count">{countsQuery.data.summons}</span>
 						{/if}
 					</Segment>
 					<Segment value="artifacts">
-						Artifacts
+						{m.collection_tab_artifacts()}
 						{#if countsQuery.data?.artifacts != null}
 							<span class="count">{countsQuery.data.artifacts}</span>
 						{/if}
@@ -265,7 +272,7 @@
 								icon="plus"
 								iconPosition="left"
 							>
-								Add artifact
+								{m.collection_add_artifact()}
 							</Button>
 						{/if}
 
@@ -275,7 +282,7 @@
 							{/snippet}
 							{#snippet menu()}
 								<button type="button" class="dropdown-menu-item" onclick={handleEnterSelectionMode}>
-									Select {activeEntityType}...
+									{m.collection_select_type({ type: entityNameMap[activeEntityType] ?? activeEntityType })}
 								</button>
 							{/snippet}
 						</DropdownMenu>
@@ -289,7 +296,7 @@
 				{@render children()}
 				{#snippet failed(error, reset)}
 					<div class="collection-error" role="alert">
-						<p>Failed to load collection</p>
+						<p>{m.collection_load_error()}</p>
 						<button onclick={reset}>{m.retry()}</button>
 					</div>
 				{/snippet}

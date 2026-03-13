@@ -214,9 +214,9 @@
 				value={rarityFilter}
 				onValueChange={(v) => (rarityFilter = v as 'all' | 'standard' | 'quirk')}
 				options={[
-					{ value: 'all', label: 'All' },
-					{ value: 'standard', label: 'Standard' },
-					{ value: 'quirk', label: 'Quirk' }
+					{ value: 'all', label: m.collection_filter_all() },
+					{ value: 'standard', label: m.collection_filter_standard() },
+					{ value: 'quirk', label: m.collection_filter_quirk() }
 				]}
 				size="small"
 			/>
@@ -224,43 +224,43 @@
 			<MultiSelect
 				options={elementOptions}
 				bind:value={elementFilters}
-				placeholder="Element"
+				placeholder={m.collection_filter_element()}
 				size="small"
 			/>
 			<MultiSelect
 				options={proficiencyOptions}
 				bind:value={proficiencyFilters}
-				placeholder="Proficiency"
+				placeholder={m.collection_filter_proficiency()}
 				size="small"
 			/>
 
 			<MultiSelect
 				options={slot1Options}
 				bind:value={slot1Filters}
-				placeholder="Slot 1"
+				placeholder={m.collection_filter_slot({ num: 1 })}
 				size="small"
 			/>
 			<MultiSelect
 				options={slot2Options}
 				bind:value={slot2Filters}
-				placeholder="Slot 2"
+				placeholder={m.collection_filter_slot({ num: 2 })}
 				size="small"
 			/>
 			<MultiSelect
 				options={slot3Options}
 				bind:value={slot3Filters}
-				placeholder="Slot 3"
+				placeholder={m.collection_filter_slot({ num: 3 })}
 				size="small"
 			/>
 			<MultiSelect
 				options={slot4Options}
 				bind:value={slot4Filters}
-				placeholder="Slot 4"
+				placeholder={m.collection_filter_slot({ num: 4 })}
 				size="small"
 			/>
 
 			{#if hasActiveFilters}
-				<button class="clear-filters-btn" onclick={clearAllFilters}>Clear</button>
+				<button class="clear-filters-btn" onclick={clearAllFilters}>{m.filter_clear()}</button>
 			{/if}
 		</div>
 
@@ -314,7 +314,7 @@
 			{#if collectionQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={20} />
-					<span>Loading more...</span>
+					<span>{m.loading_more()}</span>
 				</div>
 			{/if}
 		{/if}

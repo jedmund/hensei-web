@@ -29,6 +29,7 @@
 	import SelectableSummonRow from './SelectableSummonRow.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
@@ -64,11 +65,11 @@
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
 
-	// Entity type display names
+	// Localized entity type display names
 	const entityNames: Record<EntityType, { singular: string; plural: string }> = {
-		character: { singular: 'character', plural: 'characters' },
-		weapon: { singular: 'weapon', plural: 'weapons' },
-		summon: { singular: 'summon', plural: 'summons' }
+		character: { singular: m.collection_entity_character(), plural: m.collection_entity_characters() },
+		weapon: { singular: m.collection_entity_weapon(), plural: m.collection_entity_weapons() },
+		summon: { singular: m.collection_entity_summon(), plural: m.collection_entity_summons() }
 	}
 
 	// Get IDs of characters already in collection (only used for characters)
@@ -277,7 +278,7 @@
 				error && typeof error === 'object' && 'name' in error && error.name === 'CancelledError'
 			if (!isCancelledError) {
 				console.error(`Failed to add ${entityNames[currentEntityType].plural}:`, error)
-				toast.error(extractErrorMessage(error, 'Failed to add to collection'))
+				toast.error(extractErrorMessage(error, m.collection_add_error()))
 			}
 		}
 	}
@@ -306,21 +307,22 @@
 	}
 
 	// Dialog title based on entity type
-	const dialogTitle = $derived(`Add ${entityNames[entityType].plural.charAt(0).toUpperCase() + entityNames[entityType].plural.slice(1)} to Collection`)
+	const dialogTitle = $derived(m.collection_add_title({ type: entityNames[entityType].plural }))
 
 	// Placeholder text based on entity type
-	const searchPlaceholder = $derived(`Search ${entityNames[entityType].plural} by name...`)
+	const searchPlaceholder = $derived(m.collection_add_search({ type: entityNames[entityType].plural }))
 
 	// Footer text based on entity type
 	const selectedText = $derived.by(() => {
 		if (entityType === 'character') {
-			return `${selectedCount} ${selectedCount === 1 ? entityNames[entityType].singular : entityNames[entityType].plural} selected`
+			return m.collection_add_selected({ count: selectedCount, type: selectedCount === 1 ? entityNames[entityType].singular : entityNames[entityType].plural })
 		} else {
 			// For weapons/summons, show both item count and total quantity
 			if (selectedItemCount === 0) return ''
-			const itemText = `${selectedItemCount} ${selectedItemCount === 1 ? 'item' : 'items'}`
-			const qtyText = selectedCount > selectedItemCount ? ` (${selectedCount} total)` : ''
-			return `${itemText}${qtyText} selected`
+			if (selectedCount > selectedItemCount) {
+				return m.collection_add_items_selected({ count: selectedItemCount, total: selectedCount })
+			}
+			return m.collection_add_selected({ count: selectedItemCount, type: entityNames[entityType].plural })
 		}
 	})
 </script>
@@ -364,19 +366,19 @@
 				{#if isLoading}
 					<div class="loading-state">
 						<Icon name="loader-2" size={32} />
-						<p>Loading {entityNames[entityType].plural}...</p>
+						<p>{m.collection_add_loading({ type: entityNames[entityType].plural })}</p>
 					</div>
 				{:else if displayedResults.length === 0}
 					<div class="empty-state">
 						{#if showOnlySelected}
-							<p>No {entityNames[entityType].plural} selected</p>
+							<p>{m.collection_add_none_selected({ type: entityNames[entityType].plural })}</p>
 							<Button variant="ghost" size="small" onclick={toggleShowSelected}>
-								Show all {entityNames[entityType].plural}
+								{m.collection_add_show_all({ type: entityNames[entityType].plural })}
 							</Button>
 						{:else if searchQuery || Object.values(searchFilters).some((v) => v)}
-							<p>No {entityNames[entityType].plural} match your search</p>
+							<p>{m.collection_add_no_results({ type: entityNames[entityType].plural })}</p>
 						{:else}
-							<p>Start searching to find {entityNames[entityType].plural}</p>
+							<p>{m.collection_add_search_prompt({ type: entityNames[entityType].plural })}</p>
 						{/if}
 					</div>
 				{:else if currentViewMode === 'grid'}
@@ -447,7 +449,7 @@
 					{#if searchResults.isFetchingNextPage}
 						<div class="loading-more">
 							<Icon name="loader-2" size={20} />
-							<span>Loading more...</span>
+							<span>{m.loading_more()}</span>
 						</div>
 					{/if}
 				{/if}
@@ -456,7 +458,7 @@
 		<ModalFooter
 			onCancel={() => (open = false)}
 			primaryAction={{
-				label: currentMutation.isPending ? 'Adding...' : 'Add to Collection',
+				label: currentMutation.isPending ? m.collection_adding() : m.collection_add_button(),
 				onclick: handleAdd,
 				disabled: selectedCount === 0 || currentMutation.isPending
 			}}
