@@ -7,6 +7,8 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
+	import { localizedName } from '$lib/utils/locale'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -38,28 +40,28 @@
 	const special = $derived(type === 'character' && (itemData?.rarity ?? 3) < 3)
 </script>
 
-<DetailsSection title="Basic Information">
-	{#if type === 'character' && itemData?.styleName?.en}
-		<DetailRow label="Style" value={itemData.styleName.en} />
+<DetailsSection title={m.details_basic_info()}>
+	{#if type === 'character' && itemData?.styleName}
+		<DetailRow label={m.details_style()} value={localizedName(itemData.styleName)} />
 	{/if}
-	<DetailRow label="Rarity" value={getRarityLabel(itemData?.rarity)} />
-	<DetailRow label="Element">
+	<DetailRow label={m.details_rarity()} value={getRarityLabel(itemData?.rarity)} />
+	<DetailRow label={m.details_element()}>
 		<ElementLabel element={itemData?.element} size="medium" />
 	</DetailRow>
 
 	{#if type === 'character'}
 		{#if itemData?.race && itemData.race.length > 0}
 			<DetailRow
-				label="Race"
+				label={m.details_race()}
 				value={itemData.race
 					.map((r: any) => getRaceLabel(r))
 					.filter(Boolean)
 					.join(', ') || '—'}
 			/>
 		{/if}
-		<DetailRow label="Gender" value={getGenderLabel(itemData?.gender)} />
+		<DetailRow label={m.details_gender()} value={getGenderLabel(itemData?.gender)} />
 		{#if itemData?.proficiency && itemData.proficiency.length > 0}
-			<DetailRow label="Proficiencies">
+			<DetailRow label={m.details_proficiencies()}>
 				<span class="proficiency-list">
 					{#each itemData.proficiency as prof}
 						<ProficiencyLabel proficiency={prof} size="medium" />
@@ -68,12 +70,12 @@
 			</DetailRow>
 		{/if}
 	{:else if type === 'weapon'}
-		<DetailRow label="Proficiency">
+		<DetailRow label={m.details_proficiency()}>
 			<ProficiencyLabel proficiency={itemData?.proficiency} size="medium" />
 		</DetailRow>
 	{/if}
 
-	<DetailRow label="Max Uncap">
+	<DetailRow label={m.details_max_uncap()}>
 		<UncapIndicator
 			{type}
 			uncapLevel={maxUncapLevel}

@@ -4,6 +4,7 @@
 	import type { LocalizedName } from '$lib/types/api/entities'
 	import { localizedName } from '$lib/utils/locale'
 	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		weaponKeys?: WeaponKey[]
@@ -31,11 +32,11 @@
 	function getKeyDescription(key: WeaponKey): string {
 		const name = localizedName(key.name)
 		if (name !== '—') return name
-		return key.slug || 'Weapon Key'
+		return key.slug || m.details_weapon_key_fallback()
 	}
 
 	function getSlotLabel(slot: number, series?: WeaponSeriesRef | null): string {
-		return `Skill ${slot + 1}`
+		return m.details_skill_slot({ slot: String(slot + 1) })
 	}
 </script>
 

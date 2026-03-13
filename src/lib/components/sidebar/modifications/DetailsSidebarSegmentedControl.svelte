@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		hasModifications: boolean
@@ -25,8 +26,8 @@
 			size="small"
 			grow
 		>
-			<Segment value="user">This team</Segment>
-			<Segment value="canonical">Info</Segment>
+			<Segment value="user">{m.details_tab_team()}</Segment>
+			<Segment value="canonical">{m.details_tab_info()}</Segment>
 		</SegmentedControl>
 	</div>
 {/if}

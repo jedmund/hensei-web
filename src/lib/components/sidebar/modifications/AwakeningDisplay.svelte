@@ -1,6 +1,8 @@
 <script lang="ts">
   import { getAwakeningImage } from '$lib/utils/modifiers'
   import type { Awakening } from '$lib/types/api/entities'
+  import { localizedName } from '$lib/utils/locale'
+  import * as m from '$lib/paraglide/messages'
 
   interface Props {
     awakening?: {
@@ -37,7 +39,7 @@
 
   let awakeningData = $derived(getAwakeningData())
   let imageUrl = $derived(getAwakeningImage(awakeningData ?? undefined))
-  let displayName = $derived(awakeningData?.type?.name?.en || awakeningData?.type?.name?.ja || 'Awakening')
+  let displayName = $derived(awakeningData?.type?.name ? localizedName(awakeningData.type.name) : m.details_awakening())
 </script>
 
 {#if awakeningData}

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import DetailsSection from './DetailsSection.svelte'
 	import DetailRow from './DetailRow.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		itemData: any
@@ -12,33 +13,33 @@
 </script>
 
 {#if itemData?.hp}
-	<DetailsSection title="HP">
-		<DetailRow label="Base" value={itemData.hp.minHp} />
-		<DetailRow label="MLB" value={itemData.hp.maxHp} />
+	<DetailsSection title={m.details_hp()}>
+		<DetailRow label={m.details_base()} value={itemData.hp.minHp} />
+		<DetailRow label={m.details_mlb()} value={itemData.hp.maxHp} />
 		{#if itemData.uncap?.flb && itemData.hp.maxHpFlb}
-			<DetailRow label="FLB" value={itemData.hp.maxHpFlb} />
+			<DetailRow label={m.details_flb()} value={itemData.hp.maxHpFlb} />
 		{/if}
 		{#if itemData.uncap?.ulb && itemData.hp.maxHpUlb}
-			<DetailRow label="ULB" value={itemData.hp.maxHpUlb} />
+			<DetailRow label={m.details_ulb()} value={itemData.hp.maxHpUlb} />
 		{/if}
 		{#if gridTranscendence && gridTranscendence > 0}
-			<DetailRow label="T5" value={itemData.hp.maxHpXlb} />
+			<DetailRow label={m.details_t5()} value={itemData.hp.maxHpXlb} />
 		{/if}
 	</DetailsSection>
 {/if}
 
 {#if itemData?.atk}
-	<DetailsSection title="ATK">
-		<DetailRow label="Base" value={itemData.atk.minAtk} />
-		<DetailRow label="MLB" value={itemData.atk.maxAtk} />
+	<DetailsSection title={m.details_atk()}>
+		<DetailRow label={m.details_base()} value={itemData.atk.minAtk} />
+		<DetailRow label={m.details_mlb()} value={itemData.atk.maxAtk} />
 		{#if itemData.uncap?.flb && itemData.atk.maxAtkFlb}
-			<DetailRow label="FLB" value={itemData.atk.maxAtkFlb} />
+			<DetailRow label={m.details_flb()} value={itemData.atk.maxAtkFlb} />
 		{/if}
 		{#if itemData.uncap?.ulb && itemData.atk.maxAtkUlb}
-			<DetailRow label="ULB" value={itemData.atk.maxAtkUlb} />
+			<DetailRow label={m.details_ulb()} value={itemData.atk.maxAtkUlb} />
 		{/if}
 		{#if gridTranscendence && gridTranscendence > 0}
-			<DetailRow label="T5" value={itemData.atk.maxAtkXlb} />
+			<DetailRow label={m.details_t5()} value={itemData.atk.maxAtkXlb} />
 		{/if}
 	</DetailsSection>
 {/if}

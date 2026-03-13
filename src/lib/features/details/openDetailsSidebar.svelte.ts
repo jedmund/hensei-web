@@ -1,3 +1,4 @@
+import { localizedName } from '$lib/utils/locale'
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import { partyStore } from '$lib/stores/partyStore.svelte'
 import DetailsSidebar from '$lib/components/sidebar/DetailsSidebar.svelte'
@@ -214,11 +215,8 @@ export function openCharacterEditSidebar(character: GridCharacter, onSaveCharact
 function getName(obj: any): string {
   if (!obj) return 'Details'
   const name = obj.name ?? obj
-  if (typeof name === 'string') return name
-  if (name && typeof name === 'object') {
-    return name.en || name.ja || 'Details'
-  }
-  return 'Details'
+  const resolved = localizedName(name)
+  return resolved === '—' ? 'Details' : resolved
 }
 
 export function closeDetailsSidebar() {
