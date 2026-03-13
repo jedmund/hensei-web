@@ -103,8 +103,6 @@
 	@use '$src/themes/layout' as *;
 
 	.result-item {
-		margin-bottom: $unit-half;
-
 		.result-button {
 			width: 100%;
 			display: flex;
@@ -119,7 +117,7 @@
 			text-align: left;
 
 			&:hover {
-				background: var(--bg-tertiary);
+				background: var(--list-cell-bg-hover);
 			}
 
 			&:active:not(:disabled) {
