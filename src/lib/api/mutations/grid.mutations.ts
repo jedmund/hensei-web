@@ -202,6 +202,16 @@ export function swapWeaponsOptions(queryClient: QueryClient) {
 	}
 }
 
+export function duplicateGridWeaponOptions(queryClient: QueryClient) {
+	return {
+		mutationFn: (params: { id: string; partyShortcode: string; position: number }) =>
+			gridAdapter.duplicateWeapon({ id: params.id, position: params.position }),
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
+		}
+	}
+}
+
 // ============================================================================
 // Character Mutation Options
 // ============================================================================
@@ -495,6 +505,16 @@ export function swapSummonsOptions(queryClient: QueryClient) {
 	}
 }
 
+export function duplicateGridSummonOptions(queryClient: QueryClient) {
+	return {
+		mutationFn: (params: { id: string; partyShortcode: string; position: number }) =>
+			gridAdapter.duplicateSummon({ id: params.id, position: params.position }),
+		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
+		}
+	}
+}
+
 // ============================================================================
 // Style Swap Mutation Options
 // ============================================================================
@@ -597,6 +617,11 @@ export function useSwapWeapons() {
 	return createMutation(() => swapWeaponsOptions(queryClient))
 }
 
+export function useDuplicateGridWeapon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => duplicateGridWeaponOptions(queryClient))
+}
+
 export function useCreateGridCharacter() {
 	const queryClient = useQueryClient()
 	return createMutation(() => createGridCharacterOptions(queryClient))
@@ -655,6 +680,11 @@ export function useUpdateQuickSummon() {
 export function useSwapSummons() {
 	const queryClient = useQueryClient()
 	return createMutation(() => swapSummonsOptions(queryClient))
+}
+
+export function useDuplicateGridSummon() {
+	const queryClient = useQueryClient()
+	return createMutation(() => duplicateGridSummonOptions(queryClient))
 }
 
 export function useSwitchCharacterStyle() {

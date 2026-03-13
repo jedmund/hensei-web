@@ -32,13 +32,17 @@
 		dragContext?.state.draggedItem?.source.position === position
 	)
 
+	let isDuplicating = $derived(
+		dragContext?.state.isDragging && dragContext?.state.isDuplicating
+	)
+
 	function handleDragStart(e: DragEvent) {
 		if (!canDrag || !item || !dragContext) {
 			e.preventDefault()
 			return
 		}
 
-		e.dataTransfer!.effectAllowed = 'move'
+		e.dataTransfer!.effectAllowed = 'copyMove'
 		e.dataTransfer!.setData('application/json', JSON.stringify({
 			item,
 			container,
@@ -52,7 +56,7 @@
 			requestAnimationFrame(() => ghost.remove())
 		}
 
-		dragContext.startDrag(item, { container, position, type })
+		dragContext.startDrag(item, { container, position, type }, { altKey: e.altKey })
 	}
 
 	function handleDragEnd(e: DragEvent) {
@@ -155,6 +159,7 @@
 	onpointerup={handlePointerUp}
 	class="draggable-item"
 	class:dragging={isDragging}
+	class:duplicating={isDuplicating}
 	class:can-drag={canDrag && !!item}
 	class:empty={!item}
 	data-container={container}
@@ -172,6 +177,10 @@
 		&.dragging {
 			opacity: 0.5;
 			cursor: grabbing;
+		}
+
+		&.duplicating {
+			cursor: copy;
 		}
 
 		&.can-drag {

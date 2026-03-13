@@ -43,7 +43,11 @@
 		if (!canDrop || !dragContext) return
 
 		e.preventDefault()
-		e.dataTransfer!.dropEffect = 'move'
+
+		// Sync Alt key state from drag event (keydown/keyup may not fire during HTML5 drag)
+		dragContext.state.isDuplicating = e.altKey
+
+		e.dataTransfer!.dropEffect = dragContext.state.isDuplicating ? 'copy' : 'move'
 
 		if (dragContext.state.draggedItem) {
 			const target = { container, position, type }
@@ -83,6 +87,9 @@
 
 		e.preventDefault()
 		e.stopPropagation()
+
+		// Final Alt key sync before processing the drop
+		dragContext.state.isDuplicating = e.altKey
 
 		const target = { container, position, type }
 

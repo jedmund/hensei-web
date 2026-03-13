@@ -14,6 +14,8 @@ import {
 	useSwapWeapons,
 	useSwapCharacters,
 	useSwapSummons,
+	useDuplicateGridWeapon,
+	useDuplicateGridSummon,
 	useSwitchCharacterStyle,
 	useSyncAllPartyItems,
 	useUnlinkCollectionSource
@@ -53,6 +55,8 @@ export function usePartyMutations() {
 	const swapWeapons = useSwapWeapons()
 	const swapCharacters = useSwapCharacters()
 	const swapSummons = useSwapSummons()
+	const duplicateWeapon = useDuplicateGridWeapon()
+	const duplicateSummon = useDuplicateGridSummon()
 	const switchCharacterStyle = useSwitchCharacterStyle()
 	const syncAllItems = useSyncAllPartyItems()
 	const unlinkCollectionSource = useUnlinkCollectionSource()
@@ -89,6 +93,8 @@ export function usePartyMutations() {
 			swapWeapons,
 			swapCharacters,
 			swapSummons,
+			duplicateWeapon,
+			duplicateSummon,
 			switchCharacterStyle,
 			syncAllItems,
 			unlinkCollectionSource

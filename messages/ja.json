@@ -49,6 +49,11 @@
 	"context_view_in_database": "データベースで見る",
 	"context_replace": "{type}を交換",
 	"context_remove": "編成から外す",
+	"context_duplicate": "複製する",
+
+	"duplicate_collection_title": "コレクションのアイテムを複製しますか？",
+	"duplicate_collection_body": "複製はコレクションとリンクされません。コレクションでの変更は複製に反映されません。",
+	"duplicate_collection_confirm": "それでも複製する",
 
 	"conflict_title": "コンフリクト検出",
 	"conflict_character_message": "同じ名前のキャラクターがパーティに編成されています。以下のキャラクターを入れ替えますか？",

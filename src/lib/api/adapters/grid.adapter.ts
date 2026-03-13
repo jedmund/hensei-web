@@ -531,6 +531,30 @@ export class GridAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Duplicates a grid weapon to a new position
+	 */
+	async duplicateWeapon(params: { id: string; position: number }, headers?: Record<string, string>): Promise<GridWeapon> {
+		const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${params.id}/duplicate`, {
+			method: 'POST',
+			body: { position: params.position },
+			headers
+		})
+		return response.gridWeapon
+	}
+
+	/**
+	 * Duplicates a grid summon to a new position
+	 */
+	async duplicateSummon(params: { id: string; position: number }, headers?: Record<string, string>): Promise<GridSummon> {
+		const response = await this.request<{ gridSummon: GridSummon }>(`/grid_summons/${params.id}/duplicate`, {
+			method: 'POST',
+			body: { position: params.position },
+			headers
+		})
+		return response.gridSummon
+	}
+
+	/**
 	 * Syncs all linked items in a party from their collection sources
 	 */
 	async syncAllPartyItems(partyId: string, headers?: Record<string, string>): Promise<SyncAllPartyItemsResponse> {

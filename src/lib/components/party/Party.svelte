@@ -33,6 +33,7 @@
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import ConflictDialog from '$lib/components/dialogs/ConflictDialog.svelte'
 	import DeleteTeamDialog from '$lib/components/dialogs/DeleteTeamDialog.svelte'
+	import DuplicateCollectionDialog from '$lib/components/dialogs/DuplicateCollectionDialog.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -128,11 +129,14 @@
 		ensurePartyExists: ensurePartyExists ? (() => ensurePartyExists()) : undefined
 	})
 
-	const { dragContext } = usePartyDragDrop({
+	const partyDragDrop = usePartyDragDrop({
 		mutations,
 		getParty: () => party,
-		canEdit: () => canEdit()
+		canEdit: () => canEdit(),
+		getActiveTab: () => activeTab,
+		setSelectedSlot: (n) => { selectedSlot = n }
 	})
+	const dragContext = partyDragDrop.dragContext
 
 	const itemAddition = useItemAddition({
 		mutations,
@@ -286,6 +290,7 @@
 		canEdit: () => canEdit(),
 		getEditKey: () => editKey,
 		getSelectedSlot: () => selectedSlot,
+		setSelectedSlot: (n: number) => { selectedSlot = n },
 		getActiveTab: () => activeTab,
 		services: {
 			gridService
@@ -471,6 +476,13 @@
 	partyShortcode={party.shortcode}
 	onResolve={itemAddition.resolveConflict}
 	onCancel={itemAddition.cancelConflict}
+/>
+
+<!-- Duplicate Collection Warning Dialog (drag-triggered) -->
+<DuplicateCollectionDialog
+	open={!!partyDragDrop.pendingDuplicate}
+	onConfirm={partyDragDrop.confirmDuplicate}
+	onCancel={partyDragDrop.cancelDuplicate}
 />
 
 <style lang="scss">
