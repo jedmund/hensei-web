@@ -249,5 +249,12 @@
 	"profile_loading_more": "さらに読み込み中...",
 	"profile_seen_all": "すべての編成を表示しました！",
 
-	"explore_empty": "編成が見つかりません。"
+	"explore_empty": "編成が見つかりません。",
+
+	"tag_style": "スタイル",
+	"season_valentine": "バレンタイン",
+	"season_formal": "フォーマル",
+	"season_summer": "水着",
+	"season_halloween": "ハロウィン",
+	"season_holiday": "ホリデー"
 }

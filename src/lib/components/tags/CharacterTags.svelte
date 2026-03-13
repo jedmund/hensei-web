@@ -3,7 +3,6 @@
 	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 	import CharacterTag from './CharacterTag.svelte'
 	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
-	import { localizedName } from '$lib/utils/locale'
 
 	/** Minimal character data needed for tag display */
 	interface CharacterForTags {
@@ -28,14 +27,14 @@
 		return CHARACTER_SEASON_NAMES[character.season] ?? null
 	})
 
-	// Get first series text for comparison
-	const seriesText = $derived.by(() => {
+	// Get first series English name for dedup (season names are always English)
+	const seriesEnglishName = $derived.by(() => {
 		if (!character.series || !Array.isArray(character.series) || character.series.length === 0) {
 			return null
 		}
 		const seriesValue = character.series[0] as number | CharacterSeriesRef
 		if (typeof seriesValue === 'object' && seriesValue !== null && 'name' in seriesValue) {
-			return localizedName(seriesValue.name)
+			return seriesValue.name.en
 		}
 		if (typeof seriesValue === 'number') {
 			return CHARACTER_SERIES_NAMES[seriesValue] ?? null
@@ -44,14 +43,14 @@
 	})
 
 	// Special case: Yukata is more specific than Summer, so hide Summer if Yukata is present
-	const isYukataWithSummer = $derived(seriesText === 'Yukata' && seasonText === 'Summer')
+	const isYukataWithSummer = $derived(seriesEnglishName === 'Yukata' && seasonText === 'Summer')
 
 	// Check if character has season (seasonal variant), but hide if Yukata+Summer
 	const hasSeason = $derived(seasonText !== null && !isYukataWithSummer)
 
 	// Check if character has series with different text than season (exclude "Standard")
 	const hasDistinctSeries = $derived(
-		seriesText !== null && seriesText !== seasonText && seriesText !== 'Standard'
+		seriesEnglishName !== null && seriesEnglishName !== seasonText && seriesEnglishName !== 'Standard'
 	)
 
 	// Check if character is a style swap

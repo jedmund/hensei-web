@@ -249,5 +249,12 @@
 	"profile_loading_more": "Loading more...",
 	"profile_seen_all": "You've seen all teams!",
 
-	"explore_empty": "No teams found."
+	"explore_empty": "No teams found.",
+
+	"tag_style": "Style",
+	"season_valentine": "Valentine",
+	"season_formal": "Formal",
+	"season_summer": "Summer",
+	"season_halloween": "Halloween",
+	"season_holiday": "Holiday"
 }
