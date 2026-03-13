@@ -310,9 +310,6 @@
 			{/if}
 
 			<li>
-				<LanguageToggle />
-			</li>
-			<li>
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger
 						class="nav-more-trigger {totalNotificationCount > 0 ? `has-notification ${userElement ?? ''}` : ''}"
@@ -349,6 +346,9 @@
 									</button>
 								</DropdownItem>
 							{/if}
+							<DropdownItem>
+								<LanguageToggle />
+							</DropdownItem>
 							<DropdownItem>
 								<button onclick={() => (settingsModalOpen = true)}>
 									{m.nav_settings()}
