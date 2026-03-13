@@ -84,6 +84,14 @@
 	@include menu-item;
 }
 
+:global(.context-menu-item.danger) {
+	color: var(--danger);
+
+	&:hover {
+		background: var(--danger-bg);
+	}
+}
+
 :global(.context-menu-separator) {
 	@include menu-separator;
 }
@@ -95,6 +103,14 @@
 
 :global(.dropdown-menu-item) {
 	@include menu-item;
+}
+
+:global(.dropdown-menu-item.danger) {
+	color: var(--danger);
+
+	&:hover {
+		background: var(--danger-bg);
+	}
 }
 
 :global(.dropdown-menu-separator) {
