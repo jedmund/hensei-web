@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import Dialog from './ui/Dialog.svelte'
 	import ModalBody from './ui/ModalBody.svelte'
 	import ModalFooter from './ui/ModalFooter.svelte'
@@ -115,9 +116,9 @@
 
 	// Navigation items
 	const navItems = [
-		{ value: 'account', label: 'Account' },
-		{ value: 'profile', label: 'Profile' },
-		{ value: 'privacy', label: 'Privacy' }
+		{ value: 'account', label: m.settings_nav_account() },
+		{ value: 'profile', label: m.settings_nav_profile() },
+		{ value: 'privacy', label: m.settings_nav_privacy() }
 	]
 
 	// Check if scrolled to bottom
@@ -224,7 +225,7 @@
 			handleClose()
 		} catch (err) {
 			console.error('Failed to update settings:', err)
-			error = 'Failed to update settings. Please try again.'
+			error = m.settings_save_error()
 		} finally {
 			saving = false
 		}
@@ -246,7 +247,7 @@
 
 				<aside class="settings-sidebar">
 					<div class="sidebar-header">
-						<h2 class="title">Settings</h2>
+						<h2 class="title">{m.settings_title()}</h2>
 						<p class="username">@{username}</p>
 					</div>
 					<SettingsNav
@@ -260,7 +261,7 @@
 					{#if isLoading}
 						<div class="loading-state">
 							<div class="spinner"></div>
-							<span>Loading settings...</span>
+							<span>{m.settings_loading()}</span>
 						</div>
 					{:else if activeSection === 'account'}
 						<AccountSettings
@@ -315,7 +316,7 @@
 			onCancel={handleClose}
 			cancelDisabled={saving}
 			primaryAction={{
-				label: saving ? 'Saving...' : 'Save Changes',
+				label: saving ? m.settings_saving() : m.settings_save(),
 				onclick: handleSave,
 				disabled: saving || isLoading
 			}}
