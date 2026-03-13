@@ -12,6 +12,7 @@
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { Dialog } from 'bits-ui'
+	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -66,17 +67,17 @@
 		const newErrors: Record<string, string> = {}
 
 		if (!name.trim()) {
-			newErrors.name = 'Crew name is required'
+			newErrors.name = m.crew_error_name_required()
 		} else if (name.length > 100) {
-			newErrors.name = 'Crew name must be 100 characters or less'
+			newErrors.name = m.crew_error_name_max()
 		}
 
 		if (gamertag && gamertag.length > 10) {
-			newErrors.gamertag = 'Gamertag must be 10 characters or less'
+			newErrors.gamertag = m.crew_error_gamertag_max()
 		}
 
 		if (description && description.length > 500) {
-			newErrors.description = 'Description must be 500 characters or less'
+			newErrors.description = m.crew_error_description_max()
 		}
 
 		errors = newErrors
@@ -103,7 +104,7 @@
 			if (error.errors) {
 				errors = error.errors
 			} else {
-				errors = { form: error.message || 'Failed to update crew' }
+				errors = { form: error.message || m.crew_update_failed() }
 			}
 		}
 	}
@@ -146,12 +147,12 @@
 </script>
 
 <svelte:head>
-	<title>Crew Settings / granblue.team</title>
+	<title>{m.page_title_crew_settings()}</title>
 </svelte:head>
 
 <div class="settings-page">
 	<header class="page-header">
-		<h1>Crew Settings</h1>
+		<h1>{m.crew_settings_title()}</h1>
 	</header>
 
 	<form onsubmit={handleSubmit} class="settings-form">
@@ -163,7 +164,7 @@
 
 		<div class="form-group">
 			<label for="name" class="form-label">
-				Crew Name <span class="required">*</span>
+				{m.crew_name_label()} <span class="required">{m.crew_required_mark()}</span>
 			</label>
 			<input
 				type="text"
@@ -179,7 +180,7 @@
 		</div>
 
 		<div class="form-group">
-			<label for="gamertag" class="form-label"> Gamertag </label>
+			<label for="gamertag" class="form-label"> {m.crew_gamertag_label()} </label>
 			<input
 				type="text"
 				id="gamertag"
@@ -191,16 +192,16 @@
 			{#if errors.gamertag}
 				<span class="field-error">{errors.gamertag}</span>
 			{/if}
-			<span class="field-hint"> Short tag displayed next to member usernames </span>
+			<span class="field-hint"> {m.crew_gamertag_hint()} </span>
 		</div>
 
 		<div class="form-group">
-			<label for="granblueCrewId" class="form-label"> In-Game Crew ID </label>
+			<label for="granblueCrewId" class="form-label"> {m.crew_ingame_id_label()} </label>
 			<input type="text" id="granblueCrewId" bind:value={granblueCrewId} class="form-input" />
 		</div>
 
 		<div class="form-group">
-			<label for="description" class="form-label"> Description </label>
+			<label for="description" class="form-label"> {m.crew_description_label()} </label>
 			<textarea
 				id="description"
 				bind:value={description}
@@ -216,23 +217,23 @@
 
 		<div class="form-actions">
 			<Button variant="primary" type="submit" disabled={updateCrewMutation.isPending}>
-				{updateCrewMutation.isPending ? 'Saving...' : 'Save Changes'}
+				{updateCrewMutation.isPending ? m.crew_saving() : m.crew_save()}
 			</Button>
 		</div>
 	</form>
 
 	<!-- Danger zone -->
 	<div class="danger-zone">
-		<h2>Danger Zone</h2>
+		<h2>{m.crew_danger_zone()}</h2>
 
 		{#if crewStore.isCaptain}
 			<div class="danger-item">
 				<div class="danger-info">
-					<h3>Transfer Captain</h3>
-					<p>Transfer ownership of the crew to another member.</p>
+					<h3>{m.crew_transfer_captain()}</h3>
+					<p>{m.crew_transfer_desc()}</p>
 				</div>
 				<Button variant="secondary" size="small" onclick={() => (transferDialogOpen = true)}>
-					Transfer
+					{m.crew_transfer()}
 				</Button>
 			</div>
 		{/if}
@@ -240,15 +241,15 @@
 		{#if crewStore.canLeaveCrew}
 			<div class="danger-item">
 				<div class="danger-info">
-					<h3>Leave Crew</h3>
-					<p>Leave this crew. You'll need an invitation to rejoin.</p>
+					<h3>{m.crew_leave()}</h3>
+					<p>{m.crew_leave_desc()}</p>
 				</div>
 				<Button variant="secondary" size="small" onclick={() => (leaveDialogOpen = true)}>
-					Leave Crew
+					{m.crew_leave()}
 				</Button>
 			</div>
 		{:else if crewStore.isCaptain}
-			<p class="captain-note">As captain, you must transfer ownership before leaving the crew.</p>
+			<p class="captain-note">{m.crew_leave_must_transfer()}</p>
 		{/if}
 	</div>
 </div>
@@ -258,13 +259,13 @@
 	<Dialog.Portal>
 		<Dialog.Overlay class="dialog-overlay" />
 		<Dialog.Content class="dialog-content">
-			<Dialog.Title class="dialog-title">Leave Crew</Dialog.Title>
+			<Dialog.Title class="dialog-title">{m.crew_leave()}</Dialog.Title>
 			<Dialog.Description class="dialog-description">
-				Are you sure you want to leave {crewStore.crew?.name}? You'll need an invitation to rejoin.
+				{m.crew_leave_confirm({ name: crewStore.crew?.name ?? '' })}
 			</Dialog.Description>
 			<div class="dialog-actions">
-				<Dialog.Close class="dialog-button secondary">Cancel</Dialog.Close>
-				<button class="dialog-button primary danger" onclick={handleLeaveCrew}> Leave Crew </button>
+				<Dialog.Close class="dialog-button secondary">{m.crew_cancel()}</Dialog.Close>
+				<button class="dialog-button primary danger" onclick={handleLeaveCrew}> {m.crew_leave()} </button>
 			</div>
 		</Dialog.Content>
 	</Dialog.Portal>
@@ -275,14 +276,14 @@
 	<Dialog.Portal>
 		<Dialog.Overlay class="dialog-overlay" />
 		<Dialog.Content class="dialog-content">
-			<Dialog.Title class="dialog-title">Transfer Captain</Dialog.Title>
+			<Dialog.Title class="dialog-title">{m.crew_transfer_dialog_title()}</Dialog.Title>
 			<Dialog.Description class="dialog-description">
-				Select a member to become the new captain. You will become a regular member.
+				{m.crew_transfer_dialog_desc()}
 			</Dialog.Description>
 
 			{#if transferCandidates.length === 0}
 				<p class="no-candidates">
-					No eligible members to transfer to. The crew needs at least one other member.
+					{m.crew_transfer_no_members()}
 				</p>
 			{:else}
 				<div class="transfer-list">
@@ -296,7 +297,7 @@
 							/>
 							<span class="member-name">{member.user?.username}</span>
 							<span class="member-role">
-								{member.role === 'vice_captain' ? 'Vice Captain' : 'Member'}
+								{member.role === 'vice_captain' ? m.crew_role_vice_captain() : m.crew_role_member()}
 							</span>
 						</label>
 					{/each}
@@ -304,13 +305,13 @@
 			{/if}
 
 			<div class="dialog-actions">
-				<Dialog.Close class="dialog-button secondary">Cancel</Dialog.Close>
+				<Dialog.Close class="dialog-button secondary">{m.crew_cancel()}</Dialog.Close>
 				<button
 					class="dialog-button primary"
 					onclick={handleTransferCaptain}
 					disabled={!selectedTransferUserId || transferCandidates.length === 0}
 				>
-					Transfer
+					{m.crew_transfer()}
 				</button>
 			</div>
 		</Dialog.Content>
