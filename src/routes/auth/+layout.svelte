@@ -3,6 +3,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import { getBasePath } from '$lib/utils/images'
 	import * as m from '$lib/paraglide/messages'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
 		children: Snippet
@@ -15,7 +16,7 @@
 
 <div class="authContainer" style:--auth-bg-url="url('{backgroundUrl}')">
 	<div class="authBackground"></div>
-	<a href="/" class="backLink">
+	<a href={localizeHref('/')} class="backLink">
 		<Icon name="arrow-left" size={14} />
 		{m.auth_backToHome()}
 	</a>

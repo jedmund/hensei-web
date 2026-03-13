@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores'
 	import * as m from '$lib/paraglide/messages'
+	import { localizeHref } from '$lib/paraglide/runtime'
 </script>
 
 <div class="error-container">
@@ -9,7 +10,7 @@
 		<h1>{m.error_something_went_wrong()}</h1>
 	</div>
 
-	<a class="browse-link" href="/teams/explore">{m.error_browse_teams()}</a>
+	<a class="browse-link" href={localizeHref('/teams/explore')}>{m.error_browse_teams()}</a>
 </div>
 
 <style lang="scss">
