@@ -206,7 +206,7 @@
 			{#if collectionQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={20} />
-					<span>{m.loading_more()}</span>
+					<span>Loading more...</span>
 				</div>
 			{/if}
 		{/if}

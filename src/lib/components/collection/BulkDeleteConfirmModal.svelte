@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
@@ -23,30 +22,23 @@
 		onCancel
 	}: Props = $props()
 
-	// Localized entity name lookup
-	const entityNameMap: Record<string, string> = {
-		characters: m.collection_entity_characters(),
-		weapons: m.collection_entity_weapons(),
-		summons: m.collection_entity_summons(),
-		artifacts: m.collection_entity_artifacts()
-	}
-
-	const itemLabel = $derived(entityNameMap[entityType] ?? entityType)
+	const itemLabel = $derived(count === 1 ? entityType.slice(0, -1) : entityType)
 </script>
 
 <Dialog bind:open>
 	{#snippet children()}
-		<ModalHeader title={m.collection_bulk_delete_title({ count, type: itemLabel })} />
+		<ModalHeader title="Delete {count} {itemLabel}?" />
 		<ModalBody>
 			<p class="message">
-				{m.collection_bulk_delete_message({ count, type: itemLabel })}
+				Are you sure you want to remove {count}
+				{itemLabel} from your collection? This action cannot be undone.
 			</p>
 		</ModalBody>
 		<ModalFooter
 			{onCancel}
 			cancelDisabled={deleting}
 			primaryAction={{
-				label: deleting ? m.collection_bulk_deleting() : m.collection_bulk_delete_confirm(),
+				label: deleting ? 'Deleting...' : 'Yes, delete',
 				onclick: onConfirm,
 				destructive: true,
 				disabled: deleting
