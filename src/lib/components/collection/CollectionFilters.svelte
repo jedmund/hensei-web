@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
 	import { RACE_LABELS } from '$lib/utils/race'
 	import { GENDER_LABELS } from '$lib/utils/gender'
@@ -9,6 +10,7 @@
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { localizedName } from '$lib/utils/locale'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
 
@@ -196,7 +198,7 @@
 				.sort((a, b) => a.order - b.order)
 				.map((s) => ({
 					value: s.id,
-					label: s.name.en
+					label: localizedName(s.name)
 				}))
 		}
 		return characterSeries
@@ -446,7 +448,7 @@
 
 	<div class="right-controls">
 		{#if hasActiveFilters}
-			<button type="button" class="clear-btn" onclick={clearAll}>Clear</button>
+			<button type="button" class="clear-btn" onclick={clearAll}>{m.filter_clear()}</button>
 		{/if}
 		{#if showSort}
 			<div class="sort">

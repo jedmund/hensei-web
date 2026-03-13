@@ -1,12 +1,14 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { formatDate } from '$lib/utils/date'
 	import type { PhantomPlayer } from '$lib/types/api/crew'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		phantom: PhantomPlayer
@@ -40,12 +42,12 @@
 </script>
 
 <li class="phantom-row" class:retired={phantom.retired}>
-	<a href="/crew/phantoms/{phantom.id}" class="phantom-link">
+	<a href={localizeHref(`/crew/phantoms/${phantom.id}`)} class="phantom-link">
 		<div class="phantom-info">
 			<div class="phantom-details">
 				<span class="name">{phantom.name}</span>
 				{#if phantom.joinedAt}
-					<span class="joined-date">Joined {formatDate(phantom.joinedAt)}</span>
+					<span class="joined-date">{m.crew_joined_date({ date: formatDate(phantom.joinedAt) })}</span>
 				{/if}
 			</div>
 		</div>
@@ -53,11 +55,11 @@
 
 	<div class="phantom-actions">
 		{#if claimStatus === 'unclaimed'}
-			<span class="status-badge unclaimed">Unclaimed</span>
+			<span class="status-badge unclaimed">{m.crew_phantom_unclaimed()}</span>
 		{:else if claimStatus === 'pending'}
-			<span class="status-badge pending">Pending: {phantom.claimedBy?.username}</span>
+			<span class="status-badge pending">{m.crew_phantom_pending({ username: phantom.claimedBy?.username ?? '' })}</span>
 		{:else if claimStatus === 'claimed'}
-			<span class="status-badge claimed">Claimed by {phantom.claimedBy?.username}</span>
+			<span class="status-badge claimed">{m.crew_phantom_claimed({ username: phantom.claimedBy?.username ?? '' })}</span>
 		{/if}
 
 		{#if crewStore.isOfficer}
@@ -69,24 +71,24 @@
 				{#snippet menu()}
 					<DropdownMenuBase.Item
 						class="dropdown-menu-item"
-						onclick={() => goto(`/crew/phantoms/${phantom.id}`)}
+						onclick={() => goto(localizeHref(`/crew/phantoms/${phantom.id}`))}
 					>
-						View crew profile
+						{m.crew_view_crew_profile()}
 					</DropdownMenuBase.Item>
 					{#if onEdit}
 						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEdit}>
-							Edit
+							{m.crew_edit()}
 						</DropdownMenuBase.Item>
 					{/if}
 					{#if claimStatus === 'unclaimed' && onAssign}
 						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onAssign}>
-							Assign to...
+							{m.crew_phantom_assign()}
 						</DropdownMenuBase.Item>
 					{/if}
 					{#if onDelete}
 						<DropdownMenuBase.Separator class="dropdown-menu-separator" />
 						<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={onDelete}>
-							Delete
+							{m.crew_phantom_delete()}
 						</DropdownMenuBase.Item>
 					{/if}
 				{/snippet}
@@ -96,12 +98,12 @@
 			<div class="claim-buttons">
 				{#if onDecline}
 					<Button variant="secondary" size="small" onclick={onDecline}>
-						Decline
+						{m.crew_phantom_decline()}
 					</Button>
 				{/if}
 				{#if onAccept}
 					<Button variant="primary" size="small" onclick={onAccept}>
-						Accept
+						{m.crew_phantom_accept()}
 					</Button>
 				{/if}
 			</div>

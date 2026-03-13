@@ -9,6 +9,9 @@
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { getAvatarSrc } from '$lib/utils/avatar'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import { localizedName } from '$lib/utils/locale'
+	import { getLocale } from '$lib/paraglide/runtime'
+	import * as m from '$lib/paraglide/messages'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
 	import type {
 		CollectionCharacter,
@@ -59,6 +62,7 @@
 	let searchQuery = $state('')
 	let debouncedSearchQuery = $state('')
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined
+	let isComposing = $state(false)
 
 	// Filter state
 	let elementFilters = $state<number[]>([])
@@ -75,19 +79,33 @@
 	let selectedMemberId = $state<string | undefined>(authUserId)
 	let unlinkDialogOpen = $state(false)
 
-	// Filter visibility (collapsed by default)
-	let filtersOpen = $state(false)
+	// Filter visibility (open by default)
+	let filtersOpen = $state(true)
 
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
 
-	// Debounce search query changes
+	// IME composition handlers
+	function handleCompositionStart() {
+		isComposing = true
+	}
+
+	function handleCompositionEnd() {
+		// Safari fires compositionend before the final input event
+		setTimeout(() => {
+			isComposing = false
+		}, 50)
+	}
+
+	// Debounce search query changes (skip during IME composition)
 	$effect(() => {
 		const query = searchQuery
 
 		if (debounceTimer) {
 			clearTimeout(debounceTimer)
 		}
+
+		if (isComposing) return
 
 		debounceTimer = setTimeout(() => {
 			debouncedSearchQuery = query
@@ -119,7 +137,7 @@
 		if (!data) return []
 		return data.map((s) => ({
 			value: s.id,
-			label: s.name.en
+			label: localizedName(s.name)
 		}))
 	})
 
@@ -210,7 +228,10 @@
 	const filters = $derived<SearchFilters>({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
-		proficiency: type === 'weapon' && effectiveProficiencies ? effectiveProficiencies : undefined,
+		proficiency:
+			(type === 'weapon' || type === 'character') && effectiveProficiencies
+				? effectiveProficiencies
+				: undefined,
 		series: seriesFilter ? [seriesFilter] : undefined
 	})
 
@@ -253,16 +274,17 @@
 	const searchQueryResult = createInfiniteQuery(() => {
 		const query = debouncedSearchQuery
 		const currentFilters = filters
+		const locale = getLocale() as 'en' | 'ja'
 
 		switch (type) {
 			case 'weapon':
-				return searchQueries.weapons(query, currentFilters)
+				return searchQueries.weapons(query, currentFilters, locale)
 			case 'character':
-				return searchQueries.characters(query, currentFilters) as unknown as ReturnType<
+				return searchQueries.characters(query, currentFilters, locale) as unknown as ReturnType<
 					typeof searchQueries.weapons
 				>
 			case 'summon':
-				return searchQueries.summons(query, currentFilters) as unknown as ReturnType<
+				return searchQueries.summons(query, currentFilters, locale) as unknown as ReturnType<
 					typeof searchQueries.weapons
 				>
 		}
@@ -281,7 +303,9 @@
 			searchMode === 'collection'
 				? {
 						element: elementFilters.length > 0 ? elementFilters : undefined,
-						rarity: rarityFilters.length > 0 ? rarityFilters : undefined
+						rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
+						proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
+						series: seriesFilter ? [seriesFilter] : undefined
 					}
 				: {}
 
@@ -393,8 +417,8 @@
 					element={userElement}
 					grow
 				>
-					<Segment value="all">All Items</Segment>
-					<Segment value="collection">Collection</Segment>
+					<Segment value="all">{m.search_tab_all()}</Segment>
+					<Segment value="collection">{m.search_tab_collection()}</Segment>
 				</SegmentedControl>
 			</div>
 		{/if}
@@ -418,11 +442,13 @@
 			<Input
 				bind:value={searchQuery}
 				type="text"
-				placeholder="Search by name..."
+				placeholder={m.search_placeholder()}
 				leftIcon="search"
 				contained
 				fullWidth
 				class="search-input"
+				oncompositionstart={handleCompositionStart}
+				oncompositionend={handleCompositionEnd}
 			/>
 		</div>
 
@@ -451,7 +477,7 @@
 		{/if}
 
 		<div class="filters-toggle">
-			<Tooltip content={filtersOpen ? 'Hide filters' : 'Show filters'}>
+			<Tooltip content={filtersOpen ? m.search_hide_filters() : m.search_show_filters()}>
 				<Button
 					variant="ghost"
 					size="small"
@@ -470,13 +496,13 @@
 		{#if activeQuery.isLoading}
 			<div class="loading">
 				<Icon name="loader-2" size={24} />
-				<span>Searching...</span>
+				<span>{m.search_searching()}</span>
 			</div>
 		{:else if activeQuery.isError}
 			<div class="error-state">
 				<Icon name="alert-circle" size={24} />
-				<p>{activeQuery.error?.message || 'Search failed'}</p>
-				<Button size="small" onclick={() => activeQuery.refetch()}>Retry</Button>
+				<p>{activeQuery.error?.message || m.search_failed()}</p>
+				<Button size="small" onclick={() => activeQuery.refetch()}>{m.retry()}</Button>
 			</div>
 		{:else if searchResults.length > 0}
 			<ul class="results-list">
@@ -502,23 +528,23 @@
 			{#if activeQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={20} />
-					<span>Loading more...</span>
+					<span>{m.search_loading_more()}</span>
 				</div>
 			{/if}
 		{:else if isEmpty}
 			<div class="no-results">
 				{#if searchMode === 'collection'}
 					{#if searchQuery.length > 0}
-						No items match your search
+						{m.search_no_match()}
 					{:else if selectedMemberName}
-						{selectedMemberName}'s collection is empty
+						{m.search_member_empty({ name: selectedMemberName })}
 					{:else}
-						Your collection is empty
+						{m.search_collection_empty()}
 					{/if}
 				{:else if searchQuery.length > 0}
-					No results found
+					{m.search_no_results()}
 				{:else}
-					Start typing to search
+					{m.search_start_typing()}
 				{/if}
 			</div>
 		{/if}

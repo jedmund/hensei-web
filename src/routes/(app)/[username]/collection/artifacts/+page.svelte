@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { getContext, onDestroy, untrack } from 'svelte'
@@ -17,6 +18,7 @@
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { getArtifactImage } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 
@@ -73,22 +75,22 @@
 	const slot1Options = $derived(
 		(skillsQuery.data ?? [])
 			.filter((s) => s.skillGroup === 'group_i')
-			.map((s) => ({ value: s.modifier, label: s.name.en }))
+			.map((s) => ({ value: s.modifier, label: localizedName(s.name) }))
 	)
 	const slot2Options = $derived(
 		(skillsQuery.data ?? [])
 			.filter((s) => s.skillGroup === 'group_i')
-			.map((s) => ({ value: s.modifier, label: s.name.en }))
+			.map((s) => ({ value: s.modifier, label: localizedName(s.name) }))
 	)
 	const slot3Options = $derived(
 		(skillsQuery.data ?? [])
 			.filter((s) => s.skillGroup === 'group_ii')
-			.map((s) => ({ value: s.modifier, label: s.name.en }))
+			.map((s) => ({ value: s.modifier, label: localizedName(s.name) }))
 	)
 	const slot4Options = $derived(
 		(skillsQuery.data ?? [])
 			.filter((s) => s.skillGroup === 'group_iii')
-			.map((s) => ({ value: s.modifier, label: s.name.en }))
+			.map((s) => ({ value: s.modifier, label: localizedName(s.name) }))
 	)
 
 	// Check if any filters are active (for clear button)
@@ -270,17 +272,17 @@
 		{#if isLoading}
 			<div class="loading-state">
 				<Icon name="loader-2" size={32} />
-				<p>Loading collection...</p>
+				<p>{m.collection_loading()}</p>
 			</div>
 		{:else if isEmpty}
 			<div class="empty-state">
 				{#if data.isOwner}
 					<Icon name="gem" size={48} />
-					<h3>Your artifact collection is empty</h3>
-					<p>Artifacts will appear here once added</p>
+					<h3>{m.collection_empty_artifacts()}</h3>
+					<p>{m.collection_empty_artifacts_hint()}</p>
 				{:else}
 					<Icon name="lock" size={48} />
-					<p>This collection is empty or private</p>
+					<p>{m.collection_empty_private()}</p>
 				{/if}
 			</div>
 		{:else if currentViewMode === 'grid'}

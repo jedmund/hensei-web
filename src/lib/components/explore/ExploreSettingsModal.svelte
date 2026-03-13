@@ -9,6 +9,7 @@
   import Switch from '$lib/components/ui/switch/Switch.svelte'
   import type { FilterSet } from '$lib/types/FilterSet'
   import { defaultFilterSet } from '$lib/utils/defaultFilters'
+  import * as m from '$lib/paraglide/messages'
 
   interface Props {
     open: boolean
@@ -62,12 +63,12 @@
 </script>
 
 <Dialog bind:open {onOpenChange}>
-  <ModalHeader title="Filter Settings" />
+  <ModalHeader title={m.explore_settings_title()} />
   <ModalBody>
     <div class="sections">
       <section>
-        <h3>Grid Counts</h3>
-        <SettingsRow title="Min Characters" subtitle="Minimum number of characters">
+        <h3>{m.explore_settings_grid_counts()}</h3>
+        <SettingsRow title={m.explore_settings_min_characters()} subtitle={m.explore_settings_min_characters_desc()}>
           {#snippet control()}
             <div class="slider-row">
               <Slider
@@ -77,11 +78,11 @@
                 step={1}
                 onValueChange={(v) => (minCharacters = v)}
               />
-              <span class="slider-value">{minCharacters}</span>
+              <span class="slider-value">{m.counter_characters({ count: String(minCharacters) })}</span>
             </div>
           {/snippet}
         </SettingsRow>
-        <SettingsRow title="Min Weapons" subtitle="Minimum number of weapons">
+        <SettingsRow title={m.explore_settings_min_weapons()} subtitle={m.explore_settings_min_weapons_desc()}>
           {#snippet control()}
             <div class="slider-row">
               <Slider
@@ -91,11 +92,11 @@
                 step={1}
                 onValueChange={(v) => (minWeapons = v)}
               />
-              <span class="slider-value">{minWeapons}</span>
+              <span class="slider-value">{m.counter_weapons({ count: String(minWeapons) })}</span>
             </div>
           {/snippet}
         </SettingsRow>
-        <SettingsRow title="Min Summons" subtitle="Minimum number of summons">
+        <SettingsRow title={m.explore_settings_min_summons()} subtitle={m.explore_settings_min_summons_desc()}>
           {#snippet control()}
             <div class="slider-row">
               <Slider
@@ -105,25 +106,25 @@
                 step={1}
                 onValueChange={(v) => (minSummons = v)}
               />
-              <span class="slider-value">{minSummons}</span>
+              <span class="slider-value">{m.counter_summons({ count: String(minSummons) })}</span>
             </div>
           {/snippet}
         </SettingsRow>
       </section>
 
       <section>
-        <h3>Quality</h3>
-        <SettingsRow title="Name Quality" subtitle="Only show named teams">
+        <h3>{m.explore_settings_quality()}</h3>
+        <SettingsRow title={m.explore_settings_name_quality()} subtitle={m.explore_settings_name_quality_desc()}>
           {#snippet control()}
             <Switch bind:checked={nameQuality} size="small" />
           {/snippet}
         </SettingsRow>
-        <SettingsRow title="User Quality" subtitle="Only show verified users">
+        <SettingsRow title={m.explore_settings_user_quality()} subtitle={m.explore_settings_user_quality_desc()}>
           {#snippet control()}
             <Switch bind:checked={userQuality} size="small" />
           {/snippet}
         </SettingsRow>
-        <SettingsRow title="Original Only" subtitle="Exclude remixes">
+        <SettingsRow title={m.explore_settings_original()} subtitle={m.explore_settings_original_desc()}>
           {#snippet control()}
             <Switch bind:checked={originalOnly} size="small" />
           {/snippet}
@@ -133,10 +134,10 @@
   </ModalBody>
   <ModalFooter
     onCancel={() => (open = false)}
-    primaryAction={{ label: 'Apply', onclick: save }}
+    primaryAction={{ label: m.explore_settings_apply(), onclick: save }}
   >
     {#snippet left()}
-      <button type="button" class="reset-btn" onclick={reset}>Reset</button>
+      <button type="button" class="reset-btn" onclick={reset}>{m.explore_settings_reset()}</button>
     {/snippet}
   </ModalFooter>
 </Dialog>

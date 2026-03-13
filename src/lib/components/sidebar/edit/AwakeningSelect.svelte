@@ -6,6 +6,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import { getAwakeningImage } from '$lib/utils/modifiers'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		/** Available awakenings for the weapon */
@@ -50,7 +51,7 @@
 			const img = getAwakeningImage({ type: awk, level: 1 })
 			return {
 				value: getAwakeningKey(awk),
-				label: awk.name?.en || awk.name?.ja || 'Unknown',
+				label: localizedName(awk.name),
 				image: img ?? undefined
 			}
 		})
@@ -59,7 +60,7 @@
 		if (!awakenings.find((a) => getAwakeningKey(a) === NO_AWAKENING.id)) {
 			items.unshift({
 				value: NO_AWAKENING.id,
-				label: NO_AWAKENING.name.en
+				label: localizedName(NO_AWAKENING.name)
 			})
 		}
 

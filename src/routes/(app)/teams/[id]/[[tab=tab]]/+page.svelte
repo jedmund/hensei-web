@@ -62,14 +62,14 @@
 	const pageTitle = $derived(() => {
 		if (!party) return 'Team / granblue.team'
 		const emoji = getElementEmoji(party.element)
-		const teamName = party.name || 'Unnamed Team'
+		const teamName = party.name || m.party_untitled()
 		const username = party.user?.username || 'Anonymous'
 		return m.page_title_party({ emoji, teamName, username })
 	})
 
 	const pageDescription = $derived(() => {
 		if (!party) return m.page_desc_home()
-		const raidName = party.raid?.name || 'Unknown Raid'
+		const raidName = party.raid?.name || m.party_raid_unknown()
 		const username = party.user?.username || 'Anonymous'
 		return m.page_desc_party({ raidName, username })
 	})
@@ -88,7 +88,7 @@
 	/>
 {:else}
 	<div>
-		<h1>Party not found</h1>
-		<p>No party data available for this code.</p>
+		<h1>{m.party_not_found()}</h1>
+		<p>{m.party_no_data()}</p>
 	</div>
 {/if}

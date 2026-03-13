@@ -12,6 +12,7 @@
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		raid: Raid
@@ -162,17 +163,17 @@
 		{#if partiesQuery.isLoading && parties.length === 0}
 			<div class="loading-state">
 				<Icon name="loader-2" size={24} />
-				<span>Loading parties...</span>
+				<span>{m.sidebar_loading_parties()}</span>
 			</div>
 		{:else if partiesQuery.isError}
 			<div class="error-state">
 				<Icon name="alert-circle" size={24} />
-				<p>Failed to load parties</p>
-				<button type="button" onclick={() => partiesQuery.refetch()}>Retry</button>
+				<p>{m.sidebar_parties_error()}</p>
+				<button type="button" onclick={() => partiesQuery.refetch()}>{m.retry()}</button>
 			</div>
 		{:else if isEmpty}
 			<div class="empty-state">
-				<p>No parties found for this raid</p>
+				<p>{m.sidebar_no_parties()}</p>
 			</div>
 		{:else}
 			<div class="parties-grid">
@@ -190,7 +191,7 @@
 			{#if partiesQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={20} />
-					<span>Loading more...</span>
+					<span>{m.loading_more()}</span>
 				</div>
 			{/if}
 		{/if}

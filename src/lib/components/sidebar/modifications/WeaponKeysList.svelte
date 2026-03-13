@@ -2,7 +2,9 @@
 	import { getWeaponKeyImages } from '$lib/utils/modifiers'
 	import type { WeaponKey } from '$lib/types/api/entities'
 	import type { LocalizedName } from '$lib/types/api/entities'
+	import { localizedName } from '$lib/utils/locale'
 	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		weaponKeys?: WeaponKey[]
@@ -28,13 +30,13 @@
 	)
 
 	function getKeyDescription(key: WeaponKey): string {
-		if (key.name?.en) return key.name.en
-		if (key.name?.ja) return key.name.ja
-		return key.slug || 'Weapon Key'
+		const name = localizedName(key.name)
+		if (name !== '—') return name
+		return key.slug || m.details_weapon_key_fallback()
 	}
 
 	function getSlotLabel(slot: number, series?: WeaponSeriesRef | null): string {
-		return `Skill ${slot + 1}`
+		return m.details_skill_slot({ slot: String(slot + 1) })
 	}
 </script>
 

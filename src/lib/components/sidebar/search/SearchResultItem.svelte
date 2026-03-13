@@ -1,6 +1,8 @@
 
 <script lang="ts">
 	import Icon from '../../Icon.svelte'
+	import * as m from '$lib/paraglide/messages'
+	import { localizedName } from '$lib/utils/locale'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
@@ -49,7 +51,7 @@
 	function getItemName(result: AddItemResult): string {
 		const name = result.name
 		if (typeof name === 'string') return name
-		return name?.en || name?.ja || 'Unknown'
+		return localizedName(name) || 'Unknown'
 	}
 
 	const itemName = $derived(getItemName(item))
@@ -64,7 +66,7 @@
 		class:from-collection={fromCollection}
 		class:in-team={inTeam}
 		onclick={() => onclick?.(item)}
-		aria-label="{inTeam ? 'Already in team' : isDisabled ? 'Grid full - cannot add' : 'Add'} {itemName}"
+		aria-label={inTeam ? m.search_already_in_team() : isDisabled ? m.search_grid_full() : m.search_add_item({ name: itemName })}
 		disabled={isDisabled}
 	>
 		<img src={imageUrl} alt={itemName} class="result-image" loading="lazy" />
@@ -75,7 +77,7 @@
 					<ElementLabel element={item.element} size="small" />
 				{/if}
 				{#if inTeam}
-					<span class="in-team-pill">Added to team</span>
+					<span class="in-team-pill">{m.search_added_pill()}</span>
 				{/if}
 				{#if Array.isArray(item.proficiency)}
 					{#each item.proficiency as prof}

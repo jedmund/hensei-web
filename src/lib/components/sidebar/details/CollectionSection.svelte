@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -16,7 +17,7 @@
 
 	let { type, count, element, gridCount, hasCollection = false, sourceUsername, isOutOfSync = false, isSyncing = false, onSync }: Props = $props()
 
-	const ownerLabel = $derived(sourceUsername ? `${sourceUsername}'s` : 'your')
+	const isOwnCollection = $derived(!sourceUsername)
 	const isInsufficient = $derived(
 		(type === 'weapon' && gridCount != null && count < gridCount) ||
 		(type !== 'weapon' && count === 0)
@@ -43,28 +44,28 @@
 			style:color={isInsufficient ? 'var(--danger)' : `var(--${elementName}-nav-selected-text)`}
 		>
 			{#if type === 'character' && count > 0}
-				<span>In {ownerLabel} Collection</span>
+				<span>{isOwnCollection ? m.details_collection_in_your() : m.details_collection_in_other({ owner: sourceUsername ?? '' })}</span>
 			{:else if type === 'character'}
-				<span>Not in {ownerLabel} Collection</span>
+				<span>{isOwnCollection ? m.details_collection_not_in_your() : m.details_collection_not_in_other({ owner: sourceUsername ?? '' })}</span>
 			{:else if type === 'weapon' && gridCount != null}
-				<span>{count}/{gridCount} in {ownerLabel} Collection</span>
+				<span>{isOwnCollection ? m.details_collection_count_grid_your({ count: String(count), gridCount: String(gridCount) }) : m.details_collection_count_grid_other({ count: String(count), gridCount: String(gridCount), owner: sourceUsername ?? '' })}</span>
 			{:else}
-				<span>{count} in {ownerLabel} Collection</span>
+				<span>{isOwnCollection ? m.details_collection_count_your({ count: String(count) }) : m.details_collection_count_other({ count: String(count), owner: sourceUsername ?? '' })}</span>
 			{/if}
 		</div>
 
 		{#if isOutOfSync}
 			<div class="sync-banner">
 				<div class="sync-message">
-					<span>Out of sync with Collection</span>
-					<Tooltip content="The settings on this item have changed in the Collection since it was added to this team. Syncing will update it to match.">
+					<span>{m.details_collection_out_of_sync()}</span>
+					<Tooltip content={m.details_collection_sync_tooltip()}>
 						<span class="help-icon">
 							<Icon name="circle-help" size={14} />
 						</span>
 					</Tooltip>
 				</div>
 				<button class="sync-button" onclick={onSync} disabled={isSyncing}>
-					{isSyncing ? 'Syncing...' : 'Sync'}
+					{isSyncing ? m.details_collection_syncing() : m.details_collection_sync()}
 				</button>
 			</div>
 		{/if}

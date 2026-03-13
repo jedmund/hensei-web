@@ -3,6 +3,8 @@
 	import type { Raid } from '$lib/types/api/entities'
 	import { getRaidImage } from '$lib/utils/images'
 	import { getElementLabel } from '$lib/utils/element'
+	import { localizedName } from '$lib/utils/locale'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		raid?: Raid
@@ -16,14 +18,13 @@
 
 	const raidName = $derived(() => {
 		if (!raid) return null
-		if (typeof raid.name === 'string') return raid.name
-		return raid.name?.en || raid.name?.ja || 'Unknown Raid'
+		return localizedName(raid.name)
 	})
 
 	const elementLabel = $derived(raid ? getElementLabel(raid.element) : null)
 </script>
 
-<InfoTile label="Raid" class="raid-tile" {clickable} {onclick}>
+<InfoTile label={m.party_raid_label()} class="raid-tile" {clickable} {onclick}>
 	{#if raid}
 		<div class="raid-info">
 			<img src={getRaidImage(raid.slug)} alt="" class="raid-image" />
@@ -33,7 +34,7 @@
 			</div>
 		</div>
 	{:else}
-		<span class="empty-state">No raid selected</span>
+		<span class="empty-state">{m.party_raid_empty()}</span>
 	{/if}
 </InfoTile>
 

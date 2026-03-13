@@ -6,6 +6,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import { getElementLabel, getElementOptions } from '$lib/utils/element'
+	import { localizedName } from '$lib/utils/locale'
 	import type { SummonSeriesRef } from '$lib/types/api/summonSeries'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -34,7 +35,7 @@
 			{ value: '', label: 'None' },
 			...series.map((s) => ({
 				value: s.id,
-				label: s.name.en
+				label: localizedName(s.name)
 			}))
 		]
 	})
@@ -49,7 +50,7 @@
 	// Format series label for display mode
 	function formatSeriesLabel(series: SummonSeriesRef | null | undefined): string {
 		if (!series) return '—'
-		return series.name?.en || '—'
+		return localizedName(series.name)
 	}
 </script>
 

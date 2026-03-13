@@ -8,6 +8,7 @@
 		getBasePath
 	} from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -57,12 +58,8 @@
 
 	function displayName(input: any): string {
 		if (!input) return '—'
-		const maybe = input.name ?? input
-		if (typeof maybe === 'string') return maybe
-		if (maybe && typeof maybe === 'object') {
-			return maybe.en || maybe.ja || '—'
-		}
-		return '—'
+		const name = input.name ?? input
+		return localizedName(name)
 	}
 
 	// Special characters have different star counts (SR characters, etc.)

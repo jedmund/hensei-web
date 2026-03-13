@@ -6,6 +6,7 @@
 	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 	import InviteUserModal from '$lib/components/crew/InviteUserModal.svelte'
 	import type { CrewRole } from '$lib/types/api/crew'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
 		username: string
@@ -139,13 +140,13 @@
 	</div>
 
 	<nav class="tabs" aria-label="Profile sections" data-element={element}>
-		<a class:active={activeTab === 'teams'} href="/{username}" data-sveltekit-preload-data="hover">
+		<a class:active={activeTab === 'teams'} href={localizeHref(`/${username}`)} data-sveltekit-preload-data="hover">
 			Teams
 		</a>
 		{#if isOwner}
 			<a
 				class:active={activeTab === 'favorites'}
-				href="/{username}/favorites"
+				href={localizeHref(`/${username}/favorites`)}
 				data-sveltekit-preload-data="hover"
 			>
 				Favorites
@@ -153,7 +154,7 @@
 		{/if}
 		<a
 			class:active={activeTab === 'collection'}
-			href="/{username}/collection/characters"
+			href={localizeHref(`/${username}/collection/characters`)}
 			data-sveltekit-preload-data="hover"
 		>
 			Collection

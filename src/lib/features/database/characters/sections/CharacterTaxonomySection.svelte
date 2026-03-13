@@ -10,6 +10,7 @@
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
 	import { getElementLabel } from '$lib/utils/element'
 	import { getCharacterImage } from '$lib/utils/images'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -129,7 +130,7 @@
 			{/if}
 			{#if character.baseCharacter}
 				<DetailItem label="Base Character">
-					<a href="/database/characters/{character.baseCharacter.granblueId}" class="base-character-link">
+					<a href={localizeHref(`/database/characters/${character.baseCharacter.granblueId}`)} class="base-character-link">
 						<img
 							src={getCharacterImage(character.baseCharacter.granblueId, 'square', '01')}
 							alt={character.baseCharacter.name?.en || 'Base character'}

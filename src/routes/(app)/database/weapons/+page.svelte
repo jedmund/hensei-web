@@ -19,6 +19,7 @@
 	import AwakeningModal from '$lib/features/database/weapons/AwakeningModal.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getBasePath } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 	import type { Awakening } from '$lib/types/api/entities'
 
 	type ViewMode = 'weapons' | 'series' | 'awakenings'
@@ -182,7 +183,7 @@
 								<tr onclick={() => handleSeriesClick(series.slug)} class="clickable">
 									<td class="col-order">{series.order}</td>
 									<td class="col-name">
-										<span class="series-name">{series.name.en}</span>
+										<span class="series-name">{localizedName(series.name)}</span>
 									</td>
 									<td class="col-slug"><code>{series.slug}</code></td>
 									<td class="col-flags">
@@ -249,7 +250,7 @@
 										{#if awakening.slug}
 											<img
 												src={getAwakeningImageUrl(awakening.slug)}
-												alt={awakening.name.en}
+												alt={localizedName(awakening.name)}
 												class="awakening-icon"
 											/>
 										{:else}
@@ -257,7 +258,7 @@
 										{/if}
 									</td>
 									<td class="col-order">{awakening.order ?? '—'}</td>
-									<td class="col-name">{awakening.name.en}</td>
+									<td class="col-name">{localizedName(awakening.name)}</td>
 									<td class="col-slug"><code>{awakening.slug}</code></td>
 									<td class="col-type">{awakening.objectType ?? '—'}</td>
 								</tr>

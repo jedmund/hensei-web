@@ -1,8 +1,10 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { ArtifactSkill } from '$lib/types/api/artifact'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
+	import { localizedName } from '$lib/utils/locale'
 
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -28,11 +30,11 @@
 
 <div class="modifier-list">
 	{#if skillsQuery.isPending}
-		<div class="loading-state">Loading skills...</div>
+		<div class="loading-state">{m.artifact_skills_loading()}</div>
 	{:else if skillsQuery.isError}
-		<div class="error-state">Failed to load skills</div>
+		<div class="error-state">{m.artifact_skills_error()}</div>
 	{:else if skills.length === 0}
-		<div class="empty-state">No skills available</div>
+		<div class="empty-state">{m.artifact_skills_empty()}</div>
 	{:else}
 		<div class="skill-options">
 			{#each skills as skill (skill.id)}
@@ -48,7 +50,7 @@
 					class:element-light={element === 'light'}
 					onclick={() => onSelect(skill)}
 				>
-					<span class="name">{skill.name.en}</span>
+					<span class="name">{localizedName(skill.name)}</span>
 				</button>
 			{/each}
 		</div>

@@ -6,7 +6,12 @@
   import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
   import type { RaidFull } from '$lib/types/api/raid'
   import ExploreFilterPill from './ExploreFilterPill.svelte'
+  import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
+  import type { UnifiedSearchSeriesRef } from '$lib/api/adapters/search.adapter'
   import Icon from '$lib/components/Icon.svelte'
+  import * as m from '$lib/paraglide/messages'
+  import { getLocale } from '$lib/paraglide/runtime'
+  import { localizedName } from '$lib/utils/locale'
 
   export type FilterItem =
     | { kind: 'element'; value: number; label: string }
@@ -38,6 +43,7 @@
   let selectedIndex = $state(0)
   let searchResults = $state<UnifiedSearchResult[]>([])
   let isSearching = $state(false)
+  let isComposing = $state(false)
   let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
   // Fetch raid groups for raid search
@@ -49,36 +55,36 @@
   )
 
   // Static filter options
-  const elementOptions = [
-    { value: 0, label: 'Null' },
-    { value: 1, label: 'Wind' },
-    { value: 2, label: 'Fire' },
-    { value: 3, label: 'Water' },
-    { value: 4, label: 'Earth' },
-    { value: 5, label: 'Dark' },
-    { value: 6, label: 'Light' }
-  ]
+  const elementOptions = $derived([
+    { value: 0, label: m.element_null() },
+    { value: 1, label: m.element_wind() },
+    { value: 2, label: m.element_fire() },
+    { value: 3, label: m.element_water() },
+    { value: 4, label: m.element_earth() },
+    { value: 5, label: m.element_dark() },
+    { value: 6, label: m.element_light() }
+  ])
 
-  const recencyOptions = [
-    { value: 86400, label: 'Last day' },
-    { value: 604800, label: 'Last week' },
-    { value: 2629746, label: 'Last month' },
-    { value: 7889238, label: 'Last 3 months' },
-    { value: 15778476, label: 'Last 6 months' },
-    { value: 31556952, label: 'Last year' }
-  ]
+  const recencyOptions = $derived([
+    { value: 86400, label: m.recency_day() },
+    { value: 604800, label: m.recency_week() },
+    { value: 2629746, label: m.recency_month() },
+    { value: 7889238, label: m.recency_3months() },
+    { value: 15778476, label: m.recency_6months() },
+    { value: 31556952, label: m.recency_year() }
+  ])
 
-  const partyOptions = [
-    { value: 'full_auto', label: 'Full Auto' },
-    { value: 'auto_guard', label: 'Auto Guard' },
-    { value: 'charge_attack', label: 'Charge Attack' },
-    { value: 'youtube', label: 'Youtube' }
-  ]
+  const partyOptions = $derived([
+    { value: 'full_auto', label: m.filter_full_auto() },
+    { value: 'auto_guard', label: m.filter_auto_guard() },
+    { value: 'charge_attack', label: m.filter_charge_attack() },
+    { value: 'youtube', label: m.filter_youtube() }
+  ])
 
   // Suggestion pools per category
-  const elementSuggestions: FilterOption[] = elementOptions
+  const elementSuggestions = $derived<FilterOption[]>(elementOptions
     .filter((e) => e.value !== 0)
-    .map((e) => ({ kind: 'element', value: e.value, label: e.label, category: 'Element' }))
+    .map((e) => ({ kind: 'element', value: e.value, label: e.label, category: m.filter_cat_element() })))
 
   // Pick one random item from an array
   function pickRandom<T>(arr: T[]): T | undefined {
@@ -100,7 +106,7 @@
 
     // Element (random)
     const el = pickRandom(elementSuggestions)
-    if (el) picks.push({ label: el.label, category: 'Element', option: el })
+    if (el) picks.push({ label: el.label, category: m.filter_cat_element(), option: el })
 
     // Raid (random from loaded data)
     const raidPool = allRaids.filter(
@@ -111,17 +117,17 @@
       const opt: FilterOption = {
         kind: 'raid',
         value: raid.slug,
-        label: raid.name?.en ?? raid.slug,
-        category: 'Raid'
+        label: localizedName(raid.name) ?? raid.slug,
+        category: m.filter_cat_raid()
       }
-      picks.push({ label: opt.label, category: 'Raid', option: opt })
+      picks.push({ label: opt.label, category: m.filter_cat_raid(), option: opt })
     }
 
     // Recency (always "Last week")
     picks.push({
-      label: 'Last week',
-      category: 'Recency',
-      option: { kind: 'recency', value: 604800, label: 'Last week', category: 'Recency' }
+      label: m.recency_week(),
+      category: m.filter_cat_recency(),
+      option: { kind: 'recency', value: 604800, label: m.recency_week(), category: m.filter_cat_recency() }
     })
 
     // Entity from API (pick one random from a pool of 12)
@@ -129,15 +135,16 @@
       const { suggestions } = await searchAdapter.getRandomSuggestions()
       const entity = pickRandom(suggestions)
       if (entity) {
-        const category = entity.type === 'character' ? 'Character'
-          : entity.type === 'weapon' ? 'Weapon' : 'Summon'
+        const category = entity.type === 'character' ? m.filter_cat_character()
+          : entity.type === 'weapon' ? m.filter_cat_weapon() : m.filter_cat_summon()
+        const entityLabel = localizedName(entity.name as { en: string; ja: string }) ?? 'Unknown'
         picks.push({
-          label: entity.name?.en ?? 'Unknown',
+          label: entityLabel,
           category,
           option: {
             kind: 'entity',
             value: entity.id,
-            label: entity.name?.en ?? 'Unknown',
+            label: entityLabel,
             category,
             entityType: entity.type,
             granblueId: entity.granblueId,
@@ -151,16 +158,16 @@
 
     // Full Auto (always)
     picks.push({
-      label: 'Full Auto',
-      category: 'Party',
-      option: { kind: 'party', value: 'full_auto', label: 'Full Auto', category: 'Party' }
+      label: m.filter_full_auto(),
+      category: m.filter_cat_party(),
+      option: { kind: 'party', value: 'full_auto', label: m.filter_full_auto(), category: m.filter_cat_party() }
     })
 
     // Youtube (always)
     picks.push({
-      label: 'Youtube',
-      category: 'Party',
-      option: { kind: 'party', value: 'youtube', label: 'Youtube', category: 'Party' }
+      label: m.filter_youtube(),
+      category: m.filter_cat_party(),
+      option: { kind: 'party', value: 'youtube', label: m.filter_youtube(), category: m.filter_cat_party() }
     })
 
     placeholderSuggestions = picks
@@ -181,6 +188,8 @@
     entityType?: string
     granblueId?: string
     element?: number
+    season?: number | null
+    series?: UnifiedSearchSeriesRef[] | null
   }
 
   // Filter local static options based on input
@@ -193,7 +202,7 @@
       if (el.label.toLowerCase().includes(q)) {
         const alreadySelected = filters.some((f) => f.kind === 'element' && f.value === el.value)
         if (!alreadySelected) {
-          results.push({ kind: 'element', value: el.value, label: el.label, category: 'Element' })
+          results.push({ kind: 'element', value: el.value, label: el.label, category: m.filter_cat_element() })
         }
       }
     }
@@ -207,7 +216,7 @@
             kind: 'recency',
             value: rec.value,
             label: rec.label,
-            category: 'Recency'
+            category: m.filter_cat_recency()
           })
         }
       }
@@ -224,7 +233,7 @@
             kind: 'party',
             value: party.value,
             label: party.label,
-            category: 'Party'
+            category: m.filter_cat_party()
           })
         }
       }
@@ -240,8 +249,8 @@
           results.push({
             kind: 'raid',
             value: raid.slug,
-            label: raid.name?.en ?? raid.slug,
-            category: 'Raid'
+            label: localizedName(raid.name) ?? raid.slug,
+            category: m.filter_cat_raid()
           })
         }
       }
@@ -263,7 +272,7 @@
     isSearching = true
     searchTimeout = setTimeout(async () => {
       try {
-        const response = await searchAdapter.searchAll({ query, per: 10 })
+        const response = await searchAdapter.searchAll({ query, per: 10, locale: getLocale() as 'en' | 'ja' })
         searchResults = response.results ?? []
       } catch {
         searchResults = []
@@ -293,15 +302,17 @@
       .map((r) => {
         const type = r.searchableType.toLowerCase()
         const category =
-          type === 'character' ? 'Character' : type === 'weapon' ? 'Weapon' : 'Summon'
+          type === 'character' ? m.filter_cat_character() : type === 'weapon' ? m.filter_cat_weapon() : m.filter_cat_summon()
         return {
           kind: 'entity' as const,
           value: r.searchableId,
-          label: r.nameEn ?? 'Unknown',
+          label: localizedName({ en: r.nameEn ?? '', ja: r.nameJp ?? '' }) ?? 'Unknown',
           category,
           entityType: type,
           granblueId: r.granblueId,
-          element: r.element
+          element: r.element,
+          season: r.season,
+          series: r.series
         }
       })
 
@@ -314,9 +325,9 @@
     selectedIndex = 0
   })
 
-  // Trigger search on input change
+  // Trigger search on input change (skip during IME composition)
   $effect(() => {
-    searchEntities(inputValue)
+    if (!isComposing) searchEntities(inputValue)
   })
 
   function openDropdown() {
@@ -394,7 +405,23 @@
     onFiltersChange(filters)
   }
 
+  function handleCompositionStart() {
+    isComposing = true
+    if (searchTimeout) clearTimeout(searchTimeout)
+  }
+
+  function handleCompositionEnd(e: CompositionEvent) {
+    // Small delay for Safari, which fires compositionend before keydown
+    setTimeout(() => {
+      isComposing = false
+      const value = (e.target as HTMLInputElement)?.value ?? ''
+      searchEntities(value)
+    }, 50)
+  }
+
   function handleKeydown(e: KeyboardEvent) {
+    if (e.isComposing || e.keyCode === 229) return
+
     const isPlaceholder = !inputValue.trim()
     const listLength = isPlaceholder ? placeholderSuggestions.length : displayResults.length
 
@@ -443,18 +470,20 @@
           bind:value={inputValue}
           type="text"
           class="filter-input"
-          placeholder="Start typing..."
+          placeholder={m.explore_filter_placeholder()}
           onkeydown={handleKeydown}
+          oncompositionstart={handleCompositionStart}
+          oncompositionend={handleCompositionEnd}
         />
       </div>
     {:else}
       <button type="button" class="filter-trigger" onclick={openDropdown}>
-        <span>Filter</span>
+        <span>{m.explore_filter()}</span>
         <Icon name="plus" size={9} />
       </button>
 
       {#if filters.length === 0}
-        <span class="tagline">to find the perfect team</span>
+        <span class="tagline">{m.explore_filter_tagline()}</span>
       {/if}
     {/if}
 
@@ -492,23 +521,37 @@
           {#each displayResults as option, i (option.kind + '-' + option.value)}
             <li
               class="result-item"
+              class:entity={option.kind === 'entity'}
               class:selected={i === selectedIndex}
               role="option"
               aria-selected={i === selectedIndex}
               onmouseenter={() => (selectedIndex = i)}
               onclick={() => selectOption(option)}
             >
-              <span class="result-label">{option.label}</span>
-              <span class="result-category">{option.category}</span>
+              {#if option.kind === 'entity' && option.granblueId}
+                <SearchOptionItem
+                  label={option.label}
+                  granblueId={option.granblueId}
+                  type={option.entityType === 'character' ? 'Character' : option.entityType === 'weapon' ? 'Weapon' : 'Summon'}
+                  element={option.element}
+                  season={option.season}
+                  series={option.series}
+                  showType={false}
+                  imageSize={32}
+                />
+              {:else}
+                <span class="result-label">{option.label}</span>
+                <span class="result-category">{option.category}</span>
+              {/if}
             </li>
           {/each}
         {:else if isSearching}
           <li class="result-item loading">
-            <span class="result-label">Searching...</span>
+            <span class="result-label">{m.explore_searching()}</span>
           </li>
         {:else}
           <li class="result-item empty">
-            <span class="result-label">No results found</span>
+            <span class="result-label">{m.explore_no_results()}</span>
           </li>
         {/if}
       </ul>
@@ -685,7 +728,7 @@
     position: absolute;
     top: calc(100% + $unit);
     left: 0;
-    width: 280px;
+    width: 340px;
     background: var(--menu-bg);
     border: $card-border;
     border-radius: $card-corner;
@@ -697,7 +740,7 @@
   .results {
     list-style: none;
     margin: 0;
-    padding: $unit-half 0;
+    padding: $unit-half;
     max-height: 280px;
     overflow-y: auto;
   }
@@ -706,7 +749,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: $unit $unit-2x;
+    padding: $unit;
+    border-radius: $item-corner;
     cursor: pointer;
     @include smooth-transition($duration-quick, background);
 

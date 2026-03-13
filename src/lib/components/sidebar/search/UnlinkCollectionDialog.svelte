@@ -4,6 +4,7 @@
 	import ModalHeader from '../../ui/ModalHeader.svelte'
 	import ModalBody from '../../ui/ModalBody.svelte'
 	import ModalFooter from '../../ui/ModalFooter.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean
@@ -15,11 +16,10 @@
 
 <Dialog bind:open>
 	{#snippet children()}
-		<ModalHeader title="Clear collection source?" />
+		<ModalHeader title={m.unlink_collection_title()} />
 		<ModalBody>
 			<p class="unlink-message">
-				All collection links will be removed from items in this party. The items themselves will
-				remain.
+				{m.unlink_collection_body()}
 			</p>
 		</ModalBody>
 		<ModalFooter
@@ -27,7 +27,7 @@
 				open = false
 			}}
 			primaryAction={{
-				label: 'Clear',
+				label: m.unlink_collection_confirm(),
 				onclick: async () => {
 					await onConfirm()
 					open = false

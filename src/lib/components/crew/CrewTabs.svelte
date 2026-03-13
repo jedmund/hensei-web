@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { page } from '$app/stores'
+	import * as m from '$lib/paraglide/messages'
 
 	type Element = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -19,22 +20,22 @@
 	const tabs: Tab[] = [
 		{
 			href: '/crew',
-			label: 'Events',
+			label: m.crew_tab_events(),
 			match: (pathname) => pathname === '/crew'
 		},
 		{
 			href: '/crew/members',
-			label: 'Members',
+			label: m.crew_tab_members(),
 			match: (pathname) => pathname.startsWith('/crew/members')
 		},
 		{
 			href: '/crew/teams',
-			label: 'Teams',
+			label: m.crew_tab_teams(),
 			match: (pathname) => pathname.startsWith('/crew/teams')
 		},
 		{
 			href: '/crew/roster',
-			label: 'Roster',
+			label: m.crew_tab_roster(),
 			match: (pathname) => pathname === '/crew/roster'
 		}
 	]

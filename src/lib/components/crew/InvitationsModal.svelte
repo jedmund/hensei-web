@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import {
 		useAcceptInvitation,
@@ -117,13 +118,13 @@
 		{#if isLoading}
 			<div class="loading-state">
 				<Icon name="loader-2" size={24} />
-				<p>Loading notifications...</p>
+				<p>{m.notifications_loading()}</p>
 			</div>
 		{:else if !hasNotifications}
 			<div class="empty-state">
 				<Icon name="bell" size={32} />
-				<p>No pending notifications</p>
-				<p class="hint">You'll see crew invitations and phantom assignments here.</p>
+				<p>{m.notifications_empty()}</p>
+				<p class="hint">{m.notifications_empty_hint()}</p>
 			</div>
 		{:else}
 			<!-- Phantom Claims Section -->

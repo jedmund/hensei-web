@@ -6,6 +6,7 @@
 		onViewDetails?: (() => void) | undefined
 		onViewInDatabase?: (() => void) | undefined
 		onReplace?: (() => void) | undefined
+		onDuplicate?: (() => void) | undefined
 		onRemove?: (() => void | Promise<void>) | undefined
 		canEdit?: boolean | undefined
 		variant?: 'context' | 'dropdown'
@@ -13,6 +14,8 @@
 		viewDetailsLabel?: string | undefined
 		viewInDatabaseLabel?: string | undefined
 		replaceLabel?: string | undefined
+		duplicateLabel?: string | undefined
+		duplicateDisabled?: boolean | undefined
 		removeLabel?: string | undefined
 	}
 
@@ -21,6 +24,7 @@
 		onViewDetails,
 		onViewInDatabase,
 		onReplace,
+		onDuplicate,
 		onRemove,
 		canEdit = false,
 		variant = 'context',
@@ -28,6 +32,8 @@
 		viewDetailsLabel = 'View details',
 		viewInDatabaseLabel = 'View in Database',
 		replaceLabel = 'Replace',
+		duplicateLabel = 'Duplicate',
+		duplicateDisabled = false,
 		removeLabel = 'Remove from team'
 	}: MenuItemsProps = $props()
 
@@ -38,7 +44,7 @@
 	const separatorClass = variant === 'context' ? 'context-menu-separator' : 'dropdown-menu-separator'
 
 	// Track whether we've rendered any items above the details/database section (for separator logic)
-	const hasEditSection = canEdit && (onEdit || onReplace)
+	const hasEditSection = canEdit && (onEdit || onReplace || onDuplicate)
 </script>
 
 {#if canEdit && onEdit}
@@ -50,6 +56,12 @@
 {#if canEdit && onReplace}
 	<Item class={itemClass} onclick={onReplace}>
 		{replaceLabel}
+	</Item>
+{/if}
+
+{#if canEdit && onDuplicate}
+	<Item class={itemClass} onclick={onDuplicate} disabled={duplicateDisabled}>
+		{duplicateLabel}
 	</Item>
 {/if}
 

@@ -24,13 +24,14 @@ export interface DropTarget extends Position {
 
 export interface DragOperation {
 	id: string
-	type: 'move' | 'swap' | 'reorder'
+	type: 'move' | 'swap' | 'reorder' | 'duplicate'
 	timestamp: number
 	source: {
 		container: string
 		position: number
 		itemId: string
 		type?: GridItemType | undefined
+		collectionLinked?: boolean | undefined
 	}
 	target: {
 		container: string
@@ -59,6 +60,7 @@ export interface TouchState {
 
 export interface DragDropState {
 	isDragging: boolean
+	isDuplicating: boolean
 	draggedItem: DraggedItem | null
 	hoveredOver: DropTarget | null
 	validDrop: boolean
@@ -75,9 +77,16 @@ export interface DragDropHandlers {
 	onLocalUpdate?: (operation: DragOperation) => void
 }
 
+function hasCollectionLink(item: GridItem): boolean {
+	if ('weapon' in item) return !!(item as GridWeapon).collectionWeaponId
+	if ('summon' in item) return !!(item as GridSummon).collectionSummonId
+	return false
+}
+
 export function createDragDropContext(handlers: DragDropHandlers = {}) {
 	let state = $state<DragDropState>({
 		isDragging: false,
+		isDuplicating: false,
 		draggedItem: null,
 		hoveredOver: null,
 		validDrop: false,
@@ -142,6 +151,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		if (e.pointerType === 'mouse' && !state.isDragging && state.touchState.currentTouch) {
 			if (distance > state.touchState.touchThreshold) {
 				const { item, source, type } = state.touchState.currentTouch
+				state.isDuplicating = e.altKey
 				startDrag(item, { ...source, type })
 				state.touchState.currentTouch = null
 			}
@@ -157,7 +167,27 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		state.touchState.currentTouch = null
 	}
 
-	function startDrag(item: GridItem, source: DragSource) {
+	function handleAltKeyDown(e: KeyboardEvent) {
+		if (e.key === 'Alt' && state.isDragging) {
+			state.isDuplicating = true
+			// Re-validate current hover target
+			if (state.hoveredOver && state.draggedItem) {
+				state.validDrop = validateDrop(state.draggedItem.source, state.hoveredOver)
+			}
+		}
+	}
+
+	function handleAltKeyUp(e: KeyboardEvent) {
+		if (e.key === 'Alt' && state.isDragging) {
+			state.isDuplicating = false
+			// Re-validate current hover target
+			if (state.hoveredOver && state.draggedItem) {
+				state.validDrop = validateDrop(state.draggedItem.source, state.hoveredOver)
+			}
+		}
+	}
+
+	function startDrag(item: GridItem, source: DragSource, options?: { altKey?: boolean }) {
 		try {
 			if (import.meta.env.DEV) console.group('🚀 Drag Start')
 			if (import.meta.env.DEV) console.log('Item:', item)
@@ -165,12 +195,17 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 			if (import.meta.env.DEV) console.groupEnd()
 
 			state.isDragging = true
+			if (options?.altKey) state.isDuplicating = true
 			state.draggedItem = {
 				type: source.type,
 				data: item,
 				source
 			}
 			createDragPreview(item)
+
+			// Listen for Alt key toggles during drag
+			window.addEventListener('keydown', handleAltKeyDown)
+			window.addEventListener('keyup', handleAltKeyUp)
 		} catch (error) {
 			handleDragError(error as Error)
 		}
@@ -208,7 +243,8 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		}
 	}
 
-	function determineOperationType(source: Position, target: Position, targetHasItem: boolean): 'move' | 'swap' | 'reorder' {
+	function determineOperationType(source: Position, target: Position, targetHasItem: boolean): 'move' | 'swap' | 'reorder' | 'duplicate' {
+		if (state.isDuplicating && !targetHasItem) return 'duplicate'
 		if (source.position === target.position && source.container === target.container) return 'reorder'
 		if (targetHasItem) return 'swap'
 		return 'move'
@@ -220,15 +256,17 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 			if (import.meta.env.DEV) console.log('Final state:', { ...state })
 
 			if (state.validDrop && state.draggedItem && state.hoveredOver) {
+				const opType = determineOperationType(state.draggedItem.source, state.hoveredOver, !!targetItem)
 				const operation: DragOperation = {
 					id: crypto.randomUUID(),
-					type: determineOperationType(state.draggedItem.source, state.hoveredOver, !!targetItem),
+					type: opType,
 					timestamp: Date.now(),
 					source: {
 						container: state.draggedItem.source.container,
 						position: state.draggedItem.source.position,
 						itemId: state.draggedItem.data.id,
-						type: state.draggedItem.source.type
+						type: state.draggedItem.source.type,
+						collectionLinked: opType === 'duplicate' ? hasCollectionLink(state.draggedItem.data) : undefined
 					},
 					target: {
 						container: state.hoveredOver.container,
@@ -262,6 +300,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 
 	function cleanupDragState() {
 		state.isDragging = false
+		state.isDuplicating = false
 		state.draggedItem = null
 		state.hoveredOver = null
 		state.validDrop = false
@@ -280,6 +319,10 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 			longPressTimer: null,
 			currentTouch: null
 		}
+
+		// Remove Alt key listeners
+		window.removeEventListener('keydown', handleAltKeyDown)
+		window.removeEventListener('keyup', handleAltKeyUp)
 	}
 
 	function validateDrop(source: DragSource, target: DropTarget): boolean {

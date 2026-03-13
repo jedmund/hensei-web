@@ -21,6 +21,8 @@
 		series?: UnifiedSearchSeriesRef[] | null
 		/** Whether to show the type label */
 		showType?: boolean
+		/** Image size in pixels */
+		imageSize?: number
 	}
 
 	let {
@@ -30,7 +32,8 @@
 		element,
 		season,
 		series,
-		showType = true
+		showType = true,
+		imageSize = 48
 	}: Props = $props()
 
 	function getImage(): string {
@@ -46,7 +49,7 @@
 </script>
 
 <div class="option-item">
-	<img src={getImage()} alt="" class="option-image" />
+	<img src={getImage()} alt="" class="option-image" style="width: {imageSize}px; height: {imageSize}px;" />
 	<div class="option-info">
 		<span class="option-label">{label}</span>
 		{#if type === 'Character'}
@@ -72,8 +75,6 @@
 	}
 
 	.option-image {
-		width: 48px;
-		height: 48px;
 		border-radius: layout.$item-corner-small;
 		flex-shrink: 0;
 	}

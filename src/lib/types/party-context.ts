@@ -13,6 +13,7 @@ export interface PartyContext {
 	canEdit: () => boolean
 	getEditKey: () => string | null | undefined
 	getSelectedSlot?: () => number | null
+	setSelectedSlot?: (n: number) => void
 	getActiveTab?: () => GridType
 	services: { gridService: GridService }
 	openPicker?: (opts: {

@@ -15,6 +15,9 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
 	import * as m from '$lib/paraglide/messages'
+	import { localizedName } from '$lib/utils/locale'
+	import DuplicateCollectionDialog from '$lib/components/dialogs/DuplicateCollectionDialog.svelte'
+	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
@@ -28,14 +31,6 @@
 	let { item, position, notInCollection = false, inCollection = false }: Props = $props()
 
 	const ctx = usePartyContext()
-
-	function displayName(input: any): string {
-		if (!input) return '—'
-		const maybe = input.name ?? input
-		if (typeof maybe === 'string') return maybe
-		if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-		return '—'
-	}
 
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
@@ -68,10 +63,9 @@
 	// Check if this item is currently active in the sidebar
 	let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
 
-	// Check if this empty slot is currently selected for adding an item
-	let isEmptySelected = $derived(
-		!item &&
-			ctx?.getSelectedSlot?.() === position &&
+	// Check if this slot is currently selected for adding/replacing an item
+	let isSelected = $derived(
+		ctx?.getSelectedSlot?.() === position &&
 			ctx?.getActiveTab?.() === GridType.Weapon
 	)
 
@@ -149,6 +143,47 @@
 		goto(`/database/weapons/${item.weapon.granblueId}`)
 	}
 
+	// Duplicate: find the first empty sub-weapon slot (0-8)
+	let firstEmptySlot = $derived.by(() => {
+		const party = ctx.getParty()
+		const occupied = new Set(
+			party.weapons?.filter((w) => w.position >= 0 && w.position < 9).map((w) => w.position) ?? []
+		)
+		for (let i = 0; i < 9; i++) {
+			if (!occupied.has(i)) return i
+		}
+		return undefined
+	})
+
+	let canDuplicate = $derived(
+		!!item && position !== -1 && firstEmptySlot !== undefined && !item.weapon?.limit
+	)
+
+	let duplicateCollectionDialogOpen = $state(false)
+
+	async function duplicate() {
+		if (!item?.id || firstEmptySlot === undefined) return
+		if (item.collectionWeaponId) {
+			duplicateCollectionDialogOpen = true
+			return
+		}
+		await executeDuplicate()
+	}
+
+	async function executeDuplicate() {
+		if (!item?.id || firstEmptySlot === undefined) return
+		try {
+			await ctx.services.gridService.duplicateWeapon(item.id, firstEmptySlot)
+			const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Weapon, firstEmptySlot)
+			if (nextSlot !== SLOT_NOT_FOUND) {
+				ctx.setSelectedSlot?.(nextSlot)
+			}
+		} catch (err) {
+			console.error('Error duplicating weapon:', err)
+			toast.error(extractErrorMessage(err, 'Failed to duplicate weapon'))
+		}
+	}
+
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(($page.data.account?.role ?? 0) >= 7)
 </script>
@@ -177,6 +212,7 @@
 							class:extra={position >= 9}
 							class:editable={ctx?.canEdit()}
 							class:is-active={isActive}
+							class:is-selected={isSelected}
 							class:not-in-collection={notInCollection}
 							onclick={() => viewDetails()}
 						>
@@ -206,7 +242,7 @@
 								class="image {elementClass}"
 								class:placeholder={!item?.weapon?.granblueId}
 								class:not-in-collection={notInCollection}
-								alt={displayName(item?.weapon)}
+								alt={localizedName(item?.weapon?.name)}
 								src={imageUrl}
 							/>
 						</div>
@@ -220,13 +256,16 @@
 					onViewDetails={viewDetails}
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
+					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
+					duplicateDisabled={!canDuplicate}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="context"
-					editLabel={m.context_edit({ type: 'weapon' })}
+					editLabel={m.context_edit({ type: m.type_weapon() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace({ type: 'weapon' })}
+					replaceLabel={m.context_replace({ type: m.type_weapon() })}
+					duplicateLabel={m.context_duplicate()}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}
@@ -237,13 +276,16 @@
 					onViewDetails={viewDetails}
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
+					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
+					duplicateDisabled={!canDuplicate}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="dropdown"
-					editLabel={m.context_edit({ type: 'weapon' })}
+					editLabel={m.context_edit({ type: m.type_weapon() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace({ type: 'weapon' })}
+					replaceLabel={m.context_replace({ type: m.type_weapon() })}
+					duplicateLabel={m.context_duplicate()}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}
@@ -256,7 +298,7 @@
 				class:cell={position !== -1}
 				class:extra={position >= 9}
 				class:editable={ctx?.canEdit()}
-				class:is-selected={isEmptySelected}
+				class:is-selected={isSelected}
 				onclick={() =>
 					ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'weapon', position, item })}
 			>
@@ -318,9 +360,20 @@
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
 		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-		{item ? displayName(item?.weapon) : ''}
+		{item ? localizedName(item?.weapon?.name) : ''}
 	</div>
 </div>
+
+<DuplicateCollectionDialog
+	bind:open={duplicateCollectionDialogOpen}
+	onConfirm={async () => {
+		duplicateCollectionDialogOpen = false
+		await executeDuplicate()
+	}}
+	onCancel={() => {
+		duplicateCollectionDialogOpen = false
+	}}
+/>
 
 <style lang="scss">
 	@use '$src/themes/colors' as colors;

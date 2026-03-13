@@ -7,6 +7,7 @@
 	 * - By element (match character's element)
 	 * - By proficiency (match character's proficiencies)
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import type { Character } from '$lib/types/api/entities'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
@@ -114,12 +115,12 @@
 		{#if isLoading}
 			<div class="loading-state">
 				<Icon name="loader-2" size={24} />
-				<p>Loading artifacts...</p>
+				<p>{m.sidebar_loading_artifacts()}</p>
 			</div>
 		{:else if isEmpty}
 			<div class="empty-state">
 				<Icon name="gem" size={32} />
-				<p>No artifacts in collection</p>
+				<p>{m.sidebar_no_artifacts_collection()}</p>
 			</div>
 		{:else}
 			{#each allArtifacts as artifact (artifact.id)}
@@ -172,7 +173,7 @@
 			{#if collectionQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={16} />
-					<span>Loading more...</span>
+					<span>{m.loading_more()}</span>
 				</div>
 			{/if}
 		{/if}

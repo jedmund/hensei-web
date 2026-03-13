@@ -2,7 +2,9 @@
 <script lang="ts">
 	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 	import { getElementLabel } from '$lib/utils/element'
-	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
+	import { CharacterSeason, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
+	import { localizedName } from '$lib/utils/locale'
+	import * as m from '$lib/paraglide/messages'
 
 	type TagType = 'element' | 'season' | 'series' | 'style'
 
@@ -52,12 +54,20 @@
 			case 'element':
 				return getElementLabel(character.element ?? undefined)
 
-			case 'season':
+			case 'season': {
 				if (character.season === undefined || character.season === null) return null
-				return CHARACTER_SEASON_NAMES[character.season] ?? null
+				const seasonMessages: Record<number, () => string> = {
+					[CharacterSeason.Valentine]: m.season_valentine,
+					[CharacterSeason.Formal]: m.season_formal,
+					[CharacterSeason.Summer]: m.season_summer,
+					[CharacterSeason.Halloween]: m.season_halloween,
+					[CharacterSeason.Holiday]: m.season_holiday
+				}
+				return seasonMessages[character.season]?.() ?? null
+			}
 
 			case 'style':
-				return 'Style'
+				return m.tag_style()
 
 			case 'series':
 				// Handle array of CharacterSeriesRef objects
@@ -69,7 +79,7 @@
 
 					// Check if it's an object (CharacterSeriesRef) or number
 					if (typeof seriesValue === 'object' && seriesValue !== null && 'name' in seriesValue) {
-						return seriesValue.name.en
+						return localizedName(seriesValue.name)
 					}
 					// Legacy number format
 					if (typeof seriesValue === 'number') {

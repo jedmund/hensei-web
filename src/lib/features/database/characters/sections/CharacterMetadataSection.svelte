@@ -8,6 +8,8 @@
   import { getRarityLabel, getRarityOptions } from '$lib/utils/rarity'
   import { getWeaponImage } from '$lib/utils/images'
   import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES, getSeasonName, getSeriesNames } from '$lib/types/enums'
+  import { localizedName } from '$lib/utils/locale'
+  import { localizeHref } from '$lib/paraglide/runtime'
 
   interface Props {
     character: any
@@ -56,8 +58,8 @@
         return getSeriesNames(character.series as number[]).join(', ')
       }
       // CharacterSeriesRef[] - extract names
-      return (character.series as Array<{ name: { en?: string } }>)
-        .map((s) => s.name?.en || 'Unknown')
+      return (character.series as Array<{ name: { en?: string; ja?: string } }>)
+        .map((s) => localizedName(s.name))
         .join(', ')
     }
     return '—'
@@ -104,13 +106,13 @@
     />
     {#if character.recruitedBy}
       <DetailItem label="Recruited By">
-        <a href="/database/weapons/{character.recruitedBy.granblueId}" class="recruited-by-link">
+        <a href={localizeHref(`/database/weapons/${character.recruitedBy.granblueId}`)} class="recruited-by-link">
           <img
             src={getWeaponImage(character.recruitedBy.granblueId, 'square')}
-            alt={character.recruitedBy.name.en || 'Recruiting weapon'}
+            alt={localizedName(character.recruitedBy.name)}
             class="recruited-by-image"
           />
-          <span class="recruited-by-name">{character.recruitedBy.name.en}</span>
+          <span class="recruited-by-name">{localizedName(character.recruitedBy.name)}</span>
         </a>
       </DetailItem>
       <DetailItem
@@ -158,13 +160,13 @@
     {/if}
     {#if character.recruitedBy}
       <DetailItem label="Recruited By">
-        <a href="/database/weapons/{character.recruitedBy.granblueId}" class="recruited-by-link">
+        <a href={localizeHref(`/database/weapons/${character.recruitedBy.granblueId}`)} class="recruited-by-link">
           <img
             src={getWeaponImage(character.recruitedBy.granblueId, 'square')}
-            alt={character.recruitedBy.name.en || 'Recruiting weapon'}
+            alt={localizedName(character.recruitedBy.name)}
             class="recruited-by-image"
           />
-          <span class="recruited-by-name">{character.recruitedBy.name.en}</span>
+          <span class="recruited-by-name">{localizedName(character.recruitedBy.name)}</span>
         </a>
       </DetailItem>
       <DetailItem

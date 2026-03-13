@@ -5,6 +5,7 @@
 	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
 	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	type AvatarUser = {
 		username?: string
@@ -140,7 +141,7 @@
 
 		<!-- Creator info -->
 		{#if user && collectionSourceUser?.username && user.username === collectionSourceUser.username}
-			<a href="/{user.username}" class="creator-link">
+			<a href={localizeHref(`/${user.username}`)} class="creator-link">
 				<div class="avatar-wrapper {user.avatar?.element || ''}">
 					{#if user.avatar?.picture}
 						<img
@@ -161,14 +162,14 @@
 			<div class="creator-pair-line">
 				<AvatarPair back={user} front={collectionSourceUser} size={24} />
 				<span class="creator-pair-text">
-					<a href="/{user.username}">{user.username}</a> using <a href="/{collectionSourceUser.username}">{collectionSourceUser.username}</a>'s collection
+					<a href={localizeHref(`/${user.username}`)}>{user.username}</a> using <a href={localizeHref(`/${collectionSourceUser.username}`)}>{collectionSourceUser.username}</a>'s collection
 				</span>
 			</div>
 		{:else if user && sourceParty?.user?.username}
 			<div class="creator-pair-line">
 				<AvatarPair back={sourceParty.user} front={user} size={24} />
 				<span class="creator-pair-text">
-					<a href="/{user.username}">{user.username}</a> remixed <a href="/{sourceParty.user.username}">{sourceParty.user.username}</a>'s team
+					<a href={localizeHref(`/${user.username}`)}>{user.username}</a> remixed <a href={localizeHref(`/${sourceParty.user.username}`)}>{sourceParty.user.username}</a>'s team
 				</span>
 			</div>
 		{:else if user}

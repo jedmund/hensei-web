@@ -21,13 +21,12 @@
 	import type { Raid } from '$lib/types/api/entities'
 	import type { RaidGroupFull } from '$lib/types/api/raid'
 	import { getRaidSectionLabel } from '$lib/utils/raidSection'
+	import { localizedName } from '$lib/utils/locale'
 
 	function displayName(input: any): string {
 		if (!input) return '—'
-		const maybe = input.name ?? input
-		if (typeof maybe === 'string') return maybe
-		if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-		return '—'
+		const name = input.name ?? input
+		return localizedName(name)
 	}
 
 	// State
