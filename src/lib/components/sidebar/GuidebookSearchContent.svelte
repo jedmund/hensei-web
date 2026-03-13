@@ -203,13 +203,12 @@
 	}
 
 	.results-list {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
 		list-style: none;
 		padding: 0;
 		margin: 0;
-	}
-
-	.result-item {
-		margin-bottom: $unit-half;
 	}
 
 	.result-button {
@@ -226,7 +225,7 @@
 		text-align: left;
 
 		&:hover {
-			background: var(--bg-tertiary);
+			background: var(--list-cell-bg-hover);
 
 			.result-image {
 				border-color: var(--accent-primary);
