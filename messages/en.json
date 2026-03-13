@@ -334,5 +334,11 @@
 	"explore_settings_original": "Original Only",
 	"explore_settings_original_desc": "Exclude remixes",
 	"explore_settings_apply": "Apply",
-	"explore_settings_reset": "Reset"
+	"explore_settings_reset": "Reset",
+
+	"modal_cancel": "Nevermind",
+
+	"grid_untitled": "Untitled team",
+	"grid_no_raid": "No raid",
+	"grid_extra": "Extra"
 }

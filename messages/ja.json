@@ -321,11 +321,11 @@
 	"explore_settings_title": "フィルター設定",
 	"explore_settings_grid_counts": "グリッド数",
 	"explore_settings_min_characters": "最小キャラ数",
-	"explore_settings_min_characters_desc": "キャラクターの最小数",
+	"explore_settings_min_characters_desc": "キャラクターの最小限",
 	"explore_settings_min_weapons": "最小武器数",
-	"explore_settings_min_weapons_desc": "武器の最小数",
+	"explore_settings_min_weapons_desc": "武器の最小限",
 	"explore_settings_min_summons": "最小召喚石数",
-	"explore_settings_min_summons_desc": "召喚石の最小数",
+	"explore_settings_min_summons_desc": "召喚石の最小限",
 	"explore_settings_quality": "品質",
 	"explore_settings_name_quality": "名前あり",
 	"explore_settings_name_quality_desc": "名前のある編成のみ表示",
@@ -333,6 +333,12 @@
 	"explore_settings_user_quality_desc": "認証ユーザーの編成のみ表示",
 	"explore_settings_original": "オリジナルのみ",
 	"explore_settings_original_desc": "リミックスを除外",
-	"explore_settings_apply": "適用",
-	"explore_settings_reset": "リセット"
+	"explore_settings_apply": "フィルターを保存する",
+	"explore_settings_reset": "リセット",
+
+	"modal_cancel": "キャンセル",
+
+	"grid_untitled": "無名",
+	"grid_no_raid": "マルチなし",
+	"grid_extra": "Extra"
 }
