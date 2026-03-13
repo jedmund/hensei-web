@@ -450,7 +450,7 @@
 				{#snippet failed(error, reset)}
 					<div class="grid-error" role="alert">
 						<p>{m.party_grid_error()}</p>
-						<button onclick={reset}>{m.party_grid_retry()}</button>
+						<button onclick={reset}>{m.retry()}</button>
 					</div>
 				{/snippet}
 				</svelte:boundary>

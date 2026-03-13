@@ -497,7 +497,7 @@
 			<div class="error-state">
 				<Icon name="alert-circle" size={24} />
 				<p>{activeQuery.error?.message || m.search_failed()}</p>
-				<Button size="small" onclick={() => activeQuery.refetch()}>{m.search_retry()}</Button>
+				<Button size="small" onclick={() => activeQuery.refetch()}>{m.retry()}</Button>
 			</div>
 		{:else if searchResults.length > 0}
 			<ul class="results-list">

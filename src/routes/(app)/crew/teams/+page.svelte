@@ -73,7 +73,7 @@
 				<div class="error-state">
 					<Icon name="alert-circle" size={32} />
 					<p>{m.crew_teams_load_error({ error: sharedPartiesQuery.error?.message || m.crew_teams_unknown_error() })}</p>
-					<Button size="small" onclick={() => sharedPartiesQuery.refetch()}>{m.crew_teams_retry()}</Button>
+					<Button size="small" onclick={() => sharedPartiesQuery.refetch()}>{m.retry()}</Button>
 				</div>
 			{:else if isEmpty}
 				<div class="empty-state">

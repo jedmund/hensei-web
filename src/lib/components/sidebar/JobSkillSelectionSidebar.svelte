@@ -191,7 +191,7 @@
 			<Select
 				options={skillCategoryOptions}
 				bind:value={skillCategory}
-				placeholder="Filter by category"
+				placeholder={m.sidebar_filter_category()}
 				disabled={!canSearch}
 				size="small"
 				fullWidth={true}
@@ -213,13 +213,13 @@
 		{:else if skillsQuery.isLoading}
 			<div class="loading-state">
 				<Icon name="loader-2" size={32} />
-				<p>Loading skills...</p>
+				<p>{m.sidebar_loading_skills()}</p>
 			</div>
 		{:else if skillsQuery.isError}
 			<div class="error-state">
 				<Icon name="alert-circle" size={32} />
-				<p>{skillsQuery.error?.message || 'Failed to load skills'}</p>
-				<Button size="small" onclick={() => skillsQuery.refetch()}>Retry</Button>
+				<p>{skillsQuery.error?.message || m.sidebar_skills_error()}</p>
+				<Button size="small" onclick={() => skillsQuery.refetch()}>{m.retry()}</Button>
 			</div>
 		{:else}
 			<div class="skills-list">
@@ -233,7 +233,7 @@
 				{#if isEmpty}
 					<div class="empty-state">
 						<Icon name="search-x" size={32} />
-						<p>No skills found</p>
+						<p>{m.sidebar_no_skills()}</p>
 						{#if searchQuery || skillCategory >= 0}
 							<div class="clear-filters">
 								{#if searchQuery}
@@ -260,7 +260,7 @@
 				{#if skillsQuery.isFetchingNextPage}
 					<div class="loading-more">
 						<Icon name="loader-2" size={20} />
-						<span>Loading more skills...</span>
+						<span>{m.sidebar_loading_more_skills()}</span>
 					</div>
 				{/if}
 			</div>

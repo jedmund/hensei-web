@@ -3,6 +3,7 @@
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import * as m from '$lib/paraglide/messages'
 	import { setContext } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
@@ -289,7 +290,7 @@
 				{#snippet failed(error, reset)}
 					<div class="collection-error" role="alert">
 						<p>Failed to load collection</p>
-						<button onclick={reset}>Retry</button>
+						<button onclick={reset}>{m.retry()}</button>
 					</div>
 				{/snippet}
 			</svelte:boundary>

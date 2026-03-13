@@ -119,18 +119,18 @@
 		{#if jobsQuery.isLoading}
 			<div class="loading-state">
 				<Icon name="loader-2" size={32} />
-				<p>Loading jobs...</p>
+				<p>{m.sidebar_loading_jobs()}</p>
 			</div>
 		{:else if jobsQuery.isError}
 			<div class="error-state">
 				<Icon name="alert-circle" size={32} />
-				<p>{jobsQuery.error?.message || 'Failed to load jobs'}</p>
-				<Button size="small" onclick={() => jobsQuery.refetch()}>Retry</Button>
+				<p>{jobsQuery.error?.message || m.sidebar_jobs_error()}</p>
+				<Button size="small" onclick={() => jobsQuery.refetch()}>{m.retry()}</Button>
 			</div>
 		{:else if Object.keys(filteredJobs).length === 0}
 			<div class="empty-state">
 				<Icon name="briefcase" size={32} />
-				<p>No jobs found</p>
+				<p>{m.sidebar_no_jobs()}</p>
 				{#if searchQuery || selectedTiers.size > 0}
 					<Button
 						size="small"
@@ -140,7 +140,7 @@
 							selectedTiers = new Set(['4', '5', 'ex2', 'o1'])
 						}}
 					>
-						Clear filters
+						{m.sidebar_clear_filters()}
 					</Button>
 				{/if}
 			</div>

@@ -1,15 +1,16 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
 </script>
 
 <svelte:head>
-	<title>Guides</title>
+	<title>{m.page_title_guides()}</title>
 </svelte:head>
 
 <div class="container">
-	<h1>Guides</h1>
-	<p>Guides and resources for Granblue Fantasy players.</p>
+	<h1>{m.guides_heading()}</h1>
+	<p>{m.guides_description()}</p>
 	<!-- Content will be added here -->
 </div>
 

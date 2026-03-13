@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import type { CollectionWeapon, CollectionSortKey } from '$lib/types/api/collection'
 	import { getContext, onDestroy, untrack } from 'svelte'
@@ -150,17 +151,17 @@
 		{#if isLoading}
 			<div class="loading-state">
 				<Icon name="loader-2" size={32} />
-				<p>Loading collection...</p>
+				<p>{m.collection_loading()}</p>
 			</div>
 		{:else if isEmpty}
 			<div class="empty-state">
 				{#if data.isOwner}
 					<Icon name="sword" size={48} />
-					<h3>Your weapon collection is empty</h3>
-					<p>Use the "Add weapons" button above to get started</p>
+					<h3>{m.collection_empty_weapons()}</h3>
+					<p>{m.collection_empty_weapons_hint()}</p>
 				{:else}
 					<Icon name="lock" size={48} />
-					<p>This collection is empty or private</p>
+					<p>{m.collection_empty_private()}</p>
 				{/if}
 			</div>
 		{:else if currentViewMode === 'grid'}

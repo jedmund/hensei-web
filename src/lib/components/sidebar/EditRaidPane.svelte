@@ -6,6 +6,7 @@
 	 * Allows users to browse and select a raid from organized groups.
 	 * Features section tabs (Raids/Events/Solo), search, and sort toggle.
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import type { Raid } from '$lib/types/api/entities'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -98,7 +99,7 @@
 	<div class="raid-list-container">
 		{#if isLoading}
 			<div class="loading-state">
-				<span>Loading raids...</span>
+				<span>{m.sidebar_loading_raids()}</span>
 			</div>
 		{:else}
 			<RaidGroupList

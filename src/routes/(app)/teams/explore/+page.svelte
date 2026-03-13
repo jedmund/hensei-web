@@ -228,7 +228,7 @@
     <div class="error">
       <Icon name="alert-circle" size={32} />
       <p>{m.explore_load_error({ error: partiesQuery.error?.message || m.explore_unknown_error() })}</p>
-      <Button size="small" onclick={() => partiesQuery.refetch()}>{m.explore_retry()}</Button>
+      <Button size="small" onclick={() => partiesQuery.refetch()}>{m.retry()}</Button>
     </div>
   {:else if isEmpty}
     <div class="empty">

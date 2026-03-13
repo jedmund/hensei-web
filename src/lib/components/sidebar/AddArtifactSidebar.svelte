@@ -10,6 +10,7 @@
 	 * 4. Configure level, nickname
 	 * 5. Configure skills (for standard artifacts only, uses pane stack)
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import { onMount, untrack } from 'svelte'
 	import type {
 		Artifact,
@@ -344,11 +345,11 @@
 			<DetailsSection title="Artifact">
 				<div class="artifact-select">
 					{#if artifactsQuery.isPending}
-						<p class="loading">Loading artifacts...</p>
+						<p class="loading">{m.sidebar_loading_artifacts()}</p>
 					{:else if artifactsQuery.isError}
-						<p class="error">Failed to load artifacts</p>
+						<p class="error">{m.sidebar_artifacts_error()}</p>
 					{:else if artifactOptions.length === 0}
-						<p class="empty">No artifacts available for this proficiency</p>
+						<p class="empty">{m.sidebar_no_artifacts_proficiency()}</p>
 					{:else}
 						<Select
 							options={artifactOptions}
