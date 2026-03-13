@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import { invalidateAll } from '$app/navigation'
-	import Switch from './ui/switch/Switch.svelte'
+	import { Switch as SwitchPrimitive } from 'bits-ui'
+	import * as m from '$lib/paraglide/messages'
 	import type { AppLocale } from '$lib/utils/locale'
 
 	const locale = $derived(getLocale() as AppLocale)
@@ -17,17 +18,26 @@
 	}
 </script>
 
-<div class="language-toggle" role="group" aria-label="Language">
-	<span class="label" class:active={!isJapanese}>EN</span>
-	<Switch checked={isJapanese} size="small" onCheckedChange={handleToggle} />
-	<span class="label" class:active={isJapanese}>JP</span>
+<div class="language-row">
+	<span class="language-label">{m.nav_language()}</span>
+	<SwitchPrimitive.Root
+		checked={isJapanese}
+		onCheckedChange={handleToggle}
+		class="language-switch"
+	>
+		<SwitchPrimitive.Thumb class="language-thumb" />
+		<span class="track-label left">JP</span>
+		<span class="track-label right">EN</span>
+	</SwitchPrimitive.Root>
 </div>
 
 <style lang="scss">
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/colors' as colors;
+	@use '$src/themes/effects' as effects;
 
-	.language-toggle {
+	.language-row {
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit;
@@ -35,15 +45,64 @@
 		width: 100%;
 	}
 
-	.label {
+	.language-label {
+		flex: 1;
 		font-size: typography.$font-small;
-		font-weight: typography.$normal;
-		color: var(--text-tertiary);
+		font-weight: typography.$medium;
+		color: var(--menu-text);
 		user-select: none;
+	}
 
-		&.active {
-			font-weight: typography.$bold;
-			color: var(--text-primary);
+	:global(.language-switch) {
+		$height: 24px;
+
+		background: colors.$grey-60;
+		border-radius: calc($height / 2);
+		border: none;
+		position: relative;
+		width: 44px;
+		height: $height;
+		cursor: pointer;
+		flex-shrink: 0;
+	}
+
+	:global(.language-thumb) {
+		$diameter: 18px;
+
+		background: colors.$grey-100;
+		border-radius: calc($diameter / 2);
+		display: block;
+		height: $diameter;
+		width: $diameter;
+		position: absolute;
+		top: 3px;
+		left: 3px;
+		z-index: 3;
+		cursor: pointer;
+		@include effects.smooth-transition(effects.$duration-instant, left);
+	}
+
+	:global(.language-thumb[data-state='checked']) {
+		left: 23px;
+	}
+
+	.track-label {
+		color: colors.$grey-100;
+		font-size: 10px;
+		font-weight: typography.$bold;
+		position: absolute;
+		z-index: 2;
+		user-select: none;
+		pointer-events: none;
+
+		&.left {
+			top: 6px;
+			left: 6px;
+		}
+
+		&.right {
+			top: 6px;
+			right: 5px;
 		}
 	}
 </style>
