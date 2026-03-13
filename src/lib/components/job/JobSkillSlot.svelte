@@ -2,6 +2,7 @@
 	import type { JobSkill } from '$lib/types/api/entities'
 	import { getSkillCategoryColor } from '$lib/utils/jobUtils'
 	import { getJobSkillIcon } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -96,10 +97,10 @@
 {#snippet SkillContent({ skill, skillIconUrl, locked }: { skill: JobSkill; skillIconUrl: string; locked: boolean })}
 	<div class="skill-content">
 		{#if skillIconUrl}
-			<img src={skillIconUrl} alt={skill.name.en} class="skill-icon" loading="lazy" />
+			<img src={skillIconUrl} alt={localizedName(skill.name)} class="skill-icon" loading="lazy" />
 		{/if}
 		<div class="skill-info">
-			<span class="skill-name">{skill.name.en}</span>
+			<span class="skill-name">{localizedName(skill.name)}</span>
 		</div>
 		{#if locked}
 			<Tooltip content="Main skill (locked)">

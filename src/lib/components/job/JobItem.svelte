@@ -6,6 +6,7 @@
 		formatJobProficiency,
 		Gender
 	} from '$lib/utils/jobUtils'
+	import { localizedName } from '$lib/utils/locale'
 	import ProficiencyLabel from '../labels/ProficiencyLabel.svelte'
 
 	interface Props {
@@ -24,19 +25,19 @@
 	class:selected
 	onclick={onClick}
 	aria-pressed={selected}
-	aria-label="{job.name.en} - {selected ? 'Currently selected' : 'Click to select'}"
+	aria-label="{localizedName(job.name)} - {selected ? 'Currently selected' : 'Click to select'}"
 >
 	<div class="job-image-container">
 		<img
 			src={getJobWideImageUrl(job, Gender.Gran)}
-			alt={job.name.en}
+			alt={localizedName(job.name)}
 			class="job-wide"
 			loading="lazy"
 		/>
 	</div>
 
 	<div class="job-info">
-		<span class="job-name">{job.name.en}</span>
+		<span class="job-name">{localizedName(job.name)}</span>
 
 		{#if proficiencies.length > 0}
 			<div class="proficiencies">

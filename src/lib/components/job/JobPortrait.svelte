@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Job } from '$lib/types/api/entities'
 	import { getJobFullImageUrl, getJobIconUrl, Gender } from '$lib/utils/jobUtils'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		job?: Job
@@ -57,9 +58,9 @@
 	onkeydown={handleKeydown}
 >
 	{#if job}
-		<img src={portraitUrl} alt={job.name.en} class="portrait" loading="lazy" decoding="async" />
+		<img src={portraitUrl} alt={localizedName(job.name)} class="portrait" loading="lazy" decoding="async" />
 		{#if size !== 'small'}
-			<img src={iconUrl} alt="{job.name.en} icon" class="icon" loading="lazy" decoding="async" />
+			<img src={iconUrl} alt="{localizedName(job.name)} icon" class="icon" loading="lazy" decoding="async" />
 		{/if}
 	{:else if showPlaceholder}
 		<div class="placeholder">
