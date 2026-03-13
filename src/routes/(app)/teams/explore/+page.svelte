@@ -191,19 +191,19 @@
           class="collection-toggle"
           class:active={collectionFilterActive}
           onclick={() => (collectionFilterActive = !collectionFilterActive)}
-          aria-label="Filter by my collection"
+          aria-label={m.explore_collection_aria()}
           aria-pressed={collectionFilterActive}
         >
-          Collection only
+          {m.explore_collection_only()}
         </button>
       {/if}
       <button
         type="button"
         class="settings-btn"
         onclick={() => (settingsOpen = true)}
-        aria-label="Filter settings"
+        aria-label={m.explore_settings_aria()}
       >
-        Settings
+        {m.explore_settings()}
       </button>
     </div>
   </div>
@@ -216,26 +216,26 @@
 
   {#if showCollectionPrompt}
     <div class="empty-collection">
-      <p>Set up your collection to filter by items you own</p>
-      <Button href={localizeHref(`/${data.account?.username}/collection`)} size="small">Go to Collection</Button>
+      <p>{m.explore_collection_prompt()}</p>
+      <Button href={localizeHref(`/${data.account?.username}/collection`)} size="small">{m.explore_go_to_collection()}</Button>
     </div>
   {:else if partiesQuery.isLoading}
     <div class="loading">
       <Icon name="loader-2" size={32} />
-      <p>Loading teams...</p>
+      <p>{m.explore_loading()}</p>
     </div>
   {:else if partiesQuery.isError}
     <div class="error">
       <Icon name="alert-circle" size={32} />
-      <p>Failed to load teams: {partiesQuery.error?.message || 'Unknown error'}</p>
-      <Button size="small" onclick={() => partiesQuery.refetch()}>Retry</Button>
+      <p>{m.explore_load_error({ error: partiesQuery.error?.message || m.explore_unknown_error() })}</p>
+      <Button size="small" onclick={() => partiesQuery.refetch()}>{m.explore_retry()}</Button>
     </div>
   {:else if isEmpty}
     <div class="empty">
       {#if collectionFilterActive}
-        <p>No teams match your collection</p>
+        <p>{m.explore_no_collection_match()}</p>
       {:else}
-        <p>No teams found</p>
+        <p>{m.explore_no_teams()}</p>
       {/if}
     </div>
   {:else}
@@ -251,13 +251,13 @@
       {#if partiesQuery.isFetchingNextPage}
         <div class="loading-more">
           <Icon name="loader-2" size={20} />
-          <span>Loading more...</span>
+          <span>{m.explore_loading_more()}</span>
         </div>
       {/if}
 
       {#if !partiesQuery.hasNextPage && items.length > 0}
         <div class="end">
-          <p>You've reached the end of all teams!</p>
+          <p>{m.explore_end()}</p>
         </div>
       {/if}
     </div>

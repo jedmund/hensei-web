@@ -2,6 +2,7 @@
 <script lang="ts">
   import Icon from '$lib/components/Icon.svelte'
   import Tooltip from '$lib/components/ui/Tooltip.svelte'
+  import * as m from '$lib/paraglide/messages'
 
   const ELEMENT_CLASSES: Record<number, string> = {
     0: 'null',
@@ -31,12 +32,12 @@
 
 <span class="pill {elementClass}" class:entity={isEntity}>
   {#if isEntity}
-    <Tooltip content={mode === 'exclude' ? 'Click to include' : 'Click to exclude'}>
+    <Tooltip content={mode === 'exclude' ? m.explore_pill_include() : m.explore_pill_exclude()}>
       <button
         type="button"
         class="toggle-area"
         onclick={(e) => { e.stopPropagation(); onToggleMode?.() }}
-        aria-label={mode === 'exclude' ? 'Switch to include' : 'Switch to exclude'}
+        aria-label={mode === 'exclude' ? m.explore_pill_switch_include() : m.explore_pill_switch_exclude()}
       >
         <span class="prefix"><Icon name={prefixIcon} size={10} /></span>
         <span class="label">{label}</span>
@@ -49,7 +50,7 @@
     type="button"
     class="remove"
     onclick={(e) => { e.stopPropagation(); onRemove() }}
-    aria-label="Remove filter"
+    aria-label={m.explore_pill_remove()}
   >
     <Icon name="close" size={12} />
   </button>
