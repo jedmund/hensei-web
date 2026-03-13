@@ -21,7 +21,9 @@
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
 	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
 	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
-	import { openSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
+	import { openSearchSidebar, openGuidebookSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
+	import { useUpdatePartyGuidebook, useRemovePartyGuidebook } from '$lib/api/mutations/guidebook.mutations'
+	import type { Guidebook } from '$lib/types/api/entities'
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
 	import { GridType } from '$lib/types/enums'
 	import Icon from '$lib/components/Icon.svelte'
@@ -149,6 +151,41 @@
 		},
 		ensurePartyExists: ensurePartyExists ? (() => ensurePartyExists()) : undefined
 	})
+
+	// --- Guidebook mutations ---
+	const updateGuidebook = useUpdatePartyGuidebook()
+	const removeGuidebook = useRemovePartyGuidebook()
+
+	function handleClickGuidebookSlot(position: number) {
+		if (!canEdit()) return
+		openGuidebookSearchSidebar({
+			position,
+			onSelect: (result) => {
+				const guidebook: Guidebook = {
+					id: result.id,
+					granblueId: Number(result.granblueId),
+					name: result.name as { en: string; ja: string },
+					slug: ''
+				}
+				updateGuidebook.mutate({
+					partyId: party.id,
+					shortcode: party.shortcode,
+					guidebookId: result.id,
+					guidebook,
+					position: position as 1 | 2 | 3
+				})
+			}
+		})
+	}
+
+	function handleRemoveGuidebook(position: number) {
+		if (!canEdit()) return
+		removeGuidebook.mutate({
+			partyId: party.id,
+			shortcode: party.shortcode,
+			position: position as 1 | 2 | 3
+		})
+	}
 
 	// --- Derived values ---
 	const mainWeapon = $derived((party?.weapons ?? []).find((w) => w?.mainhand || w?.position === -1))
@@ -415,9 +452,12 @@
 				{#if activeTab === GridType.Weapon}
 					<WeaponGrid
 						weapons={party.weapons}
-						raidExtra={(party as any)?.raid?.extra}
-						showGuidebooks={(party as any)?.raid?.group?.guidebooks}
-						guidebooks={(party as any)?.guidebooks}
+						raidExtra={party.raid?.extra}
+						showGuidebooks={party.raid?.group?.guidebooks}
+						guidebooks={party.guidebooks}
+						canEdit={canEdit()}
+						onClickGuidebookSlot={handleClickGuidebookSlot}
+						onRemoveGuidebook={handleRemoveGuidebook}
 						{collectionWeaponItems}
 					/>
 				{:else if activeTab === GridType.Summon}

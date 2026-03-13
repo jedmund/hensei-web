@@ -1,6 +1,8 @@
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import SearchContent from '$lib/components/sidebar/SearchContent.svelte'
+import GuidebookSearchContent from '$lib/components/sidebar/GuidebookSearchContent.svelte'
 import type { AddItemResult } from '$lib/types/api/search'
+import type { SearchResult } from '$lib/api/adapters/search.adapter'
 
 interface SearchSidebarOptions {
 	type: 'weapon' | 'character' | 'summon'
@@ -45,6 +47,25 @@ export function openSearchSidebar(options: SearchSidebarOptions) {
 		requiredProficiencies,
 		userElement,
 		onUnlinkCollection
+	})
+}
+
+interface GuidebookSearchSidebarOptions {
+	/** Guidebook position (1, 2, or 3) */
+	position: number
+	/** Callback when a guidebook is selected */
+	onSelect: (guidebook: SearchResult) => void
+}
+
+export function openGuidebookSearchSidebar(options: GuidebookSearchSidebarOptions) {
+	const { position, onSelect } = options
+
+	sidebar.openWithComponent('Search Guidebooks', GuidebookSearchContent, {
+		position,
+		onSelect: (guidebook: SearchResult) => {
+			onSelect(guidebook)
+			sidebar.close()
+		}
 	})
 }
 

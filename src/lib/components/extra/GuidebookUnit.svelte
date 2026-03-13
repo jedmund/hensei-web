@@ -1,30 +1,45 @@
 <script lang="ts">
   import { getGuidebookImage } from '$lib/utils/images'
+  import { localizedName } from '$lib/utils/locale'
+  import type { Guidebook } from '$lib/types/api/entities'
 
   interface Props {
-    item: Record<string, any> | undefined
+    item: Guidebook | undefined
     position: number // 1..3
+    canEdit?: boolean
+    onclick?: () => void
+    onRemove?: () => void
   }
 
-  let { item, position }: Props = $props()
+  let { item, position, canEdit = false, onclick, onRemove }: Props = $props()
 
-  function displayName(input: Record<string, any> | undefined): string {
-    if (!input) return '—'
-    const maybe = input.name ?? input
-    if (typeof maybe === 'string') return maybe
-    if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-    return '—'
-  }
+  const name = $derived(item ? localizedName(item.name) || '—' : '—')
+  const imageUrl = $derived(getGuidebookImage(item?.granblueId))
 
-  function guidebookImageUrl(g?: Record<string, any>): string {
-    return getGuidebookImage(g?.granblueId)
+  function handleContextMenu(e: MouseEvent) {
+    if (!canEdit || !item) return
+    e.preventDefault()
+    onRemove?.()
   }
 </script>
 
-<div class="unit">
-  <img class="image" alt={item ? displayName(item) : ''} src={guidebookImageUrl(item)} />
-  <div class="name">{item ? displayName(item) : '—'}</div>
-</div>
+{#if canEdit}
+  <button
+    class="unit"
+    class:empty={!item}
+    onclick={() => onclick?.()}
+    oncontextmenu={handleContextMenu}
+    type="button"
+  >
+    <img class="image" alt={name} src={imageUrl} />
+    <div class="name">{name}</div>
+  </button>
+{:else}
+  <div class="unit" class:empty={!item}>
+    <img class="image" alt={name} src={imageUrl} />
+    <div class="name">{name}</div>
+  </div>
+{/if}
 
 <style lang="scss">
   @use '$src/themes/colors' as *;
@@ -32,7 +47,51 @@
   @use '$src/themes/spacing' as *;
   @use '$src/themes/layout' as layout;
 
-  .unit { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; gap: $unit; }
-  .image { width: 100%; height: auto; border: 1px solid $grey-75; border-radius: layout.$input-corner; display: block; background: var(--extra-purple-card-bg); }
-  .name { font-size: $font-small; text-align: center; color: var(--text-secondary); }
+  .unit {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $unit;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: default;
+  }
+
+  button.unit {
+    cursor: pointer;
+
+    &:hover .image {
+      border-color: var(--accent-primary);
+    }
+
+    &.empty {
+      .image {
+        opacity: 0.5;
+      }
+
+      &:hover .image {
+        opacity: 0.75;
+        border-color: var(--accent-primary);
+      }
+    }
+  }
+
+  .image {
+    width: 100%;
+    height: auto;
+    border: 1px solid $grey-75;
+    border-radius: layout.$input-corner;
+    display: block;
+    background: var(--extra-purple-card-bg);
+    transition: border-color 0.15s ease-out, opacity 0.15s ease-out;
+  }
+
+  .name {
+    font-size: $font-small;
+    text-align: center;
+    color: var(--text-secondary);
+  }
 </style>
