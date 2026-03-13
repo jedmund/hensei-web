@@ -725,5 +725,33 @@
 	"crew_teams_loading_more": "さらに読み込み中",
 	"crew_teams_end": "すべての共有編成を表示しました",
 
-	"crew_update_failed": "騎空団の更新に失敗しました"
+	"crew_update_failed": "騎空団の更新に失敗しました",
+
+	"collection_loading": "コレクションを読み込み中",
+	"collection_empty_characters": "コレクションは空です",
+	"collection_empty_characters_hint": "上の「コレクションに追加」ボタンから始めましょう",
+	"collection_empty_weapons": "武器コレクションは空です",
+	"collection_empty_weapons_hint": "上の「武器を追加」ボタンから始めましょう",
+	"collection_empty_summons": "召喚石コレクションは空です",
+	"collection_empty_summons_hint": "上の「召喚石を追加」ボタンから始めましょう",
+	"collection_empty_artifacts": "アーティファクトコレクションは空です",
+	"collection_empty_artifacts_hint": "追加するとここに表示されます",
+	"collection_empty_private": "このコレクションは空か非公開です",
+
+	"favorites_loading": "お気に入りを読み込み中",
+	"favorites_load_error": "お気に入りの読み込みに失敗しました: {error}",
+	"favorites_empty": "お気に入りの編成はまだありません",
+	"page_title_favorites": "{username}のお気に入り / granblue.team",
+
+	"notifications_loading": "通知を読み込み中",
+	"notifications_empty": "通知はありません",
+	"notifications_empty_hint": "騎空団のスカウトや幻団員の割り当てがここに表示されます",
+
+	"artifact_skills_loading": "スキルを読み込み中",
+	"artifact_skills_error": "スキルの読み込みに失敗しました",
+	"artifact_skills_empty": "利用可能なスキルはありません",
+
+	"page_title_guides": "ガイド",
+	"guides_heading": "ガイド",
+	"guides_description": "グランブルーファンタジーのガイドとリソース"
 }

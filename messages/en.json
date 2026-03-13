@@ -725,5 +725,33 @@
 	"crew_teams_loading_more": "Loading more...",
 	"crew_teams_end": "You've seen all shared teams",
 
-	"crew_update_failed": "Failed to update crew"
+	"crew_update_failed": "Failed to update crew",
+
+	"collection_loading": "Loading collection",
+	"collection_empty_characters": "Your collection is empty",
+	"collection_empty_characters_hint": "Use the \"Add to Collection\" button above to get started",
+	"collection_empty_weapons": "Your weapon collection is empty",
+	"collection_empty_weapons_hint": "Use the \"Add weapons\" button above to get started",
+	"collection_empty_summons": "Your summon collection is empty",
+	"collection_empty_summons_hint": "Use the \"Add summons\" button above to get started",
+	"collection_empty_artifacts": "Your artifact collection is empty",
+	"collection_empty_artifacts_hint": "Artifacts will appear here once added",
+	"collection_empty_private": "This collection is empty or private",
+
+	"favorites_loading": "Loading favorites",
+	"favorites_load_error": "Failed to load favorites: {error}",
+	"favorites_empty": "No favorite teams yet",
+	"page_title_favorites": "{username}'s Favorites / granblue.team",
+
+	"notifications_loading": "Loading notifications",
+	"notifications_empty": "No pending notifications",
+	"notifications_empty_hint": "You'll see crew invitations and phantom assignments here.",
+
+	"artifact_skills_loading": "Loading skills",
+	"artifact_skills_error": "Failed to load skills",
+	"artifact_skills_empty": "No skills available",
+
+	"page_title_guides": "Guides",
+	"guides_heading": "Guides",
+	"guides_description": "Guides and resources for Granblue Fantasy players."
 }
