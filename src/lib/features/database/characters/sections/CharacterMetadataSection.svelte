@@ -9,6 +9,7 @@
   import { getWeaponImage } from '$lib/utils/images'
   import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES, getSeasonName, getSeriesNames } from '$lib/types/enums'
   import { localizedName } from '$lib/utils/locale'
+  import { localizeHref } from '$lib/paraglide/runtime'
 
   interface Props {
     character: any
@@ -105,7 +106,7 @@
     />
     {#if character.recruitedBy}
       <DetailItem label="Recruited By">
-        <a href="/database/weapons/{character.recruitedBy.granblueId}" class="recruited-by-link">
+        <a href={localizeHref(`/database/weapons/${character.recruitedBy.granblueId}`)} class="recruited-by-link">
           <img
             src={getWeaponImage(character.recruitedBy.granblueId, 'square')}
             alt={localizedName(character.recruitedBy.name)}
@@ -159,7 +160,7 @@
     {/if}
     {#if character.recruitedBy}
       <DetailItem label="Recruited By">
-        <a href="/database/weapons/{character.recruitedBy.granblueId}" class="recruited-by-link">
+        <a href={localizeHref(`/database/weapons/${character.recruitedBy.granblueId}`)} class="recruited-by-link">
           <img
             src={getWeaponImage(character.recruitedBy.granblueId, 'square')}
             alt={localizedName(character.recruitedBy.name)}

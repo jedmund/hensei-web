@@ -4,6 +4,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import WeaponTypeahead from '$lib/components/ui/WeaponTypeahead.svelte'
 	import { getWeaponGridImage } from '$lib/utils/images'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
 		weapon: any
@@ -51,7 +52,7 @@
 					<div class="forge-chain">
 						{#each forgeChain as chainWeapon, index}
 							<a
-								href="/database/weapons/{chainWeapon.granblueId}"
+								href={localizeHref(`/database/weapons/${chainWeapon.granblueId}`)}
 								class="chain-item"
 								class:current={chainWeapon.granblueId === weapon.granblueId}
 							>
@@ -73,7 +74,7 @@
 
 			{#if forgedFrom && forgeChain.length === 0}
 				<DetailItem label="Forged From">
-					<a href="/database/weapons/{forgedFrom.granblueId}" class="forged-from-link">
+					<a href={localizeHref(`/database/weapons/${forgedFrom.granblueId}`)} class="forged-from-link">
 						{forgedFrom.name?.en || forgedFrom.name?.ja}
 					</a>
 				</DetailItem>

@@ -3,6 +3,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import { entityAdapter, type ParsedCharacterData } from '$lib/api/adapters/entity.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
 	import { getGameCdnCharacterImage, getPlaceholderImage } from '$lib/utils/images'
@@ -324,7 +325,7 @@
 	}
 
 	function handleCancel() {
-		goto('/database/characters')
+		goto(localizeHref('/database/characters'))
 	}
 
 	// Can save current entity

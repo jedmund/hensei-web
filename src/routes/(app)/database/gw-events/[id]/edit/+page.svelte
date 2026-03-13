@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
@@ -88,7 +89,7 @@
 			await queryClient.invalidateQueries({ queryKey: ['gw', 'events'] })
 
 			// Navigate back to detail page
-			goto(`/database/gw-events/${eventId}`)
+			goto(localizeHref(`/database/gw-events/${eventId}`))
 		} catch (error: any) {
 			saveError = error.message || 'Failed to save event'
 		} finally {
@@ -98,7 +99,7 @@
 
 	// Cancel and go back
 	function handleCancel() {
-		goto(`/database/gw-events/${eventId}`)
+		goto(localizeHref(`/database/gw-events/${eventId}`))
 	}
 </script>
 
@@ -158,7 +159,7 @@
 		<div class="not-found">
 			<h2>Event Not Found</h2>
 			<p>The event you're looking for could not be found.</p>
-			<Button variant="secondary" onclick={() => goto('/database/gw-events')}>
+			<Button variant="secondary" onclick={() => goto(localizeHref('/database/gw-events'))}>
 				Back to Events
 			</Button>
 		</div>
