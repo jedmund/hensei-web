@@ -15,6 +15,7 @@
   import Button from '$lib/components/ui/Button.svelte'
   import PageMeta from '$lib/components/PageMeta.svelte'
   import * as m from '$lib/paraglide/messages'
+  import { localizeHref } from '$lib/paraglide/runtime'
 
   const { data } = $props() as { data: PageData }
 
@@ -216,7 +217,7 @@
   {#if showCollectionPrompt}
     <div class="empty-collection">
       <p>Set up your collection to filter by items you own</p>
-      <Button href="/{data.account?.username}/collection" size="small">Go to Collection</Button>
+      <Button href={localizeHref(`/${data.account?.username}/collection`)} size="small">Go to Collection</Button>
     </div>
   {:else if partiesQuery.isLoading}
     <div class="loading">

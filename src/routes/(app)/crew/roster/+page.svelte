@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import Svelecte from 'svelecte'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { crewAdapter } from '$lib/api/adapters/crew.adapter'
@@ -68,7 +69,7 @@
 	// Check if user is an officer
 	$effect(() => {
 		if (!crewStore.isLoading && !crewStore.isOfficer) {
-			goto('/crew')
+			goto(localizeHref('/crew'))
 		}
 	})
 

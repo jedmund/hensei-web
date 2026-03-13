@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { goto, replaceState } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
@@ -118,7 +119,7 @@
 
 	// Navigate back
 	function handleBack() {
-		goto('/crew')
+		goto(localizeHref('/crew'))
 	}
 
 	// ==================== Add Score Modal ====================

@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
@@ -200,7 +201,7 @@
 										<Button
 											variant="secondary"
 											size="small"
-											onclick={() => goto(`/crew/join?invitation=${invitation.id}`)}
+											onclick={() => goto(localizeHref(`/crew/join?invitation=${invitation.id}`))}
 										>
 											View
 										</Button>
@@ -246,7 +247,7 @@
 				{:else if eventsQuery.data && eventsQuery.data.length > 0}
 					<ul class="event-list">
 						{#each eventsQuery.data as event}
-							<li class="event-item" onclick={() => goto(`/crew/events/${event.eventNumber}`)}>
+							<li class="event-item" onclick={() => goto(localizeHref(`/crew/events/${event.eventNumber}`))}>
 								<div class="event-info">
 									<span class="event-number">{event.eventNumber}</span>
 									<ElementBadge element={event.element} />

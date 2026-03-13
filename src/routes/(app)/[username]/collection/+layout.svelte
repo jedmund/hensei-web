@@ -2,6 +2,7 @@
 	import type { LayoutData } from './$types'
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import { setContext } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
@@ -93,7 +94,7 @@
 		if (selectionMode.isActive) {
 			selectionMode.exit()
 		}
-		goto(`/${username}/collection/${value}`)
+		goto(localizeHref(`/${username}/collection/${value}`))
 	}
 
 	function handleAddArtifact() {

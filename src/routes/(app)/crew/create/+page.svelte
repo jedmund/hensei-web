@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { useCreateCrew } from '$lib/api/mutations/crew.mutations'
@@ -20,7 +21,7 @@
 	// Redirect if user already has a crew
 	$effect(() => {
 		if (crewQuery.data && !crewQuery.isLoading) {
-			goto('/crew')
+			goto(localizeHref('/crew'))
 		}
 	})
 
@@ -76,7 +77,7 @@
 			crewStore.setCrew(crew, crew.currentMembership ?? null)
 
 			// Navigate to crew dashboard
-			goto('/crew')
+			goto(localizeHref('/crew'))
 		} catch (error: any) {
 			// Handle API errors
 			if (error.errors) {
@@ -194,7 +195,7 @@
 					<Button
 						variant="secondary"
 						type="button"
-						onclick={() => goto('/crew')}
+						onclick={() => goto(localizeHref('/crew'))}
 					>
 						Cancel
 					</Button>
