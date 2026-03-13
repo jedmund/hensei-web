@@ -6,8 +6,8 @@
  * that mutations actually read or transform.
  */
 
-import type { Party, GridWeapon, GridCharacter, GridSummon, JobSkillList } from '$lib/types/api/party'
-import type { Weapon, Character, Summon, Job, JobSkill } from '$lib/types/api/entities'
+import type { Party, GridWeapon, GridCharacter, GridSummon, JobSkillList, GuidebookList } from '$lib/types/api/party'
+import type { Weapon, Character, Summon, Job, JobSkill, Guidebook } from '$lib/types/api/entities'
 
 // ============================================================================
 // Base Entities
@@ -175,6 +175,29 @@ export const MOCK_JOB_SKILLS: JobSkillList = {
 }
 
 // ============================================================================
+// Guidebooks
+// ============================================================================
+
+export const MOCK_GUIDEBOOK_1: Guidebook = {
+	id: 'guidebook-1',
+	granblueId: 101,
+	name: { en: 'Test Guidebook', ja: 'テスト教本' },
+	slug: 'test-guidebook'
+}
+
+export const MOCK_GUIDEBOOK_2: Guidebook = {
+	id: 'guidebook-2',
+	granblueId: 102,
+	name: { en: 'Test Guidebook 2', ja: 'テスト教本2' },
+	slug: 'test-guidebook-2'
+}
+
+export const MOCK_GUIDEBOOK_LIST: GuidebookList = {
+	1: MOCK_GUIDEBOOK_1,
+	2: MOCK_GUIDEBOOK_2
+}
+
+// ============================================================================
 // Party
 // ============================================================================
 
@@ -189,6 +212,7 @@ export const MOCK_PARTY: Party = {
 	summons: [MOCK_GRID_SUMMON, MOCK_GRID_SUMMON_2],
 	job: MOCK_JOB,
 	jobSkills: MOCK_JOB_SKILLS,
+	guidebooks: MOCK_GUIDEBOOK_LIST,
 	favorited: false,
 	user: { id: 'user-1', username: 'testuser' },
 	createdAt: '2024-01-01T00:00:00Z',
