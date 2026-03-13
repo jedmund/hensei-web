@@ -4,6 +4,7 @@
 	import type { Party } from '$lib/types/api/party'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	let randomParty: Party | null = $state(null)
 
@@ -33,20 +34,20 @@
 <div class="error-container">
 	<div class="error-message">
 		<span class="status-code">{$page.status}</span>
-		<h1>{is404 ? 'Are you in the right skydom?' : 'Something went wrong'}</h1>
+		<h1>{is404 ? m.error_404_title() : m.error_something_went_wrong()}</h1>
 	</div>
 
 	{#if is404 && randomParty}
 		<div class="random-team">
-			<p class="random-label">Here's a random team, or <a href="/teams/explore" style:color={linkColor}>Browse teams</a></p>
+			<p class="random-label">{m.error_random_team_or_browse()} <a href="/teams/explore" style:color={linkColor}>{m.error_browse_teams()}</a></p>
 			<div class="random-team-card">
 				<GridRep party={randomParty} />
 			</div>
 		</div>
 	{:else if is404}
-		<a class="browse-link" href="/teams/explore" style:color={linkColor}>Browse teams</a>
+		<a class="browse-link" href="/teams/explore" style:color={linkColor}>{m.error_browse_teams()}</a>
 	{:else}
-		<a class="browse-link" href="/teams/explore">Browse teams</a>
+		<a class="browse-link" href="/teams/explore">{m.error_browse_teams()}</a>
 	{/if}
 </div>
 
