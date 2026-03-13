@@ -2,6 +2,7 @@
 	import type { JobSkill } from '$lib/types/api/entities'
 	import { getSkillCategoryName } from '$lib/utils/jobUtils'
 	import { getJobSkillIcon } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		skill: JobSkill
@@ -31,12 +32,12 @@
 	class:current={variant === 'current'}
 	onclick={onClick}
 	{disabled}
-	aria-label="{skill.name.en} - {getSkillCategoryName(skill)} skill"
+	aria-label="{localizedName(skill.name)} - {getSkillCategoryName(skill)} skill"
 >
-	<img src={getSkillIcon(skill)} alt={skill.name.en} class="skill-icon" loading="lazy" />
+	<img src={getSkillIcon(skill)} alt={localizedName(skill.name)} class="skill-icon" loading="lazy" />
 
 	<div class="skill-info">
-		<span class="skill-name">{skill.name.en}</span>
+		<span class="skill-name">{localizedName(skill.name)}</span>
 		<span class="skill-category">
 			{getSkillCategoryName(skill)}
 		</span>

@@ -13,6 +13,7 @@
   import { sidebar } from '$lib/stores/sidebar.svelte'
   import { GridType } from '$lib/types/enums'
   import * as m from '$lib/paraglide/messages'
+  import { localizedName } from '$lib/utils/locale'
   import { toast } from 'svelte-sonner'
   import { extractErrorMessage } from '$lib/utils/errors'
 
@@ -27,13 +28,6 @@
 
   const ctx = usePartyContext()
 
-  function displayName(input: any): string {
-    if (!input) return '—'
-    const maybe = input.name ?? input
-    if (typeof maybe === 'string') return maybe
-    if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-    return '—'
-  }
   // Use position (not data flags) to determine sizing — position is authoritative
   let isMainSized = $derived(position === -1 || position === 6)
 
@@ -129,7 +123,7 @@
               class="image {elementClass}"
               class:placeholder={!item?.summon?.granblueId}
               class:not-in-collection={notInCollection}
-              alt={displayName(item?.summon)}
+              alt={localizedName(item?.summon?.name)}
               src={imageUrl}
             />
           </div>
@@ -147,7 +141,7 @@
           variant="context"
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
-          replaceLabel={m.context_replace({ type: 'summon' })}
+          replaceLabel={m.context_replace({ type: m.type_summon() })}
           removeLabel={m.context_remove()}
         />
       {/snippet}
@@ -162,7 +156,7 @@
           variant="dropdown"
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
-          replaceLabel={m.context_replace({ type: 'summon' })}
+          replaceLabel={m.context_replace({ type: m.type_summon() })}
           removeLabel={m.context_remove()}
         />
       {/snippet}
@@ -226,7 +220,7 @@
   {/if}
   <div class="name" class:not-in-collection={notInCollection}>
     {#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-    {item ? displayName(item?.summon) : ''}
+    {item ? localizedName(item?.summon?.name) : ''}
   </div>
 </div>
 

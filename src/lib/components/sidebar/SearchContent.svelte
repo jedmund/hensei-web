@@ -9,6 +9,7 @@
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { getAvatarSrc } from '$lib/utils/avatar'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import { localizedName } from '$lib/utils/locale'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
 	import type {
 		CollectionCharacter,
@@ -119,7 +120,7 @@
 		if (!data) return []
 		return data.map((s) => ({
 			value: s.id,
-			label: s.name.en
+			label: localizedName(s.name)
 		}))
 	})
 

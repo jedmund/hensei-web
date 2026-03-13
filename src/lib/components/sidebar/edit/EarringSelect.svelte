@@ -3,6 +3,7 @@
 	import MasteryRow from './MasteryRow.svelte'
 	import { aetherialMastery, type ItemSkill } from '$lib/data/overMastery'
 	import { getElementalizedEarringStat } from '$lib/utils/masteryUtils'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface ExtendedMastery {
 		modifier: number
@@ -39,7 +40,7 @@
 			const elementalizedSkill = getElementalizedEarringStat(skill.id, element, 'en')
 			options.push({
 				value: skill.id,
-				label: elementalizedSkill?.name.en ?? skill.name.en
+				label: localizedName(elementalizedSkill?.name ?? skill.name)
 			})
 		}
 

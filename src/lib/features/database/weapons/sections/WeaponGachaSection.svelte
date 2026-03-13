@@ -6,6 +6,7 @@
 	import CharacterTypeahead from '$lib/components/ui/CharacterTypeahead.svelte'
 	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
 	import { getCharacterImage } from '$lib/utils/images'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
 		weapon: any
@@ -59,7 +60,7 @@
 		/>
 		<DetailItem label="Recruits" sublabel="Character recruited by this weapon">
 			{#if weapon.recruits}
-				<a href="/database/characters/{weapon.recruits.granblueId}" class="recruits-link">
+				<a href={localizeHref(`/database/characters/${weapon.recruits.granblueId}`)} class="recruits-link">
 					<img
 						src={getCharacterImage(weapon.recruits.granblueId, 'square', '01')}
 						alt={weapon.recruits.name?.en || 'Recruited character'}

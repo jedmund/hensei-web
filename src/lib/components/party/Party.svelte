@@ -33,6 +33,7 @@
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import ConflictDialog from '$lib/components/dialogs/ConflictDialog.svelte'
 	import DeleteTeamDialog from '$lib/components/dialogs/DeleteTeamDialog.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		party?: Party
@@ -351,7 +352,7 @@
 									{#if canEdit() && hasCollectionLinks}
 										<DropdownItem>
 											<button onclick={actions.syncFromCollection} disabled={actions.loading || actions.isSyncingAll}>
-												{actions.isSyncingAll ? 'Syncing...' : 'Sync from collection'}
+												{actions.isSyncingAll ? m.party_syncing() : m.party_sync_collection()}
 											</button>
 										</DropdownItem>
 										<DropdownMenu.Separator class="dropdown-separator" />
@@ -360,20 +361,20 @@
 									{#if authUserId}
 										<DropdownItem>
 											<button onclick={actions.toggleFavorite} disabled={actions.loading}>
-												{party.favorited ? 'Remove from favorites' : 'Add to favorites'}
+												{party.favorited ? m.party_remove_favorite() : m.party_add_favorite()}
 											</button>
 										</DropdownItem>
 									{/if}
 
 									<DropdownItem>
-										<button onclick={actions.remixParty} disabled={actions.loading}>Remix</button>
+										<button onclick={actions.remixParty} disabled={actions.loading}>{m.party_remix()}</button>
 									</DropdownItem>
 
 									{#if party.user?.id === authUserId}
 										<DropdownMenu.Separator class="dropdown-separator" />
 										<DropdownItem>
 											<button onclick={() => (actions.deleteDialogOpen = true)} disabled={actions.loading}>
-												Delete
+												{m.party_delete()}
 											</button>
 										</DropdownItem>
 									{/if}
@@ -387,7 +388,7 @@
 			{#if hasOrphanedItems}
 				<div class="orphan-warning" role="alert">
 					<Icon name="alertTriangle" size={16} />
-					<span>Some items in this party are no longer in your collection and may have outdated data.</span>
+					<span>{m.party_orphan_warning()}</span>
 				</div>
 			{/if}
 
@@ -443,8 +444,8 @@
 				{/if}
 				{#snippet failed(error, reset)}
 					<div class="grid-error" role="alert">
-						<p>Failed to render grid</p>
-						<button onclick={reset}>Retry</button>
+						<p>{m.party_grid_error()}</p>
+						<button onclick={reset}>{m.party_grid_retry()}</button>
 					</div>
 				{/snippet}
 				</svelte:boundary>
@@ -456,7 +457,7 @@
 <!-- Delete Confirmation Dialog -->
 <DeleteTeamDialog
 	bind:open={actions.deleteDialogOpen}
-	partyName={party.name || 'Untitled team'}
+	partyName={party.name || m.party_untitled()}
 	deleting={actions.deleting}
 	onDelete={actions.deleteParty}
 	onCancel={() => (actions.deleteDialogOpen = false)}

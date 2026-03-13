@@ -17,6 +17,7 @@
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
 	import * as m from '$lib/paraglide/messages'
+	import { localizedName } from '$lib/utils/locale'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
@@ -33,13 +34,6 @@
 
 	const ctx = usePartyContext()
 
-	function displayName(input: any): string {
-		if (!input) return '—'
-		const maybe = input.name ?? input
-		if (typeof maybe === 'string') return maybe
-		if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-		return '—'
-	}
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
 		// If no item or no character with granblueId, return placeholder
@@ -253,7 +247,7 @@
 									class="image {elementClass}"
 									class:placeholder={!item?.character?.granblueId}
 									class:not-in-collection={notInCollection}
-									alt={displayName(item?.character)}
+									alt={localizedName(item?.character?.name)}
 									src={imageUrl}
 								/>
 							{/if}
@@ -271,10 +265,10 @@
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="context"
-					editLabel={m.context_edit({ type: 'character' })}
+					editLabel={m.context_edit({ type: m.type_character() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace({ type: 'character' })}
+					replaceLabel={m.context_replace({ type: m.type_character() })}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}
@@ -288,10 +282,10 @@
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="dropdown"
-					editLabel={m.context_edit({ type: 'character' })}
+					editLabel={m.context_edit({ type: m.type_character() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace({ type: 'character' })}
+					replaceLabel={m.context_replace({ type: m.type_character() })}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}
@@ -366,7 +360,7 @@
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
 		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-		{item ? displayName(item?.character) : ''}
+		{item ? localizedName(item?.character?.name) : ''}
 		{#if item?.artifact}
 			<Icon name="gem" size={12} class="artifact-indicator" />
 		{/if}

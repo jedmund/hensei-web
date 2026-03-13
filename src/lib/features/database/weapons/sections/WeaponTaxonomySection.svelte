@@ -7,6 +7,7 @@
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import { getElementLabel, getElementOptions } from '$lib/utils/element'
+	import { localizedName } from '$lib/utils/locale'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
 	import { getSeriesDisplayName } from '$lib/utils/weaponSeries'
 	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
@@ -39,7 +40,7 @@
 			{ value: '', label: 'None' },
 			...series.map((s) => ({
 				value: s.id,
-				label: s.name.en
+				label: localizedName(s.name)
 			}))
 		]
 	})

@@ -9,6 +9,7 @@
 		Gender
 	} from '$lib/utils/jobUtils'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import { localizedName } from '$lib/utils/locale'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 
 	interface Props {
@@ -47,21 +48,21 @@
 	<div class="images-grid">
 		<div class="image-item">
 			<a href={images.portrait} target="_blank" rel="noopener noreferrer" class="image-container portrait">
-				<img src={images.portrait} alt="{job.name.en} Portrait" loading="lazy" />
+				<img src={images.portrait} alt="{localizedName(job.name)} Portrait" loading="lazy" />
 			</a>
 			<span class="image-label">Portrait</span>
 		</div>
 
 		<div class="image-item">
 			<a href={images.full} target="_blank" rel="noopener noreferrer" class="image-container full">
-				<img src={images.full} alt="{job.name.en} Full" loading="lazy" />
+				<img src={images.full} alt="{localizedName(job.name)} Full" loading="lazy" />
 			</a>
 			<span class="image-label">Full</span>
 		</div>
 
 		<div class="image-item">
 			<a href={images.icon} target="_blank" rel="noopener noreferrer" class="image-container icon">
-				<img src={images.icon} alt="{job.name.en} Icon" loading="lazy" />
+				<img src={images.icon} alt="{localizedName(job.name)} Icon" loading="lazy" />
 			</a>
 			<span class="image-label">Icon</span>
 			<span class="image-sublabel">(No gender variant)</span>
@@ -69,7 +70,7 @@
 
 		<div class="image-item wide-item">
 			<a href={images.wide} target="_blank" rel="noopener noreferrer" class="image-container wide">
-				<img src={images.wide} alt="{job.name.en} Wide" loading="lazy" />
+				<img src={images.wide} alt="{localizedName(job.name)} Wide" loading="lazy" />
 			</a>
 			<span class="image-label">Wide Banner</span>
 		</div>

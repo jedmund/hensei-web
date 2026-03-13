@@ -15,6 +15,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
 	import * as m from '$lib/paraglide/messages'
+	import { localizedName } from '$lib/utils/locale'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
@@ -28,14 +29,6 @@
 	let { item, position, notInCollection = false, inCollection = false }: Props = $props()
 
 	const ctx = usePartyContext()
-
-	function displayName(input: any): string {
-		if (!input) return '—'
-		const maybe = input.name ?? input
-		if (typeof maybe === 'string') return maybe
-		if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-		return '—'
-	}
 
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
@@ -206,7 +199,7 @@
 								class="image {elementClass}"
 								class:placeholder={!item?.weapon?.granblueId}
 								class:not-in-collection={notInCollection}
-								alt={displayName(item?.weapon)}
+								alt={localizedName(item?.weapon?.name)}
 								src={imageUrl}
 							/>
 						</div>
@@ -223,10 +216,10 @@
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="context"
-					editLabel={m.context_edit({ type: 'weapon' })}
+					editLabel={m.context_edit({ type: m.type_weapon() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace({ type: 'weapon' })}
+					replaceLabel={m.context_replace({ type: m.type_weapon() })}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}
@@ -240,10 +233,10 @@
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="dropdown"
-					editLabel={m.context_edit({ type: 'weapon' })}
+					editLabel={m.context_edit({ type: m.type_weapon() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace({ type: 'weapon' })}
+					replaceLabel={m.context_replace({ type: m.type_weapon() })}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}
@@ -318,7 +311,7 @@
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
 		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-		{item ? displayName(item?.weapon) : ''}
+		{item ? localizedName(item?.weapon?.name) : ''}
 	</div>
 </div>
 

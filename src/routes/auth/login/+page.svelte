@@ -5,6 +5,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
 		form: { error?: string; email?: string } | null
@@ -68,7 +69,7 @@
 	{#snippet footer()}
 		<p>
 			{m.auth_login_noAccount()}
-			<a href="/auth/register">{m.auth_login_register()}</a>
+			<a href={localizeHref('/auth/register')}>{m.auth_login_register()}</a>
 		</p>
 	{/snippet}
 </AuthCard>

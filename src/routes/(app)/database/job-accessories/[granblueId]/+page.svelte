@@ -22,6 +22,8 @@
 	import { getAccessoryTypeName } from '$lib/utils/jobAccessoryUtils'
 	import { getJobAccessoryImageUrl } from '$lib/utils/jobAccessoryUtils'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
+	import { localizedName } from '$lib/utils/locale'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import { getRarityLabel } from '$lib/utils/rarity'
 
 	// Types
@@ -121,13 +123,13 @@
 				<DetailsContainer title="Associated Job">
 					<DetailItem label="Job">
 						{#if accessory.job}
-							<a href="/database/jobs/{accessory.job.granblueId}" class="job-link">
+							<a href={localizeHref(`/database/jobs/${accessory.job.granblueId}`)} class="job-link">
 								<img
 									src={getJobIconUrl(accessory.job.granblueId)}
 									alt=""
 									class="job-link-icon"
 								/>
-								{accessory.job.name.en}
+								{localizedName(accessory.job.name)}
 							</a>
 						{:else}
 							<span class="empty-value">—</span>
@@ -142,7 +144,7 @@
 		<div class="not-found">
 			<h2>Accessory Not Found</h2>
 			<p>The accessory you're looking for could not be found.</p>
-			<Button variant="secondary" size="small" href="/database/jobs?view=accessories">
+			<Button variant="secondary" size="small" href={localizeHref('/database/jobs?view=accessories')}>
 				Back to Accessories
 			</Button>
 		</div>

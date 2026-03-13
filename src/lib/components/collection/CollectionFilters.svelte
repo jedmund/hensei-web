@@ -9,6 +9,7 @@
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { localizedName } from '$lib/utils/locale'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
 
@@ -196,7 +197,7 @@
 				.sort((a, b) => a.order - b.order)
 				.map((s) => ({
 					value: s.id,
-					label: s.name.en
+					label: localizedName(s.name)
 				}))
 		}
 		return characterSeries

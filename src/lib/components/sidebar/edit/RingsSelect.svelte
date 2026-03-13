@@ -2,6 +2,7 @@
 <script lang="ts">
 	import MasteryRow from './MasteryRow.svelte'
 	import { overMastery, type ItemSkill } from '$lib/data/overMastery'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface ExtendedMastery {
 		modifier: number
@@ -56,7 +57,7 @@
 		for (const skill of overMastery.b) {
 			options.push({
 				value: skill.id,
-				label: skill.name.en
+				label: localizedName(skill.name)
 			})
 		}
 
@@ -64,7 +65,7 @@
 		for (const skill of overMastery.c) {
 			options.push({
 				value: skill.id,
-				label: skill.name.en
+				label: localizedName(skill.name)
 			})
 		}
 
@@ -102,8 +103,8 @@
 	const hpSkill = $derived(getSkillData(HP_MODIFIER))
 
 	// Fixed modifier options for ATK and HP (single option, disabled)
-	const atkModifierOptions = $derived([{ value: ATK_MODIFIER, label: atkSkill?.name.en ?? 'ATK' }])
-	const hpModifierOptions = $derived([{ value: HP_MODIFIER, label: hpSkill?.name.en ?? 'HP' }])
+	const atkModifierOptions = $derived([{ value: ATK_MODIFIER, label: atkSkill ? localizedName(atkSkill.name) : 'ATK' }])
+	const hpModifierOptions = $derived([{ value: HP_MODIFIER, label: hpSkill ? localizedName(hpSkill.name) : 'HP' }])
 
 	// Strength options
 	const atkStrengthOptions = $derived(buildStrengthOptions(atkSkill))

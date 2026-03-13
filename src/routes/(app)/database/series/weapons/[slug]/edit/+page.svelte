@@ -12,6 +12,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { getAugmentTypeOptions } from '$lib/utils/augmentType'
+	import { localizedName } from '$lib/utils/locale'
 	import type { AugmentType } from '$lib/types/api/weaponStatModifier'
 	import type { PageData } from './$types'
 
@@ -25,7 +26,7 @@
 	}))
 
 	const series = $derived(seriesQuery.data)
-	const pageTitle = $derived(series?.name?.en ? `Edit ${series.name.en}` : 'Edit Weapon Series')
+	const pageTitle = $derived(series?.name ? `Edit ${localizedName(series.name)}` : 'Edit Weapon Series')
 
 	// Save state
 	let isSaving = $state(false)

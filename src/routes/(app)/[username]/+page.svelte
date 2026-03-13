@@ -79,17 +79,17 @@
 	{#if partiesQuery.isLoading}
 		<div class="loading">
 			<Icon name="loader-2" size={32} />
-			<p>Loading teams...</p>
+			<p>{m.profile_loading()}</p>
 		</div>
 	{:else if partiesQuery.isError}
 		<div class="error">
 			<Icon name="alert-circle" size={32} />
-			<p>Failed to load teams: {partiesQuery.error?.message || 'Unknown error'}</p>
+			<p>{m.profile_load_error({ error: partiesQuery.error?.message || '' })}</p>
 			<Button size="small" onclick={() => partiesQuery.refetch()}>Retry</Button>
 		</div>
 	{:else if isEmpty}
 		<div class="empty">
-			<p>No teams found</p>
+			<p>{m.profile_empty()}</p>
 		</div>
 	{:else}
 		<div class="profile-grid">
@@ -104,13 +104,13 @@
 			{#if partiesQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={20} />
-					<span>Loading more...</span>
+					<span>{m.profile_loading_more()}</span>
 				</div>
 			{/if}
 
 			{#if !partiesQuery.hasNextPage && items().length > 0}
 				<div class="end">
-					<p>You've seen all teams!</p>
+					<p>{m.profile_seen_all()}</p>
 				</div>
 			{/if}
 		</div>

@@ -19,6 +19,7 @@
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import LanguageToggle from './LanguageToggle.svelte'
 
 	// Props from layout data
 	const {
@@ -204,11 +205,11 @@
 			<!-- Back button -->
 			<ul role="list" class="database-back-section">
 				<li>
-					<Tooltip content="Back to site">
+					<Tooltip content={m.nav_back_to_site()}>
 						<a
 							href={galleryHref}
 							class="database-back-button"
-							aria-label="Back to site"
+							aria-label={m.nav_back_to_site()}
 						>
 							<Icon name="home" size={21} />
 						</a>
@@ -223,17 +224,17 @@
 						href={databaseCharactersHref}
 						class:selected={isDatabaseNavSelected(databaseCharactersHref)}
 					>
-						Characters
+						{m.nav_characters()}
 					</a>
 				</li>
 				<li>
 					<a href={databaseWeaponsHref} class:selected={isDatabaseNavSelected(databaseWeaponsHref)}>
-						Weapons
+						{m.nav_weapons()}
 					</a>
 				</li>
 				<li>
 					<a href={databaseSummonsHref} class:selected={isDatabaseNavSelected(databaseSummonsHref)}>
-						Summons
+						{m.nav_summons()}
 					</a>
 				</li>
 				<li>
@@ -245,18 +246,18 @@
 						<DropdownMenu.Portal>
 							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
 								<DropdownItem>
-									<a href={databaseJobsHref}>Jobs</a>
+									<a href={databaseJobsHref}>{m.nav_jobs()}</a>
 								</DropdownItem>
 								<DropdownItem>
-									<a href={databaseRaidsHref}>Raids</a>
-								</DropdownItem>
-								<DropdownMenu.Separator class="dropdown-separator" />
-								<DropdownItem>
-									<a href={databaseArtifactSkillsHref}>Artifact Skills</a>
+									<a href={databaseRaidsHref}>{m.nav_raids()}</a>
 								</DropdownItem>
 								<DropdownMenu.Separator class="dropdown-separator" />
 								<DropdownItem>
-									<a href={databaseGwEventsHref}>Unite & Fight</a>
+									<a href={databaseArtifactSkillsHref}>{m.nav_artifact_skills()}</a>
+								</DropdownItem>
+								<DropdownMenu.Separator class="dropdown-separator" />
+								<DropdownItem>
+									<a href={databaseGwEventsHref}>{m.nav_unite_and_fight()}</a>
 								</DropdownItem>
 							</DropdownMenu.Content>
 						</DropdownMenu.Portal>
@@ -272,15 +273,15 @@
 			</li>
 			{#if isAuth}
 				<!-- Authenticated: show Guides and Crew in nav -->
-				<li><a href={guidesHref} class:selected={isNavSelected(guidesHref)}>Guides</a></li>
+				<li><a href={guidesHref} class:selected={isNavSelected(guidesHref)}>{m.nav_guides()}</a></li>
 				<li>
-					<a href={crewHref} class:selected={isNavSelected(crewHref)}>Crew</a>
+					<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
 				</li>
 				<li>
 					<a
 						href={meHref}
 						class:selected={isProfileSelected}
-						aria-label="Your account"
+						aria-label={m.nav_account_aria()}
 						class="profile-link"
 					>
 						{#if avatarSrc}
@@ -325,26 +326,28 @@
 							{#if !isAuth}
 								<!-- Not authenticated: show Guides in dropdown -->
 								<DropdownItem>
-									<a href={guidesHref}>Guides</a>
+									<a href={guidesHref}>{m.nav_guides()}</a>
 								</DropdownItem>
 								<DropdownMenu.Separator class="dropdown-separator" />
 							{/if}
 							{#if role !== null && role >= 7}
 								<DropdownItem>
-									<a href={databaseHref}>Database</a>
+									<a href={databaseHref}>{m.nav_database()}</a>
 								</DropdownItem>
 								<DropdownMenu.Separator class="dropdown-separator" />
 							{/if}
 							{#if isAuth}
 								<DropdownItem>
 									<button class="dropdown-button-with-badge" onclick={() => (invitationsModalOpen = true)}>
-										<span>Notifications</span>
+										<span>{m.nav_notifications()}</span>
 										{#if totalNotificationCount > 0}
 											<NotificationBadge count={totalNotificationCount} showCount element={userElement} />
 										{/if}
 									</button>
 								</DropdownItem>
 							{/if}
+							<LanguageToggle />
+							<DropdownMenu.Separator class="dropdown-separator" />
 							<DropdownItem>
 								<button onclick={() => (settingsModalOpen = true)}>
 									{m.nav_settings()}
@@ -415,7 +418,7 @@
 			{...(userElement ? { element: userElement } : {})}
 			elementStyle={Boolean(userElement)}
 			class="new-team-button"
-			aria-label="New team"
+			aria-label={m.nav_new_team()}
 			href={newTeamHref}
 		/>
 	{/if}

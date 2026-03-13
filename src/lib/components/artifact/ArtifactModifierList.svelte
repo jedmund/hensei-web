@@ -3,6 +3,7 @@
 	import type { ArtifactSkill } from '$lib/types/api/artifact'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
+	import { localizedName } from '$lib/utils/locale'
 
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -48,7 +49,7 @@
 					class:element-light={element === 'light'}
 					onclick={() => onSelect(skill)}
 				>
-					<span class="name">{skill.name.en}</span>
+					<span class="name">{localizedName(skill.name)}</span>
 				</button>
 			{/each}
 		</div>

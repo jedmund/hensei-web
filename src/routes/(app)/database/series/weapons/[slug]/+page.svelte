@@ -11,6 +11,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { getAugmentTypeLabel } from '$lib/utils/augmentType'
+	import { localizedName } from '$lib/utils/locale'
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()
@@ -25,7 +26,7 @@
 	const canEdit = $derived(userRole >= 7)
 	const editUrl = $derived(series?.slug ? `/database/series/weapons/${series.slug}/edit` : undefined)
 
-	const pageTitle = $derived(series?.name?.en ? `${series.name.en} Series` : 'Weapon Series')
+	const pageTitle = $derived(series?.name ? `${localizedName(series.name)} Series` : 'Weapon Series')
 </script>
 
 <PageMeta title={pageTitle} description={m.page_desc_home()} />

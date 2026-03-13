@@ -14,6 +14,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		job?: Job | undefined
@@ -62,7 +63,7 @@
 <div class="job-section">
 	<div class="job-image-container" style:background-image="url({jobBackgroundUrl})">
 		{#if job}
-			<img class="job-portrait" src={jobImageUrl} alt={job.name.en} />
+			<img class="job-portrait" src={jobImageUrl} alt={localizedName(job.name)} />
 			<div class="overlay"></div>
 		{:else}
 			<div class="empty-portrait"></div>
@@ -82,8 +83,8 @@
 				{#if canEdit}
 					<button class="job-name clickable" onclick={onSelectJob}>
 						<div class="job-name-row">
-							<img src={jobIconUrl} alt="{job.name.en} icon" class="job-icon" />
-							<h3>{job.name.en}</h3>
+							<img src={jobIconUrl} alt="{localizedName(job.name)} icon" class="job-icon" />
+							<h3>{localizedName(job.name)}</h3>
 						</div>
 						{#if job.masterLevel || job.ultimateMastery}
 							<div class="job-badges">
@@ -99,8 +100,8 @@
 				{:else}
 					<div class="job-name">
 						<div class="job-name-row">
-							<img src={jobIconUrl} alt="{job.name.en} icon" class="job-icon" />
-							<h3>{job.name.en}</h3>
+							<img src={jobIconUrl} alt="{localizedName(job.name)} icon" class="job-icon" />
+							<h3>{localizedName(job.name)}</h3>
 						</div>
 						{#if job.masterLevel || job.ultimateMastery}
 							<div class="job-badges">
@@ -151,13 +152,13 @@
 						{#if accessory}
 							<img
 								src={getAccessoryImage(accessory.granblueId)}
-								alt={accessory.name.en}
+								alt={localizedName(accessory.name)}
 								class="accessory-icon"
 							/>
-							<span class="accessory-name">{accessory.name.en}</span>
+							<span class="accessory-name">{localizedName(accessory.name)}</span>
 						{:else}
 							<Icon name="plus" size={16} />
-							<span>Select Accessory</span>
+							<span>{m.party_job_select_accessory()}</span>
 						{/if}
 					</div>
 				</div>
@@ -167,7 +168,7 @@
 				{#if canEdit}
 					<Button onclick={onSelectJob} small>{m.job_choose()}</Button>
 				{:else}
-					<p>No job selected</p>
+					<p>{m.party_job_no_job()}</p>
 				{/if}
 			</div>
 		{/if}

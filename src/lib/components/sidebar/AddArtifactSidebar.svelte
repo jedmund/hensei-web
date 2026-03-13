@@ -30,6 +30,7 @@
 	import ArtifactSkillRow from '$lib/components/artifact/ArtifactSkillRow.svelte'
 	import ArtifactModifierList from '$lib/components/artifact/ArtifactModifierList.svelte'
 	import { getElementColor } from '$lib/utils/gw'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		/** Callback when artifact is created successfully */
@@ -100,7 +101,7 @@
 	const artifactOptions = $derived.by(() => {
 		return filteredArtifacts.map((a) => ({
 			value: a.id,
-			label: typeof a.name === 'string' ? a.name : a.name.en || a.name.ja || '—'
+			label: localizedName(a.name)
 		}))
 	})
 

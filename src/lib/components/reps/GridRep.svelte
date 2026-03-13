@@ -5,6 +5,8 @@
 	import CharacterRep from '$lib/components/reps/CharacterRep.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import { localizeHref } from '$lib/paraglide/runtime'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		party: Party
@@ -12,7 +14,7 @@
 		loading?: boolean
 	}
 
-	let { party, href = `/teams/${party.shortcode}`, loading = false }: Props = $props()
+	let { party, href = localizeHref(`/teams/${party.shortcode}`), loading = false }: Props = $props()
 
 	let currentView: 'weapons' | 'summons' | 'characters' = $state('weapons')
 
@@ -20,8 +22,7 @@
 		if (!input) return '—'
 		const maybe = input.name ?? input
 		if (typeof maybe === 'string') return maybe
-		if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-		return '—'
+		return localizedName(maybe)
 	}
 </script>
 

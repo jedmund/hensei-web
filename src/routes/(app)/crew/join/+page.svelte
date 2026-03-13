@@ -2,6 +2,7 @@
 <script lang="ts">
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { useAcceptInvitation, useRejectInvitation } from '$lib/api/mutations/crew.mutations'
@@ -21,7 +22,7 @@
 	// Check if user already has a crew - redirect to crew page
 	$effect(() => {
 		if (crewStore.isInCrew && !crewStore.isLoading) {
-			goto('/crew')
+			goto(localizeHref('/crew'))
 		}
 	})
 
@@ -44,7 +45,7 @@
 		try {
 			await acceptMutation.mutateAsync(invitationId)
 			// Successfully joined - redirect to crew
-			goto('/crew')
+			goto(localizeHref('/crew'))
 		} catch (error) {
 			console.error('Failed to accept invitation:', error)
 			toast.error(extractErrorMessage(error, 'Failed to accept invitation'))
@@ -95,7 +96,7 @@
 			<p class="hint">
 				Ask a crew captain or vice captain to send you an invitation.
 			</p>
-			<Button variant="secondary" onclick={() => goto('/crew')}>
+			<Button variant="secondary" onclick={() => goto(localizeHref('/crew'))}>
 				Go Back
 			</Button>
 		</div>
