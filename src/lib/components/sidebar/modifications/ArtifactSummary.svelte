@@ -4,6 +4,8 @@
 	import { getArtifactImage } from '$lib/utils/images'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
+	import { localizedName } from '$lib/utils/locale'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		artifact: GridArtifact | CollectionArtifact
@@ -14,12 +16,7 @@
 
 	const imageUrl = $derived(getArtifactImage(artifact.artifact?.granblueId))
 
-	const displayName = $derived.by(() => {
-		const name = artifact.artifact?.name
-		if (!name) return '—'
-		if (typeof name === 'string') return name
-		return name.en || name.ja || '—'
-	})
+	const displayName = $derived(localizedName(artifact.artifact?.name))
 
 	// Is quirk artifact?
 	const isQuirk = $derived(artifact.artifact?.rarity === 'quirk')
@@ -60,33 +57,33 @@
 			</div>
 			<div class="header-info">
 				<span class="name">{displayName}</span>
-				<span class="level">Lv.{artifact.level}</span>
+				<span class="level">{m.details_artifact_level({ level: String(artifact.level) })}</span>
 			</div>
 		</div>
 
 		<div class="stats">
 			<div class="stat">
-				<span class="stat-label">Element</span>
+				<span class="stat-label">{m.details_element()}</span>
 				<ElementLabel element={artifact.element} size="small" />
 			</div>
 			<div class="stat">
-				<span class="stat-label">Proficiency</span>
+				<span class="stat-label">{m.details_proficiency()}</span>
 				<ProficiencyLabel {proficiency} size="small" />
 			</div>
 			{#if !isQuirk}
 				<div class="stat">
-					<span class="stat-label">Skills</span>
+					<span class="stat-label">{m.details_skills()}</span>
 					<span class="stat-value">{skillCount}/4</span>
 				</div>
 			{:else}
 				<div class="stat">
-					<span class="stat-label">Type</span>
-					<span class="quirk-badge">Quirk</span>
+					<span class="stat-label">{m.details_artifact_type()}</span>
+					<span class="quirk-badge">{m.details_artifact_quirk()}</span>
 				</div>
 			{/if}
 			{#if gradeLetter}
 				<div class="stat">
-					<span class="stat-label">Grade</span>
+					<span class="stat-label">{m.details_artifact_grade()}</span>
 					<span class="grade-badge grade-{gradeClass}">{gradeLetter}</span>
 				</div>
 			{/if}

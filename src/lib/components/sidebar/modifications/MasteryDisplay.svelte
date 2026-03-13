@@ -4,6 +4,7 @@
 	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
 	import { getMasteryImage } from '$lib/utils/images'
 	import { getLocale } from '$lib/paraglide/runtime.js'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		rings?: GridCharacter['overMastery']
@@ -37,7 +38,7 @@
 {#if rings && rings.length > 0}
 	<div class="mastery-display rings {variant}">
 		{#if variant === 'detailed'}
-			<h4 class="mastery-title">Over Mastery</h4>
+			<h4 class="mastery-title">{m.details_over_mastery()}</h4>
 		{/if}
 		<ul class="mastery-list">
 			{#each rings as ring}
@@ -73,7 +74,7 @@
 {#if earring}
 	<div class="mastery-display earring {variant}">
 		{#if variant === 'detailed'}
-			<h4 class="mastery-title">Aetherial Mastery</h4>
+			<h4 class="mastery-title">{m.details_aetherial_mastery()}</h4>
 		{/if}
 		<ul class="mastery-list">
 			<li class="mastery-item enhanced">

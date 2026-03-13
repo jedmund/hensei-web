@@ -9,6 +9,7 @@
 	import { formatAxSkill, getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -41,8 +42,8 @@
 </script>
 
 <div class="team-view">
-	<DetailsSection title="Uncap & Transcendence">
-		<DetailRow label="Max Uncap Level">
+	<DetailsSection title={m.details_uncap_transcendence()}>
+		<DetailRow label={m.details_max_uncap_level()}>
 			<UncapIndicator
 				{type}
 				uncapLevel={gridUncapLevel}
@@ -58,7 +59,7 @@
 		{@const char = item as GridCharacter}
 
 		{#if modificationStatus.hasAwakening}
-			<DetailsSection title="Awakening">
+			<DetailsSection title={m.details_awakening()}>
 				<AwakeningDisplay
 					{...(char.awakening ? { awakening: char.awakening } : {})}
 					size="medium"
@@ -68,7 +69,7 @@
 		{/if}
 
 		{#if modificationStatus.hasRings || modificationStatus.hasEarring}
-			<DetailsSection title="Mastery">
+			<DetailsSection title={m.details_mastery()}>
 				<MasteryDisplay
 					rings={char.overMastery}
 					earring={char.aetherialMastery}
@@ -80,13 +81,13 @@
 		{/if}
 
 		{#if modificationStatus.hasPerpetuity}
-			<DetailsSection title="Status">
-				<DetailRow label="Perpetuity Ring" value="Active" />
+			<DetailsSection title={m.details_status()}>
+				<DetailRow label={m.details_perpetuity_ring()} value={m.details_active()} />
 			</DetailsSection>
 		{/if}
 
 		{#if char.artifact}
-			<DetailsSection title="Artifact">
+			<DetailsSection title={m.details_artifact()}>
 				<ArtifactSummary artifact={char.artifact} />
 			</DetailsSection>
 		{/if}
@@ -94,7 +95,7 @@
 		{@const weapon = item as GridWeapon}
 
 		{#if modificationStatus.hasAwakening && weapon.awakening}
-			<DetailsSection title="Awakening">
+			<DetailsSection title={m.details_awakening()}>
 				<AwakeningDisplay awakening={weapon.awakening} size="medium" showLevel={true} />
 			</DetailsSection>
 		{/if}
@@ -106,7 +107,7 @@
 		{/if}
 
 		{#if modificationStatus.hasAxSkills && weapon.ax?.length}
-			<DetailsSection title="AX Skills">
+			<DetailsSection title={m.details_ax_skills()}>
 				{#each weapon.ax as axSkill}
 					{#if axSkill.modifier?.id}
 						<DetailRow
@@ -119,21 +120,21 @@
 		{/if}
 
 		{#if modificationStatus.hasBefoulment && weapon.befoulment?.modifier}
-			<DetailsSection title="Befoulment">
+			<DetailsSection title={m.details_befoulment()}>
 				<DetailRow
 					label={weapon.befoulment.modifier.nameEn}
 					value={`${weapon.befoulment.strength}${weapon.befoulment.modifier.suffix ?? ''}`}
 				/>
 				<DetailRow
-					label="Exorcism Level"
+					label={m.details_exorcism_level()}
 					value={`${weapon.befoulment.exorcismLevel ?? 0}`}
 				/>
 			</DetailsSection>
 		{/if}
 
 		{#if modificationStatus.hasElement && weapon.element}
-			<DetailsSection title="Element Override">
-				<DetailRow label="Weapon Element">
+			<DetailsSection title={m.details_element_override()}>
+				<DetailRow label={m.details_weapon_element()}>
 					<ElementLabel element={weapon.element} size="medium" />
 				</DetailRow>
 			</DetailsSection>
@@ -142,12 +143,12 @@
 		{@const summon = item as GridSummon}
 
 		{#if modificationStatus.hasQuickSummon || modificationStatus.hasFriendSummon}
-			<DetailsSection title="Summon Status">
+			<DetailsSection title={m.details_summon_status()}>
 				{#if summon.quickSummon}
-					<DetailRow label="Quick Summon" value="Enabled" />
+					<DetailRow label={m.details_quick_summon()} value={m.details_enabled()} />
 				{/if}
 				{#if summon.friend}
-					<DetailRow label="Friend Summon" value="Yes" />
+					<DetailRow label={m.details_friend_summon()} value={m.details_yes()} />
 				{/if}
 			</DetailsSection>
 		{/if}

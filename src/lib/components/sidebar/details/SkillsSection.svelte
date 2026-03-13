@@ -1,4 +1,7 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
+	import { localizedName } from '$lib/utils/locale'
+
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
 		itemData: any
@@ -8,22 +11,18 @@
 
 	function displayName(input: any): string {
 		if (!input) return '—'
-		const maybe = input.name ?? input
-		if (typeof maybe === 'string') return maybe
-		if (maybe && typeof maybe === 'object') {
-			return maybe.en || maybe.ja || '—'
-		}
-		return '—'
+		const name = input.name ?? input
+		return localizedName(name)
 	}
 </script>
 
 {#if type === 'weapon' && itemData?.weaponSkills && itemData.weaponSkills.length > 0}
 	<div class="details-section">
-		<h3>Skills</h3>
+		<h3>{m.details_skills()}</h3>
 		<div class="skills-list">
 			{#each itemData.weaponSkills as skill}
 				<div class="skill-item">
-					<h4>{displayName(skill) || 'Unknown Skill'}</h4>
+					<h4>{displayName(skill) || m.details_unknown_skill()}</h4>
 					{#if skill.description}
 						<p>{skill.description}</p>
 					{/if}
@@ -35,11 +34,11 @@
 
 {#if type === 'summon' && itemData?.summonAuras && itemData.summonAuras.length > 0}
 	<div class="details-section">
-		<h3>Auras</h3>
+		<h3>{m.details_auras()}</h3>
 		<div class="auras-list">
 			{#each itemData.summonAuras as aura}
 				<div class="aura-item">
-					<h4>{displayName(aura) || 'Unknown Aura'}</h4>
+					<h4>{displayName(aura) || m.details_unknown_aura()}</h4>
 					{#if aura.description}
 						<p>{aura.description}</p>
 					{/if}
@@ -51,11 +50,11 @@
 
 {#if type === 'weapon' && itemData?.weaponKeys && itemData.weaponKeys.length > 0}
 	<div class="details-section">
-		<h3>Weapon Keys</h3>
+		<h3>{m.details_weapon_keys()}</h3>
 		<div class="keys-list">
 			{#each itemData.weaponKeys as key}
 				<div class="key-item">
-					<span class="key-slot">Slot {key.slot}</span>
+					<span class="key-slot">{m.details_slot({ slot: key.slot })}</span>
 					<span class="key-name">{displayName(key.weaponKey1) || '—'}</span>
 				</div>
 			{/each}
@@ -66,7 +65,7 @@
 {#if type === 'character' && itemData?.special}
 	<div class="details-section">
 		<div class="detail-row special-indicator">
-			<span class="label">Special Character</span>
+			<span class="label">{m.details_special_character()}</span>
 			<span class="value">✓</span>
 		</div>
 	</div>

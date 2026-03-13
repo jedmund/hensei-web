@@ -4,8 +4,10 @@
 // generated/loaded based on environment (see app.html and hooks)
 
 // Font-weight (AGrot: 400, 500, 700, 900)
+// $medium uses a CSS custom property so it can be overridden per locale
+// (Japanese fonts lack a visible 500 weight, so ja maps medium → bold)
 $normal: 400;
-$medium: 500;
+$medium: var(--font-weight-medium, 500);
 $bold: 700;
 
 // Font size (in rems based on 10px base = 62.5% of 16px)

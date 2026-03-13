@@ -8,6 +8,11 @@
 
 :root {
 	--main-max-width: 820px; // Default max-width for main content
+	--font-weight-medium: 500;
+}
+
+:root:lang(ja) {
+	--font-weight-medium: 700;
 }
 
 html {

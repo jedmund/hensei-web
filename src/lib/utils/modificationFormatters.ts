@@ -1,6 +1,7 @@
 import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 import { getRingStat, getEarringStat, getElementalizedEarringStat } from './masteryUtils'
 import { isWeaponSeriesRef, type WeaponSeriesRef } from '$lib/types/api/weaponSeries'
+import * as m from '$lib/paraglide/messages'
 
 export function formatRingStat(
 	modifier: number,
@@ -40,22 +41,22 @@ export function formatAxSkill(ax: AugmentSkill, locale: 'en' | 'ja' = 'en'): str
 
 export function getWeaponKeyTitle(series?: WeaponSeriesRef | null): string {
 	if (!isWeaponSeriesRef(series)) {
-		return 'Weapon Keys'
+		return m.details_weapon_keys()
 	}
 
 	switch (series.slug) {
 		case 'dark-opus':
-			return 'Pendulums & Chains'
+			return m.details_weapon_key_pendulums()
 		case 'draconic':
 		case 'draconic-providence':
 		case 'superlative':
-			return 'Telumas'
+			return m.details_weapon_key_telumas()
 		case 'ultima':
-			return 'Ultima Keys'
+			return m.details_weapon_key_ultima()
 		case 'astral':
-			return 'Emblems'
+			return m.details_weapon_key_emblems()
 		default:
-			return 'Weapon Keys'
+			return m.details_weapon_keys()
 	}
 }
 

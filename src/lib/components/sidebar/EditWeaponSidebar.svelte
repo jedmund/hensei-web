@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { localizedName } from '$lib/utils/locale'
 	import type { GridWeapon } from '$lib/types/api/party'
 	import type { WeaponKey } from '$lib/api/adapters/entity.adapter'
 	import type { Awakening } from '$lib/types/api/entities'
@@ -113,10 +114,8 @@
 
 	function displayName(input: any): string {
 		if (!input) return '—'
-		const maybe = input.name ?? input
-		if (typeof maybe === 'string') return maybe
-		if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
-		return '—'
+		const name = input.name ?? input
+		return localizedName(name)
 	}
 
 	// Build the update payload for the API
