@@ -346,9 +346,8 @@
 									</button>
 								</DropdownItem>
 							{/if}
-							<DropdownItem>
-								<LanguageToggle />
-							</DropdownItem>
+							<LanguageToggle />
+							<DropdownMenu.Separator class="dropdown-separator" />
 							<DropdownItem>
 								<button onclick={() => (settingsModalOpen = true)}>
 									{m.nav_settings()}
