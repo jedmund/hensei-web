@@ -223,5 +223,31 @@
 	"updates_event_legfest": "レジェンドフェス",
 	"updates_event_flash": "グランデフェス",
 	"updates_event_content": "アップデート",
-	"updates_event_uncap": "上限解放"
+	"updates_event_uncap": "上限解放",
+
+	"party_raid_label": "マルチバトル",
+	"party_raid_unknown": "不明なマルチバトル",
+	"party_raid_empty": "マルチバトル未選択",
+	"party_job_no_job": "ジョブ未選択",
+	"party_job_select_accessory": "アクセサリー選択",
+	"party_sync_collection": "コレクションから同期",
+	"party_syncing": "同期中...",
+	"party_add_favorite": "お気に入りに追加",
+	"party_remove_favorite": "お気に入りから削除",
+	"party_remix": "リミックス",
+	"party_delete": "削除",
+	"party_orphan_warning": "この編成の一部のアイテムはコレクションから削除されており、データが古い可能性があります。",
+	"party_grid_error": "グリッドの表示に失敗しました",
+	"party_grid_retry": "再試行",
+	"party_not_found": "編成が見つかりません",
+	"party_no_data": "このコードに対応する編成データがありません。",
+	"party_untitled": "無題の編成",
+
+	"profile_loading": "編成を読み込み中...",
+	"profile_load_error": "編成の読み込みに失敗しました: {error}",
+	"profile_empty": "編成が見つかりません",
+	"profile_loading_more": "さらに読み込み中...",
+	"profile_seen_all": "すべての編成を表示しました！",
+
+	"explore_empty": "編成が見つかりません。"
 }

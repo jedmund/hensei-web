@@ -158,7 +158,7 @@
 							<span class="accessory-name">{localizedName(accessory.name)}</span>
 						{:else}
 							<Icon name="plus" size={16} />
-							<span>Select Accessory</span>
+							<span>{m.party_job_select_accessory()}</span>
 						{/if}
 					</div>
 				</div>
@@ -168,7 +168,7 @@
 				{#if canEdit}
 					<Button onclick={onSelectJob} small>{m.job_choose()}</Button>
 				{:else}
-					<p>No job selected</p>
+					<p>{m.party_job_no_job()}</p>
 				{/if}
 			</div>
 		{/if}

@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Party } from '$lib/types/api/party'
   import GridRep from '$lib/components/reps/GridRep.svelte'
+  import * as m from '$lib/paraglide/messages'
 
   interface Props {
     items?: Party[]
@@ -10,7 +11,7 @@
 </script>
 
 {#if items.length === 0}
-  <p class="empty">No teams found.</p>
+  <p class="empty">{m.explore_empty()}</p>
 {:else}
   <ul class="grid" role="list">
     {#each items as p, i (i)}
