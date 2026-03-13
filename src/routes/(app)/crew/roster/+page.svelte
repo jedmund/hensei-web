@@ -19,6 +19,7 @@
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
 	import type { RosterMember, RosterItem } from '$lib/types/api/crew'
+	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -195,17 +196,17 @@
 	function getRoleLabel(role: string): string {
 		switch (role) {
 			case 'captain':
-				return 'Captain'
+				return m.crew_role_captain()
 			case 'vice_captain':
-				return 'Vice Captain'
+				return m.crew_role_vice_captain()
 			default:
-				return 'Member'
+				return m.crew_role_member()
 		}
 	}
 </script>
 
 <svelte:head>
-	<title>Crew Roster / granblue.team</title>
+	<title>{m.page_title_crew_roster()}</title>
 </svelte:head>
 
 <div class="page">
@@ -228,7 +229,7 @@
 					labelField="label"
 					valueField="value"
 					searchable={true}
-					placeholder="Search characters, weapons, summons..."
+					placeholder={m.crew_roster_search()}
 					clearable={false}
 					onChange={handleChange}
 				>
@@ -252,7 +253,7 @@
 			<!-- Roster Grid -->
 			<div class="roster-section">
 				{#if isLoadingRoster}
-					<div class="loading-roster">Loading...</div>
+					<div class="loading-roster">{m.crew_roster_loading()}</div>
 				{:else if rosterData.length > 0}
 					<div class="roster-grid">
 						{#if selectedItems.length > 0}
@@ -285,7 +286,7 @@
 													<button
 														class="remove-item-btn"
 														onclick={() => removeItem(item.id, item.type)}
-														aria-label="Remove {item.name}"
+														aria-label={m.crew_roster_remove_aria({ name: item.name })}
 													>
 														<Icon name="close" size={12} />
 													</button>
@@ -330,7 +331,7 @@
 						</div>
 					</div>
 				{:else}
-					<div class="empty-roster">No crew members found</div>
+					<div class="empty-roster">{m.crew_roster_no_members()}</div>
 				{/if}
 			</div>
 		</div>

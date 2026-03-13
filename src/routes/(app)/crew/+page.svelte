@@ -19,6 +19,7 @@
 	import { formatScore, toCrewHistoryChartData } from '$lib/utils/gw'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -148,9 +149,9 @@
 			const start = new Date(startDate)
 			const diffTime = start.getTime() - now.getTime()
 			const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-			if (diffDays <= 0) return 'Starting soon'
-			if (diffDays === 1) return 'in 1 day'
-			return `in ${diffDays} days`
+			if (diffDays <= 0) return m.crew_starting_soon()
+			if (diffDays === 1) return m.crew_starts_in_1_day()
+			return m.crew_starts_in_days({ days: String(diffDays) })
 		}
 		return status
 	}
@@ -169,19 +170,19 @@
 	<div class="card">
 		{#if crewQuery.isLoading}
 			<div class="loading-state">
-				<p>Loading...</p>
+				<p>{m.crew_loading()}</p>
 			</div>
 		{:else if crewQuery.isError || !crewStore.isInCrew}
 			<!-- No crew state -->
 			<div class="no-crew">
 				<div class="no-crew-content">
 					<p class="description">
-						Crews let you team up with other players, track Guild War scores, and share strategies.
+						{m.crew_intro()}
 					</p>
 
 					<div class="actions">
 						<Button variant="primary" size="small" onclick={() => (createModalOpen = true)}>
-							Create a Crew
+							{m.crew_create()}
 						</Button>
 					</div>
 				</div>
@@ -195,7 +196,7 @@
 										<div class="invitation-info">
 											<span class="crew-name">{invitation.crew.name}</span>
 											<span class="invited-by">
-												from {invitation.invitedBy.username}
+												{m.crew_from({ username: invitation.invitedBy.username })}
 											</span>
 										</div>
 										<Button
@@ -203,7 +204,7 @@
 											size="small"
 											onclick={() => goto(localizeHref(`/crew/join?invitation=${invitation.id}`))}
 										>
-											View
+											{m.crew_view()}
 										</Button>
 									</li>
 								{/if}
@@ -222,7 +223,7 @@
 				>
 					{#snippet actions()}
 						{#if crewStore.isOfficer}
-							<Button variant="secondary" size="small" onclick={openSettingsModal}>Settings</Button>
+							<Button variant="secondary" size="small" onclick={openSettingsModal}>{m.crew_settings_title()}</Button>
 						{/if}
 					{/snippet}
 				</CrewHeader>
@@ -231,7 +232,7 @@
 
 				<!-- GW Events Section -->
 				<div class="section-header">
-					<span class="section-title">Unite and Fight</span>
+					<span class="section-title">{m.crew_unite_and_fight()}</span>
 				</div>
 
 				{#if historyChartData.length > 0}
@@ -242,7 +243,7 @@
 
 				{#if eventsQuery.isLoading}
 					<div class="loading-state">
-						<p>Loading events...</p>
+						<p>{m.crew_loading_events()}</p>
 					</div>
 				{:else if eventsQuery.data && eventsQuery.data.length > 0}
 					<ul class="event-list">
@@ -267,7 +268,7 @@
 						{/each}
 					</ul>
 				{:else}
-					<p class="empty-state">No events yet</p>
+					<p class="empty-state">{m.crew_no_events()}</p>
 				{/if}
 			</div>
 		{/if}
@@ -277,7 +278,7 @@
 <!-- Create Crew Modal -->
 <Dialog bind:open={createModalOpen} onOpenChange={(open) => !open && handleCloseModal()}>
 	{#snippet children()}
-		<ModalHeader title="Create a Crew" />
+		<ModalHeader title={m.crew_create()} />
 
 		<ModalBody>
 			{#snippet children()}
@@ -288,18 +289,18 @@
 
 					<div class="form-fields">
 						<Input
-							label="Crew Name"
+							label={m.crew_name_label()}
 							bind:value={crewName}
-							placeholder="Enter crew name"
+							placeholder={m.crew_name_placeholder_short()}
 							maxLength={100}
 							fullWidth
 							contained
 						/>
 
 						<Input
-							label="Gamertag (optional)"
+							label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
 							bind:value={crewGamertag}
-							placeholder="Short tag, e.g. CREW"
+							placeholder={m.crew_gamertag_placeholder()}
 							maxLength={5}
 							fullWidth
 							contained
@@ -307,12 +308,12 @@
 
 						<div class="form-field">
 							<label for="crew-description"
-								>Description <span class="optional">(optional)</span></label
+								>{m.crew_description_label()} <span class="optional">{m.crew_gamertag_optional()}</span></label
 							>
 							<textarea
 								id="crew-description"
 								bind:value={crewDescription}
-								placeholder="Tell others about your crew"
+								placeholder={m.crew_description_placeholder()}
 								maxlength="500"
 								rows="3"
 							></textarea>
@@ -326,7 +327,7 @@
 			onCancel={handleCloseModal}
 			cancelDisabled={createCrewMutation.isPending}
 			primaryAction={{
-				label: createCrewMutation.isPending ? 'Creating...' : 'Create Crew',
+				label: createCrewMutation.isPending ? m.crew_creating() : m.crew_create(),
 				onclick: handleCreateCrew,
 				disabled: !canCreate || createCrewMutation.isPending
 			}}
@@ -337,7 +338,7 @@
 <!-- Crew Settings Modal -->
 <Dialog bind:open={settingsModalOpen} onOpenChange={(open) => !open && handleCloseSettingsModal()}>
 	{#snippet children()}
-		<ModalHeader title="Crew Settings" />
+		<ModalHeader title={m.crew_settings_title()} />
 
 		<ModalBody>
 			{#snippet children()}
@@ -348,18 +349,18 @@
 
 					<div class="form-fields">
 						<Input
-							label="Crew Name"
+							label={m.crew_name_label()}
 							bind:value={settingsName}
-							placeholder="Enter crew name"
+							placeholder={m.crew_name_placeholder_short()}
 							maxLength={100}
 							fullWidth
 							contained
 						/>
 
 						<Input
-							label="Gamertag (optional)"
+							label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
 							bind:value={settingsGamertag}
-							placeholder="Short tag, e.g. CREW"
+							placeholder={m.crew_gamertag_placeholder()}
 							maxLength={5}
 							fullWidth
 							contained
@@ -367,12 +368,12 @@
 
 						<div class="form-field">
 							<label for="settings-description"
-								>Description <span class="optional">(optional)</span></label
+								>{m.crew_description_label()} <span class="optional">{m.crew_gamertag_optional()}</span></label
 							>
 							<textarea
 								id="settings-description"
 								bind:value={settingsDescription}
-								placeholder="Tell others about your crew"
+								placeholder={m.crew_description_placeholder()}
 								maxlength="500"
 								rows="3"
 							></textarea>
@@ -386,7 +387,7 @@
 			onCancel={handleCloseSettingsModal}
 			cancelDisabled={updateCrewMutation.isPending}
 			primaryAction={{
-				label: updateCrewMutation.isPending ? 'Saving...' : 'Save',
+				label: updateCrewMutation.isPending ? m.crew_saving() : m.crew_save_button(),
 				onclick: handleUpdateSettings,
 				disabled: !canSaveSettings || updateCrewMutation.isPending
 			}}

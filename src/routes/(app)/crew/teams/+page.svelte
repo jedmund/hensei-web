@@ -10,6 +10,7 @@
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -44,7 +45,7 @@
 </script>
 
 <svelte:head>
-	<title>Crew Teams / granblue.team</title>
+	<title>{m.page_title_crew_teams()}</title>
 </svelte:head>
 
 <div class="page">
@@ -61,24 +62,24 @@
 			{#if !crewStore.isInCrew}
 				<div class="empty-state">
 					<Icon name="users" size={32} />
-					<p>You're not in a crew</p>
+					<p>{m.crew_teams_not_in_crew()}</p>
 				</div>
 			{:else if sharedPartiesQuery.isLoading}
 				<div class="loading-state">
 					<Icon name="loader-2" size={32} class="spin" />
-					<p>Loading shared teams...</p>
+					<p>{m.crew_teams_loading()}</p>
 				</div>
 			{:else if sharedPartiesQuery.isError}
 				<div class="error-state">
 					<Icon name="alert-circle" size={32} />
-					<p>Failed to load teams: {sharedPartiesQuery.error?.message || 'Unknown error'}</p>
-					<Button size="small" onclick={() => sharedPartiesQuery.refetch()}>Retry</Button>
+					<p>{m.crew_teams_load_error({ error: sharedPartiesQuery.error?.message || m.crew_teams_unknown_error() })}</p>
+					<Button size="small" onclick={() => sharedPartiesQuery.refetch()}>{m.crew_teams_retry()}</Button>
 				</div>
 			{:else if isEmpty}
 				<div class="empty-state">
 					<Icon name="share-2" size={32} />
-					<p>No teams have been shared with your crew yet</p>
-					<span class="hint">Crew members can share their teams from the team settings</span>
+					<p>{m.crew_teams_empty()}</p>
+					<span class="hint">{m.crew_teams_empty_hint()}</span>
 				</div>
 			{:else}
 				<div class="teams-grid">
@@ -93,13 +94,13 @@
 					{#if sharedPartiesQuery.isFetchingNextPage}
 						<div class="loading-more">
 							<Icon name="loader-2" size={20} class="spin" />
-							<span>Loading more...</span>
+							<span>{m.crew_teams_loading_more()}</span>
 						</div>
 					{/if}
 
 					{#if !sharedPartiesQuery.hasNextPage && items.length > 0}
 						<div class="end-message">
-							<p>You've seen all shared teams</p>
+							<p>{m.crew_teams_end()}</p>
 						</div>
 					{/if}
 				</div>
