@@ -8,6 +8,7 @@
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { formatDate } from '$lib/utils/date'
 	import type { CrewMembership } from '$lib/types/api/crew'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		member: CrewMembership
@@ -22,11 +23,11 @@
 	function getRoleLabel(role: string): string {
 		switch (role) {
 			case 'captain':
-				return 'Captain'
+				return m.crew_role_captain()
 			case 'vice_captain':
-				return 'Vice Captain'
+				return m.crew_role_vice_captain()
 			default:
-				return 'Member'
+				return m.crew_role_member()
 		}
 	}
 
@@ -61,10 +62,10 @@
 				{#if member.user?.username}
 					<span class="username">{member.user.username}</span>
 				{:else}
-					<span class="username">Unknown</span>
+					<span class="username">{m.crew_unknown()}</span>
 				{/if}
 				{#if member.joinedAt}
-					<span class="joined-date">Joined {formatDate(member.joinedAt)}</span>
+					<span class="joined-date">{m.crew_joined_date({ date: formatDate(member.joinedAt) })}</span>
 				{/if}
 			</div>
 		</div>
@@ -85,34 +86,34 @@
 					class="dropdown-menu-item"
 					onclick={() => goto(localizeHref(`/crew/members/${member.user?.username}`))}
 				>
-					View crew profile
+					{m.crew_view_crew_profile()}
 				</DropdownMenuBase.Item>
 				<DropdownMenuBase.Item
 					class="dropdown-menu-item"
 					onclick={() => goto(localizeHref(`/${member.user?.username}`))}
 				>
-					View profile
+					{m.crew_view_profile()}
 				</DropdownMenuBase.Item>
 			{/if}
 			{#if crewStore.isOfficer && onEdit}
 				<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEdit}>
-					Edit
+					{m.crew_edit()}
 				</DropdownMenuBase.Item>
 			{/if}
 			{#if canShowOfficerActions}
 				{#if canPromote && onPromote}
 					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onPromote}>
-						Promote
+						{m.crew_promote()}
 					</DropdownMenuBase.Item>
 				{/if}
 				{#if canDemote && onDemote}
 					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onDemote}>
-						Demote
+						{m.crew_demote()}
 					</DropdownMenuBase.Item>
 				{/if}
 				{#if onRemove}
 					<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={onRemove}>
-						Remove
+						{m.crew_remove()}
 					</DropdownMenuBase.Item>
 				{/if}
 			{/if}
