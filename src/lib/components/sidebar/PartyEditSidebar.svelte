@@ -5,6 +5,7 @@
 	 * This sidebar is opened via openPartyEditSidebar() and provides
 	 * editing for battle settings, clear time, metrics, video URL, and raid.
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import DetailsSection from './details/DetailsSection.svelte'
 	import DetailRow from './details/DetailRow.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
@@ -308,7 +309,7 @@
 			<Input
 				label="Title"
 				bind:value={name}
-				placeholder="Enter party title..."
+				placeholder={m.sidebar_party_title_placeholder()}
 				contained
 				fullWidth
 			/>
@@ -341,7 +342,7 @@
 		{#if descriptionPreview}
 			<p class="description-preview">{descriptionPreview}</p>
 		{:else}
-			<span class="description-placeholder">Add description...</span>
+			<span class="description-placeholder">{m.sidebar_add_description()}</span>
 		{/if}
 	</button>
 

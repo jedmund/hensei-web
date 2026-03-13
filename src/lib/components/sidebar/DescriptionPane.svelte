@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { onMount } from 'svelte'
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
 	import EditDescriptionPane from './EditDescriptionPane.svelte'
@@ -74,7 +75,7 @@
 				</div>
 			{:else}
 				<div class="empty-state">
-					<p>No description available for this party.</p>
+					<p>{m.sidebar_no_description()}</p>
 				</div>
 			{/if}
 		</div>

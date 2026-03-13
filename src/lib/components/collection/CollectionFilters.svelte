@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
 	import { RACE_LABELS } from '$lib/utils/race'
 	import { GENDER_LABELS } from '$lib/utils/gender'
@@ -447,7 +448,7 @@
 
 	<div class="right-controls">
 		{#if hasActiveFilters}
-			<button type="button" class="clear-btn" onclick={clearAll}>Clear</button>
+			<button type="button" class="clear-btn" onclick={clearAll}>{m.filter_clear()}</button>
 		{/if}
 		{#if showSort}
 			<div class="sort">

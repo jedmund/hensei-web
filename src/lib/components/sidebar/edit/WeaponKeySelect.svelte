@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import type { WeaponKey } from '$lib/api/adapters/entity.adapter'
@@ -123,9 +124,9 @@
 
 <div class="weapon-key-select">
 	{#if weaponKeysQuery.isPending}
-		<div class="loading">Loading keys...</div>
+		<div class="loading">{m.sidebar_loading_keys()}</div>
 	{:else if weaponKeysQuery.error}
-		<div class="error">Failed to load keys</div>
+		<div class="error">{m.sidebar_keys_error()}</div>
 	{:else}
 		<Select
 			options={groupedOptions}
