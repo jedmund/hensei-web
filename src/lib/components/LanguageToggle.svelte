@@ -55,7 +55,7 @@
 		}
 
 		.other {
-			font-weight: typography.$regular;
+			font-weight: typography.$normal;
 			color: var(--text-secondary);
 		}
 	}
