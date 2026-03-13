@@ -41,6 +41,7 @@
 	import type { PageData } from './$types'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		data: PageData
@@ -96,13 +97,13 @@
 	// Filter options - Pending only shown to officers
 	const filterOptions = $derived.by(() => {
 		const options: { value: MemberFilter; label: string }[] = [
-			{ value: 'all', label: 'All' },
-			{ value: 'active', label: 'Active' }
+			{ value: 'all', label: m.crew_filter_all() },
+			{ value: 'active', label: m.crew_filter_active() }
 		]
 		if (crewStore.isOfficer) {
-			options.push({ value: 'pending', label: 'Pending' })
+			options.push({ value: 'pending', label: m.crew_filter_pending() })
 		}
-		options.push({ value: 'retired', label: 'Retired' })
+		options.push({ value: 'retired', label: m.crew_filter_retired() })
 		return options
 	})
 
@@ -400,7 +401,7 @@
 						disabled={isRosterFull}
 						onclick={() => (scoutModalOpen = true)}
 					>
-						Scout
+						{m.crew_scout()}
 					</Button>
 					<DropdownMenu>
 						{#snippet trigger({ props })}
@@ -411,7 +412,7 @@
 								class="dropdown-menu-item"
 								onclick={() => (bulkPhantomDialogOpen = true)}
 							>
-								Add phantoms...
+								{m.crew_add_phantoms()}
 							</DropdownMenuBase.Item>
 						{/snippet}
 					</DropdownMenu>
@@ -440,30 +441,30 @@
 		{#if filter === 'pending'}
 			{#if invitationsQuery.isLoading || phantomsQuery.isLoading}
 				<div class="loading-state">
-					<p>Loading...</p>
+					<p>{m.crew_loading()}</p>
 				</div>
 			{:else}
 				{#if invitationsQuery.data && invitationsQuery.data.length > 0}
 					<div class="section-divider">
-						<span>Pending Invitations ({invitationsQuery.data.length})</span>
+						<span>{m.crew_pending_invitations({ count: String(invitationsQuery.data.length) })}</span>
 					</div>
 					<ul class="member-list">
 						{#each invitationsQuery.data as invitation}
 							{@const expired = isInvitationExpired(invitation.expiresAt)}
 							<li class="invitation-row" class:expired>
 								<div class="invitation-info">
-									<span class="invited-user">{invitation.user?.username ?? 'Unknown'}</span>
+									<span class="invited-user">{invitation.user?.username ?? m.crew_unknown()}</span>
 									{#if invitation.invitedBy}
 										<span class="invited-by">
-											Invited by {invitation.invitedBy.username}
+											{m.crew_invited_by({ username: invitation.invitedBy.username })}
 										</span>
 									{/if}
 								</div>
 								<div class="invitation-status">
 									{#if expired}
-										<span class="status-badge expired">Expired</span>
+										<span class="status-badge expired">{m.crew_expired()}</span>
 									{:else}
-										<span class="expires-text">Expires {formatDate(invitation.expiresAt)}</span>
+										<span class="expires-text">{m.crew_expires({ date: formatDate(invitation.expiresAt) })}</span>
 									{/if}
 								</div>
 							</li>
@@ -473,7 +474,7 @@
 
 				{#if pendingClaimPhantoms.length > 0}
 					<div class="section-divider">
-						<span>Pending Claims ({pendingClaimPhantoms.length})</span>
+						<span>{m.crew_pending_claims({ count: String(pendingClaimPhantoms.length) })}</span>
 					</div>
 					<ul class="member-list">
 						{#each pendingClaimPhantoms as phantom}
@@ -492,17 +493,17 @@
 
 				{#if (!invitationsQuery.data || invitationsQuery.data.length === 0) && pendingClaimPhantoms.length === 0}
 					<div class="empty-state">
-						<p>No pending items.</p>
+						<p>{m.crew_no_pending()}</p>
 					</div>
 				{/if}
 			{/if}
 		{:else if membersQuery.isLoading}
 			<div class="loading-state">
-				<p>Loading...</p>
+				<p>{m.crew_loading()}</p>
 			</div>
 		{:else if membersQuery.isError}
 			<div class="error-state">
-				<p>Failed to load members</p>
+				<p>{m.crew_load_members_failed()}</p>
 			</div>
 		{:else}
 			{@const hasMembers = membersQuery.data?.members && membersQuery.data.members.length > 0}
@@ -511,14 +512,14 @@
 			<!-- Empty state for active/retired when no members or phantoms -->
 			{#if (filter === 'active' || filter === 'retired') && !hasMembers && !hasPhantoms}
 				<div class="empty-state">
-					<p>No {filter} players found.</p>
+					<p>{m.crew_no_filter_players({ filter })}</p>
 				</div>
 			{:else}
 				<!-- Regular members -->
 				{#if hasMembers}
 					{#if (filter === 'active' || filter === 'retired') && hasPhantoms}
 						<div class="section-divider">
-							<span>Members ({membersQuery.data?.members.length})</span>
+							<span>{m.crew_members_count({ count: String(membersQuery.data?.members.length ?? 0) })}</span>
 						</div>
 					{/if}
 					<ul class="member-list">
@@ -538,7 +539,7 @@
 				{#if hasPhantoms}
 					{#if filter === 'all' || filter === 'active' || filter === 'retired'}
 						<div class="section-divider">
-							<span>Phantom Players ({membersQuery.data?.phantoms.length})</span>
+							<span>{m.crew_phantoms_count({ count: String(membersQuery.data?.phantoms.length ?? 0) })}</span>
 						</div>
 					{/if}
 					<ul class="member-list">
@@ -565,21 +566,20 @@
 	{#snippet children()}
 		<ModalHeader
 			title={confirmAction === 'remove'
-				? 'Remove Member'
+				? m.crew_remove_member()
 				: confirmAction === 'promote'
-					? 'Promote to Vice Captain'
-					: 'Demote to Member'}
+					? m.crew_promote_member()
+					: m.crew_demote_member()}
 		/>
 
 		<ModalBody>
 			<p class="confirm-message">
 				{#if confirmAction === 'remove'}
-					Are you sure you want to remove {selectedMember?.user?.username ?? 'this member'} from the
-					crew?
+					{m.crew_confirm_remove({ name: selectedMember?.user?.username ?? '' })}
 				{:else if confirmAction === 'promote'}
-					Promote {selectedMember?.user?.username ?? 'this member'} to Vice Captain?
+					{m.crew_confirm_promote({ name: selectedMember?.user?.username ?? '' })}
 				{:else if confirmAction === 'demote'}
-					Demote {selectedMember?.user?.username ?? 'this member'} from Vice Captain to Member?
+					{m.crew_confirm_demote({ name: selectedMember?.user?.username ?? '' })}
 				{/if}
 			</p>
 		</ModalBody>
@@ -589,10 +589,10 @@
 			primaryAction={{
 				label:
 					confirmAction === 'remove'
-						? 'Remove'
+						? m.crew_remove()
 						: confirmAction === 'promote'
-							? 'Promote'
-							: 'Demote',
+							? m.crew_promote()
+							: m.crew_demote(),
 				onclick: handleConfirmAction,
 				destructive: confirmAction === 'remove'
 			}}
@@ -603,14 +603,14 @@
 <!-- Edit Member/Phantom Dialog -->
 <Dialog bind:open={editDialogOpen}>
 	{#snippet children()}
-		<ModalHeader title="Edit player" />
+		<ModalHeader title={m.crew_edit_player()} />
 
 		<ModalBody>
 			<div class="modal-form">
 				<div class="form-fields">
 					{#if editingPhantom}
 						<Input
-							label="Granblue ID"
+							label={m.crew_granblue_id()}
 							bind:value={editGranblueId}
 							maxLength={20}
 							variant="contained"
@@ -618,32 +618,32 @@
 					{/if}
 
 					{#if loadingHistory}
-						<p class="loading-text">Loading membership history...</p>
+						<p class="loading-text">{m.crew_membership_loading()}</p>
 					{:else if membershipHistory.length > 1}
 						<!-- Multiple membership periods (boomerang player) -->
 						<div class="membership-periods">
-							<h4 class="periods-title">Membership Periods</h4>
+							<h4 class="periods-title">{m.crew_membership_periods()}</h4>
 							<p class="help-text">
-								This player has joined and left the crew multiple times. Edit each period below.
+								{m.crew_membership_hint()}
 							</p>
 							{#each membershipHistory as period, i}
 								<div class="period-row">
 									<span class="period-label">
 										{#if i === 0}
-											Current
+											{m.crew_period_current()}
 										{:else}
-											Period {membershipHistory.length - i}
+											{m.crew_period_number({ n: String(membershipHistory.length - i) })}
 										{/if}
 									</span>
 									<div class="period-fields">
 										<DatePicker
-											label="Joined"
+											label={m.crew_joined()}
 											bind:value={period.joinedAt}
 											contained
 										/>
 										{#if period.retired || i > 0}
 											<DatePicker
-												label="Left"
+												label={m.crew_left()}
 												bind:value={period.retiredAt}
 												contained
 											/>
@@ -655,7 +655,7 @@
 
 						<!-- Retired toggle only affects current membership -->
 						{#if !membershipHistory[0]?.retired}
-							<SettingsRow title="Retired" subtitle="Mark current membership as ended">
+							<SettingsRow title={m.crew_retired()} subtitle={m.crew_mark_retired()}>
 								{#snippet control()}
 									<Switch
 										checked={editRetired}
@@ -670,25 +670,24 @@
 								{/snippet}
 							</SettingsRow>
 							{#if editRetired && membershipHistory[0]}
-								<DatePicker label="Retired date" bind:value={membershipHistory[0].retiredAt} contained />
+								<DatePicker label={m.crew_retired_date()} bind:value={membershipHistory[0].retiredAt} contained />
 							{/if}
 						{/if}
 					{:else}
 						<!-- Single membership period (normal case) -->
-						<DatePicker label="Join date" bind:value={editJoinDate} contained />
+						<DatePicker label={m.crew_join_date()} bind:value={editJoinDate} contained />
 						<p class="help-text">
-							This date is used to determine which events a member was active for when adding
-							historical GW scores.
+							{m.crew_join_date_hint()}
 						</p>
-						<SettingsRow title="Retired" subtitle="This player is no longer a part of the crew">
+						<SettingsRow title={m.crew_retired()} subtitle={m.crew_retired_hint()}>
 							{#snippet control()}
 								<Switch bind:checked={editRetired} name="retired" />
 							{/snippet}
 						</SettingsRow>
 						{#if editRetired}
-							<DatePicker label="Retired date" bind:value={editRetiredAt} contained />
+							<DatePicker label={m.crew_retired_date()} bind:value={editRetiredAt} contained />
 							<p class="help-text">
-								This date is used to determine which events a retired player was active for.
+								{m.crew_retired_date_hint()}
 							</p>
 						{/if}
 					{/if}
@@ -699,7 +698,7 @@
 		<ModalFooter
 			onCancel={() => (editDialogOpen = false)}
 			primaryAction={{
-				label: 'Save',
+				label: m.crew_save_button(),
 				onclick: handleSaveEdit,
 				disabled: membershipHistory.length > 1 ? !membershipHistory[0]?.joinedAt : !editJoinDate
 			}}
@@ -710,19 +709,18 @@
 <!-- Delete Phantom Confirmation Dialog -->
 <Dialog bind:open={deletePhantomDialogOpen}>
 	{#snippet children()}
-		<ModalHeader title="Delete Phantom Player" />
+		<ModalHeader title={m.crew_delete_phantom_title()} />
 
 		<ModalBody>
 			<p class="confirm-message">
-				Are you sure you want to delete {phantomToDelete?.name ?? 'this phantom player'}? This
-				action cannot be undone.
+				{m.crew_confirm_delete_phantom({ name: phantomToDelete?.name ?? '' })}
 			</p>
 		</ModalBody>
 
 		<ModalFooter
 			onCancel={() => (deletePhantomDialogOpen = false)}
 			primaryAction={{
-				label: 'Delete',
+				label: m.crew_phantom_delete(),
 				onclick: handleConfirmDeletePhantom,
 				destructive: true
 			}}

@@ -7,6 +7,7 @@
 	import { useCreateCrew } from '$lib/api/mutations/crew.mutations'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -42,17 +43,17 @@
 		const newErrors: Record<string, string> = {}
 
 		if (!name.trim()) {
-			newErrors.name = 'Crew name is required'
+			newErrors.name = m.crew_error_name_required()
 		} else if (name.length > 100) {
-			newErrors.name = 'Crew name must be 100 characters or less'
+			newErrors.name = m.crew_error_name_max()
 		}
 
 		if (gamertag && gamertag.length > 10) {
-			newErrors.gamertag = 'Gamertag must be 10 characters or less'
+			newErrors.gamertag = m.crew_error_gamertag_max()
 		}
 
 		if (description && description.length > 500) {
-			newErrors.description = 'Description must be 500 characters or less'
+			newErrors.description = m.crew_error_description_max()
 		}
 
 		errors = newErrors
@@ -96,13 +97,13 @@
 <div class="create-crew-page">
 	{#if crewQuery.isLoading}
 		<div class="loading-state">
-			<p>Loading...</p>
+			<p>{m.crew_loading()}</p>
 		</div>
 	{:else}
 		<div class="form-container">
 			<header class="page-header">
-				<h1>Create a Crew</h1>
-				<p class="description">Start a new crew and invite players to join.</p>
+				<h1>{m.crew_create()}</h1>
+				<p class="description">{m.crew_create_subtitle()}</p>
 			</header>
 
 			<form onsubmit={handleSubmit} class="crew-form">
@@ -114,7 +115,7 @@
 
 				<div class="form-group">
 					<label for="name" class="form-label">
-						Crew Name <span class="required">*</span>
+						{m.crew_name_label()} <span class="required">{m.crew_required_mark()}</span>
 					</label>
 					<input
 						type="text"
@@ -122,18 +123,18 @@
 						bind:value={name}
 						class="form-input"
 						class:error={errors.name}
-						placeholder="Enter your crew name"
+						placeholder={m.crew_name_placeholder()}
 						maxlength="100"
 					/>
 					{#if errors.name}
 						<span class="field-error">{errors.name}</span>
 					{/if}
-					<span class="field-hint">{name.length}/100 characters</span>
+					<span class="field-hint">{m.crew_name_counter({ length: String(name.length) })}</span>
 				</div>
 
 				<div class="form-group">
 					<label for="gamertag" class="form-label">
-						Gamertag
+						{m.crew_gamertag_label()}
 					</label>
 					<input
 						type="text"
@@ -141,20 +142,20 @@
 						bind:value={gamertag}
 						class="form-input"
 						class:error={errors.gamertag}
-						placeholder="e.g., CREW"
+						placeholder={m.crew_gamertag_placeholder()}
 						maxlength="10"
 					/>
 					{#if errors.gamertag}
 						<span class="field-error">{errors.gamertag}</span>
 					{/if}
 					<span class="field-hint">
-						Short tag displayed next to member usernames (optional)
+						{m.crew_gamertag_hint()}
 					</span>
 				</div>
 
 				<div class="form-group">
 					<label for="granblueCrewId" class="form-label">
-						In-Game Crew ID
+						{m.crew_ingame_id_label()}
 					</label>
 					<input
 						type="text"
@@ -162,33 +163,33 @@
 						bind:value={granblueCrewId}
 						class="form-input"
 						class:error={errors.granblueCrewId}
-						placeholder="Your Granblue Fantasy crew ID"
+						placeholder={m.crew_ingame_id_placeholder()}
 					/>
 					{#if errors.granblueCrewId}
 						<span class="field-error">{errors.granblueCrewId}</span>
 					{/if}
 					<span class="field-hint">
-						The numeric ID from your in-game crew (optional)
+						{m.crew_ingame_id_hint()}
 					</span>
 				</div>
 
 				<div class="form-group">
 					<label for="description" class="form-label">
-						Description
+						{m.crew_description_label()}
 					</label>
 					<textarea
 						id="description"
 						bind:value={description}
 						class="form-input form-textarea"
 						class:error={errors.description}
-						placeholder="Tell others about your crew"
+						placeholder={m.crew_description_placeholder()}
 						maxlength="500"
 						rows="4"
 					></textarea>
 					{#if errors.description}
 						<span class="field-error">{errors.description}</span>
 					{/if}
-					<span class="field-hint">{description.length}/500 characters</span>
+					<span class="field-hint">{m.crew_description_counter({ length: String(description.length) })}</span>
 				</div>
 
 				<div class="form-actions">
@@ -197,14 +198,14 @@
 						type="button"
 						onclick={() => goto(localizeHref('/crew'))}
 					>
-						Cancel
+						{m.crew_cancel()}
 					</Button>
 					<Button
 						variant="primary"
 						type="submit"
 						disabled={createCrewMutation.isPending}
 					>
-						{createCrewMutation.isPending ? 'Creating...' : 'Create Crew'}
+						{createCrewMutation.isPending ? m.crew_creating() : m.crew_create()}
 					</Button>
 				</div>
 			</form>
