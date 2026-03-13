@@ -1,6 +1,8 @@
 <script lang="ts">
   import GuidebookUnit from '$lib/components/extra/GuidebookUnit.svelte'
+  import ExtraContainerItem from './ExtraContainerItem.svelte'
   import type { GuidebookList } from '$lib/types/api/party'
+  import * as m from '$lib/paraglide/messages'
 
   interface Props {
     guidebooks?: GuidebookList
@@ -12,7 +14,7 @@
   let { guidebooks, canEdit = false, onClickSlot, onRemove }: Props = $props()
 </script>
 
-<div class="guidebooks">
+<ExtraContainerItem title={m.guidebooks()}>
   <ul class="grid">
     {#each [1, 2, 3] as pos (pos)}
       <li>
@@ -26,22 +28,20 @@
       </li>
     {/each}
   </ul>
-</div>
+</ExtraContainerItem>
 
 <style lang="scss">
   @use '$src/themes/spacing' as *;
   @use '$src/themes/mixins' as *;
 
-  .guidebooks {
-    .grid {
-      display: grid;
-      gap: $unit-3x;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+  .grid {
+    display: grid;
+    gap: $unit-3x;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
-      @include breakpoint(tablet) { gap: $unit-2x; }
-      @include breakpoint(phone) { gap: $unit; }
+    @include breakpoint(tablet) { gap: $unit-2x; }
+    @include breakpoint(phone) { gap: $unit; }
 
-      & > li { list-style: none; }
-    }
+    & > li { list-style: none; }
   }
 </style>
