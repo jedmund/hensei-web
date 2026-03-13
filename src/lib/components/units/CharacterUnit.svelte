@@ -265,10 +265,10 @@
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="context"
-					editLabel={m.context_edit({ type: 'character' })}
+					editLabel={m.context_edit({ type: m.type_character() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace({ type: 'character' })}
+					replaceLabel={m.context_replace({ type: m.type_character() })}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}
@@ -282,10 +282,10 @@
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="dropdown"
-					editLabel={m.context_edit({ type: 'character' })}
+					editLabel={m.context_edit({ type: m.type_character() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace({ type: 'character' })}
+					replaceLabel={m.context_replace({ type: m.type_character() })}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}

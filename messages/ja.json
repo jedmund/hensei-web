@@ -256,5 +256,9 @@
 	"season_formal": "ドレスアップ",
 	"season_summer": "水着",
 	"season_halloween": "ハロウィン",
-	"season_holiday": "クリスマス"
+	"season_holiday": "クリスマス",
+
+	"type_character": "キャラクター",
+	"type_weapon": "武器",
+	"type_summon": "召喚石"
 }

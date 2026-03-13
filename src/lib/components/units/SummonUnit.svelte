@@ -141,7 +141,7 @@
           variant="context"
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
-          replaceLabel={m.context_replace({ type: 'summon' })}
+          replaceLabel={m.context_replace({ type: m.type_summon() })}
           removeLabel={m.context_remove()}
         />
       {/snippet}
@@ -156,7 +156,7 @@
           variant="dropdown"
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
-          replaceLabel={m.context_replace({ type: 'summon' })}
+          replaceLabel={m.context_replace({ type: m.type_summon() })}
           removeLabel={m.context_remove()}
         />
       {/snippet}

@@ -216,10 +216,10 @@
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="context"
-					editLabel={m.context_edit({ type: 'weapon' })}
+					editLabel={m.context_edit({ type: m.type_weapon() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace({ type: 'weapon' })}
+					replaceLabel={m.context_replace({ type: m.type_weapon() })}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}
@@ -233,10 +233,10 @@
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					variant="dropdown"
-					editLabel={m.context_edit({ type: 'weapon' })}
+					editLabel={m.context_edit({ type: m.type_weapon() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
-					replaceLabel={m.context_replace({ type: 'weapon' })}
+					replaceLabel={m.context_replace({ type: m.type_weapon() })}
 					removeLabel={m.context_remove()}
 				/>
 			{/snippet}

@@ -256,5 +256,9 @@
 	"season_formal": "Formal",
 	"season_summer": "Summer",
 	"season_halloween": "Halloween",
-	"season_holiday": "Holiday"
+	"season_holiday": "Holiday",
+
+	"type_character": "character",
+	"type_weapon": "weapon",
+	"type_summon": "summon"
 }
