@@ -1,4 +1,5 @@
 import { getBasePath } from '$lib/utils/images'
+import * as m from '$lib/paraglide/messages'
 
 interface ElementData {
 	en: string
@@ -16,8 +17,8 @@ export const ELEMENTS: Record<number, ElementData> = {
 	6: { en: 'Light', ja: '光', opposite_id: 5 }
 }
 
-// Legacy support - still used in many places
-export const ELEMENT_LABELS: Record<number, string> = {
+// English keys used for file paths and CSS classes — not for display
+const ELEMENT_KEYS: Record<number, string> = {
 	0: 'Null',
 	1: 'Wind',
 	2: 'Fire',
@@ -27,30 +28,44 @@ export const ELEMENT_LABELS: Record<number, string> = {
 	6: 'Light'
 }
 
+const ELEMENT_MESSAGES: Record<number, () => string> = {
+	0: m.element_null,
+	1: m.element_wind,
+	2: m.element_fire,
+	3: m.element_water,
+	4: m.element_earth,
+	5: m.element_dark,
+	6: m.element_light
+}
+
+/** @deprecated Use getElementLabel() instead for display text */
+export const ELEMENT_LABELS = ELEMENT_KEYS
+
 export function getElementLabel(element?: number): string {
 	if (element === undefined || element === null) return '—'
-	return ELEMENT_LABELS[element] || '—'
+	const messageFn = ELEMENT_MESSAGES[element]
+	return messageFn ? messageFn() : '—'
 }
 
 export function getElementClass(element?: number): string {
 	if (element === undefined || element === null) return ''
-	const label = ELEMENT_LABELS[element]
-	return label ? `element-${label.toLowerCase()}` : ''
+	const key = ELEMENT_KEYS[element]
+	return key ? `element-${key.toLowerCase()}` : ''
 }
 
 export function getElementIcon(element?: number): string {
-	const label = getElementLabel(element)
-	if (label === '—') return ''
-	if (label === 'Null') return `${getBasePath()}/labels/element/Label_Element_Any.png`
-	// Capitalize first letter for filename
-	const capitalizedLabel = label.charAt(0).toUpperCase() + label.slice(1)
-	return `${getBasePath()}/labels/element/Label_Element_${capitalizedLabel}.png`
+	if (element === undefined || element === null) return ''
+	const key = ELEMENT_KEYS[element]
+	if (!key) return ''
+	if (key === 'Null') return `${getBasePath()}/labels/element/Label_Element_Any.png`
+	const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1)
+	return `${getBasePath()}/labels/element/Label_Element_${capitalizedKey}.png`
 }
 
 export function getElementOptions() {
-	return Object.entries(ELEMENT_LABELS).map(([value, label]) => ({
+	return Object.entries(ELEMENT_MESSAGES).map(([value, messageFn]) => ({
 		value: Number(value),
-		label
+		label: messageFn()
 	}))
 }
 
@@ -73,6 +88,6 @@ export function getOppositeElement(element?: number): number | undefined {
  */
 export function getElementImage(element?: number): string {
 	if (element === undefined || element === null) return ''
-	const label = ELEMENT_LABELS[element]?.toLowerCase() ?? 'null'
-	return `${getBasePath()}/elements/${label}.png`
+	const key = ELEMENT_KEYS[element]?.toLowerCase() ?? 'null'
+	return `${getBasePath()}/elements/${key}.png`
 }
