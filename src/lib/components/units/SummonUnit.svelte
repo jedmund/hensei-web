@@ -14,6 +14,8 @@
   import { GridType } from '$lib/types/enums'
   import * as m from '$lib/paraglide/messages'
   import { localizedName } from '$lib/utils/locale'
+  import DuplicateCollectionDialog from '$lib/components/dialogs/DuplicateCollectionDialog.svelte'
+  import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
   import { toast } from 'svelte-sonner'
   import { extractErrorMessage } from '$lib/utils/errors'
 
@@ -40,10 +42,9 @@
   // Check if this item is currently active in the sidebar
   let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
 
-  // Check if this empty slot is currently selected for adding an item
-  let isEmptySelected = $derived(
-    !item &&
-      ctx?.getSelectedSlot?.() === position &&
+  // Check if this slot is currently selected for adding/replacing an item
+  let isSelected = $derived(
+    ctx?.getSelectedSlot?.() === position &&
       ctx?.getActiveTab?.() === GridType.Summon
   )
 
@@ -93,6 +94,47 @@
     goto(`/database/summons/${item.summon.granblueId}`)
   }
 
+  // Duplicate: find the first empty sub-summon slot (0-3)
+  let firstEmptySlot = $derived.by(() => {
+    const party = ctx.getParty()
+    const occupied = new Set(
+      party.summons?.filter((s) => s.position >= 0 && s.position < 4).map((s) => s.position) ?? []
+    )
+    for (let i = 0; i < 4; i++) {
+      if (!occupied.has(i)) return i
+    }
+    return undefined
+  })
+
+  let canDuplicate = $derived(
+    !!item && position !== -1 && position !== 6 && firstEmptySlot !== undefined
+  )
+
+  let duplicateCollectionDialogOpen = $state(false)
+
+  async function duplicate() {
+    if (!item?.id || firstEmptySlot === undefined) return
+    if (item.collectionSummonId) {
+      duplicateCollectionDialogOpen = true
+      return
+    }
+    await executeDuplicate()
+  }
+
+  async function executeDuplicate() {
+    if (!item?.id || firstEmptySlot === undefined) return
+    try {
+      await ctx.services.gridService.duplicateSummon(item.id, firstEmptySlot)
+      const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Summon, firstEmptySlot)
+      if (nextSlot !== SLOT_NOT_FOUND) {
+        ctx.setSelectedSlot?.(nextSlot)
+      }
+    } catch (err) {
+      console.error('Error duplicating summon:', err)
+      toast.error(extractErrorMessage(err, 'Failed to duplicate summon'))
+    }
+  }
+
   // Check if user can view database (role >= 7)
   let canViewDatabase = $derived(($page.data.account?.role ?? 0) >= 7)
 
@@ -111,6 +153,7 @@
               class:cell={!isMainSized}
               class:editable={ctx?.canEdit()}
               class:is-active={isActive}
+              class:is-selected={isSelected}
               class:not-in-collection={notInCollection}
               onclick={() => viewDetails()}
             >
@@ -136,12 +179,15 @@
           onViewDetails={viewDetails}
           onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
           onReplace={ctx?.canEdit() ? replace : undefined}
+          onDuplicate={ctx?.canEdit() ? duplicate : undefined}
+          duplicateDisabled={!canDuplicate}
           onRemove={ctx?.canEdit() ? remove : undefined}
           canEdit={ctx?.canEdit()}
           variant="context"
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
           replaceLabel={m.context_replace({ type: m.type_summon() })}
+          duplicateLabel={m.context_duplicate()}
           removeLabel={m.context_remove()}
         />
       {/snippet}
@@ -151,12 +197,15 @@
           onViewDetails={viewDetails}
           onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
           onReplace={ctx?.canEdit() ? replace : undefined}
+          onDuplicate={ctx?.canEdit() ? duplicate : undefined}
+          duplicateDisabled={!canDuplicate}
           onRemove={ctx?.canEdit() ? remove : undefined}
           canEdit={ctx?.canEdit()}
           variant="dropdown"
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
           replaceLabel={m.context_replace({ type: m.type_summon() })}
+          duplicateLabel={m.context_duplicate()}
           removeLabel={m.context_remove()}
         />
       {/snippet}
@@ -169,7 +218,7 @@
         class:friend={position === 6}
         class:cell={!(position === -1 || position === 6)}
         class:editable={ctx?.canEdit()}
-        class:is-selected={isEmptySelected}
+        class:is-selected={isSelected}
         onclick={() => ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'summon', position, item })}
       >
         <img
@@ -223,6 +272,17 @@
     {item ? localizedName(item?.summon?.name) : ''}
   </div>
 </div>
+
+<DuplicateCollectionDialog
+  bind:open={duplicateCollectionDialogOpen}
+  onConfirm={async () => {
+    duplicateCollectionDialogOpen = false
+    await executeDuplicate()
+  }}
+  onCancel={() => {
+    duplicateCollectionDialogOpen = false
+  }}
+/>
 
 <style lang="scss">
   @use '$src/themes/colors' as colors;
