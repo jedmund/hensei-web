@@ -49,6 +49,11 @@
 	"context_view_in_database": "View in Database",
 	"context_replace": "Replace {type}",
 	"context_remove": "Remove from team",
+	"context_duplicate": "Duplicate",
+
+	"duplicate_collection_title": "Duplicate collection item?",
+	"duplicate_collection_body": "The duplicate will not be linked to your collection. Changes to the original in your collection won't sync to the copy.",
+	"duplicate_collection_confirm": "Duplicate anyway",
 
 	"conflict_title": "Conflict Detected",
 	"conflict_character_message": "Only one version of a character can be included in each party. Do you want to replace them?",
