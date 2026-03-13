@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import Select from '../ui/Select.svelte'
 	import Input from '../ui/Input.svelte'
 	import SettingsRow from '../ui/SettingsRow.svelte'
@@ -58,12 +59,12 @@
 	}
 
 	const elementOptions = [
-		{ value: 'wind', label: 'Wind', image: getElementCircle('wind') },
-		{ value: 'fire', label: 'Fire', image: getElementCircle('fire') },
-		{ value: 'water', label: 'Water', image: getElementCircle('water') },
-		{ value: 'earth', label: 'Earth', image: getElementCircle('earth') },
-		{ value: 'dark', label: 'Dark', image: getElementCircle('dark') },
-		{ value: 'light', label: 'Light', image: getElementCircle('light') }
+		{ value: 'wind', label: m.settings_element_wind(), image: getElementCircle('wind') },
+		{ value: 'fire', label: m.settings_element_fire(), image: getElementCircle('fire') },
+		{ value: 'water', label: m.settings_element_water(), image: getElementCircle('water') },
+		{ value: 'earth', label: m.settings_element_earth(), image: getElementCircle('earth') },
+		{ value: 'dark', label: m.settings_element_dark(), image: getElementCircle('dark') },
+		{ value: 'light', label: m.settings_element_light(), image: getElementCircle('light') }
 	]
 
 	const genderOptions = [
@@ -77,9 +78,9 @@
 	]
 
 	const themeOptions = [
-		{ value: 'system', label: 'System' },
-		{ value: 'light', label: 'Light' },
-		{ value: 'dark', label: 'Dark' }
+		{ value: 'system', label: m.settings_theme_system() },
+		{ value: 'light', label: m.settings_theme_light() },
+		{ value: 'dark', label: m.settings_theme_dark() }
 	]
 
 	// Get current picture data
@@ -149,8 +150,8 @@
 			<Select
 				bind:value={localPicture}
 				options={pictureOptions}
-				label="Avatar"
-				placeholder="Select an avatar"
+				label={m.settings_avatar()}
+				placeholder={m.settings_avatar_placeholder()}
 				fullWidth
 				contained
 				portal
@@ -158,12 +159,12 @@
 		</div>
 
 		<!-- Element Selection -->
-		<SettingsRow title="Element" subtitle="Your profile accent color">
+		<SettingsRow title={m.settings_element()} subtitle={m.settings_element_subtitle()}>
 			{#snippet control()}
 				<Select
 					bind:value={localElement}
 					options={elementOptions}
-					placeholder="Select an element"
+					placeholder={m.settings_element_placeholder()}
 					contained
 					portal
 				/>
@@ -173,21 +174,21 @@
 		<hr class="separator" />
 
 		<!-- Granblue ID -->
-		<SettingsRow title="Granblue ID" subtitle="Your in-game player ID">
+		<SettingsRow title={m.settings_granblue_id()} subtitle={m.settings_granblue_id_subtitle()}>
 			{#snippet control()}
-				<Input bind:value={localGranblueId} placeholder="Enter ID" contained />
+				<Input bind:value={localGranblueId} placeholder={m.settings_granblue_id_placeholder()} contained />
 			{/snippet}
 		</SettingsRow>
 
 		<hr class="separator" />
 
 		<!-- Gender Selection -->
-		<SettingsRow title="Gender" subtitle="Your in-game character">
+		<SettingsRow title={m.settings_gender()} subtitle={m.settings_gender_subtitle()}>
 			{#snippet control()}
 				<Select
 					bind:value={localGender}
 					options={genderOptions}
-					placeholder="Select gender"
+					placeholder={m.settings_gender_placeholder()}
 					contained
 					portal
 				/>
@@ -195,12 +196,12 @@
 		</SettingsRow>
 
 		<!-- Language Selection -->
-		<SettingsRow title="Language" subtitle="Display language for the site">
+		<SettingsRow title={m.settings_language()} subtitle={m.settings_language_subtitle()}>
 			{#snippet control()}
 				<Select
 					bind:value={localLanguage}
 					options={languageOptions}
-					placeholder="Select language"
+					placeholder={m.settings_language_placeholder()}
 					contained
 					portal
 				/>
@@ -208,12 +209,12 @@
 		</SettingsRow>
 
 		<!-- Theme Selection -->
-		<SettingsRow title="Theme" subtitle="Light, dark, or system default">
+		<SettingsRow title={m.settings_theme()} subtitle={m.settings_theme_subtitle()}>
 			{#snippet control()}
 				<Select
 					bind:value={localTheme}
 					options={themeOptions}
-					placeholder="Select theme"
+					placeholder={m.settings_theme_placeholder()}
 					contained
 					portal
 				/>

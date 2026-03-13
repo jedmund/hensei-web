@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import Select from '../ui/Select.svelte'
 	import Switch from '../ui/switch/Switch.svelte'
 	import SettingsRow from '../ui/SettingsRow.svelte'
@@ -31,9 +32,9 @@
 
 	// Collection privacy options (1-based to avoid JavaScript falsy 0 issues)
 	const collectionPrivacyOptions = [
-		{ value: 1, label: 'Everyone', description: 'Anyone can view your collection' },
-		{ value: 2, label: 'Crew only', description: 'Only crew members can view' },
-		{ value: 3, label: 'Private', description: 'Only you can view your collection' }
+		{ value: 1, label: m.settings_privacy_everyone(), description: m.settings_privacy_everyone_desc() },
+		{ value: 2, label: m.settings_privacy_crew(), description: m.settings_privacy_crew_desc() },
+		{ value: 3, label: m.settings_privacy_private(), description: m.settings_privacy_private_desc() }
 	]
 
 </script>
@@ -42,8 +43,8 @@
 	<div class="form-fields">
 		<!-- Show Granblue ID on profile -->
 		<SettingsRow
-			title="Show Granblue ID on profile"
-			subtitle="Display your in-game ID on your public profile"
+			title={m.settings_show_granblue_id()}
+			subtitle={m.settings_show_granblue_id_subtitle()}
 		>
 			{#snippet control()}
 				<Switch
@@ -58,8 +59,8 @@
 		<!-- Show Crew Gamertag (only if in a crew with a gamertag) -->
 		{#if isInCrew && crewGamertag}
 			<SettingsRow
-				title="Show crew tag on profile"
-				subtitle={`Display "${crewGamertag}" next to your name`}
+				title={m.settings_show_crew_tag()}
+				subtitle={m.settings_show_crew_tag_subtitle({ gamertag: crewGamertag ?? '' })}
 			>
 				{#snippet control()}
 					<Switch
@@ -76,15 +77,15 @@
 
 		<!-- Collection Privacy -->
 		<SettingsRow
-			title="Collection visibility"
-			subtitle="Control who can view your character, weapon, and summon collection"
+			title={m.settings_collection_visibility()}
+			subtitle={m.settings_collection_visibility_subtitle()}
 		>
 			{#snippet control()}
 				<Select
 					value={collectionPrivacy}
 					onValueChange={onCollectionPrivacyChange}
 					options={collectionPrivacyOptions}
-					placeholder="Who can see your collection"
+					placeholder={m.settings_collection_visibility_placeholder()}
 					contained
 					portal
 				/>
