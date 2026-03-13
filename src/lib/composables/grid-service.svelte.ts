@@ -149,6 +149,32 @@ export function useGridService(
 				throw err
 			}
 		},
+		async duplicateWeapon(gridWeaponId: string, position: number) {
+			try {
+				await mutations.grid.duplicateWeapon.mutateAsync({
+					id: gridWeaponId,
+					partyShortcode: getPartyShortcode(),
+					position
+				})
+			} catch (err) {
+				console.error('Failed to duplicate weapon:', err)
+				toast.error(extractErrorMessage(err, 'Failed to duplicate weapon'))
+				throw err
+			}
+		},
+		async duplicateSummon(gridSummonId: string, position: number) {
+			try {
+				await mutations.grid.duplicateSummon.mutateAsync({
+					id: gridSummonId,
+					partyShortcode: getPartyShortcode(),
+					position
+				})
+			} catch (err) {
+				console.error('Failed to duplicate summon:', err)
+				toast.error(extractErrorMessage(err, 'Failed to duplicate summon'))
+				throw err
+			}
+		},
 		async updateSummonUncap(
 			gridSummonId: string,
 			uncapLevel?: number,
