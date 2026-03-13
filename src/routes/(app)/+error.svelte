@@ -5,7 +5,9 @@
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { localizeHref } from '$lib/paraglide/runtime'
+	import { getLocale, localizeHref } from '$lib/paraglide/runtime'
+
+	const isJa = $derived(getLocale() === 'ja')
 
 	let randomParty: Party | null = $state(null)
 
@@ -40,7 +42,7 @@
 
 	{#if is404 && randomParty}
 		<div class="random-team">
-			<p class="random-label">{m.error_random_team_or_browse()} <a href={localizeHref('/teams/explore')} style:color={linkColor}>{m.error_browse_teams()}</a></p>
+			<p class="random-label" class:ja={isJa}>{m.error_random_team_or_browse()}<br>{m.error_or()} <a href={localizeHref('/teams/explore')} style:color={linkColor}>{m.error_browse_teams()}</a></p>
 			<div class="random-team-card">
 				<GridRep party={randomParty} />
 			</div>
@@ -111,6 +113,11 @@
 		color: var(--text-secondary);
 		margin: 0;
 		text-align: center;
+		line-height: 1.4;
+
+		&.ja {
+			line-height: 1.8;
+		}
 
 		a {
 			color: var(--link);
