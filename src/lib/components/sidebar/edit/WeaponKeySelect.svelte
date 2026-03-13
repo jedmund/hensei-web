@@ -4,6 +4,7 @@
 	import type { WeaponKey } from '$lib/api/adapters/entity.adapter'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { queryOptions } from '@tanstack/svelte-query'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		/** The weapon series slug (determines which keys are available) */
@@ -99,7 +100,7 @@
 
 				result.push({
 					value: key.id,
-					label: key.name.en,
+					label: localizedName(key.name),
 					disabled: isDisabled
 				})
 			}

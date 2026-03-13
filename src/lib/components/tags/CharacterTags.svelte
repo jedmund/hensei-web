@@ -3,6 +3,7 @@
 	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 	import CharacterTag from './CharacterTag.svelte'
 	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
+	import { localizedName } from '$lib/utils/locale'
 
 	/** Minimal character data needed for tag display */
 	interface CharacterForTags {
@@ -34,7 +35,7 @@
 		}
 		const seriesValue = character.series[0] as number | CharacterSeriesRef
 		if (typeof seriesValue === 'object' && seriesValue !== null && 'name' in seriesValue) {
-			return seriesValue.name.en
+			return localizedName(seriesValue.name)
 		}
 		if (typeof seriesValue === 'number') {
 			return CHARACTER_SERIES_NAMES[seriesValue] ?? null

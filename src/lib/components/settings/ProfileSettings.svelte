@@ -4,6 +4,7 @@
 	import Input from '../ui/Input.svelte'
 	import SettingsRow from '../ui/SettingsRow.svelte'
 	import { pictureData } from '$lib/utils/pictureData'
+	import { localizedName } from '$lib/utils/locale'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { ELEMENT_HEX_COLORS } from '$lib/utils/gw'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
@@ -38,16 +39,13 @@
 		onThemeChange
 	}: Props = $props()
 
-	// Get current locale from user settings
-	const locale = $derived(language as 'en' | 'ja')
-
 	// Prepare options for selects
 	const pictureOptions = $derived(
 		pictureData
-			.sort((a, b) => a.name.en.localeCompare(b.name.en))
+			.sort((a, b) => localizedName(a.name).localeCompare(localizedName(b.name)))
 			.map((p) => ({
 				value: p.filename,
-				label: p.name[locale] || p.name.en,
+				label: localizedName(p.name),
 				image: getAvatarSrc(p.filename)
 			}))
 	)
@@ -144,7 +142,7 @@
 				<img
 					src={getAvatarSrc(localPicture)}
 					srcset={getAvatarSrcSet(localPicture)}
-					alt={currentPicture?.name[locale] || ''}
+					alt={currentPicture ? localizedName(currentPicture.name) : ''}
 					class="avatar-preview element-{localElement}"
 				/>
 			</div>

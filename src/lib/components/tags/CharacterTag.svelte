@@ -3,6 +3,7 @@
 	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 	import { getElementLabel } from '$lib/utils/element'
 	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
+	import { localizedName } from '$lib/utils/locale'
 
 	type TagType = 'element' | 'season' | 'series' | 'style'
 
@@ -69,7 +70,7 @@
 
 					// Check if it's an object (CharacterSeriesRef) or number
 					if (typeof seriesValue === 'object' && seriesValue !== null && 'name' in seriesValue) {
-						return seriesValue.name.en
+						return localizedName(seriesValue.name)
 					}
 					// Legacy number format
 					if (typeof seriesValue === 'number') {
