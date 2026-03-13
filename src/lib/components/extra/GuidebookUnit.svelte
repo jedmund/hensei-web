@@ -1,8 +1,11 @@
 <script lang="ts">
   import Icon from '$lib/components/Icon.svelte'
+  import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
+  import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
   import { getGuidebookImage } from '$lib/utils/images'
   import { localizedName } from '$lib/utils/locale'
   import type { Guidebook } from '$lib/types/api/entities'
+  import * as m from '$lib/paraglide/messages'
 
   interface Props {
     item: Guidebook | undefined
@@ -17,26 +20,46 @@
   const name = $derived(item ? localizedName(item.name) || '—' : '—')
   const imageUrl = $derived(getGuidebookImage(item?.granblueId))
 
-  function handleContextMenu(e: MouseEvent) {
-    if (!canEdit || !item) return
-    e.preventDefault()
+  function replace() {
+    onclick?.()
+  }
+
+  function remove() {
     onRemove?.()
   }
 </script>
 
 <div class="unit" class:empty={!item}>
   {#if item}
-    <div
-      class="frame"
-      class:editable={canEdit}
-      role={canEdit ? 'button' : undefined}
-      tabindex={canEdit ? 0 : undefined}
-      onclick={() => canEdit && onclick?.()}
-      oncontextmenu={handleContextMenu}
-      onkeydown={(e) => { if (canEdit && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onclick?.() }}}
-    >
-      <img class="image" alt={name} src={imageUrl} />
-    </div>
+    <UnitMenuContainer showGearButton={canEdit}>
+      {#snippet trigger()}
+        <div class="frame" class:editable={canEdit}>
+          <img class="image" alt={name} src={imageUrl} />
+        </div>
+      {/snippet}
+
+      {#snippet contextMenu()}
+        <MenuItems
+          onReplace={canEdit ? replace : undefined}
+          onRemove={canEdit ? remove : undefined}
+          canEdit={canEdit}
+          variant="context"
+          replaceLabel={m.context_replace({ type: m.type_guidebook() })}
+          removeLabel={m.context_remove()}
+        />
+      {/snippet}
+
+      {#snippet dropdownMenu()}
+        <MenuItems
+          onReplace={canEdit ? replace : undefined}
+          onRemove={canEdit ? remove : undefined}
+          canEdit={canEdit}
+          variant="dropdown"
+          replaceLabel={m.context_replace({ type: m.type_guidebook() })}
+          removeLabel={m.context_remove()}
+        />
+      {/snippet}
+    </UnitMenuContainer>
   {:else}
     <div
       class="frame"

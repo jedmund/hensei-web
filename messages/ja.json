@@ -289,6 +289,7 @@
 	"type_character": "キャラクター",
 	"type_weapon": "武器",
 	"type_summon": "召喚石",
+	"type_guidebook": "教本",
 
 	"element_any": "全属性",
 	"element_null": "無",

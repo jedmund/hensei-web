@@ -289,6 +289,7 @@
 	"type_character": "character",
 	"type_weapon": "weapon",
 	"type_summon": "summon",
+	"type_guidebook": "guidebook",
 
 	"element_any": "Any",
 	"element_null": "Null",
