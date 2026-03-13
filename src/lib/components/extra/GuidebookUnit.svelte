@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Icon from '$lib/components/Icon.svelte'
   import { getGuidebookImage } from '$lib/utils/images'
   import { localizedName } from '$lib/utils/locale'
   import type { Guidebook } from '$lib/types/api/entities'
@@ -23,29 +24,45 @@
   }
 </script>
 
-{#if canEdit}
-  <button
-    class="unit"
-    class:empty={!item}
-    onclick={() => onclick?.()}
-    oncontextmenu={handleContextMenu}
-    type="button"
-  >
-    <img class="image" alt={name} src={imageUrl} />
-    <div class="name">{name}</div>
-  </button>
-{:else}
-  <div class="unit" class:empty={!item}>
-    <img class="image" alt={name} src={imageUrl} />
-    <div class="name">{name}</div>
-  </div>
-{/if}
+<div class="unit" class:empty={!item}>
+  {#if item}
+    <div
+      class="frame"
+      class:editable={canEdit}
+      role={canEdit ? 'button' : undefined}
+      tabindex={canEdit ? 0 : undefined}
+      onclick={() => canEdit && onclick?.()}
+      oncontextmenu={handleContextMenu}
+      onkeydown={(e) => { if (canEdit && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onclick?.() }}}
+    >
+      <img class="image" alt={name} src={imageUrl} />
+    </div>
+  {:else}
+    <div
+      class="frame"
+      class:editable={canEdit}
+      role={canEdit ? 'button' : undefined}
+      tabindex={canEdit ? 0 : undefined}
+      onclick={() => canEdit && onclick?.()}
+      onkeydown={(e) => { if (canEdit && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onclick?.() }}}
+    >
+      {#if canEdit}
+        <span class="icon">
+          <Icon name="plus" size={24} />
+        </span>
+      {/if}
+    </div>
+  {/if}
+  <div class="name">{item ? name : ''}</div>
+</div>
 
 <style lang="scss">
-  @use '$src/themes/colors' as *;
-  @use '$src/themes/typography' as *;
-  @use '$src/themes/spacing' as *;
+  @use '$src/themes/colors' as colors;
+  @use '$src/themes/typography' as typography;
+  @use '$src/themes/spacing' as spacing;
   @use '$src/themes/layout' as layout;
+  @use '$src/themes/rep' as rep;
+  @use '$src/themes/effects' as effects;
 
   .unit {
     position: relative;
@@ -53,45 +70,59 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: $unit;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: default;
+    gap: spacing.$unit;
+
+    &.empty .name {
+      display: none;
+    }
   }
 
-  button.unit {
-    cursor: pointer;
+  .frame {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: layout.$input-corner;
+    background: var(--extra-purple-card-bg);
+    transition: opacity 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include rep.aspect(rep.$weapon-cell-w, rep.$weapon-cell-h);
 
-    &:hover .image {
-      border-color: var(--accent-primary);
-    }
+    &.editable {
+      cursor: pointer;
 
-    &.empty {
-      .image {
-        opacity: 0.5;
-      }
-
-      &:hover .image {
-        opacity: 0.75;
-        border-color: var(--accent-primary);
+      &:hover {
+        opacity: 0.95;
+        box-shadow: var(--shadow-sm);
       }
     }
   }
 
   .image {
+    position: relative;
     width: 100%;
-    height: auto;
-    border: 1px solid $grey-75;
-    border-radius: layout.$input-corner;
+    height: 100%;
+    object-fit: cover;
     display: block;
-    background: var(--extra-purple-card-bg);
-    transition: border-color 0.15s ease-out, opacity 0.15s ease-out;
+    z-index: effects.$z-badge;
+  }
+
+  .icon {
+    position: absolute;
+    z-index: effects.$z-raised;
+    color: var(--extra-purple-secondary);
+    transition: color 0.2s ease-in-out;
+  }
+
+  .frame.editable:hover .icon {
+    color: var(--extra-purple-primary);
   }
 
   .name {
-    font-size: $font-small;
+    font-size: typography.$font-small;
+    font-weight: typography.$medium;
     text-align: center;
-    color: var(--text-secondary);
+    color: var(--extra-purple-text);
   }
 </style>
