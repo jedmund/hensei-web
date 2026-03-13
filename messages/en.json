@@ -51,7 +51,7 @@
 	"context_view_in_database": "View in Database",
 	"context_replace": "Replace {type}",
 	"context_remove": "Remove from team",
-	"context_duplicate": "Duplicate",
+	"context_duplicate": "Duplicate {type}",
 
 	"duplicate_collection_title": "Duplicate collection item?",
 	"duplicate_collection_body": "The duplicate will not be linked to your collection. Changes to the original in your collection won't sync to the copy.",
