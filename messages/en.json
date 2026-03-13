@@ -340,5 +340,37 @@
 
 	"grid_untitled": "Untitled team",
 	"grid_no_raid": "No raid",
-	"grid_extra": "Extra"
+	"grid_extra": "Extra",
+
+	"search_tab_all": "All Items",
+	"search_tab_collection": "Collection",
+	"search_placeholder": "Search by name...",
+	"search_hide_filters": "Hide filters",
+	"search_show_filters": "Show filters",
+	"search_searching": "Searching...",
+	"search_failed": "Search failed",
+	"search_retry": "Retry",
+	"search_no_match": "No items match your search",
+	"search_member_empty": "{name}'s collection is empty",
+	"search_collection_empty": "Your collection is empty",
+	"search_no_results": "No results found",
+	"search_start_typing": "Start typing to search",
+
+	"search_filter_rarity": "Rarity",
+	"search_filter_element": "Element",
+	"search_filter_proficiency": "Proficiency",
+	"search_filter_series": "Series",
+	"search_filter_clear": "Clear",
+	"search_filter_all_series": "All series",
+
+	"search_already_in_team": "Already in team",
+	"search_grid_full": "Grid full - cannot add",
+	"search_add_item": "Add {name}",
+	"search_added_pill": "Added to team",
+
+	"unlink_collection_title": "Clear collection source?",
+	"unlink_collection_body": "All collection links will be removed from items in this party. The items themselves will remain.",
+	"unlink_collection_confirm": "Clear",
+
+	"search_select_member": "Select member"
 }
