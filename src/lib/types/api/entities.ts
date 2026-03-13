@@ -279,7 +279,9 @@ export interface WeaponKey {
 // Guidebook entity
 export interface Guidebook {
   id: string
+  granblueId: number
   name: LocalizedName
+  description?: LocalizedName
   slug: string
 }
 

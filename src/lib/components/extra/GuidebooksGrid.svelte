@@ -1,18 +1,28 @@
 <script lang="ts">
   import GuidebookUnit from '$lib/components/extra/GuidebookUnit.svelte'
+  import type { GuidebookList } from '$lib/types/api/party'
 
   interface Props {
-    guidebooks?: Record<string, any>
+    guidebooks?: GuidebookList
+    canEdit?: boolean
+    onClickSlot?: (position: number) => void
+    onRemove?: (position: number) => void
   }
 
-  let { guidebooks }: Props = $props()
+  let { guidebooks, canEdit = false, onClickSlot, onRemove }: Props = $props()
 </script>
 
 <div class="guidebooks">
   <ul class="grid">
-    {#each [1,2,3] as pos}
+    {#each [1, 2, 3] as pos (pos)}
       <li>
-        <GuidebookUnit item={guidebooks?.[String(pos)]} position={pos} />
+        <GuidebookUnit
+          item={guidebooks?.[pos as 1 | 2 | 3]}
+          position={pos}
+          {canEdit}
+          onclick={() => onClickSlot?.(pos)}
+          onRemove={() => onRemove?.(pos)}
+        />
       </li>
     {/each}
   </ul>

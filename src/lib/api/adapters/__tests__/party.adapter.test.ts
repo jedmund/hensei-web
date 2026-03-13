@@ -37,6 +37,7 @@ describe('PartyAdapter', () => {
 			name: { en: 'Proto Bahamut', ja: 'プロトバハムート' },
 			level: 50,
 			element: 0,
+			extra: false,
 			group: {
 				id: 'group-1',
 				name: { en: 'Tier 1', ja: 'ティア1' },
@@ -45,7 +46,8 @@ describe('PartyAdapter', () => {
 				difficulty: 1,
 				hl: false,
 				extra: false,
-				guidebooks: true
+				guidebooks: true,
+				unlimited: false
 			}
 		},
 		weapons: [],
@@ -420,6 +422,56 @@ describe('PartyAdapter', () => {
 					name: 'A'.repeat(256)
 				})
 			).rejects.toThrow()
+		})
+	})
+
+	describe('Guidebook operations', () => {
+		it('should update a guidebook on a party', async () => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({ party: mockParty })
+			})
+
+			const result = await adapter.updateGuidebook('123', 'gb-1', 2)
+
+			expect(global.fetch).toHaveBeenCalledWith(
+				expect.stringContaining('/parties/123'),
+				expect.objectContaining({
+					method: 'PATCH',
+					body: JSON.stringify({
+						party: {
+							guidebook2_id: 'gb-1'
+						}
+					})
+				})
+			)
+
+			// Verifies envelope unwrapping: { party: ... } → party object
+			expect(result).toEqual(mockParty)
+		})
+
+		it('should remove a guidebook from a party', async () => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({ party: mockParty })
+			})
+
+			const result = await adapter.removeGuidebook('123', 1)
+
+			expect(global.fetch).toHaveBeenCalledWith(
+				expect.stringContaining('/parties/123'),
+				expect.objectContaining({
+					method: 'PATCH',
+					body: JSON.stringify({
+						party: {
+							guidebook1_id: null
+						}
+					})
+				})
+			)
+
+			// Verifies envelope unwrapping: { party: ... } → party object
+			expect(result).toEqual(mockParty)
 		})
 	})
 })

@@ -378,6 +378,41 @@ export class PartyAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Updates a guidebook on a party
+	 * @param partyId - The party's UUID
+	 * @param guidebookId - The guidebook's UUID
+	 * @param position - Guidebook position (1, 2, or 3)
+	 */
+	async updateGuidebook(partyId: string, guidebookId: string, position: number): Promise<Party> {
+		const response = await this.request<{ party: Party }>(`/parties/${partyId}`, {
+			method: 'PATCH',
+			body: {
+				party: {
+					[`guidebook${position}_id`]: guidebookId
+				}
+			}
+		})
+		return response.party
+	}
+
+	/**
+	 * Removes a guidebook from a party
+	 * @param partyId - The party's UUID
+	 * @param position - Guidebook position (1, 2, or 3)
+	 */
+	async removeGuidebook(partyId: string, position: number): Promise<Party> {
+		const response = await this.request<{ party: Party }>(`/parties/${partyId}`, {
+			method: 'PATCH',
+			body: {
+				party: {
+					[`guidebook${position}_id`]: null
+				}
+			}
+		})
+		return response.party
+	}
+
+	/**
 	 * Gets party preview image
 	 */
 	async getPreview(shortcode: string): Promise<Blob> {

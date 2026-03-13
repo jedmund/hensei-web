@@ -1,6 +1,6 @@
 
 <script lang="ts">
-	import type { GridWeapon } from '$lib/types/api/party'
+	import type { GridWeapon, GuidebookList } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
@@ -10,7 +10,10 @@
 		weapons?: GridWeapon[]
 		raidExtra?: boolean
 		showGuidebooks?: boolean
-		guidebooks?: Record<string, any>
+		guidebooks?: GuidebookList
+		canEdit?: boolean
+		onClickGuidebookSlot?: (position: number) => void
+		onRemoveGuidebook?: (position: number) => void
 		collectionWeaponItems?: Map<string, { uncapLevel: number; transcendenceStep: number }[]>
 	}
 
@@ -19,6 +22,9 @@
 		raidExtra = undefined,
 		showGuidebooks = undefined,
 		guidebooks = undefined,
+		canEdit = false,
+		onClickGuidebookSlot = undefined,
+		onRemoveGuidebook = undefined,
 		collectionWeaponItems = undefined
 	}: Props = $props()
 
@@ -116,7 +122,7 @@
 				<ExtraWeapons {weapons} offset={9} />
 			{/if}
 			{#if showGuidebooks}
-				<Guidebooks {guidebooks} />
+				<Guidebooks {guidebooks} {canEdit} onClickSlot={onClickGuidebookSlot} onRemove={onRemoveGuidebook} />
 			{/if}
 		</ExtraContainer>
 	{/if}

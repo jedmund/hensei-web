@@ -116,11 +116,11 @@ export interface JobSkillList {
   3?: JobSkill
 }
 
-// GuidebookList for party guidebooks
+// GuidebookList for party guidebooks (1-based keys matching API response)
 export interface GuidebookList {
-  0?: Guidebook
   1?: Guidebook
   2?: Guidebook
+  3?: Guidebook
 }
 
 // Party from PartyBlueprint

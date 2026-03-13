@@ -428,4 +428,87 @@ describe('SearchAdapter', () => {
 			expect(result.results).toEqual([])
 		})
 	})
+
+	describe('searchGuidebooks', () => {
+		it('should search guidebooks with query', async () => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({
+					results: [
+						{
+							id: 'gb-1',
+							granblue_id: 101,
+							name: { en: 'Guidebook 1', ja: 'ガイド1' },
+							slug: 'guidebook-1'
+						}
+					],
+					meta: { count: 1, page: 1, per_page: 50, total_pages: 1 }
+				})
+			})
+
+			const result = await adapter.searchGuidebooks({
+				query: 'guide',
+				locale: 'en',
+				page: 1
+			})
+
+			expect(global.fetch).toHaveBeenCalledWith(
+				'https://api.example.com/search/guidebooks',
+				expect.objectContaining({
+					method: 'POST',
+					body: JSON.stringify({
+						search: {
+							locale: 'en',
+							page: 1,
+							query: 'guide'
+						}
+					})
+				})
+			)
+
+			// Verifies snake_case → camelCase transformation by BaseAdapter
+			expect(result.results[0].granblueId).toBe(101)
+			expect(result.meta?.perPage).toBe(50)
+			expect(result.meta?.totalPages).toBe(1)
+		})
+
+		it('should search guidebooks without query', async () => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({ results: [], meta: { count: 0, page: 1, per_page: 50, total_pages: 0 } })
+			})
+
+			await adapter.searchGuidebooks({ locale: 'ja' })
+
+			expect(global.fetch).toHaveBeenCalledWith(
+				'https://api.example.com/search/guidebooks',
+				expect.objectContaining({
+					body: JSON.stringify({
+						search: {
+							locale: 'ja',
+							page: 1
+						}
+					})
+				})
+			)
+		})
+
+		it('should pass per-page header when specified', async () => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({ results: [] })
+			})
+
+			await adapter.searchGuidebooks({ per: 25 })
+
+			expect(global.fetch).toHaveBeenCalledWith(
+				expect.any(String),
+				expect.objectContaining({
+					headers: expect.objectContaining({
+						'X-Per-Page': '25'
+					})
+				})
+			)
+		})
+	})
 })
