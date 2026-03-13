@@ -78,7 +78,7 @@
                 step={1}
                 onValueChange={(v) => (minCharacters = v)}
               />
-              <span class="slider-value">{minCharacters}</span>
+              <span class="slider-value">{m.counter_characters({ count: String(minCharacters) })}</span>
             </div>
           {/snippet}
         </SettingsRow>
@@ -92,7 +92,7 @@
                 step={1}
                 onValueChange={(v) => (minWeapons = v)}
               />
-              <span class="slider-value">{minWeapons}</span>
+              <span class="slider-value">{m.counter_weapons({ count: String(minWeapons) })}</span>
             </div>
           {/snippet}
         </SettingsRow>
@@ -106,7 +106,7 @@
                 step={1}
                 onValueChange={(v) => (minSummons = v)}
               />
-              <span class="slider-value">{minSummons}</span>
+              <span class="slider-value">{m.counter_summons({ count: String(minSummons) })}</span>
             </div>
           {/snippet}
         </SettingsRow>
