@@ -2,7 +2,8 @@
 <script lang="ts">
 	import { ToggleGroup } from 'bits-ui'
 	import Tooltip from '../Tooltip.svelte'
-	import { ELEMENT_LABELS, getElementImage } from '$lib/utils/element'
+	import { getElementLabel, getElementImage } from '$lib/utils/element'
+	import * as m from '$lib/paraglide/messages'
 
 	// Element display order: Fire(2) → Water(3) → Earth(4) → Wind(1) → Light(6) → Dark(5)
 	const ELEMENT_DISPLAY_ORDER = [2, 3, 4, 1, 6, 5]
@@ -56,8 +57,8 @@
 
 	// Get label for element (use "Any" for element 0 instead of "Null")
 	function getLabel(element: number): string {
-		if (element === 0) return 'Any'
-		return ELEMENT_LABELS[element] ?? 'Unknown'
+		if (element === 0) return m.element_any()
+		return getElementLabel(element)
 	}
 
 	// Convert value to string format for ToggleGroup

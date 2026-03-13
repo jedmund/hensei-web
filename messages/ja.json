@@ -263,6 +263,7 @@
 	"type_weapon": "武器",
 	"type_summon": "召喚石",
 
+	"element_any": "全属性",
 	"element_null": "無",
 	"element_wind": "風",
 	"element_fire": "火",
@@ -340,5 +341,50 @@
 
 	"grid_untitled": "無名",
 	"grid_no_raid": "マルチなし",
-	"grid_extra": "Extra"
+	"grid_extra": "Extra",
+
+	"search_tab_all": "すべて",
+	"search_tab_collection": "コレクション",
+	"search_placeholder": "アイテム名で検索",
+	"search_hide_filters": "フィルターを非表示",
+	"search_show_filters": "フィルターを表示",
+	"search_searching": "検索中",
+	"search_loading_more": "読み込み中",
+	"search_failed": "検索に失敗しました",
+	"search_retry": "再試行",
+	"search_no_match": "検索条件に一致するアイテムがありません",
+	"search_member_empty": "{name}のコレクションは空です",
+	"search_collection_empty": "コレクションは空です",
+	"search_no_results": "検索結果が見つかりません",
+	"search_start_typing": "入力して検索",
+
+	"search_filter_rarity": "レアリティ",
+	"search_filter_element": "属性",
+	"search_filter_proficiency": "得意武器",
+	"search_filter_series": "シリーズ",
+	"search_filter_clear": "リセット",
+	"search_filter_all_series": "すべてのシリーズ",
+
+	"search_already_in_team": "編成に追加済み",
+	"search_grid_full": "編成が満杯です",
+	"search_add_item": "{name}を追加",
+	"search_added_pill": "追加済み",
+
+	"unlink_collection_title": "コレクションのリンクを解除しますか？",
+	"unlink_collection_body": "この編成のすべてのコレクションリンクが解除されます。アイテム自体は残ります。",
+	"unlink_collection_confirm": "解除する",
+
+	"search_select_member": "メンバーを選択",
+
+	"proficiency_none": "なし",
+	"proficiency_sabre": "剣",
+	"proficiency_dagger": "短剣",
+	"proficiency_axe": "斧",
+	"proficiency_spear": "槍",
+	"proficiency_bow": "弓",
+	"proficiency_staff": "杖",
+	"proficiency_melee": "格闘",
+	"proficiency_harp": "楽器",
+	"proficiency_gun": "銃",
+	"proficiency_katana": "刀"
 }

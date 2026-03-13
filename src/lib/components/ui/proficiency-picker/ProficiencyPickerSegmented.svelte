@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { ToggleGroup } from 'bits-ui'
 	import Tooltip from '../Tooltip.svelte'
-	import { PROFICIENCY_LABELS, getProficiencyImage } from '$lib/utils/proficiency'
+	import { getProficiencyLabel, getProficiencyImage } from '$lib/utils/proficiency'
 
 	// Proficiency display order: Sabre, Dagger, Spear, Axe, Staff, Gun, Melee, Bow, Harp, Katana
 	// Using values from PROFICIENCY_LABELS: 1=Sabre, 2=Dagger, 3=Axe, 4=Spear, 5=Bow, 6=Staff, 7=Melee, 8=Harp, 9=Gun, 10=Katana
@@ -51,7 +51,7 @@
 
 	// Get label for proficiency
 	function getLabel(proficiency: number): string {
-		return PROFICIENCY_LABELS[proficiency] ?? 'Unknown'
+		return getProficiencyLabel(proficiency)
 	}
 
 	// Convert value to string format for ToggleGroup

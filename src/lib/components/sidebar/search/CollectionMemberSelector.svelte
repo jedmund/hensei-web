@@ -2,6 +2,7 @@
 <script lang="ts">
 	import Select from '../../ui/Select.svelte'
 	import Icon from '../../Icon.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface MemberOption {
 		value: string
@@ -44,7 +45,7 @@
 			options={memberOptions}
 			value={selectedMemberId}
 			onValueChange={(v) => onMemberChange(v)}
-			placeholder="Select member"
+			placeholder={m.search_select_member()}
 			contained
 			fullWidth
 		/>

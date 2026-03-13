@@ -4,6 +4,7 @@
 	import ElementPicker from '../../ui/element-picker/ElementPicker.svelte'
 	import RarityPicker from '../../ui/rarity-picker/RarityPicker.svelte'
 	import ProficiencyPicker from '../../ui/proficiency-picker/ProficiencyPicker.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		type: 'weapon' | 'character' | 'summon'
@@ -54,7 +55,7 @@
 	<div class="filter-row">
 		<div class="filter-group">
 			<div class="filter-header">
-				<label class="filter-label">Rarity</label>
+				<label class="filter-label">{m.search_filter_rarity()}</label>
 				{#if rarityFilters.length > 0}
 					<a
 						href="#"
@@ -62,7 +63,7 @@
 						onclick={(e) => {
 							e.preventDefault()
 							onRarityChange([])
-						}}>Clear</a
+						}}>{m.search_filter_clear()}</a
 					>
 				{/if}
 			</div>
@@ -77,7 +78,7 @@
 
 		<div class="filter-group">
 			<div class="filter-header">
-				<label class="filter-label">Element</label>
+				<label class="filter-label">{m.search_filter_element()}</label>
 				{#if elementFilters.length > 0}
 					<a
 						href="#"
@@ -85,7 +86,7 @@
 						onclick={(e) => {
 							e.preventDefault()
 							onElementChange([])
-						}}>Clear</a
+						}}>{m.search_filter_clear()}</a
 					>
 				{/if}
 			</div>
@@ -103,7 +104,7 @@
 	{#if showProficiency}
 		<div class="filter-group">
 			<div class="filter-header">
-				<label class="filter-label">Proficiency</label>
+				<label class="filter-label">{m.search_filter_proficiency()}</label>
 				{#if proficiencyFilters.length > 0}
 					<a
 						href="#"
@@ -111,7 +112,7 @@
 						onclick={(e) => {
 							e.preventDefault()
 							onProficiencyChange([])
-						}}>Clear</a
+						}}>{m.search_filter_clear()}</a
 					>
 				{/if}
 			</div>
@@ -127,7 +128,7 @@
 
 	<div class="filter-group">
 		<div class="filter-header">
-			<label class="filter-label">Series</label>
+			<label class="filter-label">{m.search_filter_series()}</label>
 			{#if seriesFilter}
 				<a
 					href="#"
@@ -135,7 +136,7 @@
 					onclick={(e) => {
 						e.preventDefault()
 						onSeriesChange(undefined)
-					}}>Clear</a
+					}}>{m.search_filter_clear()}</a
 				>
 			{/if}
 		</div>
@@ -143,7 +144,7 @@
 			options={seriesOptions}
 			value={seriesFilter}
 			onValueChange={onSeriesChange}
-			placeholder="All series"
+			placeholder={m.search_filter_all_series()}
 			contained={true}
 			fullWidth={true}
 		/>
