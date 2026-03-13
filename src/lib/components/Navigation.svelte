@@ -19,6 +19,7 @@
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import LanguageToggle from './LanguageToggle.svelte'
 
 	// Props from layout data
 	const {
@@ -308,6 +309,9 @@
 				</li>
 			{/if}
 
+			<li>
+				<LanguageToggle />
+			</li>
 			<li>
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger
