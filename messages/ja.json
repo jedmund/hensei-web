@@ -263,6 +263,7 @@
 	"type_weapon": "武器",
 	"type_summon": "召喚石",
 
+	"element_any": "全属性",
 	"element_null": "無",
 	"element_wind": "風",
 	"element_fire": "火",
@@ -348,6 +349,7 @@
 	"search_hide_filters": "フィルターを非表示",
 	"search_show_filters": "フィルターを表示",
 	"search_searching": "検索中",
+	"search_loading_more": "読み込み中",
 	"search_failed": "検索に失敗しました",
 	"search_retry": "再試行",
 	"search_no_match": "検索条件に一致するアイテムがありません",

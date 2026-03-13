@@ -263,6 +263,7 @@
 	"type_weapon": "weapon",
 	"type_summon": "summon",
 
+	"element_any": "Any",
 	"element_null": "Null",
 	"element_wind": "Wind",
 	"element_fire": "Fire",
@@ -348,6 +349,7 @@
 	"search_hide_filters": "Hide filters",
 	"search_show_filters": "Show filters",
 	"search_searching": "Searching...",
+	"search_loading_more": "Loading more...",
 	"search_failed": "Search failed",
 	"search_retry": "Retry",
 	"search_no_match": "No items match your search",

@@ -10,6 +10,7 @@
 	import { getAvatarSrc } from '$lib/utils/avatar'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { getLocale } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
 	import type {
@@ -61,6 +62,7 @@
 	let searchQuery = $state('')
 	let debouncedSearchQuery = $state('')
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined
+	let isComposing = $state(false)
 
 	// Filter state
 	let elementFilters = $state<number[]>([])
@@ -83,13 +85,27 @@
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
 
-	// Debounce search query changes
+	// IME composition handlers
+	function handleCompositionStart() {
+		isComposing = true
+	}
+
+	function handleCompositionEnd() {
+		// Safari fires compositionend before the final input event
+		setTimeout(() => {
+			isComposing = false
+		}, 50)
+	}
+
+	// Debounce search query changes (skip during IME composition)
 	$effect(() => {
 		const query = searchQuery
 
 		if (debounceTimer) {
 			clearTimeout(debounceTimer)
 		}
+
+		if (isComposing) return
 
 		debounceTimer = setTimeout(() => {
 			debouncedSearchQuery = query
@@ -255,16 +271,17 @@
 	const searchQueryResult = createInfiniteQuery(() => {
 		const query = debouncedSearchQuery
 		const currentFilters = filters
+		const locale = getLocale() as 'en' | 'ja'
 
 		switch (type) {
 			case 'weapon':
-				return searchQueries.weapons(query, currentFilters)
+				return searchQueries.weapons(query, currentFilters, locale)
 			case 'character':
-				return searchQueries.characters(query, currentFilters) as unknown as ReturnType<
+				return searchQueries.characters(query, currentFilters, locale) as unknown as ReturnType<
 					typeof searchQueries.weapons
 				>
 			case 'summon':
-				return searchQueries.summons(query, currentFilters) as unknown as ReturnType<
+				return searchQueries.summons(query, currentFilters, locale) as unknown as ReturnType<
 					typeof searchQueries.weapons
 				>
 		}
@@ -425,6 +442,8 @@
 				contained
 				fullWidth
 				class="search-input"
+				oncompositionstart={handleCompositionStart}
+				oncompositionend={handleCompositionEnd}
 			/>
 		</div>
 
@@ -504,7 +523,7 @@
 			{#if activeQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={20} />
-					<span>Loading more...</span>
+					<span>{m.search_loading_more()}</span>
 				</div>
 			{/if}
 		{:else if isEmpty}
