@@ -250,5 +250,37 @@ export const searchQueries = {
 			},
 			staleTime: 1000 * 60 * 5, // 5 minutes
 			gcTime: 1000 * 60 * 30, // 30 minutes
+		}),
+
+	/**
+	 * Guidebook search infinite query options
+	 * Simple search with no filters — just query and pagination
+	 */
+	guidebooks: (query: string = '', locale: 'en' | 'ja' = 'en') =>
+		infiniteQueryOptions({
+			queryKey: ['search', 'guidebooks', query, locale] as const,
+			queryFn: async ({ pageParam }): Promise<SearchPageResult> => {
+				const response = await searchAdapter.searchGuidebooks({
+					query: query.trim() || undefined,
+					page: pageParam,
+					locale,
+					per: SEARCH_PER_PAGE
+				})
+
+				return {
+					results: response.results,
+					page: response.meta?.page ?? response.page ?? pageParam,
+					totalPages: response.meta?.totalPages ?? response.totalPages ?? 1
+				}
+			},
+			initialPageParam: 1,
+			getNextPageParam: (lastPage) => {
+				if (lastPage.page < lastPage.totalPages) {
+					return lastPage.page + 1
+				}
+				return undefined
+			},
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			gcTime: 1000 * 60 * 30, // 30 minutes
 		})
 }
