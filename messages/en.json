@@ -753,5 +753,30 @@
 
 	"page_title_guides": "Guides",
 	"guides_heading": "Guides",
-	"guides_description": "Guides and resources for Granblue Fantasy players."
+	"guides_description": "Guides and resources for Granblue Fantasy players.",
+
+	"sidebar_loading_jobs": "Loading jobs",
+	"sidebar_jobs_error": "Failed to load jobs",
+	"sidebar_no_jobs": "No jobs found",
+	"sidebar_clear_filters": "Clear filters",
+	"sidebar_loading_skills": "Loading skills",
+	"sidebar_skills_error": "Failed to load skills",
+	"sidebar_no_skills": "No skills found",
+	"sidebar_loading_more_skills": "Loading more skills...",
+	"sidebar_filter_category": "Filter by category",
+	"sidebar_loading_artifacts": "Loading artifacts",
+	"sidebar_artifacts_error": "Failed to load artifacts",
+	"sidebar_no_artifacts_collection": "No artifacts in collection",
+	"sidebar_no_artifacts_proficiency": "No artifacts available for this proficiency",
+	"sidebar_loading_parties": "Loading parties",
+	"sidebar_parties_error": "Failed to load parties",
+	"sidebar_no_parties": "No parties found for this raid",
+	"sidebar_loading_raids": "Loading raids",
+	"sidebar_loading_keys": "Loading keys",
+	"sidebar_keys_error": "Failed to load keys",
+	"sidebar_no_description": "No description available for this party.",
+	"sidebar_add_description": "Add description...",
+	"sidebar_party_title_placeholder": "Enter party title...",
+	"loading_more": "Loading more...",
+	"filter_clear": "Clear"
 }
