@@ -351,6 +351,7 @@ export class SearchAdapter extends BaseAdapter {
 			rarity: true,
 			proficiency1: true,
 			proficiency2: true,
+			series: true,
 			season: true,
 			characterSeries: true,
 			gachaAvailable: true
@@ -376,6 +377,7 @@ export class SearchAdapter extends BaseAdapter {
 		const body = this.buildSearchBody(params, {
 			element: true,
 			rarity: true,
+			series: true,
 			promotions: true,
 			subaura: true
 		})

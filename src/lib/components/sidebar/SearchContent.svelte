@@ -228,7 +228,10 @@
 	const filters = $derived<SearchFilters>({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
-		proficiency: type === 'weapon' && effectiveProficiencies ? effectiveProficiencies : undefined,
+		proficiency:
+			(type === 'weapon' || type === 'character') && effectiveProficiencies
+				? effectiveProficiencies
+				: undefined,
 		series: seriesFilter ? [seriesFilter] : undefined
 	})
 
@@ -300,7 +303,9 @@
 			searchMode === 'collection'
 				? {
 						element: elementFilters.length > 0 ? elementFilters : undefined,
-						rarity: rarityFilters.length > 0 ? rarityFilters : undefined
+						rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
+						proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
+						series: seriesFilter ? [seriesFilter] : undefined
 					}
 				: {}
 
