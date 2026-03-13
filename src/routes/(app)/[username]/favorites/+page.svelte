@@ -32,7 +32,7 @@
 </script>
 
 <svelte:head>
-	<title>{data.user.username}'s Favorites / granblue.team</title>
+	<title>{m.page_title_favorites({ username: data.user.username })}</title>
 </svelte:head>
 
 <section class="profile">
@@ -52,17 +52,17 @@
 	{#if favoritesQuery.isLoading}
 		<div class="loading">
 			<Icon name="loader-2" size={32} />
-			<p>Loading favorites...</p>
+			<p>{m.favorites_loading()}</p>
 		</div>
 	{:else if favoritesQuery.isError}
 		<div class="error">
 			<Icon name="alert-circle" size={32} />
-			<p>Failed to load favorites: {favoritesQuery.error?.message || 'Unknown error'}</p>
+			<p>{m.favorites_load_error({ error: favoritesQuery.error?.message || '' })}</p>
 			<Button size="small" onclick={() => favoritesQuery.refetch()}>{m.retry()}</Button>
 		</div>
 	{:else if isEmpty}
 		<div class="empty">
-			<p>No favorite teams yet</p>
+			<p>{m.favorites_empty()}</p>
 		</div>
 	{:else}
 		<div class="profile-grid">
