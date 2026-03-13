@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
@@ -54,7 +55,7 @@
 </script>
 
 <li class="member-row" class:retired={member.retired}>
-	<a href="/crew/members/{member.user?.username}" class="member-link">
+	<a href={localizeHref(`/crew/members/${member.user?.username}`)} class="member-link">
 		<div class="member-info">
 			<div class="member-details">
 				{#if member.user?.username}
@@ -82,13 +83,13 @@
 			{#if member.user?.username}
 				<DropdownMenuBase.Item
 					class="dropdown-menu-item"
-					onclick={() => goto(`/crew/members/${member.user?.username}`)}
+					onclick={() => goto(localizeHref(`/crew/members/${member.user?.username}`))}
 				>
 					View crew profile
 				</DropdownMenuBase.Item>
 				<DropdownMenuBase.Item
 					class="dropdown-menu-item"
-					onclick={() => goto(`/${member.user?.username}`)}
+					onclick={() => goto(localizeHref(`/${member.user?.username}`))}
 				>
 					View profile
 				</DropdownMenuBase.Item>

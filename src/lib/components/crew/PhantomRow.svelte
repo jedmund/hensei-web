@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
@@ -40,7 +41,7 @@
 </script>
 
 <li class="phantom-row" class:retired={phantom.retired}>
-	<a href="/crew/phantoms/{phantom.id}" class="phantom-link">
+	<a href={localizeHref(`/crew/phantoms/${phantom.id}`)} class="phantom-link">
 		<div class="phantom-info">
 			<div class="phantom-details">
 				<span class="name">{phantom.name}</span>
@@ -69,7 +70,7 @@
 				{#snippet menu()}
 					<DropdownMenuBase.Item
 						class="dropdown-menu-item"
-						onclick={() => goto(`/crew/phantoms/${phantom.id}`)}
+						onclick={() => goto(localizeHref(`/crew/phantoms/${phantom.id}`))}
 					>
 						View crew profile
 					</DropdownMenuBase.Item>
