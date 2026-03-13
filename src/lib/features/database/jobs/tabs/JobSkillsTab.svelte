@@ -5,6 +5,7 @@
 	import { jobQueries, jobKeys } from '$lib/api/queries/job.queries'
 	import { jobAdapter } from '$lib/api/adapters/job.adapter'
 	import { getJobSkillIcon } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 	import { getSkillCategoryName, getSkillCategoryColor } from '$lib/utils/jobUtils'
 	import { DropdownMenu } from 'bits-ui'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -122,9 +123,9 @@
 				<div class="skill-list">
 					{#each groupedSkills.main as skill}
 						<div class="skill-item">
-							<img src={getJobSkillIcon(skill)} alt={skill.name.en} class="skill-icon" />
+							<img src={getJobSkillIcon(skill)} alt={localizedName(skill.name)} class="skill-icon" />
 							<div class="skill-info">
-								<span class="skill-name">{skill.name.en}</span>
+								<span class="skill-name">{localizedName(skill.name)}</span>
 								{#if skill.name.ja}
 									<span class="skill-name-jp">{skill.name.ja}</span>
 								{/if}
@@ -170,9 +171,9 @@
 				<div class="skill-list">
 					{#each groupedSkills.sub as skill}
 						<div class="skill-item">
-							<img src={getJobSkillIcon(skill)} alt={skill.name.en} class="skill-icon" />
+							<img src={getJobSkillIcon(skill)} alt={localizedName(skill.name)} class="skill-icon" />
 							<div class="skill-info">
-								<span class="skill-name">{skill.name.en}</span>
+								<span class="skill-name">{localizedName(skill.name)}</span>
 								{#if skill.name.ja}
 									<span class="skill-name-jp">{skill.name.ja}</span>
 								{/if}
@@ -218,9 +219,9 @@
 				<div class="skill-list">
 					{#each groupedSkills.emp as skill}
 						<div class="skill-item">
-							<img src={getJobSkillIcon(skill)} alt={skill.name.en} class="skill-icon" />
+							<img src={getJobSkillIcon(skill)} alt={localizedName(skill.name)} class="skill-icon" />
 							<div class="skill-info">
-								<span class="skill-name">{skill.name.en}</span>
+								<span class="skill-name">{localizedName(skill.name)}</span>
 								{#if skill.name.ja}
 									<span class="skill-name-jp">{skill.name.ja}</span>
 								{/if}
@@ -266,9 +267,9 @@
 				<div class="skill-list">
 					{#each groupedSkills.base as skill}
 						<div class="skill-item">
-							<img src={getJobSkillIcon(skill)} alt={skill.name.en} class="skill-icon" />
+							<img src={getJobSkillIcon(skill)} alt={localizedName(skill.name)} class="skill-icon" />
 							<div class="skill-info">
-								<span class="skill-name">{skill.name.en}</span>
+								<span class="skill-name">{localizedName(skill.name)}</span>
 								{#if skill.name.ja}
 									<span class="skill-name-jp">{skill.name.ja}</span>
 								{/if}

@@ -10,6 +10,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
+	import { localizedName } from '$lib/utils/locale'
 
 	const queryClient = useQueryClient()
 
@@ -141,7 +142,7 @@
 				<div class="left">
 					<div class="modifier-badge">{skill.modifier}</div>
 					<div class="info">
-						<h2>{skill.name.en}</h2>
+						<h2>{localizedName(skill.name)}</h2>
 						<div class="meta">
 							<span class="skill-group">{skillGroupOptions.find(o => o.value === getSkillGroupNumber(skill.skillGroup))?.label}</span>
 						</div>

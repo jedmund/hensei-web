@@ -22,6 +22,7 @@
 	import { getAccessoryTypeName } from '$lib/utils/jobAccessoryUtils'
 	import { getJobAccessoryImageUrl } from '$lib/utils/jobAccessoryUtils'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
+	import { localizedName } from '$lib/utils/locale'
 	import { getRarityLabel } from '$lib/utils/rarity'
 
 	// Types
@@ -127,7 +128,7 @@
 									alt=""
 									class="job-link-icon"
 								/>
-								{accessory.job.name.en}
+								{localizedName(accessory.job.name)}
 							</a>
 						{:else}
 							<span class="empty-value">—</span>

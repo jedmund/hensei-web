@@ -18,6 +18,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 
 	// Utils
+	import { localizedName } from '$lib/utils/locale'
 	import { ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
 
 	// Types
@@ -106,7 +107,7 @@
 	{#if accessory}
 		<div class="header">
 			<div class="header-content">
-				<h1 class="title">Edit: {accessory.name.en}</h1>
+				<h1 class="title">Edit: {localizedName(accessory.name)}</h1>
 			</div>
 			<div class="header-actions">
 				<Button variant="secondary" size="small" onclick={handleCancel} disabled={isSaving}>

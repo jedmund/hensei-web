@@ -4,6 +4,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
 	import PageMeta from '$lib/components/PageMeta.svelte'
+	import { localizedName } from '$lib/utils/locale'
 	import type { ArtifactSkill } from '$lib/types/api/artifact'
 
 	// Fetch all skills
@@ -92,7 +93,7 @@
 											</td>
 											<td class="col-name">
 												<div class="name-cell">
-													<span class="name-en">{skill.name.en}</span>
+													<span class="name-en">{localizedName(skill.name)}</span>
 													{#if skill.name.ja}
 														<span class="name-jp">{skill.name.ja}</span>
 													{/if}

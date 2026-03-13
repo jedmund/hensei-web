@@ -17,6 +17,7 @@
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { getArtifactImage } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 
@@ -73,22 +74,22 @@
 	const slot1Options = $derived(
 		(skillsQuery.data ?? [])
 			.filter((s) => s.skillGroup === 'group_i')
-			.map((s) => ({ value: s.modifier, label: s.name.en }))
+			.map((s) => ({ value: s.modifier, label: localizedName(s.name) }))
 	)
 	const slot2Options = $derived(
 		(skillsQuery.data ?? [])
 			.filter((s) => s.skillGroup === 'group_i')
-			.map((s) => ({ value: s.modifier, label: s.name.en }))
+			.map((s) => ({ value: s.modifier, label: localizedName(s.name) }))
 	)
 	const slot3Options = $derived(
 		(skillsQuery.data ?? [])
 			.filter((s) => s.skillGroup === 'group_ii')
-			.map((s) => ({ value: s.modifier, label: s.name.en }))
+			.map((s) => ({ value: s.modifier, label: localizedName(s.name) }))
 	)
 	const slot4Options = $derived(
 		(skillsQuery.data ?? [])
 			.filter((s) => s.skillGroup === 'group_iii')
-			.map((s) => ({ value: s.modifier, label: s.name.en }))
+			.map((s) => ({ value: s.modifier, label: localizedName(s.name) }))
 	)
 
 	// Check if any filters are active (for clear button)

@@ -39,6 +39,7 @@
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import { getListUrl } from '$lib/utils/listNavigation'
+	import { localizedName } from '$lib/utils/locale'
 
 	// Types
 	import type { PageData } from './$types'
@@ -306,10 +307,10 @@
 									<a href="/database/characters/{related.granblueId}{related.styleSwap ? '/style' : ''}" class="related-unit">
 										<img
 											src={getCharacterImage(related.granblueId, 'grid', related.styleSwap ? '01_style' : '01')}
-											alt={related.name.en}
+											alt={localizedName(related.name)}
 											class="related-image"
 										/>
-										<span class="related-name">{related.name.en}</span>
+										<span class="related-name">{localizedName(related.name)}</span>
 										<CharacterTags character={related} />
 									</a>
 								{/each}
