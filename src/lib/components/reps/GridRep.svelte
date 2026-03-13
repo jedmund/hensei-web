@@ -7,6 +7,7 @@
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		party: Party
@@ -34,11 +35,11 @@
 >
 	<a {href} data-sveltekit-preload-data="hover">
 		<div class="info">
-			<h2 class:empty={!party.name}>{party.name || 'Untitled team'}</h2>
+			<h2 class:empty={!party.name}>{party.name || m.grid_untitled()}</h2>
 			<div class="details">
 				<div class="details-text">
 					<span class={`raid ${!party.raid ? 'empty' : ''}`}
-						>{party.raid ? displayName(party.raid) : 'No raid'}</span
+						>{party.raid ? displayName(party.raid) : m.grid_no_raid()}</span
 					>
 					{#if party.job}
 						<span class="separator">•</span>
@@ -48,7 +49,7 @@
 
 				<div class="pills">
 					{#if party.chargeAttack}
-						<Tooltip content="Charge Attack">
+						<Tooltip content={m.filter_charge_attack()}>
 							{#snippet children()}
 								<span class="pill chargeAttack">
 									<Icon name="charge-attack" size={16} />
@@ -57,7 +58,7 @@
 						</Tooltip>
 					{/if}
 					{#if party.fullAuto}
-						<Tooltip content="Full Auto">
+						<Tooltip content={m.filter_full_auto()}>
 							{#snippet children()}
 								<span class="pill fullAuto">
 									<Icon name="full-auto" size={16} />
@@ -66,7 +67,7 @@
 						</Tooltip>
 					{/if}
 					{#if party.raid?.extra}
-						<Tooltip content="Extra">
+						<Tooltip content={m.grid_extra()}>
 							{#snippet children()}
 								<span class="pill extra">
 									<Icon name="extra-grid" size={16} />
@@ -92,15 +93,15 @@
 				onmouseenter={() => (currentView = 'characters')}
 			>
 				<div class="indicator"></div>
-				<span class="sr-only">Characters</span>
+				<span class="sr-only">{m.nav_characters()}</span>
 			</li>
 			<li class:active={currentView === 'weapons'} onmouseenter={() => (currentView = 'weapons')}>
 				<div class="indicator"></div>
-				<span class="sr-only">Weapons</span>
+				<span class="sr-only">{m.nav_weapons()}</span>
 			</li>
 			<li class:active={currentView === 'summons'} onmouseenter={() => (currentView = 'summons')}>
 				<div class="indicator"></div>
-				<span class="sr-only">Summons</span>
+				<span class="sr-only">{m.nav_summons()}</span>
 			</li>
 		</ul>
 	</a>
