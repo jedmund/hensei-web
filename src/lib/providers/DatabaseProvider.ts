@@ -2,6 +2,7 @@ import { RestDataProvider } from 'wx-grid-data-provider'
 import { searchAdapter } from '$lib/api/adapters/search.adapter'
 import type { SearchParams } from '$lib/api/adapters/search.adapter'
 import type { SearchFilters } from '$lib/api/adapters/types'
+import { localizedName } from '$lib/utils/locale'
 
 interface DatabaseProviderOptions {
 	resource: 'weapons' | 'characters' | 'summons' | 'jobs'
@@ -35,7 +36,7 @@ export class DatabaseProvider extends RestDataProvider<any> {
 			// Normalize data if needed
 			if (item.name && typeof item.name === 'object') {
 				// Ensure name is accessible for display
-				item.displayName = item.name.en || item.name.ja || '—'
+				item.displayName = localizedName(item.name)
 			}
 			return item
 		})
