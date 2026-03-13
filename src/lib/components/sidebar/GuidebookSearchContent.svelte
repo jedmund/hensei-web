@@ -227,6 +227,10 @@
 
 		&:hover {
 			background: var(--bg-tertiary);
+
+			.result-image {
+				border-color: var(--accent-primary);
+			}
 		}
 
 		&:active {
@@ -240,6 +244,7 @@
 		border-radius: $item-corner-small;
 		border: 1px solid var(--border-primary);
 		flex-shrink: 0;
+		transition: border-color 0.15s ease-out;
 	}
 
 	.result-info {
