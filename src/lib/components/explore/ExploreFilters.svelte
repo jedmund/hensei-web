@@ -6,8 +6,11 @@
   import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
   import type { RaidFull } from '$lib/types/api/raid'
   import ExploreFilterPill from './ExploreFilterPill.svelte'
+  import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
+  import type { UnifiedSearchSeriesRef } from '$lib/api/adapters/search.adapter'
   import Icon from '$lib/components/Icon.svelte'
   import * as m from '$lib/paraglide/messages'
+  import { getLocale } from '$lib/paraglide/runtime'
   import { localizedName } from '$lib/utils/locale'
 
   export type FilterItem =
@@ -40,6 +43,7 @@
   let selectedIndex = $state(0)
   let searchResults = $state<UnifiedSearchResult[]>([])
   let isSearching = $state(false)
+  let isComposing = $state(false)
   let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
   // Fetch raid groups for raid search
@@ -133,13 +137,14 @@
       if (entity) {
         const category = entity.type === 'character' ? m.filter_cat_character()
           : entity.type === 'weapon' ? m.filter_cat_weapon() : m.filter_cat_summon()
+        const entityLabel = localizedName(entity.name as { en: string; ja: string }) ?? 'Unknown'
         picks.push({
-          label: entity.name?.en ?? 'Unknown',
+          label: entityLabel,
           category,
           option: {
             kind: 'entity',
             value: entity.id,
-            label: entity.name?.en ?? 'Unknown',
+            label: entityLabel,
             category,
             entityType: entity.type,
             granblueId: entity.granblueId,
@@ -183,6 +188,8 @@
     entityType?: string
     granblueId?: string
     element?: number
+    season?: number | null
+    series?: UnifiedSearchSeriesRef[] | null
   }
 
   // Filter local static options based on input
@@ -265,7 +272,7 @@
     isSearching = true
     searchTimeout = setTimeout(async () => {
       try {
-        const response = await searchAdapter.searchAll({ query, per: 10 })
+        const response = await searchAdapter.searchAll({ query, per: 10, locale: getLocale() as 'en' | 'ja' })
         searchResults = response.results ?? []
       } catch {
         searchResults = []
@@ -299,11 +306,13 @@
         return {
           kind: 'entity' as const,
           value: r.searchableId,
-          label: r.nameEn ?? 'Unknown',
+          label: localizedName({ en: r.nameEn ?? '', ja: r.nameJp ?? '' }) ?? 'Unknown',
           category,
           entityType: type,
           granblueId: r.granblueId,
-          element: r.element
+          element: r.element,
+          season: r.season,
+          series: r.series
         }
       })
 
@@ -316,9 +325,9 @@
     selectedIndex = 0
   })
 
-  // Trigger search on input change
+  // Trigger search on input change (skip during IME composition)
   $effect(() => {
-    searchEntities(inputValue)
+    if (!isComposing) searchEntities(inputValue)
   })
 
   function openDropdown() {
@@ -396,7 +405,23 @@
     onFiltersChange(filters)
   }
 
+  function handleCompositionStart() {
+    isComposing = true
+    if (searchTimeout) clearTimeout(searchTimeout)
+  }
+
+  function handleCompositionEnd(e: CompositionEvent) {
+    // Small delay for Safari, which fires compositionend before keydown
+    setTimeout(() => {
+      isComposing = false
+      const value = (e.target as HTMLInputElement)?.value ?? ''
+      searchEntities(value)
+    }, 50)
+  }
+
   function handleKeydown(e: KeyboardEvent) {
+    if (e.isComposing || e.keyCode === 229) return
+
     const isPlaceholder = !inputValue.trim()
     const listLength = isPlaceholder ? placeholderSuggestions.length : displayResults.length
 
@@ -447,6 +472,8 @@
           class="filter-input"
           placeholder={m.explore_filter_placeholder()}
           onkeydown={handleKeydown}
+          oncompositionstart={handleCompositionStart}
+          oncompositionend={handleCompositionEnd}
         />
       </div>
     {:else}
@@ -494,14 +521,28 @@
           {#each displayResults as option, i (option.kind + '-' + option.value)}
             <li
               class="result-item"
+              class:entity={option.kind === 'entity'}
               class:selected={i === selectedIndex}
               role="option"
               aria-selected={i === selectedIndex}
               onmouseenter={() => (selectedIndex = i)}
               onclick={() => selectOption(option)}
             >
-              <span class="result-label">{option.label}</span>
-              <span class="result-category">{option.category}</span>
+              {#if option.kind === 'entity' && option.granblueId}
+                <SearchOptionItem
+                  label={option.label}
+                  granblueId={option.granblueId}
+                  type={option.entityType === 'character' ? 'Character' : option.entityType === 'weapon' ? 'Weapon' : 'Summon'}
+                  element={option.element}
+                  season={option.season}
+                  series={option.series}
+                  showType={false}
+                  imageSize={32}
+                />
+              {:else}
+                <span class="result-label">{option.label}</span>
+                <span class="result-category">{option.category}</span>
+              {/if}
             </li>
           {/each}
         {:else if isSearching}
@@ -687,7 +728,7 @@
     position: absolute;
     top: calc(100% + $unit);
     left: 0;
-    width: 280px;
+    width: 340px;
     background: var(--menu-bg);
     border: $card-border;
     border-radius: $card-corner;
@@ -699,7 +740,7 @@
   .results {
     list-style: none;
     margin: 0;
-    padding: $unit-half 0;
+    padding: $unit-half;
     max-height: 280px;
     overflow-y: auto;
   }
@@ -708,7 +749,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: $unit $unit-2x;
+    padding: $unit;
+    border-radius: $item-corner;
     cursor: pointer;
     @include smooth-transition($duration-quick, background);
 
