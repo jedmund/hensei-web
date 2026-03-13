@@ -437,8 +437,8 @@ export const PartySchemaRaw = z.object({
   guidebook2_id: z.string().nullish(),
   guidebook3_id: z.string().nullish(),
   guidebooks: z.union([
-    z.array(z.any()),
-    z.record(z.string(), z.any())
+    z.array(GuidebookSchema),
+    z.record(z.string(), GuidebookSchema)
   ]).nullish().default([]),
   
   // Grid arrays (may be empty or contain items with missing nested data)
