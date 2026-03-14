@@ -5,13 +5,11 @@
 
 	interface Props {
 		score: ArtifactScore | null
-		/** Whether to show the attack/defense/special breakdown (default: true) */
-		showBreakdown?: boolean
 		/** Size variant */
 		size?: 'small' | 'medium' | 'large'
 	}
 
-	const { score, showBreakdown = true, size = 'medium' }: Props = $props()
+	const { score, size = 'medium' }: Props = $props()
 
 	/**
 	 * Returns a CSS color based on the total score value.
@@ -28,28 +26,24 @@
 
 <div class="score-display" class:size-small={size === 'small'} class:size-large={size === 'large'}>
 	{#if score}
-		<div class="score-header">
-			<span class="total-score" style:color={scoreColor(score.total)}>
-				{score.total}
-			</span>
-		</div>
-
-		{#if showBreakdown}
-			<div class="breakdown">
-				<div class="breakdown-item">
-					<span class="breakdown-label">{m.artifact_score_atk()}</span>
-					<span class="breakdown-value">{score.attack}</span>
-				</div>
-				<div class="breakdown-item">
-					<span class="breakdown-label">{m.artifact_score_def()}</span>
-					<span class="breakdown-value">{score.defense}</span>
-				</div>
-				<div class="breakdown-item">
-					<span class="breakdown-label">{m.artifact_score_special()}</span>
-					<span class="breakdown-value">{score.special}</span>
-				</div>
+		<div class="score-row">
+			<div class="score-item">
+				<span class="score-label">{m.artifact_score_atk()}</span>
+				<span class="score-value">{score.attack}</span>
 			</div>
-		{/if}
+			<div class="score-item">
+				<span class="score-label">{m.artifact_score_def()}</span>
+				<span class="score-value">{score.defense}</span>
+			</div>
+			<div class="score-item">
+				<span class="score-label">{m.artifact_score_special()}</span>
+				<span class="score-value">{score.special}</span>
+			</div>
+			<div class="score-item total">
+				<span class="score-label">{m.artifact_score_total()}</span>
+				<span class="score-value" style:color={scoreColor(score.total)}>{score.total}</span>
+			</div>
+		</div>
 	{:else}
 		<div class="no-score">
 			<span class="no-score-text">{m.artifact_no_score()}</span>
@@ -69,10 +63,6 @@
 		--score-low: #f87171;
 		--score-none: var(--text-tertiary);
 
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit;
-
 		:global(html[data-theme='dark']) & {
 			--score-high: #ffe066;
 			--score-good: #86efac;
@@ -80,19 +70,7 @@
 		}
 	}
 
-	.score-header {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit;
-	}
-
-	.total-score {
-		font-size: 2rem;
-		font-weight: typography.$bold;
-		line-height: 1;
-	}
-
-	.breakdown {
+	.score-row {
 		display: flex;
 		gap: spacing.$unit-2x;
 		padding: spacing.$unit;
@@ -100,19 +78,25 @@
 		border-radius: layout.$item-corner;
 	}
 
-	.breakdown-item {
+	.score-item {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-fourth;
 		flex: 1;
+
+		&.total {
+			.score-value {
+				font-weight: typography.$bold;
+			}
+		}
 	}
 
-	.breakdown-label {
+	.score-label {
 		font-size: typography.$font-small;
 		color: var(--text-secondary);
 	}
 
-	.breakdown-value {
+	.score-value {
 		font-size: typography.$font-regular;
 		font-weight: typography.$medium;
 		color: var(--text-primary);
@@ -132,14 +116,14 @@
 
 	// Size variants
 	.size-small {
-		.total-score {
-			font-size: 1.25rem;
+		.score-value {
+			font-size: typography.$font-small;
 		}
 	}
 
 	.size-large {
-		.total-score {
-			font-size: 3rem;
+		.score-value {
+			font-size: typography.$font-body;
 		}
 	}
 </style>
