@@ -11,6 +11,7 @@
 	import Trash from '@lucide/svelte/icons/trash';
 	import Captions from '@lucide/svelte/icons/captions';
 
+	import * as m from '$lib/paraglide/messages';
 	import { duplicateContent } from '../../utils.js';
 
 	interface MediaExtendedProps extends NodeViewProps {
@@ -181,21 +182,21 @@
 				<button
 					class={`edra-toolbar-button ${node.attrs.align === 'left' ? 'active' : ''}`}
 					onclick={() => updateAttributes({ align: 'left' })}
-					title="Align Left"
+					title={m.editor_align_left()}
 				>
 					<AlignLeft />
 				</button>
 				<button
 					class={`edra-toolbar-button ${node.attrs.align === 'center' ? 'active' : ''}`}
 					onclick={() => updateAttributes({ align: 'center' })}
-					title="Align Center"
+					title={m.editor_align_center()}
 				>
 					<AlignCenter />
 				</button>
 				<button
 					class={`edra-toolbar-button ${node.attrs.align === 'right' ? 'active' : ''}`}
 					onclick={() => updateAttributes({ align: 'right' })}
-					title="Align Right"
+					title={m.editor_align_right()}
 				>
 					<AlignRight />
 				</button>
@@ -204,7 +205,7 @@
 					onclick={() => {
 						if (caption === null || caption.trim() === '') caption = 'Audio Caption';
 					}}
-					title="Caption"
+					title={m.editor_caption()}
 				>
 					<Captions />
 				</button>
@@ -213,7 +214,7 @@
 					onclick={() => {
 						duplicateContent(editor, node);
 					}}
-					title="Duplicate"
+					title={m.editor_duplicate()}
 				>
 					<CopyIcon />
 				</button>
@@ -224,7 +225,7 @@
 							width: 'fit-content'
 						});
 					}}
-					title="Full Screen"
+					title={m.editor_full_screen()}
 				>
 					<Fullscreen />
 				</button>
@@ -233,7 +234,7 @@
 					onclick={() => {
 						deleteNode();
 					}}
-					title="Delete"
+					title={m.editor_delete()}
 				>
 					<Trash />
 				</button>

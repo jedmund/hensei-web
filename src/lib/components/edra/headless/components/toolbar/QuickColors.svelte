@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Editor } from '@tiptap/core';
+	import * as m from '$lib/paraglide/messages';
 
 	interface Props {
 		editor: Editor;
@@ -7,16 +8,16 @@
 	const { editor }: Props = $props();
 
 	const colors = [
-		{ label: 'Default', value: '' },
-		{ label: 'Blue', value: '#0000FF' },
-		{ label: 'Brown', value: '#A52A2A' },
-		{ label: 'Green', value: '#008000' },
-		{ label: 'Grey', value: '#808080' },
-		{ label: 'Orange', value: '#FFA500' },
-		{ label: 'Pink', value: '#FFC0CB' },
-		{ label: 'Purple', value: '#800080' },
-		{ label: 'Red', value: '#FF0000' },
-		{ label: 'Yellow', value: '#FFFF00' }
+		{ label: m.editor_color_default(), value: '' },
+		{ label: m.editor_color_blue(), value: '#0000FF' },
+		{ label: m.editor_color_brown(), value: '#A52A2A' },
+		{ label: m.editor_color_green(), value: '#008000' },
+		{ label: m.editor_color_grey(), value: '#808080' },
+		{ label: m.editor_color_orange(), value: '#FFA500' },
+		{ label: m.editor_color_pink(), value: '#FFC0CB' },
+		{ label: m.editor_color_purple(), value: '#800080' },
+		{ label: m.editor_color_red(), value: '#FF0000' },
+		{ label: m.editor_color_yellow(), value: '#FFFF00' }
 	];
 
 	const currentColor = $derived.by(() => editor.getAttributes('textStyle').color ?? '');
@@ -30,7 +31,7 @@
 		editor.chain().focus().setColor(color).run();
 	}}
 	style={`color: ${currentColor}`}
-	title="Text Color"
+	title={m.editor_text_color()}
 >
 	<option value="" label="Default"></option>
 	{#each colors as color (color)}
@@ -45,7 +46,7 @@
 		editor.chain().focus().setHighlight({ color }).run();
 	}}
 	style={`background-color: ${currentHighlight}50`}
-	title="Hightlight Color"
+	title={m.editor_highlight_color()}
 >
 	<option value="" label="Default"></option>
 	{#each colors as color (color)}

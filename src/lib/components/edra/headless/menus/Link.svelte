@@ -2,6 +2,7 @@
 	import type { ShouldShowProps } from '../../types.js';
 	import BubbleMenu from '../../components/BubbleMenu.svelte';
 	import type { Editor } from '@tiptap/core';
+	import * as m from '$lib/paraglide/messages';
 	import Copy from '@lucide/svelte/icons/copy';
 	import Trash from '@lucide/svelte/icons/trash';
 
@@ -26,7 +27,7 @@
 		{link}
 	</a>
 	<button
-		title="Copy Link"
+		title={m.editor_copy_link()}
 		class="edra-command-button"
 		onclick={() => {
 			navigator.clipboard.writeText(link);
@@ -36,7 +37,7 @@
 	</button>
 	<button
 		class="edra-command-button"
-		title="Remove Link"
+		title={m.editor_remove_link()}
 		onclick={() => editor.chain().focus().extendMarkRange('link').unsetLink().run()}
 	>
 		<Trash class="edra-toolbar-icon" />

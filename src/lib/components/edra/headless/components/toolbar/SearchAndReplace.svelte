@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Editor } from '@tiptap/core';
+	import * as m from '$lib/paraglide/messages';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import CaseSensitive from '@lucide/svelte/icons/case-sensitive';
@@ -71,7 +72,7 @@
 			clear();
 			updateSearchTerm();
 		}}
-		title={show ? 'Go Back' : 'Search and Replace'}
+		title={show ? m.editor_go_back() : m.editor_search_replace()}
 	>
 		{#if show}
 			<ArrowLeft class="edra-toolbar-icon" />
@@ -81,7 +82,7 @@
 	</button>
 	{#if show}
 		<div class="edra-search-and-replace-content">
-			<input placeholder="Search..." bind:value={searchText} oninput={() => updateSearchTerm()} />
+			<input placeholder={m.editor_search_placeholder()} bind:value={searchText} oninput={() => updateSearchTerm()} />
 			<span>{searchCount > 0 ? searchIndex + 1 : 0}/{searchCount}</span>
 			<button
 				class="edra-command-button"
@@ -90,23 +91,23 @@
 					caseSensitive = !caseSensitive;
 					updateSearchTerm();
 				}}
-				title="Case Sensitive"
+				title={m.editor_case_sensitive()}
 			>
 				<CaseSensitive class="edra-toolbar-icon" />
 			</button>
-			<button class="edra-command-button" onclick={previous} title="Previous">
+			<button class="edra-command-button" onclick={previous} title={m.editor_previous()}>
 				<ArrowLeft class="edra-toolbar-icon" />
 			</button>
-			<button class="edra-command-button" onclick={next} title="Next">
+			<button class="edra-command-button" onclick={next} title={m.editor_next()}>
 				<ArrowRight class="edra-toolbar-icon" />
 			</button>
 			<span class="separator"></span>
 
-			<input placeholder="Replace..." bind:value={replaceText} oninput={() => updateSearchTerm()} />
-			<button class="edra-command-button" onclick={replace} title="Replace">
+			<input placeholder={m.editor_replace_placeholder()} bind:value={replaceText} oninput={() => updateSearchTerm()} />
+			<button class="edra-command-button" onclick={replace} title={m.editor_replace()}>
 				<Replace class="edra-toolbar-icon" />
 			</button>
-			<button class="edra-command-button" onclick={replaceAll} title="Replace All">
+			<button class="edra-command-button" onclick={replaceAll} title={m.editor_replace_all()}>
 				<ReplaceAll class="edra-toolbar-icon" />
 			</button>
 		</div>
