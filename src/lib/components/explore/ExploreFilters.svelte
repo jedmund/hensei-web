@@ -115,13 +115,13 @@
     // Raid (random from loaded data)
     if (!excludedKinds.includes('raid')) {
       const raidPool = allRaids.filter(
-        (r) => !filters.some((f) => f.kind === 'raid' && f.value === r.slug)
+        (r) => !filters.some((f) => f.kind === 'raid' && f.value === r.id)
       )
       const raid = pickRandom(raidPool)
       if (raid) {
         const opt: FilterOption = {
           kind: 'raid',
-          value: raid.slug,
+          value: raid.id,
           label: localizedName(raid.name) ?? raid.slug,
           category: m.filter_cat_raid()
         }
@@ -263,11 +263,11 @@
         const nameEn = raid.name?.en?.toLowerCase() ?? ''
         const nameJa = raid.name?.ja ?? ''
         if (nameEn.includes(q) || nameJa.includes(q)) {
-          const alreadySelected = filters.some((f) => f.kind === 'raid' && f.value === raid.slug)
+          const alreadySelected = filters.some((f) => f.kind === 'raid' && f.value === raid.id)
           if (!alreadySelected) {
             results.push({
               kind: 'raid',
-              value: raid.slug,
+              value: raid.id,
               label: localizedName(raid.name) ?? raid.slug,
               category: m.filter_cat_raid()
             })
