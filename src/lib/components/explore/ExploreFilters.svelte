@@ -12,6 +12,7 @@
   import * as m from '$lib/paraglide/messages'
   import { getLocale } from '$lib/paraglide/runtime'
   import { localizedName } from '$lib/utils/locale'
+  import { getElementImage } from '$lib/utils/element'
 
   export type FilterItem =
     | { kind: 'element'; value: number; label: string; pinned?: boolean }
@@ -567,6 +568,16 @@
                   showType={false}
                   imageSize={32}
                 />
+              {:else if option.kind === 'element'}
+                <div class="result-with-image">
+                  <img
+                    src={getElementImage(option.value as number)}
+                    alt=""
+                    class="result-image"
+                  />
+                  <span class="result-label">{option.label}</span>
+                </div>
+                <span class="result-category">{option.category}</span>
               {:else}
                 <span class="result-label">{option.label}</span>
                 <span class="result-category">{option.category}</span>
@@ -802,6 +813,19 @@
     .empty & {
       color: var(--text-tertiary);
     }
+  }
+
+  .result-with-image {
+    display: flex;
+    align-items: center;
+    gap: $unit;
+  }
+
+  .result-image {
+    width: 32px;
+    height: 32px;
+    border-radius: $item-corner-small;
+    flex-shrink: 0;
   }
 
   .result-category {
