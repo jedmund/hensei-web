@@ -45,6 +45,7 @@
   let dropdownOpen = $state(false)
   let inputEl = $state<HTMLInputElement>()
   let containerEl = $state<HTMLDivElement>()
+  let listEl = $state<HTMLUListElement>()
   let selectedIndex = $state(0)
   let searchResults = $state<UnifiedSearchResult[]>([])
   let isSearching = $state(false)
@@ -412,6 +413,12 @@
     selectedIndex = 0
   })
 
+  // Scroll the selected item into view on keyboard navigation
+  $effect(() => {
+    const item = listEl?.children[selectedIndex] as HTMLElement | undefined
+    item?.scrollIntoView({ block: 'nearest' })
+  })
+
   // Trigger search on input change (skip during IME composition)
   $effect(() => {
     if (!isComposing) searchEntities(inputValue)
@@ -615,7 +622,7 @@
 
   {#if dropdownOpen}
     <div class="dropdown">
-      <ul class="results" role="listbox">
+      <ul class="results" role="listbox" bind:this={listEl}>
         {#if !inputValue.trim()}
           {#each placeholderSuggestions as suggestion, i (suggestion.label)}
             <li
@@ -864,6 +871,7 @@
     list-style: none;
     margin: 0;
     padding: $unit-half;
+    min-height: 200px;
     max-height: 280px;
     overflow-y: auto;
   }
@@ -886,6 +894,8 @@
     &.empty {
       cursor: default;
       color: var(--text-tertiary);
+      justify-content: center;
+      min-height: calc(200px - $unit);
     }
   }
 
