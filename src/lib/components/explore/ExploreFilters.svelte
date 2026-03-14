@@ -219,6 +219,29 @@
     series?: UnifiedSearchSeriesRef[] | null
   }
 
+  // Rank results so exact/prefix matches and filter options appear first
+  function rankResults(results: FilterOption[], query: string): FilterOption[] {
+    const filterKinds = new Set(['element', 'recency', 'party', 'boost', 'side', 'class'])
+
+    return results.toSorted((a, b) => {
+      const aLabel = a.label.toLowerCase()
+      const bLabel = b.label.toLowerCase()
+      const aExact = aLabel === query
+      const bExact = bLabel === query
+      if (aExact !== bExact) return aExact ? -1 : 1
+
+      const aPrefix = aLabel.startsWith(query)
+      const bPrefix = bLabel.startsWith(query)
+      if (aPrefix !== bPrefix) return aPrefix ? -1 : 1
+
+      const aFilter = filterKinds.has(a.kind)
+      const bFilter = filterKinds.has(b.kind)
+      if (aFilter !== bFilter) return aFilter ? -1 : 1
+
+      return 0
+    })
+  }
+
   // Filter local static options based on input
   function matchLocal(query: string): FilterOption[] {
     const q = query.toLowerCase()
@@ -380,7 +403,7 @@
         }
       })
 
-    return [...local, ...apiResults]
+    return rankResults([...local, ...apiResults], inputValue.trim().toLowerCase())
   })
 
   // Reset selected index when results change
