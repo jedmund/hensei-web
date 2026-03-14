@@ -48,6 +48,30 @@
 	"type_job": "ジョブ",
 	"type_raid": "クエスト",
 
+	"action_cancel": "キャンセル",
+
+	"search_sidebar_title": "{type}を検索",
+	"search_sidebar_element": "属性",
+	"search_sidebar_rarity": "レアリティ",
+	"search_sidebar_proficiency": "得意武器",
+	"search_sidebar_searching": "検索中",
+	"search_sidebar_no_results": "結果が見つかりません",
+	"search_sidebar_loading": "最近のアイテムを読み込み中",
+	"search_sidebar_empty": "アイテムが見つかりません",
+	"search_sidebar_previous": "前へ",
+	"search_sidebar_page": "{current}/{total}ページ",
+	"search_sidebar_next": "次へ",
+
+	"sidebar_weapon_out_of_sync": "コレクションとシンクされていません",
+	"sidebar_weapon_syncing": "シンク中",
+	"sidebar_weapon_sync": "シンク",
+
+	"description_view_video": "📹 動画を見る",
+
+	"element_no_element": "属性なし",
+
+	"favorites_seen_all": "すべてのお気に入りを表示しました",
+
 	"error_something_went_wrong": "エラーが発生しました",
 	"error_404_title": "正しい空域にいますか？",
 	"error_random_team_or_browse": "ランダムな編成をどうぞ。",

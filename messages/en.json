@@ -48,6 +48,30 @@
 	"type_job": "job",
 	"type_raid": "raid",
 
+	"action_cancel": "Cancel",
+
+	"search_sidebar_title": "Search {type}s",
+	"search_sidebar_element": "Element",
+	"search_sidebar_rarity": "Rarity",
+	"search_sidebar_proficiency": "Proficiency",
+	"search_sidebar_searching": "Searching...",
+	"search_sidebar_no_results": "No results found",
+	"search_sidebar_loading": "Loading recent items...",
+	"search_sidebar_empty": "No items found",
+	"search_sidebar_previous": "Previous",
+	"search_sidebar_page": "Page {current} of {total}",
+	"search_sidebar_next": "Next",
+
+	"sidebar_weapon_out_of_sync": "Out of sync with collection",
+	"sidebar_weapon_syncing": "Syncing...",
+	"sidebar_weapon_sync": "Sync",
+
+	"description_view_video": "📹 View Video",
+
+	"element_no_element": "No element",
+
+	"favorites_seen_all": "You've seen all favorites!",
+
 	"error_something_went_wrong": "Something went wrong",
 	"error_404_title": "Are you in the right skydom?",
 	"error_random_team_or_browse": "Here's a random team.",
