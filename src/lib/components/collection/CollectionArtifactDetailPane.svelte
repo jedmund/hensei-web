@@ -38,6 +38,11 @@
 	// Local state that can be updated when returning from edit pane
 	let artifact = $state(initialArtifact)
 
+	// Sync local state when a different artifact is selected
+	$effect(() => {
+		artifact = initialArtifact
+	})
+
 	// Update artifact when edit pane returns with new data
 	function handleArtifactUpdated(updatedArtifact: CollectionArtifact) {
 		artifact = updatedArtifact
