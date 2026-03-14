@@ -19,11 +19,12 @@
     kind: string
     mode?: 'include' | 'exclude'
     element?: number
+    pinned?: boolean
     onRemove: () => void
     onToggleMode?: () => void
   }
 
-  let { label, kind, mode, element, onRemove, onToggleMode }: Props = $props()
+  let { label, kind, mode, element, pinned = false, onRemove, onToggleMode }: Props = $props()
 
   const isEntity = $derived(kind === 'entity')
   const prefixIcon = $derived(isEntity ? (mode === 'exclude' ? 'minus' : 'plus') : '')
@@ -46,14 +47,16 @@
   {:else}
     <span class="label">{label}</span>
   {/if}
-  <button
-    type="button"
-    class="remove"
-    onclick={(e) => { e.stopPropagation(); onRemove() }}
-    aria-label={m.explore_pill_remove()}
-  >
-    <Icon name="close" size={12} />
-  </button>
+  {#if !pinned}
+    <button
+      type="button"
+      class="remove"
+      onclick={(e) => { e.stopPropagation(); onRemove() }}
+      aria-label={m.explore_pill_remove()}
+    >
+      <Icon name="close" size={12} />
+    </button>
+  {/if}
 </span>
 
 <style lang="scss">
