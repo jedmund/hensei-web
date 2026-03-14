@@ -10,6 +10,7 @@
   import { getSummonImage } from '$lib/features/database/detail/image'
   import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+  import { openSubstitutionsSidebar } from '$lib/features/details/openSubstitutionsSidebar.svelte'
   import { sidebar } from '$lib/stores/sidebar.svelte'
   import { GridType } from '$lib/types/enums'
   import * as m from '$lib/paraglide/messages'
@@ -138,6 +139,13 @@
   // Check if user can view database (role >= 7)
   let canViewDatabase = $derived(($page.data.account?.role ?? 0) >= 7)
 
+  let hasSubstitutions = $derived((item?.substitutions?.length ?? 0) > 0)
+
+  function showSubstitutions() {
+    if (!item) return
+    openSubstitutionsSidebar({ type: 'summon', item })
+  }
+
 </script>
 
 <div class="unit {elementClass}" class:empty={!item} class:is-active={isActive} class:orphaned={item?.orphaned}>
@@ -170,6 +178,12 @@
               src={imageUrl}
             />
           </div>
+          {#if hasSubstitutions}
+            <div class="stack-indicator">
+              <div class="stack-line"></div>
+              <div class="stack-line"></div>
+            </div>
+          {/if}
           {/key}
         </div>
       {/snippet}
@@ -178,6 +192,7 @@
         <MenuItems
           onViewDetails={viewDetails}
           onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
+          onShowSubstitutions={hasSubstitutions ? showSubstitutions : undefined}
           onReplace={ctx?.canEdit() ? replace : undefined}
           onDuplicate={ctx?.canEdit() ? duplicate : undefined}
           duplicateDisabled={!canDuplicate}
@@ -186,6 +201,7 @@
           variant="context"
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
+          showSubstitutionsLabel={m.substitution_show()}
           replaceLabel={m.context_replace({ type: m.type_summon() })}
           duplicateLabel={m.context_duplicate({ type: m.type_summon() })}
           removeLabel={m.context_remove()}
@@ -196,6 +212,7 @@
         <MenuItems
           onViewDetails={viewDetails}
           onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
+          onShowSubstitutions={hasSubstitutions ? showSubstitutions : undefined}
           onReplace={ctx?.canEdit() ? replace : undefined}
           onDuplicate={ctx?.canEdit() ? duplicate : undefined}
           duplicateDisabled={!canDuplicate}
@@ -204,6 +221,7 @@
           variant="dropdown"
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
+          showSubstitutionsLabel={m.substitution_show()}
           replaceLabel={m.context_replace({ type: m.type_summon() })}
           duplicateLabel={m.context_duplicate({ type: m.type_summon() })}
           removeLabel={m.context_remove()}
@@ -531,6 +549,36 @@
 
     &.neutral .name {
       color: var(--text-secondary);
+    }
+  }
+
+  // Stack indicator for items with substitutions
+  .stack-indicator {
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 0;
+
+    .stack-line {
+      height: 2px;
+      border-radius: 1px;
+      background: var(--text-tertiary);
+      opacity: 0.4;
+
+      &:first-child {
+        width: 80%;
+        margin: 0 auto;
+      }
+
+      &:last-child {
+        width: 60%;
+        margin: 0 auto;
+        opacity: 0.25;
+      }
     }
   }
 </style>
