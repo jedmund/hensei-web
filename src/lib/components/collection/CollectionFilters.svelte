@@ -94,7 +94,7 @@
 			element: true,
 			rarity: true,
 			season: false,
-			series: false,
+			series: true,
 			race: false,
 			proficiency: false,
 			gender: false
@@ -181,6 +181,17 @@
 		})
 	)
 
+	// Fetch summon series from API (only when entityType is summon)
+	const summonSeriesQuery = createQuery(() =>
+		queryOptions({
+			queryKey: ['summonSeries', 'list'] as const,
+			queryFn: () => entityAdapter.getSummonSeriesList(),
+			enabled: entityType === 'summon',
+			staleTime: 1000 * 60 * 60,
+			gcTime: 1000 * 60 * 60 * 24
+		})
+	)
+
 	// Convert record maps to arrays for iteration
 	const seasons = Object.entries(CHARACTER_SEASON_NAMES).map(([value, label]) => ({
 		value: Number(value),
@@ -194,11 +205,19 @@
 	}))
 
 	// Build series options based on entity type
-	// For weapons: use API-fetched series with string IDs
+	// For weapons/summons: use API-fetched series with string IDs
 	// For characters: use hardcoded enum with number values
 	const seriesOptions = $derived.by(() => {
 		if (entityType === 'weapon' && weaponSeriesQuery.data) {
 			return weaponSeriesQuery.data
+				.sort((a, b) => a.order - b.order)
+				.map((s) => ({
+					value: s.id,
+					label: localizedName(s.name)
+				}))
+		}
+		if (entityType === 'summon' && summonSeriesQuery.data) {
+			return summonSeriesQuery.data
 				.sort((a, b) => a.order - b.order)
 				.map((s) => ({
 					value: s.id,

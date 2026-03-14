@@ -34,6 +34,7 @@
 	// Filter state (initialized from localStorage)
 	let elementFilters = $state<number[]>(collectionFilters.summons.element)
 	let rarityFilters = $state<number[]>(collectionFilters.summons.rarity)
+	let seriesFilters = $state<(number | string)[]>(collectionFilters.summons.series ?? [])
 	let searchQuery = $state('')
 
 	// Sort state (initialized from localStorage)
@@ -46,6 +47,7 @@
 	const queryFilters = $derived({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
+		series: seriesFilters.length > 0 ? seriesFilters : undefined,
 		search: searchQuery.length > 0 ? searchQuery : undefined,
 		sort: sortBy
 	})
@@ -93,6 +95,7 @@
 	function handleFiltersChange(filters: CollectionFilterState) {
 		elementFilters = filters.element
 		rarityFilters = filters.rarity
+		seriesFilters = filters.series
 	}
 
 	// Persist all filter and sort state to localStorage
@@ -100,6 +103,7 @@
 		const filters = {
 			element: elementFilters,
 			rarity: rarityFilters,
+			series: seriesFilters,
 			sort: sortBy
 		}
 		untrack(() => collectionFilters.setSummons(filters))
@@ -127,6 +131,7 @@
 			entityType="summon"
 			bind:elementFilters
 			bind:rarityFilters
+			bind:seriesFilters
 			bind:searchQuery
 			bind:sortBy
 			onFiltersChange={handleFiltersChange}
