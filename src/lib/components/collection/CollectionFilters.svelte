@@ -128,23 +128,23 @@
 
 	// Sort options
 	const sortOptions: { value: CollectionSortKey; label: string }[] = [
-		{ value: 'name_asc', label: 'Name A → Z' },
-		{ value: 'name_desc', label: 'Name Z → A' },
-		{ value: 'element_asc', label: 'Element ↑' },
-		{ value: 'element_desc', label: 'Element ↓' },
-		{ value: 'proficiency_asc', label: 'Proficiency ↑' },
-		{ value: 'proficiency_desc', label: 'Proficiency ↓' }
+		{ value: 'name_asc', label: m.sort_name_asc() },
+		{ value: 'name_desc', label: m.sort_name_desc() },
+		{ value: 'element_asc', label: m.sort_element_asc() },
+		{ value: 'element_desc', label: m.sort_element_desc() },
+		{ value: 'proficiency_asc', label: m.sort_proficiency_asc() },
+		{ value: 'proficiency_desc', label: m.sort_proficiency_desc() }
 	]
 
 	// Constants
 	const elements = [
-		{ value: 0, label: 'Null', color: '#888' },
-		{ value: 1, label: 'Wind', color: '#4A9B3F' },
-		{ value: 2, label: 'Fire', color: '#D94444' },
-		{ value: 3, label: 'Water', color: '#4A7FB8' },
-		{ value: 4, label: 'Earth', color: '#9B6E3F' },
-		{ value: 5, label: 'Dark', color: '#6B3E9B' },
-		{ value: 6, label: 'Light', color: '#F4B643' }
+		{ value: 0, label: m.element_null(), color: '#888' },
+		{ value: 1, label: m.element_wind(), color: '#4A9B3F' },
+		{ value: 2, label: m.element_fire(), color: '#D94444' },
+		{ value: 3, label: m.element_water(), color: '#4A7FB8' },
+		{ value: 4, label: m.element_earth(), color: '#9B6E3F' },
+		{ value: 5, label: m.element_dark(), color: '#6B3E9B' },
+		{ value: 6, label: m.element_light(), color: '#F4B643' }
 	]
 
 	const rarities = [
@@ -154,16 +154,16 @@
 	]
 
 	const proficiencies = [
-		{ value: 1, label: 'Sabre' },
-		{ value: 2, label: 'Dagger' },
-		{ value: 3, label: 'Axe' },
-		{ value: 4, label: 'Spear' },
-		{ value: 5, label: 'Bow' },
-		{ value: 6, label: 'Staff' },
-		{ value: 7, label: 'Melee' },
-		{ value: 8, label: 'Harp' },
-		{ value: 9, label: 'Gun' },
-		{ value: 10, label: 'Katana' }
+		{ value: 1, label: m.proficiency_sabre() },
+		{ value: 2, label: m.proficiency_dagger() },
+		{ value: 3, label: m.proficiency_axe() },
+		{ value: 4, label: m.proficiency_spear() },
+		{ value: 5, label: m.proficiency_bow() },
+		{ value: 6, label: m.proficiency_staff() },
+		{ value: 7, label: m.proficiency_melee() },
+		{ value: 8, label: m.proficiency_harp() },
+		{ value: 9, label: m.proficiency_gun() },
+		{ value: 10, label: m.proficiency_katana() }
 	]
 
 	// Fetch weapon series from API (only when entityType is weapon)
@@ -314,49 +314,49 @@
 			options: elements,
 			value: elementFilters,
 			onChange: (v) => handleElementChange(v as number[]),
-			placeholder: 'Element'
+			placeholder: m.filter_element()
 		},
 		{
 			key: 'rarity',
 			options: rarities,
 			value: rarityFilters,
 			onChange: (v) => handleRarityChange(v as number[]),
-			placeholder: 'Rarity'
+			placeholder: m.filter_rarity()
 		},
 		{
 			key: 'season',
 			options: seasons,
 			value: seasonFilters,
 			onChange: (v) => handleSeasonChange(v as number[]),
-			placeholder: 'Season'
+			placeholder: m.filter_season()
 		},
 		{
 			key: 'series',
 			options: seriesOptions,
 			value: seriesFilters,
 			onChange: (v) => handleSeriesChange(v),
-			placeholder: 'Series'
+			placeholder: m.filter_series()
 		},
 		{
 			key: 'race',
 			options: races,
 			value: raceFilters,
 			onChange: (v) => handleRaceChange(v as number[]),
-			placeholder: 'Race'
+			placeholder: m.filter_race()
 		},
 		{
 			key: 'proficiency',
 			options: proficiencies,
 			value: proficiencyFilters,
 			onChange: (v) => handleProficiencyChange(v as number[]),
-			placeholder: 'Proficiency'
+			placeholder: m.filter_proficiency()
 		},
 		{
 			key: 'gender',
 			options: genders,
 			value: genderFilters,
 			onChange: (v) => handleGenderChange(v as number[]),
-			placeholder: 'Gender'
+			placeholder: m.filter_gender()
 		}
 	])
 
@@ -397,7 +397,7 @@
 		{#if showMoreButton}
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger class="more-trigger">
-					<span>More</span>
+					<span>{m.filter_more()}</span>
 					<Icon name="chevron-down-small" size={14} />
 				</DropdownMenu.Trigger>
 
