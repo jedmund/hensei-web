@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { useAssignPhantom } from '$lib/api/mutations/crew.mutations'
@@ -33,14 +34,14 @@
 
 	// Get active members (excluding those who already have scores - per requirement)
 	const availableMembers = $derived(
-		membersQuery.data?.members?.filter((m) => !m.retired) ?? []
+		membersQuery.data?.members?.filter((member) => !member.retired) ?? []
 	)
 
 	// Assign phantom to selected member
 	async function handleAssign() {
 		if (!phantom || !selectedMemberId) return
 
-		const selectedMember = availableMembers.find((m) => m.id === selectedMemberId)
+		const selectedMember = availableMembers.find((member) => member.id === selectedMemberId)
 		if (!selectedMember?.user?.id) return
 
 		assignError = null
@@ -81,23 +82,23 @@
 
 <Dialog bind:open>
 	<ModalHeader
-		title="Assign Phantom"
-		description={phantom ? `Assign "${phantom.name}" to a crew member` : 'Select a crew member'}
+		title={m.crew_assign_phantom_title()}
+		description={phantom ? m.crew_assign_phantom_desc({ name: phantom.name }) : m.crew_assign_phantom_desc_generic()}
 	/>
 
 	<ModalBody>
 		{#if assignSuccess}
 			<div class="success-message">
 				<Icon name="check-circle" size={32} />
-				<p>Phantom assigned successfully!</p>
+				<p>{m.crew_assign_success()}</p>
 			</div>
 		{:else if membersQuery.isLoading}
 			<div class="loading-state">
-				<p>Loading members...</p>
+				<p>{m.crew_assign_loading()}</p>
 			</div>
 		{:else if availableMembers.length === 0}
 			<div class="empty-state">
-				<p>No crew members available to assign.</p>
+				<p>{m.crew_assign_no_members()}</p>
 			</div>
 		{:else}
 			<div class="members-list">
@@ -129,7 +130,7 @@
 			onCancel={handleCancel}
 			primaryAction={selectedMemberId
 				? {
-						label: assignMutation.isPending ? 'Assigning...' : 'Assign',
+						label: assignMutation.isPending ? m.crew_assign_assigning() : m.crew_assign_confirm(),
 						onclick: handleAssign,
 						disabled: assignMutation.isPending
 					}

@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { useSendInvitation } from '$lib/api/mutations/crew.mutations'
+	import * as m from '$lib/paraglide/messages'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
@@ -53,22 +54,22 @@
 
 <Dialog bind:open>
 	<ModalHeader
-		title="Invite to Crew"
-		description="Send a crew invitation to this user"
+		title={m.crew_invite_title()}
+		description={m.crew_invite_desc()}
 	/>
 
 	<ModalBody>
 		{#if success}
 			<div class="success-message">
-				<p>Invitation sent to <strong>{username}</strong>!</p>
+				<p>{m.crew_invite_success({ username })}</p>
 			</div>
 		{:else}
 			<div class="confirmation">
 				<p>
-					Are you sure you want to invite <strong>{username}</strong> to join your crew?
+					{m.crew_invite_confirm({ username })}
 				</p>
 				<p class="note">
-					They will receive the invitation and can choose to accept or decline.
+					{m.crew_invite_hint()}
 				</p>
 			</div>
 
@@ -85,7 +86,7 @@
 			onCancel={handleCancel}
 			cancelDisabled={sendMutation.isPending}
 			primaryAction={{
-				label: sendMutation.isPending ? 'Sending...' : 'Send Invitation',
+				label: sendMutation.isPending ? m.crew_invite_sending() : m.crew_invite_title(),
 				onclick: handleSend,
 				disabled: sendMutation.isPending
 			}}

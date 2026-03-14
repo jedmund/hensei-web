@@ -11,6 +11,7 @@
 	import Select from '$lib/components/ui/Select.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean
@@ -171,15 +172,15 @@
 </script>
 
 <Dialog bind:open>
-	<ModalHeader title="Scout Player" description="Search for a user to invite to your crew" />
+	<ModalHeader title={m.crew_scout_title()} description={m.crew_scout_desc()} />
 
 	<ModalBody>
 		{#if inviteSuccess}
 			<div class="success-message">
 				<Icon name="check-circle" size={32} />
-				<p>Invitation sent to <strong>{foundUser?.username}</strong>!</p>
+				<p>{m.crew_scout_success({ username: foundUser?.username ?? '' })}</p>
 				{#if selectedPhantomName}
-					<p class="success-detail">"{selectedPhantomName}" will be assigned when they accept.</p>
+					<p class="success-detail">{m.crew_scout_phantom_assign({ name: selectedPhantomName })}</p>
 				{/if}
 			</div>
 		{:else}
@@ -213,7 +214,7 @@
 						<div class="combobox-input-wrapper">
 							<Combobox.Input
 								class="combobox-input"
-								placeholder="Search by username..."
+								placeholder={m.crew_scout_search()}
 								oninput={(e) => handleInputChange(e.currentTarget.value)}
 							/>
 							{#if isLoading}
@@ -264,15 +265,15 @@
 					{#if unclaimedPhantoms.length > 0}
 						<div class="phantom-section">
 							<Select
-								label="Assign to phantom"
+								label={m.crew_scout_assign_phantom()}
 								options={phantomOptions}
 								bind:value={selectedPhantomId}
-								placeholder="None"
+								placeholder={m.crew_scout_none()}
 								fullWidth
 								contained
 								portal
 							/>
-							<span class="phantom-hint">You can assign this later</span>
+							<span class="phantom-hint">{m.crew_scout_assign_later()}</span>
 						</div>
 					{/if}
 				{/if}
@@ -285,7 +286,7 @@
 			onCancel={handleCancel}
 			primaryAction={foundUser
 				? {
-						label: sendMutation.isPending ? 'Sending...' : 'Send Invitation',
+						label: sendMutation.isPending ? m.crew_scout_sending() : m.crew_scout_send(),
 						onclick: handleInvite,
 						disabled: sendMutation.isPending
 					}
