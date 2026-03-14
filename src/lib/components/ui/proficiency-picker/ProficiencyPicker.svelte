@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { MediaQuery } from 'svelte/reactivity'
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'
@@ -81,7 +82,7 @@
 			size="medium"
 			{contained}
 			disabled={disabled}
-			placeholder="Select proficiencies..."
+			placeholder={m.placeholder_select_proficiencies()}
 			fullWidth={true}
 			class={className}
 		/>
@@ -93,7 +94,7 @@
 			size="medium"
 			{contained}
 			disabled={disabled}
-			placeholder="Select proficiency"
+			placeholder={m.placeholder_select_proficiency()}
 			fullWidth={true}
 			class={className}
 		/>

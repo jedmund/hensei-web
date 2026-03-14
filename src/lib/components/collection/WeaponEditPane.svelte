@@ -242,7 +242,7 @@
 					<Select
 						options={elementOptions}
 						bind:value={element}
-						placeholder="Select element"
+						placeholder={m.placeholder_select_element()}
 						size="medium"
 						fullWidth
 						contained

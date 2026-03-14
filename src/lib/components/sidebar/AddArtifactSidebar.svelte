@@ -325,7 +325,7 @@
 					onValueChange={handleProficiencyChange}
 					size="small"
 					contained
-					placeholder="Select proficiency"
+					placeholder={m.placeholder_select_proficiency()}
 				/>
 			</DetailRow>
 
@@ -336,7 +336,7 @@
 					onValueChange={(v) => (element = v)}
 					size="small"
 					contained
-					placeholder="Select element"
+					placeholder={m.placeholder_select_element()}
 				/>
 			</DetailRow>
 		</DetailsSection>
@@ -355,7 +355,7 @@
 							options={artifactOptions}
 							value={selectedArtifactId}
 							onValueChange={handleArtifactChange}
-							placeholder="Select artifact..."
+							placeholder={m.placeholder_select_artifact()}
 							size="medium"
 							fullWidth
 							contained
@@ -381,7 +381,7 @@
 				</DetailRow>
 
 				<DetailRow label="Nickname" noHover>
-					<Input bind:value={nickname} placeholder="Optional nickname" maxLength={50} />
+					<Input bind:value={nickname} placeholder={m.placeholder_optional_nickname()} maxLength={50} />
 				</DetailRow>
 			</DetailsSection>
 

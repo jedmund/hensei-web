@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { MediaQuery } from 'svelte/reactivity'
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'
@@ -84,7 +85,7 @@
 			size="medium"
 			{contained}
 			disabled={disabled}
-			placeholder="Select elements..."
+			placeholder={m.placeholder_select_elements()}
 			fullWidth={true}
 			class={className}
 		/>
@@ -96,7 +97,7 @@
 			size="medium"
 			{contained}
 			disabled={disabled}
-			placeholder="Select element"
+			placeholder={m.placeholder_select_element()}
 			fullWidth={true}
 			class={className}
 		/>
