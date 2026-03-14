@@ -148,9 +148,22 @@
 		border-bottom: 1px solid var(--border-subtle);
 		flex-shrink: 0;
 
-		// Constrain dropdown to sidebar width
+		// Reduce aura spread to fit in sidebar
+		:global(.filter-trigger::before),
+		:global(.filter-input-wrapper::before) {
+			inset: -3px !important;
+			filter: blur(6px) !important;
+		}
+
+		// Disable breathe animation in sidebar
+		:global(.filter-trigger:hover::before),
+		:global(.filter-input-wrapper::before) {
+			animation-name: none !important;
+		}
+
+		// Full-width dropdown
 		:global(.dropdown) {
-			width: min(340px, calc(100% - #{$unit-4x}));
+			width: 100%;
 		}
 	}
 
