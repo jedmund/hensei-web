@@ -35,15 +35,13 @@
 		summon: CollectionSummon
 		isOwner: boolean
 		onClose?: () => void
+		paneId?: string
 	}
 
-	let { summon: initialSummon, isOwner, onClose }: Props = $props()
+	let { summon: initialSummon, isOwner, onClose, paneId }: Props = $props()
 
 	// Local state for the summon - updated when mutation succeeds
 	let summon = $state<CollectionSummon>(initialSummon)
-
-	// Track which summon we're displaying to detect when a different one is selected
-	let currentSummonId = $state(initialSummon.id)
 
 	// Tab state
 	let selectedTab = $state<'info' | 'collection'>('collection')
@@ -53,15 +51,6 @@
 
 	// Reference to the edit pane component for calling save()
 	let editPaneRef: ReturnType<typeof SummonEditPane> | undefined = $state()
-
-	// Sync local state only when a DIFFERENT summon is selected (not on every re-render)
-	$effect(() => {
-		if (initialSummon.id !== currentSummonId) {
-			summon = initialSummon
-			currentSummonId = initialSummon.id
-			isEditing = false
-		}
-	})
 
 	// Mutations
 	const updateMutation = useUpdateCollectionSummon()
@@ -118,8 +107,9 @@
 	// Enter edit mode and update header action
 	function enterEditMode() {
 		isEditing = true
-		// Update header to show Save button
-		sidebar.setAction(() => editPaneRef?.save(), m.action_save(), elementName)
+		if (paneId) {
+			sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), elementName)
+		}
 	}
 
 	// Handle delete from collection
@@ -135,15 +125,15 @@
 
 	// Update action visibility when tab or edit state changes
 	function updateActionVisibility() {
+		if (!paneId) return
+
 		if (isOwner && selectedTab === 'collection') {
 			if (isEditing) {
-				// Show Save button when editing, hide overflow menu
-				sidebar.setAction(() => editPaneRef?.save(), m.action_save(), elementName)
-				sidebar.clearOverflowMenu()
+				sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), elementName)
+				sidebar.setOverflowMenuForPane(paneId, undefined)
 			} else {
-				// Show Edit button and overflow menu when viewing
-				sidebar.setAction(enterEditMode, m.action_edit(), elementName)
-				sidebar.setOverflowMenu([
+				sidebar.setActionForPane(paneId, enterEditMode, m.action_edit(), elementName)
+				sidebar.setOverflowMenuForPane(paneId, [
 					{
 						label: m.collection_remove_from(),
 						handler: handleDelete,
@@ -152,8 +142,8 @@
 				])
 			}
 		} else {
-			sidebar.clearAction()
-			sidebar.clearOverflowMenu()
+			sidebar.setActionForPane(paneId, undefined)
+			sidebar.setOverflowMenuForPane(paneId, undefined)
 		}
 	}
 
@@ -175,8 +165,10 @@
 		updateActionVisibility()
 
 		return () => {
-			sidebar.clearAction()
-			sidebar.clearOverflowMenu()
+			if (paneId) {
+				sidebar.setActionForPane(paneId, undefined)
+				sidebar.setOverflowMenuForPane(paneId, undefined)
+			}
 		}
 	})
 </script>

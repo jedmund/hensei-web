@@ -31,9 +31,10 @@
 		userId: string
 		isOwner?: boolean
 		onClose?: () => void
+		paneId?: string
 	}
 
-	let { artifact: initialArtifact, userId, isOwner = false, onClose }: Props = $props()
+	let { artifact: initialArtifact, userId, isOwner = false, onClose, paneId }: Props = $props()
 
 	// Local state that can be updated when returning from edit pane
 	let artifact = $state(initialArtifact)
@@ -110,9 +111,9 @@
 
 	// Set up the Edit action button and overflow menu for owners
 	onMount(() => {
-		if (isOwner) {
-			sidebar.setAction(handleEdit, m.action_edit(), elementType)
-			sidebar.setOverflowMenu([
+		if (isOwner && paneId) {
+			sidebar.setActionForPane(paneId, handleEdit, m.action_edit(), elementType)
+			sidebar.setOverflowMenuForPane(paneId, [
 				{
 					label: m.collection_remove_from(),
 					handler: handleDelete,
@@ -122,8 +123,10 @@
 		}
 
 		return () => {
-			sidebar.clearAction()
-			sidebar.clearOverflowMenu()
+			if (paneId) {
+				sidebar.setActionForPane(paneId, undefined)
+				sidebar.setOverflowMenuForPane(paneId, undefined)
+			}
 		}
 	})
 </script>

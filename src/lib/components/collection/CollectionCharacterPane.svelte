@@ -38,15 +38,13 @@
 		character: CollectionCharacter
 		isOwner: boolean
 		onClose?: () => void
+		paneId?: string
 	}
 
-	let { character: initialCharacter, isOwner, onClose }: Props = $props()
+	let { character: initialCharacter, isOwner, onClose, paneId }: Props = $props()
 
 	// Local state for the character - updated when mutation succeeds
 	let character = $state<CollectionCharacter>(initialCharacter)
-
-	// Track which character we're displaying to detect when a different one is selected
-	let currentCharacterId = $state(initialCharacter.id)
 
 	// Tab state
 	let selectedTab = $state<'info' | 'collection'>('collection')
@@ -56,15 +54,6 @@
 
 	// Reference to the edit pane component for calling save()
 	let editPaneRef: ReturnType<typeof CharacterEditPane> | undefined = $state()
-
-	// Sync local state only when a DIFFERENT character is selected (not on every re-render)
-	$effect(() => {
-		if (initialCharacter.id !== currentCharacterId) {
-			character = initialCharacter
-			currentCharacterId = initialCharacter.id
-			isEditing = false
-		}
-	})
 
 	// Mutations
 	const updateMutation = useUpdateCollectionCharacter()
@@ -169,8 +158,9 @@
 	// Enter edit mode and update header action
 	function enterEditMode() {
 		isEditing = true
-		// Update header to show Save button
-		sidebar.setAction(() => editPaneRef?.save(), m.action_save(), elementName)
+		if (paneId) {
+			sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), elementName)
+		}
 	}
 
 	// Handle delete from collection
@@ -186,15 +176,17 @@
 
 	// Update action visibility when tab or edit state changes
 	function updateActionVisibility() {
+		if (!paneId) return
+
 		if (isOwner && selectedTab === 'collection') {
 			if (isEditing) {
 				// Show Save button when editing, hide overflow menu
-				sidebar.setAction(() => editPaneRef?.save(), m.action_save(), elementName)
-				sidebar.clearOverflowMenu()
+				sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), elementName)
+				sidebar.setOverflowMenuForPane(paneId, undefined)
 			} else {
 				// Show Edit button and overflow menu when viewing
-				sidebar.setAction(enterEditMode, m.action_edit(), elementName)
-				sidebar.setOverflowMenu([
+				sidebar.setActionForPane(paneId, enterEditMode, m.action_edit(), elementName)
+				sidebar.setOverflowMenuForPane(paneId, [
 					{
 						label: m.collection_remove_from(),
 						handler: handleDelete,
@@ -203,8 +195,8 @@
 				])
 			}
 		} else {
-			sidebar.clearAction()
-			sidebar.clearOverflowMenu()
+			sidebar.setActionForPane(paneId, undefined)
+			sidebar.setOverflowMenuForPane(paneId, undefined)
 		}
 	}
 
@@ -277,12 +269,13 @@
 
 	// Set up sidebar action on mount and clean up on destroy
 	onMount(() => {
-		// Initial setup - show Edit button if on collection tab and owner
 		updateActionVisibility()
 
 		return () => {
-			sidebar.clearAction()
-			sidebar.clearOverflowMenu()
+			if (paneId) {
+				sidebar.setActionForPane(paneId, undefined)
+				sidebar.setOverflowMenuForPane(paneId, undefined)
+			}
 		}
 	})
 </script>

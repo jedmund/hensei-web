@@ -6,6 +6,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { setContext } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -102,6 +103,7 @@
 		if (selectionMode.isActive) {
 			selectionMode.exit()
 		}
+		sidebar.close()
 		goto(localizeHref(`/${username}/collection/${value}`))
 	}
 
