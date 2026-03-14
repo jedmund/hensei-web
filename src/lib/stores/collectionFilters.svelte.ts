@@ -22,6 +22,7 @@ interface WeaponFilters {
 interface SummonFilters {
 	element: number[]
 	rarity: number[]
+	series: (number | string)[]
 	sort: CollectionSortKey
 }
 
@@ -53,7 +54,7 @@ const DEFAULTS: EntityFilters = {
 		sort: 'name_asc'
 	},
 	weapons: { element: [], rarity: [], proficiency: [], series: [], sort: 'name_asc' },
-	summons: { element: [], rarity: [], sort: 'name_asc' },
+	summons: { element: [], rarity: [], series: [], sort: 'name_asc' },
 	artifacts: {
 		element: [],
 		proficiency: [],
