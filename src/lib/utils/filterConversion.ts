@@ -35,6 +35,14 @@ export function filterItemsToParams(filterItems: FilterItem[]): ExploreFilterPar
 		else if (val === 'youtube') params.hasVideo = true
 	}
 
+	// Boost mod (single-select)
+	const boost = filterItems.find((f) => f.kind === 'boost')
+	if (boost) params.boostMod = boost.value as string
+
+	// Boost side (single-select)
+	const side = filterItems.find((f) => f.kind === 'side')
+	if (side) params.boostSide = side.value as string
+
 	// Entity includes/excludes — API expects comma-separated granblue_id values
 	const entities = filterItems.filter(
 		(f): f is FilterItem & { kind: 'entity' } => f.kind === 'entity'
