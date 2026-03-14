@@ -21,7 +21,9 @@
 
 <aside class="sidebar" class:open style:--sidebar-width={SIDEBAR_WIDTH}>
 	{#if stack && !stack.isEmpty}
-		<PaneStack {stack} {onClose} />
+		{#key stack.version}
+			<PaneStack {stack} {onClose} />
+		{/key}
 	{:else if children}
 		<div class="sidebar-content scrollable">
 			{@render children()}

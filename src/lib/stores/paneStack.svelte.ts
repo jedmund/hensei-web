@@ -54,13 +54,17 @@ interface PaneStackState {
 	isAnimating: boolean
 	/** Direction of current animation */
 	animationDirection: 'push' | 'pop' | null
+	/** Monotonic counter — incremented on every mutation to break $state proxy
+	 *  reference equality so consumers can reliably detect changes */
+	version: number
 }
 
 export class PaneStackStore {
 	state = $state<PaneStackState>({
 		panes: [],
 		isAnimating: false,
-		animationDirection: null
+		animationDirection: null,
+		version: 0
 	})
 
 	/** Animation duration in ms - should match CSS */
@@ -78,6 +82,7 @@ export class PaneStackStore {
 		this.state.isAnimating = true
 		this.state.animationDirection = 'push'
 		this.state.panes = [...this.state.panes, config]
+		this.state.version++
 
 		// Clear animation state after transition completes
 		this.animationTimeoutId = setTimeout(() => {
@@ -155,6 +160,7 @@ export class PaneStackStore {
 		this.state.panes = []
 		this.state.isAnimating = false
 		this.state.animationDirection = null
+		this.state.version++
 	}
 
 	/**
@@ -168,6 +174,7 @@ export class PaneStackStore {
 		this.state.panes = [config]
 		this.state.isAnimating = false
 		this.state.animationDirection = null
+		this.state.version++
 	}
 
 	/**
@@ -229,6 +236,10 @@ export class PaneStackStore {
 
 	get depth() {
 		return this.state.panes.length
+	}
+
+	get version() {
+		return this.state.version
 	}
 
 	get isEmpty() {

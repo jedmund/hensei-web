@@ -21,11 +21,8 @@
 	// Set context so child components can access the pane stack
 	setPaneStackContext(stack)
 
-	// Spread to break $state proxy reference — $derived(stack.panes) returns a
-	// stable proxy object that short-circuits $derived's equality check (see
-	// updatePaneAt comment in paneStack.svelte.ts). Spreading forces a new
-	// array reference so the {#each} block re-diffs on every mutation.
-	const panes = $derived([...stack.panes])
+	// Derive values from the stack
+	const panes = $derived(stack.panes)
 	const isAnimating = $derived(stack.isAnimating)
 	const animationDirection = $derived(stack.animationDirection)
 
