@@ -1070,5 +1070,71 @@
 	"series_halloween": "ハロウィン",
 	"series_formal": "ドレスアップ",
 	"series_holiday": "クリスマス",
-	"series_event": "イベント"
+	"series_event": "イベント",
+
+	"party_details": "詳細",
+	"party_raid": "クエスト",
+	"party_select_raid": "クエストを選択",
+	"party_description": "説明",
+
+	"skill_slot_current": "現在のアビリティ",
+	"skill_slot_select_job_first": "先にジョブを選択してください",
+	"skill_slot_locked": "この枠は変更できません",
+	"skill_slot_already_equipped": "このアビリティは別の枠に装備済みです",
+	"skill_slot_select": "アビリティを選択",
+
+	"job_no_job": "ジョブなし",
+
+	"collection_pane_info": "情報",
+	"collection_pane_my_collection": "マイコレクション",
+	"collection_viewer_viewing_as": "表示中",
+	"collection_viewer_you": "あなた",
+
+	"delete_team_confirm": "この編成を完全に削除しますか？",
+
+	"artifact_equipped": "装備中",
+	"extra_summons_subaura": "サブ加護召喚石",
+
+	"placeholder_select_proficiency": "得意武器を選択",
+	"placeholder_select_element": "属性を選択",
+	"placeholder_select_artifact": "アーティファクトを選択",
+	"placeholder_optional_nickname": "ニックネーム（任意）",
+	"placeholder_search_raids": "クエストを検索",
+	"placeholder_select_befoulment": "魔蝕を選択",
+	"placeholder_select_awakening": "覚醒を選択",
+	"placeholder_select_skill": "スキルを選択",
+	"placeholder_value": "値",
+	"placeholder_select_proficiencies": "得意武器を選択",
+	"placeholder_select_rarities": "レアリティを選択",
+	"placeholder_select_elements": "属性を選択",
+
+	"label_befoulment_type": "魔蝕タイプ",
+	"label_exorcism_level": "退魔レベル",
+	"label_exorcism_hint": "退魔レベルが高いほどマイナス効果が軽減されます",
+	"label_perpetuity_ring": "久遠の指輪",
+	"label_level": "レベル",
+	"label_value": "値",
+
+	"artifact_grade_selection": "厳選度",
+	"artifact_grade_strength": "効果値",
+	"artifact_grade_synergy": "相性度",
+
+	"toolbar_bold": "太字",
+	"toolbar_italic": "斜体",
+	"toolbar_underline": "下線",
+	"toolbar_strikethrough": "取り消し線",
+	"toolbar_link": "リンク",
+	"toolbar_bullet_list": "箇条書き",
+	"toolbar_ordered_list": "番号付きリスト",
+	"code_copied": "コピー済み",
+	"code_copy": "コピー",
+
+	"error_boundary_message": "このページの表示中にエラーが発生しました",
+	"error_boundary_retry": "もう一度試す",
+
+	"crew_loading_generic": "読み込み中",
+	"crew_loading_invitations": "スカウトを読み込み中",
+	"page_title_crew_create": "騎空団を作成 / granblue.team",
+	"gw_chart_not_in_crew": "未所属",
+	"gw_chart_hint": "ドラッグで移動・Shift+スクロールでズーム・チャート下のスライダーで操作"
 }

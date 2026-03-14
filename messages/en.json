@@ -1070,5 +1070,71 @@
 	"series_halloween": "Halloween",
 	"series_formal": "Formal",
 	"series_holiday": "Holiday",
-	"series_event": "Event"
+	"series_event": "Event",
+
+	"party_details": "Details",
+	"party_raid": "Raid",
+	"party_select_raid": "Select raid...",
+	"party_description": "Description",
+
+	"skill_slot_current": "Current Skill",
+	"skill_slot_select_job_first": "Select a job first",
+	"skill_slot_locked": "This slot cannot be changed",
+	"skill_slot_already_equipped": "This skill is already equipped in another slot",
+	"skill_slot_select": "Select a skill",
+
+	"job_no_job": "No Job",
+
+	"collection_pane_info": "Info",
+	"collection_pane_my_collection": "My Collection",
+	"collection_viewer_viewing_as": "Viewing as",
+	"collection_viewer_you": "You",
+
+	"delete_team_confirm": "Are you sure you want to permanently delete this team?",
+
+	"artifact_equipped": "Equipped",
+	"extra_summons_subaura": "Subaura Summons",
+
+	"placeholder_select_proficiency": "Select proficiency",
+	"placeholder_select_element": "Select element",
+	"placeholder_select_artifact": "Select artifact...",
+	"placeholder_optional_nickname": "Optional nickname",
+	"placeholder_search_raids": "Search raids...",
+	"placeholder_select_befoulment": "Select befoulment",
+	"placeholder_select_awakening": "Select awakening",
+	"placeholder_select_skill": "Select skill",
+	"placeholder_value": "Value",
+	"placeholder_select_proficiencies": "Select proficiencies...",
+	"placeholder_select_rarities": "Select rarities...",
+	"placeholder_select_elements": "Select elements...",
+
+	"label_befoulment_type": "Befoulment Type",
+	"label_exorcism_level": "Exorcism Level",
+	"label_exorcism_hint": "Higher exorcism reduces the negative effect",
+	"label_perpetuity_ring": "Perpetuity Ring",
+	"label_level": "Level",
+	"label_value": "Value",
+
+	"artifact_grade_selection": "Selection",
+	"artifact_grade_strength": "Strength",
+	"artifact_grade_synergy": "Synergy",
+
+	"toolbar_bold": "Bold",
+	"toolbar_italic": "Italic",
+	"toolbar_underline": "Underline",
+	"toolbar_strikethrough": "Strikethrough",
+	"toolbar_link": "Link",
+	"toolbar_bullet_list": "Bullet List",
+	"toolbar_ordered_list": "Ordered List",
+	"code_copied": "Copied!",
+	"code_copy": "Copy",
+
+	"error_boundary_message": "An error occurred while rendering this page.",
+	"error_boundary_retry": "Try again",
+
+	"crew_loading_generic": "Loading...",
+	"crew_loading_invitations": "Loading invitations...",
+	"page_title_crew_create": "Create Crew / granblue.team",
+	"gw_chart_not_in_crew": "Not in crew",
+	"gw_chart_hint": "Drag to pan · Shift+scroll to zoom · Use slider below chart"
 }
