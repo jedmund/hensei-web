@@ -204,7 +204,7 @@
 				{/each}
 			</div>
 		{:else}
-			<span class="empty-state">No description</span>
+			<span class="empty-state">{m.party_no_description()}</span>
 		{/if}
 	</button>
 </div>

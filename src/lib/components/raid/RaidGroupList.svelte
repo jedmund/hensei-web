@@ -7,6 +7,7 @@
 	 */
 	import type { RaidGroupFull, RaidFull } from '$lib/types/api/raid'
 	import RaidGroupItem from './RaidGroupItem.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		groups: RaidGroupFull[]
@@ -66,7 +67,7 @@
 		{/each}
 	{:else}
 		<div class="empty-state">
-			<span class="empty-text">No raids found</span>
+			<span class="empty-text">{m.raid_no_raids_found()}</span>
 		</div>
 	{/if}
 </div>

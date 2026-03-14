@@ -26,7 +26,7 @@
 			{onCancel}
 			cancelDisabled={deleting}
 			primaryAction={{
-				label: deleting ? 'Deleting...' : 'Yes, delete',
+				label: deleting ? m.action_deleting() : m.action_confirm_delete(),
 				onclick: onDelete,
 				destructive: true,
 				disabled: deleting

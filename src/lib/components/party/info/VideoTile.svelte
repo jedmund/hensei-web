@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import InfoTile from './InfoTile.svelte'
 
 	interface Props {
@@ -59,7 +60,7 @@
 	}
 </script>
 
-<InfoTile label="Video" class="video-tile">
+<InfoTile label={m.party_video()} class="video-tile">
 	{#if videoUrl && videoId}
 		<div class="video-container">
 			{#if isPlaying && embedUrl}
@@ -93,7 +94,7 @@
 			{/if}
 		</div>
 	{:else}
-		<span class="empty-state">No video</span>
+		<span class="empty-state">{m.party_no_video()}</span>
 	{/if}
 </InfoTile>
 
