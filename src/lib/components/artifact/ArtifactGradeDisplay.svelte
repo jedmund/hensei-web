@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { ArtifactGrade } from '$lib/types/api/artifact'
 
 	interface Props {
@@ -50,15 +51,15 @@
 		{#if showBreakdown && grade.breakdown}
 			<div class="breakdown">
 				<div class="breakdown-item">
-					<span class="breakdown-label">Selection</span>
+					<span class="breakdown-label">{m.artifact_grade_selection()}</span>
 					<span class="breakdown-value">{grade.breakdown.skillSelection}</span>
 				</div>
 				<div class="breakdown-item">
-					<span class="breakdown-label">Strength</span>
+					<span class="breakdown-label">{m.artifact_grade_strength()}</span>
 					<span class="breakdown-value">{grade.breakdown.baseStrength}</span>
 				</div>
 				<div class="breakdown-item">
-					<span class="breakdown-label">Synergy</span>
+					<span class="breakdown-label">{m.artifact_grade_synergy()}</span>
 					<span class="breakdown-value">{grade.breakdown.synergy}</span>
 				</div>
 			</div>

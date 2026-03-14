@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import TranscendenceFragment from './TranscendenceFragment.svelte'
 	import { Portal } from 'bits-ui'
 
@@ -195,7 +196,7 @@
 					{/each}
 				</div>
 				<div class="level">
-					<span>Level</span>
+					<span>{m.label_level()}</span>
 					<span class="level-value" class:pending={visibleStage !== currentStage}>{displayLevel}</span>
 				</div>
 			</div>

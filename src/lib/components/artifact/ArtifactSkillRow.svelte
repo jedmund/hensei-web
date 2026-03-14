@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import DisclosureRow from '$lib/components/ui/DisclosureRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { localizedName } from '$lib/utils/locale'
@@ -128,7 +129,7 @@
 			/>
 			<div class="skill-controls">
 				<div class="control-group">
-					<label class="control-label">Level</label>
+					<label class="control-label">{m.label_level()}</label>
 					<Select
 						value={skill.level}
 						options={levelOptions()}
@@ -138,7 +139,7 @@
 					/>
 				</div>
 				<div class="control-group">
-					<label class="control-label">Value</label>
+					<label class="control-label">{m.label_value()}</label>
 					<Select
 						value={skill.strength}
 						options={strengthOptions()}
