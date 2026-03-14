@@ -1,7 +1,6 @@
 
 <script lang="ts">
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
-	import { localizedName } from '$lib/utils/locale'
 	import { getArtifactImage } from '$lib/utils/images'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
@@ -15,28 +14,32 @@
 
 	const imageUrl = $derived(getArtifactImage(artifact.artifact?.granblueId))
 
-	const displayName = $derived(localizedName(artifact.artifact?.name))
-
 	// Is this a quirk artifact?
 	const isQuirk = $derived(artifact.artifact?.rarity === 'quirk')
 
 	// Proficiency: quirk artifacts use instance proficiency, standard use canonical
 	const proficiency = $derived(artifact.proficiency ?? artifact.artifact?.proficiency)
+
+	const totalScore = $derived(artifact.score?.total ?? null)
+
+	function scoreColor(total: number): string {
+		if (total >= 27) return 'var(--score-high)'
+		if (total >= 23) return 'var(--score-good)'
+		return 'var(--score-low)'
+	}
 </script>
 
 <button type="button" class="artifact-card" onclick={onClick}>
 	<div class="card-image">
-		<img class="artifact-image" src={imageUrl} alt={displayName} loading="lazy" />
+		<img class="artifact-image" src={imageUrl} alt="" loading="lazy" />
 		<span class="level-badge">Lv.{artifact.level}</span>
 		{#if isQuirk}
 			<span class="quirk-badge">Q</span>
 		{/if}
+		{#if totalScore != null && !isQuirk}
+			<span class="score-badge" style:--score-color={scoreColor(totalScore)}>{totalScore}</span>
+		{/if}
 	</div>
-	{#if artifact.nickname}
-		<span class="artifact-name nickname">{artifact.nickname}</span>
-	{:else}
-		<span class="artifact-name">{displayName}</span>
-	{/if}
 	<div class="card-info">
 		<ElementLabel element={artifact.element} size="small" />
 		<ProficiencyLabel {proficiency} size="small" />
@@ -119,23 +122,29 @@
 		gap: $unit-half;
 	}
 
-	.artifact-name {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
+	.score-badge {
+		position: absolute;
+		bottom: $unit-fourth;
+		right: $unit-fourth;
 		font-size: $font-small;
-		line-height: 1.4;
-		color: var(--text-tertiary);
-		text-align: center;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: normal;
-		word-break: break-word;
-		max-width: 139px;
-		min-height: calc($font-small * 1.4 * 2);
+		font-weight: $bold;
+		padding: 2px 6px;
+		border-radius: $item-corner-small;
+		line-height: 1;
+		color: var(--score-color);
+		background: var(--grey-80, #e9e9e9);
 
-		&.nickname {
-			font-weight: $bold;
+		--score-high: #b8860b;
+		--score-good: #e67e22;
+		--score-low: #dc2626;
+		--score-none: var(--text-tertiary);
+
+		:global(html[data-theme='dark']) & {
+			--score-high: #daa520;
+			--score-good: #f59e0b;
+			--score-low: #f87171;
+			background: var(--grey-20, #333);
 		}
 	}
+
 </style>
