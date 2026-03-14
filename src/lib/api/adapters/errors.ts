@@ -8,6 +8,7 @@
  */
 
 import type { AdapterError } from './types'
+import * as m from '$lib/paraglide/messages'
 
 /**
  * Custom error class for adapter-specific errors
@@ -204,26 +205,26 @@ export function createErrorFromStatus(status: number, message?: string, details?
 			return new RateLimitError(retryAfter, details)
 
 		case 500:
-			return new ApiError('SERVER_ERROR', status, message || 'Internal server error', details)
+			return new ApiError('SERVER_ERROR', status, message || m.error_internal_server(), details)
 
 		case 502:
-			return new ApiError('BAD_GATEWAY', status, message || 'Bad gateway', details)
+			return new ApiError('BAD_GATEWAY', status, message || m.error_bad_gateway(), details)
 
 		case 503:
-			return new ApiError('SERVICE_UNAVAILABLE', status, message || 'Service unavailable', details)
+			return new ApiError('SERVICE_UNAVAILABLE', status, message || m.error_service_unavailable(), details)
 
 		case 504:
-			return new ApiError('GATEWAY_TIMEOUT', status, message || 'Gateway timeout', details)
+			return new ApiError('GATEWAY_TIMEOUT', status, message || m.error_gateway_timeout(), details)
 
 		default:
 			// For any other status codes
 			if (status >= 400 && status < 500) {
-				return new ApiError('CLIENT_ERROR', status, message || 'Client error', details)
+				return new ApiError('CLIENT_ERROR', status, message || m.error_client(), details)
 			} else if (status >= 500) {
-				return new ApiError('SERVER_ERROR', status, message || 'Server error', details)
+				return new ApiError('SERVER_ERROR', status, message || m.error_server(), details)
 			}
 
-			return new ApiError('UNKNOWN_ERROR', status, message || 'Unknown error', details)
+			return new ApiError('UNKNOWN_ERROR', status, message || m.error_unknown(), details)
 	}
 }
 
@@ -332,7 +333,7 @@ export function normalizeError(error: any): AdapterError {
 	return new ApiError(
 		error?.code || 'UNKNOWN_ERROR',
 		error?.status || 0,
-		error?.message || 'An unknown error occurred',
+		error?.message || m.error_unknown(),
 		error
 	).toJSON()
 }
@@ -345,7 +346,7 @@ export function normalizeError(error: any): AdapterError {
  */
 export function getErrorMessage(error: any): string {
 	if (!error) {
-		return 'An unknown error occurred'
+		return m.error_unknown()
 	}
 
 	// Try to get message from various error formats
@@ -354,19 +355,19 @@ export function getErrorMessage(error: any): string {
 		error.error ||
 		error.errors?.[0]?.message ||
 		error.statusText ||
-		'An unknown error occurred'
+		m.error_unknown()
 
 	// Make network errors more user-friendly
 	if (message.includes('NetworkError') || message.includes('Failed to fetch')) {
-		return 'Unable to connect to the server. Please check your internet connection.'
+		return m.error_network()
 	}
 
 	if (message.includes('TimeoutError')) {
-		return 'The request took too long. Please try again.'
+		return m.error_timeout()
 	}
 
 	if (message.includes('AbortError') || message.includes('cancelled')) {
-		return 'The request was cancelled.'
+		return m.error_cancelled()
 	}
 
 	return message
