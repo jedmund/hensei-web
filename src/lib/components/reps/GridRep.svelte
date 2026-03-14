@@ -15,9 +15,18 @@
 		loading?: boolean
 	}
 
-	let { party, href = localizeHref(`/teams/${party.shortcode}`), loading = false }: Props = $props()
+	let { party, href: hrefProp, loading = false }: Props = $props()
 
 	let currentView: 'weapons' | 'summons' | 'characters' = $state('weapons')
+
+	let href = $derived(
+		hrefProp ??
+			localizeHref(
+				currentView === 'weapons'
+					? `/teams/${party.shortcode}`
+					: `/teams/${party.shortcode}/${currentView}`
+			)
+	)
 
 	function displayName(input: any): string {
 		if (!input) return '—'
