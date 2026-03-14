@@ -99,5 +99,5 @@
 	{strength}
 	onModifierChange={handleModifierChange}
 	onStrengthChange={handleStrengthChange}
-	modifierPlaceholder="Select earring"
+	modifierPlaceholder={m.placeholder_select_earring()}
 />

@@ -6,6 +6,7 @@
 	import Select from '$lib/components/ui/Select.svelte'
 	import { queryOptions } from '@tanstack/svelte-query'
 	import { localizedName } from '$lib/utils/locale'
+	import { getLocale } from '$lib/paraglide/runtime'
 
 	interface Props {
 		/** The weapon series slug (determines which keys are available) */
@@ -67,7 +68,7 @@
 	)
 
 	// Get the key type name for this series/slot
-	const keyTypeName = $derived(seriesSlug ? (KEY_TYPE_NAMES[seriesSlug]?.[slot]?.en ?? 'Key') : 'Key')
+	const keyTypeName = $derived(seriesSlug ? (KEY_TYPE_NAMES[seriesSlug]?.[slot]?.[getLocale() === 'ja' ? 'ja' : 'en'] ?? 'Key') : 'Key')
 
 	// Group and sort weapon keys
 	const groupedOptions = $derived.by(() => {
@@ -88,7 +89,7 @@
 		// Add "No key" option first
 		result.push({
 			value: '',
-			label: `No ${keyTypeName}`
+			label: m.weapon_key_none({ keyType: keyTypeName })
 		})
 
 		// Add grouped keys
@@ -132,7 +133,7 @@
 			options={groupedOptions}
 			value={value ?? ''}
 			onValueChange={handleChange}
-			placeholder={`Select ${keyTypeName}`}
+			placeholder={m.weapon_key_select({ keyType: keyTypeName })}
 			size="medium"
 			fullWidth
 			contained

@@ -67,7 +67,7 @@ export function formatUncapLevel(level?: number | null): string {
 
 export function formatTranscendenceStep(step?: number | null): string {
 	if (!step || step === 0) return ''
-	return `Stage ${step}`
+	return m.transcendence_stage({ step: String(step) })
 }
 
 export function getStatModifierIcon(type: 'ring' | 'earring', modifier: number): string | null {

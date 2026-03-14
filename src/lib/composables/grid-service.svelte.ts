@@ -2,6 +2,7 @@ import type { PartyMutations } from './party-mutations.svelte'
 import type { GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
 import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
+import * as m from '$lib/paraglide/messages'
 
 export function useGridService(
 	mutations: PartyMutations,
@@ -18,7 +19,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to remove weapon:', err)
-				toast.error(extractErrorMessage(err, 'Failed to remove weapon'))
+				toast.error(extractErrorMessage(err, m.toast_failed_remove_weapon()))
 				throw err
 			}
 		},
@@ -31,7 +32,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to remove summon:', err)
-				toast.error(extractErrorMessage(err, 'Failed to remove summon'))
+				toast.error(extractErrorMessage(err, m.toast_failed_remove_summon()))
 				throw err
 			}
 		},
@@ -44,7 +45,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to remove character:', err)
-				toast.error(extractErrorMessage(err, 'Failed to remove character'))
+				toast.error(extractErrorMessage(err, m.toast_failed_remove_character()))
 				throw err
 			}
 		},
@@ -57,7 +58,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to update weapon:', err)
-				toast.error(extractErrorMessage(err, 'Failed to update weapon'))
+				toast.error(extractErrorMessage(err, m.toast_failed_update_weapon()))
 				throw err
 			}
 		},
@@ -70,7 +71,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to update summon:', err)
-				toast.error(extractErrorMessage(err, 'Failed to update summon'))
+				toast.error(extractErrorMessage(err, m.toast_failed_update_summon()))
 				throw err
 			}
 		},
@@ -88,7 +89,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to update character:', err)
-				toast.error(extractErrorMessage(err, 'Failed to update character'))
+				toast.error(extractErrorMessage(err, m.toast_failed_update_character()))
 				throw err
 			}
 		},
@@ -103,7 +104,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to switch character style:', err)
-				toast.error(extractErrorMessage(err, 'Failed to switch style'))
+				toast.error(extractErrorMessage(err, m.toast_failed_switch_style()))
 				throw err
 			}
 		},
@@ -124,7 +125,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to update character uncap:', err)
-				toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
+				toast.error(extractErrorMessage(err, m.toast_failed_update_uncap()))
 				throw err
 			}
 		},
@@ -145,7 +146,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to update weapon uncap:', err)
-				toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
+				toast.error(extractErrorMessage(err, m.toast_failed_update_uncap()))
 				throw err
 			}
 		},
@@ -158,7 +159,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to duplicate weapon:', err)
-				toast.error(extractErrorMessage(err, 'Failed to duplicate weapon'))
+				toast.error(extractErrorMessage(err, m.toast_failed_duplicate_weapon()))
 				throw err
 			}
 		},
@@ -171,7 +172,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to duplicate summon:', err)
-				toast.error(extractErrorMessage(err, 'Failed to duplicate summon'))
+				toast.error(extractErrorMessage(err, m.toast_failed_duplicate_summon()))
 				throw err
 			}
 		},
@@ -192,7 +193,7 @@ export function useGridService(
 				})
 			} catch (err) {
 				console.error('Failed to update summon uncap:', err)
-				toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
+				toast.error(extractErrorMessage(err, m.toast_failed_update_uncap()))
 				throw err
 			}
 		}

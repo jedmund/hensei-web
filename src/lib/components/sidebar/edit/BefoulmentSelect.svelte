@@ -33,7 +33,7 @@
 	// Build befoulment options
 	const befoulmentOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [
-			{ value: '', label: 'No befoulment' }
+			{ value: '', label: m.befoulment_none() }
 		]
 
 		for (const bef of befoulments) {
@@ -51,7 +51,7 @@
 		const max = maxExorcismLevel ?? 5
 		return Array.from({ length: max + 1 }, (_, i) => ({
 			value: i,
-			label: `Level ${i}`
+			label: m.befoulment_level({ level: String(i) })
 		}))
 	})
 
@@ -122,7 +122,7 @@
 			<!-- Strength -->
 			<div class="field-row">
 				<label class="field-label">
-					Strength
+					{m.befoulment_strength()}
 					{#if getSuffix(selectedModifier)}
 						<span class="suffix">({getSuffix(selectedModifier)})</span>
 					{/if}

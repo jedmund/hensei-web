@@ -6,6 +6,7 @@ import type { PartyMutations } from './party-mutations.svelte'
 import type { Party, GridWeapon, GridSummon } from '$lib/types/api/party'
 import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
+import * as m from '$lib/paraglide/messages'
 import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 import { GridType } from '$lib/types/enums'
 
@@ -31,7 +32,7 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 	async function handleSwap(source: DragOperation['source'], target: DragOperation['target']): Promise<void> {
 		const party = opts.getParty()
 		if (!party.id || party.id === 'new') {
-			throw new Error('Cannot swap items in unsaved party')
+			throw new Error(m.toast_unsaved_swap())
 		}
 
 		const swapParams = {
@@ -53,7 +54,7 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 	async function handleMove(source: DragOperation['source'], target: DragOperation['target']): Promise<void> {
 		const party = opts.getParty()
 		if (!party.id || party.id === 'new') {
-			throw new Error('Cannot move items in unsaved party')
+			throw new Error(m.toast_unsaved_move())
 		}
 
 		const updateParams = {
@@ -74,7 +75,7 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 	async function handleDuplicate(source: DragOperation['source'], target: DragOperation['target']): Promise<void> {
 		const party = opts.getParty()
 		if (!party.id || party.id === 'new') {
-			throw new Error('Cannot duplicate items in unsaved party')
+			throw new Error(m.toast_unsaved_duplicate())
 		}
 
 		// If the source is collection-linked, defer to the dialog
@@ -126,9 +127,9 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 			loading = true
 			await executeDuplicate(sourceId, position, type)
 		} catch (err: any) {
-			error = err.message || 'Failed to duplicate'
+			error = err.message || m.toast_failed_duplicate()
 			console.error('Duplicate failed:', err)
-			toast.error(extractErrorMessage(err, 'Failed to duplicate'))
+			toast.error(extractErrorMessage(err, m.toast_failed_duplicate()))
 		} finally {
 			loading = false
 		}
@@ -170,9 +171,9 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 				await handleDuplicate(operation.source, operation.target)
 			}
 		} catch (err: any) {
-			error = err.message || 'Failed to update party'
+			error = err.message || m.toast_failed_update_party()
 			console.error('Drag operation failed:', err)
-			toast.error(extractErrorMessage(err, 'Drag operation failed'))
+			toast.error(extractErrorMessage(err, m.toast_drag_failed()))
 		} finally {
 			loading = false
 			dragContext.clearQueue()
