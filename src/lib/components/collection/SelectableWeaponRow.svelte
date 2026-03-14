@@ -6,6 +6,7 @@
 	 * quantity support (users can own multiple copies).
 	 */
 	import { getWeaponImage } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import QuantityCounter from './QuantityCounter.svelte'
 	import type { SearchPageResult } from '$lib/api/queries/search.queries'
@@ -22,11 +23,7 @@
 
 	const imageUrl = $derived(getWeaponImage(weapon.granblueId, 'grid', weapon.element === 0 ? 0 : undefined))
 
-	const name = $derived(
-		typeof weapon.name === 'string'
-			? weapon.name
-			: weapon.name?.en || weapon.name?.ja || 'Unknown'
-	)
+	const name = $derived(localizedName(weapon.name))
 
 	const element = $derived(weapon.element)
 

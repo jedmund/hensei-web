@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { CollectionWeapon } from '$lib/types/api/collection'
 	import { getWeaponImage } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '../labels/ProficiencyLabel.svelte'
@@ -22,12 +23,7 @@
 		getWeaponImage(weapon.weapon?.granblueId, 'grid', displayElement, transformation)
 	)
 
-	const displayName = $derived.by(() => {
-		const name = weapon.weapon?.name
-		if (!name) return '—'
-		if (typeof name === 'string') return name
-		return name.en || name.ja || '—'
-	})
+	const displayName = $derived(localizedName(weapon.weapon?.name))
 
 	// Show instance element for element-changeable, otherwise show weapon's base element
 	const element = $derived(weapon.weapon?.element === 0 ? weapon.element : weapon.weapon?.element)
@@ -38,7 +34,7 @@
 	// Awakening display
 	const awakeningDisplay = $derived.by(() => {
 		if (!weapon.awakening) return null
-		const type = weapon.awakening.type?.name?.en || 'Balanced'
+		const type = weapon.awakening.type?.name ? localizedName(weapon.awakening.type.name) : 'Balanced'
 		const level = weapon.awakening.level || 1
 		const abbrev =
 			type === 'Balanced'

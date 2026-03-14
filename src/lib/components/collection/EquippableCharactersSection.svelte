@@ -2,6 +2,7 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
+	import { localizedName } from '$lib/utils/locale'
 	import { getCharacterImage, getCharacterPose } from '$lib/utils/images'
 	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
@@ -32,9 +33,7 @@
 
 	// Get character display name
 	function getDisplayName(character: (typeof characters)[number]): string {
-		const name = character.character.name
-		if (typeof name === 'string') return name
-		return name.en || name.ja || '—'
+		return localizedName(character.character.name)
 	}
 
 	// Get character image with pose

@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
+	import { localizedName } from '$lib/utils/locale'
 	import { getArtifactImage } from '$lib/utils/images'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
@@ -14,12 +15,7 @@
 
 	const imageUrl = $derived(getArtifactImage(artifact.artifact?.granblueId))
 
-	const displayName = $derived.by(() => {
-		const name = artifact.artifact?.name
-		if (!name) return '—'
-		if (typeof name === 'string') return name
-		return name.en || name.ja || '—'
-	})
+	const displayName = $derived(localizedName(artifact.artifact?.name))
 
 	// Is this a quirk artifact?
 	const isQuirk = $derived(artifact.artifact?.rarity === 'quirk')
