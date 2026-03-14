@@ -34,6 +34,7 @@
 	// Filter state (initialized from localStorage)
 	let elementFilters = $state<number[]>(collectionFilters.summons.element)
 	let rarityFilters = $state<number[]>(collectionFilters.summons.rarity)
+	let searchQuery = $state('')
 
 	// Sort state (initialized from localStorage)
 	let sortBy = $state<CollectionSortKey>(collectionFilters.summons.sort)
@@ -45,6 +46,7 @@
 	const queryFilters = $derived({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
+		search: searchQuery.length > 0 ? searchQuery : undefined,
 		sort: sortBy
 	})
 
@@ -125,6 +127,7 @@
 			entityType="summon"
 			bind:elementFilters
 			bind:rarityFilters
+			bind:searchQuery
 			bind:sortBy
 			onFiltersChange={handleFiltersChange}
 			showViewToggle={true}

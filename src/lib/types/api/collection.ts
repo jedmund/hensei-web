@@ -176,6 +176,7 @@ export interface CollectionFilters {
 	proficiency?: number[]
 	gender?: number[]
 	series?: (string | number)[]
+	search?: string
 	sort?: CollectionSortKey
 	page?: number
 	limit?: number
