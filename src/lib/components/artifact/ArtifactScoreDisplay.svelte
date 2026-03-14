@@ -16,11 +16,9 @@
 	 * Low scores are red, mid scores are neutral, high scores are green/gold.
 	 */
 	function scoreColor(total: number): string {
-		if (total >= 16) return 'var(--score-high)'
-		if (total >= 12) return 'var(--score-good)'
-		if (total >= 8) return 'var(--score-mid)'
-		if (total >= 4) return 'var(--score-low)'
-		return 'var(--score-none)'
+		if (total >= 27) return 'var(--score-high)'
+		if (total >= 23) return 'var(--score-good)'
+		return 'var(--score-low)'
 	}
 </script>
 
@@ -57,30 +55,35 @@
 	@use '$src/themes/layout' as layout;
 
 	.score-display {
-		--score-high: #ffd700;
-		--score-good: #4ade80;
-		--score-mid: var(--text-primary);
-		--score-low: #f87171;
+		flex: 1;
+		--score-high: #b8860b;
+		--score-good: #e67e22;
+		--score-low: #dc2626;
 		--score-none: var(--text-tertiary);
 
 		:global(html[data-theme='dark']) & {
-			--score-high: #ffe066;
-			--score-good: #86efac;
-			--score-low: #fca5a5;
+			--score-high: #daa520;
+			--score-good: #f59e0b;
+			--score-low: #f87171;
 		}
 	}
 
 	.score-row {
 		display: flex;
-		gap: spacing.$unit-2x;
+		gap: spacing.$unit;
 		padding: spacing.$unit;
-		background: var(--card-bg);
+		background: var(--grey-90, #f0f0f0);
 		border-radius: layout.$item-corner;
+
+		:global(html[data-theme='dark']) & {
+			background: var(--grey-15, #262626);
+		}
 	}
 
 	.score-item {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		gap: spacing.$unit-fourth;
 		flex: 1;
 
@@ -104,8 +107,6 @@
 
 	.no-score {
 		padding: spacing.$unit;
-		background: var(--card-bg);
-		border-radius: layout.$item-corner;
 	}
 
 	.no-score-text {
