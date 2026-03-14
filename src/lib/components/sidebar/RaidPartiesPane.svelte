@@ -3,16 +3,20 @@
 	 * RaidPartiesPane - Shows parties that use a specific raid
 	 *
 	 * Displays a filterable list of public parties for a given raid.
-	 * Filters include: Element, Full Auto, Charge Attack, Auto Guard
+	 * Uses ExploreFilters with a pinned raid filter for consistency
+	 * with the gallery/explore page filtering experience.
 	 */
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { onDestroy } from 'svelte'
 	import type { Raid } from '$lib/types/api/entities'
-	import { partyQueries, type RaidPartiesFilters } from '$lib/api/queries/party.queries'
+	import { partyQueries } from '$lib/api/queries/party.queries'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import { filterItemsToParams } from '$lib/utils/filterConversion'
+	import ExploreFilters, { type FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		raid: Raid
@@ -20,25 +24,30 @@
 
 	let { raid }: Props = $props()
 
-	// Filter state
-	let elementFilter = $state<number | undefined>(undefined)
-	let fullAutoFilter = $state<boolean | undefined>(undefined)
-	let chargeAttackFilter = $state<boolean | undefined>(undefined)
-	let autoGuardFilter = $state<boolean | undefined>(undefined)
+	// Pinned raid filter — always present, not removable
+	const pinnedRaidFilter: FilterItem = $derived({
+		kind: 'raid',
+		value: raid.slug,
+		label: localizedName(raid.name) ?? raid.slug,
+		pinned: true
+	})
+
+	// User-added filters (element, entity, party settings, etc.)
+	let userFilters = $state<FilterItem[]>([])
+
+	// Combined filters: pinned raid + user selections
+	const allFilters = $derived<FilterItem[]>([pinnedRaidFilter, ...userFilters])
+
+	// Convert to API query params
+	const filterParams = $derived(filterItemsToParams(allFilters))
 
 	// Sentinel for infinite scroll
 	let sentinelEl = $state<HTMLElement>()
 
-	// Build filters object
-	const filters = $derived<RaidPartiesFilters>({
-		element: elementFilter,
-		fullAuto: fullAutoFilter,
-		chargeAttack: chargeAttackFilter,
-		autoGuard: autoGuardFilter
-	})
-
-	// Query for parties
-	const partiesQuery = createInfiniteQuery(() => partyQueries.raidParties(raid.id, filters))
+	// Query for parties using the shared list endpoint
+	const partiesQuery = createInfiniteQuery(() =>
+		partyQueries.list({ filters: filterParams })
+	)
 
 	// Infinite loader
 	const loader = useInfiniteLoader(
@@ -49,7 +58,7 @@
 
 	// Reset loader when filters change
 	$effect(() => {
-		void filters
+		void filterParams
 		loader.reset()
 	})
 
@@ -62,100 +71,20 @@
 		parties.length === 0 && !partiesQuery.isLoading && !partiesQuery.isError
 	)
 
-	// Element filter options
-	const elementOptions = [
-		{ value: undefined, label: 'All' },
-		{ value: 1, label: 'Wind' },
-		{ value: 2, label: 'Fire' },
-		{ value: 3, label: 'Water' },
-		{ value: 4, label: 'Earth' },
-		{ value: 5, label: 'Dark' },
-		{ value: 6, label: 'Light' }
-	]
-
-	// Battle setting definitions
-	const battleSettings = [
-		{
-			key: 'chargeAttack',
-			label: 'CA',
-			get value() {
-				return chargeAttackFilter
-			},
-			set: (v: boolean | undefined) => (chargeAttackFilter = v)
-		},
-		{
-			key: 'fullAuto',
-			label: 'FA',
-			get value() {
-				return fullAutoFilter
-			},
-			set: (v: boolean | undefined) => (fullAutoFilter = v)
-		},
-		{
-			key: 'autoGuard',
-			label: 'AG',
-			get value() {
-				return autoGuardFilter
-			},
-			set: (v: boolean | undefined) => (autoGuardFilter = v)
-		}
-	]
-
-	function toggleBattleSetting(setting: (typeof battleSettings)[0]) {
-		const current = setting.value
-		// Cycle: undefined -> true -> false -> undefined
-		if (current === undefined) setting.set(true)
-		else if (current === true) setting.set(false)
-		else setting.set(undefined)
-	}
-
-	function getBattleSettingLabel(setting: (typeof battleSettings)[0]): string {
-		const value = setting.value
-		if (value === undefined) return setting.label
-		return `${setting.label} ${value ? 'On' : 'Off'}`
+	function handleFiltersChange(newFilters: FilterItem[]) {
+		// Strip pinned filters — only keep user-added ones
+		userFilters = newFilters.filter((f) => !f.pinned)
 	}
 </script>
 
 <div class="raid-parties-pane">
 	<!-- Filters -->
 	<div class="filters-section">
-		<!-- Element filter -->
-		<div class="filter-group">
-			<span class="filter-label">Element</span>
-			<div class="filter-buttons">
-				{#each elementOptions as option (option.label)}
-					<button
-						type="button"
-						class="filter-btn element-btn"
-						class:active={elementFilter === option.value}
-						onclick={() => (elementFilter = option.value)}
-						aria-pressed={elementFilter === option.value}
-					>
-						{option.label}
-					</button>
-				{/each}
-			</div>
-		</div>
-
-		<!-- Battle settings filter -->
-		<div class="filter-group">
-			<span class="filter-label">Battle</span>
-			<div class="filter-buttons">
-				{#each battleSettings as setting (setting.key)}
-					<button
-						type="button"
-						class="filter-btn battle-btn"
-						class:active={setting.value !== undefined}
-						class:on={setting.value === true}
-						class:off={setting.value === false}
-						onclick={() => toggleBattleSetting(setting)}
-						aria-pressed={setting.value !== undefined}
-					>
-						{getBattleSettingLabel(setting)}
-					</button>
-				{/each}
-			</div>
-		</div>
+		<ExploreFilters
+			filters={allFilters}
+			onFiltersChange={handleFiltersChange}
+			excludedKinds={['raid']}
+		/>
 	</div>
 
 	<!-- Party list -->
@@ -212,70 +141,22 @@
 	.filters-section {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-2x;
+		gap: $unit;
 		padding: $unit-2x;
 		background: var(--sidebar-bg);
 		border-bottom: 1px solid var(--border-subtle);
 		flex-shrink: 0;
-	}
 
-	.filter-group {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
-	}
-
-	.filter-label {
-		font-size: $font-tiny;
-		font-weight: $bold;
-		text-transform: uppercase;
-		color: var(--text-secondary);
-		letter-spacing: 0.5px;
-	}
-
-	.filter-buttons {
-		display: flex;
-		flex-wrap: wrap;
-		gap: $unit-half;
-	}
-
-	.filter-btn {
-		padding: $unit-half $unit;
-		border: 1px solid var(--border-subtle);
-		background: var(--button-bg);
-		border-radius: $input-corner;
-		font-size: $font-small;
-		cursor: pointer;
-		transition: all 0.15s ease;
-		color: var(--text-primary);
-
-		&:hover {
-			background: var(--button-bg-hover);
-			border-color: var(--border-medium);
-		}
-
-		&.active {
-			background: var(--accent-blue);
-			color: white;
-			border-color: var(--accent-blue);
-		}
-	}
-
-	.battle-btn {
-		&.on {
-			background: var(--full-auto-bg);
-			color: var(--full-auto-text);
-			border-color: var(--full-auto-bg);
-		}
-
-		&.off {
-			background: var(--input-bg);
-			color: var(--text-secondary);
-			border-color: var(--border-medium);
+		// Constrain dropdown to sidebar width
+		:global(.dropdown) {
+			width: min(340px, calc(100% - #{$unit-4x}));
 		}
 	}
 
 	.parties-list {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
 		flex: 1;
 		overflow-y: auto;
 		padding: $unit-2x;
@@ -316,7 +197,6 @@
 
 	.load-more-sentinel {
 		height: 1px;
-		margin-top: $unit;
 
 		&.hidden {
 			display: none;
