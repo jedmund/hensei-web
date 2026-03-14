@@ -1,7 +1,9 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import DisclosureRow from '$lib/components/ui/DisclosureRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
+	import { localizedName } from '$lib/utils/locale'
 	import {
 		calculateSkillDisplayValue,
 		type ArtifactSkill,
@@ -44,7 +46,7 @@
 	)
 
 	// Get modifier name for display
-	const modifierName = $derived(currentSkillDef?.name?.en ?? 'Unknown')
+	const modifierName = $derived(localizedName(currentSkillDef?.name))
 
 	// Build strength options from the skill's baseValues
 	// Display values are calculated based on current level, but stored value is the base
@@ -112,8 +114,8 @@
 	{#if !skill?.modifier}
 		<!-- Unset: Show disclosure to select modifier -->
 		<DisclosureRow
-			label="Skill {slot}"
-			sublabel="Tap to select"
+			label={m.artifact_skill_label({ slot: String(slot) })}
+			sublabel={m.artifact_tap_to_select()}
 			onclick={onSelectModifier}
 			{disabled}
 		/>
@@ -127,7 +129,7 @@
 			/>
 			<div class="skill-controls">
 				<div class="control-group">
-					<label class="control-label">Level</label>
+					<label class="control-label">{m.label_level()}</label>
 					<Select
 						value={skill.level}
 						options={levelOptions()}
@@ -137,7 +139,7 @@
 					/>
 				</div>
 				<div class="control-group">
-					<label class="control-label">Value</label>
+					<label class="control-label">{m.label_value()}</label>
 					<Select
 						value={skill.strength}
 						options={strengthOptions()}

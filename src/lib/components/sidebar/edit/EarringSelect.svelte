@@ -4,6 +4,7 @@
 	import { aetherialMastery, type ItemSkill } from '$lib/data/overMastery'
 	import { getElementalizedEarringStat } from '$lib/utils/masteryUtils'
 	import { localizedName } from '$lib/utils/locale'
+	import * as m from '$lib/paraglide/messages'
 
 	interface ExtendedMastery {
 		modifier: number
@@ -33,7 +34,7 @@
 
 	// Build modifier options
 	const modifierOptions = $derived.by(() => {
-		const options: Array<{ value: number; label: string }> = [{ value: 0, label: 'None' }]
+		const options: Array<{ value: number; label: string }> = [{ value: 0, label: m.option_none() }]
 
 		for (const skill of aetherialMastery) {
 			// Use elementalized name for display
@@ -98,5 +99,5 @@
 	{strength}
 	onModifierChange={handleModifierChange}
 	onStrengthChange={handleStrengthChange}
-	modifierPlaceholder="Select earring"
+	modifierPlaceholder={m.placeholder_select_earring()}
 />

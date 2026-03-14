@@ -7,6 +7,7 @@
 	import InviteUserModal from '$lib/components/crew/InviteUserModal.svelte'
 	import type { CrewRole } from '$lib/types/api/crew'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		username: string
@@ -104,7 +105,7 @@
 
 		<div class="header-actions">
 			{#if gbfProfileUrl}
-				<Tooltip content="In-game profile">
+				<Tooltip content={m.profile_ingame()}>
 					<a
 						href={gbfProfileUrl}
 						target="_blank"
@@ -128,7 +129,7 @@
 								<DropdownItem>
 									<button onclick={() => (inviteModalOpen = true)}>
 										<Icon name="user-plus" size={14} />
-										<span>Invite to Crew</span>
+										<span>{m.crew_invite_title()}</span>
 									</button>
 								</DropdownItem>
 							{/if}
@@ -141,7 +142,7 @@
 
 	<nav class="tabs" aria-label="Profile sections" data-element={element}>
 		<a class:active={activeTab === 'teams'} href={localizeHref(`/${username}`)} data-sveltekit-preload-data="hover">
-			Teams
+			{m.profile_tab_teams()}
 		</a>
 		{#if isOwner}
 			<a
@@ -149,7 +150,7 @@
 				href={localizeHref(`/${username}/favorites`)}
 				data-sveltekit-preload-data="hover"
 			>
-				Favorites
+				{m.profile_tab_favorites()}
 			</a>
 		{/if}
 		<a
@@ -157,7 +158,7 @@
 			href={localizeHref(`/${username}/collection/characters`)}
 			data-sveltekit-preload-data="hover"
 		>
-			Collection
+			{m.profile_tab_collection()}
 		</a>
 	</nav>
 </header>

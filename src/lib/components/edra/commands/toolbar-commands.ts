@@ -1,5 +1,6 @@
 import type { EdraToolBarCommands } from './types.js';
 import { isMac } from '../utils.js';
+import * as m from '$lib/paraglide/messages';
 import Undo from '@lucide/svelte/icons/undo-2';
 import Redo from '@lucide/svelte/icons/redo-2';
 import Heading1 from '@lucide/svelte/icons/heading-1';
@@ -37,7 +38,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Undo,
 			name: 'undo',
-			tooltip: 'Undo',
+			tooltip: m.editor_undo(),
 			shortCut: `${isMac ? '⌘' : 'Ctrl+'}Z`,
 			onClick: (editor) => {
 				editor.chain().focus().undo().run();
@@ -49,7 +50,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Redo,
 			name: 'redo',
-			tooltip: 'Redo',
+			tooltip: m.editor_redo(),
 			shortCut: `${isMac ? '⌘' : 'Ctrl+'}Y`,
 			onClick: (editor) => {
 				editor.chain().focus().redo().run();
@@ -63,7 +64,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Heading1,
 			name: 'h1',
-			tooltip: 'Heading 1',
+			tooltip: m.editor_heading_1(),
 			shortCut: `${isMac ? '⌘⌥' : 'Ctrl+Alt+'}1`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleHeading({ level: 1 }).run();
@@ -81,7 +82,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Heading2,
 			name: 'h2',
-			tooltip: 'Heading 2',
+			tooltip: m.editor_heading_2(),
 			shortCut: `${isMac ? '⌘⌥' : 'Ctrl+Alt+'}2`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleHeading({ level: 2 }).run();
@@ -99,7 +100,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Heading3,
 			name: 'h3',
-			tooltip: 'Heading 3',
+			tooltip: m.editor_heading_3(),
 			shortCut: `${isMac ? '⌘⌥' : 'Ctrl+Alt+'}3`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleHeading({ level: 3 }).run();
@@ -117,7 +118,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Heading4,
 			name: 'h4',
-			tooltip: 'Heading 4',
+			tooltip: m.editor_heading_4(),
 			shortCut: `${isMac ? '⌘⌥' : 'Ctrl+Alt+'}4`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleHeading({ level: 4 }).run();
@@ -137,12 +138,12 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Link,
 			name: 'link',
-			tooltip: 'Link',
+			tooltip: m.editor_link(),
 			onClick: (editor) => {
 				if (editor.isActive('link')) {
 					editor.chain().focus().unsetLink().run();
 				} else {
-					const url = window.prompt('Enter the URL of the link:');
+					const url = window.prompt(m.editor_prompt_link_url());
 					if (url) {
 						editor.chain().focus().toggleLink({ href: url }).run();
 					}
@@ -155,7 +156,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Pilcrow,
 			name: 'paragraph',
-			tooltip: 'Paragraph',
+			tooltip: m.editor_paragraph(),
 			shortCut: `${isMac ? '⌘⇧' : 'Ctrl+Shift+'}0`,
 			onClick: (editor) => {
 				editor.chain().focus().setParagraph().run();
@@ -173,7 +174,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Bold,
 			name: 'bold',
-			tooltip: 'Bold',
+			tooltip: m.editor_bold(),
 			shortCut: `${isMac ? '⌘' : 'Ctrl+'}B`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleBold().run();
@@ -191,7 +192,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Italic,
 			name: 'italic',
-			tooltip: 'Italic',
+			tooltip: m.editor_italic(),
 			shortCut: `${isMac ? '⌘' : 'Ctrl+'}I`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleItalic().run();
@@ -209,7 +210,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Underline,
 			name: 'underline',
-			tooltip: 'Underline',
+			tooltip: m.editor_underline(),
 			shortCut: `${isMac ? '⌘' : 'Ctrl+'}U`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleUnderline().run();
@@ -227,7 +228,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: StrikeThrough,
 			name: 'strikethrough',
-			tooltip: 'Strikethrough',
+			tooltip: m.editor_strikethrough(),
 			shortCut: `${isMac ? '⌘⇧' : 'Ctrl+Shift+'}S`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleStrike().run();
@@ -245,7 +246,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Quote,
 			name: 'blockQuote',
-			tooltip: 'BlockQuote',
+			tooltip: m.editor_blockquote(),
 			shortCut: `${isMac ? '⌘⇧' : 'Ctrl+Shift+'}B`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleBlockquote().run();
@@ -263,7 +264,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Code,
 			name: 'code',
-			tooltip: 'Inline Code',
+			tooltip: m.editor_inline_code(),
 			shortCut: `${isMac ? '⌘' : 'Ctrl+'}E`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleCode().run();
@@ -281,7 +282,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Superscript,
 			name: 'superscript',
-			tooltip: 'Superscript',
+			tooltip: m.editor_superscript(),
 			shortCut: `${isMac ? '⌘' : 'Ctrl+'}.`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleSuperscript().run();
@@ -296,7 +297,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Subscript,
 			name: 'subscript',
-			tooltip: 'Subscript',
+			tooltip: m.editor_subscript(),
 			shortCut: `${isMac ? '⌘' : 'Ctrl+'},`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleSubscript().run();
@@ -313,7 +314,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: AlignLeft,
 			name: 'align-left',
-			tooltip: 'Align Left',
+			tooltip: m.editor_align_left(),
 			shortCut: `${isMac ? '⌘⇧' : 'Ctrl+Shift+'}L`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleTextAlign('left').run();
@@ -326,7 +327,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: AlignCenter,
 			name: 'align-center',
-			tooltip: 'Align Center',
+			tooltip: m.editor_align_center(),
 			shortCut: `${isMac ? '⌘⇧' : 'Ctrl+Shift+'}E`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleTextAlign('center').run();
@@ -339,7 +340,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: AlignRight,
 			name: 'align-right',
-			tooltip: 'Align Right',
+			tooltip: m.editor_align_right(),
 			shortCut: `${isMac ? '⌘⇧' : 'Ctrl+Shift+'}R`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleTextAlign('right').run();
@@ -352,7 +353,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: AlighJustify,
 			name: 'align-justify',
-			tooltip: 'Align Justify',
+			tooltip: m.editor_align_justify(),
 			shortCut: `${isMac ? '⌘⇧' : 'Ctrl+Shift+'}J`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleTextAlign('justify').run();
@@ -367,7 +368,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: List,
 			name: 'bulletList',
-			tooltip: 'Bullet List',
+			tooltip: m.editor_bullet_list(),
 			shortCut: `${isMac ? '⌘⇧' : 'Ctrl+Shift+'}8`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleBulletList().run();
@@ -380,7 +381,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: ListOrdered,
 			name: 'orderedList',
-			tooltip: 'Ordered List',
+			tooltip: m.editor_ordered_list(),
 			shortCut: `${isMac ? '⌘⇧' : 'Ctrl+Shift+'}7`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleOrderedList().run();
@@ -398,7 +399,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: ListChecks,
 			name: 'taskList',
-			tooltip: 'Task List',
+			tooltip: m.editor_task_list(),
 			shortCut: `${isMac ? '⌘⇧' : 'Ctrl+Shift+'}9`,
 			onClick: (editor) => {
 				editor.chain().focus().toggleTaskList().run();
@@ -418,7 +419,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Image,
 			name: 'image-placeholder',
-			tooltip: 'Image Placeholder',
+			tooltip: m.editor_image_placeholder(),
 			onClick: (editor) => {
 				editor.chain().focus().insertImagePlaceholder().run();
 			},
@@ -427,7 +428,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Video,
 			name: 'video-placeholder',
-			tooltip: 'Video Placeholder',
+			tooltip: m.editor_video_placeholder(),
 			onClick: (editor) => {
 				editor.chain().focus().insertVideoPlaceholder().run();
 			},
@@ -436,7 +437,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Audio,
 			name: 'audio-placeholder',
-			tooltip: 'Audio Placeholder',
+			tooltip: m.editor_audio_placeholder(),
 			onClick: (editor) => {
 				editor.chain().focus().insertAudioPlaceholder().run();
 			},
@@ -445,7 +446,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: IFrame,
 			name: 'iframe-placeholder',
-			tooltip: 'IFrame Placeholder',
+			tooltip: m.editor_iframe_placeholder(),
 			onClick: (editor) => {
 				editor.chain().focus().insertIFramePlaceholder().run();
 			},
@@ -456,10 +457,10 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Table,
 			name: 'table',
-			tooltip: 'Table',
+			tooltip: m.editor_table(),
 			onClick: (editor) => {
 				if (editor.isActive('table')) {
-					const del = confirm('Do you really want to delete this table??');
+					const del = confirm(m.editor_confirm_delete_table());
 					if (del) {
 						editor.chain().focus().deleteTable().run();
 						return;
@@ -474,7 +475,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Radical,
 			name: 'mathematics',
-			tooltip: 'Inline Expression',
+			tooltip: m.editor_inline_expression(),
 			onClick: (editor) => {
 				let latex = 'a^2 + b^2 = c^2';
 				const chain = editor.chain().focus();
@@ -490,7 +491,7 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: SquareRadical,
 			name: 'mathematics',
-			tooltip: 'Block Expression',
+			tooltip: m.editor_block_expression(),
 			onClick: (editor) => {
 				const latex = 'a^2 + b^2 = c^2';
 				editor.chain().focus().insertBlockMath({ latex }).run();

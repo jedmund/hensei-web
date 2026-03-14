@@ -218,7 +218,7 @@
 						>
 							<div class="modifiers">
 								{#if item?.orphaned}
-									<div class="orphaned-badge" title="This item is no longer in your collection">
+									<div class="orphaned-badge" title={m.tooltip_not_in_collection()}>
 										<Icon name="alertTriangle" size={16} />
 									</div>
 								{/if}

@@ -4,6 +4,7 @@
 	 *
 	 * Displays toggles for Full Auto, Auto Guard, Auto Summon, and Charge Attack.
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
@@ -47,8 +48,8 @@
 	}
 </script>
 
-<DetailsSection title="Battle Settings">
-	<DetailRow label="Charge Attack" noHover compact>
+<DetailsSection title={m.section_battle_settings()}>
+	<DetailRow label={m.battle_charge_attack()} noHover compact>
 		{#snippet children()}
 			<Switch
 				checked={chargeAttack}
@@ -60,7 +61,7 @@
 		{/snippet}
 	</DetailRow>
 
-	<DetailRow label="Full Auto" noHover compact>
+	<DetailRow label={m.battle_full_auto()} noHover compact>
 		{#snippet children()}
 			<Switch
 				checked={fullAuto}
@@ -72,7 +73,7 @@
 		{/snippet}
 	</DetailRow>
 
-	<DetailRow label="Auto Summon" noHover compact>
+	<DetailRow label={m.battle_auto_summon()} noHover compact>
 		{#snippet children()}
 			<Switch
 				checked={autoSummon}
@@ -84,7 +85,7 @@
 		{/snippet}
 	</DetailRow>
 
-	<DetailRow label="Auto Guard" noHover compact>
+	<DetailRow label={m.battle_auto_guard()} noHover compact>
 		{#snippet children()}
 			<Switch
 				checked={autoGuard}

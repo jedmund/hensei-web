@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { Befoulment, WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
 	import { useWeaponStatModifiers } from '$lib/composables/useWeaponStatModifiers.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
@@ -32,7 +33,7 @@
 	// Build befoulment options
 	const befoulmentOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [
-			{ value: '', label: 'No befoulment' }
+			{ value: '', label: m.befoulment_none() }
 		]
 
 		for (const bef of befoulments) {
@@ -50,7 +51,7 @@
 		const max = maxExorcismLevel ?? 5
 		return Array.from({ length: max + 1 }, (_, i) => ({
 			value: i,
-			label: `Level ${i}`
+			label: m.befoulment_level({ level: String(i) })
 		}))
 	})
 
@@ -105,12 +106,12 @@
 	<div class="befoulment-select">
 		<!-- Befoulment Type -->
 		<div class="field-row">
-			<label class="field-label">Befoulment Type</label>
+			<label class="field-label">{m.label_befoulment_type()}</label>
 			<Select
 				options={befoulmentOptions}
 				value={selectedModifierId}
 				onValueChange={handleModifierChange}
-				placeholder="Select befoulment"
+				placeholder={m.placeholder_select_befoulment()}
 				size="medium"
 				fullWidth
 				contained
@@ -121,7 +122,7 @@
 			<!-- Strength -->
 			<div class="field-row">
 				<label class="field-label">
-					Strength
+					{m.befoulment_strength()}
 					{#if getSuffix(selectedModifier)}
 						<span class="suffix">({getSuffix(selectedModifier)})</span>
 					{/if}
@@ -130,7 +131,7 @@
 					type="number"
 					class="strength-input"
 					step="0.5"
-					placeholder="Value"
+					placeholder={m.placeholder_value()}
 					value={strength || ''}
 					oninput={handleStrengthChange}
 				/>
@@ -138,7 +139,7 @@
 
 			<!-- Exorcism Level -->
 			<div class="field-row">
-				<label class="field-label">Exorcism Level</label>
+				<label class="field-label">{m.label_exorcism_level()}</label>
 				<Select
 					options={exorcismOptions}
 					value={exorcismLevel}
@@ -147,7 +148,7 @@
 					fullWidth
 					contained
 				/>
-				<p class="help-text">Higher exorcism reduces the negative effect</p>
+				<p class="help-text">{m.label_exorcism_hint()}</p>
 			</div>
 		{/if}
 	</div>

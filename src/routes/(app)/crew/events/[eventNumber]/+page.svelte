@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { goto, replaceState } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
@@ -160,11 +161,11 @@
 	<div class="card">
 		{#if eventQuery.isLoading}
 			<div class="loading-state">
-				<p>Loading...</p>
+				<p>{m.crew_loading_generic()}</p>
 			</div>
 		{:else if !gwEvent}
 			<div class="error-state">
-				<p>Event not found</p>
+				<p>{m.gw_event_not_found()}</p>
 				<Button variant="secondary" size="small" onclick={handleBack}>Back to Crew</Button>
 			</div>
 		{:else}
@@ -178,23 +179,23 @@
 					</div>
 					<div class="tab-control">
 						<SegmentedControl value={activeTab} onValueChange={(v) => handleTabChange(v as 'individual' | 'crew')} size="small" variant="background" grow>
-							<Segment value="individual">Individual</Segment>
-							<Segment value="crew">Crew</Segment>
+							<Segment value="individual">{m.gw_tab_individual()}</Segment>
+							<Segment value="crew">{m.gw_tab_crew()}</Segment>
 						</SegmentedControl>
 					</div>
 				{/snippet}
 				{#snippet actions()}
 					{#if crewStore.isOfficer && gwEvent.status !== 'upcoming' && activeTab === 'individual'}
-						<Button variant="primary" size="small" onclick={() => (showScoreModal = true)}>Add Score</Button>
+						<Button variant="primary" size="small" onclick={() => (showScoreModal = true)}>{m.crew_gw_add_score()}</Button>
 					{/if}
 				{/snippet}
 			</CrewHeader>
 
 			{#if !participation}
 				<div class="not-participating">
-					<p>No scores recorded yet for this event.</p>
+					<p>{m.gw_no_scores()}</p>
 					{#if crewStore.isOfficer && gwEvent.status !== 'upcoming'}
-						<p class="hint">Click "Add Score" above to start recording scores.</p>
+						<p class="hint">{m.gw_no_scores_hint()}</p>
 					{/if}
 				</div>
 			{:else}
@@ -203,15 +204,15 @@
 					<div class="stats-row">
 						<div class="stat">
 							<span class="stat-value">{formatScore(participation.totalScore)}</span>
-							<span class="stat-label">Total Honors</span>
+							<span class="stat-label">{m.gw_total_honors()}</span>
 						</div>
 						<div class="stat">
 							<span class="stat-value">{participation.wins ?? 0}</span>
-							<span class="stat-label">Wins</span>
+							<span class="stat-label">{m.gw_wins()}</span>
 						</div>
 						<div class="stat">
 							<span class="stat-value">{participation.losses ?? 0}</span>
-							<span class="stat-label">Losses</span>
+							<span class="stat-label">{m.gw_losses()}</span>
 						</div>
 					</div>
 				{/if}
@@ -225,7 +226,7 @@
 					{/if}
 
 					<div class="section-header">
-						<span class="section-title">Individual Scores</span>
+						<span class="section-title">{m.gw_individual_scores()}</span>
 					</div>
 
 					{#if playerScores.length > 0}
@@ -240,7 +241,7 @@
 							{/each}
 						</ul>
 					{:else}
-						<p class="empty-state">No scores recorded yet</p>
+						<p class="empty-state">{m.gw_no_scores_short()}</p>
 					{/if}
 				{/if}
 
@@ -254,9 +255,9 @@
 
 					<div class="crew-score-table">
 						<div class="crew-score-header">
-							<span class="col-round">Round</span>
-							<span class="col-our-score">Our Score</span>
-							<span class="col-their-score">Their Score</span>
+							<span class="col-round">{m.gw_round()}</span>
+							<span class="col-our-score">{m.gw_our_score()}</span>
+							<span class="col-their-score">{m.gw_their_score()}</span>
 							<span class="col-actions"></span>
 						</div>
 						{#each [2, 3, 4, 5] as round (round)}
@@ -266,7 +267,7 @@
 									<span class="round-label">{GW_ROUND_LABELS[round as GwRound]}</span>
 									{#if score?.victory !== undefined && score.victory !== null}
 										<span class="result-badge" class:win={score.victory} class:loss={!score.victory}>
-											{score.victory ? 'Win' : 'Loss'}
+											{score.victory ? m.gw_win() : m.gw_loss()}
 										</span>
 									{/if}
 								</div>
@@ -307,7 +308,7 @@
 														class="dropdown-menu-item"
 														onclick={() => openCrewScoreModal(round as GwRound, score)}
 													>
-														Edit score...
+														{m.gw_edit_score()}
 													</DropdownMenuBase.Item>
 												{/snippet}
 											</DropdownMenu>
@@ -315,7 +316,7 @@
 									{:else}
 										{#if crewStore.isOfficer}
 											<Button size="small" onclick={() => openCrewScoreModal(round as GwRound)}>
-												Record
+												{m.gw_record()}
 											</Button>
 										{/if}
 									{/if}

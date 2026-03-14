@@ -11,6 +11,7 @@
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import { formatScore, parseScore } from '$lib/utils/gw'
 	import { GW_ROUND_LABELS, type GwRound, type GwIndividualScore } from '$lib/types/api/gw'
+	import * as m from '$lib/paraglide/messages'
 
 	// Simplified types matching the API response
 	interface MemberDuringEvent {
@@ -236,25 +237,25 @@
 </script>
 
 <Dialog bind:open onOpenChange={(isOpen) => !isOpen && handleClose()}>
-	<ModalHeader title="Add Score" />
+	<ModalHeader title={m.crew_add_score_title()} />
 	<ModalBody>
 		<div class="score-form">
 			<Select
 				options={playerOptions}
 				bind:value={selectedPlayerId}
-				placeholder="Select player"
-				label="Player"
+				placeholder={m.crew_score_select_player()}
+				label={m.crew_score_player()}
 				fullWidth
 				contained
 				portal
 			/>
 
 			<Input
-				label="Cumulative Score"
+				label={m.crew_score_cumulative()}
 				type="text"
 				inputmode="numeric"
 				bind:value={cumulativeScore}
-				placeholder="Enter total score"
+				placeholder={m.crew_score_enter_total()}
 				disabled={!isCumulative}
 				fullWidth
 				contained
@@ -262,7 +263,7 @@
 
 			<label class="checkbox-row">
 				<Checkbox bind:checked={isCumulative} size="small" />
-				<span>Cumulative score</span>
+				<span>{m.crew_score_cumulative_label()}</span>
 			</label>
 
 			{#if !isCumulative}
@@ -283,13 +284,13 @@
 			<div class="excused-section">
 				<label class="checkbox-row">
 					<Checkbox bind:checked={isExcused} size="small" contained />
-					<span>Excused?</span>
+					<span>{m.crew_score_excused_q()}</span>
 				</label>
 				{#if isExcused}
 					<textarea
 						class="excuse-textarea"
 						bind:value={excuseReason}
-						placeholder="Excusal reason (optional)"
+						placeholder={m.crew_score_excusal_reason()}
 						rows="2"
 					></textarea>
 				{/if}
@@ -297,7 +298,7 @@
 
 			{#if addScoreMutation.isError}
 				<p class="error-message">
-					{addScoreMutation.error?.message ?? 'Failed to add score'}
+					{addScoreMutation.error?.message ?? m.crew_score_add_failed()}
 				</p>
 			{/if}
 		</div>
@@ -305,7 +306,7 @@
 	<ModalFooter
 		onCancel={handleClose}
 		primaryAction={{
-			label: isSubmitting ? 'Saving...' : 'Save',
+			label: isSubmitting ? m.crew_score_saving() : m.action_save(),
 			onclick: handleSubmit,
 			disabled: !canSubmit
 		}}

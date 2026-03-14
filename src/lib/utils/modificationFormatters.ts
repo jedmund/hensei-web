@@ -9,7 +9,7 @@ export function formatRingStat(
 	locale: 'en' | 'ja' = 'en'
 ): string {
 	const stat = getRingStat(modifier)
-	if (!stat) return `Unknown +${strength}`
+	if (!stat) return m.modifier_unknown({ strength: String(strength) })
 
 	const statName = stat.name[locale]
 	return `${statName} +${strength}${stat.suffix}`
@@ -27,7 +27,7 @@ export function formatEarringStat(
 			? getElementalizedEarringStat(modifier, characterElement, locale)
 			: getEarringStat(modifier)
 
-	if (!stat) return `Unknown +${strength}`
+	if (!stat) return m.modifier_unknown({ strength: String(strength) })
 
 	const statName = stat.name[locale]
 	return `${statName} +${strength}${stat.suffix}`
@@ -67,7 +67,7 @@ export function formatUncapLevel(level?: number | null): string {
 
 export function formatTranscendenceStep(step?: number | null): string {
 	if (!step || step === 0) return ''
-	return `Stage ${step}`
+	return m.transcendence_stage({ step: String(step) })
 }
 
 export function getStatModifierIcon(type: 'ring' | 'earring', modifier: number): string | null {
@@ -77,20 +77,20 @@ export function getStatModifierIcon(type: 'ring' | 'earring', modifier: number):
 export function getElementName(element?: number | null): string {
 	switch (element) {
 		case 0:
-			return 'Null'
+			return m.element_null()
 		case 1:
-			return 'Wind'
+			return m.element_wind()
 		case 2:
-			return 'Fire'
+			return m.element_fire()
 		case 3:
-			return 'Water'
+			return m.element_water()
 		case 4:
-			return 'Earth'
+			return m.element_earth()
 		case 5:
-			return 'Dark'
+			return m.element_dark()
 		case 6:
-			return 'Light'
+			return m.element_light()
 		default:
-			return 'Unknown'
+			return m.mention_unknown()
 	}
 }

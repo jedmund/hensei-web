@@ -64,26 +64,26 @@
 
 	// Proficiency options - matches database enum values
 	const proficiencyOptions = [
-		{ value: 1, label: 'Sabre' },
-		{ value: 2, label: 'Dagger' },
-		{ value: 3, label: 'Axe' },
-		{ value: 4, label: 'Spear' },
-		{ value: 5, label: 'Bow' },
-		{ value: 6, label: 'Staff' },
-		{ value: 7, label: 'Melee' },
-		{ value: 8, label: 'Harp' },
-		{ value: 9, label: 'Gun' },
-		{ value: 10, label: 'Katana' }
+		{ value: 1, label: m.proficiency_sabre() },
+		{ value: 2, label: m.proficiency_dagger() },
+		{ value: 3, label: m.proficiency_axe() },
+		{ value: 4, label: m.proficiency_spear() },
+		{ value: 5, label: m.proficiency_bow() },
+		{ value: 6, label: m.proficiency_staff() },
+		{ value: 7, label: m.proficiency_melee() },
+		{ value: 8, label: m.proficiency_harp() },
+		{ value: 9, label: m.proficiency_gun() },
+		{ value: 10, label: m.proficiency_katana() }
 	]
 
 	// Element options with colored dots
 	const elementOptions = [
-		{ value: 1, label: 'Wind', color: getElementColor(1) },
-		{ value: 2, label: 'Fire', color: getElementColor(2) },
-		{ value: 3, label: 'Water', color: getElementColor(3) },
-		{ value: 4, label: 'Earth', color: getElementColor(4) },
-		{ value: 5, label: 'Dark', color: getElementColor(5) },
-		{ value: 6, label: 'Light', color: getElementColor(6) }
+		{ value: 1, label: m.element_wind(), color: getElementColor(1) },
+		{ value: 2, label: m.element_fire(), color: getElementColor(2) },
+		{ value: 3, label: m.element_water(), color: getElementColor(3) },
+		{ value: 4, label: m.element_earth(), color: getElementColor(4) },
+		{ value: 5, label: m.element_dark(), color: getElementColor(5) },
+		{ value: 6, label: m.element_light(), color: getElementColor(6) }
 	]
 
 	// Filter artifacts by selected proficiency
@@ -134,7 +134,7 @@
 	function handleSelectModifier(slot: number) {
 		const config: PaneConfig = {
 			id: `modifier-select-${slot}`,
-			title: `Select Skill ${slot}`,
+			title: m.artifact_select_skill({ slot: String(slot) }),
 			component: ArtifactModifierList,
 			props: {
 				slot,
@@ -317,32 +317,32 @@
 
 <div class="add-artifact-sidebar">
 	<div class="form-sections">
-		<DetailsSection title="Base Properties">
-			<DetailRow label="Proficiency" noHover>
+		<DetailsSection title={m.section_base_properties()}>
+			<DetailRow label={m.label_proficiency()} noHover>
 				<Select
 					options={proficiencyOptions}
 					value={proficiency}
 					onValueChange={handleProficiencyChange}
 					size="small"
 					contained
-					placeholder="Select proficiency"
+					placeholder={m.placeholder_select_proficiency()}
 				/>
 			</DetailRow>
 
-			<DetailRow label="Element" noHover>
+			<DetailRow label={m.label_element()} noHover>
 				<Select
 					options={elementOptions}
 					value={element}
 					onValueChange={(v) => (element = v)}
 					size="small"
 					contained
-					placeholder="Select element"
+					placeholder={m.placeholder_select_element()}
 				/>
 			</DetailRow>
 		</DetailsSection>
 
 		{#if proficiency !== undefined}
-			<DetailsSection title="Artifact">
+			<DetailsSection title={m.artifact_title()}>
 				<div class="artifact-select">
 					{#if artifactsQuery.isPending}
 						<p class="loading">{m.sidebar_loading_artifacts()}</p>
@@ -355,7 +355,7 @@
 							options={artifactOptions}
 							value={selectedArtifactId}
 							onValueChange={handleArtifactChange}
-							placeholder="Select artifact..."
+							placeholder={m.placeholder_select_artifact()}
 							size="medium"
 							fullWidth
 							contained
@@ -366,8 +366,8 @@
 		{/if}
 
 		{#if selectedArtifact}
-			<DetailsSection title="Configuration">
-				<DetailRow label="Level" noHover>
+			<DetailsSection title={m.section_configuration()}>
+				<DetailRow label={m.label_level()} noHover>
 					{#if isQuirk}
 						<span>1</span>
 					{:else}
@@ -380,13 +380,13 @@
 					{/if}
 				</DetailRow>
 
-				<DetailRow label="Nickname" noHover>
-					<Input bind:value={nickname} placeholder="Optional nickname" maxLength={50} />
+				<DetailRow label={m.label_nickname()} noHover>
+					<Input bind:value={nickname} placeholder={m.placeholder_optional_nickname()} maxLength={50} />
 				</DetailRow>
 			</DetailsSection>
 
 			{#if !isQuirk}
-				<DetailsSection title="Skills">
+				<DetailsSection title={m.artifact_skills()}>
 					<div class="skills-list">
 						{#each [1, 2, 3, 4] as slot}
 							<ArtifactSkillRow

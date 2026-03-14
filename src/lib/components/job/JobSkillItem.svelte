@@ -3,6 +3,7 @@
 	import { getSkillCategoryName } from '$lib/utils/jobUtils'
 	import { getJobSkillIcon } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		skill: JobSkill
@@ -45,7 +46,7 @@
 
 	{#if variant === 'current' && onRemove}
 		<button class="remove-button" onclick={(e) => { e.stopPropagation(); onRemove?.(); }} aria-label="Remove skill">
-			Remove
+			{m.action_remove()}
 		</button>
 	{/if}
 </button>

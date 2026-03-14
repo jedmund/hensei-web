@@ -3,11 +3,12 @@
 	import type { Cell } from 'wx-svelte-grid'
 	import type { JobAccessory } from '$lib/types/api/entities'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
+	import { localizedName } from '$lib/utils/locale'
 
 	const { row }: Cell = $props()
 
 	const accessory = row as JobAccessory
-	const jobName = $derived(accessory.job?.name?.en ?? '—')
+	const jobName = $derived(localizedName(accessory.job?.name))
 	const jobIcon = $derived(accessory.job ? getJobIconUrl(accessory.job.granblueId) : undefined)
 </script>
 

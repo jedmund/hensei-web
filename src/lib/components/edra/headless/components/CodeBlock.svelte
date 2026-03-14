@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { NodeViewWrapper, NodeViewContent } from 'svelte-tiptap';
 	import type { NodeViewProps } from '@tiptap/core';
 	const { node, updateAttributes, extension }: NodeViewProps = $props();
@@ -35,9 +36,9 @@
 		</select>
 		<button class="code-wrapper-copy" onclick={copyCode}>
 			{#if isCopying}
-				<span class="code-wrapper-copy-text copied">Copied!</span>
+				<span class="code-wrapper-copy-text copied">{m.code_copied()}</span>
 			{:else}
-				<span class="code-wrapper-copy-text">Copy</span>
+				<span class="code-wrapper-copy-text">{m.code_copy()}</span>
 			{/if}
 		</button>
 	</div>

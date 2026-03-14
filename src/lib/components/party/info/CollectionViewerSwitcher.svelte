@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import Icon from '$lib/components/Icon.svelte'
 	import { DropdownMenu, Tooltip } from 'bits-ui'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
@@ -51,14 +52,14 @@
 								<div class="avatar-placeholder" aria-hidden="true"></div>
 							{/if}
 						</div>
-						<span class="switcher-name">{activeCollectionUser === 'viewer' ? 'You' : activeUser?.username}</span>
+						<span class="switcher-name">{activeCollectionUser === 'viewer' ? m.collection_viewer_you() : activeUser?.username}</span>
 					</div>
 					<Icon name="chevron-down" size={10} />
 				</DropdownMenu.Trigger>
 
 				<DropdownMenu.Portal>
 					<DropdownMenu.Content class="collection-dropdown-content" sideOffset={6} align="end">
-						<div class="dropdown-label">Viewing as</div>
+						<div class="dropdown-label">{m.collection_viewer_viewing_as()}</div>
 						<DropdownMenu.RadioGroup value={activeCollectionUser} onValueChange={(v) => onSwitchCollectionUser(v as 'viewer' | 'source')}>
 							<DropdownMenu.RadioItem value="viewer" class="dropdown-radio-item {authElement}">
 								<div class="switcher-avatar {authElement}">
@@ -75,7 +76,7 @@
 										<div class="avatar-placeholder" aria-hidden="true"></div>
 									{/if}
 								</div>
-								<span>You</span>
+								<span>{m.collection_viewer_you()}</span>
 								{#if activeCollectionUser === 'viewer'}
 									<span class="radio-indicator"><Icon name="check" size={14} /></span>
 								{/if}

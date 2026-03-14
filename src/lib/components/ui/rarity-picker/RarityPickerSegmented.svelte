@@ -3,6 +3,7 @@
 	import { ToggleGroup } from 'bits-ui'
 	import Tooltip from '../Tooltip.svelte'
 	import { RARITY_LABELS, getRarityImage } from '$lib/utils/rarity'
+	import * as m from '$lib/paraglide/messages'
 
 	// Rarity display order: R(1) → SR(2) → SSR(3)
 	const RARITY_DISPLAY_ORDER = [1, 2, 3]
@@ -143,7 +144,7 @@
 			{/if}
 		</div>
 		{#if hasSelection}
-			<button type="button" class="clearButton" onclick={handleClear}> Clear </button>
+			<button type="button" class="clearButton" onclick={handleClear}> {m.button_clear()} </button>
 		{/if}
 	</div>
 {:else}

@@ -10,6 +10,7 @@ import type { JobSkillList } from '$lib/types/api/party'
 import { getImageBaseUrl } from '$lib/api/adapters/config'
 import { getGenericPlaceholder } from './images'
 import { localizedName } from '$lib/utils/locale'
+import * as m from '$lib/paraglide/messages'
 
 /**
  * Gets the base path for images
@@ -88,20 +89,21 @@ export function getJobWideImageUrl(job: Job | undefined, gender: Gender = Gender
  * Converts internal row codes to user-friendly names
  */
 export function getJobTierName(row: string | number): string {
-	const tierNames: Record<string, string> = {
-		'1': 'Class I',
-		'2': 'Class II',
-		'3': 'Class III',
-		'4': 'Class IV',
-		'5': 'Class V',
-		ex: 'EX',
-		ex1: 'EX',
-		ex2: 'EXII',
-		o1: 'Origin I'
+	const tierMessages: Record<string, () => string> = {
+		'1': m.job_tier_class_1,
+		'2': m.job_tier_class_2,
+		'3': m.job_tier_class_3,
+		'4': m.job_tier_class_4,
+		'5': m.job_tier_class_5,
+		ex: m.job_tier_ex,
+		ex1: m.job_tier_ex,
+		ex2: m.job_tier_ex2,
+		o1: m.job_tier_origin_1
 	}
 
 	const rowStr = row.toString().toLowerCase()
-	return tierNames[rowStr] || `Class ${row}`
+	const messageFn = tierMessages[rowStr]
+	return messageFn ? messageFn() : `Class ${row}`
 }
 
 /**
@@ -167,11 +169,11 @@ export function isSkillSlotLocked(
  * Get skill category display name
  */
 export function getSkillCategoryName(skill: JobSkill): string {
-	if (skill.main) return 'Main'
-	if (skill.sub) return 'Subskill'
-	if (skill.emp) return 'EMP'
-	if (skill.base) return 'Base'
-	return 'Unknown'
+	if (skill.main) return m.skill_category_main()
+	if (skill.sub) return m.skill_category_sub()
+	if (skill.emp) return m.skill_category_emp()
+	if (skill.base) return m.skill_category_base()
+	return m.skill_category_unknown()
 }
 
 /**
@@ -191,25 +193,25 @@ export function getSkillCategoryColor(skill: JobSkill): string {
  * Converts proficiency numbers to weapon type names
  */
 export function formatJobProficiency(proficiency: [number, number]): string[] {
-	const weaponTypes: Record<number, string> = {
-		1: 'Sabre',
-		2: 'Dagger',
-		3: 'Axe',
-		4: 'Spear',
-		5: 'Bow',
-		6: 'Staff',
-		7: 'Melee',
-		8: 'Harp',
-		9: 'Gun',
-		10: 'Katana'
+	const weaponTypes: Record<number, () => string> = {
+		1: m.proficiency_sabre,
+		2: m.proficiency_dagger,
+		3: m.proficiency_axe,
+		4: m.proficiency_spear,
+		5: m.proficiency_bow,
+		6: m.proficiency_staff,
+		7: m.proficiency_melee,
+		8: m.proficiency_harp,
+		9: m.proficiency_gun,
+		10: m.proficiency_katana
 	}
 
 	const result: string[] = []
-	const type1 = proficiency[0] ? weaponTypes[proficiency[0]] : undefined
+	const type1 = proficiency[0] ? weaponTypes[proficiency[0]]?.() : undefined
 	if (type1) {
 		result.push(type1)
 	}
-	const type2 = proficiency[1] ? weaponTypes[proficiency[1]] : undefined
+	const type2 = proficiency[1] ? weaponTypes[proficiency[1]]?.() : undefined
 	if (type2) {
 		result.push(type2)
 	}
@@ -296,29 +298,29 @@ export function validateSkillConfiguration(
  * Proficiency options for job forms
  */
 export const PROFICIENCIES = [
-	{ value: 0, label: 'None' },
-	{ value: 1, label: 'Sabre' },
-	{ value: 2, label: 'Dagger' },
-	{ value: 3, label: 'Axe' },
-	{ value: 4, label: 'Spear' },
-	{ value: 5, label: 'Bow' },
-	{ value: 6, label: 'Staff' },
-	{ value: 7, label: 'Melee' },
-	{ value: 8, label: 'Harp' },
-	{ value: 9, label: 'Gun' },
-	{ value: 10, label: 'Katana' }
-] as const
+	{ value: 0, label: m.proficiency_none() },
+	{ value: 1, label: m.proficiency_sabre() },
+	{ value: 2, label: m.proficiency_dagger() },
+	{ value: 3, label: m.proficiency_axe() },
+	{ value: 4, label: m.proficiency_spear() },
+	{ value: 5, label: m.proficiency_bow() },
+	{ value: 6, label: m.proficiency_staff() },
+	{ value: 7, label: m.proficiency_melee() },
+	{ value: 8, label: m.proficiency_harp() },
+	{ value: 9, label: m.proficiency_gun() },
+	{ value: 10, label: m.proficiency_katana() }
+]
 
 /**
  * Row options for job forms
  */
 export const ROWS = [
-	{ value: '1', label: 'Class I' },
-	{ value: '2', label: 'Class II' },
-	{ value: '3', label: 'Class III' },
-	{ value: '4', label: 'Class IV' },
-	{ value: '5', label: 'Class V' },
-	{ value: 'ex', label: 'EX' },
-	{ value: 'ex2', label: 'EX II' },
-	{ value: 'o1', label: 'Origin I' }
-] as const
+	{ value: '1', label: m.job_tier_class_1() },
+	{ value: '2', label: m.job_tier_class_2() },
+	{ value: '3', label: m.job_tier_class_3() },
+	{ value: '4', label: m.job_tier_class_4() },
+	{ value: '5', label: m.job_tier_class_5() },
+	{ value: 'ex', label: m.job_tier_ex() },
+	{ value: 'ex2', label: m.job_tier_ex2() },
+	{ value: 'o1', label: m.job_tier_origin_1() }
+]

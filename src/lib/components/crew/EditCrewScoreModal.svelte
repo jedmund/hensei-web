@@ -10,6 +10,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import { GW_ROUND_LABELS, type GwCrewScore, type GwRound } from '$lib/types/api/gw'
 	import { formatScore, parseScore } from '$lib/utils/gw'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean
@@ -132,7 +133,7 @@
 	}
 
 	async function handleDelete() {
-		if (!confirm('Are you sure you want to delete this crew score?')) return
+		if (!confirm(m.crew_crew_score_delete())) return
 
 		try {
 			await deleteCrewScoreMutation.mutateAsync()
@@ -158,45 +159,45 @@
 <Dialog bind:open>
 	<ModalHeader
 		title={GW_ROUND_LABELS[round]}
-		description={existingScore ? 'Edit score' : 'Add score'}
+		description={existingScore ? m.crew_edit_crew_score() : m.crew_add_crew_score()}
 	/>
 
 	<ModalBody>
 		<div class="form-content">
 			<Input
-				label="Crew Score"
+				label={m.crew_crew_score()}
 				type="text"
 				inputmode="numeric"
 				bind:value={crewScore}
-				placeholder="Enter your crew's score"
+				placeholder={m.crew_crew_score_placeholder()}
 				fullWidth
 				contained
 			/>
 
 			<Input
-				label="Opponent Score"
+				label={m.crew_opponent_score()}
 				type="text"
 				inputmode="numeric"
 				bind:value={opponentScore}
-				placeholder="Enter opponent's score (optional)"
+				placeholder={m.crew_opponent_score_placeholder()}
 				fullWidth
 				contained
 			/>
 
 			<Input
-				label="Opponent Name"
+				label={m.crew_opponent_name()}
 				type="text"
 				bind:value={opponentName}
-				placeholder="Enter opponent crew name (optional)"
+				placeholder={m.crew_opponent_name_placeholder()}
 				fullWidth
 				contained
 			/>
 
 			<Input
-				label="Opponent Crew ID"
+				label={m.crew_opponent_id()}
 				type="text"
 				bind:value={opponentCrewId}
-				placeholder="Enter opponent crew ID (optional)"
+				placeholder={m.crew_opponent_id_placeholder()}
 				fullWidth
 				contained
 			/>
@@ -212,7 +213,7 @@
 	<ModalFooter
 		onCancel={handleCancel}
 		primaryAction={{
-			label: isSubmitting ? 'Saving...' : 'Save',
+			label: isSubmitting ? m.crew_crew_score_saving() : m.action_save(),
 			onclick: handleSave,
 			disabled: isSubmitting || !hasChanges || !crewScore
 		}}
@@ -224,7 +225,7 @@
 					onclick={handleDelete}
 					disabled={deleteCrewScoreMutation.isPending}
 				>
-					Delete score
+					{m.crew_crew_score_delete_button()}
 				</Button>
 			{/if}
 		{/snippet}

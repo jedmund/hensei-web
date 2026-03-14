@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Editor } from '@tiptap/core';
+	import * as m from '$lib/paraglide/messages';
 
 	interface Props {
 		editor: Editor;
@@ -8,12 +9,12 @@
 	const { editor }: Props = $props();
 
 	const FONT_SIZE = [
-		{ label: 'Tiny', value: '0.7rem' },
-		{ label: 'Smaller', value: '0.75rem' },
-		{ label: 'Small', value: '0.9rem' },
-		{ label: 'Default', value: '' },
-		{ label: 'Large', value: '1.25rem' },
-		{ label: 'Extra Large', value: '1.5rem' }
+		{ label: m.font_size_tiny(), value: '0.7rem' },
+		{ label: m.font_size_smaller(), value: '0.75rem' },
+		{ label: m.font_size_small(), value: '0.9rem' },
+		{ label: m.font_size_default(), value: '' },
+		{ label: m.font_size_large(), value: '1.25rem' },
+		{ label: m.font_size_extra_large(), value: '1.5rem' }
 	];
 
 	let currentSize = $derived.by(() => editor.getAttributes('textStyle').fontSize || '');

@@ -17,6 +17,7 @@ import MathMatics from '@tiptap/extension-mathematics';
 import Youtube from '@tiptap/extension-youtube';
 import { EntityMention, createEntityMentionSuggestion } from './extensions/entity-mention/index.js';
 
+import * as m from '$lib/paraglide/messages';
 import AutoJoiner from 'tiptap-extension-auto-joiner';
 import 'katex/dist/katex.min.css';
 import { InlineMathReplacer } from './extensions/InlineMathReplacer.js';
@@ -61,9 +62,9 @@ export default (
 				// Use different placeholders depending on the node type:
 				placeholder: ({ node }) => {
 					if (node.type.name === 'heading') {
-						return 'What’s the title?';
+						return m.editor_title_placeholder();
 					} else if (node.type.name === 'paragraph') {
-						return 'Press / or write something ...';
+						return m.editor_body_placeholder();
 					}
 					return '';
 				}
@@ -87,7 +88,7 @@ export default (
 			MathMatics.configure({
 				blockOptions: {
 					onClick: (node, pos) => {
-						const newCalculation = prompt('Enter new calculation:', node.attrs.latex);
+						const newCalculation = prompt(m.editor_prompt_calculation(), node.attrs.latex);
 						if (newCalculation) {
 							editor
 								.chain()
@@ -100,7 +101,7 @@ export default (
 				},
 				inlineOptions: {
 					onClick: (node, pos) => {
-						const newCalculation = prompt('Enter new calculation:', node.attrs.latex);
+						const newCalculation = prompt(m.editor_prompt_calculation(), node.attrs.latex);
 						if (newCalculation) {
 							editor
 								.chain()

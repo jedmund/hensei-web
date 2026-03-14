@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { AugmentSkill, WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
 	import { useWeaponStatModifiers } from '$lib/composables/useWeaponStatModifiers.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
@@ -36,7 +37,7 @@
 
 	// Build primary skill options
 	const primaryOptions = $derived.by(() => {
-		const items: Array<{ value: string; label: string }> = [{ value: '', label: 'No skill' }]
+		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
 		for (const skill of primaryAxSkills) {
 			items.push({
@@ -50,7 +51,7 @@
 
 	// Build secondary skill options
 	const secondaryOptions = $derived.by(() => {
-		const items: Array<{ value: string; label: string }> = [{ value: '', label: 'No skill' }]
+		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
 		for (const skill of secondaryAxSkills) {
 			items.push({
@@ -132,7 +133,7 @@
 						options={primaryOptions}
 						value={selectedPrimaryId}
 						onValueChange={handlePrimaryChange}
-						placeholder="Select skill"
+						placeholder={m.placeholder_select_skill()}
 						size="medium"
 						fullWidth
 						contained
@@ -144,7 +145,7 @@
 						type="number"
 						class="skill-value"
 						step="0.5"
-						placeholder="Value"
+						placeholder={m.placeholder_value()}
 						value={primaryStrength || ''}
 						oninput={handlePrimaryStrengthChange}
 					/>
@@ -164,7 +165,7 @@
 							options={secondaryOptions}
 							value={selectedSecondaryId}
 							onValueChange={handleSecondaryChange}
-							placeholder="Select skill"
+							placeholder={m.placeholder_select_skill()}
 							size="medium"
 							fullWidth
 							contained
@@ -176,7 +177,7 @@
 							type="number"
 							class="skill-value"
 							step="0.5"
-							placeholder="Value"
+							placeholder={m.placeholder_value()}
 							value={secondaryStrength || ''}
 							oninput={handleSecondaryStrengthChange}
 						/>

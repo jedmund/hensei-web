@@ -32,15 +32,15 @@
 	// Skill category filter options
 	// Values match Rails search_controller expectations:
 	// -1: All, 0-3: Color categories, 4: EMP, 5: Base
-	const skillCategoryOptions = [
-		{ value: -1, label: 'All Skills' },
-		{ value: 2, label: 'Damaging' },
-		{ value: 0, label: 'Buffing' },
-		{ value: 1, label: 'Debuffing' },
-		{ value: 3, label: 'Healing' },
-		{ value: 4, label: 'EMP' },
-		{ value: 5, label: 'Base' }
-	]
+	const skillCategoryOptions = $derived([
+		{ value: -1, label: m.skill_filter_all() },
+		{ value: 2, label: m.skill_filter_damaging() },
+		{ value: 0, label: m.skill_filter_buffing() },
+		{ value: 1, label: m.skill_filter_debuffing() },
+		{ value: 3, label: m.skill_filter_healing() },
+		{ value: 4, label: m.skill_category_emp() },
+		{ value: 5, label: m.skill_category_base() }
+	])
 
 	// State for filtering (local UI state, not server state)
 	let searchQuery = $state('')
@@ -122,7 +122,7 @@
 		error = undefined
 
 		if (slotLocked) {
-			error = 'This slot cannot be changed'
+			error = m.skill_slot_locked()
 			return
 		}
 
@@ -134,7 +134,7 @@
 		})
 
 		if (alreadyEquipped) {
-			error = 'This skill is already equipped in another slot'
+			error = m.skill_slot_already_equipped()
 			return
 		}
 
@@ -153,13 +153,13 @@
 	{#if slotLocked && currentSkill}
 		<div class="locked-notice">
 			<Icon name="arrow-left" size={16} />
-			<p>This slot cannot be changed</p>
+			<p>{m.skill_slot_locked()}</p>
 		</div>
 	{/if}
 
 	{#if currentSkill && !slotLocked}
 		<div class="current-skill">
-			<h4>Current Skill</h4>
+			<h4>{m.skill_slot_current()}</h4>
 			<JobSkillItem
 				skill={currentSkill}
 				variant="current"
@@ -203,12 +203,12 @@
 		{#if !job}
 			<div class="empty-state">
 				<Icon name="briefcase" size={32} />
-				<p>Select a job first</p>
+				<p>{m.skill_slot_select_job_first()}</p>
 			</div>
 		{:else if slotLocked}
 			<div class="empty-state">
 				<Icon name="arrow-left" size={32} />
-				<p>This slot cannot be changed</p>
+				<p>{m.skill_slot_locked()}</p>
 			</div>
 		{:else if skillsQuery.isLoading}
 			<div class="loading-state">
@@ -238,12 +238,12 @@
 							<div class="clear-filters">
 								{#if searchQuery}
 									<Button size="small" variant="ghost" onclick={() => searchQuery = ''}>
-										Clear search
+										{m.skill_clear_search()}
 									</Button>
 								{/if}
 								{#if skillCategory >= 0}
 									<Button size="small" variant="ghost" onclick={() => skillCategory = -1}>
-										Clear filter
+										{m.filter_clear()}
 									</Button>
 								{/if}
 							</div>

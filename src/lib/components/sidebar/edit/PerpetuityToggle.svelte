@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import { getBasePath } from '$lib/utils/images'
 
@@ -38,7 +39,7 @@
 				alt="Perpetuity Ring"
 				class="perpetuity-icon"
 			/>
-			<span class="toggle-label">Perpetuity Ring</span>
+			<span class="toggle-label">{m.label_perpetuity_ring()}</span>
 		</div>
 	</label>
 </div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as m from '$lib/paraglide/messages'
   import SummonUnit from '$lib/components/units/SummonUnit.svelte'
   import type { GridSummon } from '$lib/types/api/party'
 
@@ -19,7 +20,7 @@
 </script>
 
 <div class="container">
-  <h3>Subaura Summons</h3>
+  <h3>{m.extra_summons_subaura()}</h3>
   <ul class="grid" id="ExtraSummons">
     {#each subauraSlots() as summon, i}
       <li>

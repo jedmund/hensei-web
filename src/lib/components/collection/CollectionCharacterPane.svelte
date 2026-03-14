@@ -175,7 +175,7 @@
 
 	// Handle delete from collection
 	function handleDelete() {
-		if (confirm('Are you sure you want to remove this character from your collection?')) {
+		if (confirm(m.collection_remove_confirm_character())) {
 			deleteMutation.mutate(character.id, {
 				onSuccess: () => {
 					onClose?.()
@@ -196,7 +196,7 @@
 				sidebar.setAction(enterEditMode, m.action_edit(), elementName)
 				sidebar.setOverflowMenu([
 					{
-						label: 'Remove from collection',
+						label: m.collection_remove_from(),
 						handler: handleDelete,
 						variant: 'danger'
 					}
@@ -305,8 +305,8 @@
 			size="small"
 			grow
 		>
-			<Segment value="info">Info</Segment>
-			<Segment value="collection">My Collection</Segment>
+			<Segment value="info">{m.collection_pane_info()}</Segment>
+			<Segment value="collection">{m.collection_pane_my_collection()}</Segment>
 		</SegmentedControl>
 	</div>
 
@@ -334,8 +334,8 @@
 		{:else}
 			<!-- My Collection view: user's customizations -->
 			<div class="collection-view">
-				<DetailsSection title="General">
-					<DetailRow label="Uncap Level">
+				<DetailsSection title={m.section_general()}>
+					<DetailRow label={m.label_uncap_level()}>
 						<UncapIndicator
 							type="character"
 							uncapLevel={character.uncapLevel}
@@ -346,15 +346,15 @@
 							transcendence={characterData?.uncap?.transcendence}
 						/>
 					</DetailRow>
-					<DetailRow label="Perpetuity Ring" value={character.perpetuity ? 'Equipped' : '—'} />
+					<DetailRow label={m.label_perpetuity_ring()} value={character.perpetuity ? m.label_equipped() : '—'} />
 				</DetailsSection>
 
-				<DetailsSection title="Awakening" empty={!hasAwakening} emptyMessage="Not set">
-					<DetailRow label="Type" value={getAwakeningType()} />
-					<DetailRow label="Level" value={getAwakeningLevel()} />
+				<DetailsSection title={m.details_awakening()} empty={!hasAwakening} emptyMessage={m.collection_not_set()}>
+					<DetailRow label={m.label_type()} value={getAwakeningType()} />
+					<DetailRow label={m.label_level()} value={getAwakeningLevel()} />
 				</DetailsSection>
 
-				<DetailsSection title="Over Mastery" empty={!hasRings} emptyMessage="No ring equipped">
+				<DetailsSection title={m.details_over_mastery()} empty={!hasRings} emptyMessage={m.collection_no_ring()}>
 					{#if character.ring1?.modifier != null && character.ring1.modifier !== 0}
 						<DetailRow
 							label={getRingLabel(character.ring1)}
@@ -382,9 +382,9 @@
 				</DetailsSection>
 
 				<DetailsSection
-					title="Aetherial Mastery"
+					title={m.details_aetherial_mastery()}
 					empty={!hasEarring}
-					emptyMessage="No earring equipped"
+					emptyMessage={m.collection_no_earring()}
 				>
 					<DetailRow label={getEarringLabel()} value={getEarringValue()} />
 				</DetailsSection>

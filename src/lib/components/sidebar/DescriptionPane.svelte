@@ -32,7 +32,7 @@
 	function openEditPane() {
 		paneStack.push({
 			id: 'edit-description',
-			title: 'Edit Description',
+			title: m.pane_edit_description(),
 			component: EditDescriptionPane,
 			props: {
 				description,
@@ -62,7 +62,7 @@
 				<div class="video-embed">
 					<iframe
 						src="https://www.youtube.com/embed/{videoId}"
-						title="YouTube video"
+						title={m.tooltip_youtube_video()}
 						frameborder="0"
 						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 						allowfullscreen

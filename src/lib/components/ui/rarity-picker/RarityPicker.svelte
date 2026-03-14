@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { MediaQuery } from 'svelte/reactivity'
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'
@@ -81,7 +82,7 @@
 			size="medium"
 			{contained}
 			disabled={disabled}
-			placeholder="Select rarities..."
+			placeholder={m.placeholder_select_rarities()}
 			fullWidth={true}
 			class={className}
 		/>
@@ -93,7 +94,7 @@
 			size="medium"
 			{contained}
 			disabled={disabled}
-			placeholder="Select rarity"
+			placeholder={m.filter_rarity()}
 			fullWidth={true}
 			class={className}
 		/>

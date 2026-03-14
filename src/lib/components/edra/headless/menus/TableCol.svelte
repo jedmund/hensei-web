@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { type Editor } from '@tiptap/core';
+	import * as m from '$lib/paraglide/messages';
 	import ArrowLeftFromLine from '@lucide/svelte/icons/arrow-left-from-line';
 	import ArrowRightFromLine from '@lucide/svelte/icons/arrow-right-from-line';
 	import Trash from '@lucide/svelte/icons/trash';
@@ -31,21 +32,21 @@
 >
 	<button
 		class="edra-command-button"
-		title="Add Column After"
+		title={m.editor_add_col_after()}
 		onclick={() => editor.chain().focus().addColumnAfter().run()}
 	>
 		<ArrowRightFromLine class="edra-toolbar-icon" />
 	</button>
 	<button
 		class="edra-command-button"
-		title="Add Column Before"
+		title={m.editor_add_col_before()}
 		onclick={() => editor.chain().focus().addColumnBefore().run()}
 	>
 		<ArrowLeftFromLine class="edra-toolbar-icon" />
 	</button>
 	<button
 		class="edra-command-button"
-		title="Delete Column"
+		title={m.editor_delete_col()}
 		onclick={() => editor.chain().focus().deleteColumn().run()}
 	>
 		<Trash class="edra-toolbar-icon" />

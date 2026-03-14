@@ -7,6 +7,7 @@
 	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { localizedName } from '$lib/utils/locale'
 
 	type AvatarUser = {
 		username?: string
@@ -85,9 +86,9 @@
 			const getNodeText = (node: JSONContent): string => {
 				if (node.type === 'text') return node.text ?? ''
 				if (node.type === 'mention') {
-					// EntityMention stores name in attrs.id
-					const id = node.attrs?.id as { name?: { en?: string }; granblue_en?: string } | undefined
-					return id?.name?.en ?? id?.granblue_en ?? ''
+					const id = node.attrs?.id as { name?: { en?: string; ja?: string }; granblue_en?: string } | undefined
+					const name = localizedName(id?.name)
+					return name !== '—' ? name : (id?.granblue_en ?? '')
 				}
 				return ''
 			}
@@ -121,7 +122,7 @@
 	<!-- Header: Title + Actions -->
 	<div class="tile-header-container">
 		<div class="tile-header">
-			<h1 class="party-name" class:empty={!name}>{name || 'Untitled team'}</h1>
+			<h1 class="party-name" class:empty={!name}>{name || m.party_untitled()}</h1>
 			<div class="actions">
 				{#if showCollectionSwitcher && authUser && collectionSourceUser}
 					<CollectionViewerSwitcher
@@ -157,20 +158,20 @@
 						<div class="avatar-placeholder" aria-hidden="true"></div>
 					{/if}
 				</div>
-				<span class="username">{user.username} using their collection</span>
+				<span class="username">{m.party_using_own_collection({ username: user.username ?? '' })}</span>
 			</a>
 		{:else if user && collectionSourceUser?.username}
 			<div class="creator-pair-line">
 				<AvatarPair back={user} front={collectionSourceUser} size={24} />
 				<span class="creator-pair-text">
-					<a href={localizeHref(`/${user.username}`)}>{user.username}</a> using <a href={localizeHref(`/${collectionSourceUser.username}`)}>{collectionSourceUser.username}</a>'s collection
+					{m.party_using_others_collection({ username: user.username ?? '', otherUsername: collectionSourceUser.username ?? '' })}
 				</span>
 			</div>
 		{:else if user && sourceParty?.user?.username}
 			<div class="creator-pair-line">
 				<AvatarPair back={sourceParty.user} front={user} size={24} />
 				<span class="creator-pair-text">
-					<a href={localizeHref(`/${user.username}`)}>{user.username}</a> remixed <a href={localizeHref(`/${sourceParty.user.username}`)}>{sourceParty.user.username}</a>'s team
+					{m.party_remixed({ username: user.username ?? '', otherUsername: sourceParty.user.username ?? '' })}
 				</span>
 			</div>
 		{:else if user}
@@ -203,7 +204,7 @@
 				{/each}
 			</div>
 		{:else}
-			<span class="empty-state">No description</span>
+			<span class="empty-state">{m.party_no_description()}</span>
 		{/if}
 	</button>
 </div>

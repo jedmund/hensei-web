@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { JobSkill } from '$lib/types/api/entities'
 	import { getSkillCategoryColor } from '$lib/utils/jobUtils'
 	import { getJobSkillIcon } from '$lib/utils/images'
@@ -117,7 +118,7 @@
 		<div class="placeholder-icon">
 			<Icon name="plus" size={16} />
 		</div>
-		<span class="placeholder-text">Select a skill</span>
+		<span class="placeholder-text">{m.skill_slot_select()}</span>
 	</div>
 {/snippet}
 

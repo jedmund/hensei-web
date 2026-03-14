@@ -25,6 +25,7 @@
 	import { storeListUrl } from '$lib/utils/listNavigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import * as m from '$lib/paraglide/messages'
 
 	import type { Snippet } from 'svelte'
 
@@ -447,7 +448,7 @@
 				</Button>
 			{/if}
 
-			<input type="text" placeholder="Search..." bind:value={searchTerm} />
+			<input type="text" placeholder={m.placeholder_search()} bind:value={searchTerm} />
 		</div>
 	</div>
 

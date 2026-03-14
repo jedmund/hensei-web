@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { Awakening } from '$lib/types/api/entities'
 	import { NO_AWAKENING } from '$lib/types/api/entities'
 	import Select from '$lib/components/ui/Select.svelte'
@@ -127,7 +128,7 @@
 			options={options}
 			value={selectedId}
 			onValueChange={handleAwakeningChange}
-			placeholder="Select awakening"
+			placeholder={m.placeholder_select_awakening()}
 			size="medium"
 			fullWidth
 			contained
@@ -135,7 +136,7 @@
 	</div>
 
 	{#if !isNoAwakening}
-		<DetailRow label="Level" noHover noPadding>
+		<DetailRow label={m.label_level()} noHover noPadding>
 			<Input
 				type="number"
 				min={1}

@@ -97,9 +97,9 @@
 
 	// Visibility options for select (1=Public, 2=Unlisted, 3=Private per Rails API)
 	const visibilityOptions: Array<{ value: PartyVisibility; label: string }> = [
-		{ value: 1, label: 'Public' },
-		{ value: 2, label: 'Unlisted' },
-		{ value: 3, label: 'Private' }
+		{ value: 1, label: m.visibility_public() },
+		{ value: 2, label: m.visibility_unlisted() },
+		{ value: 3, label: m.visibility_private() }
 	]
 
 	// Check if any values have changed (compared against snapshot, not proxy)
@@ -187,7 +187,7 @@
 	function openRaidPane() {
 		paneStack.push({
 			id: 'edit-raid',
-			title: 'Select Raid',
+			title: m.pane_select_raid(),
 			component: EditRaidPane,
 			props: {
 				currentRaid: raid,
@@ -259,8 +259,9 @@
 			const getNodeText = (node: JSONContent): string => {
 				if (node.type === 'text') return node.text ?? ''
 				if (node.type === 'mention') {
-					const id = node.attrs?.id as { name?: { en?: string }; granblue_en?: string } | undefined
-					return id?.name?.en ?? id?.granblue_en ?? ''
+					const id = node.attrs?.id as { name?: { en?: string; ja?: string }; granblue_en?: string } | undefined
+					const name = localizedName(id?.name)
+					return name !== '—' ? name : (id?.granblue_en ?? '')
 				}
 				return ''
 			}
@@ -288,7 +289,7 @@
 	function openDescriptionPane() {
 		paneStack.push({
 			id: 'edit-description',
-			title: 'Edit Description',
+			title: m.pane_edit_description(),
 			component: EditDescriptionPane,
 			props: {
 				description,
@@ -304,18 +305,18 @@
 
 <div class="party-edit-sidebar">
 	<div class="top-section">
-		<h3>Details</h3>
+		<h3>{m.party_details()}</h3>
 		<div class="top-fields">
 			<Input
-				label="Title"
+				label={m.party_edit_title_label()}
 				bind:value={name}
 				placeholder={m.sidebar_party_title_placeholder()}
 				contained
 				fullWidth
 			/>
-			<YouTubeUrlInput label="Video" bind:value={videoUrl} contained />
+			<YouTubeUrlInput label={m.party_edit_video_label()} bind:value={videoUrl} contained />
 			<div class="raid-field">
-				<span class="raid-label">Raid</span>
+				<span class="raid-label">{m.party_raid()}</span>
 				<button
 					type="button"
 					class="raid-select-button {getRaidElementClass(raid)}"
@@ -324,7 +325,7 @@
 					{#if raid}
 						<span class="raid-name">{getRaidName(raid)}</span>
 					{:else}
-						<span class="placeholder">Select raid...</span>
+						<span class="placeholder">{m.party_select_raid()}</span>
 					{/if}
 					<Icon name="chevron-right" size={16} class="chevron-icon" />
 				</button>
@@ -336,7 +337,7 @@
 
 	<button type="button" class="description-button" onclick={openDescriptionPane}>
 		<div class="description-header">
-			<span class="description-label">Description</span>
+			<span class="description-label">{m.party_description()}</span>
 			<Icon name="chevron-right" size={16} class="description-chevron" />
 		</div>
 		{#if descriptionPreview}
@@ -348,8 +349,8 @@
 
 	<hr class="divider" />
 
-	<DetailsSection title="Sharing">
-		<DetailRow label="Visibility" noHover compact>
+	<DetailsSection title={m.section_sharing()}>
+		<DetailRow label={m.visibility_label()} noHover compact>
 			{#snippet children()}
 				<Select
 					options={visibilityOptions}
@@ -359,7 +360,7 @@
 			{/snippet}
 		</DetailRow>
 		{#if isInCrew}
-			<DetailRow label="Share with Crew" noHover compact>
+			<DetailRow label={m.party_edit_share_crew()} noHover compact>
 				{#snippet children()}
 					<Switch
 						bind:checked={sharedWithCrew}
@@ -384,23 +385,23 @@
 
 	<hr class="divider" />
 
-	<DetailsSection title="Performance">
-		<DetailRow label="Clear Time" noHover compact>
+	<DetailsSection title={m.section_performance()}>
+		<DetailRow label={m.party_edit_clear_time()} noHover compact>
 			{#snippet children()}
 				<ClearTimeInput bind:value={clearTime} contained />
 			{/snippet}
 		</DetailRow>
-		<DetailRow label="Button Count" noHover compact>
+		<DetailRow label={m.party_edit_button_count()} noHover compact>
 			{#snippet children()}
 				<MetricField bind:value={buttonCount} label="B" contained />
 			{/snippet}
 		</DetailRow>
-		<DetailRow label="Chain Count" noHover compact>
+		<DetailRow label={m.party_edit_chain_count()} noHover compact>
 			{#snippet children()}
 				<MetricField bind:value={chainCount} label="C" contained />
 			{/snippet}
 		</DetailRow>
-		<DetailRow label="Summon Count" noHover compact>
+		<DetailRow label={m.party_edit_summon_count()} noHover compact>
 			{#snippet children()}
 				<MetricField bind:value={summonCount} label="S" contained />
 			{/snippet}

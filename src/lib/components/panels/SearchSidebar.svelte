@@ -7,6 +7,7 @@
   import { extractErrorMessage } from '$lib/utils/errors'
   import { getElementColor } from '$lib/utils/gw'
   import { localizedName } from '$lib/utils/locale'
+  import * as m from '$lib/paraglide/messages'
 
   interface Props {
     open?: boolean
@@ -45,13 +46,13 @@
 
   // Constants
   const elements = [
-    { value: 0, label: 'Null', color: getElementColor(0) },
-    { value: 1, label: 'Wind', color: getElementColor(1) },
-    { value: 2, label: 'Fire', color: getElementColor(2) },
-    { value: 3, label: 'Water', color: getElementColor(3) },
-    { value: 4, label: 'Earth', color: getElementColor(4) },
-    { value: 5, label: 'Dark', color: getElementColor(5) },
-    { value: 6, label: 'Light', color: getElementColor(6) }
+    { value: 0, label: m.element_null(), color: getElementColor(0) },
+    { value: 1, label: m.element_wind(), color: getElementColor(1) },
+    { value: 2, label: m.element_fire(), color: getElementColor(2) },
+    { value: 3, label: m.element_water(), color: getElementColor(3) },
+    { value: 4, label: m.element_earth(), color: getElementColor(4) },
+    { value: 5, label: m.element_dark(), color: getElementColor(5) },
+    { value: 6, label: m.element_light(), color: getElementColor(6) }
   ]
 
   const rarities = [
@@ -61,16 +62,16 @@
   ]
 
   const proficiencies = [
-    { value: 1, label: 'Sabre' },
-    { value: 2, label: 'Dagger' },
-    { value: 3, label: 'Spear' },
-    { value: 4, label: 'Axe' },
-    { value: 5, label: 'Staff' },
-    { value: 6, label: 'Gun' },
-    { value: 7, label: 'Melee' },
-    { value: 8, label: 'Bow' },
-    { value: 9, label: 'Harp' },
-    { value: 10, label: 'Katana' }
+    { value: 1, label: m.proficiency_sabre() },
+    { value: 2, label: m.proficiency_dagger() },
+    { value: 3, label: m.proficiency_spear() },
+    { value: 4, label: m.proficiency_axe() },
+    { value: 5, label: m.proficiency_staff() },
+    { value: 6, label: m.proficiency_gun() },
+    { value: 7, label: m.proficiency_melee() },
+    { value: 8, label: m.proficiency_bow() },
+    { value: 9, label: m.proficiency_harp() },
+    { value: 10, label: m.proficiency_katana() }
   ]
 
   // Focus search input and load recent items when opened
@@ -217,11 +218,11 @@
   class="sidebar"
   class:open={open}
   aria-hidden={!open}
-  aria-label="Search {type}s"
+  aria-label={m.search_sidebar_title({ type })}
   onkeydown={handleKeyDown}
 >
   <header class="sidebar-header">
-    <h2>Search {type}s</h2>
+    <h2>{m.search_sidebar_title({ type })}</h2>
     <button class="close-btn" onclick={onClose} aria-label="Close">×</button>
   </header>
 
@@ -230,7 +231,7 @@
       bind:this={searchInput}
       bind:value={searchQuery}
       type="text"
-      placeholder="Search by name..."
+      placeholder={m.placeholder_search_by_name()}
       aria-label="Search"
       class="search-input"
     />
@@ -239,7 +240,7 @@
   <div class="filters-section">
     <!-- Element filters -->
     <div class="filter-group">
-      <label class="filter-label">Element</label>
+      <label class="filter-label">{m.search_sidebar_element()}</label>
       <div class="filter-buttons">
         {#each elements as element}
           <button
@@ -257,7 +258,7 @@
 
     <!-- Rarity filters -->
     <div class="filter-group">
-      <label class="filter-label">Rarity</label>
+      <label class="filter-label">{m.search_sidebar_rarity()}</label>
       <div class="filter-buttons">
         {#each rarities as rarity}
           <button
@@ -275,7 +276,7 @@
     <!-- Proficiency filters (weapons only, hidden when required proficiencies set) -->
     {#if type === 'weapon' && !requiredProficiencies}
       <div class="filter-group">
-        <label class="filter-label">Proficiency</label>
+        <label class="filter-label">{m.search_sidebar_proficiency()}</label>
         <div class="filter-buttons proficiency-grid">
           {#each proficiencies as prof}
             <button
@@ -295,7 +296,7 @@
   <!-- Results -->
   <div class="results-section" bind:this={resultsContainer}>
     {#if isLoading}
-      <div class="loading">Searching...</div>
+      <div class="loading">{m.search_sidebar_searching()}</div>
     {:else if searchResults.length > 0}
       <ul class="results-list">
         {#each searchResults as item (item.id)}
@@ -332,23 +333,23 @@
             onclick={() => currentPage = Math.max(1, currentPage - 1)}
             disabled={currentPage === 1}
           >
-            Previous
+            {m.search_sidebar_previous()}
           </button>
-          <span>Page {currentPage} of {totalPages}</span>
+          <span>{m.search_sidebar_page({ current: currentPage, total: totalPages })}</span>
           <button
             onclick={() => currentPage = Math.min(totalPages, currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            Next
+            {m.search_sidebar_next()}
           </button>
         </div>
       {/if}
     {:else if searchQuery.length > 0}
-      <div class="no-results">No results found</div>
+      <div class="no-results">{m.search_sidebar_no_results()}</div>
     {:else if !hasInitialLoad}
-      <div class="empty-state">Loading recent items...</div>
+      <div class="empty-state">{m.search_sidebar_loading()}</div>
     {:else}
-      <div class="no-results">No items found</div>
+      <div class="no-results">{m.search_sidebar_empty()}</div>
     {/if}
   </div>
 </aside>

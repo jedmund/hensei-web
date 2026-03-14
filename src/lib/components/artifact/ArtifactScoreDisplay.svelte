@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { ArtifactScore } from '$lib/types/api/artifact'
 
 	interface Props {
@@ -36,22 +37,22 @@
 		{#if showBreakdown}
 			<div class="breakdown">
 				<div class="breakdown-item">
-					<span class="breakdown-label">ATK</span>
+					<span class="breakdown-label">{m.artifact_score_atk()}</span>
 					<span class="breakdown-value">{score.attack}</span>
 				</div>
 				<div class="breakdown-item">
-					<span class="breakdown-label">DEF</span>
+					<span class="breakdown-label">{m.artifact_score_def()}</span>
 					<span class="breakdown-value">{score.defense}</span>
 				</div>
 				<div class="breakdown-item">
-					<span class="breakdown-label">Special</span>
+					<span class="breakdown-label">{m.artifact_score_special()}</span>
 					<span class="breakdown-value">{score.special}</span>
 				</div>
 			</div>
 		{/if}
 	{:else}
 		<div class="no-score">
-			<span class="no-score-text">No score</span>
+			<span class="no-score-text">{m.artifact_no_score()}</span>
 		</div>
 	{/if}
 </div>

@@ -14,6 +14,7 @@
 	 *
 	 * The caller is responsible for handling the save action with their specific mutation.
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import type { Character, Awakening } from '$lib/types/api/entities'
 	import type { ExtendedMastery } from '$lib/types/api/collection'
 	import DetailsSection from './details/DetailsSection.svelte'
@@ -171,7 +172,7 @@
 
 <div class="character-edit-pane">
 	<div class="edit-sections">
-		<DetailsSection title="Uncap Level">
+		<DetailsSection title={m.section_uncap_level()}>
 			<div class="section-content uncap-section">
 				<UncapIndicator
 					type="character"
@@ -189,7 +190,7 @@
 		</DetailsSection>
 
 		{#if hasAwakening && availableAwakenings.length > 0}
-			<DetailsSection title="Awakening">
+			<DetailsSection title={m.details_awakening()}>
 				<div class="section-content">
 					<AwakeningSelect
 						awakenings={availableAwakenings}
@@ -207,7 +208,7 @@
 			</DetailsSection>
 		{/if}
 
-		<DetailsSection title="Over Mastery Rings">
+		<DetailsSection title={m.details_over_mastery()}>
 			<div class="section-content">
 				<RingsSelect
 					{rings}
@@ -218,7 +219,7 @@
 			</div>
 		</DetailsSection>
 
-		<DetailsSection title="Aetherial Mastery">
+		<DetailsSection title={m.details_aetherial_mastery()}>
 			<div class="section-content">
 				<EarringSelect
 					value={earring}
@@ -231,7 +232,7 @@
 		</DetailsSection>
 
 		{#if showPerpetuity}
-			<DetailsSection title="Perpetuity">
+			<DetailsSection title={m.details_perpetuity_ring()}>
 				<div class="section-content">
 					<PerpetuityToggle
 						value={perpetuity}

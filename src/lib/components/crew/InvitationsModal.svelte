@@ -112,7 +112,7 @@
 </script>
 
 <Dialog bind:open>
-	<ModalHeader title="Notifications" />
+	<ModalHeader title={m.crew_notifications_title()} />
 
 	<ModalBody>
 		{#if isLoading}
@@ -130,8 +130,8 @@
 			<!-- Phantom Claims Section -->
 			{#if hasPhantomClaims}
 				<div class="section">
-					<h3 class="section-title">Phantom Assignments</h3>
-					<p class="section-description">Accept to inherit the phantom's GW scores and join date</p>
+					<h3 class="section-title">{m.crew_notifications_phantom_section()}</h3>
+					<p class="section-description">{m.crew_notifications_phantom_desc()}</p>
 					<div class="notifications-list">
 						{#each phantomClaims as phantom}
 							{@const crew = phantom.crew}
@@ -145,11 +145,11 @@
 												<span class="notification-title">{phantom.name}</span>
 											</div>
 											<span class="notification-subtitle">
-												From crew {crew.name}{crew.gamertag ? ` [${crew.gamertag}]` : ''}
+												{m.crew_notifications_from_crew({ name: crew.name, tag: crew.gamertag ? ` [${crew.gamertag}]` : '' })}
 											</span>
 											{#if phantom.joinedAt}
 												<span class="notification-meta">
-													Joined {formatDate(phantom.joinedAt)}
+													{m.crew_notifications_joined({ date: formatDate(phantom.joinedAt) })}
 												</span>
 											{/if}
 										</div>
@@ -162,7 +162,7 @@
 											onclick={() => handleDeclinePhantomClaim(phantom)}
 											disabled={isProcessing}
 										>
-											{isProcessing && declineClaimMutation.isPending ? 'Declining...' : 'Decline'}
+											{isProcessing && declineClaimMutation.isPending ? m.crew_notifications_declining() : m.crew_notifications_decline()}
 										</Button>
 										<Button
 											variant="primary"
@@ -170,7 +170,7 @@
 											onclick={() => handleAcceptPhantomClaim(phantom)}
 											disabled={isProcessing}
 										>
-											{isProcessing && confirmClaimMutation.isPending ? 'Accepting...' : 'Accept'}
+											{isProcessing && confirmClaimMutation.isPending ? m.crew_notifications_accepting() : m.crew_notifications_accept()}
 										</Button>
 									</div>
 								</div>
@@ -183,7 +183,7 @@
 			<!-- Crew Invitations Section -->
 			{#if hasInvitations}
 				<div class="section">
-					<h3 class="section-title">Crew invites</h3>
+					<h3 class="section-title">{m.crew_notifications_crew_section()}</h3>
 					<div class="notifications-list">
 						{#each invitations as invitation}
 							{@const expired = isExpired(invitation.expiresAt)}
@@ -203,18 +203,18 @@
 											</div>
 											{#if invitedBy}
 												<span class="notification-subtitle">
-													Invited by {invitedBy.username}
+													{m.crew_invited_by({ username: invitedBy.username })}
 												</span>
 											{/if}
 											{#if invitation.phantomPlayer}
 												<span class="notification-meta">
-													Phantom assigned: {invitation.phantomPlayer.name}
+													{m.crew_notifications_phantom_assigned({ name: invitation.phantomPlayer.name })}
 												</span>
 											{/if}
 										</div>
 
 										{#if expired}
-											<div class="expired-badge">Expired</div>
+											<div class="expired-badge">{m.crew_expired()}</div>
 										{:else}
 											<div class="expires-info">
 												Expires {formatDate(invitation.expiresAt)}
@@ -230,7 +230,7 @@
 												onclick={() => handleRejectInvitation(invitation.id)}
 												disabled={isProcessing}
 											>
-												{isProcessing && rejectMutation.isPending ? 'Declining...' : 'Decline'}
+												{isProcessing && rejectMutation.isPending ? m.crew_notifications_declining() : m.crew_notifications_decline()}
 											</Button>
 											<Button
 												variant="primary"
@@ -238,7 +238,7 @@
 												onclick={() => handleAcceptInvitation(invitation.id)}
 												disabled={isProcessing}
 											>
-												{isProcessing && acceptMutation.isPending ? 'Joining...' : 'Accept'}
+												{isProcessing && acceptMutation.isPending ? m.crew_notifications_joining() : m.crew_notifications_accept()}
 											</Button>
 										</div>
 									{/if}

@@ -104,7 +104,7 @@
 					elementFilter = e.currentTarget.checked ? character?.element : undefined
 				}}
 			/>
-			<span>Match element</span>
+			<span>{m.artifact_match_element()}</span>
 		</label>
 	</div>
 
@@ -149,7 +149,7 @@
 						</div>
 					</div>
 					{#if isEquipped}
-						<span class="equipped-badge">Equipped</span>
+						<span class="equipped-badge">{m.artifact_equipped()}</span>
 					{:else}
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->

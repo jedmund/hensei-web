@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { useConfirmPhantomClaim } from '$lib/api/mutations/crew.mutations'
+	import * as m from '$lib/paraglide/messages'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
@@ -60,21 +61,21 @@
 </script>
 
 <Dialog bind:open>
-	<ModalHeader title="Confirm Phantom Claim" />
+	<ModalHeader title={m.crew_confirm_claim_title()} />
 
 	<ModalBody>
 		{#if confirmSuccess}
 			<div class="success-message">
 				<Icon name="check-circle" size={32} />
-				<p>Claim confirmed! You have inherited the phantom's scores and join date.</p>
+				<p>{m.crew_confirm_claim_success()}</p>
 			</div>
 		{:else}
 			<div class="confirm-content">
 				<p class="confirm-message">
-					Are you sure you want to claim <strong>{phantom?.name ?? 'this phantom'}</strong>?
+					{m.crew_confirm_claim_body({ name: phantom?.name ?? 'this phantom' })}
 				</p>
 				<p class="confirm-details">
-					You will inherit this phantom's GW scores and join date. This action cannot be undone.
+					{m.crew_confirm_claim_hint()}
 				</p>
 
 				{#if confirmError}
@@ -90,7 +91,7 @@
 		<ModalFooter
 			onCancel={handleCancel}
 			primaryAction={{
-				label: confirmMutation.isPending ? 'Confirming...' : 'Confirm Claim',
+				label: confirmMutation.isPending ? m.crew_confirm_claim_confirming() : m.crew_confirm_claim_button(),
 				onclick: handleConfirm,
 				disabled: confirmMutation.isPending
 			}}

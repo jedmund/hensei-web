@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -78,26 +79,26 @@
 
 <div class="join-page">
 	<header class="page-header">
-		<h1>Join a Crew</h1>
-		<p class="description">Accept an invitation to join a crew.</p>
+		<h1>{m.crew_join_title()}</h1>
+		<p class="description">{m.crew_join_description()}</p>
 	</header>
 
 	{#if invitationsQuery.isLoading}
 		<div class="loading-state">
-			<p>Loading invitations...</p>
+			<p>{m.crew_loading_invitations()}</p>
 		</div>
 	{:else if invitationsQuery.isError}
 		<div class="error-state">
-			<p>Failed to load invitations</p>
+			<p>{m.crew_join_failed_load()}</p>
 		</div>
 	{:else if !invitationsQuery.data || invitationsQuery.data.length === 0}
 		<div class="empty-state">
-			<p>You don't have any pending invitations.</p>
+			<p>{m.crew_join_no_invitations()}</p>
 			<p class="hint">
-				Ask a crew captain or vice captain to send you an invitation.
+				{m.crew_join_hint()}
 			</p>
 			<Button variant="secondary" onclick={() => goto(localizeHref('/crew'))}>
-				Go Back
+				{m.crew_join_go_back()}
 			</Button>
 		</div>
 	{:else}
@@ -123,7 +124,7 @@
 
 						<div class="invitation-meta">
 							<span class="invited-by">
-								Invited by <strong>{invitedBy.username}</strong>
+								{m.crew_join_invited_by({ username: invitedBy.username })}
 							</span>
 							<span class="invited-date">
 								{formatDate(invitation.createdAt)}
@@ -132,7 +133,7 @@
 
 						{#if invitation.phantomPlayer}
 							<div class="phantom-assignment">
-								Phantom assigned: <strong>{invitation.phantomPlayer.name}</strong>
+								{m.crew_join_phantom_assigned({ name: invitation.phantomPlayer.name })}
 								{#if invitation.phantomPlayer.granblueId}
 									<span class="granblue-id">({invitation.phantomPlayer.granblueId})</span>
 								{/if}
@@ -142,18 +143,18 @@
 						{#if 'memberCount' in crew && crew.memberCount !== undefined}
 							<div class="crew-stats">
 								<span class="stat">
-									{crew.memberCount} member{crew.memberCount === 1 ? '' : 's'}
+									{m.crew_join_member_count({ count: String(crew.memberCount) })}
 								</span>
 							</div>
 						{/if}
 
 					{#if expired}
 						<div class="expired-notice">
-							This invitation has expired.
+							{m.crew_join_expired()}
 						</div>
 					{:else}
 						<div class="expires-notice">
-							Expires: {formatDate(invitation.expiresAt)}
+							{m.crew_join_expires({ date: formatDate(invitation.expiresAt) })}
 						</div>
 
 						<div class="invitation-actions">
@@ -163,7 +164,7 @@
 								onclick={() => handleReject(invitation.id)}
 								disabled={processingId === invitation.id}
 							>
-								{processingId === invitation.id && rejectMutation.isPending ? 'Declining...' : 'Decline'}
+								{processingId === invitation.id && rejectMutation.isPending ? m.crew_join_declining() : m.crew_join_decline()}
 							</Button>
 							<Button
 								variant="primary"
@@ -171,7 +172,7 @@
 								onclick={() => handleAccept(invitation.id)}
 								disabled={processingId === invitation.id}
 							>
-								{processingId === invitation.id && acceptMutation.isPending ? 'Joining...' : 'Accept'}
+								{processingId === invitation.id && acceptMutation.isPending ? m.crew_join_joining() : m.crew_join_accept()}
 							</Button>
 						</div>
 					{/if}

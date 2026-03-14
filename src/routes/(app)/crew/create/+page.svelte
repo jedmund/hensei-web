@@ -91,7 +91,7 @@
 </script>
 
 <svelte:head>
-	<title>Create Crew / granblue.team</title>
+	<title>{m.page_title_crew_create()}</title>
 </svelte:head>
 
 <div class="create-crew-page">

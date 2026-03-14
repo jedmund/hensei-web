@@ -7,6 +7,7 @@ import {
 import { transformSkillsToArray } from '$lib/utils/jobSkills'
 import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
+import * as m from '$lib/paraglide/messages'
 
 interface JobHandlerOptions {
 	mutations: PartyMutations
@@ -47,9 +48,9 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 						jobId: job.id
 					})
 				} catch (e) {
-					error = e instanceof Error ? e.message : 'Failed to update job'
+					error = e instanceof Error ? e.message : m.toast_failed_update_job()
 					console.error('Failed to update job:', e)
-					toast.error(extractErrorMessage(e, 'Failed to update job'))
+					toast.error(extractErrorMessage(e, m.toast_failed_update_job()))
 				} finally {
 					loading = false
 				}
@@ -82,9 +83,9 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 						skills: skillsArray
 					})
 				} catch (e: any) {
-					error = extractErrorMessage(e, 'Failed to update skill')
+					error = extractErrorMessage(e, m.toast_failed_update_skill())
 					console.error('Failed to update skill:', e)
-					toast.error(extractErrorMessage(e, 'Failed to update skill'))
+					toast.error(extractErrorMessage(e, m.toast_failed_update_skill()))
 				} finally {
 					loading = false
 				}
@@ -110,9 +111,9 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 				slot
 			})
 		} catch (e) {
-			error = e instanceof Error ? e.message : 'Failed to remove skill'
+			error = e instanceof Error ? e.message : m.toast_failed_remove_skill()
 			console.error('Failed to remove skill:', e)
-			toast.error(extractErrorMessage(e, 'Failed to remove skill'))
+			toast.error(extractErrorMessage(e, m.toast_failed_remove_skill()))
 		} finally {
 			loading = false
 		}

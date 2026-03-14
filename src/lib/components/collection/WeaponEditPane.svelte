@@ -10,6 +10,7 @@
 	 * - AX skills (for weapons with AX support)
 	 * - Awakening (for weapons with awakening support)
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import type { Weapon, Awakening } from '$lib/types/api/entities'
 	import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
@@ -134,12 +135,12 @@
 
 	// Element options
 	const elementOptions = [
-		{ value: 1, label: 'Wind', image: getElementIcon(1) },
-		{ value: 2, label: 'Fire', image: getElementIcon(2) },
-		{ value: 3, label: 'Water', image: getElementIcon(3) },
-		{ value: 4, label: 'Earth', image: getElementIcon(4) },
-		{ value: 5, label: 'Dark', image: getElementIcon(5) },
-		{ value: 6, label: 'Light', image: getElementIcon(6) }
+		{ value: 1, label: m.element_wind(), image: getElementIcon(1) },
+		{ value: 2, label: m.element_fire(), image: getElementIcon(2) },
+		{ value: 3, label: m.element_water(), image: getElementIcon(3) },
+		{ value: 4, label: m.element_earth(), image: getElementIcon(4) },
+		{ value: 5, label: m.element_dark(), image: getElementIcon(5) },
+		{ value: 6, label: m.element_light(), image: getElementIcon(6) }
 	]
 
 	// Awakening slug to UUID map
@@ -219,7 +220,7 @@
 
 <div class="weapon-edit-pane">
 	<div class="edit-sections">
-		<DetailsSection title="Uncap Level">
+		<DetailsSection title={m.section_uncap_level()}>
 			<div class="section-content uncap-section">
 				<UncapIndicator
 					type="weapon"
@@ -236,12 +237,12 @@
 		</DetailsSection>
 
 		{#if canChangeElement}
-			<DetailsSection title="Element">
+			<DetailsSection title={m.details_element()}>
 				<div class="section-content">
 					<Select
 						options={elementOptions}
 						bind:value={element}
-						placeholder="Select element"
+						placeholder={m.placeholder_select_element()}
 						size="medium"
 						fullWidth
 						contained
@@ -251,7 +252,7 @@
 		{/if}
 
 		{#if hasWeaponKeys}
-			<DetailsSection title="Weapon Keys">
+			<DetailsSection title={m.details_weapon_keys()}>
 				<div class="section-content key-selects">
 					{#if keySlotCount >= 1}
 						<WeaponKeySelect
@@ -282,7 +283,7 @@
 		{/if}
 
 		{#if hasAxSkills}
-			<DetailsSection title="AX Skills">
+			<DetailsSection title={m.details_ax_skills()}>
 				<div class="section-content">
 					<AxSkillSelect
 						currentSkills={axSkills}
@@ -295,7 +296,7 @@
 		{/if}
 
 		{#if hasBefoulment}
-			<DetailsSection title="Befoulment">
+			<DetailsSection title={m.details_befoulment()}>
 				<div class="section-content">
 					<BefoulmentSelect
 						currentBefoulment={befoulment}
@@ -309,7 +310,7 @@
 		{/if}
 
 		{#if hasAwakening && availableAwakenings.length > 0}
-			<DetailsSection title="Awakening">
+			<DetailsSection title={m.details_awakening()}>
 				<div class="section-content">
 					<AwakeningSelect
 						awakenings={availableAwakenings}

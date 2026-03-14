@@ -6,6 +6,7 @@
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { formatScore } from '$lib/utils/gw'
 	import type { GwIndividualScore } from '$lib/types/api/gw'
+	import * as m from '$lib/paraglide/messages'
 
 	export interface PlayerScore {
 		id: string
@@ -56,14 +57,14 @@
 		<span class="player-rank">{rank}</span>
 		<span class="player-name">{player.name}{#if isTopFive}<span class="star">★</span>{/if}</span>
 		{#if player.isRetired}
-			<span class="player-badge retired">Retired</span>
+			<span class="player-badge retired">{m.crew_score_retired()}</span>
 		{/if}
 		{#if isExcused}
-			<span class="player-badge excused">Excused</span>
+			<span class="player-badge excused">{m.crew_score_excused()}</span>
 		{/if}
 	</div>
 	{#if player.type === 'phantom'}
-		<span class="player-type">Phantom</span>
+		<span class="player-type">{m.crew_phantom()}</span>
 	{/if}
 	<div class="player-actions">
 		<span class="player-score">{formatScore(player.totalScore)}</span>
@@ -77,7 +78,7 @@
 					{/snippet}
 					{#snippet menu()}
 						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEditScore}>
-							Edit score...
+							{m.crew_gw_edit_score()}
 						</DropdownMenuBase.Item>
 					{/snippet}
 				</DropdownMenu>

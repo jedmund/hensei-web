@@ -7,6 +7,7 @@
 	 * provides Edit button in header to push edit pane onto stack.
 	 */
 	import * as m from '$lib/paraglide/messages'
+	import { localizedName } from '$lib/utils/locale'
 	import { onMount } from 'svelte'
 	import type { CollectionArtifact, ArtifactSkillInstance } from '$lib/types/api/artifact'
 	import { isQuirkArtifact, getSkillGroupForSlot } from '$lib/types/api/artifact'
@@ -68,7 +69,7 @@
 		const skillDef = skillsQuery.data?.find(
 			(s) => s.modifier === skill.modifier && s.skillGroup === group
 		)
-		return skillDef?.name?.en ?? 'Unknown Skill'
+		return localizedName(skillDef?.name)
 	}
 
 	// Convert numeric element to ElementType string
@@ -86,7 +87,7 @@
 	function handleEdit() {
 		const config: PaneConfig = {
 			id: `artifact-edit-${artifact.id}`,
-			title: 'Edit Artifact',
+			title: m.pane_edit_artifact(),
 			component: CollectionArtifactEditPane,
 			props: {
 				artifact,
@@ -98,7 +99,7 @@
 
 	// Handle delete
 	function handleDelete() {
-		if (confirm('Are you sure you want to remove this artifact from your collection?')) {
+		if (confirm(m.collection_remove_confirm_artifact())) {
 			deleteMutation.mutate(artifact.id, {
 				onSuccess: () => {
 					onClose?.()
@@ -113,7 +114,7 @@
 			sidebar.setAction(handleEdit, m.action_edit(), elementType)
 			sidebar.setOverflowMenu([
 				{
-					label: 'Remove from collection',
+					label: m.collection_remove_from(),
 					handler: handleDelete,
 					variant: 'danger'
 				}
@@ -133,28 +134,28 @@
 	</div>
 
 	<div class="pane-content">
-		<DetailsSection title="General">
+		<DetailsSection title={m.section_general()}>
 			{#if artifact.nickname}
-				<DetailRow label="Nickname" value={artifact.nickname} />
+				<DetailRow label={m.label_nickname()} value={artifact.nickname} />
 			{/if}
 
-			<DetailRow label="Element">
+			<DetailRow label={m.label_element()}>
 				<ElementLabel element={artifact.element} size="medium" />
 			</DetailRow>
 
-			<DetailRow label="Proficiency">
+			<DetailRow label={m.label_proficiency()}>
 				<ProficiencyLabel {proficiency} size="medium" />
 			</DetailRow>
 
-			<DetailRow label="Level" value="Lv.{artifact.level}" />
+			<DetailRow label={m.label_level()} value="Lv.{artifact.level}" />
 
 			{#if isQuirk}
-				<DetailRow label="Type" value="Quirk" />
+				<DetailRow label={m.label_type()} value={m.artifact_quirk()} />
 			{/if}
 		</DetailsSection>
 
 		{#if hasSkills}
-			<DetailsSection title="Skills">
+			<DetailsSection title={m.artifact_skills()}>
 				{#each skills as skill, index}
 					{@const skillSlot = index + 1}
 					{#if skill}
@@ -174,7 +175,7 @@
 			/>
 		{/if}
 
-		<DetailsSection title="Score">
+		<DetailsSection title={m.artifact_score()}>
 			<div class="score-section">
 				<ArtifactScoreDisplay score={artifact.score} />
 			</div>

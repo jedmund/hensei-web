@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import Navigation from '$lib/components/Navigation.svelte'
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
@@ -131,9 +132,9 @@
 					{@render children?.()}
 					{#snippet failed(error, reset)}
 						<div class="page-error" role="alert">
-							<h2>Something went wrong</h2>
-							<p>An error occurred while rendering this page.</p>
-							<button onclick={reset}>Try again</button>
+							<h2>{m.error_something_went_wrong()}</h2>
+							<p>{m.error_boundary_message()}</p>
+							<button onclick={reset}>{m.error_boundary_retry()}</button>
 						</div>
 					{/snippet}
 				</svelte:boundary>

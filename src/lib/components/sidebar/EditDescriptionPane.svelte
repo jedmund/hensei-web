@@ -93,7 +93,7 @@
 		if (editor?.isActive('link')) {
 			editor?.chain().focus().unsetLink().run()
 		} else {
-			const url = window.prompt('Enter the URL:')
+			const url = window.prompt(m.editor_prompt_url())
 			if (url) {
 				editor?.chain().focus().toggleLink({ href: url }).run()
 			}
@@ -153,7 +153,7 @@
 				class:active={editor?.isActive('bold')}
 				onclick={() => editor?.chain().focus().toggleBold().run()}
 				disabled={!editor}
-				title="Bold"
+				title={m.toolbar_bold()}
 			>
 				<Bold size={16} />
 			</button>
@@ -163,7 +163,7 @@
 				class:active={editor?.isActive('italic')}
 				onclick={() => editor?.chain().focus().toggleItalic().run()}
 				disabled={!editor}
-				title="Italic"
+				title={m.toolbar_italic()}
 			>
 				<Italic size={16} />
 			</button>
@@ -173,7 +173,7 @@
 				class:active={editor?.isActive('underline')}
 				onclick={() => editor?.chain().focus().toggleUnderline().run()}
 				disabled={!editor}
-				title="Underline"
+				title={m.toolbar_underline()}
 			>
 				<Underline size={16} />
 			</button>
@@ -183,7 +183,7 @@
 				class:active={editor?.isActive('strike')}
 				onclick={() => editor?.chain().focus().toggleStrike().run()}
 				disabled={!editor}
-				title="Strikethrough"
+				title={m.toolbar_strikethrough()}
 			>
 				<StrikeThrough size={16} />
 			</button>
@@ -196,7 +196,7 @@
 				class:active={editor?.isActive('link')}
 				onclick={toggleLink}
 				disabled={!editor}
-				title="Link"
+				title={m.toolbar_link()}
 			>
 				<LinkIcon size={16} />
 			</button>
@@ -209,7 +209,7 @@
 				class:active={editor?.isActive('bulletList')}
 				onclick={() => editor?.chain().focus().toggleBulletList().run()}
 				disabled={!editor}
-				title="Bullet List"
+				title={m.toolbar_bullet_list()}
 			>
 				<List size={16} />
 			</button>
@@ -219,7 +219,7 @@
 				class:active={editor?.isActive('orderedList')}
 				onclick={() => editor?.chain().focus().toggleOrderedList().run()}
 				disabled={!editor}
-				title="Ordered List"
+				title={m.toolbar_ordered_list()}
 			>
 				<ListOrdered size={16} />
 			</button>

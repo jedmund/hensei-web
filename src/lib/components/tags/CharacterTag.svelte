@@ -2,7 +2,7 @@
 <script lang="ts">
 	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 	import { getElementLabel } from '$lib/utils/element'
-	import { CharacterSeason, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
+	import { CharacterSeason } from '$lib/types/enums'
 	import { localizedName } from '$lib/utils/locale'
 	import * as m from '$lib/paraglide/messages'
 
@@ -83,7 +83,24 @@
 					}
 					// Legacy number format
 					if (typeof seriesValue === 'number') {
-						return CHARACTER_SERIES_NAMES[seriesValue] ?? null
+						const seriesMessages: Record<number, () => string> = {
+							1: m.series_grand,
+							2: m.series_zodiac,
+							3: m.series_promo,
+							4: m.series_collab,
+							5: m.series_eternal,
+							6: m.series_evoker,
+							7: m.series_saint,
+							8: m.series_fantasy,
+							9: m.series_summer,
+							10: m.series_yukata,
+							11: m.series_valentine,
+							12: m.series_halloween,
+							13: m.series_formal,
+							14: m.series_holiday,
+							15: m.series_event
+						}
+						return seriesMessages[seriesValue]?.() ?? null
 					}
 				}
 				// Fallback to seriesNames if available

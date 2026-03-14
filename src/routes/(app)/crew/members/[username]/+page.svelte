@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
@@ -40,11 +41,11 @@
 	<div class="card">
 		{#if scoresQuery.isLoading}
 			<div class="loading-state">
-				<p>Loading...</p>
+				<p>{m.crew_loading_generic()}</p>
 			</div>
 		{:else if scoresQuery.isError}
 			<div class="error-state">
-				<p>Failed to load scores</p>
+				<p>{m.gw_failed_load()}</p>
 			</div>
 		{:else if scoresQuery.data}
 			{@const data = scoresQuery.data}
@@ -54,11 +55,11 @@
 			<div class="stats-row">
 				<div class="stat">
 					<span class="stat-value">{formatScore(data.grandTotal)}</span>
-					<span class="stat-label">Total Honors</span>
+					<span class="stat-label">{m.gw_total_honors()}</span>
 				</div>
 				<div class="stat">
 					<span class="stat-value">{eventsInCrew}</span>
-					<span class="stat-label">Events</span>
+					<span class="stat-label">{m.gw_events_count()}</span>
 				</div>
 			</div>
 
@@ -69,10 +70,10 @@
 			{/if}
 
 			{#if data.eventScores.length === 0}
-				<div class="empty-state">No GW scores recorded yet.</div>
+				<div class="empty-state">{m.gw_no_honors()}</div>
 			{:else}
 				<div class="section-header">
-					<span class="section-title">Event History</span>
+					<span class="section-title">{m.gw_event_history()}</span>
 				</div>
 
 				<ul class="event-list">
@@ -89,7 +90,7 @@
 										<span class="event-number">GW #{eventScore.gwEvent.eventNumber}</span>
 										<ElementBadge element={eventScore.gwEvent.element} />
 									</div>
-									<span class="gap-indicator">Not in crew</span>
+									<span class="gap-indicator">{m.gw_not_in_crew()}</span>
 								</button>
 							</li>
 						{/if}

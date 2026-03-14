@@ -58,26 +58,26 @@
 
 	// Element options for MultiSelect
 	const elementOptions = [
-		{ value: 1, label: 'Wind' },
-		{ value: 2, label: 'Fire' },
-		{ value: 3, label: 'Water' },
-		{ value: 4, label: 'Earth' },
-		{ value: 5, label: 'Dark' },
-		{ value: 6, label: 'Light' }
+		{ value: 1, label: m.element_wind() },
+		{ value: 2, label: m.element_fire() },
+		{ value: 3, label: m.element_water() },
+		{ value: 4, label: m.element_earth() },
+		{ value: 5, label: m.element_dark() },
+		{ value: 6, label: m.element_light() }
 	]
 
 	// Proficiency options for MultiSelect
 	const proficiencyOptions = [
-		{ value: 1, label: 'Sabre' },
-		{ value: 2, label: 'Dagger' },
-		{ value: 3, label: 'Axe' },
-		{ value: 4, label: 'Spear' },
-		{ value: 5, label: 'Bow' },
-		{ value: 6, label: 'Staff' },
-		{ value: 7, label: 'Melee' },
-		{ value: 8, label: 'Harp' },
-		{ value: 9, label: 'Gun' },
-		{ value: 10, label: 'Katana' }
+		{ value: 1, label: m.proficiency_sabre() },
+		{ value: 2, label: m.proficiency_dagger() },
+		{ value: 3, label: m.proficiency_axe() },
+		{ value: 4, label: m.proficiency_spear() },
+		{ value: 5, label: m.proficiency_bow() },
+		{ value: 6, label: m.proficiency_staff() },
+		{ value: 7, label: m.proficiency_melee() },
+		{ value: 8, label: m.proficiency_harp() },
+		{ value: 9, label: m.proficiency_gun() },
+		{ value: 10, label: m.proficiency_katana() }
 	]
 
 	// Query for artifact skills (cached 1 hour)

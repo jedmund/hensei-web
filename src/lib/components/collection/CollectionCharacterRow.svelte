@@ -7,6 +7,7 @@
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		character: CollectionCharacter
@@ -45,8 +46,8 @@
 					<img
 						class="perpetuity-badge"
 						src={perpetuityFilled}
-						alt="Perpetuity Ring"
-						title="Perpetuity Ring"
+						alt={m.label_perpetuity_ring()}
+						title={m.label_perpetuity_ring()}
 					/>
 				{/if}
 			</div>

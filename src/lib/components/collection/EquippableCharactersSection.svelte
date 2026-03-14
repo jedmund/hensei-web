@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import { localizedName } from '$lib/utils/locale'
@@ -43,14 +44,14 @@
 	}
 </script>
 
-<DetailsSection title="Equippable Characters">
+<DetailsSection title={m.section_equippable_characters()}>
 	{#if isLoading}
 		<div class="loading-state">
 			<Icon name="loader-2" size={20} />
 		</div>
 	{:else if isEmpty}
 		<div class="empty-state">
-			<span class="empty-text">No matching characters in collection</span>
+			<span class="empty-text">{m.collection_no_matching_characters()}</span>
 		</div>
 	{:else}
 		<div class="character-grid">

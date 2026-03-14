@@ -5,6 +5,7 @@
 	 * Uses the shared CharacterEditPane for edit controls.
 	 * Handles GridCharacter-specific data transformation and mutations.
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import type { GridCharacter } from '$lib/types/api/party'
 	import ItemHeader from './details/ItemHeader.svelte'
 	import CharacterEditPane, {
@@ -120,7 +121,7 @@
 		<div class="sync-banner">
 			<div class="sync-message">
 				<Icon name="refresh-cw" size={14} />
-				<span>Out of sync with collection</span>
+				<span>{m.details_collection_out_of_sync()}</span>
 			</div>
 			<button
 				class="sync-button"

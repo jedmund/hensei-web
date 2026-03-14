@@ -5,6 +5,7 @@
   Never wired up — the description editor feature is not yet migrated from Next.js.
 -->
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { Editor } from '@tiptap/core'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { DropdownMenu } from 'bits-ui'
@@ -64,7 +65,7 @@
 		if (editor.isActive('link')) {
 			editor.chain().focus().unsetLink().run()
 		} else {
-			const url = window.prompt('Enter the URL:')
+			const url = window.prompt(m.editor_prompt_url())
 			if (url) {
 				editor.chain().focus().toggleLink({ href: url }).run()
 			}
@@ -111,28 +112,28 @@
 					onSelect={() => setHeading(1)}
 				>
 					<Heading1 size={16} />
-					<span>Heading 1</span>
+					<span>{m.editor_heading_1()}</span>
 				</DropdownMenu.Item>
 				<DropdownMenu.Item
 					class="style-item {editor.isActive('heading', { level: 2 }) ? 'active' : ''}"
 					onSelect={() => setHeading(2)}
 				>
 					<Heading2 size={16} />
-					<span>Heading 2</span>
+					<span>{m.editor_heading_2()}</span>
 				</DropdownMenu.Item>
 				<DropdownMenu.Item
 					class="style-item {editor.isActive('heading', { level: 3 }) ? 'active' : ''}"
 					onSelect={() => setHeading(3)}
 				>
 					<Heading3 size={16} />
-					<span>Heading 3</span>
+					<span>{m.editor_heading_3()}</span>
 				</DropdownMenu.Item>
 				<DropdownMenu.Item
 					class="style-item {editor.isActive('paragraph') ? 'active' : ''}"
 					onSelect={setParagraph}
 				>
 					<Pilcrow size={16} />
-					<span>Paragraph</span>
+					<span>{m.editor_paragraph()}</span>
 				</DropdownMenu.Item>
 			</DropdownMenu.Content>
 		</DropdownMenu.Portal>
@@ -147,7 +148,7 @@
 		iconOnly
 		onclick={toggleBold}
 		active={editor.isActive('bold')}
-		title="Bold"
+		title={m.toolbar_bold()}
 		class="toolbar-button"
 	>
 		<Bold size={16} />
@@ -159,7 +160,7 @@
 		iconOnly
 		onclick={toggleItalic}
 		active={editor.isActive('italic')}
-		title="Italic"
+		title={m.toolbar_italic()}
 		class="toolbar-button"
 	>
 		<Italic size={16} />
@@ -171,7 +172,7 @@
 		iconOnly
 		onclick={toggleUnderline}
 		active={editor.isActive('underline')}
-		title="Underline"
+		title={m.toolbar_underline()}
 		class="toolbar-button"
 	>
 		<Underline size={16} />
@@ -183,7 +184,7 @@
 		iconOnly
 		onclick={toggleStrike}
 		active={editor.isActive('strike')}
-		title="Strikethrough"
+		title={m.toolbar_strikethrough()}
 		class="toolbar-button"
 	>
 		<StrikeThrough size={16} />
@@ -198,7 +199,7 @@
 		iconOnly
 		onclick={toggleLink}
 		active={editor.isActive('link')}
-		title="Link"
+		title={m.toolbar_link()}
 		class="toolbar-button"
 	>
 		<LinkIcon size={16} />
@@ -213,7 +214,7 @@
 		iconOnly
 		onclick={toggleBulletList}
 		active={editor.isActive('bulletList')}
-		title="Bullet List"
+		title={m.toolbar_bullet_list()}
 		class="toolbar-button"
 	>
 		<List size={16} />
@@ -225,7 +226,7 @@
 		iconOnly
 		onclick={toggleOrderedList}
 		active={editor.isActive('orderedList')}
-		title="Ordered List"
+		title={m.toolbar_ordered_list()}
 		class="toolbar-button"
 	>
 		<ListOrdered size={16} />

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { JSONContent } from '@tiptap/core'
 	import { localizedName } from '$lib/utils/locale'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		content?: string
@@ -110,19 +111,19 @@
 
 				// If we couldn't extract an ID, fall back to link
 				if (!videoId) {
-					return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">📹 View Video</a></p>`
+					return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">${m.description_view_video()}</a></p>`
 				}
 
 				// For truncated view, show a link instead of embed
 				if (truncate) {
-					return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">📹 View Video</a></p>`
+					return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">${m.description_view_video()}</a></p>`
 				}
 
 				// Embed YouTube video with responsive iframe
 				return `<div class="video-wrapper">
 					<iframe
 						src="https://www.youtube.com/embed/${videoId}"
-						title="YouTube video"
+						title="${m.tooltip_youtube_video()}"
 						frameborder="0"
 						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 						allowfullscreen

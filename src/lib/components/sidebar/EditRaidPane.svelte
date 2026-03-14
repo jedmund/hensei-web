@@ -75,7 +75,7 @@
 	<div class="search-section">
 		<Input
 			leftIcon="search"
-			placeholder="Search raids..."
+			placeholder={m.placeholder_search_raids()}
 			bind:value={searchQuery}
 			contained
 			clearable
@@ -91,7 +91,7 @@
 			iconOnly
 			icon={sortAscending ? 'arrow-up' : 'arrow-down'}
 			onclick={toggleSort}
-			title="Toggle sort order"
+			title={m.tooltip_toggle_sort()}
 		/>
 	</div>
 

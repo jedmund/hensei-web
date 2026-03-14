@@ -189,7 +189,7 @@
 
 	// Handle delete from collection
 	function handleDelete() {
-		if (confirm('Are you sure you want to remove this weapon from your collection?')) {
+		if (confirm(m.collection_remove_confirm_weapon())) {
 			deleteMutation.mutate(weapon.id, {
 				onSuccess: () => {
 					onClose?.()
@@ -210,7 +210,7 @@
 				sidebar.setAction(enterEditMode, m.action_edit(), elementName)
 				sidebar.setOverflowMenu([
 					{
-						label: 'Remove from collection',
+						label: m.collection_remove_from(),
 						handler: handleDelete,
 						variant: 'danger'
 					}
@@ -285,8 +285,8 @@
 			size="small"
 			grow
 		>
-			<Segment value="info">Info</Segment>
-			<Segment value="collection">My Collection</Segment>
+			<Segment value="info">{m.collection_pane_info()}</Segment>
+			<Segment value="collection">{m.collection_pane_my_collection()}</Segment>
 		</SegmentedControl>
 	</div>
 
@@ -310,8 +310,8 @@
 			/>
 		{:else}
 			<div class="collection-view">
-				<DetailsSection title="General">
-					<DetailRow label="Uncap Level">
+				<DetailsSection title={m.section_general()}>
+					<DetailRow label={m.label_uncap_level()}>
 						<UncapIndicator
 							type="weapon"
 							uncapLevel={weapon.uncapLevel}
@@ -322,24 +322,24 @@
 						/>
 					</DetailRow>
 					{#if canChangeElement}
-						<DetailRow label="Element">
+						<DetailRow label={m.label_element()}>
 							<ElementLabel element={displayElement} size="medium" />
 						</DetailRow>
 					{/if}
 				</DetailsSection>
 
-				<DetailsSection title="Awakening" empty={!hasAwakening} emptyMessage="Not set">
-					<DetailRow label="Type" value={getAwakeningType()} />
-					<DetailRow label="Level" value={getAwakeningLevel()} />
+				<DetailsSection title={m.details_awakening()} empty={!hasAwakening} emptyMessage={m.collection_not_set()}>
+					<DetailRow label={m.label_type()} value={getAwakeningType()} />
+					<DetailRow label={m.label_level()} value={getAwakeningLevel()} />
 				</DetailsSection>
 
-				<DetailsSection title="Weapon Keys" empty={!hasWeaponKeys} emptyMessage="Not set">
+				<DetailsSection title={m.details_weapon_keys()} empty={!hasWeaponKeys} emptyMessage={m.collection_not_set()}>
 					{#each weapon.weaponKeys ?? [] as key, i}
 						<DetailRow label="Key {i + 1}" value={getWeaponKeyName(i)} />
 					{/each}
 				</DetailsSection>
 
-				<DetailsSection title="AX Skills" empty={!hasAxSkills} emptyMessage="Not set">
+				<DetailsSection title={m.details_ax_skills()} empty={!hasAxSkills} emptyMessage={m.collection_not_set()}>
 					{#each weapon.ax ?? [] as ax, i}
 						{#if ax.modifier?.id}
 							<DetailRow label="Skill {i + 1}" value={`${ax.modifier.nameEn} +${ax.strength}${ax.modifier.suffix ?? ''}`} />

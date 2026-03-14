@@ -124,7 +124,7 @@
 
 	// Handle delete from collection
 	function handleDelete() {
-		if (confirm('Are you sure you want to remove this summon from your collection?')) {
+		if (confirm(m.collection_remove_confirm_summon())) {
 			deleteMutation.mutate(summon.id, {
 				onSuccess: () => {
 					onClose?.()
@@ -145,7 +145,7 @@
 				sidebar.setAction(enterEditMode, m.action_edit(), elementName)
 				sidebar.setOverflowMenu([
 					{
-						label: 'Remove from collection',
+						label: m.collection_remove_from(),
 						handler: handleDelete,
 						variant: 'danger'
 					}
@@ -198,8 +198,8 @@
 			size="small"
 			grow
 		>
-			<Segment value="info">Info</Segment>
-			<Segment value="collection">My Collection</Segment>
+			<Segment value="info">{m.collection_pane_info()}</Segment>
+			<Segment value="collection">{m.collection_pane_my_collection()}</Segment>
 		</SegmentedControl>
 	</div>
 
@@ -222,8 +222,8 @@
 			/>
 		{:else}
 			<div class="collection-view">
-				<DetailsSection title="General">
-					<DetailRow label="Uncap Level">
+				<DetailsSection title={m.section_general()}>
+					<DetailRow label={m.label_uncap_level()}>
 						<UncapIndicator
 							type="summon"
 							uncapLevel={summon.uncapLevel}

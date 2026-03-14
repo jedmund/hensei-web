@@ -5,6 +5,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		character: CollectionCharacter
@@ -34,8 +35,8 @@
 			<img
 				class="perpetuity-badge"
 				src={perpetuityFilled}
-				alt="Perpetuity Ring"
-				title="Perpetuity Ring"
+				alt={m.label_perpetuity_ring()}
+				title={m.label_perpetuity_ring()}
 			/>
 		{/if}
 		<img class="character-image" src={imageUrl} alt={displayName} loading="lazy" />

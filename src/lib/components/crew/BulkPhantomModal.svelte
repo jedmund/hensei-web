@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { untrack } from 'svelte'
 	import { useBulkCreatePhantoms } from '$lib/api/mutations/crew.mutations'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
@@ -95,16 +96,16 @@
 <Dialog bind:open size="medium">
 	{#snippet children()}
 		<ModalHeader
-			title="Add Phantom Players"
-			description="Phantom players allow you to track the scores of members without accounts"
+			title={m.crew_bulk_phantom_title()}
+			description={m.crew_bulk_phantom_desc()}
 		/>
 
 		<ModalBody>
 			<div class="phantom-rows">
 				<div class="row-header">
-					<span class="col-name">Name</span>
-					<span class="col-id">Granblue ID</span>
-					<span class="col-date">Join Date</span>
+					<span class="col-name">{m.crew_bulk_name()}</span>
+					<span class="col-id">{m.crew_granblue_id()}</span>
+					<span class="col-date">{m.crew_bulk_join_date()}</span>
 					<span class="col-action"></span>
 				</div>
 
@@ -113,13 +114,13 @@
 						<input
 							type="text"
 							class="input name-input"
-							placeholder="Player name"
+							placeholder={m.crew_bulk_placeholder()}
 							bind:value={row.name}
 						/>
 						<input
 							type="text"
 							class="input id-input"
-							placeholder="Optional"
+							placeholder={m.crew_bulk_optional()}
 							bind:value={row.granblueId}
 						/>
 						<input type="date" class="input date-input" bind:value={row.joinedAt} />
@@ -137,12 +138,12 @@
 			</div>
 
 			<Button variant="ghost" size="small" leftIcon="plus" onclick={addRow}>
-				Add Another
+				{m.crew_bulk_add_another()}
 			</Button>
 
 			{#if bulkCreateMutation.isError}
 				<p class="error-message">
-					Failed to create phantom players. Please check the inputs and try again.
+					{m.crew_bulk_error()}
 				</p>
 			{/if}
 		</ModalBody>
@@ -152,8 +153,8 @@
 			cancelDisabled={bulkCreateMutation.isPending}
 			primaryAction={{
 				label: bulkCreateMutation.isPending
-					? 'Creating...'
-					: `Create ${validPhantoms.length} Phantom${validPhantoms.length !== 1 ? 's' : ''}`,
+					? m.crew_bulk_creating()
+					: m.crew_bulk_create_count({ count: validPhantoms.length }),
 				onclick: handleSubmit,
 				disabled: !canSubmit
 			}}

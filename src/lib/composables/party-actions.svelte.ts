@@ -8,6 +8,7 @@ import {
 } from '$lib/features/party/openPartyEditSidebar.svelte'
 import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
+import * as m from '$lib/paraglide/messages'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -40,7 +41,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				...updates
 			})
 		} catch (err: any) {
-			error = err.message || 'Failed to update party'
+			error = err.message || m.toast_failed_update_party()
 		} finally {
 			loading = false
 		}
@@ -61,7 +62,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				await opts.mutations.party.favorite.mutateAsync(party.shortcode)
 			}
 		} catch (err: any) {
-			error = err.message || 'Failed to update favorite status'
+			error = err.message || m.toast_failed_update_favorite()
 		} finally {
 			loading = false
 		}
@@ -76,7 +77,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 			const newParty = await opts.mutations.party.remix.mutateAsync(party.shortcode)
 			window.location.href = `/teams/${newParty.shortcode}`
 		} catch (err: any) {
-			error = err.message || 'Failed to remix party'
+			error = err.message || m.toast_failed_remix()
 		} finally {
 			loading = false
 		}
@@ -102,7 +103,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				window.location.href = '/me'
 			}
 		} catch (err: any) {
-			error = err.message || 'Failed to delete party'
+			error = err.message || m.toast_failed_delete_party()
 			deleteDialogOpen = false
 		} finally {
 			deleting = false
@@ -122,7 +123,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				partyShortcode: party.shortcode
 			})
 		} catch (err: any) {
-			error = err.message || 'Failed to sync from collection'
+			error = err.message || m.toast_failed_sync_collection()
 		} finally {
 			loading = false
 		}
@@ -138,14 +139,14 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				partyShortcode: party.shortcode
 			})
 		} catch (err: any) {
-			error = err.message || 'Failed to unlink collection'
+			error = err.message || m.toast_failed_unlink_collection()
 		}
 	}
 
 	function openDescriptionPanel() {
 		const party = opts.getParty()
 		openDescriptionPane({
-			title: party.name || '(untitled party)',
+			title: party.name || m.party_untitled(),
 			description: party.description,
 			videoUrl: party.videoUrl,
 			canEdit: opts.canEdit(),
@@ -211,7 +212,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 						})
 					} catch (err: any) {
 						console.error('Failed to share with crew:', err)
-						toast.error(extractErrorMessage(err, 'Failed to share with crew'))
+						toast.error(extractErrorMessage(err, m.toast_failed_share_crew()))
 					}
 				} else if (!values.sharedWithCrew && wasShared) {
 					const share = party.shares?.find((s) => s.shareableType === 'crew')
@@ -224,7 +225,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 							})
 						} catch (err: any) {
 							console.error('Failed to remove share:', err)
-							toast.error(extractErrorMessage(err, 'Failed to remove crew share'))
+							toast.error(extractErrorMessage(err, m.toast_failed_remove_crew_share()))
 						}
 					}
 				}
