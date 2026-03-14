@@ -14,7 +14,7 @@ export function appLocale(): AppLocale {
  * Get the localized display name from a LocalizedName object.
  * Falls back to English if the current locale's value is empty.
  */
-export function localizedName(name: LocalizedName | string | null | undefined): string {
+export function localizedName(name: LocalizedName | Partial<LocalizedName> | string | null | undefined): string {
 	if (!name) return '—'
 	if (typeof name === 'string') return name
 
