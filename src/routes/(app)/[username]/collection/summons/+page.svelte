@@ -19,6 +19,7 @@
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import { localizedName } from '$lib/utils/locale'
 
 	const { data }: { data: PageData } = $props()
 
@@ -107,10 +108,7 @@
 	}
 
 	function openSummonDetails(summon: CollectionSummon) {
-		const summonName =
-			typeof summon.summon?.name === 'string'
-				? summon.summon.name
-				: summon.summon?.name?.en || 'Summon'
+		const summonName = localizedName(summon.summon?.name)
 
 		sidebar.openWithComponent(summonName, CollectionSummonPane, {
 			summon,
