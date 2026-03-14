@@ -45,6 +45,7 @@
   let dropdownOpen = $state(false)
   let inputEl = $state<HTMLInputElement>()
   let containerEl = $state<HTMLDivElement>()
+  let listEl = $state<HTMLUListElement>()
   let selectedIndex = $state(0)
   let searchResults = $state<UnifiedSearchResult[]>([])
   let isSearching = $state(false)
@@ -219,6 +220,29 @@
     series?: UnifiedSearchSeriesRef[] | null
   }
 
+  // Rank results so exact/prefix matches and filter options appear first
+  function rankResults(results: FilterOption[], query: string): FilterOption[] {
+    const filterKinds = new Set(['element', 'recency', 'party', 'boost', 'side', 'class'])
+
+    return results.toSorted((a, b) => {
+      const aLabel = a.label.toLowerCase()
+      const bLabel = b.label.toLowerCase()
+      const aExact = aLabel === query
+      const bExact = bLabel === query
+      if (aExact !== bExact) return aExact ? -1 : 1
+
+      const aPrefix = aLabel.startsWith(query)
+      const bPrefix = bLabel.startsWith(query)
+      if (aPrefix !== bPrefix) return aPrefix ? -1 : 1
+
+      const aFilter = filterKinds.has(a.kind)
+      const bFilter = filterKinds.has(b.kind)
+      if (aFilter !== bFilter) return aFilter ? -1 : 1
+
+      return 0
+    })
+  }
+
   // Filter local static options based on input
   function matchLocal(query: string): FilterOption[] {
     const q = query.toLowerCase()
@@ -380,13 +404,19 @@
         }
       })
 
-    return [...local, ...apiResults]
+    return rankResults([...local, ...apiResults], inputValue.trim().toLowerCase())
   })
 
   // Reset selected index when results change
   $effect(() => {
     void displayResults
     selectedIndex = 0
+  })
+
+  // Scroll the selected item into view on keyboard navigation
+  $effect(() => {
+    const item = listEl?.children[selectedIndex] as HTMLElement | undefined
+    item?.scrollIntoView({ block: 'nearest' })
   })
 
   // Trigger search on input change (skip during IME composition)
@@ -592,7 +622,7 @@
 
   {#if dropdownOpen}
     <div class="dropdown">
-      <ul class="results" role="listbox">
+      <ul class="results" role="listbox" bind:this={listEl}>
         {#if !inputValue.trim()}
           {#each placeholderSuggestions as suggestion, i (suggestion.label)}
             <li
@@ -841,6 +871,7 @@
     list-style: none;
     margin: 0;
     padding: $unit-half;
+    min-height: 200px;
     max-height: 280px;
     overflow-y: auto;
   }
@@ -863,6 +894,8 @@
     &.empty {
       cursor: default;
       color: var(--text-tertiary);
+      justify-content: center;
+      min-height: calc(200px - $unit);
     }
   }
 

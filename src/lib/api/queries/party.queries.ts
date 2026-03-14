@@ -96,6 +96,9 @@ export function buildFilterQuery(filters: ExploreFilterParams): Partial<ExploreF
 	if (filters.excludes) query.excludes = filters.excludes
 	if (filters.collectionFilter) query.collectionFilter = filters.collectionFilter
 
+	if (filters.boostMod) query.boostMod = filters.boostMod
+	if (filters.boostSide) query.boostSide = filters.boostSide
+
 	return query as Partial<ExploreFilterParams>
 }
 
