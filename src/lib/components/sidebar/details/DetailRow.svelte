@@ -36,6 +36,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		gap: spacing.$unit-2x;
 		padding: calc(spacing.$unit * 1.5) spacing.$unit;
 
 		&:not(.no-hover):hover {
@@ -54,12 +55,13 @@
 		.label {
 			font-size: typography.$font-regular;
 			color: var(--text-secondary);
+			flex: 1;
 		}
 
 		.value {
 			font-size: typography.$font-regular;
 			color: var(--text-primary);
-			min-width: 180px;
+			flex-shrink: 0;
 			display: flex;
 			justify-content: flex-end;
 			align-items: center;
