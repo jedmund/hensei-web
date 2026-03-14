@@ -36,6 +36,7 @@
 	let rarityFilters = $state<number[]>(collectionFilters.weapons.rarity)
 	let proficiencyFilters = $state<number[]>(collectionFilters.weapons.proficiency)
 	let seriesFilters = $state<(number | string)[]>(collectionFilters.weapons.series)
+	let searchQuery = $state('')
 
 	// Sort state (initialized from localStorage)
 	let sortBy = $state<CollectionSortKey>(collectionFilters.weapons.sort)
@@ -49,6 +50,7 @@
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
 		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
 		series: seriesFilters.length > 0 ? seriesFilters : undefined,
+		search: searchQuery.length > 0 ? searchQuery : undefined,
 		sort: sortBy
 	})
 
@@ -135,6 +137,7 @@
 			bind:rarityFilters
 			bind:proficiencyFilters
 			bind:seriesFilters
+			bind:searchQuery
 			bind:sortBy
 			onFiltersChange={handleFiltersChange}
 			showViewToggle={true}

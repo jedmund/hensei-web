@@ -37,6 +37,7 @@
 	let raceFilters = $state<number[]>(collectionFilters.characters.race)
 	let proficiencyFilters = $state<number[]>(collectionFilters.characters.proficiency)
 	let genderFilters = $state<number[]>(collectionFilters.characters.gender)
+	let searchQuery = $state('')
 
 	// Sort state (initialized from localStorage)
 	let sortBy = $state<CollectionSortKey>(collectionFilters.characters.sort)
@@ -51,6 +52,7 @@
 		race: raceFilters.length > 0 ? raceFilters : undefined,
 		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
 		gender: genderFilters.length > 0 ? genderFilters : undefined,
+		search: searchQuery.length > 0 ? searchQuery : undefined,
 		sort: sortBy
 	})
 
@@ -139,6 +141,7 @@
 			bind:raceFilters
 			bind:proficiencyFilters
 			bind:genderFilters
+			bind:searchQuery
 			bind:sortBy
 			onFiltersChange={handleFiltersChange}
 			showFilters={{

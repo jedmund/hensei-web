@@ -5,6 +5,7 @@
 	import { GENDER_LABELS } from '$lib/utils/gender'
 	import type { CollectionSortKey } from '$lib/types/api/collection'
 	import type { ViewMode } from '$lib/stores/viewMode.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
@@ -54,6 +55,8 @@
 		neutralViewToggle?: boolean
 		/** Whether to show contained background styling (default: true) */
 		contained?: boolean
+		/** Search query for plaintext name search */
+		searchQuery?: string
 	}
 
 	export interface CollectionFilterState {
@@ -117,7 +120,8 @@
 		showViewToggle = false,
 		element,
 		neutralViewToggle = false,
-		contained = true
+		contained = true,
+		searchQuery = $bindable('')
 	}: Props = $props()
 
 	// Compute effective filter visibility (explicit showFilters overrides entityType defaults)
@@ -280,6 +284,7 @@
 		raceFilters = []
 		proficiencyFilters = []
 		genderFilters = []
+		searchQuery = ''
 		emitChange()
 	}
 
@@ -290,7 +295,8 @@
 			seriesFilters.length > 0 ||
 			raceFilters.length > 0 ||
 			proficiencyFilters.length > 0 ||
-			genderFilters.length > 0
+			genderFilters.length > 0 ||
+			searchQuery.length > 0
 	)
 
 	// Overflow detection state
@@ -304,8 +310,8 @@
 		placeholder: string
 	}
 
-	// Filters that always go in the "More" dropdown
-	const moreFilterKeys: FilterKey[] = ['race', 'gender']
+	// Maximum number of filters visible in the main row before overflow into "More"
+	const MAX_VISIBLE_FILTERS = 3
 
 	// Unified filter configuration
 	const filterConfigs = $derived<FilterConfig[]>([
@@ -363,11 +369,11 @@
 	// Active filters based on visibility settings
 	const activeFilters = $derived(filterConfigs.filter((f) => effectiveShowFilters[f.key]))
 
-	// Filters visible in the main row (not in moreFilterKeys)
-	const visibleFilters = $derived(activeFilters.filter((f) => !moreFilterKeys.includes(f.key)))
+	// Filters visible in the main row (first N filters)
+	const visibleFilters = $derived(activeFilters.slice(0, MAX_VISIBLE_FILTERS))
 
-	// Filters in the "More" dropdown
-	const moreFilters = $derived(activeFilters.filter((f) => moreFilterKeys.includes(f.key)))
+	// Filters in the "More" dropdown (everything after the first N)
+	const moreFilters = $derived(activeFilters.slice(MAX_VISIBLE_FILTERS))
 
 	const showMoreButton = $derived(moreFilters.length > 0)
 
@@ -382,8 +388,14 @@
 	}
 </script>
 
-<div class="filters-container" class:contained>
+<div class="filters-container" class:contained style:--accent-color={element ? `var(--${element}-button-bg)` : undefined}>
 	<div class="filters">
+		<input
+			type="text"
+			class="search-input"
+			placeholder={m.placeholder_search()}
+			bind:value={searchQuery}
+		/>
 		{#each visibleFilters as filter (filter.key)}
 			<MultiSelect
 				options={filter.options}
@@ -444,12 +456,15 @@
 				</DropdownMenu.Portal>
 			</DropdownMenu.Root>
 		{/if}
+
+		{#if hasActiveFilters}
+			<Button variant="element-ghost" size="small" element={element} onclick={clearAll} class="clear-btn">
+				{m.filter_clear()}
+			</Button>
+		{/if}
 	</div>
 
 	<div class="right-controls">
-		{#if hasActiveFilters}
-			<button type="button" class="clear-btn" onclick={clearAll}>{m.filter_clear()}</button>
-		{/if}
 		{#if showSort}
 			<div class="sort">
 				<Select
@@ -501,6 +516,33 @@
 		gap: $unit;
 	}
 
+	.search-input {
+		all: unset;
+		box-sizing: border-box;
+		background-color: var(--input-bg);
+		border-radius: $input-corner;
+		border: 1px solid transparent;
+		color: var(--text-primary);
+		font-family: var(--font-family);
+		font-size: $font-small;
+		padding: $unit-half $unit;
+		min-height: $unit-3x;
+		width: 140px;
+		@include smooth-transition($duration-quick, background-color, border-color);
+
+		&::placeholder {
+			color: var(--text-secondary);
+		}
+
+		&:hover {
+			background-color: var(--input-bg-hover);
+		}
+
+		&:focus {
+			border-color: var(--accent-blue);
+		}
+	}
+
 	.right-controls {
 		display: flex;
 		align-items: center;
@@ -516,19 +558,11 @@
 		}
 	}
 
-	.clear-btn {
-		background: none;
-		border: none;
-		padding: $unit-half $unit;
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--accent-color);
-		cursor: pointer;
-
-		&:hover {
-			text-decoration: underline;
-		}
+	:global([data-button-root].clear-btn) {
+		padding: 6px 12px;
+		min-height: 26px;
 	}
+
 
 	// More button trigger - matches MultiSelect trigger styling
 	:global(.more-trigger) {
@@ -542,7 +576,7 @@
 		font-size: $font-small;
 		font-family: var(--font-family);
 		min-height: $unit-3x;
-		color: var(--text-tertiary);
+		color: var(--text-secondary);
 		background-color: var(--input-bg);
 		border-radius: $input-corner;
 		border: 1px solid transparent;
@@ -562,7 +596,7 @@
 
 		:global(svg) {
 			flex-shrink: 0;
-			color: var(--text-tertiary);
+			color: var(--text-secondary);
 		}
 	}
 
