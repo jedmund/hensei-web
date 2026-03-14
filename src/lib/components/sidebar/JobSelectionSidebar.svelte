@@ -27,14 +27,14 @@
 
 	// Available tiers with short labels for display
 	const tiers = [
-		{ value: '1', label: 'Class I', shortLabel: 'I' },
-		{ value: '2', label: 'Class II', shortLabel: 'II' },
-		{ value: '3', label: 'Class III', shortLabel: 'III' },
-		{ value: '4', label: 'Class IV', shortLabel: 'IV' },
-		{ value: '5', label: 'Class V', shortLabel: 'V' },
-		{ value: 'ex', label: 'Extra', shortLabel: 'EXI' },
-		{ value: 'ex2', label: 'Extra II', shortLabel: 'EXII' },
-		{ value: 'o1', label: 'Origin I', shortLabel: 'OI' }
+		{ value: '1', label: m.job_tier_class_1(), shortLabel: 'I' },
+		{ value: '2', label: m.job_tier_class_2(), shortLabel: 'II' },
+		{ value: '3', label: m.job_tier_class_3(), shortLabel: 'III' },
+		{ value: '4', label: m.job_tier_class_4(), shortLabel: 'IV' },
+		{ value: '5', label: m.job_tier_class_5(), shortLabel: 'V' },
+		{ value: 'ex', label: m.job_tier_ex(), shortLabel: 'EXI' },
+		{ value: 'ex2', label: m.job_tier_ex2(), shortLabel: 'EXII' },
+		{ value: 'o1', label: m.job_tier_origin_1(), shortLabel: 'OI' }
 	]
 
 	function toggleTier(value: string) {

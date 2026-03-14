@@ -4,6 +4,8 @@
  * Helper functions for working with job accessories (Shields and Manatura).
  */
 
+import * as m from '$lib/paraglide/messages'
+
 /**
  * Accessory type constants
  */
@@ -20,11 +22,11 @@ export type AccessoryType = (typeof ACCESSORY_TYPES)[keyof typeof ACCESSORY_TYPE
 export function getAccessoryTypeName(type: number): string {
 	switch (type) {
 		case ACCESSORY_TYPES.SHIELD:
-			return 'Shield'
+			return m.accessory_type_shield()
 		case ACCESSORY_TYPES.MANATURA:
-			return 'Manatura'
+			return m.accessory_type_manatura()
 		default:
-			return 'Unknown'
+			return m.accessory_type_unknown()
 	}
 }
 
@@ -33,8 +35,8 @@ export function getAccessoryTypeName(type: number): string {
  */
 export function getAccessoryTypeOptions(): Array<{ value: number; label: string }> {
 	return [
-		{ value: ACCESSORY_TYPES.SHIELD, label: 'Shield' },
-		{ value: ACCESSORY_TYPES.MANATURA, label: 'Manatura' }
+		{ value: ACCESSORY_TYPES.SHIELD, label: m.accessory_type_shield() },
+		{ value: ACCESSORY_TYPES.MANATURA, label: m.accessory_type_manatura() }
 	]
 }
 
